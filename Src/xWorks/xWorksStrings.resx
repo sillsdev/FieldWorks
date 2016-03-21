@@ -415,6 +415,15 @@ Are you SURE you want to delete the field {2}?</value>
   <data name="RemoveHighlighting" xml:space="preserve">
     <value>Remove highlighting from affected content</value>
   </data>
+  <data name="ConfigureReferencedHeadwordsTooltip" xml:space="preserve">
+    <value>Configure how homograph and sense numbers appear on headwords in cross references</value>
+  </data>
+  <data name="ConfigureHomographNumber" xml:space="preserve">
+    <value>Configure Homograph Number...</value>
+  </data>
+  <data name="ConfigureHomographNumberTooltip" xml:space="preserve">
+    <value>Configure how homograph numbers appear on all headwords</value>
+  </data>
   <data name="kstidExportingLists" xml:space="preserve">
     <value>Writing possibility list contents</value>
   </data>

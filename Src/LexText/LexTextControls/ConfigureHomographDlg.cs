@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		public void SetupDialog(HomographConfiguration hc, FdoCache cache, FwStyleSheet stylesheet, IApp app,
 			IHelpTopicProvider helpTopicProvider)
 		{
-			SetHelpTopic("khtpConfigureHomograph"); // Default help topic ID
+			SetHelpTopic("khtpConfigureReferencedHeadwords"); // Default help topic ID
 			m_helpProvider = new HelpProvider();
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			m_helpProvider.SetShowHelp(this, true);

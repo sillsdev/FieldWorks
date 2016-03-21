@@ -8,16 +8,22 @@ using System.Windows.Forms;
 
 namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 {
-	public partial class ButtonWithPane : UserControl
+	public partial class ButtonOverPanel : UserControl
 	{
 		private Control m_panelContents;
+		private readonly ToolTip m_tt = new ToolTip();
 
-		public ButtonWithPane()
+		public ButtonOverPanel()
 		{
 			InitializeComponent();
+			ButtonToolTip = xWorksStrings.ConfigureReferencedHeadwordsTooltip;
 		}
 
-		public UserControl PaneContents
+		public string ButtonText { set { button.Text = value; } }
+
+		public string ButtonToolTip { set { m_tt.SetToolTip(button, value); } }
+
+		public UserControl PanelContents
 		{
 			set
 			{
@@ -32,15 +38,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 					m_panelContents.Dock = DockStyle.Fill;
 					m_panelContents.Location = new Point(0, 0);
 					panel.Controls.Add(m_panelContents);
-					// Set the initial size to whatever is available.
-					SetPanelOptionsSize();
 				}
 			}
-		}
-
-		private void SetPanelOptionsSize()
-		{
-			//panel.Size = new Size(Width, Height - (m_deltaStyleLabel + 10));
 		}
 
 		public event EventHandler ButtonClicked

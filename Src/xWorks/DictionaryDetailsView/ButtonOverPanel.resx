@@ -148,13 +148,13 @@
     <value>3, 3</value>
   </data>
   <data name="button.Size" type="System.Drawing.Size, System.Drawing">
-    <value>196, 23</value>
+    <value>201, 23</value>
   </data>
   <data name="button.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
   <data name="button.Text" xml:space="preserve">
-    <value>Configure Homograph Number...</value>
+    <value>Configure Referenced Headwords...</value>
   </data>
   <data name="&gt;&gt;button.Name" xml:space="preserve">
     <value>button</value>

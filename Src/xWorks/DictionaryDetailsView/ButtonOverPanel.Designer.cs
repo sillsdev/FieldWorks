@@ -1,6 +1,6 @@
 ﻿namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 {
-	partial class ButtonWithPane
+	partial class ButtonOverPanel
 	{
 		/// <summary> 
 		/// Required designer variable.
@@ -29,7 +29,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ButtonWithPane));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ButtonOverPanel));
 			this.panel = new System.Windows.Forms.Panel();
 			this.button = new System.Windows.Forms.Button();
 			this.SuspendLayout();

@@ -4701,7 +4701,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void m_linkConfigureHomograph_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			m_mediator.SendMessage("ConfigureHomographs", this);
+			m_mediator.SendMessage("ConfigureReferencedHeadwords", this);
 		}
 
 		#region ILayoutConverter methods

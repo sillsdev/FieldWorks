@@ -2711,9 +2711,9 @@
   <data name="khtpBulkEditPublishIn(Sense)" xml:space="preserve">
     <value>/Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_publications.htm</value>
   </data>
-  <data name="khtpConfigureHomograph" xml:space="preserve">
-    <value>/User_Interface/Menus/Tools/Configure_Homograph_Number/Configure_Homograph_Number_dialog_box.htm</value>
-    <comment>Configure Homograph Number Dialog box.</comment>
+  <data name="khtpConfigureReferencedHeadwords" xml:space="preserve">
+    <value>/User_Interface/Menus/Tools/Configure_Referenced_Headwords/Config_Refed_Hdwrds_dialog_box.htm</value>
+    <comment>Configure Referenced Headwords Dialog box.</comment>
   </data>
   <data name="khtpConfigureDictionary" xml:space="preserve">
     <value>/User_Interface/Menus/Tools/Configure_Dictionary/Configure_Dictionary.htm</value>

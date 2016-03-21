@@ -101,7 +101,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (Options is DictionaryNodeWritingSystemOptions)
 				{
-					LoadWsOptions((DictionaryNodeWritingSystemOptions) Options, DictionaryConfigurationModel.IsHeadWord(node));
+					LoadWsOptions((DictionaryNodeWritingSystemOptions) Options);
 				}
 				else if (Options is DictionaryNodeSenseOptions)
 				{
@@ -233,7 +233,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>Initialize options for DictionaryNodeWritingSystemOptions</summary>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "wsOptionsView is disposed by its parent")]
-		private void LoadWsOptions(DictionaryNodeWritingSystemOptions wsOptions, bool showConfigureHomographNum)
+		private void LoadWsOptions(DictionaryNodeWritingSystemOptions wsOptions)
 		{
 			var wsOptionsView = new ListOptionsView
 			{
@@ -250,9 +250,14 @@ namespace SIL.FieldWorks.XWorks
 			// Prevent events from firing while the view is being initialized
 			wsOptionsView.Load += WritingSystemEventHandlerAdder(wsOptionsView, wsOptions);
 
-			if (showConfigureHomographNum)
+			if (DictionaryConfigurationModel.IsHeadWord(m_node)) // show the Configure Referenced Headwords... button
 			{
-				var optionsView = new ButtonWithPane { PaneContents = wsOptionsView };
+				var optionsView = new ButtonOverPanel { PanelContents = wsOptionsView };
+				if (m_node.Parent != null && m_node.Parent.Parent == null) // HeadWord at this level is not Referenced; rename the button accordingly
+				{
+					optionsView.ButtonText = xWorksStrings.ConfigureHomographNumber;
+					optionsView.ButtonToolTip = xWorksStrings.ConfigureHomographNumberTooltip;
+				}
 				optionsView.ButtonClicked += (o, e) => HandleHomographButton();
 				View.OptionsView = optionsView;
 			}
@@ -288,15 +293,16 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// initialize SenseOptionsView
 			//For senses disallow the 1 1.2 1.2.3 option, that is now handled in subsenses
-			string numberingStyles = "x";
+			var disallowedNumberingStyles = string.Empty;
 			if (!isSubsense)
 			{
-				numberingStyles = "%O";
+				disallowedNumberingStyles = "%O";
 			}
 			IDictionarySenseOptionsView senseOptionsView = new SenseOptionsView(isSubsense)
 			{
 				BeforeText = senseOptions.BeforeNumber,
-				NumberingStyles = XmlVcDisplayVec.SupportedNumberingStyles.Where(prop => prop.FormatString != numberingStyles).ToList(), // load available list before setting value
+				// load list of available NumberingStyles before setting NumberingStyle's value
+				NumberingStyles = XmlVcDisplayVec.SupportedNumberingStyles.Where(prop => prop.FormatString != disallowedNumberingStyles).ToList(),
 				NumberingStyle = senseOptions.NumberingStyle,
 				AfterText = senseOptions.AfterNumber,
 				NumberSingleSense = senseOptions.NumberEvenASingleSense,
