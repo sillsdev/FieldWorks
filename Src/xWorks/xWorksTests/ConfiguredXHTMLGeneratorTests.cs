@@ -5182,6 +5182,73 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_MinorComplexForm_GeneratesGlossOrSummaryDefinition()
+		{
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			var lexentry = CreateInterestingLexEntry(Cache);
+			AddSenseToEntry(lexentry, "gloss2", wsEn, Cache);
+			AddSenseToEntry(lexentry, string.Empty, wsEn, Cache);
+			lexentry.SummaryDefinition.SetAnalysisDefaultWritingSystem("MainEntrySummaryDefn");
+			lexentry.SensesOS[0].Definition.SetAnalysisDefaultWritingSystem("MainEntryS1Defn");
+			lexentry.SensesOS[2].Definition.SetAnalysisDefaultWritingSystem("MainEntryS3Defn");
+
+			var subentry1 = CreateInterestingLexEntry(Cache);
+			CreateComplexForm(lexentry, subentry1, true); // subentry references main ILexEntry
+
+			var subentry2 = CreateInterestingLexEntry(Cache);
+			CreateComplexForm(lexentry.SensesOS[1], subentry2, true); // subentry references 2nd ILexSense
+
+			var subentry3 = CreateInterestingLexEntry(Cache);
+			CreateComplexForm(lexentry.SensesOS[2], subentry3, true); // subentry references 3rd ILexSense
+
+			var glossOrSummDefnNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "GlossOrSummary",
+				Label = "Gloss (or Summary Definition)",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+			};
+			var refentryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { glossOrSummDefnNode },
+				FieldDescription = "ConfigReferencedEntries",
+				Label = "Referenced Entries",
+				CSSClassNameOverride = "referencedentries"
+			};
+			var ComponentsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ComplexFormEntryRefs",
+				Label = "Components",
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex, true),
+				Children = new List<ConfigurableDictionaryNode> { refentryNode }
+			};
+			var minorEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { ComponentsNode },
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "minorentrycomplex",
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(minorEntryNode);
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(subentry1, minorEntryNode, null, settings);
+			const string complexFormEntryRefXpath = "div[@class='minorentrycomplex']/span[@class='complexformentryrefs']/span[@class='complexformentryref']";
+			const string referencedEntriesXpath = "/span[@class='referencedentries']/span[@class='referencedentry']";
+			const string glossOrSummXpath1 = complexFormEntryRefXpath + referencedEntriesXpath + "/span[@class='glossorsummary']/span[@lang='en' and text()='MainEntrySummaryDefn']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(glossOrSummXpath1, 1);
+
+			//SUT
+			var result2 = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(subentry2, minorEntryNode, null, settings);
+			const string glossOrSummXpath2 = complexFormEntryRefXpath + referencedEntriesXpath + "/span[@class='glossorsummary']/span[@lang='en' and text()='gloss2']";
+			AssertThatXmlIn.String(result2).HasSpecifiedNumberOfMatchesForXpath(glossOrSummXpath2, 1);
+
+			//SUT
+			var result3 = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(subentry3, minorEntryNode, null, settings);
+			const string glossOrSummXpath3 = complexFormEntryRefXpath + referencedEntriesXpath + "/span[@class='glossorsummary']/span[@lang='en' and text()='MainEntryS3Defn']";
+			AssertThatXmlIn.String(result3).HasSpecifiedNumberOfMatchesForXpath(glossOrSummXpath3, 1);
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_ContinuationParagraphWithEmtpyContentDoesNotGenerateSelfClosingTag()
 		{
 			var lexentry = CreateInterestingLexEntry(Cache);
@@ -5975,7 +6042,8 @@ namespace SIL.FieldWorks.XWorks
 			var senseFactory = cache.ServiceLocator.GetInstance<ILexSenseFactory>();
 			var sense = senseFactory.Create();
 			entry.SensesOS.Add(sense);
-			sense.Gloss.set_String(wsId, cache.TsStrFactory.MakeString(gloss, wsId));
+			if (!string.IsNullOrEmpty(gloss))
+				sense.Gloss.set_String(wsId, cache.TsStrFactory.MakeString(gloss, wsId));
 		}
 
 		private void AddSenseAndTwoSubsensesToEntry(ILexEntry entry, string gloss)

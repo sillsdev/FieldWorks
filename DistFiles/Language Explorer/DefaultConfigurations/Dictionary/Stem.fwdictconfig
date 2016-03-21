@@ -1178,7 +1178,7 @@
   					<Option id="vernacular" isEnabled="true"/>
   				</WritingSystemOptions>
   			</ConfigurationItem>
-  			<ConfigurationItem name="Gloss (or Summary Definition)" before=" " between=" " isEnabled="false" field="DefinitionOrGloss">
+  			<ConfigurationItem name="Gloss (or Summary Definition)" before=" " between=" " isEnabled="false" field="GlossOrSummary">
   				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
   					<Option id="all analysis" isEnabled="true"/>
   				</WritingSystemOptions>
@@ -1219,7 +1219,7 @@
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Gloss (or Summary Definition)" before=" " between=" " isEnabled="true" field="DefinitionOrGloss">
+		<ConfigurationItem name="Gloss (or Summary Definition)" before=" " between=" " isEnabled="true" field="GlossOrSummary">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="all analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -2267,7 +2267,7 @@
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Gloss (or Summary Definition)" before=" " between=" " isEnabled="true" field="DefinitionOrGloss">
+		<ConfigurationItem name="Gloss (or Summary Definition)" before=" " between=" " isEnabled="true" field="GlossOrSummary">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="all analysis" isEnabled="true"/>
 		  </WritingSystemOptions>

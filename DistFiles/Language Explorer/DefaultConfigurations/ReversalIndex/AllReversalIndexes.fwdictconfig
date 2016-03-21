@@ -218,7 +218,7 @@
 		<ConfigurationItem name="Primary Entry(s)" isEnabled="true" between="," after=" " field="PrimarySensesOrEntries" cssClassNameOverride="primarylexemes">
 		  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after=" " field="HeadWord">
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="true" between=" " after=" " field="DefinitionOrGloss">
+		  <ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="true" between=" " after=" " field="GlossOrSummary">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true" />
 			</WritingSystemOptions>
@@ -784,7 +784,7 @@
 			  <Option id="vernacular" isEnabled="true" />
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="true" between=" " after=" " field="DefinitionOrGloss">
+		  <ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="true" between=" " after=" " field="GlossOrSummary">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true" />
 			</WritingSystemOptions>

@@ -9475,7 +9475,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
-		public IMultiAccessorBase DefinitionOrGloss
+		public IMultiAccessorBase GlossOrSummary
 		{
 			get
 			{
@@ -9485,11 +9485,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					return entry.SummaryDefinition;
 				}
 				var sense = Item as ILexSense;
-				if(sense != null)
-				{
-					return sense.DefinitionOrGloss;
-				}
-				return null;
+				if (sense == null)
+					return null;
+				// LT-17202 Change fallback order
+				// But do have a fallback as per LT-16485
+				if (sense.Gloss != null && sense.Gloss.StringCount > 0)
+					return sense.Gloss;
+				return sense.Definition;
 			}
 		}
 	}

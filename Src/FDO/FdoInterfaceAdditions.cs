@@ -5943,8 +5943,8 @@ namespace SIL.FieldWorks.FDO
 		IMultiUnicode Gloss { get; }
 
 		/// <summary>
-		/// Returns the SummaryDefinition on Entry, or DefinitionOrGloss on Sense
+		/// Returns the SummaryDefinition on Entry, or Gloss on Sense
 		/// </summary>
-		IMultiAccessorBase DefinitionOrGloss { get; }
+		IMultiAccessorBase GlossOrSummary { get; }
 	}
 }
