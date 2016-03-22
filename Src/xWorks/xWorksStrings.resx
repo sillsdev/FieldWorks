@@ -416,7 +416,7 @@ Are you SURE you want to delete the field {2}?</value>
     <value>Remove highlighting from affected content</value>
   </data>
   <data name="ConfigureReferencedHeadwordsTooltip" xml:space="preserve">
-    <value>Configure how homograph and sense numbers appear on headwords in cross references</value>
+    <value>Configure homograph numbers on all headwords and sense numbers on headwords in cross references</value>
   </data>
   <data name="ConfigureHomographNumber" xml:space="preserve">
     <value>Configure Homograph Number...</value>

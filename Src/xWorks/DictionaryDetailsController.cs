@@ -256,7 +256,8 @@ namespace SIL.FieldWorks.XWorks
 				if (m_node.Parent != null && m_node.Parent.Parent == null) // HeadWord at this level is not Referenced; rename the button accordingly
 				{
 					optionsView.ButtonText = xWorksStrings.ConfigureHomographNumber;
-					optionsView.ButtonToolTip = xWorksStrings.ConfigureHomographNumberTooltip;
+					// We have the option of a separate tooltip, but for now keep them the same.  -BB
+					// optionsView.ButtonToolTip = xWorksStrings.ConfigureHomographNumberTooltip;
 				}
 				optionsView.ButtonClicked += (o, e) => HandleHomographButton();
 				View.OptionsView = optionsView;
