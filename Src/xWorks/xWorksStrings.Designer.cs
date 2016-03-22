@@ -187,25 +187,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Configure Homograph Number....
-        /// </summary>
-        internal static string ConfigureHomographNumber {
-            get {
-                return ResourceManager.GetString("ConfigureHomographNumber", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Configure how homograph numbers appear on all headwords.
-        /// </summary>
-        internal static string ConfigureHomographNumberTooltip {
-            get {
-                return ResourceManager.GetString("ConfigureHomographNumberTooltip", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Configure how homograph and sense numbers appear on headwords in cross references.
+        ///   Looks up a localized string similar to Configure homograph numbers on all headwords and sense numbers on headwords in cross references.
         /// </summary>
         internal static string ConfigureReferencedHeadwordsTooltip {
             get {

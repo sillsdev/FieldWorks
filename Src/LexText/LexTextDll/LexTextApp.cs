@@ -440,7 +440,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			m_windowToCloseOnIdle = null;
 		}
 
-		public bool OnConfigureReferencedHeadwords(object commandObject)
+		public bool OnConfigureHeadwordNumbers(object commandObject)
 		{
 			CheckDisposed();
 			var configDlg = commandObject as XmlDocConfigureDlg;

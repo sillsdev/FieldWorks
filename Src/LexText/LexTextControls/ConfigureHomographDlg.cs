@@ -6,14 +6,12 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.FieldWorks.Resources;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -39,7 +37,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		public void SetupDialog(HomographConfiguration hc, FdoCache cache, FwStyleSheet stylesheet, IApp app,
 			IHelpTopicProvider helpTopicProvider)
 		{
-			SetHelpTopic("khtpConfigureReferencedHeadwords"); // Default help topic ID
+			SetHelpTopic("khtpConfigureHeadwordNumbers"); // Default help topic ID
 			m_helpProvider = new HelpProvider();
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			m_helpProvider.SetShowHelp(this, true);
@@ -99,7 +97,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				DialogResult = DialogResult.OK; // let the client know that something has changed
 		}
 
-		private void m_radioBefore_CheckedChanged(object sender, System.EventArgs e)
+		private void m_radioBefore_CheckedChanged(object sender, EventArgs e)
 		{
 			if (m_radioBefore.Checked)
 			{
@@ -124,7 +122,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private void m_radioAfter_CheckedChanged(object sender, System.EventArgs e)
+		private void m_radioAfter_CheckedChanged(object sender, EventArgs e)
 		{
 			if (m_radioAfter.Checked)
 			{
@@ -134,7 +132,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			EnableControls();
 		}
 
-		private void m_radioHide_CheckedChanged(object sender, System.EventArgs e)
+		private void m_radioHide_CheckedChanged(object sender, EventArgs e)
 		{
 			if (m_radioHide.Checked)
 			{
