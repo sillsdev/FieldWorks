@@ -91,21 +91,34 @@ namespace SIL.FieldWorks.XWorks
 		internal static void PopulateFieldsForTesting(ConfigurableDictionaryNode node)
 		{
 			Assert.NotNull(node);
-			if(node.Parent == null)
-				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { node });
-			// avoid test problems in ConfigurableDictionaryNode.GetHashCode() if no Label is set
-			if (string.IsNullOrEmpty(node.Label))
-				node.Label = node.FieldDescription;
+			PopulateFieldsForTesting(new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { node } });
+		}
 
-			node.IsEnabled = true;
-			if (node.DictionaryNodeOptions != null)
-				EnableAllListOptions(node.DictionaryNodeOptions);
+		/// <summary>Populate fields that need to be populated on node and its children, including Parent, Label, and IsEnabled</summary>
+		internal static void PopulateFieldsForTesting(DictionaryConfigurationModel model)
+		{
+			Assert.NotNull(model);
+			if (model.SharedItems == null)
+				model.SharedItems = new List<ConfigurableDictionaryNode>();
+			model.SpecifyParentsAndReferences(model.Parts);
+			PopulateFieldsForTesting(model.Parts);
+			PopulateFieldsForTesting(model.SharedItems);
+		}
 
-			if (node.Children == null)
-				return;
-			foreach (var childNode in node.Children)
+		private static void PopulateFieldsForTesting(List<ConfigurableDictionaryNode> nodes)
+		{
+			foreach (var node in nodes)
 			{
-				PopulateFieldsForTesting(childNode);
+				// avoid test problems in ConfigurableDictionaryNode.GetHashCode() if no Label is set
+				if (string.IsNullOrEmpty(node.Label))
+					node.Label = node.FieldDescription;
+
+				node.IsEnabled = true;
+				if (node.DictionaryNodeOptions != null)
+					EnableAllListOptions(node.DictionaryNodeOptions);
+
+				if (node.Children != null)
+					PopulateFieldsForTesting(node.Children);
 			}
 		}
 
@@ -1084,8 +1097,7 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true
 			};
 
-			var model = new DictionaryConfigurationModel();
-			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { headwordNode } };
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			//make sure that fontinfo with the superscript overrides made it into css
@@ -1128,8 +1140,7 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { senses }
 			};
 
-			var model = new DictionaryConfigurationModel();
-			model.Parts = new List<ConfigurableDictionaryNode> { entry };
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
 			PopulateFieldsForTesting(entry);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
@@ -1162,8 +1173,7 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { variantForms }
 			};
 
-			var model = new DictionaryConfigurationModel();
-			model.Parts = new List<ConfigurableDictionaryNode> { entry };
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
 			PopulateFieldsForTesting(entry);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);

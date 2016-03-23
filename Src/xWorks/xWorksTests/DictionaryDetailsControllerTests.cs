@@ -290,34 +290,30 @@ namespace SIL.FieldWorks.XWorks
 			var pronunciation = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Form",
-				Label = "Pronunciation",
-				IsEnabled = true
+				Label = "Pronunciation"
 			};
 
 			var variantPronunciations = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { pronunciation },
 				FieldDescription = "OwningEntry",
-				Label = "Variant Pronunciations",
-				IsEnabled = true
+				Label = "Variant Pronunciations"
 			};
 
 			var variantForms = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { variantPronunciations },
 				FieldDescription = "VariantFormEntryBackRefs",
-				Label = "Variant Forms",
-				IsEnabled = true
+				Label = "Variant Forms"
 			};
 
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { variantForms },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
 
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
 			controller.LoadNode(mainEntryNode);
@@ -332,27 +328,23 @@ namespace SIL.FieldWorks.XWorks
 			var minorEntryTypes = new ConfigurableDictionaryNode
 			{
 				// Should this be something else?
-				FieldDescription = "VariantType",
-				Label = "VariantType",
-				IsEnabled = true
+				FieldDescription = "VariantType"
 			};
 
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode>(),
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
 
 			var minorEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { minorEntryTypes },
-				FieldDescription = "MinorEntry",
-				IsEnabled = true
+				FieldDescription = "MinorEntry"
 			};
 
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { minorEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			CssGeneratorTests.PopulateFieldsForTesting(minorEntryNode);
 
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
 			controller.LoadNode(mainEntryNode);
@@ -398,7 +390,7 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true
 			};
 
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			new DictionaryConfigurationModel().SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
 			controller.LoadNode(mainEntryNode);
@@ -881,7 +873,6 @@ namespace SIL.FieldWorks.XWorks
 			var subSenseConfig = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
-				IsEnabled = true,
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions
 				{
 					DisplayEachSenseInAParagraph = false,
@@ -890,13 +881,11 @@ namespace SIL.FieldWorks.XWorks
 					NumberingStyle = "%A",
 					NumberEvenASingleSense = true,
 					ShowSharedGrammarInfoFirst = true
-				},
-				Children = new List<ConfigurableDictionaryNode>()
+				}
 			};
 			var senseConfig = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
-				IsEnabled = true,
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions
 				{
 					DisplayEachSenseInAParagraph = true,
@@ -911,10 +900,9 @@ namespace SIL.FieldWorks.XWorks
 			var entryConfig = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { senseConfig }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { entryConfig });
+			CssGeneratorTests.PopulateFieldsForTesting(entryConfig);
 
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
 			controller.LoadNode(senseConfig);

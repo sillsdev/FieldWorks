@@ -182,8 +182,7 @@ namespace SIL.FieldWorks.XWorks
 			var node = new ConfigurableDictionaryNode();
 			using (var treeView = new TreeView())
 			{
-				var treeNode = new TreeNode();
-				treeNode.Tag = node;
+				var treeNode = new TreeNode { Tag = node };
 				treeView.Nodes.Add(treeNode);
 				treeView.TopNode = treeNode;
 				// SUT
@@ -199,8 +198,7 @@ namespace SIL.FieldWorks.XWorks
 			var node = new ConfigurableDictionaryNode();
 			using (var treeView = new TreeView())
 			{
-				var treeNode = new TreeNode();
-				treeNode.Tag = node;
+				var treeNode = new TreeNode { Tag = node };
 				treeView.Nodes.Add(new TreeNode());
 				// Adding a decoy tree node first
 				treeView.Nodes[0].Nodes.Add(new TreeNode());
@@ -872,12 +870,7 @@ namespace SIL.FieldWorks.XWorks
 		public void MergeCustomFieldsIntoDictionaryModel_DeletedFieldsOnCollectionsAreRemoved()
 		{
 			var model = new DictionaryConfigurationModel();
-			var customNode = new ConfigurableDictionaryNode
-			{
-				Label = "CustomString",
-				FieldDescription = "CustomString",
-				IsCustomField = true
-			};
+			var customNode = new ConfigurableDictionaryNode { FieldDescription = "CustomString", IsCustomField = true };
 			var sensesNode = new ConfigurableDictionaryNode
 				{
 					Label = "Senses",
@@ -891,7 +884,7 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { sensesNode }
 			};
 			model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
-			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			CssGeneratorTests.PopulateFieldsForTesting(model);
 			//SUT
 			DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(Cache, model);
 			Assert.AreEqual(0, model.Parts[0].Children[0].Children.Count, "The custom field in the model should have been removed since it isn't in the project(cache)");
@@ -922,7 +915,7 @@ namespace SIL.FieldWorks.XWorks
 					Children = new List<ConfigurableDictionaryNode> { senseNode }
 				};
 				model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
-				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { entryNode });
+				CssGeneratorTests.PopulateFieldsForTesting(model);
 
 				//SUT
 				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(Cache, model);
@@ -1119,16 +1112,14 @@ namespace SIL.FieldWorks.XWorks
 						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true,}
 					},
 					DisplayWritingSystemAbbreviations = false
-				},
-				IsEnabled = true
+				}
 			};
 			var reversalNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { formNode },
-				FieldDescription = "ReversalIndexEntry",
-				IsEnabled = true
+				FieldDescription = "ReversalIndexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { reversalNode });
+			CssGeneratorTests.PopulateFieldsForTesting(reversalNode);
 			using (var testView = new TestConfigurableDictionaryView())
 			{
 				m_model.Parts = new List<ConfigurableDictionaryNode> { reversalNode };
@@ -1176,27 +1167,14 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void MakingAChangeAndSavingSetsHasChangesFlag()
+		public void MakingAChangeAndSavingSetsRefreshRequiredFlag()
 		{
-			var headwordNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "MLHeadWord",
-				Label = "Headword",
-				CSSClassNameOverride = "mainheadword",
-				IsEnabled = true
-			};
-			var entryNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "LexEntry",
-				Label = "Main Entry",
-				CSSClassNameOverride = "entry",
-				IsEnabled = true,
-				Children = new List<ConfigurableDictionaryNode> { headwordNode },
-			};
-			DictionaryConfigurationModel.SpecifyParents(entryNode.Children);
+			var headwordNode = new ConfigurableDictionaryNode();
+			var entryNode = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { headwordNode } };
+			m_model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+			CssGeneratorTests.PopulateFieldsForTesting(m_model);
 			using (var testView = new TestConfigurableDictionaryView())
 			{
-				m_model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
 				var entryWithHeadword = CreateLexEntryWithHeadword();
 
 				m_mediator.PropertyTable.SetProperty("currentContentControl", "lexiconDictionary");
@@ -1206,32 +1184,19 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				dcc.View.TreeControl.Tree.TopNode.Checked = false;
 				((TestConfigurableDictionaryView)dcc.View).DoSaveModel();
-				Assert.IsTrue(dcc.MasterRefreshRequired, "Should have saved changes");
+				Assert.IsTrue(dcc.MasterRefreshRequired, "Should have saved changes and required a Master Refresh");
 			}
 		}
 
 		[Test]
-		public void MakingAChangeWithoutSavingDoesNotSetHasChangesFlag()
+		public void MakingAChangeWithoutSavingDoesNotSetRefreshRequiredFlag()
 		{
-			var headwordNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "MLHeadWord",
-				Label = "Headword",
-				CSSClassNameOverride = "mainheadword",
-				IsEnabled = true
-			};
-			var entryNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "LexEntry",
-				Label = "Main Entry",
-				CSSClassNameOverride = "entry",
-				IsEnabled = true,
-				Children = new List<ConfigurableDictionaryNode> { headwordNode },
-			};
-			DictionaryConfigurationModel.SpecifyParents(entryNode.Children);
+			var headwordNode = new ConfigurableDictionaryNode();
+			var entryNode = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { headwordNode } };
+			m_model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+			CssGeneratorTests.PopulateFieldsForTesting(m_model);
 			using (var testView = new TestConfigurableDictionaryView())
 			{
-				m_model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
 				var entryWithHeadword = CreateLexEntryWithHeadword();
 
 				m_mediator.PropertyTable.SetProperty("currentContentControl", "lexiconDictionary");
@@ -1245,27 +1210,14 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void MakingNoChangeAndSavingDoesNotSetHasChangesFlag()
+		public void MakingNoChangeAndSavingDoesNotSetRefreshRequiredFlag()
 		{
-			var headwordNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "MLHeadWord",
-				Label = "Headword",
-				CSSClassNameOverride = "mainheadword",
-				IsEnabled = true
-			};
-			var entryNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "LexEntry",
-				Label = "Main Entry",
-				CSSClassNameOverride = "entry",
-				IsEnabled = true,
-				Children = new List<ConfigurableDictionaryNode> { headwordNode },
-			};
-			DictionaryConfigurationModel.SpecifyParents(entryNode.Children);
+			var headwordNode = new ConfigurableDictionaryNode();
+			var entryNode = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { headwordNode } };
+			m_model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+			CssGeneratorTests.PopulateFieldsForTesting(m_model);
 			using (var testView = new TestConfigurableDictionaryView())
 			{
-				m_model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
 				var entryWithHeadword = CreateLexEntryWithHeadword();
 
 				m_mediator.PropertyTable.SetProperty("currentContentControl", "lexiconDictionary");
@@ -1343,10 +1295,10 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry", Label = "Main Entry", CSSClassNameOverride = "entry", IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { headwordNode, summaryNode, restrictionsNode, sensesNode },
 			};
-			DictionaryConfigurationModel.SpecifyParents(entryNode.Children);
+			m_model.Parts = new List<ConfigurableDictionaryNode> {entryNode};
+			CssGeneratorTests.PopulateFieldsForTesting(m_model);
 			using (var testView = new TestConfigurableDictionaryView())
 			{
-				m_model.Parts = new List<ConfigurableDictionaryNode> {entryNode};
 				var dcc = new DictionaryConfigurationController {View = testView, _model = m_model};
 				dcc.CreateTreeOfTreeNodes(null, m_model.Parts);
 				//SUT

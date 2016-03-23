@@ -250,10 +250,10 @@ namespace SIL.FieldWorks.XWorks
 			// Prevent events from firing while the view is being initialized
 			wsOptionsView.Load += WritingSystemEventHandlerAdder(wsOptionsView, wsOptions);
 
-			if (DictionaryConfigurationModel.IsHeadWord(m_node)) // show the Configure Referenced Headwords... button
+			if (DictionaryConfigurationModel.IsHeadWord(m_node)) // show the Configure Headword Numbers... button
 			{
 				var optionsView = new ButtonOverPanel { PanelContents = wsOptionsView };
-				optionsView.ButtonClicked += (o, e) => HandleHomographButton();
+				optionsView.ButtonClicked += (o, e) => HandleHeadwordNumbersButton();
 				View.OptionsView = optionsView;
 			}
 			else
@@ -287,6 +287,7 @@ namespace SIL.FieldWorks.XWorks
 		private void LoadSenseOptions(DictionaryNodeSenseOptions senseOptions, bool isSubsense)
 		{
 			// initialize SenseOptionsView
+			// REVIEW (Hasso) 2016.03: A better name for this string would be disallowedNumberingStyle; also, 'x' is confusing as it is neither prefixed by % nor a valid numberingStyle
 			//For senses disallow the 1 1.2 1.2.3 option, that is now handled in subsenses
 			var disallowedNumberingStyles = string.Empty;
 			if (!isSubsense)
@@ -732,7 +733,7 @@ namespace SIL.FieldWorks.XWorks
 				StylesDialogMadeChanges(m_node, new EventArgs());
 		}
 
-		private void HandleHomographButton()
+		private void HandleHeadwordNumbersButton()
 		{
 			var hc = m_cache.ServiceLocator.GetInstance<HomographConfiguration>();
 			using (var dlg = new ConfigureHomographDlg())

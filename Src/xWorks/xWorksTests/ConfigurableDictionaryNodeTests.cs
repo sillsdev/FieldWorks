@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using NUnit.Framework;
+// ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.XWorks
 {

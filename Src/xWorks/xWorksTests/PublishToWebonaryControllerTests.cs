@@ -26,7 +26,7 @@ using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
-	class PublishToWebonaryControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
+	public class PublishToWebonaryControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
 	{
 		private FwXApp m_application;
 		private FwXWindow m_window;
@@ -140,27 +140,20 @@ namespace SIL.FieldWorks.XWorks
 			mockView.Model.Configurations = testConfig;
 			// Build model sufficient to generate xhtml and css
 			ConfiguredXHTMLGenerator.AssemblyFile = "FDO";
-			var model = new DictionaryConfigurationModel
-			{
-				Parts = new List<ConfigurableDictionaryNode>()
-			};
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "HeadWord",
-				Label = "Headword",
 				CSSClassNameOverride = "entry",
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions {Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new [] { "fr" })},
 				Before = "MainEntry: ",
-				IsEnabled = true
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode },
 				FieldDescription = "LexEntry",
-				IsEnabled = true
 			};
-			model.Parts.Add(mainEntryNode);
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			CssGeneratorTests.PopulateFieldsForTesting(model);
 			testConfig["Test Config"] = model;
 			// create entry sufficient to generate xhtml and css
 			var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
@@ -518,10 +511,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		#region Helpers
-		/// <summary>
-		/// Helper.
-		/// </summary>
-		public MockWebonaryDlg SetUpView()
+		/// <summary/>
+		private MockWebonaryDlg SetUpView()
 		{
 			return new MockWebonaryDlg {
 				Model = SetUpModel()

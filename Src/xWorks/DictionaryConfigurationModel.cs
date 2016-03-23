@@ -105,7 +105,7 @@ namespace SIL.FieldWorks.XWorks
 				else
 					Publications = LoadPublicationsSafe(model, cache);
 			}
-			SpecifyParents(Parts);
+			SpecifyParentsAndReferences(Parts);
 			// Handle any changes to the custom field definitions.  (See https://jira.sil.org/browse/LT-16430.)
 			// The "Merge" method handles both additions and deletions.
 			DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(cache, this);
@@ -312,20 +312,38 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Assign Parent properties to descendants of nodes.
+		/// Assign Parent properties to descendants of nodes
 		/// </summary>
-		internal static void SpecifyParents(List<ConfigurableDictionaryNode> nodes)
+		internal void SpecifyParentsAndReferences(List<ConfigurableDictionaryNode> nodes)
 		{
 			if (nodes == null)
 				throw new ArgumentNullException();
 
 			foreach (var node in nodes)
 			{
-				if (node.Children == null)
-					continue;
-				foreach (var child in node.Children)
-					child.Parent = node;
-				SpecifyParents(node.Children);
+				if (node.Children == null) // TODO pH 2016.03: || !node.Children.Any())
+				{
+					if (string.IsNullOrEmpty(node.ReferenceItem))
+						continue;
+					node.ReferencedNode = SharedItems.FirstOrDefault(si =>
+						si.Label == node.ReferenceItem && si.FieldDescription == node.FieldDescription && si.SubField == node.SubField);
+					if (node.ReferencedNode == null)
+						throw new KeyNotFoundException(string.Format("Could not find Referenced Node named {0} for field {1}.{2}",
+							node.ReferenceItem, node.FieldDescription, node.SubField));
+					if (node.ReferencedNode.Parent != null)
+						continue;
+					node.ReferencedNode.Parent = node;
+					SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { node.ReferencedNode }); // REVIEW pH 2016.03: specify here, or all SI's together?
+				}
+				else
+				{
+					// REVIEW (Jason) 2016.03: should we allow mixed families? Should Referenced Children eclipse Children instead of as-is? also in node.ChildrenOrReferencedChildren
+					//if (!string.IsNullOrEmpty(node.ReferenceItem)) // TODO pH 2016.03: decide, and implement accordingly
+					//	throw new ArgumentException("We presently do not allow biological parents to adopt");
+					foreach (var child in node.Children)
+						child.Parent = node;
+					SpecifyParentsAndReferences(node.Children);
+				}
 			}
 		}
 

@@ -42,6 +42,11 @@ namespace SIL.FieldWorks.XWorks
 			XmlCloseTagsFromRoot;
 		private const string XmlCloseTagsFromRoot = @"</DictionaryConfiguration>";
 
+		private const string m_reference = "Reference";
+		private const string m_field = "LexEntry";
+
+		private static readonly DictionaryConfigurationModel m_model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode>() };
+
 		[TestFixtureSetUp]
 		public void DictionaryConfigModelFixtureSetup()
 		{
@@ -534,6 +539,8 @@ namespace SIL.FieldWorks.XWorks
 				Parts = new List<ConfigurableDictionaryNode> { oneConfigNode },
 				SharedItems = new List<ConfigurableDictionaryNode> { oneRefConfigNode }
 			};
+			model.SpecifyParentsAndReferences(model.Parts);
+
 			//SUT
 			model.Save();
 			ValidateAgainstSchema(modelFile);
@@ -846,14 +853,14 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void SpecifyParents_ThrowsOnNullArgument()
+		public void SpecifyParentsAndReferences_ThrowsOnNullArgument()
 		{
 			// SUT
-			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationModel.SpecifyParents(null));
+			Assert.Throws<ArgumentNullException>(() => m_model.SpecifyParentsAndReferences(null));
 		}
 
 		[Test]
-		public void SpecifyParents_DoesNotChangeRootNode()
+		public void SpecifyParentsAndReferences_DoesNotChangeRootNode()
 		{
 			var child = new ConfigurableDictionaryNode();
 			var rootNode = new ConfigurableDictionaryNode
@@ -863,12 +870,12 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var parts = new List<ConfigurableDictionaryNode> {rootNode};
 			// SUT
-			DictionaryConfigurationModel.SpecifyParents(parts);
+			m_model.SpecifyParentsAndReferences(parts);
 			Assert.That(parts[0].Parent, Is.Null, "Shouldn't have changed parent of a root node");
 		}
 
 		[Test]
-		public void SpecifyParents_UpdatesParentPropertyOfChild()
+		public void SpecifyParentsAndReferences_UpdatesParentPropertyOfChild()
 		{
 			var rootNode = new ConfigurableDictionaryNode
 			{
@@ -886,10 +893,128 @@ namespace SIL.FieldWorks.XWorks
 
 			var parts = new List<ConfigurableDictionaryNode> { rootNode };
 			// SUT
-			DictionaryConfigurationModel.SpecifyParents(parts);
+			m_model.SpecifyParentsAndReferences(parts);
 			Assert.That(grandchild.Parent, Is.EqualTo(childA), "Parent should have been set");
 			Assert.That(childA.Parent, Is.EqualTo(rootNode), "Parent should have been set");
 			Assert.That(childB.Parent, Is.EqualTo(rootNode), "Parent should have been set");
+		}
+
+		[Test]
+		public void SpecifyParentsAndReferences_ThrowsIfReferenceItemDNE()
+		{
+			var configNode = new ConfigurableDictionaryNode { FieldDescription = "LexEntry", ReferenceItem = "DNE" };
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { configNode } };
+
+			// SUT (DNE b/c no SharedItems)
+			Assert.Throws<ArgumentNullException>(() => model.SpecifyParentsAndReferences(model.Parts), "No SharedItems!");
+
+			model.SharedItems = new List<ConfigurableDictionaryNode>();
+
+			// SUT (DNE b/c SharedItems doesn't contain what was requested)
+			Assert.Throws<KeyNotFoundException>(() => model.SpecifyParentsAndReferences(model.Parts), "No matching item!");
+		}
+
+		[Test]
+		public void SpecifyParentsAndReferences_ProhibitsReferencesOfIncompatibleTypes()
+		{
+			var configNode = new ConfigurableDictionaryNode { FieldDescription = m_field, ReferenceItem = m_reference };
+			var refConfigNode = new ConfigurableDictionaryNode { FieldDescription = "SensesOS", Label = m_reference };
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { configNode },
+				SharedItems = new List<ConfigurableDictionaryNode> { refConfigNode }
+			};
+
+			// SUT (Field is different)
+			Assert.Throws<KeyNotFoundException>(() => model.SpecifyParentsAndReferences(model.Parts));
+			Assert.IsNull(configNode.ReferencedNode, "ReferencedNode should not have been set");
+
+			refConfigNode.FieldDescription = m_field;
+			refConfigNode.SubField = "SensesOS";
+
+			// SUT (SubField is different)
+			Assert.Throws<KeyNotFoundException>(() => model.SpecifyParentsAndReferences(model.Parts));
+			Assert.IsNull(configNode.ReferencedNode, "ReferencedNode should not have been set");
+		}
+
+		[Test]
+		public void SpecifyParentsAndReferences_UpdatesReferencePropertyOfNodeWithReference()
+		{
+			var oneConfigNode = new ConfigurableDictionaryNode { FieldDescription = m_field, ReferenceItem = m_reference };
+			var oneRefConfigNode = new ConfigurableDictionaryNode { FieldDescription = m_field, Label = m_reference };
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { oneConfigNode },
+				SharedItems = new List<ConfigurableDictionaryNode> { oneRefConfigNode }
+			};
+
+			// SUT
+			model.SpecifyParentsAndReferences(model.Parts);
+
+			Assert.AreSame(oneRefConfigNode, oneConfigNode.ReferencedNode);
+		}
+
+		[Test]
+		public void SpecifyParentsAndReferences_UpdatesParentPropertyOfReferencedNodeOnce()
+		{
+			var configNodeOne = new ConfigurableDictionaryNode { FieldDescription = m_field, ReferenceItem = m_reference };
+			var configNodeTwo = new ConfigurableDictionaryNode { FieldDescription = m_field, ReferenceItem = m_reference };
+			var refdConfigNode = new ConfigurableDictionaryNode { FieldDescription = m_field, Label = m_reference };
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { configNodeOne, configNodeTwo },
+				SharedItems = new List<ConfigurableDictionaryNode> { refdConfigNode }
+			};
+
+			// SUT
+			model.SpecifyParentsAndReferences(model.Parts);
+
+			Assert.AreSame(configNodeOne, refdConfigNode.Parent, "The Referenced node's 'Parent' should be the first to reference");
+		}
+
+		[Test]
+		public void SpecifyParentsAndReferences_SpecifiesParentsOfSharedItems()
+		{
+			var configNode = new ConfigurableDictionaryNode { FieldDescription = m_field, ReferenceItem = m_reference };
+			var refdConfigNodeChild = new ConfigurableDictionaryNode();
+			var refdConfigNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = m_field, Label = m_reference,
+				Children = new List<ConfigurableDictionaryNode> { refdConfigNodeChild }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { configNode },
+				SharedItems = new List<ConfigurableDictionaryNode> { refdConfigNode }
+			};
+
+			// SUT
+			model.SpecifyParentsAndReferences(model.Parts);
+
+			Assert.AreSame(refdConfigNode, refdConfigNodeChild.Parent);
+		}
+
+		[Test]
+		public void SpecifyParentsAndReferences_WorksForCircularReferences()
+		{
+			var configNode = new ConfigurableDictionaryNode { FieldDescription = m_field, ReferenceItem = m_reference };
+			var refdConfigNodeChild = new ConfigurableDictionaryNode { FieldDescription = m_field, ReferenceItem = m_reference };
+			var refdConfigNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = m_field, Label = m_reference,
+				Children = new List<ConfigurableDictionaryNode> { refdConfigNodeChild }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { configNode },
+				SharedItems = new List<ConfigurableDictionaryNode> { refdConfigNode }
+			};
+
+			// SUT
+			model.SpecifyParentsAndReferences(model.Parts);
+
+			Assert.AreSame(refdConfigNode, refdConfigNodeChild.Parent);
+			Assert.AreSame(refdConfigNode, refdConfigNodeChild.ReferencedNode);
 		}
 
 		[Test]

@@ -1371,14 +1371,16 @@ namespace SIL.FieldWorks.XWorks
 				var defaultWs = owningObject.Cache.WritingSystemFactory.get_EngineOrNull(owningObject.Cache.DefaultUserWs);
 				langId = defaultWs.Id;
 				var entryType = item.GetType();
-				var grammaticalInfo =
-					config.Children.FirstOrDefault(e => (e.FieldDescription == "MorphoSyntaxAnalysisRA" && e.IsEnabled));
-				if (grammaticalInfo == null) return false;
+				var grammaticalInfo = config.Children.FirstOrDefault(e => e.FieldDescription == "MorphoSyntaxAnalysisRA" && e.IsEnabled);
+				if (grammaticalInfo == null)
+					return false;
 				var property = entryType.GetProperty(grammaticalInfo.FieldDescription);
 				var propertyValue = property.GetValue(item, new object[] {});
-				if (propertyValue == null) return false;
-				var child = grammaticalInfo.Children.FirstOrDefault(e => (e.IsEnabled && e.Children.Count == 0));
-				if (child == null) return false;
+				if (propertyValue == null)
+					return false;
+				var child = grammaticalInfo.Children.FirstOrDefault(e => e.IsEnabled && e.Children.Count == 0);
+				if (child == null)
+					return false;
 				entryType = propertyValue.GetType();
 				property = entryType.GetProperty(child.FieldDescription);
 				propertyValue = property.GetValue(propertyValue, new object[] {});

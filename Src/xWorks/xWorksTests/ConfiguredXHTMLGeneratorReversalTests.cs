@@ -552,6 +552,7 @@ namespace SIL.FieldWorks.XWorks
 			entry.SensesOS.First().ReversalEntriesRC.Add(riEntry);
 			return riEntry;
 		}
+
 		private IReversalIndexEntry CreateInterestingEnglishSubReversalEntryWithSubSense()
 		{
 			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
@@ -560,7 +561,6 @@ namespace SIL.FieldWorks.XWorks
 			var risubEntry = revIndex.FindOrCreateReversalEntry("SubReversal");
 			riEntry.SubentriesOS.Add(risubEntry);
 			AddSingleSubSenseToSense(risubEntry, "subgloss", m_wsEn, Cache);
-			//entry.SensesOS.First().ReversalEntriesRC.Add(risubEntry);
 			return riEntry;
 		}
 

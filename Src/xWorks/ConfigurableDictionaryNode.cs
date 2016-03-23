@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
 using SIL.Utils;
 
@@ -172,16 +173,30 @@ namespace SIL.FieldWorks.XWorks
 		public List<ConfigurableDictionaryNode> Children { get; set; }
 
 		/// <summary>
-		/// Parent of this node, or null.
+		/// Parent of this node, or null if this is a top-level node.
 		/// </summary>
 		[XmlIgnore]
 		public ConfigurableDictionaryNode Parent { get; internal set; }
 
 		/// <summary>
-		/// Reference to a shared configuration node or null.
+		/// Reference to (Label of) a shared configuration node in SharedItems or null.
 		/// </summary>
 		[XmlElement("ReferenceItem")]
 		public string ReferenceItem { get; set; }
+
+		/// <summary>
+		/// The actual node denoted by ReferenceItem; null if none
+		/// </summary>
+		internal ConfigurableDictionaryNode ReferencedNode { get; set; }
+
+		/// <summary>
+		/// Children of this node, if any; otherwise, children of the ReferenceItem, if any
+		/// </summary>
+		[XmlIgnore]
+		public List<ConfigurableDictionaryNode> ReferencedOrDirectChildren
+		{ // TODO pH better name? Dependents? AllChildren? Niblets?
+			get { return ReferencedNode == null ? Children : ReferencedNode.Children; }
+		}
 
 		/// <summary>
 		/// Clone this node. Point to the same Parent object. Deep-clone Children and DictionaryNodeOptions.
@@ -303,7 +318,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public bool ChangeSuffix(string newSuffix, List<ConfigurableDictionaryNode> siblings)
 		{
-			if (siblings.Exists(sibling => sibling != this && sibling.Label == this.Label && sibling.LabelSuffix == newSuffix))
+			if (siblings.Exists(sibling => !ReferenceEquals(sibling, this) && sibling.Label == this.Label && sibling.LabelSuffix == newSuffix))
 				return false;
 
 			LabelSuffix = newSuffix;

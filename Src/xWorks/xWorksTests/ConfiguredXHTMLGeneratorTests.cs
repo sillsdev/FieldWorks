@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.XWorks
 {
 	// ReSharper disable InconsistentNaming
 	[TestFixture]
-	class ConfiguredXHTMLGeneratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
+	public class ConfiguredXHTMLGeneratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
 	{
 		private int m_wsEn, m_wsFr;
 
@@ -37,7 +37,10 @@ namespace SIL.FieldWorks.XWorks
 		private Mediator m_mediator;
 		private RecordClerk m_Clerk;
 
-		StringBuilder XHTMLStringBuilder { get; set; }
+		private static readonly DictionaryConfigurationModel s_model =
+			new DictionaryConfigurationModel { SharedItems = new List<ConfigurableDictionaryNode>() }; // for specifying Parents, etc.
+
+		private StringBuilder XHTMLStringBuilder { get; set; }
 
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
@@ -183,18 +186,15 @@ namespace SIL.FieldWorks.XWorks
 			var headwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",
-				Label = "Headword",
 				CSSClassNameOverride = "headword",
-				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
-				IsEnabled = true
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { headwordNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(entry, "HeadWordTest", m_wsFr, Cache);
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
@@ -210,17 +210,14 @@ namespace SIL.FieldWorks.XWorks
 			var headwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexemeFormOA",
-				Label = "Lexeme Form",
-				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "vernacular" }),
-				IsEnabled = true
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "vernacular" })
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { headwordNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 			var entry = CreateInterestingLexEntry(Cache);
 			//Fill in the LexemeForm
@@ -240,33 +237,26 @@ namespace SIL.FieldWorks.XWorks
 			var nameNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Name",
-				Label = "Name",
-				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
-				IsEnabled = true
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
 			var locationNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LocationRA",
 				CSSClassNameOverride = "Location",
-				Label = "Spoken here",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { nameNode }
 			};
 			var pronunciationsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "PronunciationsOS",
 				CSSClassNameOverride = "Pronunciations",
-				Label = "Speak this",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { locationNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { pronunciationsNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 			var entry = CreateInterestingLexEntry(Cache);
 			//Create and fill in the Location
@@ -293,8 +283,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "PronunciationsOS",
 				CSSClassNameOverride = "pronunciations",
-				Label = "Pronunciations",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { CreateMediaNode() }
 			};
 			var variantPronunciationsNode = new ConfigurableDictionaryNode
@@ -302,25 +290,20 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "OwningEntry",
 				SubField = "PronunciationsOS",
 				CSSClassNameOverride = "variantpronunciations",
-				Label = "Variant Pronunciations",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { CreateMediaNode() }
 			};
 			var variantFormsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "VariantFormEntryBackRefs",
-				Label = "Variant Forms",
 				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { variantPronunciationsNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { pronunciationsNode, variantFormsNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
 			var variant = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(entry, variant, true); // we need a real Variant Type to pass the list options test
@@ -375,14 +358,12 @@ namespace SIL.FieldWorks.XWorks
 			var mediaFileNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MediaFileRA",
-				Label = "Media Files",
 				IsEnabled = true
 			};
 			var mediaNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MediaFilesOS",
 				CSSClassNameOverride = "mediafiles",
-				Label = "Pronunciation Media",
 				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> {mediaFileNode}
 			};
@@ -395,7 +376,6 @@ namespace SIL.FieldWorks.XWorks
 			var homographNum = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "HomographNumber",
-				Label = "Homograph Number",
 				IsEnabled = true
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -415,19 +395,13 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_HomographNumbersGeneratesCorrectResult()
 		{
-			var homographNum = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "HomographNumber",
-				Label = "Homograph Number",
-				IsEnabled = true
-			};
+			var homographNum = new ConfigurableDictionaryNode { FieldDescription = "HomographNumber" };
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { homographNum },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entryOne = CreateInterestingLexEntry(Cache);
 			var entryTwo = CreateInterestingLexEntry(Cache);
 
@@ -449,28 +423,19 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_OneSenseWithGlossGeneratesCorrectResult()
 		{
-			var wsOpts = new DictionaryNodeWritingSystemOptions
-			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
-				}
-			};
-			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true };
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses",
-				Label = "Senses",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { sensesNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
@@ -484,30 +449,22 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_OneEntryWithSenseAndOneWithoutWorks()
 		{
-			var wsOpts = new DictionaryNodeWritingSystemOptions
-			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-				{ new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true} }
-			};
-
 			var glossNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Gloss",
-				DictionaryNodeOptions = wsOpts,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }),
 				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode>()
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses",
-				Label = "Senses",
 				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var headwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",
-				Label = "Headword",
 				CSSClassNameOverride = "headword",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
 				IsEnabled = true,
@@ -519,7 +476,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry",
 				IsEnabled = true
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
+			s_model.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			var entryOne = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(entryOne, "FirstHeadword", m_wsFr, Cache);
 			var entryTwo = CreateInterestingLexEntry(Cache);
@@ -548,10 +505,9 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_DefaultRootGeneratesResult()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache,
-																					(ISilDataAccessManaged)Cache.MainCacheAccessor,
+			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
 																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			string defaultRoot = string.Concat(
+			var defaultRoot = string.Concat(
 				Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary", "Root"), DictionaryConfigurationModel.FileExtension);
 			var entry = CreateInterestingLexEntry(Cache);
 			var dictionaryModel = new DictionaryConfigurationModel(defaultRoot, Cache);
@@ -565,17 +521,10 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_DoesNotDescendThroughDisabledNode()
 		{
-			var wsOpts = new DictionaryNodeWritingSystemOptions
-			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
-				}
-			};
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var senses = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses",
-				Label = "Senses",
 				IsEnabled = false,
 				Children = new List<ConfigurableDictionaryNode>
 				{
@@ -585,7 +534,6 @@ namespace SIL.FieldWorks.XWorks
 			var headword = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",
-				Label = "Headword",
 				CSSClassNameOverride = "headword",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
 				IsEnabled = true,
@@ -597,7 +545,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry",
 				IsEnabled = true
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
+			s_model.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			var entryOne = CreateInterestingLexEntry(Cache);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
@@ -612,17 +560,10 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_ProduceNothingWithOnlyDisabledNode()
 		{
-			var wsOpts = new DictionaryNodeWritingSystemOptions
-			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
-				}
-			};
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var senses = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses",
-				Label = "Senses",
 				IsEnabled = false,
 				Children = new List<ConfigurableDictionaryNode>
 				{
@@ -635,7 +576,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry",
 				IsEnabled = true
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
+			s_model.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			var entryOne = CreateInterestingLexEntry(Cache);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
@@ -654,8 +595,6 @@ namespace SIL.FieldWorks.XWorks
 			var categorynfo = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLPartOfSpeech",
-				Label = "Category Info.",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode>(),
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new [] { "en" } )
 			};
@@ -663,24 +602,21 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "MorphoSyntaxAnalysisRA",
 				CSSClassNameOverride = "msas",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { categorynfo }
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "Senses",
-				IsEnabled = true,
 				DictionaryNodeOptions = DictionaryNodeSenseOptions,
 				Children = new List<ConfigurableDictionaryNode> { gramInfoNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { sensesNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
 
 			var posSeq = Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS;
@@ -719,8 +655,6 @@ namespace SIL.FieldWorks.XWorks
 			var categoryInfo = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLPartOfSpeech",
-				Label = "Category Info.",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode>(),
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
 			};
@@ -728,24 +662,21 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "MorphoSyntaxAnalysisRA",
 				CSSClassNameOverride = "msa",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { categoryInfo }
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "Senses",
-				IsEnabled = true,
 				DictionaryNodeOptions = DictionaryNodeSenseOptions,
 				Children = new List<ConfigurableDictionaryNode> { gramInfoNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { sensesNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
 
 			var posSeq = Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS;
@@ -809,8 +740,6 @@ namespace SIL.FieldWorks.XWorks
 			var categorynfo = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLPartOfSpeech",
-				Label = "Category Info.",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode>(),
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
 			};
@@ -818,24 +747,21 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "MorphoSyntaxAnalysisRA",
 				CSSClassNameOverride = "msas",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { categorynfo }
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "Senses",
-				IsEnabled = true,
 				DictionaryNodeOptions = DictionaryNodeSenseOptions,
 				Children = new List<ConfigurableDictionaryNode> { gramInfoNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { sensesNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
 
 			var posSeq = Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS;
@@ -879,40 +805,33 @@ namespace SIL.FieldWorks.XWorks
 			var categorynfo = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLPartOfSpeech",
-				Label = "Category Info.",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode>()
 			};
 			var gramInfoNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MorphoSyntaxAnalysisRA",
-				CSSClassNameOverride = "MorphoSyntaxAnalysis",
-				IsEnabled = true,
+				CSSClassNameOverride = "morphosyntaxanalysis",
 				Children = new List<ConfigurableDictionaryNode> { categorynfo }
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
-				IsEnabled = true,
 				DictionaryNodeOptions = DictionaryNodeSenseOptions,
 				Children = new List<ConfigurableDictionaryNode> { gramInfoNode }
 			};
 			var headword = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",
-				Label = "Headword",
 				CSSClassNameOverride = "headword",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode>()
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { headword, sensesNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
 			AddSenseToEntry(entry, "sense 2", m_wsEn, Cache);
 
@@ -930,29 +849,25 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var gramInfoAbbrev = new ConfigurableDictionaryNode()
 			{
-				FieldDescription = "InterlinearAbbrTSS",
-				IsEnabled = true
+				FieldDescription = "InterlinearAbbrTSS"
 			};
 			var gramInfoNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MorphoSyntaxAnalysisRA",
 				CSSClassNameOverride = "MorphoSyntaxAnalysis",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { gramInfoAbbrev }
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { gramInfoNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { sensesNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
 
 			var sense = entry.SensesOS.First();
@@ -992,7 +907,6 @@ namespace SIL.FieldWorks.XWorks
 			var headword = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",
-				Label = "Headword",
 				CSSClassNameOverride = "headword",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
 				IsEnabled = true,
@@ -1004,7 +918,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry",
 				IsEnabled = true
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			s_model.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			var entry = CreateInterestingLexEntry(Cache);
 
 			var sense = entry.SensesOS.First();
@@ -1026,33 +940,25 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_DoesNotMakeSpanForRAIfNoData()
 		{
-			var gramInfoNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "MorphoSyntaxAnalysisRA",
-				IsEnabled = true
-			};
+			var gramInfoNode = new ConfigurableDictionaryNode { FieldDescription = "MorphoSyntaxAnalysisRA" };
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { gramInfoNode }
 			};
 			var headword = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",
-				Label = "Headword",
 				CSSClassNameOverride = "headword",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode>()
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { headword, sensesNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
@@ -1068,33 +974,25 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_DoesNotMakeSpanForTSStringIfNoData()
 		{
-			var scientificName = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "ScientificName",
-				IsEnabled = true
-			};
+			var scientificName = new ConfigurableDictionaryNode { FieldDescription = "ScientificName" };
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { scientificName }
 			};
 			var headword = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",
-				Label = "Headword",
 				CSSClassNameOverride = "headword",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode>()
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { headword, sensesNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
@@ -1110,35 +1008,30 @@ namespace SIL.FieldWorks.XWorks
 			var gramAbbrNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "InterlinearAbbrTSS",
-				IsEnabled = true,
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
 			var gramNameNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "InterlinearNameTSS",
-				IsEnabled = true,
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
 			var gramInfoNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MorphoSyntaxAnalysisRA",
 				CSSClassNameOverride = "MorphoSyntaxAnalysis",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode>{gramAbbrNode,gramNameNode}
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses",
-				IsEnabled = true,
 				Children=new List<ConfigurableDictionaryNode>{gramInfoNode}
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { sensesNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 			var entry = CreateInterestingLexEntry(Cache);
 
@@ -1174,30 +1067,21 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_DefinitionOrGlossWorks()
 		{
-			var wsOpts = new DictionaryNodeWritingSystemOptions
-			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
-				}
-			};
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var senses = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses",
-				Label = "Senses",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode>
 				{
-					new ConfigurableDictionaryNode { FieldDescription = "DefinitionOrGloss", DictionaryNodeOptions = wsOpts, IsEnabled = true }
+					new ConfigurableDictionaryNode { FieldDescription = "DefinitionOrGloss", DictionaryNodeOptions = wsOpts }
 				}
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { senses },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entryOne = CreateInterestingLexEntry(Cache);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
@@ -1210,36 +1094,24 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_DefinitionOrGlossWorks_WithAbbrev()
 		{
-			var wsOpts = new DictionaryNodeWritingSystemOptions
-			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-				{
-					new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en", IsEnabled = true,}
-				},
-				DisplayWritingSystemAbbreviations = true
-			};
 			var senses = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses",
-				Label = "Senses",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode>
 				{
 					new ConfigurableDictionaryNode
 					{
 						FieldDescription = "DefinitionOrGloss",
-						DictionaryNodeOptions = wsOpts,
-						IsEnabled = true
+						DictionaryNodeOptions = GetWsOptionsForLanguageswithDisplayWsAbbrev(new[] { "en" })
 					}
 				}
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> {senses},
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {mainEntryNode});
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entryOne = CreateInterestingLexEntry(Cache);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
@@ -1255,42 +1127,35 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var complexformoptions = new DictionaryNodeComplexFormOptions
 			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				{
+					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "73266a3a-48e8-4bd7-8c84-91c730340b7d" }
+				}
 			};
-			complexformoptions.Options.Add(new DictionaryNodeListOptions.DictionaryNodeOption
-			{
-				Id = "73266a3a-48e8-4bd7-8c84-91c730340b7d",
-				IsEnabled = true
-			});
 
 			var revAbbrevNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReverseAbbr",
-				IsEnabled = true,
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
 			};
 			var refTypeNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ComplexEntryTypesRS",
-				IsEnabled = true,
 				CSSClassNameOverride = "complexformtypes",
 				Children = new List<ConfigurableDictionaryNode> { revAbbrevNode }
 			};
 			var orcfNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ComplexFormsNotSubentries",
-				Label = "Other Referenced Complex Forms",
-				IsEnabled = true,
 				DictionaryNodeOptions = complexformoptions,
 				Children = new List<ConfigurableDictionaryNode> { refTypeNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { orcfNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var otherReferencedComplexForm = CreateInterestingLexEntry(Cache);
@@ -1316,35 +1181,25 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_DuplicateConfigNodeWithSpaceWorks()
 		{
-			var wsOpts = new DictionaryNodeWritingSystemOptions
-			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-				{
-					new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en", IsEnabled = true,}
-				},
-			};
 			var defOrGloss = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "DefinitionOrGloss",
-				DictionaryNodeOptions = wsOpts,
-				IsEnabled = true
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+
 			};
 			var senses = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses",
-				Label = "Senses",
 				IsDuplicate = true,
 				LabelSuffix = "Test one",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { defOrGloss }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { senses },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entryOne = CreateInterestingLexEntry(Cache);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
@@ -1357,35 +1212,25 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_DuplicateConfigNodeWithPuncWorks()
 		{
-			var wsOpts = new DictionaryNodeWritingSystemOptions
-			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-				{
-					new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en", IsEnabled = true,}
-				},
-			};
 			var defOrGloss = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "DefinitionOrGloss",
-				DictionaryNodeOptions = wsOpts,
-				IsEnabled = true
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+
 			};
 			var senses = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses",
-				Label = "Senses",
 				IsDuplicate = true,
 				LabelSuffix = "#Test",
-				IsEnabled = true,
-				Children = new List<ConfigurableDictionaryNode> { defOrGloss },
+				Children = new List<ConfigurableDictionaryNode> { defOrGloss }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { senses },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entryOne = CreateInterestingLexEntry(Cache);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
@@ -1398,35 +1243,25 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_DuplicateConfigNodeWithMultiPuncWorks()
 		{
-			var wsOpts = new DictionaryNodeWritingSystemOptions
-			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-				{
-					new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en", IsEnabled = true,}
-				},
-			};
 			var defOrGloss = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "DefinitionOrGloss",
-				DictionaryNodeOptions = wsOpts,
-				IsEnabled = true
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+
 			};
 			var senses = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses",
-				Label = "Senses",
 				IsDuplicate = true,
 				LabelSuffix = "#Test$",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { defOrGloss }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { senses },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entryOne = CreateInterestingLexEntry(Cache);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
@@ -1439,51 +1274,39 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_MLHeadWordVirtualPropWorks()
 		{
-			var wsOpts = new DictionaryNodeWritingSystemOptions
-			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "vernacular", IsEnabled = true }
-				}
-			};
+			var wsOpts = GetWsOptionsForLanguages(new[] { "vernacular" });
 			const string headWord = "mlhw";
 			var mlHeadWordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",
 				CSSClassNameOverride = headWord,
-				DictionaryNodeOptions = wsOpts,
-				IsEnabled = true
+				DictionaryNodeOptions = wsOpts
 			};
 			const string nters = "nters";
 			var nonTrivialRoots = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "NonTrivialEntryRoots",
 				DictionaryNodeOptions = wsOpts,
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { mlHeadWordNode },
 				CSSClassNameOverride = nters
 			};
 			var otherRefForms = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ComplexFormsNotSubentries",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { nonTrivialRoots },
 				CSSClassNameOverride = "cfns"
 			};
 			var senses = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
-				Label = "Senses",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { otherRefForms }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { senses },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			// Build up model that will allow for testing of the MLHeadword virtual property under
 			// the NonTrivialEntryRoots back reference field.
 			var entryOne = CreateInterestingLexEntry(Cache);
@@ -1516,20 +1339,14 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "EtymologyOA",
 				CSSClassNameOverride = "Etymology",
-				Label = "Etymology",
-				IsEnabled = true,
-				Children = new List<ConfigurableDictionaryNode>
-				{
-					new ConfigurableDictionaryNode { FieldDescription = "Source", IsEnabled = true }
-				}
+				Children = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode { FieldDescription = "Source" } }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { etymology },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entryOne = CreateInterestingLexEntry(Cache);
 			entryOne.EtymologyOA = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
 			entryOne.EtymologyOA.Source = "George";
@@ -1556,10 +1373,9 @@ namespace SIL.FieldWorks.XWorks
 			var rootNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { stringNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {rootNode});
+			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
 			var result = ConfiguredXHTMLGenerator.PropertyType.InvalidProperty;
 			// SUT
 			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(stringNode));
@@ -1581,7 +1397,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
 				Children = new List<ConfigurableDictionaryNode> { memberNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {rootNode});
+			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
 			var result = ConfiguredXHTMLGenerator.PropertyType.InvalidProperty;
 			// SUT
 			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(interfaceNode));
@@ -1603,7 +1419,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
 				Children = new List<ConfigurableDictionaryNode> { memberNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {rootNode});
+			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
 			var result = ConfiguredXHTMLGenerator.PropertyType.InvalidProperty;
 			// SUT
 			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(interfaceNode));
@@ -1625,7 +1441,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
 				Children = new List<ConfigurableDictionaryNode> { memberNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {rootNode});
+			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
 			var result = ConfiguredXHTMLGenerator.PropertyType.InvalidProperty;
 			// SUT
 			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(interfaceNode));
@@ -1647,7 +1463,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
 				Children = new List<ConfigurableDictionaryNode> { memberNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {rootNode});
+			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
 			var result = ConfiguredXHTMLGenerator.PropertyType.InvalidProperty;
 			// SUT
 			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(interfaceNode));
@@ -1669,7 +1485,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
 				Children = new List<ConfigurableDictionaryNode> { memberNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {rootNode});
+			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
 			var result = ConfiguredXHTMLGenerator.PropertyType.InvalidProperty;
 			// SUT
 			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(stringNodeInClass));
@@ -1692,7 +1508,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
 				Children = new List<ConfigurableDictionaryNode> { memberNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {rootNode});
+			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
 			var result = ConfiguredXHTMLGenerator.PropertyType.PrimitiveType;
 			// SUT
 			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(interfaceNode));
@@ -1713,7 +1529,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
 				Children = new List<ConfigurableDictionaryNode> { memberNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {rootNode});
+			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
 			var result = ConfiguredXHTMLGenerator.PropertyType.InvalidProperty;
 			// SUT
 			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(memberNode));
@@ -1734,7 +1550,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
 				Children = new List<ConfigurableDictionaryNode> { memberNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { rootNode });
+			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
 			var result = ConfiguredXHTMLGenerator.PropertyType.PrimitiveType;
 			// SUT
 			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(memberNode));
@@ -1770,7 +1586,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "SIL.FieldWorks.XWorks.TestPictureClass",
 				Children = new List<ConfigurableDictionaryNode> { memberNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { rootNode });
+			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
 			var result = ConfiguredXHTMLGenerator.PropertyType.InvalidProperty;
 			// SUT
 			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(pictureFileNode));
@@ -1787,16 +1603,14 @@ namespace SIL.FieldWorks.XWorks
 				var customFieldNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = fieldName,
-					IsEnabled = true,
 					IsCustomField = true
 				};
 				var mainEntryNode = new ConfigurableDictionaryNode
 				{
 					Children = new List<ConfigurableDictionaryNode> { customFieldNode },
-					FieldDescription = "LexEntry",
-					IsEnabled = true
+					FieldDescription = "LexEntry"
 				};
-				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+				CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 				var testEntry = CreateInterestingLexEntry(Cache);
 				const string customData = @"I am custom data";
 				var locator = Cache.ServiceLocator;
@@ -1899,32 +1713,23 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_SenseNumbersGeneratedForMultipleSenses()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache,
-																					(ISilDataAccessManaged)Cache.MainCacheAccessor,
+			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
 																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var wsOpts = new DictionaryNodeWritingSystemOptions
-			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
-				}
-			};
-			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true };
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "Senses",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%d" },
-				Children = new List<ConfigurableDictionaryNode> { glossNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { sensesNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 			AddSenseToEntry(testEntry, "second gloss", m_wsEn, Cache);
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
@@ -1943,29 +1748,21 @@ namespace SIL.FieldWorks.XWorks
 			var pubDecorator = new DictionaryPublicationDecorator(Cache,
 																					(ISilDataAccessManaged)Cache.MainCacheAccessor,
 																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var wsOpts = new DictionaryNodeWritingSystemOptions
-			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
-				}
-			};
-			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true };
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "Senses",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberEvenASingleSense = false },
-				Children = new List<ConfigurableDictionaryNode> { glossNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { sensesNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
@@ -1980,42 +1777,21 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateXHTMLForEntry_NumberingSingleSenseAlsoCountsSubsense()
 		{
 			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var wsOpts = new DictionaryNodeWritingSystemOptions
-			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
-				}
-			};
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
 			{
-				BeforeNumber = "",
-				AfterNumber = ")",
-				NumberStyle = "Dictionary-SenseNumber",
-				NumberingStyle = "%d",
-				DisplayEachSenseInAParagraph = false,
-				NumberEvenASingleSense = false,
-				ShowSharedGrammarInfoFirst = false
+				BeforeNumber = "", AfterNumber = ")", NumberStyle = "Dictionary-SenseNumber", NumberingStyle = "%d",
+				DisplayEachSenseInAParagraph = false, NumberEvenASingleSense = false, ShowSharedGrammarInfoFirst = false
 			};
-			var DictionaryNodeSubSenseOptions = new DictionaryNodeSenseOptions
-			{
-				BeforeNumber = "",
-				AfterNumber = ")",
-				NumberStyle = "Dictionary-SenseNumber",
-				NumberingStyle = "%d.d",
-				DisplayEachSenseInAParagraph = false,
-				NumberEvenASingleSense = false,
-				ShowSharedGrammarInfoFirst = false
-			};
+			var DictionaryNodeSubSenseOptions = DictionaryNodeSenseOptions.DeepClone();
+			((DictionaryNodeSenseOptions)DictionaryNodeSubSenseOptions).NumberingStyle = "%d.d";
 
-			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true };
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var subSenseNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
-				Label = "Subsenses",
 				DictionaryNodeOptions = DictionaryNodeSubSenseOptions,
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var sensesNode = new ConfigurableDictionaryNode
@@ -2023,18 +1799,16 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
 				DictionaryNodeOptions = DictionaryNodeSenseOptions,
-				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode }
 			};
 
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { sensesNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
 			};
 
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 			AddSingleSubSenseToSense("gloss", testEntry.SensesOS.First());
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
@@ -2049,13 +1823,7 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateXHTMLForEntry_SensesAndSubSensesWithDifferentNumberingStyle()
 		{
 			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var wsOpts = new DictionaryNodeWritingSystemOptions
-			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
-				}
-			};
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
 			{
 				BeforeNumber = "",
@@ -2077,14 +1845,12 @@ namespace SIL.FieldWorks.XWorks
 				ShowSharedGrammarInfoFirst = false
 			};
 
-			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true };
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var subSenseNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
-				Label = "Subsenses",
 				DictionaryNodeOptions = DictionaryNodeSubSenseOptions,
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var sensesNode = new ConfigurableDictionaryNode
@@ -2092,18 +1858,16 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
 				DictionaryNodeOptions = DictionaryNodeSenseOptions,
-				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode }
 			};
 
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { sensesNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
 			};
 
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
@@ -2124,13 +1888,7 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateXHTMLForEntry_SensesAndSubSensesWithNumberingStyle()
 		{
 			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var wsOpts = new DictionaryNodeWritingSystemOptions
-			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
-				}
-			};
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
 			{
 				BeforeNumber = "",
@@ -2152,14 +1910,12 @@ namespace SIL.FieldWorks.XWorks
 				ShowSharedGrammarInfoFirst = false
 			};
 
-			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true };
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var subSenseNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
-				Label = "Subsenses",
 				DictionaryNodeOptions = DictionaryNodeSubSenseOptions,
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var sensesNode = new ConfigurableDictionaryNode
@@ -2167,18 +1923,16 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
 				DictionaryNodeOptions = DictionaryNodeSenseOptions,
-				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode }
 			};
 
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { sensesNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
 			};
 
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
@@ -2199,13 +1953,7 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateXHTMLForEntry_SensesNoneAndSubSensesWithNumberingStyle()
 		{
 			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var wsOpts = new DictionaryNodeWritingSystemOptions
-			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
-				}
-			};
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
 			{
 				BeforeNumber = "",
@@ -2226,14 +1974,12 @@ namespace SIL.FieldWorks.XWorks
 				ShowSharedGrammarInfoFirst = false
 			};
 
-			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true };
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var subSenseNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
-				Label = "Subsenses",
 				DictionaryNodeOptions = DictionaryNodeSubSenseOptions,
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var sensesNode = new ConfigurableDictionaryNode
@@ -2241,18 +1987,16 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
 				DictionaryNodeOptions = DictionaryNodeSenseOptions,
-				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode }
 			};
 
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { sensesNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
 			};
 
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
@@ -2269,13 +2013,7 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateXHTMLForEntry_SensesGeneratedForMultipleSubSenses()
 		{
 			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var wsOpts = new DictionaryNodeWritingSystemOptions
-			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
-				}
-			};
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var DictionaryNodeSubSenseOptions = new DictionaryNodeSenseOptions
 			{
 				BeforeNumber = "",
@@ -2287,14 +2025,12 @@ namespace SIL.FieldWorks.XWorks
 				ShowSharedGrammarInfoFirst = false
 			};
 
-			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true };
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var subSenseNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
-				Label = "Subsenses",
 				DictionaryNodeOptions = DictionaryNodeSubSenseOptions,
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var sensesNode = new ConfigurableDictionaryNode
@@ -2302,18 +2038,16 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
 				DictionaryNodeOptions = DictionaryNodeSubSenseOptions,
-				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode }
 			};
 
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { sensesNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
 			};
 
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
@@ -2334,32 +2068,23 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_SingleSenseGetsNumberWithNumberEvenOneSenseOption()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache,
-																					(ISilDataAccessManaged)Cache.MainCacheAccessor,
+			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
 																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var wsOpts = new DictionaryNodeWritingSystemOptions
-			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
-				}
-			};
-			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true };
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "Senses",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberEvenASingleSense = true, NumberingStyle = "%d" },
-				Children = new List<ConfigurableDictionaryNode> { glossNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { sensesNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
@@ -2373,32 +2098,23 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_SenseContentWithGuid()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache,
-																					(ISilDataAccessManaged)Cache.MainCacheAccessor,
+			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
 																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var wsOpts = new DictionaryNodeWritingSystemOptions
-			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
-				}
-			};
-			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true };
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "Senses",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions(),
-				Children = new List<ConfigurableDictionaryNode> { glossNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { sensesNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
@@ -2413,32 +2129,32 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var translationNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "Translation", IsEnabled = true, DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+				FieldDescription = "Translation", DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
 			};
 			var translationsNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "TranslationsOC", CSSClassNameOverride = "translations", IsEnabled = true,
+				FieldDescription = "TranslationsOC", CSSClassNameOverride = "translations",
 				Children = new List<ConfigurableDictionaryNode> { translationNode }
 			};
 			var exampleNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "Example", IsEnabled = true, DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+				FieldDescription = "Example", DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
 			var examplesNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "ExamplesOS", CSSClassNameOverride = "examples", IsEnabled = true,
+				FieldDescription = "ExamplesOS", CSSClassNameOverride = "examples",
 				Children = new List<ConfigurableDictionaryNode> { exampleNode, translationsNode }
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "SensesOS", CSSClassNameOverride = "senses", IsEnabled = true,
+				FieldDescription = "SensesOS", CSSClassNameOverride = "senses",
 				Children = new List<ConfigurableDictionaryNode> { examplesNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LexEntry", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { sensesNode }
+				FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { sensesNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			const string example = "Example Sentence On Entry";
 			const string translation = "Translation of the Example";
@@ -2461,31 +2177,31 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var translationNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "Translation", IsEnabled = true, DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+				FieldDescription = "Translation", DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
 			};
 			var translationsNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "TranslationsOC", CSSClassNameOverride = "translations", IsEnabled = true,
+				FieldDescription = "TranslationsOC", CSSClassNameOverride = "translations",
 				Children = new List<ConfigurableDictionaryNode> { translationNode }
 			};
 			var exampleNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "Example", IsEnabled = true, DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+				FieldDescription = "Example", DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
 			var examplesNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "ExampleSentences", IsEnabled = true,
+				FieldDescription = "ExampleSentences",
 				Children = new List<ConfigurableDictionaryNode> { exampleNode, translationsNode }
 			};
 			var otherRcfsNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "ComplexFormsNotSubentries", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { examplesNode }
+				FieldDescription = "ComplexFormsNotSubentries", Children = new List<ConfigurableDictionaryNode> { examplesNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LexEntry", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { otherRcfsNode }
+				FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { otherRcfsNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			const string example = "Example Sentence On Variant Form";
 			const string translation = "Translation of the Sentence";
@@ -2510,27 +2226,27 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var stringRepNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "StringRepresentation", IsEnabled = true,
+				FieldDescription = "StringRepresentation",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new [] { "en" })
 			};
 			var environmentsNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "AllomorphEnvironments", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { stringRepNode }
+				FieldDescription = "AllomorphEnvironments", Children = new List<ConfigurableDictionaryNode> { stringRepNode }
 			};
 			var formNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "Form", IsEnabled = true,
+				FieldDescription = "Form",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new [] { "fr" })
 			};
 			var allomorphsNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "AlternateFormsOS", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { formNode, environmentsNode }
+				FieldDescription = "AlternateFormsOS", Children = new List<ConfigurableDictionaryNode> { formNode, environmentsNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LexEntry", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { allomorphsNode }
+				FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { allomorphsNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			AddAllomorphToEntry(mainEntry);
@@ -2550,18 +2266,18 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var complexFormNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "OwningEntry", SubField = "MLHeadWord", IsEnabled = true,
+				FieldDescription = "OwningEntry", SubField = "MLHeadWord",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new [] { "fr" })
 			};
 			var rcfsNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "VisibleComplexFormBackRefs", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { complexFormNode }
+				FieldDescription = "VisibleComplexFormBackRefs", Children = new List<ConfigurableDictionaryNode> { complexFormNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LexEntry", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { rcfsNode }
+				FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { rcfsNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var otherReferencedComplexForm = CreateInterestingLexEntry(Cache);
@@ -2581,34 +2297,34 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var headwordNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "HeadWord", CSSClassNameOverride = "headword", IsEnabled = true,
+				FieldDescription = "HeadWord", CSSClassNameOverride = "headword",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
 			};
 			var refNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "ConfigReferencedEntries", IsEnabled = true,
+				FieldDescription = "ConfigReferencedEntries",
 				Children = new List<ConfigurableDictionaryNode> { headwordNode },
 				CSSClassNameOverride = "referencedentries"
 			};
 			var variantsNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "VisibleVariantEntryRefs", IsEnabled = true,
+				FieldDescription = "VisibleVariantEntryRefs",
 				Children = new List<ConfigurableDictionaryNode> { refNode }
 			};
 			var complexFormNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "OwningEntry", SubField = "MLHeadWord", CSSClassNameOverride = "headword", IsEnabled = true,
+				FieldDescription = "OwningEntry", SubField = "MLHeadWord", CSSClassNameOverride = "headword",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new [] { "fr" })
 			};
 			var rcfsNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "VisibleComplexFormBackRefs", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { complexFormNode }
+				FieldDescription = "VisibleComplexFormBackRefs", Children = new List<ConfigurableDictionaryNode> { complexFormNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LexEntry", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { variantsNode, rcfsNode }
+				FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { variantsNode, rcfsNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var variantForm = CreateInterestingLexEntry(Cache);
@@ -2637,17 +2353,17 @@ namespace SIL.FieldWorks.XWorks
 
 			var formNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "HeadWord", CSSClassNameOverride = "headword", IsEnabled = true,
+				FieldDescription = "HeadWord", CSSClassNameOverride = "headword",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
 			var targetsNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "ConfigTargets", IsEnabled = true,
+				FieldDescription = "ConfigTargets",
 				Children = new List<ConfigurableDictionaryNode> { formNode }
 			};
 			var crossReferencesNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "MinimalLexReferences", IsEnabled = true,
+				FieldDescription = "MinimalLexReferences",
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
 					ListId = DictionaryNodeListOptions.ListIds.Entry,
@@ -2657,9 +2373,9 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LexEntry", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { crossReferencesNode }
+				FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { crossReferencesNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
@@ -2683,8 +2399,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "MLHeadWord",
 				CSSClassNameOverride = "headword",
 				IsEnabled = true,
-				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
-				Children = new List<ConfigurableDictionaryNode> { }
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
 			var targetsNode = new ConfigurableDictionaryNode
 			{
@@ -2706,11 +2421,9 @@ namespace SIL.FieldWorks.XWorks
 			var headword = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",
-				Label = "Headword",
 				CSSClassNameOverride = "headword",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
-				IsEnabled = true,
-				Children = new List<ConfigurableDictionaryNode>()
+				IsEnabled = true
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -2718,7 +2431,7 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { headword, crossReferencesNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			s_model.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT-
@@ -2739,12 +2452,12 @@ namespace SIL.FieldWorks.XWorks
 
 			var nameNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "OwnerType", SubField = "Name", IsEnabled = true,
+				FieldDescription = "OwnerType", SubField = "Name",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
 			};
 			var crossReferencesNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "MinimalLexReferences", IsEnabled = true,
+				FieldDescription = "MinimalLexReferences",
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
 					ListId = DictionaryNodeListOptions.ListIds.Entry,
@@ -2754,9 +2467,9 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LexEntry", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { crossReferencesNode }
+				FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { crossReferencesNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
@@ -2782,12 +2495,12 @@ namespace SIL.FieldWorks.XWorks
 
 			var nameNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "OwnerType", SubField = "Name", IsEnabled = true,
+				FieldDescription = "OwnerType", SubField = "Name",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
 			};
 			var crossReferencesNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "MinimalLexReferences", IsEnabled = true,
+				FieldDescription = "MinimalLexReferences",
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
 					ListId = DictionaryNodeListOptions.ListIds.Entry,
@@ -2797,9 +2510,9 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LexEntry", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { crossReferencesNode }
+				FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { crossReferencesNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
@@ -2825,12 +2538,12 @@ namespace SIL.FieldWorks.XWorks
 
 			var nameNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "OwnerType", SubField = "Name", IsEnabled = true,
+				FieldDescription = "OwnerType", SubField = "Name",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
 			};
 			var crossReferencesNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "MinimalLexReferences", IsEnabled = true,
+				FieldDescription = "MinimalLexReferences",
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
 					ListId = DictionaryNodeListOptions.ListIds.Entry,
@@ -2840,9 +2553,9 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LexEntry", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { crossReferencesNode }
+				FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { crossReferencesNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
@@ -2868,13 +2581,12 @@ namespace SIL.FieldWorks.XWorks
 
 			var nameNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "OwnerType", SubField = "Name", IsEnabled = true,
+				FieldDescription = "OwnerType", SubField = "Name",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
 			};
 			var referencesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexSenseReferences",
-				IsEnabled = true,
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
 					ListId = DictionaryNodeListOptions.ListIds.Sense,
@@ -2884,13 +2596,13 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "SensesOS", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { referencesNode }
+				FieldDescription = "SensesOS", Children = new List<ConfigurableDictionaryNode> { referencesNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LexEntry", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { sensesNode }
+				FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { sensesNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
@@ -2916,13 +2628,12 @@ namespace SIL.FieldWorks.XWorks
 
 			var nameNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "OwnerType", SubField = "Name", IsEnabled = true,
+				FieldDescription = "OwnerType", SubField = "Name",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
 			};
 			var referencesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexSenseReferences",
-				IsEnabled = true,
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
 					ListId = DictionaryNodeListOptions.ListIds.Sense,
@@ -2932,13 +2643,13 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "SensesOS", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { referencesNode }
+				FieldDescription = "SensesOS", Children = new List<ConfigurableDictionaryNode> { referencesNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LexEntry", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { sensesNode }
+				FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { sensesNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
@@ -2976,13 +2687,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "OwnerType",
 				SubField = "Name",
-				IsEnabled = true,
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
 			};
 			var crossReferencesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MinimalLexReferences",
-				IsEnabled = true,
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
 					ListId = DictionaryNodeListOptions.ListIds.Entry,
@@ -2994,10 +2703,9 @@ namespace SIL.FieldWorks.XWorks
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { crossReferencesNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
@@ -3050,30 +2758,26 @@ namespace SIL.FieldWorks.XWorks
 			var headwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "HeadWord",
-				IsEnabled = true,
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
 			var glossNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Gloss",
-				IsEnabled = true,
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
 			};
 			var refListNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ConfigTargets",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { headwordNode, glossNode }
 			};
 			var nameNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "OwnerType", SubField = "Name", IsEnabled = true,
+				FieldDescription = "OwnerType", SubField = "Name",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
 			};
 			var referencesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexSenseReferences",
-				IsEnabled = true,
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
 					ListId = DictionaryNodeListOptions.ListIds.Sense,
@@ -3083,13 +2787,13 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "SensesOS", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { referencesNode }
+				FieldDescription = "SensesOS", Children = new List<ConfigurableDictionaryNode> { referencesNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LexEntry", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { sensesNode }
+				FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { sensesNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
@@ -3124,16 +2828,14 @@ namespace SIL.FieldWorks.XWorks
 			var variantsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "VariantFormEntryBackRefs",
-				IsEnabled = true,
 				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Variant, new [] { crazyVariantPoss })
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { variantsNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			//SUT
 			Assert.IsTrue(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(variantsNode, variantForm.VisibleVariantEntryRefs.First(), variantForm));
@@ -3170,7 +2872,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "OwningEntry",
 				SubField = "MLHeadWord",
-				IsEnabled = true,
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
 			var mainEntry = CreateInterestingLexEntry(Cache);
@@ -3181,15 +2882,14 @@ namespace SIL.FieldWorks.XWorks
 			var rcfsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "VariantFormEntryBackRefs",
-				IsEnabled = true,
 				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Variant, new [] { notCrazyVariant }),
 				Children = new List<ConfigurableDictionaryNode> { formNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LexEntry", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { rcfsNode }
+				FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { rcfsNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			//SUT
 			Assert.IsFalse(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(rcfsNode, variantForm.VisibleVariantEntryRefs.First(), variantForm));
@@ -3207,16 +2907,14 @@ namespace SIL.FieldWorks.XWorks
 			var variantsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "VisibleComplexFormBackRefs",
-				IsEnabled = true,
 				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Complex, new [] { complexTypePoss })
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { variantsNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			//SUT
 			Assert.IsTrue(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(variantsNode, mainEntry.VisibleComplexFormBackRefs.First(), mainEntry));
@@ -3234,16 +2932,14 @@ namespace SIL.FieldWorks.XWorks
 			var variantsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Subentries",
-				IsEnabled = true,
 				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Complex, new [] { complexTypePoss })
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { variantsNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			//SUT
 			Assert.IsTrue(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(variantsNode, mainEntry.Subentries.First(), mainEntry));
@@ -3256,7 +2952,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "OwningEntry",
 				SubField = "MLHeadWord",
-				IsEnabled = true,
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
 			var mainEntry = CreateInterestingLexEntry(Cache);
@@ -3268,17 +2963,15 @@ namespace SIL.FieldWorks.XWorks
 			var rcfsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "VisibleComplexFormBackRefs",
-				IsEnabled = true,
 				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Complex, new [] { notComplexTypePoss }),
 				Children = new List<ConfigurableDictionaryNode> { formNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { rcfsNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			//SUT
 			Assert.IsFalse(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(rcfsNode, mainEntry.VisibleComplexFormBackRefs.First(), mainEntry));
@@ -3291,7 +2984,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "OwningEntry",
 				SubField = "MLHeadWord",
-				IsEnabled = true,
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
 			var mainEntry = CreateInterestingLexEntry(Cache);
@@ -3303,17 +2995,15 @@ namespace SIL.FieldWorks.XWorks
 			var entryReferenceNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MinimalLexReferences",
-				IsEnabled = true,
 				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Entry, new [] { notComplexTypePoss }),
 				Children = new List<ConfigurableDictionaryNode> { formNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { entryReferenceNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			Assert.IsTrue(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(entryReferenceNode, mainEntry.MinimalLexReferences.First(), mainEntry));
 			Assert.IsTrue(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(entryReferenceNode, referencedEntry.MinimalLexReferences.First(), referencedEntry));
 		}
@@ -3330,7 +3020,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "OwningEntry",
 				SubField = "MLHeadWord",
-				IsEnabled = true,
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
 			var mainEntry = CreateInterestingLexEntry(Cache);
@@ -3342,7 +3031,6 @@ namespace SIL.FieldWorks.XWorks
 			var entryReferenceNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MinimalLexReferences",
-				IsEnabled = true,
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
 					ListId = DictionaryNodeListOptions.ListIds.Entry,
@@ -3353,10 +3041,9 @@ namespace SIL.FieldWorks.XWorks
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { entryReferenceNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			Assert.IsFalse(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(entryReferenceNode, mainEntry.MinimalLexReferences.First(), mainEntry));
 			Assert.IsTrue(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(entryReferenceNode, referencedEntry.MinimalLexReferences.First(), referencedEntry));
 		}
@@ -3373,7 +3060,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "OwningEntry",
 				SubField = "MLHeadWord",
-				IsEnabled = true,
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
 			var mainEntry = CreateInterestingLexEntry(Cache);
@@ -3385,7 +3071,6 @@ namespace SIL.FieldWorks.XWorks
 			var entryReferenceNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MinimalLexReferences",
-				IsEnabled = true,
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
 					ListId = DictionaryNodeListOptions.ListIds.Entry,
@@ -3396,10 +3081,9 @@ namespace SIL.FieldWorks.XWorks
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { entryReferenceNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			Assert.IsTrue(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(entryReferenceNode, mainEntry.MinimalLexReferences.First(), mainEntry));
 			Assert.IsFalse(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(entryReferenceNode, referencedEntry.MinimalLexReferences.First(), referencedEntry));
 		}
@@ -3416,7 +3100,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "OwningEntry",
 				SubField = "MLHeadWord",
-				IsEnabled = true,
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
 			var mainEntry = CreateInterestingLexEntry(Cache);
@@ -3428,7 +3111,6 @@ namespace SIL.FieldWorks.XWorks
 			var entryReferenceNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MinimalLexReferences",
-				IsEnabled = true,
 				DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
 					ListId = DictionaryNodeListOptions.ListIds.Entry,
@@ -3439,10 +3121,9 @@ namespace SIL.FieldWorks.XWorks
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { entryReferenceNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			Assert.IsTrue(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(entryReferenceNode, mainEntry.MinimalLexReferences.First(), mainEntry));
 			Assert.IsTrue(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(entryReferenceNode, referencedEntry.MinimalLexReferences.First(), referencedEntry));
 		}
@@ -3483,7 +3164,7 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { entryReferenceNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			s_model.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			Assert.IsFalse(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(entryReferenceNode, mainEntry.MinimalLexReferences.First(), mainEntry));
 			Assert.IsFalse(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(entryReferenceNode, referencedEntry.MinimalLexReferences.First(), referencedEntry));
 		}
@@ -3494,8 +3175,7 @@ namespace SIL.FieldWorks.XWorks
 			var formNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "OwningEntry",
-				SubField = "MLHeadWord",
-				IsEnabled = true
+				SubField = "MLHeadWord"
 			};
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
@@ -3506,16 +3186,14 @@ namespace SIL.FieldWorks.XWorks
 			var entryReferenceNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MinimalLexReferences",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { formNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { entryReferenceNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			Assert.Throws<ArgumentException>(() => ConfiguredXHTMLGenerator.IsListItemSelectedForExport(entryReferenceNode, mainEntry.MinimalLexReferences.First(), mainEntry));
 		}
 
@@ -3544,7 +3222,6 @@ namespace SIL.FieldWorks.XWorks
 			var headword = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",
-				Label = "Headword",
 				CSSClassNameOverride = "headword",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
 				IsEnabled = true,
@@ -3554,7 +3231,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "LexEntry", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { headword, variantsNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			s_model.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
@@ -3589,7 +3266,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "LexEntry", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { variantsNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			s_model.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
@@ -3603,23 +3280,23 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var complexFormNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "OwningEntry", SubField = "MLHeadWord", IsEnabled = true,
+				FieldDescription = "OwningEntry", SubField = "MLHeadWord",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new [] { "fr" })
 			};
 			var rcfsNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "VisibleComplexFormBackRefs",IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { complexFormNode }
+				FieldDescription = "VisibleComplexFormBackRefs", Children = new List<ConfigurableDictionaryNode> { complexFormNode }
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "SensesOS", CSSClassNameOverride = "senses", IsEnabled = true,
+				FieldDescription = "SensesOS", CSSClassNameOverride = "senses",
 				Children = new List<ConfigurableDictionaryNode> { rcfsNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LexEntry", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { sensesNode }
+				FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { sensesNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var otherReferencedComplexForm = CreateInterestingLexEntry(Cache);
@@ -3655,7 +3332,7 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderIfPreviousHeaderDoesNotMatch()
 		{
 			var entry = CreateInterestingLexEntry(Cache);
-			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
 				var last = "A a";
@@ -3672,7 +3349,7 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateLetterHeaderIfNeeded_GeneratesNoHeaderIfPreviousHeaderDoesMatch()
 		{
 			var entry = CreateInterestingLexEntry(Cache);
-			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
 				var last = "A a";
@@ -3691,36 +3368,26 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_OneSenseWithSinglePicture()
 		{
-			var wsOpts = new DictionaryNodeWritingSystemOptions
-			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
-				}
-			};
-			var captionNode = new ConfigurableDictionaryNode { FieldDescription = "Caption", IsEnabled = true, DictionaryNodeOptions = wsOpts };
-			var thumbNailNode = new ConfigurableDictionaryNode { FieldDescription = "PictureFileRA", CSSClassNameOverride = "photo", IsEnabled = true };
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
+			var captionNode = new ConfigurableDictionaryNode { FieldDescription = "Caption", DictionaryNodeOptions = wsOpts };
+			var thumbNailNode = new ConfigurableDictionaryNode { FieldDescription = "PictureFileRA", CSSClassNameOverride = "photo" };
 			var pictureNode = new ConfigurableDictionaryNode
 			{
 				DictionaryNodeOptions = new DictionaryNodePictureOptions(),
 				FieldDescription = "PicturesOfSenses",
-				IsEnabled = true,
 				CSSClassNameOverride = "Pictures",
 				Children = new List<ConfigurableDictionaryNode> { thumbNailNode, captionNode }
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses",
-				Label = "Senses",
-				IsEnabled = true,
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { sensesNode, pictureNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 			var sense = testEntry.SensesOS[0];
 			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
@@ -3748,7 +3415,6 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateXHTMLForEntry_PictureWithNonUnicodePathLinksCorrectly()
 		{
 			var mainEntryNode = CreatePictureModel();
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			var testEntry = CreateInterestingLexEntry(Cache);
 			var sense = testEntry.SensesOS[0];
 			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
@@ -3778,7 +3444,6 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateXHTMLForEntry_PictureCopiedAndRelativePathUsed()
 		{
 			var mainEntryNode = CreatePictureModel();
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			var testEntry = CreateInterestingLexEntry(Cache);
 			var sense = testEntry.SensesOS[0];
 			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
@@ -3818,7 +3483,6 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateXHTMLForEntry_MissingPictureFileDoesNotCrashOnCopy()
 		{
 			var mainEntryNode = CreatePictureModel();
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			var testEntry = CreateInterestingLexEntry(Cache);
 			var sense = testEntry.SensesOS[0];
 			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
@@ -3855,7 +3519,6 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateXHTMLForEntry_TwoDifferentFilesGetTwoDifferentResults()
 		{
 			var mainEntryNode = CreatePictureModel();
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			var testEntry = CreateInterestingLexEntry(Cache);
 			AddSenseToEntry(testEntry, "second", m_wsEn, Cache);
 			var sense = testEntry.SensesOS[0];
@@ -3920,7 +3583,6 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateXHTMLForEntry_TwoDifferentLinksToTheSamefileWorks()
 		{
 			var mainEntryNode = CreatePictureModel();
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			var testEntry = CreateInterestingLexEntry(Cache);
 			AddSenseToEntry(testEntry, "second", m_wsEn, Cache);
 			var sense = testEntry.SensesOS[0];
@@ -3971,17 +3633,14 @@ namespace SIL.FieldWorks.XWorks
 				var customFieldNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = "CustomString",
-					Label = "Custom String",
-					IsEnabled = true,
 					IsCustomField = true
 				};
 				var mainEntryNode = new ConfigurableDictionaryNode
 				{
 					Children = new List<ConfigurableDictionaryNode> { customFieldNode },
-					FieldDescription = "LexEntry",
-					IsEnabled = true
+					FieldDescription = "LexEntry"
 				};
-				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+				CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 				var testEntry = CreateInterestingLexEntry(Cache);
 				const string customData = @"I am custom data";
 				var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
@@ -4005,17 +3664,14 @@ namespace SIL.FieldWorks.XWorks
 				var customFieldNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = "CustomString",
-					Label = "Custom String",
-					IsEnabled = true,
 					IsCustomField = true
 				};
 				var mainEntryNode = new ConfigurableDictionaryNode
 				{
 					Children = new List<ConfigurableDictionaryNode> { customFieldNode },
-					FieldDescription = "LexEntry",
-					IsEnabled = true
+					FieldDescription = "LexEntry"
 				};
-				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+				CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 				var testEntry = CreateInterestingLexEntry(Cache);
 				const string customData = @"I am custom data";
 				var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
@@ -4036,14 +3692,11 @@ namespace SIL.FieldWorks.XWorks
 				var customFieldNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = "CustomString",
-					Label = "Custom String",
-					IsEnabled = true,
 					IsCustomField = true
 				};
 				var senseNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = "SensesOS",
-					IsEnabled = true,
 					Children = new List<ConfigurableDictionaryNode> { customFieldNode },
 					CSSClassNameOverride = "es"
 				};
@@ -4051,10 +3704,9 @@ namespace SIL.FieldWorks.XWorks
 				{
 					Children = new List<ConfigurableDictionaryNode> { senseNode },
 					FieldDescription = "LexEntry",
-					IsEnabled = true,
 					CSSClassNameOverride = "l"
 				};
-				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+				CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 				var testEntry = CreateInterestingLexEntry(Cache);
 				const string customData = @"I am custom sense data";
 				var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
@@ -4079,21 +3731,17 @@ namespace SIL.FieldWorks.XWorks
 				var customFieldNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = "CustomString",
-					Label = "Custom String",
-					IsEnabled = true,
 					IsCustomField = true
 				};
 				var exampleNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = "ExamplesOS",
-					IsEnabled = true,
 					Children = new List<ConfigurableDictionaryNode> { customFieldNode },
 					CSSClassNameOverride = "xs"
 				};
 				var senseNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = "SensesOS",
-					IsEnabled = true,
 					Children = new List<ConfigurableDictionaryNode> { exampleNode },
 					CSSClassNameOverride = "es"
 				};
@@ -4101,10 +3749,9 @@ namespace SIL.FieldWorks.XWorks
 				{
 					Children = new List<ConfigurableDictionaryNode> { senseNode },
 					FieldDescription = "LexEntry",
-					IsEnabled = true,
 					CSSClassNameOverride = "l"
 				};
-				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+				CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 				var testEntry = CreateInterestingLexEntry(Cache);
 				const string customData = @"I am custom example data";
 				var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
@@ -4131,14 +3778,11 @@ namespace SIL.FieldWorks.XWorks
 				var customFieldNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = "CustomString",
-					Label = "Custom String",
-					IsEnabled = true,
 					IsCustomField = true
 				};
 				var senseNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = "AlternateFormsOS",
-					IsEnabled = true,
 					Children = new List<ConfigurableDictionaryNode> { customFieldNode },
 					CSSClassNameOverride = "as"
 				};
@@ -4146,10 +3790,9 @@ namespace SIL.FieldWorks.XWorks
 				{
 					Children = new List<ConfigurableDictionaryNode> { senseNode },
 					FieldDescription = "LexEntry",
-					IsEnabled = true,
 					CSSClassNameOverride = "l"
 				};
-				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+				CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 				var testEntry = CreateInterestingLexEntry(Cache);
 				const string customData = @"I am custom morph data";
 				var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
@@ -4175,18 +3818,15 @@ namespace SIL.FieldWorks.XWorks
 				var customFieldNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = "CustomString",
-					Label = "Custom String",
-					IsEnabled = true,
 					IsCustomField = true,
 					DictionaryNodeOptions = GetWsOptionsForLanguages(new [] { "en" })
 				};
 				var mainEntryNode = new ConfigurableDictionaryNode
 				{
 					Children = new List<ConfigurableDictionaryNode> { customFieldNode },
-					FieldDescription = "LexEntry",
-					IsEnabled = true
+					FieldDescription = "LexEntry"
 				};
-				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+				CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 				var testEntry = CreateInterestingLexEntry(Cache);
 				const string customData = @"I am custom data";
 				var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
@@ -4213,24 +3853,21 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var nameNode = new ConfigurableDictionaryNode
 				{
-					FieldDescription = "Name", IsEnabled = true,
+					FieldDescription = "Name",
 					DictionaryNodeOptions = GetWsOptionsForLanguages(new[]{ "en" })
 				};
 				var customFieldNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = "CustomListItem",
-					Label = "Custom List Item",
-					IsEnabled = true,
 					IsCustomField = true,
 					Children = new List<ConfigurableDictionaryNode> { nameNode }
 				};
 				var mainEntryNode = new ConfigurableDictionaryNode
 				{
 					Children = new List<ConfigurableDictionaryNode> { customFieldNode },
-					FieldDescription = "LexEntry",
-					IsEnabled = true
+					FieldDescription = "LexEntry"
 				};
-				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+				CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 				var testEntry = CreateInterestingLexEntry(Cache);
 
 				// Set custom field data
@@ -4258,24 +3895,20 @@ namespace SIL.FieldWorks.XWorks
 				var nameNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = "Name",
-					IsEnabled = true,
 					DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
 				};
 				var customFieldNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = "CustomListItems",
-					Label = "Custom List Items",
-					IsEnabled = true,
 					IsCustomField = true,
 					Children = new List<ConfigurableDictionaryNode> { nameNode }
 				};
 				var mainEntryNode = new ConfigurableDictionaryNode
 				{
 					Children = new List<ConfigurableDictionaryNode> { customFieldNode },
-					FieldDescription = "LexEntry",
-					IsEnabled = true
+					FieldDescription = "LexEntry"
 				};
-				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+				CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 				var testEntry = CreateInterestingLexEntry(Cache);
 
 				// Set custom field data
@@ -4299,17 +3932,14 @@ namespace SIL.FieldWorks.XWorks
 				var customFieldNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = "CustomDate",
-					Label = "Custom Date",
-					IsEnabled = true,
 					IsCustomField = true
 				};
 				var mainEntryNode = new ConfigurableDictionaryNode
 				{
 					Children = new List<ConfigurableDictionaryNode> { customFieldNode },
-					FieldDescription = "LexEntry",
-					IsEnabled = true
+					FieldDescription = "LexEntry"
 				};
-				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+				CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 				var testEntry = CreateInterestingLexEntry(Cache);
 				var customData = DateTime.Now;
 
@@ -4332,17 +3962,14 @@ namespace SIL.FieldWorks.XWorks
 				var customFieldNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = "CustomInteger",
-					Label = "Custom Integer",
-					IsEnabled = true,
 					IsCustomField = true
 				};
 				var mainEntryNode = new ConfigurableDictionaryNode
 				{
 					Children = new List<ConfigurableDictionaryNode> { customFieldNode },
-					FieldDescription = "LexEntry",
-					IsEnabled = true
+					FieldDescription = "LexEntry"
 				};
-				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+				CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 				var testEntry = CreateInterestingLexEntry(Cache);
 				const int customData = 123456;
 
@@ -4366,18 +3993,15 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var memberNode = new ConfigurableDictionaryNode
 				{
-					Label = "Multiple lineTest",
 					FieldDescription = "MultiplelineTest",
-					IsCustomField = true,
-					IsEnabled = true
+					IsCustomField = true
 				};
 				var rootNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = "LexEntry",
-					IsEnabled = true,
 					Children = new List<ConfigurableDictionaryNode> {memberNode}
 				};
-				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> {rootNode});
+				CssGeneratorTests.PopulateFieldsForTesting(rootNode);
 				var testEntry = CreateInterestingLexEntry(Cache);
 				var text = CreateMultiParaText("Custom string", Cache);
 				// SUT
@@ -4397,29 +4021,25 @@ namespace SIL.FieldWorks.XWorks
 			var headwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "HeadWord",
-				IsEnabled = true,
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
 			};
 			var refNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ConfigReferencedEntries",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { headwordNode },
 				CSSClassNameOverride = "referencedentries"
 			};
 			var variantsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "VisibleVariantEntryRefs",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { refNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { variantsNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var variantForm = CreateInterestingLexEntry(Cache);
@@ -4442,17 +4062,14 @@ namespace SIL.FieldWorks.XWorks
 			var headwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexemeFormOA",
-				Label = "Lexeme Form",
-				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en-Zxxx-x-audio" }),
-				IsEnabled = true
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en-Zxxx-x-audio" })
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { headwordNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entryOne = CreateInterestingLexEntry(Cache);
 			var senseaudio = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entryOne.LexemeFormOA = senseaudio;
@@ -4482,17 +4099,14 @@ namespace SIL.FieldWorks.XWorks
 			var headwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexemeFormOA",
-				Label = "Lexeme Form",
-				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en-Zxxx-x-audio" }),
-				IsEnabled = true
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en-Zxxx-x-audio" })
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { headwordNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entryOne = CreateInterestingLexEntry(Cache);
 			var senseaudio = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entryOne.LexemeFormOA = senseaudio;
@@ -4525,12 +4139,12 @@ namespace SIL.FieldWorks.XWorks
 
 			var revAbbrevNode  = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "ReverseAbbr", IsEnabled = true,
+				FieldDescription = "ReverseAbbr",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
 			};
 			var refTypeNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LookupComplexEntryType", IsEnabled = true,
+				FieldDescription = "LookupComplexEntryType",
 				CSSClassNameOverride = "complexformtypes",
 				Children = new List<ConfigurableDictionaryNode> { revAbbrevNode }
 			};
@@ -4538,14 +4152,14 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Children = new List<ConfigurableDictionaryNode> { refTypeNode },
 				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions(),
-				FieldDescription = "Subentries", IsEnabled = true
+				FieldDescription = "Subentries"
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { subentryNode },
-				FieldDescription = "LexEntry", IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
@@ -4590,7 +4204,6 @@ namespace SIL.FieldWorks.XWorks
 			var headword = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",
-				Label = "Headword",
 				CSSClassNameOverride = "headword",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
 				IsEnabled = true,
@@ -4601,7 +4214,7 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { headword, subentryNode },
 				FieldDescription = "LexEntry", IsEnabled = true
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			s_model.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
@@ -4623,15 +4236,12 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "OwningEntry",
 				SubField = "MLHeadWord",
-				Label = "Headword",
 				CSSClassNameOverride = "headword",
-				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
-				IsEnabled = true
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
 			var complexEntryTypeNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ComplexEntryTypesRS",
-				IsEnabled = true,
 				CSSClassNameOverride = "complexformtypes",
 			};
 			var complexOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex, true);
@@ -4639,16 +4249,14 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Children = new List<ConfigurableDictionaryNode> {complexEntryTypeNode, formNode },
 				DictionaryNodeOptions = complexOptions,
-				FieldDescription = "VisibleComplexFormBackRefs",
-				IsEnabled = true
+				FieldDescription = "VisibleComplexFormBackRefs"
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { referencedCompFormNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
@@ -4670,15 +4278,12 @@ namespace SIL.FieldWorks.XWorks
 			var headwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",
-				Label = "Headword",
 				CSSClassNameOverride = "headword",
-				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
-				IsEnabled = true
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
 			var refTypeNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LookupComplexEntryType",
-				IsEnabled = true,
 				CSSClassNameOverride = "complexformtypes",
 			};
 			var complexOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex, true);
@@ -4686,16 +4291,14 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Children = new List<ConfigurableDictionaryNode> { refTypeNode, headwordNode },
 				DictionaryNodeOptions = complexOptions,
-				FieldDescription = "Subentries",
-				IsEnabled = true
+				FieldDescription = "Subentries"
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { subentryNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
@@ -4718,30 +4321,25 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "OwningEntry",
 				SubField = "MLHeadWord",
-				Label = "Headword",
 				CSSClassNameOverride = "headword",
-				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
-				IsEnabled = true
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
 			var variantEntryTypeNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "VariantEntryTypesRS",
-				IsEnabled = true,
+				FieldDescription = "VariantEntryTypesRS"
 			};
 			var variantFormNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { variantEntryTypeNode, formNode },
 				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
-				FieldDescription = "VariantFormEntryBackRefs",
-				IsEnabled = true
+				FieldDescription = "VariantFormEntryBackRefs"
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { variantFormNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
@@ -4775,36 +4373,38 @@ namespace SIL.FieldWorks.XWorks
 					complexRef.ComplexEntryTypesRS.Clear();
 			}
 
-			if(isUnspecifiedComplexTypeEnabled)
+			if (isUnspecifiedComplexTypeEnabled)
 				enabledMinorEntryTypes.Add(XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString());
 
 			if (variantForm != FormType.None)
 			{
 				var variantRef = CreateVariantForm(mainEntry, minorEntry);
-				if(variantForm == FormType.Unspecified)
+				if (variantForm == FormType.Unspecified)
 					variantRef.VariantEntryTypesRS.Clear();
 			}
 
-			if(isUnspecifiedVariantTypeEnabled)
+			if (isUnspecifiedVariantTypeEnabled)
 				enabledMinorEntryTypes.Add(XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString());
 
 			var headwordNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "MLHeadWord", Label = "Headword", CSSClassNameOverride = "headword",
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "headword",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
 				IsEnabled = true
 			};
 			var minorEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { headwordNode },
-				DictionaryNodeOptions =  GetListOptionsForStrings(DictionaryNodeListOptions.ListIds.Minor, enabledMinorEntryTypes),
-				FieldDescription = "LexEntry", IsEnabled = true
+				DictionaryNodeOptions = GetListOptionsForStrings(DictionaryNodeListOptions.ListIds.Minor, enabledMinorEntryTypes),
+				FieldDescription = "LexEntry",
+				IsEnabled = true
 			};
 			var model = new DictionaryConfigurationModel
 			{
-				Parts = new List<ConfigurableDictionaryNode> {new ConfigurableDictionaryNode(), minorEntryNode} // dummy main entry node
+				Parts = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode(), minorEntryNode } // dummy main entry node
 			};
-			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			CssGeneratorTests.PopulateFieldsForTesting(model);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
@@ -4855,7 +4455,7 @@ namespace SIL.FieldWorks.XWorks
 			var exampleCorpsBody1 = AddExampleToSense(entryCorps.SensesOS[0], "Le corps est gros.", "The body is big.");
 			var exampleCorpsBody2 = AddExampleToSense(entryCorps.SensesOS[0], "Le corps est esprit.", "The body is spirited.");
 			AddSenseToEntry(entryCorps, "corpse", m_wsEn, Cache);
-			var exampleCorpsCorpse1 = AddExampleToSense(entryCorps.SensesOS[1], "Le corps est morte.", "The corpse is dead.");
+			AddExampleToSense(entryCorps.SensesOS[1], "Le corps est morte.", "The corpse is dead.");
 
 			entryCorps.SensesOS[0].DoNotPublishInRC.Add(typeTest);
 			exampleCorpsBody1.DoNotPublishInRC.Add(typeTest);
@@ -4868,9 +4468,9 @@ namespace SIL.FieldWorks.XWorks
 			var entryBras = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(entryBras, "bras", m_wsFr, Cache);
 			entryBras.SensesOS[0].Gloss.set_String(m_wsEn, "arm");
-			var exampleBrasArm1 = AddExampleToSense(entryBras.SensesOS[0], "Mon bras est broken.", "My arm is broken.");
+			AddExampleToSense(entryBras.SensesOS[0], "Mon bras est broken.", "My arm is broken.");
 			AddSenseToEntry(entryBras, "hand", m_wsEn, Cache);
-			var exampleBrasHand1 = AddExampleToSense(entryBras.SensesOS[1], "Ma bras est fine.", "My arm is fine.");
+			AddExampleToSense(entryBras.SensesOS[1], "Ma bras est fine.", "My arm is fine.");
 			entryBras.DoNotPublishInRC.Add(typeTest);
 			entryBras.SensesOS[0].DoNotPublishInRC.Add(typeTest);
 			entryBras.SensesOS[1].DoNotPublishInRC.Add(typeTest);
@@ -4881,7 +4481,7 @@ namespace SIL.FieldWorks.XWorks
 			var entryOreille = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(entryOreille, "oreille", m_wsFr, Cache);
 			entryOreille.SensesOS[0].Gloss.set_String(m_wsEn, "ear");
-			var exampleOreille1 = AddExampleToSense(entryOreille.SensesOS[0], "Lac Pend d'Oreille est en Idaho.", "Lake Pend d'Oreille is in Idaho.");
+			AddExampleToSense(entryOreille.SensesOS[0], "Lac Pend d'Oreille est en Idaho.", "Lake Pend d'Oreille is in Idaho.");
 			entryOreille.DoNotPublishInRC.Add(typeMain);
 			entryOreille.SensesOS[0].DoNotPublishInRC.Add(typeMain);
 			//exampleOreille1.DoNotPublishInRC.Add(typeMain); -- should not show in main because its owner is not shown there
@@ -4893,16 +4493,16 @@ namespace SIL.FieldWorks.XWorks
 			AddHeadwordToEntry(entryMainsubentry, "mainsubentry", m_wsFr, Cache);
 			entryMainsubentry.SensesOS[0].Gloss.set_String (m_wsEn, "mainsubentry");
 			entryMainsubentry.DoNotPublishInRC.Add(typeTest);
-			var complexFormRef1 = CreateComplexForm(entryEntry, entryMainsubentry, true);
-			var complexRefName1 = complexFormRef1.ComplexEntryTypesRS[0].Name.BestAnalysisAlternative.Text;
-			var complexTypePoss1 = Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.First(complex => complex.Name.BestAnalysisAlternative.Text == complexRefName1);
+			CreateComplexForm(entryEntry, entryMainsubentry, true);
+			//var complexRefName1 = complexFormRef1.ComplexEntryTypesRS[0].Name.BestAnalysisAlternative.Text;
+			//var complexTypePoss1 = Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.First(complex => complex.Name.BestAnalysisAlternative.Text == complexRefName1);
 			var entryTestsubentry = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(entryTestsubentry, "testsubentry", m_wsFr, Cache);
 			entryTestsubentry.SensesOS[0].Gloss.set_String (m_wsEn, "testsubentry");
 			entryTestsubentry.DoNotPublishInRC.Add(typeMain);
-			var complexFormRef2 = CreateComplexForm(entryEntry, entryTestsubentry, true);
-			var complexRefName2 = complexFormRef2.ComplexEntryTypesRS[0].Name.BestAnalysisAlternative.Text;
-			var complexTypePoss2 = Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.First(complex => complex.Name.BestAnalysisAlternative.Text == complexRefName2);
+			CreateComplexForm(entryEntry, entryTestsubentry, true);
+			//var complexRefName2 = complexFormRef2.ComplexEntryTypesRS[0].Name.BestAnalysisAlternative.Text;
+			//var complexTypePoss2 = Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.First(complex => complex.Name.BestAnalysisAlternative.Text == complexRefName2);
 
 			// Note that the decorators must be created (or refreshed) *after* the data exists.
 			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
@@ -4929,73 +4529,64 @@ namespace SIL.FieldWorks.XWorks
 
 			var subHeadwordNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "MLHeadWord", IsEnabled = true,
+				FieldDescription = "MLHeadWord",
 				CSSClassNameOverride = "subentry",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
 			var subentryNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "Subentries", IsEnabled = true,
+				FieldDescription = "Subentries",
 				Children = new List<ConfigurableDictionaryNode> { subHeadwordNode }
 			};
 			var translationNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Translation",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }),
-				CSSClassNameOverride = "translatedsentence",
-				IsEnabled = true
+				CSSClassNameOverride = "translatedsentence"
 			};
 			var translationsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "TranslationsOC",
 				Children = new List<ConfigurableDictionaryNode> { translationNode },
-				CSSClassNameOverride = "translations",
-				IsEnabled = true
+				CSSClassNameOverride = "translations"
 			};
 			var exampleNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Example",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
-				CSSClassNameOverride = "examplesentence",
-				IsEnabled = true
+				CSSClassNameOverride = "examplesentence"
 			};
 			var examplesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ExamplesOS",
 				Children = new List<ConfigurableDictionaryNode> { exampleNode, translationsNode },
-				CSSClassNameOverride = "examples",
-				IsEnabled = true
+				CSSClassNameOverride = "examples"
 			};
 			var glossNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "DefinitionOrGloss",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] {"en"}),
-				CSSClassNameOverride = "definitionorgloss",
-				IsEnabled = true
+				CSSClassNameOverride = "definitionorgloss"
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions(),
 				Children = new List<ConfigurableDictionaryNode> { glossNode, examplesNode },
-				CSSClassNameOverride = "senses",
-				IsEnabled = true
+				CSSClassNameOverride = "senses"
 			};
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "HeadWord",
-				Label = "Headword",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
-				CSSClassNameOverride = "entry",
-				IsEnabled = true
+				CSSClassNameOverride = "entry"
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode, sensesNode, subentryNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			const string matchFrenchEntry = "//span[@class='entry']/span[@lang='fr']";
 			const string matchEnglishDefOrGloss =
@@ -5135,13 +4726,11 @@ namespace SIL.FieldWorks.XWorks
 			var revAbbrevNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReverseAbbr",
-				IsEnabled = true,
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
 			};
 			var refTypeNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LookupComplexEntryType",
-				IsEnabled = true,
 				CSSClassNameOverride = "complexformtypes",
 				Children = new List<ConfigurableDictionaryNode> { revAbbrevNode }
 			};
@@ -5149,26 +4738,22 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Children = new List<ConfigurableDictionaryNode> { refTypeNode },
 				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions{DisplayEachComplexFormInAParagraph = true},
-				FieldDescription = "Subentries",
-				IsEnabled = true
+				FieldDescription = "Subentries"
 			};
-			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", IsEnabled = true, DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }) };
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }) };
 			var SenseNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
-				Label = "Senses",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions{DisplayEachSenseInAParagraph = true},
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { SenseNode, subentryNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
@@ -5252,29 +4837,25 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateXHTMLForEntry_ContinuationParagraphWithEmtpyContentDoesNotGenerateSelfClosingTag()
 		{
 			var lexentry = CreateInterestingLexEntry(Cache);
-			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", IsEnabled = true, DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }) };
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }) };
 			var subentryNode = new ConfigurableDictionaryNode
 			{
 				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = true },
-				FieldDescription = "Subentries",
-				IsEnabled = true
+				FieldDescription = "Subentries"
 			};
 			var SenseNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
-				Label = "Senses",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true },
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { SenseNode, subentryNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
@@ -5296,31 +4877,26 @@ namespace SIL.FieldWorks.XWorks
 			AddHeadwordToEntry(lexentry2, "homme", m_wsFr, Cache);
 			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
 			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
-			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", IsEnabled = true, DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }) };
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }) };
 			var SenseNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
-				Label = "Senses",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions{DisplayEachSenseInAParagraph = true},
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",
-				Label = "Headword",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
-				CSSClassNameOverride = "entry",
-				IsEnabled = true
+				CSSClassNameOverride = "entry"
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode, SenseNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var model = new DictionaryConfigurationModel
 			{
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
@@ -5368,18 +4944,15 @@ namespace SIL.FieldWorks.XWorks
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",
-				Label = "Headword",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
-				CSSClassNameOverride = "entry",
-				IsEnabled = true
+				CSSClassNameOverride = "entry"
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var model = new DictionaryConfigurationModel
 			{
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
@@ -5388,11 +4961,10 @@ namespace SIL.FieldWorks.XWorks
 			const string letterHeaderXPath = "//div[@class='letHead']";
 			try
 			{
-				var clerk = m_mediator.PropertyTable.GetValue("ActiveClerk", null) as RecordClerk;
+				var clerk = (RecordClerk)m_mediator.PropertyTable.GetValue("ActiveClerk", null);
 				clerk.SortName = "Glosses";
 				xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new[] { firstAEntry.Hvo }, pubEverything, model, m_mediator);
 				var xhtml = File.ReadAllText(xhtmlPath);
-				xhtml = File.ReadAllText(xhtmlPath);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(letterHeaderXPath, 0);
 			}
 			finally
@@ -5402,7 +4974,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void SavePublishedHtmlWithStyles_ProducesHeadersAndEntriesInOrder()
+		public void SavePublishedHtmlWithStyles_ProducesHeadingsAndEntriesInOrder()
 		{
 			var firstAEntry = CreateInterestingLexEntry(Cache);
 			var firstAHeadword = "alpha1";
@@ -5418,18 +4990,15 @@ namespace SIL.FieldWorks.XWorks
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",
-				Label = "Headword",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
-				CSSClassNameOverride = "entry",
-				IsEnabled = true
+				CSSClassNameOverride = "entry"
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var model = new DictionaryConfigurationModel
 			{
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
@@ -5443,9 +5012,9 @@ namespace SIL.FieldWorks.XWorks
 				//System.Diagnostics.Debug.WriteLine(String.Format("GENERATED XHTML = \r\n{0}\r\n=====================", xhtml));
 				// There should be only 2 letter headers if both a entries are generated in order
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(letterHeaderXPath, 2);
-				var firstHeadwordLoc = xhtml.IndexOf(firstAHeadword);
-				var secondHeadwordLoc = xhtml.IndexOf(secondAHeadword);
-				var thirdHeadwordLoc = xhtml.IndexOf(bHeadword);
+				var firstHeadwordLoc = xhtml.IndexOf(firstAHeadword, StringComparison.Ordinal);
+				var secondHeadwordLoc = xhtml.IndexOf(secondAHeadword, StringComparison.Ordinal);
+				var thirdHeadwordLoc = xhtml.IndexOf(bHeadword, StringComparison.Ordinal);
 				// The headwords should show up in the xhtml in the given order (firstA, secondA, b)
 				Assert.True(firstHeadwordLoc != -1 && firstHeadwordLoc < secondHeadwordLoc  && secondHeadwordLoc < thirdHeadwordLoc,
 					"Entries generated out of order: first at {0}, second at {1}, third at {2}", firstHeadwordLoc, secondHeadwordLoc, thirdHeadwordLoc);
@@ -5502,91 +5071,69 @@ namespace SIL.FieldWorks.XWorks
 			var subCategNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLPartOfSpeech",
-				IsEnabled = true,
-				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
-				{
-					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis,
-					DisplayWritingSystemAbbreviations = false,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { new DictionaryNodeListOptions.DictionaryNodeOption { Id = "analysis", IsEnabled = true } }
-				},
-				Children = new List<ConfigurableDictionaryNode> {  }
+				DictionaryNodeOptions =
+					GetWsOptionsForLanguages(new[] { "analysis" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis),
+				Children = new List<ConfigurableDictionaryNode>()
 			};
 			var subGramInfoNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MorphoSyntaxAnalysisRA",
 				CSSClassNameOverride = "morphosyntaxanalysis",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { subCategNode }
 			};
 			var subGlossNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Gloss",
-				IsEnabled = true,
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
 			};
 			var subSenseNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
-				Label = "Senses",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions
 				{
 					NumberEvenASingleSense = false,
 					ShowSharedGrammarInfoFirst = true
 				},
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { subGramInfoNode, subGlossNode }
 			};
 			var categNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLPartOfSpeech",
-				IsEnabled = true,
-				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
-				{
-					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis,
-					DisplayWritingSystemAbbreviations = false,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { new DictionaryNodeListOptions.DictionaryNodeOption { Id="analysis", IsEnabled=true } }
-				},
-				Children = new List<ConfigurableDictionaryNode> { }
+				DictionaryNodeOptions =
+					GetWsOptionsForLanguages(new[] { "analysis" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis),
+				Children = new List<ConfigurableDictionaryNode>()
 			};
 			var gramInfoNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MorphoSyntaxAnalysisRA",
 				CSSClassNameOverride = "morphosyntaxanalysis",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { categNode }
 			};
 			var glossNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Gloss",
-				IsEnabled = true,
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
 			};
 			var senseNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
-				Label = "Senses",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions
 				{
 					DisplayEachSenseInAParagraph = true,
 					NumberEvenASingleSense = false,
 					ShowSharedGrammarInfoFirst = true
 				},
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { gramInfoNode, glossNode, subSenseNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { senseNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				FieldDescription = "LexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
-			var model = new DictionaryConfigurationModel
-			{
-				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
-			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			CssGeneratorTests.PopulateFieldsForTesting(model);
 
 			string xhtmlPath = null;
 			var letterHeaderXPath = "//div[@class='letHead']";
@@ -5673,30 +5220,23 @@ namespace SIL.FieldWorks.XWorks
 			sixthSense.Gloss.set_String(m_wsEn, "individual");
 
 			var antonyms = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtSensePair, "Antonym", "ant", null, null);
-			CreateLexReference(antonyms, new ILexSense[] { firstSense, secondSense });
-			CreateLexReference(antonyms, new ILexSense[] { fourthSense, fifthSense });
-			CreateLexReference(antonyms, new ILexSense[] { thirdSense, sixthSense });
+			CreateLexReference(antonyms, new[] { firstSense, secondSense });
+			CreateLexReference(antonyms, new[] { fourthSense, fifthSense });
+			CreateLexReference(antonyms, new[] { thirdSense, sixthSense });
 
 			var wholeparts = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtSenseTree, "Part", "pt", "Whole", "wh");
-			CreateLexReference(wholeparts, new ILexSense[] { thirdSense, firstSense, secondSense, fourthSense, fifthSense });
+			CreateLexReference(wholeparts, new[] { thirdSense, firstSense, secondSense, fourthSense, fifthSense });
 
 			var refHeadwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "HeadWord",
-				IsEnabled = true,
-				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
-				{
-					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
-					DisplayWritingSystemAbbreviations = false,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { new DictionaryNodeListOptions.DictionaryNodeOption { IsEnabled=true, Id="vernacular" } }
-				},
-				Children = new List<ConfigurableDictionaryNode> { }
+				DictionaryNodeOptions =
+					GetWsOptionsForLanguages(new[] { "vernacular" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular)
 			};
 			var targetsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ConfigTargets",
 				Between = ", ",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { refHeadwordNode }
 			};
 			var relAbbrNode = new ConfigurableDictionaryNode
@@ -5704,45 +5244,27 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "OwnerType",
 				SubField = "Abbreviation",
 				After = ": ",
-				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
-				{
-					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis,
-					DisplayWritingSystemAbbreviations = false,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { new DictionaryNodeListOptions.DictionaryNodeOption { IsEnabled=true, Id="analysis" } }
-				},
-				IsEnabled = true,
-				Children = new List<ConfigurableDictionaryNode> { }
+				DictionaryNodeOptions =
+					GetWsOptionsForLanguages(new[] { "analysis" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis)
 			};
 			var relationsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexSenseReferences",
 				Between = "; ",
 				After = ". ",
-				DictionaryNodeOptions = new DictionaryNodeListOptions
+				DictionaryNodeOptions = GetListOptionsForStrings(DictionaryNodeListOptions.ListIds.Sense, new[]
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Sense,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-					{
-						// This ordering is the crucial part of this test.
-						new DictionaryNodeListOptions.DictionaryNodeOption { IsEnabled=true, Id=wholeparts.Guid.ToString() + ":r" },
-						new DictionaryNodeListOptions.DictionaryNodeOption { IsEnabled=true, Id=antonyms.Guid.ToString() },
-						new DictionaryNodeListOptions.DictionaryNodeOption { IsEnabled=true, Id=wholeparts.Guid.ToString() + ":f" },
-					}
-				},
-				IsEnabled = true,
+					wholeparts.Guid + ":r",
+					antonyms.Guid.ToString(),
+					wholeparts.Guid + ":f"
+				}),
 				Children = new List<ConfigurableDictionaryNode> { relAbbrNode, targetsNode }
 			};
 			var glossNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Gloss",
-				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
-				{
-					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis,
-					DisplayWritingSystemAbbreviations = false,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { new DictionaryNodeListOptions.DictionaryNodeOption { IsEnabled=true, Id="analysis" } }
-				},
-				IsEnabled = true,
-				Children = new List<ConfigurableDictionaryNode> { }
+				DictionaryNodeOptions =
+					GetWsOptionsForLanguages(new[] { "analysis" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis)
 			};
 			var senseNode = new ConfigurableDictionaryNode
 			{
@@ -5754,29 +5276,21 @@ namespace SIL.FieldWorks.XWorks
 					NumberEvenASingleSense = false,
 					ShowSharedGrammarInfoFirst = false
 				},
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { glossNode, relationsNode }
 			};
 			var headwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",
 				CSSClassNameOverride = "headword",
-				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
-				{
-					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
-					DisplayWritingSystemAbbreviations = false,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { new DictionaryNodeListOptions.DictionaryNodeOption { IsEnabled=true, Id="vernacular" } }
-				},
-				IsEnabled = true,
-				Children = new List<ConfigurableDictionaryNode> { }
+				DictionaryNodeOptions =
+					GetWsOptionsForLanguages(new[] { "vernacular" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular)
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { headwordNode, senseNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			var xpathLexRef = "//div/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='lexsensereferences']/span[@class='lexsensereference']";
 			var antSpan = "<span class=\"ownertype_abbreviation\"><span lang=\"en\">ant</span></span>";
@@ -5785,9 +5299,9 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var firstResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(firstEntry, mainEntryNode, null, settings);
 			AssertThatXmlIn.String(firstResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 2);
-			var idxAntonym = firstResult.IndexOf(antSpan);
-			var idxWhole = firstResult.IndexOf(whSpan);
-			var idxPart = firstResult.IndexOf(ptSpan);
+			var idxAntonym = firstResult.IndexOf(antSpan, StringComparison.Ordinal);
+			var idxWhole = firstResult.IndexOf(whSpan, StringComparison.Ordinal);
+			var idxPart = firstResult.IndexOf(ptSpan, StringComparison.Ordinal);
 			Assert.Less(0, idxAntonym, "Antonym relation should exist for homme");
 			Assert.Less(0, idxWhole, "Whole relation should exist for homme");
 			Assert.AreEqual(-1, idxPart, "Part relation should not exist for homme");
@@ -5795,9 +5309,9 @@ namespace SIL.FieldWorks.XWorks
 
 			var thirdResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(thirdEntry, mainEntryNode, null, settings);
 			AssertThatXmlIn.String(thirdResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 2);
-			idxAntonym = thirdResult.IndexOf(antSpan);
-			idxWhole = thirdResult.IndexOf(whSpan);
-			idxPart = thirdResult.IndexOf(ptSpan);
+			idxAntonym = thirdResult.IndexOf(antSpan, StringComparison.Ordinal);
+			idxWhole = thirdResult.IndexOf(whSpan, StringComparison.Ordinal);
+			idxPart = thirdResult.IndexOf(ptSpan, StringComparison.Ordinal);
 			Assert.Less(0, idxAntonym, "Antonym relation should exist for famille");
 			Assert.AreEqual(-1, idxWhole, "Whole relation should not exist for famille");
 			Assert.Less(0, idxPart, "Part relation should exist for famille");
@@ -5805,9 +5319,9 @@ namespace SIL.FieldWorks.XWorks
 
 			var sixthResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(sixthEntry, mainEntryNode, null, settings);
 			AssertThatXmlIn.String(sixthResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 1);
-			idxAntonym = sixthResult.IndexOf(antSpan);
-			idxWhole = sixthResult.IndexOf(whSpan);
-			idxPart = sixthResult.IndexOf(ptSpan);
+			idxAntonym = sixthResult.IndexOf(antSpan, StringComparison.Ordinal);
+			idxWhole = sixthResult.IndexOf(whSpan, StringComparison.Ordinal);
+			idxPart = sixthResult.IndexOf(ptSpan, StringComparison.Ordinal);
 			Assert.Less(0, idxAntonym, "Antonym relation should exist for individuel");
 			Assert.AreEqual(-1, idxWhole, "Whole relation should not exist for individuel");
 			Assert.AreEqual(-1, idxPart, "Part relation should not exist for individuel");
@@ -5816,7 +5330,7 @@ namespace SIL.FieldWorks.XWorks
 		#region Helpers
 		private static void DeleteTempXhtmlAndCssFiles(string xhtmlPath)
 		{
-			if(string.IsNullOrEmpty(xhtmlPath))
+			if (string.IsNullOrEmpty(xhtmlPath))
 				return;
 			File.Delete(xhtmlPath);
 			File.Delete(Path.ChangeExtension(xhtmlPath, "css"));
@@ -5828,19 +5342,16 @@ namespace SIL.FieldWorks.XWorks
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "HeadWord",
-				Label = "Headword",
 				CSSClassNameOverride = "entry",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
 				Before = "MainEntry: ",
-				IsEnabled = true
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode },
 				FieldDescription = "LexEntry",
-				IsEnabled = true
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			var minorEntryNode = mainEntryNode.DeepCloneUnderSameParent();
 			minorEntryNode.CSSClassNameOverride = "minorentry";
@@ -5860,29 +5371,20 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var thumbNailNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "PictureFileRA",
-				CSSClassNameOverride = "picture",
-				IsEnabled = true
+				FieldDescription = "PictureFileRA", CSSClassNameOverride = "picture"
 			};
 			var pictureNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "PicturesOfSenses",
-				IsEnabled = true,
 				CSSClassNameOverride = "Pictures",
 				Children = new List<ConfigurableDictionaryNode> { thumbNailNode }
 			};
-			var sensesNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "Senses",
-				Label = "Senses",
-				IsEnabled = true,
-			};
+			var sensesNode = new ConfigurableDictionaryNode { FieldDescription = "Senses" };
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				Children = new List<ConfigurableDictionaryNode> { sensesNode, pictureNode },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { sensesNode, pictureNode }, FieldDescription = "LexEntry"
 			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			return mainEntryNode;
 		}
 
@@ -6128,14 +5630,25 @@ namespace SIL.FieldWorks.XWorks
 
 		public static DictionaryNodeOptions GetWsOptionsForLanguages(string[] languages)
 		{
-			var wsOptions = new DictionaryNodeWritingSystemOptions { Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(languages) };
-			return wsOptions;
+			return new DictionaryNodeWritingSystemOptions { Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(languages) };
+		}
+
+		public static DictionaryNodeOptions GetWsOptionsForLanguages(string[] languages, DictionaryNodeWritingSystemOptions.WritingSystemType type)
+		{
+			return new DictionaryNodeWritingSystemOptions
+			{
+				Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(languages),
+				WsType = type
+			};
 		}
 
 		public static DictionaryNodeOptions GetWsOptionsForLanguageswithDisplayWsAbbrev(string[] languages)
 		{
-			var wsOptions = new DictionaryNodeWritingSystemOptions { Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(languages),DisplayWritingSystemAbbreviations = true};
-			return wsOptions;
+			return new DictionaryNodeWritingSystemOptions
+			{
+				Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(languages),
+				DisplayWritingSystemAbbreviations = true
+			};
 		}
 
 		public static DictionaryNodeOptions GetListOptionsForItems(DictionaryNodeListOptions.ListIds listName, ICmPossibility[] checkedItems)
