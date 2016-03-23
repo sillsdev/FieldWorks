@@ -177,6 +177,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public void Step(int step)
 		{
+			CheckDisposed();
 			Position += step;
 		}
 
@@ -187,8 +188,16 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public string Title
 		{
-			get { return Text; }
-			set { Text = value; }
+			get
+			{
+				CheckDisposed();
+				return Text;
+			}
+			set
+			{
+				CheckDisposed();
+				Text = value;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -307,7 +316,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public ISynchronizeInvoke SynchronizeInvoke
 		{
-			get { return this; }
+			get
+			{
+				CheckDisposed();
+				return this;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -317,7 +330,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public Form Form
 		{
-			get { return this; }
+			get
+			{
+				CheckDisposed();
+				return this;
+			}
 		}
 
 		/// <summary>
@@ -325,8 +342,16 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public bool IsIndeterminate
 		{
-			get { return progressBar.Style == ProgressBarStyle.Marquee; }
-			set { progressBar.Style = value ? ProgressBarStyle.Marquee : ProgressBarStyle.Continuous; }
+			get
+			{
+				CheckDisposed();
+				return progressBar.Style == ProgressBarStyle.Marquee;
+			}
+			set
+			{
+				CheckDisposed();
+				progressBar.Style = value ? ProgressBarStyle.Marquee : ProgressBarStyle.Continuous;
+			}
 		}
 		#endregion
 
@@ -355,6 +380,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		protected override void OnVisibleChanged(EventArgs e)
 		{
+			CheckDisposed();
 			base.OnVisibleChanged(e);
 
 			if (Visible)
@@ -372,6 +398,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		protected virtual void OnCancel()
 		{
+			CheckDisposed();
 			if (Canceling != null)
 			{
 				var cea = new CancelEventArgs();

@@ -253,88 +253,54 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// This method uses a ThreadPool to execute the given actions in parallel.
-		/// It waits for all the actions to complete and then returns.
+		/// This method uses a ThreadPool to execute the given individualActions in parallel.
+		/// It waits for all the individualActions to complete and then returns.
 		/// </summary>
-		/// <param name="actions"></param>
-		private static void SpawnEntryGenerationThreadsAndWait(List<Action> actions, IThreadedProgress progress)
+		/// <param name="individualActions"></param>
+		private static void SpawnEntryGenerationThreadsAndWait(List<Action> individualActions, IThreadedProgress progress)
 		{
-			int actionCount = actions.Count;
-			//This code works in the program, but fails in the unit tests on Windows (but succeeds on Linux unit tests).
+			var actionCount = individualActions.Count;
 			//Note that our COM classes all implement the STA threading model, while the ThreadPool always uses MTA model threads.
 			//I don't understand why using the ThreadPool sometimes works, but not always.  Expliciting allocating STA model
-			//threads as done below works in all the cases that have been tried.  (Windows/Linux, program/unit test)  Unfortunately,
+			//threads as done here works in all the cases that have been tried.  (Windows/Linux, program/unit test)  Unfortunately,
 			//the speedup on Linux is minimal.
-			//int maxWorkers, maxIoThreads;
-			//ThreadPool.GetMaxThreads(out maxWorkers, out maxIoThreads);
-			//ThreadPool.SetMaxThreads((int)(Environment.ProcessorCount * 1.5), maxIoThreads);
-			//using (var countDown = new CountdownEvent(actionCount))
-			//{
-			//	foreach (var currentAction in actions)
-			//	{
-			//		Action wrappedAction = () => { try { currentAction(); } finally { countDown.Signal(); } };
-			//		ThreadPool.QueueUserWorkItem(x => wrappedAction());
-			//	}
-			//	countDown.Wait();
-			//}
-			// This code works in both the unit test and the program on both Windows and Linux.
-			var innerCount = Math.Min(16, (int)(Environment.ProcessorCount*1.5));
-			innerCount = Math.Min(innerCount, actionCount);
-			using (var countDown = new CountdownEvent(innerCount))
+			var maxThreadCount = Math.Min(16, (int)(Environment.ProcessorCount*1.5));
+			maxThreadCount = Math.Min(maxThreadCount, actionCount);
+			Exception exceptionThrown = null;
+			var threadActionArray = new Action[maxThreadCount];
+			using (var countDown = new CountdownEvent(maxThreadCount))
 			{
-				// ReSharper disable AccessToDisposedClosure
-				// Note that the loop index variable i cannot be used in an action defined as a closure.  So we have to define all the
+				// Note that the loop index variable startIndex cannot be used in an action defined as a closure.  So we have to define all the
 				// possible closures explicitly to achieve the parallelism reliably.  (Remember your theoretical computer science lessons
 				// about lambda expressions and the various ways that variables are bound.  For some of us, that's been over 40 years!)
-				Action currentAction00 = () => { try { for (var j = 0; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction01 = () => { try { for (var j = 1; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction02 = () => { try { for (var j = 2; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction03 = () => { try { for (var j = 3; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction04 = () => { try { for (var j = 4; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction05 = () => { try { for (var j = 5; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction06 = () => { try { for (var j = 6; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction07 = () => { try { for (var j = 7; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction08 = () => { try { for (var j = 8; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction09 = () => { try { for (var j = 9; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction10 = () => { try { for (var j = 10; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction11 = () => { try { for (var j = 11; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction12 = () => { try { for (var j = 12; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction13 = () => { try { for (var j = 13; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction14 = () => { try { for (var j = 14; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				Action currentAction15 = () => { try { for (var j = 15; j < actionCount && !IsCanceling(progress); j += innerCount) actions[j](); } finally { countDown.Signal(); } };
-				// ReSharper restore AccessToDisposedClosure
-				var threads = new List<Thread>(innerCount);
-				for (int i = 0; i < innerCount; ++i)
+				// ReSharper disable AccessToDisposedClosure Justification: threads are guaranteed to finish before countDown is disposed
+				for (var startIndex = 0; startIndex < maxThreadCount; startIndex++)
 				{
-					Thread x = null;
-					switch (i)
+					// bind a copy of the current value of the loop index to the closure,
+					// instead of depending on startIndex which will change
+					var index = startIndex;
+					threadActionArray[index] = () =>
 					{
-						case 0: x = new Thread(new ThreadStart(currentAction00)); break;
-						case 1: x = new Thread(new ThreadStart(currentAction01)); break;
-						case 2: x = new Thread(new ThreadStart(currentAction02)); break;
-						case 3: x = new Thread(new ThreadStart(currentAction03)); break;
-						case 4: x = new Thread(new ThreadStart(currentAction04)); break;
-						case 5: x = new Thread(new ThreadStart(currentAction05)); break;
-						case 6: x = new Thread(new ThreadStart(currentAction06)); break;
-						case 7: x = new Thread(new ThreadStart(currentAction07)); break;
-						case 8: x = new Thread(new ThreadStart(currentAction08)); break;
-						case 9: x = new Thread(new ThreadStart(currentAction09)); break;
-						case 10: x = new Thread(new ThreadStart(currentAction10)); break;
-						case 11: x = new Thread(new ThreadStart(currentAction11)); break;
-						case 12: x = new Thread(new ThreadStart(currentAction12)); break;
-						case 13: x = new Thread(new ThreadStart(currentAction13)); break;
-						case 14: x = new Thread(new ThreadStart(currentAction14)); break;
-						case 15: x = new Thread(new ThreadStart(currentAction15)); break;
-					}
-					if (x != null)
-					{
-						x.SetApartmentState(ApartmentState.STA);
-						x.Start();
-						threads.Add(x);		// ensure thread doesn't get garbage collected prematurely.
-					}
+						try { for (var j = index; j < actionCount && !IsCanceling(progress); j += maxThreadCount) individualActions[j](); }
+						catch (Exception e) { exceptionThrown = e; }
+						finally { countDown.Signal(); }
+					};
+				}
+				// ReSharper restore AccessToDisposedClosure
+				var threads = new List<Thread>(maxThreadCount);
+				for (var i = 0; i < maxThreadCount; ++i)
+				{
+					var x = new Thread(new ThreadStart(threadActionArray[i]));
+					x.SetApartmentState(ApartmentState.STA);
+					x.Start();
+					threads.Add(x);		// ensure thread doesn't get garbage collected prematurely.
 				}
 				countDown.Wait();
 				threads.Clear();
+				// Throwing the exception out here avoids hanging up the Green screen AND the progress dialog.
+				// The only downside is we only see one exception. See LT-17244.
+				if (exceptionThrown != null)
+					throw exceptionThrown;
 			}
 		}
 
