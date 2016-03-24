@@ -156,6 +156,16 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForConfiguration_SimpleConfigurationGeneratesLetHead()
+		{
+			//SUT
+			var cssResult = CssGenerator.GenerateLetterHeaderCss(m_mediator);
+			// verify that the css result contains .letHead similar to: .letHead {-moz-column-count:1;-webkit-column-count:1;column-count:1;clear:both;text-align:center;width:100%;}
+			Assert.IsTrue(Regex.Match(cssResult, @"\.letHead\s*{\s*-moz-column-count:1;\s*-webkit-column-count:1;\s*column-count:1;\s*clear:both;\s*text-align:center;\s*width:100%;").Success,
+							  "Css did not generate LetHead rules match");
+		}
+
+		[Test]
 		public void GenerateCssForConfiguration_SimpleConfigurationGeneratesValidCss()
 		{
 			var headwordNode = new ConfigurableDictionaryNode
