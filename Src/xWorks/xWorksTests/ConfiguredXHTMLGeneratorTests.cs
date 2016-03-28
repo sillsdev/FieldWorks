@@ -1055,9 +1055,9 @@ namespace SIL.FieldWorks.XWorks
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
 
 			const string gramAbbr1 = xpathThruSense + "/span[@class='morphosyntaxanalysis']/span[@class='interlinearabbrtss']/span[@lang='fr' and text()='Blah']";
-			const string gramAbbr2 = xpathThruSense + "/span[@class='morphosyntaxanalysis']/span[@class='interlinearabbrtss']/span[@lang='fr' and text()=':Any']";
+			const string gramAbbr2 = xpathThruSense + "/span[@class='morphosyntaxanalysis']/span[@class='interlinearabbrtss']/span[@lang='en' and text()=':Any']";
 			const string gramName1 = xpathThruSense + "/span[@class='morphosyntaxanalysis']/span[@class='interlinearnametss']/span[@lang='fr' and text()='Blah']";
-			const string gramName2 = xpathThruSense + "/span[@class='morphosyntaxanalysis']/span[@class='interlinearnametss']/span[@lang='fr' and text()=':Any']";
+			const string gramName2 = xpathThruSense + "/span[@class='morphosyntaxanalysis']/span[@class='interlinearnametss']/span[@lang='en' and text()=':Any']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(gramAbbr1, 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(gramAbbr2, 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(gramName1, 1);
@@ -2298,7 +2298,7 @@ namespace SIL.FieldWorks.XWorks
 			var headwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "HeadWord", CSSClassNameOverride = "headword",
-				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
 			var refNode = new ConfigurableDictionaryNode
 			{
@@ -2336,7 +2336,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
-				"//span[@class='visiblevariantentryrefs']/span[@class='visiblevariantentryref']/span[@class='referencedentries']/span[@class='referencedentry']/span[@class='headword']/span[@lang='en']/a[@href]", 2);
+				"//span[@class='visiblevariantentryrefs']/span[@class='visiblevariantentryref']/span[@class='referencedentries']/span[@class='referencedentry']/span[@class='headword']/span[@lang='fr']/a[@href]", 2);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
 				"/div[@class='lexentry']/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='headword']/span[@lang='fr']/a[@href]", 2);
 		}
@@ -3842,6 +3842,51 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_MultiStringDefinition_GeneratesMultilingualSpans()
+		{
+			var definitionNode	 = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Definition",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions(),
+				Children = new List<ConfigurableDictionaryNode> { definitionNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { sensesNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			// Setup 1st Sense with multilingual Tss string
+			var testEntry = CreateInterestingLexEntry(Cache);
+			var multirunContent = new[] { "This definition includes ", "chat ", "and, ", "chien." };
+			var defn = MakeMulitlingualTss(multirunContent);
+			testEntry.SensesOS[0].Definition.set_String(m_wsEn, defn);
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
+			var definitionXpath = "//div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='definition']";
+			var str1Xpath = string.Format(definitionXpath + "/span[@lang='en' and text()='{0}']", multirunContent[0]);
+			var str2Xpath = string.Format(definitionXpath + "/span[@lang='fr' and text()='{0}']", multirunContent[1]);
+			var str3Xpath = string.Format(definitionXpath + "/span[@lang='en' and text()='{0}']", multirunContent[2]);
+			var str4Xpath = string.Format(definitionXpath + "/span[@lang='fr' and text()='{0}']", multirunContent[3]);
+			var str2BadXpath = string.Format(definitionXpath + "/span[@lang='en' and text()='{0}']", multirunContent[1]);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(definitionXpath + "/span", 4);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(str1Xpath, 1);
+			AssertThatXmlIn.String(result).HasNoMatchForXpath(str2BadXpath);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(str2Xpath, 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(str3Xpath, 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(str4Xpath, 1);
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_ListItemCustomFieldGeneratesContent()
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
@@ -4021,7 +4066,7 @@ namespace SIL.FieldWorks.XWorks
 			var headwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "HeadWord",
-				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
 			var refNode = new ConfigurableDictionaryNode
 			{
@@ -4048,7 +4093,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
 			const string referencedEntries =
-				"//span[@class='visiblevariantentryrefs']/span[@class='visiblevariantentryref']/span[@class='referencedentries']/span[@class='referencedentry']/span[@class='headword']/span[@lang='en']";
+				"//span[@class='visiblevariantentryrefs']/span[@class='visiblevariantentryref']/span[@class='referencedentries']/span[@class='referencedentry']/span[@class='headword']/span[@lang='fr']";
 			AssertThatXmlIn.String(result)
 				.HasSpecifiedNumberOfMatchesForXpath(referencedEntries, 2);
 		}
@@ -5620,6 +5665,20 @@ namespace SIL.FieldWorks.XWorks
 		private static ITsString MakeVernTss(string content, FdoCache cache)
 		{
 			return cache.TsStrFactory.MakeString(content, cache.DefaultVernWs);
+		}
+
+		private ITsString MakeMulitlingualTss(IEnumerable<string> content)
+		{
+			// automatically alternates runs between 'en' and 'fr'
+			var tsFact = Cache.TsStrFactory;
+			var lastWs = m_wsFr;
+			var builder = tsFact.GetIncBldr();
+			foreach (var runContent in content)
+			{
+				lastWs = lastWs == m_wsEn ? m_wsFr : m_wsEn; // switch ws for each run
+				builder.AppendTsString(tsFact.MakeString(runContent, lastWs));
+			}
+			return builder.GetString();
 		}
 
 		private static void SetPublishAsMinorEntry(ILexEntry entry, bool publish)

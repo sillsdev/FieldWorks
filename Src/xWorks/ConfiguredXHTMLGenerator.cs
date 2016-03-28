@@ -2128,7 +2128,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// use the passed in writing system unless null
 				// otherwise use the first option from the DictionaryNodeWritingSystemOptions or english if the options are null
-				writingSystem = writingSystem ?? GetLanguageFromFirstOption(config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions, settings.Cache);
 				var bldr = new StringBuilder();
 				using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
 				{
@@ -2137,14 +2136,9 @@ namespace SIL.FieldWorks.XWorks
 						var text = fieldValue.get_RunText(i);
 						var props = fieldValue.get_Properties(i);
 						var style = props.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
-#if HANDLELANGPROPERLY
-						// This introduces another variation in the xhtml generation, so instantiating it is waiting for
-						// review, and probably some testing of the overall generation before adding this twist.
-						// I think we want to do this eventually, so I'm leaving the code in place with the #if to disable it.
 						int dummy;
 						var ws = props.GetIntPropValues((int)FwTextPropType.ktptWs, out dummy);
-						writingSystem = GetLangFromWs(ws, settings.Cache)
-#endif
+						writingSystem = GetLangFromWs(ws, settings.Cache);
 						GenerateSpanWithPossibleLink(settings, writingSystem, xw, style, text, guid);
 					}
 					xw.Flush();
@@ -2154,6 +2148,24 @@ namespace SIL.FieldWorks.XWorks
 			return String.Empty;
 		}
 
+		// Cache the mapping from number to string for faster lookup.
+		private static readonly Dictionary<int, string> s_mapWsToLang = new Dictionary<int, string>();
+
+		/// <summary>
+		/// Get the RFC5646 language id string from the numeric writing system id.
+		/// </summary>
+		private static string GetLangFromWs(int wsid, FdoCache cache)
+		{
+			lock (s_mapWsToLang)
+			{
+				string lang;
+				if (s_mapWsToLang.TryGetValue(wsid, out lang))
+					return lang;
+				var ws = cache.ServiceLocator.WritingSystemManager.Get(wsid);
+				s_mapWsToLang.Add(wsid, ws.RFC5646);
+				return ws.RFC5646;
+			}
+		}
 
 		private static void GenerateSpanWithPossibleLink(GeneratorSettings settings, string writingSystem, XmlWriter writer, string style,
 			string text, Guid linkDestination)
@@ -2181,29 +2193,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 			writer.WriteEndElement();
 		}
-
-#if HANDLELANGPROPERLY
-		// See the comment above with the prior #if.
-
-		// Cache the mapping from number to string for faster lookup.
-		private static Dictionary<int, string> s_mapWsToLang = new Dictionary<int, string>();
-
-		/// <summary>
-		/// Get the RFC5646 language id string from the numeric writing system id.
-		/// </summary>
-		private static string GetLangFromWs(int wsid, FdoCache cache)
-		{
-			lock (s_mapWsToLang)
-			{
-				string lang;
-				if (s_mapWsToLang.TryGetValue(wsid, out lang))
-					return lang;
-				var ws = cache.ServiceLocator.WritingSystemManager.Get(wsid);
-				s_mapWsToLang.Add(wsid, ws.RFC5646);
-				return ws.RFC5646;
-			}
-		}
-#endif
 
 		/// <summary>
 		/// This method Generate XHTML for Audio file
