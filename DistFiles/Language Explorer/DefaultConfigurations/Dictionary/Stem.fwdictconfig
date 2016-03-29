@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <DictionaryConfiguration name="Stem-based (complex forms as main entries)" allPublications="true" version="1" lastModified="2014-10-07">
   <!-- Main entries in the dictionary have historically been written out with class="entry" -->
-  <ConfigurationItem name="Main Entry" isEnabled="true" field="LexEntry" cssClassNameOverride="entry">
-	  <ParagraphOptions paragraphStyle="Dictionary-Normal" continuationParagraphStyle="Dictionary-Continuation" />
+  <ConfigurationItem name="Main Entry" isEnabled="true" style="Dictionary-Normal" styleType="paragraph" field="LexEntry" cssClassNameOverride="entry">
   <!-- using a different CSS Class for the main HeadWord and the HeadWords for subentries, references, and (variant|complex) forms
 	   prevents styles for the main HeadWord from leaking onto other HeadWords -->
 	<ConfigurationItem name="Headword" between=" " after="  " style="Dictionary-Headword" isEnabled="true" field="MLHeadWord" cssClassNameOverride="mainheadword">
@@ -20,7 +19,7 @@
 		<Option id="all vernacular" isEnabled="true"/>
 	  </WritingSystemOptions>
 	</ConfigurationItem>
-	<ConfigurationItem name="Homograph Number" style="Homograph-Number" after=" " isEnabled="false" field="HomographNumber"/>
+	<ConfigurationItem name="Secondary Homograph Number" style="" after=" " isEnabled="false" field="HomographNumber"/>
 	<ConfigurationItem name="Pronunciations" between=", " after=" " isEnabled="true" field="PronunciationsOS" cssClassNameOverride="pronunciations">
 	  <ConfigurationItem name="Pronunciation" before="[" between=" " after="]" isEnabled="true" field="Form">
 		<WritingSystemOptions writingSystemType="pronunciation" displayWSAbreviation="false">
@@ -912,7 +911,7 @@
 		  <Option id="vernacular" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Grammatical Info." style="Dictionary-Contrasting" isEnabled="true" field="MorphoSyntaxAnalyses">
+	  <ConfigurationItem name="Grammatical Info." between=", " after=" " style="Dictionary-Contrasting" isEnabled="true" field="MorphoSyntaxAnalyses">
 		<ConfigurationItem name="Gram Info (Name)" between=" " after=" " isEnabled="false" field="InterlinearNameTSS" cssClassNameOverride="graminfoname"/>
 		<ConfigurationItem name="Gram Info (Abbrev)" between=" " after=" " isEnabled="false" field="InterlinearAbbrTSS" cssClassNameOverride="graminfoabbrev"/>
 		<ConfigurationItem name="Category Info." between=" " after=" " isEnabled="true" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
@@ -987,8 +986,7 @@
 	  </ConfigurationItem>
 	</ConfigurationItem>
   </ConfigurationItem>
-  <!-- Minor entries in the dictionary have historically been written out with class="minorentry" -->
-  <ConfigurationItem name="Main Entry (Complex Forms)" style="Dictionary-Normal" styleType="paragraph" isEnabled="true" field="LexEntry" cssClassNameOverride="minorentrycomplex">
+  <ConfigurationItem name="Main Entry (Complex Forms)" style="Dictionary-Normal" styleType="paragraph" isEnabled="true" field="LexEntry" cssClassNameOverride="mainentrycomplex">
 	<ListTypeOptions list="complex">
 	  <Option isEnabled="true"  id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
 	  <Option isEnabled="true"  id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
@@ -1013,7 +1011,7 @@
 		<Option id="all vernacular" isEnabled="true"/>
 	  </WritingSystemOptions>
 	</ConfigurationItem>
-	<ConfigurationItem name="Homograph Number" after=" " isEnabled="false" field="HomographNumber"/>
+	<ConfigurationItem name="Secondary Homograph Number" after=" " isEnabled="false" field="HomographNumber"/>
 	<ConfigurationItem name="Pronunciations" between=", " after=" " isEnabled="true" field="PronunciationsOS" cssClassNameOverride="pronunciations">
 	  <ConfigurationItem name="Pronunciation" before="[" between=" " after="]" isEnabled="true" field="Form">
 		<WritingSystemOptions writingSystemType="pronunciation" displayWSAbreviation="false">
@@ -1151,7 +1149,7 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-  	<ConfigurationItem name="Component References" before=" (" between=", " after=")" isEnabled="true" field="ComplexFormEntryRefs" styleType="character">
+  	<ConfigurationItem name="Component References" before=" (" between=", " after=") " isEnabled="true" field="ComplexFormEntryRefs" styleType="character">
   		<ListTypeOptions list="complex">
   			<Option isEnabled="true"  id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
   			<Option isEnabled="true"  id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
@@ -1161,7 +1159,7 @@
   			<Option isEnabled="true"  id="35cee792-74c8-444e-a9b7-ed0461d4d3b7"/>
   			<Option isEnabled="true"  id="9466d126-246e-400b-8bba-0703e09bc567"/>
   		</ListTypeOptions>
-  		<ConfigurationItem name="Complex Form Type" between=", " after=" " isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
+  		<ConfigurationItem name="Complex Form Type" between=", " after="" isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
   			<ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
   				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
   					<Option id="analysis" isEnabled="true"/>
@@ -1180,7 +1178,7 @@
   					<Option id="vernacular" isEnabled="true"/>
   				</WritingSystemOptions>
   			</ConfigurationItem>
-  			<ConfigurationItem name="Gloss (or Summary Definition)" before=" " between=" " isEnabled="false" field="DefinitionOrGloss">
+  			<ConfigurationItem name="Gloss (or Summary Definition)" before=" " between=" " isEnabled="false" field="GlossOrSummary">
   				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
   					<Option id="all analysis" isEnabled="true"/>
   				</WritingSystemOptions>
@@ -1221,7 +1219,7 @@
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Gloss (or Summary Definition)" before=" " between=" " isEnabled="true" field="DefinitionOrGloss">
+		<ConfigurationItem name="Gloss (or Summary Definition)" before=" " between=" " isEnabled="true" field="GlossOrSummary">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="all analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -1996,7 +1994,7 @@
 		  <Option id="vernacular" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Grammatical Info." after=" " style="Dictionary-Contrasting" isEnabled="false" field="MorphoSyntaxAnalysisRA" cssClassNameOverride="morphosyntaxanalysis">
+	  <ConfigurationItem name="Grammatical Info." between=", " after=" " style="Dictionary-Contrasting" isEnabled="false" field="MorphoSyntaxAnalyses">
 		<ConfigurationItem name="Gram Info (Name)" between=" " after=" " isEnabled="false" field="InterlinearNameTSS" cssClassNameOverride="graminfoname"/>
 		<ConfigurationItem name="Gram Info (Abbrev)" between=" " after=" " isEnabled="false" field="InterlinearAbbrTSS" cssClassNameOverride="graminfoabbrev"/>
 		<ConfigurationItem name="Category Info." between=" " after=" " isEnabled="true" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
@@ -2022,7 +2020,7 @@
 		<ConfigurationItem name="Inflection Features" after=" " isEnabled="false" field="FeaturesTSS" cssClassNameOverride="inflectionfeatures"/>
 		<ConfigurationItem name="Exception Features" after=" " isEnabled="false" field="ExceptionFeaturesTSS" cssClassNameOverride="exceptionfeatures"/>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Definition (or Gloss)" between=" " after=" " isEnabled="true" field="DefinitionOrGloss">
+	  <ConfigurationItem name="Definition (or Gloss)" between=" " after=" " isEnabled="true" field="DefinitionOrGloss" cssClassNameOverride="definitionorglosses">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="all analysis" isEnabled="true"/>
 		</WritingSystemOptions>
@@ -2065,6 +2063,16 @@
 		<ConfigurationItem name="Reference" after=" " isEnabled="false" field="Reference"/>
 	  </ConfigurationItem>
 	</ConfigurationItem>
+	<ConfigurationItem name="Pictures" between="  " after=" " style="Dictionary-Pictures" isEnabled="true" field="PicturesOfSenses" cssClassNameOverride="pictures">
+	  <PictureOptions minimumHeight="0" maximumHeight="1" minimumWidth="0" maximumWidth="0" pictureLocation="right" stackPictures="false" />
+	  <ConfigurationItem name="Thumbnail" after=" " isEnabled="true" field="PictureFileRA" cssClassNameOverride="thumbnail"/>
+	  <ConfigurationItem name="Sense Number" after=" " isEnabled="true" field="SenseNumberTSS" cssClassNameOverride="sensenumber"/>
+	  <ConfigurationItem name="Caption" between=" " isEnabled="true" field="Caption">
+		<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+		  <Option id="vernacular" isEnabled="true"/>
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+	</ConfigurationItem>
   </ConfigurationItem>
   <!-- Minor entries in the dictionary have historically been written out with class="minorentry" -->
   <ConfigurationItem name="Minor Entry (Variants)" style="Dictionary-Minor" styleType="paragraph" isEnabled="true" field="LexEntry" cssClassNameOverride="minorentryvariant">
@@ -2092,7 +2100,7 @@
 		<Option id="all vernacular" isEnabled="true"/>
 	  </WritingSystemOptions>
 	</ConfigurationItem>
-	<ConfigurationItem name="Homograph Number" after=" " isEnabled="false" field="HomographNumber"/>
+	<ConfigurationItem name="Secondary Homograph Number" after=" " isEnabled="false" field="HomographNumber"/>
 	<ConfigurationItem name="Pronunciations" between=", " after=" " isEnabled="true" field="PronunciationsOS" cssClassNameOverride="pronunciations">
 	  <ConfigurationItem name="Pronunciation" before="[" between=" " after="]" isEnabled="true" field="Form">
 		<WritingSystemOptions writingSystemType="pronunciation" displayWSAbreviation="false">
@@ -2259,7 +2267,7 @@
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Gloss (or Summary Definition)" before=" " between=" " isEnabled="true" field="DefinitionOrGloss">
+		<ConfigurationItem name="Gloss (or Summary Definition)" before=" " between=" " isEnabled="true" field="GlossOrSummary">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="all analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -3034,7 +3042,7 @@
 		  <Option id="vernacular" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Grammatical Info." after=" " style="Dictionary-Contrasting" isEnabled="false" field="MorphoSyntaxAnalysisRA" cssClassNameOverride="morphosyntaxanalysis">
+	  <ConfigurationItem name="Grammatical Info." between=", " after=" " style="Dictionary-Contrasting" isEnabled="false" field="MorphoSyntaxAnalyses">
 		<ConfigurationItem name="Gram Info (Name)" between=" " after=" " isEnabled="false" field="InterlinearNameTSS" cssClassNameOverride="graminfoname"/>
 		<ConfigurationItem name="Gram Info (Abbrev)" between=" " after=" " isEnabled="false" field="InterlinearAbbrTSS" cssClassNameOverride="graminfoabbrev"/>
 		<ConfigurationItem name="Category Info." between=" " after=" " isEnabled="true" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
@@ -3060,7 +3068,7 @@
 		<ConfigurationItem name="Inflection Features" after=" " isEnabled="false" field="FeaturesTSS" cssClassNameOverride="inflectionfeatures"/>
 		<ConfigurationItem name="Exception Features" after=" " isEnabled="false" field="ExceptionFeaturesTSS" cssClassNameOverride="exceptionfeatures"/>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Definition (or Gloss)" between=" " after=" " isEnabled="true" field="DefinitionOrGloss">
+	  <ConfigurationItem name="Definition (or Gloss)" between=" " after=" " isEnabled="true" field="DefinitionOrGloss" cssClassNameOverride="definitionorglosses">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="all analysis" isEnabled="true"/>
 		</WritingSystemOptions>

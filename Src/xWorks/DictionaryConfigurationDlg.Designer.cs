@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.XWorks
 			this.m_lblPubsForConfig = new System.Windows.Forms.Label();
 			this.m_cbDictConfig = new System.Windows.Forms.ComboBox();
 			this.m_lblDictConfig = new System.Windows.Forms.Label();
-			this.m_linkManageConfigurations = new System.Windows.Forms.LinkLabel();
+			this.m_buttonManageConfigurations = new System.Windows.Forms.Button();
 			this.treeDetail_Button_Split = new System.Windows.Forms.SplitContainer();
 			this.tree_Detail_Split = new System.Windows.Forms.SplitContainer();
 			this.previewDetailSplit = new System.Windows.Forms.SplitContainer();
@@ -98,7 +98,7 @@ namespace SIL.FieldWorks.XWorks
 			this.m_grpConfigurationManagement.Controls.Add(this.m_lblPubsForConfig);
 			this.m_grpConfigurationManagement.Controls.Add(this.m_cbDictConfig);
 			this.m_grpConfigurationManagement.Controls.Add(this.m_lblDictConfig);
-			this.m_grpConfigurationManagement.Controls.Add(this.m_linkManageConfigurations);
+			this.m_grpConfigurationManagement.Controls.Add(this.m_buttonManageConfigurations);
 			resources.ApplyResources(this.m_grpConfigurationManagement, "m_grpConfigurationManagement");
 			this.m_grpConfigurationManagement.Name = "m_grpConfigurationManagement";
 			this.m_grpConfigurationManagement.TabStop = false;
@@ -128,12 +128,11 @@ namespace SIL.FieldWorks.XWorks
 			resources.ApplyResources(this.m_lblDictConfig, "m_lblDictConfig");
 			this.m_lblDictConfig.Name = "m_lblDictConfig";
 			// 
-			// m_linkManageConfigurations
+			// m_buttonManageConfigurations
 			// 
-			resources.ApplyResources(this.m_linkManageConfigurations, "m_linkManageConfigurations");
-			this.m_linkManageConfigurations.Name = "m_linkManageConfigurations";
-			this.m_linkManageConfigurations.TabStop = true;
-			this.m_linkManageConfigurations.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.m_linkManageConfigurations_LinkClicked);
+			resources.ApplyResources(this.m_buttonManageConfigurations, "m_buttonManageConfigurations");
+			this.m_buttonManageConfigurations.Name = "m_buttonManageConfigurations";
+			this.m_buttonManageConfigurations.Click += new System.EventHandler(this.m_buttonManageConfigurations_Click);
 			// 
 			// treeDetail_Button_Split
 			// 
@@ -260,7 +259,7 @@ namespace SIL.FieldWorks.XWorks
 		private System.Windows.Forms.GroupBox m_grpConfigurationManagement;
 		private System.Windows.Forms.ComboBox m_cbDictConfig;
 		private System.Windows.Forms.Label m_lblDictConfig;
-		private System.Windows.Forms.LinkLabel m_linkManageConfigurations;
+		private System.Windows.Forms.Button m_buttonManageConfigurations;
 		private System.Windows.Forms.SplitContainer tree_Detail_Split;
 		private System.Windows.Forms.FlowLayoutPanel buttonLayoutPanel;
 		private System.Windows.Forms.Button helpButton;

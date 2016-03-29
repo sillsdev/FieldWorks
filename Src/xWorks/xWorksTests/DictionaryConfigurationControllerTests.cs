@@ -10,19 +10,27 @@ using System.Linq;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.Utils;
 using XCore;
+
+// ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.XWorks
 {
 	[TestFixture]
 	public class DictionaryConfigurationControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		#region Context
+		#region Setup and Teardown
 		private DictionaryConfigurationModel m_model;
+		private FwXApp m_application;
+		private FwXWindow m_window;
+		private PropertyTable m_propertyTable;
 
 		[SetUp]
 		public void Setup()
@@ -30,12 +38,42 @@ namespace SIL.FieldWorks.XWorks
 			m_model = new DictionaryConfigurationModel();
 		}
 
-		[TearDown]
-		public void TearDown()
+		[TestFixtureSetUp]
+		public override void FixtureSetup()
 		{
+			FwRegistrySettings.Init(); // This is needed for the MockFwXApp to initialize properly
+			base.FixtureSetup();
 
+			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
+			var configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
+			m_window = new MockFwXWindow(m_application, configFilePath);
+			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
+			m_propertyTable = m_window.PropTable;
+			m_window.LoadUI(configFilePath); // actually loads UI here; needed for non-null stylesheet
+			// Add styles to the stylesheet to prevent intermittent unit test failures setting the selected index in the Styles Combobox
+			var styles = FontHeightAdjuster.StyleSheetFromPropertyTable(m_window.PropTable).Styles;
+			styles.Add(new BaseStyleInfo { Name = "ParaStyle", IsParagraphStyle = true });
+			styles.Add(new BaseStyleInfo { Name = "CharStyle", IsParagraphStyle = false });
 		}
-		#endregion
+
+		[TestFixtureTearDown]
+		public override void FixtureTeardown()
+		{
+			if (m_application != null && !m_application.IsDisposed)
+			{
+				m_application.Dispose();
+				m_application = null;
+			}
+			if (m_window != null && !m_window.IsDisposed)
+			{
+				m_window.Dispose(); // also disposes m_mediator
+				m_window = null;
+				m_propertyTable = null;
+			}
+			FwRegistrySettings.Release();
+			base.FixtureTeardown();
+		}
+		#endregion Setup and Teardown
 
 		/// <summary>
 		/// This test verifies that PopulateTreeView builds a TreeView that has the same structure as the model it is based on
@@ -145,8 +183,7 @@ namespace SIL.FieldWorks.XWorks
 			var node = new ConfigurableDictionaryNode();
 			using (var treeView = new TreeView())
 			{
-				var treeNode = new TreeNode();
-				treeNode.Tag = node;
+				var treeNode = new TreeNode { Tag = node };
 				treeView.Nodes.Add(treeNode);
 				treeView.TopNode = treeNode;
 				// SUT
@@ -162,8 +199,7 @@ namespace SIL.FieldWorks.XWorks
 			var node = new ConfigurableDictionaryNode();
 			using (var treeView = new TreeView())
 			{
-				var treeNode = new TreeNode();
-				treeNode.Tag = node;
+				var treeNode = new TreeNode { Tag = node };
 				treeView.Nodes.Add(new TreeNode());
 				// Adding a decoy tree node first
 				treeView.Nodes[0].Nodes.Add(new TreeNode());
@@ -567,8 +603,8 @@ namespace SIL.FieldWorks.XWorks
 				var projectPath = string.Concat(Path.Combine(Path.Combine(
 					FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Test"), "test"), DictionaryConfigurationModel.FileExtension);
 				//SUT
-				var controller = new DictionaryConfigurationController();
-				var result = controller.GetProjectConfigLocationForPath(projectPath, mockWindow.PropertyTable);
+				var controller = new DictionaryConfigurationController { _propertyTable = mockWindow.PropertyTable };
+				var result = controller.GetProjectConfigLocationForPath(projectPath);
 				Assert.AreEqual(result, projectPath);
 			}
 		}
@@ -581,9 +617,9 @@ namespace SIL.FieldWorks.XWorks
 			using(var mockWindow = new MockWindowSetup(Cache))
 			{
 				//SUT
-				var controller = new DictionaryConfigurationController();
+				var controller = new DictionaryConfigurationController { _propertyTable = mockWindow.PropertyTable };
 				Assert.IsFalse(defaultPath.StartsWith(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder)));
-				var result = controller.GetProjectConfigLocationForPath(defaultPath, mockWindow.PropertyTable);
+				var result = controller.GetProjectConfigLocationForPath(defaultPath);
 				Assert.IsTrue(result.StartsWith(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder)));
 				Assert.IsTrue(result.EndsWith(string.Concat(Path.Combine("Test", "test"), DictionaryConfigurationModel.FileExtension)));
 			}
@@ -839,12 +875,7 @@ namespace SIL.FieldWorks.XWorks
 		public void MergeCustomFieldsIntoDictionaryModel_DeletedFieldsOnCollectionsAreRemoved()
 		{
 			var model = new DictionaryConfigurationModel();
-			var customNode = new ConfigurableDictionaryNode
-			{
-				Label = "CustomString",
-				FieldDescription = "CustomString",
-				IsCustomField = true
-			};
+			var customNode = new ConfigurableDictionaryNode { FieldDescription = "CustomString", IsCustomField = true };
 			var sensesNode = new ConfigurableDictionaryNode
 				{
 					Label = "Senses",
@@ -858,7 +889,7 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { sensesNode }
 			};
 			model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
-			DictionaryConfigurationModel.SpecifyParents(model.Parts);
+			CssGeneratorTests.PopulateFieldsForTesting(model);
 			//SUT
 			DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(Cache, model);
 			Assert.AreEqual(0, model.Parts[0].Children[0].Children.Count, "The custom field in the model should have been removed since it isn't in the project(cache)");
@@ -889,7 +920,7 @@ namespace SIL.FieldWorks.XWorks
 					Children = new List<ConfigurableDictionaryNode> { senseNode }
 				};
 				model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
-				DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { entryNode });
+				CssGeneratorTests.PopulateFieldsForTesting(model);
 
 				//SUT
 				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(Cache, model);
@@ -983,7 +1014,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using (var mockWindow = new MockWindowSetup(Cache))
 			{
-				Utils.FileUtils.EnsureDirectoryExists(DictionaryConfigurationListener.GetProjectConfigurationDirectory(mockWindow.PropertyTable, "Dictionary"));
+				FileUtils.EnsureDirectoryExists(DictionaryConfigurationListener.GetProjectConfigurationDirectory(mockWindow.PropertyTable, "Dictionary"));
 				var controller = new DictionaryConfigurationController
 				{
 					_propertyTable = mockWindow.PropertyTable,
@@ -1034,6 +1065,9 @@ namespace SIL.FieldWorks.XWorks
 			public void Redraw()
 			{ }
 
+			public void HighlightContent(ConfigurableDictionaryNode configNode)
+			{ }
+
 			public void SetChoices(IEnumerable<DictionaryConfigurationModel> choices)
 			{ }
 
@@ -1043,14 +1077,25 @@ namespace SIL.FieldWorks.XWorks
 			public void SelectConfiguration(DictionaryConfigurationModel configuration)
 			{ }
 
+			public void DoSaveModel()
+			{
+				if (SaveModel != null)
+				{
+					SaveModel(null, null);
+				}
+			}
+
 			public void Dispose()
 			{
-				m_treeControl.Dispose();
+					if (DetailsView != null && !DetailsView.IsDisposed)
+						DetailsView.Dispose();
+					m_treeControl.Dispose();
 			}
-#pragma warning disable 67
-			public event EventHandler ManageConfigurations;
 
 			public event EventHandler SaveModel;
+
+#pragma warning disable 67
+			public event EventHandler ManageConfigurations;
 
 			public event SwitchConfigurationEvent SwitchConfiguration;
 #pragma warning restore 67
@@ -1072,22 +1117,23 @@ namespace SIL.FieldWorks.XWorks
 						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true,}
 					},
 					DisplayWritingSystemAbbreviations = false
-				},
-				IsEnabled = true
+				}
 			};
 			var reversalNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { formNode },
-				FieldDescription = "ReversalIndexEntry",
-				IsEnabled = true
+				FieldDescription = "ReversalIndexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { reversalNode });
+			CssGeneratorTests.PopulateFieldsForTesting(reversalNode);
 			using (var testView = new TestConfigurableDictionaryView())
 			{
 				m_model.Parts = new List<ConfigurableDictionaryNode> { reversalNode };
 
-				var dcc = new DictionaryConfigurationController { View = testView, _model = m_model };
-				dcc._previewEntry = DictionaryConfigurationController.GetDefaultEntryForType("Reversal Index", Cache);
+				var dcc = new DictionaryConfigurationController
+				{
+					View = testView, _model = m_model,
+					_previewEntry = DictionaryConfigurationController.GetDefaultEntryForType("Reversal Index", Cache)
+				};
 
 				CreateALexEntry(Cache);
 				Assert.AreEqual(0, Cache.LangProject.LexDbOA.ReversalIndexesOC.Count,
@@ -1123,6 +1169,70 @@ namespace SIL.FieldWorks.XWorks
 			var sense = senseFactory.Create();
 			entry.SensesOS.Add(sense);
 			sense.Gloss.set_String(wsEn, cache.TsStrFactory.MakeString("word", wsEn));
+		}
+
+		[Test]
+		public void MakingAChangeAndSavingSetsRefreshRequiredFlag()
+		{
+			var headwordNode = new ConfigurableDictionaryNode();
+			var entryNode = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { headwordNode } };
+			m_model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+			CssGeneratorTests.PopulateFieldsForTesting(m_model);
+			using (var testView = new TestConfigurableDictionaryView())
+			{
+				var entryWithHeadword = CreateLexEntryWithHeadword();
+
+				m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
+				Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
+
+				var dcc = new DictionaryConfigurationController(testView, m_propertyTable, entryWithHeadword);
+				//SUT
+				dcc.View.TreeControl.Tree.TopNode.Checked = false;
+				((TestConfigurableDictionaryView)dcc.View).DoSaveModel();
+				Assert.IsTrue(dcc.MasterRefreshRequired, "Should have saved changes and required a Master Refresh");
+			}
+		}
+
+		[Test]
+		public void MakingAChangeWithoutSavingDoesNotSetRefreshRequiredFlag()
+		{
+			var headwordNode = new ConfigurableDictionaryNode();
+			var entryNode = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { headwordNode } };
+			m_model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+			CssGeneratorTests.PopulateFieldsForTesting(m_model);
+			using (var testView = new TestConfigurableDictionaryView())
+			{
+				var entryWithHeadword = CreateLexEntryWithHeadword();
+
+				m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
+				Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
+
+				var dcc = new DictionaryConfigurationController(testView, m_propertyTable, entryWithHeadword);
+				//SUT
+				dcc.View.TreeControl.Tree.TopNode.Checked = false;
+				Assert.IsFalse(dcc.MasterRefreshRequired, "Should not have saved changes--user did not click OK or Apply");
+			}
+		}
+
+		[Test]
+		public void MakingNoChangeAndSavingDoesNotSetRefreshRequiredFlag()
+		{
+			var headwordNode = new ConfigurableDictionaryNode();
+			var entryNode = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { headwordNode } };
+			m_model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+			CssGeneratorTests.PopulateFieldsForTesting(m_model);
+			using (var testView = new TestConfigurableDictionaryView())
+			{
+				var entryWithHeadword = CreateLexEntryWithHeadword();
+
+				m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
+				Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
+
+				var dcc = new DictionaryConfigurationController(testView, m_propertyTable, entryWithHeadword);
+				//SUT
+				((TestConfigurableDictionaryView)dcc.View).DoSaveModel();
+				Assert.IsFalse(dcc.MasterRefreshRequired, "Should not have saved changes--none to save");
+			}
 		}
 
 		[Test]
@@ -1190,10 +1300,10 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry", Label = "Main Entry", CSSClassNameOverride = "entry", IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { headwordNode, summaryNode, restrictionsNode, sensesNode },
 			};
-			DictionaryConfigurationModel.SpecifyParents(entryNode.Children);
+			m_model.Parts = new List<ConfigurableDictionaryNode> {entryNode};
+			CssGeneratorTests.PopulateFieldsForTesting(m_model);
 			using (var testView = new TestConfigurableDictionaryView())
 			{
-				m_model.Parts = new List<ConfigurableDictionaryNode> {entryNode};
 				var dcc = new DictionaryConfigurationController {View = testView, _model = m_model};
 				dcc.CreateTreeOfTreeNodes(null, m_model.Parts);
 				//SUT

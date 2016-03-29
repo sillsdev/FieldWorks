@@ -129,6 +129,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public bool IsCanceling
+		{
+			get { return false; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Displays the progress dialog as a modal dialog and starts the background task.
 		/// </summary>
 		/// <param name="fDisplayUi">set to <c>true</c> to display the progress dialog,

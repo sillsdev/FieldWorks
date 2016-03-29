@@ -46,6 +46,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DictionaryConfigurationTreeControl));
 			this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.highlight = new System.Windows.Forms.Button();
 			this.tree = new System.Windows.Forms.TreeView();
 			this.moveUp = new System.Windows.Forms.Button();
 			this.moveDown = new System.Windows.Forms.Button();
@@ -64,7 +65,16 @@ namespace SIL.FieldWorks.XWorks
 			this.tableLayoutPanel.Controls.Add(this.duplicate, 1, 2);
 			this.tableLayoutPanel.Controls.Add(this.remove, 1, 3);
 			this.tableLayoutPanel.Controls.Add(this.rename, 1, 4);
+			this.tableLayoutPanel.Controls.Add(this.highlight, 1, 5);
 			this.tableLayoutPanel.Name = "tableLayoutPanel";
+			// 
+			// highlight
+			// 
+			this.highlight.BackColor = System.Drawing.Color.Yellow;
+			this.highlight.FlatAppearance.MouseDownBackColor = System.Drawing.Color.White;
+			resources.ApplyResources(this.highlight, "highlight");
+			this.highlight.Name = "highlight";
+			this.highlight.UseVisualStyleBackColor = false;
 			// 
 			// tree
 			// 
@@ -72,7 +82,7 @@ namespace SIL.FieldWorks.XWorks
 			resources.ApplyResources(this.tree, "tree");
 			this.tree.HideSelection = false;
 			this.tree.Name = "tree";
-			this.tableLayoutPanel.SetRowSpan(this.tree, 5);
+			this.tableLayoutPanel.SetRowSpan(this.tree, 6);
 			this.tree.Click += new System.EventHandler(this.TreeClick);
 			// 
 			// moveUp
@@ -125,5 +135,6 @@ namespace SIL.FieldWorks.XWorks
 		private System.Windows.Forms.Button duplicate;
 		private System.Windows.Forms.Button moveUp;
 		private System.Windows.Forms.Button rename;
+		private Button highlight;
 	}
 }

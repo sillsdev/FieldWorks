@@ -423,6 +423,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			get { return false; }
 			set { throw new NotImplementedException(); }
 		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public bool IsCanceling
+		{
+			get { return false; }
+		}
 		#endregion
 
 		#region private methods

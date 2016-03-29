@@ -128,20 +128,29 @@ namespace SIL.FieldWorks.FixData
 			string pathname = parameters[0] as string;
 			StringBuilder bldr = new StringBuilder();
 
-			FwDataFixer data = new FwDataFixer(pathname, progressDlg, LogErrors);
+			FwDataFixer data = new FwDataFixer(pathname, progressDlg, LogErrors, ErrorCount);
+			_errorsFixed = 0;
+			_errors.Clear();
 			data.FixErrorsAndSave();
 
-			foreach (var err in errors)
+			foreach (var err in _errors)
 				bldr.AppendLine(err);
 			return bldr.ToString();
 		}
 
-		private List<string> errors = new List<string>();
-		private void LogErrors(string guid, string date, string message)
+		private List<string> _errors = new List<string>();
+		private int _errorsFixed = 0;
+		private void LogErrors(string message, bool errorFixed)
 		{
-			errors.Add(message);
+			_errors.Add(message);
+			if (errorFixed)
+				++_errorsFixed;
 		}
 
+		private int ErrorCount()
+		{
+			return _errorsFixed;
+		}
 		#endregion
 	}
 }

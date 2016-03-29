@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,8 +13,6 @@ using SIL.TestUtilities;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.FDOTests;
 using XCore;
 
@@ -22,7 +20,7 @@ namespace SIL.FieldWorks.XWorks
 {
 	// ReSharper disable InconsistentNaming
 	[TestFixture]
-	internal class ConfiguredXHTMLGeneratorReversalTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
+	public class ConfiguredXHTMLGeneratorReversalTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
 	{
 		private int m_wsEn, m_wsFr;
 
@@ -98,26 +96,20 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "ReversalForm",
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new [] {"en"}),
-				Label = "Reversal Form",
-				IsEnabled = true
+				Label = "Reversal Form"
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { reversalFormNode },
-				FieldDescription = "ReversalIndexEntry",
-				IsEnabled = true
+				FieldDescription = "ReversalIndexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingEnglishReversalEntry();
-			using(var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
-			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, XHTMLWriter, false, false, null);
-				//SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings));
-				XHTMLWriter.Flush();
-				const string frenchLexForm = "/div[@class='reversalindexentry']/span[@class='reversalform']/span[@lang='en' and text()='ReversalForm']";
-				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(frenchLexForm, 1);
-			}
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			//SUT
+			string result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
+			const string frenchLexForm = "/div[@class='reversalindexentry']/span[@class='reversalform']/span[@lang='en' and text()='ReversalForm']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(frenchLexForm, 1);
 		}
 
 		[Test]
@@ -132,7 +124,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, Cache));
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
-				const string letterHeaderToMatch = "//div[@class='letHead']/div[@class='letter' and text()='R r']";
+				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='en' and text()='R r']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
 				Assert.AreEqual("r", last, "should have updated the last letter header");
 			}
@@ -150,7 +142,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, Cache));
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
-				const string letterHeaderToMatch = "//div[@class='letHead']/div[@class='letter' and text()='R r']";
+				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='en' and text()='R r']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
 			}
 		}
@@ -168,8 +160,8 @@ namespace SIL.FieldWorks.XWorks
 				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, Cache);
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
-				const string letterHeaderToMatch = "//div[@class='letHead']/div[@class='letter' and text()='R r']";
-				const string proveOnlyOneHeader = "//div[@class='letHead']/div[@class='letter']";
+				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='en' and text()='R r']";
+				const string proveOnlyOneHeader = "//div[@class='letHead']/span[@class='letter']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(proveOnlyOneHeader, 1);
 			}
@@ -188,34 +180,27 @@ namespace SIL.FieldWorks.XWorks
 					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
 					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
 					{
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "fr", IsEnabled = true,}
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "fr"}
 					},
 					DisplayWritingSystemAbbreviations = false
-				},
-				IsEnabled = true
+				}
 			};
 			var reversalNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { formNode },
-				FieldDescription = "ReversalIndexEntry",
-				IsEnabled = true
+				FieldDescription = "ReversalIndexEntry"
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { reversalNode });
+			CssGeneratorTests.PopulateFieldsForTesting(reversalNode);
 			var rie = CreateInterestingFrenchReversalEntry() as IReversalIndexEntry;
 			var entryHeadWord = rie.ReferringSenses.First().Entry.HeadWord;
 
-			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
-			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, XHTMLWriter, false, false, null);
-				//SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(rie, reversalNode, null, settings));
-				XHTMLWriter.Flush();
-				var result = XHTMLStringBuilder.ToString();
-				var reversalFormDataPath = string.Format("/div[@class='reversalindexentry']/span[@class='reversalform']/span[text()='{0}']", rie.LongName);
-				var entryDataPath = string.Format("//span[text()='{0}']", entryHeadWord.Text);
-				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(reversalFormDataPath, 1);
-				AssertThatXmlIn.String(result).HasNoMatchForXpath(entryDataPath);
-			}
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(rie, reversalNode, null, settings);
+			var reversalFormDataPath = string.Format("/div[@class='reversalindexentry']/span[@class='reversalform']/span[text()='{0}']", rie.LongName);
+			var entryDataPath = string.Format("//span[text()='{0}']", entryHeadWord.Text);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(reversalFormDataPath, 1);
+			AssertThatXmlIn.String(result).HasNoMatchForXpath(entryDataPath);
 		}
 
 		[Test]
@@ -223,40 +208,34 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var headwordNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "MLOwnerOutlineName",
+				FieldDescription = "ReversalName",
 				CSSClassNameOverride = "headword",
-				DictionaryNodeOptions = new ReferringSenseOptions()
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions()
 				{
-					WritingSystemOptions = new DictionaryNodeWritingSystemOptions
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
 					{
-						WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
-						Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-						{
-							new DictionaryNodeListOptions.DictionaryNodeOption {Id = "vernacular", IsEnabled = true}
-						}
-					},
-					SenseOptions = new DictionaryNodeSenseOptions
-					{
-						NumberEvenASingleSense = true,
-						NumberingStyle = "%A"
+						new DictionaryNodeListOptions.DictionaryNodeOption {Id = "vernacular"}
 					}
-				},
-				IsEnabled = true,
-			};
-			var wsOpts = new DictionaryNodeWritingSystemOptions
-			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
 				}
 			};
-			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true };
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Gloss",
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+				{
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "reversal" }
+					}
+				}
+			};
 			var formNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReferringSenses",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%d" },
-				Children = new List<ConfigurableDictionaryNode> {headwordNode, glossNode},
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> {headwordNode, glossNode}
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -265,78 +244,61 @@ namespace SIL.FieldWorks.XWorks
 					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
 					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
 					{
-						new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en", IsEnabled = true,}
+						new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en"}
 					},
 					DisplayWritingSystemAbbreviations = false,
 				},
 				FieldDescription = "ReversalIndexEntry",
-				Children = new List<ConfigurableDictionaryNode> { formNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { formNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingEnglishReversalEntry();
 			AddSenseToReversaEntry(testEntry, "second gloss", m_wsEn, Cache);
-			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
-			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, XHTMLWriter, false, false, null);
-				//SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
-				XHTMLWriter.Flush();
-				const string senseNumberOne = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
-				const string senseNumberTwo = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense' and preceding-sibling::span[@class='sensenumber' and text()='2']]//span[@lang='en' and text()='second gloss']";
-				//This assert is dependent on the specific entry data created in CreateInterestingEnglishReversalEntry
-				var xhtml = XHTMLStringBuilder.ToString();
-				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(senseNumberOne, 1);
-				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(senseNumberTwo, 1);
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			//SUT
+			var xhtml = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
+			const string senseNumberOne = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
+			const string senseNumberTwo = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense' and preceding-sibling::span[@class='sensenumber' and text()='2']]//span[@lang='en' and text()='second gloss']";
+			//This assert is dependent on the specific entry data created in CreateInterestingEnglishReversalEntry
+			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(senseNumberOne, 1);
+			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(senseNumberTwo, 1);
 
-				const string headwordOne = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/a/span[@lang='fr' and text()='Citation' and following-sibling::span[@lang='fr' and text()='1']]";
-				const string headwordTwo = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/a/span[@lang='fr' and text()='Citation' and following-sibling::span[@lang='fr' and text()='2']]";
-				const string headwordSenseOne = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span[@class='referringsensenumber' and text()='A']";
-				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(headwordOne, 1);
-				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(headwordTwo, 1);
-				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(headwordSenseOne, 2);
-			}
+			const string headwordOne = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span[@lang='fr' and following-sibling::span[@lang='fr']/a[text()='1']]/a[text()='Citation']";
+			const string headwordTwo = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span[@lang='fr' and following-sibling::span[@lang='fr']/a[text()='2']]/a[text()='Citation']";
+			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(headwordOne, 1);
+			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(headwordTwo, 1);
 		}
 
 		[Test]
-		public void GenerateXHTMLForEntry_VernacularFormWithSubSences()
+		public void GenerateXHTMLForEntry_VernacularFormWithSubSenses()
 		{
 			var headwordNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "MLOwnerOutlineName",
+				FieldDescription = "ReversalName",
 				CSSClassNameOverride = "headword",
-				DictionaryNodeOptions = new ReferringSenseOptions()
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
 				{
-					WritingSystemOptions = new DictionaryNodeWritingSystemOptions
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
 					{
-						WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
-						Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-						{
-							new DictionaryNodeListOptions.DictionaryNodeOption {Id = "vernacular", IsEnabled = true}
-						}
-					},
-					SenseOptions = new DictionaryNodeSenseOptions
-					{
-						NumberEvenASingleSense = true,
-						NumberingStyle = "%O"
+						new DictionaryNodeListOptions.DictionaryNodeOption {Id = "vernacular"}
 					}
-				},
-				IsEnabled = true,
+				}
 			};
 			var wsOpts = new DictionaryNodeWritingSystemOptions
 			{
+				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
 				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
 				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
+					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "reversal" }
 				}
 			};
-			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true };
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var formNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReferringSenses",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%d" },
-				Children = new List<ConfigurableDictionaryNode> { headwordNode, glossNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { headwordNode, glossNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -345,29 +307,232 @@ namespace SIL.FieldWorks.XWorks
 					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
 					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
 					{
-						new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en", IsEnabled = true,}
+						new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en"}
 					},
 					DisplayWritingSystemAbbreviations = false,
 				},
 				FieldDescription = "ReversalIndexEntry",
-				Children = new List<ConfigurableDictionaryNode> { formNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { formNode }
 			};
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingEnglishReversalEntry();
 			AddSingleSubSenseToSense(testEntry, "second gloss", m_wsEn, Cache);
-			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			//SUT
+			var xhtml = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
+			// REVIEW (Hasso) 2016.03: we should probably do something about the leading space in the Sense Number Run, as it is currently in addition to the "between" space.
+			const string subSenseOneOne = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span/a[text()=' 1.1']";
+			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(subSenseOneOne, 1);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_VernacularFormWithSubSensesinReversalSubEntry()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
 			{
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, XHTMLWriter, false, false, null);
-				//SUT
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
-				XHTMLWriter.Flush();
+				FieldDescription = "ReversalName",
+				Label = "Headword",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+				{
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						new DictionaryNodeListOptions.DictionaryNodeOption {Id = "vernacular"}
+					}
+				}
+			};
+			var wsOpts = new DictionaryNodeWritingSystemOptions
+			{
+				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				{
+					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "reversal" }
+				}
+			};
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ReferringSenses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%d",NumberEvenASingleSense = true},
+				Children = new List<ConfigurableDictionaryNode> { headwordNode, glossNode }
+			};
+			var subEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SubentriesOS",
+				CSSClassNameOverride = "subentries",
+				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions {DisplayEachComplexFormInAParagraph = true},
+				Children = new List<ConfigurableDictionaryNode> {formNode}
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+				{
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en"}
+					},
+					DisplayWritingSystemAbbreviations = false,
+				},
+				FieldDescription = "ReversalIndexEntry",
+				Children = new List<ConfigurableDictionaryNode> { subEntryNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var testEntry = CreateInterestingEnglishSubReversalEntryWithSubSense();
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			//SUT
+			var xhtml = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
+			const string subSenseOneOne = "/div[@class='reversalindexentry']/span[@class='subentries']/span[@class='subentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span/a[text()=' 1.1']";
+			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(subSenseOneOne, 1);
+		}
 
-				var xhtml = XHTMLStringBuilder.ToString();
+		[Test]
+		public void GenerateXHTMLForEntry_SameGramInfoCollapsesOnDemand()
+		{
+			var defOrGlossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "DefinitionOrGloss",
+				Between = " ",
+				After = " ",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+				{
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
+					DisplayWritingSystemAbbreviations = false,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { new DictionaryNodeListOptions.DictionaryNodeOption { Id="reversal", IsEnabled=true } }
+				},
+				Children = new List<ConfigurableDictionaryNode> { }
+			};
+			var catInfoNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLPartOfSpeech",
+				CSSClassNameOverride = "partofspeech",
+				Between = " ",
+				After = " ",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+				{
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
+					DisplayWritingSystemAbbreviations = false,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { new DictionaryNodeListOptions.DictionaryNodeOption { Id="reversal", IsEnabled=true } }
+				},
+				Children = new List<ConfigurableDictionaryNode> { }
+			};
+			var gramInfoNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MorphoSyntaxAnalysisRA",
+				CSSClassNameOverride = "morphosyntaxanalysis",
+				After = " ",
+				Style = "Dictionary-Contrasting",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { catInfoNode }
+			};
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ReversalName",
+				Between = " ",
+				After = " ",
+				StyleType = ConfigurableDictionaryNode.StyleTypes.Character,
+				Style = "Reversal-Vernacular",
+				IsEnabled = true,
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+				{
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
+					DisplayWritingSystemAbbreviations = false,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { new DictionaryNodeListOptions.DictionaryNodeOption { Id = "vernacular", IsEnabled=true } }
+				},
+				Children = new List<ConfigurableDictionaryNode> { }
+			};
+			var vernFormNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ReferringSenses",
+				Between = "; ",
+				After = " ",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					NumberStyle = "Dictionary-SenseNumber",
+					AfterNumber = ") ",
+					NumberingStyle = "%d",
+					NumberEvenASingleSense = false,
+					ShowSharedGrammarInfoFirst = true,
+					DisplayEachSenseInAParagraph = false
+				},
+				Children = new List<ConfigurableDictionaryNode> { headwordNode, gramInfoNode, defOrGlossNode }
+			};
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ReversalForm",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+				{
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
+					DisplayWritingSystemAbbreviations = false,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption> { new DictionaryNodeListOptions.DictionaryNodeOption { Id = "reversal", IsEnabled=true } }
+				},
+				Children = new List<ConfigurableDictionaryNode> { }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ReversalIndexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { formNode, vernFormNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 
-				const string headwordSenseOne = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span[@class='referringsensenumber' and text()='1.1']";
-				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(headwordSenseOne, 1);
-			}
+			var noun = CreatePartOfSpeech("noun", "n");
+			var verb = CreatePartOfSpeech("verb", "v");
+			var revIndex = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().FindOrCreateIndexForWs(m_wsEn);
+
+			var entry1 = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			entry1.CitationForm.set_String(m_wsFr, "premier");
+			entry1.SensesOS.First().Gloss.set_String(m_wsEn, "first");
+			var msa1 = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+			entry1.MorphoSyntaxAnalysesOC.Add(msa1);
+			msa1.PartOfSpeechRA = noun;
+			entry1.SensesOS.First().MorphoSyntaxAnalysisRA = msa1;
+
+			var entry2 = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			entry2.CitationForm.set_String(m_wsFr, "primary");
+			entry2.SensesOS.First().Gloss.set_String(m_wsEn, "first");
+			var msa2 = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+			entry2.MorphoSyntaxAnalysesOC.Add(msa2);
+			msa2.PartOfSpeechRA = noun;
+			entry2.SensesOS.First().MorphoSyntaxAnalysisRA = msa2;
+
+			var testEntry = revIndex.FindOrCreateReversalEntry("first");
+			entry1.SensesOS.First().ReversalEntriesRC.Add(testEntry);
+			entry2.SensesOS.First().ReversalEntriesRC.Add(testEntry);
+
+			var xhtml = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
+			// check that the sense gram info appears once before the rest of the sense information.
+			Assert.IsNotNullOrEmpty(xhtml);
+			const string sharedGramInfo = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sharedgrammaticalinfo']/span[@class='morphosyntaxanalysis']/span[@class='partofspeech']/span[@lang='en' and text()='n']";
+			const string separateGramInfo = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='morphosyntaxanalysis']/span[@class='partofspeech']/span[@lang='en']";
+			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(sharedGramInfo, 1);
+			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(separateGramInfo, 0);
+
+			var msa2a = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+			entry2.MorphoSyntaxAnalysesOC.Add(msa2a);
+			msa2a.PartOfSpeechRA = verb;
+			entry2.SensesOS.First().MorphoSyntaxAnalysisRA = msa2a;
+			xhtml = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
+			// check that the sense gram info appears separately for both senses.
+			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(sharedGramInfo, 0);
+			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(separateGramInfo, 2);
+		}
+
+		private IPartOfSpeech CreatePartOfSpeech(string name, string abbr)
+		{
+			var factory = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>();
+			var pos = factory.Create();
+			Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Add(pos);
+			pos.Name.set_String(m_wsEn, name);
+			pos.Abbreviation.set_String(m_wsEn, abbr);
+			return pos;
 		}
 
 		private IReversalIndexEntry CreateInterestingFrenchReversalEntry()
@@ -387,6 +552,18 @@ namespace SIL.FieldWorks.XWorks
 			entry.SensesOS.First().ReversalEntriesRC.Add(riEntry);
 			return riEntry;
 		}
+
+		private IReversalIndexEntry CreateInterestingEnglishSubReversalEntryWithSubSense()
+		{
+			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var revIndex = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().FindOrCreateIndexForWs(m_wsEn);
+			var riEntry = revIndex.FindOrCreateReversalEntry("MainReversal");
+			var risubEntry = revIndex.FindOrCreateReversalEntry("SubReversal");
+			riEntry.SubentriesOS.Add(risubEntry);
+			AddSingleSubSenseToSense(risubEntry, "subgloss", m_wsEn, Cache);
+			return riEntry;
+		}
+
 		private static void AddSenseToReversaEntry(IReversalIndexEntry riEntry, string gloss, int wsId, FdoCache cache)
 		{
 			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(cache);
@@ -410,12 +587,11 @@ namespace SIL.FieldWorks.XWorks
 
 		private static void CreateSubsenseModel(FdoCache Cache)
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var wsOpts = new DictionaryNodeWritingSystemOptions
 			{
 				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
 				{
-					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = true }
+					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en" }
 				}
 			};
 			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
@@ -439,14 +615,13 @@ namespace SIL.FieldWorks.XWorks
 				ShowSharedGrammarInfoFirst = false
 			};
 
-			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true };
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var subSenseNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
 				Label = "Subsenses",
 				DictionaryNodeOptions = DictionaryNodeSubSenseOptions,
-				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var sensesNode = new ConfigurableDictionaryNode
@@ -454,18 +629,16 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
 				DictionaryNodeOptions = DictionaryNodeSenseOptions,
-				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode }
 			};
 
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { sensesNode },
-				IsEnabled = true
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
 			};
 
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2015 SIL International
+﻿// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -28,9 +28,9 @@ namespace SIL.FieldWorks.XWorks
 
 		internal const string BeforeAfterBetweenStyleName = "Dictionary-Context";
 		internal const string LetterHeadingStyleName = "Dictionary-LetterHeading";
-		internal const string DictionaryContinuation = "Dictionary-Continuation";
 		internal const string DictionaryNormal = "Dictionary-Normal";
 		internal const string DictionaryMinor = "Dictionary-Minor";
+		internal const string WritingSystemPrefix = "writingsystemprefix";
 		private static readonly Dictionary<string, string> BulletSymbolsCollection = new Dictionary<string, string>();
 		/// <summary>
 		/// Generate all the css rules necessary to represent every enabled portion of the given configuration
@@ -46,10 +46,10 @@ namespace SIL.FieldWorks.XWorks
 			var propStyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 			var cache = propertyTable.GetValue<FdoCache>("cache");
 			LoadBulletUnicodes();
-			GenerateCssForDefaultStyles(propertyTable, propStyleSheet, styleSheet, cache);
+			GenerateCssForDefaultStyles(propertyTable, propStyleSheet, styleSheet, model, cache);
 			MakeLinksLookLikePlainText(styleSheet);
 			GenerateCssForAudioWs(styleSheet, cache);
-			foreach(var configNode in model.Parts)
+			foreach(var configNode in model.Parts.Where(x => x.IsEnabled))
 			{
 				GenerateCssFromConfigurationNode(configNode, styleSheet, null, propertyTable);
 			}
@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static void GenerateCssForDefaultStyles(PropertyTable propertyTable, FwStyleSheet mediatorstyleSheet,
-			StyleSheet styleSheet, FdoCache cache)
+			StyleSheet styleSheet, DictionaryConfigurationModel model, FdoCache cache)
 		{
 			if (mediatorstyleSheet == null) return;
 			if (mediatorstyleSheet.Styles.Contains("Normal"))
@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (mediatorstyleSheet.Styles.Contains(DictionaryMinor))
 			{
-				GenerateDictionaryMinorParagraphCss(styleSheet, propertyTable, cache);
+				GenerateDictionaryMinorParagraphCss(styleSheet, propertyTable, cache, model);
 			}
 		}
 
@@ -106,12 +106,23 @@ namespace SIL.FieldWorks.XWorks
 			styleSheet.Rules.Add(dictNormalRule);
 		}
 
-		private static void GenerateDictionaryMinorParagraphCss(StyleSheet styleSheet, PropertyTable propertyTable, FdoCache cache)
+		private static void GenerateDictionaryMinorParagraphCss(StyleSheet styleSheet, PropertyTable propertyTable, FdoCache cache, DictionaryConfigurationModel model)
 		{
-			var dictMinorRule = new StyleRule {Value = "div.minorentry"};
-			var dictMinorStyle = GenerateCssStyleFromFwStyleSheet(DictionaryMinor, 0, propertyTable);
-			dictMinorRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictMinorStyle));
-			styleSheet.Rules.Add(dictMinorRule);
+			// Use the style set in all the parts following main entry, if no style is specified assume Dictionary-Minor
+			for (var i = 1; i < model.Parts.Count; ++i)
+			{
+				var minorEntryNode = model.Parts[i];
+				if (minorEntryNode.IsEnabled)
+				{
+					var styleName = minorEntryNode.Style;
+					if (string.IsNullOrEmpty(styleName))
+						styleName = DictionaryMinor;
+					var dictionaryMinorStyle = GenerateCssStyleFromFwStyleSheet(styleName, 0, propertyTable);
+					var minorRule = new StyleRule { Value = string.Format("div.{0}", GetClassAttributeForConfig(minorEntryNode)) };
+					minorRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictionaryMinorStyle));
+					styleSheet.Rules.Add(minorRule);
+				}
+			}
 		}
 
 		private static void GenerateCssForAudioWs(StyleSheet styleSheet, FdoCache cache)
@@ -144,33 +155,14 @@ namespace SIL.FieldWorks.XWorks
 																			  string baseSelection,
 																			  PropertyTable propertyTable)
 		{
-			// If we are displaying this node in a paragraph then we should generate the selector for the content in the continuation paragraph
-			if (configNode.CheckForParaNodesEnabled())
-			{
-				var intermediateRule = GenerateRuleforContentFollowIntermediatePara(baseSelection + "> " + SelectBareClassName(configNode), propertyTable, configNode);
-				styleSheet.Rules.Add(intermediateRule);
-			}
-			// If we are part of a continuation paragraph modify the base selector to include the div
-			if (configNode.Parent != null && configNode.Parent.Parent == null && configNode.CheckForPrevParaNodeSibling())
-			{
-				baseSelection = baseSelection.Contains(".paracontinuation") ? baseSelection : string.Concat(baseSelection, " .paracontinuation");
-			}
 			var rule = new StyleRule();
 			var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
-			var referringsenseOptions = configNode.DictionaryNodeOptions as ReferringSenseOptions;
 			if (senseOptions != null)
 			{
 				// Try to generate the css for the sense number before the baseSelection is updated because
 				// the sense number is a sibling of the sense element and we are normally applying styles to the
 				// children of collections. Also set display:block on span
 				GenerateCssForSenses(configNode, senseOptions, styleSheet, ref baseSelection, propertyTable);
-			}
-			else if (referringsenseOptions != null)
-			{
-				// Try to generate the css for the sense number before the baseSelection is updated because
-				// the sense number is a sibling of the sense element and we are normally applying styles to the
-				// children of collections. Also set display:block on span
-				GenerateCssForReferringHeadword(configNode, referringsenseOptions.SenseOptions, styleSheet, ref baseSelection, propertyTable);
 			}
 			else
 			{
@@ -184,9 +176,9 @@ namespace SIL.FieldWorks.XWorks
 				var pictureOptions = configNode.DictionaryNodeOptions as DictionaryNodePictureOptions;
 				if (pictureOptions != null)
 				{
-					GenerateCssFromPictureOptions(configNode, pictureOptions, styleSheet, baseSelection, propertyTable);
+					GenerateCssFromPictureOptions(configNode, pictureOptions, styleSheet, baseSelection);
 				}
-				var beforeAfterSelectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection,
+				var selectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection,
 					propertyTable.GetValue<FdoCache>("cache"), propertyTable);
 				rule.Value = baseSelection;
 				// if the configuration node defines a style then add all the rules generated from that style
@@ -205,64 +197,55 @@ namespace SIL.FieldWorks.XWorks
 					{
 						GenerateCssForWritingSystemPrefix(styleSheet, baseSelection);
 					}
-					if (wsOptions.Options.Count(s => s.IsEnabled) > 1)
-					{
-						GenerateCssForFieldWithMultipleWs(styleSheet, baseSelection);
-						GenerateCssForBetweenContentWithMultipleWs(ref beforeAfterSelectors, baseSelection, configNode.Between,
-							wsOptions.DisplayWritingSystemAbbreviations);
-					}
 				}
-				styleSheet.Rules.AddRange(beforeAfterSelectors);
-				styleSheet.Rules.Add(rule);
+				if (showingParagraph)	// Paragraphs don't want the before and after strings!  See LT-17167.
+					selectors = RemoveBeforeAfterSelectorRules(selectors);
+				styleSheet.Rules.AddRange(CheckRangeOfRulesForEmpties(selectors));
+				if (!IsEmptyRule(rule))
+					styleSheet.Rules.Add(rule);
 			}
 			if(configNode.Children == null)
 				return;
 			//Recurse into each child
-			foreach(var child in configNode.Children)
+			foreach(var child in configNode.Children.Where(x => x.IsEnabled))
 			{
 				GenerateCssFromConfigurationNode(child, styleSheet, baseSelection, propertyTable);
 			}
 		}
 
-		/// <summary>
-		/// Generate CSS for Between rule for multiple writingsystem selection
-		/// </summary>
-		/// <param name="beforeAfterSelectors">before/after/between StyleRules in IEnumerable</param>
-		/// <param name="baseSelection">BaseSelection for the between content</param>
-		/// <param name="betweenContent">Between content value</param>
-		/// <param name="isDisplayWSChecked">True when display writing system checkbox is checked</param>
-		private static void GenerateCssForBetweenContentWithMultipleWs(ref IEnumerable<StyleRule> beforeAfterSelectors, string baseSelection, string betweenContent, bool isDisplayWSChecked)
+		private static bool IsEmptyRule(StyleRule rule)
 		{
-			if(!isDisplayWSChecked) return;
-
-			////Rule added for "writingsystemprefix" class to insert "between" content only when more than one writingsystem selected.
-			var wsRule1 = new StyleRule { Value = baseSelection + ".writingsystemprefix:not(:first-child):before" };
-			wsRule1.Declarations.Properties.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, betweenContent) });
-
-			var beforeAfterList = beforeAfterSelectors.ToList();
-			var betweenSelectorIndex = beforeAfterList.FindIndex(x => x.Value.Contains("span+ span:before"));
-			if (betweenSelectorIndex < 0) return;
-			beforeAfterList[betweenSelectorIndex] = wsRule1;
-			beforeAfterSelectors = beforeAfterList;
+			return rule.Declarations.All(decl => string.IsNullOrWhiteSpace(decl.ToString()));
 		}
 
-		private static void GenerateCssForFieldWithMultipleWs(StyleSheet styleSheet, string baseSelection)
+		private static IEnumerable<StyleRule> CheckRangeOfRulesForEmpties(IEnumerable<StyleRule> rules)
 		{
-			var glossRule = new StyleRule {Value = baseSelection + ":not(:last-child):after"};
-			glossRule.Declarations.Properties.Add(new Property("content") {Term = new PrimitiveTerm(UnitType.String, " ")});
-			styleSheet.Rules.Add(glossRule);
+			return rules.Where(rule => !IsEmptyRule(rule));
+		}
+
+		private static bool IsBeforeOrAfter(StyleRule rule)
+		{
+			var sel = rule.Selector.ToString();
+			return sel.EndsWith(":before") || sel.EndsWith(":after");
+		}
+
+		private static IEnumerable<StyleRule> RemoveBeforeAfterSelectorRules(IEnumerable<StyleRule> rules)
+		{
+			return rules.Where(rule => !IsBeforeOrAfter(rule));
 		}
 
 		private static void GenerateCssForSenses(ConfigurableDictionaryNode configNode, DictionaryNodeSenseOptions senseOptions,
 														StyleSheet styleSheet, ref string baseSelection, PropertyTable propertyTable)
 		{
-			var beforeAfterSelectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, propertyTable.GetValue<FdoCache>("cache"), propertyTable);
+			var selectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, propertyTable.GetValue<FdoCache>("cache"), propertyTable);
 			var senseContentSelector = string.Empty;
 			if (baseSelection.LastIndexOf(".sense", StringComparison.Ordinal) >= 0)
 				senseContentSelector = string.Format("{0}> .sensecontent", baseSelection.Substring(0, baseSelection.LastIndexOf(".sense", StringComparison.Ordinal)));
 			else if (baseSelection.LastIndexOf(".referringsense", StringComparison.Ordinal) >= 0)
 				senseContentSelector = string.Format("{0}> .sensecontent", baseSelection.Substring(0, baseSelection.LastIndexOf(".referringsense", StringComparison.Ordinal)));
-			styleSheet.Rules.AddRange(beforeAfterSelectors);
+			if (senseOptions.DisplayEachSenseInAParagraph)
+				selectors = RemoveBeforeAfterSelectorRules(selectors);
+			styleSheet.Rules.AddRange(CheckRangeOfRulesForEmpties(selectors));
 			var senseNumberRule = new StyleRule();
 			// Not using SelectClassName here; sense and sensenumber are siblings and the configNode is for the Senses collection.
 			// Select the base plus the node's unmodified class attribute and append the sensenumber matcher.
@@ -273,7 +256,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				senseNumberRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(senseOptions.NumberStyle, DefaultStyle, propertyTable));
 			}
-			styleSheet.Rules.Add(senseNumberRule);
+			if (!IsEmptyRule(senseNumberRule))
+				styleSheet.Rules.Add(senseNumberRule);
 			if(!String.IsNullOrEmpty(senseOptions.BeforeNumber))
 			{
 				var beforeDeclaration = new StyleDeclaration
@@ -309,11 +293,9 @@ namespace SIL.FieldWorks.XWorks
 					// Apply the paragraph style information to all but the first sense
 					Value = string.Format("{0} + {1} > .sense", senseContentSelector, ".sensecontent")
 				};
-				styleSheet.Rules.Add(senseCharRule);
+				if (!IsEmptyRule(senseCharRule))
+					styleSheet.Rules.Add(senseCharRule);
 				GenerateCssforBulletedList(configNode, styleSheet, senseParaRule.Value, propertyTable);
-				//Generate the style for field following last sense
-				var rule = new StyleRule();
-				styleSheet.Rules.Add(rule);
 			}
 			else
 			{
@@ -322,109 +304,18 @@ namespace SIL.FieldWorks.XWorks
 				{
 					Value = string.Format(baseSelection)
 				};
-				styleSheet.Rules.Add(senseContentRule);
+				if (!IsEmptyRule(senseContentRule))
+					styleSheet.Rules.Add(senseContentRule);
 			}
 
 			if (senseOptions.ShowSharedGrammarInfoFirst)
 			{
-				var collectionSelector = baseSelection.Substring(0, baseSelection.LastIndexOf(" ."));
-				foreach (var gramInfoNode in configNode.Children.Where(node => node.FieldDescription == "MorphoSyntaxAnalysisRA"))
+				var collectionSelector = baseSelection.Substring(0, baseSelection.LastIndexOf(" .", StringComparison.Ordinal));
+				foreach (var gramInfoNode in configNode.Children.Where(node => node.FieldDescription == "MorphoSyntaxAnalysisRA" && node.IsEnabled))
 				{
 					GenerateCssFromConfigurationNode(gramInfoNode, styleSheet, collectionSelector + " .sharedgrammaticalinfo", propertyTable);
 				}
 			}
-		}
-
-		private static void GenerateCssForReferringHeadword(ConfigurableDictionaryNode configNode, DictionaryNodeSenseOptions senseOptions,
-														StyleSheet styleSheet, ref string baseSelection, PropertyTable propertyTable)
-		{
-			var beforeAfterSelectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, propertyTable.GetValue<FdoCache>("cache"), propertyTable);
-			var senseNumberRule = new StyleRule();
-			// Not using SelectClassName here; sense and sensenumber are siblings and the configNode is for the Senses collection.
-			// Select the base plus the node's unmodified class attribute and append the sensenumber matcher.
-			var senseNumberSelector = string.Format("{0} .referringsensenumber", baseSelection);
-
-			senseNumberRule.Value = senseNumberSelector;
-			if (!String.IsNullOrEmpty(senseOptions.NumberStyle))
-			{
-				senseNumberRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(senseOptions.NumberStyle, DefaultStyle, propertyTable));
-			}
-			styleSheet.Rules.Add(senseNumberRule);
-			if (!String.IsNullOrEmpty(senseOptions.BeforeNumber))
-			{
-				var beforeDeclaration = new StyleDeclaration
-				{
-					new Property("content") { Term = new PrimitiveTerm(UnitType.String, senseOptions.BeforeNumber) }
-				};
-				styleSheet.Rules.Add(new StyleRule(beforeDeclaration) { Value = senseNumberSelector + ":before" });
-			}
-			if (!String.IsNullOrEmpty(senseOptions.AfterNumber))
-			{
-				var afterDeclaration = new StyleDeclaration();
-				afterDeclaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, senseOptions.AfterNumber) });
-				var afterRule = new StyleRule(afterDeclaration) { Value = senseNumberSelector + ":after" };
-				styleSheet.Rules.Add(afterRule);
-			}
-			var styleDeclaration = string.IsNullOrEmpty(configNode.Style) ? new StyleDeclaration() : GenerateCssStyleFromFwStyleSheet(configNode.Style, 0, propertyTable);
-				// Generate the style information specifically for senses
-				var senseContentRule = new StyleRule(GetOnlyCharacterStyle(styleDeclaration))
-				{
-					Value = string.Format(baseSelection)
-				};
-				styleSheet.Rules.Add(senseContentRule);
-			if (senseOptions.ShowSharedGrammarInfoFirst)
-			{
-				var blockDeclaration = new StyleDeclaration();
-				blockDeclaration.Add(new Property("font-style") { Term = new PrimitiveTerm(UnitType.Attribute, "italic") });
-				var sensesCssClass = GetClassAttributeForConfig(configNode);
-				var sensesSelector = baseSelection.Substring(0,
-					baseSelection.LastIndexOf(sensesCssClass, StringComparison.Ordinal) + sensesCssClass.Length);
-				var blockRule1 = new StyleRule(blockDeclaration)
-				{
-					Value = String.Format("{0}> .sharedgrammaticalinfo", sensesSelector)
-				};
-				styleSheet.Rules.Add(blockRule1);
-
-				blockDeclaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, " ") });
-				var blockRule2 = new StyleRule(blockDeclaration)
-				{
-					Value = String.Format("{0}> .sharedgrammaticalinfo:after", sensesSelector)
-				};
-				styleSheet.Rules.Add(blockRule2);
-			}
-			var wsOptions = configNode.DictionaryNodeOptions as ReferringSenseOptions;
-			if (wsOptions != null && wsOptions.WritingSystemOptions != null)
-			{
-				GenerateCssFromWsOptions(configNode, wsOptions.WritingSystemOptions, styleSheet, baseSelection, propertyTable);
-				if (wsOptions.WritingSystemOptions.DisplayWritingSystemAbbreviations)
-				{
-					GenerateCssForWritingSystemPrefix(styleSheet, baseSelection);
-				}
-				if (wsOptions.WritingSystemOptions.Options.Count(s => s.IsEnabled) > 1)
-				{
-					GenerateCssForFieldWithMultipleWs(styleSheet, baseSelection);
-					GenerateCssForBetweenContentWithMultipleWs(ref beforeAfterSelectors, baseSelection, configNode.Between,
-						wsOptions.WritingSystemOptions.DisplayWritingSystemAbbreviations);
-				}
-			}
-			styleSheet.Rules.AddRange(beforeAfterSelectors);
-		}
-
-		/// <summary>
-		/// Generates rule for Content Following Intermediate Para
-		/// </summary>
-		/// <param name="baseSelection">base class tree</param>
-		/// <param name="propertyTable">propertyTable to get the styles</param>
-		/// <param name="configNode"></param>
-		/// <param name="classname">preceding class name</param>
-		private static StyleRule GenerateRuleforContentFollowIntermediatePara(string baseSelection, PropertyTable propertyTable, ConfigurableDictionaryNode configNode)
-		{
-			var styledeclaration = GenerateCssStyleFromFwStyleSheet(DictionaryContinuation, DefaultStyle, configNode, propertyTable);
-			var rule = new StyleRule(styledeclaration)
-			{
-				Value = string.Format("{0} ~ .paracontinuation", baseSelection)
-			};
-			return rule;
 		}
 
 		/// <summary>
@@ -450,7 +341,8 @@ namespace SIL.FieldWorks.XWorks
 					bulletRule.Declarations.Add(new Property("font-size") { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(wsFontInfo.FontSize.Value)) });
 					bulletRule.Declarations.Add(new Property("color") { Term = new PrimitiveTerm(UnitType.RGB, wsFontInfo.FontColor.Value.Name) });
 				}
-				styleSheet.Rules.Add(bulletRule);
+				if (!IsEmptyRule(bulletRule))
+					styleSheet.Rules.Add(bulletRule);
 			}
 		}
 
@@ -508,7 +400,7 @@ namespace SIL.FieldWorks.XWorks
 																	StyleSheet styleSheet, string baseSelection, PropertyTable propertyTable)
 		{
 			var cache = propertyTable.GetValue<FdoCache>("cache");
-			foreach(var ws in wsOptions.Options)
+			foreach(var ws in wsOptions.Options.Where(opt => opt.IsEnabled))
 			{
 				var possiblyMagic = WritingSystemServices.GetMagicWsIdFromName(ws.Id);
 				// if the writing system isn't a magic name just use it otherwise find the right one from the magic list
@@ -517,13 +409,14 @@ namespace SIL.FieldWorks.XWorks
 				var wsRule = new StyleRule {Value = baseSelection + String.Format("[lang|=\"{0}\"]", wsIdString)};
 				if (!String.IsNullOrEmpty(configNode.Style))
 					wsRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, wsId, propertyTable));
-				styleSheet.Rules.Add(wsRule);
+				if (!IsEmptyRule(wsRule))
+					styleSheet.Rules.Add(wsRule);
 			}
 		}
 
 		private static void GenerateCssForWritingSystemPrefix(StyleSheet styleSheet, string baseSelection)
 		{
-			var wsRule1 = new StyleRule {Value = baseSelection + ".writingsystemprefix"};
+			var wsRule1 = new StyleRule {Value = string.Format("{0}.{1}", baseSelection, WritingSystemPrefix)};
 			wsRule1.Declarations.Properties.Add(new Property("font-style") {Term = new PrimitiveTerm(UnitType.Attribute, "normal")});
 			wsRule1.Declarations.Properties.Add(new Property("font-size") {Term = new PrimitiveTerm(UnitType.Point, 10)});
 			styleSheet.Rules.Add(wsRule1);
@@ -533,9 +426,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static void GenerateCssFromPictureOptions(ConfigurableDictionaryNode configNode, DictionaryNodePictureOptions pictureOptions,
-																		  StyleSheet styleSheet, string baseSelection, PropertyTable propertyTable)
+			StyleSheet styleSheet, string baseSelection)
 		{
-			var cache = propertyTable.GetValue<FdoCache>("cache");
 			var pictureAndCaptionRule = new StyleRule();
 			pictureAndCaptionRule.Value = baseSelection + " " + SelectClassName(configNode);
 
@@ -543,10 +435,15 @@ namespace SIL.FieldWorks.XWorks
 			pictureProps.Add(new Property("float") { Term = new PrimitiveTerm(UnitType.Ident, "right") });
 			pictureProps.Add(new Property("text-align") { Term = new PrimitiveTerm(UnitType.Ident, "center") });
 			var margin = new Property("margin");
-			margin.Term = new TermList(new PrimitiveTerm(UnitType.Point, 0),
-												new PrimitiveTerm(UnitType.Point, 0),
-												new PrimitiveTerm(UnitType.Point, 4),
-												new PrimitiveTerm(UnitType.Point, 4));
+			var marginValues = new TermList();
+			marginValues.AddTerm(new PrimitiveTerm(UnitType.Point, 0));
+			marginValues.AddSeparator(TermList.TermSeparator.Space);
+			marginValues.AddTerm(new PrimitiveTerm(UnitType.Point, 0));
+			marginValues.AddSeparator(TermList.TermSeparator.Space);
+			marginValues.AddTerm(new PrimitiveTerm(UnitType.Point, 4));
+			marginValues.AddSeparator(TermList.TermSeparator.Space);
+			marginValues.AddTerm(new PrimitiveTerm(UnitType.Point, 4));
+			margin.Term = marginValues;
 			pictureProps.Add(margin);
 			pictureProps.Add(new Property("padding") { Term = new PrimitiveTerm(UnitType.Point, 2) });
 			pictureProps.Add(new Property("float")
@@ -585,13 +482,13 @@ namespace SIL.FieldWorks.XWorks
 					Term = new PrimitiveTerm(UnitType.Inch, pictureOptions.MaximumWidth)
 				});
 			}
-			styleSheet.Rules.Add(pictureRule);
+			if (!IsEmptyRule(pictureRule))
+				styleSheet.Rules.Add(pictureRule);
 		}
 
 		/// <summary>
 		/// This method will generate before and after rules if the configuration node requires them. It also generates the selector for the node
 		/// </summary>
-		/// <returns></returns>
 		private static IEnumerable<StyleRule> GenerateSelectorsFromNode(
 			string parentSelector, ConfigurableDictionaryNode configNode,
 			out string baseSelection, FdoCache cache, PropertyTable propertyTable)
@@ -623,9 +520,13 @@ namespace SIL.FieldWorks.XWorks
 					var betweenRule = new StyleRule(dec) { Value = betweenSelector };
 					if (configNode.DictionaryNodeOptions != null)
 					{
-						// Rule added for all span tag which only having WritingSystems attribute
-						if (configNode.DisplayLabel == "Headword")
-							betweenSelector = String.Format("{0}> {1}>{2}+{2}:not('style'):before", parentSelector, collectionSelector, " span");
+						var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+						var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
+						// If wsOptions are enabled generate a between rule which will not put content between the abbreviation and the ws data
+						if (wsOptions != null && wsOptions.DisplayWritingSystemAbbreviations && wsOptions.Options.Count(x => x.IsEnabled) > 1)
+							betweenSelector = String.Format("{0}> {1}> span.{2} + span:not(:last-child):after", parentSelector, collectionSelector, WritingSystemPrefix);
+						else if (senseOptions != null && senseOptions.ShowSharedGrammarInfoFirst)
+							betweenSelector = String.Format("{0}> {1}>{2}.sensecontent+{2}:before", parentSelector, collectionSelector, " span");
 						else
 							betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, " span");
 
@@ -709,6 +610,7 @@ namespace SIL.FieldWorks.XWorks
 					return " img"; // Pictures are written out as img tags
 				}
 				case ConfiguredXHTMLGenerator.PropertyType.PrimitiveType:
+				case ConfiguredXHTMLGenerator.PropertyType.MoFormType:
 				{
 					// for multi-lingual strings each language's string will have the contents generated in a span
 					if(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions)
@@ -723,7 +625,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Generate the singular of the collection name: drop the final character ('s') or handle "entries" => "entry" or "analyses" to "analysis"
+		/// Generate the singular of the collection name: drop the final character ('s') or
+		/// handle "entries" => "entry" or "analyses" to "analysis" or "glosses" to "gloss"
 		/// </summary>
 		internal static string GetClassAttributeForCollectionItem(ConfigurableDictionaryNode configNode)
 		{
@@ -733,6 +636,8 @@ namespace SIL.FieldWorks.XWorks
 				singularBase = classNameBase.Remove(classNameBase.Length - 3) + "y";
 			else if (classNameBase.EndsWith("analyses"))
 				singularBase = classNameBase.Remove(classNameBase.Length - 2) + "is";
+			else if (classNameBase.EndsWith("sses"))
+				singularBase = classNameBase.Remove(classNameBase.Length - 2);
 			else
 				singularBase = classNameBase.Remove(classNameBase.Length - 1);
 			return singularBase + GetClassAttributeDupSuffix(configNode).ToLower();
@@ -940,7 +845,7 @@ namespace SIL.FieldWorks.XWorks
 				declaration.Add(new Property("padding-right") { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.TrailingIndent)) });
 			}
 
-			AddFontInfoCss(projectStyle, declaration, wsId);
+			AddFontInfoCss(projectStyle, declaration, wsId, propertyTable.GetValue<FdoCache>("cache"));
 
 			if (exportStyleInfo.NumberScheme != 0)
 			{
@@ -965,7 +870,7 @@ namespace SIL.FieldWorks.XWorks
 					return ancestorIndents;
 			} while (!IsParagraphStyle(parentNode, styleSheet));
 
-			var projectStyle = styleSheet.Styles[GetParagraphStyleNameFromNode(parentNode, currentNode.CheckForPrevParaNodeSibling())];
+			var projectStyle = styleSheet.Styles[parentNode.Style];
 			var exportStyleInfo = new ExportStyleInfo(projectStyle);
 
 			return new Tuple<float, float>(GetLeadingIndent(exportStyleInfo),
@@ -986,19 +891,10 @@ namespace SIL.FieldWorks.XWorks
 
 		private static bool IsParagraphStyle(ConfigurableDictionaryNode node, FwStyleSheet styleSheet)
 		{
-			var style = GetParagraphStyleNameFromNode(node);
+			if (node.StyleType == ConfigurableDictionaryNode.StyleTypes.Character)
+				return false;
+			var style = node.Style;
 			return !string.IsNullOrEmpty(style) && styleSheet.Styles.Contains(style) && styleSheet.Styles[style].IsParagraphStyle;
-		}
-
-		private static string GetParagraphStyleNameFromNode(ConfigurableDictionaryNode node, bool isContinuation = false)
-		{
-			var paragraphOptions = node.DictionaryNodeOptions as DictionaryNodeParagraphOptions;
-			if (isContinuation && paragraphOptions != null)
-				return paragraphOptions.ContinuationParagraphStyle;
-			var style = !string.IsNullOrEmpty(node.Style)
-				? node.Style
-				: paragraphOptions == null ? null : paragraphOptions.PargraphStyle;
-			return style;
 		}
 
 		/// <summary>
@@ -1050,17 +946,25 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Builds the css rules for font info properties using the writing system overrides
 		/// </summary>
-		/// <param name="projectStyle"></param>
-		/// <param name="declaration"></param>
-		/// <param name="wsId">writing system id</param>
-		private static void AddFontInfoCss(BaseStyleInfo projectStyle, StyleDeclaration declaration, int wsId)
+		private static void AddFontInfoCss(BaseStyleInfo projectStyle, StyleDeclaration declaration, int wsId, FdoCache cache)
 		{
 			var wsFontInfo = projectStyle.FontInfoForWs(wsId);
 			var defaultFontInfo = projectStyle.DefaultCharacterStyleInfo;
 			// set fontName to the wsFontInfo value if set, otherwise the defaultFontInfo if set, or null
 			var fontName = wsFontInfo.FontName.ValueIsSet ? wsFontInfo.FontName.Value
-																		 : defaultFontInfo.FontName.ValueIsSet ? defaultFontInfo.FontName.Value : null;
-			if(fontName != null)
+				: defaultFontInfo.FontName.ValueIsSet ? defaultFontInfo.FontName.Value : null;
+
+			// fontName still null means not set in Normal Style, then get default fonts from WritingSystems configuration.
+			// Comparison, projectStyle.Name == "Normal", required to limit the font-family definition to the
+			// empty span (ie span[lang|="en"]{}. If not included, font-family will be added to many more spans.
+			if (fontName == null && projectStyle.Name == "Normal")
+			{
+				var lgWritingSysytem = cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId);
+				if(lgWritingSysytem != null)
+					fontName = lgWritingSysytem.DefaultFontName;
+			}
+
+			if (fontName != null)
 			{
 				var fontFamily = new Property("font-family");
 				fontFamily.Term =
@@ -1077,6 +981,7 @@ namespace SIL.FieldWorks.XWorks
 			AddInfoFromWsOrDefaultValue(wsFontInfo.BackColor, defaultFontInfo.BackColor, "background-color", declaration);
 			AddInfoFromWsOrDefaultValue(wsFontInfo.SuperSub, defaultFontInfo.SuperSub, "vertical-align", declaration);
 			AddInfoForUnderline(wsFontInfo, defaultFontInfo, declaration);
+
 		}
 
 		/// <summary>
@@ -1289,10 +1194,10 @@ namespace SIL.FieldWorks.XWorks
 			letHeadRule.Declarations.Properties.Add(new Property("-webkit-column-count") { Term = new PrimitiveTerm(UnitType.Number, 1) });
 			letHeadRule.Declarations.Properties.Add(new Property("column-count") { Term = new PrimitiveTerm(UnitType.Number, 1) });
 			letHeadRule.Declarations.Properties.Add(new Property("clear") { Term = new PrimitiveTerm(UnitType.Ident, "both") });
+			letHeadRule.Declarations.Properties.Add(new Property("text-align") { Term = new PrimitiveTerm(UnitType.Ident, "center") });
+			letHeadRule.Declarations.Properties.Add(new Property("width") { Term = new PrimitiveTerm(UnitType.Percentage, 100) });
 
 			var letterRule = new StyleRule { Value = ".letter" };
-			letterRule.Declarations.Properties.Add(new Property("text-align") { Term = new PrimitiveTerm(UnitType.Ident, "center") });
-			letterRule.Declarations.Properties.Add(new Property("width") { Term = new PrimitiveTerm(UnitType.Percentage, 100) });
 			var cache = propertyTable.GetValue<FdoCache>("cache");
 			letterRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(LetterHeadingStyleName, cache.DefaultVernWs, propertyTable));
 			return letHeadRule.ToString(true) + Environment.NewLine + letterRule.ToString(true) + Environment.NewLine;

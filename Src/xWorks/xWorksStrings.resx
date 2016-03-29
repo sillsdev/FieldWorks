@@ -391,11 +391,32 @@ Are you SURE you want to delete the field {2}?</value>
   </data>
   <data name="MoveDown" xml:space="preserve">
     <value>Move Down</value>
-    <comment>context menu item</comment>
+    <comment>action on a tree view item</comment>
   </data>
   <data name="MoveUp" xml:space="preserve">
     <value>Move Up</value>
-    <comment>context menu item</comment>
+    <comment>action on a tree view item</comment>
+  </data>
+  <data name="Duplicate" xml:space="preserve">
+    <value>Duplicate</value>
+    <comment>action on a tree view item</comment>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+    <comment>action on a tree view item</comment>
+  </data>
+  <data name="EditLabel" xml:space="preserve">
+    <value>Edit Label</value>
+    <comment>action on a tree view item</comment>
+  </data>
+  <data name="HighlightAffectedContent" xml:space="preserve">
+    <value>Highlight affected content</value>
+  </data>
+  <data name="RemoveHighlighting" xml:space="preserve">
+    <value>Remove highlighting from affected content</value>
+  </data>
+  <data name="ConfigureReferencedHeadwordsTooltip" xml:space="preserve">
+    <value>Configure homograph numbers on all headwords and sense numbers on headwords in cross references</value>
   </data>
   <data name="kstidExportingLists" xml:space="preserve">
     <value>Writing possibility list contents</value>
@@ -638,6 +659,10 @@ Are you sure you want to delete this list?</value>
   <data name="ksConfigure" xml:space="preserve">
     <value>Configure {0} View...</value>
     <comment>Sole item in right-click menu in Dictionary view</comment>
+  </data>
+  <data name="ksInspect" xml:space="preserve">
+    <value>Inspect entry</value>
+    <comment>Second item in ctrl-right-click menu in Dictionary view</comment>
   </data>
   <data name="ksCtrlClickJumpTooltip" xml:space="preserve">
     <value>Ctrl+Click to jump</value>
@@ -916,5 +941,27 @@ If you are not the one designated user who adds fields, or you are making some o
   <data name="ksPreparingPublicationDisplay" xml:space="preserve">
     <value>Preparing to display the publication view</value>
     <comment>this is the title for a progress report dialog</comment>
+  </data>
+	<data name="ksSubsenseNumberConfig" xml:space="preserve">
+    <value>Subsense Number Configuration</value>
+  </data>
+	<data name="ksNumberSingleSubsense" xml:space="preserve">
+    <value>Number even a single subsense</value>
+  </data>
+	<data name="ksHideGramInfoIfSameAsParent" xml:space="preserve">
+    <value>Hide subsense grammatical info if same as parent</value>
+  </data>
+	<data name="ksCancelingPublicationLabel" xml:space="preserve">
+    <value>Click Cancel to stop loading the Dictionary view and move to Lexicon Edit.</value>
+  </data>
+  <data name="ReversalIndexConfigurationDlgTitle" xml:space="preserve">
+    <value>Reversal Index Configuration Manager</value>
+  </data>
+  <data name="YouAreResettingReversal" xml:space="preserve">
+    <value>You are resetting the following to the 'All Reversal Indexes' settings:</value>
+  </data>
+  <data name="DictionaryConfigurationMangager_ReversalConfigurations_GroupLabel" xml:space="preserve">
+    <value>Reversal Configurations</value>
+    <comment>Label for the group box which contains the reversal configurations</comment>
   </data>
 </root>

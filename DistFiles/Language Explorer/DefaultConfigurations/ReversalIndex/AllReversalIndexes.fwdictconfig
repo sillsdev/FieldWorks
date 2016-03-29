@@ -1,7 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<DictionaryConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="All Reversal Indexes" version="-1" lastModified="2015-12-17" allPublications="true">
-  <ConfigurationItem name="Reversal Entry" isEnabled="true" field="ReversalIndexEntry">
-	<ConfigurationItem name="Reversal Form" isEnabled="true" style="Reversal-Headword" between=" " after=" " field="ReversalForm">
+<?xml version="1.0" encoding="utf-8"?>
+<DictionaryConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="All Reversal Indexes" writingSystem="" version="-1" lastModified="2015-12-17" allPublications="true">
+  <ConfigurationItem name="Reversal Entry" isEnabled="true" style="Dictionary-Normal" styleType="paragraph" field="ReversalIndexEntry" cssClassNameOverride="reversalindexentry">
+	<ConfigurationItem name="Reversal Form" isEnabled="true" style="Reversal-Headword" between=" " after="  " field="ReversalForm">
 	  <WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 		<Option id="reversal" isEnabled="true" />
 	  </WritingSystemOptions>
@@ -18,15 +18,12 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Vernacular Form" isEnabled="true" between="; " after=" " field="ReferringSenses">
+	<ConfigurationItem name="Referenced Senses" isEnabled="true" between="; " after=" " field="ReferringSenses">
 	  <SenseOptions numberStyle="Dictionary-SenseNumber" numberAfter=") " numberSingleSense="false" showSingleGramInfoFirst="false" displayEachSenseInParagraph="false" />
-	  <ConfigurationItem name="Headword" isEnabled="true" style="Reversal-Vernacular" styleType="character" between=" " after=" " field="MLOwnerOutlineName" cssClassNameOverride="headword">
-	  <ReferringSenseOptions>
+	  <ConfigurationItem name="Headword" isEnabled="true" style="Reversal-Vernacular" styleType="character" between=" " after=" " field="ReversalName" cssClassNameOverride="headword">
 		<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		  <Option id="vernacular" isEnabled="true" />
 		</WritingSystemOptions>
-		<SenseOptions numberStyle="Sense-Reference-Number" numberBefore=" " numberingStyle="%O" numberAfter="" numberSingleSense="false" showSingleGramInfoFirst="false" displayEachSenseInParagraph="false" />
-		</ReferringSenseOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Lexeme Form" isEnabled="false" between=" " after=" " field="Owner" subField="LexemeFormOA" cssClassNameOverride="lexemeform">
 		<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -196,10 +193,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 		<ConfigurationItem name="Targets" isEnabled="true" between=", " after=" " field="ConfigTargets">
-		  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" between=" " field="MLHeadWord" cssClassNameOverride="headword">
-			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
-			  <Option id="vernacular" isEnabled="true" />
-			</WritingSystemOptions>
+		  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" field="HeadWord">
 		  </ConfigurationItem>
 		  <ConfigurationItem name="Summary Definition" isEnabled="false" between=" " after=" " field="SummaryDefinition">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -221,34 +215,16 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Primary Entry(s)" isEnabled="true" between="," after=" " field="PrimaryLexemesRS">
-		  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" between=" " after=" " field="MLHeadWord" cssClassNameOverride="headword">
-			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
-			  <Option id="vernacular" isEnabled="true" />
-			</WritingSystemOptions>
+		<ConfigurationItem name="Primary Entry(s)" isEnabled="true" between="," after=" " field="PrimarySensesOrEntries" cssClassNameOverride="primarylexemes">
+		  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after=" " field="HeadWord">
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Summary Definition" isEnabled="false" between=" " after=" " field="SummaryDefinition">
+		  <ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="true" between=" " after=" " field="GlossOrSummary">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true" />
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Referenced Headword and Sense Number" isEnabled="true" style="Dictionary-CrossReferences" between=" " after=" " field="HeadWordReversalName">
-			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
-			  <Option id="vernacular" isEnabled="true" />
-			</WritingSystemOptions>
-		  </ConfigurationItem>
-		  <ConfigurationItem name="Gloss" isEnabled="false" between=" " after=" " field="Gloss">
-			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			  <Option id="all analysis" isEnabled="true" />
-			</WritingSystemOptions>
-		  </ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Comment" isEnabled="false" between=" " after=" " field="Summary">
-		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			<Option id="analysis" isEnabled="true" />
-		  </WritingSystemOptions>
-		</ConfigurationItem>
-		<ConfigurationItem name="Summary Definition" isEnabled="false" between=" " after=" " field="SummaryDefinition">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true" />
 		  </WritingSystemOptions>
@@ -367,10 +343,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 		<ConfigurationItem name="Targets" isEnabled="true" between=", " after=" " field="ConfigTargets">
-		  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" between=" " field="MLHeadWord" cssClassNameOverride="headword">
-			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
-			  <Option id="vernacular" isEnabled="true" />
-			</WritingSystemOptions>
+		  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" field="HeadWord">
 		  </ConfigurationItem>
 		  <ConfigurationItem name="Gloss" isEnabled="false" between=" " after=" " field="Gloss">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -588,7 +561,7 @@
 	</ConfigurationItem>
 	<ConfigurationItem name="Reversal Subentries" isEnabled="true" style="Reversal-Subentry" field="SubentriesOS" cssClassNameOverride="Subentries" >
 		<ComplexFormOptions displayEachComplexFormInParagraph="true" />
-		<ConfigurationItem name="Reversal Form" isEnabled="true" style="Reversal-Headword" between=" " after=" " field="ReversalForm">
+		<ConfigurationItem name="Reversal Form" isEnabled="true" style="Reversal-Headword" between=" " after="  " field="ReversalForm">
 			<WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 				<Option id="reversal" isEnabled="true" />
 			</WritingSystemOptions>
@@ -605,9 +578,9 @@
 				</WritingSystemOptions>
 			</ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Vernacular Form" isEnabled="true" between="; " after=" " field="ReferringSenses">
+		<ConfigurationItem name="Referenced Senses" isEnabled="true" between="; " after=" " field="ReferringSenses">
 	  <SenseOptions numberStyle="Dictionary-SenseNumber" numberSingleSense="false" showSingleGramInfoFirst="false" displayEachSenseInParagraph="false" />
-	  <ConfigurationItem name="Headword" isEnabled="true" style="Reversal-Vernacular" between=" " after=" " field="Owner" subField="MLHeadWord" cssClassNameOverride="headword">
+	  <ConfigurationItem name="Headword" isEnabled="true" style="Reversal-Vernacular" between=" " after=" " field="ReversalName" cssClassNameOverride="headword">
 		<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		  <Option id="vernacular" isEnabled="true" />
 		</WritingSystemOptions>
@@ -805,34 +778,19 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Primary Entry(s)" isEnabled="true" between="," after=" " field="PrimaryLexemesRS">
+		<ConfigurationItem name="Primary Entry(s)" isEnabled="true" between="," after=" " field="PrimarySensesOrEntries" cssClassNameOverride="primarylexemes">
 		  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" between=" " after=" " field="MLHeadWord" cssClassNameOverride="headword">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			  <Option id="vernacular" isEnabled="true" />
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Summary Definition" isEnabled="false" between=" " after=" " field="SummaryDefinition">
+		  <ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="true" between=" " after=" " field="GlossOrSummary">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true" />
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Referenced Headword and Sense Number" isEnabled="true" style="Dictionary-CrossReferences" between=" " after=" " field="HeadWordReversalName">
-			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
-			  <Option id="vernacular" isEnabled="true" />
-			</WritingSystemOptions>
-		  </ConfigurationItem>
-		  <ConfigurationItem name="Gloss" isEnabled="false" between=" " after=" " field="Gloss">
-			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			  <Option id="all analysis" isEnabled="true" />
-			</WritingSystemOptions>
-		  </ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Comment" isEnabled="false" between=" " after=" " field="Summary">
-		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			<Option id="analysis" isEnabled="true" />
-		  </WritingSystemOptions>
-		</ConfigurationItem>
-		<ConfigurationItem name="Summary Definition" isEnabled="false" between=" " after=" " field="SummaryDefinition">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true" />
 		  </WritingSystemOptions>

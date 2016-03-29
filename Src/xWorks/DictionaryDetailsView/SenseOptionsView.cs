@@ -14,7 +14,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 	/// </summary>
 	public partial class SenseOptionsView : UserControl, IDictionarySenseOptionsView
 	{
-		public SenseOptionsView()
+		private bool m_isSubsense;
+
+		public SenseOptionsView(bool isSubsense)
 		{
 			InitializeComponent();
 
@@ -23,6 +25,16 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 
 			textBoxBefore.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
 			textBoxAfter.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
+
+			m_isSubsense = isSubsense;
+			if (m_isSubsense)
+			{
+				groupBoxSenseNumber.Text = xWorksStrings.ksSubsenseNumberConfig;
+				checkBoxNumberSingleSense.Text = xWorksStrings.ksNumberSingleSubsense;
+				checkBoxShowGrammarFirst.Text = xWorksStrings.ksHideGramInfoIfSameAsParent;
+				checkBoxSenseInPara.Enabled = false;
+				checkBoxSenseInPara.Visible = false;
+			}
 		}
 
 		public bool NumberMetaConfigEnabled

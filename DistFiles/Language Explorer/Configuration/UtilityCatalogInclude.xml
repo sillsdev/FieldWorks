@@ -12,4 +12,5 @@
 	<utility assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.LexEntryTypeConverter"/>
 	<utility assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.GoldEticGuidFixer"/>
 	<utility assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.SortReversalSubEntries"/>
+	<utility assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.CircularRefBreaker"/>
 </utilityCatalog>

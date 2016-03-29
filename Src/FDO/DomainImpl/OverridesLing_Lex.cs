@@ -2479,14 +2479,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
-		/// Virtual property allows HeadWordReversal to be read through cache.
+		/// Virtual property allows ReversalName to be read through cache.
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.MultiUnicode)]
-		public VirtualStringAccessor HeadWordReversal
+		public VirtualStringAccessor ReversalName
 		{
 			get
 			{
-				return new VirtualStringAccessor(this, Cache.ServiceLocator.GetInstance<Virtuals>().LexEntryHeadWordReversal, HeadWordReversalForWs);
+				return new VirtualStringAccessor(this, Cache.ServiceLocator.GetInstance<Virtuals>().LexEntryReversalName, HeadWordReversalForWs);
 			}
 		}
 
@@ -3741,6 +3741,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			m_MLOwnerOutlineNameFlid = Cache.MetaDataCache.GetFieldId("LexSense", "MLOwnerOutlineName", false);
 		}
 
+		[VirtualProperty(CellarPropertyType.ReferenceCollection, "LexEntryRef")]
 		public IEnumerable<ILexEntryRef> EntryRefsWithThisMainSense
 		{
 			get
@@ -9034,6 +9035,21 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// This is a virtual property.  It returns a list of the DefinitionOrGloss values for
+		/// for all the top-level senses owned by the owner of this LexEntryRef.
+		/// Enhance JohnT: implement automatic update when senses, Definitions, or Glosses change.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public IEnumerable<IMultiStringAccessor> DefinitionOrGloss
+		{
+			get
+			{
+				return from sense in ((ILexEntry)Owner).SensesOS select sense.DefinitionOrGloss;
+			}
+		}
+
 		/// <summary>
 		/// Virtual property for configuration, wraps <see cref="ComponentLexemesRS"/> collection objects in read only interface
 		/// that exposes certain LexSense- and LexEntry-specific fields.
@@ -9046,6 +9062,23 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if(ComponentLexemesRS.Count > 0)
 				{
 					wrappedTargets.AddRange(ComponentLexemesRS.Select(target => new SenseOrEntry(target)));
+				}
+				return wrappedTargets;
+			}
+		}
+
+		/// <summary>
+		/// Virtual property for configuration, wraps <see cref="PrimaryLexemesRS"/> collection objects in read only interface
+		/// that exposes certain LexSense- and LexEntry-specific fields.
+		/// </summary>
+		public IEnumerable<ISenseOrEntry> PrimarySensesOrEntries
+		{
+			get
+			{
+				var wrappedTargets = new List<ISenseOrEntry>();
+				if(PrimaryLexemesRS.Count > 0)
+				{
+					wrappedTargets.AddRange(PrimaryLexemesRS.Select(target => new SenseOrEntry(target)));
 				}
 				return wrappedTargets;
 			}
@@ -9370,7 +9403,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			Item = target;
 		}
-		private ICmObject Item { get; set; }
+
+		/// <summary>
+		/// The actual ILexSense or ILexEntry object.
+		/// </summary>
+		public ICmObject Item { get; private set; }
 
 		public Guid EntryGuid
 		{
@@ -9394,14 +9431,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
-		public IMultiAccessorBase HeadWordReversalName
+		public IMultiAccessorBase ReversalName
 		{
 			get
 			{
 				var entry = Item as LexEntry;
 				if(entry != null)
 				{
-					return entry.HeadWordReversal;
+					return entry.ReversalName;
 				}
 				var sense = Item as LexSense;
 				if(sense != null)
@@ -9438,7 +9475,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
-		public IMultiAccessorBase DefinitionOrGloss
+		public IMultiAccessorBase GlossOrSummary
 		{
 			get
 			{
@@ -9448,11 +9485,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					return entry.SummaryDefinition;
 				}
 				var sense = Item as ILexSense;
-				if(sense != null)
-				{
+				if (sense == null)
+					return null;
+				// LT-17202 Change fallback order
+				// But do have a fallback as per LT-16485
+				if (sense.Gloss != null && sense.Gloss.StringCount > 0)
 					return sense.Gloss;
-				}
-				return null;
+				return sense.Definition;
 			}
 		}
 	}

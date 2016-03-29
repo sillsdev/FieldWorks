@@ -232,12 +232,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Sets all properties to inherited.
+		/// Forces all properties to be inherited, and sets the inherited value
 		/// </summary>
 		/// <param name="basedOnFontInfo">The font info from which to get the inherited values.
 		/// </param>
 		/// ------------------------------------------------------------------------------------
-		internal void SetAllPropertiesToInherited(FontInfo basedOnFontInfo)
+		internal void ResetAllPropertiesToInherited(FontInfo basedOnFontInfo)
 		{
 			m_fontName.ResetToInherited(basedOnFontInfo.m_fontName);
 			m_fontSize.ResetToInherited(basedOnFontInfo.m_fontSize);
@@ -250,6 +250,28 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			m_underlineColor.ResetToInherited(basedOnFontInfo.m_underlineColor);
 			m_offset.ResetToInherited(basedOnFontInfo.m_offset);
 			m_features.ResetToInherited(basedOnFontInfo.m_features);
+		}
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Inherit the values for all properties, but don't force a change in the inherit value.
+		/// </summary>
+		/// <remarks>Explicitly set values will not be affected</remarks>
+		/// <param name="basedOnFontInfo">The font info from which to get the inherited values.
+		/// </param>
+		/// ------------------------------------------------------------------------------------
+		internal void InheritAllProperties(FontInfo basedOnFontInfo)
+		{
+			m_fontName.InheritValue(basedOnFontInfo.m_fontName);
+			m_fontSize.InheritValue(basedOnFontInfo.m_fontSize);
+			m_fontColor.InheritValue(basedOnFontInfo.m_fontColor);
+			m_backColor.InheritValue(basedOnFontInfo.m_backColor);
+			m_bold.InheritValue(basedOnFontInfo.m_bold);
+			m_italic.InheritValue(basedOnFontInfo.m_italic);
+			m_superSub.InheritValue(basedOnFontInfo.m_superSub);
+			m_underline.InheritValue(basedOnFontInfo.m_underline);
+			m_underlineColor.InheritValue(basedOnFontInfo.m_underlineColor);
+			m_offset.InheritValue(basedOnFontInfo.m_offset);
+			m_features.InheritValue(basedOnFontInfo.m_features);
 		}
 	}
 }

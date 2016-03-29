@@ -26,7 +26,7 @@ using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
-	class PublishToWebonaryControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
+	public class PublishToWebonaryControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
 	{
 		private FwXApp m_application;
 		private FwXWindow m_window;
@@ -144,27 +144,20 @@ namespace SIL.FieldWorks.XWorks
 			mockView.Model.Configurations = testConfig;
 			// Build model sufficient to generate xhtml and css
 			ConfiguredXHTMLGenerator.AssemblyFile = "FDO";
-			var model = new DictionaryConfigurationModel
-			{
-				Parts = new List<ConfigurableDictionaryNode>()
-			};
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "HeadWord",
-				Label = "Headword",
 				CSSClassNameOverride = "entry",
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions {Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new [] { "fr" })},
 				Before = "MainEntry: ",
-				IsEnabled = true
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode },
 				FieldDescription = "LexEntry",
-				IsEnabled = true
 			};
-			model.Parts.Add(mainEntryNode);
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			CssGeneratorTests.PopulateFieldsForTesting(model);
 			testConfig["Test Config"] = model;
 			// create entry sufficient to generate xhtml and css
 			var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
@@ -474,11 +467,56 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		#region Helpers
 		/// <summary>
-		/// Helper.
+		/// LT-17149.
 		/// </summary>
-		public MockWebonaryDlg SetUpView()
+		[Test]
+		public void UploadFilename_UsesSiteName()
+		{
+			var view = SetUpView();
+			var model = view.Model;
+			model.SiteName = "mySiteName";
+			var expectedFilename = "mySiteName.zip";
+			var actualFilename = PublishToWebonaryController.UploadFilename(model, view);
+			Assert.That(actualFilename, Is.EqualTo(expectedFilename), "Incorrect filename for webonary export.");
+		}
+
+		[Test]
+		public void UploadFilename_ThrowsForBadInput()
+		{
+			Assert.Throws<ArgumentNullException>(() => PublishToWebonaryController.UploadFilename(null, null));
+			var view = SetUpView();
+			var model = view.Model;
+			model.SiteName = null;
+			Assert.Throws<ArgumentException>(() => PublishToWebonaryController.UploadFilename(model, view));
+			model.SiteName = "";
+			Assert.Throws<ArgumentException>(() => PublishToWebonaryController.UploadFilename(model, view));
+		}
+
+		[TestCase("my.Site")]
+		[TestCase("my Site")]
+		[TestCase("my$Site")]
+		[TestCase("my%Site")]
+		[TestCase("my_Site")]
+		[TestCase("my*Site")]
+		[TestCase("my/Site")]
+		[TestCase("my:Site")]
+		public void UploadFilename_FailsForInvalidCharactersInSitename(string sitename)
+		{
+			var view = SetUpView();
+			var model = view.Model;
+			model.SiteName = sitename;
+
+			// SUT
+			var result = PublishToWebonaryController.UploadFilename(model, view);
+
+			Assert.That(result, Is.Null, "Fail on invalid characters.");
+			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.Contains("Invalid characters found in sitename"))), "Inform that there was a problem");
+		}
+
+		#region Helpers
+		/// <summary/>
+		private MockWebonaryDlg SetUpView()
 		{
 			return new MockWebonaryDlg {
 				Model = SetUpModel()
@@ -526,6 +564,10 @@ namespace SIL.FieldWorks.XWorks
 			public void UpdateStatus(string statusString)
 			{
 				StatusStrings.Add(statusString);
+			}
+
+			public void SetStatusCondition(WebonaryStatusCondition condition)
+			{
 			}
 
 			public void PopulatePublicationsList(IEnumerable<string> publications)

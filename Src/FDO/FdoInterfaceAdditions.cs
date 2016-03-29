@@ -658,13 +658,20 @@ namespace SIL.FieldWorks.FDO
 		/// <returns>this.Owner.SensesOS.ExamplesOS</returns>
 		IEnumerable<ILexExampleSentence> ExampleSentences { get; }
 
-
+		/// <returns>this.Owner.SensesOS.DefinitionOrGloss</returns>
+		IEnumerable<IMultiStringAccessor>  DefinitionOrGloss { get; }
 
 		/// <summary>
 		/// Virtual property for configuration, wraps <see cref="ComponentLexemesRS"/> collection objects in read only interface
 		/// that exposes certain LexSense- and LexEntry-specific fields.
 		/// </summary>
 		IEnumerable<ISenseOrEntry> ConfigReferencedEntries { get; }
+
+		/// <summary>
+		/// Virtual property for configuration, wraps <see cref="PrimaryLexemesRS"/> collection objects in read only interface
+		/// that exposes certain LexSense- and LexEntry-specific fields.
+		/// </summary>
+		IEnumerable<ISenseOrEntry> PrimarySensesOrEntries { get; }
 	}
 
 	public partial interface ILexReference
@@ -1082,6 +1089,11 @@ namespace SIL.FieldWorks.FDO
 		/// This returns the subentries of this sense
 		/// </summary>
 		IEnumerable<ILexEntry> Subentries { get; }
+
+		/// <summary>
+		/// This is a entry reference property. It returns the list of all the LexEntryRef objects that refer to this LexSense.
+		/// </summary>
+		IEnumerable<ILexEntryRef> EntryRefsWithThisMainSense { get; }
 	}
 
 	/// <summary>
@@ -5884,6 +5896,10 @@ namespace SIL.FieldWorks.FDO
 	public interface ISenseOrEntry
 	{
 		/// <summary>
+		/// The actual ILexSense or ILexEntry object.
+		/// </summary>
+		ICmObject Item { get; }
+		/// <summary>
 		/// The Guid if LexEntry; the owning entry's Guid if LexSense
 		/// </summary>
 		Guid EntryGuid { get; }
@@ -5894,9 +5910,9 @@ namespace SIL.FieldWorks.FDO
 		ITsString HeadWord { get; }
 
 		/// <summary>
-		/// HeadWordReversal if LexEntry, ReversalName if LexSense
+		/// ReversalName from either LexEntry or LexSense
 		/// </summary>
-		IMultiAccessorBase HeadWordReversalName { get; }
+		IMultiAccessorBase ReversalName { get; }
 
 		/// <summary>
 		/// The SummaryDefinition property if wrapping LexEntry, or null for LexSense
@@ -5909,8 +5925,8 @@ namespace SIL.FieldWorks.FDO
 		IMultiUnicode Gloss { get; }
 
 		/// <summary>
-		/// Returns the SummaryDefinition on Entry, or DefinitionOrGloss on Sense
+		/// Returns the SummaryDefinition on Entry, or Gloss on Sense
 		/// </summary>
-		IMultiAccessorBase DefinitionOrGloss { get; }
+		IMultiAccessorBase GlossOrSummary { get; }
 	}
 }

@@ -1188,12 +1188,15 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var cache = propertyTable.GetValue<FdoCache>("cache");
 
-			var reversals = cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances().Select(item => item.Name.BestAnalysisAlternative.Text);
 			var publications = cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p.Name.BestAnalysisAlternative.Text).ToList();
 
 			var projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(propertyTable, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 			var defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 			var configurations = DictionaryConfigurationController.GetDictionaryConfigurationLabels(cache, defaultConfigDir, projectConfigDir);
+			// Now collect all the reversal configurations into the reversals variable
+			projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(propertyTable, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+			defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+			var reversals = DictionaryConfigurationController.GetDictionaryConfigurationLabels(cache, defaultConfigDir, projectConfigDir);
 
 			// show dialog
 			var controller = new PublishToWebonaryController(cache, propertyTable, mediator);

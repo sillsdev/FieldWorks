@@ -1527,7 +1527,7 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					node.ResetVernacularFont(
 						m_cache.WritingSystemFactory,
-						m_cache.DefaultVernWs,
+						m_cache.DefaultUserWs,
 						stylesheet);
 					maxPoints = Math.Max(maxPoints, node.NodeFont.SizeInPoints);
 				}

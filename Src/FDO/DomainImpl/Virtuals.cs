@@ -110,14 +110,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl // TODO: Move this to DomainServices
 		private int m_lexEntryHeadWordReversal;
 
 		/// <summary>
-		/// The Flid for the LexEntry.HeadWordReversal virtual property.
+		/// The Flid for the LexEntry.ReversalName virtual property.
 		/// </summary>
-		public int LexEntryHeadWordReversal
+		public int LexEntryReversalName
 		{
 			get
 			{
 				if (m_lexEntryHeadWordReversal == 0)
-					m_lexEntryHeadWordReversal = m_mdc.GetFieldId2(LexEntryTags.kClassId, "HeadWordReversal", false);
+					m_lexEntryHeadWordReversal = m_mdc.GetFieldId2(LexEntryTags.kClassId, "ReversalName", false);
 				return m_lexEntryHeadWordReversal;
 			}
 		}

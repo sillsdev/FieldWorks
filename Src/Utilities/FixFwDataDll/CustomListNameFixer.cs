@@ -60,9 +60,15 @@ namespace SIL.FieldWorks.FixData
 				fixedName = name + append++;
 			m_nameToGuid[fixedName] = guid; // this name is now taken too.
 			rt.Element("Name").Element("AUni").SetValue(fixedName);
-			logger(guid, DateTime.Now.ToShortDateString(),
-				String.Format(Strings.ksRepairingDuplicateListName, name, firstGuid, guid, fixedName));
+			logger(String.Format(Strings.ksRepairingDuplicateListName, name, firstGuid, guid, fixedName), true);
 			return true;
+		}
+
+		internal override void Reset()
+		{
+			m_guidToName.Clear();
+			m_nameToGuid.Clear();
+			base.Reset();
 		}
 	}
 }

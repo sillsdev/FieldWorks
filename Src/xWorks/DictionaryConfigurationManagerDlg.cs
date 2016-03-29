@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2014-2016 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -14,10 +18,14 @@ namespace SIL.FieldWorks.XWorks
 		private string m_helpTopic;
 		private readonly HelpProvider m_helpProvider;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
+		private readonly ToolTip m_toolTip;
 
 		public DictionaryConfigurationManagerDlg(IHelpTopicProvider helpTopicProvider)
 		{
 			InitializeComponent();
+
+			m_toolTip = new ToolTip();
+			m_toolTip.SetToolTip(copyButton, xWorksStrings.Duplicate); // the (reset|delete) button's tooltip is set when a config is selected
 
 			m_helpTopicProvider = helpTopicProvider;
 
@@ -60,14 +68,7 @@ namespace SIL.FieldWorks.XWorks
 
 		internal string HelpTopic
 		{
-			get
-			{
-				if (m_helpTopic == null)
-				{
-					m_helpTopic = "khtpDictConfigManager";
-				}
-				return m_helpTopic;
-			}
+			get { return m_helpTopic ?? (m_helpTopic = "khtpDictConfigManager"); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
@@ -76,6 +77,10 @@ namespace SIL.FieldWorks.XWorks
 				m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(HelpTopic));
 			}
 		}
+
+		public string ConfigurationGroupText { set { configurationsGroupBox.Text = value; } }
+
+		public string RemoveButtonToolTip { set { m_toolTip.SetToolTip(removeButton, value); } }
 
 		private void helpButton_Click(object sender, EventArgs e)
 		{

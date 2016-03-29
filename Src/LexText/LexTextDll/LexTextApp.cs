@@ -437,7 +437,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			m_windowToCloseOnIdle = null;
 		}
 
-		public bool OnConfigureHomographs(object commandObject)
+		public bool OnConfigureHeadwordNumbers(object commandObject)
 		{
 			CheckDisposed();
 			var configDlg = commandObject as XmlDocConfigureDlg;
@@ -455,7 +455,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 					dlg.StartPosition = FormStartPosition.CenterScreen;
 					if (dlg.ShowDialog(wndActive) != DialogResult.OK)
 						return true;
-					dlg.GetResults(hc);
 					// If called from config dlg, it will do its own refresh when it closes.
 					if (configDlg == null)
 						OnMasterRefresh(null);

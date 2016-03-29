@@ -186,6 +186,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnConfigureDictionary(object commandObject)
 		{
+			bool refreshNeeded;
 			using (var dlg = new DictionaryConfigurationDlg(m_propertyTable))
 			{
 				var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
@@ -193,8 +194,10 @@ namespace SIL.FieldWorks.XWorks
 				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, GetDictionaryConfigurationType(m_propertyTable));
 				dlg.HelpTopic = GetConfigDialogHelpTopic(m_propertyTable);
 				dlg.ShowDialog(m_propertyTable.GetValue<IWin32Window>("window"));
+				refreshNeeded = controller.MasterRefreshRequired;
 			}
-			m_mediator.SendMessage("MasterRefresh", null);
+			if (refreshNeeded)
+				m_mediator.SendMessage("MasterRefresh", null);
 			return true; // message handled
 		}
 

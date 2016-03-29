@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,11 +13,12 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
 using FileUtils = SIL.Utils.FileUtils;
+// ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.XWorks
 {
 	[TestFixture]
-	class DictionaryConfigurationManagerControllerTests : MemoryOnlyBackendProviderTestBase
+	public class DictionaryConfigurationManagerControllerTests : MemoryOnlyBackendProviderTestBase
 	{
 		private DictionaryConfigurationManagerController _controller;
 		private List<DictionaryConfigurationModel> _configurations;
@@ -149,6 +150,7 @@ namespace SIL.FieldWorks.XWorks
 
 			Assert.AreEqual(oldLabel, selectedConfig.Label, "Configuration should not have been renamed");
 			Assert.AreEqual(oldLabel, listViewItem.Text, "ListViewItem Text should have been reset");
+			Assert.False(_controller.IsDirty, "No changes; should not be dirty");
 		}
 
 		[Test]
@@ -178,6 +180,7 @@ namespace SIL.FieldWorks.XWorks
 				"Renaming a config to a unique name should complete successfully");
 			Assert.AreEqual(newLabel, selectedConfig.Label, "The configuration should have been renamed");
 			Assert.AreEqual(_controller.FormatFilePath(newLabel), selectedConfig.FilePath, "The FilePath should have been generated");
+			Assert.True(_controller.IsDirty, "Made changes; should be dirty");
 		}
 
 		[Test]
@@ -267,6 +270,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.AreEqual(pubs[i], newConfig.Publications[i], "Publications were not copied");
 			}
 			Assert.IsNull(newConfig.FilePath, "Path should be null to signify that it should be generated on rename");
+			Assert.True(_controller.IsDirty, "Made changes; should be dirty");
 		}
 
 		[Test]
@@ -277,6 +281,7 @@ namespace SIL.FieldWorks.XWorks
 			_controller.DeleteConfiguration(configurationToDelete);
 
 			Assert.That(_configurations, Is.Not.Contains(configurationToDelete), "Should have removed configuration from list of configurations");
+			Assert.That(_controller.IsDirty, "made changes; should be dirty");
 		}
 
 		[Test]
@@ -293,6 +298,7 @@ namespace SIL.FieldWorks.XWorks
 			_controller.DeleteConfiguration(configurationToDelete);
 
 			Assert.That(!FileUtils.FileExists(pathToConfiguration), "File should have been deleted");
+			Assert.That(_controller.IsDirty, "made changes; should be dirty");
 		}
 
 		[Test]
@@ -303,6 +309,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// SUT
 			Assert.DoesNotThrow(()=> _controller.DeleteConfiguration(configurationToDelete), "Don't crash if the FilePath isn't set for some reason.");
+			Assert.That(_controller.IsDirty, "made changes; should be dirty");
 		}
 
 		[Test]
@@ -331,6 +338,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(FileUtils.FileExists(pathToConfiguration), "File should still be there, not deleted.");
 			Assert.That(configurationToDelete.Label, Is.EqualTo("Root-based (complex forms as subentries)"), "Did not seem to reset configuration to shipped defaults.");
 			Assert.Contains(configurationToDelete, _configurations, "Should still have the configuration in the list of configurations");
+			Assert.That(_controller.IsDirty, "Resetting is a change that is saved later; should be dirty");
 
 			// Not asserting that the configurationToDelete.FilePath file contents are reset because that will happen later when it is saved.
 		}
@@ -345,7 +353,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 			// SUT
-			var claimsToBeDerived = _controller.IsConfigurationACustomizedShippedDefault(configuration);
+			var claimsToBeDerived = _controller.IsConfigurationACustomizedOriginal(configuration);
 
 			Assert.That(claimsToBeDerived, Is.False, "Should not have reported this as a shipped default configuration.");
 		}
@@ -360,7 +368,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 			// SUT
-			var claimsToBeDerived = _controller.IsConfigurationACustomizedShippedDefault(configuration);
+			var claimsToBeDerived = _controller.IsConfigurationACustomizedOriginal(configuration);
 
 			Assert.That(claimsToBeDerived, Is.False, "Should not have reported this as a shipped default configuration.");
 		}
@@ -375,9 +383,105 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 			// SUT
-			var claimsToBeDerived = _controller.IsConfigurationACustomizedShippedDefault(configuration);
+			var claimsToBeDerived = _controller.IsConfigurationACustomizedOriginal(configuration);
 
 			Assert.That(claimsToBeDerived, Is.True, "Should have reported this as a shipped default configuration.");
+		}
+
+		[Test]
+		public void ReversalCopyIsNotACustomizedOriginal()
+		{
+			var configuration = new DictionaryConfigurationModel
+			{
+				Label = "English Copy",
+				WritingSystem = "en",
+				FilePath = Path.Combine("whateverdir", "Copy of English" + DictionaryConfigurationModel.FileExtension)
+			};
+
+			// SUT
+			var claimsToBeDerived = _controller.IsConfigurationACustomizedOriginal(configuration);
+
+			Assert.That(claimsToBeDerived, Is.False, "Copy of a reversal should not claim to be a customized original");
+		}
+
+		[Test]
+		public void ReversalMatchingLanguageIsACustomizedOriginal()
+		{
+			var configuration = new DictionaryConfigurationModel
+			{
+				Label = "English",
+				WritingSystem = "en",
+				FilePath = Path.Combine("whateverdir", "English" + DictionaryConfigurationModel.FileExtension)
+			};
+
+			// SUT
+			var claimsToBeDerived = _controller.IsConfigurationACustomizedOriginal(configuration);
+
+			Assert.That(claimsToBeDerived, Is.True, "Should have reported this as a shipped default configuration.");
+		}
+
+		[Test]
+		public void RenamedReversalMatchingLanguageIsACustomizedOriginal()
+		{
+			var configuration = new DictionaryConfigurationModel
+			{
+				Label = "Manglish",
+				WritingSystem = "en",
+				FilePath = Path.Combine("whateverdir", "English" + DictionaryConfigurationModel.FileExtension)
+			};
+
+			// SUT
+			var claimsToBeDerived = _controller.IsConfigurationACustomizedOriginal(configuration);
+
+			Assert.That(claimsToBeDerived, Is.True, "Should have reported this as a shipped default configuration.");
+		}
+
+		[Test]
+		public void ReversalNotMatchingLanguageIsACustomizedOriginal()
+		{
+			var configuration = new DictionaryConfigurationModel
+			{
+				Label = "English (copy)",
+				WritingSystem = "en",
+				FilePath = Path.Combine("whateverdir", "English-Copy" + DictionaryConfigurationModel.FileExtension)
+			};
+
+			// SUT
+			var claimsToBeDerived = _controller.IsConfigurationACustomizedOriginal(configuration);
+
+			Assert.That(claimsToBeDerived, Is.False, "This is a copy and not a customized original and should have reported false.");
+		}
+
+		[Test]
+		public void ReversalOfLanguageWithRegionIsACustomizedOriginal()
+		{
+			var configuration = new DictionaryConfigurationModel
+			{
+				Label = "German (Algeria)",
+				WritingSystem = "de-DZ",
+				FilePath = Path.Combine("whateverdir", "German (Algeria)" + DictionaryConfigurationModel.FileExtension)
+			};
+
+			// SUT
+			var claimsToBeDerived = _controller.IsConfigurationACustomizedOriginal(configuration);
+
+			Assert.That(claimsToBeDerived, Is.True, "Should have reported this as a shipped default configuration.");
+		}
+
+		[Test]
+		public void ReversalOfInvalidLanguageIsNotACustomizedOriginal()
+		{
+			var configuration = new DictionaryConfigurationModel
+			{
+				Label = "English",
+				WritingSystem = "enz1a",
+				FilePath = Path.Combine("whateverdir", "enz1a" + DictionaryConfigurationModel.FileExtension)
+			};
+
+			// SUT
+			var claimsToBeDerived = _controller.IsConfigurationACustomizedOriginal(configuration);
+
+			Assert.That(claimsToBeDerived, Is.False, "Should have reported this as a shipped default configuration.");
 		}
 	}
 }

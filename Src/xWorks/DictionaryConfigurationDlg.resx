@@ -132,6 +132,9 @@
   <data name="manageConfigs_treeDetailButton_split.Orientation" type="System.Windows.Forms.Orientation, System.Windows.Forms">
     <value>Horizontal</value>
   </data>
+  <data name="m_txtPubsForConfig.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Bottom, Left, Right</value>
+  </data>
   <data name="m_txtPubsForConfig.Location" type="System.Drawing.Point, System.Drawing">
     <value>374, 30</value>
   </data>
@@ -139,7 +142,7 @@
     <value>True</value>
   </data>
   <data name="m_txtPubsForConfig.Size" type="System.Drawing.Size, System.Drawing">
-    <value>244, 34</value>
+    <value>245, 31</value>
   </data>
   <data name="m_txtPubsForConfig.TabIndex" type="System.Int32, mscorlib">
     <value>37</value>
@@ -243,34 +246,31 @@
   <data name="&gt;&gt;m_lblDictConfig.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
-  <data name="m_linkManageConfigurations.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="m_linkManageConfigurations.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+  <data name="m_buttonManageConfigurations.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="m_linkManageConfigurations.Location" type="System.Drawing.Point, System.Drawing">
-    <value>277, 45</value>
+  <data name="m_buttonManageConfigurations.Location" type="System.Drawing.Point, System.Drawing">
+    <value>262, 34</value>
   </data>
-  <data name="m_linkManageConfigurations.Size" type="System.Drawing.Size, System.Drawing">
-    <value>77, 13</value>
+  <data name="m_buttonManageConfigurations.Size" type="System.Drawing.Size, System.Drawing">
+    <value>105, 21</value>
   </data>
-  <data name="m_linkManageConfigurations.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_buttonManageConfigurations.TabIndex" type="System.Int32, mscorlib">
     <value>35</value>
   </data>
-  <data name="m_linkManageConfigurations.Text" xml:space="preserve">
-    <value>Manage Views</value>
+  <data name="m_buttonManageConfigurations.Text" xml:space="preserve">
+    <value>Manage Views...</value>
   </data>
-  <data name="&gt;&gt;m_linkManageConfigurations.Name" xml:space="preserve">
-    <value>m_linkManageConfigurations</value>
+  <data name="&gt;&gt;m_buttonManageConfigurations.Name" xml:space="preserve">
+    <value>m_buttonManageConfigurations</value>
   </data>
-  <data name="&gt;&gt;m_linkManageConfigurations.Type" xml:space="preserve">
-    <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;m_buttonManageConfigurations.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_linkManageConfigurations.Parent" xml:space="preserve">
+  <data name="&gt;&gt;m_buttonManageConfigurations.Parent" xml:space="preserve">
     <value>m_grpConfigurationManagement</value>
   </data>
-  <data name="&gt;&gt;m_linkManageConfigurations.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_buttonManageConfigurations.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
   <data name="m_grpConfigurationManagement.Location" type="System.Drawing.Point, System.Drawing">
@@ -340,7 +340,7 @@
     <value>treeControl</value>
   </data>
   <data name="&gt;&gt;treeControl.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.XWorks.DictionaryConfigurationTreeControl, xWorks, Version=8.3.0.35565, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.XWorks.DictionaryConfigurationTreeControl, xWorks, Version=8.3.0.24522, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;treeControl.Parent" xml:space="preserve">
     <value>tree_Detail_Split.Panel1</value>
@@ -698,6 +698,9 @@
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>634, 672</value>
+  </data>
+  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
     <value>350, 515</value>
