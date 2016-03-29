@@ -3757,6 +3757,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					if (sequence != null && sequence.Flid == LexEntryRefTags.kflidComponentLexemes)
 						list.Add(sequence.MainObject as ILexEntryRef);
 				}
+				// LT-17277 PrimaryEntryReferences not showing
+				// because EntryRefsWithThisMainSense should actually be EntryRefsWithThisMainSenseOrEntry
+				foreach (var item in OwningEntry.ReferringObjects)
+				{
+					if (item is ILexEntryRef)
+						list.Add(item as ILexEntryRef);
+				}
 				return list;
 			}
 		}

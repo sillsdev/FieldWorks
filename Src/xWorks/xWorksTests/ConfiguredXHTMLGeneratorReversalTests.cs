@@ -113,6 +113,70 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_ReferencedSenses_PrimaryEntryReferenceTypeWorks()
+		{
+			var abbrNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Abbreviation",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "analysis" })
+			};
+			var nameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new []{ "analysis" })
+			};
+			var typeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "EntryTypes",
+				Children = new List<ConfigurableDictionaryNode> { abbrNode, nameNode },
+				Label = "Type"
+			};
+			var primaryEntryRefNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "EntryRefsWithThisMainSense",
+				Children = new List<ConfigurableDictionaryNode> { typeNode },
+				Label = "Primary Entry References"
+			};
+			var headWordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ReversalName",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new []{"vernacular"})
+			};
+			var referencedSensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ReferringSenses",
+				Children = new List<ConfigurableDictionaryNode> { headWordNode, primaryEntryRefNode },
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					NumberingStyle = "Dictionary-SenseNumber", DisplayEachSenseInAParagraph = false, ShowSharedGrammarInfoFirst = false
+				},
+				Label = "Referenced Senses"
+			};
+			var mainRevEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { referencedSensesNode },
+				FieldDescription = "ReversalIndexEntry",
+				CSSClassNameOverride = "reversalindexentry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainRevEntryNode);
+			var reversalEntry = CreateInterestingEnglishReversalEntry();
+			var referringSense = reversalEntry.ReferringSenses.First();
+			var complexForm = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			ConfiguredXHTMLGeneratorTests.CreateComplexForm(Cache, referringSense.Owner, complexForm, false); // true or false both work
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			//SUT
+			string result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(reversalEntry, mainRevEntryNode, null, settings);
+			const string referringSenseXpath = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']";
+			var headwordXpath = referringSenseXpath + "/span[@class='headword']/span[@lang='fr']/a[text()='Citation']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(headwordXpath, 1);
+			const string entryRefXpath = "/span[@class='entryrefswiththismainsense']/span[@class='entryrefswiththismainsens']";
+			const string entryRefTypeXpath = "/span[@class='entrytypes']/span[@class='entrytype']";
+			var refTypeXpath = referringSenseXpath + entryRefXpath + entryRefTypeXpath + "/span[@class='abbreviation']/span[@lang='en' and text()='comp. of']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(refTypeXpath, 1);
+		}
+
+		[Test]
 		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderIfNoPreviousHeader()
 		{
 			var entry = CreateInterestingEnglishReversalEntry();

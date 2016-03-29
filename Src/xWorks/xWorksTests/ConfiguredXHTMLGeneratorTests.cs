@@ -2207,7 +2207,7 @@ namespace SIL.FieldWorks.XWorks
 			const string translation = "Translation of the Sentence";
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
-			CreateComplexForm(mainEntry, minorEntry, false);
+			CreateComplexForm(Cache, mainEntry, minorEntry, false);
 			AddExampleToSense(minorEntry.SensesOS[0], example, translation);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
@@ -2282,8 +2282,8 @@ namespace SIL.FieldWorks.XWorks
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var otherReferencedComplexForm = CreateInterestingLexEntry(Cache);
 			var subentry = CreateInterestingLexEntry(Cache);
-			CreateComplexForm(mainEntry, subentry, true);
-			CreateComplexForm(mainEntry, otherReferencedComplexForm, false);
+			CreateComplexForm(Cache, mainEntry, subentry, true);
+			CreateComplexForm(Cache, mainEntry, otherReferencedComplexForm, false);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
@@ -2330,7 +2330,7 @@ namespace SIL.FieldWorks.XWorks
 			var variantForm = CreateInterestingLexEntry(Cache);
 			var subentry = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(variantForm, mainEntry);
-			CreateComplexForm(mainEntry, subentry, true);
+			CreateComplexForm(Cache, mainEntry, subentry, true);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
@@ -2900,7 +2900,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var complexForm = CreateInterestingLexEntry(Cache);
-			var complexFormRef = CreateComplexForm(mainEntry, complexForm, false);
+			var complexFormRef = CreateComplexForm(Cache, mainEntry, complexForm, false);
 			var complexRefName = complexFormRef.ComplexEntryTypesRS[0].Name.BestAnalysisAlternative.Text;
 			var complexTypePoss = Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.First(complex => complex.Name.BestAnalysisAlternative.Text == complexRefName);
 
@@ -2925,7 +2925,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var complexForm = CreateInterestingLexEntry(Cache);
-			var complexFormRef = CreateComplexForm(mainEntry, complexForm, true);
+			var complexFormRef = CreateComplexForm(Cache, mainEntry, complexForm, true);
 			var complexRefName = complexFormRef.ComplexEntryTypesRS[0].Name.BestAnalysisAlternative.Text;
 			var complexTypePoss = Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.First(complex => complex.Name.BestAnalysisAlternative.Text == complexRefName);
 
@@ -2956,7 +2956,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var complexForm = CreateInterestingLexEntry(Cache);
-			var complexFormRef = CreateComplexForm(mainEntry, complexForm, false);
+			var complexFormRef = CreateComplexForm(Cache, mainEntry, complexForm, false);
 			var complexRefName = complexFormRef.ComplexEntryTypesRS[0].Name.BestAnalysisAlternative.Text;
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.First(complex => complex.Name.BestAnalysisAlternative.Text != complexRefName);
 			Assert.IsNotNull(notComplexTypePoss);
@@ -3301,8 +3301,8 @@ namespace SIL.FieldWorks.XWorks
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var otherReferencedComplexForm = CreateInterestingLexEntry(Cache);
 			var subentry = CreateInterestingLexEntry(Cache);
-			CreateComplexForm(mainEntry.SensesOS[0], subentry, true);
-			CreateComplexForm(mainEntry.SensesOS[0], otherReferencedComplexForm, false);
+			CreateComplexForm(Cache, mainEntry.SensesOS[0], subentry, true);
+			CreateComplexForm(Cache, mainEntry.SensesOS[0], otherReferencedComplexForm, false);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
@@ -4177,7 +4177,7 @@ namespace SIL.FieldWorks.XWorks
 			var lexentry = CreateInterestingLexEntry(Cache);
 
 			var subentry = CreateInterestingLexEntry(Cache);
-			var subentryRef = CreateComplexForm(lexentry, subentry, true);
+			var subentryRef = CreateComplexForm(Cache, lexentry, subentry, true);
 
 			var complexRefAbbr = subentryRef.ComplexEntryTypesRS[0].Abbreviation.BestAnalysisAlternative.Text;
 			var complexRefRevAbbr = subentryRef.ComplexEntryTypesRS[0].ReverseAbbr.BestAnalysisAlternative.Text;
@@ -4225,7 +4225,7 @@ namespace SIL.FieldWorks.XWorks
 			var lexentry = CreateInterestingLexEntry(Cache);
 
 			var subentry = CreateInterestingLexEntry(Cache);
-			var subentryRef = CreateComplexForm(lexentry, subentry, true);
+			var subentryRef = CreateComplexForm(Cache, lexentry, subentry, true);
 
 			var complexRefAbbr = subentryRef.ComplexEntryTypesRS[0].Abbreviation.BestAnalysisAlternative.Text;
 
@@ -4274,7 +4274,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var lexentry = CreateInterestingLexEntry(Cache);
 			var complexEntry = CreateInterestingLexEntry(Cache);
-			var complexFormRef= CreateComplexForm(lexentry, complexEntry, false);
+			var complexFormRef= CreateComplexForm(Cache, lexentry, complexEntry, false);
 			complexFormRef.ComplexEntryTypesRS.Clear(); // no complex form type specified
 
 			var formNode = new ConfigurableDictionaryNode
@@ -4317,7 +4317,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var lexentry = CreateInterestingLexEntry(Cache);
 			var subentry = CreateInterestingLexEntry(Cache);
-			var subentryRef = CreateComplexForm(lexentry, subentry, true);
+			var subentryRef = CreateComplexForm(Cache, lexentry, subentry, true);
 			subentryRef.ComplexEntryTypesRS.Clear(); // no complex form type specified
 
 			var headwordNode = new ConfigurableDictionaryNode
@@ -4413,7 +4413,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (complexForm != FormType.None)
 			{
-				var complexRef = CreateComplexForm(mainEntry, minorEntry, false);
+				var complexRef = CreateComplexForm(Cache, mainEntry, minorEntry, false);
 				if (complexForm == FormType.Unspecified)
 					complexRef.ComplexEntryTypesRS.Clear();
 			}
@@ -4538,14 +4538,14 @@ namespace SIL.FieldWorks.XWorks
 			AddHeadwordToEntry(entryMainsubentry, "mainsubentry", m_wsFr, Cache);
 			entryMainsubentry.SensesOS[0].Gloss.set_String (m_wsEn, "mainsubentry");
 			entryMainsubentry.DoNotPublishInRC.Add(typeTest);
-			CreateComplexForm(entryEntry, entryMainsubentry, true);
+			CreateComplexForm(Cache, entryEntry, entryMainsubentry, true);
 			//var complexRefName1 = complexFormRef1.ComplexEntryTypesRS[0].Name.BestAnalysisAlternative.Text;
 			//var complexTypePoss1 = Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.First(complex => complex.Name.BestAnalysisAlternative.Text == complexRefName1);
 			var entryTestsubentry = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(entryTestsubentry, "testsubentry", m_wsFr, Cache);
 			entryTestsubentry.SensesOS[0].Gloss.set_String (m_wsEn, "testsubentry");
 			entryTestsubentry.DoNotPublishInRC.Add(typeMain);
-			CreateComplexForm(entryEntry, entryTestsubentry, true);
+			CreateComplexForm(Cache, entryEntry, entryTestsubentry, true);
 			//var complexRefName2 = complexFormRef2.ComplexEntryTypesRS[0].Name.BestAnalysisAlternative.Text;
 			//var complexTypePoss2 = Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.First(complex => complex.Name.BestAnalysisAlternative.Text == complexRefName2);
 
@@ -4764,7 +4764,7 @@ namespace SIL.FieldWorks.XWorks
 			var lexentry = CreateInterestingLexEntry(Cache);
 
 			var subentry = CreateInterestingLexEntry(Cache);
-			var subentryRef = CreateComplexForm(lexentry, subentry, true);
+			var subentryRef = CreateComplexForm(Cache, lexentry, subentry, true);
 
 			var complexRefRevAbbr = subentryRef.ComplexEntryTypesRS[0].ReverseAbbr.BestAnalysisAlternative.Text;
 
@@ -4823,13 +4823,13 @@ namespace SIL.FieldWorks.XWorks
 			lexentry.SensesOS[2].Definition.SetAnalysisDefaultWritingSystem("MainEntryS3Defn");
 
 			var subentry1 = CreateInterestingLexEntry(Cache);
-			CreateComplexForm(lexentry, subentry1, true); // subentry references main ILexEntry
+			CreateComplexForm(Cache, lexentry, subentry1, true); // subentry references main ILexEntry
 
 			var subentry2 = CreateInterestingLexEntry(Cache);
-			CreateComplexForm(lexentry.SensesOS[1], subentry2, true); // subentry references 2nd ILexSense
+			CreateComplexForm(Cache, lexentry.SensesOS[1], subentry2, true); // subentry references 2nd ILexSense
 
 			var subentry3 = CreateInterestingLexEntry(Cache);
-			CreateComplexForm(lexentry.SensesOS[2], subentry3, true); // subentry references 3rd ILexSense
+			CreateComplexForm(Cache, lexentry.SensesOS[2], subentry3, true); // subentry references 3rd ILexSense
 
 			var glossOrSummDefnNode = new ConfigurableDictionaryNode
 			{
@@ -5468,11 +5468,11 @@ namespace SIL.FieldWorks.XWorks
 			return variantForm.MakeVariantOf(main, varType);
 		}
 
-		private ILexEntryRef CreateComplexForm(ICmObject main, ILexEntry complexForm, bool subentry)
+		internal static ILexEntryRef CreateComplexForm(FdoCache fdoCache, ICmObject main, ILexEntry complexForm, bool subentry)
 		{
-			var complexEntryRef = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
+			var complexEntryRef = fdoCache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
 			complexForm.EntryRefsOS.Add(complexEntryRef);
-			var complexEntryType = (ILexEntryType) Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS[0];
+			var complexEntryType = (ILexEntryType) fdoCache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS[0];
 			var complexEntryTypeAbbrText = complexEntryType.Abbreviation.BestAnalysisAlternative.Text;
 			var complexEntryTypeRevAbbr = complexEntryType.ReverseAbbr;
 			// If there is no reverseAbbr, generate one from the forward abbr (e.g. "comp. of") by trimming the trailing " of"
