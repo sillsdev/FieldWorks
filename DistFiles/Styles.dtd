@@ -16,7 +16,7 @@
 <!ELEMENT Styles (markup, replacements, ImportMappingSets)>
 <!ATTLIST Styles
 	date CDATA #REQUIRED
-	DTDver (B8521229-70FB-4DD9-A022-434714B8DE4B) #REQUIRED
+	DTDver (64DE4B02-14DA-42F6-8C1C-CF21E41D3EF7) #REQUIRED
 	label CDATA #IMPLIED
 >
 <!ELEMENT markup (tag+)>
@@ -32,6 +32,7 @@
 	structure (body | heading) #IMPLIED
 	use (chapter | verse | prose | proseSentenceInitial | line | lineSentenceInitial | list | table | footnote | stanzabreak | title | properNoun | special) #IMPLIED
 	type (character | paragraph) #REQUIRED
+	basedOn IDREF #IMPLIED
 >
 <!ELEMENT sfm (#PCDATA)>
 <!ATTLIST sfm

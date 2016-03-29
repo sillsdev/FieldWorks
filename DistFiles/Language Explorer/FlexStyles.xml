@@ -5,7 +5,7 @@
 	guid. Be sure to validate any changes against ../Styles.dtd.
 	*********************************************************************************************
 -->
-<Styles date="2016-02-02" DTDver="B8521229-70FB-4DD9-A022-434714B8DE4B" label="Flex Dictionary">
+<Styles date="2016-02-02" DTDver="64DE4B02-14DA-42F6-8C1C-CF21E41D3EF7" label="Flex Dictionary">
 	<markup version="4831DC54-CBF2-4C47-A5C7-D0512F54EDE3">
 		<!--
 		The 'Normal' entry is here mainly as a placeholder, so the DTD will allow things to be based on it.
@@ -209,7 +209,7 @@
 				<override wsId="pt" family="Microsoft Sans Serif" size="10 pt"/>
 			</font>
 		</tag>
-		<tag id="Homograph-Number" guid="6ED2CB3D-F6DB-4AF5-9DE9-75669CE26F46" userlevel="1" context="internalConfigureView" type="character">
+		<tag id="Homograph-Number" guid="6ED2CB3D-F6DB-4AF5-9DE9-75669CE26F46" userlevel="1" context="internalConfigureView" type="character" basedOn="Dictionary-Headword">
 			<usage wsId="en">Used for homograph numbers</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font subscript="true" bold="true"/>
