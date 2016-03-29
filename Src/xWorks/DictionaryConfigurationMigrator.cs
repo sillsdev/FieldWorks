@@ -552,6 +552,9 @@ namespace SIL.FieldWorks.XWorks
 				if (child.Label == "Homograph Number")
 					result = "Secondary Homograph Number";
 
+				if (child.Label == "Headword" && child.Parent.Label == "Referenced Senses")
+					result = "Referenced Headword";
+
 			}
 			return result;
 		}

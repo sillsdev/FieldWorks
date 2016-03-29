@@ -1852,6 +1852,66 @@ namespace SIL.FieldWorks.XWorks
 			return model;
 		}
 
+		private DictionaryConfigurationModel BuildConvertedReversalIndexChildNodesReferencedHeadword()
+		{
+			var referencedHeadword = new ConfigurableDictionaryNode
+			{
+				Label = "Headword",
+				FieldDescription = "ReversalName"
+			};
+			var referencedSenses = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Senses",
+				FieldDescription = "ReferringSenses",
+				Children = new List<ConfigurableDictionaryNode> { referencedHeadword }
+			};
+			var reversalSubentries = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Subentries",
+				FieldDescription = "Subentries",
+				Children = new List<ConfigurableDictionaryNode> { referencedSenses }
+			};
+			var reversalEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { referencedSenses, reversalSubentries }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(reversalEntryNode);
+
+			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode }, Version = -1 };
+		}
+
+		private DictionaryConfigurationModel BuildCurrentDefaultReversalIndexChildNodesReferencedHeadword()
+		{
+			var referencedHeadword = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Headword",
+				FieldDescription = "ReversalName"
+			};
+			var referencedSenses = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Senses",
+				FieldDescription = "ReferringSenses",
+				Children = new List<ConfigurableDictionaryNode> { referencedHeadword }
+			};
+			var reversalSubentries = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Subentries",
+				FieldDescription = "Subentries",
+				Children = new List<ConfigurableDictionaryNode> { referencedSenses }
+			};
+			var reversalEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { referencedSenses, reversalSubentries }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(reversalEntryNode);
+
+			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode }, Version = -1 };
+		}
+
 		///<summary/>
 		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_Homograph_RenamedTo_SecondaryHomographNumber()
@@ -1878,6 +1938,29 @@ namespace SIL.FieldWorks.XWorks
 				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(minorCfEntriesPath + newHomographPath, 1);
 				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(minorVarEntriesPath + oldHomographPath);
 				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(minorVarEntriesPath + newHomographPath, 1);
+			}
+		}
+
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_Headword_RenamedTo_ReferencedHeadword()
+		{
+			const string reversalEntriesPath = "//ConfigurationItem[@name='Reversal Entry']/ConfigurationItem[@name='Referenced Senses']/";
+			const string reversalSubentriesPath = "//ConfigurationItem[@name='Reversal Subentries']/ConfigurationItem[@name='Referenced Senses']/";
+			const string oldReferencedHeadword = "ConfigurationItem[@name='Headword']";
+			const string newReferencedHeadword = "ConfigurationItem[@name='Referenced Headword']";
+			using (var convertedModelFile = new TempFile())
+			{
+				var convertedConfig = BuildConvertedReversalIndexChildNodesReferencedHeadword();
+				convertedConfig.FilePath = convertedModelFile.Path;
+				var defaultConfig = BuildCurrentDefaultReversalIndexChildNodesReferencedHeadword();
+
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedConfig, defaultConfig);
+				convertedConfig.Save();
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(reversalEntriesPath + oldReferencedHeadword);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(reversalEntriesPath + newReferencedHeadword, 1);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(reversalSubentriesPath + oldReferencedHeadword);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(reversalSubentriesPath + newReferencedHeadword, 1);
 			}
 		}
 
