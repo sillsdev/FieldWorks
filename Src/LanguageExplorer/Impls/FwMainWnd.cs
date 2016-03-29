@@ -33,6 +33,7 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.Reporting;
 using SIL.Utils;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 using Win32 = SIL.FieldWorks.Common.FwUtils.Win32;
@@ -75,7 +76,9 @@ namespace LanguageExplorer.Impls
 		private FwStyleSheet _stylesheet;
 		private IPublisher _publisher;
 		private ISubscriber _subscriber;
-		private IFlexApp _flexApp;
+		private readonly IFlexApp _flexApp;
+		private DateTime _lastToolChange = DateTime.MinValue;
+		private HashSet<string> _toolsReportedToday = new HashSet<string>();
 
 		/// <summary>
 		/// Create new instance of window.
@@ -531,7 +534,25 @@ namespace LanguageExplorer.Impls
 				_currentTool.Deactivate(mainContainer, _menuStrip, toolStripContainer, _statusbar);
 			}
 			_currentTool = clickedTool;
-			PropertyTable.SetProperty(string.Format("ToolForAreaNamed_{0}", _currentArea.MachineName), _currentTool.MachineName, SettingsGroup.LocalSettings, true, false);
+			string areaName = _currentArea.MachineName;
+			var toolName = _currentTool.MachineName;
+			PropertyTable.SetProperty(string.Format("ToolForAreaNamed_{0}", areaName), toolName, SettingsGroup.LocalSettings, true, false);
+
+			// Do some logging.
+			Logger.WriteEvent("Switched to " + _currentTool.MachineName);
+			// Should we report a tool change?
+			if (_lastToolChange.Date != DateTime.Now.Date)
+			{
+				// New day has dawned (or just started up). Reset tool reporting.
+				_toolsReportedToday.Clear();
+				_lastToolChange = DateTime.Now;
+			}
+			if (!_toolsReportedToday.Contains(toolName))
+			{
+				_toolsReportedToday.Add(toolName);
+				UsageReporter.SendNavigationNotice("SwitchToTool/{0}/{1}", areaName, toolName);
+			}
+
 			_currentTool.Activate(mainContainer, _menuStrip, toolStripContainer, _statusbar);
 		}
 

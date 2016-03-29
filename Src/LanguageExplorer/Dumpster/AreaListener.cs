@@ -24,7 +24,7 @@ namespace LanguageExplorer.Dumpster
 	/// <summary>
 	/// Summary description for AreaListener.
 	/// </summary>
-	internal sealed class AreaListener : IFlexComponent, IFWDisposable
+	internal sealed class AreaListener : IFWDisposable
 	{
 		#region Member variables
 
@@ -132,107 +132,13 @@ namespace LanguageExplorer.Dumpster
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			PropertyTable = null;
-			Publisher = null;
-			Subscriber = null;
 
 			m_isDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation
 
-		#region Implementation of IPropertyTableProvider
-
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
-		/// <summary>
-		/// Initialize a FLEx component with the basic interfaces.
-		/// </summary>
-		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
-		{
-			FlexComponentCheckingService.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-			PropertyTable = flexComponentParameters.PropertyTable;
-			Publisher = flexComponentParameters.Publisher;
-			Subscriber = flexComponentParameters.Subscriber;
-
-			m_ctotalLists = 0;
-			m_ccustomLists = 0;
-		}
-
-		#endregion
-
-		private DateTime m_lastToolChange = DateTime.MinValue;
-		HashSet<string> m_toolsReportedToday = new HashSet<string>();
-
-		public void OnPropertyChanged(string name)
-		{
-			CheckDisposed();
-
-			switch(name)
-			{
-				default:
-					break;
-				/* remember, what XCore thinks of as a "Content Control", is what this AreaManager sees as a "tool".
-					* with that in mind, this case is invoked when the user chooses a different tool.
-					* the purpose of this code is to then store the name of that tool so that
-					* next time we come back to this area, we can remember to use this same tool.
-					*/
-				case "currentContentControlObject":
-					string toolName = PropertyTable.GetValue("currentContentControl", "");
-					var c = PropertyTable.GetValue<IMainContentControl>("currentContentControlObject");
-					var propName = "ToolForAreaNamed_" + c.AreaName;
-					PropertyTable.SetProperty(propName, toolName, true, true);
-					Logger.WriteEvent("Switched to " + toolName);
-					// Should we report a tool change?
-					if (m_lastToolChange.Date != DateTime.Now.Date)
-					{
-						// new day has dawned (or just started up). Reset tool reporting.
-						m_toolsReportedToday.Clear();
-						m_lastToolChange = DateTime.Now;
-					}
-					string areaNameForReport = PropertyTable.GetValue<string>("areaChoice");
-					if (!string.IsNullOrWhiteSpace(areaNameForReport) && !m_toolsReportedToday.Contains(toolName))
-					{
-						m_toolsReportedToday.Add(toolName);
-						UsageReporter.SendNavigationNotice("SwitchToTool/{0}/{1}", areaNameForReport, toolName);
-					}
-					break;
-
-				case "areaChoice":
-					string areaName = PropertyTable.GetValue<string>("areaChoice");
-
-					if(string.IsNullOrEmpty(areaName))
-						break;//this can happen when we use this property very early in the initialization
-
-					//for next startup
-					PropertyTable.SetProperty("InitialArea", areaName, true, true);
-
-					ActivateToolForArea(areaName);
-					break;
-			}
-		}
+		private IPropertyTable PropertyTable { get; set; }
 
 		/// <summary>
 		/// This method is called BY REFLECTION through the mediator from LinkListener.FollowActiveLink, because the assembly dependencies
@@ -551,35 +457,6 @@ namespace LanguageExplorer.Dumpster
 		#endregion
 
 		/// <summary>
-		/// this is called by xWindow just before it sets the initial control which will actually
-		/// take over the content area.
-		/// </summary>
-		/// <param name="windowConfigurationNode"></param>
-		/// <returns></returns>
-		public bool OnSetInitialContentObject(object windowConfigurationNode)
-		{
-			CheckDisposed();
-
-			string areaName = PropertyTable.GetValue("InitialArea", "");
-			Debug.Assert( areaName !="", "The configuration files should set a default for 'InitialArea' under <defaultProperties>");
-
-			// if an old configuration is preserving an obsolete InitialArea, reset it now, so we don't crash (cf. LT-7977)
-			if (!IsValidAreaName(areaName))
-			{
-				areaName = "lexicon";
-				if (!IsValidAreaName(areaName))
-					throw new ApplicationException(String.Format("could not find default area name '{0}'", areaName));
-			}
-
-			//this will cause our "onPropertyChanged" method to fire, and it will then set the tool appropriately.
-			PropertyTable.SetProperty("areaChoice", areaName, false, true);
-
-			ActivateToolForArea(areaName);
-
-			return true;	//we handled this.
-		}
-
-		/// <summary>
 		/// This is called by CustomListDlg to get a new/modified list to show up in the tools list.
 		/// </summary>
 		/// <param name="areaId"></param>
@@ -638,37 +515,6 @@ namespace LanguageExplorer.Dumpster
 			var windowConfiguration = PropertyTable.GetValue<XmlNode>("WindowConfiguration");
 			areaParams = windowConfiguration.SelectSingleNode("//lists/list[@id='AreasList']/item[@value='" + areaName + "']/parameters");
 			return areaParams != null;
-		}
-
-		private void ActivateToolForArea(string areaName)
-		{
-			var currentContentControl = PropertyTable.GetValue<IMainContentControl>("currentContentControlObject");
-			if (currentContentControl != null && currentContentControl.AreaName == areaName)
-				return;//we are already in a control of this area, don't change anything.
-
-			string toolName;
-			XmlNode node = GetToolNodeForArea(areaName, out toolName);
-			PropertyTable.SetProperty("currentContentControlParameters", node.SelectSingleNode("control"), false, true);
-			PropertyTable.SetProperty("currentContentControl", toolName, false, true);
-		}
-
-		private XmlNode GetToolNodeForArea(string areaName, out string toolName)
-		{
-			string property = "ToolForAreaNamed_" + areaName;
-			toolName = PropertyTable.GetValue(property, "");
-			if (toolName == "")
-				throw new ConfigurationException("There must be a property named " + property + " in the <defaultProperties> section of the configuration file.");
-
-			XmlNode node;
-			if (!TryGetToolNode(areaName, toolName, out node))
-			{
-				// the tool must be obsolete, so just get the default tool for this area
-				var windowConfiguration = PropertyTable.GetValue<XmlNode>("WindowConfiguration");
-				toolName = windowConfiguration.SelectSingleNode("//defaultProperties/property[@name='" + property + "']/@value").InnerText;
-				if (!TryGetToolNode(areaName, toolName, out node))
-					throw new ConfigurationException("There must be a property named " + property + " in the <defaultProperties> section of the configuration file.");
-			}
-			return node;
 		}
 
 		/// <summary>

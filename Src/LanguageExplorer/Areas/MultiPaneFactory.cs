@@ -53,13 +53,14 @@ namespace LanguageExplorer.Areas
 		/// Remove <paramref name="multiPane"/> from parent control and dispose it.
 		/// </summary>
 		/// <param name="multiPane">The MultiPane to remove and dispose.</param>
-		internal static void RemoveFromParentAndDispose(MultiPane multiPane)
+		internal static void RemoveFromParentAndDispose(ref MultiPane multiPane)
 		{
 			var parentControl = multiPane.Parent;
 			parentControl.SuspendLayout();
 			parentControl.Controls.Remove(multiPane);
 			multiPane.Dispose();
 			parentControl.ResumeLayout();
+			multiPane = null;
 		}
 	}
 }

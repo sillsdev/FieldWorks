@@ -75,8 +75,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			PaneBarContainerFactory.RemoveFromParentAndDispose(_paneBarContainer);
-			_paneBarContainer = null;
+			PaneBarContainerFactory.RemoveFromParentAndDispose(ref _paneBarContainer);
 		}
 
 		/// <summary>

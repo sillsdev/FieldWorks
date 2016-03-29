@@ -74,8 +74,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			MultiPaneFactory.RemoveFromParentAndDispose(_multiPane);
-			_multiPane = null;
+			MultiPaneFactory.RemoveFromParentAndDispose(ref _multiPane);
 		}
 
 		/// <summary>

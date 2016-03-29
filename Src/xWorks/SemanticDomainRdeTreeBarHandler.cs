@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Xml;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
@@ -14,6 +13,7 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using System;
+using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework;
 
@@ -34,43 +34,33 @@ namespace SIL.FieldWorks.XWorks
 		private ListView m_listView;
 		private IVwStylesheet m_stylesheet;
 		private ICmSemanticDomainRepository m_semDomRepo;
+		private XElement m_configurationParametersElement;
 
 		/// <summary />
-		public SemanticDomainRdeTreeBarHandler(IPropertyTable propertyTable, bool expand, bool hierarchical, bool includeAbbr, string bestWS)
+		public SemanticDomainRdeTreeBarHandler(XElement configurationParametersElement, IPaneBar paneBar, IPropertyTable propertyTable, bool expand, bool hierarchical, bool includeAbbr, string bestWS)
 			: base(propertyTable, expand, hierarchical, includeAbbr, bestWS)
 		{
-		}
-
-#if RANDYTODO
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="treeBarControl is a reference")]
-		internal override void Init(IPropertyTable propertyTable, XmlNode node)
-		{
-			base.Init(propertyTable, node);
+			m_configurationParametersElement = configurationParametersElement;
+			m_titleBar = paneBar;
 
 			m_semDomRepo = m_cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
 			m_stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			var treeBarControl = GetTreeBarControl();
-			SetupAndShowHeaderPanel(node, treeBarControl);
-			m_searchTimer = new SearchTimer(treeBarControl, 500, HandleChangeInSearchText,
+			SetupAndShowHeaderPanel(treeBarControl);
+			m_searchTimer = new SearchTimer((Control)treeBarControl, 500, HandleChangeInSearchText,
 				new List<Control> { treeBarControl.TreeView, treeBarControl.ListView });
 			m_textSearch.TextChanged += m_searchTimer.OnSearchTextChanged;
 			m_treeView = treeBarControl.TreeView;
 			m_listView = treeBarControl.ListView;
 			m_listView.HeaderStyle = ColumnHeaderStyle.None; // We don't want a secondary "Records" title bar
 		}
-#endif
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="PaneBar and Panel get added to controls collection and disposed there")]
-		private void SetupAndShowHeaderPanel(XmlNode node, IRecordBar treeBarControl)
+			Justification="Panel gets added to controls collection and disposed there")]
+		private void SetupAndShowHeaderPanel(IRecordBar treeBarControl)
 		{
 			if (!treeBarControl.HasHeaderControl)
 			{
-#if RANDYTODO
-				// TODO: Has to wait until xWorks is merged into LanguageExplorer to be able to create the pane bar.
-				m_titleBar = new PaneBar { Dock = DockStyle.Top };
-#endif
 				var headerPanel = new Panel { Visible = false };
 				headerPanel.Controls.Add((Control)m_titleBar);
 				m_btnCancelSearch = new FwCancelSearchButton();
@@ -86,9 +76,7 @@ namespace SIL.FieldWorks.XWorks
 				// Keep the text box from covering the cancel search button
 				m_textSearch.Width = headerPanel.Width - m_btnCancelSearch.Width;
 				m_btnCancelSearch.Location = new Point(headerPanel.Width - m_btnCancelSearch.Width, m_textSearch.Location.Y);
-#if RANDYTODO
-				SetInfoBarText(node, m_titleBar);
-#endif
+				SetInfoBarText();
 			}
 			treeBarControl.ShowHeaderControl = true;
 		}
@@ -201,11 +189,11 @@ namespace SIL.FieldWorks.XWorks
 			return window.RecordBarControl;
 		}
 
-		private void SetInfoBarText(XmlNode handlerNode, IPaneBar infoBar)
+		private void SetInfoBarText()
 		{
 			var titleStr = string.Empty;
 			// See if we have an AlternativeTitle string table id for an alternate title.
-			var titleId = XmlUtils.GetAttributeValue(handlerNode, "altTitleId");
+			var titleId = XmlUtils.GetAttributeValue(m_configurationParametersElement, "altTitleId");
 			if (titleId != null)
 			{
 				XmlViewsUtils.TryFindString("AlternativeTitles", titleId, out titleStr);
@@ -214,7 +202,7 @@ namespace SIL.FieldWorks.XWorks
 				if (titleStr == null)
 					titleStr = titleId;
 			}
-			infoBar.Text = titleStr;
+			m_titleBar.Text = titleStr;
 		}
 
 		/// <summary>

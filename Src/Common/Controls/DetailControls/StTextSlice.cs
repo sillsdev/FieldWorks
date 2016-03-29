@@ -37,9 +37,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 			base.FinishInit();
 
-			if (m_cache.DomainDataByFlid.get_ObjectProp(m_obj.Hvo, m_flid) == 0)
+			var objPropHvo = m_cache.DomainDataByFlid.get_ObjectProp(m_obj.Hvo, m_flid);
+			if (objPropHvo == 0)
 			{
 				CreateText();
+			}
+			else
+			{
+				var rootSiteAsStTextView = (StTextView) RootSite;
+				if (rootSiteAsStTextView.StText == null)
+				{
+					// Owner has the text, but it isn't in the view yet.
+					rootSiteAsStTextView.StText = m_cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(objPropHvo);
+				}
 			}
 			((StTextView)RootSite).Init(m_ws);
 		}

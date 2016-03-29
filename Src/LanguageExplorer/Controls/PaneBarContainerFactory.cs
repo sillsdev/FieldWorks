@@ -51,8 +51,8 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
 		/// <param name="parentMultiPane">Parent control for the new PaneBarContainers</param>
-		/// <param name="firstChildControl">Main child control for the new PaneBarContainer</param>
-		/// <param name="secondChildControl">Main child control for the new PaneBarContainer</param>
+		/// <param name="firstChildControl">Main child control for the new Top/Left PaneBarContainer</param>
+		/// <param name="secondChildControl">Main child control for the new Right/Bottom PaneBarContainer</param>
 		/// <returns>The new PaneBarContainer instance.</returns>
 		internal static void Create(FlexComponentParameters flexComponentParameters, MultiPane parentMultiPane, Control firstChildControl, Control secondChildControl)
 		{
@@ -77,13 +77,14 @@ namespace LanguageExplorer.Controls
 		/// Remove <paramref name="paneBarContainer"/> from parent control and dispose it.
 		/// </summary>
 		/// <param name="paneBarContainer">The PaneBarContainer to remove and dispose.</param>
-		internal static void RemoveFromParentAndDispose(PaneBarContainer paneBarContainer)
+		internal static void RemoveFromParentAndDispose(ref PaneBarContainer paneBarContainer)
 		{
 			var parentControl = paneBarContainer.Parent;
 			parentControl.SuspendLayout();
 			parentControl.Controls.Remove(paneBarContainer);
 			paneBarContainer.Dispose();
 			parentControl.ResumeLayout();
+			paneBarContainer = null;
 		}
 	}
 }

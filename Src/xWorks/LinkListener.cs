@@ -486,6 +486,9 @@ namespace SIL.FieldWorks.XWorks
 						false,
 						true);
 				}
+#if RANDYTODO
+				// TODO: I supect the following three 'Publish' calls need to be merged into one, or we may not be alive to come back to after one or the other of them.
+#endif
 				Publisher.Publish("SetToolFromName", m_lnkActive.ToolName);
 				// Note: It can be Guid.Empty in cases where it was never set,
 				// or more likely, when the HVO was set to -1.
