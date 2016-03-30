@@ -9496,9 +9496,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					return null;
 				// LT-17202 Change fallback order
 				// But do have a fallback as per LT-16485
-				if (sense.Gloss != null && sense.Gloss.StringCount > 0)
-					return sense.Gloss;
-				return sense.Definition;
+				if (sense.Gloss == null || sense.Gloss.BestAnalysisAlternative.Equals(sense.Gloss.NotFoundTss))
+					return sense.Definition;
+				return sense.Gloss;
 			}
 		}
 	}
