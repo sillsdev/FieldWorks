@@ -522,8 +522,26 @@ namespace SIL.FieldWorks.XWorks
 						var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 						var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
 						// If wsOptions are enabled generate a between rule which will not put content between the abbreviation and the ws data
-						if (wsOptions != null && wsOptions.DisplayWritingSystemAbbreviations && wsOptions.Options.Count(x => x.IsEnabled) > 1)
-							betweenSelector = String.Format("{0}> {1}> span.{2} + span:not(:last-child):after", parentSelector, collectionSelector, WritingSystemPrefix);
+						if (wsOptions != null)
+						{
+							if (wsOptions.DisplayWritingSystemAbbreviations)
+							{
+								betweenSelector = String.Format("{0}> {1}> span.{2} ~ span.{2}:before", parentSelector, collectionSelector,
+									WritingSystemPrefix);
+							}
+							else
+							{
+								var enabledWsOptions = wsOptions.Options.Where(x => x.IsEnabled).ToArray();
+								//Fix LT-17238: Between rule added as before rule to ws span which iterates from last ws to second ws span
+								//First Ws is skipped as between rules no longer needed before first WS span
+								for (var i = enabledWsOptions.Count() - 1; i > 0; i--)
+								{
+									betweenSelector = (i == enabledWsOptions.Count() - 1 ? string.Empty : (betweenSelector + ",")) +
+									String.Format("{0}> {1}> span[lang|='{2}']:before", parentSelector, collectionSelector,
+									enabledWsOptions[i].Id);
+								}
+							}
+						}
 						else if (senseOptions != null && senseOptions.ShowSharedGrammarInfoFirst)
 							betweenSelector = String.Format("{0}> {1}>{2}.sensecontent+{2}:before", parentSelector, collectionSelector, " span");
 						else

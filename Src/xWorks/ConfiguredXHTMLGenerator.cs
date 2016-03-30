@@ -2131,16 +2131,21 @@ namespace SIL.FieldWorks.XWorks
 				var bldr = new StringBuilder();
 				using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
 				{
+					if (fieldValue.RunCount > 1)
+					{
+						xw.WriteStartElement("span");
+						xw.WriteAttributeString("lang", writingSystem ?? GetLanguageFromFirstOption(config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions, settings.Cache));
+					}
 					for (int i = 0; i < fieldValue.RunCount; i++)
 					{
 						var text = fieldValue.get_RunText(i);
 						var props = fieldValue.get_Properties(i);
 						var style = props.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
-						int dummy;
-						var ws = props.GetIntPropValues((int)FwTextPropType.ktptWs, out dummy);
-						writingSystem = GetLangFromWs(ws, settings.Cache);
+						writingSystem = settings.Cache.WritingSystemFactory.GetStrFromWs(fieldValue.get_WritingSystem(i));
 						GenerateSpanWithPossibleLink(settings, writingSystem, xw, style, text, guid);
 					}
+					if (fieldValue.RunCount > 1)
+						xw.WriteEndElement();
 					xw.Flush();
 					return bldr.ToString();
 				}

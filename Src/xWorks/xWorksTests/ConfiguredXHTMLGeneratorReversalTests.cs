@@ -166,13 +166,13 @@ namespace SIL.FieldWorks.XWorks
 			ConfiguredXHTMLGeneratorTests.CreateComplexForm(Cache, referringSense.Owner, complexForm, false); // true or false both work
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
-			string result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(reversalEntry, mainRevEntryNode, null, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(reversalEntry, mainRevEntryNode, null, settings);
 			const string referringSenseXpath = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']";
-			var headwordXpath = referringSenseXpath + "/span[@class='headword']/span[@lang='fr']/a[text()='Citation']";
+			const string headwordXpath = referringSenseXpath + "/span[@class='headword']/span[@lang='fr']//a[text()='Citation']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(headwordXpath, 1);
 			const string entryRefXpath = "/span[@class='entryrefswiththismainsense']/span[@class='entryrefswiththismainsens']";
 			const string entryRefTypeXpath = "/span[@class='entrytypes']/span[@class='entrytype']";
-			var refTypeXpath = referringSenseXpath + entryRefXpath + entryRefTypeXpath + "/span[@class='abbreviation']/span[@lang='en' and text()='comp. of']";
+			const string refTypeXpath = referringSenseXpath + entryRefXpath + entryRefTypeXpath + "/span[@class='abbreviation']/span[@lang='en' and text()='comp. of']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(refTypeXpath, 1);
 		}
 
@@ -327,8 +327,8 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(senseNumberOne, 1);
 			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(senseNumberTwo, 1);
 
-			const string headwordOne = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span[@lang='fr' and following-sibling::span[@lang='fr']/a[text()='1']]/a[text()='Citation']";
-			const string headwordTwo = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span[@lang='fr' and following-sibling::span[@lang='fr']/a[text()='2']]/a[text()='Citation']";
+			const string headwordOne = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span[@lang='fr' and child::span[@lang='fr']/a[text()='1']]/span[@lang='fr' and a[text()='Citation']]";
+			const string headwordTwo = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span[@lang='fr' and child::span[@lang='fr']/a[text()='2']]/span[@lang='fr' and a[text()='Citation']]";
 			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(headwordOne, 1);
 			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(headwordTwo, 1);
 		}
@@ -385,7 +385,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var xhtml = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 			// REVIEW (Hasso) 2016.03: we should probably do something about the leading space in the Sense Number Run, as it is currently in addition to the "between" space.
-			const string subSenseOneOne = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span/a[text()=' 1.1']";
+			const string subSenseOneOne = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span/span/a[text()=' 1.1']";
 			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(subSenseOneOne, 1);
 		}
 
@@ -447,7 +447,7 @@ namespace SIL.FieldWorks.XWorks
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
 			var xhtml = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
-			const string subSenseOneOne = "/div[@class='reversalindexentry']/span[@class='subentries']/span[@class='subentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span/a[text()=' 1.1']";
+			const string subSenseOneOne = "/div[@class='reversalindexentry']/span[@class='subentries']/span[@class='subentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span/span/a[text()=' 1.1']";
 			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(subSenseOneOne, 1);
 		}
 
