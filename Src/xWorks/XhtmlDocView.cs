@@ -735,7 +735,7 @@ namespace SIL.FieldWorks.XWorks
 			if (progress != null)
 			{
 				progress.Minimum = 0;
-				var entryCount = entriesToPublish.Length;
+				var entryCount = ConfiguredXHTMLGenerator.EntriesPerPage;
 				progress.Maximum = entryCount + 1 + entryCount / 100;
 				progress.Position++;
 			}

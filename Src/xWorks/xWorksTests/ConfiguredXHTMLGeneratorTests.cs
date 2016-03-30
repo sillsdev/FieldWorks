@@ -5071,6 +5071,191 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void SavePublishedHtmlWithStyles_MoreEntriesThanLimitProducesPageDivs()
+		{
+			var firstAEntry = CreateInterestingLexEntry(Cache);
+			var firstAHeadword = "alpha1";
+			var secondAHeadword = "alpha2";
+			var bHeadword = "beta";
+			AddHeadwordToEntry(firstAEntry, firstAHeadword, m_wsFr, Cache);
+			var secondAEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(secondAEntry, secondAHeadword, m_wsFr, Cache);
+			var bEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(bEntry, bHeadword, m_wsFr, Cache);
+			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
+			var mainHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
+				CSSClassNameOverride = "entry"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode },
+				FieldDescription = "LexEntry"
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+			string xhtmlPath = null;
+			const string pagesDivXPath = "//div[@class='pages']";
+			const string pageButtonXPath = "//div[@class='pages']/span[@class='pagebutton']";
+			try
+			{
+				xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new[] { firstAEntry.Hvo, secondAEntry.Hvo, bEntry.Hvo }, pubEverything, model, m_mediator, entriesPerPage:1);
+				var xhtml = File.ReadAllText(xhtmlPath);
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(pagesDivXPath, 2);
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(pageButtonXPath, 6);
+			}
+			finally
+			{
+				DeleteTempXhtmlAndCssFiles(xhtmlPath);
+			}
+		}
+
+		[Test]
+		public void SavePublishedHtmlWithStyles_ExtraEntriesIncludedInLastPage()
+		{
+			int[] hvos = new int[21];
+			//Generate 21 entries for the test
+			for (var i = 0; i < 21; ++i)
+			{
+				var entry = CreateInterestingLexEntry(Cache);
+				AddHeadwordToEntry(entry, "a" + i, m_wsFr, Cache);
+				hvos[i] = entry.Hvo;
+			}
+			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
+			var mainHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				Label = "Headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
+				CSSClassNameOverride = "entry"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode },
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "entry"
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+			string xhtmlPath = null;
+			const string pagesDivXPath = "//div[@class='pages']";
+			const string pageButtonXPath = "//div[@class='pages']/span[@class='pagebutton']";
+			const string pageButtonLastIndexPath = "//div[@class='pages']/span[@class='pagebutton' and @endIndex='20']";
+			const string entryDivXPath = "//div[@class='entry']";
+			try
+			{
+				xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(hvos, pubEverything, model, m_mediator, entriesPerPage: 10);
+				var xhtml = File.ReadAllText(xhtmlPath);
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(pagesDivXPath, 2);
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(pageButtonXPath, 4); // 2 page buttons (top and bottom)
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(pageButtonLastIndexPath, 2); // last page includes the last entry
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(entryDivXPath, 10); // 10 entries generated on first page
+			}
+			finally
+			{
+				DeleteTempXhtmlAndCssFiles(xhtmlPath);
+			}
+		}
+
+		[Test]
+		public void SavePublishedHtmlWithStyles_ExtraEntriesMoreThanTenPercentGetOwnPage()
+		{
+			int[] hvos = new int[21];
+			//Generate 21 entries for the test
+			for (var i = 0; i < 21; ++i)
+			{
+				var entry = CreateInterestingLexEntry(Cache);
+				AddHeadwordToEntry(entry, "a" + i, m_wsFr, Cache);
+				hvos[i] = entry.Hvo;
+			}
+			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
+			var mainHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
+				CSSClassNameOverride = "entry"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode },
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "entry"
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+			string xhtmlPath = null;
+			const string pagesDivXPath = "//div[@class='pages']";
+			const string pageButtonXPath = "//div[@class='pages']/span[@class='pagebutton']";
+			const string firstPageButtonXPath = "//div[@class='pages']/span[@class='pagebutton' and @id='currentPageButton' and @startIndex='0' and @endIndex='7']";
+			const string lastPageButtonXPath = "//div[@class='pages']/span[@class='pagebutton' and @startIndex='16' and @endIndex='20']";
+			const string entryXPath = "//div[@class='entry']";
+			try
+			{
+				xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(hvos, pubEverything, model, m_mediator, entriesPerPage: 8);
+				var xhtml = File.ReadAllText(xhtmlPath);
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(pagesDivXPath, 2);
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(pageButtonXPath, 6); // 3 pages on top and bottom
+				AssertThatXmlIn.String(xhtml).HasAtLeastOneMatchForXpath(firstPageButtonXPath);
+				AssertThatXmlIn.String(xhtml).HasAtLeastOneMatchForXpath(lastPageButtonXPath);
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(entryXPath, 8); // 8 entries per page
+			}
+			finally
+			{
+				DeleteTempXhtmlAndCssFiles(xhtmlPath);
+			}
+		}
+
+		[Test]
+		public void SavePublishedHtmlWithStyles_ZeroEntriesDoesNotThrow()
+		{
+			var hvos = new int[0];
+			var flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
+			var mainHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode },
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "entry"
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+			string xhtmlPath = null;
+			try
+			{
+				xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(hvos, pubEverything, model, m_mediator, entriesPerPage: 8);
+				var xhtml = File.ReadAllText(xhtmlPath);
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath("//div[@entry]", 0);
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath("//*[@page]", 0);
+			}
+			finally
+			{
+				DeleteTempXhtmlAndCssFiles(xhtmlPath);
+			}
+		}
+
+		[Test]
 		public void CheckSubsenseOutput()
 		{
 			var posNoun = CreatePartOfSpeech("noun", "n");

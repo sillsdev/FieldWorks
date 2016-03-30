@@ -166,7 +166,10 @@ namespace Palaso.TestUtilities
 		{
 			XmlWriterSettings settings = new XmlWriterSettings();
 			settings.Indent = true;
-			settings.ConformanceLevel = ConformanceLevel.Fragment;
+			if(node is XmlDocument)
+				settings.ConformanceLevel = ConformanceLevel.Document;
+			else
+				settings.ConformanceLevel = ConformanceLevel.Fragment;
 			using (XmlWriter writer = XmlWriter.Create(Console.Out, settings))
 			{
 				node.WriteContentTo(writer);

@@ -434,14 +434,8 @@ namespace SIL.FieldWorks.XWorks
 			pictureProps.Add(new Property("float") { Term = new PrimitiveTerm(UnitType.Ident, "right") });
 			pictureProps.Add(new Property("text-align") { Term = new PrimitiveTerm(UnitType.Ident, "center") });
 			var margin = new Property("margin");
-			var marginValues = new TermList();
-			marginValues.AddTerm(new PrimitiveTerm(UnitType.Point, 0));
-			marginValues.AddSeparator(TermList.TermSeparator.Space);
-			marginValues.AddTerm(new PrimitiveTerm(UnitType.Point, 0));
-			marginValues.AddSeparator(TermList.TermSeparator.Space);
-			marginValues.AddTerm(new PrimitiveTerm(UnitType.Point, 4));
-			marginValues.AddSeparator(TermList.TermSeparator.Space);
-			marginValues.AddTerm(new PrimitiveTerm(UnitType.Point, 4));
+			var marginValues = BuildTermList(TermList.TermSeparator.Space, new PrimitiveTerm(UnitType.Point, 0),
+				new PrimitiveTerm(UnitType.Point, 0), new PrimitiveTerm(UnitType.Point, 4), new PrimitiveTerm(UnitType.Point, 4));
 			margin.Term = marginValues;
 			pictureProps.Add(margin);
 			pictureProps.Add(new Property("padding") { Term = new PrimitiveTerm(UnitType.Point, 2) });
@@ -1218,6 +1212,103 @@ namespace SIL.FieldWorks.XWorks
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			letterRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(LetterHeadingStyleName, cache.DefaultVernWs, mediator));
 			return letHeadRule.ToString(true) + Environment.NewLine + letterRule.ToString(true) + Environment.NewLine;
+		}
+
+		public static string GenerateCssForNextFewEntriesButton(bool isTop)
+		{
+			var nextEntriesSection = new StyleRule { Value = ".nextentriessection" };
+			nextEntriesSection.Declarations.Properties.Add(new Property("height") { Term = new PrimitiveTerm(UnitType.Pixel, 25) });
+			nextEntriesSection.Declarations.Properties.Add(new Property("background-color") { Term = new PrimitiveTerm(UnitType.RGB, "#777777") });
+			var nextEntriesHover = new StyleRule { Value = ".nextentriessection:hover" };
+			nextEntriesHover.Declarations.Properties.Add(new Property("background-color") { Term = new PrimitiveTerm(UnitType.RGB, "#cdcdcd") });
+			nextEntriesHover.Declarations.Properties.Add(new Property("cursor") { Term = new PrimitiveTerm(UnitType.Ident, "pointer") });
+			var nextEntriesButton = new StyleRule { Value = ".nextentriesbutton" + (isTop ? "top" : "bottom") };
+			nextEntriesButton.Declarations.Properties.Add(new Property("width") { Term = new PrimitiveTerm(UnitType.Percentage, 100) });
+			nextEntriesButton.Declarations.Properties.Add(new Property("height") { Term = new PrimitiveTerm(UnitType.Pixel, 25) });
+			var buttonBorderTerms = BuildTermList(TermList.TermSeparator.Space, new PrimitiveTerm(UnitType.Pixel, 5),
+				new PrimitiveTerm(UnitType.Ident, "solid"), new PrimitiveTerm(UnitType.RGB, "#555"));
+			nextEntriesButton.Declarations.Properties.Add(new Property(isTop ? "border-bottom" : "border-top") { Term = buttonBorderTerms });
+			var nextEntriesButtonActive = new StyleRule { Value = ".nextentriesbutton:active" };
+			nextEntriesButtonActive.Declarations.Properties.Add(new Property("position") { Term = new PrimitiveTerm(UnitType.Ident, "relative") });
+			nextEntriesButtonActive.Declarations.Properties.Add(new Property("top") { Term = new PrimitiveTerm(UnitType.Pixel, 2) });
+			var downArrow = new StyleRule { Value = ".downarrow" };
+			downArrow.Declarations.Properties.Add(new Property("width") { Term = new PrimitiveTerm(UnitType.Pixel, 0) });
+			downArrow.Declarations.Properties.Add(new Property("height") { Term = new PrimitiveTerm(UnitType.Pixel, 0) });
+			var transparentSideTerms = BuildTermList(TermList.TermSeparator.Space,
+				new PrimitiveTerm(UnitType.Pixel, 30), new PrimitiveTerm(UnitType.Ident, "solid"), new PrimitiveTerm(UnitType.Ident, "transparent"));
+			downArrow.Declarations.Properties.Add(new Property("border-left") { Term = transparentSideTerms });
+			downArrow.Declarations.Properties.Add(new Property("border-right") { Term = transparentSideTerms });
+			var pointTerms = BuildTermList(TermList.TermSeparator.Space, new PrimitiveTerm(UnitType.Pixel, 15),
+				new PrimitiveTerm(UnitType.Ident, "solid"), new PrimitiveTerm(UnitType.RGB, "#555"));
+			downArrow.Declarations.Properties.Add(new Property("border-top") { Term = pointTerms });
+			downArrow.Declarations.Properties.Add(new Property("position") { Term = new PrimitiveTerm(UnitType.Ident, "relative") });
+			downArrow.Declarations.Properties.Add(new Property("top") { Term = new PrimitiveTerm(UnitType.Pixel, 14) });
+			var upArrow = new StyleRule { Value = ".uparrow" };
+			upArrow.Declarations.Properties.Add(new Property("width") { Term = new PrimitiveTerm(UnitType.Pixel, 0) });
+			upArrow.Declarations.Properties.Add(new Property("height") { Term = new PrimitiveTerm(UnitType.Pixel, 0) });
+			upArrow.Declarations.Properties.Add(new Property("border-left") { Term = transparentSideTerms });
+			upArrow.Declarations.Properties.Add(new Property("border-right") { Term = transparentSideTerms });
+			upArrow.Declarations.Properties.Add(new Property("border-bottom") { Term = pointTerms });
+			upArrow.Declarations.Properties.Add(new Property("position") { Term = new PrimitiveTerm(UnitType.Ident, "relative") });
+			upArrow.Declarations.Properties.Add(new Property("bottom") { Term = new PrimitiveTerm(UnitType.Pixel, 7) });
+
+			return string.Format("{1}{0}{2}{0}{3}{0}{4}{0}{5}{0}{6}{0}", Environment.NewLine, nextEntriesSection.ToString(true),
+				nextEntriesButton.ToString(true), nextEntriesHover.ToString(true), nextEntriesButtonActive.ToString(true),
+				downArrow.ToString(true), upArrow.ToString(true));
+		}
+
+		public static string GenerateCssForPageButtons()
+		{
+			var pages = new StyleRule { Value = ".pages" };
+			pages.Declarations.Properties.Add(new Property("display") { Term = new PrimitiveTerm(UnitType.Ident, "table") });
+			pages.Declarations.Properties.Add(new Property("width") { Term = new PrimitiveTerm(UnitType.Percentage, 100) });
+			var pageButtonHover = new StyleRule { Value = ".pagebutton:hover" };
+			pageButtonHover.Declarations.Properties.Add(new Property("background") { Term = new PrimitiveTerm(UnitType.Grad, "linear-gradient(to bottom, #dfdfdf 5%, #ededed 100%)") });
+			pageButtonHover.Declarations.Properties.Add(new Property("background-color") { Term = new PrimitiveTerm(UnitType.RGB, "#cdcdcd") });
+			var pageButtonActive = new StyleRule { Value = ".pagebutton:active" };
+			pageButtonActive.Declarations.Properties.Add(new Property("position") { Term = new PrimitiveTerm(UnitType.Ident, "relative") });
+			pageButtonActive.Declarations.Properties.Add(new Property("top") { Term = new PrimitiveTerm(UnitType.Pixel, 1) });
+			var pageButton = new StyleRule { Value = ".pagebutton" };
+			pageButton.Declarations.Properties.Add(new Property("display") { Term = new PrimitiveTerm(UnitType.Ident, "table-cell") });
+			pageButton.Declarations.Properties.Add(new Property("cursor") { Term = new PrimitiveTerm(UnitType.Ident, "pointer") });
+			pageButton.Declarations.Properties.Add(new Property("color") { Term = new PrimitiveTerm(UnitType.RGB, "#777777") });
+			pageButton.Declarations.Properties.Add(new Property("text-decoration") { Term = new PrimitiveTerm(UnitType.Ident, "none") });
+			pageButton.Declarations.Properties.Add(new Property("text-align") { Term = new PrimitiveTerm(UnitType.Ident, "center") });
+			pageButton.Declarations.Properties.Add(new Property("font-weight") { Term = new PrimitiveTerm(UnitType.Ident, "bold") });
+			var shadowTerms = BuildTermList(TermList.TermSeparator.Space, new PrimitiveTerm(UnitType.Ident, "inset"), new PrimitiveTerm(UnitType.Pixel, 0),
+				new PrimitiveTerm(UnitType.Pixel, 1), new PrimitiveTerm(UnitType.Pixel, 0), new PrimitiveTerm(UnitType.Pixel, 0), new PrimitiveTerm(UnitType.RGB, "#ffffff"));
+			pageButton.Declarations.Properties.Add(new Property("box-shadow") { Term = shadowTerms });
+			var textShadowTerms = BuildTermList(TermList.TermSeparator.Space, new PrimitiveTerm(UnitType.Pixel, 0), new PrimitiveTerm(UnitType.Pixel, 1),
+				new PrimitiveTerm(UnitType.Pixel, 0), new PrimitiveTerm(UnitType.RGB, "#ffffff"));
+			pageButton.Declarations.Properties.Add(new Property("text-shadow") { Term = textShadowTerms });
+			var borderTerms = BuildTermList(TermList.TermSeparator.Space, new PrimitiveTerm(UnitType.Pixel, 1),
+				new PrimitiveTerm(UnitType.Ident, "solid"), new PrimitiveTerm(UnitType.RGB, "#dcdcdc"));
+			pageButton.Declarations.Properties.Add(new Property("border") { Term = borderTerms });
+			pageButton.Declarations.Properties.Add(new Property("border-radius") { Term = new PrimitiveTerm(UnitType.Pixel, 6) });
+			pageButton.Declarations.Properties.Add(new Property("background-color") { Term = new PrimitiveTerm(UnitType.RGB, "#ededed")});
+			var currentButtonRule = new StyleRule { Value = "#currentPageButton" };
+			currentButtonRule.Declarations.Properties.Add(new Property("background") { Term = new PrimitiveTerm(UnitType.Grad, "linear-gradient(to bottom, #dfdfdf 5%, #ededed 100%)") });
+			currentButtonRule.Declarations.Properties.Add(new Property("background-color") { Term = new PrimitiveTerm(UnitType.RGB, "#cdcdcd") });
+
+			return string.Format("{1}{0}{2}{0}{3}{0}{4}{0}{5}{0}", Environment.NewLine, pages.ToString(true),
+				pageButton.ToString(true), pageButtonHover.ToString(true), pageButtonActive.ToString(true), currentButtonRule.ToString(true));
+		}
+
+		/// <summary>
+		/// This method will build a css term list with all the provided terms separated by the provided separator
+		/// </summary>
+		private static TermList BuildTermList(TermList.TermSeparator separator, params Term[] terms)
+		{
+			var termList = new TermList();
+			for(var i = 0; i < terms.Length; ++i)
+			{
+				if (i > 0)
+				{
+					termList.AddSeparator(separator);
+				}
+				termList.AddTerm(terms[i]);
+			}
+			return termList;
 		}
 	}
 }

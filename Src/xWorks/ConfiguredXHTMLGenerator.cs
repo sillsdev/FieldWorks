@@ -41,6 +41,11 @@ namespace SIL.FieldWorks.XWorks
 		private const string PublicIdentifier = @"-//W3C//DTD XHTML 1.1//EN";
 
 		/// <summary>
+		/// This is the limit for the number of entries allowed on a single page of the output (used only when generating internal previews)
+		/// </summary>
+		public const int EntriesPerPage = 1000;
+
+		/// <summary>
 		/// Static initializer setting the AssemblyFile to the default Fieldworks model dll.
 		/// </summary>
 		static ConfiguredXHTMLGenerator()
@@ -102,6 +107,10 @@ namespace SIL.FieldWorks.XWorks
 			xhtmlWriter.WriteAttributeString("rel", "schema.DC");
 			xhtmlWriter.WriteEndElement(); //</link>
 			GenerateWritingSystemsMetadata(exportSettings, xhtmlWriter);
+			xhtmlWriter.WriteStartElement("title");
+			// Use the WriteRaw, WriteFullEndElement hack to avoid a self closing tag which is invalid xhtml. This empty title is here to make more valid xhtml.
+			xhtmlWriter.WriteRaw("");
+			xhtmlWriter.WriteFullEndElement(); //</title>
 			xhtmlWriter.WriteEndElement(); //</head>
 			xhtmlWriter.WriteStartElement("body");
 			xhtmlWriter.WriteWhitespace(Environment.NewLine);
@@ -147,14 +156,14 @@ namespace SIL.FieldWorks.XWorks
 		/// Saves the generated content in the Temp directory, to a unique but discoverable and somewhat stable location.
 		/// </summary>
 		/// <returns>The path to the XHTML file</returns>
-		public static string SavePreviewHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator,
-			DictionaryConfigurationModel configuration, Mediator mediator, IThreadedProgress progress = null)
+		public static string SavePreviewHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, DictionaryConfigurationModel configuration, Mediator mediator,
+			IThreadedProgress progress = null, int entriesPerPage = EntriesPerPage)
 		{
 			var preferredPath = GetPreferredPreviewPath(configuration, (FdoCache)mediator.PropertyTable.GetValue("cache"), entryHvos.Length == 1);
 			var xhtmlPath = Path.ChangeExtension(preferredPath, "xhtml");
 			try
 			{
-				SavePublishedHtmlWithStyles(entryHvos, publicationDecorator, configuration, mediator, xhtmlPath, progress);
+				SavePublishedHtmlWithStyles(entryHvos, publicationDecorator, entriesPerPage, configuration, mediator, xhtmlPath, progress);
 			}
 			catch (IOException ioEx)
 			{
@@ -166,7 +175,7 @@ namespace SIL.FieldWorks.XWorks
 					xhtmlPath = Path.ChangeExtension(preferredPath + i, "xhtml");
 					try
 					{
-						SavePublishedHtmlWithStyles(entryHvos, publicationDecorator, configuration, mediator, xhtmlPath, progress);
+						SavePublishedHtmlWithStyles(entryHvos, publicationDecorator, entriesPerPage, configuration, mediator, xhtmlPath, progress);
 					}
 					catch (IOException e)
 					{
@@ -187,7 +196,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Saves the generated content into the given xhtml and css file paths for all the entries in
 		/// the given collection.
 		/// </summary>
-		public static void SavePublishedHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator,
+		public static void SavePublishedHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, int entriesPerPage,
 			DictionaryConfigurationModel configuration, Mediator mediator, string xhtmlPath, IThreadedProgress progress = null)
 		{
 			var entryCount = entryHvos.Length;
@@ -201,13 +210,16 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var settings = new GeneratorSettings(cache, mediator, true, true, Path.GetDirectoryName(xhtmlPath));
 				GenerateOpeningHtml(cssPath, settings, xhtmlWriter);
+				Tuple<int, int> currentPageBounds = GetPageForCurrentEntry(settings, entryHvos, entriesPerPage);
+				GenerateTopOfPageButtonsIfNeeded(settings, entryHvos, entriesPerPage, currentPageBounds, xhtmlWriter, cssWriter);
 				string lastHeader = null;
-				var entryContents = new Tuple<ICmObject, StringBuilder>[entryCount];
+				var itemsOnPage = currentPageBounds.Item2 - currentPageBounds.Item1;
+				var entryContents = new Tuple<ICmObject, StringBuilder>[itemsOnPage + 1];
 				var entryActions = new List<Action>();
-				// For every entry generate an action that will produce the xhtml document fragment for that entry
-				for (var i = 0; i < entryCount; ++i)
+				// For every entry in the page generate an action that will produce the xhtml document fragment for that entry
+				for (var i = 0; i <= itemsOnPage; ++i)
 				{
-					var hvo = entryHvos.ElementAt(i);
+					var hvo = entryHvos.ElementAt(currentPageBounds.Item1 + i);
 					var entry = cache.ServiceLocator.GetObject(hvo);
 					var entryStringBuilder = new StringBuilder(100);
 					entryContents[i] = new Tuple<ICmObject, StringBuilder>(entry, entryStringBuilder);
@@ -236,6 +248,7 @@ namespace SIL.FieldWorks.XWorks
 						GenerateLetterHeaderIfNeeded(entryAndXhtml.Item1, ref lastHeader, xhtmlWriter, cache);
 					xhtmlWriter.WriteRaw(entryAndXhtml.Item2.ToString());
 				}
+				GenerateBottomOfPageButtonsIfNeeded(settings, entryHvos, entriesPerPage, currentPageBounds, xhtmlWriter, cssWriter);
 				GenerateClosingHtml(xhtmlWriter);
 				xhtmlWriter.Flush();
 
@@ -245,6 +258,168 @@ namespace SIL.FieldWorks.XWorks
 				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, mediator));
 				cssWriter.Flush();
 			}
+		}
+
+		private static void GenerateNextFewEntriesButtonIfNeeded(Tuple<int, int> currentPage, int[] entryHvos, XmlWriter xhtmlWriter, StreamWriter cssWriter, bool isTop)
+		{
+			// No load more above button for the first page, and no load more below button for the last page
+			if (isTop && currentPage.Item1 > 0 || !isTop && currentPage.Item2 != entryHvos.Length)
+			{
+				xhtmlWriter.WriteStartElement("div");
+				xhtmlWriter.WriteAttributeString("class", "nextentriessection");
+				xhtmlWriter.WriteStartElement("div");
+				xhtmlWriter.WriteAttributeString("class", "nextentriesbutton" + (isTop ? "top" : "bottom"));
+				xhtmlWriter.WriteStartElement("div");
+				xhtmlWriter.WriteAttributeString("class", "nextentriestriangle");
+				xhtmlWriter.WriteStartElement("center");
+				xhtmlWriter.WriteStartElement("span");
+				xhtmlWriter.WriteAttributeString("class", isTop ? "uparrow" : "downarrow");
+				xhtmlWriter.WriteRaw("");
+				xhtmlWriter.WriteFullEndElement(); // </span>
+				xhtmlWriter.WriteEndElement(); // </center>
+				xhtmlWriter.WriteEndElement(); // </div> nextentriestriangle
+				xhtmlWriter.WriteWhitespace(Environment.NewLine);
+				xhtmlWriter.WriteEndElement(); // </div> nextentriesbutton
+				xhtmlWriter.WriteWhitespace(Environment.NewLine);
+				xhtmlWriter.WriteEndElement(); // </div> nextentriessection
+				xhtmlWriter.WriteWhitespace(Environment.NewLine);
+
+				cssWriter.Write(CssGenerator.GenerateCssForNextFewEntriesButton(isTop));
+			}
+		}
+
+		private static void GenerateTopOfPageButtonsIfNeeded(GeneratorSettings settings, int[] entryHvos, int entriesPerPage, Tuple<int, int> currentPageBounds, XmlWriter xhtmlWriter, StreamWriter cssWriter)
+		{
+			var pageRanges = GetPageRanges(entryHvos, entriesPerPage);
+			if (pageRanges.Count <= 1)
+			{
+				return;
+			}
+			GeneratePageButtons(settings, entryHvos, pageRanges, currentPageBounds, xhtmlWriter);
+			GenerateNextFewEntriesButtonIfNeeded(currentPageBounds, entryHvos, xhtmlWriter, cssWriter, true);
+			cssWriter.Write(CssGenerator.GenerateCssForPageButtons());
+		}
+
+		private static void GenerateBottomOfPageButtonsIfNeeded(GeneratorSettings settings, int[] entryHvos, int entriesPerPage, Tuple<int, int> currentPageBounds,
+			XmlWriter xhtmlWriter, StreamWriter cssWriter)
+		{
+			var pageRanges = GetPageRanges(entryHvos, entriesPerPage);
+			if (pageRanges.Count <= 1)
+			{
+				return;
+			}
+			GenerateNextFewEntriesButtonIfNeeded(currentPageBounds, entryHvos, xhtmlWriter, cssWriter, false);
+			GeneratePageButtons(settings, entryHvos, pageRanges, currentPageBounds, xhtmlWriter);
+		}
+
+		private static void GeneratePageButtons(GeneratorSettings settings, int[] entryHvos, List<Tuple<int, int>> pageRanges, Tuple<int, int> currentPageBounds, XmlWriter xhtmlWriter)
+		{
+			xhtmlWriter.WriteStartElement("div");
+			xhtmlWriter.WriteAttributeString("class", "pages");
+			xhtmlWriter.WriteAttributeString("width", "100%");
+			foreach (var page in pageRanges)
+			{
+				xhtmlWriter.WriteStartElement("span");
+				xhtmlWriter.WriteAttributeString("class", "pagebutton");
+				xhtmlWriter.WriteAttributeString("startIndex", page.Item1.ToString());
+				xhtmlWriter.WriteAttributeString("endIndex", page.Item2.ToString());
+				if (page.Equals(currentPageBounds))
+				{
+					xhtmlWriter.WriteAttributeString("id", "currentPageButton");
+				}
+				xhtmlWriter.WriteString(GeneratePageButtonText(entryHvos[page.Item1], entryHvos[page.Item2], settings, page.Equals(pageRanges.First())));
+				xhtmlWriter.WriteEndElement();
+			}
+			xhtmlWriter.WriteEndElement();
+		}
+
+		private static string GeneratePageButtonText(int firstEntryId, int lastEntryId, GeneratorSettings settings, bool isFirst)
+		{
+			string firstLetters = "";
+			string lastLetters = "";
+			var firstEntry = settings.Cache.ServiceLocator.GetObject(firstEntryId);
+			var lastEntry = settings.Cache.ServiceLocator.GetObject(lastEntryId);
+			firstLetters = GetIndexLettersOfHeadword(GetLetHeadbyEntryType(firstEntry), isFirst);
+			lastLetters = GetIndexLettersOfHeadword(GetLetHeadbyEntryType(lastEntry));
+			return firstEntryId == lastEntryId ? firstLetters : firstLetters + " .. " + lastLetters;
+		}
+
+		/// <summary>
+		/// Get the page for the current entry, represented by the range of entries on the page containing the current entry
+		/// </summary>
+		private static Tuple<int, int> GetPageForCurrentEntry(GeneratorSettings settings, int[] entryHvos, int entriesPerPage)
+		{
+			var currentEntryHvo = 0;
+			var clerk = (RecordClerk)settings.Mediator.PropertyTable.GetValue("ActiveClerk");
+			if (clerk != null)
+			{
+				currentEntryHvo = clerk.CurrentObjectHvo;
+			}
+			var pages = GetPageRanges(entryHvos, entriesPerPage);
+			if (currentEntryHvo != 0)
+			{
+				var currentEntryIndex = Array.IndexOf(entryHvos, currentEntryHvo);
+				foreach (Tuple<int, int> page in pages)
+				{
+					if (currentEntryIndex > page.Item1 && currentEntryIndex < page.Item2)
+					{
+						return page;
+					}
+				}
+			}
+			return pages[0];
+		}
+
+		/// <summary>
+		/// Return the first two letters of headword (or just one letter if headword is one character long, or if justFirstLetter is true
+		/// </summary>
+		private static string GetIndexLettersOfHeadword(string headWord, bool justFirstLetter = false)
+		{
+			// I don't know if we can have an empty headword. If we can then return empty string instead of crashing.
+			if (headWord.Length == 0)
+				return string.Empty;
+			return headWord.Substring(0, headWord.Length <= 1 || justFirstLetter ? 1 : 2);
+		}
+
+		private static List<Tuple<int, int>> GetPageRanges(int[] entryHvos, int entriesPerPage)
+		{
+			if (entriesPerPage <= 0)
+			{
+				throw new ArgumentException(@"Bad page size", "entriesPerPage");
+			}
+
+			// Rather than complicate the logic below, handle the special cases of no entries and single entry first
+			if (entryHvos.Length <= 1)
+			{
+				return new List<Tuple<int, int>>() { new Tuple<int, int>(0, entryHvos.Length - 1)};
+			}
+
+			var pageRanges = new List<Tuple<int, int>>();
+			if (entryHvos.Length%entriesPerPage != 0) // If we didn't luck out and have exactly full pages
+			{
+				// If the last page is less than 10% of the max entries per page just add them to the last page
+				if (entryHvos.Length%entriesPerPage <= entriesPerPage/10)
+				{
+					// Generate a last page including the 10% or less overflow entries
+					pageRanges.Add(new Tuple<int, int>(Math.Max(entryHvos.Length - entryHvos.Length % entriesPerPage - entriesPerPage, 0), entryHvos.Length - 1));
+				}
+				else
+				{
+					// Generate the page with the last entries
+					pageRanges.Add(new Tuple<int, int>(Math.Max(entryHvos.Length - entryHvos.Length % entriesPerPage, 0),
+						entryHvos.Length - 1));
+				}
+			}
+			else
+			{
+				// Generate the page with the last 'entriesPerPage' number of entries
+				pageRanges.Add(new Tuple<int, int>(entryHvos.Length - entriesPerPage, entryHvos.Length - 1));
+			}
+			while (pageRanges[0].Item1 != 0)
+			{
+				pageRanges.Insert(0, new Tuple<int, int>(Math.Max(0, pageRanges[0].Item1 - entriesPerPage), pageRanges[0].Item1 - 1));
+			}
+			return pageRanges;
 		}
 
 		private static bool IsCanceling(IThreadedProgress progress)
