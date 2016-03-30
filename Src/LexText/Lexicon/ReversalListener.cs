@@ -298,7 +298,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		#endregion Go Dlg
 
 		#region Reversal Index Combo
-
 		/// <summary>
 		/// Called (by xcore) to control display params of the reversal index menu, e.g. whether it should be enabled.
 		/// </summary>
@@ -329,17 +328,19 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			CheckDisposed();
 
-			display.List.Clear();
-			var lp = ((FdoCache) m_mediator.PropertyTable.GetValue("cache")).LanguageProject;
-			// List all existing reversal indexes.  (LT-4479, as amended)
-			// But only for analysis wss
-			foreach (IReversalIndex ri in from ri in lp.LexDbOA.ReversalIndexesOC
-										  where lp.AnalysisWss.Contains(ri.WritingSystem)
-										  select ri)
+			var configObjectName = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "configureObjectName", null);
+			configObjectName = "ReversalIndex";
+			var cache = m_mediator.PropertyTable.GetValue("cache") as FdoCache;
+			var reversalIndexConfigurations = SIL.FieldWorks.XWorks.DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(cache, configObjectName);
+
+			// Add menu items that display the configuration name and send PropChanges with
+			// the configuration path.
+			foreach(var config in reversalIndexConfigurations)
 			{
-				display.List.Add(ri.ShortName, ri.Guid.ToString(), null, null);
+				display.List.Add(config.Key, config.Value, null, null);
 			}
-			display.List.Sort();
+			DictionaryConfigurationUtils.RemoveAllReversalChoiceFromList(ref display);
+
 			return true; // We handled this, no need to ask anyone else.
 		}
 		#endregion Reversal Index Combo
@@ -410,12 +411,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			// This looks like our best chance to update a global "Current Reversal Index Writing System" value.
 			WritingSystemServices.CurrentReversalWsId = Cache.WritingSystemFactory.GetWsFromStr(ri.WritingSystem);
-
-			// Generate and store the expected path to a configuration file specific to this reversal index.  If it doesn't
-			// exist, code elsewhere will make up for it.
-			var layoutName = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "ReversalIndex",
-				ri.ShortName + DictionaryConfigurationModel.FileExtension);
-			m_mediator.PropertyTable.SetProperty("ReversalIndexPublicationLayout", layoutName);
 
 			ICmObject newOwningObj = NewOwningObject(ri);
 			if (newOwningObj != OwningObject)
@@ -523,7 +518,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				(window as FwXWindow).ClearInvalidatedStoredData();
 			}
-			switch(name)
+			switch (name)
 			{
 				default:
 					base.OnPropertyChanged(name);
@@ -531,7 +526,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				case "ReversalIndexGuid":
 					ChangeOwningObjectIfPossible();
 					break;
-				case "ToolForAreaNamed_lexicon" :
+				case "ToolForAreaNamed_lexicon":
 					int rootIndex = GetRootIndex(m_list.CurrentIndex);
 					JumpToIndex(rootIndex);
 					base.OnPropertyChanged(name);
@@ -542,6 +537,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						ChangeOwningObjectIfPossible();
 					else
 						base.OnPropertyChanged(name);
+					break;
+				case "ReversalIndexPublicationLayout":
+					// When the user chooses a different reversal index configuration from the drop-down menu,
+					// set the list of associated reversal index entries.
+					DictionaryConfigurationUtils.SetReversalIndexGuidBasedOnReversalIndexConfiguration(m_mediator, Cache);
 					break;
 			}
 		}

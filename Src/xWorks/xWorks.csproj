@@ -599,6 +599,7 @@
     <Content Include="Resources\FWLastArrow.bmp" />
     <Content Include="Resources\FWLeftArrow.bmp" />
     <Content Include="Resources\FWRightArrow.bmp" />
+    <Compile Include="DictionaryConfigurationUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

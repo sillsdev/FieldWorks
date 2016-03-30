@@ -19,8 +19,18 @@ namespace SIL.FieldWorks.XWorks
 	[XmlRoot(ElementName = "DictionaryConfiguration")]
 	public class DictionaryConfigurationModel
 	{
+		/// <summary>
+		/// File extension for dictionary configuration files.
+		/// </summary>
 		public const string FileExtension = ".fwdictconfig";
+
 		public const string AllReversalIndexes = "All Reversal Indexes";
+
+		/// <summary>
+		/// Filename (without extension) of the reversal index configuration file
+		/// for "all reversal indexes".
+		/// </summary>
+		public const string AllReversalIndexesFilenameBase = "AllReversalIndexes";
 
 		/// <summary>
 		/// Trees of dictionary elements

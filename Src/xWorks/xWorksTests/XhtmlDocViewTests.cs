@@ -32,90 +32,10 @@ namespace SIL.FieldWorks.XWorks
 			Cache.ProjectId.Path = testProjPath;
 		}
 
-		[Test]
-		public void GatherBuiltInAndUserConfigurations_ReturnsShippedConfigurations()
-		{
-			using(var docView = new TestXhtmlDocView())
-			{
-				docView.SetConfigObjectName("Dictionary");
-				docView.SetMediator(m_mediator);
-				// SUT
-				var fileListFromResults = docView.GatherBuiltInAndUserConfigurations().Values;
-				var shippedFileList = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"));
-				CollectionAssert.AreEquivalent(fileListFromResults, shippedFileList);
-			}
-		}
-
-		[Test]
-		public void GatherBuiltInAndUserConfigurations_ReturnsProjectAndShippedConfigs()
-		{
-			using(var docView = new TestXhtmlDocView())
-			{
-				docView.SetConfigObjectName("Dictionary");
-				docView.SetMediator(m_mediator);
-				var projectDictionaryConfigs =
-					Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder),
-									 "Dictionary");
-				Directory.CreateDirectory(projectDictionaryConfigs);
-				using(var tempConfigFile = TempFile.WithFilename(Path.Combine(projectDictionaryConfigs,
-																								  "NotAShippingConfig"+DictionaryConfigurationModel.FileExtension)))
-				{
-					File.WriteAllText(tempConfigFile.Path,
-											"<?xml version='1.0' encoding='utf-8'?><DictionaryConfiguration name='New User Config'/>");
-					// SUT
-					var fileListFromResults = docView.GatherBuiltInAndUserConfigurations().Values;
-					var shippedFileList = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"));
-					// all the shipped configs are in the return list
-					CollectionAssert.IsSubsetOf(shippedFileList, fileListFromResults);
-					// new user configuration is present in results
-					CollectionAssert.Contains(fileListFromResults, tempConfigFile.Path);
-				}
-			}
-		}
-
-		[Test]
-		public void GatherBuiltInAndUserConfigurations_ProjectOverrideReplacesShipped()
-		{
-			using(var docView = new TestXhtmlDocView())
-			{
-				docView.SetConfigObjectName("Dictionary");
-				docView.SetMediator(m_mediator);
-				var projectDictionaryConfigs =
-					Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder),
-									 "Dictionary");
-				Directory.CreateDirectory(projectDictionaryConfigs);
-				using(var tempConfigFile = TempFile.WithFilename(Path.Combine(projectDictionaryConfigs,
-																								  "Override"+DictionaryConfigurationModel.FileExtension)))
-				{
-					string firstShippedConfigName;
-					var shippedFileList =
-						Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"));
-					var fileList = shippedFileList.ToArray();
-					using(var stream = new FileStream(fileList.First(), FileMode.Open))
-					{
-						var doc = new XmlDocument();
-						doc.Load(stream);
-						var node = doc.SelectSingleNode("DictionaryConfiguration");
-						firstShippedConfigName = node.Attributes["name"].Value;
-					}
-
-					File.WriteAllText(tempConfigFile.Path,
-											"<?xml version='1.0' encoding='utf-8'?><DictionaryConfiguration name='"+
-											firstShippedConfigName+"'/>");
-					// SUT
-					var fileListFromResults = docView.GatherBuiltInAndUserConfigurations().Values;
-					CollectionAssert.Contains(fileListFromResults, tempConfigFile.Path);
-					Assert.AreEqual(fileListFromResults.Count, fileList.Count(),
-										 "Override was added instead of replacing a shipped config.");
-				}
-			}
-		}
-
 		private const string ConfigurationTemplate = "<?xml version='1.0' encoding='utf-8'?><DictionaryConfiguration name='AConfigPubtest'>" +
 		"<Publications></Publications></DictionaryConfiguration>";
 		private const string ConfigurationTemplateWithAllPublications = "<?xml version='1.0' encoding='utf-8'?><DictionaryConfiguration name='AConfigPubtest' allPublications='true'>" +
 		"<Publications></Publications></DictionaryConfiguration>";
-
 
 		[Test]
 		public void SplitPublicationsByConfiguration_AllPublicationIsIn()

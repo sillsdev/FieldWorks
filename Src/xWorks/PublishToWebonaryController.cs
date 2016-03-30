@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.XWorks
 					throw new ApplicationException(string.Format("Could not locate reversal writing system for {0}", reversal));
 				}
 				var xhtmlPath = Path.Combine(tempDirectoryToCompress, string.Format("reversal_{0}.xhtml", reversalWs.RFC5646));
-				var configurationFile = Path.Combine(m_mediator.PropertyTable.UserSettingDirectory, "ReversalIndex", reversal + ".fwdictconfig");
+				var configurationFile = Path.Combine(m_mediator.PropertyTable.UserSettingDirectory, "ReversalIndex", reversal + DictionaryConfigurationModel.FileExtension);
 				var configuration = new DictionaryConfigurationModel(configurationFile, m_cache);
 				m_exportService.ExportReversalContent(xhtmlPath, reversal, configuration);
 				webonaryView.UpdateStatus(xWorksStrings.ExportingReversalsToWebonaryCompleted);

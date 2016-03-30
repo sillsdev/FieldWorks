@@ -791,7 +791,7 @@
 				<item command="CmdPublicationsJumpToDefault"/>
 			</menu>
 			<menu id="ReversalIndexPaneMenu" icon="MenuWidget" alignment="left">
-			<menu inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" list="ReversalIndexList" property="ReversalIndexGuid" />
+			<menu inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" list="ReversalIndexList" property="ReversalIndexPublicationLayout" />
 			<item label="-" translate="do not translate"/>
 			<item command="CmdConfigureDictionary"/>
 			</menu>

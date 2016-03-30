@@ -519,7 +519,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Populate the list of publications for the first dictionary titlebar menu.
 		/// </summary>
-		/// <returns></returns>
 		public bool OnDisplayPublications(object parameter, ref UIListDisplayProperties display)
 		{
 			List<string> inConfig;
@@ -543,6 +542,18 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Populate a list of reversal index configurations for display in the reversal index configuration
+		/// chooser drop-down list in the Reversal Indexes area.
+		/// Omit the "All Reversal Indexes" item (LT-17170).
+		/// </summary>
+		public bool OnDisplayReversalIndexList(object parameter, ref UIListDisplayProperties display)
+		{
+			var handled = OnDisplayConfigurations(parameter, ref display);
+			DictionaryConfigurationUtils.RemoveAllReversalChoiceFromList(ref display);
+			return handled;
+		}
+
+		/// <summary>
 		/// Populate the list of dictionary configuration views for the second dictionary titlebar menu.
 		/// </summary>
 		/// <remarks>The areaconfiguration.xml defines the "Configurations" menu and the XWorksViews event handling calls this</remarks>
@@ -550,7 +561,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			IDictionary<string, string> hasPub;
 			IDictionary<string, string> doesNotHavePub;
-			var allConfigurations = GatherBuiltInAndUserConfigurations();
+			var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(Cache, m_configObjectName);
 			SplitConfigurationsByPublication(allConfigurations,
 														GetCurrentPublication(),
 														out hasPub, out doesNotHavePub);
@@ -617,56 +628,6 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected override void SetupDataContext()
 		{
-		}
-
-		/// <summary>
-		/// Stores the configuration name as the key, and the file path as the value
-		/// User configuration files with the same name as a shipped configuration will trump the shipped
-		/// </summary>
-		/// <seealso cref="DictionaryConfigurationController.ListDictionaryConfigurationChoices()"/>
-		/// <returns></returns>
-		internal SortedDictionary<string, string> GatherBuiltInAndUserConfigurations()
-		{
-			var configurations = new SortedDictionary<string, string>();
-			var defaultConfigs = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, m_configObjectName),
-																			"*" + DictionaryConfigurationModel.FileExtension);
-			// for every configuration file in the DefaultConfigurations folder add an entry
-			AddOrOverrideConfiguration(defaultConfigs, configurations);
-			var projectConfigPath = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder),
-																m_configObjectName);
-			if(Directory.Exists(projectConfigPath))
-			{
-				var projectConfigs = Directory.EnumerateFiles(projectConfigPath, "*" + DictionaryConfigurationModel.FileExtension);
-				// for every configuration in the projects configurations folder either override a shipped configuration or add an entry
-				AddOrOverrideConfiguration(projectConfigs, configurations);
-			}
-			return configurations;
-		}
-
-		/// <summary>
-		/// Reads just the configuration name out of each configuration file and either adds it to the configurations
-		/// dictionary by name or overwrites a previous entry with a new file location.
-		/// </summary>
-		private static void AddOrOverrideConfiguration(IEnumerable<string> configFiles,
-																	  IDictionary<string, string> configurations)
-		{
-			foreach(var configFile in configFiles)
-			{
-				using(var fileStream = new FileStream(configFile, FileMode.Open, FileAccess.Read))
-				using(var reader = XmlReader.Create(fileStream))
-				{
-					do
-					{
-						reader.Read();
-					} while(reader.NodeType != XmlNodeType.Element);
-					// Get the root xml element to grab the "name" value
-					var configName = reader["name"];
-					if(configName == null)
-						throw new InvalidDataException(String.Format("{0} is an invalid configuration file",
-																					configFile));
-					configurations[configName] = configFile;
-				}
-			}
 		}
 
 		/// <summary>
@@ -758,7 +719,7 @@ namespace SIL.FieldWorks.XWorks
 			if(publication == xWorksStrings.AllEntriesPublication)
 				return GetCurrentConfiguration(false);
 			var currentConfig = GetCurrentConfiguration(false);
-			var allConfigurations = GatherBuiltInAndUserConfigurations();
+			var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(Cache,m_configObjectName);
 			IDictionary<string, string> hasPub;
 			IDictionary<string, string> doesNotHavePub;
 			SplitConfigurationsByPublication(allConfigurations,
@@ -778,7 +739,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public void OnPropertyChanged(string name)
 		{
-			switch(name)
+			switch (name)
 			{
 				case "SelectedPublication":
 					var pubDecorator = PublicationDecorator;
@@ -789,14 +750,13 @@ namespace SIL.FieldWorks.XWorks
 				case "ReversalIndexPublicationLayout":
 					var currentConfig = GetCurrentConfiguration(false);
 					if (name == "ReversalIndexPublicationLayout")
-						currentConfig = GetCurrentConfigForReversalIndex(currentConfig);
+						DictionaryConfigurationUtils.SetReversalIndexGuidBasedOnReversalIndexConfiguration(m_mediator, Cache);
 					var currentPublication = GetCurrentPublication();
 					var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? xWorksStrings.AllEntriesPublication;
-					if(validPublication != currentPublication)
+					if (validPublication != currentPublication)
 					{
 						m_mediator.PropertyTable.SetProperty("SelectedPublication", validPublication, false);
 					}
-					SetReversalIndexOnPropertyDlg();
 					UpdateContent(PublicationDecorator, currentConfig);
 					break;
 				case "ActiveClerkSelectedObject":
@@ -866,41 +826,11 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Method to handle the reversalIndex selection from the Pane-Bar combo box, It is special scenario for Reversal Index
-		/// </summary>
-		/// <param name="currentConfig">Configuration from ReversalIndexPublicationLayout, Which may be default</param>
-		/// <returns></returns>
-		private string GetCurrentConfigForReversalIndex(string currentConfig)
-		{
-			var allConfigurations = GatherBuiltInAndUserConfigurations();
-			var reversalIndexGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_mediator, "ReversalIndexGuid");
-			var currentReversalIndex = Cache.ServiceLocator.GetObject(reversalIndexGuid) as IReversalIndex;
-			if (currentReversalIndex != null && allConfigurations.Keys.Contains(currentReversalIndex.ShortName))
-			{
-				currentConfig = allConfigurations[currentReversalIndex.ShortName];
-				SetCurrentConfiguration(currentConfig, false);
-				SetReversalIndexOnPropertyDlg();
-			}
-			return currentConfig;
-		}
-
-
-		/// <summary>
 		/// Method which set the current writing system when selected in ConfigureReversalIndexDialog
 		/// </summary>
 		private void SetReversalIndexOnPropertyDlg() // REVIEW (Hasso) 2016.01: this seems to sabotage whatever is selected in the Config dialog
 		{
-			var currWsPath = m_mediator.PropertyTable.GetStringProperty("ReversalIndexPublicationLayout", string.Empty);
-			var currWsName = Path.GetFileNameWithoutExtension(currWsPath);
-			var currentAnalysisWsList = Cache.LanguageProject.CurrentAnalysisWritingSystems;
-			var wsObj = currentAnalysisWsList.FirstOrDefault(ws => ws.DisplayLabel == currWsName);
-			if (wsObj == null || wsObj.DisplayLabel.ToLower().Contains("audio"))
-				return;
-			var riRepo = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
-			var mHvoRevIdx = riRepo.FindOrCreateIndexForWs(wsObj.Handle).Hvo;
-			var revGuid = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(mHvoRevIdx).Guid;
-			m_mediator.PropertyTable.SetProperty("ReversalIndexGuid", revGuid.ToString());
-			m_mediator.PropertyTable.SetPropertyPersistence("ReversalIndexGuid", true);
+			DictionaryConfigurationUtils.SetReversalIndexGuidBasedOnReversalIndexConfiguration(m_mediator, Cache);
 		}
 
 		public void OnMasterRefresh(object sender)
@@ -1094,7 +1024,7 @@ namespace SIL.FieldWorks.XWorks
 		private void SetConfigViewTitle()
 		{
 			var maxViewWidth = Width/2 - kSpaceForMenuButton;
-			var allConfigurations = GatherBuiltInAndUserConfigurations();
+			var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(Cache, m_configObjectName);
 			string curViewName;
 			var currentConfig = GetCurrentConfiguration(false);
 			if(allConfigurations.ContainsValue(currentConfig))
