@@ -394,6 +394,33 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void ShippedFilesHaveNoRedundantChildrenOrOrphans([Values("Dictionary", "ReversalIndex")] string subFolder)
+		{
+			var shippedConfigfolder = Path.Combine(FwDirectoryFinder.FlexFolder, "DefaultConfigurations", subFolder);
+			foreach(var shippedFile in Directory.EnumerateFiles(shippedConfigfolder, "*"+DictionaryConfigurationModel.FileExtension))
+			{
+				var model = new DictionaryConfigurationModel(shippedFile, Cache);
+				VerifyNoRedundantChildren(model.Parts);
+				if (model.SharedItems != null)
+				{
+					VerifyNoRedundantChildren(model.SharedItems);
+					foreach(var si in model.SharedItems)
+						Assert.NotNull(si.Parent, "Shared item {0} is an orphan", si.Label);
+				}
+			}
+		}
+
+		private static void VerifyNoRedundantChildren(List<ConfigurableDictionaryNode> nodes)
+		{
+			foreach (var node in nodes)
+			{
+				Assert.That(string.IsNullOrEmpty(node.ReferenceItem) || node.Children == null || !node.Children.Any());
+				if(node.Children != null)
+					VerifyNoRedundantChildren(node.Children);
+			}
+		}
+
+		[Test]
 		public void Save_BasicValidatesAgainstSchema()
 		{
 			var modelFile = Path.GetTempFileName();
@@ -919,11 +946,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var configNode = new ConfigurableDictionaryNode { FieldDescription = m_field, ReferenceItem = m_reference };
 			var refConfigNode = new ConfigurableDictionaryNode { FieldDescription = "SensesOS", Label = m_reference };
-			var model = new DictionaryConfigurationModel
-			{
-				Parts = new List<ConfigurableDictionaryNode> { configNode },
-				SharedItems = new List<ConfigurableDictionaryNode> { refConfigNode }
-			};
+			var model = CreateSimpleSharingModel(configNode, refConfigNode);
 
 			// SUT (Field is different)
 			Assert.Throws<KeyNotFoundException>(() => model.SpecifyParentsAndReferences(model.Parts));
@@ -942,11 +965,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var oneConfigNode = new ConfigurableDictionaryNode { FieldDescription = m_field, ReferenceItem = m_reference };
 			var oneRefConfigNode = new ConfigurableDictionaryNode { FieldDescription = m_field, Label = m_reference };
-			var model = new DictionaryConfigurationModel
-			{
-				Parts = new List<ConfigurableDictionaryNode> { oneConfigNode },
-				SharedItems = new List<ConfigurableDictionaryNode> { oneRefConfigNode }
-			};
+			var model = CreateSimpleSharingModel(oneConfigNode, oneRefConfigNode);
 
 			// SUT
 			model.SpecifyParentsAndReferences(model.Parts);
@@ -982,11 +1001,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = m_field, Label = m_reference,
 				Children = new List<ConfigurableDictionaryNode> { refdConfigNodeChild }
 			};
-			var model = new DictionaryConfigurationModel
-			{
-				Parts = new List<ConfigurableDictionaryNode> { configNode },
-				SharedItems = new List<ConfigurableDictionaryNode> { refdConfigNode }
-			};
+			var model = CreateSimpleSharingModel(configNode, refdConfigNode);
 
 			// SUT
 			model.SpecifyParentsAndReferences(model.Parts);
@@ -1004,17 +1019,26 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = m_field, Label = m_reference,
 				Children = new List<ConfigurableDictionaryNode> { refdConfigNodeChild }
 			};
-			var model = new DictionaryConfigurationModel
-			{
-				Parts = new List<ConfigurableDictionaryNode> { configNode },
-				SharedItems = new List<ConfigurableDictionaryNode> { refdConfigNode }
-			};
+			var model = CreateSimpleSharingModel(configNode, refdConfigNode);
 
 			// SUT
 			model.SpecifyParentsAndReferences(model.Parts);
 
 			Assert.AreSame(refdConfigNode, refdConfigNodeChild.Parent);
 			Assert.AreSame(refdConfigNode, refdConfigNodeChild.ReferencedNode);
+		}
+
+		[Test]
+		public void LinkReferencedNode()
+		{
+			var configNode = new ConfigurableDictionaryNode { FieldDescription = m_field };
+			var refConfigNode = new ConfigurableDictionaryNode { FieldDescription = m_field, Label = m_reference };
+			var model = CreateSimpleSharingModel(configNode, refConfigNode);
+
+			// SUT
+			model.LinkReferencedNode(configNode, m_reference);
+			Assert.AreEqual(refConfigNode.Label, configNode.ReferenceItem);
+			Assert.AreSame(refConfigNode, configNode.ReferencedNode);
 		}
 
 		[Test]
@@ -1347,6 +1371,44 @@ namespace SIL.FieldWorks.XWorks
 				// Don't mess up other unit tests with an extra reference type.
 				RemoveNewReferenceType(newType);
 			}
+		}
+
+		[Test]
+		public void ShareNodeForReference()
+		{
+			var configNodeChild = new ConfigurableDictionaryNode { Label = "child", FieldDescription = "someField" };
+			var configNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = m_field,
+				Label = "parent",
+				Children = new List<ConfigurableDictionaryNode> { configNodeChild }
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { configNode } };
+			model.SpecifyParentsAndReferences(model.Parts);
+
+			// SUT
+			model.ShareNodeForReference(configNode);
+			Assert.AreEqual(1, model.Parts.Count, "should still be 1 part");
+			Assert.AreEqual(1, model.SharedItems.Count, "Should be 1 shared item");
+			Assert.AreSame(configNode, model.Parts[0]);
+			var sharedItem = model.SharedItems[0];
+			Assert.AreEqual(m_field, configNode.FieldDescription, "Part's field");
+			Assert.AreEqual(m_field, sharedItem.FieldDescription, "Shared Item's field");
+			Assert.That(sharedItem.IsEnabled, "shared items are always enabled (for configurability)");
+			Assert.AreSame(configNode, sharedItem.Parent, "The original owner should be the 'master parent'");
+			Assert.NotNull(configNode.ReferencedNode, "part should store a reference to the shared item in memory");
+			Assert.NotNull(configNode.ReferenceItem, "part should store the name of the shared item");
+			Assert.AreEqual(sharedItem.Label, configNode.ReferenceItem, "Part should store the name of the shared item");
+			sharedItem.Children.ForEach(child => Assert.AreSame(sharedItem, child.Parent));
+		}
+
+		public DictionaryConfigurationModel CreateSimpleSharingModel(ConfigurableDictionaryNode part, ConfigurableDictionaryNode sharedItem)
+		{
+			return new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { part },
+				SharedItems = new List<ConfigurableDictionaryNode> { sharedItem },
+			};
 		}
 
 		private ILexEntryType CreateNewVariantType(string name)

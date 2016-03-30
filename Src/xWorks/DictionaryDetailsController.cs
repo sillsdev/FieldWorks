@@ -152,7 +152,7 @@ namespace SIL.FieldWorks.XWorks
 
 			bool atLeastOneWsChecked = false;
 			// Check if the default WS is selected (it will be the one and only)
-			if (selectedWSs.Count() == 1)
+			if (selectedWSs.Count == 1)
 			{
 				var selectedWsDefaultId = WritingSystemServices.GetMagicWsIdFromName(selectedWSs[0].Id);
 				if (selectedWsDefaultId < 0)
@@ -287,14 +287,13 @@ namespace SIL.FieldWorks.XWorks
 		private void LoadSenseOptions(DictionaryNodeSenseOptions senseOptions, bool isSubsense)
 		{
 			// initialize SenseOptionsView
-			// REVIEW (Hasso) 2016.03: A better name for this string would be disallowedNumberingStyle; also, 'x' is confusing as it is neither prefixed by % nor a valid numberingStyle
 			//For senses disallow the 1 1.2 1.2.3 option, that is now handled in subsenses
 			var disallowedNumberingStyles = string.Empty;
 			if (!isSubsense)
 			{
 				disallowedNumberingStyles = "%O";
 			}
-			IDictionarySenseOptionsView senseOptionsView = new SenseOptionsView(isSubsense)
+			var senseOptionsView = new SenseOptionsView(isSubsense)
 			{
 				BeforeText = senseOptions.BeforeNumber,
 				// load list of available NumberingStyles before setting NumberingStyle's value
@@ -336,14 +335,14 @@ namespace SIL.FieldWorks.XWorks
 			senseOptionsView.SenseInParaChanged += (sender, e) => SenseInParaChanged(senseOptions, senseOptionsView);
 
 			// add senseOptionsView to the DetailsView
-			View.OptionsView = senseOptionsView as SenseOptionsView;
+			View.OptionsView = senseOptionsView;
 		}
 
 		/// <summary>Initialize options for DictionaryNodeListOptions other than WritingSystem options</summary>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "listOptionsView is disposed by its parent")]
 		private void LoadListOptions(DictionaryNodeListOptions listOptions)
 		{
-			IDictionaryListOptionsView listOptionsView = new ListOptionsView();
+			var listOptionsView = new ListOptionsView();
 
 			if (listOptions is DictionaryNodeComplexFormOptions)
 			{
@@ -368,7 +367,7 @@ namespace SIL.FieldWorks.XWorks
 			// Prevent events from firing while the view is being initialized
 			listOptionsView.Load += ListEventHandlerAdder(listOptionsView, listOptions);
 
-			View.OptionsView = listOptionsView as UserControl;
+			View.OptionsView = listOptionsView;
 		}
 
 		private void InternalLoadList(DictionaryNodeListOptions listOptions, IDictionaryListOptionsView listOptionsView)

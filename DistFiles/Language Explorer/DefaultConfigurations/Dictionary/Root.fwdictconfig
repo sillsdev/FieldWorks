@@ -523,7 +523,6 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Subentries" style="Dictionary-Subentry" isEnabled="false" field="Subentries">
-		<ReferenceItem>LexEntry</ReferenceItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Subsenses" style="Dictionary-Sense" between="  " after=" " isEnabled="true" field="SensesOS" cssClassNameOverride="senses">
 		<SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=") " numberingStyle="%O" numberSingleSense="true" showSingleGramInfoFirst="true"/>
@@ -881,7 +880,6 @@
 		  </ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Subentries" style="Dictionary-Subentry" isEnabled="false" field="Subentries">
-		  <ReferenceItem>LexEntry</ReferenceItem>
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	</ConfigurationItem>

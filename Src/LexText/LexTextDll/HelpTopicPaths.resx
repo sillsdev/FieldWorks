@@ -2712,7 +2712,7 @@
     <value>/Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_publications.htm</value>
   </data>
   <data name="khtpConfigureHeadwordNumbers" xml:space="preserve">
-    <value>/User_Interface/Menus/Tools/Configure_Referenced_Headwords/Config_Refed_Hdwrds_dialog_box.htm</value>
+    <value>/User_Interface/Menus/Tools/Configure_Headword_Numbers/Config_Hdwrd_Numbers_dialog_box.htm</value>
     <comment>Configure Headword Numbers Dialog box.</comment>
   </data>
   <data name="khtpConfigureDictionary" xml:space="preserve">

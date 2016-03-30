@@ -98,11 +98,10 @@ namespace SIL.FieldWorks.XWorks
 		internal static void PopulateFieldsForTesting(DictionaryConfigurationModel model)
 		{
 			Assert.NotNull(model);
-			if (model.SharedItems == null)
-				model.SharedItems = new List<ConfigurableDictionaryNode>();
 			model.SpecifyParentsAndReferences(model.Parts);
 			PopulateFieldsForTesting(model.Parts);
-			PopulateFieldsForTesting(model.SharedItems);
+			if (model.SharedItems != null)
+				PopulateFieldsForTesting(model.SharedItems);
 		}
 
 		private static void PopulateFieldsForTesting(List<ConfigurableDictionaryNode> nodes)

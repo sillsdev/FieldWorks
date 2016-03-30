@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Trees of shared dictionary elements
 		/// </summary>
 		[XmlArray(ElementName = "SharedItems")]
-		[XmlArrayItem("ConfigurationItem", typeof(ConfigurableDictionaryNode))]
+		[XmlArrayItem(ElementName = "ConfigurationItem")]
 		public List<ConfigurableDictionaryNode> SharedItems { get; set; }
 
 		/// <summary>
@@ -94,16 +94,10 @@ namespace SIL.FieldWorks.XWorks
 			using(var reader = XmlReader.Create(FilePath))
 			{
 				var model = (DictionaryConfigurationModel)serializer.Deserialize(reader);
-				Label = model.Label;
-				WritingSystem = model.WritingSystem;
-				LastModified = model.LastModified;
-				Version = model.Version;
-				Parts = model.Parts;
-				AllPublications = model.AllPublications;
-				if (AllPublications)
-					Publications = GetAllPublications(cache);
-				else
-					Publications = LoadPublicationsSafe(model, cache);
+				model.FilePath = FilePath; // this doesn't get [de]serialized
+				foreach (var property in typeof(DictionaryConfigurationModel).GetProperties().Where(prop => prop.CanWrite))
+					property.SetValue(this, property.GetValue(model, null), null);
+				Publications = AllPublications ? GetAllPublications(cache) : LoadPublicationsSafe(model, cache);
 			}
 			SpecifyParentsAndReferences(Parts);
 			// Handle any changes to the custom field definitions.  (See https://jira.sil.org/browse/LT-16430.)
@@ -321,30 +315,60 @@ namespace SIL.FieldWorks.XWorks
 
 			foreach (var node in nodes)
 			{
-				if (node.Children == null) // TODO pH 2016.03: || !node.Children.Any())
-				{
-					if (string.IsNullOrEmpty(node.ReferenceItem))
-						continue;
-					node.ReferencedNode = SharedItems.FirstOrDefault(si =>
-						si.Label == node.ReferenceItem && si.FieldDescription == node.FieldDescription && si.SubField == node.SubField);
-					if (node.ReferencedNode == null)
-						throw new KeyNotFoundException(string.Format("Could not find Referenced Node named {0} for field {1}.{2}",
-							node.ReferenceItem, node.FieldDescription, node.SubField));
-					if (node.ReferencedNode.Parent != null)
-						continue;
-					node.ReferencedNode.Parent = node;
-					SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { node.ReferencedNode }); // REVIEW pH 2016.03: specify here, or all SI's together?
-				}
-				else
-				{
-					// REVIEW (Jason) 2016.03: should we allow mixed families? Should Referenced Children eclipse Children instead of as-is? also in node.ChildrenOrReferencedChildren
-					//if (!string.IsNullOrEmpty(node.ReferenceItem)) // TODO pH 2016.03: decide, and implement accordingly
-					//	throw new ArgumentException("We presently do not allow biological parents to adopt");
-					foreach (var child in node.Children)
-						child.Parent = node;
-					SpecifyParentsAndReferences(node.Children);
-				}
+				if (!string.IsNullOrEmpty(node.ReferenceItem))
+					LinkReferencedNode(node, node.ReferenceItem);
+				if (node.Children == null)
+					continue;
+				foreach (var child in node.Children)
+					child.Parent = node;
+				SpecifyParentsAndReferences(node.Children);
 			}
+		}
+
+		public void LinkReferencedNode(ConfigurableDictionaryNode node, string referenceItem)
+		{
+			node.ReferencedNode = SharedItems.FirstOrDefault(si =>
+				si.Label == referenceItem && si.FieldDescription == node.FieldDescription && si.SubField == node.SubField);
+			if (node.ReferencedNode == null)
+				throw new KeyNotFoundException(string.Format("Could not find Referenced Node named {0} for field {1}.{2}",
+					referenceItem, node.FieldDescription, node.SubField));
+			node.ReferenceItem = referenceItem;
+			if (node.ReferencedNode.Parent != null)
+				return; // ENHANCE (Hasso) 2016.03: this is a depth-first search for a parent; would emulating breadth-first be better?
+			node.ReferencedNode.Parent = node;
+			SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { node.ReferencedNode }); // REVIEW pH 2016.03: specify here, or all SI's together?
+		}
+
+		/// <summary>
+		/// Allow other nodes to reference this node's children
+		/// </summary>
+		public void ShareNodeForReference(ConfigurableDictionaryNode node)
+		{
+			if (SharedItems == null)
+				SharedItems = new List<ConfigurableDictionaryNode>();
+			// ENHANCE (Hasso) 2016.03: enforce that the specified node is part of *this* model (incl shared items)
+			var key = string.Format("Shared{0}", node.Label);
+			if (SharedItems.Any(item => item.Label == key))
+			{
+				var i = 1;
+				for (; SharedItems.Any(item => item.Label == key + i); ++i) {}
+				key = key + i;
+			}
+			var sharedItem = new ConfigurableDictionaryNode
+			{
+				Label = key,
+				FieldDescription = node.FieldDescription,
+				SubField = node.SubField,
+				Parent = node,
+				Children = node.Children, // ENHANCE (Hasso) 2016.03: deep-clone so that unshared changes are not lost? Or only on share-with?
+				IsEnabled = true // shared items are always enabled (for configurability)
+			};
+			foreach (var child in sharedItem.Children)
+				child.Parent = sharedItem;
+			SharedItems.Add(sharedItem);
+			node.ReferenceItem = key;
+			node.ReferencedNode = sharedItem;
+			node.Children = null;
 		}
 
 		public override string ToString()

@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 // ReSharper disable InconsistentNaming
 
@@ -306,6 +307,24 @@ namespace SIL.FieldWorks.XWorks
 			var result = rootNode.ChangeSuffix("new", rootNodes);
 			Assert.That(result, Is.True, "allow changing suffix of root");
 			Assert.That(rootNode.LabelSuffix, Is.EqualTo("new"), "failed to change suffix");
+		}
+
+		[Test]
+		public void ReferencedOrDirectChildren_PrefersReferencedChildren()
+		{
+			var refChild = new ConfigurableDictionaryNode { Label = "ReferencedChild" };
+			var refNode = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { refChild } };
+			var child = new ConfigurableDictionaryNode { Label = "DirectChild" };
+			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { child }, ReferencedNode = refNode };
+			Assert.AreSame(refChild, parent.ReferencedOrDirectChildren.First());
+		}
+
+		[Test]
+		public void ReferencedOrDirectChildren_FallsBackOnDirectChildren()
+		{
+			var child = new ConfigurableDictionaryNode { Label = "DirectChild" };
+			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { child } };
+			Assert.AreSame(child, parent.ReferencedOrDirectChildren.First());
 		}
 
 		[Test]

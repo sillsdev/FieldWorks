@@ -214,13 +214,13 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>Refresh the Preview without reloading the entire configuration tree</summary>
 		private void RefreshPreview(bool isChangeInDictionaryModel = true)
 		{
-			//_mediator should be null only for unit tests which don't need styles
-			if (_mediator == null || _previewEntry == null || !_previewEntry.IsValidObject)
-				return;
 			if (isChangeInDictionaryModel)
 				m_isDirty = true;
 			else
 				MasterRefreshRequired = true;
+			//_mediator should be null only for unit tests which don't need styles
+			if (_mediator == null || _previewEntry == null || !_previewEntry.IsValidObject)
+				return;
 			View.PreviewData = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(_previewEntry, _model, _allEntriesPublicationDecorator, _mediator);
 			if(_isHighlighted)
 				View.HighlightContent(View.TreeControl.Tree.SelectedNode.Tag as ConfigurableDictionaryNode);
