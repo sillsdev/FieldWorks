@@ -189,10 +189,6 @@
       <Name>xWorks</Name>
       <HintPath>..\..\..\Output\Debug\xWorks.dll</HintPath>
     </Reference>
-    <Reference Include="FixFwDataDll">
-      <Name>FixFwDataDll</Name>
-      <HintPath>..\..\..\Output\Debug\FixFwDataDll.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs">

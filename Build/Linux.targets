@@ -281,7 +281,7 @@
 		<ForceDelete Files="@(FilesToDelete)"/>
 	</Target>
 
-	<Target Name="build4package-fdo" DependsOnTargets="Initialize;setRegistryValues;ensureTLBsUpToDate;downloadDlls;allCppNoTest;IcuData;FDO">
+	<Target Name="build4package-fdo" DependsOnTargets="Initialize;setRegistryValues;ensureTLBsUpToDate;downloadDlls;allCppNoTest;IcuData;FDO;FixFwDataDll">
 		<ItemGroup>
 			<FilesToCopy Include="$(dir-outputBase)/**"/>
 		</ItemGroup>

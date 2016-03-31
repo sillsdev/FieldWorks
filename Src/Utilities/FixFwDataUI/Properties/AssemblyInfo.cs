@@ -6,6 +6,5 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("FixFwDataDll")]
+[assembly: AssemblyTitle("FixFwDataUI")]
 [assembly: ComVisible(false)]
-[assembly: InternalsVisibleTo("FixFwDataUI")]

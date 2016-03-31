@@ -138,10 +138,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\Filters.dll</HintPath>
     </Reference>
-    <Reference Include="FixFwDataDll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\FixFwDataDll.dll</HintPath>
-    </Reference>
     <Reference Include="Framework">
       <Name>Framework</Name>
       <HintPath>..\..\..\Output\Debug\Framework.dll</HintPath>
