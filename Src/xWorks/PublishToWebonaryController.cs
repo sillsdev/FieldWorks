@@ -120,11 +120,9 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal virtual string DestinationURI(string siteName)
 		{
-			// TODO use specified site with respect to webonary domain, rather than using value
-			// for current testing. eg $siteName.webonary.org/something or
-			// www.webonary.org/$sitename/wp-json/something .
+			// To do local testing set the WEBONARYSERVER environment variable to something like 192.168.33.10
 			var server = Environment.GetEnvironmentVariable("WEBONARYSERVER");
-			server = string.IsNullOrEmpty(server) ? "192.168.33.10" : server;
+			server = string.IsNullOrEmpty(server) ? "webonary.org" : server;
 			return string.Format("https://{0}.{1}/wp-json/webonary/import", siteName, server);
 		}
 
