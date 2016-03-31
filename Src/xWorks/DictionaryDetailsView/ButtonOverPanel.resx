@@ -118,157 +118,55 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="labelParaStyle.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="panel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Bottom, Left, Right</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="labelParaStyle.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 8</value>
+  <data name="panel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 32</value>
   </data>
-  <data name="labelParaStyle.Size" type="System.Drawing.Size, System.Drawing">
-    <value>140, 13</value>
+  <data name="panel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>255, 16</value>
   </data>
-  <data name="labelParaStyle.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="labelParaStyle.Text" xml:space="preserve">
-    <value>Paragraph Style for Content:</value>
-  </data>
-  <data name="&gt;&gt;labelParaStyle.Name" xml:space="preserve">
-    <value>labelParaStyle</value>
-  </data>
-  <data name="&gt;&gt;labelParaStyle.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelParaStyle.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;labelParaStyle.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="buttonParaStyles.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="buttonParaStyles.Location" type="System.Drawing.Point, System.Drawing">
-    <value>209, 29</value>
-  </data>
-  <data name="buttonParaStyles.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 21</value>
-  </data>
-  <data name="buttonParaStyles.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="buttonParaStyles.Text" xml:space="preserve">
-    <value>Styles...</value>
-  </data>
-  <data name="&gt;&gt;buttonParaStyles.Name" xml:space="preserve">
-    <value>buttonParaStyles</value>
-  </data>
-  <data name="&gt;&gt;buttonParaStyles.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;buttonParaStyles.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;buttonParaStyles.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="dropDownParaStyle.Location" type="System.Drawing.Point, System.Drawing">
-    <value>7, 29</value>
-  </data>
-  <data name="dropDownParaStyle.Size" type="System.Drawing.Size, System.Drawing">
-    <value>181, 21</value>
-  </data>
-  <data name="dropDownParaStyle.TabIndex" type="System.Int32, mscorlib">
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="panel.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
-  <data name="&gt;&gt;dropDownParaStyle.Name" xml:space="preserve">
-    <value>dropDownParaStyle</value>
+  <data name="&gt;&gt;panel.Name" xml:space="preserve">
+    <value>panel</value>
   </data>
-  <data name="&gt;&gt;dropDownParaStyle.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;panel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;dropDownParaStyle.Parent" xml:space="preserve">
+  <data name="&gt;&gt;panel.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;dropDownParaStyle.ZOrder" xml:space="preserve">
-    <value>4</value>
+  <data name="&gt;&gt;panel.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
-  <data name="labelContParaStyle.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="button.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 3</value>
   </data>
-  <data name="labelContParaStyle.Location" type="System.Drawing.Point, System.Drawing">
-    <value>7, 57</value>
+  <data name="button.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 23</value>
   </data>
-  <data name="labelContParaStyle.Size" type="System.Drawing.Size, System.Drawing">
-    <value>219, 13</value>
-  </data>
-  <data name="labelContParaStyle.TabIndex" type="System.Int32, mscorlib">
-    <value>5</value>
-  </data>
-  <data name="labelContParaStyle.Text" xml:space="preserve">
-    <value>Paragraph Style for Continuation Paragraphs:</value>
-  </data>
-  <data name="&gt;&gt;labelContParaStyle.Name" xml:space="preserve">
-    <value>labelContParaStyle</value>
-  </data>
-  <data name="&gt;&gt;labelContParaStyle.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelContParaStyle.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;labelContParaStyle.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="buttonContParaStyles.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="buttonContParaStyles.Location" type="System.Drawing.Point, System.Drawing">
-    <value>209, 78</value>
-  </data>
-  <data name="buttonContParaStyles.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 21</value>
-  </data>
-  <data name="buttonContParaStyles.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="buttonContParaStyles.Text" xml:space="preserve">
-    <value>Styles...</value>
-  </data>
-  <data name="&gt;&gt;buttonContParaStyles.Name" xml:space="preserve">
-    <value>buttonContParaStyles</value>
-  </data>
-  <data name="&gt;&gt;buttonContParaStyles.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;buttonContParaStyles.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;buttonContParaStyles.ZOrder" xml:space="preserve">
+  <data name="button.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
-  <data name="dropDownContParaStyle.Location" type="System.Drawing.Point, System.Drawing">
-    <value>7, 78</value>
+  <data name="button.Text" xml:space="preserve">
+    <value>Configure Headword Numbers...</value>
   </data>
-  <data name="dropDownContParaStyle.Size" type="System.Drawing.Size, System.Drawing">
-    <value>181, 21</value>
+  <data name="&gt;&gt;button.Name" xml:space="preserve">
+    <value>button</value>
   </data>
-  <data name="dropDownContParaStyle.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
+  <data name="&gt;&gt;button.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;dropDownContParaStyle.Name" xml:space="preserve">
-    <value>dropDownContParaStyle</value>
-  </data>
-  <data name="&gt;&gt;dropDownContParaStyle.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;dropDownContParaStyle.Parent" xml:space="preserve">
+  <data name="&gt;&gt;button.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;dropDownContParaStyle.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="&gt;&gt;button.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -277,10 +175,10 @@
     <value>6, 13</value>
   </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>291, 113</value>
+    <value>261, 51</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>ParagraphOptionsView</value>
+    <value>ButtonWithPane</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
     <value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>

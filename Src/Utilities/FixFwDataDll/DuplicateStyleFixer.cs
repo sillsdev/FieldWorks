@@ -69,8 +69,7 @@ namespace SIL.FieldWorks.FixData
 					if (!m_deletedGuids.Contains(guid))
 						return true; // keep it as far as we're concerned.
 					var name = rt.Element("Name").Element("Uni").Value; // none can be null or we wouldn't have listed it for deletion
-					errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(),
-						String.Format(Strings.ksRemovingDuplicateStyle, name));
+					errorLogger(String.Format(Strings.ksRemovingDuplicateStyle, name), true);
 					return false; // This element must go away!
 				case "LangProject":
 				case "Scripture":
@@ -88,6 +87,13 @@ namespace SIL.FieldWorks.FixData
 					break;
 			}
 			return true; // we're not deleting it.
+		}
+
+		internal override void Reset()
+		{
+			m_stylesSeen.Clear();
+			m_deletedGuids.Clear();
+			base.Reset();
 		}
 	}
 }

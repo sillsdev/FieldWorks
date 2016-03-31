@@ -65,8 +65,8 @@ namespace SIL.FieldWorks.XWorks
 		public List<string> Publications { get; set; }
 
 		public Dictionary<string, DictionaryConfigurationModel> Configurations { get; set; }
+		public Dictionary<string, DictionaryConfigurationModel> Reversals { get; set; }
 
-		public IEnumerable<string> Reversals { get; set; }
 		private IPropertyTable PropertyTable { get; set; }
 
 		public PublishToWebonaryModel(IPropertyTable propertyTable)
@@ -122,7 +122,8 @@ namespace SIL.FieldWorks.XWorks
 			CoreImpl.Properties.Settings.Default.WebonaryUser = UserName;
 
 			PropertyTable.SetProperty(WebonarySite, SiteName, true, false);
-			PropertyTable.SetProperty(WebonaryReversals, CombineReversalSettingStrings(Reversals), true, false);
+			PropertyTable.SetProperty(WebonaryReversals, CombineReversalSettingStrings(Reversals.Keys), true, false);
+			PropertyTable.SetProperty(WebonaryReversals, CombineReversalSettingStrings(SelectedReversals), true, false);
 			if(m_selectedConfiguration != null)
 			{
 				PropertyTable.SetProperty(WebonaryConfiguration, m_selectedConfiguration, true, false);

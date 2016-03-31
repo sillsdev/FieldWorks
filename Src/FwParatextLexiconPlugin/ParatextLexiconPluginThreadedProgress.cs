@@ -54,6 +54,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		public bool AllowCancel { get; set; }
 
+		public bool IsCanceling
+		{
+			get { return false; }
+		}
+
 		public event CancelEventHandler Canceling;
 
 		public object RunTask(Func<IThreadedProgress, object[], object> backgroundTask, params object[] parameters)

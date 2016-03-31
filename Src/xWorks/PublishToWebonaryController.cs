@@ -12,6 +12,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using System.Net;
 using System.Text;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -98,7 +99,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (model.Reversals == null)
 				return;
-			foreach (var reversal in model.Reversals)
+			foreach (var reversal in model.SelectedReversals)
 			{
 				webonaryView.UpdateStatus(string.Format(xWorksStrings.ExportingReversalsToWebonary, reversal));
 				var reversalWs = m_cache.LangProject.AnalysisWritingSystems.FirstOrDefault(ws => ws.DisplayLabel == reversal);
@@ -108,7 +109,7 @@ namespace SIL.FieldWorks.XWorks
 					throw new ApplicationException(string.Format("Could not locate reversal writing system for {0}", reversal));
 				}
 				var xhtmlPath = Path.Combine(tempDirectoryToCompress, string.Format("reversal_{0}.xhtml", reversalWs.IcuLocale));
-				var configurationFile = Path.Combine(m_propertyTable.UserSettingDirectory, "ReversalIndex", reversal + ".fwdictconfig"); // TODO (Hasso) 2016.01: what if the user wants to use a copy of this config?
+				var configurationFile = Path.Combine(m_propertyTable.UserSettingDirectory, "ReversalIndex", reversal + ".fwdictconfig");
 				var configuration = new DictionaryConfigurationModel(configurationFile, m_cache);
 				m_exportService.ExportReversalContent(xhtmlPath, reversal, configuration);
 				webonaryView.UpdateStatus(xWorksStrings.ExportingReversalsToWebonaryCompleted);
@@ -153,13 +154,14 @@ namespace SIL.FieldWorks.XWorks
 				{
 					const string errorMessage = "Unable to connect to Webonary.  Please check your username and password and your Internet connection.";
 					view.UpdateStatus(string.Format("An error occurred uploading your data: {0}{1}{2}", errorMessage, Environment.NewLine, e.Message));
+					view.SetStatusCondition(WebonaryStatusCondition.Error);
 					return;
 				}
 				var responseText = Encoding.ASCII.GetString(response);
 
 				if (responseText.Contains("Upload successful"))
 				{
-					if (responseText.IndexOf("error", StringComparison.OrdinalIgnoreCase) < 0)
+					if (!responseText.Contains("error"))
 					{
 						view.UpdateStatus("Upload successful. " +
 							"Preparing your data for publication. " +
@@ -167,16 +169,24 @@ namespace SIL.FieldWorks.XWorks
 							"You will receive an email when the process is complete. " +
 							"You can examine the progress on the admin page of your Webonary site. "+
 							"You may now safely close this dialog.");
+						view.SetStatusCondition(WebonaryStatusCondition.Success);
 						return;
 					}
 
 					view.UpdateStatus("The upload was successful; however, there were errors processing your data.");
+					view.SetStatusCondition(WebonaryStatusCondition.Error);
 				}
 
 				if (responseText.Contains("Wrong username or password"))
+				{
 					view.UpdateStatus("Error: Wrong username or password");
+					view.SetStatusCondition(WebonaryStatusCondition.Error);
+				}
 				if (responseText.Contains("User doesn't have permission to import data"))
+				{
 					view.UpdateStatus("Error: User doesn't have permission to import data");
+					view.SetStatusCondition(WebonaryStatusCondition.Error);
+				}
 
 				view.UpdateStatus(string.Format("Response from server:{0}{1}{0}", Environment.NewLine, responseText));
 			}
@@ -190,45 +200,74 @@ namespace SIL.FieldWorks.XWorks
 		public void PublishToWebonary(PublishToWebonaryModel model, IPublishToWebonaryView view)
 		{
 			view.UpdateStatus("Publishing to Webonary.");
+			view.SetStatusCondition(WebonaryStatusCondition.None);
 
 			if(string.IsNullOrEmpty(model.SiteName))
 			{
 				view.UpdateStatus("Error: No site name specified.");
+				view.SetStatusCondition(WebonaryStatusCondition.Error);
 				return;
 			}
 
 			if(string.IsNullOrEmpty(model.UserName))
 			{
 				view.UpdateStatus("Error: No username specified.");
+				view.SetStatusCondition(WebonaryStatusCondition.Error);
 				return;
 			}
 
 			if (string.IsNullOrEmpty(model.Password))
 			{
 				view.UpdateStatus("Error: No Password specified.");
+				view.SetStatusCondition(WebonaryStatusCondition.Error);
 				return;
 			}
 
 			if(string.IsNullOrEmpty(model.SelectedPublication))
 			{
 				view.UpdateStatus("Error: No Publication specified.");
+				view.SetStatusCondition(WebonaryStatusCondition.Error);
 				return;
 			}
 
 			if(string.IsNullOrEmpty(model.SelectedConfiguration))
 			{
 				view.UpdateStatus("Error: No Configuration specified.");
+				view.SetStatusCondition(WebonaryStatusCondition.Error);
 				return;
 			}
 
 			var tempDirectoryToCompress = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-			var zipFileToUpload = Path.Combine(Path.GetTempPath(), Path.GetTempFileName());
+			var zipBasename = UploadFilename(model, view);
+			if (zipBasename == null)
+				return;
+			var zipFileToUpload = Path.Combine(Path.GetTempPath(), zipBasename);
 			Directory.CreateDirectory(tempDirectoryToCompress);
 			ExportDictionaryContent(tempDirectoryToCompress, model, view);
 			ExportReversalContent(tempDirectoryToCompress, model, view);
 			ExportOtherFilesContent(tempDirectoryToCompress, model, view);
 			CompressExportedFiles(tempDirectoryToCompress, zipFileToUpload, view);
 			UploadToWebonary(zipFileToUpload, model, view);
+		}
+
+		/// <summary>
+		/// Filename of zip file to upload to webonary, based on a particular model.
+		/// If there are any characters that might cause a problem, null is returned.
+		/// </summary>
+		internal static string UploadFilename(PublishToWebonaryModel basedOnModel, IPublishToWebonaryView view)
+		{
+			if (basedOnModel == null)
+				throw new ArgumentNullException("basedOnModel");
+			if (string.IsNullOrEmpty(basedOnModel.SiteName))
+				throw new ArgumentException("basedOnModel");
+			var disallowedCharacters = MiscUtils.GetInvalidProjectNameChars(MiscUtils.FilenameFilterStrength.kFilterProjName) + "_ $.%";
+			if (basedOnModel.SiteName.IndexOfAny(disallowedCharacters.ToCharArray()) >= 0)
+			{
+				view.UpdateStatus("Error: Invalid characters found in sitename.");
+				view.SetStatusCondition(WebonaryStatusCondition.Error);
+				return null;
+			}
+			return basedOnModel.SiteName + ".zip";
 		}
 
 		/// <summary>

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2015 SIL International
+﻿// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,8 +12,10 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FwCoreDlgControls;
+using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 
 namespace SIL.FieldWorks.XWorks
@@ -42,6 +44,9 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>Fired whenever the model is changed so that the dictionary preview can be refreshed</summary>
 		public event EventHandler DetailsModelChanged;
+
+		/// <summary>Fired whenever the Styles dialog makes changes that require the dictionary preview to be refreshed</summary>
+		public event EventHandler StylesDialogMadeChanges;
 
 		public DictionaryDetailsController(IDictionaryDetailsView view, IPropertyTable propertyTable)
 		{
@@ -87,7 +92,7 @@ namespace SIL.FieldWorks.XWorks
 			ResetView(View, node);
 
 			// Populate Styles dropdown
-			bool isPara = m_node.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph;
+			var isPara = m_node.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph;
 			View.SetStyles(isPara ? m_paraStyles : m_charStyles, m_node.Style, isPara);
 
 			// Test for Options type
@@ -95,39 +100,25 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (Options is DictionaryNodeWritingSystemOptions)
 				{
-					LoadWsOptions(Options as DictionaryNodeWritingSystemOptions);
+					LoadWsOptions((DictionaryNodeWritingSystemOptions) Options);
 				}
 				else if (Options is DictionaryNodeSenseOptions)
 				{
-					LoadSenseOptions(Options as DictionaryNodeSenseOptions);
+					LoadSenseOptions((DictionaryNodeSenseOptions) Options, node.Parent != null && node.FieldDescription == node.Parent.FieldDescription);
 				}
 				else if (Options is DictionaryNodeListOptions)
 				{
-					LoadListOptions(Options as DictionaryNodeListOptions);
-				}
-				else if (Options is DictionaryNodeParagraphOptions)
-				{
-					LoadParagraphOptions(Options as DictionaryNodeParagraphOptions);
+					LoadListOptions((DictionaryNodeListOptions) Options);
 				}
 				else if (Options is DictionaryNodePictureOptions)
 				{
 					// todo: loading options here once UX has been worked out
 					View.OptionsView = null;
 				}
-				else if (Options is ReferringSenseOptions)
-				{
-					LoadListSenseOptions(Options as ReferringSenseOptions);
-				}
 				else
 				{
 					throw new ArgumentException("Unrecognised type of DictionaryNodeOptions");
 				}
-			}
-			else if ("LexEntry".Equals(m_node.FieldDescription))
-			{
-				// Main Entry and Minor Entry are the only two where field=LexEntry; of these, only Main Entry has Options=null
-				// There is nothing to configure on the Main Entry itself
-				View.Visible = false;
 			}
 			else if ("MorphoSyntaxAnalysisRA".Equals(m_node.FieldDescription) && m_node.Parent.DictionaryNodeOptions is DictionaryNodeSenseOptions)
 			{
@@ -136,9 +127,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
-
 				// else, show only the default details (style, before, between, after)
 				View.OptionsView = null;
+				if (DictionaryConfigurationModel.IsReadonlyMainEntry(m_node))
+					View.StylesEnabled = false;
 			}
 
 			// Register eventhandlers
@@ -149,70 +141,6 @@ namespace SIL.FieldWorks.XWorks
 			View.AfterTextChanged += OnViewOnAfterTextChanged;
 
 			View.ResumeLayout();
-		}
-
-		private void LoadListSenseOptions(ReferringSenseOptions listOptions)
-		{
-			string numberingStyles = "x";
-			var listOptionsView = new ListSenseOptionView
-			{
-				DisplayOptionCheckBoxVisible = true,
-				BeforeText = listOptions.SenseOptions.BeforeNumber,
-				NumberingStyles = XmlVcDisplayVec.SupportedNumberingStyles.Where(prop => prop.FormatString != numberingStyles).ToList(),
-				NumberingStyle = listOptions.SenseOptions.NumberingStyle,
-				AfterText = listOptions.SenseOptions.AfterNumber,
-				NumberSingleSense = listOptions.SenseOptions.NumberEvenASingleSense,
-				ShowGrammarFirst = listOptions.SenseOptions.ShowSharedGrammarInfoFirst,
-				SenseInPara = false,
-				DisplayOptionCheckBoxChecked = listOptions.WritingSystemOptions.DisplayWritingSystemAbbreviations,
-			};
-			if (m_node.StyleType != ConfigurableDictionaryNode.StyleTypes.Character)
-		{
-					View.SetStyles(m_paraStyles, m_node.Style, true);
-		}
-			// load character Style (number) and paragraph Style (sense)
-			listOptionsView.SetStyles(m_charStyles, listOptions.SenseOptions.NumberStyle);
-			View.SetStyles(m_paraStyles, m_node.Style, true);
-
-			// (dis)actviate appropriate parts of the view
-			listOptionsView.NumberMetaConfigEnabled = !string.IsNullOrEmpty(listOptions.SenseOptions.NumberingStyle);
-			ToggleViewForShowInPara(listOptions.SenseOptions.DisplayEachSenseInAParagraph);
-
-			// Register eventhandlers
-			listOptionsView.BeforeTextChanged += (sender, e) => { listOptions.SenseOptions.BeforeNumber = listOptionsView.BeforeText; RefreshPreview(); };
-			var senseoptions = listOptions.SenseOptions;
-			listOptionsView.NumberingStyleChanged += (sender, e) => SenseNumbingStyleChanged(senseoptions, listOptionsView);
-			listOptionsView.AfterTextChanged += (sender, e) => { senseoptions.AfterNumber = listOptionsView.AfterText; RefreshPreview(); };
-			listOptionsView.NumberStyleChanged += (sender, e) => { senseoptions.NumberStyle = listOptionsView.NumberStyle; RefreshPreview(); };
-			// ReSharper disable ImplicitlyCapturedClosure
-			// Justification: senseOptions, senseOptionsView, and all of these lambda functions will all disappear at the same time.
-			listOptionsView.StyleButtonClick += (sender, e) => HandleStylesBtn((ComboBox)sender, listOptionsView.NumberStyle);
-			// ReSharper restore ImplicitlyCapturedClosure
-			listOptionsView.NumberSingleSenseChanged += (sender, e) =>
-			{
-				senseoptions.NumberEvenASingleSense = listOptionsView.NumberSingleSense;
-				RefreshPreview();
-			};
-			listOptionsView.ShowGrammarFirstChanged += (sender, e) =>
-		{
-				senseoptions.ShowSharedGrammarInfoFirst = listOptionsView.ShowGrammarFirst;
-				RefreshPreview();
-			};
-			listOptionsView.SenseInParaChanged += (sender, e) => SenseInParaChanged(senseoptions, listOptionsView);
-
-			var wsOptions = listOptions.WritingSystemOptions;
-			var availableWSs = LoadAvailableWsList(wsOptions);
-
-			listOptionsView.AvailableItems = availableWSs;
-
-			// Displaying WS Abbreviations is available only when multiple WS's are selected.
-			listOptionsView.DisplayOptionCheckBoxEnabled = (availableWSs.Count(item => item.Checked) >= 2);
-
-			// Prevent events from firing while the view is being initialized
-			listOptionsView.Load += WritingSystemEventHandlerAdder(listOptionsView, wsOptions);
-			// add listOptionsView to the DetailsView
-
-			View.OptionsView = listOptionsView as UserControl;
 		}
 
 		private List<ListViewItem> LoadAvailableWsList(DictionaryNodeWritingSystemOptions wsOptions)
@@ -297,8 +225,9 @@ namespace SIL.FieldWorks.XWorks
 			view.AfterText = node.After;
 			view.Visible = true;
 			view.StylesVisible = true;
+			view.StylesEnabled = true;
 			view.Enabled = IsAllParentsChecked(node);
-			view.SurroundingCharsVisible = node.Label != null && !node.Label.ToLower().StartsWith("minor entry");
+			view.SurroundingCharsVisible = node.Parent != null; // top-level nodes don't need Surrounding Characters (Before, Between, After)
 		}
 
 		/// <summary>Initialize options for DictionaryNodeWritingSystemOptions</summary>
@@ -320,7 +249,16 @@ namespace SIL.FieldWorks.XWorks
 			// Prevent events from firing while the view is being initialized
 			wsOptionsView.Load += WritingSystemEventHandlerAdder(wsOptionsView, wsOptions);
 
+			if (DictionaryConfigurationModel.IsHeadWord(m_node)) // show the Configure Headword Numbers... button
+			{
+				var optionsView = new ButtonOverPanel { PanelContents = wsOptionsView };
+				optionsView.ButtonClicked += (o, e) => HandleHeadwordNumbersButton();
+				View.OptionsView = optionsView;
+			}
+			else
+			{
 			View.OptionsView = wsOptionsView;
+		}
 		}
 
 		private EventHandler WritingSystemEventHandlerAdder(IDictionaryListOptionsView wsOptionsView, DictionaryNodeWritingSystemOptions wsOptions)
@@ -343,38 +281,23 @@ namespace SIL.FieldWorks.XWorks
 			};
 		}
 
-		/// <summary>Initialize options for DictionaryNodeParagraphOptions</summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "paragraphOptions is disposed by its parent")]
-		private void LoadParagraphOptions(DictionaryNodeParagraphOptions paragraphOptions)
-		{
-			IDictionaryParagraphOptionsView paragraphOptionsView = new ParagraphOptionsView();
-			paragraphOptionsView.SetParaStyles(m_paraStyles, paragraphOptions.PargraphStyle);
-			paragraphOptionsView.SetContParaStyles(m_paraStyles, paragraphOptions.ContinuationParagraphStyle);
-			paragraphOptionsView.ParaStyleChanged += (sender, e) => ParaStyleChanged(paragraphOptions, paragraphOptionsView);
-			paragraphOptionsView.ContParaStyleChanged += (sender, e) => ContParaStyleChanged(paragraphOptions, paragraphOptionsView);
-			paragraphOptionsView.StyleParaButtonClick += (sender, e) => HandleStylesBtn((ComboBox)sender, paragraphOptionsView.ParaStyle);
-			paragraphOptionsView.StyleContParaButtonClick += (sender, e) => HandleStylesBtn((ComboBox)sender, paragraphOptionsView.ContParaStyle);
-			View.OptionsView = paragraphOptionsView as ParagraphOptionsView;
-			View.StylesVisible = false;
-			View.SurroundingCharsVisible = false;
-
-		}
-
 		/// <summary>Initialize options for DictionaryNodeSenseOptions</summary>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "senseOptionsView is disposed by its parent")]
-		private void LoadSenseOptions(DictionaryNodeSenseOptions senseOptions)
+		private void LoadSenseOptions(DictionaryNodeSenseOptions senseOptions, bool isSubsense)
 		{
 			// initialize SenseOptionsView
+			// REVIEW (Hasso) 2016.03: A better name for this string would be disallowedNumberingStyle; also, 'x' is confusing as it is neither prefixed by % nor a valid numberingStyle
 			//For senses disallow the 1 1.2 1.2.3 option, that is now handled in subsenses
-			string numberingStyles = "x";
-			if (m_node.DisplayLabel == "Senses")
+			var disallowedNumberingStyles = string.Empty;
+			if (!isSubsense)
 			{
-				numberingStyles = "%O";
+				disallowedNumberingStyles = "%O";
 			}
-			IDictionarySenseOptionsView senseOptionsView = new SenseOptionsView
+			IDictionarySenseOptionsView senseOptionsView = new SenseOptionsView(isSubsense)
 			{
 				BeforeText = senseOptions.BeforeNumber,
-				NumberingStyles = XmlVcDisplayVec.SupportedNumberingStyles.Where(prop => prop.FormatString != numberingStyles).ToList(), // load available list before setting value
+				// load list of available NumberingStyles before setting NumberingStyle's value
+				NumberingStyles = XmlVcDisplayVec.SupportedNumberingStyles.Where(prop => prop.FormatString != disallowedNumberingStyles).ToList(),
 				NumberingStyle = senseOptions.NumberingStyle,
 				AfterText = senseOptions.AfterNumber,
 				NumberSingleSense = senseOptions.NumberEvenASingleSense,
@@ -423,7 +346,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (listOptions is DictionaryNodeComplexFormOptions)
 			{
-				LoadComplexFormOptions(listOptions as DictionaryNodeComplexFormOptions, listOptionsView);
+				LoadComplexFormOptions((DictionaryNodeComplexFormOptions) listOptions, listOptionsView);
 			}
 			else
 			{
@@ -439,6 +362,16 @@ namespace SIL.FieldWorks.XWorks
 					View.SetStyles(m_paraStyles, m_node.Style, true);
 				}
 			}
+			InternalLoadList(listOptions, listOptionsView);
+
+			// Prevent events from firing while the view is being initialized
+			listOptionsView.Load += ListEventHandlerAdder(listOptionsView, listOptions);
+
+			View.OptionsView = listOptionsView as UserControl;
+		}
+
+		private void InternalLoadList(DictionaryNodeListOptions listOptions, IDictionaryListOptionsView listOptionsView)
+		{
 			if (listOptions.ListId == DictionaryNodeListOptions.ListIds.None)
 			{
 				listOptionsView.ListViewVisible = false;
@@ -463,11 +396,6 @@ namespace SIL.FieldWorks.XWorks
 
 				listOptionsView.AvailableItems = availableOptions;
 			}
-
-				// Prevent events from firing while the view is being initialized
-				listOptionsView.Load += ListEventHandlerAdder(listOptionsView, listOptions);
-
-			View.OptionsView = listOptionsView as UserControl;
 		}
 
 		private void LoadComplexFormOptions(DictionaryNodeComplexFormOptions complexFormOptions, IDictionaryListOptionsView listOptionsView)
@@ -489,12 +417,12 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (listOptions.ListId != DictionaryNodeListOptions.ListIds.None)
 				{
-				listOptionsView.UpClicked += (sender, e) =>
-					Reorder(listOptionsView.AvailableItems.First(item => item.Selected), DictionaryConfigurationController.Direction.Up);
-				listOptionsView.DownClicked += (sender, e) =>
-					Reorder(listOptionsView.AvailableItems.First(item => item.Selected), DictionaryConfigurationController.Direction.Down);
-				listOptionsView.ListItemSelectionChanged += (sender, e) => ListViewSelectionChanged(listOptionsView, e);
-				listOptionsView.ListItemCheckBoxChanged += (sender, e) => ListItemCheckedChanged(listOptionsView, null, e);
+					listOptionsView.UpClicked += (sender, e) =>
+						Reorder(listOptionsView.AvailableItems.First(item => item.Selected), DictionaryConfigurationController.Direction.Up);
+					listOptionsView.DownClicked += (sender, e) =>
+						Reorder(listOptionsView.AvailableItems.First(item => item.Selected), DictionaryConfigurationController.Direction.Down);
+					listOptionsView.ListItemSelectionChanged += (sender, e) => ListViewSelectionChanged(listOptionsView, e);
+					listOptionsView.ListItemCheckBoxChanged += (sender, e) => ListItemCheckedChanged(listOptionsView, null, e);
 				}
 
 				var complexFormOptions = listOptions as DictionaryNodeComplexFormOptions;
@@ -614,15 +542,22 @@ namespace SIL.FieldWorks.XWorks
 			m_paraStyles.Sort();
 		}
 
-		private void LoadStylesLists_ResetComboxBox()
+		/// <summary>
+		/// Creates an Action for the Styles dialog to run to fix the Styles in the Model [and Combobox] and cause a refresh.
+		/// StylesDialogMadeChanges tells the main controller to check all Styles in the Model, refresh, and register that a change has been saved.
+		/// View.SetStyles changes the selected Style in the Combo, triggering a refresh and register that a change has been made but not saved.
+		/// </summary>
+		private Action FixStyles(bool repopulate)
 		{
+			return () =>
+			{
+				RefreshStylesAndPreview();
+				if (!repopulate)
+					return;
 			LoadStylesLists();
-
-			bool isPara = m_node.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph;
-			if (isPara)
-				View.SetStyles(m_paraStyles, m_node.Style, true);
-			else
-				View.SetStyles(m_charStyles, m_node.Style, false);
+				var isPara = m_node.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph;
+				View.SetStyles(isPara ? m_paraStyles : m_charStyles, m_node.Style, isPara);
+			};
 		}
 
 		/// <summary>
@@ -791,18 +726,38 @@ namespace SIL.FieldWorks.XWorks
 				DetailsModelChanged(m_node, new EventArgs());
 		}
 
+		private void RefreshStylesAndPreview()
+		{
+			if (StylesDialogMadeChanges != null)
+				StylesDialogMadeChanges(m_node, new EventArgs());
+		}
+
+		private void HandleHeadwordNumbersButton()
+		{
+			var hc = m_cache.ServiceLocator.GetInstance<HomographConfiguration>();
+			using (var dlg = new ConfigureHomographDlg())
+			{
+				dlg.SetupDialog(hc, m_cache, m_styleSheet, m_propertyTable.GetValue<IFlexApp>("App"), m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+				//dlg.StartPosition = FormStartPosition.CenterScreen;
+				if (dlg.ShowDialog(View.TopLevelControl) != DialogResult.OK)
+					return;
+				RefreshStylesAndPreview(); // The Styles dialog is also available through the ConfigureHomographDlg
+			}
+		}
+
+		/// <summary>
+		/// Run the Styles dialog for the Styles Combo. If the Combo is enabled, update its selected value.
+		/// </summary>
 		private void HandleStylesBtn(ComboBox combo, string defaultStyle)
 		{
-			var app = m_propertyTable.GetValue<IFlexApp>("App");
 #if RANDYTODO
 			// TODO: Needs to be able to create FlexStylesXmlAccessor, which is now in LangExp.
 			// TODO: Enable after xWorks is merged into Lang Exp.
-			FwStylesDlg.RunStylesDialogForCombo(combo, LoadStylesLists_ResetComboxBox, defaultStyle, m_styleSheet, 0, 0, m_cache, View.TopLevelControl,
-				app, app,
-				(new FlexStylesXmlAccessor(m_cache.LanguageProject.LexDbOA)).SetPropsToFactorySettings);
+			// If the combo is not enabled, don't allow the Styles dialog to change it (pass null instead). FixStyles will ensure a refresh.
+			FwStylesDlg.RunStylesDialogForCombo(combo.Enabled ? combo : null, FixStyles(combo.Enabled),
+				defaultStyle, m_styleSheet, 0, 0, m_cache, View.TopLevelControl, m_propertyTable.GetValue<IFlexApp>("App"),
+				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), new LexText.FlexStylesXmlAccessor(m_cache.LanguageProject.LexDbOA).SetPropsToFactorySettings);
 #endif
-			LoadStylesLists_ResetComboxBox();
-			RefreshPreview();
 		}
 
 		private void BeforeTextChanged()
@@ -884,13 +839,9 @@ namespace SIL.FieldWorks.XWorks
 			}).ToList();
 
 			if (Options is DictionaryNodeWritingSystemOptions)
-				(Options as DictionaryNodeWritingSystemOptions).Options = options;
+				((DictionaryNodeWritingSystemOptions) Options).Options = options;
 			else if (Options is DictionaryNodeListOptions)
-				(Options as DictionaryNodeListOptions).Options = options;
-			else if (Options is ReferringSenseOptions)
-			{
-				(Options as ReferringSenseOptions).WritingSystemOptions.Options = options;
-			}
+				((DictionaryNodeListOptions) Options).Options = options;
 			else
 				throw new InvalidCastException("Options could not be cast to WS- or ListOptions type.");
 
@@ -958,22 +909,6 @@ namespace SIL.FieldWorks.XWorks
 			RefreshPreview();
 		}
 		#endregion SenseChanges
-
-		#region ParagrahChanges
-		private void ParaStyleChanged(DictionaryNodeParagraphOptions paraOptions, IDictionaryParagraphOptionsView paraOptionsView)
-		{
-			paraOptions.PargraphStyle = paraOptionsView.ParaStyle;
-			paraOptionsView.NumberMetaConfigEnabled = !string.IsNullOrEmpty(paraOptions.PargraphStyle);
-			RefreshPreview();
-		}
-
-		private void ContParaStyleChanged(DictionaryNodeParagraphOptions contParaOptions, IDictionaryParagraphOptionsView paraOptionsView)
-		{
-			contParaOptions.ContinuationParagraphStyle = paraOptionsView.ParaStyle;
-			paraOptionsView.NumberMetaConfigEnabled = !string.IsNullOrEmpty(contParaOptions.PargraphStyle);
-			RefreshPreview();
-		}
-		#endregion
 
 		private void ToggleViewForShowInPara(bool showInPara)
 		{

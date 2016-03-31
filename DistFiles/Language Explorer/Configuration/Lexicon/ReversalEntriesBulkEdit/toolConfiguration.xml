@@ -19,7 +19,7 @@
 										<string field="ReversalForm" ws="$ws=reversal"/>
 									</span>
 								</column>
-								<column label="Senses" width="33%" ws="vernacular" multipara="true">
+								<column label="Referenced Senses" width="33%" ws="vernacular" multipara="true">
 									<properties>
 										<editable value="false"/>
 									</properties>

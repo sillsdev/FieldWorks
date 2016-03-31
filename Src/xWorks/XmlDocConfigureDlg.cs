@@ -3045,8 +3045,8 @@ namespace SIL.FieldWorks.XWorks
 								+ "so we're setting @wsType to 'vernacular analysis'",
 								refValue, wsValue));
 						}
-						// store the wsType attribute on the node, so that if 'ws' changes to something
-						// specific, we still know what type of wss to provide options for in the m_lvWritingSystems.
+							// store the wsType attribute on the node, so that if 'ws' changes to something
+							// specific, we still know what type of wss to provide options for in the m_lvWritingSystems.
 						var xa = new XAttribute("wsType", m_sWsType);
 						config.Add(xa);
 					}
@@ -3861,7 +3861,7 @@ namespace SIL.FieldWorks.XWorks
 								xnLayout.Add(new XAttribute(srcAttr.Name, srcAttr.Value));
 							}
 							else
-							{
+						{
 								attr.SetValue(srcAttr.Value);
 							}
 						}
@@ -4690,7 +4690,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void m_linkConfigureHomograph_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			m_publisher.Publish("ConfigureHomographs", this);
+			m_publisher.Publish("ConfigureHeadwordNumbers", this);
 		}
 
 		#region ILayoutConverter methods

@@ -60,7 +60,7 @@
 		<command id="CmdAddCustomField" label="Custom _Fields..." message="AddCustomField"/>
 		<command id="CmdConfigureColumns" label="_Columns..." icon="columnChooser" message="ConfigureColumns"/>
 		<command id="CmdUseVernSpellingDictionary" label="Show Vernacular Spelling _Errors" message="UseVernSpellingDictionary"/>
-		<command id="CmdConfigHomographs" label="Homograph Number..." message="ConfigureHomographs"/>
+		<command id="CmdConfigHeadwordNumbers" label="Headword Numbers..." message="ConfigureHeadwordNumbers"/>
 		<command id="CmdRestoreDefaults" label="Restore Defaults..." message="RestoreDefaultLayouts"/>
 		<command id="CmdToolsOptions" label="_Options..." message="LaunchConnectedDialog">
 			<parameters>
@@ -467,7 +467,7 @@ InterlinMaster user:
 				<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*"/>
 				<include path="Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*"/>
 				<item command="CmdConfigureColumns" defaultVisible="false"/>
-				<item command="CmdConfigHomographs"/>
+				<item command="CmdConfigHeadwordNumbers"/>
 				<item command="CmdRestoreDefaults"/>
 				<!-- CmdAddCustomField goes below "Set up WS menu item -->
 				<item command="CmdAddCustomField" defaultVisible="false"/>
@@ -610,6 +610,13 @@ InterlinMaster user:
 			<item label="Sorted By Length" boolProperty="SortedByLength"/>
 		</menu>
 		<menu id="PaneBar-ReversalIndicesMenu">
+			<menu id="ReversalIndexPaneMenu" icon="MenuWidget" alignment="right">
+				<item command="CmdShowAllPublications"/>
+				<menu list="Publications" inline="true" emptyAllowed="true"
+					  behavior="singlePropertyAtomicValue" property="SelectedPublication"/>
+				<item label="-" translate="do not translate"/> <!-- separator -->
+				<item command="CmdPublicationsJumpToDefault"/>
+			</menu>
 			<menu id="ReversalIndexPaneMenu" icon="MenuWidget" alignment="left">
 			<menu inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" list="ReversalIndexList" property="ReversalIndexGuid" />
 			<item label="-" translate="do not translate"/>

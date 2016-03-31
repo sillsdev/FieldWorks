@@ -235,22 +235,33 @@ namespace SIL.FieldWorks.FixData
 						if (homographNum != "0") // no need to make a change if already implicitly zero.
 						{
 							rt.Add(new XElement("HomographNumber", new XAttribute("val", homographNum)));
-							logger(guidString, DateTime.Now.ToShortDateString(),
-								   String.Format(Strings.ksAdjustedHomograph, guidString, m_oldHomographNumbers[guid], homographNum));
+							logger(String.Format(Strings.ksAdjustedHomograph, guidString, m_oldHomographNumbers[guid], homographNum), true);
 						}
 						break;
 					}
 					if (homographElement.Attribute("val") == null || homographElement.Attribute("val").Value != homographNum)
 					{
 						homographElement.SetAttributeValue("val", homographNum);
-						logger(guidString, DateTime.Now.ToShortDateString(),
-							   String.Format(Strings.ksAdjustedHomograph, guidString, m_oldHomographNumbers[guid], homographNum));
+						logger(String.Format(Strings.ksAdjustedHomograph, guidString, m_oldHomographNumbers[guid], homographNum), true);
 					}
 					break;
 				default:
 					break;
 			}
 			return true;
+		}
+
+		internal override void Reset()
+		{
+			m_MoAllomorphs.Clear();
+			m_oldHomographNumbers.Clear();
+			m_firstAllomorphs.Clear();
+			m_Homographs.Clear();
+			entriesWithCitationForm.Clear();
+			m_LexEntryHomographNumbers.Clear();
+			m_homographWs = null;
+			m_MorphTypeSort.Clear();
+			base.Reset();
 		}
 	}
 }

@@ -26,7 +26,7 @@ using SIL.FieldWorks.FDO.FDOTests;
 namespace SIL.FieldWorks.XWorks
 {
 #if RANDYTODO // Some of this can be salvaged, but not the part where it loads the main xml config files.
-	class PublishToWebonaryControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
+	public class PublishToWebonaryControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
 	{
 		private FwXApp m_application;
 		private IFwMainWnd m_window;
@@ -138,33 +138,26 @@ namespace SIL.FieldWorks.XWorks
 		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void PublishToWebonaryExportsXhtmlAndCss()
 		{
-			var controller = new PublishToWebonaryController { Cache = Cache, PropertyTable = m_propertyTable };
+			var controller = SetUpController();
 			var mockView = SetUpView();
 			var testConfig = new Dictionary<string, DictionaryConfigurationModel>();
 			mockView.Model.Configurations = testConfig;
 			// Build model sufficient to generate xhtml and css
 			ConfiguredXHTMLGenerator.AssemblyFile = "FDO";
-			var model = new DictionaryConfigurationModel
-			{
-				Parts = new List<ConfigurableDictionaryNode>()
-			};
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "HeadWord",
-				Label = "Headword",
 				CSSClassNameOverride = "entry",
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions {Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new [] { "fr" })},
 				Before = "MainEntry: ",
-				IsEnabled = true
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode },
 				FieldDescription = "LexEntry",
-				IsEnabled = true
 			};
-			model.Parts.Add(mainEntryNode);
-			DictionaryConfigurationModel.SpecifyParents(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			CssGeneratorTests.PopulateFieldsForTesting(model);
 			testConfig["Test Config"] = model;
 			// create entry sufficient to generate xhtml and css
 			var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
@@ -278,7 +271,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void UploadToWebonaryThrowsOnNullInput()
 		{
-			var controller = new MockPublishToWebonaryController();
+			var controller = new MockPublishToWebonaryController(Cache, m_propertyTable, m_publisher);
 			var view = new MockWebonaryDlg();
 			var model = new PublishToWebonaryModel(m_propertyTable);
 			Assert.Throws<ArgumentNullException>(() => controller.UploadToWebonary(null, model, view));
@@ -290,7 +283,7 @@ namespace SIL.FieldWorks.XWorks
 		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void UploadToWebonaryReportsFailedAuthentication()
 		{
-			var controller = new MockPublishToWebonaryController();
+			var controller = new MockPublishToWebonaryController(Cache, m_propertyTable, m_publisher);
 			var view = new MockWebonaryDlg()
 			{
 				Model = new PublishToWebonaryModel(m_propertyTable)
@@ -307,7 +300,7 @@ namespace SIL.FieldWorks.XWorks
 		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void UploadToWebonaryReportsLackingPermissionsToUpload()
 		{
-			var controller = new MockPublishToWebonaryController();
+			var controller = new MockPublishToWebonaryController(Cache, m_propertyTable, m_publisher);
 			var view = new MockWebonaryDlg()
 			{
 				Model = new PublishToWebonaryModel(m_propertyTable)
@@ -324,7 +317,7 @@ namespace SIL.FieldWorks.XWorks
 		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void UploadToWebonaryReportsSuccess()
 		{
-			var controller = new MockPublishToWebonaryController();
+			var controller = new MockPublishToWebonaryController(Cache, m_propertyTable, m_publisher);
 			var view = new MockWebonaryDlg()
 			{
 				Model = new PublishToWebonaryModel(m_propertyTable)
@@ -342,7 +335,7 @@ namespace SIL.FieldWorks.XWorks
 		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void UploadToWebonaryReportsErrorsInProcessingData()
 		{
-			var controller = new MockPublishToWebonaryController();
+			var controller = new MockPublishToWebonaryController(Cache, m_propertyTable, m_publisher);
 			var view = new MockWebonaryDlg()
 			{
 				Model = new PublishToWebonaryModel(m_propertyTable)
@@ -367,7 +360,7 @@ namespace SIL.FieldWorks.XWorks
 		[Ignore("Takes too long to timeout. Enable if want to test.")]
 		public void UploadToWebonaryHandlesNetworkErrors()
 		{
-			var controller = new MockPublishToWebonaryController();
+			var controller = new MockPublishToWebonaryController(Cache, m_propertyTable, m_publisher);
 			var view = new MockWebonaryDlg();
 			var filepath = "../../Src/xWorks/xWorksTests/lubwisi-d-new.zip";
 
@@ -474,11 +467,56 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		#region Helpers
 		/// <summary>
-		/// Helper.
+		/// LT-17149.
 		/// </summary>
-		public MockWebonaryDlg SetUpView()
+		[Test]
+		public void UploadFilename_UsesSiteName()
+		{
+			var view = SetUpView();
+			var model = view.Model;
+			model.SiteName = "mySiteName";
+			var expectedFilename = "mySiteName.zip";
+			var actualFilename = PublishToWebonaryController.UploadFilename(model, view);
+			Assert.That(actualFilename, Is.EqualTo(expectedFilename), "Incorrect filename for webonary export.");
+		}
+
+		[Test]
+		public void UploadFilename_ThrowsForBadInput()
+		{
+			Assert.Throws<ArgumentNullException>(() => PublishToWebonaryController.UploadFilename(null, null));
+			var view = SetUpView();
+			var model = view.Model;
+			model.SiteName = null;
+			Assert.Throws<ArgumentException>(() => PublishToWebonaryController.UploadFilename(model, view));
+			model.SiteName = "";
+			Assert.Throws<ArgumentException>(() => PublishToWebonaryController.UploadFilename(model, view));
+		}
+
+		[TestCase("my.Site")]
+		[TestCase("my Site")]
+		[TestCase("my$Site")]
+		[TestCase("my%Site")]
+		[TestCase("my_Site")]
+		[TestCase("my*Site")]
+		[TestCase("my/Site")]
+		[TestCase("my:Site")]
+		public void UploadFilename_FailsForInvalidCharactersInSitename(string sitename)
+		{
+			var view = SetUpView();
+			var model = view.Model;
+			model.SiteName = sitename;
+
+			// SUT
+			var result = PublishToWebonaryController.UploadFilename(model, view);
+
+			Assert.That(result, Is.Null, "Fail on invalid characters.");
+			Assert.That(!String.IsNullOrEmpty(view.StatusStrings.Find(s => s.Contains("Invalid characters found in sitename"))), "Inform that there was a problem");
+		}
+
+		#region Helpers
+		/// <summary/>
+		private MockWebonaryDlg SetUpView()
 		{
 			return new MockWebonaryDlg {
 				Model = SetUpModel()
@@ -528,6 +566,10 @@ namespace SIL.FieldWorks.XWorks
 				StatusStrings.Add(statusString);
 			}
 
+			public void SetStatusCondition(WebonaryStatusCondition condition)
+			{
+			}
+
 			public void PopulatePublicationsList(IEnumerable<string> publications)
 			{
 			}
@@ -550,9 +592,7 @@ namespace SIL.FieldWorks.XWorks
 			/// </summary>
 			public string UploadURI { get; set; }
 
-			public MockPublishToWebonaryController() : base()
-			{
-			}
+			public MockPublishToWebonaryController(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher) : base(cache, propertyTable, publisher) { }
 
 			internal override string DestinationURI(string siteName)
 			{

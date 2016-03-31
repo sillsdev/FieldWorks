@@ -25,7 +25,7 @@ namespace FixFwData
 			var pathname = args[0];
 			using (var prog = new NullProgress())
 			{
-				var data = new FwDataFixer(pathname, prog, logger);
+				var data = new FwDataFixer(pathname, prog, logger, counter);
 				data.FixErrorsAndSave();
 			}
 			if (errorsOccurred)
@@ -34,11 +34,19 @@ namespace FixFwData
 		}
 
 		private static bool errorsOccurred;
+		private static int errorCount;
 
-		private static void logger(string guid, string date, string description)
+		private static void logger(string description, bool errorFixed)
 		{
 			Console.WriteLine(description);
 			errorsOccurred = true;
+			if (errorFixed)
+				++errorCount;
+		}
+
+		private static int counter()
+		{
+			return errorCount;
 		}
 
 		private static void SetUpErrorHandling()

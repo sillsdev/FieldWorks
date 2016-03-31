@@ -1054,4 +1054,25 @@ you expect.</value>
   <data name="ksShowHiddenFields" xml:space="preserve">
     <value>Show Hidden Fields</value>
   </data>
+  <data name="ksAlsoEmptyComplexFormInfo" xml:space="preserve">
+    <value>Also removing empty Complex Form Info from {0}</value>
+  </data>
+  <data name="ksBreakCircularRefs" xml:space="preserve">
+    <value>Remove circular references to complex forms</value>
+  </data>
+  <data name="ksCircularRefsFixed" xml:space="preserve">
+    <value>Circular Reference Fixed</value>
+  </data>
+  <data name="ksFoundNCircularReferences" xml:space="preserve">
+    <value>Found {0} circular references in {1} entry references</value>
+  </data>
+  <data name="ksRemovingCircularComponentLexeme" xml:space="preserve">
+    <value>Removing {0} as component lexeme for {1}</value>
+  </data>
+  <data name="ksTryIfProgramGoesPoof" xml:space="preserve">
+    <value>Try this tool if Language Explorer disappears or produces a "FieldWorks has stopped working" dialog when you try to view the Dictionary.</value>
+  </data>
+  <data name="ksWhatAreCircularRefs" xml:space="preserve">
+    <value>Older versions of Language Explorer allowed the user to make two complex form entries claim each other as components.  This is no longer allowed, but older projects can be in this bad state.</value>
+  </data>
 </root>

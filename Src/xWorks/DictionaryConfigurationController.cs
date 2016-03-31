@@ -1,10 +1,11 @@
-﻿// Copyright (c) 2014-2015 SIL International
+﻿// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -22,7 +23,7 @@ using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
-	class DictionaryConfigurationController
+	internal class DictionaryConfigurationController
 	{
 		/// <summary>
 		/// The current model being worked with
@@ -38,6 +39,8 @@ namespace SIL.FieldWorks.XWorks
 		/// IPropertyTable to use
 		/// </summary>
 		internal IPropertyTable _propertyTable;
+
+		private FdoCache Cache { get { return _propertyTable.GetValue<FdoCache>("cache"); } }
 
 		/// <summary>
 		/// The view to display the model in
@@ -71,6 +74,19 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal string _defaultConfigDir;
 
+		private bool m_isDirty;
+
+		/// <summary>
+		/// Flag whether we're highlighting the affected node in the preview area.
+		/// </summary>
+		private bool _isHighlighted;
+
+		/// <summary>
+		/// Whether any changes have been saved, including changes to the Configs, which Config is the current Config, changes to Styles, etc.,
+		/// that require the preview to be updated.
+		/// </summary>
+		public bool MasterRefreshRequired { get; private set; }
+
 		/// <summary>
 		/// Figure out what alternate dictionaries are available (eg root-, stem-, ...)
 		/// Populate _dictionaryConfigurations with available models.
@@ -78,8 +94,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void LoadDictionaryConfigurations()
 		{
-			var cache = _propertyTable.GetValue<FdoCache>("cache");
-			_dictionaryConfigurations = GetDictionaryConfigurationModels(cache, _defaultConfigDir, _projectConfigDir);
+			_dictionaryConfigurations = GetDictionaryConfigurationModels(Cache, _defaultConfigDir, _projectConfigDir);
 			View.SetChoices(_dictionaryConfigurations);
 		}
 
@@ -197,14 +212,18 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>Refresh the Preview without reloading the entire configuration tree</summary>
-		private void RefreshPreview()
+		private void RefreshPreview(bool isChangeInDictionaryModel = true)
 		{
 			//_propertyTable should be null only for unit tests which don't need styles
-			if (_propertyTable != null && _previewEntry != null && _previewEntry.IsValidObject)
-			{
-				View.PreviewData = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(_previewEntry, _model,
-					_allEntriesPublicationDecorator, _propertyTable);
-			}
+			if (_propertyTable == null || _previewEntry == null || !_previewEntry.IsValidObject)
+				return;
+			if (isChangeInDictionaryModel)
+				m_isDirty = true;
+			else
+				MasterRefreshRequired = true;
+			View.PreviewData = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(_previewEntry, _model, _allEntriesPublicationDecorator, _propertyTable);
+			if(_isHighlighted)
+				View.HighlightContent(View.TreeControl.Tree.SelectedNode.Tag as ConfigurableDictionaryNode);
 		}
 
 		/// <summary>
@@ -318,8 +337,7 @@ namespace SIL.FieldWorks.XWorks
 			_propertyTable = propertyTable;
 			var cache = propertyTable.GetValue<FdoCache>("cache");
 			_allEntriesPublicationDecorator = new DictionaryPublicationDecorator(cache,
-																										(ISilDataAccessManaged)cache.MainCacheAccessor,
-																										cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+				(ISilDataAccessManaged)cache.MainCacheAccessor, cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 
 			_previewEntry = previewEntry ?? GetDefaultEntryForType(DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(propertyTable), cache);
 			View = view;
@@ -330,29 +348,34 @@ namespace SIL.FieldWorks.XWorks
 			PopulateTreeView();
 			View.ManageConfigurations += (sender, args) =>
 			{
+				var currentModel = _model;
+				bool managerMadeChanges;
 				// show the Configuration Manager dialog
 				using (var dialog = new DictionaryConfigurationManagerDlg(_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 				{
 					var configurationManagerController = new DictionaryConfigurationManagerController(dialog, _propertyTable,
 						_dictionaryConfigurations, _model.GetAllPublications(cache), _projectConfigDir, _defaultConfigDir, _model);
 					configurationManagerController.Finished += SelectModelFromManager;
-					dialog.HelpTopic = DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(_propertyTable) == "Dictionary"
-						? "khtpDictConfigManager"
-						: "khtpRevIndexConfigManager";
+					SetManagerTypeInfo(dialog);
 					dialog.ShowDialog(View as Form);
+					managerMadeChanges = configurationManagerController.IsDirty ||  _model != currentModel;
 				}
-
+				// if the manager has not updated anything then we don't need to make any adustments
+				if (!managerMadeChanges)
+					return;
 				// Update our Views
 				View.SetChoices(_dictionaryConfigurations);
 				MergeCustomFieldsIntoDictionaryModel(cache, _model);
-				RefreshView();
-				SelectCurrentConfiguration();
+				SaveModel();
+				SelectCurrentConfigurationAndRefresh();
 			};
 			View.SaveModel += SaveModelHandler;
 			View.SwitchConfiguration += (sender, args) =>
 			{
+				if (_model == args.ConfigurationPicked)
+					return;
 				_model = args.ConfigurationPicked;
-				RefreshView();
+				RefreshView(); // isChangeInDictionaryModel: true, because we update the current config in the PropertyTable when we save the model.
 			};
 
 			View.TreeControl.MoveUp += node => Reorder(node.Tag as ConfigurableDictionaryNode, Direction.Up);
@@ -397,6 +420,23 @@ namespace SIL.FieldWorks.XWorks
 				RefreshView();
 			};
 
+			View.TreeControl.Highlight += (node, button, tooltip) =>
+			{
+				_isHighlighted = !_isHighlighted;
+				if (_isHighlighted)
+				{
+					View.HighlightContent(node.Tag as ConfigurableDictionaryNode);
+					button.BackColor = Color.White;
+					tooltip.SetToolTip(button, xWorksStrings.RemoveHighlighting);
+				}
+				else
+				{
+					View.HighlightContent(null);	// turns off current highlighting.
+					button.BackColor = Color.Yellow;
+					tooltip.SetToolTip(button, xWorksStrings.HighlightAffectedContent);
+				}
+			};
+
 			View.TreeControl.Tree.AfterCheck += (sender, args) =>
 			{
 				var node = (ConfigurableDictionaryNode) args.Node.Tag;
@@ -405,7 +445,7 @@ namespace SIL.FieldWorks.XWorks
 				// Details may need to be enabled or disabled
 				RefreshPreview();
 				View.TreeControl.Tree.SelectedNode = FindTreeNode(node, View.TreeControl.Tree.Nodes);
-				BuildAndShowOptions(node, propertyTable);
+				BuildAndShowOptions(node);
 			};
 
 			View.TreeControl.Tree.AfterSelect += (sender, args) =>
@@ -414,11 +454,17 @@ namespace SIL.FieldWorks.XWorks
 
 				View.TreeControl.MoveUpEnabled = CanReorder(node, Direction.Up);
 				View.TreeControl.MoveDownEnabled = CanReorder(node, Direction.Down);
-				View.TreeControl.DuplicateEnabled = !DictionaryConfigurationModel.IsMainEntry(node);
+				View.TreeControl.DuplicateEnabled = !DictionaryConfigurationModel.IsReadonlyMainEntry(node);
 				View.TreeControl.RemoveEnabled = node.IsDuplicate;
 				View.TreeControl.RenameEnabled = node.IsDuplicate;
 
-				BuildAndShowOptions(node, propertyTable);
+				BuildAndShowOptions(node);
+
+				if (_isHighlighted)
+				{
+					// Highlighting is turned on, change what is highlighted.
+					View.HighlightContent(node);
+				}
 			};
 			View.TreeControl.CheckAll += treeNode =>
 			{
@@ -430,7 +476,21 @@ namespace SIL.FieldWorks.XWorks
 				DisableNodeAndDescendants(treeNode.Tag as ConfigurableDictionaryNode);
 				RefreshView();
 			};
-			SelectCurrentConfiguration();
+			SelectCurrentConfigurationAndRefresh();
+			MasterRefreshRequired = m_isDirty = false;
+		}
+
+		private void SetManagerTypeInfo(DictionaryConfigurationManagerDlg dialog)
+		{
+			dialog.HelpTopic = DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(_propertyTable) == xWorksStrings.Dictionary
+						? "khtpDictConfigManager"
+						: "khtpRevIndexConfigManager";
+
+			if (DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(_propertyTable) == xWorksStrings.ReversalIndex)
+			{
+				dialog.Text = xWorksStrings.ReversalIndexConfigurationDlgTitle;
+				dialog.ConfigurationGroupText = xWorksStrings.DictionaryConfigurationMangager_ReversalConfigurations_GroupLabel;
+			}
 		}
 
 		public void SelectModelFromManager(DictionaryConfigurationModel model)
@@ -477,25 +537,26 @@ namespace SIL.FieldWorks.XWorks
 
 		private void SaveModelHandler(object sender, EventArgs e)
 		{
+			if (m_isDirty)
 			SaveModel();
-			RefreshView(); // REVIEW (Hasso) 2014.11: refreshing here is beneficial only if some configuration change fails to refresh the preview
 		}
 
 		internal void SaveModel()
 		{
 			foreach (var config in _dictionaryConfigurations)
 			{
-				config.FilePath = GetProjectConfigLocationForPath(config.FilePath, _propertyTable);
+				config.FilePath = GetProjectConfigLocationForPath(config.FilePath);
 				config.Save();
 			}
 			// This property must be set *after* saving, because the initial save changes the FilePath
 			DictionaryConfigurationListener.SetCurrentConfiguration(_propertyTable, _model.FilePath);
+			MasterRefreshRequired = true;
+			m_isDirty = false;
 		}
 
-		internal string GetProjectConfigLocationForPath(string filePath, IPropertyTable propertyTable)
+		internal string GetProjectConfigLocationForPath(string filePath)
 		{
-			var cache = propertyTable.GetValue<FdoCache>("cache");
-			var projectConfigDir = FdoFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder);
+			var projectConfigDir = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
 			if(filePath.StartsWith(projectConfigDir))
 			{
 				return filePath;
@@ -507,12 +568,17 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Populate options pane, from model.
 		/// </summary>
-		private void BuildAndShowOptions(ConfigurableDictionaryNode node, IPropertyTable propertyTable)
+		private void BuildAndShowOptions(ConfigurableDictionaryNode node)
 		{
 			if (DetailsController == null)
 			{
-				DetailsController = new DictionaryDetailsController(new DetailsView(), propertyTable);
+				DetailsController = new DictionaryDetailsController(new DetailsView(), _propertyTable);
 				DetailsController.DetailsModelChanged += (sender, e) => RefreshPreview();
+				DetailsController.StylesDialogMadeChanges += (sender, e) =>
+				{
+					_model.EnsureValidStylesInModel(Cache); // in case the change was a rename or deletion
+					RefreshPreview(false);
+				};
 			}
 			DetailsController.LoadNode(node);
 			View.DetailsView = DetailsController.View;
@@ -572,11 +638,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void SelectCurrentConfiguration()
+		private void SelectCurrentConfigurationAndRefresh()
 		{
 			View.SelectConfiguration(_model);
-			SaveModel();
-			RefreshView();
+			RefreshView(); // REVIEW pH 2016.02: this is called only in ctor and after ManageViews. do we even want to refresh and set isDirty?
 		}
 
 		/// <summary>
@@ -736,8 +801,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Generate a list of ConfigurableDictionaryNode objects to represent each custom field of the given type.
 		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="className"></param>
 		/// <param name="customFieldMap">existing custom field map for performance, method will build one if none given</param>
-		/// <returns></returns>
 		public static List<ConfigurableDictionaryNode> GetCustomFieldsForType(FdoCache cache, string className,
 			Dictionary<string, List<int>> customFieldMap = null)
 		{
@@ -924,7 +990,8 @@ namespace SIL.FieldWorks.XWorks
 		/// before running out of classes causes one level of backtracking up the configuration tree to look for a better
 		/// match.
 		/// </summary>
-		private ConfigurableDictionaryNode FindStartingConfigNode(ConfigurableDictionaryNode topNode, List<string> classList)
+		/// <remarks>LT-17213 Now 'internal static' so DictionaryConfigurationDlg can use it.</remarks>
+		internal static ConfigurableDictionaryNode FindStartingConfigNode(ConfigurableDictionaryNode topNode, List<string> classList)
 		{
 			if (classList.Count == 0)
 				return topNode;  // what we have already is the best we can find.
@@ -966,7 +1033,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private TreeNode FindMatchingTreeNode(TreeNode node, ConfigurableDictionaryNode configNode)
 		{
-			if ((node.Tag as ConfigurableDictionaryNode) == configNode)
+			if (node.Tag as ConfigurableDictionaryNode == configNode)
 				return node;
 			foreach (TreeNode child in node.Nodes)
 			{

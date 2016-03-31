@@ -61,6 +61,7 @@ namespace SIL.FieldWorks.XWorks
 
 		HashSet<int> m_lexRefFieldsToFilter = new HashSet<int>();
 		HashSet<int> m_lexEntryRefFieldsToFilter = new HashSet<int>();
+		HashSet<int> m_reversalEntryFieldsToFilter = new HashSet<int>();
 
 		private List<IVwNotifyChange> m_notifees = new List<IVwNotifyChange>(); // the things we have to notify of PropChanges.
 
@@ -91,7 +92,7 @@ namespace SIL.FieldWorks.XWorks
 			m_mlOwnerOutlineFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexSenseTags.kClassId, "MLOwnerOutlineName", false);
 			m_publishAsMinorEntryFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "PublishAsMinorEntry", false);
 			m_headwordRefFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "HeadWordRef", false);
-			m_headwordReversalFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "HeadWordReversal", false);
+			m_headwordReversalFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "ReversalName", false);
 			m_reversalNameFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexSenseTags.kClassId, "ReversalName", false);
 			Publication = publication;
 			BuildExcludedObjects();
@@ -356,6 +357,8 @@ namespace SIL.FieldWorks.XWorks
 						m_lexRefFieldsToFilter.Add(flid);
 					else if (dstCls == LexEntryRefTags.kClassId)
 						m_lexEntryRefFieldsToFilter.Add(flid);
+					else if (dstCls == ReversalIndexEntryTags.kClassId)
+						m_reversalEntryFieldsToFilter.Add(flid);
 				}
 			}
 			m_fieldsToFilter.Add(LexEntryRefTags.kflidComponentLexemes);
@@ -470,6 +473,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				return result.Where(IsPublishablePicture).ToArray();
 			}
+			if (m_reversalEntryFieldsToFilter.Contains(tag))
+			{
+				return result.Where(IsPublishableReversalEntry).ToArray();
+			}
 			return result;
 		}
 
@@ -482,13 +489,28 @@ namespace SIL.FieldWorks.XWorks
 			// Get the list of ReversalIndexItem objects sorted and filtered as set by the reversal bulk edit.
 			var result = base.VecProp(currentReversalIndexHvo, virtualFlid);
 			// Is there ever any more filtering that we need to do?  It would be done here.
-			return result.Where(IsMainReversalEntry).ToArray();
+			return result.Where(IsMainReversalEntry).Where(IsPublishableReversalEntry).ToArray();
 		}
 
 		private bool IsMainReversalEntry(int hvo)
 		{
 			var entry = Cache.ServiceLocator.GetObject(hvo) as IReversalIndexEntry;
 			return entry != null && entry.Owner is IReversalIndex; // Subentries are owned by other Entries
+		}
+
+		private bool IsPublishableReversalEntry(int hvo)
+		{
+			return IsPublishableReversalEntry((IReversalIndexEntry)Cache.ServiceLocator.GetObject(hvo));
+		}
+
+		private bool IsPublishableReversalEntry(IReversalIndexEntry revEntry)
+		{
+			foreach (var sense in revEntry.ReferringSenses)
+			{
+				if (!m_excludedItems.Contains(sense.Hvo))
+					return true;	// At least one sense in one entry allows publication.
+			}
+			return false;	// nobody wants us.
 		}
 
 		/// <summary>
@@ -572,9 +594,11 @@ namespace SIL.FieldWorks.XWorks
 		/// Return whether this object is explicitly excluded by the publication filtering.
 		/// This is needed by ConfiguredXHTMLGenerator, which uses reflection to obtain data internally.
 		/// </summary>
-		internal bool IsExcludedObject(int hvo)
+		internal bool IsExcludedObject(ICmObject item)
 		{
-			return m_excludedItems.Contains(hvo);
+			if (item is IReversalIndexEntry)
+				return !IsPublishableReversalEntry((IReversalIndexEntry)item);
+			return m_excludedItems.Contains(item.Hvo);
 		}
 	}
 }

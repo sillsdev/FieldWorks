@@ -297,12 +297,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			foreach (var hvo in ((ISilDataAccessManaged)m_fdoCache.DomainDataByFlid).VecProp(m_hvoStylesOwner, m_tagStylesList))
 			{
 				var style = m_fdoCache.ServiceLocator.GetInstance<IStStyleRepository>().GetObject(hvo);
-				var basedOnStyle = new BaseStyleInfo(style);
-				m_StyleInfos.Add(basedOnStyle);
-			}
-			foreach (var loadedStyle in m_StyleInfos)
-			{
-				loadedStyle.SetBasedOnStyle(m_StyleInfos);
+				var styleInfo = new BaseStyleInfo(style);
+				m_StyleInfos.Add(styleInfo);
 			}
 
 			ComputeDerivedStyles();
@@ -1123,6 +1119,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				{
 					// Compute and save the fully derived props for this style
 					ComputeDerivedStyle(m_StyleInfos.Count, styleInfo);
+				}
+				if (styleInfo.BasedOnStyle == null)
+				{
+					styleInfo.SetBasedOnStyleAndInheritValues(m_StyleInfos);
 				}
 			}
 			m_ttpNormalFont = null; // may have been changed, recompute if needed.

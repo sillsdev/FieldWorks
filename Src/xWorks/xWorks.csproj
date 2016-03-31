@@ -294,23 +294,17 @@
       <DependentUpon>DictionaryConfigurationTreeControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DictionaryDetailsController.cs" />
+    <Compile Include="DictionaryDetailsView\ButtonOverPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DictionaryDetailsView\ButtonOverPanel.Designer.cs">
+      <DependentUpon>ButtonOverPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="DictionaryDetailsView\DetailsView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DictionaryDetailsView\DetailsView.Designer.cs">
       <DependentUpon>DetailsView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DictionaryDetailsView\ListSenseOptionView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DictionaryDetailsView\ListSenseOptionView.Designer.cs">
-      <DependentUpon>ListSenseOptionView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DictionaryDetailsView\ParagraphOptionsView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DictionaryDetailsView\ParagraphOptionsView.Designer.cs">
-      <DependentUpon>ParagraphOptionsView.cs</DependentUpon>
     </Compile>
     <Compile Include="DictionaryExportService.cs" />
     <Compile Include="EntriesOrChildClassesRecordList.cs" />
@@ -333,7 +327,6 @@
     <Compile Include="IDictionaryConfigurationView.cs" />
     <Compile Include="DictionaryNodeOptions.cs" />
     <Compile Include="IDictionaryDetailsView.cs" />
-    <Compile Include="IDictionaryParagraphOptionsView.cs" />
     <Compile Include="IDictionarySenseOptionsView.cs" />
     <Compile Include="ILayoutConverter.cs" />
     <Compile Include="ISetCache.cs" />
@@ -453,6 +446,12 @@
     <Compile Include="XhtmlRecordDocView.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="XmlDiagnosticsDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="XmlDiagnosticsDlg.Designer.cs">
+      <DependentUpon>XmlDiagnosticsDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="XmlDocConfigureDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -499,14 +498,11 @@
     <EmbeddedResource Include="DictionaryConfigurationTreeControl.resx">
       <DependentUpon>DictionaryConfigurationTreeControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="DictionaryDetailsView\ButtonOverPanel.resx">
+      <DependentUpon>ButtonOverPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DictionaryDetailsView\DetailsView.resx">
       <DependentUpon>DetailsView.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DictionaryDetailsView\ListSenseOptionView.resx">
-      <DependentUpon>ListSenseOptionView.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DictionaryDetailsView\ParagraphOptionsView.resx">
-      <DependentUpon>ParagraphOptionsView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DictionaryDetailsView\SenseOptionsView.resx">
       <DependentUpon>SenseOptionsView.cs</DependentUpon>
@@ -554,6 +550,9 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\App.ico" />
+    <EmbeddedResource Include="XmlDiagnosticsDlg.resx">
+      <DependentUpon>XmlDiagnosticsDlg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="XmlDocConfigureDlg.resx">
       <SubType>Designer</SubType>
       <DependentUpon>XmlDocConfigureDlg.cs</DependentUpon>

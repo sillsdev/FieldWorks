@@ -18,7 +18,7 @@ using SIL.Windows.Forms;
 namespace SIL.FieldWorks.XWorks
 {
 #if RANDYTODO
-	// TODO: This was creted in the old FwXWindow class.
+	// TODO: This was created in the old FwXWindow class.
 	// TODO: Figure out who can create it now.
 #endif
 	/// <summary>
@@ -28,6 +28,9 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private readonly PublishToWebonaryController m_controller;
+		// Mono 3 handles the display of the size gripper differently than .NET SWF and so the dialog needs to be taller. Part of LT-16433.
+		private const int m_additionalMinimumHeightForMono = 26;
+
 		/// <summary>
 		/// Needed to get the HelpTopicProvider and to save project specific settings
 		/// </summary>
@@ -43,10 +46,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			InitializeComponent();
 
-			// Mono 3 handles the display of the size gripper differently than .NET SWF and so the dialog needs to be taller. Part of LT-16433.
-			var additionalMinimumHeightForMono = 26;
 			if (MiscUtils.IsUnix)
-				MinimumSize = new Size(MinimumSize.Width, MinimumSize.Height + additionalMinimumHeightForMono);
+				MinimumSize = new Size(MinimumSize.Width, MinimumSize.Height + m_additionalMinimumHeightForMono);
 
 			m_controller = controller;
 			Model = model;
@@ -98,6 +99,7 @@ namespace SIL.FieldWorks.XWorks
 		private void publicationBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			PopulateConfigurationsListBySelectedPublication();
+			PopulateReversalsCheckboxList();
 		}
 
 		private void configurationBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -125,9 +127,13 @@ namespace SIL.FieldWorks.XWorks
 
 		private void PopulateReversalsCheckboxList()
 		{
-			foreach(var reversal in Model.Reversals)
+			var selectedConfiguration =
+				Model.Reversals.Where(prop => prop.Value.Publications.Contains(publicationBox.SelectedItem.ToString())).ToList();
+			reversalsCheckedListBox.Items.Clear();
+			foreach (var reversal in selectedConfiguration)
 			{
-				reversalsCheckedListBox.Items.Add(reversal);
+				if (reversal.Value.Label != DictionaryConfigurationModel.AllReversalIndexes)
+				reversalsCheckedListBox.Items.Add(reversal.Value.Label);
 			}
 		}
 
@@ -139,8 +145,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// Load the contents of the drop down and checkbox list controls
 				PopulatePublicationsList();
-				PopulateReversalsCheckboxList();
-
 				if(Model.RememberPassword)
 				{
 					rememberPasswordCheckbox.Checked = true;
@@ -148,7 +152,6 @@ namespace SIL.FieldWorks.XWorks
 				}
 				webonaryUsernameTextbox.Text = Model.UserName;
 				webonarySiteNameTextbox.Text = Model.SiteName;
-				SetSelectedReversals(Model.SelectedReversals);
 				if (!String.IsNullOrEmpty(Model.SelectedPublication))
 				{
 					publicationBox.SelectedItem = Model.SelectedPublication;
@@ -157,6 +160,8 @@ namespace SIL.FieldWorks.XWorks
 				{
 					publicationBox.SelectedIndex = 0;
 				}
+				PopulateReversalsCheckboxList();
+				SetSelectedReversals(Model.SelectedReversals);
 				if(!String.IsNullOrEmpty(Model.SelectedConfiguration))
 				{
 					configurationBox.SelectedItem = Model.SelectedConfiguration;
@@ -174,7 +179,7 @@ namespace SIL.FieldWorks.XWorks
 			Model.Password = webonaryPasswordTextbox.Text;
 			Model.UserName = webonaryUsernameTextbox.Text;
 			Model.SiteName = webonarySiteNameTextbox.Text;
-			Model.Reversals = GetSelectedReversals();
+			Model.SelectedReversals = GetSelectedReversals();
 			if(configurationBox.SelectedItem != null)
 			{
 				Model.SelectedConfiguration = configurationBox.SelectedItem.ToString();
@@ -217,6 +222,8 @@ namespace SIL.FieldWorks.XWorks
 			var allButTheLogRowHeight = this.tableLayoutPanel.GetRowHeights().Sum() - this.tableLayoutPanel.GetRowHeights().Last();
 			var fudge = this.Height - this.tableLayoutPanel.Height;
 			var minimumFormHeightToShowLog = allButTheLogRowHeight + this.outputLogTextbox.MinimumSize.Height + fudge;
+			if (MiscUtils.IsUnix)
+				minimumFormHeightToShowLog += m_additionalMinimumHeightForMono;
 			this.MinimumSize = new Size(this.MinimumSize.Width, minimumFormHeightToShowLog);
 
 			m_controller.PublishToWebonary(Model, this);
@@ -227,9 +234,40 @@ namespace SIL.FieldWorks.XWorks
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpPublishToWebonary");
 		}
 
+		/// <summary>
+		/// Add a message to the status area. Make sure the status area is redrawn so the
+		/// user can see what's going on even if we are working on something.
+		/// </summary>
 		public void UpdateStatus(string statusString)
 		{
-			outputLogTextbox.Text += Environment.NewLine + statusString;
+			outputLogTextbox.AppendText(Environment.NewLine + statusString);
+			outputLogTextbox.Refresh();
+		}
+
+		/// <summary>
+		/// Respond to a new status condition by changing the background color of the
+		/// output log.
+		/// </summary>
+		public void SetStatusCondition(WebonaryStatusCondition condition)
+		{
+			Color newColor;
+			switch (condition)
+			{
+				case WebonaryStatusCondition.Success:
+					// Green
+					newColor = System.Drawing.ColorTranslator.FromHtml("#b8ffaa");
+					break;
+				case WebonaryStatusCondition.Error:
+					// Red
+					newColor = System.Drawing.ColorTranslator.FromHtml("#ffaaaa");
+					break;
+				case WebonaryStatusCondition.None:
+				default:
+					// Grey
+					newColor = System.Drawing.ColorTranslator.FromHtml("#dcdad5");
+					break;
+			}
+			outputLogTextbox.BackColor = newColor;
 		}
 
 		private void closeButton_Click(object sender, EventArgs e)
@@ -250,6 +288,15 @@ namespace SIL.FieldWorks.XWorks
 			base.OnClosing(e);
 		}
 
+		protected override void OnResize(EventArgs e)
+		{
+			base.OnResize(e);
+
+			// On Linux, when reducing the height of the dialog, the output log doesn't shrink with it.
+			// Set its height back to something smaller to keep the whole control visible. It will expand as appropriate.
+			if (MiscUtils.IsUnix)
+				outputLogTextbox.Size = new Size(outputLogTextbox.Size.Width, outputLogTextbox.MinimumSize.Height);
+		}
 	}
 
 	/// <summary>
@@ -258,6 +305,17 @@ namespace SIL.FieldWorks.XWorks
 	public interface IPublishToWebonaryView
 	{
 		void UpdateStatus(string statusString);
+		void SetStatusCondition(WebonaryStatusCondition condition);
 		PublishToWebonaryModel Model { get; set; }
+	}
+
+	/// <summary>
+	/// Condition of status of publishing to webonary.
+	/// </summary>
+	public enum WebonaryStatusCondition
+	{
+		None,
+		Success,
+		Error
 	}
 }

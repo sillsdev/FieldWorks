@@ -567,6 +567,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\Lexicon\AllReversalEntriesRecordList.cs" />
+    <Compile Include="Areas\Lexicon\CircularRefBreaker.cs" />
     <Compile Include="Areas\Lexicon\Tools\BulkEditReversalEntries\BulkReversalEntryPosEditor.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\AddComplexFormChooserCommand.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\AddPrimaryLexemeChooserCommand.cs" />

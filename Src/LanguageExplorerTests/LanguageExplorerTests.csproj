@@ -228,6 +228,7 @@
     <Compile Include="Lexicon\LexReferenceTreeRootLauncherTests.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Lexicon\CircularRefBreakerTests.cs" />
     <Compile Include="Lexicon\ReversalEntryBulkEditTests.cs" />
     <Compile Include="Lexicon\SortReversalSubEntriesTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

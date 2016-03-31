@@ -91,25 +91,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void CanDeepCloneParagraphOptions()
-		{
-			var orig = new DictionaryNodeParagraphOptions
-			{
-				ContinuationParagraphStyle = "continuationParagraphStyle",
-				PargraphStyle = "paragraphStyle"
-			};
-
-			// SUT
-			var genericClone = orig.DeepClone();
-
-			var clone = genericClone as DictionaryNodeParagraphOptions;
-			Assert.NotNull(clone, "Incorrect subclass returned; expected DictionaryNodeParagraphOptions");
-			Assert.AreNotSame(orig, clone, "Not deep cloned; shallow cloned");
-			Assert.AreEqual(orig.ContinuationParagraphStyle, clone.ContinuationParagraphStyle);
-			Assert.AreEqual(orig.PargraphStyle, clone.PargraphStyle);
-		}
-
-		[Test]
 		public void CanDeepCloneWritingSystemOptions()
 		{
 			var orig = new DictionaryNodeWritingSystemOptions

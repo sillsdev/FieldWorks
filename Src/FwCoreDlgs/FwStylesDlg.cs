@@ -115,10 +115,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <c>true</c> the passed-in value for this parameter will be ignored and the display
 		/// will automatically be BiDi enabled. If this value is false, then simple "Left" and
 		/// "Right" labels will be used in the display, rather than "Leading" and "Trailing".</param>
-		/// <param name="normalStyleName">Name of the normal style.</param>
+		/// <param name="normalStyleName">Name of the normal style. Selected when the dialog starts if there is no paragraph style.</param>
 		/// <param name="customUserLevel">The custom user level.</param>
 		/// <param name="userMeasurementType">User's prefered measurement units.</param>
-		/// <param name="paraStyleName">Name of the currently selected paragraph style.</param>
+		/// <param name="paraStyleName">Name of the currently selected paragraph style. Selected when the dialog starts.</param>
 		/// <param name="charStyleName">Name of the currently selected character style.</param>
 		/// <param name="hvoRootObject">The hvo of the root object in the current view.</param>
 		/// <param name="app">The application.</param>
@@ -213,36 +213,22 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			IWin32Window owner, IApp app, IHelpTopicProvider helpTopicProvider,
 			Action<StyleInfo> setPropsToFactorySettings)
 		{
-			var sci = combo.SelectedItem as StyleComboItem;
-			string charStyleName = combo.SelectedItem as string;
-			if (sci != null)
-				charStyleName = (sci != null && sci.Style != null) ? sci.Style.Name : "";
-			var paraStyleName = stylesheet.GetDefaultBasedOnStyleName();
-			// Although we call this 'paraStyleName', it's actual function is to determine the style that
-			// will be selected in the dialog when it launches. We want that to be the one from the style
-			// combo we are editing, whether it's a paragraph or character one.
-			if (!string.IsNullOrEmpty(charStyleName))
-				paraStyleName = charStyleName;
-			// ReSharper disable ConvertToConstant.Local
-			bool fRightToLeft = false;
-			// ReSharper restore ConvertToConstant.Local
-			IVwRootSite site = null;		// Do we need something better?  We don't have anything!
-			// ReSharper disable RedundantAssignment
-			var selectedStyle = "";
-			// ReSharper restore RedundantAssignment
+			var comboStartingSelectedStyle = combo == null ? defaultStyle : GetStyleName(combo.SelectedItem);
+			var dialogStartingSelectedStyle = stylesheet.GetDefaultBasedOnStyleName();
+			if (!string.IsNullOrEmpty(comboStartingSelectedStyle))
+				dialogStartingSelectedStyle = comboStartingSelectedStyle;
+			const bool fRightToLeft = false;
 			using (var stylesDlg = new FwStylesDlg(
-				site,
+				null,
 				cache,
 				stylesheet,
-				// ReSharper disable ConditionIsAlwaysTrueOrFalse
 				fRightToLeft,
-				// ReSharper restore ConditionIsAlwaysTrueOrFalse
 				cache.ServiceLocator.WritingSystems.AllWritingSystems.Any(ws => ws.RightToLeftScript),
 				stylesheet.GetDefaultBasedOnStyleName(),
 				nMaxStyleLevel,
 				app.MeasurementSystem,
-				paraStyleName,
-				charStyleName,
+				dialogStartingSelectedStyle,
+				comboStartingSelectedStyle,
 				hvoAppRoot,
 				app,
 				helpTopicProvider))
@@ -250,19 +236,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				stylesDlg.ShowTEStyleTypes = false;
 				stylesDlg.CanSelectParagraphBackgroundColor = false;
 				stylesDlg.SetPropsToFactorySettings = setPropsToFactorySettings;
-				if (stylesDlg.ShowDialog(owner) == DialogResult.OK &&
-					((stylesDlg.ChangeType & StyleChangeType.DefChanged) > 0 ||
-					 (stylesDlg.ChangeType & StyleChangeType.Added) > 0))
+				if (stylesDlg.ShowDialog(owner) == DialogResult.OK && stylesDlg.ChangeType != StyleChangeType.None)
 				{
 					app.Synchronize(SyncMsg.ksyncStyle);
-					selectedStyle = stylesDlg.SelectedStyle;
-					m_oldStyle = GetStyleName(combo.SelectedItem);
+					var selectedStyle = stylesDlg.SelectedStyle;
+					m_oldStyle = comboStartingSelectedStyle;
 					if (fixCombo != null)
 						fixCombo();
 					if (string.IsNullOrEmpty(selectedStyle))
 						selectedStyle = defaultStyle;
 					// Make the requested change if possible...otherwise restore the previous selction.
-					if (!SelectStyle(combo, selectedStyle))
+					if (combo != null && !SelectStyle(combo, selectedStyle))
 						SelectStyle(combo, m_oldStyle);
 				}
 			}

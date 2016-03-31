@@ -360,6 +360,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Also removing empty Complex Form Info from {0}.
+        /// </summary>
+        internal static string ksAlsoEmptyComplexFormInfo {
+            get {
+                return ResourceManager.GetString("ksAlsoEmptyComplexFormInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Alternate Forms.
         /// </summary>
         internal static string ksAlternateForms {
@@ -392,6 +401,15 @@ namespace LanguageExplorer {
         internal static string ksBackMenuItem {
             get {
                 return ResourceManager.GetString("ksBackMenuItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove circular references to complex forms.
+        /// </summary>
+        internal static string ksBreakCircularRefs {
+            get {
+                return ResourceManager.GetString("ksBreakCircularRefs", resourceCulture);
             }
         }
         
@@ -500,6 +518,15 @@ namespace LanguageExplorer {
         internal static string ksChooseWhereToShowSubentry {
             get {
                 return ResourceManager.GetString("ksChooseWhereToShowSubentry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Circular Reference Fixed.
+        /// </summary>
+        internal static string ksCircularRefsFixed {
+            get {
+                return ResourceManager.GetString("ksCircularRefsFixed", resourceCulture);
             }
         }
         
@@ -892,6 +919,15 @@ namespace LanguageExplorer {
         internal static string ksFoundAndFixingInvalidDataCells {
             get {
                 return ResourceManager.GetString("ksFoundAndFixingInvalidDataCells", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Found {0} circular references in {1} entry references.
+        /// </summary>
+        internal static string ksFoundNCircularReferences {
+            get {
+                return ResourceManager.GetString("ksFoundNCircularReferences", resourceCulture);
             }
         }
         
@@ -1823,6 +1859,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Removing {0} as component lexeme for {1}.
+        /// </summary>
+        internal static string ksRemovingCircularComponentLexeme {
+            get {
+                return ResourceManager.GetString("ksRemovingCircularComponentLexeme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Replace Reference.
         /// </summary>
         internal static string ksReplaceXEntry {
@@ -2042,6 +2087,15 @@ namespace LanguageExplorer {
         internal static string ksTodo_WordformEditing {
             get {
                 return ResourceManager.GetString("ksTodo_WordformEditing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Try this tool if Language Explorer disappears or produces a &quot;FieldWorks has stopped working&quot; dialog when you try to view the Dictionary..
+        /// </summary>
+        internal static string ksTryIfProgramGoesPoof {
+            get {
+                return ResourceManager.GetString("ksTryIfProgramGoesPoof", resourceCulture);
             }
         }
         
@@ -2501,6 +2555,15 @@ namespace LanguageExplorer {
         internal static string ksWarningSortReversalSubentries {
             get {
                 return ResourceManager.GetString("ksWarningSortReversalSubentries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Older versions of Language Explorer allowed the user to make two complex form entries claim each other as components.  This is no longer allowed, but older projects can be in this bad state..
+        /// </summary>
+        internal static string ksWhatAreCircularRefs {
+            get {
+                return ResourceManager.GetString("ksWhatAreCircularRefs", resourceCulture);
             }
         }
         

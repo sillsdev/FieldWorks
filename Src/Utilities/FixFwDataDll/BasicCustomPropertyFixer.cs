@@ -98,10 +98,15 @@ namespace SIL.FieldWorks.FixData
 				// even to report it. But don't remove the logging without adding another mechanism for
 				// the system to know that a problem has been fixed...this controls the important behavior
 				// of re-splitting the file before we commit.
-				logger(guid, DateTime.Now.ToShortDateString(),
-					String.Format(Strings.ksAddingMissingDefaultForValueType, guid));
+				logger(String.Format(Strings.ksAddingMissingDefaultForValueType, guid), true);
 			}
 			return true;
+		}
+
+		internal override void Reset()
+		{
+			m_customFields.Clear();
+			base.Reset();
 		}
 	}
 }

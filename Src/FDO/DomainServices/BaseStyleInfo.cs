@@ -1371,12 +1371,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// XML property value settings to be lost by being converted from explicit to inherited values if
 		/// they match the default value (such as in FwFontTab UpdateForStyle()).
 		/// </remarks>
-		protected void SetAllPropertiesToInherited(bool andSetDefaultValues=true)
+		protected void SetAllPropertiesToInherited()
 		{
-			BaseStyleInfo basedOn = m_basedOnStyle ?? this;
-			m_defaultFontInfo.SetAllPropertiesToInherited(basedOn.m_defaultFontInfo);
+			var basedOn = m_basedOnStyle ?? this;
+			m_defaultFontInfo.ResetAllPropertiesToInherited(basedOn.m_defaultFontInfo);
 			foreach (FontInfo fontInfoOverride in m_fontInfoOverrides.Values)
-				fontInfoOverride.SetAllPropertiesToInherited(basedOn.m_defaultFontInfo);
+				fontInfoOverride.ResetAllPropertiesToInherited(basedOn.m_defaultFontInfo);
 			m_rtl.ResetToInherited(basedOn.m_rtl);
 			m_keepWithNext.ResetToInherited(basedOn.m_keepWithNext);
 			m_keepTogether.ResetToInherited(basedOn.m_keepTogether);
@@ -1392,8 +1392,33 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			m_borderColor.ResetToInherited(basedOn.m_borderColor);
 			m_bulletInfo.ResetToInherited(basedOn.m_bulletInfo);
 
-			if (this.BasedOnStyle == null)
+			if (BasedOnStyle == null)
 				SetAllDefaults();
+		}
+
+		/// <summary>
+		/// Set all the values of inherited properties to the inherited value, leave explicit values alone
+		/// </summary>
+		private void SetNonExplicitPropertiesToInherited()
+		{
+			var basedOn = m_basedOnStyle ?? this;
+			m_defaultFontInfo.InheritAllProperties(basedOn.m_defaultFontInfo);
+			foreach (FontInfo fontInfoOverride in m_fontInfoOverrides.Values)
+				fontInfoOverride.InheritAllProperties(basedOn.m_defaultFontInfo);
+			m_rtl.InheritValue(basedOn.m_rtl);
+			m_keepWithNext.InheritValue(basedOn.m_keepWithNext);
+			m_keepTogether.InheritValue(basedOn.m_keepTogether);
+			m_widowOrphanControl.InheritValue(basedOn.m_widowOrphanControl);
+			m_alignment.InheritValue(basedOn.m_alignment);
+			m_lineSpacing.InheritValue(basedOn.m_lineSpacing);
+			m_spaceBefore.InheritValue(basedOn.m_spaceBefore);
+			m_spaceAfter.InheritValue(basedOn.m_spaceAfter);
+			m_firstLineIndent.InheritValue(basedOn.m_firstLineIndent);
+			m_leadingIndent.InheritValue(basedOn.m_leadingIndent);
+			m_trailingIndent.InheritValue(basedOn.m_trailingIndent);
+			m_border.InheritValue(basedOn.m_border);
+			m_borderColor.InheritValue(basedOn.m_borderColor);
+			m_bulletInfo.InheritValue(basedOn.m_bulletInfo);
 		}
 		#endregion
 
@@ -2053,7 +2078,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <summary>
 		/// If the based on style name is set then set the actual based on style member to the item in the styleInfoCollection
 		/// </summary>
-		public void SetBasedOnStyle(FwStyleSheet.StyleInfoCollection styleInfoCollection)
+		public void SetBasedOnStyleAndInheritValues(FwStyleSheet.StyleInfoCollection styleInfoCollection)
 		{
 			if (string.IsNullOrEmpty(m_basedOnStyleName) || m_basedOnStyleName == Name)
 			{
@@ -2062,6 +2087,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (styleInfoCollection.Contains(m_basedOnStyleName))
 			{
 				m_basedOnStyle = styleInfoCollection[m_basedOnStyleName];
+				SetNonExplicitPropertiesToInherited();
 			}
 		}
 	}

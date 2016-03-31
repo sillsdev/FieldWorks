@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
 using System.Xml;
 using SIL.CoreImpl;
@@ -57,26 +56,45 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		// TODO (Hasso) 2016.02: honor reversalName (LT-17011)
 		public void ExportReversalContent(string xhtmlPath, string reversalName = null, DictionaryConfigurationModel configuration = null,
 			IThreadedProgress progress = null)
 		{
 			using (ClerkActivator.ActivateClerkMatchingExportType(ReversalType, m_propertyTable, m_publisher))
 			{
+				var originalReversalIndexGuid = m_propertyTable.GetValue<string>("ReversalIndexGuid");
+				var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
+				if (reversalName != null)
+				{
+					// Set the reversal index guid property so that the right guid is found down in DictionaryPublicationDecorater.GetEntriesToPublish,
+					// and manually call OnPropertyChanged to cause LexEdDll ReversalClerk.ChangeOwningObject(guid) to be called. This causes the
+					// right reversal content to be exported, fixing LT-17011.
+					var reversalIndex = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances()
+						.FirstOrDefault(repo => repo.ShortName == reversalName);
+					m_propertyTable.SetProperty("ReversalIndexGuid", reversalIndex.Guid.ToString(), true, false);
+					if (clerk != null)
+						clerk.OnPropertyChanged("ReversalIndexGuid");
+				}
+
 				configuration = configuration ?? new DictionaryConfigurationModel(
 					DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "ReversalIndex"), Cache);
 				ExportConfiguredXhtml(xhtmlPath, configuration, ReversalType, progress);
+
+				if (originalReversalIndexGuid != null && originalReversalIndexGuid != m_propertyTable.GetValue<string>("ReversalIndexGuid"))
+				{
+					m_propertyTable.SetProperty("ReversalIndexGuid", originalReversalIndexGuid, true, false);
+					if (clerk != null)
+						clerk.OnPropertyChanged("ReversalIndexGuid");
+				}
 			}
 		}
 
 		private void ExportConfiguredXhtml(string xhtmlPath, DictionaryConfigurationModel configuration, string exportType, IThreadedProgress progress)
 		{
-			var cssPath = Path.ChangeExtension(xhtmlPath, "css");
 			int[] entriesToSave;
 			var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entriesToSave, exportType);
 			if (progress != null)
 				progress.Maximum = entriesToSave.Length;
-			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, configuration, m_propertyTable, xhtmlPath, cssPath, progress);
+			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, configuration, m_propertyTable, xhtmlPath, progress);
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",

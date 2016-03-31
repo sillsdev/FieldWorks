@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace SIL.FieldWorks.XWorks
 {
-	interface IDictionaryConfigurationView
+	internal interface IDictionaryConfigurationView
 	{
 		/// <summary>
 		/// Tell the controller to launch the dialog where different dictionary configurations (or views) are managed.
@@ -61,6 +61,11 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="configuration"></param>
 		void SelectConfiguration(DictionaryConfigurationModel configuration);
+
+		/// <summary>
+		/// Highlight the element(s) corresponding to the configuration node in the preview pane.
+		/// </summary>
+		void HighlightContent(ConfigurableDictionaryNode configNode);
 	}
 
 	public delegate void SwitchConfigurationEvent(object sender, SwitchConfigurationEventArgs args);

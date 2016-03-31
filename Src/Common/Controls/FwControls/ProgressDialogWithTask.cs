@@ -80,6 +80,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_owner = owner;
 			m_synchronizeInvoke = synchronizeInvoke;
 			m_fCreatedProgressDlg = true;
+			IsCanceling = false;
 			InitOnOwnerThread();
 			if (m_synchronizeInvoke == null)
 				m_synchronizeInvoke = m_progressDialog.SynchronizeInvoke;
@@ -419,6 +420,31 @@ namespace SIL.FieldWorks.Common.Controls
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public string CancelLabelText
+		{
+			get
+			{
+				CheckDisposed();
+
+				if (m_synchronizeInvoke.InvokeRequired)
+					return (string)m_synchronizeInvoke.Invoke((Func<string>)(() => ((ProgressDialogImpl)m_progressDialog).CancelLabelText), null);
+				return ((ProgressDialogImpl)m_progressDialog).CancelLabelText;
+			}
+			set
+			{
+				CheckDisposed();
+
+				if (m_synchronizeInvoke.InvokeRequired)
+					m_synchronizeInvoke.Invoke((Action<string>)(s => ((ProgressDialogImpl)m_progressDialog).CancelLabelText = s), new object[] {value});
+				else
+					((ProgressDialogImpl)m_progressDialog).CancelLabelText = value;
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Gets or sets a value indicating whether or not the progress indicator can restart
 		/// at zero if it goes beyond the end.
 		/// </summary>
@@ -478,6 +504,12 @@ namespace SIL.FieldWorks.Common.Controls
 					m_progressDialog.AllowCancel = value;
 			}
 		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public bool IsCanceling { get; private set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -741,6 +773,7 @@ namespace SIL.FieldWorks.Common.Controls
 		protected virtual void m_progressDialog_Canceling(object sender, CancelEventArgs e)
 		{
 			bool cancel = true;
+			IsCanceling = true;
 			if (Canceling != null)
 			{
 				var cea = new CancelEventArgs();
@@ -749,7 +782,9 @@ namespace SIL.FieldWorks.Common.Controls
 				cancel = !cea.Cancel;
 			}
 			if (cancel)
+			{
 				m_worker.CancelAsync();
+			}
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",

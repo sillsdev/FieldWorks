@@ -164,20 +164,118 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void m_linkManageConfigurations_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		/// <summary>
+		/// Remember which elements are highlighted so that we can turn the highlighting off later.
+		/// </summary>
+		private List<GeckoElement> _highlightedElements;
+		private const string HighlightStyle = "background-color:Yellow ";	// LightYellow isn't really bold enough marking to my eyes for this feature.
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "element does NOT need to be disposed locally!")]
+		public void HighlightContent(ConfigurableDictionaryNode configNode)
 		{
-			ManageConfigurations(sender, e);
+			if (m_preview.IsDisposed)
+				return;
+			if (_highlightedElements != null)
+			{
+				foreach (var element in _highlightedElements)
+				{
+					// remove the background-color added earlier.  any other style setting is unchanged.
+					var style = element.GetAttribute("style");
+					style = style.Replace(HighlightStyle, "");
+					element.SetAttribute("style", style);
+				}
+				_highlightedElements = null;
+			}
+			if (configNode == null)
+				return;
+			var browser = (GeckoWebBrowser)m_preview.NativeBrowser;
+			// Surprisingly, xpath does not work for xml documents in geckofx, so we need to search manually for the node we want.
+			_highlightedElements = FindConfiguredItem(configNode, browser);
+			foreach (var element in _highlightedElements)
+			{
+				// add background-color to the style, preserving any existing style.  (See LT-17222.)
+				var style = element.GetAttribute("style");
+				if (String.IsNullOrEmpty(style))
+					style = HighlightStyle;
+				else
+					style = HighlightStyle + style;	// note trailing space in string constant
+				element.SetAttribute("style", style);
+			}
+		}
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "body is a reference")]
+		private static List<GeckoElement> FindConfiguredItem(ConfigurableDictionaryNode selectedConfigNode, GeckoWebBrowser browser)
+		{
+			var elements = new List<GeckoElement>();
+			var body = browser.Document.Body;
+			if (body == null || selectedConfigNode == null) // Sanity check
+				return elements;
+
+			var topLevelConfigNode = GetTopLevelNode(selectedConfigNode);
+			var topLevelClass = CssGenerator.GetClassAttributeForConfig(topLevelConfigNode);
+			foreach (var div in body.GetElementsByTagName("div"))
+			{
+				if (Equals(div.ParentElement, body) && div.GetAttribute("class") == topLevelClass)
+					elements.AddRange(FindMatchingSpans(selectedConfigNode, div, topLevelConfigNode));
+			}
+			return elements;
+		}
+
+		private static ConfigurableDictionaryNode GetTopLevelNode(ConfigurableDictionaryNode childNode)
+		{
+			ConfigurableDictionaryNode topLevelConfigNode = null;
+			for (var node = childNode; node != null; node = node.Parent)
+			{
+				topLevelConfigNode = node;
+			}
+			return topLevelConfigNode;
+		}
+
+		private static bool DoesGeckoElementOriginateFromConfigNode(ConfigurableDictionaryNode configNode, GeckoElement element,
+			ConfigurableDictionaryNode topLevelNode)
+		{
+			Guid dummyGuid;
+			GeckoElement dummyElement;
+			var classListForGeckoElement = XhtmlDocView.GetClassListFromGeckoElement(element, out dummyGuid, out dummyElement);
+			classListForGeckoElement.RemoveAt(0); // don't need the top level class
+			var nodeToMatch = DictionaryConfigurationController.FindStartingConfigNode(topLevelNode, classListForGeckoElement);
+			return Equals(nodeToMatch, configNode);
+		}
+
+		private static IEnumerable<GeckoElement> FindMatchingSpans(ConfigurableDictionaryNode selectedNode, GeckoElement parent,
+			ConfigurableDictionaryNode topLevelNode)
+		{
+			var elements = new List<GeckoElement>();
+			var desiredClass = CssGenerator.GetClassAttributeForConfig(selectedNode);
+			foreach (var span in parent.GetElementsByTagName("span"))
+			{
+				if (span.GetAttribute("class") == desiredClass &&
+					DoesGeckoElementOriginateFromConfigNode(selectedNode, span, topLevelNode))
+				{
+					elements.Add(span);
+				}
+			}
+			return elements;
+		}
+
+		private void m_buttonManageConfigurations_Click(object sender, EventArgs e)
+		{
+			if (ManageConfigurations != null)
+				ManageConfigurations(sender, e);
 		}
 
 		private void okButton_Click(object sender, EventArgs e)
 		{
-			SaveModel(sender, e);
+			if (SaveModel != null)
+				SaveModel(sender, e);
 			Close();
 		}
 
 		private void applyButton_Click(object sender, EventArgs e)
 		{
-			SaveModel(sender, e);
+			if (SaveModel != null)
+				SaveModel(sender, e);
 		}
 
 		private void helpButton_Click(object sender, EventArgs e)
@@ -187,10 +285,11 @@ namespace SIL.FieldWorks.XWorks
 
 		private void OnConfigurationChanged(object sender, EventArgs e)
 		{
-			SwitchConfiguration(sender, new SwitchConfigurationEventArgs
-			{
-				ConfigurationPicked = (DictionaryConfigurationModel)m_cbDictConfig.SelectedItem
-			});
+			if(SwitchConfiguration != null)
+				SwitchConfiguration(sender, new SwitchConfigurationEventArgs
+				{
+					ConfigurationPicked = (DictionaryConfigurationModel)m_cbDictConfig.SelectedItem
+				});
 		}
 
 		/// <summary>

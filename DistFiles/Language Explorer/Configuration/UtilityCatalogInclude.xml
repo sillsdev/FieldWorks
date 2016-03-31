@@ -12,4 +12,5 @@
 	<utility assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.Edit.LexEntryTypeConverter"/>
 	<utility assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Grammar.Tools.PosEdit.GoldEticGuidFixer"/>
 	<utility assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes.SortReversalSubEntries"/>
+	<utility assemblyPath="LanguageExplorer.dll" class="SIL.FieldWorks.XWorks.LexEd.CircularRefBreaker"/>
 </utilityCatalog>

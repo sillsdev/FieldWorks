@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
@@ -76,8 +77,11 @@ namespace SIL.FieldWorks.XWorks
 			var element = browser.DomDocument.ElementFromPoint(e.ClientX, e.ClientY);
 			if (element == null || element.TagName == "html")
 				return;
-			// We don't care about left clicks in this context.
-			if (e.Button == GeckoMouseButton.Right)
+			if (e.Button == GeckoMouseButton.Left)
+			{
+				XhtmlDocView.HandleDomLeftClick(Clerk, e, element);
+			}
+			else if (e.Button == GeckoMouseButton.Right)
 			{
 				XhtmlDocView.HandleDomRightClick(browser, e, element, PropertyTable, Publisher, m_configObjectName);
 			}
@@ -99,12 +103,7 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				}
 				var configuration = new DictionaryConfigurationModel(configurationFile, Cache);
-				var baseName = XhtmlDocView.MakeFilenameSafeForHtml(Path.GetFileNameWithoutExtension(configurationFile));
-				var basePath = Path.Combine(Path.GetTempPath(), "DictionaryPreview", baseName);
-				Directory.CreateDirectory(Path.GetDirectoryName(basePath));
-				var xhtmlPath = basePath + "-Preview.xhtml";
-				var cssPath = basePath + "-Preview.css";
-				ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(new[] { cmo.Hvo }, null, configuration, PropertyTable, xhtmlPath, cssPath);
+				var xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new [] { cmo.Hvo }, null, configuration, PropertyTable);
 				m_mainView.Url = new Uri(xhtmlPath);
 				m_mainView.Refresh(WebBrowserRefreshOption.Completely);
 			}

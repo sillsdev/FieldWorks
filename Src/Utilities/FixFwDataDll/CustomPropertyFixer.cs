@@ -50,8 +50,7 @@ namespace SIL.FieldWorks.FixData
 			{
 				if (!string.IsNullOrEmpty(kvp.Key) && m_customFieldNames.ContainsKey(kvp.Key))
 					continue;
-				logger(guid.ToString(), DateTime.Now.ToShortDateString(),
-					String.Format(Strings.ksRemovingUndefinedCustomProperty, kvp.Key.Substring(0, kvp.Key.LastIndexOf('_')), className, guid));
+				logger(String.Format(Strings.ksRemovingUndefinedCustomProperty, kvp.Key.Substring(0, kvp.Key.LastIndexOf('_')), className, guid), true);
 				kvp.Value.Remove();
 			}
 			return true;
@@ -81,6 +80,12 @@ namespace SIL.FieldWorks.FixData
 				customProps.Add(nameClassKey, customProp);
 			}
 			return customProps;
+		}
+
+		internal override void Reset()
+		{
+			m_customFieldNames.Clear();
+			base.Reset();
 		}
 	}
 }

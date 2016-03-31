@@ -137,8 +137,7 @@ namespace SIL.FieldWorks.FixData
 				var guid = rt.Attribute("guid").Value;
 				if (m_guidsToDelete.TryGetValue(guid, out replacement))
 				{
-					logger(guid, DateTime.Now.ToShortDateString(),
-						String.Format(Strings.ksDuplicateWordform, guid, GetWordformKey(rt), replacement));
+					logger(String.Format(Strings.ksDuplicateWordform, guid, GetWordformKey(rt), replacement), true);
 					return false; // discard this element
 				}
 				// Modify it if we need to add to its analyses.
@@ -183,6 +182,14 @@ namespace SIL.FieldWorks.FixData
 				}
 			}
 			return true; // keep the current element.
+		}
+
+		internal override void Reset()
+		{
+			m_formToGuid.Clear();
+			m_modifiedWordforms.Clear();
+			m_guidsToDelete.Clear();
+			base.Reset();
 		}
 
 		private class WordformInfo : Tuple<string, string>

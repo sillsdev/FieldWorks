@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,6 +11,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using Gecko;
+using Gecko.DOM;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -92,7 +93,7 @@ namespace SIL.FieldWorks.XWorks
 			if (e.Button == GeckoMouseButton.Left)
 			{
 				// Select the entry represented by the current element.  [LT-16982]
-				HandleDomLeftClick(e, element);
+				HandleDomLeftClick(Clerk, e, element);
 			}
 			else if (e.Button == GeckoMouseButton.Right)
 			{
@@ -113,12 +114,27 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void HandleDomLeftClick(DomMouseEventArgs e, GeckoElement element)
+		internal static void HandleDomLeftClick(RecordClerk clerk, DomMouseEventArgs e, GeckoElement element)
 		{
-			Guid topLevelGuid;
-			GetClassListFromGeckoElement(element, out topLevelGuid);
+			GeckoElement dummy;
+			var topLevelGuid = GetHrefFromGeckoDomElement(element);
+			if (topLevelGuid == Guid.Empty)
+				GetClassListFromGeckoElement(element, out topLevelGuid, out dummy);
 			if (topLevelGuid != Guid.Empty)
-				Clerk.JumpToRecord(topLevelGuid);
+			{
+				var currentObj = clerk.CurrentObject;
+				if (currentObj != null && currentObj.Guid == topLevelGuid)
+				{
+					// don't need to jump, we're already here...
+					// unless this is a video link
+					if (element is GeckoAnchorElement)
+						return; // don't handle the click; gecko will jump to the link
+				}
+				else
+				{
+					clerk.JumpToRecord(topLevelGuid);
+				}
+			}
 			e.Handled = true;
 		}
 
@@ -130,51 +146,68 @@ namespace SIL.FieldWorks.XWorks
 		/// This is static so that the method can be shared with XhtmlRecordDocView.
 		/// </remarks>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ToolStripMenuItem gets added to m_contextMenu.Items; ContextMenuStrip is disposed in DisposeContextMenu()")]
+			Justification = "ToolStripMenuItems get added to m_contextMenu.Items; ContextMenuStrip is disposed in DisposeContextMenu()")]
 		internal static void HandleDomRightClick(GeckoWebBrowser browser, DomMouseEventArgs e,
 			GeckoElement element, IPropertyTable propertyTable, IPublisher publisher, string configObjectName)
 		{
 			Guid topLevelGuid;
-			var classList = GetClassListFromGeckoElement(element, out topLevelGuid);
-			var label = String.Format(xWorksStrings.ksConfigure, configObjectName);
+			GeckoElement entryElement;
+			var classList = GetClassListFromGeckoElement(element, out topLevelGuid, out entryElement);
+			var label = string.Format(xWorksStrings.ksConfigure, configObjectName);
 			s_contextMenu = new ContextMenuStrip();
 			var item = new ToolStripMenuItem(label);
 			s_contextMenu.Items.Add(item);
 			item.Click += RunConfigureDialogAt;
 			item.Tag = new object[] { propertyTable, publisher, classList, topLevelGuid };
+			if (e.CtrlKey) // show hidden menu item for tech support
+			{
+				item = new ToolStripMenuItem(xWorksStrings.ksInspect);
+				s_contextMenu.Items.Add(item);
+				item.Click += RunDiagnosticsDialogAt;
+				item.Tag = new object[] { propertyTable, entryElement, topLevelGuid };
+			}
 			s_contextMenu.Show(browser, new Point(e.ClientX, e.ClientY));
 			s_contextMenu.Closed += m_contextMenu_Closed;
 			e.Handled = true;
 		}
 
+		/// <summary>
+		/// Returns the class hierarchy for a GeckoElement
+		/// </summary>
+		/// <remarks>LT-17213 Internal for use in DictionaryConfigurationDlg</remarks>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "elem does NOT need to be disposed locally!")]
-		private static List<string> GetClassListFromGeckoElement(GeckoElement element, out Guid topLevelGuid)
+		internal static List<string> GetClassListFromGeckoElement(GeckoElement element, out Guid topLevelGuid, out GeckoElement entryElement)
 		{
 			topLevelGuid = Guid.Empty;
+			entryElement = element;
 			var classList = new List<string>();
-			for (var elem = element; elem != null; elem = elem.ParentElement)
+			if (entryElement.TagName == "body" || entryElement.TagName == "html")
+				return classList;
+			for (; entryElement != null; entryElement = entryElement.ParentElement)
 			{
-				if (elem.TagName == "body" || elem.TagName == "html")
-					break;
-				var className = elem.GetAttribute("class");
+				var className = entryElement.GetAttribute("class");
 				if (string.IsNullOrEmpty(className))
 					continue;
 				if (className == "letHead")
 					break;
-				if (elem.TagName == "div")
-				{
-						// handle original configuration nodes
-					if (className == "entry" || className == "minorentrycomplex" || className == "minorentryvariant" || className == "reversalindexentry" ||
-						// handle duplicated configuration nodes
-						className.StartsWith("entry_") || className.StartsWith("minorentrycomplex_") || className.StartsWith("minorentryvariant_") || className.StartsWith("reversalindexentry_"))
+				classList.Insert(0, className);
+				if (entryElement.TagName == "div" && entryElement.ParentElement.TagName == "body")
 					{
-						topLevelGuid = GetGuidFromGeckoDomElement(elem);
+					topLevelGuid = GetGuidFromGeckoDomElement(entryElement);
+					break; // we have the element we want; continuing to loop will get its parent instead
 					}
 				}
-				classList.Insert(0, className);
-			}
 			return classList;
+			}
+
+		internal static Guid GetHrefFromGeckoDomElement(GeckoElement element)
+		{
+			if (!element.HasAttribute("href"))
+				return Guid.Empty;
+
+			var hrefVal = element.GetAttribute("href");
+			return !hrefVal.StartsWith("#g") ? Guid.Empty : new Guid(hrefVal.Substring(2));
 		}
 
 		private static Guid GetGuidFromGeckoDomElement(GeckoElement element)
@@ -220,11 +253,12 @@ namespace SIL.FieldWorks.XWorks
 		private static void RunConfigureDialogAt(object sender, EventArgs e)
 		{
 			var item = (ToolStripMenuItem)sender;
-			var tagObjects = item.Tag as object[];
+			var tagObjects = (object[])item.Tag;
 			var propertyTable = tagObjects[0] as IPropertyTable;
 			var publisher = tagObjects[1] as IPublisher;
 			var classList = tagObjects[2] as List<string>;
 			var guid = (Guid)tagObjects[3];
+			bool refreshNeeded;
 			using (var dlg = new DictionaryConfigurationDlg(propertyTable))
 			{
 				var cache = propertyTable.GetValue<FdoCache>("cache");
@@ -239,8 +273,23 @@ namespace SIL.FieldWorks.XWorks
 				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, DictionaryConfigurationListener.GetDictionaryConfigurationType(propertyTable));
 				dlg.HelpTopic = DictionaryConfigurationListener.GetConfigDialogHelpTopic(propertyTable);
 				dlg.ShowDialog(propertyTable.GetValue<IWin32Window>("window"));
+				refreshNeeded = controller.MasterRefreshRequired;
 			}
-			publisher.Publish("MasterRefresh", null);
+			if (refreshNeeded)
+				publisher.Publish("MasterRefresh", null);
+		}
+
+		private static void RunDiagnosticsDialogAt(object sender, EventArgs e)
+		{
+			var item = (ToolStripMenuItem)sender;
+			var tagObjects = (object[])item.Tag;
+			var propTable = (IPropertyTable)tagObjects[0];
+			var element = (GeckoElement)tagObjects[1];
+			var guid = (Guid)tagObjects[2];
+			using (var dlg = new XmlDiagnosticsDlg(element, guid))
+			{
+				dlg.ShowDialog(propTable.GetValue<IWin32Window>("window"));
+			}
 		}
 
 		#endregion
@@ -666,21 +715,27 @@ namespace SIL.FieldWorks.XWorks
 			else
 			{
 				using (new WaitCursor(this.ParentForm))
-				{
 					using (var progressDlg = new Common.Controls.ProgressDialogWithTask(ParentForm))
 					{
-						progressDlg.AllowCancel = false;
+					progressDlg.AllowCancel = true;
+					progressDlg.CancelLabelText = xWorksStrings.ksCancelingPublicationLabel;
 						progressDlg.Title = xWorksStrings.ksPreparingPublicationDisplay;
 						var xhtmlPath = progressDlg.RunTask(true, SaveConfiguredXhtmlAndDisplay, publicationDecorator, configurationFile) as string;
 						if (xhtmlPath != null)
 						{
+						if (progressDlg.IsCanceling)
+						{
+							Publisher.Publish("SetToolFromName", "lexiconEdit");
+						}
+						else
+						{
 							m_mainView.Url = new Uri(xhtmlPath);
 							m_mainView.Refresh(WebBrowserRefreshOption.Completely);
+						}
 							return;
 						}
 					}
 				}
-			}
 			m_mainView.DocumentText = String.Format("<html><body>{0}</body></html>", htmlErrorMessage);
 		}
 
@@ -695,25 +750,20 @@ namespace SIL.FieldWorks.XWorks
 			var configuration = new DictionaryConfigurationModel(configurationFile, Cache);
 			publicationDecorator.Refresh();
 			var entriesToPublish = publicationDecorator.GetEntriesToPublish(PropertyTable, Clerk.VirtualFlid);
-			var baseName = MakeFilenameSafeForHtml(Path.GetFileNameWithoutExtension(configurationFile));
-			var basePath = Path.Combine(Path.GetTempPath(), "DictionaryPreview", baseName);
-			Directory.CreateDirectory(Path.GetDirectoryName(basePath));
-			var xhtmlPath = basePath + ".xhtml";
-			var cssPath = basePath + ".css";
 #if DEBUG
 			var start = DateTime.Now;
 #endif
 			if (progress != null)
 			{
 				progress.Minimum = 0;
-				var entryCount = entriesToPublish.Count();
+				var entryCount = entriesToPublish.Length;
 				progress.Maximum = entryCount + 1 + entryCount / 100;
 				progress.Position++;
 			}
-			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToPublish, publicationDecorator, configuration, PropertyTable, xhtmlPath, cssPath, progress);
+			var xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(entriesToPublish, publicationDecorator, configuration, PropertyTable, progress);
 #if DEBUG
 			var end = DateTime.Now;
-			System.Diagnostics.Debug.WriteLine(String.Format("saving xhtml/css took {0}", end - start));
+			System.Diagnostics.Debug.WriteLine(string.Format("saving xhtml/css took {0}", end - start));
 #endif
 			return xhtmlPath;
 		}
@@ -732,7 +782,8 @@ namespace SIL.FieldWorks.XWorks
 		private string GetCurrentPublication()
 		{
 			// Returns the current publication and use '$$all_entries$$' if none has yet been set
-			return PropertyTable.GetValue("SelectedPublication", xWorksStrings.AllEntriesPublication);
+			return PropertyTable.GetValue("SelectedPublication",
+			 xWorksStrings.AllEntriesPublication);
 		}
 
 		private string GetCurrentConfiguration(bool fUpdate)
@@ -792,7 +843,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 			// Limit length of View title to remaining available width
 			curViewName = TrimToMaxPixelWidth(Math.Max(2, maxViewWidth), curViewName);
+			var isReversalIndex = DictionaryConfigurationListener.GetDictionaryConfigurationType(PropertyTable) == xWorksStrings.ReversalIndex;
+			if (!isReversalIndex)
 			ResetSpacer(maxViewWidth, curViewName);
+			else
+				((IPaneBar) m_informationBar).Text = curViewName;
 		}
 
 		/// <summary>
@@ -804,16 +859,11 @@ namespace SIL.FieldWorks.XWorks
 			if(m_informationBar == null)
 				return;
 			var titleStr = GetBaseTitleStringFromConfig();
-			var isReversalIndex = DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(PropertyTable) == "Reversal Index";
-			if (isReversalIndex && Clerk.OwningObject != null && Clerk.OwningObject.ShortName != null)
-				titleStr = Clerk.OwningObject.ShortName;
 			if (titleStr == string.Empty)
 			{
 				base.SetInfoBarText();
 				return;
 			}
-			if (!isReversalIndex)
-			{
 				// Set the configuration part of the title
 				SetConfigViewTitle();
 				//Set the publication part of the title
@@ -821,8 +871,16 @@ namespace SIL.FieldWorks.XWorks
 				if (pubNameTitlePiece == xWorksStrings.AllEntriesPublication)
 					pubNameTitlePiece = xWorksStrings.ksAllEntries;
 				titleStr = pubNameTitlePiece + " " + titleStr;
+			var isReversalIndex = DictionaryConfigurationListener.GetDictionaryConfigurationType(PropertyTable) == xWorksStrings.ReversalIndex;
+			if (isReversalIndex)
+			{
+				var maxViewWidth = Width / 2 - kSpaceForMenuButton;
+				// Limit length of View title to remaining available width
+				titleStr = TrimToMaxPixelWidth(Math.Max(2, maxViewWidth), titleStr);
+				ResetSpacer(maxViewWidth, titleStr);
 			}
-			((IPaneBar)m_informationBar).Text = titleStr;
+			else
+				((IPaneBar) m_informationBar).Text = titleStr;
 		}
 
 		private const int kSpaceForMenuButton = 26;

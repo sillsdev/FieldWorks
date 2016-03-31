@@ -187,6 +187,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Configure homograph numbers on all headwords and sense numbers on headwords in cross references.
+        /// </summary>
+        internal static string ConfigureReferencedHeadwordsTooltip {
+            get {
+                return ResourceManager.GetString("ConfigureReferencedHeadwordsTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Configure {0}.
         /// </summary>
         internal static string ConfigureTitle {
@@ -201,6 +210,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string Confirm {
             get {
                 return ResourceManager.GetString("Confirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        internal static string Delete {
+            get {
+                return ResourceManager.GetString("Delete", resourceCulture);
             }
         }
         
@@ -276,11 +294,38 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reversal Configurations.
+        /// </summary>
+        internal static string DictionaryConfigurationMangager_ReversalConfigurations_GroupLabel {
+            get {
+                return ResourceManager.GetString("DictionaryConfigurationMangager_ReversalConfigurations_GroupLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You did not select a writing system that is valid for this database. Unless you have previously entered data in this database in this writing system, this field will never be shown..
         /// </summary>
         internal static string DidNotSelectValidWsForDb {
             get {
                 return ResourceManager.GetString("DidNotSelectValidWsForDb", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate.
+        /// </summary>
+        internal static string Duplicate {
+            get {
+                return ResourceManager.GetString("Duplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Label.
+        /// </summary>
+        internal static string EditLabel {
+            get {
+                return ResourceManager.GetString("EditLabel", resourceCulture);
             }
         }
         
@@ -474,6 +519,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Highlight affected content.
+        /// </summary>
+        internal static string HighlightAffectedContent {
+            get {
+                return ResourceManager.GetString("HighlightAffectedContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The root node in your configuration is invalid. The field attribute &apos;{0}&apos; must match a class name..
         /// </summary>
         internal static string InvalidRootConfigurationNode {
@@ -632,6 +686,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string ksCanBeConfiguredInMoreDetail {
             get {
                 return ResourceManager.GetString("ksCanBeConfiguredInMoreDetail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click Cancel to stop loading the Dictionary view and move to Lexicon Edit..
+        /// </summary>
+        internal static string ksCancelingPublicationLabel {
+            get {
+                return ResourceManager.GetString("ksCancelingPublicationLabel", resourceCulture);
             }
         }
         
@@ -1059,6 +1122,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hide subsense grammatical info if same as parent.
+        /// </summary>
+        internal static string ksHideGramInfoIfSameAsParent {
+            get {
+                return ResourceManager.GetString("ksHideGramInfoIfSameAsParent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0}: {1}.
         /// </summary>
         internal static string ksHierarchyLabel {
@@ -1083,6 +1155,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string ksIllegalXmlChars {
             get {
                 return ResourceManager.GetString("ksIllegalXmlChars", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Inspect entry.
+        /// </summary>
+        internal static string ksInspect {
+            get {
+                return ResourceManager.GetString("ksInspect", resourceCulture);
             }
         }
         
@@ -1326,6 +1407,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string ksNumberingCharacterStyle {
             get {
                 return ResourceManager.GetString("ksNumberingCharacterStyle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Number even a single subsense.
+        /// </summary>
+        internal static string ksNumberSingleSubsense {
+            get {
+                return ResourceManager.GetString("ksNumberSingleSubsense", resourceCulture);
             }
         }
         
@@ -1580,6 +1670,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string ksSorting {
             get {
                 return ResourceManager.GetString("ksSorting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Subsense Number Configuration.
+        /// </summary>
+        internal static string ksSubsenseNumberConfig {
+            get {
+                return ResourceManager.GetString("ksSubsenseNumberConfig", resourceCulture);
             }
         }
         
@@ -2006,6 +2105,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Remove highlighting from affected content.
+        /// </summary>
+        internal static string RemoveHighlighting {
+            get {
+                return ResourceManager.GetString("RemoveHighlighting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reset.
         /// </summary>
         internal static string Reset {
@@ -2020,6 +2128,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string ReversalIndex {
             get {
                 return ResourceManager.GetString("ReversalIndex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reversal Index Configuration Manager.
+        /// </summary>
+        internal static string ReversalIndexConfigurationDlgTitle {
+            get {
+                return ResourceManager.GetString("ReversalIndexConfigurationDlgTitle", resourceCulture);
             }
         }
         
@@ -2173,6 +2290,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string YouAreResetting {
             get {
                 return ResourceManager.GetString("YouAreResetting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are resetting the following to the &apos;All Reversal Indexes&apos; settings:.
+        /// </summary>
+        internal static string YouAreResettingReversal {
+            get {
+                return ResourceManager.GetString("YouAreResettingReversal", resourceCulture);
             }
         }
     }
