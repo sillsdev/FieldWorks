@@ -4,134 +4,52 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.LexText.Controls;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.IText
 {
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_mediator is a reference")]
-	public class ComplexConcPatternVc : FwBaseVc
+	public class ComplexConcPatternVc : PatternVcBase
 	{
-		public const int kfragPattern = 0;
-		public const int kfragNode = 1;
+		// normal frags
+		public const int kfragPattern = 100;
+		public const int kfragNode = 101;
 
 		// variant frags
-		public const int kfragEmpty = 2;
-		public const int kfragFeatureLine = 3;
-		public const int kfragNodeMax = 4;
-		public const int kfragNodeMin = 5;
-		public const int kfragLeftBracketUpHook = 6;
-		public const int kfragLeftBracketExt = 7;
-		public const int kfragLeftBracketLowHook = 8;
-		public const int kfragRightBracketUpHook = 9;
-		public const int kfragRightBracketExt = 10;
-		public const int kfragRightBracketLowHook = 11;
-		public const int kfragLeftBracket = 12;
-		public const int kfragRightBracket = 13;
-		public const int kfragLeftParen = 14;
-		public const int kfragRightParen = 15;
-		public const int kfragZeroWidthSpace = 16;
-		public const int kfragLeftParenUpHook = 17;
-		public const int kfragLeftParenExt = 18;
-		public const int kfragLeftParenLowHook = 19;
-		public const int kfragRightParenUpHook = 20;
-		public const int kfragRightParenExt = 21;
-		public const int kfragRightParenLowHook = 22;
-		public const int kfragOR = 23;
-		public const int kfragHash = 24;
+		public const int kfragFeatureLine = 103;
+		public const int kfragNodeMax = 104;
+		public const int kfragNodeMin = 105;
+		public const int kfragOR = 106;
+		public const int kfragHash = 107;
 
 		// fake flids
-		public const int ktagType = -100;
-		public const int ktagForm = -101;
-		public const int ktagGloss = -102;
-		public const int ktagCategory = -103;
-		public const int ktagEntry = -104;
-		public const int ktagTag = -105;
-		public const int ktagInfl = -106;
-		public const int ktagLeftBoundary = -107;
-		public const int ktagRightBoundary = -108;
-		public const int ktagLeftNonBoundary = -109;
-		public const int ktagRightNonBoundary = -110;
-		public const int ktagInnerNonBoundary = -111;
+		public const int ktagType = -200;
+		public const int ktagForm = -201;
+		public const int ktagGloss = -202;
+		public const int ktagCategory = -203;
+		public const int ktagEntry = -204;
+		public const int ktagTag = -205;
+		public const int ktagInfl = -206;
 
-		// spacing between contexts
-		private const int PileMargin = 1000;
-
-		private readonly Mediator m_mediator;
-
-		private readonly ITsTextProps m_bracketProps;
-		private readonly ITsTextProps m_pileProps;
-
-		private readonly ITsString m_empty;
 		private readonly ITsString m_infinity;
-		private readonly ITsString m_leftBracketUpHook;
-		private readonly ITsString m_leftBracketExt;
-		private readonly ITsString m_leftBracketLowHook;
-		private readonly ITsString m_rightBracketUpHook;
-		private readonly ITsString m_rightBracketExt;
-		private readonly ITsString m_rightBracketLowHook;
-		private readonly ITsString m_leftBracket;
-		private readonly ITsString m_rightBracket;
-		private readonly ITsString m_leftParen;
-		private readonly ITsString m_rightParen;
-		private readonly ITsString m_zwSpace;
-		private readonly ITsString m_leftParenUpHook;
-		private readonly ITsString m_leftParenExt;
-		private readonly ITsString m_leftParenLowHook;
-		private readonly ITsString m_rightParenUpHook;
-		private readonly ITsString m_rightParenExt;
-		private readonly ITsString m_rightParenLowHook;
 		private readonly ITsString m_or;
 		private readonly ITsString m_hash;
 
 		private IDictionary<IFsFeatDefn, object> m_curInflFeatures;
 
 		public ComplexConcPatternVc(FdoCache cache, Mediator mediator)
+			: base(cache, mediator)
 		{
-			Cache = cache;
-			m_mediator = mediator;
-
-			// use Charis SIL because it supports the special characters that are needed for
-			// multiline brackets
-			ITsPropsBldr tpb = TsPropsBldrClass.Create();
-			tpb.SetStrPropValue((int) FwTextPropType.ktptFontFamily, "Charis SIL");
-			m_bracketProps = tpb.GetTextProps();
-
-			tpb = TsPropsBldrClass.Create();
-			tpb.SetIntPropValues((int) FwTextPropType.ktptMarginLeading, (int) FwTextPropVar.ktpvMilliPoint, PileMargin);
-			tpb.SetIntPropValues((int) FwTextPropType.ktptMarginTrailing, (int) FwTextPropVar.ktpvMilliPoint, PileMargin);
-			m_pileProps = tpb.GetTextProps();
-
-			var tsf = m_cache.TsStrFactory;
-			var userWs = m_cache.DefaultUserWs;
-			m_empty = tsf.MakeString("", userWs);
+			ITsStrFactory tsf = m_cache.TsStrFactory;
+			int userWs = m_cache.DefaultUserWs;
 			m_infinity = tsf.MakeString("\u221e", userWs);
-			m_leftBracketUpHook = tsf.MakeString("\u23a1", userWs);
-			m_leftBracketExt = tsf.MakeString("\u23a2", userWs);
-			m_leftBracketLowHook = tsf.MakeString("\u23a3", userWs);
-			m_rightBracketUpHook = tsf.MakeString("\u23a4", userWs);
-			m_rightBracketExt = tsf.MakeString("\u23a5", userWs);
-			m_rightBracketLowHook = tsf.MakeString("\u23a6", userWs);
-			m_leftBracket = tsf.MakeString("[", userWs);
-			m_rightBracket = tsf.MakeString("]", userWs);
-			m_leftParen = tsf.MakeString("(", userWs);
-			m_rightParen = tsf.MakeString(")", userWs);
-			m_zwSpace = tsf.MakeString("\u200b", userWs);
-			m_leftParenUpHook = tsf.MakeString("\u239b", userWs);
-			m_leftParenExt = tsf.MakeString("\u239c", userWs);
-			m_leftParenLowHook = tsf.MakeString("\u239d", userWs);
-			m_rightParenUpHook = tsf.MakeString("\u239e", userWs);
-			m_rightParenExt = tsf.MakeString("\u239f", userWs);
-			m_rightParenLowHook = tsf.MakeString("\u23a0", userWs);
 			m_or = tsf.MakeString("OR", userWs);
 			m_hash = tsf.MakeString("#", userWs);
 		}
@@ -160,10 +78,10 @@ namespace SIL.FieldWorks.IText
 					vwenv.OpenParagraph();
 					if (((ComplexConcPatternSda) vwenv.DataAccess).Root.IsLeaf)
 					{
-						OpenSingleLinePile(vwenv);
+						OpenSingleLinePile(vwenv, GetMaxNumLines(vwenv), false);
 						vwenv.Props = m_bracketProps;
 						vwenv.AddProp(ComplexConcPatternSda.ktagChildren, this, kfragEmpty);
-						CloseSingleLinePile(vwenv);
+						CloseSingleLinePile(vwenv, false);
 					}
 					else
 					{
@@ -179,24 +97,17 @@ namespace SIL.FieldWorks.IText
 
 				case kfragNode:
 					ComplexConcPatternNode node = ((ComplexConcPatternSda) vwenv.DataAccess).Nodes[hvo];
+					int maxNumLines = GetMaxNumLines(vwenv);
 					if (node is ComplexConcOrNode)
 					{
-						OpenSingleLinePile(vwenv);
-						vwenv.Props = m_bracketProps;
-						vwenv.AddProp(ktagLeftBoundary, this, kfragZeroWidthSpace);
+						OpenSingleLinePile(vwenv, maxNumLines);
 						vwenv.AddProp(ktagInnerNonBoundary, this, kfragOR);
-						vwenv.Props = m_bracketProps;
-						vwenv.AddProp(ktagRightBoundary, this, kfragZeroWidthSpace);
-						CloseSingleLinePile(vwenv);
+						CloseSingleLinePile(vwenv, false);
 					}
 					else if (node is ComplexConcWordBdryNode)
 					{
-						OpenSingleLinePile(vwenv);
-						vwenv.Props = m_bracketProps;
-						vwenv.AddProp(ktagLeftBoundary, this, kfragZeroWidthSpace);
+						OpenSingleLinePile(vwenv, maxNumLines);
 						vwenv.AddProp(ktagInnerNonBoundary, this, kfragHash);
-						vwenv.Props = m_bracketProps;
-						vwenv.AddProp(ktagRightBoundary, this, kfragZeroWidthSpace);
 						CloseSingleLinePile(vwenv);
 					}
 					else if (node is ComplexConcGroupNode)
@@ -205,7 +116,7 @@ namespace SIL.FieldWorks.IText
 						bool hasMinMax = node.Maximum != 1 || node.Minimum != 1;
 						if (numLines == 1)
 						{
-							OpenSingleLinePile(vwenv);
+							OpenSingleLinePile(vwenv, maxNumLines, false);
 							// use normal parentheses for a single line group
 							vwenv.AddProp(ktagLeftBoundary, this, kfragLeftParen);
 
@@ -214,11 +125,10 @@ namespace SIL.FieldWorks.IText
 							vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightBoundary, this, kfragRightParen);
 							if (hasMinMax)
 								DisplayMinMax(numLines, vwenv);
-							CloseSingleLinePile(vwenv);
+							CloseSingleLinePile(vwenv, false);
 						}
 						else
 						{
-							int maxNumLines = GetMaxNumLines(vwenv);
 							vwenv.Props = m_bracketProps;
 							vwenv.set_IntProperty((int) FwTextPropType.ktptMarginLeading, (int) FwTextPropVar.ktpvMilliPoint, PileMargin);
 							vwenv.OpenInnerPile();
@@ -250,7 +160,7 @@ namespace SIL.FieldWorks.IText
 						int numLines = GetNumLines(node);
 						if (numLines == 1)
 						{
-							OpenSingleLinePile(vwenv);
+							OpenSingleLinePile(vwenv, maxNumLines, false);
 							// use normal brackets for a single line constraint
 							vwenv.AddProp(ktagLeftBoundary, this, kfragLeftBracket);
 
@@ -259,13 +169,11 @@ namespace SIL.FieldWorks.IText
 							vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightBoundary, this, kfragRightBracket);
 							if (hasMinMax)
 								DisplayMinMax(numLines, vwenv);
-							CloseSingleLinePile(vwenv);
+							CloseSingleLinePile(vwenv, false);
 						}
 						else
 						{
 							// left bracket pile
-							int maxNumLines = GetMaxNumLines(vwenv);
-
 							vwenv.Props = m_bracketProps;
 							vwenv.set_IntProperty((int) FwTextPropType.ktptMarginLeading, (int) FwTextPropVar.ktpvMilliPoint, PileMargin);
 							vwenv.OpenInnerPile();
@@ -339,10 +247,6 @@ namespace SIL.FieldWorks.IText
 			ITsString tss = null;
 			switch (frag)
 			{
-				case kfragEmpty:
-					tss = m_empty;
-					break;
-
 				case kfragFeatureLine:
 					ComplexConcPatternNode node = ((ComplexConcPatternSda) vwenv.DataAccess).Nodes[vwenv.CurrentObject()];
 					switch (tag)
@@ -462,80 +366,16 @@ namespace SIL.FieldWorks.IText
 					tss = m_cache.TsStrFactory.MakeString(node2.Minimum.ToString(CultureInfo.InvariantCulture), m_cache.DefaultUserWs);
 					break;
 
-				case kfragLeftBracketUpHook:
-					tss = m_leftBracketUpHook;
-					break;
-
-				case kfragLeftBracketExt:
-					tss = m_leftBracketExt;
-					break;
-
-				case kfragLeftBracketLowHook:
-					tss = m_leftBracketLowHook;
-					break;
-
-				case kfragRightBracketUpHook:
-					tss = m_rightBracketUpHook;
-					break;
-
-				case kfragRightBracketExt:
-					tss = m_rightBracketExt;
-					break;
-
-				case kfragRightBracketLowHook:
-					tss = m_rightBracketLowHook;
-					break;
-
-				case kfragLeftBracket:
-					tss = m_leftBracket;
-					break;
-
-				case kfragRightBracket:
-					tss = m_rightBracket;
-					break;
-
-				case kfragLeftParen:
-					tss = m_leftParen;
-					break;
-
-				case kfragRightParen:
-					tss = m_rightParen;
-					break;
-
-				case kfragZeroWidthSpace:
-					tss = m_zwSpace;
-					break;
-
-				case kfragLeftParenUpHook:
-					tss = m_leftParenUpHook;
-					break;
-
-				case kfragLeftParenExt:
-					tss = m_leftParenExt;
-					break;
-
-				case kfragLeftParenLowHook:
-					tss = m_leftParenLowHook;
-					break;
-
-				case kfragRightParenUpHook:
-					tss = m_rightParenUpHook;
-					break;
-
-				case kfragRightParenExt:
-					tss = m_rightParenExt;
-					break;
-
-				case kfragRightParenLowHook:
-					tss = m_rightParenLowHook;
-					break;
-
 				case kfragOR:
 					tss = m_or;
 					break;
 
 				case kfragHash:
 					tss = m_hash;
+					break;
+
+				default:
+					tss = base.DisplayVariant(vwenv, tag, frag);
 					break;
 			}
 			return tss;
@@ -632,8 +472,6 @@ namespace SIL.FieldWorks.IText
 			else
 			{
 				// left bracket pile
-				int maxNumLines = GetMaxNumLines(vwenv);
-
 				vwenv.Props = m_bracketProps;
 				vwenv.set_IntProperty((int) FwTextPropType.ktptMarginLeading, (int) FwTextPropVar.ktpvMilliPoint, PileMargin);
 				vwenv.OpenInnerPile();
@@ -749,44 +587,6 @@ namespace SIL.FieldWorks.IText
 					num++;
 			}
 			return num;
-		}
-
-		/// <summary>
-		/// Gets the font height of the specified writing system for the normal style.
-		/// </summary>
-		/// <param name="ws">The ws.</param>
-		/// <returns></returns>
-		private int GetFontHeight(int ws)
-		{
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
-			return FontHeightAdjuster.GetFontHeightForStyle("Normal", stylesheet,
-				ws, m_cache.LanguageWritingSystemFactoryAccessor);
-		}
-
-		private void AddExtraLines(int numLines, int tag, IVwEnv vwenv)
-		{
-			for (int i = 0; i < numLines; i++)
-			{
-				vwenv.Props = m_bracketProps;
-				vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
-				vwenv.OpenParagraph();
-				vwenv.AddProp(tag, this, kfragEmpty);
-				vwenv.CloseParagraph();
-			}
-		}
-
-		private void OpenSingleLinePile(IVwEnv vwenv)
-		{
-			vwenv.Props = m_pileProps;
-			vwenv.OpenInnerPile();
-			AddExtraLines(GetMaxNumLines(vwenv) - 1, ktagLeftNonBoundary, vwenv);
-			vwenv.OpenParagraph();
-		}
-
-		private void CloseSingleLinePile(IVwEnv vwenv)
-		{
-			vwenv.CloseParagraph();
-			vwenv.CloseInnerPile();
 		}
 	}
 }
