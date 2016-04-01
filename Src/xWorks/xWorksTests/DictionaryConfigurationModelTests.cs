@@ -29,13 +29,13 @@ namespace SIL.FieldWorks.XWorks
 			<DictionaryConfiguration name=""Root"" version=""1"" lastModified=""2014-02-13"">";
 		private const string XmlOpenTagsThruRootWithAllPublications = @"<?xml version=""1.0"" encoding=""utf-8""?>
 			<DictionaryConfiguration allPublications=""true"" name=""Root"" version=""1"" lastModified=""2014-02-13"">";
-		private const string XmlOpenTagsThruHeadword =
+		internal const string XmlOpenTagsThruHeadword =
 				XmlOpenTagsThruRoot +
 				@"<ConfigurationItem name=""Main Entry"" isEnabled=""true"" field=""LexEntry"">
 					<ConfigurationItem name=""Testword"" nameSuffix=""2b""
 							before=""["" between="", "" after=""] "" style=""Dictionary-Headword"" isEnabled=""true"" field=""HeadWord"">";
 
-		private const string XmlCloseTagsFromHeadword = @"
+		internal const string XmlCloseTagsFromHeadword = @"
 					</ConfigurationItem>
 				</ConfigurationItem>
 				<SharedItems/>" +

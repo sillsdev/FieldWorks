@@ -34,7 +34,6 @@ namespace SIL.FieldWorks.XWorks
 		private string m_configFilePath;
 		private MockFwXWindow m_window;
 		private FwStyleSheet m_styleSheet;
-		private StyleInfoTable m_owningTable;
 
 		// Set up Custom Fields at the Fixture level, since disposing one in one test disposes them all in all tests
 		private const string CustomFieldChangedLabel = "Custom Label";
@@ -65,7 +64,6 @@ namespace SIL.FieldWorks.XWorks
 			m_window.LoadUI(m_configFilePath); // actually loads UI here; needed for non-null stylesheet
 
 			m_styleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
-			m_owningTable = new StyleInfoTable("AbbySomebody", (IWritingSystemManager)Cache.WritingSystemFactory);
 
 			m_migrator = new DictionaryConfigurationMigrator(m_mediator);
 
@@ -519,12 +517,12 @@ namespace SIL.FieldWorks.XWorks
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
-			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+			var wsOpts = (DictionaryNodeWritingSystemOptions)configNode.DictionaryNodeOptions;
 			Assert.IsTrue(wsOpts.DisplayWritingSystemAbbreviations, "ShowWsLabels true value did not convert into DisplayWritingSystemAbbreviation");
 			nodeWithWs.ShowWsLabels = false;
 
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
-			wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+			wsOpts = (DictionaryNodeWritingSystemOptions)configNode.DictionaryNodeOptions;
 			Assert.IsFalse(wsOpts.DisplayWritingSystemAbbreviations, "ShowWsLabels false value did not convert into DisplayWritingSystemAbbreviation");
 		}
 
@@ -824,7 +822,6 @@ namespace SIL.FieldWorks.XWorks
 				NumFont = "arial",
 				ShowSenseConfig = true
 			};
-			ConfigurableDictionaryNode configNode = null;
 			const string styleName = "Dictionary-SenseNumber";
 			var senseStyle = m_styleSheet.FindStyle(styleName);
 			const string styleName2 = "Dictionary-SenseNumber-2";
@@ -835,8 +832,8 @@ namespace SIL.FieldWorks.XWorks
 			foreach(var option in senseNumberOptions)
 			{
 				senseNumberNode.NumStyle = option;
-				Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
-				Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
+				Assert.DoesNotThrow(() => m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
+				Assert.DoesNotThrow(() => m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
 				senseStyle2 = m_styleSheet.FindStyle(styleName2);
 				DeleteStyleSheet(styleName);
 				Assert.IsNull(senseStyle2, "A duplicate sense number style should not have been created converting the same node twice.");
@@ -978,16 +975,16 @@ namespace SIL.FieldWorks.XWorks
 			convertedParentNode.Children = new List<ConfigurableDictionaryNode> { convertedChildNode };
 			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedParentNode } };
 			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions() };
-			(baseParentNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular;
-			(baseParentNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).DisplayWritingSystemAbbreviations = false;
-			(baseParentNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+			((DictionaryNodeWritingSystemOptions)baseParentNode.DictionaryNodeOptions).WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular;
+			((DictionaryNodeWritingSystemOptions)baseParentNode.DictionaryNodeOptions).DisplayWritingSystemAbbreviations = false;
+			((DictionaryNodeWritingSystemOptions)baseParentNode.DictionaryNodeOptions).Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
 			{
 				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "vernacular", IsEnabled = true }
 			};
 			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child", DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions() };
-			(baseChildNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis;
-			(baseChildNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).DisplayWritingSystemAbbreviations = false;
-			(baseChildNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+			((DictionaryNodeWritingSystemOptions)baseChildNode.DictionaryNodeOptions).WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis;
+			((DictionaryNodeWritingSystemOptions)baseChildNode.DictionaryNodeOptions).DisplayWritingSystemAbbreviations = false;
+			((DictionaryNodeWritingSystemOptions)baseChildNode.DictionaryNodeOptions).Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
 			{
 				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "analysis", IsEnabled = true }
 			};
@@ -2032,7 +2029,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void GetConfigsNeedMigratingFrom83_NeededIfLowerVersionInFwdictconfigFile()
+		public void GetConfigsNeedingMigratingFrom83_NeededIfLowerVersionInFwdictconfigFile()
 		{
 			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
 			var newDictConfigLoc = Path.Combine(configSettingsDir, "Dictionary");
@@ -2048,7 +2045,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void GetConfigsNeedMigratingFrom83_DoesNotThrowForBadReferencedItems()
+		public void GetConfigsNeedingMigratingFrom83_DoesNotThrowForBadReferencedItems()
 		{
 			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
 			var newDictConfigLoc = Path.Combine(configSettingsDir, "Dictionary");
@@ -2280,6 +2277,37 @@ namespace SIL.FieldWorks.XWorks
 			var configModel = new DictionaryConfigurationModel { Version = 1, Parts = new List<ConfigurableDictionaryNode> { configParent } };
 			m_migrator.MigrateFrom83Alpha(configModel);
 			Assert.Null(configChild.ReferenceItem, "Unused ReferenceItem should have been removed");
+		}
+
+		[Test]
+		public void MigrateFrom83Alpha_ExtractsWritingSystemOptionsFromReferencedSenseOptions()
+		{
+			DictionaryConfigurationModel model;
+			using (var modelFile = new TempFile(new[]
+			{
+				DictionaryConfigurationModelTests.XmlOpenTagsThruHeadword, @"
+				<ReferringSenseOptions>
+					<WritingSystemOptions writingSystemType=""vernacular"" displayWSAbreviation=""true"">
+						<Option id=""vernacular"" isEnabled=""true"" />
+					</WritingSystemOptions>
+					<SenseOptions numberStyle=""Sense-Reference-Number"" numberBefore="" "" numberingStyle=""%O"" numberAfter="""" numberSingleSense=""false"" showSingleGramInfoFirst=""false"" displayEachSenseInParagraph=""false"" />
+				</ReferringSenseOptions>",
+				DictionaryConfigurationModelTests.XmlCloseTagsFromHeadword
+			}))
+			{
+				model = new DictionaryConfigurationModel(modelFile.Path, Cache);
+			}
+
+			// SUT
+			m_migrator.MigrateFrom83Alpha(model);
+			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
+			Assert.IsInstanceOf(typeof(DictionaryNodeWritingSystemOptions), testNodeOptions);
+			var wsOptions = (DictionaryNodeWritingSystemOptions)testNodeOptions;
+			Assert.IsTrue(wsOptions.DisplayWritingSystemAbbreviations);
+			Assert.AreEqual(DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular, wsOptions.WsType);
+			Assert.AreEqual(1, wsOptions.Options.Count);
+			Assert.AreEqual("vernacular", wsOptions.Options[0].Id);
+			Assert.IsTrue(wsOptions.Options[0].IsEnabled);
 		}
 
 		#region Helper

@@ -210,6 +210,18 @@ namespace SIL.FieldWorks.XWorks
 		}
 	}
 
+	/// <remarks>deprecated; needed for migration</remarks>
+	public class DictionaryNodeReferringSenseOptions : DictionaryNodeOptions
+	{
+		[XmlElement(ElementName = "WritingSystemOptions")]
+		public DictionaryNodeWritingSystemOptions WritingSystemOptions { get; set; }
+
+		public override DictionaryNodeOptions DeepClone()
+		{
+			return WritingSystemOptions.DeepClone(); // this is what migration should do anyway
+		}
+	}
+
 	/// <summary>Options for formatting Pictures</summary>
 	public class DictionaryNodePictureOptions : DictionaryNodeOptions
 	{

@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.XWorks
 				return;
 
 			SpecifyParentsAndReferences(Parts);
-			Publications = AllPublications ? GetAllPublications(cache) : LoadPublicationsSafe(this, cache);
+			Publications = AllPublications ? GetAllPublications(cache) : FilterRealPublications(cache);
 			// Handle any changes to the custom field definitions.  (See https://jira.sil.org/browse/LT-16430.)
 			// The "Merge" method handles both additions and deletions.
 			DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(cache, this);
@@ -169,8 +169,6 @@ namespace SIL.FieldWorks.XWorks
 						FixOptionsAccordingToCurrentTypes(listOptions.Options, complexAndVariant);
 						break;
 					}
-					default:
-					break;
 				}
 			}
 			//Recurse into child nodes and fix the type lists on them
@@ -238,30 +236,21 @@ namespace SIL.FieldWorks.XWorks
 				senseOptions.NumberStyle = null;
 		}
 
-		private List<string> LoadPublicationsSafe(DictionaryConfigurationModel model, FdoCache cache)
-		{
-			if (model == null || model.Publications == null)
-				return new List<string>();
-
-			return FilterRealPublications(model.Publications, cache);
-		}
-
-		public List<string> GetAllPublications(FdoCache cache)
+		public static List<string> GetAllPublications(FdoCache cache)
 		{
 			return cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p.Name.BestAnalysisAlternative.Text).ToList();
 		}
 
-		private List<string> FilterRealPublications(List<string> modelPublications, FdoCache cache)
+		private List<string> FilterRealPublications(FdoCache cache)
 		{
-			List<ICmPossibility> allPossibilities =
-				cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.ToList();
+			if (Publications == null || !Publications.Any())
+				return new List<string>();
+			var allPossibilities = cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.ToList();
 			var allPossiblePublicationsInAllWs = new HashSet<string>();
-			foreach (ICmPossibility possibility in allPossibilities)
-				foreach (int ws in cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Handles())
+			foreach (var possibility in allPossibilities)
+				foreach (var ws in cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Handles())
 					allPossiblePublicationsInAllWs.Add(possibility.Name.get_String(ws).Text);
-			var realPublications = modelPublications.Where(allPossiblePublicationsInAllWs.Contains).ToList();
-
-			return realPublications;
+			return Publications.Where(allPossiblePublicationsInAllWs.Contains).ToList();
 		}
 
 		/// <summary>

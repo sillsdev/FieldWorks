@@ -512,6 +512,7 @@ namespace SIL.FieldWorks.XWorks
 				case VersionPre83: // previous migrations neglected to update the version number; this is the same as 1
 				case 1:
 					RemoveReferencedItems(alphaModel.Parts);
+					ExtractWritingSystemOptionsFromReferringSenseOptions(alphaModel.Parts);
 					break;
 			}
 			alphaModel.Version = VersionCurrent;
@@ -524,6 +525,18 @@ namespace SIL.FieldWorks.XWorks
 				node.ReferenceItem = null; // For now, assume they're all bad (they were in version 1)
 				if(node.Children != null)
 					RemoveReferencedItems(node.Children);
+			}
+		}
+
+		private void ExtractWritingSystemOptionsFromReferringSenseOptions(List<ConfigurableDictionaryNode> nodes)
+		{
+			foreach (var node in nodes)
+			{
+				var rsOpts = node.DictionaryNodeOptions as DictionaryNodeReferringSenseOptions;
+				if (rsOpts != null)
+					node.DictionaryNodeOptions = rsOpts.WritingSystemOptions;
+				if(node.Children != null)
+					ExtractWritingSystemOptionsFromReferringSenseOptions(node.Children);
 			}
 		}
 

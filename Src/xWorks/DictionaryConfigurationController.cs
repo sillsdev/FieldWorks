@@ -355,7 +355,7 @@ namespace SIL.FieldWorks.XWorks
 				using (var dialog = new DictionaryConfigurationManagerDlg(_mediator.HelpTopicProvider))
 				{
 					var configurationManagerController = new DictionaryConfigurationManagerController(dialog, _mediator,
-						_dictionaryConfigurations, _model.GetAllPublications(cache), _projectConfigDir, _defaultConfigDir, _model);
+						_dictionaryConfigurations, DictionaryConfigurationModel.GetAllPublications(cache), _projectConfigDir, _defaultConfigDir, _model);
 					configurationManagerController.Finished += SelectModelFromManager;
 					SetManagerTypeInfo(dialog);
 					dialog.ShowDialog(View as Form);
