@@ -46,11 +46,18 @@ namespace SIL.FieldWorks.XWorks
 		public const int EntriesPerPage = 1000;
 
 		/// <summary>
+		/// The number of entries to add to a page when the user asks to see 'a few more'
+		/// </summary>
+		/// <remarks>internal to facilitate unit tests</remarks>
+		internal static int EntriesToAddCount { get; set; }
+
+		/// <summary>
 		/// Static initializer setting the AssemblyFile to the default Fieldworks model dll.
 		/// </summary>
 		static ConfiguredXHTMLGenerator()
 		{
 			AssemblyFile = "FDO";
+			EntriesToAddCount = 5;
 		}
 
 		/// <summary>
@@ -260,34 +267,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private static void GenerateNextFewEntriesButtonIfNeeded(Tuple<int, int> currentPage, int[] entryHvos, XmlWriter xhtmlWriter, StreamWriter cssWriter, bool isTop)
-		{
-			// No load more above button for the first page, and no load more below button for the last page
-			if (isTop && currentPage.Item1 > 0 || !isTop && currentPage.Item2 != entryHvos.Length)
-			{
-				xhtmlWriter.WriteStartElement("div");
-				xhtmlWriter.WriteAttributeString("class", "nextentriessection");
-				xhtmlWriter.WriteStartElement("div");
-				xhtmlWriter.WriteAttributeString("class", "nextentriesbutton" + (isTop ? "top" : "bottom"));
-				xhtmlWriter.WriteStartElement("div");
-				xhtmlWriter.WriteAttributeString("class", "nextentriestriangle");
-				xhtmlWriter.WriteStartElement("center");
-				xhtmlWriter.WriteStartElement("span");
-				xhtmlWriter.WriteAttributeString("class", isTop ? "uparrow" : "downarrow");
-				xhtmlWriter.WriteRaw("");
-				xhtmlWriter.WriteFullEndElement(); // </span>
-				xhtmlWriter.WriteEndElement(); // </center>
-				xhtmlWriter.WriteEndElement(); // </div> nextentriestriangle
-				xhtmlWriter.WriteWhitespace(Environment.NewLine);
-				xhtmlWriter.WriteEndElement(); // </div> nextentriesbutton
-				xhtmlWriter.WriteWhitespace(Environment.NewLine);
-				xhtmlWriter.WriteEndElement(); // </div> nextentriessection
-				xhtmlWriter.WriteWhitespace(Environment.NewLine);
-
-				cssWriter.Write(CssGenerator.GenerateCssForNextFewEntriesButton(isTop));
-			}
-		}
-
 		private static void GenerateTopOfPageButtonsIfNeeded(GeneratorSettings settings, int[] entryHvos, int entriesPerPage, Tuple<int, int> currentPageBounds, XmlWriter xhtmlWriter, StreamWriter cssWriter)
 		{
 			var pageRanges = GetPageRanges(entryHvos, entriesPerPage);
@@ -296,7 +275,6 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			}
 			GeneratePageButtons(settings, entryHvos, pageRanges, currentPageBounds, xhtmlWriter);
-			GenerateNextFewEntriesButtonIfNeeded(currentPageBounds, entryHvos, xhtmlWriter, cssWriter, true);
 			cssWriter.Write(CssGenerator.GenerateCssForPageButtons());
 		}
 
@@ -308,8 +286,84 @@ namespace SIL.FieldWorks.XWorks
 			{
 				return;
 			}
-			GenerateNextFewEntriesButtonIfNeeded(currentPageBounds, entryHvos, xhtmlWriter, cssWriter, false);
 			GeneratePageButtons(settings, entryHvos, pageRanges, currentPageBounds, xhtmlWriter);
+		}
+
+		public static List<string> GenerateNextFewEntries(DictionaryPublicationDecorator publicationDecorator, int[] entryHvos,
+			string currentConfigPath, GeneratorSettings settings, Tuple<int, int> oldCurrentPageRange, Tuple<int, int> oldAdjacentPageRange,
+			int entriesToAddCount, out Tuple<int, int> currentPage, out Tuple<int, int> adjacentPage)
+		{
+			GenerateAdjustedPageButtons(entryHvos, settings, oldCurrentPageRange, oldAdjacentPageRange,
+				entriesToAddCount, out currentPage, out adjacentPage);
+			var entries = new List<string>();
+			DictionaryConfigurationModel currentConfig = new DictionaryConfigurationModel(currentConfigPath, settings.Cache);
+			if (oldCurrentPageRange.Item1 > oldAdjacentPageRange.Item1)
+			{
+				var firstEntry = Math.Max(0, oldCurrentPageRange.Item1 - entriesToAddCount);
+				for (var i = firstEntry; i < oldCurrentPageRange.Item1; ++i)
+				{
+					entries.Add(GenerateXHTMLForEntry(settings.Cache.ServiceLocator.ObjectRepository.GetObject(entryHvos[i]),
+						currentConfig, publicationDecorator, settings));
+				}
+			}
+			else
+			{
+				var lastEntry = Math.Min(oldAdjacentPageRange.Item2, oldCurrentPageRange.Item2 + entriesToAddCount);
+				for (var i = oldCurrentPageRange.Item2 + 1; i <= lastEntry; ++i)
+				{
+					entries.Add(GenerateXHTMLForEntry(settings.Cache.ServiceLocator.ObjectRepository.GetObject(entryHvos[i]),
+						currentConfig, publicationDecorator, settings));
+				}
+			}
+			return entries;
+		}
+
+		internal static void GenerateAdjustedPageButtons(int[] entryHvos, GeneratorSettings settings, Tuple<int, int> currentPageRange, Tuple<int, int> adjacentPageRange,
+			int entriesToAddCount, out Tuple<int, int> newCurrentPageRange, out Tuple<int, int> newAdjacentPageRange)
+		{
+			var currentPageStart = -1;
+			var currentPageEnd = -1;
+			var adjPageStart = -1;
+			var adjPageEnd = -1;
+			newAdjacentPageRange = null;
+			var goingUp = currentPageRange.Item1 < adjacentPageRange.Item1;
+			if (goingUp)
+			{
+				// If the current page range has swallowed up the adjacentPageRange
+				if (currentPageRange.Item2 + entriesToAddCount >= adjacentPageRange.Item2)
+				{
+					currentPageStart = currentPageRange.Item1;
+					currentPageEnd = adjacentPageRange.Item2;
+				}
+				else
+				{
+					currentPageStart = currentPageRange.Item1;
+					currentPageEnd = currentPageRange.Item2 + entriesToAddCount;
+					adjPageStart = adjacentPageRange.Item1 + entriesToAddCount;
+					adjPageEnd = adjacentPageRange.Item2;
+				}
+			}
+			else
+			{
+				// If the current page range has swallowed up the adjacentPageRange
+				if (currentPageRange.Item1 - entriesToAddCount <= adjacentPageRange.Item1)
+				{
+					currentPageStart = Math.Max(currentPageRange.Item1 - entriesToAddCount, 0);
+					currentPageEnd = currentPageRange.Item2;
+				}
+				else
+				{
+					adjPageStart = adjacentPageRange.Item1;
+					adjPageEnd = adjacentPageRange.Item2 - entriesToAddCount;
+					currentPageStart = currentPageRange.Item1 - entriesToAddCount;
+					currentPageEnd = currentPageRange.Item2;
+				}
+			}
+			newCurrentPageRange = new Tuple<int, int>(currentPageStart, currentPageEnd);
+			if (adjPageStart != -1)
+			{
+				newAdjacentPageRange = new Tuple<int, int>(adjPageStart, adjPageEnd);
+			}
 		}
 
 		private static void GeneratePageButtons(GeneratorSettings settings, int[] entryHvos, List<Tuple<int, int>> pageRanges, Tuple<int, int> currentPageBounds, XmlWriter xhtmlWriter)
@@ -319,17 +373,25 @@ namespace SIL.FieldWorks.XWorks
 			xhtmlWriter.WriteAttributeString("width", "100%");
 			foreach (var page in pageRanges)
 			{
-				xhtmlWriter.WriteStartElement("span");
-				xhtmlWriter.WriteAttributeString("class", "pagebutton");
-				xhtmlWriter.WriteAttributeString("startIndex", page.Item1.ToString());
-				xhtmlWriter.WriteAttributeString("endIndex", page.Item2.ToString());
-				if (page.Equals(currentPageBounds))
-				{
-					xhtmlWriter.WriteAttributeString("id", "currentPageButton");
-				}
-				xhtmlWriter.WriteString(GeneratePageButtonText(entryHvos[page.Item1], entryHvos[page.Item2], settings, page.Equals(pageRanges.First())));
-				xhtmlWriter.WriteEndElement();
+				GeneratePageButton(settings, entryHvos, pageRanges, currentPageBounds, xhtmlWriter, page);
 			}
+			xhtmlWriter.WriteEndElement();
+		}
+
+		private static void GeneratePageButton(GeneratorSettings settings, int[] entryHvos, List<Tuple<int, int>> pageRanges,
+			Tuple<int, int> currentPageBounds, XmlWriter xhtmlWriter, Tuple<int, int> page)
+		{
+			xhtmlWriter.WriteStartElement("span");
+			xhtmlWriter.WriteAttributeString("class", "pagebutton");
+			xhtmlWriter.WriteAttributeString("startIndex", page.Item1.ToString());
+			xhtmlWriter.WriteAttributeString("endIndex", page.Item2.ToString());
+			xhtmlWriter.WriteAttributeString("firstEntryGuid",
+				settings.Cache.ServiceLocator.ObjectRepository.GetObject(entryHvos[page.Item1]).Guid.ToString());
+			if (page.Equals(currentPageBounds))
+			{
+				xhtmlWriter.WriteAttributeString("id", "currentPageButton");
+			}
+			xhtmlWriter.WriteString(GeneratePageButtonText(entryHvos[page.Item1], entryHvos[page.Item2], settings, page.Item1 == 0));
 			xhtmlWriter.WriteEndElement();
 		}
 
@@ -361,7 +423,7 @@ namespace SIL.FieldWorks.XWorks
 				var currentEntryIndex = Array.IndexOf(entryHvos, currentEntryHvo);
 				foreach (Tuple<int, int> page in pages)
 				{
-					if (currentEntryIndex > page.Item1 && currentEntryIndex < page.Item2)
+					if (currentEntryIndex >= page.Item1 && currentEntryIndex < page.Item2)
 					{
 						return page;
 					}

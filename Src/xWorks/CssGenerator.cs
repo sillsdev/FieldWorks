@@ -1214,49 +1214,6 @@ namespace SIL.FieldWorks.XWorks
 			return letHeadRule.ToString(true) + Environment.NewLine + letterRule.ToString(true) + Environment.NewLine;
 		}
 
-		public static string GenerateCssForNextFewEntriesButton(bool isTop)
-		{
-			var nextEntriesSection = new StyleRule { Value = ".nextentriessection" };
-			nextEntriesSection.Declarations.Properties.Add(new Property("height") { Term = new PrimitiveTerm(UnitType.Pixel, 25) });
-			nextEntriesSection.Declarations.Properties.Add(new Property("background-color") { Term = new PrimitiveTerm(UnitType.RGB, "#777777") });
-			var nextEntriesHover = new StyleRule { Value = ".nextentriessection:hover" };
-			nextEntriesHover.Declarations.Properties.Add(new Property("background-color") { Term = new PrimitiveTerm(UnitType.RGB, "#cdcdcd") });
-			nextEntriesHover.Declarations.Properties.Add(new Property("cursor") { Term = new PrimitiveTerm(UnitType.Ident, "pointer") });
-			var nextEntriesButton = new StyleRule { Value = ".nextentriesbutton" + (isTop ? "top" : "bottom") };
-			nextEntriesButton.Declarations.Properties.Add(new Property("width") { Term = new PrimitiveTerm(UnitType.Percentage, 100) });
-			nextEntriesButton.Declarations.Properties.Add(new Property("height") { Term = new PrimitiveTerm(UnitType.Pixel, 25) });
-			var buttonBorderTerms = BuildTermList(TermList.TermSeparator.Space, new PrimitiveTerm(UnitType.Pixel, 5),
-				new PrimitiveTerm(UnitType.Ident, "solid"), new PrimitiveTerm(UnitType.RGB, "#555"));
-			nextEntriesButton.Declarations.Properties.Add(new Property(isTop ? "border-bottom" : "border-top") { Term = buttonBorderTerms });
-			var nextEntriesButtonActive = new StyleRule { Value = ".nextentriesbutton:active" };
-			nextEntriesButtonActive.Declarations.Properties.Add(new Property("position") { Term = new PrimitiveTerm(UnitType.Ident, "relative") });
-			nextEntriesButtonActive.Declarations.Properties.Add(new Property("top") { Term = new PrimitiveTerm(UnitType.Pixel, 2) });
-			var downArrow = new StyleRule { Value = ".downarrow" };
-			downArrow.Declarations.Properties.Add(new Property("width") { Term = new PrimitiveTerm(UnitType.Pixel, 0) });
-			downArrow.Declarations.Properties.Add(new Property("height") { Term = new PrimitiveTerm(UnitType.Pixel, 0) });
-			var transparentSideTerms = BuildTermList(TermList.TermSeparator.Space,
-				new PrimitiveTerm(UnitType.Pixel, 30), new PrimitiveTerm(UnitType.Ident, "solid"), new PrimitiveTerm(UnitType.Ident, "transparent"));
-			downArrow.Declarations.Properties.Add(new Property("border-left") { Term = transparentSideTerms });
-			downArrow.Declarations.Properties.Add(new Property("border-right") { Term = transparentSideTerms });
-			var pointTerms = BuildTermList(TermList.TermSeparator.Space, new PrimitiveTerm(UnitType.Pixel, 15),
-				new PrimitiveTerm(UnitType.Ident, "solid"), new PrimitiveTerm(UnitType.RGB, "#555"));
-			downArrow.Declarations.Properties.Add(new Property("border-top") { Term = pointTerms });
-			downArrow.Declarations.Properties.Add(new Property("position") { Term = new PrimitiveTerm(UnitType.Ident, "relative") });
-			downArrow.Declarations.Properties.Add(new Property("top") { Term = new PrimitiveTerm(UnitType.Pixel, 14) });
-			var upArrow = new StyleRule { Value = ".uparrow" };
-			upArrow.Declarations.Properties.Add(new Property("width") { Term = new PrimitiveTerm(UnitType.Pixel, 0) });
-			upArrow.Declarations.Properties.Add(new Property("height") { Term = new PrimitiveTerm(UnitType.Pixel, 0) });
-			upArrow.Declarations.Properties.Add(new Property("border-left") { Term = transparentSideTerms });
-			upArrow.Declarations.Properties.Add(new Property("border-right") { Term = transparentSideTerms });
-			upArrow.Declarations.Properties.Add(new Property("border-bottom") { Term = pointTerms });
-			upArrow.Declarations.Properties.Add(new Property("position") { Term = new PrimitiveTerm(UnitType.Ident, "relative") });
-			upArrow.Declarations.Properties.Add(new Property("bottom") { Term = new PrimitiveTerm(UnitType.Pixel, 7) });
-
-			return string.Format("{1}{0}{2}{0}{3}{0}{4}{0}{5}{0}{6}{0}", Environment.NewLine, nextEntriesSection.ToString(true),
-				nextEntriesButton.ToString(true), nextEntriesHover.ToString(true), nextEntriesButtonActive.ToString(true),
-				downArrow.ToString(true), upArrow.ToString(true));
-		}
-
 		public static string GenerateCssForPageButtons()
 		{
 			var pages = new StyleRule { Value = ".pages" };

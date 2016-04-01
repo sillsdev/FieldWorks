@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Linq;
 using Gecko;
 using Gecko.DOM;
 using Palaso.UI.WindowsForms.HtmlBrowser;
@@ -58,7 +59,22 @@ namespace SIL.FieldWorks.XWorks
 					browser.DomClick += OnDomClick;
 					browser.DomKeyPress += OnDomKeyPress;
 					browser.DocumentCompleted += OnDocumentCompleted;
+					browser.DomMouseScroll += OnMouseWheel;
 				}
+			}
+		}
+
+		private void OnMouseWheel(object sender, DomMouseEventArgs domMouseEventArgs)
+		{
+			var scrollDelta = domMouseEventArgs.Detail;
+			var browser = (GeckoWebBrowser)m_mainView.NativeBrowser;
+			if (scrollDelta < 0 && browser.Window.ScrollY == 0)
+			{
+				AddMoreEntriesToPage(true, (GeckoWebBrowser)m_mainView.NativeBrowser);
+			}
+			else if (browser.Window.ScrollY >= browser.Window.DomWindow.GetScrollMaxYAttribute())
+			{
+				AddMoreEntriesToPage(false, (GeckoWebBrowser)m_mainView.NativeBrowser);
 			}
 		}
 
@@ -67,7 +83,58 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void OnDomKeyPress(object sender, DomKeyEventArgs e)
 		{
-			System.Diagnostics.Debug.WriteLine(String.Format(@"DEBUG: OnDomKeyPress({0}, {1})", sender, e));
+			var browser = (GeckoWebBrowser) m_mainView.NativeBrowser;
+			const int UP = 38;
+			const int DOWN = 40;
+			const int PAGEUP = 33;
+			const int PAGEDOWN = 34;
+			switch (e.KeyCode)
+			{
+				case UP:
+				{
+					if (browser.Window.ScrollY == 0)
+					{
+						AddMoreEntriesToPage(true, (GeckoWebBrowser)m_mainView.NativeBrowser);
+					}
+					break;
+				}
+				case DOWN:
+				{
+					if (browser.Window.ScrollY >= browser.Window.DomWindow.GetScrollMaxYAttribute())
+					{
+						AddMoreEntriesToPage(false, (GeckoWebBrowser)m_mainView.NativeBrowser);
+					}
+					break;
+				}
+				case PAGEUP:
+				{
+					if (browser.Window.ScrollY == 0)
+					{
+						var currentPage = GetTopCurrentPageButton(browser.Document.Body);
+						if (currentPage.PreviousSibling != null)
+						{
+							var itemIndex = int.Parse(((GeckoHtmlElement)currentPage.PreviousSibling).Attributes["endIndex"].NodeValue);
+							Clerk.JumpToRecord(PublicationDecorator.GetEntriesToPublish(m_mediator, Clerk.VirtualFlid)[itemIndex]);
+						}
+					}
+					break;
+				}
+				case PAGEDOWN:
+				{
+					if (browser.Window.ScrollY >= browser.Window.DomWindow.GetScrollMaxYAttribute())
+					{
+						var currentPage = GetTopCurrentPageButton(browser.Document.Body);
+						if (currentPage.NextSibling != null)
+						{
+							var itemIndex = int.Parse(((GeckoHtmlElement)currentPage.NextSibling).Attributes["startIndex"].NodeValue);
+							Clerk.JumpToRecord(PublicationDecorator.GetEntriesToPublish(m_mediator, Clerk.VirtualFlid)[itemIndex]);
+						}
+					}
+					break;
+				}
+				default:
+					break;
+			}
 		}
 
 		/// <summary>
@@ -85,7 +152,11 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			if (e.Button == GeckoMouseButton.Left)
 			{
-				// Select the entry represented by the current element.  [LT-16982]
+				if (HandleClickOnPageButton(Clerk, element))
+				{
+					return;
+				}
+				// Handle button clicks or select the entry represented by the current element.
 				HandleDomLeftClick(Clerk, e, element);
 			}
 			else if (e.Button == GeckoMouseButton.Right)
@@ -107,6 +178,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <summary>
+		/// Handle the user left clicking on the document view by jumping to an entry, playing a media element, or adjusting the view
+		/// </summary>
+		/// <remarks>internal so that it can be re-used by the XhtmlRecordDocView</remarks>
 		internal static void HandleDomLeftClick(RecordClerk clerk, DomMouseEventArgs e, GeckoElement element)
 		{
 			GeckoElement dummy;
@@ -129,6 +204,128 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 			e.Handled = true;
+		}
+
+		private void AddMoreEntriesToPage(bool goingUp, GeckoWebBrowser browser)
+		{
+			var browserElement = browser.Document.Body;
+			var entriesToPublish = PublicationDecorator.GetEntriesToPublish(m_mediator, Clerk.VirtualFlid);
+			// Get the current page
+			if (goingUp)
+			{
+				// Use the up/down info to select the adjacentPage
+				Tuple<int, int> newCurPageRange;
+				Tuple<int, int> newAdjPageRange;
+				// Gecko xpath seems to be sensitive to namespaces, using * instead of span helps
+				var currentPageButton = GetTopCurrentPageButton(browserElement);
+				if(currentPageButton == null)
+					throw new ArgumentException(@"No page buttons found in the document element is a part of", "element");
+				var adjacentPageButton = (GeckoHtmlElement)currentPageButton.PreviousSibling;
+				if (adjacentPageButton == null)
+					return;
+				var oldCurPageRange = new Tuple<int, int>(int.Parse(currentPageButton.Attributes["startIndex"].NodeValue), int.Parse(currentPageButton.Attributes["endIndex"].NodeValue));
+				var oldAdjPageRange = new Tuple<int, int>(int.Parse(adjacentPageButton.Attributes["startIndex"].NodeValue), int.Parse(adjacentPageButton.Attributes["endIndex"].NodeValue));
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, "");
+				var entries = ConfiguredXHTMLGenerator.GenerateNextFewEntries(PublicationDecorator, entriesToPublish, GetCurrentConfiguration(false), settings, oldCurPageRange,
+					oldAdjPageRange, ConfiguredXHTMLGenerator.EntriesToAddCount, out newCurPageRange, out newAdjPageRange);
+				// Load entries above
+				foreach (var entry in entries)
+				{
+					var entryElement = browserElement.OwnerDocument.CreateHtmlElement("div");
+					var entryDoc = XDocument.Parse(entry);
+					foreach (var attribute in entryDoc.Root.Attributes())
+					{
+						entryElement.SetAttribute(attribute.Name.ToString(), attribute.Value);
+					}
+					entryElement.InnerHtml = string.Join("", entryDoc.Root.Elements().Select(x => x.ToString(SaveOptions.DisableFormatting)));
+					// Get the div of the first entry element
+					var before = browserElement.SelectFirst("*[contains(@class, 'entry')]");
+					before.ParentElement.InsertBefore(entryElement, before);
+				}
+				ChangeHtmlForCurrentAndAdjacentButtons(newCurPageRange, newAdjPageRange, currentPageButton, true);
+			}
+			else
+			{
+				// Use the up/down info to select the adjacentPage
+				Tuple<int, int> newCurrentPageRange;
+				Tuple<int, int> newAdjPageRange;
+				// Gecko xpath seems to be sensitive to namespaces, using * instead of span helps
+				var currentPageButton = GetBottomCurrentPageButton(browserElement);
+				if (currentPageButton == null)
+					throw new ArgumentException(@"No page buttons found in the document element is a part of", "element");
+				var adjPage = (GeckoHtmlElement)currentPageButton.NextSibling;
+				if (adjPage == null)
+					return;
+				var currentPageRange = new Tuple<int, int>(int.Parse(currentPageButton.Attributes["startIndex"].NodeValue), int.Parse(currentPageButton.Attributes["endIndex"].NodeValue));
+				var adjacentPageRange = new Tuple<int, int>(int.Parse(adjPage.Attributes["startIndex"].NodeValue), int.Parse(adjPage.Attributes["endIndex"].NodeValue));
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, "");
+				var entries = ConfiguredXHTMLGenerator.GenerateNextFewEntries(PublicationDecorator, entriesToPublish, GetCurrentConfiguration(false), settings, currentPageRange,
+					adjacentPageRange, ConfiguredXHTMLGenerator.EntriesToAddCount, out newCurrentPageRange, out newAdjPageRange);
+				// Load entries above
+				foreach (var entry in entries)
+				{
+					var entryElement = browserElement.OwnerDocument.CreateHtmlElement("div"); var entryDoc = XDocument.Parse(entry);
+					foreach (var attribute in entryDoc.Root.Attributes())
+					{
+						entryElement.SetAttribute(attribute.Name.ToString(), attribute.Value);
+					}
+					entryElement.InnerHtml = string.Join("", entryDoc.Root.Elements().Select(x => x.ToString(SaveOptions.DisableFormatting)));
+
+					var buttonDiv = currentPageButton.ParentElement;
+					buttonDiv.ParentNode.InsertBefore(entryElement, buttonDiv);
+				}
+				ChangeHtmlForCurrentAndAdjacentButtons(newCurrentPageRange, newAdjPageRange, currentPageButton, false);
+			}
+			m_mainView.Refresh();
+		}
+
+		private void ChangeHtmlForCurrentAndAdjacentButtons(Tuple<int, int> newCurrentPageRange, Tuple<int, int> newAdjacentPageRange, GeckoElement pageButtonElement, bool goingUp)
+		{
+			GeckoHtmlElement currentPageTop = GetTopCurrentPageButton(pageButtonElement);
+			var adjPageTop = goingUp ? (GeckoHtmlElement)currentPageTop.PreviousSibling : (GeckoHtmlElement)currentPageTop.NextSibling;
+			GeckoHtmlElement currentPageBottom = GetBottomCurrentPageButton(pageButtonElement);
+			var adjPageBottom = goingUp ? (GeckoHtmlElement)currentPageBottom.PreviousSibling : (GeckoHtmlElement)currentPageBottom.NextSibling;
+			currentPageTop.SetAttribute("startIndex", newCurrentPageRange.Item1.ToString());
+			currentPageBottom.SetAttribute("startIndex", newCurrentPageRange.Item1.ToString());
+			currentPageTop.SetAttribute("endIndex", newCurrentPageRange.Item2.ToString());
+			currentPageBottom.SetAttribute("endIndex", newCurrentPageRange.Item2.ToString());
+			if (newAdjacentPageRange != null)
+			{
+				adjPageTop.SetAttribute("startIndex", newAdjacentPageRange.Item1.ToString());
+				adjPageBottom.SetAttribute("startIndex", newAdjacentPageRange.Item1.ToString());
+				adjPageTop.SetAttribute("endIndex", newAdjacentPageRange.Item2.ToString());
+				adjPageBottom.SetAttribute("endIndex", newAdjacentPageRange.Item2.ToString());
+			}
+			else
+			{
+				adjPageTop.Parent.RemoveChild(adjPageTop);
+				adjPageBottom.Parent.RemoveChild(adjPageBottom);
+			}
+		}
+
+		private static GeckoHtmlElement GetBottomCurrentPageButton(GeckoElement pageButtonElement)
+		{
+			// from the parent node select the second instance of the current page (the one with the id)
+			return (GeckoHtmlElement)pageButtonElement.OwnerDocument.Body.SelectFirst("(//*[@class='pagebutton' and @id])[2]");
+		}
+
+		private static GeckoHtmlElement GetTopCurrentPageButton(GeckoElement element)
+		{
+			// The page with the id is the current page, select the first one on the page
+			return (GeckoHtmlElement)element.OwnerDocument.Body.SelectFirst("//*[@class='pagebutton' and @id]");
+		}
+
+		private static bool HandleClickOnPageButton(RecordClerk clerk, GeckoElement element)
+		{
+			if (element.HasAttribute("class") && element.Attributes["class"].NodeValue.Equals("pagebutton"))
+			{
+				if(!element.HasAttribute("firstEntryGuid"))
+					throw new ArgumentException(@"The element passed to this method should have a firstEntryGuid.", "element");
+				var firstEntryOnPage = element.Attributes["firstEntryGuid"].NodeValue;
+				clerk.JumpToRecord(new Guid(firstEntryOnPage));
+				return true;
+			}
+			return false;
 		}
 
 		/// <summary>
@@ -577,12 +774,29 @@ namespace SIL.FieldWorks.XWorks
 					if (browser != null)
 					{
 						RemoveStyleFromPreviousSelectedEntryOnView(browser);
+						LoadPageIfNecessary(browser);
 						SetActiveSelectedEntryOnView(browser);
 					}
 					break;
 				default:
 					// Not sure what other properties might change, but I'm not doing anything.
 					break;
+			}
+		}
+
+		private void LoadPageIfNecessary(GeckoWebBrowser browser)
+		{
+			var currentObjectHvo = Clerk.CurrentObject.Hvo;
+			var currentObjectIndex = Array.IndexOf(PublicationDecorator.GetEntriesToPublish(m_mediator, Clerk.VirtualFlid), currentObjectHvo);
+			if (currentObjectIndex < 0 || browser == null || browser.Document == null) // If the current item is not to be displayed (invalid, not in this publication) just quit
+				return;
+			var currentPage = GetTopCurrentPageButton(browser.Document.Body);
+			if (currentPage == null)
+				return;
+			var currentPageRange = new Tuple<int, int>(int.Parse(currentPage.Attributes["startIndex"].NodeValue), int.Parse(currentPage.Attributes["endIndex"].NodeValue));
+			if (currentObjectIndex < currentPageRange.Item1 || currentObjectIndex > currentPageRange.Item2)
+			{
+				OnMasterRefresh(this); // Reload the page
 			}
 		}
 
@@ -695,8 +909,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
-				using (new WaitCursor(this.ParentForm))
-				using (var progressDlg = new SIL.FieldWorks.Common.Controls.ProgressDialogWithTask(this.ParentForm))
+				using (new WaitCursor(ParentForm))
+				using (var progressDlg = new Common.Controls.ProgressDialogWithTask(this.ParentForm))
 				{
 					progressDlg.AllowCancel = true;
 					progressDlg.CancelLabelText = xWorksStrings.ksCancelingPublicationLabel;

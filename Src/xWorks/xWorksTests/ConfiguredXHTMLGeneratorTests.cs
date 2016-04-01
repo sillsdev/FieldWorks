@@ -5586,6 +5586,223 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(-1, idxPart, "Part relation should not exist for individuel");
 		}
 
+		[Test]
+		public void GenerateAdjustedPageNumbers_NoAdjacentWhenUpButtonConsumesAllEntries()
+		{
+			var firstEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(firstEntry, "homme", m_wsFr, Cache);
+
+			var secondEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(secondEntry, "femme", m_wsFr, Cache);
+
+			var thirdEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(thirdEntry, "famille", m_wsFr, Cache);
+			var currentPage = new Tuple<int, int>(0, 2);
+			var adjacentPage = new Tuple<int, int>(2, 2);
+			Tuple<int, int> current;
+			Tuple<int, int> adjacent;
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, "");
+			// SUT
+			ConfiguredXHTMLGenerator.GenerateAdjustedPageButtons(new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo }, settings, currentPage, adjacentPage, 2,
+				out current, out adjacent);
+			Assert.IsNull(adjacent, "The Adjacent page should have been consumed into the current page");
+			Assert.AreEqual(0, current.Item1, "Current page should start at 0");
+			Assert.AreEqual(2, current.Item2, "Current page should end at 2");
+		}
+
+		[Test]
+		public void GenerateAdjustedPageNumbers_NoAdjacentWhenDownButtonConsumesAllEntries()
+		{
+			var firstEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(firstEntry, "homme", m_wsFr, Cache);
+
+			var secondEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(secondEntry, "femme", m_wsFr, Cache);
+
+			var thirdEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(thirdEntry, "famille", m_wsFr, Cache);
+			var currentPage = new Tuple<int, int>(1, 2);
+			var adjPage = new Tuple<int, int>(0, 1);
+			Tuple<int, int> current;
+			Tuple<int, int> adjacent;
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, "");
+			// SUT
+			ConfiguredXHTMLGenerator.GenerateAdjustedPageButtons(new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo }, settings, currentPage, adjPage, 2,
+				out current, out adjacent);
+			Assert.IsNull(adjacent, "The Adjacent page should have been consumed into the current page");
+			Assert.AreEqual(0, current.Item1, "Current page should start at 0");
+			Assert.AreEqual(2, current.Item2, "Current page should end at 2");
+		}
+
+		[Test]
+		public void GenerateAdjustedPageNumbers_AdjacentAndCurrentPageAdjustCorrectlyUp()
+		{
+			var firstEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(firstEntry, "homme", m_wsFr, Cache);
+
+			var secondEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(secondEntry, "femme", m_wsFr, Cache);
+
+			var thirdEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(thirdEntry, "famille", m_wsFr, Cache);
+
+			var fourthEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(thirdEntry, "famille", m_wsFr, Cache);
+
+			var currentPage = new Tuple<int, int>(0, 2);
+			var adjPage = new Tuple<int, int>(3, 4);
+			Tuple<int, int> current;
+			Tuple<int, int> adjacent;
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, "");
+			// SUT
+			ConfiguredXHTMLGenerator.GenerateAdjustedPageButtons(new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo, fourthEntry.Hvo }, settings, currentPage, adjPage, 1,
+				out current, out adjacent);
+			Assert.AreEqual(0, current.Item1, "Current page should start at 0");
+			Assert.AreEqual(3, current.Item2, "Current page should end at 3");
+			Assert.AreEqual(4, adjacent.Item1, "Adjacent page should start at 4");
+			Assert.AreEqual(4, adjacent.Item2, "Adjacent page should end at 4");
+		}
+
+		[Test]
+		public void GenerateAdjustedPageNumbers_AdjacentAndCurrentPageAdjustCorrectlyDown()
+		{
+			var firstEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(firstEntry, "homme", m_wsFr, Cache);
+
+			var secondEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(secondEntry, "femme", m_wsFr, Cache);
+
+			var thirdEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(thirdEntry, "famille", m_wsFr, Cache);
+
+			var fourthEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(thirdEntry, "famille", m_wsFr, Cache);
+
+			var adjPage = new Tuple<int, int>(0, 2);
+			var currentPage = new Tuple<int, int>(3, 4);
+			Tuple<int, int> current;
+			Tuple<int, int> adjacent;
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, "");
+			// SUT
+			ConfiguredXHTMLGenerator.GenerateAdjustedPageButtons(new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo, fourthEntry.Hvo }, settings, currentPage, adjPage, 1,
+				out current, out adjacent);
+			Assert.AreEqual(2, current.Item1, "Current page should start at 2");
+			Assert.AreEqual(4, current.Item2, "Current page should end at 4");
+			Assert.AreEqual(0, adjacent.Item1, "Adjacent page should start at 0");
+			Assert.AreEqual(1, adjacent.Item2, "Adjacent page should end at 1");
+		}
+
+		[Test]
+		public void GenerateNextFewEntries_UpReturnsRequestedEntries()
+		{
+			var firstEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(firstEntry, "homme", m_wsFr, Cache);
+
+			var secondEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(secondEntry, "femme", m_wsFr, Cache);
+
+			var thirdEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(thirdEntry, "famille", m_wsFr, Cache);
+
+			var fourthEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(fourthEntry, "familliar", m_wsFr, Cache);
+
+			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+			var mainHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
+				CSSClassNameOverride = "entry"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode },
+				FieldDescription = "LexEntry"
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+			var configPath = Path.Combine(Path.GetTempPath(), Path.GetTempFileName());
+			model.FilePath = configPath;
+			model.Save();
+			try
+			{
+				var adjPage = new Tuple<int, int>(0, 2);
+				var currentPage = new Tuple<int, int>(3, 3);
+				Tuple<int, int> current;
+				Tuple<int, int> adjacent;
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, "");
+
+				// SUT
+				var entries = ConfiguredXHTMLGenerator.GenerateNextFewEntries(pubEverything, new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo, fourthEntry.Hvo }, configPath,
+					settings, currentPage, adjPage, 1, out current, out adjacent);
+				Assert.AreEqual(1, entries.Count, "No entries generated");
+				Assert.That(entries[0], Is.StringContaining(thirdEntry.HeadWord.Text));
+			}
+			finally
+			{
+				File.Delete(model.FilePath);
+			}
+		}
+
+		[Test]
+		public void GenerateNextFewEntries_DownReturnsRequestedEntries()
+		{
+			var firstEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(firstEntry, "homme", m_wsFr, Cache);
+
+			var secondEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(secondEntry, "femme", m_wsFr, Cache);
+
+			var thirdEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(thirdEntry, "famille", m_wsFr, Cache);
+
+			var fourthEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(fourthEntry, "familliar", m_wsFr, Cache);
+
+			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+			var mainHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
+				CSSClassNameOverride = "entry"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode },
+				FieldDescription = "LexEntry"
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+			var configPath = Path.Combine(Path.GetTempPath(), Path.GetTempFileName());
+			model.FilePath = configPath;
+			model.Save();
+			try
+			{
+				var adjPage = new Tuple<int, int>(2, 3);
+				var currentPage = new Tuple<int, int>(0, 1);
+				Tuple<int, int> current;
+				Tuple<int, int> adjacent;
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, "");
+
+				// SUT
+				var entries = ConfiguredXHTMLGenerator.GenerateNextFewEntries(pubEverything, new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo, fourthEntry.Hvo }, configPath,
+					settings, currentPage, adjPage, 2, out current, out adjacent);
+				Assert.AreEqual(2, entries.Count, "Not enough entries generated");
+				Assert.That(entries[0], Is.StringContaining(thirdEntry.HeadWord.Text));
+				Assert.That(entries[1], Is.StringContaining(fourthEntry.HeadWord.Text));
+				Assert.IsNull(adjacent);
+			}
+			finally
+			{
+				File.Delete(model.FilePath);
+			}
+		}
 		#region Helpers
 		private static void DeleteTempXhtmlAndCssFiles(string xhtmlPath)
 		{
