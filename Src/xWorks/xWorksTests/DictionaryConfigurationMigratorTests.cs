@@ -246,6 +246,20 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_UpdatesVersionNumber()
+		{
+			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode() } };
+			var currentDefaultModel = new DictionaryConfigurationModel
+			{
+				Version = DictionaryConfigurationMigrator.VersionCurrent,
+				Parts = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode() }
+			};
+			// SUT
+			m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, currentDefaultModel);
+			Assert.AreEqual(DictionaryConfigurationMigrator.VersionCurrent, convertedModel.Version);
+		}
+
+		[Test]
 		public void CopyDefaultsIntoMinorEntryNode_UpdatesLabelAndListId()
 		{
 			var convertedMinorEntryModel = BuildConvertedMinorEntryNodes();
@@ -1966,43 +1980,43 @@ namespace SIL.FieldWorks.XWorks
 
 		///<summary/>
 		[Test]
-		public void ConfigsNeedMigrating_ReturnsFalseIfNewReversalConfigsExist()
+		public void ConfigsNeedMigratingFromPre83_ReturnsFalseIfNewReversalConfigsExist()
 		{
 			var newRevIdxConfigLoc = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)),
 				DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
 			Directory.CreateDirectory(newRevIdxConfigLoc);
 			File.AppendAllText(Path.Combine(newRevIdxConfigLoc, "SomeConfig" + DictionaryConfigurationModel.FileExtension), "Foo");
-			Assert.That(!m_migrator.ConfigsNeedMigrating(), "If current configs exist no migration should be needed."); // SUT
+			Assert.That(!m_migrator.ConfigsNeedMigratingFromPre83(), "If current configs exist no migration should be needed."); // SUT
 			DirectoryUtilities.DeleteDirectoryRobust(newRevIdxConfigLoc);
 		}
 
 		///<summary/>
 		[Test]
-		public void ConfigsNeedMigrating_ReturnsFalseIfNewDictionaryConfigsExist()
+		public void ConfigsNeedMigratingFromPre83_ReturnsFalseIfNewDictionaryConfigsExist()
 		{
 			var newDictConfigLoc = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)),
 				DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 			Directory.CreateDirectory(newDictConfigLoc);
 			File.AppendAllText(Path.Combine(newDictConfigLoc, "SomeConfig" + DictionaryConfigurationModel.FileExtension), "Foo");
-			Assert.That(!m_migrator.ConfigsNeedMigrating(), "If current configs exist no migration should be needed."); // SUT
+			Assert.That(!m_migrator.ConfigsNeedMigratingFromPre83(), "If current configs exist no migration should be needed."); // SUT
 			DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
 		}
 
 		///<summary/>
 		[Test]
-		public void ConfigsNeedMigrating_ReturnsFalseIfNoNewConfigsAndNoOldConfigs()
+		public void ConfigsNeedMigratingFromPre83_ReturnsFalseIfNoNewConfigsAndNoOldConfigs()
 		{
 			var newDictConfigLoc = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)),
 				DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 			Directory.CreateDirectory(newDictConfigLoc);
 			Directory.EnumerateFiles(newDictConfigLoc).ForEach(File.Delete);
-			Assert.That(!m_migrator.ConfigsNeedMigrating(), "With no new or old configs no migration should be needed."); // SUT
+			Assert.That(!m_migrator.ConfigsNeedMigratingFromPre83(), "With no new or old configs no migration should be needed."); // SUT
 			DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
 		}
 
 		///<summary/>
 		[Test]
-		public void ConfigsNeedMigrating_ReturnsTrueIfNoNewConfigsAndOneOldConfig()
+		public void ConfigsNeedMigratingFromPre83_ReturnsTrueIfNoNewConfigsAndOneOldConfig()
 		{
 			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
 			var newDictConfigLoc = Path.Combine(configSettingsDir, "Dictionary");
@@ -2012,7 +2026,40 @@ namespace SIL.FieldWorks.XWorks
 			using(TempFile.WithFilename(tempFwLayoutPath))
 			{
 				File.AppendAllText(tempFwLayoutPath, "LayoutFoo");
-				Assert.That(m_migrator.ConfigsNeedMigrating(), "There is an old config, a migration is needed."); // SUT
+				Assert.That(m_migrator.ConfigsNeedMigratingFromPre83(), "There is an old config, a migration is needed."); // SUT
+			}
+			DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
+		}
+
+		[Test]
+		public void GetConfigsNeedMigratingFrom83_NeededIfLowerVersionInFwdictconfigFile()
+		{
+			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
+			var newDictConfigLoc = Path.Combine(configSettingsDir, "Dictionary");
+			Directory.CreateDirectory(newDictConfigLoc);
+			Directory.EnumerateFiles(newDictConfigLoc).ForEach(File.Delete);
+			var tempFwLayoutPath = Path.Combine(newDictConfigLoc, "SomeConfig" + DictionaryConfigurationModel.FileExtension);
+			using(TempFile.WithFilename(tempFwLayoutPath))
+			{
+				new DictionaryConfigurationModel { Version = 0, FilePath = tempFwLayoutPath }.Save();
+				Assert.AreEqual(1, m_migrator.GetConfigsNeedingMigratingFrom83().Count, "There is one config needing migrating."); // SUT
+			}
+			DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
+		}
+
+		[Test]
+		public void GetConfigsNeedMigratingFrom83_DoesNotThrowForBadReferencedItems()
+		{
+			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
+			var newDictConfigLoc = Path.Combine(configSettingsDir, "Dictionary");
+			Directory.CreateDirectory(newDictConfigLoc);
+			Directory.EnumerateFiles(newDictConfigLoc).ForEach(File.Delete);
+			var tempFwLayoutPath = Path.Combine(newDictConfigLoc, "SomeConfig" + DictionaryConfigurationModel.FileExtension);
+			using(TempFile.WithFilename(tempFwLayoutPath))
+			{
+				var parts = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode { Label = "Good", ReferenceItem = "Bad" } };
+				new DictionaryConfigurationModel { Version = 0, Parts = parts, FilePath = tempFwLayoutPath }.Save();
+				Assert.DoesNotThrow(() => m_migrator.GetConfigsNeedingMigratingFrom83()); // SUT
 			}
 			DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
 		}
@@ -2201,6 +2248,38 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsTrue(newTypeNode1.IsCustomField, "A custom field should be marked as such after conversion");
 			Assert.IsTrue(newTypeNode1.IsEnabled, "A custom field should be enabled properly.");
 			Assert.AreEqual("Single Sense", newTypeNode1.Label, "A custom field copies its label properly during conversion");
+		}
+
+		[Test]
+		public void MigrateFrom83Alpha_UpdatesVersion()
+		{
+			var alphaModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode() } };
+			m_migrator.MigrateFrom83Alpha(alphaModel); // SUT
+			Assert.AreEqual(DictionaryConfigurationMigrator.VersionCurrent, alphaModel.Version);
+		}
+
+		[Test]
+		public void MigrateFrom83Alpha_ConfigWithVerMinus1GetsMigrated()
+		{
+			var configChild = new ConfigurableDictionaryNode { ReferenceItem = "LexEntry" };
+			var configParent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { configChild } };
+			var configModel = new DictionaryConfigurationModel
+			{
+				Version = DictionaryConfigurationMigrator.VersionPre83, // the original migration code neglected to update the version on completion
+				Parts = new List<ConfigurableDictionaryNode> { configParent }
+			};
+			m_migrator.MigrateFrom83Alpha(configModel);
+			Assert.Null(configChild.ReferenceItem, "Unused ReferenceItem should have been removed");
+		}
+
+		[Test]
+		public void MigrateFrom83Alpha_RemovesDeadReferenceItems()
+		{
+			var configChild = new ConfigurableDictionaryNode { ReferenceItem = "LexEntry" };
+			var configParent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { configChild } };
+			var configModel = new DictionaryConfigurationModel { Version = 1, Parts = new List<ConfigurableDictionaryNode> { configParent } };
+			m_migrator.MigrateFrom83Alpha(configModel);
+			Assert.Null(configChild.ReferenceItem, "Unused ReferenceItem should have been removed");
 		}
 
 		#region Helper

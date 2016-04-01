@@ -28,6 +28,8 @@ namespace SIL.FieldWorks.XWorks
 		Justification="Cache is a reference")]
 	public class DictionaryConfigurationMigrator : ILayoutConverter
 	{
+		public const int VersionPre83 = -1;
+		public const int VersionCurrent = 2;
 		private readonly Inventory m_layoutInventory;
 		private readonly Inventory m_partInventory;
 		private readonly Mediator m_mediator;
@@ -66,7 +68,7 @@ namespace SIL.FieldWorks.XWorks
 			using (m_logger = new SimpleLogger())
 			{
 				var versionProvider = new VersionInfoProvider(Assembly.GetExecutingAssembly(), true);
-				if (ConfigsNeedMigrating())
+				if (ConfigsNeedMigratingFromPre83())
 				{
 					m_logger.WriteLine(string.Format("{0}: Old configurations were found in need of migration. - {1}",
 						versionProvider.ApplicationVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss")));
@@ -95,6 +97,14 @@ namespace SIL.FieldWorks.XWorks
 							var configureLayouts = GetConfigureLayoutsNodeForTool("reversalToolEditComplete");
 							LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
 						});
+				}
+				else
+				{
+					foreach (var config in GetConfigsNeedingMigratingFrom83())
+					{
+						MigrateFrom83Alpha(config);
+						config.Save();
+					}
 				}
 				if (m_logger.HasContent)
 				{
@@ -131,24 +141,38 @@ namespace SIL.FieldWorks.XWorks
 		/// determine what the user has configured, if the user has configured anything, migrate everything.
 		/// </summary>
 		/// <remarks>Internal only for tests, production entry point is MigrateOldConfigurationsIfNeeded()</remarks>
-		internal bool ConfigsNeedMigrating()
+		internal bool ConfigsNeedMigratingFromPre83()
 		{
 			// If the project already has up-to-date configurations then we don't need to migrate
 			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
 			var newDictionaryConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
-			if(Directory.Exists(newDictionaryConfigLoc) &&
-				Directory.EnumerateFiles(newDictionaryConfigLoc, "*"+DictionaryConfigurationModel.FileExtension).Any())
+			if(ConfigFilesInDir(newDictionaryConfigLoc).Any())
 			{
 				return false;
 			}
 			var newReversalIndexConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
-			if(Directory.Exists(newReversalIndexConfigLoc) &&
-				Directory.EnumerateFiles(newReversalIndexConfigLoc, "*"+DictionaryConfigurationModel.FileExtension).Any())
+			if(ConfigFilesInDir(newReversalIndexConfigLoc).Any())
 			{
 				return false;
 			}
 			// If the project has old configurations, we need to migrate them; if it doesn't, there is nothing worth migrating.
 			return Directory.Exists(configSettingsDir) && Directory.EnumerateFiles(configSettingsDir, "*.fwlayout").Any();
+		}
+
+		internal List<DictionaryConfigurationModel> GetConfigsNeedingMigratingFrom83()
+		{
+			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
+			var dictionaryConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+			var reversalIndexConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+			var projectConfigPaths = new List<string>(ConfigFilesInDir(dictionaryConfigLoc));
+			projectConfigPaths.AddRange(ConfigFilesInDir(reversalIndexConfigLoc));
+			return projectConfigPaths.Select(path => new DictionaryConfigurationModel(path, null))
+				.Where(model => model.Version < VersionCurrent).ToList();
+		}
+
+		private static IEnumerable<string> ConfigFilesInDir(string dir)
+		{
+			return Directory.Exists(dir) ? Directory.EnumerateFiles(dir, "*" + DictionaryConfigurationModel.FileExtension) : new string[0];
 		}
 
 		/// <summary>ILayoutConverter implementation</summary>
@@ -164,7 +188,7 @@ namespace SIL.FieldWorks.XWorks
 			m_logger.WriteLine(string.Format("Migrating old fwlayout and parts config: '{0}' - {1}.", label, layout));
 			m_logger.IncreaseIndent();
 			var configNodeList = oldNodes.Select(ConvertLayoutTreeNodeToConfigNode).ToList();
-			var convertedModel = new DictionaryConfigurationModel { Parts = configNodeList, Label = label, Version = -1, AllPublications = true};
+			var convertedModel = new DictionaryConfigurationModel { Parts = configNodeList, Label = label, Version = VersionPre83, AllPublications = true};
 			convertedModel.SpecifyParentsAndReferences(convertedModel.Parts); // REVIEW (Hasso) 2016.03: need to set SharedItems? Shouldn't!
 			CopyNewDefaultsIntoConvertedModel(layout, convertedModel);
 			convertedModel.Save();
@@ -191,82 +215,81 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal void CopyNewDefaultsIntoConvertedModel(string layout, DictionaryConfigurationModel convertedModel)
 		{
-			if(convertedModel.Version == -1)
+			if (convertedModel.Version != VersionPre83)
+				return;
+			DictionaryConfigurationModel currentDefaultModel;
+			const string extension = DictionaryConfigurationModel.FileExtension;
+			var projectPath = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), m_configDirSuffixBeingMigrated);
+			var defaultPath = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(m_configDirSuffixBeingMigrated);
+			const string defaultStemName = "Stem" + extension;
+			const string defaultRootName = "Root" + extension;
+			const string defaultReversalName = "AllReversalIndexes" + extension;
+			switch(layout)
 			{
-				DictionaryConfigurationModel currentDefaultModel;
-				const string extension = DictionaryConfigurationModel.FileExtension;
-				var projectPath = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), m_configDirSuffixBeingMigrated);
-				var defaultPath = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(m_configDirSuffixBeingMigrated);
-				const string defaultStemName = "Stem" + extension;
-				const string defaultRootName = "Root" + extension;
-				const string defaultReversalName = "AllReversalIndexes" + extension;
-				switch(layout)
+				case "publishStem":
 				{
-					case "publishStem":
+					convertedModel.FilePath = Path.Combine(projectPath, defaultStemName);
+					currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultStemName), Cache);
+					break;
+				}
+				case "publishRoot":
+				{
+					convertedModel.FilePath = Path.Combine(projectPath, defaultRootName);
+					currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultRootName), Cache);
+					break;
+				}
+				case "publishReversal":
+				{
+					convertedModel.FilePath = Path.Combine(projectPath, defaultReversalName);
+					currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultReversalName), Cache);
+					break;
+				}
+				default:
+				{
+					// If a user copied an old configuration FLEx appended '#' followed by a unique integer to the layout name.
+					// We will write out the new configuration to a file which uses what the user named it but preserving the integer
+					// as a potential customer support aid.
+					var customSuffixIndex = layout.IndexOf('#');
+					if(customSuffixIndex > 0 && layout.StartsWith("publishStem"))
 					{
-						convertedModel.FilePath = Path.Combine(projectPath, defaultStemName);
+						var customFileName = string.Format("{0}-Stem-{1}{2}", convertedModel.Label, layout.Substring(customSuffixIndex), extension);
+						convertedModel.FilePath = Path.Combine(projectPath, customFileName);
 						currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultStemName), Cache);
-						break;
 					}
-					case "publishRoot":
+					else if(customSuffixIndex > 0 && layout.StartsWith("publishRoot"))
 					{
-						convertedModel.FilePath = Path.Combine(projectPath, defaultRootName);
+						var customFileName = string.Format("{0}-Root-{1}{2}", convertedModel.Label, layout.Substring(customSuffixIndex), extension);
+						convertedModel.FilePath = Path.Combine(projectPath, customFileName);
 						currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultRootName), Cache);
-						break;
 					}
-					case "publishReversal":
+					else if(layout.StartsWith("publishReversal")) // a reversal index for a specific language or a copied Reversal Index Config
 					{
-						convertedModel.FilePath = Path.Combine(projectPath, defaultReversalName);
-						currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultReversalName), Cache);
-						break;
-					}
-					default:
-					{
-						// If a user copied an old configuration FLEx appended '#' followed by a unique integer to the layout name.
-						// We will write out the new configuration to a file which uses what the user named it but preserving the integer
-						// as a potential customer support aid.
-						var customSuffixIndex = layout.IndexOf('#');
-						if(customSuffixIndex > 0 && layout.StartsWith("publishStem"))
+						// Label similar to publishReversal-en#Engli704, including one or both suffixes
+						var languageSuffixIndex = layout.IndexOf('-') + 1;
+						string reversalIndex;
+						if (languageSuffixIndex > 0)
 						{
-							var customFileName = string.Format("{0}-Stem-{1}{2}", convertedModel.Label, layout.Substring(customSuffixIndex), extension);
-							convertedModel.FilePath = Path.Combine(projectPath, customFileName);
-							currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultStemName), Cache);
-						}
-						else if(customSuffixIndex > 0 && layout.StartsWith("publishRoot"))
-						{
-							var customFileName = string.Format("{0}-Root-{1}{2}", convertedModel.Label, layout.Substring(customSuffixIndex), extension);
-							convertedModel.FilePath = Path.Combine(projectPath, customFileName);
-							currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultRootName), Cache);
-						}
-						else if(layout.StartsWith("publishReversal")) // a reversal index for a specific language or a copied Reversal Index Config
-						{
-							// Label similar to publishReversal-en#Engli704, including one or both suffixes
-							var languageSuffixIndex = layout.IndexOf('-') + 1;
-							string reversalIndex;
-							if (languageSuffixIndex > 0)
-							{
-								var languageCode = customSuffixIndex > 0
-									? layout.Substring(languageSuffixIndex, customSuffixIndex - languageSuffixIndex)
-									: layout.Substring(languageSuffixIndex);
-								reversalIndex = Cache.ServiceLocator.WritingSystemManager.Get(languageCode).DisplayLabel;
-							}
-							else
-							{
-								reversalIndex = "AllReversalIndexes";
-							}
-							var customFileName = customSuffixIndex > 0
-								? string.Format("{0}-{1}-{2}{3}", convertedModel.Label, reversalIndex, layout.Substring(customSuffixIndex), extension)
-								: string.Format("{0}{1}", reversalIndex, extension);
-							convertedModel.FilePath = Path.Combine(projectPath, customFileName);
-							currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultReversalName), Cache);
+							var languageCode = customSuffixIndex > 0
+								? layout.Substring(languageSuffixIndex, customSuffixIndex - languageSuffixIndex)
+								: layout.Substring(languageSuffixIndex);
+							reversalIndex = Cache.ServiceLocator.WritingSystemManager.Get(languageCode).DisplayLabel;
 						}
 						else
-							throw new NotImplementedException("Classified Dictionary migration or something has not yet been implemented.");
-						break;
+						{
+							reversalIndex = "AllReversalIndexes";
+						}
+						var customFileName = customSuffixIndex > 0
+							? string.Format("{0}-{1}-{2}{3}", convertedModel.Label, reversalIndex, layout.Substring(customSuffixIndex), extension)
+							: string.Format("{0}{1}", reversalIndex, extension);
+						convertedModel.FilePath = Path.Combine(projectPath, customFileName);
+						currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultReversalName), Cache);
 					}
+					else
+						throw new NotImplementedException("Classified Dictionary migration or something has not yet been implemented.");
+					break;
 				}
-				CopyNewDefaultsIntoConvertedModel(convertedModel, currentDefaultModel);
 			}
+			CopyNewDefaultsIntoConvertedModel(convertedModel, currentDefaultModel);
 		}
 
 		/// <remarks>Internal only for tests; production entry point is MigrateOldConfigurationsIfNeeded()</remarks>
@@ -334,6 +357,8 @@ namespace SIL.FieldWorks.XWorks
 					CopyDefaultsIntoMinorEntryNode(convertedNode, currentDefaultVariantNode, DictionaryNodeListOptions.ListIds.Variant, ver);
 				}
 			}
+
+			convertedModel.Version = currentDefaultModel.Version; // Migration is complete; update the version
 		}
 
 		/// <remarks>Internal only for tests; production entry point is MigrateOldConfigurationsIfNeeded()</remarks>
@@ -405,7 +430,7 @@ namespace SIL.FieldWorks.XWorks
 			convertedNode.StyleType = currentDefaultNode.StyleType;
 			convertedNode.CSSClassNameOverride = currentDefaultNode.CSSClassNameOverride;
 
-			if(version == -1 && IsReferencedEntriesNode(convertedNode))
+			if(version == VersionPre83 && IsReferencedEntriesNode(convertedNode))
 			{
 				ConvertReferencedEntries(convertedNode, currentDefaultNode);
 				return;
@@ -480,6 +505,28 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		internal void MigrateFrom83Alpha(DictionaryConfigurationModel alphaModel)
+		{
+			switch (alphaModel.Version)
+			{
+				case VersionPre83: // previous migrations neglected to update the version number; this is the same as 1
+				case 1:
+					RemoveReferencedItems(alphaModel.Parts);
+					break;
+			}
+			alphaModel.Version = VersionCurrent;
+		}
+
+		private void RemoveReferencedItems(List<ConfigurableDictionaryNode> nodes)
+		{
+			foreach (var node in nodes)
+			{
+				node.ReferenceItem = null; // For now, assume they're all bad (they were in version 1)
+				if(node.Children != null)
+					RemoveReferencedItems(node.Children);
+			}
+		}
+
 		private void SetNodeAsCustom(ConfigurableDictionaryNode child, string parentType)
 		{
 			m_logger.IncreaseIndent();
@@ -527,7 +574,7 @@ namespace SIL.FieldWorks.XWorks
 		private static string HandleChildNodeRenaming(int version, ConfigurableDictionaryNode child)
 		{
 			var result = child.Label;
-			if (version == -1)
+			if (version == VersionPre83)
 			{
 				if (child.Label == "Components" && child.Parent.Label == "Component References")
 					result = "Referenced Entries";
@@ -554,7 +601,6 @@ namespace SIL.FieldWorks.XWorks
 
 				if (child.Label == "Headword" && child.Parent.Label == "Referenced Senses")
 					result = "Referenced Headword";
-
 			}
 			return result;
 		}

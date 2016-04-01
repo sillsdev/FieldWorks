@@ -87,7 +87,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		/// <summary></summary>
+		/// <summary>
+		/// Loads the model. If Cache is not null, also connects parents and references, and updates lists from the rest of the FieldWorks model.
+		/// </summary>
 		public void Load(FdoCache cache)
 		{
 			var serializer = new XmlSerializer(typeof(DictionaryConfigurationModel));
@@ -97,9 +99,12 @@ namespace SIL.FieldWorks.XWorks
 				model.FilePath = FilePath; // this doesn't get [de]serialized
 				foreach (var property in typeof(DictionaryConfigurationModel).GetProperties().Where(prop => prop.CanWrite))
 					property.SetValue(this, property.GetValue(model, null), null);
-				Publications = AllPublications ? GetAllPublications(cache) : LoadPublicationsSafe(model, cache);
 			}
+			if (cache == null)
+				return;
+
 			SpecifyParentsAndReferences(Parts);
+			Publications = AllPublications ? GetAllPublications(cache) : LoadPublicationsSafe(this, cache);
 			// Handle any changes to the custom field definitions.  (See https://jira.sil.org/browse/LT-16430.)
 			// The "Merge" method handles both additions and deletions.
 			DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(cache, this);

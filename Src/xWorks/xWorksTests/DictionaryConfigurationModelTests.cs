@@ -447,6 +447,16 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void ShippedFilesHaveCurrentVersion([Values("Dictionary", "ReversalIndex")] string subFolder)
+		{
+			var shippedConfigfolder = Path.Combine(FwDirectoryFinder.FlexFolder, "DefaultConfigurations", subFolder);
+			foreach(var shippedFile in Directory.EnumerateFiles(shippedConfigfolder, "*"+DictionaryConfigurationModel.FileExtension))
+			{
+				Assert.AreEqual(DictionaryConfigurationMigrator.VersionCurrent, new DictionaryConfigurationModel(shippedFile, Cache).Version);
+			}
+		}
+
+		[Test]
 		public void Save_ConfigWithOneNodeValidatesAgainstSchema()
 		{
 			var modelFile = Path.GetTempFileName();
@@ -1402,7 +1412,7 @@ namespace SIL.FieldWorks.XWorks
 			sharedItem.Children.ForEach(child => Assert.AreSame(sharedItem, child.Parent));
 		}
 
-		public DictionaryConfigurationModel CreateSimpleSharingModel(ConfigurableDictionaryNode part, ConfigurableDictionaryNode sharedItem)
+		public static DictionaryConfigurationModel CreateSimpleSharingModel(ConfigurableDictionaryNode part, ConfigurableDictionaryNode sharedItem)
 		{
 			return new DictionaryConfigurationModel
 			{
