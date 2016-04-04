@@ -306,7 +306,7 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
 			var variant = CreateInterestingLexEntry(Cache);
-			CreateVariantForm(entry, variant, true); // we need a real Variant Type to pass the list options test
+			CreateVariantForm(Cache, entry, variant, true); // we need a real Variant Type to pass the list options test
 			// Create a folder in the project to hold the media files
 			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
 			Cache.LangProject.MediaOC.Add(folder);
@@ -1631,7 +1631,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
-			CreateVariantForm(mainEntry, minorEntry);
+			CreateVariantForm(Cache, mainEntry, minorEntry);
 			// SUT
 			Assert.That(ConfiguredXHTMLGenerator.IsMinorEntry(minorEntry));
 		}
@@ -1641,7 +1641,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
-			CreateVariantForm(mainEntry, minorEntry);
+			CreateVariantForm(Cache, mainEntry, minorEntry);
 			// SUT
 			Assert.False(ConfiguredXHTMLGenerator.IsMinorEntry(mainEntry));
 			Assert.False(ConfiguredXHTMLGenerator.IsMinorEntry(Cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>().Create()));
@@ -1661,7 +1661,7 @@ namespace SIL.FieldWorks.XWorks
 			var configModel = CreateInterestingConfigurationModel();
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
-			CreateVariantForm(mainEntry, minorEntry);
+			CreateVariantForm(Cache, mainEntry, minorEntry);
 			SetPublishAsMinorEntry(minorEntry, true);
 			configModel.Parts[1].DictionaryNodeOptions =
 				configModel.Parts[2].DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Minor);
@@ -1680,7 +1680,7 @@ namespace SIL.FieldWorks.XWorks
 			var configModel = CreateInterestingConfigurationModel();
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
-			CreateVariantForm(mainEntry, minorEntry);
+			CreateVariantForm(Cache, mainEntry, minorEntry);
 			configModel.Parts[1].DictionaryNodeOptions = configModel.Parts[2].DictionaryNodeOptions =
 				GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Minor, new ICmPossibility[0]);
 			SetPublishAsMinorEntry(minorEntry, true);
@@ -1700,7 +1700,7 @@ namespace SIL.FieldWorks.XWorks
 			var configModel = CreateInterestingConfigurationModel();
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
-			CreateVariantForm(mainEntry, minorEntry);
+			CreateVariantForm(Cache, mainEntry, minorEntry);
 			SetPublishAsMinorEntry(minorEntry, false);
 
 			//SUT
@@ -2329,7 +2329,7 @@ namespace SIL.FieldWorks.XWorks
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var variantForm = CreateInterestingLexEntry(Cache);
 			var subentry = CreateInterestingLexEntry(Cache);
-			CreateVariantForm(variantForm, mainEntry);
+			CreateVariantForm(Cache, variantForm, mainEntry);
 			CreateComplexForm(Cache, mainEntry, subentry, true);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
@@ -2822,7 +2822,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var variantForm = CreateInterestingLexEntry(Cache);
-			CreateVariantForm(mainEntry, variantForm);
+			CreateVariantForm(Cache, mainEntry, variantForm);
 			var crazyVariantPoss = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.First(variant => variant.Name.BestAnalysisAlternative.Text == TestVariantName);
 
 			var variantsNode = new ConfigurableDictionaryNode
@@ -2850,7 +2850,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
-			CreateVariantForm(mainEntry, minorEntry);
+			CreateVariantForm(Cache, mainEntry, minorEntry);
 			var crazyVariantPoss = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.First(variant => variant.Name.BestAnalysisAlternative.Text == TestVariantName);
 
 			var minorEntryNode = new ConfigurableDictionaryNode
@@ -2876,7 +2876,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var variantForm = CreateInterestingLexEntry(Cache);
-			CreateVariantForm (mainEntry, variantForm);
+			CreateVariantForm (Cache, mainEntry, variantForm);
 			var notCrazyVariant = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.FirstOrDefault(variant => variant.Name.BestAnalysisAlternative.Text != TestVariantName);
 			Assert.IsNotNull(notCrazyVariant);
 			var rcfsNode = new ConfigurableDictionaryNode
@@ -3209,7 +3209,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var variantForm = CreateInterestingLexEntry(Cache);
-			CreateVariantForm (mainEntry, variantForm);
+			CreateVariantForm (Cache, mainEntry, variantForm);
 			var notCrazyVariant = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.FirstOrDefault(variant => variant.Name.BestAnalysisAlternative.Text != TestVariantName);
 			Assert.IsNotNull(notCrazyVariant);
 			var variantsNode = new ConfigurableDictionaryNode
@@ -3252,7 +3252,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var variantForm = CreateInterestingLexEntry(Cache);
-			CreateVariantForm (mainEntry, variantForm);
+			CreateVariantForm (Cache, mainEntry, variantForm);
 			var crazyVariant = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.FirstOrDefault(variant => variant.Name.BestAnalysisAlternative.Text == TestVariantName);
 			Assert.IsNotNull(crazyVariant);
 			var variantsNode = new ConfigurableDictionaryNode
@@ -4088,7 +4088,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var variantForm = CreateInterestingLexEntry(Cache);
-			CreateVariantForm(variantForm, mainEntry);
+			CreateVariantForm(Cache, variantForm, mainEntry);
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
@@ -4359,7 +4359,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var lexentry = CreateInterestingLexEntry(Cache);
 			var variantEntry = CreateInterestingLexEntry(Cache);
-			var variantEntryRef = CreateVariantForm(lexentry, variantEntry);
+			var variantEntryRef = CreateVariantForm(Cache, lexentry, variantEntry);
 			variantEntryRef.VariantEntryTypesRS.Clear(); // no variant entry type specified
 
 			var formNode = new ConfigurableDictionaryNode
@@ -4423,7 +4423,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (variantForm != FormType.None)
 			{
-				var variantRef = CreateVariantForm(mainEntry, minorEntry);
+				var variantRef = CreateVariantForm(Cache, mainEntry, minorEntry);
 				if (variantForm == FormType.Unspecified)
 					variantRef.VariantEntryTypesRS.Clear();
 			}
@@ -5864,7 +5864,14 @@ namespace SIL.FieldWorks.XWorks
 			return mainEntryNode;
 		}
 
-		internal static ILexEntry CreateInterestingLexEntry(FdoCache cache)
+		/// <summary>
+		/// Creates an ILexEntry object, optionally with specified headword and gloss
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="headword">Optional: defaults to 'Citation'</param>
+		/// <param name="gloss">Optional: defaults to 'gloss'</param>
+		/// <returns></returns>
+		internal static ILexEntry CreateInterestingLexEntry(FdoCache cache, string headword = "Citation", string gloss = "gloss")
 		{
 			var factory = cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			var entry = factory.Create();
@@ -5874,15 +5881,18 @@ namespace SIL.FieldWorks.XWorks
 				cache.WritingSystemFactory.get_Engine("fr") as IWritingSystem);
 			var wsEn = cache.WritingSystemFactory.GetWsFromStr("en");
 			var wsFr = cache.WritingSystemFactory.GetWsFromStr("fr");
-			AddHeadwordToEntry(entry, "Citation", wsFr, cache);
+			AddHeadwordToEntry(entry, headword, wsFr, cache);
 			entry.Comment.set_String(wsEn, cache.TsStrFactory.MakeString("Comment", wsEn));
-			AddSenseToEntry(entry, "gloss", wsEn, cache);
+			AddSenseToEntry(entry, gloss, wsEn, cache);
 			return entry;
 		}
 
-		private ILexEntryRef CreateVariantForm(ILexEntry main, ILexEntry variantForm, bool useKnownType = false)
+		/// <summary>
+		/// 'internal static' so Reversal tests can use it
+		/// </summary>
+		internal static ILexEntryRef CreateVariantForm(FdoCache cache, IVariantComponentLexeme main, ILexEntry variantForm, bool useKnownType = false)
 		{
-			var owningList = Cache.LangProject.LexDbOA.VariantEntryTypesOA;
+			var owningList = cache.LangProject.LexDbOA.VariantEntryTypesOA;
 			Assert.IsNotNull(owningList, "No VariantEntryTypes property on Lexicon object.");
 			ILexEntryType varType;
 			if (useKnownType)
@@ -5891,9 +5901,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
-				varType = Cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>().Create();
+				varType = cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>().Create();
 				owningList.PossibilitiesOS.Add(varType);
-				var ws = Cache.DefaultAnalWs;
+				var ws = cache.DefaultAnalWs;
 				varType.Name.set_String(ws, TestVariantName);
 			}
 			return variantForm.MakeVariantOf(main, varType);

@@ -113,67 +113,172 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void GenerateXHTMLForEntry_ReferencedSenses_PrimaryEntryReferenceTypeWorks()
+		public void GenerateXHTMLForEntry_PrimaryEntryReferencesWork_ComplexFormOfEntry()
+		{
+			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
+			var reversalEntry = CreateInterestingEnglishReversalEntry("spokesmanRevForm", "porte-parole", "spokesman:gloss");
+			var referringSense = reversalEntry.ReferringSenses.First();
+			var paroleEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "parole", "speech");
+			paroleEntry.SummaryDefinition.SetAnalysisDefaultWritingSystem("summDefn");
+			ConfiguredXHTMLGeneratorTests.CreateComplexForm(Cache, paroleEntry, referringSense.Owner as ILexEntry, true);
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(reversalEntry, mainRevEntryNode, null, settings);
+			const string referringSenseXpath = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']";
+			const string headwordXpath = referringSenseXpath + "/span[@class='headword']/span[@lang='fr']//a[text()='porte-parole']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(headwordXpath, 1);
+			const string entryRefXpath = "/span[@class='mainentryrefs']/span[@class='mainentryref']";
+			const string entryRefTypeXpath = "/span[@class='entrytypes']/span[@class='entrytype']";
+			const string refTypeXpath = referringSenseXpath + entryRefXpath + entryRefTypeXpath + "/span[@class='abbreviation']/span[@lang='en' and text()='comp. of']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(refTypeXpath, 1);
+			const string primaryEntryXpath = "/span[@class='primarylexemes']/span[@class='primarylexeme']";
+			const string refHeadwordXpath = referringSenseXpath + entryRefXpath + primaryEntryXpath + "/span[@class='headword']/span[@lang='fr']/a[text()='parole']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(refHeadwordXpath, 1);
+			const string glossOrSummDefXpath = referringSenseXpath + entryRefXpath + primaryEntryXpath + "/span[@class='glossorsummary']/span[@lang='en' and text()='summDefn']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(glossOrSummDefXpath, 1);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_PrimaryEntryReferencesWork_ComplexFormOfSense()
+		{
+			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
+			var reversalEntry = CreateInterestingEnglishReversalEntry("spokesmanRevForm", "porte-parole", "spokesman:gloss");
+			var referringSense = reversalEntry.ReferringSenses.First();
+			var paroleEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "parole", "speech");
+			ConfiguredXHTMLGeneratorTests.CreateComplexForm(Cache, paroleEntry.SensesOS[0], referringSense.Owner as ILexEntry, true);
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(reversalEntry, mainRevEntryNode, null, settings);
+			const string referringSenseXpath = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']";
+			const string entryRefXpath = "/span[@class='mainentryrefs']/span[@class='mainentryref']";
+			const string entryRefTypeXpath = "/span[@class='entrytypes']/span[@class='entrytype']";
+			const string refTypeXpath = referringSenseXpath + entryRefXpath + entryRefTypeXpath + "/span[@class='abbreviation']/span[@lang='en' and text()='comp. of']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(refTypeXpath, 1);
+			const string primaryEntryXpath = "/span[@class='primarylexemes']/span[@class='primarylexeme']";
+			const string refHeadwordXpath = referringSenseXpath + entryRefXpath + primaryEntryXpath + "/span[@class='headword']/span[@lang='fr']/a[text()='parole']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(refHeadwordXpath, 1);
+			const string glossOrSummDefXpath = referringSenseXpath + entryRefXpath + primaryEntryXpath + "/span[@class='glossorsummary']/span[@lang='en' and text()='speech']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(glossOrSummDefXpath, 1);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_PrimaryEntryReferencesWork_VariantFormOfSense()
+		{
+			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
+			var reversalEntry = CreateInterestingEnglishReversalEntry("speechRevForm", "parol", "speech:gloss");
+			var variantEntry = reversalEntry.ReferringSenses.First().Owner as ILexEntry;
+			var paroleEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "parole", "speech");
+			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, paroleEntry.SensesOS[0], variantEntry, true);
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(reversalEntry, mainRevEntryNode, null, settings);
+			const string referringSenseXpath = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']";
+			const string entryRefXpath = "/span[@class='mainentryrefs']/span[@class='mainentryref']";
+			const string entryRefTypeXpath = "/span[@class='entrytypes']/span[@class='entrytype']";
+			const string refTypeXpath = referringSenseXpath + entryRefXpath + entryRefTypeXpath + "/span[@class='abbreviation']/span[@lang='en' and text()='sp. var. of']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(refTypeXpath, 1);
+			const string primaryEntryXpath = "/span[@class='primarylexemes']/span[@class='primarylexeme']";
+			const string refHeadwordXpath = referringSenseXpath + entryRefXpath + primaryEntryXpath + "/span[@class='headword']/span[@lang='fr']/a[text()='parole']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(refHeadwordXpath, 1);
+			const string glossOrSummDefXpath = referringSenseXpath + entryRefXpath + primaryEntryXpath + "/span[@class='glossorsummary']/span[@lang='en' and text()='speech']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(glossOrSummDefXpath, 1);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_PrimaryEntryReferencesWork_VariantFormOfEntry()
+		{
+			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
+			var reversalEntry = CreateInterestingEnglishReversalEntry("speechRevForm", "parol", "speech:gloss");
+			var variantEntry = reversalEntry.ReferringSenses.First().Owner as ILexEntry;
+			var paroleEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "parole", "speech");
+			paroleEntry.SummaryDefinition.SetAnalysisDefaultWritingSystem("summDefn");
+			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, paroleEntry, variantEntry, true);
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(reversalEntry, mainRevEntryNode, null, settings);
+			const string referringSenseXpath = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']";
+			const string entryRefXpath = "/span[@class='mainentryrefs']/span[@class='mainentryref']";
+			const string entryRefTypeXpath = "/span[@class='entrytypes']/span[@class='entrytype']";
+			const string refTypeXpath = referringSenseXpath + entryRefXpath + entryRefTypeXpath + "/span[@class='abbreviation']/span[@lang='en' and text()='sp. var. of']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(refTypeXpath, 1);
+			const string primaryEntryXpath = "/span[@class='primarylexemes']/span[@class='primarylexeme']";
+			const string refHeadwordXpath = referringSenseXpath + entryRefXpath + primaryEntryXpath + "/span[@class='headword']/span[@lang='fr']/a[text()='parole']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(refHeadwordXpath, 1);
+			const string glossOrSummDefXpath = referringSenseXpath + entryRefXpath + primaryEntryXpath + "/span[@class='glossorsummary']/span[@lang='en' and text()='summDefn']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(glossOrSummDefXpath, 1);
+		}
+
+		private static ConfigurableDictionaryNode PreparePrimaryEntryReferencesConfigSetup()
 		{
 			var abbrNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Abbreviation",
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "analysis" })
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] {"analysis"})
 			};
 			var nameNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Name",
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new []{ "analysis" })
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] {"analysis"})
 			};
 			var typeNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "EntryTypes",
-				Children = new List<ConfigurableDictionaryNode> { abbrNode, nameNode },
+				Children = new List<ConfigurableDictionaryNode> {abbrNode, nameNode},
 				Label = "Type"
+			};
+			var refHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] {"vernacular"}),
+				Label = "Referenced Headword"
+			};
+			var glossOrSummaryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "GlossOrSummary",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] {"analysis"}),
+				Label = "Gloss (or Summary Definition)"
+			};
+			var primaryEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "PrimarySensesOrEntries",
+				CSSClassNameOverride = "primarylexemes",
+				Children = new List<ConfigurableDictionaryNode> {refHeadwordNode, glossOrSummaryNode},
+				Label = "Primary Entry(s)"
 			};
 			var primaryEntryRefNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "EntryRefsWithThisMainSense",
-				Children = new List<ConfigurableDictionaryNode> { typeNode },
+				FieldDescription = "MainEntryRefs",
+				Children = new List<ConfigurableDictionaryNode> {typeNode, primaryEntryNode},
 				Label = "Primary Entry References"
 			};
 			var headWordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReversalName",
 				CSSClassNameOverride = "headword",
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new []{"vernacular"})
+				Label = "Referenced Headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] {"vernacular"})
 			};
 			var referencedSensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReferringSenses",
-				Children = new List<ConfigurableDictionaryNode> { headWordNode, primaryEntryRefNode },
+				Children = new List<ConfigurableDictionaryNode> {headWordNode, primaryEntryRefNode},
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions
 				{
-					NumberingStyle = "Dictionary-SenseNumber", DisplayEachSenseInAParagraph = false, ShowSharedGrammarInfoFirst = false
+					NumberingStyle = "Dictionary-SenseNumber",
+					DisplayEachSenseInAParagraph = false,
+					ShowSharedGrammarInfoFirst = false
 				},
 				Label = "Referenced Senses"
 			};
 			var mainRevEntryNode = new ConfigurableDictionaryNode
 			{
-				Children = new List<ConfigurableDictionaryNode> { referencedSensesNode },
+				Children = new List<ConfigurableDictionaryNode> {referencedSensesNode},
 				FieldDescription = "ReversalIndexEntry",
 				CSSClassNameOverride = "reversalindexentry"
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainRevEntryNode);
-			var reversalEntry = CreateInterestingEnglishReversalEntry();
-			var referringSense = reversalEntry.ReferringSenses.First();
-			var complexForm = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
-			ConfiguredXHTMLGeneratorTests.CreateComplexForm(Cache, referringSense.Owner, complexForm, false); // true or false both work
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
-			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(reversalEntry, mainRevEntryNode, null, settings);
-			const string referringSenseXpath = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']";
-			const string headwordXpath = referringSenseXpath + "/span[@class='headword']/span[@lang='fr']//a[text()='Citation']";
-			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(headwordXpath, 1);
-			const string entryRefXpath = "/span[@class='entryrefswiththismainsense']/span[@class='entryrefswiththismainsens']";
-			const string entryRefTypeXpath = "/span[@class='entrytypes']/span[@class='entrytype']";
-			const string refTypeXpath = referringSenseXpath + entryRefXpath + entryRefTypeXpath + "/span[@class='abbreviation']/span[@lang='en' and text()='comp. of']";
-			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(refTypeXpath, 1);
+			return mainRevEntryNode;
 		}
 
 		[Test]
@@ -608,11 +713,12 @@ namespace SIL.FieldWorks.XWorks
 			return riEntry;
 		}
 
-		private IReversalIndexEntry CreateInterestingEnglishReversalEntry()
+		private IReversalIndexEntry CreateInterestingEnglishReversalEntry(string reversalForm = "ReversalForm",
+			string vernacularHeadword = "Citation", string analysisGloss = "gloss")
 		{
-			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, vernacularHeadword, analysisGloss);
 			var revIndex = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().FindOrCreateIndexForWs(m_wsEn);
-			var riEntry = revIndex.FindOrCreateReversalEntry("ReversalForm");
+			var riEntry = revIndex.FindOrCreateReversalEntry(reversalForm);
 			entry.SensesOS.First().ReversalEntriesRC.Add(riEntry);
 			return riEntry;
 		}

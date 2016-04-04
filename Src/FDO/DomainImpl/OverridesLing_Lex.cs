@@ -3757,14 +3757,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					if (sequence != null && sequence.Flid == LexEntryRefTags.kflidComponentLexemes)
 						list.Add(sequence.MainObject as ILexEntryRef);
 				}
-				// LT-17277 PrimaryEntryReferences not showing
-				// because EntryRefsWithThisMainSense should actually be EntryRefsWithThisMainSenseOrEntry
-				foreach (var item in OwningEntry.ReferringObjects)
-				{
-					if (item is ILexEntryRef)
-						list.Add(item as ILexEntryRef);
-				}
 				return list;
+			}
+		}
+
+		/// <summary>
+		/// This property returns the list of all the LexEntryRef objects that refer to this LexSense
+		/// or its owning LexEntry.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceCollection, "LexEntryRef")]
+		public IEnumerable<ILexEntryRef> MainEntryRefs
+		{
+			get
+			{
+				return OwningEntry.EntryRefsOS;
 			}
 		}
 
@@ -9083,9 +9089,23 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var wrappedTargets = new List<ISenseOrEntry>();
-				if(PrimaryLexemesRS.Count > 0)
+				if (RefType == LexEntryRefTags.krtComplexForm)
 				{
-					wrappedTargets.AddRange(PrimaryLexemesRS.Select(target => new SenseOrEntry(target)));
+					if(PrimaryLexemesRS.Count > 0)
+					{
+						wrappedTargets.AddRange(PrimaryLexemesRS.Select(target => new SenseOrEntry(target)));
+					}
+					if (wrappedTargets.Count == 0 && ShowComplexFormsInRS.Count > 0)
+					{
+						wrappedTargets.AddRange(ShowComplexFormsInRS.Select(target => new SenseOrEntry(target)));
+					}
+				}
+				else
+				{
+					if (ComponentLexemesRS.Count > 0)
+					{
+						wrappedTargets.AddRange(ComponentLexemesRS.Select(target => new SenseOrEntry(target)));
+					}
 				}
 				return wrappedTargets;
 			}
