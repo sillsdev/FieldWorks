@@ -12,14 +12,11 @@ namespace LanguageExplorer.Controls
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// This class extends SplitContainer by adding buttons which replace a nearly collpased
+	/// This class extends SplitContainer by adding buttons which replace a nearly collapsed
 	/// control (Panel1 or Panel2 child). When the SplitterDistance gets low enough, then the
 	/// button becomes top most, which hides the main control.
 	///
-	/// Clicking on the button will reset the SplitterDistance, and show the main control again.
-	/// TODO: We may be able expand back out to the previous SplitterDistance,
-	/// or we may just have to jump out to some other distance.
-	/// For now, we will remember (and restore) the previous position.
+	/// Clicking on the button will restore the previous SplitterDistance, and show the main control again.
 	///
 	/// We will still support complete collapsing of a main control, of course, but client code
 	/// will have to do that.

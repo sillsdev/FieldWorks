@@ -157,6 +157,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		/// </summary>
 		public void FinishRefresh()
 		{
+#if RANDYTODO
+			// TODO: If tool uses a SDA decorator (IRefreshable), then call its "Refresh" method.
+			// TODO: Call "ReloadIfNeeded" on Record clerk(s).
+#endif
 		}
 
 		/// <summary>

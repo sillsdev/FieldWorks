@@ -129,10 +129,6 @@ namespace LanguageExplorer.Areas.Lexicon
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer,
 			MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar)
 		{
-#if RANDYTODO
-			// Implement and call Deactivate(parameters) on current tool in area.
-			//MessageBoxUtils.Show(Form.ActiveForm, "Implement lexicon area Deactivate method.", "Need to implement", MessageBoxButtons.OK);
-#endif
 		}
 
 		/// <summary>
@@ -144,10 +140,6 @@ namespace LanguageExplorer.Areas.Lexicon
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer,
 			MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar)
 		{
-#if RANDYTODO
-			// Implement and call Activate(parameters) on current/default tool in area.
-			//MessageBoxUtils.Show(Form.ActiveForm, "Implement lexicon area Activate method.", "Need to implement", MessageBoxButtons.OK);
-#endif
 		}
 
 		/// <summary>
@@ -155,10 +147,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-#if RANDYTODO
-			// Implement and call PrepareToRefresh() on current tool in area.
-			//MessageBoxUtils.Show(Form.ActiveForm, "Implement lexicon area PrepareToRefresh method.", "Need to implement", MessageBoxButtons.OK);
-#endif
+			m_toolRepository.GetPersistedOrDefaultToolForArea(this).PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -166,10 +155,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		public void FinishRefresh()
 		{
-#if RANDYTODO
-			// Implement and call FinishRefresh() on current tool in area.
-			//MessageBoxUtils.Show(Form.ActiveForm, "Implement lexicon area FinishRefresh method.", "Need to implement", MessageBoxButtons.OK);
-#endif
+			m_toolRepository.GetPersistedOrDefaultToolForArea(this).FinishRefresh();
 		}
 
 		/// <summary>

@@ -10,6 +10,8 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
+using SIL.FieldWorks.XWorks;
+using SIL.Utils;
 
 namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 {
@@ -23,6 +25,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 		/// The RecordBar has no top PaneBar for information, menus, etc.
 		/// </summary>
 		private CollapsingSplitContainer _collapsingSplitContainer;
+		private RecordClerk _recordClerk;
 
 		#region Implementation of IPropertyTableProvider
 
@@ -79,7 +82,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(ref _collapsingSplitContainer);
+			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(ref _collapsingSplitContainer, ref _recordClerk);
 		}
 
 		/// <summary>
@@ -94,7 +97,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(new FlexComponentParameters(PropertyTable, Publisher, Subscriber), mainCollapsingSplitContainer, true,
 				XDocument.Parse(ListResources.CharttempEditParameters).Root, XDocument.Parse(ListResources.ListToolsSliceFilters),
 				MachineName,
-				new PossibilityListClerkParameters("DiscChartTemplateList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.DiscourseDataOA.ConstChartTemplOA, true, true, false, "best analysis"));
+				new PossibilityListClerkParameters("DiscChartTemplateList", PropertyTable.GetValue<FdoCache>("cache").LanguageProject.DiscourseDataOA.ConstChartTemplOA, true, true, false, "best analysis"),
+				out _recordClerk);
 		}
 
 		/// <summary>
@@ -115,6 +119,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 		/// </remarks>
 		public void FinishRefresh()
 		{
+#if RANDYTODO
+			// TODO: If tool uses a SDA decorator (IRefreshable), then call its "Refresh" method.
+#endif
+			_recordClerk.ReloadIfNeeded();
+			((IRefreshable)_recordClerk.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>

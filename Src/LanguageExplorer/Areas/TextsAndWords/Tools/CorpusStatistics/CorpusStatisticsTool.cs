@@ -100,15 +100,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// Do whatever might be needed to get ready for a refresh.
 		/// </summary>
 		public void PrepareToRefresh()
-		{
-		}
+		{ /* Do nothing. */ }
 
 		/// <summary>
 		/// Finish the refresh.
 		/// </summary>
 		public void FinishRefresh()
-		{
-		}
+		{ /* Do nothing. */ }
 
 		/// <summary>
 		/// The properties are about to be saved, so make sure they are all current.

@@ -31,11 +31,13 @@ namespace LanguageExplorer.Controls
 		/// <param name="sliceFilterDocument">Document that has Slice filtering information.</param>
 		/// <param name="toolMachineName">Name of the tool being set up.</param>
 		/// <param name="possibilityListClerkParameters">parameter object of data needed to create the clerk and it record list.</param>
+		/// <param name="recordClerk">Output the RecordClerk, so caller can use it more easily.</param>
 		/// <returns>A new instance of CollapsingSplitContainer, which has been placed into "SecondControl/Panel2" of <paramref name="mainCollapsingSplitContainer"/>.</returns>
 		internal static CollapsingSplitContainer Create(FlexComponentParameters flexComponentParameters,
 			ICollapsingSplitContainer mainCollapsingSplitContainer, bool verticalSplitter, XElement configurationParametersElement, XDocument sliceFilterDocument,
 			string toolMachineName,
-			PossibilityListClerkParameters possibilityListClerkParameters)
+			PossibilityListClerkParameters possibilityListClerkParameters,
+			out RecordClerk recordClerk)
 		{
 			var panelButton = new PanelButton(flexComponentParameters.PropertyTable, null, ListsArea.CreateShowHiddenFieldsPropertyName(toolMachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
@@ -50,7 +52,7 @@ namespace LanguageExplorer.Controls
 			}
 			parentSplitterPanelControl.Controls.Clear();
 
-			var recordClerk = ListsArea.CreateBasicClerkForListArea(flexComponentParameters.PropertyTable, possibilityListClerkParameters);
+			recordClerk = ListsArea.CreateBasicClerkForListArea(flexComponentParameters.PropertyTable, possibilityListClerkParameters);
 			recordClerk.InitializeFlexComponent(flexComponentParameters);
 			var recordBar = new RecordBar
 			{
@@ -99,7 +101,8 @@ namespace LanguageExplorer.Controls
 		/// Remove <paramref name="collapsingSplitContainer"/> from parent control and dispose it.
 		/// </summary>
 		/// <param name="collapsingSplitContainer">The CollapsingSplitContainer to remove and dispose.</param>
-		internal static void RemoveFromParentAndDispose(ref CollapsingSplitContainer collapsingSplitContainer)
+		/// <param name="recordClerk">The RecordClerk data member to set to null.</param>
+		internal static void RemoveFromParentAndDispose(ref CollapsingSplitContainer collapsingSplitContainer, ref RecordClerk recordClerk)
 		{
 			var parentCollapsingSplitContainer = (CollapsingSplitContainer)collapsingSplitContainer.Parent.Parent;
 			var parentControl = parentCollapsingSplitContainer.Panel2;
@@ -113,6 +116,11 @@ namespace LanguageExplorer.Controls
 			parentControl.ResumeLayout();
 
 			collapsingSplitContainer = null;
+
+			// recordClerk is disposed by XWorksViewBase in the call "collapsingSplitContainer.Dispose()", but just set the variable to null here.
+			// "recordClerk" is a data member of the caller. Rather than have every caller set its own data member to null,
+			// we do it here for all of them.
+			recordClerk = null;
 		}
 	}
 }

@@ -61,6 +61,15 @@ namespace LanguageExplorer.Areas
 			multiPane.Dispose();
 			parentControl.ResumeLayout();
 			multiPane = null;
+
+#if RANDYTODO
+			// TODO: At some point the client tool that created the MultiPane will have some class of RecordClerk,
+			// TODO: which will get disposed by a parent MultiPane. Do to it here, waht the other factories do.
+			// recordClerk is disposed by XWorksViewBase in the call "multiPane.Dispose()", but just set the variable to null here.
+			// "recordClerk" is a data member of the caller. Rather than have every caller set its own data member to null,
+			// we do it here for all of them.
+			recordClerk = null;
+#endif
 		}
 	}
 }

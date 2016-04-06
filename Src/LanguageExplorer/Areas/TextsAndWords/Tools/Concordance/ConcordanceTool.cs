@@ -93,6 +93,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		/// </summary>
 		public void PrepareToRefresh()
 		{
+#if RANDYTODO
+			// TODO: Call PrepareToRefresh on nested RecordBrowseView control (left side of main ConcordanceContainer splitter control).
+			// TODO: Call PrepareToRefresh on nested InterlinMasterNoTitleBar control (right side of main ConcordanceContainer splitter control).
+#endif
 		}
 
 		/// <summary>
@@ -100,6 +104,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		/// </summary>
 		public void FinishRefresh()
 		{
+#if RANDYTODO
+			// TODO: If tool uses a SDA decorator (IRefreshable), then call its "Refresh" method.
+			// TODO: Call "ReloadIfNeeded" on Record clerk(s).
+#endif
 		}
 
 		/// <summary>

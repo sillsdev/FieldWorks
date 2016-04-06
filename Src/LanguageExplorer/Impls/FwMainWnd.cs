@@ -833,16 +833,6 @@ namespace LanguageExplorer.Impls
 		/// ------------------------------------------------------------------------------------
 		public void PrepareToRefresh()
 		{
-#if RANDYTODO
-			// TODO (RandyR): Remove all of these comments, when XWorksViewBase or InterlinMaster code is put back in service.
-			// the original code in otherMainWindow.PrepareToRefresh() did this: m_mediator.SendMessageToAllNow("PrepareToRefresh", null);
-			// There are/were three impls of "OnPrepareToRefresh": XWindow, XWorksViewBase, and InterlinMaster
-			// The IArea & ITool interfaces have "PrepareToRefresh()" methods now.
-			// TODO: When the relevant IArea and/or ITool impls are developed that use either
-			// TODO: XWorksViewBase or InterlinMaster code, then those area/tool impls will need to call the
-			// TODO: "OnPrepareToRefresh" (renamed to simply ""PrepareToRefresh"") methods on those classes.
-			// TODO: The 'XWindow class will need nothing done to it, since it is just going to be deleted.
-#endif
 			_currentArea.PrepareToRefresh();
 		}
 
@@ -856,6 +846,7 @@ namespace LanguageExplorer.Impls
 		/// ------------------------------------------------------------------------------------
 		public void FinishRefresh()
 		{
+			Cache.ServiceLocator.GetInstance<IUndoStackManager>().Refresh();
 			_currentArea.FinishRefresh();
 			Refresh();
 		}
@@ -936,18 +927,9 @@ namespace LanguageExplorer.Impls
 		{
 			get
 			{
-				IRecordBar recordBarControl = null;
-				var rightSideControl = mainContainer.SecondControl;
-				if (rightSideControl is CollapsingSplitContainer)
-				{
-					var rightSideControlAsCollapsingSplitContainer = (CollapsingSplitContainer)rightSideControl;
-					var leftSideControl = rightSideControlAsCollapsingSplitContainer.FirstControl;
-					if (leftSideControl is IRecordBar)
-					{
-						recordBarControl = (IRecordBar)leftSideControl;
-					}
-				}
-				return recordBarControl;
+				if (!(mainContainer.SecondControl is CollapsingSplitContainer))
+					return null;
+				return ((CollapsingSplitContainer)mainContainer.SecondControl).FirstControl as IRecordBar; // Will be null, if it isn't an IRecordBar.
 			}
 		}
 

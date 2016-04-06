@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using LanguageExplorer.Areas;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Controls
 {
@@ -77,14 +78,21 @@ namespace LanguageExplorer.Controls
 		/// Remove <paramref name="paneBarContainer"/> from parent control and dispose it.
 		/// </summary>
 		/// <param name="paneBarContainer">The PaneBarContainer to remove and dispose.</param>
-		internal static void RemoveFromParentAndDispose(ref PaneBarContainer paneBarContainer)
+		/// <param name="recordClerk">The RecordClerk data member to set to null.</param>
+		internal static void RemoveFromParentAndDispose(ref PaneBarContainer paneBarContainer, ref RecordClerk recordClerk)
 		{
 			var parentControl = paneBarContainer.Parent;
 			parentControl.SuspendLayout();
 			parentControl.Controls.Remove(paneBarContainer);
 			paneBarContainer.Dispose();
 			parentControl.ResumeLayout();
+
 			paneBarContainer = null;
+
+			// recordClerk is disposed by XWorksViewBase in the call "paneBarContainer.Dispose()", but just set the variable to null here.
+			// "recordClerk" is a data member of the caller. Rather than have every caller set its own data member to null,
+			// we do it here for all of them.
+			recordClerk = null;
 		}
 	}
 }

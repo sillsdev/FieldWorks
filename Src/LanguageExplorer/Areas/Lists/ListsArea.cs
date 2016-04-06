@@ -114,6 +114,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// </summary>
 		public void PrepareToRefresh()
 		{
+			m_toolRepository.GetPersistedOrDefaultToolForArea(this).PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -121,6 +122,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// </summary>
 		public void FinishRefresh()
 		{
+			m_toolRepository.GetPersistedOrDefaultToolForArea(this).FinishRefresh();
 		}
 
 		/// <summary>

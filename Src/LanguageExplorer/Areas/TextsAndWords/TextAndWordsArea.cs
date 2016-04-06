@@ -119,6 +119,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public void PrepareToRefresh()
 		{
+			m_toolRepository.GetPersistedOrDefaultToolForArea(this).PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -126,6 +127,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public void FinishRefresh()
 		{
+			m_toolRepository.GetPersistedOrDefaultToolForArea(this).FinishRefresh();
 		}
 
 		/// <summary>

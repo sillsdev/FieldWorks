@@ -11,6 +11,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.Utils;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 {
@@ -21,6 +22,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 	{
 		private XDocument _configurationDocument;
 		private PaneBarContainer _paneBarContainer;
+		private RecordClerk _recordClerk;
 
 		#region Implementation of IPropertyTableProvider
 
@@ -77,7 +79,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			PaneBarContainerFactory.RemoveFromParentAndDispose(ref _paneBarContainer);
+			PaneBarContainerFactory.RemoveFromParentAndDispose(ref _paneBarContainer, ref _recordClerk);
 		}
 
 		/// <summary>
@@ -93,13 +95,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 			var columnsElement = XElement.Parse(LexiconResources.LexiconBrowseDialogColumnDefinitions);
 			OverrideServices.OverrideVisibiltyAttributes(columnsElement, XElement.Parse(LexiconResources.LexiconBrowseOverrides));
 			_configurationDocument.Root.Add(columnsElement);
-			var recordClerk = LexiconArea.CreateBasicClerkForLexiconArea(PropertyTable.GetValue<FdoCache>("cache"));
+			_recordClerk = LexiconArea.CreateBasicClerkForLexiconArea(PropertyTable.GetValue<FdoCache>("cache"));
 			var flexComponentParameterObject = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
-			recordClerk.InitializeFlexComponent(flexComponentParameterObject);
+			_recordClerk.InitializeFlexComponent(flexComponentParameterObject);
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				flexComponentParameterObject,
 				mainCollapsingSplitContainer.SecondControl,
-				new RecordBrowseView(_configurationDocument.Root, recordClerk));
+				new RecordBrowseView(_configurationDocument.Root, _recordClerk));
 		}
 
 		/// <summary>
@@ -114,6 +116,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 		/// </summary>
 		public void FinishRefresh()
 		{
+#if RANDYTODO
+			// TODO: If tool uses a SDA decorator (IRefreshable), then call its "Refresh" method.
+#endif
+			_recordClerk.ReloadIfNeeded();
+			((IRefreshable)_recordClerk.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>

@@ -8,6 +8,8 @@ using LanguageExplorer.Controls;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
+using SIL.FieldWorks.XWorks;
+using SIL.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 {
@@ -17,6 +19,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 	internal sealed class BulkEditWordformsTool : ITool
 	{
 		private PaneBarContainer _paneBarContainer;
+		private RecordClerk _recordClerk;
 
 		#region Implementation of IPropertyTableProvider
 
@@ -73,7 +76,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			PaneBarContainerFactory.RemoveFromParentAndDispose(ref _paneBarContainer);
+			PaneBarContainerFactory.RemoveFromParentAndDispose(ref _paneBarContainer, ref _recordClerk);
 		}
 
 		/// <summary>
@@ -96,6 +99,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 		/// </summary>
 		public void PrepareToRefresh()
 		{
+#if RANDYTODO
+			// TODO: Call PrepareToRefresh on buried RecordBrowseView class (in PaneBarContainer control).
+#endif
 		}
 
 		/// <summary>
@@ -103,6 +109,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 		/// </summary>
 		public void FinishRefresh()
 		{
+#if RANDYTODO
+			// TODO: If tool uses a SDA decorator (IRefreshable), then call its "Refresh" method.
+#endif
+			_recordClerk.ReloadIfNeeded();
+			((IRefreshable)_recordClerk.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>

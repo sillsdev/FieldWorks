@@ -102,6 +102,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		/// </summary>
 		public void PrepareToRefresh()
 		{
+#if RANDYTODO
+			// TODO: Call PrepareToRefresh on nested RecordBrowseView control (left side of main MultiPane splitter control).
+			// TODO: Call PrepareToRefresh on nested RecordBrowseView control (top side of nested MultiPane splitter control).
+			// TODO: Call PrepareToRefresh on nested InterlinMasterNoTitleBar control (bottom side of nested MultiPane splitter control).
+#endif
 		}
 
 		/// <summary>
@@ -109,6 +114,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		/// </summary>
 		public void FinishRefresh()
 		{
+#if RANDYTODO
+			// TODO: If tool uses a SDA decorator (IRefreshable), then call its "Refresh" method.
+			// TODO: Call "ReloadIfNeeded" on Record clerk(s).
+#endif
 		}
 
 		/// <summary>

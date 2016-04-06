@@ -29,10 +29,10 @@ R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
 # added to other object and disposed there
 M: System.Void LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinTaggingChild::AddListToMenu(System.Windows.Forms.ToolStrip,SIL.FieldWorks.FDO.ICmPossibility)
 M: LanguageExplorer.Areas.TextsAndWords.Interlinear.IComboHandler LanguageExplorer.Areas.TextsAndWords.Interlinear.SandboxBase/InterlinComboHandler::MakeCombo(SIL.CoreImpl.IHelpTopicProvider,System.Int32,LanguageExplorer.Areas.TextsAndWords.Interlinear.SandboxBase,System.Int32,SIL.FieldWorks.Common.COMInterfaces.SelLevInfo[],System.Int32)
-M: LanguageExplorer.Controls.CollapsingSplitContainer LanguageExplorer.Controls.CollapsingSplitContainerFactory::Create(SIL.CoreImpl.FlexComponentParameters,SIL.FieldWorks.Common.FwUtils.ICollapsingSplitContainer,System.Boolean,System.Xml.Linq.XElement,System.Xml.Linq.XDocument,System.String,LanguageExplorer.Controls.PossibilityListClerkParameters)
-M: System.Void LanguageExplorer.Controls.CollapsingSplitContainerFactory::RemoveFromParentAndDispose(LanguageExplorer.Controls.CollapsingSplitContainer&)
+M: LanguageExplorer.Controls.CollapsingSplitContainer LanguageExplorer.Controls.CollapsingSplitContainerFactory::Create(SIL.CoreImpl.FlexComponentParameters,SIL.FieldWorks.Common.FwUtils.ICollapsingSplitContainer,System.Boolean,System.Xml.Linq.XElement,System.Xml.Linq.XDocument,System.String,LanguageExplorer.Controls.PossibilityListClerkParameters,SIL.FieldWorks.XWorks.RecordClerk&)
+M: System.Void LanguageExplorer.Controls.CollapsingSplitContainerFactory::RemoveFromParentAndDispose(LanguageExplorer.Controls.CollapsingSplitContainer&,SIL.FieldWorks.XWorks.RecordClerk&)
 M: System.Void LanguageExplorer.Areas.MultiPaneFactory::RemoveFromParentAndDispose(LanguageExplorer.Areas.MultiPane&)
-M: System.Void LanguageExplorer.Controls.PaneBarContainerFactory::RemoveFromParentAndDispose(LanguageExplorer.Controls.PaneBarContainer&)
+M: System.Void LanguageExplorer.Controls.PaneBarContainerFactory::RemoveFromParentAndDispose(LanguageExplorer.Controls.PaneBarContainer&,SIL.FieldWorks.XWorks.RecordClerk&)
 M: SIL.FieldWorks.XWorks.RecordClerk LanguageExplorer.Areas.Lists.ListsArea::CreateBasicClerkForListArea(SIL.CoreImpl.IPropertyTable,LanguageExplorer.Controls.PossibilityListClerkParameters)
 M: SIL.FieldWorks.Common.FwUtils.IRecordBar LanguageExplorer.Impls.FwMainWnd::get_RecordBarControl()
 

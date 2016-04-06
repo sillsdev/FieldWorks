@@ -10,6 +10,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.Utils;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 {
@@ -20,6 +21,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 	{
 		private XDocument _configurationDocument;
 		private PaneBarContainer _paneBarContainer;
+		private RecordClerk _recordClerk;
 
 		#region Implementation of IPropertyTableProvider
 
@@ -76,7 +78,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			PaneBarContainerFactory.RemoveFromParentAndDispose(ref _paneBarContainer);
+			PaneBarContainerFactory.RemoveFromParentAndDispose(ref _paneBarContainer, ref _recordClerk);
 		}
 
 		/// <summary>
@@ -89,13 +91,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 			StatusBar statusbar)
 		{
 			_configurationDocument = XDocument.Parse(GrammarResources.GrammarCategoryBrowserParameters);
-			var recordClerk = GrammarArea.CreateBrowseClerkForGrammarArea(PropertyTable, false);
+			_recordClerk = GrammarArea.CreateBrowseClerkForGrammarArea(PropertyTable, false);
 			var flexComponentParameterObject = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
-			recordClerk.InitializeFlexComponent(flexComponentParameterObject);
+			_recordClerk.InitializeFlexComponent(flexComponentParameterObject);
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				flexComponentParameterObject,
 				mainCollapsingSplitContainer.SecondControl,
-				new RecordBrowseView(_configurationDocument.Root, recordClerk));
+				new RecordBrowseView(_configurationDocument.Root, _recordClerk));
 		}
 
 		/// <summary>
@@ -110,6 +112,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		/// </summary>
 		public void FinishRefresh()
 		{
+#if RANDYTODO
+			// TODO: If tool uses a SDA decorator (IRefreshable), then call its "Refresh" method.
+#endif
+			_recordClerk.ReloadIfNeeded();
+			((IRefreshable)_recordClerk.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>

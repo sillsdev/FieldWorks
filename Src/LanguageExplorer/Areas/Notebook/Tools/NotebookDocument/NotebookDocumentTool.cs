@@ -13,6 +13,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.Utils;
 
 namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 {
@@ -23,6 +24,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 	{
 		private XDocument _configurationDocument;
 		private PaneBarContainer _paneBarContainer;
+		private RecordClerk _recordClerk;
 
 		#region Implementation of IPropertyTableProvider
 
@@ -79,7 +81,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			PaneBarContainerFactory.RemoveFromParentAndDispose(ref _paneBarContainer);
+			PaneBarContainerFactory.RemoveFromParentAndDispose(ref _paneBarContainer, ref _recordClerk);
 		}
 
 		/// <summary>
@@ -113,6 +115,11 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		/// </summary>
 		public void FinishRefresh()
 		{
+#if RANDYTODO
+			// TODO: If tool uses a SDA decorator (IRefreshable), then call its "Refresh" method.
+#endif
+			_recordClerk.ReloadIfNeeded();
+			((IRefreshable)_recordClerk.VirtualListPublisher).Refresh();
 		}
 
 		/// <summary>

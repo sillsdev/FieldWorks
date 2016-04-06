@@ -105,6 +105,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		/// </remarks>
 		public void PrepareToRefresh()
 		{
+#if RANDYTODO
+			// TODO: Call PrepareToRefresh on buried RecordBrowseView class (PaneBarContainer in left side of MultiPane control).
+#endif
 		}
 
 		/// <summary>
@@ -115,6 +118,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		/// </remarks>
 		public void FinishRefresh()
 		{
+#if RANDYTODO
+			// TODO: If tool uses a SDA decorator (IRefreshable), then call its "Refresh" method.
+			// TODO: Call "ReloadIfNeeded" on Record clerk(s).
+#endif
 		}
 
 		/// <summary>
