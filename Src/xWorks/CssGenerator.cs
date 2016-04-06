@@ -990,7 +990,7 @@ namespace SIL.FieldWorks.XWorks
 			AddInfoFromWsOrDefaultValue(wsFontInfo.Italic, defaultFontInfo.Italic, "font-style", "italic", "normal", declaration);
 			AddInfoFromWsOrDefaultValue(wsFontInfo.FontColor, defaultFontInfo.FontColor, "color", declaration);
 			AddInfoFromWsOrDefaultValue(wsFontInfo.BackColor, defaultFontInfo.BackColor, "background-color", declaration);
-			AddInfoFromWsOrDefaultValue(wsFontInfo.SuperSub, defaultFontInfo.SuperSub, "vertical-align", declaration);
+			AddInfoFromWsOrDefaultValue(wsFontInfo.SuperSub, defaultFontInfo.SuperSub, declaration);
 			AddInfoForUnderline(wsFontInfo, defaultFontInfo, declaration);
 
 		}
@@ -1061,39 +1061,29 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="wsFontInfo"></param>
 		/// <param name="defaultFontInfo"></param>
-		/// <param name="propName"></param>
 		/// <param name="declaration"></param>
 		private static void AddInfoFromWsOrDefaultValue(IStyleProp<FwSuperscriptVal> wsFontInfo,
-																		IStyleProp<FwSuperscriptVal> defaultFontInfo, string propName, StyleDeclaration declaration)
+																		IStyleProp<FwSuperscriptVal> defaultFontInfo, StyleDeclaration declaration)
 		{
 			FwSuperscriptVal fontValue;
 			if(!GetFontValue(wsFontInfo, defaultFontInfo, out fontValue))
 				return;
-			var fontProp = new Property(propName);
 			var sizeProp = new Property("font-size");
 			sizeProp.Term = new PrimitiveTerm(UnitType.Ident, "58%"); //58% is what OpenOffice does
-			var subSuperVal = "inherit";
-			switch(fontValue)
-			{
-				case (FwSuperscriptVal.kssvSub):
-				{
-					subSuperVal = "sub";
-					break;
-				}
-				case (FwSuperscriptVal.kssvSuper):
-				{
-					subSuperVal = "super";
-					break;
-				}
-				case (FwSuperscriptVal.kssvOff):
-				{
-					subSuperVal = "initial";
-					break;
-				}
-			}
-			fontProp.Term = new PrimitiveTerm(UnitType.Ident, subSuperVal);
-			declaration.Add(fontProp);
 			declaration.Add(sizeProp);
+
+			if (fontValue != FwSuperscriptVal.kssvOff)
+			{
+				var position = new Property("position");
+				position.Term = new PrimitiveTerm(UnitType.Ident, "relative");
+				var top = new Property("top");
+				if (fontValue == FwSuperscriptVal.kssvSub)
+					top.Term = new PrimitiveTerm(UnitType.Pixel, "0.3em");
+				else
+					top.Term = new PrimitiveTerm(UnitType.Pixel, "-0.6em");
+				declaration.Add(position);
+				declaration.Add(top);
+			}
 		}
 
 		private static void AddInfoForUnderline(FontInfo wsFont, ICharacterStyleInfo defaultFont, StyleDeclaration declaration)

@@ -932,6 +932,8 @@ namespace SIL.FieldWorks.XWorks
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			//make sure that fontinfo with the subscript overrides made it into css
 			VerifyExtraFontInfoInCss(0, FwSuperscriptVal.kssvSub, FwUnderlineType.kuntNone, Color.Black, cssResult);
+			Assert.IsTrue(Regex.Match(cssResult, @".*\.sil*\.fieldworks.xworks.testrootclass\s*span\[lang|='fr']\{.*position\:relative\*top\:-0.2em.*", RegexOptions.Singleline).Success,
+				  "Subscript's positiion not generated properly");
 		}
 
 		[Test]
@@ -957,6 +959,8 @@ namespace SIL.FieldWorks.XWorks
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			//make sure that fontinfo with the superscript overrides made it into css
 			VerifyExtraFontInfoInCss(0, FwSuperscriptVal.kssvSuper, FwUnderlineType.kuntNone, Color.Black, cssResult);
+			Assert.IsTrue(Regex.Match(cssResult, @".*\.sil*\.fieldworks.xworks.testrootclass\s*span\[lang|='fr']\{.*position\:relative\*top\:\0.2em.*", RegexOptions.Singleline).Success,
+				  "Superscript's positiion not generated properly");
 		}
 
 		[Test]
@@ -2679,13 +2683,15 @@ namespace SIL.FieldWorks.XWorks
 				case (FwSuperscriptVal.kssvSub):
 				{
 					Assert.That(css, Contains.Substring("font-size:58%"), "subscript did not affect size");
-					Assert.That(css, Contains.Substring("vertical-align:sub;"), "subscript was not applied");
+					Assert.That(css, Contains.Substring("position:relative;"), "subscript was not applied");
+					Assert.That(css, Contains.Substring("top:0.3em;"), "subscript was not applied");
 					break;
 				}
 				case (FwSuperscriptVal.kssvSuper):
 				{
 					Assert.That(css, Contains.Substring("font-size:58%"), "superscript did not affect size");
-					Assert.That(css, Contains.Substring("vertical-align:super;"), "superscript was not applied");
+					Assert.That(css, Contains.Substring("position:relative;"), "superscript was not applied");
+					Assert.That(css, Contains.Substring("top:-0.6em;"), "superscript was not applied");
 					break;
 				}
 				case (FwSuperscriptVal.kssvOff):
