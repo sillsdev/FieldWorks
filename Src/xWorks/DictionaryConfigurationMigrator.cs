@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.XWorks
 	public class DictionaryConfigurationMigrator : ILayoutConverter
 	{
 		public const int VersionPre83 = -1;
-		public const int VersionCurrent = 2;
+		public const int VersionCurrent = 3;
 		private readonly Inventory m_layoutInventory;
 		private readonly Inventory m_partInventory;
 		private readonly Mediator m_mediator;
@@ -421,7 +421,10 @@ namespace SIL.FieldWorks.XWorks
 				// This check is necessary to handle splitting "Minor Entries" to
 				// "Minor Entries (Complex Forms)" and "Minor Entries (Variants)".
 				if (!currentDefaultNode.Label.StartsWith(convertedNode.Label + " "))
-					throw new ArgumentException("Cannot merge two nodes that do not match.");
+				{
+					throw new ArgumentException(string.Format("Cannot merge two nodes that do not match. [{0}, {1}]",
+						convertedNode.Label, currentDefaultNode.Label));
+				}
 			}
 			convertedNode.FieldDescription = currentDefaultNode.FieldDescription;
 			convertedNode.SubField = currentDefaultNode.SubField;
@@ -513,9 +516,62 @@ namespace SIL.FieldWorks.XWorks
 				case 1:
 					RemoveReferencedItems(alphaModel.Parts);
 					ExtractWritingSystemOptionsFromReferringSenseOptions(alphaModel.Parts);
+					goto case 2;
+				case 2:
+					HandleFieldChanges(alphaModel.Parts, 1, !string.IsNullOrEmpty(alphaModel.WritingSystem));
 					break;
 			}
 			alphaModel.Version = VersionCurrent;
+		}
+
+		private void HandleFieldChanges(List<ConfigurableDictionaryNode> parts, int version, bool isReversal)
+		{
+			foreach (var node in parts)
+			{
+				switch (version)
+				{
+					case 1:
+						if (isReversal)
+						{
+							ReplaceFieldInNodes(node, n => n.Label == "Referenced Headword", "ReversalName");
+							ReplaceSubFieldInNodes(node, n => n.Label == "Complex Form" && n.FieldDescription == "OwningEntry", "ReversalName");
+						}
+						else
+						{
+							ReplaceFieldInNodes(node, n => n.Label == "Referenced Headword", "HeadWordRef");
+							ReplaceSubFieldInNodes(node, n => n.Label == "Complex Form" && n.FieldDescription == "OwningEntry", "HeadWordRef");
+						}
+						break;
+				}
+			}
+		}
+
+		private void ReplaceSubFieldInNodes(ConfigurableDictionaryNode node, Func<ConfigurableDictionaryNode, bool> match, string newSubFieldValue)
+		{
+			if (match(node))
+			{
+				node.SubField = newSubFieldValue;
+			}
+			if (node.Children == null)
+				return;
+			foreach (var child in node.Children)
+			{
+				ReplaceSubFieldInNodes(child, match, newSubFieldValue);
+			}
+		}
+
+		private void ReplaceFieldInNodes(ConfigurableDictionaryNode node, Func<ConfigurableDictionaryNode, bool> match, string newFieldValue)
+		{
+			if (match(node))
+			{
+				node.FieldDescription = newFieldValue;
+			}
+			if (node.Children == null)
+				return;
+			foreach (var child in node.Children)
+			{
+				ReplaceFieldInNodes(child, match, newFieldValue);
+			}
 		}
 
 		private void RemoveReferencedItems(List<ConfigurableDictionaryNode> nodes)
@@ -612,7 +668,8 @@ namespace SIL.FieldWorks.XWorks
 				if (child.Label == "Homograph Number")
 					result = "Secondary Homograph Number";
 
-				if (child.Label == "Headword" && child.Parent.Label == "Referenced Senses")
+				if (child.Label == "Headword" && child.Parent.Label == "Referenced Senses"
+					|| child.Label == "Form" && child.Parent.Label == "Subentry Under Reference")
 					result = "Referenced Headword";
 			}
 			return result;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<DictionaryConfiguration name="Root-based (complex forms as subentries)" allPublications="true" version="2" lastModified="2014-10-07">
+<DictionaryConfiguration name="Root-based (complex forms as subentries)" allPublications="true" version="3" lastModified="2016-04-05">
   <!-- Main entries in the dictionary have historically been written out with class="entry" -->
   <ConfigurationItem name="Main Entry" style="Dictionary-Normal" styleType="paragraph" isEnabled="true" field="LexEntry" cssClassNameOverride="entry">
   <!-- using a different CSS Class for the main HeadWord and the HeadWords for subentries, references, and (variant|complex) forms
@@ -71,7 +71,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variant Form" between=", " isEnabled="true" field="OwningEntry" subField="MLHeadWord" cssClassNameOverride="headword">
+	  <ConfigurationItem name="Variant Form" between=", " isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		  <Option id="vernacular" isEnabled="true"/>
 		</WritingSystemOptions>
@@ -145,7 +145,7 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Targets" between=", " after=" " isEnabled="true" field="ConfigTargets">
 		<!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
-		<ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord" cssClassNameOverride="headword">
+		<ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -515,7 +515,7 @@
 		  <ConfigurationItem name="Reference" after=" " isEnabled="false" field="Reference"/>
 		</ConfigurationItem>
 		<ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
-		  <ConfigurationItem name="Form" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
+		  <ConfigurationItem name="Referenced Headword" isEnabled="true" field="HeadWordRef" cssClassNameOverride="headword">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			  <Option id="vernacular" isEnabled="true"/>
 			</WritingSystemOptions>
@@ -872,7 +872,7 @@
 			<ConfigurationItem name="Reference" after=" " isEnabled="false" field="Reference"/>
 		  </ConfigurationItem>
 		  <ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
-			<ConfigurationItem name="Form" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
+			<ConfigurationItem name="Referenced Headword" isEnabled="true" field="HeadWordRef" cssClassNameOverride="headword">
 			  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 				<Option id="vernacular" isEnabled="true"/>
 			  </WritingSystemOptions>
@@ -1020,7 +1020,7 @@
 		<ConfigurationItem name="Reference" after=" " isEnabled="false" field="Reference"/>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
-		<ConfigurationItem name="Form" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
+		<ConfigurationItem name="Referenced Headword" isEnabled="true" field="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -1126,7 +1126,7 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Variant Form" between=", " isEnabled="true" field="OwningEntry" subField="MLHeadWord" cssClassNameOverride="headword">
+		<ConfigurationItem name="Variant Form" between=", " isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -1200,7 +1200,7 @@
 		</ConfigurationItem>
 		<ConfigurationItem name="Targets" between=", " after=" " isEnabled="true" field="ConfigTargets">
 		  <!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
-		  <ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord" cssClassNameOverride="headword">
+		  <ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWordRef" cssClassNameOverride="headword">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			  <Option id="vernacular" isEnabled="true"/>
 			</WritingSystemOptions>
@@ -1561,7 +1561,7 @@
 			<ConfigurationItem name="Reference" after=" " isEnabled="false" field="Reference"/>
 		  </ConfigurationItem>
 		  <ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
-			<ConfigurationItem name="Form" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
+			<ConfigurationItem name="Referenced Headword" isEnabled="true" field="HeadWordRef" cssClassNameOverride="headword">
 			  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 				<Option id="vernacular" isEnabled="true"/>
 			  </WritingSystemOptions>
@@ -1907,7 +1907,7 @@
 			  <ConfigurationItem name="Reference" after=" " isEnabled="false" field="Reference"/>
 			</ConfigurationItem>
 			<ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
-			  <ConfigurationItem name="Form" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
+			  <ConfigurationItem name="Referenced Headword" isEnabled="true" field="HeadWordRef" cssClassNameOverride="headword">
 				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 				  <Option id="vernacular" isEnabled="true"/>
 				</WritingSystemOptions>
@@ -2000,7 +2000,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 		<ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
-		  <ConfigurationItem name="Form" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
+		  <ConfigurationItem name="Referenced Headword" isEnabled="true" field="HeadWordRef" cssClassNameOverride="headword">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			  <Option id="vernacular" isEnabled="true"/>
 			</WritingSystemOptions>
@@ -2108,7 +2108,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variant Form" between=", " isEnabled="true" field="OwningEntry" subField="MLHeadWord" cssClassNameOverride="headword">
+	  <ConfigurationItem name="Variant Form" between=", " isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		  <Option id="vernacular" isEnabled="true"/>
 		</WritingSystemOptions>
@@ -2182,7 +2182,7 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Targets" between=", " after=" " isEnabled="true" field="ConfigTargets">
 		<!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
-		<ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord" cssClassNameOverride="headword">
+		<ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -2218,7 +2218,7 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Referenced Entries" between=", " isEnabled="true" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
 		<!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
-		<ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord" cssClassNameOverride="headword">
+		<ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -2259,7 +2259,7 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Referenced Entries" between=", " isEnabled="true" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
 		<!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
-		<ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord" cssClassNameOverride="headword">
+		<ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -2276,7 +2276,7 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Subentry Under" before=", see under " between=", " isEnabled="true" field="NonTrivialEntryRoots">
-		<ConfigurationItem name="Form" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
+		<ConfigurationItem name="Referenced Headword" isEnabled="true" field="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -2632,7 +2632,7 @@
 		  <ConfigurationItem name="Reference" after=" " isEnabled="false" field="Reference"/>
 		</ConfigurationItem>
 		<ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
-		  <ConfigurationItem name="Form" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
+		  <ConfigurationItem name="Form" isEnabled="true" field="HeadWordRef" cssClassNameOverride="headword">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			  <Option id="vernacular" isEnabled="true"/>
 			</WritingSystemOptions>
@@ -2978,7 +2978,7 @@
 			<ConfigurationItem name="Reference" after=" " isEnabled="false" field="Reference"/>
 		  </ConfigurationItem>
 		  <ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
-			<ConfigurationItem name="Form" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
+			<ConfigurationItem name="Form" isEnabled="true" field="HeadWordRef" cssClassNameOverride="headword">
 			  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 				<Option id="vernacular" isEnabled="true"/>
 			  </WritingSystemOptions>
@@ -3208,7 +3208,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variant Form" between=", " isEnabled="true" field="OwningEntry" subField="MLHeadWord" cssClassNameOverride="headword">
+	  <ConfigurationItem name="Variant Form" between=", " isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		  <Option id="vernacular" isEnabled="true"/>
 		</WritingSystemOptions>
@@ -3282,7 +3282,7 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Targets" between=", " after=" " isEnabled="true" field="ConfigTargets">
 		<!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
-		<ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord" cssClassNameOverride="headword">
+		<ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -3318,7 +3318,7 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Referenced Entries" between=", " isEnabled="true" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
 		<!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
-		<ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord" cssClassNameOverride="headword">
+		<ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -3359,7 +3359,7 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Referenced Entries" between=", " isEnabled="true" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
 		<!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
-		<ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord" cssClassNameOverride="headword">
+		<ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -3376,7 +3376,7 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Subentry Under" before=", see under " between=", " isEnabled="true" field="NonTrivialEntryRoots">
-		<ConfigurationItem name="Form" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
+		<ConfigurationItem name="Referenced Headword" isEnabled="true" field="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -3732,7 +3732,7 @@
 		  <ConfigurationItem name="Reference" after=" " isEnabled="false" field="Reference"/>
 		</ConfigurationItem>
 		<ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
-		  <ConfigurationItem name="Form" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
+		  <ConfigurationItem name="Referenced Headword" isEnabled="true" field="HeadWordRef" cssClassNameOverride="headword">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			  <Option id="vernacular" isEnabled="true"/>
 			</WritingSystemOptions>
@@ -4078,7 +4078,7 @@
 			<ConfigurationItem name="Reference" after=" " isEnabled="false" field="Reference"/>
 		  </ConfigurationItem>
 		  <ConfigurationItem name="Subentry Under Reference" before=" (see under " between=", " after=") " style="Dictionary-CrossReferences" isEnabled="true" field="NonTrivialEntryRoots">
-			<ConfigurationItem name="Form" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
+			<ConfigurationItem name="Referenced Headword" isEnabled="true" field="HeadWordRef" cssClassNameOverride="headword">
 			  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 				<Option id="vernacular" isEnabled="true"/>
 			  </WritingSystemOptions>

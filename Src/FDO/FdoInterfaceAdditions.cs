@@ -1272,6 +1272,15 @@ namespace SIL.FieldWorks.FDO
 			get;
 		}
 
+		/// <summary>
+		/// Virtual property allows Headword to be read through cache using the DictionaryReference homograph number configuration
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.MultiUnicode)]
+		IMultiAccessorBase HeadWordRef
+		{
+			get;
+		}
+
 		/// <summary/>
 		IMoMorphType PrimaryMorphType
 		{
@@ -5927,6 +5936,11 @@ namespace SIL.FieldWorks.FDO
 		/// The Guid if LexEntry; the owning entry's Guid if LexSense
 		/// </summary>
 		Guid EntryGuid { get; }
+
+		/// <summary>
+		/// The HeadWordRef property if wrapping LexEntry, or the HeadWord virtual property for LexSense
+		/// </summary>
+		ITsString HeadWordRef { get; }
 
 		/// <summary>
 		/// The HeadWord property if wrapping LexEntry, or the HeadWord virtual property for LexSense

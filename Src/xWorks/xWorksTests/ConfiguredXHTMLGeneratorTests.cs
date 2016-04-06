@@ -1272,13 +1272,13 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void GenerateXHTMLForEntry_MLHeadWordVirtualPropWorks()
+		public void GenerateXHTMLForEntry_HeadWordRefVirtualPropWorks()
 		{
 			var wsOpts = GetWsOptionsForLanguages(new[] { "vernacular" });
 			const string headWord = "mlhw";
 			var mlHeadWordNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "MLHeadWord",
+				FieldDescription = "HeadWordRef",
 				CSSClassNameOverride = headWord,
 				DictionaryNodeOptions = wsOpts
 			};

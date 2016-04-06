@@ -786,9 +786,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void LoadPageIfNecessary(GeckoWebBrowser browser)
 		{
-			if (Clerk.CurrentObject == null)
-				return;
-			var currentObjectHvo = Clerk.CurrentObject.Hvo;
+			var currentObjectHvo = Clerk.CurrentObjectHvo;
 			var currentObjectIndex = Array.IndexOf(PublicationDecorator.GetEntriesToPublish(m_mediator, Clerk.VirtualFlid), currentObjectHvo);
 			if (currentObjectIndex < 0 || browser == null || browser.Document == null) // If the current item is not to be displayed (invalid, not in this publication) just quit
 				return;

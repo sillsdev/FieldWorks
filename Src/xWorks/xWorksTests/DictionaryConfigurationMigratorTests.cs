@@ -1977,6 +1977,37 @@ namespace SIL.FieldWorks.XWorks
 
 		///<summary/>
 		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_CopyNewDefaultsThrowsWhenLabelsAreMismatched()
+		{
+			var convertedNode = new ConfigurableDictionaryNode
+			{
+				Label = "Miss",
+				FieldDescription = "LexEntry"
+			};
+			var defaultNode = new ConfigurableDictionaryNode
+			{
+				Label = "Match",
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(convertedNode);
+			CssGeneratorTests.PopulateFieldsForTesting(defaultNode);
+
+			var convertedConfig = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { convertedNode },
+				Version = -1
+			};
+			var defaultConfig = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { defaultNode },
+				Version = 1
+			};
+
+			Assert.Throws<ArgumentException>(()=>m_migrator.CopyNewDefaultsIntoConvertedModel(convertedConfig, defaultConfig));
+		}
+
+		///<summary/>
+		[Test]
 		public void ConfigsNeedMigratingFromPre83_ReturnsFalseIfNewReversalConfigsExist()
 		{
 			var newRevIdxConfigLoc = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)),
@@ -2277,6 +2308,30 @@ namespace SIL.FieldWorks.XWorks
 			var configModel = new DictionaryConfigurationModel { Version = 1, Parts = new List<ConfigurableDictionaryNode> { configParent } };
 			m_migrator.MigrateFrom83Alpha(configModel);
 			Assert.Null(configChild.ReferenceItem, "Unused ReferenceItem should have been removed");
+		}
+
+		[Test]
+		public void MigrateFrom83Alpha_UpdatesHeadWordRefs()
+		{
+			var cpFormChild = new ConfigurableDictionaryNode { Label = "Complex Form", FieldDescription = "OwningEntry", SubField = "MLHeadWord"};
+			var referenceHwChild = new ConfigurableDictionaryNode { Label = "Referenced Headword", FieldDescription = "HeadWord" };
+			var configParent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { referenceHwChild, cpFormChild } };
+			var configModel = new DictionaryConfigurationModel { Version = 2, Parts = new List<ConfigurableDictionaryNode> { configParent } };
+			m_migrator.MigrateFrom83Alpha(configModel);
+			Assert.AreEqual("HeadWordRef", referenceHwChild.FieldDescription);
+			Assert.AreEqual("HeadWordRef", cpFormChild.SubField);
+		}
+
+		[Test]
+		public void MigrateFrom83Alpha_UpdatesReversalHeadwordRefs()
+		{
+			var cpFormChild = new ConfigurableDictionaryNode { Label = "Complex Form", FieldDescription = "OwningEntry", SubField = "MLHeadWord" };
+			var referenceHwChild = new ConfigurableDictionaryNode { Label = "Referenced Headword", FieldDescription = "HeadWord" };
+			var configParent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { referenceHwChild, cpFormChild } };
+			var configModel = new DictionaryConfigurationModel { Version = 2, WritingSystem = "en", Parts = new List<ConfigurableDictionaryNode> { configParent } };
+			m_migrator.MigrateFrom83Alpha(configModel);
+			Assert.AreEqual("ReversalName", referenceHwChild.FieldDescription);
+			Assert.AreEqual("ReversalName", cpFormChild.SubField);
 		}
 
 		[Test]

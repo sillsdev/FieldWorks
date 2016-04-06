@@ -2470,7 +2470,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Virtual property allows HeadWordRef to be read through cache.
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.MultiUnicode)]
-		public VirtualStringAccessor HeadWordRef
+		public IMultiAccessorBase HeadWordRef
 		{
 			get
 			{
@@ -9453,6 +9453,19 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if(entry != null)
 				{
 					return entry.HeadWord;
+				}
+				return ((LexSense)Item).OwnerOutlineName;
+			}
+		}
+
+		public ITsString HeadWordRef
+		{
+			get
+			{
+				var entry = Item as ILexEntry;
+				if (entry != null)
+				{
+					return entry.HeadWordRef.BestVernacularAlternative;
 				}
 				return ((LexSense)Item).OwnerOutlineName;
 			}
