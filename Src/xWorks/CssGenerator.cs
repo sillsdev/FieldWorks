@@ -1206,9 +1206,13 @@ namespace SIL.FieldWorks.XWorks
 
 		public static string GenerateCssForPageButtons()
 		{
-			var pages = new StyleRule { Value = ".pages" };
-			pages.Declarations.Properties.Add(new Property("display") { Term = new PrimitiveTerm(UnitType.Ident, "table") });
-			pages.Declarations.Properties.Add(new Property("width") { Term = new PrimitiveTerm(UnitType.Percentage, 100) });
+			var screenPages = new StyleRule { Value = ".pages" };
+			screenPages.Declarations.Properties.Add(new Property("display") { Term = new PrimitiveTerm(UnitType.Ident, "table") });
+			screenPages.Declarations.Properties.Add(new Property("width") { Term = new PrimitiveTerm(UnitType.Percentage, 100) });
+			var screen = new MediaRule { Condition = "screen", RuleSets = { screenPages } };
+			var printPages = new StyleRule { Value = ".pages" };
+			printPages.Declarations.Properties.Add(new Property("display") { Term = new PrimitiveTerm(UnitType.Ident, "none") });
+			var print = new MediaRule { Condition = "print", RuleSets = { printPages } };
 			var pageButtonHover = new StyleRule { Value = ".pagebutton:hover" };
 			pageButtonHover.Declarations.Properties.Add(new Property("background") { Term = new PrimitiveTerm(UnitType.Grad, "linear-gradient(to bottom, #dfdfdf 5%, #ededed 100%)") });
 			pageButtonHover.Declarations.Properties.Add(new Property("background-color") { Term = new PrimitiveTerm(UnitType.RGB, "#cdcdcd") });
@@ -1237,7 +1241,7 @@ namespace SIL.FieldWorks.XWorks
 			currentButtonRule.Declarations.Properties.Add(new Property("background") { Term = new PrimitiveTerm(UnitType.Grad, "linear-gradient(to bottom, #dfdfdf 5%, #ededed 100%)") });
 			currentButtonRule.Declarations.Properties.Add(new Property("background-color") { Term = new PrimitiveTerm(UnitType.RGB, "#cdcdcd") });
 
-			return string.Format("{1}{0}{2}{0}{3}{0}{4}{0}{5}{0}", Environment.NewLine, pages.ToString(true),
+			return string.Format("{1}{0}{2}{0}{3}{0}{4}{0}{5}{0}{6}{0}", Environment.NewLine, screen.ToString(true), print.ToString(true),
 				pageButton.ToString(true), pageButtonHover.ToString(true), pageButtonActive.ToString(true), currentButtonRule.ToString(true));
 		}
 

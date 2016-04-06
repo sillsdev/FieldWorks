@@ -880,9 +880,9 @@ namespace SIL.FieldWorks.XWorks
 		private static bool IsVideo(string fileName)
 		{
 			var extension = Path.GetExtension(fileName);
-			switch (extension)
+			switch (extension.ToLowerInvariant())
 			{
-					// any others we should detect?
+				// any others we should detect?
 				case ".mp4":
 				case ".avi":
 				case ".swf":

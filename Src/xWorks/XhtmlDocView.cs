@@ -571,6 +571,34 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Enable the 'File Print...' menu option for the Dictionary view
+		/// </summary>
+		public bool OnDisplayPrint(object parameter, UIItemDisplayProperties display)
+		{
+			return true;
+		}
+
+		private void OnPrintPage()
+		{
+			CloseContextMenuIfOpen(); // not sure if this is necessary or not
+			var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
+			if (browser == null)
+				return;
+			browser.Window.Print();
+		}
+
+		/// <summary>
+		/// Handle the 'File Print...' menu item click (defined in the Lexicon areaConfiguration.xml)
+		/// </summary>
+		/// <param name="commandObject"></param>
+		/// <returns></returns>
+		public bool OnPrint(object commandObject)
+		{
+			OnPrintPage();
+			return true;
+		}
+
+		/// <summary>
 		/// Read in the parameters to determine which sequence/collection we are editing.
 		/// </summary>
 		protected override void ReadParameters()

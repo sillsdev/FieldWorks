@@ -5109,6 +5109,14 @@ namespace SIL.FieldWorks.XWorks
 				var xhtml = File.ReadAllText(xhtmlPath);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(pagesDivXPath, 2);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(pageButtonXPath, 6);
+				var cssPath = Path.ChangeExtension(xhtmlPath, "css");
+				var css = File.ReadAllText(cssPath);
+				// verify that the css file contains a line similar to: @media screen {
+				Assert.IsTrue(Regex.Match(css, @"@media\s*screen\s*{\s*\.pages\s*{\s*display:\s*table;\s*width:\s*100%;").Success,
+								  "Css for page buttons did not generate a screen-only rule");
+				// verify that the css file contains a line similar to: @media print {
+				Assert.IsTrue(Regex.Match(css, @"@media\s*print\s*{\s*\.pages\s*{\s*display:\s*none;\s*}").Success,
+								  "Css for page buttons did not generate a print-only rule");
 			}
 			finally
 			{
