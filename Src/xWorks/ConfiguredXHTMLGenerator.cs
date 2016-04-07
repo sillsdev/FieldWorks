@@ -889,6 +889,7 @@ namespace SIL.FieldWorks.XWorks
 				case ".mov":
 				case ".flv":
 				case ".ogv":
+				case ".3gp":
 					return true;
 			}
 			return false;
