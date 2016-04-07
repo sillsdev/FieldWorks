@@ -8,13 +8,16 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using Gecko;
 using Gecko.DOM;
 using Palaso.UI.WindowsForms.HtmlBrowser;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FwCoreDlgs;
@@ -919,6 +922,49 @@ namespace SIL.FieldWorks.XWorks
 			display.Enabled = true;
 			display.Checked = (xWorksStrings.AllEntriesPublication == pubName);
 			return true;
+		}
+
+		/// <summary>
+		/// Implements the command that just does Find, without Replace.
+		/// </summary>
+		public bool OnFindAndReplaceText(object argument)
+		{
+			using (var findDlg = new BasicFindDialog())
+			{
+				findDlg.FindNext += FindDlgFindNextHandler;
+				findDlg.ShowDialog(this);
+			}
+			return true;
+		}
+
+		void FindDlgFindNextHandler(object sender, IBasicFindView view)
+		{
+			if (m_mainView != null)
+			{
+				var geckoBrowser = m_mainView.NativeBrowser as GeckoWebBrowser;
+				var field = typeof(GeckoWebBrowser).GetField("WebBrowser", BindingFlags.Instance | BindingFlags.NonPublic);
+				nsIWebBrowser browser = (nsIWebBrowser)field.GetValue(geckoBrowser);
+				var browserFind = Xpcom.QueryInterface<nsIWebBrowserFind>(browser);
+				browserFind.SetSearchStringAttribute(view.SearchText);
+				try
+				{
+					browserFind.SetWrapFindAttribute(true);
+					browserFind.FindNext();
+				}
+				catch (Exception e)
+				{
+					view.StatusText = e.Message;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Enables the command that just does Find, without Replace.
+		/// </summary>
+		public virtual bool OnDisplayFindAndReplaceText(object commandObject, ref UIItemDisplayProperties display)
+		{
+			display.Enabled = display.Visible = true;
+			return true; //we've handled this
 		}
 
 		public bool OnShowAllEntries(object args)

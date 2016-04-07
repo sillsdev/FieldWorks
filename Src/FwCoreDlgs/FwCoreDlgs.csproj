@@ -294,6 +294,12 @@
       <DependentUpon>RestoreProjectDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="BackupRestore\RestoreProjectPresenter.cs" />
+    <Compile Include="BasicFindDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BasicFindDialog.Designer.cs">
+      <DependentUpon>BasicFindDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="CharContextCtrl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -517,6 +523,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="BackupRestore\RestoreProjectDlg.resx">
       <DependentUpon>RestoreProjectDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BasicFindDialog.resx">
+      <DependentUpon>BasicFindDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CharContextCtrl.resx">
       <DependentUpon>CharContextCtrl.cs</DependentUpon>
