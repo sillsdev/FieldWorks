@@ -550,7 +550,7 @@ namespace SIL.FieldWorks.XWorks
 				config.Save();
 			}
 			// This property must be set *after* saving, because the initial save changes the FilePath
-			DictionaryConfigurationListener.SetCurrentConfiguration(_mediator, _model.FilePath);
+			DictionaryConfigurationListener.SetCurrentConfiguration(_mediator, _model.FilePath, false);
 			MasterRefreshRequired = true;
 			m_isDirty = false;
 		}
