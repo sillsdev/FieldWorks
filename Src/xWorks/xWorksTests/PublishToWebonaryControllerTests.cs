@@ -387,6 +387,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.True(PublishToWebonaryController.IsSupportedWebonaryFile("foo.png"));
 
 			Assert.True(PublishToWebonaryController.IsSupportedWebonaryFile("foo.mp3"));
+			Assert.True(PublishToWebonaryController.IsSupportedWebonaryFile("foo.MP4")); // avoid failure because of capitalization
 
 			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.wmf"));
 			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.tif"));
@@ -436,6 +437,12 @@ namespace SIL.FieldWorks.XWorks
 				var jpegMagicNumber = new byte[] {0xff, 0xd8};
 				File.WriteAllBytes(jpegPath, jpegMagicNumber);
 
+				// MP4
+				var mp4Filename = Path.GetFileName(Path.GetTempFileName() + ".mp4");
+				var mp4Path = Path.Combine(tempDirectoryToCompress, mp4Filename);
+				var mp4MagicNumber = new byte[] { 0x00, 0x00, 0x00, 0x18, 0x66, 0x74, 0x79, 0x70, 0x6d, 0x70, 0x34, 0x32 };
+				File.WriteAllBytes(mp4Path, mp4MagicNumber);
+
 				var xhtmlFilename = Path.GetFileName(Path.GetTempFileName() + ".xhtml");
 				var xhtmlPath = Path.Combine(tempDirectoryToCompress, xhtmlFilename);
 				var xhtmlContent = "<xhtml/>";
@@ -444,18 +451,24 @@ namespace SIL.FieldWorks.XWorks
 				// SUT
 				PublishToWebonaryController.CompressExportedFiles(tempDirectoryToCompress, zipFileToUpload, view);
 
+				// Verification
+				const string unsupported = ".*nsupported.*";
+				const string unsupportedRegex = ".*{0}" + unsupported;
 				using (var uploadZip = new ZipFile(zipFileToUpload))
 				{
 					Assert.False(uploadZip.EntryFileNames.Contains(tiffFilename), "Should not have included unsupported TIFF file in file to upload.");
 					Assert.True(uploadZip.EntryFileNames.Contains(jpegFilename), "Should have included supported JPEG file in file to upload.");
+					Assert.True(uploadZip.EntryFileNames.Contains(mp4Filename), "Should have included supported MP4 file in file to upload.");
 				}
 
-				var query = string.Format(".*{0}.*nsupported.*", tiffFilename);
+				var query = string.Format(unsupportedRegex, tiffFilename);
 				Assert.True(view.StatusStrings.Exists(statusString => Regex.Matches(statusString, query).Count==1), "Lack of support for the tiff file should have been reported to the user.");
-				query = string.Format(".*{0}.*nsupported.*", jpegFilename);
+				query = string.Format(unsupportedRegex, jpegFilename);
 				Assert.False(view.StatusStrings.Exists(statusString => Regex.Matches(statusString, query).Count==1), "Should not have reported lack of support for the jpeg file.");
+				query = string.Format(unsupportedRegex, mp4Filename);
+				Assert.False(view.StatusStrings.Exists(statusString => Regex.Matches(statusString, query).Count == 1), "Should not have reported lack of support for the mp4 file.");
 
-				Assert.That(view.StatusStrings.Count(statusString => Regex.Matches(statusString, ".*nsupported.*").Count > 0), Is.EqualTo(1), "Too many unsupported files reported.");
+				Assert.That(view.StatusStrings.Count(statusString => Regex.Matches(statusString, unsupported).Count > 0), Is.EqualTo(1), "Too many unsupported files reported.");
 			}
 			finally
 			{

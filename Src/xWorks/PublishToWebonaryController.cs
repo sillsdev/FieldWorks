@@ -276,9 +276,9 @@ namespace SIL.FieldWorks.XWorks
 			var supportedFileExtensions = new List<string>
 			{
 				".xhtml", ".css", ".html", ".htm", ".json", ".xml",
-				".jpg", ".jpeg", ".gif", ".png", ".mp3"
+				".jpg", ".jpeg", ".gif", ".png", ".mp3", ".mp4"
 			};
-			return supportedFileExtensions.Any(path.EndsWith);
+			return supportedFileExtensions.Any(path.ToLowerInvariant().EndsWith);
 		}
 	}
 }
