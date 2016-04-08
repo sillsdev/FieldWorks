@@ -15,9 +15,7 @@ using System.Xml.Linq;
 using Gecko;
 using Gecko.DOM;
 using Palaso.UI.WindowsForms.HtmlBrowser;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FwCoreDlgs;
@@ -578,16 +576,8 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public bool OnDisplayPrint(object parameter, UIItemDisplayProperties display)
 		{
+			display.Enabled = display.Visible = true;
 			return true;
-		}
-
-		private void OnPrintPage()
-		{
-			CloseContextMenuIfOpen(); // not sure if this is necessary or not
-			var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
-			if (browser == null)
-				return;
-			browser.Window.Print();
 		}
 
 		/// <summary>
@@ -597,8 +587,17 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnPrint(object commandObject)
 		{
-			OnPrintPage();
+			CloseContextMenuIfOpen(); // not sure if this is necessary or not
+			PrintPage(m_mainView);
 			return true;
+		}
+
+		internal static void PrintPage(XWebBrowser browser)
+		{
+			var geckoBrowser = browser.NativeBrowser as GeckoWebBrowser;
+			if (geckoBrowser == null)
+				return;
+			geckoBrowser.Window.Print();
 		}
 
 		/// <summary>
