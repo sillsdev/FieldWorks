@@ -4586,9 +4586,9 @@ namespace SIL.FieldWorks.XWorks
 			AddHeadwordToEntry(entryCorps, "corps", m_wsFr, Cache);
 			entryCorps.SensesOS[0].Gloss.set_String (m_wsEn, "body");
 			var exampleCorpsBody1 = AddExampleToSense(entryCorps.SensesOS[0], "Le corps est gros.", "The body is big.");
-			var exampleCorpsBody2 = AddExampleToSense(entryCorps.SensesOS[0], "Le corps est esprit.", "The body is spirited.");
+			var exampleCorpsBody2 = AddExampleToSense(entryCorps.SensesOS[0], "Le corps est esprit.", "The body is spirit.");
 			AddSenseToEntry(entryCorps, "corpse", m_wsEn, Cache);
-			AddExampleToSense(entryCorps.SensesOS[1], "Le corps est morte.", "The corpse is dead.");
+			AddExampleToSense(entryCorps.SensesOS[1], "Le corps est mort.", "The corpse is dead.");
 
 			entryCorps.SensesOS[0].DoNotPublishInRC.Add(typeTest);
 			exampleCorpsBody1.DoNotPublishInRC.Add(typeTest);
@@ -4601,9 +4601,9 @@ namespace SIL.FieldWorks.XWorks
 			var entryBras = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(entryBras, "bras", m_wsFr, Cache);
 			entryBras.SensesOS[0].Gloss.set_String(m_wsEn, "arm");
-			AddExampleToSense(entryBras.SensesOS[0], "Mon bras est broken.", "My arm is broken.");
+			AddExampleToSense(entryBras.SensesOS[0], "Mon bras est casse.", "My arm is broken.");
 			AddSenseToEntry(entryBras, "hand", m_wsEn, Cache);
-			AddExampleToSense(entryBras.SensesOS[1], "Ma bras est fine.", "My arm is fine.");
+			AddExampleToSense(entryBras.SensesOS[1], "Mon bras va bien.", "My arm is fine.");
 			entryBras.DoNotPublishInRC.Add(typeTest);
 			entryBras.SensesOS[0].DoNotPublishInRC.Add(typeTest);
 			entryBras.SensesOS[1].DoNotPublishInRC.Add(typeTest);
@@ -4634,6 +4634,9 @@ namespace SIL.FieldWorks.XWorks
 			entryTestsubentry.SensesOS[0].Gloss.set_String (m_wsEn, "testsubentry");
 			entryTestsubentry.DoNotPublishInRC.Add(typeMain);
 			CreateComplexForm(Cache, entryEntry, entryTestsubentry, true);
+			var bizarroVariant = CreateInterestingLexEntry(Cache, "bizarre", "myVariant");
+			CreateVariantForm(Cache, entryEntry, bizarroVariant, true);
+			bizarroVariant.DoNotPublishInRC.Add(typeTest);
 			//var complexRefName2 = complexFormRef2.ComplexEntryTypesRS[0].Name.BestAnalysisAlternative.Text;
 			//var complexTypePoss2 = Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.First(complex => complex.Name.BestAnalysisAlternative.Text == complexRefName2);
 
@@ -4644,9 +4647,10 @@ namespace SIL.FieldWorks.XWorks
 			var pubTest = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual, typeTest);
 			//SUT
 			var hvosMain = new List<int>( pubMain.GetEntriesToPublish(m_mediator, flidVirtual) );
-			Assert.AreEqual(4, hvosMain.Count, "there are four entries in the main publication");
+			Assert.AreEqual(5, hvosMain.Count, "there are five entries in the main publication");
 			Assert.IsTrue(hvosMain.Contains(entryCorps.Hvo), "corps is shown in the main publication");
 			Assert.IsTrue(hvosMain.Contains(entryBras.Hvo), "bras is shown in the main publication");
+			Assert.IsTrue(hvosMain.Contains(bizarroVariant.Hvo), "bizarre is shown in the main publication");
 			Assert.IsFalse(hvosMain.Contains(entryOreille.Hvo), "oreille is not shown in the main publication");
 			Assert.IsTrue(hvosMain.Contains(entryEntry.Hvo), "entry is shown in the main publication");
 			Assert.IsTrue(hvosMain.Contains(entryMainsubentry.Hvo), "mainsubentry is shown in the main publication");
@@ -4655,11 +4659,29 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(4, hvosTest.Count, "there are four entries in the test publication");
 			Assert.IsTrue(hvosTest.Contains(entryCorps.Hvo), "corps is shown in the test publication");
 			Assert.IsFalse(hvosTest.Contains(entryBras.Hvo), "bras is not shown in the test publication");
+			Assert.IsFalse(hvosTest.Contains(bizarroVariant.Hvo), "bizarre is not shown in the test publication");
 			Assert.IsTrue(hvosTest.Contains(entryOreille.Hvo), "oreille is shown in the test publication");
 			Assert.IsTrue(hvosTest.Contains(entryEntry.Hvo), "entry is shown in the test publication");
 			Assert.IsFalse(hvosTest.Contains(entryMainsubentry.Hvo), "mainsubentry is shown in the test publication");
 			Assert.IsTrue(hvosTest.Contains(entryTestsubentry.Hvo), "testsubentry is shown in the test publication");
 
+			var variantTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+			};
+			var variantTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				CSSClassNameOverride = "variantentrytypes",
+				Children = new List<ConfigurableDictionaryNode> { variantTypeNameNode },
+			};
+			var variantNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs",
+				Children = new List<ConfigurableDictionaryNode> { variantTypeNode },
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant, false)
+			};
 			var subHeadwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",
@@ -4716,7 +4738,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode, sensesNode, subentryNode },
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode, sensesNode, subentryNode, variantNode },
 				FieldDescription = "LexEntry"
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
@@ -4821,9 +4843,10 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchExample, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishTranslation, 1);
 
-			var matchFrenchSubentry = "//span[@class='subentries']/span[@class='subentry']/span[@class='subentry']/span[@lang='fr']";
-			var matchMainsubentry = "//span[@class='subentries']/span[@class='subentry']/span[@class='subentry']/span[@lang='fr'and text()='mainsubentry']";
-			var matchTestsubentry = "//span[@class='subentries']/span[@class='subentry']/span[@class='subentry']/span[@lang='fr'and text()='testsubentry']";
+			const string matchFrenchSubentry = "//span[@class='subentries']/span[@class='subentry']/span[@class='subentry']/span[@lang='fr']";
+			const string matchMainsubentry = "//span[@class='subentries']/span[@class='subentry']/span[@class='subentry']/span[@lang='fr'and text()='mainsubentry']";
+			const string matchTestsubentry = "//span[@class='subentries']/span[@class='subentry']/span[@class='subentry']/span[@lang='fr'and text()='testsubentry']";
+			const string matchVariantRef = "//span[@class='variantentrytypes']/span[@class='variantentrytype']/span[@class='name']/span[@lang='en']";
 
 			//SUT
 			output = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryEntry, mainEntryNode, pubMain, settings);
@@ -4833,7 +4856,8 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchSubentry, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchMainsubentry, 1);
-			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchTestsubentry, 0);
+			AssertThatXmlIn.String(output).HasNoMatchForXpath(matchTestsubentry);
+			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchVariantRef, 1);
 
 			//SUT
 			output = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryEntry, mainEntryNode, pubTest, settings);
@@ -4844,6 +4868,7 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchSubentry, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchMainsubentry, 0);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchTestsubentry, 1);
+			AssertThatXmlIn.String(output).HasNoMatchForXpath(matchVariantRef);
 		}
 
 		[Test]

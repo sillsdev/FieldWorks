@@ -599,7 +599,18 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (item is IReversalIndexEntry)
 				return !IsPublishableReversalEntry((IReversalIndexEntry)item);
+			if (item is ILexEntryRef)
+				return !IsPublishableReference((ILexEntryRef) item);
 			return m_excludedItems.Contains(item.Hvo);
+		}
+
+		private bool IsPublishableReference(ILexEntryRef entryRef)
+		{
+			// A reference is not publishable if its owner is excluded
+			if (m_excludedItems.Contains(entryRef.Owner.Hvo))
+				return false;
+			// A reference is also not publishable if all of its PrimarySensesOrEntries are excluded
+			return entryRef.PrimarySensesOrEntries.Any(senseOrEntry => !m_excludedItems.Contains(senseOrEntry.Item.Hvo));
 		}
 	}
 }
