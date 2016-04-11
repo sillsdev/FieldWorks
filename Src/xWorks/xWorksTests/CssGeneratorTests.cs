@@ -100,8 +100,10 @@ namespace SIL.FieldWorks.XWorks
 			Assert.NotNull(model);
 			model.SpecifyParentsAndReferences(model.Parts);
 			PopulateFieldsForTesting(model.Parts);
-			if (model.SharedItems != null)
-				PopulateFieldsForTesting(model.SharedItems);
+			if (model.SharedItems == null)
+				model.SharedItems = new List<ConfigurableDictionaryNode>();
+			model.SpecifyParentsAndReferences(model.SharedItems);
+			PopulateFieldsForTesting(model.SharedItems);
 		}
 
 		private static void PopulateFieldsForTesting(List<ConfigurableDictionaryNode> nodes)
@@ -180,9 +182,9 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { headwordNode },
 				FieldDescription = "LexEntry"
 			};
-			PopulateFieldsForTesting(mainEntryNode);
-
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			PopulateFieldsForTesting(model);
+
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			// verify that the css result contains a line similar to: .lexentry {clear:both;white-space:pre;}
@@ -191,6 +193,39 @@ namespace SIL.FieldWorks.XWorks
 			// verify that the css result contains a line similar to: .lexentry .headword {
 			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry>\s*\.mainheadword\s*span\s*{.*").Success,
 							  "Css for child node(headword) did not generate a specific match");
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_SharedConfigurationGeneratesValidCss()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "mainheadword",
+				Style = "FooStyle",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var sharedNode = new ConfigurableDictionaryNode
+			{
+				Label = "SharedSubentries",
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				FieldDescription = "Subentries",
+				CSSClassNameOverride = "sharedsubentries"
+			};
+			var subentriesNode = new ConfigurableDictionaryNode { FieldDescription = "Subentries", ReferenceItem = "SharedSubentries" };
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { subentriesNode }
+			};
+			var model = DictionaryConfigurationModelTests.CreateSimpleSharingModel(mainEntryNode, sharedNode);
+			PopulateFieldsForTesting(model);
+
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			// verify that the css result contains a line similar to: .sharedsubentries .sharedsubentry .headword span{
+			Assert.IsTrue(Regex.Match(cssResult, @"\.sharedsubentries\s*\.sharedsubentry>\s*\.mainheadword\s*span\s*{.*").Success,
+				"Css for child node(headword) did not generate a match{0}{1}", Environment.NewLine, cssResult);
 		}
 
 		[Test]
@@ -230,9 +265,9 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			// Check result for before and after rules equivalent to .headword span:first-child{content:'Z';} and .headword span:last-child{content:'A'}
-			Assert.IsTrue(Regex.Match(cssResult, "\\.mainheadword\\s*span\\s*:\\s*first-child:before\\s*{\\s*content\\s*:\\s*'Z';\\s*}").Success,
+			Assert.IsTrue(Regex.Match(cssResult, @"\.mainheadword\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'Z';\s*}").Success,
 							  "css before rule with Z content not found on headword");
-			Assert.IsTrue(Regex.Match(cssResult, "\\.mainheadword\\s*span\\s*:\\s*last-child:after\\s*{\\s*content\\s*:\\s*'A';\\s*}").Success,
+			Assert.IsTrue(Regex.Match(cssResult, @"\.mainheadword\s*span\s*:\s*last-child:after\s*{\s*content\s*:\s*'A';\s*}").Success,
 							  "css after rule with A content not found on headword");
 		}
 
@@ -292,9 +327,9 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			// Check result for before and after rules equivalent to .subentries .subentry .headword span:first-child{content:'Z';} and .headword span:last-child{content:'A'}
-			Assert.IsTrue(Regex.Match(cssResult, "\\.subentries\\s*\\.subentry>\\s*\\.headword\\s*span\\s*:\\s*first-child:before\\s*{\\s*content\\s*:\\s*'Z';\\s*}").Success,
+			Assert.IsTrue(Regex.Match(cssResult, @"\.subentries\s*\.subentry>\s*\.headword\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'Z';\s*}").Success,
 							  "css before rule with Z content not found on headword");
-			Assert.IsTrue(Regex.Match(cssResult, "\\.subentries\\s*\\.subentry>\\s\\.headword\\s*span\\s*:\\s*last-child:after\\s*{\\s*content\\s*:\\s*'A';\\s*}").Success,
+			Assert.IsTrue(Regex.Match(cssResult, @"\.subentries\s*\.subentry>\s\.headword\s*span\s*:\s*last-child:after\s*{\s*content\s*:\s*'A';\s*}").Success,
 							  "css after rule with A content not found on headword");
 		}
 
@@ -322,9 +357,9 @@ namespace SIL.FieldWorks.XWorks
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			// Check result for before and after rules equivalent to .headword span:first-child{content:'Z';font-size:10pt;color:#00F;}
 			// and .headword span:last-child{content:'A';font-size:10pt;color:#00F;}
-			Assert.IsTrue(Regex.Match(cssResult, "\\.mainheadword\\s*span\\s*:\\s*first-child:before\\s*{\\s*content\\s*:\\s*'Z';\\s*font-size\\s*:\\s*10pt;\\s*color\\s*:\\s*#00F;\\s*}").Success,
+			Assert.IsTrue(Regex.Match(cssResult, @"\.mainheadword\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'Z';\s*font-size\s*:\s*10pt;\s*color\s*:\s*#00F;\s*}").Success,
 							  "css before rule with Z content with css format not found on headword");
-			Assert.IsTrue(Regex.Match(cssResult, "\\.mainheadword\\s*span\\s*:\\s*last-child:after\\s*{\\s*content\\s*:\\s*'A';\\s*font-size\\s*:\\s*10pt;\\s*color\\s*:\\s*#00F;\\s*}").Success,
+			Assert.IsTrue(Regex.Match(cssResult, @"\.mainheadword\s*span\s*:\s*last-child:after\s*{\s*content\s*:\s*'A';\s*font-size\s*:\s*10pt;\s*color\s*:\s*#00F;\s*}").Success,
 							  "css after rule with A content with css format not found on headword");
 		}
 
@@ -2465,23 +2500,23 @@ namespace SIL.FieldWorks.XWorks
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 
 			//Following Testcase removed(no longer needed) as a fix for LT-17238 ("Between" contents should not come between spans that are all in a single string with embedded WSs)
-			//var regexItem1 = ".entry> .pronunciations .pronunciation> .form> span\\+ span:before\\{\\s*content:' ';\\s*\\}";
+			//var regexItem1 = @".entry> .pronunciations .pronunciation> .form> span\+ span:before\{\s*content:' ';\s*\}";
 			//Assert.IsTrue(Regex.Match(cssResult, regexItem1, RegexOptions.Singleline).Success, "expected collection item between rule is generated");
 
-			var regexItem2 = ".entry> .pronunciations .pronunciation> .form span:first-child:before\\{\\s*content:'\\[';\\s*\\}";
+			var regexItem2 = @".entry> .pronunciations .pronunciation> .form span:first-child:before\{\s*content:'\[';\s*\}";
 			Assert.IsTrue(Regex.Match(cssResult, regexItem2, RegexOptions.Singleline).Success, "expected collection item before rule is generated");
 
-			var regexItem3 = ".entry> .pronunciations .pronunciation> .form span:last-child:after\\{\\s*content:'\\]';\\s*\\}";
+			var regexItem3 = @".entry> .pronunciations .pronunciation> .form span:last-child:after\{\s*content:'\]';\s*\}";
 			Assert.IsTrue(Regex.Match(cssResult, regexItem3, RegexOptions.Singleline).Success, "expected collection item after rule is generated");
 
-			var regexCollection1 = ".entry .pronunciations> .pronunciation\\+ .pronunciation:before\\{\\s*content:', ';\\s*\\}";
+			var regexCollection1 = @".entry .pronunciations> .pronunciation\+ .pronunciation:before\{\s*content:', ';\s*\}";
 			Assert.IsTrue(Regex.Match(cssResult, regexCollection1, RegexOptions.Singleline).Success, "expected collection between rule is generated");
 
 			// The following two checks test the fix for LT-17048.  The preceding four checks should be the same before and after the fix.
-			var regexCollection2 = ".entry> .pronunciations:before\\{\\s*content:'\\{Pron: ';\\s*\\}";
+			var regexCollection2 = @".entry> .pronunciations:before\{\s*content:'\{Pron: ';\s*\}";
 			Assert.IsTrue(Regex.Match(cssResult, regexCollection2, RegexOptions.Singleline).Success, "expected collection before rule is generated");
 
-			var regexCollection3 = ".entry> .pronunciations:after\\{\\s*content:'\\} ';\\s*\\}";
+			var regexCollection3 = @".entry> .pronunciations:after\{\s*content:'\} ';\s*\}";
 			Assert.IsTrue(Regex.Match(cssResult, regexCollection3, RegexOptions.Singleline).Success, "expected collection after rule is generated");
 		}
 

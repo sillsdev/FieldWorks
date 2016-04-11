@@ -104,6 +104,7 @@ namespace SIL.FieldWorks.XWorks
 				return;
 
 			SpecifyParentsAndReferences(Parts);
+			SpecifyParentsAndReferences(SharedItems); // REVIEW (Hasso) 2016.04: do we want to have to call Specify twice?
 			Publications = AllPublications ? GetAllPublications(cache) : FilterRealPublications(cache);
 			// Handle any changes to the custom field definitions.  (See https://jira.sil.org/browse/LT-16430.)
 			// The "Merge" method handles both additions and deletions.
@@ -307,19 +308,23 @@ namespace SIL.FieldWorks.XWorks
 			if (nodes == null)
 				throw new ArgumentNullException();
 
-			foreach (var node in nodes)
+			var rollingNodes = new List<ConfigurableDictionaryNode>(nodes);
+
+			while (rollingNodes.Any())
 			{
+				var node = rollingNodes[0];
+				rollingNodes.RemoveAt(0);
 				if (!string.IsNullOrEmpty(node.ReferenceItem))
 					LinkReferencedNode(node, node.ReferenceItem);
 				if (node.Children == null)
 					continue;
 				foreach (var child in node.Children)
 					child.Parent = node;
-				SpecifyParentsAndReferences(node.Children);
+				rollingNodes.AddRange(node.Children);
 			}
 		}
 
-		public void LinkReferencedNode(ConfigurableDictionaryNode node, string referenceItem)
+		public bool LinkReferencedNode(ConfigurableDictionaryNode node, string referenceItem)
 		{
 			node.ReferencedNode = SharedItems.FirstOrDefault(si =>
 				si.Label == referenceItem && si.FieldDescription == node.FieldDescription && si.SubField == node.SubField);
@@ -328,15 +333,15 @@ namespace SIL.FieldWorks.XWorks
 					referenceItem, node.FieldDescription, node.SubField));
 			node.ReferenceItem = referenceItem;
 			if (node.ReferencedNode.Parent != null)
-				return; // ENHANCE (Hasso) 2016.03: this is a depth-first search for a parent; would emulating breadth-first be better?
+				return false;
 			node.ReferencedNode.Parent = node;
-			SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { node.ReferencedNode }); // REVIEW pH 2016.03: specify here, or all SI's together?
+			return true;
 		}
 
 		/// <summary>
 		/// Allow other nodes to reference this node's children
 		/// </summary>
-		public void ShareNodeForReference(ConfigurableDictionaryNode node)
+		public void ShareNodeAsReference(ConfigurableDictionaryNode node)
 		{
 			if (SharedItems == null)
 				SharedItems = new List<ConfigurableDictionaryNode>();

@@ -253,9 +253,14 @@ namespace SIL.FieldWorks.XWorks
 			foreach(var node in nodes)
 			{
 				CreateAndAddTreeNodeForNode(parent, node);
-				if(node.Children != null)
+				if(node.Children != null && node.Children.Any())
 				{
 					CreateTreeOfTreeNodes(node, node.Children);
+				}
+				else if (node.ReferencedNode != null && ReferenceEquals(node, node.ReferencedNode.Parent))
+				{
+					// Allow configuring shared nodes exactly once: under their master parent
+					CreateTreeOfTreeNodes(node, node.ReferencedOrDirectChildren);
 				}
 			}
 		}

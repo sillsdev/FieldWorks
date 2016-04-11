@@ -48,7 +48,8 @@ namespace SIL.FieldWorks.XWorks
 			GenerateCssForDefaultStyles(mediator, mediatorstyleSheet, styleSheet, model, cache);
 			MakeLinksLookLikePlainText(styleSheet);
 			GenerateCssForAudioWs(styleSheet, cache);
-			foreach(var configNode in model.Parts.Where(x => x.IsEnabled))
+			foreach(var configNode in model.Parts.Where(x => x.IsEnabled)
+				.Concat(model.SharedItems == null ? new ConfigurableDictionaryNode[0] : model.SharedItems.Where(x => x.Parent != null)))
 			{
 				GenerateCssFromConfigurationNode(configNode, styleSheet, null, mediator);
 			}

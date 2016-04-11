@@ -531,16 +531,9 @@ namespace SIL.FieldWorks.XWorks
 				switch (version)
 				{
 					case 1:
-						if (isReversal)
-						{
-							ReplaceFieldInNodes(node, n => n.Label == "Referenced Headword", "ReversalName");
-							ReplaceSubFieldInNodes(node, n => n.Label == "Complex Form" && n.FieldDescription == "OwningEntry", "ReversalName");
-						}
-						else
-						{
-							ReplaceFieldInNodes(node, n => n.Label == "Referenced Headword", "HeadWordRef");
-							ReplaceSubFieldInNodes(node, n => n.Label == "Complex Form" && n.FieldDescription == "OwningEntry", "HeadWordRef");
-						}
+						var newHeadword = isReversal ? "ReversalName" : "HeadWordRef";
+						ReplaceFieldInNodes(node, n => n.Label == "Referenced Headword", newHeadword);
+						ReplaceSubFieldInNodes(node, n => n.FieldDescription == "OwningEntry" && n.SubField == "MLHeadWord", newHeadword);
 						break;
 				}
 			}

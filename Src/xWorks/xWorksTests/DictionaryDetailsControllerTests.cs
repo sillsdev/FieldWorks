@@ -145,7 +145,7 @@ namespace SIL.FieldWorks.XWorks
 
 			public IList<ListViewItem> GetListViewItems()
 			{
-				IDictionaryListOptionsView listOptionsView = OptionsView as IDictionaryListOptionsView;
+				var listOptionsView = OptionsView as IDictionaryListOptionsView;
 				var listView = (ListView)ReflectionHelper.GetField(listOptionsView, "listView");
 				return listView.Items.Cast<ListViewItem>().ToList();
 			}
@@ -196,23 +196,23 @@ namespace SIL.FieldWorks.XWorks
 
 		private static IList<StyleComboItem> GetAvailableStyles(IDictionaryDetailsView view)
 		{
-			return (view as TestDictionaryDetailsView).GetStyles();
+			return ((TestDictionaryDetailsView)view).GetStyles();
 		}
 
 		private static IDictionaryListOptionsView GetListOptionsView(IDictionaryDetailsView view)
 		{
-			return (view as TestDictionaryDetailsView).OptionsView as IDictionaryListOptionsView;
+			return ((TestDictionaryDetailsView)view).OptionsView as IDictionaryListOptionsView;
 		}
 
 		private static IDictionarySenseOptionsView GetSenseOptionsView(IDictionaryDetailsView view)
 		{
-			return (view as TestDictionaryDetailsView).OptionsView as IDictionarySenseOptionsView;
+			return ((TestDictionaryDetailsView)view).OptionsView as IDictionarySenseOptionsView;
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "ListOptionsView is disposed by its parent")]
 		private static IList<ListViewItem> GetListViewItems(IDictionaryDetailsView view)
 		{
-			return (view as TestDictionaryDetailsView).GetListViewItems();
+			return ((TestDictionaryDetailsView)view).GetListViewItems();
 		}
 
 		private static void AssertShowingCharacterStyles(IDictionaryDetailsView view)

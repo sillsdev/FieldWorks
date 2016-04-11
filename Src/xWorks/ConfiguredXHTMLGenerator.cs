@@ -255,7 +255,7 @@ namespace SIL.FieldWorks.XWorks
 						GenerateLetterHeaderIfNeeded(entryAndXhtml.Item1, ref lastHeader, xhtmlWriter, cache);
 					xhtmlWriter.WriteRaw(entryAndXhtml.Item2.ToString());
 				}
-				GenerateBottomOfPageButtonsIfNeeded(settings, entryHvos, entriesPerPage, currentPageBounds, xhtmlWriter, cssWriter);
+				GenerateBottomOfPageButtonsIfNeeded(settings, entryHvos, entriesPerPage, currentPageBounds, xhtmlWriter);
 				GenerateClosingHtml(xhtmlWriter);
 				xhtmlWriter.Flush();
 
@@ -278,8 +278,8 @@ namespace SIL.FieldWorks.XWorks
 			cssWriter.Write(CssGenerator.GenerateCssForPageButtons());
 		}
 
-		private static void GenerateBottomOfPageButtonsIfNeeded(GeneratorSettings settings, int[] entryHvos, int entriesPerPage, Tuple<int, int> currentPageBounds,
-			XmlWriter xhtmlWriter, StreamWriter cssWriter)
+		private static void GenerateBottomOfPageButtonsIfNeeded(GeneratorSettings settings, int[] entryHvos, int entriesPerPage,
+			Tuple<int, int> currentPageBounds, XmlWriter xhtmlWriter)
 		{
 			var pageRanges = GetPageRanges(entryHvos, entriesPerPage);
 			if (pageRanges.Count <= 1)
@@ -652,7 +652,8 @@ namespace SIL.FieldWorks.XWorks
 				return String.Empty;
 			}
 
-			var pieces = configuration.Children.Select(config => GenerateXHTMLForFieldByReflection(entry, config, publicationDecorator, settings))
+			var pieces = configuration.ReferencedOrDirectChildren
+				.Select(config => GenerateXHTMLForFieldByReflection(entry, config, publicationDecorator, settings))
 				.Where(content => !string.IsNullOrEmpty(content)).ToList();
 			if (pieces.Count == 0)
 				return string.Empty;
@@ -677,7 +678,10 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="configNode">used to look up any mapping overrides</param>
 		private static void WriteClassNameAttributeForConfig(XmlWriter writer, ConfigurableDictionaryNode configNode)
 		{
-			writer.WriteAttributeString("class", CssGenerator.GetClassAttributeForConfig(configNode));
+			var classAtt = CssGenerator.GetClassAttributeForConfig(configNode);
+			if (configNode.ReferencedNode != null)
+				classAtt = string.Format("{0} {1}", classAtt, CssGenerator.GetClassAttributeForConfig(configNode.ReferencedNode));
+			writer.WriteAttributeString("class", classAtt);
 		}
 
 		/// <summary>
@@ -844,9 +848,9 @@ namespace SIL.FieldWorks.XWorks
 			var bldr = new StringBuilder();
 			bldr.Append(content);
 
-			if (config.Children != null)
+			if (config.ReferencedOrDirectChildren != null)
 			{
-				foreach (var child in config.Children)
+				foreach (var child in config.ReferencedOrDirectChildren)
 				{
 					content = GenerateXHTMLForFieldByReflection(propertyValue, child, publicationDecorator, settings);
 					bldr.Append(content);
@@ -993,21 +997,17 @@ namespace SIL.FieldWorks.XWorks
 		private static string GenerateXHTMLForPossibility(object propertyValue, ConfigurableDictionaryNode config,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
-			if (config.Children.Any(node => node.IsEnabled))
+			if (config.ReferencedOrDirectChildren == null || !config.ReferencedOrDirectChildren.Any(node => node.IsEnabled))
+				return string.Empty;
+			var bldr = new StringBuilder();
+			foreach (var child in config.ReferencedOrDirectChildren)
 			{
-				var bldr = new StringBuilder();
-				if (config.Children != null)
-				{
-					foreach (var child in config.Children)
-					{
-						var content = GenerateXHTMLForFieldByReflection(propertyValue, child, publicationDecorator, settings);
-						bldr.Append(content);
-					}
-				}
-				if (bldr.Length > 0)
-					return WriteRawElementContents("span", bldr.ToString(), config);
+				var content = GenerateXHTMLForFieldByReflection(propertyValue, child, publicationDecorator, settings);
+				bldr.Append(content);
 			}
-			return String.Empty;
+			if (bldr.Length > 0)
+				return WriteRawElementContents("span", bldr.ToString(), config);
+			return string.Empty;
 		}
 
 		private static string GenerateXHTMLForPictureCaption(object propertyValue, ConfigurableDictionaryNode config, GeneratorSettings settings)
@@ -1409,8 +1409,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// Don't export if there is no such data
 			if (moForm == null)
-				return String.Empty;
-			if (config.Children != null && config.Children.Any())
+				return string.Empty;
+			if (config.ReferencedOrDirectChildren != null && config.ReferencedOrDirectChildren.Any())
 			{
 				throw new NotImplementedException("Children for MoForm types not yet supported.");
 			}
@@ -1486,7 +1486,7 @@ namespace SIL.FieldWorks.XWorks
 			if (isSameGrammaticalInfo && !isSubsense)
 			{
 				var content = InsertGramInfoBeforeSenses(filteredSenseCollection.First(),
-					config.Children.FirstOrDefault(e => e.FieldDescription == "MorphoSyntaxAnalysisRA" && e.IsEnabled),
+					config.ReferencedOrDirectChildren.FirstOrDefault(e => e.FieldDescription == "MorphoSyntaxAnalysisRA" && e.IsEnabled),
 					publicationDecorator, settings);
 				bldr.Append(content);
 			}
@@ -1575,14 +1575,14 @@ namespace SIL.FieldWorks.XWorks
 				var defaultWs = owningObject.Cache.WritingSystemFactory.get_EngineOrNull(owningObject.Cache.DefaultUserWs);
 				langId = defaultWs.Id;
 				var entryType = item.GetType();
-				var grammaticalInfo = config.Children.FirstOrDefault(e => e.FieldDescription == "MorphoSyntaxAnalysisRA" && e.IsEnabled);
+				var grammaticalInfo = config.ReferencedOrDirectChildren.FirstOrDefault(e => e.FieldDescription == "MorphoSyntaxAnalysisRA" && e.IsEnabled);
 				if (grammaticalInfo == null)
 					return false;
 				var property = entryType.GetProperty(grammaticalInfo.FieldDescription);
 				var propertyValue = property.GetValue(item, new object[] {});
 				if (propertyValue == null)
 					return false;
-				var child = grammaticalInfo.Children.FirstOrDefault(e => e.IsEnabled && e.Children.Count == 0);
+				var child = grammaticalInfo.ReferencedOrDirectChildren.FirstOrDefault(e => e.IsEnabled && e.ReferencedOrDirectChildren.Count == 0);
 				if (child == null)
 					return false;
 				entryType = propertyValue.GetType();
@@ -1618,7 +1618,7 @@ namespace SIL.FieldWorks.XWorks
 			object item, bool isSingle, GeneratorSettings settings, bool isSameGrammaticalInfo,int reversalcount=0)
 		{
 			string senseNumberSpan = String.Empty;
-			if (config.Children.Count != 0)
+			if (config.ReferencedOrDirectChildren.Count != 0)
 			{
 				// Wrap the number and sense combination in a sensecontent span so that can both be affected by DisplayEachSenseInParagraph
 				if (config.FieldDescription != "ReferringSenses")
@@ -1628,9 +1628,9 @@ namespace SIL.FieldWorks.XWorks
 					senseNumberSpan = GenerateReversalSenseNumberSpanIfNeeded(config, isSingle, reversalcount);
 			}
 			var bldr = new StringBuilder();
-			if (config.Children != null)
+			if (config.ReferencedOrDirectChildren != null)
 			{
-				foreach (var child in config.Children)
+				foreach (var child in config.ReferencedOrDirectChildren)
 				{
 					if (child.FieldDescription != "MorphoSyntaxAnalysisRA" || !isSameGrammaticalInfo)
 					{
@@ -1639,9 +1639,8 @@ namespace SIL.FieldWorks.XWorks
 					}
 				}
 			}
-			// REVIEW: what if bldr is empty?
-			if (config.Children == null || config.Children.Count == 0 || bldr.Length == 0)
-				return String.Empty;
+			if (config.ReferencedOrDirectChildren == null || config.ReferencedOrDirectChildren.Count == 0 || bldr.Length == 0)
+				return string.Empty;
 			var senseContent = bldr.ToString();
 			bldr.Clear();
 			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
@@ -1664,44 +1663,39 @@ namespace SIL.FieldWorks.XWorks
 			object item, object collectionOwner, GeneratorSettings settings)
 		{
 			if (item is IMultiStringAccessor)
-			{
 				return GenerateXHTMLForStrings((IMultiStringAccessor)item, config, settings);
-			}
-			if (config.DictionaryNodeOptions is DictionaryNodeListOptions && !IsListItemSelectedForExport(config, item, collectionOwner))
-			{
-				return String.Empty;
-			}
+			if ((config.DictionaryNodeOptions is DictionaryNodeListOptions && !IsListItemSelectedForExport(config, item, collectionOwner))
+				|| config.ReferencedOrDirectChildren == null)
+				return string.Empty;
+
 			var bldr = new StringBuilder();
-			if (config.Children != null)
+			var listOptions = config.DictionaryNodeOptions as DictionaryNodeListOptions;
+			// sense and entry options types suggest that we are working with a cross reference
+			if (listOptions != null &&
+				(listOptions.ListId == DictionaryNodeListOptions.ListIds.Sense ||
+					listOptions.ListId == DictionaryNodeListOptions.ListIds.Entry))
 			{
-				var listOptions = config.DictionaryNodeOptions as DictionaryNodeListOptions;
-				// sense and entry options types suggest that we are working with a cross reference
-				if (listOptions != null &&
-					(listOptions.ListId == DictionaryNodeListOptions.ListIds.Sense ||
-					 listOptions.ListId == DictionaryNodeListOptions.ListIds.Entry))
+				var contentCrossRef = GenerateCrossReferenceChildren(config, publicationDecorator, (ILexReference)item, collectionOwner, settings);
+				bldr.Append(contentCrossRef);
+			}
+			else if (listOptions is DictionaryNodeComplexFormOptions)
+			{
+				foreach (var child in config.ReferencedOrDirectChildren)
 				{
-					var contentCrossRef = GenerateCrossReferenceChildren(config, publicationDecorator, (ILexReference)item, collectionOwner, settings);
-					bldr.Append(contentCrossRef);
+					string content;
+					if (child.FieldDescription == "LookupComplexEntryType")
+						content = GenerateSubentryTypeChild(child, publicationDecorator, (ILexEntry)item, collectionOwner, settings);
+					else
+						content = GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
+					bldr.Append(content);
 				}
-				else if (listOptions is DictionaryNodeComplexFormOptions)
+			}
+			else
+			{
+				foreach (var child in config.ReferencedOrDirectChildren)
 				{
-					foreach (var child in config.Children)
-					{
-						string content;
-						if (child.FieldDescription == "LookupComplexEntryType")
-							content = GenerateSubentryTypeChild(child, publicationDecorator, (ILexEntry)item, (ILexEntry)collectionOwner, settings);
-						else
-							content = GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
-						bldr.Append(content);
-					}
-				}
-				else
-				{
-					foreach (var child in config.Children)
-					{
-						var content = GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
-						bldr.Append(content);
-					}
+					var content = GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
+					bldr.Append(content);
 				}
 			}
 			if (bldr.Length == 0)
@@ -1722,64 +1716,64 @@ namespace SIL.FieldWorks.XWorks
 		private static string GenerateCrossReferenceChildren(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
 			ILexReference reference, object collectionOwner, GeneratorSettings settings)
 		{
+			if (config.ReferencedOrDirectChildren == null)
+				return string.Empty;
 			var bldrTotal = new StringBuilder();
-			if(config.Children != null)
+			foreach(var child in config.ReferencedOrDirectChildren.Where(c => c.IsEnabled))
 			{
-				foreach(var child in config.Children)
+				var contentChild = string.Empty;
+				if(child.FieldDescription == "ConfigTargets")
 				{
-					string contentChild = String.Empty;
-					if(child.IsEnabled && child.FieldDescription == "ConfigTargets")
+					var bldr = new StringBuilder();
+					var ownerHvo = collectionOwner is ILexEntry ? ((ILexEntry)collectionOwner).Guid : ((ILexSense)collectionOwner).Owner.Guid;
+					// "Where" excludes the entry we are displaying. (The LexReference contains all involved entries)
+					// If someone ever uses a "Sequence" type lexical relation, should the current item
+					// be displayed in its location in the sequence?  Just asking...
+					foreach(var target in reference.ConfigTargets.Where(x => x.EntryGuid != ownerHvo))
 					{
-						var bldr = new StringBuilder();
-						var ownerHvo = collectionOwner is ILexEntry ? ((ILexEntry)collectionOwner).Guid : ((ILexSense)collectionOwner).Owner.Guid;
-						// "Where" excludes the entry we are displaying. (The LexReference contains all involved entries)
-						// If someone ever uses a "Sequence" type lexical relation, should the current item
-						// be displayed in its location in the sequence?  Just asking...
-						foreach(var target in reference.ConfigTargets.Where(x => x.EntryGuid != ownerHvo))
+						var content = GenerateCollectionItemContent(child, publicationDecorator, target, reference, settings);
+						bldr.Append(content);
+						if (LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)reference.OwnerType.MappingType) &&
+							LexRefDirection(reference, collectionOwner) == ":r")
 						{
-							var content = GenerateCollectionItemContent(child, publicationDecorator, target, reference, settings);
-							bldr.Append(content);
-							if (LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)reference.OwnerType.MappingType) &&
-								LexRefDirection(reference, collectionOwner) == ":r")
-							{
-								// In the reverse direction of an asymmetric lexical reference, we want only the first item.
-								// See https://jira.sil.org/browse/LT-16427.
-								break;
-							}
+							// In the reverse direction of an asymmetric lexical reference, we want only the first item.
+							// See https://jira.sil.org/browse/LT-16427.
+							break;
 						}
-						if (bldr.Length > 0)
-							contentChild = WriteRawElementContents("span", bldr.ToString(), child);
 					}
-					else if(child.FieldDescription == "OwnerType"
-						// OwnerType is a LexRefType, some of which are asymmetric (e.g. Part/Whole). If this Type is symmetric or we are currently
-						// working in the forward direction, the generic code will work; however, if we are working on an asymmetric LexRefType
-						// in the reverse direction, we need to display the ReverseName or ReverseAbbreviation instead of the Name or Abbreviation.
-						&& LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)reference.OwnerType.MappingType)
-						&& LexRefDirection(reference, collectionOwner) == ":r")
-					{
-						// Changing the SubField changes the default CSS Class name.
-						// If there is no override, override with the default before changing the SubField.
-						if(string.IsNullOrEmpty(child.CSSClassNameOverride))
-							child.CSSClassNameOverride = CssGenerator.GetClassAttributeForConfig(child);
-						// Flag to prepend "Reverse" to child.SubField when it is used.
-						contentChild = GenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings, true);
-					}
-					else
-					{
-						contentChild = GenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings);
-					}
-					bldrTotal.Append(contentChild);
+					if (bldr.Length > 0)
+						contentChild = WriteRawElementContents("span", bldr.ToString(), child);
 				}
+				else if(child.FieldDescription == "OwnerType"
+					// OwnerType is a LexRefType, some of which are asymmetric (e.g. Part/Whole). If this Type is symmetric or we are currently
+					// working in the forward direction, the generic code will work; however, if we are working on an asymmetric LexRefType
+					// in the reverse direction, we need to display the ReverseName or ReverseAbbreviation instead of the Name or Abbreviation.
+					&& LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)reference.OwnerType.MappingType)
+					&& LexRefDirection(reference, collectionOwner) == ":r")
+				{
+					// Changing the SubField changes the default CSS Class name.
+					// If there is no override, override with the default before changing the SubField.
+					if(string.IsNullOrEmpty(child.CSSClassNameOverride))
+						child.CSSClassNameOverride = CssGenerator.GetClassAttributeForConfig(child);
+					// Flag to prepend "Reverse" to child.SubField when it is used.
+					contentChild = GenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings, true);
+				}
+				else
+				{
+					contentChild = GenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings);
+				}
+				bldrTotal.Append(contentChild);
 			}
 			return bldrTotal.ToString();
 		}
 
 		private static string GenerateSubentryTypeChild(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
-			ILexEntry subEntry, ILexEntry mainEntry, GeneratorSettings settings)
+			ILexEntry subEntry, object mainEntryOrSense, GeneratorSettings settings)
 		{
 			if (!config.IsEnabled)
 				return String.Empty;
 
+			var mainEntry = mainEntryOrSense as ILexEntry ?? ((ILexSense)mainEntryOrSense).Entry;
 			var entryRefs = subEntry.ComplexFormEntryRefs.Where(entryRef => entryRef.PrimaryEntryRoots.Contains(mainEntry));
 			var complexEntryRef = entryRefs.FirstOrDefault();
 			if (complexEntryRef == null)
@@ -1914,29 +1908,26 @@ namespace SIL.FieldWorks.XWorks
 		private static string GenerateXHTMLForICmObject(ICmObject propertyValue, ConfigurableDictionaryNode config, GeneratorSettings settings)
 		{
 			// Don't export if there is no such data
-			if (propertyValue == null)
-				return String.Empty;
-			if (config.Children != null && config.Children.Any(node => node.IsEnabled))
+			if (propertyValue == null || config.ReferencedOrDirectChildren == null || !config.ReferencedOrDirectChildren.Any(node => node.IsEnabled))
+				return string.Empty;
+			var bldr = new StringBuilder();
+			foreach (var child in config.ReferencedOrDirectChildren.Where(node => node.IsEnabled))
 			{
-				var bldr = new StringBuilder();
-				foreach (var child in config.Children)
-				{
-					if (child.IsEnabled)
-					{
-						var content = GenerateXHTMLForFieldByReflection(propertyValue, child, null, settings);
-						bldr.Append(content);
-					}
-				}
-				if (bldr.Length > 0)
-					return WriteRawElementContents("span", bldr.ToString(), config);
+				var content = GenerateXHTMLForFieldByReflection(propertyValue, child, null, settings);
+				bldr.Append(content);
 			}
+			if (bldr.Length > 0)
+				return WriteRawElementContents("span", bldr.ToString(), config);
 			return String.Empty;
 		}
 
 		/// <summary>Write the class element in the span for an individual item in the collection</summary>
 		private static void WriteCollectionItemClassAttribute(ConfigurableDictionaryNode config, XmlWriter writer)
 		{
-			writer.WriteAttributeString("class", CssGenerator.GetClassAttributeForCollectionItem(config));
+			var classAtt = CssGenerator.GetClassAttributeForCollectionItem(config);
+			if (config.ReferencedNode != null)
+				classAtt = string.Format("{0} {1}", classAtt, CssGenerator.GetClassAttributeForCollectionItem(config.ReferencedNode));
+			writer.WriteAttributeString("class", classAtt);
 		}
 
 		/// <summary>
@@ -2391,25 +2382,6 @@ namespace SIL.FieldWorks.XWorks
 			return String.Empty;
 		}
 
-		// Cache the mapping from number to string for faster lookup.
-		private static readonly Dictionary<int, string> s_mapWsToLang = new Dictionary<int, string>();
-
-		/// <summary>
-		/// Get the RFC5646 language id string from the numeric writing system id.
-		/// </summary>
-		private static string GetLangFromWs(int wsid, FdoCache cache)
-		{
-			lock (s_mapWsToLang)
-			{
-				string lang;
-				if (s_mapWsToLang.TryGetValue(wsid, out lang))
-					return lang;
-				var ws = cache.ServiceLocator.WritingSystemManager.Get(wsid);
-				s_mapWsToLang.Add(wsid, ws.RFC5646);
-				return ws.RFC5646;
-			}
-		}
-
 		private static void GenerateSpanWithPossibleLink(GeneratorSettings settings, string writingSystem, XmlWriter writer, string style,
 			string text, Guid linkDestination)
 		{
@@ -2418,9 +2390,9 @@ namespace SIL.FieldWorks.XWorks
 			writer.WriteAttributeString("lang", writingSystem);
 			if (!String.IsNullOrEmpty(style))
 			{
-				var css_style = CssGenerator.GenerateCssStyleFromFwStyleSheet(style,
+				var cssStyle = CssGenerator.GenerateCssStyleFromFwStyleSheet(style,
 					settings.Cache.WritingSystemFactory.GetWsFromStr(writingSystem), settings.Mediator);
-				var css = css_style.ToString();
+				var css = cssStyle.ToString();
 				if (!String.IsNullOrEmpty(css))
 					writer.WriteAttributeString("style", css);
 			}

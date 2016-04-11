@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<DictionaryConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="All Reversal Indexes" writingSystem="" version="3" lastModified="2016-04-05" allPublications="true">
+<DictionaryConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="All Reversal Indexes" writingSystem="" version="3" lastModified="2016-04-08" allPublications="true">
 	<ConfigurationItem name="Reversal Entry" isEnabled="true" style="Dictionary-Normal" styleType="paragraph" field="ReversalIndexEntry" cssClassNameOverride="reversalindexentry">
 		<ConfigurationItem name="Reversal Form" isEnabled="true" style="Reversal-Headword" between=" " after="  " field="ReversalForm">
 			<WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
@@ -73,7 +73,7 @@
 						</WritingSystemOptions>
 					</ConfigurationItem>
 				</ConfigurationItem>
-				<ConfigurationItem name="Variant Form" isEnabled="true" between=", " field="OwningEntry" subField="MLHeadWord" cssClassNameOverride="headword">
+				<ConfigurationItem name="Variant Form" isEnabled="true" between=", " field="OwningEntry" subField="ReversalName" cssClassNameOverride="headword">
 					<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 						<Option id="vernacular" isEnabled="true" />
 					</WritingSystemOptions>
@@ -123,7 +123,7 @@
 						</WritingSystemOptions>
 					</ConfigurationItem>
 				</ConfigurationItem>
-				<ConfigurationItem name="Variant Form" isEnabled="true" between=", " field="OwningEntry" subField="MLHeadWord" cssClassNameOverride="headword">
+				<ConfigurationItem name="Variant Form" isEnabled="true" between=", " field="OwningEntry" subField="ReversalName" cssClassNameOverride="headword">
 					<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 						<Option id="vernacular" isEnabled="true" />
 					</WritingSystemOptions>
@@ -349,7 +349,7 @@
 					</WritingSystemOptions>
 				</ConfigurationItem>
 				<ConfigurationItem name="Targets" isEnabled="true" between=", " after=" " field="ConfigTargets">
-					<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" field="HeadWordRef" cssClassNameOverride="headword">
+					<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" field="ReversalName" cssClassNameOverride="headword">
 						<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 							<Option id="vernacular" isEnabled="true" />
 						</WritingSystemOptions>
@@ -569,7 +569,12 @@
 			</ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Reversal Subentries" isEnabled="true" style="Reversal-Subentry" field="SubentriesOS" cssClassNameOverride="Subentries" >
-			<ComplexFormOptions displayEachComplexFormInParagraph="true" />
+	  <ComplexFormOptions displayEachComplexFormInParagraph="true" />
+	  <ReferenceItem>AllReversalSubentries</ReferenceItem>
+	</ConfigurationItem>
+  </ConfigurationItem>
+  <SharedItems>
+	<ConfigurationItem name="AllReversalSubentries" isEnabled="true" field="SubentriesOS" cssClassNameOverride="allreversalsubsenses">
 			<ConfigurationItem name="Reversal Form" isEnabled="true" style="Reversal-Headword" between=" " after="  " field="ReversalForm">
 				<WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 					<Option id="reversal" isEnabled="true" />
@@ -642,7 +647,7 @@
 							</WritingSystemOptions>
 						</ConfigurationItem>
 					</ConfigurationItem>
-					<ConfigurationItem name="Variant Form" isEnabled="true" between=", " field="OwningEntry" subField="MLHeadWord" cssClassNameOverride="headword">
+					<ConfigurationItem name="Variant Form" isEnabled="true" between=", " field="OwningEntry" subField="ReversalName" cssClassNameOverride="headword">
 						<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 							<Option id="vernacular" isEnabled="true" />
 						</WritingSystemOptions>
@@ -692,7 +697,7 @@
 							</WritingSystemOptions>
 						</ConfigurationItem>
 					</ConfigurationItem>
-					<ConfigurationItem name="Variant Form" isEnabled="true" between=", " field="OwningEntry" subField="MLHeadWord" cssClassNameOverride="headword">
+					<ConfigurationItem name="Variant Form" isEnabled="true" between=", " field="OwningEntry" subField="ReversalName" cssClassNameOverride="headword">
 						<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 							<Option id="vernacular" isEnabled="true" />
 						</WritingSystemOptions>
@@ -762,7 +767,7 @@
 						</WritingSystemOptions>
 					</ConfigurationItem>
 					<ConfigurationItem name="Targets" isEnabled="true" between=", " after=" " field="ConfigTargets">
-						<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" between=" " field="MLHeadWord" cssClassNameOverride="headword">
+						<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" between=" " field="ReversalName" cssClassNameOverride="headword">
 							<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 								<Option id="vernacular" isEnabled="true" />
 							</WritingSystemOptions>
@@ -788,7 +793,7 @@
 						</ConfigurationItem>
 					</ConfigurationItem>
 					<ConfigurationItem name="Primary Entry(s)" isEnabled="true" between="," after=" " field="PrimarySensesOrEntries" cssClassNameOverride="primarylexemes">
-						<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" between=" " after=" " field="MLHeadWord" cssClassNameOverride="headword">
+						<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" between=" " after=" " field="ReversalName" cssClassNameOverride="headword">
 							<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 								<Option id="vernacular" isEnabled="true" />
 							</WritingSystemOptions>
@@ -918,7 +923,7 @@
 						</WritingSystemOptions>
 					</ConfigurationItem>
 					<ConfigurationItem name="Targets" isEnabled="true" between=", " after=" " field="ConfigTargets">
-						<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" between=" " field="MLHeadWord" cssClassNameOverride="headword">
+						<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" between=" " field="ReversalName" cssClassNameOverride="headword">
 							<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 								<Option id="vernacular" isEnabled="true" />
 							</WritingSystemOptions>
@@ -1091,7 +1096,7 @@
 							</WritingSystemOptions>
 						</ConfigurationItem>
 					</ConfigurationItem>
-					<ConfigurationItem name="Complex Form" isEnabled="true" between=" " field="OwningEntry" subField="MLHeadWord" cssClassNameOverride="headword">
+					<ConfigurationItem name="Complex Form" isEnabled="true" between=" " field="OwningEntry" subField="ReversalName" cssClassNameOverride="headword">
 						<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 							<Option id="vernacular" isEnabled="true" />
 						</WritingSystemOptions>
@@ -1137,6 +1142,10 @@
 					</ConfigurationItem>
 				</ConfigurationItem>
 			</ConfigurationItem>
+	<ConfigurationItem name="Reversal Subsubentries" isEnabled="true" style="Reversal-Subentry" field="SubentriesOS" cssClassNameOverride="Subentries" >
+	  <ComplexFormOptions displayEachComplexFormInParagraph="false" />
+	  <ReferenceItem>AllReversalSubentries</ReferenceItem>
 		</ConfigurationItem>
 	</ConfigurationItem>
+  </SharedItems>
 </DictionaryConfiguration>

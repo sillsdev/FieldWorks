@@ -984,7 +984,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void SpecifyParentsAndReferences_UpdatesParentPropertyOfReferencedNodeOnce()
+		public void SpecifyParentsAndReferences_RefsPreferFirstParentIfSameLevel()
 		{
 			var configNodeOne = new ConfigurableDictionaryNode { FieldDescription = m_field, ReferenceItem = m_reference };
 			var configNodeTwo = new ConfigurableDictionaryNode { FieldDescription = m_field, ReferenceItem = m_reference };
@@ -998,7 +998,26 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			model.SpecifyParentsAndReferences(model.Parts);
 
-			Assert.AreSame(configNodeOne, refdConfigNode.Parent, "The Referenced node's 'Parent' should be the first to reference");
+			Assert.AreSame(configNodeOne, refdConfigNode.Parent, "The Referenced node's 'Parent' should be the first to reference (breadth first)");
+		}
+
+		[Test]
+		public void SpecifyParentsAndReferences_RefsPreferShallowestParentEvenIfNotFirst()
+		{
+			var configNodeKid = new ConfigurableDictionaryNode { FieldDescription = m_field, ReferenceItem = m_reference };
+			var configNodeOne = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { configNodeKid } };
+			var configNodeTwo = new ConfigurableDictionaryNode { FieldDescription = m_field, ReferenceItem = m_reference };
+			var refdConfigNode = new ConfigurableDictionaryNode { FieldDescription = m_field, Label = m_reference };
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { configNodeOne, configNodeTwo },
+				SharedItems = new List<ConfigurableDictionaryNode> { refdConfigNode }
+			};
+
+			// SUT
+			model.SpecifyParentsAndReferences(model.Parts);
+
+			Assert.AreSame(configNodeTwo, refdConfigNode.Parent, "The Referenced node's 'Parent' should be the first to reference (breadth first)");
 		}
 
 		[Test]
@@ -1015,6 +1034,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// SUT
 			model.SpecifyParentsAndReferences(model.Parts);
+			model.SpecifyParentsAndReferences(model.SharedItems);
 
 			Assert.AreSame(refdConfigNode, refdConfigNodeChild.Parent);
 		}
@@ -1033,6 +1053,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// SUT
 			model.SpecifyParentsAndReferences(model.Parts);
+			model.SpecifyParentsAndReferences(model.SharedItems);
 
 			Assert.AreSame(refdConfigNode, refdConfigNodeChild.Parent);
 			Assert.AreSame(refdConfigNode, refdConfigNodeChild.ReferencedNode);
@@ -1384,7 +1405,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void ShareNodeForReference()
+		public void ShareNodeAsReference()
 		{
 			var configNodeChild = new ConfigurableDictionaryNode { Label = "child", FieldDescription = "someField" };
 			var configNode = new ConfigurableDictionaryNode
@@ -1397,7 +1418,7 @@ namespace SIL.FieldWorks.XWorks
 			model.SpecifyParentsAndReferences(model.Parts);
 
 			// SUT
-			model.ShareNodeForReference(configNode);
+			model.ShareNodeAsReference(configNode);
 			Assert.AreEqual(1, model.Parts.Count, "should still be 1 part");
 			Assert.AreEqual(1, model.SharedItems.Count, "Should be 1 shared item");
 			Assert.AreSame(configNode, model.Parts[0]);
@@ -1412,7 +1433,7 @@ namespace SIL.FieldWorks.XWorks
 			sharedItem.Children.ForEach(child => Assert.AreSame(sharedItem, child.Parent));
 		}
 
-		public static DictionaryConfigurationModel CreateSimpleSharingModel(ConfigurableDictionaryNode part, ConfigurableDictionaryNode sharedItem)
+		internal static DictionaryConfigurationModel CreateSimpleSharingModel(ConfigurableDictionaryNode part, ConfigurableDictionaryNode sharedItem)
 		{
 			return new DictionaryConfigurationModel
 			{

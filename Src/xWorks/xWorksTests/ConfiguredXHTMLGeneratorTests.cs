@@ -2385,6 +2385,53 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_GeneratesLinksForCrossReferencesWithReferencedNodes()
+		{
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var referencedEntry = CreateInterestingLexEntry(Cache);
+			const string refTypeName = "TestRefType";
+			CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
+			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
+			Assert.IsNotNull(refType);
+
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord", CSSClassNameOverride = "headword", DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var targetsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ConfigTargets", Children = new List<ConfigurableDictionaryNode> { formNode }
+			};
+			var refdCrossRefsNode = new ConfigurableDictionaryNode
+			{
+				Label = "CrossRefRef", CSSClassNameOverride = "refdrefs",
+				FieldDescription = "MinimalLexReferences",
+				Children = new List<ConfigurableDictionaryNode> { targetsNode }
+			};
+			var crossReferencesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MinimalLexReferences",
+				ReferenceItem = "CrossRefRef",
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new [] { refType.Guid.ToString() })
+				}
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { crossReferencesNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(DictionaryConfigurationModelTests.CreateSimpleSharingModel(mainEntryNode, refdCrossRefsNode));
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
+				"//span[@class='minimallexreferences refdrefs']/span[@class='minimallexreference refdref']/span[@class='configtargets']/span[@class='configtarget']/span[@class='headword']/span[@lang='fr']//a[@href]", 2);
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_GeneratesCrossReferencesOnUnCheckConfigTargets()
 		{
 			var mainEntry = CreateInterestingLexEntry(Cache);
@@ -4396,6 +4443,47 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		public enum FormType { Specified, Unspecified, None }
+
+		[Test]
+		public void GenerateXHTMLForEntry_ReferencedNode_GeneratesBothClasses()
+		{
+			var lexentry = CreateInterestingLexEntry(Cache);
+			var subentry = CreateInterestingLexEntry(Cache);
+			CreateComplexForm(Cache, lexentry, subentry, true);
+
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var sharedSubentryNode = new ConfigurableDictionaryNode
+			{
+				Label = "SharedSubentries",
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				FieldDescription = "Subentries",
+				CSSClassNameOverride = "sharedsubentries"
+			};
+			var subentryNode = new ConfigurableDictionaryNode
+			{
+				ReferenceItem = "SharedSubentries",
+				//DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex, true),
+				FieldDescription = "Subentries",
+				CSSClassNameOverride = "reffingsubs"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { subentryNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(DictionaryConfigurationModelTests.CreateSimpleSharingModel(mainEntryNode, sharedSubentryNode));
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
+			const string headwordXpath = "//span[@class='reffingsubs sharedsubentries']/span[@class='reffingsub sharedsubentry']/span[@class='headword']";
+			AssertThatXmlIn.String(result).HasAtLeastOneMatchForXpath(headwordXpath);
+		}
 
 		[Test]
 		public void GenerateXHTMLForEntry_GeneratesCorrectMinorEntries(

@@ -195,7 +195,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		[XmlIgnore]
 		public List<ConfigurableDictionaryNode> ReferencedOrDirectChildren
-		{ // TODO pH better name? Dependents? AllChildren? Niblets?
+		{
 			get { return ReferencedNode == null ? Children : ReferencedNode.Children; } // REVIEW (Hasso) 2016.03: optimize by caching
 		}
 
