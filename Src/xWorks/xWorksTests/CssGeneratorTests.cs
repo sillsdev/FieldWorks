@@ -1934,19 +1934,28 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_PictureCssIsGenerated()
 		{
+			TestStyle style = GenerateStyle("Normal");
+			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, LeadingIndent);
 			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
 			var pictureFileNode = new ConfigurableDictionaryNode { FieldDescription = "PictureFileRA" };
+			var senseNumberNode = new ConfigurableDictionaryNode { FieldDescription = "SenseNumberTSS"};
+			var captionNode = new ConfigurableDictionaryNode { FieldDescription = "Caption", Style = "Normal" };
 			var memberNode = new ConfigurableDictionaryNode
 			{
 				DictionaryNodeOptions = new DictionaryNodePictureOptions { MaximumWidth = 1 },
+				CSSClassNameOverride = "pictures",
 				FieldDescription = "Pictures",
-				Children = new List<ConfigurableDictionaryNode> { pictureFileNode }
+				Children = new List<ConfigurableDictionaryNode> { pictureFileNode, senseNumberNode, captionNode }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
 			};
 			var rootNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SIL.FieldWorks.XWorks.TestPictureClass",
-				CSSClassNameOverride = "testentry",
-				Children = new List<ConfigurableDictionaryNode> { memberNode }
+				CSSClassNameOverride = "entry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode, memberNode }
 			};
 			PopulateFieldsForTesting(rootNode);
 
@@ -1957,14 +1966,16 @@ namespace SIL.FieldWorks.XWorks
 
 			// SUT
 			var cssWithPictureRules = CssGenerator.GenerateCssFromConfiguration(config, m_mediator);
-			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.testentry.*picture.*{.*float:right.*}", RegexOptions.Singleline).Success,
+			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.entry.*picture.*{.*float:right.*}", RegexOptions.Singleline).Success,
 							  "picture not floated right");
-			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.testentry.*picture.*img.*{.*max-width:1in;.*}", RegexOptions.Singleline).Success,
+			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.entry.*picture.*img.*{.*max-width:1in;.*}", RegexOptions.Singleline).Success,
 							  "css for image did not contain height contraint attribute");
-			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.testentry.*pictures.*picture.*{.*margin:\s*0pt\s*0pt\s*4pt\s*4pt.*;.*}", RegexOptions.Singleline).Success,
+			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.entry.*pictures.*picture.*{.*margin:\s*0pt\s*0pt\s*4pt\s*4pt.*;.*}", RegexOptions.Singleline).Success,
 							  "css for image did not contain valid margin attribute");
-			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.testentry.*{.*clear:both.*}", RegexOptions.Singleline).Success,
+			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.entry.*{.*clear:both.*}", RegexOptions.Singleline).Success,
 							  "float not cleared at entry");
+			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.entry*\>\s*.*pictures.*picture*\>\s*.captionContent\s*.caption*\{.*margin-left:\s*24pt", RegexOptions.Singleline).Success,
+							  "css for caption did not contain valid margin attribute");
 		}
 		[Test]
 		public void GenerateCssForConfiguration_GlossWithMultipleWs()

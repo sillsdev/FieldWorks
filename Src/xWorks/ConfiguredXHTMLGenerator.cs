@@ -847,7 +847,6 @@ namespace SIL.FieldWorks.XWorks
 			var content = GenerateXHTMLForValue(field, propertyValue, config, settings);
 			var bldr = new StringBuilder();
 			bldr.Append(content);
-
 			if (config.ReferencedOrDirectChildren != null)
 			{
 				foreach (var child in config.ReferencedOrDirectChildren)
@@ -1207,7 +1206,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				return PropertyType.CollectionType;
 			}
-			if (typeof(ICmPicture).IsAssignableFrom(parentType))
+			if (typeof(ICmPicture).IsAssignableFrom(parentType) && typeof(ICmFile).IsAssignableFrom(fieldType))
 			{
 				return PropertyType.CmPictureType;
 			}
@@ -1659,6 +1658,41 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		private static void GeneratePictureContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
+			object item, GeneratorSettings settings, StringBuilder bldr)
+		{
+			//Adding Thumbnail tag
+			foreach (var child in config.ReferencedOrDirectChildren)
+			{
+				if (child.FieldDescription == "PictureFileRA")
+				{
+					var content = GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
+					bldr.Append(content);
+					break;
+				}
+			}
+			//Adding tags for Sense Number and Caption
+			var captionBldr = new StringBuilder();
+			foreach (var child in config.ReferencedOrDirectChildren)
+			{
+				if (child.FieldDescription != "PictureFileRA")
+				{
+					var content = GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
+					captionBldr.Append(content);
+				}
+			}
+			if (captionBldr.Length == 0)
+			return;
+			//Adding div tag before Sense Number and Caption
+			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
+			{
+				  xw.WriteStartElement("div");
+				  xw.WriteAttributeString("class", "captionContent");
+				  xw.WriteRaw(captionBldr.ToString());
+				  xw.WriteEndElement();
+			}
+		}
+
 		private static string GenerateCollectionItemContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
 			object item, object collectionOwner, GeneratorSettings settings)
 		{
@@ -1689,6 +1723,10 @@ namespace SIL.FieldWorks.XWorks
 						content = GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
 					bldr.Append(content);
 				}
+			}
+			else if (config.DictionaryNodeOptions is DictionaryNodePictureOptions)
+			{
+				GeneratePictureContent(config, publicationDecorator, item, settings, bldr);
 			}
 			else
 			{

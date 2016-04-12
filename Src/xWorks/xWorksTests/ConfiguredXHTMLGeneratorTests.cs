@@ -3416,14 +3416,15 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateXHTMLForEntry_OneSenseWithSinglePicture()
 		{
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
-			var captionNode = new ConfigurableDictionaryNode { FieldDescription = "Caption", DictionaryNodeOptions = wsOpts };
 			var thumbNailNode = new ConfigurableDictionaryNode { FieldDescription = "PictureFileRA", CSSClassNameOverride = "photo" };
+			var senseNumberNode = new ConfigurableDictionaryNode { FieldDescription = "SenseNumberTSS", CSSClassNameOverride = "sensenumber" };
+			var captionNode = new ConfigurableDictionaryNode { FieldDescription = "Caption", DictionaryNodeOptions = wsOpts };
 			var pictureNode = new ConfigurableDictionaryNode
 			{
 				DictionaryNodeOptions = new DictionaryNodePictureOptions(),
 				FieldDescription = "PicturesOfSenses",
 				CSSClassNameOverride = "Pictures",
-				Children = new List<ConfigurableDictionaryNode> { thumbNailNode, captionNode }
+				Children = new List<ConfigurableDictionaryNode> { thumbNailNode, senseNumberNode, captionNode }
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
@@ -3452,7 +3453,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 			const string oneSenseWithPicture = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/img[@class='photo' and @id]";
-			const string oneSenseWithPictureCaption = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/div[@class='caption']//span[text()='caption']";
+			const string oneSenseWithPictureCaption = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/div[@class='captionContent']/span[@class='caption']//span[text()='caption']";
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithPicture, 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithPictureCaption, 1);
