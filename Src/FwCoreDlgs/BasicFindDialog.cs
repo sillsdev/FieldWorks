@@ -61,6 +61,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if ((e.KeyCode == Keys.Enter || e.KeyCode == Keys.F3) && _findNext.Enabled)
 			{
 				_findNext_Click(this, EventArgs.Empty);
+				e.SuppressKeyPress = true;
 			}
 		}
 	}

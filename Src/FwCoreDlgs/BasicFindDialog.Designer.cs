@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
+using SIL.FieldWorks.Common.Widgets;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -35,7 +36,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this._searchTextbox = new System.Windows.Forms.TextBox();
+			this._searchTextbox = new FwTextBox();
 			this._notificationLabel = new System.Windows.Forms.Label();
 			this._findNext = new System.Windows.Forms.Button();
 			this.SuspendLayout();
@@ -92,7 +93,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		#endregion
 
-		private System.Windows.Forms.TextBox _searchTextbox;
+		private FwTextBox _searchTextbox;
 		private System.Windows.Forms.Label _notificationLabel;
 		private System.Windows.Forms.Button _findNext;
 	}
