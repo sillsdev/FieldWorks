@@ -718,8 +718,8 @@ Are you sure you want to delete this list?</value>
     <comment>{1} is a number to distinguish an earlier copy.  {0} is the name of a stored dictionary configuration that is being copied.</comment>
   </data>
   <data name="ksAllEntries" xml:space="preserve">
-    <value>All Entries</value>
-    <comment>Used in Dictionary View pane when Main Dictionary publication is selected.</comment>
+    <value>All</value>
+    <comment>Used in Dictionary View pane when no Dictionary Publication is selected.</comment>
   </data>
   <data name="ksPublicationEntries" xml:space="preserve">
     <value>{0} {1}</value>
