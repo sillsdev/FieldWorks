@@ -940,7 +940,7 @@ namespace SIL.FieldWorks.XWorks
 		public void SpecifyParentsAndReferences_ThrowsIfReferenceItemDNE()
 		{
 			var configNode = new ConfigurableDictionaryNode { FieldDescription = "LexEntry", ReferenceItem = "DNE" };
-			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { configNode } };
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { configNode }, SharedItems = null };
 
 			// SUT (DNE b/c no SharedItems)
 			Assert.Throws<ArgumentNullException>(() => model.SpecifyParentsAndReferences(model.Parts), "No SharedItems!");

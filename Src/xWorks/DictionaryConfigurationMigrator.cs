@@ -295,75 +295,84 @@ namespace SIL.FieldWorks.XWorks
 		/// <remarks>Internal only for tests; production entry point is MigrateOldConfigurationsIfNeeded()</remarks>
 		internal void CopyNewDefaultsIntoConvertedModel(DictionaryConfigurationModel convertedModel, DictionaryConfigurationModel currentDefaultModel)
 		{
-			var ver = convertedModel.Version;
+			convertedModel.SharedItems = convertedModel.SharedItems ?? new List<ConfigurableDictionaryNode>();
 
 			// Stem-based treats Complex Forms as Main Entries. Previously, they had all been configured by the same Main Entries node,
 			// but now, they are configured in a separate "Main Entries (Complex Forms)" node.
 			if (Path.GetFileNameWithoutExtension(currentDefaultModel.FilePath) == "Stem")
 			{
 				convertedModel.Parts.Insert(0, convertedModel.Parts[0].DeepCloneUnderSameParent()); // Split Main into Main and Main (Complex)
-				CopyDefaultsIntoConfigNode(convertedModel.Parts[0], currentDefaultModel.Parts[0], ver); // Main Entry
-				CopyDefaultsIntoMinorEntryNode(convertedModel.Parts[1], currentDefaultModel.Parts[1], 0, ver); // Main Entry (Complex Forms)
+				CopyDefaultsIntoConfigNode(convertedModel, convertedModel.Parts[0], currentDefaultModel.Parts[0]); // Main Entry
+				CopyDefaultsIntoMinorEntryNode(convertedModel, convertedModel.Parts[1], currentDefaultModel.Parts[1], 0); // Main Entry (Complex Forms)
 				convertedModel.Parts[1].Style = currentDefaultModel.Parts[1].Style; // Main Entry had no style in the old model
 				for (var i = 2; i < convertedModel.Parts.Count; ++i)
 				{
-					CopyDefaultsIntoMinorEntryNode(convertedModel.Parts[i], currentDefaultModel.Parts[2], // Minor Entry (Variants)
-						DictionaryNodeListOptions.ListIds.Variant, ver);
+					CopyDefaultsIntoMinorEntryNode(convertedModel, convertedModel.Parts[i], currentDefaultModel.Parts[2], // Minor Entry (Variants)
+						DictionaryNodeListOptions.ListIds.Variant);
 				}
-				return;
+			}
+			else
+			{
+				if (currentDefaultModel.Label == DictionaryConfigurationModel.AllReversalIndexes
+					&& convertedModel.Label != DictionaryConfigurationModel.AllReversalIndexes)
+				{
+					// If this is a WS-specific Reversal Index, set its WS
+					convertedModel.WritingSystem = Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems
+						.Where(x => x.DisplayLabel == convertedModel.Label).Select(x => x.IcuLocale).FirstOrDefault();
+				}
+				else if (convertedModel.Label == DictionaryConfigurationModel.AllReversalIndexes)
+				{
+					convertedModel.WritingSystem = "";
+				}
+
+				CopyDefaultsIntoConfigNode(convertedModel, convertedModel.Parts[0], currentDefaultModel.Parts[0]); // copy defaults into Main Entry
+				for (var i = 1; i < convertedModel.Parts.Count; ++i)
+				{
+					// Any copies of the minor entry node in the model we are converting should use the defaults from the minor entry nodes,
+					// split into Complex Forms and Variants
+					var currentDefaultComplexNode = currentDefaultModel.Parts[1];
+					var currentDefaultVariantNode = currentDefaultModel.Parts[2];
+
+					var convertedNode = convertedModel.Parts[i];
+					var selectedMinorEntryTypes = ((DictionaryNodeListOptions)convertedNode.DictionaryNodeOptions).Options;
+					var hasComplexTypesSelected = HasComplexFormTypesSelected(selectedMinorEntryTypes);
+					var hasVariantTypesSelected = HasVariantTypesSelected(selectedMinorEntryTypes);
+					// We should create a Complex Forms node if this is the original (non-duplicate) node, if the user has selected at least one
+					// Complex Form Type, or if the user has not selected any Types for display--otherwise this node would disappear entirely!
+					var shouldCreateComplexNode = !convertedNode.IsDuplicate || hasComplexTypesSelected || !hasVariantTypesSelected;
+					var shouldCreateVariantNode = !convertedNode.IsDuplicate || hasVariantTypesSelected || !hasComplexTypesSelected;
+					if (shouldCreateComplexNode && shouldCreateVariantNode)
+					{
+						var convertedComplexNode = convertedNode;
+						var convertedVariantNode = convertedNode.DeepCloneUnderSameParent();
+						convertedModel.Parts.Insert(++i, convertedVariantNode);
+						CopyDefaultsIntoMinorEntryNode(convertedModel, convertedComplexNode, currentDefaultComplexNode,
+							DictionaryNodeListOptions.ListIds.Complex);
+						CopyDefaultsIntoMinorEntryNode(convertedModel, convertedVariantNode, currentDefaultVariantNode,
+							DictionaryNodeListOptions.ListIds.Variant);
+					}
+					else if (shouldCreateComplexNode)
+					{
+						CopyDefaultsIntoMinorEntryNode(convertedModel, convertedNode, currentDefaultComplexNode,
+							DictionaryNodeListOptions.ListIds.Complex);
+					}
+					else // if (shouldCreateVariantNode)
+					{
+						CopyDefaultsIntoMinorEntryNode(convertedModel, convertedNode, currentDefaultVariantNode,
+							DictionaryNodeListOptions.ListIds.Variant);
+					}
+				}
 			}
 
-			if (currentDefaultModel.Label == DictionaryConfigurationModel.AllReversalIndexes && convertedModel.Label != DictionaryConfigurationModel.AllReversalIndexes)
-			{
-				convertedModel.WritingSystem = Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Where(
-					x => x.DisplayLabel == convertedModel.Label)
-					.Select(x => x.IcuLocale).FirstOrDefault();
-			}
-			else if (convertedModel.Label == DictionaryConfigurationModel.AllReversalIndexes)
-			{
-				convertedModel.WritingSystem = "";
-			}
-
-			CopyDefaultsIntoConfigNode(convertedModel.Parts[0], currentDefaultModel.Parts[0], ver); // copy defaults into the Main Entry node
-			for(var i = 1; i < convertedModel.Parts.Count; ++i)
-			{
-				// Any copies of the minor entry node in the model we are converting should use the defaults from the minor entry nodes,
-				// split into Complex Forms and Variants
-				var currentDefaultComplexNode = currentDefaultModel.Parts[1];
-				var currentDefaultVariantNode = currentDefaultModel.Parts[2];
-
-				var convertedNode = convertedModel.Parts[i];
-				var selectedMinorEntryTypes = ((DictionaryNodeListOptions)convertedNode.DictionaryNodeOptions).Options;
-				var hasComplexTypesSelected = HasComplexFormTypesSelected(selectedMinorEntryTypes);
-				var hasVariantTypesSelected = HasVariantTypesSelected(selectedMinorEntryTypes);
-				// We should create a Complex Forms node if this is the original (non-duplicate) node, if the user has selected at least one
-				// Complex Form Type, or if the user has not selected any Types for display--otherwise this node would disappear entirely!
-				var shouldCreateComplexNode = !convertedNode.IsDuplicate || hasComplexTypesSelected || !hasVariantTypesSelected;
-				var shouldCreateVariantNode = !convertedNode.IsDuplicate || hasVariantTypesSelected || !hasComplexTypesSelected;
-				if (shouldCreateComplexNode && shouldCreateVariantNode)
-				{
-					var convertedComplexNode = convertedNode;
-					var convertedVariantNode = convertedNode.DeepCloneUnderSameParent();
-					convertedModel.Parts.Insert(++i, convertedVariantNode);
-					CopyDefaultsIntoMinorEntryNode(convertedComplexNode, currentDefaultComplexNode, DictionaryNodeListOptions.ListIds.Complex, ver);
-					CopyDefaultsIntoMinorEntryNode(convertedVariantNode, currentDefaultVariantNode, DictionaryNodeListOptions.ListIds.Variant, ver);
-				}
-				else if (shouldCreateComplexNode)
-				{
-					CopyDefaultsIntoMinorEntryNode(convertedNode, currentDefaultComplexNode, DictionaryNodeListOptions.ListIds.Complex, ver);
-				}
-				else // if (shouldCreateVariantNode)
-				{
-					CopyDefaultsIntoMinorEntryNode(convertedNode, currentDefaultVariantNode, DictionaryNodeListOptions.ListIds.Variant, ver);
-				}
-			}
+			// add any SharedItems that may have been missed
+			var missedSharedItems = currentDefaultModel.SharedItems.Where(dsi => convertedModel.SharedItems.All(csi => dsi.Label != csi.Label));
+			convertedModel.SharedItems.AddRange(missedSharedItems);
 
 			convertedModel.Version = currentDefaultModel.Version; // Migration is complete; update the version
 		}
 
 		/// <remarks>Internal only for tests; production entry point is MigrateOldConfigurationsIfNeeded()</remarks>
-		internal void CopyDefaultsIntoMinorEntryNode(ConfigurableDictionaryNode convertedNode, ConfigurableDictionaryNode currentDefaultNode,
-			DictionaryNodeListOptions.ListIds complexOrVariant, int version)
+		internal void CopyDefaultsIntoMinorEntryNode(DictionaryConfigurationModel convertedModel, ConfigurableDictionaryNode convertedNode, ConfigurableDictionaryNode currentDefaultNode, DictionaryNodeListOptions.ListIds complexOrVariant)
 		{
 			convertedNode.Label = currentDefaultNode.Label;
 			var nodeOptions = convertedNode.DictionaryNodeOptions as DictionaryNodeListOptions;
@@ -375,7 +384,7 @@ namespace SIL.FieldWorks.XWorks
 					: AvailableVariantTypes;
 				nodeOptions.Options = nodeOptions.Options.Where(option => availableOptions.Contains(option.Id)).ToList();
 			}
-			CopyDefaultsIntoConfigNode(convertedNode, currentDefaultNode, version);
+			CopyDefaultsIntoConfigNode(convertedModel, convertedNode, currentDefaultNode);
 		}
 
 		/// <remarks>Internal only for tests; production entry point is MigrateOldConfigurationsIfNeeded()</remarks>
@@ -414,7 +423,7 @@ namespace SIL.FieldWorks.XWorks
 		/// into the converted node and add any children that are new in the current defaults to the converted node. The order of children
 		/// in the converted node is maintained.
 		/// </summary>
-		private void CopyDefaultsIntoConfigNode(ConfigurableDictionaryNode convertedNode, ConfigurableDictionaryNode currentDefaultNode, int version)
+		private void CopyDefaultsIntoConfigNode(DictionaryConfigurationModel convertedModel, ConfigurableDictionaryNode convertedNode, ConfigurableDictionaryNode currentDefaultNode)
 		{
 			if(convertedNode.Label != currentDefaultNode.Label)
 			{
@@ -428,12 +437,13 @@ namespace SIL.FieldWorks.XWorks
 			}
 			convertedNode.FieldDescription = currentDefaultNode.FieldDescription;
 			convertedNode.SubField = currentDefaultNode.SubField;
+			convertedNode.ReferenceItem = currentDefaultNode.ReferenceItem;
 			if (convertedNode.DictionaryNodeOptions == null)
 				convertedNode.DictionaryNodeOptions = currentDefaultNode.DictionaryNodeOptions;
 			convertedNode.StyleType = currentDefaultNode.StyleType;
 			convertedNode.CSSClassNameOverride = currentDefaultNode.CSSClassNameOverride;
 
-			if(version == VersionPre83 && IsReferencedEntriesNode(convertedNode))
+			if(convertedModel.Version == VersionPre83 && IsReferencedEntriesNode(convertedNode))
 			{
 				ConvertReferencedEntries(convertedNode, currentDefaultNode);
 				return;
@@ -443,68 +453,90 @@ namespace SIL.FieldWorks.XWorks
 			if (convertedNode.Parent == null)
 				convertedNode.After = convertedNode.Between = convertedNode.Before = null;
 
-			// if the new defaults have children and we don't they need to be added
-			if(convertedNode.Children == null && currentDefaultNode.Children != null &&
-				currentDefaultNode.Children.Count > 0)
+			if (convertedNode.Children == null)
 			{
-				convertedNode.Children = new List<ConfigurableDictionaryNode>(currentDefaultNode.Children);
+				// if the new default node has children and the converted node doesn't, they need to be added
+				if(currentDefaultNode.Children != null && currentDefaultNode.Children.Any())
+					convertedNode.Children = new List<ConfigurableDictionaryNode>(currentDefaultNode.Children);
 				return;
 			}
 			// if there are child lists to merge then merge them
-			if(convertedNode.Children != null && currentDefaultNode.Children != null)
+			if (currentDefaultNode.Children != null && currentDefaultNode.Children.Any())
 			{
-				var currentDefaultChildren = new List<ConfigurableDictionaryNode>(currentDefaultNode.Children);
-				var matchedChildren = new List<ConfigurableDictionaryNode>();
-				foreach (var child in convertedNode.Children)
+				CopyDefaultsIntoChildren(convertedModel, convertedNode, currentDefaultNode);
+			}
+			else if (currentDefaultNode.ReferencedNode != null)
+			{
+				if (ReferenceEquals(currentDefaultNode.ReferencedNode.Parent, currentDefaultNode))
 				{
-					var pathStringToNode = BuildPathStringFromNode(child);
-					child.Label = HandleChildNodeRenaming(version, child);
-					// Attempt to find a matching node from the current default model from which to copy defaults
-					ConfigurableDictionaryNode matchFromBase;
-					if (TryGetMatchingNode(child.Label, currentDefaultChildren, matchedChildren, out matchFromBase))
-						CopyDefaultsIntoConfigNode(child, matchFromBase, version);
-					else
+					m_logger.WriteLine(string.Format("Sharing node '{0}' using key '{1}'",
+						BuildPathStringFromNode(convertedNode), convertedNode.ReferenceItem));
+					CopyDefaultsIntoChildren(convertedModel, convertedNode, currentDefaultNode.ReferencedNode);
+					convertedModel.ShareNodeAsReference(convertedNode);
+				}
+				else
+				{
+					m_logger.WriteLine(string.Format("Configuration for '{0}' will follow '{1}'",
+						BuildPathStringFromNode(convertedNode), BuildPathStringFromNode(currentDefaultNode.ReferencedNode.Parent)));
+					// No need for any processing here; since we set ReferenceItem above, shared nodes will be linked next time this model is loaded
+				}
+				convertedNode.Children = null; // Nodes with referenced children do not need direct children
+			}
+			else // if the converted node children and default doesn't
+			{
+				throw new Exception("These nodes are not likely to match the convertedModel.");
+			}
+		}
+
+		private void CopyDefaultsIntoChildren(DictionaryConfigurationModel convertedModel, ConfigurableDictionaryNode convertedNode, ConfigurableDictionaryNode currentDefaultNode)
+		{
+			var currentDefaultChildren = new List<ConfigurableDictionaryNode>(currentDefaultNode.Children);
+			var matchedChildren = new List<ConfigurableDictionaryNode>();
+			foreach (var child in convertedNode.Children)
+			{
+				var pathStringToNode = BuildPathStringFromNode(child);
+				child.Label = HandleChildNodeRenaming(convertedModel.Version, child);
+				// Attempt to find a matching node from the current default model from which to copy defaults
+				ConfigurableDictionaryNode matchFromBase;
+				if (TryGetMatchingNode(child.Label, currentDefaultChildren, matchedChildren, out matchFromBase))
+					CopyDefaultsIntoConfigNode(convertedModel, child, matchFromBase);
+				else
+				{
+					// This node does not match anything in the shipping defaults; it may be a custom field, or it may
+					// have been overlooked before, or we may have garbage.  See https://jira.sil.org/browse/LT-16735.
+					var parentType = DictionaryConfigurationController.GetLookupClassForCustomFieldParent(currentDefaultNode, Cache);
+					bool isCustom;
+					if (IsFieldValid(child.Label, parentType, out isCustom))
 					{
-						// This node does not match anything in the shipping defaults; it may be a custom field, or it may
-						// have been overlooked before, or we may have garbage.  See https://jira.sil.org/browse/LT-16735.
-						var parentType = DictionaryConfigurationController.GetLookupClassForCustomFieldParent(currentDefaultNode, Cache);
-						bool isCustom;
-						if (IsFieldValid(child.Label, parentType, out isCustom))
+						if (isCustom)
 						{
-							if (isCustom)
-							{
-								m_logger.WriteLine(string.Format("Could not match '{0}' in defaults, but it is a valid custom field.", pathStringToNode));
-								SetNodeAsCustom(child, parentType);
-							}
-							else
-							{
-								m_logger.WriteLine(string.Format("Could not match '{0}' in defaults, but it actually exists in the model.", pathStringToNode));
-								if (child.FieldDescription == null)
-									child.FieldDescription = child.Label;
-							}
+							m_logger.WriteLine(string.Format("Could not match '{0}' in defaults, but it is a valid custom field.", pathStringToNode));
+							SetNodeAsCustom(child, parentType);
 						}
 						else
 						{
-							m_logger.WriteLine(string.Format(
-								"Could not match '{0}' in defaults. It may have been valid in a previous version, but is no longer. It will be removed next time the model is loaded.",
-								pathStringToNode));
-							// Treat this as a custom field so that unit tests will pass.
-							SetNodeAsCustom(child, parentType);
+							m_logger.WriteLine(string.Format("Could not match '{0}' in defaults, but it actually exists in the model.", pathStringToNode));
+							if (child.FieldDescription == null)
+								child.FieldDescription = child.Label;
 						}
 					}
-				}
-				//remove all the matches from default list
-				currentDefaultChildren.RemoveAll(matchedChildren.Contains);
-				foreach(var newChild in currentDefaultChildren)
-				{
-					m_logger.WriteLine(string.Format("'{0}->{1}' was not in the old version; adding from default config.",
-						BuildPathStringFromNode(convertedNode), newChild)); // BuildPath from convertedNode to ensure display of LabelSuffixes
-					convertedNode.Children.Add(newChild);
+					else
+					{
+						m_logger.WriteLine(string.Format(
+							"Could not match '{0}' in defaults. It may have been valid in a previous version, but is no longer. It will be removed next time the model is loaded.",
+							pathStringToNode));
+						// Treat this as a custom field so that unit tests will pass.
+						SetNodeAsCustom(child, parentType);
+					}
 				}
 			}
-			else if(convertedNode.Children != null) // if we have children and the base doesn't
+			//remove all the matches from default list
+			currentDefaultChildren.RemoveAll(matchedChildren.Contains);
+			foreach (var newChild in currentDefaultChildren)
 			{
-				throw new Exception("These nodes are not likely to match the convertedModel.");
+				m_logger.WriteLine(string.Format("'{0}->{1}' was not in the old version; adding from default config.",
+					BuildPathStringFromNode(convertedNode), newChild)); // BuildPath from convertedNode to ensure display of LabelSuffixes
+				convertedNode.Children.Add(newChild);
 			}
 		}
 

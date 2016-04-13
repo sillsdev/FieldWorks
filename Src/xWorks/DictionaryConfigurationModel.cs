@@ -267,7 +267,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Default constructor for easier testing.
 		/// </summary>
-		internal DictionaryConfigurationModel() {}
+		internal DictionaryConfigurationModel() { SharedItems = new List<ConfigurableDictionaryNode>(); }
 
 		/// <summary>Loads a DictionaryConfigurationModel from the given path</summary>
 		public DictionaryConfigurationModel(string path, FdoCache cache)
@@ -356,7 +356,7 @@ namespace SIL.FieldWorks.XWorks
 			if (SharedItems == null)
 				SharedItems = new List<ConfigurableDictionaryNode>();
 			// ENHANCE (Hasso) 2016.03: enforce that the specified node is part of *this* model (incl shared items)
-			var key = string.Format("Shared{0}", node.Label);
+			var key = string.IsNullOrEmpty(node.ReferenceItem) ? string.Format("Shared{0}", node.Label) : node.ReferenceItem;
 			if (SharedItems.Any(item => item.Label == key))
 			{
 				var i = 1;

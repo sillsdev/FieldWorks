@@ -260,10 +260,10 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void CopyDefaultsIntoMinorEntryNode_UpdatesLabelAndListId()
 		{
-			var convertedMinorEntryModel = BuildConvertedMinorEntryNodes();
-			var convertedMinorEntryNode = convertedMinorEntryModel.Parts[1];
-			m_migrator.CopyDefaultsIntoMinorEntryNode(convertedMinorEntryNode, BuildCurrentDefaultMinorEntryNodes().Parts[1],
-				DictionaryNodeListOptions.ListIds.Complex, convertedMinorEntryModel.Version);
+			var convertedModel = BuildConvertedMinorEntryNodes();
+			var convertedMinorEntryNode = convertedModel.Parts[1];
+			m_migrator.CopyDefaultsIntoMinorEntryNode(convertedModel, convertedMinorEntryNode, BuildCurrentDefaultMinorEntryNodes().Parts[1],
+				DictionaryNodeListOptions.ListIds.Complex);
 			Assert.AreEqual(MinorEntryComplexLabel, convertedMinorEntryNode.Label);
 			Assert.AreEqual(DictionaryNodeListOptions.ListIds.Complex,
 				((DictionaryNodeListOptions)convertedMinorEntryNode.DictionaryNodeOptions).ListId);
@@ -272,12 +272,12 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void CopyDefaultsIntoMinorEntryNode_PreservesOnlyRelevantTypes()
 		{
-			var convertedMinorEntryModel = BuildConvertedMinorEntryNodes();
-			var convertedMinorEntryNode = convertedMinorEntryModel.Parts[1];
+			var convertedModel = BuildConvertedMinorEntryNodes();
+			var convertedMinorEntryNode = convertedModel.Parts[1];
 			convertedMinorEntryNode.DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache,
 				DictionaryNodeListOptions.ListIds.Minor);
-			m_migrator.CopyDefaultsIntoMinorEntryNode(convertedMinorEntryNode, BuildCurrentDefaultMinorEntryNodes().Parts[1],
-				DictionaryNodeListOptions.ListIds.Complex, convertedMinorEntryModel.Version);
+			m_migrator.CopyDefaultsIntoMinorEntryNode(convertedModel, convertedMinorEntryNode, BuildCurrentDefaultMinorEntryNodes().Parts[1],
+				DictionaryNodeListOptions.ListIds.Complex);
 			var options = ((DictionaryNodeListOptions)convertedMinorEntryNode.DictionaryNodeOptions).Options;
 			var complexTypeGuids = m_migrator.AvailableComplexFormTypes;
 			Assert.AreEqual(complexTypeGuids.Count(), options.Count, "All Complex Form Types should be present");
@@ -291,8 +291,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void CopyDefaultsIntoMinorEntryNode_PreservesSelections()
 		{
-			var convertedMinorEntryModel = BuildConvertedMinorEntryNodes();
-			var convertedMinorEntryNode = convertedMinorEntryModel.Parts[1];
+			var convertedModel = BuildConvertedMinorEntryNodes();
+			var convertedMinorEntryNode = convertedModel.Parts[1];
 			convertedMinorEntryNode.DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache,
 				DictionaryNodeListOptions.ListIds.Minor);
 			var options = ((DictionaryNodeListOptions)convertedMinorEntryNode.DictionaryNodeOptions).Options;
@@ -306,8 +306,8 @@ namespace SIL.FieldWorks.XWorks
 				.Select(option => new DictionaryNodeListOptions.DictionaryNodeOption{ Id = option.Id, IsEnabled = option.IsEnabled }).ToList();
 
 			// SUT
-			m_migrator.CopyDefaultsIntoMinorEntryNode(convertedMinorEntryNode, BuildCurrentDefaultMinorEntryNodes().Parts[1],
-				DictionaryNodeListOptions.ListIds.Complex, convertedMinorEntryModel.Version);
+			m_migrator.CopyDefaultsIntoMinorEntryNode(convertedModel, convertedMinorEntryNode, BuildCurrentDefaultMinorEntryNodes().Parts[1],
+				DictionaryNodeListOptions.ListIds.Complex);
 			var resultOptions = ((DictionaryNodeListOptions)convertedMinorEntryNode.DictionaryNodeOptions).Options;
 
 			Assert.AreEqual(expectedOptions.Count, resultOptions.Count);
@@ -1487,9 +1487,9 @@ namespace SIL.FieldWorks.XWorks
 				CSSClassNameOverride = "entry",
 				Children = new List<ConfigurableDictionaryNode> { subentriesNode }
 			};
-			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
-
-			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+			return model;
 		}
 
 		///<summary/>
@@ -1564,9 +1564,9 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry",
 				Children = new List<ConfigurableDictionaryNode> { referencedSenses }
 			};
-			CssGeneratorTests.PopulateFieldsForTesting(reversalEntryNode);
-
-			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode } };
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode } };
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+			return model;
 		}
 
 		///<summary/>
@@ -1641,9 +1641,9 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry",
 				Children = new List<ConfigurableDictionaryNode> { reversalForm, reversalCategory, referencedSenses }
 			};
-			CssGeneratorTests.PopulateFieldsForTesting(reversalEntryNode);
-
-			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode } };
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode } };
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+			return model;
 		}
 
 		///<summary/>
@@ -1740,9 +1740,9 @@ namespace SIL.FieldWorks.XWorks
 				CSSClassNameOverride = "entry",
 				Children = new List<ConfigurableDictionaryNode> { componentReferencesNode }
 			};
-			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
-
-			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+			return model;
 		}
 
 		///<summary/>
@@ -1888,9 +1888,9 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry",
 				Children = new List<ConfigurableDictionaryNode> { referencedSenses, reversalSubentries }
 			};
-			CssGeneratorTests.PopulateFieldsForTesting(reversalEntryNode);
-
-			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode }, Version = -1 };
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode }, Version = -1 };
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+			return model;
 		}
 
 		private DictionaryConfigurationModel BuildCurrentDefaultReversalIndexChildNodesReferencedHeadword()
@@ -1918,9 +1918,9 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry",
 				Children = new List<ConfigurableDictionaryNode> { referencedSenses, reversalSubentries }
 			};
-			CssGeneratorTests.PopulateFieldsForTesting(reversalEntryNode);
-
-			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode }, Version = -1 };
+			var model =  new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode } };
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+			return model;
 		}
 
 		///<summary/>
@@ -2004,6 +2004,109 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 			Assert.Throws<ArgumentException>(()=>m_migrator.CopyNewDefaultsIntoConvertedModel(convertedConfig, defaultConfig));
+		}
+
+		private const string SharedSubentries = "SharedSubentries";
+
+		private static DictionaryConfigurationModel BuildConvertedSubentriesNodes()
+		{
+			var complexFormTypeNode = new ConfigurableDictionaryNode { Label = "Complex Form Type" };
+			var subsubentriesNode = new ConfigurableDictionaryNode { Label = "Subsubentries", Before = "Before Subentry: " };
+			var subentriesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Subentries",
+				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = true },
+				Children = new List<ConfigurableDictionaryNode> { complexFormTypeNode, subsubentriesNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				CSSClassNameOverride = "entry",
+				Children = new List<ConfigurableDictionaryNode> { subentriesNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			return new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode },
+				Version = DictionaryConfigurationMigrator.VersionPre83
+			};
+		}
+
+		private static DictionaryConfigurationModel BuildCurrentDefaultSharedSubentriesNodes()
+		{
+			var complexFormTypeNode = new ConfigurableDictionaryNode { Label = "Complex Form Type", FieldDescription = "LookupComplexEntryType" };
+			var subsubentriesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Subsubentries", FieldDescription = "Subentries", ReferenceItem = SharedSubentries
+			};
+			var sharedSubentriesNode = new ConfigurableDictionaryNode
+			{
+				Label = SharedSubentries,
+				FieldDescription = "Subentries",
+				Children = new List<ConfigurableDictionaryNode> { complexFormTypeNode, subsubentriesNode }
+			};
+			var subentriesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Subentries", FieldDescription = "Subentries", ReferenceItem = SharedSubentries,
+				Children = new List<ConfigurableDictionaryNode>(), // when deserialized, Children is an empty list rather than null
+				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = false }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "entry",
+				Children = new List<ConfigurableDictionaryNode> { subentriesNode }
+			};
+			var model = DictionaryConfigurationModelTests.CreateSimpleSharingModel(mainEntryNode, sharedSubentriesNode);
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+			return model;
+		}
+
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_MigratesIntoSharedNodes()
+		{
+			var convertedModel = BuildConvertedSubentriesNodes();
+
+			// SUT
+			using (m_migrator.SetTestLogger = new SimpleLogger())
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, BuildCurrentDefaultSharedSubentriesNodes());
+
+			Assert.AreEqual(1, convertedModel.Parts.Count, "Should still be 1 part");
+			Assert.AreEqual(1, convertedModel.SharedItems.Count, "Should now be 1 shared item");
+			var subentriesNode = convertedModel.Parts[0].Children[0];
+			var subentriesOptions = subentriesNode.DictionaryNodeOptions as DictionaryNodeComplexFormOptions;
+			Assert.NotNull(subentriesOptions, "Subentries should still have options");
+			Assert.That(subentriesOptions.DisplayEachComplexFormInAParagraph, "should still display in Para");
+			Assert.IsNull(subentriesNode.Children, "Subentries should have no children of its own");
+			Assert.AreEqual(SharedSubentries, subentriesNode.ReferenceItem, "Should reference SharedSubentries");
+			var sharedSubsNode = convertedModel.SharedItems[0];
+			Assert.AreEqual(SharedSubentries, sharedSubsNode.Label, "Shared node's label should match sharing node's ReferenceItem");
+			var subSubsNode = sharedSubsNode.Children[1];
+			Assert.AreEqual(SharedSubentries, subSubsNode.ReferenceItem, "Subsubentries should also reference SharedSubentries");
+			Assert.AreEqual("Before Subentry: ", subSubsNode.Before, "Subsubentries node should retain its own Before");
+		}
+
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_CopiesMissedSharedItems()
+		{
+			var convertedModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { EmptyNode },
+				Version = DictionaryConfigurationMigrator.VersionPre83
+			};
+			var sharedNode = new ConfigurableDictionaryNode { Label = SharedSubentries };
+			var currentDefaultModel = DictionaryConfigurationModelTests.CreateSimpleSharingModel(EmptyNode, sharedNode);
+
+			// SUT
+			using (m_migrator.SetTestLogger = new SimpleLogger())
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, currentDefaultModel);
+
+			Assert.AreEqual(1, convertedModel.SharedItems.Count, "Should be a SharedItem");
+			Assert.AreEqual(SharedSubentries, convertedModel.SharedItems[0].Label, "SharedItem's Label");
 		}
 
 		///<summary/>
