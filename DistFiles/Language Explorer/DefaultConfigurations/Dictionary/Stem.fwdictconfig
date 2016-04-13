@@ -71,7 +71,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variant Form" between=", " isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+	  <ConfigurationItem name="Variant Form" between=", " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		  <Option id="vernacular" isEnabled="true"/>
 		</WritingSystemOptions>
@@ -308,7 +308,7 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Variant Form" between=", " isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		<ConfigurationItem name="Variant Form" between=", " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -463,7 +463,7 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Complex Form" between=" " isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		<ConfigurationItem name="Complex Form" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -570,7 +570,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Complex Form" between=" " after=" " isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+	  <ConfigurationItem name="Complex Form" between=" " style="Dictionary-CrossReferences" after=" " isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		  <Option id="vernacular" isEnabled="true"/>
 		</WritingSystemOptions>
@@ -727,7 +727,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variant Form" between=", " isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+	  <ConfigurationItem name="Variant Form" between=", " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		  <Option id="vernacular" isEnabled="true"/>
 		</WritingSystemOptions>
@@ -1046,7 +1046,7 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Variant Form" between=", " isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		<ConfigurationItem name="Variant Form" between=", " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -1141,7 +1141,7 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Complex Form" between=" " isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		<ConfigurationItem name="Complex Form" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -1385,7 +1385,7 @@
 			  </WritingSystemOptions>
 			</ConfigurationItem>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Variant Form" between=", " isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		  <ConfigurationItem name="Variant Form" between=", " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			  <Option id="vernacular" isEnabled="true"/>
 			</WritingSystemOptions>
@@ -1540,7 +1540,7 @@
 			  </WritingSystemOptions>
 			</ConfigurationItem>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Complex Form" between=" " isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		  <ConfigurationItem name="Complex Form" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			  <Option id="vernacular" isEnabled="true"/>
 			</WritingSystemOptions>
@@ -1653,7 +1653,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Complex Form" between=" " isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+	  <ConfigurationItem name="Complex Form" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		  <Option id="vernacular" isEnabled="true"/>
 		</WritingSystemOptions>
@@ -1816,7 +1816,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variant Form" between=", " isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+	  <ConfigurationItem name="Variant Form" between=", " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		  <Option id="vernacular" isEnabled="true"/>
 		</WritingSystemOptions>
@@ -2094,7 +2094,7 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Variant Form" between=", " isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		<ConfigurationItem name="Variant Form" between=", " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -2189,7 +2189,7 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Complex Form" between=" " isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		<ConfigurationItem name="Complex Form" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -2433,7 +2433,7 @@
 			  </WritingSystemOptions>
 			</ConfigurationItem>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Variant Form" between=", " isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		  <ConfigurationItem name="Variant Form" between=", " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			  <Option id="vernacular" isEnabled="true"/>
 			</WritingSystemOptions>
@@ -2588,7 +2588,7 @@
 			  </WritingSystemOptions>
 			</ConfigurationItem>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Complex Form" between=" " isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		  <ConfigurationItem name="Complex Form" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			  <Option id="vernacular" isEnabled="true"/>
 			</WritingSystemOptions>
@@ -2701,7 +2701,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Complex Form" between=" " isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+	  <ConfigurationItem name="Complex Form" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		  <Option id="vernacular" isEnabled="true"/>
 		</WritingSystemOptions>
@@ -2917,7 +2917,7 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Variant Form" between=", " isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		<ConfigurationItem name="Variant Form" between=", " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -3072,7 +3072,7 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Complex Form" between=" " isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		<ConfigurationItem name="Complex Form" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
