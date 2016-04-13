@@ -45,8 +45,8 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Pronunciation Media" after=" " isEnabled="false" field="MediaFilesOS" cssClassNameOverride="mediafiles">
-		<ConfigurationItem name="Media Files" after=" " isEnabled="false" field="MediaFileRA"/>
+	  <ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+		<ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
 	  </ConfigurationItem>
 	</ConfigurationItem>
 	<ConfigurationItem name="Variant Forms" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
@@ -96,8 +96,8 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Pronunciation Media" after=" " isEnabled="false" field="MediaFilesOS" cssClassNameOverride="mediafiles">
-		  <ConfigurationItem name="Media Files" after=" " isEnabled="false" field="MediaFileRA"/>
+		<ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+		  <ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Comment" before=" " between=" " isEnabled="false" field="Summary">
@@ -333,8 +333,8 @@
 			  </WritingSystemOptions>
 			</ConfigurationItem>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Pronunciation Media" after=" " isEnabled="false" field="MediaFilesOS" cssClassNameOverride="mediafiles">
-			<ConfigurationItem name="Media Files" after=" " isEnabled="false" field="MediaFileRA"/>
+		  <ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+			<ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
 		  </ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Comment" before=" " between=" " isEnabled="false" field="Summary">
@@ -701,8 +701,8 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Pronunciation Media" after=" " isEnabled="false" field="MediaFilesOS" cssClassNameOverride="mediafiles">
-		<ConfigurationItem name="Media Files" after=" " isEnabled="false" field="MediaFileRA"/>
+	  <ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+		<ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
 	  </ConfigurationItem>
 	</ConfigurationItem>
 	<ConfigurationItem name="Variant Forms" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
@@ -752,8 +752,8 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Pronunciation Media" after=" " isEnabled="false" field="MediaFilesOS" cssClassNameOverride="mediafiles">
-		  <ConfigurationItem name="Media Files" after=" " isEnabled="false" field="MediaFileRA"/>
+		<ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+		  <ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Comment" before=" " between=" " isEnabled="false" field="Summary">
@@ -1071,8 +1071,8 @@
 			  </WritingSystemOptions>
 			</ConfigurationItem>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Pronunciation Media" after=" " isEnabled="false" field="MediaFilesOS" cssClassNameOverride="mediafiles">
-			<ConfigurationItem name="Media Files" after=" " isEnabled="false" field="MediaFileRA"/>
+		  <ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+			<ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
 		  </ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Comment" before=" " between=" " isEnabled="false" field="Summary">
@@ -1410,8 +1410,8 @@
 				</WritingSystemOptions>
 			  </ConfigurationItem>
 			</ConfigurationItem>
-			<ConfigurationItem name="Pronunciation Media" after=" " isEnabled="false" field="MediaFilesOS" cssClassNameOverride="mediafiles">
-			  <ConfigurationItem name="Media Files" after=" " isEnabled="false" field="MediaFileRA"/>
+			<ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+			  <ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
 			</ConfigurationItem>
 		  </ConfigurationItem>
 		  <ConfigurationItem name="Comment" before=" " between=" " isEnabled="false" field="Summary">
@@ -1790,8 +1790,8 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Pronunciation Media" after=" " isEnabled="false" field="MediaFilesOS" cssClassNameOverride="mediafiles">
-		<ConfigurationItem name="Media Files" after=" " isEnabled="false" field="MediaFileRA"/>
+	  <ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+		<ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
 	  </ConfigurationItem>
 	</ConfigurationItem>
 	<ConfigurationItem name="Variant Forms" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
@@ -1841,8 +1841,8 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Pronunciation Media" after=" " isEnabled="false" field="MediaFilesOS" cssClassNameOverride="mediafiles">
-		  <ConfigurationItem name="Media Files" after=" " isEnabled="false" field="MediaFileRA"/>
+		<ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+		  <ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Comment" before=" " between=" " isEnabled="false" field="Summary">
@@ -2119,8 +2119,8 @@
 			  </WritingSystemOptions>
 			</ConfigurationItem>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Pronunciation Media" after=" " isEnabled="false" field="MediaFilesOS" cssClassNameOverride="mediafiles">
-			<ConfigurationItem name="Media Files" after=" " isEnabled="false" field="MediaFileRA"/>
+		  <ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+			<ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
 		  </ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Comment" before=" " between=" " isEnabled="false" field="Summary">
@@ -2458,8 +2458,8 @@
 				</WritingSystemOptions>
 			  </ConfigurationItem>
 			</ConfigurationItem>
-			<ConfigurationItem name="Pronunciation Media" after=" " isEnabled="false" field="MediaFilesOS" cssClassNameOverride="mediafiles">
-			  <ConfigurationItem name="Media Files" after=" " isEnabled="false" field="MediaFileRA"/>
+			<ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+			  <ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
 			</ConfigurationItem>
 		  </ConfigurationItem>
 		  <ConfigurationItem name="Comment" before=" " between=" " isEnabled="false" field="Summary">
@@ -2942,8 +2942,8 @@
 			  </WritingSystemOptions>
 			</ConfigurationItem>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Pronunciation Media" after=" " isEnabled="false" field="MediaFilesOS" cssClassNameOverride="mediafiles">
-			<ConfigurationItem name="Media Files" after=" " isEnabled="false" field="MediaFileRA"/>
+		  <ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+			<ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
 		  </ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Comment" before=" " between=" " isEnabled="false" field="Summary">
