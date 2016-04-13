@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<DictionaryConfiguration name="Stem-based (complex forms as main entries)" allPublications="true" version="3" lastModified="2016-04-08">
+<DictionaryConfiguration name="Stem-based (complex forms as main entries)" allPublications="true" version="4" lastModified="2016-04-14">
   <!-- Main entries in the dictionary have historically been written out with class="entry" -->
   <ConfigurationItem name="Main Entry" isEnabled="true" style="Dictionary-Normal" styleType="paragraph" field="LexEntry" cssClassNameOverride="entry">
 	<!-- using a different CSS Class for the main HeadWord and the HeadWords for subentries, references, and (variant|complex) forms
@@ -223,7 +223,7 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Examples" between="  " after=" " isEnabled="true" field="ExamplesOS" cssClassNameOverride="examples">
-		<ConfigurationItem name="Example" between=" " after=" " style="Dictionary-Vernacular" isEnabled="true" field="Example">
+		<ConfigurationItem name="Example Sentence" between=" " after=" " style="Dictionary-Vernacular" isEnabled="true" field="Example">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="all vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -961,7 +961,7 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Examples" between="  " after=" " isEnabled="true" field="ExamplesOS" cssClassNameOverride="examples">
-		<ConfigurationItem name="Example" between=" " after=" " style="Dictionary-Vernacular" isEnabled="true" field="Example">
+		<ConfigurationItem name="Example Sentence" between=" " after=" " style="Dictionary-Vernacular" isEnabled="true" field="Example">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="all vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -1300,7 +1300,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 		<ConfigurationItem name="Examples" between="  " after=" " isEnabled="true" field="ExamplesOS" cssClassNameOverride="examples">
-		  <ConfigurationItem name="Example" between=" " after=" " style="Dictionary-Vernacular" isEnabled="true" field="Example">
+		  <ConfigurationItem name="Example Sentence" between=" " after=" " style="Dictionary-Vernacular" isEnabled="true" field="Example">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			  <Option id="all vernacular" isEnabled="true"/>
 			</WritingSystemOptions>
@@ -2009,7 +2009,7 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Examples" between="  " after=" " isEnabled="true" field="ExamplesOS" cssClassNameOverride="examples">
-		<ConfigurationItem name="Example" between=" " after=" " style="Dictionary-Vernacular" isEnabled="true" field="Example">
+		<ConfigurationItem name="Example Sentence" between=" " after=" " style="Dictionary-Vernacular" isEnabled="true" field="Example">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="all vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -2348,7 +2348,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 		<ConfigurationItem name="Examples" between="  " after=" " isEnabled="true" field="ExamplesOS" cssClassNameOverride="examples">
-		  <ConfigurationItem name="Example" between=" " after=" " style="Dictionary-Vernacular" isEnabled="true" field="Example">
+		  <ConfigurationItem name="Example Sentence" between=" " after=" " style="Dictionary-Vernacular" isEnabled="true" field="Example">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			  <Option id="all vernacular" isEnabled="true"/>
 			</WritingSystemOptions>
@@ -2832,7 +2832,7 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Examples" between="  " after=" " isEnabled="true" field="ExamplesOS" cssClassNameOverride="examples">
-		<ConfigurationItem name="Example" between=" " after=" " style="Dictionary-Vernacular" isEnabled="true" field="Example">
+		<ConfigurationItem name="Example Sentence" between=" " after=" " style="Dictionary-Vernacular" isEnabled="true" field="Example">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="all vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>

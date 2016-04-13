@@ -2417,6 +2417,17 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void MigrateFrom83Alpha_UpdatesExampleSentence()
+		{
+			var configExampleParent = new ConfigurableDictionaryNode { Label = "Examples", FieldDescription = "ExamplesOS"};
+			var configExampleNode = new ConfigurableDictionaryNode { Label = "Example", FieldDescription = "Example", Parent = configExampleParent };
+			var configParent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { configExampleNode, configExampleParent } };
+			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
+			m_migrator.MigrateFrom83Alpha(configModel);
+			Assert.AreEqual("Example Sentence", configExampleNode.Label);
+		}
+
+		[Test]
 		public void MigrateFrom83Alpha_UpdatesHeadWordRefs()
 		{
 			var cpFormChild = new ConfigurableDictionaryNode { Label = "Complex Form", FieldDescription = "OwningEntry", SubField = "MLHeadWord"};

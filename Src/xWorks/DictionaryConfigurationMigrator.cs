@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.XWorks
 	public class DictionaryConfigurationMigrator : ILayoutConverter
 	{
 		public const int VersionPre83 = -1;
-		public const int VersionCurrent = 3;
+		public const int VersionCurrent = 4;
 		private readonly Inventory m_layoutInventory;
 		private readonly Inventory m_partInventory;
 		private readonly Mediator m_mediator;
@@ -551,9 +551,39 @@ namespace SIL.FieldWorks.XWorks
 					goto case 2;
 				case 2:
 					HandleFieldChanges(alphaModel.Parts, 1, !string.IsNullOrEmpty(alphaModel.WritingSystem));
+					goto case 3;
+				case 3:
+					HandleLabelChanges(alphaModel.Parts, 1);
 					break;
 			}
 			alphaModel.Version = VersionCurrent;
+		}
+
+		private void HandleLabelChanges(List<ConfigurableDictionaryNode> parts, int version)
+		{
+			foreach (var node in parts)
+			{
+				switch (version)
+				{
+					case 1:
+						ReplaceLabelInNodes(node, n => n.FieldDescription == "Example" && n.Parent != null && n.Parent.FieldDescription == "ExamplesOS", "Example Sentence");
+						break;
+				}
+			}
+		}
+
+		private void ReplaceLabelInNodes(ConfigurableDictionaryNode node, Func<ConfigurableDictionaryNode, bool> match, string newLabelValue)
+		{
+			if (match(node))
+			{
+				node.Label = newLabelValue;
+			}
+			if (node.Children == null)
+				return;
+			foreach (var child in node.Children)
+			{
+				ReplaceLabelInNodes(child, match, newLabelValue);
+			}
 		}
 
 		private void HandleFieldChanges(List<ConfigurableDictionaryNode> parts, int version, bool isReversal)
