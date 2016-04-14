@@ -15,6 +15,7 @@ using System.Xml.Linq;
 using Gecko;
 using Gecko.DOM;
 using Palaso.UI.WindowsForms.HtmlBrowser;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FdoUi;
@@ -883,7 +884,7 @@ namespace SIL.FieldWorks.XWorks
 				var field = typeof(GeckoWebBrowser).GetField("WebBrowser", BindingFlags.Instance | BindingFlags.NonPublic);
 				nsIWebBrowser browser = (nsIWebBrowser)field.GetValue(geckoBrowser);
 				var browserFind = Xpcom.QueryInterface<nsIWebBrowserFind>(browser);
-				browserFind.SetSearchStringAttribute(view.SearchText);
+				browserFind.SetSearchStringAttribute(Icu.Normalize(view.SearchText, Icu.UNormalizationMode.UNORM_NFD));
 				try
 				{
 					browserFind.SetWrapFindAttribute(true);
