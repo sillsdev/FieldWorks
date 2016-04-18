@@ -351,21 +351,38 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Allow other nodes to reference this node's children
 		/// </summary>
-		public void ShareNodeAsReference(ConfigurableDictionaryNode node)
+		public void ShareNodeAsReference(ConfigurableDictionaryNode node, string cssClass = null)
 		{
-			if (SharedItems == null)
-				SharedItems = new List<ConfigurableDictionaryNode>();
+			SharedItems = SharedItems ?? new List<ConfigurableDictionaryNode>();
+			if (node.ReferencedNode != null)
+				throw new InvalidOperationException(string.Format("Node {0} is already shared as {1}",
+					DictionaryConfigurationMigrator.BuildPathStringFromNode(node), node.ReferenceItem ?? node.ReferencedNode.Label));
+			if (node.Children == null || !node.Children.Any())
+				return; // no point sharing Children there aren't any
+			var dupItem = SharedItems.FirstOrDefault(item => item.FieldDescription == node.FieldDescription && item.SubField == node.SubField);
+			if (dupItem != null)
+			{
+				var fullField = string.IsNullOrEmpty(node.SubField)
+					? node.FieldDescription
+					: string.Format("{0}.{1}", node.FieldDescription, node.SubField);
+				// TODO pH 2016.04: replace this with MessageBox.Show when this method moves out of the model
+				Console.WriteLine(string.Format("Inadvisable to share {0} because a shared node with the same field ({1}) already exists ({2})",
+					node.DisplayLabel, fullField, DictionaryConfigurationMigrator.BuildPathStringFromNode(dupItem.Parent)));
+				return;
+			}
+
 			// ENHANCE (Hasso) 2016.03: enforce that the specified node is part of *this* model (incl shared items)
 			var key = string.IsNullOrEmpty(node.ReferenceItem) ? string.Format("Shared{0}", node.Label) : node.ReferenceItem;
-			if (SharedItems.Any(item => item.Label == key))
+			cssClass = string.IsNullOrEmpty(cssClass) ? string.Format("shared{0}", CssGenerator.GetClassAttributeForConfig(node)) : cssClass.ToLowerInvariant();
+			// Ensure the shared node's Label and CSSClassNameOverride are both unique within this Configuration
+			if (SharedItems.Any(item => item.Label == key || item.CSSClassNameOverride == cssClass))
 			{
-				var i = 1;
-				for (; SharedItems.Any(item => item.Label == key + i); ++i) {}
-				key = key + i;
+				throw new ArgumentException(string.Format("A SharedItem already exists with the Label '{0}' or the class '{1}'", key, cssClass));
 			}
 			var sharedItem = new ConfigurableDictionaryNode
 			{
 				Label = key,
+				CSSClassNameOverride = cssClass,
 				FieldDescription = node.FieldDescription,
 				SubField = node.SubField,
 				Parent = node,

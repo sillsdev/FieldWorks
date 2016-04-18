@@ -472,7 +472,7 @@ namespace SIL.FieldWorks.XWorks
 					m_logger.WriteLine(string.Format("Sharing node '{0}' using key '{1}'",
 						BuildPathStringFromNode(convertedNode), convertedNode.ReferenceItem));
 					CopyDefaultsIntoChildren(convertedModel, convertedNode, currentDefaultNode.ReferencedNode);
-					convertedModel.ShareNodeAsReference(convertedNode);
+					convertedModel.ShareNodeAsReference(convertedNode, currentDefaultNode.ReferencedNode.CSSClassNameOverride);
 				}
 				else
 				{

@@ -2044,11 +2044,12 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Label = SharedSubentries,
 				FieldDescription = "Subentries",
+				CSSClassNameOverride = "sharedsubclass",
 				Children = new List<ConfigurableDictionaryNode> { complexFormTypeNode, subsubentriesNode }
 			};
 			var subentriesNode = new ConfigurableDictionaryNode
 			{
-				Label = "Subentries", FieldDescription = "Subentries", ReferenceItem = SharedSubentries,
+				Label = "Subentries", FieldDescription = "Subentries", ReferenceItem = SharedSubentries, CSSClassNameOverride = "masterparentclass",
 				Children = new List<ConfigurableDictionaryNode>(), // when deserialized, Children is an empty list rather than null
 				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = false }
 			};
@@ -2082,8 +2083,10 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(subentriesOptions.DisplayEachComplexFormInAParagraph, "should still display in Para");
 			Assert.IsNull(subentriesNode.Children, "Subentries should have no children of its own");
 			Assert.AreEqual(SharedSubentries, subentriesNode.ReferenceItem, "Should reference SharedSubentries");
+			Assert.AreEqual("masterparentclass", subentriesNode.CSSClassNameOverride, "Referring and Referenced Nodes should have distinct classes");
 			var sharedSubsNode = convertedModel.SharedItems[0];
 			Assert.AreEqual(SharedSubentries, sharedSubsNode.Label, "Shared node's label should match sharing node's ReferenceItem");
+			Assert.AreEqual("sharedsubclass", sharedSubsNode.CSSClassNameOverride, "CSS Class should have been merged in");
 			var subSubsNode = sharedSubsNode.Children[1];
 			Assert.AreEqual(SharedSubentries, subSubsNode.ReferenceItem, "Subsubentries should also reference SharedSubentries");
 			Assert.AreEqual("Before Subentry: ", subSubsNode.Before, "Subsubentries node should retain its own Before");

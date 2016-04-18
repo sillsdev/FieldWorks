@@ -1425,12 +1425,97 @@ namespace SIL.FieldWorks.XWorks
 			var sharedItem = model.SharedItems[0];
 			Assert.AreEqual(m_field, configNode.FieldDescription, "Part's field");
 			Assert.AreEqual(m_field, sharedItem.FieldDescription, "Shared Item's field");
+			Assert.AreEqual("shared" + CssGenerator.GetClassAttributeForConfig(configNode), CssGenerator.GetClassAttributeForConfig(sharedItem));
 			Assert.That(sharedItem.IsEnabled, "shared items are always enabled (for configurability)");
 			Assert.AreSame(configNode, sharedItem.Parent, "The original owner should be the 'master parent'");
+			Assert.AreSame(sharedItem, configNode.ReferencedNode, "The ReferencedNode should be the SharedItem");
 			Assert.NotNull(configNode.ReferencedNode, "part should store a reference to the shared item in memory");
 			Assert.NotNull(configNode.ReferenceItem, "part should store the name of the shared item");
 			Assert.AreEqual(sharedItem.Label, configNode.ReferenceItem, "Part should store the name of the shared item");
 			sharedItem.Children.ForEach(child => Assert.AreSame(sharedItem, child.Parent));
+		}
+
+		[Test]
+		public void ShareNodeAsReference_PreventsDuplicateSharedItemLabel()
+		{
+			var configNodeChild = new ConfigurableDictionaryNode { Label = "child", FieldDescription = "someField" };
+			var configNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = m_field,
+				Label = "parent",
+				Children = new List<ConfigurableDictionaryNode> { configNodeChild }
+			};
+			var preextantSharedNode = new ConfigurableDictionaryNode { Label = "Sharedparent" };
+			var model = CreateSimpleSharingModel(configNode, preextantSharedNode);
+			model.SpecifyParentsAndReferences(model.Parts);
+
+			// SUT
+			Assert.Throws<ArgumentException>(() => model.ShareNodeAsReference(configNode));
+		}
+
+		[Test]
+		public void ShareNodeAsReference_PreventsDuplicateSharedItemCssClass()
+		{
+			var configNodeChild = new ConfigurableDictionaryNode { Label = "child", FieldDescription = "someField" };
+			var configNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = m_field,
+				Label = "parent",
+				Children = new List<ConfigurableDictionaryNode> { configNodeChild }
+			};
+			var preextantSharedNode = new ConfigurableDictionaryNode { CSSClassNameOverride = string.Format("shared{0}", m_field).ToLower() };
+			var model = CreateSimpleSharingModel(configNode, preextantSharedNode);
+			model.SpecifyParentsAndReferences(model.Parts);
+
+			// SUT
+			Assert.Throws<ArgumentException>(() => model.ShareNodeAsReference(configNode));
+		}
+
+		[Test]
+		public void ShareNodeAsReference_DoesntShareNodeOfSameTypeAsPreextantSharedNode()
+		{
+			var configNodeChild = new ConfigurableDictionaryNode { Label = "child", FieldDescription = "someField" };
+			var configNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = m_field,
+				Label = "parent",
+				Children = new List<ConfigurableDictionaryNode> { configNodeChild }
+			};
+			var preextantSharedNode = new ConfigurableDictionaryNode { FieldDescription = m_field, Parent = new ConfigurableDictionaryNode() };
+			var model = CreateSimpleSharingModel(configNode, preextantSharedNode);
+			model.SpecifyParentsAndReferences(model.Parts);
+
+			// SUT
+			model.ShareNodeAsReference(configNode);
+			Assert.AreEqual(1, model.SharedItems.Count, "Should be only the preextant shared item");
+			Assert.AreSame(preextantSharedNode, model.SharedItems[0], "Should be only the preextant shared item");
+		}
+
+		[Test]
+		public void ShareNodeAsReference_PreventSharingSharedNode()
+		{
+			var configNode = new ConfigurableDictionaryNode { ReferencedNode = new ConfigurableDictionaryNode() };
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { configNode } };
+
+			// SUT
+			Assert.Throws<InvalidOperationException>(() => model.ShareNodeAsReference(configNode));
+		}
+
+		[Test]
+		public void ShareNodeAsReference_DoesntShareChildlessNode()
+		{
+			var configNode = new ConfigurableDictionaryNode { FieldDescription = m_field, Label = "parent" };
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { configNode } };
+
+			// SUT
+			model.ShareNodeAsReference(configNode);
+			Assert.IsEmpty(model.SharedItems);
+
+			configNode.Children = new List<ConfigurableDictionaryNode>();
+
+			// SUT
+			model.ShareNodeAsReference(configNode);
+			Assert.IsEmpty(model.SharedItems);
 		}
 
 		internal static DictionaryConfigurationModel CreateSimpleSharingModel(ConfigurableDictionaryNode part, ConfigurableDictionaryNode sharedItem)
