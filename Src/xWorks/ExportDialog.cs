@@ -18,6 +18,7 @@ using Microsoft.Win32;
 
 using Palaso.Lift;
 using Palaso.Lift.Validation;
+using Palaso.Reporting;
 using SIL.FieldWorks.FdoUi;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
@@ -494,10 +495,8 @@ namespace SIL.FieldWorks.XWorks
 				m_exportItems.Add(sel);
 			using (EnsureViewInfo())
 			{
-
 				if (!PrepareForExport())
 					return;
-
 				bool fLiftExport = m_exportItems[0].SubItems[2].Text == "lift";
 				string sFileName;
 				string sDirectory;
@@ -714,6 +713,8 @@ namespace SIL.FieldWorks.XWorks
 			using (new WaitCursor(this))
 			using (var progressDlg = new ProgressDialogWithTask(this))
 			{
+				UsageReporter.SendEvent(m_areaOrig + @"Export", @"Export", ft.m_ft.ToString(),
+					string.Format("{0} {1} {2}", ft.m_sDataType, ft.m_sFormat, ft.m_filtered ? "filtered" : "unfiltered"), 0);
 				try
 				{
 					progressDlg.Title = String.Format(xWorksStrings.Exporting0,
