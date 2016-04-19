@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<DictionaryConfiguration name="Stem-based (complex forms as main entries)" allPublications="true" version="4" lastModified="2016-04-14">
+<DictionaryConfiguration name="Stem-based (complex forms as main entries)" allPublications="true" version="4" lastModified="2016-04-18">
   <!-- Main entries in the dictionary have historically been written out with class="entry" -->
   <ConfigurationItem name="Main Entry" isEnabled="true" style="Dictionary-Normal" styleType="paragraph" field="LexEntry" cssClassNameOverride="entry">
 	<!-- using a different CSS Class for the main HeadWord and the HeadWords for subentries, references, and (variant|complex) forms

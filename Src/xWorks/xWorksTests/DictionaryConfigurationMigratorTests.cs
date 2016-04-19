@@ -2452,6 +2452,45 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void MigrateFrom83Alpha_MissingReversalWsFilledIn()
+		{
+			Cache.LangProject.AddToCurrentAnalysisWritingSystems((IWritingSystem) Cache.WritingSystemFactory.get_Engine("ta-fonipa"));
+			var configModelEn = new DictionaryConfigurationModel { Version = 2, Parts = new List<ConfigurableDictionaryNode>(),
+				Label = "English", FilePath = Path.Combine("ReversalIndex", "English.fwdictconfig")};
+			var configModelTamil = new DictionaryConfigurationModel { Version = 2, Parts = new List<ConfigurableDictionaryNode>(),
+				Label = "Tamil (International Phonetic Alphabet)", FilePath = Path.Combine("ReversalIndex", "Tamil.fwdictconfig") };
+			m_migrator.MigrateFrom83Alpha(configModelEn);
+			Assert.AreEqual("en", configModelEn.WritingSystem);
+			m_migrator.MigrateFrom83Alpha(configModelTamil);
+			Assert.AreEqual("ta__IPA", configModelTamil.WritingSystem);
+		}
+
+		[Test]
+		public void MigrateFrom83Alpha_MissingReversalWsFilledIn_NonReversalsIgnored()
+		{
+			// This covers the unlikely case where a non-reversal configuration is named after a language
+			var configModelRoot = new DictionaryConfigurationModel { Version = 2, Parts = new List<ConfigurableDictionaryNode>(),
+				Label = "English", FilePath = Path.Combine("NotReversalIndex", "English.fwdictconfig") };
+			m_migrator.MigrateFrom83Alpha(configModelRoot);
+			Assert.Null(configModelRoot.WritingSystem, "The WritingSystem should not be filled in for configurations that aren't for reversal");
+		}
+
+		[Test]
+		public void MigrateFrom83Alpha_Pre83ReversalCopiesGrabNameFromFile()
+		{
+			// This test case handles advanced users who made copies pre 8.3 and have used the alpha
+			var configModelRoot = new DictionaryConfigurationModel
+			{
+				Version = 2,
+				Parts = new List<ConfigurableDictionaryNode>(),
+				Label = "My Copy",
+				FilePath = Path.Combine("ReversalIndex", "My Copy-English-#Engl464.fwdictconfig")
+			};
+			m_migrator.MigrateFrom83Alpha(configModelRoot);
+			Assert.AreEqual("en", configModelRoot.WritingSystem, "English should have been parsed out of the filename and used to set the WritingSystem");
+		}
+
+		[Test]
 		public void MigrateFrom83Alpha_ExtractsWritingSystemOptionsFromReferencedSenseOptions()
 		{
 			DictionaryConfigurationModel model;

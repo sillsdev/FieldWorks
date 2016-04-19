@@ -317,8 +317,7 @@ namespace SIL.FieldWorks.XWorks
 					&& convertedModel.Label != DictionaryConfigurationModel.AllReversalIndexes)
 				{
 					// If this is a WS-specific Reversal Index, set its WS
-					convertedModel.WritingSystem = Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems
-						.Where(x => x.DisplayLabel == convertedModel.Label).Select(x => x.IcuLocale).FirstOrDefault();
+					SetWritingSystemForReversalModel(convertedModel);
 				}
 				else if (convertedModel.Label == DictionaryConfigurationModel.AllReversalIndexes)
 				{
@@ -369,6 +368,32 @@ namespace SIL.FieldWorks.XWorks
 			convertedModel.SharedItems.AddRange(missedSharedItems);
 
 			convertedModel.Version = currentDefaultModel.Version; // Migration is complete; update the version
+		}
+
+		private void SetWritingSystemForReversalModel(DictionaryConfigurationModel convertedModel)
+		{
+			var directory = Path.GetFileName(Path.GetDirectoryName(convertedModel.FilePath));
+			if (DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName.Equals(directory))
+			{
+				var writingSystem = Cache.ServiceLocator.WritingSystems.AnalysisWritingSystems
+					.Where(x => x.DisplayLabel == convertedModel.Label).Select(x => x.IcuLocale).FirstOrDefault();
+				// If the label didn't get us a writing system then we need to attempt to extract the writing system from the filename
+				if (writingSystem == null)
+				{
+					// old copies looked like this 'my name-French-#frenc343.extension'
+					var fileParts = convertedModel.FilePath.Split('-');
+					if (fileParts.Length == 3)
+					{
+						writingSystem = Cache.ServiceLocator.WritingSystems.AnalysisWritingSystems
+							.Where(x => x.DisplayLabel == fileParts[1]).Select(x => x.IcuLocale).FirstOrDefault();
+					}
+					else
+					{
+						writingSystem = "";
+					}
+				}
+				convertedModel.WritingSystem = writingSystem;
+			}
 		}
 
 		/// <remarks>Internal only for tests; production entry point is MigrateOldConfigurationsIfNeeded()</remarks>
@@ -554,6 +579,7 @@ namespace SIL.FieldWorks.XWorks
 					goto case 3;
 				case 3:
 					HandleLabelChanges(alphaModel.Parts, 1);
+					SetWritingSystemForReversalModel(alphaModel);
 					break;
 			}
 			alphaModel.Version = VersionCurrent;
