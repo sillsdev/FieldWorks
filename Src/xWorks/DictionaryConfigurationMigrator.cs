@@ -189,7 +189,7 @@ namespace SIL.FieldWorks.XWorks
 			m_logger.IncreaseIndent();
 			var configNodeList = oldNodes.Select(ConvertLayoutTreeNodeToConfigNode).ToList();
 			var convertedModel = new DictionaryConfigurationModel { Parts = configNodeList, Label = label, Version = VersionPre83, AllPublications = true};
-			convertedModel.SpecifyParentsAndReferences(convertedModel.Parts); // REVIEW (Hasso) 2016.03: need to set SharedItems? Shouldn't!
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(convertedModel.Parts);
 			CopyNewDefaultsIntoConvertedModel(layout, convertedModel);
 			convertedModel.Save();
 			MigratePublicationLayoutSelection(layout, convertedModel.FilePath);
@@ -497,7 +497,8 @@ namespace SIL.FieldWorks.XWorks
 					m_logger.WriteLine(string.Format("Sharing node '{0}' using key '{1}'",
 						BuildPathStringFromNode(convertedNode), convertedNode.ReferenceItem));
 					CopyDefaultsIntoChildren(convertedModel, convertedNode, currentDefaultNode.ReferencedNode);
-					convertedModel.ShareNodeAsReference(convertedNode, currentDefaultNode.ReferencedNode.CSSClassNameOverride);
+					DictionaryConfigurationController.ShareNodeAsReference(convertedModel.SharedItems, convertedNode,
+						currentDefaultNode.ReferencedNode.CSSClassNameOverride);
 				}
 				else
 				{

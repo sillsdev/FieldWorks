@@ -528,6 +528,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to It is inadvisable to share &apos;{0}&apos; because a shared node with the same field ({1}) already exists ({2}). No changes have been made..
+        /// </summary>
+        internal static string InadvisableToShare {
+            get {
+                return ResourceManager.GetString("InadvisableToShare", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The root node in your configuration is invalid. The field attribute &apos;{0}&apos; must match a class name..
         /// </summary>
         internal static string InvalidRootConfigurationNode {
@@ -591,7 +600,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All Entries.
+        ///   Looks up a localized string similar to All.
         /// </summary>
         internal static string ksAllEntries {
             get {

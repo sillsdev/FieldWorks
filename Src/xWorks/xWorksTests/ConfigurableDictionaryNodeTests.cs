@@ -435,5 +435,103 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			Assert.That(nodeWithSuffix.DisplayLabel, Is.EqualTo("label2 (suffix2)"), "DisplayLabel should include suffix");
 		}
+
+		[Test]
+		public void IsHeadWord_HeadWord_True()
+		{
+			Assert.True(new ConfigurableDictionaryNode {
+				Label = "Headword",
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "headword"
+			}.IsHeadWord);
+		}
+
+		[Test]
+		public void IsHeadWord_NonStandardHeadWord_True()
+		{
+			Assert.True(new ConfigurableDictionaryNode
+			{
+				Label = "Other Form",
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "headword"
+			}.IsHeadWord);
+			Assert.True(new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Headword",
+				FieldDescription = "ReversalName",
+				CSSClassNameOverride = "headword"
+			}.IsHeadWord);
+			Assert.True(new ConfigurableDictionaryNode
+			{
+				Label = "Headword",
+				FieldDescription = "OwningEntry",
+				SubField = "MLHeadWord",
+				CSSClassNameOverride = "headword"
+			}.IsHeadWord);
+			Assert.True(new ConfigurableDictionaryNode
+			{
+				Label = "Headword",
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "mainheadword"
+			}.IsHeadWord);
+		}
+
+		[Test]
+		public void IsHeadWord_NonHeadWord_False()
+		{
+			Assert.False(new ConfigurableDictionaryNode
+			{
+				Label = "Headword",
+				FieldDescription = "OwningEntry",
+				CSSClassNameOverride = "alternateform"
+			}.IsHeadWord);
+		}
+
+		[Test]
+		public void IsMainEntry_MainEntry_True()
+		{
+			var mainEntryNode = new ConfigurableDictionaryNode { FieldDescription = "LexEntry", CSSClassNameOverride = "entry", Parent = null };
+			Assert.True(mainEntryNode.IsMainEntry, "Main Entry");
+			Assert.True(mainEntryNode.IsReadonlyMainEntry, "Readonly Main Entry");
+		}
+
+		[Test]
+		public void IsMainEntry_StemBasedMainEntry_ComplexForms_True_ButNotReadonly()
+		{
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "mainentrycomplex",
+				DictionaryNodeOptions = new DictionaryNodeListOptions(),
+				Parent = null
+			};
+			Assert.True(mainEntryNode.IsMainEntry, "Main Entry");
+			Assert.False(mainEntryNode.IsReadonlyMainEntry, "Stem's Complex Main Entry should be duplicable");
+		}
+
+		[Test]
+		public void IsMainEntry_MainReversalIndexEntry_True()
+		{
+			var mainEntryNode = new ConfigurableDictionaryNode { FieldDescription = "ReversalIndexEntry", CSSClassNameOverride = "reversalindexentry", Parent = null };
+			Assert.True(mainEntryNode.IsMainEntry, "Main Entry");
+			Assert.True(mainEntryNode.IsReadonlyMainEntry, "Readonly Main Entry");
+		}
+
+		[Test]
+		public void IsMainEntry_MinorEntry_False()
+		{
+			var minorEntryNode = new ConfigurableDictionaryNode { FieldDescription = "LexEntry", CSSClassNameOverride = "minorentry", Parent = null };
+			Assert.False(minorEntryNode.IsMainEntry, "Main Entry");
+			Assert.False(minorEntryNode.IsReadonlyMainEntry, "Readonly Main Entry");
+		}
+
+		[Test]
+		public void IsMainEntry_OtherEntry_False()
+		{
+			var mainEntryNode = new ConfigurableDictionaryNode { FieldDescription = "LexEntry", CSSClassNameOverride = "entry", Parent = null };
+			var someNode = new ConfigurableDictionaryNode { FieldDescription = "MLHeadWord", CSSClassNameOverride = "mainheadword", Parent = mainEntryNode };
+			Assert.False(someNode.IsMainEntry, "Main Entry");
+			Assert.False(someNode.IsReadonlyMainEntry, "Readonly Main Entry");
+		}
 	}
 }

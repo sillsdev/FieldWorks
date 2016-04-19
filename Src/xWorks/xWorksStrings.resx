@@ -961,4 +961,8 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>Reversal Configurations</value>
     <comment>Label for the group box which contains the reversal configurations</comment>
   </data>
+  <data name="InadvisableToShare" xml:space="preserve">
+    <value>It is inadvisable to share '{0}' because a shared node with the same field ({1}) already exists ({2}). No changes have been made.</value>
+    <comment>{0} is the node the user has requested to share. {3} is the field these nodes control. {2} is an existing shared node.</comment>
+  </data>
 </root>

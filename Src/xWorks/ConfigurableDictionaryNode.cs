@@ -199,6 +199,29 @@ namespace SIL.FieldWorks.XWorks
 			get { return ReferencedNode == null ? Children : ReferencedNode.Children; } // REVIEW (Hasso) 2016.03: optimize by caching
 		}
 
+		/// <summary>If node is a HeadWord node.</summary>
+		internal bool IsHeadWord { get { return CSSClassNameOverride == "headword" || CSSClassNameOverride == "mainheadword"; } }
+
+		/// <summary>If node is a Main Entry node that should not be duplicated or edited.</summary>
+		internal bool IsReadonlyMainEntry { get { return IsMainEntry && DictionaryNodeOptions == null; } }
+
+		/// <summary>If node is a Main Entry node.</summary>
+		internal bool IsMainEntry
+		{
+			get
+			{
+				switch (CSSClassNameOverride)
+				{
+					case "entry":
+					case "mainentrycomplex":
+					case "reversalindexentry":
+						return true;
+					default:
+						return false;
+				}
+			}
+		}
+
 		/// <summary>
 		/// Clone this node. Point to the same Parent object. Deep-clone Children and DictionaryNodeOptions.
 		/// </summary>

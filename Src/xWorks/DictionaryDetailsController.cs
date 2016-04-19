@@ -130,7 +130,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// else, show only the default details (style, before, between, after)
 				View.OptionsView = null;
-				if (DictionaryConfigurationModel.IsReadonlyMainEntry(m_node))
+				if (m_node.IsReadonlyMainEntry)
 					View.StylesEnabled = false;
 			}
 
@@ -250,7 +250,7 @@ namespace SIL.FieldWorks.XWorks
 			// Prevent events from firing while the view is being initialized
 			wsOptionsView.Load += WritingSystemEventHandlerAdder(wsOptionsView, wsOptions);
 
-			if (DictionaryConfigurationModel.IsHeadWord(m_node)) // show the Configure Headword Numbers... button
+			if (m_node.IsHeadWord) // show the Configure Headword Numbers... button
 			{
 				var optionsView = new ButtonOverPanel { PanelContents = wsOptionsView };
 				optionsView.ButtonClicked += (o, e) => HandleHeadwordNumbersButton();

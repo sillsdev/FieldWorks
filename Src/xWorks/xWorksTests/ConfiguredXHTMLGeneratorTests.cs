@@ -37,9 +37,6 @@ namespace SIL.FieldWorks.XWorks
 		private Mediator m_mediator;
 		private RecordClerk m_Clerk;
 
-		private static readonly DictionaryConfigurationModel s_model =
-			new DictionaryConfigurationModel { SharedItems = new List<ConfigurableDictionaryNode>() }; // for specifying Parents, etc.
-
 		private StringBuilder XHTMLStringBuilder { get; set; }
 
 		[TestFixtureSetUp]
@@ -476,7 +473,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry",
 				IsEnabled = true
 			};
-			s_model.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			var entryOne = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(entryOne, "FirstHeadword", m_wsFr, Cache);
 			var entryTwo = CreateInterestingLexEntry(Cache);
@@ -545,7 +542,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry",
 				IsEnabled = true
 			};
-			s_model.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			var entryOne = CreateInterestingLexEntry(Cache);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
@@ -576,7 +573,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry",
 				IsEnabled = true
 			};
-			s_model.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			var entryOne = CreateInterestingLexEntry(Cache);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
@@ -918,7 +915,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry",
 				IsEnabled = true
 			};
-			s_model.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			var entry = CreateInterestingLexEntry(Cache);
 
 			var sense = entry.SensesOS.First();
@@ -2478,7 +2475,7 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { headword, crossReferencesNode }
 			};
-			s_model.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT-
@@ -3211,7 +3208,7 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { entryReferenceNode }
 			};
-			s_model.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			Assert.IsFalse(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(entryReferenceNode, mainEntry.MinimalLexReferences.First(), mainEntry));
 			Assert.IsFalse(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(entryReferenceNode, referencedEntry.MinimalLexReferences.First(), referencedEntry));
 		}
@@ -3278,7 +3275,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "LexEntry", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { headword, variantsNode }
 			};
-			s_model.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
@@ -3313,7 +3310,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "LexEntry", IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { variantsNode }
 			};
-			s_model.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
@@ -4307,7 +4304,7 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { headword, subentryNode },
 				FieldDescription = "LexEntry", IsEnabled = true
 			};
-			s_model.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT

@@ -1271,7 +1271,7 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { componentsNode }
 			};
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { minorEntryNode }, Version = -1 };
-			model.SpecifyParentsAndReferences(model.Parts);
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts);
 			return model;
 		}
 
@@ -1301,7 +1301,7 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { componentsNode }
 			};
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { minorEntryNode } };
-			model.SpecifyParentsAndReferences(model.Parts);
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts);
 			return model;
 		}
 
@@ -2277,7 +2277,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsNull(convertedCommentNode.FieldDescription, "Initial conversion should not set FieldDescription for the Comment node");
 
 			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedTopNode }, Label = "Test", Version = -1, AllPublications = true};
-			convertedModel.SpecifyParentsAndReferences(convertedModel.Parts);
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(convertedModel.Parts);
 
 			var newTypeNode = new ConfigurableDictionaryNode
 			{
@@ -2356,7 +2356,7 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true
 			};
 			var currentDefaultModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { newReversalEntryNode } };
-			currentDefaultModel.SpecifyParentsAndReferences(currentDefaultModel.Parts);
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(currentDefaultModel.Parts);
 
 			m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, currentDefaultModel);
 			Assert.AreEqual("ReversalIndexEntry", convertedTopNode.FieldDescription, "Converted top node should have FieldDescription=ReversalIndexEntry");

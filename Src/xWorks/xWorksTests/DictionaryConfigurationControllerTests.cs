@@ -9,12 +9,14 @@ using System.Linq;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using XCore;
 
@@ -25,6 +27,8 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	public class DictionaryConfigurationControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
+		private const string m_field = "LexEntry";
+
 		#region Setup and Teardown
 		private DictionaryConfigurationModel m_model;
 		private FwXApp m_application;
@@ -51,8 +55,8 @@ namespace SIL.FieldWorks.XWorks
 			m_window.LoadUI(configFilePath); // actually loads UI here; needed for non-null stylesheet
 			// Add styles to the stylesheet to prevent intermittent unit test failures setting the selected index in the Styles Combobox
 			var styles = FontHeightAdjuster.StyleSheetFromMediator(m_mediator).Styles;
-			styles.Add(new BaseStyleInfo { Name = "ParaStyle", IsParagraphStyle = true });
-			styles.Add(new BaseStyleInfo { Name = "CharStyle", IsParagraphStyle = false });
+			styles.Add(new BaseStyleInfo { Name = "Dictionary-Normal", IsParagraphStyle = true });
+			styles.Add(new BaseStyleInfo { Name = "Dictionary-Headword", IsParagraphStyle = false });
 		}
 
 		[TestFixtureTearDown]
@@ -633,8 +637,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetCustomFieldsForType_EntryCustomFieldIsRepresented()
 		{
-			using (var cf = new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
-									 CellarPropertyType.MultiString, Guid.Empty))
+			using (new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+				CellarPropertyType.MultiString, Guid.Empty))
 			{
 				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache, "LexEntry");
 				CollectionAssert.IsNotEmpty(customFieldNodes);
@@ -645,11 +649,11 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetCustomFieldsForType_PossibilityListFieldGetsChildren()
 		{
-			using (var cf = new CustomFieldForTest(Cache, "CustomListItem", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
-								 CellarPropertyType.OwningAtomic, Cache.LanguageProject.LocationsOA.Guid))
+			using (new CustomFieldForTest(Cache, "CustomListItem", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+				CellarPropertyType.OwningAtomic, Cache.LanguageProject.LocationsOA.Guid))
 			{
 				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache,
-																														  "LexEntry");
+					"LexEntry");
 				CollectionAssert.IsNotEmpty(customFieldNodes, "The custom field configuration node was not inserted for a PossibilityListReference");
 				Assert.AreEqual(customFieldNodes[0].Label, "CustomListItem", "Custom field did not get inserted correctly.");
 				CollectionAssert.IsNotEmpty(customFieldNodes[0].Children, "ListItem Child nodes not created");
@@ -665,11 +669,10 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetCustomFieldsForType_SenseCustomFieldIsRepresented()
 		{
-			using (var cf = new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexSense"), 0,
-								 CellarPropertyType.ReferenceCollection, Guid.Empty))
+			using (new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexSense"), 0,
+				CellarPropertyType.ReferenceCollection, Guid.Empty))
 			{
-				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache,
-																														  "LexSense");
+				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache, "LexSense");
 				CollectionAssert.IsNotEmpty(customFieldNodes);
 				Assert.IsTrue(customFieldNodes[0].Label == "CustomCollection");
 			}
@@ -678,11 +681,10 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetCustomFieldsForType_MorphCustomFieldIsRepresented()
 		{
-			using (var cf = new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("MoForm"), 0,
-								 CellarPropertyType.ReferenceCollection, Guid.Empty))
+			using (new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("MoForm"), 0,
+				CellarPropertyType.ReferenceCollection, Guid.Empty))
 			{
-				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache,
-																														  "MoForm");
+				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache, "MoForm");
 				CollectionAssert.IsNotEmpty(customFieldNodes);
 				Assert.IsTrue(customFieldNodes[0].Label == "CustomCollection");
 			}
@@ -691,11 +693,10 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetCustomFieldsForType_ExampleCustomFieldIsRepresented()
 		{
-			using (var cf = new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexExampleSentence"), 0,
-								 CellarPropertyType.ReferenceCollection, Guid.Empty))
+			using (new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexExampleSentence"), 0,
+				CellarPropertyType.ReferenceCollection, Guid.Empty))
 			{
-				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache,
-																														  "LexExampleSentence");
+				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache, "LexExampleSentence");
 				CollectionAssert.IsNotEmpty(customFieldNodes);
 				Assert.IsTrue(customFieldNodes[0].Label == "CustomCollection");
 			}
@@ -704,13 +705,12 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetCustomFieldsForType_MultipleFieldsAreReturned()
 		{
-			using (var cf = new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexSense"), 0,
-								 CellarPropertyType.ReferenceCollection, Guid.Empty))
-			using (var cf2 = new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexSense"), 0,
-								 CellarPropertyType.ReferenceCollection, Guid.Empty))
+			using (new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexSense"), 0,
+				CellarPropertyType.ReferenceCollection, Guid.Empty))
+			using (new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexSense"), 0,
+				CellarPropertyType.ReferenceCollection, Guid.Empty))
 			{
-				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache,
-																														  "LexSense");
+				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache, "LexSense");
 				CollectionAssert.IsNotEmpty(customFieldNodes);
 				CollectionAssert.AllItemsAreUnique(customFieldNodes);
 				Assert.IsTrue(customFieldNodes.Count == 2, "Incorrect number of nodes created from the custom fields.");
@@ -724,8 +724,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using (var view = new TestConfigurableDictionaryView())
 			{
-				var controller = new DictionaryConfigurationController() { View = view, _model = m_model };
-				var rootNode = new ConfigurableDictionaryNode() { Label = "root", Children = new List<ConfigurableDictionaryNode>() };
+				var controller = new DictionaryConfigurationController { View = view, _model = m_model };
+				var rootNode = new ConfigurableDictionaryNode { Label = "root", Children = new List<ConfigurableDictionaryNode>() };
 				AddChildrenToNode(rootNode, 2);
 				var movingChild = rootNode.Children[movingChildOriginalPosition];
 				var otherChild = rootNode.Children[movingChildExpectedPosition];
@@ -741,10 +741,10 @@ namespace SIL.FieldWorks.XWorks
 
 		private sealed class MockMediator : IDisposable
 		{
-			private MockFwXApp application;
-			private MockFwXWindow window;
+			private readonly MockFwXApp application;
+			private readonly MockFwXWindow window;
 
-			public Mediator Mediator { get; set; }
+			public Mediator Mediator { get; private set; }
 
 			public MockMediator(FdoCache cache)
 			{
@@ -767,17 +767,18 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void MergeCustomFieldsIntoDictionaryModel_NewFieldsAreAdded()
 		{
-			using (var cf2 = new CustomFieldForTest(Cache, "CustomString",
-															Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
-															CellarPropertyType.ReferenceCollection, Guid.Empty))
+			using (new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+				CellarPropertyType.ReferenceCollection, Guid.Empty))
 			{
-				var model = new DictionaryConfigurationModel();
-				model.Parts = new List<ConfigurableDictionaryNode>
+				var model = new DictionaryConfigurationModel
+				{
+					Parts = new List<ConfigurableDictionaryNode>
 					{
 						new ConfigurableDictionaryNode { Label = "Main Entry", FieldDescription = "LexEntry" }
-					};
+					}
+				};
 				//SUT
-				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(Cache, model);
+				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache);
 				Assert.IsNotNull(model.Parts[0].Children, "Custom Field did not add to children");
 				CollectionAssert.IsNotEmpty(model.Parts[0].Children, "Custom Field did not add to children");
 				Assert.AreEqual(model.Parts[0].Children[0].Label, "CustomString");
@@ -789,9 +790,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void MergeCustomFieldsIntoDictionaryModel_FieldsAreNotDuplicated()
 		{
-			using (var cf2 = new CustomFieldForTest(Cache, "CustomString",
-															Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
-															CellarPropertyType.ReferenceCollection, Guid.Empty))
+			using (new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+				CellarPropertyType.ReferenceCollection, Guid.Empty))
 			{
 				var model = new DictionaryConfigurationModel();
 				var customNode = new ConfigurableDictionaryNode()
@@ -809,7 +809,7 @@ namespace SIL.FieldWorks.XWorks
 				model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
 
 				//SUT
-				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(Cache, model);
+				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache);
 				Assert.AreEqual(1, model.Parts[0].Children.Count, "Only the existing custom field node should be present");
 			}
 		}
@@ -862,7 +862,7 @@ namespace SIL.FieldWorks.XWorks
 			model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
 
 			//SUT
-			DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(Cache, model);
+			DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache);
 			Assert.AreEqual(0, model.Parts[0].Children.Count, "The custom field in the model should have been removed since it isn't in the project(cache)");
 		}
 
@@ -886,7 +886,7 @@ namespace SIL.FieldWorks.XWorks
 			model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
 			CssGeneratorTests.PopulateFieldsForTesting(model);
 			//SUT
-			DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(Cache, model);
+			DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache);
 			Assert.AreEqual(0, model.Parts[0].Children[0].Children.Count, "The custom field in the model should have been removed since it isn't in the project(cache)");
 		}
 
@@ -918,7 +918,7 @@ namespace SIL.FieldWorks.XWorks
 				CssGeneratorTests.PopulateFieldsForTesting(model);
 
 				//SUT
-				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(Cache, model);
+				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache);
 				Assert.AreEqual(1, examplesNode.Children.Count, "Custom field should have been added to ExampleSentence");
 			}
 		}
@@ -934,7 +934,7 @@ namespace SIL.FieldWorks.XWorks
 					Cache);
 
 				//SUT
-				Assert.DoesNotThrow(() => DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(Cache, model));
+				Assert.DoesNotThrow(() => DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache));
 			}
 		}
 
@@ -1340,6 +1340,348 @@ namespace SIL.FieldWorks.XWorks
 				Assert.AreSame(translationNode, treeNode.Tag, "entry//translation should find the right TreeNode");
 				Assert.AreEqual(translationNode.Label, treeNode.Text, "The TreeNode for entry//translation should have the right Text");
 			}
+		}
+
+		[Test]
+		public void EnsureValidStylesInModelRemovesMissingStyles()
+		{
+			var senseNode = new ConfigurableDictionaryNode
+			{
+				Label = "Senses",
+				FieldDescription = "SensesOS",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					DisplayEachSenseInAParagraph = true,
+					NumberStyle = "Green-Dictionary-SenseNumber",
+					NumberingStyle = "%d",
+					NumberEvenASingleSense = false,
+					ShowSharedGrammarInfoFirst = true
+				},
+				StyleType = ConfigurableDictionaryNode.StyleTypes.Paragraph,
+				Style = "Orange-Sense-Paragraph"
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Entry",
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Style = "Dictionary-Continuation",
+				Children = new List<ConfigurableDictionaryNode> { senseNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				FilePath = "/no/such/file",
+				Version = 0,
+				Label = "Root",
+				Parts = new List<ConfigurableDictionaryNode> { entryNode },
+			};
+			DictionaryConfigurationController.EnsureValidStylesInModel(model, Cache);
+			//SUT
+			Assert.IsNull(entryNode.Style, "Missing style should be removed.");
+			Assert.IsNull(senseNode.Style, "Missing style should be removed.");
+			Assert.IsNull(((DictionaryNodeSenseOptions)senseNode.DictionaryNodeOptions).NumberStyle, "Missing style should be removed.");
+		}
+
+		[Test]
+		public void CheckNewAndDeleteddVariantTypes()
+		{
+			var minorEntryVariantNode = new ConfigurableDictionaryNode
+			{
+				Label = "Minor Entry (Variants)",
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Variant,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="01234567-89ab-cdef-0123-456789abcdef", IsEnabled = true },
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="024b62c9-93b3-41a0-ab19-587a0030219a", IsEnabled = true },
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="4343b1ef-b54f-4fa4-9998-271319a6d74c", IsEnabled = true },
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c", IsEnabled = true },
+					},
+				},
+			};
+			var variantsNode = new ConfigurableDictionaryNode
+			{
+				Label = "Variant Forms",
+				FieldDescription = "VariantFormEntryBackRefs",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Variant,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="01234567-89ab-cdef-0123-456789abcdef", IsEnabled = true },
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="024b62c9-93b3-41a0-ab19-587a0030219a", IsEnabled = true },
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="4343b1ef-b54f-4fa4-9998-271319a6d74c", IsEnabled = true },
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c", IsEnabled = true }
+					}
+				}
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Style = "Dictionary-Normal",
+				Children = new List<ConfigurableDictionaryNode> { variantsNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				FilePath = "/no/such/file",
+				Version = 0,
+				Label = "Root",
+				Parts = new List<ConfigurableDictionaryNode> { entryNode, minorEntryVariantNode },
+			};
+			var newType = CreateNewVariantType("Absurd Variant");
+			// SUT
+			try
+			{
+				DictionaryConfigurationController.MergeTypesIntoDictionaryModel(model, Cache);
+				var opts1 = ((DictionaryNodeListOptions)variantsNode.DictionaryNodeOptions).Options;
+				// We have options for the standard six variant types (including the last three shown above, plus one for the
+				// new type we added, plus one for the "No Variant Type" pseudo-type for a total of eight.
+				Assert.AreEqual(8, opts1.Count, "Properly merged variant types to options list in major entry child node");
+				Assert.AreEqual(newType.Guid.ToString(), opts1[6].Id, "New type appears near end of options list in major entry child node");
+				Assert.AreEqual("b0000000-c40e-433e-80b5-31da08771344", opts1[7].Id, "'No Variant Type' type appears at end of options list in major entry child node");
+				var opts2 = ((DictionaryNodeListOptions)minorEntryVariantNode.DictionaryNodeOptions).Options;
+				Assert.AreEqual(8, opts2.Count, "Properly merged variant types to options list in minor entry top node");
+				Assert.AreEqual(newType.Guid.ToString(), opts2[6].Id, "New type appears near end of options list in minor entry top node");
+				Assert.AreEqual("b0000000-c40e-433e-80b5-31da08771344", opts2[7].Id, "'No Variant Type' type appears near end of options list in minor entry top node");
+			}
+			finally
+			{
+				// Don't mess up other unit tests with an extra variant type.
+				RemoveNewVariantType(newType);
+			}
+		}
+
+		[Test]
+		public void CheckNewAndDeletedReferenceTypes()
+		{
+			var lexicalRelationNode = new ConfigurableDictionaryNode
+			{
+				Label = "Lexical Relations",
+				FieldDescription = "LexSenseReferences",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Sense,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="0b5b04c8-3900-4537-9eec-1346d10507d7", IsEnabled = true },
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="1ac9f08e-ed72-4775-a18e-3b1330da8618", IsEnabled = true },
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="854fc2a8-c0e0-4b72-8611-314a21467fe4", IsEnabled = true }
+					},
+				},
+			};
+			var senseNode = new ConfigurableDictionaryNode
+			{
+				Label = "Senses",
+				FieldDescription = "SensesOS",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					DisplayEachSenseInAParagraph = true,
+					NumberingStyle = "%d",
+					NumberEvenASingleSense = false,
+					ShowSharedGrammarInfoFirst = true
+				},
+				Children = new List<ConfigurableDictionaryNode> { lexicalRelationNode }
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Style = "Dictionary-Normal",
+				Children = new List<ConfigurableDictionaryNode> { senseNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				FilePath = "/no/such/file",
+				Version = 0,
+				Label = "Root",
+				Parts = new List<ConfigurableDictionaryNode> { entryNode },
+			};
+			var newType = MakeRefType("Part", null, (int)LexRefTypeTags.MappingTypes.kmtSenseCollection);
+			// SUT
+			try
+			{
+				DictionaryConfigurationController.MergeTypesIntoDictionaryModel(model, Cache);
+				var opts1 = ((DictionaryNodeListOptions)lexicalRelationNode.DictionaryNodeOptions).Options;
+				Assert.AreEqual(1, opts1.Count, "Properly merged reference types to options list in lexical relation node");
+				Assert.AreEqual(newType.Guid.ToString(), opts1[0].Id, "New type appears in the list in lexical relation node");
+			}
+			finally
+			{
+				// Don't mess up other unit tests with an extra reference type.
+				RemoveNewReferenceType(newType);
+			}
+		}
+
+		[Test]
+		public void ShareNodeAsReference()
+		{
+			var configNodeChild = new ConfigurableDictionaryNode { Label = "child", FieldDescription = "someField" };
+			var configNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = m_field,
+				Label = "parent",
+				Children = new List<ConfigurableDictionaryNode> { configNodeChild }
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { configNode } };
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts);
+
+			// SUT
+			DictionaryConfigurationController.ShareNodeAsReference(model.SharedItems, configNode);
+			Assert.AreEqual(1, model.Parts.Count, "should still be 1 part");
+			Assert.AreEqual(1, model.SharedItems.Count, "Should be 1 shared item");
+			Assert.AreSame(configNode, model.Parts[0]);
+			var sharedItem = model.SharedItems[0];
+			Assert.AreEqual(m_field, configNode.FieldDescription, "Part's field");
+			Assert.AreEqual(m_field, sharedItem.FieldDescription, "Shared Item's field");
+			Assert.AreEqual("shared" + CssGenerator.GetClassAttributeForConfig(configNode), CssGenerator.GetClassAttributeForConfig(sharedItem));
+			Assert.That(sharedItem.IsEnabled, "shared items are always enabled (for configurability)");
+			Assert.AreSame(configNode, sharedItem.Parent, "The original owner should be the 'master parent'");
+			Assert.AreSame(sharedItem, configNode.ReferencedNode, "The ReferencedNode should be the SharedItem");
+			Assert.NotNull(configNode.ReferencedNode, "part should store a reference to the shared item in memory");
+			Assert.NotNull(configNode.ReferenceItem, "part should store the name of the shared item");
+			Assert.AreEqual(sharedItem.Label, configNode.ReferenceItem, "Part should store the name of the shared item");
+			sharedItem.Children.ForEach(child => Assert.AreSame(sharedItem, child.Parent));
+		}
+
+		[Test]
+		public void ShareNodeAsReference_PreventsDuplicateSharedItemLabel()
+		{
+			var configNodeChild = new ConfigurableDictionaryNode { Label = "child", FieldDescription = "someField" };
+			var configNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = m_field,
+				Label = "parent",
+				Children = new List<ConfigurableDictionaryNode> { configNodeChild }
+			};
+			var preextantSharedNode = new ConfigurableDictionaryNode { Label = "Sharedparent" };
+			var model = DictionaryConfigurationModelTests.CreateSimpleSharingModel(configNode, preextantSharedNode);
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems);
+
+			// SUT
+			Assert.Throws<ArgumentException>(() => DictionaryConfigurationController.ShareNodeAsReference(model.SharedItems, configNode));
+		}
+
+		[Test]
+		public void ShareNodeAsReference_PreventsDuplicateSharedItemCssClass()
+		{
+			var configNodeChild = new ConfigurableDictionaryNode { Label = "child", FieldDescription = "someField" };
+			var configNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = m_field,
+				Label = "parent",
+				Children = new List<ConfigurableDictionaryNode> { configNodeChild }
+			};
+			var preextantSharedNode = new ConfigurableDictionaryNode { CSSClassNameOverride = string.Format("shared{0}", m_field).ToLower() };
+			var model = DictionaryConfigurationModelTests.CreateSimpleSharingModel(configNode, preextantSharedNode);
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems);
+
+			// SUT
+			Assert.Throws<ArgumentException>(() => DictionaryConfigurationController.ShareNodeAsReference(model.SharedItems, configNode));
+		}
+
+		[Test]
+		public void ShareNodeAsReference_DoesntShareNodeOfSameTypeAsPreextantSharedNode()
+		{
+			var configNodeChild = new ConfigurableDictionaryNode { Label = "child", FieldDescription = "someField" };
+			var configNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = m_field,
+				Label = "parent",
+				Children = new List<ConfigurableDictionaryNode> { configNodeChild }
+			};
+			var preextantSharedNode = new ConfigurableDictionaryNode { FieldDescription = m_field, Parent = new ConfigurableDictionaryNode() };
+			var model = DictionaryConfigurationModelTests.CreateSimpleSharingModel(configNode, preextantSharedNode);
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems);
+
+			// SUT
+			DictionaryConfigurationController.ShareNodeAsReference(model.SharedItems, configNode);
+			Assert.AreEqual(1, model.SharedItems.Count, "Should be only the preextant shared item");
+			Assert.AreSame(preextantSharedNode, model.SharedItems[0], "Should be only the preextant shared item");
+		}
+
+		[Test]
+		public void ShareNodeAsReference_PreventSharingSharedNode()
+		{
+			var configNode = new ConfigurableDictionaryNode { ReferencedNode = new ConfigurableDictionaryNode() };
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { configNode } };
+
+			// SUT
+			Assert.Throws<InvalidOperationException>(() => DictionaryConfigurationController.ShareNodeAsReference(model.SharedItems, configNode));
+		}
+
+		[Test]
+		public void ShareNodeAsReference_DoesntShareChildlessNode()
+		{
+			var configNode = new ConfigurableDictionaryNode { FieldDescription = m_field, Label = "parent" };
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { configNode } };
+
+			// SUT
+			DictionaryConfigurationController.ShareNodeAsReference(model.SharedItems, configNode);
+			Assert.IsEmpty(model.SharedItems);
+
+			configNode.Children = new List<ConfigurableDictionaryNode>();
+
+			// SUT
+			DictionaryConfigurationController.ShareNodeAsReference(model.SharedItems, configNode);
+			Assert.IsEmpty(model.SharedItems);
+		}
+
+		private ILexEntryType CreateNewVariantType(string name)
+		{
+			ILexEntryType poss = null;
+			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor, () =>
+			{
+				var fact = Cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>();
+				poss = fact.Create();
+				Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Add(poss);
+				poss.Name.SetAnalysisDefaultWritingSystem(name);
+			});
+			return poss;
+		}
+
+		private ILexRefType MakeRefType(string name, string reverseName, int mapType)
+		{
+			ILexRefType result = null;
+			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor, () =>
+			{
+				if (Cache.LangProject.LexDbOA.ReferencesOA == null)
+					Cache.LangProject.LexDbOA.ReferencesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+				result = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
+				Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(result);
+				result.Name.AnalysisDefaultWritingSystem = AnalysisTss(name);
+				if (reverseName != null)
+					result.ReverseName.AnalysisDefaultWritingSystem = AnalysisTss(reverseName);
+				result.MappingType = mapType;
+			});
+			return result;
+		}
+		private ITsString AnalysisTss(string form)
+		{
+			return Cache.TsStrFactory.MakeString(form, Cache.DefaultAnalWs);
+		}
+		private void RemoveNewVariantType(ILexEntryType newType)
+		{
+			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor, () =>
+			{
+				Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Remove(newType);
+			});
+		}
+		private void RemoveNewReferenceType(ILexRefType newType)
+		{
+			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor, () =>
+			{
+				Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Remove(newType);
+			});
 		}
 	}
 }

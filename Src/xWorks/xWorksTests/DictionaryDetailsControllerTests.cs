@@ -390,7 +390,7 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true
 			};
 
-			new DictionaryConfigurationModel().SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
 			controller.LoadNode(mainEntryNode);
