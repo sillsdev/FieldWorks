@@ -596,6 +596,8 @@ namespace SIL.FieldWorks.XWorks
 				{
 					case 3:
 						ReplaceLabelInNodes(node, n => n.FieldDescription == "Example" && n.Parent != null && n.Parent.FieldDescription == "ExamplesOS", "Example Sentence");
+						ReplaceLabelInNodes(node, n => n.FieldDescription == "Owner" && n.Parent != null && n.Parent.FieldDescription == "ReferringSenses" && n.SubField == "Bibliography", "Bibliography (Entry)");
+						ReplaceLabelInNodes(node, n => n.FieldDescription == "Bibliography" && n.Parent != null && n.Parent.FieldDescription == "ReferringSenses", "Bibliography (Sense)");
 						break;
 				}
 			}
