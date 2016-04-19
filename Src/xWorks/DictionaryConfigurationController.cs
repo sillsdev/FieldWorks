@@ -1156,7 +1156,12 @@ namespace SIL.FieldWorks.XWorks
 		internal static ConfigurableDictionaryNode FindStartingConfigNode(ConfigurableDictionaryNode topNode, List<string> classList)
 		{
 			if (classList.Count == 0)
-				return topNode;  // what we have already is the best we can find.
+			{
+				return topNode.IsSharedItem ? topNode.Parent : topNode; // what we have already is the best we can find.
+			}
+			// If we have a referenced node, we prefer to use it over any Children we might have
+			if (topNode.ReferencedNode != null)
+				topNode = topNode.ReferencedNode;
 
 			// If we can't go further down the configuration tree, but still have classes to match, back up one level
 			// and try matching with the remaining classes.  The configuration tree doesn't always map exactly with
@@ -1174,7 +1179,8 @@ namespace SIL.FieldWorks.XWorks
 			foreach (ConfigurableDictionaryNode node in topNode.Children)
 			{
 				var cssClass = CssGenerator.GetClassAttributeForConfig(node);
-				if (cssClass == classList[0])
+				// LT-17359 a reference node might have "senses mainentrysubsenses"
+				if (cssClass == classList[0].Split(' ')[0])
 				{
 					matchingNode = node;
 					break;

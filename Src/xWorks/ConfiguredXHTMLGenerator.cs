@@ -1978,6 +1978,11 @@ namespace SIL.FieldWorks.XWorks
 			return (entryType.GetGenericArguments().Length > 0);
 		}
 
+		internal static bool IsCollectionNode(ConfigurableDictionaryNode configNode)
+		{
+			return GetPropertyTypeForConfigurationNode(configNode) == PropertyType.CollectionType;
+		}
+
 		/// <summary>
 		/// Determines if the user has specified that this item should generate content.
 		/// <returns><c>true</c> if the user has ticked the list item that applies to this object</returns>

@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Xml.Serialization;
 using SIL.Utils;
 
@@ -219,6 +218,39 @@ namespace SIL.FieldWorks.XWorks
 					default:
 						return false;
 				}
+			}
+		}
+
+		/// <summary>
+		/// Whether this is a Referenced Child of another node (as opposed to a direct child).
+		/// </summary>
+		internal bool IsReferencedChild
+		{
+			get
+			{
+				if (Parent == null)
+					return false; // isn't any child.
+				var grandparent = Parent.Parent;
+				return grandparent != null && (grandparent.Children == null || !grandparent.Children.Contains(grandparent));
+			}
+		}
+
+		/// <summary>
+		/// Whether this is a SharedItem.
+		/// </summary>
+		internal bool IsSharedItem { get { return Parent != null && ReferenceEquals(this, Parent.ReferencedNode); } }
+
+		/// <summary>
+		/// Whether this has a SharedItem anywhere in its ancestry
+		/// </summary>
+		internal bool IsSharedItemOrDescendant
+		{
+			get
+			{
+				for(var node = this; node.Parent != null; node = node.Parent)
+					if (ReferenceEquals(node, node.Parent.ReferencedNode))
+						return true;
+				return false;
 			}
 		}
 
