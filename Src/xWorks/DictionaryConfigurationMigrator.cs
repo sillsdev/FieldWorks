@@ -568,6 +568,8 @@ namespace SIL.FieldWorks.XWorks
 
 		internal void MigrateFrom83Alpha(DictionaryConfigurationModel alphaModel)
 		{
+			var allParts = new List<ConfigurableDictionaryNode>(alphaModel.Parts);
+			allParts.AddRange(alphaModel.SharedItems);
 			switch (alphaModel.Version)
 			{
 				case VersionPre83: // previous migrations neglected to update the version number; this is the same as 1
@@ -576,30 +578,30 @@ namespace SIL.FieldWorks.XWorks
 					ExtractWritingSystemOptionsFromReferringSenseOptions(alphaModel.Parts);
 					goto case 2;
 				case 2:
-					HandleFieldChanges(alphaModel.Parts, 1, !string.IsNullOrEmpty(alphaModel.WritingSystem));
+					HandleFieldChanges(allParts, 2, !string.IsNullOrEmpty(alphaModel.WritingSystem));
 					goto case 3;
 				case 3:
-					HandleLabelChanges(alphaModel.Parts, 1);
+					HandleLabelChanges(allParts, 3);
 					SetWritingSystemForReversalModel(alphaModel);
 					break;
 			}
 			alphaModel.Version = VersionCurrent;
 		}
 
-		private void HandleLabelChanges(List<ConfigurableDictionaryNode> parts, int version)
+		private static void HandleLabelChanges(List<ConfigurableDictionaryNode> parts, int version)
 		{
 			foreach (var node in parts)
 			{
 				switch (version)
 				{
-					case 1:
+					case 3:
 						ReplaceLabelInNodes(node, n => n.FieldDescription == "Example" && n.Parent != null && n.Parent.FieldDescription == "ExamplesOS", "Example Sentence");
 						break;
 				}
 			}
 		}
 
-		private void ReplaceLabelInNodes(ConfigurableDictionaryNode node, Func<ConfigurableDictionaryNode, bool> match, string newLabelValue)
+		private static void ReplaceLabelInNodes(ConfigurableDictionaryNode node, Func<ConfigurableDictionaryNode, bool> match, string newLabelValue)
 		{
 			if (match(node))
 			{
@@ -613,13 +615,13 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void HandleFieldChanges(List<ConfigurableDictionaryNode> parts, int version, bool isReversal)
+		private static void HandleFieldChanges(List<ConfigurableDictionaryNode> parts, int version, bool isReversal)
 		{
 			foreach (var node in parts)
 			{
 				switch (version)
 				{
-					case 1:
+					case 2:
 						var newHeadword = isReversal ? "ReversalName" : "HeadWordRef";
 						ReplaceFieldInNodes(node, n => n.Label == "Referenced Headword", newHeadword);
 						ReplaceSubFieldInNodes(node, n => n.FieldDescription == "OwningEntry" && n.SubField == "MLHeadWord", newHeadword);
@@ -628,7 +630,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void ReplaceSubFieldInNodes(ConfigurableDictionaryNode node, Func<ConfigurableDictionaryNode, bool> match, string newSubFieldValue)
+		private static void ReplaceSubFieldInNodes(ConfigurableDictionaryNode node, Func<ConfigurableDictionaryNode, bool> match, string newSubFieldValue)
 		{
 			if (match(node))
 			{
@@ -642,7 +644,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void ReplaceFieldInNodes(ConfigurableDictionaryNode node, Func<ConfigurableDictionaryNode, bool> match, string newFieldValue)
+		private static void ReplaceFieldInNodes(ConfigurableDictionaryNode node, Func<ConfigurableDictionaryNode, bool> match, string newFieldValue)
 		{
 			if (match(node))
 			{
@@ -656,7 +658,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void RemoveReferencedItems(List<ConfigurableDictionaryNode> nodes)
+		private static void RemoveReferencedItems(List<ConfigurableDictionaryNode> nodes)
 		{
 			foreach (var node in nodes)
 			{
@@ -666,7 +668,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void ExtractWritingSystemOptionsFromReferringSenseOptions(List<ConfigurableDictionaryNode> nodes)
+		private static void ExtractWritingSystemOptionsFromReferringSenseOptions(List<ConfigurableDictionaryNode> nodes)
 		{
 			foreach (var node in nodes)
 			{
@@ -701,7 +703,7 @@ namespace SIL.FieldWorks.XWorks
 			try
 			{
 				// Convert an interface type name to a class type name if necessary.
-				if (type.StartsWith("I") && Char.IsUpper(type[1]))
+				if (type.StartsWith("I") && char.IsUpper(type[1]))
 					type = type.Substring(1);
 				var metaDataCache = Cache.MetaDataCacheAccessor;
 				var clsid = metaDataCache.GetClassId(type);

@@ -2452,6 +2452,24 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void MigrateFrom83Alpha_UpdatesSharedItems()
+		{
+			var cpFormChild = new ConfigurableDictionaryNode { Label = "Complex Form", FieldDescription = "OwningEntry", SubField = "MLHeadWord" };
+			var referenceHwChild = new ConfigurableDictionaryNode { Label = "Referenced Headword", FieldDescription = "HeadWord" };
+			var configParent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { referenceHwChild, cpFormChild } };
+			var configModel = new DictionaryConfigurationModel
+			{
+				Version = 2,
+				WritingSystem = "en",
+				Parts = new List<ConfigurableDictionaryNode>(),
+				SharedItems = new List<ConfigurableDictionaryNode> { configParent }
+			};
+			m_migrator.MigrateFrom83Alpha(configModel);
+			Assert.AreEqual("ReversalName", referenceHwChild.FieldDescription);
+			Assert.AreEqual("ReversalName", cpFormChild.SubField);
+		}
+
+		[Test]
 		public void MigrateFrom83Alpha_MissingReversalWsFilledIn()
 		{
 			Cache.LangProject.AddToCurrentAnalysisWritingSystems((IWritingSystem) Cache.WritingSystemFactory.get_Engine("ta-fonipa"));
