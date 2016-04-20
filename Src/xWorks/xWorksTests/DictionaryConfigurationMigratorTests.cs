@@ -2454,25 +2454,25 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void MigrateFrom83Alpha_UpdatesExampleSentenceLabels()
 		{
-			var configExampleParent = new ConfigurableDictionaryNode { Label = "Examples", FieldDescription = "ExamplesOS"};
-			var configExampleNode = new ConfigurableDictionaryNode { Label = "Example", FieldDescription = "Example", Parent = configExampleParent };
-			var configParent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { configExampleNode, configExampleParent } };
+			var configExampleChild = new ConfigurableDictionaryNode { Label = "Example", FieldDescription = "Example"};
+			var configExampleParent = new ConfigurableDictionaryNode { Label = "Examples", FieldDescription = "ExamplesOS" , Children = new List<ConfigurableDictionaryNode> { configExampleChild } };
+			var configParent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { configExampleParent } };
 			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
 			m_migrator.MigrateFrom83Alpha(configModel);
-			Assert.AreEqual("Example Sentence", configExampleNode.Label);
+			Assert.AreEqual("Example Sentence", configExampleChild.Label);
 		}
 
 		[Test]
 		public void MigrateFrom83Alpha_UpdatesBibliographyLabels()
 		{
-			var configBiblioParent = new ConfigurableDictionaryNode { Label = "Referenced Senses", FieldDescription = "ReferringSenses"};
-			var configBiblioSenseNode = new ConfigurableDictionaryNode { Label = "Bibliography", FieldDescription = "Bibliography" , Parent = configBiblioParent};
-			var configBiblioEntryNode = new ConfigurableDictionaryNode { Label = "Bibliography", FieldDescription = "Owner", SubField = "Bibliography" , Parent = configBiblioParent};
-			var configParent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { configBiblioSenseNode, configBiblioEntryNode, configBiblioParent } };
+			var configBiblioEntryNode = new ConfigurableDictionaryNode { Label = "Bibliography", FieldDescription = "Owner", SubField = "Bibliography"};
+			var configBiblioSenseNode = new ConfigurableDictionaryNode { Label = "Bibliography", FieldDescription = "Bibliography"};
+			var configBiblioParent = new ConfigurableDictionaryNode { Label = "Referenced Senses", FieldDescription = "ReferringSenses", Children = new List<ConfigurableDictionaryNode> { configBiblioSenseNode, configBiblioEntryNode } };
+			var configParent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { configBiblioParent } };
 			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
 			m_migrator.MigrateFrom83Alpha(configModel);
-			Assert.AreEqual("Bibliography (Sense)", configBiblioSenseNode.Label);
 			Assert.AreEqual("Bibliography (Entry)", configBiblioEntryNode.Label);
+			Assert.AreEqual("Bibliography (Sense)", configBiblioSenseNode.Label);
 		}
 
 		[Test]

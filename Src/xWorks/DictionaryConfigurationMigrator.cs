@@ -574,8 +574,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				case VersionPre83: // previous migrations neglected to update the version number; this is the same as 1
 				case 1:
-					RemoveReferencedItems(alphaModel.Parts);
-					ExtractWritingSystemOptionsFromReferringSenseOptions(alphaModel.Parts);
+					RemoveReferencedItems(allParts);
+					ExtractWritingSystemOptionsFromReferringSenseOptions(allParts);
 					goto case 2;
 				case 2:
 					HandleFieldChanges(allParts, 2, !string.IsNullOrEmpty(alphaModel.WritingSystem));
@@ -596,25 +596,28 @@ namespace SIL.FieldWorks.XWorks
 				switch (version)
 				{
 					case 3:
-						ReplaceLabelInNodes(node, n => n.FieldDescription == "Example" && n.Parent != null && n.Parent.FieldDescription == "ExamplesOS", "Example Sentence");
-						ReplaceLabelInNodes(node, n => n.FieldDescription == "Owner" && n.Parent != null && n.Parent.FieldDescription == "ReferringSenses" && n.SubField == "Bibliography", "Bibliography (Entry)");
-						ReplaceLabelInNodes(node, n => n.FieldDescription == "Bibliography" && n.Parent != null && n.Parent.FieldDescription == "ReferringSenses", "Bibliography (Sense)");
+						ReplaceLabelInChildren(node, n => n.FieldDescription == "ExamplesOS", n => n.FieldDescription == "Example", "Example Sentence");
+						ReplaceLabelInChildren(node, n => n.FieldDescription == "ReferringSenses", n => n.FieldDescription == "Owner" && n.SubField == "Bibliography", "Bibliography (Entry)");
+						ReplaceLabelInChildren(node, n => n.FieldDescription == "ReferringSenses", n => n.FieldDescription == "Bibliography", "Bibliography (Sense)");
 						break;
 				}
 			}
 		}
 
-		private static void ReplaceLabelInNodes(ConfigurableDictionaryNode node, Func<ConfigurableDictionaryNode, bool> match, string newLabelValue)
+		private static void ReplaceLabelInChildren(ConfigurableDictionaryNode node, Func<ConfigurableDictionaryNode, bool> parentMatch, Func<ConfigurableDictionaryNode, bool> childMatch, string newLabelValue)
 		{
-			if (match(node))
-			{
-				node.Label = newLabelValue;
-			}
 			if (node.Children == null)
 				return;
+			if (parentMatch(node))
+			{
+				foreach(var replaceChild in node.Children.Where(childMatch))
+				{
+					replaceChild.Label = newLabelValue;
+				}
+			}
 			foreach (var child in node.Children)
 			{
-				ReplaceLabelInNodes(child, match, newLabelValue);
+				ReplaceLabelInChildren(child, parentMatch, childMatch, newLabelValue);
 			}
 		}
 
