@@ -9,11 +9,9 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Xml;
 using LanguageExplorer.Controls;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
 
 namespace LanguageExplorer.Areas
 {
@@ -49,11 +47,13 @@ namespace LanguageExplorer.Areas
 		private Size m_parentSizeHint;
 		private bool m_showingFirstPane;
 		private string m_propertyControllingVisibilityOfFirstPane;
-		private string m_defaultPrintPaneId = string.Empty;
-		private string m_defaultFocusControl = string.Empty;
-		private XmlNode m_configurationParameters;
+		private string m_defaultPrintPaneId;
+		private string m_defaultFocusControl;
 		//the name of the tool which this MultiPane is a part of.
-		private string m_toolName = string.Empty;
+		private string m_toolName;
+		private string m_defaultFixedPaneSizePoints;
+		private string m_persistContext;
+		private string m_label;
 
 		/// <summary>
 		/// Constructor
@@ -68,16 +68,32 @@ namespace LanguageExplorer.Areas
 			InitializeComponent();
 		}
 
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		internal MultiPane(string toolMachineName, string areaMachineName, string id)
+		/// <summary />
+		internal MultiPane(MultiPaneParameters parameters)
 			: this()
 		{
-			m_toolName = toolMachineName;
-			m_areaMachineName = areaMachineName;
-			m_id = id;
+			m_toolName = parameters.ToolMachineName ?? string.Empty;
+			m_areaMachineName = parameters.AreaMachineName;
+			m_id = parameters.Id ?? "NOID";
+			m_defaultFixedPaneSizePoints = parameters.DefaultFixedPaneSizePoints ?? "50%";
+			m_defaultPrintPaneId = parameters.DefaultPrintPane ?? string.Empty;
+			m_defaultFocusControl = parameters.DefaultFocusControl ?? string.Empty;
+			m_persistContext = parameters.PersistContext;
+			m_label = parameters.Label;
+			m_propertyControllingVisibilityOfFirstPane = string.Format("Show_{0}", m_id);
+
+			SecondCollapseZone = parameters.SecondCollapseZone;
+			Orientation = parameters.Orientation;
+			Dock = DockStyle.Fill;
+			SplitterWidth = 5;
+
+			FirstControl = parameters.FirstControlParameters.Control;
+			FirstLabel = parameters.FirstControlParameters.Label;
+			FirstControl.Dock = DockStyle.Fill;
+
+			SecondControl = parameters.SecondControlParameters.Control;
+			SecondLabel = parameters.SecondControlParameters.Label;
+			SecondControl.Dock = DockStyle.Fill;
 		}
 
 
@@ -170,23 +186,19 @@ namespace LanguageExplorer.Areas
 			{
 				CheckDisposed();
 
-				string defaultName = "MultiPane";
-				string name;
-
-#if RANDYTO
-				if (this is IxCoreColleague)
+				var name = m_persistContext;
+				if (string.IsNullOrEmpty(name))
 				{
-					name = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "persistContext");
-
-					if (name == null || name == "")
-						name = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "id");
-
-					if (name == null || name == "")
-						name = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "label", defaultName);
+					name = m_id;
 				}
-				else
-#endif
-					name = defaultName;
+				if (string.IsNullOrEmpty(name))
+				{
+					name = m_label;
+				}
+				if (string.IsNullOrEmpty(name))
+				{
+					name = "MultiPane";
+				}
 
 				return name;
 			}
@@ -225,7 +237,7 @@ namespace LanguageExplorer.Areas
 			{
 				CheckDisposed();
 
-				return XmlUtils.GetManditoryAttributeValue( m_configurationParameters, "area");
+				return m_areaMachineName;
 			}
 		}
 
@@ -267,108 +279,6 @@ namespace LanguageExplorer.Areas
 
 		#endregion  ICtrlTabProvider implementation
 
-		#region IxCoreColleague implementation
-#if RANDYTODO
-		/// <summary>
-		/// Initialize this has an IxCoreColleague
-		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		public void Init(Mediator mediator, IPropertyTable propertyTable, XmlNode configurationParameters)
-		{
-			CheckDisposed();
-
-			SuspendLayout();
-			Panel1.SuspendLayout();
-			Panel2.SuspendLayout();
-			IsInitializing = true;
-
-			m_configurationParameters = configurationParameters;
-			m_mediator = mediator;
-			m_propertyTable = propertyTable;
-			var toolNode = configurationParameters.SelectSingleNode("ancestor::tool");
-			m_toolName = toolNode == null ? "" : toolNode.Attributes["value"].Value;
-//			m_fDontCollapseFillPane = XmlUtils.GetOptionalBooleanAttributeValue(
-//				m_configurationParameters, "dontCollapseFillPane", false);
-
-			XmlNodeList nodes = configurationParameters.SelectNodes("control");
-			if (nodes.Count != 2)
-				throw new ConfigurationException(
-					"Was expecting 2 controls to be defined in the parameters of the Multipane.",
-					configurationParameters);
-
-			string id = XmlUtils.GetAttributeValue(configurationParameters, "id", "");
-			m_propertyControllingVisibilityOfFirstPane = GetPropertyControllingVisibilityOfFirstPane(nodes[0]);
-			if (m_propertyControllingVisibilityOfFirstPane == null)
-			{
-				m_showingFirstPane = false;
-			}
-			else
-			{
-				m_showingFirstPane = true; // default
-				// NOTE: we don't actually want to create and persist this property if it's not already loaded.
-				bool showingFirstPane;
-				if (m_propertyTable.TryGetValue(m_propertyControllingVisibilityOfFirstPane, SettingsGroup.LocalSettings, out showingFirstPane))
-				{
-					m_showingFirstPane = showingFirstPane;
-				}
-			}
-
-			SplitterWidth = 5;
-			if (id != "") //must have an id if we're going to persist the value of the splitter
-				this.Name = id;//for debugging
-			FirstLabel = XmlUtils.GetOptionalAttributeValue(configurationParameters, "firstLabel", "");
-			SecondLabel = XmlUtils.GetOptionalAttributeValue(configurationParameters, "secondLabel", "");
-
-			string orientation = XmlUtils.GetOptionalAttributeValue(configurationParameters, "splitterBarOrientation", "vertical");
-			if (orientation.ToLowerInvariant() == "horizontal" && Orientation != Orientation.Horizontal)
-				Orientation = Orientation.Horizontal;
-			else if (Orientation != Orientation.Vertical)
-				Orientation = Orientation.Vertical;
-
-			string defaultPrintPaneId = XmlUtils.GetOptionalAttributeValue(configurationParameters,
-				"defaultPrintPane", "");
-			string defaultFocusControl = XmlUtils.GetOptionalAttributeValue(configurationParameters,
-				"defaultFocusControl", "");
-			// If we are a subcontrol of a MultiPane, our DefaultPrintPane property may already be set.
-			// we don't want to change it, unless it's not an empty string.
-			if (!String.IsNullOrEmpty(defaultPrintPaneId))
-				m_defaultPrintPaneId = defaultPrintPaneId;
-			if (!String.IsNullOrEmpty(defaultFocusControl))
-				m_defaultFocusControl = defaultFocusControl;
-			MakeSubControl(nodes[0], Size, true);
-			Panel1Collapsed = !m_showingFirstPane;
-			MakeSubControl(nodes[1], Size, false);
-
-			// Attempt to focus the default child control if there is one configured
-			// TODO: Things are not yet in a suitable state, hooking onto a later event should work
-			// TODO: But if you switch between tools in an area there is sometimes an extra
-			// TODO: WM_LBUTTON_DOWN event which steals focus back into the ListViewItemArea
-			SetFocusInDefaultControl();
-
-			IsInitializing = false;
-			Panel2.ResumeLayout(false);
-			Panel1.ResumeLayout(false);
-			ResumeLayout(false);
-
-			//it's important to do this last, so that we don't go generating property change
-			//notifications that we then go trying to cope with before we are ready
-			mediator.AddColleague(this);
-			m_fOkToPersistSplit = true;
-		}
-
-		private string GetPropertyControllingVisibilityOfFirstPane(XmlNode configurationNodeOfFirstPane)
-		{
-			XmlNode parameters = configurationNodeOfFirstPane.SelectSingleNode("parameters");
-			if (parameters == null)
-				return null;
-			string property =  XmlUtils.GetOptionalAttributeValue(parameters,"id", null);
-			if(property == null)
-				return null;
-			return property.Insert(0,"Show_");
-		}
-#endif
-
 		/// <summary>
 		/// Used to give us an idea of what our boundaries will be before we are initialized
 		/// enough to determine them ourselves.
@@ -402,99 +312,6 @@ namespace LanguageExplorer.Areas
 				return new Size(2000,2000);
 			}
 		}
-
-#if RANDYTODO
-		private void MakeSubControl(XmlNode configuration, Size parentSizeHint, bool isFirst)
-		{
-			XmlNode dynLoaderNode = configuration.SelectSingleNode("dynamicloaderinfo");
-			if (dynLoaderNode == null)
-				throw new ArgumentException("Required 'dynamicloaderinfo' XML node not found, while trying to make control for MultiPane.", "configuration");
-
-			string contentAssemblyPath = XmlUtils.GetManditoryAttributeValue(dynLoaderNode, "assemblyPath");
-			string contentClass = XmlUtils.GetManditoryAttributeValue(dynLoaderNode, "class");
-			try
-			{
-				Control subControl = (Control)DynamicLoader.CreateObject(contentAssemblyPath, contentClass);
-				if (subControl.AccessibleName == null)
-					subControl.AccessibleName = contentClass;
-				if (!(subControl is IxCoreColleague))
-				{
-					throw new ApplicationException(
-						"XCore can only handle controls which implement IxCoreColleague. " +
-						contentClass + " does not.");
-				}
-				if (!(subControl is IMainUserControl))
-				{
-					throw new ApplicationException(
-						"XCore can only handle controls which implement IMainUserControl. " +
-						contentClass + " does not.");
-				}
-
-				subControl.SuspendLayout();
-
-				subControl.Dock = DockStyle.Fill;
-
-				// we add this before Initializing so that this child control will have access
-				// to its eventual height and width, in case it needs to make initialization
-				// decisions based on that.  for example, if the child is another multipane, it
-				// will use this to come up with a reasonable default location for its splitter.
-				if (subControl is MultiPane)
-				{
-					MultiPane mpSubControl = subControl as MultiPane;
-					mpSubControl.ParentSizeHint = parentSizeHint;
-					// cause our subcontrol to inherit our DefaultPrintPane property.
-					mpSubControl.DefaultPrintPaneId = m_defaultPrintPaneId;
-				}
-				// we add this before Initializing so that this child control will have access
-				// to its eventual height and width, in case it needs to make initialization
-				// decisions based on that.  for example, if the child is another multipane, it
-				// will use this to come up with a reasonable default location for its splitter.
-				if (subControl is PaneBarContainer)
-				{
-					PaneBarContainer mpSubControl = subControl as PaneBarContainer;
-					mpSubControl.ParentSizeHint = parentSizeHint;
-					// cause our subcontrol to inherit our DefaultPrintPane property.
-					mpSubControl.DefaultPrintPaneId = m_defaultPrintPaneId;
-				}
-
-
-				XmlNode parameters = null;
-				if (configuration != null)
-					parameters = configuration.SelectSingleNode("parameters");
-				((IxCoreColleague)subControl).Init(m_mediator, m_propertyTable, parameters);
-
-				// in normal situations, colleagues add themselves to the mediator when
-				// initialized.  in this case, we don't want this colleague to add itself
-				// because we want it to be subservient to this "papa" control.  however, since
-				// this control is only experimental, I'm loathe to change the interfaces in
-				// such a way as to tell a colleague that it should not add itself to the
-				// mediator.  so, for now, we will just do this hack and remove the colleague
-				// from the mediator.
-				m_mediator.RemoveColleague((IxCoreColleague)subControl);
-
-				if (isFirst)
-				{
-					subControl.AccessibleName += ".First";
-					FirstControl = subControl;
-				}
-				else
-				{
-					subControl.AccessibleName += ".Second";
-					SecondControl = subControl;
-				}
-				subControl.ResumeLayout(false);
-			}
-			catch (Exception error)
-			{
-				string s = "Something went wrong trying to create a " + contentClass + ".";
-				IFwMainWnd window = m_propertyTable.GetValue<IFwMainWnd>("window");
-				ErrorReporter.ReportException(new ApplicationException(s, error),
-					window.ApplicationRegistryKey, m_propertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress);
-			}
-		}
-#endif
-
-		#endregion // IxCoreColleague implementation
 
 		/// <summary />
 		protected override void OnSizeChanged(EventArgs e)
@@ -541,16 +358,11 @@ namespace LanguageExplorer.Areas
 		private void SetSplitterDistance()
 		{
 			int sizeOfSharedDimension = Orientation == Orientation.Vertical ? Width : Height;
-			// If the default size is specified in the XML file, use that,
-			// otherwise compute something reasonable.
-			string defaultLoc = XmlUtils.GetOptionalAttributeValue(m_configurationParameters,
-				"defaultFixedPaneSizePoints",
-				"50%");
 			int defaultLocation;
 
 			// Find 'total', which will be the height or width,
 			// depending on the orientation of the multi pane.
-			bool proportional = defaultLoc.EndsWith("%");
+			bool proportional = m_defaultFixedPaneSizePoints.EndsWith("%");
 			int total;
 			Size size = Size;
 			if (m_parentSizeHint.Width != 0 && !proportional)
@@ -562,7 +374,7 @@ namespace LanguageExplorer.Areas
 
 			if (proportional)
 			{
-				string percentStr = defaultLoc.Substring(0, defaultLoc.Length - 1);
+				string percentStr = m_defaultFixedPaneSizePoints.Substring(0, m_defaultFixedPaneSizePoints.Length - 1);
 				int percent = Int32.Parse(percentStr);
 				float loc = (total * (((float)percent) / 100));
 				double locD = Math.Round(loc);
@@ -570,7 +382,7 @@ namespace LanguageExplorer.Areas
 			}
 			else
 			{
-				defaultLocation = Int32.Parse(defaultLoc);
+				defaultLocation = Int32.Parse(m_defaultFixedPaneSizePoints);
 			}
 
 			if (PropertyTable != null)
@@ -603,9 +415,9 @@ namespace LanguageExplorer.Areas
 				{
 					Debug.WriteLine(err.Message);
 					string msg = string.Format("Orientation: {0} Width: {1} Height: {2} Original SD: {3} New SD: {4} Panel1MinSize: {5} Panel2MinSize: {6} ID: {7} Panel1Collapsed: {8} Panel2Collapsed: {9}",
-						Orientation.ToString(), Width, Height, originalSD, defaultLocation,
+						Orientation, Width, Height, originalSD, defaultLocation,
 						Panel1MinSize, Panel2MinSize,
-						XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "id", "NOID"),
+						m_id,
 						Panel1Collapsed, Panel2Collapsed);
 					throw new ArgumentOutOfRangeException(msg, err);
 				}
@@ -644,6 +456,15 @@ namespace LanguageExplorer.Areas
 			}
 
 		}
+#endif
+
+		protected override void OnHandleCreated(EventArgs e)
+		{
+			base.OnHandleCreated(e);
+
+			SetFocusInDefaultControl();
+		}
+
 		/// <summary>
 		/// The focus will only be set in the default control if it implements IFocusablePanePortion.
 		/// Note that it may BE our First or SecondPane, or it may be a child of one of those.
@@ -652,21 +473,20 @@ namespace LanguageExplorer.Areas
 		{
 			if (String.IsNullOrEmpty(m_defaultFocusControl))
 				return;
-			var defaultFocusControl = (IFwMainWnd.FindControl(FirstControl, m_defaultFocusControl) ??
-				IFwMainWnd.FindControl(SecondControl, m_defaultFocusControl)) as IFocusablePanePortion;
+			var defaultFocusControl = (FwUtils.FindControl(FirstControl, m_defaultFocusControl) ??
+				FwUtils.FindControl(SecondControl, m_defaultFocusControl)) as IFocusablePanePortion;
 			Debug.Assert(defaultFocusControl != null,
 				"Failed to find focusable subcontrol.",
 				"This MultiPane was configured to focus {0} as a default control. But it either was not found or was not an IFocuablePanePortion",
 				m_defaultFocusControl);
 			// LT-14222...can't do BeginInvoke until our handle is created...we attempt this multiple times since it is hard
 			// to find the right time to do it. If we can't do it yet hope we can do it later.
-			if (defaultFocusControl != null && this.IsHandleCreated)
+			if (defaultFocusControl != null && IsHandleCreated)
 			{
 				defaultFocusControl.IsFocusedPane = true; // Lets it know it can do any special behavior (e.g., DataPane) when it is the focused child.
 				BeginInvoke((MethodInvoker) (() => defaultFocusControl.Focus()));
 			}
 		}
-#endif
 
 		#region Implementation of IPropertyTableProvider
 
@@ -705,7 +525,24 @@ namespace LanguageExplorer.Areas
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			m_showingFirstPane = false; // Default to not showing.
+			IsInitializing = true;
+			if (m_propertyControllingVisibilityOfFirstPane == null)
+			{
+				m_showingFirstPane = false;
+			}
+			else
+			{
+				m_showingFirstPane = true; // default
+				// NOTE: we don't actually want to create and persist this property if it's not already loaded.
+				bool showingFirstPane;
+				if (PropertyTable.TryGetValue(m_propertyControllingVisibilityOfFirstPane, SettingsGroup.LocalSettings, out showingFirstPane))
+				{
+					m_showingFirstPane = showingFirstPane;
+				}
+			}
+			Panel1Collapsed = !m_showingFirstPane;
+			IsInitializing = false;
+			m_fOkToPersistSplit = true;
 		}
 
 		#endregion

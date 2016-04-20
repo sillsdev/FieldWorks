@@ -61,7 +61,6 @@ namespace SIL.FieldWorks.XWorks
 		/// of its root object
 		/// </summary>
 		private bool m_showDescendantInRoot;
-		private TreeView m_recordBarTreeView;
 		private ImageList buttonImages;
 		protected Panel m_panel;
 		protected DataTree m_dataEntryForm;
@@ -86,18 +85,28 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "DataTree gets disposed in Dispose()")]
-		public RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, TreeView recordBarTreeView, RecordClerk recordClerk)
-			: this(configurationParametersElement, sliceFilterDocument, recordBarTreeView, recordClerk, new DataTree())
+		public RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, RecordClerk recordClerk, DTMenuHandler dataTreeMenuHandler)
+			: this(configurationParametersElement, sliceFilterDocument, recordClerk, dataTreeMenuHandler, new DataTree())
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="RecordEditView"/> class.
+		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "DataTree gets disposed in Dispose()")]
+		public RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, RecordClerk recordClerk)
+			: this(configurationParametersElement, sliceFilterDocument, recordClerk, new DTMenuHandler(), new DataTree())
 		{
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "DataTree gets disposed in Dispose()")]
-		protected RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, TreeView recordBarTreeView, RecordClerk recordClerk, DataTree dataEntryForm)
+		protected RecordEditView(XElement configurationParametersElement, XDocument sliceFilterDocument, RecordClerk recordClerk, DTMenuHandler dataTreeMenuHandler, DataTree dataEntryForm)
 			: base(configurationParametersElement, recordClerk)
 		{
+			m_menuHandler = dataTreeMenuHandler;
 			m_sliceFilterDocument = sliceFilterDocument;
-			m_recordBarTreeView = recordBarTreeView;
 			// This must be called before InitializeComponent()
 			m_dataEntryForm = dataEntryForm;
 			m_dataEntryForm.CurrentSliceChanged += m_dataEntryForm_CurrentSliceChanged;
@@ -128,7 +137,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public void FinishInitialization()
 		{
-			InitBase(PropertyTable, m_configurationParametersElement);
+			InitBase();
 
 			m_showDescendantInRoot = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParametersElement, "showDescendantInRoot", false);
 
@@ -151,6 +160,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// If possible make it use the style sheet appropriate for its main window.
 			m_dataEntryForm.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(PropertyTable);
+			ShowRecord();
 			m_fullyInitialized = true;
 		}
 
@@ -434,12 +444,8 @@ namespace SIL.FieldWorks.XWorks
 			// Already done. m_dataEntryForm.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
 			if (m_dataEntryForm.AccessibilityObject != null)
 				m_dataEntryForm.AccessibilityObject.Name = "RecordEditView.DataTree";
-			//set up the context menu, overriding the automatic menu creator/handler
 
-			m_menuHandler = DTMenuHandler.Create(m_dataEntryForm, m_configurationParametersElement);
-			m_menuHandler.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-
-//			m_dataEntryForm.SetContextMenuHandler(new SliceMenuRequestHandler((m_menuHandler.GetSliceContextMenu));
+			// set up the context menu, overriding the automatic menu creator/handler
 			m_dataEntryForm.SetContextMenuHandler(m_menuHandler.ShowSliceContextMenu);
 
 			Controls.Clear();

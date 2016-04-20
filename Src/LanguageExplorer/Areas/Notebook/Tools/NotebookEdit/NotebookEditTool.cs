@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
+using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 {
@@ -16,6 +17,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 	internal sealed class NotebookEditTool : ITool
 	{
 		private MultiPane _multiPane;
+		private RecordClerk _recordClerk;
 
 		#region Implementation of IPropertyTableProvider
 
@@ -74,7 +76,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			MultiPaneFactory.RemoveFromParentAndDispose(ref _multiPane);
+			MultiPaneFactory.RemoveFromParentAndDispose(mainCollapsingSplitContainer, ref _multiPane, ref _recordClerk);
 		}
 
 		/// <summary>
@@ -86,9 +88,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			_multiPane = MultiPaneFactory.Create(
+			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
 				new FlexComponentParameters(PropertyTable, Publisher, Subscriber),
-				mainCollapsingSplitContainer.SecondControl,
+				mainCollapsingSplitContainer,
 				this,
 				"RecordBrowseAndDetailMultiPane",
 				TemporaryToolProviderHack.CreateNewLabel(string.Format("Browse view for tool: {0}", MachineName)), "Browse",
@@ -113,8 +115,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		{
 #if RANDYTODO
 			// TODO: If tool uses a SDA decorator (IRefreshable), then call its "Refresh" method.
-			// TODO: Call "ReloadIfNeeded" on Record clerk(s).
 #endif
+			_recordClerk.ReloadIfNeeded();
 		}
 
 		/// <summary>

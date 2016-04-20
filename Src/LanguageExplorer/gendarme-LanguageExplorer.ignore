@@ -31,10 +31,12 @@ M: System.Void LanguageExplorer.Areas.TextsAndWords.Interlinear.InterlinTaggingC
 M: LanguageExplorer.Areas.TextsAndWords.Interlinear.IComboHandler LanguageExplorer.Areas.TextsAndWords.Interlinear.SandboxBase/InterlinComboHandler::MakeCombo(SIL.CoreImpl.IHelpTopicProvider,System.Int32,LanguageExplorer.Areas.TextsAndWords.Interlinear.SandboxBase,System.Int32,SIL.FieldWorks.Common.COMInterfaces.SelLevInfo[],System.Int32)
 M: LanguageExplorer.Controls.CollapsingSplitContainer LanguageExplorer.Controls.CollapsingSplitContainerFactory::Create(SIL.CoreImpl.FlexComponentParameters,SIL.FieldWorks.Common.FwUtils.ICollapsingSplitContainer,System.Boolean,System.Xml.Linq.XElement,System.Xml.Linq.XDocument,System.String,LanguageExplorer.Controls.PossibilityListClerkParameters,SIL.FieldWorks.XWorks.RecordClerk&)
 M: System.Void LanguageExplorer.Controls.CollapsingSplitContainerFactory::RemoveFromParentAndDispose(LanguageExplorer.Controls.CollapsingSplitContainer&,SIL.FieldWorks.XWorks.RecordClerk&)
-M: System.Void LanguageExplorer.Areas.MultiPaneFactory::RemoveFromParentAndDispose(LanguageExplorer.Areas.MultiPane&)
+M: System.Void LanguageExplorer.Areas.MultiPaneFactory::RemoveFromParentAndDispose(SIL.FieldWorks.Common.FwUtils.ICollapsingSplitContainer,LanguageExplorer.Areas.MultiPane&,SIL.FieldWorks.XWorks.RecordClerk&)
 M: System.Void LanguageExplorer.Controls.PaneBarContainerFactory::RemoveFromParentAndDispose(LanguageExplorer.Controls.PaneBarContainer&,SIL.FieldWorks.XWorks.RecordClerk&)
 M: SIL.FieldWorks.XWorks.RecordClerk LanguageExplorer.Areas.Lists.ListsArea::CreateBasicClerkForListArea(SIL.CoreImpl.IPropertyTable,LanguageExplorer.Controls.PossibilityListClerkParameters)
 M: SIL.FieldWorks.Common.FwUtils.IRecordBar LanguageExplorer.Impls.FwMainWnd::get_RecordBarControl()
+M: LanguageExplorer.Areas.MultiPane LanguageExplorer.Areas.MultiPaneFactory::CreateNestedMultiPane(SIL.CoreImpl.FlexComponentParameters,LanguageExplorer.Areas.MultiPaneParameters)
+M: LanguageExplorer.Areas.MultiPane LanguageExplorer.Areas.MultiPaneFactory::CreateInMainCollapsingSplitContainer(SIL.CoreImpl.FlexComponentParameters,SIL.FieldWorks.Common.FwUtils.ICollapsingSplitContainer,LanguageExplorer.Areas.MultiPaneParameters)
 
 # variable is added to Controls and disposed there
 M: System.Void LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChart::BuildTopStuffUI()
@@ -85,6 +87,8 @@ M: System.Void LanguageExplorer.Areas.TextsAndWords.Tools.Analyses.AnalysisInter
 M: SIL.FieldWorks.XWorks.RecordClerk LanguageExplorer.Areas.Notebook.NotebookArea::CreateRecordClerkForAllNotebookAreaTools(SIL.FieldWorks.FDO.FdoCache)
 M: SIL.FieldWorks.XWorks.RecordClerk LanguageExplorer.Areas.Lexicon.LexiconArea::CreateBasicClerkForLexiconArea(SIL.FieldWorks.FDO.FdoCache)
 M: SIL.FieldWorks.XWorks.RecordClerk LanguageExplorer.Areas.Grammar.GrammarArea::CreateBrowseClerkForGrammarArea(SIL.CoreImpl.IPropertyTable,System.Boolean)
+M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.LexiconEditTool::Activate(SIL.FieldWorks.Common.FwUtils.ICollapsingSplitContainer,System.Windows.Forms.MenuStrip,System.Windows.Forms.ToolStripContainer,System.Windows.Forms.StatusBar)
+M: LanguageExplorer.Areas.MultiPane LanguageExplorer.Areas.MultiPaneFactory::CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(SIL.CoreImpl.FlexComponentParameters,SIL.FieldWorks.Common.FwUtils.ICollapsingSplitContainer,LanguageExplorer.Areas.MultiPaneParameters,System.Windows.Forms.Control,System.String,System.Windows.Forms.Control,System.String)
 
 # variable added to menu and disposed there
 M: System.Void LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChartLogic::AddDependentClauseMenuItems(LanguageExplorer.Areas.TextsAndWords.Discourse.ChartLocation,System.Int32,System.Windows.Forms.ContextMenuStrip)

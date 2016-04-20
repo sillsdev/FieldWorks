@@ -1277,8 +1277,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
 
-			//Clerk.InitializeFlexComponent(PropertyTable, Publisher, Subscriber);
-
 			InitBase();
 		}
 

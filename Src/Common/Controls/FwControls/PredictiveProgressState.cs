@@ -66,10 +66,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// the same amount of work is being done. The times taken last time are stored based on
 		/// the task label parameter.
 		/// </summary>
-		/// <param name="progressBar"></param>
-		/// <param name="applicationKey"></param>
-		/// <param name="taskLabel"></param>
-		public PredictiveProgressState(StatusBarProgressPanel progressBar, RegistryKey applicationKey, string taskLabel)
+		public PredictiveProgressState(StatusBarProgressPanel progressBar, string taskLabel)
 			: base(progressBar)
 		{
 			m_taskLabel = taskLabel;

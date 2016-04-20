@@ -1,0 +1,2 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<parameters PaneBarGroupId="PaneBar-LexicalDetail" persistContext="normalEdit" suppressInfoBar="ifNotFirst" layout="Normal" treeBarAvailability="NotAllowed" emptyTitleId="No-LexEntries" printLayout="publishStem" />

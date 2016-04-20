@@ -43,6 +43,11 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected DataTree m_dataEntryForm;
 
+		/// <summary />
+		public DTMenuHandler()
+		{
+		}
+
 		#region Implementation of IPropertyTableProvider
 
 		/// <summary>
@@ -82,41 +87,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		#endregion
-
-		/// <summary>
-		/// factory method which creates the correct subclass based on the XML parameters
-		/// </summary>
-		/// <param name="dataEntryForm"></param>
-		/// <param name="configuration"></param>
-		/// <returns></returns>
-		public static DTMenuHandler Create(DataTree dataEntryForm, XElement configuration)
-		{
-			DTMenuHandler h= null;
-			if(configuration !=null)
-			{
-				var node = configuration.XPathSelectElement("menuHandler/dynamicloaderinfo");
-				if (node != null)
-				{
-					h = (DTMenuHandler)DynamicLoader.CreateObject(node);
-				}
-			}
-			if(h==null)			//no class specified, so just returned a generic DTMenuHandler
-				h = new DTMenuHandler();
-			h.DtTree = dataEntryForm;
-			return h;
-		}
-
-		public DataTree DtTree
-		{
-			set
-			{
-				m_dataEntryForm = value;
-			}
-		}
-
-		protected DTMenuHandler()
-		{
-		}
 
 		/// <summary>
 		/// Called by reflection based on menu item InsertPicture.

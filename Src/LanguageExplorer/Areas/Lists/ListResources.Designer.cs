@@ -62,7 +62,7 @@ namespace LanguageExplorer.Areas.Lists {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-AcademicDomains&quot; /&gt;.
+        ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-AnthroItems&quot; /&gt;.
         /// </summary>
         internal static string AnthroEditParameters {
             get {
@@ -137,15 +137,6 @@ namespace LanguageExplorer.Areas.Lists {
         internal static string GenresEditParameters {
             get {
                 return ResourceManager.GetString("GenresEditParameters", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ShowHiddenFields.
-        /// </summary>
-        internal static string ksShowHiddenFields {
-            get {
-                return ResourceManager.GetString("ksShowHiddenFields", resourceCulture);
             }
         }
         

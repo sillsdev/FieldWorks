@@ -26,8 +26,6 @@ namespace LanguageExplorer.Controls.PaneBar
 			Click += PanelMenu_Click;
 			TabIndex = 0;
 
-			//Tag = group;
-
 			Display();
 		}
 
@@ -64,12 +62,9 @@ namespace LanguageExplorer.Controls.PaneBar
 #endif
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary />
 		public void UpdateDisplay()
 		{
-			//			Display();
 		}
 
 		private void PanelMenu_Click(object sender, EventArgs e)

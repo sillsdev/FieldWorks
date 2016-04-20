@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (fDisposing)
 			{
 				if (m_rootSite != null)
-					((XmlBrowseViewBase)m_rootSite).OnRestoreScrollPosition(null);
+					((XmlBrowseViewBase)m_rootSite).RestoreScrollPosition(null);
 			}
 		}
 	}

@@ -413,15 +413,13 @@ namespace SIL.FieldWorks.XWorks
 				if (hvo <= 0)
 					return null;
 
-				try
+				ICmObject currentObject;
+				if (m_cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out currentObject))
 				{
-					return m_cache.ServiceLocator.GetObject(hvo);
+					return currentObject;
 				}
-				catch (KeyNotFoundException)//CmObject throws this when the object has been deleted todo:OR OTHERWISE BAD
-				{
-					CurrentIndex = -1;
-					return null;
-				}
+				CurrentIndex = -1;
+				return null;
 			}
 		}
 

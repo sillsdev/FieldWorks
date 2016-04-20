@@ -39,7 +39,7 @@ namespace LanguageExplorer.Controls
 			PossibilityListClerkParameters possibilityListClerkParameters,
 			out RecordClerk recordClerk)
 		{
-			var panelButton = new PanelButton(flexComponentParameters.PropertyTable, null, ListsArea.CreateShowHiddenFieldsPropertyName(toolMachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
+			var panelButton = new PanelButton(flexComponentParameters.PropertyTable, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(toolMachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
 				Dock = DockStyle.Right
 			};
@@ -59,7 +59,7 @@ namespace LanguageExplorer.Controls
 				IsFlatList = false
 			};
 			recordBar.Clear();
-			var recordEditView = new RecordEditView(configurationParametersElement, sliceFilterDocument, recordBar.TreeView, recordClerk);
+			var recordEditView = new RecordEditView(configurationParametersElement, sliceFilterDocument, recordClerk);
 			recordEditView.InitializeFlexComponent(flexComponentParameters);
 			var paneBar = new PaneBar.PaneBar();
 			paneBar.AddControls(new List<Control> { panelButton });
@@ -90,7 +90,6 @@ namespace LanguageExplorer.Controls
 
 			newCollapsingSplitContainer.SplitterDistance = flexComponentParameters.PropertyTable.GetValue<int>("RecordListWidthGlobal");
 			mainCollapsingSplitContainer.SecondControl = newCollapsingSplitContainer;
-			recordEditView.MainPaneBar = paneBarContainer.PaneBar;
 			panelButton.DatTree = recordEditView.DatTree;
 			recordEditView.FinishInitialization();
 

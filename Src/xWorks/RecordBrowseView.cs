@@ -74,7 +74,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
 
-			InitBase(PropertyTable, m_configurationParametersElement);
+			InitBase();
 			m_fullyInitialized = true;
 			// These have to be done here, rather than in SetupDataContext(),
 			// or the record clerk resets its current object,
@@ -137,8 +137,6 @@ namespace SIL.FieldWorks.XWorks
 				m_browseViewer.BrowseView.RootBox.DestroySelection();
 			}
 
-			// ShowRecord() was called in InitBase, but quit without doing anything,
-			// so call it again, since we are ready now.
 			ShowRecord();
 		}
 

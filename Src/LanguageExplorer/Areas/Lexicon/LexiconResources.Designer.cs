@@ -76,9 +76,9 @@ namespace LanguageExplorer.Areas.Lexicon {
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;overrides&gt;
-        ///	&lt;column layout=&quot;CitationFormForEntry&quot; visibility=&quot;menu&quot;/&gt;
-        ///	&lt;column layout=&quot;GrammaticalInfoAbbrForSense&quot; visibility=&quot;menu&quot;/&gt;
-        ///	&lt;column layout=&quot;DomainsOfSensesForSense&quot; visibility=&quot;menu&quot;/&gt;
+        ///	&lt;column layout=&quot;CitationFormForEntry&quot; visibility=&quot;menu&quot; /&gt;
+        ///	&lt;column layout=&quot;GrammaticalInfoAbbrForSense&quot; visibility=&quot;menu&quot; /&gt;
+        ///	&lt;column layout=&quot;DomainsOfSensesForSense&quot; visibility=&quot;menu&quot; /&gt;
         ///&lt;/overrides&gt;.
         /// </summary>
         internal static string LexiconBrowseOverrides {
@@ -94,6 +94,31 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string LexiconBrowseParameters {
             get {
                 return ResourceManager.GetString("LexiconBrowseParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters id=&quot;DictionaryPubPreview&quot; layout=&quot;publishStem&quot; layoutProperty=&quot;DictionaryPublicationLayout&quot; layoutSuffix=&quot;Preview&quot; editable=&quot;false&quot; configureObjectName=&quot;Dictionary&quot; viewTypeLabelKey=&quot;ksDictionaryView&quot; emptyTitleId=&quot;No-LexEntries&quot;&gt;
+        ///	&lt;configureLayouts&gt;
+        ///		&lt;layoutType label=&quot;Stem-based (complex forms as main entries)&quot; layout=&quot;publishStem&quot;&gt;
+        ///			&lt;configure class=&quot;LexEntry&quot; label=&quot;Main Entry&quot; layout=&quot;publishStemEntry&quot;/&gt;
+        ///			&lt;configure class=&quot;LexEntry&quot; label=&quot;M [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string LexiconEditRecordDocViewParameters {
+            get {
+                return ResourceManager.GetString("LexiconEditRecordDocViewParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters PaneBarGroupId=&quot;PaneBar-LexicalDetail&quot; persistContext=&quot;normalEdit&quot; suppressInfoBar=&quot;ifNotFirst&quot; layout=&quot;Normal&quot; treeBarAvailability=&quot;NotAllowed&quot; emptyTitleId=&quot;No-LexEntries&quot; printLayout=&quot;publishStem&quot; /&gt;
+        ///.
+        /// </summary>
+        internal static string LexiconEditRecordEditViewParameters {
+            get {
+                return ResourceManager.GetString("LexiconEditRecordEditViewParameters", resourceCulture);
             }
         }
     }

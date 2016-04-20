@@ -1075,4 +1075,10 @@ you expect.</value>
   <data name="ksWhatAreCircularRefs" xml:space="preserve">
     <value>Older versions of Language Explorer allowed the user to make two complex form entries claim each other as components.  This is no longer allowed, but older projects can be in this bad state.</value>
   </data>
+  <data name="SomethingWentWrongLastTime" xml:space="preserve">
+    <value>Something went wrong the last time this program was run. Click 'Yes' to revert to 'factory settings', 'No' to see if you can preserve your settings without crashing again.</value>
+  </data>
+  <data name="MenuWidget" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\MenuWidget.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

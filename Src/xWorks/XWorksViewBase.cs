@@ -289,6 +289,17 @@ namespace SIL.FieldWorks.XWorks
 			{
 				CheckDisposed();
 
+				if (m_informationBar != null)
+				{
+					if (m_informationBar == value)
+					{
+						Console.WriteLine("It is the same one.");
+					}
+					else
+					{
+						m_informationBar.Dispose();
+					}
+				}
 				m_informationBar = value as UserControl;
 			}
 		}

@@ -12,8 +12,10 @@
 // </remarks>
 
 using System;
+using System.Linq;
 using System.Windows.Forms;
-
+using Microsoft.Win32;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
@@ -41,6 +43,21 @@ namespace SIL.FieldWorks.Common.Controls
 			m_progressBar = progressBar;
 			if (m_progressBar != null)
 				m_progressBar.SetStateProvider(this);
+		}
+
+		/// <summary>
+		/// factory method for getting a progress state which is already hooked up to the correct progress panel
+		/// </summary>
+		public static ProgressState CreatePredictiveProgressState(IPropertyTable propertyTable, string taskLabel)
+		{
+			var wnd = propertyTable.GetValue<Form>("window");
+			var statusBar = wnd.Controls.OfType<StatusBar>().First();
+			var panel = statusBar.Panels["statusBarPanelProgressBar"] as StatusBarProgressPanel;
+
+			if (panel == null)
+				return new NullProgressState();//not ready to be doing progress bars
+
+			return new PredictiveProgressState(panel, taskLabel);
 		}
 
 		#region IDisposable & Co. implementation

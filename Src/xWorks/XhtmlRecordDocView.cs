@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
 
-			InitBase(PropertyTable, m_configurationParametersElement);
+			InitBase();
 			m_mainView = new XWebBrowser(XWebBrowser.BrowserType.GeckoFx)
 			{
 				Dock = DockStyle.Fill,

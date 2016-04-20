@@ -6,6 +6,7 @@
 // Responsibility: TE Team
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Drawing;
 
@@ -209,6 +210,28 @@ namespace SIL.FieldWorks.Common.FwUtils
 				hWndParent = Win32.GetParent(hWnd);
 			}
 			return (hWnd == parent.Handle);
+		}
+
+		/// <summary>
+		/// Finds the first control of the given name under the parentControl.
+		/// </summary>
+		/// <param name="parentControl"></param>
+		/// <param name="nameOfChildToFocus"></param>
+		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "controls contains references")]
+		public static Control FindControl(Control parentControl, string nameOfChildToFocus)
+		{
+			if (string.IsNullOrEmpty(nameOfChildToFocus))
+			{
+				return null;
+			}
+			if (parentControl.Name == nameOfChildToFocus)
+			{
+				return parentControl;
+			}
+			var controls = parentControl.Controls.Find(nameOfChildToFocus, true);
+			return controls.Length > 0 ? controls[0] : null;
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -2,11 +2,17 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Xml.Linq;
+using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.PaneBar;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Resources;
+using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
@@ -15,7 +21,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// </summary>
 	internal sealed class LexiconEditTool : ITool
 	{
+		private XDocument _configurationDocument;
 		private MultiPane _multiPane;
+		private RecordBrowseView _recordBrowseView;
+		private MultiPane _innerMultiPane;
+		private RecordClerk _recordClerk;
 
 		#region Implementation of IPropertyTableProvider
 
@@ -74,7 +84,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer,
 			MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar)
 		{
-			MultiPaneFactory.RemoveFromParentAndDispose(ref _multiPane);
+			MultiPaneFactory.RemoveFromParentAndDispose(mainCollapsingSplitContainer, ref _multiPane, ref _recordClerk);
+
+			_configurationDocument = null;
 		}
 
 		/// <summary>
@@ -85,14 +97,78 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </remarks>
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer, StatusBar statusbar)
 		{
-			_multiPane = MultiPaneFactory.Create(
-				new FlexComponentParameters(PropertyTable, Publisher, Subscriber),
-				mainCollapsingSplitContainer.SecondControl,
-				this,
-				"LexItemsAndDetailMultiPane",
-				TemporaryToolProviderHack.CreateNewLabel(string.Format("Browse view for tool: {0}", MachineName)), "Browse",
-				TemporaryToolProviderHack.CreateNewLabel(string.Format("Details view for tool: {0}", MachineName)), "Details",
-				Orientation.Vertical);
+			_configurationDocument = XDocument.Parse(LexiconResources.LexiconBrowseParameters);
+			// Modify the basic parameters for this tool.
+			_configurationDocument.Root.Attribute("id").Value = "lexentryList";
+			_configurationDocument.Root.Add(new XAttribute("defaultCursor", "Arrow"), new XAttribute("hscroll", "true"));
+
+			var overrides = XElement.Parse(LexiconResources.LexiconBrowseOverrides);
+			// Add one more element to 'overrides'.
+			overrides.Add(new XElement("column", new XAttribute("layout", "DefinitionsForSense"), new XAttribute("visibility", "menu")));
+			var columnsElement = XElement.Parse(LexiconResources.LexiconBrowseDialogColumnDefinitions);
+			OverrideServices.OverrideVisibiltyAttributes(columnsElement, overrides);
+			_configurationDocument.Root.Add(columnsElement);
+
+			_recordClerk = LexiconArea.CreateBasicClerkForLexiconArea(PropertyTable.GetValue<FdoCache>("cache"));
+			var flexComponentParameterObject = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
+			_recordClerk.InitializeFlexComponent(flexComponentParameterObject);
+
+			_recordBrowseView = new RecordBrowseView(_configurationDocument.Root, _recordClerk);
+
+			var dataTreeMenuHandler = new LexEntryMenuHandler();
+			dataTreeMenuHandler.InitializeFlexComponent(flexComponentParameterObject);
+#if RANDYTODO
+			// TODO: Set up 'dataTreeMenuHandler' to handle menu events.
+#endif
+			var recordEditView = new RecordEditView(XElement.Parse(LexiconResources.LexiconEditRecordEditViewParameters), XDocument.Parse(AreaResources.CompleteFilter), _recordClerk, dataTreeMenuHandler);
+			var nestedMultiPaneParameters = new MultiPaneParameters
+			{
+				Orientation = Orientation.Horizontal,
+				AreaMachineName = AreaMachineName,
+				DefaultFixedPaneSizePoints = "60",
+				Id = "TestEditMulti",
+				ToolMachineName = MachineName,
+				FirstControlParameters = new SplitterChildControlParameters {Control = new RecordDocXmlView(XDocument.Parse(LexiconResources.LexiconEditRecordDocViewParameters).Root, _recordClerk), Label = "Dictionary"},
+				SecondControlParameters = new SplitterChildControlParameters { Control = recordEditView, Label = "Details" }
+			};
+			var mainMultiPaneParameters = new MultiPaneParameters
+			{
+				Orientation = Orientation.Vertical,
+				AreaMachineName = AreaMachineName,
+				Id = "LexItemsAndDetailMultiPane",
+				ToolMachineName = MachineName,
+				DefaultPrintPane = "DictionaryPubPreview"
+			};
+			var paneBar = new PaneBar();
+			var img = LanguageExplorerResources.MenuWidget;
+			img.MakeTransparent(Color.Magenta);
+			var panelMenu = new PanelMenu
+			{
+				Dock = DockStyle.Left,
+				BackgroundImage = img,
+				BackgroundImageLayout = ImageLayout.Center
+#if RANDYTODO
+				// TODO: Add context menu for down arrow. Each context menu item can/should ahve its OnClick event handler set to something in this tool.
+				/*,
+				ContextMenu = new ContextMenu(new[] { new MenuItem("LexEntryPaneMenu"// , Add OnClick event handler here ) })*/
+#endif
+			};
+			var panelButton = new PanelButton(PropertyTable, null, PaneBarContainerFactory.CreateShowHiddenFieldsPropertyName(MachineName), LanguageExplorerResources.ksHideFields, LanguageExplorerResources.ksShowHiddenFields)
+			{
+				Dock = DockStyle.Right
+			};
+			paneBar.AddControls(new List<Control> { panelMenu, panelButton });
+			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(flexComponentParameterObject,
+				mainCollapsingSplitContainer,
+				mainMultiPaneParameters,
+				_recordBrowseView, "Browse",
+				MultiPaneFactory.CreateNestedMultiPane(flexComponentParameterObject, nestedMultiPaneParameters), "Dictionary & Details",
+				paneBar);
+			panelButton.DatTree = recordEditView.DatTree;
+
+			// Too early before now.
+			recordEditView.FinishInitialization();
+			((RecordDocXmlView)nestedMultiPaneParameters.FirstControlParameters.Control).ReallyShowRecordNow();
 		}
 
 		/// <summary>
@@ -100,9 +176,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-#if RANDYTODO
-			// TODO: Call PrepareToRefresh on nested RecordBrowseView control (left side of main MultiPane splitter control).
-#endif
+			_recordBrowseView.BrowseViewer.BrowseView.PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -112,8 +186,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 #if RANDYTODO
 			// TODO: If tool uses a SDA decorator (IRefreshable), then call its "Refresh" method.
-			// TODO: Call "ReloadIfNeeded" on Record clerk(s).
 #endif
+			_recordClerk.ReloadIfNeeded();
 		}
 
 		/// <summary>

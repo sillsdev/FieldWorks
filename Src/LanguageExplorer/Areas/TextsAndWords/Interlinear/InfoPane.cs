@@ -215,11 +215,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 #if RANDYTODO
 			// TODO: Replace four null values with real values.
+			// TODO: maybe replace "new DTMenuHandler()" with whatever the tool(s) might want.
 #endif
 			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 				Justification = "StTextDataTree gets disposed in base class")]
 			public InterlinearTextsRecordEditView(InfoPane info, XElement xnControl)
-				: base(null, null, null, null, new StTextDataTree())
+				: base(null, null, null, new DTMenuHandler(), new StTextDataTree())
 			{
 				(m_dataEntryForm as StTextDataTree).InfoPane = info;
 				m_configurationParametersElement = xnControl;

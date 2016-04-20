@@ -2696,12 +2696,31 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap MenuWidget {
+            get {
+                object obj = ResourceManager.GetObject("MenuWidget", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon Notebook {
             get {
                 object obj = ResourceManager.GetObject("Notebook", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Something went wrong the last time this program was run. Click &apos;Yes&apos; to revert to &apos;factory settings&apos;, &apos;No&apos; to see if you can preserve your settings without crashing again..
+        /// </summary>
+        internal static string SomethingWentWrongLastTime {
+            get {
+                return ResourceManager.GetString("SomethingWentWrongLastTime", resourceCulture);
             }
         }
         

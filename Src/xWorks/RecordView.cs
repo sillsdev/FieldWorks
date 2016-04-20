@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.XWorks
 		#region Consruction and disposal
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ViewManager"/> class.
+		/// Initializes a new instance of the <see cref="RecordView"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
 		public RecordView()
@@ -200,13 +200,9 @@ namespace SIL.FieldWorks.XWorks
 		/// This was done, rather than providing an Init() here in the normal way,
 		/// to drive home the point that the subclass must set m_fullyInitialized
 		/// to true when it is fully initialized.</remarks>
-		/// <param name="propertyTable"></param>
-		/// <param name="configurationParameters"></param>
-		protected void InitBase(IPropertyTable propertyTable, XElement configurationParameters)
+		protected void InitBase()
 		{
 			Debug.Assert(m_fullyInitialized == false, "No way we are fully initialized yet!");
-
-			m_configurationParametersElement = configurationParameters;
 
 			ReadParameters();
 
@@ -257,7 +253,6 @@ namespace SIL.FieldWorks.XWorks
 			if (!didRestoreFromPersistence && !Clerk.ListLoadingSuppressed && Clerk.RequestedLoadWhileSuppressed)
 				Clerk.UpdateList(true, true); // sluggishness culprit for LT-12844 was in here
 			Clerk.SetCurrentFromRelatedClerk(); // See if some other clerk wants to influence our current object.
-			ShowRecord();
 		}
 
 		private string GetClerkPersistPathname()

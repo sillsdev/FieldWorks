@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
+using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 {
@@ -16,6 +17,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 	internal sealed class ReversalIndexPosTool : ITool
 	{
 		private MultiPane _multiPane;
+		private RecordClerk _recordClerk;
 
 		#region Implementation of IPropertyTableProvider
 
@@ -72,7 +74,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			MultiPaneFactory.RemoveFromParentAndDispose(ref _multiPane);
+			MultiPaneFactory.RemoveFromParentAndDispose(mainCollapsingSplitContainer, ref _multiPane, ref _recordClerk);
 		}
 
 		/// <summary>
@@ -87,9 +89,9 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 #if RANDYTODO
 			// TODO: Do not use generic list tool setup!
 #endif
-			_multiPane = MultiPaneFactory.Create(
+			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
 				new FlexComponentParameters(PropertyTable, Publisher, Subscriber),
-				mainCollapsingSplitContainer.SecondControl,
+				mainCollapsingSplitContainer,
 				this,
 				"RevEntryPOSesAndDetailMultiPane",
 				TemporaryToolProviderHack.CreateNewLabel(string.Format("Browse view for tool: {0}", MachineName)), "Browse",
@@ -120,8 +122,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		{
 #if RANDYTODO
 			// TODO: If tool uses a SDA decorator (IRefreshable), then call its "Refresh" method.
-			// TODO: Call "ReloadIfNeeded" on Record clerk(s).
 #endif
+			_recordClerk.ReloadIfNeeded();
 		}
 
 		/// <summary>

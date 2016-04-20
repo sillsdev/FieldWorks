@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
+using SIL.FieldWorks.XWorks;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 {
@@ -16,6 +17,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 	internal sealed class ReversalEditCompleteTool : ITool
 	{
 		private MultiPane _multiPane;
+		private RecordClerk _recordClerk;
 
 		#region Implementation of IPropertyTableProvider
 
@@ -72,7 +74,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			MultiPaneFactory.RemoveFromParentAndDispose(ref _multiPane);
+			MultiPaneFactory.RemoveFromParentAndDispose(mainCollapsingSplitContainer, ref _multiPane, ref _recordClerk);
 		}
 
 		/// <summary>
@@ -84,9 +86,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		public void Activate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			_multiPane = MultiPaneFactory.Create(
+			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(
 				new FlexComponentParameters(PropertyTable, Publisher, Subscriber),
-				mainCollapsingSplitContainer.SecondControl,
+				mainCollapsingSplitContainer,
 				this,
 				"ReversalIndexItemsAndDetailMultiPane",
 				TemporaryToolProviderHack.CreateNewLabel(string.Format("Doc Reversals view for tool: {0}", MachineName)), "Doc Reversals",
@@ -108,8 +110,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		{
 #if RANDYTODO
 			// TODO: If tool uses a SDA decorator (IRefreshable), then call its "Refresh" method.
-			// TODO: Call "ReloadIfNeeded" on Record clerk(s).
 #endif
+			_recordClerk.ReloadIfNeeded();
 		}
 
 		/// <summary>

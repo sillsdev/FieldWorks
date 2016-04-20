@@ -80,6 +80,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 			StatusBar statusbar)
 		{
 			PaneBarContainerFactory.RemoveFromParentAndDispose(ref _paneBarContainer, ref _recordClerk);
+
+			_configurationDocument = null;
 		}
 
 		/// <summary>

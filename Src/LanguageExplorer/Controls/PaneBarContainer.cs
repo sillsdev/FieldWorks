@@ -57,10 +57,17 @@ namespace LanguageExplorer.Controls
 			PaneBar = paneBar;
 			paneBar.Dock = DockStyle.Top;
 
+			if (mainControl is IPaneBarUser)
+			{
+				((IPaneBarUser)mainControl).MainPaneBar = PaneBar;
+			}
+
+			Dock = DockStyle.Fill;
 			mainControl.Dock = DockStyle.Fill;
 			Controls.Add(paneBar);
 			Controls.Add(m_mainControl);
 			ResumeLayout(false);
+			m_mainControl.BringToFront();
 		}
 
 		/// <summary />

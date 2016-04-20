@@ -244,6 +244,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="images\MenuWidget.bmp" />
+    <Content Include="Resources\CompleteFilter.xml" />
+    <Content Include="Resources\LexiconEditRecordDocViewParameters.xml" />
+    <Content Include="Resources\LexiconEditRecordEditViewParameters.xml" />
     <Content Include="Resources\TimeOfDayEditParameters.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -358,9 +362,6 @@
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\Edit\DataEntryFilters\basicPlusFilter.xml">
       <Link>XML\Lexicon\Edit\DataEntryFilters\basicPlusFilter.xml</Link>
     </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\Edit\DataEntryFilters\CompleteFilter.xml">
-      <Link>XML\Lexicon\Edit\DataEntryFilters\CompleteFilter.xml</Link>
-    </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\RDE\toolConfiguration.xml">
       <Link>XML\Lexicon\RDE\toolConfiguration.xml</Link>
       <SubType>Designer</SubType>
@@ -471,10 +472,6 @@
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\areaConfiguration.xml">
       <Link>XML\Lexicon\areaConfiguration.xml</Link>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\DistFiles\Language Explorer\Configuration\Lexicon\Edit\toolConfiguration.xml">
-      <Link>XML\Lexicon\Edit\toolConfiguration.xml</Link>
       <SubType>Designer</SubType>
     </None>
     <None Include="..\..\DistFiles\Language Explorer\Configuration\Main.xml">
@@ -622,6 +619,7 @@
     <Compile Include="Areas\Lists\Tools\ReversalIndexPOS\ReversalIndexPOSRecordList.cs" />
     <Compile Include="Areas\Lists\Tools\ReversalIndexPOS\ReversalPOSMenuHandler.cs" />
     <Compile Include="Areas\MultiPaneFactory.cs" />
+    <Compile Include="Areas\MultiPaneParameters.cs" />
     <Compile Include="Areas\Notebook\Tools\NotebookEdit\RecordReferenceVectorLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -649,6 +647,7 @@
     <Compile Include="Areas\RuleFormulaView.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Areas\SplitterChildControlParameters.cs" />
     <Compile Include="Areas\TemporaryToolProviderHack.cs" />
     <Compile Include="Areas\TextsAndWords\ConcordanceDlg.cs">
       <SubType>Form</SubType>

@@ -3753,7 +3753,12 @@ namespace SIL.FieldWorks.Common.Controls
 			Subscriber = flexComponentParameters.Subscriber;
 
 			// Make the right subclass of XmlBrowseViewBase first, the column header creation uses information from it.
-			if (m_nodeSpec.Attribute("editRowModelClass") != null)
+			if (m_nodeSpec == null)
+			{
+				// Some XMLViews tests have not set it.
+				// m_xbv has been set to FakeXmlBrowseViewBase
+			}
+			else if (m_nodeSpec.Attribute("editRowModelClass") != null)
 			{
 				m_xbv = new XmlBrowseRDEView(); // Use special RDE class.
 			}
@@ -3880,7 +3885,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_bv = bv;
 
 			// Store location for restore after Reconstruct. (LT-8336)
-			m_bv.BrowseView.OnSaveScrollPosition(null); // says it's called through Mediator, but not that I can see!
+			m_bv.BrowseView.SaveScrollPosition(null);
 
 			// Figure out if highlighted row is visible or not
 			m_irow = m_bv.SelectedIndex;
@@ -3983,7 +3988,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (m_bv != null && m_bv.BrowseView != null && m_bv.BrowseView.RootBox != null)
 					m_bv.BrowseView.RootBox.Reconstruct(); // Otherwise every cell redraws individually!
 
-				m_bv.BrowseView.OnRestoreScrollPosition(null);
+				m_bv.BrowseView.RestoreScrollPosition(null);
 
 				if (m_fHiliteWasVisible && m_irow >= 0 && m_irow < m_bv.AllItems.Count)
 				{

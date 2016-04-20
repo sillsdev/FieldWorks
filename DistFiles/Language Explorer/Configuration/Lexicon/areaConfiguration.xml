@@ -438,7 +438,6 @@
 				<include path="RDE/toolConfiguration.xml" query="root/clerks/*"/>
 			</clerks>
 			<tools>
-				<include path="Edit/toolConfiguration.xml" query="root/tools/*"/>
 				<include path="Dictionary/toolConfiguration.xml" query="root/tools/*"/>
 				<include path="RDE/toolConfiguration.xml" query="root/tools/*"/>
 				<include path="ReversalIndices/toolConfiguration.xml" query="root/tools/*"/>

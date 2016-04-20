@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Windows.Forms;
 using LanguageExplorer.Areas;
 using SIL.CoreImpl;
@@ -30,14 +31,9 @@ namespace LanguageExplorer.Controls
 				Dock = DockStyle.Fill
 			};
 			newPaneBarContainer.InitializeFlexComponent(flexComponentParameters);
-			if (mainChildControl is IPaneBarUser)
-			{
-				var asPaneBarUser = (IPaneBarUser)mainChildControl;
-				asPaneBarUser.MainPaneBar = newPaneBarContainer.PaneBar;
-			}
 			if (mainChildControl is IFlexComponent)
 			{
-				var asFlexComponent = (IFlexComponent) mainChildControl;
+				var asFlexComponent = (IFlexComponent)mainChildControl;
 				asFlexComponent.InitializeFlexComponent(flexComponentParameters);
 			}
 			parentControl.Controls.Add(newPaneBarContainer);
@@ -48,30 +44,62 @@ namespace LanguageExplorer.Controls
 		}
 
 		/// <summary>
-		/// Create a pair of PaneBarContainer instances for <paramref name="parentMultiPane"/>.
+		/// Create a new PaneBarContainer
 		/// </summary>
 		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		/// <param name="parentMultiPane">Parent control for the new PaneBarContainers</param>
-		/// <param name="firstChildControl">Main child control for the new Top/Left PaneBarContainer</param>
-		/// <param name="secondChildControl">Main child control for the new Right/Bottom PaneBarContainer</param>
+		/// <param name="mainChildControl">Main child control for the new PaneBarContainer</param>
 		/// <returns>The new PaneBarContainer instance.</returns>
-		internal static void Create(FlexComponentParameters flexComponentParameters, MultiPane parentMultiPane, Control firstChildControl, Control secondChildControl)
+		internal static PaneBarContainer Create(FlexComponentParameters flexComponentParameters, Control mainChildControl)
 		{
-			parentMultiPane.SuspendLayout();
-			var newPaneBarContainer1 = new PaneBarContainer(firstChildControl)
+			var newPaneBarContainer = new PaneBarContainer(mainChildControl)
 			{
 				Dock = DockStyle.Fill
 			};
-			newPaneBarContainer1.InitializeFlexComponent(flexComponentParameters);
-			parentMultiPane.FirstControl = newPaneBarContainer1;
-			var newPaneBarContainer2 = new PaneBarContainer(secondChildControl)
+			if (mainChildControl is IFlexComponent)
+			{
+				((IFlexComponent)mainChildControl).InitializeFlexComponent(flexComponentParameters);
+			}
+			if (mainChildControl is MultiPane)
+			{
+				var mainChildControlAsMultiPane = (MultiPane)mainChildControl;
+				// Set first control of MultiPane for PaneBar, if it is IPaneBarUser.
+				if (mainChildControlAsMultiPane.FirstControl is IPaneBarUser)
+				{
+					((IPaneBarUser)mainChildControlAsMultiPane.FirstControl).MainPaneBar = newPaneBarContainer.PaneBar;
+				}
+			}
+
+			return newPaneBarContainer;
+		}
+
+		/// <summary>
+		/// Create a new PaneBarContainer
+		/// </summary>
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		/// <param name="paneBar"></param>
+		/// <param name="mainChildControl">Main child control for the new PaneBarContainer</param>
+		/// <returns>The new PaneBarContainer instance.</returns>
+		internal static PaneBarContainer Create(FlexComponentParameters flexComponentParameters, PaneBar.PaneBar paneBar, Control mainChildControl)
+		{
+			var newPaneBarContainer = new PaneBarContainer(paneBar, mainChildControl)
 			{
 				Dock = DockStyle.Fill
 			};
-			newPaneBarContainer2.InitializeFlexComponent(flexComponentParameters);
-			parentMultiPane.SecondControl = newPaneBarContainer2;
-			parentMultiPane.ResumeLayout();
-			firstChildControl.BringToFront();
+			if (mainChildControl is IFlexComponent)
+			{
+				((IFlexComponent)mainChildControl).InitializeFlexComponent(flexComponentParameters);
+			}
+			if (mainChildControl is MultiPane)
+			{
+				var mainChildControlAsMultiPane = (MultiPane)mainChildControl;
+				// Set first control of MultiPane for PaneBar, if it is IPaneBarUser.
+				if (mainChildControlAsMultiPane.FirstControl is IPaneBarUser)
+				{
+					((IPaneBarUser)mainChildControlAsMultiPane.FirstControl).MainPaneBar = newPaneBarContainer.PaneBar;
+				}
+			}
+
+			return newPaneBarContainer;
 		}
 
 		/// <summary>
@@ -93,6 +121,11 @@ namespace LanguageExplorer.Controls
 			// "recordClerk" is a data member of the caller. Rather than have every caller set its own data member to null,
 			// we do it here for all of them.
 			recordClerk = null;
+		}
+
+		internal static string CreateShowHiddenFieldsPropertyName(string toolMachineName)
+		{
+			return String.Format("{0}-{1}", LanguageExplorerResources.ksShowHiddenFields, toolMachineName);
 		}
 	}
 }

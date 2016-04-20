@@ -9,8 +9,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
 
@@ -506,11 +508,19 @@ namespace XMLViewsTests
 	{
 		private FakeXmlBrowseViewBase m_view;
 
+		private IPublisher m_publisher;
+		private ISubscriber m_subscriber;
+		private IPropertyTable m_propertyTable;
+
 		/// <summary/>
 		[SetUp]
 		public void SetUp()
 		{
+			PubSubSystemFactory.CreatePubSubSystem(out m_publisher, out m_subscriber);
+			m_propertyTable = PropertyTableFactory.CreatePropertyTable(m_publisher);
 			var bv = new FakeBrowseViewer();
+			var flexComponentParameters = new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber);
+			bv.InitializeFlexComponent(flexComponentParameters);
 			m_view = bv.m_xbv as FakeXmlBrowseViewBase;
 
 			ConfigureScrollBars();
@@ -530,6 +540,14 @@ namespace XMLViewsTests
 		public void TearDown()
 		{
 			m_view.m_bv.Dispose();
+
+			if (m_propertyTable != null)
+			{
+				m_propertyTable.Dispose();
+				m_propertyTable = null;
+			}
+			m_publisher = null;
+			m_subscriber = null;
 		}
 
 		/// <summary>

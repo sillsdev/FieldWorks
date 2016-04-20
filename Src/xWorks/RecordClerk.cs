@@ -2272,7 +2272,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				CheckDisposed();
 				if (m_list.IsCurrentObjectValid())
-				return m_list.CurrentObject;
+					return m_list.CurrentObject;
 				return null;
 			}
 		}

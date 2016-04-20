@@ -18,6 +18,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -49,6 +50,11 @@ namespace SIL.FieldWorks.XWorks
 
 		#region Construction and Removal
 
+		public RecordDocView(XElement configurationParametersElement, RecordClerk recordClerk)
+			: base(configurationParametersElement, recordClerk)
+		{
+		}
+
 		#region Overrides of XWorksViewBase
 
 		/// <summary>
@@ -59,7 +65,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
 
-			InitBase(PropertyTable, null);
+			InitBase();
 
 			m_fullyInitialized = true;
 		}
@@ -132,16 +138,23 @@ namespace SIL.FieldWorks.XWorks
 
 		protected override void ShowRecord()
 		{
+			Debug.Assert(Clerk.CurrentObject != null);
+			Debug.Assert(m_rootSite != null);
+#if !RANDYTODO
+			// TODO: I run release builds, so the above assert doesn't do anything.
+			// TODO: Remove this approach, when I'm satisfied all callers are well-behaved.
+			if (Clerk.CurrentObject == null)
+				throw new InvalidOperationException("'ShowRecord' called too early.");
+			if (m_rootSite == null)
+				throw new InvalidOperationException("'ShowRecord' called too early.");
+#endif
+
 			//todo: add the document view name to the task label
 			//todo: fast machine, this doesn't really seem to do any good. I think maybe the parts that
 			//are taking a long time are not getting Breath().
 			//todo: test on a machine that is slow enough to see if this is helpful or not!
-#if RANDYTODO
-			using (ProgressState progress = FwXWindow.CreatePredictiveProgressState(PropertyTable, m_vectorName))
+			using (var progress = ProgressState.CreatePredictiveProgressState(PropertyTable, ((RecordList)Clerk.SortItemProvider).PropertyName))
 			{
-				progress.Breath();
-
-				Debug.Assert(m_rootSite != null);
 
 				progress.Breath();
 
@@ -151,16 +164,16 @@ namespace SIL.FieldWorks.XWorks
 
 				progress.Breath();
 
-				if (Clerk.CurrentObject == null)
-				{
-					m_rootSite.Hide();
-					return;
-				}
 				try
 				{
 					progress.SetMilestone();
 
-					m_rootSite.Show();
+					if (!m_rootSite.Visible)
+					{
+						m_rootSite.Visible = true;
+					}
+					BringToFront();
+					m_rootSite.BringToFront();
 					using (new WaitCursor(this))
 					{
 						IChangeRootObject root = m_rootSite as IChangeRootObject;
@@ -170,13 +183,14 @@ namespace SIL.FieldWorks.XWorks
 				}
 				catch (Exception error)
 				{
-					//don't really need to make the program stop just because we could not show this record.
-					IApp app = PropertyTable.GetValue<IApp>("App");
-					ErrorReporter.ReportException(error, app.SettingsKey,
-						PropertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress, null, false);
+					using (var appSettingsKey = PropertyTable.GetValue<IFlexApp>("App").SettingsKey)
+					{
+						//don't really need to make the program stop just because we could not show this record.
+						ErrorReporter.ReportException(error, appSettingsKey,
+							PropertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress, null, false);
+					}
 				}
 			}
-#endif
 		}
 
 		protected override void SetupDataContext()
@@ -372,6 +386,11 @@ namespace SIL.FieldWorks.XWorks
 		XElement m_jtSpecs; // node required by XmlView.
 		protected string m_configObjectName; // name to display in Configure dialog.
 
+		public RecordDocXmlView(XElement configurationParametersElement, RecordClerk recordClerk)
+			: base(configurationParametersElement, recordClerk)
+		{
+		}
+
 		#region IDisposable override
 
 		/// <summary>
@@ -421,6 +440,11 @@ namespace SIL.FieldWorks.XWorks
 			return new XmlDocItemView(0, m_jtSpecs, sLayout);
 		}
 
+		protected override TreebarAvailability DefaultTreeBarAvailability
+		{
+			get { return TreebarAvailability.NotMyBusiness; }
+		}
+
 		/// <summary>
 		/// This routine encapsulates the process for looking at the spec node of a tool (specifically the
 		/// parameters node controlling the tool for a RecordDocView) and determining the layout that should
@@ -454,13 +478,18 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// The base class uses these specs, so locate them first!
 			m_jtSpecs = m_configurationParametersElement;
-			base.SetupDataContext ();
+			base.SetupDataContext();
 		}
 
 		protected override void ReadParameters()
 		{
 			m_configObjectName = XmlUtils.GetLocalizedAttributeValue(m_configurationParametersElement, "configureObjectName", null);
 			base.ReadParameters();
+		}
+
+		internal void ReallyShowRecordNow()
+		{
+			ShowRecord();
 		}
 
 #if RANDYTODO

@@ -61,6 +61,22 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+        ///&lt;!-- this file this special instructions for XDE nodes. Currently, all that you are allowed to say is
+        ///that a node is not visible. You do that by listing the node here. the id of the node must match the XDE
+        ///node that would otherwise produce a slice which you want to hide. note that most XDE nodes
+        ///do not otherwise have an ID; you usually have to add 1 before you can reference it in this kind of document.--&gt;
+        ///&lt;SliceFilter&gt;
+        ///&lt;/SliceFilter&gt;
+        ///.
+        /// </summary>
+        internal static string CompleteFilter {
+            get {
+                return ResourceManager.GetString("CompleteFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Index.
         /// </summary>
         internal static string ksAffixRuleIndex {

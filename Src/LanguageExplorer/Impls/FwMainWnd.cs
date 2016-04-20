@@ -28,13 +28,17 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
+using SIL.IO;
 using SIL.Reporting;
 using SIL.Utils;
+using File = System.IO.File;
+using FileUtils = SIL.Utils.FileUtils;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 using Win32 = SIL.FieldWorks.Common.FwUtils.Win32;
 
@@ -79,6 +83,7 @@ namespace LanguageExplorer.Impls
 		private readonly IFlexApp _flexApp;
 		private DateTime _lastToolChange = DateTime.MinValue;
 		private HashSet<string> _toolsReportedToday = new HashSet<string>();
+		private bool _persistWindowSize;
 
 		/// <summary>
 		/// Create new instance of window.
@@ -99,6 +104,16 @@ namespace LanguageExplorer.Impls
 			Guard.AssertThat(wndCopyFrom == null, "Support for the 'wndCopyFrom' is not yet implemented.");
 			Guard.AssertThat(linkArgs == null, "Support for the 'linkArgs' is not yet implemented.");
 
+			var wasCrashDuringPreviousStartup = File.Exists(CrashOnStartupDetectorPathName);
+			if (!wasCrashDuringPreviousStartup)
+			{
+				// Create the crash detector file for next time.
+				// Make sure the folder exists first.
+				Directory.CreateDirectory(CrashOnStartupDetectorPathName.Substring(0, CrashOnStartupDetectorPathName.LastIndexOf(Path.DirectorySeparatorChar)));
+				using (var writer = File.CreateText(CrashOnStartupDetectorPathName))
+					writer.Close();
+			}
+
 			_flexApp = flexApp;
 
 			AddCustomStatusBarPanels();
@@ -114,6 +129,9 @@ namespace LanguageExplorer.Impls
 
 			SetupPropertyTable();
 
+			RestoreWindowSettings(wasCrashDuringPreviousStartup);
+			var restoreSize = Size;
+
 			_toolRepository = new ToolRepository();
 			_areaRepository = new AreaRepository(_toolRepository);
 			_areaRepository.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
@@ -121,6 +139,20 @@ namespace LanguageExplorer.Impls
 			SetupOutlookBar();
 
 			SetWindowTitle();
+
+			if (restoreSize != Size)
+			{
+				if (restoreSize != Size)
+				{
+					// It will be the same as what is now in the file and the prop table,
+					// so skip updating the table.
+					_persistWindowSize = false;
+					Size = restoreSize;
+					_persistWindowSize = true;
+				}
+			}
+			if (File.Exists(CrashOnStartupDetectorPathName)) // Have to check again, because unit test check deletes it in the RestoreWindowSettings method.
+				File.Delete(CrashOnStartupDetectorPathName);
 #if RANDYTODOMERGEFILES
 			// Remove this when I'm done with project.
 			// Load xml config files and save merged document.
@@ -477,6 +509,141 @@ namespace LanguageExplorer.Impls
 		}
 #endif
 
+		/// <summary>
+		/// Gets the pathname of the "crash detector" file.
+		/// The file is created at app startup, and deleted at app exit,
+		/// so if it exists before being created, the app didn't close properly,
+		/// and will start without using the saved settings.
+		/// </summary>
+		private static string CrashOnStartupDetectorPathName
+		{
+			get
+			{
+				return Path.Combine(
+					Path.Combine(
+					Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+					Path.Combine("SIL", "FieldWorks")),
+					"CrashOnStartupDetector.tmp");
+			}
+		}
+
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "activeForm is a reference")]
+		private void RestoreWindowSettings(bool wasCrashDuringPreviousStartup)
+		{
+			const string id = "Language Explorer";
+			bool useExtantPrefs = ModifierKeys != Keys.Shift; // Holding shift key means don't use extant preference file, no matter what.
+			if (useExtantPrefs)
+			{
+				// Tentatively RestoreProperties, but first check for a previous crash...
+				if (wasCrashDuringPreviousStartup && (Environment.ExpandEnvironmentVariables("%FwSkipSafeMode%") == "%FwSkipSafeMode%"))
+				{
+					// Note: The environment variable will not exist at all to get here.
+					// A non-developer user.
+					// Display a message box asking users if they
+					// want to  revert to factory settings.
+					ShowInTaskbar = true;
+					var activeForm = ActiveForm;
+					if (activeForm == null)
+						useExtantPrefs = (MessageBox.Show(ActiveForm, LanguageExplorerResources.SomethingWentWrongLastTime,
+							id,
+							MessageBoxButtons.YesNo,
+							MessageBoxIcon.Question) != DialogResult.Yes);
+					else
+					{
+						// Make sure as far as possible it comes up in front of any active window, including the splash screen.
+						activeForm.Invoke((Action)(() =>
+							useExtantPrefs = (MessageBox.Show(LanguageExplorerResources.SomethingWentWrongLastTime,
+								id,
+								MessageBoxButtons.YesNo,
+								MessageBoxIcon.Question) != DialogResult.Yes)));
+					}
+				}
+			}
+			if (useExtantPrefs)
+			{
+				RestoreProperties();
+			}
+			else
+			{
+				DiscardProperties();
+			}
+
+			FormWindowState state;
+			if (PropertyTable.TryGetValue("windowState", SettingsGroup.GlobalSettings, out state) && state != FormWindowState.Minimized)
+			{
+				WindowState = state;
+			}
+
+			Point persistedLocation;
+			if (PropertyTable.TryGetValue("windowLocation", SettingsGroup.GlobalSettings, out persistedLocation))
+			{
+				Location = persistedLocation;
+				//the location restoration only works if the window startposition is set to "manual"
+				//because the window is not visible yet, and the location will be changed
+				//when it is Show()n.
+				StartPosition = FormStartPosition.Manual;
+			}
+
+			Size persistedSize;
+			if (!PropertyTable.TryGetValue("windowSize", SettingsGroup.GlobalSettings, out persistedSize))
+			{
+				return;
+			}
+			_persistWindowSize = false;
+			try
+			{
+				Size = persistedSize;
+			}
+			finally
+			{
+				_persistWindowSize = true;
+			}
+		}
+
+		private void SaveWindowSettings()
+		{
+			if (!_persistWindowSize)
+				return;
+			// Don't bother storing anything if we are maximized or minimized.
+			// if we did, then when the user exits the application and then runs it again,
+			//then switches to the normal state, we would be switching to 0,0 or something.
+			if (WindowState != FormWindowState.Normal)
+			{
+				return;
+			}
+
+			PropertyTable.SetProperty("windowState", WindowState, SettingsGroup.GlobalSettings, true, false);
+			PropertyTable.SetProperty("windowLocation", Location, SettingsGroup.GlobalSettings, true, false);
+			PropertyTable.SetProperty("windowSize", Size, SettingsGroup.GlobalSettings, true, false);
+		}
+
+		/// <summary>
+		/// Restore properties persisted for the mediator.
+		/// </summary>
+		private void RestoreProperties()
+		{
+			PropertyTable.RestoreFromFile(PropertyTable.GlobalSettingsId);
+			PropertyTable.RestoreFromFile(PropertyTable.LocalSettingsId);
+			var hcSettings = PropertyTable.GetValue<string>("HomographConfiguration");
+			if (string.IsNullOrEmpty(hcSettings))
+			{
+				return;
+			}
+			var hc = Cache.ServiceLocator.GetInstance<HomographConfiguration>();
+			hc.PersistData = hcSettings;
+		}
+
+		/// <summary>
+		/// If we are discarding saved settings, we must not keep any saved sort sequences,
+		/// as they may represent a filter we are not restoring (LT-11647)
+		/// </summary>
+		private void DiscardProperties()
+		{
+			var tempDirectory = Path.Combine(Cache.ProjectId.ProjectFolder, FdoFileHelper.ksSortSequenceTempDir);
+			DirectoryUtilities.DeleteDirectoryRobust(tempDirectory);
+		}
+
 		private void SetupOutlookBar()
 		{
 			mainContainer.SuspendLayout();
@@ -678,11 +845,44 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
+		protected override void OnResize(EventArgs e)
+		{
+			base.OnResize(e);
+
+			if (!_persistWindowSize)
+				return;
+
+			// Don't bother storing the size if we are maximized or minimized.
+			// If we did, then when the user exits the application and then runs it again,
+			//then switches to the normal state, we would be switching to a bizarre size.
+			if (WindowState == FormWindowState.Normal)
+			{
+				PropertyTable.SetProperty("windowSize", Size, SettingsGroup.GlobalSettings, true, false);
+			}
+		}
+
+		protected override void OnMove(EventArgs e)
+		{
+			base.OnMove(e);
+
+			if (!_persistWindowSize)
+				return;
+			// Don't bother storing the location if we are maximized or minimized.
+			// if we did, then when the user exits the application and then runs it again,
+			//then switches to the normal state, we would be switching to 0,0 or something.
+			if (WindowState == FormWindowState.Normal)
+			{
+				PropertyTable.SetProperty("windowLocation", Location, SettingsGroup.GlobalSettings, true, false);
+			}
+		}
+
 		/// <summary>
 		/// Save settings.
 		/// </summary>
 		public void SaveSettings()
 		{
+			SaveWindowSettings();
+
 			// Have current IArea put any needed properties into the table.
 			_currentArea.EnsurePropertiesAreCurrent();
 

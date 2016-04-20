@@ -1158,6 +1158,9 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe("SaveScrollPosition", SaveScrollPosition);
+				Subscriber.Unsubscribe("RestoreScrollPosition", RestoreScrollPosition);
+
 				if (m_bv != null && !m_bv.IsDisposed && m_bv.SpecialCache != null)
 					m_bv.SpecialCache.RemoveNotification(this);
 			}
@@ -1415,19 +1418,14 @@ namespace SIL.FieldWorks.Common.Controls
 			get { return m_sda; }
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Called when [prepare to refresh].
 		/// </summary>
-		/// <param name="args">The args.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public bool OnPrepareToRefresh(object args)
+		public void PrepareToRefresh()
 		{
 			CheckDisposed();
 
-			OnSaveScrollPosition(args);
-			return false; // other things may wish to prepare too.
+			SaveScrollPosition(null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1441,7 +1439,8 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		/// Called through mediator by reflection.
+		/// Called through Publisher.
+		///
 		/// Save the current scroll position for later restoration, in a form that will survive
 		/// having the view contents replaced by a lazy box (that is, it's not good enough to
 		/// just save AutoScrollPosition.y, we need enough information to create a selection
@@ -1449,13 +1448,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// This class implements this by figuring out the index of the record at the top of
 		/// the screen and saving that.
 		/// </summary>
-		/// <param name="args"></param>
-		/// <returns></returns>
-		public bool OnSaveScrollPosition(object args)
+		public void SaveScrollPosition(object newValue)
 		{
 			CheckDisposed();
 
-			IVwSelection sel = null;
 			if (!IsHandleCreated || RootBox == null)
 			{
 				// JohnT: really nasty things can happen if we create the root box as part of
@@ -1463,7 +1459,7 @@ namespace SIL.FieldWorks.Common.Controls
 				// haven't even made our root box we can't have a meaningful scroll position to
 				// save.
 				m_iTopOfScreenObjectForScrollPosition = -1; // in case we can't figure one.
-				return false;
+				return;
 			}
 			try
 			{
@@ -1472,10 +1468,10 @@ namespace SIL.FieldWorks.Common.Controls
 					Rectangle rcSrcRoot;
 					Rectangle rcDstRoot;
 					GetCoordRects(out rcSrcRoot, out rcDstRoot);
-					sel = this.RootBox.MakeSelAt(1, 0, rcSrcRoot, rcDstRoot, false);
+					var sel = RootBox.MakeSelAt(1, 0, rcSrcRoot, rcDstRoot, false);
 					m_iTopOfScreenObjectForScrollPosition = -1; // in case we can't figure one.
 					if (sel == null)
-						return false;
+						return;
 					// This gets us the index of the object at the top of the screen in the list of
 					// objects we are browsing.
 					int hvoObj, tag, cpropPrevious; // dummies
@@ -1484,14 +1480,14 @@ namespace SIL.FieldWorks.Common.Controls
 						out m_iTopOfScreenObjectForScrollPosition, out cpropPrevious, out vps);
 					// Get a selection of that whole object. This is just in case there might be a pixel or two difference
 					// between the top of an IP and the top of the rectangle that encloses the whole object.
-					SelLevInfo[] rgvsli = new SelLevInfo[1];
+					var rgvsli = new SelLevInfo[1];
 					rgvsli[0].ihvo = m_iTopOfScreenObjectForScrollPosition;
 					rgvsli[0].tag = m_madeUpFieldIdentifier;
 					sel = RootBox.MakeTextSelInObj(0, 1, rgvsli, 0, null, false, false, false, true, false);
 					if (sel == null)
 					{
 						m_iTopOfScreenObjectForScrollPosition = -1; // in case we can't figure one.
-						return false;
+						return;
 					}
 
 					//sel = RootBox.MakeSelInObj(0, 1, rgvsli, 0, false);
@@ -1506,9 +1502,7 @@ namespace SIL.FieldWorks.Common.Controls
 			catch
 			{
 				m_iTopOfScreenObjectForScrollPosition = -1; // in case we can't figure one.
-				return false;
 			}
-			return true; // indicates success
 		}
 
 		/// <summary>
@@ -1518,13 +1512,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// m_iTopOfScreenObjectForScrollPosition is m_dyTopOfScreenOffset pixels below the top of the
 		/// client area (or above, if m_dyTopOfScreenOffset is negative).
 		/// </summary>
-		/// <param name="args"></param>
-		/// <returns></returns>
-		public bool OnRestoreScrollPosition(object args)
+		public void RestoreScrollPosition(object newValue)
 		{
 			CheckDisposed();
 
-			return RestoreScrollPosition(m_iTopOfScreenObjectForScrollPosition);
+			RestoreScrollPosition(m_iTopOfScreenObjectForScrollPosition);
 		}
 
 		/// <summary>
@@ -1535,28 +1527,28 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="irow">index of highlighted row</param>
 		/// <returns></returns>
-		internal bool RestoreScrollPosition(int irow)
+		internal void RestoreScrollPosition(int irow)
 		{
 			if (irow < 0 ||
 				irow > m_sda.get_VecSize(m_hvoRoot, m_madeUpFieldIdentifier))
 			{
 				// we weren't able to save a scroll position for some reason, or the position we saved is
 				// out of range following whatever changed, so we can't restore.
-				return false;
+				return;
 			}
 			// Get a selection of the whole target object. Do this OUTSIDE the HoldGraphics/GetCoordRects block,
 			// since it may change the scroll position as it expands lazy boxes, modifying the dest rect.
 			try
 			{
-				SelLevInfo[] rgvsli = new SelLevInfo[1];
+				var rgvsli = new SelLevInfo[1];
 				rgvsli[0].ihvo = irow;
 				rgvsli[0].tag = m_madeUpFieldIdentifier;
-				IVwSelection sel = RootBox.MakeTextSelInObj(0, 1, rgvsli, 0, null, false, false, false, true, false);
+				var sel = RootBox.MakeTextSelInObj(0, 1, rgvsli, 0, null, false, false, false, true, false);
 				if (sel == null)
 				{
 					// Just ignore it if we couldn't make a selection.
 					Debug.WriteLine("restore scroll position failed");
-					return true;
+					return;
 				}
 				using (new HoldGraphics(this))
 				{
@@ -1579,7 +1571,6 @@ namespace SIL.FieldWorks.Common.Controls
 				// Just ignore it if we couldn't make a selection or something else goes wrong.
 				Debug.WriteLine("restore scroll position failed");
 			}
-			return true;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2120,6 +2111,9 @@ namespace SIL.FieldWorks.Common.Controls
 		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
+
+			Subscriber.Subscribe("SaveScrollPosition", SaveScrollPosition);
+			Subscriber.Subscribe("RestoreScrollPosition", RestoreScrollPosition);
 
 			SetSelectedRowHighlighting();//read the property table
 		}
