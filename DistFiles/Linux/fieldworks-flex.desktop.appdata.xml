@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2016 SIL International -->
+<component type="desktop">
+	<id>fieldworks-flex.desktop</id>
+	<metadata_license>CC-BY-SA-3.0</metadata_license>
+	<project_license>LGPL-2.1+ and CPOL-1.02</project_license>
+	<name>FieldWorks Language Explorer</name>
+	<summary>Suite of programs to manage language and cultural data</summary>
+
+	<description>
+		<p>
+			FieldWorks is a suite of software tools to help language development teams
+			manage language and cultural data, with support for complex scripts.
+		</p>
+	</description>
+
+	<screenshots>
+		<screenshot type="default">
+			<image width="500" height="359">http://fieldworks.sil.org/wp-content/uploads/2010/06/lexicon-plain_500.png</image>
+			<caption>Lexicon</caption>
+		</screenshot>
+	</screenshots>
+
+	<url type="homepage">http://fieldworks.sil.org/</url>
+
+	<provides>
+		<binary>fieldworks-flex</binary>
+	</provides>
+
+	<releases>
+		<release version="8.2.7" date="2016-04-21">
+		</release>
+	</releases>
+</component>

@@ -293,7 +293,11 @@ install-menuentries:
 	desktop-file-install --dir $(DESTDIR)/usr/share/applications Lib/linux/fieldworks-flex.desktop
 	desktop-file-install --dir $(DESTDIR)/usr/share/applications Lib/linux/unicodechareditor.desktop
 
-install: install-tree install-menuentries l10n-install
+install-packagemetadata:
+	install -d $(DESTDIR)/usr/share/appdata
+	install -m 644 DistFiles/Linux/fieldworks-flex.desktop.appdata.xml $(DESTDIR)/usr/share/appdata
+
+install: install-tree install-menuentries l10n-install install-packagemetadata
 
 install-package: install install-COM
 	$(DESTDIR)/usr/lib/fieldworks/cpol-action pack
