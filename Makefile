@@ -308,6 +308,18 @@ install-package: install install-COM
 	$(DESTDIR)/usr/lib/fieldworks/cpol-action pack
 
 install-package-fdo: install-tree-fdo install-COM
+	# Remove additional unwanted files
+	rm -f $(DESTDIR)/usr/lib/fieldworks/FormattedEditor.dll*
+	rm -f $(DESTDIR)/usr/lib/fieldworks/HelpSystem.dll*
+	rm -f $(DESTDIR)/usr/lib/fieldworks/HtmlEditor.dll*
+	rm -f $(DESTDIR)/usr/lib/fieldworks/Interop.*
+	rm -f $(DESTDIR)/usr/lib/fieldworks/NetLoc.*
+	rm -f $(DESTDIR)/usr/lib/fieldworks/Palaso.Media.dll*
+	rm -f $(DESTDIR)/usr/lib/fieldworks/PalasoUIWindowsForms*
+	rm -f $(DESTDIR)/usr/lib/fieldworks/Paratext*
+	rm -f $(DESTDIR)/usr/lib/fieldworks/SIL.Archiving*
+	rm -f $(DESTDIR)/usr/lib/fieldworks/Utilities.*
+	rm -f $(DESTDIR)/usr/lib/fieldworks/Vulcan.Uczniowie.HelpProvider*
 
 uninstall: uninstall-menuentries
 	rm -rf $(DESTDIR)/usr/bin/flex $(DESTDIR)/usr/lib/fieldworks $(DESTDIR)/usr/share/fieldworks
