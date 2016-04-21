@@ -582,6 +582,7 @@ namespace SIL.FieldWorks.XWorks
 					goto case 3;
 				case 3:
 					HandleLabelChanges(allParts, 3);
+					HandleFieldChanges(allParts, 3, false);
 					SetWritingSystemForReversalModel(alphaModel);
 					break;
 			}
@@ -627,6 +628,9 @@ namespace SIL.FieldWorks.XWorks
 						var newHeadword = isReversal ? "ReversalName" : "HeadWordRef";
 						ReplaceFieldInNodes(node, n => n.Label == "Referenced Headword", newHeadword);
 						ReplaceSubFieldInNodes(node, n => n.FieldDescription == "OwningEntry" && n.SubField == "MLHeadWord", newHeadword);
+						break;
+					case 3:
+						ReplaceFieldInNodes(node, n => n.Label == "Gloss (or Summary Definition)", "GlossOrSummary");
 						break;
 				}
 			}

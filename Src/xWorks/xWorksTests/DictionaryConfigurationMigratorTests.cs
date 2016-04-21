@@ -2407,6 +2407,41 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void MigrateFrom83Alpha_UpdatesReferencedEntriesToGlossOrSummary()
+		{
+			var configGlossOrSummDefn = new ConfigurableDictionaryNode { Label = "Gloss (or Summary Definition)", FieldDescription = "DefinitionOrGloss" };
+			var configReferencedEntries = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Entries",
+				FieldDescription = "ConfigReferencedEntries",
+				CSSClassNameOverride = "referencedentries",
+				Children = new List<ConfigurableDictionaryNode> { configGlossOrSummDefn } };
+			var configParent = new ConfigurableDictionaryNode
+			{
+				Label = "Variant Of",
+				Children = new List<ConfigurableDictionaryNode> { configReferencedEntries }
+			};
+			var configDefnOrGloss = new ConfigurableDictionaryNode { Label = "Definition (or Gloss)", FieldDescription = "DefinitionOrGloss" };
+			var configSenses = new ConfigurableDictionaryNode
+			{
+				Label = "Senses",
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Children = new List<ConfigurableDictionaryNode> { configDefnOrGloss }
+			};
+			var configModel = new DictionaryConfigurationModel
+			{
+				Version = 3,
+				Parts = new List<ConfigurableDictionaryNode> { configParent, configSenses }
+			};
+			m_migrator.MigrateFrom83Alpha(configModel);
+			Assert.AreEqual("GlossOrSummary", configGlossOrSummDefn.FieldDescription,
+				"'Gloss (or Summary Definition)' Field Description should have been updated");
+			Assert.AreEqual("DefinitionOrGloss", configDefnOrGloss.FieldDescription,
+				"'Definition (or Gloss)' should not change fields");
+		}
+
+		[Test]
 		public void MigrateFrom83Alpha_RemovesDeadReferenceItems()
 		{
 			var configChild = new ConfigurableDictionaryNode { ReferenceItem = "LexEntry" };
