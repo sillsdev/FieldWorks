@@ -57,6 +57,7 @@ namespace SIL.FieldWorks.XWorks
 			var styles = FontHeightAdjuster.StyleSheetFromMediator(m_mediator).Styles;
 			styles.Add(new BaseStyleInfo { Name = "Dictionary-Normal", IsParagraphStyle = true });
 			styles.Add(new BaseStyleInfo { Name = "Dictionary-Headword", IsParagraphStyle = false });
+			styles.Add(new BaseStyleInfo { Name = "Bulleted List", IsParagraphStyle = true });
 		}
 
 		[TestFixtureTearDown]

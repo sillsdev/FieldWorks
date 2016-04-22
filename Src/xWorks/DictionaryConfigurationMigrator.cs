@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.XWorks
 	public class DictionaryConfigurationMigrator : ILayoutConverter
 	{
 		public const int VersionPre83 = -1;
-		public const int VersionCurrent = 4;
+		public const int VersionCurrent = 5;
 		private readonly Inventory m_layoutInventory;
 		private readonly Inventory m_partInventory;
 		private readonly Mediator m_mediator;
@@ -584,9 +584,42 @@ namespace SIL.FieldWorks.XWorks
 					HandleLabelChanges(allParts, 3);
 					HandleFieldChanges(allParts, 3, false);
 					SetWritingSystemForReversalModel(alphaModel);
+					goto case 4;
+				case 4:
+					HandleOptionsChanges(allParts, 3);
 					break;
 			}
 			alphaModel.Version = VersionCurrent;
+		}
+
+		private static void HandleOptionsChanges(List<ConfigurableDictionaryNode> parts, int version)
+		{
+			foreach (var node in parts)
+			{
+				switch (version)
+				{
+					case 3:
+						SetOptionsInExamplesNodes(node, n => n.FieldDescription == "ExamplesOS");
+						break;
+				}
+			}
+		}
+
+		private static void SetOptionsInExamplesNodes(ConfigurableDictionaryNode node, Func<ConfigurableDictionaryNode, bool> match)
+		{
+			if (match(node))
+			{
+				node.StyleType = ConfigurableDictionaryNode.StyleTypes.Paragraph;
+				node.Style = "Bulleted List";
+				DictionaryNodeOptions options = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = true };
+				node.DictionaryNodeOptions = options;
+			}
+			if (node.Children == null)
+				return;
+			foreach (var child in node.Children)
+			{
+				SetOptionsInExamplesNodes(child, match);
+			}
 		}
 
 		private static void HandleLabelChanges(List<ConfigurableDictionaryNode> parts, int version)

@@ -238,6 +238,42 @@ namespace SIL.FieldWorks.XWorks
 		}
 		#endregion Helpers
 
+		#region Example tests
+		[Test]
+		public void ExampleLoadsParagraphStylesWhenShowInParaSet()
+		{
+			var testNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions =
+					new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = true }
+			};
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			controller.LoadNode(testNode);
+			using (var view = controller.View)
+			{
+				// SUT
+				AssertShowingParagraphStyles(view);
+			}
+		}
+
+		[Test]
+		public void ExampleLoadsCharacterStylesWhenShowInParaNotSet()
+		{
+			var testNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions =
+					new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = false }
+			};
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			controller.LoadNode(testNode);
+			using (var view = controller.View)
+			{
+				// SUT
+				AssertShowingCharacterStyles(view);
+			}
+		}
+		#endregion
+
 		#region Sense tests
 		[Test]
 		public void SenseLoadsParagraphStylesWhenShowInParaSet()

@@ -406,7 +406,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				listOptionsView.DisplayOptionCheckBoxLabel = xWorksStrings.ksDisplaySubentriesInParagraphs;
 			}
-
+			else if (m_node.FieldDescription == "ExamplesOS")
+			{
+				listOptionsView.DisplayOptionCheckBoxLabel = xWorksStrings.ksDisplayExamplesInParagraphs;
+			}
 			listOptionsView.DisplayOptionCheckBoxChecked = complexFormOptions.DisplayEachComplexFormInAParagraph;
 			ToggleViewForShowInPara(complexFormOptions.DisplayEachComplexFormInAParagraph);
 		}
@@ -443,11 +446,17 @@ namespace SIL.FieldWorks.XWorks
 
 		private static string ParagraphStyleForSubentries(bool showInParagraph, string field)
 		{
-			return showInParagraph
-				? field == "SubentriesOS" // only Reversal Subentries use SubentriesOS
-					? "Reversal-Subentry"
-					: "Dictionary-Subentry"
-				: null;
+			string styleName = null;
+			if (showInParagraph)
+			{
+				if (field == "SubentriesOS") // only Reversal Subentries use SubentriesOS
+					styleName = "Reversal-Subentry";
+				else if (field == "ExamplesOS")
+					styleName = "Bulleted List";
+				else
+					styleName = "Dictionary-Subentry";
+			}
+			return styleName;
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "optionsView is disposed by its parent")]

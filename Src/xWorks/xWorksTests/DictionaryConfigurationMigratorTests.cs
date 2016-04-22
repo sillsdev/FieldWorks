@@ -2463,6 +2463,20 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void MigrateFrom83Alpha_UpdatesExampleOptions()
+		{
+			var configExamplesNode = new ConfigurableDictionaryNode { Label = "Examples", FieldDescription = "ExamplesOS" };
+			var configParent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { configExamplesNode } };
+			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
+			m_migrator.MigrateFrom83Alpha(configModel);
+			Assert.AreEqual(ConfigurableDictionaryNode.StyleTypes.Paragraph, configExamplesNode.StyleType);
+			Assert.AreEqual("Bulleted List", configExamplesNode.Style);
+			Assert.IsTrue(configExamplesNode.DictionaryNodeOptions is DictionaryNodeComplexFormOptions, "wrong type");
+			var options = (DictionaryNodeComplexFormOptions)configExamplesNode.DictionaryNodeOptions;
+			Assert.IsTrue(options.DisplayEachComplexFormInAParagraph, "True was not set");
+		}
+
+		[Test]
 		public void MigrateFrom83Alpha_UpdatesBibliographyLabels()
 		{
 			var configBiblioEntryNode = new ConfigurableDictionaryNode { Label = "Bibliography", FieldDescription = "Owner", SubField = "Bibliography"};

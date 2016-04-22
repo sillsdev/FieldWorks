@@ -916,39 +916,39 @@ If you are not the one designated user who adds fields, or you are making some o
   <data name="PublicationEntriesLabel" xml:space="preserve">
     <value>Pressing Publish will send {0} entries and {1} reversal entries to Webonary.</value>
   </data>
-	<data name="ksGeneratingDisplayFragments" xml:space="preserve">
+  <data name="ksGeneratingDisplayFragments" xml:space="preserve">
     <value>Generating the display fragments for individual entries</value>
     <comment>message displayed on progress report dialog</comment>
   </data>
-	<data name="ksArrangingDisplayFragments" xml:space="preserve">
+  <data name="ksArrangingDisplayFragments" xml:space="preserve">
     <value>Putting the display fragments together with the letter headers</value>
     <comment>this message is displayed on a progress report dialog</comment>
   </data>
-	<data name="ksGeneratingStyleInfo" xml:space="preserve">
+  <data name="ksGeneratingStyleInfo" xml:space="preserve">
     <value>Generating the styles information</value>
     <comment>this message is displayed on a progress report dialog</comment>
   </data>
-	<data name="ksErrorDisplayingPublication" xml:space="preserve">
+  <data name="ksErrorDisplayingPublication" xml:space="preserve">
     <value>Cannot generate the display the current publication</value>
   </data>
-	<data name="ksObtainingEntriesToDisplay" xml:space="preserve">
+  <data name="ksObtainingEntriesToDisplay" xml:space="preserve">
     <value>Obtaining the list of entries to display</value>
     <comment>this message is displayed in a progress report dialog</comment>
   </data>
-	<data name="ksPreparingPublicationDisplay" xml:space="preserve">
+  <data name="ksPreparingPublicationDisplay" xml:space="preserve">
     <value>Preparing to display the publication view</value>
     <comment>this is the title for a progress report dialog</comment>
   </data>
-	<data name="ksSubsenseNumberConfig" xml:space="preserve">
+  <data name="ksSubsenseNumberConfig" xml:space="preserve">
     <value>Subsense Number Configuration</value>
   </data>
-	<data name="ksNumberSingleSubsense" xml:space="preserve">
+  <data name="ksNumberSingleSubsense" xml:space="preserve">
     <value>Number even a single subsense</value>
   </data>
-	<data name="ksHideGramInfoIfSameAsParent" xml:space="preserve">
+  <data name="ksHideGramInfoIfSameAsParent" xml:space="preserve">
     <value>Hide subsense grammatical info if same as parent</value>
   </data>
-	<data name="ksCancelingPublicationLabel" xml:space="preserve">
+  <data name="ksCancelingPublicationLabel" xml:space="preserve">
     <value>Click Cancel to stop loading the Dictionary view and move to Lexicon Edit.</value>
   </data>
   <data name="ReversalIndexConfigurationDlgTitle" xml:space="preserve">
@@ -964,5 +964,8 @@ If you are not the one designated user who adds fields, or you are making some o
   <data name="InadvisableToShare" xml:space="preserve">
     <value>It is inadvisable to share '{0}' because a shared node with the same field ({1}) already exists ({2}). No changes have been made.</value>
     <comment>{0} is the node the user has requested to share. {3} is the field these nodes control. {2} is an existing shared node.</comment>
+  </data>
+  <data name="ksDisplayExamplesInParagraphs" xml:space="preserve">
+    <value>Display each example in a paragraph</value>
   </data>
 </root>

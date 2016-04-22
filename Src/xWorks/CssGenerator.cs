@@ -185,7 +185,8 @@ namespace SIL.FieldWorks.XWorks
 				if (!String.IsNullOrEmpty(configNode.Style))
 				{
 					//Generate the rules for the default font info
-					rule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, configNode, mediator));
+					rule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, configNode,
+						mediator));
 					if (showingParagraph)
 						rule = AdjustRuleIfParagraphNumberScheme(rule, configNode, mediator);
 				}
@@ -198,7 +199,7 @@ namespace SIL.FieldWorks.XWorks
 						GenerateCssForWritingSystemPrefix(styleSheet, baseSelection);
 					}
 				}
-				if (showingParagraph)	// Paragraphs don't want the before and after strings!  See LT-17167.
+				if (showingParagraph) // Paragraphs don't want the before and after strings!  See LT-17167.
 					selectors = RemoveBeforeAfterSelectorRules(selectors);
 				styleSheet.Rules.AddRange(CheckRangeOfRulesForEmpties(selectors));
 				if (!IsEmptyRule(rule))
@@ -385,7 +386,8 @@ namespace SIL.FieldWorks.XWorks
 			var exportStyleInfo = new ExportStyleInfo(projectStyle);
 			if (exportStyleInfo.NumberScheme != 0)
 			{
-
+				if (configNode.FieldDescription == "ExamplesOS")
+					rule.Value += "> .example";
 				var bulletRule = new StyleRule { Value = rule.Value + ":before" };
 				bulletRule.Declarations.Properties.AddRange(GetOnlyBulletContent(rule.Declarations));
 				var wsFontInfo = exportStyleInfo.BulletInfo.FontInfo;

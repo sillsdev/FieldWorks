@@ -3,7 +3,7 @@
  xsi:noNamespaceSchemaLocation="../../Configuration/DictionaryConfiguration.xsd"
  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
  name="Hybrid (complex forms as main entries and mini subentries)"
- version="4" lastModified="2016-04-18"
+ version="5" lastModified="2016-04-21"
  allPublications="true">
   <ConfigurationItem name="Main Entry" isEnabled="true" style="Dictionary-Normal" styleType="paragraph" field="LexEntry" cssClassNameOverride="entry">
 	<!-- using a different CSS Class for the main HeadWord and the HeadWords for subentries, references, and (variant|complex) forms
@@ -132,8 +132,9 @@
 		  <Option id="all analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Examples" isEnabled="true" before="" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examples">
-		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" before="" between=" " after=" " field="Example">
+		<ConfigurationItem name="Examples" style="Bulleted List" styleType="paragraph" isEnabled="true" before="" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examples">
+			<ComplexFormOptions list="none" displayEachComplexFormInParagraph="true"/>
+			<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="all vernacular" isEnabled="true" />
 		  </WritingSystemOptions>
@@ -897,8 +898,9 @@
 		  <Option id="all analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Examples" isEnabled="true" before="" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examples">
-		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" before="" between=" " after=" " field="Example">
+		<ConfigurationItem name="Examples" style="Bulleted List" styleType="paragraph" isEnabled="true" before="" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examples">
+			<ComplexFormOptions list="none" displayEachComplexFormInParagraph="true"/>
+			<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="all vernacular" isEnabled="true" />
 		  </WritingSystemOptions>
@@ -1228,8 +1230,9 @@
 			<Option id="all analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Examples" between="  " after=" " isEnabled="true" field="ExamplesOS" cssClassNameOverride="examples">
-		  <ConfigurationItem name="Example Sentence" between=" " after=" " style="Dictionary-Vernacular" isEnabled="true" field="Example">
+	  	<ConfigurationItem name="Examples" style="Bulleted List" styleType="paragraph" between="  " after=" " isEnabled="true" field="ExamplesOS" cssClassNameOverride="examples">
+	  		<ComplexFormOptions list="none" displayEachComplexFormInParagraph="true"/>
+	  		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			  <Option id="all vernacular" isEnabled="true"/>
 			</WritingSystemOptions>
@@ -2000,8 +2003,9 @@
 			<Option id="all analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Examples" between="  " after=" " isEnabled="true" field="ExamplesOS" cssClassNameOverride="examples">
-		  <ConfigurationItem name="Example Sentence" between=" " after=" " style="Dictionary-Vernacular" isEnabled="true" field="Example">
+	  	<ConfigurationItem name="Examples" style="Bulleted List" styleType="paragraph" between="  " after=" " isEnabled="true" field="ExamplesOS" cssClassNameOverride="examples">
+	  		<ComplexFormOptions list="none" displayEachComplexFormInParagraph="true"/>
+	  		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			  <Option id="all vernacular" isEnabled="true"/>
 			</WritingSystemOptions>
@@ -2767,8 +2771,9 @@
 		  <Option id="all analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Examples" isEnabled="true" before="" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examples">
-		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" before="" between=" " after=" " field="Example">
+		<ConfigurationItem name="Examples" style="Bulleted List" styleType="paragraph" isEnabled="true" before="" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examples">
+	  	<ComplexFormOptions list="none" displayEachComplexFormInParagraph="true"/>
+			<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="all vernacular" isEnabled="true" />
 		  </WritingSystemOptions>
@@ -3092,8 +3097,9 @@
 			<Option id="all analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Examples" between="  " after=" " isEnabled="true" field="ExamplesOS" cssClassNameOverride="examples">
-		  <ConfigurationItem name="Example Sentence" between=" " after=" " style="Dictionary-Vernacular" isEnabled="true" field="Example">
+	  	<ConfigurationItem name="Examples" style="Bulleted List" styleType="paragraph" between="  " after=" " isEnabled="true" field="ExamplesOS" cssClassNameOverride="examples">
+	  		<ComplexFormOptions list="none" displayEachComplexFormInParagraph="true"/>
+	  		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			  <Option id="all vernacular" isEnabled="true"/>
 			</WritingSystemOptions>
@@ -3738,8 +3744,9 @@
 		  <Option id="all analysis" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Examples" between="  " after=" " isEnabled="true" field="ExamplesOS" cssClassNameOverride="examples">
-		<ConfigurationItem name="Example Sentence" between=" " after=" " style="Dictionary-Vernacular" isEnabled="true" field="Example">
+		<ConfigurationItem name="Examples" style="Bulleted List" styleType="paragraph" between="  " after=" " isEnabled="true" field="ExamplesOS" cssClassNameOverride="examples">
+			<ComplexFormOptions list="none" displayEachComplexFormInParagraph="true"/>
+			<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="all vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -4176,8 +4183,9 @@
 			<Option id="all analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Examples" between="  " after=" " isEnabled="true" field="ExamplesOS" cssClassNameOverride="examples">
-		  <ConfigurationItem name="Example Sentence" between=" " after=" " style="Dictionary-Vernacular" isEnabled="true" field="Example">
+	  	<ConfigurationItem name="Examples" style="Bulleted List" styleType="paragraph" between="  " after=" " isEnabled="true" field="ExamplesOS" cssClassNameOverride="examples">
+	  		<ComplexFormOptions list="none" displayEachComplexFormInParagraph="true"/>
+	  		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			  <Option id="all vernacular" isEnabled="true"/>
 			</WritingSystemOptions>

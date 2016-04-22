@@ -1032,6 +1032,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Display each example in a paragraph.
+        /// </summary>
+        internal static string ksDisplayExamplesInParagraphs {
+            get {
+                return ResourceManager.GetString("ksDisplayExamplesInParagraphs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Display each Subentry in a paragraph.
         /// </summary>
         internal static string ksDisplaySubentriesInParagraphs {
