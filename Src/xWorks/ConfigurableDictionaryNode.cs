@@ -241,20 +241,6 @@ namespace SIL.FieldWorks.XWorks
 		internal bool IsSharedItem { get { return Parent != null && ReferenceEquals(this, Parent.ReferencedNode); } }
 
 		/// <summary>
-		/// Whether this has a SharedItem anywhere in its ancestry
-		/// </summary>
-		internal bool IsSharedItemOrDescendant
-		{
-			get
-			{
-				for(var node = this; node.Parent != null; node = node.Parent)
-					if (ReferenceEquals(node, node.Parent.ReferencedNode))
-						return true;
-				return false;
-			}
-		}
-
-		/// <summary>
 		/// Clone this node. Point to the same Parent object. Deep-clone Children and DictionaryNodeOptions.
 		/// </summary>
 		internal ConfigurableDictionaryNode DeepCloneUnderSameParent()

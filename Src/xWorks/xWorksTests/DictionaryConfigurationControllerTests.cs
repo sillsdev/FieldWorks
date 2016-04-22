@@ -294,23 +294,13 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using (var view = new TestConfigurableDictionaryView())
 			{
-				var controller = new DictionaryConfigurationController() { View = view };
-				var rootNode = new ConfigurableDictionaryNode() { Label = "0", Children = new List<ConfigurableDictionaryNode>() };
+				var controller = new DictionaryConfigurationController { View = view };
+				var rootNode = new ConfigurableDictionaryNode { Label = "0", Children = new List<ConfigurableDictionaryNode>() };
 				// SUT
 				controller.CreateTreeOfTreeNodes(null, new List<ConfigurableDictionaryNode> { rootNode });
 
 				BasicTreeNodeVerification(controller, rootNode);
 			}
-		}
-
-		private TreeNode BasicTreeNodeVerification(DictionaryConfigurationController controller, ConfigurableDictionaryNode rootNode)
-		{
-			Assert.That(controller.View.TreeControl.Tree.Nodes[0].Tag, Is.EqualTo(rootNode), "root TreeNode does not corresponded to expected dictionary configuration node");
-			Assert.That(controller.View.TreeControl.Tree.Nodes.Count, Is.EqualTo(1), "Did not expect more than one root TreeNode");
-			var rootTreeNode = controller.View.TreeControl.Tree.Nodes[0];
-			VerifyTreeNodeHierarchy(rootTreeNode);
-			Assert.That(rootTreeNode.Nodes.Count, Is.EqualTo(rootNode.Children.Count), "root treenode does not have expected number of descendants");
-			return rootTreeNode;
 		}
 
 		/// <summary/>
@@ -319,8 +309,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using (var view = new TestConfigurableDictionaryView())
 			{
-				var controller = new DictionaryConfigurationController() { View = view };
-				var rootNode = new ConfigurableDictionaryNode() { Label = "0", Children = new List<ConfigurableDictionaryNode>() };
+				var controller = new DictionaryConfigurationController { View = view };
+				var rootNode = new ConfigurableDictionaryNode { Label = "0", Children = new List<ConfigurableDictionaryNode>() };
 				AddChildrenToNode(rootNode, 3);
 				// SUT
 				controller.CreateTreeOfTreeNodes(null, new List<ConfigurableDictionaryNode> { rootNode });
@@ -342,8 +332,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using (var view = new TestConfigurableDictionaryView())
 			{
-				var controller = new DictionaryConfigurationController() { View = view };
-				var rootNode = new ConfigurableDictionaryNode() { Label = "0", Children = new List<ConfigurableDictionaryNode>() };
+				var controller = new DictionaryConfigurationController { View = view };
+				var rootNode = new ConfigurableDictionaryNode { Label = "0", Children = new List<ConfigurableDictionaryNode>() };
 				AddChildrenToNode(rootNode, 2);
 				AddChildrenToNode(rootNode.Children[0], 2);
 				AddChildrenToNode(rootNode.Children[1], 3);
@@ -352,14 +342,35 @@ namespace SIL.FieldWorks.XWorks
 				controller.CreateTreeOfTreeNodes(null, new List<ConfigurableDictionaryNode> { rootNode });
 
 				var rootTreeNode = BasicTreeNodeVerification(controller, rootNode);
-				string errorMessage = "Did not make correct number of third-level children";
+				const string errorMessage = "Did not make correct number of third-level children";
 				Assert.That(rootTreeNode.Nodes[0].Nodes.Count, Is.EqualTo(rootNode.Children[0].Children.Count), errorMessage); // ie 2
 				Assert.That(rootTreeNode.Nodes[1].Nodes.Count, Is.EqualTo(rootNode.Children[1].Children.Count), errorMessage); // ie 3
-				string errorMessage2 = "Should not have made any fourth-level children that did not exist in the dictionary configuration node hierarchy.";
+				const string errorMessage2 = "Should not have made any fourth-level children that did not exist in the dictionary configuration node hierarchy.";
 				for (int i = 0; i < 2; i++)
 					Assert.That(rootTreeNode.Nodes[0].Nodes[i].Nodes.Count, Is.EqualTo(rootNode.Children[0].Children[i].Children.Count), errorMessage2); // ie 0
 				for (int i = 0; i < 3; i++)
 					Assert.That(rootTreeNode.Nodes[1].Nodes[i].Nodes.Count, Is.EqualTo(rootNode.Children[1].Children[i].Children.Count), errorMessage2); // ie 0
+			}
+		}
+
+		[Test]
+		public void CreateTreeOfTreeNodes_PrefersReferencedChildren()
+		{
+			using (var view = new TestConfigurableDictionaryView())
+			{
+				var controller = new DictionaryConfigurationController { View = view };
+				var rootNode = new ConfigurableDictionaryNode { Label = "0", Children = new List<ConfigurableDictionaryNode>() };
+				var refdNode = new ConfigurableDictionaryNode { Label = "R", Parent = rootNode, Children = new List<ConfigurableDictionaryNode>() };
+				rootNode.ReferencedNode = refdNode;
+				AddChildrenToNode(rootNode, 2);
+				AddChildrenToNode(refdNode, 4);
+
+				// SUT
+				controller.CreateTreeOfTreeNodes(null, new List<ConfigurableDictionaryNode> { rootNode });
+
+				var rootTreeNode = BasicTreeNodeVerification(controller, rootNode);
+				Assert.That(rootTreeNode.Nodes[0].Nodes.Count, Is.EqualTo(rootNode.ReferencedNode.Children[0].Children.Count), // ie 0
+					"Should not have made any third-level children that did not exist in the dictionary configuration node hierarchy");
 			}
 		}
 
@@ -461,7 +472,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary/>
-		private void AddChildrenToNode(ConfigurableDictionaryNode node, int numberOfChildren)
+		private static void AddChildrenToNode(ConfigurableDictionaryNode node, int numberOfChildren)
 		{
 			for (int childIndex = 0; childIndex < numberOfChildren; childIndex++)
 			{
@@ -475,19 +486,34 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		private static TreeNode BasicTreeNodeVerification(DictionaryConfigurationController controller, ConfigurableDictionaryNode rootNode)
+		{
+			Assert.That(controller.View.TreeControl.Tree.Nodes[0].Tag, Is.EqualTo(rootNode), "root TreeNode does not corresponded to expected dictionary configuration node");
+			Assert.That(controller.View.TreeControl.Tree.Nodes.Count, Is.EqualTo(1), "Did not expect more than one root TreeNode");
+			var rootTreeNode = controller.View.TreeControl.Tree.Nodes[0];
+			VerifyTreeNodeHierarchy(rootTreeNode);
+			// A SharedItem's Childen should be configurable under its Master Parent and nowhere else
+			var childrenCount = rootNode.ReferencedNode == null || ReferenceEquals(rootNode, rootNode.ReferencedNode.Parent)
+					? rootNode.ReferencedOrDirectChildren.Count
+					: 0;
+			Assert.That(rootTreeNode.Nodes.Count, Is.EqualTo(childrenCount), "root treenode does not have expected number of descendants");
+			return rootTreeNode;
+		}
+
 		/// <summary>
 		/// Verify that all descendants of treeNode are associated with
 		/// ConfigurableDictionaryNode objects with labels that match
 		/// the hierarchy that they are found in the TreeNode.
 		/// </summary>
-		private void VerifyTreeNodeHierarchy(TreeNode treeNode)
+		private static void VerifyTreeNodeHierarchy(TreeNode treeNode)
 		{
-			var label = ((ConfigurableDictionaryNode)treeNode.Tag).Label;
-			for (int childIndex = 0; childIndex < treeNode.Nodes.Count; childIndex++)
+			var configNode = (ConfigurableDictionaryNode)treeNode.Tag;
+			var labelPrefix = configNode.ReferencedNode == null ? configNode.Label : configNode.ReferencedNode.Label;
+			for (var childIndex = 0; childIndex < treeNode.Nodes.Count; childIndex++)
 			{
 				var child = treeNode.Nodes[childIndex];
 				var childLabel = ((ConfigurableDictionaryNode)child.Tag).Label;
-				var expectedChildLabel = label + "." + childIndex;
+				var expectedChildLabel = labelPrefix + "." + childIndex;
 				Assert.That(childLabel, Is.EqualTo(expectedChildLabel), "TreeNode child has associated configuration dictionary node with wrong label");
 				VerifyTreeNodeHierarchy(child);
 			}
@@ -812,6 +838,41 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache);
 				Assert.AreEqual(1, model.Parts[0].Children.Count, "Only the existing custom field node should be present");
+			}
+		}
+
+		[Test]
+		public void MergeCustomFieldsIntoDictionaryModel_NewFieldsOnSharedNodesAreAddedToSharedItemsExclusively()
+		{
+			var subSubsNode = new ConfigurableDictionaryNode { Label = "Subsubs", FieldDescription = "Subentries", ReferenceItem = "SharedSubs" };
+			var sharedSubsNode = new ConfigurableDictionaryNode
+			{
+				Label = "SharedSubs", FieldDescription = "Subentries", Children = new List<ConfigurableDictionaryNode> { subSubsNode }
+			};
+			var masterParentSubsNode = new ConfigurableDictionaryNode
+			{
+				Label = "Subs", FieldDescription = "Subentries", ReferenceItem = "SharedSubs"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry", FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { masterParentSubsNode }
+			};
+			var model = DictionaryConfigurationModelTests.CreateSimpleSharingModel(mainEntryNode, sharedSubsNode);
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+			using (new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+				CellarPropertyType.ReferenceCollection, Guid.Empty))
+			{
+				//SUT
+				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache);
+				Assert.AreSame(masterParentSubsNode, model.Parts[0].Children[0], "Custom Field should be added at the end");
+				Assert.IsNull(masterParentSubsNode.Children, "Custom Field should not have been added to the Referring Node");
+				Assert.AreSame(subSubsNode, sharedSubsNode.Children[0], "Custom Field should be added at the end");
+				Assert.IsNull(subSubsNode.Children, "Custom Field should not have been added to the Referring Node");
+				Assert.AreEqual(2, sharedSubsNode.Children.Count, "Custom Field was not added to Subentries");
+				var customNode = sharedSubsNode.Children[1];
+				Assert.AreEqual(customNode.Label, "CustomString");
+				Assert.AreEqual(customNode.FieldDescription, "CustomString");
+				Assert.AreEqual(customNode.IsCustomField, true);
 			}
 		}
 
@@ -1346,6 +1407,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void EnsureValidStylesInModelRemovesMissingStyles()
 		{
+			var sharedKid = new ConfigurableDictionaryNode { Style = "bad" };
+			var sharedNode = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { sharedKid } };
 			var senseNode = new ConfigurableDictionaryNode
 			{
 				Label = "Senses",
@@ -1370,17 +1433,12 @@ namespace SIL.FieldWorks.XWorks
 				Style = "Dictionary-Continuation",
 				Children = new List<ConfigurableDictionaryNode> { senseNode }
 			};
-			var model = new DictionaryConfigurationModel
-			{
-				FilePath = "/no/such/file",
-				Version = 0,
-				Label = "Root",
-				Parts = new List<ConfigurableDictionaryNode> { entryNode },
-			};
+			var model = DictionaryConfigurationModelTests.CreateSimpleSharingModel(entryNode, sharedNode);
 			DictionaryConfigurationController.EnsureValidStylesInModel(model, Cache);
 			//SUT
 			Assert.IsNull(entryNode.Style, "Missing style should be removed.");
 			Assert.IsNull(senseNode.Style, "Missing style should be removed.");
+			Assert.IsNull(sharedKid.Style, "Missing style should be removed.");
 			Assert.IsNull(((DictionaryNodeSenseOptions)senseNode.DictionaryNodeOptions).NumberStyle, "Missing style should be removed.");
 		}
 

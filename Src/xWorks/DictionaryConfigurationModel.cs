@@ -83,6 +83,12 @@ namespace SIL.FieldWorks.XWorks
 		[XmlIgnore]
 		public string FilePath { get; set; }
 
+		/// <summary>
+		/// A concatenation of Parts and SharedItems; useful for migration and synchronization with the FDO model
+		/// </summary>
+		[XmlIgnore]
+		public IEnumerable<ConfigurableDictionaryNode> PartsAndSharedItems { get { return Parts.Concat(SharedItems); } }
+
 		/// <summary></summary>
 		public void Save()
 		{

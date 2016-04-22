@@ -254,15 +254,9 @@ namespace SIL.FieldWorks.XWorks
 			foreach(var node in nodes)
 			{
 				CreateAndAddTreeNodeForNode(parent, node);
-				if(node.Children != null && node.Children.Any())
-				{
-					CreateTreeOfTreeNodes(node, node.Children);
-				}
-				else if (node.ReferencedNode != null && ReferenceEquals(node, node.ReferencedNode.Parent))
-				{
-					// Allow configuring shared nodes exactly once: under their master parent
+				// Checking RefEq(node, node.Ref.Parent) ensures configuring shared nodes exactly once: under their master parent
+				if ((node.ReferencedNode == null || ReferenceEquals(node, node.ReferencedNode.Parent)) && node.ReferencedOrDirectChildren != null)
 					CreateTreeOfTreeNodes(node, node.ReferencedOrDirectChildren);
-				}
 			}
 		}
 
@@ -600,7 +594,7 @@ namespace SIL.FieldWorks.XWorks
 				throw new ArgumentNullException();
 
 			var parent = node.Parent;
-			// Root node can't be moved
+			// Root nodes can't be moved
 			if (parent == null)
 				return false;
 
@@ -742,7 +736,8 @@ namespace SIL.FieldWorks.XWorks
 			sharedItems.Add(sharedItem);
 			node.ReferenceItem = key;
 			node.ReferencedNode = sharedItem;
-			node.Children = null;
+			node.Children = null; // For now, we expect that nodes have ReferencedChildren NAND direct Children.
+			// ENHANCE pH 2016.04: if we ever allow nodes to have both Referenced and direct Children, all DC-model-sync code will need to change.
 		}
 
 		#region ModelSynchronization
@@ -762,7 +757,7 @@ namespace SIL.FieldWorks.XWorks
 				foreach (var pos in cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS)
 					referenceTypes.Add(pos.Guid);
 			}
-			foreach (var part in model.Parts)
+			foreach (var part in model.PartsAndSharedItems)
 			{
 				FixTypeListOnNode(part, complexTypes, variantTypes, referenceTypes);
 			}
@@ -825,7 +820,7 @@ namespace SIL.FieldWorks.XWorks
 		public static void EnsureValidStylesInModel(DictionaryConfigurationModel model, FdoCache cache)
 		{
 			var styles = cache.LangProject.StylesOC.ToDictionary(style => style.Name);
-			foreach (var part in model.Parts)
+			foreach (var part in model.PartsAndSharedItems)
 			{
 				if (part.IsMainEntry && string.IsNullOrEmpty(part.Style))
 					part.Style = "Dictionary-Normal";
@@ -884,8 +879,6 @@ namespace SIL.FieldWorks.XWorks
 						model.FilePath, part.Label));
 				}
 				var customFields = GetCustomFieldsForType(cache, part.FieldDescription);
-				if(part.Children == null)
-					part.Children = new List<ConfigurableDictionaryNode>();
 				MergeCustomFieldLists(part, customFields);
 				MergeCustomFieldsIntoDictionaryModel(cache, part.Children);
 			}
@@ -908,10 +901,6 @@ namespace SIL.FieldWorks.XWorks
 				if(lookupClass != null)
 				{
 					var fieldsForType = GetCustomFieldsForType(cache, lookupClass, classToCustomFields);
-					if(configNode.Children == null)
-					{
-						configNode.Children = new List<ConfigurableDictionaryNode>();
-					}
 					MergeCustomFieldLists(configNode, fieldsForType);
 				}
 				// recurse into the rest of the dictionary model
@@ -968,11 +957,16 @@ namespace SIL.FieldWorks.XWorks
 
 		private static void MergeCustomFieldLists(ConfigurableDictionaryNode parent, List<ConfigurableDictionaryNode> customFieldNodes)
 		{
+			if (parent.ReferencedNode != null && !ReferenceEquals(parent, parent.ReferencedNode.Parent))
+				return; // If parent has Referenced Children but is not the Master Parent, return; fields will be merged under the Master Parent
+			parent = parent.ReferencedNode ?? parent;
 			// Set the parent on the customFieldNodes (needed for Contains and to make any new fields valid when added)
 			foreach(var customField in customFieldNodes)
 			{
 				customField.Parent = parent;
 			}
+			if (parent.Children == null)
+				parent.Children = new List<ConfigurableDictionaryNode>();
 			var children = parent.Children;
 			// Traverse through the children from end to beginning removing any custom fields that no longer exist.
 			for(var i = children.Count - 1; i >= 0; --i)
@@ -1039,23 +1033,25 @@ namespace SIL.FieldWorks.XWorks
 		/// </remarks>
 		internal static void AddFieldsForPossibilityList(ConfigurableDictionaryNode configNode)
 		{
-			configNode.Children = new List<ConfigurableDictionaryNode>();
-			configNode.Children.Add(new ConfigurableDictionaryNode
+			configNode.Children = new List<ConfigurableDictionaryNode>
+			{
+				new ConfigurableDictionaryNode
 				{
 					Label = "Name",
 					FieldDescription = "Name",
 					DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions { WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis },
 					Parent = configNode,
-					IsCustomField = false		// the parent node may be for a custom field, but this node is for a standard CmPossibility field
-				});
-			configNode.Children.Add(new ConfigurableDictionaryNode
+					IsCustomField = false // the parent node may be for a custom field, but this node is for a standard CmPossibility field
+				},
+				new ConfigurableDictionaryNode
 				{
 					Label = "Abbreviation",
 					FieldDescription = "Abbreviation",
 					DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions { WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis },
 					Parent = configNode,
-					IsCustomField = false		// the parent node may be for a custom field, but this node is for a standard CmPossibility field
-				});
+					IsCustomField = false // the parent node may be for a custom field, but this node is for a standard CmPossibility field
+				}
+			};
 		}
 
 		private static DictionaryNodeOptions BuildOptionsForType(int fieldType)

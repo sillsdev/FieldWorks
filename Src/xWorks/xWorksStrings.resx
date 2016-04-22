@@ -966,6 +966,6 @@ If you are not the one designated user who adds fields, or you are making some o
     <comment>{0} is the node the user has requested to share. {3} is the field these nodes control. {2} is an existing shared node.</comment>
   </data>
   <data name="ksDisplayExamplesInParagraphs" xml:space="preserve">
-    <value>Display each example in a paragraph</value>
+    <value>Display each Example in a paragraph</value>
   </data>
 </root>
