@@ -349,6 +349,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							// assume it is an hvo
 							sb.Append("[");
 							string sHvo = str;
+							// check for any reduplication pattern index (indicated by ^1, ^2, etc.)
+							int iCaretPosition = str.IndexOf('^');
+							if (iCaretPosition > -1)
+							{ // ignore the index
+								sHvo = str.Substring(0, iCaretPosition);
+							}
 							int hvo = Convert.ToInt32(sHvo);
 							sb.Append(strRepSelector(PhNaturalClassTags.kClassId, hvo));
 							sb.Append("]");
