@@ -688,7 +688,8 @@ namespace SIL.FieldWorks.XWorks
 		/// This method will use reflection to pull data out of the given object based on the given configuration and
 		/// write out appropriate XHTML.
 		/// </summary>
-		private static string GenerateXHTMLForFieldByReflection(object field, ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings,
+		private static string GenerateXHTMLForFieldByReflection(object field, ConfigurableDictionaryNode config,
+			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, SenseInfo info = new SenseInfo(),
 			bool fUseReverseSubField = false)
 		{
 			if (!config.IsEnabled)
@@ -811,8 +812,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				case PropertyType.CollectionType:
 					if (!IsCollectionEmpty(propertyValue))
-						return GenerateXHTMLForCollection(propertyValue, config, publicationDecorator, field, settings);
-					return String.Empty;
+						return GenerateXHTMLForCollection(propertyValue, config, publicationDecorator, field, settings, info);
+					return string.Empty;
 
 				case PropertyType.MoFormType:
 					return GenerateXHTMLForMoForm(propertyValue as IMoForm, config, settings);
@@ -844,15 +845,12 @@ namespace SIL.FieldWorks.XWorks
 				default:
 					break;
 			}
-			var content = GenerateXHTMLForValue(field, propertyValue, config, settings);
-			var bldr = new StringBuilder();
-			bldr.Append(content);
+			var bldr = new StringBuilder(GenerateXHTMLForValue(field, propertyValue, config, settings));
 			if (config.ReferencedOrDirectChildren != null)
 			{
 				foreach (var child in config.ReferencedOrDirectChildren)
 				{
-					content = GenerateXHTMLForFieldByReflection(propertyValue, child, publicationDecorator, settings);
-					bldr.Append(content);
+					bldr.Append(GenerateXHTMLForFieldByReflection(propertyValue, child, publicationDecorator, settings));
 				}
 			}
 			return bldr.ToString();
@@ -1419,17 +1417,18 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// This method will generate the XHTML that represents a collection and its contents
 		/// </summary>
-		private static string GenerateXHTMLForCollection(object collectionField, ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, object collectionOwner, GeneratorSettings settings)
+		private static string GenerateXHTMLForCollection(object collectionField, ConfigurableDictionaryNode config,
+			DictionaryPublicationDecorator pubDecorator, object collectionOwner, GeneratorSettings settings, SenseInfo info = new SenseInfo())
 		{
 			var bldr = new StringBuilder();
 			IEnumerable collection;
 			if (collectionField is IEnumerable)
 			{
-				collection = collectionField as IEnumerable;
+				collection = (IEnumerable)collectionField;
 			}
 			else if (collectionField is IFdoVector)
 			{
-				collection = (collectionField as IFdoVector).Objects;
+				collection = ((IFdoVector)collectionField).Objects;
 			}
 			else
 			{
@@ -1437,23 +1436,19 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (config.DictionaryNodeOptions is DictionaryNodeSenseOptions)
 			{
-				var content = GenerateXHTMLForSenses(config, publicationDecorator, settings, collection);
-				bldr.Append(content);
+				bldr.Append(GenerateXHTMLForSenses(config, pubDecorator, settings, collection, info));
 			}
 			else
 			{
 				foreach (var item in collection)
 				{
-					if (publicationDecorator != null &&
-						item is ICmObject &&
-						publicationDecorator.IsExcludedObject((ICmObject)item))
+					if (pubDecorator != null && item is ICmObject && pubDecorator.IsExcludedObject((ICmObject)item))
 					{
 						// Don't show examples or subentries that have been marked to exclude from publication.
 						// See https://jira.sil.org/browse/LT-15697 and https://jira.sil.org/browse/LT-16775.
 						continue;
 					}
-					var content = GenerateCollectionItemContent(config, publicationDecorator, item, collectionOwner, settings);
-					bldr.Append(content);
+					bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings));
 				}
 			}
 			if (bldr.Length > 0)
@@ -1464,7 +1459,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// This method will generate the XHTML that represents a senses collection and its contents
 		/// </summary>
-		private static string GenerateXHTMLForSenses(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, IEnumerable senseCollection)
+		private static string GenerateXHTMLForSenses(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
+			GeneratorSettings settings, IEnumerable senseCollection, SenseInfo info)
 		{
 			// Check whether all the senses have been excluded from publication.  See https://jira.sil.org/browse/LT-15697.
 			var filteredSenseCollection = new List<ILexSense>();
@@ -1484,18 +1480,16 @@ namespace SIL.FieldWorks.XWorks
 			var isSameGrammaticalInfo = IsAllGramInfoTheSame(config, filteredSenseCollection, isSubsense, out lastGrammaticalInfo, out langId);
 			if (isSameGrammaticalInfo && !isSubsense)
 			{
-				var content = InsertGramInfoBeforeSenses(filteredSenseCollection.First(),
+				bldr.Append(InsertGramInfoBeforeSenses(filteredSenseCollection.First(),
 					config.ReferencedOrDirectChildren.FirstOrDefault(e => e.FieldDescription == "MorphoSyntaxAnalysisRA" && e.IsEnabled),
-					publicationDecorator, settings);
-				bldr.Append(content);
+					publicationDecorator, settings));
 			}
 			//sensecontent sensenumber sense morphosyntaxanalysis mlpartofspeech en
-			int reversalcount=0;
+			info.SenseCounter = 0; // This ticker is more efficient than computing the index for each sense individually
 			foreach (var item in filteredSenseCollection)
 			{
-				var content = GenerateSenseContent(config, publicationDecorator, item, isSingle, settings, isSameGrammaticalInfo,
-					++reversalcount);
-				bldr.Append(content);
+				info.SenseCounter++;
+				bldr.Append(GenerateSenseContent(config, publicationDecorator, item, isSingle, settings, isSameGrammaticalInfo, info));
 			}
 			return bldr.ToString();
 		}
@@ -1514,20 +1508,18 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
 			var content = GenerateXHTMLForFieldByReflection(item, gramInfoNode, publicationDecorator, settings);
-			if (!String.IsNullOrEmpty(content))
+			if (string.IsNullOrEmpty(content))
+				return string.Empty;
+			var bldr = new StringBuilder();
+			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
 			{
-				var bldr = new StringBuilder();
-				using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
-				{
-					xw.WriteStartElement("span");
-					xw.WriteAttributeString("class", "sharedgrammaticalinfo");
-					xw.WriteRaw(content);
-					xw.WriteEndElement();
-					xw.Flush();
-					return bldr.ToString();
-				}
+				xw.WriteStartElement("span");
+				xw.WriteAttributeString("class", "sharedgrammaticalinfo");
+				xw.WriteRaw(content);
+				xw.WriteEndElement();
+				xw.Flush();
+				return bldr.ToString();
 			}
-			return String.Empty;
 		}
 
 		private static bool IsAllGramInfoTheSame(ConfigurableDictionaryNode config, IEnumerable<ILexSense> collection, bool isSubsense,
@@ -1614,18 +1606,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static string GenerateSenseContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
-			object item, bool isSingle, GeneratorSettings settings, bool isSameGrammaticalInfo,int reversalcount=0)
+			object item, bool isSingle, GeneratorSettings settings, bool isSameGrammaticalInfo, SenseInfo info)
 		{
-			string senseNumberSpan = String.Empty;
-			if (config.ReferencedOrDirectChildren.Count != 0)
-			{
-				// Wrap the number and sense combination in a sensecontent span so that can both be affected by DisplayEachSenseInParagraph
-				if (config.FieldDescription != "ReferringSenses")
-					senseNumberSpan = GenerateSenseNumberSpanIfNeeded(config, item, settings.Cache,
-						publicationDecorator, isSingle);
-				else
-					senseNumberSpan = GenerateReversalSenseNumberSpanIfNeeded(config, isSingle, reversalcount);
-			}
+			var senseNumberSpan = GenerateSenseNumberSpanIfNeeded(config, isSingle, ref info);
 			var bldr = new StringBuilder();
 			if (config.ReferencedOrDirectChildren != null)
 			{
@@ -1633,17 +1616,17 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if (child.FieldDescription != "MorphoSyntaxAnalysisRA" || !isSameGrammaticalInfo)
 					{
-						var content = GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
-						bldr.Append(content);
+						bldr.Append(GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings, info));
 					}
 				}
 			}
-			if (config.ReferencedOrDirectChildren == null || config.ReferencedOrDirectChildren.Count == 0 || bldr.Length == 0)
+			if (bldr.Length == 0)
 				return string.Empty;
 			var senseContent = bldr.ToString();
 			bldr.Clear();
 			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
 			{
+				// Wrap the number and sense combination in a sensecontent span so that can both be affected by DisplayEachSenseInParagraph
 				xw.WriteStartElement("span");
 				xw.WriteAttributeString("class", "sensecontent");
 				xw.WriteRaw(senseNumberSpan);
@@ -1672,6 +1655,9 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 			//Adding tags for Sense Number and Caption
+			// Note: this SenseNumber comes from a field in the FDO model (not generated based on a DictionaryNodeSenseOptions).
+			//  Should we choose in the future to generate the Picture's sense number using ConfiguredXHTMLGenerator based on a SenseOption,
+			//  we will need to pass the SenseOptions to this point in the call tree.
 			var captionBldr = new StringBuilder();
 			foreach (var child in config.ReferencedOrDirectChildren)
 			{
@@ -1794,7 +1780,7 @@ namespace SIL.FieldWorks.XWorks
 					if(string.IsNullOrEmpty(child.CSSClassNameOverride))
 						child.CSSClassNameOverride = CssGenerator.GetClassAttributeForConfig(child);
 					// Flag to prepend "Reverse" to child.SubField when it is used.
-					contentChild = GenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings, true);
+					contentChild = GenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings, fUseReverseSubField: true);
 				}
 				else
 				{
@@ -1820,47 +1806,14 @@ namespace SIL.FieldWorks.XWorks
 			return GenerateXHTMLForCollection(complexEntryRef.ComplexEntryTypesRS, config, publicationDecorator, subEntry, settings);
 		}
 
-		private static string GenerateSenseNumberSpanIfNeeded(ConfigurableDictionaryNode senseConfigNode,
-																			 object sense, FdoCache cache,
-																			 DictionaryPublicationDecorator publicationDecorator, bool isSingle)
+		private static string GenerateSenseNumberSpanIfNeeded(ConfigurableDictionaryNode senseConfigNode, bool isSingle, ref SenseInfo info)
 		{
 			var senseOptions = senseConfigNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
-			if (senseOptions == null || (isSingle && !senseOptions.NumberEvenASingleSense))
-				return String.Empty;
-			if (string.IsNullOrEmpty(senseOptions.NumberingStyle))
-				return String.Empty;
-			string senseNumber;
-			if (publicationDecorator != null)
-				senseNumber = cache.GetOutlineNumber((ICmObject) sense, LexSenseTags.kflidSenses, false, true,
-					publicationDecorator);
-			else
-				senseNumber = cache.GetOutlineNumber((ICmObject) sense, LexSenseTags.kflidSenses, false, true,
-					cache.MainCacheAccessor);
-			string formattedSenseNumber = GenerateOutlineNumber(senseOptions.NumberingStyle, senseNumber, senseConfigNode);
-			if (String.IsNullOrEmpty(formattedSenseNumber))
-				return String.Empty;
-			var bldr = new StringBuilder();
-			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
-			{
-				xw.WriteStartElement("span");
-				xw.WriteAttributeString("class", "sensenumber");
-				xw.WriteString(formattedSenseNumber);
-				xw.WriteEndElement();
-				xw.Flush();
-				return bldr.ToString();
-			}
-		}
-		private static string GenerateReversalSenseNumberSpanIfNeeded(ConfigurableDictionaryNode senseConfigNode,
-																	bool isSingle, int senseNumber)
-		{
-			var senseOptions = senseConfigNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
-			if (senseOptions == null || (isSingle && !senseOptions.NumberEvenASingleSense))
-				return String.Empty;
-			if (string.IsNullOrEmpty(senseOptions.NumberingStyle))
-				return String.Empty;
-			string formattedSenseNumber = GenerateOutlineNumber(senseOptions.NumberingStyle, senseNumber.ToString(), senseConfigNode);
-			if (String.IsNullOrEmpty(formattedSenseNumber))
-				return String.Empty;
+			if (senseOptions == null || (isSingle && !senseOptions.NumberEvenASingleSense) || string.IsNullOrEmpty(senseOptions.NumberingStyle))
+				return string.Empty;
+			var formattedSenseNumber = GetSenseNumber(senseOptions.NumberingStyle, ref info);
+			if (string.IsNullOrEmpty(formattedSenseNumber))
+				return string.Empty;
 			var bldr = new StringBuilder();
 			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
 			{
@@ -1873,71 +1826,44 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private static string GenerateOutlineNumber(string numberingStyle, string senseNumber, ConfigurableDictionaryNode senseConfigNode)
+		private static string GetSenseNumber(string numberingStyle, ref SenseInfo info)
 		{
 			string nextNumber;
 			switch (numberingStyle)
 			{
-				case "%d":
-					nextNumber = GetLastPartOfSenseNumber(senseNumber).ToString();
-					break;
 				case "%a":
 				case "%A":
-					nextNumber = GetAlphaSenseCounter(numberingStyle, senseNumber);
+					nextNumber = GetAlphaSenseCounter(numberingStyle, info.SenseCounter);
 					break;
 				case "%i":
 				case "%I":
-					nextNumber = GetRomanSenseCounter(numberingStyle, senseNumber);
+					nextNumber = GetRomanSenseCounter(numberingStyle, info.SenseCounter);
 					break;
-				case "%O":
-					nextNumber = GetSubSenseNumber(senseNumber, senseConfigNode);
-					break;
-				default://this handles "%z"
-					nextNumber = senseNumber;
+				default: // handles %d and %O. We no longer support "%z" (1  b  iii) because users can hand-configure its equivalent
+					nextNumber = info.SenseCounter.ToString();
 					break;
 			}
-			return nextNumber;
+			info.SenseOutlineNumber = string.IsNullOrEmpty(info.SenseOutlineNumber)
+				? nextNumber
+				: string.Format("{0}.{1}", info.SenseOutlineNumber, nextNumber);
+			return numberingStyle == "%O" ? info.SenseOutlineNumber : nextNumber;
 		}
 
-		private static string GetSubSenseNumber(string senseNumber, ConfigurableDictionaryNode senseConfigNode)
+		private static string GetAlphaSenseCounter(string numberingStyle, int senseNumber)
 		{
-			string subSenseNumber = string.Empty;
-			var parentSenseNode = senseConfigNode.Parent.DictionaryNodeOptions as DictionaryNodeSenseOptions;
-			if (parentSenseNode != null)
-			{
-				if (!string.IsNullOrEmpty(parentSenseNode.NumberingStyle) && senseNumber.Contains('.'))
-					subSenseNumber = GenerateOutlineNumber(parentSenseNode.NumberingStyle, senseNumber.Split('.')[0], senseConfigNode) + ".";
-			}
-			subSenseNumber += senseNumber.Split('.')[senseNumber.Split('.').Length - 1];
-			return subSenseNumber;
-		}
-
-		private static string GetAlphaSenseCounter(string numberingStyle, string senseNumber)
-		{
-			string nextNumber;
-			int asciiBytes = 64;
-			asciiBytes = asciiBytes + GetLastPartOfSenseNumber(senseNumber);
-			nextNumber = ((char) (asciiBytes)).ToString();
+			var asciiBytes = 64; // char 'A'
+			asciiBytes = asciiBytes + senseNumber;
+			var nextNumber = ((char) (asciiBytes)).ToString();
 			if (numberingStyle == "%a")
 				nextNumber = nextNumber.ToLower();
 			return nextNumber;
 		}
 
-		private static int GetLastPartOfSenseNumber(string senseNumber)
+		private static string GetRomanSenseCounter(string numberingStyle, int senseNumber)
 		{
-			if (senseNumber.Contains("."))
-				return Int32.Parse(senseNumber.Split('.')[senseNumber.Split('.').Length - 1]);
-			return Int32.Parse(senseNumber);
-		}
-
-		private static string GetRomanSenseCounter(string numberingStyle, string senseNumber)
-		{
-			int num = GetLastPartOfSenseNumber(senseNumber);
-			string[] ten = { "", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC" };
+			string[] tens = { "", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC" };
 			string[] ones = { "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX" };
-			string roman = string.Empty;
-			roman += ten[(num / 10)];
-			roman += ones[num % 10];
+			var roman = string.Format("{0}{1}", tens[senseNumber / 10], ones[senseNumber % 10]);
 			if (numberingStyle == "%i")
 				roman = roman.ToLower();
 			return roman;
@@ -1949,7 +1875,7 @@ namespace SIL.FieldWorks.XWorks
 			if (propertyValue == null || config.ReferencedOrDirectChildren == null || !config.ReferencedOrDirectChildren.Any(node => node.IsEnabled))
 				return string.Empty;
 			var bldr = new StringBuilder();
-			foreach (var child in config.ReferencedOrDirectChildren.Where(node => node.IsEnabled))
+			foreach (var child in config.ReferencedOrDirectChildren)
 			{
 				var content = GenerateXHTMLForFieldByReflection(propertyValue, child, null, settings);
 				bldr.Append(content);
@@ -2337,9 +2263,7 @@ namespace SIL.FieldWorks.XWorks
 																					owningObject.Hvo, multiStringAccessor.Flid, (IWritingSystem)defaultWs);
 				}
 				var requestedString = multiStringAccessor.get_String(wsId);
-				var content = GenerateWsPrefixAndString(config, settings, wsOptions, wsId, requestedString, guid);
-				if (!String.IsNullOrEmpty(content))
-					bldr.Append(content);
+				bldr.Append(GenerateWsPrefixAndString(config, settings, wsOptions, wsId, requestedString, guid));
 			}
 			if (bldr.Length > 0)
 			{
@@ -2584,6 +2508,15 @@ namespace SIL.FieldWorks.XWorks
 				CopyFiles = copyFiles;
 				ExportPath = exportPath;
 			}
+		}
+
+		/// <remarks>
+		/// Presently, this handles only Sense Info, but if other info needs to be handed down the call stack in the future, we could rename this
+		/// </remarks>
+		private struct SenseInfo
+		{
+			public int SenseCounter { get; set; }
+			public string SenseOutlineNumber { get; set; }
 		}
 	}
 }

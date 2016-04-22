@@ -221,7 +221,7 @@ namespace SIL.FieldWorks.XWorks
 				// Gecko xpath seems to be sensitive to namespaces, using * instead of span helps
 				var currentPageButton = GetTopCurrentPageButton(browserElement);
 				if(currentPageButton == null)
-					throw new ArgumentException(@"No page buttons found in the document element is a part of", "element");
+					return;
 				var adjacentPageButton = (GeckoHtmlElement)currentPageButton.PreviousSibling;
 				if (adjacentPageButton == null)
 					return;
