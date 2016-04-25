@@ -136,44 +136,6 @@ namespace LanguageExplorer.Areas.Lexicon
 			display.Enabled = entry != null;
 			return true;
 		}
-#endif
-
-		/// <summary>
-		/// determine if this is the correct place [it's the only one that handles the message, and
-		/// it defaults to false, so it should be]
-		/// </summary>
-		private  bool InFriendlyAreaShow_DictionaryPubPreview
-		{
-			get
-			{
-				string desiredArea = "lexicon";
-
-				// see if it's the right area
-				string areaChoice = PropertyTable.GetValue<string>("areaChoice");
-				if (areaChoice != null && areaChoice == desiredArea)
-				{
-					// now see if it's one of the right tools
-					string[] allowedTools = {"simpleLexiconEdit", "lexiconTestEdit",
-							"lexiconEdit", "lexiconEdit", "lexiconFullEdit"};
-					var toolChoice = PropertyTable.GetValue<string>("ToolForAreaNamed_lexicon");
-					return allowedTools.Any(tool => toolChoice != null && toolChoice == tool);
-				}
-				return false; //we are not in a valid area
-			}
-		}
-
-#if RANDYTODO
-		/// <summary>
-		/// handle the message to see if the menu item should be enabled
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public virtual bool OnDisplayShow_DictionaryPubPreview(object commandObject, ref UIItemDisplayProperties display)
-		{
-			display.Enabled = InFriendlyAreaShow_DictionaryPubPreview;
-			return true; //we've handled this
-		}
 
 		/// <summary>
 		/// Handle the message to delete a Sense. The Sense # slice is virtual, therefore

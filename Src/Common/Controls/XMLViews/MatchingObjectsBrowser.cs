@@ -53,7 +53,12 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private FdoCache m_cache;
 		private IVwStylesheet m_stylesheet; // used to figure font heights.
-		private IPropertyTable m_propertyTable;
+		/// <summary />
+		protected IPropertyTable m_propertyTable;
+		/// <summary />
+		protected IPublisher m_publisher;
+		/// <summary />
+		protected ISubscriber m_subscriber;
 
 		private BrowseViewer m_bvMatches;
 		private ObjectListPublisher m_listPublisher;
@@ -154,12 +159,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache">The cache.</param>
 		/// <param name="stylesheet">The stylesheet.</param>
 		/// <param name="propertyTable"></param>
+		/// <param name="publisher"></param>
+		/// <param name="subscriber"></param>
 		/// <param name="configNode">The config node.</param>
 		/// <param name="searchEngine">The search engine.</param>
-		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, IPropertyTable propertyTable, XElement configNode,
-			SearchEngine searchEngine)
+		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, XElement configNode, SearchEngine searchEngine)
 		{
-			Initialize(cache, stylesheet, propertyTable, configNode, searchEngine, null);
+			Initialize(cache, stylesheet, propertyTable, publisher, subscriber, configNode, searchEngine, null);
 		}
 
 		/// <summary>
@@ -168,17 +174,20 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache">The cache.</param>
 		/// <param name="stylesheet">The stylesheet.</param>
 		/// <param name="propertyTable"></param>
+		/// <param name="publisher"></param>
+		/// <param name="subscriber"></param>
 		/// <param name="configNode">The config node.</param>
 		/// <param name="searchEngine">The search engine.</param>
 		/// <param name="reversalWs">The reversal writing system.</param>
-		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, IPropertyTable propertyTable, XElement configNode,
-			SearchEngine searchEngine, CoreWritingSystemDefinition reversalWs)
+		public void Initialize(FdoCache cache, IVwStylesheet stylesheet, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, XElement configNode, SearchEngine searchEngine, CoreWritingSystemDefinition reversalWs)
 		{
 			CheckDisposed();
 
 			m_cache = cache;
 			m_stylesheet = stylesheet;
 			m_propertyTable = propertyTable;
+			m_publisher = publisher;
+			m_subscriber = subscriber;
 			m_searchEngine = searchEngine;
 			m_searchEngine.SearchCompleted += m_searchEngine_SearchCompleted;
 
@@ -315,11 +324,10 @@ namespace SIL.FieldWorks.Common.Controls
 		private void CreateBrowseViewer(XElement configNode, CoreWritingSystemDefinition reversalWs)
 		{
 			m_listPublisher = new ObjectListPublisher(m_cache.DomainDataByFlid as ISilDataAccessManaged, ListFlid);
-#if RANDYTODO
-			// TODO: Call InitializeFlexComponent on m_bvMatches.
-#endif
 			m_bvMatches = new BrowseViewer(configNode, m_cache.LanguageProject.LexDbOA.Hvo, m_cache,
 				null, m_listPublisher);
+			m_bvMatches.InitializeFlexComponent(new FlexComponentParameters(m_propertyTable, m_publisher, m_subscriber));
+			m_bvMatches.FinishInitialization(m_cache.LanguageProject.LexDbOA.Hvo, m_listPublisher.MadeUpFieldIdentifier);
 			m_bvMatches.SuspendLayout();
 			m_bvMatches.Location = new Point(0, 0);
 			m_bvMatches.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Right;

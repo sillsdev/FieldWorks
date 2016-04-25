@@ -248,6 +248,7 @@
     <Content Include="Resources\CompleteFilter.xml" />
     <Content Include="Resources\LexiconEditRecordDocViewParameters.xml" />
     <Content Include="Resources\LexiconEditRecordEditViewParameters.xml" />
+    <Content Include="Resources\MatchingEntriesParameters.xml" />
     <Content Include="Resources\TimeOfDayEditParameters.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -863,6 +864,7 @@
       <DependentUpon>WordsSfmImportWizard.cs</DependentUpon>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\WsListManager.cs" />
+    <Compile Include="Controls\PaneBarContextMenuFactory.cs" />
     <Compile Include="Controls\PossibilityListClerkParameters.cs" />
     <Compile Include="Controls\CollapsingSplitContainerFactory.cs" />
     <Compile Include="Dumpster\ImportWordSetListener.cs" />

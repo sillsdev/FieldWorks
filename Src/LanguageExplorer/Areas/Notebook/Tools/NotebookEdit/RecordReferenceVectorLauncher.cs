@@ -26,7 +26,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 					m_title = LanguageExplorerResources.ksIdentifyRecord,
 					m_btnText = LanguageExplorerResources.ks_Add
 				};
-				dlg.SetDlgInfo(m_cache, wp, PropertyTable, Publisher);
+				dlg.SetDlgInfo(m_cache, wp, PropertyTable, Publisher, Subscriber);
 				dlg.SetHelpTopic(Slice.GetChooserHelpTopicID());
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 					AddItem(dlg.SelectedObject);

@@ -234,6 +234,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return controls.Length > 0 ? controls[0] : null;
 		}
 
+		/// <summary>
+		/// Replace underline character with ampersand.
+		/// </summary>
+		public static string ReplaceUnderlineWithAmpersand(string guiString)
+		{
+			return guiString.Replace("_", "&");
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Takes a string in the form "{X=l,Y=t,Width=w,Height=h}" (where l, t, w, and h are

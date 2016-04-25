@@ -24,9 +24,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		/// <summary />
 		public AddPrimaryLexemeChooserCommand(FdoCache cache, bool fCloseBeforeExecuting,
-			string sLabel, IPropertyTable propertyTable, IPublisher publisher, ICmObject lexEntryRef, /* Why ICmObject? */
+			string sLabel, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ICmObject lexEntryRef, /* Why ICmObject? */
 			Form parentWindow)
-			: base(cache, fCloseBeforeExecuting, sLabel, propertyTable, publisher)
+			: base(cache, fCloseBeforeExecuting, sLabel, propertyTable, publisher, subscriber)
 		{
 			m_lexEntryRef = lexEntryRef as ILexEntryRef;
 			m_parentWindow = parentWindow;
@@ -43,7 +43,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					ILexEntry le = null;
 					// assume the owner is the entry (e.g. owner of LexEntryRef)
 					le = m_lexEntryRef.OwnerOfClass<ILexEntry>();
-					dlg.SetDlgInfo(m_cache, m_propertyTable, m_publisher, le);
+					dlg.SetDlgInfo(m_cache, m_propertyTable, m_publisher, m_subscriber, le);
 					dlg.SetHelpTopic("khtpChooseLexicalEntryOrSense");
 					if (dlg.ShowDialog(m_parentWindow) == DialogResult.OK)
 					{

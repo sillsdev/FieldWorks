@@ -66,8 +66,8 @@ namespace LanguageExplorer.Areas.Grammar {
         ///&lt;!-- Please increment BrowseViewer.kBrowseViewVersion when you change these specs,
         /// so that XmlBrowseViewBaseVc can invalidate obsoleted columns that have been saved in each current control&apos;s ColumnList --&gt;
         ///	&lt;columns&gt;
-        ///		&lt;column label=&quot;Name&quot; width=&quot;16%&quot; layout=&quot;Name&quot; ws=&quot;$ws=best analysis&quot; field=&quot;Name&quot;/&gt;
-        ///		&lt;column la [rest of string was truncated]&quot;;.
+        ///		&lt;column label=&quot;Name&quot; width=&quot;16%&quot; layout=&quot;Name&quot; ws=&quot;$ws=best analysis&quot; field=&quot;Name&quot; /&gt;
+        ///		&lt;column l [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string GrammarCategoryBrowserParameters {
             get {

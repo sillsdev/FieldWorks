@@ -38,7 +38,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			using (LinkEntryOrSenseDlg dlg = new LinkEntryOrSenseDlg())
 			{
 				var le = m_obj as ILexEntry;
-				dlg.SetDlgInfo(m_obj.Cache, PropertyTable, Publisher, le);
+				dlg.SetDlgInfo(m_obj.Cache, PropertyTable, Publisher, Subscriber, le);
 				var str = ShowHelp.RemoveSpaces(Slice.Label);
 				dlg.SetHelpTopic("khtpChooseLexicalEntryOrSense-" + str);
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)

@@ -19,11 +19,15 @@ using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
+#if RANDYTODO
+	// TODO: Move this class into Lexicon Area in Lang Exp.
+#endif
 	public class MergeEntryDlg : EntryGoDlg
 	{
 		#region Data members
 
 		private PictureBox m_pictureBox;
+		private XElement m_parametersElement;
 
 		#endregion Data members
 
@@ -82,17 +86,19 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		/// <param name="cache">FDO cache.</param>
-		/// <param name="propertyTable"></param>
-		/// <param name="startingEntry">Entry that cannot be used as a match in this dlg.</param>
-		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, ILexEntry startingEntry)
+		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, XElement parametersElement, ILexEntry startingEntry, string title, string formlabel, string okbuttonlabel)
 		{
 			CheckDisposed();
 
 			Debug.Assert(startingEntry != null);
 			m_startingEntry = startingEntry;
+			m_parametersElement = parametersElement;
 
-			SetDlgInfo(cache, propertyTable, null);
+			SetDlgInfo(cache, null, propertyTable, publisher, subscriber);
+
+			Text = title;
+			m_formLabel.Text = formlabel;
+			m_btnOK.Text = okbuttonlabel;
 
 			// Relocate remaining three buttons.
 			Point pt = m_btnHelp.Location;
@@ -189,13 +195,10 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		protected override void InitializeMatchingObjects(FdoCache cache)
 		{
-			var xnWindow = m_propertyTable.GetValue<XElement>("WindowConfiguration");
-			var configNode = xnWindow.XPathSelectElement("controls/parameters/guicontrol[@id=\"matchingEntries\"]/parameters");
-
 			var searchEngine = (MergeEntrySearchEngine)SearchEngine.Get(m_propertyTable, "MergeEntrySearchEngine", () => new MergeEntrySearchEngine(cache));
 			searchEngine.CurrentEntryHvo = m_startingEntry.Hvo;
 
-			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_propertyTable, configNode,
+			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_propertyTable, m_publisher, m_subscriber, m_parametersElement,
 				searchEngine);
 
 			// start building index

@@ -35,9 +35,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected ITsStrFactory m_tsf;
 		/// <summary />
 		protected IPropertyTable m_propertyTable;
-		/// <summary>
-		/// </summary>
+		/// <summary />
 		protected IPublisher m_publisher;
+		/// <summary />
+		protected ISubscriber m_subscriber;
 		protected bool m_skipCheck;
 		protected bool m_hasBeenActivated;
 		protected string m_oldSearchKey;
@@ -221,12 +222,13 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="wp">Strings used for various items in this dialog.</param>
 		/// <param name="propertyTable"></param>
 		/// <param name="publisher"></param>
-		public virtual void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher)
+		/// <param name="subscriber"></param>
+		public virtual void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
-			SetDlgInfo(cache, wp, propertyTable, publisher, cache.DefaultVernWs);
+			SetDlgInfo(cache, wp, propertyTable, publisher, subscriber, cache.DefaultVernWs);
 		}
 
-		protected virtual void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, int ws)
+		protected virtual void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, int ws)
 		{
 			CheckDisposed();
 
@@ -236,6 +238,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			m_propertyTable = propertyTable;
 			m_publisher = publisher;
+			m_subscriber = subscriber;
 
 			if (m_propertyTable != null)
 			{
@@ -485,15 +488,15 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="publisher"></param>
 		/// <param name="form">Form to use in main text edit box.</param>
-		public virtual void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, string form)
+		public virtual void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, string form)
 		{
 			CheckDisposed();
-			SetDlgInfo(cache, wp, propertyTable, publisher, form, cache.DefaultVernWs);
+			SetDlgInfo(cache, wp, propertyTable, publisher, subscriber, form, cache.DefaultVernWs);
 		}
 
-		protected void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, string form, int ws)
+		protected void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, string form, int ws)
 		{
-			SetDlgInfo(cache, wp, propertyTable, publisher, ws);
+			SetDlgInfo(cache, wp, propertyTable, publisher, subscriber, ws);
 			Form = form;
 		}
 
@@ -505,10 +508,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="publisher"></param>
 		/// <param name="tssform">establishes the ws of the dialog.</param>
-		public void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ITsString tssform)
+		public void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ITsString tssform)
 		{
 			CheckDisposed();
-			SetDlgInfo(cache, wp, propertyTable, publisher, tssform.Text, TsStringUtils.GetWsAtOffset(tssform, 0));
+			SetDlgInfo(cache, wp, propertyTable, publisher, subscriber, tssform.Text, TsStringUtils.GetWsAtOffset(tssform, 0));
 		}
 
 		#endregion Construction and Destruction

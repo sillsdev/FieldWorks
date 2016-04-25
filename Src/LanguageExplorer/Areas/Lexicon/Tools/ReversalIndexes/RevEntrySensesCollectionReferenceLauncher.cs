@@ -65,7 +65,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 					m_title = LanguageExplorerResources.ksIdentifySense,
 					m_btnText = LanguageExplorerResources.ksSetReversal
 				};
-				dlg.SetDlgInfo(m_cache, wp, PropertyTable, Publisher);
+				dlg.SetDlgInfo(m_cache, wp, PropertyTable, Publisher, Subscriber);
 				dlg.SelectSensesOnly = true;
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK && dlg.SelectedObject != null)
 					AddItem(dlg.SelectedObject);

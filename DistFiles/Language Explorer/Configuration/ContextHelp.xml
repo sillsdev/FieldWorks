@@ -68,7 +68,6 @@
 	<item id="Sidebar">Show the sidebar.</item>
 	<item id="Record List">Show the list of records.</item>
 
-	<item id="Show_DictionaryPubPreview">Display the dictionary entry for this lexeme above the Lexicon Edit pane.</item>
 	<item id="ShowHiddenFields">Display all possible fields.</item>
 	<item id="CmdToggleRawAndInterlinear">Toggle between the baseline and interlinear text view.</item>
 	<item id="CmdChangeFilterClearAll">Turn off all filters.</item>
@@ -80,7 +79,6 @@
 	<item id="CmdPreviousRecord">Show the previous item.</item>
 	<item id="CmdNextRecord">Show the next item.</item>
 	<item id="CmdLastRecord">Show the last item.</item>
-	<item id="CmdMergeEntry">Merge current lexical entry into another entry.</item>
 	<item id="CmdApproveAndMoveNext">Approve the suggested analysis and move to the next word.</item>
 	<item id="CmdApproveForWholeTextAndMoveNext">Approve the suggested analysis throughout this text, and move to the next word.</item>
 	<item id="CmdNextIncompleteBundle">Approve the suggested analysis, and jump to the next word with a suggested or incomplete analysis.</item>
@@ -112,11 +110,7 @@
 	<item id="CmdInsertMorphType">Create a new morpheme type.</item>
 	<item id="CmdInsertLexEntryType">Create a new {0}.</item>
 	<item id="CmdDataTree-Insert-LexEntryType">Insert a new subtype in this type.</item>
-	<item id="CmdInsertVariant">Add a Variant Form to this entry</item>
-	<item id="CmdChangeToComplexForm">This Lexeme Form contains several morphemes. Add the fields for me to specify the components and type of complex form.</item>
-	<item id="CmdChangeToVariant">This Lexeme Form is related to another form as a variant. Add the fields for me to specify the related form(s) and type of variant.</item>
 	<item id="CmdDataTree-Insert-VariantSpec">This Lexeme Form is also another kind of variant. Add the fields for me to specify the related form(s) and the variant type(s).</item>
-	<item id="CmdDataTree-Insert-AlternateForm">Add an allomorph to this entry</item>
 	<item id="CmdInsertAnthroCategory">Create a new anthropology category.</item>
 	<item id="CmdInsertLocation">Create a new location.</item>
 	<item id="CmdInsertPerson">Add a new person.</item>
@@ -134,15 +128,12 @@
 	<item id="CmdInsertAllomorphACP">Create a rule to prevent allomorphs from co-occurring.</item>
 	<item id="CmdInsertACPGroup">Create a group of ad hoc rules.</item>
 	<item id="CmdImportWordSet">Import a set of words in a file and give the set a name.</item>
-	<item id="CmdInsertSense">Insert a new sense.</item>
-	<item id="CmdInsertSubsense">Insert a new subsense.</item>
 	<item id="CmdInsertLinkToFile">Insert a link to an external file.</item>
 	<item id="CmdAddNote">Insert a note.</item>
 	<item id="CmdAddCustomList">Add a custom list.</item>
 	<item id="CmdInsertStemAllomorph">Add an allomorph of a stem.</item>
 	<item id="CmdInsertAffixAllomorph">Add an allomorph of an affix.</item>
 	<item id="CmdDataTree-Insert-Pronunciation">Add a pronunciation field to this entry.</item>
-	<item id="CmdInsertMediaFile">Add a sound or movie file to the pronunciation, creating the pronunciation if necessary.</item>
 	<item id="CmdInsertText">Add a new text to the corpus.</item>
 	<item id="CmdInsertFeatureType">Create a new feature type.</item>
 	<item id="CmdInsertPhonologicalClosedFeature">Add a phonological feature.</item>

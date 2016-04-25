@@ -125,22 +125,9 @@ namespace SIL.FieldWorks.FdoUi
 			return matchingEntry == null ? null : new LexEntryUi(matchingEntry);
 		}
 
-		///  ------------------------------------------------------------------------------------
 		///   <summary />
-		///  <param name="cache"></param>
-		///  <param name="hvoSrc"></param>
-		///  <param name="tagSrc"></param>
-		///  <param name="wsSrc"></param>
-		///  <param name="ichMin"></param>
-		///  <param name="ichLim"></param>
-		///  <param name="owner"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="publisher"></param>
-		/// <param name="helpProvider"></param>
-		///  <param name="helpFileKey">string key to get the help file name</param>
-		///  ------------------------------------------------------------------------------------
 		public static void DisplayOrCreateEntry(FdoCache cache, int hvoSrc, int tagSrc, int wsSrc,
-			int ichMin, int ichLim, IWin32Window owner, IPropertyTable propertyTable, IPublisher publisher,
+			int ichMin, int ichLim, IWin32Window owner, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber,
 			IHelpTopicProvider helpProvider, string helpFileKey)
 		{
 			ITsString tssContext = cache.DomainDataByFlid.get_StringProp(hvoSrc, tagSrc);
@@ -187,10 +174,10 @@ namespace SIL.FieldWorks.FdoUi
 						wfa = (anal as IWfiGloss).OwnerOfClass<IWfiAnalysis>();
 				}
 			}
-			DisplayEntries(cache, owner, propertyTable, publisher, helpProvider, helpFileKey, tssWf, wfa);
+			DisplayEntries(cache, owner, propertyTable, publisher, subscriber, helpProvider, helpFileKey, tssWf, wfa);
 		}
 
-		internal static void DisplayEntry(FdoCache cache, IWin32Window owner, IPropertyTable propertyTable, IPublisher publisher,
+		internal static void DisplayEntry(FdoCache cache, IWin32Window owner, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn)
 		{
 			ITsString tssWf = tssWfIn;
@@ -219,7 +206,7 @@ namespace SIL.FieldWorks.FdoUi
 				IVwStylesheet styleSheet = GetStyleSheet(cache, propertyTable);
 				if (leui == null)
 				{
-					ILexEntry entry = ShowFindEntryDialog(cache, propertyTable, publisher, tssWf, owner);
+					ILexEntry entry = ShowFindEntryDialog(cache, propertyTable, publisher, subscriber, tssWf, owner);
 					if (entry == null)
 					{
 						return;
@@ -236,13 +223,13 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		// Currently only called from WCF (11/21/2013 - AP)
-		public static void DisplayEntry(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher,
+		public static void DisplayEntry(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn, IWfiAnalysis wfa)
 		{
-			DisplayEntries(cache, null, propertyTable, publisher, helpProvider, helpFileKey, tssWfIn, wfa);
+			DisplayEntries(cache, null, propertyTable, publisher, subscriber, helpProvider, helpFileKey, tssWfIn, wfa);
 		}
 
-		internal static void DisplayEntries(FdoCache cache, IWin32Window owner, IPropertyTable propertyTable, IPublisher publisher,
+		internal static void DisplayEntries(FdoCache cache, IWin32Window owner, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn, IWfiAnalysis wfa)
 		{
 			ITsString tssWf = tssWfIn;
@@ -251,17 +238,17 @@ namespace SIL.FieldWorks.FdoUi
 			IVwStylesheet styleSheet = GetStyleSheet(cache, propertyTable);
 			if (entries == null || entries.Count == 0)
 			{
-				ILexEntry entry = ShowFindEntryDialog(cache, propertyTable, publisher, tssWf, owner);
+				ILexEntry entry = ShowFindEntryDialog(cache, propertyTable, publisher, subscriber, tssWf, owner);
 				if (entry == null)
 					return;
 				entries = new List<ILexEntry>(1);
 				entries.Add(entry);
 			}
-			DisplayEntriesRecursive(cache, owner, propertyTable, publisher, styleSheet, helpProvider, helpFileKey, entries, tssWf);
+			DisplayEntriesRecursive(cache, owner, propertyTable, publisher, subscriber, styleSheet, helpProvider, helpFileKey, entries, tssWf);
 		}
 
 		private static void DisplayEntriesRecursive(FdoCache cache, IWin32Window owner,
-			IPropertyTable propertyTable, IPublisher publisher, IVwStylesheet stylesheet,
+			IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, IVwStylesheet stylesheet,
 			IHelpTopicProvider helpProvider, string helpFileKey,
 			List<ILexEntry> entries, ITsString tssWf)
 		{
@@ -286,7 +273,7 @@ namespace SIL.FieldWorks.FdoUi
 				{
 					// Look for another entry to display.  (If the user doesn't select another
 					// entry, loop back and redisplay the current entry.)
-					var entry = ShowFindEntryDialog(cache, propertyTable, publisher, tssWf, owner);
+					var entry = ShowFindEntryDialog(cache, propertyTable, publisher, subscriber, tssWf, owner);
 					if (entry != null)
 					{
 						// We need a list that contains the entry we found to display on the
@@ -485,12 +472,12 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="cache">The cache.</param>
 		/// <param name="propertyTable"></param>
 		/// <param name="publisher"></param>
+		/// <param name="subscriber"></param>
 		/// <param name="tssForm">The TSS form.</param>
 		/// <param name="owner">The owner.</param>
 		/// <returns>The HVO of the selected or created entry</returns>
 		/// ------------------------------------------------------------------------------------
-		internal static ILexEntry ShowFindEntryDialog(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher,
-			ITsString tssForm, IWin32Window owner)
+		internal static ILexEntry ShowFindEntryDialog(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ITsString tssForm, IWin32Window owner)
 		{
 			using (EntryGoDlg entryGoDlg = new EntryGoDlg())
 			{
@@ -506,7 +493,7 @@ namespace SIL.FieldWorks.FdoUi
 				if (owner == null)
 					entryGoDlg.StartPosition = FormStartPosition.CenterScreen;
 				entryGoDlg.Owner = owner as Form;
-				entryGoDlg.SetDlgInfo(cache, wp, propertyTable, publisher, tssForm);
+				entryGoDlg.SetDlgInfo(cache, wp, propertyTable, publisher, subscriber, tssForm);
 				entryGoDlg.SetHelpTopic("khtpFindInDictionary");
 				if (entryGoDlg.ShowDialog() == DialogResult.OK)
 				{
@@ -535,7 +522,7 @@ namespace SIL.FieldWorks.FdoUi
 			}
 			if (otherButtonClicked)
 			{
-				var entry = ShowFindEntryDialog(Object.Cache, PropertyTable, Publisher, tssWf, owner);
+				var entry = ShowFindEntryDialog(Object.Cache, PropertyTable, Publisher, Subscriber, tssWf, owner);
 				if (entry != null)
 				{
 					using (var leuiNew = new LexEntryUi(entry))

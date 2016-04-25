@@ -453,7 +453,7 @@ namespace LanguageExplorer.Dumpster
 
 			using (var dlg = new WordformGoDlg())
 			{
-				dlg.SetDlgInfo(Cache, null, PropertyTable, Publisher);
+				dlg.SetDlgInfo(Cache, null, PropertyTable, Publisher, Subscriber);
 				if (dlg.ShowDialog() == DialogResult.OK)
 					Publisher.Publish("JumpToRecord", dlg.SelectedObject.Hvo);
 			}

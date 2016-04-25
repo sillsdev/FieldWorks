@@ -61,6 +61,213 @@ namespace LanguageExplorer.Areas.Lexicon {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert A_llomorph.
+        /// </summary>
+        internal static string Insert_Allomorph {
+            get {
+                return ResourceManager.GetString("Insert_Allomorph", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add an allomorph to this entry.
+        /// </summary>
+        internal static string Insert_Allomorph_Tooltip {
+            get {
+                return ResourceManager.GetString("Insert_Allomorph_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert _Pronunciation.
+        /// </summary>
+        internal static string Insert_Pronunciation {
+            get {
+                return ResourceManager.GetString("Insert_Pronunciation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add a pronunciation field to this entry..
+        /// </summary>
+        internal static string Insert_Pronunciation_Tooltip {
+            get {
+                return ResourceManager.GetString("Insert_Pronunciation_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert _Sense.
+        /// </summary>
+        internal static string Insert_Sense {
+            get {
+                return ResourceManager.GetString("Insert_Sense", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Sound or Movie _File.
+        /// </summary>
+        internal static string Insert_Sound_Or_Movie_File {
+            get {
+                return ResourceManager.GetString("Insert_Sound_Or_Movie_File", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add a sound or movie file to the pronunciation, creating the pronunciation if necessary..
+        /// </summary>
+        internal static string Insert_Sound_Or_Movie_File_Tooltip {
+            get {
+                return ResourceManager.GetString("Insert_Sound_Or_Movie_File_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Subsense (in sense).
+        /// </summary>
+        internal static string Insert_Subsense {
+            get {
+                return ResourceManager.GetString("Insert_Subsense", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert a new subsense..
+        /// </summary>
+        internal static string Insert_Subsense_Tooltip {
+            get {
+                return ResourceManager.GetString("Insert_Subsense_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert _Variant.
+        /// </summary>
+        internal static string Insert_Variant {
+            get {
+                return ResourceManager.GetString("Insert_Variant", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add a Variant Form to this entry.
+        /// </summary>
+        internal static string Insert_Variant_Tooltip {
+            get {
+                return ResourceManager.GetString("Insert_Variant_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert a new sense..
+        /// </summary>
+        internal static string InsertSenseToolTip {
+            get {
+                return ResourceManager.GetString("InsertSenseToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Find.
+        /// </summary>
+        internal static string ks_Find {
+            get {
+                return ResourceManager.GetString("ks_Find", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Merge.
+        /// </summary>
+        internal static string ks_Merge {
+            get {
+                return ResourceManager.GetString("ks_Merge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The two entries have been merged..
+        /// </summary>
+        internal static string ksEntriesHaveBeenMerged {
+            get {
+                return ResourceManager.GetString("ksEntriesHaveBeenMerged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Merge Entry.
+        /// </summary>
+        internal static string ksMergeEntry {
+            get {
+                return ResourceManager.GetString("ksMergeEntry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Merge Report.
+        /// </summary>
+        internal static string ksMergeReport {
+            get {
+                return ResourceManager.GetString("ksMergeReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Redo Merge Entry.
+        /// </summary>
+        internal static string ksRedoMergeEntry {
+            get {
+                return ResourceManager.GetString("ksRedoMergeEntry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Merge Entry.
+        /// </summary>
+        internal static string ksUndoMergeEntry {
+            get {
+                return ResourceManager.GetString("ksUndoMergeEntry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lexeme Form has components.
+        /// </summary>
+        internal static string Lexeme_Form_Has_Components {
+            get {
+                return ResourceManager.GetString("Lexeme_Form_Has_Components", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This Lexeme Form contains several morphemes. Add the fields for me to specify the components and type of complex form..
+        /// </summary>
+        internal static string Lexeme_Form_Has_Components_Tooltip {
+            get {
+                return ResourceManager.GetString("Lexeme_Form_Has_Components_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lexeme Form is a variant.
+        /// </summary>
+        internal static string Lexeme_Form_Is_A_Variant {
+            get {
+                return ResourceManager.GetString("Lexeme_Form_Is_A_Variant", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This Lexeme Form is related to another form as a variant. Add the fields for me to specify the related form(s) and type of variant..
+        /// </summary>
+        internal static string Lexeme_Form_Is_A_Variant_Tooltip {
+            get {
+                return ResourceManager.GetString("Lexeme_Form_Is_A_Variant_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;!-- Please increment BrowseViewer.kBrowseViewVersion when you change these specs,
         /// so that XmlBrowseViewBaseVc can invalidate obsoleted columns that have been saved in each current control&apos;s ColumnList --&gt;
         ///&lt;columns generate=&quot;childPartsForParentLayouts&quot;&gt;
@@ -119,6 +326,64 @@ namespace LanguageExplorer.Areas.Lexicon {
         internal static string LexiconEditRecordEditViewParameters {
             get {
                 return ResourceManager.GetString("LexiconEditRecordEditViewParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters id=&quot;lexentryMatchList&quot; listItemsClass=&quot;LexEntry&quot; filterBar=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;LexEntry-Plural&quot; editable=&quot;false&quot;&gt;
+        ///	&lt;columns&gt;
+        ///		&lt;column label=&quot;Headword&quot; sortmethod=&quot;FullSortKey&quot; ws=&quot;$ws=best vernoranal&quot; editable=&quot;false&quot; width=&quot;68000&quot; layout=&quot;EntryHeadwordForFindEntry&quot; /&gt;
+        ///		&lt;column label=&quot;Lexeme Form&quot; visibility=&quot;menu&quot; common=&quot;true&quot; sortmethod=&quot;MorphSortKey&quot; ws=&quot;$ws=best vernoranal&quot; ed [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string MatchingEntriesParameters {
+            get {
+                return ResourceManager.GetString("MatchingEntriesParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Merge with entry....
+        /// </summary>
+        internal static string Merge_With_Entry {
+            get {
+                return ResourceManager.GetString("Merge_With_Entry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Merge current lexical entry into another entry..
+        /// </summary>
+        internal static string Merge_With_Entry_Tooltip {
+            get {
+                return ResourceManager.GetString("Merge_With_Entry_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Dictionary Preview.
+        /// </summary>
+        internal static string Show_DictionaryPubPreview {
+            get {
+                return ResourceManager.GetString("Show_DictionaryPubPreview", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display the dictionary entry for this lexeme above the Lexicon Edit pane..
+        /// </summary>
+        internal static string Show_DictionaryPubPreview_ToolTip {
+            get {
+                return ResourceManager.GetString("Show_DictionaryPubPreview_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Entry in Concordance.
+        /// </summary>
+        internal static string Show_Entry_In_Concordance {
+            get {
+                return ResourceManager.GetString("Show_Entry_In_Concordance", resourceCulture);
             }
         }
     }

@@ -109,13 +109,14 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="wp">Strings used for various items in this dialog.</param>
 		/// <param name="propertyTable"></param>
 		/// <param name="publisher"></param>
+		/// <param name="subscriber"></param>
 		/// <param name="tssform">The form.</param>
 		/// <param name="hvoType">The HVO of the type.</param>
-		public void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ITsString tssform, int hvoType)
+		public void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ITsString tssform, int hvoType)
 		{
 			CheckDisposed();
 
-			SetDlgInfo(cache, wp, propertyTable, publisher, tssform);
+			SetDlgInfo(cache, wp, propertyTable, publisher, subscriber, tssform);
 
 			m_formOrig = m_tbForm.Text;
 			m_hvoType = hvoType;

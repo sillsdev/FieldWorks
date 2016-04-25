@@ -207,31 +207,13 @@ namespace SIL.FieldWorks.XWorks
 			ReadParameters();
 
 			RecordClerk clerk = ExistingClerk;
+			Debug.Assert(clerk != null);
 			bool fClerkAlreadySuppressed = false;
 			bool fClerkWasCreated = false;
-			if (clerk == null)
-			{
-				// We do NOT want to load the list as part of creating the clerk.
-				// At earliest, we want to do so only when the ListUpdateHelper is disposed,
-				// after the clerk and list are sufficiently initialized (e.g., with saved sorting and filtering
-				// information) to sort correctly. This is part of a fairly convoluted attempt to prevent
-				// sorting the list repeatedly during startup, even though startup involves many events
-				// that normally require it to be resorted.
-				// In this case the clerk will be created with its list already in the ListLoadingSuppressed state,
-				// and already set to indicate that loading is necessary when suppression ends;
-				// we want to pass FALSE to the ListUpdateHelper constructor, however, to pretend that the
-				// list was NOT suppressed when the helper was created, so it will duly be sorted when
-				// the helper is disposed.
-				fClerkWasCreated = true;
-				clerk = CreateClerk(false);
-				Debug.Assert(clerk != null);
-			}
-			else
-				fClerkAlreadySuppressed = clerk.ListLoadingSuppressed; // If we didn't create the clerk, someone else might have suppressed it.
+			fClerkAlreadySuppressed = clerk.ListLoadingSuppressed; // If we didn't create the clerk, someone else might have suppressed it.
 			// suspend any loading of the Clerk's list items until after a
 			// subclass (possibly) initializes sorters/filters
 			// in SetupDataContext()
-			bool didRestoreFromPersistence = false;
 			using (var luh = new RecordClerk.ListUpdateHelper(clerk, fClerkAlreadySuppressed))
 			{
 				luh.ClearBrowseListUntilReload = true;
@@ -242,15 +224,9 @@ namespace SIL.FieldWorks.XWorks
 				//Historical comments here indicated that the Clerk should be processed by the mediator before the
 				//view. This is handled by Priority now, RecordView is by default just after RecordClerk in the processing.
 				SetupDataContext();
-				// Only if it was just now created should we try to restore from what we persisted.
-				// Otherwise (e.g., FWR-1128) we may miss changes made to the list in other tools.
-				if (fClerkWasCreated)
-					didRestoreFromPersistence = RestoreSortSequence();
-				if (didRestoreFromPersistence)
-					luh.ListWasRestored();
 			}
 			// In case it hasn't yet been loaded, load it!  See LT-10185.
-			if (!didRestoreFromPersistence && !Clerk.ListLoadingSuppressed && Clerk.RequestedLoadWhileSuppressed)
+			if (!Clerk.ListLoadingSuppressed && Clerk.RequestedLoadWhileSuppressed)
 				Clerk.UpdateList(true, true); // sluggishness culprit for LT-12844 was in here
 			Clerk.SetCurrentFromRelatedClerk(); // See if some other clerk wants to influence our current object.
 		}

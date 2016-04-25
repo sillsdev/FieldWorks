@@ -66,7 +66,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						break;
 				}
 				var wp = new WindowParams { m_title = sTitle, m_btnText = LanguageExplorerResources.ks_Add };
-				dlg.SetDlgInfo(m_cache, wp, PropertyTable, Publisher);
+				dlg.SetDlgInfo(m_cache, wp, PropertyTable, Publisher, Subscriber);
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK && dlg.SelectedObject != null)
 				{

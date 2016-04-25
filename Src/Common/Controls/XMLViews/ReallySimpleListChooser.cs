@@ -35,13 +35,13 @@ namespace SIL.FieldWorks.Common.Controls
 	/// <summary></summary>
 	public class ReallySimpleListChooser : Form, IFWDisposable
 	{
-		/// <summary></summary>
+		/// <summary />
 		protected ObjectLabel m_chosenLabel;
-		/// <summary></summary>
+		/// <summary />
 		protected Button btnOK;
-		/// <summary></summary>
+		/// <summary />
 		protected Button btnCancel;
-		/// <summary></summary>
+		/// <summary />
 		protected TreeView m_labelsTreeView;
 		private bool m_fFlatList = false;
 		private bool m_fSortLabels = true;
@@ -49,24 +49,24 @@ namespace SIL.FieldWorks.Common.Controls
 		private List<ICmObject> m_objs;
 		private FlatListView m_flvLabels;
 		private List<ObjectLabel> m_labels;
-		/// <summary></summary>
+		/// <summary />
 		protected ToolTip toolTip1;
 		private IContainer components;
-		/// <summary></summary>
+		/// <summary />
 		protected IPersistenceProvider m_persistProvider;
-		/// <summary></summary>
+		/// <summary />
 		protected ImageList m_imageList;
-		/// <summary></summary>
+		/// <summary />
 		protected LinkLabel m_lblLink2;
-		/// <summary></summary>
+		/// <summary />
 		protected PictureBox m_picboxLink2;
-		/// <summary></summary>
+		/// <summary />
 		protected LinkLabel m_lblLink1;
-		/// <summary></summary>
+		/// <summary />
 		protected PictureBox m_picboxLink1;
-		/// <summary></summary>
+		/// <summary />
 		protected Label m_lblExplanation;
-		/// <summary></summary>
+		/// <summary />
 		protected FdoCache m_cache;
 
 		/// <summary>
@@ -74,20 +74,21 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public bool Atomic { get; set; }
 
-		/// <summary></summary>
+		/// <summary />
 		protected bool m_fLinkExecuted = false;
-
-		/// <summary></summary>
+		/// <summary />
 		protected NullObjectLabel m_nullLabel;
-		/// <summary></summary>
+		/// <summary />
 		protected int m_hvoObject;
-		/// <summary></summary>
+		/// <summary />
 		protected int m_flidObject;
-		/// <summary></summary>
+		/// <summary />
 		protected IPropertyTable m_propertyTable;
-		/// <summary></summary>
+		/// <summary />
 		protected IPublisher m_publisher;
-		/// <summary></summary>
+		/// <summary />
+		protected ISubscriber m_subscriber;
+		/// <summary />
 		protected string m_fieldName = null;
 		private int m_cLinksShown = 0;
 		private object m_obj1 = null;
@@ -95,7 +96,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private FwLinkArgs m_linkJump = null;
 		private ChooserCommand m_linkCmd = null;
 		private string m_sTextParam = null;
-		/// <summary></summary>
+		/// <summary />
 		protected int m_hvoTextParam = 0;
 		private Guid m_guidLink = Guid.Empty;
 		private readonly HashSet<ICmObject> m_chosenObjs = null;
@@ -130,20 +131,20 @@ namespace SIL.FieldWorks.Common.Controls
 		private Button m_helpBrowserButton;
 		private SplitContainer m_splitContainer;
 		private FlowLayoutPanel m_buttonPanel;
-		/// <summary></summary>
+		/// <summary />
 		protected Panel m_viewPanel;
-		/// <summary></summary>
+		/// <summary />
 		protected FlowLayoutPanel m_link2Panel;
-		/// <summary></summary>
+		/// <summary />
 		protected Panel m_viewExtrasPanel;
 		private Label m_ctrlClickLabel;
-		/// <summary></summary>
+		/// <summary />
 		protected FlowLayoutPanel m_link1Panel;
 
 		private ToolStrip m_helpBrowserStrip;
 		private ToolStripButton m_backButton;
 		private ToolStripButton m_forwardButton;
-		/// <summary></summary>
+		/// <summary />
 		protected FlowLayoutPanel m_checkBoxPanel;
 		private CheckBox m_displayUsageCheckBox;
 

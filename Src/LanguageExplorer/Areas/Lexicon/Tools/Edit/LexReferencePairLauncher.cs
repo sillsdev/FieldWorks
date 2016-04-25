@@ -109,7 +109,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					wp.m_btnText = LanguageExplorerResources.ks_Replace;
 				}
 
-				dlg.SetDlgInfo(m_cache, wp, PropertyTable, Publisher);
+				dlg.SetDlgInfo(m_cache, wp, PropertyTable, Publisher, Subscriber);
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 				{

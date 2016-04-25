@@ -71,7 +71,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 					dlg = new LinkMSADlg();
 				}
 				Debug.Assert(dlg != null);
-				dlg.SetDlgInfo(m_cache, null, PropertyTable, Publisher);
+				dlg.SetDlgInfo(m_cache, null, PropertyTable, Publisher, Subscriber);
 				if (dlg.ShowDialog(frm) == DialogResult.OK)
 					AddItem(dlg.SelectedObject);
 			}

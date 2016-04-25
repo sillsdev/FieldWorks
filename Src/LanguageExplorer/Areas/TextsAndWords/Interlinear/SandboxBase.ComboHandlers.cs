@@ -2186,7 +2186,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					using (InsertEntryDlg dlg = InsertEntryNow.CreateInsertEntryDlg(fCreateNow))
 					{
-						dlg.SetDlgInfo(cache, m_sandbox.GetFullMorphForm(m_hvoMorph), m_sandbox.PropertyTable, m_sandbox.Publisher);
+						dlg.SetDlgInfo(cache, m_sandbox.GetFullMorphForm(m_hvoMorph), m_sandbox.PropertyTable, m_sandbox.Publisher, m_sandbox.Subscriber);
 						dlg.TssGloss = entryComponents.GlossAlternatives.FirstOrDefault();
 						foreach (ITsString tss in entryComponents.GlossAlternatives.Skip(1))
 							dlg.SetInitialGloss(TsStringUtils.GetWsAtOffset(tss, 0), tss);
@@ -2335,7 +2335,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				using (AddAllomorphDlg dlg = new AddAllomorphDlg())
 				{
 					FdoCache cache = m_caches.MainCache;
-					dlg.SetDlgInfo(cache, null, m_sandbox.PropertyTable, m_sandbox.Publisher, tssForm, morphType.Hvo);
+					dlg.SetDlgInfo(cache, null, m_sandbox.PropertyTable, m_sandbox.Publisher, m_sandbox.Subscriber, tssForm, morphType.Hvo);
 					Form mainWnd = m_sandbox.FindForm();
 					// Making the form active fixes LT-2619.
 					// I'm (RandyR) not sure what adverse impact might show up by doing this.
@@ -2784,13 +2784,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						if (morphReal != null && morphReal.IsValidObject)
 						{
 							variantEntry = morphReal.Owner as ILexEntry;
-							dlg.SetDlgInfo(m_sandbox.Cache, m_sandbox.PropertyTable, m_sandbox.Publisher, variantEntry);
+							dlg.SetDlgInfo(m_sandbox.Cache, m_sandbox.PropertyTable, m_sandbox.Publisher, m_sandbox.Subscriber, variantEntry);
 						}
 						else
 						{
 							// since we didn't start with an entry,
 							// set up the dialog using the form of the variant
-							dlg.SetDlgInfo(m_sandbox.Cache, m_sandbox.PropertyTable, m_sandbox.Publisher, tssForm);
+							dlg.SetDlgInfo(m_sandbox.Cache, m_sandbox.PropertyTable, m_sandbox.Publisher, m_sandbox.Subscriber, tssForm);
 						}
 						dlg.SetHelpTopic("khtpAddVariantFromInterlinear");
 						Form mainWnd = m_sandbox.FindForm();

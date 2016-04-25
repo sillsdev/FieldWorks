@@ -28,14 +28,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			get { return "RecordGo"; }
 		}
 
-		public override void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher)
+		public override void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
-			SetDlgInfo(cache, wp, propertyTable, publisher, cache.DefaultAnalWs);
+			SetDlgInfo(cache, wp, propertyTable, publisher, subscriber, cache.DefaultAnalWs);
 		}
 
-		public override void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, string form)
+		public override void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, string form)
 		{
-			SetDlgInfo(cache, wp, propertyTable, publisher, form, cache.DefaultAnalWs);
+			SetDlgInfo(cache, wp, propertyTable, publisher, subscriber, form, cache.DefaultAnalWs);
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			SearchEngine searchEngine = SearchEngine.Get(m_propertyTable, "RecordGoSearchEngine", () => new RecordGoSearchEngine(cache));
 
-			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_propertyTable, configNode,
+			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_propertyTable, m_publisher, m_subscriber, configNode,
 				searchEngine);
 
 			// start building index

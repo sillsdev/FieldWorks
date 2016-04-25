@@ -45,7 +45,6 @@ using Win32 = SIL.FieldWorks.Common.FwUtils.Win32;
 #if RANDYTODOMERGEFILES
 using System.Xml;
 using System.Collections.Specialized;
-using File = System.IO.File;
 #endif
 
 namespace LanguageExplorer.Impls

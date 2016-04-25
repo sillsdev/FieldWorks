@@ -120,80 +120,106 @@
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="DomainTypeEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\DomainTypeEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="ListToolsSliceFilters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\ListToolsSliceFilters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="AnthroEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\AnthroEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="ComplexEntryTypeEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\ComplexEntryTypeEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="ChartmarkEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\ChartmarkEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="CharttempEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\CharttempEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="ConfidenceEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\ConfidenceEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="EducationEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\EducationEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="GenresEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\GenresEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="LexRefEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\LexRefEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="LocationsEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\LocationsEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="MorphTypeEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\MorphTypeEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="PeopleEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\PeopleEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="PositionsEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\PositionsEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="PublicationsEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\PublicationsEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="RecTypeEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\RecTypeEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="RestrictionsEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\RestrictionsEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="RoleEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\RoleEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="SemanticDomainEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\SemanticDomainEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="SenseTypeEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\SenseTypeEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="StatusEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\StatusEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="TextMarkupTagsEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\TextMarkupTagsEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="TimeOfDayEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\TimeOfDayEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="TranslationTypeEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\TranslationTypeEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="UsageTypeEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\UsageTypeEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="VariantEntryTypeEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\VariantEntryTypeEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
 </root>

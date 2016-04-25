@@ -14,10 +14,5 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Get the pane bar.
 		/// </summary>
 		IPaneBar PaneBar { get; }
-
-		/// <summary>
-		/// Refresh/Change the panebar contents.
-		/// </summary>
-		void RefreshPaneBar();
 	}
 }

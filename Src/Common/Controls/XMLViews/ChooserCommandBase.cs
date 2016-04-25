@@ -19,16 +19,18 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	public abstract class ChooserCommand
 	{
-		/// <summary></summary>
+		/// <summary />
 		protected bool m_fShouldCloseBeforeExecuting;
-		/// <summary></summary>
+		/// <summary />
 		protected string m_sLabel;
-		/// <summary></summary>
+		/// <summary />
 		protected FdoCache m_cache;
-		/// <summary></summary>
+		/// <summary />
 		protected IPropertyTable m_propertyTable;
-		/// <summary></summary>
+		/// <summary />
 		protected IPublisher m_publisher;
+		/// <summary />
+		protected ISubscriber m_subscriber;
 
 #if WhenFigureOutWhatThisShouldBe
 		protected string m_sHelp;
@@ -43,14 +45,16 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="sLabel">The s label.</param>
 		/// <param name="propertyTable"></param>
 		/// <param name="publisher"></param>
+		/// <param name="subscriber"></param>
 		/// ------------------------------------------------------------------------------------
-		protected ChooserCommand(FdoCache cache, bool fCloseBeforeExecuting, string sLabel, IPropertyTable propertyTable, IPublisher publisher)
+		protected ChooserCommand(FdoCache cache, bool fCloseBeforeExecuting, string sLabel, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
 			m_cache = cache;
 			m_fShouldCloseBeforeExecuting = fCloseBeforeExecuting;
 			m_sLabel = sLabel + "  ";  // Extra spaces are just a hack to keep the label from being truncated - I have no idea why it is being truncated
 			m_propertyTable = propertyTable;
 			m_publisher = publisher;
+			m_subscriber = subscriber;
 		}
 
 		//properties

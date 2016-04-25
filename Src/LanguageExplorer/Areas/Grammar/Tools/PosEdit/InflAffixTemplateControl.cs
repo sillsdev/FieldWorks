@@ -654,11 +654,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			string sLabel = String.Format(m_sObligatorySlot, sTopPOS);
 			chooser.AddLink(sLabel, SimpleListChooser.LinkType.kSimpleLink,
 				new MakeInflAffixSlotChooserCommand(Cache, true, sLabel, pos.Hvo,
-				false, PropertyTable, Publisher));
+				false, PropertyTable, Publisher, Subscriber));
 			sLabel = String.Format(m_sOptionalSlot, sTopPOS);
 			chooser.AddLink(sLabel, SimpleListChooser.LinkType.kSimpleLink,
 				new MakeInflAffixSlotChooserCommand(Cache, true, sLabel, pos.Hvo, true,
-				PropertyTable, Publisher));
+				PropertyTable, Publisher, Subscriber));
 			chooser.SetObjectAndFlid(pos.Hvo, MoInflAffixTemplateTags.kflidSlots);
 			return chooser;
 		}

@@ -87,18 +87,14 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		/// <param name="cache">FDO cache.</param>
-		/// <param name="propertyTable"></param>
-		/// <param name="publisher"></param>
-		/// <param name="startingEntry">Entry that cannot be used as a match in this dlg.</param>
-		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ILexEntry startingEntry)
+		public void SetDlgInfo(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ILexEntry startingEntry)
 		{
 			CheckDisposed();
 
 			Debug.Assert(startingEntry != null);
 			m_startingEntry = startingEntry;
 
-			SetDlgInfo(cache, null, propertyTable, publisher);
+			SetDlgInfo(cache, null, propertyTable, publisher, subscriber);
 			SetComboWritingSystemFactory(cache);
 		}
 
@@ -115,13 +111,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="wp"></param>
-		/// <param name="propertyTable"></param>
-		/// <param name="publisher"></param>
-		public override void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher)
+		public override void SetDlgInfo(FdoCache cache, WindowParams wp, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
-			base.SetDlgInfo(cache, wp, propertyTable, publisher);
+			base.SetDlgInfo(cache, wp, propertyTable, publisher, subscriber);
 			// This is needed to make the replacement MatchingEntriesBrowser visible:
 			Controls.SetChildIndex(m_matchingObjectsBrowser, 0);
 			// LT-6325 fix...

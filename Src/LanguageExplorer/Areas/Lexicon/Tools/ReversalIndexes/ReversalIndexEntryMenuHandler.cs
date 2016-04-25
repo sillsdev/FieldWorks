@@ -130,7 +130,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				dlg.SetHelpTopic("khtpMoveReversalEntry");
 				var wp = new WindowParams { m_btnText = LanguageExplorerResources.ks_MoveEntry, m_title = LanguageExplorerResources.ksMoveRevEntry };
 				var cache = PropertyTable.GetValue<FdoCache>("cache");
-				dlg.SetDlgInfo(cache, wp, PropertyTable, Publisher);
+				dlg.SetDlgInfo(cache, wp, PropertyTable, Publisher, Subscriber);
 				if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
 				{
 					var newOwner = (IReversalIndexEntry) dlg.SelectedObject;

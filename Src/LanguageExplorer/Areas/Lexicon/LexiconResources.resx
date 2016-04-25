@@ -117,20 +117,113 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="InsertSenseToolTip" xml:space="preserve">
+    <value>Insert a new sense.</value>
+  </data>
+  <data name="Insert_Allomorph" xml:space="preserve">
+    <value>Insert A_llomorph</value>
+  </data>
+  <data name="Insert_Allomorph_Tooltip" xml:space="preserve">
+    <value>Add an allomorph to this entry</value>
+  </data>
+  <data name="Insert_Pronunciation" xml:space="preserve">
+    <value>Insert _Pronunciation</value>
+  </data>
+  <data name="Insert_Pronunciation_Tooltip" xml:space="preserve">
+    <value>Add a pronunciation field to this entry.</value>
+  </data>
+  <data name="Insert_Sense" xml:space="preserve">
+    <value>Insert _Sense</value>
+  </data>
+  <data name="Insert_Sound_Or_Movie_File" xml:space="preserve">
+    <value>Insert Sound or Movie _File</value>
+  </data>
+  <data name="Insert_Sound_Or_Movie_File_Tooltip" xml:space="preserve">
+    <value>Add a sound or movie file to the pronunciation, creating the pronunciation if necessary.</value>
+  </data>
+  <data name="Insert_Subsense" xml:space="preserve">
+    <value>Insert Subsense (in sense)</value>
+  </data>
+  <data name="Insert_Subsense_Tooltip" xml:space="preserve">
+    <value>Insert a new subsense.</value>
+  </data>
+  <data name="Insert_Variant" xml:space="preserve">
+    <value>Insert _Variant</value>
+  </data>
+  <data name="Insert_Variant_Tooltip" xml:space="preserve">
+    <value>Add a Variant Form to this entry</value>
+  </data>
+  <data name="ksEntriesHaveBeenMerged" xml:space="preserve">
+    <value>The two entries have been merged.</value>
+  </data>
+  <data name="ksMergeEntry" xml:space="preserve">
+    <value>Merge Entry</value>
+  </data>
+  <data name="ksMergeReport" xml:space="preserve">
+    <value>Merge Report</value>
+  </data>
+  <data name="ksRedoMergeEntry" xml:space="preserve">
+    <value>Redo Merge Entry</value>
+  </data>
+  <data name="ksUndoMergeEntry" xml:space="preserve">
+    <value>Undo Merge Entry</value>
+  </data>
+  <data name="ks_Find" xml:space="preserve">
+    <value>_Find</value>
+  </data>
+  <data name="ks_Merge" xml:space="preserve">
+    <value>_Merge</value>
+  </data>
+  <data name="Lexeme_Form_Has_Components" xml:space="preserve">
+    <value>Lexeme Form has components</value>
+  </data>
+  <data name="Lexeme_Form_Has_Components_Tooltip" xml:space="preserve">
+    <value>This Lexeme Form contains several morphemes. Add the fields for me to specify the components and type of complex form.</value>
+  </data>
+  <data name="Lexeme_Form_Is_A_Variant" xml:space="preserve">
+    <value>Lexeme Form is a variant</value>
+  </data>
+  <data name="Lexeme_Form_Is_A_Variant_Tooltip" xml:space="preserve">
+    <value>This Lexeme Form is related to another form as a variant. Add the fields for me to specify the related form(s) and type of variant.</value>
+  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="LexiconBrowseDialogColumnDefinitions" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\LexiconBrowseDialogColumnDefinitions.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="LexiconBrowseOverrides" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\LexiconBrowseOverrides.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="LexiconBrowseParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\LexiconBrowseParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="LexiconEditRecordDocViewParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\LexiconEditRecordDocViewParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
   </data>
   <data name="LexiconEditRecordEditViewParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\LexiconEditRecordEditViewParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
+  </data>
+  <data name="MatchingEntriesParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\MatchingEntriesParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
+  </data>
+  <data name="Merge_With_Entry" xml:space="preserve">
+    <value>_Merge with entry...</value>
+  </data>
+  <data name="Merge_With_Entry_Tooltip" xml:space="preserve">
+    <value>Merge current lexical entry into another entry.</value>
+  </data>
+  <data name="Show_DictionaryPubPreview" xml:space="preserve">
+    <value>Show Dictionary Preview</value>
+  </data>
+  <data name="Show_DictionaryPubPreview_ToolTip" xml:space="preserve">
+    <value>Display the dictionary entry for this lexeme above the Lexicon Edit pane.</value>
+  </data>
+  <data name="Show_Entry_In_Concordance" xml:space="preserve">
+    <value>Show Entry in Concordance</value>
   </data>
 </root>

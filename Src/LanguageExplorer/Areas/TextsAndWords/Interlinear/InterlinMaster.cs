@@ -655,7 +655,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (paneBarAsControl == null) return;
 			var parentAsPaneBarContainer = paneBarAsControl.Parent as IPaneBarContainer;
 			if (parentAsPaneBarContainer == null) return;
+#if RANDYTODO
+			// TODO: This is the only known caller of PaneBarContainer's public RefreshPaneBar method.
+			// TODO: That method has gone away, so the responsibility needs to shift here or its tool.
 			parentAsPaneBarContainer.RefreshPaneBar();
+#endif
 		}
 
 		/// <summary>

@@ -37,6 +37,7 @@ M: SIL.FieldWorks.XWorks.RecordClerk LanguageExplorer.Areas.Lists.ListsArea::Cre
 M: SIL.FieldWorks.Common.FwUtils.IRecordBar LanguageExplorer.Impls.FwMainWnd::get_RecordBarControl()
 M: LanguageExplorer.Areas.MultiPane LanguageExplorer.Areas.MultiPaneFactory::CreateNestedMultiPane(SIL.CoreImpl.FlexComponentParameters,LanguageExplorer.Areas.MultiPaneParameters)
 M: LanguageExplorer.Areas.MultiPane LanguageExplorer.Areas.MultiPaneFactory::CreateInMainCollapsingSplitContainer(SIL.CoreImpl.FlexComponentParameters,SIL.FieldWorks.Common.FwUtils.ICollapsingSplitContainer,LanguageExplorer.Areas.MultiPaneParameters)
+M: System.Windows.Forms.ContextMenuStrip LanguageExplorer.Areas.Lexicon.Tools.Edit.LexiconEditTool::CreateContextMenuStrip()
 
 # variable is added to Controls and disposed there
 M: System.Void LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChart::BuildTopStuffUI()

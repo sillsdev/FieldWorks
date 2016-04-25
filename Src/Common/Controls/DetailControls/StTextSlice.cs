@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (ichLim > ichMin)
 			{
 				LexEntryUi.DisplayOrCreateEntry(m_cache, hvo, tag, ws, ichMin, ichLim, this,
-					PropertyTable, Publisher, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "UserHelpFile");
+					PropertyTable, Publisher, Subscriber, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "UserHelpFile");
 				return true;
 			}
 			return false;
@@ -204,7 +204,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				ITsString tssForm = tsb.GetString();
 				using (var dlg = new InsertEntryDlg())
 				{
-					dlg.SetDlgInfo(m_cache, tssForm, PropertyTable, Publisher);
+					dlg.SetDlgInfo(m_cache, tssForm, PropertyTable, Publisher, Subscriber);
 					if (dlg.ShowDialog(this) == DialogResult.OK)
 					{
 						// is there anything special we want to do?

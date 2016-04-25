@@ -100,7 +100,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						// assume the owner is the entry (e.g. owner of LexEntryRef)
 						le = m_obj.OwnerOfClass<ILexEntry>();
 					}
-					dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, le);
+					dlg.SetDlgInfo(m_cache, PropertyTable, Publisher, Subscriber, le);
 					String str = ShowHelp.RemoveSpaces(this.Slice.Label);
 					dlg.SetHelpTopic("khtpChooseLexicalEntryOrSense-" + str);
 					if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
@@ -130,7 +130,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
 					chooser.InitializeExtras(null, PropertyTable);
 					chooser.AddLink(LanguageExplorerResources.ksAddAComponent, ReallySimpleListChooser.LinkType.kDialogLink,
-						new AddPrimaryLexemeChooserCommand(m_cache, false, null, PropertyTable, Publisher, m_obj, FindForm()));
+						new AddPrimaryLexemeChooserCommand(m_cache, false, null, PropertyTable, Publisher, Subscriber, m_obj, FindForm()));
 					DialogResult res = chooser.ShowDialog();
 					if (DialogResult.Cancel == res)
 						return;
@@ -148,7 +148,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						using (var dlg = new EntryGoDlg())
 						{
 							dlg.StartingEntry = m_obj as ILexEntry ?? (m_obj as ILexSense).Entry;
-							dlg.SetDlgInfo(m_cache, null, PropertyTable, Publisher);
+							dlg.SetDlgInfo(m_cache, null, PropertyTable, Publisher, Subscriber);
 							String str = ShowHelp.RemoveSpaces(Slice.Label);
 							dlg.SetHelpTopic("khtpChooseComplexFormEntryOrSense-" + str);
 							dlg.SetOkButtonText(LanguageExplorerResources.ksMakeComponentOf);
@@ -208,7 +208,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				chooser.InitializeExtras(null, PropertyTable);
 				// Step 3 of LT-11155:
 				chooser.AddLink(LanguageExplorerResources.ksAddAComplexForm, ReallySimpleListChooser.LinkType.kDialogLink,
-					new AddComplexFormChooserCommand(m_cache, false, null, PropertyTable, Publisher, m_obj, FindForm()));
+					new AddComplexFormChooserCommand(m_cache, false, null, PropertyTable, Publisher, Subscriber, m_obj, FindForm()));
 				DialogResult res = chooser.ShowDialog();
 				if (DialogResult.Cancel == res)
 					return;

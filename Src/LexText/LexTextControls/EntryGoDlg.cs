@@ -90,7 +90,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			SearchEngine searchEngine = SearchEngine.Get(m_propertyTable, "EntryGoSearchEngine", () => new EntryGoSearchEngine(cache));
 
-			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_propertyTable, configNode,
+			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_propertyTable, m_publisher, m_subscriber, configNode,
 				searchEngine);
 
 			m_matchingObjectsBrowser.ColumnsChanged += m_matchingObjectsBrowser_ColumnsChanged;
@@ -229,7 +229,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				string form = m_tbForm.Text.Trim();
 				ITsString tssFormTrimmed = TsStringUtils.MakeTss(form, TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0));
-				dlg.SetDlgInfo(m_cache, tssFormTrimmed, m_propertyTable, m_publisher);
+				dlg.SetDlgInfo(m_cache, tssFormTrimmed, m_propertyTable, m_publisher, m_subscriber);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					ILexEntry entry;

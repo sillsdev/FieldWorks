@@ -283,10 +283,6 @@
     <value>Empty</value>
     <comment>header for table column</comment>
   </data>
-  <data name="ksEntriesHaveBeenMerged" xml:space="preserve">
-    <value>The two entries have been merged.</value>
-    <comment>message for message box</comment>
-  </data>
   <data name="ksEntryXMergedIntoSel" xml:space="preserve">
     <value>Entry "{0}" will be merged into the entry you select above,{1}resulting in one entry.</value>
     <comment>{1} is a newline character, and is optional</comment>
@@ -391,10 +387,6 @@
   </data>
   <data name="ksMergeEntry" xml:space="preserve">
     <value>Merge Entry</value>
-  </data>
-  <data name="ksMergeReport" xml:space="preserve">
-    <value>Merge Report</value>
-    <comment>caption for message box</comment>
   </data>
   <data name="ksMessagesFromLoading" xml:space="preserve">
     <value>These messages came from loading the processed data into the FieldWorks project.</value>
@@ -501,9 +493,6 @@
   <data name="ksRedoInsertInflectionFeature" xml:space="preserve">
     <value>Redo Insert Inflection Feature</value>
   </data>
-  <data name="ksRedoMergeEntry" xml:space="preserve">
-    <value>Redo Merge Entry</value>
-  </data>
   <data name="ksRedoSetX" xml:space="preserve">
     <value>Redo Set {0}</value>
   </data>
@@ -592,9 +581,6 @@
   </data>
   <data name="ksUndoInsertInflectionFeature" xml:space="preserve">
     <value>Undo Insert Inflection Feature</value>
-  </data>
-  <data name="ksUndoMergeEntry" xml:space="preserve">
-    <value>Undo Merge Entry</value>
   </data>
   <data name="ksUndoSetX" xml:space="preserve">
     <value>Undo Set {0}</value>

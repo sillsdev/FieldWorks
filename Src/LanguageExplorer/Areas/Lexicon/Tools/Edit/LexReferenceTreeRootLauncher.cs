@@ -163,7 +163,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				};
 				//This method is only called when we are Replacing the
 				//tree root of a Whole/Part lexical relation
-				dlg.SetDlgInfo(m_cache, wp, PropertyTable, Publisher);
+				dlg.SetDlgInfo(m_cache, wp, PropertyTable, Publisher, Subscriber);
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 				{

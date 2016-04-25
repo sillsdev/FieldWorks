@@ -245,17 +245,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		internal RecordClerk CreateClerk(bool loadList)
-		{
-#if RANDYTODO
-			var clerk = RecordClerkFactory.CreateClerk(PropertyTable, Publisher, Subscriber, loadList);
-			clerk.Editable = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParametersElement, "allowInsertDeleteRecord", true);
-			return clerk;
-#else
-			return null;
-#endif
-		}
-
 		/// <summary>
 		/// Get/Set the Clerk used by the view.
 		/// </summary>
@@ -265,7 +254,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				return m_clerk = ExistingClerk ?? CreateClerk(true);
+				return m_clerk;
 			}
 			set
 			{
@@ -291,14 +280,7 @@ namespace SIL.FieldWorks.XWorks
 
 				if (m_informationBar != null)
 				{
-					if (m_informationBar == value)
-					{
-						Console.WriteLine("It is the same one.");
-					}
-					else
-					{
-						m_informationBar.Dispose();
-					}
+					throw new NotSupportedException("Don't even 'think' of setting it more than once!");
 				}
 				m_informationBar = value as UserControl;
 			}

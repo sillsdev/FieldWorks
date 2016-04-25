@@ -24,8 +24,6 @@ namespace LanguageExplorer.Controls.PaneBar
 	/// </summary>
 	internal sealed partial class PaneBar : UserControl, IPaneBar
 	{
-		private Hashtable m_propertiesToWatch = new Hashtable();
-
 		/// <summary />
 		public PaneBar()
 		{
@@ -33,8 +31,6 @@ namespace LanguageExplorer.Controls.PaneBar
 			Dock = DockStyle.Top;
 			AccessibleName = @"LanguageExplorer.Controls.PaneBar";
 		}
-
-
 
 		#region Implementation of IPaneBar
 

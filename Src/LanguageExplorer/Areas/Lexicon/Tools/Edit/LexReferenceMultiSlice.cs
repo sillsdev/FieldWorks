@@ -634,7 +634,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					lrt.ReverseName.BestAnalysisAlternative.Text),
 					m_btnText = LanguageExplorerResources.ks_Add
 				};
-				dlg.SetDlgInfo(m_cache, wp, PropertyTable, Publisher);
+				dlg.SetDlgInfo(m_cache, wp, PropertyTable, Publisher, Subscriber);
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 					first = dlg.SelectedObject;
@@ -716,7 +716,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				Debug.Assert(objEntry.ClassID == LexEntryTags.kClassId);
 				dlg.StartingEntry = objEntry as ILexEntry;
 
-				dlg.SetDlgInfo(m_cache, wp, PropertyTable, Publisher);
+				dlg.SetDlgInfo(m_cache, wp, PropertyTable, Publisher, Subscriber);
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 					first = dlg.SelectedObject;

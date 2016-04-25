@@ -30,9 +30,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		/// <summary />
 		public AddComplexFormChooserCommand(FdoCache cache, bool fCloseBeforeExecuting,
-			string sLabel, IPropertyTable propertyTable, IPublisher publisher, ICmObject lexEntry, /* Why ICmObject? */
+			string sLabel, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ICmObject lexEntry, /* Why ICmObject? */
 			Form parentWindow)
-			: base(cache, fCloseBeforeExecuting, sLabel, propertyTable, publisher)
+			: base(cache, fCloseBeforeExecuting, sLabel, propertyTable, publisher, subscriber)
 		{
 			m_lexEntry = lexEntry as ILexEntry;
 			if (m_lexEntry == null)
@@ -53,7 +53,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				using (var dlg = new EntryGoDlg())
 				{
-					dlg.SetDlgInfo(m_cache, null, m_propertyTable, m_publisher);
+					dlg.SetDlgInfo(m_cache, null, m_propertyTable, m_publisher, m_subscriber);
 					dlg.SetHelpTopic("khtpChooseLexicalEntryOrSense"); // TODO: When LT-11318 is fixed, use its help topic ID.
 					dlg.SetOkButtonText(LanguageExplorerResources.ksMakeComponentOf);
 					if (dlg.ShowDialog(m_parentWindow) == DialogResult.OK)

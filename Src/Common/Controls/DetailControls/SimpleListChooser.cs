@@ -174,7 +174,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							"Linguistics/Morphology/TemplateTable");
 						AddLink(sLabel, LinkType.kSimpleLink,
 							new MakeInflAffixSlotChooserCommand(m_cache, true, sTitle, hvoPos,
-							fOptional, m_propertyTable, m_publisher));
+							fOptional, m_propertyTable, m_publisher, m_subscriber));
 					}
 					break;
 				default:

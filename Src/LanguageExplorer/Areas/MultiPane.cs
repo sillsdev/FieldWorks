@@ -37,23 +37,18 @@ namespace LanguageExplorer.Areas
 	/// </summary>
 	internal class MultiPane : CollapsingSplitContainer, IMainContentControl
 	{
-		/// <summary />
-		internal event EventHandler ShowFirstPaneChanged;
-
 		private readonly string m_areaMachineName;
 		private readonly string m_id;
 		// When its superclass gets switched to the new SplitContainer class. it has to implement IMainUserControl itself.
 		private IContainer components;
 		private Size m_parentSizeHint;
-		private bool m_showingFirstPane;
-		private string m_propertyControllingVisibilityOfFirstPane;
 		private string m_defaultPrintPaneId;
-		private string m_defaultFocusControl;
-		//the name of the tool which this MultiPane is a part of.
-		private string m_toolName;
-		private string m_defaultFixedPaneSizePoints;
-		private string m_persistContext;
-		private string m_label;
+		private readonly string m_defaultFocusControl;
+		private readonly string m_defaultFixedPaneSizePoints;
+		private readonly string m_persistContext;
+		private readonly string m_label;
+		// Set to true when sufficiently initialized that it makes sense to persist changes to split position.
+		private bool m_fOkToPersistSplit;
 
 		/// <summary>
 		/// Constructor
@@ -72,7 +67,6 @@ namespace LanguageExplorer.Areas
 		internal MultiPane(MultiPaneParameters parameters)
 			: this()
 		{
-			m_toolName = parameters.ToolMachineName ?? string.Empty;
 			m_areaMachineName = parameters.AreaMachineName;
 			m_id = parameters.Id ?? "NOID";
 			m_defaultFixedPaneSizePoints = parameters.DefaultFixedPaneSizePoints ?? "50%";
@@ -80,7 +74,6 @@ namespace LanguageExplorer.Areas
 			m_defaultFocusControl = parameters.DefaultFocusControl ?? string.Empty;
 			m_persistContext = parameters.PersistContext;
 			m_label = parameters.Label;
-			m_propertyControllingVisibilityOfFirstPane = string.Format("Show_{0}", m_id);
 
 			SecondCollapseZone = parameters.SecondCollapseZone;
 			Orientation = parameters.Orientation;
@@ -94,36 +87,6 @@ namespace LanguageExplorer.Areas
 			SecondControl = parameters.SecondControlParameters.Control;
 			SecondLabel = parameters.SecondControlParameters.Label;
 			SecondControl.Dock = DockStyle.Fill;
-		}
-
-
-		/// <summary />
-		internal string PropertyControllingVisibilityOfFirstPane
-		{
-			get { return m_propertyControllingVisibilityOfFirstPane; }
-			set
-			{
-				if (!string.IsNullOrEmpty(m_propertyControllingVisibilityOfFirstPane))
-				{
-					Subscriber.Unsubscribe(m_propertyControllingVisibilityOfFirstPane, PropertyControllingVisibilityOfFirstPane_Changed);
-				}
-				m_propertyControllingVisibilityOfFirstPane = value;
-				m_showingFirstPane = string.IsNullOrEmpty(value);
-				Subscriber.Subscribe(m_propertyControllingVisibilityOfFirstPane, PropertyControllingVisibilityOfFirstPane_Changed);
-			}
-		}
-
-		private void PropertyControllingVisibilityOfFirstPane_Changed(object newValue)
-		{
-			var showIt = (bool) newValue;
-			if (m_showingFirstPane == showIt)
-			{
-				return; // No change.
-			}
-			m_showingFirstPane = string.IsNullOrEmpty(m_propertyControllingVisibilityOfFirstPane) && showIt;
-			Panel1Collapsed = !m_showingFirstPane;
-			if (ShowFirstPaneChanged != null)
-				ShowFirstPaneChanged(this, new EventArgs());
 		}
 
 		/// <summary />
@@ -149,10 +112,6 @@ namespace LanguageExplorer.Areas
 			{
 				if(components != null)
 					components.Dispose();
-				if (!string.IsNullOrWhiteSpace(m_propertyControllingVisibilityOfFirstPane))
-				{
-					Subscriber.Unsubscribe(m_propertyControllingVisibilityOfFirstPane, PropertyControllingVisibilityOfFirstPane_Changed);
-				}
 			}
 
 			base.Dispose(disposing);
@@ -337,9 +296,6 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		// Set to true when sufficiently initialized that it makes sense to persist changes to split position.
-		private bool m_fOkToPersistSplit = false;
-
 		/// <summary />
 		protected override void OnSplitterMoved(object sender, SplitterEventArgs e)
 		{
@@ -349,7 +305,7 @@ namespace LanguageExplorer.Areas
 			base.OnSplitterMoved(sender, e);
 
 			// Persist new position.
-			if (PropertyTable != null && m_fOkToPersistSplit)
+			if (m_fOkToPersistSplit)
 			{
 				PropertyTable.SetProperty(SplitterDistancePropertyName, SplitterDistance, true, false);
 			}
@@ -424,40 +380,6 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-
-#if RANDYTO
-		/// summary>
-		/// Receives the broadcast message "PropertyChanged." If it is the ShowFirstPane
-		/// property, adjust.
-		/// /summary>
-		public void OnPropertyChanged(string name)
-		{
-			CheckDisposed();
-			if (PropertyTable.GetValue("ToolForAreaNamed_lexicon", "") != m_toolName)
-			{
-				return;
-			}
-			if (name == "ActiveClerkSelectedObject" || name == "ToolForAreaNamed_lexicon")
-			{
-				SetFocusInDefaultControl();
-			}
-			if (name == m_propertyControllingVisibilityOfFirstPane)
-			{
-				bool fShowFirstPane = PropertyTable.GetValue(m_propertyControllingVisibilityOfFirstPane, true);
-				if (fShowFirstPane == m_showingFirstPane)
-					return; // just in case it didn't really change
-
-				m_showingFirstPane = fShowFirstPane;
-
-				Panel1Collapsed = !fShowFirstPane;
-
-				if (ShowFirstPaneChanged != null)
-					ShowFirstPaneChanged(this, new EventArgs());
-			}
-
-		}
-#endif
-
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
@@ -525,23 +447,8 @@ namespace LanguageExplorer.Areas
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			IsInitializing = true;
-			if (m_propertyControllingVisibilityOfFirstPane == null)
-			{
-				m_showingFirstPane = false;
-			}
-			else
-			{
-				m_showingFirstPane = true; // default
-				// NOTE: we don't actually want to create and persist this property if it's not already loaded.
-				bool showingFirstPane;
-				if (PropertyTable.TryGetValue(m_propertyControllingVisibilityOfFirstPane, SettingsGroup.LocalSettings, out showingFirstPane))
-				{
-					m_showingFirstPane = showingFirstPane;
-				}
-			}
-			Panel1Collapsed = !m_showingFirstPane;
-			IsInitializing = false;
+			Panel1Collapsed = !PropertyTable.GetValue(string.Format("Show_{0}", m_id), true);
+
 			m_fOkToPersistSplit = true;
 		}
 

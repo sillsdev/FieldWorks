@@ -1962,7 +1962,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						{
 							var entOld = (ILexEntry) sliceObj;
 							dlg.SetHelpTopic("khtpInsertVariantDlg");
-							dlg.SetDlgInfo(cache, PropertyTable, Publisher, entOld);
+							dlg.SetDlgInfo(cache, PropertyTable, Publisher, Subscriber, entOld);
 							if (dlg.ShowDialog() == DialogResult.OK && dlg.NewlyCreatedVariantEntryRefResult)
 							{
 								return entOld.VariantFormEntryBackRefs.Count();

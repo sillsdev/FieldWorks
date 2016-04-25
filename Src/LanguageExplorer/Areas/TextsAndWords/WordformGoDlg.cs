@@ -55,7 +55,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			SearchEngine searchEngine = SearchEngine.Get(m_propertyTable, "WordformGoSearchEngine", () => new WordformGoSearchEngine(cache));
 
-			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_propertyTable, configNode,
+			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_propertyTable, m_publisher, m_subscriber, configNode,
 				searchEngine);
 
 			// start building index

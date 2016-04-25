@@ -53,8 +53,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		#region Data members
 
 		private FdoCache m_cache;
-		private IPublisher m_publisher;
 		private IPropertyTable m_propertyTable;
+		private IPublisher m_publisher;
+		private ISubscriber m_subscriber;
 		private ILexEntry m_entry;
 		private IMoMorphType m_morphType;
 		private ILexEntryType m_complexType;
@@ -565,8 +566,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 				SearchEngine searchEngine = SearchEngine.Get(m_propertyTable, "InsertEntrySearchEngine", () => new InsertEntrySearchEngine(cache));
 
-				m_matchingObjectsBrowser.Initialize(cache, stylesheet, m_propertyTable, configNode,
-					searchEngine);
+				m_matchingObjectsBrowser.Initialize(cache, stylesheet, m_propertyTable, m_publisher, m_subscriber, configNode, searchEngine);
 
 				m_cache = cache;
 
@@ -772,12 +772,14 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="tssForm">The initial form to use.</param>
 		/// <param name="propertyTable"></param>
 		/// <param name="publisher">The publisher to use.</param>
-		public void SetDlgInfo(FdoCache cache, ITsString tssForm, IPropertyTable propertyTable, IPublisher publisher)
+		/// <param name="subscriber"></param>
+		public void SetDlgInfo(FdoCache cache, ITsString tssForm, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)
 		{
 			CheckDisposed();
 
 			m_propertyTable = propertyTable; // Must do be fore setting the Mediator prop.
 			m_publisher = publisher;
+			m_subscriber = subscriber;
 			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			if (helpTopicProvider != null)
 			{
