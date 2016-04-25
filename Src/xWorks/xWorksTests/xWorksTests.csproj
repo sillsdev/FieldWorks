@@ -260,15 +260,15 @@
     <Compile Include="ConfiguredXHTMLGeneratorReversalTests.cs" />
     <Compile Include="ConfiguredXHTMLGeneratorTests.cs" />
     <Compile Include="CssGeneratorTests.cs" />
-    <Compile Include="CustomListDlgTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="CustomListDlgTests.cs" />
     <Compile Include="DeleteCustomListTests.cs" />
     <Compile Include="DictionaryConfigManagerTests.cs" />
     <Compile Include="DictionaryConfigurationControllerTests.cs" />
     <Compile Include="DictionaryConfigurationListenerTests.cs" />
     <Compile Include="DictionaryConfigurationManagerControllerTests.cs" />
-    <Compile Include="DictionaryConfigurationMigratorTests.cs" />
+    <Compile Include="DictionaryConfigurationMigrators\DictionaryConfigurationMigratorTests.cs" />
+    <Compile Include="DictionaryConfigurationMigrators\FirstAlphaMigratorTests.cs" />
+    <Compile Include="DictionaryConfigurationMigrators\PreHistoricMigratorTests.cs" />
     <Compile Include="DictionaryConfigurationModelTests.cs" />
     <Compile Include="DictionaryConfigViewerStub.cs" />
     <Compile Include="DictionaryDetailsControllerTests.cs" />
@@ -288,9 +288,7 @@
     <Compile Include="UnicodeCharacterEditingHelperTests.cs" />
     <Compile Include="WordsUsedOnlyElsewhereFilterTests.cs" />
     <Compile Include="XhtmlDocViewTests.cs" />
-    <Compile Include="XWorksAppTestBase.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="XWorksAppTestBase.cs" />
     <Compile Include="..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfo.cs</Link>
     </Compile>
@@ -338,4 +336,5 @@
   <ItemGroup>
     <None Include="gendarme-xWorksTests.ignore" />
   </ItemGroup>
+  <ItemGroup />
 </Project>

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using NUnit.Framework;
 using Palaso.IO;
 using Palaso.Linq;
 using Palaso.TestUtilities;
@@ -18,17 +19,16 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
-using NUnit.Framework;
 using SIL.Utils;
 using XCore;
 
-namespace SIL.FieldWorks.XWorks
+namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 {
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule", Justification="Cache is a reference")]
 	[SuppressMessage("ReSharper", "InconsistentNaming")]
-	public class DictionaryConfigurationMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
+	public class PreHistoricMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		private DictionaryConfigurationMigrator m_migrator;
+		private PreHistoricMigrator m_migrator;
 		private Mediator m_mediator;
 		private FwXApp m_application;
 		private string m_configFilePath;
@@ -65,8 +65,6 @@ namespace SIL.FieldWorks.XWorks
 
 			m_styleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
 
-			m_migrator = new DictionaryConfigurationMigrator(m_mediator);
-
 			m_cf1 = new CustomFieldForTest(Cache, CustomFieldChangedLabel, CustomFieldOriginalName, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"),
 				CellarPropertyType.ReferenceCollection, Guid.Empty);
 			m_cf2 = new CustomFieldForTest(Cache, CustomFieldUnchangedNameAndLabel, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), -1,
@@ -90,6 +88,12 @@ namespace SIL.FieldWorks.XWorks
 			m_application.Dispose();
 			m_mediator.Dispose();
 			FwRegistrySettings.Release();
+		}
+
+		[SetUp]
+		public void SetUp()
+		{
+			m_migrator = new PreHistoricMigrator(Cache, m_mediator);
 		}
 
 		///<summary/>
@@ -586,7 +590,7 @@ namespace SIL.FieldWorks.XWorks
 		public void ConvertLayoutTreeNodeToConfigNode_DisplaySubentriesInParagraph()
 		{
 			const string disabledGuid = "-a0000000-1000-b000-2000-c00000000000";
-			var node = new MockLayoutTreeNode
+			var node = new PreHistoricMigratorTests.MockLayoutTreeNode
 			{
 				m_partName = "LexEntry-Jt-RootSubentriesConfig",
 				EntryType = "complex",
@@ -2029,7 +2033,7 @@ namespace SIL.FieldWorks.XWorks
 			return new DictionaryConfigurationModel
 			{
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode },
-				Version = DictionaryConfigurationMigrator.VersionPre83
+				Version = PreHistoricMigrator.VersionPre83
 			};
 		}
 
@@ -2099,7 +2103,7 @@ namespace SIL.FieldWorks.XWorks
 			var convertedModel = new DictionaryConfigurationModel
 			{
 				Parts = new List<ConfigurableDictionaryNode> { EmptyNode },
-				Version = DictionaryConfigurationMigrator.VersionPre83
+				Version = PreHistoricMigrator.VersionPre83
 			};
 			var sharedNode = new ConfigurableDictionaryNode { Label = SharedSubentries };
 			var currentDefaultModel = DictionaryConfigurationModelTests.CreateSimpleSharingModel(EmptyNode, sharedNode);
@@ -2161,39 +2165,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				File.AppendAllText(tempFwLayoutPath, "LayoutFoo");
 				Assert.That(m_migrator.ConfigsNeedMigratingFromPre83(), "There is an old config, a migration is needed."); // SUT
-			}
-			DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
-		}
-
-		[Test]
-		public void GetConfigsNeedingMigratingFrom83_NeededIfLowerVersionInFwdictconfigFile()
-		{
-			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
-			var newDictConfigLoc = Path.Combine(configSettingsDir, "Dictionary");
-			Directory.CreateDirectory(newDictConfigLoc);
-			Directory.EnumerateFiles(newDictConfigLoc).ForEach(File.Delete);
-			var tempFwLayoutPath = Path.Combine(newDictConfigLoc, "SomeConfig" + DictionaryConfigurationModel.FileExtension);
-			using(TempFile.WithFilename(tempFwLayoutPath))
-			{
-				new DictionaryConfigurationModel { Version = 0, FilePath = tempFwLayoutPath }.Save();
-				Assert.AreEqual(1, m_migrator.GetConfigsNeedingMigratingFrom83().Count, "There is one config needing migrating."); // SUT
-			}
-			DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
-		}
-
-		[Test]
-		public void GetConfigsNeedingMigratingFrom83_DoesNotThrowForBadReferencedItems()
-		{
-			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
-			var newDictConfigLoc = Path.Combine(configSettingsDir, "Dictionary");
-			Directory.CreateDirectory(newDictConfigLoc);
-			Directory.EnumerateFiles(newDictConfigLoc).ForEach(File.Delete);
-			var tempFwLayoutPath = Path.Combine(newDictConfigLoc, "SomeConfig" + DictionaryConfigurationModel.FileExtension);
-			using(TempFile.WithFilename(tempFwLayoutPath))
-			{
-				var parts = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode { Label = "Good", ReferenceItem = "Bad" } };
-				new DictionaryConfigurationModel { Version = 0, Parts = parts, FilePath = tempFwLayoutPath }.Save();
-				Assert.DoesNotThrow(() => m_migrator.GetConfigsNeedingMigratingFrom83()); // SUT
 			}
 			DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
 		}
@@ -2382,223 +2353,6 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsTrue(newTypeNode1.IsCustomField, "A custom field should be marked as such after conversion");
 			Assert.IsTrue(newTypeNode1.IsEnabled, "A custom field should be enabled properly.");
 			Assert.AreEqual("Single Sense", newTypeNode1.Label, "A custom field copies its label properly during conversion");
-		}
-
-		[Test]
-		public void MigrateFrom83Alpha_UpdatesVersion()
-		{
-			var alphaModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode() } };
-			m_migrator.MigrateFrom83Alpha(alphaModel); // SUT
-			Assert.AreEqual(DictionaryConfigurationMigrator.VersionCurrent, alphaModel.Version);
-		}
-
-		[Test]
-		public void MigrateFrom83Alpha_ConfigWithVerMinus1GetsMigrated()
-		{
-			var configChild = new ConfigurableDictionaryNode { ReferenceItem = "LexEntry" };
-			var configParent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { configChild } };
-			var configModel = new DictionaryConfigurationModel
-			{
-				Version = DictionaryConfigurationMigrator.VersionPre83, // the original migration code neglected to update the version on completion
-				Parts = new List<ConfigurableDictionaryNode> { configParent }
-			};
-			m_migrator.MigrateFrom83Alpha(configModel);
-			Assert.Null(configChild.ReferenceItem, "Unused ReferenceItem should have been removed");
-		}
-
-		[Test]
-		public void MigrateFrom83Alpha_UpdatesReferencedEntriesToGlossOrSummary()
-		{
-			var configGlossOrSummDefn = new ConfigurableDictionaryNode { Label = "Gloss (or Summary Definition)", FieldDescription = "DefinitionOrGloss" };
-			var configReferencedEntries = new ConfigurableDictionaryNode
-			{
-				Label = "Referenced Entries",
-				FieldDescription = "ConfigReferencedEntries",
-				CSSClassNameOverride = "referencedentries",
-				Children = new List<ConfigurableDictionaryNode> { configGlossOrSummDefn } };
-			var configParent = new ConfigurableDictionaryNode
-			{
-				Label = "Variant Of",
-				Children = new List<ConfigurableDictionaryNode> { configReferencedEntries }
-			};
-			var configDefnOrGloss = new ConfigurableDictionaryNode { Label = "Definition (or Gloss)", FieldDescription = "DefinitionOrGloss" };
-			var configSenses = new ConfigurableDictionaryNode
-			{
-				Label = "Senses",
-				FieldDescription = "SensesOS",
-				CSSClassNameOverride = "senses",
-				Children = new List<ConfigurableDictionaryNode> { configDefnOrGloss }
-			};
-			var configModel = new DictionaryConfigurationModel
-			{
-				Version = 3,
-				Parts = new List<ConfigurableDictionaryNode> { configParent, configSenses }
-			};
-			m_migrator.MigrateFrom83Alpha(configModel);
-			Assert.AreEqual("GlossOrSummary", configGlossOrSummDefn.FieldDescription,
-				"'Gloss (or Summary Definition)' Field Description should have been updated");
-			Assert.AreEqual("DefinitionOrGloss", configDefnOrGloss.FieldDescription,
-				"'Definition (or Gloss)' should not change fields");
-		}
-
-		[Test]
-		public void MigrateFrom83Alpha_RemovesDeadReferenceItems()
-		{
-			var configChild = new ConfigurableDictionaryNode { ReferenceItem = "LexEntry" };
-			var configParent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { configChild } };
-			var configModel = new DictionaryConfigurationModel { Version = 1, Parts = new List<ConfigurableDictionaryNode> { configParent } };
-			m_migrator.MigrateFrom83Alpha(configModel);
-			Assert.Null(configChild.ReferenceItem, "Unused ReferenceItem should have been removed");
-		}
-
-		[Test]
-		public void MigrateFrom83Alpha_UpdatesExampleSentenceLabels()
-		{
-			var configExampleChild = new ConfigurableDictionaryNode { Label = "Example", FieldDescription = "Example"};
-			var configExampleParent = new ConfigurableDictionaryNode { Label = "Examples", FieldDescription = "ExamplesOS" , Children = new List<ConfigurableDictionaryNode> { configExampleChild } };
-			var configParent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { configExampleParent } };
-			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
-			m_migrator.MigrateFrom83Alpha(configModel);
-			Assert.AreEqual("Example Sentence", configExampleChild.Label);
-		}
-
-		[Test]
-		public void MigrateFrom83Alpha_UpdatesExampleOptions()
-		{
-			var configExamplesNode = new ConfigurableDictionaryNode { Label = "Examples", FieldDescription = "ExamplesOS" };
-			var configParent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { configExamplesNode } };
-			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
-			m_migrator.MigrateFrom83Alpha(configModel);
-			Assert.AreEqual(ConfigurableDictionaryNode.StyleTypes.Paragraph, configExamplesNode.StyleType);
-			Assert.AreEqual("Bulleted List", configExamplesNode.Style);
-			Assert.IsTrue(configExamplesNode.DictionaryNodeOptions is DictionaryNodeComplexFormOptions, "wrong type");
-			var options = (DictionaryNodeComplexFormOptions)configExamplesNode.DictionaryNodeOptions;
-			Assert.IsTrue(options.DisplayEachComplexFormInAParagraph, "True was not set");
-		}
-
-		[Test]
-		public void MigrateFrom83Alpha_UpdatesBibliographyLabels()
-		{
-			var configBiblioEntryNode = new ConfigurableDictionaryNode { Label = "Bibliography", FieldDescription = "Owner", SubField = "Bibliography"};
-			var configBiblioSenseNode = new ConfigurableDictionaryNode { Label = "Bibliography", FieldDescription = "Bibliography"};
-			var configBiblioParent = new ConfigurableDictionaryNode { Label = "Referenced Senses", FieldDescription = "ReferringSenses", Children = new List<ConfigurableDictionaryNode> { configBiblioSenseNode, configBiblioEntryNode } };
-			var configParent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { configBiblioParent } };
-			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
-			m_migrator.MigrateFrom83Alpha(configModel);
-			Assert.AreEqual("Bibliography (Entry)", configBiblioEntryNode.Label);
-			Assert.AreEqual("Bibliography (Sense)", configBiblioSenseNode.Label);
-		}
-
-		[Test]
-		public void MigrateFrom83Alpha_UpdatesHeadWordRefs()
-		{
-			var cpFormChild = new ConfigurableDictionaryNode { Label = "Complex Form", FieldDescription = "OwningEntry", SubField = "MLHeadWord"};
-			var referenceHwChild = new ConfigurableDictionaryNode { Label = "Referenced Headword", FieldDescription = "HeadWord" };
-			var configParent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { referenceHwChild, cpFormChild } };
-			var configModel = new DictionaryConfigurationModel { Version = 2, Parts = new List<ConfigurableDictionaryNode> { configParent } };
-			m_migrator.MigrateFrom83Alpha(configModel);
-			Assert.AreEqual("HeadWordRef", referenceHwChild.FieldDescription);
-			Assert.AreEqual("HeadWordRef", cpFormChild.SubField);
-		}
-
-		[Test]
-		public void MigrateFrom83Alpha_UpdatesReversalHeadwordRefs()
-		{
-			var cpFormChild = new ConfigurableDictionaryNode { Label = "Complex Form", FieldDescription = "OwningEntry", SubField = "MLHeadWord" };
-			var referenceHwChild = new ConfigurableDictionaryNode { Label = "Referenced Headword", FieldDescription = "HeadWord" };
-			var configParent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { referenceHwChild, cpFormChild } };
-			var configModel = new DictionaryConfigurationModel { Version = 2, WritingSystem = "en", Parts = new List<ConfigurableDictionaryNode> { configParent } };
-			m_migrator.MigrateFrom83Alpha(configModel);
-			Assert.AreEqual("ReversalName", referenceHwChild.FieldDescription);
-			Assert.AreEqual("ReversalName", cpFormChild.SubField);
-		}
-
-		[Test]
-		public void MigrateFrom83Alpha_UpdatesSharedItems()
-		{
-			var cpFormChild = new ConfigurableDictionaryNode { Label = "Complex Form", FieldDescription = "OwningEntry", SubField = "MLHeadWord" };
-			var referenceHwChild = new ConfigurableDictionaryNode { Label = "Referenced Headword", FieldDescription = "HeadWord" };
-			var configParent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { referenceHwChild, cpFormChild } };
-			var configModel = new DictionaryConfigurationModel
-			{
-				Version = 2,
-				WritingSystem = "en",
-				Parts = new List<ConfigurableDictionaryNode>(),
-				SharedItems = new List<ConfigurableDictionaryNode> { configParent }
-			};
-			m_migrator.MigrateFrom83Alpha(configModel);
-			Assert.AreEqual("ReversalName", referenceHwChild.FieldDescription);
-			Assert.AreEqual("ReversalName", cpFormChild.SubField);
-		}
-
-		[Test]
-		public void MigrateFrom83Alpha_MissingReversalWsFilledIn()
-		{
-			Cache.LangProject.AddToCurrentAnalysisWritingSystems((IWritingSystem) Cache.WritingSystemFactory.get_Engine("ta-fonipa"));
-			var configModelEn = new DictionaryConfigurationModel { Version = 2, Parts = new List<ConfigurableDictionaryNode>(),
-				Label = "English", FilePath = Path.Combine("ReversalIndex", "English.fwdictconfig")};
-			var configModelTamil = new DictionaryConfigurationModel { Version = 2, Parts = new List<ConfigurableDictionaryNode>(),
-				Label = "Tamil (International Phonetic Alphabet)", FilePath = Path.Combine("ReversalIndex", "Tamil.fwdictconfig") };
-			m_migrator.MigrateFrom83Alpha(configModelEn);
-			Assert.AreEqual("en", configModelEn.WritingSystem);
-			m_migrator.MigrateFrom83Alpha(configModelTamil);
-			Assert.AreEqual("ta__IPA", configModelTamil.WritingSystem);
-		}
-
-		[Test]
-		public void MigrateFrom83Alpha_MissingReversalWsFilledIn_NonReversalsIgnored()
-		{
-			// This covers the unlikely case where a non-reversal configuration is named after a language
-			var configModelRoot = new DictionaryConfigurationModel { Version = 2, Parts = new List<ConfigurableDictionaryNode>(),
-				Label = "English", FilePath = Path.Combine("NotReversalIndex", "English.fwdictconfig") };
-			m_migrator.MigrateFrom83Alpha(configModelRoot);
-			Assert.Null(configModelRoot.WritingSystem, "The WritingSystem should not be filled in for configurations that aren't for reversal");
-		}
-
-		[Test]
-		public void MigrateFrom83Alpha_Pre83ReversalCopiesGrabNameFromFile()
-		{
-			// This test case handles advanced users who made copies pre 8.3 and have used the alpha
-			var configModelRoot = new DictionaryConfigurationModel
-			{
-				Version = 2,
-				Parts = new List<ConfigurableDictionaryNode>(),
-				Label = "My Copy",
-				FilePath = Path.Combine("ReversalIndex", "My Copy-English-#Engl464.fwdictconfig")
-			};
-			m_migrator.MigrateFrom83Alpha(configModelRoot);
-			Assert.AreEqual("en", configModelRoot.WritingSystem, "English should have been parsed out of the filename and used to set the WritingSystem");
-		}
-
-		[Test]
-		public void MigrateFrom83Alpha_ExtractsWritingSystemOptionsFromReferencedSenseOptions()
-		{
-			DictionaryConfigurationModel model;
-			using (var modelFile = new TempFile(new[]
-			{
-				DictionaryConfigurationModelTests.XmlOpenTagsThruHeadword, @"
-				<ReferringSenseOptions>
-					<WritingSystemOptions writingSystemType=""vernacular"" displayWSAbreviation=""true"">
-						<Option id=""vernacular"" isEnabled=""true"" />
-					</WritingSystemOptions>
-					<SenseOptions numberStyle=""Sense-Reference-Number"" numberBefore="" "" numberingStyle=""%O"" numberAfter="""" numberSingleSense=""false"" showSingleGramInfoFirst=""false"" displayEachSenseInParagraph=""false"" />
-				</ReferringSenseOptions>",
-				DictionaryConfigurationModelTests.XmlCloseTagsFromHeadword
-			}))
-			{
-				model = new DictionaryConfigurationModel(modelFile.Path, Cache);
-			}
-
-			// SUT
-			m_migrator.MigrateFrom83Alpha(model);
-			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
-			Assert.IsInstanceOf(typeof(DictionaryNodeWritingSystemOptions), testNodeOptions);
-			var wsOptions = (DictionaryNodeWritingSystemOptions)testNodeOptions;
-			Assert.IsTrue(wsOptions.DisplayWritingSystemAbbreviations);
-			Assert.AreEqual(DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular, wsOptions.WsType);
-			Assert.AreEqual(1, wsOptions.Options.Count);
-			Assert.AreEqual("vernacular", wsOptions.Options[0].Id);
-			Assert.IsTrue(wsOptions.Options[0].IsEnabled);
 		}
 
 		#region Helper
