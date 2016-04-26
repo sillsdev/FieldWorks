@@ -67,9 +67,37 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					goto case 4;
 				case 4:
 					HandleOptionsChanges(allParts, 4);
+					HandleCssClassChanges(allParts, 4);
 					break;
 			}
 			alphaModel.Version = DictionaryConfigurationMigrator.VersionCurrent;
+		}
+
+		private static void HandleCssClassChanges(List<ConfigurableDictionaryNode> parts, int version)
+		{
+			foreach (var node in parts)
+			{
+				switch (version)
+				{
+					case 4:
+						ReplaceTranslationsCssClass(node, n => n.FieldDescription == "TranslationsOC");
+						break;
+				}
+			}
+		}
+
+		private static void ReplaceTranslationsCssClass(ConfigurableDictionaryNode node, Func<ConfigurableDictionaryNode, bool> match)
+		{
+			if (match(node))
+			{
+				node.CSSClassNameOverride = "translationcontents";
+			}
+			if (node.Children == null)
+				return;
+			foreach (var child in node.Children)
+			{
+				ReplaceTranslationsCssClass(child, match);
+			}
 		}
 
 		private static void HandleOptionsChanges(List<ConfigurableDictionaryNode> parts, int version)

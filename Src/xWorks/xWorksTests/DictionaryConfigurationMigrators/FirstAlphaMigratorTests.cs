@@ -251,5 +251,15 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.AreEqual("vernacular", wsOptions.Options[0].Id);
 			Assert.IsTrue(wsOptions.Options[0].IsEnabled);
 		}
+		[Test]
+		public void MigrateFrom83Alpha_UpdatesTranslationsCssClass()
+		{
+			var configTranslationsChild = new ConfigurableDictionaryNode { Label = "Translations", FieldDescription = "TranslationsOC" };
+			var configExampleParent = new ConfigurableDictionaryNode { Label = "Examples", FieldDescription = "ExamplesOS", Children = new List<ConfigurableDictionaryNode> { configTranslationsChild } };
+			var configParent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { configExampleParent } };
+			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
+			m_migrator.MigrateFrom83Alpha(configModel);
+			Assert.AreEqual("translationcontents", configTranslationsChild.CSSClassNameOverride);
+		}
 	}
 }
