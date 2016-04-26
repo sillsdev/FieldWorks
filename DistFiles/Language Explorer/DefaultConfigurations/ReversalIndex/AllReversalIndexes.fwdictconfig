@@ -296,7 +296,7 @@
 						<Option id="all vernacular" isEnabled="true" />
 					</WritingSystemOptions>
 				</ConfigurationItem>
-				<ConfigurationItem name="Translations" isEnabled="true" field="TranslationsOC" cssClassNameOverride="translations">
+				<ConfigurationItem name="Translations" isEnabled="true" field="TranslationsOC" cssClassNameOverride="translationcontents">
 					<ConfigurationItem name="Type" isEnabled="false" after=" " field="TypeRA" cssClassNameOverride="type">
 						<ConfigurationItem name="Abbreviation" isEnabled="false" between=" " field="Abbreviation">
 							<WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
@@ -871,7 +871,7 @@
 							<Option id="all vernacular" isEnabled="true" />
 						</WritingSystemOptions>
 					</ConfigurationItem>
-					<ConfigurationItem name="Translations" isEnabled="true" field="TranslationsOC" cssClassNameOverride="translations">
+					<ConfigurationItem name="Translations" isEnabled="true" field="TranslationsOC" cssClassNameOverride="translationcontents">
 						<ConfigurationItem name="Type" isEnabled="false" after=" " field="TypeRA" cssClassNameOverride="type">
 							<ConfigurationItem name="Abbreviation" isEnabled="false" between=" " field="Abbreviation">
 								<WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
