@@ -35,14 +35,18 @@ namespace SIL.FieldWorks.XWorks
 			return entries.Length;
 		}
 
-		public int CountReversalIndexEntries(IEnumerable<string> selectedReversalIndexes)
+		/// <summary>
+		/// Produce a table of reversal index ShortNames and the count of the entries in each of them.
+		/// The reversal indexes included will be limited to those ShortNames specified in selectedReversalIndexes.
+		/// </summary>
+		internal static Dictionary<string,int> GetCountsOfReversalIndexes(FdoCache cache, IEnumerable<string> selectedReversalIndexes)
 		{
-			// TODO: we need to add some logic to retrive reversal entry based on Selected publication in future.
-
-			return Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances()
-				.Select(repo => Cache.ServiceLocator.GetObject(repo.Guid) as IReversalIndex)
+			var relevantReversalIndexesAndTheirCounts = cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances()
+				.Select(repo => cache.ServiceLocator.GetObject(repo.Guid) as IReversalIndex)
 				.Where(reversalindex => reversalindex != null && selectedReversalIndexes.Contains(reversalindex.ShortName))
-				.Sum(reversalindex => reversalindex.EntriesOC.Count);
+				.ToDictionary(reversalIndex => reversalIndex.ShortName, reversalIndex => reversalIndex.EntriesOC.Count);
+
+			return relevantReversalIndexesAndTheirCounts;
 		}
 
 		public void ExportDictionaryContent(string xhtmlPath, DictionaryConfigurationModel configuration = null, IThreadedProgress progress = null)

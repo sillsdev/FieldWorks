@@ -40,9 +40,12 @@ namespace SIL.FieldWorks.XWorks
 			return m_exportService.CountDictionaryEntries();
 		}
 
-		public int CountReversalIndexEntries(IEnumerable<string> indexes)
+		/// <summary>
+		/// Table of reversal indexes and their counts.
+		/// </summary>
+		public Dictionary<string,int> GetCountsOfReversalIndexes(IEnumerable<string> requestedIndexes)
 		{
-			return m_exportService.CountReversalIndexEntries(indexes);
+			return DictionaryExportService.GetCountsOfReversalIndexes(m_cache, requestedIndexes);
 		}
 
 		/// <summary>

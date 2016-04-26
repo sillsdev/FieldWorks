@@ -79,8 +79,24 @@ namespace SIL.FieldWorks.XWorks
 
 		private void UpdateEntriesToBePublishedLabel()
 		{
-			howManyPubsAlertLabel.Text = string.Format(xWorksStrings.PublicationEntriesLabel,
-				m_controller.CountDictionaryEntries(), m_controller.CountReversalIndexEntries(GetSelectedReversals()));
+			var howManyPubsText= string.Format("Pressing Publish will send {0} dictionary entries", m_controller.CountDictionaryEntries());
+			var reversalCounts = m_controller.GetCountsOfReversalIndexes(GetSelectedReversals());
+
+			foreach (var reversalIndex in reversalCounts.Keys)
+			{
+				string middle = "";
+				middle = string.Format(", {0} {1} reversal entries", reversalCounts[reversalIndex], reversalIndex);
+				if (reversalIndex == reversalCounts.Keys.Last())
+					middle = string.Format(", and {0} {1} reversal entries", reversalCounts[reversalIndex], reversalIndex);
+				if (reversalIndex == reversalCounts.Keys.First() && reversalIndex == reversalCounts.Keys.Last())
+					middle = string.Format(" and {0} {1} reversal entries", reversalCounts[reversalIndex], reversalIndex);
+
+				howManyPubsText += middle;
+			}
+
+			var end = " to Webonary.";
+			howManyPubsText += end;
+			howManyPubsAlertLabel.Text = howManyPubsText;
 		}
 
 		private void PopulatePublicationsList()
