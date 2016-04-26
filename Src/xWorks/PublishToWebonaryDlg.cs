@@ -79,24 +79,27 @@ namespace SIL.FieldWorks.XWorks
 
 		private void UpdateEntriesToBePublishedLabel()
 		{
-			var howManyPubsText= string.Format("Pressing Publish will send {0} dictionary entries", m_controller.CountDictionaryEntries());
-			var reversalCounts = m_controller.GetCountsOfReversalIndexes(GetSelectedReversals());
+			var countOfDictionaryEntries = m_controller.CountDictionaryEntries();
 
+			var reversalCounts = m_controller.GetCountsOfReversalIndexes(GetSelectedReversals());
+			string middle = "";
 			foreach (var reversalIndex in reversalCounts.Keys)
 			{
-				string middle = "";
-				middle = string.Format(", {0} {1} reversal entries", reversalCounts[reversalIndex], reversalIndex);
+				// Use commas and conjunctions as appropriate depending on if this reversal is the first and/or last in the set.
 				if (reversalIndex == reversalCounts.Keys.Last())
-					middle = string.Format(", and {0} {1} reversal entries", reversalCounts[reversalIndex], reversalIndex);
-				if (reversalIndex == reversalCounts.Keys.First() && reversalIndex == reversalCounts.Keys.Last())
-					middle = string.Format(" and {0} {1} reversal entries", reversalCounts[reversalIndex], reversalIndex);
-
-				howManyPubsText += middle;
+				{
+					if (reversalIndex == reversalCounts.Keys.First())
+						middle += string.Format(" and {0} {1} reversal entries", reversalCounts[reversalIndex], reversalIndex);
+					else
+						middle += string.Format(", and {0} {1} reversal entries", reversalCounts[reversalIndex], reversalIndex);
+				}
+				else
+				{
+					middle += string.Format(", {0} {1} reversal entries", reversalCounts[reversalIndex], reversalIndex);
+				}
 			}
 
-			var end = " to Webonary.";
-			howManyPubsText += end;
-			howManyPubsAlertLabel.Text = howManyPubsText;
+			howManyPubsAlertLabel.Text = string.Format("Pressing Publish will send {0} dictionary entries{1} to Webonary.", countOfDictionaryEntries, middle);
 		}
 
 		private void PopulatePublicationsList()
