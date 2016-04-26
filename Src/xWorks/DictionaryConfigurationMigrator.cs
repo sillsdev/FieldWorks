@@ -50,6 +50,7 @@ namespace SIL.FieldWorks.XWorks
 			using (m_logger = new SimpleLogger())
 			{
 				var versionProvider = new VersionInfoProvider(Assembly.GetExecutingAssembly(), true);
+				// Further migration changes (especially Label changes) may need changes in multiple migrators:
 				foreach (IDictionaryConfigurationMigrator migrator in m_migrators)
 				{
 					migrator.MigrateIfNeeded(m_logger, m_mediator, versionProvider.ApplicationVersion);

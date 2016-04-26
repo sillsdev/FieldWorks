@@ -104,6 +104,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 		private static void HandleLabelChanges(List<ConfigurableDictionaryNode> parts, int version)
 		{
+			// If you add to this method (i.e. we have later version label changes), don't forget to
+			// also modify HandleChildNodeRenaming() in PreHistoricMigrator.
 			foreach (var node in parts)
 			{
 				switch (version)

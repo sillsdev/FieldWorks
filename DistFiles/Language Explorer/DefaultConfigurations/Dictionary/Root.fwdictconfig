@@ -1371,7 +1371,7 @@
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="all analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
-		</ConfigurationItem>	
+		</ConfigurationItem>
 	  	<ConfigurationItem name="Examples" style="Bulleted List" styleType="paragraph" between="  " after=" " isEnabled="true" field="ExamplesOS" cssClassNameOverride="examples">
 		  <ComplexFormOptions list="none" displayEachComplexFormInParagraph="true"/>
 	  	  <ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">

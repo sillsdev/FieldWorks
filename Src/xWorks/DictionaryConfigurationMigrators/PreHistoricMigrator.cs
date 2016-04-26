@@ -389,6 +389,12 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				convertedNode.IsCustomField = (attr != null && attr.Value == "$child");
 			}
 
+			// LT-17356 Converting the Label in HandleChildNodeRenaming() requires more info than we have there.
+			if (node.Label == "Bibliography" && node.Parent.Text == "Referenced Senses")
+			{
+				convertedNode.Label = node.ClassName == "LexEntry" ? "Bibliography (Entry)" : "Bibliography (Sense)";
+			}
+
 			// ConfigurableDictionaryNode.Label properties don't include the suffix like XmlDocConfigureDlg.LayoutTreeNode.Label properties do.
 			if (convertedNode.IsDuplicate)
 			{
@@ -715,6 +721,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		/// </summary>
 		private static string HandleChildNodeRenaming(int version, ConfigurableDictionaryNode child)
 		{
+			// If you add to this method (i.e. we have later version label changes), don't forget to
+			// also modify HandleLabelChanges() in FirstAlphaMigrator.
 			var result = child.Label;
 			if (version == VersionPre83)
 			{
@@ -742,6 +750,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 				if (child.Label == "Headword" && child.Parent.Label == "Referenced Senses" || child.Label == "Form" && child.Parent.Label == "Subentry Under Reference")
 					result = "Referenced Headword";
+
+				if (child.Label == "Example" && child.Parent.Label == "Examples")
+					result = "Example Sentence"; // LT-17354
 			}
 			return result;
 		}
