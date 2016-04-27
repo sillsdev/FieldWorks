@@ -80,23 +80,23 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				switch (version)
 				{
 					case 4:
-						ReplaceTranslationsCssClass(node, n => n.FieldDescription == "TranslationsOC");
+						ReplaceTranslationsCssClass(node, n => n.FieldDescription == "TranslationsOC", "translationcontents");
 						break;
 				}
 			}
 		}
 
-		private static void ReplaceTranslationsCssClass(ConfigurableDictionaryNode node, Func<ConfigurableDictionaryNode, bool> match)
+		private static void ReplaceTranslationsCssClass(ConfigurableDictionaryNode node, Func<ConfigurableDictionaryNode, bool> match, string cssClass)
 		{
 			if (match(node))
 			{
-				node.CSSClassNameOverride = "translationcontents";
+				node.CSSClassNameOverride = cssClass;
 			}
 			if (node.Children == null)
 				return;
 			foreach (var child in node.Children)
 			{
-				ReplaceTranslationsCssClass(child, match);
+				ReplaceTranslationsCssClass(child, match, cssClass);
 			}
 		}
 
