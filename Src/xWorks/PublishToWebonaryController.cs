@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Table of reversal indexes and their counts.
 		/// </summary>
-		public Dictionary<string,int> GetCountsOfReversalIndexes(IEnumerable<string> requestedIndexes)
+		public SortedDictionary<string,int> GetCountsOfReversalIndexes(IEnumerable<string> requestedIndexes)
 		{
 			return DictionaryExportService.GetCountsOfReversalIndexes(m_cache, requestedIndexes);
 		}

@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.XWorks
 			revIndexEn.FindOrCreateReversalEntry("blah en");
 			revIndexEn.FindOrCreateReversalEntry("blah en2");
 
-			var selectedReversalIndexes = new List<string>{ revIndexFr.ShortName, revIndexEn.ShortName };
+			var selectedReversalIndexes = new List<string>{ revIndexEn.ShortName, revIndexFr.ShortName };
 
 			// SUT
 			var result = DictionaryExportService.GetCountsOfReversalIndexes(Cache, selectedReversalIndexes);
@@ -43,6 +43,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(result.Keys.Count, Is.EqualTo(2), "Wrong number of languages provided");
 			Assert.That(result["English"], Is.EqualTo(2), "Wrong number of English reversal index entries");
 			Assert.That(result["French"], Is.EqualTo(3), "Wrong number of French reversal index entries");
+			Assert.That(string.Compare(result.Keys.First(), result.Keys.Last(), StringComparison.InvariantCulture), Is.LessThan(0), "Not sorted by reversal name alphabetically.");
 		}
 	}
 }

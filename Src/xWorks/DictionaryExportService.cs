@@ -39,14 +39,14 @@ namespace SIL.FieldWorks.XWorks
 		/// Produce a table of reversal index ShortNames and the count of the entries in each of them.
 		/// The reversal indexes included will be limited to those ShortNames specified in selectedReversalIndexes.
 		/// </summary>
-		internal static Dictionary<string,int> GetCountsOfReversalIndexes(FdoCache cache, IEnumerable<string> selectedReversalIndexes)
+		internal static SortedDictionary<string,int> GetCountsOfReversalIndexes(FdoCache cache, IEnumerable<string> selectedReversalIndexes)
 		{
 			var relevantReversalIndexesAndTheirCounts = cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances()
 				.Select(repo => cache.ServiceLocator.GetObject(repo.Guid) as IReversalIndex)
 				.Where(reversalindex => reversalindex != null && selectedReversalIndexes.Contains(reversalindex.ShortName))
 				.ToDictionary(reversalIndex => reversalIndex.ShortName, reversalIndex => reversalIndex.EntriesOC.Count);
 
-			return relevantReversalIndexesAndTheirCounts;
+			return new SortedDictionary<string,int> (relevantReversalIndexesAndTheirCounts);
 		}
 
 		public void ExportDictionaryContent(string xhtmlPath, DictionaryConfigurationModel configuration = null, IThreadedProgress progress = null)
