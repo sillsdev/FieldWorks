@@ -89,17 +89,17 @@ namespace SIL.FieldWorks.XWorks
 				if (reversalIndex == reversalCounts.Keys.Last())
 				{
 					if (reversalIndex == reversalCounts.Keys.First())
-						middle += string.Format(" and {0} {1} reversal entries", reversalCounts[reversalIndex], reversalIndex);
+						middle += string.Format(xWorksStrings.ReversalEntries_Only, reversalCounts[reversalIndex], reversalIndex);
 					else
-						middle += string.Format(", and {0} {1} reversal entries", reversalCounts[reversalIndex], reversalIndex);
+						middle += string.Format(xWorksStrings.ReversalEntries_Last, reversalCounts[reversalIndex], reversalIndex);
 				}
 				else
 				{
-					middle += string.Format(", {0} {1} reversal entries", reversalCounts[reversalIndex], reversalIndex);
+					middle += string.Format(xWorksStrings.ReversalEntries, reversalCounts[reversalIndex], reversalIndex);
 				}
 			}
 
-			howManyPubsAlertLabel.Text = string.Format("Pressing Publish will send {0} dictionary entries{1} to Webonary.", countOfDictionaryEntries, middle);
+			howManyPubsAlertLabel.Text = string.Format(xWorksStrings.PublicationEntriesLabel, countOfDictionaryEntries, middle);
 		}
 
 		private void PopulatePublicationsList()

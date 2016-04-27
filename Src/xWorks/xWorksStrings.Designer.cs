@@ -2040,7 +2040,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pressing Publish will send {0} entries and {1} reversal entries to Webonary..
+        ///   Looks up a localized string similar to Pressing Publish will send {0} dictionary entries{1} to Webonary..
         /// </summary>
         internal static string PublicationEntriesLabel {
             get {
@@ -2317,6 +2317,33 @@ namespace SIL.FieldWorks.XWorks {
         internal static string YouAreResettingReversal {
             get {
                 return ResourceManager.GetString("YouAreResettingReversal", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to  and {0} {1} reversal entries.
+        /// </summary>
+        internal static string ReversalEntries_Only {
+            get {
+                return ResourceManager.GetString("ReversalEntries_Only", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to , and {0} {1} reversal entries.
+        /// </summary>
+        internal static string ReversalEntries_Last {
+            get {
+                return ResourceManager.GetString("ReversalEntries_Last", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to , {0} {1} reversal entries.
+        /// </summary>
+        internal static string ReversalEntries {
+            get {
+                return ResourceManager.GetString("ReversalEntries", resourceCulture);
             }
         }
     }
