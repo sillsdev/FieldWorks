@@ -275,8 +275,14 @@ namespace SIL.FieldWorks.XWorks
 					currentConfig = Path.Combine(defaultConfigDir, defaultPublication + DictionaryConfigurationModel.FileExtension);
 				}
 			}
-			Debug.Assert(File.Exists(currentConfig));
-			mediator.PropertyTable.SetProperty(pubLayoutPropName, currentConfig, fUpdate);
+			if (File.Exists(currentConfig))
+			{
+				mediator.PropertyTable.SetProperty(pubLayoutPropName, currentConfig, fUpdate);
+			}
+			else
+			{
+				mediator.PropertyTable.RemoveProperty(pubLayoutPropName);
+			}
 			return currentConfig;
 		}
 

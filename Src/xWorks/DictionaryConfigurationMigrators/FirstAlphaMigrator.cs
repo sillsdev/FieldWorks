@@ -64,6 +64,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					HandleLabelChanges(allParts, 3);
 					HandleFieldChanges(allParts, 3, false);
 					DictionaryConfigurationMigrator.SetWritingSystemForReversalModel(alphaModel, Cache);
+					AddSharedNodesToAlphaConfigurations(alphaModel, alphaModel.WritingSystem != null);
 					goto case 4;
 				case 4:
 					HandleOptionsChanges(allParts, 4);
@@ -71,6 +72,146 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					break;
 			}
 			alphaModel.Version = DictionaryConfigurationMigrator.VersionCurrent;
+		}
+
+		private void AddSharedNodesToAlphaConfigurations(DictionaryConfigurationModel model, bool isReversal)
+		{
+			if (model.SharedItems.Any())
+			{
+				// TODO: Log something about this unexpected situation
+				return;
+			}
+			foreach (var configNode in model.Parts)
+			{
+				SetReferenceNodeInConfigNodes(configNode);
+			}
+			if (!isReversal)
+			{
+				var mainEntrySubSenseNode = FindMainEntryGrandChildNode(model, "Senses", "Subsenses");
+				DictionaryConfigurationController.ShareNodeAsReference(model.SharedItems, mainEntrySubSenseNode, "mainentrysubsenses");
+				var mainEntrySubEntries = GetMainEntryChildNode(model, "Subentries");
+				AddSubsubEntriesOptionsIfNeeded(mainEntrySubEntries);
+				DictionaryConfigurationController.ShareNodeAsReference(model.SharedItems, mainEntrySubEntries, "mainentrysubentries");
+			}
+			else
+			{
+				var reversalSubEntries = GetMainEntryChildNode(model, "Reversal Subentries");
+				AddReversalSubsubEntriesIfNeeded(reversalSubEntries);
+				DictionaryConfigurationController.ShareNodeAsReference(model.SharedItems, reversalSubEntries, "allreversalsubentries");
+			}
+			foreach (var configNode in model.Parts)
+			{
+				RemoveDirectChildrenFromSharedNodes(configNode);
+			}
+		}
+
+		private void AddSubsubEntriesOptionsIfNeeded(ConfigurableDictionaryNode mainEntrySubEntries)
+		{
+			if (mainEntrySubEntries.DictionaryNodeOptions == null)
+			{
+				mainEntrySubEntries.DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
+				{
+					DisplayEachComplexFormInAParagraph = false,
+					ListId = DictionaryNodeListOptions.ListIds.Complex
+				};
+			}
+		}
+
+		private static void AddReversalSubsubEntriesIfNeeded(ConfigurableDictionaryNode reversalSubentriesNode)
+		{
+			if (reversalSubentriesNode != null && reversalSubentriesNode.Children.Any(n => n.Label == "Reversal Subsubentries"))
+				return;
+			// Add in the new reversal subsubentries node
+			var revsubsubentriesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Subsubentries",
+				IsEnabled = true,
+				Style = "Reversal-Subentry",
+				FieldDescription = "SubentriesOS",
+				CSSClassNameOverride = "subentries",
+				ReferenceItem = "AllReversalSubentries",
+				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions {DisplayEachComplexFormInAParagraph = false}
+			};
+			reversalSubentriesNode.Children.Add(revsubsubentriesNode);
+		}
+
+		private static ConfigurableDictionaryNode GetMainEntryChildNode(DictionaryConfigurationModel model, string mainEntryChildLabel)
+		{
+			ConfigurableDictionaryNode mainEntryChildNode = null;
+			var mainEntry = model.Parts.FirstOrDefault();
+			if (mainEntry != null)
+			{
+				mainEntryChildNode = mainEntry.Children.Find(n => n.Label == mainEntryChildLabel && string.IsNullOrEmpty(n.LabelSuffix));
+			}
+			// If we couldn't find a subsense node this is probably a test that didn't have a full model
+			//TODO: log error about not being able to find subentries
+			return mainEntryChildNode ?? new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>() };
+		}
+
+		private static ConfigurableDictionaryNode FindMainEntryGrandChildNode(DictionaryConfigurationModel model, string childLabel, string grandChildLabel)
+		{
+			ConfigurableDictionaryNode subsenseNode = null;
+			var mainEntry = model.Parts.FirstOrDefault();
+			if (mainEntry != null)
+			{
+				var senses = mainEntry.Children.Find(n => n.Label == childLabel && string.IsNullOrEmpty(n.LabelSuffix));
+				if (senses != null)
+				{
+					subsenseNode = senses.Children.Find(n => n.Label == grandChildLabel && string.IsNullOrEmpty(n.LabelSuffix));
+				}
+			}
+			// If we couldn't find a subsense node this is probably a test that didn't have a full model
+			//TODO: log error about not being able to find subsenses
+			return subsenseNode ?? new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>() };
+		}
+
+		private static void SetReferenceNodeInConfigNodes(ConfigurableDictionaryNode configNode)
+		{
+			if (configNode.Label == "Subentries")
+			{
+				configNode.ReferenceItem = "MainEntrySubentries";
+				if (configNode.DictionaryNodeOptions == null)
+				{
+					configNode.DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
+					{
+						ListId = DictionaryNodeListOptions.ListIds.Complex
+					};
+				}
+			}
+			else if (configNode.Label == "Subsenses" || configNode.Label == "Subsubsenses")
+			{
+				configNode.ReferenceItem = "MainEntrySubsenses";
+			}
+			else if (configNode.Label == "Reversal Subentries")
+			{
+				configNode.ReferenceItem = "AllReversalSubentries"; if (configNode.DictionaryNodeOptions == null)
+				{
+					configNode.DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
+					{
+						DisplayEachComplexFormInAParagraph = false
+					};
+				}
+			}
+			if (configNode.Children == null)
+				return;
+			foreach (var child in configNode.Children)
+			{
+				SetReferenceNodeInConfigNodes(child);
+			}
+		}
+
+		private void RemoveDirectChildrenFromSharedNodes(ConfigurableDictionaryNode configNode)
+		{
+			if (configNode.Children == null)
+			{
+				return;
+			}
+			foreach (var child in configNode.Children)
+			{
+				RemoveDirectChildrenFromSharedNodes(child);
+			}
+			if (!string.IsNullOrEmpty(configNode.ReferenceItem))
+				configNode.Children = null;
 		}
 
 		private static void HandleCssClassChanges(List<ConfigurableDictionaryNode> parts, int version)

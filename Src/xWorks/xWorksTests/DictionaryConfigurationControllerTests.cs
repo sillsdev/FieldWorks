@@ -1089,7 +1089,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.AreEqual(controller._model.FilePath, savedPath, "Should have saved the path to the selected Configuration Model");
 				StringAssert.StartsWith(projectConfigsPath, savedPath, "Path should be in the project's folder");
 				StringAssert.EndsWith("SomeConfigurationFileName", savedPath, "Incorrect configuration saved");
-				File.Delete(savedPath);
+				DeleteConfigurationTestModelFiles(controller);
 			}
 		}
 
@@ -1247,6 +1247,7 @@ namespace SIL.FieldWorks.XWorks
 				dcc.View.TreeControl.Tree.TopNode.Checked = false;
 				((TestConfigurableDictionaryView)dcc.View).DoSaveModel();
 				Assert.IsTrue(dcc.MasterRefreshRequired, "Should have saved changes and required a Master Refresh");
+				DeleteConfigurationTestModelFiles(dcc);
 			}
 		}
 
@@ -1268,6 +1269,7 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				dcc.View.TreeControl.Tree.TopNode.Checked = false;
 				Assert.IsFalse(dcc.MasterRefreshRequired, "Should not have saved changes--user did not click OK or Apply");
+				DeleteConfigurationTestModelFiles(dcc);
 			}
 		}
 
@@ -1289,6 +1291,25 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				((TestConfigurableDictionaryView)dcc.View).DoSaveModel();
 				Assert.IsFalse(dcc.MasterRefreshRequired, "Should not have saved changes--none to save");
+				DeleteConfigurationTestModelFiles(dcc);
+			}
+		}
+
+		/// <summary>
+		/// Deletes any files resulting from model saves by the controller in the tests
+		/// </summary>
+		private void DeleteConfigurationTestModelFiles(DictionaryConfigurationController dcc)
+		{
+			foreach(var model in dcc._dictionaryConfigurations)
+			{
+				if (File.Exists(model.FilePath) && !model.FilePath.StartsWith(FwDirectoryFinder.DefaultConfigurations))
+				{
+					// I believe that moving the file before deleting will avoid problems that crop up as a result
+					// of the File.Delete call returning before the file is actually removed by the OS
+					var pathToTempForDeletion = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+					File.Move(model.FilePath, pathToTempForDeletion);
+					File.Delete(pathToTempForDeletion);
+				}
 			}
 		}
 

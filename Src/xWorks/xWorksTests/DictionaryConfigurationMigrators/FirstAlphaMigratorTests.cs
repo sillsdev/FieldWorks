@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using NUnit.Framework;
 using Palaso.IO;
 using Palaso.Linq;
@@ -251,6 +252,193 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.AreEqual("vernacular", wsOptions.Options[0].Id);
 			Assert.IsTrue(wsOptions.Options[0].IsEnabled);
 		}
+
+		[Test]
+		public void MigrateFrom83Alpha_SubSubSenseReferenceNodeSharesMainEntrySense()
+		{
+			var subsubsenses = new ConfigurableDictionaryNode { Label = "Subsubsenses", FieldDescription = "SensesOS", ReferenceItem = null };
+			var subsenses = new ConfigurableDictionaryNode { Label = "Subsenses", FieldDescription = "SensesOS", Children = new List<ConfigurableDictionaryNode> { subsubsenses } };
+			var subentriesUnderSenses = new ConfigurableDictionaryNode
+			{
+				Label = "Subentries", FieldDescription = "Subentries",
+				Children = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode {Label = "TestNode"} }
+			};
+			var mainEntryHeadword = new ConfigurableDictionaryNode { FieldDescription = "HeadWord" };
+			var senses = new ConfigurableDictionaryNode { Label = "Senses", FieldDescription = "SensesOS", Children = new List<ConfigurableDictionaryNode> { subsenses, subentriesUnderSenses } };
+			var subentries = new ConfigurableDictionaryNode
+			{
+				Label = "Subentries",
+				FieldDescription = "Subentries",
+				Children = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode { Label = "TestNode" } }
+			};
+			var mainEntry = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { mainEntryHeadword, senses, subentries }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Version = 1,
+				Parts = new List<ConfigurableDictionaryNode> { mainEntry }
+			};
+
+			m_migrator.MigrateFrom83Alpha(model);
+			Assert.That(subsenses.ReferenceItem, Is.StringMatching("MainEntrySubsenses"));
+			Assert.That(subsubsenses.ReferenceItem, Is.StringMatching("MainEntrySubsenses"));
+			Assert.That(subentriesUnderSenses.ReferenceItem, Is.StringMatching("MainEntrySubentries"));
+			Assert.Null(subsenses.Children, "Children not removed from shared nodes");
+			Assert.Null(subsubsenses.Children, "Children not removed from shared nodes");
+			Assert.Null(subentriesUnderSenses.Children, "Children not removed from shared nodes");
+		}
+
+		[Test]
+		public void MigrateFrom83Alpha_SubSenseSettingsMigratedToSharedNodes()
+		{
+			var subCategNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLPartOfSpeech",
+				DictionaryNodeOptions =
+					ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "analysis" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis),
+				IsEnabled = false
+			};
+			var subGramInfoNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MorphoSyntaxAnalysisRA",
+				CSSClassNameOverride = "morphosyntaxanalysis",
+				Children = new List<ConfigurableDictionaryNode> { subCategNode },
+				IsEnabled = true
+			};
+			var subGlossNode = new ConfigurableDictionaryNode
+			{
+				Label = "Gloss",
+				FieldDescription = "Gloss",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" }),
+				IsEnabled = true
+			};
+			var subSenseNode = new ConfigurableDictionaryNode
+			{
+				Label = "Subsenses",
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					NumberEvenASingleSense = false,
+					ShowSharedGrammarInfoFirst = true
+				},
+				Children = new List<ConfigurableDictionaryNode> { subGramInfoNode, subGlossNode }
+			};
+			var senseNode = new ConfigurableDictionaryNode
+			{
+				Label = "Senses",
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					DisplayEachSenseInAParagraph = true,
+					NumberEvenASingleSense = false,
+					ShowSharedGrammarInfoFirst = true
+				},
+				Children = new List<ConfigurableDictionaryNode> { subSenseNode }
+			};
+			var subentriesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Subentries",
+				FieldDescription = "Subentries",
+				Children = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode { Label = "TestChild" } }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { senseNode, subentriesNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Version = -1,
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+
+			m_migrator.MigrateFrom83Alpha(model);
+			var subSenseGloss =
+				model.SharedItems.Find(node => node.Label == "MainEntrySubsenses").Children.Find(child => child.Label == subGlossNode.Label);
+			var subGramInfo =
+				model.SharedItems.Find(node => node.Label == "MainEntrySubsenses").Children.Find(child => child.Label == subGramInfoNode.Label);
+			var subEntries = model.SharedItems.Find(node => node.Label == "MainEntrySubentries");
+			Assert.NotNull(subSenseGloss, "Subsenses did not get moved into the shared node");
+			Assert.Null(model.Parts[0].Children[1].Children, "Subsenses children were left in non-shared node");
+			Assert.IsTrue(subSenseGloss.IsEnabled, "Enabled not migrated into shared nodes for direct children");
+			Assert.NotNull(subGramInfo, "Subsense children were not moved into the shared node");
+			Assert.IsTrue(subGramInfo.IsEnabled, "Enabled not migrated into shared nodes for descendents");
+			Assert.NotNull(subEntries);
+			Assert.AreEqual(1, subEntries.Children.Count, "Subentries children were not moved to shared");
+			Assert.Null(model.Parts[0].Children[1].Children, "Subentries children were left in non-shared node");
+			Assert.NotNull(model.Parts[0].Children[1].DictionaryNodeOptions, "Subentries complex form options not added in migration");
+		}
+
+		[Test]
+		public void MigrateFrom83Alpha_ReversalSubentriesMigratedToSharedNodes()
+		{var subentriesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Subentries",
+				FieldDescription = "SubentriesOS",
+				Children = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode { Label = "TestChild" } }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { subentriesNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Version = -1,
+				WritingSystem = "en",
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+
+			m_migrator.MigrateFrom83Alpha(model);
+			var subEntries = model.SharedItems.Find(node => node.Label == "AllReversalSubentries");
+			Assert.NotNull(subEntries);
+			Assert.AreEqual(2, subEntries.Children.Count, "Subentries children were not moved to shared");
+			Assert.That(subEntries.Children[1].Label, Is.StringMatching("Reversal Subsubentries"), "Subsubentries not added during migration");
+			Assert.Null(model.Parts[0].Children[0].Children, "Subentries children were left in non-shared node");
+		}
+
+		[Test]
+		public void MigrateFrom83Alpha_ReversalSubentriesNotDuplicatedIfPresentMigratedToSharedNodes()
+		{
+			var subentriesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Subentries",
+				FieldDescription = "SubentriesOS",
+				Children = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode { Label = "TestChild" },
+					new ConfigurableDictionaryNode { Label = "Reversal Subsubentries" }
+				}
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { subentriesNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Version = 1,
+				WritingSystem = "en",
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+
+			m_migrator.MigrateFrom83Alpha(model);
+			var subEntries = model.SharedItems.Find(node => node.Label == "AllReversalSubentries");
+			Assert.NotNull(subEntries);
+			Assert.AreEqual(2, subEntries.Children.Count, "Subentries children were not moved to shared");
+			Assert.That(subEntries.Children[1].Label, Is.StringMatching("Reversal Subsubentries"), "Subsubentries not added during migration");
+			Assert.Null(model.Parts[0].Children[0].Children, "Subentries children were left in non-shared node");
+		}
+
 		[Test]
 		public void MigrateFrom83Alpha_UpdatesTranslationsCssClass()
 		{

@@ -575,7 +575,7 @@
 	</ConfigurationItem>
   </ConfigurationItem>
   <SharedItems>
-	<ConfigurationItem name="AllReversalSubentries" isEnabled="true" field="SubentriesOS" cssClassNameOverride="allreversalsubsenses">
+	<ConfigurationItem name="AllReversalSubentries" isEnabled="true" field="SubentriesOS" cssClassNameOverride="allreversalsubentries">
 			<ConfigurationItem name="Reversal Form" isEnabled="true" style="Reversal-Headword" between=" " after="  " field="ReversalForm">
 				<WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 					<Option id="reversal" isEnabled="true" />
