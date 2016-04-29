@@ -221,6 +221,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				{
 					case 4:
 						ReplaceTranslationsCssClass(node, n => n.FieldDescription == "TranslationsOC", "translationcontents");
+						ReplaceTranslationsCssClass(node, n => n.FieldDescription == "ExamplesOS", "examplescontents");
 						break;
 				}
 			}
@@ -257,9 +258,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		{
 			if (match(node))
 			{
-				node.StyleType = ConfigurableDictionaryNode.StyleTypes.Paragraph;
-				node.Style = "Bulleted List";
-				DictionaryNodeOptions options = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = true };
+				node.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
+				node.Style = "none";
+				DictionaryNodeOptions options = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = false };
 				node.DictionaryNodeOptions = options;
 			}
 			if (node.Children == null)

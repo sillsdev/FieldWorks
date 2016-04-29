@@ -104,11 +104,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var configParent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { configExamplesNode } };
 			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
 			m_migrator.MigrateFrom83Alpha(configModel);
-			Assert.AreEqual(ConfigurableDictionaryNode.StyleTypes.Paragraph, configExamplesNode.StyleType);
-			Assert.AreEqual("Bulleted List", configExamplesNode.Style);
+			Assert.AreEqual(ConfigurableDictionaryNode.StyleTypes.Character, configExamplesNode.StyleType);
+			Assert.AreEqual("none", configExamplesNode.Style);
 			Assert.IsTrue(configExamplesNode.DictionaryNodeOptions is DictionaryNodeComplexFormOptions, "wrong type");
 			var options = (DictionaryNodeComplexFormOptions)configExamplesNode.DictionaryNodeOptions;
-			Assert.IsTrue(options.DisplayEachComplexFormInAParagraph, "True was not set");
+			Assert.IsFalse(options.DisplayEachComplexFormInAParagraph, "True was not set");
 		}
 
 		[Test]
