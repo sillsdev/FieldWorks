@@ -40,13 +40,13 @@
 			<usage wsId="en">A numbered list of paragraphs</usage>
 			<help category="Paragraph_Elements"/>
 			<font/>
-			<paragraph basedOn="Normal" next="Numbered_List" bulNumScheme="Arabic" bulNumStartAt="1" firstLine="-18 pt"/>
+			<paragraph basedOn="Normal" next="Numbered_List" bulNumScheme="Arabic" bulNumStartAt="1" indentLeft="36 pt" firstLine="-9 pt"/>
 		</tag>
 		<tag id="Bulleted_List" guid="3C8C511B-4683-4289-88D0-024F66540F6F" userlevel="1" context="general" type="paragraph">
 			<usage wsId="en">A bulleted list of paragraphs</usage>
 			<help category="Paragraph_Elements"/>
 			<font/>
-			<paragraph basedOn="Normal" next="Bulleted_List" bulNumScheme="Bullet:1" bulNumStartAt="1" firstLine="-18 pt"/>
+			<paragraph basedOn="Normal" next="Bulleted_List" bulNumScheme="Bullet:1" bulNumStartAt="1" indentLeft="36 pt" firstLine="-9 pt"/>
 		</tag>
 		<tag id="Block_Quote" guid="879D3C6F-8E62-4887-A4AF-27FEB88C2AF1" userlevel="1" context="general" type="paragraph">
 			<usage wsId="en">Extended (paragraph size or larger) quotation</usage>
