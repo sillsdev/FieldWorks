@@ -814,6 +814,13 @@ function Toggle(node, path, imgOffset)
 							<xsl:when test="@type = 'nonFinalTemplate'">
 								<xsl:text>Further derivation is required after a non-final template.</xsl:text>
 							</xsl:when>
+							<xsl:when test="@type = 'pos'">
+								<xsl:text>The parse's part of speech '</xsl:text>
+								<xsl:value-of select="Pos"/>
+								<xsl:text>' conflicts with the following required parts of speech: </xsl:text>
+								<xsl:value-of select="RequiredPos"/>
+								<xsl:text>.</xsl:text>
+							</xsl:when>
 						</xsl:choose>
 						<xsl:text>)</xsl:text>
 					</span>

@@ -271,6 +271,7 @@
     <Compile Include="AffixRuleFormulaSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="AffixRuleFormulaVc.cs" />
     <Compile Include="AnalysisInterlinearRS.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -321,6 +322,7 @@
     <Compile Include="MetaRuleFormulaSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="MetaRuleFormulaVc.cs" />
     <Compile Include="MorphologyListener.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -347,6 +349,7 @@
     <Compile Include="RegRuleFormulaSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="RegRuleFormulaVc.cs" />
     <Compile Include="RespellerDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -360,9 +363,7 @@
     <Compile Include="RuleFormulaSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="RuleFormulaView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="RuleFormulaVcBase.cs" />
     <Compile Include="WordformGoDlg.cs">
       <SubType>Form</SubType>
     </Compile>

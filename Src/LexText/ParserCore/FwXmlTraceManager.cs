@@ -200,15 +200,27 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				CreateMorphologicalRuleElement(rule));
 			var aprule = rule as AffixProcessRule;
 			if (aprule != null)
-				trace.Add(CreateAllomorphElement(aprule.Allomorphs[subruleIndex]));
+				trace.Add(CreateAllomorphElement(subruleIndex == -1 ? aprule.Allomorphs.Last() : aprule.Allomorphs[subruleIndex]));
 			trace.Add(new XElement("Output", "*None*"));
 			switch (reason)
 			{
 				case FailureReason.RequiredSyntacticFeatureStruct:
 					Debug.Assert(aprule != null);
-					trace.Add(new XElement("FailureReason", new XAttribute("type", "inflFeats"),
-						CreateInflFeaturesElement("InflFeatures", input.SyntacticFeatureStruct),
-						CreateInflFeaturesElement("RequiredInflFeatures", (FeatureStruct) failureObj)));
+					var requiredFS = (FeatureStruct) failureObj;
+					var requiredPos = requiredFS.GetValue<SymbolicFeatureValue>("pos");
+					var inputPos = input.SyntacticFeatureStruct.GetValue<SymbolicFeatureValue>("pos");
+					if (requiredPos.Values.Intersect(inputPos.Values).Any())
+					{
+						trace.Add(new XElement("FailureReason", new XAttribute("type", "inflFeats"),
+							CreateInflFeaturesElement("InflFeatures", input.SyntacticFeatureStruct),
+							CreateInflFeaturesElement("RequiredInflFeatures", requiredFS)));
+					}
+					else
+					{
+						trace.Add(new XElement("FailureReason", new XAttribute("type", "pos"),
+							new XElement("Pos", string.Join(", ", inputPos.Values.Select(s => s.Description))),
+							new XElement("RequiredPos", string.Join(", ", requiredPos.Values.Select(s => s.Description)))));
+					}
 					break;
 
 				case FailureReason.StemName:
