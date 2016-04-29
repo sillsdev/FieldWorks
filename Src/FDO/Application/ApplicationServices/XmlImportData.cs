@@ -434,7 +434,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			CopyMultiUnicode(leOld.CitationForm, leNew.CitationForm);
 			CopyMultiString(leOld.Comment, leNew.Comment);
 			CopyMultiString(leOld.LiteralMeaning, leNew.LiteralMeaning);
-			CopyMultiUnicode(leOld.Restrictions, leNew.Restrictions);
+			CopyMultiString(leOld.Restrictions, leNew.Restrictions);
 			CopyMultiString(leOld.SummaryDefinition, leNew.SummaryDefinition);
 			ILexEtymology ety = leOld.EtymologyOA;
 			if (leNew.EtymologyOA == null && ety != null)

@@ -37,6 +37,7 @@ The original version number was: 7000000. Be sure it has the right number of zer
 editing it.
 
 Change History: (Be sure to update the 'version' attribute in the EntireModel, when needed. (Almost always.))
+  28 April 2016 (7000069): Make LexEntry and LexSense Restrictions a MultiString field.
   9 July 2013 (7000068): Make ReversalIndexEntry subentries be a sequence instead of a collection (LT-6468). No DM needed.
   7 May 2013  (7000067): Remove illegal attributes from <Uni> element. (Appears to come from FW 6.0.x.)
   22 March 2013 (7000066): Redux of DM64, but with real DM code.
@@ -190,7 +191,7 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 	2 September 2009 (NA): Add schema and optional 'singleton' and 'owner' attributes to <class> element. [Nothing at all for data migration.]
 	8 August 2009 (7000000): Original file created
 -->
-<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000068" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
+<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000069" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
   <CellarModule id="Cellar" num="0">
 	<class num="0" id="CmObject" abstract="false" abbr="obj">
 	  <props/>
@@ -2580,7 +2581,7 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 			<para>Each entry can have one etymology specification.</para>
 		  </comment>
 		</owning>
-		<basic num="14" id="Restrictions" sig="MultiUnicode">
+		<basic num="14" id="Restrictions" sig="MultiString">
 		  <comment>
 			<para>Only certain people can use the entry under certain circumstances</para>
 		  </comment>
@@ -2885,7 +2886,7 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 		<basic num="19" id="GeneralNote" sig="MultiString"/>
 		<basic num="20" id="GrammarNote" sig="MultiString"/>
 		<basic num="21" id="PhonologyNote" sig="MultiString"/>
-		<basic num="22" id="Restrictions" sig="MultiUnicode"/>
+		<basic num="22" id="Restrictions" sig="MultiString"/>
 		<basic num="23" id="SemanticsNote" sig="MultiString"/>
 		<basic num="24" id="SocioLinguisticsNote" sig="MultiString"/>
 		<basic num="25" id="Source" sig="String"/>
