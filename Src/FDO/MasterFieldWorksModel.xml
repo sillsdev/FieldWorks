@@ -37,7 +37,9 @@ The original version number was: 7000000. Be sure it has the right number of zer
 editing it.
 
 Change History: (Be sure to update the 'version' attribute in the EntireModel, when needed. (Almost always.))
-  28 April 2016 (7000069): Make LexEntry and LexSense Restrictions a MultiString field.
+  3 May 2016 (7000069): Make multiple model changes:
+    * Make LexEntry and LexSense Restrictions a MultiString field.
+    * Add ReverseName to LexEntryType as a MultiUnicode field. Swap Abbreviation and ReverseAbbr fields.
   9 July 2013 (7000068): Make ReversalIndexEntry subentries be a sequence instead of a collection (LT-6468). No DM needed.
   7 May 2013  (7000067): Remove illegal attributes from <Uni> element. (Appears to come from FW 6.0.x.)
   22 March 2013 (7000066): Redux of DM64, but with real DM code.
@@ -4721,7 +4723,12 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 	  <props>
 		<basic num="1" id="ReverseAbbr" sig="MultiUnicode">
 		  <comment>
-			<para>This abbreviation may be used in the minor/subentry when referring to the major entry. For example, CmPossibility_Abbreviation could have "var." and LexEntryType_ReverseAbbr could have "var. of" </para>
+			<para>This abbreviation may be used in the minor/subentry when referring to the major entry. For example, LexEntryType_Abbreviation could have "var." and LexEntryType_ReverseAbbr could have "var. of" </para>
+		  </comment>
+		</basic>
+		<basic num="2" id="ReverseName" sig="MultiUnicode">
+		  <comment>
+			<para>This name may be used in the minor/subentry when referring to the major entry. For example, LexEntryType_ReverseName could have "Dialectal Variant of" and LexEntryType_Name could have "Dialectal Variant" </para>
 		  </comment>
 		</basic>
 	  </props>

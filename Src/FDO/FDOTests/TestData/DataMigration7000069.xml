@@ -26,4 +26,40 @@
 		</Gloss>
 	</rt>
 
+	<rt class="LexEntryType" guid="024b62c9-93b3-41a0-ab19-587a0030219a">
+		<Abbreviation>
+			<AUni ws="en">dial. var. of</AUni>
+		</Abbreviation>
+		<Name>
+			<AUni ws="en">Dialectal Variant</AUni>
+		</Name>
+		<ReverseAbbr>
+			<AUni ws="en">dial. var.</AUni>
+		</ReverseAbbr>
+	</rt>
+
+	<rt class="LexEntryType" guid="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c">
+		<SubPossibilities>
+			<objsur t="o" guid="837ebe72-8c1d-4864-95d9-fa313c499d78" />
+		</SubPossibilities>
+		<Name>
+			<AUni ws="en">Irregularly Inflected Form</AUni>
+		</Name>
+	</rt>
+
+	<rt class="LexEntryType" guid="837ebe72-8c1d-4864-95d9-fa313c499d78" ownerguid="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c">
+		<Abbreviation>
+			<AUni ws="en">pst. of</AUni>
+			<AUni ws="fr">pss. de</AUni>
+		</Abbreviation>
+		<Name>
+			<AUni ws="en">Past</AUni>
+			<AUni ws="fr">Passé</AUni>
+		</Name>
+		<ReverseAbbr>
+			<AUni ws="en">pst.</AUni>
+			<AUni ws="fr">pss.</AUni>
+		</ReverseAbbr>
+	</rt>
+
 </languageproject>
