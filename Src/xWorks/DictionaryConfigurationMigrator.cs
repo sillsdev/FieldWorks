@@ -85,8 +85,7 @@ namespace SIL.FieldWorks.XWorks
 
 		internal static void SetWritingSystemForReversalModel(DictionaryConfigurationModel convertedModel, FdoCache cache)
 		{
-			var directory = Path.GetFileName(Path.GetDirectoryName(convertedModel.FilePath));
-			if (DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName.Equals(directory))
+			if (convertedModel.IsReversal)
 			{
 				var writingSystem = cache.ServiceLocator.WritingSystems.AnalysisWritingSystems
 					.Where(x => x.DisplayLabel == convertedModel.Label).Select(x => x.IcuLocale).FirstOrDefault();

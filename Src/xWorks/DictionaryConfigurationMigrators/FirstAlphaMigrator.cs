@@ -57,8 +57,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					ExtractWritingSystemOptionsFromReferringSenseOptions(alphaModel.Parts);
 					goto case 2;
 				case 2:
-					HandleFieldChanges(allParts, 2, !string.IsNullOrEmpty(alphaModel.WritingSystem));
-					HandleFieldChanges(allParts, 3, false);
+					HandleFieldChanges(allParts, 2, alphaModel.IsReversal);
 					goto case 3;
 				case 3:
 					HandleLabelChanges(allParts, 3);
@@ -307,17 +306,25 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 		private static void HandleFieldChanges(List<ConfigurableDictionaryNode> parts, int version, bool isReversal)
 		{
+			var wsOptions = new DictionaryNodeWritingSystemOptions
+			{
+				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				{
+					new DictionaryNodeListOptions.DictionaryNodeOption {Id = "vernacular", IsEnabled = true }
+				}
+			};
 			foreach (var node in parts)
 			{
 				switch (version)
 				{
 					case 2:
 						var newHeadword = isReversal ? "ReversalName" : "HeadWordRef";
-						ReplaceFieldInNodes(node, n => n.Label == "Referenced Headword", newHeadword);
+						ReplaceFieldInNodesAndOptionallyEnsureOptions(node, n => n.Label == "Referenced Headword", newHeadword, isReversal ? wsOptions : null);
 						ReplaceSubFieldInNodes(node, n => n.FieldDescription == "OwningEntry" && n.SubField == "MLHeadWord", newHeadword);
 						break;
 					case 3:
-						ReplaceFieldInNodes(node, n => n.Label == "Gloss (or Summary Definition)", "GlossOrSummary");
+						ReplaceFieldInNodesAndOptionallyEnsureOptions(node, n => n.Label == "Gloss (or Summary Definition)", "GlossOrSummary");
 						break;
 				}
 			}
@@ -337,17 +344,19 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			}
 		}
 
-		private static void ReplaceFieldInNodes(ConfigurableDictionaryNode node, Func<ConfigurableDictionaryNode, bool> match, string newFieldValue)
+		private static void ReplaceFieldInNodesAndOptionallyEnsureOptions(ConfigurableDictionaryNode node, Func<ConfigurableDictionaryNode, bool> match, string newFieldValue, DictionaryNodeOptions childOptions = null)
 		{
 			if (match(node))
 			{
 				node.FieldDescription = newFieldValue;
+				if (childOptions != null && node.DictionaryNodeOptions == null)
+					node.DictionaryNodeOptions = childOptions.DeepClone();
 			}
 			if (node.Children == null)
 				return;
 			foreach (var child in node.Children)
 			{
-				ReplaceFieldInNodes(child, match, newFieldValue);
+				ReplaceFieldInNodesAndOptionallyEnsureOptions(child, match, newFieldValue, childOptions);
 			}
 		}
 

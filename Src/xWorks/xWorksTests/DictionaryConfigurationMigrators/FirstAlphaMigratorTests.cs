@@ -1,11 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using NUnit.Framework;
 using Palaso.IO;
-using Palaso.Linq;
 using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 
 namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
@@ -144,7 +142,12 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var cpFormChild = new ConfigurableDictionaryNode { Label = "Complex Form", FieldDescription = "OwningEntry", SubField = "MLHeadWord" };
 			var referenceHwChild = new ConfigurableDictionaryNode { Label = "Referenced Headword", FieldDescription = "HeadWord" };
 			var configParent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { referenceHwChild, cpFormChild } };
-			var configModel = new DictionaryConfigurationModel { Version = 2, WritingSystem = "en", Parts = new List<ConfigurableDictionaryNode> { configParent } };
+			var configModel = new DictionaryConfigurationModel
+			{
+				Version = 2, WritingSystem = "en",
+				Parts = new List<ConfigurableDictionaryNode> { configParent },
+				FilePath = Path.Combine("ReversalIndex", "English.fwdictconfig")
+			};
 			m_migrator.MigrateFrom83Alpha(configModel);
 			Assert.AreEqual("ReversalName", referenceHwChild.FieldDescription);
 			Assert.AreEqual("ReversalName", cpFormChild.SubField);
@@ -158,9 +161,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var configParent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { referenceHwChild, cpFormChild } };
 			var configModel = new DictionaryConfigurationModel
 			{
-				Version = 2,
-				WritingSystem = "en",
+				Version = 2, WritingSystem = "en",
 				Parts = new List<ConfigurableDictionaryNode>(),
+				FilePath = Path.Combine("ReversalIndex", "English.fwdictconfig"),
 				SharedItems = new List<ConfigurableDictionaryNode> { configParent }
 			};
 			m_migrator.MigrateFrom83Alpha(configModel);
@@ -394,6 +397,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				Version = -1,
 				WritingSystem = "en",
+				FilePath = String.Empty,
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
 
@@ -428,6 +432,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				Version = 1,
 				WritingSystem = "en",
+				FilePath = string.Empty,
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
 

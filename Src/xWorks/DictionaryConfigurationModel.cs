@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
@@ -82,6 +83,24 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		[XmlIgnore]
 		public string FilePath { get; set; }
+
+		/// <summary>
+		/// Checks which folder this will be saved in to determine if it is a reversal
+		/// </summary>
+		internal bool IsReversal
+		{
+			get
+			{
+				if (!string.IsNullOrEmpty(WritingSystem))
+					return true;
+
+				// Fallback for migration
+				if (string.IsNullOrEmpty(FilePath))
+					return false; // easiest way to avoid a crash; assume something that may not be true!
+				var directory = Path.GetFileName(Path.GetDirectoryName(FilePath));
+				return DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName.Equals(directory);
+			}
+		}
 
 		/// <summary>
 		/// A concatenation of Parts and SharedItems; useful for migration and synchronization with the FDO model

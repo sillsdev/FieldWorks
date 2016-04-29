@@ -4,8 +4,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
@@ -248,6 +248,7 @@ namespace SIL.FieldWorks.XWorks
 			var defaultPublication = isDictionary ? "Root" : "AllReversalIndexes";
 			var defaultConfigDir = GetDefaultConfigurationDirectory(innerConfigDir);
 			var projectConfigDir = GetProjectConfigurationDirectory(mediator, innerConfigDir);
+			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			// If no configuration has yet been selected or the previous selection is invalid,
 			// and the value is "publishSomething", try to use the new "Something" config
 			if (currentConfig != null && currentConfig.StartsWith("publish", StringComparison.Ordinal))
@@ -255,7 +256,6 @@ namespace SIL.FieldWorks.XWorks
 				var selectedPublication = currentConfig.Replace("publish", string.Empty);
 				if (!isDictionary)
 				{
-					var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 					var languageCode = selectedPublication.Replace("Reversal-", string.Empty);
 					selectedPublication = cache.ServiceLocator.WritingSystemManager.Get(languageCode).DisplayLabel;
 				}
@@ -268,6 +268,15 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (!File.Exists(currentConfig))
 			{
+				if (defaultPublication == "AllReversalIndexes")
+				{
+					// check in projectConfigDir for files whose name = default analysis ws
+					if (TryMatchingReversalConfigByWritingSystem(projectConfigDir, cache, out currentConfig))
+					{
+						mediator.PropertyTable.SetProperty(pubLayoutPropName, currentConfig, fUpdate);
+						return currentConfig;
+					}
+				}
 				// select the project's Root configuration if available; otherwise, select the default Root configuration
 				currentConfig = Path.Combine(projectConfigDir, defaultPublication + DictionaryConfigurationModel.FileExtension);
 				if (!File.Exists(currentConfig))
@@ -284,6 +293,15 @@ namespace SIL.FieldWorks.XWorks
 				mediator.PropertyTable.RemoveProperty(pubLayoutPropName);
 			}
 			return currentConfig;
+		}
+
+		private static bool TryMatchingReversalConfigByWritingSystem(string projectConfigDir, FdoCache cache, out string currentConfig)
+		{
+			var displayName = cache.LangProject.DefaultAnalysisWritingSystem.DisplayLabel;
+			var fileList = Directory.EnumerateFiles(projectConfigDir);
+			var fileName = fileList.FirstOrDefault(fname => Path.GetFileNameWithoutExtension(fname) == displayName);
+			currentConfig = fileName ?? string.Empty;
+			return !string.IsNullOrEmpty(currentConfig);
 		}
 
 		/// <summary>

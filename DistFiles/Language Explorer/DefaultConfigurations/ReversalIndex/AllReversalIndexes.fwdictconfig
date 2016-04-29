@@ -219,7 +219,7 @@
 					</ConfigurationItem>
 				</ConfigurationItem>
 				<ConfigurationItem name="Primary Entry(s)" isEnabled="true" between="," after=" " field="PrimarySensesOrEntries" cssClassNameOverride="primarylexemes">
-					<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after=" " field="HeadWord" cssClassNameOverride="headword">
+					<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after=" " field="ReversalName" cssClassNameOverride="headword">
 						<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 							<Option id="vernacular" isEnabled="true" />
 						</WritingSystemOptions>
