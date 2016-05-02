@@ -1526,6 +1526,37 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForConfiguration_ExampleUncheckedDisplayInParaWorks()
+		{
+			var examples = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ExamplesOS",
+				CSSClassNameOverride = "examples",
+				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = false }
+			};
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true },
+				Children = new List<ConfigurableDictionaryNode> { examples }
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "lexentry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { entry };
+			PopulateFieldsForTesting(entry);
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.IsFalse(Regex.Match(cssResult, @"\.lexentry>\s*\.senses\s*\.sense>\s*\.examples\s*\.example\s*{.*display\s*:\s*block;.*}", RegexOptions.Singleline).Success);
+		}
+
+		[Test]
 		public void GenerateCssForConfiguration_SenseParaStyleNotApplyToFirstSense()
 		{
 			GenerateStyle("Sense-List");

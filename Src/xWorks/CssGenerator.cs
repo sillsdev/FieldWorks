@@ -348,12 +348,14 @@ namespace SIL.FieldWorks.XWorks
 
 		private static void GenerateCssFromComplexFormOptions(ConfigurableDictionaryNode configNode, DictionaryNodeComplexFormOptions complexFormOpts, StyleSheet styleSheet, string baseSelection, Mediator mediator)
 		{
+			var blockDeclaration = string.IsNullOrEmpty(configNode.Style)
+				? new StyleDeclaration()
+				: GenerateCssStyleFromFwStyleSheet(configNode.Style, 0, configNode, mediator);
 			if (complexFormOpts.DisplayEachComplexFormInAParagraph)
 			{
 				// Don't remove any character level settings since paragraphs can have their own character level
 				// information, eg font, font-size, color, etc.  See https://jira.sil.org/browse/LT-16781.
 				// But do remove any settings that apply only to ":before" formatting.
-				var blockDeclaration = string.IsNullOrEmpty(configNode.Style) ? new StyleDeclaration() : GenerateCssStyleFromFwStyleSheet(configNode.Style, 0, configNode, mediator);
 				for (int i = blockDeclaration.Properties.Count - 1; i >= 0; --i)
 				{
 					if (blockDeclaration.Properties[i].Name == "content")
@@ -368,6 +370,16 @@ namespace SIL.FieldWorks.XWorks
 					Value = baseSelection + "> " + SelectClassName(configNode)
 				};
 				styleSheet.Rules.Add(blockRule);
+			}
+			else
+			{
+				// Generate the style information specifically for ComplexFormsOptions
+				var complexContentRule = new StyleRule(GetOnlyCharacterStyle(blockDeclaration))
+				{
+					Value = baseSelection + "> " + SelectClassName(configNode)
+				};
+				if (!IsEmptyRule(complexContentRule))
+					styleSheet.Rules.Add(complexContentRule);
 			}
 		}
 
