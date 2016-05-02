@@ -101,7 +101,6 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(model.Parts);
 			PopulateFieldsForTesting(model.SharedItems);
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems);
-			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.SharedItems, model.SharedItems);
 		}
 
 		private static void PopulateFieldsForTesting(List<ConfigurableDictionaryNode> nodes)

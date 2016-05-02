@@ -1171,7 +1171,7 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Subsenses" between="  " after=" " isEnabled="true" field="SensesOS" cssClassNameOverride="senses">
 		<SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=") " numberingStyle="%O" numberSingleSense="false" showSingleGramInfoFirst="true"/>
-		<ConfigurationItem name="Grammatical Info." after=" " style="Dictionary-Contrasting" isEnabled="false" field="MorphoSyntaxAnalysisRA" cssClassNameOverride="morphosyntaxanalysis">
+		<ConfigurationItem name="Grammatical Info." after=" " style="Dictionary-Contrasting" isEnabled="true" field="MorphoSyntaxAnalysisRA" cssClassNameOverride="morphosyntaxanalysis">
 		  <ConfigurationItem name="Gram Info (Name)" between=" " after=" " isEnabled="false" field="InterlinearNameTSS" cssClassNameOverride="graminfoname"/>
 		  <ConfigurationItem name="Gram Info (Abbrev)" between=" " after=" " isEnabled="false" field="InterlinearAbbrTSS" cssClassNameOverride="graminfoabbrev"/>
 		  <ConfigurationItem name="Category Info." between=" " after=" " isEnabled="true" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
@@ -1788,7 +1788,7 @@
 		  <Option id="vernacular" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Grammatical Info." isEnabled="false" style="Dictionary-Contrasting" before=" " between=", " after=" " field="MorphoSyntaxAnalyses">
+	  <ConfigurationItem name="Grammatical Info." isEnabled="true" style="Dictionary-Contrasting" before=" " between=", " after=" " field="MorphoSyntaxAnalyses">
 		<ConfigurationItem name="Category Info." isEnabled="true" before="" between=" " after=" " field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true" />
@@ -3044,7 +3044,7 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Subsenses" between="  " after=" " isEnabled="true" field="SensesOS" cssClassNameOverride="senses">
 		<SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=") " numberingStyle="%O" numberSingleSense="false" showSingleGramInfoFirst="true"/>
-		<ConfigurationItem name="Grammatical Info." after=" " style="Dictionary-Contrasting" isEnabled="false" field="MorphoSyntaxAnalysisRA" cssClassNameOverride="morphosyntaxanalysis">
+		<ConfigurationItem name="Grammatical Info." after=" " style="Dictionary-Contrasting" isEnabled="true" field="MorphoSyntaxAnalysisRA" cssClassNameOverride="morphosyntaxanalysis">
 		  <ConfigurationItem name="Gram Info (Name)" between=" " after=" " isEnabled="false" field="InterlinearNameTSS" cssClassNameOverride="graminfoname"/>
 		  <ConfigurationItem name="Gram Info (Abbrev)" between=" " after=" " isEnabled="false" field="InterlinearAbbrTSS" cssClassNameOverride="graminfoabbrev"/>
 		  <ConfigurationItem name="Category Info." between=" " after=" " isEnabled="true" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
@@ -3619,7 +3619,7 @@
 		  <Option id="vernacular" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Grammatical Info." isEnabled="false" style="Dictionary-Contrasting" before=" " between=", " after=" " field="MorphoSyntaxAnalyses">
+	  <ConfigurationItem name="Grammatical Info." isEnabled="true" style="Dictionary-Contrasting" before=" " between=", " after=" " field="MorphoSyntaxAnalyses">
 		<ConfigurationItem name="Category Info." isEnabled="true" before="" between=" " after=" " field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true" />
@@ -3691,7 +3691,7 @@
   </ConfigurationItem>
   <SharedItems>
 	<ConfigurationItem name="MainEntrySubsenses" isEnabled="true" field="SensesOS" cssClassNameOverride="mainentrysubsenses">
-	  <ConfigurationItem name="Grammatical Info." after=" " style="Dictionary-Contrasting" isEnabled="false" field="MorphoSyntaxAnalysisRA" cssClassNameOverride="morphosyntaxanalysis">
+	  <ConfigurationItem name="Grammatical Info." after=" " style="Dictionary-Contrasting" isEnabled="true" field="MorphoSyntaxAnalysisRA" cssClassNameOverride="morphosyntaxanalysis">
 		<ConfigurationItem name="Gram Info (Name)" between=" " after=" " isEnabled="false" field="InterlinearNameTSS" cssClassNameOverride="graminfoname"/>
 		<ConfigurationItem name="Gram Info (Abbrev)" between=" " after=" " isEnabled="false" field="InterlinearAbbrTSS" cssClassNameOverride="graminfoabbrev"/>
 		<ConfigurationItem name="Category Info." between=" " after=" " isEnabled="true" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">

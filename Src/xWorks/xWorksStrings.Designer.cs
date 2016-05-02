@@ -160,6 +160,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Click to jump to {0}..
+        /// </summary>
+        internal static string ClickToJumpTo {
+            get {
+                return ResourceManager.GetString("ClickToJumpTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Configuration.
         /// </summary>
         internal static string Configuration {
@@ -866,6 +875,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string ksConfigureList {
             get {
                 return ResourceManager.GetString("ksConfigureList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configure now....
+        /// </summary>
+        internal static string ksConfigureNow {
+            get {
+                return ResourceManager.GetString("ksConfigureNow", resourceCulture);
             }
         }
         
@@ -1860,7 +1878,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} otherwise uses the same configuration as {1}..
+        ///   Looks up a localized string similar to {0} uses the same configuration for subfields as {1}..
         /// </summary>
         internal static string ksUsesTheSameConfigurationAs {
             get {
@@ -2141,6 +2159,33 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to , {0} {1} reversal entries.
+        /// </summary>
+        internal static string ReversalEntries {
+            get {
+                return ResourceManager.GetString("ReversalEntries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to , and {0} {1} reversal entries.
+        /// </summary>
+        internal static string ReversalEntries_Last {
+            get {
+                return ResourceManager.GetString("ReversalEntries_Last", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  and {0} {1} reversal entries.
+        /// </summary>
+        internal static string ReversalEntries_Only {
+            get {
+                return ResourceManager.GetString("ReversalEntries_Only", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reversal Index.
         /// </summary>
         internal static string ReversalIndex {
@@ -2177,6 +2222,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to See {0} for a list of affected nodes..
+        /// </summary>
+        internal static string SeeAffectedNodesUnder {
+            get {
+                return ResourceManager.GetString("SeeAffectedNodesUnder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select Custom Field.
         /// </summary>
         internal static string SelectCustomField {
@@ -2204,6 +2258,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Configuring the subfields of {0} also affects:{1}..
+        /// </summary>
+        internal static string SharesWithTheseNodes {
+            get {
+                return ResourceManager.GetString("SharesWithTheseNodes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sorted by {0}.
         /// </summary>
         internal static string SortedBy {
@@ -2227,6 +2290,24 @@ namespace SIL.FieldWorks.XWorks {
         internal static string ThankYouForCheckingOutFlex {
             get {
                 return ResourceManager.GetString("ThankYouForCheckingOutFlex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This configuration is shared..
+        /// </summary>
+        internal static string ThisConfigurationIsShared {
+            get {
+                return ResourceManager.GetString("ThisConfigurationIsShared", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This item is configured somewhere else..
+        /// </summary>
+        internal static string ThisIsConfiguredElsewhere {
+            get {
+                return ResourceManager.GetString("ThisIsConfiguredElsewhere", resourceCulture);
             }
         }
         
@@ -2317,33 +2398,6 @@ namespace SIL.FieldWorks.XWorks {
         internal static string YouAreResettingReversal {
             get {
                 return ResourceManager.GetString("YouAreResettingReversal", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to  and {0} {1} reversal entries.
-        /// </summary>
-        internal static string ReversalEntries_Only {
-            get {
-                return ResourceManager.GetString("ReversalEntries_Only", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to , and {0} {1} reversal entries.
-        /// </summary>
-        internal static string ReversalEntries_Last {
-            get {
-                return ResourceManager.GetString("ReversalEntries_Last", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to , {0} {1} reversal entries.
-        /// </summary>
-        internal static string ReversalEntries {
-            get {
-                return ResourceManager.GetString("ReversalEntries", resourceCulture);
             }
         }
     }

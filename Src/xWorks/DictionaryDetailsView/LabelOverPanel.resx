@@ -123,10 +123,10 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="panel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 32</value>
+    <value>0, 16</value>
   </data>
   <data name="panel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>261, 19</value>
+    <value>260, 14</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="panel.TabIndex" type="System.Int32, mscorlib">
@@ -144,28 +144,32 @@
   <data name="&gt;&gt;panel.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="button.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 3</value>
+  <data name="label.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
   </data>
-  <data name="button.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 23</value>
+  <data name="label.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 0</value>
   </data>
-  <data name="button.TabIndex" type="System.Int32, mscorlib">
+  <data name="label.Size" type="System.Drawing.Size, System.Drawing">
+    <value>84, 13</value>
+  </data>
+  <data name="label.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
-  <data name="button.Text" xml:space="preserve">
-    <value>Configure Headword Numbers...</value>
+  <data name="label.Text" xml:space="preserve">
+    <value>{0} can be configured in more detail.
+	Configure now...</value>
   </data>
-  <data name="&gt;&gt;button.Name" xml:space="preserve">
-    <value>button</value>
+  <data name="&gt;&gt;label.Name" xml:space="preserve">
+    <value>label</value>
   </data>
-  <data name="&gt;&gt;button.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;label.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;button.Parent" xml:space="preserve">
+  <data name="&gt;&gt;label.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;button.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;label.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -175,10 +179,10 @@
     <value>6, 13</value>
   </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>261, 51</value>
+    <value>260, 30</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>ButtonOverPanel</value>
+    <value>LabelOverPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
     <value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>

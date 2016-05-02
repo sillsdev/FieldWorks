@@ -93,8 +93,6 @@ namespace SIL.FieldWorks.XWorks
 		internal class TestDictionaryDetailsView : IDictionaryDetailsView
 		{
 			private List<StyleComboItem> m_styles;
-			private string m_selectedStyle;
-			private bool m_usingParaStyles;
 
 #pragma warning disable 67
 			public event EventHandler StyleSelectionChanged;
@@ -110,15 +108,15 @@ namespace SIL.FieldWorks.XWorks
 			public bool StylesVisible { get; set; }
 			public bool StylesEnabled { get; set; }
 			public bool SurroundingCharsVisible { get; set; }
-			private UserControl _mOptionsView = null;
+			private UserControl m_optionsView;
 			public UserControl OptionsView
 			{
-				get { return _mOptionsView; }
+				get { return m_optionsView; }
 				set
 				{
-					if (_mOptionsView != null)
-						_mOptionsView.Dispose();
-					_mOptionsView = value;
+					if (m_optionsView != null)
+						m_optionsView.Dispose();
+					m_optionsView = value;
 				}
 			}
 			public bool Visible { get; set; }
@@ -129,8 +127,7 @@ namespace SIL.FieldWorks.XWorks
 			public void SetStyles(List<StyleComboItem> styles, string selectedStyle, bool usingParaStyles)
 			{
 				m_styles = styles;
-				m_selectedStyle = selectedStyle;
-				m_usingParaStyles = usingParaStyles;
+				Style = selectedStyle;
 			}
 
 			public void SuspendLayout() { }
@@ -148,6 +145,18 @@ namespace SIL.FieldWorks.XWorks
 				var listOptionsView = OptionsView as IDictionaryListOptionsView;
 				var listView = (ListView)ReflectionHelper.GetField(listOptionsView, "listView");
 				return listView.Items.Cast<ListViewItem>().ToList();
+			}
+
+			public string GetTooltipFromOverPanel()
+			{
+				if (OptionsView is ButtonOverPanel)
+					throw new NotImplementedException();
+				var labelOverPanel = OptionsView as LabelOverPanel;
+				if (labelOverPanel == null)
+					return null;
+				var tip = (ToolTip)ReflectionHelper.GetField(labelOverPanel, "m_tt");
+				var label = (Control)ReflectionHelper.GetField(labelOverPanel, "label");
+				return tip.GetToolTip(label);
 			}
 
 			public void Dispose()
@@ -475,17 +484,18 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void LoadNode_AllowsStyleOverride()
 		{
-			var node = new ConfigurableDictionaryNode();
-
 			// Load paragraph styles
-			node.DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
+			var node = new ConfigurableDictionaryNode
 			{
-				ListId = DictionaryNodeListOptions.ListIds.Complex,
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
-				DisplayEachComplexFormInAParagraph = true
+				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Complex,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
+					DisplayEachComplexFormInAParagraph = true
+				}
 			};
-
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			// SUT
 			controller.LoadNode(node);
 			AssertShowingParagraphStyles(controller.View);
 
@@ -1132,5 +1142,69 @@ namespace SIL.FieldWorks.XWorks
 		}
 		#endregion Writing System tests
 		#endregion List tests
+
+		#region SharedItem tests
+		[Test]
+		public void UsersAreNotifiedOfSharedItems()
+		{
+			var subEntryHeadword = new ConfigurableDictionaryNode { FieldDescription = "HeadWord" };
+			var sensesUnderSubentries = new ConfigurableDictionaryNode { FieldDescription = "SensesOS", ReferenceItem = "SharedSenses" };
+			var subsubEntries = new ConfigurableDictionaryNode { FieldDescription = "Subentries", ReferenceItem = "SharedSubentries"};
+			var sharedSubentries = new ConfigurableDictionaryNode
+			{
+				Label = "SharedSubentries", FieldDescription = "Subentries",
+				Children = new List<ConfigurableDictionaryNode> { subEntryHeadword, sensesUnderSubentries, subsubEntries }
+			};
+			var subSenseGloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss" };
+			var subsenses = new ConfigurableDictionaryNode { FieldDescription = "SensesOS", ReferenceItem = "SharedSenses" };
+			var subentriesUnderSenses = new ConfigurableDictionaryNode { FieldDescription = "Subentries", ReferenceItem = "SharedSubentries"};
+			var sharedSenses = new ConfigurableDictionaryNode
+			{
+				Label = "SharedSenses", FieldDescription = "SensesOS",
+				Children = new List<ConfigurableDictionaryNode> { subSenseGloss, subsenses, subentriesUnderSenses }
+			};
+			var mainEntryHeadword = new ConfigurableDictionaryNode { FieldDescription = "HeadWord" };
+			var senses = new ConfigurableDictionaryNode { FieldDescription = "SensesOS", ReferenceItem = "SharedSenses" };
+			var subentries = new ConfigurableDictionaryNode { FieldDescription = "Subentries", ReferenceItem = "SharedSubentries"};
+			var mainEntry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> {  mainEntryHeadword, senses, subentries }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntry },
+				SharedItems = new List<ConfigurableDictionaryNode> { sharedSenses, sharedSubentries }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(model); // PopulateFieldsForTesting populates each node's Label with its FieldDescription
+
+			using (var view = new TestDictionaryDetailsView())
+			{
+				var controller = new DictionaryDetailsController(model, view, m_mediator);
+				controller.LoadNode(mainEntry); // SUT (unshared node)
+				Assert.IsNullOrEmpty(view.GetTooltipFromOverPanel(), "Unshared nodes require no explanation");
+
+				controller.LoadNode(subentries); // SUT (Master Parent)
+				var tooltip = view.GetTooltipFromOverPanel();
+				StringAssert.Contains("LexEntry > SensesOS > Subentries", tooltip);
+				StringAssert.Contains("LexEntry > Subentries > Subentries", tooltip);
+				StringAssert.DoesNotContain("LexEntry > Subentries" + Environment.NewLine, tooltip, "The Master Parent itself shouldn't be listed");
+				StringAssert.DoesNotContain("LexEntry > Subentries > Subentries > Subentries", tooltip, "Node finder shouldn't recurse indefinitely");
+				StringAssert.DoesNotContain("SharedSubentries", tooltip, "The SharedItem's name should not be in the path");
+
+				controller.LoadNode(subsubEntries); // SUT (Subordinate Parent)
+				tooltip = view.GetTooltipFromOverPanel();
+				StringAssert.Contains("LexEntry > Subentries.", tooltip, "Tooltip should indicate the Master Parent's location");
+				StringAssert.Contains("LexEntry > Subentries > Subentries", tooltip, "Tooltip should indicate the node's full path");
+				StringAssert.DoesNotContain("LexEntry > Senses", tooltip, "No other nodes should be listed");
+				StringAssert.DoesNotContain("LexEntry > Subentries > Subentries >", tooltip, "No other nodes should be listed");
+
+				controller.LoadNode(subEntryHeadword); // SUT (shared child)
+				tooltip = view.GetTooltipFromOverPanel();
+				StringAssert.Contains("LexEntry > Subentries", tooltip, "Tooltip should indicate the Master Parent's location");
+				StringAssert.DoesNotContain("LexEntry > Subentries > ", tooltip, "No other nodes should be listed");
+			}
+		}
+		#endregion SharedItem tests
 	}
 }

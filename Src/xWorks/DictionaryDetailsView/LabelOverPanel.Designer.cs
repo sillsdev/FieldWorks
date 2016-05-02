@@ -1,6 +1,6 @@
 ﻿namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 {
-	partial class ButtonOverPanel
+	partial class LabelOverPanel
 	{
 		/// <summary> 
 		/// Required designer variable.
@@ -29,9 +29,9 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ButtonOverPanel));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LabelOverPanel));
 			this.panel = new System.Windows.Forms.Panel();
-			this.button = new System.Windows.Forms.Button();
+			this.label = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// panel
@@ -39,26 +39,26 @@
 			resources.ApplyResources(this.panel, "panel");
 			this.panel.Name = "panel";
 			// 
-			// button
+			// label
 			// 
-			resources.ApplyResources(this.button, "button");
-			this.button.Name = "button";
-			this.button.UseVisualStyleBackColor = true;
+			resources.ApplyResources(this.label, "label");
+			this.label.Name = "label";
 			// 
-			// ButtonOverPanel
+			// LabelOverPanel
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.button);
+			this.Controls.Add(this.label);
 			this.Controls.Add(this.panel);
-			this.Name = "ButtonOverPanel";
+			this.Name = "LabelOverPanel";
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
 		#endregion
 
 		private System.Windows.Forms.Panel panel;
-		private System.Windows.Forms.Button button;
+		private System.Windows.Forms.Label label;
 	}
 }

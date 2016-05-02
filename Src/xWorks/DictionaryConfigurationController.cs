@@ -254,8 +254,8 @@ namespace SIL.FieldWorks.XWorks
 			foreach(var node in nodes)
 			{
 				CreateAndAddTreeNodeForNode(parent, node);
-				// Checking RefEq(node, node.Ref.Parent) ensures configuring shared nodes exactly once: under their master parent
-				if ((node.ReferencedNode == null || ReferenceEquals(node, node.ReferencedNode.Parent)) && node.ReferencedOrDirectChildren != null)
+				// Configure shared nodes exactly once: under their master parent
+				if (!node.IsSubordinateParent && node.ReferencedOrDirectChildren != null)
 					CreateTreeOfTreeNodes(node, node.ReferencedOrDirectChildren);
 			}
 		}
@@ -573,12 +573,18 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (DetailsController == null)
 			{
-				DetailsController = new DictionaryDetailsController(new DetailsView(), _mediator);
+				DetailsController = new DictionaryDetailsController(_model, new DetailsView(), _mediator);
 				DetailsController.DetailsModelChanged += (sender, e) => RefreshPreview();
 				DetailsController.StylesDialogMadeChanges += (sender, e) =>
 				{
 					EnsureValidStylesInModel(_model, Cache); // in case the change was a rename or deletion
 					RefreshPreview(false);
+				};
+				DetailsController.SelectedNodeChanged += (sender, e) =>
+				{
+					var nodeToSelect = sender as ConfigurableDictionaryNode;
+					if (nodeToSelect != null)
+						View.TreeControl.Tree.SelectedNode = FindTreeNode(nodeToSelect, View.TreeControl.Tree.Nodes);
 				};
 			}
 			DetailsController.LoadNode(node);
@@ -678,6 +684,9 @@ namespace SIL.FieldWorks.XWorks
 			RefreshView();
 		}
 
+		/// <summary>
+		/// Link this node to a SharedItem to use its children. Returns true if this node is the first (Master) parent; false otherwise
+		/// </summary>
 		public static bool LinkReferencedNode(List<ConfigurableDictionaryNode> sharedItems, ConfigurableDictionaryNode node, string referenceItem)
 		{
 			node.ReferencedNode = sharedItems.FirstOrDefault(
@@ -957,7 +966,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private static void MergeCustomFieldLists(ConfigurableDictionaryNode parent, List<ConfigurableDictionaryNode> customFieldNodes)
 		{
-			if (parent.ReferencedNode != null && !ReferenceEquals(parent, parent.ReferencedNode.Parent))
+			if (parent.IsSubordinateParent)
 				return; // If parent has Referenced Children but is not the Master Parent, return; fields will be merged under the Master Parent
 			parent = parent.ReferencedNode ?? parent;
 			// Set the parent on the customFieldNodes (needed for Contains and to make any new fields valid when added)

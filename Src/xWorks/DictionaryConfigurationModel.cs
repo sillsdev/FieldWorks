@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
+using Palaso.Linq;
 using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.XWorks
@@ -137,7 +138,6 @@ namespace SIL.FieldWorks.XWorks
 			if (cache == null)
 				return;
 			SpecifyParentsAndReferences(Parts, SharedItems);
-			SpecifyParentsAndReferences(SharedItems, SharedItems); // REVIEW (Hasso) 2016.04: do we want to have to call Specify twice?
 			if (AllPublications)
 				Publications = DictionaryConfigurationController.GetAllPublications(cache);
 			else
@@ -198,7 +198,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Assign Parent and ReferencedNode properties to descendants of nodes
+		/// Assign Parent and ReferencedNode properties to descendants of nodes.
 		/// </summary>
 		internal static void SpecifyParentsAndReferences(List<ConfigurableDictionaryNode> nodes, List<ConfigurableDictionaryNode> sharedItems = null)
 		{
@@ -219,6 +219,9 @@ namespace SIL.FieldWorks.XWorks
 					child.Parent = node;
 				rollingNodes.AddRange(node.Children);
 			}
+
+			if (sharedItems != null && !ReferenceEquals(nodes, sharedItems))
+				SpecifyParentsAndReferences(sharedItems, sharedItems);
 		}
 
 		public override string ToString()

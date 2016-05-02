@@ -493,9 +493,7 @@ namespace SIL.FieldWorks.XWorks
 			var rootTreeNode = controller.View.TreeControl.Tree.Nodes[0];
 			VerifyTreeNodeHierarchy(rootTreeNode);
 			// A SharedItem's Childen should be configurable under its Master Parent and nowhere else
-			var childrenCount = rootNode.ReferencedNode == null || ReferenceEquals(rootNode, rootNode.ReferencedNode.Parent)
-					? rootNode.ReferencedOrDirectChildren.Count
-					: 0;
+			var childrenCount = rootNode.IsSubordinateParent ? 0 : rootNode.ReferencedOrDirectChildren.Count;
 			Assert.That(rootTreeNode.Nodes.Count, Is.EqualTo(childrenCount), "root treenode does not have expected number of descendants");
 			return rootTreeNode;
 		}
