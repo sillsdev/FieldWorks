@@ -533,5 +533,42 @@ namespace SIL.FieldWorks.XWorks
 			Assert.False(someNode.IsMainEntry, "Main Entry");
 			Assert.False(someNode.IsReadonlyMainEntry, "Readonly Main Entry");
 		}
+
+		[Test]
+		public void IsMasterParent()
+		{
+			var children = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode() };
+			var sharedNode = new ConfigurableDictionaryNode { Children = children };
+			var masterParent = new ConfigurableDictionaryNode { ReferencedNode = sharedNode };
+			var otherParent = new ConfigurableDictionaryNode { ReferencedNode = sharedNode };
+			sharedNode.Parent = masterParent;
+			var standaloneParent = new ConfigurableDictionaryNode { Children = children };
+
+			Assert.True(masterParent.IsMasterParent, "Shared Node's Parent should be Master Parent");
+			Assert.False(otherParent.IsMasterParent, "Other node referring to Shared node should not be Master Parent");
+			Assert.False(standaloneParent.IsMasterParent, "node with only direct children should not be Master Parent");
+
+			Assert.False(masterParent.IsSubordinateParent, "Shared Node's Parent should not be Subordinate Parent");
+			Assert.True(otherParent.IsSubordinateParent, "Other node referring to Shared node should be Subordinate Parent");
+			Assert.False(standaloneParent.IsSubordinateParent, "node with only direct children should not be Subordinate Parent (to whom would it subord?)");
+		}
+
+		[Test]
+		public void TryGetMasterParent()
+		{
+			var child = new ConfigurableDictionaryNode();
+			var sharedNode = new ConfigurableDictionaryNode { Label = "Shared", Children = new List<ConfigurableDictionaryNode> { child } };
+			var masterParent = new ConfigurableDictionaryNode { ReferenceItem = "Shared" };
+			var root = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { masterParent } };
+			CssGeneratorTests.PopulateFieldsForTesting(DictionaryConfigurationModelTests.CreateSimpleSharingModel(root, sharedNode));
+
+			ConfigurableDictionaryNode returnedMasterParent;
+			Assert.True(child.TryGetMasterParent(out returnedMasterParent)); // SUT
+			Assert.AreSame(masterParent, returnedMasterParent);
+			Assert.False(masterParent.TryGetMasterParent(out returnedMasterParent), "The master parent doesn't *have* a master parent, it *is* one"); // SUT
+			Assert.IsNull(returnedMasterParent, "Master Parent");
+			Assert.False(root.TryGetMasterParent(out returnedMasterParent), "The root node *certainly* doesn't have a master parent"); // SUT
+			Assert.IsNull(returnedMasterParent, "Root Node");
+		}
 	}
 }

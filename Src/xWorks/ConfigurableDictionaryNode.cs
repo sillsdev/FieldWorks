@@ -222,23 +222,36 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Whether this is a Referenced Child of another node (as opposed to a direct child).
+		/// Whether this node is the master parent of a SharedItem
 		/// </summary>
-		internal bool IsReferencedChild
-		{
-			get
-			{
-				if (Parent == null)
-					return false; // isn't any child.
-				var grandparent = Parent.Parent;
-				return grandparent != null && (grandparent.Children == null || !grandparent.Children.Contains(grandparent));
-			}
-		}
+		internal bool IsMasterParent { get { return ReferencedNode != null && ReferenceEquals(this, ReferencedNode.Parent); } }
+
+		/// <summary>
+		/// True when this node is a parent of a SharedItem, but not the Master Parent
+		/// </summary>
+		internal bool IsSubordinateParent { get { return ReferencedNode != null && !ReferenceEquals(this, ReferencedNode.Parent); } }
 
 		/// <summary>
 		/// Whether this is a SharedItem.
 		/// </summary>
-		internal bool IsSharedItem { get { return Parent != null && ReferenceEquals(this, Parent.ReferencedNode); } }
+		internal bool IsSharedItem { get { return Parent != null && Parent.ReferencedNode != null; } }
+
+		/// <summary>
+		/// Whether this has a SharedItem anywhere in its ancestry
+		/// </summary>
+		internal bool IsSharedItemOrDescendant { get { ConfigurableDictionaryNode dummy; return TryGetMasterParent(out dummy); } }
+
+		/// <summary>
+		/// Finds the nearest Master Parent in this node's ancestry if this is a SharedItem or descendent;
+		/// returns false (out null) if this is a direct descendent of a Part.
+		/// </summary>
+		internal bool TryGetMasterParent(out ConfigurableDictionaryNode masterParent)
+		{
+			for (masterParent = Parent; masterParent != null; masterParent = masterParent.Parent)
+				if (masterParent.ReferencedNode != null)
+					return true;
+			return false;
+		}
 
 		/// <summary>
 		/// Clone this node. Point to the same Parent object. Deep-clone Children and DictionaryNodeOptions.

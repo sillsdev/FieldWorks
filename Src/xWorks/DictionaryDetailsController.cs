@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.RootSites;
@@ -17,6 +18,7 @@ using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
+using SIL.FieldWorks.XWorks.LexText;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -37,25 +39,33 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>Model for the dictionary element being configured</summary>
 		private ConfigurableDictionaryNode m_node;
+		private readonly DictionaryConfigurationModel m_model;
+
 		/// <summary>Model for options specific to the element type, such as writing systems or relation types</summary>
 		private DictionaryNodeOptions Options { get { return m_node.DictionaryNodeOptions; } }
 
 		/// <summary>The DetailsView controlled by this controller</summary>
 		public IDictionaryDetailsView View { get; private set; }
 
-		/// <summary>Fired whenever the model is changed so that the dictionary preview can be refreshed</summary>
+		/// <summary>Fired whenever the model is changed, so that the dictionary preview can be refreshed</summary>
 		public event EventHandler DetailsModelChanged;
 
 		/// <summary>Fired whenever the Styles dialog makes changes that require the dictionary preview to be refreshed</summary>
 		public event EventHandler StylesDialogMadeChanges;
 
-		public DictionaryDetailsController(IDictionaryDetailsView view, Mediator mediator)
+		/// <summary>Fired whenever the selected node is changed, so that the node tree can be refreshed</summary>
+		public event EventHandler SelectedNodeChanged;
+
+		internal DictionaryDetailsController(IDictionaryDetailsView view, Mediator mediator) : this(null, view, mediator) { }
+
+		public DictionaryDetailsController(DictionaryConfigurationModel model, IDictionaryDetailsView view, Mediator mediator)
 		{
 			// one-time setup
 			m_mediator = mediator;
 			m_cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			m_styleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
 			LoadStylesLists();
+			m_model = model;
 			View = view;
 		}
 
@@ -77,7 +87,6 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
-
 		#region LoadModel
 		/// <summary>
 		/// (Re)initializes the controller and view to configure the given node
@@ -97,24 +106,24 @@ namespace SIL.FieldWorks.XWorks
 			View.SetStyles(isPara ? m_paraStyles : m_charStyles, m_node.Style, isPara);
 
 			// Test for Options type
+			UserControl optionsView = null;
 			if (Options != null)
 			{
 				if (Options is DictionaryNodeWritingSystemOptions)
 				{
-					LoadWsOptions((DictionaryNodeWritingSystemOptions) Options);
+					optionsView = LoadWsOptions((DictionaryNodeWritingSystemOptions) Options);
 				}
 				else if (Options is DictionaryNodeSenseOptions)
 				{
-					LoadSenseOptions((DictionaryNodeSenseOptions) Options, node.Parent != null && node.FieldDescription == node.Parent.FieldDescription);
+					optionsView = LoadSenseOptions((DictionaryNodeSenseOptions) Options, node.Parent != null && node.FieldDescription == node.Parent.FieldDescription);
 				}
 				else if (Options is DictionaryNodeListOptions)
 				{
-					LoadListOptions((DictionaryNodeListOptions) Options);
+					optionsView = LoadListOptions((DictionaryNodeListOptions) Options);
 				}
 				else if (Options is DictionaryNodePictureOptions)
 				{
 					// todo: loading options here once UX has been worked out
-					View.OptionsView = null;
 				}
 				else
 				{
@@ -124,15 +133,75 @@ namespace SIL.FieldWorks.XWorks
 			else if ("MorphoSyntaxAnalysisRA".Equals(m_node.FieldDescription) && m_node.Parent.DictionaryNodeOptions is DictionaryNodeSenseOptions)
 			{
 				// Special Grammatical Info. options are needed only if the parent is Senses.
-				LoadGrammaticalInfoOptions();
+				optionsView = LoadGrammaticalInfoOptions();
 			}
 			else
 			{
 				// else, show only the default details (style, before, between, after)
-				View.OptionsView = null;
 				if (m_node.IsReadonlyMainEntry)
 					View.StylesEnabled = false;
 			}
+
+			// Notify users of shared nodes
+			if (node.ReferencedNode != null)
+			{
+				var nodePath = DictionaryConfigurationMigrator.BuildPathStringFromNode(node, false);
+				if (node.IsMasterParent) // node is the Master Parent
+				{
+					var sharingParents = FindNodes(m_model.Parts, n => ReferenceEquals(node.ReferencedNode, n.ReferencedNode));
+					var sharingParentsStringBuilder = new StringBuilder();
+					foreach (var sharingParent in sharingParents.Where(s => !ReferenceEquals(node, s)))
+						sharingParentsStringBuilder.Append(Environment.NewLine)
+							.Append(DictionaryConfigurationMigrator.BuildPathStringFromNode(sharingParent, false));
+					if (sharingParentsStringBuilder.Length > 0)
+					{
+						optionsView = new LabelOverPanel
+						{
+							PanelContents = optionsView,
+							LabelText = xWorksStrings.ThisConfigurationIsShared,
+							LabelToolTip = string.Format(xWorksStrings.SharesWithTheseNodes, nodePath, sharingParentsStringBuilder)
+						};
+					}
+				}
+				else // node is a Subordinate Parent
+				{
+					var masterParent = node.ReferencedNode.Parent;
+					var masterParentPath = DictionaryConfigurationMigrator.BuildPathStringFromNode(masterParent, false);
+					var goToView = new ButtonOverPanel
+					{
+						PanelContents = optionsView,
+						ButtonText = xWorksStrings.ksConfigureNow,
+						ButtonToolTip = string.Format(xWorksStrings.ClickToJumpTo, masterParentPath)
+					};
+					goToView.ButtonClicked += (sender, args) =>
+					{
+						if (SelectedNodeChanged != null)
+							SelectedNodeChanged(masterParent, args);
+					};
+					optionsView = new LabelOverPanel
+					{
+						PanelContents = goToView,
+						LabelText = xWorksStrings.ThisIsConfiguredElsewhere,
+						LabelToolTip = string.Format(xWorksStrings.ksUsesTheSameConfigurationAs, nodePath, masterParentPath)
+					};
+				}
+			}
+			else
+			{
+				ConfigurableDictionaryNode masterParent;
+				if (node.TryGetMasterParent(out masterParent)) // node is a shared descendant
+				{
+					optionsView = new LabelOverPanel
+					{
+						PanelContents = optionsView,
+						LabelText = xWorksStrings.ThisConfigurationIsShared,
+						LabelToolTip = string.Format(xWorksStrings.SeeAffectedNodesUnder,
+							DictionaryConfigurationMigrator.BuildPathStringFromNode(masterParent), false)
+					};
+				}
+			}
+
+			View.OptionsView = optionsView;
 
 			// Register eventhandlers
 			View.StyleSelectionChanged += OnViewOnStyleSelectionChanged;
@@ -142,6 +211,25 @@ namespace SIL.FieldWorks.XWorks
 			View.AfterTextChanged += OnViewOnAfterTextChanged;
 
 			View.ResumeLayout();
+		}
+
+		internal static IEnumerable<ConfigurableDictionaryNode> FindNodes(
+			List<ConfigurableDictionaryNode> nodes, Func<ConfigurableDictionaryNode, bool> match)
+		{
+			if (nodes == null)
+				throw new ArgumentNullException();
+
+			foreach (var node in nodes)
+			{
+				if (match(node))
+					yield return node;
+				if (node.IsMasterParent)
+					foreach (var child in FindNodes(node.ReferencedOrDirectChildren, match))
+						yield return child;
+				else if (node.Children != null)
+					foreach (var child in FindNodes(node.Children, match))
+						yield return child;
+			}
 		}
 
 		private List<ListViewItem> LoadAvailableWsList(DictionaryNodeWritingSystemOptions wsOptions)
@@ -233,7 +321,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>Initialize options for DictionaryNodeWritingSystemOptions</summary>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "wsOptionsView is disposed by its parent")]
-		private void LoadWsOptions(DictionaryNodeWritingSystemOptions wsOptions)
+		private UserControl LoadWsOptions(DictionaryNodeWritingSystemOptions wsOptions)
 		{
 			var wsOptionsView = new ListOptionsView
 			{
@@ -250,16 +338,12 @@ namespace SIL.FieldWorks.XWorks
 			// Prevent events from firing while the view is being initialized
 			wsOptionsView.Load += WritingSystemEventHandlerAdder(wsOptionsView, wsOptions);
 
-			if (m_node.IsHeadWord) // show the Configure Headword Numbers... button
-			{
-				var optionsView = new ButtonOverPanel { PanelContents = wsOptionsView };
-				optionsView.ButtonClicked += (o, e) => HandleHeadwordNumbersButton();
-				View.OptionsView = optionsView;
-			}
-			else
-			{
-				View.OptionsView = wsOptionsView;
-			}
+			if (!m_node.IsHeadWord)
+				return wsOptionsView;
+			// show the Configure Headword Numbers... button
+			var optionsView = new ButtonOverPanel { PanelContents = wsOptionsView };
+			optionsView.ButtonClicked += (o, e) => HandleHeadwordNumbersButton();
+			return optionsView;
 		}
 
 		private EventHandler WritingSystemEventHandlerAdder(IDictionaryListOptionsView wsOptionsView, DictionaryNodeWritingSystemOptions wsOptions)
@@ -284,7 +368,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>Initialize options for DictionaryNodeSenseOptions</summary>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "senseOptionsView is disposed by its parent")]
-		private void LoadSenseOptions(DictionaryNodeSenseOptions senseOptions, bool isSubsense)
+		private UserControl LoadSenseOptions(DictionaryNodeSenseOptions senseOptions, bool isSubsense)
 		{
 			// initialize SenseOptionsView
 			//For senses disallow the 1 1.2 1.2.3 option, that is now handled in subsenses
@@ -335,12 +419,12 @@ namespace SIL.FieldWorks.XWorks
 			senseOptionsView.SenseInParaChanged += (sender, e) => SenseInParaChanged(senseOptions, senseOptionsView);
 
 			// add senseOptionsView to the DetailsView
-			View.OptionsView = senseOptionsView;
+			return senseOptionsView;
 		}
 
 		/// <summary>Initialize options for DictionaryNodeListOptions other than WritingSystem options</summary>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "listOptionsView is disposed by its parent")]
-		private void LoadListOptions(DictionaryNodeListOptions listOptions)
+		private UserControl LoadListOptions(DictionaryNodeListOptions listOptions)
 		{
 			var listOptionsView = new ListOptionsView();
 
@@ -367,7 +451,7 @@ namespace SIL.FieldWorks.XWorks
 			// Prevent events from firing while the view is being initialized
 			listOptionsView.Load += ListEventHandlerAdder(listOptionsView, listOptions);
 
-			View.OptionsView = listOptionsView;
+			return listOptionsView;
 		}
 
 		private void InternalLoadList(DictionaryNodeListOptions listOptions, IDictionaryListOptionsView listOptionsView)
@@ -460,7 +544,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "optionsView is disposed by its parent")]
-		private void LoadGrammaticalInfoOptions()
+		private UserControl LoadGrammaticalInfoOptions()
 		{
 			var optionsView = new ListOptionsView
 			{
@@ -479,7 +563,7 @@ namespace SIL.FieldWorks.XWorks
 				RefreshPreview();
 			};
 
-			View.OptionsView = optionsView;
+			return optionsView;
 		}
 
 		#region Load more-static parts
@@ -723,7 +807,7 @@ namespace SIL.FieldWorks.XWorks
 				return yName == null ? 0 : -1;
 			if (yName == null)
 				return 1;
-			return String.Compare(xName, yName, StringComparison.InvariantCulture);
+			return string.Compare(xName, yName, StringComparison.InvariantCulture);
 		}
 		#endregion Load more-static parts
 		#endregion LoadModel
@@ -762,7 +846,7 @@ namespace SIL.FieldWorks.XWorks
 			// If the combo is not enabled, don't allow the Styles dialog to change it (pass null instead). FixStyles will ensure a refresh.
 			FwStylesDlg.RunStylesDialogForCombo(combo.Enabled ? combo : null, FixStyles(combo.Enabled),
 				defaultStyle, m_styleSheet, 0, 0, m_cache, View.TopLevelControl, (IApp)m_mediator.PropertyTable.GetValue("App"),
-				m_mediator.HelpTopicProvider, new LexText.FlexStylesXmlAccessor(m_cache.LanguageProject.LexDbOA).SetPropsToFactorySettings);
+				m_mediator.HelpTopicProvider, new FlexStylesXmlAccessor(m_cache.LanguageProject.LexDbOA).SetPropsToFactorySettings);
 		}
 
 		private void BeforeTextChanged()

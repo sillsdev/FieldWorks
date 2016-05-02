@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators;
@@ -29,7 +30,7 @@ namespace SIL.FieldWorks.XWorks
 		private SimpleLogger m_logger;
 		private FdoCache Cache { get; set; }
 
-		private IEnumerable<IDictionaryConfigurationMigrator> m_migrators;
+		private readonly IEnumerable<IDictionaryConfigurationMigrator> m_migrators;
 
 		public DictionaryConfigurationMigrator(Mediator mediator)
 		{
@@ -51,7 +52,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var versionProvider = new VersionInfoProvider(Assembly.GetExecutingAssembly(), true);
 				// Further migration changes (especially Label changes) may need changes in multiple migrators:
-				foreach (IDictionaryConfigurationMigrator migrator in m_migrators)
+				foreach (var migrator in m_migrators)
 				{
 					migrator.MigrateIfNeeded(m_logger, m_mediator, versionProvider.ApplicationVersion);
 				}
@@ -66,16 +67,18 @@ namespace SIL.FieldWorks.XWorks
 			m_logger = null;
 		}
 
-		internal static string BuildPathStringFromNode(ConfigurableDictionaryNode child)
+		internal static string BuildPathStringFromNode(ConfigurableDictionaryNode node, bool includeSharedItems = true)
 		{
-			var path = child.DisplayLabel;
-			var node = child;
+			if (node.Parent == null)
+				return node.DisplayLabel;
+			var path = string.Empty;
 			while (node.Parent != null)
 			{
-				path = node.Parent.DisplayLabel + "->" + path;
+				if (includeSharedItems || node.Parent.ReferencedNode == null)
+					path = " > " + node.DisplayLabel + path;
 				node = node.Parent;
 			}
-			return path;
+			return node.DisplayLabel + path;
 		}
 
 		internal static IEnumerable<string> ConfigFilesInDir(string dir)

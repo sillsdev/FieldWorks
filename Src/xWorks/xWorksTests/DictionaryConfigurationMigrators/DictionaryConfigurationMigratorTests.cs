@@ -1,4 +1,9 @@
-﻿using System;
+﻿// Copyright (c) 2014-2016 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using NUnit.Framework;
@@ -10,6 +15,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
 using XCore;
+// ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 {
@@ -65,9 +71,30 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.AreEqual(updatedConfigModel.Version, DictionaryConfigurationMigrator.VersionCurrent);
 		}
 
+		[Test]
+		public void BuildPathStringFromNode()
+		{
+			var subsenses = new ConfigurableDictionaryNode { Label = "Subsenses", FieldDescription = "SensesOS", ReferenceItem = "SharedSenses" };
+			var sharedSenses = new ConfigurableDictionaryNode
+			{
+				Label = "SharedSenses", FieldDescription = "SensesOS", Children = new List<ConfigurableDictionaryNode> { subsenses }
+			};
+			var senses = new ConfigurableDictionaryNode { Label = "Senses", FieldDescription = "SensesOS", ReferenceItem = "SharedSenses" };
+			var mainEntry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+			var model = DictionaryConfigurationModelTests.CreateSimpleSharingModel(mainEntry, sharedSenses);
+			CssGeneratorTests.PopulateFieldsForTesting(model); // PopulateFieldsForTesting populates each node's Label with its FieldDescription
+
+			Assert.AreEqual("LexEntry > Senses > SharedSenses > Subsenses", DictionaryConfigurationMigrator.BuildPathStringFromNode(subsenses));
+			Assert.AreEqual("LexEntry > Senses > Subsenses", DictionaryConfigurationMigrator.BuildPathStringFromNode(subsenses, false));
+			Assert.AreEqual("LexEntry", DictionaryConfigurationMigrator.BuildPathStringFromNode(mainEntry));
+		}
+
 		private class StubContentControlProvider : IxCoreColleague
 		{
-			private string m_contentControlForTest =
+			private const string m_contentControlForTest =
 				@"<control>
 					<parameters PaneBarGroupId='PaneBar-Dictionary'>
 						<!-- The following configureLayouts node is only required to help migrate old configurations to the new format -->
@@ -83,15 +110,16 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 						</configureLayouts>
 					</parameters>
 				</control>";
-			private XmlNode m_testControlNode;
 
-			private string m_contentControlBlank =
+			private readonly XmlNode m_testControlNode;
+
+			private const string m_contentControlBlank =
 				@"<control><parameters><configureLayouts>
 					<layoutType label='$wsName' layout='bogus-$ws'>
 						<configure class='LexEntry' label='Main Entry' layout='publishRootEntry' />
 					</layoutType>
 				</configureLayouts></parameters></control>";
-			private XmlNode m_testControlBlankNode;
+			private readonly XmlNode m_testControlBlankNode;
 
 			public StubContentControlProvider()
 			{
@@ -115,6 +143,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			/// <summary>
 			/// This is called by reflection through the mediator. We need so that we can migrate through the PreHistoricMigrator.
 			/// </summary>
+			// ReSharper disable once UnusedMember.Local
 			private bool OnGetContentControlParameters(object parameterObj)
 			{
 				var param = parameterObj as Tuple<string, string, XmlNode[]>;

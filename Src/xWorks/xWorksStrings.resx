@@ -348,7 +348,28 @@ Are you SURE you want to delete the field {2}?</value>
     <value>{0} can be configured in more detail.</value>
   </data>
   <data name="ksUsesTheSameConfigurationAs" xml:space="preserve">
-    <value>{0} otherwise uses the same configuration as {1}.</value>
+    <value>{0} uses the same configuration for subfields as {1}.</value>
+    <comment>{0} and {1} are both configuration nodes</comment>
+  </data>
+  <data name="ksConfigureNow" xml:space="preserve">
+    <value>Configure now...</value>
+  </data>
+  <data name="ClickToJumpTo" xml:space="preserve">
+    <value>Click to jump to {0}.</value>
+  </data>
+  <data name="ThisIsConfiguredElsewhere" xml:space="preserve">
+    <value>This item is configured somewhere else.</value>
+  </data>
+  <data name="ThisConfigurationIsShared" xml:space="preserve">
+    <value>This configuration is shared.</value>
+  </data>
+  <data name="SharesWithTheseNodes" xml:space="preserve">
+    <value>Configuring the subfields of {0} also affects:{1}.</value>
+    <comment>{0} is the name of this node. {1} is a list of affected nodes.</comment>
+  </data>
+  <data name="SeeAffectedNodesUnder" xml:space="preserve">
+    <value>See {0} for a list of affected nodes.</value>
+    <comment>{0} is the node whose tooltip is SharesWithTheseNodes</comment>
   </data>
   <data name="ksBefore" xml:space="preserve">
     <value>Before:</value>

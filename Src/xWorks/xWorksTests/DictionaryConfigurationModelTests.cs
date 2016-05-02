@@ -1050,7 +1050,6 @@ namespace SIL.FieldWorks.XWorks
 
 			// SUT
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems);
-			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.SharedItems, model.SharedItems);
 
 			Assert.AreSame(refdConfigNode, refdConfigNodeChild.Parent);
 			Assert.AreSame(refdConfigNode, refdConfigNodeChild.ReferencedNode);
