@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	/// Rules that extend this class override the methods that provide information about the
 	/// various table cells in the rule and the data contained in each cell.
 	/// </summary>
-	public class RuleFormulaControl : ButtonLauncher
+	public class RuleFormulaControl : ButtonLauncher, IPatternControl
 	{
 		protected enum RuleInsertType
 		{
@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		protected InsertionControl m_insertionControl;
-		protected RuleFormulaView m_view;
+		protected PatternView m_view;
 
 		public RuleFormulaControl()
 		{
@@ -231,28 +231,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				CheckDisposed();
 				SelectionHelper sel = SelectionHelper.Create(m_view);
-				var obj = GetItem(sel, SelectionHelper.SelLimitType.Anchor);
-				var endObj = GetItem(sel, SelectionHelper.SelLimitType.End);
+				ICmObject obj = GetCmObject(sel, SelectionHelper.SelLimitType.Anchor);
+				ICmObject endObj = GetCmObject(sel, SelectionHelper.SelLimitType.End);
 				if (obj != endObj || obj == null || endObj == null)
 					return null;
 				return obj;
 			}
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			if (IsDisposed)
-				return;
-
-			if (disposing)
-			{
-				m_insertionControl.Insert -= m_insertionControl_Insert;
-			}
-
-			m_insertionControl = null;
-			m_view = null;
-
-			base.Dispose(disposing);
 		}
 
 		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider,
@@ -264,81 +248,122 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			m_mainControl = m_view;
 
+			m_view.SelectionChanged += SelectionChanged;
+			m_view.RemoveItemsRequested += RemoveItemsRequested;
+			m_view.ContextMenuRequested += ContextMenuRequested;
+
 			m_insertionControl.Insert += m_insertionControl_Insert;
 		}
 
-		/// <summary>
-		/// Gets the ID of the currently selected cell. Any integer can be used as a cell ID, except
-		/// <c>-1</c> and <c>-2</c>, which is used to indicate no cell.
-		/// </summary>
-		/// <param name="sel">The selection.</param>
-		/// <param name="limit">The limit.</param>
-		/// <returns></returns>
+		private static int ToCellId(object ctxt)
+		{
+			return (int?) ctxt ?? -1;
+		}
+
+		private static object ToContextObject(int cellId)
+		{
+			if (cellId == -1)
+				return null;
+			return cellId;
+		}
+
+		public object GetContext(SelectionHelper sel)
+		{
+			return ToContextObject(GetCell(sel));
+		}
+
+		public object GetContext(SelectionHelper sel, SelectionHelper.SelLimitType limit)
+		{
+			return ToContextObject(GetCell(sel, limit));
+		}
+
+		public object GetItem(SelectionHelper sel, SelectionHelper.SelLimitType limit)
+		{
+			return GetCmObject(sel, limit);
+		}
+
+		public int GetItemContextIndex(object ctxt, object obj)
+		{
+			return GetItemCellIndex(ToCellId(ctxt), (ICmObject) obj);
+		}
+
+		public SelLevInfo[] GetLevelInfo(object ctxt, int index)
+		{
+			return GetLevelInfo(ToCellId(ctxt), index);
+		}
+
+		public int GetContextCount(object ctxt)
+		{
+			return GetCellCount(ToCellId(ctxt));
+		}
+
+		public object GetNextContext(object ctxt)
+		{
+			return ToContextObject(GetNextCell(ToCellId(ctxt)));
+		}
+
+		public object GetPrevContext(object ctxt)
+		{
+			return ToContextObject(GetPrevCell(ToCellId(ctxt)));
+		}
+
+		public int GetFlid(object ctxt)
+		{
+			return GetFlid(ToCellId(ctxt));
+		}
+
+		protected int GetCell(SelectionHelper sel)
+		{
+			if (sel == null)
+				return -1;
+
+			int cellId = GetCell(sel, SelectionHelper.SelLimitType.Anchor);
+
+			if (sel.IsRange && cellId != -1)
+			{
+				int endCellId = GetCell(sel, SelectionHelper.SelLimitType.End);
+				if (cellId != endCellId)
+					return -1;
+			}
+			return cellId;
+		}
+
 		protected virtual int GetCell(SelectionHelper sel, SelectionHelper.SelLimitType limit)
 		{
 			throw new NotImplementedException();
 		}
 
-		/// <summary>
-		/// Gets the currently selected item.
-		/// </summary>
-		/// <param name="sel">The selection.</param>
-		/// <param name="limit">The limit.</param>
-		/// <returns></returns>
-		protected virtual ICmObject GetItem(SelectionHelper sel, SelectionHelper.SelLimitType limit)
+		protected virtual ICmObject GetCmObject(SelectionHelper sel, SelectionHelper.SelLimitType limit)
 		{
 			throw new NotImplementedException();
 		}
 
-		/// <summary>
-		/// Gets the index of an item in the specified cell.
-		/// </summary>
-		/// <param name="cellId">The cell id.</param>
-		/// <param name="obj">The object.</param>
-		/// <returns></returns>
-		protected virtual int GetItemCellIndex(int cellId, ICmObject obj)
-		{
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
-		/// Gets the level information for selection purposes of the item at the specified
-		/// index in the specified cell.
-		/// </summary>
-		/// <param name="cellId">The cell id.</param>
-		/// <param name="cellIndex">Index of the cell.</param>
-		/// <returns></returns>
-		protected virtual SelLevInfo[] GetLevelInfo(int cellId, int cellIndex)
-		{
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
-		/// Gets the number of items in the specified cell.
-		/// </summary>
-		/// <param name="cellId">The cell id.</param>
-		/// <returns></returns>
 		protected virtual int GetCellCount(int cellId)
 		{
 			throw new NotImplementedException();
 		}
 
-		/// <summary>
-		/// Gets the ID of the next cell from the specified cell.
-		/// </summary>
-		/// <param name="cellId">The cell id.</param>
-		/// <returns></returns>
+		protected virtual int GetItemCellIndex(int cellId, ICmObject obj)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected virtual SelLevInfo[] GetLevelInfo(int cellId, int index)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected virtual int GetNextCell(int cellId)
 		{
 			throw new NotImplementedException();
 		}
 
-		/// <summary>
-		/// Gets the ID of the previous cell from the specified cell.
-		/// </summary>
-		/// <param name="cellId">The cell id.</param>
-		/// <returns></returns>
 		protected virtual int GetPrevCell(int cellId)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected virtual int GetFlid(int cellId)
 		{
 			throw new NotImplementedException();
 		}
@@ -447,16 +472,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			throw new NotImplementedException();
 		}
 
-		/// <summary>
-		/// Gets the flid associated with the specified cell. It is used for selection purposes.
-		/// </summary>
-		/// <param name="cellId">The cell ID.</param>
-		/// <returns>The flid.</returns>
-		protected virtual int GetFlid(int cellId)
-		{
-			throw new NotImplementedException();
-		}
-
 		protected virtual string FeatureChooserHelpTopic
 		{
 			get
@@ -479,27 +494,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				throw new NotImplementedException();
 			}
-		}
-
-		/// <summary>
-		/// Gets the ID of the selected cell.
-		/// </summary>
-		/// <param name="sel">The selection.</param>
-		/// <returns></returns>
-		protected int GetCell(SelectionHelper sel)
-		{
-			if (sel == null)
-				return -1;
-
-			int cellId = GetCell(sel, SelectionHelper.SelLimitType.Anchor);
-
-			if (sel.IsRange && cellId != -1 && cellId != -2)
-			{
-				int endCellId = GetCell(sel, SelectionHelper.SelLimitType.End);
-				if (cellId != endCellId)
-					return -1;
-			}
-			return cellId;
 		}
 
 		/// <summary>
@@ -688,7 +682,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			ICmObject obj = null;
 
-			var labels = ObjectLabel.CreateObjectLabels(m_cache, candidates);
+			IEnumerable<ObjectLabel> labels = ObjectLabel.CreateObjectLabels(m_cache, candidates);
 
 			using (var chooser = new SimpleListChooser(m_persistProvider, labels, fieldName, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
@@ -759,7 +753,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				return 0;
 			}
-			var curObj = GetItem(sel, SelectionHelper.SelLimitType.Top);
+			ICmObject curObj = GetCmObject(sel, SelectionHelper.SelLimitType.Top);
 			int ich = sel.GetIch(SelectionHelper.SelLimitType.Top);
 			for (int i = 0; i < objs.Length; i++)
 			{
@@ -772,19 +766,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return objs.Length;
 		}
 
-		/// <summary>
-		/// Removes items. This is called by the view when a delete or backspace button is pressed.
-		/// </summary>
-		/// <param name="forward">if <c>true</c> the delete button was pressed, otherwise backspace was pressed</param>
-		public void RemoveItems(bool forward)
+		private void RemoveItemsRequested(object sender, RemoveItemsRequestedEventArgs e)
 		{
-			CheckDisposed();
 			SelectionHelper sel = SelectionHelper.Create(m_view);
 			int cellId = -1;
 			int cellIndex = -1;
 			UndoableUnitOfWorkHelper.Do(MEStrings.ksRuleUndoRemove, MEStrings.ksRuleRedoRemove, m_cache.ActionHandlerAccessor, () =>
 			{
-				cellId = RemoveItems(sel, forward, out cellIndex);
+				cellId = RemoveItems(sel, e.Forward, out cellIndex);
 			});
 
 			// if the no cell is returned, then do not reconstruct
@@ -902,8 +891,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		protected int[] GetIndicesToRemove(ICmObject[] objs, SelectionHelper sel)
 		{
-			var beginObj = GetItem(sel, SelectionHelper.SelLimitType.Top);
-			var endObj = GetItem(sel, SelectionHelper.SelLimitType.Bottom);
+			ICmObject beginObj = GetCmObject(sel, SelectionHelper.SelLimitType.Top);
+			ICmObject endObj = GetCmObject(sel, SelectionHelper.SelLimitType.Bottom);
 
 			var remove = new List<int>();
 			bool inRange = false;
@@ -931,7 +920,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		protected int GetIndexToRemove(ICmObject[] objs, SelectionHelper sel, bool forward)
 		{
-			var obj = GetItem(sel, SelectionHelper.SelLimitType.Top);
+			ICmObject obj = GetCmObject(sel, SelectionHelper.SelLimitType.Top);
 			for (int i = 0; i < objs.Length; i++)
 			{
 				if (objs[i] == obj)
@@ -964,9 +953,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public void SetContextFeatures()
 		{
 			SelectionHelper sel = SelectionHelper.Create(m_view);
-			bool reconstruct = false;
+			bool reconstruct;
 
-			using (var featChooser = new SIL.FieldWorks.LexText.Controls.PhonologicalFeatureChooserDlg())
+			using (var featChooser = new PhonologicalFeatureChooserDlg())
 			{
 				var ctxt = (IPhSimpleContextNC) CurrentContext;
 				var natClass = (IPhNCFeatures) ctxt.FeatureStructureRA;
@@ -1005,256 +994,25 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
-		public virtual bool DisplayContextMenu(IVwSelection vwselNew)
+		private void ContextMenuRequested(object sender, ContextMenuRequestedEventArgs e)
 		{
-			SelectionHelper sel = SelectionHelper.Create(vwselNew, m_view);
-			var obj = CurrentObject;
+			e.Selection.Install();
+			ICmObject obj = CurrentObject;
 
 			if (obj != null)
 			{
 				// we only bother to display the context menu if an item is selected
 				using (var ui = new CmObjectUi(obj))
-					return ui.HandleRightClick(Mediator, m_propertyTable, this, true, ContextMenuID);
+				{
+					e.Handled = ui.HandleRightClick(Mediator, m_propertyTable, this, true, ContextMenuID);
+				}
 			}
-			return false;
 		}
 
-		/// <summary>
-		/// Update the new selection. This is called by rule formula view when selection changes.
-		/// </summary>
-		/// <param name="prootb">The root box.</param>
-		/// <param name="vwselNew">The new selection.</param>
-		public virtual void UpdateSelection(IVwRootBox prootb, IVwSelection vwselNew)
+		private void SelectionChanged(object sender, EventArgs eventArgs)
 		{
-			CheckDisposed();
-			SelectionHelper sel = SelectionHelper.Create(vwselNew, m_view);
-			int cellId = GetCell(sel);
-			if (sel != null)
-			{
-				// if cell ID is -1 or -2 then we are trying to select outside of a single cell
-				if (cellId == -1 || cellId == -2)
-				{
-					if (sel.IsRange)
-					{
-						// ensure that a range selection only occurs within one cell
-						int topCellId = GetCell(sel, SelectionHelper.SelLimitType.Top);
-						int bottomCellId = GetCell(sel, SelectionHelper.SelLimitType.Bottom);
-						var limit = SelectionHelper.SelLimitType.Top;
-						if (topCellId != -1 && topCellId != -2)
-						{
-							limit = SelectionHelper.SelLimitType.Top;
-							cellId = topCellId;
-						}
-						else if (bottomCellId != -1 && bottomCellId != -2)
-						{
-							limit = SelectionHelper.SelLimitType.Bottom;
-							cellId = bottomCellId;
-						}
-
-						if (cellId != -1 && cellId != -2)
-						{
-							IVwSelection newSel = SelectCell(cellId, limit == SelectionHelper.SelLimitType.Bottom, false);
-							SelectionHelper.SelLimitType otherLimit = limit == SelectionHelper.SelLimitType.Top
-								? SelectionHelper.SelLimitType.Bottom : SelectionHelper.SelLimitType.Top;
-							sel.ReduceToIp(limit);
-							IVwSelection otherSel = sel.SetSelection(m_view, false, false);
-							if (sel.Selection.EndBeforeAnchor)
-								m_view.RootBox.MakeRangeSelection(limit == SelectionHelper.SelLimitType.Top ? newSel : otherSel,
-									limit == SelectionHelper.SelLimitType.Top ? otherSel : newSel, true);
-							else
-								m_view.RootBox.MakeRangeSelection(limit == SelectionHelper.SelLimitType.Top ? otherSel : newSel,
-									limit == SelectionHelper.SelLimitType.Top ? newSel : otherSel, true);
-						}
-
-					}
-				}
-				else
-				{
-					AdjustSelection(sel);
-				}
-			}
 			// since the context has changed update the display options on the insertion control
 			m_insertionControl.UpdateOptionsDisplay();
-		}
-
-		/// <summary>
-		/// Adjusts the selection.
-		/// </summary>
-		/// <param name="sel">The selection.</param>
-		void AdjustSelection(SelectionHelper sel)
-		{
-			IVwSelection anchorSel;
-			int curHvo, curIch, curTag;
-			// anchor IP
-			if (!GetSelectionInfo(sel, SelectionHelper.SelLimitType.Anchor, out anchorSel, out curHvo, out curIch, out curTag))
-				return;
-
-			IVwSelection endSel;
-			int curEndHvo, curEndIch, curEndTag;
-			// end IP
-			if (!GetSelectionInfo(sel, SelectionHelper.SelLimitType.End, out endSel, out curEndHvo, out curEndIch, out curEndTag))
-				return;
-
-			// create range selection
-			IVwSelection vwSel = m_view.RootBox.MakeRangeSelection(anchorSel, endSel, false);
-			if (vwSel != null)
-			{
-				ITsString tss;
-				int ws;
-				bool prev;
-
-				// only install the adjusted selection if it is different then the current selection
-				int wholeHvo, wholeIch, wholeTag, wholeEndHvo, wholeEndIch, wholeEndTag;
-				vwSel.TextSelInfo(false, out tss, out wholeIch, out prev, out wholeHvo, out wholeTag, out ws);
-				vwSel.TextSelInfo(true, out tss, out wholeEndIch, out prev, out wholeEndHvo, out wholeEndTag, out ws);
-
-				if (wholeHvo != curHvo || wholeEndHvo != curEndHvo || wholeIch != curIch || wholeEndIch != curEndIch
-					|| wholeTag != curTag || wholeEndTag != curEndTag)
-					vwSel.Install();
-			}
-		}
-
-		/// <summary>
-		/// Creates a selection IP for the specified limit.
-		/// </summary>
-		/// <param name="sel">The selection.</param>
-		/// <param name="limit">The limit.</param>
-		/// <param name="vwSel">The new selection.</param>
-		/// <param name="curHvo">The current hvo.</param>
-		/// <param name="curIch">The current ich.</param>
-		/// <param name="curTag">The current tag.</param>
-		/// <returns><c>true</c> if we want to create a range selection, otherwise <c>false</c></returns>
-		bool GetSelectionInfo(SelectionHelper sel, SelectionHelper.SelLimitType limit, out IVwSelection vwSel,
-			out int curHvo, out int curIch, out int curTag)
-		{
-			vwSel = null;
-			curHvo = 0;
-			curIch = -1;
-			curTag = -1;
-
-			var obj = GetItem(sel, limit);
-			if (obj == null)
-				return false;
-
-			ITsString curTss;
-			int ws;
-			bool prev;
-
-			sel.Selection.TextSelInfo(limit == SelectionHelper.SelLimitType.End, out curTss, out curIch, out prev, out curHvo, out curTag, out ws);
-
-			int cellId = GetCell(sel);
-			int cellIndex = GetItemCellIndex(cellId, obj);
-
-			if (!sel.IsRange)
-			{
-				// if the current selection is an IP, check if it is in one of the off-limits areas, and move the IP
-				if (curIch == 0 && curTag == RuleFormulaVc.ktagLeftNonBoundary)
-				{
-					// the cursor is at a non-selectable left edge of an item, so
-					// move to the selectable left edge
-					SelectLeftBoundary(cellId, cellIndex, true);
-					return false;
-				}
-				if (curIch == curTss.Length && curTag == RuleFormulaVc.ktagLeftNonBoundary)
-				{
-					// the cursor has been moved to the left from the left boundary, so move the
-					// cursor to the previous item in the cell or the previous cell
-					if (cellIndex > 0)
-					{
-						SelectAt(cellId, cellIndex - 1, false, true, true);
-					}
-					else
-					{
-						int prevCellId = GetPrevCell(cellId);
-						if (prevCellId != -1)
-							SelectCell(prevCellId, false, true);
-						else
-							SelectLeftBoundary(cellId, cellIndex, true);
-
-					}
-					return false;
-				}
-				if (curIch == curTss.Length && curTag == RuleFormulaVc.ktagRightNonBoundary)
-				{
-					// the cursor is at a non-selectable right edge of an item, so move to the
-					// selectable right edge
-					SelectRightBoundary(cellId, cellIndex, true);
-					return false;
-				}
-				if (curIch == 0 && curTag == RuleFormulaVc.ktagRightNonBoundary)
-				{
-					// the cursor has been moved to the right from the right boundary, so move the
-					// cursor to the next item in the cell or the next cell
-					if (cellIndex < GetCellCount(cellId) - 1)
-					{
-						SelectAt(cellId, cellIndex + 1, true, true, true);
-					}
-					else
-					{
-						int nextCellId = GetNextCell(cellId);
-						if (nextCellId != -1)
-							SelectCell(nextCellId, true, true);
-						else
-							SelectRightBoundary(cellId, cellIndex, true);
-
-					}
-					return false;
-				}
-				if (!sel.Selection.IsEditable)
-				{
-					//SelectAt(cellId, cellIndex, true, true, true);
-					return false;
-				}
-			}
-
-			// find the beginning of the currently selected item
-			IVwSelection initialSel = SelectAt(cellId, cellIndex, true, false, false);
-
-			ITsString tss;
-			int selCellIndex = cellIndex;
-			int initialHvo, initialIch, initialTag;
-			if (initialSel == null)
-				return false;
-			initialSel.TextSelInfo(false, out tss, out initialIch, out prev, out initialHvo, out initialTag, out ws);
-			// are we at the beginning of an item?
-			if ((curHvo == initialHvo && curIch == initialIch && curTag == initialTag)
-				|| (curIch == 0 && curTag == RuleFormulaVc.ktagLeftBoundary)
-				//|| (m_cache.GetClassOfObject(hvo) != PhIterationContext.kclsidPhIterationContext && curIch == 0 && curTag == (int)PhTerminalUnit.PhTerminalUnitTags.kflidName)
-				|| (curIch == 0 && curTag == RuleFormulaVc.ktagXVariable))
-			{
-				// if the current selection is an IP, then don't adjust anything
-				if (!sel.IsRange)
-					return false;
-
-				// if we are the beginning of the current item, and the current selection is a range, and the end is before the anchor,
-				// then do not include the current item in the adjusted range selection
-				if (sel.Selection.EndBeforeAnchor && limit == SelectionHelper.SelLimitType.Anchor)
-					selCellIndex = cellIndex - 1;
-			}
-			else
-			{
-				int finalIch, finalHvo, finalTag;
-				IVwSelection finalSel = SelectAt(cellId, cellIndex, false, false, false);
-				finalSel.TextSelInfo(false, out tss, out finalIch, out prev, out finalHvo, out finalTag, out ws);
-				// are we at the end of an item?
-				if ((curHvo == finalHvo && curIch == finalIch && curTag == finalTag)
-					|| (curIch == curTss.Length && curTag == RuleFormulaVc.ktagRightBoundary))
-				{
-					// if the current selection is an IP, then don't adjust anything
-					if (!sel.IsRange)
-						return false;
-
-					// if we are the end of the current item, and the current selection is a range, and the anchor is before the end,
-					// then do not include the current item in the adjusted range selection
-					if (!sel.Selection.EndBeforeAnchor && limit == SelectionHelper.SelLimitType.Anchor)
-						selCellIndex = cellIndex + 1;
-				}
-			}
-
-			bool initial = limit == SelectionHelper.SelLimitType.Anchor ? !sel.Selection.EndBeforeAnchor : sel.Selection.EndBeforeAnchor;
-			vwSel = SelectAt(cellId, selCellIndex, initial, false, false);
-
-			return vwSel != null;
 		}
 
 		/// <summary>
@@ -1266,72 +1024,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		protected void ReconstructView(int cellId, int cellIndex, bool initial)
 		{
 			m_view.RootBox.Reconstruct();
-			SelectAt(cellId, cellIndex, initial, true, true);
-		}
-
-		private void SelectLeftBoundary(int cellId, int cellIndex, bool install)
-		{
-			var levels = new List<SelLevInfo>(GetLevelInfo(cellId, cellIndex));
-			// if the current item is an iteration context, include the extra level
-			//if (m_cache.GetClassOfObject(hvo) == PhIterationContext.kclsidPhIterationContext)
-			//{
-			//    SelLevInfo iterCtxtLev = new SelLevInfo();
-			//    iterCtxtLev.tag = (int)PhIterationContext.PhIterationContextTags.kflidMember;
-			//    levels.Insert(0, iterCtxtLev);
-			//}
-			try
-			{
-				m_view.RootBox.MakeTextSelection(0, levels.Count, levels.ToArray(), RuleFormulaVc.ktagLeftBoundary, 0, 0, 0,
-					0, false, -1, null, install);
-			}
-			catch (Exception)
-			{
-			}
-		}
-
-		private void SelectRightBoundary(int cellId, int cellIndex, bool install)
-		{
-			SelLevInfo[] levels = GetLevelInfo(cellId, cellIndex);
-			try
-			{
-				m_view.RootBox.MakeTextSelection(0, levels.Length, levels, RuleFormulaVc.ktagRightBoundary, 0, 1, 1,
-					0, false, -1, null, install);
-			}
-			catch (Exception)
-			{
-			}
-		}
-
-		/// <summary>
-		/// Moves the cursor to the specified position in the specified cell.
-		/// </summary>
-		/// <param name="cellId">The cell id.</param>
-		/// <param name="cellIndex">Index of the item in the cell.</param>
-		/// <param name="initial">if <c>true</c> move the cursor to the beginning of the specified item, otherwise it is moved to the end</param>
-		/// <param name="editable">if <c>true</c> move the cursor to the first editable position</param>
-		/// <param name="install">if <c>true</c> install the selection</param>
-		/// <returns>The new selection</returns>
-		protected IVwSelection SelectAt(int cellId, int cellIndex, bool initial, bool editable, bool install)
-		{
-			SelLevInfo[] levels = GetLevelInfo(cellId, cellIndex);
-			if (levels == null)
-			{
-				int count = GetCellCount(cellId);
-				if (count == 0)
-				{
-					var newSel = new SelectionHelper();
-					newSel.SetTextPropId(SelectionHelper.SelLimitType.Anchor, GetFlid(cellId));
-					return newSel.SetSelection(m_view, install, false);
-				}
-				levels = GetLevelInfo(cellId, initial ? 0 : count - 1);
-			}
-
-			return m_view.RootBox.MakeTextSelInObj(0, levels.Length, levels, 0, null, initial, editable, false, false, install);
-		}
-
-		IVwSelection SelectCell(int cellId, bool initial, bool install)
-		{
-			return SelectAt(cellId, -1, initial, true, install);
+			m_view.SelectAt(cellId, cellIndex, initial, true, true);
 		}
 
 		internal static bool IsWordBoundary(IPhContextOrVar ctxt)
@@ -1366,7 +1059,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		private void InitializeComponent()
 		{
-			this.m_view = new SIL.FieldWorks.XWorks.MorphologyEditor.RuleFormulaView();
+			this.m_view = new SIL.FieldWorks.LexText.Controls.PatternView();
 			this.m_insertionControl = new InsertionControl();
 			this.m_panel.SuspendLayout();
 			this.SuspendLayout();
@@ -1423,7 +1116,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			this.ResumeLayout(false);
 
 		}
-
 		#endregion
 	}
 }

@@ -335,9 +335,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ComplexConcPatternVc.cs" />
-    <Compile Include="ComplexConcPatternView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="ConcordanceWordList.cs" />
     <Compile Include="ConfigureInterlinDialog.cs">
       <SubType>Form</SubType>

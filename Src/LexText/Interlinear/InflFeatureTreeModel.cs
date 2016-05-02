@@ -33,6 +33,10 @@ namespace SIL.FieldWorks.IText
 				var complexFeat = feature as IFsComplexFeature;
 				if (complexFeat != null)
 				{
+					// skip complex features without a type specified
+					if (complexFeat.TypeRA == null)
+						continue;
+
 					var node = new ComplexFeatureNode(complexFeat) {Image = m_complexImage};
 					object value;
 					if (values == null || !values.TryGetValue(complexFeat, out value))

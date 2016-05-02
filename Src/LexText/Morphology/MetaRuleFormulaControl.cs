@@ -3,10 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Drawing;
 using System.Linq;
 using System.Xml;
-
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
@@ -56,7 +54,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			CheckDisposed();
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
 
-			m_view.Init(mediator, propertyTable, obj, this, new MetaRuleFormulaVc(mediator, propertyTable), MetaRuleFormulaVc.kfragRule);
+			m_view.Init(mediator, propertyTable, obj.Hvo, this, new MetaRuleFormulaVc(cache, propertyTable), MetaRuleFormulaVc.kfragRule, cache.MainCacheAccessor);
 
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Phoneme), DisplayOption);
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.NaturalClass), DisplayOption);
@@ -94,8 +92,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							}
 							if (sel.IsRange)
 							{
-								var beginObj = GetItem(sel, SelectionHelper.SelLimitType.Top);
-								var endObj = GetItem(sel, SelectionHelper.SelLimitType.Bottom);
+								ICmObject beginObj = GetCmObject(sel, SelectionHelper.SelLimitType.Top);
+								ICmObject endObj = GetCmObject(sel, SelectionHelper.SelLimitType.Bottom);
 
 								IPhSimpleContext lastCtxt;
 								if (Rule.MiddleIndex != -1 && Rule.IsMiddleWithLeftSwitch)
@@ -126,8 +124,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							}
 							if (sel.IsRange)
 							{
-								var beginObj = GetItem(sel, SelectionHelper.SelLimitType.Top);
-								var endObj = GetItem(sel, SelectionHelper.SelLimitType.Bottom);
+								ICmObject beginObj = GetCmObject(sel, SelectionHelper.SelLimitType.Top);
+								ICmObject endObj = GetCmObject(sel, SelectionHelper.SelLimitType.Bottom);
 
 								IPhSimpleContext firstCtxt;
 								if (Rule.MiddleIndex != -1 && !Rule.IsMiddleWithLeftSwitch)
@@ -259,14 +257,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					return PhMetathesisRuleTags.kidxRightEnv;
 			}
 
-			var obj = GetItem(sel, limit);
+			ICmObject obj = GetCmObject(sel, limit);
 			if (obj == null)
 				return -1;
 
-			return Rule.GetStrucChangeIndex(obj as IPhSimpleContext);
+			return Rule.GetStrucChangeIndex((IPhSimpleContext) obj);
 		}
 
-		protected override ICmObject GetItem(SelectionHelper sel, SelectionHelper.SelLimitType limit)
+		protected override ICmObject GetCmObject(SelectionHelper sel, SelectionHelper.SelLimitType limit)
 		{
 			if (Rule.StrucDescOS.Count == 0 || sel.GetNumberOfLevels(limit) == 0)
 				return null;
@@ -481,353 +479,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				int w = Width;
 				m_view.Width = w > 0 ? w : 0;
-			}
-		}
-	}
-
-	class MetaRuleFormulaVc : RuleFormulaVc
-	{
-		public const int kfragRule = 100;
-
-		public const int ktagLeftEnv = -200;
-		public const int ktagRightEnv = -201;
-		public const int ktagLeftSwitch = -202;
-		public const int ktagRightSwitch = -203;
-
-		ITsTextProps m_inputCtxtProps;
-		ITsTextProps m_resultCtxtProps;
-		ITsTextProps m_colHeaderProps;
-		ITsTextProps m_rowHeaderProps;
-
-		ITsString m_inputStr;
-		ITsString m_resultStr;
-		ITsString m_leftEnvStr;
-		ITsString m_rightEnvStr;
-		ITsString m_switchStr;
-
-		IPhMetathesisRule m_rule = null;
-
-		public MetaRuleFormulaVc(Mediator mediator, PropertyTable propertyTable)
-			: base(mediator, propertyTable)
-		{
-			ITsPropsBldr tpb = TsPropsBldrClass.Create();
-			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault,
-				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
-			tpb.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalCenter);
-			m_inputCtxtProps = tpb.GetTextProps();
-
-			tpb = TsPropsBldrClass.Create();
-			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault,
-				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
-			tpb.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalCenter);
-			tpb.SetIntPropValues((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
-			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,
-				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
-			m_resultCtxtProps = tpb.GetTextProps();
-
-			tpb = TsPropsBldrClass.Create();
-			tpb.SetStrPropValue((int)FwTextPropType.ktptFontFamily, MiscUtils.StandardSansSerif);
-			tpb.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 10000);
-			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault,
-				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
-			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,
-				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
-			tpb.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalCenter);
-			tpb.SetIntPropValues((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
-			m_colHeaderProps = tpb.GetTextProps();
-
-			tpb = TsPropsBldrClass.Create();
-			tpb.SetStrPropValue((int)FwTextPropType.ktptFontFamily, MiscUtils.StandardSansSerif);
-			tpb.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 10000);
-			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,
-				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
-			tpb.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalLeft);
-			tpb.SetIntPropValues((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
-			m_rowHeaderProps = tpb.GetTextProps();
-
-			var tsf = m_cache.TsStrFactory;
-			var userWs = m_cache.DefaultUserWs;
-			m_inputStr = tsf.MakeString(MEStrings.ksMetaRuleInput, userWs);
-			m_resultStr = tsf.MakeString(MEStrings.ksMetaRuleResult, userWs);
-			m_leftEnvStr = tsf.MakeString(MEStrings.ksMetaRuleLeftEnv, userWs);
-			m_rightEnvStr = tsf.MakeString(MEStrings.ksMetaRuleRightEnv, userWs);
-			m_switchStr = tsf.MakeString(MEStrings.ksMetaRuleSwitch, userWs);
-		}
-
-		protected override int MaxNumLines
-		{
-			get
-			{
-				return GetNumLines(m_rule.StrucDescOS);
-			}
-		}
-
-		protected override int GetVarIndex(IPhFeatureConstraint var)
-		{
-			return -1;
-		}
-
-		public override void Display(IVwEnv vwenv, int hvo, int frag)
-		{
-			switch (frag)
-			{
-				case kfragRule:
-					m_rule = m_cache.ServiceLocator.GetInstance<IPhMetathesisRuleRepository>().GetObject(hvo);
-					if (m_rule.Disabled)
-					{
-						vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, "Disabled Text");
-					}
-
-					VwLength tableLen;
-					tableLen.nVal = 10000;
-					tableLen.unit = VwUnit.kunPercent100;
-					vwenv.OpenTable(5, tableLen, 0, VwAlignment.kvaCenter, VwFramePosition.kvfpVoid, VwRule.kvrlNone, 0, 4000, false);
-
-					VwLength ctxtLen;
-					ctxtLen.nVal = 1;
-					ctxtLen.unit = VwUnit.kunRelative;
-
-					int resultx, inputx, dmpy;
-					vwenv.get_StringWidth(m_resultStr, m_colHeaderProps, out resultx, out dmpy);
-					vwenv.get_StringWidth(m_inputStr, m_colHeaderProps, out inputx, out dmpy);
-					VwLength headerLen;
-					headerLen.nVal = Math.Max(resultx, inputx) + 8000;
-					headerLen.unit = VwUnit.kunPoint1000;
-
-					vwenv.MakeColumns(1, headerLen);
-					vwenv.MakeColumns(4, ctxtLen);
-
-					vwenv.OpenTableBody();
-
-					vwenv.OpenTableRow();
-
-					vwenv.OpenTableCell(1, 1);
-					vwenv.CloseTableCell();
-
-					// left context header cell
-					vwenv.Props = m_colHeaderProps;
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTop, (int)FwTextPropVar.ktpvMilliPoint, 1000);
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderLeading, (int)FwTextPropVar.ktpvMilliPoint, 1000);
-					vwenv.OpenTableCell(1, 1);
-					vwenv.AddString(m_leftEnvStr);
-					vwenv.CloseTableCell();
-
-					// switch header cell
-					vwenv.Props = m_colHeaderProps;
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTop, (int)FwTextPropVar.ktpvMilliPoint, 2000);
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderLeading, (int)FwTextPropVar.ktpvMilliPoint, 2000);
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTrailing, (int)FwTextPropVar.ktpvMilliPoint, 2000);
-					vwenv.OpenTableCell(1, 2);
-					vwenv.AddString(m_switchStr);
-					vwenv.CloseTableCell();
-
-					// right context header cell
-					vwenv.Props = m_colHeaderProps;
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTop, (int)FwTextPropVar.ktpvMilliPoint, 1000);
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTrailing, (int)FwTextPropVar.ktpvMilliPoint, 1000);
-					vwenv.OpenTableCell(1, 1);
-					vwenv.AddString(m_rightEnvStr);
-					vwenv.CloseTableCell();
-
-					vwenv.CloseTableRow();
-
-					vwenv.OpenTableRow();
-
-					// input header cell
-					vwenv.Props = m_rowHeaderProps;
-					vwenv.OpenTableCell(1, 1);
-					vwenv.AddString(m_inputStr);
-					vwenv.CloseTableCell();
-
-					// input left context cell
-					vwenv.Props = m_inputCtxtProps;
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTop, (int)FwTextPropVar.ktpvMilliPoint, 1000);
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderLeading, (int)FwTextPropVar.ktpvMilliPoint, 1000);
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderBottom, (int)FwTextPropVar.ktpvMilliPoint, 1000);
-					vwenv.OpenTableCell(1, 1);
-					vwenv.OpenParagraph();
-					if (m_rule.LeftEnvIndex == -1)
-					{
-						OpenContextPile(vwenv, false);
-						vwenv.Props = m_bracketProps;
-						vwenv.AddProp(ktagLeftEnv, this, kfragEmpty);
-						CloseContextPile(vwenv, false);
-					}
-					else
-					{
-						for (int i = 0; i < m_rule.LeftEnvLimit; i++)
-							vwenv.AddObj(m_rule.StrucDescOS[i].Hvo, this, kfragContext);
-					}
-					vwenv.CloseParagraph();
-					vwenv.CloseTableCell();
-
-					// input left switch cell
-					vwenv.Props = m_inputCtxtProps;
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTop, (int)FwTextPropVar.ktpvMilliPoint, 1000);
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderLeading, (int)FwTextPropVar.ktpvMilliPoint, 2000);
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTrailing, (int)FwTextPropVar.ktpvMilliPoint, 1000);
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderBottom, (int)FwTextPropVar.ktpvMilliPoint, 1000);
-					vwenv.OpenTableCell(1, 1);
-					vwenv.OpenParagraph();
-					if (m_rule.LeftSwitchIndex == -1)
-					{
-						OpenContextPile(vwenv, false);
-						vwenv.Props = m_bracketProps;
-						vwenv.AddProp(ktagLeftSwitch, this, kfragEmpty);
-						CloseContextPile(vwenv, false);
-					}
-					else
-					{
-						for (int i = m_rule.LeftSwitchIndex; i < m_rule.LeftSwitchLimit; i++)
-							vwenv.AddObj(m_rule.StrucDescOS[i].Hvo, this, kfragContext);
-
-						if (m_rule.MiddleIndex != -1 && m_rule.IsMiddleWithLeftSwitch)
-						{
-							for (int i = m_rule.MiddleIndex; i < m_rule.MiddleLimit; i++)
-								vwenv.AddObj(m_rule.StrucDescOS[i].Hvo, this, kfragContext);
-						}
-					}
-					vwenv.CloseParagraph();
-					vwenv.CloseTableCell();
-
-					// input right switch cell
-					vwenv.Props = m_inputCtxtProps;
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTop, (int)FwTextPropVar.ktpvMilliPoint, 1000);
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTrailing, (int)FwTextPropVar.ktpvMilliPoint, 2000);
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderBottom, (int)FwTextPropVar.ktpvMilliPoint, 1000);
-					vwenv.OpenTableCell(1, 1);
-					vwenv.OpenParagraph();
-					if (m_rule.RightSwitchIndex == -1)
-					{
-						OpenContextPile(vwenv, false);
-						vwenv.Props = m_bracketProps;
-						vwenv.AddProp(ktagRightSwitch, this, kfragEmpty);
-						CloseContextPile(vwenv, false);
-					}
-					else
-					{
-						if (m_rule.MiddleIndex != -1 && !m_rule.IsMiddleWithLeftSwitch)
-						{
-							for (int i = m_rule.MiddleIndex; i < m_rule.MiddleLimit; i++)
-								vwenv.AddObj(m_rule.StrucDescOS[i].Hvo, this, kfragContext);
-						}
-
-						for (int i = m_rule.RightSwitchIndex; i < m_rule.RightSwitchLimit; i++)
-							vwenv.AddObj(m_rule.StrucDescOS[i].Hvo, this, kfragContext);
-					}
-					vwenv.CloseParagraph();
-					vwenv.CloseTableCell();
-
-					// input right context cell
-					vwenv.Props = m_inputCtxtProps;
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTop, (int)FwTextPropVar.ktpvMilliPoint, 1000);
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTrailing, (int)FwTextPropVar.ktpvMilliPoint, 1000);
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderBottom, (int)FwTextPropVar.ktpvMilliPoint, 1000);
-					vwenv.OpenTableCell(1, 1);
-					vwenv.OpenParagraph();
-					if (m_rule.RightEnvIndex == -1)
-					{
-						OpenContextPile(vwenv, false);
-						vwenv.Props = m_bracketProps;
-						vwenv.AddProp(ktagRightEnv, this, kfragEmpty);
-						CloseContextPile(vwenv, false);
-					}
-					else
-					{
-						for (int i = m_rule.RightEnvIndex; i < m_rule.RightEnvLimit; i++)
-							vwenv.AddObj(m_rule.StrucDescOS[i].Hvo, this, kfragContext);
-					}
-					vwenv.CloseParagraph();
-					vwenv.CloseTableCell();
-
-					vwenv.CloseTableRow();
-
-					vwenv.OpenTableRow();
-
-					// input result header cell
-					vwenv.Props = m_rowHeaderProps;
-					vwenv.OpenTableCell(1, 1);
-					vwenv.AddString(m_resultStr);
-					vwenv.CloseTableCell();
-
-					// result left context cell
-					vwenv.Props = m_resultCtxtProps;
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderLeading, (int)FwTextPropVar.ktpvMilliPoint, 1000);
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderBottom, (int)FwTextPropVar.ktpvMilliPoint, 1000);
-					vwenv.OpenTableCell(1, 1);
-					vwenv.OpenParagraph();
-					if (m_rule.LeftEnvIndex != -1)
-					{
-						for (int i = 0; i < m_rule.LeftEnvLimit; i++)
-							vwenv.AddObj(m_rule.StrucDescOS[i].Hvo, this, kfragContext);
-					}
-					vwenv.CloseParagraph();
-					vwenv.CloseTableCell();
-
-					// result right switch cell
-					vwenv.Props = m_resultCtxtProps;
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderLeading, (int)FwTextPropVar.ktpvMilliPoint, 2000);
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTrailing, (int)FwTextPropVar.ktpvMilliPoint, 1000);
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderBottom, (int)FwTextPropVar.ktpvMilliPoint, 2000);
-					vwenv.OpenTableCell(1, 1);
-					vwenv.OpenParagraph();
-					if (m_rule.RightSwitchIndex != -1)
-					{
-						for (int i = m_rule.RightSwitchIndex; i < m_rule.RightSwitchLimit; i++)
-							vwenv.AddObj(m_rule.StrucDescOS[i].Hvo, this, kfragContext);
-					}
-					if (m_rule.MiddleIndex != -1 && m_rule.IsMiddleWithLeftSwitch)
-					{
-						for (int i = m_rule.MiddleIndex; i < m_rule.MiddleLimit; i++)
-							vwenv.AddObj(m_rule.StrucDescOS[i].Hvo, this, kfragContext);
-					}
-					vwenv.CloseParagraph();
-					vwenv.CloseTableCell();
-
-					// result left switch cell
-					vwenv.Props = m_resultCtxtProps;
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTrailing, (int)FwTextPropVar.ktpvMilliPoint, 2000);
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderBottom, (int)FwTextPropVar.ktpvMilliPoint, 2000);
-					vwenv.OpenTableCell(1, 1);
-					vwenv.OpenParagraph();
-
-					if (m_rule.MiddleIndex != -1 && !m_rule.IsMiddleWithLeftSwitch)
-					{
-						for (int i = m_rule.MiddleIndex; i < m_rule.MiddleLimit; i++)
-							vwenv.AddObj(m_rule.StrucDescOS[i].Hvo, this, kfragContext);
-					}
-					if (m_rule.LeftSwitchIndex != -1)
-					{
-						for (int i = m_rule.LeftSwitchIndex; i < m_rule.LeftSwitchLimit; i++)
-							vwenv.AddObj(m_rule.StrucDescOS[i].Hvo, this, kfragContext);
-					}
-					vwenv.CloseParagraph();
-					vwenv.CloseTableCell();
-
-					// result right context cell
-					vwenv.Props = m_resultCtxtProps;
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTrailing, (int)FwTextPropVar.ktpvMilliPoint, 1000);
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderBottom, (int)FwTextPropVar.ktpvMilliPoint, 1000);
-					vwenv.OpenTableCell(1, 1);
-					vwenv.OpenParagraph();
-					if (m_rule.RightEnvIndex != -1)
-					{
-						for (int i = m_rule.RightEnvIndex; i < m_rule.RightEnvLimit; i++)
-							vwenv.AddObj(m_rule.StrucDescOS[i].Hvo, this, kfragContext);
-					}
-					vwenv.CloseParagraph();
-					vwenv.CloseTableCell();
-
-					vwenv.CloseTableRow();
-
-					vwenv.CloseTableBody();
-
-					vwenv.CloseTable();
-					break;
-
-				default:
-					base.Display(vwenv, hvo, frag);
-					break;
 			}
 		}
 	}

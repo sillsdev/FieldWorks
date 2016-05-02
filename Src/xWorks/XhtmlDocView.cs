@@ -158,7 +158,7 @@ namespace SIL.FieldWorks.XWorks
 				item = new ToolStripMenuItem(xWorksStrings.ksInspect);
 				s_contextMenu.Items.Add(item);
 				item.Click += RunDiagnosticsDialogAt;
-				item.Tag = new object[] { mediator, entryElement, topLevelGuid };
+				item.Tag = new object[] { propertyTable, entryElement, topLevelGuid };
 			}
 			s_contextMenu.Show(browser, new Point(e.ClientX, e.ClientY));
 			s_contextMenu.Closed += m_contextMenu_Closed;
