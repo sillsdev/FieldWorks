@@ -39,7 +39,6 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>Model for the dictionary element being configured</summary>
 		private ConfigurableDictionaryNode m_node;
-		private readonly DictionaryConfigurationModel m_model;
 
 		/// <summary>Model for options specific to the element type, such as writing systems or relation types</summary>
 		private DictionaryNodeOptions Options { get { return m_node.DictionaryNodeOptions; } }
@@ -56,16 +55,13 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>Fired whenever the selected node is changed, so that the node tree can be refreshed</summary>
 		public event EventHandler SelectedNodeChanged;
 
-		internal DictionaryDetailsController(IDictionaryDetailsView view, Mediator mediator) : this(null, view, mediator) { }
-
-		public DictionaryDetailsController(DictionaryConfigurationModel model, IDictionaryDetailsView view, Mediator mediator)
+		public DictionaryDetailsController(IDictionaryDetailsView view, Mediator mediator)
 		{
 			// one-time setup
 			m_mediator = mediator;
 			m_cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			m_styleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
 			LoadStylesLists();
-			m_model = model;
 			View = view;
 		}
 
@@ -91,9 +87,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// (Re)initializes the controller and view to configure the given node
 		/// </summary>
-		/// <param name="node"></param>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "View is disposed by its parent")]
-		public void LoadNode(ConfigurableDictionaryNode node)
+		public void LoadNode(DictionaryConfigurationModel model, ConfigurableDictionaryNode node)
 		{
 			m_node = node;
 
@@ -148,7 +143,7 @@ namespace SIL.FieldWorks.XWorks
 				var nodePath = DictionaryConfigurationMigrator.BuildPathStringFromNode(node, false);
 				if (node.IsMasterParent) // node is the Master Parent
 				{
-					var sharingParents = FindNodes(m_model.Parts, n => ReferenceEquals(node.ReferencedNode, n.ReferencedNode));
+					var sharingParents = FindNodes(model.Parts, n => ReferenceEquals(node.ReferencedNode, n.ReferencedNode));
 					var sharingParentsStringBuilder = new StringBuilder();
 					foreach (var sharingParent in sharingParents.Where(s => !ReferenceEquals(node, s)))
 						sharingParentsStringBuilder.Append(Environment.NewLine)

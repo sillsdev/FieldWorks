@@ -573,7 +573,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (DetailsController == null)
 			{
-				DetailsController = new DictionaryDetailsController(_model, new DetailsView(), _mediator);
+				DetailsController = new DictionaryDetailsController(new DetailsView(), _mediator);
 				DetailsController.DetailsModelChanged += (sender, e) => RefreshPreview();
 				DetailsController.StylesDialogMadeChanges += (sender, e) =>
 				{
@@ -587,7 +587,7 @@ namespace SIL.FieldWorks.XWorks
 						View.TreeControl.Tree.SelectedNode = FindTreeNode(nodeToSelect, View.TreeControl.Tree.Nodes);
 				};
 			}
-			DetailsController.LoadNode(node);
+			DetailsController.LoadNode(_model, node);
 			View.DetailsView = DetailsController.View;
 		}
 
