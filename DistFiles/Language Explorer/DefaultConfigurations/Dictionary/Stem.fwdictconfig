@@ -30,7 +30,7 @@
 	  <ConfigurationItem name="Tone" after=" " isEnabled="false" field="Tone"/>
 	  <ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="true" field="LocationRA" cssClassNameOverride="location">
 		<ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
-		  <WritingSystemOptions writingSystemType="both" displayWSAbreviation="true">
+		  <WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
@@ -687,7 +687,7 @@
 	  <ConfigurationItem name="Tone" after=" " isEnabled="false" field="Tone"/>
 	  <ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="false" field="LocationRA" cssClassNameOverride="location">
 		<ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
-		  <WritingSystemOptions writingSystemType="both" displayWSAbreviation="true">
+		  <WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
@@ -1441,7 +1441,7 @@
 	  <ConfigurationItem name="Tone" after=" " isEnabled="false" field="Tone"/>
 	  <ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="false" field="LocationRA" cssClassNameOverride="location">
 		<ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
-		  <WritingSystemOptions writingSystemType="both" displayWSAbreviation="true">
+		  <WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
