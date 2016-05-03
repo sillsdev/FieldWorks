@@ -1771,24 +1771,22 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void GenerateXHTMLForEntry_NumberingSingleSenseAlsoCountsSubsense()
+		public void GenerateXHTMLForEntry_NumberingSingleSenseAlsoCountsSubAndSuperSense()
 		{
 			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
 			{
-				BeforeNumber = "", AfterNumber = ")", NumberStyle = "Dictionary-SenseNumber", NumberingStyle = "%d",
+				BeforeNumber = "", AfterNumber = ")", NumberStyle = "Dictionary-SenseNumber", NumberingStyle = "%O",
 				DisplayEachSenseInAParagraph = false, NumberEvenASingleSense = false, ShowSharedGrammarInfoFirst = false
 			};
-			var DictionaryNodeSubSenseOptions = DictionaryNodeSenseOptions.DeepClone();
-			((DictionaryNodeSenseOptions)DictionaryNodeSubSenseOptions).NumberingStyle = "%d.d";
 
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var subSenseNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
-				DictionaryNodeOptions = DictionaryNodeSubSenseOptions,
+				DictionaryNodeOptions = DictionaryNodeSenseOptions,
 				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var sensesNode = new ConfigurableDictionaryNode
@@ -1811,9 +1809,11 @@ namespace SIL.FieldWorks.XWorks
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
-			const string SenseOneSubSense = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]/span[@class='senses']/span[@class='sensecontent']//span[@lang='en' and text()='gloss1.1']";
+			const string SenseOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
+			const string SubSense = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1.1']]//span[@lang='en' and text()='gloss1.1']";
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
-			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(SenseOneSubSense, 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(SenseOne, 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(SubSense, 1);
 		}
 
 		[Test]

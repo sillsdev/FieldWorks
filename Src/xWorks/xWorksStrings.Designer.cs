@@ -2294,7 +2294,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This configuration is shared..
+        ///   Looks up a localized string similar to This configuration is shared. Hover for details..
         /// </summary>
         internal static string ThisConfigurationIsShared {
             get {
@@ -2303,7 +2303,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This item is configured somewhere else..
+        ///   Looks up a localized string similar to This item is configured somewhere else. Hover for details..
         /// </summary>
         internal static string ThisIsConfiguredElsewhere {
             get {

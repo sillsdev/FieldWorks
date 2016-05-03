@@ -1472,10 +1472,10 @@ namespace SIL.FieldWorks.XWorks
 				filteredSenseCollection.Add(item);
 			}
 			if (filteredSenseCollection.Count == 0)
-				return String.Empty;
+				return string.Empty;
 			var bldr = new StringBuilder();
 			var isSubsense = config.Parent != null && config.FieldDescription == config.Parent.FieldDescription;
-			var isSingle = IsSingleSense(filteredSenseCollection);
+			var isSingle = !isSubsense && IsSingleSense(filteredSenseCollection); // A subsense is never its Entry's only Sense
 			string lastGrammaticalInfo, langId;
 			var isSameGrammaticalInfo = IsAllGramInfoTheSame(config, filteredSenseCollection, isSubsense, out lastGrammaticalInfo, out langId);
 			if (isSameGrammaticalInfo && !isSubsense)

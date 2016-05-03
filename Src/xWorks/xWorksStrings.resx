@@ -358,10 +358,10 @@ Are you SURE you want to delete the field {2}?</value>
     <value>Click to jump to {0}.</value>
   </data>
   <data name="ThisIsConfiguredElsewhere" xml:space="preserve">
-    <value>This item is configured somewhere else.</value>
+    <value>This item is configured somewhere else. Hover for details.</value>
   </data>
   <data name="ThisConfigurationIsShared" xml:space="preserve">
-    <value>This configuration is shared.</value>
+    <value>This configuration is shared. Hover for details.</value>
   </data>
   <data name="SharesWithTheseNodes" xml:space="preserve">
     <value>Configuring the subfields of {0} also affects:{1}.</value>
