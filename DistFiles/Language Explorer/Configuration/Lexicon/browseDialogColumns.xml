@@ -70,7 +70,7 @@
 			transduce="LexPronunciation.CVPattern" ghostListField="LexDb.AllPossiblePronunciations"  cansortbylength="true" visibility="dialog"/>
 	<column layout="Tone" label="Tones" multipara="true" editable="false" ws="$ws=pronunciation"
 			transduce="LexPronunciation.Tone" ghostListField="LexDb.AllPossiblePronunciations" cansortbylength="true" visibility="dialog"/>
-	<column layout="Location" label="Locations" multipara="true" visibility="dialog"
+	<column layout="Location" label="Pronunciation-Location" multipara="true" visibility="dialog" ws="$ws=vernacular analysis" 
 			bulkEdit="atomicFlatListItem" field="LexPronunciation.Location" ghostListField="LexDb.AllPossiblePronunciations" list="LangProject.Locations"/>
 	<column layout="SummaryDefinitionForEntry" label="Summary Definition" transduce="LexEntry.SummaryDefinition" ws="$ws=analysis" visibility="dialog"/>
 	<column layout="PictureCaptionForSense" label="Picture-Caption"  multipara="true" editable="false" visibility="dialog" ws="$ws=vernacular analysis" />
