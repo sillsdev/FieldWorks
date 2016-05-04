@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -83,7 +84,7 @@ namespace SIL.FieldWorks.XWorks
 			ConfiguredXHTMLGenerator.AssemblyFile = "FDO";
 			if (!m_styleSheet.Styles.Contains("FooStyle"))
 			{
-				GenerateNormalStyle("FooStyle");
+				GenerateStyle("FooStyle");
 			}
 		}
 
@@ -576,6 +577,60 @@ namespace SIL.FieldWorks.XWorks
 			// The child margin should be the negation of the parent adjusted margin plus the LeadingIndent less the childs hanging indent
 			var adjustedChildIndent = parentHangingIndent - childHangingIndent;
 			Assert.That(childDeclaration.ToString(), Contains.Substring("margin-left:" + adjustedChildIndent / 1000 + "pt"));
+		}
+
+		[Test]
+		public void GenerateCssForStyleName_ComplexFormsUnderSenses_FirstSenseAndFollowingSenseRulesGenerated()
+		{
+			var parentHangingIndent = -8 * 1000;
+			var childHangingIndent = -10 * 1000;
+			var grandChildHangingIndent = -3 * 1000;
+			var grandChildStyleName = "Dictionary-Paragraph-Padding-Hanging-GrandBaby";
+			var childStyleName = "Dictionary-Paragraph-Padding-Hanging-Child";
+			var parentStyle = GenerateParagraphStyle("Dictionary-Paragraph-Padding-Hanging-Parent");
+			var childStyle = GenerateParagraphStyle(childStyleName);
+			var grandChildStyle = GenerateParagraphStyle(grandChildStyleName);
+			var exampleChild = new ConfigurableDictionaryNode { FieldDescription = "Example" };
+			var examples = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ExamplesOS",
+				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = true },
+				Style = grandChildStyleName,
+				Children = new List<ConfigurableDictionaryNode> { exampleChild }
+			};
+			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss" };
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true },
+				Children = new List<ConfigurableDictionaryNode> { gloss, examples },
+				Style = childStyle.Name
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Style = parentStyle.Name,
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+			PopulateFieldsForTesting(entry);
+			parentStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptFirstIndent, 0, parentHangingIndent);
+			childStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptFirstIndent, 0, childHangingIndent);
+			grandChildStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptFirstIndent, 0, grandChildHangingIndent);
+
+			var grandChildDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet(grandChildStyleName, CssGenerator.DefaultStyle, examples, m_mediator, true);
+
+			Assert.AreEqual(2, grandChildDeclaration.Count);
+			// Indent values are converted into pt values on export
+			var firstSenseChildCss = grandChildDeclaration[0].ToString();
+			var allOtherSenseChildrenCss = grandChildDeclaration[1].ToString();
+			Assert.That(firstSenseChildCss, Is.Not.StringMatching(allOtherSenseChildrenCss));
+			var firstSenseIndent = parentHangingIndent - grandChildHangingIndent;
+			var otherSenseIndent = childHangingIndent - grandChildHangingIndent;
+			Assert.That(firstSenseChildCss, Contains.Substring("margin-left:" + firstSenseIndent / 1000 + "pt"));
+			Assert.That(firstSenseChildCss, Contains.Substring("text-indent:" + grandChildHangingIndent / 1000 + "pt"));
+			Assert.That(allOtherSenseChildrenCss, Contains.Substring("margin-left:" + otherSenseIndent / 1000 + "pt"));
+			Assert.That(allOtherSenseChildrenCss, Contains.Substring("text-indent:" + grandChildHangingIndent / 1000 + "pt"));
 		}
 
 		[Test]
@@ -1390,10 +1445,10 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .gloss"));
-			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .morphosyntaxanalysisra"));
+			Assert.That(cssResult, Contains.Substring(".lexentry> .senses > .sensecontent > .sense> .gloss"));
+			Assert.That(cssResult, Contains.Substring(".lexentry> .senses > .sensecontent > .sense> .morphosyntaxanalysisra"));
 			Assert.IsTrue(Regex.Match(cssResult,
-				@"\.lexentry>\s*\.senses\s*\.sharedgrammaticalinfo\s*>\s*\.morphosyntaxanalysisra\s*{.*font-family\s*:\s*'foofoo'\,serif.*}",
+				@"\.lexentry>\s*\.senses\s*>\s*\.sensecontent\s*>\s*\.sharedgrammaticalinfo\s*>\s*\.morphosyntaxanalysisra\s*{.*font-family\s*:\s*'foofoo'\,serif.*}",
 				RegexOptions.Singleline).Success, "Style for sharedgrammaticalinfo not placed correctly");
 		}
 
@@ -1488,7 +1543,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .gloss"));
+			Assert.That(cssResult, Contains.Substring(".lexentry> .senses > .sensecontent > .sense> .gloss"));
 			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry>\s*\.senses\s*>\s*\.sensecontent\s*\+\s*\.sensecontent\s*{.*display\s*:\s*block;.*}", RegexOptions.Singleline).Success);
 			Assert.False(Regex.Match(cssResult, @"{\s*}").Success); // make sure we filter out empty rules
 		}
@@ -1521,7 +1576,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry>\s*\.senses\s*\.sense>\s*\.examples\s*\.example\s*{.*display\s*:\s*block;.*}", RegexOptions.Singleline).Success);
+			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry>\s*\.senses\s*>\s*\.sensecontent\s*>\s*\.sense>\s*\.examples\s*\.example\s*{.*display\s*:\s*block;.*}", RegexOptions.Singleline).Success);
 		}
 
 		[Test]
@@ -1579,8 +1634,9 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .gloss"));
-			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry>\s*\.senses\s*>\s*\.sensecontent\s*\+\s*\.sensecontent\s*>\s*\.sense\s*{.*font-style\s*:\s*italic;.*}", RegexOptions.Singleline).Success);
+			Assert.That(cssResult, Contains.Substring(".lexentry> .senses > .sensecontent > .sense> .gloss"));
+			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry>\s*\.senses\s*>\s*\.sensecontent\s*\+\s*\.sensecontent\s*{.*display\s*:\s*block;.*}", RegexOptions.Singleline).Success);
+			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry>\s*\.senses\s*>\s*\.sensecontent\s*>\s*\.sense\s*{.*font-style\s*:\s*italic;.*}", RegexOptions.Singleline).Success);
 		}
 
 		[Test]
@@ -1634,7 +1690,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			Assert.That(cssResult, Contains.Substring(".reversalindexentry> .referringsenses .referringsense> .gloss"));
+			Assert.That(cssResult, Contains.Substring(".reversalindexentry> .referringsenses > .sensecontent > .referringsense> .gloss"));
 			Assert.IsTrue(Regex.Match(cssResult, @"\.reversalindexentry>\s*\.referringsenses\s*>\s*\.sensecontent\s*\.sensenumber\s*{.*font-style\s*:\s*italic;.*}", RegexOptions.Singleline).Success);
 			Assert.False(Regex.Match(cssResult, @"{\s*}").Success); // make sure we filter out empty rules
 		}
@@ -2345,7 +2401,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			var regExPected = @".lexentry>\s.senses\s.sense>\s.senses\s>\s.sensecontent\s\+\s.sensecontent:not\(:first-child\):before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*}";
+			var regExPected = @".lexentry>\s.senses\s*>\s*.sensecontent\s*>\s*.sense>\s.senses\s>\s.sensecontent\s\+\s.sensecontent:not\(:first-child\):before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*}";
 			Assert.IsTrue(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success,
 							  "Bulleted style for SubSenses not generated.");
 		}
