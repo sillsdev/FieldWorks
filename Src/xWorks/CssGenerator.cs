@@ -3,10 +3,12 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
+using ControlExtenders;
 using ExCSS;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
@@ -154,8 +156,10 @@ namespace SIL.FieldWorks.XWorks
 																			  string baseSelection,
 																			  Mediator mediator)
 		{
+			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			var rule = new StyleRule();
 			var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
+			var complexFormOpts = configNode.DictionaryNodeOptions as DictionaryNodeComplexFormOptions;
 			if (senseOptions != null)
 			{
 				// Try to generate the css for the sense number before the baseSelection is updated because
@@ -163,22 +167,19 @@ namespace SIL.FieldWorks.XWorks
 				// children of collections. Also set display:block on span
 				GenerateCssForSenses(configNode, senseOptions, styleSheet, ref baseSelection, mediator);
 			}
+			else if (complexFormOpts != null)
+			{
+				GenerateCssFromComplexFormOptions(configNode, complexFormOpts, styleSheet, ref baseSelection, cache, mediator);
+			}
 			else
 			{
-				var showingParagraph = false;
-				var complexFormOpts = configNode.DictionaryNodeOptions as DictionaryNodeComplexFormOptions;
-				if (complexFormOpts != null)
-				{
-					GenerateCssFromComplexFormOptions(configNode, complexFormOpts, styleSheet, baseSelection, mediator);
-					showingParagraph = complexFormOpts.DisplayEachComplexFormInAParagraph;
-				}
 				var pictureOptions = configNode.DictionaryNodeOptions as DictionaryNodePictureOptions;
 				if (pictureOptions != null)
 				{
 					GenerateCssFromPictureOptions(configNode, pictureOptions, styleSheet, baseSelection);
 				}
 				var selectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection,
-					(FdoCache) mediator.PropertyTable.GetValue("cache"), mediator);
+					cache, mediator);
 				rule.Value = baseSelection;
 				// if the configuration node defines a style then add all the rules generated from that style
 				if (!String.IsNullOrEmpty(configNode.Style))
@@ -186,8 +187,6 @@ namespace SIL.FieldWorks.XWorks
 					//Generate the rules for the default font info
 					rule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, configNode,
 						mediator));
-					if (showingParagraph)
-						rule = AdjustRuleIfParagraphNumberScheme(rule, configNode, mediator);
 				}
 				var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 				if (wsOptions != null)
@@ -198,8 +197,6 @@ namespace SIL.FieldWorks.XWorks
 						GenerateCssForWritingSystemPrefix(styleSheet, baseSelection);
 					}
 				}
-				if (showingParagraph) // Paragraphs don't want the before and after strings!  See LT-17167.
-					selectors = RemoveBeforeAfterSelectorRules(selectors);
 				styleSheet.Rules.AddRange(CheckRangeOfRulesForEmpties(selectors));
 				if (!IsEmptyRule(rule))
 					styleSheet.Rules.Add(rule);
@@ -239,10 +236,17 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var selectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, (FdoCache)mediator.PropertyTable.GetValue("cache"), mediator);
 			var senseContentSelector = string.Empty;
+			var senseItemName = string.Empty;
 			if (baseSelection.LastIndexOf(".sense", StringComparison.Ordinal) >= 0)
+			{
 				senseContentSelector = string.Format("{0}> .sensecontent", baseSelection.Substring(0, baseSelection.LastIndexOf(".sense", StringComparison.Ordinal)));
+				senseItemName = "sense";
+			}
 			else if (baseSelection.LastIndexOf(".referringsense", StringComparison.Ordinal) >= 0)
+			{
 				senseContentSelector = string.Format("{0}> .sensecontent", baseSelection.Substring(0, baseSelection.LastIndexOf(".referringsense", StringComparison.Ordinal)));
+				senseItemName = "referringsense";
+			}
 			if (senseOptions.DisplayEachSenseInAParagraph)
 				selectors = RemoveBeforeAfterSelectorRules(selectors);
 			styleSheet.Rules.AddRange(CheckRangeOfRulesForEmpties(selectors));
@@ -273,9 +277,20 @@ namespace SIL.FieldWorks.XWorks
 				var afterRule = new StyleRule(afterDeclaration) { Value = senseNumberSelector + ":after" };
 				styleSheet.Rules.Add(afterRule);
 			}
+			// set the base selection to the sense level under the sense content
+			baseSelection = string.Format("{0} > .{1}", senseContentSelector, senseItemName);
 			var styleDeclaration = string.IsNullOrEmpty(configNode.Style) ? new StyleDeclaration() : GenerateCssStyleFromFwStyleSheet(configNode.Style, 0, configNode, mediator);
 			if (senseOptions.DisplayEachSenseInAParagraph)
 			{
+				var sensCharDeclaration = GetOnlyCharacterStyle(styleDeclaration);
+				var senseCharRule = new StyleRule(sensCharDeclaration)
+				{
+					// Apply the style with paragraph info removed to the first sense
+					Value = baseSelection
+				};
+				if (!IsEmptyRule(senseCharRule))
+					styleSheet.Rules.Add(senseCharRule);
+
 				var senseParaDeclaration = GetOnlyParagraphStyle(styleDeclaration);
 				senseParaDeclaration.Add(new Property("display")
 				{
@@ -287,14 +302,6 @@ namespace SIL.FieldWorks.XWorks
 					Value = string.Format("{0} + {1}", senseContentSelector, ".sensecontent")
 				};
 				styleSheet.Rules.Add(senseParaRule);
-				var sensCharDeclaration = GetOnlyCharacterStyle(styleDeclaration);
-				var senseCharRule = new StyleRule(sensCharDeclaration)
-				{
-					// Apply the paragraph style information to all but the first sense
-					Value = string.Format("{0} + {1} > .sense", senseContentSelector, ".sensecontent")
-				};
-				if (!IsEmptyRule(senseCharRule))
-					styleSheet.Rules.Add(senseCharRule);
 				GenerateCssforBulletedList(configNode, styleSheet, senseParaRule.Value, mediator);
 			}
 			else
@@ -302,7 +309,7 @@ namespace SIL.FieldWorks.XWorks
 				// Generate the style information specifically for senses
 				var senseContentRule = new StyleRule(GetOnlyCharacterStyle(styleDeclaration))
 				{
-					Value = string.Format(baseSelection)
+					Value = baseSelection
 				};
 				if (!IsEmptyRule(senseContentRule))
 					styleSheet.Rules.Add(senseContentRule);
@@ -346,65 +353,74 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private static void GenerateCssFromComplexFormOptions(ConfigurableDictionaryNode configNode, DictionaryNodeComplexFormOptions complexFormOpts, StyleSheet styleSheet, string baseSelection, Mediator mediator)
+		private static void GenerateCssFromComplexFormOptions(ConfigurableDictionaryNode configNode,
+			DictionaryNodeComplexFormOptions complexFormOpts, StyleSheet styleSheet, ref string baseSelection, FdoCache cache, Mediator mediator)
 		{
-			var blockDeclaration = string.IsNullOrEmpty(configNode.Style)
-				? new StyleDeclaration()
-				: GenerateCssStyleFromFwStyleSheet(configNode.Style, 0, configNode, mediator);
+			var blockDeclarations = string.IsNullOrEmpty(configNode.Style)
+				? new List<StyleDeclaration> { new StyleDeclaration() }
+				: GenerateCssStyleFromFwStyleSheet(configNode.Style, 0, configNode, mediator, true);
+			var selectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, cache, mediator);
+			var styleRules = selectors as StyleRule[] ?? selectors.ToArray();
 			if (complexFormOpts.DisplayEachComplexFormInAParagraph)
 			{
-				// Don't remove any character level settings since paragraphs can have their own character level
-				// information, eg font, font-size, color, etc.  See https://jira.sil.org/browse/LT-16781.
-				// But do remove any settings that apply only to ":before" formatting.
-				for (int i = blockDeclaration.Properties.Count - 1; i >= 0; --i)
+				for (var i = 0; i < blockDeclarations.Count; ++i)
 				{
-					if (blockDeclaration.Properties[i].Name == "content")
+					var declaration = blockDeclarations[i];
+					declaration.Add(new Property("display") { Term = new PrimitiveTerm(UnitType.Ident, "block") });
+					var blockRule = new StyleRule(declaration)
 					{
-						blockDeclaration.Properties.RemoveAt(i);
-						break;	// At the moment, there's only the one setting to remove, so we can quit the loop here.
-					}
+						Value = i == 1 ? baseSelection.Replace("sensecontent", "sensecontent + .sensecontent") : baseSelection
+					};
+					styleSheet.Rules.Add(blockRule);
+					var bulletRule = AdjustRuleIfParagraphNumberScheme(blockRule, configNode, mediator);
+					styleSheet.Rules.AddRange(RemoveBeforeAfterSelectorRules(styleRules));
+					styleSheet.Rules.Add(bulletRule);
 				}
-				blockDeclaration.Add(new Property("display") { Term = new PrimitiveTerm(UnitType.Ident, "block") });
-				var blockRule = new StyleRule(blockDeclaration)
-				{
-					Value = baseSelection + "> " + SelectClassName(configNode)
-				};
-				styleSheet.Rules.Add(blockRule);
 			}
 			else
 			{
-				// Generate the style information specifically for ComplexFormsOptions
-				var complexContentRule = new StyleRule(GetOnlyCharacterStyle(blockDeclaration))
+				foreach (var declaration in blockDeclarations)
 				{
-					Value = baseSelection + "> " + SelectClassName(configNode)
-				};
-				if (!IsEmptyRule(complexContentRule))
-					styleSheet.Rules.Add(complexContentRule);
+					// Generate the style information specifically for ComplexFormsOptions
+					var complexContentRule = new StyleRule(GetOnlyCharacterStyle(declaration))
+					{
+						Value = baseSelection
+					};
+					if (!IsEmptyRule(complexContentRule))
+						styleSheet.Rules.Add(complexContentRule);
+					styleSheet.Rules.AddRange(styleRules);
+				}
 			}
 		}
 
 		/// <summary>
-		/// Convert the rule to a :before rule if it derives from a paragraph style with a number scheme (such as bulleted).
-		/// In that case, also remove the properties that don't apply to a :before rule.
+		/// Return a :before rule if the given rule derives from a paragraph style with a number scheme (such as bulleted).
+		/// Remove the content part of the given rule if it is present and also remove the properties that don't apply to a :before rule.
 		/// </summary>
 		/// <remarks>
 		/// See https://jira.sil.org/browse/LT-11625 for justification.
 		/// </remarks>
 		private static StyleRule AdjustRuleIfParagraphNumberScheme(StyleRule rule, ConfigurableDictionaryNode configNode, Mediator mediator)
 		{
-			var projectStyles = FontHeightAdjuster.StyleSheetFromMediator(mediator);
-			BaseStyleInfo projectStyle = projectStyles.Styles[configNode.Style];
-			var exportStyleInfo = new ExportStyleInfo(projectStyle);
-			if (exportStyleInfo.NumberScheme != 0)
+			if (!string.IsNullOrEmpty(configNode.Style))
 			{
-				if (configNode.FieldDescription == "ExamplesOS")
-					rule.Value += "> .example";
-				var bulletRule = new StyleRule { Value = rule.Value + ":before" };
-				bulletRule.Declarations.Properties.AddRange(GetOnlyBulletContent(rule.Declarations));
-				var wsFontInfo = exportStyleInfo.BulletInfo.FontInfo;
-				bulletRule.Declarations.Add(new Property("font-size") { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(wsFontInfo.FontSize.Value)) });
-				bulletRule.Declarations.Add(new Property("color") { Term = new PrimitiveTerm(UnitType.RGB, wsFontInfo.FontColor.Value.Name) });
-				return bulletRule;
+				var projectStyles = FontHeightAdjuster.StyleSheetFromMediator(mediator);
+				BaseStyleInfo projectStyle = projectStyles.Styles[configNode.Style];
+				var exportStyleInfo = new ExportStyleInfo(projectStyle);
+				if (exportStyleInfo.NumberScheme != 0)
+				{
+					// Create a rule to add the bullet content before based off the given rule
+					var bulletRule = new StyleRule { Value = rule.Value + ":before" };
+					bulletRule.Declarations.Properties.AddRange(GetOnlyBulletContent(rule.Declarations));
+					var wsFontInfo = exportStyleInfo.BulletInfo.FontInfo;
+					bulletRule.Declarations.Add(new Property("font-size") { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(wsFontInfo.FontSize.Value)) });
+					bulletRule.Declarations.Add(new Property("color") { Term = new PrimitiveTerm(UnitType.RGB, wsFontInfo.FontColor.Value.Name) });
+					// remove the bullet content if present in the base rule
+					var contentInRule = rule.Declarations.FirstOrDefault(p => p.Name == "content");
+					if (contentInRule != null)
+						rule.Declarations.Remove(contentInRule);
+					return bulletRule;
+				}
 			}
 			return rule;
 		}
@@ -766,20 +782,26 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="node">The configuration node to use for generating paragraph margin in context</param>
 		/// <param name="mediator"></param>
 		/// <returns></returns>
-		internal static StyleDeclaration GenerateCssStyleFromFwStyleSheet(string styleName, int wsId, ConfigurableDictionaryNode node, Mediator mediator)
+		internal static StyleDeclaration GenerateCssStyleFromFwStyleSheet(string styleName, int wsId,
+			ConfigurableDictionaryNode node, Mediator mediator)
+		{
+			return GenerateCssStyleFromFwStyleSheet(styleName, wsId, node, mediator, false)[0];
+		}
+
+		internal static List<StyleDeclaration> GenerateCssStyleFromFwStyleSheet(string styleName, int wsId, ConfigurableDictionaryNode node, Mediator mediator, bool calculateFirstSenseStyle)
 		{
 			var declaration = new StyleDeclaration();
 			var styleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
 			if(styleSheet == null || !styleSheet.Styles.Contains(styleName))
 			{
-				return declaration;
+				return new List<StyleDeclaration> {declaration};
 			}
 			var projectStyle = styleSheet.Styles[styleName];
 			var exportStyleInfo = new ExportStyleInfo(projectStyle);
 			var hangingIndent = 0.0f;
 
 			// Tuple ancestorIndents used for ancestor components leadingIndent and hangingIndent.
-			var ancestorIndents = new Tuple<float, float>(0.0f, 0.0f);
+			var ancestorIndents = new AncestorIndents(0.0f, 0.0f);
 			if(exportStyleInfo.IsParagraphStyle && node != null)
 				ancestorIndents = CalculateParagraphIndentsFromAncestors(node, styleSheet, ancestorIndents);
 
@@ -831,16 +853,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				throw new NotImplementedException("Keep With Next style export not yet implemented.");
 			}
-			if(exportStyleInfo.HasLeadingIndent || hangingIndent < 0.0f || ancestorIndents.Item2 < 0.0f)
+			if(exportStyleInfo.HasLeadingIndent || hangingIndent < 0.0f || ancestorIndents.TextIndent < 0.0f)
 			{
-				var leadingIndent = 0.0f;
-				if (exportStyleInfo.HasLeadingIndent)
-				{
-					leadingIndent = MilliPtToPt(exportStyleInfo.LeadingIndent);
-				}
-
-				var ancestorMargin = ancestorIndents.Item1 - ancestorIndents.Item2;
-				leadingIndent -= ancestorMargin + hangingIndent;
+				var leadingIndent = CalculateMarginLeft(exportStyleInfo, ancestorIndents, hangingIndent);
 
 				declaration.Add(new Property("margin-left") { Term = new PrimitiveTerm(UnitType.Point, leadingIndent) });
 			}
@@ -884,11 +899,39 @@ namespace SIL.FieldWorks.XWorks
 					declaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, selectedBullet) });
 				}
 			}
-			return declaration;
+			var styleList = new List<StyleDeclaration> {declaration};
+			if (calculateFirstSenseStyle && ancestorIndents.Ancestor != null)
+			{
+				var senseOptions = ancestorIndents.Ancestor.DictionaryNodeOptions as DictionaryNodeSenseOptions;
+				if (senseOptions != null && senseOptions.DisplayEachSenseInAParagraph)
+				{
+					ancestorIndents = CalculateParagraphIndentsFromAncestors(ancestorIndents.Ancestor, styleSheet, new AncestorIndents(0f, 0f));
+					var marginLeft = CalculateMarginLeft(exportStyleInfo, ancestorIndents, hangingIndent);
+					var firstSenseStyle = new StyleDeclaration();
+					firstSenseStyle.Properties.AddRange(declaration.Where(p => p.Name != "margin-left"));
+					firstSenseStyle.Properties.Add(new Property("margin-left") { Term = new PrimitiveTerm(UnitType.Point, marginLeft) });
+					styleList.Insert(0, firstSenseStyle);
+				}
+			}
+			return styleList;
 		}
 
-		private static Tuple<float,float> CalculateParagraphIndentsFromAncestors(ConfigurableDictionaryNode currentNode,
-			FwStyleSheet styleSheet, Tuple<float,float> ancestorIndents)
+		private static float CalculateMarginLeft(ExportStyleInfo exportStyleInfo, AncestorIndents ancestorIndents,
+			float hangingIndent)
+		{
+			var leadingIndent = 0.0f;
+			if (exportStyleInfo.HasLeadingIndent)
+			{
+				leadingIndent = MilliPtToPt(exportStyleInfo.LeadingIndent);
+			}
+
+			var ancestorMargin = ancestorIndents.Margin - ancestorIndents.TextIndent;
+			leadingIndent -= ancestorMargin + hangingIndent;
+			return leadingIndent;
+		}
+
+		private static AncestorIndents CalculateParagraphIndentsFromAncestors(ConfigurableDictionaryNode currentNode,
+			FwStyleSheet styleSheet, AncestorIndents ancestorIndents)
 		{
 			var parentNode = currentNode;
 			do
@@ -901,8 +944,7 @@ namespace SIL.FieldWorks.XWorks
 			var projectStyle = styleSheet.Styles[parentNode.Style];
 			var exportStyleInfo = new ExportStyleInfo(projectStyle);
 
-			return new Tuple<float, float>(GetLeadingIndent(exportStyleInfo),
-				GetHangingIndentIfAny(exportStyleInfo));
+			return new AncestorIndents(parentNode, GetLeadingIndent(exportStyleInfo), GetHangingIndentIfAny(exportStyleInfo));
 		}
 
 		private static float GetHangingIndentIfAny(ExportStyleInfo exportStyleInfo)
@@ -1277,6 +1319,24 @@ namespace SIL.FieldWorks.XWorks
 				termList.AddTerm(terms[i]);
 			}
 			return termList;
+		}
+
+		private class AncestorIndents
+		{
+			public AncestorIndents(float margin, float textIndent): this(null, margin, textIndent)
+			{
+			}
+
+			public AncestorIndents(ConfigurableDictionaryNode ancestor, float margin, float textIndent)
+			{
+				Ancestor = ancestor;
+				Margin = margin;
+				TextIndent = textIndent;
+			}
+
+			public float Margin { get; private set; }
+			public float TextIndent { get; private set; }
+			public ConfigurableDictionaryNode Ancestor { get; private set; }
 		}
 	}
 }
