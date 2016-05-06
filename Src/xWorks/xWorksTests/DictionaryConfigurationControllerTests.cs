@@ -1120,7 +1120,7 @@ namespace SIL.FieldWorks.XWorks
 			public void Redraw()
 			{ }
 
-			public void HighlightContent(ConfigurableDictionaryNode configNode)
+			public void HighlightContent(ConfigurableDictionaryNode configNode, FdoCache cache)
 			{ }
 
 			public void SetChoices(IEnumerable<DictionaryConfigurationModel> choices)

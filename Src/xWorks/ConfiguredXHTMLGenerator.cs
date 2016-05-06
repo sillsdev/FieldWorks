@@ -1904,9 +1904,9 @@ namespace SIL.FieldWorks.XWorks
 			return (entryType.GetGenericArguments().Length > 0);
 		}
 
-		internal static bool IsCollectionNode(ConfigurableDictionaryNode configNode)
+		internal static bool IsCollectionNode(ConfigurableDictionaryNode configNode, FdoCache cache)
 		{
-			return GetPropertyTypeForConfigurationNode(configNode) == PropertyType.CollectionType;
+			return GetPropertyTypeForConfigurationNode(configNode, cache) == PropertyType.CollectionType;
 		}
 
 		/// <summary>

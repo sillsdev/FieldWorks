@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -65,7 +66,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Highlight the element(s) corresponding to the configuration node in the preview pane.
 		/// </summary>
-		void HighlightContent(ConfigurableDictionaryNode configNode);
+		void HighlightContent(ConfigurableDictionaryNode configNode, FdoCache cache);
 	}
 
 	public delegate void SwitchConfigurationEvent(object sender, SwitchConfigurationEventArgs args);
