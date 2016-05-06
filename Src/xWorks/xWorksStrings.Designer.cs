@@ -1878,7 +1878,8 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} uses the same configuration for subfields as {1}..
+        ///   Looks up a localized string similar to {0} uses the same configuration for subfields as
+        ///{1}..
         /// </summary>
         internal static string ksUsesTheSameConfigurationAs {
             get {

@@ -7,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators;
@@ -24,18 +23,17 @@ namespace SIL.FieldWorks.XWorks
 	public class DictionaryConfigurationMigrator
 	{
 		public const int VersionCurrent = 5;
+		internal const string NodePathSeparator = " > ";
 		private readonly Inventory m_layoutInventory;
 		private readonly Inventory m_partInventory;
 		private readonly Mediator m_mediator;
 		private SimpleLogger m_logger;
-		private FdoCache Cache { get; set; }
 
 		private readonly IEnumerable<IDictionaryConfigurationMigrator> m_migrators;
 
 		public DictionaryConfigurationMigrator(Mediator mediator)
 		{
 			m_mediator = mediator;
-			Cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			m_migrators = new List<IDictionaryConfigurationMigrator>
 			{
 				new PreHistoricMigrator(),
@@ -75,7 +73,7 @@ namespace SIL.FieldWorks.XWorks
 			while (node.Parent != null)
 			{
 				if (includeSharedItems || node.Parent.ReferencedNode == null)
-					path = " > " + node.DisplayLabel + path;
+					path = NodePathSeparator + node.DisplayLabel + path;
 				node = node.Parent;
 			}
 			return node.DisplayLabel + path;
@@ -88,27 +86,26 @@ namespace SIL.FieldWorks.XWorks
 
 		internal static void SetWritingSystemForReversalModel(DictionaryConfigurationModel convertedModel, FdoCache cache)
 		{
-			if (convertedModel.IsReversal)
+			if (!convertedModel.IsReversal || !string.IsNullOrEmpty(convertedModel.WritingSystem)) // don't change existing WS's
+				return;
+			var writingSystem = cache.ServiceLocator.WritingSystems.AnalysisWritingSystems
+				.Where(x => x.DisplayLabel == convertedModel.Label).Select(x => x.IcuLocale).FirstOrDefault();
+			// If the label didn't get us a writing system then we need to attempt to extract the writing system from the filename
+			if (writingSystem == null)
 			{
-				var writingSystem = cache.ServiceLocator.WritingSystems.AnalysisWritingSystems
-					.Where(x => x.DisplayLabel == convertedModel.Label).Select(x => x.IcuLocale).FirstOrDefault();
-				// If the label didn't get us a writing system then we need to attempt to extract the writing system from the filename
-				if (writingSystem == null)
+				// old copies looked like this 'my name-French-#frenc343.extension'
+				var fileParts = convertedModel.FilePath.Split('-');
+				if (fileParts.Length == 3)
 				{
-					// old copies looked like this 'my name-French-#frenc343.extension'
-					var fileParts = convertedModel.FilePath.Split('-');
-					if (fileParts.Length == 3)
-					{
-						writingSystem = cache.ServiceLocator.WritingSystems.AnalysisWritingSystems
-							.Where(x => x.DisplayLabel == fileParts[1]).Select(x => x.IcuLocale).FirstOrDefault();
-					}
-					else
-					{
-						writingSystem = "";
-					}
+					writingSystem = cache.ServiceLocator.WritingSystems.AnalysisWritingSystems
+						.Where(x => x.DisplayLabel == fileParts[1]).Select(x => x.IcuLocale).FirstOrDefault();
 				}
-				convertedModel.WritingSystem = writingSystem;
+				else
+				{
+					writingSystem = "";
+				}
 			}
+			convertedModel.WritingSystem = writingSystem;
 		}
 
 		/// <summary>

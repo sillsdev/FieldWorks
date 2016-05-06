@@ -348,7 +348,8 @@ Are you SURE you want to delete the field {2}?</value>
     <value>{0} can be configured in more detail.</value>
   </data>
   <data name="ksUsesTheSameConfigurationAs" xml:space="preserve">
-    <value>{0} uses the same configuration for subfields as {1}.</value>
+    <value>{0} uses the same configuration for subfields as
+{1}.</value>
     <comment>{0} and {1} are both configuration nodes</comment>
   </data>
   <data name="ksConfigureNow" xml:space="preserve">

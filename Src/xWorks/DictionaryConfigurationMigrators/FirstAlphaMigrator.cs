@@ -9,6 +9,7 @@ using System.Linq;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using XCore;
+using DCM = SIL.FieldWorks.XWorks.DictionaryConfigurationMigrator;
 
 namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 {
@@ -17,24 +18,35 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 	/// </summary>
 	public class FirstAlphaMigrator : IDictionaryConfigurationMigrator
 	{
-		public FirstAlphaMigrator() : this(null)
+		private SimpleLogger m_logger;
+
+		public FirstAlphaMigrator() : this(null, null)
 		{
 		}
 
-		public FirstAlphaMigrator(FdoCache cache)
+		public FirstAlphaMigrator(FdoCache cache, SimpleLogger logger)
 		{
 			Cache = cache;
+			m_logger = logger;
 		}
 
 		private FdoCache Cache { get; set; }
 
-		public void MigrateIfNeeded(SimpleLogger logger, Mediator mediator, string applicationVersion)
+		public void MigrateIfNeeded(SimpleLogger logger, Mediator mediator, string appVersion)
 		{
+			m_logger = logger;
 			Cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			var foundOne = string.Format("{0}: Configuration was found in need of migration. - {1}",
+				appVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss"));
 			foreach (var config in GetConfigsNeedingMigratingFrom83())
 			{
+				m_logger.WriteLine(foundOne);
+				m_logger.WriteLine(string.Format("Migrating {0} configuration '{1}' from version {2} to {3}.",
+					config.IsReversal ? "Reversal Index" : "Dictionary", config.Label, config.Version, DCM.VersionCurrent));
+				m_logger.IncreaseIndent();
 				MigrateFrom83Alpha(config);
 				config.Save();
+				m_logger.DecreaseIndent();
 			}
 		}
 
@@ -43,347 +55,245 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
 			var dictionaryConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 			var reversalIndexConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
-			var projectConfigPaths = new List<string>(DictionaryConfigurationMigrator.ConfigFilesInDir(dictionaryConfigLoc));
-			projectConfigPaths.AddRange(DictionaryConfigurationMigrator.ConfigFilesInDir(reversalIndexConfigLoc));
+			var projectConfigPaths = new List<string>(DCM.ConfigFilesInDir(dictionaryConfigLoc));
+			projectConfigPaths.AddRange(DCM.ConfigFilesInDir(reversalIndexConfigLoc));
 			return projectConfigPaths.Select(path => new DictionaryConfigurationModel(path, null))
-				.Where(model => model.Version < DictionaryConfigurationMigrator.VersionCurrent).ToList();
+				.Where(model => model.Version < DCM.VersionCurrent).ToList();
 		}
 
 		internal void MigrateFrom83Alpha(DictionaryConfigurationModel alphaModel)
 		{
-			var allParts = new List<ConfigurableDictionaryNode>(alphaModel.Parts);
-			allParts.AddRange(alphaModel.SharedItems);
+			if (alphaModel.Version == -1 || alphaModel.Version == 1) // original migration neglected to update the version number; -1 is the same as 1
+				RemoveNonLoadableData(alphaModel.PartsAndSharedItems);
+			// now that it's safe to specify them, it would be helpful to have parents in certain steps:
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(alphaModel.Parts, alphaModel.SharedItems);
 			switch (alphaModel.Version)
 			{
-				case -1: // previous migrations neglected to update the version number; this is the same as 1
+				case -1:
 				case 1:
-					RemoveReferencedItems(alphaModel.Parts);
-					ExtractWritingSystemOptionsFromReferringSenseOptions(alphaModel.Parts);
-					goto case 2;
 				case 2:
-					HandleFieldChanges(allParts, 2, alphaModel.IsReversal);
+					HandleNodewiseChanges(alphaModel.PartsAndSharedItems, 2, alphaModel.IsReversal);
 					goto case 3;
 				case 3:
-					HandleLabelChanges(allParts, 3);
-					HandleFieldChanges(allParts, 3, false);
-					DictionaryConfigurationMigrator.SetWritingSystemForReversalModel(alphaModel, Cache);
-					AddSharedNodesToAlphaConfigurations(alphaModel, alphaModel.WritingSystem != null);
+					HandleNodewiseChanges(alphaModel.PartsAndSharedItems, 3, alphaModel.IsReversal);
+					DCM.SetWritingSystemForReversalModel(alphaModel, Cache);
+					AddSharedNodesToAlphaConfigurations(alphaModel);
 					goto case 4;
 				case 4:
-					HandleOptionsChanges(allParts, 4);
-					HandleCssClassChanges(allParts, 4);
+					HandleNodewiseChanges(alphaModel.PartsAndSharedItems, 4, alphaModel.IsReversal);
+					break;
+				default:
+					m_logger.WriteLine(string.Format(
+						"Unable to migrate {0}: no migration instructions for version {1}", alphaModel.Label, alphaModel.Version));
 					break;
 			}
-			alphaModel.Version = DictionaryConfigurationMigrator.VersionCurrent;
+			alphaModel.Version = DCM.VersionCurrent;
 		}
 
-		private void AddSharedNodesToAlphaConfigurations(DictionaryConfigurationModel model, bool isReversal)
+		private static void RemoveNonLoadableData(IEnumerable<ConfigurableDictionaryNode> nodes)
+		{
+			PerformActionOnNodes(nodes, node =>
+			{
+				node.ReferenceItem = null;
+				var rsOptions = node.DictionaryNodeOptions as DictionaryNodeReferringSenseOptions;
+				if (rsOptions != null)
+					node.DictionaryNodeOptions = rsOptions.WritingSystemOptions;
+			});
+		}
+
+		private void AddSharedNodesToAlphaConfigurations(DictionaryConfigurationModel model)
 		{
 			if (model.SharedItems.Any())
 			{
-				// TODO: Log something about this unexpected situation
+				m_logger.WriteLine("Not adding shared nodes because some already exist:");
+				m_logger.IncreaseIndent();
+				model.SharedItems.ForEach(si => m_logger.WriteLine(DCM.BuildPathStringFromNode(si)));
+				m_logger.DecreaseIndent();
 				return;
 			}
-			foreach (var configNode in model.Parts)
+			PerformActionOnNodes(model.Parts, SetReferenceItem);
+			if (model.IsReversal)
 			{
-				SetReferenceNodeInConfigNodes(configNode);
+				var reversalSubEntries = FindMainEntryDescendant(model, "SubentriesOS");
+				AddSubsubNodeIfNeeded(reversalSubEntries);
+				DictionaryConfigurationController.ShareNodeAsReference(model.SharedItems, reversalSubEntries, "allreversalsubentries");
 			}
-			if (!isReversal)
+			else // is Configured Dictionary
 			{
-				var mainEntrySubSenseNode = FindMainEntryGrandChildNode(model, "Senses", "Subsenses");
+				var mainEntrySubSenseNode = FindMainEntryDescendant(model, "SensesOS", "SensesOS");
+				AddSubsubNodeIfNeeded(mainEntrySubSenseNode);
 				DictionaryConfigurationController.ShareNodeAsReference(model.SharedItems, mainEntrySubSenseNode, "mainentrysubsenses");
-				var mainEntrySubEntries = GetMainEntryChildNode(model, "Subentries");
+				var mainEntrySubEntries = FindMainEntryDescendant(model, "Subentries");
 				AddSubsubEntriesOptionsIfNeeded(mainEntrySubEntries);
 				DictionaryConfigurationController.ShareNodeAsReference(model.SharedItems, mainEntrySubEntries, "mainentrysubentries");
 			}
-			else
-			{
-				var reversalSubEntries = GetMainEntryChildNode(model, "Reversal Subentries");
-				AddReversalSubsubEntriesIfNeeded(reversalSubEntries);
-				DictionaryConfigurationController.ShareNodeAsReference(model.SharedItems, reversalSubEntries, "allreversalsubentries");
-			}
-			foreach (var configNode in model.Parts)
-			{
-				RemoveDirectChildrenFromSharedNodes(configNode);
-			}
+			// Remove direct children from nodes with referenced children
+			PerformActionOnNodes(model.PartsAndSharedItems, n => { if (!string.IsNullOrEmpty(n.ReferenceItem)) n.Children = null; });
 		}
 
-		private void AddSubsubEntriesOptionsIfNeeded(ConfigurableDictionaryNode mainEntrySubEntries)
+		private static void AddSubsubEntriesOptionsIfNeeded(ConfigurableDictionaryNode mainEntrySubEntries)
 		{
 			if (mainEntrySubEntries.DictionaryNodeOptions == null)
 			{
 				mainEntrySubEntries.DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
 				{
-					DisplayEachComplexFormInAParagraph = false,
 					ListId = DictionaryNodeListOptions.ListIds.Complex
 				};
 			}
 		}
 
-		private static void AddReversalSubsubEntriesIfNeeded(ConfigurableDictionaryNode reversalSubentriesNode)
+		private static void AddSubsubNodeIfNeeded(ConfigurableDictionaryNode subNode)
 		{
-			if (reversalSubentriesNode != null && reversalSubentriesNode.Children.Any(n => n.Label == "Reversal Subsubentries"))
+			if (subNode.Children.Any(n => n.FieldDescription == subNode.FieldDescription))
 				return;
-			// Add in the new reversal subsubentries node
-			var revsubsubentriesNode = new ConfigurableDictionaryNode
+			switch (subNode.FieldDescription)
 			{
-				Label = "Reversal Subsubentries",
-				IsEnabled = true,
-				Style = "Reversal-Subentry",
-				FieldDescription = "SubentriesOS",
-				CSSClassNameOverride = "subentries",
-				ReferenceItem = "AllReversalSubentries",
-				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions {DisplayEachComplexFormInAParagraph = false}
-			};
-			reversalSubentriesNode.Children.Add(revsubsubentriesNode);
-		}
-
-		private static ConfigurableDictionaryNode GetMainEntryChildNode(DictionaryConfigurationModel model, string mainEntryChildLabel)
-		{
-			ConfigurableDictionaryNode mainEntryChildNode = null;
-			var mainEntry = model.Parts.FirstOrDefault();
-			if (mainEntry != null)
-			{
-				mainEntryChildNode = mainEntry.Children.Find(n => n.Label == mainEntryChildLabel && string.IsNullOrEmpty(n.LabelSuffix));
-			}
-			// If we couldn't find a subsense node this is probably a test that didn't have a full model
-			//TODO: log error about not being able to find subentries
-			return mainEntryChildNode ?? new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>() };
-		}
-
-		private static ConfigurableDictionaryNode FindMainEntryGrandChildNode(DictionaryConfigurationModel model, string childLabel, string grandChildLabel)
-		{
-			ConfigurableDictionaryNode subsenseNode = null;
-			var mainEntry = model.Parts.FirstOrDefault();
-			if (mainEntry != null)
-			{
-				var senses = mainEntry.Children.Find(n => n.Label == childLabel && string.IsNullOrEmpty(n.LabelSuffix));
-				if (senses != null)
-				{
-					subsenseNode = senses.Children.Find(n => n.Label == grandChildLabel && string.IsNullOrEmpty(n.LabelSuffix));
-				}
-			}
-			// If we couldn't find a subsense node this is probably a test that didn't have a full model
-			//TODO: log error about not being able to find subsenses
-			return subsenseNode ?? new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>() };
-		}
-
-		private static void SetReferenceNodeInConfigNodes(ConfigurableDictionaryNode configNode)
-		{
-			if (configNode.Label == "Subentries")
-			{
-				configNode.ReferenceItem = "MainEntrySubentries";
-				if (configNode.DictionaryNodeOptions == null)
-				{
-					configNode.DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
+				case "SensesOS":
+					// On the odd chance Subsense has no SenseOptions, construct some.
+					subNode.DictionaryNodeOptions = subNode.DictionaryNodeOptions ?? new DictionaryNodeSenseOptions();
+					// Add in the new subsubsenses node
+					subNode.Children.Add(new ConfigurableDictionaryNode
 					{
-						ListId = DictionaryNodeListOptions.ListIds.Complex
-					};
-				}
-			}
-			else if (configNode.Label == "Subsenses" || configNode.Label == "Subsubsenses")
-			{
-				configNode.ReferenceItem = "MainEntrySubsenses";
-			}
-			else if (configNode.Label == "Reversal Subentries")
-			{
-				configNode.ReferenceItem = "AllReversalSubentries"; if (configNode.DictionaryNodeOptions == null)
-				{
-					configNode.DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
+						Label = "Subsubsenses",
+						IsEnabled = true,
+						Style = "Dictionary-Sense",
+						FieldDescription = "SensesOS",
+						CSSClassNameOverride = "subsenses",
+						ReferenceItem = "MainEntrySubsenses",
+						DictionaryNodeOptions = subNode.DictionaryNodeOptions.DeepClone()
+					});
+					break;
+				case "SubentriesOS": // SubentriesOS uniquely identifies Reversal Index subentries
+					// Add in the new reversal subsubentries node
+					subNode.Children.Add(new ConfigurableDictionaryNode
 					{
-						DisplayEachComplexFormInAParagraph = false
-					};
-				}
-			}
-			if (configNode.Children == null)
-				return;
-			foreach (var child in configNode.Children)
-			{
-				SetReferenceNodeInConfigNodes(child);
+						Label = "Reversal Subsubentries",
+						IsEnabled = true,
+						Style = "Reversal-Subentry",
+						FieldDescription = "SubentriesOS",
+						CSSClassNameOverride = "subentries",
+						ReferenceItem = "AllReversalSubentries"
+					});
+					break;
 			}
 		}
 
-		private void RemoveDirectChildrenFromSharedNodes(ConfigurableDictionaryNode configNode)
+		/// <param name="model"></param>
+		/// <param name="ancestors">Fields in the desired node's ancestry, included the desired node's field, but not including Main Entry</param>
+		/// <remarks>Currently ignores nodes' subfields</remarks>
+		private ConfigurableDictionaryNode FindMainEntryDescendant(DictionaryConfigurationModel model, params string[] ancestors)
 		{
-			if (configNode.Children == null)
+			var failureMessage = "Unable to find 'Main Entry";
+			var nextNode = model.Parts.FirstOrDefault();
+			foreach (var ancestor in ancestors)
 			{
-				return;
+				if (nextNode == null)
+					break;
+				failureMessage += DCM.NodePathSeparator + ancestor;
+				nextNode = nextNode.Children.Find(n => n.FieldDescription == ancestor && string.IsNullOrEmpty(n.LabelSuffix));
 			}
-			foreach (var child in configNode.Children)
-			{
-				RemoveDirectChildrenFromSharedNodes(child);
-			}
-			if (!string.IsNullOrEmpty(configNode.ReferenceItem))
-				configNode.Children = null;
+			if (nextNode != null)
+				return nextNode;
+			// If we couldn't find the node, this is probably a test that didn't have a full model
+			m_logger.WriteLine(string.Format("Unable to find '{0}'", string.Join(DCM.NodePathSeparator, new[] { "Main Entry" }.Concat(ancestors))));
+			m_logger.WriteLine(failureMessage + "'");
+			return new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>() };
 		}
 
-		private static void HandleCssClassChanges(List<ConfigurableDictionaryNode> parts, int version)
+		private static void SetReferenceItem(ConfigurableDictionaryNode configNode)
 		{
-			foreach (var node in parts)
+			switch (configNode.FieldDescription)
 			{
-				switch (version)
-				{
-					case 4:
-						ReplaceTranslationsCssClass(node, n => n.FieldDescription == "TranslationsOC", "translationcontents");
-						ReplaceTranslationsCssClass(node, n => n.FieldDescription == "ExamplesOS", "examplescontents");
-						break;
-				}
+				case "Subentries":
+					configNode.ReferenceItem = "MainEntrySubentries";
+					if (configNode.DictionaryNodeOptions == null)
+					{
+						configNode.DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
+						{
+							ListId = DictionaryNodeListOptions.ListIds.Complex
+						};
+					}
+					break;
+				case "SensesOS":
+					if (configNode.Parent.FieldDescription == "SensesOS") // update only subsenses
+						configNode.ReferenceItem = "MainEntrySubsenses";
+					break;
+				case "SubentriesOS": // uniquely identifies Reversal Index Subentries
+					configNode.ReferenceItem = "AllReversalSubentries";
+					break;
 			}
 		}
 
-		private static void ReplaceTranslationsCssClass(ConfigurableDictionaryNode node, Func<ConfigurableDictionaryNode, bool> match, string cssClass)
+		/// <remarks>If you add Label changes to this method, don't forget to modify HandleChildNodeRenaming() in PreHistoricMigrator, too</remarks>
+		private static void HandleNodewiseChanges(IEnumerable<ConfigurableDictionaryNode> nodes, int version, bool isReversal)
 		{
-			if (match(node))
+			switch (version)
 			{
-				node.CSSClassNameOverride = cssClass;
-			}
-			if (node.Children == null)
-				return;
-			foreach (var child in node.Children)
-			{
-				ReplaceTranslationsCssClass(child, match, cssClass);
-			}
-		}
-
-		private static void HandleOptionsChanges(List<ConfigurableDictionaryNode> parts, int version)
-		{
-			foreach (var node in parts)
-			{
-				switch (version)
-				{
-					case 4:
-						SetOptionsInExamplesNodes(node, n => n.FieldDescription == "ExamplesOS");
-						break;
-				}
-			}
-		}
-
-		private static void SetOptionsInExamplesNodes(ConfigurableDictionaryNode node, Func<ConfigurableDictionaryNode, bool> match)
-		{
-			if (match(node))
-			{
-				node.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
-				node.Style = "none";
-				DictionaryNodeOptions options = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = false };
-				node.DictionaryNodeOptions = options;
-			}
-			if (node.Children == null)
-				return;
-			foreach (var child in node.Children)
-			{
-				SetOptionsInExamplesNodes(child, match);
-			}
-		}
-
-		private static void HandleLabelChanges(List<ConfigurableDictionaryNode> parts, int version)
-		{
-			// If you add to this method (i.e. we have later version label changes), don't forget to
-			// also modify HandleChildNodeRenaming() in PreHistoricMigrator.
-			foreach (var node in parts)
-			{
-				switch (version)
-				{
-					case 3:
-						ReplaceLabelInChildren(node, n => n.FieldDescription == "ExamplesOS", n => n.FieldDescription == "Example", "Example Sentence");
-						ReplaceLabelInChildren(node, n => n.FieldDescription == "ReferringSenses", n => n.FieldDescription == "Owner" && n.SubField == "Bibliography", "Bibliography (Entry)");
-						ReplaceLabelInChildren(node, n => n.FieldDescription == "ReferringSenses", n => n.FieldDescription == "Bibliography", "Bibliography (Sense)");
-						break;
-				}
-			}
-		}
-
-		private static void ReplaceLabelInChildren(ConfigurableDictionaryNode node, Func<ConfigurableDictionaryNode, bool> parentMatch, Func<ConfigurableDictionaryNode, bool> childMatch, string newLabelValue)
-		{
-			if (node.Children == null)
-				return;
-			if (parentMatch(node))
-			{
-				foreach (var replaceChild in node.Children.Where(childMatch))
-				{
-					replaceChild.Label = newLabelValue;
-				}
-			}
-			foreach (var child in node.Children)
-			{
-				ReplaceLabelInChildren(child, parentMatch, childMatch, newLabelValue);
+				case 2:
+					var newHeadword = isReversal ? "ReversalName" : "HeadWordRef";
+					PerformActionOnNodes(nodes, n =>
+					{
+						if (n.Label == "Referenced Headword")
+						{
+							n.FieldDescription = newHeadword;
+							if (isReversal && n.DictionaryNodeOptions == null)
+								n.DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+								{
+									WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
+									Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+									{
+										new DictionaryNodeListOptions.DictionaryNodeOption { Id = "vernacular", IsEnabled = true }
+									}
+								};
+						}
+						else if (n.FieldDescription == "OwningEntry" && n.SubField == "MLHeadWord")
+							n.SubField = newHeadword;
+					});
+					break;
+				case 3:
+					PerformActionOnNodes(nodes, n =>
+					{
+						if (n.Label == "Gloss (or Summary Definition)")
+							n.FieldDescription = "GlossOrSummary";
+						if (n.Parent == null)
+							return;
+						if (n.Parent.FieldDescription == "ExamplesOS" && n.FieldDescription == "Example")
+							n.Label = "Example Sentence";
+						else if (n.Parent.FieldDescription == "ReferringSenses")
+						{
+							if (n.FieldDescription == "Owner" && n.SubField == "Bibliography")
+								n.Label = "Bibliography (Entry)";
+							else if (n.FieldDescription == "Bibliography")
+								n.Label = "Bibliography (Sense)";
+						}
+					});
+					break;
+				case 4:
+					PerformActionOnNodes(nodes, n =>
+					{
+						switch (n.FieldDescription)
+						{
+							case "TranslationsOC":
+								n.CSSClassNameOverride = "translationcontents";
+								break;
+							case "ExamplesOS":
+								n.CSSClassNameOverride = "examplescontents";
+								n.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
+								n.DictionaryNodeOptions = new DictionaryNodeComplexFormOptions(); // allow to be shown in paragraph
+								break;
+						}
+					});
+					break;
 			}
 		}
 
-		private static void HandleFieldChanges(List<ConfigurableDictionaryNode> parts, int version, bool isReversal)
-		{
-			var wsOptions = new DictionaryNodeWritingSystemOptions
-			{
-				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-				{
-					new DictionaryNodeListOptions.DictionaryNodeOption {Id = "vernacular", IsEnabled = true }
-				}
-			};
-			foreach (var node in parts)
-			{
-				switch (version)
-				{
-					case 2:
-						var newHeadword = isReversal ? "ReversalName" : "HeadWordRef";
-						ReplaceFieldInNodesAndOptionallyEnsureOptions(node, n => n.Label == "Referenced Headword", newHeadword, isReversal ? wsOptions : null);
-						ReplaceSubFieldInNodes(node, n => n.FieldDescription == "OwningEntry" && n.SubField == "MLHeadWord", newHeadword);
-						break;
-					case 3:
-						ReplaceFieldInNodesAndOptionallyEnsureOptions(node, n => n.Label == "Gloss (or Summary Definition)", "GlossOrSummary");
-						break;
-				}
-			}
-		}
-
-		private static void ReplaceSubFieldInNodes(ConfigurableDictionaryNode node, Func<ConfigurableDictionaryNode, bool> match, string newSubFieldValue)
-		{
-			if (match(node))
-			{
-				node.SubField = newSubFieldValue;
-			}
-			if (node.Children == null)
-				return;
-			foreach (var child in node.Children)
-			{
-				ReplaceSubFieldInNodes(child, match, newSubFieldValue);
-			}
-		}
-
-		private static void ReplaceFieldInNodesAndOptionallyEnsureOptions(ConfigurableDictionaryNode node, Func<ConfigurableDictionaryNode, bool> match, string newFieldValue, DictionaryNodeOptions childOptions = null)
-		{
-			if (match(node))
-			{
-				node.FieldDescription = newFieldValue;
-				if (childOptions != null && node.DictionaryNodeOptions == null)
-					node.DictionaryNodeOptions = childOptions.DeepClone();
-			}
-			if (node.Children == null)
-				return;
-			foreach (var child in node.Children)
-			{
-				ReplaceFieldInNodesAndOptionallyEnsureOptions(child, match, newFieldValue, childOptions);
-			}
-		}
-
-		private static void RemoveReferencedItems(List<ConfigurableDictionaryNode> nodes)
+		private static void PerformActionOnNodes(IEnumerable<ConfigurableDictionaryNode> nodes, Action<ConfigurableDictionaryNode> action)
 		{
 			foreach (var node in nodes)
 			{
-				node.ReferenceItem = null; // For now, assume they're all bad (they were in version 1)
+				action(node);
 				if (node.Children != null)
-					RemoveReferencedItems(node.Children);
-			}
-		}
-
-		private static void ExtractWritingSystemOptionsFromReferringSenseOptions(List<ConfigurableDictionaryNode> nodes)
-		{
-			foreach (var node in nodes)
-			{
-				var rsOpts = node.DictionaryNodeOptions as DictionaryNodeReferringSenseOptions;
-				if (rsOpts != null)
-					node.DictionaryNodeOptions = rsOpts.WritingSystemOptions;
-				if (node.Children != null)
-					ExtractWritingSystemOptionsFromReferringSenseOptions(node.Children);
+					PerformActionOnNodes(node.Children, action);
 			}
 		}
 	}

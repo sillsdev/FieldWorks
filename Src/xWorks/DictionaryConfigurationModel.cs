@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
-using Palaso.Linq;
 using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.XWorks
