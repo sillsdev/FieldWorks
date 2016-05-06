@@ -536,7 +536,7 @@
 		<ReferenceItem>MainEntrySubentries</ReferenceItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Subsenses" style="Dictionary-Sense" between="  " after=" " isEnabled="true" field="SensesOS" cssClassNameOverride="senses">
-		<SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=") " numberingStyle="%O" numberSingleSense="true" showSingleGramInfoFirst="true"/>
+		<SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=") " numberingStyle="%O" numberSingleSense="false" showSingleGramInfoFirst="true"/>
 		<ReferenceItem>MainEntrySubsenses</ReferenceItem>
 	  </ConfigurationItem>
 	</ConfigurationItem>
@@ -1318,7 +1318,7 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Subsenses" between="  " after=" " isEnabled="true" field="SensesOS" cssClassNameOverride="senses">
-		<SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=") " numberingStyle="%O" numberSingleSense="true" showSingleGramInfoFirst="true"/>
+		<SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=") " numberingStyle="%O" numberSingleSense="false" showSingleGramInfoFirst="true"/>
 		<ReferenceItem>MainEntrySubsenses</ReferenceItem>
 	  </ConfigurationItem>
 	</ConfigurationItem>
@@ -2076,7 +2076,7 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Subsenses" between="  " after=" " isEnabled="true" field="SensesOS" cssClassNameOverride="senses">
-		<SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=") " numberingStyle="%O" numberSingleSense="true" showSingleGramInfoFirst="true"/>
+		<SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=") " numberingStyle="%O" numberSingleSense="false" showSingleGramInfoFirst="true"/>
 		<ReferenceItem>MainEntrySubsenses</ReferenceItem>
 	  </ConfigurationItem>
 	</ConfigurationItem>
@@ -2592,7 +2592,7 @@
 		<ReferenceItem>MainEntrySubentries</ReferenceItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Subsubsenses" between="  " after=" " isEnabled="true" field="SensesOS" cssClassNameOverride="senses">
-		<SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=") " numberingStyle="%O" numberSingleSense="true" showSingleGramInfoFirst="true"/>
+		<SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=") " numberingStyle="%O" numberSingleSense="false" showSingleGramInfoFirst="true"/>
 		<ReferenceItem>MainEntrySubsenses</ReferenceItem>
 	  </ConfigurationItem>
 	</ConfigurationItem>
