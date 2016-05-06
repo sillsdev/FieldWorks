@@ -659,7 +659,7 @@ namespace SIL.FieldWorks.XWorks
 					// for multi-lingual strings each language's string will have the contents generated in a span
 					if(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions)
 					{
-						return "." + GetClassAttributeForConfig(configNode) + " span";
+						return "." + GetClassAttributeForConfig(configNode) + "> span";
 					}
 					goto default;
 				}
