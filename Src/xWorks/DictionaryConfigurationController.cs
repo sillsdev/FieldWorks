@@ -224,7 +224,7 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			View.PreviewData = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(_previewEntry, _model, _allEntriesPublicationDecorator, _mediator);
 			if(_isHighlighted)
-				View.HighlightContent(View.TreeControl.Tree.SelectedNode.Tag as ConfigurableDictionaryNode);
+				View.HighlightContent(View.TreeControl.Tree.SelectedNode.Tag as ConfigurableDictionaryNode, Cache);
 		}
 
 		/// <summary>
@@ -426,13 +426,13 @@ namespace SIL.FieldWorks.XWorks
 				_isHighlighted = !_isHighlighted;
 				if (_isHighlighted)
 				{
-					View.HighlightContent(node.Tag as ConfigurableDictionaryNode);
+					View.HighlightContent(node.Tag as ConfigurableDictionaryNode, cache);
 					button.BackColor = Color.White;
 					tooltip.SetToolTip(button, xWorksStrings.RemoveHighlighting);
 				}
 				else
 				{
-					View.HighlightContent(null);	// turns off current highlighting.
+					View.HighlightContent(null, cache);	// turns off current highlighting.
 					button.BackColor = Color.Yellow;
 					tooltip.SetToolTip(button, xWorksStrings.HighlightAffectedContent);
 				}
@@ -464,7 +464,7 @@ namespace SIL.FieldWorks.XWorks
 				if (_isHighlighted)
 				{
 					// Highlighting is turned on, change what is highlighted.
-					View.HighlightContent(node);
+					View.HighlightContent(node, cache);
 				}
 			};
 			View.TreeControl.CheckAll += treeNode =>
