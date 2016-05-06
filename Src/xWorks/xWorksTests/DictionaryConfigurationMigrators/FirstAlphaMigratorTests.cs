@@ -2,13 +2,15 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using NUnit.Framework;
 using Palaso.IO;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.Utils;
+
 // ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
@@ -16,17 +18,25 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 	public class FirstAlphaMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private FirstAlphaMigrator m_migrator;
+		private SimpleLogger m_logger;
 
 		[SetUp]
 		public void SetUp()
 		{
-			m_migrator = new FirstAlphaMigrator(Cache);
+			m_logger = new SimpleLogger();
+			m_migrator = new FirstAlphaMigrator(Cache, m_logger);
+		}
+
+		[TearDown]
+		public void TearDown()
+		{
+			m_logger.Dispose();
 		}
 
 		[Test]
 		public void MigrateFrom83Alpha_UpdatesVersion()
 		{
-			var alphaModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode() } };
+			var alphaModel = new DictionaryConfigurationModel { Version = -1, Parts = new List<ConfigurableDictionaryNode>() };
 			m_migrator.MigrateFrom83Alpha(alphaModel); // SUT
 			Assert.AreEqual(DictionaryConfigurationMigrator.VersionCurrent, alphaModel.Version);
 		}
@@ -69,10 +79,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				CSSClassNameOverride = "senses",
 				Children = new List<ConfigurableDictionaryNode> { configDefnOrGloss }
 			};
+			var main = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { configParent, configSenses } };
 			var configModel = new DictionaryConfigurationModel
 			{
 				Version = 3,
-				Parts = new List<ConfigurableDictionaryNode> { configParent, configSenses }
+				Parts = new List<ConfigurableDictionaryNode> { main }
 			};
 			m_migrator.MigrateFrom83Alpha(configModel);
 			Assert.AreEqual("GlossOrSummary", configGlossOrSummDefn.FieldDescription,
@@ -103,6 +114,20 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		}
 
 		[Test]
+		public void MigrateFrom83Alpha_UpdatesFreshlySharedNodes()
+		{
+			var examplesOS = new ConfigurableDictionaryNode { Label = "Examples", FieldDescription = "ExamplesOS" };
+			var subsenses = new ConfigurableDictionaryNode { Label = "Subsenses", FieldDescription = "SensesOS", Children = new List<ConfigurableDictionaryNode> { examplesOS } };
+			var senses = new ConfigurableDictionaryNode { Label = "Senses", FieldDescription = "SensesOS", Children = new List<ConfigurableDictionaryNode> { subsenses } };
+			var configParent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { senses } };
+			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
+			m_migrator.MigrateFrom83Alpha(configModel); // SUT
+			for (var node = examplesOS; !configModel.SharedItems.Contains(node); node = node.Parent)
+				Assert.NotNull(node, "ExamplesOS should be freshly-shared (under subsenses)");
+			Assert.That(examplesOS.DictionaryNodeOptions, Is.TypeOf(typeof(DictionaryNodeComplexFormOptions)), "Freshly-shared nodes should be included");
+		}
+
+		[Test]
 		public void MigrateFrom83Alpha_UpdatesExampleOptions()
 		{
 			var configExamplesNode = new ConfigurableDictionaryNode { Label = "Examples", FieldDescription = "ExamplesOS" };
@@ -110,10 +135,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
 			m_migrator.MigrateFrom83Alpha(configModel);
 			Assert.AreEqual(ConfigurableDictionaryNode.StyleTypes.Character, configExamplesNode.StyleType);
-			Assert.AreEqual("none", configExamplesNode.Style);
 			Assert.IsTrue(configExamplesNode.DictionaryNodeOptions is DictionaryNodeComplexFormOptions, "wrong type");
 			var options = (DictionaryNodeComplexFormOptions)configExamplesNode.DictionaryNodeOptions;
-			Assert.IsFalse(options.DisplayEachComplexFormInAParagraph, "True was not set");
+			Assert.IsFalse(options.DisplayEachComplexFormInAParagraph, "Default is *not* in paragraph");
 		}
 
 		[Test]
@@ -298,6 +322,40 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.Null(subsenses.Children, "Children not removed from shared nodes");
 			Assert.Null(subsubsenses.Children, "Children not removed from shared nodes");
 			Assert.Null(subentriesUnderSenses.Children, "Children not removed from shared nodes");
+			var sharedSubsenses = model.SharedItems.FirstOrDefault(si => si.Label == "MainEntrySubsenses");
+			Assert.NotNull(sharedSubsenses, "No Subsenses in SharedItems");
+			Assert.AreEqual(1, sharedSubsenses.Children.Count(n => n.FieldDescription == "SensesOS"), "Should have exactly one Subsubsenses node");
+		}
+
+		[Test]
+		public void MigrateFrom83Alpha_SubsubsensesNodeAddedIfNeeded()
+		{
+			var subsensesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Subsenses",
+				FieldDescription = "SensesOS",
+				Children = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode { Label = "TestChild" } }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Senses",
+				FieldDescription = "SensesOS",
+				Children = new List<ConfigurableDictionaryNode> { subsensesNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+			var model = new DictionaryConfigurationModel { Version = -1, Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+
+			m_migrator.MigrateFrom83Alpha(model);
+			var subSenses = model.SharedItems.Find(node => node.Label == "MainEntrySubsenses");
+			Assert.NotNull(subSenses);
+			Assert.AreEqual(2, subSenses.Children.Count, "Subsenses children were not moved to shared");
+			Assert.That(subSenses.Children[1].Label, Is.StringMatching("Subsubsenses"), "Subsubsenses not added during migration");
+			Assert.Null(model.Parts[0].Children[0].Children[0].Children, "Subsenses children were left in non-shared node");
 		}
 
 		[Test]
@@ -386,7 +444,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 		[Test]
 		public void MigrateFrom83Alpha_ReversalSubentriesMigratedToSharedNodes()
-		{var subentriesNode = new ConfigurableDictionaryNode
+		{
+			var subentriesNode = new ConfigurableDictionaryNode
 			{
 				Label = "Reversal Subentries",
 				FieldDescription = "SubentriesOS",
@@ -402,7 +461,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				Version = -1,
 				WritingSystem = "en",
-				FilePath = String.Empty,
+				FilePath = string.Empty,
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
 
@@ -424,7 +483,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				Children = new List<ConfigurableDictionaryNode>
 				{
 					new ConfigurableDictionaryNode { Label = "TestChild" },
-					new ConfigurableDictionaryNode { Label = "Reversal Subsubentries" }
+					new ConfigurableDictionaryNode { Label = "Reversal Subsubentries", FieldDescription = "SubentriesOS" }
 				}
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
