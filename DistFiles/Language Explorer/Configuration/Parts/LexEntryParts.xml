@@ -254,6 +254,9 @@
 		<part id="LexEntry-Jt-Pronunciation" type="jtview">
 			<seq field="Pronunciations" layout="Pronunciation"/>
 		</part>
+		<part id="LexEntry-Jt-PronunciationMediaFile" type="jtview">
+			<seq field="Pronunciations" layout="PronunciationMediaFileName"/>
+		</part>
 		<part id="LexEntry-Jt-CVPattern" type="jtview">
 			<seq field="Pronunciations" layout="CVPattern"/>
 		</part>
@@ -881,6 +884,9 @@
 				</chooserInfo>
 			</slice>
 		</part>
+		<part id="LexPronunciation-Jt-PronunciationMediaFileName" type="jtview">
+			<seq field="MediaFiles" layout="MediaFileName" />
+		</part>
 		<part id="LexPronunciation-Detail-CVPattern" type="Detail">
 			<slice field="CVPattern" label="CVPattern" editor="String" sameObject="true"/><!-- assume same object as preceding field for formatting lines on display -->
 		</part>
@@ -1128,6 +1134,13 @@
 		<part id="CmMedia-Detail-Label" type="Detail">
 			<slice label="Label" field="Label" editor="multistring" ws="all analysis" menu="mnuDataTree-CmMedia" sameObject="true"/><!-- assume same object as preceding field for formatting lines on display -->
 		</part>
+		<part id="CmMedia-Jt-MediaFileName" type="jtview">
+			<obj field="MediaFile" layout="MediaFilePath"/>
+		</part>
+	</bin>
+
+	<bin class="CmFile">
+		<part id="CmFile-Jt-MediaFilePath" type="jtview"><string field="InternalPath" /></part>
 	</bin>
 
 	<!-- STUFF ADDED FOR NEW CONFIGURATION WORK -->
