@@ -431,10 +431,10 @@ Are you SURE you want to delete the field {2}?</value>
     <value>No</value>
   </data>
   <data name="ksChooseLIFTFolderTitle" xml:space="preserve">
-    <value>Choose where to save the LIFT files</value>
+    <value>Choose where to save the files that constitute a LIFT export</value>
   </data>
   <data name="ksChooseLIFTExportFolder" xml:space="preserve">
-    <value>Choose the location and name of the LIFT export folder FLEx will use.  You can make a new folder, or choose one which already contains LIFT data (e.g. a WeSay project folder)</value>
+    <value>Choose or create a folder for FLEx to put all the files into for this LIFT export.  Choose a new folder, or one that already contains LIFT data you wish to overwrite. The name of the folder will be the name of the LIFT export.</value>
   </data>
   <data name="ksLIFTAlreadyExists" xml:space="preserve">
     <value>There is already a project in that folder.  Click “OK” to overwrite the lexicon in that project, or “Cancel” to abort.</value>
