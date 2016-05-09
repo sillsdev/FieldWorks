@@ -1164,7 +1164,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				return topNode.IsSharedItem ? topNode.Parent : topNode; // what we have already is the best we can find.
 			}
-			// If we have a referenced node, we prefer to use it over any Children we might have
+			// If we have a referenced node, we prefer to use its Children over any Children we might have
 			if (topNode.ReferencedNode != null)
 				topNode = topNode.ReferencedNode;
 
@@ -1176,7 +1176,7 @@ namespace SIL.FieldWorks.XWorks
 			if (topNode.Children == null || topNode.Children.Count == 0)
 			{
 				var match = FindStartingConfigNode(topNode.Parent, classList);
-				if (match != topNode.Parent)
+				if (!ReferenceEquals(match, topNode.Parent))
 					return match;	// we found something better!
 				return topNode;		// this is the best we can find.
 			}

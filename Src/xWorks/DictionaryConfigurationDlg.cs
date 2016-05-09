@@ -213,8 +213,6 @@ namespace SIL.FieldWorks.XWorks
 			if (body == null || selectedConfigNode == null) // Sanity check
 				return elements;
 
-			// SharedItems can occur under any Part. If topLevelConfigNode is a SharedItem,
-			// don't bother filtering top-level divs by class.
 			var topLevelConfigNode = GetTopLevelNode(selectedConfigNode);
 			var topLevelClass = CssGenerator.GetClassAttributeForConfig(topLevelConfigNode);
 			foreach (var div in body.GetElementsByTagName("div"))
@@ -226,15 +224,10 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Returns the top-level ancestor of the given node. Considers SharedItems to be top-level because they can occur
-		/// under multiple top-level Parts, and we want to select them everywhere
+		/// Returns the top-level ancestor of the given node
 		/// </summary>
 		private static ConfigurableDictionaryNode GetTopLevelNode(ConfigurableDictionaryNode childNode)
 		{
-			//if (childNode.ReferencedNode != null)
-			//	return childNode.ReferencedNode; // REVIEW (Hasso) 2016.04: how do we want to handle this edge case?
-			// REVIEW (cont): this could be subsenses->subentries...what to do there?
-			// TODO pH don't do the above; childNode.Options do not apply to other references to childNode.ReferencedNode
 			while (childNode.Parent != null)
 				childNode = childNode.Parent;
 			return childNode;
