@@ -16,6 +16,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using XCore;
+using DCM = SIL.FieldWorks.XWorks.DictionaryConfigurationMigrator;
 
 namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 {
@@ -122,12 +123,12 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			// If the project already has up-to-date configurations then we don't need to migrate
 			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
 			var newDictionaryConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
-			if (DictionaryConfigurationMigrator.ConfigFilesInDir(newDictionaryConfigLoc).Any())
+			if (DCM.ConfigFilesInDir(newDictionaryConfigLoc).Any())
 			{
 				return false;
 			}
 			var newReversalIndexConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
-			if (DictionaryConfigurationMigrator.ConfigFilesInDir(newReversalIndexConfigLoc).Any())
+			if (DCM.ConfigFilesInDir(newReversalIndexConfigLoc).Any())
 			{
 				return false;
 			}
@@ -265,7 +266,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					&& convertedModel.Label != DictionaryConfigurationModel.AllReversalIndexes)
 				{
 					// If this is a WS-specific Reversal Index, set its WS
-					DictionaryConfigurationMigrator.SetWritingSystemForReversalModel(convertedModel, Cache);
+					DCM.SetWritingSystemForReversalModel(convertedModel, Cache);
 				}
 				else if (convertedModel.Label == DictionaryConfigurationModel.AllReversalIndexes)
 				{
@@ -324,7 +325,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var matchedChildren = new List<ConfigurableDictionaryNode>();
 			foreach (var child in convertedNode.Children)
 			{
-				var pathStringToNode = DictionaryConfigurationMigrator.BuildPathStringFromNode(child);
+				var pathStringToNode = DCM.BuildPathStringFromNode(child);
 				child.Label = HandleChildNodeRenaming(convertedModel.Version, child);
 				// Attempt to find a matching node from the current default model from which to copy defaults
 				ConfigurableDictionaryNode matchFromBase;
@@ -364,8 +365,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			currentDefaultChildren.RemoveAll(matchedChildren.Contains);
 			foreach (var newChild in currentDefaultChildren)
 			{
-				m_logger.WriteLine(string.Format("'{0}->{1}' was not in the old version; adding from default config.",
-					DictionaryConfigurationMigrator.BuildPathStringFromNode(convertedNode), newChild)); // BuildPath from convertedNode to ensure display of LabelSuffixes
+				m_logger.WriteLine(string.Format("'{0}{1}{2}' was not in the old version; adding from default config.",
+					DCM.BuildPathStringFromNode(convertedNode), // BuildPath from convertedNode to display LabelSuffixes
+					DCM.NodePathSeparator, newChild));
 				convertedNode.Children.Add(newChild);
 			}
 		}
@@ -394,6 +396,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			}
 
 			// LT-17356 Converting the Label in HandleChildNodeRenaming() requires more info than we have there.
+			// ENHANCE (Hasso) 2106.05: localize? (worthwhile only after migration in general works in a localized interface)
 			if (node.Label == "Bibliography" && node.Parent.Text == "Referenced Senses")
 			{
 				convertedNode.Label = node.ClassName == "LexEntry" ? "Bibliography (Entry)" : "Bibliography (Sense)";
@@ -437,11 +440,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var path = string.Format("{0} ({1})", child.Label, child.DupString);
 			var node = child;
 			while (node.Parent != null // If 'Minor Entry' is duplicated, both copies get a new, common parent 'Minor Entry', which does not affect migration
-				// apart from making log entries about 'Minor Entry->Minor Entry (1)->and so on'
+				// apart from making log entries about 'Minor Entry > Minor Entry (1) > and so on'
 				&& !(node.Parent.Parent == null || ((XmlDocConfigureDlg.LayoutTreeNode)node.Parent).Label.Equals(node.Label)))
 			{
 				node = (XmlDocConfigureDlg.LayoutTreeNode)node.Parent;
-				path = node.Label + "->" + path;
+				path = node.Label + DCM.NodePathSeparator + path;
 			}
 			return path;
 		}
@@ -491,7 +494,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					if (node.PartName == "LexEntry-Jt-RootSubentriesConfig")
 					{
 						// LT-15834
-						(options as DictionaryNodeComplexFormOptions).DisplayEachComplexFormInAParagraph = true;
+						((DictionaryNodeComplexFormOptions)options).DisplayEachComplexFormInAParagraph = true;
 					}
 				}
 				else
@@ -603,7 +606,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				if (ReferenceEquals(currentDefaultNode.ReferencedNode.Parent, currentDefaultNode))
 				{
 					m_logger.WriteLine(string.Format("Sharing node '{0}' using key '{1}'",
-						DictionaryConfigurationMigrator.BuildPathStringFromNode(convertedNode), convertedNode.ReferenceItem));
+						DCM.BuildPathStringFromNode(convertedNode), convertedNode.ReferenceItem));
 					CopyDefaultsIntoChildren(convertedModel, convertedNode, currentDefaultNode.ReferencedNode);
 					DictionaryConfigurationController.ShareNodeAsReference(convertedModel.SharedItems, convertedNode,
 						currentDefaultNode.ReferencedNode.CSSClassNameOverride);
@@ -611,7 +614,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				else
 				{
 					m_logger.WriteLine(string.Format("Configuration for '{0}' will follow '{1}'",
-						DictionaryConfigurationMigrator.BuildPathStringFromNode(convertedNode), DictionaryConfigurationMigrator.BuildPathStringFromNode(currentDefaultNode.ReferencedNode.Parent)));
+						DCM.BuildPathStringFromNode(convertedNode), DCM.BuildPathStringFromNode(currentDefaultNode.ReferencedNode.Parent)));
 					// No need for any processing here; since we set ReferenceItem above, shared nodes will be linked next time this model is loaded
 				}
 				convertedNode.Children = null; // Nodes with referenced children do not need direct children
@@ -668,7 +671,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			if (convertedNode.Children.Count != 4)
 			{
 				m_logger.WriteLine(string.Format("{0} had children (probably duplicates) that were not migrated.",
-					DictionaryConfigurationMigrator.BuildPathStringFromNode(convertedNode)));
+					DCM.BuildPathStringFromNode(convertedNode)));
 			}
 			convertedNode.Children = newChildren;
 		}
@@ -732,8 +735,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				if (child.Label == "Components" && child.Parent.Label == "Component References")
 					result = "Referenced Entries";
-				// Don't rename Components -> Complex Form Type -> Abbreviation,
-				// but do rename Subentries -> CFT -> Abbreviations to Reverse Abbreviation
+				// Don't rename Components > Complex Form Type > Abbreviation,
+				// but do rename Subentries > CFT > Abbreviations to Reverse Abbreviation
 				if (child.Label == "Abbreviation" && child.Parent.Label == "Complex Form Type" && child.Parent.Parent.Label == "Subentries") // not renamed in "Components CFTs"
 					result = "Reverse Abbreviation";
 
@@ -800,19 +803,16 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				foreach (var child in node.Children)
 				{
 					m_logger.WriteLine(string.Format("Treating '{0}' as custom.",
-						DictionaryConfigurationMigrator.BuildPathStringFromNode(child)));
+						DCM.BuildPathStringFromNode(child)));
 					SetupCustomField(child, null);
 					// Children should be not marked as custom unless we know they are.
-					int field = GetFieldIdForNode(child, metaDataCache);
-					if (field != 0)
-						child.IsCustomField = metaDataCache.IsCustom(field);
-					else
-						child.IsCustomField = false;
+					var field = GetFieldIdForNode(child, metaDataCache);
+					child.IsCustomField = field != 0 && metaDataCache.IsCustom(field);
 				}
 			}
 			else
 			{
-				int field = GetFieldIdForNode(node, metaDataCache);
+				var field = GetFieldIdForNode(node, metaDataCache);
 				if (field != 0)
 				{
 					var listId = metaDataCache.GetFieldListRoot(field);
@@ -885,7 +885,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			options.Options.AddRange(sequence.Split(',').Select(id => new DictionaryNodeListOptions.DictionaryNodeOption
 			{
 				IsEnabled = id.StartsWith("+"),
-				Id = id.Trim(new[] { '+', '-', ' ' })
+				Id = id.Trim('+', '-', ' ')
 			}));
 		}
 

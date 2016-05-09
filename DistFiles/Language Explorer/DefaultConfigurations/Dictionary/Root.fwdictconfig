@@ -3119,6 +3119,10 @@
 			</ConfigurationItem>
 		  </ConfigurationItem>
 		</ConfigurationItem>
+		<ConfigurationItem name="Subsenses" between="  " after=" " isEnabled="true" field="SensesOS" cssClassNameOverride="senses">
+		  <SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=") " numberingStyle="%O" numberSingleSense="true" showSingleGramInfoFirst="true"/>
+		  <ReferenceItem>MainEntrySubsenses</ReferenceItem>
+		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Bibliography" between=" " after=" " isEnabled="false" field="Bibliography">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
