@@ -2269,6 +2269,8 @@ namespace SIL.FieldWorks.XWorks
 			const string senseEntryGuid = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and @entryguid]";
 			// This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseEntryGuid, 1);
+			string senseEntryGuidstatsWithG = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and @entryguid='g" + testEntry.Guid + "']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseEntryGuidstatsWithG, 1);
 		}
 
 		public void GenerateXHTMLForEntry_ExampleAndTranslationAreGenerated()

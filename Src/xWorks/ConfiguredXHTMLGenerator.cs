@@ -1632,7 +1632,7 @@ namespace SIL.FieldWorks.XWorks
 				xw.WriteRaw(senseNumberSpan);
 				xw.WriteStartElement(GetElementNameForProperty(config));
 				WriteCollectionItemClassAttribute(config, xw);
-				xw.WriteAttributeString("entryguid", ((ICmObject)item).Owner.Guid.ToString());
+				xw.WriteAttributeString("entryguid", "g" + ((ICmObject)item).Owner.Guid.ToString());
 				xw.WriteRaw(senseContent);
 				xw.WriteEndElement();	// element name for property
 				xw.WriteEndElement();	// </span>
