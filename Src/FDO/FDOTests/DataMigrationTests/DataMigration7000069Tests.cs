@@ -107,7 +107,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			var mockMdc = new MockMDCForDataMigration();
 			mockMdc.AddClass(1, "CmObject", null, new List<string> {"CmPossibility"});
 			mockMdc.AddClass(2, "CmPossibility", "CmObject", new List<string>{"LexEntryType"});
-			mockMdc.AddClass(3, "LexEntryType", "CmPossibility", new List<string>());
+			mockMdc.AddClass(3, "LexEntryType", "CmPossibility", new List<string> { "LexEntryInflType" });
+			mockMdc.AddClass(4, "LexEntryInflType", "LexEntryType", new List<string>());
 
 			var currentFlid = 2000;
 			mockMdc.AddField(++currentFlid, "Name", CellarPropertyType.MultiUnicode, 2);
@@ -120,7 +121,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000068, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
 
 			// Make sure Variant and Complex Form Type do not have ReverseName prior to migration.
-			foreach (var dto in dtoRepos.AllInstancesSansSubclasses("LexEntryType"))
+			foreach (var dto in dtoRepos.AllInstancesWithSubclasses("LexEntryType"))
 			{
 				var elt = XElement.Parse(dto.Xml);
 				Assert.IsNull(elt.Element("ReverseName"));
@@ -130,7 +131,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 			const string frWs = "fr";
 			const string enWs = "en";
-			var firstEntry = XElement.Parse(dtoRepos.AllInstancesSansSubclasses("LexEntryType").First().Xml);
+			var firstEntry = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("LexEntryType").First().Xml);
 
 			var nameElement = firstEntry.Element("Name");
 			var multiUniElements = nameElement.Descendants("AUni");
@@ -148,7 +149,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			Assert.AreEqual(enWs, attr.Value);
 
 			// Past is a subpossibility and also has multiple language strings.
-			var pastEntry = XElement.Parse(dtoRepos.AllInstancesSansSubclasses("LexEntryType").First(
+			var pastEntry = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("LexEntryType").First(
 											e => e.Guid.ToString()=="837ebe72-8c1d-4864-95d9-fa313c499d78").Xml);
 
 			// We only test the English contents. Transforming "of" from any language and predicting the outcome
@@ -165,16 +166,16 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			var abbrElement = pastEntry.Element("Abbreviation");
 			multiUniElements = abbrElement.Descendants("AUni");
 			Assert.AreEqual(2, multiUniElements.Count());
-			uniString = multiUniElements.First(wselt => wselt.Attribute("ws").Value == "en").Value;
+			uniString = multiUniElements.First(wselt => wselt.Attribute("ws").Value == enWs).Value;
 			Assert.AreEqual("pst.", uniString);
-			uniString = multiUniElements.First(wselt => wselt.Attribute("ws").Value == "fr").Value;
+			uniString = multiUniElements.First(wselt => wselt.Attribute("ws").Value == frWs).Value;
 			Assert.AreEqual("pss.", uniString);
 			var revAbbrElement = pastEntry.Element("ReverseAbbr");
 			multiUniElements = revAbbrElement.Descendants("AUni");
 			Assert.AreEqual(2, multiUniElements.Count());
-			uniString = multiUniElements.First(wselt => wselt.Attribute("ws").Value == "en").Value;
+			uniString = multiUniElements.First(wselt => wselt.Attribute("ws").Value == enWs).Value;
 			Assert.AreEqual("pst. of", uniString);
-			uniString = multiUniElements.First(wselt => wselt.Attribute("ws").Value == "fr").Value;
+			uniString = multiUniElements.First(wselt => wselt.Attribute("ws").Value == frWs).Value;
 			Assert.AreEqual("pss. de", uniString);
 		}
 	}

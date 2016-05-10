@@ -61,7 +61,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 
 		private void AddReverseNameAndSwapAbbreviationFields(IDomainObjectDTORepository repoDto)
 		{
-			foreach (var dto in repoDto.AllInstancesSansSubclasses("LexEntryType"))
+			// We DO want subclasses (e.g. LexEntryInflType)
+			foreach (var dto in repoDto.AllInstancesWithSubclasses("LexEntryType"))
 			{
 				XElement data = XElement.Parse(dto.Xml);
 
