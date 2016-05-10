@@ -11,12 +11,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 	public partial class LabelOverPanel : UserControl
 	{
 		private Control m_panelContents;
-		private readonly ToolTip m_tt = new ToolTip();
+		private readonly ToolTip m_tt = new ToolTip { AutoPopDelay = 32767 }; // We expect verbose tooltips; make them show as long as possible (33s)
 
 		public LabelOverPanel()
 		{
 			InitializeComponent();
-			LabelToolTip = xWorksStrings.ConfigureReferencedHeadwordsTooltip;
 		}
 
 		public string LabelText { set { label.Text = value; } }
