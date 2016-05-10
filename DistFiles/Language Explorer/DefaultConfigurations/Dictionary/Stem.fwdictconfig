@@ -59,8 +59,8 @@
 		<Option isEnabled="true" id="a32f1d1c-4832-46a2-9732-c2276d6547e8"/>
 		<Option isEnabled="true" id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed"/>
 	  </ListTypeOptions>
-	  <ConfigurationItem name="Variant Type" between=", " after="" isEnabled="true" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
-		<ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
+	  <ConfigurationItem name="Variant Type" between=", " after=" " isEnabled="true" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
+		<ConfigurationItem name="Reverse Abbreviation" between=" " after=" " isEnabled="true" field="ReverseAbbr">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -452,13 +452,13 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Referenced Complex Forms" between=" " after=" " isEnabled="true" field="VisibleComplexFormBackRefs">
-		<ConfigurationItem name="Complex Form Type" after="" isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
-		  <ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
+		<ConfigurationItem name="Complex Form Type" after=" " isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
+		  <ConfigurationItem name="Reverse Abbreviation" between=" " isEnabled="true" field="ReverseAbbr">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true"/>
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Name" between=" " after=" " isEnabled="false" field="Name">
+		  <ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true"/>
 			</WritingSystemOptions>
@@ -558,14 +558,14 @@
 	</ConfigurationItem>
 	<ConfigurationItem name="Date Created" before="created on: " after=" " isEnabled="false" field="DateCreated"/>
 	<ConfigurationItem name="Date Modified" before="modified on: " after=" " isEnabled="false" field="DateModified"/>
-	<ConfigurationItem name="Referenced Complex Forms" between=" " after="" isEnabled="true" field="VisibleComplexFormBackRefs">
+	<ConfigurationItem name="Referenced Complex Forms" between=" " after=" " isEnabled="true" field="VisibleComplexFormBackRefs">
 	  <ConfigurationItem name="Complex Form Type" after=" " isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
-		<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
+		<ConfigurationItem name="Reverse Abbreviation" between=" " isEnabled="true" field="ReverseAbbr">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Name" between=" " after=" " isEnabled="false" field="Name">
+		<ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -716,8 +716,8 @@
 		<Option isEnabled="true" id="a32f1d1c-4832-46a2-9732-c2276d6547e8"/>
 		<Option isEnabled="true" id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed"/>
 	  </ListTypeOptions>
-	  <ConfigurationItem name="Variant Type" between=", " after="" isEnabled="true" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
-		<ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
+	  <ConfigurationItem name="Variant Type" between=", " after=" " isEnabled="true" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
+		<ConfigurationItem name="Reverse Abbreviation" between=" " after=" " isEnabled="true" field="ReverseAbbr">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -825,12 +825,12 @@
 		<Option isEnabled="true" id="9466d126-246e-400b-8bba-0703e09bc567"/>
 	  </ListTypeOptions>
 	  <ConfigurationItem name="Complex Form Type" between=", " after="" isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
-		<ConfigurationItem name="Reverse Abbreviation" between=" " after=" " isEnabled="true" field="ReverseAbbr">
+		<ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Reverse Name" between=" " isEnabled="false" field="ReverseName">
+		<ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -855,7 +855,7 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Variant of" between=", " after=" " isEnabled="true" field="VisibleVariantEntryRefs">
+	<ConfigurationItem name="Variant Of" between=", " after=" " isEnabled="true" field="VisibleVariantEntryRefs">
 	  <ListTypeOptions list="variant">
 		<Option isEnabled="true" id="b0000000-c40e-433e-80b5-31da08771344"/>
 		<Option isEnabled="true" id="024b62c9-93b3-41a0-ab19-587a0030219a"/>
@@ -866,12 +866,12 @@
 		<Option isEnabled="true" id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed"/>
 	  </ListTypeOptions>
 	  <ConfigurationItem name="Variant Type" between=", " after=" " isEnabled="true" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
-		<ConfigurationItem name="Reverse Abbreviation" between=" " isEnabled="true" field="ReverseAbbr">
+		<ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Reverse Name" between=" " isEnabled="false" field="ReverseName">
+		<ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -1131,13 +1131,13 @@
 	  <ConfigurationItem name="Scientific Name" after=" " isEnabled="true" field="ScientificName"/>
 	  <ConfigurationItem name="Source" after=" " isEnabled="false" field="Source"/>
 	  <ConfigurationItem name="Referenced Complex Forms" between=" " after=" " isEnabled="true" field="VisibleComplexFormBackRefs">
-		<ConfigurationItem name="Complex Form Type" after="" isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
-		  <ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
+		<ConfigurationItem name="Complex Form Type" after=" " isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
+		  <ConfigurationItem name="Reverse Abbreviation" between=" " isEnabled="true" field="ReverseAbbr">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true"/>
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Name" between=" " after=" " isEnabled="false" field="Name">
+		  <ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true"/>
 			</WritingSystemOptions>
@@ -1307,13 +1307,13 @@
 		<Option isEnabled="true" id="35cee792-74c8-444e-a9b7-ed0461d4d3b7"/>
 		<Option isEnabled="true" id="9466d126-246e-400b-8bba-0703e09bc567"/>
 	  </ComplexFormOptions>
-	  <ConfigurationItem name="Complex Form Type" after="" isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
-		<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
+	  <ConfigurationItem name="Complex Form Type" after=" " isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
+		<ConfigurationItem name="Reverse Abbreviation" between=" " isEnabled="true" field="ReverseAbbr">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Name" between=" " after=" " isEnabled="false" field="Name">
+		<ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -1470,8 +1470,8 @@
 		<Option isEnabled="true" id="a32f1d1c-4832-46a2-9732-c2276d6547e8"/>
 		<Option isEnabled="true" id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed"/>
 	  </ListTypeOptions>
-	  <ConfigurationItem name="Variant Type" between=", " after="" isEnabled="true" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
-		<ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
+	  <ConfigurationItem name="Variant Type" between=", " after=" " isEnabled="true" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
+		<ConfigurationItem name="Reverse Abbreviation" between=" " after=" " isEnabled="true" field="ReverseAbbr">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -1568,7 +1568,7 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Variant of" between=", " after=" " isEnabled="true" field="VisibleVariantEntryRefs">
+	<ConfigurationItem name="Variant Of" between=", " after=" " isEnabled="true" field="VisibleVariantEntryRefs">
 	  <ListTypeOptions list="variant">
 		<Option isEnabled="true" id="b0000000-c40e-433e-80b5-31da08771344"/>
 		<Option isEnabled="true" id="024b62c9-93b3-41a0-ab19-587a0030219a"/>
@@ -1579,12 +1579,12 @@
 		<Option isEnabled="true" id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed"/>
 	  </ListTypeOptions>
 	  <ConfigurationItem name="Variant Type" between=", " after=" " isEnabled="true" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
-		<ConfigurationItem name="Reverse Abbreviation" between=" " isEnabled="true" field="ReverseAbbr">
+		<ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Reverse Name" between=" " isEnabled="false" field="ReverseName">
+		<ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -1844,13 +1844,13 @@
 	  <ConfigurationItem name="Scientific Name" after=" " isEnabled="true" field="ScientificName"/>
 	  <ConfigurationItem name="Source" after=" " isEnabled="false" field="Source"/>
 	  <ConfigurationItem name="Referenced Complex Forms" between=" " after=" " isEnabled="true" field="VisibleComplexFormBackRefs">
-		<ConfigurationItem name="Complex Form Type" after="" isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
-		  <ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
+		<ConfigurationItem name="Complex Form Type" after=" " isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
+		  <ConfigurationItem name="Reverse Abbreviation" between=" " isEnabled="true" field="ReverseAbbr">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true"/>
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Name" between=" " after=" " isEnabled="false" field="Name">
+		  <ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true"/>
 			</WritingSystemOptions>
@@ -2244,13 +2244,13 @@
 		  </ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Referenced Complex Forms" between=" " after=" " isEnabled="true" field="VisibleComplexFormBackRefs">
-		  <ConfigurationItem name="Complex Form Type" after="" isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
-			<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
+		  <ConfigurationItem name="Complex Form Type" after=" " isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
+			<ConfigurationItem name="Reverse Abbreviation" between=" " isEnabled="true" field="ReverseAbbr">
 			  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 				<Option id="analysis" isEnabled="true"/>
 			  </WritingSystemOptions>
 			</ConfigurationItem>
-			<ConfigurationItem name="Name" between=" " after=" " isEnabled="false" field="Name">
+			<ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
 			  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 				<Option id="analysis" isEnabled="true"/>
 			  </WritingSystemOptions>
@@ -2357,13 +2357,13 @@
 		<Option isEnabled="true" id="35cee792-74c8-444e-a9b7-ed0461d4d3b7"/>
 		<Option isEnabled="true" id="9466d126-246e-400b-8bba-0703e09bc567"/>
 	  </ComplexFormOptions>
-	  <ConfigurationItem name="Complex Form Type" after="" isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
-		<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
+	  <ConfigurationItem name="Complex Form Type" after=" " isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
+		<ConfigurationItem name="Reverse Abbreviation" between=" " isEnabled="true" field="ReverseAbbr">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Name" between=" " after=" " isEnabled="false" field="Name">
+		<ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -2729,13 +2729,13 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Referenced Complex Forms" between=" " after=" " isEnabled="true" field="VisibleComplexFormBackRefs">
-		<ConfigurationItem name="Complex Form Type" after="" isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
-		  <ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
+		<ConfigurationItem name="Complex Form Type" after=" " isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
+		  <ConfigurationItem name="Reverse Abbreviation" between=" " isEnabled="true" field="ReverseAbbr">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true"/>
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Name" between=" " after=" " isEnabled="false" field="Name">
+		  <ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true"/>
 			</WritingSystemOptions>
