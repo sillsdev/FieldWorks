@@ -2091,6 +2091,78 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.entry*\>\s*.*pictures.*picture*\>\s*.captionContent\s*.caption*\{.*margin-left:\s*24pt", RegexOptions.Singleline).Success,
 							  "css for caption did not contain valid margin attribute");
 		}
+
+		/// <summary>
+		/// The css for a picture sub fields  Before Between After Css is Generated.
+		/// </summary>
+		[Test]
+		public void GenerateCssForConfiguration_PictureSubfieldsBeforeBetweenAfterIsAreGenerated()
+		{
+			TestStyle style = GenerateStyle("Normal");
+			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, LeadingIndent);
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			var pictureFileNode = new ConfigurableDictionaryNode { FieldDescription = "PictureFileRA" };
+			var senseNumberNode = new ConfigurableDictionaryNode
+			{
+				Before = "[",
+				After = "]",
+				Between = ", ",
+				FieldDescription = "SenseNumberTSS"
+			};
+			var captionNode = new ConfigurableDictionaryNode
+			{
+				Before = "{",
+				After = "}",
+				Between = " ",
+				FieldDescription = "Caption",
+				Style = "Normal"
+			};
+			var memberNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = new DictionaryNodePictureOptions { MaximumWidth = 1 },
+				CSSClassNameOverride = "pictures",
+				FieldDescription = "Pictures",
+				Children = new List<ConfigurableDictionaryNode> { pictureFileNode, senseNumberNode, captionNode }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+			};
+			var rootNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SIL.FieldWorks.XWorks.TestPictureClass",
+				CSSClassNameOverride = "entry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode, memberNode }
+			};
+			PopulateFieldsForTesting(rootNode);
+
+			var config = new DictionaryConfigurationModel()
+			{
+				Parts = new List<ConfigurableDictionaryNode> { rootNode }
+			};
+
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(config, m_mediator);
+
+			var senseNumberBefore = @".entry> .pictures .picture> .captionContent .sensenumbertss:before\{\s*content:'\[';";
+			Assert.IsTrue(Regex.Match(cssResult, senseNumberBefore, RegexOptions.Singleline).Success, "expected Sense Number before rule is generated");
+
+			var senseNumberAfter = @".entry> .pictures .picture> .captionContent .sensenumbertss:after\{\s*content:'\]';";
+			Assert.IsTrue(Regex.Match(cssResult, senseNumberAfter, RegexOptions.Singleline).Success, "expected Sense Number after rule is generated");
+
+			var senseNumberBetween = @".entry> .pictures .picture .sensenumbertss> .sensenumberts\+ .sensenumberts:before\{\s*content:', ';";
+			Assert.IsTrue(Regex.Match(cssResult, senseNumberBetween, RegexOptions.Singleline).Success, "expected Sense Number between rule is generated");
+
+			var captionBefore = @".entry> .pictures .picture> .captionContent .caption:before\{\s*content:'\{';";
+			Assert.IsTrue(Regex.Match(cssResult, captionBefore, RegexOptions.Singleline).Success, "expected Caption before rule is generated");
+
+			var captionAfter = @".entry> .pictures .picture> .captionContent .caption:after\{\s*content:'\}';";
+			Assert.IsTrue(Regex.Match(cssResult, captionAfter, RegexOptions.Singleline).Success, "expected Caption after rule is generated");
+
+			var captionBetween = @".entry> .pictures .picture .caption> .captio\+ .captio:before\{\s*content:' ';";
+			Assert.IsTrue(Regex.Match(cssResult, captionBetween, RegexOptions.Singleline).Success, "expected Caption between rule is generated");
+		}
+
 		[Test]
 		public void GenerateCssForConfiguration_GlossWithMultipleWs()
 		{

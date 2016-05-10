@@ -576,10 +576,15 @@ namespace SIL.FieldWorks.XWorks
 					rules.Add(betweenRule);
 				}
 				if ((configNode.FieldDescription == "SenseNumberTSS" || configNode.FieldDescription == "Caption") && parentSelector == ".entry> .pictures .picture")
+				{
 					baseSelection = parentSelector + "> " + ".captionContent " + SelectClassName(configNode, cache);
+					simpleSelector = parentSelector + "> " + ".captionContent " + SelectBareClassName(configNode, cache);
+				}
 				else
+				{
 					baseSelection = parentSelector + "> " + SelectClassName(configNode, cache);
-				simpleSelector = parentSelector + "> " + SelectBareClassName(configNode, cache);
+					simpleSelector = parentSelector + "> " + SelectBareClassName(configNode, cache);
+				}
 			}
 			if(!String.IsNullOrEmpty(configNode.Before))
 			{
