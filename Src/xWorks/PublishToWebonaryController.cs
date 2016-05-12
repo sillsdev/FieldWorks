@@ -35,9 +35,9 @@ namespace SIL.FieldWorks.XWorks
 			m_exportService = new DictionaryExportService(mediator);
 		}
 
-		public int CountDictionaryEntries()
+		public int CountDictionaryEntries(DictionaryConfigurationModel config)
 		{
-			return m_exportService.CountDictionaryEntries();
+			return m_exportService.CountDictionaryEntries(config);
 		}
 
 		/// <summary>

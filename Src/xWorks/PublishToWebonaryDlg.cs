@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void UpdateEntriesToBePublishedLabel()
 		{
-			var countOfDictionaryEntries = m_controller.CountDictionaryEntries();
+			var countOfDictionaryEntries = m_controller.CountDictionaryEntries(GetSelectedDictionaryModel());
 
 			var reversalCounts = m_controller.GetCountsOfReversalIndexes(GetSelectedReversals());
 			string middle = "";
@@ -222,6 +222,11 @@ namespace SIL.FieldWorks.XWorks
 		private IEnumerable<string> GetSelectedReversals()
 		{
 			return (from object item in reversalsCheckedListBox.CheckedItems select item.ToString()).ToList();
+		}
+
+		private DictionaryConfigurationModel GetSelectedDictionaryModel()
+		{
+			return Model.Configurations[configurationBox.SelectedItem.ToString()];
 		}
 
 		private void publishButton_Click(object sender, EventArgs e)

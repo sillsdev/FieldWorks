@@ -4,21 +4,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Xml;
 using NUnit.Framework;
-using Palaso.IO;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
 using SIL.FieldWorks.FDO.FDOTests;
+
+// ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.XWorks
 {
+	// Remarks: Due to the painfully extensive setup needed, we do not bother to test any methods that `using` a `ClerkActivator`
 	[TestFixture]
-	class DictionaryExportServiceTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
+	public class DictionaryExportServiceTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		[Test]
 		public void GetCountsOfReversalIndexes_Works()
@@ -44,6 +41,24 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(result["English"], Is.EqualTo(2), "Wrong number of English reversal index entries");
 			Assert.That(result["French"], Is.EqualTo(3), "Wrong number of French reversal index entries");
 			Assert.That(string.Compare(result.Keys.First(), result.Keys.Last(), StringComparison.InvariantCulture), Is.LessThan(0), "Not sorted by reversal name alphabetically.");
+		}
+
+		[Test]
+		public void CountDictionaryEntries_DoesNotCountHiddenMinorEntries()
+		{
+			var configModel = ConfiguredXHTMLGeneratorTests.CreateInterestingConfigurationModel(Cache);
+			var mainEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var minorEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, mainEntry, minorEntry, true);
+
+			Assert.AreEqual(1, DictionaryExportService.CountTimesGenerated(Cache, configModel, minorEntry.Hvo), "Should be generated once");
+
+			ConfiguredXHTMLGeneratorTests.SetPublishAsMinorEntry(minorEntry, false);
+
+			//SUT
+			Assert.AreEqual(0, DictionaryExportService.CountTimesGenerated(Cache, configModel, minorEntry.Hvo),
+				"Hidden minor entry should not be generated");
+			Assert.AreEqual(1, DictionaryExportService.CountTimesGenerated(Cache, configModel, mainEntry.Hvo), "Main entry should still be generated");
 		}
 	}
 }

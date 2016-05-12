@@ -1655,7 +1655,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
 																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var configModel = CreateInterestingConfigurationModel();
+			var configModel = CreateInterestingConfigurationModel(Cache);
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(Cache, mainEntry, minorEntry);
@@ -1674,7 +1674,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
 																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var configModel = CreateInterestingConfigurationModel();
+			var configModel = CreateInterestingConfigurationModel(Cache);
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(Cache, mainEntry, minorEntry);
@@ -1694,7 +1694,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
 																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var configModel = CreateInterestingConfigurationModel();
+			var configModel = CreateInterestingConfigurationModel(Cache);
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(Cache, mainEntry, minorEntry);
@@ -6138,7 +6138,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>Creates a DictionaryConfigurationModel with one Main and two Minor Entry nodes, all with enabled HeadWord children</summary>
-		private static DictionaryConfigurationModel CreateInterestingConfigurationModel()
+		/// <param name="cache"></param>
+		internal static DictionaryConfigurationModel CreateInterestingConfigurationModel(FdoCache cache)
 		{
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
@@ -6157,9 +6158,11 @@ namespace SIL.FieldWorks.XWorks
 			var minorEntryNode = mainEntryNode.DeepCloneUnderSameParent();
 			minorEntryNode.CSSClassNameOverride = "minorentry";
 			minorEntryNode.Before = "MinorEntry: ";
+			minorEntryNode.DictionaryNodeOptions = GetFullyEnabledListOptions(cache, DictionaryNodeListOptions.ListIds.Complex);
 
 			var minorSecondNode = minorEntryNode.DeepCloneUnderSameParent();
 			minorSecondNode.Before = "HalfStep: ";
+			minorEntryNode.DictionaryNodeOptions = GetFullyEnabledListOptions(cache, DictionaryNodeListOptions.ListIds.Variant);
 
 			return new DictionaryConfigurationModel
 			{
@@ -6452,7 +6455,7 @@ namespace SIL.FieldWorks.XWorks
 			return builder.GetString();
 		}
 
-		private static void SetPublishAsMinorEntry(ILexEntry entry, bool publish)
+		internal static void SetPublishAsMinorEntry(ILexEntry entry, bool publish)
 		{
 			foreach (var ler in entry.EntryRefsOS)
 				ler.HideMinorEntry = publish ? 0 : 1;
