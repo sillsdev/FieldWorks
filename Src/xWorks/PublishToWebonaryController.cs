@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public SortedDictionary<string,int> GetCountsOfReversalIndexes(IEnumerable<string> requestedIndexes)
 		{
-			return DictionaryExportService.GetCountsOfReversalIndexes(m_cache, requestedIndexes);
+			return m_exportService.GetCountsOfReversalIndexes(requestedIndexes);
 		}
 
 		/// <summary>
