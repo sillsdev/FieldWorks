@@ -2884,7 +2884,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				return EntryRefsOS.Cast<LexEntryRef>().Any(ler => ler.HideMinorEntry == 0);
+				return EntryRefsOS.Any(ler => ler.HideMinorEntry == 0);
 			}
 			set
 			{

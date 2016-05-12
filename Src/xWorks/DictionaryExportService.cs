@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
 using System.Xml;
 using SIL.FieldWorks.FDO;
@@ -17,7 +16,7 @@ namespace SIL.FieldWorks.XWorks
 	public class DictionaryExportService
 	{
 		private readonly Mediator m_mediator;
-		private FdoCache Cache { get { return (FdoCache)m_mediator.PropertyTable.GetValue("cache"); } }
+		private readonly FdoCache m_cache;
 
 		private const string DictionaryType = "Dictionary";
 		private const string ReversalType = "Reversal Index";
@@ -25,14 +24,36 @@ namespace SIL.FieldWorks.XWorks
 		public DictionaryExportService(Mediator mediator)
 		{
 			m_mediator = mediator;
+			m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
 		}
 
-		public int CountDictionaryEntries()
+		public int CountDictionaryEntries(DictionaryConfigurationModel config)
 		{
 			int[] entries;
 			using(ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_mediator))
 				ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_mediator, out entries, DictionaryType);
-			return entries.Length;
+			return entries.Sum(e => CountTimesGenerated(m_cache, config, e));
+		}
+
+		/// <summary>
+		/// Determines how many times the entry with the given HVO is generated for the given config (usually 0 or 1,
+		/// but can be more if the entry matches more than one Minor Entry node)
+		/// </summary>
+		internal static int CountTimesGenerated(FdoCache cache, DictionaryConfigurationModel config, int hvo)
+		{
+			var entry = (ILexEntry)cache.ServiceLocator.GetObject(hvo);
+			if (!ConfiguredXHTMLGenerator.IsMinorEntry(entry))
+				return config.Parts[0].IsEnabled ? 1 : 0;
+			if (!entry.PublishAsMinorEntry)
+				return 0;
+			var matchingMinorParts = 0;
+			for (var i = 1; i < config.Parts.Count; i++)
+			{
+				var part = config.Parts[i];
+				if (part.IsEnabled && ConfiguredXHTMLGenerator.IsListItemSelectedForExport(part, entry, null))
+					matchingMinorParts++;
+			}
+			return matchingMinorParts;
 		}
 
 		/// <summary>
@@ -54,7 +75,7 @@ namespace SIL.FieldWorks.XWorks
 			using (ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_mediator))
 			{
 				configuration = configuration ?? new DictionaryConfigurationModel(
-					DictionaryConfigurationListener.GetCurrentConfiguration(m_mediator, "Dictionary"), Cache);
+					DictionaryConfigurationListener.GetCurrentConfiguration(m_mediator, "Dictionary"), m_cache);
 				ExportConfiguredXhtml(xhtmlPath, configuration, DictionaryType, progress);
 			}
 		}
@@ -71,15 +92,15 @@ namespace SIL.FieldWorks.XWorks
 					// Set the reversal index guid property so that the right guid is found down in DictionaryPublicationDecorater.GetEntriesToPublish,
 					// and manually call OnPropertyChanged to cause LexEdDll ReversalClerk.ChangeOwningObject(guid) to be called. This causes the
 					// right reversal content to be exported, fixing LT-17011.
-					var reversalIndex = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances()
-						.FirstOrDefault(repo => repo.ShortName == reversalName);
+					var reversalIndex = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances()
+						.First(repo => repo.ShortName == reversalName);
 					m_mediator.PropertyTable.SetProperty("ReversalIndexGuid", reversalIndex.Guid.ToString());
 					if (clerk != null)
 						clerk.OnPropertyChanged("ReversalIndexGuid");
 				}
 
 				configuration = configuration ?? new DictionaryConfigurationModel(
-					DictionaryConfigurationListener.GetCurrentConfiguration(m_mediator, "ReversalIndex"), Cache);
+					DictionaryConfigurationListener.GetCurrentConfiguration(m_mediator, "ReversalIndex"), m_cache);
 				ExportConfiguredXhtml(xhtmlPath, configuration, ReversalType, progress);
 
 				if (originalReversalIndexGuid != null && originalReversalIndexGuid != m_mediator.PropertyTable.GetStringProperty("ReversalIndexGuid", null))
