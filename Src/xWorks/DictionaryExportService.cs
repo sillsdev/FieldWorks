@@ -60,14 +60,25 @@ namespace SIL.FieldWorks.XWorks
 		/// Produce a table of reversal index ShortNames and the count of the entries in each of them.
 		/// The reversal indexes included will be limited to those ShortNames specified in selectedReversalIndexes.
 		/// </summary>
-		internal static SortedDictionary<string,int> GetCountsOfReversalIndexes(FdoCache cache, IEnumerable<string> selectedReversalIndexes)
+		public SortedDictionary<string,int> GetCountsOfReversalIndexes(IEnumerable<string> selectedReversalIndexes)
 		{
-			var relevantReversalIndexesAndTheirCounts = cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances()
-				.Select(repo => cache.ServiceLocator.GetObject(repo.Guid) as IReversalIndex)
-				.Where(reversalindex => reversalindex != null && selectedReversalIndexes.Contains(reversalindex.ShortName))
-				.ToDictionary(reversalIndex => reversalIndex.ShortName, reversalIndex => reversalIndex.EntriesOC.Count);
+			using (ClerkActivator.ActivateClerkMatchingExportType(ReversalType, m_mediator))
+			{
+				var relevantReversalIndexesAndTheirCounts = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances()
+					.Select(repo => m_cache.ServiceLocator.GetObject(repo.Guid) as IReversalIndex)
+					.Where(ri => ri != null && selectedReversalIndexes.Contains(ri.ShortName))
+					.ToDictionary(ri => ri.ShortName, CountReversalIndexEntries);
 
-			return new SortedDictionary<string,int> (relevantReversalIndexesAndTheirCounts);
+				return new SortedDictionary<string,int> (relevantReversalIndexesAndTheirCounts);
+			}
+		}
+
+		internal int CountReversalIndexEntries(IReversalIndex ri)
+		{
+			int[] entries;
+			using (ReversalIndexActivator.ActivateReversalIndex(ri.Guid, m_mediator))
+				ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_mediator, out entries, ReversalType);
+			return entries.Length;
 		}
 
 		public void ExportDictionaryContent(string xhtmlPath, DictionaryConfigurationModel configuration = null, IThreadedProgress progress = null)
@@ -84,31 +95,11 @@ namespace SIL.FieldWorks.XWorks
 			IThreadedProgress progress = null)
 		{
 			using (ClerkActivator.ActivateClerkMatchingExportType(ReversalType, m_mediator))
+			using (ReversalIndexActivator.ActivateReversalIndex(reversalName, m_mediator, m_cache))
 			{
-				var originalReversalIndexGuid = m_mediator.PropertyTable.GetStringProperty("ReversalIndexGuid", null);
-				var clerk = m_mediator.PropertyTable.GetValue("ActiveClerk", null) as RecordClerk;
-				if (reversalName != null)
-				{
-					// Set the reversal index guid property so that the right guid is found down in DictionaryPublicationDecorater.GetEntriesToPublish,
-					// and manually call OnPropertyChanged to cause LexEdDll ReversalClerk.ChangeOwningObject(guid) to be called. This causes the
-					// right reversal content to be exported, fixing LT-17011.
-					var reversalIndex = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances()
-						.First(repo => repo.ShortName == reversalName);
-					m_mediator.PropertyTable.SetProperty("ReversalIndexGuid", reversalIndex.Guid.ToString());
-					if (clerk != null)
-						clerk.OnPropertyChanged("ReversalIndexGuid");
-				}
-
 				configuration = configuration ?? new DictionaryConfigurationModel(
 					DictionaryConfigurationListener.GetCurrentConfiguration(m_mediator, "ReversalIndex"), m_cache);
 				ExportConfiguredXhtml(xhtmlPath, configuration, ReversalType, progress);
-
-				if (originalReversalIndexGuid != null && originalReversalIndexGuid != m_mediator.PropertyTable.GetStringProperty("ReversalIndexGuid", null))
-				{
-					m_mediator.PropertyTable.SetProperty("ReversalIndexGuid", originalReversalIndexGuid.ToString());
-					if (clerk != null)
-						clerk.OnPropertyChanged("ReversalIndexGuid");
-				}
 			}
 		}
 
@@ -193,6 +184,60 @@ namespace SIL.FieldWorks.XWorks
 					return false;
 				var id = atts["clerk"].Value;
 				return id == clerk.Id;
+			}
+		}
+
+		[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule", Justification = "m_mediator and m_clerk are references")]
+		private sealed class ReversalIndexActivator : IDisposable
+		{
+			private readonly string m_sCurrentRevIdxGuid;
+			private readonly Mediator m_mediator;
+			private readonly RecordClerk m_clerk;
+
+			private ReversalIndexActivator(string currentRevIdxGuid, Mediator mediator, RecordClerk clerk)
+			{
+				m_sCurrentRevIdxGuid = currentRevIdxGuid;
+				m_mediator = mediator;
+				m_clerk = clerk;
+			}
+
+			public void Dispose()
+			{
+				string dummy;
+				ActivateReversalIndexIfNeeded(m_sCurrentRevIdxGuid, m_mediator, m_clerk, out dummy);
+			}
+
+			public static ReversalIndexActivator ActivateReversalIndex(string reversalName, Mediator mediator, FdoCache cache)
+			{
+				if (reversalName == null)
+					return null;
+				var reversalGuid = cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances()
+					.First(revIdx => revIdx.ShortName == reversalName).Guid;
+				return ActivateReversalIndex(reversalGuid, mediator);
+			}
+
+			public static ReversalIndexActivator ActivateReversalIndex(Guid reversalGuid, Mediator mediator)
+			{
+				var clerk = mediator.PropertyTable.GetValue("ActiveClerk", null) as RecordClerk;
+				string originalReversalIndexGuid;
+				return ActivateReversalIndexIfNeeded(reversalGuid.ToString(), mediator, clerk, out originalReversalIndexGuid)
+					? new ReversalIndexActivator(originalReversalIndexGuid, mediator, clerk)
+					: null;
+			}
+
+			/// <returns>true iff activation was needed (the requested Reversal Index was not already active)</returns>
+			private static bool ActivateReversalIndexIfNeeded(string newReversalGuid, Mediator mediator, RecordClerk clerk, out string oldReversalGuid)
+			{
+				oldReversalGuid = mediator.PropertyTable.GetStringProperty("ReversalIndexGuid", null);
+				if (newReversalGuid == null || newReversalGuid == oldReversalGuid)
+					return false;
+				// Set the reversal index guid property so that the right guid is found down in DictionaryPublicationDecorater.GetEntriesToPublish,
+				// and manually call OnPropertyChanged to cause LexEdDll ReversalClerk.ChangeOwningObject(guid) to be called. This causes the
+				// right reversal content to be exported, fixing LT-17011.
+				mediator.PropertyTable.SetProperty("ReversalIndexGuid", newReversalGuid);
+				if (clerk != null)
+					clerk.OnPropertyChanged("ReversalIndexGuid");
+				return true;
 			}
 		}
 	}
