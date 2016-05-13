@@ -55,7 +55,7 @@ namespace FixFwDataDllTests
 		private readonly string[] m_testFileDirectories =
 			{
 				"DuplicateGuid", "DanglingCustomListReference", "DanglingCustomProperty", "DanglingReference",
-				"DuplicateWs", "SequenceFixer", "EntryWithExtraMSA", "EntryWithMsaAndNoSenses", "TagAndCellRefs", "GenericDates",
+				"DuplicateWs", "SequenceFixer", "EntryWithExtraMSA", "EntryWithMsaAndNoSenses", "EntryExtraMsaAndBustedSenseRef", "TagAndCellRefs", "GenericDates",
 				"HomographFixer", WordformswithsameformTestDir, "MorphBundleProblems", "MissingBasicCustomField", "DeletedMsaRefBySenseAndBundle",
 				"DuplicateNameCustomList", "SingleTargetLexRefs", "DuplicateStyles"
 			};
@@ -752,6 +752,31 @@ namespace FixFwDataDllTests
 			// And that it was deleted.
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
 				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 0, false);
+		}
+
+		[Test]
+		public void TestEntryWithOneExtraMsaAndOneSenseWithABustedRef()
+		{
+			var testPath = Path.Combine(basePath, "EntryExtraMsaAndBustedSenseRef");
+			_errors.Clear();
+			Assert.DoesNotThrow(() =>
+			{
+				var data = new FwDataFixer(Path.Combine(testPath, "BasicFixup.fwdata"), new DummyProgressDlg(),
+										   LogErrors, ErrorCount);
+
+				// SUT
+				data.FixErrorsAndSave();
+			}, "Exception running the data fixer on the entry with MSA and no senses test data.");
+			Assert.That(_errors.Count, Is.GreaterThan(0), "fixing anything should log an error");
+
+			// check that the msa was there originally
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 2, false);
+			// And that it was deleted.
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 1, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexSense\"]/MorphoSyntaxAnalysis/objsur", 1, false);
 		}
 
 		[Test]

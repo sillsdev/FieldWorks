@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000059">
+
+<rt class="LexSense" guid="8fcdb528-a37c-449e-9946-d39b33e1c433" ownerguid="2949d25e-6383-4294-a4f8-e16c7b824198">
+<MorphoSyntaxAnalysis>
+<objsur guid="dcc439f6-d07a-4b0c-a812-0647f89317b7" t="r" />
+</MorphoSyntaxAnalysis>
+</rt>
+
+<rt class="LexSense" guid="2949d25e-6383-4294-a4f8-e16c7b824198" ownerguid="94ea64f8-9f89-4aa8-a397-854deba627e3">
+<MorphoSyntaxAnalysis>
+<objsur guid="e1032bd5-d80f-41eb-b602-39eaa255993e" t="r" />
+</MorphoSyntaxAnalysis>
+<Senses>
+<objsur guid="8fcdb528-a37c-449e-9946-d39b33e1c433" t="o" />
+</Senses>
+</rt>
+
+<rt class="MoStemMsa" guid="0149e462-fff9-4504-89f6-4c239d7e505d" ownerguid="94ea64f8-9f89-4aa8-a397-854deba627e3">
+<PartOfSpeech>
+<objsur guid="46e4fe08-ffa0-4c8b-bf98-2c56f38904d9" t="r" />
+</PartOfSpeech>
+</rt>
+<rt class="MoStemMsa" guid="dcc439f6-d07a-4b0c-a812-0647f89317b7" ownerguid="94ea64f8-9f89-4aa8-a397-854deba627e3">
+<PartOfSpeech>
+<objsur guid="a8e41fd3-e343-4c7c-aa05-01ea3dd5cfb5" t="r" />
+</PartOfSpeech>
+</rt>
+
+<rt class="PartOfSpeech" guid="46e4fe08-ffa0-4c8b-bf98-2c56f38904d9" ownerguid="e4b68610-178e-45d2-a946-4a5055ae2aa7">
+<Abbreviation>
+<AUni ws="en">adv</AUni>
+</Abbreviation>
+<Name>
+<AUni ws="en">Adverb</AUni>
+</Name>
+</rt>
+<rt class="PartOfSpeech" guid="a8e41fd3-e343-4c7c-aa05-01ea3dd5cfb5" ownerguid="e4b68610-178e-45d2-a946-4a5055ae2aa7">
+<Abbreviation>
+<AUni ws="en">n</AUni>
+</Abbreviation>
+<Name>
+<AUni ws="en">Noun</AUni>
+</Name>
+</rt>
+
+<rt class="CmPossibilityList" guid="e4b68610-178e-45d2-a946-4a5055ae2aa7" ownerguid="c1ed6dba-e382-11de-8a39-0800200c9a66">
+<Abbreviation>
+<AUni ws="en">Pos</AUni>
+</Abbreviation>
+<Name>
+<AUni ws="en">Parts Of Speech</AUni>
+</Name>
+<Possibilities>
+<objsur guid="46e4fe08-ffa0-4c8b-bf98-2c56f38904d9" t="o" />
+<objsur guid="a8e41fd3-e343-4c7c-aa05-01ea3dd5cfb5" t="o" />
+</Possibilities>
+</rt>
+
+<rt class="LexEntry" guid="94ea64f8-9f89-4aa8-a397-854deba627e3">
+<MorphoSyntaxAnalyses>
+<objsur guid="0149e462-fff9-4504-89f6-4c239d7e505d" t="o" />
+<objsur guid="dcc439f6-d07a-4b0c-a812-0647f89317b7" t="o" />
+</MorphoSyntaxAnalyses>
+<Senses>
+<objsur guid="2949d25e-6383-4294-a4f8-e16c7b824198" t="o" />
+</Senses>
+</rt>
+<rt class="MoMorphData" guid="b80228bc-ea5e-11de-9d24-0013722f8dec" ownerguid="c1ed6dba-e382-11de-8a39-0800200c9a66">
+</rt>
+<rt class="LangProject" guid="c1ed6dba-e382-11de-8a39-0800200c9a66">
+<MorphologicalData>
+<objsur guid="b80228bc-ea5e-11de-9d24-0013722f8dec" t="o" />
+</MorphologicalData>
+<PartsOfSpeech>
+<objsur guid="e4b68610-178e-45d2-a946-4a5055ae2aa7" t="o" />
+</PartsOfSpeech>
+</rt>
+</languageproject>
