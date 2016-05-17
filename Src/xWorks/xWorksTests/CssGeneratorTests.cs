@@ -1447,7 +1447,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(cssResult, Contains.Substring(".lexentry> .senses > .sensecontent > .sense> .gloss"));
 			Assert.That(cssResult, Contains.Substring(".lexentry> .senses > .sensecontent > .sense> .morphosyntaxanalysisra"));
 			Assert.IsTrue(Regex.Match(cssResult,
-				@"\.lexentry>\s*\.senses\s*>\s*\.sensecontent\s*>\s*\.sharedgrammaticalinfo\s*>\s*\.morphosyntaxanalysisra\s*{.*font-family\s*:\s*'foofoo'\,serif.*}",
+				@"\.lexentry>\s*\.senses\s*>\s*\.sharedgrammaticalinfo\s*>\s*\.morphosyntaxanalysisra\s*{.*font-family\s*:\s*'foofoo'\,serif.*}",
 				RegexOptions.Singleline).Success, "Style for sharedgrammaticalinfo not placed correctly");
 		}
 
