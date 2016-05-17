@@ -63,7 +63,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 		internal void MigrateFrom83Alpha(DictionaryConfigurationModel alphaModel)
 		{
-			if (alphaModel.Version == -1 || alphaModel.Version == 1) // original migration neglected to update the version number; -1 is the same as 1
+			// original migration neglected to update the version number; -1 (Pre83) is the same as 1 (Alpha1)
+			if (alphaModel.Version == PreHistoricMigrator.VersionPre83 || alphaModel.Version == PreHistoricMigrator.VersionAlpha1)
 				RemoveNonLoadableData(alphaModel.PartsAndSharedItems);
 			// now that it's safe to specify them, it would be helpful to have parents in certain steps:
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(alphaModel.Parts, alphaModel.SharedItems);
@@ -81,6 +82,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					goto case 4;
 				case 4:
 					HandleNodewiseChanges(alphaModel.PartsAndSharedItems, 4, alphaModel.IsReversal);
+					goto case 5;
+				case 5:
+					HandleNodewiseChanges(alphaModel.PartsAndSharedItems, 5, alphaModel.IsReversal);
 					break;
 				default:
 					m_logger.WriteLine(string.Format(
@@ -224,7 +228,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			}
 		}
 
-		/// <remarks>If you add Label changes to this method, don't forget to modify HandleChildNodeRenaming() in PreHistoricMigrator, too</remarks>
+		/// <remarks>
+		/// Handles various kinds of configuration node changes that happened post-8.3Alpha1.
+		/// It should no longer be necessary to add changes in two places
+		/// [except: see caveat on PreHistoricMigrator.HandleChildNodeRenaming()]
+		/// </remarks>
 		private static void HandleNodewiseChanges(IEnumerable<ConfigurableDictionaryNode> nodes, int version, bool isReversal)
 		{
 			switch (version)
@@ -284,6 +292,40 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 						}
 					});
 					break;
+				case 5:
+					PerformActionOnNodes(nodes, n =>
+					{
+						if (n.FieldDescription == "VisibleVariantEntryRefs" && n.Label == "Variant Of")
+							n.Label = "Variant of";
+						else if (n.FieldDescription.Contains("EntryType"))
+						{
+							var parentFd = n.Parent.FieldDescription;
+							if (n.FieldDescription == "LookupComplexEntryType")
+							{
+								if (parentFd == "ComplexFormEntryRefs")
+								{
+									// set type children to RevAbbr/RevName
+									SetEntryTypeChildrenBackward(n);
+								}
+								else
+								{
+									// set type children to Abbr/Name
+									SetEntryTypeChildrenForward(n);
+								}
+							}
+							else if (parentFd.EndsWith("BackRefs") || parentFd == "ComplexFormsNotSubentries")
+							{
+								// set type children to Abbr/Name
+								SetEntryTypeChildrenForward(n);
+							}
+							else
+							{
+								// set type children to RevAbbr/RevName
+								SetEntryTypeChildrenBackward(n);
+							}
+						}
+					});
+					break;
 			}
 		}
 
@@ -295,6 +337,48 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				if (node.Children != null)
 					PerformActionOnNodes(node.Children, action);
 			}
+		}
+
+		/// <summary>
+		/// Swap out node Label and FieldDescription, checks for null node and empty strings
+		/// in case only one of the parameters needs changing.
+		/// </summary>
+		private static void SwapOutNodeLabelAndField(ConfigurableDictionaryNode node, string label, string fieldDescription)
+		{
+			if (node == null)
+				return;
+			if (!string.IsNullOrEmpty(label))
+				node.Label = label;
+			if (!string.IsNullOrEmpty(fieldDescription))
+				node.FieldDescription = fieldDescription;
+		}
+
+		private const string Abbr = "Abbreviation"; // good for label and field
+		private const string Name = "Name"; // good for label and field
+		private const string ReversePrefix = "Reverse "; // for reverse labels
+		private const string RevAbbr = "ReverseAbbr";
+		private const string RevName = "ReverseName";
+
+		/// <summary>
+		/// Makes sure EntryType node contains Abbreviation and Name nodes
+		/// </summary>
+		private static void SetEntryTypeChildrenForward(ConfigurableDictionaryNode entryTypeNode)
+		{
+			var abbrNode = entryTypeNode.Children.Find(node => node.FieldDescription == RevAbbr);
+			SwapOutNodeLabelAndField(abbrNode, Abbr, Abbr);
+			var nameNode = entryTypeNode.Children.Find(node => node.FieldDescription == RevName);
+			SwapOutNodeLabelAndField(nameNode, Name, Name);
+		}
+
+		/// <summary>
+		/// Makes sure EntryType node contains ReverseAbbr and ReverseName nodes
+		/// </summary>
+		private static void SetEntryTypeChildrenBackward(ConfigurableDictionaryNode entryTypeNode)
+		{
+			var abbrNode = entryTypeNode.Children.Find(node => node.FieldDescription == Abbr);
+			SwapOutNodeLabelAndField(abbrNode, ReversePrefix + Abbr, RevAbbr);
+			var nameNode = entryTypeNode.Children.Find(node => node.FieldDescription == Name);
+			SwapOutNodeLabelAndField(nameNode, ReversePrefix + Name, RevName);
 		}
 	}
 }

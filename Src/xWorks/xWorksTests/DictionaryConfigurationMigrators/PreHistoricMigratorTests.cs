@@ -248,7 +248,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		}
 
 		[Test]
-		public void CopyNewDefaultsIntoConvertedModel_UpdatesVersionNumber()
+		public void CopyNewDefaultsIntoConvertedModel_UpdatesVersionNumberToAlpha1()
 		{
 			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode() } };
 			var currentDefaultModel = new DictionaryConfigurationModel
@@ -258,7 +258,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 			// SUT
 			m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, currentDefaultModel);
-			Assert.AreEqual(DictionaryConfigurationMigrator.VersionCurrent, convertedModel.Version);
+			Assert.AreEqual(PreHistoricMigrator.VersionAlpha1, convertedModel.Version);
 		}
 
 		[Test]
@@ -336,7 +336,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				Before = ")",
 				DictionaryNodeOptions = new DictionaryNodeListOptions()
 			};
-			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { EmptyNode, minorEntryNode }, Version = -1 };
+			return new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { EmptyNode, minorEntryNode },
+				Version = PreHistoricMigrator.VersionPre83
+			};
 		}
 
 		private static DictionaryConfigurationModel BuildCurrentDefaultMinorEntryNodes()
@@ -362,7 +366,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				FieldDescription = "LexEntry",
 				IsEnabled = true,
 			};
-			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { EmptyNode, complexEntryNode, variantEntryNode } };
+			return new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { EmptyNode, complexEntryNode, variantEntryNode },
+				Version = PreHistoricMigrator.VersionAlpha1
+			};
 		}
 
 		[Test]
@@ -913,13 +921,21 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var convertedParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
 			var convertedChildNode = new ConfigurableDictionaryNode { Label = "Child" };
 			convertedParentNode.Children = new List<ConfigurableDictionaryNode> { convertedChildNode };
-			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedParentNode } };
+			var convertedModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { convertedParentNode },
+				Version = PreHistoricMigrator.VersionPre83
+			};
 			const string parentField = "ParentDescription";
 			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", FieldDescription = parentField};
 			const string childField = "ChildDescription";
 			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child", FieldDescription = childField };
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
-			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+			var baseModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { baseParentNode },
+				Version = PreHistoricMigrator.VersionAlpha1
+			};
 
 			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
 			Assert.AreEqual(convertedModel.Parts[0].FieldDescription, parentField, "Field description for parent node not migrated");
@@ -933,13 +949,21 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var convertedParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
 			var convertedChildNode = new ConfigurableDictionaryNode { Label = "Child" };
 			convertedParentNode.Children = new List<ConfigurableDictionaryNode> { convertedChildNode };
-			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedParentNode } };
+			var convertedModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { convertedParentNode },
+				Version = PreHistoricMigrator.VersionPre83
+			};
 			const string parentOverride = "dad";
 			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", CSSClassNameOverride = parentOverride };
 			const string childOverride = "johnboy";
 			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child", CSSClassNameOverride = childOverride };
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
-			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+			var baseModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { baseParentNode },
+				Version = PreHistoricMigrator.VersionAlpha1
+			};
 
 			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
 			Assert.AreEqual(convertedModel.Parts[0].CSSClassNameOverride, parentOverride, "CssClassNameOverride for parent node not migrated");
@@ -954,7 +978,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var convertedChildNode1 = new ConfigurableDictionaryNode { Label = "Little Thing 1" };
 			var convertedChildNode2 = new ConfigurableDictionaryNode { Label = "Little Thing 2" };
 			convertedParentNode.Children = new List<ConfigurableDictionaryNode> { convertedChildNode1, convertedChildNode2 };
-			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedParentNode } };
+			var convertedModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { convertedParentNode },
+				Version = PreHistoricMigrator.VersionPre83
+			};
 			const ConfigurableDictionaryNode.StyleTypes parentOverride = ConfigurableDictionaryNode.StyleTypes.Paragraph;
 			const ConfigurableDictionaryNode.StyleTypes child1Override = ConfigurableDictionaryNode.StyleTypes.Character;
 			const ConfigurableDictionaryNode.StyleTypes defaultStyleType = ConfigurableDictionaryNode.StyleTypes.Default;
@@ -962,7 +990,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var baseChildNode1 = new ConfigurableDictionaryNode { Label = "Little Thing 1", StyleType = child1Override };
 			var baseChildNode2 = new ConfigurableDictionaryNode { Label = "Little Thing 2" }; // Child2 will have the default StyleType
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode1, baseChildNode2 };
-			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+			var baseModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { baseParentNode },
+				Version = PreHistoricMigrator.VersionAlpha1
+			};
 
 			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
 			Assert.AreEqual(parentOverride, convertedModel.Parts[0].StyleType, "CssClassNameOverride for parent node not migrated");
@@ -977,7 +1009,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var convertedParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
 			var convertedChildNode = new ConfigurableDictionaryNode { Label = "Child" };
 			convertedParentNode.Children = new List<ConfigurableDictionaryNode> { convertedChildNode };
-			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedParentNode } };
+			var convertedModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { convertedParentNode },
+				Version = PreHistoricMigrator.VersionPre83
+			};
 			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions() };
 			((DictionaryNodeWritingSystemOptions)baseParentNode.DictionaryNodeOptions).WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular;
 			((DictionaryNodeWritingSystemOptions)baseParentNode.DictionaryNodeOptions).DisplayWritingSystemAbbreviations = false;
@@ -993,7 +1029,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				new DictionaryNodeListOptions.DictionaryNodeOption { Id = "analysis", IsEnabled = true }
 			};
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
-			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+			var baseModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { baseParentNode },
+				Version = PreHistoricMigrator.VersionAlpha1
+			};
 
 			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
 			Assert.AreEqual(convertedModel.Parts[0].DictionaryNodeOptions, baseModel.Parts[0].DictionaryNodeOptions, "DictionaryNodeOptions for parent node not migrated");
@@ -1007,13 +1047,21 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			// make convertedChildNode look like a copy of a Child node which is not represented in the test.
 			var convertedChildNode = new ConfigurableDictionaryNode { Label = "Child", LabelSuffix = "1"};
 			convertedParentNode.Children = new List<ConfigurableDictionaryNode> { convertedChildNode };
-			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedParentNode } };
+			var convertedModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { convertedParentNode },
+				Version = PreHistoricMigrator.VersionPre83
+			};
 			const string parentField = "ParentDescription";
 			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", FieldDescription = parentField };
 			const string childField = "ChildDescription";
 			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child", FieldDescription = childField };
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
-			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+			var baseModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { baseParentNode },
+				Version = PreHistoricMigrator.VersionAlpha1
+			};
 
 			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
 			Assert.AreEqual(convertedModel.Parts[0].Children[0].FieldDescription, childField, "Field description for copy of child not migrated");
@@ -1028,13 +1076,21 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var convertedChildNodeCopy1 = new ConfigurableDictionaryNode { Label = "Child", LabelSuffix = "1" };
 			var convertedChildNodeCopy2 = new ConfigurableDictionaryNode { Label = "Child", LabelSuffix = "2" };
 			convertedParentNode.Children = new List<ConfigurableDictionaryNode> { convertedChildNode, convertedChildNodeCopy1, convertedChildNodeCopy2 };
-			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedParentNode } };
+			var convertedModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { convertedParentNode },
+				Version = PreHistoricMigrator.VersionPre83
+			};
 			const string parentField = "ParentDescription";
 			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", FieldDescription = parentField };
 			const string childField = "ChildDescription";
 			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child", FieldDescription = childField };
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
-			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+			var baseModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { baseParentNode },
+				Version = PreHistoricMigrator.VersionAlpha1
+			};
 
 			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
 			Assert.AreEqual(convertedModel.Parts[0].Children.Count, 3, "The copied children did not get migrated");
@@ -1050,12 +1106,20 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var convertedParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
 			var convertedChildNode = new ConfigurableDictionaryNode { Label = "Child" };
 			convertedParentNode.Children = new List<ConfigurableDictionaryNode> { convertedChildNode };
-			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedParentNode } };
+			var convertedModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { convertedParentNode },
+				Version = PreHistoricMigrator.VersionPre83
+			};
 			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
 			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child" };
 			var baseChildNodeTwo = new ConfigurableDictionaryNode { Label = "Child2" };
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode, baseChildNodeTwo };
-			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+			var baseModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { baseParentNode },
+				Version = PreHistoricMigrator.VersionAlpha1
+			};
 
 			using (m_migrator.SetTestLogger = new SimpleLogger())
 			{
@@ -1074,12 +1138,20 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var convertedChildNode = new ConfigurableDictionaryNode { Label = "Child" };
 			var convertedChildNodeTwo = new ConfigurableDictionaryNode { Label = "Child2" };
 			convertedParentNode.Children = new List<ConfigurableDictionaryNode> { convertedChildNodeTwo, convertedChildNode };
-			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedParentNode } };
+			var convertedModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { convertedParentNode },
+				Version = PreHistoricMigrator.VersionPre83
+			};
 			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
 			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child" };
 			var baseChildNodeTwo = new ConfigurableDictionaryNode { Label = "Child2" };
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode, baseChildNodeTwo };
-			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+			var baseModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { baseParentNode },
+				Version = PreHistoricMigrator.VersionAlpha1
+			};
 
 			using (m_migrator.SetTestLogger = new SimpleLogger())
 			{
@@ -1098,11 +1170,19 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var customNode = new ConfigurableDictionaryNode { Label = CustomFieldUnchangedNameAndLabel };
 			var oldChild = new ConfigurableDictionaryNode { Label = "Child" };
 			convertedParentNode.Children = new List<ConfigurableDictionaryNode> { customNode, oldChild };
-			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedParentNode } };
+			var convertedModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { convertedParentNode },
+				Version = PreHistoricMigrator.VersionPre83
+			};
 			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", FieldDescription = "LexEntry" };
 			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child" };
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
-			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+			var baseModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { baseParentNode },
+				Version = PreHistoricMigrator.VersionAlpha1
+			};
 
 			using (m_migrator.SetTestLogger = new SimpleLogger())
 			{
@@ -1125,11 +1205,19 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			convertedParentNode.Children = new List<ConfigurableDictionaryNode> { customNode, oldChild };
 			var customChild = new ConfigurableDictionaryNode { Label = "Custom Child" };
 			customNode.Children = new List<ConfigurableDictionaryNode> { customChild };
-			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedParentNode } };
+			var convertedModel = new DictionaryConfigurationModel
+			{
+				Version = PreHistoricMigrator.VersionPre83,
+				Parts = new List<ConfigurableDictionaryNode> { convertedParentNode }
+			};
 			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", FieldDescription = "LexEntry" };
 			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child" };
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
-			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+			var baseModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { baseParentNode },
+				Version = PreHistoricMigrator.VersionAlpha1
+			};
 
 			using (m_migrator.SetTestLogger = new SimpleLogger())
 			{
@@ -1154,13 +1242,21 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				Label = "Parent", Children = new List<ConfigurableDictionaryNode> { customNode, oldChild }
 			};
-			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedParentNode } };
+			var convertedModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { convertedParentNode },
+				Version = PreHistoricMigrator.VersionPre83
+			};
 			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child" };
 			var baseParentNode = new ConfigurableDictionaryNode
 			{
 				Label = "Parent", FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { baseChildNode }
 			};
-			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+			var baseModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { baseParentNode },
+				Version = PreHistoricMigrator.VersionAlpha1
+			};
 
 			using (m_migrator.SetTestLogger = new SimpleLogger())
 			{
@@ -1182,11 +1278,19 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var customNode = new ConfigurableDictionaryNode { Label = "Truly Custom" };
 			var oldChild = new ConfigurableDictionaryNode { Label = "Child" };
 			convertedParentNode.Children = new List<ConfigurableDictionaryNode> { customNode, oldChild };
-			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedParentNode } };
+			var convertedModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { convertedParentNode },
+				Version = PreHistoricMigrator.VersionPre83
+			};
 			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", FieldDescription = "LexReference" };
 			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child" };
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
-			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+			var baseModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { baseParentNode },
+				Version = PreHistoricMigrator.VersionAlpha1
+			};
 
 			using (var logger = m_migrator.SetTestLogger = new SimpleLogger())
 			{
@@ -1208,12 +1312,20 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var customPersonNode = new ConfigurableDictionaryNode { Label = CustomFieldLocation, Parent = convertedParentNode };
 			var customGenDateNode = new ConfigurableDictionaryNode {Label = CustomFieldGenDate, Parent = convertedParentNode };
 			convertedParentNode.Children = new List<ConfigurableDictionaryNode> { customPersonNode, customGenDateNode };
-			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedParentNode } };
+			var convertedModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { convertedParentNode },
+				Version = PreHistoricMigrator.VersionPre83
+			};
 			// Test handling expanding "Minor Entries" to "Minor Entries (Complex Forms)" and "Minor Entries (Variants)"
 			var baseParentNode = new ConfigurableDictionaryNode { Label = "Minor Entries (Complex Forms)", FieldDescription = "LexEntry" };
 			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child", Parent = baseParentNode };
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
-			var baseModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { baseParentNode } };
+			var baseModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { baseParentNode },
+				Version = PreHistoricMigrator.VersionAlpha1
+			};
 
 			// Ensure we don't throw because the parent node's label has been expanded.
 			using (m_migrator.SetTestLogger = new SimpleLogger())
@@ -1274,7 +1386,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { componentsNode }
 			};
-			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { minorEntryNode }, Version = -1 };
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { minorEntryNode },
+				Version = PreHistoricMigrator.VersionPre83
+			};
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts);
 			return model;
 		}
@@ -1304,7 +1420,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				IsEnabled = true,
 				Children = new List<ConfigurableDictionaryNode> { componentsNode }
 			};
-			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { minorEntryNode } };
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { minorEntryNode },
+				Version = PreHistoricMigrator.VersionAlpha1
+			};
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts);
 			return model;
 		}
@@ -1462,7 +1582,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
-			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }, Version = -1 };
+			return new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode },
+				Version = PreHistoricMigrator.VersionPre83
+			};
 		}
 
 		private DictionaryConfigurationModel BuildCurrentDefaultComplexEntryTypeNodes()
@@ -1491,7 +1615,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				CSSClassNameOverride = "entry",
 				Children = new List<ConfigurableDictionaryNode> { subentriesNode }
 			};
-			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode },
+				Version = PreHistoricMigrator.VersionAlpha1
+			};
 			CssGeneratorTests.PopulateFieldsForTesting(model);
 			return model;
 		}
@@ -1540,7 +1668,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(reversalEntryNode);
 
-			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode }, Version = -1 };
+			return new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode },
+				Version = PreHistoricMigrator.VersionPre83
+			};
 		}
 
 		private DictionaryConfigurationModel BuildCurrentDefaultGrammaticalInfoNodes()
@@ -1568,7 +1700,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				FieldDescription = "LexEntry",
 				Children = new List<ConfigurableDictionaryNode> { referencedSenses }
 			};
-			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode } };
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode },
+				Version = PreHistoricMigrator.VersionAlpha1
+			};
 			CssGeneratorTests.PopulateFieldsForTesting(model);
 			return model;
 		}
@@ -1619,7 +1755,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(reversalEntryNode);
 
-			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode }, Version = -1 };
+			return new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode },
+				Version = PreHistoricMigrator.VersionPre83
+			};
 		}
 
 		private DictionaryConfigurationModel BuildCurrentDefaultReversalIndexChildNodes()
@@ -1645,7 +1785,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				FieldDescription = "LexEntry",
 				Children = new List<ConfigurableDictionaryNode> { reversalForm, reversalCategory, referencedSenses }
 			};
-			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode } };
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode },
+				Version = PreHistoricMigrator.VersionAlpha1
+			};
 			CssGeneratorTests.PopulateFieldsForTesting(model);
 			return model;
 		}
@@ -1679,7 +1823,12 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		public void CopyDefaultsIntoConvertedModel_PicksSensibleNameForReversalIndexes(string oldLayout, string oldLabel, string newFileName)
 		{
 			var node = new ConfigurableDictionaryNode { Label = "Reversal Entry" };
-			var model = new DictionaryConfigurationModel{ Version = -1, Label = oldLabel, Parts = new List<ConfigurableDictionaryNode> { node } };
+			var model = new DictionaryConfigurationModel
+			{
+				Version = PreHistoricMigrator.VersionPre83,
+				Label = oldLabel,
+				Parts = new List<ConfigurableDictionaryNode> { node }
+			};
 			m_migrator.m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName;
 			m_migrator.CopyNewDefaultsIntoConvertedModel(oldLayout, model);
 			Assert.AreEqual(newFileName, Path.GetFileNameWithoutExtension(model.FilePath));
@@ -1709,7 +1858,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
-			return new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }, Version = -1 };
+			return new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode },
+				Version = PreHistoricMigrator.VersionPre83
+			};
 		}
 
 		private DictionaryConfigurationModel BuildCurrentDefaultComponentReferencesNodes()
@@ -1744,7 +1897,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				CSSClassNameOverride = "entry",
 				Children = new List<ConfigurableDictionaryNode> { componentReferencesNode }
 			};
-			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode },
+				Version = PreHistoricMigrator.VersionAlpha1
+			};
 			CssGeneratorTests.PopulateFieldsForTesting(model);
 			return model;
 		}
@@ -1798,7 +1955,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var model = new DictionaryConfigurationModel
 			{
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode, minorEntryNode },
-				Version = -1
+				Version = PreHistoricMigrator.VersionPre83
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(model);
 			return model;
@@ -1860,7 +2017,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 			var model = new DictionaryConfigurationModel
 			{
-				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode, minorComplexNode, minorVariantNode }
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode, minorComplexNode, minorVariantNode },
+				Version = PreHistoricMigrator.VersionAlpha1
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(model);
 
@@ -1892,7 +2050,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				FieldDescription = "LexEntry",
 				Children = new List<ConfigurableDictionaryNode> { referencedSenses, reversalSubentries }
 			};
-			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode }, Version = -1 };
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode },
+				Version = PreHistoricMigrator.VersionPre83
+			};
 			CssGeneratorTests.PopulateFieldsForTesting(model);
 			return model;
 		}
@@ -1922,7 +2084,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				FieldDescription = "LexEntry",
 				Children = new List<ConfigurableDictionaryNode> { referencedSenses, reversalSubentries }
 			};
-			var model =  new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode } };
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode },
+				Version = PreHistoricMigrator.VersionAlpha1
+			};
 			CssGeneratorTests.PopulateFieldsForTesting(model);
 			return model;
 		}
@@ -1999,121 +2165,15 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var convertedConfig = new DictionaryConfigurationModel
 			{
 				Parts = new List<ConfigurableDictionaryNode> { convertedNode },
-				Version = -1
+				Version = PreHistoricMigrator.VersionPre83
 			};
 			var defaultConfig = new DictionaryConfigurationModel
 			{
 				Parts = new List<ConfigurableDictionaryNode> { defaultNode },
-				Version = 1
+				Version = PreHistoricMigrator.VersionAlpha1
 			};
 
 			Assert.Throws<ArgumentException>(()=>m_migrator.CopyNewDefaultsIntoConvertedModel(convertedConfig, defaultConfig));
-		}
-
-		private const string SharedSubentries = "SharedSubentries";
-
-		private static DictionaryConfigurationModel BuildConvertedSubentriesNodes()
-		{
-			var complexFormTypeNode = new ConfigurableDictionaryNode { Label = "Complex Form Type" };
-			var subsubentriesNode = new ConfigurableDictionaryNode { Label = "Subsubentries", Before = "Before Subentry: " };
-			var subentriesNode = new ConfigurableDictionaryNode
-			{
-				Label = "Subentries",
-				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = true },
-				Children = new List<ConfigurableDictionaryNode> { complexFormTypeNode, subsubentriesNode }
-			};
-			var mainEntryNode = new ConfigurableDictionaryNode
-			{
-				Label = "Main Entry",
-				CSSClassNameOverride = "entry",
-				Children = new List<ConfigurableDictionaryNode> { subentriesNode }
-			};
-			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
-
-			return new DictionaryConfigurationModel
-			{
-				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode },
-				Version = PreHistoricMigrator.VersionPre83
-			};
-		}
-
-		private static DictionaryConfigurationModel BuildCurrentDefaultSharedSubentriesNodes()
-		{
-			var complexFormTypeNode = new ConfigurableDictionaryNode { Label = "Complex Form Type", FieldDescription = "LookupComplexEntryType" };
-			var subsubentriesNode = new ConfigurableDictionaryNode
-			{
-				Label = "Subsubentries", FieldDescription = "Subentries", ReferenceItem = SharedSubentries
-			};
-			var sharedSubentriesNode = new ConfigurableDictionaryNode
-			{
-				Label = SharedSubentries,
-				FieldDescription = "Subentries",
-				CSSClassNameOverride = "sharedsubclass",
-				Children = new List<ConfigurableDictionaryNode> { complexFormTypeNode, subsubentriesNode }
-			};
-			var subentriesNode = new ConfigurableDictionaryNode
-			{
-				Label = "Subentries", FieldDescription = "Subentries", ReferenceItem = SharedSubentries, CSSClassNameOverride = "masterparentclass",
-				Children = new List<ConfigurableDictionaryNode>(), // when deserialized, Children is an empty list rather than null
-				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = false }
-			};
-			var mainEntryNode = new ConfigurableDictionaryNode
-			{
-				Label = "Main Entry",
-				FieldDescription = "LexEntry",
-				CSSClassNameOverride = "entry",
-				Children = new List<ConfigurableDictionaryNode> { subentriesNode }
-			};
-			var model = DictionaryConfigurationModelTests.CreateSimpleSharingModel(mainEntryNode, sharedSubentriesNode);
-			CssGeneratorTests.PopulateFieldsForTesting(model);
-			return model;
-		}
-
-		///<summary/>
-		[Test]
-		public void CopyNewDefaultsIntoConvertedModel_MigratesIntoSharedNodes()
-		{
-			var convertedModel = BuildConvertedSubentriesNodes();
-
-			// SUT
-			using (m_migrator.SetTestLogger = new SimpleLogger())
-				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, BuildCurrentDefaultSharedSubentriesNodes());
-
-			Assert.AreEqual(1, convertedModel.Parts.Count, "Should still be 1 part");
-			Assert.AreEqual(1, convertedModel.SharedItems.Count, "Should now be 1 shared item");
-			var subentriesNode = convertedModel.Parts[0].Children[0];
-			var subentriesOptions = subentriesNode.DictionaryNodeOptions as DictionaryNodeComplexFormOptions;
-			Assert.NotNull(subentriesOptions, "Subentries should still have options");
-			Assert.That(subentriesOptions.DisplayEachComplexFormInAParagraph, "should still display in Para");
-			Assert.IsNull(subentriesNode.Children, "Subentries should have no children of its own");
-			Assert.AreEqual(SharedSubentries, subentriesNode.ReferenceItem, "Should reference SharedSubentries");
-			Assert.AreEqual("masterparentclass", subentriesNode.CSSClassNameOverride, "Referring and Referenced Nodes should have distinct classes");
-			var sharedSubsNode = convertedModel.SharedItems[0];
-			Assert.AreEqual(SharedSubentries, sharedSubsNode.Label, "Shared node's label should match sharing node's ReferenceItem");
-			Assert.AreEqual("sharedsubclass", sharedSubsNode.CSSClassNameOverride, "CSS Class should have been merged in");
-			var subSubsNode = sharedSubsNode.Children[1];
-			Assert.AreEqual(SharedSubentries, subSubsNode.ReferenceItem, "Subsubentries should also reference SharedSubentries");
-			Assert.AreEqual("Before Subentry: ", subSubsNode.Before, "Subsubentries node should retain its own Before");
-		}
-
-		///<summary/>
-		[Test]
-		public void CopyNewDefaultsIntoConvertedModel_CopiesMissedSharedItems()
-		{
-			var convertedModel = new DictionaryConfigurationModel
-			{
-				Parts = new List<ConfigurableDictionaryNode> { EmptyNode },
-				Version = PreHistoricMigrator.VersionPre83
-			};
-			var sharedNode = new ConfigurableDictionaryNode { Label = SharedSubentries };
-			var currentDefaultModel = DictionaryConfigurationModelTests.CreateSimpleSharingModel(EmptyNode, sharedNode);
-
-			// SUT
-			using (m_migrator.SetTestLogger = new SimpleLogger())
-				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, currentDefaultModel);
-
-			Assert.AreEqual(1, convertedModel.SharedItems.Count, "Should be a SharedItem");
-			Assert.AreEqual(SharedSubentries, convertedModel.SharedItems[0].Label, "SharedItem's Label");
 		}
 
 		///<summary/>
@@ -2247,7 +2307,13 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.AreEqual("Comment", convertedCommentNode.Label, "Third child converted in order okay");
 			Assert.IsNull(convertedCommentNode.FieldDescription, "Initial conversion should not set FieldDescription for the Comment node");
 
-			var convertedModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { convertedTopNode }, Label = "Test", Version = -1, AllPublications = true};
+			var convertedModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { convertedTopNode },
+				Label = "Test",
+				Version = PreHistoricMigrator.VersionPre83,
+				AllPublications = true
+			};
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(convertedModel.Parts);
 
 			var newTypeNode = new ConfigurableDictionaryNode
@@ -2326,7 +2392,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				Children = new List<ConfigurableDictionaryNode> { newRefSensesNode },
 				IsEnabled = true
 			};
-			var currentDefaultModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { newReversalEntryNode } };
+			var currentDefaultModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { newReversalEntryNode },
+				Version = PreHistoricMigrator.VersionAlpha1
+			};
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(currentDefaultModel.Parts);
 
 			m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, currentDefaultModel);
