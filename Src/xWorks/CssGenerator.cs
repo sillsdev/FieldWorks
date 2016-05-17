@@ -317,7 +317,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (senseOptions.ShowSharedGrammarInfoFirst)
 			{
-				var collectionSelector = baseSelection.Substring(0, baseSelection.LastIndexOf(" .", StringComparison.Ordinal));
+				var collectionSelector = senseContentSelector.Substring(0, senseContentSelector.LastIndexOf(" .", StringComparison.Ordinal));
 				foreach (var gramInfoNode in configNode.Children.Where(node => node.FieldDescription == "MorphoSyntaxAnalysisRA" && node.IsEnabled))
 				{
 					GenerateCssFromConfigurationNode(gramInfoNode, styleSheet, collectionSelector + " .sharedgrammaticalinfo", mediator);
