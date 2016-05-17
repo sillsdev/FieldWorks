@@ -12,7 +12,6 @@ using SIL.FieldWorks.FDO;
 using XCore;
 using System.Net;
 using System.Text;
-using Palaso.Extensions;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
@@ -20,20 +19,42 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// Currently serves as the controller and the model for the PublishToWebonaryView
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Cache and Mediator are references")]
-	public class PublishToWebonaryController
+	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule", Justification="Cache and Mediator are references")]
+	public class PublishToWebonaryController : IDisposable
 	{
 		private readonly FdoCache m_cache;
 		private readonly Mediator m_mediator;
 		private readonly DictionaryExportService m_exportService;
+		private DictionaryExportService.PublicationActivator m_publicationActivator;
 
 		public PublishToWebonaryController(FdoCache cache, Mediator mediator)
 		{
 			m_cache = cache;
 			m_mediator = mediator;
 			m_exportService = new DictionaryExportService(mediator);
+			m_publicationActivator = new DictionaryExportService.PublicationActivator(mediator);
 		}
+
+		#region Disposal
+		protected virtual void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (disposing && m_publicationActivator != null)
+				m_publicationActivator.Dispose();
+			m_publicationActivator = null;
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		~PublishToWebonaryController()
+		{
+			Dispose(false);
+		}
+		#endregion Disposal
 
 		public int CountDictionaryEntries(DictionaryConfigurationModel config)
 		{
@@ -46,6 +67,11 @@ namespace SIL.FieldWorks.XWorks
 		public SortedDictionary<string,int> GetCountsOfReversalIndexes(IEnumerable<string> requestedIndexes)
 		{
 			return m_exportService.GetCountsOfReversalIndexes(requestedIndexes);
+		}
+
+		public void ActivatePublication(string publication)
+		{
+			m_publicationActivator.ActivatePublication(publication);
 		}
 
 		/// <summary>

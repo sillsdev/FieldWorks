@@ -112,8 +112,11 @@ namespace SIL.FieldWorks.XWorks
 
 		private void publicationBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			PopulateConfigurationsListBySelectedPublication();
-			PopulateReversalsCheckboxList();
+			var selectedPublication = publicationBox.SelectedItem.ToString();
+			m_controller.ActivatePublication(selectedPublication);
+			PopulateConfigurationsListByPublication(selectedPublication);
+			PopulateReversalsCheckboxListByPublication(selectedPublication);
+			UpdateEntriesToBePublishedLabel();
 		}
 
 		private void configurationBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -126,29 +129,31 @@ namespace SIL.FieldWorks.XWorks
 			UpdateEntriesToBePublishedLabel();
 		}
 
-		private void PopulateConfigurationsListBySelectedPublication()
+		private void PopulateConfigurationsListByPublication(string publication)
 		{
-			var selectedConfiguration =
-				Model.Configurations.Where(prop => prop.Value.Publications.Contains(publicationBox.SelectedItem.ToString())).ToList();
+			var selectedConfiguration = (configurationBox.SelectedItem ?? string.Empty).ToString();
+			var availableConfigurations = Model.Configurations.Where(prop => prop.Value.Publications.Contains(publication))
+				.Select(prop => prop.Value.Label).ToList();
 			configurationBox.Items.Clear();
-			foreach (var config in selectedConfiguration)
+			foreach (var config in availableConfigurations)
 			{
-				configurationBox.Items.Add(config.Value.Label);
+				configurationBox.Items.Add(config);
 			}
-			if (selectedConfiguration.Count > 0)
+			if (availableConfigurations.Contains(selectedConfiguration))
+				configurationBox.SelectedItem = selectedConfiguration;
+			else if (availableConfigurations.Count > 0)
 				configurationBox.SelectedIndex = 0;
 		}
 
-		private void PopulateReversalsCheckboxList()
+		private void PopulateReversalsCheckboxListByPublication(string publication)
 		{
-			var selectedConfiguration =
-				Model.Reversals.Where(prop => prop.Value.Publications.Contains(publicationBox.SelectedItem.ToString())).ToList();
+			var selectedReversals = GetSelectedReversals();
+			var availableReversals = Model.Reversals.Where(prop => prop.Value.Publications.Contains(publication)
+				&& prop.Value.Label != DictionaryConfigurationModel.AllReversalIndexes).Select(prop => prop.Value.Label).ToList();
 			reversalsCheckedListBox.Items.Clear();
-			foreach (var reversal in selectedConfiguration)
-			{
-				if (reversal.Value.Label != DictionaryConfigurationModel.AllReversalIndexes)
-				reversalsCheckedListBox.Items.Add(reversal.Value.Label);
-			}
+			foreach (var reversal in availableReversals)
+				reversalsCheckedListBox.Items.Add(reversal);
+			SetSelectedReversals(selectedReversals);
 		}
 
 		public PublishToWebonaryModel Model { get; set; }
@@ -174,7 +179,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					publicationBox.SelectedIndex = 0;
 				}
-				PopulateReversalsCheckboxList();
+				PopulateReversalsCheckboxListByPublication(publicationBox.SelectedItem.ToString());
 				SetSelectedReversals(Model.SelectedReversals);
 				if(!String.IsNullOrEmpty(Model.SelectedConfiguration))
 				{
@@ -205,7 +210,7 @@ namespace SIL.FieldWorks.XWorks
 			Model.SaveToSettings();
 		}
 
-		private void SetSelectedReversals(IEnumerable<string> selectedReversals)
+		private void SetSelectedReversals(ICollection<string> selectedReversals)
 		{
 			if(selectedReversals == null)
 				return;
@@ -219,7 +224,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private IEnumerable<string> GetSelectedReversals()
+		private List<string> GetSelectedReversals()
 		{
 			return (from object item in reversalsCheckedListBox.CheckedItems select item.ToString()).ToList();
 		}

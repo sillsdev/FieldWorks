@@ -240,5 +240,31 @@ namespace SIL.FieldWorks.XWorks
 				return true;
 			}
 		}
+
+		[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule", Justification = "m_mediator is a reference")]
+		internal sealed class PublicationActivator : IDisposable
+		{
+			private readonly string m_currentPublication;
+			private readonly Mediator m_mediator;
+
+			public PublicationActivator(Mediator mediator)
+			{
+				m_currentPublication = mediator.PropertyTable.GetStringProperty("SelectedPublication", null);
+				m_mediator = mediator;
+			}
+
+			public void Dispose()
+			{
+				if (!string.IsNullOrEmpty(m_currentPublication))
+					m_mediator.PropertyTable.SetProperty("SelectedPublication", m_currentPublication, false);
+			}
+
+			public void ActivatePublication(string publication)
+			{
+				// Don't publish the property change: doing so may refresh the Dictionary (or Reversal) preview in the main window;
+				// we want to activate the Publication for export purposes only.
+				m_mediator.PropertyTable.SetProperty("SelectedPublication", publication, false);
+			}
+		}
 	}
 }
