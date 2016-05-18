@@ -598,7 +598,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		public void ConvertLayoutTreeNodeToConfigNode_DisplaySubentriesInParagraph()
 		{
 			const string disabledGuid = "-a0000000-1000-b000-2000-c00000000000";
-			var node = new PreHistoricMigratorTests.MockLayoutTreeNode
+			var node = new MockLayoutTreeNode
 			{
 				m_partName = "LexEntry-Jt-RootSubentriesConfig",
 				EntryType = "complex",
@@ -1039,6 +1039,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.AreEqual(convertedModel.Parts[0].DictionaryNodeOptions, baseModel.Parts[0].DictionaryNodeOptions, "DictionaryNodeOptions for parent node not migrated");
 			Assert.AreEqual(convertedModel.Parts[0].Children[0].DictionaryNodeOptions, baseModel.Parts[0].Children[0].DictionaryNodeOptions, "DictionaryNodeOptions for child not migrated");
 		}
+
 		///<summary/>
 		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_CopyOfNodeGetsValueFromBase()
@@ -1558,7 +1559,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 		#endregion
 
-		private DictionaryConfigurationModel BuildConvertedComplexEntryTypeNodes()
+		private static DictionaryConfigurationModel BuildConvertedComplexEntryTypeNodes()
 		{
 			var reverseAbbr = new ConfigurableDictionaryNode
 			{
@@ -1589,7 +1590,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 		}
 
-		private DictionaryConfigurationModel BuildCurrentDefaultComplexEntryTypeNodes()
+		private static DictionaryConfigurationModel BuildCurrentDefaultComplexEntryTypeNodes()
 		{
 			var abbreviation = new ConfigurableDictionaryNode
 			{
@@ -1642,7 +1643,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			}
 		}
 
-		private DictionaryConfigurationModel BuildConvertedGrammaticalInfoNodes()
+		private static DictionaryConfigurationModel BuildConvertedGrammaticalInfoNodes()
 		{
 			var features = new ConfigurableDictionaryNode
 			{
@@ -1675,7 +1676,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 		}
 
-		private DictionaryConfigurationModel BuildCurrentDefaultGrammaticalInfoNodes()
+		private static DictionaryConfigurationModel BuildCurrentDefaultGrammaticalInfoNodes()
 		{
 			var inflectionFeatures = new ConfigurableDictionaryNode
 			{
@@ -1730,7 +1731,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			}
 		}
 
-		private DictionaryConfigurationModel BuildConvertedReversalIndexChildNodes()
+		private static DictionaryConfigurationModel BuildConvertedReversalIndexChildNodes()
 		{
 			var reversalForm = new ConfigurableDictionaryNode
 			{
@@ -1762,7 +1763,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 		}
 
-		private DictionaryConfigurationModel BuildCurrentDefaultReversalIndexChildNodes()
+		private static DictionaryConfigurationModel BuildCurrentDefaultReversalIndexChildNodes()
 		{
 			var reversalForm = new ConfigurableDictionaryNode
 			{
@@ -1834,7 +1835,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.AreEqual(newFileName, Path.GetFileNameWithoutExtension(model.FilePath));
 		}
 
-		private DictionaryConfigurationModel BuildConvertedComponentReferencesNodes()
+		private static DictionaryConfigurationModel BuildConvertedComponentReferencesNodes()
 		{
 			var headwordNode = new ConfigurableDictionaryNode { Label = "Referenced Headword" };
 			var refSenseHeadwordNode = new ConfigurableDictionaryNode { Label = "Referenced Sense Headword" };
@@ -1865,7 +1866,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 		}
 
-		private DictionaryConfigurationModel BuildCurrentDefaultComponentReferencesNodes()
+		private static DictionaryConfigurationModel BuildCurrentDefaultComponentReferencesNodes()
 		{
 			var refHeadwordNode = new ConfigurableDictionaryNode
 			{
@@ -1928,7 +1929,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			}
 		}
 
-		private DictionaryConfigurationModel BuildConvertedHomographNumberNodes()
+		private static DictionaryConfigurationModel BuildConvertedHomographNumberNodes()
 		{
 			var subentryHomographNumberNode = new ConfigurableDictionaryNode { Label = "Homograph Number" };
 			var subentriesNode = new ConfigurableDictionaryNode
@@ -1961,7 +1962,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			return model;
 		}
 
-		private DictionaryConfigurationModel BuildCurrentDefaultHomographNumberNodes()
+		private static DictionaryConfigurationModel BuildCurrentDefaultHomographNumberNodes()
 		{
 			var subentryHomographNumberNode = new ConfigurableDictionaryNode
 			{
@@ -2022,74 +2023,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(model);
 
-			return model;
-		}
-
-		private DictionaryConfigurationModel BuildConvertedReversalIndexChildNodesReferencedHeadword()
-		{
-			var referencedHeadword = new ConfigurableDictionaryNode
-			{
-				Label = "Headword",
-				FieldDescription = "ReversalName"
-			};
-			var referencedSenses = new ConfigurableDictionaryNode
-			{
-				Label = "Referenced Senses",
-				FieldDescription = "ReferringSenses",
-				Children = new List<ConfigurableDictionaryNode> { referencedHeadword }
-			};
-			var reversalSubentries = new ConfigurableDictionaryNode
-			{
-				Label = "Reversal Subentries",
-				FieldDescription = "Subentries",
-				Children = new List<ConfigurableDictionaryNode> { referencedSenses }
-			};
-			var reversalEntryNode = new ConfigurableDictionaryNode
-			{
-				Label = "Reversal Entry",
-				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { referencedSenses, reversalSubentries }
-			};
-			var model = new DictionaryConfigurationModel
-			{
-				Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode },
-				Version = PreHistoricMigrator.VersionPre83
-			};
-			CssGeneratorTests.PopulateFieldsForTesting(model);
-			return model;
-		}
-
-		private DictionaryConfigurationModel BuildCurrentDefaultReversalIndexChildNodesReferencedHeadword()
-		{
-			var referencedHeadword = new ConfigurableDictionaryNode
-			{
-				Label = "Referenced Headword",
-				FieldDescription = "ReversalName"
-			};
-			var referencedSenses = new ConfigurableDictionaryNode
-			{
-				Label = "Referenced Senses",
-				FieldDescription = "ReferringSenses",
-				Children = new List<ConfigurableDictionaryNode> { referencedHeadword }
-			};
-			var reversalSubentries = new ConfigurableDictionaryNode
-			{
-				Label = "Reversal Subentries",
-				FieldDescription = "Subentries",
-				Children = new List<ConfigurableDictionaryNode> { referencedSenses }
-			};
-			var reversalEntryNode = new ConfigurableDictionaryNode
-			{
-				Label = "Reversal Entry",
-				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { referencedSenses, reversalSubentries }
-			};
-			var model = new DictionaryConfigurationModel
-			{
-				Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode },
-				Version = PreHistoricMigrator.VersionAlpha1
-			};
-			CssGeneratorTests.PopulateFieldsForTesting(model);
 			return model;
 		}
 

@@ -19,7 +19,7 @@ using XCore;
 
 namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 {
-	class DictionaryConfigurationMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
+	public class DictionaryConfigurationMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private MockFwXApp m_application;
 		private string m_configFilePath;
@@ -57,6 +57,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		public void MigrateOldConfigurationsIfNeeded_BringsPreHistoricFileToCurrentVersion()
 		{
 			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
+			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName,
+				"Stem" + DictionaryConfigurationModel.FileExtension);
+			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
 			Directory.CreateDirectory(configSettingsDir);
 			File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{
 				@"<layoutType label='Stem-based (complex forms as main entries)' layout='publishStem'><configure class='LexEntry' label='Main Entry' layout='publishStemEntry' />",
@@ -66,9 +69,37 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				migrator.MigrateOldConfigurationsIfNeeded();
 			}
-			var updatedConfigModel = new DictionaryConfigurationModel(Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName,
-				"Stem" + DictionaryConfigurationModel.FileExtension), Cache);
-			Assert.AreEqual(updatedConfigModel.Version, DictionaryConfigurationMigrator.VersionCurrent);
+			var updatedConfigModel = new DictionaryConfigurationModel(newConfigFilePath, Cache);
+			Assert.AreEqual(DictionaryConfigurationMigrator.VersionCurrent, updatedConfigModel.Version);
+			DirectoryUtilities.DeleteDirectoryRobust(configSettingsDir);
+		}
+
+		[Test]
+		public void MigrateOldConfigurationsIfNeeded_MatchesLabelsWhenUIIsLocalized()
+		{
+			// Localize a Part's label to German (sufficient to cause a mismatched nodes crash if one config's labels are localized)
+			var localizedPartLabels = new Dictionary<string, string>();
+			localizedPartLabels["Main Entry"] = "Haupteintrag";
+			var pathsToL10nStrings = (Dictionary<string, Dictionary<string, string>>)ReflectionHelper.GetField(m_mediator.StringTbl, "m_pathsToStrings");
+			pathsToL10nStrings["group[@id = 'LocalizedAttributes']/"] = localizedPartLabels;
+
+			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
+			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName,
+				"Stem" + DictionaryConfigurationModel.FileExtension);
+			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
+			Directory.CreateDirectory(configSettingsDir);
+			File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{
+				@"<layoutType label='Stem-based (complex forms as main entries)' layout='publishStem'><configure class='LexEntry' label='Main Entry' layout='publishStemEntry' />",
+				@"<configure class='LexEntry' label='Minor Entry' layout='publishStemMinorEntry' hideConfig='true' /></layoutType>'"});
+			var migrator = new DictionaryConfigurationMigrator(m_mediator);
+			using (migrator.SetTestLogger = new SimpleLogger())
+			{
+				Assert.DoesNotThrow(() => migrator.MigrateOldConfigurationsIfNeeded(), "ArgumentException indicates localized labels."); // SUT
+			}
+			var updatedConfigModel = new DictionaryConfigurationModel(newConfigFilePath, Cache);
+			Assert.AreEqual(3, updatedConfigModel.Parts.Count, "Should have 3 top-level nodes");
+			Assert.AreEqual("Main Entry", updatedConfigModel.Parts[0].Label);
+			DirectoryUtilities.DeleteDirectoryRobust(configSettingsDir);
 		}
 
 		[Test]

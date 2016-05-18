@@ -62,19 +62,18 @@ namespace SIL.FieldWorks.XWorks
 						continue;
 					foreach(IReversalIndex ri in converter.Cache.LangProject.LexDbOA.CurrentReversalIndices)
 					{
-						IWritingSystem ws = converter.Cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem);
-						string sWsTag = ws.Id;
+						var ws = converter.Cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem);
+						var sWsTag = ws.Id;
 						converter.ExpandWsTaggedNodes(sWsTag);	// just in case we have a new index.
 						// Create a copy of the layoutType node for the specific writing system.
-						XmlNode xnRealLayout = CreateWsSpecficLayoutType(xnLayoutType,
-																						 ws.DisplayLabel, sLayout.Replace("$ws", sWsTag), sWsTag);
-						List<XmlDocConfigureDlg.LayoutTreeNode> rgltnStyle = BuildLayoutTree(xnRealLayout, converter);
+						var xnRealLayout = CreateWsSpecficLayoutType(xnLayoutType, ws.DisplayLabel, sLayout.Replace("$ws", sWsTag), sWsTag);
+						var rgltnStyle = BuildLayoutTree(xnRealLayout, converter);
 						converter.AddDictionaryTypeItem(xnRealLayout, rgltnStyle);
 					}
 				}
 				else
 				{
-					List<XmlDocConfigureDlg.LayoutTreeNode> rgltnStyle = BuildLayoutTree(xnLayoutType, converter);
+					var rgltnStyle = BuildLayoutTree(xnLayoutType, converter);
 					converter.AddDictionaryTypeItem(xnLayoutType, rgltnStyle);
 				}
 			}
@@ -143,7 +142,6 @@ namespace SIL.FieldWorks.XWorks
 		internal static void AddChildNodes(XmlNode layout, XmlDocConfigureDlg.LayoutTreeNode ltnParent, int iStart, ILayoutConverter converter)
 		{
 			bool fMerging = iStart < ltnParent.Nodes.Count;
-			int iNode = iStart;
 			string className = XmlUtils.GetManditoryAttributeValue(layout, "class");
 			List<XmlNode> nodes = PartGenerator.GetGeneratedChildren(layout, converter.Cache,
 																						new[] { "ref", "label" });
@@ -231,7 +229,6 @@ namespace SIL.FieldWorks.XWorks
 					{
 						converter.LayoutLevels.Pop();
 					}
-					++iNode;
 				}
 			}
 		}
@@ -240,9 +237,6 @@ namespace SIL.FieldWorks.XWorks
 		/// Walk the tree of child nodes, storing information for each &lt;obj&gt; or &lt;seq&gt;
 		/// node.
 		/// </summary>
-		/// <param name="xmlNodeList"></param>
-		/// <param name="className"></param>
-		/// <param name="ltn"></param>
 		private static void ProcessChildNodes(XmlNodeList xmlNodeList, string className, XmlDocConfigureDlg.LayoutTreeNode ltn, ILayoutConverter converter)
 		{
 			foreach (XmlNode xn in xmlNodeList)

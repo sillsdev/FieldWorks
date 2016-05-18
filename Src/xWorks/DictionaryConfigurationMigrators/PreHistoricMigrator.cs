@@ -77,7 +77,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			m_logger = logger;
 			m_mediator = mediator;
 			Cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
-			StringTable = mediator.StringTbl;
 			LayoutLevels = new LayoutLevels();
 			m_layoutInventory = Inventory.GetInventory("layouts", Cache.ProjectId.Name);
 			m_partInventory = Inventory.GetInventory("parts", Cache.ProjectId.Name);
@@ -93,25 +92,26 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
 				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
 					"Undo Migrate old Dictionary Configurations", "Redo Migrate old Dictionary Configurations",
-					Cache.ActionHandlerAccessor,
-					() =>
-					{
-						var configureLayouts = GetConfigureLayoutsNodeForTool("lexiconDictionary");
-						LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
-					});
+					Cache.ActionHandlerAccessor, PerformMigrationUOW);
 				m_logger.WriteLine(string.Format("Migrating Reversal Index configurations, if any - {0}",
 					DateTime.Now.ToString("h:mm:ss")));
 				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName;
 				Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
 				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
 					"Undo Migrate old Reversal Configurations", "Redo Migrate old Reversal Configurations",
-					Cache.ActionHandlerAccessor,
-					() =>
-					{
-						var configureLayouts = GetConfigureLayoutsNodeForTool("reversalToolEditComplete");
-						LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
-					});
+					Cache.ActionHandlerAccessor, PerformMigrationUOW);
 			}
+		}
+
+		/// <summary>Perform the migration for Dictionary or Reversal (depending on m_configDirSuffixBeingMigrated.</summary>
+		/// <remarks>Must be called in an UndoableUnitOfWork.</remarks>
+		private void PerformMigrationUOW()
+		{
+			var tool = m_configDirSuffixBeingMigrated == DictionaryConfigurationListener.DictionaryConfigurationDirectoryName
+				? "lexiconDictionary"
+				: "reversalToolEditComplete";
+			var configureLayouts = GetConfigureLayoutsNodeForTool(tool);
+			LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
 		}
 
 		/// <summary>
@@ -407,8 +407,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			}
 
 			// LT-17356 Converting the Label in HandleChildNodeRenaming() requires more info than we have there.
-			// ENHANCE (Hasso) 2106.05: localize? (worthwhile only after migration in general works in a localized interface)
+			// ReSharper disable LocalizableElement - Justification: node.Parent.Text should not be localized during migration.
 			if (node.Label == "Bibliography" && node.Parent.Text == "Referenced Senses")
+				// ReSharper restore LocalizableElement
 			{
 				convertedNode.Label = node.ClassName == "LexEntry" ? "Bibliography (Entry)" : "Bibliography (Sense)";
 			}
@@ -1025,7 +1026,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		}
 
 		public FdoCache Cache { get; private set; }
-		public StringTable StringTable { get; private set; }
+		public StringTable StringTable { get { return null; } } // used solely for l10n of nodes, which is a hindrance to migration.
 		public LayoutLevels LayoutLevels { get; private set; }
 
 		public void ExpandWsTaggedNodes(string sWsTag)
