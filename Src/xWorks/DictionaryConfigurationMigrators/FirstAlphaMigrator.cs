@@ -19,6 +19,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 	public class FirstAlphaMigrator : IDictionaryConfigurationMigrator
 	{
 		private SimpleLogger m_logger;
+		internal const int VersionAlpha2 = 5;
 
 		public FirstAlphaMigrator() : this(null, null)
 		{
@@ -82,9 +83,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					goto case 4;
 				case 4:
 					HandleNodewiseChanges(alphaModel.PartsAndSharedItems, 4, alphaModel.IsReversal);
-					goto case 5;
-				case 5:
-					HandleNodewiseChanges(alphaModel.PartsAndSharedItems, 5, alphaModel.IsReversal);
+					goto case VersionAlpha2;
+				case VersionAlpha2:
+					HandleNodewiseChanges(alphaModel.PartsAndSharedItems, VersionAlpha2, alphaModel.IsReversal);
 					break;
 				default:
 					m_logger.WriteLine(string.Format(
@@ -235,26 +236,13 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		/// </remarks>
 		private static void HandleNodewiseChanges(IEnumerable<ConfigurableDictionaryNode> nodes, int version, bool isReversal)
 		{
+			var newHeadword = isReversal ? "ReversalName" : "HeadWordRef";
 			switch (version)
 			{
 				case 2:
-					var newHeadword = isReversal ? "ReversalName" : "HeadWordRef";
 					PerformActionOnNodes(nodes, n =>
 					{
-						if (n.Label == "Referenced Headword")
-						{
-							n.FieldDescription = newHeadword;
-							if (isReversal && n.DictionaryNodeOptions == null)
-								n.DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
-								{
-									WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
-									Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-									{
-										new DictionaryNodeListOptions.DictionaryNodeOption { Id = "vernacular", IsEnabled = true }
-									}
-								};
-						}
-						else if (n.FieldDescription == "OwningEntry" && n.SubField == "MLHeadWord")
+						if (n.FieldDescription == "OwningEntry" && n.SubField == "MLHeadWord")
 							n.SubField = newHeadword;
 					});
 					break;
@@ -292,7 +280,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 						}
 					});
 					break;
-				case 5:
+				case VersionAlpha2:
 					PerformActionOnNodes(nodes, n =>
 					{
 						if (n.FieldDescription == "VisibleVariantEntryRefs" && n.Label == "Variant Of")
@@ -323,6 +311,23 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 								// set type children to RevAbbr/RevName
 								SetEntryTypeChildrenBackward(n);
 							}
+						}
+						else if (n.Label == "Headword" && n.Parent.FieldDescription == "ReferringSenses")
+						{
+							n.Label = "Referenced Headword";
+						}
+						if (n.Label == "Referenced Headword")
+						{
+							n.FieldDescription = newHeadword;
+							if (isReversal && n.DictionaryNodeOptions == null)
+								n.DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+								{
+									WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
+									Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+									{
+										new DictionaryNodeListOptions.DictionaryNodeOption { Id = "vernacular", IsEnabled = true }
+									}
+								};
 						}
 					});
 					break;

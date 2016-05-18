@@ -3,12 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
-using ControlExtenders;
 using ExCSS;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
@@ -246,6 +245,16 @@ namespace SIL.FieldWorks.XWorks
 			{
 				senseContentSelector = string.Format("{0}> .sensecontent", baseSelection.Substring(0, baseSelection.LastIndexOf(".referringsense", StringComparison.Ordinal)));
 				senseItemName = "referringsense";
+			}
+			else if (baseSelection.LastIndexOf(".subsense", StringComparison.Ordinal) >= 0)
+			{
+				senseContentSelector = string.Format("{0}> .sensecontent", baseSelection.Substring(0, baseSelection.LastIndexOf(".subsense", StringComparison.Ordinal)));
+				senseItemName = "subsense";
+			}
+			else
+			{
+				Debug.Fail(string.Format("senseContentSelector not set for baseSelection: '{0}'", baseSelection));
+				return;
 			}
 			if (senseOptions.DisplayEachSenseInAParagraph)
 				selectors = RemoveBeforeAfterSelectorRules(selectors);

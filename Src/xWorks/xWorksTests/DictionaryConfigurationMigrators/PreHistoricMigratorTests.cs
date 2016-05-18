@@ -2124,29 +2124,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 		///<summary/>
 		[Test]
-		public void CopyNewDefaultsIntoConvertedModel_Headword_RenamedTo_ReferencedHeadword()
-		{
-			const string reversalEntriesPath = "//ConfigurationItem[@name='Reversal Entry']/ConfigurationItem[@name='Referenced Senses']/";
-			const string reversalSubentriesPath = "//ConfigurationItem[@name='Reversal Subentries']/ConfigurationItem[@name='Referenced Senses']/";
-			const string oldReferencedHeadword = "ConfigurationItem[@name='Headword']";
-			const string newReferencedHeadword = "ConfigurationItem[@name='Referenced Headword']";
-			using (var convertedModelFile = new TempFile())
-			{
-				var convertedConfig = BuildConvertedReversalIndexChildNodesReferencedHeadword();
-				convertedConfig.FilePath = convertedModelFile.Path;
-				var defaultConfig = BuildCurrentDefaultReversalIndexChildNodesReferencedHeadword();
-
-				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedConfig, defaultConfig);
-				convertedConfig.Save();
-				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(reversalEntriesPath + oldReferencedHeadword);
-				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(reversalEntriesPath + newReferencedHeadword, 1);
-				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(reversalSubentriesPath + oldReferencedHeadword);
-				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(reversalSubentriesPath + newReferencedHeadword, 1);
-			}
-		}
-
-		///<summary/>
-		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_CopyNewDefaultsThrowsWhenLabelsAreMismatched()
 		{
 			var convertedNode = new ConfigurableDictionaryNode

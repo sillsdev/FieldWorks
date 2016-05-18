@@ -581,9 +581,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 			var model = new DictionaryConfigurationModel
 			{
-				Version = 5,
-				WritingSystem = "en",
-				FilePath = string.Empty,
+				Version = FirstAlphaMigrator.VersionAlpha2,
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
 
@@ -700,9 +698,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 			var model = new DictionaryConfigurationModel
 			{
-				Version = 5,
-				WritingSystem = "en",
-				FilePath = string.Empty,
+				Version = FirstAlphaMigrator.VersionAlpha2,
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
 
@@ -749,6 +745,35 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				"Abbreviation should be changed to Reverse Abbreviation");
 			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Reverse Name"),
 				"Name should be changed to ReverseName");
+		}
+
+		[Test]
+		public void MigrateFromConfigV5toV6_UpdatesReferencedHeadword()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				Label = "Headword", FieldDescription = "MLOwnerOutlineName", CSSClassNameOverride = "headword"
+			};
+			var referencedSensesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Senses", FieldDescription = "ReferringSenses",
+				Children = new List<ConfigurableDictionaryNode> { headwordNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Entry",
+				FieldDescription = "ReversalIndexEntry",
+				Children = new List<ConfigurableDictionaryNode> { referencedSensesNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Version = PreHistoricMigrator.VersionAlpha1,
+				WritingSystem = "en",
+				FilePath = string.Empty,
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			m_migrator.MigrateFrom83Alpha(model);
+			Assert.AreEqual("Referenced Headword", headwordNode.Label);
 		}
 	}
 }

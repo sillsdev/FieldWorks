@@ -765,10 +765,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					break;
 				case "Homograph Number":
 					return "Secondary Homograph Number";
-				case "Headword":
-					if (child.Parent.Label == "Referenced Senses")
-						return "Referenced Headword";
-					break;
+				//case "Headword": now handled in FirstAlphaMigrator
 			}
 			return child.Label;
 		}
