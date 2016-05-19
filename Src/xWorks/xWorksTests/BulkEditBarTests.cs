@@ -4,6 +4,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
@@ -30,10 +32,10 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// m_window is needed for processing xcore messages when simulating user events.
 		/// </summary>
-		protected Mediator m_mediator;
+		private Mediator m_mediator;
 		protected BulkEditBarForTests m_bulkEditBar;
 		protected BrowseViewerForTests m_bv;
-		protected List<ICmObject> m_createdObjectList;
+		protected ObservableCollection<ICmObject> m_createdObjectList;
 
 		#region Setup and Teardown
 
@@ -43,7 +45,27 @@ namespace SIL.FieldWorks.XWorks
 		protected override void Init()
 		{
 			m_application = new MockFwXApp(new MockFwManager { Cache = this.Cache }, null, null);
-			m_createdObjectList = new List<ICmObject>();
+			m_createdObjectList = new ObservableCollection<ICmObject>();
+			m_createdObjectList.CollectionChanged += m_createdObjectList_CollectionChanged;
+		}
+
+		void m_createdObjectList_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (e.Action == NotifyCollectionChangedAction.Add)
+			{
+				var objType = e.NewItems[0].GetType().ToString();
+				var lastword = objType.Substring(objType.LastIndexOf(".") + 1);
+				Console.WriteLine("*** Added a {0} to our object list.", lastword);
+			}
+		}
+
+		/// <summary>
+		/// Run by FixtureCleanup() in XWorksAppTestBase
+		/// </summary>
+		protected override void TearDown()
+		{
+			m_createdObjectList.CollectionChanged -= m_createdObjectList_CollectionChanged;
+			m_createdObjectList = null;
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -65,9 +87,6 @@ namespace SIL.FieldWorks.XWorks
 			// delete property table settings.
 			Properties.RemoveLocalAndGlobalSettings();
 
-			//if (m_bulkEditBar != null)
-			//    m_bulkEditBar.Dispose();
-
 			if (m_mediator != null)
 				m_mediator.RemoveColleague(m_window);
 			if (m_window != null && !m_window.IsDisposed)
@@ -86,7 +105,7 @@ namespace SIL.FieldWorks.XWorks
 			m_createdObjectList.Clear();
 		}
 
-		protected void CreateAndInitializeNewWindow()
+		private void CreateAndInitializeNewWindow()
 		{
 			m_window = new MockFwXWindow(m_application, m_configFilePath); // (MockFwXApp)
 			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
@@ -98,13 +117,12 @@ namespace SIL.FieldWorks.XWorks
 			ControlAssemblyReplacements();
 			m_window.LoadUI(m_configFilePath); // actually loads UI here.
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, CreateTestData);
-			//m_window.Show(); // doesn't seem to make any difference!
 		}
 
 		/// <summary>
 		/// Any db object created here or in tests must be added to m_createdObjectList.
 		/// </summary>
-		protected void CreateTestData()
+		private void CreateTestData()
 		{
 			var stemMT = GetMorphTypeOrCreateOne("stem");
 			var rootMT = GetMorphTypeOrCreateOne("root");
@@ -153,6 +171,8 @@ namespace SIL.FieldWorks.XWorks
 				if (obj is ILexEntry)
 					obj.Delete();
 				if (obj is ICmSemanticDomain)
+					obj.Delete();
+				if (obj is ILexEntryRef)
 					obj.Delete();
 				// Some types won't get deleted directly (e.g. ILexSense),
 				// but should get deleted by their owner.
@@ -518,7 +538,7 @@ namespace SIL.FieldWorks.XWorks
 		public void ChooseLabel()
 		{
 			// Setup test
-			AddTwoVariants();
+			AddOneVariantEachToHimbiliraSenseAndPusEntry();
 			// LT-9940 Bulk Edit List Choice tab, the "Choose..." button loses its label.
 			m_bulkEditBar.PersistSettings = true;
 			m_bulkEditBar.SwitchTab("ListChoice");
@@ -545,23 +565,33 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private List<ILexEntry> AddTwoVariants()
+		private List<ILexEntry> AddOneVariantEachToHimbiliraSenseAndPusEntry()
 		{
 			var result = new List<ILexEntry>();
-			var entryList = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().ToList();
-			var le1 = entryList[0];
-			var le2 = entryList[1];
+			var le1 = Cache.LangProject.LexDbOA.Entries.FirstOrDefault(e => e.HeadWord.Text == "pus");
 			var rootMT = GetMorphTypeOrCreateOne("root");
-			var spellVar = GetVariantTypeOrCreateOne("Spelling Variant");
 			var dialVar = GetVariantTypeOrCreateOne("Dialectal Variant");
 			var nounPOS = GetGrammaticalCategoryOrCreateOne("noun", Cache.LangProject.PartsOfSpeechOA);
-			var verbPOS = GetGrammaticalCategoryOrCreateOne("verb", Cache.LangProject.PartsOfSpeechOA);
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				result.Add(AddVariantLexeme(m_createdObjectList, le1, "pusa", rootMT, "greenish",
 					nounPOS, dialVar));
-				result.Add(AddVariantLexeme(m_createdObjectList, le2.SensesOS[1], "rimbolira", rootMT,
-					"to.understand", verbPOS, spellVar));
+			});
+			result.Add(AddOneVariantToHimbiliraSense());
+			return result;
+		}
+
+		private ILexEntry AddOneVariantToHimbiliraSense()
+		{
+			ILexEntry result = null;
+			var entry = Cache.LangProject.LexDbOA.Entries.First(e => e.HeadWord.Text == "*himbilira");
+			var rootMT = GetMorphTypeOrCreateOne("root");
+			var spellVar = GetVariantTypeOrCreateOne("Spelling Variant");
+			var verbPOS = GetGrammaticalCategoryOrCreateOne("verb", Cache.LangProject.PartsOfSpeechOA);
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				result = AddVariantLexeme(m_createdObjectList, entry.SensesOS[1], "rimbolira", rootMT,
+					"to.understand", verbPOS, spellVar);
 			});
 			return result;
 		}
@@ -963,14 +993,19 @@ namespace SIL.FieldWorks.XWorks
 
 		private void AddPronunciation()
 		{
-			var entryList = Cache.LangProject.LexDbOA.Entries.ToList();
+			var entry = Cache.LangProject.LexDbOA.Entries.FirstOrDefault(e => e.HeadWord.Text == "pus");
+			AddPronunciation(entry);
+		}
+
+		private void AddPronunciation(ILexEntry entry)
+		{
 			var pronuncFact = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>();
-			var entry = entryList[0]; // the first one will be sorted to a later position.
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				var pronunciation = pronuncFact.Create();
 				entry.PronunciationsOS.Add(pronunciation);
 				pronunciation.Form.set_String(Cache.DefaultVernWs, "Pronunciation");
+				Console.WriteLine("*** We just added a pronunciation called 'Pronunciation' to entry {0}.", entry.HeadWord.Text);
 			});
 		}
 
@@ -1113,6 +1148,87 @@ namespace SIL.FieldWorks.XWorks
 			m_bulkEditBar.ClickApply();
 			Assert.AreEqual(1, firstEntryWithoutPronunciation.PronunciationsOS.Count);
 			Assert.AreEqual(lexemeForm, firstEntryWithoutPronunciation.PronunciationsOS[0].Tone.Text);
+		}
+
+		/// <summary>
+		/// (LT-13041) Bulk Copy to a Complex Form Comment field
+		/// </summary>
+		[Test]
+		public void ComplexForm_BulkCopy_Comment()
+		{
+			// Setup data.
+			var pusEntry = Cache.LangProject.LexDbOA.Entries.FirstOrDefault(e => e.HeadWord.Text == "pus");
+			var complexEntry = AddOneComplexEntry(pusEntry);
+			var complexEntryRef = complexEntry.EntryRefsOS[0];
+
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				complexEntry.Comment.SetAnalysisDefaultWritingSystem("Complex Form note");
+				complexEntryRef.Summary.SetAnalysisDefaultWritingSystem("exising comment");
+			});
+
+			// do a bulk copy from LexemeForm to Pronunciations
+			m_bulkEditBar.SwitchTab("BulkCopy");
+			m_bv.ShowColumn("NoteForEntry");
+			m_bv.ShowColumn("ComplexFormsSummaryPub");
+
+			FwOverrideComboBox bulkCopySourceCombo = m_bulkEditBar.GetTabControlChild("m_bulkCopySourceCombo") as FwOverrideComboBox;
+			NonEmptyTargetControl bcNonEmptyTargetControl = m_bulkEditBar.GetTabControlChild("m_bcNonEmptyTargetControl") as NonEmptyTargetControl;
+			// set to overwrite
+			bcNonEmptyTargetControl.NonEmptyMode = NonEmptyTargetOptions.Overwrite;
+			bulkCopySourceCombo.Text = "Note";
+			// first try to bulk copy the "Note" field to the Complex Form Comment field, which is a multilingual field
+			using (m_bulkEditBar.SetTargetField("Complex Form Comment"))
+			{
+				// try bulk copy into an existing Comment
+				m_bv.OnUncheckAll();
+				m_bv.SetCheckedItems(new List<int>(new int[] {complexEntryRef.Hvo}));
+				Assert.AreEqual("exising comment", complexEntryRef.Summary.AnalysisDefaultWritingSystem.Text);
+
+				m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
+				m_bulkEditBar.ClickApply();
+				string result = complexEntry.EntryRefsOS[0].Summary.AnalysisDefaultWritingSystem.Text;
+				Assert.AreEqual("Complex Form note", result);
+			}
+		}
+
+		/// <summary>
+		/// (LT-13041) Bulk Copy to a Variant Comment field
+		/// </summary>
+		[Test]
+		public void Variant_BulkCopy_Comment()
+		{
+			// Setup data.
+			var variantEntry = AddOneVariantToHimbiliraSense();
+			var variantEntryRef = variantEntry.EntryRefsOS[0];
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				variantEntry.Comment.SetAnalysisDefaultWritingSystem("Variant note");
+			});
+
+			// do a bulk copy from Entry-level Note to Variant Comment
+			m_bulkEditBar.SwitchTab("BulkCopy");
+			m_bv.ShowColumn("NoteForEntry");
+			m_bv.ShowColumn("VariantsSummaryPub");
+
+			var bulkCopySourceCombo = m_bulkEditBar.GetTabControlChild("m_bulkCopySourceCombo") as FwOverrideComboBox;
+			var bcNonEmptyTargetControl = m_bulkEditBar.GetTabControlChild("m_bcNonEmptyTargetControl") as NonEmptyTargetControl;
+			// try bulk copy into an empty Comment
+			bcNonEmptyTargetControl.NonEmptyMode = NonEmptyTargetOptions.DoNothing;
+			bulkCopySourceCombo.Text = "Note";
+
+			// try to bulk copy the "Note" field to the Variant Comment field, which is a multilingual field
+			using (m_bulkEditBar.SetTargetField("Variant Comment"))
+			{
+				m_bv.OnUncheckAll();
+				m_bv.SetCheckedItems(new List<int>(new int[] {variantEntryRef.Hvo}));
+				Assert.IsNullOrEmpty(variantEntryRef.Summary.AnalysisDefaultWritingSystem.Text);
+
+				m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
+				m_bulkEditBar.ClickApply();
+				var result = variantEntry.EntryRefsOS[0].Summary.AnalysisDefaultWritingSystem.Text;
+				Assert.AreEqual("Variant note", result);
+			}
 		}
 
 		private void SetupAllomorphsData(out IMoForm firstAllomorphOut,
@@ -1270,8 +1386,7 @@ namespace SIL.FieldWorks.XWorks
 		public void EntryRefs_ListChoice_VariantEntryTypes()
 		{
 			// setup data.
-			var variantList = AddTwoVariants();
-			var hvoSecondVariant = variantList[1].Hvo;
+			var variantList = AddOneVariantEachToHimbiliraSenseAndPusEntry();
 			var secondVariantRef = variantList[1].EntryRefsOS[0];
 			var choiceFreeVariant = GetVariantTypeOrCreateOne("Free Variant");
 
@@ -1322,7 +1437,6 @@ namespace SIL.FieldWorks.XWorks
 			var entryRepo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var entryPus = entryRepo.AllInstances().First();
 			var complexEntry = AddOneComplexEntry(entryPus);
-			var hvoComplexEntry = complexEntry.Hvo;
 			int hvoComplexRef = complexEntry.EntryRefsOS[0].Hvo;
 
 			// SUT (2)
@@ -1360,6 +1474,7 @@ namespace SIL.FieldWorks.XWorks
 				var ler = MakeComplexFormLexEntryRef(result);
 				ler.PrimaryLexemesRS.Add(part);
 				m_createdObjectList.Add(ler);
+				m_createdObjectList.Add(result);
 			});
 			return result;
 		}
@@ -1407,12 +1522,15 @@ namespace SIL.FieldWorks.XWorks
 				parentEntry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
 					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm),
 					TsStringUtils.MakeTss(formLexEntry, Cache.DefaultVernWs), "ZZZparentEntry.sense1", null);
-				var parentEntry_Sense1 = parentEntry.SensesOS[0];
-				var parentEntry_Sense2 = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create(
+				var parentEntrySense1 = parentEntry.SensesOS[0];
+				var parentEntrySense2 = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create(
 					parentEntry, null, "ZZZparentEntry.sense2");
 				pronunc = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
 				parentEntry.PronunciationsOS.Add(pronunc);
 				pronunc.Form.set_String(Cache.DefaultVernWs, "samplePronunciation");
+				m_createdObjectList.Add(parentEntry);
+				m_createdObjectList.Add(parentEntrySense1);
+				m_createdObjectList.Add(parentEntrySense2);
 			});
 			pronunciation = parentEntry.PronunciationsOS.Last();
 			return parentEntry;

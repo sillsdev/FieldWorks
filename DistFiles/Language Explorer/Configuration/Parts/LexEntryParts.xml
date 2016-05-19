@@ -858,6 +858,16 @@
         </seq>
       </span>
     </part>
+	<part id="LexEntry-Jt-ComplexFormsSummaryPub" type="jtview">
+		<seq field="ComplexFormEntryRefs" layout="empty" sep=", " frag="true" >
+		    <string field="Summary" ws="$ws=best analorvern"/>
+		</seq>
+	</part>
+	<part id="LexEntry-Jt-VariantsSummaryPub" type="jtview">
+		<seq field="VariantEntryRefs" layout="empty" sep=", " frag="true" >
+		    <string field="Summary" ws="$ws=best analorvern"/>
+		</seq>
+	</part>
   </bin>
 
 	<bin class="LexEtymology">
