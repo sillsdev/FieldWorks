@@ -148,12 +148,14 @@
 	<column layout="ShowMinorEntryBrowse" label="Show Minor Entry" bulkDelete="false" visibility="dialog" sortType="YesNo" multipara="true"
 			bulkEdit="booleanOnSubfield" field="LexEntry.EntryRefs" subfield="LexEntryRef.HideMinorEntry" items="0:no;1:yes" blankPossible="yes"/>
 	<column layout="ComplexFormsBrowse" label="Complex Forms" multipara="true" editable="false" visibility="dialog" ws="$ws=vernacular" />
+	<column layout="ComplexFormsSummaryPub" label="Complex Form Comment" editable="false" visibility="dialog" ws="$ws=analysis" transduce="LexEntryRef.Summary" />
 	<column layout="ComponentLexemesBrowse" label="Variant of" multipara="true" editable="false" visibility="dialog" ws="$ws=vernacular" />
 	<column layout="VariantEntryTypesBrowse" ws="$ws=best analysis" label="Variant Types" multipara="true" editable="false" visibility="dialog"
 			chooserFilter="complexListMultiple" canChooseEmpty="true"
 			ghostListField="LexDb.AllVariantEntryRefPropertyTargets"
 			bulkEdit="variantEntryTypes" field="LexEntryRef.VariantEntryTypes" list="LexDb.VariantEntryTypes" displayNameProperty="ShortNameTSS" displayWs="analysis"/>
 	<column layout="VariantsBrowse" label="Variants" multipara="true" editable="false" visibility="dialog" ws="$ws=vernacular" />
+	<column layout="VariantsSummaryPub" label="Variant Comment" editable="false" visibility="dialog" ws="$ws=analysis" transduce="LexEntryRef.Summary" />
 	<column layout="CrossReferencesForEntry"  label="Cross References" multipara="true" editable="false" visibility="dialog"/>
 	<column layout="LexicalRelationsForSense" label="Lexical Relations" multipara="true" editable="false" visibility="dialog"/>
 	<column layout="Example" ws="$ws=vernacular" label="Example Sentences" multipara="true" editable="true" visibility="dialog"
