@@ -2163,6 +2163,55 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsTrue(Regex.Match(cssResult, captionBetween, RegexOptions.Singleline).Success, "expected Caption between rule is generated");
 		}
 
+		/// <summary>
+		/// The css for a picture Before Between After Css is Generated.
+		/// </summary>
+		[Test]
+		public void GenerateCssForConfiguration_PictureBeforeBetweenAfterIsAreGenerated()
+		{
+			TestStyle style = GenerateStyle("Normal");
+			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, LeadingIndent);
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+
+			var memberNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = new DictionaryNodePictureOptions { MaximumWidth = 1 },
+				CSSClassNameOverride = "pictures",
+				FieldDescription = "PicturesOfSenses",
+				Before = "[",
+				After = "]",
+				Between = ", "
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+			};
+			var rootNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SIL.FieldWorks.XWorks.TestPictureClass",
+				CSSClassNameOverride = "entry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode, memberNode }
+			};
+			PopulateFieldsForTesting(rootNode);
+
+			var config = new DictionaryConfigurationModel()
+			{
+				Parts = new List<ConfigurableDictionaryNode> { rootNode }
+			};
+
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(config, m_mediator);
+
+			var pictureBefore = @".entry> .pictures> div:first-child:before\{\s*content:'\[';";
+			Assert.IsTrue(Regex.Match(cssResult, pictureBefore, RegexOptions.Singleline).Success, "expected Picture before rule is generated");
+
+			var pictureAfter = @".entry> .pictures> div:last-child:after\{\s*content:'\]';";
+			Assert.IsTrue(Regex.Match(cssResult, pictureAfter, RegexOptions.Singleline).Success, "expected Picture after rule is generated");
+
+			var pictureBetween = @".entry> .pictures> div\+ div:before\{\s*content:', ';";
+			Assert.IsTrue(Regex.Match(cssResult, pictureBetween, RegexOptions.Singleline).Success, "expected Picture between rule is generated");
+		}
+
 		[Test]
 		public void GenerateCssForConfiguration_GlossWithMultipleWs()
 		{

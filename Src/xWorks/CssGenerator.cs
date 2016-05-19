@@ -577,6 +577,8 @@ namespace SIL.FieldWorks.XWorks
 						}
 						else if (senseOptions != null && senseOptions.ShowSharedGrammarInfoFirst)
 							betweenSelector = String.Format("{0}> {1}>{2}.sensecontent+{2}:before", parentSelector, collectionSelector, " span");
+						else if (configNode.FieldDescription == "PicturesOfSenses")
+							betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, " div");
 						else
 							betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, " span");
 
@@ -601,7 +603,10 @@ namespace SIL.FieldWorks.XWorks
 				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, configNode.Before) });
 				if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
 					dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, mediator));
-				var beforeRule = new StyleRule(dec) { Value = GetBaseSelectionWithSelectors(simpleSelector, ":before") };
+				var selectorBase = simpleSelector;
+				if (configNode.FieldDescription == "PicturesOfSenses")
+					selectorBase += "> div:first-child";
+				var beforeRule = new StyleRule(dec) { Value = GetBaseSelectionWithSelectors(selectorBase, ":before") };
 				rules.Add(beforeRule);
 			}
 			if(!String.IsNullOrEmpty(configNode.After))
@@ -610,7 +615,10 @@ namespace SIL.FieldWorks.XWorks
 				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, configNode.After) });
 				if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
 					dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, mediator));
-				var afterRule = new StyleRule(dec) { Value = GetBaseSelectionWithSelectors(simpleSelector, ":after") };
+				var selectorBase = simpleSelector;
+				if (configNode.FieldDescription == "PicturesOfSenses")
+					selectorBase += "> div:last-child";
+				var afterRule = new StyleRule(dec) { Value = GetBaseSelectionWithSelectors(selectorBase, ":after") };
 				rules.Add(afterRule);
 			}
 			return rules;
