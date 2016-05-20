@@ -231,7 +231,11 @@ namespace SIL.FieldWorks.XWorks
 				{
 					CmObjectUi ui = CmObjectUi.MakeUi(Cache, hvo); // Disposes of itself when menu closes since true passed in lext line.
 					if (ui != null)
+					{
+						ui.Mediator = m_mediator;
+						ui.PropTable = m_propertyTable;
 						e.EventHandled = ui.HandleRightClick(m_mediator, m_propertyTable, sender, true, "mnuBrowseView");
+					}
 				}
 			}
 		}

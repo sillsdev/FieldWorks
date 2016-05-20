@@ -796,6 +796,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					{
 
 						var ui = CmObjectUi.MakeUi(m_cache, lr.Hvo);
+						ui.Mediator = Mediator;
+						ui.PropTable = m_propertyTable;
 
 						//We need this to determine which kind of relation we are deleting
 						var lrtOwner = (ILexRefType) lr.Owner;
@@ -871,6 +873,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					using (var dlg = new ConfirmDeleteObjectDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 					{
 						var ui = CmObjectUi.MakeUi(m_cache, lr.Hvo);
+						ui.Mediator = Mediator;
+						ui.PropTable = m_propertyTable;
 
 						//We need this to determine which kind of relation we are deleting
 						var lrtOwner = lr.Owner as ILexRefType;

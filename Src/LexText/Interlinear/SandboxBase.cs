@@ -2896,6 +2896,8 @@ namespace SIL.FieldWorks.IText
 		{
 			Debug.Assert(Mediator != null);
 			CmObjectUi rightClickUiObj = CmObjectUi.MakeUi(Cache, hvoReal);
+			rightClickUiObj.Mediator = Mediator;
+			rightClickUiObj.PropTable = m_propertyTable;
 			if (rightClickUiObj != null)
 			{
 				rightClickUiObj.AdditionalColleague = additionalTarget;
@@ -4368,6 +4370,8 @@ namespace SIL.FieldWorks.IText
 				if (hvoTarget == 0)
 					return; // LT-13878: User may have 'Ctrl+Click'ed on an arrow or off in space somewhere
 				CmObjectUi targetUiObj = CmObjectUi.MakeUi(Cache, hvoTarget);
+				targetUiObj.Mediator = Mediator;
+				targetUiObj.PropTable = m_propertyTable;
 				targetUiObj.HandleCtrlClick(this);
 			}
 		}
@@ -4449,6 +4453,8 @@ namespace SIL.FieldWorks.IText
 					// This method should do likewise...
 					using (CmObjectUi ui = CmObjectUi.MakeUi(m_caches.MainCache, hvoMsa))
 					{
+						ui.Mediator = Mediator;
+						ui.PropTable = m_propertyTable;
 						Guid guid = ui.GuidForJumping(null);
 						if (guid == Guid.Empty)
 							return 0;

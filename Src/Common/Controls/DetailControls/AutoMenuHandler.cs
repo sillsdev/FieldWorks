@@ -326,6 +326,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				using (CmObjectUi ui = CmObjectUi.MakeUi(m_cache, m_hvoDeleteTarget))
 				{
 					ui.Mediator = m_sliceTreeNode.Slice.ContainingDataTree.Mediator;
+					ui.PropTable = m_sliceTreeNode.Slice.ContainingDataTree.PropTable;
 					ui.DeleteUnderlyingObject();
 				}
 				m_cache.DomainDataByFlid.EndUndoTask();

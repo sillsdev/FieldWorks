@@ -968,6 +968,7 @@ namespace SIL.FieldWorks.FdoUi
 					using (CmObjectUi owner = MakeUi(m_cache, m_obj.Owner.Hvo))
 					{
 						owner.Mediator = m_mediator;
+						owner.PropTable = m_propertyTable;
 						owner.DeleteUnderlyingObject();
 					}
 				}

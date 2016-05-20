@@ -598,6 +598,7 @@ namespace SIL.FieldWorks.IText
 				{
 					ui = CmObjectUi.MakeUi(Cache, wordform.Hvo);
 					ui.Mediator = m_mediator;
+					ui.PropTable = m_propertyTable;
 					tempColleague = new TemporaryColleagueParameter(m_mediator, ui, false);
 				}
 				mainWind.ShowContextMenu("mnuIText-RawText", new Point(Cursor.Position.X, Cursor.Position.Y),

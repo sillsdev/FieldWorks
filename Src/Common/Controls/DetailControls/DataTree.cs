@@ -594,6 +594,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
+		/// <summary />
+		public PropertyTable PropTable
+		{
+			get
+			{
+				CheckDisposed();
+				return m_propertyTable;
+			}
+		}
+
 		/// <summary>
 		/// Tells whether we are showing all fields, or just the ones requested.
 		/// </summary>

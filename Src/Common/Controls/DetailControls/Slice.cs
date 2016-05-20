@@ -2348,6 +2348,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					using (CmObjectUi ui = CmObjectUi.MakeUi(m_cache, obj.Hvo))
 					{
 						ui.Mediator = m_mediator;
+						ui.PropTable = m_propertyTable;
 						result = ui.DeleteUnderlyingObject();
 					}
 				}
@@ -2594,6 +2595,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			using (CmObjectUi ui = CmObjectUi.MakeUi(m_cache, obj.Hvo))
 			{
 				ui.Mediator = m_mediator;
+				ui.PropTable = m_propertyTable;
 				ui.MergeUnderlyingObject(fLoseNoTextData);
 			}
 			// The slice will likely be disposed in the MergeUnderlyingObject call,
@@ -2648,6 +2650,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			using (CmObjectUi ui = CmObjectUi.MakeUi(m_cache, obj.Hvo))
 			{
 				ui.Mediator = m_mediator;
+				ui.PropTable = m_propertyTable;
 				ui.MoveUnderlyingObjectToCopyOfOwner();
 			}
 			// The slice will likely be disposed in the MoveUnderlyingObjectToCopyOfOwner call,

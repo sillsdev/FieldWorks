@@ -231,6 +231,8 @@ namespace SIL.FieldWorks.FdoUi
 				}
 				if (mediator != null)
 					leui.Mediator = mediator;
+				if (propertyTable != null)
+					leui.PropTable = propertyTable;
 				leui.ShowSummaryDialog(owner, tssWf, helpProvider, helpFileKey, styleSheet);
 			}
 			finally
