@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,7 +14,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 	/// </summary>
 	public partial class SenseOptionsView : UserControl, IDictionarySenseOptionsView
 	{
-		private bool m_isSubsense;
 
 		public SenseOptionsView(bool isSubsense)
 		{
@@ -26,14 +25,13 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			textBoxBefore.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
 			textBoxAfter.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
 
-			m_isSubsense = isSubsense;
-			if (m_isSubsense)
-			{
-				groupBoxSenseNumber.Text = xWorksStrings.ksSubsenseNumberConfig;
-				checkBoxNumberSingleSense.Text = xWorksStrings.ksNumberSingleSubsense;
-				checkBoxShowGrammarFirst.Text = xWorksStrings.ksHideGramInfoIfSameAsParent;
-				checkBoxSenseInPara.Text = xWorksStrings.ksDisplayEachSubsenseInAParagraph;
-			}
+			if (!isSubsense)
+				return;
+			groupBoxSenseNumber.Text = xWorksStrings.ksSubsenseNumberConfig;
+			checkBoxNumberSingleSense.Text = xWorksStrings.ksNumberSingleSubsense;
+			checkBoxShowGrammarFirst.Text = xWorksStrings.ksHideGramInfoIfSameAsParent;
+			checkBoxSenseInPara.Text = xWorksStrings.ksDisplayEachSubsenseInAParagraph;
+			checkBoxFirstSenseInline.Text = xWorksStrings.ksStartingWithTheSecondSubsense;
 		}
 
 		public bool NumberMetaConfigEnabled
@@ -56,7 +54,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			set
 			{
 				dropDownNumberingStyle.Items.Clear();
+				// ReSharper disable CoVariantArrayConversion - Justification: array values will not be written
 				dropDownNumberingStyle.Items.AddRange(value.ToArray());
+				// ReSharper restore CoVariantArrayConversion
 			}
 		}
 
@@ -91,9 +91,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		public void SetStyles(List<StyleComboItem> styles, string selectedStyle)
 		{
 			dropDownStyle.Items.Clear();
+			// ReSharper disable CoVariantArrayConversion - Justification: array values will not be written
 			dropDownStyle.Items.AddRange(styles.ToArray());
+			// ReSharper restore CoVariantArrayConversion
 			dropDownStyle.SelectedIndex = 0; // default so we don't have a null item selected.  If there are 0 items, we have other problems.
-			for (int i = 0; i < styles.Count; ++i)
+			for (var i = 0; i < styles.Count; ++i)
 			{
 				if (styles[i].Style != null && styles[i].Style.Name == selectedStyle)
 				{
@@ -128,6 +130,17 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		{
 			get { return checkBoxSenseInPara.Checked; }
 			set { checkBoxSenseInPara.Checked = value; }
+		}
+
+		public bool FirstSenseInline
+		{
+			get { return checkBoxFirstSenseInline.Checked; }
+			set { checkBoxFirstSenseInline.Checked = value; }
+		}
+
+		public bool FirstSenseInlineVisible
+		{
+			set { checkBoxFirstSenseInline.Visible = checkBoxFirstSenseInline.Enabled = value; }
 		}
 
 		#region EventHandlers
@@ -180,6 +193,12 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		{
 			add { checkBoxSenseInPara.CheckedChanged += value; }
 			remove { checkBoxSenseInPara.CheckedChanged -= value; }
+		}
+
+		public event EventHandler FirstSenseInlineChanged
+		{
+			add { checkBoxFirstSenseInline.CheckedChanged += value; }
+			remove { checkBoxFirstSenseInline.CheckedChanged -= value; }
 		}
 		#endregion EventHandlers
 	}

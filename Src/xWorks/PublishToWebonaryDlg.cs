@@ -189,6 +189,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					configurationBox.SelectedIndex = 0;
 				}
+				UpdateEntriesToBePublishedLabel();
 			}
 		}
 

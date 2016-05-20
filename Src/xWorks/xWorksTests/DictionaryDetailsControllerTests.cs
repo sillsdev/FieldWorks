@@ -935,6 +935,7 @@ namespace SIL.FieldWorks.XWorks
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions
 				{
 					DisplayEachSenseInAParagraph = true,
+					DisplayFirstSenseInline = true,
 					BeforeNumber = "",
 					AfterNumber = ") ",
 					NumberingStyle = "%d",
@@ -957,6 +958,7 @@ namespace SIL.FieldWorks.XWorks
 				var optionsView = GetSenseOptionsView(view);
 				Assert.IsNotNull(optionsView, "DictionaryNodeSenseOptions should cause SenseOptionsView to be created");
 				Assert.IsTrue(optionsView.SenseInPara, "checkbox set properly for showing senses in paragraph for Sense");
+				Assert.IsTrue(optionsView.FirstSenseInline, "checkbox for showing first senses in line with the entry");
 				Assert.AreEqual("", optionsView.BeforeText, "proper text before number loads for Sense");
 				Assert.AreEqual(") ", optionsView.AfterText, "proper text after number loads for Sense");
 				Assert.AreEqual("%d", optionsView.NumberingStyle, "proper numbering style loads for Sense");
@@ -970,16 +972,21 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if (control is GroupBox && control.Name == "groupBoxSenseNumber")
 					{
-						Assert.AreEqual("Sense Number Configuration", control.Text, "groupBoxSenseNumber has the right Text for Sense");
+						Assert.AreEqual("Sense Number Configuration", control.Text, "groupBoxSenseNumber has incorrect Text for Sense");
 						++controlsChecked;
 					}
 					else if (control is CheckBox && control.Name == "checkBoxSenseInPara")
 					{
-						Assert.IsTrue(control.Enabled && control.Visible, "checkBoxSenseInPara is enabled and visible for Sense");
+						Assert.IsTrue(control.Enabled && control.Visible, "checkBoxSenseInPara should be enabled and visible for Sense");
+						++controlsChecked;
+					}
+					else if (control is CheckBox && control.Name == "checkBoxFirstSenseInline")
+					{
+						Assert.IsTrue(control.Enabled && control.Visible, "checkBoxFirstSenseInline should be enabled and visible for Sense");
 						++controlsChecked;
 					}
 				}
-				Assert.AreEqual(2, controlsChecked, "Checked two controls for Sense");
+				Assert.AreEqual(3, controlsChecked, "Matched incorrect number of controls for Sense");
 			}
 
 			var controller2 = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
@@ -1002,11 +1009,21 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if (control is GroupBox && control.Name == "groupBoxSenseNumber")
 					{
-						Assert.AreEqual(xWorksStrings.ksSubsenseNumberConfig, control.Text, "groupBoxSenseNumber has the right Text for Subsense");
+						Assert.AreEqual(xWorksStrings.ksSubsenseNumberConfig, control.Text, "groupBoxSenseNumber has incorrect Text for Subsense");
+						++controlsChecked;
+					}
+					else if (control is CheckBox && control.Name == "checkBoxSenseInPara")
+					{
+						Assert.IsTrue(control.Enabled && control.Visible, "checkBoxSenseInPara should be enabled and visible for Subsense");
+						++controlsChecked;
+					}
+					else if (control is CheckBox && control.Name == "checkBoxFirstSenseInline")
+					{
+						Assert.IsFalse(control.Enabled || control.Visible, "checkBoxFirstSenseInline should be disabled and invisible when no paras");
 						++controlsChecked;
 					}
 				}
-				Assert.AreEqual(1, controlsChecked, "Checked two controls for Subsense");
+				Assert.AreEqual(3, controlsChecked, "Matched incorrect number of controls for Subsense");
 			}
 		}
 
