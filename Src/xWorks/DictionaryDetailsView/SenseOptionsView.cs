@@ -32,8 +32,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 				groupBoxSenseNumber.Text = xWorksStrings.ksSubsenseNumberConfig;
 				checkBoxNumberSingleSense.Text = xWorksStrings.ksNumberSingleSubsense;
 				checkBoxShowGrammarFirst.Text = xWorksStrings.ksHideGramInfoIfSameAsParent;
-				checkBoxSenseInPara.Enabled = false;
-				checkBoxSenseInPara.Visible = false;
+				checkBoxSenseInPara.Text = xWorksStrings.ksDisplayEachSubsenseInAParagraph;
 			}
 		}
 

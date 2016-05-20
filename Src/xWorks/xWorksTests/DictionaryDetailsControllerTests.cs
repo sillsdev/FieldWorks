@@ -1005,13 +1005,8 @@ namespace SIL.FieldWorks.XWorks
 						Assert.AreEqual(xWorksStrings.ksSubsenseNumberConfig, control.Text, "groupBoxSenseNumber has the right Text for Subsense");
 						++controlsChecked;
 					}
-					else if (control is CheckBox && control.Name == "checkBoxSenseInPara")
-					{
-						Assert.IsFalse(control.Enabled || control.Visible, "checkBoxSenseInPara is disabled and invisible for Subsense");
-						++controlsChecked;
-					}
 				}
-				Assert.AreEqual(2, controlsChecked, "Checked two controls for Subsense");
+				Assert.AreEqual(1, controlsChecked, "Checked two controls for Subsense");
 			}
 		}
 

@@ -1048,7 +1048,18 @@ namespace SIL.FieldWorks.XWorks {
                 return ResourceManager.GetString("ksDisplayComplexFormsInParagraphs", resourceCulture);
             }
         }
-        
+
+		/// <summary>
+		///   Looks up a localized string similar to Display each subsense in a paragraph.
+		/// </summary>
+		internal static string ksDisplayEachSubsenseInAParagraph
+		{
+			get
+			{
+				return ResourceManager.GetString("ksDisplayEachSubsenseInAParagraph", resourceCulture);
+			}
+		}
+
         /// <summary>
         ///   Looks up a localized string similar to Display each Example in a paragraph.
         /// </summary>
