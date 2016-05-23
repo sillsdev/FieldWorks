@@ -19,10 +19,15 @@ namespace LanguageExplorer.Areas
 		/// <summary />
 		internal static void SetupToolDisplay(ICollapsingSplitContainer mainCollapsingSplitContainer, ITool tool)
 		{
-			mainCollapsingSplitContainer.SecondControl.SuspendLayout();
+			var mainCollapsingSplitContainerAsControl = (Control)mainCollapsingSplitContainer;
+			mainCollapsingSplitContainerAsControl.SuspendLayout();
+			var oldSecondControl = mainCollapsingSplitContainer.SecondControl;
+			mainCollapsingSplitContainerAsControl.Controls.Remove(oldSecondControl);
+			oldSecondControl.Dispose();
+
 			var newTempControl = CreateNewLabel(tool);
-			mainCollapsingSplitContainer.SecondControl.Controls.Add(newTempControl);
-			mainCollapsingSplitContainer.SecondControl.ResumeLayout();
+			mainCollapsingSplitContainer.SecondControl = newTempControl;
+			mainCollapsingSplitContainerAsControl.ResumeLayout();
 		}
 
 		internal static Label CreateNewLabel(ITool tool)
@@ -57,21 +62,16 @@ namespace LanguageExplorer.Areas
 		/// <summary />
 		internal static void RemoveToolDisplay(ICollapsingSplitContainer mainCollapsingSplitContainer)
 		{
-			if (mainCollapsingSplitContainer.SecondControl.Controls.Count == 0)
-			{
-				return;
-			}
-			var tempControl = mainCollapsingSplitContainer.SecondControl.Controls[0];
-			try
-			{
-				mainCollapsingSplitContainer.SecondControl.SuspendLayout();
-				mainCollapsingSplitContainer.SecondControl.Controls.RemoveAt(0);
-			}
-			finally
-			{
-				tempControl.Dispose();
-				mainCollapsingSplitContainer.SecondControl.ResumeLayout();
-			}
+			var mainCollapsingSplitContainerAsControl = (Control)mainCollapsingSplitContainer;
+			mainCollapsingSplitContainerAsControl.SuspendLayout();
+
+			var oldControl = mainCollapsingSplitContainer.SecondControl;
+			mainCollapsingSplitContainerAsControl.Controls.Remove(oldControl);
+			oldControl.Dispose();
+
+			mainCollapsingSplitContainer.SecondControl = new Panel();
+
+			mainCollapsingSplitContainerAsControl.ResumeLayout();
 		}
 	}
 }

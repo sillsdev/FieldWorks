@@ -177,7 +177,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				_recordBrowseView, "Browse",
 				_innerMultiPane = MultiPaneFactory.CreateNestedMultiPane(flexComponentParameterObject, nestedMultiPaneParameters), "Dictionary & Details",
 				paneBar);
-			_innerMultiPane.Panel1Collapsed = !GetItemForItemText(LexiconResources.Show_DictionaryPubPreview).Checked;
+			_innerMultiPane.Panel1Collapsed = !PropertyTable.GetValue<bool>(Show_DictionaryPubPreview);
 			panelButton.DatTree = recordEditView.DatTree;
 
 			// Too early before now.
@@ -402,7 +402,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var menuItem = GetItemForItemText(LexiconResources.Show_DictionaryPubPreview);
 			menuItem.Checked = !menuItem.Checked;
 			PropertyTable.SetProperty(Show_DictionaryPubPreview, menuItem.Checked, SettingsGroup.LocalSettings, true, false);
-			_innerMultiPane.Panel1Collapsed = !menuItem.Checked;
+			_innerMultiPane.Panel1Collapsed = !PropertyTable.GetValue<bool>(Show_DictionaryPubPreview);
 		}
 
 		/// <summary>

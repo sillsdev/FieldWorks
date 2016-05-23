@@ -20,31 +20,37 @@ namespace LanguageExplorer.Controls
 		/// Create a new PaneBarContainer
 		/// </summary>
 		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		/// <param name="parentControl">Parent control for the new PaneBarContainer</param>
+		/// <param name="mainCollapsingSplitContainer">Put the new PaneBarContainer into SecondControl.</param>
 		/// <param name="mainChildControl">Main child control for the new PaneBarContainer</param>
 		/// <returns>The new PaneBarContainer instance.</returns>
-		internal static PaneBarContainer Create(FlexComponentParameters flexComponentParameters, Control parentControl, Control mainChildControl)
+		internal static PaneBarContainer Create(FlexComponentParameters flexComponentParameters, ICollapsingSplitContainer mainCollapsingSplitContainer, Control mainChildControl)
 		{
-			parentControl.SuspendLayout();
+			var mainCollapsingSplitContainerAsControl = (Control)mainCollapsingSplitContainer;
+			mainCollapsingSplitContainerAsControl.SuspendLayout();
+			if (mainCollapsingSplitContainer.SecondControl != null)
+			{
+				mainCollapsingSplitContainerAsControl.Controls.Remove(mainCollapsingSplitContainer.SecondControl);
+				mainCollapsingSplitContainer.SecondControl.Dispose();
+			}
 			var newPaneBarContainer = new PaneBarContainer(mainChildControl)
 			{
 				Dock = DockStyle.Fill
 			};
+			mainCollapsingSplitContainer.SecondControl = newPaneBarContainer;
 			newPaneBarContainer.InitializeFlexComponent(flexComponentParameters);
 			if (mainChildControl is IFlexComponent)
 			{
 				var asFlexComponent = (IFlexComponent)mainChildControl;
 				asFlexComponent.InitializeFlexComponent(flexComponentParameters);
 			}
-			parentControl.Controls.Add(newPaneBarContainer);
-			parentControl.ResumeLayout();
+			mainCollapsingSplitContainerAsControl.ResumeLayout();
 			mainChildControl.BringToFront();
 
 			return newPaneBarContainer;
 		}
 
 		/// <summary>
-		/// Create a new PaneBarContainer
+		/// Create a new PaneBarContainer, but not one that is the 'SecondControl' of an ICollapsingSplitContainer instance
 		/// </summary>
 		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
 		/// <param name="mainChildControl">Main child control for the new PaneBarContainer</param>
@@ -105,15 +111,17 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Remove <paramref name="paneBarContainer"/> from parent control and dispose it.
 		/// </summary>
+		/// <param name="mainCollapsingSplitContainer"></param>
 		/// <param name="paneBarContainer">The PaneBarContainer to remove and dispose.</param>
 		/// <param name="recordClerk">The RecordClerk data member to set to null.</param>
-		internal static void RemoveFromParentAndDispose(ref PaneBarContainer paneBarContainer, ref RecordClerk recordClerk)
+		internal static void RemoveFromParentAndDispose(ICollapsingSplitContainer mainCollapsingSplitContainer, ref PaneBarContainer paneBarContainer, ref RecordClerk recordClerk)
 		{
-			var parentControl = paneBarContainer.Parent;
-			parentControl.SuspendLayout();
-			parentControl.Controls.Remove(paneBarContainer);
+			var mainCollapsingSplitContainerAsControl = (Control)mainCollapsingSplitContainer;
+			mainCollapsingSplitContainerAsControl.SuspendLayout();
+			mainCollapsingSplitContainerAsControl.Controls.Remove(paneBarContainer);
 			paneBarContainer.Dispose();
-			parentControl.ResumeLayout();
+			mainCollapsingSplitContainer.SecondControl = new Panel();
+			mainCollapsingSplitContainerAsControl.ResumeLayout();
 
 			paneBarContainer = null;
 

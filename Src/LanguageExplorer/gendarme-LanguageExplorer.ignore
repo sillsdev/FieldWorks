@@ -90,6 +90,7 @@ M: SIL.FieldWorks.XWorks.RecordClerk LanguageExplorer.Areas.Lexicon.LexiconArea:
 M: SIL.FieldWorks.XWorks.RecordClerk LanguageExplorer.Areas.Grammar.GrammarArea::CreateBrowseClerkForGrammarArea(SIL.CoreImpl.IPropertyTable,System.Boolean)
 M: System.Void LanguageExplorer.Areas.Lexicon.Tools.Edit.LexiconEditTool::Activate(SIL.FieldWorks.Common.FwUtils.ICollapsingSplitContainer,System.Windows.Forms.MenuStrip,System.Windows.Forms.ToolStripContainer,System.Windows.Forms.StatusBar)
 M: LanguageExplorer.Areas.MultiPane LanguageExplorer.Areas.MultiPaneFactory::CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(SIL.CoreImpl.FlexComponentParameters,SIL.FieldWorks.Common.FwUtils.ICollapsingSplitContainer,LanguageExplorer.Areas.MultiPaneParameters,System.Windows.Forms.Control,System.String,System.Windows.Forms.Control,System.String)
+M: System.Void LanguageExplorer.Areas.TemporaryToolProviderHack::SetupToolDisplay(SIL.FieldWorks.Common.FwUtils.ICollapsingSplitContainer,LanguageExplorer.ITool)
 
 # variable added to menu and disposed there
 M: System.Void LanguageExplorer.Areas.TextsAndWords.Discourse.ConstituentChartLogic::AddDependentClauseMenuItems(LanguageExplorer.Areas.TextsAndWords.Discourse.ChartLocation,System.Int32,System.Windows.Forms.ContextMenuStrip)

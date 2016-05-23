@@ -81,7 +81,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			PaneBarContainerFactory.RemoveFromParentAndDispose(ref _paneBarContainer, ref _recordClerk);
+			PaneBarContainerFactory.RemoveFromParentAndDispose(mainCollapsingSplitContainer, ref _paneBarContainer, ref _recordClerk);
 		}
 
 		/// <summary>
@@ -99,7 +99,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 			recordClerk.InitializeFlexComponent(flexComponentParameterObject);
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				flexComponentParameterObject,
-				mainCollapsingSplitContainer.SecondControl,
+				mainCollapsingSplitContainer,
 				new XmlDocView(_configurationDocument.Root, recordClerk));
 		}
 

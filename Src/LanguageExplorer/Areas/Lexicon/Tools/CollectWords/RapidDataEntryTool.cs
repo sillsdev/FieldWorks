@@ -76,7 +76,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			PaneBarContainerFactory.RemoveFromParentAndDispose(ref _paneBarContainer, ref _recordClerk);
+			PaneBarContainerFactory.RemoveFromParentAndDispose(mainCollapsingSplitContainer, ref _paneBarContainer, ref _recordClerk);
 		}
 
 		/// <summary>
@@ -90,7 +90,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		{
 			_paneBarContainer = PaneBarContainerFactory.Create(
 				new FlexComponentParameters(PropertyTable, Publisher, Subscriber),
-				mainCollapsingSplitContainer.SecondControl,
+				mainCollapsingSplitContainer,
 				TemporaryToolProviderHack.CreateNewLabel(this));
 		}
 
