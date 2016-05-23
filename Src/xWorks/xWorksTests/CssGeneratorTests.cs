@@ -2329,12 +2329,47 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { senses }
 			};
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
-			PopulateFieldsForTesting(entry);
+			PopulateFieldsForTesting(model);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			var regExPected = @".lexentry>\s.senses\s>\s.sensecontent\s\+\s.sensecontent:not\(:first-child\):before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*}";
 			Assert.IsTrue(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success,
 							  "Bulleted style not generated.");
+		}
+
+		[Test]
+		public void GenerateCssForDirectionRightToLeftForEntry()
+		{
+			var entryParagraphStyle = GenerateParagraphStyle("Dictionary-Entry");
+			entryParagraphStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptRightToLeft, 2, (int)TriStateBool.triTrue);
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "lexentry",
+				Style = "Dictionary-Entry"
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
+			PopulateFieldsForTesting(model);
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.That(cssResult, Contains.Substring("direction:rtl"));
+		}
+
+		[Test]
+		public void GenerateCssForDirectionNotSetForEntry()
+		{
+			GenerateParagraphStyle("Dictionary-Entry-NoRTL");
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "lexentry",
+				Style = "Dictionary-Entry-NoRTL"
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
+			PopulateFieldsForTesting(model);
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.That(cssResult, !Contains.Substring("direction"));
 		}
 
 		[Test]
