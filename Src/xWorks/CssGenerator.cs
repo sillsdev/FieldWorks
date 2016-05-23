@@ -926,6 +926,12 @@ namespace SIL.FieldWorks.XWorks
 					styleList.Insert(0, firstSenseStyle);
 				}
 			}
+
+			if (exportStyleInfo.DirectionIsRightToLeft != TriStateBool.triNotSet)
+			{
+				declaration.Add(new Property("direction") { Term = new PrimitiveTerm(UnitType.Ident, exportStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue ? "rtl" : "ltr") });
+			}
+
 			return styleList;
 		}
 
