@@ -87,6 +87,16 @@ namespace SIL.FieldWorks.XWorks
 
 		private static void GenerateCssForWsSpanWithNormalStyle(StyleSheet styleSheet, Mediator mediator, FdoCache cache)
 		{
+			// Generate the rules for the programmatic default style info (
+			var defaultStyleProps = GetOnlyCharacterStyle(GenerateCssStyleFromFwStyleSheet("Normal", DefaultStyle, mediator));
+			if (!defaultStyleProps.Any(p => p.Name == "font-size"))
+			{
+				defaultStyleProps.Add(new Property("font-size") { Term = new PrimitiveTerm(UnitType.Point, FontInfo.kDefaultFontSize) });
+			}
+			var defaultRule = new StyleRule { Value = "span" };
+			defaultRule.Declarations.Properties.AddRange(defaultStyleProps);
+			styleSheet.Rules.Add(defaultRule);
+			// Then generate the rules for all the writing system overrides
 			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
 				// We want only the character type settings from the "Normal" style since we're applying them
