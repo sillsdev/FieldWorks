@@ -2159,11 +2159,13 @@ namespace SIL.FieldWorks.XWorks
 				Parts = new List<ConfigurableDictionaryNode> { testEntryNode }
 			};
 			PopulateFieldsForTesting(testEntryNode);
+			// Default (no ws) style info
+			const string defaultStyle = "span{font-size:10pt;}";
+			const string englishStyle = "span[lang|=\"en\"]{font-family:'english',serif;color:#F00;}";
+			const string frenchStyle = "span[lang|=\"fr\"]{font-family:'french',serif;color:#008000;}";
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""),
-				Contains.Substring(
-					"span[lang|=\"en\"]{font-family:'english',serif;color:#F00;}span[lang|=\"fr\"]{font-family:'french',serif;color:#008000;}"));
+			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(defaultStyle + englishStyle + frenchStyle));
 		}
 
 		[Test]
