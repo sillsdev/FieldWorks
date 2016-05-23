@@ -358,7 +358,7 @@
 					<Option id="reversal" isEnabled="true" />
 				</WritingSystemOptions>
 			</ConfigurationItem>
-			<ConfigurationItem name="Bibliography" isEnabled="false" between=" " after=" " field="Bibliography">
+			<ConfigurationItem name="Bibliography (Sense)" isEnabled="false" between=" " after=" " field="Bibliography">
 				<WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 					<Option id="reversal" isEnabled="true" />
 				</WritingSystemOptions>
@@ -455,7 +455,7 @@
 					</WritingSystemOptions>
 				</ConfigurationItem>
 			</ConfigurationItem>
-			<ConfigurationItem name="Bibliography" isEnabled="false" between=" " after=" " field="Owner" subField="Bibliography">
+			<ConfigurationItem name="Bibliography (Entry)" isEnabled="false" between=" " after=" " field="Owner" subField="Bibliography">
 				<WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 					<Option id="reversal" isEnabled="true" />
 				</WritingSystemOptions>
@@ -927,7 +927,7 @@
 						<Option id="reversal" isEnabled="true" />
 					</WritingSystemOptions>
 				</ConfigurationItem>
-				<ConfigurationItem name="Bibliography" isEnabled="false" between=" " after=" " field="Bibliography">
+				<ConfigurationItem name="Bibliography (Sense)" isEnabled="false" between=" " after=" " field="Bibliography">
 					<WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 						<Option id="reversal" isEnabled="true" />
 					</WritingSystemOptions>
@@ -1024,7 +1024,7 @@
 						</WritingSystemOptions>
 					</ConfigurationItem>
 				</ConfigurationItem>
-				<ConfigurationItem name="Bibliography" isEnabled="false" between=" " after=" " field="Owner" subField="Bibliography">
+				<ConfigurationItem name="Bibliography (Entry)" isEnabled="false" between=" " after=" " field="Owner" subField="Bibliography">
 					<WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 						<Option id="reversal" isEnabled="true" />
 					</WritingSystemOptions>
