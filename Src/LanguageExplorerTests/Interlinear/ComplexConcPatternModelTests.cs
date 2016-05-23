@@ -11,30 +11,22 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
 using FS = System.Collections.Generic.Dictionary<SIL.FieldWorks.FDO.IFsFeatDefn, object>;
 
 namespace LanguageExplorerTests.Interlinear
 {
 	[TestFixture]
-	public class ComplexConcPatternModelTests : MemoryOnlyBackendProviderTestBase
+	public class ComplexConcPatternModelTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private IPartOfSpeech m_noun;
 		private IPartOfSpeech m_verb;
 		private IPartOfSpeech m_adj;
 		private IText m_text;
 		private ICmPossibility m_np;
-		private IEqualityComparer<IParaFragment> m_fragmentComparer;
+		private readonly IEqualityComparer<IParaFragment> m_fragmentComparer = new ParaFragmentEqualityComparer();
 		private IFsFeatStrucType m_inflType;
 
-		[TestFixtureSetUp]
-		public override void FixtureSetup()
-		{
-			base.FixtureSetup();
-
-			m_fragmentComparer = new ParaFragmentEqualityComparer();
-
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+		protected override void CreateTestData()
 				{
 					m_noun = MakePartOfSpeech("noun");
 					m_verb = MakePartOfSpeech("verb");
@@ -66,7 +58,6 @@ namespace LanguageExplorerTests.Interlinear
 
 					var para = (IStTxtPara) m_text.ContentsOA.ParagraphsOS.First();
 					MakeTag(m_text, m_np, para.SegmentsOS.First(), 1, para.SegmentsOS.First(), 3);
-				});
 		}
 
 		private IFsClosedFeature AddClosedFeature(IFsFeatureSystem featSys, string name, params string[] values)
@@ -146,7 +137,7 @@ namespace LanguageExplorerTests.Interlinear
 			return Cache.LanguageProject.MsFeatureSystemOA.FeaturesOC.OfType<IFsClosedFeature>().SelectMany(f => f.ValuesOC).First(sym => sym.Abbreviation.AnalysisDefaultWritingSystem.Text == id);
 		}
 
-		private void MakeTag(SIL.FieldWorks.FDO.IText text, ICmPossibility tag, ISegment beginSeg, int begin, ISegment endSeg, int end)
+		private ITextTag MakeTag(IText text, ICmPossibility tag, ISegment beginSeg, int begin, ISegment endSeg, int end)
 		{
 			ITextTag ttag = Cache.ServiceLocator.GetInstance<ITextTagFactory>().Create();
 			text.ContentsOA.TagsOC.Add(ttag);
@@ -155,9 +146,10 @@ namespace LanguageExplorerTests.Interlinear
 			ttag.BeginAnalysisIndex = begin;
 			ttag.EndSegmentRA = endSeg;
 			ttag.EndAnalysisIndex = end;
+			return ttag;
 		}
 
-		private SIL.FieldWorks.FDO.IText MakeText(string contents)
+		private IText MakeText(string contents)
 		{
 			var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
 			var stText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
@@ -560,6 +552,45 @@ namespace LanguageExplorerTests.Interlinear
 				}});
 			model.Compile();
 			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 23, null)}).Using(m_fragmentComparer));
+		}
+
+		[Test]
+		public void ParagraphWithInvalidParse()
+		{
+			var para = (IStTxtPara) m_text.ContentsOA.ParagraphsOS.First();
+			ISegment seg = para.SegmentsOS.First();
+
+			var model = new ComplexConcPatternModel(Cache);
+
+			model.Root.Children.Add(new ComplexConcMorphNode {Category = m_noun});
+			model.Compile();
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 17, 23, null)}).Using(m_fragmentComparer));
+
+			// cause analyses and baseline to get out-of-sync
+			seg.AnalysesRS.RemoveAt(0);
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 17, 23, null)}).Using(m_fragmentComparer));
+		}
+
+		[Test]
+		public void InvalidTags()
+		{
+			var para = (IStTxtPara) m_text.ContentsOA.ParagraphsOS.First();
+			ISegment seg = para.SegmentsOS.First();
+
+			var model = new ComplexConcPatternModel(Cache);
+
+			model.Root.Children.Add(new ComplexConcWordNode {Category = m_verb});
+			model.Compile();
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null)}).Using(m_fragmentComparer));
+
+			// create a tag that occurs after the segment
+			ITextTag ttag = MakeTag(m_text, m_np, seg, 6, seg, 6);
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null)}).Using(m_fragmentComparer));
+
+			ttag.Delete();
+			// create a tag where the begin index is greater than the end index
+			MakeTag(m_text, m_np, seg, 5, seg, 4);
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null)}).Using(m_fragmentComparer));
 		}
 
 		private class ParaFragmentEqualityComparer : IEqualityComparer<IParaFragment>

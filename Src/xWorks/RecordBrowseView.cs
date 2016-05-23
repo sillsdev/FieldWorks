@@ -324,9 +324,9 @@ namespace SIL.FieldWorks.XWorks
 					{
 						ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 						e.EventHandled = ui.HandleRightClick(sender, true, "mnuBrowseView");
-					}
 				}
 			}
+		}
 		}
 
 		#endregion // Message Handlers

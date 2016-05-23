@@ -619,6 +619,9 @@
     <Compile Include="Areas\Lists\Tools\ReversalIndexPOS\ReversalEntryPOSClerk.cs" />
     <Compile Include="Areas\Lists\Tools\ReversalIndexPOS\ReversalIndexPOSRecordList.cs" />
     <Compile Include="Areas\Lists\Tools\ReversalIndexPOS\ReversalPOSMenuHandler.cs" />
+    <Compile Include="Areas\AffixRuleFormulaVc.cs" />
+    <Compile Include="Areas\MetaRuleFormulaVc.cs" />
+    <Compile Include="Areas\RegRuleFormulaVc.cs" />
     <Compile Include="Areas\MultiPaneFactory.cs" />
     <Compile Include="Areas\MultiPaneParameters.cs" />
     <Compile Include="Areas\Notebook\Tools\NotebookEdit\RecordReferenceVectorLauncher.cs">
@@ -645,9 +648,7 @@
     <Compile Include="Areas\RuleFormulaSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\RuleFormulaView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="Areas\RuleFormulaVcBase.cs" />
     <Compile Include="Areas\SplitterChildControlParameters.cs" />
     <Compile Include="Areas\TemporaryToolProviderHack.cs" />
     <Compile Include="Areas\TextsAndWords\ConcordanceDlg.cs">
@@ -685,9 +686,6 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcPatternNode.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcPatternSda.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcPatternVc.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcPatternView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcTagDlg.cs">
       <SubType>Form</SubType>
     </Compile>

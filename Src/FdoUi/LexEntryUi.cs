@@ -236,16 +236,16 @@ namespace SIL.FieldWorks.FdoUi
 			var entries = FindEntriesForWordformUI(cache, tssWf, wfa);
 
 			IVwStylesheet styleSheet = GetStyleSheet(cache, propertyTable);
-			if (entries == null || entries.Count == 0)
-			{
+				if (entries == null || entries.Count == 0)
+				{
 				ILexEntry entry = ShowFindEntryDialog(cache, propertyTable, publisher, subscriber, tssWf, owner);
-				if (entry == null)
-					return;
-				entries = new List<ILexEntry>(1);
-				entries.Add(entry);
-			}
+					if (entry == null)
+						return;
+					entries = new List<ILexEntry>(1);
+					entries.Add(entry);
+				}
 			DisplayEntriesRecursive(cache, owner, propertyTable, publisher, subscriber, styleSheet, helpProvider, helpFileKey, entries, tssWf);
-		}
+			}
 
 		private static void DisplayEntriesRecursive(FdoCache cache, IWin32Window owner,
 			IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, IVwStylesheet stylesheet,
@@ -479,29 +479,29 @@ namespace SIL.FieldWorks.FdoUi
 		/// ------------------------------------------------------------------------------------
 		internal static ILexEntry ShowFindEntryDialog(FdoCache cache, IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber, ITsString tssForm, IWin32Window owner)
 		{
-			using (EntryGoDlg entryGoDlg = new EntryGoDlg())
-			{
-				// Temporarily set TopMost to true so it will launch above any calling app (e.g. Paratext)
-				// but reset after activated.
-				SetCurrentModalForm(entryGoDlg);
-				var wp = new WindowParams
+				using (EntryGoDlg entryGoDlg = new EntryGoDlg())
 				{
-					m_btnText = FdoUiStrings.ksShow,
-					m_title = FdoUiStrings.ksFindInDictionary,
-					m_label = FdoUiStrings.ksFind_
-				};
-				if (owner == null)
-					entryGoDlg.StartPosition = FormStartPosition.CenterScreen;
-				entryGoDlg.Owner = owner as Form;
+					// Temporarily set TopMost to true so it will launch above any calling app (e.g. Paratext)
+					// but reset after activated.
+					SetCurrentModalForm(entryGoDlg);
+					var wp = new WindowParams
+								 {
+									 m_btnText = FdoUiStrings.ksShow,
+									 m_title = FdoUiStrings.ksFindInDictionary,
+									 m_label = FdoUiStrings.ksFind_
+								 };
+					if (owner == null)
+						entryGoDlg.StartPosition = FormStartPosition.CenterScreen;
+					entryGoDlg.Owner = owner as Form;
 				entryGoDlg.SetDlgInfo(cache, wp, propertyTable, publisher, subscriber, tssForm);
-				entryGoDlg.SetHelpTopic("khtpFindInDictionary");
-				if (entryGoDlg.ShowDialog() == DialogResult.OK)
-				{
-					var entry = entryGoDlg.SelectedObject as ILexEntry;
-					Debug.Assert(entry != null);
-					return entry;
+					entryGoDlg.SetHelpTopic("khtpFindInDictionary");
+					if (entryGoDlg.ShowDialog() == DialogResult.OK)
+					{
+						var entry = entryGoDlg.SelectedObject as ILexEntry;
+						Debug.Assert(entry != null);
+						return entry;
+					}
 				}
-			}
 			return null;
 		}
 

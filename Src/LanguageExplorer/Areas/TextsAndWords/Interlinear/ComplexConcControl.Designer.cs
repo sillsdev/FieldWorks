@@ -35,7 +35,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ComplexConcControl));
-			this.m_view = new ComplexConcPatternView();
+			this.m_view = new SIL.FieldWorks.LexText.Controls.PatternView();
 			this.m_insertControl = new SIL.FieldWorks.LexText.Controls.InsertionControl();
 			this.m_searchButton = new System.Windows.Forms.Button();
 			this.m_panel = new System.Windows.Forms.TableLayoutPanel();
@@ -98,7 +98,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#endregion
 
-		private ComplexConcPatternView m_view;
+		private PatternView m_view;
 		private InsertionControl m_insertControl;
 		private System.Windows.Forms.Button m_searchButton;
 		private System.Windows.Forms.TableLayoutPanel m_panel;

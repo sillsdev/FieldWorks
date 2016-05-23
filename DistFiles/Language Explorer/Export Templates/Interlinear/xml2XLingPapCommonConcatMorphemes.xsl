@@ -77,6 +77,12 @@ Elements to ignore or are handled elsewhere
 													<xsl:value-of select="normalize-space(translate(.,'§',''))"/>
 												</xsl:if>
 											</xsl:for-each>
+											<xsl:for-each select="../following-sibling::word[2]/item[@type='punct' and @lang!=$sLang]">
+												<xsl:if test="not(contains(.,'(') or contains(.,'[') or contains(.,'{') or contains(.,'“') or contains(.,'‘'))">
+													<!-- skip any preceding punctuation N.B. may well need to look for characters, too -->
+													<xsl:value-of select="normalize-space(translate(.,'§',''))"/>
+												</xsl:if>
+											</xsl:for-each>
 										</langData>
 									</wrd>
 								</xsl:for-each>

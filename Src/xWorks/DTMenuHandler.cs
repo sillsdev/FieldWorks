@@ -938,6 +938,7 @@ namespace SIL.FieldWorks.XWorks
 			using (CmObjectUi fdoUi = CmObjectUi.MakeUi(m_dataEntryForm.CurrentSlice.Object))
 			{
 				fdoUi.Mediator = m_mediator;
+				fdoUi.PropTable = m_propertyTable;
 				fdoUi.LaunchGuiControl(command);
 			}
 			return true;

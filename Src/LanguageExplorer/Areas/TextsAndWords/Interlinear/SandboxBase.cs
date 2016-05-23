@@ -2896,6 +2896,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private bool HandleRightClickOnObject(int hvoReal)
 		{
 			CmObjectUi rightClickUiObj = CmObjectUi.MakeUi(Cache, hvoReal);
+			rightClickUiObj.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			if (rightClickUiObj != null)
 			{
 				m_fHandlingRightClickMenu = true;
@@ -4366,6 +4367,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (hvoTarget == 0)
 					return; // LT-13878: User may have 'Ctrl+Click'ed on an arrow or off in space somewhere
 				CmObjectUi targetUiObj = CmObjectUi.MakeUi(Cache, hvoTarget);
+				targetUiObj.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				targetUiObj.HandleCtrlClick(this);
 			}
 		}
@@ -4449,6 +4451,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					// This method should do likewise...
 					using (CmObjectUi ui = CmObjectUi.MakeUi(m_caches.MainCache, hvoMsa))
 					{
+						ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 						Guid guid = ui.GuidForJumping(null);
 						if (guid == Guid.Empty)
 							return 0;

@@ -289,7 +289,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					return;
 				}
 
-				SplitCont.Panel2.Controls.Add(value);
+					SplitCont.Panel2.Controls.Add(value);
 			}
 		}
 

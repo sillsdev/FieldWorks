@@ -1247,7 +1247,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (PersistenceProvder != null)
 			{
 				PersistenceProvder.SetInfoObject("SliceSplitterBaseDistance", SliceSplitPositionBase);
-			}
+		}
 		}
 
 		private void RestorePreferences()
@@ -2067,8 +2067,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						new XAttribute("ref", "Custom"),
 						new XAttribute("param", target));
 					insertAfter.AddAfterSelf(part);
-				}
-			}
+		}
+		}
 		}
 
 		/// <summary>
@@ -2829,7 +2829,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="obj"></param>
 		/// <param name="attr"></param>
 		private string GetLabel(XElement caller, XElement node, ICmObject obj, string attr)
-		{
+			{
 			var label = XmlUtils.GetLocalizedAttributeValue(caller, attr, null)
 				?? XmlUtils.GetLocalizedAttributeValue(node, attr, null)
 				?? XmlUtils.GetOptionalAttributeValue(caller, attr)
@@ -4048,24 +4048,24 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// try to see if any of our current slices have focus. if so, use that one.
 			if (sliceToSetAsCurrent == null)
 			{
-				if (ContainsFocus)
-				{
-					// see if we can find the parent slice for focusedControl
+			if (ContainsFocus)
+			{
+				// see if we can find the parent slice for focusedControl
 					var currentControl = PropertyTable.GetValue<IFwMainWnd>("window").FocusedControl;
-					while (currentControl != null && currentControl != this)
+				while (currentControl != null && currentControl != this)
+				{
+					if (currentControl is Slice)
 					{
-						if (currentControl is Slice)
-						{
-							// found the slice to
-							sliceToSetAsCurrent = currentControl as Slice;
+						// found the slice to
+						sliceToSetAsCurrent = currentControl as Slice;
 							if (sliceToSetAsCurrent.IsDisposed)
 								sliceToSetAsCurrent = null;		// shouldn't happen, but...
 							else
-								break;
-						}
-						currentControl = currentControl.Parent;
+						break;
 					}
+					currentControl = currentControl.Parent;
 				}
+			}
 			}
 			// set current slice.
 			if (sliceToSetAsCurrent != null)
