@@ -19,15 +19,7 @@ namespace LanguageExplorer.Areas
 		/// <summary />
 		internal static void SetupToolDisplay(ICollapsingSplitContainer mainCollapsingSplitContainer, ITool tool)
 		{
-			var mainCollapsingSplitContainerAsControl = (Control)mainCollapsingSplitContainer;
-			mainCollapsingSplitContainerAsControl.SuspendLayout();
-			var oldSecondControl = mainCollapsingSplitContainer.SecondControl;
-			mainCollapsingSplitContainerAsControl.Controls.Remove(oldSecondControl);
-			oldSecondControl.Dispose();
-
-			var newTempControl = CreateNewLabel(tool);
-			mainCollapsingSplitContainer.SecondControl = newTempControl;
-			mainCollapsingSplitContainerAsControl.ResumeLayout();
+			mainCollapsingSplitContainer.SecondControl = CreateNewLabel(tool);
 		}
 
 		internal static Label CreateNewLabel(ITool tool)
@@ -62,16 +54,8 @@ namespace LanguageExplorer.Areas
 		/// <summary />
 		internal static void RemoveToolDisplay(ICollapsingSplitContainer mainCollapsingSplitContainer)
 		{
-			var mainCollapsingSplitContainerAsControl = (Control)mainCollapsingSplitContainer;
-			mainCollapsingSplitContainerAsControl.SuspendLayout();
-
-			var oldControl = mainCollapsingSplitContainer.SecondControl;
-			mainCollapsingSplitContainerAsControl.Controls.Remove(oldControl);
-			oldControl.Dispose();
-
-			mainCollapsingSplitContainer.SecondControl = new Panel();
-
-			mainCollapsingSplitContainerAsControl.ResumeLayout();
+			// Re-setting SecondControl, will dispose the Label.
+			mainCollapsingSplitContainer.SecondControl = null;
 		}
 	}
 }

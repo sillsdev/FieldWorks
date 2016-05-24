@@ -105,12 +105,6 @@ namespace LanguageExplorer.Areas
 		{
 			// All tools with MultiPane as main second child of top level mainCollapsingSplitContainer
 			// have PaneBarContainer children, which then have other main children,
-			var mainCollapsingSplitContainerAsControl = (Control)mainCollapsingSplitContainer;
-			mainCollapsingSplitContainerAsControl.SuspendLayout();
-			// Get rid of any other controls
-			var oldSecondControl = mainCollapsingSplitContainer.SecondControl;
-			mainCollapsingSplitContainerAsControl.Controls.Remove(oldSecondControl);
-			oldSecondControl.Dispose();
 			var newMultiPane = new MultiPane(multiPaneParameters);
 
 			InitializeSubControl(newMultiPane, multiPaneParameters.FirstControlParameters.Control, true);
@@ -128,7 +122,6 @@ namespace LanguageExplorer.Areas
 			{
 				((IFlexComponent)secondControl).InitializeFlexComponent(flexComponentParameters);
 			}
-			mainCollapsingSplitContainerAsControl.ResumeLayout();
 			multiPaneParameters.FirstControlParameters.Control.BringToFront();
 			multiPaneParameters.SecondControlParameters.Control.BringToFront();
 			firstControl.BringToFront();
@@ -227,12 +220,8 @@ namespace LanguageExplorer.Areas
 		/// <param name="recordClerk">The RecordClerk data member to set to null.</param>
 		internal static void RemoveFromParentAndDispose(ICollapsingSplitContainer mainCollapsingSplitContainer, ref MultiPane multiPane, ref RecordClerk recordClerk)
 		{
-			var parentControl = multiPane.Parent;
-			parentControl.SuspendLayout();
-			parentControl.Controls.Remove(multiPane);
-			multiPane.Dispose();
-			mainCollapsingSplitContainer.SecondControl = new Panel(); // Keep something current in it.
-			parentControl.ResumeLayout();
+			// Re-setting SecondControl, will dispose its multiPane.
+			mainCollapsingSplitContainer.SecondControl = null;
 			multiPane = null;
 
 			// recordClerk is disposed by XWorksViewBase in the call "multiPane.Dispose()", but just set the variable to null here.

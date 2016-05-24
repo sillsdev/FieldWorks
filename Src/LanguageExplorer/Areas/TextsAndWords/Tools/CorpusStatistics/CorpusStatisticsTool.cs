@@ -75,8 +75,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 			_statisticsView.Deactivate(mainCollapsingSplitContainer, menuStrip, toolStripContainer, statusbar);
 
 			// Remove StatisticsView (right panel of 'mainCollapsingSplitContainer').
-			mainCollapsingSplitContainer.SecondControl.Controls.Remove(_statisticsView);
-			_statisticsView.Dispose();
+			mainCollapsingSplitContainer.SecondControl = null;
 			_statisticsView = null;
 		}
 
@@ -91,7 +90,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		{
 			// Get the StatisticsView into right panel of 'mainCollapsingSplitContainer'.
 			_statisticsView = new StatisticsView();
-			mainCollapsingSplitContainer.SecondControl.Controls.Add(_statisticsView);
+			mainCollapsingSplitContainer.SecondControl = _statisticsView;
 			_statisticsView.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			_statisticsView.Activate(mainCollapsingSplitContainer, menuStrip, toolStripContainer, statusbar);
 		}

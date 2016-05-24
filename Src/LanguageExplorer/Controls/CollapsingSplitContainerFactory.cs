@@ -99,20 +99,13 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Remove <paramref name="collapsingSplitContainer"/> from parent control and dispose it.
 		/// </summary>
+		/// <param name="mainCollapsingSplitContainer"></param>
 		/// <param name="collapsingSplitContainer">The CollapsingSplitContainer to remove and dispose.</param>
 		/// <param name="recordClerk">The RecordClerk data member to set to null.</param>
-		internal static void RemoveFromParentAndDispose(ref CollapsingSplitContainer collapsingSplitContainer, ref RecordClerk recordClerk)
+		internal static void RemoveFromParentAndDispose(ICollapsingSplitContainer mainCollapsingSplitContainer, ref CollapsingSplitContainer collapsingSplitContainer, ref RecordClerk recordClerk)
 		{
-			var parentCollapsingSplitContainer = (CollapsingSplitContainer)collapsingSplitContainer.Parent.Parent;
-			var parentControl = parentCollapsingSplitContainer.Panel2;
-			parentControl.SuspendLayout();
-			parentControl.Controls.Remove(collapsingSplitContainer);
-			collapsingSplitContainer.Dispose();
-			// Add a temporary placeholder Panel in main splitter's right pane.
-			// "SecondControl" cannot be set to null, and its old value ("collapsingSplitContainer") has now been disposed.
-			// If another controll is added as "SecondControl", the temporary Panel will be disposed.
-			parentCollapsingSplitContainer.SecondControl = new Panel();
-			parentControl.ResumeLayout();
+			// Re-setting SecondControl, will dispose the child collapsingSplitContainer control.
+			mainCollapsingSplitContainer.SecondControl = null;
 
 			collapsingSplitContainer = null;
 

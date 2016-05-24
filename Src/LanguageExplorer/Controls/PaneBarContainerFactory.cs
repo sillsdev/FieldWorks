@@ -25,17 +25,7 @@ namespace LanguageExplorer.Controls
 		/// <returns>The new PaneBarContainer instance.</returns>
 		internal static PaneBarContainer Create(FlexComponentParameters flexComponentParameters, ICollapsingSplitContainer mainCollapsingSplitContainer, Control mainChildControl)
 		{
-			var mainCollapsingSplitContainerAsControl = (Control)mainCollapsingSplitContainer;
-			mainCollapsingSplitContainerAsControl.SuspendLayout();
-			if (mainCollapsingSplitContainer.SecondControl != null)
-			{
-				mainCollapsingSplitContainerAsControl.Controls.Remove(mainCollapsingSplitContainer.SecondControl);
-				mainCollapsingSplitContainer.SecondControl.Dispose();
-			}
-			var newPaneBarContainer = new PaneBarContainer(mainChildControl)
-			{
-				Dock = DockStyle.Fill
-			};
+			var newPaneBarContainer = new PaneBarContainer(mainChildControl);
 			mainCollapsingSplitContainer.SecondControl = newPaneBarContainer;
 			newPaneBarContainer.InitializeFlexComponent(flexComponentParameters);
 			if (mainChildControl is IFlexComponent)
@@ -43,7 +33,6 @@ namespace LanguageExplorer.Controls
 				var asFlexComponent = (IFlexComponent)mainChildControl;
 				asFlexComponent.InitializeFlexComponent(flexComponentParameters);
 			}
-			mainCollapsingSplitContainerAsControl.ResumeLayout();
 			mainChildControl.BringToFront();
 
 			return newPaneBarContainer;
@@ -116,12 +105,8 @@ namespace LanguageExplorer.Controls
 		/// <param name="recordClerk">The RecordClerk data member to set to null.</param>
 		internal static void RemoveFromParentAndDispose(ICollapsingSplitContainer mainCollapsingSplitContainer, ref PaneBarContainer paneBarContainer, ref RecordClerk recordClerk)
 		{
-			var mainCollapsingSplitContainerAsControl = (Control)mainCollapsingSplitContainer;
-			mainCollapsingSplitContainerAsControl.SuspendLayout();
-			mainCollapsingSplitContainerAsControl.Controls.Remove(paneBarContainer);
-			paneBarContainer.Dispose();
-			mainCollapsingSplitContainer.SecondControl = new Panel();
-			mainCollapsingSplitContainerAsControl.ResumeLayout();
+			// Re-setting SecondControl, will dispose paneBarContainer.
+			mainCollapsingSplitContainer.SecondControl = null;
 
 			paneBarContainer = null;
 

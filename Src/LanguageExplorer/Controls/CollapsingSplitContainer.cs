@@ -208,7 +208,7 @@ namespace LanguageExplorer.Controls
 			set
 			{
 				if (value == null)
-					throw new ArgumentNullException("FirstControl cannot be null.");
+					value = new Panel();
 
 				value.Dock = DockStyle.Fill;
 				if (Panel1.Controls.Contains(m_firstMainControl))
@@ -267,7 +267,7 @@ namespace LanguageExplorer.Controls
 			set
 			{
 				if (value == null)
-					throw new ArgumentNullException("SecondControl cannot be null.");
+					value = new Panel();
 
 				value.Dock = DockStyle.Fill;
 				if (SecondPanel.Controls.Contains(m_secondMainControl))

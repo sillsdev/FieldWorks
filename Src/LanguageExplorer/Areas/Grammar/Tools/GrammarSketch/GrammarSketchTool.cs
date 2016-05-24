@@ -91,8 +91,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			mainCollapsingSplitContainer.SecondControl.Controls.Remove(_grammarSketchHtmlViewer);
-			((IDisposable)_grammarSketchHtmlViewer).Dispose();
+			mainCollapsingSplitContainer.SecondControl = null;
 			_grammarSketchHtmlViewer = null;
 
 			_refreshMenu.Enabled = _refreshOriginalValue;
@@ -122,7 +121,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 				Dock = DockStyle.Fill
 			};
 			_grammarSketchHtmlViewer.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-			mainCollapsingSplitContainer.SecondControl.Controls.Add(_grammarSketchHtmlViewer);
+			mainCollapsingSplitContainer.SecondControl = _grammarSketchHtmlViewer;
 
 			// F5 refresh is disabled in this tool.
 			// TODO-Linux: boolean 'searchAllChildren' parameter is marked with "MonoTODO".

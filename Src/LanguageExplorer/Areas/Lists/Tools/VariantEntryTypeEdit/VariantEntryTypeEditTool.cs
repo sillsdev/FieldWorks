@@ -82,7 +82,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 		public void Deactivate(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			StatusBar statusbar)
 		{
-			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(ref _collapsingSplitContainer, ref _recordClerk);
+			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(mainCollapsingSplitContainer, ref _collapsingSplitContainer, ref _recordClerk);
 		}
 
 		/// <summary>
