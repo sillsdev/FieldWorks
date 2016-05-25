@@ -16,7 +16,8 @@
 	#							- use different style for quest if no examples
 	#			  2013/05/28 jt - ensure only one abbreviation output (in correct WS)
 	#							- integrated into git; recommend we stop tracking changes here
-	# Copyright:   (c) 2012-2013 SIL International
+	#			  2016/05/26 ab - Fix spacing in semantic domain worksheets - LT-14995 LT-14996
+	# Copyright:   (c) 2012-2016 SIL International
 	# License:	 <LGPL>
 	################################################################-->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -46,12 +47,12 @@
 					<xsl:attribute name="type">text/css</xsl:attribute>
 					<xsl:text>
 h1 { font-family: Arial, sanserif; font-size: 16pt; margin: 0; page-break-before: always;}
-h2 { font-family: Arial, sanserif; font-size: 16pt; margin: 0; page-break-after: avoid;}
-.descr { font-family: "Times New Roman", serif; font-size: 12pt; margin: 0;}
-.quest { font-family: "Times New Roman", serif; font-size: 12pt; margin: 0; margin-top: 4pt; page-break-after: avoid; }
-.quest1 { font-family: "Times New Roman", serif; font-size: 12pt; margin: 0; margin-top: 4pt; }
+h2 { font-family: Arial, sanserif; font-size: 16pt; margin: 0; margin-top: 18pt; page-break-after: avoid;}
+.descr { font-family: "Times New Roman", serif; font-size: 12pt; margin: 0; }
+.quest { font-family: "Times New Roman", serif; font-size: 12pt; margin: 0; margin-top: 4pt; page-break-before: avoid; }
+.quest1 { font-family: "Times New Roman", serif; font-size: 12pt; margin: 0; margin-top: 4pt; page-break-before: avoid; }
 .words { font-style: italic; font-family: "Times New Roman", serif; font-size: 12pt;
-		 margin: 0; margin-left: 0.38in; text-indent: -0.13in; display: none;}
+		 margin: 0; margin-left: 0.38in; text-indent: -0.13in; display: none; page-break-before: avoid;}
 .english {color: red;}
 					</xsl:text>
 				</xsl:element>
