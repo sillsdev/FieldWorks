@@ -238,7 +238,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 								reader.MoveToElement();
 								cfiList.Add(cfi);
 							}
-							RegisterOriginalCustomProperties(cfiList);
+							RegisterOriginalCustomProperties(cfiList, m_startupVersionNumber);
 						}
 					}
 

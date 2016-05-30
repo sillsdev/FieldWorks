@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -419,8 +419,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			foreach (var dirtball in dtoRepository.Dirtballs)
 			{
 				// Since we're doing migration, everything in the map should still be a surrogate.
-				var originalSurr = m_identityMap.GetObjectOrSurrogate(idFact.FromGuid(new Guid(dirtball.Guid)))
-					as CmObjectSurrogate;
+				var originalSurr = (CmObjectSurrogate)m_identityMap.GetObjectOrSurrogate(idFact.FromGuid(new Guid(dirtball.Guid)));
 				originalSurr.Reset(dirtball.Classname, dirtball.XmlBytes);
 				dirtballs.Add(originalSurr);
 			}
@@ -659,7 +658,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 						ReconstituteObjectsFor(WfiGlossTags.kClassId);
 						ReconstituteObjectsFor(WfiMorphBundleTags.kClassId);
 						break;
-						//case BackendBulkLoadDomain.None: // 'On demand' loading only. Fall through.
+					//case BackendBulkLoadDomain.None: // 'On demand' loading only. Fall through.
 					default:
 						break; // 'On demand' loading only.
 				}
@@ -779,14 +778,51 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			BootstrapNewLanguageProject.BootstrapNewSystem(m_cache.ServiceLocator);
 		}
 
-		internal void RegisterOriginalCustomProperties(IEnumerable<CustomFieldInfo> originalCustomProperties)
+		internal void RegisterOriginalCustomProperties(List<CustomFieldInfo> originalCustomProperties, int startupVersionNumber)
 		{
+			if (startupVersionNumber < 7000069)
+			{
+				// Model version 7000069 introduces the built-in field `UsageNote` and `Exemplar` on `LexSense`.
+				// Rename any Custom Field `UsageNote` and `Exemplar` on `LexSense` to prevent a crash trying to register
+				// a Custom Field with the same name as a built-in field. Any data in this field will be removed or
+				// migrated by the Migrator.
+				PreLoadCustomFields(originalCustomProperties);
+			}
 			m_mdcInternal.AddCustomFields(originalCustomProperties);
-			foreach (CustomFieldInfo cfi in m_mdcInternal.GetCustomFields())
+			foreach (var cfi in m_mdcInternal.GetCustomFields())
 			{
 				if (m_extantCustomFields.ContainsKey(cfi.Key))
 					return; // Must have done a migration.
 				m_extantCustomFields.Add(cfi.Key, cfi);
+			}
+		}
+
+		/// <summary>
+		/// Model version 7000069 introduces the built-in fields `UsageNote` and `Exemplar` on `LexSense`.
+		/// Remove CustomField from the list if type MultiString or MultiUnicode, else rename `UsageNote` or `Exemplar` field.
+		/// </summary>
+		/// <param name="cfiList">List of Custom Fields</param>
+		internal static void PreLoadCustomFields(List<CustomFieldInfo> cfiList)
+		{
+			var senseCfis = cfiList.Where(cfi => cfi.m_classname == "LexSense").ToList();
+			foreach (var cfName in new[] { "Exemplar", "UsageNote" })
+			{
+				var cf = senseCfis.FirstOrDefault(cfi => cfi.m_fieldname == cfName);
+				if (cf == null)
+					continue; // no conflicting custom field
+				if (cf.m_fieldType == CellarPropertyType.MultiString || cf.m_fieldType == CellarPropertyType.MultiUnicode)
+				{
+					//the custom field exactly matches the new built-in field. Remove the CF; data will be migrated.
+					cfiList.Remove(cf);
+					continue;
+				}
+				// Be kind to the crazy user who has multiple fields as custom fields on LexSense (ie. `UsageNote` and `UsageNote1`);
+				// find the first available and rename.
+				// This is the same algorithm used by DataMigration7000069 to prevent naming conflicts with existing Custom Fields
+				var nameSuffix = 0;
+				while (senseCfis.Any(cfi => cfi.m_fieldname == cfName + nameSuffix))
+					nameSuffix++;
+				cf.m_fieldname = cfName + nameSuffix;
 			}
 		}
 

@@ -307,6 +307,7 @@
     <Compile Include="DummyProgressDlg.cs" />
     <Compile Include="DuplicateAnalysisFixerTests.cs" />
     <Compile Include="DuplicateWordformFixerTests.cs" />
+    <Compile Include="FdoBackendProviderTests.cs" />
     <Compile Include="FdoFactoryAdditionsTests.cs" />
     <Compile Include="FeatureSystemTests.cs" />
     <Compile Include="FwSetupFixtureClass.cs" />
@@ -421,6 +422,8 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="TestData\DataMigration7000069_CustomExemplar.xml" />
+    <Content Include="TestData\DataMigration7000069_CustomUsageNote.xml" />
     <Content Include="TestData\DataMigration7000069.xml" />
     <Content Include="TestData\DataMigration7000067TestData.xml" />
     <Content Include="TestData\DataMigration7000058_NonEmptyGlossAppend.xml" />

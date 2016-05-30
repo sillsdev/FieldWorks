@@ -18,8 +18,9 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 	/// Swap Abbreviation and ReverseAbbr fields. By swapping the fields the "of" will be switched
 	/// to the other reference.
 	///
-	/// 3) This migration also adds DoNotPublishIn fields to CmPicture and LexPronunciation,
-	/// but adding empty fields does not involve any actual migration.
+	/// 3) Add a MultiString UsageNote and MuliUnicode Exemplar field in LexSense, allowing for multiple ws
+	/// attributes in their run. If user has created a Custom "UsageNote" or "Exemplar", then copy the data into the
+	/// new field and remove the Custom field.
 	///
 	/// 4) Remove LexEntryRefs (Complex Forms and Variants) with no ComponentLexemes (they mean nothing)
 	/// </summary>
@@ -29,13 +30,17 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		public void PerformMigration(IDomainObjectDTORepository repoDto)
 		{
 			DataMigrationServices.CheckVersionNumber(repoDto, 7000068);
+
 			UpdateRestrictions(repoDto);
 			AddReverseNameAndSwapAbbreviationFields(repoDto);
-			RemoveEmptyComplexFormType(repoDto);
+			RemoveEmptyLexEntryRefs(repoDto);
+			MigrateIntoNewMultistringField(repoDto, "Exemplar");
+			MigrateIntoNewMultistringField(repoDto, "UsageNote");
+
 			DataMigrationServices.IncrementVersionNumber(repoDto);
 		}
 
-		/// <summary>Update every instance of a Restriction in a LexEntry or a LexSense to change from AUni to AStr.</summary>
+		/// <summary>We update every instance of a Restriction in a LexEntry or a LexSense to change from AUni to AStr.</summary>
 		private static void UpdateRestrictions(IDomainObjectDTORepository repoDto)
 		{
 			foreach (var dto in repoDto.AllInstancesSansSubclasses("LexEntry").Union(repoDto.AllInstancesSansSubclasses("LexSense")))
@@ -60,7 +65,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			}
 		}
 
-		private void AddReverseNameAndSwapAbbreviationFields(IDomainObjectDTORepository repoDto)
+		internal static void AddReverseNameAndSwapAbbreviationFields(IDomainObjectDTORepository repoDto)
 		{
 			// We DO want subclasses (e.g. LexEntryInflType)
 			foreach (var dto in repoDto.AllInstancesWithSubclasses("LexEntryType"))
@@ -84,26 +89,77 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 
 				var abbrevElt = data.Element("Abbreviation");
 				var revAbbrElt = data.Element("ReverseAbbr");
-				if(abbrevElt != null)
+				if (abbrevElt != null)
 					abbrevElt.Name = "ReverseAbbr";
-				if(revAbbrElt != null)
+				if (revAbbrElt != null)
 					revAbbrElt.Name = "Abbreviation";
 
 				DataMigrationServices.UpdateDTO(repoDto, dto, data.ToString());
 			}
 		}
 
-		private static void RemoveEmptyComplexFormType(IDomainObjectDTORepository repoDto)
+		internal static void RemoveEmptyLexEntryRefs(IDomainObjectDTORepository repoDto)
 		{
 			foreach (var dto in repoDto.AllInstancesWithSubclasses("LexEntryRef"))
 			{
-				var data = XElement.Parse(dto.Xml);
+				XElement data = XElement.Parse(dto.Xml);
 
 				var components = data.Element("ComponentLexemes");
 				if (components == null || !components.HasElements)
 				{
 					DataMigrationServices.RemoveIncludingOwnedObjects(repoDto, dto, true);
 				}
+			}
+		}
+
+		/// <summary>
+		/// If user created a Custom "Exemplar" or "UsageNote" of type MultiString or MultiUnicode,
+		/// copy that data into the new built-in MultiString element and, if MultiString, remove the Custom Field.
+		/// If a conflicting Custom Field cannot be migrated and removed, rename it to avoid conflict.
+		/// </summary>
+		internal static void MigrateIntoNewMultistringField(IDomainObjectDTORepository repoDto, string fieldName)
+		{
+			// This is the same algorithm used by FDOBackendProvider.PreLoadCustomFields to prevent naming conflicts with existing Custom Fields
+			var nameSuffix = 0;
+			var lexSenseClid = repoDto.MDC.GetClassId("LexSense");
+			while (repoDto.MDC.FieldExists(lexSenseClid, fieldName + nameSuffix, false))
+				++nameSuffix;
+			var newFieldName = fieldName + nameSuffix;
+
+			foreach (var dto in repoDto.AllInstancesSansSubclasses("LexSense"))
+			{
+				var data = XElement.Parse(dto.Xml);
+
+				var customElt = data.Elements("Custom").FirstOrDefault(elt => elt.Attribute("name").Value == fieldName);
+				if (customElt == null)
+					continue;
+				customElt.SetAttributeValue("name", newFieldName); // rename to the new custom Exemplar name
+
+				var builtInElt = new XElement(fieldName);
+				var isFieldBuiltIn = false;
+				foreach (var multiStrElt in customElt.Elements("AStr"))
+				{
+					builtInElt.Add(multiStrElt);
+					isFieldBuiltIn = true;
+				}
+				foreach (var multiStrElt in customElt.Elements("AUni"))
+				{
+					multiStrElt.Name = "AStr";
+					var mutiStrData = multiStrElt.Value;
+					multiStrElt.Value = string.Empty;
+					var wsAttr = multiStrElt.Attribute("ws");
+					var runElt = new XElement("Run") { Value = mutiStrData };
+					runElt.SetAttributeValue("ws", wsAttr.Value);
+					multiStrElt.Add(runElt);
+					builtInElt.Add(multiStrElt);
+					isFieldBuiltIn = true;
+				}
+				if (isFieldBuiltIn)
+				{
+					customElt.Remove();
+					data.Add(builtInElt);
+				}
+				DataMigrationServices.UpdateDTO(repoDto, dto, data.ToString());
 			}
 		}
 	}

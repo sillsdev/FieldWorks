@@ -37,10 +37,12 @@ The original version number was: 7000000. Be sure it has the right number of zer
 editing it.
 
 Change History: (Be sure to update the 'version' attribute in the EntireModel, when needed. (Almost always.))
-  31 May 2016 (7000069): Make multiple model changes:
+  02 June 2016 (7000069): Make multiple model changes:
     * Add DoNotPublishIn fields to CmPicture and LexPronunciation.
     * Make LexEntry and LexSense Restrictions a MultiString field.
     * Add ReverseName to LexEntryType as a MultiUnicode field. Swap Abbreviation and ReverseAbbr fields.
+    * Add UsageNote to LexSense as a MultiString field.
+    * Add Exemplar to LexSense as a MultiString field.
   9 July 2013 (7000068): Make ReversalIndexEntry subentries be a sequence instead of a collection (LT-6468). No DM needed.
   7 May 2013  (7000067): Remove illegal attributes from <Uni> element. (Appears to come from FW 6.0.x.)
   22 March 2013 (7000066): Redux of DM64, but with real DM code.
@@ -2917,6 +2919,8 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 			<para>This property lists publications in which this sense should not appear, either in its main place or as any kind of link target. Currently the hiding only takes place in Dictionary view.</para>
 		  </comment>
 		</rel>
+		<basic num="33" id="Exemplar" sig="MultiString"/>
+		<basic num="34" id="UsageNote" sig="MultiString"/>
 	  </props>
 	</class>
 	<class num="26" id="MoAdhocProhib" abstract="true" abbr="acp" base="CmObject" depth="0">
