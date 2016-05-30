@@ -555,10 +555,14 @@ namespace SIL.FieldWorks.XWorks
 			if (firstLetter != lastHeader && !String.IsNullOrEmpty(firstLetter))
 			{
 				var headerTextBuilder = new StringBuilder();
-				headerTextBuilder.Append(Icu.ToTitle(firstLetter, wsString));
-				headerTextBuilder.Append(' ');
-				headerTextBuilder.Append(firstLetter.Normalize());
-
+				var upperCase = Icu.ToTitle(firstLetter, wsString);
+				var lowerCase = firstLetter.Normalize();
+				headerTextBuilder.Append(upperCase);
+				if (lowerCase != upperCase)
+				{
+					headerTextBuilder.Append(' ');
+					headerTextBuilder.Append(lowerCase);
+				}
 				xhtmlWriter.WriteStartElement("div");
 				xhtmlWriter.WriteAttributeString("class", "letHead");
 				xhtmlWriter.WriteStartElement("span");
