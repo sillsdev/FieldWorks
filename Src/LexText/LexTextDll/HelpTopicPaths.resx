@@ -1930,6 +1930,7 @@
   </data>
   <data name="khtpField-variantEntryTypeEdit-LexEntryType-Abbreviation" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/abbreviation_fld_variant_types.htm</value>
+    <comment>Most Variants are of type LexEntryType, but some are of type LexEntryInflType (a subclass; see above), so both are necessary here.</comment>
   </data>
   <data name="khtpField-variantEntryTypeEdit-LexEntryType-Confidence" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Confidence_fld_(Variant_Types).htm</value>
@@ -2909,6 +2910,7 @@
   </data>
   <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-Abbreviation" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/abbreviation_fld_variant_types.htm</value>
+    <comment>Most Variants are of type LexEntryType (see below), but some are of type LexEntryInflType (a subclass), so both are necessary here.</comment>
   </data>
   <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-Confidence" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Confidence_fld_(Variant_Types).htm</value>
@@ -3006,5 +3008,14 @@
   </data>
   <data name="khtpField-MoAffixProcess-Form" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Lexeme_Form_field.htm</value>
+  </data>
+  <data name="khtpField-complexEntryTypeEdit-LexEntryType-ReverseName" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lists/Complex_Form_Types_flds/Reverse_Name_field_(Complex_Form_Types).htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-ReverseName" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Reverse_Name_field_(Variant_Types).htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryType-ReverseName" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Reverse_Name_field_(Variant_Types).htm</value>
   </data>
 </root>
