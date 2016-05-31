@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2013 SIL International
+﻿// Copyright (c) 2010-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,6 +14,7 @@ using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using System.Collections.Generic;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.FwUtils;
+// ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -1204,40 +1205,41 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Addresses LT-16734.
+		/// Addresses LT-16734, LT-17415.
 		/// </summary>
 		[Test]
-		public void ExportTranslatedLists_ExportsReverseAbbrAndGlossAppend()
+		public void ExportTranslatedLists_ExportsReverseNameAndAbbrAndGlossAppend()
 		{
-			int wsFr = m_cache.WritingSystemFactory.GetWsFromStr("fr");
+			var wsFr = m_cache.WritingSystemFactory.GetWsFromStr("fr");
 			Assert.AreNotEqual(0, wsFr, "French (fr) should be defined");
 
-			int wsEn = m_cache.WritingSystemFactory.GetWsFromStr("en");
+			var wsEn = m_cache.WritingSystemFactory.GetWsFromStr("en");
 
 			using (new NonUndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor))
 			{
 				// Set data to test.
-				for (int i = 0; i < m_cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Count; i++)
+				for (var i = 0; i < m_cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Count; i++)
 				{
 					var possibility = m_cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[i]  as ILexEntryInflType;
 					if (possibility == null)
 						continue;
 
+					possibility.ReverseName.set_String(wsEn, string.Format("reverse name {0}", i));
 					possibility.ReverseAbbr.set_String(wsEn, string.Format("reverse abbreviation {0}", i));
 					possibility.GlossAppend.set_String(wsEn, string.Format("gloss append {0}", i));
 				}
 
-				List<ICmPossibilityList> lists = new List<ICmPossibilityList>{ m_cache.LangProject.LexDbOA.VariantEntryTypesOA };
+				var lists = new List<ICmPossibilityList>{ m_cache.LangProject.LexDbOA.VariantEntryTypesOA };
 
-				List<int> wses = new List<int> { wsFr };
-				ExportDialog.TranslatedListsExporter exporter = new ExportDialog.TranslatedListsExporter(lists, wses, null);
+				var wses = new List<int> { wsFr };
+				var exporter = new ExportDialog.TranslatedListsExporter(lists, wses, null);
 				string exportedOutput;
-				using (StringWriter w = new StringWriter())
+				using (var w = new StringWriter())
 				{
 					exporter.ExportTranslatedLists(w);
 					exportedOutput = w.ToString();
 				}
-				using (StringReader r = new StringReader(exportedOutput))
+				using (var r = new StringReader(exportedOutput))
 				{
 					Assert.AreEqual("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", r.ReadLine());
 					StringAssert.StartsWith("<Lists date=\"", r.ReadLine());
@@ -1272,6 +1274,10 @@ namespace SIL.FieldWorks.XWorks
 					Assert.AreEqual("<AUni ws=\"en\">irr. inf. var. of</AUni>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
 					Assert.AreEqual("</Abbreviation>", r.ReadLine());
+					Assert.AreEqual("<ReverseName>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"en\">reverse name 2</AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
+					Assert.AreEqual("</ReverseName>", r.ReadLine());
 					Assert.AreEqual("<ReverseAbbr>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"en\">reverse abbreviation 2</AUni>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
@@ -1290,6 +1296,10 @@ namespace SIL.FieldWorks.XWorks
 					Assert.AreEqual("<AUni ws=\"en\">pl. var. of</AUni>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
 					Assert.AreEqual("</Abbreviation>", r.ReadLine());
+					Assert.AreEqual("<ReverseName>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"en\">reverse name 3</AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
+					Assert.AreEqual("</ReverseName>", r.ReadLine());
 					Assert.AreEqual("<ReverseAbbr>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"en\">reverse abbreviation 3</AUni>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
@@ -1308,6 +1318,10 @@ namespace SIL.FieldWorks.XWorks
 					Assert.AreEqual("<AUni ws=\"en\">pst. var. of</AUni>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
 					Assert.AreEqual("</Abbreviation>", r.ReadLine());
+					Assert.AreEqual("<ReverseName>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"en\">reverse name 4</AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
+					Assert.AreEqual("</ReverseName>", r.ReadLine());
 					Assert.AreEqual("<ReverseAbbr>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"en\">reverse abbreviation 4</AUni>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
