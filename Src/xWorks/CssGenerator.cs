@@ -869,8 +869,10 @@ namespace SIL.FieldWorks.XWorks
 			if(exportStyleInfo.HasLeadingIndent || hangingIndent < 0.0f || ancestorIndents.TextIndent < 0.0f)
 			{
 				var leadingIndent = CalculateMarginLeft(exportStyleInfo, ancestorIndents, hangingIndent);
-
-				declaration.Add(new Property("margin-left") { Term = new PrimitiveTerm(UnitType.Point, leadingIndent) });
+				string marginDirection = "margin-left";
+				if (exportStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue)
+					marginDirection = "margin-right";
+				declaration.Add(new Property(marginDirection) { Term = new PrimitiveTerm(UnitType.Point, leadingIndent) });
 			}
 			if(exportStyleInfo.HasLineSpacing)
 			{
