@@ -18,6 +18,9 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 	/// Complex Form Type. The migration fills in the 'en' ws contents with Name.Value + " of".
 	/// Swap Abbreviation and ReverseAbbr fields. By swapping the fields the "of" will be switched
 	/// to the other reference.
+	///
+	/// 3) This migration also adds DoNotPublishIn fields to CmPicture and LexPronunciation,
+	/// but adding empty fields does not involve any actual migration.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	internal class DataMigration7000069 : IDataMigration
@@ -28,6 +31,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 
 			UpdateRestrictions(repoDto);
 			AddReverseNameAndSwapAbbreviationFields(repoDto);
+			// Also this migration adds DoNotPublishIn fields to CmPicture and LexPronunciation,
+			// but adding empty fields does not actually involve any migration.
 
 			DataMigrationServices.IncrementVersionNumber(repoDto);
 		}

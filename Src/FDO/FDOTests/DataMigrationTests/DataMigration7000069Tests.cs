@@ -131,15 +131,15 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 			const string frWs = "fr";
 			const string enWs = "en";
-			var firstEntry = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("LexEntryType").First().Xml);
+			var firstEntryType = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("LexEntryType").First().Xml);
 
-			var nameElement = firstEntry.Element("Name");
+			var nameElement = firstEntryType.Element("Name");
 			var multiUniElements = nameElement.Descendants("AUni");
 			Assert.AreEqual(1, multiUniElements.Count());
 			var uniString = multiUniElements.FirstOrDefault().Value;
 			Assert.AreEqual("Dialectal Variant", uniString);
 
-			var reversenameElement = firstEntry.Element("ReverseName");
+			var reversenameElement = firstEntryType.Element("ReverseName");
 			multiUniElements = reversenameElement.Descendants("AUni");
 			Assert.AreEqual(1, multiUniElements.Count());
 			uniString = multiUniElements.FirstOrDefault().Value;
@@ -177,6 +177,100 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			Assert.AreEqual("pst. of", uniString);
 			uniString = multiUniElements.First(wselt => wselt.Attribute("ws").Value == frWs).Value;
 			Assert.AreEqual("pss. de", uniString);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test the migration from version 7000068 to 7000069 adding DoNotPublishIn fields to
+		/// both LexPronunciation and CmPicture.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void AddDoNotPublishInPropertyToLexPronunciationAndCmPicture()
+		{
+			var mockMdc = new MockMDCForDataMigration();
+			mockMdc.AddClass(1, "CmObject", null, new List<string> { "LexEntry", "LexSense", "LexPronunciation", "CmPicture" });
+			mockMdc.AddClass(2, "LexEntry", "CmObject", new List<string>());
+			mockMdc.AddClass(3, "LexSense", "CmObject", new List<string>());
+			mockMdc.AddClass(4, "LexPronunciation", "CmObject", new List<string>());
+			mockMdc.AddClass(5, "CmPicture", "CmObject", new List<string>());
+
+			var currentFlid = 2000;
+			mockMdc.AddField(++currentFlid, "Senses", CellarPropertyType.OwningSequence, 2);
+			mockMdc.AddField(++currentFlid, "Pronunciations", CellarPropertyType.OwningSequence, 2);
+			mockMdc.AddField(++currentFlid, "Pictures", CellarPropertyType.OwningSequence, 3);
+			mockMdc.AddField(++currentFlid, "Form", CellarPropertyType.MultiString, 4);
+			mockMdc.AddField(++currentFlid, "Caption", CellarPropertyType.MultiUnicode, 5);
+			mockMdc.AddField(++currentFlid, "DoNotPublishIn", CellarPropertyType.ReferenceSequence, 4);
+			mockMdc.AddField(++currentFlid, "DoNotPublishIn", CellarPropertyType.ReferenceSequence, 5);
+
+			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000069.xml");
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000068, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
+
+			// Make sure CmPicture and LexPronunciation do not have DoNotPublishIn prior to migration.
+			foreach (var dto in dtoRepos.AllInstancesWithSubclasses("CmPicture"))
+			{
+				var elt = XElement.Parse(dto.Xml);
+				Assert.IsNull(elt.Element("DoNotPublishIn"));
+			}
+			foreach (var dto in dtoRepos.AllInstancesWithSubclasses("LexPronunciation"))
+			{
+				var elt = XElement.Parse(dto.Xml);
+				Assert.IsNull(elt.Element("DoNotPublishIn"));
+			}
+
+			m_dataMigrationManager.PerformMigration(dtoRepos, 7000069, new DummyProgressDlg());
+
+			// Since we're just adding two fields that will be empty initially,
+			// we just need to verify that nothing in our data changed.
+			const string frWs = "fr";
+			const string frPhoneticWs = "fr-fonipa";
+			const string frAudioWs = "fr-Zxxx-x-audio";
+			const string entryGuid = "7ecbb299-bf35-4795-a5cc-8d38ce8b891c";
+			const string senseGuid = "e3c2d179-3ccd-431e-ac2e-100bdb883680";
+
+			// Verify Pronunciation
+			var firstEntry = XElement.Parse(dtoRepos.GetDTO(entryGuid).Xml);
+			var entryPronElement = firstEntry.Element("Pronunciations");
+			var pronPointers = entryPronElement.Descendants("objsur");
+			Assert.AreEqual(1, pronPointers.Count(), "There should be one Pronunciation object");
+			var pronGuid = pronPointers.First().Attribute("guid").Value;
+			var allPronunciationDtos = dtoRepos.AllInstancesWithSubclasses("LexPronunciation");
+			Assert.AreEqual(1, allPronunciationDtos.Count(), "There should be one Pronunciation object");
+			var pronElement = XElement.Parse(allPronunciationDtos.First().Xml);
+			Assert.AreEqual(pronGuid, pronElement.Attribute("guid").Value,
+				"LexEntry guid pointer doesn't point to right LexPronunciation object");
+			Assert.AreEqual(1, pronElement.Descendants("Form").Count());
+			var form = pronElement.Descendants("Form").FirstOrDefault();
+			var multiUniElements = form.Descendants("AUni");
+			Assert.AreEqual(2, multiUniElements.Count());
+			var uniString = multiUniElements.First(wselt => wselt.Attribute("ws").Value == frPhoneticWs).Value;
+			Assert.AreEqual("se pron\x00f5se k\x0259m sa", uniString);
+			uniString = multiUniElements.First(wselt => wselt.Attribute("ws").Value == frAudioWs).Value;
+			Assert.AreEqual("12345A LexPronunciation.wav", uniString);
+
+			// Verify Picture
+			var sense = XElement.Parse(dtoRepos.GetDTO(senseGuid).Xml);
+			var sensePicElement = sense.Element("Pictures");
+			var picPointers = sensePicElement.Descendants("objsur");
+			Assert.AreEqual(1, picPointers.Count(), "There should be one Picture object");
+			var picGuid = picPointers.First().Attribute("guid").Value;
+			var allPictureDtos = dtoRepos.AllInstancesWithSubclasses("CmPicture");
+			Assert.AreEqual(1, allPictureDtos.Count(), "There should be one Picture object");
+			var picElement = XElement.Parse(allPictureDtos.First().Xml);
+			Assert.AreEqual(picGuid, picElement.Attribute("guid").Value,
+				"LexSense guid pointer doesn't point to right CmPicture object");
+			Assert.AreEqual(1, picElement.Descendants("Caption").Count());
+			var caption = picElement.Descendants("Caption").FirstOrDefault();
+			multiUniElements = caption.Descendants("AStr");
+			Assert.AreEqual(1, multiUniElements.Count(), "There should only be one caption");
+			var astrElt = multiUniElements.First();
+			Assert.AreEqual(frWs, astrElt.FirstAttribute.Value);
+			var runs = astrElt.Descendants("Run");
+			Assert.AreEqual(1, runs.Count());
+			var runElt = runs.FirstOrDefault();
+			Assert.AreEqual(frWs, runElt.FirstAttribute.Value);
+			Assert.AreEqual("grenouille", runElt.Value);
 		}
 	}
 }

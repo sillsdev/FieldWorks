@@ -5,6 +5,9 @@
 		<Restrictions>
 			<AUni ws="fr">Restrictions sur une entrée</AUni>
 		</Restrictions>
+		<Pronunciations>
+			<objsur guid="01049427-9d47-4e2b-bb83-efe7089ab6e2" t="o" />
+		</Pronunciations>
 	</rt>
 
 	<rt class="LexEntry" guid="7ecbb299-bf35-4795-a5cc-8d38ce8b891d">
@@ -18,6 +21,9 @@
 			<AUni ws="en">Sense restriction in English</AUni>
 			<AUni ws="fr">Restriction en français sur un sens</AUni>
 		</Restrictions>
+		<Pictures>
+			<objsur guid="e7219d1c-c2cc-4956-9389-0d161cc57a07" t="o" />
+		</Pictures>
 	</rt>
 
 	<rt class="LexSense" guid="e3c2d179-3ccd-431e-ac2e-100bdb883681" ownerguid="7ecbb299-bf35-4795-a5cc-8d38ce8b891d">
@@ -60,6 +66,21 @@
 			<AUni ws="en">pst.</AUni>
 			<AUni ws="fr">pss.</AUni>
 		</ReverseAbbr>
+	</rt>
+
+	<rt class="LexPronunciation" guid="01049427-9d47-4e2b-bb83-efe7089ab6e2" ownerguid="7ecbb299-bf35-4795-a5cc-8d38ce8b891c">
+		<Form>
+			<AUni ws="fr-fonipa">se pronõse kəm sa</AUni>
+			<AUni ws="fr-Zxxx-x-audio">12345A LexPronunciation.wav</AUni>
+		</Form>
+	</rt>
+
+	<rt class="CmPicture" guid="e7219d1c-c2cc-4956-9389-0d161cc57a07" ownerguid="7ecbb299-bf35-4795-a5cc-8d38ce8b891c">
+		<Caption>
+			<AStr ws="fr">
+				<Run ws="fr">grenouille</Run>
+			</AStr>
+		</Caption>
 	</rt>
 
 </languageproject>

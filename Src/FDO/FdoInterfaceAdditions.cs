@@ -941,6 +941,18 @@ namespace SIL.FieldWorks.FDO
 	}
 
 	/// <summary>
+	/// Non-model interface additions for ILexPronunciation.
+	/// </summary>
+	public partial interface ILexPronunciation
+	{
+		/// <summary>
+		/// The publications from which this is not excluded, that is, the ones in which it
+		/// SHOULD be published.
+		/// </summary>
+		IFdoSet<ICmPossibility> PublishIn { get; }
+	}
+
+	/// <summary>
 	/// Non-model interface additions for ILexSense.
 	/// </summary>
 	public partial interface ILexSense : IVariantComponentLexeme
@@ -4597,6 +4609,12 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="ich">character offset where insertion is to occur</param>
 		/// ------------------------------------------------------------------------------------
 		void InsertORCAt(ITsStrBldr tsStrBldr, int ich);
+
+		/// <summary>
+		/// The publications from which this is not excluded, that is, the ones in which it
+		/// SHOULD be published.
+		/// </summary>
+		IFdoSet<ICmPossibility> PublishIn { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

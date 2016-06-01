@@ -603,6 +603,26 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	/// </summary>
 	internal partial class LexPronunciation
 	{
+		protected override void AddObjectSideEffectsInternal(AddObjectEventArgs e)
+		{
+			if (e.Flid == LexPronunciationTags.kflidDoNotPublishIn)
+			{
+				var uowService = ((IServiceLocatorInternal)Services).UnitOfWorkService;
+				uowService.RegisterVirtualAsModified(this, "PublishIn", PublishIn.Cast<ICmObject>());
+			}
+			base.AddObjectSideEffectsInternal(e);
+		}
+
+		protected override void RemoveObjectSideEffectsInternal(RemoveObjectEventArgs e)
+		{
+			if (e.Flid == LexPronunciationTags.kflidDoNotPublishIn)
+			{
+				var uowService = ((IServiceLocatorInternal)Services).UnitOfWorkService;
+				uowService.RegisterVirtualAsModified(this, "PublishIn", PublishIn.Cast<ICmObject>());
+			}
+			base.RemoveObjectSideEffectsInternal(e);
+		}
+
 		/// <summary>
 		/// Object owner. This virtual may seem redundant with CmObject.Owner, but it is important,
 		/// because we can correctly indicate the destination class. This is used (at least) in
@@ -612,6 +632,19 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		public ILexEntry OwningEntry
 		{
 			get { return (ILexEntry)Owner; }
+		}
+
+		/// <summary>
+		/// The publications from which this is not excluded, that is, the ones in which it
+		/// SHOULD be published.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceCollection, "CmPossibility")]
+		public IFdoSet<ICmPossibility> PublishIn
+		{
+			get
+			{
+				return new FdoInvertSet<ICmPossibility>(DoNotPublishInRC, Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS);
+			}
 		}
 
 		/// <summary>
@@ -682,13 +715,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		public override ICmObject ReferenceTargetOwner(int flid)
 		{
-			switch (flid)
-			{
-				case LexPronunciationTags.kflidLocation:
-					return m_cache.LangProject.LocationsOA;
-				default:
-					return base.ReferenceTargetOwner(flid);
-			}
+			if (flid == m_cache.MetaDataCacheAccessor.GetFieldId2(LexPronunciationTags.kClassId, "PublishIn", false))
+				return m_cache.LangProject.LexDbOA.PublicationTypesOA;
+			if (flid == LexPronunciationTags.kflidLocation)
+				return m_cache.LangProject.LocationsOA;
+			return base.ReferenceTargetOwner(flid);
 		}
 	}
 

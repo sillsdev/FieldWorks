@@ -37,7 +37,8 @@ The original version number was: 7000000. Be sure it has the right number of zer
 editing it.
 
 Change History: (Be sure to update the 'version' attribute in the EntireModel, when needed. (Almost always.))
-  3 May 2016 (7000069): Make multiple model changes:
+  31 May 2016 (7000069): Make multiple model changes:
+    * Add DoNotPublishIn fields to CmPicture and LexPronunciation.
     * Make LexEntry and LexSense Restrictions a MultiString field.
     * Add ReverseName to LexEntryType as a MultiUnicode field. Swap Abbreviation and ReverseAbbr fields.
   9 July 2013 (7000068): Make ReversalIndexEntry subentries be a sequence instead of a collection (LT-6468). No DM needed.
@@ -1281,6 +1282,11 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 			<para>Depending on the value of LocationRangeType, specifies the maximum Scripture reference or the number of paragraphs after the paragraph containing the ORC reference at which this picture can be laid out.</para>
 		  </comment>
 		</basic>
+		<rel num="10" id="DoNotPublishIn" card="col" sig="CmPossibility">
+		  <comment>
+			<para>This property lists publications in which this picture should not appear.</para>
+		  </comment>
+		</rel>
 	  </props>
 	</class>
 	<class num="49" id="FsFeatureSystem" abstract="false" abbr="fsys" base="CmObject" depth="0">
@@ -2860,6 +2866,11 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 		  </comment>
 		</basic>
 		<basic num="7" id="LiftResidue" sig="Unicode"/>
+		<rel num="8" id="DoNotPublishIn" card="col" sig="CmPossibility">
+		  <comment>
+			<para>This property lists publications in which this pronunciation should not appear.</para>
+		  </comment>
+		</rel>
 	  </props>
 	</class>
 	<class num="16" id="LexSense" abstract="false" abbr="sens" base="CmObject" depth="0">
