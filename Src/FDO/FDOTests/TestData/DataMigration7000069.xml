@@ -83,4 +83,16 @@
 		</Caption>
 	</rt>
 
+  <rt class="LexEntryRef" guid="43be38f8-1a0d-4828-aa77-080d7c7bf368" ownerguid="7ecbb299-bf35-4795-a5cc-8d38ce8b891c">
+    <HideMinorEntry val="0" />
+    <RefType val="1" />
+  </rt>
+
+  <rt class="LexEntryRef" guid="43be38f8-1a0d-4828-aa77-080d7c7bf369" ownerguid="7ecbb299-bf35-4795-a5cc-8d38ce8b891d">
+	  <ComponentLexemes>
+		  <objsur guid="7ecbb299-bf35-4795-a5cc-8d38ce8b891c" t="r" />
+	  </ComponentLexemes>
+	  <HideMinorEntry val="0" />
+    <RefType val="1" />
+  </rt>
 </languageproject>

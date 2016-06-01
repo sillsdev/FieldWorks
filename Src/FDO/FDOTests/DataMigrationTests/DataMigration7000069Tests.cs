@@ -97,6 +97,34 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Test the migration from version 7000068 to 7000069 to Remove CustomField for UsageNote.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void RemoveEmptyLexEntryRefs()
+		{
+			var mockMdc = new MockMDCForDataMigration();
+			mockMdc.AddClass(1, "CmObject", null, new List<string> { "CmPossibility" });
+			mockMdc.AddClass(2, "CmPossibility", "CmObject", new List<string> { "LexEntryRef" });
+			mockMdc.AddClass(3, "LexEntryRef", "CmPossibility", new List<string>());
+
+			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000069.xml");
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000068, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
+
+			Assert.AreEqual(2, dtoRepos.AllInstancesWithSubclasses("LexEntryRef").Count(), "The test data has changed");
+
+			m_dataMigrationManager.PerformMigration(dtoRepos, 7000069, new DummyProgressDlg()); // SUT
+
+			// Make sure Empty complex form has been removed.
+			var survivingRefs = dtoRepos.AllInstancesWithSubclasses("LexEntryRef").ToList();
+			Assert.AreEqual(1, survivingRefs.Count, "empty ref should have been removed");
+			var data = XElement.Parse(survivingRefs[0].Xml);
+			var referees = data.Element("ComponentLexemes");
+			Assert.That(referees != null && referees.HasElements, "Should have components (or variants)");
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Test the migration from version 7000068 to 7000069 from Name to ReverseName field, and swapping of the
 		/// Abbreviation and ReverseAbbr fields.
 		/// </summary>
@@ -127,24 +155,24 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 				Assert.IsNull(elt.Element("ReverseName"));
 			}
 
-			m_dataMigrationManager.PerformMigration(dtoRepos, 7000069, new DummyProgressDlg());
+			m_dataMigrationManager.PerformMigration(dtoRepos, 7000069, new DummyProgressDlg()); // SUT
 
 			const string frWs = "fr";
 			const string enWs = "en";
 			var firstEntryType = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("LexEntryType").First().Xml);
 
 			var nameElement = firstEntryType.Element("Name");
-			var multiUniElements = nameElement.Descendants("AUni");
-			Assert.AreEqual(1, multiUniElements.Count());
-			var uniString = multiUniElements.FirstOrDefault().Value;
+			var multiUniElements = nameElement.Descendants("AUni").ToList();
+			Assert.AreEqual(1, multiUniElements.Count);
+			var uniString = multiUniElements[0].Value;
 			Assert.AreEqual("Dialectal Variant", uniString);
 
 			var reversenameElement = firstEntryType.Element("ReverseName");
-			multiUniElements = reversenameElement.Descendants("AUni");
-			Assert.AreEqual(1, multiUniElements.Count());
-			uniString = multiUniElements.FirstOrDefault().Value;
+			multiUniElements = reversenameElement.Descendants("AUni").ToList();
+			Assert.AreEqual(1, multiUniElements.Count);
+			uniString = multiUniElements[0].Value;
 			Assert.AreEqual("Dialectal Variant of", uniString);
-			var attr = multiUniElements.FirstOrDefault().FirstAttribute;
+			var attr = multiUniElements[0].FirstAttribute;
 			Assert.AreEqual("ws", attr.Name.ToString());
 			Assert.AreEqual(enWs, attr.Value);
 
@@ -155,23 +183,23 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			// We only test the English contents. Transforming "of" from any language and predicting the outcome
 			// from the Name.Value would be near impossible.
 			reversenameElement = pastEntry.Element("ReverseName");
-			multiUniElements = reversenameElement.Descendants("AUni");
-			Assert.AreEqual(1, multiUniElements.Count());
-			uniString = multiUniElements.FirstOrDefault().Value;
+			multiUniElements = reversenameElement.Descendants("AUni").ToList();
+			Assert.AreEqual(1, multiUniElements.Count);
+			uniString = multiUniElements[0].Value;
 			Assert.AreEqual("Past of", uniString);
-			attr = multiUniElements.FirstOrDefault().FirstAttribute;
+			attr = multiUniElements[0].FirstAttribute;
 			Assert.AreEqual("ws", attr.Name.ToString());
 			Assert.AreEqual(enWs, attr.Value);
 
 			var abbrElement = pastEntry.Element("Abbreviation");
-			multiUniElements = abbrElement.Descendants("AUni");
+			multiUniElements = abbrElement.Descendants("AUni").ToList();
 			Assert.AreEqual(2, multiUniElements.Count());
 			uniString = multiUniElements.First(wselt => wselt.Attribute("ws").Value == enWs).Value;
 			Assert.AreEqual("pst.", uniString);
 			uniString = multiUniElements.First(wselt => wselt.Attribute("ws").Value == frWs).Value;
 			Assert.AreEqual("pss.", uniString);
 			var revAbbrElement = pastEntry.Element("ReverseAbbr");
-			multiUniElements = revAbbrElement.Descendants("AUni");
+			multiUniElements = revAbbrElement.Descendants("AUni").ToList();
 			Assert.AreEqual(2, multiUniElements.Count());
 			uniString = multiUniElements.First(wselt => wselt.Attribute("ws").Value == enWs).Value;
 			Assert.AreEqual("pst. of", uniString);
