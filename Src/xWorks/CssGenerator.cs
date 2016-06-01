@@ -897,7 +897,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if(exportStyleInfo.HasTrailingIndent)
 			{
-				declaration.Add(new Property("padding-right") { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.TrailingIndent)) });
+				string paddingDirection = "padding-right";
+				if (exportStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue)
+					paddingDirection = "padding-left";
+				declaration.Add(new Property(paddingDirection) { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.TrailingIndent)) });
 			}
 
 			AddFontInfoCss(projectStyle, declaration, wsId, (FdoCache)mediator.PropertyTable.GetValue("cache"));
@@ -920,8 +923,11 @@ namespace SIL.FieldWorks.XWorks
 					ancestorIndents = CalculateParagraphIndentsFromAncestors(ancestorIndents.Ancestor, styleSheet, new AncestorIndents(0f, 0f));
 					var marginLeft = CalculateMarginLeft(exportStyleInfo, ancestorIndents, hangingIndent);
 					var firstSenseStyle = new StyleDeclaration();
-					firstSenseStyle.Properties.AddRange(declaration.Where(p => p.Name != "margin-left"));
-					firstSenseStyle.Properties.Add(new Property("margin-left") { Term = new PrimitiveTerm(UnitType.Point, marginLeft) });
+					string marginDirection = "margin-left";
+					if (exportStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue)
+						marginDirection = "margin-right";
+					firstSenseStyle.Properties.AddRange(declaration.Where(p => p.Name != marginDirection));
+					firstSenseStyle.Properties.Add(new Property(marginDirection) { Term = new PrimitiveTerm(UnitType.Point, marginLeft) });
 					styleList.Insert(0, firstSenseStyle);
 				}
 			}
