@@ -2,94 +2,96 @@
 <!-- Nonstandard layouts for LexEntry and related classes. -->
 <LayoutInventory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation='ViewsLayout.xsd'>
-  <layout class="LexEntry" type="detail" name="Normal">
-	<part label="Lexeme Form" ref="LexemeForm"/>
-	<part label="Citation Form" ref="CitationFormAllV"/>
-	<part ref="ComplexFormEntries" visibility="ifdata"/>
-	<part ref="EntryRefs" param="Normal" visibility="ifdata"/>
-	<part ref="EntryRefsGhostComponents" visibility="always"/>
-	<part ref="EntryRefsGhostVariantOf" visibility="never"/>
-	<part ref="Pronunciations" param="Normal" visibility="ifdata"/>
-	<part ref="Etymology" menu="mnuDataTree-InsertEtymology" visibility="ifdata" />
-	<part ref="CommentAllA"/>
-	<part ref="LiteralMeaningAllA"  visibility="ifdata"/> <!-- Only for Subentries. -->
-	<part ref="BibliographyAllA"   visibility="ifdata" />
-	<part ref="RestrictionsAllA"   visibility="ifdata" />
-	<part ref="SummaryDefinitionAllA" visibility="ifdata"/>
+	<layout class="LexEntry" type="detail" name="Normal">
+		<part ref="ChangeHandler"/>
+		<part label="Lexeme Form" ref="LexemeForm"/>
+		<part label="Citation Form" ref="CitationFormAllV"/>
+		<part ref="ComplexFormEntries" visibility="ifdata"/>
+		<part ref="EntryRefs" param="Normal" visibility="ifdata"/>
+		<part ref="EntryRefsGhostComponents" visibility="always"/>
+		<part ref="EntryRefsGhostVariantOf" visibility="never"/>
+		<part ref="Pronunciations" param="Normal" visibility="ifdata"/>
+		<part ref="Etymology" menu="mnuDataTree-InsertEtymology" visibility="ifdata" />
+		<part ref="CommentAllA"/>
+		<part ref="LiteralMeaningAllA"  visibility="ifdata"/>
+		<!-- Only for Subentries. -->
+		<part ref="BibliographyAllA"   visibility="ifdata" />
+		<part ref="RestrictionsAllA"   visibility="ifdata" />
+		<part ref="SummaryDefinitionAllA" visibility="ifdata"/>
 
-	<part ref="CurrentLexReferences"   visibility="ifdata" />
+		<part ref="CurrentLexReferences"   visibility="ifdata" />
 
-	<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
-	<part customFields="here" />
+		<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
+		<part customFields="here" />
 
-	<part ref="ImportResidue" label="Import Residue" visibility="ifdata"/>
-	<part ref="DateCreatedAllA"  visibility="never"/>
-	<part ref="DateModifiedAllA"  visibility="never"/>
-	<part ref="Messages" visibility="always"/>
-	  <part ref="Senses" param="Normal" expansion="expanded"/>
-	<part ref="VariantFormsSection" expansion="expanded" label="Variants" menu="mnuDataTree-VariantForms" hotlinks="mnuDataTree-VariantForms-Hotlinks">
-		<indent>
-			<part ref="VariantForms"/>
-		</indent>
-	</part>
-	<part ref="AlternateFormsSection" expansion="expanded" label="Allomorphs" menu="mnuDataTree-AlternateForms" hotlinks="mnuDataTree-AlternateForms-Hotlinks">
-		<indent>
-			<part ref="AlternateForms" param="Normal"/>
-		</indent>
-	</part>
-	<part ref="GrammaticalFunctionsSection" label="Grammatical Info. Details" menu="mnuDataTree-Help" hotlinks="mnuDataTree-Help">
-		<indent>
-			<part ref="MorphoSyntaxAnalyses" param="Normal"/>
-		</indent>
-	</part>
-	<part ref="PublicationSection" label="Publication Settings" menu="mnuDataTree-Help" hotlinks="mnuDataTree-Help">
-		<indent>
-			<part ref="PublishIn"   visibility="always" />
-			<part ref="ShowMainEntryIn" label="Show As Headword In" visibility="always" />
-			<part ref="EntryRefs" param="Publication" visibility="ifdata"/>
-			<part ref="ShowMinorEntry"/>
-			<part ref="Subentries" visibility="ifdata"/>
-			<part ref="VisibleComplexFormEntries" visibility="ifdata"/>
-		</indent>
-	</part>
-  </layout>
+		<part ref="ImportResidue" label="Import Residue" visibility="ifdata"/>
+		<part ref="DateCreatedAllA"  visibility="never"/>
+		<part ref="DateModifiedAllA"  visibility="never"/>
+		<part ref="Messages" visibility="always"/>
+		<part ref="Senses" param="Normal" expansion="expanded"/>
+		<part ref="VariantFormsSection" expansion="expanded" label="Variants" menu="mnuDataTree-VariantForms" hotlinks="mnuDataTree-VariantForms-Hotlinks">
+			<indent>
+				<part ref="VariantForms"/>
+			</indent>
+		</part>
+		<part ref="AlternateFormsSection" expansion="expanded" label="Allomorphs" menu="mnuDataTree-AlternateForms" hotlinks="mnuDataTree-AlternateForms-Hotlinks">
+			<indent>
+				<part ref="AlternateForms" param="Normal"/>
+			</indent>
+		</part>
+		<part ref="GrammaticalFunctionsSection" label="Grammatical Info. Details" menu="mnuDataTree-Help" hotlinks="mnuDataTree-Help">
+			<indent>
+				<part ref="MorphoSyntaxAnalyses" param="Normal"/>
+			</indent>
+		</part>
+		<part ref="PublicationSection" label="Publication Settings" menu="mnuDataTree-Help" hotlinks="mnuDataTree-Help">
+			<indent>
+				<part ref="PublishIn"   visibility="always" />
+				<part ref="ShowMainEntryIn" label="Show As Headword In" visibility="always" />
+				<part ref="EntryRefs" param="Publication" visibility="ifdata"/>
+				<part ref="ShowMinorEntry"/>
+				<part ref="Subentries" visibility="ifdata"/>
+				<part ref="VisibleComplexFormEntries" visibility="ifdata"/>
+			</indent>
+		</part>
+	</layout>
 
 
 	<layout class="LexEntry" type="detail" name="AsVariantForm">
 		<part ref="AsVariantForm"/>
 	</layout>
 
-  <layout class="LexEntry" type="jtview" name="pubSenseSubEntry">
-	<part ref="CrossRefName"/>
-	<part ref="EntryType" param="SpaceParenAbbr"/>
-	<part ref="SummaryDefinitionAllA"/>
-	<part ref="Space"/>
-  </layout>
+	<layout class="LexEntry" type="jtview" name="pubSenseSubEntry">
+		<part ref="CrossRefName"/>
+		<part ref="EntryType" param="SpaceParenAbbr"/>
+		<part ref="SummaryDefinitionAllA"/>
+		<part ref="Space"/>
+	</layout>
 
- <layout class="LexEtymology" type="detail" name="default">
-	<part ref="FormAllWs" menu="mnuDataTree-DeleteEtymology" expansion="expanded">
-	<indent>
-		<part ref="GlossAllA"/>
-		<part ref="CommentAllA"/>
-		<part ref="Source"/>
-	</indent>
-	</part>
-  </layout>
+	<layout class="LexEtymology" type="detail" name="default">
+		<part ref="FormAllWs" menu="mnuDataTree-DeleteEtymology" expansion="expanded">
+			<indent>
+				<part ref="GlossAllA"/>
+				<part ref="CommentAllA"/>
+				<part ref="Source"/>
+			</indent>
+		</part>
+	</layout>
 
-  <layout class="LexEntry" type="jtview" name="CrossRefPub">
-	<part ref="MLHeadWordPub" label="Headword" before="" after=" " visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
-  </layout>
+	<layout class="LexEntry" type="jtview" name="CrossRefPub">
+		<part ref="MLHeadWordPub" label="Headword" before="" after=" " visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
+	</layout>
 	<layout class="LexEntry" type="jtview" name="SubentryUnderPub">
 		<part ref="MLHeadWordPub" label="Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " hideConfig="true" showLabels="false" style="Dictionary-CrossReferences"/>
 	</layout>
 
-  <layout class="LexPronunciation" type="detail" name="Normal">
-	  <part ref="FormOnly" label="Pronunciation"/>
-	  <part ref="MediaFiles" param="FileAndLabel"/>
-	  <part ref="CVPattern" label="CV Pattern"/>
-	  <part ref="Tone"/>
-	  <part ref="Location"/>
-  </layout>
+	<layout class="LexPronunciation" type="detail" name="Normal">
+		<part ref="FormOnly" label="Pronunciation"/>
+		<part ref="MediaFiles" param="FileAndLabel"/>
+		<part ref="CVPattern" label="CV Pattern"/>
+		<part ref="Tone"/>
+		<part ref="Location"/>
+	</layout>
 
 
 	<layout class="LexEntryRef" type="detail" name="Normal">
@@ -111,20 +113,20 @@
 	</layout>
 
 
-  <layout class="CmMedia" type="detail" name="FileAndLabel">
-	<part ref="MediaFile"/>
-	<part ref="Label"/>
-  </layout>
+	<layout class="CmMedia" type="detail" name="FileAndLabel">
+		<part ref="MediaFile"/>
+		<part ref="Label"/>
+	</layout>
 
-  <layout class="CmSemanticDomain" type="jtview" name="classifiedDict">
-	<sublayout name="domainLabel" group="para" style="Classified-MainEntry"/>
-	<part ref="ReferringSenses" label ="Referenced Senses" param="classifiedDict" autoexp="true"/>
-  </layout>
+	<layout class="CmSemanticDomain" type="jtview" name="classifiedDict">
+		<sublayout name="domainLabel" group="para" style="Classified-MainEntry"/>
+		<part ref="ReferringSenses" label ="Referenced Senses" param="classifiedDict" autoexp="true"/>
+	</layout>
 
-  <layout class="CmSemanticDomain" type="jtview" name="domainLabel">
-	<part ref="ConfigureAbbrCd" label="Abbreviation" after=" " ws="analysis"/>
-	<part ref="ConfigureNameCd" label="Name" ws="analysis"/>
-  </layout>
+	<layout class="CmSemanticDomain" type="jtview" name="domainLabel">
+		<part ref="ConfigureAbbrCd" label="Abbreviation" after=" " ws="analysis"/>
+		<part ref="ConfigureNameCd" label="Name" ws="analysis"/>
+	</layout>
 
 	<!-- STUFF ADDED FOR NEW CONFIGURATION WORK -->
 	<!--
@@ -1372,7 +1374,7 @@
 		<part ref="EntryTargetsConfig" label="Targets" sep=", " before="" after="" visibility="ifdata" param="publishCdCrossRef" css="crossref-targets"/>
 	</layout>
 
-<!--
+	<!--
 	<layout class="LexEntryType" type="jtview" name="publishStemAbbreviation">
 		<part ref="AbbreviationPub" label="Entry Type Abbreviation" before="" after="" ws="analysis" wsType="analysis" css="entry-type-abbr" hideConfig="true"/>
 	</layout>
