@@ -28,6 +28,9 @@
 <Discussion>
 <objsur guid="b6f4c056-ea5e-11de-8a9c-0013722f8dec" t="o" />
 </Discussion>
+<GlossAppend>
+<AUni ws="en">.irr.infl</AUni>
+</GlossAppend>
 <IsProtected val="true" />
 <Name>
 <AUni ws="en">Irregularly Inflected Form</AUni>
