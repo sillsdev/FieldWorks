@@ -4357,14 +4357,12 @@ namespace SIL.FieldWorks.XWorks
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
 
 			const string audioTagwithSource = "//audio/source/@src";
-			AssertThatXmlIn.String(result)
-				.HasSpecifiedNumberOfMatchesForXpath(audioTagwithSource, 1);
-			string audioFileUrl = Path.Combine("AudioVisual", "TestAudio.wav");
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(audioTagwithSource, 1);
+			var audioFileUrl = Path.Combine("AudioVisual", "TestAudio.wav");
 			Assert.That(result, Contains.Substring(audioFileUrl));
 			const string linkTagwithOnClick =
-				"//span[@class='lexemeformoa']/span/a[@class='en-Zxxx-x-audio' and contains(@onclick,'play()')]";
-			AssertThatXmlIn.String(result)
-				.HasSpecifiedNumberOfMatchesForXpath(linkTagwithOnClick, 1);
+				"//span[@class='lexemeformoa']/span/a[@class='en-Zxxx-x-audio' and @href!='#' and contains(@onclick,'play()')]";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(linkTagwithOnClick, 1);
 		}
 
 		[Test]

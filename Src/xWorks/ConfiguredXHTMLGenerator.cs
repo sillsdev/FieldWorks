@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.XWorks
 			var previewCssPath = Path.Combine(projectPath, "Preview.css");
 			var stringBuilder = new StringBuilder();
 			using (var writer = XmlWriter.Create(stringBuilder))
-			using (var cssWriter = new StreamWriter(previewCssPath, false))
+			using (var cssWriter = new StreamWriter(previewCssPath, false, Encoding.UTF8))
 			{
 				var exportSettings = new GeneratorSettings((FdoCache)mediator.PropertyTable.GetValue("cache"), mediator, false, false, null);
 				GenerateOpeningHtml(previewCssPath, exportSettings, writer);
@@ -213,7 +213,7 @@ namespace SIL.FieldWorks.XWorks
 			// Don't display letter headers if we're showing a preview in the Edit tool.
 			var wantLetterHeaders = (entryCount > 1 || publicationDecorator != null) && (IsClerkSortingByHeadword(clerk));
 			using (var xhtmlWriter = XmlWriter.Create(xhtmlPath))
-			using (var cssWriter = new StreamWriter(cssPath, false))
+			using (var cssWriter = new StreamWriter(cssPath, false, Encoding.UTF8))
 			{
 				var settings = new GeneratorSettings(cache, mediator, true, true, Path.GetDirectoryName(xhtmlPath));
 				GenerateOpeningHtml(cssPath, settings, xhtmlWriter);
@@ -2406,7 +2406,7 @@ namespace SIL.FieldWorks.XWorks
 				xw.WriteEndElement();
 				xw.WriteStartElement("a");
 				xw.WriteAttributeString("class", classname);
-				xw.WriteAttributeString("href", "#");
+				xw.WriteAttributeString("href", "#" + audioId);
 				xw.WriteAttributeString("onclick", "document.getElementById('" + audioId + "').play()");
 				if (!String.IsNullOrEmpty(caption))
 					xw.WriteString(caption);
