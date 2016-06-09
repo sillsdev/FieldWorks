@@ -446,12 +446,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		protected void PerformCommit(HashSet<ICmObjectOrSurrogate> newbies, HashSet<ICmObjectOrSurrogate> dirtballs, HashSet<ICmObjectId> goners,
 			IEnumerable<CustomFieldInfo> customFields)
 		{
-			if (CommitThread == null || !CommitThread.WaitForNextRequest())
+			if (CommitThread == null)
 			{
-				// If thread is already dead, then WaitForNextRequest will return false, but we still have to call Dispose() on it.
-				if (CommitThread != null)
-					CommitThread.Dispose();
-
 				CommitThread = new ConsumerThread<int, CommitWork>(Work);
 				CommitThread.Start();
 			}
