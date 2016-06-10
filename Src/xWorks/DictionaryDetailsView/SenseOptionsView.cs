@@ -143,6 +143,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			set { checkBoxFirstSenseInline.Visible = checkBoxFirstSenseInline.Enabled = value; }
 		}
 
+		internal ComboBox.ObjectCollection DropdownNumberingStyles
+		{
+			get { return dropDownNumberingStyle.Items; }
+		}
+
 		#region EventHandlers
 		public event EventHandler BeforeTextChanged
 		{

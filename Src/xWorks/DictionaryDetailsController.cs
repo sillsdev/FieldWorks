@@ -376,7 +376,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				BeforeText = senseOptions.BeforeNumber,
 				// load list of available NumberingStyles before setting NumberingStyle's value
-				NumberingStyles = XmlVcDisplayVec.SupportedNumberingStyles.Where(prop => prop.FormatString != disallowedNumberingStyles).ToList(),
+				NumberingStyles = disallowedNumberingStyles == string.Empty
+									? XmlVcDisplayVec.SupportedNumberingStyles
+									: XmlVcDisplayVec.SupportedNumberingStyles.Where(prop => prop.FormatString != disallowedNumberingStyles).ToList(),
 				NumberingStyle = senseOptions.NumberingStyle,
 				AfterText = senseOptions.AfterNumber,
 				NumberSingleSense = senseOptions.NumberEvenASingleSense,
