@@ -312,7 +312,7 @@
 		<IcuDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/Libraries_IcucilPrecise64icu54Continuous/fw-8.2.tcbuildtag</IcuDownloadUrl>
 		<ProtoBufNetDownloadUrl>https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/protobuf-net/protobuf-net%20r668.zip</ProtoBufNetDownloadUrl>
 		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1/</DownloadsSilOrgDownloadUrl>
-		<HermitCrabDownloadUrl>http://build.palaso.org/guestAuth/repository/download/bt410/fw-8.2.tcbuildtag</HermitCrabDownloadUrl>
+		<HermitCrabDownloadUrl>http://build.palaso.org/guestAuth/repository/download/bt410/.lastSuccessful</HermitCrabDownloadUrl>
 		<Icu4cDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/Libraries_Icu4cWin32FieldWorksContinuous/fw-8.2.tcbuildtag</Icu4cDownloadUrl>
 		<!-- Windows/.Net and Linux/Mono use different extensions for debug information files. -->
 		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>

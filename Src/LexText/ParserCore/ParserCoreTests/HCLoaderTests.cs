@@ -616,7 +616,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			IMoInflAffixSlot prefixSlot2 = AddSlot(template, "prefixSlot2", true, false);
 			AddEntry(MoMorphTypeTags.kguidMorphPrefix, "s", "gloss2", new SandboxGenericMSA {MsaType = MsaType.kInfl, MainPOS = m_verb, Slot = prefixSlot2});
 			IMoInflAffixSlot suffixSlot = AddSlot(template, "suffixSlot", false, false);
-			AddEntry(MoMorphTypeTags.kguidMorphSuffix, "t", "gloss3", new SandboxGenericMSA {MsaType = MsaType.kInfl, MainPOS = m_verb, Slot = suffixSlot});
+			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphSuffix, "t", "gloss3", new SandboxGenericMSA {MsaType = MsaType.kInfl, MainPOS = m_verb, Slot = suffixSlot});
+			ILexEntryType type = Cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypDialectalVar);
+			entry.CreateVariantEntryAndBackRef(type, Cache.TsStrFactory.MakeString("ɯt", Cache.DefaultVernWs));
 			LoadLanguage();
 
 			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(0));
@@ -628,8 +630,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			AffixTemplateSlot hcSlot = hcTemplate.Slots[0];
 			Assert.That(hcSlot.Optional, Is.False);
-			Assert.That(hcSlot.Rules.Count, Is.EqualTo(1));
+			Assert.That(hcSlot.Rules.Count, Is.EqualTo(2));
 			Assert.That(hcSlot.Rules.First().ToString(), Is.EqualTo("-t"));
+			Assert.That(hcSlot.Rules.Last().ToString(), Is.EqualTo("-ɯt"));
 
 			hcSlot = hcTemplate.Slots[1];
 			Assert.That(hcSlot.Optional, Is.False);

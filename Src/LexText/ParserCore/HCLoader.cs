@@ -1259,8 +1259,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					List<Morpheme> morphemes;
 					if (m_morphemes.TryGetValue(msa, out morphemes))
 					{
-						AffixProcessRule mrule = morphemes.OfType<AffixProcessRule>().FirstOrDefault();
-						if (mrule != null)
+						foreach (AffixProcessRule mrule in morphemes.OfType<AffixProcessRule>())
 						{
 							if (type != null)
 							{
