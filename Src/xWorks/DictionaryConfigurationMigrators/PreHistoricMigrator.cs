@@ -571,7 +571,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		/// into the converted node and add any children that are new in the current defaults to the converted node. The order of children
 		/// in the converted node is maintained.
 		/// </summary>
-		private void CopyDefaultsIntoConfigNode(DictionaryConfigurationModel convertedModel, ConfigurableDictionaryNode convertedNode, ConfigurableDictionaryNode currentDefaultNode)
+		internal void CopyDefaultsIntoConfigNode(DictionaryConfigurationModel convertedModel, ConfigurableDictionaryNode convertedNode, ConfigurableDictionaryNode currentDefaultNode)
 		{
 			if (convertedNode.Label != currentDefaultNode.Label)
 			{
@@ -605,7 +605,14 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				// if the new default node has children and the converted node doesn't, they need to be added
 				if (currentDefaultNode.Children != null && currentDefaultNode.Children.Any())
+				{
 					convertedNode.Children = new List<ConfigurableDictionaryNode>(currentDefaultNode.Children);
+					if (convertedNode.Label == "Subsenses")
+					{
+						convertedNode.Children = new List<ConfigurableDictionaryNode>(convertedNode.Parent.Children.Select(node => node.DeepCloneUnderSameParent()));
+						convertedNode.Children.ForEach(child => child.Parent = convertedNode);
+					}
+				}
 				return;
 			}
 			// if there are child lists to merge then merge them

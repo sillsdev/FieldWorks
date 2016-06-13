@@ -110,6 +110,79 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 		///<summary/>
 		[Test]
+		public void ConvertLayoutTreeNodeToConfigNode_SubsensesBeforeAfterAndBetweenWork()
+		{
+			var oldExampleSentenceNode = new ConfigurableDictionaryNode
+			{
+				Label = "Example Sentences",
+				FieldDescription = "ExampleSentences",
+				Before = "@",
+				Between = ",",
+				After = "@"
+			};
+
+			var oldExampleNode = new ConfigurableDictionaryNode
+			{
+				Label = "Examples",
+				FieldDescription = "ExamplesOS",
+				Children = new List<ConfigurableDictionaryNode> { oldExampleSentenceNode }
+			};
+
+			var oldSensesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Senses",
+				FieldDescription = "SensesOS",
+				Children = new List<ConfigurableDictionaryNode> { oldExampleNode }
+			};
+
+			var oldSubsensesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Subsenses",
+				FieldDescription = "SensesOS"
+			};
+			oldSubsensesNode.Parent = oldSensesNode;
+
+			var exampleSentenceNode = new ConfigurableDictionaryNode
+			{
+				Label = "Example Sentences",
+				FieldDescription = "ExampleSentences"
+			};
+
+			var exampleNode = new ConfigurableDictionaryNode
+			{
+				Label = "Examples",
+				FieldDescription = "ExamplesOS",
+				Children = new List<ConfigurableDictionaryNode> { exampleSentenceNode }
+			};
+
+			var newSubsensesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Subsenses",
+				FieldDescription = "SensesOS",
+				Children = new List<ConfigurableDictionaryNode> { exampleNode }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Senses",
+				FieldDescription = "SensesOS",
+				Children = new List<ConfigurableDictionaryNode> { newSubsensesNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+			var model = new DictionaryConfigurationModel { Version = PreHistoricMigrator.VersionPre83, Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+
+			m_migrator.CopyDefaultsIntoConfigNode(model, oldSubsensesNode, newSubsensesNode);
+			Assert.AreEqual(oldSubsensesNode.Children[0].Children[0].Between, ",", "Between not migrated");
+			Assert.AreEqual(oldSubsensesNode.Children[0].Children[0].Before, "@", "Before not migrated");
+			Assert.AreEqual(oldSubsensesNode.Children[0].Children[0].After, "@", "After not migrated");
+		}
+
+		///<summary/>
+		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_StyleWorks()
 		{
 			ConfigurableDictionaryNode configNode = null;
