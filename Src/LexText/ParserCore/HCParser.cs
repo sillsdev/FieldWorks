@@ -386,7 +386,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		internal static XElement CreateAllomorphElement(string name, IMoForm form, IMoMorphSynAnalysis msa, bool circumfix)
 		{
-			var elem = new XElement(name, new XAttribute("id", form.Hvo), new XAttribute("type", GetMorphTypeString(circumfix ? MoMorphTypeTags.kguidMorphCircumfix : form.MorphTypeRA.Guid)),
+			Guid morphTypeGuid = circumfix ? MoMorphTypeTags.kguidMorphCircumfix : (form.MorphTypeRA == null ? Guid.Empty : form.MorphTypeRA.Guid);
+			var elem = new XElement(name, new XAttribute("id", form.Hvo), new XAttribute("type", GetMorphTypeString(morphTypeGuid)),
 				new XElement("Form", circumfix ? form.OwnerOfClass<ILexEntry>().HeadWord.Text : form.GetFormWithMarkers(form.Cache.DefaultVernWs)),
 				new XElement("LongName", form.LongName));
 			elem.Add(CreateMorphemeElement(msa));
