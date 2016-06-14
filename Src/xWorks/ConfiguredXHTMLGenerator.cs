@@ -321,8 +321,8 @@ namespace SIL.FieldWorks.XWorks
 		internal static void GenerateAdjustedPageButtons(int[] entryHvos, GeneratorSettings settings, Tuple<int, int> currentPageRange, Tuple<int, int> adjacentPageRange,
 			int entriesToAddCount, out Tuple<int, int> newCurrentPageRange, out Tuple<int, int> newAdjacentPageRange)
 		{
-			var currentPageStart = -1;
-			var currentPageEnd = -1;
+			int currentPageStart;
+			int currentPageEnd;
 			var adjPageStart = -1;
 			var adjPageEnd = -1;
 			newAdjacentPageRange = null;
@@ -397,12 +397,10 @@ namespace SIL.FieldWorks.XWorks
 
 		private static string GeneratePageButtonText(int firstEntryId, int lastEntryId, GeneratorSettings settings, bool isFirst)
 		{
-			string firstLetters = "";
-			string lastLetters = "";
 			var firstEntry = settings.Cache.ServiceLocator.GetObject(firstEntryId);
 			var lastEntry = settings.Cache.ServiceLocator.GetObject(lastEntryId);
-			firstLetters = GetIndexLettersOfHeadword(GetLetHeadbyEntryType(firstEntry), isFirst);
-			lastLetters = GetIndexLettersOfHeadword(GetLetHeadbyEntryType(lastEntry));
+			var firstLetters = GetIndexLettersOfHeadword(GetLetHeadbyEntryType(firstEntry), isFirst);
+			var lastLetters = GetIndexLettersOfHeadword(GetLetHeadbyEntryType(lastEntry));
 			return firstEntryId == lastEntryId ? firstLetters : firstLetters + " .. " + lastLetters;
 		}
 
@@ -493,7 +491,6 @@ namespace SIL.FieldWorks.XWorks
 		/// This method uses a ThreadPool to execute the given individualActions in parallel.
 		/// It waits for all the individualActions to complete and then returns.
 		/// </summary>
-		/// <param name="individualActions"></param>
 		private static void SpawnEntryGenerationThreadsAndWait(List<Action> individualActions, IThreadedProgress progress)
 		{
 			var actionCount = individualActions.Count;
@@ -845,9 +842,6 @@ namespace SIL.FieldWorks.XWorks
 						return GenerateXHTMLForAudioFile(fileProperty.ClassName, audioId, srcAttr, audioPlayButton);
 					}
 					return String.Empty;
-
-				default:
-					break;
 			}
 			var bldr = new StringBuilder(GenerateXHTMLForValue(field, propertyValue, config, settings));
 			if (config.ReferencedOrDirectChildren != null)

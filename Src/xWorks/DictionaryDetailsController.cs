@@ -138,7 +138,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// Notify users of shared nodes
-			if (node.ReferencedNode != null)
+			if (node.ReferencedNode != null) //REVIEW: make sure ReferencedNodes always have no options
 			{
 				var nodePath = DictionaryConfigurationMigrator.BuildPathStringFromNode(node, false);
 				if (node.IsMasterParent) // node is the Master Parent

@@ -1082,9 +1082,9 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(entryConfig);
 
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
-			controller.LoadNode(null, senseConfig);
 			using (var view = controller.View)
 			{
+				controller.LoadNode(null, senseConfig);
 				var expectedNumberingStyle = XmlVcDisplayVec.SupportedNumberingStyles.Where(prop => prop.FormatString != "%O").ToList();
 
 				var optionsView = GetSenseOptionsView(view);
@@ -1094,31 +1094,27 @@ namespace SIL.FieldWorks.XWorks
 				Assert.AreEqual(expectedNumberingStyle.Count(), outputNumberingStyle.Count, "Sense number's numbering style should be same count.");
 				Assert.AreEqual(expectedNumberingStyle.First().Label, outputNumberingStyle.First().Label, "Sense number's numbering style should have 'none' option.");
 				Assert.IsTrue(expectedNumberingStyle.All(c => outputNumberingStyle.Count(p => p.Label == c.Label) == 1), "Sense number's numbering style should be same.");
-			}
 
-			controller.LoadNode(null, subSenseConfig);
-			using (var view = controller.View)
-			{
-				var expectedNumberingStyle = XmlVcDisplayVec.SupportedNumberingStyles.ToList();
+				controller.LoadNode(null, subSenseConfig);
 
-				var optionsView = GetSenseOptionsView(view);
-				var realView = optionsView as SenseOptionsView;
+				expectedNumberingStyle = XmlVcDisplayVec.SupportedNumberingStyles.ToList();
+
+				optionsView = GetSenseOptionsView(view);
+				realView = optionsView as SenseOptionsView;
 				Assert.IsNotNull(realView);
-				var outputNumberingStyle = realView.DropdownNumberingStyles.Cast<NumberingStyleComboItem>().ToList();
-				Assert.AreEqual(expectedNumberingStyle.Count(), outputNumberingStyle.Count, "SubSense number's numbering style should be same count.");
+				outputNumberingStyle = realView.DropdownNumberingStyles.Cast<NumberingStyleComboItem>().ToList();
+				Assert.AreEqual(expectedNumberingStyle.Count, outputNumberingStyle.Count, "SubSense number's numbering style should be same count.");
 				Assert.AreEqual(expectedNumberingStyle.First().Label, outputNumberingStyle.First().Label, "SubSense number's numbering style should have 'none' option.");
 				Assert.IsTrue(expectedNumberingStyle.All(c => outputNumberingStyle.Count(p => p.Label == c.Label) == 1), "SubSense number's numbering style should be same.");
-			}
 
-			controller.LoadNode(null, subSubSenseConfig);
-			using (var view = controller.View)
-			{
-				var expectedNumberingStyle = XmlVcDisplayVec.SupportedNumberingStyles.ToList();
+				controller.LoadNode(null, subSubSenseConfig);
 
-				var optionsView = GetSenseOptionsView(view);
-				var realView = optionsView as SenseOptionsView;
+				expectedNumberingStyle = XmlVcDisplayVec.SupportedNumberingStyles.ToList();
+
+				optionsView = GetSenseOptionsView(view);
+				realView = optionsView as SenseOptionsView;
 				Assert.IsNotNull(realView);
-				var outputNumberingStyle = realView.DropdownNumberingStyles.Cast<NumberingStyleComboItem>().ToList();
+				outputNumberingStyle = realView.DropdownNumberingStyles.Cast<NumberingStyleComboItem>().ToList();
 				Assert.AreEqual(expectedNumberingStyle.Count(), outputNumberingStyle.Count, "SubSubSense number's numbering style should be same count.");
 				Assert.AreEqual(expectedNumberingStyle.First().Label, outputNumberingStyle.First().Label, "SubSubSense number's numbering style should have 'none' option.");
 				Assert.IsTrue(expectedNumberingStyle.All(c => outputNumberingStyle.Count(p => p.Label == c.Label) == 1), "SubSubSense number's numbering style should be same.");
