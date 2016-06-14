@@ -951,16 +951,22 @@ namespace SIL.FieldWorks.XWorks
 				// Also generate a mapping for the corresponding FDO interface (metadata does not contain this)
 				var cfOwnerInterfaceName = cfOwnerClassName.Insert(0, "I");
 				// Map the class name and then the interface name to the custom field id list
-				if(classToCustomFields.ContainsKey(cfOwnerClassName))
+				if (classToCustomFields.ContainsKey(cfOwnerClassName))
 					classToCustomFields[cfOwnerClassName].Add(customFieldId);
 				else
-					classToCustomFields[cfOwnerClassName] = new List<int> { customFieldId };
-
-				if(classToCustomFields.ContainsKey(cfOwnerInterfaceName))
-					classToCustomFields[cfOwnerInterfaceName].Add(customFieldId);
-				else
-					classToCustomFields[cfOwnerInterfaceName] = new List<int> { customFieldId };
+				{
+					classToCustomFields[cfOwnerInterfaceName] = classToCustomFields[cfOwnerClassName] = new List<int> { customFieldId };
+					if (cfOwnerClassName == "LexEntry")
+						classToCustomFields["ILexEntryRef"] = classToCustomFields["LexEntryRef"] = classToCustomFields["LexEntry"];
+				}
 			}
+			var senseOrEntryFields = new List<int>();
+			if (classToCustomFields.ContainsKey("LexSense"))
+				senseOrEntryFields.AddRange(classToCustomFields["LexSense"]);
+			if (classToCustomFields.ContainsKey("LexEntry"))
+				senseOrEntryFields.AddRange(classToCustomFields["LexEntry"]);
+			if (senseOrEntryFields.Any())
+				classToCustomFields["SenseOrEntry"] = classToCustomFields["ISenseOrEntry"] = senseOrEntryFields;
 			return classToCustomFields;
 		}
 
@@ -1006,20 +1012,22 @@ namespace SIL.FieldWorks.XWorks
 			Dictionary<string, List<int>> customFieldMap = null)
 		{
 			customFieldMap = customFieldMap ?? BuildCustomFieldMap(cache);
-			var customFieldIds = customFieldMap.ContainsKey(className)
-												 ? customFieldMap[className]
-												 : new List<int>();
+			if (!customFieldMap.ContainsKey(className))
+				return new List<ConfigurableDictionaryNode>();
 
 			var customFieldList = new List<ConfigurableDictionaryNode>();
 			var metaDataCache = (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor;
-			foreach(var field in customFieldIds)
+			var isEntryRefType = className.EndsWith("EntryRef");
+			foreach(var field in customFieldMap[className])
 			{
 				var configNode = new ConfigurableDictionaryNode
 				{
 					Label = metaDataCache.GetFieldLabel(field),
 					IsCustomField = true,
 					IsEnabled = false,
-					FieldDescription = metaDataCache.GetFieldName(field),
+					// Custom fields in the Map under LexEntryRef are actually LexEntry CustomFields; look for them under OwningEntry
+					FieldDescription = isEntryRefType ? "OwningEntry" : metaDataCache.GetFieldName(field),
+					SubField = isEntryRefType ? metaDataCache.GetFieldName(field) : null,
 					DictionaryNodeOptions = BuildOptionsForType(metaDataCache.GetFieldType(field))
 				};
 				var listId = metaDataCache.GetFieldListRoot(field);

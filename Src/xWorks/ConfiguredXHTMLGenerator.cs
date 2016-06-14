@@ -17,6 +17,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using XCore;
 using FileUtils = SIL.Utils.FileUtils;
@@ -695,78 +696,16 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (!config.IsEnabled)
 			{
-				return String.Empty;
+				return string.Empty;
 			}
 			var cache = settings.Cache;
 			var entryType = field.GetType();
 			object propertyValue = null;
-			if (config.IsCustomField)
+			if (config.IsCustomField && config.SubField == null)
 			{
 				var customFieldOwnerClassName = GetClassNameForCustomFieldParent(config, settings.Cache);
-				int customFieldFlid;
-				customFieldFlid = GetCustomFieldFlid(config, cache, customFieldOwnerClassName);
-				if (customFieldFlid != 0)
-				{
-					var customFieldType = cache.MetaDataCacheAccessor.GetFieldType(customFieldFlid);
-					switch (customFieldType)
-					{
-						case (int)CellarPropertyType.ReferenceCollection:
-						case (int)CellarPropertyType.OwningCollection:
-							// Collections are stored essentially the same as sequences.
-						case (int)CellarPropertyType.ReferenceSequence:
-						case (int)CellarPropertyType.OwningSequence:
-							{
-								var sda = cache.MainCacheAccessor;
-								// This method returns the hvo of the object pointed to
-								var chvo = sda.get_VecSize(((ICmObject)field).Hvo, customFieldFlid);
-								int[] contents;
-								using (var arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
-								{
-									sda.VecProp(((ICmObject)field).Hvo, customFieldFlid, chvo, out chvo, arrayPtr);
-									contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
-								}
-								// if the hvo is invalid set propertyValue to null otherwise get the object
-								propertyValue = contents.Select(id => cache.LangProject.Services.GetObject(id));
-								break;
-							}
-						case (int)CellarPropertyType.ReferenceAtomic:
-						case (int)CellarPropertyType.OwningAtomic:
-							{
-								// This method returns the hvo of the object pointed to
-								propertyValue = cache.MainCacheAccessor.get_ObjectProp(((ICmObject)field).Hvo, customFieldFlid);
-								// if the hvo is invalid set propertyValue to null otherwise get the object
-								propertyValue = (int)propertyValue > 0 ? cache.LangProject.Services.GetObject((int)propertyValue) : null;
-								break;
-							}
-						case (int)CellarPropertyType.GenDate:
-							{
-								propertyValue = new GenDate(cache.MainCacheAccessor.get_IntProp(((ICmObject) field).Hvo, customFieldFlid));
-								break;
-							}
-
-						case (int)CellarPropertyType.Time:
-							{
-								propertyValue = SilTime.ConvertFromSilTime(cache.MainCacheAccessor.get_TimeProp(((ICmObject)field).Hvo, customFieldFlid));
-								break;
-							}
-						case (int)CellarPropertyType.MultiUnicode:
-						case (int)CellarPropertyType.MultiString:
-							{
-								propertyValue = cache.MainCacheAccessor.get_MultiStringProp(((ICmObject)field).Hvo, customFieldFlid);
-								break;
-							}
-						case (int)CellarPropertyType.String:
-							{
-								propertyValue = cache.MainCacheAccessor.get_StringProp(((ICmObject)field).Hvo, customFieldFlid);
-								break;
-							}
-						case (int)CellarPropertyType.Integer:
-						{
-							propertyValue = cache.MainCacheAccessor.get_IntProp(((ICmObject)field).Hvo, customFieldFlid);
-							break;
-						}
-					}
-				}
+				if (!GetPropValueForCustomField(field, config, cache, customFieldOwnerClassName, config.FieldDescription, ref propertyValue))
+					return string.Empty;
 			}
 			else
 			{
@@ -774,10 +713,10 @@ namespace SIL.FieldWorks.XWorks
 				if (property == null)
 				{
 #if DEBUG
-					var msg = String.Format("Issue with finding {0} for {1}", config.FieldDescription, entryType);
+					var msg = string.Format("Issue with finding {0} for {1}", config.FieldDescription, entryType);
 					ShowConfigDebugInfo(msg, config);
 #endif
-					return String.Empty;
+					return string.Empty;
 				}
 				propertyValue = property.GetValue(field, new object[] { });
 				GetSortedReferencePropertyValue(config, ref propertyValue, field);
@@ -785,25 +724,37 @@ namespace SIL.FieldWorks.XWorks
 			// If the property value is null there is nothing to generate
 			if (propertyValue == null)
 			{
-				return String.Empty;
+				return string.Empty;
 			}
-			if (!String.IsNullOrEmpty(config.SubField))
+			if (!string.IsNullOrEmpty(config.SubField))
 			{
-				var subType = propertyValue.GetType();
-				var subField = fUseReverseSubField ? "Reverse" + config.SubField : config.SubField;
-				var subProp = subType.GetProperty(subField);
-				if (subProp == null)
+				if (config.IsCustomField)
 				{
-#if DEBUG
-					var msg = String.Format("Issue with finding (subField) {0} for (subType) {1}", subField, subType);
-					ShowConfigDebugInfo(msg, config);
-#endif
-					return String.Empty;
+					// Get the custom field value (in SubField) using the property which came from the field object
+					if (!GetPropValueForCustomField(propertyValue, config, cache, ((ICmObject) propertyValue).ClassName,
+						config.SubField, ref propertyValue))
+					{
+						return string.Empty;
+					}
 				}
-				propertyValue = subProp.GetValue(propertyValue, new object[] { });
+				else
+				{
+					var subType = propertyValue.GetType();
+					var subField = fUseReverseSubField ? "Reverse" + config.SubField : config.SubField;
+					var subProp = subType.GetProperty(subField);
+					if (subProp == null)
+					{
+#if DEBUG
+						var msg = String.Format("Issue with finding (subField) {0} for (subType) {1}", subField, subType);
+						ShowConfigDebugInfo(msg, config);
+#endif
+						return string.Empty;
+					}
+					propertyValue = subProp.GetValue(propertyValue, new object[] { });
+				}
 				// If the property value is null there is nothing to generate
 				if (propertyValue == null)
-					return String.Empty;
+					return string.Empty;
 			}
 			ICmFile fileProperty;
 			var typeForNode = config.IsCustomField
@@ -841,7 +792,7 @@ namespace SIL.FieldWorks.XWorks
 						var audioId = "g" + fileProperty.Guid;
 						return GenerateXHTMLForAudioFile(fileProperty.ClassName, audioId, srcAttr, audioPlayButton);
 					}
-					return String.Empty;
+					return string.Empty;
 			}
 			var bldr = new StringBuilder(GenerateXHTMLForValue(field, propertyValue, config, settings));
 			if (config.ReferencedOrDirectChildren != null)
@@ -852,6 +803,95 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 			return bldr.ToString();
+		}
+
+		/// <summary>
+		/// Gets the value of the requested custom field associated with the fieldOwner object
+		/// </summary>
+		/// <returns>true if the custom field was valid and false otherwise</returns>
+		/// <remarks>propertyValue can be null if the custom field is valid but no value is stored fore the owning objected</remarks>
+		private static bool GetPropValueForCustomField(object fieldOwner, ConfigurableDictionaryNode config,
+			FdoCache cache, string customFieldOwnerClassName, string customFieldName, ref object propertyValue)
+		{
+			int customFieldFlid = GetCustomFieldFlid(config, cache, customFieldOwnerClassName, customFieldName);
+			if (customFieldFlid != 0)
+			{
+				var customFieldType = cache.MetaDataCacheAccessor.GetFieldType(customFieldFlid);
+				ICmObject specificObject;
+				if (fieldOwner is ISenseOrEntry)
+				{
+					specificObject = ((ISenseOrEntry) fieldOwner).Item;
+					if (!((IFwMetaDataCacheManaged) cache.MetaDataCacheAccessor).GetFields(specificObject.ClassID,
+						true, (int) CellarPropertyTypeFilter.All).Contains(customFieldFlid))
+					{
+						return false;
+					}
+				}
+				else
+				{
+					specificObject = (ICmObject) fieldOwner;
+				}
+
+				switch (customFieldType)
+				{
+					case (int) CellarPropertyType.ReferenceCollection:
+					case (int) CellarPropertyType.OwningCollection:
+					// Collections are stored essentially the same as sequences.
+					case (int) CellarPropertyType.ReferenceSequence:
+					case (int) CellarPropertyType.OwningSequence:
+					{
+						var sda = cache.MainCacheAccessor;
+						// This method returns the hvo of the object pointed to
+						var chvo = sda.get_VecSize(specificObject.Hvo, customFieldFlid);
+						int[] contents;
+						using (var arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
+						{
+							sda.VecProp(specificObject.Hvo, customFieldFlid, chvo, out chvo, arrayPtr);
+							contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
+						}
+						// if the hvo is invalid set propertyValue to null otherwise get the object
+						propertyValue = contents.Select(id => cache.LangProject.Services.GetObject(id));
+						break;
+					}
+					case (int) CellarPropertyType.ReferenceAtomic:
+					case (int) CellarPropertyType.OwningAtomic:
+					{
+						// This method returns the hvo of the object pointed to
+						propertyValue = cache.MainCacheAccessor.get_ObjectProp(specificObject.Hvo, customFieldFlid);
+						// if the hvo is invalid set propertyValue to null otherwise get the object
+						propertyValue = (int) propertyValue > 0 ? cache.LangProject.Services.GetObject((int) propertyValue) : null;
+						break;
+					}
+					case (int) CellarPropertyType.GenDate:
+					{
+						propertyValue = new GenDate(cache.MainCacheAccessor.get_IntProp(specificObject.Hvo, customFieldFlid));
+						break;
+					}
+
+					case (int) CellarPropertyType.Time:
+					{
+						propertyValue = SilTime.ConvertFromSilTime(cache.MainCacheAccessor.get_TimeProp(specificObject.Hvo, customFieldFlid));
+						break;
+					}
+					case (int) CellarPropertyType.MultiUnicode:
+					case (int) CellarPropertyType.MultiString:
+					{
+						propertyValue = cache.MainCacheAccessor.get_MultiStringProp(specificObject.Hvo, customFieldFlid);
+						break;
+					}
+					case (int) CellarPropertyType.String:
+					{
+						propertyValue = cache.MainCacheAccessor.get_StringProp(specificObject.Hvo, customFieldFlid);
+						break;
+					}
+					case (int) CellarPropertyType.Integer:
+					{
+						propertyValue = cache.MainCacheAccessor.get_IntProp(specificObject.Hvo, customFieldFlid);
+						break;
+					}
+				}
+			}
+			return true;
 		}
 
 		private static string GenerateXHTMLForVideoFile(string className, string srcAttribute, string caption)
@@ -948,21 +988,20 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns>Returns the flid of the custom field identified by the configuration nodes FieldDescription
 		/// in the class identified by <code>customFieldOwnerClassName</code></returns>
 		private static int GetCustomFieldFlid(ConfigurableDictionaryNode config, FdoCache cache,
-														  string customFieldOwnerClassName)
+														  string customFieldOwnerClassName, string customFieldName = null)
 		{
-			int customFieldFlid;
-			try
+			var fieldName = customFieldName ?? config.FieldDescription;
+			var customFieldFlid = 0;
+			var mdc = (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor;
+			if (mdc.FieldExists(customFieldOwnerClassName, fieldName, false))
+				customFieldFlid = cache.MetaDataCacheAccessor.GetFieldId(customFieldOwnerClassName, fieldName, false);
+			else if (customFieldOwnerClassName == "SenseOrEntry")
 			{
-				customFieldFlid = cache.MetaDataCacheAccessor.GetFieldId(customFieldOwnerClassName,
-																							config.FieldDescription, false);
-			}
-			catch (FDOInvalidFieldException)
-			{
-				var usefulMessage =
-					String.Format(
-						"The custom field {0} could not be found in the class {1} for the node labelled {2}",
-						config.FieldDescription, customFieldOwnerClassName, config.Parent.Label);
-				throw new ArgumentException(usefulMessage, "config");
+				// ENHANCE (Hasso) 2016.06: take pity on the poor user who has defined identically-named Custom Fields on both Sense and Entry
+				if (mdc.FieldExists("LexSense", config.FieldDescription, false))
+					customFieldFlid = mdc.GetFieldId("LexSense", fieldName, false);
+				else if (mdc.FieldExists("LexEntry", config.FieldDescription, false))
+					customFieldFlid = mdc.GetFieldId("LexEntry", fieldName, false);
 			}
 			return customFieldFlid;
 		}
@@ -1266,14 +1305,13 @@ namespace SIL.FieldWorks.XWorks
 			// Traverse the configuration reflectively inspecting the types in parent to child order
 			foreach (var node in lineage)
 			{
-				PropertyInfo property;
 				if (node.IsCustomField)
 				{
 					fieldType = GetCustomFieldType(lookupType, node, cache);
 				}
 				else
 				{
-					property = GetProperty(lookupType, node);
+					var property = GetProperty(lookupType, node);
 					if (property != null)
 					{
 						fieldType = property.PropertyType;

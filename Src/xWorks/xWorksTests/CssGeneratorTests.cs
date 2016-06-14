@@ -2642,46 +2642,82 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForCustomFieldUnderISenseOrEntry()
+		{
+			var customConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Costume", DictionaryNodeOptions = new DictionaryNodeListOptions(),
+				Style = "FooStyle", IsCustomField = true
+			};
+			var targets = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ConfigTargets",
+				Children = new List<ConfigurableDictionaryNode> { customConfig }
+			};
+			var crossRefs = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MinimalLexReferences", CSSClassNameOverride = "mlrs",
+				Children = new List<ConfigurableDictionaryNode> { targets }
+			};
+			var entryConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { crossRefs }
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryConfig } };
+			PopulateFieldsForTesting(model);
+			using (new CustomFieldForTest(Cache, "Costume", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0, CellarPropertyType.Nil, Guid.Empty))
+			{
+				// SUT
+				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+				const string regexExpected1 = @"\.lexentry>\s.mlrs\s\.mlr>\s\.configtargets\s\.configtarget>\s\.costume{[^}]*}";
+				Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success, "expected costume rule not generated");
+			}
+		}
+
+		[Test]
 		public void GenerateCssForCustomFieldWithSpaces()
 		{
 			var nameConfig = new ConfigurableDictionaryNode
 			{
-				Label = "Name",
 				FieldDescription = "Name",
 				Style = "FooStyle",
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions()
 			};
 			var abbrConfig = new ConfigurableDictionaryNode
 			{
-				Label = "Abbreviation",
 				FieldDescription = "Abbreviation",
 				Style = "FooStyle",
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions()
 			};
 			var customConfig = new ConfigurableDictionaryNode
 			{
-				Label = "Custom Location", FieldDescription = "Custom Location", DictionaryNodeOptions = new DictionaryNodeListOptions(),
-				Style = "FooStyle",
+				FieldDescription = "Custom Location", DictionaryNodeOptions = new DictionaryNodeListOptions(),
+				Style = "FooStyle", IsCustomField = true,
 				Children = new List<ConfigurableDictionaryNode> { nameConfig, abbrConfig }
 			};
 			var entryConfig = new ConfigurableDictionaryNode
 			{
-				Label = "Main Entry", FieldDescription = "LexEntry",
+				FieldDescription = "LexEntry",
 				Children = new List<ConfigurableDictionaryNode> { customConfig }
 			};
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryConfig } };
-			PopulateFieldsForTesting(entryConfig);
-			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			var regexExpected1 = @"\.lexentry>\s\.custom-location{[^}]*}";
-			Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success,
-				"expected custom-location rule not generated");
-			var regexExpected2 = @"\.lexentry>\s\.custom-location>\s\.name{[^}]*}";
-			Assert.IsTrue(Regex.Match(cssResult, regexExpected2, RegexOptions.Singleline).Success,
-				"expected custom-location>name rule not generated");
-			var regexExpected3 = @"\.lexentry>\s\.custom-location>\s\.abbreviation{[^}]*}";
-			Assert.IsTrue(Regex.Match(cssResult, regexExpected3, RegexOptions.Singleline).Success,
-				"expected custom-location>abbreviation rule not generated");
+			PopulateFieldsForTesting(model);
+			using (new CustomFieldForTest(Cache, "Custom Location", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+				CellarPropertyType.ReferenceCollection, Guid.Empty))
+			{
+				// SUT
+				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+				const string regexExpected1 = @"\.lexentry>\s\.custom-location{[^}]*}";
+				Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success,
+					"expected custom-location rule not generated");
+				const string regexExpected2 = @"\.lexentry>\s\.custom-location>\s\.name{[^}]*}";
+				Assert.IsTrue(Regex.Match(cssResult, regexExpected2, RegexOptions.Singleline).Success,
+					"expected custom-location>name rule not generated");
+				const string regexExpected3 = @"\.lexentry>\s\.custom-location>\s\.abbreviation{[^}]*}";
+				Assert.IsTrue(Regex.Match(cssResult, regexExpected3, RegexOptions.Singleline).Success,
+					"expected custom-location>abbreviation rule not generated");
+			}
 		}
 
 		[Test]
@@ -2689,7 +2725,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var noteConfig = new ConfigurableDictionaryNode
 			{
-				Label = "Note",
 				FieldDescription = "Note",
 				IsDuplicate = true,
 				LabelSuffix = "Test One",
@@ -2698,12 +2733,11 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var entryConfig = new ConfigurableDictionaryNode
 			{
-				Label = "Main Entry",
 				FieldDescription = "LexEntry",
 				Children = new List<ConfigurableDictionaryNode> { noteConfig }
 			};
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryConfig } };
-			PopulateFieldsForTesting(entryConfig);
+			PopulateFieldsForTesting(model);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			var regexExpected1 = @"\.lexentry>\s\.note_test-one{[^}]*}";
@@ -2716,7 +2750,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var noteConfig = new ConfigurableDictionaryNode
 			{
-				Label = "Note",
 				FieldDescription = "Note",
 				IsDuplicate = true,
 				LabelSuffix = "#Test",
@@ -2725,12 +2758,11 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var entryConfig = new ConfigurableDictionaryNode
 			{
-				Label = "Main Entry",
 				FieldDescription = "LexEntry",
 				Children = new List<ConfigurableDictionaryNode> { noteConfig }
 			};
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryConfig } };
-			PopulateFieldsForTesting(entryConfig);
+			PopulateFieldsForTesting(model);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			var regexExpected1 = @"\.lexentry>\s\.note_-test{[^}]*}";
@@ -2743,7 +2775,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var noteConfig = new ConfigurableDictionaryNode
 			{
-				Label = "Note",
 				FieldDescription = "Note",
 				IsDuplicate = true,
 				LabelSuffix = "#Test#",
@@ -2752,12 +2783,11 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var entryConfig = new ConfigurableDictionaryNode
 			{
-				Label = "Main Entry",
 				FieldDescription = "LexEntry",
 				Children = new List<ConfigurableDictionaryNode> { noteConfig }
 			};
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryConfig } };
-			PopulateFieldsForTesting(entryConfig);
+			PopulateFieldsForTesting(model);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			var regexExpected1 = @"\.lexentry>\s\.note_-test-{[^}]*}";

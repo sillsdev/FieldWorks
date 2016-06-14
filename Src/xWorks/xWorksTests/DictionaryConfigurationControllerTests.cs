@@ -744,6 +744,40 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		[Test]
+		public void GetCustomFieldsForType_SenseOrEntry()
+		{
+			using (new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexSense"), 0,
+				CellarPropertyType.ReferenceCollection, Guid.Empty))
+			using (new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+				CellarPropertyType.ReferenceCollection, Guid.Empty))
+			{
+				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache, "SenseOrEntry");
+				Assert.AreEqual(customFieldNodes, DictionaryConfigurationController.GetCustomFieldsForType(Cache, "ISenseOrEntry"));
+				CollectionAssert.IsNotEmpty(customFieldNodes);
+				CollectionAssert.AllItemsAreUnique(customFieldNodes);
+				Assert.IsTrue(customFieldNodes.Count == 2, "Incorrect number of nodes created from the custom fields.");
+				Assert.IsTrue(customFieldNodes[0].Label == "CustomCollection");
+				Assert.IsTrue(customFieldNodes[1].Label == "CustomString");
+			}
+		}
+
+		[Test]
+		public void GetCustomFieldsForType_InterfacesAndReferencesAreAliased()
+		{
+			using (new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+				CellarPropertyType.MultiString, Guid.Empty))
+			{
+				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache, "ILexEntry");
+				CollectionAssert.IsNotEmpty(customFieldNodes);
+				Assert.IsTrue(customFieldNodes[0].Label == "CustomString");
+				customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache, "LexEntryRef");
+				Assert.AreEqual(customFieldNodes, DictionaryConfigurationController.GetCustomFieldsForType(Cache, "ILexEntryRef"));
+				CollectionAssert.IsNotEmpty(customFieldNodes);
+				Assert.IsTrue(customFieldNodes[0].Label == "CustomString");
+			}
+		}
+
 		private void MoveSiblingAndVerifyPosition(int movingChildOriginalPosition, int movingChildExpectedPosition,
 			DictionaryConfigurationController.Direction directionToMoveChild)
 		{
@@ -787,6 +821,34 @@ namespace SIL.FieldWorks.XWorks
 				window.Dispose();
 				Mediator.Dispose();
 			}
+		}
+
+		/// <summary>
+		/// Ensure the string that displays the publications associated with the current dictionary configuration is correct.
+		/// </summary>
+		[Test]
+		public void GetThePublicationsForTheCurrentConfiguration()
+		{
+			var controller = new DictionaryConfigurationController { _model = m_model };
+
+			//ensure this is handled gracefully when the publications have not been initialized.
+			Assert.AreEqual(controller.AffectedPublications, xWorksStrings.ksNone1);
+
+			m_model.Publications = new List<string> { "A" };
+			Assert.AreEqual(controller.AffectedPublications, "A");
+
+			m_model.Publications = new List<string> { "A", "B" };
+			Assert.AreEqual(controller.AffectedPublications, "A, B");
+		}
+
+		[Test]
+		public void DisplaysAllPublicationsIfSet()
+		{
+			var controller = new DictionaryConfigurationController { _model = m_model };
+			m_model.Publications = new List<string> { "A", "B" };
+			m_model.AllPublications = true;
+
+			Assert.That(controller.AffectedPublications, Is.EqualTo("All publications"), "Show that it's all-publications if so.");
 		}
 
 		[Test]
@@ -874,35 +936,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		/// <summary>
-		/// Ensure the string that displays the publications associated with the current
-		/// dictionary configuration is correct.
-		/// </summary>
-		[Test]
-		public void GetThePublicationsForTheCurrentConfiguration()
-		{
-			var controller = new DictionaryConfigurationController { _model = m_model };
-
-			//ensure this is handled gracefully when the publications have not been initialized.
-			Assert.AreEqual(controller.AffectedPublications, xWorksStrings.ksNone1);
-
-			m_model.Publications = new List<string> { "A" };
-			Assert.AreEqual(controller.AffectedPublications, "A");
-
-			m_model.Publications = new List<string> { "A", "B" };
-			Assert.AreEqual(controller.AffectedPublications, "A, B");
-		}
-
-		[Test]
-		public void DisplaysAllPublicationsIfSet()
-		{
-			var controller = new DictionaryConfigurationController { _model = m_model };
-			m_model.Publications = new List<string> { "A", "B" };
-			m_model.AllPublications = true;
-
-			Assert.That(controller.AffectedPublications, Is.EqualTo("All publications"), "Show that it's all-publications if so.");
-		}
-
 		[Test]
 		public void MergeCustomFieldsIntoDictionaryModel_DeletedFieldsAreRemoved()
 		{
@@ -948,6 +981,28 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache);
 			Assert.AreEqual(0, model.Parts[0].Children[0].Children.Count, "The custom field in the model should have been removed since it isn't in the project(cache)");
+		}
+
+		[Test]
+		public void MergecustomFieldsIntoModel_RefTypesUseOwningEntry()
+		{
+			var variantFormsNode = new ConfigurableDictionaryNode { FieldDescription = "VariantFormEntryBackRefs" };
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { variantFormsNode }
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryNode } };
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+			using (new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+				CellarPropertyType.ReferenceCollection, Guid.Empty))
+			{
+				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache); // SUT
+				Assert.AreEqual(1, variantFormsNode.Children.Count);
+				var customNode = variantFormsNode.Children[0];
+				Assert.AreEqual("OwningEntry", customNode.FieldDescription);
+				Assert.AreEqual("CustomCollection", customNode.SubField);
+			}
 		}
 
 		[Test]
