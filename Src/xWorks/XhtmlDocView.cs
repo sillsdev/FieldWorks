@@ -766,6 +766,7 @@ namespace SIL.FieldWorks.XWorks
 					{
 						RemoveStyleFromPreviousSelectedEntryOnView(browser);
 						LoadPageIfNecessary(browser);
+						Clerk.SelectedRecordChanged(true);
 						SetActiveSelectedEntryOnView(browser);
 					}
 					break;
