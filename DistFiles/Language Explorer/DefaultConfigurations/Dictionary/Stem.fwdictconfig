@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<DictionaryConfiguration name="Stem-based (complex forms as main entries)" allPublications="true" version="6" lastModified="2016-05-16">
+<DictionaryConfiguration name="Stem-based (complex forms as main entries)" allPublications="true" version="7" lastModified="2016-06-09">
   <!-- Main entries in the dictionary have historically been written out with class="entry" -->
   <ConfigurationItem name="Main Entry" isEnabled="true" style="Dictionary-Normal" styleType="paragraph" field="LexEntry" cssClassNameOverride="entry">
 	<!-- using a different CSS Class for the main HeadWord and the HeadWords for subentries, references, and (variant|complex) forms
@@ -111,23 +111,44 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Etymology" before=" " after=" " isEnabled="true" field="EtymologyOA" cssClassNameOverride="etymology">
-	  <ConfigurationItem name="Etymological Form" between=" " after=" " isEnabled="true" field="Form">
+	<ConfigurationItem name="Etymology" isEnabled="false" before="(" after=") " between=" " field="EtymologyOS" cssClassNameOverride="etymologies">
+	  <ConfigurationItem name="Preceding Annotation" isEnabled="true" before="" between=" " after=" " field="PrecComment">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true" />
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+	  <ConfigurationItem name="Source Language" after=" " isEnabled="true" field="Language">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true"/>
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+	  <ConfigurationItem name="Source Form" isEnabled="true" before="" between=" " after=" " field="Form">
 		<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
-		  <Option id="best vernoranal" isEnabled="true"/>
+		  <Option id="best vernoranal" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Gloss" between=" " after=" " isEnabled="true" field="Gloss">
+	  <ConfigurationItem name="Gloss" isEnabled="true" before="" between=" " after=" " field="Gloss">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-		  <Option id="analysis" isEnabled="true"/>
+		  <Option id="analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Comment" between=" " after=" " isEnabled="true" field="Comment">
+	  <ConfigurationItem name="Following Comment" isEnabled="false" before="" between=" " after=" " field="Comment">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-		  <Option id="analysis" isEnabled="true"/>
+		  <Option id="analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Source" after=" " isEnabled="false" field="Source"/>
+	  <ConfigurationItem name="Bibliographic Source" isEnabled="true" before="" between=" " after=" " field="Bibliography">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true" />
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+<!--
+	  <ConfigurationItem name="Note" isEnabled="false" before="" between=" " after=" " field="Note">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true" />
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+-->
 	</ConfigurationItem>
 	<ConfigurationItem name="Cross References" between="; " after=". " isEnabled="true" field="MinimalLexReferences">
 	  <ListTypeOptions list="entry">
@@ -768,23 +789,44 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Etymology" before=" " after=" " isEnabled="false" field="EtymologyOA" cssClassNameOverride="etymology">
-	  <ConfigurationItem name="Etymological Form" between=" " after=" " isEnabled="true" field="Form">
+	<ConfigurationItem name="Etymology" isEnabled="false" before="(" after=") " between=" " field="EtymologyOS" cssClassNameOverride="etymologies">
+	  <ConfigurationItem name="Preceding Annotation" isEnabled="true" before="" between=" " after=" " field="PrecComment">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true" />
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+	  <ConfigurationItem name="Source Language" after=" " isEnabled="true" field="Language">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true"/>
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+	  <ConfigurationItem name="Source Form" isEnabled="true" before="" between=" " after=" " field="Form">
 		<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
-		  <Option id="best vernoranal" isEnabled="true"/>
+		  <Option id="best vernoranal" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Gloss" between=" " after=" " isEnabled="true" field="Gloss">
+	  <ConfigurationItem name="Gloss" isEnabled="true" before="" between=" " after=" " field="Gloss">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-		  <Option id="analysis" isEnabled="true"/>
+		  <Option id="analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Comment" between=" " after=" " isEnabled="true" field="Comment">
+	  <ConfigurationItem name="Following Comment" isEnabled="false" before="" between=" " after=" " field="Comment">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-		  <Option id="analysis" isEnabled="true"/>
+		  <Option id="analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Source" after=" " isEnabled="false" field="Source"/>
+	  <ConfigurationItem name="Bibliographic Source" isEnabled="true" before="" between=" " after=" " field="Bibliography">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true" />
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+<!--
+	  <ConfigurationItem name="Note" isEnabled="false" before="" between=" " after=" " field="Note">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true" />
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+-->
 	</ConfigurationItem>
 	<ConfigurationItem name="Cross References" between="; " after=". " isEnabled="false" field="MinimalLexReferences">
 	  <ListTypeOptions list="entry">
@@ -1522,23 +1564,44 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Etymology" before=" " after=" " isEnabled="false" field="EtymologyOA" cssClassNameOverride="etymology">
-	  <ConfigurationItem name="Etymological Form" between=" " after=" " isEnabled="true" field="Form">
+	<ConfigurationItem name="Etymology" isEnabled="false" before="(" after=") " between=" " field="EtymologyOS" cssClassNameOverride="etymologies">
+	  <ConfigurationItem name="Preceding Annotation" isEnabled="true" before="" between=" " after=" " field="PrecComment">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true" />
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+	  <ConfigurationItem name="Source Language" after=" " isEnabled="true" field="Language">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true"/>
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+	  <ConfigurationItem name="Source Form" isEnabled="true" before="" between=" " after=" " field="Form">
 		<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
-		  <Option id="best vernoranal" isEnabled="true"/>
+		  <Option id="best vernoranal" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Gloss" between=" " after=" " isEnabled="true" field="Gloss">
+	  <ConfigurationItem name="Gloss" isEnabled="true" before="" between=" " after=" " field="Gloss">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-		  <Option id="analysis" isEnabled="true"/>
+		  <Option id="analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Comment" between=" " after=" " isEnabled="true" field="Comment">
+	  <ConfigurationItem name="Following Comment" isEnabled="false" before="" between=" " after=" " field="Comment">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-		  <Option id="analysis" isEnabled="true"/>
+		  <Option id="analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Source" after=" " isEnabled="false" field="Source"/>
+	  <ConfigurationItem name="Bibliographic Source" isEnabled="true" before="" between=" " after=" " field="Bibliography">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true" />
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+<!--
+	  <ConfigurationItem name="Note" isEnabled="false" before="" between=" " after=" " field="Note">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true" />
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+-->
 	</ConfigurationItem>
 	<ConfigurationItem name="Cross References" between="; " after=". " isEnabled="false" field="MinimalLexReferences">
 	  <ListTypeOptions list="entry">

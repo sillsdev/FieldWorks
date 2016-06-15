@@ -3,7 +3,7 @@
  xsi:noNamespaceSchemaLocation="../../Configuration/DictionaryConfiguration.xsd"
  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
  name="Hybrid (complex forms as main entries and mini subentries)"
- version="6" lastModified="2016-05-16"
+ version="7" lastModified="2016-06-09"
  allPublications="true">
   <ConfigurationItem name="Main Entry" isEnabled="true" style="Dictionary-Normal" styleType="paragraph" field="LexEntry" cssClassNameOverride="entry">
 	<!-- using a different CSS Class for the main HeadWord and the HeadWords for subentries, references, and (variant|complex) forms
@@ -53,8 +53,18 @@
 		<ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Etymology" isEnabled="false" before="" after=" " field="EtymologyOA" cssClassNameOverride="etymology">
-	  <ConfigurationItem name="Etymological Form" isEnabled="true" before="" between=" " after=" " field="Form">
+	<ConfigurationItem name="Etymology" isEnabled="false" before="(" after=") " between=" " field="EtymologyOS" cssClassNameOverride="etymologies">
+	  <ConfigurationItem name="Preceding Annotation" isEnabled="true" before="" between=" " after=" " field="PrecComment">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true" />
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+	  <ConfigurationItem name="Source Language" after=" " isEnabled="true" field="Language">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true"/>
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+	  <ConfigurationItem name="Source Form" isEnabled="true" before="" between=" " after=" " field="Form">
 		<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 		  <Option id="best vernoranal" isEnabled="true" />
 		</WritingSystemOptions>
@@ -64,12 +74,23 @@
 		  <Option id="analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Comment" isEnabled="true" before="" between=" " after=" " field="Comment">
+	  <ConfigurationItem name="Following Comment" isEnabled="false" before="" between=" " after=" " field="Comment">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Source" isEnabled="false" before="" after=" " field="Source" />
+	  <ConfigurationItem name="Bibliographic Source" isEnabled="true" before="" between=" " after=" " field="Bibliography">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true" />
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+<!--
+	  <ConfigurationItem name="Note" isEnabled="false" before="" between=" " after=" " field="Note">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true" />
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+-->
 	</ConfigurationItem>
 	<ConfigurationItem name="Senses" isEnabled="true" before="" between="  " after=" " field="SensesOS" cssClassNameOverride="senses">
 	  <SenseOptions numberStyle="Dictionary-SenseNumber" numberBefore="" numberingStyle="%d" numberAfter=") " numberSingleSense="false" showSingleGramInfoFirst="true" displayEachSenseInParagraph="false" />
@@ -784,8 +805,18 @@
 		<ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Etymology" isEnabled="false" before=" " after=" " field="EtymologyOA" cssClassNameOverride="etymology">
-	  <ConfigurationItem name="Etymological Form" isEnabled="true" before="" between=" " after=" " field="Form">
+	<ConfigurationItem name="Etymology" isEnabled="false" before="(" after=") " between=" " field="EtymologyOS" cssClassNameOverride="etymologies">
+	  <ConfigurationItem name="Preceding Annotation" isEnabled="true" before="" between=" " after=" " field="PrecComment">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true" />
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+	  <ConfigurationItem name="Source Language" after=" " isEnabled="true" field="Language">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true"/>
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+	  <ConfigurationItem name="Source Form" isEnabled="true" before="" between=" " after=" " field="Form">
 		<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 		  <Option id="best vernoranal" isEnabled="true" />
 		</WritingSystemOptions>
@@ -795,12 +826,23 @@
 		  <Option id="analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Comment" isEnabled="true" before="" between=" " after=" " field="Comment">
+	  <ConfigurationItem name="Following Comment" isEnabled="false" before="" between=" " after=" " field="Comment">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Source" isEnabled="false" before="" after=" " field="Source" />
+	  <ConfigurationItem name="Bibliographic Source" isEnabled="true" before="" between=" " after=" " field="Bibliography">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true" />
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+<!--
+	  <ConfigurationItem name="Note" isEnabled="false" before="" between=" " after=" " field="Note">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true" />
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+-->
 	</ConfigurationItem>
 	<ConfigurationItem name="Variant of" isEnabled="true" before=" {" between=", " after="}" field="VisibleVariantEntryRefs">
 	  <ListTypeOptions list="variant">
@@ -1571,23 +1613,44 @@
 		  <ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Etymology" before=" [" after="] " isEnabled="true" field="EtymologyOA" cssClassNameOverride="etymology">
-		<ConfigurationItem name="Etymological Form" between=" " after=" " isEnabled="true" field="Form">
+	  <ConfigurationItem name="Etymology" isEnabled="false" before="(" after=") " between=" " field="EtymologyOS" cssClassNameOverride="etymologies">
+		<ConfigurationItem name="Preceding Annotation" isEnabled="true" before="" between=" " after=" " field="PrecComment">
+		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+			<Option id="analysis" isEnabled="true" />
+		  </WritingSystemOptions>
+		</ConfigurationItem>
+		<ConfigurationItem name="Source Language" after=" " isEnabled="true" field="Language">
+		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+			<Option id="analysis" isEnabled="true"/>
+		  </WritingSystemOptions>
+		</ConfigurationItem>
+		<ConfigurationItem name="Source Form" isEnabled="true" before="" between=" " after=" " field="Form">
 		  <WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
-			<Option id="best vernoranal" isEnabled="true"/>
+			<Option id="best vernoranal" isEnabled="true" />
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Gloss" between=" " after=" " isEnabled="true" field="Gloss">
+		<ConfigurationItem name="Gloss" isEnabled="true" before="" between=" " after=" " field="Gloss">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			<Option id="analysis" isEnabled="true"/>
+			<Option id="analysis" isEnabled="true" />
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Comment" between=" " after=" " isEnabled="true" field="Comment">
+		<ConfigurationItem name="Following Comment" isEnabled="false" before="" between=" " after=" " field="Comment">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			<Option id="analysis" isEnabled="true"/>
+			<Option id="analysis" isEnabled="true" />
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Source" after=" " isEnabled="false" field="Source"/>
+		<ConfigurationItem name="Bibliographic Source" isEnabled="true" before="" between=" " after=" " field="Bibliography">
+		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+			<Option id="analysis" isEnabled="true" />
+		  </WritingSystemOptions>
+		</ConfigurationItem>
+<!--
+		<ConfigurationItem name="Note" isEnabled="false" before="" between=" " after=" " field="Note">
+		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+			<Option id="analysis" isEnabled="true" />
+		  </WritingSystemOptions>
+		</ConfigurationItem>
+-->
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Senses" between="  " after=" " isEnabled="false" field="SensesOS" cssClassNameOverride="senses">
 		<SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=") " numberingStyle="%O" numberSingleSense="false" showSingleGramInfoFirst="true"/>
@@ -2282,8 +2345,18 @@
 		<ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Etymology" isEnabled="false" before=" " after=" " field="EtymologyOA" cssClassNameOverride="etymology">
-	  <ConfigurationItem name="Etymological Form" isEnabled="true" before="" between=" " after=" " field="Form">
+	<ConfigurationItem name="Etymology" isEnabled="false" before="(" after=") " between=" " field="EtymologyOS" cssClassNameOverride="etymologies">
+	  <ConfigurationItem name="Preceding Annotation" isEnabled="true" before="" between=" " after=" " field="PrecComment">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true" />
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+	  <ConfigurationItem name="Source Language" after=" " isEnabled="true" field="Language">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true"/>
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+	  <ConfigurationItem name="Source Form" isEnabled="true" before="" between=" " after=" " field="Form">
 		<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 		  <Option id="best vernoranal" isEnabled="true" />
 		</WritingSystemOptions>
@@ -2293,12 +2366,23 @@
 		  <Option id="analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Comment" isEnabled="true" before="" between=" " after=" " field="Comment">
+	  <ConfigurationItem name="Following Comment" isEnabled="false" before="" between=" " after=" " field="Comment">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Source" isEnabled="false" before="" after=" " field="Source" />
+	  <ConfigurationItem name="Bibliographic Source" isEnabled="true" before="" between=" " after=" " field="Bibliography">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true" />
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+<!--
+	  <ConfigurationItem name="Note" isEnabled="false" before="" between=" " after=" " field="Note">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true" />
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+-->
 	</ConfigurationItem>
 	<ConfigurationItem name="Variant of" isEnabled="true" before=" {" between=", " after="}" field="VisibleVariantEntryRefs">
 	  <ListTypeOptions list="variant">
@@ -3386,23 +3470,44 @@
 		  <ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Etymology" before=" [" after="] " isEnabled="true" field="EtymologyOA" cssClassNameOverride="etymology">
-		<ConfigurationItem name="Etymological Form" between=" " after=" " isEnabled="true" field="Form">
+	  <ConfigurationItem name="Etymology" isEnabled="false" before="(" after=") " between=" " field="EtymologyOS" cssClassNameOverride="etymologies">
+		<ConfigurationItem name="Preceding Annotation" isEnabled="true" before="" between=" " after=" " field="PrecComment">
+		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+			<Option id="analysis" isEnabled="true" />
+		  </WritingSystemOptions>
+		</ConfigurationItem>
+		<ConfigurationItem name="Source Language" after=" " isEnabled="true" field="Language">
+		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+			<Option id="analysis" isEnabled="true"/>
+		  </WritingSystemOptions>
+		</ConfigurationItem>
+		<ConfigurationItem name="Source Form" isEnabled="true" before="" between=" " after=" " field="Form">
 		  <WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
-			<Option id="best vernoranal" isEnabled="true"/>
+			<Option id="best vernoranal" isEnabled="true" />
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Gloss" between=" " after=" " isEnabled="true" field="Gloss">
+		<ConfigurationItem name="Gloss" isEnabled="true" before="" between=" " after=" " field="Gloss">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			<Option id="analysis" isEnabled="true"/>
+			<Option id="analysis" isEnabled="true" />
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Comment" between=" " after=" " isEnabled="true" field="Comment">
+		<ConfigurationItem name="Following Comment" isEnabled="false" before="" between=" " after=" " field="Comment">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			<Option id="analysis" isEnabled="true"/>
+			<Option id="analysis" isEnabled="true" />
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Source" after=" " isEnabled="false" field="Source"/>
+		<ConfigurationItem name="Bibliographic Source" isEnabled="true" before="" between=" " after=" " field="Bibliography">
+		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+			<Option id="analysis" isEnabled="true" />
+		  </WritingSystemOptions>
+		</ConfigurationItem>
+<!--
+		<ConfigurationItem name="Note" isEnabled="false" before="" between=" " after=" " field="Note">
+		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+			<Option id="analysis" isEnabled="true" />
+		  </WritingSystemOptions>
+		</ConfigurationItem>
+-->
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Senses" between="  " after=" " isEnabled="false" field="SensesOS" cssClassNameOverride="senses">
 		<SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=") " numberingStyle="%O" numberSingleSense="false" showSingleGramInfoFirst="true"/>

@@ -436,9 +436,9 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			CopyMultiString(leOld.LiteralMeaning, leNew.LiteralMeaning);
 			CopyMultiString(leOld.Restrictions, leNew.Restrictions);
 			CopyMultiString(leOld.SummaryDefinition, leNew.SummaryDefinition);
-			ILexEtymology ety = leOld.EtymologyOA;
-			if (leNew.EtymologyOA == null && ety != null)
-				leNew.EtymologyOA = ety;
+			ILexEtymology[] rgety = leOld.EtymologyOS.ToArray();
+			for (int i = 0; i < rgety.Length; ++i)
+				leNew.EtymologyOS.Add(rgety[i]);
 			IMoForm[] rgmf = leOld.AlternateFormsOS.ToArray();
 			for (int i = 0; i < rgmf.Length; ++i)
 				leNew.AlternateFormsOS.Add(rgmf[i]);

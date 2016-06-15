@@ -422,6 +422,7 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="TestData\DataMigration7000069_Etymology.xml" />
     <Content Include="TestData\DataMigration7000069_CustomExemplar.xml" />
     <Content Include="TestData\DataMigration7000069_CustomUsageNote.xml" />
     <Content Include="TestData\DataMigration7000069.xml" />

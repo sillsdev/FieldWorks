@@ -230,8 +230,6 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			mockMdc.AddField(++currentFlid, "Pictures", CellarPropertyType.OwningSequence, 3);
 			mockMdc.AddField(++currentFlid, "Form", CellarPropertyType.MultiString, 4);
 			mockMdc.AddField(++currentFlid, "Caption", CellarPropertyType.MultiUnicode, 5);
-			mockMdc.AddField(++currentFlid, "DoNotPublishIn", CellarPropertyType.ReferenceSequence, 4);
-			mockMdc.AddField(++currentFlid, "DoNotPublishIn", CellarPropertyType.ReferenceSequence, 5);
 
 			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000069.xml");
 			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000068, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
@@ -299,6 +297,163 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			var runElt = runs[0];
 			Assert.AreEqual(frWs, runElt.FirstAttribute.Value);
 			Assert.AreEqual("grenouille", runElt.Value);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test the migration from version 7000068 to 7000069 adding 3 fields to LexEtymology
+		/// and changing LexEntry->Etymology from atomic to sequence.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void AddLexEtymologyFieldsMakeSequence()
+		{
+			var mockMdc = new MockMDCForDataMigration();
+			mockMdc.AddClass(1, "CmObject", null, new List<string> { "LexEntry", "LexEtymology", "LangProject" });
+			mockMdc.AddClass(2, "LexEntry", "CmObject", new List<string>());
+			mockMdc.AddClass(3, "LexEtymology", "CmObject", new List<string>());
+			mockMdc.AddClass(4, "LangProject", "CmObject", new List<string>());
+
+			var currentFlid = 2000;
+			// These represent the pre-migration state
+			mockMdc.AddField(++currentFlid, "Etymology", CellarPropertyType.OwningAtomic, 2);
+
+			mockMdc.AddField(++currentFlid, "Comment", CellarPropertyType.MultiString, 3);
+			mockMdc.AddField(++currentFlid, "Form", CellarPropertyType.MultiUnicode, 3);
+			mockMdc.AddField(++currentFlid, "Gloss", CellarPropertyType.MultiUnicode, 3);
+			mockMdc.AddField(++currentFlid, "Source", CellarPropertyType.Unicode, 3);
+			mockMdc.AddField(++currentFlid, "LiftResidue", CellarPropertyType.Unicode, 3);
+
+			mockMdc.AddField(++currentFlid, "CurAnalysisWss", CellarPropertyType.Unicode, 4);
+			mockMdc.AddField(++currentFlid, "CurVernWss", CellarPropertyType.Unicode, 4);
+
+			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000069_Etymology.xml");
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000068, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
+
+			// Old model
+			// LexEntry.Etymology atomic						(-> sequence)
+			//<basic num="1" id="Comment" sig="MultiString"/>	(no change)
+			//<basic num="2" id="Form" sig="MultiUnicode"/>		(-> MultiString)
+			//<basic num="3" id="Gloss" sig="MultiUnicode"/>	(-> MultiString)
+			//<basic num="4" id="Source" sig="Unicode"/>		(-> "Language" MultiString)
+			//<basic num="5" id="LiftResidue" sig="Unicode"/>	(no change)
+
+			// New model
+			//<basic num="1" id="Comment" sig="MultiString"/>
+			//<basic num="2" id="Form" sig="MultiString"/>
+			//<basic num="3" id="Gloss" sig="MultiString"/>
+			//<basic num="4" id="Language" sig="MultiString"/>
+			//<basic num="5" id="LiftResidue" sig="Unicode"/>
+			//<basic num="6" id="PrecComment" sig="MultiString"/>	(new)
+			//<basic num="7" id="Note" sig="MultiString"/>			(new)
+			//<basic num="8" id="Bibliography" sig="MultiString"/>	(new)
+
+			// Make sure LexEtymology objects do not have Language, PrecComment, Note or Bibliography prior to migration.
+			foreach (var dto in dtoRepos.AllInstancesSansSubclasses("LexEtymology"))
+			{
+				var elt = XElement.Parse(dto.Xml);
+				Assert.IsNull(elt.Element("Language"));
+				Assert.IsNull(elt.Element("PrecComment"));
+				Assert.IsNull(elt.Element("Note"));
+				Assert.IsNull(elt.Element("Bibliography"));
+			}
+
+			DataMigration7000069.AugmentEtymologyCluster(dtoRepos);
+
+			// Since we're just adding two fields that will be empty initially,
+			// we just need to verify that nothing in our data changed.
+			const string frWs = "fr";
+			const string frPhoneticWs = "fr-fonipa";
+			const string enWs = "en";
+			const string idWs = "id";
+			const string entry1Guid = "7ecbb299-bf35-4795-a5cc-8d38ce8b891c";
+			const string entry2Guid = "7ecbb299-bf35-4795-a5cc-8d38ce8b891e";
+			const string emptyEntryGuid = "7ecbb299-bf35-4795-a5cc-8d38ce8b891f";
+
+			// Verification
+			var primaryAnalysisWs = enWs;
+			var allEtymologyDtos = dtoRepos.AllInstancesSansSubclasses("LexEtymology");
+			Assert.AreEqual(2, allEtymologyDtos.Count(), "There should be two Etymology objects");
+			var firstEntry = XElement.Parse(dtoRepos.GetDTO(entry1Guid).Xml);
+			var secondEntry = XElement.Parse(dtoRepos.GetDTO(entry2Guid).Xml);
+			var emptyEntry = XElement.Parse(dtoRepos.GetDTO(emptyEntryGuid).Xml);
+			var entryEtymElt = emptyEntry.Element("Etymology");
+			Assert.IsNull(entryEtymElt, "Empty entry should not have an Etymology object");
+			var firstEtymElt = GetEntryEtymologyElement(dtoRepos, firstEntry);
+			var secondEtymElt = GetEntryEtymologyElement(dtoRepos, secondEntry);
+
+			// Verify contents of firstEtymElt
+			var comment = firstEtymElt.Element("Comment");
+			VerifyMultiString(comment, new[] { enWs }, new[] { "Odd comment." }, false);
+			var form = firstEtymElt.Element("Form");
+			VerifyMultiString(form, new[] { frWs }, new[] { "alcool" }, false);
+			var gloss = firstEtymElt.Element("Gloss");
+			VerifyMultiString(gloss, new[] { enWs }, new[] { "alcohol" }, true);
+			VerifyMultiString(gloss, new[] { idWs }, new[] { "minuman keras" }, true);
+			var language = firstEtymElt.Element("Language");
+			VerifyMultiString(language, new []{primaryAnalysisWs}, new []{"l'arabe"}, false);
+			var source = firstEtymElt.Elements("Source");
+			CollectionAssert.IsEmpty(source, "Should not be any Etymology Source left.");
+			var liftRes = firstEtymElt.Elements("LiftResidue");
+			CollectionAssert.IsEmpty(liftRes, "Should not create any LiftResidue at this point.");
+
+			// Verify contents of secondEtymElt
+			comment = secondEtymElt.Element("Comment");
+			VerifyMultiString(comment, new[] { enWs, frWs, enWs }, new[] { "some comment", " avec ", "embedded French" }, true);
+			VerifyMultiString(comment, new[] { idWs }, new[] { "Indonesian comment" }, true);
+			form = secondEtymElt.Element("Form");
+			VerifyMultiString(form, new[] { frWs }, new[] { "coleus" }, true);
+			VerifyMultiString(form, new[] { frPhoneticWs }, new[] { "kolius" }, true);
+			VerifyMultiString(form, new[] { enWs }, new[] { "koleus" }, true);
+			VerifyMultiString(form, new[] { idWs }, new[] { "kolele" }, true);
+			gloss = secondEtymElt.Element("Gloss");
+			VerifyMultiString(gloss, new[] { enWs }, new[] { "coleus flower" }, true);
+			VerifyMultiString(gloss, new[] { idWs }, new[] { "indonesian gloss" }, true);
+			language = secondEtymElt.Element("Language");
+			VerifyMultiString(language, new[] { primaryAnalysisWs }, new[] { "All made up" }, false);
+			source = secondEtymElt.Elements("Source");
+			CollectionAssert.IsEmpty(source, "Should not be any Etymology Source left.");
+			liftRes = secondEtymElt.Elements("LiftResidue");
+			CollectionAssert.IsEmpty(liftRes, "Should not create any LiftResidue at this point.");
+		}
+
+		/// <summary>
+		/// Verify that elt contains at least one AStr element containing as many Run elements
+		/// as the size of wsArray, each having ws attribute set to the corresponding
+		/// value in wsArray and each containing the corresponding string in runContentArray.
+		/// The AStr element is verified to have its ws attribute set to the first value in
+		/// wsArray. If allowOtherAstr is false, the matching AStr element will be verified
+		/// to be the only AStr in elt.
+		/// </summary>
+		private void VerifyMultiString(XElement elt, string[] wsArray, string[] runContentArray, bool allowOtherAstr)
+		{
+			Assert.NotNull(elt, "Empty element fed to VerifyMultiString()");
+			Assert.AreEqual(wsArray.Length, runContentArray.Length, "VerifyMultiString fed two arrays of different length");
+
+			var astrElts = elt.Elements("AStr");
+			if (!allowOtherAstr)
+				Assert.AreEqual(1, astrElts.Count(), "Did not find unique AStr element in {0}", elt.Name);
+			var astrElt = astrElts.FirstOrDefault(elem => elem.Attribute("ws").Value == wsArray[0]);
+			Assert.NotNull(astrElt, "AStr element has wrong ws attribute value in {0}.", elt.Name);
+
+			var runElts = astrElt.Elements("Run");
+			Assert.AreEqual(wsArray.Length, runElts.Count(), "MultiString {0} has the wrong number of Run elements", elt.Name);
+			var i = 0;
+			foreach (var runElt in runElts)
+			{
+				Assert.That(runElt.Attribute("ws").Value, Is.EqualTo(wsArray[i]), "Run element has wrong ws attribute value.");
+				Assert.That(runElt.Value, Is.EqualTo(runContentArray[i]), "Run element contains the wrong data.");
+				i++;
+			}
+		}
+
+		private XElement GetEntryEtymologyElement(IDomainObjectDTORepository dtoRepos, XElement entryElement)
+		{
+			var entryEtymElt = entryElement.Element("Etymology");
+			var etyPointers = entryEtymElt.Descendants("objsur");
+			Assert.AreEqual(1, etyPointers.Count(), "There should be one Etymology object");
+			var etyGuid = etyPointers.First().Attribute("guid").Value;
+			return XElement.Parse(dtoRepos.GetDTO(etyGuid).Xml);
 		}
 
 

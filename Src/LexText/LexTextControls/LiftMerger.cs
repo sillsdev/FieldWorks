@@ -479,8 +479,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_deletedGuids.Add(le.Guid);
 			if (le.LexemeFormOA != null)
 				m_deletedGuids.Add(le.LexemeFormOA.Guid);
-			if (le.EtymologyOA != null)
-				m_deletedGuids.Add(le.EtymologyOA.Guid);
+			foreach (var ety in le.EtymologyOS)
+				m_deletedGuids.Add(ety.Guid);
 			foreach (var msa in le.MorphoSyntaxAnalysesOC)
 				m_deletedGuids.Add(msa.Guid);
 			foreach (var er in le.EntryRefsOS)
@@ -1927,7 +1927,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				ProcessEntryFields(le, entry);
 				CreateEntryVariants(le, entry);
 				CreateEntryPronunciations(le, entry);
-				ProcessEntryEtymologies(le, entry);
+				CreateEntryEtymologies(le, entry);
 				ProcessEntryRelations(le, entry);
 				foreach (CmLiftSense sense in entry.Senses)
 					CreateEntrySense(le, sense);
@@ -2023,11 +2023,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			ILexEntry le = entry.CmObject as ILexEntry;
 			if (LexemeFormsConflict(le, entry))
 				return true;
-			if (EntryEtymologiesConflict(le.EtymologyOA, entry.Etymologies))
-			{
-				m_cdConflict = new ConflictingEntry("Etymology", le, this);
+			if (EntryEtymologiesConflict(le, entry.Etymologies))
 				return true;
-			}
 			if (EntryFieldsConflict(le, entry.Fields))
 				return true;
 			if (EntryNotesConflict(le, entry.Notes))
@@ -2055,7 +2052,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			ProcessEntryFields(le, entry);
 			MergeEntryVariants(le, entry);
 			MergeEntryPronunciations(le, entry);
-			ProcessEntryEtymologies(le, entry);
+			MergeEntryEtymologies(le, entry);
 			ProcessEntryRelations(le, entry);
 			Dictionary<CmLiftSense, ILexSense> map = new Dictionary<CmLiftSense, ILexSense>();
 			Set<int> setUsed = new Set<int>();
@@ -3679,66 +3676,128 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private void ProcessEntryEtymologies(ILexEntry le, CmLiftEntry entry)
+		private void CreateEntryEtymologies(ILexEntry le, CmLiftEntry entry)
 		{
-			bool fFirst = true;
-			foreach (CmLiftEtymology let in entry.Etymologies)
+			foreach (CmLiftEtymology liftEtymology in entry.Etymologies)
 			{
-				if (fFirst)
-				{
-					if (le.EtymologyOA == null)
-					{
-						ILexEtymology ety = CreateNewLexEtymology();
-						le.EtymologyOA = ety;
-					}
-					AddNewWsToVernacular();
-					MergeInMultiUnicode(le.EtymologyOA.Form, LexEtymologyTags.kflidForm, let.Form, le.EtymologyOA.Guid);
-					AddNewWsToAnalysis();
-					MergeInMultiUnicode(le.EtymologyOA.Gloss, LexEtymologyTags.kflidGloss, let.Gloss, le.EtymologyOA.Guid);
-					// See LT-11765 for issues here.
-					if (let.Source != null && let.Source != "UNKNOWN")
-					{
-						if (!m_fCreatingNewEntry && m_msImport == MergeStyle.MsKeepOld)
-						{
-							if (String.IsNullOrEmpty(le.EtymologyOA.Source))
-								le.EtymologyOA.Source = let.Source;
-						}
-						else
-						{
-							le.EtymologyOA.Source = let.Source;
-						}
-					}
-					ProcessEtymologyFieldsAndTraits(le.EtymologyOA, let);
-					StoreDatesInResidue(le.EtymologyOA, let);
-					fFirst = false;
-				}
-				else
-				{
-					StoreEtymologyAsResidue(le, let);
-				}
+				AddNewWsToVernacular();
+				ILexEtymology ety = CreateNewLexEtymology();
+				le.EtymologyOS.Add(ety);
+				MergeInMultiUnicode(ety.Form, LexEtymologyTags.kflidForm, liftEtymology.Form, ety.Guid);
+				AddNewWsToAnalysis();
+				MergeInMultiUnicode(ety.Gloss, LexEtymologyTags.kflidGloss, liftEtymology.Gloss, ety.Guid);
+				ProcessEtymologyFieldsAndTraits(ety, liftEtymology);
+				StoreAnnotationsAndDatesInResidue(ety, liftEtymology);
 			}
 		}
 
-		private bool EntryEtymologiesConflict(ILexEtymology lexety, List<CmLiftEtymology> list)
+		private void MergeEntryEtymologies(ILexEntry le, CmLiftEntry entry)
 		{
-			if (lexety == null || list.Count == 0)
-				return false;
-			foreach (CmLiftEtymology ety in list)
+			var dictHvoLiftEtym = new Dictionary<int, CmLiftEtymology>();
+			foreach (CmLiftEtymology liftEtym in entry.Etymologies)
 			{
 				AddNewWsToVernacular();
-				if (MultiUnicodeStringsConflict(lexety.Form, ety.Form, false, Guid.Empty, 0))
-					return true;
+				var etym = FindMatchingEtymology(le, dictHvoLiftEtym, liftEtym);
+				if (etym == null)
+				{
+					etym = CreateNewLexEtymology();
+					le.EtymologyOS.Add(etym);
+					dictHvoLiftEtym.Add(etym.Hvo, liftEtym);
+				}
+				MergeInMultiUnicode(etym.Form, LexEtymologyTags.kflidForm, liftEtym.Form, etym.Guid);
 				AddNewWsToAnalysis();
-				if (MultiUnicodeStringsConflict(lexety.Gloss, ety.Gloss, false, Guid.Empty, 0))
-					return true;
-				IgnoreNewWs();
-				if (StringsConflict(lexety.Source, ety.Source))
-					return true;
-				if (EtymologyFieldsConflict(lexety, ety.Fields))
-					return true;
-				break;
+				MergeInMultiUnicode(etym.Gloss, LexEtymologyTags.kflidGloss, liftEtym.Gloss, etym.Guid);
+				// See LT-11765 for issues here.
+				if (liftEtym.Source != null && liftEtym.Source != "UNKNOWN")
+				{
+						etym.LiftResidue = liftEtym.Source; // Source is no longer part of the model
+				}
+				ProcessEtymologyFieldsAndTraits(etym, liftEtym);
+				StoreDatesInResidue(etym, liftEtym);
 			}
-			return false;
+		}
+
+		/// <summary>
+		/// Find the best matching etymology in the lex entry (if one exists) for the imported LiftEtymology let.
+		/// At least one form must match if any forms exist on either side.
+		/// As a side-effect, dictHvoLiftEtym has the matching hvo keyed to the imported data (if one exists).
+		/// </summary>
+		/// <returns>best match, or null</returns>
+		private ILexEtymology FindMatchingEtymology(ILexEntry le, Dictionary<int, CmLiftEtymology> dictHvoLiftEtym, CmLiftEtymology let)
+		{
+			ILexEtymology lexEtym = null;
+			var cMatches = 0;
+			foreach (var etym in le.EtymologyOS)
+			{
+				if (dictHvoLiftEtym.ContainsKey(etym.Hvo))
+					continue;
+				bool fFormMatches = false;
+				var cCurrent = 0;
+				AddNewWsToVernacular();
+				if (let.Form.Count == 0)
+				{
+					Dictionary<int, string> forms = GetAllUnicodeAlternatives(etym.Form);
+					fFormMatches = forms.Count == 0;
+				}
+				else
+				{
+					cCurrent = MultiUnicodeStringMatches(etym.Form, let.Form, false, Guid.Empty, 0);
+					fFormMatches = cCurrent > cMatches;
+				}
+				if (fFormMatches)
+				{
+					cMatches = cCurrent;
+					lexEtym = etym;
+				}
+			}
+			if (lexEtym == null)
+				return null;
+			dictHvoLiftEtym.Add(lexEtym.Hvo, let);
+			return lexEtym;
+		}
+
+		private bool EntryEtymologiesConflict(ILexEntry le, List<CmLiftEtymology> list)
+		{
+			if (le.EtymologyOS.Count == 0 || list.Count == 0)
+				return false;
+			int cCommon = 0;
+			Dictionary<int, CmLiftEtymology> dictHvoEtymology = new Dictionary<int, CmLiftEtymology>();
+			foreach (CmLiftEtymology lety in list)
+			{
+				AddNewWsToVernacular();
+				var etym = FindMatchingEtymology(le, dictHvoEtymology, lety);
+				if (etym != null)
+				{
+					if (MultiUnicodeStringsConflict(etym.Form, lety.Form, false, Guid.Empty, 0))
+					{
+						m_cdConflict = new ConflictingEntry(String.Format("Form ({0})",
+							TsStringAsHtml(etym.Form.BestVernacularAlternative, m_cache)), le, this);
+						return true;
+					}
+					AddNewWsToAnalysis();
+					if (MultiUnicodeStringsConflict(etym.Gloss, lety.Gloss, false, Guid.Empty, 0))
+					{
+						m_cdConflict = new ConflictingEntry(String.Format("Gloss ({0})",
+							TsStringAsHtml(etym.Form.BestAnalysisAlternative, m_cache)), le, this);
+						return true;
+					}
+					if (EtymologyFieldsConflict(etym, lety.Fields))
+						return true;
+					IgnoreNewWs();
+					if (StringsConflict(etym.LiftResidue, lety.Source))
+						return true;
+					++cCommon;
+				}
+			}
+			if (cCommon < Math.Min(le.EtymologyOS.Count, list.Count))
+			{
+				m_cdConflict = new ConflictingEntry("Etymologies", le, this);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 
 		private void ProcessEtymologyFieldsAndTraits(ILexEtymology ety, CmLiftEtymology let)
@@ -3751,9 +3810,18 @@ namespace SIL.FieldWorks.LexText.Controls
 					case "comment":
 						MergeInMultiString(ety.Comment, LexEtymologyTags.kflidComment, field.Content, ety.Guid);
 						break;
-					//case "multiform":		causes problems on round-tripping
-					//    MergeIn(ety.Form, field.Content, ety.Guid);
-					//    break;
+					case "language":
+						MergeInMultiString(ety.Language, LexEtymologyTags.kflidLanguage, field.Content, ety.Guid);
+						break;
+					case "preccomment":
+						MergeInMultiString(ety.PrecComment, LexEtymologyTags.kflidPrecComment, field.Content, ety.Guid);
+						break;
+					case "note":
+						MergeInMultiString(ety.Note, LexEtymologyTags.kflidNote, field.Content, ety.Guid);
+						break;
+					case "bibliography":
+						MergeInMultiString(ety.Bibliography, LexEtymologyTags.kflidBibliography, field.Content, ety.Guid);
+						break;
 					default:
 						ProcessUnknownField(ety, let, field,
 							"LexEtymology", "custom-etymology-", LexEtymologyTags.kClassId);
@@ -3777,6 +3845,22 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					case "comment":
 						if (MultiTsStringsConflict(lexety.Comment, field.Content))
+							return true;
+						break;
+					case "language":
+						if (MultiTsStringsConflict(lexety.Language, field.Content))
+							return true;
+						break;
+					case "preccomment":
+						if (MultiTsStringsConflict(lexety.PrecComment, field.Content))
+							return true;
+						break;
+					case "note":
+						if (MultiTsStringsConflict(lexety.Note, field.Content))
+							return true;
+						break;
+					case "bibliography":
+						if (MultiTsStringsConflict(lexety.Bibliography, field.Content))
 							return true;
 						break;
 				}

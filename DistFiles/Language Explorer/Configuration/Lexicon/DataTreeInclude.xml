@@ -226,10 +226,16 @@
 		<!--
 			Etymology
 		-->
-		<command id="CmdDataTree-Insert-Etymology" label="Insert Etymology" message="DataTreeInsert">
+		<command id="CmdDataTree-Insert-Etymology" label="_Etymology" message="DataTreeInsert">
+			<parameters field="Etymology" className="LexEtymology" ownerClass="LexEntry"/>
+		</command>
+		<command id="CmdDataTree-Delete-Etymology" label="Delete this Etymology" message="DataTreeDelete" icon="Delete">
 			<parameters field="Etymology" className="LexEtymology"/>
 		</command>
-		<command id="CmdDataTree-Delete-Etymology" label="Delete Etymology" message="DataTreeDelete" icon="Delete">
+		<command id="CmdDataTree-MoveUp-Etymology" label="Move Etymology _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+			<parameters field="Etymology" className="LexEtymology"/>
+		</command>
+		<command id="CmdDataTree-MoveDown-Etymology" label="Move Etymology _Down" message="MoveDownObjectInSequence" icon="MoveDown">
 			<parameters field="Etymology" className="LexEtymology"/>
 		</command>
 		<!--
@@ -479,15 +485,19 @@
 			<item command="CmdDataTree-Insert-SubSense"/>
 			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
-		<menu id="mnuDataTree-InsertEtymology">
-			<item command="CmdDataTree-Insert-Etymology"/>
-			<!-- <item command="CmdDataTree-Help"/> -->
+		<menu id="mnuDataTree-Etymology">
+			<item command="CmdDataTree-Insert-Etymology" label="Insert _Etymology"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-MoveUp-Etymology"/>
+			<item command="CmdDataTree-MoveDown-Etymology"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-Delete-Etymology"/>
 		</menu>
 		<menu id="mnuDataTree-DeleteEtymology">
 			<item command="CmdDataTree-Delete-Etymology"/>
 			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
-	<menu id="mnuDataTree-DeleteAddLexReference">
+		<menu id="mnuDataTree-DeleteAddLexReference">
 	  <item command="CmdDataTree-Delete-LexReference"/>
 	  <item command="CmdDataTree-Add-ToLexReference"/>
 	  <item command="CmdDataTree-EditDetails-LexReference"/>

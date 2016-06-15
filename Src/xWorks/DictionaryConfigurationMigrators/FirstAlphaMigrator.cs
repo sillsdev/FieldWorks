@@ -86,6 +86,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					goto case VersionAlpha2;
 				case VersionAlpha2:
 					HandleNodewiseChanges(alphaModel.PartsAndSharedItems, VersionAlpha2, alphaModel.IsReversal);
+					goto case 6;
+				case 6:
+					HandleNodewiseChanges(alphaModel.PartsAndSharedItems, 6, alphaModel.IsReversal);
 					break;
 				default:
 					m_logger.WriteLine(string.Format(
@@ -331,6 +334,88 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 						}
 					});
 					break;
+				case 6:
+					var etymNodeList = new List<ConfigurableDictionaryNode>();
+					PerformActionOnNodes(nodes, n =>
+					{
+						if (n.Label == "Etymology")
+						{
+							n.FieldDescription = "EtymologyOS";
+							n.CSSClassNameOverride = "etymologies";
+							n.Before = "(";
+							n.Between = " ";
+							n.After = ") ";
+
+							etymNodeList.Add(n); // do more drastic changes later
+						}
+						else if (n.Parent != null && n.Parent.Label == "Etymology")
+						{
+							switch (n.FieldDescription)
+							{
+								case "Form":
+									n.Label = "Source Form";
+									n.IsEnabled = true;
+									break;
+								case "Comment":
+									n.Label = "Following Comment";
+									n.IsEnabled = false;
+									break;
+								case "Gloss":
+									n.IsEnabled = true;
+									break;
+							}
+						}
+					});
+					AddRemoveEtymologyFields(etymNodeList);
+					break;
+			}
+		}
+
+		private static void AddRemoveEtymologyFields(IEnumerable<ConfigurableDictionaryNode> etymNodes)
+		{
+			// WsOptions to clone as needed
+			var analysisWsOptions = new DictionaryNodeWritingSystemOptions
+			{
+				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis,
+				DisplayWritingSystemAbbreviations = false,
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				{
+					new DictionaryNodeListOptions.DictionaryNodeOption {Id = "analysis", IsEnabled = true}
+				}
+			};
+
+			// PerformActionOnNodes was walking a tree, so add/removing children was problematical
+			// Here we're just going through a list of nodes modifying the internal structure of each.
+			foreach (var etymNode in etymNodes)
+			{
+				var sourceNode = etymNode.Children.FirstOrDefault(node => node.Label == "Source");
+				if (sourceNode != null)
+					etymNode.Children.Remove(sourceNode);
+
+				// Add new kids in proper slots
+				// PrecComment - 1st slot
+				// Language - 2nd slot
+				var langNode = new ConfigurableDictionaryNode
+				{
+					After = " ", Before = "", Between = " ", Label = "Source Language", FieldDescription = "Language",
+					IsEnabled = true, DictionaryNodeOptions = analysisWsOptions.DeepClone()
+				};
+				etymNode.Children.Insert(0, langNode);
+				var precCommentNode = new ConfigurableDictionaryNode
+				{
+					After = " ", Before = "", Between = " ", Label = "Preceding Annotation", FieldDescription = "PrecComment",
+					IsEnabled = true, DictionaryNodeOptions = analysisWsOptions.DeepClone()
+				};
+				etymNode.Children.Insert(0, precCommentNode);
+
+				// Bibliography - last slot
+				// (Don't add Note to dictionary config. It is UI only for now.)
+				var biblioNode = new ConfigurableDictionaryNode
+				{
+					After = " ", Before = "", Between = " ", Label = "Bibliographic Source", FieldDescription = "Bibliography",
+					IsEnabled = true, DictionaryNodeOptions = analysisWsOptions.DeepClone()
+				};
+				etymNode.Children.Add(biblioNode);
 			}
 		}
 

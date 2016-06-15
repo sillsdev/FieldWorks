@@ -1317,9 +1317,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"</LexemeForm>" + Environment.NewLine +
 				"<Etymology>" + Environment.NewLine +
 				"<LexEtymology>" + Environment.NewLine +
-				"<Source>" + Environment.NewLine +
-				"<Uni>|bBold|r regular |iItalic|r|fw{greek}ignored*bold*words|b|ibold-italic|r|r|bBOLD  |r</Uni>" + Environment.NewLine +
-				"</Source>" + Environment.NewLine +
+				"<Language>" + Environment.NewLine +
+				"<AStr ws=\"en\">" + Environment.NewLine +
+				"<Run ws=\"en\">|bBold|r regular |iItalic|r|fw{greek}ignored*bold*words|b|ibold-italic|r|r|bBOLD  |r</Run>" + Environment.NewLine +
+				"</AStr>" + Environment.NewLine +
+				"</Language>" + Environment.NewLine +
 				"</LexEtymology>" + Environment.NewLine +
 				"</Etymology>" + Environment.NewLine +
 				"<Senses>" + Environment.NewLine +

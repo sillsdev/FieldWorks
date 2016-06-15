@@ -183,6 +183,7 @@
 			<item command="CmdInsertReversalEntry" defaultVisible="false"/>
 			<item command="CmdDataTree-Insert-Pronunciation" defaultVisible="false"/>
 			<item command="CmdInsertMediaFile" defaultVisible="false"/>
+			<item command="CmdDataTree-Insert-Etymology" defaultVisible="false"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdInsertSubsense" defaultVisible="false"/>
 			<item command="CmdInsertPicture" defaultVisible="false"/>
@@ -214,6 +215,7 @@
 				<item label="Insert A_llomorph" command="CmdDataTree-Insert-AlternateForm"/>
 				<item label="Insert _Pronunciation" command="CmdDataTree-Insert-Pronunciation"/>
 				<item label="Insert Sound or Movie _File" command="CmdInsertMediaFile"/>
+				<item label="Insert _Etymology" command="CmdDataTree-Insert-Etymology"/>
 				<item label="-" translate="do not translate"/>
 				<item command="CmdChangeToComplexForm"/>
 				<item command="CmdChangeToVariant"/>
@@ -343,6 +345,7 @@
 								<LexEntry sourceField="Entries">
 									<LexEntryRef sourceField="AllEntryRefs" altSourceField="ComplexEntryTypes:AllComplexEntryRefPropertyTargets;VariantEntryTypes:AllVariantEntryRefPropertyTargets"/>
 									<LexPronunciation sourceField="AllPossiblePronunciations"/>
+									<LexEtymology sourceField="AllPossibleEtymologies"/>
 									<MoForm sourceField="AllPossibleAllomorphs"/>
 									<LexSense sourceField="AllSenses">
 										<LexExampleSentence sourceField="AllExampleSentenceTargets">
@@ -359,6 +362,12 @@
 										<int class="LexPronunciation" field="Self"/>
 									</seq>
 									<!-- NOTE: AllPossiblePronunciations can also have LexEntry items, since it is a ghost field -->
+								</part>
+								<part id="LexEntry-Jt-AllPossibleEtymologies" type="jtview">
+									<seq class="LexEntry" field="Etymology" firstOnly="true" layout="empty">
+										<int class="LexEtymology" field="Self"/>
+									</seq>
+									<!-- NOTE: AllPossibleEtymologies can also have LexEntry items, since it is a ghost field -->
 								</part>
 								<part id="LexEntry-Jt-AllComplexEntryRefPropertyTargets" type="jtview">
 									<seq class="LexEntry" field="EntryRefs" firstOnly="true" layout="empty">

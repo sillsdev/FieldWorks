@@ -1329,14 +1329,21 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void GenerateXHTMLForEntry_EtymologySourceWorks()
+		public void GenerateXHTMLForEntry_EtymologyLanguageWorks()
 		{
 			//This test also proves to verify that .NET String properties can be generated
 			var etymology = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "EtymologyOA",
-				CSSClassNameOverride = "Etymology",
-				Children = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode { FieldDescription = "Source" } }
+				FieldDescription = "EtymologyOS",
+				CSSClassNameOverride = "etymologies",
+				Children = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode
+					{
+						FieldDescription = "Language",
+						DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+					}
+				}
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -1345,14 +1352,15 @@ namespace SIL.FieldWorks.XWorks
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entryOne = CreateInterestingLexEntry(Cache);
-			entryOne.EtymologyOA = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
-			entryOne.EtymologyOA.Source = "George";
+			var etym = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
+			entryOne.EtymologyOS.Add(etym);
+			etym.Language.SetAnalysisDefaultWritingSystem("Georgian");
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
-			const string etymologyWithGeorgeSource = "//span[@class='etymology']/span[@class='source' and text()='George']";
-			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(etymologyWithGeorgeSource, 1);
+			const string etymologyWithGeorgianSource = "//span[@class='etymologies']/span[@class='etymologie']/span[@class='language']/span[@lang='en' and text()='Georgian']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(etymologyWithGeorgianSource, 1);
 		}
 
 		[Test]

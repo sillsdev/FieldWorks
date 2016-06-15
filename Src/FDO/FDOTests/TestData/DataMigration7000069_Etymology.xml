@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<languageproject version="7000068">
+
+	<rt class="LangProject" guid="1e89c3a0-7f6c-4260-a3d8-30921503fa54">
+		<CurAnalysisWss>
+			<Uni>en id</Uni>
+		</CurAnalysisWss>
+		<CurVernWss>
+			<Uni>fr fr-fonipa</Uni>
+		</CurVernWss>
+	</rt>
+	
+	<rt class="LexEntry" guid="7ecbb299-bf35-4795-a5cc-8d38ce8b891c">
+		<Etymology>
+			<objsur guid="c6c2d02f-c2e5-4c33-aded-457bd430640b" t="o" />
+		</Etymology>
+	</rt>
+
+	<rt class="LexEntry" guid="7ecbb299-bf35-4795-a5cc-8d38ce8b891e">
+		<Etymology>
+			<objsur guid="c6c2d02f-c2e5-4c33-aded-457bd4306405" t="o" />
+		</Etymology>
+	</rt>
+
+	<rt class="LexEntry" guid="7ecbb299-bf35-4795-a5cc-8d38ce8b891f">
+	</rt>
+
+	<rt class="LexEtymology" guid="c6c2d02f-c2e5-4c33-aded-457bd4306405" ownerguid="7ecbb299-bf35-4795-a5cc-8d38ce8b891e">
+		<Comment>
+			<AStr ws="en">
+				<Run ws="en">some comment</Run>
+				<Run ws="fr"> avec </Run>
+				<Run ws="en">embedded French</Run>
+			</AStr>
+			<AStr ws="id">
+				<Run ws="id">Indonesian comment</Run>
+			</AStr>
+		</Comment>
+		<Form>
+			<AUni ws="en">koleus</AUni>
+			<AUni ws="fr">coleus</AUni>
+			<AUni ws="fr-fonipa">kolius</AUni>
+			<AUni ws="id">kolele</AUni>
+		</Form>
+		<Gloss>
+			<AUni ws="en">coleus flower</AUni>
+			<AUni ws="id">indonesian gloss</AUni>
+		</Gloss>
+		<Source>
+			<Uni>All made up</Uni>
+		</Source>
+	</rt>
+
+	<rt class="LexEtymology" guid="c6c2d02f-c2e5-4c33-aded-457bd430640b" ownerguid="7ecbb299-bf35-4795-a5cc-8d38ce8b891c">
+		<Comment>
+			<AStr ws="en">
+				<Run ws="en">Odd comment.</Run>
+			</AStr>
+		</Comment>
+		<Form>
+			<AUni ws="fr">alcool</AUni>
+		</Form>
+		<Gloss>
+			<AUni ws="en">alcohol</AUni>
+			<AUni ws="id">minuman keras</AUni>
+		</Gloss>
+		<Source>
+			<Uni>l'arabe</Uni>
+		</Source>
+	</rt>
+
+</languageproject>

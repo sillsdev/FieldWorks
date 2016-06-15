@@ -152,6 +152,26 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		/// <summary>
 		/// Gets all the bulk-editable things that might be used as the destination of a bulk edit to
+		/// etymology. This includes the entries that do not have etymologies.
+		/// Note that this implementation is only possible because there are no other possible owners for LexEtymology.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceSequence, "CmObject")]
+		public IEnumerable<ICmObject> AllPossibleEtymologies
+		{
+			get
+			{
+				// Optimize JohnT: are we likely to modify any of the iterators while iterating? If not
+				// we may not need the ToList().
+				return Cache.ServiceLocator.GetInstance<ILexEtymologyRepository>().AllInstances().Cast<ICmObject>()
+					.Concat((from entry in Cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances()
+							 where entry.EtymologyOS.Count == 0
+							 select entry).Cast<ICmObject>())
+					.ToList();
+			}
+		}
+
+		/// <summary>
+		/// Gets all the bulk-editable things that might be used as the destination of a bulk edit to
 		/// Allomorphs. This includes the entries that do not have allomorphs. It does NOT include
 		/// MoForms that are the LexemeForm of some entry. (Possibly the name should indicate this better somehow?)
 		/// </summary>
@@ -1596,9 +1616,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						CopyObject<IMoForm>.CloneFdoObjects(AlternateFormsOS, newForm => leNew.AlternateFormsOS.Add(newForm));
 						CopyObject<ILexPronunciation>.CloneFdoObjects(PronunciationsOS, newPron => leNew.PronunciationsOS.Add(newPron));
 						CopyObject<ILexEntryRef>.CloneFdoObjects(EntryRefsOS, newEr => leNew.EntryRefsOS.Add(newEr));
-
-						if (EtymologyOA != null)
-							CopyObject<ILexEtymology>.CloneFdoObject(EtymologyOA, newEtymology => leNew.EtymologyOA = newEtymology);
+						CopyObject<ILexEtymology>.CloneFdoObjects(EtymologyOS, newEty => leNew.EtymologyOS.Add(newEty));
 
 						UpdateReferencesForSenseMove(this, leNew, ls);
 
@@ -9364,28 +9382,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
-		/// <summary>
-		/// Provide something for the LIFT source attribute.
-		/// </summary>
-		public string LiftSource
-		{
-			get
-			{
-				string sSource = this.Source;
-				if (String.IsNullOrEmpty(sSource))
-				{
-					IWritingSystem ws = LiftFormWritingSystem;
-					if (ws != null)
-					{
-						sSource = ws.DisplayLabel;
-					}
-				}
-				if (string.IsNullOrEmpty(sSource))
-					return "UNKNOWN";
-				return sSource;
-			}
-		}
-
 		private IWritingSystem LiftFormWritingSystem
 		{
 			get
@@ -9412,21 +9408,27 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// Object owner. This virtual may seem redundant with CmObject.Owner, but it is important,
+		/// because we can correctly indicate the destination class. This is used (at least) in
+		/// PartGenerator.GeneratePartsFromLayouts to determine that it needs to generate parts for LexEntry.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceAtomic, "LexEntry")]
+		public ILexEntry OwningEntry
+		{
+			get { return (ILexEntry)Owner; }
+		}
+
+		/// <summary>
 		/// Override of ShortName
 		/// </summary>
 		public override string ShortName
 		{
 			get
 			{
-				if (!string.IsNullOrEmpty(Source))
-				{
-					return String.Format("{0} ({1})",
-						this.Form.BestVernacularAnalysisAlternative.Text, this.Source);
-				}
-				else
-				{
-					return this.Form.BestVernacularAnalysisAlternative.Text;
-				}
+				return Language.BestAnalysisAlternative.Text == "***" ?
+					Form.BestVernacularAnalysisAlternative.Text :
+					string.Format("{0} ({1})",
+						Form.BestVernacularAnalysisAlternative.Text, Language.BestAnalysisAlternative.Text);
 			}
 		}
 
@@ -9437,20 +9439,15 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				if (!string.IsNullOrEmpty(Source))
-				{
-					ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
-					tisb.AppendTsString(this.Form.BestVernacularAnalysisAlternative);
-					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
-					tisb.Append(" (");
-					tisb.Append(this.Source);
-					tisb.Append(")");
-					return tisb.GetString();
-				}
-				else
-				{
-					return this.Form.BestVernacularAnalysisAlternative;
-				}
+				if (Language.BestAnalysisAlternative.Text == "***")
+					return Form.BestVernacularAnalysisAlternative;
+				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+				tisb.AppendTsString(Form.BestVernacularAnalysisAlternative);
+				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
+				tisb.Append(" (");
+				tisb.AppendTsString(Language.BestAnalysisAlternative);
+				tisb.Append(")");
+				return tisb.GetString();
 			}
 		}
 	}

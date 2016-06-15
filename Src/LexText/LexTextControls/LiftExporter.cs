@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -253,8 +254,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			WriteString(w, "field", "type=\"import-residue\"", "form", entry.ImportResidue);
 			foreach (var alt in entry.AlternateFormsOS)
 				WriteAlternateForm(w, alt);
-			if (entry.EtymologyOA != null)
-				WriteEtymology(w, entry.EtymologyOA);
+			foreach (var etym in entry.EtymologyOS)
+				WriteEtymology(w, etym);
 			foreach (var er in entry.EntryRefsOS)
 				WriteLexEntryRef(w, er);
 			foreach (var ler in entry.LexEntryReferences)
@@ -662,11 +663,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			w.Write("<etymology");
 			WriteLiftDates(w, ety);
 			w.Write(" type=\"{0}\"", MakeSafeAndNormalizedAttribute(GetProperty(ety, "LiftType").ToString()));
-			w.Write(" source=\"{0}\"", MakeSafeAndNormalizedAttribute(GetProperty(ety, "LiftSource").ToString()));
+			w.Write(" source=\"{0}\"", string.Empty);
 			w.WriteLine(">");
 			WriteAllForms(w, null, null, "form", ety.Form);
 			WriteAllForms(w, null, null, "gloss", ety.Gloss);
 			WriteAllForms(w, "field", "type=\"comment\"", "form", ety.Comment);
+			WriteAllForms(w, "field", "type=\"language\"", "form", ety.Language);
+			WriteAllForms(w, "field", "type=\"preccomment\"", "form", ety.PrecComment);
+			WriteAllForms(w, "field", "type=\"note\"", "form", ety.Note);
+			WriteAllForms(w, "field", "type=\"bibliography\"", "form", ety.Bibliography);
 			WriteLiftResidue(w, ety);
 			w.WriteLine("</etymology>");
 		}

@@ -11,7 +11,7 @@
 		<part ref="EntryRefsGhostComponents" visibility="always"/>
 		<part ref="EntryRefsGhostVariantOf" visibility="never"/>
 		<part ref="Pronunciations" param="Normal" visibility="ifdata"/>
-		<part ref="Etymology" menu="mnuDataTree-InsertEtymology" visibility="ifdata" />
+		<part ref="Etymologies" param="Normal" visibility="ifdata" />
 		<part ref="CommentAllA"/>
 		<part ref="LiteralMeaningAllA"  visibility="ifdata"/>
 		<!-- Only for Subentries. -->
@@ -68,14 +68,14 @@
 		<part ref="Space"/>
 	</layout>
 
-	<layout class="LexEtymology" type="detail" name="default">
-		<part ref="FormAllWs" menu="mnuDataTree-DeleteEtymology" expansion="expanded">
-			<indent>
-				<part ref="GlossAllA"/>
-				<part ref="CommentAllA"/>
-				<part ref="Source"/>
-			</indent>
-		</part>
+	<layout class="LexEtymology" type="detail" name="Normal">
+		<part ref="PrecComment" label="Preceding Annotation"/>
+		<part ref="Language" label="Source Language"/>
+		<part ref="Form" label="Source Form"/>
+		<part ref="Gloss" label="Gloss"/>
+		<part ref="Comment" label="Following Comment"/>
+		<part ref="Bibliography" label="Bibliographic Source"/>
+		<part ref="Note" label="Etymology Note"/>
 	</layout>
 
 	<layout class="LexEntry" type="jtview" name="CrossRefPub">
@@ -180,7 +180,7 @@
 		<part ref="HomographNumber" label="Homograph Number" before="" after=" " visibility="never"/>
 		<part ref="PronunciationsConfig" label="Pronunciations" before="" after=" " sep=", " visibility="ifdata" param="publishStemForLexEntry" css="pronunciations"/>
 		<part ref="VariantFormsConfig" label="Variant Forms" visibility="ifdata" before="(" after=") " sep="; " entrytype="variant" param="publishStemVariantRef" css="variantrefs"/>
-		<part ref="EtymologyConfig" label="Etymology" visibility="ifdata" before="" after=" " param="publishStemEtymology" css="etymology"/>
+		<part ref="EtymologyConfig" label="Etymology" visibility="ifdata" before="" after=" " sep=", " param="publishStemForLexEntry" css="etymologies"/>
 		<part ref="LexReferencesConfig" label="Cross References" field="LexReferences" visibility="ifdata" sep="; " after=". " param="publishStemEntry" css="crossrefs" lexreltype="entry"/>
 		<part ref="StemMainEntryConfig" label="Component References" param="publishStemEntryRefs" visibility="ifdata" before="(" after=") " sep=", " css="primaryrefs"/>
 		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="never" css="summarydef"/>
@@ -241,7 +241,7 @@
 		<part ref="HomographNumber" label="Homograph Number" before="" after=" " visibility="never"/>
 		<part ref="PronunciationsConfig" label="Pronunciations" before="" after=" " sep=", " visibility="ifdata" param="publishStemMinorForLexEntry" css="pronunciations-minor"/>
 		<part ref="VariantFormsConfig" label="Variant Forms" visibility="ifdata" before="(" after=") " sep="; " entrytype="variant" param="publishStemMinorVariantRef" css="variantrefs-minor"/>
-		<part ref="EtymologyConfig" label="Etymology" visibility="never" before=" " after=" " param="publishStemMinorEtymology" css="etymology-minor"/>
+		<part ref="EtymologyConfig" label="Etymology" visibility="never" before=" " after=" " sep=", " param="publishStemMinorForLexEntry" css="etymologies-minor"/>
 		<part ref="LexReferencesConfig" label="Cross References" field="LexReferences" visibility="never" sep="; " after=". " param="publishStemMinorEntry" css="crossrefs-minor" lexreltype="entry"/>
 		<part ref="VisibleVariantEntryRefsConfig" label="Variant Of" param="publishStemMinorEntryRefs" visibility="ifdata" before="" after=" " sep=", " entrytype="variant" css="primaryrefs-minor"/>
 		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="summarydef-minor"/>
@@ -305,7 +305,7 @@
 		<part ref="HomographNumber" label="Homograph Number" before="" after=" " visibility="never"/>
 		<part ref="PronunciationsConfig" label="Pronunciations" before="" after=" " sep=", " visibility="ifdata" param="publishRootForLexEntry" css="pronunciations"/>
 		<part ref="VariantFormsConfig" label="Variant Forms" visibility="ifdata" before="(" after=") " sep="; " entrytype="variant" param="publishRootVariantRef" css="variantrefs"/>
-		<part ref="EtymologyConfig" label="Etymology" visibility="ifdata" before=" " after=" " param="publishRootEtymology" css="etymology"/>
+		<part ref="EtymologyConfig" label="Etymology" visibility="ifdata" before=" " after=" " sep=", " param="publishRootForLexEntry" css="etymologies"/>
 		<part ref="LexReferencesConfig" label="Cross References" field="LexReferences" visibility="ifdata" sep="; " after=". " param="publishRootEntry" css="crossrefs" lexreltype="entry"/>
 		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="never" css="summarydef"/>
 		<part ref="RestrictionsEntryPub" label="Restrictions (Entry)" before=" " after=" " ws="analysis" wsType="analysis" visibility="never" css="restrictionsentry"/>
@@ -365,7 +365,7 @@
 		<part ref="HomographNumber" label="Homograph Number" before="" after=" " visibility="never"/>
 		<part ref="PronunciationsConfig" label="Pronunciations" before="" after=" " sep=", " visibility="ifdata" param="publishRootMinorForLexEntry" css="pronunciations-minor"/>
 		<part ref="VariantFormsConfig" label="Variant Forms" visibility="ifdata" before="(" after=") " sep="; " entrytype="variant" param="publishRootMinorVariantRef" css="variantrefs-minor"/>
-		<part ref="EtymologyConfig" label="Etymology" visibility="never" before=" " after=" " param="publishRootMinorEtymology" css="etymology-minor"/>
+		<part ref="EtymologyConfig" label="Etymology" visibility="ifdata" before=" " after=" " sep=", " param="publishRootMinorForLexEntry" css="etymologies-minor"/>
 		<part ref="LexReferencesConfig" label="Cross References" field="LexReferences" visibility="never" sep="; " after=". " param="publishRootMinorEntry" css="crossrefs-minor" lexreltype="entry"/>
 		<part ref="VisibleVariantEntryRefsConfig" label="Variant Of" param="publishRootMinorEntryRefs" visibility="ifdata" before="" after=" " sep=", " entrytype="variant" css="primaryrefs-minor"/>
 		<part ref="StemMinorComponentsConfig" label="Components" param="publishRootComponentRefs" visibility="ifdata" before=" (" after=")" sep=", " entrytype="complex" css="components-minor"/>
@@ -435,7 +435,7 @@
 		<part ref="RootSubEntryTypeConfig" param="publishRootSubEntryType" hideConfig="true"/>
 		<part ref="PronunciationsConfig" label="Pronunciations" before="" after=" " sep=", " visibility="ifdata" param="publishRootSubForLexEntry" css="pronunciations-sub"/>
 		<part ref="VariantFormsConfig" label="Variant Forms" visibility="ifdata" before="(" after=") " sep="; " entrytype="variant" param="publishRootSubVariantRef" css="variantrefs-sub"/>
-		<part ref="EtymologyConfig" label="Etymology" visibility="ifdata" before=" " after=" " param="publishRootSubEtymology" css="etymology-sub"/>
+		<part ref="EtymologyConfig" label="Etymology" visibility="ifdata" before=" " after=" " sep=", " param="publishRootSubForLexEntry" css="etymologies-sub"/>
 		<part ref="LexReferencesConfig" label="Cross References" field="LexReferences" visibility="ifdata" sep="; " after=". " param="publishRootSubEntry" css="crossrefs-sub" lexreltype="entry"/>
 		<!-- the next part is not wanted according to LT-9566 -->
 		<!--part ref="RootSubMainEntryConfig" label="Primary Entry References" visibility="ifdata" before="" after=" " sep=", " css="primaryrefs-sub"/-->
@@ -1296,46 +1296,60 @@
 	</layout>
 
 	<layout class="LexEtymology" type="jtview" name="publishStemEtymology">
-		<part ref="FormPub" label="Etymological Form" before="" after=" " visibility="ifdata" ws="best vernoranal" wsType="vernacular analysis" css="etymology-form"/>
+		<part ref="PrecCommentPub" label="Preceding Annotation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-preccomment"/>
+		<part ref="LanguagePub" label="Source Language" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-language"/>
+		<part ref="FormPub" label="Source Form" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-form"/>
 		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-gloss"/>
-		<part ref="CommentPub" label="Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment"/>
-		<part ref="SourcePub" label="Source" before="" after=" " visibility="never"/>
+		<part ref="CommentPub" label="Following Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment"/>
+		<part ref="BibliographyPub" label="Bibliographic Source" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-bibliography"/>
 	</layout>
 	<layout class="LexEtymology" type="jtview" name="publishStemMinorEtymology">
-		<part ref="FormPub" label="Etymological Form" before="" after=" " visibility="ifdata" ws="best vernoranal" wsType="vernacular analysis" css="etymology-form-minor"/>
+		<part ref="PrecCommentPub" label="Preceding Annotation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-preccomment-minor"/>
+		<part ref="LanguagePub" label="Source Language" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-language-minor"/>
+		<part ref="FormPub" label="Source Form" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-form-minor"/>
 		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-gloss-minor"/>
-		<part ref="CommentPub" label="Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment-minor"/>
-		<part ref="SourcePub" label="Source" before="" after=" " visibility="never"/>
+		<part ref="CommentPub" label="Following Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment-minor"/>
+		<part ref="BibliographyPub" label="Bibliographic Source" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-bibliography-minor"/>
 	</layout>
 	<layout class="LexEtymology" type="jtview" name="publishRootEtymology">
-		<part ref="FormPub" label="Etymological Form" before="" after=" " visibility="ifdata" ws="best vernoranal" wsType="vernacular analysis" css="etymology-form"/>
+		<part ref="PrecCommentPub" label="Preceding Annotation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-preccomment"/>
+		<part ref="LanguagePub" label="Source Language" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-language"/>
+		<part ref="FormPub" label="Source Form" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-form"/>
 		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-gloss"/>
-		<part ref="CommentPub" label="Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment"/>
-		<part ref="SourcePub" label="Source" before="" after=" " visibility="never"/>
+		<part ref="CommentPub" label="Following Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment"/>
+		<part ref="BibliographyPub" label="Bibliographic Source" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-bibliography"/>
 	</layout>
 	<layout class="LexEtymology" type="jtview" name="publishRootMinorEtymology">
-		<part ref="FormPub" label="Etymological Form" before="" after=" " visibility="ifdata" ws="best vernoranal" wsType="vernacular analysis" css="etymology-form-minor"/>
+		<part ref="PrecCommentPub" label="Preceding Annotation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-preccomment-minor"/>
+		<part ref="LanguagePub" label="Source Language" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-language-minor"/>
+		<part ref="FormPub" label="Source Form" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-form-minor"/>
 		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-gloss-minor"/>
-		<part ref="CommentPub" label="Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment-minor"/>
-		<part ref="SourcePub" label="Source" before="" after=" " visibility="never"/>
+		<part ref="CommentPub" label="Following Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment-minor"/>
+		<part ref="BibliographyPub" label="Bibliographic Source" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-bibliography-minor"/>
 	</layout>
 	<layout class="LexEtymology" type="jtview" name="publishRootMinorSubEtymology">
-		<part ref="FormPub" label="Etymological Form" before="" after=" " visibility="ifdata" ws="best vernoranal" wsType="vernacular analysis" css="etymology-form-minor"/>
+		<part ref="PrecCommentPub" label="Preceding Annotation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-preccomment-minor"/>
+		<part ref="LanguagePub" label="Source Language" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-language-minor"/>
+		<part ref="FormPub" label="Source Form" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-form-minor"/>
 		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-gloss-minor"/>
-		<part ref="CommentPub" label="Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment-minor"/>
-		<part ref="SourcePub" label="Source" before="" after=" " visibility="never"/>
+		<part ref="CommentPub" label="Following Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment-minor"/>
+		<part ref="BibliographyPub" label="Bibliographic Source" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-bibliography-minor"/>
 	</layout>
 	<layout class="LexEtymology" type="jtview" name="publishRootSubEtymology">
-		<part ref="FormPub" label="Etymological Form" before="" after=" " visibility="ifdata" ws="best vernoranal" wsType="vernacular analysis" css="etymology-form-sub"/>
+		<part ref="PrecCommentPub" label="Preceding Annotation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-preccomment-sub"/>
+		<part ref="LanguagePub" label="Source Language" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-language-sub"/>
+		<part ref="FormPub" label="Source Form" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-form-sub"/>
 		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-gloss-sub"/>
-		<part ref="CommentPub" label="Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment-sub"/>
-		<part ref="SourcePub" label="Source" before="" after=" " visibility="never"/>
+		<part ref="CommentPub" label="Following Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment-sub"/>
+		<part ref="BibliographyPub" label="Bibliographic Source" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-bibliography-sub"/>
 	</layout>
 	<layout class="LexEtymology" type="jtview" name="publishCd">
-		<part ref="FormPub" label="Etymological Form" before="" after=" " visibility="ifdata" ws="best vernoranal" wsType="vernacular analysis" css="etymology-form"/>
+		<part ref="PrecCommentPub" label="Preceding Annotation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-preccomment"/>
+		<part ref="LanguagePub" label="Source Language" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-language"/>
+		<part ref="FormPub" label="Source Form" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-form"/>
 		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-gloss"/>
-		<part ref="CommentPub" label="Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment"/>
-		<part ref="SourcePub" label="Source" before="" after=" " visibility="never"/>
+		<part ref="CommentPub" label="Following Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment"/>
+		<part ref="BibliographyPub" label="Bibliographic Source" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-bibliography"/>
 	</layout>
 
 	<layout class="LexReference" type="jtview" name="publishStemEntry">

@@ -23,6 +23,11 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 	/// new field and remove the Custom field.
 	///
 	/// 4) Remove LexEntryRefs (Complex Forms and Variants) with no ComponentLexemes (they mean nothing)
+	///
+	/// 5) Add 4 fields to LexEtymology and make LexEntry->Etymology an owning sequence (instead of atomic).
+	///    Added fields are: PrecComment, Language, Bibliography and Note.
+	///    Remove Source and put its data in Language, other added fields are empty.
+	///    Existing fields Form and Gloss are changed from MultiUnicode to MultiString.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	internal class DataMigration7000069 : IDataMigration
@@ -36,32 +41,92 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			RemoveEmptyLexEntryRefs(repoDto);
 			MigrateIntoNewMultistringField(repoDto, "Exemplar");
 			MigrateIntoNewMultistringField(repoDto, "UsageNote");
+			AugmentEtymologyCluster(repoDto);
 
 			DataMigrationServices.IncrementVersionNumber(repoDto);
+		}
+
+		/// <summary>
+		/// Change LexEntry.Etymology to Owned Sequence, add several fields to LexEtymology
+		/// Change some existing field signatures. Remove Source and put its data in Language
+		/// in a slightly different format (Unicode -> MultiString).
+		/// </summary>
+		/// <remarks>internal for testing</remarks>
+		internal static void AugmentEtymologyCluster(IDomainObjectDTORepository repoDto)
+		{
+			var etymologyDtos = repoDto.AllInstancesSansSubclasses("LexEtymology");
+			if (!etymologyDtos.Any())
+				return;
+			var primaryAnalysisWs = ExtractPrimaryWsFromLangProj(repoDto, true);
+			foreach (var etymologyDto in etymologyDtos)
+			{
+				ChangeMultiUnicodeElementToMultiString(repoDto, etymologyDto, "//Form");
+				ChangeMultiUnicodeElementToMultiString(repoDto, etymologyDto, "//Gloss");
+				var dataElt = XElement.Parse(etymologyDto.Xml);
+				var sourceElt = dataElt.Element("Source");
+				if (sourceElt == null)
+					continue;
+				sourceElt.Name = "Language"; // sourceElt is now the languageElt!
+				var oldSourceData = sourceElt.Element("Uni").Value;
+				var multiStrElt = BuildMultiStringElement(primaryAnalysisWs, oldSourceData);
+				sourceElt.RemoveAll();
+				sourceElt.Add(multiStrElt);
+				DataMigrationServices.UpdateDTO(repoDto, etymologyDto, dataElt.ToString());
+			}
+		}
+
+		private static string ExtractPrimaryWsFromLangProj(IDomainObjectDTORepository dtoRepos, bool analysis)
+		{
+			const string defaultWs = "en";
+			var propName = analysis ? "CurAnalysisWss" : "CurVernWss";
+			var langProj = dtoRepos.AllInstancesSansSubclasses("LangProject").FirstOrDefault();
+			if (langProj == null) // It's a test! A real test that cares should have a LangProject element!
+				return defaultWs;
+			var propString = XElement.Parse(langProj.Xml).Element(propName).Element("Uni").Value;
+			return propString.Split(' ')[0];
+		}
+
+		private static XElement BuildMultiStringElement(string primaryAnalysisWs, string oldSourceData)
+		{
+			var runElt = new XElement("Run");
+			runElt.SetAttributeValue("ws", primaryAnalysisWs);
+			runElt.SetValue(oldSourceData);
+			var astrElt = new XElement("AStr");
+			astrElt.SetAttributeValue("ws", primaryAnalysisWs);
+			astrElt.Add(runElt);
+			return astrElt;
 		}
 
 		/// <summary>We update every instance of a Restriction in a LexEntry or a LexSense to change from AUni to AStr.</summary>
 		private static void UpdateRestrictions(IDomainObjectDTORepository repoDto)
 		{
-			foreach (var dto in repoDto.AllInstancesSansSubclasses("LexEntry").Union(repoDto.AllInstancesSansSubclasses("LexSense")))
+			var xpathToRestrictionsElt = "//Restrictions";
+			foreach (var entryOrSenseDto in repoDto.AllInstancesSansSubclasses("LexEntry").Union(repoDto.AllInstancesSansSubclasses("LexSense")))
 			{
-				var changed = false;
-				var data = XElement.Parse(dto.Xml);
-				foreach (var elt in data.XPathSelectElements("//Restrictions/AUni"))
-				{
-					elt.Name = "AStr";
-					var restrictionData = elt.Value;
-					elt.Value = string.Empty;
-					var wsAttr = elt.Attribute("ws");
-					var runElt = new XElement("Run") { Value = restrictionData };
-					runElt.SetAttributeValue("ws", wsAttr.Value);
-					elt.Add(runElt);
-					changed = true;
-				}
-				if (changed)
-				{
-					DataMigrationServices.UpdateDTO(repoDto, dto, data.ToString());
-				}
+				ChangeMultiUnicodeElementToMultiString(repoDto, entryOrSenseDto, xpathToRestrictionsElt);
+			}
+		}
+
+		private static void ChangeMultiUnicodeElementToMultiString(IDomainObjectDTORepository repoDto, DomainObjectDTO dto,
+			string xpathToMultiUnicodeElement)
+		{
+			const string auniXpath = "/AUni";
+			var changed = false;
+			var dataElt = XElement.Parse(dto.Xml);
+			foreach (var elt in dataElt.XPathSelectElements(xpathToMultiUnicodeElement + auniXpath))
+			{
+				elt.Name = "AStr";
+				var unicodeData = elt.Value;
+				elt.Value = string.Empty;
+				var wsAttr = elt.Attribute("ws");
+				var runElt = new XElement("Run") {Value = unicodeData};
+				runElt.SetAttributeValue("ws", wsAttr.Value);
+				elt.Add(runElt);
+				changed = true;
+			}
+			if (changed)
+			{
+				DataMigrationServices.UpdateDTO(repoDto, dto, dataElt.ToString());
 			}
 		}
 

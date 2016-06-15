@@ -37,7 +37,8 @@ The original version number was: 7000000. Be sure it has the right number of zer
 editing it.
 
 Change History: (Be sure to update the 'version' attribute in the EntireModel, when needed. (Almost always.))
-  02 June 2016 (7000069): Make multiple model changes:
+  14 June 2016 (7000069): Make multiple model changes:
+    * Add/modify LexEtymology fields and make LexEntry->Etymology an owning sequence.
     * Add DoNotPublishIn fields to CmPicture and LexPronunciation.
     * Make LexEntry and LexSense Restrictions a MultiString field.
     * Add ReverseName to LexEntryType as a MultiUnicode field. Swap Abbreviation and ReverseAbbr fields.
@@ -2586,9 +2587,9 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 			<para>Bibliographic information</para>
 		  </comment>
 		</basic>
-		<owning num="13" id="Etymology" card="atomic" sig="LexEtymology">
+		<owning num="13" id="Etymology" card="seq" sig="LexEtymology">
 		  <comment>
-			<para>Each entry can have one etymology specification.</para>
+			<para>Each entry may have multiple etymology specifications.</para>
 		  </comment>
 		</owning>
 		<basic num="14" id="Restrictions" sig="MultiString">
@@ -4691,10 +4692,21 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 	  </comment>
 	  <props>
 		<basic num="1" id="Comment" sig="MultiString"/>
-		<basic num="2" id="Form" sig="MultiUnicode"/>
-		<basic num="3" id="Gloss" sig="MultiUnicode"/>
-		<basic num="4" id="Source" sig="Unicode"/>
+		<basic num="2" id="Form" sig="MultiString"/>
+		<basic num="3" id="Gloss" sig="MultiString"/>
+		<basic num="4" id="Language" sig="MultiString"/>
 		<basic num="5" id="LiftResidue" sig="Unicode"/>
+		<basic num="6" id="PrecComment" sig="MultiString"/>
+		<basic num="7" id="Note" sig="MultiString">
+		  <comment>
+			<para>For the lexicographer, not intended for printing. For now, at least, this appears in the UI, but not in the dictionary configurations.</para>
+		  </comment>
+		</basic>
+		<basic num="8" id="Bibliography" sig="MultiString">
+		  <comment>
+			<para>For the lexicographer, not intended for printing.</para>
+		  </comment>
+		</basic>
 	  </props>
 	</class>
 	<class num="116" id="ChkRef" abstract="false" abbr="chkr" base="CmObject" depth="0">

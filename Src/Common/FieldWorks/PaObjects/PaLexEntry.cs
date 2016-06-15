@@ -81,8 +81,10 @@ namespace SIL.FieldWorks.PaObjects
 			xVariants = lxEntry.VariantFormEntryBackRefs.Select(x => new PaVariant(x)).ToList();
 			xGuid = lxEntry.Guid;
 
-			if (lxEntry.EtymologyOA != null)
-				xEtymology = PaMultiString.Create(lxEntry.EtymologyOA.Form, svcloc);
+			// Hack to get this compiling
+			// Review: Should PaObjects deal with multiple etymologies?
+			if (lxEntry.EtymologyOS != null && lxEntry.EtymologyOS.Count > 0)
+				xEtymology = PaMultiString.Create(lxEntry.EtymologyOS.First().Form, svcloc);
 
 			xComplexFormInfo = (from eref in lxEntry.EntryRefsOS
 								let pcfi = PaComplexFormInfo.Create(eref)
