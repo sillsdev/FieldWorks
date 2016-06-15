@@ -365,6 +365,16 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 									break;
 							}
 						}
+						if (isReversal && n.Label == "Pronunciation" && n.Parent.Label == "Pronunciations")
+						{
+							var parent = n.Parent;
+							parent.Before = "[";
+							parent.Between = " ";
+							parent.After = "] ";
+							n.Before = "";
+							n.Between = "";
+							n.After = " ";
+						}
 					});
 					AddRemoveEtymologyFields(etymNodeList);
 					break;

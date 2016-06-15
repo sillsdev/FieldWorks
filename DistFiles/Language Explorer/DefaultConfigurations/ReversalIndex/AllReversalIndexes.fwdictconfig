@@ -30,8 +30,8 @@
 					<Option id="vernacular" isEnabled="true" />
 				</WritingSystemOptions>
 			</ConfigurationItem>
-			<ConfigurationItem name="Pronunciations" isEnabled="false" between=" " after=" " field="Owner" subField="PronunciationsOS" cssClassNameOverride="pronunciations">
-				<ConfigurationItem name="Pronunciation" isEnabled="true" before="[" between=" " after="] " field="Form">
+			<ConfigurationItem name="Pronunciations" isEnabled="false" before="[" between=" " after="] " field="Owner" subField="PronunciationsOS" cssClassNameOverride="pronunciations">
+				<ConfigurationItem name="Pronunciation" isEnabled="true" before=" " after=" " field="Form">
 					<WritingSystemOptions writingSystemType="pronunciation" displayWSAbreviation="false">
 						<Option id="pronunciation" isEnabled="true" />
 					</WritingSystemOptions>

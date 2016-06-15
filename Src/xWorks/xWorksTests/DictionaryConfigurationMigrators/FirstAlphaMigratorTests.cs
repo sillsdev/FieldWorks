@@ -821,8 +821,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var model = new DictionaryConfigurationModel
 			{
 				Version = FirstAlphaMigrator.VersionAlpha2,
-				WritingSystem = "en",
-				FilePath = string.Empty,
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
 			m_migrator.MigrateFrom83Alpha(model);
@@ -830,7 +828,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.AreEqual("etymologies", etymologyNode.CSSClassNameOverride, "Should have changed CSS override");
 			Assert.AreEqual("(", etymologyNode.Before, "Should have set Before to '('.");
 			Assert.AreEqual(") ", etymologyNode.After, "Should have set After to ') '.");
-			Assert.AreEqual(" ", etymologyNode.Between, "Should have set Between to ' '.");
+			Assert.AreEqual(" ", etymologyNode.Between, "Should have set Between to one space.");
 			var etymChildren = etymologyNode.Children;
 			Assert.AreEqual(6, etymChildren.Count);
 			Assert.IsNull(etymChildren.Find(node => node.Label == "Source"),
@@ -875,6 +873,56 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var options = configNode.DictionaryNodeOptions;
 			Assert.True(options is DictionaryNodeWritingSystemOptions, "Config node should have WritingSystemOptions");
 			Assert.AreEqual(expectedWsType, (options as DictionaryNodeWritingSystemOptions).WsType);
+		}
+
+		[Test]
+		public void MigrateFromConfigV6toV7_PronunciationBefAft()
+		{
+			var formNode = new ConfigurableDictionaryNode
+			{
+				Before = "[",
+				Between = " ",
+				After = "] ",
+				Label = "Pronunciation",
+				FieldDescription = "Form",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "pronunciation" },
+					DictionaryNodeWritingSystemOptions.WritingSystemType.Pronunciation)
+			};
+			var pronunciationsNode = new ConfigurableDictionaryNode
+			{
+				Between = " ",
+				After = " ",
+				Label = "Pronunciations",
+				FieldDescription = "Owner",
+				SubField = "PronunciationsOS",
+				CSSClassNameOverride = "pronunciations",
+				Children = new List<ConfigurableDictionaryNode> { formNode }
+			};
+			var referencedSensesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Senses", FieldDescription = "ReferringSenses",
+				Children = new List<ConfigurableDictionaryNode> { pronunciationsNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Entry",
+				FieldDescription = "ReversalIndexEntry",
+				Children = new List<ConfigurableDictionaryNode> {referencedSensesNode}
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Version = FirstAlphaMigrator.VersionAlpha2,
+				WritingSystem = "en",
+				FilePath = string.Empty,
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			m_migrator.MigrateFrom83Alpha(model);
+			Assert.AreEqual("[", pronunciationsNode.Before, "Should have set Before to '['.");
+			Assert.AreEqual("] ", pronunciationsNode.After, "Should have set After to '] '.");
+			Assert.AreEqual(" ", pronunciationsNode.Between, "Should have set Between to one space.");
+			Assert.AreEqual("", formNode.Before, "Should have set Before to empty string.");
+			Assert.AreEqual(" ", formNode.After, "Should have set After to one space.");
+			Assert.AreEqual("", formNode.Between, "Should have set Between to empty string.");
 		}
 	}
 }
