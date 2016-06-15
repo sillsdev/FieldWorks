@@ -307,11 +307,14 @@ install: install-tree install-menuentries l10n-install
 install-package: install install-COM
 	$(DESTDIR)/usr/lib/fieldworks/cpol-action pack
 
-install-package-fdo: install-tree-fdo install-COM
+install-package-fdo: install-tree-fdo package-fdo-remove-unwanted-files install-COM
+
+package-fdo-remove-unwanted-files:
 	# Remove additional unwanted files
 	rm -f $(DESTDIR)/usr/lib/fieldworks/FormattedEditor.dll*
 	rm -f $(DESTDIR)/usr/lib/fieldworks/HelpSystem.dll*
 	rm -f $(DESTDIR)/usr/lib/fieldworks/HtmlEditor.dll*
+	rm -f $(DESTDIR)/usr/lib/fieldworks/LibChorus.dll*
 	rm -f $(DESTDIR)/usr/lib/fieldworks/Interop.*
 	rm -f $(DESTDIR)/usr/lib/fieldworks/NetLoc.*
 	rm -f $(DESTDIR)/usr/lib/fieldworks/Palaso.Media.dll*
