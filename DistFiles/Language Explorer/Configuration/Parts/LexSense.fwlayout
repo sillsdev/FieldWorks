@@ -62,6 +62,7 @@
 		<part ref="Thumbnail" label="Thumbnail" visibility="never"/>
 		<part ref="CaptionA" label="Caption"/>
 		<part ref="FileName" label="File"/>
+		<part ref="PublishIn" label="Publish In"/>
 	</layout>
 	<layout class="CmFile" type="detail" name="Normal">
 		<part ref="FileName" label="File"/>
@@ -1297,5 +1298,4 @@
 		<part ref="SenseNumber" label="Sense Number" visibility="ifdata" before="" after=" " css="pictureSense"/>
 		<part ref="CaptionPub" label="Caption" visibility="ifdata" before="" after="" ws="vernacular" wsType="vernacular analysis" css="pictureLabel"/>
 	</layout>
-
 </LayoutInventory>

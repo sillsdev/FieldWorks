@@ -52,6 +52,15 @@
 			</chooserInfo>
 		</slice>
 	</part>
+	<part id="LexEntry-Detail-PublishInForPronunciations" type="Detail">
+		<slice field="PublishIn" label="Publish In" tooltip="Remove a publication from this field to completely exclude this entry from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
+			menu="mnuDataTree-Help">
+			<deParams displayProperty="ShortName" ws="best analysis" />
+			<chooserInfo>
+				<chooserLink type="goto" label="Edit the Publications list" tool="publicationsEdit" />
+			</chooserInfo>
+		</slice>
+	</part>
 	<part id ="LexEntry-Detail-EntryRefsGhostVariantOf" type="detail">
 	  <if field="VariantEntryRefs" lengthatmost="0">
 		<slice field="EntryRefs" label="Variant of" editor="Custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.GhostLexRefSlice"
@@ -297,6 +306,9 @@
 		</part>
 		<part id="LexEntry-Jt-Location" type="jtview">
 			<seq field="Pronunciations" layout="Location"/>
+		</part>
+		<part id="LexEntry-Jt-PublishInForPronunciations" type="JtView">
+			<seq field="Pronunciations" layout="PublishInForPronunciations"/>
 		</part>
 		<part id="LexEntry-Jt-BibliographyForEntry" type="jtview">
 			<string field="Bibliography" ws="$ws=analysis"/>
@@ -972,6 +984,15 @@
 		</part>
 		<part id="LexPronunciation-Detail-Tone" type="Detail">
 			<slice field="Tone" label="Tone" editor="String" sameObject="true"/><!-- assume same object as preceding field for formatting lines on display -->
+		</part>
+		<part id="LexPronunciation-Detail-PublishIn" type="Detail">
+			<slice field="PublishIn" label="Publish In" tooltip="Remove a publication from this field to completely exclude this entry from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
+				menu="mnuDataTree-Help">
+				<deParams displayProperty="ShortName" ws="best analysis" />
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the Publications list" tool="publicationsEdit" />
+				</chooserInfo>
+			</slice>
 		</part>
 		<part id="LexPronunciation-Jt-FormOnly" type="JtView">
 			<string field="Form" ws="pronunciation" />

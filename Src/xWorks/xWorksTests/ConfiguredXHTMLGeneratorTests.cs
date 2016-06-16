@@ -4922,15 +4922,23 @@ namespace SIL.FieldWorks.XWorks
 			// its owner is not published in test.
 			var entryCorps = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(entryCorps, "corps", m_wsFr, Cache);
+			var Pronunciation = AddPronunciationToEntry(entryCorps, "pronunciation", m_wsFr, Cache);
 			entryCorps.SensesOS[0].Gloss.set_String (m_wsEn, "body");
 			var exampleCorpsBody1 = AddExampleToSense(entryCorps.SensesOS[0], "Le corps est gros.", "The body is big.");
 			var exampleCorpsBody2 = AddExampleToSense(entryCorps.SensesOS[0], "Le corps est esprit.", "The body is spirit.");
 			AddSenseToEntry(entryCorps, "corpse", m_wsEn, Cache);
 			AddExampleToSense(entryCorps.SensesOS[1], "Le corps est mort.", "The corpse is dead.");
 
+			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
+			sensePic.Caption.set_String(wsFr, Cache.TsStrFactory.MakeString("caption", wsFr));
+			entryCorps.SensesOS[0].PicturesOS.Add(sensePic);
+
+			Pronunciation.DoNotPublishInRC.Add(typeTest);
 			entryCorps.SensesOS[0].DoNotPublishInRC.Add(typeTest);
 			exampleCorpsBody1.DoNotPublishInRC.Add(typeTest);
 			exampleCorpsBody2.DoNotPublishInRC.Add(typeMain);	// should not show at all!
+			sensePic.DoNotPublishInRC.Add(typeTest);
 
 			entryCorps.SensesOS[1].DoNotPublishInRC.Add(typeMain);
 			//exampleCorpsCorpse1.DoNotPublishInRC.Add(typeMain); -- should not show in main because its owner is not shown there
@@ -5061,12 +5069,32 @@ namespace SIL.FieldWorks.XWorks
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] {"en"}),
 				CSSClassNameOverride = "definitionorgloss"
 			};
+			var captionNode = new ConfigurableDictionaryNode { FieldDescription = "Caption", DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }) };
+			var pictureNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = new DictionaryNodePictureOptions(),
+				FieldDescription = "PicturesOfSenses",
+				CSSClassNameOverride = "Pictures",
+				Children = new List<ConfigurableDictionaryNode> { captionNode }
+			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions(),
 				Children = new List<ConfigurableDictionaryNode> { glossNode, examplesNode },
 				CSSClassNameOverride = "senses"
+			};
+			var pronunciationForm = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Form",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var mainPronunciationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "PronunciationsOS",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
+				CSSClassNameOverride = "pronunciations",
+				Children = new List<ConfigurableDictionaryNode> { pronunciationForm }
 			};
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
@@ -5076,18 +5104,20 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode, sensesNode, subentryNode, variantNode },
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode, mainPronunciationsNode, sensesNode, pictureNode, subentryNode, variantNode },
 				FieldDescription = "LexEntry"
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			const string matchFrenchEntry = "//span[@class='entry']/span[@lang='fr']";
+			const string matchFrenchPronunciation = "//span[@class='pronunciations']/span[@class='pronunciation']/span[@class='form']/span[@lang='fr']";
 			const string matchEnglishDefOrGloss =
 				"//span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='definitionorgloss']/span[@lang='en']";
 			const string matchFrenchExample =
 				"//span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='examples']/span[@class='example']/span[@class='examplesentence']/span[@lang='fr']";
 			const string matchEnglishTranslation =
 				"//span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='examples']/span[@class='example']/span[@class='translations']/span[@class='translation']/span[@class='translatedsentence']/span[@lang='en']";
+			const string matchFrenchPictureCaption = "//span[@class='pictures']/div[@class='picture']/div[@class='captionContent']/span[@class='caption']/span[@lang='fr']";
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
@@ -5095,18 +5125,22 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsNotNullOrEmpty(output);
 			// Verify that the unfiltered output displays everything.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
+			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchPronunciation, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 2);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchExample, 3);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishTranslation, 3);
+			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchPictureCaption, 1);
 
 			//SUT
 			output =  ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryCorps, mainEntryNode, pubMain, settings);
 			Assert.IsNotNullOrEmpty(output);
 			// Verify that the main publication output displays what it should.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
+			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchPronunciation, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchExample, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishTranslation, 1);
+			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchPictureCaption, 1);
 			const string matchBodyIsBig =
 				"//span[@class='examples']/span[@class='example']/span[@class='translations']/span[@class='translation']/span[@class='translatedsentence']/span[@lang='en' and text()='The body is big.']";
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchBodyIsBig, 1);
@@ -5116,9 +5150,11 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsNotNullOrEmpty(output);
 			// Verify that the test publication output displays what it should.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
+			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchPronunciation, 0);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchExample, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishTranslation, 1);
+			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchPictureCaption, 0);
 			const string matchCorpseIsDead =
 				"//span[@class='examples']/span[@class='example']/span[@class='translations']/span[@class='translation']/span[@class='translatedsentence']/span[@lang='en' and text()='The corpse is dead.']";
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchCorpseIsDead, 1);
@@ -6485,6 +6521,14 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// The headword field is special: it uses Citation if available, or LexemeForm if Citation isn't filled in
 			entry.CitationForm.set_String(wsId, cache.TsStrFactory.MakeString(headword, wsId));
+		}
+
+		private static ILexPronunciation AddPronunciationToEntry(ILexEntry entry, string content, int wsId, FdoCache cache)
+		{
+			var pronunciation = cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
+			entry.PronunciationsOS.Add(pronunciation);
+			pronunciation.Form.set_String(wsId, cache.TsStrFactory.MakeString(content, wsId));
+			return pronunciation;
 		}
 
 		private static void AddSenseToEntry(ILexEntry entry, string gloss, int wsId, FdoCache cache)
