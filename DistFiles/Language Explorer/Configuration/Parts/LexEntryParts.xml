@@ -917,8 +917,45 @@
   </bin>
 
 	<bin class="LexEtymology">
+		<part id="LexEtymology-Jt-Summary" type="jtview">
+			<para>
+				<properties>
+					<forecolor value="ControlDarkDark" />
+					<fontsize value="10000"/>
+					<style value="UiElement"/>
+					<bold value="on" />
+				</properties>
+				<lit>Etymology</lit>
+			</para>
+		</part>
+		<part id="LexEtymology-Jt-SummaryCollapsed" type="jtview">
+			<para>
+				<properties>
+					<forecolor value="ControlDarkDark" />
+					<fontsize value="10000"/>
+					<bold value="on" />
+				</properties>
+				<span>
+					<properties>
+						<style value="UiElement"/>
+					</properties>
+					<lit>Etymology</lit>
+					<lit> - </lit>
+				</span>
+				<choice>
+					<where field="Language" stringaltequals="" ws="all analysis">
+						<string field="Gloss" ws="best analysis"/>
+					</where>
+					<otherwise>
+						<string field="Language" ws="best analysis"/>
+						<lit> - </lit>
+						<string field="Gloss" ws="best analysis"/>
+					</otherwise>
+				</choice>
+			</para>
+		</part>
 		<part id="LexEtymology-Detail-PrecComment" type="Detail">
-			<slice field="PrecComment" label="Preceding Annotation" editor="multistring" ws="all analysis" menu="mnuDataTree-Etymology" />
+			<slice field="PrecComment" label="Preceding Annotation" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
 		</part>
 		<part id="LexEtymology-Detail-Language" type="Detail">
 			<slice field="Language" label="Source Language" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />

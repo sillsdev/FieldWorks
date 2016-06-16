@@ -497,6 +497,9 @@
 			<item command="CmdDataTree-Delete-Etymology"/>
 			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
+		<menu id="mnuDataTree-Etymology-Hotlinks">
+			<item command="CmdDataTree-Insert-Etymology"/>
+		</menu>
 		<menu id="mnuDataTree-DeleteAddLexReference">
 	  <item command="CmdDataTree-Delete-LexReference"/>
 	  <item command="CmdDataTree-Add-ToLexReference"/>

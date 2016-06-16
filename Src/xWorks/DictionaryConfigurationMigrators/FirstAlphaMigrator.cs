@@ -336,11 +336,15 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					break;
 				case 6:
 					var etymNodeList = new List<ConfigurableDictionaryNode>();
+					const string etymSequence = "EtymologyOS";
 					PerformActionOnNodes(nodes, n =>
 					{
 						if (n.Label == "Etymology")
 						{
-							n.FieldDescription = "EtymologyOS";
+							if (isReversal)
+								n.SubField = etymSequence;
+							else
+								n.FieldDescription = etymSequence;
 							n.CSSClassNameOverride = "etymologies";
 							n.Before = "(";
 							n.Between = " ";

@@ -69,13 +69,17 @@
 	</layout>
 
 	<layout class="LexEtymology" type="detail" name="Normal">
-		<part ref="PrecComment" label="Preceding Annotation"/>
-		<part ref="Language" label="Source Language"/>
-		<part ref="Form" label="Source Form"/>
-		<part ref="Gloss" label="Gloss"/>
-		<part ref="Comment" label="Following Comment"/>
-		<part ref="Bibliography" label="Bibliographic Source"/>
-		<part ref="Note" label="Etymology Note"/>
+		<part ref="NormalSummary" param="Summary" collapsedLayout="SummaryCollapsed" expansion="expanded" menu="mnuDataTree-Etymology" hotlinks="mnuDataTree-Etymology-Hotlinks">
+			<indent>
+				<part ref="PrecComment" label="Preceding Annotation"/>
+				<part ref="Language" label="Source Language"/>
+				<part ref="Form" label="Source Form"/>
+				<part ref="Gloss" label="Gloss"/>
+				<part ref="Comment" label="Following Comment"/>
+				<part ref="Bibliography" label="Bibliographic Source"/>
+				<part ref="Note" label="Etymology Note"/>
+			</indent>
+		</part>
 	</layout>
 
 	<layout class="LexEntry" type="jtview" name="CrossRefPub">

@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -867,6 +868,70 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			TestForWritingSystemOptionsType(configNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
 		}
 
+		[Test]
+		public void MigrateFromConfigV6toV7_UpdatesReversalEtymologyCluster()
+		{
+			var formNode = new ConfigurableDictionaryNode
+			{
+				Label = "Etymological Form",
+				FieldDescription = "Form",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "best vernoranal" },
+					DictionaryNodeWritingSystemOptions.WritingSystemType.Both)
+			};
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				Label = "Gloss",
+				FieldDescription = "Gloss",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "analysis" },
+					DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis)
+			};
+			var commentNode = new ConfigurableDictionaryNode
+			{
+				Label = "Comment",
+				FieldDescription = "Comment",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "analysis" },
+					DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis)
+			};
+			var sourceNode = new ConfigurableDictionaryNode
+			{
+				Label = "Source",
+				FieldDescription = "Source"
+			};
+			var etymologyNode = new ConfigurableDictionaryNode
+			{
+				Label = "Etymology",
+				FieldDescription = "Owner",
+				SubField = "EtymologyOA",
+				CSSClassNameOverride = "etymology",
+				Children = new List<ConfigurableDictionaryNode> { formNode, glossNode, commentNode, sourceNode }
+			};
+			var referencedSensesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Senses",
+				FieldDescription = "ReferringSenses",
+				Children = new List<ConfigurableDictionaryNode> { etymologyNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Entry",
+				FieldDescription = "ReversalIndexEntry",
+				Children = new List<ConfigurableDictionaryNode> { referencedSensesNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Version = FirstAlphaMigrator.VersionAlpha2,
+				WritingSystem = "en",
+				FilePath = String.Empty,
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			m_migrator.MigrateFrom83Alpha(model);
+			Assert.AreEqual("Owner", etymologyNode.FieldDescription, "Should not have changed FieldDescription.");
+			Assert.AreEqual("EtymologyOS", etymologyNode.SubField, "Should have changed to a sequence.");
+			var etymChildren = etymologyNode.Children;
+			Assert.IsNull(etymChildren.Find(node => node.Label == "Source"),
+				"Should have deleted the old Source node");
+		}
+
 		private void TestForWritingSystemOptionsType(ConfigurableDictionaryNode configNode,
 			DictionaryNodeWritingSystemOptions.WritingSystemType expectedWsType)
 		{
@@ -876,7 +941,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		}
 
 		[Test]
-		public void MigrateFromConfigV6toV7_PronunciationBefAft()
+		public void MigrateFromConfigV6toV7_ReversalPronunciationBefAft()
 		{
 			var formNode = new ConfigurableDictionaryNode
 			{
