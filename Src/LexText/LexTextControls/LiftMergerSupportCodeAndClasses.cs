@@ -3128,6 +3128,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryTree:
 				case (int)LexRefTypeTags.MappingTypes.kmtSenseTree:
+				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
+				case (int)LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
+				case (int)LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
 					StoreTreeRelation(refsAsYetUnmatched, lrt, rgRelation);
 					break;
 			}

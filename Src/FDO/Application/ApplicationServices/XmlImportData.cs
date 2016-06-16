@@ -1972,6 +1972,9 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryTree:
 				case (int)LexRefTypeTags.MappingTypes.kmtSenseTree:
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
+				case (int)LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
+				case (int)LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
+				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
 					break;
 				default:
 					// not part of any sequence; if we have a pending sequence finish it.
@@ -2251,7 +2254,10 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				case (int)LexRefTypeTags.MappingTypes.kmtEntrySequence:
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence:
 				case (int)LexRefTypeTags.MappingTypes.kmtSenseSequence:
-					throw new ApplicationException("FindMatchingLexRef should not be called for sequences or trees");
+				case (int)LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
+				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
+				case (int)LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
+					throw new ApplicationException("FindMatchingLexRef should not be called for sequences, trees, or unidirectional");
 			}
 			return null;
 		}

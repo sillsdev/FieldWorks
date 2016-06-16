@@ -272,7 +272,13 @@ namespace SIL.FieldWorks.FDO
 			/// <summary></summary>
 			kmtEntryOrSenseTree = 13,
 			/// <summary></summary>
-			kmtEntryOrSenseSequence = 14
+			kmtEntryOrSenseSequence = 14,
+			/// <summary></summary>
+			kmtSenseUnidirectional = 15,
+			/// <summary></summary>
+			kmtEntryUnidirectional = 16,
+			/// <summary></summary>
+			kmtEntryOrSenseUnidirectional = 17
 		};
 
 		/// <returns>True if the MappingType is directional (asymmetric); false if it is the same in any direction (symmetric).</returns>
@@ -283,7 +289,18 @@ namespace SIL.FieldWorks.FDO
 				|| type == MappingTypes.kmtSenseAsymmetricPair
 				|| type == MappingTypes.kmtEntryTree
 				|| type == MappingTypes.kmtEntryOrSenseTree
-				|| type == MappingTypes.kmtSenseTree;
+				|| type == MappingTypes.kmtSenseTree
+				|| type == MappingTypes.kmtSenseUnidirectional
+				|| type == MappingTypes.kmtEntryUnidirectional
+				|| type == MappingTypes.kmtEntryOrSenseUnidirectional;
+		}
+
+		/// <returns>True if the MappingType is unidirectional; false if it is bidirectional.</returns>
+		public static bool IsUnidirectional(MappingTypes type)
+		{
+			return type == MappingTypes.kmtSenseUnidirectional
+				|| type == MappingTypes.kmtEntryUnidirectional
+				|| type == MappingTypes.kmtEntryOrSenseUnidirectional;
 		}
 	}
 

@@ -345,6 +345,9 @@
 	<string id="EntrySensePair2" txt="Entry/Sense Pair - 2 relation names"/>
 	<string id="EntrySenseTree" txt="Entry/Sense Tree"/>
 	<string id="EntrySenseSequence" txt="Entry/Sense Sequence/scale"/>
+	<string id="SenseUnidirectional" txt="Sense Unidirectional"/>
+	<string id="EntryUnidirectional" txt="Entry Unidirectional"/>
+	<string id="EntrySenseUnidirectional" txt="Entry/Sense Unidirectional"/>
   </group>
   <group id="LabelAbbreviations">
 <!-- (sorted by abbreviation) -->

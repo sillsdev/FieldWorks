@@ -860,9 +860,11 @@ namespace SIL.FieldWorks.LexText.Controls
 							case (int)MappingTypes.kmtEntryCollection:
 							case (int)MappingTypes.kmtEntryPair:
 							case (int)MappingTypes.kmtEntrySequence:
+							case (int)MappingTypes.kmtEntryUnidirectional:
 							case (int)MappingTypes.kmtEntryOrSenseCollection:
 							case (int)MappingTypes.kmtEntryOrSensePair:
 							case (int)MappingTypes.kmtEntryOrSenseSequence:
+							case (int)MappingTypes.kmtEntryOrSenseUnidirectional:
 								//abbr = lrt.Abbreviation.AnalysisDefaultWritingSystem.Text;
 								//name = lrt.Name.AnalysisDefaultWritingSystem.Text;
 								//AddAbbrAndNameInfo(abbr, name, "en", null, null, null);
@@ -893,9 +895,11 @@ namespace SIL.FieldWorks.LexText.Controls
 							case (int)MappingTypes.kmtSenseCollection:
 							case (int)MappingTypes.kmtSensePair:
 							case (int)MappingTypes.kmtSenseSequence:
+							case (int)MappingTypes.kmtSenseUnidirectional:
 							case (int)MappingTypes.kmtEntryOrSenseCollection:
 							case (int)MappingTypes.kmtEntryOrSensePair:
 							case (int)MappingTypes.kmtEntryOrSenseSequence:
+							case (int)MappingTypes.kmtEntryOrSenseUnidirectional:
 								//abbr = lrt.Abbreviation.AnalysisDefaultWritingSystem.Text;
 								//name = lrt.Name.AnalysisDefaultWritingSystem.Text;
 								//AddAbbrAndNameInfo(abbr, name, "en", null, null, null);

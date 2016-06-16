@@ -1778,6 +1778,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (config.ReferencedOrDirectChildren == null)
 				return string.Empty;
+			if (LexRefTypeTags.IsUnidirectional((LexRefTypeTags.MappingTypes)reference.OwnerType.MappingType) &&
+				LexRefDirection(reference, collectionOwner) == ":r")
+			{
+				return string.Empty;
+			}
+
 			var bldrTotal = new StringBuilder();
 			foreach(var child in config.ReferencedOrDirectChildren.Where(c => c.IsEnabled))
 			{

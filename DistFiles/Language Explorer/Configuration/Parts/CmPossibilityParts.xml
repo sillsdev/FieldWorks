@@ -403,7 +403,7 @@
 	<part id="LexRefType-Detail-MappingType" type="Detail">
 		<slice field="MappingType" label="Reference set type" editor="enumComboBox"  menu="mnuDataTree-Help" refreshDataTreeOnChange="true">
 			<deParams>
-				<stringList group="MappingType" ids="SenseCollection, SensePair, SensePair2, SenseTree, SenseSequence, EntryCollection, EntryPair, EntryPair2, EntryTree, EntrySequence, EntrySenseCollection, EntrySensePair, EntrySensePair2, EntrySenseTree, EntrySenseSequence"/>
+				<stringList group="MappingType" ids="SenseCollection, SensePair, SensePair2, SenseTree, SenseSequence, EntryCollection, EntryPair, EntryPair2, EntryTree, EntrySequence, EntrySenseCollection, EntrySensePair, EntrySensePair2, EntrySenseTree, EntrySenseSequence, SenseUnidirectional, EntryUnidirectional, EntrySenseUnidirectional"/>
 			</deParams>
 		</slice>
 	</part>

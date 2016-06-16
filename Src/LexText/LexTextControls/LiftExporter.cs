@@ -561,6 +561,15 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (target.Hvo == hvoOpen)
 						continue;
 				}
+				// If this is a unidirectional type relation, only show elements if the
+				//  first element is the currently open object.
+				if (nMappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseUnidirectional ||
+					nMappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryUnidirectional ||
+					nMappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional)
+				{
+					if (hvoOpen != lref.TargetsRS[0].Hvo)
+						break;
+				}
 				slr.CrossRefHvo = target.Hvo;
 				w.Write("<relation");
 				WriteLiftDates(w, lref);

@@ -751,14 +751,17 @@ namespace SIL.FieldWorks.XWorks
 							SubClass = LexReferenceInfo.TypeSubClass.Forward
 						}.StorageString.Substring(1) // substring removes the leading "+";
 					});
-					listViewItemS.Add(new ListViewItem(lexRelType.ReverseName.BestAnalysisVernacularAlternative.Text)
+					if (!LexRefTypeTags.IsUnidirectional(mappingType))
 					{
-						Checked = true,
-						Tag = new LexReferenceInfo(true, relType.Guid)
+						listViewItemS.Add(new ListViewItem(lexRelType.ReverseName.BestAnalysisVernacularAlternative.Text)
 						{
-							SubClass = LexReferenceInfo.TypeSubClass.Reverse
-						}.StorageString.Substring(1)
-					});
+							Checked = true,
+							Tag = new LexReferenceInfo(true, relType.Guid)
+							{
+								SubClass = LexReferenceInfo.TypeSubClass.Reverse
+							}.StorageString.Substring(1)
+						});
+					}
 				}
 				else
 				{
@@ -779,6 +782,7 @@ namespace SIL.FieldWorks.XWorks
 					case LexRefTypeTags.MappingTypes.kmtEntryPair:
 					case LexRefTypeTags.MappingTypes.kmtEntryCollection:
 					case LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair:
+					case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
 						if (listId == DictionaryNodeListOptions.ListIds.Entry)
 							lexRelTypesSubset.AddRange(listViewItemS);
 						break;
@@ -787,6 +791,7 @@ namespace SIL.FieldWorks.XWorks
 					case LexRefTypeTags.MappingTypes.kmtSensePair:
 					case LexRefTypeTags.MappingTypes.kmtSenseCollection:
 					case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair:
+					case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
 						if (listId == DictionaryNodeListOptions.ListIds.Sense)
 							lexRelTypesSubset.AddRange(listViewItemS);
 						break;
