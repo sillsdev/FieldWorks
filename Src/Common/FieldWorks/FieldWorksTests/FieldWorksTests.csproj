@@ -68,6 +68,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
     </Reference>
+    <Reference Include="COMInterfaces, Version=8.3.0.24914, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    </Reference>
     <Reference Include="COMInterfacesTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
@@ -92,6 +96,14 @@
     <Reference Include="FwUtils, Version=6.1.1.27334, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="PaToFdoInterfaces, Version=1.0.4097.23370, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\DistFiles\PaToFdoInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -128,6 +140,7 @@
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
     <Compile Include="FieldWorksTests.cs" />
+    <Compile Include="PaObjectsTests.cs" />
     <Compile Include="ProjectIDTests.cs" />
     <Compile Include="WelcomeToFieldWorksDlgTests.cs" />
   </ItemGroup>
