@@ -2238,6 +2238,62 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsTrue(Regex.Match(cssResult, pictureBetween, RegexOptions.Singleline).Success, "expected Picture between rule is generated");
 		}
 
+
+		/// <summary>
+		/// Part of LT-12572.
+		/// </summary>
+		[Test]
+		public void GenerateCssForConfiguration_PictureWritesRulesForHeadwordAndGlossInCaptionArea()
+		{
+			TestStyle style = GenerateStyle("Normal");
+			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, LeadingIndent);
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+
+			var captionNode = new ConfigurableDictionaryNode { FieldDescription = "Caption", Style = "Normal" };
+			var headwordNode = new ConfigurableDictionaryNode {
+				FieldDescription = "Owner",
+				SubField="OwnerOutlineName",
+				Style = "Normal",
+				CSSClassNameOverride="headword"
+			};
+			var glossNode = new ConfigurableDictionaryNode {
+
+				FieldDescription = "Owner",
+				SubField="Gloss",
+				Style = "Normal",
+			};
+
+			var memberNode = new ConfigurableDictionaryNode
+				{
+					DictionaryNodeOptions = new DictionaryNodePictureOptions { MaximumWidth = 1 },
+					CSSClassNameOverride = "pictures",
+					FieldDescription = "Pictures",
+					Children = new List<ConfigurableDictionaryNode> { captionNode, headwordNode, glossNode }
+				};
+			var rootNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "SIL.FieldWorks.XWorks.TestPictureClass",
+					CSSClassNameOverride = "entry",
+					Children = new List<ConfigurableDictionaryNode> { memberNode }
+				};
+			PopulateFieldsForTesting(rootNode);
+
+			var config = new DictionaryConfigurationModel()
+				{
+					Parts = new List<ConfigurableDictionaryNode> { rootNode }
+				};
+
+			// SUT
+			var cssWithPictureRules = CssGenerator.GenerateCssFromConfiguration(config, m_mediator);
+
+			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.entry.*pictures.*picture> .captionContent .caption", RegexOptions.Singleline).Success,
+				"css for image did not contain expected rule");
+			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.entry.*pictures.*picture> .captionContent .headword", RegexOptions.Singleline).Success,
+				"css for image did not contain expected headword rule");
+			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.entry.*pictures.*picture> .captionContent .owner_gloss", RegexOptions.Singleline).Success,
+				"css for image did not contain expected gloss rule");
+		}
+
 		[Test]
 		public void GenerateCssForConfiguration_GlossWithMultipleWs()
 		{

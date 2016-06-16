@@ -577,7 +577,8 @@ namespace SIL.FieldWorks.XWorks
 					}
 					rules.Add(betweenRule);
 				}
-				if ((configNode.FieldDescription == "SenseNumberTSS" || configNode.FieldDescription == "Caption") && parentSelector == ".entry> .pictures .picture")
+				// Headword, Gloss, and Caption are contained in a captionContent area.
+				if (configNode.Parent.DictionaryNodeOptions is DictionaryNodePictureOptions)
 				{
 					baseSelection = parentSelector + "> " + ".captionContent " + SelectClassName(configNode, cache);
 					simpleSelector = parentSelector + "> " + ".captionContent " + SelectBareClassName(configNode, cache);
