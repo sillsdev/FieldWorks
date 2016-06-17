@@ -407,6 +407,18 @@
 		<part id="LexEntry-Jt-CustomPossAtomForAllomorph_$fieldName" type="jtview">
 			<seq field="AlternateForms" layout="CustomPossAtomForAllomorph_$fieldName"/>
 		</part>
+		<part id="LexEntry-Jt-Example" type="jtview">
+			<seq class="LexEntry" field="AllSenses" layout="Example"/>
+		</part>
+		<part id="LexEntry-Jt-ExampleTranslation" type="jtview">
+			<seq class="LexEntry" field="AllSenses" layout="ExampleTranslation"/>
+		</part>
+		<part id="LexEntry-Jt-ExampleReference" type="jtview">
+			<seq class="LexEntry" field="AllSenses" layout="ExampleReference"/>
+		</part>
+		<part id="LexEntry-Jt-ExampleTranslationType" type="jtview">
+			<seq class="LexEntry" field="AllSenses" layout="ExampleTranslationType"/>
+		</part>
 		<!-- By default let ChildPartGenerator look for missing part layouts under LexSense -->
 		<part id="LexEntry-Jt-$fieldName" type="jtview">
 			<seq class="LexEntry" field="Senses" layout="$fieldName"/>
@@ -460,19 +472,22 @@
 			<seq field="Senses" layout="SenseHeadwordForSense"/>
 		</part>
 		<part id="LexEntry-Jt-GrammaticalInfoFullForSense" type="jtview">
-			<seq field="Senses" layout="GrammaticalInfoFullForSense"/>
+			<seq field="AllSenses" layout="GrammaticalInfoFullForSense"/>
 		</part>
 		<part id="LexEntry-Jt-GrammaticalInfoAbbrForSense" type="jtview">
-			<seq field="Senses" layout="GrammaticalInfoAbbrForSense"/>
+			<seq field="AllSenses" layout="GrammaticalInfoAbbrForSense"/>
 		</part>
 		<part id="LexEntry-Jt-GrammaticalCategoryForSense" type="jtview">
-			<seq field="Senses" layout="GrammaticalCategoryForSense"/>
+			<seq field="AllSenses" layout="GrammaticalCategoryForSense"/>
 		</part>
 		<part id="LexEntry-Jt-GlossesForSense" type="jtview">
-			<seq field="Senses" layout="GlossesForSense"/>
+			<seq field="AllSenses" layout="GlossesForSense"/>
 		</part>
 		<part id="LexEntry-Jt-DefinitionsForSense" type="jtview">
-			<seq field="Senses" layout="DefinitionsForSense"/>
+			<seq field="AllSenses" layout="DefinitionsForSense"/>
+		</part>
+		<part id="LexEntry-Jt-OutlineForSense" type="jtview">
+			<seq field="AllSenses" layout="OutlineForSense"/>
 		</part>
 		<part id="LexEntry-Jt-PictureCaptionForSense" type="jtview">
 			<seq field="Senses" layout="PictureCaptionForSense"/>
@@ -484,43 +499,43 @@
 			<seq field="Senses" layout="StatusForSense"/>
 		</part>
 		<part id="LexEntry-Jt-AnthropologyNoteForSense" type="jtview">
-			<seq field="Senses" layout="AnthropologyNoteForSense"/>
+			<seq field="AllSenses" layout="AnthropologyNoteForSense"/>
 		</part>
 		<part id="LexEntry-Jt-BibliographyForSense" type="jtview">
-			<seq field="Senses" layout="BibliographyForSense"/>
+			<seq field="AllSenses" layout="BibliographyForSense"/>
 		</part>
 		<part id="LexEntry-Jt-DiscourseNoteForSense" type="jtview">
-			<seq field="Senses" layout="DiscourseNoteForSense"/>
+			<seq field="AllSenses" layout="DiscourseNoteForSense"/>
 		</part>
 		<part id="LexEntry-Jt-EncyclopedicInfoForSense" type="jtview">
-			<seq field="Senses" layout="EncyclopedicInfoForSense"/>
+			<seq field="AllSenses" layout="EncyclopedicInfoForSense"/>
 		</part>
 		<part id="LexEntry-Jt-GeneralNoteForSense" type="jtview">
-			<seq field="Senses" layout="GeneralNoteForSense"/>
+			<seq field="AllSenses" layout="GeneralNoteForSense"/>
 		</part>
 		<part id="LexEntry-Jt-GrammarNoteForSense" type="jtview">
-			<seq field="Senses" layout="GrammarNoteForSense"/>
+			<seq field="AllSenses" layout="GrammarNoteForSense"/>
 		</part>
 		<part id="LexEntry-Jt-ImportResidueSense" type="jtview">
-			<seq field="Senses" layout="ImportResidueSense"/>
+			<seq field="AllSenses" layout="ImportResidueSense"/>
 		</part>
 		<part id="LexEntry-Jt-PhonologyNoteForSense" type="jtview">
-			<seq field="Senses" layout="PhonologyNoteForSense"/>
+			<seq field="AllSenses" layout="PhonologyNoteForSense"/>
 		</part>
 		<part id="LexEntry-Jt-RestrictionsForSense" type="jtview">
-			<seq field="Senses" layout="RestrictionsForSense"/>
+			<seq field="AllSenses" layout="RestrictionsForSense"/>
 		</part>
 		<part id="LexEntry-Jt-ScientificNameForSense" type="jtview">
-			<seq field="Senses" layout="ScientificNameForSense"/>
+			<seq field="AllSenses" layout="ScientificNameForSense"/>
 		</part>
 		<part id="LexEntry-Jt-SemanticsNoteForSense" type="jtview">
-			<seq field="Senses" layout="SemanticsNoteForSense"/>
+			<seq field="AllSenses" layout="SemanticsNoteForSense"/>
 		</part>
 		<part id="LexEntry-Jt-SociolinguisticsNoteForSense" type="jtview">
-			<seq field="Senses" layout="SociolinguisticsNoteForSense"/>
+			<seq field="AllSenses" layout="SociolinguisticsNoteForSense"/>
 		</part>
 		<part id="LexEntry-Jt-SourceForSense" type="jtview">
-			<seq field="Senses" layout="SourceForSense"/>
+			<seq field="AllSenses" layout="SourceForSense"/>
 		</part>
 		<part id="LexEntry-Jt-AnthropologyCategoriesForSense" type="jtview">
 			<seq field="Senses" layout="AnthropologyCategoriesForSense"/>
@@ -548,7 +563,7 @@
 		</part>
 
 		<part id="LexEntry-Jt-DomainsOfSensesForSense" type="jtview">
-			<seq field="Senses" layout="DomainsOfSensesForSense"/>
+			<seq field="AllSenses" layout="DomainsOfSensesForSense"/>
 		</part>
 		<part id="LexEntry-Jt-ReversalEntriesForSense" type="jtview">
 			<seq field="Senses" layout="ReversalEntriesForSense"/>

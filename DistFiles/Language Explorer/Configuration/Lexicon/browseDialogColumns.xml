@@ -26,6 +26,7 @@
 		bulkEdit="external">
 		<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.BulkPosEditor"/>
 	</column>
+	<column layout="OutlineForSense" label="Sense Number" multipara="true" ws="$ws=analysis" field="LexEntry.Senses" visibility="dialog" />
 	<column layout="ReversalEntriesForSense" editLayout ="ReversalEntriesForSenseEdit" label="Reversals" multipara="true" transduce="LexSense.ReversalEntriesBulkText"
 		  ws="$ws=analysis" visibility="dialog"/>
 	<column layout="IsAbstractFormForEntry" label="Is Abstract Form" visibility="dialog"
