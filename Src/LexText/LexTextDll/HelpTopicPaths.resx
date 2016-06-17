@@ -2649,8 +2649,14 @@
   <data name="khtpField-lexiconEdit-LexEntryRef-PrimaryLexemes" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Publication_Settings_flds/Show_Subentry_under.htm</value>
   </data>
+  <data name="khtpField-lexiconEdit-LexPronunciation-PublishIn" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Publish_In_(Pronunciations).htm</value>
+  </data>
   <data name="khtpField-lexiconEdit-LexExampleSentence-PublishIn" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Publish_In_(Example).htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-CmPicture-PublishIn" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Publish_In_(Pictures).htm</value>
   </data>
   <data name="khtpField-lexiconEdit-LexSense-PublishIn" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Publish_In_(Sense).htm</value>
