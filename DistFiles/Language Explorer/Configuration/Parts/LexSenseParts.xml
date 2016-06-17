@@ -183,6 +183,11 @@
 				<string class="LexSense" field="Definition" ws="analysis"/>
 			</para>
 		</part>
+		<part id="LexSense-Jt-OutlineForSense" type="jtview">
+			<para>
+				<string field="LexSenseOutline"></string>
+			</para>
+		</part>
 		<part id="LexSense-Jt-ReversalsForSense" type="jtview">
 			<string field="ReversalEntriesBulkText" ws="$ws=reversal"/>
 		</part>
