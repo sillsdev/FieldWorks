@@ -25,12 +25,12 @@
 					<Option id="vernacular" isEnabled="true" />
 				</WritingSystemOptions>
 			</ConfigurationItem>
-			<ConfigurationItem name="Lexeme Form" isEnabled="false" between=" " after=" " field="Owner" subField="LexemeFormOA" cssClassNameOverride="lexemeform">
+			<ConfigurationItem name="Lexeme Form" isEnabled="false" between=" " after=" " field="Entry" subField="LexemeFormOA" cssClassNameOverride="lexemeform">
 				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 					<Option id="vernacular" isEnabled="true" />
 				</WritingSystemOptions>
 			</ConfigurationItem>
-			<ConfigurationItem name="Pronunciations" isEnabled="false" before="[" between=" " after="] " field="Owner" subField="PronunciationsOS" cssClassNameOverride="pronunciations">
+			<ConfigurationItem name="Pronunciations" isEnabled="false" before="[" between=" " after="] " field="Entry" subField="PronunciationsOS" cssClassNameOverride="pronunciations">
 				<ConfigurationItem name="Pronunciation" isEnabled="true" before=" " after=" " field="Form">
 					<WritingSystemOptions writingSystemType="pronunciation" displayWSAbreviation="false">
 						<Option id="pronunciation" isEnabled="true" />
@@ -51,7 +51,7 @@
 					</ConfigurationItem>
 				</ConfigurationItem>
 			</ConfigurationItem>
-			<ConfigurationItem name="Variants (of Entry)" isEnabled="false" before="(" between="; " after=") " field="Owner" subField="VariantFormEntryBackRefs">
+			<ConfigurationItem name="Variants (of Entry)" isEnabled="false" before="(" between="; " after=") " field="Entry" subField="VariantFormEntryBackRefs">
 				<ListTypeOptions list="variant">
 					<Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="true" />
 					<Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
@@ -160,7 +160,7 @@
 					</WritingSystemOptions>
 				</ConfigurationItem>
 			</ConfigurationItem>
-			<ConfigurationItem name="Etymology" isEnabled="false" before="(" after=") " between=" " field="Owner" subField="EtymologyOS" cssClassNameOverride="etymologies">
+			<ConfigurationItem name="Etymology" isEnabled="false" before="(" after=") " between=" " field="Entry" subField="EtymologyOS" cssClassNameOverride="etymologies">
 			  <ConfigurationItem name="Preceding Annotation" isEnabled="true" before="" between=" " after=" " field="PrecComment">
 				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 				  <Option id="analysis" isEnabled="true" />
@@ -199,7 +199,7 @@
 			  </ConfigurationItem>
 -->
 			</ConfigurationItem>
-			<ConfigurationItem name="Cross References" isEnabled="false" between="; " after=". " field="Owner" subField="MinimalLexReferences">
+			<ConfigurationItem name="Cross References" isEnabled="false" between="; " after=". " field="Entry" subField="MinimalLexReferences">
 				<ListTypeOptions list="entry">
 					<Option id="b79ba420-ea5e-11de-8f71-0013722f8dec" isEnabled="true" />
 				</ListTypeOptions>
@@ -485,22 +485,22 @@
 					</WritingSystemOptions>
 				</ConfigurationItem>
 			</ConfigurationItem>
-			<ConfigurationItem name="Bibliography (Entry)" isEnabled="false" between=" " after=" " field="Owner" subField="Bibliography">
+			<ConfigurationItem name="Bibliography (Entry)" isEnabled="false" between=" " after=" " field="Entry" subField="Bibliography">
 				<WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 					<Option id="reversal" isEnabled="true" />
 				</WritingSystemOptions>
 			</ConfigurationItem>
-			<ConfigurationItem name="Note" isEnabled="false" between=" " after=" " field="Owner" subField="Comment">
+			<ConfigurationItem name="Note" isEnabled="false" between=" " after=" " field="Entry" subField="Comment">
 				<WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 					<Option id="reversal" isEnabled="true" />
 				</WritingSystemOptions>
 			</ConfigurationItem>
-			<ConfigurationItem name="Literal Meaning" isEnabled="false" between=" " after=" " field="Owner" subField="LiteralMeaning">
+			<ConfigurationItem name="Literal Meaning" isEnabled="false" between=" " after=" " field="Entry" subField="LiteralMeaning">
 				<WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 					<Option id="reversal" isEnabled="true" />
 				</WritingSystemOptions>
 			</ConfigurationItem>
-			<ConfigurationItem name="Allomorphs" isEnabled="false" between=", " after=" " field="Owner" subField="AlternateFormsOS" cssClassNameOverride="allomorphs">
+			<ConfigurationItem name="Allomorphs" isEnabled="false" between=", " after=" " field="Entry" subField="AlternateFormsOS" cssClassNameOverride="allomorphs">
 				<ConfigurationItem name="Morph Type" isEnabled="false" between=" " after=" " field="MorphTypeRA" cssClassNameOverride="morphtype">
 					<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 						<Option id="analysis" isEnabled="true" />
@@ -531,7 +531,7 @@
 			</ConfigurationItem>
 			<ConfigurationItem name="Date Created" isEnabled="false" before="created on: " after=" " field="Owner" subField="DateCreated" />
 			<ConfigurationItem name="Date Modified" isEnabled="false" before="modified on: " after=" " field="Owner" subField="DateModified" />
-			<ConfigurationItem name="Referenced Complex Forms (of Entry)" isEnabled="false" between=" " after=" " field="Owner" subField="VisibleComplexFormBackRefs">
+			<ConfigurationItem name="Referenced Complex Forms (of Entry)" isEnabled="false" between=" " after=" " field="Entry" subField="VisibleComplexFormBackRefs">
 				<ConfigurationItem name="Complex Form Type" isEnabled="true" after=" " field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 					<ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
 						<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -621,12 +621,12 @@
 						<Option id="vernacular" isEnabled="true" />
 					</WritingSystemOptions>
 				</ConfigurationItem>
-				<ConfigurationItem name="Lexeme Form" isEnabled="false" between=" " after=" " field="Owner" subField="LexemeFormOA" cssClassNameOverride="lexemeform">
+				<ConfigurationItem name="Lexeme Form" isEnabled="false" between=" " after=" " field="Entry" subField="LexemeFormOA" cssClassNameOverride="lexemeform">
 					<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 						<Option id="vernacular" isEnabled="true" />
 					</WritingSystemOptions>
 				</ConfigurationItem>
-				<ConfigurationItem name="Pronunciations" isEnabled="false" between=" " after=" " field="Owner" subField="PronunciationsOS" cssClassNameOverride="pronunciations">
+				<ConfigurationItem name="Pronunciations" isEnabled="false" between=" " after=" " field="Entry" subField="PronunciationsOS" cssClassNameOverride="pronunciations">
 					<ConfigurationItem name="Pronunciation" isEnabled="true" before="[" between=" " after="] " field="Form">
 						<WritingSystemOptions writingSystemType="pronunciation" displayWSAbreviation="false">
 							<Option id="pronunciation" isEnabled="true" />
@@ -647,7 +647,7 @@
 						</ConfigurationItem>
 					</ConfigurationItem>
 				</ConfigurationItem>
-				<ConfigurationItem name="Variants (of Entry)" isEnabled="false" before="(" between="; " after=") " field="Owner" subField="VariantFormEntryBackRefs">
+				<ConfigurationItem name="Variants (of Entry)" isEnabled="false" before="(" between="; " after=") " field="Entry" subField="VariantFormEntryBackRefs">
 					<ListTypeOptions list="variant">
 						<Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="true" />
 						<Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
@@ -756,7 +756,7 @@
 						</WritingSystemOptions>
 					</ConfigurationItem>
 				</ConfigurationItem>
-				<ConfigurationItem name="Etymology" isEnabled="false" before="(" after=") " between=" " field="Owner" subField="EtymologyOS" cssClassNameOverride="etymologies">
+				<ConfigurationItem name="Etymology" isEnabled="false" before="(" after=") " between=" " field="Entry" subField="EtymologyOS" cssClassNameOverride="etymologies">
 				  <ConfigurationItem name="Preceding Annotation" isEnabled="true" before="" between=" " after=" " field="PrecComment">
 					<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 					  <Option id="analysis" isEnabled="true" />
@@ -795,7 +795,7 @@
 				  </ConfigurationItem>
 -->
 				</ConfigurationItem>
-				<ConfigurationItem name="Cross References" isEnabled="false" between="; " after=". " field="Owner" subField="MinimalLexReferences">
+				<ConfigurationItem name="Cross References" isEnabled="false" between="; " after=". " field="Entry" subField="MinimalLexReferences">
 					<ListTypeOptions list="entry">
 						<Option id="b79ba420-ea5e-11de-8f71-0013722f8dec" isEnabled="true" />
 					</ListTypeOptions>
@@ -1081,22 +1081,22 @@
 						</WritingSystemOptions>
 					</ConfigurationItem>
 				</ConfigurationItem>
-				<ConfigurationItem name="Bibliography (Entry)" isEnabled="false" between=" " after=" " field="Owner" subField="Bibliography">
+				<ConfigurationItem name="Bibliography (Entry)" isEnabled="false" between=" " after=" " field="Entry" subField="Bibliography">
 					<WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 						<Option id="reversal" isEnabled="true" />
 					</WritingSystemOptions>
 				</ConfigurationItem>
-				<ConfigurationItem name="Note" isEnabled="false" between=" " after=" " field="Owner" subField="Comment">
+				<ConfigurationItem name="Note" isEnabled="false" between=" " after=" " field="Entry" subField="Comment">
 					<WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 						<Option id="reversal" isEnabled="true" />
 					</WritingSystemOptions>
 				</ConfigurationItem>
-				<ConfigurationItem name="Literal Meaning" isEnabled="false" between=" " after=" " field="Owner" subField="LiteralMeaning">
+				<ConfigurationItem name="Literal Meaning" isEnabled="false" between=" " after=" " field="Entry" subField="LiteralMeaning">
 					<WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 						<Option id="reversal" isEnabled="true" />
 					</WritingSystemOptions>
 				</ConfigurationItem>
-				<ConfigurationItem name="Allomorphs" isEnabled="false" between=", " after=" " field="Owner" subField="AlternateFormsOS" cssClassNameOverride="allomorphs">
+				<ConfigurationItem name="Allomorphs" isEnabled="false" between=", " after=" " field="Entry" subField="AlternateFormsOS" cssClassNameOverride="allomorphs">
 					<ConfigurationItem name="Morph Type" isEnabled="false" between=" " after=" " field="MorphTypeRA" cssClassNameOverride="morphtype">
 						<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 							<Option id="analysis" isEnabled="true" />
@@ -1127,7 +1127,7 @@
 				</ConfigurationItem>
 				<ConfigurationItem name="Date Created" isEnabled="false" before="created on: " after=" " field="Owner" subField="DateCreated" />
 				<ConfigurationItem name="Date Modified" isEnabled="false" before="modified on: " after=" " field="Owner" subField="DateModified" />
-				<ConfigurationItem name="Referenced Complex Forms (of Entry)" isEnabled="false" between=" " after=" " field="Owner" subField="VisibleComplexFormBackRefs">
+				<ConfigurationItem name="Referenced Complex Forms (of Entry)" isEnabled="false" between=" " after=" " field="Entry" subField="VisibleComplexFormBackRefs">
 					<ConfigurationItem name="Complex Form Type" isEnabled="true" after=" " field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 						<ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
 							<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
