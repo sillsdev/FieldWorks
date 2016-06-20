@@ -2687,7 +2687,7 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 	  <props>
 		<basic num="1" id="Example" sig="MultiString">
 		  <comment>
-			<para>This multilingual attribute holds the vernacular example sentence prior to tokenization. After tokenization it is cleared and the contents are transferred to the contents attribute. It is multilingual to allow multiple encodings in the same language (e.g., Thai, Laotian, and Vietnamese). It is multiString rather than multiUnicode to allow formatting - for example, applying bold to the word associated with the LexEntry.</para>
+			<para>This multilingual attribute holds the vernacular example sentence. It is multilingual to allow multiple encodings in the same language (e.g., Thai, Laotian, and Vietnamese). It is multiString rather than multiUnicode to allow formatting - for example, applying bold to the word associated with the LexEntry.</para>
 		  </comment>
 		</basic>
 		<basic num="2" id="Reference" sig="String"/>
