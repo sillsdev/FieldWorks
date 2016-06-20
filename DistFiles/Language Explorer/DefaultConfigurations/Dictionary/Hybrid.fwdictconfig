@@ -3,7 +3,7 @@
  xsi:noNamespaceSchemaLocation="../../Configuration/DictionaryConfiguration.xsd"
  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
  name="Hybrid (complex forms as main entries and mini subentries)"
- version="7" lastModified="2016-06-09"
+ version="8" lastModified="2016-06-17"
  allPublications="true">
   <ConfigurationItem name="Main Entry" isEnabled="true" style="Dictionary-Normal" styleType="paragraph" field="LexEntry" cssClassNameOverride="entry">
 	<!-- using a different CSS Class for the main HeadWord and the HeadWords for subentries, references, and (variant|complex) forms
@@ -212,6 +212,37 @@
 			  <Option id="all analysis" isEnabled="true" />
 			</WritingSystemOptions>
 		  </ConfigurationItem>
+			<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=") " field="PrimaryEntryRefs">
+				<ConfigurationItem name="Type" isEnabled="true" between="," after=" " field="EntryTypes" cssClassNameOverride="entrytypes">
+					<ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " after=" " field="ReverseAbbr">
+						<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+							<Option id="analysis" isEnabled="true" />
+						</WritingSystemOptions>
+					</ConfigurationItem>
+					<ConfigurationItem name="Reverse Name" isEnabled="true" between=" " after=" " field="ReverseName">
+						<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+							<Option id="analysis" isEnabled="true" />
+						</WritingSystemOptions>
+					</ConfigurationItem>
+				</ConfigurationItem>
+				<ConfigurationItem name="Primary Entry(s)" isEnabled="true" between="," after=" " field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
+					<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after=" " field="HeadWord" cssClassNameOverride="headword">
+						<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+							<Option id="vernacular" isEnabled="true" />
+						</WritingSystemOptions>
+					</ConfigurationItem>
+					<ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="true" between=" " after=" " field="GlossOrSummary">
+						<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+							<Option id="analysis" isEnabled="true" />
+						</WritingSystemOptions>
+					</ConfigurationItem>
+				</ConfigurationItem>
+				<ConfigurationItem name="Comment" isEnabled="true" between=" " after=" " field="Summary">
+					<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+						<Option id="analysis" isEnabled="true" />
+					</WritingSystemOptions>
+				</ConfigurationItem>
+			</ConfigurationItem>
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Variants of Sense" isEnabled="false" before="(" between="; " after=") " field="VariantFormEntryBackRefs">
@@ -594,6 +625,37 @@
 			<Option id="analysis" isEnabled="true" />
 		  </WritingSystemOptions>
 		</ConfigurationItem>
+	  	<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=") "  field="PrimaryEntryRefs">
+	  		<ConfigurationItem name="Type" isEnabled="true" between="," after=" " field="EntryTypes" cssClassNameOverride="entrytypes">
+	  			<ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " after=" " field="ReverseAbbr">
+	  				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+	  					<Option id="analysis" isEnabled="true" />
+	  				</WritingSystemOptions>
+	  			</ConfigurationItem>
+	  			<ConfigurationItem name="Reverse Name" isEnabled="true" between=" " after=" " field="ReverseName">
+	  				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+	  					<Option id="analysis" isEnabled="true" />
+	  				</WritingSystemOptions>
+	  			</ConfigurationItem>
+	  		</ConfigurationItem>
+	  		<ConfigurationItem name="Primary Entry(s)" isEnabled="true" between="," after=" " field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
+	  			<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after=" " field="HeadWord" cssClassNameOverride="headword">
+	  				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+	  					<Option id="vernacular" isEnabled="true" />
+	  				</WritingSystemOptions>
+	  			</ConfigurationItem>
+	  			<ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="true" between=" " after=" " field="GlossOrSummary">
+	  				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+	  					<Option id="analysis" isEnabled="true" />
+	  				</WritingSystemOptions>
+	  			</ConfigurationItem>
+	  		</ConfigurationItem>
+	  		<ConfigurationItem name="Comment" isEnabled="true" between=" " after=" " field="Summary">
+	  			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+	  				<Option id="analysis" isEnabled="true" />
+	  			</WritingSystemOptions>
+	  		</ConfigurationItem>
+	  	</ConfigurationItem>
 	  </ConfigurationItem>
 	</ConfigurationItem>
 	<ConfigurationItem name="Bibliography" isEnabled="false" before="" between=" " after=" " field="Bibliography">
@@ -1381,6 +1443,37 @@
 			<Option id="analysis" isEnabled="true" />
 		  </WritingSystemOptions>
 		</ConfigurationItem>
+	  	<ConfigurationItem name="Primary Entry References" isEnabled="true" styleType="character" before=" (" between=", " after=") " field="PrimaryEntryRefs">
+	  		<ConfigurationItem name="Type" isEnabled="true" between="," after=" " field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
+	  			<ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " after=" " field="ReverseAbbr">
+	  				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+	  					<Option id="analysis" isEnabled="true" />
+	  				</WritingSystemOptions>
+	  			</ConfigurationItem>
+	  			<ConfigurationItem name="Reverse Name" isEnabled="true" between=" " after=" " field="ReverseName">
+	  				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+	  					<Option id="analysis" isEnabled="true" />
+	  				</WritingSystemOptions>
+	  			</ConfigurationItem>
+	  		</ConfigurationItem>
+	  		<ConfigurationItem name="Primary Entry(s)" isEnabled="true" between="," after=" " field="ConfigReferencedEntries" cssClassNameOverride="headword">
+	  			<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after=" " field="HeadWord" cssClassNameOverride="headword">
+	  				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+	  					<Option id="vernacular" isEnabled="true" />
+	  				</WritingSystemOptions>
+	  			</ConfigurationItem>
+	  			<ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="true" between=" " after=" " field="GlossOrSummary">
+	  				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+	  					<Option id="analysis" isEnabled="true" />
+	  				</WritingSystemOptions>
+	  			</ConfigurationItem>
+	  		</ConfigurationItem>
+	  		<ConfigurationItem name="Comment" isEnabled="true" between=" " after=" " field="Summary">
+	  			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+	  				<Option id="analysis" isEnabled="true" />
+	  			</WritingSystemOptions>
+	  		</ConfigurationItem>
+	  	</ConfigurationItem>
 	  </ConfigurationItem>
 	</ConfigurationItem>
 	<ConfigurationItem name="Component References" isEnabled="true" before="(" between=", " after=") " field="ComplexFormEntryRefs">
@@ -1780,6 +1873,37 @@
 				<Option id="all analysis" isEnabled="true"/>
 			  </WritingSystemOptions>
 			</ConfigurationItem>
+		  	<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=") " field="PrimaryEntryRefs">
+		  		<ConfigurationItem name="Type" isEnabled="true" between="," after=" " field="EntryTypes" cssClassNameOverride="entrytypes">
+		  			<ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " after=" " field="ReverseAbbr">
+		  				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  					<Option id="analysis" isEnabled="true" />
+		  				</WritingSystemOptions>
+		  			</ConfigurationItem>
+		  			<ConfigurationItem name="Reverse Name" isEnabled="true" between=" " after=" " field="ReverseName">
+		  				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  					<Option id="analysis" isEnabled="true" />
+		  				</WritingSystemOptions>
+		  			</ConfigurationItem>
+		  		</ConfigurationItem>
+		  		<ConfigurationItem name="Primary Entry(s)" isEnabled="true" between="," after=" " field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
+		  			<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after=" " field="HeadWord" cssClassNameOverride="headword">
+		  				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+		  					<Option id="vernacular" isEnabled="true" />
+		  				</WritingSystemOptions>
+		  			</ConfigurationItem>
+		  			<ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="true" between=" " after=" " field="GlossOrSummary">
+		  				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  					<Option id="analysis" isEnabled="true" />
+		  				</WritingSystemOptions>
+		  			</ConfigurationItem>
+		  		</ConfigurationItem>
+		  		<ConfigurationItem name="Comment" isEnabled="true" between=" " after=" " field="Summary">
+		  			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  				<Option id="analysis" isEnabled="true" />
+		  			</WritingSystemOptions>
+		  		</ConfigurationItem>
+		  	</ConfigurationItem>
 		  </ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Variants of Sense" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
@@ -2549,6 +2673,37 @@
 			  <Option id="all analysis" isEnabled="true" />
 			</WritingSystemOptions>
 		  </ConfigurationItem>
+			<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=") " field="PrimaryEntryRefs">
+				<ConfigurationItem name="Type" isEnabled="true" between="," after=" " field="EntryTypes" cssClassNameOverride="entrytypes">
+					<ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " after=" " field="ReverseAbbr">
+						<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+							<Option id="analysis" isEnabled="true" />
+						</WritingSystemOptions>
+					</ConfigurationItem>
+					<ConfigurationItem name="Reverse Name" isEnabled="true" between=" " after=" " field="ReverseName">
+						<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+							<Option id="analysis" isEnabled="true" />
+						</WritingSystemOptions>
+					</ConfigurationItem>
+				</ConfigurationItem>
+				<ConfigurationItem name="Primary Entry(s)" isEnabled="true" between="," after=" " field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
+					<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after=" " field="HeadWord" cssClassNameOverride="headword">
+						<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+							<Option id="vernacular" isEnabled="true" />
+						</WritingSystemOptions>
+					</ConfigurationItem>
+					<ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="true" between=" " after=" " field="GlossOrSummary">
+						<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+							<Option id="analysis" isEnabled="true" />
+						</WritingSystemOptions>
+					</ConfigurationItem>
+				</ConfigurationItem>
+				<ConfigurationItem name="Comment" isEnabled="true" between=" " after=" " field="Summary">
+					<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+						<Option id="analysis" isEnabled="true" />
+					</WritingSystemOptions>
+				</ConfigurationItem>
+			</ConfigurationItem>
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Variants of Sense" isEnabled="false" before="(" between="; " after=") " field="VariantFormEntryBackRefs">
@@ -2921,6 +3076,37 @@
 			<Option id="analysis" isEnabled="true" />
 		  </WritingSystemOptions>
 		</ConfigurationItem>
+	  	<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=") " field="PrimaryEntryRefs">
+	  		<ConfigurationItem name="Type" isEnabled="true" between="," after=" " field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
+	  			<ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " after=" " field="ReverseAbbr">
+	  				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+	  					<Option id="analysis" isEnabled="true" />
+	  				</WritingSystemOptions>
+	  			</ConfigurationItem>
+	  			<ConfigurationItem name="Reverse Name" isEnabled="true" between=" " after=" " field="ReverseName">
+	  				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+	  					<Option id="analysis" isEnabled="true" />
+	  				</WritingSystemOptions>
+	  			</ConfigurationItem>
+	  		</ConfigurationItem>
+	  		<ConfigurationItem name="Primary Entry(s)" isEnabled="true" between="," after=" " field="ConfigReferencedEntries" cssClassNameOverride="headword">
+	  			<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after=" " field="HeadWord" cssClassNameOverride="headword">
+	  				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+	  					<Option id="vernacular" isEnabled="true" />
+	  				</WritingSystemOptions>
+	  			</ConfigurationItem>
+	  			<ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="true" between=" " after=" " field="GlossOrSummary">
+	  				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+	  					<Option id="analysis" isEnabled="true" />
+	  				</WritingSystemOptions>
+	  			</ConfigurationItem>
+	  		</ConfigurationItem>
+	  		<ConfigurationItem name="Comment" isEnabled="true" between=" " after=" " field="Summary">
+	  			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+	  				<Option id="analysis" isEnabled="true" />
+	  			</WritingSystemOptions>
+	  		</ConfigurationItem>
+	  	</ConfigurationItem>
 	  </ConfigurationItem>
 	</ConfigurationItem>
 	<ConfigurationItem name="Bibliography" isEnabled="false" before="" between=" " after=" " field="Bibliography">
@@ -3182,6 +3368,37 @@
 			  <Option id="all analysis" isEnabled="true"/>
 			</WritingSystemOptions>
 		  </ConfigurationItem>
+			<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=") " field="PrimaryEntryRefs">
+				<ConfigurationItem name="Type" isEnabled="true" between="," after=" " field="EntryTypes" cssClassNameOverride="entrytypes">
+					<ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " after=" " field="ReverseAbbr">
+						<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+							<Option id="analysis" isEnabled="true" />
+						</WritingSystemOptions>
+					</ConfigurationItem>
+					<ConfigurationItem name="Reverse Name" isEnabled="true" between=" " after=" " field="ReverseName">
+						<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+							<Option id="analysis" isEnabled="true" />
+						</WritingSystemOptions>
+					</ConfigurationItem>
+				</ConfigurationItem>
+				<ConfigurationItem name="Primary Entry(s)" isEnabled="true" between="," after=" " field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
+					<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after=" " field="HeadWord" cssClassNameOverride="headword">
+						<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+							<Option id="vernacular" isEnabled="true" />
+						</WritingSystemOptions>
+					</ConfigurationItem>
+					<ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="true" between=" " after=" " field="GlossOrSummary">
+						<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+							<Option id="analysis" isEnabled="true" />
+						</WritingSystemOptions>
+					</ConfigurationItem>
+				</ConfigurationItem>
+				<ConfigurationItem name="Comment" isEnabled="true" between=" " after=" " field="Summary">
+					<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+						<Option id="analysis" isEnabled="true" />
+					</WritingSystemOptions>
+				</ConfigurationItem>
+			</ConfigurationItem>
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Variants of Sense" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
@@ -4035,6 +4252,37 @@
 			  <Option id="analysis" isEnabled="true"/>
 			</WritingSystemOptions>
 		  </ConfigurationItem>
+			<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=") "  field="PrimaryEntryRefs">
+				<ConfigurationItem name="Type" isEnabled="true" between="," after=" " field="EntryTypes" cssClassNameOverride="entrytypes">
+					<ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " after=" " field="ReverseAbbr">
+						<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+							<Option id="analysis" isEnabled="true" />
+						</WritingSystemOptions>
+					</ConfigurationItem>
+					<ConfigurationItem name="Reverse Name" isEnabled="true" between=" " after=" " field="ReverseName">
+						<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+							<Option id="analysis" isEnabled="true" />
+						</WritingSystemOptions>
+					</ConfigurationItem>
+				</ConfigurationItem>
+				<ConfigurationItem name="Primary Entry(s)" isEnabled="true" between="," after=" " field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
+					<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after=" " field="HeadWord" cssClassNameOverride="headword">
+						<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+							<Option id="vernacular" isEnabled="true" />
+						</WritingSystemOptions>
+					</ConfigurationItem>
+					<ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="true" between=" " after=" " field="GlossOrSummary">
+						<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+							<Option id="analysis" isEnabled="true" />
+						</WritingSystemOptions>
+					</ConfigurationItem>
+				</ConfigurationItem>
+				<ConfigurationItem name="Comment" isEnabled="true" between=" " after=" " field="Summary">
+					<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+						<Option id="analysis" isEnabled="true" />
+					</WritingSystemOptions>
+				</ConfigurationItem>
+			</ConfigurationItem>
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Bibliography" between=" " after=" " isEnabled="false" field="Bibliography">

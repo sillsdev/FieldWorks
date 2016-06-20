@@ -5984,5 +5984,10 @@ namespace SIL.FieldWorks.FDO
 		/// Returns the SummaryDefinition on Entry, or Gloss on Sense
 		/// </summary>
 		IMultiAccessorBase GlossOrSummary { get; }
+
+		/// <summary>
+		/// Returns the entryRefs for the entry/owning entry for the sense
+		/// </summary>
+		IFdoOwningSequence<ILexEntryRef> PrimaryEntryRefs { get; }
 	}
 }

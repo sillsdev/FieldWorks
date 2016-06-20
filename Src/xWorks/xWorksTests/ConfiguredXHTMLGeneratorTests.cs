@@ -2498,6 +2498,105 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_GeneratesLinksForPrimaryEntryReferences()
+		{
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(mainEntry, "Test", m_wsFr, Cache);
+			var referencedEntry = CreateInterestingLexEntry(Cache);
+			var otherMainEntry = CreateInterestingLexEntry(Cache);
+			const string refTypeName = "TestRefType";
+			CreateComplexForm(Cache, mainEntry, referencedEntry, true);
+			CreateLexicalReference(otherMainEntry, referencedEntry, refTypeName);
+
+			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
+			Assert.IsNotNull(refType);
+
+			var RevNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ReverseName",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+
+			var RevAbbrNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ReverseAbbr",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+
+			var typeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "EntryTypes",
+				CSSClassNameOverride = "entrytypes",
+				Children = new List<ConfigurableDictionaryNode> { RevNameNode, RevAbbrNode }
+			};
+
+			var refHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+
+			var glossOrSummaryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "GlossOrSummary",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+
+			var primaryEntrysNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ConfigReferencedEntries",
+				CSSClassNameOverride = "referencedentries",
+				Children = new List<ConfigurableDictionaryNode> { refHeadwordNode, glossOrSummaryNode }
+			};
+
+			var commentNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Summary",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+
+			var primaryEntryRefNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Item",
+				SubField = "EntryRefsOS",
+				CSSClassNameOverride = "primaryentryrefs",
+				Children = new List<ConfigurableDictionaryNode> { typeNode, primaryEntrysNode, commentNode }
+			};
+
+			var targetsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ConfigTargets",
+				Children = new List<ConfigurableDictionaryNode> { primaryEntryRefNode }
+			};
+			var crossReferencesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MinimalLexReferences",
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { refType.Guid.ToString() })
+				},
+				Children = new List<ConfigurableDictionaryNode> { targetsNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { crossReferencesNode }
+			};
+
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(otherMainEntry, mainEntryNode, null, settings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
+				"//span[@class='minimallexreferences']/span[@class='minimallexreference']/span[@class='configtargets']/span[@class='configtarget']/span[@class='primaryentryrefs']/span[@class='primaryentryref']/span[@class='referencedentries']/span[@class='referencedentry']/span[@class='headword']/span[@lang='fr']/a[@href]", 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
+				"//span[@class='minimallexreferences']/span[@class='minimallexreference']/span[@class='configtargets']/span[@class='configtarget']/span[@class='primaryentryrefs']/span[@class='primaryentryref']/span[@class='referencedentries']/span[@class='referencedentry']/span[@class='headword']/span[@lang='fr']/a[@href][contains(text(), 'Test')]", 1);
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_GeneratesLinksForCrossReferences()
 		{
 			var mainEntry = CreateInterestingLexEntry(Cache);

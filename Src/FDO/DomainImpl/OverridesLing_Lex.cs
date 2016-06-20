@@ -9562,5 +9562,22 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				return sense.Gloss;
 			}
 		}
+
+		public IFdoOwningSequence<ILexEntryRef> PrimaryEntryRefs
+		{
+			get
+			{
+				var entry = Item as ILexEntry;
+				if (entry != null)
+				{
+					return entry.EntryRefsOS;
+				}
+				var sense = Item as ILexSense;
+				if (sense == null)
+					return null;
+				return sense.Entry.EntryRefsOS;
+			}
+		}
+
 	}
 }
