@@ -287,8 +287,8 @@
   <data name="khtpField-LexEntry-Comment" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Note_field.htm</value>
   </data>
-  <data name="khtpField-LexEtymology-Comment" xml:space="preserve">
-    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Comment_field_Etymology.htm</value>
+  <data name="khtpField-lexiconEdit-LexEtymology-Comment" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Following_Comment_Etymology.htm</value>
   </data>
   <data name="khtpField-LexEntry-Condition" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Condition_field.htm</value>
@@ -305,8 +305,8 @@
   <data name="khtpField-LexEntry-Environments" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Environments_field.htm</value>
   </data>
-  <data name="khtpField-LexEtymology-Form" xml:space="preserve">
-    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Etymology_field.htm</value>
+  <data name="khtpField-lexiconEdit-LexEtymology-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Etymology_field.htm</value>
   </data>
   <data name="khtpField-LexEtymology-Gloss" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Gloss_field_Etymology.htm</value>
@@ -428,8 +428,8 @@
   <data name="khtpField-lexiconEdit-IsAbstract" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Is_Abstract_Form_field.htm</value>
   </data>
-  <data name="khtpField-LexEtymology-Source" xml:space="preserve">
-    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Source_field_Etymology.htm</value>
+  <data name="khtpField-SourceForm" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Source_Form_Etymology.htm</value>
   </data>
   <data name="khtpField-LexPronunciation-Tone" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Tone_field.htm</value>
@@ -3023,5 +3023,17 @@
   </data>
   <data name="khtpField-variantEntryTypeEdit-LexEntryType-ReverseName" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Reverse_Name_field_(Variant_Types).htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEtymology-Bibliography" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Bibliographic_Source_Etymology.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEtymology-Language" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Source_Language_Etymology.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEtymology-Note" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Etymology_Note_Etymology.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEtymology-PrecedingAnnotation" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Preceding_Annotation_Etymology.htm</value>
   </data>
 </root>
