@@ -197,7 +197,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 							}
 							// copy the segment string into the new LexExampleSentence
 							// Enhance: bold the relevant occurrence(s).
-							newLexExample.Example.VernacularDefaultWritingSystem = seg.BaselineText;
+							// LT-11388 Make sure baseline text gets copied into correct ws
+							var baseWs = GetBestVernWsForNewExample(seg);
+							newLexExample.Example.set_String(baseWs, seg.BaselineText);
 							if (seg.FreeTranslation.AvailableWritingSystemIds.Length > 0)
 							{
 								var trans = m_cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(newLexExample,
@@ -227,6 +229,17 @@ namespace SIL.FieldWorks.XWorks.LexEd
 							newLexExample.Reference = tsb.GetString();
 						}
 					});
+		}
+
+		private int GetBestVernWsForNewExample(ISegment seg)
+		{
+			var baseWs = seg.BaselineText.get_WritingSystem(0);
+			if (baseWs < 1)
+				return m_cache.DefaultVernWs;
+
+			var possibleWss = m_cache.ServiceLocator.WritingSystems.VernacularWritingSystems;
+			var wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(baseWs);
+			return possibleWss.Contains(wsObj) ? baseWs : m_cache.DefaultVernWs;
 		}
 
 		private void btnHelp_Click(object sender, EventArgs e)
