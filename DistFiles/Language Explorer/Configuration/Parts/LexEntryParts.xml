@@ -53,7 +53,7 @@
 		</slice>
 	</part>
 	<part id="LexEntry-Detail-PublishInForPronunciations" type="Detail">
-		<slice field="PublishIn" label="Publish In" tooltip="Remove a publication from this field to completely exclude this entry from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
+		<slice field="PublishIn" label="Publish In" tooltip="Remove a publication from this field to completely exclude this pronunciation from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
 			menu="mnuDataTree-Help">
 			<deParams displayProperty="ShortName" ws="best analysis" />
 			<chooserInfo>
@@ -1038,7 +1038,7 @@
 			<slice field="Tone" label="Tone" editor="String" sameObject="true"/><!-- assume same object as preceding field for formatting lines on display -->
 		</part>
 		<part id="LexPronunciation-Detail-PublishIn" type="Detail">
-			<slice field="PublishIn" label="Publish In" tooltip="Remove a publication from this field to completely exclude this entry from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
+			<slice field="PublishIn" label="Publish In" tooltip="Remove a publication from this field to completely exclude this pronunciation from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
 				menu="mnuDataTree-Help">
 				<deParams displayProperty="ShortName" ws="best analysis" />
 				<chooserInfo>
