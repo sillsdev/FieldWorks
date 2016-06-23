@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;		// controls and etc...
 using System.Xml;
 using Palaso.WritingSystems;
@@ -458,21 +459,42 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		/// <summary>
 		/// Make a selection in the specified writing system at the specified character offset.
-		/// Note: selecting other than the first writing system is not yet implemented.
 		/// </summary>
 		public void SelectAt(int ws, int ich)
 		{
 			CheckDisposed();
 
-			Debug.Assert(ws == m_rgws[0].Handle);
+			var cpropPrevious = 0;
+			if (ws != m_rgws[0].Handle)
+			{
+				// According to the documentation on RootBox.MakeTextSelection, cpropPrevious
+				// needs to be the index into the ws array that matches the ws to be selected.
+				cpropPrevious = GetRightPositionInWsArray(ws);
+				if (cpropPrevious < 0)
+				{
+					Debug.Fail("InnerLabeledMultiStringView could not select correct ws");
+					cpropPrevious = 0; // safety net to keep from crashing outright.
+				}
+			}
 			try
 			{
-				RootBox.MakeTextSelection(0, 0, null, m_flid, 0, ich, ich, ws, true, -1, null, true);
+				RootBox.MakeTextSelection(0, 0, null, m_flid, cpropPrevious, ich, ich, ws, true, -1, null, true);
 			}
 			catch (Exception)
 			{
 				Debug.Assert(false, "Unexpected failure to make selection in LabeledMultiStringView");
 			}
+		}
+
+		private int GetRightPositionInWsArray(int ws)
+		{
+			var i = 0;
+			for (; i < m_rgws.Count; i++)
+			{
+				if (m_rgws[i].Handle == ws)
+					break;
+			}
+			return i == m_rgws.Count ? -1 : i;
 		}
 	}
 
