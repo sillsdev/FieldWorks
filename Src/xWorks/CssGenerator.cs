@@ -32,6 +32,8 @@ namespace SIL.FieldWorks.XWorks
 		internal const string DictionaryMinor = "Dictionary-Minor";
 		internal const string WritingSystemPrefix = "writingsystemprefix";
 		private static readonly Dictionary<string, string> BulletSymbolsCollection = new Dictionary<string, string>();
+		private static readonly Dictionary<string, string> NumberingStylesCollection = new Dictionary<string, string>();
+
 		/// <summary>
 		/// Generate all the css rules necessary to represent every enabled portion of the given configuration
 		/// </summary>
@@ -46,6 +48,7 @@ namespace SIL.FieldWorks.XWorks
 			var mediatorstyleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			LoadBulletUnicodes();
+			LoadNumberingStyles();
 			GenerateCssForDefaultStyles(mediator, mediatorstyleSheet, styleSheet, model, cache);
 			MakeLinksLookLikePlainText(styleSheet);
 			GenerateCssForAudioWs(styleSheet, cache);
@@ -301,8 +304,9 @@ namespace SIL.FieldWorks.XWorks
 					// Apply the paragraph style information to all but the first sensecontent block, if requested
 					Value = senseOptions.DisplayFirstSenseInline ? string.Format("{0} + {1}", senseContentSelector, ".sensecontent") : senseContentSelector
 				};
+
 				styleSheet.Rules.Add(senseParaRule);
-				GenerateCssforBulletedList(configNode, styleSheet, senseParaRule.Value, mediator);
+				GenerateCssforBulletedList(configNode, styleSheet, senseParaRule.Value, mediator, styleDeclaration);
 			}
 			else
 			{
@@ -332,12 +336,15 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="styleSheet">Stylesheet to add the new rule</param>
 		/// <param name="bulletSelector">Style name for the bullet property</param>
 		/// <param name="mediator">mediator to get the styles</param>
-		private static void GenerateCssforBulletedList(ConfigurableDictionaryNode configNode, StyleSheet styleSheet, string bulletSelector, Mediator mediator)
+		/// <param name="styleDeclaration">Style properties collection</param>
+		private static void GenerateCssforBulletedList(ConfigurableDictionaryNode configNode, StyleSheet styleSheet, string bulletSelector, Mediator mediator, StyleDeclaration styleDeclaration)
 		{
 			if (configNode.Style != null)
 			{
+				if (styleDeclaration.Properties.Count == 0)
+					styleDeclaration = GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, mediator);
+				GenerateCssForCounterReset(styleSheet, bulletSelector, styleDeclaration, false);
 				var bulletRule = new StyleRule { Value = bulletSelector + ":not(:first-child):before" };
-				var styleDeclaration = GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, mediator);
 				bulletRule.Declarations.Properties.AddRange(GetOnlyBulletContent(styleDeclaration));
 				var projectStyles = FontHeightAdjuster.StyleSheetFromMediator(mediator);
 				BaseStyleInfo projectStyle = projectStyles.Styles[configNode.Style];
@@ -349,7 +356,9 @@ namespace SIL.FieldWorks.XWorks
 					bulletRule.Declarations.Add(new Property("color") { Term = new PrimitiveTerm(UnitType.RGB, wsFontInfo.FontColor.Value.Name) });
 				}
 				if (!IsEmptyRule(bulletRule))
+				{
 					styleSheet.Rules.Add(bulletRule);
+				}
 			}
 		}
 
@@ -372,6 +381,7 @@ namespace SIL.FieldWorks.XWorks
 						Value = i == 1 ? baseSelection.Replace("sensecontent", "sensecontent + .sensecontent") : baseSelection
 					};
 					styleSheet.Rules.Add(blockRule);
+					GenerateCssForCounterReset(styleSheet, baseSelection, declaration, true);
 					var bulletRule = AdjustRuleIfParagraphNumberScheme(blockRule, configNode, mediator);
 					styleSheet.Rules.AddRange(RemoveBeforeAfterSelectorRules(styleRules));
 					styleSheet.Rules.Add(bulletRule);
@@ -390,6 +400,30 @@ namespace SIL.FieldWorks.XWorks
 						styleSheet.Rules.Add(complexContentRule);
 					styleSheet.Rules.AddRange(styleRules);
 				}
+			}
+		}
+
+		/// <summary>
+		/// Generates Counter reset style properties
+		/// </summary>
+		/// <param name="styleSheet">Stylesheet to add the new rule</param>
+		/// <param name="baseSelection">Style name for the bullet property</param>
+		/// <param name="declaration">Style properties collection</param>
+		/// <param name="isSplitBySpace">Split baseSelection by space/greater than</param>
+		private static void GenerateCssForCounterReset(StyleSheet styleSheet, string baseSelection, StyleDeclaration declaration, bool isSplitBySpace)
+		{
+			var resetSection = GetOnlyCounterResetContent(declaration);
+			if (!string.IsNullOrEmpty(resetSection))
+			{
+				string bulletParentSelector = baseSelection.Substring(0, baseSelection.LastIndexOf('>') - 1);
+				if (isSplitBySpace)
+					bulletParentSelector = baseSelection.Substring(0, baseSelection.LastIndexOf(' '));
+				var resetRule = new StyleRule { Value = bulletParentSelector };
+				resetRule.Declarations.Add(new Property("counter-reset")
+				{
+					Term = new PrimitiveTerm(UnitType.Attribute, resetSection)
+				});
+				styleSheet.Rules.Add(resetRule);
 			}
 		}
 
@@ -419,6 +453,10 @@ namespace SIL.FieldWorks.XWorks
 					var contentInRule = rule.Declarations.FirstOrDefault(p => p.Name == "content");
 					if (contentInRule != null)
 						rule.Declarations.Remove(contentInRule);
+					// remove the bullet counter-increment if present in the base rule
+					var counterIncrement = rule.Declarations.FirstOrDefault(p => p.Name == "counter-increment");
+					if (counterIncrement != null)
+						rule.Declarations.Remove(counterIncrement);
 					return bulletRule;
 				}
 			}
@@ -757,7 +795,7 @@ namespace SIL.FieldWorks.XWorks
 		internal static StyleDeclaration GetOnlyParagraphStyle(StyleDeclaration fullStyleDeclaration)
 		{
 			var declaration = new StyleDeclaration();
-			foreach(var prop in fullStyleDeclaration.Where(prop => !prop.Name.Contains("font") && !prop.Name.Contains("color")))
+			foreach(var prop in fullStyleDeclaration.Where(prop => !prop.Name.Contains("font") && !prop.Name.Contains("color") && !prop.Name.Contains("content") && !prop.Name.Contains("counter-increment")))
 			{
 				declaration.Add(prop);
 			}
@@ -767,11 +805,17 @@ namespace SIL.FieldWorks.XWorks
 		internal static StyleDeclaration GetOnlyBulletContent(StyleDeclaration fullStyleDeclaration)
 		{
 			var declaration = new StyleDeclaration();
-			foreach (var prop in fullStyleDeclaration.Where(prop => prop.Name.Contains("content")))
+			foreach (var prop in fullStyleDeclaration.Where(prop => prop.Name.Contains("content") || prop.Name.Contains("counter-increment")))
 			{
 				declaration.Add(prop);
 			}
 			return declaration;
+		}
+
+		internal static string GetOnlyCounterResetContent(StyleDeclaration fullStyleDeclaration)
+		{
+			var counterProp = fullStyleDeclaration.FirstOrDefault(prop => prop.Name.Contains("counter-increment"));
+			return counterProp != null ? counterProp.Term.ToString() : string.Empty;
 		}
 
 		/// <summary>
@@ -917,6 +961,15 @@ namespace SIL.FieldWorks.XWorks
 					string selectedBullet = BulletSymbolsCollection[numScheme];
 					declaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, selectedBullet) });
 				}
+				else if (NumberingStylesCollection.ContainsKey(exportStyleInfo.NumberScheme.ToString()))
+				{
+					if (node != null)
+					{
+						string selectedNumStyle = NumberingStylesCollection[numScheme];
+						declaration.Add(new Property("counter-increment") { Term = new PrimitiveTerm(UnitType.Attribute, " " + node.Label.ToLower()) });
+						declaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.Attribute, string.Format(" counter({0}, {1}) {2}", node.Label.ToLower(), selectedNumStyle, @"' '")) });
+					}
+				}
 			}
 			var styleList = new List<StyleDeclaration> {declaration};
 			if (calculateFirstSenseStyle && ancestorIndents.Ancestor != null)
@@ -1030,7 +1083,22 @@ namespace SIL.FieldWorks.XWorks
 			BulletSymbolsCollection.Add("124", "\\2713");
 		}
 
+		/// <summary>
+		/// Mapping the numbering styles with the content's number format
+		/// </summary>
+		private static void LoadNumberingStyles()
+		{
+			if (NumberingStylesCollection.Count > 0)
+				return;
 
+			NumberingStylesCollection.Add("kvbnNumberBase", "decimal");
+			NumberingStylesCollection.Add("kvbnArabic", "decimal");
+			NumberingStylesCollection.Add("kvbnRomanLower", "lower-roman");
+			NumberingStylesCollection.Add("kvbnRomanUpper", "upper-roman");
+			NumberingStylesCollection.Add("kvbnLetterLower", "lower-alpha");
+			NumberingStylesCollection.Add("kvbnLetterUpper", "upper-alpha");
+			NumberingStylesCollection.Add("kvbnArabic01", "decimal-leading-zero");
+		}
 
 		/// <summary>
 		/// In the FwStyles values were stored in millipoints to avoid expensive floating point calculations in c++ code.
