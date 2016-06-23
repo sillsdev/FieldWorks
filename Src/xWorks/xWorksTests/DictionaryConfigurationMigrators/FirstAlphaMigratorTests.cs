@@ -869,6 +869,42 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		}
 
 		[Test]
+		public void MigrateFromConfigV7toV8_AddsIsRootBased_Stem()
+		{
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Version = FirstAlphaMigrator.VersionAlpha2,
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode },
+				FilePath = "./Stem" + DictionaryConfigurationModel.FileExtension
+			};
+			m_migrator.MigrateFrom83Alpha(model);
+			Assert.IsFalse(model.IsRootBased);
+		}
+
+		[Test]
+		public void MigrateFromConfigV7toV8_AddsIsRootBased_Root()
+		{
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Version = FirstAlphaMigrator.VersionAlpha2,
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode },
+				FilePath = "./Root" + DictionaryConfigurationModel.FileExtension
+			};
+			m_migrator.MigrateFrom83Alpha(model);
+			Assert.IsTrue(model.IsRootBased);
+		}
+
+		[Test]
 		public void MigrateFromConfigV6toV7_UpdatesReversalEtymologyCluster()
 		{
 			var formNode = new ConfigurableDictionaryNode

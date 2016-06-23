@@ -267,6 +267,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			CssGeneratorTests.PopulateFieldsForTesting(currentDefaultModel);
 
 			m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, currentDefaultModel);
+			Assert.IsFalse(convertedModel.IsRootBased, "Stem-based should not be Root-based!");
 			Assert.AreEqual(3, convertedModel.Parts.Count, "Number of top-level nodes");
 			convertedMainNode = convertedModel.Parts[0];
 			Assert.AreEqual("Main Entry", convertedMainNode.Label);
@@ -398,7 +399,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 		private static ConfigurableDictionaryNode EmptyNode { get { return new ConfigurableDictionaryNode{ Label = string.Empty }; } }
 
-		private static DictionaryConfigurationModel BuildConvertedMinorEntryNodes()
+		private static DictionaryConfigurationModel BuildConvertedMinorEntryNodes(bool isRootBased = false)
 		{
 			var minorEntryNode = new ConfigurableDictionaryNode
 			{
@@ -409,14 +410,14 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				Before = ")",
 				DictionaryNodeOptions = new DictionaryNodeListOptions()
 			};
-			return new DictionaryConfigurationModel
+			return new DictionaryConfigurationModel(isRootBased)
 			{
 				Parts = new List<ConfigurableDictionaryNode> { EmptyNode, minorEntryNode },
 				Version = PreHistoricMigrator.VersionPre83
 			};
 		}
 
-		private static DictionaryConfigurationModel BuildCurrentDefaultMinorEntryNodes()
+		private static DictionaryConfigurationModel BuildCurrentDefaultMinorEntryNodes(bool isRootBased = false)
 		{
 			var complexEntryNode = new ConfigurableDictionaryNode
 			{
@@ -439,7 +440,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				FieldDescription = "LexEntry",
 				IsEnabled = true,
 			};
-			return new DictionaryConfigurationModel
+			return new DictionaryConfigurationModel(isRootBased)
 			{
 				Parts = new List<ConfigurableDictionaryNode> { EmptyNode, complexEntryNode, variantEntryNode },
 				Version = PreHistoricMigrator.VersionAlpha1

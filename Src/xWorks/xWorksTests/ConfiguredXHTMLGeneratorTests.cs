@@ -1638,7 +1638,7 @@ namespace SIL.FieldWorks.XWorks
 			var minorEntry = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(Cache, mainEntry, minorEntry);
 			// SUT
-			Assert.That(ConfiguredXHTMLGenerator.IsMinorEntry(minorEntry));
+			Assert.That(ConfiguredXHTMLGenerator.IsComplexFormOrVariant(minorEntry));
 		}
 
 		[Test]
@@ -1648,8 +1648,8 @@ namespace SIL.FieldWorks.XWorks
 			var minorEntry = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(Cache, mainEntry, minorEntry);
 			// SUT
-			Assert.False(ConfiguredXHTMLGenerator.IsMinorEntry(mainEntry));
-			Assert.False(ConfiguredXHTMLGenerator.IsMinorEntry(Cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>().Create()));
+			Assert.False(ConfiguredXHTMLGenerator.IsComplexFormOrVariant(mainEntry));
+			Assert.False(ConfiguredXHTMLGenerator.IsComplexFormOrVariant(Cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>().Create()));
 		}
 
 		[Test]
@@ -4879,6 +4879,76 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasAtLeastOneMatchForXpath(headwordXpath);
 		}
 
+		[Test]
+		public void GenerateXHTMLForEntry_VariantShowsInStem_DespiteHideMinorEntry()
+		{
+			var lexentry = CreateInterestingLexEntry(Cache);
+			var variantEntry = CreateInterestingLexEntry(Cache);
+			var variantEntryRef = CreateVariantForm(Cache, lexentry, variantEntry);
+			variantEntryRef.VariantEntryTypesRS[0] = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[0] as ILexEntryType;
+			variantEntryRef.HideMinorEntry = 1; // We want it to show up despite this
+
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var minorEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
+				FieldDescription = "LexEntry",
+				Label = "Minor Entry (Variants)"
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode(), minorEntryNode }, // dummy main entry node
+				IsRootBased = false
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(variantEntry, model, null, settings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath("/div[@class='lexentry']/span[@class='headword']", 1);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_VariantDoesNotShowInRoot_BecauseOfHideMinorEntry()
+		{
+			var lexentry = CreateInterestingLexEntry(Cache);
+			var variantEntry = CreateInterestingLexEntry(Cache);
+			var variantEntryRef = CreateVariantForm(Cache, lexentry, variantEntry);
+			variantEntryRef.VariantEntryTypesRS[0] = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[0] as ILexEntryType;
+			variantEntryRef.HideMinorEntry = 1; // This should keep it from showing up.
+
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var minorEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
+				FieldDescription = "LexEntry",
+				Label = "Minor Entry (Variants)"
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode(), minorEntryNode }, // dummy main entry node
+				IsRootBased = true
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(variantEntry, model, null, settings);
+			Assert.IsNullOrEmpty(result);
+		}
+
 		public enum FormType { Specified, Unspecified, None }
 
 		[Test]
@@ -4927,7 +4997,8 @@ namespace SIL.FieldWorks.XWorks
 			[Values(FormType.Specified, FormType.Unspecified, FormType.None)] FormType complexForm,
 			[Values(true, false)] bool isUnspecifiedComplexTypeEnabled,
 			[Values(FormType.Specified, FormType.Unspecified, FormType.None)] FormType variantForm,
-			[Values(true, false)] bool isUnspecifiedVariantTypeEnabled)
+			[Values(true, false)] bool isUnspecifiedVariantTypeEnabled,
+			[Values(true, false)] bool isRootBased)
 		{
 			if (complexForm == FormType.None && variantForm == FormType.None)
 				return; // A Minor entry makes no sense if it's neither complex nor variant
@@ -4972,7 +5043,8 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var model = new DictionaryConfigurationModel
 			{
-				Parts = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode(), minorEntryNode } // dummy main entry node
+				Parts = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode(), minorEntryNode }, // dummy main entry node
+				IsRootBased = isRootBased
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(model);
 

@@ -42,9 +42,9 @@ namespace SIL.FieldWorks.XWorks
 		internal static int CountTimesGenerated(FdoCache cache, DictionaryConfigurationModel config, int hvo)
 		{
 			var entry = (ILexEntry)cache.ServiceLocator.GetObject(hvo);
-			if (!ConfiguredXHTMLGenerator.IsMinorEntry(entry))
+			if (!ConfiguredXHTMLGenerator.IsComplexFormOrVariant(entry))
 				return config.Parts[0].IsEnabled ? 1 : 0;
-			if (!entry.PublishAsMinorEntry)
+			if (!entry.PublishAsMinorEntry && config.IsRootBased)
 				return 0;
 			var matchingMinorParts = 0;
 			for (var i = 1; i < config.Parts.Count; i++)

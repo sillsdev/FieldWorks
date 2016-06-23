@@ -89,6 +89,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					goto case 6;
 				case 6:
 					HandleNodewiseChanges(alphaModel.PartsAndSharedItems, 6, alphaModel.IsReversal);
+					goto case 7;
+				case 7:
+					var fileName = Path.GetFileNameWithoutExtension(alphaModel.FilePath);
+					if (!alphaModel.IsRootBased)
+						alphaModel.IsRootBased = fileName == "Root";
 					break;
 				default:
 					m_logger.WriteLine(string.Format(

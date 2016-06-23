@@ -601,10 +601,10 @@ namespace SIL.FieldWorks.XWorks
 		public static string GenerateXHTMLForEntry(ICmObject entry, DictionaryConfigurationModel configuration,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
-			if (IsMinorEntry(entry))
+			if (IsComplexFormOrVariant(entry))
 			{
 				var bldr = new StringBuilder();
-				if (((ILexEntry)entry).PublishAsMinorEntry)
+				if (!configuration.IsRootBased || (configuration.IsRootBased && ((ILexEntry)entry).PublishAsMinorEntry))
 				{
 					for (var i = 1; i < configuration.Parts.Count; i++)
 					{
@@ -624,12 +624,14 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// If entry might be a minor entry. Sometimes returns true when the entry is not a minor entry.
+		/// If entry is either a Complex Form or a Variant (or both).
+		/// For Root-based configs, this means the entry is a Minor Entry.
+		/// For Stem-based configs, this means the entry is a Main Entry if Complex, but Minor Entry if Variant.
 		/// </summary>
-		internal static bool IsMinorEntry(ICmObject entry)
+		internal static bool IsComplexFormOrVariant(ICmObject entry)
 		{
-			// owning an ILexEntryRef denotes a minor entry (Complex Forms* or Variants)
-			// * In Stem-based configurations, Complex Forms are considered Main Entries, but are still independently configurable
+			// owning an ILexEntryRef denotes Complex Forms or Variants
+			// In Stem-based configurations, Complex Forms are considered Main Entries, but are still independently configurable
 			return entry is ILexEntry && ((ILexEntry)entry).EntryRefsOS.Any();
 		}
 
@@ -2020,7 +2022,7 @@ namespace SIL.FieldWorks.XWorks
 			else if (entry != null)
 			{
 				if (listId == DictionaryNodeListOptions.ListIds.Variant || listId == DictionaryNodeListOptions.ListIds.Minor)
-					foreach (var visibleEntryRef in entry.VisibleVariantEntryRefs)
+					foreach (var visibleEntryRef in entry.VariantEntryRefs)
 						GetVariantTypeGuidsForEntryRef(visibleEntryRef, entryTypeGuids);
 				if (listId == DictionaryNodeListOptions.ListIds.Complex || listId == DictionaryNodeListOptions.ListIds.Minor)
 					foreach (var complexFormEntryRef in entry.ComplexFormEntryRefs)

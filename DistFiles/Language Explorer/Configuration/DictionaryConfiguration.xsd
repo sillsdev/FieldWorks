@@ -24,6 +24,7 @@
 		<xs:attribute type="xs:integer" name="version" use="required"/>
 		<xs:attribute type="xs:date" name="lastModified"/>
 		<xs:attribute type="xs:boolean" name="allPublications" use="optional"/>
+		<xs:attribute type="xs:boolean" name="isRootBased" use="required"/>
 	</xs:complexType>
 </xs:element>
 <xs:complexType name="SenseOptionsType">

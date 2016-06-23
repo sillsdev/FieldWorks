@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- This is a static version of the dictionary configuration used for converting pre-8.3 FLEx databases -->
-<DictionaryConfiguration name="Root-based (complex forms as subentries)" allPublications="true" version="1" lastModified="2016-05-11">
+<DictionaryConfiguration name="Root-based (complex forms as subentries)" allPublications="true" version="1" isRootBased="true" lastModified="2016-06-23">
 	<!-- Main entries in the dictionary have historically been written out with class="entry" -->
 	<ConfigurationItem name="Main Entry" style="Dictionary-Normal" isEnabled="true" field="LexEntry" cssClassNameOverride="entry">
 		<ParagraphOptions paragraphStyle="Dictionary-Normal" continuationParagraphStyle="Dictionary-Continuation" />
