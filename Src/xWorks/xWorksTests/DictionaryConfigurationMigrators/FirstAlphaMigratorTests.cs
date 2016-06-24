@@ -338,6 +338,46 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		}
 
 		[Test]
+		public void MigrateFrom83Alpha_SubSenseParentSenseNumberingStyleMigrated()
+		{
+			var DictionaryNodeSubSenseOptions = new DictionaryNodeSenseOptions
+			{
+				BeforeNumber = "",
+				AfterNumber = ")",
+				NumberStyle = "Dictionary-SenseNumber",
+				NumberingStyle = "%d",
+				ParentSenseNumberingStyle = "%.",
+				DisplayEachSenseInAParagraph = false,
+				NumberEvenASingleSense = true,
+				ShowSharedGrammarInfoFirst = false
+			};
+			var subsubsenses = new ConfigurableDictionaryNode { Label = "Subsubsenses", FieldDescription = "SensesOS", ReferenceItem = null };
+			var subsenses = new ConfigurableDictionaryNode { Label = "Subsenses", FieldDescription = "SensesOS", DictionaryNodeOptions = DictionaryNodeSubSenseOptions, Children = new List<ConfigurableDictionaryNode> { subsubsenses } };
+			var senses = new ConfigurableDictionaryNode { Label = "Senses", FieldDescription = "SensesOS", Children = new List<ConfigurableDictionaryNode> { subsenses } };
+			var subentries = new ConfigurableDictionaryNode
+			{
+				Label = "Subentries",
+				FieldDescription = "Subentries",
+				Children = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode { FieldDescription = "TestChild", Label = "TestNode" } }
+			};
+			var mainEntry = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { senses, subentries }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Version = 1,
+				Parts = new List<ConfigurableDictionaryNode> { mainEntry }
+			};
+
+			m_migrator.MigrateFrom83Alpha(model);
+			var subSenseNode = (DictionaryNodeSenseOptions)subsenses.DictionaryNodeOptions;
+			Assert.That(subSenseNode.ParentSenseNumberingStyle, Is.StringMatching("%."));
+		}
+
+		[Test]
 		public void MigrateFrom83Alpha_SubsubsensesNodeAddedIfNeeded()
 		{
 			var subsensesNode = new ConfigurableDictionaryNode

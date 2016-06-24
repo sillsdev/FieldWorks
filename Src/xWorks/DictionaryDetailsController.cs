@@ -367,11 +367,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// initialize SenseOptionsView
 			//For senses disallow the 1 1.2 1.2.3 option, that is now handled in subsenses
-			var disallowedNumberingStyles = string.Empty;
-			if (!isSubsense)
-			{
-				disallowedNumberingStyles = "%O";
-			}
+			var disallowedNumberingStyles = "%O";
 			var senseOptionsView = new SenseOptionsView(isSubsense)
 			{
 				BeforeText = senseOptions.BeforeNumber,
@@ -380,6 +376,7 @@ namespace SIL.FieldWorks.XWorks
 									? XmlVcDisplayVec.SupportedNumberingStyles
 									: XmlVcDisplayVec.SupportedNumberingStyles.Where(prop => prop.FormatString != disallowedNumberingStyles).ToList(),
 				NumberingStyle = senseOptions.NumberingStyle,
+				ParentSenseNumberingStyleVisible = false,
 				AfterText = senseOptions.AfterNumber,
 				NumberSingleSense = senseOptions.NumberEvenASingleSense,
 				ShowGrammarFirst = senseOptions.ShowSharedGrammarInfoFirst,
@@ -387,6 +384,12 @@ namespace SIL.FieldWorks.XWorks
 				FirstSenseInline = senseOptions.DisplayFirstSenseInline
 			};
 
+			if (isSubsense)
+			{
+				senseOptionsView.ParentSenseNumberingStyleVisible = true;
+				senseOptionsView.ParentSenseNumberingStyles = XmlVcDisplayVec.SupportedParentSenseNumberStyles;
+				senseOptionsView.ParentSenseNumberingStyle = senseOptions.ParentSenseNumberingStyle;
+			}
 			// load character Style (number) and paragraph Style (sense)
 			senseOptionsView.SetStyles(m_charStyles, senseOptions.NumberStyle);
 			View.SetStyles(m_paraStyles, m_node.Style, true);
@@ -401,6 +404,7 @@ namespace SIL.FieldWorks.XWorks
 			senseOptionsView.NumberingStyleChanged += (sender, e) => SenseNumbingStyleChanged(senseOptions, senseOptionsView);
 			senseOptionsView.AfterTextChanged += (sender, e) => { senseOptions.AfterNumber = senseOptionsView.AfterText; RefreshPreview(); };
 			senseOptionsView.NumberStyleChanged += (sender, e) => { senseOptions.NumberStyle = senseOptionsView.NumberStyle; RefreshPreview(); };
+			senseOptionsView.ParentSenseNumberingStyleChanged += (sender, e) => { senseOptions.ParentSenseNumberingStyle = senseOptionsView.ParentSenseNumberingStyle; RefreshPreview(); };
 			// ReSharper disable ImplicitlyCapturedClosure
 			// Justification: senseOptions, senseOptionsView, and all of these lambda functions will all disappear at the same time.
 			senseOptionsView.StyleButtonClick += (sender, e) => HandleStylesBtn((ComboBox)sender, senseOptionsView.NumberStyle);

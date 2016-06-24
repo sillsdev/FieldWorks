@@ -56,6 +56,10 @@ namespace SIL.FieldWorks.XWorks
 		[XmlAttribute(AttributeName = "numberingStyle")]
 		public string NumberingStyle { get; set; }
 
+		// Example values: ""->none; %j->Joined; %.->Separated by dot
+		[XmlAttribute(AttributeName = "parentSenseNumberingStyle")]
+		public string ParentSenseNumberingStyle { get; set; }
+
 		[XmlAttribute(AttributeName = "numberAfter")]
 		public string AfterNumber { get; set; }
 

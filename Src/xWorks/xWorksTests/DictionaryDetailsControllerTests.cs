@@ -1040,7 +1040,7 @@ namespace SIL.FieldWorks.XWorks
 					DisplayEachSenseInAParagraph = false,
 					BeforeNumber = "",
 					AfterNumber = ") ",
-					NumberingStyle = "%O",
+					NumberingStyle = "%a",
 					NumberEvenASingleSense = true,
 					ShowSharedGrammarInfoFirst = true
 				}
@@ -1097,7 +1097,7 @@ namespace SIL.FieldWorks.XWorks
 
 				controller.LoadNode(null, subSenseConfig);
 
-				expectedNumberingStyle = XmlVcDisplayVec.SupportedNumberingStyles.ToList();
+				expectedNumberingStyle = XmlVcDisplayVec.SupportedNumberingStyles.Where(prop => prop.FormatString != "%O").ToList();
 
 				optionsView = GetSenseOptionsView(view);
 				realView = optionsView as SenseOptionsView;
@@ -1109,7 +1109,7 @@ namespace SIL.FieldWorks.XWorks
 
 				controller.LoadNode(null, subSubSenseConfig);
 
-				expectedNumberingStyle = XmlVcDisplayVec.SupportedNumberingStyles.ToList();
+				expectedNumberingStyle = XmlVcDisplayVec.SupportedNumberingStyles.Where(prop => prop.FormatString != "%O").ToList();
 
 				optionsView = GetSenseOptionsView(view);
 				realView = optionsView as SenseOptionsView;

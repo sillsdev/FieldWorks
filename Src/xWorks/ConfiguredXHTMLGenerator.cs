@@ -1524,6 +1524,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 			//sensecontent sensenumber sense morphosyntaxanalysis mlpartofspeech en
 			info.SenseCounter = 0; // This ticker is more efficient than computing the index for each sense individually
+			var senseNode = (DictionaryNodeSenseOptions)config.DictionaryNodeOptions;
+			if (senseNode != null)
+				info.ParentSenseNumberingStyle = senseNode.ParentSenseNumberingStyle;
 			foreach (var item in filteredSenseCollection)
 			{
 				info.SenseCounter++;
@@ -1887,10 +1890,20 @@ namespace SIL.FieldWorks.XWorks
 					nextNumber = info.SenseCounter.ToString();
 					break;
 			}
-			info.SenseOutlineNumber = string.IsNullOrEmpty(info.SenseOutlineNumber)
-				? nextNumber
-				: string.Format("{0}.{1}", info.SenseOutlineNumber, nextNumber);
-			return numberingStyle == "%O" ? info.SenseOutlineNumber : nextNumber;
+			info.SenseOutlineNumber = GenerateSenseOutlineNumber(info, nextNumber);
+			return info.SenseOutlineNumber;
+		}
+
+		private static string GenerateSenseOutlineNumber(SenseInfo info, string nextNumber)
+		{
+			if (info.ParentSenseNumberingStyle == "%j")
+				info.SenseOutlineNumber = string.Format("{0}{1}", info.SenseOutlineNumber, nextNumber);
+			else if (info.ParentSenseNumberingStyle == "%.")
+				info.SenseOutlineNumber = string.Format("{0}.{1}", info.SenseOutlineNumber, nextNumber);
+			else
+				info.SenseOutlineNumber = nextNumber;
+
+			return info.SenseOutlineNumber;
 		}
 
 		private static string GetAlphaSenseCounter(string numberingStyle, int senseNumber)
@@ -2561,6 +2574,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			public int SenseCounter { get; set; }
 			public string SenseOutlineNumber { get; set; }
+			public string ParentSenseNumberingStyle { get; set; }
 		}
 	}
 }

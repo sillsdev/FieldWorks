@@ -32,6 +32,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			checkBoxShowGrammarFirst.Text = xWorksStrings.ksHideGramInfoIfSameAsParent;
 			checkBoxSenseInPara.Text = xWorksStrings.ksDisplayEachSubsenseInAParagraph;
 			checkBoxFirstSenseInline.Text = xWorksStrings.ksStartingWithTheSecondSubsense;
+			labelParentSenseNumberStyle.Text = xWorksStrings.ksParentSenseNumberingStyle;
 		}
 
 		public bool NumberMetaConfigEnabled
@@ -81,6 +82,38 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			}
 		}
 
+		internal List<NumberingStyleComboItem> ParentSenseNumberingStyles
+		{
+			set
+			{
+				dropDownParentSenseNumberStyle.Items.Clear();
+				// ReSharper disable CoVariantArrayConversion - Justification: array values will not be written
+				dropDownParentSenseNumberStyle.Items.AddRange(value.ToArray());
+				// ReSharper restore CoVariantArrayConversion
+			}
+		}
+
+		public string ParentSenseNumberingStyle
+		{
+			get { return ((NumberingStyleComboItem)dropDownParentSenseNumberStyle.SelectedItem).FormatString; }
+			set
+			{
+				if (string.IsNullOrEmpty(value))
+				{
+					dropDownParentSenseNumberStyle.SelectedIndex = 0;
+					return;
+				}
+				for (int i = 0; i < dropDownParentSenseNumberStyle.Items.Count; i++)
+				{
+					if (((NumberingStyleComboItem)dropDownParentSenseNumberStyle.Items[i]).FormatString.Equals(value))
+					{
+						dropDownParentSenseNumberStyle.SelectedIndex = i;
+						break;
+					}
+				}
+			}
+		}
+
 		public string AfterText
 		{
 			get { return SpecialCharacterHandling.VisibleToInvisibleCharacters(textBoxAfter.Text); }
@@ -114,10 +147,25 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			}
 		}
 
+		public string ParentSenseNumberStyle
+		{
+			get
+			{
+				var style = ((StyleComboItem)dropDownStyle.SelectedItem).Style;
+				return style != null ? style.Name : null;
+			}
+		}
+
 		public bool NumberSingleSense
 		{
 			get { return checkBoxNumberSingleSense.Checked; }
 			set { checkBoxNumberSingleSense.Checked = value; }
+		}
+
+		public bool ParentSenseNumberingStyleVisible
+		{
+			get { return dropDownParentSenseNumberStyle.Visible; }
+			set { labelParentSenseNumberStyle.Visible = dropDownParentSenseNumberStyle.Visible = value; }
 		}
 
 		public bool ShowGrammarFirst
@@ -148,6 +196,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			get { return dropDownNumberingStyle.Items; }
 		}
 
+		internal ComboBox.ObjectCollection DropDownParentSenseNumberStyle
+		{
+			get { return dropDownParentSenseNumberStyle.Items; }
+		}
+
 		#region EventHandlers
 		public event EventHandler BeforeTextChanged
 		{
@@ -159,6 +212,12 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		{
 			add { dropDownNumberingStyle.SelectedValueChanged += value; }
 			remove { dropDownNumberingStyle.SelectedValueChanged -= value; }
+		}
+
+		public event EventHandler ParentSenseNumberingStyleChanged
+		{
+			add { dropDownParentSenseNumberStyle.SelectedValueChanged += value; }
+			remove { dropDownParentSenseNumberStyle.SelectedValueChanged -= value; }
 		}
 
 		public event EventHandler AfterTextChanged

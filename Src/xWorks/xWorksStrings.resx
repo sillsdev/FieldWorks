@@ -1008,6 +1008,9 @@ If you are not the one designated user who adds fields, or you are making some o
   </data>
   <data name="ksStartingWithTheSecondSubsense" xml:space="preserve">
     <value>starting with second subsense</value>
-	<comment>This directly follows ksDisplayEachSubsenseInAParagraph</comment>
+    <comment>This directly follows ksDisplayEachSubsenseInAParagraph</comment>
+  </data>
+  <data name="ksParentSenseNumberingStyle" xml:space="preserve">
+    <value>Show parent sense number</value>
   </data>
 </root>

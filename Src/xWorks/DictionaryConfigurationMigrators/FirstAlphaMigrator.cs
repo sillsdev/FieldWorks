@@ -324,6 +324,16 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 						{
 							n.Label = "Referenced Headword";
 						}
+						else if (n.Label == "Subsenses" && n.Parent.FieldDescription == "SensesOS")
+						{
+							var senseNode = (DictionaryNodeSenseOptions)n.DictionaryNodeOptions;
+							if (senseNode != null)
+							{
+								senseNode.ParentSenseNumberingStyle = "%.";
+								senseNode.NumberingStyle = "%d";
+								n.DictionaryNodeOptions = senseNode;
+							}
+						}
 						if (n.Label == "Referenced Headword")
 						{
 							n.FieldDescription = newHeadword;

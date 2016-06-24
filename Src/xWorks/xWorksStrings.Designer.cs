@@ -1499,7 +1499,16 @@ namespace SIL.FieldWorks.XWorks {
                 return ResourceManager.GetString("ksParagraphStyleForContent", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Show parent sense number.
+        /// </summary>
+        internal static string ksParentSenseNumberingStyle {
+            get {
+                return ResourceManager.GetString("ksParentSenseNumberingStyle", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Processing.
         /// </summary>
@@ -1508,7 +1517,7 @@ namespace SIL.FieldWorks.XWorks {
                 return ResourceManager.GetString("ksParsing", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Preparing to display the publication view.
         /// </summary>
