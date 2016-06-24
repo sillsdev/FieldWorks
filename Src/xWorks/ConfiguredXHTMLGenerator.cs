@@ -598,28 +598,35 @@ namespace SIL.FieldWorks.XWorks
 		/// If it is a Minor Entry, first checks whether the entry should be published as a Minor Entry; then, generates XHTML for each applicable
 		/// Minor Entry configuration node.
 		/// </summary>
-		public static string GenerateXHTMLForEntry(ICmObject entry, DictionaryConfigurationModel configuration,
+		public static string GenerateXHTMLForEntry(ICmObject entryObj, DictionaryConfigurationModel configuration,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
-			if (IsComplexFormOrVariant(entry))
+			if (IsComplexFormOrVariant(entryObj))
 			{
+				var entry = entryObj as ILexEntry;
 				var bldr = new StringBuilder();
-				if (!configuration.IsRootBased || (configuration.IsRootBased && ((ILexEntry)entry).PublishAsMinorEntry))
-				{
-					for (var i = 1; i < configuration.Parts.Count; i++)
-					{
-						if (IsListItemSelectedForExport(configuration.Parts[i], entry, null))
-						{
-							var content = GenerateXHTMLForEntry(entry, configuration.Parts[i], publicationDecorator, settings);
-							bldr.Append(content);
-						}
-					}
-				}
+				if (!entry.PublishAsMinorEntry && (entry.VariantEntryRefs.Any() || configuration.IsRootBased))
+					return bldr.ToString();
+
+				GenerateXHTMLForComplexOrVariantEntry(entry, configuration, publicationDecorator, settings, bldr);
 				return bldr.ToString();
 			}
 			else
 			{
-				return GenerateXHTMLForEntry(entry, configuration.Parts[0], publicationDecorator, settings);
+				return GenerateXHTMLForEntry(entryObj, configuration.Parts[0], publicationDecorator, settings);
+			}
+		}
+
+		private static void GenerateXHTMLForComplexOrVariantEntry(ICmObject entry, DictionaryConfigurationModel configuration,
+			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, StringBuilder bldr)
+		{
+			for (var i = 1; i < configuration.Parts.Count; i++)
+			{
+				if (IsListItemSelectedForExport(configuration.Parts[i], entry, null))
+				{
+					var content = GenerateXHTMLForEntry(entry, configuration.Parts[i], publicationDecorator, settings);
+					bldr.Append(content);
+				}
 			}
 		}
 
@@ -2035,8 +2042,8 @@ namespace SIL.FieldWorks.XWorks
 			else if (entry != null)
 			{
 				if (listId == DictionaryNodeListOptions.ListIds.Variant || listId == DictionaryNodeListOptions.ListIds.Minor)
-					foreach (var visibleEntryRef in entry.VariantEntryRefs)
-						GetVariantTypeGuidsForEntryRef(visibleEntryRef, entryTypeGuids);
+					foreach (var variantEntryRef in entry.VariantEntryRefs)
+						GetVariantTypeGuidsForEntryRef(variantEntryRef, entryTypeGuids);
 				if (listId == DictionaryNodeListOptions.ListIds.Complex || listId == DictionaryNodeListOptions.ListIds.Minor)
 					foreach (var complexFormEntryRef in entry.ComplexFormEntryRefs)
 						GetComplexFormTypeGuidsForEntryRef(complexFormEntryRef, entryTypeGuids);

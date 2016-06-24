@@ -5042,13 +5042,13 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void GenerateXHTMLForEntry_VariantShowsInStem_DespiteHideMinorEntry()
+		public void GenerateXHTMLForEntry_VariantShowsIfNotHideMinorEntry_ViewDoesntMatter()
 		{
 			var lexentry = CreateInterestingLexEntry(Cache);
 			var variantEntry = CreateInterestingLexEntry(Cache);
 			var variantEntryRef = CreateVariantForm(Cache, lexentry, variantEntry);
 			variantEntryRef.VariantEntryTypesRS[0] = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[0] as ILexEntryType;
-			variantEntryRef.HideMinorEntry = 1; // We want it to show up despite this
+			variantEntryRef.HideMinorEntry = 1; // This should hide a Variant no matter the view
 
 			var headwordNode = new ConfigurableDictionaryNode
 			{
@@ -5073,41 +5073,17 @@ namespace SIL.FieldWorks.XWorks
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(variantEntry, model, null, settings);
+			Assert.IsNullOrEmpty(result);
+			// try with HideMinorEntry off
+			variantEntryRef.HideMinorEntry = 0;
+			result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(variantEntry, model, null, settings);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath("/div[@class='lexentry']/span[@class='headword']", 1);
-		}
-
-		[Test]
-		public void GenerateXHTMLForEntry_VariantDoesNotShowInRoot_BecauseOfHideMinorEntry()
-		{
-			var lexentry = CreateInterestingLexEntry(Cache);
-			var variantEntry = CreateInterestingLexEntry(Cache);
-			var variantEntryRef = CreateVariantForm(Cache, lexentry, variantEntry);
-			variantEntryRef.VariantEntryTypesRS[0] = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[0] as ILexEntryType;
-			variantEntryRef.HideMinorEntry = 1; // This should keep it from showing up.
-
-			var headwordNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "MLHeadWord",
-				CSSClassNameOverride = "headword",
-				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
-			};
-			var minorEntryNode = new ConfigurableDictionaryNode
-			{
-				Children = new List<ConfigurableDictionaryNode> { headwordNode },
-				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
-				FieldDescription = "LexEntry",
-				Label = "Minor Entry (Variants)"
-			};
-			var model = new DictionaryConfigurationModel
-			{
-				Parts = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode(), minorEntryNode }, // dummy main entry node
-				IsRootBased = true
-			};
-			CssGeneratorTests.PopulateFieldsForTesting(model);
-
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
-			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(variantEntry, model, null, settings);
+			// Should get the same results if in Root based view
+			model.IsRootBased = true;
+			result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(variantEntry, model, null, settings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath("/div[@class='lexentry']/span[@class='headword']", 1);
+			variantEntryRef.HideMinorEntry = 1;
+			result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(variantEntry, model, null, settings);
 			Assert.IsNullOrEmpty(result);
 		}
 
