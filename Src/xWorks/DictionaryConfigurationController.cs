@@ -153,7 +153,7 @@ namespace SIL.FieldWorks.XWorks
 				MergeCustomFieldsIntoDictionaryModel(model, cache);
 				configurationModels.Add(model);
 			}
-			configurationModels.Sort((lhs, rhs) => string.Compare(lhs.Label, rhs.Label));
+			configurationModels.Sort((lhs, rhs) => String.Compare(lhs.Label, rhs.Label));
 			return configurationModels;
 		}
 
@@ -524,7 +524,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				default:
 				{
-					throw new NotImplementedException(string.Format("Default entry for {0} type not implemented.", configurationType));
+					throw new NotImplementedException(String.Format("Default entry for {0} type not implemented.", configurationType));
 				}
 			}
 		}
@@ -692,7 +692,7 @@ namespace SIL.FieldWorks.XWorks
 			node.ReferencedNode = sharedItems.FirstOrDefault(
 				si => si.Label == referenceItem && si.FieldDescription == node.FieldDescription && si.SubField == node.SubField);
 			if (node.ReferencedNode == null)
-				throw new KeyNotFoundException(string.Format("Could not find Referenced Node named {0} for field {1}.{2}",
+				throw new KeyNotFoundException(String.Format("Could not find Referenced Node named {0} for field {1}.{2}",
 					referenceItem, node.FieldDescription, node.SubField));
 			node.ReferenceItem = referenceItem;
 			if (node.ReferencedNode.Parent != null)
@@ -707,28 +707,28 @@ namespace SIL.FieldWorks.XWorks
 		public static void ShareNodeAsReference(List<ConfigurableDictionaryNode> sharedItems, ConfigurableDictionaryNode node, string cssClass = null)
 		{
 			if (node.ReferencedNode != null)
-				throw new InvalidOperationException(string.Format("Node {0} is already shared as {1}",
+				throw new InvalidOperationException(String.Format("Node {0} is already shared as {1}",
 					DictionaryConfigurationMigrator.BuildPathStringFromNode(node), node.ReferenceItem ?? node.ReferencedNode.Label));
 			if (node.Children == null || !node.Children.Any())
 				return; // no point sharing Children there aren't any
 			var dupItem = sharedItems.FirstOrDefault(item => item.FieldDescription == node.FieldDescription && item.SubField == node.SubField);
 			if (dupItem != null)
 			{
-				var fullField = string.IsNullOrEmpty(node.SubField)
+				var fullField = String.IsNullOrEmpty(node.SubField)
 					? node.FieldDescription
-					: string.Format("{0}.{1}", node.FieldDescription, node.SubField);
-				MessageBoxUtils.Show(string.Format(xWorksStrings.InadvisableToShare,
+					: String.Format("{0}.{1}", node.FieldDescription, node.SubField);
+				MessageBoxUtils.Show(String.Format(xWorksStrings.InadvisableToShare,
 					node.DisplayLabel, fullField, DictionaryConfigurationMigrator.BuildPathStringFromNode(dupItem.Parent)));
 				return;
 			}
 
 			// ENHANCE (Hasso) 2016.03: enforce that the specified node is part of *this* model (incl shared items)
-			var key = string.IsNullOrEmpty(node.ReferenceItem) ? string.Format("Shared{0}", node.Label) : node.ReferenceItem;
-			cssClass = string.IsNullOrEmpty(cssClass) ? string.Format("shared{0}", CssGenerator.GetClassAttributeForConfig(node)) : cssClass.ToLowerInvariant();
+			var key = String.IsNullOrEmpty(node.ReferenceItem) ? String.Format("Shared{0}", node.Label) : node.ReferenceItem;
+			cssClass = String.IsNullOrEmpty(cssClass) ? String.Format("shared{0}", CssGenerator.GetClassAttributeForConfig(node)) : cssClass.ToLowerInvariant();
 			// Ensure the shared node's Label and CSSClassNameOverride are both unique within this Configuration
 			if (sharedItems.Any(item => item.Label == key || item.CSSClassNameOverride == cssClass))
 			{
-				throw new ArgumentException(string.Format("A SharedItem already exists with the Label '{0}' or the class '{1}'", key, cssClass));
+				throw new ArgumentException(String.Format("A SharedItem already exists with the Label '{0}' or the class '{1}'", key, cssClass));
 			}
 			var sharedItem = new ConfigurableDictionaryNode
 			{
@@ -831,7 +831,7 @@ namespace SIL.FieldWorks.XWorks
 			var styles = cache.LangProject.StylesOC.ToDictionary(style => style.Name);
 			foreach (var part in model.PartsAndSharedItems)
 			{
-				if (part.IsMainEntry && string.IsNullOrEmpty(part.Style))
+				if (part.IsMainEntry && String.IsNullOrEmpty(part.Style))
 					part.Style = "Dictionary-Normal";
 				EnsureValidStylesInConfigNodes(part, styles);
 			}
@@ -839,7 +839,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private static void EnsureValidStylesInConfigNodes(ConfigurableDictionaryNode node, Dictionary<string, IStStyle> styles)
 		{
-			if (!string.IsNullOrEmpty(node.Style) && !styles.ContainsKey(node.Style))
+			if (!String.IsNullOrEmpty(node.Style) && !styles.ContainsKey(node.Style))
 				node.Style = null;
 			if (node.DictionaryNodeOptions != null)
 				EnsureValidStylesInNodeOptions(node.DictionaryNodeOptions, styles);
@@ -855,7 +855,7 @@ namespace SIL.FieldWorks.XWorks
 			var senseOptions = options as DictionaryNodeSenseOptions;
 			if (senseOptions == null)
 				return;
-			if (!string.IsNullOrEmpty(senseOptions.NumberStyle) && !styles.ContainsKey(senseOptions.NumberStyle))
+			if (!String.IsNullOrEmpty(senseOptions.NumberStyle) && !styles.ContainsKey(senseOptions.NumberStyle))
 				senseOptions.NumberStyle = null;
 		}
 
@@ -884,7 +884,7 @@ namespace SIL.FieldWorks.XWorks
 				// This is only expected to happen to our testers, we don't need to recover, just inform the testers.
 				if (part.FieldDescription == null)
 				{
-					throw new ApplicationException(string.Format("{0} is corrupt. {1} has no FieldDescription. Deleting this configuration file may fix the problem.",
+					throw new ApplicationException(String.Format("{0} is corrupt. {1} has no FieldDescription. Deleting this configuration file may fix the problem.",
 						model.FilePath, part.Label));
 				}
 				var customFields = GetCustomFieldsForType(cache, part.FieldDescription);
@@ -1028,7 +1028,7 @@ namespace SIL.FieldWorks.XWorks
 					// Custom fields in the Map under LexEntryRef are actually LexEntry CustomFields; look for them under OwningEntry
 					FieldDescription = isEntryRefType ? "OwningEntry" : metaDataCache.GetFieldName(field),
 					SubField = isEntryRefType ? metaDataCache.GetFieldName(field) : null,
-					DictionaryNodeOptions = BuildOptionsForType(metaDataCache.GetFieldType(field))
+					DictionaryNodeOptions = BuildOptionsForType(metaDataCache, field)
 				};
 				var listId = metaDataCache.GetFieldListRoot(field);
 				if(listId != Guid.Empty)
@@ -1056,7 +1056,8 @@ namespace SIL.FieldWorks.XWorks
 				{
 					Label = "Name",
 					FieldDescription = "Name",
-					DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions { WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis },
+					After = " ",
+					DictionaryNodeOptions = BuildWsOptionsForWsType("analysis"),
 					Parent = configNode,
 					IsCustomField = false // the parent node may be for a custom field, but this node is for a standard CmPossibility field
 				},
@@ -1064,20 +1065,24 @@ namespace SIL.FieldWorks.XWorks
 				{
 					Label = "Abbreviation",
 					FieldDescription = "Abbreviation",
-					DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions { WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis },
+					DictionaryNodeOptions = BuildWsOptionsForWsType("analysis"),
 					Parent = configNode,
 					IsCustomField = false // the parent node may be for a custom field, but this node is for a standard CmPossibility field
 				}
 			};
 		}
 
-		private static DictionaryNodeOptions BuildOptionsForType(int fieldType)
+		private static DictionaryNodeOptions BuildOptionsForType(IFwMetaDataCacheManaged metaDataCache, int fieldId)
 		{
+			var fieldType = metaDataCache.GetFieldType(fieldId);
 			switch(fieldType)
 			{
 				case (int)CellarPropertyType.MultiString:
 				case (int)CellarPropertyType.MultiUnicode:
-					return new DictionaryNodeWritingSystemOptions();
+				{
+					var wsTypeId = WritingSystemServices.GetMagicWsNameFromId(metaDataCache.GetFieldWs(fieldId));
+					return BuildWsOptionsForWsType(wsTypeId);
+				}
 				case (int)CellarPropertyType.OwningCollection:
 				case (int)CellarPropertyType.OwningSequence:
 				case (int)CellarPropertyType.ReferenceCollection:
@@ -1086,6 +1091,17 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return null;
 		}
+
+		private static DictionaryNodeOptions BuildWsOptionsForWsType(string wsTypeId)
+		{
+			var wsOptions = new DictionaryNodeWritingSystemOptions
+			{
+				WsType = GetWsTypeFromMagicWsName(wsTypeId),
+				Options = { new DictionaryNodeListOptions.DictionaryNodeOption { Id = wsTypeId, IsEnabled = true } },
+			};
+			return wsOptions;
+		}
+
 		#endregion ModelSynchronization
 
 		public static void EnableNodeAndDescendants(ConfigurableDictionaryNode node)
@@ -1223,6 +1239,22 @@ namespace SIL.FieldWorks.XWorks
 					return start;
 			}
 			return null;
+		}
+
+		public static DictionaryNodeWritingSystemOptions.WritingSystemType GetWsTypeFromMagicWsName(string wsType)
+		{
+			switch (wsType)
+			{
+				case "analysis":
+				case "analysisform": return DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis;
+				case "vernacular": return DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular;
+				case "vernacular analysis":
+				case "analysis vernacular":
+				case "vernoranal": return DictionaryNodeWritingSystemOptions.WritingSystemType.Both;
+				case "pronunciation": return DictionaryNodeWritingSystemOptions.WritingSystemType.Pronunciation;
+				case "reversal": return DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal;
+				default: throw new ArgumentException(String.Format("Unknown writing system type {0}", wsType), wsType);
+			}
 		}
 	}
 }

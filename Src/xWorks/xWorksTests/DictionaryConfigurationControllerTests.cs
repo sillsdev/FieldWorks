@@ -28,6 +28,7 @@ namespace SIL.FieldWorks.XWorks
 	public class DictionaryConfigurationControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private const string m_field = "LexEntry";
+		private const int AnalysisWsId = -5;
 
 		#region Setup and Teardown
 		private DictionaryConfigurationModel m_model;
@@ -662,7 +663,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetCustomFieldsForType_EntryCustomFieldIsRepresented()
 		{
-			using (new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+			using (new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), AnalysisWsId,
 				CellarPropertyType.MultiString, Guid.Empty))
 			{
 				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache, "LexEntry");
@@ -681,13 +682,17 @@ namespace SIL.FieldWorks.XWorks
 					"LexEntry");
 				CollectionAssert.IsNotEmpty(customFieldNodes, "The custom field configuration node was not inserted for a PossibilityListReference");
 				Assert.AreEqual(customFieldNodes[0].Label, "CustomListItem", "Custom field did not get inserted correctly.");
-				CollectionAssert.IsNotEmpty(customFieldNodes[0].Children, "ListItem Child nodes not created");
-				Assert.AreEqual(2, customFieldNodes[0].Children.Count, "custom list type nodes should get a child for Name and Abbreviation");
-				CollectionAssert.IsNotEmpty(customFieldNodes[0].Children.Where(t => t.Label == "Name" && !t.IsCustomField),
+				var cfChildren = customFieldNodes[0].Children;
+				CollectionAssert.IsNotEmpty(cfChildren, "ListItem Child nodes not created");
+				Assert.AreEqual(2, cfChildren.Count, "custom list type nodes should get a child for Name and Abbreviation");
+				Assert.AreEqual(" ", cfChildren[0].After, "Name and abbreviation not seperated by a space");
+				CollectionAssert.IsNotEmpty(cfChildren.Where(t => t.Label == "Name" && !t.IsCustomField),
 					"No standard Name node found on custom possibility list reference");
-				CollectionAssert.IsNotEmpty(customFieldNodes[0].Children.Where(t => t.Label == "Abbreviation" && !t.IsCustomField),
+				CollectionAssert.IsNotEmpty(cfChildren.Where(t => t.Label == "Abbreviation" && !t.IsCustomField),
 					"No standard Abbreviation node found on custom possibility list reference");
-				Assert.IsNotNull(customFieldNodes[0].Children[0].DictionaryNodeOptions as DictionaryNodeWritingSystemOptions, "No writing system node on possibility list custom node");
+				var wsOptions = cfChildren[0].DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+				Assert.IsNotNull(wsOptions, "No writing system node on possibility list custom node");
+				CollectionAssert.IsNotEmpty(wsOptions.Options.Where(o => o.IsEnabled), "No default writing system added.");
 			}
 		}
 
@@ -765,7 +770,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetCustomFieldsForType_InterfacesAndReferencesAreAliased()
 		{
-			using (new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+			using (new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), AnalysisWsId,
 				CellarPropertyType.MultiString, Guid.Empty))
 			{
 				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache, "ILexEntry");
@@ -854,8 +859,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void MergeCustomFieldsIntoDictionaryModel_NewFieldsAreAdded()
 		{
-			using (new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
-				CellarPropertyType.ReferenceCollection, Guid.Empty))
+			using (new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"),
+				WritingSystemServices.GetMagicWsIdFromName("analysis vernacular"), CellarPropertyType.MultiString, Guid.Empty))
 			{
 				var model = new DictionaryConfigurationModel
 				{
@@ -866,18 +871,24 @@ namespace SIL.FieldWorks.XWorks
 				};
 				//SUT
 				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache);
-				Assert.IsNotNull(model.Parts[0].Children, "Custom Field did not add to children");
-				CollectionAssert.IsNotEmpty(model.Parts[0].Children, "Custom Field did not add to children");
-				Assert.AreEqual(model.Parts[0].Children[0].Label, "CustomString");
-				Assert.AreEqual(model.Parts[0].Children[0].FieldDescription, "CustomString");
-				Assert.AreEqual(model.Parts[0].Children[0].IsCustomField, true);
+				var children = model.Parts[0].Children;
+				Assert.IsNotNull(children, "Custom Field did not add to children");
+				CollectionAssert.IsNotEmpty(children, "Custom Field did not add to children");
+				var cfNode = children[0];
+				Assert.AreEqual(cfNode.Label, "CustomString");
+				Assert.AreEqual(cfNode.FieldDescription, "CustomString");
+				Assert.AreEqual(cfNode.IsCustomField, true);
+				var wsOptions = cfNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+				Assert.NotNull(wsOptions, "WritingSystemOptions not added");
+				Assert.AreEqual(wsOptions.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Both, "WritingSystemOptions is the wrong type");
+				CollectionAssert.IsNotEmpty(wsOptions.Options.Where(o => o.IsEnabled), "WsOptions not populated with any choices");
 			}
 		}
 
 		[Test]
 		public void MergeCustomFieldsIntoDictionaryModel_FieldsAreNotDuplicated()
 		{
-			using (new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+			using (new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), AnalysisWsId,
 				CellarPropertyType.ReferenceCollection, Guid.Empty))
 			{
 				var model = new DictionaryConfigurationModel();
@@ -885,7 +896,15 @@ namespace SIL.FieldWorks.XWorks
 				{
 					Label = "CustomString",
 					FieldDescription = "CustomString",
-					IsCustomField = true
+					IsCustomField = true,
+					DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+					{
+						DisplayWritingSystemAbbreviations = true,
+						Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+						{
+							new DictionaryNodeListOptions.DictionaryNodeOption() { Id = "en", IsEnabled = true }
+						}
+					}
 				};
 				var entryNode = new ConfigurableDictionaryNode
 				{
@@ -894,10 +913,16 @@ namespace SIL.FieldWorks.XWorks
 					Children = new List<ConfigurableDictionaryNode> { customNode }
 				};
 				model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+				CssGeneratorTests.PopulateFieldsForTesting(model);
 
 				//SUT
 				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache);
 				Assert.AreEqual(1, model.Parts[0].Children.Count, "Only the existing custom field node should be present");
+				var wsOptions = model.Parts[0].Children[0].DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+				Assert.NotNull(wsOptions, "Writing system options lost in merge");
+				Assert.IsTrue(wsOptions.DisplayWritingSystemAbbreviations, "WsAbbreviation lost in merge");
+				Assert.AreEqual("en", wsOptions.Options[0].Id);
+				Assert.IsTrue(wsOptions.Options[0].IsEnabled, "Selected writing system lost in merge");
 			}
 		}
 

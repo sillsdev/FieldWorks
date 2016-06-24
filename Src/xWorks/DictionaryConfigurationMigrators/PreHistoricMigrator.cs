@@ -470,7 +470,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				options = new DictionaryNodeWritingSystemOptions
 				{
 					DisplayWritingSystemAbbreviations = node.ShowWsLabels,
-					WsType = MigrateWsType(node.WsType),
+					WsType = DictionaryConfigurationController.GetWsTypeFromMagicWsName(node.WsType),
 					Options = MigrateWsOptions(node.WsLabel)
 				};
 			}
@@ -997,22 +997,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		private List<DictionaryNodeListOptions.DictionaryNodeOption> MigrateWsOptions(string wsLabel)
 		{
 			return wsLabel.Split(',').Select(item => new DictionaryNodeListOptions.DictionaryNodeOption { Id = item.Trim(), IsEnabled = true }).ToList();
-		}
-
-		private DictionaryNodeWritingSystemOptions.WritingSystemType MigrateWsType(string wsType)
-		{
-			switch (wsType)
-			{
-				case "analysis":
-				case "analysisform": return DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis;
-				case "vernacular": return DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular;
-				case "vernacular analysis":
-				case "analysis vernacular":
-				case "vernoranal": return DictionaryNodeWritingSystemOptions.WritingSystemType.Both;
-				case "pronunciation": return DictionaryNodeWritingSystemOptions.WritingSystemType.Pronunciation;
-				case "reversal": return DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal;
-				default: throw new ArgumentException(string.Format("Unknown writing system type {0}", wsType), wsType);
-			}
 		}
 
 		private void MigratePublicationLayoutSelection(string oldLayout, string newPath)
