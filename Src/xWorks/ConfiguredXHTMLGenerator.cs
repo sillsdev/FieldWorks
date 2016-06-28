@@ -1358,6 +1358,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					case (int)CellarPropertyType.ReferenceSequence:
 					case (int)CellarPropertyType.OwningSequence:
+					case (int)CellarPropertyType.ReferenceCollection:
 						{
 							return typeof(IFdoVector);
 						}
@@ -1965,7 +1966,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// The collections we test here are generic collection types (e.g. IEnumerable<T>). Note: This (and other code) does not work for arrays.
 			// We do have at least one collection type with at least two generic arguments; hence `> 0` instead of `== 1`
-			return (entryType.GetGenericArguments().Length > 0);
+			return entryType.GetGenericArguments().Length > 0 || typeof (IFdoVector).IsAssignableFrom(entryType);
 		}
 
 		internal static bool IsCollectionNode(ConfigurableDictionaryNode configNode, FdoCache cache)

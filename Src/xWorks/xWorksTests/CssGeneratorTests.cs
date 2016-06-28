@@ -2884,13 +2884,13 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// SUT
 				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-				const string regexExpected1 = @"\.lexentry>\s\.custom-location{[^}]*}";
+				const string regexExpected1 = @"\.lexentry>\s\.custom-location \.custom-locatio{[^}]*}";
 				Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success,
 					"expected custom-location rule not generated");
-				const string regexExpected2 = @"\.lexentry>\s\.custom-location>\s\.name{[^}]*}";
+				const string regexExpected2 = @"\.lexentry>\s\.custom-location \.custom-locatio>\s\.name{[^}]*}";
 				Assert.IsTrue(Regex.Match(cssResult, regexExpected2, RegexOptions.Singleline).Success,
 					"expected custom-location>name rule not generated");
-				const string regexExpected3 = @"\.lexentry>\s\.custom-location>\s\.abbreviation{[^}]*}";
+				const string regexExpected3 = @"\.lexentry>\s\.custom-location \.custom-locatio>\s\.abbreviation{[^}]*}";
 				Assert.IsTrue(Regex.Match(cssResult, regexExpected3, RegexOptions.Singleline).Success,
 					"expected custom-location>abbreviation rule not generated");
 			}

@@ -1245,11 +1245,17 @@ namespace SIL.FieldWorks.XWorks
 		{
 			switch (wsType)
 			{
+				case "best analysis":
+				case "all analysis":
 				case "analysis":
 				case "analysisform": return DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis;
+				case "best vernacular":
+				case "all vernacular":
 				case "vernacular": return DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular;
 				case "vernacular analysis":
 				case "analysis vernacular":
+				case "best vernoranal":
+				case "best analorvern":
 				case "vernoranal": return DictionaryNodeWritingSystemOptions.WritingSystemType.Both;
 				case "pronunciation": return DictionaryNodeWritingSystemOptions.WritingSystemType.Pronunciation;
 				case "reversal": return DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal;

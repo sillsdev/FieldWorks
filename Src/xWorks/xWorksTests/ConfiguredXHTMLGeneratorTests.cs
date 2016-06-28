@@ -5210,6 +5210,7 @@ namespace SIL.FieldWorks.XWorks
 			var twoParamImplOfIFdoVector =
 				assembly.GetType("SIL.FieldWorks.FDO.DomainImpl.ScrTxtPara").GetNestedType("OwningSequenceWrapper`2", BindingFlags.NonPublic);
 			Assert.True(ConfiguredXHTMLGenerator.IsCollectionType(twoParamImplOfIFdoVector));
+			Assert.True(ConfiguredXHTMLGenerator.IsCollectionType(typeof(IFdoVector)), "Custom fields containing list items may no longer work.");
 
 			// Strings and MultiStrings, while enumerable, are not collections as we define them for the purpose of publishing data as XHTML
 			Assert.False(ConfiguredXHTMLGenerator.IsCollectionType(typeof(string)));
