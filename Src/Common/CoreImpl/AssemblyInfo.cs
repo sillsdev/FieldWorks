@@ -10,3 +10,4 @@ using System.Runtime.CompilerServices;
 [assembly: System.Runtime.InteropServices.ComVisible(false)]
 [assembly: InternalsVisibleTo("CoreImplTests")]
 [assembly: InternalsVisibleTo("TestUtils")]
+[assembly: InternalsVisibleTo("LfMerge.Tests")]

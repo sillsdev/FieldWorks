@@ -34,7 +34,7 @@ namespace SIL.CoreImpl
 			{
 				return ((AssemblyCompanyAttribute)Attribute.GetCustomAttribute(
 					Assembly.GetExecutingAssembly(), typeof(AssemblyCompanyAttribute), false))
-				   .Company;
+					.Company;
 			}
 		}
 
