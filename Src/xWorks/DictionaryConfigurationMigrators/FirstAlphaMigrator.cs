@@ -394,10 +394,63 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 							n.Between = "";
 							n.After = " ";
 						}
+						UpdatePicturesChildren(n);
 					});
 					AddRemoveEtymologyFields(etymNodeList);
 					break;
 			}
+		}
+
+		/// <summary>
+		/// If node is a Pictures node, update its child nodes by removing Sense Number and adding Headword and Gloss.
+		/// Part of LT-12572.
+		/// </summary>
+		private static void UpdatePicturesChildren(ConfigurableDictionaryNode node)
+		{
+			if (node == null)
+				return;
+			if (node.Label != "Pictures")
+				return;
+
+			node.Children.RemoveAll(child => child.Label == "Sense Number");
+
+			var analysisWsOptions = new DictionaryNodeWritingSystemOptions
+				{
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis,
+					DisplayWritingSystemAbbreviations = false,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+						{
+							new DictionaryNodeListOptions.DictionaryNodeOption {Id = "analysis", IsEnabled = true}
+						}
+				};
+
+			var vernacularWsOptions = new DictionaryNodeWritingSystemOptions
+				{
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
+					DisplayWritingSystemAbbreviations = false,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+						{
+							new DictionaryNodeListOptions.DictionaryNodeOption {Id = "vernacular", IsEnabled = true}
+						}
+				};
+
+			var headwordNode = new ConfigurableDictionaryNode
+				{
+					After = "  ", Between = " ", Label = "Headword", FieldDescription = "Owner",
+					SubField="OwnerOutlineName", CSSClassNameOverride="headword",
+					Style="Dictionary-Headword",
+					IsEnabled = true, DictionaryNodeOptions = vernacularWsOptions
+				};
+
+			var glossNode = new ConfigurableDictionaryNode
+				{
+					After = " ", Between = " ", Label = "Gloss", FieldDescription = "Owner",
+					SubField="Gloss",
+					IsEnabled = true, DictionaryNodeOptions = analysisWsOptions
+				};
+
+			node.Children.Add(headwordNode);
+			node.Children.Add(glossNode);
 		}
 
 		private static void AddRemoveEtymologyFields(IEnumerable<ConfigurableDictionaryNode> etymNodes)

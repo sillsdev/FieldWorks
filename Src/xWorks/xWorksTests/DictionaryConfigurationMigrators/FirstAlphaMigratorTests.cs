@@ -1065,5 +1065,61 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.AreEqual(" ", formNode.After, "Should have set After to one space.");
 			Assert.AreEqual("", formNode.Between, "Should have set Between to empty string.");
 		}
+
+		/// <summary>
+		/// Part of LT-12572.
+		/// </summary>
+		[Test]
+		public void MigrateFrom83Alpha_PicturesChildrenUpdated()
+		{
+			// Old:
+			//   Pictures
+			//    - Thumbnail
+			//    - Sense Number
+			//    - Caption
+			// Should me migrated to:
+			//   Pictures
+			//    - Thumbnail
+			//    - Caption
+			//    - Headword
+			//    - Gloss
+
+			var captionNode = new ConfigurableDictionaryNode
+				{ Label = "Caption", FieldDescription = "Caption" };
+			var senseNumberNode = new ConfigurableDictionaryNode
+				{ Label = "Sense Number", FieldDescription = "SenseNumberTSS" };
+			var thumbnailNode = new ConfigurableDictionaryNode
+				{ Label = "Thumbnail", FieldDescription = "PictureFieldRA" };
+			var picturesNode = new ConfigurableDictionaryNode
+				{
+					Label = "Pictures",
+					FieldDescription = "PicturesOfSenses",
+					Children = new List<ConfigurableDictionaryNode>{ thumbnailNode, senseNumberNode, captionNode }
+				};
+			var mainEntryNode = new ConfigurableDictionaryNode
+				{
+					Label = "Main Entry",
+					FieldDescription = "LexEntry",
+					Children = new List<ConfigurableDictionaryNode> { picturesNode }
+				};
+			var model = new DictionaryConfigurationModel { Version = PreHistoricMigrator.VersionAlpha1, Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+
+			// SUT
+			m_migrator.MigrateFrom83Alpha(model);
+
+			var migratedPicturesNode=model.Parts[0].Children[0];
+
+			// Sense Number should be gone
+			Assert.That(migratedPicturesNode.Children[1].Label, Is.Not.StringMatching("Sense Number"), "Sense Number should be gone");
+
+			// Thumbnail and Caption should still be there
+			Assert.That(migratedPicturesNode.Children[0].Label, Is.StringMatching("Thumbnail"), "Thumbnail should still be present");
+			Assert.That(migratedPicturesNode.Children[1].Label, Is.StringMatching("Caption"), "Caption should still be present");
+
+			// Headword and Gloss should now be there
+			Assert.That(migratedPicturesNode.Children.Count, Is.GreaterThanOrEqualTo(3), "Not enough child nodes. Maybe Headword and Gloss weren't added.");
+			Assert.That(migratedPicturesNode.Children[2].Label, Is.StringMatching("Headword"), "Headword not introduced");
+			Assert.That(migratedPicturesNode.Children[3].Label, Is.StringMatching("Gloss"), "Gloss not introduced");
+		}
 	}
 }
