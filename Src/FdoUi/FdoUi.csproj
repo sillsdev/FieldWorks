@@ -183,6 +183,10 @@
       <HintPath>..\..\Output\Debug\XMLViews.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="Reporting">
+      <HintPath>..\..\Output\Debug\Reporting.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\CommonAssemblyInfo.cs">
@@ -371,11 +375,5 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\question.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Utilities\Reporting\Reporting.csproj">
-      <Project>{9CCBECEC-513C-4DA4-A4CE-F5361B633760}</Project>
-      <Name>Reporting</Name>
-    </ProjectReference>
   </ItemGroup>
 </Project>
