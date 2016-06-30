@@ -2556,7 +2556,37 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(model);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			const string regExPected = @".lexentry>\s.senses\s>\s.sensecontent:not\(:first-child\):before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*}";
+			const string regExPected = @".lexentry>\s.senses\s>\s.sensecontent:before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*}";
+			Assert.IsTrue(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success, "Bulleted style not generated.");
+		}
+
+		[Test]
+		public void GenerateCssForBulletStyleForSensesWithDisplayFirstSenseInline()
+		{
+			GenerateBulletStyle("Bulleted List");
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					NumberStyle = "Dictionary-SenseNum",
+					DisplayEachSenseInAParagraph = true,
+					DisplayFirstSenseInline = true
+				},
+				Style = "Bulleted List"
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "lexentry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
+			PopulateFieldsForTesting(model);
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			const string regExPected = @".lexentry>\s.senses\s>\s.sensecontent\s.\s.sensecontent:not\(:first-child\):before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*}";
 			Assert.IsTrue(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success, "Bulleted style not generated.");
 		}
 
@@ -2585,7 +2615,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(model);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			const string regexExpected = @".lexentry>\s.senses{.*counter-reset:\ssensesos;.*}.*.lexentry>\s.senses\s>\s.sensecontent:not.:first-child.:before{.*counter-increment:\ssensesos;.*content:\scounter.sensesos,\sdecimal.\s'\s';.*font-size:14pt;.*color:Green;.*}";
+			const string regexExpected = @".lexentry>\s.senses{.*counter-reset:\ssensesos;.*}.*.lexentry>\s.senses\s>\s.sensecontent:before{.*counter-increment:\ssensesos;.*content:\scounter.sensesos,\sdecimal.\s'\s';.*font-size:14pt;.*color:Green;.*}";
 			Assert.IsTrue(Regex.Match(cssResult, regexExpected, RegexOptions.Singleline).Success, "Numbering style not generated for Senses.");
 		}
 
@@ -2760,7 +2790,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			const string regExPected = @".lexentry>\s.senses\s*>\s*.sensecontent\s*>\s*.sense>\s.senses\s>\s.sensecontent:not\(:first-child\):before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*}";
+			const string regExPected = @".lexentry>\s.senses\s*>\s*.sensecontent\s*>\s*.sense>\s.senses\s>\s.sensecontent:before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*}";
 			Assert.IsTrue(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success, "Bulleted style for SubSenses not generated.");
 		}
 

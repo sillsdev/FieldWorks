@@ -344,7 +344,9 @@ namespace SIL.FieldWorks.XWorks
 				if (styleDeclaration.Properties.Count == 0)
 					styleDeclaration = GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, mediator);
 				GenerateCssForCounterReset(styleSheet, bulletSelector, styleDeclaration, false);
-				var bulletRule = new StyleRule { Value = bulletSelector + ":not(:first-child):before" };
+				var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
+				var senseSufixRule = senseOptions != null && senseOptions.DisplayFirstSenseInline ? ":not(:first-child):before" : ":before";
+				var bulletRule = new StyleRule { Value = bulletSelector + senseSufixRule };
 				bulletRule.Declarations.Properties.AddRange(GetOnlyBulletContent(styleDeclaration));
 				var projectStyles = FontHeightAdjuster.StyleSheetFromMediator(mediator);
 				BaseStyleInfo projectStyle = projectStyles.Styles[configNode.Style];
@@ -418,7 +420,7 @@ namespace SIL.FieldWorks.XWorks
 				string bulletParentSelector = baseSelection.Substring(0, baseSelection.LastIndexOf('>') - 1);
 				if (isSplitBySpace)
 					bulletParentSelector = baseSelection.Substring(0, baseSelection.LastIndexOf(' '));
-				var resetRule = new StyleRule { Value = bulletParentSelector };
+				var resetRule = new StyleRule {Value = bulletParentSelector};
 				resetRule.Declarations.Add(new Property("counter-reset")
 				{
 					Term = new PrimitiveTerm(UnitType.Attribute, resetSection)
