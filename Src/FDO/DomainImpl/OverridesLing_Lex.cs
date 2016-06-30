@@ -5422,8 +5422,115 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				tisb.SetStrPropValue((int) FwTextPropType.ktptNamedStyle,
 					HomographConfiguration.ksSenseReferenceNumberStyle);
 				tisb.Append(" ");
-				tisb.Append(SenseNumber);
+				var referencedSenseNumber = FormatSenseNumber();
+				tisb.Append(referencedSenseNumber);
 			}
+		}
+
+		private string FormatSenseNumber()
+		{
+			string number = "";
+			if (Owner is ILexEntry)
+			{
+				number = FormatParentSense((ILexEntry)Owner, this);
+			}
+			else
+			{
+				var ls = Owner as LexSense;
+				number = FormatSubSense(ls, this);
+			}
+			return number;
+		}
+
+		private string FormatParentSense(ILexEntry parent, ILexSense child)
+		{
+			var hc = Services.GetInstance<HomographConfiguration>();
+			if (hc.ksSenseNumberStyle == "")
+				return "";
+			string senseIdx = (parent.SensesOS.IndexOf(child) + 1).ToString();
+			senseIdx = GetSenseNumber(senseIdx, hc.ksSenseNumberStyle, "");
+			return senseIdx;
+		}
+
+		private string FormatSubSense(ILexSense parent, ILexSense child)
+		{
+			var hc = Services.GetInstance<HomographConfiguration>();
+			string senseIdx = string.Empty;
+			if (parent.Owner is LexEntry)
+			{
+				//SubSense
+				if (hc.ksSubSenseNumberStyle != "")
+				{
+					senseIdx = (parent.SensesOS.IndexOf(child) + 1).ToString();
+					senseIdx = GetSenseNumber(senseIdx, hc.ksSubSenseNumberStyle, hc.ksParentSenseNumberStyle);
+					if (hc.ksParentSenseNumberStyle == "")
+						return senseIdx;
+				}
+				//Sense
+				return FormatParentSense((ILexEntry)parent.Owner, parent) + senseIdx;
+			}
+			//SubSubSense
+			if (hc.ksSubSubSenseNumberStyle == "")
+				return senseIdx;
+			senseIdx = (parent.SensesOS.IndexOf(child) + 1).ToString();
+			senseIdx = GetSenseNumber(senseIdx, hc.ksSubSubSenseNumberStyle, hc.ksParentSubSenseNumberStyle);
+			if (hc.ksParentSubSenseNumberStyle == "")
+				return senseIdx;
+			senseIdx = FormatSubSense((ILexSense)parent.Owner, parent) + senseIdx;
+			return senseIdx;
+		}
+
+		private string GetSenseNumber(string senseNumber, string numberingStyle, string parentNumberingStyle)
+		{
+			string nextNumber;
+			switch (numberingStyle)
+			{
+				case "%a":
+				case "%A":
+					nextNumber = GetAlphaSenseCounter(numberingStyle, Convert.ToByte(senseNumber));
+					break;
+				case "%i":
+				case "%I":
+					nextNumber = GetRomanSenseCounter(numberingStyle, Convert.ToByte(senseNumber));
+					break;
+				default: // handles %d and %O. We no longer support "%z" (1  b  iii) because users can hand-configure its equivalent
+					nextNumber = senseNumber;
+					break;
+			}
+			nextNumber = GenerateSenseOutlineNumber(parentNumberingStyle, nextNumber);
+			return nextNumber;
+		}
+
+		private string GenerateSenseOutlineNumber(string parentNumberingStyle, string nextNumber)
+		{
+			string fprmattedNumber;
+			if (parentNumberingStyle == "%j")
+				fprmattedNumber = string.Format("{0}", nextNumber);
+			else if (parentNumberingStyle == "%.")
+				fprmattedNumber = string.Format(".{0}", nextNumber);
+			else
+				fprmattedNumber = nextNumber;
+
+			return fprmattedNumber;
+		}
+
+		private string GetAlphaSenseCounter(string numberingStyle, byte senseNumber)
+		{
+			var asciiBytes = 64; // char 'A'
+			asciiBytes = asciiBytes + senseNumber;
+			var nextNumber = ((char)(asciiBytes)).ToString();
+			if (numberingStyle == "%a")
+				nextNumber = nextNumber.ToLower();
+			return nextNumber;
+		}
+
+		private static string GetRomanSenseCounter(string numberingStyle, int senseNumber)
+		{
+			string roman = string.Empty;
+			roman = RomanNumerals.IntToRoman(senseNumber);
+			if (numberingStyle == "%i")
+				roman = roman.ToLower();
+			return roman;
 		}
 
 		/// <summary>

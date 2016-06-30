@@ -1926,9 +1926,8 @@ namespace SIL.FieldWorks.XWorks
 
 		private static string GetRomanSenseCounter(string numberingStyle, int senseNumber)
 		{
-			string[] tens = { "", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC" };
-			string[] ones = { "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX" };
-			var roman = string.Format("{0}{1}", tens[senseNumber / 10], ones[senseNumber % 10]);
+			string roman = string.Empty;
+			roman = RomanNumerals.IntToRoman(senseNumber);
 			if (numberingStyle == "%i")
 				roman = roman.ToLower();
 			return roman;
