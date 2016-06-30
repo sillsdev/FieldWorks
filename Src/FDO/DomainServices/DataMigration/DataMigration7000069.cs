@@ -2,7 +2,9 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Linq;
+using System.Text;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
@@ -11,16 +13,16 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// 1) Fix the Restrictions field for both LexEntry and LexSense to be MultiString (AStr)
-	/// instead of MultiUnicode (AUni).
+	///    instead of MultiUnicode (AUni).
 	///
 	/// 2) Add a MultiString (AUni) ReverseName field to LexEntryType, both Variant Type and
-	/// Complex Form Type. The migration fills in the 'en' ws contents with Name.Value + " of".
-	/// Swap Abbreviation and ReverseAbbr fields. By swapping the fields the "of" will be switched
-	/// to the other reference.
+	///    Complex Form Type. The migration fills in the 'en' ws contents with Name.Value + " of".
+	///    Swap Abbreviation and ReverseAbbr fields. By swapping the fields the "of" will be switched
+	///    to the other reference.
 	///
 	/// 3) Add a MultiString UsageNote and MuliUnicode Exemplar field in LexSense, allowing for multiple ws
-	/// attributes in their run. If user has created a Custom "UsageNote" or "Exemplar", then copy the data into the
-	/// new field and remove the Custom field.
+	///    attributes in their run. If user has created a Custom "UsageNote" or "Exemplar", then copy the data
+	///    into the new field and remove the Custom field.
 	///
 	/// 4) Remove LexEntryRefs (Complex Forms and Variants) with no ComponentLexemes (they mean nothing)
 	///
@@ -28,6 +30,14 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 	///    Added fields are: PrecComment, Language, Bibliography and Note.
 	///    Remove Source and put its data in Language, other added fields are empty.
 	///    Existing fields Form and Gloss are changed from MultiUnicode to MultiString.
+	///
+	/// 6) Add a new property to LexSense; owning sequence of LexExtendedNote.
+	///    Add a new property to LexDb; owned atomic CmPossibilityList called ExtendedNoteTypes
+	///    Add a new class LexExtendedNote with properties:
+	///      - ExtendedNoteType: atomic reference to CmPossiblity owned by ExtendedNoteTypes list
+	///      - Discussion: all analysis MultiString
+	///      - Examples: owning sequence of LexExample
+	///    Add the ExtendedNoteTypes CmPossibility list with 5 default entries
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	internal class DataMigration7000069 : IDataMigration
@@ -42,8 +52,97 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			MigrateIntoNewMultistringField(repoDto, "Exemplar");
 			MigrateIntoNewMultistringField(repoDto, "UsageNote");
 			AugmentEtymologyCluster(repoDto);
+			AddNewExtendedNoteCluster(repoDto);
+			//VerifyExistenceOfMinimalPublicationType(repoDto); DM 7000041 does this already
 
 			DataMigrationServices.IncrementVersionNumber(repoDto);
+		}
+
+		/// <summary>
+		/// Add LexDb.ExtendedNoteTypes possibility list to data
+		/// </summary>
+		/// <remarks>internal for testing</remarks>
+		internal static void AddNewExtendedNoteCluster(IDomainObjectDTORepository repoDto)
+		{
+			const string extNoteListGuid = "ed6b2dcc-e82f-4631-b61a-6b630de332d0";
+
+			var lexDbDTO = repoDto.AllInstancesSansSubclasses("LexDb").FirstOrDefault();
+			if (lexDbDTO == null)
+				return; // This must be a test that doesn't care about LexDb.
+			var lexDbElt = XElement.Parse(lexDbDTO.Xml);
+			if (lexDbElt.Element("ExtendedNoteTypes") != null)
+				return; // probably a test involving NewLangProj which is still languishing at v7000062
+			CreateNewLexDbProperty(lexDbElt, extNoteListGuid);
+			var lexDbGuid = lexDbElt.Attribute("guid").Value;
+
+			// create ExtendedNoteTypes' possibility list
+			var sb = new StringBuilder();
+			sb.AppendFormat("<rt class=\"CmPossibilityList\" guid=\"{0}\" ownerguid=\"{1}\">", extNoteListGuid,
+							lexDbGuid);
+			sb.Append("<Abbreviation>");
+			sb.Append("<AUni ws=\"en\">ExtNoteTyp</AUni>");
+			sb.Append("</Abbreviation>");
+			sb.Append("<DateCreated val=\"2016-06-27 18:48:18.679\" />");
+			sb.Append("<DateModified val=\"2016-06-27 18:48:18.679\" />");
+			sb.Append("<Depth val=\"1\" />");
+			sb.Append("<IsSorted val=\"True\" />");
+			sb.Append("<ItemClsid val=\"7\" />");
+			sb.Append("<Name>");
+			sb.Append("<AUni ws=\"en\">Extended Note Types</AUni>");
+			sb.Append("</Name>");
+			sb.Append("<Possibilities>");
+			sb.Append("<objsur guid=\"2f06d436-b1e0-47ae-a42e-1f7b893c5fc2\" t=\"o\" />");
+			sb.Append("<objsur guid=\"7ad06e7d-15d1-42b0-ae19-9c05b7c0b181\" t=\"o\" />");
+			sb.Append("<objsur guid=\"d3d28628-60c9-4917-8185-ba64c59f20c3\" t=\"o\" />");
+			sb.Append("<objsur guid=\"30115b33-608a-4506-9f9c-2457cab4f4a8\" t=\"o\" />");
+			sb.Append("<objsur guid=\"5dd29371-fdb0-497a-a2fb-7ca69b00ad4f\" t=\"o\" />");
+			sb.Append("</Possibilities>");
+			sb.Append("<PreventDuplicates val=\"True\" />");
+			sb.Append("<WsSelector val=\"-3\" />");
+			sb.Append("</rt>");
+			var newCmPossibilityListElt = XElement.Parse(sb.ToString());
+			var dtoCmPossibilityList = new DomainObjectDTO(extNoteListGuid, "CmPossibilityList", newCmPossibilityListElt.ToString());
+			repoDto.Add(dtoCmPossibilityList);
+
+			// Now add our 5 default possibilities
+			CreatePossibility(repoDto, extNoteListGuid, "2f06d436-b1e0-47ae-a42e-1f7b893c5fc2", "Collocation", "Coll.");
+			CreatePossibility(repoDto, extNoteListGuid, "7ad06e7d-15d1-42b0-ae19-9c05b7c0b181", "Cultural", "Cult.");
+			CreatePossibility(repoDto, extNoteListGuid, "d3d28628-60c9-4917-8185-ba64c59f20c3", "Discourse", "Disc.");
+			CreatePossibility(repoDto, extNoteListGuid, "30115b33-608a-4506-9f9c-2457cab4f4a8", "Grammar", "Gram.");
+			CreatePossibility(repoDto, extNoteListGuid, "5dd29371-fdb0-497a-a2fb-7ca69b00ad4f", "Semantic", "Sem.");
+
+			DataMigrationServices.UpdateDTO(repoDto, lexDbDTO, lexDbElt.ToString());
+		}
+
+		private static void CreatePossibility(IDomainObjectDTORepository repoDto, string listGuid, string possibilityGuid,
+			string name, string abbr)
+		{
+			var sb = new StringBuilder();
+			sb.AppendFormat("<rt class=\"CmPossibility\" guid=\"{0}\" ownerguid=\"{1}\">", possibilityGuid, listGuid);
+			sb.Append("<Abbreviation>");
+			sb.AppendFormat("<AUni ws=\"en\">{0}</AUni>", abbr);
+			sb.Append("</Abbreviation>");
+			sb.Append("<DateCreated val=\"2016-06-27 18:48:18.679\" />");
+			sb.Append("<DateModified val=\"2016-06-27 18:48:18.679\" />");
+			sb.Append("<BackColor val=\"-1073741824\" />");
+			sb.Append("<ForeColor val=\"-1073741824\" />");
+			sb.Append("<IsProtected val=\"True\" />");
+			sb.Append("<Name>");
+			sb.AppendFormat("<AUni ws=\"en\">{0}</AUni>", name);
+			sb.Append("</Name>");
+			sb.Append("<UnderColor val=\"-1073741824\" />");
+			sb.Append("</rt>");
+			var newCmPossibilityElt = XElement.Parse(sb.ToString());
+			var dtoCmPossibility = new DomainObjectDTO(possibilityGuid, "CmPossibility", newCmPossibilityElt.ToString());
+			repoDto.Add(dtoCmPossibility);
+		}
+
+		private static void CreateNewLexDbProperty(XElement lexDbElt, string extNoteListGuid)
+		{
+			lexDbElt.Add(new XElement("ExtendedNoteTypes",
+							new XElement("objsur",
+								new XAttribute("guid", extNoteListGuid),
+								new XAttribute("t", "o"))));
 		}
 
 		/// <summary>
@@ -80,7 +179,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			const string defaultWs = "en";
 			var propName = analysis ? "CurAnalysisWss" : "CurVernWss";
 			var langProj = dtoRepos.AllInstancesSansSubclasses("LangProject").FirstOrDefault();
-			if (langProj == null) // It's a test! A real test that cares should have a LangProject element!
+			if (langProj == null) // We must be in a test! A real test that cares should have a LangProject element!
 				return defaultWs;
 			var propString = XElement.Parse(langProj.Xml).Element(propName).Element("Uni").Value;
 			return propString.Split(' ')[0];

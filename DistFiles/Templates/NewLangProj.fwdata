@@ -934,6 +934,9 @@
 <DomainTypes>
 <objsur guid="b0a1eb98-ea5e-11de-888e-0013722f8dec" t="o" />
 </DomainTypes>
+<ExtendedNoteTypes>
+<objsur guid="ed6b2dcc-e82f-4631-b61a-6b630de332d0" t="o" />
+</ExtendedNoteTypes>
 <MorphTypes>
 <objsur guid="d7f713d8-e8cf-11d3-9764-00c04f186933" t="o" />
 </MorphTypes>
@@ -991,6 +994,86 @@
 <ForeColor val="-1073741824" />
 <Name>
 <AUni ws="en">primary</AUni>
+</Name>
+<UnderColor val="-1073741824" />
+</rt>
+<rt class="CmPossibilityList" guid="ed6b2dcc-e82f-4631-b61a-6b630de332d0" ownerguid="af26d792-ea5e-11de-8f7e-0013722f8dec">
+<Abbreviation>
+<AUni ws="en">ExtNoteTyp</AUni>
+</Abbreviation>
+<Depth val="1" />
+<IsSorted val="true" />
+<ItemClsid val="7" />
+<Name>
+<AUni ws="en">Extended Note Types</AUni>
+</Name>
+<Possibilities>
+<objsur guid="2f06d436-b1e0-47ae-a42e-1f7b893c5fc2" t="o" />
+<objsur guid="7ad06e7d-15d1-42b0-ae19-9c05b7c0b181" t="o" />
+<objsur guid="d3d28628-60c9-4917-8185-ba64c59f20c3" t="o" />
+<objsur guid="30115b33-608a-4506-9f9c-2457cab4f4a8" t="o" />
+<objsur guid="5dd29371-fdb0-497a-a2fb-7ca69b00ad4f" t="o" />
+</Possibilities>
+<PreventDuplicates val="true" />
+<WsSelector val="-3" />
+</rt>
+<rt class="CmPossibility" guid="2f06d436-b1e0-47ae-a42e-1f7b893c5fc2" ownerguid="ed6b2dcc-e82f-4631-b61a-6b630de332d0">
+<Abbreviation>
+<AUni ws="en">Coll.</AUni>
+</Abbreviation>
+<BackColor val="-1073741824" />
+<ForeColor val="-1073741824" />
+<IsProtected val="True" />
+<Name>
+<AUni ws="en">Collocation</AUni>
+</Name>
+<UnderColor val="-1073741824" />
+</rt>
+<rt class="CmPossibility" guid="7ad06e7d-15d1-42b0-ae19-9c05b7c0b181" ownerguid="ed6b2dcc-e82f-4631-b61a-6b630de332d0">
+<Abbreviation>
+<AUni ws="en">Cult.</AUni>
+</Abbreviation>
+<BackColor val="-1073741824" />
+<ForeColor val="-1073741824" />
+<IsProtected val="True" />
+<Name>
+<AUni ws="en">Cultural</AUni>
+</Name>
+<UnderColor val="-1073741824" />
+</rt>
+<rt class="CmPossibility" guid="d3d28628-60c9-4917-8185-ba64c59f20c3" ownerguid="ed6b2dcc-e82f-4631-b61a-6b630de332d0">
+<Abbreviation>
+<AUni ws="en">Disc.</AUni>
+</Abbreviation>
+<BackColor val="-1073741824" />
+<ForeColor val="-1073741824" />
+<IsProtected val="True" />
+<Name>
+<AUni ws="en">Discourse</AUni>
+</Name>
+<UnderColor val="-1073741824" />
+</rt>
+<rt class="CmPossibility" guid="30115b33-608a-4506-9f9c-2457cab4f4a8" ownerguid="ed6b2dcc-e82f-4631-b61a-6b630de332d0">
+<Abbreviation>
+<AUni ws="en">Gram.</AUni>
+</Abbreviation>
+<BackColor val="-1073741824" />
+<ForeColor val="-1073741824" />
+<IsProtected val="True" />
+<Name>
+<AUni ws="en">Grammar</AUni>
+</Name>
+<UnderColor val="-1073741824" />
+</rt>
+<rt class="CmPossibility" guid="5dd29371-fdb0-497a-a2fb-7ca69b00ad4f" ownerguid="ed6b2dcc-e82f-4631-b61a-6b630de332d0">
+<Abbreviation>
+<AUni ws="en">Sem.</AUni>
+</Abbreviation>
+<BackColor val="-1073741824" />
+<ForeColor val="-1073741824" />
+<IsProtected val="True" />
+<Name>
+<AUni ws="en">Semantic</AUni>
 </Name>
 <UnderColor val="-1073741824" />
 </rt>

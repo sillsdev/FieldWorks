@@ -216,44 +216,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
-		/// Get (create if necessary, in a non-undoable UOW if necessary) PublicationTypesOA in the default state.
-		/// </summary>
-		[ModelProperty(CellarPropertyType.OwningAtomic, 5005024, "CmPossibilityList")]
-		public ICmPossibilityList PublicationTypesOA
-		{
-			get
-			{
-				if (PublicationTypesOA_Generated != null)
-					return PublicationTypesOA_Generated;
-				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor,
-					() =>
-						{
-							PublicationTypesOA_Generated = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
-							var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-							// Note: we don't need to localize here because we are deliberately creating a minimal English
-							// version of the list. The user can fill in other writing systems if desired.
-							PublicationTypesOA_Generated.Name.set_String(wsEn, "Publications");
-							var mainDict = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-							PublicationTypesOA_Generated.PossibilitiesOS.Add(mainDict);
-							mainDict.Name.set_String(wsEn, "Main Dictionary");
-
-							// The following are not explicitly tested.
-							PublicationTypesOA_Generated.ItemClsid = CmPossibilityTags.kClassId;
-							PublicationTypesOA_Generated.Depth = 1;
-							PublicationTypesOA_Generated.IsSorted = true;
-							PublicationTypesOA_Generated.PreventChoiceAboveLevel = 0;
-
-							mainDict.Abbreviation.set_String(wsEn, "Main");
-							mainDict.IsProtected = true;
-						}
-					);
-				return PublicationTypesOA_Generated;
-			}
-			set { PublicationTypesOA_Generated = value; }
-		}
-
-
-		/// <summary>
 		/// Allows user to convert LexEntryType to LexEntryInflType.
 		/// </summary>
 		public void ConvertLexEntryInflTypes(IProgress progressBar, IEnumerable<ILexEntryType> list)

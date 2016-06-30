@@ -12,8 +12,5 @@
 	<Class id="LangProject">
 		<property name="LinkedFilesRootDir"/>
 	</Class>
-	<Class id="LexDb">
-		<property name="PublicationTypes"/>
-	</Class>
 	<!-- -->
 </HandGenerated>

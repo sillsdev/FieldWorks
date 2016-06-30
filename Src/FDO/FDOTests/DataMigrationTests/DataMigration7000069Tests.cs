@@ -19,6 +19,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 	[TestFixture]
 	public sealed class DataMigration7000069Tests : DataMigrationTestsBase
 	{
+		private const string enWs = "en";
+		private const string frWs = "fr";
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the migration from version 7000068 to 7000069 for the Restrictions field.
@@ -56,8 +58,6 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 			m_dataMigrationManager.PerformMigration(dtoRepos, 7000069, new DummyProgressDlg());
 
-			const string frWs = "fr";
-			const string enWs = "en";
 			var firstEntry = XElement.Parse(dtoRepos.AllInstancesSansSubclasses("LexEntry").First().Xml);
 			var restrictionsElement = firstEntry.Element("Restrictions");
 			CollectionAssert.IsEmpty(restrictionsElement.Descendants("AUni"));
@@ -158,8 +158,6 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 			DataMigration7000069.AddReverseNameAndSwapAbbreviationFields(dtoRepos); // SUT
 
-			const string frWs = "fr";
-			const string enWs = "en";
 			var firstEntryType = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("LexEntryType").First().Xml);
 
 			var nameElement = firstEntryType.Element("Name");
@@ -250,7 +248,6 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 			// Since we're just adding two fields that will be empty initially,
 			// we just need to verify that nothing in our data changed.
-			const string frWs = "fr";
 			const string frPhoneticWs = "fr-fonipa";
 			const string frAudioWs = "fr-Zxxx-x-audio";
 			const string entryGuid = "7ecbb299-bf35-4795-a5cc-8d38ce8b891c";
@@ -362,9 +359,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 			// Since we're just adding two fields that will be empty initially,
 			// we just need to verify that nothing in our data changed.
-			const string frWs = "fr";
 			const string frPhoneticWs = "fr-fonipa";
-			const string enWs = "en";
 			const string idWs = "id";
 			const string entry1Guid = "7ecbb299-bf35-4795-a5cc-8d38ce8b891c";
 			const string entry2Guid = "7ecbb299-bf35-4795-a5cc-8d38ce8b891e";
@@ -481,9 +476,6 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000069_CustomExemplar.xml");
 			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000068, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
-
-			const string frWs = "fr";
-			const string enWs = "en";
 
 			// Make sure LexSense does not have Exemplar prior to migration.
 			var lexSenseDtos = dtoRepos.AllInstancesSansSubclasses("LexSense").ToList();
@@ -625,9 +617,6 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000069_CustomUsageNote.xml");
 			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000068, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
-
-			const string frWs = "fr";
-			const string enWs = "en";
 
 			// Make sure LexSense does not have UsageNote prior to migration.
 			var lexSenseDtos = dtoRepos.AllInstancesSansSubclasses("LexSense").ToList();
@@ -771,5 +760,131 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			Assert.IsNotNull(usagenoteElt);
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test the migration from version 7000068 to 7000069 to Create ExtendedNote field,
+		/// which is a owning sequence of LexExtendedNote, a new class.
+		/// Also tests the addition of a new CmPossibilityList attached to LexDb with five
+		/// shipping defaults.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void TestAddingExtendedNoteToLexSense()
+		{
+			const string extNoteListGuid = "ed6b2dcc-e82f-4631-b61a-6b630de332d0";
+			var mockMdc = new MockMDCForDataMigration();
+			mockMdc.AddClass(1, "CmObject", null, new List<string> { "LexSense", "LexDb", "LexExampleSentence", "CmPossibilityList" });
+			mockMdc.AddClass(2, "CmPossibilityList", "CmObject", new List<string>());
+			mockMdc.AddClass(3, "LexDb", "CmObject", new List<string>());
+			mockMdc.AddClass(4, "LexSense", "CmObject", new List<string>());
+			mockMdc.AddClass(5, "LexExampleSentence", "CmObject", new List<string>());
+
+			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000069_ExtendedNote.xml");
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000068, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
+
+			// Make sure LexSense does not have ExtendedNotes prior to migration.
+			var lexSenseDtos = dtoRepos.AllInstancesSansSubclasses("LexSense").ToList();
+			foreach (var elt in lexSenseDtos.Select(dto => XElement.Parse(dto.Xml)))
+			{
+				Assert.IsNull(elt.Element("ExtendedNote"));
+			}
+
+			// Make sure LexDb does not have ExtendedNoteTypes prior to migration.
+			var lexDbDtos = dtoRepos.AllInstancesSansSubclasses("LexDb").ToList();
+			foreach (var elt in lexDbDtos.Select(dto => XElement.Parse(dto.Xml)))
+			{
+				Assert.IsNull(elt.Element("ExtendedNoteTypes"));
+			}
+
+			//SUT
+			DataMigration7000069.AddNewExtendedNoteCluster(dtoRepos);
+
+			var firstSense = XElement.Parse(lexSenseDtos.First().Xml);
+
+			var noteElt = firstSense.Element("ExtendedNote");
+			Assert.IsNull(noteElt, "ExtendedNote property should still be null");
+
+			var lexDb = XElement.Parse(lexDbDtos.First().Xml);
+			var extNoteTypElt = lexDb.Element("ExtendedNoteTypes");
+			Assert.IsNotNull(extNoteTypElt, "There should be a possibility list for ExtendedNoteTypes");
+
+			var guids = GetOwnedGuidStringsFromPropertyElement(extNoteTypElt);
+			Assert.AreEqual(1, guids.Count(), "Found too many or too few possibility lists.");
+			var possListElt = XElement.Parse(dtoRepos.GetDTO(guids.First()).Xml);
+			Assert.AreEqual(lexDb.Attribute("guid").Value, possListElt.Attribute("ownerguid").Value,
+				"Reverse link from list to LexDb not set correctly");
+			Assert.AreEqual(extNoteListGuid, possListElt.Attribute("guid").Value,
+				"ExtendedNoteTypes possibility list has the wrong guid.");
+
+			// Should look something like this:
+			//<rt class="CmPossibilityList" guid="ed6b2dcc-e82f-4631-b61a-6b630de332d0" ownerguid="66b37dff-779c-4d81-b359-f5878b5c69f0">
+			//  <Name>
+			//    <AUni ws="en">Extended Note Types</AUni>
+			//  </Name>
+			//  <Abbreviation>
+			//    <AUni ws="en">ExtNoteTyp</AUni>
+			//  </Abbreviation>
+			//  <Depth val="1"/>
+			//  <IsSorted val="True"/>
+			//  <ItemClsid val="7"/>
+			//  <Possibilities>
+			//    <objsur guid="2f06d436-b1e0-47ae-a42e-1f7b893c5fc2" t="o" />
+			//    <objsur guid="7ad06e7d-15d1-42b0-ae19-9c05b7c0b181" t="o" />
+			//    <objsur guid="d3d28628-60c9-4917-8185-ba64c59f20c3" t="o" />
+			//    <objsur guid="30115b33-608a-4506-9f9c-2457cab4f4a8" t="o" />
+			//    <objsur guid="5dd29371-fdb0-497a-a2fb-7ca69b00ad4f" t="o" />
+			//  </Possibilities>
+			//  <PreventDuplicates val="True"/>
+			//  <WsSelector val="-3" />
+			//</rt>
+
+			var name = possListElt.Element("Name").Element("AUni");
+			Assert.AreEqual(enWs, name.Attribute("ws").Value, "ws attribute not set on Name element");
+			Assert.AreEqual("Extended Note Types", name.Value);
+			var abbr = possListElt.Element("Abbreviation").Element("AUni");
+			Assert.AreEqual(enWs, name.Attribute("ws").Value, "ws attribute not set on Abbreviation element");
+			Assert.AreEqual("ExtNoteTyp", abbr.Value);
+			Assert.AreEqual("1", possListElt.Element("Depth").Attribute("val").Value);
+			Assert.AreEqual("True", possListElt.Element("IsSorted").Attribute("val").Value);
+			Assert.AreEqual("7", possListElt.Element("ItemClsid").Attribute("val").Value);
+			Assert.AreEqual("True", possListElt.Element("PreventDuplicates").Attribute("val").Value);
+			Assert.AreEqual("-3", possListElt.Element("WsSelector").Attribute("val").Value);
+			var possibilitiesElt = possListElt.Element("Possibilities");
+			Assert.AreEqual(5, possibilitiesElt.Elements("objsur").Count());
+			VerifyExtNotePossibility(possibilitiesElt, dtoRepos, "2f06d436-b1e0-47ae-a42e-1f7b893c5fc2", "Collocation", "Coll.");
+			VerifyExtNotePossibility(possibilitiesElt, dtoRepos, "7ad06e7d-15d1-42b0-ae19-9c05b7c0b181", "Cultural", "Cult.");
+			VerifyExtNotePossibility(possibilitiesElt, dtoRepos, "d3d28628-60c9-4917-8185-ba64c59f20c3", "Discourse", "Disc.");
+			VerifyExtNotePossibility(possibilitiesElt, dtoRepos, "30115b33-608a-4506-9f9c-2457cab4f4a8", "Grammar", "Gram.");
+			VerifyExtNotePossibility(possibilitiesElt, dtoRepos, "5dd29371-fdb0-497a-a2fb-7ca69b00ad4f", "Semantic", "Sem.");
+		}
+
+		private void VerifyExtNotePossibility(XElement possibilitiesElt, IDomainObjectDTORepository dtoRepos, string guidStr,
+			string name, string abbreviation)
+		{
+			var guids = GetOwnedGuidStringsFromPropertyElement(possibilitiesElt);
+			CollectionAssert.Contains(guids, guidStr, "Didn't find guid in list of pointers in CmPossibilityList");
+			var possElt = XElement.Parse(dtoRepos.GetDTO(guidStr).Xml);
+			var nameStrElt = possElt.Element("Name");
+			var abbrStrElt = possElt.Element("Abbreviation");
+			VerifySingleMultiUnicodeStringFromPropertyElement(nameStrElt, name);
+			VerifySingleMultiUnicodeStringFromPropertyElement(abbrStrElt, abbreviation);
+			var protElt = possElt.Element("IsProtected");
+			Assert.IsNotNull(protElt);
+			Assert.AreEqual("True", protElt.Attribute("val").Value, "IsProtected property not correctly set for {0}.", name);
+		}
+
+		private IEnumerable<string> GetOwnedGuidStringsFromPropertyElement(XElement propElement)
+		{
+			return propElement.Elements("objsur").Select(objPointer => objPointer.Attribute("guid").Value).ToList();
+		}
+
+		private void VerifySingleMultiUnicodeStringFromPropertyElement(XElement propElement, string value)
+		{
+			Assert.IsNotNull(propElement, "MultiUnicode property {0} should not be null.", value);
+			var aUniStr = propElement.Elements("AUni");
+			Assert.AreEqual(1, aUniStr.Count(), "Wrong number of AUni elements in MultiUnicode property.");
+			Assert.AreEqual(enWs, aUniStr.First().Attribute("ws").Value, "Unicode string ws attribute is wrong.");
+			Assert.AreEqual(value, aUniStr.First().Value, "Unicode string has wrong value.");
+		}
 	}
 }

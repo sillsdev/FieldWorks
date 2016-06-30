@@ -37,13 +37,17 @@ The original version number was: 7000000. Be sure it has the right number of zer
 editing it.
 
 Change History: (Be sure to update the 'version' attribute in the EntireModel, when needed. (Almost always.))
-  14 June 2016 (7000069): Make multiple model changes:
+  30 June 2016 (7000069): Make multiple model changes:
     * Add/modify LexEtymology fields and make LexEntry->Etymology an owning sequence.
     * Add DoNotPublishIn fields to CmPicture and LexPronunciation.
     * Make LexEntry and LexSense Restrictions a MultiString field.
     * Add ReverseName to LexEntryType as a MultiUnicode field. Swap Abbreviation and ReverseAbbr fields.
     * Add UsageNote to LexSense as a MultiString field.
     * Add Exemplar to LexSense as a MultiString field.
+    * Add LexExtendedNote cluster, add ExtendedNoteTypes property to LexDb.
+    * Add owning sequence of LexExtendedNote to LexSense as ExtendedNote property.
+    * Since LexDb.PublicationTypes used to be 'hand-generated' and isn't now, the DM will also
+      verify that the minimal (Main Dictionary) entry exists in the PublicationTypes list.
   9 July 2013 (7000068): Make ReversalIndexEntry subentries be a sequence instead of a collection (LT-6468). No DM needed.
   7 May 2013  (7000067): Remove illegal attributes from <Uni> element. (Appears to come from FW 6.0.x.)
   22 March 2013 (7000066): Redux of DM64, but with real DM code.
@@ -2776,6 +2780,16 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 			<para>This list stores the types of publications that the user defines which may be referenced in various "DoNotPublishIn" properties. By default it contains just one item, "Main Dictionary".</para>
 		  </comment>
 		</owning>
+		<owning num="25" id="ExtendedNoteTypes" card="atomic" sig="CmPossibilityList">
+		  <comment>
+			<para>This Extended Note Type list is used to classify a LexExtendedNote via the ExtendedNoteTypes property. ItemClsid should be set to CmPossibility, IsSorted to true, and Depth to 127. The list will typically be flat, but the user is free to introduce a hierarchy if desirable. The initial list may have:</para>
+			<para>Cultural</para>
+			<para>Grammar</para>
+			<para>Semantic</para>
+			<para>Collocation</para>
+			<para>Discourse</para>
+		  </comment>
+		</owning>
 	  </props>
 	</class>
 	<class num="6" id="ConstituentChartCellPart" abbr="cccp" abstract="true" base="CmObject" depth="0">
@@ -2922,6 +2936,7 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 		</rel>
 		<basic num="33" id="Exemplar" sig="MultiString"/>
 		<basic num="34" id="UsageNote" sig="MultiString"/>
+		<owning num="35" id="ExtendedNote" card="seq" sig="LexExtendedNote"/>
 	  </props>
 	</class>
 	<class num="26" id="MoAdhocProhib" abstract="true" abbr="acp" base="CmObject" depth="0">
@@ -5159,6 +5174,26 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 			<para>For example, if the type is perfective and regularly inflected verbs have a perfective prefix in the aspect slot (which happens to be the second slot before the stem), the user would indicate that second, aspect slot here</para>
 		  </comment>
 		</rel>
+	  </props>
+	</class>
+	<class num="134" id="LexExtendedNote" abstract="false" abbr="lextnt" base="CmObject" depth="0">
+	  <props>
+		<rel num="1" id="ExtendedNoteType" sig="CmPossibility" card="atomic">
+		  <comment>
+			<para>From the LexDb.ExtendedNoteTypes possibility list.</para>
+		  </comment>
+		</rel>
+		<basic num="2" id="Discussion" sig="MultiString">
+		  <comment>
+			<para>User's discussion of the topic.</para>
+		  </comment>
+		</basic>
+		<owning num="3" id="Examples" card="seq" sig="LexExampleSentence">
+		  <comment>
+			<para>These are examples that illustrate the discussion.</para>
+			<para>The LexExample model includes Translation Type and Reference, but they will be empty and not shown.</para>
+		  </comment>
+		</owning>
 	  </props>
 	</class>
   </CellarModule>
