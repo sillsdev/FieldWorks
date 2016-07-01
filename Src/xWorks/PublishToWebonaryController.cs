@@ -129,9 +129,10 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			foreach (var reversal in model.SelectedReversals)
 			{
+				var revWsRFC5646 = model.Reversals.Where(prop => prop.Value.Label == reversal).Select(prop => prop.Value.WritingSystem).FirstOrDefault();
 				webonaryView.UpdateStatus(string.Format(xWorksStrings.ExportingReversalsToWebonary, reversal));
-				var reversalWs = m_cache.LangProject.AnalysisWritingSystems.FirstOrDefault(ws => ws.DisplayLabel == reversal);
-				// The reversalWs should always match the Display label of one of the AnalysisWritingSystems, this exception is for future programming errors
+				var reversalWs = m_cache.LangProject.AnalysisWritingSystems.FirstOrDefault(ws => ws.RFC5646 == revWsRFC5646);
+				// The reversalWs should always match the RFC5646 of one of the AnalysisWritingSystems, this exception is for future programming errors
 				if (reversalWs == null)
 				{
 					throw new ApplicationException(string.Format("Could not locate reversal writing system for {0}", reversal));
@@ -139,7 +140,7 @@ namespace SIL.FieldWorks.XWorks
 				var xhtmlPath = Path.Combine(tempDirectoryToCompress, string.Format("reversal_{0}.xhtml", reversalWs.RFC5646));
 				var configurationFile = Path.Combine(m_mediator.PropertyTable.UserSettingDirectory, "ReversalIndex", reversal + DictionaryConfigurationModel.FileExtension);
 				var configuration = new DictionaryConfigurationModel(configurationFile, m_cache);
-				m_exportService.ExportReversalContent(xhtmlPath, reversal, configuration);
+				m_exportService.ExportReversalContent(xhtmlPath, revWsRFC5646, configuration);
 				webonaryView.UpdateStatus(xWorksStrings.ExportingReversalsToWebonaryCompleted);
 			}
 		}

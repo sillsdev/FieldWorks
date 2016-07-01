@@ -91,11 +91,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public void ExportReversalContent(string xhtmlPath, string reversalName = null, DictionaryConfigurationModel configuration = null,
+		public void ExportReversalContent(string xhtmlPath, string reversalWs = null, DictionaryConfigurationModel configuration = null,
 			IThreadedProgress progress = null)
 		{
 			using (ClerkActivator.ActivateClerkMatchingExportType(ReversalType, m_mediator))
-			using (ReversalIndexActivator.ActivateReversalIndex(reversalName, m_mediator, m_cache))
+			using (ReversalIndexActivator.ActivateReversalIndex(reversalWs, m_mediator, m_cache))
 			{
 				configuration = configuration ?? new DictionaryConfigurationModel(
 					DictionaryConfigurationListener.GetCurrentConfiguration(m_mediator, "ReversalIndex"), m_cache);
@@ -207,12 +207,12 @@ namespace SIL.FieldWorks.XWorks
 				ActivateReversalIndexIfNeeded(m_sCurrentRevIdxGuid, m_mediator, m_clerk, out dummy);
 			}
 
-			public static ReversalIndexActivator ActivateReversalIndex(string reversalName, Mediator mediator, FdoCache cache)
+			public static ReversalIndexActivator ActivateReversalIndex(string reversalWs, Mediator mediator, FdoCache cache)
 			{
-				if (reversalName == null)
+				if (reversalWs == null)
 					return null;
 				var reversalGuid = cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances()
-					.First(revIdx => revIdx.ShortName == reversalName).Guid;
+					.First(revIdx => revIdx.WritingSystem == reversalWs).Guid;
 				return ActivateReversalIndex(reversalGuid, mediator);
 			}
 
