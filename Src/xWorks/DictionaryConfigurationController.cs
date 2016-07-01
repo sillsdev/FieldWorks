@@ -376,6 +376,7 @@ namespace SIL.FieldWorks.XWorks
 				if (_model == args.ConfigurationPicked)
 					return;
 				_model = args.ConfigurationPicked;
+				SetConfigureHomographParameters(_model, cache);
 				RefreshView(); // isChangeInDictionaryModel: true, because we update the current config in the PropertyTable when we save the model.
 			};
 
@@ -479,6 +480,36 @@ namespace SIL.FieldWorks.XWorks
 			};
 			SelectCurrentConfigurationAndRefresh();
 			MasterRefreshRequired = m_isDirty = false;
+		}
+
+		/// <summary>
+		/// Sets Parameters for Numbering styles.
+		/// </summary>
+		/// <param name="model"></param>
+		/// <param name="cache"></param>
+		public static void SetConfigureHomographParameters(DictionaryConfigurationModel model, FdoCache cache)
+		{
+			var hc = cache.ServiceLocator.GetInstance<HomographConfiguration>();
+			if (model.Parts.Count == 0) return;
+			var mainEntryNode = model.Parts[0];
+			//Sense Node
+			string senseType = (mainEntryNode.DisplayLabel == "Reversal Entry") ? "Referenced Senses" : "Senses";
+			var senseNode = mainEntryNode.Children.Where(prop => prop.Label == senseType).FirstOrDefault();
+			if (senseNode == null) return;
+			var senseOptions = (DictionaryNodeSenseOptions)senseNode.DictionaryNodeOptions;
+			hc.ksSenseNumberStyle = senseOptions.NumberingStyle;
+			//SubSense Node
+			var subSenseNode = senseNode.Children.Where(prop => prop.Label == "Subsenses").FirstOrDefault();
+			if (subSenseNode == null) return;
+			var subSenseOptions = (DictionaryNodeSenseOptions)subSenseNode.DictionaryNodeOptions;
+			hc.ksSubSenseNumberStyle = subSenseOptions.NumberingStyle;
+			hc.ksParentSenseNumberStyle = subSenseOptions.ParentSenseNumberingStyle;
+			//SubSubSense Node
+			var subSubSenseNode = subSenseNode.ReferencedOrDirectChildren.Where(prop => prop.Label == "Subsenses").FirstOrDefault();
+			if (subSubSenseNode == null) return;
+			var subSubSenseOptions = (DictionaryNodeSenseOptions)subSubSenseNode.DictionaryNodeOptions;
+			hc.ksSubSubSenseNumberStyle = subSubSenseOptions.NumberingStyle;
+			hc.ksParentSubSenseNumberStyle = subSubSenseOptions.ParentSenseNumberingStyle;
 		}
 
 		private void SetManagerTypeInfo(DictionaryConfigurationManagerDlg dialog)
