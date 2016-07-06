@@ -103,6 +103,7 @@
 	<xs:attribute type="xs:boolean" name="isEnabled" use="required"/>
 	<xs:attribute type="xs:boolean" name="isDuplicate" use="optional"/>
 	<xs:attribute type="xs:boolean" name="isCustomField" use="optional"/>
+	<xs:attribute type="xs:boolean" name="hideCustomFields" use="optional"/>
 	<xs:attributeGroup ref="itemStyle"/>
 	<xs:attribute type="xs:string" name="field" use="required"/>
 	<xs:attribute type="xs:string" name="subField" use="optional"/>

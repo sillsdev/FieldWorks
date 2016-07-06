@@ -1057,7 +1057,7 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Components" before=" (" between=", " after=")" isEnabled="true" field="ComplexFormEntryRefs" styleType="character">
+	<ConfigurationItem name="Components" before=" (" between=", " after=")" isEnabled="true" field="ComplexFormEntryRefs" styleType="character" hideCustomFields="true">
 	  <ListTypeOptions list="complex">
 		<Option isEnabled="true" id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
 		<Option isEnabled="true" id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>

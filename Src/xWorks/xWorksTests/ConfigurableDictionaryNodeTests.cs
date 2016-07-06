@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.XWorks
 		public void ChildlessCanDeepClone()
 		{
 			var parent = new ConfigurableDictionaryNode();
-			var child = new ConfigurableDictionaryNode { After = "after", IsEnabled = true, SubField = "sub", IsCustomField = true, Parent = parent };
+			var child = new ConfigurableDictionaryNode { After = "after", IsEnabled = true, SubField = "sub", IsCustomField = true, HideCustomFields = true, Parent = parent };
 			parent.Children = new List<ConfigurableDictionaryNode> { child };
 			// SUT
 			var clone = child.DeepCloneUnderSameParent();
@@ -57,6 +57,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(clone.ReferenceItem, Is.EqualTo(node.ReferenceItem));
 			Assert.That(clone.IsEnabled, Is.EqualTo(node.IsEnabled));
 			Assert.That(clone.IsCustomField, Is.EqualTo(node.IsCustomField));
+			Assert.That(clone.HideCustomFields, Is.EqualTo(node.HideCustomFields));
 			Assert.That(clone.Label, Is.EqualTo(node.Label));
 			// Intentionally-omitted fields: IsDuplicate, LabelSuffix
 

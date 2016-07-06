@@ -1003,8 +1003,10 @@ namespace SIL.FieldWorks.XWorks
 
 		private static void MergeCustomFieldLists(ConfigurableDictionaryNode parent, List<ConfigurableDictionaryNode> customFieldNodes)
 		{
-			if (parent.IsSubordinateParent)
-				return; // If parent has Referenced Children but is not the Master Parent, return; fields will be merged under the Master Parent
+			// If parent has Referenced Children but is not the Master Parent, return; fields will be merged under the Master Parent
+			// If the node is set to hide the custom fields then we will not merge the nodes, but they should still appear under children
+			if (parent.IsSubordinateParent || parent.HideCustomFields)
+				return;
 			parent = parent.ReferencedNode ?? parent;
 			// Set the parent on the customFieldNodes (needed for Contains and to make any new fields valid when added)
 			foreach(var customField in customFieldNodes)

@@ -82,6 +82,12 @@ namespace SIL.FieldWorks.XWorks
 		[XmlAttribute(AttributeName = "isCustomField")]
 		public bool IsCustomField { get; set; }
 
+		/// <summary>
+		/// Should we disable the use of custom fields as children of this node.
+		/// </summary>
+		[XmlAttribute(AttributeName = "hideCustomFields")]
+		public bool HideCustomFields { get; set; }
+
 		/// <summary>ShouldSerialize[Attribute] is a magic method to prevent serializing the default value. May not work until Mono 3.3.0</summary>
 		public bool ShouldSerializeIsCustomField() { return IsCustomField; }
 
