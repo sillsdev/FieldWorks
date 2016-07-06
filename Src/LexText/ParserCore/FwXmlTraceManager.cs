@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		public void AnalyzeWord(Language lang, Word input)
 		{
-			input.CurrentTrace = new XElement("WordAnalysisTrace", new XElement("InputWord", input.Shape.ToString(lang.SurfaceStratum.SymbolTable, true)));
+			input.CurrentTrace = new XElement("WordAnalysisTrace", new XElement("InputWord", input.Shape.ToString(lang.SurfaceStratum.CharacterDefinitionTable, true)));
 		}
 
 		public void BeginUnapplyStratum(Stratum stratum, Word input)
@@ -90,7 +90,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			var trace = new XElement("LexLookupTrace",
 				new XElement("Stratum", stratum.Name),
-				new XElement("Shape", input.Shape.ToRegexString(stratum.SymbolTable, true)));
+				new XElement("Shape", input.Shape.ToRegexString(stratum.CharacterDefinitionTable, true)));
 			((XElement) input.CurrentTrace).Add(trace);
 		}
 
@@ -141,9 +141,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				{
 					case FailureReason.RequiredSyntacticFeatureStruct:
 						pruleTrace.Add(new XElement("FailureReason", new XAttribute("type", "category"),
-							new XElement("Category", (FeatureSymbol) input.SyntacticFeatureStruct.GetValue<SymbolicFeatureValue>("pos")),
-							new XElement("RequiredCategories", sr.RequiredSyntacticFeatureStruct.GetValue<SymbolicFeatureValue>("pos")
-								.Values.Select(pos => new XElement("Category", pos)))));
+							new XElement("Category", input.SyntacticFeatureStruct.PartsOfSpeech().FirstOrDefault()),
+							new XElement("RequiredCategories", sr.RequiredSyntacticFeatureStruct.PartsOfSpeech()
+								.Select(pos => new XElement("Category", pos)))));
 						break;
 
 					case FailureReason.RequiredMprFeatures:
@@ -207,9 +207,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				case FailureReason.RequiredSyntacticFeatureStruct:
 					Debug.Assert(aprule != null);
 					var requiredFS = (FeatureStruct) failureObj;
-					var requiredPos = requiredFS.GetValue<SymbolicFeatureValue>("pos");
-					var inputPos = input.SyntacticFeatureStruct.GetValue<SymbolicFeatureValue>("pos");
-					if (requiredPos.Values.Intersect(inputPos.Values).Any())
+					FeatureSymbol[] requiredPos = requiredFS.PartsOfSpeech().ToArray();
+					FeatureSymbol[] inputPos = input.SyntacticFeatureStruct.PartsOfSpeech().ToArray();
+					if (requiredPos.Intersect(inputPos).Any())
 					{
 						trace.Add(new XElement("FailureReason", new XAttribute("type", "inflFeats"),
 							CreateInflFeaturesElement("InflFeatures", input.SyntacticFeatureStruct),
@@ -218,8 +218,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					else
 					{
 						trace.Add(new XElement("FailureReason", new XAttribute("type", "pos"),
-							new XElement("Pos", string.Join(", ", inputPos.Values.Select(s => s.Description))),
-							new XElement("RequiredPos", string.Join(", ", requiredPos.Values.Select(s => s.Description)))));
+							new XElement("Pos", string.Join(", ", inputPos.Select(s => s.Description))),
+							new XElement("RequiredPos", string.Join(", ", requiredPos.Select(s => s.Description)))));
 					}
 					break;
 
@@ -282,7 +282,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			XElement trace;
 			switch (reason)
 			{
-				case FailureReason.ExcludedAllomorphCoOccurrences:
+				case FailureReason.AllomorphCoOccurrenceRules:
 					var alloRule = (AllomorphCoOccurrenceRule) failureObj;
 					trace = CreateParseCompleteElement(word,
 						new XElement("FailureReason", new XAttribute("type", "adhocProhibitionRule"),
@@ -292,7 +292,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							new XElement("Adjacency", alloRule.Adjacency)));
 					break;
 
-				case FailureReason.ExcludedMorphemeCoOccurrences:
+				case FailureReason.MorphemeCoOccurrenceRules:
 					var morphemeRule = (MorphemeCoOccurrenceRule) failureObj;
 					trace = CreateParseCompleteElement(word,
 						new XElement("FailureReason", new XAttribute("type", "adhocProhibitionRule"),
@@ -302,7 +302,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							new XElement("Adjacency", morphemeRule.Adjacency)));
 					break;
 
-				case FailureReason.RequiredEnvironments:
+				case FailureReason.Environments:
 					trace = CreateParseCompleteElement(word,
 						new XElement("FailureReason", new XAttribute("type", "environment"),
 							CreateAllomorphElement(allomorph),
@@ -357,7 +357,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private static XElement CreateInflFeaturesElement(string name, FeatureStruct fs)
 		{
-			return new XElement(name, fs.GetValue<FeatureStruct>("head").ToString().Replace(",", ""));
+			return new XElement(name, fs.Head().ToString().Replace(",", ""));
 		}
 
 		private static XElement CreateWordElement(string name, Word word, bool analysis)
@@ -366,7 +366,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (word == null)
 				wordStr = "*None*";
 			else
-				wordStr = analysis ? word.Shape.ToRegexString(word.Stratum.SymbolTable, true) : word.Shape.ToString(word.Stratum.SymbolTable, true);
+				wordStr = analysis ? word.Shape.ToRegexString(word.Stratum.CharacterDefinitionTable, true) : word.Shape.ToString(word.Stratum.CharacterDefinitionTable, true);
 			return new XElement(name, wordStr);
 		}
 
@@ -388,7 +388,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private static XElement CreateHCRuleElement(string name, IHCRule rule)
 		{
-			return new XElement(name, new XAttribute("id", (int?) rule.Properties["ID"] ?? 0), rule.Name);
+			int id = 0;
+			var morpheme = rule as Morpheme;
+			if (morpheme != null)
+				id = (int?) morpheme.Properties["ID"] ?? 0;
+			return new XElement(name, new XAttribute("id", id), rule.Name);
 		}
 
 		private XElement CreateAllomorphElement(Allomorph allomorph)

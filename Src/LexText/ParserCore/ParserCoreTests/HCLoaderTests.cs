@@ -5,9 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Xml;
-using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.Collections;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -26,8 +23,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	[TestFixture]
 	public class HCLoaderTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		private const string PrefixNull = "([StrRep:\"^0\", Type:boundary][StrRep:\"+\", Type:boundary])*";
-		private const string SuffixNull = "([StrRep:\"+\", Type:boundary][StrRep:\"^0\", Type:boundary])*";
+		private const string PrefixNull = "([StrRep:{\"&0\", \"*0\", \"^0\", \"∅\", \"Ø\"}, Type:boundary][StrRep:\"+\", Type:boundary])*";
+		private const string SuffixNull = "([StrRep:\"+\", Type:boundary][StrRep:{\"&0\", \"*0\", \"^0\", \"∅\", \"Ø\"}, Type:boundary])*";
 		private const string AnyPlus = PrefixNull + "ANY+" + SuffixNull;
 		private const string AnyStar = PrefixNull + "ANY*" + SuffixNull;
 		private const string VowelFS = "[cons:-, Type:segment, voc:+]";
@@ -35,8 +32,58 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private const string RightAnchorFS = "[AnchorType:RightSide, Type:anchor]";
 		private const string LeftAnchorFS = "[AnchorType:LeftSide, Type:anchor]";
 
+		private enum LoadErrorType
+		{
+			InvalidShape,
+			InvalidAffixProcess,
+			InvalidPhoneme,
+			DuplicateGrapheme,
+			InvalidEnvironment,
+			InvalidRedupForm
+		}
+
+		private class TestHCLoadErrorLogger : IHCLoadErrorLogger
+		{
+			private readonly IList<Tuple<LoadErrorType, ICmObject>> m_loadErrors;
+
+			public TestHCLoadErrorLogger(IList<Tuple<LoadErrorType, ICmObject>> loadErrors)
+			{
+				m_loadErrors = loadErrors;
+			}
+
+			public void InvalidShape(string str, int errorPos, IMoMorphSynAnalysis msa)
+			{
+				m_loadErrors.Add(Tuple.Create(LoadErrorType.InvalidShape, (ICmObject) msa));
+			}
+
+			public void InvalidAffixProcess(IMoAffixProcess affixProcess, bool isInvalidLhs, IMoMorphSynAnalysis msa)
+			{
+				m_loadErrors.Add(Tuple.Create(LoadErrorType.InvalidAffixProcess, (ICmObject) msa));
+			}
+
+			public void InvalidPhoneme(IPhPhoneme phoneme)
+			{
+				m_loadErrors.Add(Tuple.Create(LoadErrorType.InvalidPhoneme, (ICmObject) phoneme));
+			}
+
+			public void DuplicateGrapheme(IPhPhoneme phoneme)
+			{
+				m_loadErrors.Add(Tuple.Create(LoadErrorType.DuplicateGrapheme, (ICmObject) phoneme));
+			}
+
+			public void InvalidEnvironment(IMoForm form, IPhEnvironment env, string reason, IMoMorphSynAnalysis msa)
+			{
+				m_loadErrors.Add(Tuple.Create(LoadErrorType.InvalidEnvironment, (ICmObject) msa));
+			}
+
+			public void InvalidReduplicationForm(IMoForm form, string reason, IMoMorphSynAnalysis msa)
+			{
+				m_loadErrors.Add(Tuple.Create(LoadErrorType.InvalidRedupForm, (ICmObject) msa));
+			}
+		}
+
 		private SpanFactory<ShapeNode> m_spanFactory;
-		private string m_dataIssues;
+		private readonly List<Tuple<LoadErrorType, ICmObject>> m_loadErrors = new List<Tuple<LoadErrorType, ICmObject>>();
 		private Language m_lang;
 		private IPartOfSpeech m_noun;
 		private IPartOfSpeech m_verb;
@@ -185,13 +232,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return feat;
 		}
 
-		private void AddPhoneme(string strRep, FS featVals)
+		private void AddPhoneme(string strRep, FS featVals, string grapheme = null)
 		{
 			IPhPhoneme phoneme = Cache.ServiceLocator.GetInstance<IPhPhonemeFactory>().Create();
 			Cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0].PhonemesOC.Add(phoneme);
 			phoneme.Name.SetVernacularDefaultWritingSystem(strRep);
 			IPhCode code = phoneme.CodesOS[0];
-			code.Representation.SetVernacularDefaultWritingSystem(strRep);
+			code.Representation.SetVernacularDefaultWritingSystem(grapheme ?? strRep);
 
 			phoneme.FeaturesOA = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
 			CreateFeatStruc(Cache.LanguageProject.PhFeatureSystemOA, null, phoneme.FeaturesOA, featVals);
@@ -199,6 +246,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private void CreateFeatStruc(IFsFeatureSystem featSys, IFsFeatStrucType type, IFsFeatStruc fs, FS featVals)
 		{
+			if (featVals.Count == 0)
+				return;
+
 			fs.TypeRA = type;
 			foreach (KeyValuePair<string, object> featVal in featVals)
 			{
@@ -347,22 +397,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private void LoadLanguage()
 		{
-			var dataIssues = new StringBuilder();
-			using (XmlWriter writer = XmlWriter.Create(dataIssues))
-			{
-				m_lang = HCLoader.Load(m_spanFactory, Cache, writer);
-			}
-			m_dataIssues = dataIssues.ToString();
+			m_loadErrors.Clear();
+			m_lang = HCLoader.Load(m_spanFactory, Cache, new TestHCLoadErrorLogger(m_loadErrors));
 		}
 
 		[Test]
 		public void PhonologicalFeatures()
 		{
 			LoadLanguage();
-			Assert.That(m_lang.PhoneticFeatureSystem.Count, Is.EqualTo(13));
-			var voc = (SymbolicFeature) m_lang.PhoneticFeatureSystem.First(f => f.Description == "voc");
+			Assert.That(m_lang.PhonologicalFeatureSystem.Count, Is.EqualTo(13));
+			var voc = (SymbolicFeature) m_lang.PhonologicalFeatureSystem.First(f => f.Description == "voc");
 			Assert.That(voc.PossibleSymbols.Select(s => s.Description), Is.EquivalentTo(new[] {"+", "-"}));
-			var poa = (SymbolicFeature) m_lang.PhoneticFeatureSystem.First(f => f.Description == "poa");
+			var poa = (SymbolicFeature) m_lang.PhonologicalFeatureSystem.First(f => f.Description == "poa");
 			Assert.That(poa.PossibleSymbols.Select(s => s.Description), Is.EquivalentTo(new[] {"bilabial", "labiodental", "alveolar", "velar"}));
 		}
 
@@ -370,9 +416,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public void PhonemesAndBoundaries()
 		{
 			LoadLanguage();
-			Assert.That(m_lang.SurfaceStratum.SymbolTable.GetSymbolFeatureStruct("a").ToString(), Is.EqualTo("[back:+, cons:-, high:-, low:+, round:-, Type:segment, vd:+, voc:+]"));
-			Assert.That(m_lang.SurfaceStratum.SymbolTable.GetSymbolFeatureStruct("pʰ").ToString(), Is.EqualTo("[asp:+, cons:+, cont:-, nasal:-, poa:bilabial, strident:-, Type:segment, vd:-, voc:-]"));
-			Assert.That(m_lang.SurfaceStratum.SymbolTable.GetSymbolFeatureStruct("+").ToString(), Is.EqualTo("[StrRep:\"+\", Type:boundary]"));
+			Assert.That(m_lang.SurfaceStratum.CharacterDefinitionTable["a"].FeatureStruct.ToString(), Is.EqualTo("[back:+, cons:-, high:-, low:+, round:-, Type:segment, vd:+, voc:+]"));
+			Assert.That(m_lang.SurfaceStratum.CharacterDefinitionTable["pʰ"].FeatureStruct.ToString(), Is.EqualTo("[asp:+, cons:+, cont:-, nasal:-, poa:bilabial, strident:-, Type:segment, vd:-, voc:-]"));
+			Assert.That(m_lang.SurfaceStratum.CharacterDefinitionTable["+"].FeatureStruct.ToString(), Is.EqualTo("[StrRep:\"+\", Type:boundary]"));
 		}
 
 		[Test]
@@ -396,14 +442,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			AffixProcessAllomorph hcAllo = rule.Allomorphs[0];
 			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] {AnyStar + VowelFS + SuffixNull}));
 			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] {"<stem>", "+ɯd"}));
-			Assert.That(hcAllo.RequiredEnvironments.Select(e => e.ToEnvString()), Is.EquivalentTo(new[] {"/ _ " + RightAnchorFS}));
+			Assert.That(hcAllo.Environments.Select(e => e.ToEnvString()), Is.EquivalentTo(new[] {"/ _ " + RightAnchorFS}));
 			Assert.That(hcAllo.RequiredMprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"inflClass", "inflSubclass"}));
 			Assert.That(hcAllo.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[Head:[tense:pres]]"));
 
 			hcAllo = rule.Allomorphs[1];
 			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] {PrefixNull + ConsFS + SuffixNull}));
 			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] {"<stem>", "+ɯd"}));
-			Assert.That(hcAllo.RequiredEnvironments.Select(e => e.ToEnvString()), Is.EquivalentTo(new[] {"/ _ " + ConsFS}));
+			Assert.That(hcAllo.Environments.Select(e => e.ToEnvString()), Is.EquivalentTo(new[] {"/ _ " + ConsFS}));
 			Assert.That(hcAllo.RequiredMprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"inflClass", "inflSubclass"}));
 			Assert.That(hcAllo.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[Head:[tense:pres]]"));
 		}
@@ -426,8 +472,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			LoadLanguage();
 
 			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(0));
-			XElement dataIssuesElem = XElement.Parse(m_dataIssues);
-			Assert.That(dataIssuesElem.Elements("LoadError").Count(e => (string) e.Attribute("type") == "invalid-shape"), Is.EqualTo(1));
+			Assert.That(m_loadErrors.Count, Is.EqualTo(1));
+			Assert.That(m_loadErrors[0].Item1, Is.EqualTo(LoadErrorType.InvalidShape));
 		}
 
 		[Test]
@@ -447,12 +493,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			AffixProcessAllomorph hcAllo = rule.Allomorphs[0];
 			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] {PrefixNull + VowelFS, VowelFS + AnyStar}));
 			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] {"<left>", "+a+", "<right>"}));
-			Assert.That(hcAllo.RequiredEnvironments, Is.Empty);
+			Assert.That(hcAllo.Environments, Is.Empty);
 
 			hcAllo = rule.Allomorphs[1];
 			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] {AnyStar + ConsFS, ConsFS + AnyStar}));
 			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] {"<left>", "+a+", "<right>"}));
-			Assert.That(hcAllo.RequiredEnvironments, Is.Empty);
+			Assert.That(hcAllo.Environments, Is.Empty);
 		}
 
 		[Test]
@@ -529,7 +575,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			AffixProcessAllomorph hcAllo = rule.Allomorphs[0];
 			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] {PrefixNull + ConsFS + AnyStar + VowelFS + SuffixNull}));
 			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] {"d+", "<stem>", "+t"}));
-			Assert.That(hcAllo.RequiredEnvironments.Select(e => e.ToEnvString()), Is.EquivalentTo(new[] {"/ " + LeftAnchorFS + ConsFS + " _ " + VowelFS}));
+			Assert.That(hcAllo.Environments.Select(e => e.ToEnvString()), Is.EquivalentTo(new[] {"/ " + LeftAnchorFS + ConsFS + " _ " + VowelFS}));
 		}
 
 		[Test]
@@ -569,7 +615,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			CreateFeatStruc(Cache.LanguageProject.MsFeatureSystemOA, m_inflType, msa.FromMsFeaturesOA, new FS {{"tense", "pres"}});
 			msa.ToMsFeaturesOA = fsFactory.Create();
 			CreateFeatStruc(Cache.LanguageProject.MsFeatureSystemOA, m_inflType, msa.ToMsFeaturesOA, new FS {{"nounAgr", new FS {{"num", "pl"}}}});
-			msa.FromStemNameRA = AddStemName(m_verb, "stemName", new FS());
+			msa.FromStemNameRA = AddStemName(m_verb, "stemName", new FS {{"tense", "pres"}});
 			LoadLanguage();
 
 			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(1));
@@ -675,7 +721,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			var allo = (IMoStemAllomorph) entry.LexemeFormOA;
 			allo.PhoneEnvRC.Add(AddEnvironment("/ [V] _ [V]#"));
 			allo.PhoneEnvRC.Add(AddEnvironment("/ [C] _ [C]"));
-			allo.StemNameRA = AddStemName(m_verb, "stemName", new FS());
+			allo.StemNameRA = AddStemName(m_verb, "stemName", new FS {{"tense", "pres"}});
 			LoadLanguage();
 
 			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(1));
@@ -685,10 +731,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(hcEntry.Allomorphs.Count, Is.EqualTo(1));
 
 			RootAllomorph hcAllo = hcEntry.PrimaryAllomorph;
-			Assert.That(hcAllo.Shape.ToString(m_lang.Strata[0].SymbolTable, false), Is.EqualTo("sag"));
+			Assert.That(hcAllo.Shape.ToString(m_lang.Strata[0].CharacterDefinitionTable, false), Is.EqualTo("sag"));
 			Assert.That(hcAllo.StemName.ToString(), Is.EqualTo("stemName"));
 			Assert.That(hcAllo.IsBound, Is.True);
-			Assert.That(hcAllo.RequiredEnvironments.Select(e => e.ToEnvString()), Is.EquivalentTo(new[]
+			Assert.That(hcAllo.Environments.Select(e => e.ToEnvString()), Is.EquivalentTo(new[]
 				{
 					"/ [cons:-, Type:segment, voc:+] _ [cons:-, Type:segment, voc:+][AnchorType:RightSide, Type:anchor]",
 					"/ [cons:+, Type:segment, voc:-] _ [cons:+, Type:segment, voc:-]"
@@ -749,7 +795,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(hcEntry.Allomorphs.Count, Is.EqualTo(1));
 
 			RootAllomorph hcAllo = hcEntry.PrimaryAllomorph;
-			Assert.That(hcAllo.Shape.ToString(m_lang.Strata[0].SymbolTable, false), Is.EqualTo("sag"));
+			Assert.That(hcAllo.Shape.ToString(m_lang.Strata[0].CharacterDefinitionTable, false), Is.EqualTo("sag"));
 		}
 
 		[Test]
@@ -765,7 +811,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(hcEntry.Allomorphs.Count, Is.EqualTo(1));
 
 			RootAllomorph hcAllo = hcEntry.PrimaryAllomorph;
-			Assert.That(hcAllo.Shape.ToString(m_lang.Strata[0].SymbolTable, false), Is.EqualTo("sag"));
+			Assert.That(hcAllo.Shape.ToString(m_lang.Strata[0].CharacterDefinitionTable, false), Is.EqualTo("sag"));
 		}
 
 		[Test]
@@ -848,8 +894,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(1));
 			LexEntry hcStemEntry = m_lang.Strata[0].Entries.First();
-			Assert.That(hcStemEntry.PrimaryAllomorph.ExcludedAllomorphCoOccurrences.Count, Is.EqualTo(1));
-			AllomorphCoOccurrenceRule coOccurRule = hcStemEntry.PrimaryAllomorph.ExcludedAllomorphCoOccurrences.First();
+			Assert.That(hcStemEntry.PrimaryAllomorph.AllomorphCoOccurrenceRules.Count, Is.EqualTo(1));
+			AllomorphCoOccurrenceRule coOccurRule = hcStemEntry.PrimaryAllomorph.AllomorphCoOccurrenceRules.First();
 			Assert.That(coOccurRule.Adjacency, Is.EqualTo(MorphCoOccurrenceAdjacency.SomewhereToRight));
 			Assert.That(coOccurRule.Key.Morpheme.ToString(), Is.EqualTo("sag"));
 			Assert.That(coOccurRule.Others.Select(a => a.Morpheme.ToString()), Is.EqualTo(new[] {"-ɯd"}));
@@ -869,8 +915,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(1));
 			LexEntry hcStemEntry = m_lang.Strata[0].Entries.First();
-			Assert.That(hcStemEntry.ExcludedMorphemeCoOccurrences.Count, Is.EqualTo(1));
-			MorphemeCoOccurrenceRule coOccurRule = hcStemEntry.ExcludedMorphemeCoOccurrences.First();
+			Assert.That(hcStemEntry.MorphemeCoOccurrenceRules.Count, Is.EqualTo(1));
+			MorphemeCoOccurrenceRule coOccurRule = hcStemEntry.MorphemeCoOccurrenceRules.First();
 			Assert.That(coOccurRule.Adjacency, Is.EqualTo(MorphCoOccurrenceAdjacency.AdjacentToRight));
 			Assert.That(coOccurRule.Key.ToString(), Is.EqualTo("sag"));
 			Assert.That(coOccurRule.Others.Select(a => a.ToString()), Is.EqualTo(new[] {"-ɯd"}));
@@ -916,14 +962,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			Assert.That(hcPrule.Direction, Is.EqualTo(Direction.LeftToRight));
 			Assert.That(hcPrule.ApplicationMode, Is.EqualTo(RewriteApplicationMode.Simultaneous));
-			Assert.That(hcPrule.Lhs.ToString(), Is.EqualTo(m_lang.Strata[0].SymbolTable.GetSymbolFeatureStruct("a") + VowelFS));
+			Assert.That(hcPrule.Lhs.ToString(), Is.EqualTo(m_lang.Strata[0].CharacterDefinitionTable["a"].FeatureStruct + VowelFS));
 
 			Assert.That(hcPrule.Subrules.Count, Is.EqualTo(1));
 			RewriteSubrule subrule = hcPrule.Subrules[0];
 
-			Assert.That(subrule.LeftEnvironment.ToString(), Is.EqualTo(LeftAnchorFS + "(" + m_lang.Strata[0].SymbolTable.GetSymbolFeatureStruct("t") + ")"));
-			Assert.That(subrule.Rhs.ToString(), Is.EqualTo(string.Format("[cont:+, Type:segment, vd:+{0}]", constr.Hvo)));
-			Assert.That(subrule.RightEnvironment.ToString(), Is.EqualTo(string.Format("[poa:alveolar, Type:segment, vd:-{0}]", constr.Hvo)));
+			Assert.That(subrule.LeftEnvironment.ToString(), Is.EqualTo(LeftAnchorFS + "(" + m_lang.Strata[0].CharacterDefinitionTable["t"].FeatureStruct + ")"));
+			Assert.That(subrule.Rhs.ToString(), Is.EqualTo("[cont:+, Type:segment, vd:+α]"));
+			Assert.That(subrule.RightEnvironment.ToString(), Is.EqualTo("[poa:alveolar, Type:segment, vd:-α]"));
 			Assert.That(subrule.RequiredMprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"inflClass"}));
 			Assert.That(subrule.ExcludedMprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"exceptFeat"}));
 			Assert.That(subrule.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[POS:V]"));
@@ -963,9 +1009,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			Assert.That(hcPrule.Direction, Is.EqualTo(Direction.RightToLeft));
 			Assert.That(hcPrule.Pattern.ToString(), Is.EqualTo(string.Format("({0})({1})({2})({3})", VowelFS,
-				m_lang.Strata[0].SymbolTable.GetSymbolFeatureStruct("a"), m_lang.Strata[0].SymbolTable.GetSymbolFeatureStruct("t"), ConsFS)));
-			Assert.That(hcPrule.LeftGroupName, Is.EqualTo("2"));
-			Assert.That(hcPrule.RightGroupName, Is.EqualTo("1"));
+				m_lang.Strata[0].CharacterDefinitionTable["a"].FeatureStruct, m_lang.Strata[0].CharacterDefinitionTable["t"].FeatureStruct, ConsFS)));
+			Assert.That(hcPrule.LeftSwitchName, Is.EqualTo("r"));
+			Assert.That(hcPrule.RightSwitchName, Is.EqualTo("l"));
 		}
 
 		[Test]
@@ -1016,9 +1062,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] {ConsFS + "[2,]", "[round:+, Type:segment, voc:+]", AnyStar}));
 			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[]
 				{
-					string.Format("<{0}>", input1.Hvo),
+					"<1>",
 					"+a+",
-					string.Format("<{0}> -> [round:-, Type:segment, voc:+]", input2.Hvo),
+					"<2> -> [round:-, Type:segment, voc:+]",
 					"[cons:+, cont:-, nasal:+, poa:velar, Type:segment, vd:+, voc:-]"
 				}));
 		}
@@ -1054,7 +1100,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] { AnyStar }));
 			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[]
 				{
-					string.Format("<{0}>", input1.Hvo),
+					"<1>",
 					"+a"
 				}));
 		}
@@ -1084,12 +1130,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			LexEntry hcEntry = m_lang.Strata[0].Entries.First();
 			Assert.That(hcEntry.Gloss, Is.EqualTo("gloss"));
 			Assert.That(hcEntry.Allomorphs.Count, Is.EqualTo(1));
-			Assert.That(hcEntry.PrimaryAllomorph.Shape.ToString(m_lang.Strata[0].SymbolTable, false), Is.EqualTo("sag"));
+			Assert.That(hcEntry.PrimaryAllomorph.Shape.ToString(m_lang.Strata[0].CharacterDefinitionTable, false), Is.EqualTo("sag"));
 
 			hcEntry = m_lang.Strata[0].Entries.Last();
 			Assert.That(hcEntry.Gloss, Is.EqualTo("gloss.pl"));
 			Assert.That(hcEntry.Allomorphs.Count, Is.EqualTo(1));
-			Assert.That(hcEntry.PrimaryAllomorph.Shape.ToString(m_lang.Strata[0].SymbolTable, false), Is.EqualTo("sau"));
+			Assert.That(hcEntry.PrimaryAllomorph.Shape.ToString(m_lang.Strata[0].CharacterDefinitionTable, false), Is.EqualTo("sau"));
 			Assert.That(hcEntry.SyntacticFeatureStruct.ToString(), Is.EqualTo("[Head:[nounAgr:[num:pl]], POS:V]"));
 			Assert.That(hcEntry.MprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"Plural Variant"}));
 		}
@@ -1121,8 +1167,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			AddEntry(MoMorphTypeTags.kguidMorphBoundStem, "sȧg", "gloss", new SandboxGenericMSA {MsaType = MsaType.kStem, MainPOS = m_verb});
 			LoadLanguage();
 
-			Assert.That(m_lang.Strata[0].SymbolTable.Contains("e"), Is.False);
-			Assert.That(m_lang.Strata[0].SymbolTable.Contains("ȧ"), Is.False);
+			Assert.That(m_lang.Strata[0].CharacterDefinitionTable.Contains("e"), Is.False);
+			Assert.That(m_lang.Strata[0].CharacterDefinitionTable.Contains("ȧ"), Is.False);
 
 			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(0));
 			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(0));
@@ -1130,14 +1176,40 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Cache.LanguageProject.MorphologicalDataOA.ParserParameters = "<ParserParameters><ActiveParser>HC</ActiveParser><HC><NoDefaultCompounding>true</NoDefaultCompounding><AcceptUnspecifiedGraphemes>true</AcceptUnspecifiedGraphemes></HC></ParserParameters>";
 			LoadLanguage();
 
-			FeatureStruct fs;
-			Assert.That(m_lang.Strata[0].SymbolTable.TryGetSymbolFeatureStruct("e", out fs), Is.True);
-			Assert.That(fs.ValueEquals(FeatureStruct.New().Symbol(HCFeatureSystem.Segment).Feature(HCFeatureSystem.StrRep).EqualTo("e").Value), Is.True);
-			Assert.That(m_lang.Strata[0].SymbolTable.TryGetSymbolFeatureStruct("ȧ", out fs), Is.True);
-			Assert.That(fs.ValueEquals(FeatureStruct.New().Symbol(HCFeatureSystem.Segment).Feature(HCFeatureSystem.StrRep).EqualTo("ȧ").Value), Is.True);
+			CharacterDefinition cd;
+			Assert.That(m_lang.Strata[0].CharacterDefinitionTable.TryGetValue("e", out cd), Is.True);
+			Assert.That(cd.FeatureStruct.ValueEquals(FeatureStruct.New().Symbol(HCFeatureSystem.Segment).Feature(HCFeatureSystem.StrRep).EqualTo("e").Value), Is.True);
+			Assert.That(m_lang.Strata[0].CharacterDefinitionTable.TryGetValue("ȧ", out cd), Is.True);
+			Assert.That(cd.FeatureStruct.ValueEquals(FeatureStruct.New().Symbol(HCFeatureSystem.Segment).Feature(HCFeatureSystem.StrRep).EqualTo("ȧ").Value), Is.True);
 
 			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(1));
 			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(1));
+		}
+
+		[Test]
+		public void EmptyStemName()
+		{
+			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphBoundStem, "sag", "gloss", new SandboxGenericMSA {MsaType = MsaType.kStem, MainPOS = m_verb});
+			var allo = (IMoStemAllomorph) entry.LexemeFormOA;
+			allo.StemNameRA = AddStemName(m_verb, "stemName", new FS());
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(1));
+			LexEntry hcEntry = m_lang.Strata[0].Entries.First();
+
+			RootAllomorph hcAllo = hcEntry.PrimaryAllomorph;
+			Assert.That(hcAllo.StemName, Is.Null);
+		}
+
+		[Test]
+		public void DuplicateGraphemes()
+		{
+			AddPhoneme("N", new FS {{"nasal", "+"}}, "n");
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].CharacterDefinitionTable.Count, Is.EqualTo(27));
+			Assert.That(m_loadErrors.Count, Is.EqualTo(1));
+			Assert.That(m_loadErrors[0].Item1, Is.EqualTo(LoadErrorType.DuplicateGrapheme));
 		}
 	}
 }

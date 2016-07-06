@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -130,7 +131,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			using (XmlWriter writer = XmlWriter.Create(loadErrorsFile))
 			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
 			{
-				m_language = HCLoader.Load(m_spanFactory, m_cache, writer);
+				writer.WriteStartElement("LoadErrors");
+				m_language = HCLoader.Load(m_spanFactory, m_cache, new XmlHCLoadErrorLogger(writer));
+				writer.WriteEndElement();
 				XElement parserParamsElem = XElement.Parse(m_cache.LanguageProject.MorphologicalDataOA.ParserParameters);
 				XElement delReappsElem = parserParamsElem.Elements("ParserParameters").Elements("HC").Elements("DelReapps").FirstOrDefault();
 				if (delReappsElem != null)
@@ -268,7 +271,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				if (formID == 0)
 					continue;
 				var formID2 = (int?) allomorph.Properties["ID2"] ?? 0;
-				string formStr = ws.Shape.GetNodes(morph.Span).ToString(ws.Stratum.SymbolTable, false);
+				string formStr = ws.Shape.GetNodes(morph.Span).ToString(ws.Stratum.CharacterDefinitionTable, false);
 				int curFormID;
 				MorphInfo morphInfo;
 				if (!morphs.TryGetValue(allomorph.Morpheme, out morphInfo))
@@ -476,5 +479,74 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			public bool IsCircumfix { get; set; }
 		}
 		#endregion
+
+		class XmlHCLoadErrorLogger : IHCLoadErrorLogger
+		{
+			private readonly XmlWriter m_xmlWriter;
+
+			public XmlHCLoadErrorLogger(XmlWriter xmlWriter)
+			{
+				m_xmlWriter = xmlWriter;
+			}
+
+			public void InvalidShape(string str, int errorPos, IMoMorphSynAnalysis msa)
+			{
+				m_xmlWriter.WriteStartElement("LoadError");
+				m_xmlWriter.WriteAttributeString("type", "invalid-shape");
+				m_xmlWriter.WriteElementString("Form", str);
+				m_xmlWriter.WriteElementString("Position", errorPos.ToString(CultureInfo.InvariantCulture));
+				m_xmlWriter.WriteElementString("Hvo", msa.Hvo.ToString(CultureInfo.InvariantCulture));
+				m_xmlWriter.WriteEndElement();
+			}
+
+			public void InvalidAffixProcess(IMoAffixProcess affixProcess, bool isInvalidLhs, IMoMorphSynAnalysis msa)
+			{
+				m_xmlWriter.WriteStartElement("LoadError");
+				m_xmlWriter.WriteAttributeString("type", "invalid-affix-process");
+				m_xmlWriter.WriteElementString("Form", affixProcess.Form.BestVernacularAlternative.Text);
+				m_xmlWriter.WriteElementString("InvalidLhs", isInvalidLhs.ToString(CultureInfo.InvariantCulture));
+				m_xmlWriter.WriteElementString("Hvo", msa.Hvo.ToString(CultureInfo.InvariantCulture));
+				m_xmlWriter.WriteEndElement();
+			}
+
+			public void InvalidPhoneme(IPhPhoneme phoneme)
+			{
+				m_xmlWriter.WriteStartElement("LoadError");
+				m_xmlWriter.WriteAttributeString("type", "invalid-phoneme");
+				m_xmlWriter.WriteElementString("Name", phoneme.ShortName);
+				m_xmlWriter.WriteElementString("Hvo", phoneme.Hvo.ToString(CultureInfo.InvariantCulture));
+				m_xmlWriter.WriteEndElement();
+			}
+
+			public void DuplicateGrapheme(IPhPhoneme phoneme)
+			{
+				m_xmlWriter.WriteStartElement("LoadError");
+				m_xmlWriter.WriteAttributeString("type", "duplicate-grapheme");
+				m_xmlWriter.WriteElementString("Name", phoneme.ShortName);
+				m_xmlWriter.WriteElementString("Hvo", phoneme.Hvo.ToString(CultureInfo.InvariantCulture));
+				m_xmlWriter.WriteEndElement();
+			}
+
+			public void InvalidEnvironment(IMoForm form, IPhEnvironment env, string reason, IMoMorphSynAnalysis msa)
+			{
+				m_xmlWriter.WriteStartElement("LoadError");
+				m_xmlWriter.WriteAttributeString("type", "invalid-environment");
+				m_xmlWriter.WriteElementString("Form", form.Form.VernacularDefaultWritingSystem.Text);
+				m_xmlWriter.WriteElementString("Env", env.StringRepresentation.Text);
+				m_xmlWriter.WriteElementString("Hvo", msa.Hvo.ToString(CultureInfo.InvariantCulture));
+				m_xmlWriter.WriteElementString("Reason", reason);
+				m_xmlWriter.WriteEndElement();
+			}
+
+			public void InvalidReduplicationForm(IMoForm form, string reason, IMoMorphSynAnalysis msa)
+			{
+				m_xmlWriter.WriteStartElement("LoadError");
+				m_xmlWriter.WriteAttributeString("type", "invalid-redup-form");
+				m_xmlWriter.WriteElementString("Form", form.Form.VernacularDefaultWritingSystem.Text);
+				m_xmlWriter.WriteElementString("Hvo", msa.Hvo.ToString(CultureInfo.InvariantCulture));
+				m_xmlWriter.WriteElementString("Reason", reason);
+				m_xmlWriter.WriteEndElement();
+			}
+		}
 	}
 }
