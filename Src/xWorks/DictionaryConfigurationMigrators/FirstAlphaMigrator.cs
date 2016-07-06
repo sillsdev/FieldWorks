@@ -357,7 +357,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 						if (n.Label == "Etymology")
 						{
 							if (isReversal)
+							{
 								n.SubField = etymSequence;
+								n.FieldDescription = "Entry";
+							}
 							else
 								n.FieldDescription = etymSequence;
 							n.CSSClassNameOverride = "etymologies";

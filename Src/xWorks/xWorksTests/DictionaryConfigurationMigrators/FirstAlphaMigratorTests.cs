@@ -1001,11 +1001,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
 			m_migrator.MigrateFrom83Alpha(model);
-			Assert.AreEqual("Owner", etymologyNode.FieldDescription, "Should not have changed FieldDescription.");
 			Assert.AreEqual("EtymologyOS", etymologyNode.SubField, "Should have changed to a sequence.");
-			var etymChildren = etymologyNode.Children;
-			Assert.IsNull(etymChildren.Find(node => node.Label == "Source"),
-				"Should have deleted the old Source node");
+			Assert.AreEqual("Entry", etymologyNode.FieldDescription, "Should have changed 'Owner' field for reversal to 'Entry'");
+			Assert.AreEqual("etymologies", etymologyNode.CSSClassNameOverride, "Should have changed CSS override");
+			Assert.AreEqual(6, etymologyNode.Children.Count, "There should be only 4 nodes after the conversion.");
+			Assert.IsNull(etymologyNode.DictionaryNodeOptions, "Improper options added to etymology sequence node.");
 		}
 
 		private void TestForWritingSystemOptionsType(ConfigurableDictionaryNode configNode,
