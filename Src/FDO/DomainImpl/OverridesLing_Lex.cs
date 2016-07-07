@@ -5425,8 +5425,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				{
 					senseIdx = (parent.SensesOS.IndexOf(child) + 1).ToString();
 					senseIdx = GetSenseNumber(senseIdx, hc.ksSubSenseNumberStyle, hc.ksParentSenseNumberStyle);
-					if (hc.ksParentSenseNumberStyle == "")
-						return senseIdx;
 				}
 				//Sense
 				return FormatParentSense((ILexEntry)parent.Owner, parent) + senseIdx;
@@ -5436,8 +5434,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				return senseIdx;
 			senseIdx = (parent.SensesOS.IndexOf(child) + 1).ToString();
 			senseIdx = GetSenseNumber(senseIdx, hc.ksSubSubSenseNumberStyle, hc.ksParentSubSenseNumberStyle);
-			if (hc.ksParentSubSenseNumberStyle == "")
-				return senseIdx;
 			senseIdx = FormatSubSense((ILexSense)parent.Owner, parent) + senseIdx;
 			return senseIdx;
 		}
