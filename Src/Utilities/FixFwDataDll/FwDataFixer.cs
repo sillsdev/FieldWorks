@@ -28,9 +28,11 @@ namespace SIL.FieldWorks.FixData
 		IProgress m_progress;
 		int m_crt;
 
-		public delegate void ErrorLogger(string guid, string date, string description);
-
+		public delegate void ErrorLogger(string description, bool errorFixed);
 		private ErrorLogger errorLogger;
+
+		public delegate int ErrorCounter();
+		private ErrorCounter errorCounter;
 
 		List<RtFixer> m_rtLevelFixers = new List<RtFixer>();
 
@@ -46,11 +48,12 @@ namespace SIL.FieldWorks.FixData
 		/// <summary>
 		/// Constructor.  Reads the file and stores any data needed for corrections later on.
 		/// </summary>
-		public FwDataFixer(string filename, IProgress progress, ErrorLogger logger)
+		public FwDataFixer(string filename, IProgress progress, ErrorLogger logger, ErrorCounter counter)
 		{
 			m_filename = filename;
 			m_progress = progress;
 			errorLogger = logger;
+			errorCounter = counter;
 
 			m_progress.Minimum = 0;
 			m_progress.Maximum = 1000;
@@ -72,7 +75,19 @@ namespace SIL.FieldWorks.FixData
 			m_rtLevelFixers.Add(new HomographFixer());
 			m_rtLevelFixers.Add(new DuplicateWordformFixer());
 			m_rtLevelFixers.Add(new CustomListNameFixer());
-			using (XmlReader xrdr = XmlReader.Create(m_filename))
+			InitializeFixers(m_filename);
+		}
+
+		private void InitializeFixers(string filename)
+		{
+			// in case we're doing a second pass, reset various internal variables, including our own
+			foreach (var fixer in m_rtLevelFixers)
+				fixer.Reset();
+			m_owners.Clear();
+			m_guids.Clear();
+			m_parentToOwnedObjsur.Clear();
+			m_rtElementsToDelete.Clear();
+			using (XmlReader xrdr = XmlReader.Create(filename))
 			{
 				xrdr.MoveToContent();
 				if (xrdr.Name != "languageproject")
@@ -120,67 +135,87 @@ namespace SIL.FieldWorks.FixData
 			m_progress.Maximum = m_crt;
 			m_progress.Position = 0;
 			m_progress.Message = String.Format(Strings.ksLookingForAndFixingErrors, m_filename);
+			string infile = m_filename;
 			string outfile = m_filename + "-x";
+			var filesToDelete = new List<string>();		// remember intermediate files so they can be deleted.
+			var currentErrorCount = 0;
 			XmlWriterSettings settings = new XmlWriterSettings {Indent = true, IndentChars = String.Empty};
-			using (XmlWriter xw = XmlWriter.Create(outfile, settings))
+			// 20 is not a magic number, but it's comfortably larger than any iteration we expect (maximum ownership chain depth + 1).
+			// and some limit is desired to keep bugs in our fixup code from iterating forever
+			for (int repeatCount = 0; repeatCount < 20; ++repeatCount)
 			{
-				xw.WriteStartDocument();
-
-				using (XmlReader xrdr = XmlReader.Create(m_filename))
+				outfile = m_filename + "-x" + repeatCount;
+				if (repeatCount > 0)
 				{
-					xrdr.MoveToContent();
-					if (xrdr.Name != "languageproject")
-						throw new Exception(String.Format("Unexpected outer element (expected <Lists>): {0}", xrdr.Name));
-					xw.WriteStartElement("languageproject");
-					xw.WriteAttributes(xrdr, false);
-					xrdr.Read();
-					xrdr.MoveToContent();
-					if (xrdr.Name == "AdditionalFields")
-					{
-						string sXml = xrdr.ReadOuterXml();
-						var xe = XElement.Parse(sXml);
-						xe.WriteTo(xw);
-						xrdr.MoveToContent();
-					}
-					while (xrdr.Name == "rt")
-					{
-						var rtXml = xrdr.ReadOuterXml();
-						var rt = XElement.Parse(rtXml);
-						// set flag to false if we don't want to write out this rt element, i.e. delete it!
-						// N.B.: Any deleting of owned objects requires two passes, so that the reference
-						// to the object being deleted can be cleaned up too!
-						var guid = rt.Attribute("guid").Value;
-						if (!m_rtElementsToDelete.Contains(guid))
-						{
-							var fwrite = true;
-							foreach (var fixer in m_rtLevelFixers)
-							{
-								if (!fixer.FixElement(rt, errorLogger))
-									fwrite = false;
-							}
-							if (fwrite)
-								rt.WriteTo(xw);
-						}
-						else
-						{
-							var className = rt.Attribute("class").Value;
-							var errorMessage = String.Format(Strings.ksUnusedRtElement, className, guid);
-							errorLogger(guid, DateTime.Now.ToShortDateString(), errorMessage);
-						}
-						xrdr.MoveToContent();
-						m_progress.Step(1);
-					}
-					xrdr.Close();
+					InitializeFixers(infile);
+					filesToDelete.Add(infile);
 				}
-				xw.WriteEndDocument();
-				xw.Close();
-			}
+				using (XmlWriter xw = XmlWriter.Create(outfile, settings))
+				{
+					xw.WriteStartDocument();
 
+					using (XmlReader xrdr = XmlReader.Create(infile))
+					{
+						xrdr.MoveToContent();
+						if (xrdr.Name != "languageproject")
+							throw new Exception(String.Format("Unexpected outer element (expected <Lists>): {0}", xrdr.Name));
+						xw.WriteStartElement("languageproject");
+						xw.WriteAttributes(xrdr, false);
+						xrdr.Read();
+						xrdr.MoveToContent();
+						if (xrdr.Name == "AdditionalFields")
+						{
+							string sXml = xrdr.ReadOuterXml();
+							var xe = XElement.Parse(sXml);
+							xe.WriteTo(xw);
+							xrdr.MoveToContent();
+						}
+						while (xrdr.Name == "rt")
+						{
+							var rtXml = xrdr.ReadOuterXml();
+							var rt = XElement.Parse(rtXml);
+							// set flag to false if we don't want to write out this rt element, i.e. delete it!
+							// N.B.: Any deleting of owned objects requires two passes, so that the reference
+							// to the object being deleted can be cleaned up too!
+							var guid = rt.Attribute("guid").Value;
+							if (!m_rtElementsToDelete.Contains(guid))
+							{
+								var fwrite = true;
+								foreach (var fixer in m_rtLevelFixers)
+								{
+									if (!fixer.FixElement(rt, errorLogger))
+										fwrite = false;
+								}
+								if (fwrite)
+									rt.WriteTo(xw);
+							}
+							else
+							{
+								var className = rt.Attribute("class").Value;
+								var errorMessage = String.Format(Strings.ksUnusedRtElement, className, guid);
+								errorLogger(errorMessage, true);
+							}
+							xrdr.MoveToContent();
+							m_progress.Step(1);
+						}
+						xrdr.Close();
+					}
+					xw.WriteEndDocument();
+					xw.Close();
+				}
+				var newErrorCount = errorCounter();
+				if (newErrorCount == currentErrorCount)
+					break;	// If no errors were fixed on this pass, we can quit.
+				currentErrorCount = newErrorCount;
+				infile = outfile;
+			}
 			var bakfile = Path.ChangeExtension(m_filename, FdoFileHelper.ksFwDataFallbackFileExtension);
 			if (File.Exists(bakfile))
 				File.Delete(bakfile);
 			File.Move(m_filename, bakfile);
 			File.Move(outfile, m_filename);
+			foreach (var file in filesToDelete)
+				File.Delete(file);
 		}
 
 		/// <summary>
@@ -217,22 +252,19 @@ namespace SIL.FieldWorks.FixData
 					{
 						if (!storedOwner.ToString().Equals(Guid.Empty.ToString()) && m_guids.Contains(storedOwner))
 						{
-							errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format(Strings.ksChangingOwnerGuidValue,
-								guidOwner, storedOwner, className, guid));
+							errorLogger(String.Format(Strings.ksChangingOwnerGuidValue, guidOwner, storedOwner, className, guid), true);
 							xaOwner.Value = storedOwner.ToString();
 						}
 						else if (!m_guids.Contains(guidOwner))
 						{
-							errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format(Strings.ksRemovingLinkToNonexistentOwner,
-								guidOwner, className, guid));
-							xaOwner.Remove();
+							errorLogger(String.Format(Strings.ksRemovingObjectWithBadOwner, guidOwner, className, guid), true);
+							return false;
 						}
 					}
 				}
 				else if (storedOwner != Guid.Empty)
 				{
-					errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format(Strings.ksAddingLinkToOwner,
-						storedOwner, className, guid));
+					errorLogger(String.Format(Strings.ksAddingLinkToOwner, storedOwner, className, guid), true);
 					xaOwner = new XAttribute("ownerguid", storedOwner);
 					rt.Add(xaOwner);
 				}
@@ -255,8 +287,7 @@ namespace SIL.FieldWorks.FixData
 									continue;
 							}
 						}
-						errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format(Strings.ksRemovingLinkToNonexistingObject,
-							guidObj, className, guid, objsur.Parent.Name));
+						errorLogger(String.Format(Strings.ksRemovingLinkToNonexistingObject, guidObj, className, guid, objsur.Parent.Name), true);
 						m_danglingLinks.Add(objsur);
 						continue;
 					}
@@ -267,8 +298,7 @@ namespace SIL.FieldWorks.FixData
 						{
 							if (guidStored != guid)
 							{
-								errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format(Strings.ksRemovingMultipleOwnershipLink,
-									guidObj, className, guid, objsur.Parent.Name));
+								errorLogger(String.Format(Strings.ksRemovingMultipleOwnershipLink, guidObj, className, guid, objsur.Parent.Name), true);
 								m_danglingLinks.Add(objsur);	// excessive ownership
 							}
 						}
@@ -295,8 +325,7 @@ namespace SIL.FieldWorks.FixData
 					XAttribute xa = run.Attribute("editable");
 					if (xa != null)
 					{
-						errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format(Strings.ksRemovingEditableAttribute,
-							rt.Attribute("class")));
+						errorLogger(String.Format(Strings.ksRemovingEditableAttribute, rt.Attribute("class")), true);
 						run.SetAttributeValue("editable", null);
 					}
 				}
@@ -314,6 +343,12 @@ namespace SIL.FieldWorks.FixData
 				}
 				return true;
 			}
+
+			internal override void Reset()
+			{
+				m_danglingLinks.Clear();
+				base.Reset();
+			}
 		}
 
 		private void StoreGuidInfoAndOwnership(XElement rt, ErrorLogger errorLogger)
@@ -321,7 +356,7 @@ namespace SIL.FieldWorks.FixData
 			Guid guid = new Guid(rt.Attribute("guid").Value);
 			if (m_guids.Contains(guid))
 			{
-				errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format(Strings.ksObjectWithGuidAlreadyExists, guid));
+				errorLogger(String.Format(Strings.ksObjectWithGuidAlreadyExists, guid), false);
 				m_dupGuidElements.Add(rt);
 			}
 			else
@@ -338,8 +373,7 @@ namespace SIL.FieldWorks.FixData
 				Guid guidObj = new Guid(xaGuidObj.Value);
 				if (m_owners.ContainsKey(guidObj))
 				{
-					errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format(Strings.ksObjectWithGuidAlreadyOwned,
-						guidObj, guid));
+					errorLogger(String.Format(Strings.ksObjectWithGuidAlreadyOwned, guidObj, guid), false);
 					m_dupOwnedElements.Add(objsur);
 				}
 				else
@@ -366,8 +400,7 @@ namespace SIL.FieldWorks.FixData
 				if (GenDate.TryParse(genDateStr, out someDate))
 					continue; // all is well, valid GenDate
 				genDateAttr.Value = "0"; //'Remove' the date if we could not load or parse it
-				errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(),
-					string.Format(Strings.ksRemovingGenericDate, genDateStr, fieldName, className, guid));
+				errorLogger(string.Format(Strings.ksRemovingGenericDate, genDateStr, fieldName, className, guid), true);
 			}
 		}
 
@@ -402,8 +435,7 @@ namespace SIL.FieldWorks.FixData
 				{
 					if (list[i].Attribute("ws").Value == list[i + 1].Attribute("ws").Value)
 					{
-						errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(),
-							string.Format(Strings.ksRemovingDuplicateAlternative, list[i + 1], kvp.Key.Name.LocalName, guid, list[i]));
+						errorLogger(string.Format(Strings.ksRemovingDuplicateAlternative, list[i + 1], kvp.Key.Name.LocalName, guid, list[i]), true);
 						list[i + 1].Remove();
 						// Note that we did not remove it from the LIST, only from its parent.
 						// It is still available to be compared to the NEXT item, which might also have the same WS.
@@ -477,6 +509,17 @@ namespace SIL.FieldWorks.FixData
 					MarkObjForDeletionAndDecendants(ownedObj);
 				}
 			}
+		}
+
+		/// <summary>
+		/// Reset this instance to its original state.  Overrides should call the base method.
+		/// </summary>
+		internal virtual void Reset()
+		{
+			m_owners.Clear();
+			m_guids.Clear();
+			m_parentToOwnedObjsur.Clear();
+			m_rtElementsToDelete.Clear();
 		}
 	}
 }

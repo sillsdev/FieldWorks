@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <template type="LIFT">
 	<FxtDocumentDescription dataLabel="Full Lexicon" formatLabel="LIFT 0.13 XML" defaultExtension="lift" filter="LIFT files (*.lift)|*.lift|XML files (*.xml)|*.xml|All files (*.*)|*.*">
-Export the lexicon in the Lexicon Interchange FormaT (LIFT) version 0.13.  See http://code.google.com/p/lift-standard for more information about LIFT. The export dumps all entries.</FxtDocumentDescription>
+Export the lexicon in the Lexicon Interchange FormaT (LIFT) version 0.13.  A LIFT export consists of a folder with several files and folders inside of it.  Although there is a single "LIFT file", a lift export is not complete without the whole folder and the other files that are included.  See http://code.google.com/p/lift-standard for more information about LIFT. Exports all fields of all entries.</FxtDocumentDescription>
 </template>

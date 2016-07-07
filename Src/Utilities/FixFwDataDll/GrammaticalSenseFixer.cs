@@ -56,6 +56,14 @@ namespace SIL.FieldWorks.FixData
 					}
 					break;
 				case "LexSense":
+					var subSenseElement = rt.Element("Senses");
+					if (subSenseElement != null)
+					{
+						foreach (var surrogate in subSenseElement.Elements("objsur"))
+						{
+							subSenses.Add(surrogate.Attribute("guid").Value);
+						}
+					}
 					if (!senseToMSA.ContainsKey(rtGuid))
 					{
 						var msa = rt.Element("MorphoSyntaxAnalysis");
@@ -65,14 +73,6 @@ namespace SIL.FieldWorks.FixData
 						if (objsur == null || objsur.Attribute("guid") == null)
 							break;
 						senseToMSA[rtGuid] = objsur.Attribute("guid").Value;
-					}
-					var subSenseElement = rt.Element("Senses");
-					if (subSenseElement != null)
-					{
-						foreach (var surrogate in subSenseElement.Elements("objsur"))
-						{
-							subSenses.Add(surrogate.Attribute("guid").Value);
-						}
 					}
 					break;
 				default:
@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.FixData
 					}
 					foreach (var reject in rejects)
 					{
-						logger(entryGuidString, DateTime.Now.ToShortDateString(), Strings.ksRemovedUnusedMsa);
+						logger(Strings.ksRemovedUnusedMsa, true);
 						reject.Remove();
 					}
 				}
@@ -166,6 +166,16 @@ namespace SIL.FieldWorks.FixData
 		internal bool IsRejectedMsa(String guid)
 		{
 			return !goodMsas.Contains(guid);
+		}
+
+		internal override void Reset()
+		{
+			senseToMSA.Clear();
+			entryToMSA.Clear();
+			entryToSense.Clear();
+			subSenses.Clear();
+			goodMsas.Clear();
+			base.Reset();
 		}
 	}
 }

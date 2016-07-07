@@ -401,8 +401,7 @@ namespace SIL.FieldWorks.FixData
 			// Example: if guid and rt belong to a "LexReference" that has fewer than two Targets,
 			//			then the LexReference will be removed from the file and this will report it.
 			//			The objsur reference to the row gets removed elsewhere.
-			errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format(Strings.ksRemovingBadLexReference,
-				guid, guidOwner));
+			errorLogger(String.Format(Strings.ksRemovingBadLexReference, guid, guidOwner), true);
 		}
 
 		private static void ReportOwnerOfEmptySequence(Guid guid, Guid guidOwner, string className, FwDataFixer.ErrorLogger errorLogger)
@@ -410,8 +409,7 @@ namespace SIL.FieldWorks.FixData
 			// Example: if guid, className, and rt belong to a "ConstChartRow" that has no cells and guidOwner belongs
 			//			to a DsConstChart, then this will remove the ConstChartRow from the file and report it.
 			//			The objsur reference to the row gets removed elsewhere.
-			errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format(Strings.ksRemovingOwnerOfEmptySequence,
-				guid, className, guidOwner));
+			errorLogger(String.Format(Strings.ksRemovingOwnerOfEmptySequence, guid, className, guidOwner), true);
 		}
 
 		private void ReportOwnerOfBadSegmentReferences(Guid guid, Guid guidOwner, string className,
@@ -421,8 +419,7 @@ namespace SIL.FieldWorks.FixData
 			//          or EndSegment reference (being earlier deleted by OriginalFixer's dangling reference
 			//          repair), then this will remove the ConstChartWordGroup from the file and report it.
 			//			The objsur reference to the cell gets removed elsewhere.
-			errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(),
-				String.Format(Strings.ksRemovingBadAnalysisRefObj, guid, className, guidOwner));
+			errorLogger(String.Format(Strings.ksRemovingBadAnalysisRefObj, guid, className, guidOwner), true);
 		}
 
 		private void AdjustBadSegmentReferenceAndReport(XElement rt, Guid guid, Guid guidOwner,
@@ -434,8 +431,7 @@ namespace SIL.FieldWorks.FixData
 			//          with the valid one and report the repair.
 			var fieldModified = ReplaceMissingSegmentReferenceWithOtherOne(rt);
 			// TODO: Fix message string
-			errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format(Strings.ksAdjustingAnalysisRefObj,
-				guid, className, fieldModified));
+			errorLogger(String.Format(Strings.ksAdjustingAnalysisRefObj, guid, className, fieldModified), true);
 		}
 
 		private string ReplaceMissingSegmentReferenceWithOtherOne(XElement rt)
@@ -453,7 +449,7 @@ namespace SIL.FieldWorks.FixData
 
 		private void ReplaceSegmentReference(XElement rt, string propName, XElement otherReference)
 		{
-			rt.SetElementValue(propName, otherReference.ToString());
+			rt.Add(new XElement(propName, new XElement(otherReference)));
 		}
 
 		/// <summary>
@@ -474,6 +470,25 @@ namespace SIL.FieldWorks.FixData
 			ValidRef,	// Segment references analyze as valid
 			OneBad,		// One Segment reference is missing; object needs adjusting
 			BothBad		// Both Segment references are missing; object needs deleting
+		}
+
+		internal override void Reset()
+		{
+			m_charts.Clear();
+			m_rows.Clear();
+			m_rowsToDelete.Clear();
+			m_cellRefsToDelete.Clear();
+			m_phContextRefsToDelete.Clear();
+			m_typeRefsLosingReferences.Clear();
+			m_candidateForRefAdjustment.Clear();
+			m_lexRefTypes.Clear();
+			m_lexReferencesToDelete.Clear();
+			m_objsToDelete.Clear();
+			m_objsToAdjust.Clear();
+			m_ownerThatWillLoseOwnee.Clear();
+			m_emptyClauseMarkers.Clear();
+			m_emptySequenceContexts.Clear();
+			base.Reset();
 		}
 	}
 }

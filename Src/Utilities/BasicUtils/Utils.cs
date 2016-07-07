@@ -561,19 +561,24 @@ namespace SIL.Utils
 			public void GetPhysicalMemoryBytes(object stateInfo)
 			{
 				m_Memory = 0;
-				using (var searcher =
-					new ManagementObjectSearcher("select * from Win32_PhysicalMemory"))
+				try
 				{
-					using (var objColl = searcher.Get())
+					using (var searcher = new ManagementObjectSearcher("select * from Win32_PhysicalMemory"))
 					{
-						foreach (ManagementObject mem in objColl)
+						using (var objColl = searcher.Get())
 						{
-							m_Memory += (ulong)mem.GetPropertyValue("Capacity");
-							mem.Dispose();
+							foreach (ManagementObject mem in objColl)
+							{
+								m_Memory += (ulong) mem.GetPropertyValue("Capacity");
+								mem.Dispose();
+							}
 						}
 					}
 				}
-
+				catch
+				{
+					// Don't die just because we can't read the system memory
+				}
 				m_waitHandle.Set();
 			}
 #endif
