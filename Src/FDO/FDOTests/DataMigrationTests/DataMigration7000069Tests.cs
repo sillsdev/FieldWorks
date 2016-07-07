@@ -30,9 +30,10 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		public void RestrictionsFieldChangedFromMultiUnicodeToMultiString()
 		{
 			var mockMdc = new MockMDCForDataMigration();
-			mockMdc.AddClass(1, "CmObject", null, new List<string> { "LexEntry", "LexSense" });
+			mockMdc.AddClass(1, "CmObject", null, new List<string> { "LexEntry", "LexSense", "CmPossibilityList" });
 			mockMdc.AddClass(2, "LexEntry", "CmObject", new List<string>());
 			mockMdc.AddClass(3, "LexSense", "CmObject", new List<string>());
+			mockMdc.AddClass(4, "CmPossibilityList", "CmObject", new List<string>());
 
 			var currentFlid = 2000;
 			mockMdc.AddField(++currentFlid, "Restrictions", CellarPropertyType.MultiUnicode, 2);
@@ -122,6 +123,115 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			var data = XElement.Parse(survivingRefs[0].Xml);
 			var referees = data.Element("ComponentLexemes");
 			Assert.That(referees != null && referees.HasElements, "Should have components (or variants)");
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test the migration from version 7000068 to 7000069 to add default type for Complex form type and Variant Type.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void VerifyDefaultTypeInLexEntryRefs()
+		{
+			var mockMdc = new MockMDCForDataMigration();
+			mockMdc.AddClass(1, "CmObject", null, new List<string> { "LexEntryRef", "CmPossibilityList", "LanguageProject", "LexEntryType" });
+			mockMdc.AddClass(2, "LexEntryRef", "CmPossibility", new List<string>());
+			mockMdc.AddClass(3, "CmPossibilityList", "CmObject", new List<string>());
+			mockMdc.AddClass(4, "LanguageProject", "CmObject", new List<string>());
+			mockMdc.AddClass(5, "LexEntryType", "CmObject", new List<string>());
+
+			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000069_UnspecComplexAndVariantType.xml");
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000068, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
+
+			Assert.AreEqual(2, dtoRepos.AllInstancesWithSubclasses("LexEntryRef").Count(), "The LexEntryRef test data has changed");
+			Assert.AreEqual(2, dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").Count(), "The CmPossibilityList test data has changed");
+
+			DataMigration7000069.AddDefaultLexEntryRefType(dtoRepos); // SUT
+
+			// Make sure new default types are added.
+			var defaultRefs = dtoRepos.AllInstancesWithSubclasses("LexEntryRef").ToList();
+			XElement data = XElement.Parse(defaultRefs[0].Xml);
+
+			var defTypeElt = data.Element("VariantEntryTypes");
+			Assert.IsNotNull(defTypeElt);
+			Assert.That(defTypeElt != null && defTypeElt.HasElements, "Should have components (or variants)");
+			var objSurAttr = defTypeElt.Element("objsur");
+			Assert.IsNotNull(objSurAttr);
+			Assert.AreEqual("3942addb-99fd-43e9-ab7d-99025ceb0d4e", objSurAttr.FirstAttribute.Value);
+
+			data = XElement.Parse(defaultRefs[1].Xml);
+			defTypeElt = data.Element("ComplexEntryTypes");
+			Assert.IsNotNull(defTypeElt);
+			Assert.That(defTypeElt != null && defTypeElt.HasElements, "Should have components (or variants)");
+			objSurAttr = defTypeElt.Element("objsur");
+			Assert.IsNotNull(objSurAttr);
+			Assert.AreEqual("fec038ed-6a8c-4fa5-bc96-a4f515a98c50", objSurAttr.FirstAttribute.Value);
+
+			// Make sure new default types are added in possiblities
+
+			var possibilityObjs = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").First(
+											e => e.Guid.ToString() == "bb372467-5230-43ef-9cc7-4d40b053fb94").Xml);
+
+			var nameElt = possibilityObjs.Element("Name");
+			Assert.IsNotNull(nameElt);
+			var objAUniAttr = nameElt.Element("AUni");
+			Assert.IsNotNull(objAUniAttr);
+			Assert.AreEqual("Variant Types", objAUniAttr.Value);
+
+			var possElt = possibilityObjs.Element("Possibilities");
+			Assert.IsNotNull(possElt);
+			var objSurInPossAttr = possElt.Descendants("objsur").ToList();
+			Assert.AreEqual(2, objSurInPossAttr.Count);
+			var uniString1 = objSurInPossAttr.First(e => e.Attribute("guid").Value == "3942addb-99fd-43e9-ab7d-99025ceb0d4e");
+			Assert.IsNotNull(objSurInPossAttr);
+
+			possibilityObjs = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").First(
+											e => e.Guid.ToString() == "1ee09905-63dd-4c7a-a9bd-1d496743ccd6").Xml);
+
+			nameElt = possibilityObjs.Element("Name");
+			Assert.IsNotNull(nameElt);
+			objAUniAttr = nameElt.Element("AUni");
+			Assert.IsNotNull(objAUniAttr);
+			Assert.AreEqual("Complex Form Types", objAUniAttr.Value);
+
+			possElt = possibilityObjs.Element("Possibilities");
+			Assert.IsNotNull(possElt);
+			objSurInPossAttr = possElt.Descendants("objsur").ToList();
+			Assert.AreEqual(2, objSurInPossAttr.Count);
+			uniString1 = objSurInPossAttr.First(e => e.Attribute("guid").Value == "fec038ed-6a8c-4fa5-bc96-a4f515a98c50");
+			Assert.IsNotNull(objSurAttr);
+
+			// Make sure new default types are added in LexEntryType
+
+			var lexEntryObjs = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("LexEntryType").First(
+											e => e.Guid.ToString() == "3942addb-99fd-43e9-ab7d-99025ceb0d4e").Xml);
+
+			nameElt = lexEntryObjs.Element("Abbreviation");
+			Assert.IsNotNull(nameElt);
+			objAUniAttr = nameElt.Element("AUni");
+			Assert.IsNotNull(objAUniAttr);
+			Assert.AreEqual("unspec. var. of", objAUniAttr.Value);
+
+			nameElt = lexEntryObjs.Element("Name");
+			Assert.IsNotNull(nameElt);
+			objAUniAttr = nameElt.Element("AUni");
+			Assert.IsNotNull(objAUniAttr);
+			Assert.AreEqual("<Unspecified Variant>", objAUniAttr.Value);
+
+			lexEntryObjs = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("LexEntryType").First(
+											e => e.Guid.ToString() == "fec038ed-6a8c-4fa5-bc96-a4f515a98c50").Xml);
+
+			nameElt = lexEntryObjs.Element("Abbreviation");
+			Assert.IsNotNull(nameElt);
+			objAUniAttr = nameElt.Element("AUni");
+			Assert.IsNotNull(objAUniAttr);
+			Assert.AreEqual("unspec. comp. form of", objAUniAttr.Value);
+
+			nameElt = lexEntryObjs.Element("Name");
+			Assert.IsNotNull(nameElt);
+			objAUniAttr = nameElt.Element("AUni");
+			Assert.IsNotNull(objAUniAttr);
+			Assert.AreEqual("<Unspecified Complex Form>", objAUniAttr.Value);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -216,11 +326,12 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		public void AddDoNotPublishInPropertyToLexPronunciationAndCmPicture()
 		{
 			var mockMdc = new MockMDCForDataMigration();
-			mockMdc.AddClass(1, "CmObject", null, new List<string> { "LexEntry", "LexSense", "LexPronunciation", "CmPicture" });
+			mockMdc.AddClass(1, "CmObject", null, new List<string> { "LexEntry", "LexSense", "LexPronunciation", "CmPicture", "CmPossibilityList" });
 			mockMdc.AddClass(2, "LexEntry", "CmObject", new List<string>());
 			mockMdc.AddClass(3, "LexSense", "CmObject", new List<string>());
 			mockMdc.AddClass(4, "LexPronunciation", "CmObject", new List<string>());
 			mockMdc.AddClass(5, "CmPicture", "CmObject", new List<string>());
+			mockMdc.AddClass(6, "CmPossibilityList", "CmObject", new List<string>());
 
 			var currentFlid = 2000;
 			mockMdc.AddField(++currentFlid, "Senses", CellarPropertyType.OwningSequence, 2);

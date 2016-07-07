@@ -3,10 +3,13 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Palaso.Extensions;
+using SIL.FieldWorks.FDO.DomainImpl;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 {
@@ -47,8 +50,9 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			DataMigrationServices.CheckVersionNumber(repoDto, 7000068);
 
 			UpdateRestrictions(repoDto);
-			AddReverseNameAndSwapAbbreviationFields(repoDto);
 			RemoveEmptyLexEntryRefs(repoDto);
+			AddDefaultLexEntryRefType(repoDto);
+			AddReverseNameAndSwapAbbreviationFields(repoDto);
 			MigrateIntoNewMultistringField(repoDto, "Exemplar");
 			MigrateIntoNewMultistringField(repoDto, "UsageNote");
 			AugmentEtymologyCluster(repoDto);
@@ -273,6 +277,75 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				{
 					DataMigrationServices.RemoveIncludingOwnedObjects(repoDto, dto, true);
 				}
+			}
+		}
+
+		internal static void AddDefaultLexEntryRefType(IDomainObjectDTORepository repoDto)
+		{
+			const string variantXml = "<rt class=\"LexEntryType\" guid=\"3942addb-99fd-43e9-ab7d-99025ceb0d4e\"" +
+						" ownerguid=\"bb372467-5230-43ef-9cc7-4d40b053fb94\"><Abbreviation><AUni ws=\"en\">unspec. var. of</AUni></" +
+						"Abbreviation><IsProtected val=\"true\" /><Name><AUni ws=\"en\">&#60;Unspecified Variant&#62;</AUni></" +
+						"Name><ReverseAbbr><AUni ws=\"en\">unspec. var.</AUni></ReverseAbbr></rt>";
+			var newDefaultVariantType = new DomainObjectDTO("3942addb-99fd-43e9-ab7d-99025ceb0d4e", "LexEntryType", variantXml);
+			repoDto.Add(newDefaultVariantType);
+
+			const string complexXml = "<rt class=\"LexEntryType\" guid=\"fec038ed-6a8c-4fa5-bc96-a4f515a98c50\"" +
+						" ownerguid=\"1ee09905-63dd-4c7a-a9bd-1d496743ccd6\"><Abbreviation><AUni ws=\"en\">unspec. comp. form of</AUni>" +
+						"</Abbreviation><Description><AStr ws=\"en\"><Run ws=\"en\"></Run></AStr></Description><IsProtected val=\"true\"" +
+						" /><Name><AUni ws=\"en\">&#60;Unspecified Complex Form&#62;</AUni></Name>" +
+						"<ReverseAbbr><AUni ws=\"en\">unspec. comp. form</AUni></ReverseAbbr></rt>";
+			var newDefaultComplexType = new DomainObjectDTO("fec038ed-6a8c-4fa5-bc96-a4f515a98c50", "LexEntryType", complexXml);
+			repoDto.Add(newDefaultComplexType);
+
+			foreach (var dto in repoDto.AllInstancesWithSubclasses("LexEntryRef"))
+			{
+				var data = XElement.Parse(dto.Xml);
+				var nameElt = data.Element("RefType");
+				if (nameElt != null && nameElt.FirstAttribute.Value == "0")
+				{
+					AddRefType(data, repoDto, dto, "VariantEntryTypes", "3942addb-99fd-43e9-ab7d-99025ceb0d4e");
+				}
+				else
+				{
+					AddRefType(data, repoDto, dto, "ComplexEntryTypes", "fec038ed-6a8c-4fa5-bc96-a4f515a98c50");
+				}
+			}
+
+			foreach (var dto in repoDto.AllInstancesWithSubclasses("CmPossibilityList"))
+			{
+				var data = XElement.Parse(dto.Xml);
+				var nameElt = data.Element("Name");
+				if (nameElt != null && nameElt.Value == "Variant Types")
+				{
+					AddRefType(data, repoDto, dto, "Possibilities", "3942addb-99fd-43e9-ab7d-99025ceb0d4e");
+				}
+				else if (nameElt != null && nameElt.Value == "Complex Form Types")
+				{
+					AddRefType(data, repoDto, dto, "Possibilities", "fec038ed-6a8c-4fa5-bc96-a4f515a98c50");
+				}
+			}
+		}
+
+		private static void AddRefType(XElement data, IDomainObjectDTORepository repoDto, DomainObjectDTO dto, string tagName, string guid)
+		{
+			var varElementTag = data.Element(tagName);
+			if (varElementTag == null)
+			{
+				var varTypeReference = new XElement(tagName);
+				var typeReference = new XElement("objsur");
+				typeReference.SetAttributeValue("guid", guid);
+				varTypeReference.Add(typeReference);
+				data.Add(varTypeReference);
+				DataMigrationServices.UpdateDTO(repoDto, dto, data.ToString());
+			}
+			else
+			{
+				varElementTag = data.Element(tagName);
+				var typeObject = new XElement("objsur");
+				typeObject.SetAttributeValue("guid", guid);
+				typeObject.SetAttributeValue("t", "o");
+				if (varElementTag != null) varElementTag.Add(typeObject);
+				DataMigrationServices.UpdateDTO(repoDto, dto, data.ToString());
 			}
 		}
 

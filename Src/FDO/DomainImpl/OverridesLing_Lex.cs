@@ -790,7 +790,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				ler = Services.GetInstance<ILexEntryRefFactory>().Create();
 				EntryRefsOS.Add(ler);
-
+				ler.ComplexEntryTypesRS.Add(Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS[0] as ILexEntryType);
 				ler.RefType = LexEntryRefTags.krtComplexForm;
 				ler.HideMinorEntry = 0; // LT-10928
 				ChangeRootToStem();
@@ -1264,7 +1264,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			ler.HideMinorEntry = 0;
 			ler.ComponentLexemesRS.Add(componentLexeme);
 			if (variantType != null)
+			{
 				ler.VariantEntryTypesRS.Add(variantType);
+			}
+			else
+			{
+				ler.VariantEntryTypesRS.Add(Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[0] as ILexEntryType);
+			}
 			return ler;
 		}
 

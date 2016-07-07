@@ -953,11 +953,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				pos = -1;
 				if (m_refFuncString.Length > 0)
 					pos = cbFunction.FindString(m_refFuncString);
-				if (pos >= 0)
-				{
-					cbFunction.SelectedIndex = pos;
-					cbFunction.Text = cbFunction.SelectedItem as string;
-				}
+				cbFunction.SelectedIndex = pos >= 0 ? pos : 0;
+				cbFunction.Text = cbFunction.SelectedItem as string;
 			}
 			// The radio buttons for abbr and Name are set when initialized - so don't reset them
 		}

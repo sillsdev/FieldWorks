@@ -428,7 +428,9 @@
     <Content Include="TestData\DataMigration7000069_Etymology.xml" />
     <Content Include="TestData\DataMigration7000069_CustomExemplar.xml" />
     <Content Include="TestData\DataMigration7000069_CustomUsageNote.xml" />
-    <Content Include="TestData\DataMigration7000069.xml" />
+    <Content Include="TestData\DataMigration7000069.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="TestData\DataMigration7000067TestData.xml" />
     <Content Include="TestData\DataMigration7000058_NonEmptyGlossAppend.xml" />
     <Content Include="TestData\DataMigration7000058_EmptyGlossAppend.xml" />
@@ -450,6 +452,7 @@
     <Content Include="TestData\DataMigration7000066_CustomPropertyMagnet.xml" />
     <Content Include="TestData\DataMigration7000066_RegularPropertyMagnet.xml" />
     <Content Include="TestData\DataMigration7000069_ExtendedNote.xml" />
+    <Content Include="TestData\DataMigration7000069_UnspecComplexAndVariantType.xml" />
     <None Include="BackupRestore\BackupTestProject\BackupTestProject.fwdata" />
     <None Include="BackupRestore\BackupTestProject\BackupTestProject.fwdata.bak" />
     <None Include="BackupRestore\BackupTestProject\SupportingFiles\GrkPolyComp.kmp" />

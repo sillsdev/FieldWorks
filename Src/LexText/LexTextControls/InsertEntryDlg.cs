@@ -679,8 +679,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				rgComplexTypes.Sort();
 				m_idxNotComplex = m_cbComplexFormType.Items.Count;
 				m_cbComplexFormType.Items.Add(new DummyEntryType(LexTextControls.ksNotApplicable, false));
-				m_idxUnknownComplex = m_cbComplexFormType.Items.Count;
-				m_cbComplexFormType.Items.Add(new DummyEntryType(LexTextControls.ksUnknownComplexForm, false));
 				for (int i = 0; i < rgComplexTypes.Count; ++i)
 				{
 					var type = (ILexEntryType)rgComplexTypes[i];
