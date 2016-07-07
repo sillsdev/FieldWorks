@@ -1008,6 +1008,40 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.IsNull(etymologyNode.DictionaryNodeOptions, "Improper options added to etymology sequence node.");
 		}
 
+		[Test]
+		public void MigrateFromConfigV6toV7_UpdatesAllomorphFieldDescription()
+		{
+			var AllomorphNode = new ConfigurableDictionaryNode
+			{
+				Label = "Allomorphs",
+				FieldDescription = "Owner",
+				SubField = "AlternateFormsOS",
+				CSSClassNameOverride = "allomorphs",
+			};
+			var referencedSensesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Senses",
+				FieldDescription = "ReferringSenses",
+				Children = new List<ConfigurableDictionaryNode> { AllomorphNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Entry",
+				FieldDescription = "ReversalIndexEntry",
+				Children = new List<ConfigurableDictionaryNode> { referencedSensesNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Version = FirstAlphaMigrator.VersionAlpha2,
+				WritingSystem = "en",
+				FilePath = String.Empty,
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			m_migrator.MigrateFrom83Alpha(model);
+			Assert.AreEqual("Entry", AllomorphNode.FieldDescription, "Should have changed 'Owner' field for reversal to 'Entry'");
+			Assert.AreEqual("AlternateFormsOS", AllomorphNode.SubField, "Should have changed to a sequence.");
+		}
+
 		private void TestForWritingSystemOptionsType(ConfigurableDictionaryNode configNode,
 			DictionaryNodeWritingSystemOptions.WritingSystemType expectedWsType)
 		{

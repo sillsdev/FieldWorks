@@ -334,6 +334,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 								n.DictionaryNodeOptions = senseNode;
 							}
 						}
+						else if (n.Label == "Allomorphs" && n.FieldDescription == "Owner")
+						{
+							n.FieldDescription = "Entry";
+						}
 						if (n.Label == "Referenced Headword")
 						{
 							n.FieldDescription = newHeadword;

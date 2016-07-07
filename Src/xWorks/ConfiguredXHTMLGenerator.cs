@@ -1025,6 +1025,11 @@ namespace SIL.FieldWorks.XWorks
 			// If the parent node of the custom field represents a collection, calling GetTypeForConfigurationNode
 			// with the parent node returns the collection type. We want the type of the elements in the collection.
 			var parentNodeType = GetTypeForConfigurationNode(customFieldNode.Parent, cache, out unneeded);
+			if (parentNodeType == null)
+			{
+				Debug.Assert(parentNodeType != null, "Unable to find type for configuration node");
+				return string.Empty;
+			}
 			if (IsCollectionType(parentNodeType))
 			{
 				parentNodeType = parentNodeType.GetGenericArguments()[0];
