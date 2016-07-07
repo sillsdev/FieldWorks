@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.XWorks
 		public bool IsCustomField { get; set; }
 
 		/// <summary>
-		/// Should we disable the use of custom fields as children of this node.
+		/// Should we hide custom fields which would show as children of this node.
 		/// </summary>
 		[XmlAttribute(AttributeName = "hideCustomFields")]
 		public bool HideCustomFields { get; set; }
