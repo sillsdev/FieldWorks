@@ -1221,6 +1221,13 @@ namespace SIL.FieldWorks.Common.Controls
 					return wsContainer.DefaultVernacularWritingSystem.Handle;
 				case "pronunciation":
 					return wsContainer.DefaultPronunciationWritingSystem.Handle;
+				case "reversal":
+				{
+					if (WritingSystemServices.CurrentReversalWsId > 0)
+						return WritingSystemServices.CurrentReversalWsId;
+					int wsmagic;
+					return WritingSystemServices.InterpretWsLabel(cache, wsParam, wsContainer.DefaultAnalysisWritingSystem, 0, 0, null, out wsmagic);
+				}
 				case "":
 					return wsContainer.DefaultAnalysisWritingSystem.Handle;		// Most likely value.
 				default:
