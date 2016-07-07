@@ -183,6 +183,9 @@
       <Name>XMLUtils</Name>
       <HintPath>..\..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
     </Reference>
+    <Reference Include="xWorksTests">
+      <HintPath>..\..\..\..\..\Output\Debug\xWorksTests.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -204,6 +207,7 @@
     <Compile Include="VectorReferenceLauncherTests.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="SliceFactoryTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

@@ -871,7 +871,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Gets the value of the requested custom field associated with the fieldOwner object
 		/// </summary>
 		/// <returns>true if the custom field was valid and false otherwise</returns>
-		/// <remarks>propertyValue can be null if the custom field is valid but no value is stored fore the owning objected</remarks>
+		/// <remarks>propertyValue can be null if the custom field is valid but no value is stored for the owning object</remarks>
 		private static bool GetPropValueForCustomField(object fieldOwner, ConfigurableDictionaryNode config,
 			FdoCache cache, string customFieldOwnerClassName, string customFieldName, ref object propertyValue)
 		{
