@@ -318,20 +318,17 @@ namespace SIL.FieldWorks.XWorks
 			try
 			{
 				m_dataEntryForm.Show();
-				using (new WaitCursor(this))
+				// Enhance: Maybe do something here to allow changing the templates without the starting the application.
+				ICmObject obj = Clerk.CurrentObject;
+
+				if (m_showDescendantInRoot)
 				{
-					// Enhance: Maybe do something here to allow changing the templates without the starting the application.
-					ICmObject obj = Clerk.CurrentObject;
-
-					if (m_showDescendantInRoot)
-					{
-						// find the root object of the current object
-						while (obj.Owner != Clerk.OwningObject)
-							obj = obj.Owner;
-					}
-
-					m_dataEntryForm.ShowObject(obj, m_layoutName, m_layoutChoiceField, Clerk.CurrentObject, ShouldSuppressFocusChange(rni));
+					// find the root object of the current object
+					while (obj.Owner != Clerk.OwningObject)
+						obj = obj.Owner;
 				}
+
+				m_dataEntryForm.ShowObject(obj, m_layoutName, m_layoutChoiceField, Clerk.CurrentObject, ShouldSuppressFocusChange(rni));
 			}
 			catch (Exception error)
 			{
