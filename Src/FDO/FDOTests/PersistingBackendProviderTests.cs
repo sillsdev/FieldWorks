@@ -836,7 +836,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		{
 		}
 
-		protected override void StartupInternalWithDataMigrationIfNeeded(IThreadedProgress progressDlg)
+		protected override bool StartupInternalWithDataMigrationIfNeeded(IThreadedProgress progressDlg)
 		{
 			throw new UnauthorizedAccessException();
 		}

@@ -216,6 +216,7 @@
     <Compile Include="DomainServices\BackupRestore\RestoreProjectSettings.cs" />
     <Compile Include="DomainServices\BaseStyleInfo.cs" />
     <Compile Include="DomainServices\BootstrapNewLanguageProject.cs" />
+    <Compile Include="DomainServices\CircularRefBreakerService.cs" />
     <Compile Include="DomainImpl\ScrBook.cs" />
     <Compile Include="DomainImpl\ScrBookRef.cs" />
     <Compile Include="DomainImpl\ScrFootnote.cs" />

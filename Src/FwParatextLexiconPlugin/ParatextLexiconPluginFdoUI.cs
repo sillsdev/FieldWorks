@@ -100,6 +100,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			SynchronizeInvoke.Invoke(() => MessageBox.Show(message, caption, MessageBoxButtons.OK, icon));
 		}
 
+		public void DisplayCircularRefBreakerReport(string report, string caption)
+		{
+			var icon = MessageBoxIcon.Information;
+			m_synchronizeInvoke.Invoke(() => MessageBox.Show(report, caption, MessageBoxButtons.OK, icon));
+		}
+
 		public void ReportException(Exception error, bool isLethal)
 		{
 			// do nothing

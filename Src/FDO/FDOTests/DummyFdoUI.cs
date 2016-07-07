@@ -116,6 +116,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		}
 
 		/// <summary>
+		/// Displays the circular reference breaker report.
+		/// </summary>
+		public void DisplayCircularRefBreakerReport(string report, string caption)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
 		/// Show a dialog or output to the error log, as appropriate.
 		/// </summary>
 		/// <param name="error">the exception you want to report</param>

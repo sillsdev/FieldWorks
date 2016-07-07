@@ -213,6 +213,15 @@ namespace SIL.FieldWorks.FDO {
             }
         }
         
+		/// <summary>
+		///   Looks up a localized string similar to Also removing empty Complex Form Info from {0}.
+		/// </summary>
+		internal static string ksAlsoEmptyComplexFormInfo {
+			get {
+				return ResourceManager.GetString("ksAlsoEmptyComplexFormInfo", resourceCulture);
+			}
+		}
+
         /// <summary>
         ///   Looks up a localized string similar to analysis.
         /// </summary>
@@ -475,6 +484,15 @@ namespace SIL.FieldWorks.FDO {
             }
         }
         
+		/// <summary>
+		///   Looks up a localized string similar to Circular Reference Fixed.
+		/// </summary>
+		internal static string ksCircularRefsFixed {
+			get {
+				return ResourceManager.GetString("ksCircularRefsFixed", resourceCulture);
+			}
+		}
+
         /// <summary>
         ///   Looks up a localized string similar to Clitic of unknown category.
         /// </summary>
@@ -1000,6 +1018,15 @@ namespace SIL.FieldWorks.FDO {
             }
         }
         
+		/// <summary>
+		///   Looks up a localized string similar to Found {0} circular references in {1} entry references.
+		/// </summary>
+		internal static string ksFoundNCircularReferences {
+			get {
+				return ResourceManager.GetString("ksFoundNCircularReferences", resourceCulture);
+			}
+		}
+
         /// <summary>
         ///   Looks up a localized string similar to There are {0} homographs of {1}.
         ///FieldWorks currently supports a maximum of 255 distinct homographs..
@@ -1721,6 +1748,15 @@ namespace SIL.FieldWorks.FDO {
             }
         }
         
+		/// <summary>
+		///   Looks up a localized string similar to Removing {0} as component lexeme for {1}.
+		/// </summary>
+		internal static string ksRemovingCircularComponentLexeme {
+			get {
+				return ResourceManager.GetString("ksRemovingCircularComponentLexeme", resourceCulture);
+			}
+		}
+
         /// <summary>
         ///   Looks up a localized string similar to This item is required by the program, so it can&apos;t be deleted..
         /// </summary>

@@ -15,6 +15,9 @@ using System.Text;
 using System.Threading;
 using SIL.CoreImpl;
 using SIL.CoreImpl.Properties;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.Utils;
@@ -353,7 +356,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <summary>
 		/// Protected for testing (see MockXMLBackendProvider)
 		/// </summary>
-		protected virtual void StartupInternalWithDataMigrationIfNeeded(IThreadedProgress progressDlg)
+		protected virtual bool StartupInternalWithDataMigrationIfNeeded(IThreadedProgress progressDlg)
 		{
 			var currentDataStoreVersion = StartupInternal(ModelVersion);
 
@@ -361,7 +364,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				throw new FdoNewerVersionException(Properties.Resources.kstidProjectIsForNewerVersionOfFw);
 
 			if (currentDataStoreVersion == ModelVersion)
-				return;
+				return false;
 
 			if (m_settings.DisableDataMigration)
 				throw new FdoDataMigrationForbiddenException();
@@ -381,6 +384,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				// Get going the hard way with the data migration.
 				DoMigration(currentDataStoreVersion, progressDlg);
 			}
+			return true;
 		}
 
 		private void DoMigration(int currentDataStoreVersion, IThreadedProgress progressDlg)
@@ -389,6 +393,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			HashSet<ICmObjectId> goners;
 			HashSet<ICmObjectOrSurrogate> dirtballs = DoMigrationBasics(currentDataStoreVersion, out goners, out newbies, progressDlg);
 			Commit(newbies, dirtballs, goners);
+
 			// In case there is a problem when we open it, we'd like to have a current database to try to repair.
 			CompleteAllCommits();
 		}
@@ -748,12 +753,22 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			IThreadedProgress progressDlg)
 		{
 			ProjectId = projectId;
+			int m_count;
+			int m_circular;
+			string m_report = string.Empty;
+
 			try
 			{
-				StartupInternalWithDataMigrationIfNeeded(progressDlg);
+				var fMigrationNeeded = StartupInternalWithDataMigrationIfNeeded(progressDlg);
 				InitializeWritingSystemManager();
 				if (fBootstrapSystem)
 					BootstrapExtantSystem();
+				if (fMigrationNeeded)
+				{
+					CircularRefBreakerService.ReferenceBreaker(m_cache, out m_count, out m_circular, out m_report);
+					if(m_circular > 0)
+						m_ui.DisplayCircularRefBreakerReport(m_report, Strings.ksCircularRefsFixed);
+				}
 			}
 			catch (Exception e)
 			{
