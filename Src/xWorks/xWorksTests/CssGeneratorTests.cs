@@ -2468,7 +2468,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			PopulateFieldsForTesting(testEntryNode);
 			// Default (no ws) style info
-			const string defaultStyle = "span{font-size:10pt;}";
+			const string defaultStyle = "body{font-size:10pt;}";
 			const string englishStyle = "span[lang|=\"en\"]{font-family:'english',serif;color:#F00;}";
 			const string frenchStyle = "span[lang|=\"fr\"]{font-family:'french',serif;color:#008000;}";
 			//SUT

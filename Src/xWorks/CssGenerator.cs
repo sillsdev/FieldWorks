@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				defaultStyleProps.Add(new Property("font-size") { Term = new PrimitiveTerm(UnitType.Point, FontInfo.kDefaultFontSize) });
 			}
-			var defaultRule = new StyleRule { Value = "span" };
+			var defaultRule = new StyleRule { Value = "body" };
 			defaultRule.Declarations.Properties.AddRange(defaultStyleProps);
 			styleSheet.Rules.Add(defaultRule);
 			// Then generate the rules for all the writing system overrides
