@@ -1809,11 +1809,11 @@ namespace SIL.FieldWorks.XWorks
 				if(child.FieldDescription == "ConfigTargets")
 				{
 					var bldr = new StringBuilder();
-					var ownerHvo = collectionOwner is ILexEntry ? ((ILexEntry)collectionOwner).Guid : ((ILexSense)collectionOwner).Owner.Guid;
+					var ownerGuid = collectionOwner is ILexEntry ? ((ILexEntry)collectionOwner).Guid : ((ILexSense)collectionOwner).Entry.Guid;
 					// "Where" excludes the entry we are displaying. (The LexReference contains all involved entries)
 					// If someone ever uses a "Sequence" type lexical relation, should the current item
 					// be displayed in its location in the sequence?  Just asking...
-					foreach(var target in reference.ConfigTargets.Where(x => x.EntryGuid != ownerHvo))
+					foreach (var target in reference.ConfigTargets.Where(x => x.EntryGuid != ownerGuid))
 					{
 						var content = GenerateCollectionItemContent(child, publicationDecorator, target, reference, settings);
 						bldr.Append(content);

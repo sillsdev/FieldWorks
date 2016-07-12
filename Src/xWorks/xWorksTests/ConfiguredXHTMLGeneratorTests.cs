@@ -3282,6 +3282,75 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_GeneratesConfigTargetsForSubSenseProperly()
+		{
+			var firstHeadword = "homme";
+			var firstEntry = CreateInterestingLexEntry(Cache, firstHeadword, "first gloss");
+			AddSingleSubSenseToSense("man", firstEntry.SensesOS[0]);
+			var secondWord = "bras";
+			var armEntry = CreateInterestingLexEntry(Cache, secondWord, "arm");
+			var thirdWord = "jambe";
+			var legEntry = CreateInterestingLexEntry(Cache, thirdWord, "leg");
+			const string refTypeName = "Part";
+			const string refTypeRevName = "Whole";
+			CreateLexicalReference(firstEntry, firstEntry.SensesOS[0].SensesOS[0], legEntry.SensesOS.First(), refTypeName, refTypeRevName);
+			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
+			Assert.IsNotNull(refType);
+
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Gloss",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var refListNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ConfigTargets",
+				Children = new List<ConfigurableDictionaryNode> { headwordNode, glossNode }
+			};
+			var referencesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexSenseReferences",
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Sense,
+					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { refType.Guid + ":r" })
+				},
+				Children = new List<ConfigurableDictionaryNode> { refListNode }
+			};
+			var subSensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }),
+				Children = new List<ConfigurableDictionaryNode> { referencesNode}
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				Children = new List<ConfigurableDictionaryNode> { subSensesNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			//SUT
+			var output = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(firstEntry, mainEntryNode, null, settings);
+			var goodTarget = "//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='configtargets']/span[@class='configtarget']/span[@class='gloss']";
+			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(goodTarget,1);
+			var badTarget = string.Format(
+				"//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='configtargets']/span[@class='configtarget']/span[@class='headword']/span[@lang='fr' and text()='{0}']", firstHeadword);
+			AssertThatXmlIn.String(output).HasNoMatchForXpath(badTarget);
+		}
+
+		[Test]
 		public void IsListItemSelectedForExport_Variant_SelectedItemReturnsTrue()
 		{
 			var mainEntry = CreateInterestingLexEntry(Cache);
