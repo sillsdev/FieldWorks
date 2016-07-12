@@ -9,7 +9,7 @@ using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
-// ReSharper disable PossibleNullReferenceExeption -- Justification: If the exception is thrown, we'll know to fix the test.
+// ReSharper disable PossibleNullReferenceException -- Justification: If the exception is thrown, we'll know to fix the test.
 
 namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 {
@@ -19,8 +19,10 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 	[TestFixture]
 	public sealed class DataMigration7000069Tests : DataMigrationTestsBase
 	{
+		// ReSharper disable InconsistentNaming
 		private const string enWs = "en";
 		private const string frWs = "fr";
+		// ReSharper restore InconsistentNaming
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the migration from version 7000068 to 7000069 for the Restrictions field.
@@ -183,7 +185,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			var objSurInPossAttr = possElt.Descendants("objsur").ToList();
 			Assert.AreEqual(2, objSurInPossAttr.Count);
 			var uniString1 = objSurInPossAttr.First(e => e.Attribute("guid").Value == "3942addb-99fd-43e9-ab7d-99025ceb0d4e");
-			Assert.IsNotNull(objSurInPossAttr);
+			Assert.IsNotNull(uniString1);
 
 			possibilityObjs = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").First(
 											e => e.Guid.ToString() == "1ee09905-63dd-4c7a-a9bd-1d496743ccd6").Xml);
@@ -199,7 +201,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			objSurInPossAttr = possElt.Descendants("objsur").ToList();
 			Assert.AreEqual(2, objSurInPossAttr.Count);
 			uniString1 = objSurInPossAttr.First(e => e.Attribute("guid").Value == "fec038ed-6a8c-4fa5-bc96-a4f515a98c50");
-			Assert.IsNotNull(objSurAttr);
+			Assert.IsNotNull(uniString1);
 
 			// Make sure new default types are added in LexEntryType
 
@@ -531,19 +533,19 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		/// wsArray. If allowOtherAstr is false, the matching AStr element will be verified
 		/// to be the only AStr in elt.
 		/// </summary>
-		private void VerifyMultiString(XElement elt, string[] wsArray, string[] runContentArray, bool allowOtherAstr)
+		private static void VerifyMultiString(XElement elt, string[] wsArray, string[] runContentArray, bool allowOtherAstr)
 		{
 			Assert.NotNull(elt, "Empty element fed to VerifyMultiString()");
 			Assert.AreEqual(wsArray.Length, runContentArray.Length, "VerifyMultiString fed two arrays of different length");
 
-			var astrElts = elt.Elements("AStr");
+			var astrElts = elt.Elements("AStr").ToList();
 			if (!allowOtherAstr)
-				Assert.AreEqual(1, astrElts.Count(), "Did not find unique AStr element in {0}", elt.Name);
+				Assert.AreEqual(1, astrElts.Count, "Did not find unique AStr element in {0}", elt.Name);
 			var astrElt = astrElts.FirstOrDefault(elem => elem.Attribute("ws").Value == wsArray[0]);
 			Assert.NotNull(astrElt, "AStr element has wrong ws attribute value in {0}.", elt.Name);
 
-			var runElts = astrElt.Elements("Run");
-			Assert.AreEqual(wsArray.Length, runElts.Count(), "MultiString {0} has the wrong number of Run elements", elt.Name);
+			var runElts = astrElt.Elements("Run").ToList();
+			Assert.AreEqual(wsArray.Length, runElts.Count, "MultiString {0} has the wrong number of Run elements", elt.Name);
 			var i = 0;
 			foreach (var runElt in runElts)
 			{
@@ -553,11 +555,11 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			}
 		}
 
-		private XElement GetEntryEtymologyElement(IDomainObjectDTORepository dtoRepos, XElement entryElement)
+		private static XElement GetEntryEtymologyElement(IDomainObjectDTORepository dtoRepos, XElement entryElement)
 		{
 			var entryEtymElt = entryElement.Element("Etymology");
-			var etyPointers = entryEtymElt.Descendants("objsur");
-			Assert.AreEqual(1, etyPointers.Count(), "There should be one Etymology object");
+			var etyPointers = entryEtymElt.Descendants("objsur").ToList();
+			Assert.AreEqual(1, etyPointers.Count, "There should be one Etymology object");
 			var etyGuid = etyPointers.First().Attribute("guid").Value;
 			return XElement.Parse(dtoRepos.GetDTO(etyGuid).Xml);
 		}
@@ -702,7 +704,6 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			Assert.IsNull(fourthSense.Element("Exemplar"), "No Exemplar CF; nothing to migrate");
 		}
 
-			// ReSharper disable PossibleMultipleEnumeration TODO: fix multiple enumerations
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test the migration from version 7000068 to 7000069 to Create UsageNote field, which is a MuliString allowing
@@ -739,40 +740,36 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 			var firstSense = XElement.Parse(lexSenseDtos[0].Xml);
 
-			var customElt = firstSense.Elements("Custom");
-			Assert.IsNotNull(customElt);
-			var nameAttr = customElt.FirstOrDefault().FirstAttribute;
+			var customElt = firstSense.Element("Custom");
+			var nameAttr = customElt.FirstAttribute;
 			Assert.AreEqual("UsageNote", nameAttr.Value);
 			Assert.AreEqual(1, customElt.Descendants("AStr").Count());
 
 			var secondSense = XElement.Parse(lexSenseDtos[1].Xml);
 
-			customElt = secondSense.Elements("Custom");
-			Assert.IsNotNull(customElt);
-			nameAttr = customElt.FirstOrDefault().FirstAttribute;
+			customElt = secondSense.Element("Custom");
+			nameAttr = customElt.FirstAttribute;
 			Assert.AreEqual("UsageNote1", nameAttr.Value);
 			Assert.AreEqual(1, customElt.Descendants("AStr").Count());
 
 			var thirdSense = XElement.Parse(lexSenseDtos[2].Xml);
 
-			customElt = thirdSense.Elements("Custom");
-			Assert.IsNotNull(customElt);
-			nameAttr = customElt.FirstOrDefault().FirstAttribute;
+			customElt = thirdSense.Element("Custom");
+			nameAttr = customElt.FirstAttribute;
 			Assert.AreEqual("UsageNote", nameAttr.Value);
 			Assert.AreEqual(2, customElt.Descendants("AUni").Count());
 
 			var fourthSense = XElement.Parse(lexSenseDtos[3].Xml);
 
-			customElt = fourthSense.Elements("Custom");
+			customElt = fourthSense.Element("Custom");
 			Assert.IsNotNull(customElt);
-			nameAttr = customElt.FirstOrDefault().FirstAttribute;
+			nameAttr = customElt.FirstAttribute;
 			Assert.AreEqual("Test Note", nameAttr.Value);
 			Assert.AreEqual(1, customElt.Descendants("AStr").Count());
 
 			var fifthSense = XElement.Parse(lexSenseDtos[4].Xml);
 
-			customElt = fifthSense.Elements("Custom");
-			Assert.IsNotNull(customElt);
+			customElt = fifthSense.Element("Custom");
 
 			nameAttr = customElt.Attributes("name").FirstOrDefault();
 			Assert.IsNotNull(nameAttr);
@@ -785,11 +782,10 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 			firstSense = XElement.Parse(lexSenseDtos[0].Xml);
 
-			customElt = firstSense.Elements("Custom");
-			Assert.IsEmpty(customElt);
+			customElt = firstSense.Element("Custom");
+			Assert.IsNull(customElt);
 
-			customElt = firstSense.Elements("UsageNote");
-			Assert.IsNotNull(customElt);
+			customElt = firstSense.Element("UsageNote");
 
 			CollectionAssert.IsEmpty(customElt.Descendants("AUni"));
 			var multiStrElements = customElt.Descendants("AStr").ToList();
@@ -801,30 +797,28 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 			secondSense = XElement.Parse(lexSenseDtos[1].Xml);
 
-			customElt = secondSense.Elements("Custom");
+			customElt = secondSense.Element("Custom");
 			Assert.IsNotNull(customElt);
-			nameAttr = customElt.FirstOrDefault().FirstAttribute;
+			nameAttr = customElt.FirstAttribute;
 			Assert.AreEqual("UsageNote1", nameAttr.Value);
 			Assert.AreEqual(1, customElt.Descendants("AStr").Count());
 
 			CollectionAssert.IsEmpty(customElt.Descendants("AUni"));
 			multiStrElements = customElt.Descendants("AStr").ToList();
 			Assert.AreEqual(1, multiStrElements.Count);
-			runElts = multiStrElements.FirstOrDefault().Descendants("Run").ToList();
+			runElts = multiStrElements[0].Descendants("Run").ToList();
 			Assert.AreEqual(1, runElts.Count);
-			Assert.AreEqual(enWs, runElts.FirstOrDefault().FirstAttribute.Value);
-			Assert.AreEqual("Custom Usage Note using AStr in English", runElts.FirstOrDefault().Value);
+			Assert.AreEqual(enWs, runElts[0].FirstAttribute.Value);
+			Assert.AreEqual("Custom Usage Note using AStr in English", runElts[0].Value);
 
-			var usagenoteElt = secondSense.Elements("UsageNote");
-			Assert.IsNotNull(usagenoteElt);
+			Assert.IsNull(secondSense.Element("UsageNote"));
 
 			thirdSense = XElement.Parse(lexSenseDtos[2].Xml);
 
-			customElt = thirdSense.Elements("Custom");
-			Assert.IsNotNull(customElt);
+			customElt = thirdSense.Element("Custom");
+			Assert.IsNull(customElt);
 
-			usagenoteElt = thirdSense.Elements("UsageNote");
-			Assert.IsNotNull(customElt);
+			var usagenoteElt = thirdSense.Element("UsageNote");
 
 			CollectionAssert.IsEmpty(usagenoteElt.Descendants("AUni"));
 			multiStrElements = usagenoteElt.Descendants("AStr").ToList();
@@ -838,7 +832,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 			fourthSense = XElement.Parse(lexSenseDtos[3].Xml);
 
-			customElt = fourthSense.Elements("Custom");
+			customElt = fourthSense.Element("Custom");
 			Assert.IsNotNull(customElt);
 			nameAttr = customElt.Attributes("name").FirstOrDefault();
 			Assert.IsNotNull(nameAttr);
@@ -847,28 +841,26 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			CollectionAssert.IsEmpty(customElt.Descendants("AUni"));
 			multiStrElements = customElt.Descendants("AStr").ToList();
 			Assert.AreEqual(1, multiStrElements.Count);
-			runElts = multiStrElements.FirstOrDefault().Descendants("Run").ToList();
+			runElts = multiStrElements[0].Descendants("Run").ToList();
 			Assert.AreEqual(1, runElts.Count);
-			Assert.AreEqual(enWs, runElts.FirstOrDefault().FirstAttribute.Value);
-			Assert.AreEqual("Custom Test Note using AStr in English", runElts.FirstOrDefault().Value);
+			Assert.AreEqual(enWs, runElts[0].FirstAttribute.Value);
+			Assert.AreEqual("Custom Test Note using AStr in English", runElts[0].Value);
 
-			usagenoteElt = fourthSense.Elements("UsageNote");
-			Assert.IsNotNull(usagenoteElt);
+			Assert.IsNull(fourthSense.Element("UsageNote"));
 
 			fifthSense = XElement.Parse(lexSenseDtos[4].Xml);
 
-			customElt = fifthSense.Elements("Custom");
+			customElt = fifthSense.Element("Custom");
 			Assert.IsNotNull(customElt);
 
-			nameAttr = customElt.Attributes("name").FirstOrDefault();
+			nameAttr = customElt.Attribute("name");
 			Assert.IsNotNull(nameAttr);
 			Assert.AreEqual("UsageNote0", nameAttr.Value, "conflicting Custom Field should be renamed with 'UsageNote0' in this case");
 			valAttr = customElt.Attributes("val").FirstOrDefault();
 			Assert.IsNotNull(valAttr);
 			Assert.AreEqual("42", valAttr.Value);
 
-			usagenoteElt = fifthSense.Elements("UsageNote");
-			Assert.IsNotNull(usagenoteElt);
+			Assert.IsNull(fifthSense.Element("UsageNote"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -919,9 +911,9 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			var extNoteTypElt = lexDb.Element("ExtendedNoteTypes");
 			Assert.IsNotNull(extNoteTypElt, "There should be a possibility list for ExtendedNoteTypes");
 
-			var guids = GetOwnedGuidStringsFromPropertyElement(extNoteTypElt);
-			Assert.AreEqual(1, guids.Count(), "Found too many or too few possibility lists.");
-			var possListElt = XElement.Parse(dtoRepos.GetDTO(guids.First()).Xml);
+			var guids = GetOwnedGuidStringsFromPropertyElement(extNoteTypElt).ToList();
+			Assert.AreEqual(1, guids.Count, "Found too many or too few possibility lists.");
+			var possListElt = XElement.Parse(dtoRepos.GetDTO(guids[0]).Xml);
 			Assert.AreEqual(lexDb.Attribute("guid").Value, possListElt.Attribute("ownerguid").Value,
 				"Reverse link from list to LexDb not set correctly");
 			Assert.AreEqual(extNoteListGuid, possListElt.Attribute("guid").Value,
@@ -969,7 +961,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			VerifyExtNotePossibility(possibilitiesElt, dtoRepos, "5dd29371-fdb0-497a-a2fb-7ca69b00ad4f", "Semantic", "Sem.");
 		}
 
-		private void VerifyExtNotePossibility(XElement possibilitiesElt, IDomainObjectDTORepository dtoRepos, string guidStr,
+		private static void VerifyExtNotePossibility(XElement possibilitiesElt, IDomainObjectDTORepository dtoRepos, string guidStr,
 			string name, string abbreviation)
 		{
 			var guids = GetOwnedGuidStringsFromPropertyElement(possibilitiesElt);
@@ -984,18 +976,18 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			Assert.AreEqual("True", protElt.Attribute("val").Value, "IsProtected property not correctly set for {0}.", name);
 		}
 
-		private IEnumerable<string> GetOwnedGuidStringsFromPropertyElement(XElement propElement)
+		private static IEnumerable<string> GetOwnedGuidStringsFromPropertyElement(XElement propElement)
 		{
 			return propElement.Elements("objsur").Select(objPointer => objPointer.Attribute("guid").Value).ToList();
 		}
 
-		private void VerifySingleMultiUnicodeStringFromPropertyElement(XElement propElement, string value)
+		private static void VerifySingleMultiUnicodeStringFromPropertyElement(XElement propElement, string value)
 		{
 			Assert.IsNotNull(propElement, "MultiUnicode property {0} should not be null.", value);
-			var aUniStr = propElement.Elements("AUni");
-			Assert.AreEqual(1, aUniStr.Count(), "Wrong number of AUni elements in MultiUnicode property.");
-			Assert.AreEqual(enWs, aUniStr.First().Attribute("ws").Value, "Unicode string ws attribute is wrong.");
-			Assert.AreEqual(value, aUniStr.First().Value, "Unicode string has wrong value.");
+			var aUniStr = propElement.Elements("AUni").ToList();
+			Assert.AreEqual(1, aUniStr.Count, "Wrong number of AUni elements in MultiUnicode property.");
+			Assert.AreEqual(enWs, aUniStr[0].Attribute("ws").Value, "Unicode string ws attribute is wrong.");
+			Assert.AreEqual(value, aUniStr[0].Value, "Unicode string has wrong value.");
 		}
 	}
 }
