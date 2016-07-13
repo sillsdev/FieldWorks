@@ -788,7 +788,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				foreach (IMoAffixAllomorph prefixAllo in allos.OfType<IMoAffixAllomorph>().Where(a => a.MorphTypeRA.Guid == MoMorphTypeTags.kguidMorphPrefix))
 				{
-					MprFeature[] requiredMprFeatures = LoadAllInflClasses(prefixAllo.InflectionClassesRC).ToArray();
+					MprFeature[] requiredMprFeatures = null;
+					if (msa is IMoInflAffMsa)
+						requiredMprFeatures = LoadAllInflClasses(prefixAllo.InflectionClassesRC).ToArray();
 					foreach (IMoAffixAllomorph suffixAllo in allos.OfType<IMoAffixAllomorph>().Where(a => a.MorphTypeRA.Guid == MoMorphTypeTags.kguidMorphSuffix))
 					{
 						foreach (IPhEnvironment prefixEnv in GetAffixAllomorphEnvironments(prefixAllo, msa))
@@ -799,7 +801,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 								try
 								{
 									hcAllo = LoadCircumfixAffixProcessAllomorph(prefixAllo, prefixEnv, suffixAllo, suffixEnv);
-									hcAllo.RequiredMprFeatures.AddRange(requiredMprFeatures);
+									if (requiredMprFeatures != null)
+										hcAllo.RequiredMprFeatures.AddRange(requiredMprFeatures);
 									m_allomorphs.GetValue(entry.LexemeFormOA, () => new List<Allomorph>()).Add(hcAllo);
 								}
 								catch (InvalidShapeException ise)
@@ -825,7 +828,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							try
 							{
 								hcAffixProcessAllo = LoadAffixProcessAllomorph(affixProcess);
-								hcAffixProcessAllo.RequiredMprFeatures.AddRange(LoadAllInflClasses(affixProcess.InflectionClassesRC));
+								if (msa is IMoInflAffMsa)
+									hcAffixProcessAllo.RequiredMprFeatures.AddRange(LoadAllInflClasses(affixProcess.InflectionClassesRC));
 								m_allomorphs.GetValue(allo, () => new List<Allomorph>()).Add(hcAffixProcessAllo);
 							}
 							catch (InvalidShapeException ise)
@@ -842,14 +846,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 						case MoAffixAllomorphTags.kClassId:
 							var affixAllo = (IMoAffixAllomorph) allo;
-							MprFeature[] requiredMprFeatures = LoadAllInflClasses(affixAllo.InflectionClassesRC).ToArray();
+							MprFeature[] requiredMprFeatures = null;
+							if (msa is IMoInflAffMsa)
+								requiredMprFeatures = LoadAllInflClasses(affixAllo.InflectionClassesRC).ToArray();
 							foreach (IPhEnvironment env in GetAffixAllomorphEnvironments(affixAllo, msa))
 							{
 								AffixProcessAllomorph hcAffixAllo = null;
 								try
 								{
 									hcAffixAllo = LoadFormAffixProcessAllomorph(affixAllo, env);
-									hcAffixAllo.RequiredMprFeatures.AddRange(requiredMprFeatures);
+									if (requiredMprFeatures != null)
+										hcAffixAllo.RequiredMprFeatures.AddRange(requiredMprFeatures);
 									var requiredFS = new FeatureStruct();
 									if (affixAllo.MsEnvFeaturesOA != null && !affixAllo.MsEnvFeaturesOA.IsEmpty)
 										requiredFS.AddValue(m_headFeature, LoadFeatureStruct(affixAllo.MsEnvFeaturesOA, m_language.SyntacticFeatureSystem));
@@ -1913,7 +1920,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					}
 					if (nodes.Count > 0)
 					{
-						node = new Group<Word, ShapeNode>(nodes);
+						node = nodes.Count == 1 ? nodes.First() : new Group<Word, ShapeNode>(nodes);
 						return true;
 					}
 					break;

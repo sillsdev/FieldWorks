@@ -114,6 +114,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			((XElement) word.CurrentTrace).Add(new XElement("FailureReason", new XAttribute("type", "nonFinalTemplate")));
 		}
 
+		public void ApplicableTemplatesNotApplied(Stratum stratum, Word word)
+		{
+			((XElement) word.CurrentTrace).Add(new XElement("FailureReason", new XAttribute("type", "noTemplatesApplied")));
+		}
+
 		public void EndApplyStratum(Stratum stratum, Word output)
 		{
 		}
@@ -223,7 +228,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					}
 					break;
 
-				case FailureReason.StemName:
+				case FailureReason.RequiredStemName:
 					trace.Add(new XElement("FailureReason", new XAttribute("type", "fromStemName"),
 						new XElement("StemName", failureObj)));
 					break;
@@ -321,9 +326,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							CreateInflFeaturesElement("RequiredInflFeatures", (FeatureStruct) failureObj)));
 					break;
 
-				case FailureReason.StemName:
+				case FailureReason.RequiredStemName:
 					trace = CreateParseCompleteElement(word,
-						new XElement("FailureReason", new XAttribute("type", "stemName"),
+						new XElement("FailureReason", new XAttribute("type", "requiredStemName"),
+							CreateAllomorphElement(allomorph),
+							new XElement("StemName", failureObj)));
+					break;
+
+				case FailureReason.ExcludedStemName:
+					trace = CreateParseCompleteElement(word,
+						new XElement("FailureReason", new XAttribute("type", "excludedStemName"),
 							CreateAllomorphElement(allomorph),
 							new XElement("StemName", failureObj)));
 					break;

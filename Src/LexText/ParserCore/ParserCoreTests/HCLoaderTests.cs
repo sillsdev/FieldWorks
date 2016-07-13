@@ -443,14 +443,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] {AnyStar + VowelFS + SuffixNull}));
 			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] {"<stem>", "+ɯd"}));
 			Assert.That(hcAllo.Environments.Select(e => e.ToEnvString()), Is.EquivalentTo(new[] {"/ _ " + RightAnchorFS}));
-			Assert.That(hcAllo.RequiredMprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"inflClass", "inflSubclass"}));
+			Assert.That(hcAllo.RequiredMprFeatures, Is.Empty);
 			Assert.That(hcAllo.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[Head:[tense:pres]]"));
 
 			hcAllo = rule.Allomorphs[1];
 			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] {PrefixNull + ConsFS + SuffixNull}));
 			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] {"<stem>", "+ɯd"}));
 			Assert.That(hcAllo.Environments.Select(e => e.ToEnvString()), Is.EquivalentTo(new[] {"/ _ " + ConsFS}));
-			Assert.That(hcAllo.RequiredMprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"inflClass", "inflSubclass"}));
+			Assert.That(hcAllo.RequiredMprFeatures, Is.Empty);
 			Assert.That(hcAllo.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[Head:[tense:pres]]"));
 		}
 
@@ -639,6 +639,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			msa.FromProdRestrictRC.Add(AddExceptionFeature("fromExceptFeat"));
 			msa.InflFeatsOA = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
 			CreateFeatStruc(Cache.LanguageProject.MsFeatureSystemOA, m_inflType, msa.InflFeatsOA, new FS {{"tense", "past"}});
+			var allo = (IMoAffixAllomorph) entry.LexemeFormOA;
+			IMoInflClass inflClass = AddInflectionClass(m_verb, "inflClass");
+			AddInflectiononSubclass(inflClass, "inflSubclass");
+			allo.InflectionClassesRC.Add(inflClass);
 			LoadLanguage();
 
 			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(1));
@@ -647,7 +651,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(rule.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[Head:[tense:past], POS:V]"));
 			Assert.That(rule.OutSyntacticFeatureStruct.ToString(), Is.EqualTo("ANY"));
 			Assert.That(rule.Gloss, Is.EqualTo("gloss"));
-			Assert.That(rule.Allomorphs[0].RequiredMprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"fromExceptFeat"}));
+			Assert.That(rule.Allomorphs[0].RequiredMprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"fromExceptFeat", "inflClass", "inflSubclass"}));
 		}
 
 		[Test]
@@ -967,7 +971,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(hcPrule.Subrules.Count, Is.EqualTo(1));
 			RewriteSubrule subrule = hcPrule.Subrules[0];
 
-			Assert.That(subrule.LeftEnvironment.ToString(), Is.EqualTo(LeftAnchorFS + "(" + m_lang.Strata[0].CharacterDefinitionTable["t"].FeatureStruct + ")"));
+			Assert.That(subrule.LeftEnvironment.ToString(), Is.EqualTo(LeftAnchorFS + m_lang.Strata[0].CharacterDefinitionTable["t"].FeatureStruct));
 			Assert.That(subrule.Rhs.ToString(), Is.EqualTo("[cont:+, Type:segment, vd:+α]"));
 			Assert.That(subrule.RightEnvironment.ToString(), Is.EqualTo("[poa:alveolar, Type:segment, vd:-α]"));
 			Assert.That(subrule.RequiredMprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"inflClass"}));
@@ -1021,11 +1025,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			entry.ReplaceMoForm(entry.LexemeFormOA, Cache.ServiceLocator.GetInstance<IMoAffixProcessFactory>().Create());
 			var allo = (IMoAffixProcess) entry.LexemeFormOA;
 			allo.InputOS.Clear();
+
 			IPhIterationContext input1 = Cache.ServiceLocator.GetInstance<IPhIterationContextFactory>().Create();
 			allo.InputOS.Add(input1);
 			input1.Minimum = 2;
 			input1.Maximum = -1;
-			input1.MemberRA = AddNCContext(m_cons);
+			IPhSequenceContext seqCtxt = Cache.ServiceLocator.GetInstance<IPhSequenceContextFactory>().Create();
+			Cache.LanguageProject.PhonologicalDataOA.ContextsOS.Add(seqCtxt);
+			seqCtxt.MembersRS.Add(AddNCContext(m_cons));
+			seqCtxt.MembersRS.Add(AddNCContext(m_cons));
+			input1.MemberRA = seqCtxt;
 
 			IPhSimpleContextNC input2 = Cache.ServiceLocator.GetInstance<IPhSimpleContextNCFactory>().Create();
 			allo.InputOS.Add(input2);
@@ -1059,7 +1068,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(rule.Allomorphs.Count, Is.EqualTo(1));
 
 			AffixProcessAllomorph hcAllo = rule.Allomorphs[0];
-			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] {ConsFS + "[2,]", "[round:+, Type:segment, voc:+]", AnyStar}));
+			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] {"(" + ConsFS + ConsFS + ")[2,]", "[round:+, Type:segment, voc:+]", AnyStar}));
 			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[]
 				{
 					"<1>",
