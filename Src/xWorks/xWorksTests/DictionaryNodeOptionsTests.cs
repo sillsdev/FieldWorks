@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,7 +21,8 @@ namespace SIL.FieldWorks.XWorks
 				NumberStyle = "Dictionary-SenseNumber",
 				NumberEvenASingleSense = true,
 				ShowSharedGrammarInfoFirst = true,
-				DisplayEachSenseInAParagraph = true
+				DisplayEachSenseInAParagraph = true,
+				DisplayFirstSenseInline = true
 			};
 
 			// SUT
@@ -37,6 +38,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(orig.NumberEvenASingleSense, clone.NumberEvenASingleSense);
 			Assert.AreEqual(orig.ShowSharedGrammarInfoFirst, clone.ShowSharedGrammarInfoFirst);
 			Assert.AreEqual(orig.DisplayEachSenseInAParagraph, clone.DisplayEachSenseInAParagraph);
+			Assert.AreEqual(orig.DisplayFirstSenseInline, clone.DisplayFirstSenseInline);
 		}
 
 		[Test]

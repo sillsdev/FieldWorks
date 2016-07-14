@@ -825,7 +825,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Choose the location and name of the LIFT export folder FLEx will use.  You can make a new folder, or choose one which already contains LIFT data (e.g. a WeSay project folder).
+        ///   Looks up a localized string similar to Choose or create a folder (with your project name) for FLEx to put all the files into for this LIFT export.  Any LIFT data in an existing folder will be overwritten..
         /// </summary>
         internal static string ksChooseLIFTExportFolder {
             get {
@@ -834,7 +834,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Choose where to save the LIFT files.
+        ///   Looks up a localized string similar to Choose where to save the files that constitute a LIFT export.
         /// </summary>
         internal static string ksChooseLIFTFolderTitle {
             get {
@@ -1048,18 +1048,16 @@ namespace SIL.FieldWorks.XWorks {
                 return ResourceManager.GetString("ksDisplayComplexFormsInParagraphs", resourceCulture);
             }
         }
-
-		/// <summary>
-		///   Looks up a localized string similar to Display each subsense in a paragraph.
-		/// </summary>
-		internal static string ksDisplayEachSubsenseInAParagraph
-		{
-			get
-			{
-				return ResourceManager.GetString("ksDisplayEachSubsenseInAParagraph", resourceCulture);
-			}
-		}
-
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display each subsense in a paragraph.
+        /// </summary>
+        internal static string ksDisplayEachSubsenseInAParagraph {
+            get {
+                return ResourceManager.GetString("ksDisplayEachSubsenseInAParagraph", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to Display each Example in a paragraph.
         /// </summary>
@@ -1717,6 +1715,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string ksSorting {
             get {
                 return ResourceManager.GetString("ksSorting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to starting with second subsense.
+        /// </summary>
+        internal static string ksStartingWithTheSecondSubsense {
+            get {
+                return ResourceManager.GetString("ksStartingWithTheSecondSubsense", resourceCulture);
             }
         }
         

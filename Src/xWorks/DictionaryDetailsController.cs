@@ -382,6 +382,7 @@ namespace SIL.FieldWorks.XWorks
 				NumberSingleSense = senseOptions.NumberEvenASingleSense,
 				ShowGrammarFirst = senseOptions.ShowSharedGrammarInfoFirst,
 				SenseInPara = senseOptions.DisplayEachSenseInAParagraph,
+				FirstSenseInline = senseOptions.DisplayFirstSenseInline
 			};
 
 			// load character Style (number) and paragraph Style (sense)
@@ -391,6 +392,7 @@ namespace SIL.FieldWorks.XWorks
 			// (dis)actviate appropriate parts of the view
 			senseOptionsView.NumberMetaConfigEnabled = !string.IsNullOrEmpty(senseOptions.NumberingStyle);
 			ToggleViewForShowInPara(senseOptions.DisplayEachSenseInAParagraph);
+			senseOptionsView.FirstSenseInlineVisible = senseOptions.DisplayEachSenseInAParagraph;
 
 			// Register eventhandlers
 			senseOptionsView.BeforeTextChanged += (sender, e) => { senseOptions.BeforeNumber = senseOptionsView.BeforeText; RefreshPreview(); };
@@ -412,6 +414,11 @@ namespace SIL.FieldWorks.XWorks
 				RefreshPreview();
 			};
 			senseOptionsView.SenseInParaChanged += (sender, e) => SenseInParaChanged(senseOptions, senseOptionsView);
+			senseOptionsView.FirstSenseInlineChanged += (sender, e) =>
+			{
+				senseOptions.DisplayFirstSenseInline = senseOptionsView.FirstSenseInline;
+				RefreshPreview();
+			};
 
 			// add senseOptionsView to the DetailsView
 			return senseOptionsView;
@@ -423,14 +430,15 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var listOptionsView = new ListOptionsView();
 
-			if (listOptions is DictionaryNodeComplexFormOptions)
+			var complexFormOptions = listOptions as DictionaryNodeComplexFormOptions;
+			if (complexFormOptions == null)
 			{
-				LoadComplexFormOptions((DictionaryNodeComplexFormOptions) listOptions, listOptionsView);
+				// DictionaryNodeComplexFormOptions makes use of the Display Option CheckBox below the list; regular List Options do not.
+				listOptionsView.DisplayOptionCheckBoxVisible = false;
 			}
 			else
 			{
-				// Complex Forms are the only List type that make use of the Display Option CheckBox below the list
-				listOptionsView.DisplayOptionCheckBoxVisible = false;
+				LoadComplexFormOptions(complexFormOptions, listOptionsView);
 			}
 			// REVIEW (Hasso) 2016.02: could this if block be replaced by config file changes?
 			if (listOptions.ListId == DictionaryNodeListOptions.ListIds.Complex ||
@@ -990,6 +998,7 @@ namespace SIL.FieldWorks.XWorks
 			// The default style "Dictionary-Sense" will be used if the user turns this option on.
 			m_node.Style = senseOptions.DisplayEachSenseInAParagraph ? "Dictionary-Sense" : null;
 			ToggleViewForShowInPara(senseOptions.DisplayEachSenseInAParagraph);
+			senseOptionsView.FirstSenseInlineVisible = senseOptions.DisplayEachSenseInAParagraph;
 			RefreshPreview();
 		}
 		#endregion SenseChanges

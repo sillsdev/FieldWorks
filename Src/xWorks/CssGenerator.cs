@@ -245,18 +245,9 @@ namespace SIL.FieldWorks.XWorks
 														StyleSheet styleSheet, ref string baseSelection, Mediator mediator)
 		{
 			var selectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, (FdoCache)mediator.PropertyTable.GetValue("cache"), mediator);
-			var senseContentSelector = string.Empty;
-			var senseItemName = string.Empty;
-			if (baseSelection.LastIndexOf(".sense", StringComparison.Ordinal) >= 0)
-			{
-				senseContentSelector = string.Format("{0}> .sensecontent", baseSelection.Substring(0, baseSelection.LastIndexOf(".sense", StringComparison.Ordinal)));
-				senseItemName = "sense";
-			}
-			else if (baseSelection.LastIndexOf(".referringsense", StringComparison.Ordinal) >= 0)
-			{
-				senseContentSelector = string.Format("{0}> .sensecontent", baseSelection.Substring(0, baseSelection.LastIndexOf(".referringsense", StringComparison.Ordinal)));
-				senseItemName = "referringsense";
-			}
+			// Insert '> .sensecontent' between '.*senses' and '.*sense' (where * could be 'referring', 'sub', or similar)
+			var senseContentSelector = string.Format("{0}> .sensecontent", baseSelection.Substring(0, baseSelection.LastIndexOf('.')));
+			var senseItemName = baseSelection.Substring(baseSelection.LastIndexOf('.'));
 			if (senseOptions.DisplayEachSenseInAParagraph)
 				selectors = RemoveBeforeAfterSelectorRules(selectors);
 			styleSheet.Rules.AddRange(CheckRangeOfRulesForEmpties(selectors));
@@ -288,7 +279,7 @@ namespace SIL.FieldWorks.XWorks
 				styleSheet.Rules.Add(afterRule);
 			}
 			// set the base selection to the sense level under the sense content
-			baseSelection = string.Format("{0} > .{1}", senseContentSelector, senseItemName);
+			baseSelection = string.Format("{0} > {1}", senseContentSelector, senseItemName);
 			var styleDeclaration = string.IsNullOrEmpty(configNode.Style) ? new StyleDeclaration() : GenerateCssStyleFromFwStyleSheet(configNode.Style, 0, configNode, mediator);
 			if (senseOptions.DisplayEachSenseInAParagraph)
 			{
@@ -308,8 +299,8 @@ namespace SIL.FieldWorks.XWorks
 				});
 				var senseParaRule = new StyleRule(senseParaDeclaration)
 				{
-					// Apply the paragraph style information to all but the first sensecontent block
-					Value = string.Format("{0} + {1}", senseContentSelector, ".sensecontent")
+					// Apply the paragraph style information to all but the first sensecontent block, if requested
+					Value = senseOptions.DisplayFirstSenseInline ? string.Format("{0} + {1}", senseContentSelector, ".sensecontent") : senseContentSelector
 				};
 				styleSheet.Rules.Add(senseParaRule);
 				GenerateCssforBulletedList(configNode, styleSheet, senseParaRule.Value, mediator);

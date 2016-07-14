@@ -148,7 +148,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;checkBoxSenseInPara.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="checkBoxShowGrammarFirst.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
@@ -178,7 +178,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;checkBoxShowGrammarFirst.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="checkBoxNumberSingleSense.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
@@ -477,6 +477,39 @@
   <data name="&gt;&gt;groupBoxSenseNumber.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="checkBoxFirstSenseInline.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Left</value>
+  </data>
+  <data name="checkBoxFirstSenseInline.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="checkBoxFirstSenseInline.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="checkBoxFirstSenseInline.Location" type="System.Drawing.Point, System.Drawing">
+    <value>22, 173</value>
+  </data>
+  <data name="checkBoxFirstSenseInline.Size" type="System.Drawing.Size, System.Drawing">
+    <value>169, 17</value>
+  </data>
+  <data name="checkBoxFirstSenseInline.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="checkBoxFirstSenseInline.Text" xml:space="preserve">
+    <value>starting with second sense</value>
+  </data>
+  <data name="&gt;&gt;checkBoxFirstSenseInline.Name" xml:space="preserve">
+    <value>checkBoxFirstSenseInline</value>
+  </data>
+  <data name="&gt;&gt;checkBoxFirstSenseInline.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;checkBoxFirstSenseInline.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;checkBoxFirstSenseInline.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
@@ -484,7 +517,7 @@
     <value>6, 13</value>
   </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>305, 170</value>
+    <value>305, 193</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>SenseOptionsView</value>

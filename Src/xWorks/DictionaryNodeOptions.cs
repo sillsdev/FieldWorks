@@ -68,6 +68,9 @@ namespace SIL.FieldWorks.XWorks
 		[XmlAttribute(AttributeName = "displayEachSenseInParagraph")]
 		public bool DisplayEachSenseInAParagraph { get; set; }
 
+		[XmlAttribute(AttributeName = "displayFirstSenseInline")]
+		public bool DisplayFirstSenseInline { get; set; }
+
 		public override DictionaryNodeOptions DeepClone()
 		{
 			return DeepCloneInto(new DictionaryNodeSenseOptions());

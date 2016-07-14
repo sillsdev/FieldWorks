@@ -34,6 +34,7 @@
 	<xs:attribute type="xs:boolean" name="numberSingleSense"/>
 	<xs:attribute type="xs:boolean" name="showSingleGramInfoFirst"/>
 	<xs:attribute type="xs:boolean" name="displayEachSenseInParagraph"/>
+	<xs:attribute type="xs:boolean" name="displayFirstSenseInline"/>
 </xs:complexType>
 <xs:complexType name="WritingSystemOptionsType">
 	<xs:sequence>

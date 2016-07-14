@@ -82,6 +82,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.labelNumberingStyle = new System.Windows.Forms.Label();
 			this.groupBoxSenseNumber = new System.Windows.Forms.GroupBox();
 			this.buttonStyles = new System.Windows.Forms.Button();
+			this.checkBoxFirstSenseInline = new System.Windows.Forms.CheckBox();
 			this.groupBoxSenseNumber.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -169,15 +170,22 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.buttonStyles.Name = "buttonStyles";
 			this.buttonStyles.UseVisualStyleBackColor = true;
 			// 
+			// checkBoxFirstSenseInline
+			// 
+			resources.ApplyResources(this.checkBoxFirstSenseInline, "checkBoxFirstSenseInline");
+			this.checkBoxFirstSenseInline.Name = "checkBoxFirstSenseInline";
+			this.checkBoxFirstSenseInline.UseVisualStyleBackColor = true;
+			// 
 			// SenseOptionsView
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.groupBoxSenseNumber);
+			this.Controls.Add(this.checkBoxFirstSenseInline);
 			this.Controls.Add(this.checkBoxSenseInPara);
 			this.Controls.Add(this.checkBoxShowGrammarFirst);
-			this.MaximumSize = new System.Drawing.Size(0, 170);
-			this.MinimumSize = new System.Drawing.Size(305, 170);
+			this.MaximumSize = new System.Drawing.Size(0, 193);
+			this.MinimumSize = new System.Drawing.Size(305, 193);
 			this.Name = "SenseOptionsView";
 			this.groupBoxSenseNumber.ResumeLayout(false);
 			this.groupBoxSenseNumber.PerformLayout();
@@ -201,5 +209,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		private System.Windows.Forms.Label labelNumberingStyle;
 		private System.Windows.Forms.GroupBox groupBoxSenseNumber;
 		private System.Windows.Forms.Button buttonStyles;
+		private System.Windows.Forms.CheckBox checkBoxFirstSenseInline;
 	}
 }
