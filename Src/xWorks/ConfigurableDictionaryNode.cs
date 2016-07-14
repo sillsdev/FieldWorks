@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.XWorks
 		[XmlAttribute(AttributeName = "isDuplicate")]
 		public bool IsDuplicate { get; set; } // REVIEW (Hasso) 2014.04: could we use get { return !string.IsNullOrEmpty(NameSuffix); }?
 
-		/// <summary>ShouldSerialize[Attribute] is a magic method to prevent serializing the default value. May not work until Mono 3.3.0</summary>
+		/// <summary>ShouldSerialize[Attribute] is a magic method to prevent serializing the default value</summary>
 		public bool ShouldSerializeIsDuplicate() { return IsDuplicate; }
 
 		/// <summary>
@@ -82,14 +82,17 @@ namespace SIL.FieldWorks.XWorks
 		[XmlAttribute(AttributeName = "isCustomField")]
 		public bool IsCustomField { get; set; }
 
+		/// <summary>ShouldSerialize[Attribute] is a magic method to prevent serializing the default value</summary>
+		public bool ShouldSerializeIsCustomField() { return IsCustomField; }
+
 		/// <summary>
 		/// Should we hide custom fields which would show as children of this node.
 		/// </summary>
 		[XmlAttribute(AttributeName = "hideCustomFields")]
 		public bool HideCustomFields { get; set; }
 
-		/// <summary>ShouldSerialize[Attribute] is a magic method to prevent serializing the default value. May not work until Mono 3.3.0</summary>
-		public bool ShouldSerializeIsCustomField() { return IsCustomField; }
+		/// <summary>ShouldSerialize[Attribute] is a magic method to prevent serializing the default value</summary>
+		public bool ShouldSerializeHideCustomFields() { return HideCustomFields; }
 
 		/// <summary>
 		/// The style to apply to the data configured by this node
@@ -116,7 +119,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// ShouldSerialize[Attribute] is a magic method to prevent serialization of the default value.
 		/// XMLSerializer looks for this method to determine whether to serialize each Element and Attribute.
-		/// May not work in Mono until Mono 3.3.0.
 		/// </summary>
 		public bool ShouldSerializeStyleType()
 		{
