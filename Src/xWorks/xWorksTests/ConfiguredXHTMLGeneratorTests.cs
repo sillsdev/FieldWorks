@@ -4832,6 +4832,85 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_WsAudioCrashOnPrimarySelection()
+		{
+			IWritingSystem wsEn, wsEnAudio;
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("en-Zxxx-x-audio", out wsEnAudio);
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("en", out wsEn);
+
+			try
+			{
+				//Ensure Audio ws should be First and Primary item
+				Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Clear();
+				Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Insert(0, wsEnAudio);
+				Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Insert(1, wsEn);
+
+				Cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Clear();
+				Cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Add(wsEnAudio);
+				Cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Add(wsEn);
+
+				var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
+				{
+					ShowSharedGrammarInfoFirst = true
+				};
+				var categorynfo = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "MLPartOfSpeech",
+					Children = new List<ConfigurableDictionaryNode>(),
+					DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+				};
+				var gramInfoNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "MorphoSyntaxAnalysisRA",
+					CSSClassNameOverride = "msas",
+					Children = new List<ConfigurableDictionaryNode> { categorynfo }
+				};
+				var sensesNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "SensesOS",
+					CSSClassNameOverride = "Senses",
+					DictionaryNodeOptions = DictionaryNodeSenseOptions,
+					Children = new List<ConfigurableDictionaryNode> { gramInfoNode }
+				};
+				var mainEntryNode = new ConfigurableDictionaryNode
+				{
+					Children = new List<ConfigurableDictionaryNode> { sensesNode },
+					FieldDescription = "LexEntry"
+				};
+
+				CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+				var entry = CreateInterestingLexEntry(Cache);
+
+				var posSeq = Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS;
+				var pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
+				posSeq.Add(pos);
+				var sense = entry.SensesOS.First();
+
+				var msa = Cache.ServiceLocator.GetInstance<IMoInflAffMsaFactory>().Create();
+				entry.MorphoSyntaxAnalysesOC.Add(msa);
+				sense.MorphoSyntaxAnalysisRA = msa;
+
+				msa.PartOfSpeechRA = pos;
+				msa.PartOfSpeechRA.Abbreviation.set_String(m_wsEn, "Blah");
+
+				var entryOne = CreateInterestingLexEntry(Cache);
+				var senseaudio = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+				entryOne.LexemeFormOA = senseaudio;
+				senseaudio.Form.set_String(wsEnAudio.Handle, Cache.TsStrFactory.MakeString("TestAudio.wav", wsEnAudio.Handle));
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, true, true, "//audio/source/@src");
+
+				// SUT
+				var xhtmlString = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
+				Assert.DoesNotThrow(() => xhtmlString = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings), "Having an audio ws first should not cause crash.");
+			}
+			finally
+			{
+				//Remove the AudioWS from the Cache which was added in AnalysisWritingSystem for this test
+				Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Remove(wsEnAudio);
+			}
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_GeneratesComplexFormTypeForSubentryUnderSense()
 		{
 			var lexentry = CreateInterestingLexEntry(Cache);

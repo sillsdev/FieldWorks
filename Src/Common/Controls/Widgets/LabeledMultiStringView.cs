@@ -386,7 +386,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			// Make up a unique file name for the new recording. It starts with the shortname of the object
 			// so as to somewhat link them together, then adds a unique timestamp, then if by any chance
 			// that exists it keeps trying.
-			var baseNameForFile = obj.ShortName;
+			var baseNameForFile = obj.ShortName ?? string.Empty;
 			// LT-12926: Path.ChangeExtension checks for invalid filename chars,
 			// so we need to fix the filename before calling it.
 			foreach (var c in Path.GetInvalidFileNameChars())

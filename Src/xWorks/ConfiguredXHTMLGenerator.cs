@@ -2380,7 +2380,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (writingSystem != null && writingSystem.Contains("audio"))
 			{
-				if (fieldValue != null && !String.IsNullOrEmpty(fieldValue.Text))
+				if (fieldValue != null && !String.IsNullOrEmpty(fieldValue.Text) && fieldValue.Text.Contains("."))
 				{
 					var audioId = fieldValue.Text.Substring(0, fieldValue.Text.IndexOf(".", StringComparison.Ordinal));
 					var srcAttr = GenerateSrcAttributeForMediaFromFilePath(fieldValue.Text, "AudioVisual", settings);
