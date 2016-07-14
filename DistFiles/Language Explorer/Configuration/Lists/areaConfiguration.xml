@@ -65,6 +65,9 @@
 		<command id="CmdJumpToEducationList" label="Show in {0} list" message="JumpToTool">
 			<parameters tool="educationEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Education"/>
 		</command>
+		<command id="CmdJumpToExtNoteTypeList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="extNoteTypeEdit" className="CmPossibility" ownerClass="LexDb" ownerField="ExtendedNoteTypes"/>
+		</command>
 		<command id="CmdJumpToRoleList" label="Show in {0} list" message="JumpToTool">
 			<parameters tool="roleEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Roles"/>
 		</command>
@@ -80,9 +83,9 @@
 		<command id="CmdJumpToPublicationList" label="Show in {0} list" message="JumpToTool">
 			<parameters tool="publicationsEdit" className="CmPossibility" ownerClass="LexDb" ownerField="PublicationTypes"/>
 		</command>
-	<command id="CmdInsertLexEntryInflType" label="_Type" message="InsertItemInVector" icon="AddItem">
-	  <params className="LexEntryInflType"/>
-	</command>
+		<command id="CmdInsertLexEntryInflType" label="_Type" message="InsertItemInVector" icon="AddItem">
+			<params className="LexEntryInflType"/>
+		</command>
 		<command id="CmdInsertLexEntryType" label="_Type" message="InsertItemInVector" icon="AddItem">
 			<params className="LexEntryType"/>
 		</command>
@@ -416,6 +419,16 @@
 				</clerk>
 				<clerk id="EducationList">
 					<recordList owner="LangProject" property="Education">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="ExtNoteTypeList">
+					<recordList owner="LexDb" property="ExtendedNoteTypes">
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
 					</recordList>
 					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>

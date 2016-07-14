@@ -2,14 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using Palaso.Extensions;
-using SIL.FieldWorks.FDO.DomainImpl;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 {
@@ -97,9 +93,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			sb.Append("<Possibilities>");
 			sb.Append("<objsur guid=\"2f06d436-b1e0-47ae-a42e-1f7b893c5fc2\" t=\"o\" />");
 			sb.Append("<objsur guid=\"7ad06e7d-15d1-42b0-ae19-9c05b7c0b181\" t=\"o\" />");
-			sb.Append("<objsur guid=\"d3d28628-60c9-4917-8185-ba64c59f20c3\" t=\"o\" />");
 			sb.Append("<objsur guid=\"30115b33-608a-4506-9f9c-2457cab4f4a8\" t=\"o\" />");
-			sb.Append("<objsur guid=\"5dd29371-fdb0-497a-a2fb-7ca69b00ad4f\" t=\"o\" />");
+			sb.Append("<objsur guid=\"d3d28628-60c9-4917-8185-ba64c59f20c4\" t=\"o\" />");
 			sb.Append("</Possibilities>");
 			sb.Append("<PreventDuplicates val=\"True\" />");
 			sb.Append("<WsSelector val=\"-3\" />");
@@ -111,9 +106,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			// Now add our 5 default possibilities
 			CreatePossibility(repoDto, extNoteListGuid, "2f06d436-b1e0-47ae-a42e-1f7b893c5fc2", "Collocation", "Coll.");
 			CreatePossibility(repoDto, extNoteListGuid, "7ad06e7d-15d1-42b0-ae19-9c05b7c0b181", "Cultural", "Cult.");
-			CreatePossibility(repoDto, extNoteListGuid, "d3d28628-60c9-4917-8185-ba64c59f20c3", "Discourse", "Disc.");
 			CreatePossibility(repoDto, extNoteListGuid, "30115b33-608a-4506-9f9c-2457cab4f4a8", "Grammar", "Gram.");
-			CreatePossibility(repoDto, extNoteListGuid, "5dd29371-fdb0-497a-a2fb-7ca69b00ad4f", "Semantic", "Sem.");
+			CreatePossibility(repoDto, extNoteListGuid, "d3d28628-60c9-4917-8185-ba64c59f20c4", "Inflectional", "Infl.");
 
 			DataMigrationServices.UpdateDTO(repoDto, lexDbDTO, lexDbElt.ToString());
 		}

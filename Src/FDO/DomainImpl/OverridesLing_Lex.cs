@@ -172,6 +172,24 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		/// <summary>
 		/// Gets all the bulk-editable things that might be used as the destination of a bulk edit to
+		/// extended note. This includes the senses that do not have extended notes.
+		/// Note that this implementation is only possible because there are no other possible owners for LexExtendedNote.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceSequence, "CmObject")]
+		public IEnumerable<ICmObject> AllPossibleExtendedNotes
+		{
+			get
+			{
+				return Cache.ServiceLocator.GetInstance<ILexExtendedNoteRepository>().AllInstances().Cast<ICmObject>()
+					.Concat((from sense in Cache.ServiceLocator.GetInstance<ILexSenseRepository>().AllInstances()
+						where sense.ExtendedNoteOS.Count == 0
+						select sense))
+					.ToList();
+			}
+		}
+
+		/// <summary>
+		/// Gets all the bulk-editable things that might be used as the destination of a bulk edit to
 		/// Allomorphs. This includes the entries that do not have allomorphs. It does NOT include
 		/// MoForms that are the LexemeForm of some entry. (Possibly the name should indicate this better somehow?)
 		/// </summary>
@@ -577,6 +595,16 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		public string LiftDateModified
 		{
 			get { return LexEntry.ExtractAttributeFromLiftResidue(LiftResidue, "dateModified"); }
+		}
+	}
+
+	internal partial class LexExtendedNote
+	{
+		public override ICmObject ReferenceTargetOwner(int flid)
+		{
+			if (flid == Cache.MetaDataCacheAccessor.GetFieldId2(LexExtendedNoteTags.kClassId, "ExtendedNoteType", false))
+				return Cache.LangProject.LexDbOA.ExtendedNoteTypesOA;
+			return base.ReferenceTargetOwner(flid);
 		}
 	}
 

@@ -953,12 +953,11 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			Assert.AreEqual("True", possListElt.Element("PreventDuplicates").Attribute("val").Value);
 			Assert.AreEqual("-3", possListElt.Element("WsSelector").Attribute("val").Value);
 			var possibilitiesElt = possListElt.Element("Possibilities");
-			Assert.AreEqual(5, possibilitiesElt.Elements("objsur").Count());
+			Assert.AreEqual(4, possibilitiesElt.Elements("objsur").Count());
 			VerifyExtNotePossibility(possibilitiesElt, dtoRepos, "2f06d436-b1e0-47ae-a42e-1f7b893c5fc2", "Collocation", "Coll.");
 			VerifyExtNotePossibility(possibilitiesElt, dtoRepos, "7ad06e7d-15d1-42b0-ae19-9c05b7c0b181", "Cultural", "Cult.");
-			VerifyExtNotePossibility(possibilitiesElt, dtoRepos, "d3d28628-60c9-4917-8185-ba64c59f20c3", "Discourse", "Disc.");
 			VerifyExtNotePossibility(possibilitiesElt, dtoRepos, "30115b33-608a-4506-9f9c-2457cab4f4a8", "Grammar", "Gram.");
-			VerifyExtNotePossibility(possibilitiesElt, dtoRepos, "5dd29371-fdb0-497a-a2fb-7ca69b00ad4f", "Semantic", "Sem.");
+			VerifyExtNotePossibility(possibilitiesElt, dtoRepos, "d3d28628-60c9-4917-8185-ba64c59f20c4", "Inflectional", "Infl.");
 		}
 
 		private static void VerifyExtNotePossibility(XElement possibilitiesElt, IDomainObjectDTORepository dtoRepos, string guidStr,

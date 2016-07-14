@@ -61,6 +61,8 @@
 	<column layout="EtymologyComment" label="Etymology - Following Comment"  multipara="true" ws="$ws=analysis" transduce="LexEtymology.Comment" ghostListField="LexDb.AllPossibleEtymologies" editable="false" visibility="dialog" />
 	<column layout="EtymologyBibliography" label="Etymology - Bibliographic Source"  multipara="true" ws="$ws=analysis" transduce="LexEtymology.Bibliography" ghostListField="LexDb.AllPossibleEtymologies" editable="false" visibility="dialog" />
 	<column layout="EtymologyNote" label="Etymology - Note"  multipara="true" ws="$ws=analysis" transduce="LexEtymology.Note" ghostListField="LexDb.AllPossibleEtymologies" editable="false" visibility="dialog" />
+	<column layout="ExtNoteType" label="Ext. Note Type"  multipara="true" ws="$ws=analysis" transduce="LexExtendedNote.ExtendedNoteType" ghostListField="LexDb.AllPossibleExtendedNotes" editable="false" visibility="dialog" />
+	<column layout="ExtNoteDiscussion" label="Ext. Note Discussion"  multipara="true" ws="$ws=analysis" transduce="LexExtendedNote.Discussion" ghostListField="LexDb.AllPossibleExtendedNotes" editable="false" visibility="dialog" />
 
 	<column layout="BibliographyForEntry" label="Bibliography (Entry)" transduce="LexEntry.Bibliography" ws="$ws=analysis" visibility="dialog"/>
 	<column layout="LiteralMeaningForEntry" label="Literal Meaning" transduce="LexEntry.LiteralMeaning" ws="$ws=analysis" visibility="dialog"/>

@@ -10,7 +10,6 @@ using System.Xml;
 
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
@@ -60,11 +59,22 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (sourceObject is ILexExampleSentence)
 			{
 				m_les = sourceObject as ILexExampleSentence;
-				m_owningSense = (ILexSense)m_les.Owner;
+				if (m_les.Owner is ILexSense)
+				{
+					m_owningSense = (ILexSense)m_les.Owner;
+				}
+				else if (m_les.Owner is ILexExtendedNote)
+				{
+					m_owningSense = (ILexSense)m_les.Owner.Owner;
+				}
 			}
 			else if (sourceObject is ILexSense)
 			{
 				m_owningSense = sourceObject as ILexSense;
+			}
+			else if (sourceObject is ILexExtendedNote)
+			{
+				m_owningSense = sourceObject.Owner as ILexSense;
 			}
 			else
 			{

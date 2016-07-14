@@ -88,7 +88,10 @@
 	<menu id="PaneBar-ShowHiddenFields-educationEdit" label="">
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-educationEdit" defaultVisible="true" settingsGroup="local"/>
 	</menu>
-		<menu id="PaneBar-ShowHiddenFields-roleEdit" label="">
+	<menu id="PaneBar-ShowHiddenFields-extNoteTypeEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-extNoteTypeEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
+	<menu id="PaneBar-ShowHiddenFields-roleEdit" label="">
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-roleEdit" defaultVisible="true" settingsGroup="local"/>
 	</menu>
 		<menu id="PaneBar-ShowHiddenFields-genresEdit" label="">
