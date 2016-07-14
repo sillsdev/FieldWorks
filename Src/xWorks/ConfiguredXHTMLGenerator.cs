@@ -699,6 +699,7 @@ namespace SIL.FieldWorks.XWorks
 		/// This method will use reflection to pull data out of the given object based on the given configuration and
 		/// write out appropriate XHTML.
 		/// </summary>
+		/// <remarks>We use a significant amount of boilerplate code for fields and subfields. Make sure you update both.</remarks>
 		private static string GenerateXHTMLForFieldByReflection(object field, ConfigurableDictionaryNode config,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, SenseInfo info = new SenseInfo(),
 			bool fUseReverseSubField = false)
@@ -760,6 +761,7 @@ namespace SIL.FieldWorks.XWorks
 						return string.Empty;
 					}
 					propertyValue = subProp.GetValue(propertyValue, new object[] { });
+					GetSortedReferencePropertyValue(config, ref propertyValue, field);
 				}
 				// If the property value is null there is nothing to generate
 				if (propertyValue == null)
@@ -966,17 +968,21 @@ namespace SIL.FieldWorks.XWorks
 		private static void GetSortedReferencePropertyValue(ConfigurableDictionaryNode config, ref object propertyValue, object parent)
 		{
 			var options = config.DictionaryNodeOptions as DictionaryNodeListOptions;
-			if (options == null || !(propertyValue is IEnumerable<ILexReference>))
+			var unsortedReferences = propertyValue as IEnumerable<ILexReference>;
+			if (options == null || unsortedReferences == null)
 				return;
 			// Calculate and store the ids for each of the references once for efficiency.
 			var refsAndIds = new List<Tuple<ILexReference, string>>();
-			foreach (var reference in (IEnumerable<ILexReference>)propertyValue)
+			foreach (var reference in unsortedReferences)
 			{
 				var id = reference.OwnerType.Guid.ToString();
 				if (LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)reference.OwnerType.MappingType))
 					id = id + LexRefDirection(reference, parent);
 				refsAndIds.Add(new Tuple<ILexReference, string>(reference, id));
 			}
+			// LT-17384: LexReferences are not ordered (they are put in some order each time FLEx starts), but we want to have a consistent order each
+			// time we export the dictionary (even after restarting FLEx), so we sort them here (the choice of GUID as the search key is arbitrary).
+			refsAndIds.Sort((lhs, rhs) => lhs.Item1.Guid.CompareTo(rhs.Item1.Guid));
 			var sortedReferences = new List<ILexReference>();
 			// REVIEW (Hasso) 2016.03: this Where is redundant to the IsListItemSelectedForExport call in GenerateCollectionItemContent
 			// REVIEW (cont): Filtering here is more performant; the other filter can be removed if it is verifiably redundant.
@@ -2023,6 +2029,8 @@ namespace SIL.FieldWorks.XWorks
 						var entryTypeGuidAndDirection = new Tuple<Guid, string>(entryTypeGuid, LexRefDirection(lexRef, parent));
 						return forwardReverseOptions.Contains(entryTypeGuidAndDirection);
 					}
+				case DictionaryNodeListOptions.ListIds.None:
+					return true;
 				default:
 					{
 						Debug.WriteLine("Unhandled list ID encountered: " + listOptions.ListId);

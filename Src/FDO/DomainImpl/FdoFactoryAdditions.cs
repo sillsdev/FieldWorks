@@ -44,6 +44,30 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	}
 	#endregion
 
+	#region LexReferenceFactory
+	internal partial class LexReferenceFactory
+	{
+		public ILexReference Create(Guid guid, ILexRefType owner)
+		{
+			ILexReference lexReference;
+			if(guid == Guid.Empty)
+			{
+				lexReference = Create();
+			}
+			else
+			{
+				var hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
+				lexReference = new LexReference(m_cache, hvo, guid);
+			}
+			if(owner != null)
+			{
+				owner.MembersOC.Add(lexReference);
+			}
+			return lexReference;
+		}
+	}
+	#endregion
+
 	#region LexSenseFactory class
 	internal partial class LexSenseFactory
 	{
