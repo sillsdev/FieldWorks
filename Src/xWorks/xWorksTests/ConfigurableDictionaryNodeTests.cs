@@ -155,6 +155,29 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void DuplicatesGroupingNodeChildrenAffectSuffixes()
+		{
+			var nodeToDuplicateLabel = "node";
+			var nodeToDuplicate = new ConfigurableDictionaryNode { Label = nodeToDuplicateLabel, LabelSuffix = null };
+			var dupUnderGroup = new ConfigurableDictionaryNode { Label = nodeToDuplicateLabel, LabelSuffix = "1" };
+			var groupingNode = new ConfigurableDictionaryNode
+			{
+				Label = "groupNode", DictionaryNodeOptions = new DictionaryNodeGroupingOptions(),
+				Children = new List<ConfigurableDictionaryNode> { dupUnderGroup }
+			};
+			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { nodeToDuplicate, groupingNode } };
+			CssGeneratorTests.PopulateFieldsForTesting(parent);
+
+			// SUT
+			var duplicate = nodeToDuplicate.DuplicateAmongSiblings();
+			var inGroupDup = dupUnderGroup.DuplicateAmongSiblings();
+			Assert.That(duplicate.Label, Is.EqualTo(nodeToDuplicateLabel), "should not have changed original node label");
+			Assert.That(nodeToDuplicate.LabelSuffix, Is.Null, "should not have changed original node label suffix");
+			Assert.That(duplicate.LabelSuffix, Is.EqualTo("2"), "(1) was used in the group, so the suffix should be 2");
+			Assert.That(inGroupDup.LabelSuffix, Is.EqualTo("3"), "(2) was used in the group parrent, so the suffix should be 3");
+		}
+
+		[Test]
 		public void DuplicateIsPutImmediatelyAfterOriginal()
 		{
 			var parent = new ConfigurableDictionaryNode();
@@ -179,6 +202,21 @@ namespace SIL.FieldWorks.XWorks
 
 			// SUT
 			Assert.DoesNotThrow(() => nodeB.DuplicateAmongSiblings(), "problem with edge case");
+		}
+
+		[Test]
+		public void DuplicateGroupNodeDoesNotDuplicateChildren()
+		{
+			var parent = new ConfigurableDictionaryNode();
+			var groupNode = new ConfigurableDictionaryNode { Parent = parent, DictionaryNodeOptions = new DictionaryNodeGroupingOptions() };
+			var nodeB = new ConfigurableDictionaryNode { Parent = groupNode };
+			groupNode.Children = new List<ConfigurableDictionaryNode> { nodeB };
+			parent.Children = new List<ConfigurableDictionaryNode> { groupNode };
+
+			// SUT
+			var duplicate = groupNode.DuplicateAmongSiblings(parent.Children);
+			Assert.AreEqual(1, groupNode.Children.Count);
+			Assert.IsNull(duplicate.Children);
 		}
 
 		[Test]

@@ -487,6 +487,20 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		private static ConfigurableDictionaryNode AddGroupingNodeToNode(ConfigurableDictionaryNode rootNode, int index, int groupChildren)
+		{
+			var groupNode = new ConfigurableDictionaryNode
+			{
+				Label = rootNode.Label + "-group" + index,
+				Children = new List<ConfigurableDictionaryNode>(),
+				Parent = rootNode,
+				DictionaryNodeOptions = new DictionaryNodeGroupingOptions()
+			};
+			AddChildrenToNode(groupNode, groupChildren);
+			rootNode.Children.Insert(index, groupNode);
+			return groupNode;
+		}
+
 		private static TreeNode BasicTreeNodeVerification(DictionaryConfigurationController controller, ConfigurableDictionaryNode rootNode)
 		{
 			Assert.That(controller.View.TreeControl.Tree.Nodes[0].Tag, Is.EqualTo(rootNode), "root TreeNode does not corresponded to expected dictionary configuration node");
@@ -609,19 +623,103 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary/>
 		[Test]
-		public void Reorder_ReordersSiblings()
+		[TestCase(1, 0, 0)] // Move sibling from index 1 up one
+		[TestCase(0, 1, 1)] // Move sibling from index 0 down one
+		public void Reorder_ReordersSiblings(int movingChildOriginalPos, int movingChildExpectedPos, int direction)
 		{
-			var movingChildOriginalPosition = 1;
-			var movingChildExpectedPosition = 0;
-			var directionToMoveChild = DictionaryConfigurationController.Direction.Up;
+			var directionToMove = direction == 0
+				? DictionaryConfigurationController.Direction.Up
+				: DictionaryConfigurationController.Direction.Down;
+			using (var view = new TestConfigurableDictionaryView())
+			{
+				var controller = new DictionaryConfigurationController { View = view, _model = m_model };
+				var rootNode = new ConfigurableDictionaryNode { Label = "root", Children = new List<ConfigurableDictionaryNode>() };
+				AddChildrenToNode(rootNode, 2);
+				var movingChild = rootNode.Children[movingChildOriginalPos];
+				var otherChild = rootNode.Children[movingChildExpectedPos];
+				m_model.Parts = new List<ConfigurableDictionaryNode> { rootNode };
+				// SUT
+				controller.Reorder(movingChild, directionToMove);
+				Assert.That(rootNode.Children[movingChildExpectedPos], Is.EqualTo(movingChild), "movingChild should have been moved");
+				Assert.That(rootNode.Children[movingChildOriginalPos], Is.Not.EqualTo(movingChild), "movingChild should not still be in original position");
+				Assert.That(rootNode.Children[movingChildOriginalPos], Is.EqualTo(otherChild), "unexpected child in original movingChild position");
+				Assert.That(rootNode.Children.Count, Is.EqualTo(2), "unexpected number of reordered siblings");
+			}
+		}
 
-			MoveSiblingAndVerifyPosition(movingChildOriginalPosition, movingChildExpectedPosition, directionToMoveChild);
+		/// <summary/>
+		[Test]
+		[TestCase(0, 0, 0, 1)] // move child from 0 down into group with no children
+		[TestCase(2, 0, 0, 0)] // move child from 2 up into group with no children
+		[TestCase(0, 0, 1, 1)] // move child from 0 down into group with existing child
+		[TestCase(2, 1, 1, 0)] // move child from 2 up into group with existing child
+		public void Reorder_ChildrenMoveIntoGroupingNodes(int movingChildOriginalPos, int expectedIndexUnderGroup, int groupChildren, int direction)
+		{
+			var directionToMove = direction == 0
+				? DictionaryConfigurationController.Direction.Up
+				: DictionaryConfigurationController.Direction.Down;
+			using (var view = new TestConfigurableDictionaryView())
+			{
+				var controller = new DictionaryConfigurationController { View = view, _model = m_model };
+				var rootNode = new ConfigurableDictionaryNode { Label = "root", Children = new List<ConfigurableDictionaryNode>() };
+				AddChildrenToNode(rootNode, 2);
+				var groupNode = AddGroupingNodeToNode(rootNode, 1, groupChildren);
+				var movingChild = rootNode.Children[movingChildOriginalPos];
+				m_model.Parts = new List<ConfigurableDictionaryNode> { rootNode };
+				// SUT
+				controller.Reorder(movingChild, directionToMove);
+				Assert.AreEqual(1 + groupChildren, groupNode.Children.Count, "child not moved under the grouping node");
+				Assert.That(groupNode.Children[expectedIndexUnderGroup], Is.EqualTo(movingChild), "movingChild should have been moved");
+				Assert.AreEqual(2, rootNode.Children.Count, "movingChild should not still be under original parent");
+				Assert.AreEqual(movingChild.Parent, groupNode, "moved child did not have its parent updated");
+			}
+		}
 
-			movingChildOriginalPosition = 0;
-			movingChildExpectedPosition = 1;
-			directionToMoveChild = DictionaryConfigurationController.Direction.Down;
+		/// <summary/>
+		[Test]
+		[TestCase(0, 0, 0)] // move child from group index 0 up above the group
+		[TestCase(1, 1, 1)] // move child from group index 1 down below the group
+		public void Reorder_ChildrenMoveOutOfGroupingNodes(int movingChildOriginalPos, int expectedIndexUnderParent, int direction)
+		{
+			var directionToMove = direction == 0
+				? DictionaryConfigurationController.Direction.Up
+				: DictionaryConfigurationController.Direction.Down;
 
-			MoveSiblingAndVerifyPosition(movingChildOriginalPosition, movingChildExpectedPosition, directionToMoveChild);
+			using (var view = new TestConfigurableDictionaryView())
+			{
+				var controller = new DictionaryConfigurationController { View = view, _model = m_model };
+				var rootNode = new ConfigurableDictionaryNode { Label = "root", Children = new List<ConfigurableDictionaryNode>() };
+				var groupNode = AddGroupingNodeToNode(rootNode, 0, 2); // add two children under the group
+				var movingChild = groupNode.Children[movingChildOriginalPos];
+				m_model.Parts = new List<ConfigurableDictionaryNode> { rootNode };
+				// SUT
+				controller.Reorder(movingChild, directionToMove);
+				Assert.AreEqual(2, rootNode.Children.Count, "child not moved out of the grouping node");
+				Assert.That(rootNode.Children[expectedIndexUnderParent], Is.EqualTo(movingChild), "movingChild should have been moved");
+				Assert.AreEqual(1, groupNode.Children.Count, "movingChild should not still be under the grouping node");
+				Assert.AreEqual(movingChild.Parent, rootNode, "moved child did not have its parent updated");
+			}
+		}
+
+		/// <summary/>
+		[Test]
+		public void Reorder_GroupWontMoveIntoGroupingNodes([Values(0, 1)]int direction)
+		{
+			var directionToMove = direction == 0
+				? DictionaryConfigurationController.Direction.Up
+				: DictionaryConfigurationController.Direction.Down;
+			using (var view = new TestConfigurableDictionaryView())
+			{
+				var controller = new DictionaryConfigurationController { View = view, _model = m_model };
+				var rootNode = new ConfigurableDictionaryNode { Label = "root", Children = new List<ConfigurableDictionaryNode>() };
+				AddGroupingNodeToNode(rootNode, 0, 0);
+				var middleGroupNode = AddGroupingNodeToNode(rootNode, 1, 0);
+				AddGroupingNodeToNode(rootNode, 2, 0);
+				m_model.Parts = new List<ConfigurableDictionaryNode> { rootNode };
+				// SUT
+				controller.Reorder(middleGroupNode, directionToMove);
+				Assert.AreEqual(3, rootNode.Children.Count, "Root has too few children, group must have moved into a group");
+			}
 		}
 
 		[Test]
@@ -780,26 +878,6 @@ namespace SIL.FieldWorks.XWorks
 				Assert.AreEqual(customFieldNodes, DictionaryConfigurationController.GetCustomFieldsForType(Cache, "ILexEntryRef"));
 				CollectionAssert.IsNotEmpty(customFieldNodes);
 				Assert.IsTrue(customFieldNodes[0].Label == "CustomString");
-			}
-		}
-
-		private void MoveSiblingAndVerifyPosition(int movingChildOriginalPosition, int movingChildExpectedPosition,
-			DictionaryConfigurationController.Direction directionToMoveChild)
-		{
-			using (var view = new TestConfigurableDictionaryView())
-			{
-				var controller = new DictionaryConfigurationController { View = view, _model = m_model };
-				var rootNode = new ConfigurableDictionaryNode { Label = "root", Children = new List<ConfigurableDictionaryNode>() };
-				AddChildrenToNode(rootNode, 2);
-				var movingChild = rootNode.Children[movingChildOriginalPosition];
-				var otherChild = rootNode.Children[movingChildExpectedPosition];
-				m_model.Parts = new List<ConfigurableDictionaryNode>() { rootNode };
-				// SUT
-				controller.Reorder(movingChild, directionToMoveChild);
-				Assert.That(rootNode.Children[movingChildExpectedPosition], Is.EqualTo(movingChild), "movingChild should have been moved");
-				Assert.That(rootNode.Children[movingChildOriginalPosition], Is.Not.EqualTo(movingChild), "movingChild should not still be in original position");
-				Assert.That(rootNode.Children[movingChildOriginalPosition], Is.EqualTo(otherChild), "unexpected child in original movingChild position");
-				Assert.That(rootNode.Children.Count, Is.EqualTo(2), "unexpected number of reordered siblings");
 			}
 		}
 

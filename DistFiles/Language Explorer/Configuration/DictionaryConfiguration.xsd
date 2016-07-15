@@ -87,6 +87,15 @@
 			   </xs:sequence>
 			</xs:complexType>
 		</xs:element>
+		<xs:element name="GroupingOptions" minOccurs="0">
+			<xs:complexType>
+			   <xs:simpleContent>
+					<xs:extension base="xs:string">
+						<xs:attribute type="xs:boolean" name="displayGroupInParagraph" use="optional"/>
+					</xs:extension>
+			   </xs:simpleContent>
+			</xs:complexType>
+		</xs:element>
 		<xs:choice minOccurs="0" maxOccurs="1">
 			<xs:element name="ConfigurationItem" type="ConfigurationItemType" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="ReferenceItem">

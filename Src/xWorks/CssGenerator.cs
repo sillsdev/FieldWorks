@@ -183,16 +183,32 @@ namespace SIL.FieldWorks.XWorks
 			{
 				GenerateCssFromComplexFormOptions(configNode, complexFormOpts, styleSheet, ref baseSelection, cache, mediator);
 			}
+			else if (configNode.DictionaryNodeOptions is DictionaryNodeGroupingOptions
+					&& ((DictionaryNodeGroupingOptions)configNode.DictionaryNodeOptions).DisplayGroupInParagraph)
+			{
+				// In a grouping node with DisplayGroupInParagraph on we should add the block display
+				GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, cache, mediator);
+				rule.Value = baseSelection;
+				rule.Declarations.Add(new Property("display"){ Term = new PrimitiveTerm(UnitType.Ident, "block") });
+				// if the configuration node defines a style then add all the rules generated from that style
+				if (!String.IsNullOrEmpty(configNode.Style))
+				{
+					//Generate the rules for the paragraph style
+					rule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, configNode,
+						mediator)));
+				}
+				styleSheet.Rules.Add(rule);
+			}
 			else
 			{
-				var pictureOptions = configNode.DictionaryNodeOptions as DictionaryNodePictureOptions;
-				if (pictureOptions != null)
+				if (configNode.DictionaryNodeOptions is DictionaryNodePictureOptions)
 				{
-					GenerateCssFromPictureOptions(configNode, pictureOptions, styleSheet, baseSelection);
+					GenerateCssFromPictureOptions(configNode, (DictionaryNodePictureOptions)configNode.DictionaryNodeOptions, styleSheet, baseSelection);
 				}
 				var selectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection,
 					cache, mediator);
 				rule.Value = baseSelection;
+
 				// if the configuration node defines a style then add all the rules generated from that style
 				if (!String.IsNullOrEmpty(configNode.Style))
 				{
@@ -380,7 +396,7 @@ namespace SIL.FieldWorks.XWorks
 					declaration.Add(new Property("display") { Term = new PrimitiveTerm(UnitType.Ident, "block") });
 					var blockRule = new StyleRule(declaration)
 					{
-						Value = i == 1 ? baseSelection.Replace("sensecontent", "sensecontent + .sensecontent") : baseSelection
+						Value = baseSelection
 					};
 					styleSheet.Rules.Add(blockRule);
 					GenerateCssForCounterReset(styleSheet, baseSelection, declaration, true);
@@ -772,9 +788,18 @@ namespace SIL.FieldWorks.XWorks
 			// use the FieldDescription as the class name, and append a '_' followed by the SubField if it is defined.
 			// Note that custom fields can have spaces in their names, which CSS can't handle.  Convert spaces to hyphens,
 			// which CSS allows but FieldWorks doesn't use (except maybe in custom fields).
-			return string.IsNullOrEmpty(configNode.CSSClassNameOverride)
-				? configNode.FieldDescription.Replace(' ', '-') + (string.IsNullOrEmpty(configNode.SubField) ? "" : "_" + configNode.SubField)
-				: configNode.CSSClassNameOverride;
+			if (string.IsNullOrEmpty(configNode.CSSClassNameOverride))
+			{
+				var classAttribute = string.Empty;
+				if (configNode.DictionaryNodeOptions is DictionaryNodeGroupingOptions)
+				{
+					classAttribute += "grouping_";
+				}
+				classAttribute += configNode.FieldDescription.Replace(' ', '-') +
+					(string.IsNullOrEmpty(configNode.SubField) ? "" : "_" + configNode.SubField);
+				return classAttribute;
+			}
+			return configNode.CSSClassNameOverride;
 		}
 
 		private static string GetClassAttributeDupSuffix(ConfigurableDictionaryNode configNode)

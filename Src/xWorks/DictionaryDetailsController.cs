@@ -110,11 +110,16 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else if (Options is DictionaryNodeSenseOptions)
 				{
-					optionsView = LoadSenseOptions((DictionaryNodeSenseOptions)Options, node.Parent != null && node.FieldDescription == node.Parent.FieldDescription, node.Parent != null && node.Parent.Label == "MainEntrySubsenses");
+					optionsView = LoadSenseOptions((DictionaryNodeSenseOptions)Options, node.Parent != null && node.FieldDescription == node.Parent.FieldDescription,
+						node.Parent != null && node.Parent.Label == "MainEntrySubsenses");
 				}
 				else if (Options is DictionaryNodeListOptions)
 				{
 					optionsView = LoadListOptions((DictionaryNodeListOptions) Options);
+				}
+				else if (Options is DictionaryNodeGroupingOptions)
+				{
+					optionsView = LoadGroupingOptions((DictionaryNodeGroupingOptions)Options);
 				}
 				else if (Options is DictionaryNodePictureOptions)
 				{
@@ -534,6 +539,37 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				listOptionsView.Load -= ListEventHandlerAdder(listOptionsView, listOptions);
+			};
+		}
+
+		private UserControl LoadGroupingOptions(DictionaryNodeGroupingOptions options)
+		{
+			var groupOptionsView = new GroupingOptionsView
+			{
+				Description = options.Description,
+				DisplayInParagraph = options.DisplayGroupInParagraph
+			};
+			ToggleViewForShowInPara(options.DisplayGroupInParagraph);
+			groupOptionsView.Load += GroupingEventHandlerAdder(groupOptionsView, options);
+			return groupOptionsView;
+		}
+
+		private EventHandler GroupingEventHandlerAdder(IDictionaryGroupingOptionsView groupOptionsView, DictionaryNodeGroupingOptions groupOptions)
+		{
+			return (o, args) =>
+			{
+				groupOptionsView.DisplayInParagraphChanged += (sender, e) =>
+				{
+					groupOptions.DisplayGroupInParagraph = groupOptionsView.DisplayInParagraph;
+					ToggleViewForShowInPara(groupOptions.DisplayGroupInParagraph);
+					RefreshPreview();
+				};
+
+				groupOptionsView.DescriptionChanged += (sender, e) =>
+				{
+					groupOptions.Description = groupOptionsView.Description;
+				};
+				groupOptionsView.Load -= GroupingEventHandlerAdder(groupOptionsView, groupOptions);
 			};
 		}
 

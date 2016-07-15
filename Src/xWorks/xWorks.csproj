@@ -314,6 +314,12 @@
       <DependentUpon>DictionaryConfigurationTreeControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DictionaryDetailsController.cs" />
+    <Compile Include="DictionaryDetailsView\GroupingOptionsView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DictionaryDetailsView\GroupingOptionsView.Designer.cs">
+      <DependentUpon>GroupingOptionsView.cs</DependentUpon>
+    </Compile>
     <Compile Include="DictionaryDetailsView\LabelOverPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -352,6 +358,7 @@
     <Compile Include="GlobalSettingServices.cs" />
     <Compile Include="IDictionaryDetailsView.cs" />
     <Compile Include="IDictionarySenseOptionsView.cs" />
+    <Compile Include="IDictionaryGroupingOptionsView.cs" />
     <Compile Include="ILayoutConverter.cs" />
     <Compile Include="LegacyConfigurationUtils.cs" />
     <Compile Include="PalasoErrorReportingAdapter.cs" />
@@ -520,6 +527,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DictionaryConfigurationTreeControl.resx">
       <DependentUpon>DictionaryConfigurationTreeControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DictionaryDetailsView\GroupingOptionsView.resx">
+      <DependentUpon>GroupingOptionsView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DictionaryDetailsView\LabelOverPanel.resx">
       <DependentUpon>LabelOverPanel.cs</DependentUpon>

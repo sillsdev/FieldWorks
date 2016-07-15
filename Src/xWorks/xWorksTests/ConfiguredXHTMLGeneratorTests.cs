@@ -6728,6 +6728,40 @@ namespace SIL.FieldWorks.XWorks
 				File.Delete(model.FilePath);
 			}
 		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_GroupingNodeGeneratesSpanAndInnerContentWorks()
+		{
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				Children = new List<ConfigurableDictionaryNode> { glossNode }
+			};
+			var groupingNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SenseGroup",
+				Children = new List<ConfigurableDictionaryNode> {sensesNode},
+				DictionaryNodeOptions = new DictionaryNodeGroupingOptions()
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { groupingNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var testEntry = CreateInterestingLexEntry(Cache);
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
+
+			const string xpathThruSense = "/div[@class='lexentry']/span[@class='grouping_sensegroup']/span[@class='senses']/span[@class='sense']";
+			const string oneSenseWithGlossOfGloss = xpathThruSense + "//span[@lang='en' and text()='gloss']";
+			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithGlossOfGloss, 1);
+		}
 		#region Helpers
 		private static void DeleteTempXhtmlAndCssFiles(string xhtmlPath)
 		{

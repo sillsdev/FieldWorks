@@ -219,6 +219,11 @@ namespace SIL.FieldWorks.XWorks
 			return ((TestDictionaryDetailsView)view).OptionsView as IDictionarySenseOptionsView;
 		}
 
+		private static IDictionaryGroupingOptionsView GetGroupingOptionsView(IDictionaryDetailsView view)
+		{
+			return ((TestDictionaryDetailsView)view).OptionsView as IDictionaryGroupingOptionsView;
+		}
+
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "ListOptionsView is disposed by its parent")]
 		private static IList<ListViewItem> GetListViewItems(IDictionaryDetailsView view)
 		{
@@ -1316,5 +1321,38 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 		#endregion SharedItem tests
+		#region GroupingNode tests
+
+		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "optionsView is disposed by its parent")]
+		public void LoadGroupingOptions_SetsAllInfo()
+		{
+			var groupConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "grouper",
+				DictionaryNodeOptions = new DictionaryNodeGroupingOptions
+				{
+					DisplayGroupInParagraph = true,
+					Description = "Test"
+				}
+			};
+			var entryConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> {groupConfig}
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(entryConfig);
+
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			controller.LoadNode(null, groupConfig);
+			using (var view = controller.View)
+			{
+				var optionsView = GetGroupingOptionsView(view);
+				Assert.IsTrue(optionsView.DisplayInParagraph);
+				Assert.That(optionsView.Description, Is.StringMatching("Test"));
+			}
+		}
+		#endregion
 	}
 }

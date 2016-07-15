@@ -623,7 +623,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Whether node can be moved among its siblings.
+		/// Whether node can be moved among its siblings, or if it can be moved out of a grouping node.
 		/// </summary>
 		public static bool CanReorder(ConfigurableDictionaryNode node, Direction direction)
 		{
@@ -636,10 +636,10 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 
 			var nodeIndex = parent.Children.IndexOf(node);
-			if (direction == Direction.Up && nodeIndex == 0)
+			if (direction == Direction.Up && nodeIndex == 0 && !(parent.DictionaryNodeOptions is DictionaryNodeGroupingOptions))
 				return false;
 			var lastSiblingIndex = parent.Children.Count - 1;
-			if (direction == Direction.Down && nodeIndex == lastSiblingIndex)
+			if (direction == Direction.Down && nodeIndex == lastSiblingIndex && !(parent.DictionaryNodeOptions is DictionaryNodeGroupingOptions))
 				return false;
 
 			return true;
@@ -709,10 +709,57 @@ namespace SIL.FieldWorks.XWorks
 			if (direction == Direction.Down)
 				newNodeIndex = nodeIndex + 1;
 
-			parent.Children.RemoveAt(nodeIndex);
-			parent.Children.Insert(newNodeIndex, node);
-
+			var movingOutOfGroup = (newNodeIndex == -1 || newNodeIndex >= parent.Children.Count) &&
+				parent.DictionaryNodeOptions is DictionaryNodeGroupingOptions;
+			if (movingOutOfGroup)
+			{
+				MoveNodeOutOfGroup(node, direction, parent, nodeIndex);
+			}
+			else if (parent.Children[newNodeIndex].DictionaryNodeOptions is DictionaryNodeGroupingOptions &&
+				!(node.DictionaryNodeOptions is DictionaryNodeGroupingOptions))
+			{
+				MoveNodeIntoGroup(node, direction, parent, newNodeIndex, nodeIndex);
+			}
+			else
+			{
+				parent.Children.RemoveAt(nodeIndex);
+				parent.Children.Insert(newNodeIndex, node);
+			}
 			RefreshView();
+		}
+
+		private static void MoveNodeIntoGroup(ConfigurableDictionaryNode node, Direction direction,
+			ConfigurableDictionaryNode parent, int newNodeIndex, int nodeIndex)
+		{
+			var targetGroupNode = parent.Children[newNodeIndex];
+			parent.Children.RemoveAt(nodeIndex);
+			if (targetGroupNode.Children == null)
+				targetGroupNode.Children = new List<ConfigurableDictionaryNode>();
+			if (direction == Direction.Up)
+			{
+				targetGroupNode.Children.Add(node);
+			}
+			else
+			{
+				targetGroupNode.Children.Insert(0, node);
+			}
+			node.Parent = targetGroupNode;
+		}
+
+		private static void MoveNodeOutOfGroup(ConfigurableDictionaryNode node, Direction direction,
+			ConfigurableDictionaryNode parent, int nodeIndex)
+		{
+			parent.Children.RemoveAt(nodeIndex);
+			var indexOfParentGroup = parent.Parent.Children.IndexOf(parent);
+			if (direction == Direction.Down)
+			{
+				parent.Parent.Children.Insert(indexOfParentGroup + 1, node);
+			}
+			else
+			{
+				parent.Parent.Children.Insert(indexOfParentGroup, node);
+			}
+			node.Parent = parent.Parent;
 		}
 
 		/// <summary>

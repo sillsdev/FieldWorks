@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.XWorks
 		private static void EnableAllListOptions(DictionaryNodeOptions options)
 		{
 			List<DictionaryNodeListOptions.DictionaryNodeOption> checkList = null;
-			if (options is DictionaryNodeSenseOptions || options is DictionaryNodePictureOptions)
+			if (options is DictionaryNodeSenseOptions || options is DictionaryNodePictureOptions || options is DictionaryNodeGroupingOptions)
 			{
 				return;
 			}
@@ -266,6 +266,79 @@ namespace SIL.FieldWorks.XWorks
 							  "css before rule with Z content not found on headword");
 			Assert.IsTrue(Regex.Match(cssResult, @"\.mainheadword>\s*span\s*:\s*last-child:after\s*{\s*content\s*:\s*'A';\s*}").Success,
 							  "css after rule with A content not found on headword");
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_BeforeAfterGroupingSpanWorks()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				Label = "Headword",
+				CSSClassNameOverride = "mh",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				Before = "Z",
+				After = "A"
+			};
+			var groupingNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "hwg",
+				Children = new List<ConfigurableDictionaryNode> {headwordNode},
+				Before = "{",
+				After = "}",
+				DictionaryNodeOptions = new DictionaryNodeGroupingOptions()
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { groupingNode },
+				FieldDescription = "LexEntry"
+			};
+			PopulateFieldsForTesting(mainEntryNode);
+			GenerateEmptyPseudoStyle(CssGenerator.BeforeAfterBetweenStyleName);
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			// Check the result for before and after rules for the group
+			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg\s*:before\s*{\s*content\s*:\s*'{';\s*}").Success,
+							  "css before rule for the grouping node was not generated");
+			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg\s*:after\s*{\s*content\s*:\s*'}';\s*}").Success,
+							  "css after rule for the grouping node was not generated");
+			// Check result for before and after rules equivalent to .headword span:first-child{content:'Z';} and .headword span:last-child{content:'A'}
+			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg>\s*\.mh>\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'Z';\s*}").Success,
+							  "css before rule with Z content not found on headword");
+			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg>\s*\.mh>\s*span\s*:\s*last-child:after\s*{\s*content\s*:\s*'A';\s*}").Success,
+							  "css after rule with A content not found on headword");
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_BeforeAfterGroupingParagraphWorks()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				Label = "Headword",
+				CSSClassNameOverride = "mh",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+			};
+			var groupingNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "hwg",
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				DictionaryNodeOptions = new DictionaryNodeGroupingOptions { DisplayGroupInParagraph = true }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { groupingNode },
+				FieldDescription = "LexEntry"
+			};
+			PopulateFieldsForTesting(mainEntryNode);
+			GenerateEmptyPseudoStyle(CssGenerator.BeforeAfterBetweenStyleName);
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			// Check the result for before and after rules for the group
+			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg\s*{\s*display\s*:\s*block;\s*}").Success,
+							  "paragraph selection did not result in block display for css");
 		}
 
 		[Test]

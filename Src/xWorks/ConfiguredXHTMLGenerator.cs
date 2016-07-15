@@ -711,7 +711,11 @@ namespace SIL.FieldWorks.XWorks
 			var cache = settings.Cache;
 			var entryType = field.GetType();
 			object propertyValue = null;
-			if (config.IsCustomField && config.SubField == null)
+			if (config.DictionaryNodeOptions is DictionaryNodeGroupingOptions)
+			{
+				return GenerateXHTMLForGroupingNode(field, config, publicationDecorator, settings);
+			}
+			else if (config.IsCustomField && config.SubField == null)
 			{
 				var customFieldOwnerClassName = GetClassNameForCustomFieldParent(config, settings.Cache);
 				if (!GetPropValueForCustomField(field, config, cache, customFieldOwnerClassName, config.FieldDescription, ref propertyValue))
@@ -814,6 +818,34 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 			return bldr.ToString();
+		}
+
+		private static string GenerateXHTMLForGroupingNode(object field, ConfigurableDictionaryNode config,
+			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
+		{
+			if (config.ReferencedOrDirectChildren != null && config.ReferencedOrDirectChildren.Any(child => child.IsEnabled))
+			{
+				var bldr = new StringBuilder();
+				using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings {ConformanceLevel = ConformanceLevel.Fragment}))
+				{
+					xw.WriteStartElement("span");
+					xw.WriteAttributeString("class", CssGenerator.GetClassAttributeForConfig(config));
+
+					var innerBuilder = new StringBuilder();
+					foreach (var child in config.ReferencedOrDirectChildren)
+					{
+						innerBuilder.Append(GenerateXHTMLForFieldByReflection(field, child, publicationDecorator, settings));
+					}
+					var innerContents = innerBuilder.ToString();
+					if (string.IsNullOrEmpty(innerContents))
+						return string.Empty;
+					xw.WriteRaw(innerContents);
+					xw.WriteEndElement(); // </span>
+					xw.Flush();
+				}
+				return bldr.ToString();
+			}
+			return string.Empty;
 		}
 
 		/// <summary>
@@ -1306,7 +1338,9 @@ namespace SIL.FieldWorks.XWorks
 			while (next.Parent != null)
 			{
 				next = next.Parent;
-				lineage.Push(next);
+				// Grouping nodes are skipped because they do not represent properties of the model and break type finding
+				if(!(next.DictionaryNodeOptions is DictionaryNodeGroupingOptions))
+					lineage.Push(next);
 			}
 			// pop off the root configuration and read the FieldDescription property to get our starting point
 			var assembly = GetAssemblyForFile(AssemblyFile);

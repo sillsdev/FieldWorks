@@ -17,6 +17,7 @@ namespace SIL.FieldWorks.XWorks
 	[XmlInclude(typeof(DictionaryNodeWritingSystemOptions))]
 	[XmlInclude(typeof(DictionaryNodeComplexFormOptions))]
 	[XmlInclude(typeof(DictionaryNodePictureOptions))]
+	[XmlInclude(typeof(DictionaryNodeGroupingOptions))]
 	public abstract class DictionaryNodeOptions
 	{
 		/// <summary>
@@ -263,6 +264,21 @@ namespace SIL.FieldWorks.XWorks
 		public override DictionaryNodeOptions DeepClone()
 		{
 			return DeepCloneInto(new DictionaryNodePictureOptions());
+		}
+	}
+
+	/// <summary>Options for allowing the grouping of nodes which are not related in the model</summary>
+	public class DictionaryNodeGroupingOptions : DictionaryNodeOptions
+	{
+		[XmlText]
+		public string Description { get; set; }
+
+		[XmlAttribute(AttributeName = "displayGroupInParagraph")]
+		public bool DisplayGroupInParagraph { get; set; }
+
+		public override DictionaryNodeOptions DeepClone()
+		{
+			return DeepCloneInto(new DictionaryNodeGroupingOptions());
 		}
 	}
 }

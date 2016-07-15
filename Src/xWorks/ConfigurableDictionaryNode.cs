@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
 using SIL.Utils;
 
@@ -172,6 +173,7 @@ namespace SIL.FieldWorks.XWorks
 		[XmlElement("ComplexFormOptions", typeof(DictionaryNodeComplexFormOptions))]
 		[XmlElement("SenseOptions", typeof(DictionaryNodeSenseOptions))]
 		[XmlElement("PictureOptions", typeof(DictionaryNodePictureOptions))]
+		[XmlElement("GroupingOptions", typeof(DictionaryNodeGroupingOptions))]
 		public DictionaryNodeOptions DictionaryNodeOptions { get; set; }
 
 		/// <summary>
@@ -279,18 +281,27 @@ namespace SIL.FieldWorks.XWorks
 				property.SetValue(clone, originalValue, null);
 			}
 
-			// Deep-clone Children
+			// Deep-clone Children, but not of groups.
 			if (Children != null)
 			{
-				var clonedChildren = new List<ConfigurableDictionaryNode>();
-				foreach (var child in Children)
+				if (!(DictionaryNodeOptions is DictionaryNodeGroupingOptions))
 				{
-					var clonedChild = child.DeepCloneUnderSameParent();
-					// Cloned children should point to their newly-cloned parent
-					clonedChild.Parent = clone;
-					clonedChildren.Add(clonedChild);
+					var clonedChildren = new List<ConfigurableDictionaryNode>();
+					foreach (var child in Children)
+					{
+						var clonedChild = child.DeepCloneUnderSameParent();
+						// Cloned children should point to their newly-cloned parent
+						clonedChild.Parent = clone;
+						clonedChildren.Add(clonedChild);
+					}
+					clone.Children = clonedChildren;
 				}
-				clone.Children = clonedChildren;
+				else
+				{
+					// Cloning children of a group creates problems because the children can be moved out of the group.
+					// Also the only expected use of cloning a group is to get a new group to put different children under
+					clone.Children = null;
+				}
 			}
 
 			// Deep-clone DictionaryNodeOptions
@@ -348,7 +359,8 @@ namespace SIL.FieldWorks.XWorks
 
 			// Provide a suffix to distinguish among similar dictionary items.
 			int suffix = 1;
-			while (siblings.Exists(sibling => sibling.Label == this.Label && sibling.LabelSuffix == suffix.ToString()))
+			// Check that no siblings have a matching suffix, and that no children of grouping siblings have a matching suffix
+			while (duplicate.NodeWithSameDisplayLabelExists(suffix.ToString(), siblings))
 			{
 				suffix++;
 			}
@@ -381,11 +393,26 @@ namespace SIL.FieldWorks.XWorks
 
 		public bool ChangeSuffix(string newSuffix, List<ConfigurableDictionaryNode> siblings)
 		{
-			if (siblings.Exists(sibling => !ReferenceEquals(sibling, this) && sibling.Label == this.Label && sibling.LabelSuffix == newSuffix))
+			if (NodeWithSameDisplayLabelExists(newSuffix, siblings))
 				return false;
 
 			LabelSuffix = newSuffix;
 			return true;
+		}
+
+		private bool NodeWithSameDisplayLabelExists(string newSuffix, List<ConfigurableDictionaryNode> siblings)
+		{
+			// gather the sibling nodes and all related children of grouping nodes together for comparison
+			if (Parent != null && Parent.DictionaryNodeOptions is DictionaryNodeGroupingOptions)
+			{
+				siblings = Parent.Parent.Children;
+			}
+			var setForUniqueNodes = new List<ConfigurableDictionaryNode>(siblings);
+			foreach (var sibling in siblings.Where(sibling => sibling.DictionaryNodeOptions is DictionaryNodeGroupingOptions))
+			{
+				setForUniqueNodes.AddRange(sibling.Children);
+			}
+			return setForUniqueNodes.Exists(node => !ReferenceEquals(node, this) && node.Label == Label && node.LabelSuffix == newSuffix);
 		}
 	}
 }
