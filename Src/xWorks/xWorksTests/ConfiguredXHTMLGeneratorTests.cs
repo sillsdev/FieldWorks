@@ -6372,7 +6372,11 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(nestedFr, 2);
 		}
 
-		// This tests the fixes for LT-16504 and LT-17384.
+		/// <summary>
+		/// This tests the fixes for
+		/// - LT-16504: Lexical References should be sorted by LexRefType in the order specified in the configuration
+		/// - LT-17384: Lexical References should be in the same order every time (we accomplish this by sorting by GUID within each LexRefType)
+		/// </summary>
 		[Test]
 		public void GenerateXHTMLForEntry_LexicalReferencesOrderedCorrectly([Values(true, false)] bool usingSubfield)
 		{
