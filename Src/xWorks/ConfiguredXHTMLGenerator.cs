@@ -1511,6 +1511,7 @@ namespace SIL.FieldWorks.XWorks
 		private static string GenerateXHTMLForCollection(object collectionField, ConfigurableDictionaryNode config,
 			DictionaryPublicationDecorator pubDecorator, object collectionOwner, GeneratorSettings settings, SenseInfo info = new SenseInfo())
 		{
+			string previousType = "";
 			var bldr = new StringBuilder();
 			IEnumerable collection;
 			if (collectionField is IEnumerable)
@@ -1531,6 +1532,30 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
+				IEnumerable<ILexEntryRef> variants = collection.Cast<ILexEntryRef>();
+				var variantOptions = config.DictionaryNodeOptions as DictionaryNodeListOptions;
+				if (variantOptions != null && variantOptions.ListId == DictionaryNodeListOptions.ListIds.Variant)
+				{
+					if (config.ReferencedOrDirectChildren.Any(
+							x => x.FieldDescription == "VariantEntryTypesRS" && x.IsEnabled && (x.Children != null && x.Children.Any(y => y.IsEnabled))))
+					{
+						IEnumerable variantTypes = variants.Select(x => x.VariantEntryTypesRS[0]).Distinct();
+						ArrayList sortedVariants = new ArrayList();
+						foreach (var variantType in variantTypes)
+						{
+							foreach (var variant in variants)
+							{
+								if (variant.VariantEntryTypesRS[0] == variantType)
+									sortedVariants.Add(variant);
+							}
+						}
+						collection = sortedVariants;
+					}
+					else
+					{
+						Debug.WriteLine("Unable to sort " + config.FieldDescription + " By LexRefType.");
+					}
+				}
 				foreach (var item in collection)
 				{
 					if (pubDecorator != null && item is ICmObject && pubDecorator.IsExcludedObject((ICmObject)item))
@@ -1539,7 +1564,7 @@ namespace SIL.FieldWorks.XWorks
 						// See https://jira.sil.org/browse/LT-15697 and https://jira.sil.org/browse/LT-16775.
 						continue;
 					}
-					bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings));
+					bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings, ref previousType));
 				}
 			}
 			if (bldr.Length > 0)
@@ -1774,7 +1799,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static string GenerateCollectionItemContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
-			object item, object collectionOwner, GeneratorSettings settings)
+			object item, object collectionOwner, GeneratorSettings settings, ref string previousType)
 		{
 			if (item is IMultiStringAccessor)
 				return GenerateXHTMLForStrings((IMultiStringAccessor)item, config, settings);
@@ -1789,7 +1814,7 @@ namespace SIL.FieldWorks.XWorks
 				(listOptions.ListId == DictionaryNodeListOptions.ListIds.Sense ||
 					listOptions.ListId == DictionaryNodeListOptions.ListIds.Entry))
 			{
-				var contentCrossRef = GenerateCrossReferenceChildren(config, publicationDecorator, (ILexReference)item, collectionOwner, settings);
+				var contentCrossRef = GenerateCrossReferenceChildren(config, publicationDecorator, (ILexReference)item, collectionOwner, settings, ref previousType);
 				bldr.Append(contentCrossRef);
 			}
 			else if (listOptions is DictionaryNodeComplexFormOptions)
@@ -1812,7 +1837,20 @@ namespace SIL.FieldWorks.XWorks
 			{
 				foreach (var child in config.ReferencedOrDirectChildren)
 				{
-					var content = GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
+					var content = "";
+					if (child.FieldDescription == "VariantEntryTypesRS" && child.IsEnabled && child.Children != null && child.Children.Any(x => x.IsEnabled))
+					{
+						string currentVariantType = (((ILexEntryRef) item).VariantEntryTypesRS[0]).ToString();
+						if (previousType != currentVariantType)
+						{
+							content = GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
+							previousType = currentVariantType;
+						}
+					}
+					else
+					{
+						content = GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
+					}
 					bldr.Append(content);
 				}
 			}
@@ -1832,7 +1870,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static string GenerateCrossReferenceChildren(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
-			ILexReference reference, object collectionOwner, GeneratorSettings settings)
+			ILexReference reference, object collectionOwner, GeneratorSettings settings, ref string previousType)
 		{
 			if (config.ReferencedOrDirectChildren == null)
 				return string.Empty;
@@ -1855,7 +1893,7 @@ namespace SIL.FieldWorks.XWorks
 					// be displayed in its location in the sequence?  Just asking...
 					foreach (var target in reference.ConfigTargets.Where(x => x.EntryGuid != ownerGuid))
 					{
-						var content = GenerateCollectionItemContent(child, publicationDecorator, target, reference, settings);
+						var content = GenerateCollectionItemContent(child, publicationDecorator, target, reference, settings, ref previousType);
 						bldr.Append(content);
 						if (LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)reference.OwnerType.MappingType) &&
 							LexRefDirection(reference, collectionOwner) == ":r")
@@ -1884,7 +1922,19 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else
 				{
-					contentChild = GenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings);
+					if (child.FieldDescription == "OwnerType")
+					{
+						string LexicalRerelationType = GenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings);
+						if (previousType != LexicalRerelationType)
+						{
+							contentChild = LexicalRerelationType;
+							previousType = LexicalRerelationType;
+						}
+					}
+					else
+					{
+						contentChild = GenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings);
+					}
 				}
 				bldrTotal.Append(contentChild);
 			}
@@ -2331,6 +2381,7 @@ namespace SIL.FieldWorks.XWorks
 					bestString = multiStringAccessor.GetAlternativeOrBestTss(wsId, out wsId);
 				}
 				var contentItem = GenerateWsPrefixAndString(config, settings, wsOptions, wsId, bestString, guid);
+
 				if (!String.IsNullOrEmpty(contentItem))
 					bldr.Append(contentItem);
 			}

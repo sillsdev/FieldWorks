@@ -3080,6 +3080,54 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_GeneratesLexicalRelationsLabelWithNoRepetition()
+		{
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var referencedEntry1 = CreateInterestingLexEntry(Cache);
+			var referencedEntry2 = CreateInterestingLexEntry(Cache);
+			const string refTypeName = "TestRefType";
+			const string refTypeRevName = "sURsyoT";
+			CreateLexicalReference(mainEntry.SensesOS.First(), referencedEntry1, refTypeName, refTypeRevName);
+			CreateLexicalReference(mainEntry.SensesOS.First(), referencedEntry2, refTypeName, refTypeRevName);
+			var refType1 = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
+			Assert.IsNotNull(refType1);
+			var nameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwnerType",
+				SubField = "Name",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var referencesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexSenseReferences",
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Sense,
+					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { refType1.Guid + ":f"})
+				},
+				Children = new List<ConfigurableDictionaryNode> { nameNode }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				Children = new List<ConfigurableDictionaryNode> { referencesNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
+			var fwdNameXpath = string.Format(
+				"//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='ownertype_name']/span[@lang='en' and text()='{0}']", refTypeName);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(fwdNameXpath, 1);
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_GeneratesReverseNameForReverseLexicalRelations()
 		{
 			var mainEntry = CreateInterestingLexEntry(Cache);
@@ -5679,6 +5727,62 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_GeneratesVariantEntryTypesLabelWithNoRepetition()
+		{
+			var typeMain = CreatePublicationType("main");
+
+			var entryEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(entryEntry, "entry", m_wsFr, Cache);
+
+			var bizarroVariant = CreateInterestingLexEntry(Cache, "entry1", "myVariant");
+			CreateVariantForm(Cache, entryEntry, bizarroVariant, true); //Spelling Variant
+
+			var secondVariant = CreateInterestingLexEntry(Cache, "entry2", "myVariant");
+			CreateVariantForm(Cache, entryEntry, secondVariant); //Crazy Variant
+
+			var thirdVariant = CreateInterestingLexEntry(Cache, "entry3", "myVariant");
+			CreateVariantForm(Cache, entryEntry, thirdVariant, true); //Spelling Variant
+
+			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			var pubMain = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual, typeMain);
+
+			var variantTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+			};
+			var variantTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				CSSClassNameOverride = "variantentrytypes",
+				Children = new List<ConfigurableDictionaryNode> { variantTypeNameNode },
+			};
+			var variantNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs",
+				Children = new List<ConfigurableDictionaryNode> { variantTypeNode },
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant)
+			};
+			var mainHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
+				CSSClassNameOverride = "entry"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode, variantNode },
+				FieldDescription = "LexEntry"
+			};
+
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			var output = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryEntry, mainEntryNode, pubMain, settings);
+			const string matchVariantRef = "//span[@class='variantentrytypes']/span[@class='variantentrytype']/span[@class='name']/span[@lang='en']";
+			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchVariantRef, 2);
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_ComplexFormAndSenseInPara()
 		{
 			var lexentry = CreateInterestingLexEntry(Cache);
@@ -6465,48 +6569,48 @@ namespace SIL.FieldWorks.XWorks
 			const string whSpan = "<span class=\"ownertype_abbreviation\"><span lang=\"en\">wh</span></span>";
 			const string ptSpan = "<span class=\"ownertype_abbreviation\"><span lang=\"en\">pt</span></span>";
 			const string femmeSpan = "<span class=\"headword\"><span lang=\"fr\">femme</span></span>";
-			const string garçonSpan = "<span class=\"headword\"><span lang=\"fr\">garçon</span></span>";
-			const string bêteSpan = "<span class=\"headword\"><span lang=\"fr\">bête</span></span>";
+			const string garçonSpan = "<span class=\"headword\"><span lang=\"fr\">garçon</span></span>";
+			const string bêteSpan = "<span class=\"headword\"><span lang=\"fr\">bête</span></span>";
+			const string trucSpan = "<span class=\"headword\"><span lang=\"fr\">truc</span></span>";
 			//SUT
 			var firstResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(firstEntry, mainEntryNode, null, settings);
 			AssertThatXmlIn.String(firstResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 5);
-			var idxAntonym1 = firstResult.IndexOf(antSpan, StringComparison.Ordinal);
-			var idxAntonym2 = firstResult.IndexOf(antSpan, idxAntonym1 + antSpan.Length, StringComparison.Ordinal);
-			var idxAntonym3 = firstResult.IndexOf(antSpan, idxAntonym2 + antSpan.Length, StringComparison.Ordinal);
-			var idxAntonym4 = firstResult.IndexOf(antSpan, idxAntonym3 + antSpan.Length, StringComparison.Ordinal);
+			var idxAntonym = firstResult.IndexOf(antSpan, StringComparison.Ordinal);
 			var idxWhole = firstResult.IndexOf(whSpan, StringComparison.Ordinal);
 			var idxPart = firstResult.IndexOf(ptSpan, StringComparison.Ordinal);
-			Assert.Less(0, idxAntonym1, "Antonym relation should exist for homme");
-			Assert.Less(0, idxAntonym2, "Second Antonym relation should exist for homme");
-			Assert.Less(0, idxAntonym3, "Third Antonym relation should exist for homme");
-			Assert.Less(0, idxAntonym4, "Fourth Antonym relation should exist for homme");
+			Assert.Less(0, idxAntonym, "Antonym relation should exist for homme");
 			Assert.Less(0, idxWhole, "Whole relation should exist for homme");
 			Assert.AreEqual(-1, idxPart, "Part relation should not exist for homme");
-			Assert.Less(idxWhole, idxAntonym1, "Whole relation should come before Antonym relation for homme");
-			StringAssert.Contains(femmeSpan, firstResult.Substring(idxAntonym1, idxAntonym2 - idxAntonym1), "The first antonym should be femme");
-			StringAssert.Contains(garçonSpan, firstResult.Substring(idxAntonym2, idxAntonym3 - idxAntonym2), "The second antonym should be garçon");
-			StringAssert.Contains(bêteSpan, firstResult.Substring(idxAntonym3, idxAntonym4 - idxAntonym3), "The third antonym should be bête");
+			Assert.Less(idxWhole, idxAntonym, "Whole relation should come before Antonym relation for homme");
+			var idxFemme = firstResult.IndexOf(femmeSpan, StringComparison.Ordinal);
+			var idxGarcon = firstResult.IndexOf(garçonSpan, StringComparison.Ordinal);
+			var idxBete = firstResult.IndexOf(bêteSpan, StringComparison.Ordinal);
+			var idxTruc = firstResult.IndexOf(trucSpan, StringComparison.Ordinal);
+			Assert.Less(idxAntonym, idxFemme);
+			Assert.Less(idxFemme, idxGarcon);
+			Assert.Less(idxGarcon, idxBete);
+			Assert.Less(idxBete, idxTruc);
 
 			// Ignore if usingSubfield. Justification: Part-Whole direction is miscalculated for field=Entry, subfield=MinimalLexReferences (LT-17571)
 			if (!usingSubfield)
 			{
 				var thirdResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(thirdEntry, mainEntryNode, null, settings);
 				AssertThatXmlIn.String(thirdResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 2);
-				idxAntonym1 = thirdResult.IndexOf(antSpan, StringComparison.Ordinal);
+				idxAntonym = thirdResult.IndexOf(antSpan, StringComparison.Ordinal);
 				idxWhole = thirdResult.IndexOf(whSpan, StringComparison.Ordinal);
 				idxPart = thirdResult.IndexOf(ptSpan, StringComparison.Ordinal);
-				Assert.Less(0, idxAntonym1, "Antonym relation should exist for famille");
+				Assert.Less(0, idxAntonym, "Antonym relation should exist for famille");
 				Assert.AreEqual(-1, idxWhole, "Whole relation should not exist for famille");
 				Assert.Less(0, idxPart, "Part relation should exist for famille");
-				Assert.Less(idxAntonym1, idxPart, "Antonym relation should come before Part relation for famille");
+				Assert.Less(idxAntonym, idxPart, "Antonym relation should come before Part relation for famille");
 			}
 
 			var sixthResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(sixthEntry, mainEntryNode, null, settings);
 			AssertThatXmlIn.String(sixthResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 1);
-			idxAntonym1 = sixthResult.IndexOf(antSpan, StringComparison.Ordinal);
+			idxAntonym = sixthResult.IndexOf(antSpan, StringComparison.Ordinal);
 			idxWhole = sixthResult.IndexOf(whSpan, StringComparison.Ordinal);
 			idxPart = sixthResult.IndexOf(ptSpan, StringComparison.Ordinal);
-			Assert.Less(0, idxAntonym1, "Antonym relation should exist for individuel");
+			Assert.Less(0, idxAntonym, "Antonym relation should exist for individuel");
 			Assert.AreEqual(-1, idxWhole, "Whole relation should not exist for individuel");
 			Assert.AreEqual(-1, idxPart, "Part relation should not exist for individuel");
 		}
