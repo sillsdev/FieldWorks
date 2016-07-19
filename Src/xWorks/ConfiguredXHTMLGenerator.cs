@@ -1891,7 +1891,9 @@ namespace SIL.FieldWorks.XWorks
 					// "Where" excludes the entry we are displaying. (The LexReference contains all involved entries)
 					// If someone ever uses a "Sequence" type lexical relation, should the current item
 					// be displayed in its location in the sequence?  Just asking...
-					foreach (var target in reference.ConfigTargets.Where(x => x.EntryGuid != ownerGuid))
+					foreach (var target in reference.ConfigTargets.Where(x => x.EntryGuid != ownerGuid ||
+						reference.OwnerType.MappingType == Convert.ToInt32(MappingTypes.kmtSenseSequence) ||
+						reference.OwnerType.MappingType == Convert.ToInt32(MappingTypes.kmtEntryOrSenseSequence)))
 					{
 						var content = GenerateCollectionItemContent(child, publicationDecorator, target, reference, settings, ref previousType);
 						bldr.Append(content);
