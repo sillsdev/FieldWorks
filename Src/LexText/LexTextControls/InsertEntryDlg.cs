@@ -1600,7 +1600,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					m_cbComplexFormType.Enabled = true;
 					// default to "Unknown" for "phrase"
 					if (m_cbComplexFormType.SelectedIndex == m_idxNotComplex)
-						m_cbComplexFormType.SelectedIndex = m_idxUnknownComplex;
+						m_cbComplexFormType.SelectedIndex = 1;
 					break;
 				default:
 					m_cbComplexFormType.SelectedIndex = 0;
