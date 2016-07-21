@@ -187,11 +187,17 @@
 			<help category="Flex_Dictionary_Styles"/>
 			<font bold="true"/>
 		</tag>
+		<tag id="Reversal-Normal" guid="80a47ed1-1e29-40d4-9aa0-d3041a8ca9dc" userlevel="1" context="internalConfigureView" type="paragraph">
+			<usage wsId="en">Base style for everything in the Reversal view.</usage>
+			<help category="Flex_Dictionary_Styles"/>
+			<font/>
+			<paragraph basedOn="Normal" indentLeft="9 pt" hanging="36 pt" spaceBefore="1 pt" spaceAfter="2 pt"/>
+		</tag>
 		<tag id="Reversal-Subentry" guid="501C3363-065D-465A-BAAD-15D0787F9DED" userlevel="1" context="internalConfigureView" type="paragraph">
 			<usage wsId="en">Each paragraph of Subentry information that is added to a reversal entry if there are subentries.</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font/>
-			<paragraph basedOn="Dictionary-Normal" indentLeft="45 pt" hanging="0 pt" spaceBefore="0 pt"/>
+			<paragraph basedOn="Reversal-Normal" indentLeft="45 pt" hanging="0 pt" spaceBefore="0 pt"/>
 		</tag>
 		<tag id="Reversal-Vernacular" guid="282F9AE7-D4DC-4C9B-93B5-413A7D3986B1" userlevel="1" context="internalConfigureView" type="character">
 			<usage wsId="en">Used for items in reversal entries that contain vernacular text.</usage>
