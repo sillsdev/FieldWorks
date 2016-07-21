@@ -269,6 +269,38 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForConfiguration_BeforeAfterSpanConfigGeneratesApostropheBeforeBetweenAfterCss()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				Label = "Headword",
+				CSSClassNameOverride = "mainheadword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				Before = "'beforeText'",
+				Between = "'betweenText'",
+				After = "'afterText'"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				FieldDescription = "LexEntry"
+			};
+			PopulateFieldsForTesting(mainEntryNode);
+			GenerateEmptyPseudoStyle(CssGenerator.BeforeAfterBetweenStyleName);
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			// Check result for before, between and after rules
+			Assert.IsTrue(Regex.Match(cssResult, @"\.mainheadword>\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'\\\s*'beforeText\\'\s*';\s*}").Success,
+							  "css before rule with 'beforeText' content not found on headword");
+			Assert.IsTrue(Regex.Match(cssResult, @"\.mainheadword>\s*.mainheadwor\s*\+\s*.mainheadwor:before\s*{\s*content\s*:\s*'\\\s*'betweenText\\'\s*';\s*}").Success,
+							  "css before rule with 'betweenText' content not found on headword");
+			Assert.IsTrue(Regex.Match(cssResult, @"\.mainheadword>\s*span\s*:\s*last-child:after\s*{\s*content\s*:\s*'\\\s*'afterText\\'\s*';\s*}").Success,
+							  "css after rule with 'afterText' content not found on headword");
+		}
+
+		[Test]
 		public void GenerateCssForConfiguration_BeforeAfterGroupingSpanWorks()
 		{
 			var headwordNode = new ConfigurableDictionaryNode

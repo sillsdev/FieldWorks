@@ -14,6 +14,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 	public static class SpecialCharacterHandling
 	{
 		private static Dictionary<char, string> s_visibleCharacterSubstitutions;
+		private static Dictionary<char, string> s_cssCharacterSubstitutions;
 
 		private static Dictionary<char, string> VisibleCharacterSubstitutions
 		{
@@ -31,7 +32,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			{
 				// Dot
 				{' ', "\u2219"},
-
 				// Right-arrow
 				{'\t', "\u279D"},
 
@@ -99,6 +99,23 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		{
 			foreach (var replacement in VisibleCharacterSubstitutions)
 				operand = operand.Replace(replacement.Value, replacement.Key.ToString());
+			return operand;
+		}
+
+		private static void PopulateCssCharacterSubstitutions()
+		{
+			s_cssCharacterSubstitutions = new Dictionary<char, string>
+			{
+				{'\'', "\\'"} // Apostrophe
+			};
+		}
+
+		public static string MakeSafeCss(string operand)
+		{
+			if (s_cssCharacterSubstitutions == null)
+				PopulateCssCharacterSubstitutions();
+			foreach (var replacement in s_cssCharacterSubstitutions)
+				operand = operand.Replace(replacement.Key.ToString(), replacement.Value);
 			return operand;
 		}
 	}

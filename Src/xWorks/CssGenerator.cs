@@ -14,6 +14,7 @@ using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 using XCore;
 using Property = ExCSS.Property;
 
@@ -590,7 +591,7 @@ namespace SIL.FieldWorks.XWorks
 					// content is generated before each item which follows an item of the same name
 					// eg. .complexformrefs>.complexformref + .complexformref:before { content: "," }
 					var dec = new StyleDeclaration();
-					dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, configNode.Between) });
+					dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, SpecialCharacterHandling.MakeSafeCss(configNode.Between)) });
 					if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
 						dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, mediator));
 					var collectionSelector = "." + GetClassAttributeForConfig(configNode);
@@ -648,7 +649,7 @@ namespace SIL.FieldWorks.XWorks
 			if(!String.IsNullOrEmpty(configNode.Before))
 			{
 				var dec = new StyleDeclaration();
-				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, configNode.Before) });
+				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, SpecialCharacterHandling.MakeSafeCss(configNode.Before)) });
 				if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
 					dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, mediator));
 				var selectorBase = simpleSelector;
@@ -660,7 +661,7 @@ namespace SIL.FieldWorks.XWorks
 			if(!String.IsNullOrEmpty(configNode.After))
 			{
 				var dec = new StyleDeclaration();
-				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, configNode.After) });
+				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, SpecialCharacterHandling.MakeSafeCss(configNode.After)) });
 				if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
 					dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, mediator));
 				var selectorBase = simpleSelector;
