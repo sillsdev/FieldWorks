@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		// These are used to identify the <Not Complex> and <Unknown Complex Form>
 		// entries in the combobox list.
 		int m_idxNotComplex;
-		int m_idxUnknownComplex;
+		private const string m_idxUnSpecifiedComplex = "<Unspecified Complex Form>";
 		private GroupBox m_glossGroupBox;
 		private LinkLabel m_lnkAssistant;
 
@@ -1598,9 +1598,14 @@ namespace SIL.FieldWorks.LexText.Controls
 				case MoMorphTypeTags.kMorphDiscontiguousPhrase:
 				case MoMorphTypeTags.kMorphPhrase:
 					m_cbComplexFormType.Enabled = true;
-					// default to "Unknown" for "phrase"
+					// default to "Unspecified Complex Form" if found, else set to "0" for "phrase"
 					if (m_cbComplexFormType.SelectedIndex == m_idxNotComplex)
-						m_cbComplexFormType.SelectedIndex = 1;
+					{
+						int unSpecCompFormIndex = m_cbComplexFormType.FindStringExact(m_idxUnSpecifiedComplex);
+						m_cbComplexFormType.SelectedIndex = unSpecCompFormIndex != -1
+							? unSpecCompFormIndex
+							: 0;
+					}
 					break;
 				default:
 					m_cbComplexFormType.SelectedIndex = 0;
