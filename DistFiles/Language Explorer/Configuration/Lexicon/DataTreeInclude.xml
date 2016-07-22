@@ -463,7 +463,6 @@
 	  <item command="CmdDataTree-MoveUp-Sense-Symbol"/>
 -->
 			<item command="CmdDataTree-Insert-Example"/>
-			<item command="CmdDataTree-Insert-ExtNote"/>
 			<item command="CmdDataTree-Insert-SenseBelow"/>
 		</menu>
 		<menu id="mnuDataTree-Examples">
