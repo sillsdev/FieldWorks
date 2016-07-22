@@ -1847,6 +1847,15 @@ namespace SIL.FieldWorks.XWorks
 							previousType = currentVariantType;
 						}
 					}
+					else if (child.FieldDescription == "ComplexEntryTypesRS" && child.IsEnabled && child.Children != null && child.Children.Any(x => x.IsEnabled))
+					{
+						string currentComplexFormType = (((ILexEntryRef)item).ComplexEntryTypesRS[0]).ToString();
+						if (previousType != currentComplexFormType)
+						{
+							content = GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
+							previousType = currentComplexFormType;
+						}
+					}
 					else
 					{
 						content = GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
