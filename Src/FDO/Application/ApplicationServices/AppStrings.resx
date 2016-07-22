@@ -297,4 +297,19 @@
     <value>Saving migrated data before loading.</value>
     <comment>Message on a progress dialog. Appears after a data migration has completed and before the project is opened by FLEx.</comment>
   </data>
+  <data name="ksNotCreatedForComponentsLink" xml:space="preserve">
+    <value>{0}: Could not create Components link to entry "{1}", because it does not exist.</value>
+  </data>
+  <data name="ksNotCreatedForCrossReference" xml:space="preserve">
+    <value>{0}: Could not create Cross Reference link to entry "{1}", because it does not exist.</value>
+  </data>
+  <data name="ksNotCreatedForLexicalRelation" xml:space="preserve">
+    <value>{0}: Could not create Lexical Relation link to entry "{1}", because it does not exist.</value>
+  </data>
+  <data name="ksNotCreatedForLinkTarget" xml:space="preserve">
+    <value>{0}: Could not create link to entry "{1}", because it does not exist.</value>
+  </data>
+  <data name="ksNotCreatedForShowSubentryUnderLink" xml:space="preserve">
+    <value>{0}: Could not create Show Subentry Under link to entry "{1}", because it does not exist.</value>
+  </data>
 </root>

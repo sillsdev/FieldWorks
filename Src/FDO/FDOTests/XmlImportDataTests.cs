@@ -92,7 +92,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			DateTime dtLexOrig = m_cache.LangProject.LexDbOA.DateCreated;
 			TimeSpan span = new TimeSpan(dtLexOrig.Ticks - m_now.Ticks);
 			Assert.LessOrEqual(span.TotalMinutes, 1.0);		// should be only a second or two...
-			XmlImportData xid = new XmlImportData(m_cache);
+			XmlImportData xid = new XmlImportData(m_cache, true);
 			using (var rdr = new StringReader(
 				"<FwDatabase>" +
 				"<LangProject>" +
@@ -283,7 +283,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void ImportData2()
 		{
-			XmlImportData xid = new XmlImportData(m_cache);
+			XmlImportData xid = new XmlImportData(m_cache, true);
 			using (var rdr = new StringReader(
 				"<FwDatabase>" +
 				"<LangProject>" +
@@ -493,7 +493,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		//[Ignore("This needs to be rewritten so that imported files are in resources.")]
 		public void ImportData3()
 		{
-			XmlImportData xid = new XmlImportData(m_cache);
+			XmlImportData xid = new XmlImportData(m_cache, true);
 			string sFwSrcDir = FwDirectoryFinder.SourceDirectory;
 			using (var rdr = new StringReader(
 				"<FwDatabase>" + Environment.NewLine +
@@ -1300,7 +1300,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			TimeSpan span = new TimeSpan(dtLexOrig.Ticks - m_now.Ticks);
 			Assert.LessOrEqual(span.TotalMinutes, 1.0);
 			// should be only a second or two
-			XmlImportData xid = new XmlImportData(m_cache);
+			XmlImportData xid = new XmlImportData(m_cache, true);
 			using (var rdr = new StringReader(
 				"<LexDb>" + Environment.NewLine +
 				"<Entries>" + Environment.NewLine +
@@ -1402,7 +1402,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			TimeSpan span = new TimeSpan(dtLexOrig.Ticks - m_now.Ticks);
 			Assert.LessOrEqual(span.TotalMinutes, 1.0);
 			// should be only a second or two
-			XmlImportData xid = new XmlImportData(m_cache);
+			XmlImportData xid = new XmlImportData(m_cache, true);
 			using (var rdr = new StringReader(@"<LexDb xmlns:msxsl='urn:schemas-microsoft-com:xslt' xmlns:user='urn:my-scripts'>
 	<Entries>
 		<LexEntry>
@@ -1553,7 +1553,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			TimeSpan span = new TimeSpan(dtLexOrig.Ticks - m_now.Ticks);
 			Assert.LessOrEqual(span.TotalMinutes, 1.0);
 			// should be only a second or two
-			XmlImportData xid = new XmlImportData(m_cache);
+			XmlImportData xid = new XmlImportData(m_cache, true);
 			var input = @"<LexDb xmlns:msxsl='urn:schemas-microsoft-com:xslt' xmlns:user='urn:my-scripts'>
 	<Entries>
 		<LexEntry>
@@ -1749,6 +1749,269 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			//Assert.That(relations, Has.Length.EqualTo(1), "should not have produced another lexical relation");
 			//items = relations[0].TargetsRS;
 			//Assert.That(items, Has.Count.EqualTo(3), "relation should still have three items");
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the method ImportData() with the 'Create missing link entries' flag turned off (new default).
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ImportWithoutCreatingMissingLinkEntries()
+		{
+			XmlImportData xid = new XmlImportData(m_cache, false);
+			var input = @"<LexDb xmlns:msxsl='urn:schemas-microsoft-com:xslt' xmlns:user='urn:my-scripts'>
+				<Entries>
+					<LexEntry id='IID0EK'>
+						<LexemeForm>
+							<MoStemAllomorph>
+								<MorphType>
+									<Link ws='en' name='stem' />
+								</MorphType>
+								<Form>
+									<AUni ws='fr'>test</AUni>
+								</Form>
+							</MoStemAllomorph>
+						</LexemeForm>
+						<MorphoSyntaxAnalyses>
+							<MoStemMsa id='MSA1000'>
+								<PartOfSpeech>
+									<Link ws='en' abbr='v' />
+								</PartOfSpeech>
+							</MoStemMsa>
+						</MorphoSyntaxAnalyses>
+						<CrossReferences>
+							<Link wsa='en' abbr='Compare' wsv='fr' entry='b' />
+							<Link wsa='en' abbr='Compare' wsv='fr' entry='bok' />
+						</CrossReferences>
+						<Senses>
+							<LexSense>
+								<MorphoSyntaxAnalysis>
+									<Link target='MSA1000' />
+								</MorphoSyntaxAnalysis>
+								<LexicalRelations>
+									<Link wsa='en' abbr='Synonyms' wsv='fr' sense='c' />
+									<Link wsa='en' abbr='Synonyms' wsv='fr' sense='cok' />
+								</LexicalRelations>
+							</LexSense>
+						</Senses>
+					</LexEntry>
+					<LexEntry>
+						<LexemeForm>
+							<MoStemAllomorph>
+								<MorphType>
+									<Link ws='en' name='stem' />
+								</MorphType>
+								<Form>
+									<AUni ws='fr'>a</AUni>
+								</Form>
+							</MoStemAllomorph>
+						</LexemeForm>
+						<EntryRefs>
+							<LexEntryRef>
+								<VariantEntryTypes>
+									<Link ws='en' name='Irregularly Inflected Form' />
+								</VariantEntryTypes>
+								<ComponentLexemes>
+									<Link target='IID0EK' />
+								</ComponentLexemes>
+							</LexEntryRef>
+						</EntryRefs>
+					</LexEntry>
+					<LexEntry>
+						<LexemeForm>
+							<MoStemAllomorph>
+								<MorphType>
+									<Link ws='en' name='stem' />
+								</MorphType>
+								<Form>
+									<AUni ws='fr'>aok</AUni>
+								</Form>
+							</MoStemAllomorph>
+						</LexemeForm>
+						<EntryRefs>
+							<LexEntryRef>
+								<VariantEntryTypes>
+									<Link ws='en' name='Irregularly Inflected Form' />
+								</VariantEntryTypes>
+								<ComponentLexemes>
+									<Link target='IID0EK' />
+								</ComponentLexemes>
+							</LexEntryRef>
+						</EntryRefs>
+					</LexEntry>
+					<LexEntry id='IID0E1B'>
+						<LexemeForm>
+							<MoStemAllomorph>
+								<MorphType>
+									<Link ws='en' name='stem' />
+								</MorphType>
+								<Form>
+									<AUni ws='fr'>d</AUni>
+								</Form>
+							</MoStemAllomorph>
+						</LexemeForm>
+						<EntryRefs>
+							<LexEntryRef>
+								<ComplexEntryTypes>
+									<Link ws='en' name='Derivative' />
+								</ComplexEntryTypes>
+								<RefType>
+									<Integer val='1' />
+								</RefType>
+								<ComponentLexemes>
+									<Link target='IID0EK' />
+								</ComponentLexemes>
+								<PrimaryLexemes>
+									<Link target='IID0EK' />
+								</PrimaryLexemes>
+							</LexEntryRef>
+						</EntryRefs>
+					</LexEntry>
+					<LexEntry id='IID0EFC'>
+						<LexemeForm>
+							<MoStemAllomorph>
+								<MorphType>
+									<Link ws='en' name='stem' />
+								</MorphType>
+								<Form>
+									<AUni ws='fr'>dok</AUni>
+								</Form>
+							</MoStemAllomorph>
+						</LexemeForm>
+						<EntryRefs>
+							<LexEntryRef>
+								<ComplexEntryTypes>
+									<Link ws='en' name='Derivative' />
+								</ComplexEntryTypes>
+								<RefType>
+									<Integer val='1' />
+								</RefType>
+								<ComponentLexemes>
+									<Link target='IID0EK' />
+								</ComponentLexemes>
+								<PrimaryLexemes>
+									<Link target='IID0EK' />
+								</PrimaryLexemes>
+							</LexEntryRef>
+						</EntryRefs>
+					</LexEntry>
+					<LexEntry>
+						<LexemeForm>
+							<MoStemAllomorph>
+								<MorphType>
+									<Link ws='en' name='stem' />
+								</MorphType>
+								<Form>
+									<AUni ws='fr'>aok</AUni>
+								</Form>
+							</MoStemAllomorph>
+						</LexemeForm>
+						<EntryRefs>
+							<LexEntryRef>
+								<ComponentLexemes>
+									<Link ws='fr' entry='test' />
+								</ComponentLexemes>
+							</LexEntryRef>
+						</EntryRefs>
+					</LexEntry>
+					<LexEntry>
+						<LexemeForm>
+							<MoStemAllomorph>
+								<MorphType>
+									<Link ws='en' name='stem' />
+								</MorphType>
+								<Form>
+									<AUni ws='fr'>bok</AUni>
+								</Form>
+							</MoStemAllomorph>
+						</LexemeForm>
+						<CrossReferences>
+							<Link wsa='en' abbr='Compare' wsv='fr' entry='test' />
+						</CrossReferences>
+					</LexEntry>
+					<LexEntry>
+						<LexemeForm>
+							<MoStemAllomorph>
+								<MorphType>
+									<Link ws='en' name='stem' />
+								</MorphType>
+								<Form>
+									<AUni ws='fr'>cok</AUni>
+								</Form>
+							</MoStemAllomorph>
+						</LexemeForm>
+						<MorphoSyntaxAnalyses>
+							<MoStemMsa id='MSA1001'>
+								<PartOfSpeech>
+									<Link ws='en' abbr='v' />
+								</PartOfSpeech>
+							</MoStemMsa>
+						</MorphoSyntaxAnalyses>
+						<Senses>
+							<LexSense>
+								<MorphoSyntaxAnalysis>
+									<Link target='MSA1001' />
+								</MorphoSyntaxAnalysis>
+								<LexicalRelations>
+									<Link wsa='en' abbr='Synonyms' wsv='fr' sense='test 1' />
+								</LexicalRelations>
+							</LexSense>
+						</Senses>
+					</LexEntry>
+					<LexEntry>
+						<LexemeForm>
+							<MoStemAllomorph>
+								<MorphType>
+									<Link ws='en' name='stem' />
+								</MorphType>
+								<Form>
+									<AUni ws='fr'>dok</AUni>
+								</Form>
+							</MoStemAllomorph>
+						</LexemeForm>
+						<EntryRefs>
+							<LexEntryRef>
+								<ComponentLexemes>
+									<Link ws='fr' entry='test' />
+								</ComponentLexemes>
+							</LexEntryRef>
+						</EntryRefs>
+					</LexEntry>
+				</Entries>
+			</LexDb>";
+			Assert.AreEqual(0, m_cache.LangProject.LexDbOA.Entries.Count(), "The lexicon starts out empty.");
+			Assert.AreEqual(0, m_cache.LangProject.AnthroListOA.PossibilitiesOS.Count);
+			Assert.AreEqual(0, m_cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Count);
+			Assert.AreEqual(0, m_cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Count);
+			UndoableUnitOfWorkHelper.Do("do", "undo", m_cache.ActionHandlerAccessor, () =>
+			{
+				// The 'real' import process loads default reference types
+				// The test will create the ones we need, but we need a list to put them in!
+				m_cache.LangProject.LexDbOA.ReferencesOA = m_cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+			});
+			StringBuilder sbLog = new StringBuilder();
+			using (var rdr = new StringReader(input))
+			{
+				xid.ImportData(rdr, new StringWriter(sbLog), null);
+			}
+			// The main entries are test, aok, bok, cok and dok. The xslt has already created entries a and d.
+			// Because the fCreateMissingLinks flag is false (see ctor for XmlImportData), the import should
+			// NOT create entries b and c, but WILL create entries for a and d (they'll get merged post-import).
+			Assert.AreEqual(7, m_cache.LangProject.LexDbOA.Entries.Count());
+			string sLog = sbLog.ToString();
+			Assert.IsFalse(String.IsNullOrEmpty(sLog), "There should be some log information!");
+			string[] rgsLog = sLog.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+			const string msg = "data stream: Could not create {0} link to entry \"{1}\", because it does not exist.";
+			var msgb = string.Format(msg, "Cross Reference", "b");
+			CollectionAssert.Contains(rgsLog, msgb);
+			var msgc = string.Format(msg, "Lexical Relation", "c");
+			CollectionAssert.Contains(rgsLog, msgc);
+			var le = m_cache.LangProject.LexDbOA.Entries.First(e => e.LexemeFormOA.Form.BestVernacularAlternative.Text == "test");
+			Assert.NotNull(le, "Should be a 'test' lexeme");
+			var dsLen = "data stream: ".Length;
+			Assert.AreEqual(msgb.Substring(dsLen), le.ImportResidue.Text, "Message about Cross Reference should be in entry Import Residue");
+			Assert.AreEqual(msgc.Substring(dsLen), le.SensesOS[0].ImportResidue.Text, "Message about Lexical Relation should be in sense Import Residue");
 		}
 	}
 }

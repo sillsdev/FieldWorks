@@ -99,6 +99,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private System.Windows.Forms.ColumnHeader columnHeaderCM4;
 		private ImageList imageList1;	// key=sfm, value=ClsAutoField
 		private OpenFileDialogAdapter openFileDialog;
+		private CheckBox m_chkCreateMissingLinks;
 
 		private static LexImportWizard m_wizard = null;
 
@@ -1932,7 +1933,8 @@ namespace SIL.FieldWorks.LexText.Controls
 					lexImport.Error += OnImportError;
 					bool fRet = (bool)dlg.RunTask(true, lexImport.Import,
 						runToCompletion, lastStep, startPhase, m_DatabaseFileName.Text, m_cEntries,
-						m_DisplayImportReport.Checked, m_sPhase1HtmlReport, LexImport.s_sPhase1FileName);
+						m_DisplayImportReport.Checked, m_sPhase1HtmlReport, LexImport.s_sPhase1FileName,
+						m_chkCreateMissingLinks.Checked);
 
 					if (fRet)
 						DialogResult = DialogResult.OK;	// only 'OK' if not exception
@@ -2478,24 +2480,25 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.btnModifyMappingLanguage = new System.Windows.Forms.Button();
 			this.btnAddMappingLanguage = new System.Windows.Forms.Button();
 			this.listViewMappingLanguages = new System.Windows.Forms.ListView();
-			this.LangcolumnHeader1 = new System.Windows.Forms.ColumnHeader();
-			this.LangcolumnHeader2 = new System.Windows.Forms.ColumnHeader();
-			this.LangcolumnHeader3 = new System.Windows.Forms.ColumnHeader();
+			this.LangcolumnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.LangcolumnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.LangcolumnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.lblMappingLanguagesInstructions = new System.Windows.Forms.Label();
 			this.lblMappingLanguages = new System.Windows.Forms.Label();
 			this.tabPage4 = new System.Windows.Forms.TabPage();
+			this.m_chkCreateMissingLinks = new System.Windows.Forms.CheckBox();
 			this.lblTotalMarkers = new System.Windows.Forms.Label();
 			this.btnModifyContentMapping = new System.Windows.Forms.Button();
 			this.lblContentInstructions2 = new System.Windows.Forms.Label();
 			this.lblContentInstructions1 = new System.Windows.Forms.Label();
 			this.lblContentMappings = new System.Windows.Forms.Label();
 			this.listViewContentMapping = new System.Windows.Forms.ListView();
-			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
+			this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.tabPage6 = new System.Windows.Forms.TabPage();
 			this.btnDeleteCharMapping = new System.Windows.Forms.Button();
 			this.btnModifyCharMapping = new System.Windows.Forms.Button();
@@ -2503,10 +2506,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.label2 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
 			this.listViewCharMappings = new System.Windows.Forms.ListView();
-			this.columnHeaderCM1 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeaderCM2 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeaderCM3 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeaderCM4 = new System.Windows.Forms.ColumnHeader();
+			this.columnHeaderCM1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeaderCM2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeaderCM3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeaderCM4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.tabPage5 = new System.Windows.Forms.TabPage();
 			this.tvBeginMarkers = new System.Windows.Forms.TreeView();
 			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
@@ -2743,9 +2746,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			//
 			resources.ApplyResources(this.listViewMappingLanguages, "listViewMappingLanguages");
 			this.listViewMappingLanguages.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-			this.LangcolumnHeader1,
-			this.LangcolumnHeader2,
-			this.LangcolumnHeader3});
+				this.LangcolumnHeader1,
+				this.LangcolumnHeader2,
+				this.LangcolumnHeader3});
 			this.listViewMappingLanguages.FullRowSelect = true;
 			this.listViewMappingLanguages.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			this.listViewMappingLanguages.HideSelection = false;
@@ -2753,9 +2756,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.listViewMappingLanguages.Name = "listViewMappingLanguages";
 			this.listViewMappingLanguages.UseCompatibleStateImageBehavior = false;
 			this.listViewMappingLanguages.View = System.Windows.Forms.View.Details;
+			this.listViewMappingLanguages.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewMappingLanguages_ColumnClick);
 			this.listViewMappingLanguages.SelectedIndexChanged += new System.EventHandler(this.listViewMappingLanguages_SelectedIndexChanged);
 			this.listViewMappingLanguages.DoubleClick += new System.EventHandler(this.listViewMappingLanguages_DoubleClick);
-			this.listViewMappingLanguages.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewMappingLanguages_ColumnClick);
 			//
 			// LangcolumnHeader1
 			//
@@ -2782,6 +2785,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// tabPage4
 			//
 			resources.ApplyResources(this.tabPage4, "tabPage4");
+			this.tabPage4.Controls.Add(this.m_chkCreateMissingLinks);
 			this.tabPage4.Controls.Add(this.lblTotalMarkers);
 			this.tabPage4.Controls.Add(this.btnModifyContentMapping);
 			this.tabPage4.Controls.Add(this.lblContentInstructions2);
@@ -2790,6 +2794,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.tabPage4.Controls.Add(this.listViewContentMapping);
 			this.tabPage4.Name = "tabPage4";
 			this.tabPage4.UseVisualStyleBackColor = true;
+			//
+			// m_chkCreateMissingLinks
+			//
+			resources.ApplyResources(this.m_chkCreateMissingLinks, "m_chkCreateMissingLinks");
+			this.m_chkCreateMissingLinks.Name = "m_chkCreateMissingLinks";
+			this.m_chkCreateMissingLinks.UseVisualStyleBackColor = true;
 			//
 			// lblTotalMarkers
 			//
@@ -2822,12 +2832,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			//
 			resources.ApplyResources(this.listViewContentMapping, "listViewContentMapping");
 			this.listViewContentMapping.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-			this.columnHeader1,
-			this.columnHeader6,
-			this.columnHeader5,
-			this.columnHeader2,
-			this.columnHeader3,
-			this.columnHeader4});
+				this.columnHeader1,
+				this.columnHeader6,
+				this.columnHeader5,
+				this.columnHeader2,
+				this.columnHeader3,
+				this.columnHeader4});
 			this.listViewContentMapping.FullRowSelect = true;
 			this.listViewContentMapping.HideSelection = false;
 			this.listViewContentMapping.MultiSelect = false;
@@ -2835,9 +2845,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.listViewContentMapping.Sorting = System.Windows.Forms.SortOrder.Ascending;
 			this.listViewContentMapping.UseCompatibleStateImageBehavior = false;
 			this.listViewContentMapping.View = System.Windows.Forms.View.Details;
+			this.listViewContentMapping.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewContentMapping_ColumnClick);
 			this.listViewContentMapping.SelectedIndexChanged += new System.EventHandler(this.listViewContentMapping_SelectedIndexChanged);
 			this.listViewContentMapping.DoubleClick += new System.EventHandler(this.listViewContentMapping_DoubleClick);
-			this.listViewContentMapping.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewContentMapping_ColumnClick);
 			//
 			// columnHeader1
 			//
@@ -2906,10 +2916,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			// listViewCharMappings
 			//
 			this.listViewCharMappings.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-			this.columnHeaderCM1,
-			this.columnHeaderCM2,
-			this.columnHeaderCM3,
-			this.columnHeaderCM4});
+				this.columnHeaderCM1,
+				this.columnHeaderCM2,
+				this.columnHeaderCM3,
+				this.columnHeaderCM4});
 			this.listViewCharMappings.FullRowSelect = true;
 			this.listViewCharMappings.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			this.listViewCharMappings.HideSelection = false;
@@ -2955,8 +2965,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.tvBeginMarkers.ShowLines = false;
 			this.tvBeginMarkers.ShowRootLines = false;
 			this.tvBeginMarkers.BeforeCollapse += new System.Windows.Forms.TreeViewCancelEventHandler(this.tvBeginMarkers_BeforeCollapse);
-			this.tvBeginMarkers.MouseDown += new System.Windows.Forms.MouseEventHandler(this.tvBeginMarkers_MouseUp);
 			this.tvBeginMarkers.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tvBeginMarkers_KeyUp);
+			this.tvBeginMarkers.MouseDown += new System.Windows.Forms.MouseEventHandler(this.tvBeginMarkers_MouseUp);
 			//
 			// imageList1
 			//
@@ -3037,8 +3047,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_DisplayImportReport.Checked = true;
 			this.m_DisplayImportReport.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.m_DisplayImportReport.Name = "m_DisplayImportReport";
-			this.m_DisplayImportReport.KeyUp += new System.Windows.Forms.KeyEventHandler(this.m_DisplayImportReport_KeyUp);
 			this.m_DisplayImportReport.KeyDown += new System.Windows.Forms.KeyEventHandler(this.m_DisplayImportReport_KeyDown);
+			this.m_DisplayImportReport.KeyUp += new System.Windows.Forms.KeyEventHandler(this.m_DisplayImportReport_KeyUp);
 			//
 			// lblReadyToImportInstructions
 			//
@@ -3071,17 +3081,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.Name = "LexImportWizard";
 			this.ShowInTaskbar = false;
 			this.StepNames = new string[] {
-		resources.GetString("$this.StepNames"),
-		resources.GetString("$this.StepNames1"),
-		resources.GetString("$this.StepNames2"),
-		resources.GetString("$this.StepNames3"),
-		resources.GetString("$this.StepNames4"),
-		resources.GetString("$this.StepNames5"),
-		resources.GetString("$this.StepNames6"),
-		resources.GetString("$this.StepNames7")};
+				resources.GetString("$this.StepNames"),
+				resources.GetString("$this.StepNames1"),
+				resources.GetString("$this.StepNames2"),
+				resources.GetString("$this.StepNames3"),
+				resources.GetString("$this.StepNames4"),
+				resources.GetString("$this.StepNames5"),
+				resources.GetString("$this.StepNames6"),
+				resources.GetString("$this.StepNames7")};
 			this.StepPageCount = 8;
-			this.Load += new System.EventHandler(this.LexImportWizard_Load);
 			this.Closing += new System.ComponentModel.CancelEventHandler(this.LexImportWizard_Closing);
+			this.Load += new System.EventHandler(this.LexImportWizard_Load);
 			this.Controls.SetChildIndex(this.btnQuickFinish, 0);
 			this.Controls.SetChildIndex(this.panSteps, 0);
 			this.Controls.SetChildIndex(this.tabSteps, 0);
@@ -3097,6 +3107,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.tabPage2.PerformLayout();
 			this.tabPage3.ResumeLayout(false);
 			this.tabPage4.ResumeLayout(false);
+			this.tabPage4.PerformLayout();
 			this.tabPage6.ResumeLayout(false);
 			this.tabPage5.ResumeLayout(false);
 			this.tabPage7.ResumeLayout(false);
