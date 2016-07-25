@@ -48,17 +48,21 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
+				string localizedLabel;
 				if (StringTable == null)
 				{
-					if (LabelSuffix == null)
-						return Label;
-					return string.Format("{0} ({1})", Label, LabelSuffix);
+					localizedLabel = LabelSuffix == null ? Label : string.Format("{0} ({1})", Label, LabelSuffix);
 				}
-				var localLabel = StringTable.LocalizeAttributeValue(Label);
-				if (LabelSuffix == null)
-					return localLabel;
-				var localSuffix = StringTable.LocalizeAttributeValue(LabelSuffix);
-				return string.Format("{0} ({1})", localLabel, localSuffix);
+				else
+				{
+					localizedLabel = LabelSuffix == null ? StringTable.LocalizeAttributeValue(Label) : string.Format("{0} ({1})",
+						StringTable.LocalizeAttributeValue(Label), StringTable.LocalizeAttributeValue(LabelSuffix));
+				}
+				if (DictionaryNodeOptions is DictionaryNodeGroupingOptions)
+				{
+					return string.Format("[{0}]", localizedLabel);
+				}
+				return localizedLabel;
 			}
 		}
 
@@ -405,12 +409,13 @@ namespace SIL.FieldWorks.XWorks
 			// gather the sibling nodes and all related children of grouping nodes together for comparison
 			if (Parent != null && Parent.DictionaryNodeOptions is DictionaryNodeGroupingOptions)
 			{
-				siblings = Parent.Parent.Children;
+				siblings = Parent.IsSharedItem ? Parent.Parent.Parent.ReferencedOrDirectChildren : Parent.Parent.ReferencedOrDirectChildren;
 			}
 			var setForUniqueNodes = new List<ConfigurableDictionaryNode>(siblings);
 			foreach (var sibling in siblings.Where(sibling => sibling.DictionaryNodeOptions is DictionaryNodeGroupingOptions))
 			{
-				setForUniqueNodes.AddRange(sibling.Children);
+				if(sibling.ReferencedOrDirectChildren != null)
+					setForUniqueNodes.AddRange(sibling.ReferencedOrDirectChildren);
 			}
 			return setForUniqueNodes.Exists(node => !ReferenceEquals(node, this) && node.Label == Label && node.LabelSuffix == newSuffix);
 		}

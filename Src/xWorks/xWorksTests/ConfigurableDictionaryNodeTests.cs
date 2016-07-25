@@ -174,7 +174,32 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(duplicate.Label, Is.EqualTo(nodeToDuplicateLabel), "should not have changed original node label");
 			Assert.That(nodeToDuplicate.LabelSuffix, Is.Null, "should not have changed original node label suffix");
 			Assert.That(duplicate.LabelSuffix, Is.EqualTo("2"), "(1) was used in the group, so the suffix should be 2");
-			Assert.That(inGroupDup.LabelSuffix, Is.EqualTo("3"), "(2) was used in the group parrent, so the suffix should be 3");
+			Assert.That(inGroupDup.LabelSuffix, Is.EqualTo("3"), "(2) was used in the group parent, so the suffix should be 3");
+		}
+
+		[Test]
+		public void DuplicatesSharedGroupingNodeChildrenAffectSuffixes()
+		{
+			var nodeToDuplicateLabel = "node";
+			var nodeToDuplicate = new ConfigurableDictionaryNode { FieldDescription = nodeToDuplicateLabel };
+			var dupUnderShardGroup = new ConfigurableDictionaryNode { FieldDescription = nodeToDuplicateLabel, LabelSuffix = "1" };
+			var sharedNode = new ConfigurableDictionaryNode
+			{
+				Label = "Shared",
+				Children = new List<ConfigurableDictionaryNode> { dupUnderShardGroup },
+				DictionaryNodeOptions = new DictionaryNodeGroupingOptions()
+			};
+			var sharedGroupRefNode = new ConfigurableDictionaryNode { ReferenceItem = "Shared", DictionaryNodeOptions = new DictionaryNodeGroupingOptions() };
+			var root = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { sharedGroupRefNode, nodeToDuplicate } };
+			CssGeneratorTests.PopulateFieldsForTesting(DictionaryConfigurationModelTests.CreateSimpleSharingModel(root, sharedNode));
+
+			// SUT
+			var duplicate = nodeToDuplicate.DuplicateAmongSiblings();
+			var inGroupDup = dupUnderShardGroup.DuplicateAmongSiblings();
+			Assert.That(duplicate.Label, Is.EqualTo(nodeToDuplicateLabel), "should not have changed original node label");
+			Assert.That(nodeToDuplicate.LabelSuffix, Is.Null, "should not have changed original node label suffix");
+			Assert.That(duplicate.LabelSuffix, Is.EqualTo("2"), "(1) was used in the group, so the suffix should be 2");
+			Assert.That(inGroupDup.LabelSuffix, Is.EqualTo("3"), "(2) was used in the group parent, so the suffix should be 3");
 		}
 
 		[Test]
@@ -473,6 +498,18 @@ namespace SIL.FieldWorks.XWorks
 			var nodeWithSuffix = new ConfigurableDictionaryNode() { Label = "label2", LabelSuffix = "suffix2" };
 			// SUT
 			Assert.That(nodeWithSuffix.DisplayLabel, Is.EqualTo("label2 (suffix2)"), "DisplayLabel should include suffix");
+		}
+
+		[Test]
+		public void HasCorrectDisplayLabelForGroup()
+		{
+			var nodeWithNullSuffix = new ConfigurableDictionaryNode { Label = "label", LabelSuffix = null, DictionaryNodeOptions = new DictionaryNodeGroupingOptions() };
+			// SUT
+			Assert.That(nodeWithNullSuffix.DisplayLabel, Is.EqualTo("[label]"), "GroupingNodes should be bracketed");
+
+			var nodeWithSuffix = new ConfigurableDictionaryNode { Label = "label2", LabelSuffix = "suffix2", DictionaryNodeOptions = new DictionaryNodeGroupingOptions() };
+			// SUT
+			Assert.That(nodeWithSuffix.DisplayLabel, Is.EqualTo("[label2 (suffix2)]"), "Suffic should be inside the bracket for a grouping node");
 		}
 
 		[Test]

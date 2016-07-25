@@ -36,7 +36,8 @@ namespace SIL.FieldWorks.XWorks
 			var configObjectName = "Dictionary";
 			// SUT
 			var fileListFromResults = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(Cache, configObjectName).Values;
-			var shippedFileList = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"));
+			var shippedFileList = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"),
+				"*" + DictionaryConfigurationModel.FileExtension);
 			CollectionAssert.AreEquivalent(fileListFromResults, shippedFileList);
 		}
 
@@ -54,7 +55,8 @@ namespace SIL.FieldWorks.XWorks
 					"<?xml version='1.0' encoding='utf-8'?><DictionaryConfiguration name='New User Config'/>");
 				// SUT
 				var fileListFromResults = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(Cache, configObjectName).Values;
-				var shippedFileList = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"));
+				var shippedFileList = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"),
+					"*" + DictionaryConfigurationModel.FileExtension);
 				// all the shipped configs are in the return list
 				CollectionAssert.IsSubsetOf(shippedFileList, fileListFromResults);
 				// new user configuration is present in results
@@ -73,7 +75,8 @@ namespace SIL.FieldWorks.XWorks
 			using (var tempConfigFile = TempFile.WithFilename(Path.Combine(projectDictionaryConfigs, "Override" + DictionaryConfigurationModel.FileExtension)))
 			{
 				string firstShippedConfigName;
-				var shippedFileList = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"));
+				var shippedFileList = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"),
+					"*" + DictionaryConfigurationModel.FileExtension);
 				var fileList = shippedFileList.ToArray();
 				using (var stream = new FileStream(fileList.First(), FileMode.Open))
 				{

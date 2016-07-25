@@ -1107,7 +1107,7 @@ namespace SIL.FieldWorks.XWorks
 			return new DictionaryConfigurationModel
 			{
 				Parts = new List<ConfigurableDictionaryNode> { part },
-				SharedItems = new List<ConfigurableDictionaryNode> { sharedItem },
+				SharedItems = new List<ConfigurableDictionaryNode> { sharedItem }
 			};
 		}
 	}
