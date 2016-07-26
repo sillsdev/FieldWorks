@@ -167,6 +167,10 @@ namespace SIL.FieldWorks.XWorks
 
 			view.UpdateStatus("Connecting to Webonary.");
 			var targetURI = DestinationURI(model.SiteName);
+
+			if(!ValidateSiteName(model, view, targetURI))
+				return;
+
 			using (var client = new WebClient())
 			{
 				var credentials = string.Format("{0}:{1}", model.UserName, model.Password);
@@ -215,8 +219,42 @@ namespace SIL.FieldWorks.XWorks
 					view.SetStatusCondition(WebonaryStatusCondition.Error);
 				}
 
-				view.UpdateStatus(string.Format("Response from server:{0}{1}{0}", Environment.NewLine, responseText));
+				view.UpdateStatus(string.Format("Response from server:{0}{1}{0}", Environment.NewLine, Math.Min(50, responseText.Length)));
 			}
+		}
+
+		private static bool ValidateSiteName(PublishToWebonaryModel model, IPublishToWebonaryView view, string targetURI)
+		{
+			bool isValidSiteName = true;
+			try
+			{
+				var request = WebRequest.Create("http://" + model.SiteName + ".webonary.org") as HttpWebRequest;
+				if (request != null)
+				{
+					request.Timeout = 5000;
+					request.Method = "GET";
+					request.AllowAutoRedirect = false;
+
+					var response = request.GetResponse() as HttpWebResponse;
+					if (response != null)
+					{
+						var statusCode = (int) response.StatusCode;
+						if (statusCode != 200)
+						{
+							view.UpdateStatus("Error: There has been an error accessing webonary. Is your sitename correct?");
+							view.SetStatusCondition(WebonaryStatusCondition.Error);
+							isValidSiteName = false;
+						}
+					}
+				}
+			}
+			catch
+			{
+				view.UpdateStatus("Error: There has been an error accessing webonary. Is your sitename correct?");
+				view.SetStatusCondition(WebonaryStatusCondition.Error);
+				isValidSiteName = false;
+			}
+			return isValidSiteName;
 		}
 
 		private void ExportOtherFilesContent(string tempDirectoryToCompress, PublishToWebonaryModel logTextbox, object outputLogTextbox)
@@ -229,7 +267,7 @@ namespace SIL.FieldWorks.XWorks
 			view.UpdateStatus("Publishing to Webonary.");
 			view.SetStatusCondition(WebonaryStatusCondition.None);
 
-			if(string.IsNullOrEmpty(model.SiteName))
+			if (string.IsNullOrEmpty(model.SiteName))
 			{
 				view.UpdateStatus("Error: No site name specified.");
 				view.SetStatusCondition(WebonaryStatusCondition.Error);

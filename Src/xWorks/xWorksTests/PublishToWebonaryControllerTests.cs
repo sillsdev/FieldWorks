@@ -205,7 +205,7 @@ namespace SIL.FieldWorks.XWorks
 
 		[Test]
 		[Ignore("Until get working. Doesn't seem to put together the right kind of data to not get an error yet.")]
-		[Category("ByHand")] // ByHand since uses local webonary instance
+		[Category("ByHand")] // ByHand since uses local webonary instance, Requires test site on server
 		public void PublishToWebonaryCanCompleteWithoutError()
 		{
 			using (var controller = SetUpController())
@@ -305,6 +305,26 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		[Category("ByHand")] // ByHand since uses local webonary instance - LT-17409
+		public void UploadToWebonaryReportsIncorrectSiteName()
+		{
+			using (var controller = new MockPublishToWebonaryController(Cache, m_mediator))
+			{
+				var view = new MockWebonaryDlg()
+				{
+					Model = new PublishToWebonaryModel(m_mediator)
+					{
+						SiteName = "test",
+						UserName = "software",
+						Password = "4APItesting"
+					}
+				};
+				controller.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new.zip", view.Model, view);
+				Assert.That(view.StatusStrings.Any(s => s.Contains("Error: There has been an error accessing webonary. Is your sitename correct?")));
+			}
+		}
+
+		[Test]
 		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void UploadToWebonaryReportsLackingPermissionsToUpload()
 		{
@@ -314,12 +334,13 @@ namespace SIL.FieldWorks.XWorks
 				{
 					Model = new PublishToWebonaryModel(m_mediator)
 					{
+						SiteName = "test-india",
 						UserName = "software",
 						Password = "4APItesting"
 					}
 				};
 				controller.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new.zip", view.Model, view);
-				Assert.That(view.StatusStrings.Any(s => s.Contains("Error: User doesn't have permission to import data")));
+				Assert.That(view.StatusStrings.Any(s => s.Contains("Unable to connect to Webonary.  Please check your username and password and your Internet connection.")));
 			}
 		}
 
