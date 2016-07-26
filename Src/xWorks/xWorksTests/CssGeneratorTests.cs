@@ -3401,7 +3401,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 	}
 
-	class TestStyle : BaseStyleInfo
+	internal class TestStyle : BaseStyleInfo
 	{
 		public TestStyle(FontInfo defaultFontInfo, FdoCache cache)
 			: base(cache)

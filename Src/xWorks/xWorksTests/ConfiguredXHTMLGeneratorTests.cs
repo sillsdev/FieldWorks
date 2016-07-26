@@ -17,9 +17,11 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainImpl;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
 using XCore;
@@ -30,7 +32,7 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	public class ConfiguredXHTMLGeneratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
 	{
-		private int m_wsEn, m_wsFr;
+		private int m_wsEn, m_wsFr, m_wsHe;
 
 		private FwXApp m_application;
 		private FwXWindow m_window;
@@ -38,6 +40,13 @@ namespace SIL.FieldWorks.XWorks
 		private RecordClerk m_Clerk;
 
 		private StringBuilder XHTMLStringBuilder { get; set; }
+		private const string DictionaryNormal = "Dictionary-Normal";
+		private BaseStyleInfo DictionaryNormalStyle { get { return FontHeightAdjuster.StyleSheetFromMediator(m_mediator).Styles[DictionaryNormal]; } }
+
+		private ConfiguredXHTMLGenerator.GeneratorSettings DefaultSettings
+		{
+			get{ return new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null); }
+		}
 
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
@@ -50,6 +59,11 @@ namespace SIL.FieldWorks.XWorks
 			m_window = new MockFwXWindow(m_application, m_configFilePath);
 			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
 			m_mediator = m_window.Mediator;
+			m_window.LoadUI(m_configFilePath); // actually loads UI here; needed for non-null stylesheet
+
+			var styles = FontHeightAdjuster.StyleSheetFromMediator(m_mediator).Styles;
+			if (!styles.Contains(DictionaryNormal))
+				styles.Add(new BaseStyleInfo { Name = DictionaryNormal });
 
 			m_Clerk = CreateClerk();
 			m_mediator.PropertyTable.SetProperty("ActiveClerk", m_Clerk);
@@ -1656,6 +1670,28 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateEntryHtmlWithStyles_NullEntryThrowsArgumentNull()
 		{
 			Assert.Throws<ArgumentNullException>(() => ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(null, new DictionaryConfigurationModel(), null, null));
+		}
+
+		[Test]
+		public void GenerateEntryHtmlWithStyles_SelectsDirectionUsingDictionaryNormal()
+		{
+			try
+			{
+				SetDictionaryNormalDirection(new InheritableStyleProp<TriStateBool>(TriStateBool.triTrue));
+				var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
+					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+				var configModel = CreateInterestingConfigurationModel(Cache);
+				var mainEntry = CreateInterestingLexEntry(Cache);
+				//SUT
+				var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(mainEntry, configModel, pubDecorator, m_mediator);
+				// this test relies on specific test data from CreateInterestingConfigurationModel
+				const string xpath = "/html[@dir='rtl']/body[@dir='rtl']/div[@class='lexentry']/span[@class='entry']";
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 1);
+			}
+			finally
+			{
+				SetDictionaryNormalDirection(new InheritableStyleProp<TriStateBool>()); // unset direction
+			}
 		}
 
 		[Test]
@@ -3892,7 +3928,7 @@ namespace SIL.FieldWorks.XWorks
 				// SUT
 				string last = null;
 				XHTMLWriter.WriteStartElement("TestElement");
-				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, Cache);
+				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='fr' and text()='C c']";
@@ -3909,7 +3945,7 @@ namespace SIL.FieldWorks.XWorks
 				// SUT
 				var last = "A a";
 				XHTMLWriter.WriteStartElement("TestElement");
-				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, Cache);
+				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='fr' and text()='C c']";
@@ -3926,8 +3962,8 @@ namespace SIL.FieldWorks.XWorks
 				// SUT
 				var last = "A a";
 				XHTMLWriter.WriteStartElement("TestElement");
-				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, Cache);
-				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, Cache);
+				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
+				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='fr' and text()='C c']";
@@ -5832,8 +5868,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
-			var output = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryEntry, mainEntryNode, pubMain, settings);
+			var output = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryEntry, mainEntryNode, pubMain, DefaultSettings);
 			const string matchComplexFormRef = "//span[@class='complexformtypes']/span[@class='complexformtype']/span[@class='name']/span[@lang='en']";
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchComplexFormRef, 1);
 		}
@@ -5880,9 +5915,8 @@ namespace SIL.FieldWorks.XWorks
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, DefaultSettings);
 			const string senseXpath = "div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='gloss']/span[@lang='en' and text()='gloss']";
 			var paracontinuationxpath = string.Format(
 				"div[@class='lexentry']//span[@class='subentries']/span[@class='subentry']/span[@class='complexformtypes']/span[@class='complexformtype']/span[@class='reverseabbr']/span[@lang='en' and text()='{0}']",
@@ -6523,13 +6557,71 @@ namespace SIL.FieldWorks.XWorks
 			var frenchString = Cache.TsStrFactory.MakeString("French with  embedded", m_wsFr);
 			var multiRunString = frenchString.Insert(12, englishStr);
 			entry.Bibliography.set_String(m_wsFr, multiRunString);
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings);
 			const string nestedEn = "/div[@class='lexentry']/span[@class='bib']/span[@lang='fr']/span[@lang='en']";
 			const string nestedFr = "/div[@class='lexentry']/span[@class='bib']/span[@lang='fr']/span[@lang='fr']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(nestedEn, 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(nestedFr, 2);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_EmbeddedWritingSystemOfOppositeDirectionGeneratesCorrectResult()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Bibliography",
+				CSSClassNameOverride = "bib",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "he" })
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var entry = CreateInterestingLexEntry(Cache);
+			var multiRunString = MakeBidirectionalTss(new[] { "דוד", " et ", "דניאל" });
+			entry.Bibliography.set_String(m_wsHe, multiRunString);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings);
+			const string nestedEn = "/div[@class='lexentry']/span[@class='bib']/span[@lang='he']/span[@dir='rtl']/span[@lang='en']/span[@dir='ltr']";
+			const string nestedHe = "/div[@class='lexentry']/span[@class='bib']/span[@lang='he']/span[@dir='rtl']/span[@lang='he']";
+			const string extraDirection = "/div[@class='lexentry']/span[@class='bib']/span[@lang='he']/span[@dir='rtl']/span[@lang='he']/span[@dir='rtl']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(nestedEn, 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(nestedHe, 2);
+			AssertThatXmlIn.String(result).HasNoMatchForXpath(extraDirection);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_WritingSystemOfSameDirectionGeneratesNoExtraDirectionSpan()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Bibliography",
+				CSSClassNameOverride = "bib",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "he" })
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var entry = CreateInterestingLexEntry(Cache);
+			var multiRunString = MakeBidirectionalTss(new[] { "ירמיהו", " was a bullfrog." });
+			entry.Bibliography.set_String(m_wsHe, multiRunString);
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null, true); // Right-to-Left
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
+			const string nestedEn = "/div[@class='lexentry']/span[@class='bib']/span[@lang='he']/span[@lang='en']/span[@dir='ltr']";
+			const string nestedHe = "/div[@class='lexentry']/span[@class='bib']/span[@lang='he']/span[@lang='he']";
+			const string extraDirection0 = "/div[@class='lexentry']/span[@class='bib']/span[@lang='he']/span[@dir='rtl']";
+			const string extraDirection1 = "/div[@class='lexentry']/span[@class='bib']/span[@lang='he']/span[@lang='he']/span[@dir='rtl']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(nestedEn, 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(nestedHe, 1);
+			AssertThatXmlIn.String(result).HasNoMatchForXpath(extraDirection0);
+			AssertThatXmlIn.String(result).HasNoMatchForXpath(extraDirection1);
 		}
 
 		/// <summary>
@@ -6913,12 +7005,11 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, DefaultSettings);
 
-			const string xpathThruSense = "/div[@class='lexentry']/span[@class='grouping_sensegroup']/span[@class='senses']/span[@class='sense']";
-			const string oneSenseWithGlossOfGloss = xpathThruSense + "//span[@lang='en' and text()='gloss']";
+			const string oneSenseWithGlossOfGloss = "/div[@class='lexentry']/span[@class='grouping_sensegroup']"
+				+ "/span[@class='senses']/span[@class='sense']//span[@lang='en' and text()='gloss']";
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithGlossOfGloss, 1);
 		}
@@ -7259,6 +7350,37 @@ namespace SIL.FieldWorks.XWorks
 				builder.AppendTsString(tsFact.MakeString(runContent, lastWs));
 			}
 			return builder.GetString();
+		}
+
+		private ITsString MakeBidirectionalTss(IEnumerable<string> content)
+		{
+			EnsureHebrewExists();
+			// automatically alternates runs between 'en' and 'he' (Hebrew)
+			var tsFact = Cache.TsStrFactory;
+			var lastWs = m_wsEn;
+			var builder = tsFact.GetIncBldr();
+			foreach (var runContent in content)
+			{
+				lastWs = lastWs == m_wsEn ? m_wsHe : m_wsEn; // switch ws for each run
+				builder.AppendTsString(tsFact.MakeString(runContent, lastWs));
+			}
+			return builder.GetString();
+		}
+
+		private void EnsureHebrewExists()
+		{
+			if (m_wsHe > 0)
+				return;
+			var wsManager = Cache.ServiceLocator.WritingSystemManager;
+			IWritingSystem hebrew;
+			wsManager.GetOrSet("he", out hebrew);
+			hebrew.RightToLeftScript = true;
+			m_wsHe = hebrew.Handle;
+		}
+
+		private void SetDictionaryNormalDirection(InheritableStyleProp<TriStateBool> rightToLeft)
+		{
+			ReflectionHelper.SetField(DictionaryNormalStyle, "m_rtl", rightToLeft);
 		}
 
 		internal static void SetPublishAsMinorEntry(ILexEntry entry, bool publish)

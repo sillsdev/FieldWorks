@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -15,6 +16,8 @@ using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -82,7 +85,8 @@ namespace SIL.FieldWorks.XWorks
 			using (var writer = XmlWriter.Create(stringBuilder))
 			using (var cssWriter = new StreamWriter(previewCssPath, false, Encoding.UTF8))
 			{
-				var exportSettings = new GeneratorSettings((FdoCache)mediator.PropertyTable.GetValue("cache"), mediator, false, false, null);
+				var exportSettings = new GeneratorSettings((FdoCache)mediator.PropertyTable.GetValue("cache"), mediator, false, false, null,
+					IsNormalRtl(mediator));
 				GenerateOpeningHtml(previewCssPath, exportSettings, writer);
 				var content = GenerateXHTMLForEntry(entry, configuration, pubDecorator, exportSettings);
 				writer.WriteRaw(content);
@@ -100,6 +104,8 @@ namespace SIL.FieldWorks.XWorks
 			xhtmlWriter.WriteDocType("html", PublicIdentifier, null, null);
 			xhtmlWriter.WriteStartElement("html", "http://www.w3.org/1999/xhtml");
 			xhtmlWriter.WriteAttributeString("lang", "utf-8");
+			if (exportSettings.RightToLeft)
+				xhtmlWriter.WriteAttributeString("dir", "rtl");
 			xhtmlWriter.WriteStartElement("head");
 			xhtmlWriter.WriteStartElement("link");
 			xhtmlWriter.WriteAttributeString("href", "file:///" + cssPath);
@@ -121,6 +127,8 @@ namespace SIL.FieldWorks.XWorks
 			xhtmlWriter.WriteFullEndElement(); //</title>
 			xhtmlWriter.WriteEndElement(); //</head>
 			xhtmlWriter.WriteStartElement("body");
+			if (exportSettings.RightToLeft)
+				xhtmlWriter.WriteAttributeString("dir", "rtl");
 			xhtmlWriter.WriteWhitespace(Environment.NewLine);
 		}
 
@@ -200,6 +208,13 @@ namespace SIL.FieldWorks.XWorks
 			return (clerk.SortName == "Headword" || clerk.SortName == "Lexeme Form" || clerk.SortName == "Citation Form" || clerk.SortName == "Form" || clerk.SortName == "Reversal Form");
 		}
 
+		private static bool IsNormalRtl(Mediator mediator)
+		{
+			// Right-to-Left for the overall layout is determined by Dictionary-Normal
+			var dictionaryNormalStyle = new ExportStyleInfo(FontHeightAdjuster.StyleSheetFromMediator(mediator).Styles["Dictionary-Normal"]);
+			return dictionaryNormalStyle.DirectionIsRightToLeft == TriStateBool.triTrue; // default is LTR
+		}
+
 		/// <summary>
 		/// Saves the generated content into the given xhtml and css file paths for all the entries in
 		/// the given collection.
@@ -216,7 +231,7 @@ namespace SIL.FieldWorks.XWorks
 			using (var xhtmlWriter = XmlWriter.Create(xhtmlPath))
 			using (var cssWriter = new StreamWriter(cssPath, false, Encoding.UTF8))
 			{
-				var settings = new GeneratorSettings(cache, mediator, true, true, Path.GetDirectoryName(xhtmlPath));
+				var settings = new GeneratorSettings(cache, mediator, true, true, Path.GetDirectoryName(xhtmlPath), IsNormalRtl(mediator));
 				GenerateOpeningHtml(cssPath, settings, xhtmlWriter);
 				Tuple<int, int> currentPageBounds = GetPageForCurrentEntry(settings, entryHvos, entriesPerPage);
 				GenerateTopOfPageButtonsIfNeeded(settings, entryHvos, entriesPerPage, currentPageBounds, xhtmlWriter, cssWriter);
@@ -234,8 +249,7 @@ namespace SIL.FieldWorks.XWorks
 
 					var generateEntryAction = new Action(() =>
 					{
-						var entrySettings = new GeneratorSettings(cache, mediator, true, true, Path.GetDirectoryName(xhtmlPath));
-						var entryContent = GenerateXHTMLForEntry(entry, configuration, publicationDecorator, entrySettings);
+						var entryContent = GenerateXHTMLForEntry(entry, configuration, publicationDecorator, settings);
 						entryStringBuilder.Append(entryContent);
 						if (progress != null)
 							progress.Position++;
@@ -253,7 +267,7 @@ namespace SIL.FieldWorks.XWorks
 				foreach (var entryAndXhtml in entryContents)
 				{
 					if (wantLetterHeaders && !string.IsNullOrEmpty(entryAndXhtml.Item2.ToString()))
-						GenerateLetterHeaderIfNeeded(entryAndXhtml.Item1, ref lastHeader, xhtmlWriter, cache);
+						GenerateLetterHeaderIfNeeded(entryAndXhtml.Item1, ref lastHeader, xhtmlWriter, settings);
 					xhtmlWriter.WriteRaw(entryAndXhtml.Item2.ToString());
 				}
 				GenerateBottomOfPageButtonsIfNeeded(settings, entryHvos, entriesPerPage, currentPageBounds, xhtmlWriter);
@@ -539,12 +553,14 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		internal static void GenerateLetterHeaderIfNeeded(ICmObject entry, ref string lastHeader, XmlWriter xhtmlWriter, FdoCache cache)
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "cache is a reference")]
+		internal static void GenerateLetterHeaderIfNeeded(ICmObject entry, ref string lastHeader, XmlWriter xhtmlWriter, GeneratorSettings settings)
 		{
 			// If performance is an issue these dummy's can be stored between calls
 			var dummyOne = new Dictionary<string, Set<string>>();
 			var dummyTwo = new Dictionary<string, Dictionary<string, string>>();
 			var dummyThree = new Dictionary<string, Set<string>>();
+			var cache = settings.Cache;
 			var wsString = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultVernWs);
 			if (entry is IReversalIndexEntry)
 				wsString = ((IReversalIndexEntry)entry).SortKeyWs;
@@ -566,6 +582,9 @@ namespace SIL.FieldWorks.XWorks
 				xhtmlWriter.WriteStartElement("span");
 				xhtmlWriter.WriteAttributeString("class", "letter");
 				xhtmlWriter.WriteAttributeString("lang", wsString);
+				var wsRightToLeft = cache.WritingSystemFactory.get_Engine(wsString).RightToLeftScript;
+				if (wsRightToLeft != settings.RightToLeft)
+					xhtmlWriter.WriteAttributeString("dir", wsRightToLeft ? "rtl" : "ltr");
 				xhtmlWriter.WriteString(headerTextBuilder.ToString());
 				xhtmlWriter.WriteEndElement();
 				xhtmlWriter.WriteEndElement();
@@ -2500,10 +2519,19 @@ namespace SIL.FieldWorks.XWorks
 				var bldr = new StringBuilder();
 				using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
 				{
+					var rightToLeft = settings.RightToLeft;
 					if (fieldValue.RunCount > 1)
 					{
 						xw.WriteStartElement("span");
-						xw.WriteAttributeString("lang", writingSystem ?? GetLanguageFromFirstOption(config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions, settings.Cache));
+						writingSystem = writingSystem ?? GetLanguageFromFirstOption(config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions, settings.Cache);
+						xw.WriteAttributeString("lang", writingSystem);
+						var wsRtl = settings.Cache.WritingSystemFactory.get_Engine(writingSystem).RightToLeftScript;
+						if (rightToLeft != wsRtl)
+						{
+							rightToLeft = wsRtl; // the outer WS direction will be used to identify embedded runs of the opposite direction.
+							xw.WriteStartElement("span"); // set direction on a nested span to preserve Context's position and direction.
+							xw.WriteAttributeString("dir", rightToLeft ? "rtl" : "ltr");
+						}
 					}
 					for (int i = 0; i < fieldValue.RunCount; i++)
 					{
@@ -2511,10 +2539,14 @@ namespace SIL.FieldWorks.XWorks
 						var props = fieldValue.get_Properties(i);
 						var style = props.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
 						writingSystem = settings.Cache.WritingSystemFactory.GetStrFromWs(fieldValue.get_WritingSystem(i));
-						GenerateSpanWithPossibleLink(settings, writingSystem, xw, style, text, guid);
+						GenerateSpanWithPossibleLink(settings, writingSystem, xw, style, text, guid, rightToLeft);
 					}
 					if (fieldValue.RunCount > 1)
-						xw.WriteEndElement();
+					{
+						if (rightToLeft != settings.RightToLeft)
+							xw.WriteEndElement(); // </span> (dir)
+						xw.WriteEndElement(); // </span> (lang)
+					}
 					xw.Flush();
 					return bldr.ToString();
 				}
@@ -2523,11 +2555,16 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static void GenerateSpanWithPossibleLink(GeneratorSettings settings, string writingSystem, XmlWriter writer, string style,
-			string text, Guid linkDestination)
+			string text, Guid linkDestination, bool rightToLeft)
 		{
 			writer.WriteStartElement("span");
-			// TODO: In case of multi-writingsystem ITsString, update WS for each run (See #if above)
 			writer.WriteAttributeString("lang", writingSystem);
+			var wsRtl = settings.Cache.WritingSystemFactory.get_Engine(writingSystem).RightToLeftScript;
+			if (rightToLeft != wsRtl)
+			{
+				writer.WriteStartElement("span"); // set direction on a nested span to preserve Context's position and direction
+				writer.WriteAttributeString("dir", wsRtl ? "rtl" : "ltr");
+			}
 			if (!String.IsNullOrEmpty(style))
 			{
 				var cssStyle = CssGenerator.GenerateCssStyleFromFwStyleSheet(style,
@@ -2546,7 +2583,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				writer.WriteEndElement(); // </a>
 			}
-			writer.WriteEndElement();
+			if (rightToLeft != wsRtl)
+			{
+				writer.WriteEndElement(); // </span> (dir)
+			}
+			writer.WriteEndElement(); // </span> (lang)
 		}
 
 		/// <summary>
@@ -2665,11 +2706,12 @@ namespace SIL.FieldWorks.XWorks
 		public class GeneratorSettings
 		{
 			public FdoCache Cache { get; private set; }
+			public Mediator Mediator { get; private set; }
 			public bool UseRelativePaths { get; private set; }
 			public bool CopyFiles { get; private set; }
 			public string ExportPath { get; private set; }
-			public Mediator Mediator { get; private set;}
-			public GeneratorSettings(FdoCache cache, Mediator mediator, bool relativePaths, bool copyFiles, string exportPath)
+			public bool RightToLeft { get; private set; }
+			public GeneratorSettings(FdoCache cache, Mediator mediator, bool relativePaths, bool copyFiles, string exportPath, bool rightToLeft = false)
 			{
 				if (cache == null || mediator == null)
 				{
@@ -2680,6 +2722,7 @@ namespace SIL.FieldWorks.XWorks
 				UseRelativePaths = relativePaths;
 				CopyFiles = copyFiles;
 				ExportPath = exportPath;
+				RightToLeft = rightToLeft;
 			}
 		}
 

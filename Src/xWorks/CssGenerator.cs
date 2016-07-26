@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -1019,6 +1018,11 @@ namespace SIL.FieldWorks.XWorks
 
 			if (exportStyleInfo.DirectionIsRightToLeft != TriStateBool.triNotSet)
 			{
+				// REVIEW (Hasso) 2016.07: I think the only time this matters is when the user has paragraphs (senses, subentries, etc)
+				// REVIEW (cont) whose directions oppose Dictionary-Normal. In this case, O Pesky Users, we will need to know which direction the
+				// REVIEW (cont) paragraph is going when we generate the innermost strings. Implementing this will be pricy for paragraphy
+				// REVIEW (cont) dictionaries, but beneficial for only our small bidirectional contingency. Alas, O Pesky Users.
+				// REVIEW (cont) But we may need a CSS fix for bidirectionality until we can get GeckoFx 47+. O Fair Quill, Delicate Parchment.
 				declaration.Add(new Property("direction") { Term = new PrimitiveTerm(UnitType.Ident, exportStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue ? "rtl" : "ltr") });
 			}
 
