@@ -3,7 +3,7 @@
  xsi:noNamespaceSchemaLocation="../../Configuration/DictionaryConfiguration.xsd"
  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
  name="Hybrid (complex forms as main entries and mini subentries)"
- version="8" lastModified="2016-06-22"
+ version="9" lastModified="2016-07-21"
  allPublications="true" isRootBased="false">
   <ConfigurationItem name="Main Entry" isEnabled="true" style="Dictionary-Normal" styleType="paragraph" field="LexEntry" cssClassNameOverride="entry">
 	<!-- using a different CSS Class for the main HeadWord and the HeadWords for subentries, references, and (variant|complex) forms

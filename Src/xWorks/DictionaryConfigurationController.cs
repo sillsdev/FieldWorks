@@ -899,8 +899,10 @@ namespace SIL.FieldWorks.XWorks
 			for (var i = options.Count - 1; i >= 0; --i)
 			{
 				Guid guid;
-				if (Guid.TryParse(options[i].Id, out guid) && !possibilities.Contains(guid))
-					options.RemoveAt(i);
+				// Truncate any :r or :f from the end of the guid
+				var isValidGuid = Guid.TryParse(options[i].Id.Substring(0, Math.Min(options[i].Id.Length, 36)), out guid);
+				if (!isValidGuid || !possibilities.Contains(guid))
+					options.RemoveAt(i); //Guid was invalid, or not present in the current possibilities
 			}
 		}
 

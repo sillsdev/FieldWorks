@@ -20,6 +20,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 	{
 		private SimpleLogger m_logger;
 		internal const int VersionAlpha2 = 5;
+		internal const int VersionAlpha3 = 8;
 
 		public FirstAlphaMigrator() : this(null, null)
 		{
@@ -39,7 +40,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			var foundOne = string.Format("{0}: Configuration was found in need of migration. - {1}",
 				appVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss"));
-			foreach (var config in GetConfigsNeedingMigratingFrom83())
+			foreach (var config in DCM.GetConfigsNeedingMigration(Cache, VersionAlpha3))
 			{
 				m_logger.WriteLine(foundOne);
 				m_logger.WriteLine(string.Format("Migrating {0} configuration '{1}' from version {2} to {3}.",
@@ -49,17 +50,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				config.Save();
 				m_logger.DecreaseIndent();
 			}
-		}
-
-		internal List<DictionaryConfigurationModel> GetConfigsNeedingMigratingFrom83()
-		{
-			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
-			var dictionaryConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
-			var reversalIndexConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
-			var projectConfigPaths = new List<string>(DCM.ConfigFilesInDir(dictionaryConfigLoc));
-			projectConfigPaths.AddRange(DCM.ConfigFilesInDir(reversalIndexConfigLoc));
-			return projectConfigPaths.Select(path => new DictionaryConfigurationModel(path, null))
-				.Where(model => model.Version < DCM.VersionCurrent).ToList();
 		}
 
 		internal void MigrateFrom83Alpha(DictionaryConfigurationModel alphaModel)
@@ -100,7 +90,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 						"Unable to migrate {0}: no migration instructions for version {1}", alphaModel.Label, alphaModel.Version));
 					break;
 			}
-			alphaModel.Version = DCM.VersionCurrent;
+			alphaModel.Version = VersionAlpha3;
 		}
 
 		private static void RemoveNonLoadableData(IEnumerable<ConfigurableDictionaryNode> nodes)

@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		{
 			var alphaModel = new DictionaryConfigurationModel { Version = PreHistoricMigrator.VersionAlpha1, Parts = new List<ConfigurableDictionaryNode>() };
 			m_migrator.MigrateFrom83Alpha(alphaModel); // SUT
-			Assert.AreEqual(DictionaryConfigurationMigrator.VersionCurrent, alphaModel.Version);
+			Assert.AreEqual(FirstAlphaMigrator.VersionAlpha3, alphaModel.Version);
 		}
 
 		[Test]

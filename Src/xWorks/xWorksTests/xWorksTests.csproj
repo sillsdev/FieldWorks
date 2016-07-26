@@ -270,6 +270,7 @@
     <Compile Include="DictionaryConfigurationManagerControllerTests.cs" />
     <Compile Include="DictionaryConfigurationMigrators\DictionaryConfigurationMigratorTests.cs" />
     <Compile Include="DictionaryConfigurationMigrators\FirstAlphaMigratorTests.cs" />
+    <Compile Include="DictionaryConfigurationMigrators\FirstBetaMigratorTests.cs" />
     <Compile Include="DictionaryConfigurationMigrators\PreHistoricMigratorTests.cs" />
     <Compile Include="DictionaryConfigurationModelTests.cs" />
     <Compile Include="DictionaryConfigViewerStub.cs" />

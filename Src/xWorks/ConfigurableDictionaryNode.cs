@@ -270,20 +270,31 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Clone this node. Point to the same Parent object. Deep-clone Children and DictionaryNodeOptions.
 		/// </summary>
+		/// <remarks>Grouping node children are not cloned</remarks>
 		internal ConfigurableDictionaryNode DeepCloneUnderSameParent()
+		{
+			return DeepCloneUnderParent(Parent);
+		}
+
+		/// <summary>
+		/// Clone this node, point to the given Parent. Deep-clone Children and DictionaryNodeOptions
+		/// </summary>
+		/// <remarks>Grouping node children are not cloned</remarks>
+		internal ConfigurableDictionaryNode DeepCloneUnderParent(ConfigurableDictionaryNode parent)
 		{
 			var clone = new ConfigurableDictionaryNode();
 
-			// Copy everything over at first, importantly handling strings, bools, and Parent.
-			var properties = typeof (ConfigurableDictionaryNode).GetProperties();
+			// Copy everything over at first, importantly handling strings, bools.
+			var properties = typeof(ConfigurableDictionaryNode).GetProperties();
 			foreach (var property in properties)
 			{
-				// Skip read-only properties (eg DisplayLabel)
-				if (!property.CanWrite)
+				// Skip Parent and read-only properties (eg DisplayLabel)
+				if (!property.CanWrite || property.Name == "Parent")
 					continue;
 				var originalValue = property.GetValue(this, null);
 				property.SetValue(clone, originalValue, null);
 			}
+			clone.Parent = parent;
 
 			// Deep-clone Children, but not of groups.
 			if (Children != null)

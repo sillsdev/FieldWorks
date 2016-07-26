@@ -298,6 +298,7 @@
     </Compile>
     <Compile Include="DictionaryConfigurationMigrator.cs" />
     <Compile Include="DictionaryConfigurationMigrators\FirstAlphaMigrator.cs" />
+    <Compile Include="DictionaryConfigurationMigrators\FirstBetaMigrator.cs" />
     <Compile Include="DictionaryConfigurationMigrators\IDictionaryConfigurationMigrator.cs" />
     <Compile Include="DictionaryConfigurationMigrators\PreHistoricMigrator.cs" />
     <Compile Include="DictionaryConfigurationNodeRenameDlg.cs">
