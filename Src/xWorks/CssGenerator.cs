@@ -101,15 +101,7 @@ namespace SIL.FieldWorks.XWorks
 			defaultRule.Declarations.Properties.AddRange(defaultStyleProps);
 			styleSheet.Rules.Add(defaultRule);
 			// Then generate the rules for all the writing system overrides
-			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
-			{
-				// We want only the character type settings from the "Normal" style since we're applying them
-				// to a span, not a div (or a paragraph).  See https://jira.sil.org/browse/LT-16796.
-				var wsRule = new StyleRule { Value = "span" + String.Format("[lang|=\"{0}\"]", aws.RFC5646) };
-				var styleDecls = GenerateCssStyleFromFwStyleSheet("Normal", aws.Handle, mediator);
-				wsRule.Declarations.Properties.AddRange(GetOnlyCharacterStyle(styleDecls));
-				styleSheet.Rules.Add(wsRule);
-			}
+			GenerateCssForWritingSystems("span", "Normal", styleSheet, mediator);
 		}
 
 		private static void GenerateDictionaryNormalParagraphCss(StyleSheet styleSheet, Mediator mediator)
@@ -118,6 +110,8 @@ namespace SIL.FieldWorks.XWorks
 			var dictNormalStyle = GenerateCssStyleFromFwStyleSheet(DictionaryNormal, 0, mediator);
 			dictNormalRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictNormalStyle));
 			styleSheet.Rules.Add(dictNormalRule);
+			// Then generate the rules for all the writing system overrides
+			GenerateCssForWritingSystems("div.entry span", DictionaryNormal, styleSheet, mediator);
 		}
 
 		private static void GenerateDictionaryMinorParagraphCss(StyleSheet styleSheet, Mediator mediator, DictionaryConfigurationModel model)
@@ -135,7 +129,24 @@ namespace SIL.FieldWorks.XWorks
 					var minorRule = new StyleRule { Value = string.Format("div.{0}", GetClassAttributeForConfig(minorEntryNode)) };
 					minorRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictionaryMinorStyle));
 					styleSheet.Rules.Add(minorRule);
+					// Then generate the rules for all the writing system overrides
+					GenerateCssForWritingSystems(string.Format("div.{0} span", GetClassAttributeForConfig(minorEntryNode)), DictionaryMinor, styleSheet, mediator);
 				}
+			}
+		}
+
+		private static void GenerateCssForWritingSystems(string selector, string styleName, StyleSheet styleSheet, Mediator mediator)
+		{
+			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			// Generate the rules for all the writing system overrides
+			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			{
+				// We want only the character type settings from the styleName style since we're applying them
+				// to a span.
+				var wsRule = new StyleRule { Value = selector + String.Format("[lang|=\"{0}\"]", aws.RFC5646) };
+				var styleDecls = GenerateCssStyleFromFwStyleSheet(styleName, aws.Handle, mediator);
+				wsRule.Declarations.Properties.AddRange(GetOnlyCharacterStyle(styleDecls));
+				styleSheet.Rules.Add(wsRule);
 			}
 		}
 
@@ -1149,7 +1160,7 @@ namespace SIL.FieldWorks.XWorks
 			var wsFontInfo = projectStyle.FontInfoForWs(wsId);
 			var defaultFontInfo = projectStyle.DefaultCharacterStyleInfo;
 			// set fontName to the wsFontInfo value if set, otherwise the defaultFontInfo if set, or null
-			var fontName = wsFontInfo.FontName.ValueIsSet ? wsFontInfo.FontName.Value
+			var fontName = wsFontInfo.m_fontName.ValueIsSet ? wsFontInfo.m_fontName.Value
 				: defaultFontInfo.FontName.ValueIsSet ? defaultFontInfo.FontName.Value : null;
 
 			// fontName still null means not set in Normal Style, then get default fonts from WritingSystems configuration.
@@ -1172,12 +1183,12 @@ namespace SIL.FieldWorks.XWorks
 				declaration.Add(fontFamily);
 			}
 
-			AddInfoFromWsOrDefaultValue(wsFontInfo.FontSize, defaultFontInfo.FontSize, "font-size", UnitType.Point, declaration);
-			AddInfoFromWsOrDefaultValue(wsFontInfo.Bold, defaultFontInfo.Bold, "font-weight", "bold", "normal", declaration);
-			AddInfoFromWsOrDefaultValue(wsFontInfo.Italic, defaultFontInfo.Italic, "font-style", "italic", "normal", declaration);
-			AddInfoFromWsOrDefaultValue(wsFontInfo.FontColor, defaultFontInfo.FontColor, "color", declaration);
-			AddInfoFromWsOrDefaultValue(wsFontInfo.BackColor, defaultFontInfo.BackColor, "background-color", declaration);
-			AddInfoFromWsOrDefaultValue(wsFontInfo.SuperSub, defaultFontInfo.SuperSub, declaration);
+			AddInfoFromWsOrDefaultValue(wsFontInfo.m_fontSize, defaultFontInfo.FontSize, "font-size", UnitType.Point, declaration);
+			AddInfoFromWsOrDefaultValue(wsFontInfo.m_bold, defaultFontInfo.Bold, "font-weight", "bold", "normal", declaration);
+			AddInfoFromWsOrDefaultValue(wsFontInfo.m_italic, defaultFontInfo.Italic, "font-style", "italic", "normal", declaration);
+			AddInfoFromWsOrDefaultValue(wsFontInfo.m_fontColor, defaultFontInfo.FontColor, "color", declaration);
+			AddInfoFromWsOrDefaultValue(wsFontInfo.m_backColor, defaultFontInfo.BackColor, "background-color", declaration);
+			AddInfoFromWsOrDefaultValue(wsFontInfo.m_superSub, defaultFontInfo.SuperSub, declaration);
 			AddInfoForUnderline(wsFontInfo, defaultFontInfo, declaration);
 
 		}
@@ -1191,9 +1202,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="trueValue"></param>
 		/// <param name="falseValue"></param>
 		/// <param name="declaration"></param>
-		private static void AddInfoFromWsOrDefaultValue(IStyleProp<bool> wsFontInfo,
-																		IStyleProp<bool> defaultFontInfo, string propName, string trueValue,
-																		string falseValue, StyleDeclaration declaration)
+		private static void AddInfoFromWsOrDefaultValue(InheritableStyleProp<bool> wsFontInfo, IStyleProp<bool> defaultFontInfo,
+														string propName, string trueValue, string falseValue,
+														StyleDeclaration declaration)
 		{
 			bool fontValue;
 			if(!GetFontValue(wsFontInfo, defaultFontInfo, out fontValue))
@@ -1210,8 +1221,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="defaultFontInfo"></param>
 		/// <param name="propName"></param>
 		/// <param name="declaration"></param>
-		private static void AddInfoFromWsOrDefaultValue(IStyleProp<Color> wsFontInfo,
-																		IStyleProp<Color> defaultFontInfo, string propName, StyleDeclaration declaration)
+		private static void AddInfoFromWsOrDefaultValue(InheritableStyleProp<Color> wsFontInfo, IStyleProp<Color> defaultFontInfo,
+														string propName, StyleDeclaration declaration)
 		{
 			Color fontValue;
 			if(!GetFontValue(wsFontInfo, defaultFontInfo, out fontValue))
@@ -1231,9 +1242,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="propName"></param>
 		/// <param name="termType"></param>
 		/// <param name="declaration"></param>
-		private static void AddInfoFromWsOrDefaultValue(IStyleProp<int> wsFontInfo,
-																		IStyleProp<int> defaultFontInfo, string propName, UnitType termType,
-																		StyleDeclaration declaration)
+		private static void AddInfoFromWsOrDefaultValue(InheritableStyleProp<int> wsFontInfo, IStyleProp<int> defaultFontInfo,
+														string propName, UnitType termType, StyleDeclaration declaration)
 		{
 			int fontValue;
 			if(!GetFontValue(wsFontInfo, defaultFontInfo, out fontValue))
@@ -1249,8 +1259,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="wsFontInfo"></param>
 		/// <param name="defaultFontInfo"></param>
 		/// <param name="declaration"></param>
-		private static void AddInfoFromWsOrDefaultValue(IStyleProp<FwSuperscriptVal> wsFontInfo,
-																		IStyleProp<FwSuperscriptVal> defaultFontInfo, StyleDeclaration declaration)
+		private static void AddInfoFromWsOrDefaultValue(InheritableStyleProp<FwSuperscriptVal> wsFontInfo,
+														IStyleProp<FwSuperscriptVal> defaultFontInfo, StyleDeclaration declaration)
 		{
 			FwSuperscriptVal fontValue;
 			if(!GetFontValue(wsFontInfo, defaultFontInfo, out fontValue))
@@ -1276,7 +1286,7 @@ namespace SIL.FieldWorks.XWorks
 		private static void AddInfoForUnderline(FontInfo wsFont, ICharacterStyleInfo defaultFont, StyleDeclaration declaration)
 		{
 			FwUnderlineType underlineType;
-			if(!GetFontValue(wsFont.Underline, defaultFont.Underline, out underlineType))
+			if(!GetFontValue(wsFont.m_underline, defaultFont.Underline, out underlineType))
 				return;
 			switch(underlineType)
 			{
@@ -1290,7 +1300,7 @@ namespace SIL.FieldWorks.XWorks
 					termList.AddTerm(new PrimitiveTerm(UnitType.Ident, "solid"));
 					fontProp.Term = termList;
 					declaration.Add(fontProp);
-					AddInfoFromWsOrDefaultValue(wsFont.UnderlineColor, defaultFont.UnderlineColor, "border-bottom-color", declaration);
+					AddInfoFromWsOrDefaultValue(wsFont.m_underlineColor, defaultFont.UnderlineColor, "border-bottom-color", declaration);
 					goto case FwUnderlineType.kuntSingle; //fall through to single
 				}
 				case(FwUnderlineType.kuntSingle):
@@ -1298,7 +1308,7 @@ namespace SIL.FieldWorks.XWorks
 					var fontProp = new Property("text-decoration");
 					fontProp.Term = new PrimitiveTerm(UnitType.Ident, "underline");
 					declaration.Add(fontProp);
-					AddInfoFromWsOrDefaultValue(wsFont.UnderlineColor, defaultFont.UnderlineColor, "text-decoration-color", declaration);
+					AddInfoFromWsOrDefaultValue(wsFont.m_underlineColor, defaultFont.UnderlineColor, "text-decoration-color", declaration);
 					break;
 				}
 				case(FwUnderlineType.kuntStrikethrough):
@@ -1306,7 +1316,7 @@ namespace SIL.FieldWorks.XWorks
 					var fontProp = new Property("text-decoration");
 					fontProp.Term = new PrimitiveTerm(UnitType.Ident, "line-through");
 					declaration.Add(fontProp);
-					AddInfoFromWsOrDefaultValue(wsFont.UnderlineColor, defaultFont.UnderlineColor, "text-decoration-color", declaration);
+					AddInfoFromWsOrDefaultValue(wsFont.m_underlineColor, defaultFont.UnderlineColor, "text-decoration-color", declaration);
 					break;
 				}
 				case (FwUnderlineType.kuntDashed):
@@ -1321,7 +1331,7 @@ namespace SIL.FieldWorks.XWorks
 																  underlineType == FwUnderlineType.kuntDashed ? "dashed" : "dotted"));
 					fontProp.Term = termList;
 					declaration.Add(fontProp);
-					AddInfoFromWsOrDefaultValue(wsFont.UnderlineColor, defaultFont.UnderlineColor, "border-bottom-color", declaration);
+					AddInfoFromWsOrDefaultValue(wsFont.m_underlineColor, defaultFont.UnderlineColor, "border-bottom-color", declaration);
 					break;
 				}
 			}
@@ -1336,7 +1346,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="defaultFontInfo">default font info</param>
 		/// <param name="fontValue">the value retrieved from the given font infos</param>
 		/// <returns>true if fontValue was defined in one of the info objects</returns>
-		private static bool GetFontValue<T>(IStyleProp<T> wsFontInfo, IStyleProp<T> defaultFontInfo,
+		private static bool GetFontValue<T>(InheritableStyleProp<T> wsFontInfo, IStyleProp<T> defaultFontInfo,
 													out T fontValue)
 		{
 			fontValue = default(T);
