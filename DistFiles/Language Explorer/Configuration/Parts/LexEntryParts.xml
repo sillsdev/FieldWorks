@@ -613,7 +613,7 @@
 			<seq field="AllSenses" layout="DomainsOfSensesForSense"/>
 		</part>
 		<part id="LexEntry-Jt-ReversalEntriesForSense" type="jtview">
-			<seq field="Senses" layout="ReversalEntriesForSense"/>
+			<seq field="AllSenses" layout="ReversalEntriesForSense"/>
 		</part>
 		<part id="LexEntry-Jt-ReversalEntriesForSenseEdit" type="jtview">
 			<seq field="Senses" layout="ReversalEntriesForSenseEdit"/>
