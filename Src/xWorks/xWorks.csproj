@@ -361,6 +361,7 @@
     <Compile Include="IDictionarySenseOptionsView.cs" />
     <Compile Include="IDictionaryGroupingOptionsView.cs" />
     <Compile Include="ILayoutConverter.cs" />
+    <Compile Include="IWebonaryClient.cs" />
     <Compile Include="LegacyConfigurationUtils.cs" />
     <Compile Include="PalasoErrorReportingAdapter.cs" />
     <Compile Include="ConcDecorator.cs" />
@@ -470,6 +471,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UnicodeCharacterEditingHelper.cs" />
+    <Compile Include="WebonaryClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="WordsUsedOnlyElsewhereFilter.cs" />
     <Compile Include="XhtmlDocView.cs">
       <SubType>UserControl</SubType>

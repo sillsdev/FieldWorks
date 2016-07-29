@@ -26,6 +26,10 @@ namespace SIL.FieldWorks.XWorks
 		private readonly Mediator m_mediator;
 		private readonly DictionaryExportService m_exportService;
 		private DictionaryExportService.PublicationActivator m_publicationActivator;
+		/// <summary>
+		/// This action creates the WebClient for accessing webonary. Protected to enable a mock client for unit testing.
+		/// </summary>
+		protected Func<IWebonaryClient> CreateWebClient = () => new WebonaryClient();
 
 		public PublishToWebonaryController(FdoCache cache, Mediator mediator)
 		{
@@ -168,10 +172,7 @@ namespace SIL.FieldWorks.XWorks
 			view.UpdateStatus("Connecting to Webonary.");
 			var targetURI = DestinationURI(model.SiteName);
 
-			if(!ValidateSiteName(model, view, targetURI))
-				return;
-
-			using (var client = new WebClient())
+			using (var client = CreateWebClient())
 			{
 				var credentials = string.Format("{0}:{1}", model.UserName, model.Password);
 				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes(credentials)));
@@ -179,18 +180,31 @@ namespace SIL.FieldWorks.XWorks
 				byte[] response = null;
 				try
 				{
-					response = client.UploadFile(targetURI, zipFileToUpload);
+					response = client.UploadFileToWebonary(targetURI, zipFileToUpload);
 				}
-				catch (WebException e)
+				catch (WebonaryClient.WebonaryException e)
 				{
-					const string errorMessage = "Unable to connect to Webonary.  Please check your username and password and your Internet connection.";
-					view.UpdateStatus(string.Format("An error occurred uploading your data: {0}{1}{2}", errorMessage, Environment.NewLine, e.Message));
+					if (e.StatusCode == HttpStatusCode.Redirect)
+					{
+						view.UpdateStatus("Error: There has been an error accessing webonary. Is your sitename correct?");
+					}
+					else
+					{
+						const string errorMessage = "Unable to connect to Webonary.  Please check your username and password and your Internet connection.";
+						view.UpdateStatus(string.Format("An error occurred uploading your data: {0}{1}{2}:{3}",
+							errorMessage, Environment.NewLine, e.StatusCode, e.Message));
+					}
 					view.SetStatusCondition(WebonaryStatusCondition.Error);
 					return;
 				}
 				var responseText = Encoding.ASCII.GetString(response);
 
-				if (responseText.Contains("Upload successful"))
+				if (client.ResponseStatusCode == HttpStatusCode.Found)
+				{
+					view.UpdateStatus("Error: There has been an error accessing webonary. Is your sitename correct?");
+					view.SetStatusCondition(WebonaryStatusCondition.Error);
+				}
+				else if (responseText.Contains("Upload successful"))
 				{
 					if (!responseText.Contains("error"))
 					{
@@ -213,48 +227,17 @@ namespace SIL.FieldWorks.XWorks
 					view.UpdateStatus("Error: Wrong username or password");
 					view.SetStatusCondition(WebonaryStatusCondition.Error);
 				}
-				if (responseText.Contains("User doesn't have permission to import data"))
+				else if (responseText.Contains("User doesn't have permission to import data"))
 				{
 					view.UpdateStatus("Error: User doesn't have permission to import data");
 					view.SetStatusCondition(WebonaryStatusCondition.Error);
 				}
-
-				view.UpdateStatus(string.Format("Response from server:{0}{1}{0}", Environment.NewLine, Math.Min(50, responseText.Length)));
-			}
-		}
-
-		private static bool ValidateSiteName(PublishToWebonaryModel model, IPublishToWebonaryView view, string targetURI)
-		{
-			bool isValidSiteName = true;
-			try
-			{
-				var request = WebRequest.Create("http://" + model.SiteName + ".webonary.org") as HttpWebRequest;
-				if (request != null)
+				else // Unknown error, display the server response, but cut it off at 100 characters
 				{
-					request.Timeout = 5000;
-					request.Method = "GET";
-					request.AllowAutoRedirect = false;
-
-					var response = request.GetResponse() as HttpWebResponse;
-					if (response != null)
-					{
-						var statusCode = (int) response.StatusCode;
-						if (statusCode != 200)
-						{
-							view.UpdateStatus("Error: There has been an error accessing webonary. Is your sitename correct?");
-							view.SetStatusCondition(WebonaryStatusCondition.Error);
-							isValidSiteName = false;
-						}
-					}
+					view.UpdateStatus(string.Format("Response from server:{0}{1}{0}", Environment.NewLine,
+						responseText.Substring(0, Math.Min(100, responseText.Length))));
 				}
 			}
-			catch
-			{
-				view.UpdateStatus("Error: There has been an error accessing webonary. Is your sitename correct?");
-				view.SetStatusCondition(WebonaryStatusCondition.Error);
-				isValidSiteName = false;
-			}
-			return isValidSiteName;
 		}
 
 		private void ExportOtherFilesContent(string tempDirectoryToCompress, PublishToWebonaryModel logTextbox, object outputLogTextbox)

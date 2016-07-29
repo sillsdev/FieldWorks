@@ -272,6 +272,7 @@
     <Compile Include="DictionaryConfigurationMigrators\FirstAlphaMigratorTests.cs" />
     <Compile Include="DictionaryConfigurationMigrators\FirstBetaMigratorTests.cs" />
     <Compile Include="DictionaryConfigurationMigrators\PreHistoricMigratorTests.cs" />
+    <Compile Include="DictionaryConfigurationMigrators\StubContentControlProvider.cs" />
     <Compile Include="DictionaryConfigurationModelTests.cs" />
     <Compile Include="DictionaryConfigViewerStub.cs" />
     <Compile Include="DictionaryDetailsControllerTests.cs" />
