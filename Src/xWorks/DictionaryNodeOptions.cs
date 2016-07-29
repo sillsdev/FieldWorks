@@ -107,7 +107,10 @@ namespace SIL.FieldWorks.XWorks
 			Sense,
 			/// <summary>Lexical Relations, including Reverses, having to do with Entry</summary>
 			[XmlEnum("entry")]
-			Entry
+			Entry,
+			/// <summary>Extended Note Types</summary>
+			[XmlEnum("note")]
+			Note
 		}
 
 		public class DictionaryNodeOption

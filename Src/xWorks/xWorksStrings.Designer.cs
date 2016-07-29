@@ -1068,6 +1068,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Display each Extended Note in a paragraph.
+        /// </summary>
+        internal static string ksDisplayExtendedNoteInParagraphs {
+            get {
+                return ResourceManager.GetString("ksDisplayExtendedNoteInParagraphs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Display each Subentry in a paragraph.
         /// </summary>
         internal static string ksDisplaySubentriesInParagraphs {
@@ -1127,6 +1136,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string ksExportingLift {
             get {
                 return ResourceManager.GetString("ksExportingLift", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extended Note Types:.
+        /// </summary>
+        internal static string ksExtendedNoteTypes {
+            get {
+                return ResourceManager.GetString("ksExtendedNoteTypes", resourceCulture);
             }
         }
         
@@ -1393,6 +1411,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No Extended Note Type.
+        /// </summary>
+        internal static string ksNoExtendedNoteType {
+            get {
+                return ResourceManager.GetString("ksNoExtendedNoteType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No List Name.
         /// </summary>
         internal static string ksNoListName {
@@ -1499,7 +1526,7 @@ namespace SIL.FieldWorks.XWorks {
                 return ResourceManager.GetString("ksParagraphStyleForContent", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Show parent sense number.
         /// </summary>
@@ -1508,7 +1535,7 @@ namespace SIL.FieldWorks.XWorks {
                 return ResourceManager.GetString("ksParentSenseNumberingStyle", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Processing.
         /// </summary>
@@ -1517,7 +1544,7 @@ namespace SIL.FieldWorks.XWorks {
                 return ResourceManager.GetString("ksParsing", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Preparing to display the publication view.
         /// </summary>

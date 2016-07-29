@@ -152,7 +152,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			CssGeneratorTests.PopulateFieldsForTesting(alphaModel);
 			CssGeneratorTests.PopulateFieldsForTesting(defaultModelWithGroup);
 			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModelWithGroup); // SUT
-			Assert.IsTrue(alphaModel.Parts[0].Children[1].FieldDescription == group,
+			Assert.IsTrue(alphaModel.Parts[0].Children[2].FieldDescription == group,
 				"The group should be tacked on the end when the preceeding sibling couldn't be matched");
 		}
 
@@ -311,6 +311,94 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 			var stemDefault = m_migrator.LoadBetaDefaultForAlphaConfig(stemModel); // SUT
 			Assert.That(stemDefault.Label, Is.StringContaining("Stem"));
+		}
+
+		[Test]
+		public void MigrateFrom83Alpha_ExtendedNoteChildrenAreMigrated()
+		{
+			var alphaSensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Children = new List<ConfigurableDictionaryNode>()
+			};
+			var alphaMainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { alphaSensesNode }
+			};
+			var alphaModel = new DictionaryConfigurationModel { Version = FirstAlphaMigrator.VersionAlpha2, Parts = new List<ConfigurableDictionaryNode> { alphaMainEntryNode } };
+
+			var translationNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Translation"
+			};
+			var translationsNode = new ConfigurableDictionaryNode
+			{
+				Label = "Translations",
+				FieldDescription = "TranslationsOC",
+				CSSClassNameOverride = "translations",
+				Children = new List<ConfigurableDictionaryNode> { translationNode }
+			};
+			var exampleNode = new ConfigurableDictionaryNode
+			{
+				Label = "Example Sentence",
+				FieldDescription = "Example"
+			};
+			var examplesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Examples",
+				FieldDescription = "ExamplesOS",
+				CSSClassNameOverride = "examples",
+				Children = new List<ConfigurableDictionaryNode> { exampleNode, translationsNode }
+			};
+			var discussionTypeNode = new ConfigurableDictionaryNode
+			{
+				Label = "Discussion",
+				FieldDescription = "Discussion"
+			};
+			var noteTypeNode = new ConfigurableDictionaryNode
+			{
+				Label = "Note Type",
+				SubField = "Name",
+				FieldDescription = "ExtendedNoteTypeRA"
+			};
+			var extendedNoteNode = new ConfigurableDictionaryNode
+			{
+				Label = "Extended Note",
+				FieldDescription = "ExtendedNoteOS",
+				CSSClassNameOverride = "extendednotecontents",
+				Children = new List<ConfigurableDictionaryNode> { noteTypeNode, discussionTypeNode, examplesNode }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Children = new List<ConfigurableDictionaryNode> { extendedNoteNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+
+			var defaultModel = new DictionaryConfigurationModel { Version = FirstAlphaMigrator.VersionAlpha2, Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+
+			CssGeneratorTests.PopulateFieldsForTesting(alphaModel);
+			CssGeneratorTests.PopulateFieldsForTesting(defaultModel);
+			// SUT
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModel);
+
+			var migratedExtendedNoteNode = alphaModel.Parts[0].Children[0].Children[0];
+
+			// Parent Node is Extended Note
+			Assert.That(migratedExtendedNoteNode.Label, Is.StringMatching("Extended Note"), "Extended Note not migrated");
+
+			// Children Nodes are Note Type, Discussion, Example Sentence, Translations
+			Assert.That(migratedExtendedNoteNode.Children[0].Label, Is.StringMatching("Note Type"), "Note Type not migrated");
+			Assert.That(migratedExtendedNoteNode.Children[1].Label, Is.StringMatching("Discussion"), "Discussion not migrated");
+			Assert.That(migratedExtendedNoteNode.Children[2].Children[0].Label, Is.StringMatching("Example Sentence"), "Example Sentence not migrated");
+			Assert.That(migratedExtendedNoteNode.Children[2].Children[1].Label, Is.StringMatching("Translations"), "Translations not migrated");
 		}
 	}
 }

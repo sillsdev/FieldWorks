@@ -2576,6 +2576,123 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_ExtendedNoteChildrenAreGenerated()
+		{
+			var translationNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Translation",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var translationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "TranslationsOC",
+				CSSClassNameOverride = "translations",
+				Children = new List<ConfigurableDictionaryNode> { translationNode }
+			};
+			var exampleNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Example",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var examplesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ExamplesOS",
+				CSSClassNameOverride = "examples",
+				Children = new List<ConfigurableDictionaryNode> { exampleNode, translationsNode }
+			};
+			var discussionTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Discussion",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var noteTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ExtendedNoteTypeRA",
+				SubField = "Name",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var extendedNoteNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ExtendedNoteOS",
+				CSSClassNameOverride = "extendednotecontents",
+				Children = new List<ConfigurableDictionaryNode> { noteTypeNode, discussionTypeNode, examplesNode }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Children = new List<ConfigurableDictionaryNode> { extendedNoteNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			const string noteType = "Cultural";
+			const string discussion = "Discussion";
+			const string example = "Example Sentence On Entry";
+			const string translation = "Translation of the Example";
+			var testEntry = CreateInterestingLexEntry(Cache);
+
+			AddExampleToExtendedNote(testEntry.SensesOS[0], noteType, discussion, example, translation);
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
+
+			const string extendedNote = xpathThruSense + "/span[@class='extendednotecontents']/span[@class='extendednotecontent']";
+			var xpathThruNoteType = string.Format(extendedNote + "/span[@class='extendednotetypera_name']/span[@lang='en' and text()='{0}']", noteType);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathThruNoteType, 1);
+
+			var xpathThruDiscussion = string.Format(extendedNote + "/span[@class='discussion']/span[@lang='fr' and text()='{0}']", discussion);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathThruDiscussion, 1);
+
+			const string xpathThruExample = extendedNote + "/span[@class='examples']/span[@class='example']";
+			var oneSenseWithExample = string.Format(xpathThruExample + "/span[@class='example']/span[@lang='fr' and text()='{0}']", example);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithExample, 1);
+			var oneExampleSentenceTranslation = string.Format(
+				xpathThruExample + "/span[@class='translations']/span[@class='translation']/span[@class='translation']/span[@lang='en' and text()='{0}']", translation);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneExampleSentenceTranslation, 1);
+		}
+
+		private ILexExtendedNote AddExampleToExtendedNote(ILexSense sense, string noteType, string discussion, string examples, string translation = null)
+		{
+			var extendedNoteFact = Cache.ServiceLocator.GetInstance<ILexExtendedNoteFactory>();
+			var extendedNote = extendedNoteFact.Create();
+			sense.ExtendedNoteOS.Add(extendedNote);
+
+			var extendedNoteType = CreateExtendedNoteType(noteType);
+			extendedNote.ExtendedNoteTypeRA = extendedNoteType;
+			extendedNote.Discussion.set_String(m_wsFr, discussion);
+
+			var exampleFact = Cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>();
+			var example = exampleFact.Create();
+			extendedNote.ExamplesOS.Add(example);
+			example.Example.set_String(m_wsFr, Cache.TsStrFactory.MakeString(examples, m_wsFr));
+			if (translation != null)
+			{
+				var type = Cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranFreeTranslation);
+				var cmTranslation = Cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(example, type);
+				cmTranslation.Translation.set_String(m_wsEn, Cache.TsStrFactory.MakeString(translation, m_wsEn));
+				example.TranslationsOC.Add(cmTranslation);
+			}
+			return extendedNote;
+		}
+
+		private ICmPossibility CreateExtendedNoteType(string name)
+		{
+			if (Cache.LangProject.LexDbOA.ExtendedNoteTypesOA == null)
+				Cache.LangProject.LexDbOA.ExtendedNoteTypesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+			var item = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+			Cache.LangProject.LexDbOA.ExtendedNoteTypesOA.PossibilitiesOS.Add(item);
+			item.Name.set_String(m_wsEn, name);
+			Cache.LangProject.LexDbOA.ExtendedNoteTypesOA.PossibilitiesOS.Add(item);
+			return item;
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_EnvironmentsAndAllomorphsAreGenerated()
 		{
 			var stringRepNode = new ConfigurableDictionaryNode

@@ -402,6 +402,9 @@ Are you SURE you want to delete the field {2}?</value>
   <data name="ksDisplayComplexFormsInParagraphs" xml:space="preserve">
     <value>Display each Complex Form in a paragraph</value>
   </data>
+  <data name="ksDisplayExtendedNoteInParagraphs" xml:space="preserve">
+    <value>Display each Extended Note in a paragraph</value>
+  </data>
   <data name="ksCantPromoteGroupToTemplate" xml:space="preserve">
     <value>You cannot promote part of one discourse chart template to a new template. In fact, currently we do not support having more than one template at all.</value>
   </data>
@@ -717,6 +720,9 @@ Are you sure you want to delete this list?</value>
   <data name="ksComplexFormTypes" xml:space="preserve">
     <value>Complex Form Types:</value>
   </data>
+  <data name="ksExtendedNoteTypes" xml:space="preserve">
+    <value>Extended Note Types:</value>
+  </data>
   <data name="ksMinorEntryTypes" xml:space="preserve">
     <value>Minor Entry Types:</value>
   </data>
@@ -725,6 +731,9 @@ Are you sure you want to delete this list?</value>
   </data>
   <data name="ksNoComplexFormType" xml:space="preserve">
     <value>No Complex Form Type</value>
+  </data>
+  <data name="ksNoExtendedNoteType" xml:space="preserve">
+    <value>No Extended Note Type</value>
   </data>
   <data name="ksNoConfiguration" xml:space="preserve">
     <value>The dictionary display configuration has not been set.</value>

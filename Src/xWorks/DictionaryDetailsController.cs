@@ -508,6 +508,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				listOptionsView.DisplayOptionCheckBoxLabel = xWorksStrings.ksDisplayExamplesInParagraphs;
 			}
+			else if (m_node.FieldDescription == "ExtendedNoteOS")
+			{
+				listOptionsView.DisplayOptionCheckBoxLabel = xWorksStrings.ksDisplayExtendedNoteInParagraphs;
+			}
 			listOptionsView.DisplayOptionCheckBoxChecked = complexFormOptions.DisplayEachComplexFormInAParagraph;
 			ToggleViewForShowInPara(complexFormOptions.DisplayEachComplexFormInAParagraph);
 		}
@@ -582,6 +586,8 @@ namespace SIL.FieldWorks.XWorks
 					styleName = "Reversal-Subentry";
 				else if (field == "ExamplesOS")
 					styleName = "Bulleted List";
+				else if (field == "ExtendedNoteOS" || field == "SensesOS")
+					styleName = "Dictionary-Sense";
 				else
 					styleName = "Dictionary-Subentry";
 			}
@@ -713,6 +719,9 @@ namespace SIL.FieldWorks.XWorks
 				case DictionaryNodeListOptions.ListIds.Complex:
 					listLabel = xWorksStrings.ksComplexFormTypes;
 					return GetComplexFormTypes();
+				case DictionaryNodeListOptions.ListIds.Note:
+					listLabel = xWorksStrings.ksExtendedNoteTypes;
+					return GetNoteTypes();
 				case DictionaryNodeListOptions.ListIds.Variant:
 					listLabel = xWorksStrings.ksVariantTypes;
 					return GetVariantTypes();
@@ -740,6 +749,17 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Checked = true,
 				Tag = XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString()
+			});
+			return result;
+		}
+
+		private List<ListViewItem> GetNoteTypes()
+		{
+			var result = FlattenSortAndConvertList(m_cache.LangProject.LexDbOA.ExtendedNoteTypesOA);
+			result.Insert(0, new ListViewItem("<" + xWorksStrings.ksNoExtendedNoteType + ">")
+			{
+				Checked = true,
+				Tag = XmlViewsUtils.GetGuidForUnspecifiedExtendedNoteType().ToString()
 			});
 			return result;
 		}

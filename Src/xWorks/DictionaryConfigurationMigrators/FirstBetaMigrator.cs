@@ -95,8 +95,32 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			for (var part = 0; part < oldConfigList.Count; ++part)
 			{
 				MoveNodesIntoNewGroups(oldConfigList[part], currentDefaultList[part]);
+				MigrateNewDefaultNodes(oldConfigList[part], currentDefaultList[part]);
 			}
 			oldConfig.Version = DCM.VersionCurrent;
+		}
+
+		/// <summary>
+		/// This recursive method will migrate new nodes from default node to old config node
+		/// </summary>
+		private void MigrateNewDefaultNodes(ConfigurableDictionaryNode oldConfigNode, ConfigurableDictionaryNode defaultNode)
+		{
+			if (oldConfigNode.Children == null || defaultNode.Children == null)
+				return;
+			// First recurse into each matching child node
+			foreach (var newChild in defaultNode.Children)
+			{
+				var matchFromDefault = FindMatchingChildNode(newChild.Label, oldConfigNode.Children);
+				if (matchFromDefault != null)
+				{
+					MigrateNewDefaultNodes(matchFromDefault, newChild);
+				}
+				else
+				{
+					int indexOfNewChild = defaultNode.Children.FindIndex(n => n.Label == newChild.Label);
+					InsertNewNodeIntoOldConfig(oldConfigNode, newChild.DeepCloneUnderParent(oldConfigNode), defaultNode, indexOfNewChild);
+				}
+			}
 		}
 
 		/// <summary>
@@ -132,7 +156,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 						oldConfigNode.Children.RemoveAt(i);
 					}
 				}
-				InsertGroupNodeIntoOldConfig(oldConfigNode, groupNode, defaultNode, defaultNode.ReferencedOrDirectChildren.IndexOf(group));
+				InsertNewNodeIntoOldConfig(oldConfigNode, groupNode, defaultNode, defaultNode.ReferencedOrDirectChildren.IndexOf(group));
 			}
 		}
 
@@ -153,18 +177,18 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			return possibleMatches.FirstOrDefault(n => n.Label == label);
 		}
 
-		private void InsertGroupNodeIntoOldConfig(ConfigurableDictionaryNode oldConfigNode, ConfigurableDictionaryNode groupNode, ConfigurableDictionaryNode defaultNode, int indexOf)
+		private void InsertNewNodeIntoOldConfig(ConfigurableDictionaryNode oldConfigNode, ConfigurableDictionaryNode newNode, ConfigurableDictionaryNode defaultNode, int indexOf)
 		{
 			if (indexOf == 0)
-				oldConfigNode.Children.Insert(0, groupNode);
+				oldConfigNode.Children.Insert(0, newNode);
 			else
 			{
 				var olderSiblingLabel = defaultNode.Children[indexOf - 1].Label;
 				var indexOfOlderSibling = oldConfigNode.Children.FindIndex(n => n.Label == olderSiblingLabel);
 				if (indexOfOlderSibling >= 0)
-					oldConfigNode.Children.Insert(indexOfOlderSibling + 1, groupNode);
+					oldConfigNode.Children.Insert(indexOfOlderSibling + 1, newNode);
 				else
-					oldConfigNode.Children.Add(groupNode);
+					oldConfigNode.Children.Add(newNode);
 			}
 		}
 

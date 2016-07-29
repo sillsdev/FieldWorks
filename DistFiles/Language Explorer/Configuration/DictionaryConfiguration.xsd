@@ -141,6 +141,7 @@
 		<xs:enumeration value="variant"/>
 		<xs:enumeration value="sense"/>
 		<xs:enumeration value="entry"/>
+		<xs:enumeration value="note"/>
 	</xs:restriction>
 </xs:simpleType>
 <xs:complexType name="OptionListItemType">

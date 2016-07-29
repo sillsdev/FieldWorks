@@ -2128,6 +2128,7 @@ namespace SIL.FieldWorks.XWorks
 				case DictionaryNodeListOptions.ListIds.Variant:
 				case DictionaryNodeListOptions.ListIds.Complex:
 				case DictionaryNodeListOptions.ListIds.Minor:
+				case DictionaryNodeListOptions.ListIds.Note:
 					{
 						return IsListItemSelectedForExportInternal(listOptions.ListId, listItem, selectedListOptions);
 					}
@@ -2159,6 +2160,7 @@ namespace SIL.FieldWorks.XWorks
 			var entryTypeGuids = new Set<Guid>();
 			var entryRef = listItem as ILexEntryRef;
 			var entry = listItem as ILexEntry;
+			var note = listItem as ILexExtendedNote;
 			if (entryRef != null)
 			{
 				if (listId == DictionaryNodeListOptions.ListIds.Variant || listId == DictionaryNodeListOptions.ListIds.Minor)
@@ -2174,6 +2176,11 @@ namespace SIL.FieldWorks.XWorks
 				if (listId == DictionaryNodeListOptions.ListIds.Complex || listId == DictionaryNodeListOptions.ListIds.Minor)
 					foreach (var complexFormEntryRef in entry.ComplexFormEntryRefs)
 						GetComplexFormTypeGuidsForEntryRef(complexFormEntryRef, entryTypeGuids);
+			}
+			else if (note != null)
+			{
+				if (listId == DictionaryNodeListOptions.ListIds.Note)
+					GetExtendedNoteGuidsForEntryRef(note, entryTypeGuids);
 			}
 			return entryTypeGuids.Intersect(selectedListOptions).Any();
 		}
@@ -2192,6 +2199,11 @@ namespace SIL.FieldWorks.XWorks
 				entryTypeGuids.AddRange(entryRef.ComplexEntryTypesRS.Select(guid => guid.Guid));
 			else
 				entryTypeGuids.Add(XmlViewsUtils.GetGuidForUnspecifiedComplexFormType());
+		}
+
+		private static void GetExtendedNoteGuidsForEntryRef(ILexExtendedNote entryRef, Set<Guid> entryTypeGuids)
+		{
+			entryTypeGuids.Add(entryRef.ExtendedNoteTypeRA.Guid);
 		}
 
 		/// <returns>
