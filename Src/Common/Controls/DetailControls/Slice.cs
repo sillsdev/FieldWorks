@@ -1431,6 +1431,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private string GetGeneratedHelpTopicId(string helpTopicPrefix, String fieldName)
 		{
 			string className = Cache.DomainDataByFlid.MetaDataCache.GetClassName(Object.ClassID);
+			// Distinguish the Example (sense) field and the expanded example (LexExtendedNote) field
+			className = (fieldName == "Example" && this.Object.Owner.ClassName == "LexExtendedNote") ? "LexExtendedNote" : className;
 			string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
 
 			String generatedHelpTopicID;

@@ -3046,54 +3046,58 @@
   </data>
   <data name="khtpField-extNoteTypeEdit-CmPossibility-Confidence" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Extended_Note_Types/Confidence_field_Extended_Notes.htm</value>
-    <comment>Extended Note - Confidence</comment>
+    <comment>Extended Note - List -Confidence</comment>
   </data>
   <data name="khtpField-extNoteTypeEdit-CmPossibility-Description" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Extended_Note_Types/Description_field_Extended_Notes.htm</value>
-    <comment>Extended Note - Description</comment>
+    <comment>Extended Note - List - Description</comment>
   </data>
   <data name="khtpField-extNoteTypeEdit-CmPossibility-Discussion" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Extended_Note_Types/Discussion_field_Extended_Notes.htm</value>
-    <comment>Extended Note - Discussion</comment>
+    <comment>Extended Note - List -Discussion</comment>
   </data>
   <data name="khtpField-extNoteTypeEdit-CmPossibility-Name" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Extended_Note_Types/Name_field_Extended_Notes.htm</value>
-    <comment>Extended Note - Name</comment>
+    <comment>Extended Note -List - Name</comment>
   </data>
   <data name="khtpField-extNoteTypeEdit-CmPossibility-Researchers" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Extended_Note_Types/Researchers_field_Extended_Notes.htm</value>
-    <comment>Extended Note - Researchers</comment>
+    <comment>Extended Note - List -Researchers</comment>
   </data>
   <data name="khtpField-extNoteTypeEdit-CmPossibility-Restrictions" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Extended_Note_Types/Restrictions_field_Extended_Notes.htm</value>
-    <comment>Extended Note - Restrictions</comment>
+    <comment>Extended Note - List -Restrictions</comment>
   </data>
   <data name="khtpField-extNoteTypeEdit-CmPossibility-Status" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Extended_Note_Types/Status_field_Extended-Notes.htm</value>
-    <comment>Extended Note - Status</comment>
+    <comment>Extended Note - List -Status</comment>
   </data>
   <data name="khtpField-lexiconEdit-LexExampleSentence-Translations" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Extended_Note/Translation_field_(Extended_Note).htm</value>
-    <comment>Extended Note - Examples - Translation</comment>
+    <comment>Extended Note - Lexicon -Examples - Translation</comment>
   </data>
   <data name="khtpField-lexiconEdit-LexExtendedNote-" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Extended_Note/Extended_Note_field.htm</value>
-    <comment>Extended Note - First field</comment>
+    <comment>Extended Note - Unexpanded</comment>
   </data>
   <data name="khtpField-lexiconEdit-LexExtendedNote-Discussion" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Extended_Note/Discussion_field_(Extended_Note).htm</value>
-    <comment>Extended Note - Discussion</comment>
+    <comment>Extended Note - Lexicon -Discussion</comment>
   </data>
   <data name="khtpField-lexiconEdit-LexExtendedNote-Examples" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Extended_Note/Example_field_(Extended_Note).htm</value>
-    <comment>Extended Note - Examples</comment>
+    <comment>Extended Note -Lexicon - Examples</comment>
   </data>
   <data name="khtpField-lexiconEdit-LexExtendedNote-ExtendedNoteType" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Extended_Note/Type_field_(Extended_Note).htm</value>
-    <comment>Extenfded Note - Type</comment>
+    <comment>Extended Note - Lexicon -Type</comment>
   </data>
   <data name="khtpField-lexiconEdit-LexSense-ExtendedNote" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Extended_Note/Extended_Note_field.htm</value>
-    <comment>Extended Note - Parent</comment>
+    <comment>Extended Note</comment>
   </data>
+  <data name="khtpField-lexiconEdit-LexExtendedNote-Example" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Extended_Note/Example_field_(Extended_Note).htm</value>
+    <comment>Extended Note - Expanded Example </comment>
+</data>
 </root>
