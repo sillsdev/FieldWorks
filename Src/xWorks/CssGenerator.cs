@@ -222,7 +222,7 @@ namespace SIL.FieldWorks.XWorks
 					GenerateCssFromWsOptions(configNode, wsOptions, styleSheet, baseSelection, mediator);
 					if (wsOptions.DisplayWritingSystemAbbreviations)
 					{
-						GenerateCssForWritingSystemPrefix(styleSheet, baseSelection);
+						GenerateCssForWritingSystemPrefix(configNode, wsOptions, styleSheet, baseSelection, mediator);
 					}
 				}
 				styleSheet.Rules.AddRange(CheckRangeOfRulesForEmpties(selectors));
@@ -499,13 +499,12 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private static void GenerateCssForWritingSystemPrefix(StyleSheet styleSheet, string baseSelection)
+		private static void GenerateCssForWritingSystemPrefix(ConfigurableDictionaryNode configNode, DictionaryNodeWritingSystemOptions wsOptions,
+																	StyleSheet styleSheet, string baseSelection, Mediator mediator)
 		{
-			var wsRule1 = new StyleRule {Value = string.Format("{0}.{1}", baseSelection, WritingSystemPrefix)};
-			wsRule1.Declarations.Properties.Add(new Property("font-style") {Term = new PrimitiveTerm(UnitType.Attribute, "normal")});
-			wsRule1.Declarations.Properties.Add(new Property("font-size") {Term = new PrimitiveTerm(UnitType.Point, 10)});
-			styleSheet.Rules.Add(wsRule1);
-			var wsRule2=new StyleRule {Value = wsRule1.Value + ":after"};
+			var wsRule1 = new StyleRule { Value = string.Format("{0}.{1}> span", baseSelection, WritingSystemPrefix) };
+			GenerateCssFromWsOptions(configNode, wsOptions, styleSheet, wsRule1.Value, mediator);
+			var wsRule2 = new StyleRule { Value = string.Format("{0}.{1}:after", baseSelection, WritingSystemPrefix) };
 			wsRule2.Declarations.Properties.Add(new Property("content"){Term = new PrimitiveTerm(UnitType.String, " ")});
 			styleSheet.Rules.Add(wsRule2);
 		}

@@ -2494,6 +2494,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					xw.WriteStartElement("span");
 					xw.WriteAttributeString("class", CssGenerator.WritingSystemPrefix);
+					xw.WriteAttributeString("lang", wsName);
 					var prefix = ((IWritingSystem)settings.Cache.WritingSystemFactory.get_EngineOrNull(wsId)).Abbreviation;
 					xw.WriteString(prefix);
 					xw.WriteEndElement();

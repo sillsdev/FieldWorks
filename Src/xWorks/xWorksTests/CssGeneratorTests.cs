@@ -25,7 +25,7 @@ using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
 using XCore;
 
-// ReSharper disable InconsistentNaming
+// ReSharper disable InconsistentNaming - Justification: Underscores are standard for test names but nowhere else in our code
 namespace SIL.FieldWorks.XWorks
 {
 	public class CssGeneratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
@@ -2402,9 +2402,16 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_GlossWithMultipleWs()
 		{
+			var style = GenerateEmptyStyle("Normal");
+			style.IsParagraphStyle = false;
+			var engFontInfo = new FontInfo { m_fontName = { ExplicitValue = "english" }, m_fontColor = { ExplicitValue = Color.Red } };
+			style.SetWsStyle(engFontInfo, Cache.WritingSystemFactory.GetWsFromStr("en"));
+			var frFontInfo = new FontInfo { m_fontName = { ExplicitValue = "french" }, m_fontColor = { ExplicitValue = Color.Green } };
+			style.SetWsStyle(frFontInfo, Cache.WritingSystemFactory.GetWsFromStr("fr"));
 			var glossNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Gloss",
+				Style = style.Name,
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguageswithDisplayWsAbbrev(new[] { "en", "fr" })
 			};
 			var testSensesNode = new ConfigurableDictionaryNode
@@ -2430,9 +2437,11 @@ namespace SIL.FieldWorks.XWorks
 			sense.Gloss.set_String(wsEn, Cache.TsStrFactory.MakeString("gloss", wsEn));
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(".lexentry> .senses .sense> .gloss> span.writingsystemprefix{font-style:normal;font-size:10pt;}"));
+			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(".lexentry> .senses .sense> .gloss> span.writingsystemprefix> span[lang|=\"en\"]{font-family:'english',serif;color:#F00;}"));
+			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(".lexentry> .senses .sense> .gloss> span.writingsystemprefix> span[lang|=\"fr\"]{font-family:'french',serif;color:#008000;}"));
 			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(".lexentry> .senses .sense> .gloss> span.writingsystemprefix:after{content:' ';}"));
 		}
+
 		[Test]
 		public void GenerateCssForConfiguration_WsSpanWithNormalStyle()
 		{
