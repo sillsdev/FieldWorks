@@ -276,24 +276,32 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 
 		internal static void AddDefaultLexEntryRefType(IDomainObjectDTORepository repoDto)
 		{
-			var cmPossListGuidForComplexFormType = "1ee09905-63dd-4c7a-a9bd-1d496743ccd6";
-			var cmPossListGuidForVariantEntryType = "bb372467-5230-43ef-9cc7-4d40b053fb94";
-			const string unspecComplexEntryTypeGuid = "fec038ed-6a8c-4fa5-bc96-a4f515a98c50";
-			const string unspecVariantEntryTypeGuid = "3942addb-99fd-43e9-ab7d-99025ceb0d4e";
+			const string variantXml = "<rt class=\"LexEntryType\" guid=\"3942addb-99fd-43e9-ab7d-99025ceb0d4e\"" +
+						" ownerguid=\"bb372467-5230-43ef-9cc7-4d40b053fb94\"><Abbreviation><AUni ws=\"en\">unspec. var. of</AUni></" +
+						"Abbreviation><IsProtected val=\"true\" /><Name><AUni ws=\"en\">&#60;Unspecified Variant&#62;</AUni></" +
+						"Name><ReverseAbbr><AUni ws=\"en\">unspec. var.</AUni></ReverseAbbr></rt>";
+			var newDefaultVariantType = new DomainObjectDTO("3942addb-99fd-43e9-ab7d-99025ceb0d4e", "LexEntryType", variantXml);
+			repoDto.Add(newDefaultVariantType);
+
+			const string complexXml = "<rt class=\"LexEntryType\" guid=\"fec038ed-6a8c-4fa5-bc96-a4f515a98c50\"" +
+						" ownerguid=\"1ee09905-63dd-4c7a-a9bd-1d496743ccd6\"><Abbreviation><AUni ws=\"en\">unspec. comp. form of</AUni>" +
+						"</Abbreviation><Description><AStr ws=\"en\"><Run ws=\"en\"></Run></AStr></Description><IsProtected val=\"true\"" +
+						" /><Name><AUni ws=\"en\">&#60;Unspecified Complex Form&#62;</AUni></Name>" +
+						"<ReverseAbbr><AUni ws=\"en\">unspec. comp. form</AUni></ReverseAbbr></rt>";
+			var newDefaultComplexType = new DomainObjectDTO("fec038ed-6a8c-4fa5-bc96-a4f515a98c50", "LexEntryType", complexXml);
+			repoDto.Add(newDefaultComplexType);
+
 			foreach (var dto in repoDto.AllInstancesWithSubclasses("LexEntryRef"))
 			{
 				var data = XElement.Parse(dto.Xml);
-				var refTypeElt = data.Element("RefType");
-				var varientEntryTypeElt = data.Element("VariantEntryTypes");
-				var complexEntryTypeElt = data.Element("ComplexEntryTypes");
-				if (refTypeElt == null) continue;
-				if (refTypeElt.FirstAttribute.Value == "0" && complexEntryTypeElt == null)
+				var nameElt = data.Element("RefType");
+				if (nameElt != null && nameElt.FirstAttribute.Value == "0")
 				{
-					AddRefType(data, repoDto, dto, "ComplexEntryTypes", unspecComplexEntryTypeGuid);
+					AddRefType(data, repoDto, dto, "VariantEntryTypes", "3942addb-99fd-43e9-ab7d-99025ceb0d4e");
 				}
-				else if (refTypeElt.FirstAttribute.Value == "1" && varientEntryTypeElt == null)
+				else
 				{
-					AddRefType(data, repoDto, dto, "VariantEntryTypes", unspecVariantEntryTypeGuid);
+					AddRefType(data, repoDto, dto, "ComplexEntryTypes", "fec038ed-6a8c-4fa5-bc96-a4f515a98c50");
 				}
 			}
 
@@ -301,32 +309,15 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			{
 				var data = XElement.Parse(dto.Xml);
 				var nameElt = data.Element("Name");
-				if (nameElt != null && nameElt.Value.StartsWith("Variant Types"))
+				if (nameElt != null && nameElt.Value == "Variant Types")
 				{
-					cmPossListGuidForVariantEntryType = dto.Guid;
-					AddRefType(data, repoDto, dto, "Possibilities", unspecVariantEntryTypeGuid);
+					AddRefType(data, repoDto, dto, "Possibilities", "3942addb-99fd-43e9-ab7d-99025ceb0d4e");
 				}
-				else if (nameElt != null && nameElt.Value.StartsWith("Complex Form Types"))
+				else if (nameElt != null && nameElt.Value == "Complex Form Types")
 				{
-					cmPossListGuidForComplexFormType = dto.Guid;
-					AddRefType(data, repoDto, dto, "Possibilities", unspecComplexEntryTypeGuid);
+					AddRefType(data, repoDto, dto, "Possibilities", "fec038ed-6a8c-4fa5-bc96-a4f515a98c50");
 				}
 			}
-
-			string variantXml = "<rt class=\"LexEntryType\" guid=\"" + cmPossListGuidForVariantEntryType + "\"" +
-			" ownerguid=\"" + cmPossListGuidForVariantEntryType + "\"><Abbreviation><AUni ws=\"en\">unspec. var. of</AUni></" +
-			"Abbreviation><IsProtected val=\"true\" /><Name><AUni ws=\"en\">&#60;Unspecified Variant&#62;</AUni></" +
-			"Name><ReverseAbbr><AUni ws=\"en\">unspec. var.</AUni></ReverseAbbr></rt>";
-			var newDefaultVariantType = new DomainObjectDTO(unspecVariantEntryTypeGuid, "LexEntryType", variantXml);
-			repoDto.Add(newDefaultVariantType);
-
-			string complexXml = "<rt class=\"LexEntryType\" guid=\"" + cmPossListGuidForComplexFormType + "\"" +
-						" ownerguid=\"" + cmPossListGuidForComplexFormType  + "\"><Abbreviation><AUni ws=\"en\">unspec. comp. form of</AUni>" +
-						"</Abbreviation><Description><AStr ws=\"en\"><Run ws=\"en\"></Run></AStr></Description><IsProtected val=\"true\"" +
-						" /><Name><AUni ws=\"en\">&#60;Unspecified Complex Form&#62;</AUni></Name>" +
-						"<ReverseAbbr><AUni ws=\"en\">unspec. comp. form</AUni></ReverseAbbr></rt>";
-			var newDefaultComplexType = new DomainObjectDTO(unspecComplexEntryTypeGuid, "LexEntryType", complexXml);
-			repoDto.Add(newDefaultComplexType);
 		}
 
 		private static void AddRefType(XElement data, IDomainObjectDTORepository repoDto, DomainObjectDTO dto, string tagName, string guid)
