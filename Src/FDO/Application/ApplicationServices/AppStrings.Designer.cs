@@ -97,7 +97,16 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Warning: Cannot resolve a link for a lexical relation: &lt;Link {0}/&gt;..
+        ///   Looks up a localized string similar to Warning: Cannot resolve a link for a cross reference from &quot;{0}&quot; to &quot;{1}&quot;..
+        /// </summary>
+        internal static string ksCannotResolveCrossRef {
+            get {
+                return ResourceManager.GetString("ksCannotResolveCrossRef", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning: Cannot resolve a link for a lexical relation from &quot;{0}&quot; to &quot;{1}&quot;..
         /// </summary>
         internal static string ksCannotResolveLexRelation {
             get {
@@ -111,15 +120,6 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices {
         internal static string ksCannotResolveLink {
             get {
                 return ResourceManager.GetString("ksCannotResolveLink", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Warning: Cannot resolve a link for a cross reference: &lt;Link {0}/&gt;..
-        /// </summary>
-        internal static string ksCannottResolveCrossRef {
-            get {
-                return ResourceManager.GetString("ksCannottResolveCrossRef", resourceCulture);
             }
         }
         
@@ -187,7 +187,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}:{1}: Created an entry for &quot;{2}&quot; to satisfy a Components link..
+        ///   Looks up a localized string similar to {0}:{1}: Created entry &quot;{2}&quot; to satisfy a Components link..
         /// </summary>
         internal static string ksCreatedForComponentsLink {
             get {
@@ -196,7 +196,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}:{1}: Created an entry for &quot;{2}&quot; to satisfy a Cross Reference..
+        ///   Looks up a localized string similar to {0}:{1}: Created entry &quot;{2}&quot; to satisfy a Cross Reference..
         /// </summary>
         internal static string ksCreatedForCrossReference {
             get {
@@ -205,7 +205,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}:{1}: Created an entry for &quot;{2}&quot; to satisfy a Lexical Relation..
+        ///   Looks up a localized string similar to {0}:{1}: Created entry &quot;{2}&quot; to satisfy a Lexical Relation..
         /// </summary>
         internal static string ksCreatedForLexicalRelation {
             get {
@@ -214,7 +214,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}:{1}: Created an entry for &quot;{2}&quot; to satisfy a link target..
+        ///   Looks up a localized string similar to {0}:{1}: Created entry &quot;{2}&quot; to satisfy a link target..
         /// </summary>
         internal static string ksCreatedForLinkTarget {
             get {
@@ -223,7 +223,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}:{1}: Created an entry for &quot;{2}&quot; to satisfy a Show Subentry Under link..
+        ///   Looks up a localized string similar to {0}:{1}: Created entry &quot;{2}&quot; to satisfy a Show Subentry Under link..
         /// </summary>
         internal static string ksCreatedForShowSubentryUnderLink {
             get {

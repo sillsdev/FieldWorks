@@ -14,7 +14,8 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
-using Microsoft.Win32;		// For Registry and RegistryKey.
+using Microsoft.Win32;
+using Sfm2Xml;
 
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;	// FW WS stuff
@@ -100,6 +101,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private ImageList imageList1;	// key=sfm, value=ClsAutoField
 		private OpenFileDialogAdapter openFileDialog;
 		private CheckBox m_chkCreateMissingLinks;
+		private const string kOptionKeyMissingLinkCheckbox = "chkCreateMissingLinks";
 
 		private static LexImportWizard m_wizard = null;
 
@@ -251,6 +253,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			AcceptButton = null;
 			btnModifyMappingLanguage.Enabled = false;
 			btnModifyContentMapping.Enabled = false;
+			m_chkCreateMissingLinks.Checked = false;
 			string dictFileToImport = string.Empty;
 			m_SettingsFileName.Items.Clear();
 			m_SettingsFileName.Items.Add(m_sMDFImportMap);
@@ -266,6 +269,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				m_SaveAsFileName.Text = string.Empty;	// empty if not found already
 			}
+			ReadOptionInfoFromMapFile();
 			AllowQuickFinishButton();	// show it if it's valid
 
 			// Copied from the previous LexImport dlg constructor (ImportLexicon.cs)
@@ -685,12 +689,12 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			System.Text.StringBuilder sbHelp = new System.Text.StringBuilder();
 			sbHelp.Append("<Field uiname=\"");
-			sbHelp.Append(MakeVaildXML(fd.Userlabel));
+			sbHelp.Append(MakeValidXML(fd.Userlabel));
 			sbHelp.Append("\"><Help>");
 			if (fd.HelpString != null && fd.HelpString.Trim().Length > 0)
 			{
 				sbHelp.Append("<Usage>");
-				sbHelp.Append(MakeVaildXML(fd.HelpString));
+				sbHelp.Append(MakeValidXML(fd.HelpString));
 				sbHelp.Append("</Usage>");
 			}
 			sbHelp.Append("<Settings>Set the Language Descriptor to the language of this field.</Settings>");
@@ -794,7 +798,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			return customFields;
 		}
 
-		protected string MakeVaildXML(string input)
+		protected string MakeValidXML(string input)
 		{
 			return input.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
 		}
@@ -1020,6 +1024,25 @@ namespace SIL.FieldWorks.LexText.Controls
 			listViewContentMapping.Columns[1].Width = 0;
 			listViewContentMapping.EndUpdate();
 #endif
+		}
+
+		void ReadOptionInfoFromMapFile()
+		{
+			var oc = new OptionConverter();
+			var options = oc.Options(m_SettingsFileName.Text);
+
+			foreach (var option in options)
+			{
+				switch (option.Key)
+				{
+					case kOptionKeyMissingLinkCheckbox:
+						m_chkCreateMissingLinks.Checked = option.Value;
+						break;
+					default:
+						Debug.Fail(string.Format("Unknown option key {0}", option.Key));
+						break;
+				}
+			}
 		}
 
 		private void SetListViewItemColor(ref ListViewItem item)
@@ -1693,8 +1716,13 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			Hashtable uiLangsNew = GetUILanguages();
 
+			// ================================================================
+			// Build the list of options
+			var options = new List<Sfm2Xml.ILexImportOption>();
+			options.Add(new LexImportOption(kOptionKeyMissingLinkCheckbox, "Checkbox", m_chkCreateMissingLinks.Checked));
+
 			// this is the external way through common objects to create the map file
-			Sfm2Xml.STATICS.NewMapFileBuilder(uiLangsNew, m_LexFields, m_CustomFields, sfmInfo, ifMarker, m_SaveAsFileName.Text);
+			Sfm2Xml.STATICS.NewMapFileBuilder(uiLangsNew, m_LexFields, m_CustomFields, sfmInfo, ifMarker, m_SaveAsFileName.Text, options);
 
 		}
 
@@ -2028,11 +2056,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				using (RegistryKey key = m_app.SettingsKey)
 				{
-				if (key == null)
-					return;
+					if (key == null)
+						return;
 
-				// save it as the most recent dictionary file for import
-				key.SetValue("LatestImportDictFile", dbImportName);
+					// save it as the most recent dictionary file for import
+					key.SetValue("LatestImportDictFile", dbImportName);
 				}
 
 				string dbHash = dbImportName.GetHashCode().ToString();
@@ -2040,18 +2068,18 @@ namespace SIL.FieldWorks.LexText.Controls
 				// save it to the folder of imported dictionary files
 				using (var key = m_app.SettingsKey.CreateSubKey("ImportDictFiles"))
 				{
-				key.SetValue("ImportFile" + dbHash, dbImportName);
+					key.SetValue("ImportFile" + dbHash, dbImportName);
 				}
 
 				// save the support files for this: map and 'save as' files
 				using (var key = m_app.SettingsKey.CreateSubKey("ImportFile" + dbHash))
 				{
-				if (key != null)
-				{
-					key.SetValue("Settings", m_SettingsFileName.Text);
-					key.SetValue("SaveAs", m_SaveAsFileName.Text);
+					if (key != null)
+					{
+						key.SetValue("Settings", m_SettingsFileName.Text);
+						key.SetValue("SaveAs", m_SaveAsFileName.Text);
+					}
 				}
-			}
 			}
 			// also need to create the map file - or go down trying...
 			SaveNewMapFile();
@@ -3826,7 +3854,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 #endif
 
-// This moving button logic has issues on mono.
+// This moving button logic has issues on mono. (and on Windows, if truth be told!)
 #if !__MonoCS__
 		protected override void OnSizeChanged(EventArgs e)
 		{
@@ -3876,6 +3904,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						MoveButton(btnAddCharMapping, diffWidth, diffHeight);
 						MoveButton(btnModifyCharMapping, diffWidth, diffHeight);
 						MoveButton(btnDeleteCharMapping, diffWidth, diffHeight);
+						MoveButton(m_chkCreateMissingLinks, diffWidth, diffHeight);
 					}
 					else
 					{//this is for 120 dpi (125% Windows 7 display settings)
@@ -3886,6 +3915,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						MoveButton2(btnAddCharMapping, diffWidth, buttonYCoord);
 						MoveButton2(btnModifyCharMapping, diffWidth, buttonYCoord);
 						MoveButton2(btnDeleteCharMapping, diffWidth, buttonYCoord);
+						MoveButton2(m_chkCreateMissingLinks, diffWidth, buttonYCoord);
 					}
 
 					// update the 'original' size for future OnSize msgs
@@ -3895,7 +3925,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private void MoveButton(Button btn, int dw, int dh)
+		private void MoveButton(ButtonBase btn, int dw, int dh)
 		{
 			Point oldPoint = btn.Location;
 			oldPoint.X += dw;
@@ -3903,7 +3933,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			btn.Location = oldPoint;
 		}
 
-		private void MoveButton2(Button btn, int dw, int YCoord)
+		private void MoveButton2(ButtonBase btn, int dw, int YCoord)
 		{
 			Point oldPoint = btn.Location;
 			oldPoint.X += dw;
@@ -3959,7 +3989,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				listViewMappingLanguages.Height = lblSteps.Top - btnAddMappingLanguage.Height -  listViewMappingLanguages.Top - 20;
 
 				listViewContentMapping.Width = tabSteps.Width - 40;
-				listViewContentMapping.Height = tabSteps.Bottom - btnModifyContentMapping.Height - listViewContentMapping.Top - 20;
+				// LT-10904 added checkbox
+				listViewContentMapping.Height =
+					tabSteps.Bottom - btnModifyContentMapping.Height - m_chkCreateMissingLinks.Height - listViewContentMapping.Top - 20;
 
 				listViewCharMappings.Width = tabSteps.Width - 40;
 				listViewCharMappings.Height = tabSteps.Bottom - btnModifyCharMapping.Height - listViewCharMappings.Top - 20;
@@ -4093,23 +4125,23 @@ namespace SIL.FieldWorks.LexText.Controls
 			selectedIFM = listViewCharMappings.Items[selIndex].Tag as Sfm2Xml.ClsInFieldMarker;
 			using (var dlg = new LexImportWizardCharMarkerDlg(m_mediator.HelpTopicProvider, m_app, m_stylesheet))
 			{
-			dlg.Init(selectedIFM, GetUILanguages(), m_cache);
-			dlg.SetExistingBeginMarkers(ExtractExistingBeginMarkers(true));
-			dlg.SetExistingEndMarkers(ExtractExistingEndMarkers(true));
-			dlg.SetExistingElementNames(ExtractExistingElementNames(true));
-			if (dlg.ShowDialog(this) == DialogResult.OK)
-			{
-				m_dirtySenseLastSave = true;
-				// remove the old from the treeview display
-				listViewCharMappings.Items[selIndex].Selected = false;
-				listViewCharMappings.Items[selIndex].Focused = false;
-				listViewCharMappings.Items.RemoveAt(selIndex);
+				dlg.Init(selectedIFM, GetUILanguages(), m_cache);
+				dlg.SetExistingBeginMarkers(ExtractExistingBeginMarkers(true));
+				dlg.SetExistingEndMarkers(ExtractExistingEndMarkers(true));
+				dlg.SetExistingElementNames(ExtractExistingElementNames(true));
+				if (dlg.ShowDialog(this) == DialogResult.OK)
+				{
+					m_dirtySenseLastSave = true;
+					// remove the old from the treeview display
+					listViewCharMappings.Items[selIndex].Selected = false;
+					listViewCharMappings.Items[selIndex].Focused = false;
+					listViewCharMappings.Items.RemoveAt(selIndex);
 
-				// now update the item and add it again and then select it
-				AddInLineMarker(dlg.IFM(), true);
-				listViewCharMappings.Focus();
+					// now update the item and add it again and then select it
+					AddInLineMarker(dlg.IFM(), true);
+					listViewCharMappings.Focus();
+				}
 			}
-		}
 		}
 
 		private void btnDeleteCharMapping_Click(object sender, System.EventArgs e)

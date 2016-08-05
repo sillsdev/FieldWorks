@@ -379,7 +379,7 @@
     <value>m_SettingsFileName</value>
   </data>
   <data name="&gt;&gt;m_SettingsFileName.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=8.3.0.22994, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=8.3.0.13111, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_SettingsFileName.Parent" xml:space="preserve">
     <value>tabPage2</value>
@@ -640,16 +640,16 @@
     <value>True</value>
   </data>
   <data name="m_chkCreateMissingLinks.Location" type="System.Drawing.Point, System.Drawing">
-    <value>19, 383</value>
+    <value>14, 368</value>
   </data>
   <data name="m_chkCreateMissingLinks.Size" type="System.Drawing.Size, System.Drawing">
-    <value>197, 17</value>
+    <value>340, 17</value>
   </data>
   <data name="m_chkCreateMissingLinks.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
   </data>
   <data name="m_chkCreateMissingLinks.Text" xml:space="preserve">
-    <value>Create entries for missing link targets</value>
+    <value>Create entries for missing Lexical Relation/Cross Reference targets</value>
   </data>
   <data name="&gt;&gt;m_chkCreateMissingLinks.Name" xml:space="preserve">
     <value>m_chkCreateMissingLinks</value>
@@ -703,13 +703,13 @@
     <value>ModifyContentMapping</value>
   </data>
   <data name="btnModifyContentMapping.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Right</value>
+    <value>Bottom</value>
   </data>
   <data name="btnModifyContentMapping.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="btnModifyContentMapping.Location" type="System.Drawing.Point, System.Drawing">
-    <value>244, 362</value>
+    <value>203, 339</value>
   </data>
   <data name="btnModifyContentMapping.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -1453,7 +1453,7 @@
     <value>m_SettingsFileName</value>
   </data>
   <data name="&gt;&gt;m_SettingsFileName.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=8.3.0.22994, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=8.3.0.13111, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_SettingsFileName.Parent" xml:space="preserve">
     <value>tabPage2</value>
@@ -2192,7 +2192,7 @@
         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4w
         LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
         ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAACW
-        BwAAAk1TRnQBSQFMAgEBAwEAASQBAAEkAQABEAEAARABAAT/AQkBAAj/AUIBTQE2AQQGAAE2AQQCAAEo
+        BwAAAk1TRnQBSQFMAgEBAwEAASwBAAEsAQABEAEAARABAAT/AQkBAAj/AUIBTQE2AQQGAAE2AQQCAAEo
         AwABQAMAARADAAEBAQABCAYAAQQYAAGAAgABgAMAAoABAAGAAwABgAEAAYABAAKAAgADwAEAAcAB3AHA
         AQAB8AHKAaYBAAEzBQABMwEAATMBAAEzAQACMwIAAxYBAAMcAQADIgEAAykBAANVAQADTQEAA0IBAAM5
         AQABgAF8Af8BAAJQAf8BAAGTAQAB1gEAAf8B7AHMAQABxgHWAe8BAAHWAucBAAGQAakBrQIAAf8BMwMA
@@ -2774,6 +2774,6 @@ To begin importing, click Finish.</value>
     <value>LexImportWizard</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.WizardDialog, FwControls, Version=8.3.0.22994, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Controls.WizardDialog, FwControls, Version=8.3.0.13111, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

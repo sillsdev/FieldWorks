@@ -127,13 +127,13 @@
     <value>This was automatically created to satisfy a Lexical Relation, and it should be checked.</value>
   </data>
   <data name="ksCreatedForLexicalRelation" xml:space="preserve">
-    <value>{0}:{1}: Created an entry for "{2}" to satisfy a Lexical Relation.</value>
+    <value>{0}:{1}: Created entry "{2}" to satisfy a Lexical Relation.</value>
   </data>
   <data name="ksCheckCreatedForCrossReference" xml:space="preserve">
     <value>This was automatically created to satisfy a Cross Reference, and it should be checked.</value>
   </data>
   <data name="ksCreatedForCrossReference" xml:space="preserve">
-    <value>{0}:{1}: Created an entry for "{2}" to satisfy a Cross Reference.</value>
+    <value>{0}:{1}: Created entry "{2}" to satisfy a Cross Reference.</value>
   </data>
   <data name="ksCreatedTypeForLexReference" xml:space="preserve">
     <value>Info: Creating Entry Or Sense Pair Lexical Reference Type with name="{0}" and abbr="{1}".</value>
@@ -147,11 +147,11 @@
   <data name="ksCannotCreateLexRefType" xml:space="preserve">
     <value>Warning: Cannot create desired Lexical Reference Type: &lt;Link {0}/&gt;.</value>
   </data>
-  <data name="ksCannottResolveCrossRef" xml:space="preserve">
-    <value>Warning: Cannot resolve a link for a cross reference: &lt;Link {0}/&gt;.</value>
+  <data name="ksCannotResolveCrossRef" xml:space="preserve">
+    <value>Warning: Cannot resolve a link for a cross reference from "{0}" to "{1}".</value>
   </data>
   <data name="ksCannotResolveLexRelation" xml:space="preserve">
-    <value>Warning: Cannot resolve a link for a lexical relation: &lt;Link {0}/&gt;.</value>
+    <value>Warning: Cannot resolve a link for a lexical relation from "{0}" to "{1}".</value>
   </data>
   <data name="ksCreatingWritingSystem" xml:space="preserve">
     <value>Info: Creating new writing system for "{0}".</value>
@@ -272,13 +272,13 @@
     <value>This was automatically created to satisfy a link target, and it should be checked.</value>
   </data>
   <data name="ksCreatedForComponentsLink" xml:space="preserve">
-    <value>{0}:{1}: Created an entry for "{2}" to satisfy a Components link.</value>
+    <value>{0}:{1}: Created entry "{2}" to satisfy a Components link.</value>
   </data>
   <data name="ksCreatedForShowSubentryUnderLink" xml:space="preserve">
-    <value>{0}:{1}: Created an entry for "{2}" to satisfy a Show Subentry Under link.</value>
+    <value>{0}:{1}: Created entry "{2}" to satisfy a Show Subentry Under link.</value>
   </data>
   <data name="ksCreatedForLinkTarget" xml:space="preserve">
-    <value>{0}:{1}: Created an entry for "{2}" to satisfy a link target.</value>
+    <value>{0}:{1}: Created entry "{2}" to satisfy a link target.</value>
   </data>
   <data name="ksTypeNameMatchesAbbr" xml:space="preserve">
     <value>Info: Lexical reference type in a Link element has name attribute "{0}" which matches an Abbreviation value.</value>

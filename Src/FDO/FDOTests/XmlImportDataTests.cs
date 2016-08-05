@@ -1763,7 +1763,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void ImportWithoutCreatingMissingLinkEntries()
 		{
-			XmlImportData xid = new XmlImportData(m_cache, false);
 			var input = @"<LexDb xmlns:msxsl='urn:schemas-microsoft-com:xslt' xmlns:user='urn:my-scripts'>
 				<Entries>
 					<LexEntry id='IID0EK'>
@@ -1994,14 +1993,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				// The test will create the ones we need, but we need a list to put them in!
 				m_cache.LangProject.LexDbOA.ReferencesOA = m_cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
 			});
-			StringBuilder sbLog = new StringBuilder();
+			var xid = new XmlImportData(m_cache, false); // false -> fCreateMissingLinks flag (this is the new default)
+			var sbLog = new StringBuilder();
 			using (var rdr = new StringReader(input))
 			{
 				xid.ImportData(rdr, new StringWriter(sbLog), null);
 			}
 			// The main entries are test, aok, bok, cok and dok. The xslt has already created entries a and d.
-			// Because the fCreateMissingLinks flag is false (see ctor for XmlImportData), the import should
-			// NOT create entries b and c, but WILL create entries for a and d (they'll get merged post-import).
+			// Because the fCreateMissingLinks flag is false, the import should NOT create entries b and c,
+			// but WILL create entries for a and d (they'll get merged post-import).
 			Assert.AreEqual(7, m_cache.LangProject.LexDbOA.Entries.Count());
 			string sLog = sbLog.ToString();
 			Assert.IsFalse(String.IsNullOrEmpty(sLog), "There should be some log information!");

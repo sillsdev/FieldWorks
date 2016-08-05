@@ -2089,10 +2089,14 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 					ICmObject cmoTarget = ResolveLexReferenceLink(pend, flid);
 					if (cmoTarget == null)
 					{
-						if (flid == kflidCrossReferences)
-							LogMessage(AppStrings.ksCannottResolveCrossRef, pend.LineNumber);
-						else
-							LogMessage(AppStrings.ksCannotResolveLexRelation, pend.LineNumber);
+						string dummy;
+						var tform = GetLexFormAndSenseNumber(pend.LinkAttributes, out dummy);
+						var sform = GetLinkOwnerForm(pend);
+						var msgFormat = flid == kflidCrossReferences ?
+							AppStrings.ksCannotResolveCrossRef :
+							AppStrings.ksCannotResolveLexRelation;
+						var msg = string.Format(msgFormat, sform, tform);
+						LogMessage(msg, pend.LineNumber);
 						continue;
 					}
 					bool fReverse;
@@ -2222,6 +2226,17 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				VirtualOrderingServices.SetVO(mainEntry, m_cache.ServiceLocator.GetInstance<Virtuals>().LexEntrySubentries, entryOrderPair.Value.Where(item => item.IsValidObject));
 			}
 			FinalizeLrSeq(lrSeqInfo);
+		}
+
+		private string GetLinkOwnerForm(PendingLink pend)
+		{
+			var owner = pend.FieldInformation.Owner; // either Entry or Sense
+			Debug.Assert(owner is ILexEntry || owner is ILexSense, "Link owner should be either entry or sense.");
+			if (owner is ILexEntry)
+			{
+				return ((ILexEntry) owner).HomographForm;
+			}
+			return ((ILexSense) owner).FullReferenceName.Text;
 		}
 
 		private ILexReference FindMatchingLexRef(ILexRefType lrt, ICmObject cmoOwner,
@@ -2357,7 +2372,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 					return cmo;
 				var owner = pend.FieldInformation.Owner; // at this point, owner should be either ILexEntry or ILexSense
 				var msg = GetDidNotCreateEntryMessage(flid, sForm);
-				var dsLen = "data stream: ".Length;
+				var dsLen = msg.IndexOf(": ") + 2; // strip off "datastream: " or "{filename}: "
 				AppendMessageToImportResidue(owner, msg.Substring(dsLen), ws);
 			}
 			return null;
