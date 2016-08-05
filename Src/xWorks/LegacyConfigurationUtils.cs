@@ -74,7 +74,8 @@ namespace SIL.FieldWorks.XWorks
 				else
 				{
 					var rgltnStyle = BuildLayoutTree(xnLayoutType, converter);
-					converter.AddDictionaryTypeItem(xnLayoutType, rgltnStyle);
+					if (rgltnStyle.Count > 0)
+						converter.AddDictionaryTypeItem(xnLayoutType, rgltnStyle);
 				}
 			}
 		}
@@ -111,10 +112,13 @@ namespace SIL.FieldWorks.XWorks
 				if (config is XmlComment || config.Name != "configure")
 					continue;
 				var ltn = BuildMainLayout(config, converter);
-				if (XmlUtils.GetOptionalBooleanAttributeValue(config, "hideConfig", false))
-					treeNodeList.AddRange(Enumerable.Cast<XmlDocConfigureDlg.LayoutTreeNode>(ltn.Nodes));
-				else
-					treeNodeList.Add(ltn);
+				if (ltn != null)
+				{
+					if (XmlUtils.GetOptionalBooleanAttributeValue(config, "hideConfig", false))
+						treeNodeList.AddRange(Enumerable.Cast<XmlDocConfigureDlg.LayoutTreeNode>(ltn.Nodes));
+					else
+						treeNodeList.Add(ltn);
+				}
 			}
 			return treeNodeList;
 		}
@@ -130,7 +134,11 @@ namespace SIL.FieldWorks.XWorks
 			string layoutName = mainLayoutNode.LayoutName;
 			XmlNode layout = converter.GetLayoutElement(className, layoutName);
 			if (layout == null)
-				throw new Exception("Cannot configure layout " + layoutName + " of class " + className + " because it does not exist");
+			{
+				var msg = String.Format("Cannot configure layout {0} of class {1} because it does not exist",layoutName, className);
+				converter.LogConversionError(msg);
+				return null;
+			}
 			mainLayoutNode.ParentLayout = layout;	// not really the parent layout, but the parent of this node's children
 			string sVisible = XmlUtils.GetAttributeValue(layout, "visibility");
 			mainLayoutNode.Checked = sVisible != "never";
