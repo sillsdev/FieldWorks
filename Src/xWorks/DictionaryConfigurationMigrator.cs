@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.XWorks
 		Justification="Cache is a reference")]
 	public class DictionaryConfigurationMigrator
 	{
-		public const int VersionCurrent = 9;
+		public const int VersionCurrent = 10;
 		internal const string NodePathSeparator = " > ";
 		private readonly Inventory m_layoutInventory;
 		private readonly Inventory m_partInventory;
@@ -127,6 +127,16 @@ namespace SIL.FieldWorks.XWorks
 			projectConfigPaths.AddRange(ConfigFilesInDir(reversalIndexConfigLoc));
 			return projectConfigPaths.Select(path => new DictionaryConfigurationModel(path, null))
 				.Where(model => model.Version < targetVersion).ToList();
+		}
+
+		internal static void PerformActionOnNodes(IEnumerable<ConfigurableDictionaryNode> nodes, Action<ConfigurableDictionaryNode> action)
+		{
+			foreach (var node in nodes)
+			{
+				action(node);
+				if (node.Children != null)
+					PerformActionOnNodes(node.Children, action);
+			}
 		}
 	}
 }

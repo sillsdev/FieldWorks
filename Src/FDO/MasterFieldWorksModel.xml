@@ -37,7 +37,7 @@ The original version number was: 7000000. Be sure it has the right number of zer
 editing it.
 
 Change History: (Be sure to update the 'version' attribute in the EntireModel, when needed. (Almost always.))
-  30 June 2016 (7000069): Make multiple model changes:
+  04 Aug 2016 (7000069): Make multiple model changes:
     * Add/modify LexEtymology fields and make LexEntry->Etymology an owning sequence.
     * Add DoNotPublishIn fields to CmPicture and LexPronunciation.
     * Make LexEntry and LexSense Restrictions a MultiString field.
@@ -2790,6 +2790,11 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 			<para>Discourse</para>
 		  </comment>
 		</owning>
+		<owning num="26" id="Languages" card="atomic" sig="CmPossibilityList">
+		  <comment>
+			<para>This list stores the languages that the user defines which may be selected in the LexEtymology.LanguageRS field.</para>
+		  </comment>
+		</owning>
 	  </props>
 	</class>
 	<class num="6" id="ConstituentChartCellPart" abbr="cccp" abstract="true" base="CmObject" depth="0">
@@ -4709,7 +4714,11 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 		<basic num="1" id="Comment" sig="MultiString"/>
 		<basic num="2" id="Form" sig="MultiString"/>
 		<basic num="3" id="Gloss" sig="MultiString"/>
-		<basic num="4" id="Language" sig="MultiString"/>
+		<rel num="4" id="Language" card="seq" sig="CmPossibility">
+		  <comment>
+			  <para>This will be a choice from the Languages list in the Lists area (list owned by LexDb).</para>
+		  </comment>
+		</rel>
 		<basic num="5" id="LiftResidue" sig="Unicode"/>
 		<basic num="6" id="PrecComment" sig="MultiString"/>
 		<basic num="7" id="Note" sig="MultiString">
@@ -4720,6 +4729,11 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 		<basic num="8" id="Bibliography" sig="MultiString">
 		  <comment>
 			<para>For the lexicographer, not intended for printing.</para>
+		  </comment>
+		</basic>
+		<basic num="9" id="LanguageNotes" sig="MultiString">
+		  <comment>
+			<para>Notes on the source language.</para>
 		  </comment>
 		</basic>
 	  </props>

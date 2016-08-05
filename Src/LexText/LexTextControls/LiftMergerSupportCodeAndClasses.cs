@@ -83,6 +83,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_cache.LangProject.LocationsOA != null)
 				InitializePossibilityMap(m_cache.LangProject.LocationsOA.PossibilitiesOS,
 										 m_dictLocation);
+			if (m_cache.LangProject.LexDbOA.LanguagesOA != null)
+				InitializePossibilityMap(m_cache.LangProject.LexDbOA.LanguagesOA.PossibilitiesOS,
+										 m_dictLanguage);
 			if (m_cache.LangProject.PhonologicalDataOA != null)
 			{
 				foreach (IPhEnvironment env in m_cache.LangProject.PhonologicalDataOA.EnvironmentsOS)

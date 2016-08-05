@@ -100,6 +100,9 @@
 	<menu id="PaneBar-ShowHiddenFields-featureTypesAdvancedEdit" label="">
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-featureTypesAdvancedEdit" defaultVisible="true" settingsGroup="local"/>
 	</menu>
+	<menu id="PaneBar-ShowHiddenFields-languagesListEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-languagesListEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
 	<menu id="PaneBar-ShowHiddenFields-lexRefEdit" label="">
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-lexRefEdit" defaultVisible="true" settingsGroup="local"/>
 	</menu>

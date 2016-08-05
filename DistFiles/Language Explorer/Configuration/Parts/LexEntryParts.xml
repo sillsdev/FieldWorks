@@ -245,9 +245,16 @@
 			</seq>
 		</part>
 		<part id="LexEntry-Jt-EtymologyLanguage" type="jtview">
-			<seq field="Etymology" layout="Language">
+			<seq field="Etymology" layout="empty">
 				<para>
-					<string field="Language" ws="best analysis"/>
+					<seq field="Language" layout="Abbreviation" sep="; "/>
+				</para>
+			</seq>
+		</part>
+		<part id="LexEntry-Jt-EtymologyLanguageNotes" type="jtview">
+			<seq field="Etymology" layout="LanguageNotes">
+				<para>
+					<string field="LanguageNotes" ws="best analysis"/>
 				</para>
 			</seq>
 		</part>
@@ -958,11 +965,11 @@
 					<lit> - </lit>
 				</span>
 				<choice>
-					<where field="Language" stringaltequals="" ws="all analysis">
+					<where field="LanguageNotes" stringaltequals="" ws="all analysis">
 						<string field="Gloss" ws="best analysis"/>
 					</where>
 					<otherwise>
-						<string field="Language" ws="best analysis"/>
+						<string field="LanguageNotes" ws="best analysis"/>
 						<lit> - </lit>
 						<string field="Gloss" ws="best analysis"/>
 					</otherwise>
@@ -973,7 +980,15 @@
 			<slice field="PrecComment" label="Preceding Annotation" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
 		</part>
 		<part id="LexEtymology-Detail-Language" type="Detail">
-			<slice field="Language" label="Source Language" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+			<slice field="Language" label="Source Language" editor="possVectorReference" menu="mnuDataTree-Help" indent="true">
+				<deParams ws="best analysis" changeRequiresRefresh="true" />
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the Languages List" tool="languagesListEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="LexEtymology-Detail-LanguageNotes" type="Detail">
+			<slice field="LanguageNotes" label="Source Language Notes" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
 		</part>
 		<part id="LexEtymology-Detail-Form" type="Detail">
 			<slice field="Form" label="Source Form" editor="multistring" ws="analysis vernacular" menu="mnuDataTree-Help" />
@@ -994,7 +1009,10 @@
 			<string field="PrecComment"  ws="$ws=analysis" />
 		</part>
 		<part id="LexEtymology-Jt-Language" type="JtView">
-			<string field="Language"  ws="$ws=analysis" />
+			<seq field="Language" layout="BrowseAbbr" ws="$ws=analysis" />
+		</part>
+		<part id="LexEtymology-Jt-LanguageNotes" type="JtView">
+			<string field="LanguageNotes"  ws="$ws=analysis" />
 		</part>
 		<part id="LexEtymology-Jt-FormOnly" type="JtView">
 			<string field="Form" ws="$ws=analysis" />
@@ -1483,7 +1501,10 @@
 			<configureMlString field="PrecComment" />
 		</part>
 		<part id="LexEtymology-Jt-LanguagePub">
-			<configureMlString field="Language" />
+			<seq field="Language" layout="Abbreviation"/>
+		</part>
+		<part id="LexEtymology-Jt-LanguageNotesPub">
+			<configureMlString field="LanguageNotes" />
 		</part>
 		<part id="LexEtymology-Jt-FormPub">
 			<configureMlString field="Form" />
@@ -1501,7 +1522,7 @@
 			<configureMlString field="Bibliography" />
 		</part>
 		<part id="LexEtymology-Jt-SourcePub">
-			<configureMlString field="Language" />
+			<configureMlString field="LanguageNotes" />
 		</part>
 	</bin>
 

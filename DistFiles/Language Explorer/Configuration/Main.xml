@@ -753,6 +753,7 @@
 			<item command="CmdJumpToVariantEntryTypeList"/>
 			<item command="CmdJumpToTextMarkupTagsList"/>
 			<item command="CmdJumpToLexRefTypeList"/>
+			<item command="CmdJumpToLanguagesList"/>
 			<item command="CmdJumpToLocationList"/>
 			<item command="CmdJumpToPublicationList"/>
 			<item command="CmdJumpToMorphTypeList"/>

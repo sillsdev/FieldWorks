@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<DictionaryConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="All Reversal Indexes" writingSystem="" version="9" lastModified="2016-07-21" allPublications="true" isRootBased="false">
+<DictionaryConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="All Reversal Indexes" writingSystem="" version="10" lastModified="2016-07-27" allPublications="true" isRootBased="false">
 	<ConfigurationItem name="Reversal Entry" isEnabled="true" style="Reversal-Normal" styleType="paragraph" field="ReversalIndexEntry" cssClassNameOverride="reversalindexentry">
 		<ConfigurationItem name="Reversal Form" isEnabled="true" style="Reversal-Headword" between=" " after="  " field="ReversalForm">
 			<WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
@@ -166,7 +166,19 @@
 				  <Option id="analysis" isEnabled="true" />
 				</WritingSystemOptions>
 			  </ConfigurationItem>
-			  <ConfigurationItem name="Source Language" after=" " isEnabled="true" field="Language">
+			  <ConfigurationItem name="Source Language" after=" " between=" " isEnabled="true" field="LanguageRS" cssClassNameOverride="languages">
+				<ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
+				  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+					<Option id="analysis" isEnabled="true"/>
+				  </WritingSystemOptions>
+				</ConfigurationItem>
+				<ConfigurationItem name="Name" between=" " after=" " isEnabled="false" field="Name">
+				  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+					<Option id="analysis" isEnabled="true"/>
+				  </WritingSystemOptions>
+				</ConfigurationItem>
+			  </ConfigurationItem>
+			  <ConfigurationItem name="Source Language Notes" after=" " isEnabled="false" field="LanguageNotes">
 				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 				  <Option id="analysis" isEnabled="true"/>
 				</WritingSystemOptions>
@@ -762,7 +774,19 @@
 					  <Option id="analysis" isEnabled="true" />
 					</WritingSystemOptions>
 				  </ConfigurationItem>
-				  <ConfigurationItem name="Source Language" after=" " isEnabled="true" field="Language">
+				  <ConfigurationItem name="Source Language" after=" " between=" " isEnabled="true" field="LanguageRS" cssClassNameOverride="languages">
+					<ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
+					  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+						<Option id="analysis" isEnabled="true"/>
+					  </WritingSystemOptions>
+					</ConfigurationItem>
+					<ConfigurationItem name="Name" between=" " after=" " isEnabled="false" field="Name">
+					  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+						<Option id="analysis" isEnabled="true"/>
+					  </WritingSystemOptions>
+					</ConfigurationItem>
+				  </ConfigurationItem>
+				  <ConfigurationItem name="Source Language Notes" after=" " isEnabled="false" field="LanguageNotes">
 					<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 					  <Option id="analysis" isEnabled="true"/>
 					</WritingSystemOptions>

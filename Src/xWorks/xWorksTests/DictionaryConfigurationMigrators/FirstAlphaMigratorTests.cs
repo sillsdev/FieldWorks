@@ -818,97 +818,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		}
 
 		[Test]
-		public void MigrateFromConfigV6toV7_UpdatesEtymologyCluster()
-		{
-			var formNode = new ConfigurableDictionaryNode
-			{
-				Label = "Etymological Form",
-				FieldDescription = "Form",
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "best vernoranal" },
-					DictionaryNodeWritingSystemOptions.WritingSystemType.Both)
-			};
-			var glossNode = new ConfigurableDictionaryNode
-			{
-				Label = "Gloss",
-				FieldDescription = "Gloss",
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "analysis" },
-					DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis)
-			};
-			var commentNode = new ConfigurableDictionaryNode
-			{
-				Label = "Comment",
-				FieldDescription = "Comment",
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "analysis" },
-					DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis)
-			};
-			var sourceNode = new ConfigurableDictionaryNode
-			{
-				Label = "Source",
-				FieldDescription = "Source"
-			};
-			var etymologyNode = new ConfigurableDictionaryNode
-			{
-				Label = "Etymology",
-				FieldDescription = "EtymologyOA",
-				CSSClassNameOverride = "etymology",
-				Children = new List<ConfigurableDictionaryNode> { formNode, glossNode, commentNode, sourceNode }
-			};
-			var mainEntryNode = new ConfigurableDictionaryNode
-			{
-				Label = "Main Entry",
-				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { etymologyNode }
-			};
-			var model = new DictionaryConfigurationModel
-			{
-				Version = FirstAlphaMigrator.VersionAlpha2,
-				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
-			};
-			m_migrator.MigrateFrom83Alpha(model);
-			Assert.AreEqual("EtymologyOS", etymologyNode.FieldDescription, "Should have changed to a sequence.");
-			Assert.AreEqual("etymologies", etymologyNode.CSSClassNameOverride, "Should have changed CSS override");
-			Assert.AreEqual("(", etymologyNode.Before, "Should have set Before to '('.");
-			Assert.AreEqual(") ", etymologyNode.After, "Should have set After to ') '.");
-			Assert.AreEqual(" ", etymologyNode.Between, "Should have set Between to one space.");
-			var etymChildren = etymologyNode.Children;
-			Assert.AreEqual(6, etymChildren.Count);
-			Assert.IsNull(etymChildren.Find(node => node.Label == "Source"),
-				"Should have deleted the old Source node");
-			var configNode = etymChildren.Find(node => node.Label == "Preceding Annotation");
-			Assert.IsNotNull(configNode, "Should have added Preceding Annotation node");
-			Assert.That(configNode.FieldDescription, Is.EqualTo("PrecComment"));
-			Assert.That(configNode.IsEnabled, Is.True, "PrecComment node should be enabled");
-			TestForWritingSystemOptionsType(configNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
-			configNode = etymChildren.Find(node => node.Label == "Source Language");
-			Assert.IsNotNull(configNode, "Should have added Source Language node");
-			Assert.That(configNode.FieldDescription, Is.EqualTo("Language"));
-			Assert.That(configNode.IsEnabled, Is.True, "Language node should be enabled");
-			TestForWritingSystemOptionsType(configNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
-			configNode = etymChildren.Find(node => node.Label == "Source Form");
-			Assert.IsNotNull(configNode, "Should have changed the name of the old Etymological Form node");
-			Assert.That(configNode.FieldDescription, Is.EqualTo("Form"));
-			Assert.That(configNode.IsEnabled, Is.True, "Form node should be enabled");
-			TestForWritingSystemOptionsType(configNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Both);
-			configNode = etymChildren.Find(node => node.Label == "Gloss");
-			Assert.IsNotNull(configNode, "Should still have the Gloss node");
-			Assert.That(configNode.FieldDescription, Is.EqualTo("Gloss"));
-			Assert.That(configNode.IsEnabled, Is.True, "Gloss node should be enabled");
-			TestForWritingSystemOptionsType(configNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
-			configNode = etymChildren.Find(node => node.Label == "Following Comment");
-			Assert.IsNotNull(configNode, "Should have changed the name of the old Comment node");
-			Assert.That(configNode.FieldDescription, Is.EqualTo("Comment"));
-			Assert.That(configNode.IsEnabled, Is.False, "Comment node should NOT be enabled");
-			TestForWritingSystemOptionsType(configNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
-			configNode = etymChildren.Find(node => node.Label == "Note");
-			Assert.IsNull(configNode, "Should NOT add Note node to configurations");
-			configNode = etymChildren.Find(node => node.Label == "Bibliographic Source");
-			Assert.IsNotNull(configNode, "Should have added Bibliographic Source node");
-			Assert.That(configNode.FieldDescription, Is.EqualTo("Bibliography"));
-			Assert.That(configNode.IsEnabled, Is.True, "Bibliography node should be enabled");
-			TestForWritingSystemOptionsType(configNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
-		}
-
-		[Test]
 		public void MigrateFromConfigV7toV8_AddsIsRootBased_Stem()
 		{
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -945,70 +854,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		}
 
 		[Test]
-		public void MigrateFromConfigV6toV7_UpdatesReversalEtymologyCluster()
-		{
-			var formNode = new ConfigurableDictionaryNode
-			{
-				Label = "Etymological Form",
-				FieldDescription = "Form",
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "best vernoranal" },
-					DictionaryNodeWritingSystemOptions.WritingSystemType.Both)
-			};
-			var glossNode = new ConfigurableDictionaryNode
-			{
-				Label = "Gloss",
-				FieldDescription = "Gloss",
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "analysis" },
-					DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis)
-			};
-			var commentNode = new ConfigurableDictionaryNode
-			{
-				Label = "Comment",
-				FieldDescription = "Comment",
-				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "analysis" },
-					DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis)
-			};
-			var sourceNode = new ConfigurableDictionaryNode
-			{
-				Label = "Source",
-				FieldDescription = "Source"
-			};
-			var etymologyNode = new ConfigurableDictionaryNode
-			{
-				Label = "Etymology",
-				FieldDescription = "Owner",
-				SubField = "EtymologyOA",
-				CSSClassNameOverride = "etymology",
-				Children = new List<ConfigurableDictionaryNode> { formNode, glossNode, commentNode, sourceNode }
-			};
-			var referencedSensesNode = new ConfigurableDictionaryNode
-			{
-				Label = "Referenced Senses",
-				FieldDescription = "ReferringSenses",
-				Children = new List<ConfigurableDictionaryNode> { etymologyNode }
-			};
-			var mainEntryNode = new ConfigurableDictionaryNode
-			{
-				Label = "Reversal Entry",
-				FieldDescription = "ReversalIndexEntry",
-				Children = new List<ConfigurableDictionaryNode> { referencedSensesNode }
-			};
-			var model = new DictionaryConfigurationModel
-			{
-				Version = FirstAlphaMigrator.VersionAlpha2,
-				WritingSystem = "en",
-				FilePath = String.Empty,
-				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
-			};
-			m_migrator.MigrateFrom83Alpha(model);
-			Assert.AreEqual("EtymologyOS", etymologyNode.SubField, "Should have changed to a sequence.");
-			Assert.AreEqual("Entry", etymologyNode.FieldDescription, "Should have changed 'Owner' field for reversal to 'Entry'");
-			Assert.AreEqual("etymologies", etymologyNode.CSSClassNameOverride, "Should have changed CSS override");
-			Assert.AreEqual(6, etymologyNode.Children.Count, "There should be only 4 nodes after the conversion.");
-			Assert.IsNull(etymologyNode.DictionaryNodeOptions, "Improper options added to etymology sequence node.");
-		}
-
-		[Test]
 		public void MigrateFromConfigV6toV7_UpdatesAllomorphFieldDescription()
 		{
 			var AllomorphNode = new ConfigurableDictionaryNode
@@ -1040,14 +885,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			m_migrator.MigrateFrom83Alpha(model);
 			Assert.AreEqual("Entry", AllomorphNode.FieldDescription, "Should have changed 'Owner' field for reversal to 'Entry'");
 			Assert.AreEqual("AlternateFormsOS", AllomorphNode.SubField, "Should have changed to a sequence.");
-		}
-
-		private void TestForWritingSystemOptionsType(ConfigurableDictionaryNode configNode,
-			DictionaryNodeWritingSystemOptions.WritingSystemType expectedWsType)
-		{
-			var options = configNode.DictionaryNodeOptions;
-			Assert.True(options is DictionaryNodeWritingSystemOptions, "Config node should have WritingSystemOptions");
-			Assert.AreEqual(expectedWsType, (options as DictionaryNodeWritingSystemOptions).WsType);
 		}
 
 		[Test]

@@ -95,7 +95,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 		private static void RemoveNonLoadableData(IEnumerable<ConfigurableDictionaryNode> nodes)
 		{
-			PerformActionOnNodes(nodes, node =>
+			DCM.PerformActionOnNodes(nodes, node =>
 			{
 				node.ReferenceItem = null;
 				var rsOptions = node.DictionaryNodeOptions as DictionaryNodeReferringSenseOptions;
@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				m_logger.DecreaseIndent();
 				return;
 			}
-			PerformActionOnNodes(model.Parts, SetReferenceItem);
+			DCM.PerformActionOnNodes(model.Parts, SetReferenceItem);
 			if (model.IsReversal)
 			{
 				var reversalSubEntries = FindMainEntryDescendant(model, "SubentriesOS");
@@ -131,7 +131,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				DictionaryConfigurationController.ShareNodeAsReference(model.SharedItems, mainEntrySubEntries, "mainentrysubentries");
 			}
 			// Remove direct children from nodes with referenced children
-			PerformActionOnNodes(model.PartsAndSharedItems, n => { if (!string.IsNullOrEmpty(n.ReferenceItem)) n.Children = null; });
+			DCM.PerformActionOnNodes(model.PartsAndSharedItems, n => { if (!string.IsNullOrEmpty(n.ReferenceItem)) n.Children = null; });
 		}
 
 		private static void AddSubsubEntriesOptionsIfNeeded(ConfigurableDictionaryNode mainEntrySubEntries)
@@ -238,14 +238,14 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			switch (version)
 			{
 				case 2:
-					PerformActionOnNodes(nodes, n =>
+					DCM.PerformActionOnNodes(nodes, n =>
 					{
 						if (n.FieldDescription == "OwningEntry" && n.SubField == "MLHeadWord")
 							n.SubField = newHeadword;
 					});
 					break;
 				case 3:
-					PerformActionOnNodes(nodes, n =>
+					DCM.PerformActionOnNodes(nodes, n =>
 					{
 						if (n.Label == "Gloss (or Summary Definition)")
 							n.FieldDescription = "GlossOrSummary";
@@ -263,7 +263,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					});
 					break;
 				case 4:
-					PerformActionOnNodes(nodes, n =>
+					DCM.PerformActionOnNodes(nodes, n =>
 					{
 						switch (n.FieldDescription)
 						{
@@ -279,7 +279,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					});
 					break;
 				case VersionAlpha2:
-					PerformActionOnNodes(nodes, n =>
+					DCM.PerformActionOnNodes(nodes, n =>
 					{
 						if (n.FieldDescription == "VisibleVariantEntryRefs" && n.Label == "Variant Of")
 							n.Label = "Variant of";
@@ -344,43 +344,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					});
 					break;
 				case 6:
-					var etymNodeList = new List<ConfigurableDictionaryNode>();
-					const string etymSequence = "EtymologyOS";
-					PerformActionOnNodes(nodes, n =>
+					DCM.PerformActionOnNodes(nodes, n =>
 					{
-						if (n.Label == "Etymology")
-						{
-							if (isReversal)
-							{
-								n.SubField = etymSequence;
-								n.FieldDescription = "Entry";
-							}
-							else
-								n.FieldDescription = etymSequence;
-							n.CSSClassNameOverride = "etymologies";
-							n.Before = "(";
-							n.Between = " ";
-							n.After = ") ";
-
-							etymNodeList.Add(n); // do more drastic changes later
-						}
-						else if (n.Parent != null && n.Parent.Label == "Etymology")
-						{
-							switch (n.FieldDescription)
-							{
-								case "Form":
-									n.Label = "Source Form";
-									n.IsEnabled = true;
-									break;
-								case "Comment":
-									n.Label = "Following Comment";
-									n.IsEnabled = false;
-									break;
-								case "Gloss":
-									n.IsEnabled = true;
-									break;
-							}
-						}
 						if (isReversal && n.Label == "Pronunciation" && n.Parent.Label == "Pronunciations")
 						{
 							var parent = n.Parent;
@@ -393,7 +358,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 						}
 						UpdatePicturesChildren(n);
 					});
-					AddRemoveEtymologyFields(etymNodeList);
 					break;
 			}
 		}
@@ -448,64 +412,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 			node.Children.Add(headwordNode);
 			node.Children.Add(glossNode);
-		}
-
-		private static void AddRemoveEtymologyFields(IEnumerable<ConfigurableDictionaryNode> etymNodes)
-		{
-			// WsOptions to clone as needed
-			var analysisWsOptions = new DictionaryNodeWritingSystemOptions
-			{
-				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis,
-				DisplayWritingSystemAbbreviations = false,
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-				{
-					new DictionaryNodeListOptions.DictionaryNodeOption {Id = "analysis", IsEnabled = true}
-				}
-			};
-
-			// PerformActionOnNodes was walking a tree, so add/removing children was problematical
-			// Here we're just going through a list of nodes modifying the internal structure of each.
-			foreach (var etymNode in etymNodes)
-			{
-				var sourceNode = etymNode.Children.FirstOrDefault(node => node.Label == "Source");
-				if (sourceNode != null)
-					etymNode.Children.Remove(sourceNode);
-
-				// Add new kids in proper slots
-				// PrecComment - 1st slot
-				// Language - 2nd slot
-				var langNode = new ConfigurableDictionaryNode
-				{
-					After = " ", Before = "", Between = " ", Label = "Source Language", FieldDescription = "Language",
-					IsEnabled = true, DictionaryNodeOptions = analysisWsOptions.DeepClone()
-				};
-				etymNode.Children.Insert(0, langNode);
-				var precCommentNode = new ConfigurableDictionaryNode
-				{
-					After = " ", Before = "", Between = " ", Label = "Preceding Annotation", FieldDescription = "PrecComment",
-					IsEnabled = true, DictionaryNodeOptions = analysisWsOptions.DeepClone()
-				};
-				etymNode.Children.Insert(0, precCommentNode);
-
-				// Bibliography - last slot
-				// (Don't add Note to dictionary config. It is UI only for now.)
-				var biblioNode = new ConfigurableDictionaryNode
-				{
-					After = " ", Before = "", Between = " ", Label = "Bibliographic Source", FieldDescription = "Bibliography",
-					IsEnabled = true, DictionaryNodeOptions = analysisWsOptions.DeepClone()
-				};
-				etymNode.Children.Add(biblioNode);
-			}
-		}
-
-		private static void PerformActionOnNodes(IEnumerable<ConfigurableDictionaryNode> nodes, Action<ConfigurableDictionaryNode> action)
-		{
-			foreach (var node in nodes)
-			{
-				action(node);
-				if (node.Children != null)
-					PerformActionOnNodes(node.Children, action);
-			}
 		}
 
 		/// <summary>

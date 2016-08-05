@@ -3710,7 +3710,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				// See LT-11765 for issues here.
 				if (liftEtym.Source != null && liftEtym.Source != "UNKNOWN")
 				{
-						etym.LiftResidue = liftEtym.Source; // Source is no longer part of the model
+					etym.LiftResidue = liftEtym.Source; // Source is no longer part of the model
 				}
 				ProcessEtymologyFieldsAndTraits(etym, liftEtym);
 				StoreDatesInResidue(etym, liftEtym);
@@ -3810,8 +3810,8 @@ namespace SIL.FieldWorks.LexText.Controls
 					case "comment":
 						MergeInMultiString(ety.Comment, LexEtymologyTags.kflidComment, field.Content, ety.Guid);
 						break;
-					case "language":
-						MergeInMultiString(ety.Language, LexEtymologyTags.kflidLanguage, field.Content, ety.Guid);
+					case "languagenotes":
+						MergeInMultiString(ety.LanguageNotes, LexEtymologyTags.kflidLanguageNotes, field.Content, ety.Guid);
 						break;
 					case "preccomment":
 						MergeInMultiString(ety.PrecComment, LexEtymologyTags.kflidPrecComment, field.Content, ety.Guid);
@@ -3830,7 +3830,20 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			foreach (LiftTrait trait in let.Traits)
 			{
-				StoreTraitAsResidue(ety, trait);
+				switch (trait.Name.ToLowerInvariant())
+				{
+					case RangeNames.sDbLanguagesOA:
+						ICmPossibility lang = FindOrCreateLanguagePossibility(trait.Value);
+						if (!ety.LanguageRS.Any(l => l == lang) &&
+							(m_fCreatingNewEntry || m_msImport != MergeStyle.MsKeepOld || !ety.LanguageRS.Any()))
+						{
+							ety.LanguageRS.Add(lang);
+						}
+						break;
+					default:
+						StoreTraitAsResidue(ety, trait);
+						break;
+				}
 			}
 		}
 
@@ -3847,8 +3860,8 @@ namespace SIL.FieldWorks.LexText.Controls
 						if (MultiTsStringsConflict(lexety.Comment, field.Content))
 							return true;
 						break;
-					case "language":
-						if (MultiTsStringsConflict(lexety.Language, field.Content))
+					case "languagenotes":
+						if (MultiTsStringsConflict(lexety.LanguageNotes, field.Content))
 							return true;
 						break;
 					case "preccomment":

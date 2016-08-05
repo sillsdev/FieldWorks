@@ -68,6 +68,9 @@
 		<command id="CmdJumpToExtNoteTypeList" label="Show in {0} list" message="JumpToTool">
 			<parameters tool="extNoteTypeEdit" className="CmPossibility" ownerClass="LexDb" ownerField="ExtendedNoteTypes"/>
 		</command>
+		<command id="CmdJumpToLanguagesList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="languagesListEdit" className="CmPossibility" ownerClass="LexDb" ownerField="Languages"/>
+		</command>
 		<command id="CmdJumpToRoleList" label="Show in {0} list" message="JumpToTool">
 			<parameters tool="roleEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Roles"/>
 		</command>
@@ -442,6 +445,16 @@
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
 					</recordList>
 					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="LanguagesList">
+					<recordList owner="LexDb" property="Languages">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="false" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>

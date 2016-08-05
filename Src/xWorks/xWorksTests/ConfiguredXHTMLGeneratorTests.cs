@@ -1346,15 +1346,28 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateXHTMLForEntry_EtymologyLanguageWorks()
 		{
 			//This test also proves to verify that .NET String properties can be generated
+			var abbrNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Abbreviation",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
 			var etymology = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "EtymologyOS",
 				CSSClassNameOverride = "etymologies",
 				Children = new List<ConfigurableDictionaryNode>
 				{
+					new ConfigurableDictionaryNode()
+					{
+						Label = "Source Language",
+						FieldDescription = "LanguageRS",
+						CSSClassNameOverride = "languages",
+						Children = new List<ConfigurableDictionaryNode> { abbrNode }
+					},
 					new ConfigurableDictionaryNode
 					{
-						FieldDescription = "Language",
+						Label = "Source Language Notes",
+						FieldDescription = "LanguageNotes",
 						DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
 					}
 				}
@@ -1365,16 +1378,23 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry"
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var language = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+			Cache.LangProject.LexDbOA.LanguagesOA.PossibilitiesOS.Add(language);
+			language.Abbreviation.set_String(m_wsEn, Cache.TsStrFactory.MakeString("ar", m_wsEn));
+			language.Name.set_String(m_wsEn, Cache.TsStrFactory.MakeString("Arabic", m_wsEn));
 			var entryOne = CreateInterestingLexEntry(Cache);
 			var etym = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
 			entryOne.EtymologyOS.Add(etym);
-			etym.Language.SetAnalysisDefaultWritingSystem("Georgian");
+			etym.LanguageNotes.SetAnalysisDefaultWritingSystem("Georgian");
+			etym.LanguageRS.Add(language);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
-			const string etymologyWithGeorgianSource = "//span[@class='etymologies']/span[@class='etymologie']/span[@class='language']/span[@lang='en' and text()='Georgian']";
-			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(etymologyWithGeorgianSource, 1);
+			const string etymologyWithArabicSrcLanguage = "//span[@class='etymologies']/span[@class='etymology']/span[@class='languages']/span[@class='language']/span[@class='abbreviation']/span[@lang='en' and text()='ar']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(etymologyWithArabicSrcLanguage, 1);
+			const string etymologyWithGeorgianNotes = "//span[@class='etymologies']/span[@class='etymology']/span[@class='languagenotes']/span[@lang='en' and text()='Georgian']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(etymologyWithGeorgianNotes, 1);
 		}
 
 		[Test]

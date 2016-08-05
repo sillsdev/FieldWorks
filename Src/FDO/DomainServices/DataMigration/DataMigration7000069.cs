@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			var lexDbElt = XElement.Parse(lexDbDTO.Xml);
 			if (lexDbElt.Element("ExtendedNoteTypes") != null)
 				return; // probably a test involving NewLangProj which is still languishing at v7000062
-			CreateNewLexDbProperty(lexDbElt, extNoteListGuid);
+			CreateNewLexDbProperty(lexDbElt, "ExtendedNoteTypes", extNoteListGuid);
 			var lexDbGuid = lexDbElt.Attribute("guid").Value;
 
 			// create ExtendedNoteTypes' possibility list
@@ -135,22 +135,60 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			repoDto.Add(dtoCmPossibility);
 		}
 
-		private static void CreateNewLexDbProperty(XElement lexDbElt, string extNoteListGuid)
+		private static void CreateNewLexDbProperty(XElement lexDbElt, string propName, string listGuid)
 		{
-			lexDbElt.Add(new XElement("ExtendedNoteTypes",
+			lexDbElt.Add(new XElement(propName,
 							new XElement("objsur",
-								new XAttribute("guid", extNoteListGuid),
+								new XAttribute("guid", listGuid),
 								new XAttribute("t", "o"))));
 		}
 
 		/// <summary>
 		/// Change LexEntry.Etymology to Owned Sequence, add several fields to LexEtymology
-		/// Change some existing field signatures. Remove Source and put its data in Language
-		/// in a slightly different format (Unicode -> MultiString).
+		/// Change some existing field signatures. Remove Source and put its data in LanguageNotes
+		/// in a slightly different format (Unicode -> MultiString). Also add a new list Languages
+		/// owned by LexDb. Languages list will be initially empty.
 		/// </summary>
 		/// <remarks>internal for testing</remarks>
 		internal static void AugmentEtymologyCluster(IDomainObjectDTORepository repoDto)
 		{
+			const string languagesListGuid = "487c15b0-2ced-4417-8b77-9075f4a21e5f";
+			var lexDbDTO = repoDto.AllInstancesSansSubclasses("LexDb").FirstOrDefault();
+			if (lexDbDTO == null)
+				return; // This must be a test that doesn't care about LexDb.
+			var lexDbElt = XElement.Parse(lexDbDTO.Xml);
+			CreateNewLexDbProperty(lexDbElt, "Languages", languagesListGuid);
+			var lexDbGuid = lexDbElt.Attribute("guid").Value;
+
+			// create Languages' possibility list
+			var sb = new StringBuilder();
+			sb.AppendFormat("<rt class=\"CmPossibilityList\" guid=\"{0}\" ownerguid=\"{1}\">", languagesListGuid,
+							lexDbGuid);
+			sb.Append("<Abbreviation>");
+			sb.Append("<AUni ws=\"en\">Lgs</AUni>");
+			sb.Append("<AUni ws=\"es\">Ids</AUni>");
+			sb.Append("<AUni ws=\"fr\">Lgs</AUni>");
+			sb.Append("</Abbreviation>");
+			sb.Append("<DateCreated val=\"2016-07-25 18:48:18.679\" />");
+			sb.Append("<DateModified val=\"2016-07-25 18:48:18.679\" />");
+			sb.Append("<Depth val=\"1\" />");
+			sb.Append("<IsSorted val=\"True\" />");
+			sb.Append("<ItemClsid val=\"7\" />");
+			sb.Append("<Name>");
+			sb.Append("<AUni ws=\"en\">Languages</AUni>");
+			sb.Append("<AUni ws=\"es\">Idiomas</AUni>");
+			sb.Append("<AUni ws=\"fr\">Langues</AUni>");
+			sb.Append("</Name>");
+			sb.Append("<PreventDuplicates val=\"True\" />");
+			sb.Append("<WsSelector val=\"-3\" />");
+			sb.Append("</rt>");
+			// We purposefully didn't add any Possibilities element.
+			var newCmPossibilityListElt = XElement.Parse(sb.ToString());
+			var dtoCmPossibilityList = new DomainObjectDTO(languagesListGuid, "CmPossibilityList", newCmPossibilityListElt.ToString());
+			repoDto.Add(dtoCmPossibilityList);
+			DataMigrationServices.UpdateDTO(repoDto, lexDbDTO, lexDbElt.ToString()); // update LexDb object
+
+			// Augment existing Etymologies
 			var etymologyDtos = repoDto.AllInstancesSansSubclasses("LexEtymology");
 			if (!etymologyDtos.Any())
 				return;
@@ -163,7 +201,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				var sourceElt = dataElt.Element("Source");
 				if (sourceElt == null)
 					continue;
-				sourceElt.Name = "Language"; // sourceElt is now the languageElt!
+				sourceElt.Name = "LanguageNotes"; // sourceElt is now the languageNotesElt!
 				var oldSourceData = sourceElt.Element("Uni").Value;
 				var multiStrElt = BuildMultiStringElement(primaryAnalysisWs, oldSourceData);
 				sourceElt.RemoveAll();

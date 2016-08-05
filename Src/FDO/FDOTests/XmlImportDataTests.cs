@@ -1317,11 +1317,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"</LexemeForm>" + Environment.NewLine +
 				"<Etymology>" + Environment.NewLine +
 				"<LexEtymology>" + Environment.NewLine +
-				"<Language>" + Environment.NewLine +
+				"<LanguageNotes>" + Environment.NewLine +
 				"<AStr ws=\"en\">" + Environment.NewLine +
 				"<Run ws=\"en\">|bBold|r regular |iItalic|r|fw{greek}ignored*bold*words|b|ibold-italic|r|r|bBOLD  |r</Run>" + Environment.NewLine +
 				"</AStr>" + Environment.NewLine +
-				"</Language>" + Environment.NewLine +
+				"</LanguageNotes>" + Environment.NewLine +
 				"</LexEtymology>" + Environment.NewLine +
 				"</Etymology>" + Environment.NewLine +
 				"<Senses>" + Environment.NewLine +
@@ -1370,6 +1370,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(0, m_cache.LangProject.AnthroListOA.PossibilitiesOS.Count);
 			Assert.AreEqual(0, m_cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Count);
 			Assert.AreEqual(0, m_cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Count);
+			Assert.AreEqual(0, m_cache.LangProject.LexDbOA.LanguagesOA.PossibilitiesOS.Count);
 			StringBuilder sbLog = new StringBuilder();
 			xid.ImportData(rdr, new StringWriter(sbLog), null);
 			Assert.AreEqual(1, m_cache.LangProject.LexDbOA.Entries.Count());

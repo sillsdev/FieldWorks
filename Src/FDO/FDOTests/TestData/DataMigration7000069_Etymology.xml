@@ -8,8 +8,14 @@
 		<CurVernWss>
 			<Uni>fr fr-fonipa</Uni>
 		</CurVernWss>
+		<LexDb>
+			<objsur guid="bcb9fc0c-2ae0-41a9-8719-9d829cfa0337" t="o" />
+		</LexDb>
 	</rt>
-	
+
+	<rt class="LexDb" guid="bcb9fc0c-2ae0-41a9-8719-9d829cfa0337">
+	</rt>
+
 	<rt class="LexEntry" guid="7ecbb299-bf35-4795-a5cc-8d38ce8b891c">
 		<Etymology>
 			<objsur guid="c6c2d02f-c2e5-4c33-aded-457bd430640b" t="o" />

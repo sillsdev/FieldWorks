@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -45,6 +44,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		readonly List<ICmPossibility> m_rgnewUsageType = new List<ICmPossibility>();
 		readonly List<ICmLocation> m_rgnewLocation = new List<ICmLocation>();
 		readonly List<ICmPossibility> m_rgnewPerson = new List<ICmPossibility>();
+		readonly List<ICmPossibility> m_rgnewLanguage = new List<ICmPossibility>();
 		readonly List<IPhEnvironment> m_rgnewEnvirons = new List<IPhEnvironment>();
 		readonly List<ICmPossibility> m_rgnewLexRefTypes = new List<ICmPossibility>();
 		readonly List<IMoInflClass> m_rgnewInflClasses = new List<IMoInflClass>();
@@ -81,6 +81,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		readonly Dictionary<string, ICmPossibility> m_dictRevLexRefTypes = new Dictionary<string, ICmPossibility>();
 		readonly Dictionary<string, ICmPossibility> m_dictExceptFeats = new Dictionary<string, ICmPossibility>();
 		readonly Dictionary<string, ICmPossibility> m_dictPublicationTypes = new Dictionary<string, ICmPossibility>();
+		readonly Dictionary<string, ICmPossibility> m_dictLanguage = new Dictionary<string, ICmPossibility>();
 
 		//New
 		readonly Dictionary<string, ICmPossibility> m_dictAffixCategories = new Dictionary<string, ICmPossibility>();
@@ -432,6 +433,23 @@ namespace SIL.FieldWorks.LexText.Controls
 			return poss;
 		}
 
+		private ICmPossibility FindOrCreateLanguagePossibility(string traitValue)
+		{
+			ICmPossibility poss;
+			if (m_dictLanguage.TryGetValue(traitValue, out poss) ||
+				m_dictLanguage.TryGetValue(traitValue.ToLowerInvariant(), out poss))
+			{
+				return poss;
+			}
+			poss = CreateNewCmPossibility();
+			m_cache.LangProject.LexDbOA.LanguagesOA.PossibilitiesOS.Add(poss);
+			poss.Abbreviation.set_String(m_cache.DefaultAnalWs, traitValue);
+			poss.Name.set_String(m_cache.DefaultAnalWs, traitValue);
+			m_dictLanguage.Add(traitValue, poss);
+			m_rgnewLanguage.Add(poss);
+			return poss;
+		}
+
 		private ICmLocation FindOrCreateLocation(string traitValue)
 		{
 			ICmPossibility poss;
@@ -514,6 +532,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				ListNewPossibilities(writer, LexTextControls.ksStatusValuesAdded, m_rgnewStatus);
 				ListNewPossibilities(writer, LexTextControls.ksUsageTypesAdded, m_rgnewUsageType);
 				ListNewPossibilities(writer, LexTextControls.ksLocationsAdded, new List<ICmPossibility>(m_rgnewLocation));
+				ListNewPossibilities(writer, LexTextControls.ksLanguagesAdded, new List<ICmPossibility>(m_rgnewLanguage));
 				ListNewEnvironments(writer, LexTextControls.ksEnvironmentsAdded, m_rgnewEnvirons);
 				ListNewPossibilities(writer, LexTextControls.ksLexicalReferenceTypesAdded, m_rgnewLexRefTypes);
 				ListNewWritingSystems(writer, LexTextControls.ksWritingSystemsAdded, m_addedWss);
@@ -1324,6 +1343,10 @@ namespace SIL.FieldWorks.LexText.Controls
 					//handled already
 					break;
 
+				case RangeNames.sDbLanguagesOA:
+					ProcessPossibility(id, guidAttr, parent, newDesc, newLabel, newAbbrev,
+						m_dictLanguage, m_rgnewLanguage, m_cache.LangProject.LexDbOA.LanguagesOA);
+					break;
 
 					//xxx============================================xxx
 				case RangeNames.sDbMorphTypesOAold: // original FLEX export

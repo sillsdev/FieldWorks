@@ -28,6 +28,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			m_logger = logger;
 		}
 
+		public FdoCache Cache { get; set; }
+
 		public void MigrateIfNeeded(SimpleLogger logger, Mediator mediator, string appVersion)
 		{
 			m_logger = logger;
@@ -90,14 +92,83 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 		internal void MigrateFrom83Alpha(ISimpleLogger logger, DictionaryConfigurationModel oldConfig, DictionaryConfigurationModel currentDefaultModel)
 		{
+			// it may be helpful to have parents in the oldConfig, currentDefaultModel already has them:
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(oldConfig.Parts, oldConfig.SharedItems);
 			var oldConfigList = new List<ConfigurableDictionaryNode>(oldConfig.PartsAndSharedItems);
 			var currentDefaultList = new List<ConfigurableDictionaryNode>(currentDefaultModel.PartsAndSharedItems);
 			for (var part = 0; part < oldConfigList.Count; ++part)
 			{
-				MoveNodesIntoNewGroups(oldConfigList[part], currentDefaultList[part]);
-				MigrateNewDefaultNodes(oldConfigList[part], currentDefaultList[part]);
+				MigratePartFromOldVersionToCurrent(oldConfig, oldConfigList[part], currentDefaultList[part]);
 			}
 			oldConfig.Version = DCM.VersionCurrent;
+			logger.WriteLine("Migrated to version " + DCM.VersionCurrent);
+		}
+
+		private void MigratePartFromOldVersionToCurrent(DictionaryConfigurationModel oldConfig,
+			ConfigurableDictionaryNode oldConfigPart, ConfigurableDictionaryNode currentDefaultConfigPart)
+		{
+			var oldVersion = oldConfig.Version;
+			if (oldVersion < FirstAlphaMigrator.VersionAlpha3)
+				throw new ApplicationException("Beta migration starts at VersionAlpha3 (8)");
+			switch (oldVersion)
+			{
+				case FirstAlphaMigrator.VersionAlpha3:
+					MoveNodesIntoNewGroups(oldConfigPart, currentDefaultConfigPart);
+					MigrateNewDefaultNodes(oldConfigPart, currentDefaultConfigPart);
+					goto case 9;
+				case 9:
+					UpgradeEtymologyCluster(oldConfigPart, oldConfig.IsReversal);
+					break;
+				default:
+					m_logger.WriteLine(string.Format(
+						"Unable to migrate {0}: no migration instructions for version {1}", oldConfigPart.Label, oldVersion));
+					break;
+			}
+		}
+
+		/// <summary>
+		/// Case FirstAlphaMigrator.VersionAlpha3 above will pull in all the new nodes in the Etymology cluster by Label.
+		/// Gloss is the only pre-existing node that doesn't have a new name, so it won't be replaced.
+		/// It needs to be marked Enabled. The main Etymology node needs several modifications.
+		/// Three old nodes will need deleting: Etymological Form, Comment and Source
+		/// </summary>
+		/// <param name="oldConfigPart"></param>
+		/// <param name="isReversal"></param>
+		private static void UpgradeEtymologyCluster(ConfigurableDictionaryNode oldConfigPart, bool isReversal)
+		{
+			if (oldConfigPart.Children == null || oldConfigPart.Children.Count == 0)
+				return; // safety net
+
+			var etymNodes = new List<ConfigurableDictionaryNode>();
+			DCM.PerformActionOnNodes(oldConfigPart.Children, node =>
+			{
+				if (node.Label == "Etymology")
+					etymNodes.Add(node); // since we have to do some node deleting, just collect up the relevant nodes
+			});
+
+			foreach (var node in etymNodes)
+			{
+				// modify main node
+				var etymSequence = "EtymologyOS";
+				if (isReversal)
+				{
+					node.SubField = etymSequence;
+					node.FieldDescription = "Entry";
+				}
+				else
+					node.FieldDescription = etymSequence;
+				node.CSSClassNameOverride = "etymologies";
+				node.Before = "(";
+				node.Between = " ";
+				node.After = ") ";
+
+				// enable Gloss node
+				node.Children.Find(n => n.Label == "Gloss").IsEnabled = true;
+
+				// remove old children
+				var nodesToRemove = new[] {"Etymological Form", "Comment", "Source"};
+				node.Children.RemoveAll(n => nodesToRemove.Contains(n.Label));
+			}
 		}
 
 		/// <summary>
@@ -191,7 +262,5 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					oldConfigNode.Children.Add(newNode);
 			}
 		}
-
-		public FdoCache Cache { get; set; }
 	}
 }

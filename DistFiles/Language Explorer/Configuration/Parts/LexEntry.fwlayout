@@ -73,6 +73,7 @@
 			<indent>
 				<part ref="PrecComment" label="Preceding Annotation"/>
 				<part ref="Language" label="Source Language"/>
+				<part ref="LanguageNotes" label="Source Language Notes"/>
 				<part ref="Form" label="Source Form"/>
 				<part ref="Gloss" label="Gloss"/>
 				<part ref="Comment" label="Following Comment"/>
@@ -1302,7 +1303,8 @@
 
 	<layout class="LexEtymology" type="jtview" name="publishStemEtymology">
 		<part ref="PrecCommentPub" label="Preceding Annotation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-preccomment"/>
-		<part ref="LanguagePub" label="Source Language" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-language"/>
+		<part ref="LanguagePub" label="Source Language" before="" after=" " visibility="ifdata" css="etymology-language"/>
+		<part ref="LanguageNotesPub" label="Source Language Notes" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-languageNotes"/>
 		<part ref="FormPub" label="Source Form" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-form"/>
 		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-gloss"/>
 		<part ref="CommentPub" label="Following Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment"/>
@@ -1310,7 +1312,8 @@
 	</layout>
 	<layout class="LexEtymology" type="jtview" name="publishStemMinorEtymology">
 		<part ref="PrecCommentPub" label="Preceding Annotation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-preccomment-minor"/>
-		<part ref="LanguagePub" label="Source Language" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-language-minor"/>
+		<part ref="LanguagePub" label="Source Language" before="" after=" " visibility="ifdata" css="etymology-language-minor"/>
+		<part ref="LanguageNotesPub" label="Source Language Notes" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-languageNotes-minor"/>
 		<part ref="FormPub" label="Source Form" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-form-minor"/>
 		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-gloss-minor"/>
 		<part ref="CommentPub" label="Following Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment-minor"/>
@@ -1318,7 +1321,8 @@
 	</layout>
 	<layout class="LexEtymology" type="jtview" name="publishRootEtymology">
 		<part ref="PrecCommentPub" label="Preceding Annotation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-preccomment"/>
-		<part ref="LanguagePub" label="Source Language" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-language"/>
+		<part ref="LanguagePub" label="Source Language" before="" after=" " visibility="ifdata" css="etymology-language"/>
+		<part ref="LanguageNotesPub" label="Source Language Notes" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-languageNotes"/>
 		<part ref="FormPub" label="Source Form" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-form"/>
 		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-gloss"/>
 		<part ref="CommentPub" label="Following Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment"/>
@@ -1326,7 +1330,8 @@
 	</layout>
 	<layout class="LexEtymology" type="jtview" name="publishRootMinorEtymology">
 		<part ref="PrecCommentPub" label="Preceding Annotation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-preccomment-minor"/>
-		<part ref="LanguagePub" label="Source Language" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-language-minor"/>
+		<part ref="LanguagePub" label="Source Language" before="" after=" " visibility="ifdata" css="etymology-language-minor"/>
+		<part ref="LanguageNotesPub" label="Source Language Notes" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-languageNotes-minor"/>
 		<part ref="FormPub" label="Source Form" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-form-minor"/>
 		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-gloss-minor"/>
 		<part ref="CommentPub" label="Following Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment-minor"/>
@@ -1334,7 +1339,8 @@
 	</layout>
 	<layout class="LexEtymology" type="jtview" name="publishRootMinorSubEtymology">
 		<part ref="PrecCommentPub" label="Preceding Annotation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-preccomment-minor"/>
-		<part ref="LanguagePub" label="Source Language" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-language-minor"/>
+		<part ref="LanguagePub" label="Source Language" before="" after=" " visibility="ifdata" css="etymology-language-minor"/>
+		<part ref="LanguageNotesPub" label="Source Language Notes" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-languageNotes-minor"/>
 		<part ref="FormPub" label="Source Form" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-form-minor"/>
 		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-gloss-minor"/>
 		<part ref="CommentPub" label="Following Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment-minor"/>
@@ -1342,7 +1348,8 @@
 	</layout>
 	<layout class="LexEtymology" type="jtview" name="publishRootSubEtymology">
 		<part ref="PrecCommentPub" label="Preceding Annotation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-preccomment-sub"/>
-		<part ref="LanguagePub" label="Source Language" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-language-sub"/>
+		<part ref="LanguagePub" label="Source Language" before="" after=" " visibility="ifdata" css="etymology-language-sub"/>
+		<part ref="LanguageNotesPub" label="Source Language Notes" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-languageNotes-sub"/>
 		<part ref="FormPub" label="Source Form" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-form-sub"/>
 		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-gloss-sub"/>
 		<part ref="CommentPub" label="Following Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment-sub"/>
@@ -1350,7 +1357,8 @@
 	</layout>
 	<layout class="LexEtymology" type="jtview" name="publishCd">
 		<part ref="PrecCommentPub" label="Preceding Annotation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-preccomment"/>
-		<part ref="LanguagePub" label="Source Language" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-language"/>
+		<part ref="LanguagePub" label="Source Language" before="" after=" " visibility="ifdata" css="etymology-language"/>
+		<part ref="LanguageNotesPub" label="Source Language Notes" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-languageNotes"/>
 		<part ref="FormPub" label="Source Form" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-form"/>
 		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-gloss"/>
 		<part ref="CommentPub" label="Following Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment"/>

@@ -89,6 +89,7 @@
 	<string id="ExtendedNoteTypes" txt="Extended Note Type"/>
 	<string id="Roles" txt="Role"/>
 	<string id="GenreList" txt="Genre"/>
+	<string id="Languages" txt="Language"/>
 	<string id="ProdRestrict" txt="Exception &quot;Feature&quot;"/>
 	<string id="Positions" txt="Position"/>
 	<string id="PublicationTypes" txt="Publication"/>
@@ -183,6 +184,7 @@
 	<string id="No-ListItems" txt="No List items"/>
 	<string id="No-EducationLevels" txt="No Education Levels"/>
 	<string id="No-Roles" txt="No Roles"/>
+	<string id="No-Languages" txt="No Languages"/>
 	<string id="No-FsFeatStrucTypes" txt="No Feature Types"/>
 	<string id="No-Genres" txt="No Genres"/>
 	<string id="No-LexicalRelations" txt="No Lexical Relations"/>
@@ -417,6 +419,7 @@
 	<string id="Source Form" txt="sf"/>
 	<string id="Slots" txt="sl"/>
 	<string id="Source Language" txt="slg"/>
+	<string id="Source Language Notes" txt="slgn"/>
 	<string id="Semantics Note" txt="sm"/>
 	<string id="Sense Number" txt="sn"/>
 	<string id="Source" txt="so"/>

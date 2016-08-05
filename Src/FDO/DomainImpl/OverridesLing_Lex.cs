@@ -9420,6 +9420,16 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	internal partial class LexEtymology
 	{
 		/// <summary>
+		/// Override to handle reference props of this class.
+		/// </summary>
+		public override ICmObject ReferenceTargetOwner(int flid)
+		{
+			if (flid == Cache.MetaDataCacheAccessor.GetFieldId2(LexEtymologyTags.kClassId, "Language", false))
+				return Cache.LangProject.LexDbOA.LanguagesOA;
+			return base.ReferenceTargetOwner(flid);
+		}
+
+		/// <summary>
 		/// The LiftResidue field stores XML with an outer element &lt;lift-residue&gt; enclosing
 		/// the actual residue.  This returns the actual residue, minus the outer element.
 		/// </summary>
@@ -9524,10 +9534,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				return Language.BestAnalysisAlternative.Text == "***" ?
+				return LanguageNotes.BestAnalysisAlternative.Text == "***" ?
 					Form.BestVernacularAnalysisAlternative.Text :
 					string.Format("{0} ({1})",
-						Form.BestVernacularAnalysisAlternative.Text, Language.BestAnalysisAlternative.Text);
+						Form.BestVernacularAnalysisAlternative.Text, LanguageNotes.BestAnalysisAlternative.Text);
 			}
 		}
 
@@ -9538,13 +9548,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				if (Language.BestAnalysisAlternative.Text == "***")
+				if (LanguageNotes.BestAnalysisAlternative.Text == "***")
 					return Form.BestVernacularAnalysisAlternative;
 				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
 				tisb.AppendTsString(Form.BestVernacularAnalysisAlternative);
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
 				tisb.Append(" (");
-				tisb.AppendTsString(Language.BestAnalysisAlternative);
+				tisb.AppendTsString(LanguageNotes.BestAnalysisAlternative);
 				tisb.Append(")");
 				return tisb.GetString();
 			}

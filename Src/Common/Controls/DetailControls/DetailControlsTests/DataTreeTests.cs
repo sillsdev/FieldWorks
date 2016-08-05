@@ -213,6 +213,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Assert.AreEqual("Bibliography", (m_dtree.Controls[2] as Slice).Label);
 			Assert.AreEqual(0, (m_dtree.Controls[1] as Slice).Indent); // was 1, but indent currently suppressed.
 		}
+
 		/// <summary></summary>
 		[Test]
 		[Ignore("Collapsed nodes are currently not implemented")]
@@ -280,8 +281,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_parent.Dispose();
 			m_parent = null;
 
-			ILexEtymology lm = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
-			m_entry.EtymologyOS.Add(lm);
+			var etymology = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
+			m_entry.EtymologyOS.Add(etymology);
 
 			m_parent = new Form();
 			m_dtree = new DataTree();
@@ -295,18 +296,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_parent.Dispose();
 			m_parent = null;
 
-			lm.Language.AnalysisDefaultWritingSystem = TsStringUtils.MakeTss("source language", Cache.DefaultAnalWs);
-			lm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeTss("rubbish", Cache.DefaultVernWs);
+			etymology.LanguageNotes.AnalysisDefaultWritingSystem = TsStringUtils.MakeTss("source language", Cache.DefaultAnalWs);
+			etymology.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeTss("rubbish", Cache.DefaultVernWs);
 
 			m_parent = new Form();
 			m_dtree = new DataTree();
 			m_parent.Controls.Add(m_dtree);
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "OptSensesEty", null, m_entry, false);
-			// When the etymology has something we get two more. [gjm: one for now, might change soon.]
-			Assert.AreEqual(4, m_dtree.Controls.Count);
+			// When the etymology has something we get two more.
+			Assert.AreEqual(5, m_dtree.Controls.Count);
 			Assert.AreEqual("Form", (m_dtree.Controls[3] as Slice).Label);
-			//Assert.AreEqual("Language", (m_dtree.Controls[4] as Slice).Label);
+			Assert.AreEqual("Source Language Notes", (m_dtree.Controls[4] as Slice).Label);
 		}
 	}
 }

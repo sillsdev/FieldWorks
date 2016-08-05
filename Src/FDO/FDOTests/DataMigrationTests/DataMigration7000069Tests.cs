@@ -22,6 +22,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		// ReSharper disable InconsistentNaming
 		private const string enWs = "en";
 		private const string frWs = "fr";
+		private const string esWs = "es";
 		// ReSharper restore InconsistentNaming
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -411,18 +412,20 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test the migration from version 7000068 to 7000069 adding 3 fields to LexEtymology
-		/// and changing LexEntry->Etymology from atomic to sequence.
+		/// Test the migration from version 7000068 to 7000069 adding 4 fields to LexEtymology,
+		/// changing LexEntry->Etymology from atomic to sequence, and adding a (empty) list to
+		/// LexDb.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void AddLexEtymologyFieldsMakeSequence()
 		{
 			var mockMdc = new MockMDCForDataMigration();
-			mockMdc.AddClass(1, "CmObject", null, new List<string> { "LexEntry", "LexEtymology", "LangProject" });
+			mockMdc.AddClass(1, "CmObject", null, new List<string> { "LexEntry", "LexEtymology", "LangProject", "LexDb" });
 			mockMdc.AddClass(2, "LexEntry", "CmObject", new List<string>());
 			mockMdc.AddClass(3, "LexEtymology", "CmObject", new List<string>());
 			mockMdc.AddClass(4, "LangProject", "CmObject", new List<string>());
+			mockMdc.AddClass(5, "LexDb", "CmObject", new List<string>());
 
 			var currentFlid = 2000;
 			// These represent the pre-migration state
@@ -445,20 +448,21 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			//<basic num="1" id="Comment" sig="MultiString"/>	(no change)
 			//<basic num="2" id="Form" sig="MultiUnicode"/>		(-> MultiString)
 			//<basic num="3" id="Gloss" sig="MultiUnicode"/>	(-> MultiString)
-			//<basic num="4" id="Source" sig="Unicode"/>		(-> "Language" MultiString)
+			//<basic num="4" id="Source" sig="Unicode"/>		(-> "LanguageNotes" MultiString)
 			//<basic num="5" id="LiftResidue" sig="Unicode"/>	(no change)
 
 			// New model
 			//<basic num="1" id="Comment" sig="MultiString"/>
 			//<basic num="2" id="Form" sig="MultiString"/>
 			//<basic num="3" id="Gloss" sig="MultiString"/>
-			//<basic num="4" id="Language" sig="MultiString"/>
+			//<rel num="4" id="Language" card="atomic" sig="CmPossibility"/>	(new)
 			//<basic num="5" id="LiftResidue" sig="Unicode"/>
 			//<basic num="6" id="PrecComment" sig="MultiString"/>	(new)
 			//<basic num="7" id="Note" sig="MultiString"/>			(new)
 			//<basic num="8" id="Bibliography" sig="MultiString"/>	(new)
+			//<basic num="9" id="LanguageNotes" sig="MultiString"/>
 
-			// Make sure LexEtymology objects do not have Language, PrecComment, Note or Bibliography prior to migration.
+			// Make sure LexEtymology objects do not have elements prior to migration that were added in this model version.
 			foreach (var dto in dtoRepos.AllInstancesSansSubclasses("LexEtymology"))
 			{
 				var elt = XElement.Parse(dto.Xml);
@@ -466,11 +470,15 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 				Assert.IsNull(elt.Element("PrecComment"));
 				Assert.IsNull(elt.Element("Note"));
 				Assert.IsNull(elt.Element("Bibliography"));
+				Assert.IsNull(elt.Element("LanguageNotes"));
 			}
+			// Make sure LexDb has no Languages property prior to migration.
+			var lexDbElt = XElement.Parse(dtoRepos.AllInstancesSansSubclasses("LexDb").First().Xml);
+			Assert.IsNull(lexDbElt.Element("Languages"));
 
 			DataMigration7000069.AugmentEtymologyCluster(dtoRepos);
 
-			// Since we're just adding two fields that will be empty initially,
+			// Since we're just adding three fields that will be empty initially,
 			// we just need to verify that nothing in our data changed.
 			const string frPhoneticWs = "fr-fonipa";
 			const string idWs = "id";
@@ -498,12 +506,14 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			var gloss = firstEtymElt.Element("Gloss");
 			VerifyMultiString(gloss, new[] { enWs }, new[] { "alcohol" }, true);
 			VerifyMultiString(gloss, new[] { idWs }, new[] { "minuman keras" }, true);
-			var language = firstEtymElt.Element("Language");
-			VerifyMultiString(language, new []{primaryAnalysisWs}, new []{"l'arabe"}, false);
+			var languageNotes = firstEtymElt.Element("LanguageNotes");
+			VerifyMultiString(languageNotes, new []{primaryAnalysisWs}, new []{"l'arabe"}, false);
 			var source = firstEtymElt.Elements("Source");
 			CollectionAssert.IsEmpty(source, "Should not be any Etymology Source left.");
 			var liftRes = firstEtymElt.Elements("LiftResidue");
 			CollectionAssert.IsEmpty(liftRes, "Should not create any LiftResidue at this point.");
+			var language = firstEtymElt.Element("Language");
+			Assert.IsNull(language, "Should be empty list of languages.");
 
 			// Verify contents of secondEtymElt
 			comment = secondEtymElt.Element("Comment");
@@ -517,12 +527,39 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			gloss = secondEtymElt.Element("Gloss");
 			VerifyMultiString(gloss, new[] { enWs }, new[] { "coleus flower" }, true);
 			VerifyMultiString(gloss, new[] { idWs }, new[] { "indonesian gloss" }, true);
-			language = secondEtymElt.Element("Language");
-			VerifyMultiString(language, new[] { primaryAnalysisWs }, new[] { "All made up" }, false);
+			languageNotes = secondEtymElt.Element("LanguageNotes");
+			VerifyMultiString(languageNotes, new[] { primaryAnalysisWs }, new[] { "All made up" }, false);
 			source = secondEtymElt.Elements("Source");
 			CollectionAssert.IsEmpty(source, "Should not be any Etymology Source left.");
 			liftRes = secondEtymElt.Elements("LiftResidue");
 			CollectionAssert.IsEmpty(liftRes, "Should not create any LiftResidue at this point.");
+			language = secondEtymElt.Element("Language");
+			Assert.IsNull(language, "Should be empty list of languages.");
+
+			// Verify that LexDb has empty list of languages
+			lexDbElt = XElement.Parse(dtoRepos.AllInstancesSansSubclasses("LexDb").First().Xml);
+			var langElt = lexDbElt.Element("Languages");
+			var guids = GetOwnedGuidStringsFromPropertyElement(langElt);
+			Assert.AreEqual(1, guids.Count(), "Should only be one Language list pointer.");
+			var langListGuid = guids.First();
+			var langListElt = XElement.Parse(dtoRepos.GetDTO(langListGuid).Xml);
+			Assert.AreEqual(lexDbElt.Attribute("guid").Value, langListElt.Attribute("ownerguid").Value, "List is not linked properly");
+			Assert.AreEqual("CmPossibilityList", langListElt.Attribute("class").Value, "Should be a possibility list object");
+			Assert.AreEqual("1", langListElt.Element("Depth").Attribute("val").Value, "List should only have Depth of 1.");
+			Assert.AreEqual("True", langListElt.Element("IsSorted").Attribute("val").Value, "List should be sorted.");
+			Assert.AreEqual("7", langListElt.Element("ItemClsid").Attribute("val").Value, "ItemClsid should be 7 (CmPossibility).");
+			Assert.AreEqual("-3", langListElt.Element("WsSelector").Attribute("val").Value, "Wrong WsSelector value");
+			Assert.AreEqual("True", langListElt.Element("PreventDuplicates").Attribute("val").Value, "List should prevent duplicates");
+			var namePropElt = langListElt.Element("Name");
+			VerifySingleMultiUnicodeStringFromPropertyElement(namePropElt, "Languages", enWs, true);
+			VerifySingleMultiUnicodeStringFromPropertyElement(namePropElt, "Langues", frWs, true);
+			VerifySingleMultiUnicodeStringFromPropertyElement(namePropElt, "Idiomas", esWs, true);
+			var abbrPropElt = langListElt.Element("Abbreviation");
+			VerifySingleMultiUnicodeStringFromPropertyElement(abbrPropElt, "Lgs", enWs, true);
+			VerifySingleMultiUnicodeStringFromPropertyElement(abbrPropElt, "Lgs", frWs, true);
+			VerifySingleMultiUnicodeStringFromPropertyElement(abbrPropElt, "Ids", esWs, true);
+			var possibilities = langListElt.Element("Possibilities");
+			Assert.IsNull(possibilities, "List should begin life empty");
 		}
 
 		/// <summary>
@@ -980,13 +1017,22 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			return propElement.Elements("objsur").Select(objPointer => objPointer.Attribute("guid").Value).ToList();
 		}
 
-		private static void VerifySingleMultiUnicodeStringFromPropertyElement(XElement propElement, string value)
+		private static void VerifySingleMultiUnicodeStringFromPropertyElement(XElement propElement, string value, string ws = "en", bool allowOtherAUni = false)
 		{
 			Assert.IsNotNull(propElement, "MultiUnicode property {0} should not be null.", value);
 			var aUniStr = propElement.Elements("AUni").ToList();
-			Assert.AreEqual(1, aUniStr.Count, "Wrong number of AUni elements in MultiUnicode property.");
-			Assert.AreEqual(enWs, aUniStr[0].Attribute("ws").Value, "Unicode string ws attribute is wrong.");
-			Assert.AreEqual(value, aUniStr[0].Value, "Unicode string has wrong value.");
+			if (!allowOtherAUni)
+				Assert.AreEqual(1, aUniStr.Count, "Wrong number of AUni elements in MultiUnicode property.");
+			var idx = -1;
+			for (int i = 0; i < aUniStr.Count; i++)
+			{
+				if (aUniStr[i].Attribute("ws").Value != ws)
+					continue;
+				idx = i;
+				break;
+			}
+			Assert.Greater(idx, -1, "Did not find right language Unicode string");
+			Assert.AreEqual(value, aUniStr[idx].Value, "Unicode string has wrong value.");
 		}
 	}
 }

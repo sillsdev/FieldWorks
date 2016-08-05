@@ -986,6 +986,9 @@
 <ExtendedNoteTypes>
 <objsur guid="ed6b2dcc-e82f-4631-b61a-6b630de332d0" t="o" />
 </ExtendedNoteTypes>
+<Languages>
+<objsur guid="487c15b0-2ced-4417-8b77-9075f4a21e5f" t="o" />
+</Languages>
 <MorphTypes>
 <objsur guid="d7f713d8-e8cf-11d3-9764-00c04f186933" t="o" />
 </MorphTypes>
@@ -1045,6 +1048,25 @@
 <AUni ws="en">primary</AUni>
 </Name>
 <UnderColor val="-1073741824" />
+</rt>
+<rt class="CmPossibilityList" guid="487c15b0-2ced-4417-8b77-9075f4a21e5f" ownerguid="af26d792-ea5e-11de-8f7e-0013722f8dec">
+<Abbreviation>
+<AUni ws="en">Lgs</AUni>
+<AUni ws="es">Ids</AUni>
+<AUni ws="fr">Lgs</AUni>
+</Abbreviation>
+<Depth val="1" />
+<IsSorted val="true" />
+<ItemClsid val="7" />
+<Name>
+<AUni ws="en">Languages</AUni>
+<AUni ws="es">Idiomas</AUni>
+<AUni ws="fr">Langues</AUni>
+</Name>
+<Possibilities>
+</Possibilities>
+<PreventDuplicates val="true" />
+<WsSelector val="-3" />
 </rt>
 <rt class="CmPossibilityList" guid="ed6b2dcc-e82f-4631-b61a-6b630de332d0" ownerguid="af26d792-ea5e-11de-8f7e-0013722f8dec">
 <Abbreviation>

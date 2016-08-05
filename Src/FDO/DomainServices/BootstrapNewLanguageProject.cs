@@ -292,6 +292,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				dataReader.GetNextRealHvo());
 			lexDb.ExtendedNoteTypesOA.ItemClsid = CmPossibilityTags.kClassId;
 			AddExtendedNoteTypes(lexDb);
+			lexDb.LanguagesOA = listFactoryInternal.Create(
+			new Guid("487c15b0-2ced-4417-8b77-9075f4a21e5f"),
+			dataReader.GetNextRealHvo());
+			lexDb.LanguagesOA.ItemClsid = CmPossibilityTags.kClassId;
 
 			// TODO: add lexDb.Introduction, lexDb.Domain/Subentry/Sense,
 			// lexDb.AllomorphConditions, lexDb.Status

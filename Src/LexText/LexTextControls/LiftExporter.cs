@@ -677,10 +677,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			WriteAllForms(w, null, null, "form", ety.Form);
 			WriteAllForms(w, null, null, "gloss", ety.Gloss);
 			WriteAllForms(w, "field", "type=\"comment\"", "form", ety.Comment);
-			WriteAllForms(w, "field", "type=\"language\"", "form", ety.Language);
 			WriteAllForms(w, "field", "type=\"preccomment\"", "form", ety.PrecComment);
+			foreach (var lang in ety.LanguageRS)
+			{
+				WritePossibilityLiftTrait(RangeNames.sDbLanguagesOA, w, lang.Hvo);
+			}
 			WriteAllForms(w, "field", "type=\"note\"", "form", ety.Note);
 			WriteAllForms(w, "field", "type=\"bibliography\"", "form", ety.Bibliography);
+			WriteAllForms(w, "field", "type=\"languagenotes\"", "form", ety.LanguageNotes);
 			WriteLiftResidue(w, ety);
 			w.WriteLine("</etymology>");
 		}
@@ -2533,6 +2537,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		public const string sDbDomainTypesOAold1 = "domaintype";
 
 		/// <summary> </summary>
+		public const string sDbLanguagesOA = "languages";
+
+		/// <summary> </summary>
 		public const string sDbMorphTypesOAold = "MorphType";
 		/// <summary> </summary>
 		public const string sDbMorphTypesOA = "morph-type";
@@ -2646,6 +2653,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 				case "DomainTypes": rangeName = sDbDomainTypesOA; break;
 
+				case "Languages": rangeName = sDbLanguagesOA; break;
+
 				case "MorphTypes": rangeName = sDbMorphTypesOA; break;
 
 				case "PublicationTypes": rangeName = sDbPublicationTypesOA; break;
@@ -2706,6 +2715,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				case sDbComplexEntryTypesOA:
 				case sDbDomainTypesOA:
 				case sDbDomainTypesOAold1:
+				case sDbLanguagesOA:
 				case sDbMorphTypesOAold:
 				case sDbMorphTypesOA:
 				case sDbPublicationTypesOA:

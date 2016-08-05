@@ -3,7 +3,7 @@
  xsi:noNamespaceSchemaLocation="../../Configuration/DictionaryConfiguration.xsd"
  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
  name="Hybrid (complex forms as main entries and mini subentries)"
- version="9" lastModified="2016-07-21"
+ version="10" lastModified="2016-07-27"
  allPublications="true" isRootBased="false">
   <ConfigurationItem name="Main Entry" isEnabled="true" style="Dictionary-Normal" styleType="paragraph" field="LexEntry" cssClassNameOverride="entry">
 	<!-- using a different CSS Class for the main HeadWord and the HeadWords for subentries, references, and (variant|complex) forms
@@ -59,7 +59,19 @@
 		  <Option id="analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Source Language" after=" " isEnabled="true" field="Language">
+	  <ConfigurationItem name="Source Language" after=" " between=" " isEnabled="true" field="LanguageRS" cssClassNameOverride="languages">
+		<ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
+		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+			<Option id="analysis" isEnabled="true"/>
+		  </WritingSystemOptions>
+		</ConfigurationItem>
+		<ConfigurationItem name="Name" between=" " after=" " isEnabled="false" field="Name">
+		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+			<Option id="analysis" isEnabled="true"/>
+		  </WritingSystemOptions>
+		</ConfigurationItem>
+	  </ConfigurationItem>
+	  <ConfigurationItem name="Source Language Notes" after=" " isEnabled="false" field="LanguageNotes">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="analysis" isEnabled="true"/>
 		</WritingSystemOptions>
@@ -930,7 +942,19 @@
 		  <Option id="analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Source Language" after=" " isEnabled="true" field="Language">
+	  <ConfigurationItem name="Source Language" after=" " between=" " isEnabled="true" field="LanguageRS" cssClassNameOverride="languages">
+		<ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
+		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+			<Option id="analysis" isEnabled="true"/>
+		  </WritingSystemOptions>
+		</ConfigurationItem>
+		<ConfigurationItem name="Name" between=" " after=" " isEnabled="false" field="Name">
+		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+			<Option id="analysis" isEnabled="true"/>
+		  </WritingSystemOptions>
+		</ConfigurationItem>
+	  </ConfigurationItem>
+	  <ConfigurationItem name="Source Language Notes" after=" " isEnabled="false" field="LanguageNotes">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="analysis" isEnabled="true"/>
 		</WritingSystemOptions>
@@ -1850,7 +1874,19 @@
 			<Option id="analysis" isEnabled="true" />
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Source Language" after=" " isEnabled="true" field="Language">
+		<ConfigurationItem name="Source Language" after=" " between=" " isEnabled="true" field="LanguageRS" cssClassNameOverride="languages">
+		  <ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
+			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+			  <Option id="analysis" isEnabled="true"/>
+			</WritingSystemOptions>
+		  </ConfigurationItem>
+		  <ConfigurationItem name="Name" between=" " after=" " isEnabled="false" field="Name">
+			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+			  <Option id="analysis" isEnabled="true"/>
+			</WritingSystemOptions>
+		  </ConfigurationItem>
+		</ConfigurationItem>
+		<ConfigurationItem name="Source Language Notes" after=" " isEnabled="false" field="LanguageNotes">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -2678,7 +2714,19 @@
 		  <Option id="analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Source Language" after=" " isEnabled="true" field="Language">
+	  <ConfigurationItem name="Source Language" after=" " between=" " isEnabled="true" field="LanguageRS" cssClassNameOverride="languages">
+		<ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
+		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+			<Option id="analysis" isEnabled="true"/>
+		  </WritingSystemOptions>
+		</ConfigurationItem>
+		<ConfigurationItem name="Name" between=" " after=" " isEnabled="false" field="Name">
+		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+			<Option id="analysis" isEnabled="true"/>
+		  </WritingSystemOptions>
+		</ConfigurationItem>
+	  </ConfigurationItem>
+	  <ConfigurationItem name="Source Language Notes" after=" " isEnabled="false" field="LanguageNotes">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="analysis" isEnabled="true"/>
 		</WritingSystemOptions>
@@ -3992,7 +4040,19 @@
 			<Option id="analysis" isEnabled="true" />
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Source Language" after=" " isEnabled="true" field="Language">
+		<ConfigurationItem name="Source Language" after=" " between=" " isEnabled="true" field="LanguageRS" cssClassNameOverride="languages">
+		  <ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
+			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+			  <Option id="analysis" isEnabled="true"/>
+			</WritingSystemOptions>
+		  </ConfigurationItem>
+		  <ConfigurationItem name="Name" between=" " after=" " isEnabled="false" field="Name">
+			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+			  <Option id="analysis" isEnabled="true"/>
+			</WritingSystemOptions>
+		  </ConfigurationItem>
+		</ConfigurationItem>
+		<ConfigurationItem name="Source Language Notes" after=" " isEnabled="false" field="LanguageNotes">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>

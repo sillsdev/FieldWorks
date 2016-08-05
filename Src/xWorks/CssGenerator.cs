@@ -745,7 +745,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var classNameBase = GetClassAttributeBase(configNode).ToLower();
 			string singularBase;
-			if(classNameBase.EndsWith("entries"))
+			if(classNameBase.EndsWith("ies"))
 				singularBase = classNameBase.Remove(classNameBase.Length - 3) + "y";
 			else if (classNameBase.EndsWith("analyses"))
 				singularBase = classNameBase.Remove(classNameBase.Length - 2) + "is";
