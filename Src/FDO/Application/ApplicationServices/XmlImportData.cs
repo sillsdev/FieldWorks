@@ -16,6 +16,7 @@ using System.Xml;
 
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
@@ -2079,6 +2080,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			// preference to the one imported as the one that links in the file probably mean).
 			FillEntryMap();
 
+			var subentryOrderMap = new Dictionary<int, List<ICmObject>>();
 			foreach (var pend in m_rglinks.Links)
 			{
 				int flid = pend.FieldInformation.FieldId;
@@ -2188,7 +2190,22 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 							}
 						}
 						if (fAdd)
+						{
+							if (pend.FieldInformation.Owner is ILexEntryRef)
+							{
+								List<ICmObject> existing;
+								subentryOrderMap.TryGetValue(hvo, out existing);
+								if (existing == null)
+								{
+									subentryOrderMap[hvo] = new List<ICmObject> { pend.FieldInformation.ParentOfOwner.Owner };
+								}
+								else if (!existing.Contains(pend.FieldInformation.ParentOfOwner.Owner))
+								{
+									existing.Add(pend.FieldInformation.ParentOfOwner.Owner);
+								}
+							}
 							m_sda.Replace(hvoOwner, flid, chvo, chvo, new int[] { hvo }, 1);
+						}
 					}
 					cmoTargetPrev = null;
 					cmoOwnerPrev = null;
@@ -2196,6 +2213,11 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 					fReversePrev = false;
 					lrPrev = null;
 				}
+			}
+			foreach (var entryOrderPair in subentryOrderMap)
+			{
+				ICmObject mainEntry = m_repoCmObject.GetObject(entryOrderPair.Key);
+				VirtualOrderingServices.SetVO(mainEntry, m_cache.ServiceLocator.GetInstance<Virtuals>().LexEntrySubentries, entryOrderPair.Value.Where(item => item.IsValidObject));
 			}
 			FinalizeLrSeq(lrSeqInfo);
 		}

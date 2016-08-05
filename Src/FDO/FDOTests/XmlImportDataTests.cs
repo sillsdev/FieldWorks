@@ -19,6 +19,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Test.TestUtils;
 
@@ -2013,6 +2014,160 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var dsLen = "data stream: ".Length;
 			Assert.AreEqual(msgb.Substring(dsLen), le.ImportResidue.Text, "Message about Cross Reference should be in entry Import Residue");
 			Assert.AreEqual(msgc.Substring(dsLen), le.SensesOS[0].ImportResidue.Text, "Message about Lexical Relation should be in sense Import Residue");
+		}
+
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the method ImportData() on a single lexical entry.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void SubentryOrderRetained()
+		{
+			DateTime dtLexOrig = m_cache.LangProject.LexDbOA.DateCreated;
+			TimeSpan span = new TimeSpan(dtLexOrig.Ticks - m_now.Ticks);
+			Assert.LessOrEqual(span.TotalMinutes, 1.0);		// should be only a second or two...
+			XmlImportData xid = new XmlImportData(m_cache, true);
+			using (var rdr = new StringReader(
+				"<LexDb xmlns:msxsl='urn:schemas-microsoft-com:xslt' xmlns:user='urn:my-scripts'>" +
+				"	<Entries>" +
+				"		<LexEntry id='IID0EK'>" +
+				"			<LexemeForm>" +
+				"				<MoStemAllomorph>" +
+				"					<MorphType>" +
+				"						<Link ws='en' name='stem' />" +
+				"					</MorphType>" +
+				"					<Form>" +
+				"						<AUni ws='fr'>aa</AUni>" +
+				"					</Form>" +
+				"				</MoStemAllomorph>" +
+				"			</LexemeForm>" +
+				"			<MorphoSyntaxAnalyses>" +
+				"				<MoStemMsa id='MSA1000'>" +
+				"					<PartOfSpeech>" +
+				"						<Link ws='en' abbr='v' />" +
+				"					</PartOfSpeech>" +
+				"				</MoStemMsa>" +
+				"			</MorphoSyntaxAnalyses>" +
+				"			<Senses>" +
+				"				<LexSense>" +
+				"					<Gloss>" +
+				"						<AUni ws='en'>gloss-aa</AUni>" +
+				"					</Gloss>" +
+				"					<MorphoSyntaxAnalysis>" +
+				"						<Link target='MSA1000' />" +
+				"					</MorphoSyntaxAnalysis>" +
+				"				</LexSense>" +
+				"			</Senses>" +
+				"		</LexEntry>" +
+				"		<LexEntry id='IID0E2'>" +
+				"			<MorphoSyntaxAnalyses>" +
+				"				<MoStemMsa id='MSA1001'>" +
+				"					<PartOfSpeech>" +
+				"						<Link ws='en' abbr='n' />" +
+				"					</PartOfSpeech>" +
+				"				</MoStemMsa>" +
+				"			</MorphoSyntaxAnalyses>" +
+				"			<LexemeForm>" +
+				"				<MoStemAllomorph>" +
+				"					<MorphType>" +
+				"						<Link ws='en' name='stem' />" +
+				"					</MorphType>" +
+				"					<Form>" +
+				"						<AUni ws='fr'>ac</AUni>" +
+				"					</Form>" +
+				"				</MoStemAllomorph>" +
+				"			</LexemeForm>" +
+				"			<EntryRefs>" +
+				"				<LexEntryRef>" +
+				"					<ComplexEntryTypes>" +
+				"						<Link ws='en' name='Derivative' />" +
+				"					</ComplexEntryTypes>" +
+				"					<RefType>" +
+				"						<Integer val='1' />" +
+				"					</RefType>" +
+				"					<ComponentLexemes>" +
+				"						<Link target='IID0EK' />" +
+				"					</ComponentLexemes>" +
+				"					<PrimaryLexemes>" +
+				"						<Link target='IID0EK' />" +
+				"					</PrimaryLexemes>" +
+				"				</LexEntryRef>" +
+				"			</EntryRefs>" +
+				"			<Senses>" +
+				"				<LexSense>" +
+				"					<Gloss>" +
+				"						<AUni ws='en'>gloss-ac</AUni>" +
+				"					</Gloss>" +
+				"					<MorphoSyntaxAnalysis>" +
+				"						<Link target='MSA1001' />" +
+				"					</MorphoSyntaxAnalysis>" +
+				"				</LexSense>" +
+				"			</Senses>" +
+				"		</LexEntry>" +
+				"		<LexEntry id='IID0EPB'>" +
+				"			<MorphoSyntaxAnalyses>" +
+				"				<MoStemMsa id='MSA1002'>" +
+				"					<PartOfSpeech>" +
+				"						<Link ws='en' abbr='adj' />" +
+				"					</PartOfSpeech>" +
+				"				</MoStemMsa>" +
+				"			</MorphoSyntaxAnalyses>" +
+				"			<LexemeForm>" +
+				"				<MoStemAllomorph>" +
+				"					<MorphType>" +
+				"						<Link ws='en' name='stem' />" +
+				"					</MorphType>" +
+				"					<Form>" +
+				"						<AUni ws='fr'>ab</AUni>" +
+				"					</Form>" +
+				"				</MoStemAllomorph>" +
+				"			</LexemeForm>" +
+				"			<EntryRefs>" +
+				"				<LexEntryRef>" +
+				"					<ComplexEntryTypes>" +
+				"						<Link ws='en' name='Derivative' />" +
+				"					</ComplexEntryTypes>" +
+				"					<RefType>" +
+				"						<Integer val='1' />" +
+				"					</RefType>" +
+				"					<ComponentLexemes>" +
+				"						<Link target='IID0EK' />" +
+				"					</ComponentLexemes>" +
+				"					<PrimaryLexemes>" +
+				"						<Link target='IID0EK' />" +
+				"					</PrimaryLexemes>" +
+				"				</LexEntryRef>" +
+				"			</EntryRefs>" +
+				"			<Senses>" +
+				"				<LexSense>" +
+				"					<Gloss>" +
+				"						<AUni ws='en'>gloss-ab</AUni>" +
+				"					</Gloss>" +
+				"					<MorphoSyntaxAnalysis>" +
+				"						<Link target='MSA1002' />" +
+				"					</MorphoSyntaxAnalysis>" +
+				"				</LexSense>" +
+				"			</Senses>" +
+				"		</LexEntry>" +
+				"	</Entries>" +
+				"</LexDb>"))
+			{
+				var sbLog = new StringBuilder();
+				Assert.AreEqual(0, m_cache.LangProject.LexDbOA.Entries.Count(), "The lexicon starts out empty.");
+				Assert.AreEqual(0, m_cache.LangProject.AnthroListOA.PossibilitiesOS.Count);
+				Assert.AreEqual(0, m_cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Count);
+				Assert.AreEqual(0, m_cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Count);
+				xid.ImportData(rdr, new StringWriter(sbLog), null);
+				Assert.AreEqual(3, m_cache.LangProject.LexDbOA.Entries.Count(), "The import data had one entry.");
+				var entry = m_cache.LangProject.LexDbOA.Entries.ToArray()[0];
+				Assert.IsTrue(VirtualOrderingServices.HasVirtualOrdering(entry, "Subentries"));
+				var subentries = entry.Subentries.ToArray();
+				Assert.AreEqual(2, subentries.Length);
+				Assert.That(subentries[0].HeadWord.Text, Is.StringMatching("ac"));
+				Assert.That(subentries[1].HeadWord.Text, Is.StringMatching("ab"));
+			}
 		}
 	}
 }
