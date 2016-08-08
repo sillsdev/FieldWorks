@@ -154,21 +154,20 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			// Make sure new default types are added.
 			var defaultRefs = dtoRepos.AllInstancesWithSubclasses("LexEntryRef").ToList();
 			XElement data = XElement.Parse(defaultRefs[0].Xml);
-
-			var defTypeElt = data.Element("VariantEntryTypes");
+			var defTypeElt = data.Element("ComplexEntryTypes");
 			Assert.IsNotNull(defTypeElt);
 			Assert.That(defTypeElt != null && defTypeElt.HasElements, "Should have components (or variants)");
 			var objSurAttr = defTypeElt.Element("objsur");
 			Assert.IsNotNull(objSurAttr);
-			Assert.AreEqual("3942addb-99fd-43e9-ab7d-99025ceb0d4e", objSurAttr.FirstAttribute.Value);
+			Assert.AreEqual("fec038ed-6a8c-4fa5-bc96-a4f515a98c50", objSurAttr.FirstAttribute.Value);
 
 			data = XElement.Parse(defaultRefs[1].Xml);
-			defTypeElt = data.Element("ComplexEntryTypes");
+			defTypeElt = data.Element("VariantEntryTypes");
 			Assert.IsNotNull(defTypeElt);
 			Assert.That(defTypeElt != null && defTypeElt.HasElements, "Should have components (or variants)");
 			objSurAttr = defTypeElt.Element("objsur");
 			Assert.IsNotNull(objSurAttr);
-			Assert.AreEqual("fec038ed-6a8c-4fa5-bc96-a4f515a98c50", objSurAttr.FirstAttribute.Value);
+			Assert.AreEqual("3942addb-99fd-43e9-ab7d-99025ceb0d4e", objSurAttr.FirstAttribute.Value);
 
 			// Make sure new default types are added in possiblities
 
