@@ -1713,67 +1713,60 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 	  | (Note: we do not allow for a derivational circumfix to attach to a Full in order to produce a partial - that would be an error.)
 
 			  | affixes on partial with non-final inflection
-rule {One or more unanalyzed prefixes and suffixes on partial with non-final inflection}
+rule {One or more unanalyzed prefixes and suffixes on partial}
   Partial_1 = Prefs Partial_2 Suffs
 								| percolation
   <Partial_1 inflected> = <Partial_2 inflected>
   <Partial_1 synCat> = <Partial_2 synCat>
 								| constraints
-  <Partial_2 blocksInflection> = +
   <Partial_2> == ~[synCat:unknown]
 
-rule {One or more unanalyzed prefixes on partial with non-final inflection}
+rule {One or more unanalyzed prefixes on partial}
   Partial_1 = Prefs Partial_2
 								| percolation
   <Partial_1 inflected> = <Partial_2 inflected>
   <Partial_1 synCat> = <Partial_2 synCat>
 								| constraints
-  <Partial_2 blocksInflection> = +
   <Partial_2> == ~[synCat:unknown]
 
-rule {One or more unanalyzed suffixes on partial with non-final inflection}
+rule {One or more unanalyzed suffixes on partial}
   Partial_1 =          Partial_2 Suffs
 								| percolation
   <Partial_1 inflected> = <Partial_2 inflected>
   <Partial_1 synCat> = <Partial_2 synCat>
 								| constraints
-  <Partial_2 blocksInflection> = +
   <Partial_2> == ~[synCat:unknown]
 
-rule {Unanalyzed circumfix on partial with non-final inflection}
+rule {Unanalyzed circumfix on partial}
   Partial_1 = circumPfx Partial_2 circumSfx
 								| percolation
   <Partial_1 inflected> = <Partial_2 inflected>
   <Partial_1 synCat> = <Partial_2 synCat>
 								| constraints
-  <Partial_2 blocksInflection> = +
   <Partial_2> == ~[synCat:unknown]
-rule {Unanalyzed circumfix on partial with non-final inflection, where second part is an infix}
+rule {Unanalyzed circumfix on partial, where second part is an infix}
   Partial_1 = circumPfx_1 circumPfx_2 Partial_2
 								| percolation
   <Partial_1 inflected> = <Partial_2 inflected>
   <Partial_1 synCat> = <Partial_2 synCat>
 								| constraints
-  <Partial_2 blocksInflection> = +
   <Partial_2> == ~[synCat:unknown]
 								| rightmost "prefix" must be an infix
   <circumPfx_2> == [morphType : infix]
 
-rule {Derivational circumfix on partial with non-final inflection}
+rule {Derivational circumfix on partial}
   Partial_1 = derivCircumPfx Partial_2 derivCircumSfx
 								| percolation
   <Partial_1 inflected> = <Partial_2 inflected>
   <Partial_1 synCat> = <Partial_2 synCat>
 								| constraints
-  <Partial_2 blocksInflection> = +
   <Partial_2> == ~[synCat:unknown]
-rule {Derivational circumfix on partial with non-final inflection, where second part is an infix}
+rule {Derivational circumfix on partial, where second part is an infix}
   Partial_1 = derivCircumPfx_1 derivCircumPfx_2 Partial_2
 								| percolation
   <Partial_1 inflected> = <Partial_2 inflected>
   <Partial_1 synCat> = <Partial_2 synCat>
 								| constraints
-  <Partial_2 blocksInflection> = +
   <Partial_2> == ~[synCat:unknown]
 								| rightmost "prefix" must be an infix
    <derivCircumPfx_2> == [morphType : infix]
@@ -2221,13 +2214,25 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
   }
 
 
+rule {Partially analyzed stem that's been inflected with empty template}
+	Partial = PartialInflected
+								| percolation
+	<Partial synCat> = <PartialInflected synCat>
+								| constraints
+	<Partial synCat> = <PartialInflected synCat>
+	<Partial morphoSyntax> = <PartialInflected morphoSyntax>
+
+	<Partial inflected> = +
+	<PartialInflected inflected> = +
+
+	
 rule {Partially analyzed stem with inflectional template  3e2e6b4e-cbc5-46d6-a198-77415ecce02a}
-  Partial_1 =  Partial_2  32bf0473-d3a8-40ba-b681-dbecfa10edd9_0  :
+		PartialInflected =   Partial (32bf0473-d3a8-40ba-b681-dbecfa10edd9_0)  :
 														 | percolation
-  <Partial_1 synCat>       = <Partial_2 synCat>
+  <PartialInflected synCat>       = <Partial synCat>
 														 | constraints
 {
-  <Partial_2 synCat>       = d7f71527-e8cf-11d3-9764-00c04f186933 /
+  <Partial synCat>       = d7f71527-e8cf-11d3-9764-00c04f186933 /
 				  <Partial_2 synCat>       =  d7f71528-e8cf-11d3-9764-00c04f186933 /
 				  <Partial_2 synCat>       =  d7f71529-e8cf-11d3-9764-00c04f186933 /
 				  <Partial_2 synCat>       =  d7f7152a-e8cf-11d3-9764-00c04f186933 /
@@ -2237,11 +2242,11 @@ rule {Partially analyzed stem with inflectional template  3e2e6b4e-cbc5-46d6-a19
 
   <Partial_1 morphoSyntax>    = <32bf0473-d3a8-40ba-b681-dbecfa10edd9_0 morphoSyntax>
 														 | constraint
-  <Partial_1 inflected> = +
-  <Partial_2 inflected> = -
+  <PartialInflected inflected> = +
+  <Partial inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  4abcc54f-332a-4b81-b1d6-ed7a3c42db1b}
-  Partial_1 =  (42b52eed-0970-438d-9608-a03fc8c35855_0) Partial_2  617322ab-79f5-4302-8b9f-f92ca1d1eeba_0  :
+		Partial_1 =   (42b52eed-0970-438d-9608-a03fc8c35855_0) Partial_2 617322ab-79f5-4302-8b9f-f92ca1d1eeba_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -2254,7 +2259,7 @@ rule {Partially analyzed stem with inflectional template  4abcc54f-332a-4b81-b1d
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  9e2f0090-61c3-4c37-b3ca-a7b7abd4ca0c}
-  Partial_1 =  (42b52eed-0970-438d-9608-a03fc8c35855_0) Partial_2  0c7f9ffb-2fdd-4ba6-af2d-1b610d492fde_0  :
+		Partial_1 =   (42b52eed-0970-438d-9608-a03fc8c35855_0) Partial_2 0c7f9ffb-2fdd-4ba6-af2d-1b610d492fde_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -2267,7 +2272,7 @@ rule {Partially analyzed stem with inflectional template  9e2f0090-61c3-4c37-b3c
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  0e42bd7d-6e4f-47b9-a88b-8afe38d2d2fc}
-  Partial_1 =  (42b52eed-0970-438d-9608-a03fc8c35855_0) 395e7178-199d-415a-a5b4-f8f3196a93f2_1 Partial_2  617322ab-79f5-4302-8b9f-f92ca1d1eeba_0  :
+		Partial_1 =   (42b52eed-0970-438d-9608-a03fc8c35855_0) 395e7178-199d-415a-a5b4-f8f3196a93f2_1 Partial_2 617322ab-79f5-4302-8b9f-f92ca1d1eeba_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
@@ -2281,7 +2286,7 @@ rule {Partially analyzed stem with inflectional template  0e42bd7d-6e4f-47b9-a88
   <Partial_2 inflected> = -
 		
 rule {Partially analyzed stem with inflectional template  3ff09630-b36d-47dc-874f-26e298756241}
-  Partial_1 =  (42b52eed-0970-438d-9608-a03fc8c35855_0) 395e7178-199d-415a-a5b4-f8f3196a93f2_1 Partial_2  617322ab-79f5-4302-8b9f-f92ca1d1eeba_0  :
+		Partial_1 =   (42b52eed-0970-438d-9608-a03fc8c35855_0) 395e7178-199d-415a-a5b4-f8f3196a93f2_1 Partial_2 617322ab-79f5-4302-8b9f-f92ca1d1eeba_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints

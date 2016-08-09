@@ -802,67 +802,60 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 	  | (Note: we do not allow for a derivational circumfix to attach to a Full in order to produce a partial - that would be an error.)
 
 			  | affixes on partial with non-final inflection
-rule {One or more unanalyzed prefixes and suffixes on partial with non-final inflection}
+rule {One or more unanalyzed prefixes and suffixes on partial}
   Partial_1 = Prefs Partial_2 Suffs
 								| percolation
   &lt;Partial_1 inflected&gt; = &lt;Partial_2 inflected&gt;
   &lt;Partial_1 synCat&gt; = &lt;Partial_2 synCat&gt;
 								| constraints
-  &lt;Partial_2 blocksInflection&gt; = +
   &lt;Partial_2&gt; == ~[synCat:unknown]
 
-rule {One or more unanalyzed prefixes on partial with non-final inflection}
+rule {One or more unanalyzed prefixes on partial}
   Partial_1 = Prefs Partial_2
 								| percolation
   &lt;Partial_1 inflected&gt; = &lt;Partial_2 inflected&gt;
   &lt;Partial_1 synCat&gt; = &lt;Partial_2 synCat&gt;
 								| constraints
-  &lt;Partial_2 blocksInflection&gt; = +
   &lt;Partial_2&gt; == ~[synCat:unknown]
 
-rule {One or more unanalyzed suffixes on partial with non-final inflection}
+rule {One or more unanalyzed suffixes on partial}
   Partial_1 =          Partial_2 Suffs
 								| percolation
   &lt;Partial_1 inflected&gt; = &lt;Partial_2 inflected&gt;
   &lt;Partial_1 synCat&gt; = &lt;Partial_2 synCat&gt;
 								| constraints
-  &lt;Partial_2 blocksInflection&gt; = +
   &lt;Partial_2&gt; == ~[synCat:unknown]
 
-rule {Unanalyzed circumfix on partial with non-final inflection}
+rule {Unanalyzed circumfix on partial}
   Partial_1 = circumPfx Partial_2 circumSfx
 								| percolation
   &lt;Partial_1 inflected&gt; = &lt;Partial_2 inflected&gt;
   &lt;Partial_1 synCat&gt; = &lt;Partial_2 synCat&gt;
 								| constraints
-  &lt;Partial_2 blocksInflection&gt; = +
   &lt;Partial_2&gt; == ~[synCat:unknown]
-rule {Unanalyzed circumfix on partial with non-final inflection, where second part is an infix}
+rule {Unanalyzed circumfix on partial, where second part is an infix}
   Partial_1 = circumPfx_1 circumPfx_2 Partial_2
 								| percolation
   &lt;Partial_1 inflected&gt; = &lt;Partial_2 inflected&gt;
   &lt;Partial_1 synCat&gt; = &lt;Partial_2 synCat&gt;
 								| constraints
-  &lt;Partial_2 blocksInflection&gt; = +
   &lt;Partial_2&gt; == ~[synCat:unknown]
 								| rightmost "prefix" must be an infix
   &lt;circumPfx_2&gt; == [morphType : infix]
 
-rule {Derivational circumfix on partial with non-final inflection}
+rule {Derivational circumfix on partial}
   Partial_1 = derivCircumPfx Partial_2 derivCircumSfx
 								| percolation
   &lt;Partial_1 inflected&gt; = &lt;Partial_2 inflected&gt;
   &lt;Partial_1 synCat&gt; = &lt;Partial_2 synCat&gt;
 								| constraints
-  &lt;Partial_2 blocksInflection&gt; = +
   &lt;Partial_2&gt; == ~[synCat:unknown]
-rule {Derivational circumfix on partial with non-final inflection, where second part is an infix}
+rule {Derivational circumfix on partial, where second part is an infix}
   Partial_1 = derivCircumPfx_1 derivCircumPfx_2 Partial_2
 								| percolation
   &lt;Partial_1 inflected&gt; = &lt;Partial_2 inflected&gt;
   &lt;Partial_1 synCat&gt; = &lt;Partial_2 synCat&gt;
 								| constraints
-  &lt;Partial_2 blocksInflection&gt; = +
   &lt;Partial_2&gt; == ~[synCat:unknown]
 								| rightmost "prefix" must be an infix
    &lt;derivCircumPfx_2&gt; == [morphType : infix]
@@ -919,22 +912,47 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
   }
 
 <!-- 3.1.6.2	Inflectional Template Applied to a Partial Word Portion -->
-	  <xsl:for-each select="$POSs/PartOfSpeech">
+rule {Partially analyzed stem that's been inflected with empty template}
+	Partial = PartialInflected
+								| percolation
+	&lt;Partial synCat&gt; = &lt;PartialInflected synCat&gt;
+								| constraints
+	&lt;Partial synCat&gt; = &lt;PartialInflected synCat&gt;
+	&lt;Partial morphoSyntax&gt; = &lt;PartialInflected morphoSyntax&gt;
+
+	&lt;Partial inflected&gt; = +
+	&lt;PartialInflected inflected&gt; = +
+
+	<xsl:for-each select="$POSs/PartOfSpeech">
 		 <xsl:variable name="posID" select="@Id"/>
 		 <xsl:for-each select="AffixTemplates/MoInflAffixTemplate">
 			<xsl:if test="count(PrefixSlots | SuffixSlots)>0">
 rule {Partially analyzed stem with inflectional template  <xsl:value-of select="@Id"/>}
-  Partial_1 = <xsl:variable name="sAllSlotsOptional">
-				  <xsl:for-each select="PrefixSlots | SuffixSlots">
-					 <xsl:if test="key('SlotsID',@dst)/@Optional='false'">N</xsl:if>
-				  </xsl:for-each>
-			   </xsl:variable>
-			   <xsl:call-template name="AffixTemplateSlotsPSR">
+		<xsl:variable name="sAllSlotsOptional">
+			<xsl:for-each select="PrefixSlots | SuffixSlots">
+				<xsl:if test="key('SlotsID',@dst)/@Optional='false'">N</xsl:if>
+			</xsl:for-each>
+		</xsl:variable>
+		<xsl:variable name="sPartial1">
+			<xsl:choose>
+				<xsl:when test="contains($sAllSlotsOptional,'N')">Partial_1</xsl:when>
+				<xsl:otherwise>PartialInflected</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<xsl:variable name="sPartial2">
+			<xsl:choose>
+				<xsl:when test="contains($sAllSlotsOptional,'N')">Partial_2</xsl:when>
+				<xsl:otherwise>Partial</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+  <xsl:value-of select="$sPartial1"/> =  <xsl:call-template name="AffixTemplateSlotsPSR">
 				  <xsl:with-param name="Slots" select="PrefixSlots"/>
 				  <xsl:with-param name="sAllSlotsOptional" select="$sAllSlotsOptional"/>
 				  <xsl:with-param name="bPrefix">Y</xsl:with-param>
 				  <xsl:with-param name="sType">P</xsl:with-param>
-			   </xsl:call-template> Partial_2 <xsl:call-template name="AffixTemplateSlotsPSR">
+  </xsl:call-template>
+				<xsl:text>&#x20;</xsl:text>
+				<xsl:value-of select="$sPartial2"/> <xsl:call-template name="AffixTemplateSlotsPSR">
 				  <xsl:with-param name="Slots" select="SuffixSlots"/>
 				  <xsl:with-param name="sAllSlotsOptional" select="$sAllSlotsOptional"/>
 				  <xsl:with-param name="bPrefix">N</xsl:with-param>
@@ -942,22 +960,22 @@ rule {Partially analyzed stem with inflectional template  <xsl:value-of select="
 			   </xsl:call-template>
 			   <xsl:text>&#x20; :</xsl:text>
 														 | percolation
-  &lt;Partial_1 synCat&gt;       = &lt;Partial_2 synCat&gt;
+  &lt;<xsl:value-of select="$sPartial1"/> synCat&gt;       = &lt;<xsl:value-of select="$sPartial2"/> synCat&gt;
 														 | constraints
 <xsl:variable name="NestedPOS" select="../../SubPossibilities"/>
 			   <xsl:choose>
 				  <xsl:when test="count($NestedPOS)>0">{
-  &lt;Partial_2 synCat&gt;       = <xsl:value-of select="../../@Id"/>
+  &lt;<xsl:value-of select="$sPartial2"/> synCat&gt;       = <xsl:value-of select="../../@Id"/>
 					 <xsl:call-template name="NestedPOSids">
 						<xsl:with-param name="pos" select="../../@Id"/>
 						<xsl:with-param name="sType" select="'Partial'"/>
 					 </xsl:call-template>
 }</xsl:when>
-				  <xsl:otherwise>  &lt;Partial_2 synCat&gt;       = <xsl:value-of select="../../@Id"/>
+				  <xsl:otherwise>  &lt;<xsl:value-of select="$sPartial2"/> synCat&gt;       = <xsl:value-of select="../../@Id"/>
 				  </xsl:otherwise>
 			   </xsl:choose>
 			   <xsl:if test="@Final='false'">
-  &lt;Partial_1 blocksInflection&gt; = + | prevent a non-final template from immediately being inflected without any intervening derivation or compounding
+  &lt;<xsl:value-of select="$sPartial1"/> blocksInflection&gt; = + | prevent a non-final template from immediately being inflected without any intervening derivation or compounding
 </xsl:if>
 			   <xsl:text>&#x20;
 </xsl:text>
@@ -973,8 +991,8 @@ rule {Partially analyzed stem with inflectional template  <xsl:value-of select="
 			   </xsl:call-template>
 			   <!-- need to avoid nesting inflected items; do this by forcing Patial_2 to be minus and Partial_1 to be plus inflected -->
 														 | constraint
-  &lt;Partial_1 inflected&gt; = +
-  &lt;Partial_2 inflected&gt; = -
+  &lt;<xsl:value-of select="$sPartial1"/> inflected&gt; = +
+  &lt;<xsl:value-of select="$sPartial2"/> inflected&gt; = -
 		</xsl:if>
 		 </xsl:for-each>
 	  </xsl:for-each>
@@ -1598,12 +1616,12 @@ AffixTemplateSlotsPSR
 <!--         <xsl:sort select="@ord"/> now it is just position -->
 		 <xsl:text>&#x20;</xsl:text>
 		 <xsl:variable name="bOptional">
-			<xsl:if test="$sType='F'">
+			<xsl:if test="$sType!='S'">
 			   <!-- is a Full rule; use optionality of slot -->
 			   <xsl:value-of select="key('SlotsID', @dst)/@Optional"/>
 			</xsl:if>
-			<xsl:if test="$sType!='F'">
-			   <!-- is a Partial rule or a Stem rule; use optionality of slot only if some slots are required;
+			<xsl:if test="$sType='S'">
+			   <!-- is a Stem rule; use optionality of slot only if some slots are required;
 	if all slots are optional, treat all slots as required (otherwise this rule is not needed and causes a PC-PATR warning)
  -->
 			   <xsl:if test="contains($sAllSlotsOptional,'N')">
@@ -2429,6 +2447,8 @@ TemplateWithNestedPOS
 ================================================================
 Revision History
 - - - - - - - - - - - - - - - - - - -
+03-Aug-2016    Andy Black  Remove non-final verbiage from stock partial rules (they did nothing)
+			Allow a partial inflectional template to have all optional slots
 27-Mar-2012    Steve McConnel  Tweak for effiency in libxslt based processing.
 09-Mar-2006      Andy Black    Handle category hierarchy for unclassified affixes
 09-Dec-2005      Andy Black    Undo "use template disjunction for fromPOS, envPOS, and toPOS instead of constraint disjunction" because it was so inefficient
