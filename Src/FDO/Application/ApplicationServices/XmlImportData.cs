@@ -2191,7 +2191,9 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 						}
 						if (fAdd)
 						{
-							if (pend.FieldInformation.Owner is ILexEntryRef)
+							var lexEntryRef = pend.FieldInformation.Owner as ILexEntryRef;
+							// RefType of 0 indicates that the type is a variant and not a subentry
+							if (lexEntryRef != null && lexEntryRef.RefType != 0)
 							{
 								List<ICmObject> existing;
 								subentryOrderMap.TryGetValue(hvo, out existing);

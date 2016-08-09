@@ -1287,6 +1287,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			tss = m_cache.TsStrFactory.MakeString("used with the present participle or infinitive of another verb to express intention", wsEn);
 			Assert.IsTrue(tss.Equals(subsub.Definition.get_String(wsEn)));
 			Assert.AreEqual(0, subsub.SensesOS.Count);
+			// Make sure the variant reference does not result in a subentry ordering object
+			Assert.False(VirtualOrderingServices.HasVirtualOrdering(le, "Subentries"));
 		}
 
 		///--------------------------------------------------------------------------------------
