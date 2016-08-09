@@ -53,7 +53,7 @@
 				<xs:sequence>
 					<xs:element name="Option" type="OptionListItemType" maxOccurs="unbounded" minOccurs="0"/>
 				</xs:sequence>
-				<xs:attribute type="listIdType" name="list" use="required"/>
+				<xs:attribute type="listIdType" name="list" use="optional"/>
 			</xs:complexType>
 		</xs:element>
 		<xs:element name="ComplexFormOptions" minOccurs="0">
