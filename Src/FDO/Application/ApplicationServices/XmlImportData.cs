@@ -2216,9 +2216,9 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 					lrPrev = null;
 				}
 			}
-			foreach (var entryOrderPair in subentryOrderMap)
+			foreach (var entryOrderPair in subentryOrderMap.Where(kvp => kvp.Value.Count > 1))
 			{
-				ICmObject mainEntry = m_repoCmObject.GetObject(entryOrderPair.Key);
+				var mainEntry = m_repoCmObject.GetObject(entryOrderPair.Key);
 				VirtualOrderingServices.SetVO(mainEntry, m_cache.ServiceLocator.GetInstance<Virtuals>().LexEntrySubentries, entryOrderPair.Value.Where(item => item.IsValidObject));
 			}
 			FinalizeLrSeq(lrSeqInfo);
