@@ -37,6 +37,9 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 	///      - Discussion: all analysis MultiString
 	///      - Examples: owning sequence of LexExample
 	///    Add the ExtendedNoteTypes CmPossibility list with 5 default entries
+	///
+	/// 7) Add an empty DialectLabels CmPossibility list to LexDb.
+	///    Add reference sequence properties called DialectLabels to both LexEntry and LexSense.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	internal class DataMigration7000069 : IDataMigration
@@ -53,6 +56,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			MigrateIntoNewMultistringField(repoDto, "UsageNote");
 			AugmentEtymologyCluster(repoDto);
 			AddNewExtendedNoteCluster(repoDto);
+			AddDialectLabelsList(repoDto);
 			//VerifyExistenceOfMinimalPublicationType(repoDto); DM 7000041 does this already
 
 			DataMigrationServices.IncrementVersionNumber(repoDto);
@@ -439,6 +443,47 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				}
 				DataMigrationServices.UpdateDTO(repoDto, dto, data.ToString());
 			}
+		}
+
+		/// <summary>
+		/// Add a new list DialectLabels owned by LexDb. The list will be initially empty.
+		/// The migration will also add a reference sequence property to LexEntry and
+		/// LexSense, but since they will be empty too, there's no migration to happen here.
+		/// </summary>
+		/// <remarks>internal for testing</remarks>
+		internal static void AddDialectLabelsList(IDomainObjectDTORepository repoDto)
+		{
+			const string dialectListGuid = "a3a8188b-ab00-4a43-b925-a1eed62287ba";
+			var lexDbDTO = repoDto.AllInstancesSansSubclasses("LexDb").FirstOrDefault();
+			if (lexDbDTO == null)
+				return; // This must be a test that doesn't care about LexDb.
+			var lexDbElt = XElement.Parse(lexDbDTO.Xml);
+			CreateNewLexDbProperty(lexDbElt, "DialectLabels", dialectListGuid);
+			var lexDbGuid = lexDbElt.Attribute("guid").Value;
+
+			// create Languages' possibility list
+			var sb = new StringBuilder();
+			sb.AppendFormat("<rt class=\"CmPossibilityList\" guid=\"{0}\" ownerguid=\"{1}\">", dialectListGuid,
+							lexDbGuid);
+			sb.Append("<Abbreviation>");
+			sb.Append("<AUni ws=\"en\">Dials</AUni>");
+			sb.Append("</Abbreviation>");
+			sb.Append("<DateCreated val=\"2016-08-09 18:48:18.679\" />");
+			sb.Append("<DateModified val=\"2016-08-09 18:48:18.679\" />");
+			sb.Append("<Depth val=\"1\" />");
+			sb.Append("<IsSorted val=\"True\" />");
+			sb.Append("<ItemClsid val=\"7\" />");
+			sb.Append("<Name>");
+			sb.Append("<AUni ws=\"en\">Dialect Labels</AUni>");
+			sb.Append("</Name>");
+			sb.Append("<PreventDuplicates val=\"True\" />");
+			sb.Append("<WsSelector val=\"-6\" />");
+			sb.Append("</rt>");
+			// We purposefully didn't add any Possibilities element.
+			var newCmPossibilityListElt = XElement.Parse(sb.ToString());
+			var dtoCmPossibilityList = new DomainObjectDTO(dialectListGuid, "CmPossibilityList", newCmPossibilityListElt.ToString());
+			repoDto.Add(dtoCmPossibilityList);
+			DataMigrationServices.UpdateDTO(repoDto, lexDbDTO, lexDbElt.ToString()); // update LexDb object
 		}
 	}
 }

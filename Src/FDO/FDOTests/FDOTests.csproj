@@ -425,6 +425,7 @@
     <Content Include="TestData\DataMigration7000042C.xml" />
     <Content Include="TestData\DataMigration7000042D.xml" />
     <Content Include="TestData\DataMigration7000042E.xml" />
+    <Content Include="TestData\DataMigration7000069_Dialects.xml" />
     <Content Include="TestData\DataMigration7000069_Etymology.xml" />
     <Content Include="TestData\DataMigration7000069_CustomExemplar.xml" />
     <Content Include="TestData\DataMigration7000069_CustomUsageNote.xml" />

@@ -980,6 +980,9 @@
 <ComplexEntryTypes>
 <objsur guid="1ee09905-63dd-4c7a-a9bd-1d496743ccd6" t="o" />
 </ComplexEntryTypes>
+<DialectLabels>
+<objsur guid="a3a8188b-ab00-4a43-b925-a1eed62287ba" t="o" />
+</DialectLabels>
 <DomainTypes>
 <objsur guid="b0a1eb98-ea5e-11de-888e-0013722f8dec" t="o" />
 </DomainTypes>
@@ -1067,6 +1070,21 @@
 </Possibilities>
 <PreventDuplicates val="true" />
 <WsSelector val="-3" />
+</rt>
+<rt class="CmPossibilityList" guid="a3a8188b-ab00-4a43-b925-a1eed62287ba" ownerguid="af26d792-ea5e-11de-8f7e-0013722f8dec">
+<Abbreviation>
+<AUni ws="en">Dials</AUni>
+</Abbreviation>
+<Depth val="1" />
+<IsSorted val="true" />
+<ItemClsid val="7" />
+<Name>
+<AUni ws="en">Dialect Labels</AUni>
+</Name>
+<Possibilities>
+</Possibilities>
+<PreventDuplicates val="true" />
+<WsSelector val="-6" />
 </rt>
 <rt class="CmPossibilityList" guid="ed6b2dcc-e82f-4631-b61a-6b630de332d0" ownerguid="af26d792-ea5e-11de-8f7e-0013722f8dec">
 <Abbreviation>

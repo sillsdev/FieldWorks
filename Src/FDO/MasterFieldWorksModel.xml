@@ -37,8 +37,9 @@ The original version number was: 7000000. Be sure it has the right number of zer
 editing it.
 
 Change History: (Be sure to update the 'version' attribute in the EntireModel, when needed. (Almost always.))
-  04 Aug 2016 (7000069): Make multiple model changes:
+  08 Aug 2016 (7000069): Make multiple model changes:
     * Add/modify LexEtymology fields and make LexEntry->Etymology an owning sequence.
+    * Add Language list to LexDb.
     * Add DoNotPublishIn fields to CmPicture and LexPronunciation.
     * Make LexEntry and LexSense Restrictions a MultiString field.
     * Add ReverseName to LexEntryType as a MultiUnicode field. Swap Abbreviation and ReverseAbbr fields.
@@ -46,8 +47,7 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
     * Add Exemplar to LexSense as a MultiString field.
     * Add LexExtendedNote cluster, add ExtendedNoteTypes property to LexDb.
     * Add owning sequence of LexExtendedNote to LexSense as ExtendedNote property.
-    * Since LexDb.PublicationTypes used to be 'hand-generated' and isn't now, the DM will also
-      verify that the minimal (Main Dictionary) entry exists in the PublicationTypes list.
+    * Add DialectLabels list to LexDb. Also add reference to this list in LexEntry and LexSense.
   9 July 2013 (7000068): Make ReversalIndexEntry subentries be a sequence instead of a collection (LT-6468). No DM needed.
   7 May 2013  (7000067): Remove illegal attributes from <Uni> element. (Appears to come from FW 6.0.x.)
   22 March 2013 (7000066): Redux of DM64, but with real DM code.
@@ -2666,6 +2666,11 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 			<para>This property lists publications in which this entry should not appear, either as a main entry or as any kind of link target. Currently the hiding (and consequent adjusting of homograph numbers etc) only takes place in Dictionary view.</para>
 		  </comment>
 		</rel>
+		<rel num="36" id="DialectLabels" card="seq" sig="CmPossibility">
+		  <comment>
+			<para>This property lists dialects in which this entry is used.</para>
+		  </comment>
+		</rel>
 	  </props>
 	</class>
 	<class num="3" id="ConstChartRow" abbr="ccr" abstract="false" base="CmObject" depth="0">
@@ -2793,6 +2798,11 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 		<owning num="26" id="Languages" card="atomic" sig="CmPossibilityList">
 		  <comment>
 			<para>This list stores the languages that the user defines which may be selected in the LexEtymology.LanguageRS field.</para>
+		  </comment>
+		</owning>
+		<owning num="27" id="DialectLabels" card="atomic" sig="CmPossibilityList">
+		  <comment>
+			<para>This list stores the dialects that the user defines which may be assigned to any LexEntry or LexSense.</para>
 		  </comment>
 		</owning>
 	  </props>
@@ -2942,6 +2952,11 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 		<basic num="33" id="Exemplar" sig="MultiString"/>
 		<basic num="34" id="UsageNote" sig="MultiString"/>
 		<owning num="35" id="ExtendedNote" card="seq" sig="LexExtendedNote"/>
+		<rel num="36" id="DialectLabels" card="seq" sig="CmPossibility">
+		  <comment>
+			<para>This property lists dialects in which this sense is used.</para>
+		  </comment>
+		</rel>
 	  </props>
 	</class>
 	<class num="26" id="MoAdhocProhib" abstract="true" abbr="acp" base="CmObject" depth="0">

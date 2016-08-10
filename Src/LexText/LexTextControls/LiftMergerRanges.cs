@@ -42,9 +42,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		readonly List<ICmPossibility> m_rgnewSenseType = new List<ICmPossibility>();
 		readonly List<ICmPossibility> m_rgnewStatus = new List<ICmPossibility>();
 		readonly List<ICmPossibility> m_rgnewUsageType = new List<ICmPossibility>();
-		readonly List<ICmLocation> m_rgnewLocation = new List<ICmLocation>();
+		readonly List<ICmPossibility> m_rgnewLocation = new List<ICmPossibility>();
 		readonly List<ICmPossibility> m_rgnewPerson = new List<ICmPossibility>();
 		readonly List<ICmPossibility> m_rgnewLanguage = new List<ICmPossibility>();
+		readonly List<ICmPossibility> m_rgnewDialects = new List<ICmPossibility>();
 		readonly List<IPhEnvironment> m_rgnewEnvirons = new List<IPhEnvironment>();
 		readonly List<ICmPossibility> m_rgnewLexRefTypes = new List<ICmPossibility>();
 		readonly List<IMoInflClass> m_rgnewInflClasses = new List<IMoInflClass>();
@@ -82,6 +83,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		readonly Dictionary<string, ICmPossibility> m_dictExceptFeats = new Dictionary<string, ICmPossibility>();
 		readonly Dictionary<string, ICmPossibility> m_dictPublicationTypes = new Dictionary<string, ICmPossibility>();
 		readonly Dictionary<string, ICmPossibility> m_dictLanguage = new Dictionary<string, ICmPossibility>();
+		readonly Dictionary<string, ICmPossibility> m_dictDialect = new Dictionary<string, ICmPossibility>();
 
 		//New
 		readonly Dictionary<string, ICmPossibility> m_dictAffixCategories = new Dictionary<string, ICmPossibility>();
@@ -110,11 +112,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		private IPartOfSpeech FindOrCreatePartOfSpeech(string val)
 		{
 			ICmPossibility poss;
-			if (m_dictPos.TryGetValue(val, out poss) ||
-				m_dictPos.TryGetValue(val.ToLowerInvariant(), out poss))
-			{
+			if (TryGetPossibilityMatchingTrait(val, m_dictPos, out poss))
 				return poss as IPartOfSpeech;
-			}
+
 			IPartOfSpeech pos = CreateNewPartOfSpeech();
 			m_cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Add(pos);
 			// Try to find this in the category catalog list, so we can add in more information.
@@ -282,12 +282,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		private ILexEntryType FindOrCreateComplexFormType(string sType)
 		{
 			ICmPossibility poss;
-			if (m_dictComplexFormType.TryGetValue(sType, out poss) ||
-				m_dictComplexFormType.TryGetValue(sType.ToLowerInvariant(), out poss))
-			{
+			if (TryGetPossibilityMatchingTrait(sType, m_dictComplexFormType, out poss))
 				return poss as ILexEntryType;
-			}
-			ILexEntryType let = CreateNewLexEntryType();
+			var let = CreateNewLexEntryType();
 			m_cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.Add(let);
 			let.Abbreviation.set_String(m_cache.DefaultAnalWs, sType);
 			let.Name.set_String(m_cache.DefaultAnalWs, sType);
@@ -300,12 +297,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		private ILexEntryType FindOrCreateVariantType(string sType)
 		{
 			ICmPossibility poss;
-			if (m_dictVariantType.TryGetValue(sType, out poss) ||
-				m_dictVariantType.TryGetValue(sType.ToLowerInvariant(), out poss))
-			{
+			if (TryGetPossibilityMatchingTrait(sType, m_dictVariantType, out poss))
 				return poss as ILexEntryType;
-			}
-			ILexEntryType let = CreateNewLexEntryType();
+			var let = CreateNewLexEntryType();
 			m_cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Add(let);
 			let.Abbreviation.set_String(m_cache.DefaultAnalWs, sType);
 			let.Name.set_String(m_cache.DefaultAnalWs, sType);
@@ -317,171 +311,108 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private ICmAnthroItem FindOrCreateAnthroCode(string traitValue)
 		{
-			ICmPossibility poss;
-			if (m_dictAnthroCode.TryGetValue(traitValue, out poss) ||
-				m_dictAnthroCode.TryGetValue(traitValue.ToLowerInvariant(), out poss))
-			{
-				return poss as ICmAnthroItem;
-			}
-			ICmAnthroItem ant = CreateNewCmAnthroItem();
-			m_cache.LangProject.AnthroListOA.PossibilitiesOS.Add(ant);
-			ant.Abbreviation.set_String(m_cache.DefaultAnalWs, traitValue);
-			ant.Name.set_String(m_cache.DefaultAnalWs, traitValue);
-			m_dictAnthroCode.Add(traitValue, ant);
-			m_rgnewAnthroCode.Add(ant);
-			return ant;
+			var ws = m_cache.DefaultAnalWs;
+			return FindOrCreatePossibility(traitValue, ws, CreateNewCmAnthroItem, m_dictAnthroCode, m_rgnewAnthroCode,
+				m_cache.LangProject.AnthroListOA) as ICmAnthroItem;
 		}
 
 		private ICmSemanticDomain FindOrCreateSemanticDomain(string traitValue)
 		{
+			var ws = m_cache.DefaultAnalWs;
+			return FindOrCreatePossibility(traitValue, ws, CreateNewCmSemanticDomain, m_dictSemDom, m_rgnewSemDom,
+				m_cache.LangProject.SemanticDomainListOA) as ICmSemanticDomain;
+		}
+
+		private ICmPossibility FindOrCreateDialect(string traitValue)
+		{
+			var ws = m_cache.DefaultVernWs;
+			return FindOrCreatePossibility(traitValue, ws, CreateNewCmPossibility, m_dictDialect, m_rgnewDialects,
+				m_cache.LangProject.LexDbOA.DialectLabelsOA);
+		}
+
+		private static ICmPossibility FindOrCreatePossibility(string traitValue, int ws, Func<ICmPossibility> createMethod,
+			IDictionary<string, ICmPossibility> dict, ICollection<ICmPossibility> rgnewPoss, ICmPossibilityList listToUpdate)
+		{
 			ICmPossibility poss;
-			if (m_dictSemDom.TryGetValue(traitValue, out poss) ||
-				m_dictSemDom.TryGetValue(traitValue.ToLowerInvariant(), out poss))
-			{
-				return poss as ICmSemanticDomain;
-			}
-			ICmSemanticDomain sem = CreateNewCmSemanticDomain();
-			m_cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Add(sem);
-			sem.Abbreviation.set_String(m_cache.DefaultAnalWs, traitValue);
-			sem.Name.set_String(m_cache.DefaultAnalWs, traitValue);
-			m_dictSemDom.Add(traitValue, sem);
-			m_rgnewSemDom.Add(sem);
-			return sem;
+			if (TryGetPossibilityMatchingTrait(traitValue, dict, out poss))
+				return poss;
+			poss = createMethod();
+			listToUpdate.PossibilitiesOS.Add(poss);
+			UpdatePossibilityWithTraitValue(ws, poss, traitValue, dict, rgnewPoss);
+			return poss;
+		}
+
+		private static bool TryGetPossibilityMatchingTrait(string traitValue, IDictionary<string, ICmPossibility> dict,
+			out ICmPossibility poss)
+		{
+			return dict.TryGetValue(traitValue, out poss) || dict.TryGetValue(traitValue.ToLowerInvariant(), out poss);
+		}
+
+		private static void UpdatePossibilityWithTraitValue(int ws, ICmPossibility poss, string traitValue,
+			IDictionary<string, ICmPossibility> dict, ICollection<ICmPossibility> rgnewPoss)
+		{
+			poss.Abbreviation.set_String(ws, traitValue);
+			poss.Name.set_String(ws, traitValue);
+			dict.Add(traitValue, poss);
+			rgnewPoss.Add(poss);
 		}
 
 		private ICmPossibility FindOrCreateDomainType(string traitValue)
 		{
-			ICmPossibility poss;
-			if (m_dictDomainType.TryGetValue(traitValue, out poss) ||
-				m_dictDomainType.TryGetValue(traitValue.ToLowerInvariant(), out poss))
-			{
-				return poss;
-			}
-			poss = CreateNewCmPossibility();
-			m_cache.LangProject.LexDbOA.DomainTypesOA.PossibilitiesOS.Add(poss);
-			poss.Abbreviation.set_String(m_cache.DefaultAnalWs, traitValue);
-			poss.Name.set_String(m_cache.DefaultAnalWs, traitValue);
-			m_dictDomainType.Add(traitValue, poss);
-			m_rgnewDomainType.Add(poss);
-			return poss;
+			var ws = m_cache.DefaultAnalWs;
+			return FindOrCreatePossibility(traitValue, ws, CreateNewCmPossibility, m_dictDomainType, m_rgnewDomainType,
+				m_cache.LangProject.LexDbOA.DomainTypesOA);
 		}
 
 		private ICmPossibility FindOrCreateSenseType(string traitValue)
 		{
-			ICmPossibility poss;
-			if (m_dictSenseType.TryGetValue(traitValue, out poss) ||
-				m_dictSenseType.TryGetValue(traitValue.ToLowerInvariant(), out poss))
-			{
-				return poss;
-			}
-			poss = CreateNewCmPossibility();
-			m_cache.LangProject.LexDbOA.SenseTypesOA.PossibilitiesOS.Add(poss);
-			poss.Abbreviation.set_String(m_cache.DefaultAnalWs, traitValue);
-			poss.Name.set_String(m_cache.DefaultAnalWs, traitValue);
-			m_dictSenseType.Add(traitValue, poss);
-			m_rgnewSenseType.Add(poss);
-			return poss;
+			var ws = m_cache.DefaultAnalWs;
+			return FindOrCreatePossibility(traitValue, ws, CreateNewCmPossibility, m_dictSenseType, m_rgnewSenseType,
+				m_cache.LangProject.LexDbOA.SenseTypesOA);
 		}
 
 		private ICmPossibility FindOrCreateStatus(string traitValue)
 		{
-			ICmPossibility poss;
-			if (m_dictStatus.TryGetValue(traitValue, out poss) ||
-				m_dictStatus.TryGetValue(traitValue.ToLowerInvariant(), out poss))
-			{
-				return poss;
-			}
-			poss = CreateNewCmPossibility();
-			m_cache.LangProject.StatusOA.PossibilitiesOS.Add(poss);
-			poss.Abbreviation.set_String(m_cache.DefaultAnalWs, traitValue);
-			poss.Name.set_String(m_cache.DefaultAnalWs, traitValue);
-			m_dictStatus.Add(traitValue, poss);
-			m_rgnewStatus.Add(poss);
-			return poss;
+			var ws = m_cache.DefaultAnalWs;
+			return FindOrCreatePossibility(traitValue, ws, CreateNewCmPossibility, m_dictStatus, m_rgnewStatus,
+				m_cache.LangProject.StatusOA);
 		}
 
 		private ICmPossibility FindOrCreateTranslationType(string sType)
 		{
-			ICmPossibility poss;
-			if (m_dictTransType.TryGetValue(sType, out poss) ||
-				m_dictTransType.TryGetValue(sType.ToLowerInvariant(), out poss))
-			{
-				return poss;
-			}
-			poss = CreateNewCmPossibility();
-			m_cache.LangProject.TranslationTagsOA.PossibilitiesOS.Add(poss);
-			poss.Name.set_String(m_cache.DefaultAnalWs, sType);
-			m_dictTransType.Add(sType, poss);
-			m_rgnewTransType.Add(poss);
-			return poss;
+			// This method will now set the Abbreviation as well as the Name.
+			// It only set the Name before.
+			var ws = m_cache.DefaultAnalWs;
+			return FindOrCreatePossibility(sType, ws, CreateNewCmPossibility, m_dictTransType, m_rgnewTransType,
+				m_cache.LangProject.TranslationTagsOA);
 		}
 
 		private ICmPossibility FindOrCreateUsageType(string traitValue)
 		{
-			ICmPossibility poss;
-			if (m_dictUsageType.TryGetValue(traitValue, out poss) ||
-				m_dictUsageType.TryGetValue(traitValue.ToLowerInvariant(), out poss))
-			{
-				return poss;
-			}
-			poss = CreateNewCmPossibility();
-			m_cache.LangProject.LexDbOA.UsageTypesOA.PossibilitiesOS.Add(poss);
-			poss.Abbreviation.set_String(m_cache.DefaultAnalWs, traitValue);
-			poss.Name.set_String(m_cache.DefaultAnalWs, traitValue);
-			m_dictUsageType.Add(traitValue, poss);
-			m_rgnewUsageType.Add(poss);
-			return poss;
+			var ws = m_cache.DefaultAnalWs;
+			return FindOrCreatePossibility(traitValue, ws, CreateNewCmPossibility, m_dictUsageType, m_rgnewUsageType,
+				m_cache.LangProject.LexDbOA.UsageTypesOA);
 		}
 
 		private ICmPossibility FindOrCreateLanguagePossibility(string traitValue)
 		{
-			ICmPossibility poss;
-			if (m_dictLanguage.TryGetValue(traitValue, out poss) ||
-				m_dictLanguage.TryGetValue(traitValue.ToLowerInvariant(), out poss))
-			{
-				return poss;
-			}
-			poss = CreateNewCmPossibility();
-			m_cache.LangProject.LexDbOA.LanguagesOA.PossibilitiesOS.Add(poss);
-			poss.Abbreviation.set_String(m_cache.DefaultAnalWs, traitValue);
-			poss.Name.set_String(m_cache.DefaultAnalWs, traitValue);
-			m_dictLanguage.Add(traitValue, poss);
-			m_rgnewLanguage.Add(poss);
-			return poss;
+			var ws = m_cache.DefaultAnalWs;
+			return FindOrCreatePossibility(traitValue, ws, CreateNewCmPossibility, m_dictLanguage, m_rgnewLanguage,
+				m_cache.LangProject.LexDbOA.LanguagesOA);
 		}
 
 		private ICmLocation FindOrCreateLocation(string traitValue)
 		{
-			ICmPossibility poss;
-			if (m_dictLocation.TryGetValue(traitValue, out poss) ||
-				m_dictLocation.TryGetValue(traitValue.ToLowerInvariant(), out poss))
-			{
-				return poss as ICmLocation;
-			}
-			ICmLocation loc = CreateNewCmLocation();
-			m_cache.LangProject.LocationsOA.PossibilitiesOS.Add(loc);
-			loc.Abbreviation.set_String(m_cache.DefaultAnalWs, traitValue);
-			loc.Name.set_String(m_cache.DefaultAnalWs, traitValue);
-			m_dictLocation.Add(traitValue, loc);
-			m_rgnewLocation.Add(loc);
-			return loc;
+			var ws = m_cache.DefaultAnalWs;
+			return FindOrCreatePossibility(traitValue, ws, CreateNewCmLocation, m_dictLocation, m_rgnewLocation,
+				m_cache.LangProject.LocationsOA) as ICmLocation;
 		}
 
 		private ICmPossibility FindOrCreatePublicationType(string traitValue)
 		{
-			ICmPossibility poss;
-			if (m_dictPublicationTypes.TryGetValue(traitValue, out poss) ||
-				m_dictPublicationTypes.TryGetValue(traitValue.ToLowerInvariant(), out poss))
-			{
-				return poss;
-			}
-			poss = CreateNewCmPossibility();
-			m_cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(poss);
-			poss.Abbreviation.set_String(m_cache.DefaultAnalWs, traitValue);
-			poss.Name.set_String(m_cache.DefaultAnalWs, traitValue);
-			m_dictPublicationTypes.Add(traitValue, poss);
-			m_rgnewPublicationType.Add(poss);
-			return poss;
+			var ws = m_cache.DefaultAnalWs;
+			return FindOrCreatePossibility(traitValue, ws, CreateNewCmPossibility, m_dictPublicationTypes, m_rgnewPublicationType,
+				m_cache.LangProject.LexDbOA.PublicationTypesOA);
 		}
 
 		#endregion // Methods to find or create list items
@@ -526,13 +457,14 @@ namespace SIL.FieldWorks.LexText.Controls
 				ListNewPossibilities(writer, LexTextControls.ksTranslationTypesAdded, m_rgnewTransType);
 				ListNewPossibilities(writer, LexTextControls.ksConditionsAdded, m_rgnewCondition);
 				ListNewPossibilities(writer, LexTextControls.ksAnthropologyCodesAdded, m_rgnewAnthroCode);
+				ListNewPossibilities(writer, LexTextControls.ksDialectsAdded, m_rgnewDialects);
 				ListNewPossibilities(writer, LexTextControls.ksDomainTypesAdded, m_rgnewDomainType);
 				ListNewPossibilities(writer, LexTextControls.ksSenseTypesAdded, m_rgnewSenseType);
 				ListNewPossibilities(writer, LexTextControls.ksPeopleAdded, m_rgnewPerson);
 				ListNewPossibilities(writer, LexTextControls.ksStatusValuesAdded, m_rgnewStatus);
 				ListNewPossibilities(writer, LexTextControls.ksUsageTypesAdded, m_rgnewUsageType);
-				ListNewPossibilities(writer, LexTextControls.ksLocationsAdded, new List<ICmPossibility>(m_rgnewLocation));
-				ListNewPossibilities(writer, LexTextControls.ksLanguagesAdded, new List<ICmPossibility>(m_rgnewLanguage));
+				ListNewPossibilities(writer, LexTextControls.ksLocationsAdded, m_rgnewLocation);
+				ListNewPossibilities(writer, LexTextControls.ksLanguagesAdded, m_rgnewLanguage);
 				ListNewEnvironments(writer, LexTextControls.ksEnvironmentsAdded, m_rgnewEnvirons);
 				ListNewPossibilities(writer, LexTextControls.ksLexicalReferenceTypesAdded, m_rgnewLexRefTypes);
 				ListNewWritingSystems(writer, LexTextControls.ksWritingSystemsAdded, m_addedWss);
@@ -1335,6 +1267,11 @@ namespace SIL.FieldWorks.LexText.Controls
 					//lists under m_cache.LangProject.LexDbOA
 					//New
 				case RangeNames.sDbComplexEntryTypesOA:
+					break;
+
+				case RangeNames.sDbDialectLabelsOA:
+					ProcessPossibility(id, guidAttr, parent, newDesc, newLabel, newAbbrev,
+						m_dictDialect, m_rgnewDialects, m_cache.LangProject.LexDbOA.DialectLabelsOA);
 					break;
 
 					//New

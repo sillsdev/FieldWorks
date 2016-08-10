@@ -1033,5 +1033,84 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			Assert.Greater(idx, -1, "Did not find right language Unicode string");
 			Assert.AreEqual(value, aUniStr[idx].Value, "Unicode string has wrong value.");
 		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test the migration from version 7000068 to 7000069 to Create two DialectLabels fields,
+		/// both of them reference sequences of CmPossibility.
+		/// Also tests the addition of a new (initially empty) CmPossibilityList attached to LexDb.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void TestAddingDialectLabelsToLexEntryAndLexSense()
+		{
+			const string dialectListGuid = "a3a8188b-ab00-4a43-b925-a1eed62287ba";
+			var mockMdc = new MockMDCForDataMigration();
+			mockMdc.AddClass(1, "CmObject", null, new List<string> { "LexEntry", "LexSense", "LexDb", "CmPossibilityList" });
+			mockMdc.AddClass(2, "CmPossibilityList", "CmObject", new List<string>());
+			mockMdc.AddClass(3, "LexDb", "CmObject", new List<string>());
+			mockMdc.AddClass(4, "LexEntry", "CmObject", new List<string>());
+			mockMdc.AddClass(5, "LexSense", "CmObject", new List<string>());
+
+			var currentFlid = 2000;
+			mockMdc.AddField(++currentFlid, "Possibilities", CellarPropertyType.OwningSequence, 2);
+			mockMdc.AddField(++currentFlid, "CitationForm", CellarPropertyType.MultiUnicode, 4);
+			mockMdc.AddField(++currentFlid, "Gloss", CellarPropertyType.MultiUnicode, 5);
+
+			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000069_Dialects.xml");
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000068, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
+
+			// Make sure LexEntry and LexSense don't have DialectLabels prior to migration.
+			var lexEntryDtos = dtoRepos.AllInstancesSansSubclasses("LexEntry").ToList();
+			foreach (var elt in lexEntryDtos.Select(dto => XElement.Parse(dto.Xml)))
+			{
+				Assert.IsNull(elt.Element("DialectLabels"));
+			}
+			var lexSenseDtos = dtoRepos.AllInstancesSansSubclasses("LexSense").ToList();
+			foreach (var elt in lexSenseDtos.Select(dto => XElement.Parse(dto.Xml)))
+			{
+				Assert.IsNull(elt.Element("DialectLabels"));
+			}
+
+			// Make sure LexDb has no DialectLabels property prior to migration.
+			var lexDbElt = XElement.Parse(dtoRepos.AllInstancesSansSubclasses("LexDb").First().Xml);
+			Assert.IsNull(lexDbElt.Element("DialectLabels"));
+
+			//SUT
+			DataMigration7000069.AddDialectLabelsList(dtoRepos);
+
+			// Verify that LexDb has empty list of dialect labels
+			lexDbElt = XElement.Parse(dtoRepos.AllInstancesSansSubclasses("LexDb").First().Xml);
+			var dialectsElt = lexDbElt.Element("DialectLabels");
+			var guids = GetOwnedGuidStringsFromPropertyElement(dialectsElt);
+			Assert.AreEqual(1, guids.Count(), "Should only be one DialectLabels list pointer.");
+			var dialectsListElt = XElement.Parse(dtoRepos.GetDTO(guids.First()).Xml);
+			Assert.AreEqual(dialectListGuid, dialectsListElt.Attribute("guid").Value, "List has the wrong guid");
+			Assert.AreEqual(lexDbElt.Attribute("guid").Value, dialectsListElt.Attribute("ownerguid").Value, "List is not linked properly");
+			Assert.AreEqual("CmPossibilityList", dialectsListElt.Attribute("class").Value, "Should be a possibility list object");
+			Assert.AreEqual("1", dialectsListElt.Element("Depth").Attribute("val").Value, "List should only have Depth of 1.");
+			Assert.AreEqual("True", dialectsListElt.Element("IsSorted").Attribute("val").Value, "List should be sorted.");
+			Assert.AreEqual("7", dialectsListElt.Element("ItemClsid").Attribute("val").Value, "ItemClsid should be 7 (CmPossibility).");
+			Assert.AreEqual("-6", dialectsListElt.Element("WsSelector").Attribute("val").Value, "Wrong WsSelector value");
+			Assert.AreEqual("True", dialectsListElt.Element("PreventDuplicates").Attribute("val").Value, "List should prevent duplicates");
+			var namePropElt = dialectsListElt.Element("Name");
+			VerifySingleMultiUnicodeStringFromPropertyElement(namePropElt, "Dialect Labels", enWs, true);
+			var abbrPropElt = dialectsListElt.Element("Abbreviation");
+			VerifySingleMultiUnicodeStringFromPropertyElement(abbrPropElt, "Dials", enWs, true);
+			var possibilities = dialectsListElt.Element("Possibilities");
+			Assert.IsNull(possibilities, "List should begin life empty");
+
+			// LexEntry and LexSense still won't have DialectLabels after to migration.
+			lexEntryDtos = dtoRepos.AllInstancesSansSubclasses("LexEntry").ToList();
+			foreach (var elt in lexEntryDtos.Select(dto => XElement.Parse(dto.Xml)))
+			{
+				Assert.IsNull(elt.Element("DialectLabels"));
+			}
+			lexSenseDtos = dtoRepos.AllInstancesSansSubclasses("LexSense").ToList();
+			foreach (var elt in lexSenseDtos.Select(dto => XElement.Parse(dto.Xml)))
+			{
+				Assert.IsNull(elt.Element("DialectLabels"));
+			}
+		}
 	}
 }

@@ -745,6 +745,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		public override ICmObject ReferenceTargetOwner(int flid)
 		{
+			if (flid == LexEntryTags.kflidDialectLabels)
+				return Cache.LangProject.LexDbOA.DialectLabelsOA;
 			if (flid == Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "PublishIn", false) ||
 				flid == Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "ShowMainEntryIn", false))
 				return Cache.LangProject.LexDbOA.PublicationTypesOA;
@@ -5846,6 +5848,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					return m_cache.LangProject.LexDbOA.UsageTypesOA;
 				case LexSenseTags.kflidDomainTypes:
 					return m_cache.LangProject.LexDbOA.DomainTypesOA;
+				case LexSenseTags.kflidDialectLabels:
+					return m_cache.LangProject.LexDbOA.DialectLabelsOA;
 				case LexSenseTags.kflidStatus:
 					return m_cache.LangProject.StatusOA;
 				case LexSenseTags.kflidSemanticDomains:

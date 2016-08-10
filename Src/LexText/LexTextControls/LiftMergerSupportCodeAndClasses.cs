@@ -65,6 +65,9 @@ namespace SIL.FieldWorks.LexText.Controls
 											 m_dictExceptFeats);
 				}
 			}
+			if (m_cache.LangProject.LexDbOA.DialectLabelsOA != null)
+				InitializePossibilityMap(m_cache.LangProject.LexDbOA.DialectLabelsOA.PossibilitiesOS,
+										 m_dictDialect);
 			if (m_cache.LangProject.LexDbOA.DomainTypesOA != null)
 				InitializePossibilityMap(m_cache.LangProject.LexDbOA.DomainTypesOA.PossibilitiesOS,
 										 m_dictDomainType);

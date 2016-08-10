@@ -7,13 +7,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using Palaso.Lift;
@@ -2279,6 +2277,9 @@ namespace SIL.FieldWorks.LexText.Controls
 						if (le.DoNotUseForParsing != fDontUse && (m_fCreatingNewEntry || m_msImport != MergeStyle.MsKeepOld))
 							le.DoNotUseForParsing = fDontUse;
 						break;
+					case RangeNames.sDbDialectLabelsOA:
+						ProcessEntryDialects(le, lt.Value);
+						break;
 					default:
 						ProcessUnknownTrait(entry, lt, le);
 						break;
@@ -2294,6 +2295,16 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (!le.DoNotPublishInRC.Contains(publication))
 				le.DoNotPublishInRC.Add(publication);
+		}
+
+		private void ProcessEntryDialects(ILexEntry le, string traitValue)
+		{
+			// This does fine adding dialects to an entry,
+			// it won't remove dialects that the merging entry doesn't use.
+			var dialect = FindOrCreateDialect(traitValue);
+
+			if (!le.DialectLabelsRS.Contains(dialect))
+				le.DialectLabelsRS.Add(dialect);
 		}
 
 		private void ProcessUnknownTrait(LiftObject liftObject, LiftTrait lt, ICmObject cmo)
@@ -6506,6 +6517,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				ls.StatusRA = null;
 				ls.UsageTypesRC.Clear();
 				ls.DoNotPublishInRC.Clear();
+				ls.DialectLabelsRS.Clear();
 			}
 			ICmPossibility poss;
 			foreach (LiftTrait lt in sense.Traits)
@@ -6524,6 +6536,11 @@ namespace SIL.FieldWorks.LexText.Controls
 						ICmSemanticDomain sem = FindOrCreateSemanticDomain(lt.Value);
 						if (!ls.SemanticDomainsRC.Contains(sem))
 							ls.SemanticDomainsRC.Add(sem);
+						break;
+					case RangeNames.sDbDialectLabelsOA:
+						poss = FindOrCreateDialect(lt.Value);
+						if (!ls.DialectLabelsRS.Contains(poss))
+							ls.DialectLabelsRS.Add(poss);
 						break;
 					case RangeNames.sDbDomainTypesOAold1: // original FLEX export = DomainType
 					case RangeNames.sDbDomainTypesOA:
@@ -6578,6 +6595,9 @@ namespace SIL.FieldWorks.LexText.Controls
 					case RangeNames.sSemanticDomainListOA:
 						poss = FindOrCreateSemanticDomain(lt.Value);
 						// how do you detect conflicts in a reference list?
+						break;
+					case RangeNames.sDbDialectLabelsOA:
+						poss = FindOrCreateDialect(lt.Value);
 						break;
 					case RangeNames.sDbDomainTypesOAold1:	// original FLEX export = DomainType
 					case RangeNames.sDbDomainTypesOA:

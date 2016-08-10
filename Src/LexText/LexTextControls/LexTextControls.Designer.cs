@@ -845,6 +845,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The following Dialect labels were added to the language project:.
+        /// </summary>
+        internal static string ksDialectsAdded {
+            get {
+                return ResourceManager.GetString("ksDialectsAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Discarded field.
         /// </summary>
         internal static string ksDiscardedField {

@@ -276,7 +276,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 			AddMorphTypes(lexDb);
 
-			var mdcManaged = servLoc.GetInstance<IFwMetaDataCacheManaged>();
 			var listFactoryInternal = listFactory as ICmPossibilityListFactoryInternal;
 			lexDb.ComplexEntryTypesOA = listFactoryInternal.Create(
 				new Guid("1ee09905-63dd-4c7a-a9bd-1d496743ccd6"),
@@ -296,6 +295,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			new Guid("487c15b0-2ced-4417-8b77-9075f4a21e5f"),
 			dataReader.GetNextRealHvo());
 			lexDb.LanguagesOA.ItemClsid = CmPossibilityTags.kClassId;
+			lexDb.DialectLabelsOA = listFactoryInternal.Create(
+			new Guid("a3a8188b-ab00-4a43-b925-a1eed62287ba"),
+			dataReader.GetNextRealHvo());
+			lexDb.DialectLabelsOA.ItemClsid = CmPossibilityTags.kClassId;
 
 			// TODO: add lexDb.Introduction, lexDb.Domain/Subentry/Sense,
 			// lexDb.AllomorphConditions, lexDb.Status
