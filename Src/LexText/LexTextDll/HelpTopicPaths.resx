@@ -3099,5 +3099,95 @@
   <data name="khtpField-lexiconEdit-LexExtendedNote-Example" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Extended_Note/Example_field_(Extended_Note).htm</value>
     <comment>Extended Note - Expanded Example </comment>
-</data>
+  </data>
+  <data name="khtpField-anthroEdit-CmAnthroItem-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Anthropology_Categories_fields/Subcategories_field_Anthropology_Categories.htm</value>
+  </data>
+  <data name="khtpField-chartmarkEdit-CmPossibility-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Text_Chart_Markers_fields/subitems_fld_tcmrkers.htm</value>
+  </data>
+  <data name="khtpField-charttempEdit-CmPossibility-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Text_Chart_Temp_fields/subitems_field_tctemp.htm</value>
+  </data>
+  <data name="khtpField-complexEntryTypeEdit-LexEntryType-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Complex_Form_Types_flds/subtypes_fld_(complex_fm_types).htm</value>
+  </data>
+  <data name="khtpField-complexEntryTypeEdit-LexEntryType-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Complex_Form_Types_flds/subtypes_fld_(complex_fm_types).htm</value>
+  </data>
+  <data name="khtpField-domainTypeEdit-CmPossibility-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Academic_Domains_fields/subitems_field_academic_domains.htm</value>
+  </data>
+  <data name="khtpField-educationEdit-CmPossibility-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Education_Levels_fields/Subitems_field_Education_Levels.htm</value>
+  </data>
+  <data name="khtpField-extNoteTypeEdit-CmPossibility-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Extended_Note_Types/Subitems_field_(Extended_Notes).htm</value>
+  </data>
+  <data name="khtpField-extNoteTypeEdit-CmPossibility-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Extended_Note_Types/Subitems_field_(Extended_Notes).htm</value>
+  </data>
+  <data name="khtpField-genresEdit-CmPossibility-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Genres_fields/Subitems_field_Genres.htm</value>
+  </data>
+  <data name="khtpField-languagesListEdit-CmPossibility-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Languages/Subitems_field_(Languages).htm</value>
+  </data>
+  <data name="khtpField-languagesListEdit-CmPossibility-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Languages/Subitems_field_(Languages).htm</value>
+  </data>
+  <data name="khtpField-positionsEdit-CmPossibility-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Positions_fields/Subitems_field_(Positions).htm</value>
+  </data>
+  <data name="khtpField-positionsEdit-CmPossibility-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Positions_fields/Subitems_field_(Positions).htm</value>
+  </data>
+  <data name="khtpField-publicationsEdit-CmPossibility-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Publications/Subitems_field_(Publications).htm</value>
+  </data>
+  <data name="khtpField-publicationsEdit-CmPossibility-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Publications/Subitems_field_(Publications).htm</value>
+  </data>
+  <data name="khtpField-restrictionsEdit-CmPossibility-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Restrictions_fields/Subitems_field_(Restrictions).htm</value>
+  </data>
+  <data name="khtpField-restrictionsEdit-CmPossibility-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Restrictions_fields/Subitems_field_(Restrictions).htm</value>
+  </data>
+  <data name="khtpField-roleEdit-CmPossibility-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Roles_fields/Subitems_field_(Roles).htm</value>
+  </data>
+  <data name="khtpField-roleEdit-CmPossibility-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Roles_fields/Subitems_field_(Roles).htm</value>
+  </data>
+  <data name="khtpField-semanticDomainEdit-CmSemanticDomain-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Semantic_Domains_fields/Subdomain_Semantic_Domains.htm</value>
+  </data>
+  <data name="khtpField-semanticDomainEdit-CmSemanticDomain-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Semantic_Domains_fields/Subdomains_Semantic_Domains.htm</value>
+  </data>
+  <data name="khtpField-senseTypeEdit-CmPossibility-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Sense_Types_fields/Subitems_field_(Sense_Types).htm</value>
+  </data>
+  <data name="khtpField-senseTypeEdit-CmPossibility-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Sense_Types_fields/Subitems_field_(Sense_Types).htm</value>
+  </data>
+  <data name="khtpField-statusEdit-CmPossibility-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Status_fields/Subitems_field_(Status).htm</value>
+  </data>
+  <data name="khtpField-statusEdit-CmPossibility-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Status_fields/Subitems_field_(Status).htm</value>
+  </data>
+  <data name="khtpField-textMarkupTagsEdit-CmPossibility-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Text_Markup_Tags_fields/Subitems_fld_txtmkup.htm</value>
+  </data>
+  <data name="khtpField-translationTypeEdit-CmPossibility-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Translation_Types_fields/Subitems_field_(Translation_Types).htm</value>
+  </data>
+  <data name="khtpField-translationTypeEdit-CmPossibility-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Translation_Types_fields/Subitems_field_(Translation_Types).htm</value>
+  </data>
+  <data name="khtpField-usageTypeEdit-CmPossibility-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Usages_fields/Subitems_field_Usages.htm</value>
+  </data>
 </root>
