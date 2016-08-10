@@ -3190,4 +3190,10 @@
   <data name="khtpField-usageTypeEdit-CmPossibility-Subitems" xml:space="preserve">
     <value>/User_Interface/Field_Descriptions/Lists/Usages_fields/Subitems_field_Usages.htm</value>
   </data>
+  <data name="khtpChoose-Language" xml:space="preserve">
+    <value>/Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_a_source_language.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEtymology-LanguageNotes" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Source_Language_Notes_(Etymology).htm</value>
+  </data>
 </root>
