@@ -481,12 +481,12 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Extended Note" isEnabled="true" style="Dictionary-Sense" styleType="paragraph" between=" " after=" " field="ExtendedNoteOS" cssClassNameOverride="extendednotecontents">
 		<ComplexFormOptions list="note" displayEachComplexFormInParagraph="true">
-			<Option id="c0000000-dd15-4a03-9032-b40faaa9a754" isEnabled="false" />
+			<Option id="c0000000-dd15-4a03-9032-b40faaa9a754" isEnabled="true" />
 			<Option id="2f06d436-b1e0-47ae-a42e-1f7b893c5fc2" isEnabled="true" />
 			<Option id="7ad06e7d-15d1-42b0-ae19-9c05b7c0b181" isEnabled="true" />
-			<Option id="d3d28628-60c9-4917-8185-ba64c59f20c3" isEnabled="false" />
-			<Option id="30115b33-608a-4506-9f9c-2457cab4f4a8" isEnabled="false" />
-			<Option id="5dd29371-fdb0-497a-a2fb-7ca69b00ad4f" isEnabled="false" />
+			<Option id="d3d28628-60c9-4917-8185-ba64c59f20c3" isEnabled="true" />
+			<Option id="30115b33-608a-4506-9f9c-2457cab4f4a8" isEnabled="true" />
+			<Option id="5dd29371-fdb0-497a-a2fb-7ca69b00ad4f" isEnabled="true" />
 		</ComplexFormOptions>
 		<ConfigurationItem name="Note Type" isEnabled="false" between=" " after=" " field="ExtendedNoteTypeRA" subField="Name" cssClassNameOverride="notetype">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -498,9 +498,9 @@
 				<Option id="all analysis" isEnabled="true" />
 			</WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Examples" isEnabled="true" style="Bulleted List" styleType="paragraph" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
-			<ComplexFormOptions displayEachComplexFormInParagraph="true" />
-			<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
+	  	<ConfigurationItem name="Examples" isEnabled="true" style="Bulleted List" styleType="character" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
+	  		<ComplexFormOptions displayEachComplexFormInParagraph="false" />
+	  		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
 				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 					<Option id="all vernacular" isEnabled="true" />
 				</WritingSystemOptions>
@@ -1373,12 +1373,12 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Extended Note" isEnabled="true" style="Dictionary-Sense" styleType="paragraph" between=" " after=" " field="ExtendedNoteOS" cssClassNameOverride="extendednotecontents">
 		<ComplexFormOptions list="note" displayEachComplexFormInParagraph="true">
-			<Option id="c0000000-dd15-4a03-9032-b40faaa9a754" isEnabled="false" />
+			<Option id="c0000000-dd15-4a03-9032-b40faaa9a754" isEnabled="true" />
 			<Option id="2f06d436-b1e0-47ae-a42e-1f7b893c5fc2" isEnabled="true" />
 			<Option id="7ad06e7d-15d1-42b0-ae19-9c05b7c0b181" isEnabled="true" />
-			<Option id="d3d28628-60c9-4917-8185-ba64c59f20c3" isEnabled="false" />
-			<Option id="30115b33-608a-4506-9f9c-2457cab4f4a8" isEnabled="false" />
-			<Option id="5dd29371-fdb0-497a-a2fb-7ca69b00ad4f" isEnabled="false" />
+			<Option id="d3d28628-60c9-4917-8185-ba64c59f20c3" isEnabled="true" />
+			<Option id="30115b33-608a-4506-9f9c-2457cab4f4a8" isEnabled="true" />
+			<Option id="5dd29371-fdb0-497a-a2fb-7ca69b00ad4f" isEnabled="true" />
 		</ComplexFormOptions>
 		<ConfigurationItem name="Note Type" isEnabled="false" between=" " after=" " field="ExtendedNoteTypeRA" subField="Name" cssClassNameOverride="notetype">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1390,9 +1390,9 @@
 				<Option id="all analysis" isEnabled="true" />
 			</WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Examples" isEnabled="true" style="Bulleted List" styleType="paragraph" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
-			<ComplexFormOptions displayEachComplexFormInParagraph="true" />
-			<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
+	  	<ConfigurationItem name="Examples" isEnabled="true" style="Bulleted List" styleType="character" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
+	  		<ComplexFormOptions displayEachComplexFormInParagraph="false" />
+	  		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
 				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 					<Option id="all vernacular" isEnabled="true" />
 				</WritingSystemOptions>
@@ -2239,12 +2239,12 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Extended Note" isEnabled="true" style="Dictionary-Sense" styleType="paragraph" between=" " after=" " field="ExtendedNoteOS" cssClassNameOverride="extendednotecontents">
 		<ComplexFormOptions list="note" displayEachComplexFormInParagraph="true">
-			<Option id="c0000000-dd15-4a03-9032-b40faaa9a754" isEnabled="false" />
+			<Option id="c0000000-dd15-4a03-9032-b40faaa9a754" isEnabled="true" />
 			<Option id="2f06d436-b1e0-47ae-a42e-1f7b893c5fc2" isEnabled="true" />
 			<Option id="7ad06e7d-15d1-42b0-ae19-9c05b7c0b181" isEnabled="true" />
-			<Option id="d3d28628-60c9-4917-8185-ba64c59f20c3" isEnabled="false" />
-			<Option id="30115b33-608a-4506-9f9c-2457cab4f4a8" isEnabled="false" />
-			<Option id="5dd29371-fdb0-497a-a2fb-7ca69b00ad4f" isEnabled="false" />
+			<Option id="d3d28628-60c9-4917-8185-ba64c59f20c3" isEnabled="true" />
+			<Option id="30115b33-608a-4506-9f9c-2457cab4f4a8" isEnabled="true" />
+			<Option id="5dd29371-fdb0-497a-a2fb-7ca69b00ad4f" isEnabled="true" />
 		</ComplexFormOptions>
 		<ConfigurationItem name="Note Type" isEnabled="false" between=" " after=" " field="ExtendedNoteTypeRA" subField="Name" cssClassNameOverride="notetype">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -2256,9 +2256,9 @@
 				<Option id="all analysis" isEnabled="true" />
 			</WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Examples" isEnabled="true" style="Bulleted List" styleType="paragraph" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
-			<ComplexFormOptions displayEachComplexFormInParagraph="true" />
-			<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
+	  	<ConfigurationItem name="Examples" isEnabled="true" style="Bulleted List" styleType="character" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
+	  		<ComplexFormOptions displayEachComplexFormInParagraph="false" />
+	  		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
 				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 					<Option id="all vernacular" isEnabled="true" />
 				</WritingSystemOptions>
@@ -2658,12 +2658,12 @@
 		</ConfigurationItem>
 	  	<ConfigurationItem name="Extended Note" isEnabled="true" style="Dictionary-Sense" styleType="paragraph" between=" " after=" " field="ExtendedNoteOS" cssClassNameOverride="extendednotecontents">
 	  		<ComplexFormOptions list="note" displayEachComplexFormInParagraph="true">
-	  			<Option id="c0000000-dd15-4a03-9032-b40faaa9a754" isEnabled="false" />
+	  			<Option id="c0000000-dd15-4a03-9032-b40faaa9a754" isEnabled="true" />
 	  			<Option id="2f06d436-b1e0-47ae-a42e-1f7b893c5fc2" isEnabled="true" />
 	  			<Option id="7ad06e7d-15d1-42b0-ae19-9c05b7c0b181" isEnabled="true" />
-	  			<Option id="d3d28628-60c9-4917-8185-ba64c59f20c3" isEnabled="false" />
-	  			<Option id="30115b33-608a-4506-9f9c-2457cab4f4a8" isEnabled="false" />
-	  			<Option id="5dd29371-fdb0-497a-a2fb-7ca69b00ad4f" isEnabled="false" />
+	  			<Option id="d3d28628-60c9-4917-8185-ba64c59f20c3" isEnabled="true" />
+	  			<Option id="30115b33-608a-4506-9f9c-2457cab4f4a8" isEnabled="true" />
+	  			<Option id="5dd29371-fdb0-497a-a2fb-7ca69b00ad4f" isEnabled="true" />
 	  		</ComplexFormOptions>
 	  		<ConfigurationItem name="Note Type" isEnabled="false" between=" " after=" " field="ExtendedNoteTypeRA" subField="Name" cssClassNameOverride="notetype">
 	  			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -2675,8 +2675,8 @@
 	  				<Option id="all analysis" isEnabled="true" />
 	  			</WritingSystemOptions>
 	  		</ConfigurationItem>
-	  		<ConfigurationItem name="Examples" isEnabled="true" style="Bulleted List" styleType="paragraph" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
-	  			<ComplexFormOptions displayEachComplexFormInParagraph="true" />
+	  		<ConfigurationItem name="Examples" isEnabled="true" style="Bulleted List" styleType="character" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
+	  			<ComplexFormOptions displayEachComplexFormInParagraph="false" />
 	  			<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
 	  				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 	  					<Option id="all vernacular" isEnabled="true" />
@@ -3222,12 +3222,12 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Extended Note" isEnabled="true" style="Dictionary-Sense" styleType="paragraph" between=" " after=" " field="ExtendedNoteOS" cssClassNameOverride="extendednotecontents">
 		<ComplexFormOptions list="note" displayEachComplexFormInParagraph="true">
-			<Option id="c0000000-dd15-4a03-9032-b40faaa9a754" isEnabled="false" />
+			<Option id="c0000000-dd15-4a03-9032-b40faaa9a754" isEnabled="true" />
 			<Option id="2f06d436-b1e0-47ae-a42e-1f7b893c5fc2" isEnabled="true" />
 			<Option id="7ad06e7d-15d1-42b0-ae19-9c05b7c0b181" isEnabled="true" />
-			<Option id="d3d28628-60c9-4917-8185-ba64c59f20c3" isEnabled="false" />
-			<Option id="30115b33-608a-4506-9f9c-2457cab4f4a8" isEnabled="false" />
-			<Option id="5dd29371-fdb0-497a-a2fb-7ca69b00ad4f" isEnabled="false" />
+			<Option id="d3d28628-60c9-4917-8185-ba64c59f20c3" isEnabled="true" />
+			<Option id="30115b33-608a-4506-9f9c-2457cab4f4a8" isEnabled="true" />
+			<Option id="5dd29371-fdb0-497a-a2fb-7ca69b00ad4f" isEnabled="true" />
 		</ComplexFormOptions>
 		<ConfigurationItem name="Note Type" isEnabled="false" between=" " after=" " field="ExtendedNoteTypeRA" subField="Name" cssClassNameOverride="notetype">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -3239,9 +3239,9 @@
 				<Option id="all analysis" isEnabled="true" />
 			</WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Examples" isEnabled="true" style="Bulleted List" styleType="paragraph" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
-			<ComplexFormOptions displayEachComplexFormInParagraph="true" />
-			<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
+	  	<ConfigurationItem name="Examples" isEnabled="true" style="Bulleted List" styleType="character" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
+	  		<ComplexFormOptions displayEachComplexFormInParagraph="false" />
+	  		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
 				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 					<Option id="all vernacular" isEnabled="true" />
 				</WritingSystemOptions>
