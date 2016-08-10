@@ -144,12 +144,12 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Definition (or Gloss)" isEnabled="false" before="" between=" " after=" " field="DefinitionOrGloss">
+	  <ConfigurationItem name="Definition (or Gloss)" isEnabled="true" before="" between=" " after=" " field="DefinitionOrGloss">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="all analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Definition" isEnabled="true" before="" between=" " after=" " field="Definition">
+	  <ConfigurationItem name="Definition" isEnabled="false" before="" between=" " after=" " field="Definition">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="all analysis" isEnabled="true" />
 		</WritingSystemOptions>
@@ -1061,12 +1061,12 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Definition (or Gloss)" isEnabled="false" before="" between=" " after=" " field="DefinitionOrGloss">
+	  <ConfigurationItem name="Definition (or Gloss)" isEnabled="true" before="" between=" " after=" " field="DefinitionOrGloss">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="all analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Definition" isEnabled="true" before="" between=" " after=" " field="Definition">
+	  <ConfigurationItem name="Definition" isEnabled="false" before="" between=" " after=" " field="Definition">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="all analysis" isEnabled="true" />
 		</WritingSystemOptions>
@@ -1959,12 +1959,12 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Definition (or Gloss)" between=" " after=" " isEnabled="false" field="DefinitionOrGloss">
+		<ConfigurationItem name="Definition (or Gloss)" between=" " after=" " isEnabled="true" field="DefinitionOrGloss">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="all analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Definition" between=" " after=" " isEnabled="true" field="Definition">
+		<ConfigurationItem name="Definition" between=" " after=" " isEnabled="false" field="Definition">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="all analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -2844,12 +2844,12 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Definition (or Gloss)" isEnabled="false" before="" between=" " after=" " field="DefinitionOrGloss">
+	  <ConfigurationItem name="Definition (or Gloss)" isEnabled="true" before="" between=" " after=" " field="DefinitionOrGloss">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="all analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Definition" isEnabled="true" before="" between=" " after=" " field="Definition">
+	  <ConfigurationItem name="Definition" isEnabled="false" before="" between=" " after=" " field="Definition">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="all analysis" isEnabled="true" />
 		</WritingSystemOptions>
@@ -4125,12 +4125,12 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Definition (or Gloss)" between=" " after=" " isEnabled="false" field="DefinitionOrGloss">
+		<ConfigurationItem name="Definition (or Gloss)" between=" " after=" " isEnabled="true" field="DefinitionOrGloss">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="all analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Definition" between=" " after=" " isEnabled="true" field="Definition">
+		<ConfigurationItem name="Definition" between=" " after=" " isEnabled="false" field="Definition">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="all analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
