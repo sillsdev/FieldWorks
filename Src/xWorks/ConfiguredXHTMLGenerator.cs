@@ -1558,13 +1558,13 @@ namespace SIL.FieldWorks.XWorks
 					if (config.ReferencedOrDirectChildren.Any(
 							x => x.FieldDescription == "VariantEntryTypesRS" && x.IsEnabled && (x.Children != null && x.Children.Any(y => y.IsEnabled))))
 					{
-						IEnumerable variantTypes = variants.Select(x => x.VariantEntryTypesRS[0]).Distinct();
+						IEnumerable variantTypes = variants.Select(x => x.VariantEntryTypesRS.FirstOrDefault()).Distinct();
 						ArrayList sortedVariants = new ArrayList();
 						foreach (var variantType in variantTypes)
 						{
 							foreach (var variant in variants)
 							{
-								if (variant.VariantEntryTypesRS[0] == variantType)
+								if (variant.VariantEntryTypesRS.FirstOrDefault() == variantType)
 									sortedVariants.Add(variant);
 							}
 						}
@@ -1859,20 +1859,28 @@ namespace SIL.FieldWorks.XWorks
 					var content = "";
 					if (child.FieldDescription == "VariantEntryTypesRS" && child.IsEnabled && child.Children != null && child.Children.Any(x => x.IsEnabled))
 					{
-						string currentVariantType = (((ILexEntryRef) item).VariantEntryTypesRS[0]).ToString();
-						if (previousType != currentVariantType)
+						var firstOrDefaultVariantEntryType = ((ILexEntryRef) item).VariantEntryTypesRS.FirstOrDefault();
+						if (firstOrDefaultVariantEntryType != null)
 						{
-							content = GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
-							previousType = currentVariantType;
+							string currentVariantType = firstOrDefaultVariantEntryType.ToString();
+							if (previousType != currentVariantType)
+							{
+								content = GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
+								previousType = currentVariantType;
+							}
 						}
 					}
 					else if (child.FieldDescription == "ComplexEntryTypesRS" && child.IsEnabled && child.Children != null && child.Children.Any(x => x.IsEnabled))
 					{
-						string currentComplexFormType = (((ILexEntryRef)item).ComplexEntryTypesRS[0]).ToString();
-						if (previousType != currentComplexFormType)
+						var firstOrDefaultComplexEntryType = ((ILexEntryRef)item).ComplexEntryTypesRS.FirstOrDefault();
+						if (firstOrDefaultComplexEntryType != null)
 						{
-							content = GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
-							previousType = currentComplexFormType;
+							string currentComplexFormType = firstOrDefaultComplexEntryType.ToString();
+							if (previousType != currentComplexFormType)
+							{
+								content = GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
+								previousType = currentComplexFormType;
+							}
 						}
 					}
 					else

@@ -5347,6 +5347,52 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_GeneratesComplexForm_WithEmptyList()
+		{
+			var lexentry = CreateInterestingLexEntry(Cache);
+			var complexEntry = CreateInterestingLexEntry(Cache);
+			var complexFormRef = CreateComplexForm(Cache, lexentry, complexEntry, false);
+			complexFormRef.ComplexEntryTypesRS.Clear(); // no complex form type specified
+
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				SubField = "MLHeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var complexTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+			};
+			var complexEntryTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ComplexEntryTypesRS",
+				CSSClassNameOverride = "complexformtypes",
+				Children = new List<ConfigurableDictionaryNode> { complexTypeNameNode },
+			};
+			var complexOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex, true);
+			var referencedCompFormNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { complexEntryTypeNode, formNode },
+				DictionaryNodeOptions = complexOptions,
+				FieldDescription = "VisibleComplexFormBackRefs"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { referencedCompFormNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
+			Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings), "Having an empty complexentrytype list after the click event should not cause crash.");
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_GeneratesComplexForm_NoTypeSpecified()
 		{
 			var lexentry = CreateInterestingLexEntry(Cache);
@@ -5429,6 +5475,50 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(refTypeXpath);
 			const string headwordXpath = "//span[@class='subentries']/span[@class='subentry']/span[@class='headword']";
 			AssertThatXmlIn.String(result).HasAtLeastOneMatchForXpath(headwordXpath);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_GeneratesVariant_WithEmptyList()
+		{
+			var lexentry = CreateInterestingLexEntry(Cache);
+			var variantEntry = CreateInterestingLexEntry(Cache);
+			var variantEntryRef = CreateVariantForm(Cache, lexentry, variantEntry);
+			variantEntryRef.VariantEntryTypesRS.Clear(); // no variant entry type specified
+
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				SubField = "MLHeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var variantTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+			};
+			var variantEntryTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				CSSClassNameOverride = "variantentrytypes",
+				Children = new List<ConfigurableDictionaryNode> { variantTypeNameNode },
+			};
+			var variantFormNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { variantEntryTypeNode, formNode },
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
+				FieldDescription = "VariantFormEntryBackRefs"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { variantFormNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			//SUT
+			Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings), "Having an empty variantentrytype list after the click event should not cause crash.");
 		}
 
 		[Test]
