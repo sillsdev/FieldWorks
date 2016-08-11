@@ -639,8 +639,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 				// don't set the current slice until we're all setup to do so (LT-7307)
 				if (m_currentSlice == value || m_fSuspendSettingCurrentSlice)
+				{
+					// LT-17633 But if we are trying to set a different slice from the one planned,
+					// we need to remember that. This can happen, for instance, when we insert several
+					// slices to replace a ghost field, but we want the current slice to be other than
+					// the first one.
+					m_currentSliceNew = value;
 					return;
-
+				}
 				// Tell the old geezer it isn't current anymore.
 				if (m_currentSlice != null)
 				{
