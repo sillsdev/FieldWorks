@@ -511,6 +511,17 @@ rule {A derivational prefix added to a sequence of prefixes; the derivational ca
 		<Prefixes_2 synCat>           = <derivPfx fromCat>
   }
 
+rule {A derivational prefix added to a partial analysis}
+Partial_1 = derivPfx Partial_2
+								| percolation
+<Partial_1 synCat> = <derivPfx toCat>
+								| constraints
+{
+  
+		<Partial_2 synCat>           = <derivPfx fromCat>
+		<Partial_2 synCat>           = <derivPfx envCat>
+  }
+
 rule {An unanalyzed suffix added to a sequence of suffixes}
   Suffixes_1 = (Suffixes_2) suffix
 								| percolation
@@ -530,6 +541,17 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
   {
   
 		<Suffixes_2 synCat>           = <derivSfx fromCat>
+  }
+
+rule {A derivational suffix added to a partial analysis}
+Partial_1 = Partial_2 derivSfx
+								| percolation
+<Partial_1 synCat> = <derivSfx toCat>
+								| constraints
+{
+  
+		<Partial_2 synCat>           = <derivSfx fromCat>
+		<Partial_2 synCat>           = <derivSfx envCat>
   }
 
 

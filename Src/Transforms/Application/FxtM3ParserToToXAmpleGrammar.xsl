@@ -886,6 +886,18 @@ rule {A derivational prefix added to a sequence of prefixes; the derivational ca
 	  </xsl:call-template>
   }
 
+rule {A derivational prefix added to a partial analysis}
+Partial_1 = derivPfx Partial_2
+								| percolation
+&lt;Partial_1 synCat&gt; = &lt;derivPfx toCat&gt;
+								| constraints
+{
+  <xsl:call-template name="ConstrainNestedCategories">
+		 <xsl:with-param name="sOtherNode">derivPfx</xsl:with-param>
+		 <xsl:with-param name="sStemOrFull">Partial_2</xsl:with-param>
+	  </xsl:call-template>
+  }
+
 rule {An unanalyzed suffix added to a sequence of suffixes}
   Suffixes_1 = (Suffixes_2) suffix
 								| percolation
@@ -908,6 +920,18 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
   <xsl:call-template name="ConstrainNestedCategories">
 		 <xsl:with-param name="sOtherNode">derivSfx</xsl:with-param>
 		 <xsl:with-param name="sStemOrFull">Suffixes_2</xsl:with-param>
+	  </xsl:call-template>
+  }
+
+rule {A derivational suffix added to a partial analysis}
+Partial_1 = Partial_2 derivSfx
+								| percolation
+&lt;Partial_1 synCat&gt; = &lt;derivSfx toCat&gt;
+								| constraints
+{
+  <xsl:call-template name="ConstrainNestedCategories">
+		 <xsl:with-param name="sOtherNode">derivSfx</xsl:with-param>
+		 <xsl:with-param name="sStemOrFull">Partial_2</xsl:with-param>
 	  </xsl:call-template>
   }
 

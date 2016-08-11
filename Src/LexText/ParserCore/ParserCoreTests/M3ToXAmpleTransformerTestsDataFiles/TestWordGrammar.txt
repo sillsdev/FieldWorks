@@ -1992,6 +1992,125 @@ rule {A derivational prefix added to a sequence of prefixes; the derivational ca
 
   }
 
+rule {A derivational prefix added to a partial analysis}
+Partial_1 = derivPfx Partial_2
+								| percolation
+<Partial_1 synCat> = <derivPfx toCat>
+								| constraints
+{
+  
+		<Partial_2 synCat>           = <derivPfx fromCat>
+		<Partial_2 synCat>           = <derivPfx envCat>
+		/
+		<derivPfx fromCat>        = d7f7150e-e8cf-11d3-9764-00c04f186933
+		<derivPfx envCat>         = d7f7150e-e8cf-11d3-9764-00c04f186933
+{
+	  
+		<Partial_2 synCat>           = d7f7150e-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7150f-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71510-e8cf-11d3-9764-00c04f186933
+}
+
+		/
+		<derivPfx fromCat>        = d7f71513-e8cf-11d3-9764-00c04f186933
+		<derivPfx envCat>         = d7f71513-e8cf-11d3-9764-00c04f186933
+{
+	  
+		<Partial_2 synCat>           = d7f71513-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71514-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71515-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71516-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71517-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71518-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71519-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7151a-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7151b-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7151c-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7151d-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7151e-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7151f-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71520-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71521-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71522-e8cf-11d3-9764-00c04f186933
+}
+
+		/
+		<derivPfx fromCat>        = d7f71523-e8cf-11d3-9764-00c04f186933
+		<derivPfx envCat>         = d7f71523-e8cf-11d3-9764-00c04f186933
+{
+	  
+		<Partial_2 synCat>           = d7f71523-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71524-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71525-e8cf-11d3-9764-00c04f186933
+}
+
+		/
+		<derivPfx fromCat>        = d7f71527-e8cf-11d3-9764-00c04f186933
+		<derivPfx envCat>         = d7f71527-e8cf-11d3-9764-00c04f186933
+{
+	  
+		<Partial_2 synCat>           = d7f71527-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71528-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71529-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7152a-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7152b-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7152c-e8cf-11d3-9764-00c04f186933
+}
+
+		/
+		<derivPfx fromCat>        = d7f7152f-e8cf-11d3-9764-00c04f186933
+		<derivPfx envCat>         = d7f7152f-e8cf-11d3-9764-00c04f186933
+{
+	  
+		<Partial_2 synCat>           = d7f7152f-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71530-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71531-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71532-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71533-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71534-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71535-e8cf-11d3-9764-00c04f186933
+}
+
+		/
+		<derivPfx fromCat>        = d7f71536-e8cf-11d3-9764-00c04f186933
+		<derivPfx envCat>         = d7f71536-e8cf-11d3-9764-00c04f186933
+{
+	  
+		<Partial_2 synCat>           = d7f71536-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71539-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7153a-e8cf-11d3-9764-00c04f186933
+}
+
+		/
+		<derivPfx fromCat>        = d7f71537-e8cf-11d3-9764-00c04f186933
+		<derivPfx envCat>         = d7f71537-e8cf-11d3-9764-00c04f186933
+{
+	  
+		<Partial_2 synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71539-e8cf-11d3-9764-00c04f186933
+}
+
+		/
+		<derivPfx fromCat>        = d7f7153b-e8cf-11d3-9764-00c04f186933
+		<derivPfx envCat>         = d7f7153b-e8cf-11d3-9764-00c04f186933
+{
+	  
+		<Partial_2 synCat>           = d7f7153b-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7153c-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7153e-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7153f-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71540-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71541-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71542-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71543-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7153d-e8cf-11d3-9764-00c04f186933
+}
+
+  }
+
 rule {An unanalyzed suffix added to a sequence of suffixes}
   Suffixes_1 = (Suffixes_2) suffix
 								| percolation
@@ -2209,6 +2328,125 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
 		<Suffixes_2 synCat>           = d7f71542-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f71543-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f7153d-e8cf-11d3-9764-00c04f186933
+}
+
+  }
+
+rule {A derivational suffix added to a partial analysis}
+Partial_1 = Partial_2 derivSfx
+								| percolation
+<Partial_1 synCat> = <derivSfx toCat>
+								| constraints
+{
+  
+		<Partial_2 synCat>           = <derivSfx fromCat>
+		<Partial_2 synCat>           = <derivSfx envCat>
+		/
+		<derivSfx fromCat>        = d7f7150e-e8cf-11d3-9764-00c04f186933
+		<derivSfx envCat>         = d7f7150e-e8cf-11d3-9764-00c04f186933
+{
+	  
+		<Partial_2 synCat>           = d7f7150e-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7150f-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71510-e8cf-11d3-9764-00c04f186933
+}
+
+		/
+		<derivSfx fromCat>        = d7f71513-e8cf-11d3-9764-00c04f186933
+		<derivSfx envCat>         = d7f71513-e8cf-11d3-9764-00c04f186933
+{
+	  
+		<Partial_2 synCat>           = d7f71513-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71514-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71515-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71516-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71517-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71518-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71519-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7151a-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7151b-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7151c-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7151d-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7151e-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7151f-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71520-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71521-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71522-e8cf-11d3-9764-00c04f186933
+}
+
+		/
+		<derivSfx fromCat>        = d7f71523-e8cf-11d3-9764-00c04f186933
+		<derivSfx envCat>         = d7f71523-e8cf-11d3-9764-00c04f186933
+{
+	  
+		<Partial_2 synCat>           = d7f71523-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71524-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71525-e8cf-11d3-9764-00c04f186933
+}
+
+		/
+		<derivSfx fromCat>        = d7f71527-e8cf-11d3-9764-00c04f186933
+		<derivSfx envCat>         = d7f71527-e8cf-11d3-9764-00c04f186933
+{
+	  
+		<Partial_2 synCat>           = d7f71527-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71528-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71529-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7152a-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7152b-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7152c-e8cf-11d3-9764-00c04f186933
+}
+
+		/
+		<derivSfx fromCat>        = d7f7152f-e8cf-11d3-9764-00c04f186933
+		<derivSfx envCat>         = d7f7152f-e8cf-11d3-9764-00c04f186933
+{
+	  
+		<Partial_2 synCat>           = d7f7152f-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71530-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71531-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71532-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71533-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71534-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71535-e8cf-11d3-9764-00c04f186933
+}
+
+		/
+		<derivSfx fromCat>        = d7f71536-e8cf-11d3-9764-00c04f186933
+		<derivSfx envCat>         = d7f71536-e8cf-11d3-9764-00c04f186933
+{
+	  
+		<Partial_2 synCat>           = d7f71536-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71539-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7153a-e8cf-11d3-9764-00c04f186933
+}
+
+		/
+		<derivSfx fromCat>        = d7f71537-e8cf-11d3-9764-00c04f186933
+		<derivSfx envCat>         = d7f71537-e8cf-11d3-9764-00c04f186933
+{
+	  
+		<Partial_2 synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71539-e8cf-11d3-9764-00c04f186933
+}
+
+		/
+		<derivSfx fromCat>        = d7f7153b-e8cf-11d3-9764-00c04f186933
+		<derivSfx envCat>         = d7f7153b-e8cf-11d3-9764-00c04f186933
+{
+	  
+		<Partial_2 synCat>           = d7f7153b-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7153c-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7153e-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7153f-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71540-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71541-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71542-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f71543-e8cf-11d3-9764-00c04f186933 /
+		<Partial_2 synCat>           = d7f7153d-e8cf-11d3-9764-00c04f186933
 }
 
   }

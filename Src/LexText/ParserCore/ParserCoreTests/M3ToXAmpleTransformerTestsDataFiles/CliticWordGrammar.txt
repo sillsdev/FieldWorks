@@ -1992,6 +1992,125 @@ rule {A derivational prefix added to a sequence of prefixes; the derivational ca
 
   }
 
+rule {A derivational prefix added to a partial analysis}
+Partial_1 = derivPfx Partial_2
+								| percolation
+<Partial_1 synCat> = <derivPfx toCat>
+								| constraints
+{
+  
+		<Partial_2 synCat>           = <derivPfx fromCat>
+		<Partial_2 synCat>           = <derivPfx envCat>
+		/
+		<derivPfx fromCat>        = 6
+		<derivPfx envCat>         = 6
+{
+	  
+		<Partial_2 synCat>           = 6 /
+		<Partial_2 synCat>           = 7 /
+		<Partial_2 synCat>           = 10
+}
+
+		/
+		<derivPfx fromCat>        = 21
+		<derivPfx envCat>         = 21
+{
+	  
+		<Partial_2 synCat>           = 21 /
+		<Partial_2 synCat>           = 22 /
+		<Partial_2 synCat>           = 25 /
+		<Partial_2 synCat>           = 28 /
+		<Partial_2 synCat>           = 31 /
+		<Partial_2 synCat>           = 34 /
+		<Partial_2 synCat>           = 37 /
+		<Partial_2 synCat>           = 40 /
+		<Partial_2 synCat>           = 43 /
+		<Partial_2 synCat>           = 46 /
+		<Partial_2 synCat>           = 49 /
+		<Partial_2 synCat>           = 52 /
+		<Partial_2 synCat>           = 55 /
+		<Partial_2 synCat>           = 58 /
+		<Partial_2 synCat>           = 61 /
+		<Partial_2 synCat>           = 64
+}
+
+		/
+		<derivPfx fromCat>        = 69
+		<derivPfx envCat>         = 69
+{
+	  
+		<Partial_2 synCat>           = 69 /
+		<Partial_2 synCat>           = 70 /
+		<Partial_2 synCat>           = 73
+}
+
+		/
+		<derivPfx fromCat>        = 81
+		<derivPfx envCat>         = 81
+{
+	  
+		<Partial_2 synCat>           = 81 /
+		<Partial_2 synCat>           = 82 /
+		<Partial_2 synCat>           = 85 /
+		<Partial_2 synCat>           = 88 /
+		<Partial_2 synCat>           = 91 /
+		<Partial_2 synCat>           = 94
+}
+
+		/
+		<derivPfx fromCat>        = 110
+		<derivPfx envCat>         = 110
+{
+	  
+		<Partial_2 synCat>           = 110 /
+		<Partial_2 synCat>           = 111 /
+		<Partial_2 synCat>           = 114 /
+		<Partial_2 synCat>           = 117 /
+		<Partial_2 synCat>           = 120 /
+		<Partial_2 synCat>           = 123 /
+		<Partial_2 synCat>           = 126
+}
+
+		/
+		<derivPfx fromCat>        = 131
+		<derivPfx envCat>         = 131
+{
+	  
+		<Partial_2 synCat>           = 131 /
+		<Partial_2 synCat>           = 132 /
+		<Partial_2 synCat>           = 133 /
+		<Partial_2 synCat>           = 136 /
+		<Partial_2 synCat>           = 141
+}
+
+		/
+		<derivPfx fromCat>        = 132
+		<derivPfx envCat>         = 132
+{
+	  
+		<Partial_2 synCat>           = 132 /
+		<Partial_2 synCat>           = 133 /
+		<Partial_2 synCat>           = 136
+}
+
+		/
+		<derivPfx fromCat>        = 146
+		<derivPfx envCat>         = 146
+{
+	  
+		<Partial_2 synCat>           = 146 /
+		<Partial_2 synCat>           = 147 /
+		<Partial_2 synCat>           = 150 /
+		<Partial_2 synCat>           = 153 /
+		<Partial_2 synCat>           = 157 /
+		<Partial_2 synCat>           = 160 /
+		<Partial_2 synCat>           = 163 /
+		<Partial_2 synCat>           = 168 /
+		<Partial_2 synCat>           = 172
+}
+
+  }
+
 rule {An unanalyzed suffix added to a sequence of suffixes}
   Suffixes_1 = (Suffixes_2) suffix
 								| percolation
@@ -2209,6 +2328,125 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
 		<Suffixes_2 synCat>           = 163 /
 		<Suffixes_2 synCat>           = 168 /
 		<Suffixes_2 synCat>           = 172
+}
+
+  }
+
+rule {A derivational suffix added to a partial analysis}
+Partial_1 = Partial_2 derivSfx
+								| percolation
+<Partial_1 synCat> = <derivSfx toCat>
+								| constraints
+{
+  
+		<Partial_2 synCat>           = <derivSfx fromCat>
+		<Partial_2 synCat>           = <derivSfx envCat>
+		/
+		<derivSfx fromCat>        = 6
+		<derivSfx envCat>         = 6
+{
+	  
+		<Partial_2 synCat>           = 6 /
+		<Partial_2 synCat>           = 7 /
+		<Partial_2 synCat>           = 10
+}
+
+		/
+		<derivSfx fromCat>        = 21
+		<derivSfx envCat>         = 21
+{
+	  
+		<Partial_2 synCat>           = 21 /
+		<Partial_2 synCat>           = 22 /
+		<Partial_2 synCat>           = 25 /
+		<Partial_2 synCat>           = 28 /
+		<Partial_2 synCat>           = 31 /
+		<Partial_2 synCat>           = 34 /
+		<Partial_2 synCat>           = 37 /
+		<Partial_2 synCat>           = 40 /
+		<Partial_2 synCat>           = 43 /
+		<Partial_2 synCat>           = 46 /
+		<Partial_2 synCat>           = 49 /
+		<Partial_2 synCat>           = 52 /
+		<Partial_2 synCat>           = 55 /
+		<Partial_2 synCat>           = 58 /
+		<Partial_2 synCat>           = 61 /
+		<Partial_2 synCat>           = 64
+}
+
+		/
+		<derivSfx fromCat>        = 69
+		<derivSfx envCat>         = 69
+{
+	  
+		<Partial_2 synCat>           = 69 /
+		<Partial_2 synCat>           = 70 /
+		<Partial_2 synCat>           = 73
+}
+
+		/
+		<derivSfx fromCat>        = 81
+		<derivSfx envCat>         = 81
+{
+	  
+		<Partial_2 synCat>           = 81 /
+		<Partial_2 synCat>           = 82 /
+		<Partial_2 synCat>           = 85 /
+		<Partial_2 synCat>           = 88 /
+		<Partial_2 synCat>           = 91 /
+		<Partial_2 synCat>           = 94
+}
+
+		/
+		<derivSfx fromCat>        = 110
+		<derivSfx envCat>         = 110
+{
+	  
+		<Partial_2 synCat>           = 110 /
+		<Partial_2 synCat>           = 111 /
+		<Partial_2 synCat>           = 114 /
+		<Partial_2 synCat>           = 117 /
+		<Partial_2 synCat>           = 120 /
+		<Partial_2 synCat>           = 123 /
+		<Partial_2 synCat>           = 126
+}
+
+		/
+		<derivSfx fromCat>        = 131
+		<derivSfx envCat>         = 131
+{
+	  
+		<Partial_2 synCat>           = 131 /
+		<Partial_2 synCat>           = 132 /
+		<Partial_2 synCat>           = 133 /
+		<Partial_2 synCat>           = 136 /
+		<Partial_2 synCat>           = 141
+}
+
+		/
+		<derivSfx fromCat>        = 132
+		<derivSfx envCat>         = 132
+{
+	  
+		<Partial_2 synCat>           = 132 /
+		<Partial_2 synCat>           = 133 /
+		<Partial_2 synCat>           = 136
+}
+
+		/
+		<derivSfx fromCat>        = 146
+		<derivSfx envCat>         = 146
+{
+	  
+		<Partial_2 synCat>           = 146 /
+		<Partial_2 synCat>           = 147 /
+		<Partial_2 synCat>           = 150 /
+		<Partial_2 synCat>           = 153 /
+		<Partial_2 synCat>           = 157 /
+		<Partial_2 synCat>           = 160 /
+		<Partial_2 synCat>           = 163 /
+		<Partial_2 synCat>           = 168 /
+		<Partial_2 synCat>           = 172
 }
 
   }
