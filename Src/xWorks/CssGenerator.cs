@@ -31,6 +31,7 @@ namespace SIL.FieldWorks.XWorks
 		internal const string DictionaryNormal = "Dictionary-Normal";
 		internal const string DictionaryMinor = "Dictionary-Minor";
 		internal const string WritingSystemPrefix = "writingsystemprefix";
+		internal const string WritingSystemStyleName = "Writing System Abbreviation";
 		private static readonly Dictionary<string, string> BulletSymbolsCollection = new Dictionary<string, string>();
 		private static readonly Dictionary<string, string> NumberingStylesCollection = new Dictionary<string, string>();
 
@@ -222,7 +223,7 @@ namespace SIL.FieldWorks.XWorks
 					GenerateCssFromWsOptions(configNode, wsOptions, styleSheet, baseSelection, mediator);
 					if (wsOptions.DisplayWritingSystemAbbreviations)
 					{
-						GenerateCssForWritingSystemPrefix(configNode, wsOptions, styleSheet, baseSelection, mediator);
+						GenerateCssForWritingSystemPrefix(configNode, styleSheet, baseSelection, mediator);
 					}
 				}
 				styleSheet.Rules.AddRange(CheckRangeOfRulesForEmpties(selectors));
@@ -499,11 +500,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private static void GenerateCssForWritingSystemPrefix(ConfigurableDictionaryNode configNode, DictionaryNodeWritingSystemOptions wsOptions,
-																	StyleSheet styleSheet, string baseSelection, Mediator mediator)
+		private static void GenerateCssForWritingSystemPrefix(ConfigurableDictionaryNode configNode, StyleSheet styleSheet, string baseSelection, Mediator mediator)
 		{
-			var wsRule1 = new StyleRule { Value = string.Format("{0}.{1}> span", baseSelection, WritingSystemPrefix) };
-			GenerateCssFromWsOptions(configNode, wsOptions, styleSheet, wsRule1.Value, mediator);
+			var wsRule1 = new StyleRule { Value = string.Format("{0}.{1}", baseSelection, WritingSystemPrefix)};
+			wsRule1.Declarations.Properties.AddRange(GetOnlyCharacterStyle(GenerateCssStyleFromFwStyleSheet(WritingSystemStyleName, 0, configNode, mediator)));
+			styleSheet.Rules.Add(wsRule1);
 			var wsRule2 = new StyleRule { Value = string.Format("{0}.{1}:after", baseSelection, WritingSystemPrefix) };
 			wsRule2.Declarations.Properties.Add(new Property("content"){Term = new PrimitiveTerm(UnitType.String, " ")});
 			styleSheet.Rules.Add(wsRule2);
