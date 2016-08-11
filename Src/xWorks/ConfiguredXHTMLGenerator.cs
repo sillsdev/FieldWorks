@@ -2203,7 +2203,10 @@ namespace SIL.FieldWorks.XWorks
 
 		private static void GetExtendedNoteGuidsForEntryRef(ILexExtendedNote entryRef, Set<Guid> entryTypeGuids)
 		{
-			entryTypeGuids.Add(entryRef.ExtendedNoteTypeRA.Guid);
+			if (entryRef.ExtendedNoteTypeRA != null)
+				entryTypeGuids.Add(entryRef.ExtendedNoteTypeRA.Guid);
+			else
+				entryTypeGuids.Add(XmlViewsUtils.GetGuidForUnspecifiedExtendedNoteType());
 		}
 
 		/// <returns>
