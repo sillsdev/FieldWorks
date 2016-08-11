@@ -835,6 +835,7 @@
   </data>
   <data name="khtpField-domainTypeEdit-CmPossibility-" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Academic_Domains_fields/subitems_field_academic_domains.htm</value>
+    <comment>Academic Domain - Subtypes</comment>
   </data>
   <data name="khtpField-anthroEdit-CmAnthroItem-Abbreviation" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Anthropology_Categories_fields/abbreviation_field_anthropology_categories.htm</value>
@@ -862,6 +863,7 @@
   </data>
   <data name="khtpField-anthroEdit-CmAnthroItem-" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Anthropology_Categories_fields/Subcategories_field_Anthropology_Categories.htm</value>
+    <comment>Anthropology Subitems</comment>
   </data>
   <data name="khtpField-confidenceEdit-CmPossibility-Abbreviation" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Confidence_Levels_fields/abbreviation_field_confidence_levels.htm</value>
@@ -1346,6 +1348,7 @@
   </data>
   <data name="khtpField-educationEdit-CmPossibility-" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Education_Levels_fields/Subitems_field_Education_Levels.htm</value>
+    <comment>Education Levels - Subtypes</comment>
   </data>
   <data name="khtpECAdvanced" xml:space="preserve">
     <value>Advanced_Tasks/Writing_Systems/Encoding_Converters/Encoding_Converters_Advanced_tab.htm</value>
@@ -1636,6 +1639,7 @@
   </data>
   <data name="khtpField-genresEdit-CmPossibility-" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Genres_fields/Subitems_field_Genres.htm</value>
+    <comment>Genres - Subitems</comment>
   </data>
   <data name="khtpChoose-lexiconEdit-DomainTypes" xml:space="preserve">
     <value>Using_Tools/Lexicon_tools/Lexicon_Edit/choose_academic_domains.htm</value>
@@ -2752,7 +2756,7 @@
   </data>
   <data name="khtpChoose-InflectionClass" xml:space="preserve">
     <value>Using_Tools/Lexicon_tools/Lexicon_Edit/choose_an_inflection_class.htm</value>
-    <comment>Help Toopic for Choosing an Inflection Class</comment>
+    <comment>Help Topic for Choosing an Inflection Class</comment>
   </data>
   <data name="khtpField-ReferencedComplexForms-EntryLevel" xml:space="preserve">
     <value>/User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Referenced_Complex_Forms_(sense).htm</value>
@@ -2872,7 +2876,7 @@
   </data>
   <data name="khtpEntryNotPublished" xml:space="preserve">
     <value>User_Interface/Menus/Edit/Find_a_lexical_entry.htm</value>
-    <comment>I had to hsardcode the path into the source rsather than the topic because of the way </comment>
+    <comment>I had to hardcode the path into the source rather than the topic because of the way </comment>
   </data>
   <data name="khtpBulkEditShowAsHeadwordIn" xml:space="preserve">
     <value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_Edit_Entries_overview.htm</value>
@@ -3029,6 +3033,7 @@
   </data>
   <data name="khtpField-lexiconEdit-LexEtymology-Language" xml:space="preserve">
     <value>/User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Source_Language_Etymology.htm</value>
+    <comment>LexEtymology - Language</comment>
   </data>
   <data name="khtpField-lexiconEdit-LexEtymology-Note" xml:space="preserve">
     <value>/User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Etymology_Note_Etymology.htm</value>
@@ -3102,39 +3107,50 @@
   </data>
   <data name="khtpField-anthroEdit-CmAnthroItem-Subitems" xml:space="preserve">
     <value>/User_Interface/Field_Descriptions/Lists/Anthropology_Categories_fields/Subcategories_field_Anthropology_Categories.htm</value>
+    <comment>Anthropology Subitems</comment>
   </data>
   <data name="khtpField-chartmarkEdit-CmPossibility-" xml:space="preserve">
     <value>/User_Interface/Field_Descriptions/Lists/Text_Chart_Markers_fields/subitems_fld_tcmrkers.htm</value>
+    <comment>Text Chart Markers - Subitem</comment>
   </data>
   <data name="khtpField-charttempEdit-CmPossibility-" xml:space="preserve">
     <value>/User_Interface/Field_Descriptions/Lists/Text_Chart_Temp_fields/subitems_field_tctemp.htm</value>
+    <comment>Text Constituent Chart Template- Subitems</comment>
   </data>
   <data name="khtpField-complexEntryTypeEdit-LexEntryType-" xml:space="preserve">
     <value>/User_Interface/Field_Descriptions/Lists/Complex_Form_Types_flds/subtypes_fld_(complex_fm_types).htm</value>
+    <comment>Complex Entry Type - Subtypes</comment>
   </data>
   <data name="khtpField-complexEntryTypeEdit-LexEntryType-Subitems" xml:space="preserve">
     <value>/User_Interface/Field_Descriptions/Lists/Complex_Form_Types_flds/subtypes_fld_(complex_fm_types).htm</value>
+    <comment>Complex Entry Type - Subtype</comment>
   </data>
   <data name="khtpField-domainTypeEdit-CmPossibility-Subitems" xml:space="preserve">
     <value>/User_Interface/Field_Descriptions/Lists/Academic_Domains_fields/subitems_field_academic_domains.htm</value>
+    <comment>Academic Domain - Subtype</comment>
   </data>
   <data name="khtpField-educationEdit-CmPossibility-Subitems" xml:space="preserve">
     <value>/User_Interface/Field_Descriptions/Lists/Education_Levels_fields/Subitems_field_Education_Levels.htm</value>
+    <comment>Education Levels - Subtype</comment>
   </data>
   <data name="khtpField-extNoteTypeEdit-CmPossibility-" xml:space="preserve">
     <value>/User_Interface/Field_Descriptions/Lists/Extended_Note_Types/Subitems_field_(Extended_Notes).htm</value>
+    <comment>Extended Note - Subitems</comment>
   </data>
   <data name="khtpField-extNoteTypeEdit-CmPossibility-Subitems" xml:space="preserve">
     <value>/User_Interface/Field_Descriptions/Lists/Extended_Note_Types/Subitems_field_(Extended_Notes).htm</value>
+    <comment>Extended Note - Subitems</comment>
   </data>
   <data name="khtpField-genresEdit-CmPossibility-Subitems" xml:space="preserve">
     <value>/User_Interface/Field_Descriptions/Lists/Genres_fields/Subitems_field_Genres.htm</value>
   </data>
   <data name="khtpField-languagesListEdit-CmPossibility-" xml:space="preserve">
     <value>/User_Interface/Field_Descriptions/Lists/Languages/Subitems_field_(Languages).htm</value>
+    <comment>Languages list -Subitems</comment>
   </data>
   <data name="khtpField-languagesListEdit-CmPossibility-Subitems" xml:space="preserve">
     <value>/User_Interface/Field_Descriptions/Lists/Languages/Subitems_field_(Languages).htm</value>
+    <comment>Languages list -Subitem</comment>
   </data>
   <data name="khtpField-positionsEdit-CmPossibility-" xml:space="preserve">
     <value>/User_Interface/Field_Descriptions/Lists/Positions_fields/Subitems_field_(Positions).htm</value>
@@ -3192,8 +3208,42 @@
   </data>
   <data name="khtpChoose-Language" xml:space="preserve">
     <value>/Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_a_source_language.htm</value>
+    <comment>Languages -Choose</comment>
   </data>
   <data name="khtpField-lexiconEdit-LexEtymology-LanguageNotes" xml:space="preserve">
     <value>/User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Source_Language_Notes_(Etymology).htm</value>
+    <comment>LexEtymology - Language Notes</comment>
+  </data>
+  <data name="khtpField-languagesListEdit-CmPossibility-Abbreviation" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Languages/abbreviation_field_Languages.htm</value>
+    <comment>Languages list - Abbreviation</comment>
+  </data>
+  <data name="khtpField-languagesListEdit-CmPossibility-Confidence" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Languages/confidence_field_Languages.htm</value>
+    <comment>Languages list - Confidence</comment>
+  </data>
+  <data name="khtpField-languagesListEdit-CmPossibility-Description" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Languages/description_field_Languages.htm</value>
+    <comment>Languages list -Description</comment>
+  </data>
+  <data name="khtpField-languagesListEdit-CmPossibility-Discussion" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Languages/discussion_field_Languages.htm</value>
+    <comment>Languages list -Discussion</comment>
+  </data>
+  <data name="khtpField-languagesListEdit-CmPossibility-Name" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Languages/name_field_Languages.htm</value>
+    <comment>Languages list - Name</comment>
+  </data>
+  <data name="khtpField-languagesListEdit-CmPossibility-Researchers" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Languages/Researchers_field_Languages.htm</value>
+    <comment>Languages list -Researchers</comment>
+  </data>
+  <data name="khtpField-languagesListEdit-CmPossibility-Restrictions" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Languages/Restrictions_field_Languages.htm</value>
+    <comment>Languages list -Restrictions</comment>
+  </data>
+  <data name="khtpField-languagesListEdit-CmPossibility-Status" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Languages/status_field_Languages.htm</value>
+    <comment>Languages list - Status</comment>
   </data>
 </root>
