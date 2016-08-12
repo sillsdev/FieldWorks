@@ -174,7 +174,7 @@ namespace SIL.FieldWorks.XWorks
 		[XmlElement("WritingSystemOptions", typeof(DictionaryNodeWritingSystemOptions))]
 		[XmlElement("ReferringSenseOptions", typeof(DictionaryNodeReferringSenseOptions))]
 		[XmlElement("ListTypeOptions", typeof(DictionaryNodeListOptions))]
-		[XmlElement("ComplexFormOptions", typeof(DictionaryNodeComplexFormOptions))]
+		[XmlElement("ComplexFormOptions", typeof(DictionaryNodeListAndParaOptions))]
 		[XmlElement("SenseOptions", typeof(DictionaryNodeSenseOptions))]
 		[XmlElement("PictureOptions", typeof(DictionaryNodePictureOptions))]
 		[XmlElement("GroupingOptions", typeof(DictionaryNodeGroupingOptions))]

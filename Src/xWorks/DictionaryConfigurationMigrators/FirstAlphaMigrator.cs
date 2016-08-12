@@ -138,7 +138,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		{
 			if (mainEntrySubEntries.DictionaryNodeOptions == null)
 			{
-				mainEntrySubEntries.DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
+				mainEntrySubEntries.DictionaryNodeOptions = new DictionaryNodeListAndParaOptions
 				{
 					ListId = DictionaryNodeListOptions.ListIds.Complex
 				};
@@ -211,7 +211,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					configNode.ReferenceItem = "MainEntrySubentries";
 					if (configNode.DictionaryNodeOptions == null)
 					{
-						configNode.DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
+						configNode.DictionaryNodeOptions = new DictionaryNodeListAndParaOptions
 						{
 							ListId = DictionaryNodeListOptions.ListIds.Complex
 						};
@@ -273,7 +273,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 							case "ExamplesOS":
 								n.CSSClassNameOverride = "examplescontents";
 								n.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
-								n.DictionaryNodeOptions = new DictionaryNodeComplexFormOptions(); // allow to be shown in paragraph
+								n.DictionaryNodeOptions = new DictionaryNodeListAndParaOptions(); // allow to be shown in paragraph
 								break;
 						}
 					});

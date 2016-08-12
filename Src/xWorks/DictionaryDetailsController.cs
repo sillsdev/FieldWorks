@@ -441,15 +441,15 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var listOptionsView = new ListOptionsView();
 
-			var complexFormOptions = listOptions as DictionaryNodeComplexFormOptions;
-			if (complexFormOptions == null)
+			var listAndParaOptions = listOptions as DictionaryNodeListAndParaOptions;
+			if (listAndParaOptions == null)
 			{
-				// DictionaryNodeComplexFormOptions makes use of the Display Option CheckBox below the list; regular List Options do not.
+				// DictionaryNodeListAndParaOptions makes use of the Display Option CheckBox below the list; regular List Options do not.
 				listOptionsView.DisplayOptionCheckBoxVisible = false;
 			}
 			else
 			{
-				LoadComplexFormOptions(complexFormOptions, listOptionsView);
+				LoadParagraphOptions(listAndParaOptions, listOptionsView);
 			}
 			// REVIEW (Hasso) 2016.02: could this if block be replaced by config file changes?
 			if (listOptions.ListId == DictionaryNodeListOptions.ListIds.Complex ||
@@ -496,7 +496,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void LoadComplexFormOptions(DictionaryNodeComplexFormOptions complexFormOptions, IDictionaryListOptionsView listOptionsView)
+		private void LoadParagraphOptions(DictionaryNodeListAndParaOptions listAndParaOptions, IDictionaryListOptionsView listOptionsView)
 		{
 			listOptionsView.DisplayOptionCheckBoxLabel = xWorksStrings.ksDisplayComplexFormsInParagraphs;
 
@@ -512,8 +512,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				listOptionsView.DisplayOptionCheckBoxLabel = xWorksStrings.ksDisplayExtendedNoteInParagraphs;
 			}
-			listOptionsView.DisplayOptionCheckBoxChecked = complexFormOptions.DisplayEachComplexFormInAParagraph;
-			ToggleViewForShowInPara(complexFormOptions.DisplayEachComplexFormInAParagraph);
+			listOptionsView.DisplayOptionCheckBoxChecked = listAndParaOptions.DisplayEachInAParagraph;
+			ToggleViewForShowInPara(listAndParaOptions.DisplayEachInAParagraph);
 		}
 
 		private EventHandler ListEventHandlerAdder(IDictionaryListOptionsView listOptionsView, DictionaryNodeListOptions listOptions)
@@ -530,14 +530,14 @@ namespace SIL.FieldWorks.XWorks
 					listOptionsView.ListItemCheckBoxChanged += (sender, e) => ListItemCheckedChanged(listOptionsView, null, e);
 				}
 
-				var complexFormOptions = listOptions as DictionaryNodeComplexFormOptions;
-				if (complexFormOptions != null)
+				var listAndParaOptions = listOptions as DictionaryNodeListAndParaOptions;
+				if (listAndParaOptions != null)
 				{
 					listOptionsView.DisplayOptionCheckBoxChanged += (sender, e) =>
 					{
-						complexFormOptions.DisplayEachComplexFormInAParagraph = listOptionsView.DisplayOptionCheckBoxChecked;
-						m_node.Style = ParagraphStyleForSubentries(complexFormOptions.DisplayEachComplexFormInAParagraph, m_node.FieldDescription);
-						ToggleViewForShowInPara(complexFormOptions.DisplayEachComplexFormInAParagraph);
+						listAndParaOptions.DisplayEachInAParagraph = listOptionsView.DisplayOptionCheckBoxChecked;
+						m_node.Style = ParagraphStyleForSubentries(listAndParaOptions.DisplayEachInAParagraph, m_node.FieldDescription);
+						ToggleViewForShowInPara(listAndParaOptions.DisplayEachInAParagraph);
 						RefreshPreview();
 					};
 				}

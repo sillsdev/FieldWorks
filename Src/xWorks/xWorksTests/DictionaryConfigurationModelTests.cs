@@ -46,8 +46,6 @@ namespace SIL.FieldWorks.XWorks
 		private const string m_reference = "Reference";
 		private const string m_field = "LexEntry";
 
-		private static readonly DictionaryConfigurationModel m_model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode>() };
-
 		[TestFixtureSetUp]
 		public void DictionaryConfigModelFixtureSetup()
 		{
@@ -206,7 +204,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void Load_LoadsComplexFormOptions()
+		public void Load_LoadsListAndParaOptions()
 		{
 			DictionaryConfigurationModel model;
 			using (var modelFile = new TempFile(new[]
@@ -227,18 +225,18 @@ namespace SIL.FieldWorks.XWorks
 
 			// The following assertions are based on the specific test data loaded from the file
 			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
-			Assert.IsInstanceOf(typeof(DictionaryNodeComplexFormOptions), testNodeOptions);
-			var cfOptions = (DictionaryNodeComplexFormOptions)testNodeOptions;
-			Assert.AreEqual(DictionaryNodeListOptions.ListIds.Complex, cfOptions.ListId);
-			Assert.IsTrue(cfOptions.DisplayEachComplexFormInAParagraph);
+			Assert.IsInstanceOf(typeof(DictionaryNodeListAndParaOptions), testNodeOptions);
+			var lpOptions = (DictionaryNodeListAndParaOptions)testNodeOptions;
+			Assert.AreEqual(DictionaryNodeListOptions.ListIds.Complex, lpOptions.ListId);
+			Assert.IsTrue(lpOptions.DisplayEachInAParagraph);
 			// There are six complex form types by default in the language project.  (The second and third
 			// guids above are used by two of those default types.)  Ones that are missing in the configuration
 			// data are added in, ones that the configuration has but which don't exist in the language project
 			// are removed.  Note that the first one above (a0000000-dd15-4a03-9032-b40faaa9a754) is a special
 			// value used to indicate "No Complex Form Type".  The fourth value does not exist.
-			Assert.AreEqual(7, cfOptions.Options.Count);
-			Assert.AreEqual(7, cfOptions.Options.Count(option => option.IsEnabled));
-			Assert.AreEqual("a0000000-dd15-4a03-9032-b40faaa9a754", cfOptions.Options[0].Id);
+			Assert.AreEqual(7, lpOptions.Options.Count);
+			Assert.AreEqual(7, lpOptions.Options.Count(option => option.IsEnabled));
+			Assert.AreEqual("a0000000-dd15-4a03-9032-b40faaa9a754", lpOptions.Options[0].Id);
 		}
 
 		[Test]
@@ -258,11 +256,11 @@ namespace SIL.FieldWorks.XWorks
 
 			// The following assertions are based on the specific test data loaded from the file
 			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
-			Assert.IsInstanceOf(typeof(DictionaryNodeComplexFormOptions), testNodeOptions);
-			var cfOptions = (DictionaryNodeComplexFormOptions)testNodeOptions;
-			Assert.AreEqual(DictionaryNodeListOptions.ListIds.None, cfOptions.ListId);
-			Assert.That(cfOptions.Options, Is.Null.Or.Empty);
-			Assert.IsFalse(cfOptions.DisplayEachComplexFormInAParagraph);
+			Assert.IsInstanceOf(typeof(DictionaryNodeListAndParaOptions), testNodeOptions);
+			var lpOptions = (DictionaryNodeListAndParaOptions)testNodeOptions;
+			Assert.AreEqual(DictionaryNodeListOptions.ListIds.None, lpOptions.ListId);
+			Assert.That(lpOptions.Options, Is.Null.Or.Empty);
+			Assert.IsFalse(lpOptions.DisplayEachInAParagraph);
 		}
 
 		[Test]
@@ -754,7 +752,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void Save_ConfigWithComplexFormOptionsValidatesAgainstSchema()
+		public void Save_ConfigWithListAndParaOptionsValidatesAgainstSchema()
 		{
 			var modelFile = Path.GetTempFileName();
 			var oneConfigNode = new ConfigurableDictionaryNode
@@ -763,7 +761,7 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true,
 				Before = "[",
 				FieldDescription = "LexEntry",
-				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions
 				{
 					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
 					{
@@ -867,7 +865,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Label = "Entry",
 				FieldDescription = "LexEntry",
-				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions
 				{
 					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
 					{

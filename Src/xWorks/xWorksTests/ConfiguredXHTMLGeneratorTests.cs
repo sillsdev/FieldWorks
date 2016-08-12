@@ -1136,7 +1136,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_OtherReferencedComplexForms()
 		{
-			var complexformoptions = new DictionaryNodeComplexFormOptions
+			var complexformoptions = new DictionaryNodeListAndParaOptions
 			{
 				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
 				{
@@ -5219,13 +5219,13 @@ namespace SIL.FieldWorks.XWorks
 			var subentryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { refTypeNode },
-				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions(),
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions(),
 				FieldDescription = "Subentries"
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { subentryNode },
-				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions(),
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions(),
 				FieldDescription = "SensesOS", CSSClassNameOverride = "senses"
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -5273,7 +5273,7 @@ namespace SIL.FieldWorks.XWorks
 			var subentryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { refTypeNode },
-				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions(),
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions(),
 				FieldDescription = "Subentries"
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -5320,7 +5320,7 @@ namespace SIL.FieldWorks.XWorks
 			var subentryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { refTypeNode },
-				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions(),
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions(),
 				FieldDescription = "Subentries", IsEnabled = true
 			};
 			var headword = new ConfigurableDictionaryNode
@@ -6196,7 +6196,7 @@ namespace SIL.FieldWorks.XWorks
 			var subentryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { refTypeNode },
-				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions{DisplayEachComplexFormInAParagraph = true},
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions{DisplayEachInAParagraph = true},
 				FieldDescription = "Subentries"
 			};
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }) };
@@ -6298,7 +6298,7 @@ namespace SIL.FieldWorks.XWorks
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }) };
 			var subentryNode = new ConfigurableDictionaryNode
 			{
-				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = true },
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = true },
 				FieldDescription = "Subentries"
 			};
 			var SenseNode = new ConfigurableDictionaryNode
@@ -7761,7 +7761,7 @@ namespace SIL.FieldWorks.XWorks
 					throw new NotImplementedException(string.Format("Unknown list id {0}", listName));
 			}
 
-			DictionaryNodeListOptions listOptions = isComplex ? new DictionaryNodeComplexFormOptions() : new DictionaryNodeListOptions();
+			DictionaryNodeListOptions listOptions = isComplex ? new DictionaryNodeListAndParaOptions() : new DictionaryNodeListOptions();
 
 			listOptions.ListId = listName;
 			listOptions.Options = dnoList;

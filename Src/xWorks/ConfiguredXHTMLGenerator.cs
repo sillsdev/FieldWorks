@@ -1836,7 +1836,7 @@ namespace SIL.FieldWorks.XWorks
 				var contentCrossRef = GenerateCrossReferenceChildren(config, publicationDecorator, (ILexReference)item, collectionOwner, settings, ref previousType);
 				bldr.Append(contentCrossRef);
 			}
-			else if (listOptions is DictionaryNodeComplexFormOptions)
+			else if (listOptions is DictionaryNodeListAndParaOptions)
 			{
 				foreach (var child in config.ReferencedOrDirectChildren)
 				{

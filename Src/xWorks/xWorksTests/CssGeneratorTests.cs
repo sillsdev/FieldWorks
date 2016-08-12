@@ -127,7 +127,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				return;
 			}
-			if (options is DictionaryNodeListOptions) // also covers DictionaryNodeComplexFormOptions
+			if (options is DictionaryNodeListOptions) // also covers DictionaryNodeListAndParaOptions
 			{
 				checkList = ((DictionaryNodeListOptions) options).Options;
 			}
@@ -698,7 +698,7 @@ namespace SIL.FieldWorks.XWorks
 			var examples = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ExamplesOS",
-				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = true },
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = true },
 				Style = grandChildStyleName,
 				Children = new List<ConfigurableDictionaryNode> { exampleChild }
 			};
@@ -1402,7 +1402,7 @@ namespace SIL.FieldWorks.XWorks
 			var subentryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { refTypeNode },
-				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions(),
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions(),
 				FieldDescription = "Subentries"
 			};
 			var entry = new ConfigurableDictionaryNode
@@ -1468,7 +1468,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "ComplexFormsNotSubentries",
 				CSSClassNameOverride = "complexforms",
-				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = true },
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = true },
 				Children = new List<ConfigurableDictionaryNode> { form }
 			};
 			var entry = new ConfigurableDictionaryNode
@@ -1658,7 +1658,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "ExamplesOS",
 				CSSClassNameOverride = "examples",
-				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = true }
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = true }
 			};
 			var senses = new ConfigurableDictionaryNode
 			{
@@ -1689,7 +1689,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "ExamplesOS",
 				CSSClassNameOverride = "examples",
-				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = false }
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = false }
 			};
 			var senses = new ConfigurableDictionaryNode
 			{
@@ -2731,9 +2731,9 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateCssForNumberingStyleForSubentries()
 		{
 			GenerateNumberingStyle("Numbered List", VwBulNum.kvbnRomanUpper);
-			var dictNodeOptions = new DictionaryNodeComplexFormOptions
+			var dictNodeOptions = new DictionaryNodeListAndParaOptions
 			{
-				DisplayEachComplexFormInAParagraph = true,
+				DisplayEachInAParagraph = true,
 				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
 			};
 			dictNodeOptions.Options.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = "a0000000-dd15-4a03-9032-b40faaa9a754" });
@@ -2762,9 +2762,9 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateCssForNumberingStyleForExamples()
 		{
 			GenerateNumberingStyle("Numbered List", VwBulNum.kvbnLetterUpper);
-			var dictNodeOptions = new DictionaryNodeComplexFormOptions
+			var dictNodeOptions = new DictionaryNodeListAndParaOptions
 			{
-				DisplayEachComplexFormInAParagraph = true,
+				DisplayEachInAParagraph = true,
 				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
 			};
 			dictNodeOptions.Options.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = "a0000000-dd15-4a03-9032-b40faaa9a754" });
@@ -2906,9 +2906,9 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateCssForBulletStyleForRootSubentries()
 		{
 			GenerateBulletStyle("Bulleted List");
-			var dictNodeOptions = new DictionaryNodeComplexFormOptions
+			var dictNodeOptions = new DictionaryNodeListAndParaOptions
 			{
-				DisplayEachComplexFormInAParagraph = true, Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
+				DisplayEachInAParagraph = true, Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
 			};
 			dictNodeOptions.Options.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = "a0000000-dd15-4a03-9032-b40faaa9a754" } );
 			dictNodeOptions.Options.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = "1f6ae209-141a-40db-983c-bee93af0ca3c" } );

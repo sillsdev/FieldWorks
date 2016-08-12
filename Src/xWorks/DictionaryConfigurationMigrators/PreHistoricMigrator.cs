@@ -502,12 +502,12 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				// Root-based Minor Entry - Components should not have a display-each-in-paragraph checkbox. See LT-15834.
 				if (node.EntryType == "complex" && node.PartName != "LexEntry-Jt-StemMinorComponentsConfig")
 				{
-					options = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = node.ShowComplexFormPara };
+					options = new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = node.ShowComplexFormPara };
 
 					if (node.PartName == "LexEntry-Jt-RootSubentriesConfig")
 					{
 						// LT-15834
-						((DictionaryNodeComplexFormOptions)options).DisplayEachComplexFormInAParagraph = true;
+						((DictionaryNodeListAndParaOptions)options).DisplayEachInAParagraph = true;
 					}
 				}
 				else

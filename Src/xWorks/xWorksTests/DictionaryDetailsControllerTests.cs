@@ -260,7 +260,7 @@ namespace SIL.FieldWorks.XWorks
 			var testNode = new ConfigurableDictionaryNode
 			{
 				DictionaryNodeOptions =
-					new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = true }
+					new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = true }
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
 			controller.LoadNode(null, testNode);
@@ -277,7 +277,7 @@ namespace SIL.FieldWorks.XWorks
 			var testNode = new ConfigurableDictionaryNode
 			{
 				DictionaryNodeOptions =
-					new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = false }
+					new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = false }
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
 			controller.LoadNode(null, testNode);
@@ -467,11 +467,11 @@ namespace SIL.FieldWorks.XWorks
 			AssertShowingCharacterStyles(controller.View);
 
 			// Load paragraph styles
-			node.DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
+			node.DictionaryNodeOptions = new DictionaryNodeListAndParaOptions
 			{
 				ListId = DictionaryNodeListOptions.ListIds.Complex,
 				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
-				DisplayEachComplexFormInAParagraph = true
+				DisplayEachInAParagraph = true
 			};
 			controller.LoadNode(null, node); // SUT
 			AssertShowingParagraphStyles(controller.View);
@@ -493,11 +493,11 @@ namespace SIL.FieldWorks.XWorks
 			// Load paragraph styles
 			var node = new ConfigurableDictionaryNode
 			{
-				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions
 				{
 					ListId = DictionaryNodeListOptions.ListIds.Complex,
 					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
-					DisplayEachComplexFormInAParagraph = true
+					DisplayEachInAParagraph = true
 				}
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
@@ -695,7 +695,7 @@ namespace SIL.FieldWorks.XWorks
 			testNode = new ConfigurableDictionaryNode
 			{
 				IsEnabled = true,
-				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = true}
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = true}
 			};
 			controller.LoadNode(null, testNode);
 			Assert.False(controller.View.SurroundingCharsVisible, "Context should now be hidden");

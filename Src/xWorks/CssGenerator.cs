@@ -183,7 +183,7 @@ namespace SIL.FieldWorks.XWorks
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			var rule = new StyleRule();
 			var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
-			var complexFormOpts = configNode.DictionaryNodeOptions as DictionaryNodeComplexFormOptions;
+			var listAndParaOpts = configNode.DictionaryNodeOptions as DictionaryNodeListAndParaOptions;
 			if (senseOptions != null)
 			{
 				// Try to generate the css for the sense number before the baseSelection is updated because
@@ -191,9 +191,9 @@ namespace SIL.FieldWorks.XWorks
 				// children of collections. Also set display:block on span
 				GenerateCssForSenses(configNode, senseOptions, styleSheet, ref baseSelection, mediator);
 			}
-			else if (complexFormOpts != null)
+			else if (listAndParaOpts != null)
 			{
-				GenerateCssFromComplexFormOptions(configNode, complexFormOpts, styleSheet, ref baseSelection, cache, mediator);
+				GenerateCssFromListAndParaOptions(configNode, listAndParaOpts, styleSheet, ref baseSelection, cache, mediator);
 			}
 			else if (configNode.DictionaryNodeOptions is DictionaryNodeGroupingOptions
 					&& ((DictionaryNodeGroupingOptions)configNode.DictionaryNodeOptions).DisplayGroupInParagraph)
@@ -392,15 +392,15 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private static void GenerateCssFromComplexFormOptions(ConfigurableDictionaryNode configNode,
-			DictionaryNodeComplexFormOptions complexFormOpts, StyleSheet styleSheet, ref string baseSelection, FdoCache cache, Mediator mediator)
+		private static void GenerateCssFromListAndParaOptions(ConfigurableDictionaryNode configNode,
+			DictionaryNodeListAndParaOptions listAndParaOpts, StyleSheet styleSheet, ref string baseSelection, FdoCache cache, Mediator mediator)
 		{
 			var blockDeclarations = string.IsNullOrEmpty(configNode.Style)
 				? new List<StyleDeclaration> { new StyleDeclaration() }
 				: GenerateCssStyleFromFwStyleSheet(configNode.Style, 0, configNode, mediator, true);
 			var selectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, cache, mediator);
 			var styleRules = selectors as StyleRule[] ?? selectors.ToArray();
-			if (complexFormOpts.DisplayEachComplexFormInAParagraph)
+			if (listAndParaOpts.DisplayEachInAParagraph)
 			{
 				for (var i = 0; i < blockDeclarations.Count; ++i)
 				{

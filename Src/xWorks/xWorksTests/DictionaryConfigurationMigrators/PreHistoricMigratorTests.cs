@@ -682,9 +682,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(node);
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created");
 
-			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeComplexFormOptions, "wrong type");
-			var options = (DictionaryNodeComplexFormOptions)configNode.DictionaryNodeOptions;
-			Assert.IsTrue(options.DisplayEachComplexFormInAParagraph, "Did not set");
+			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeListAndParaOptions, "wrong type");
+			var options = (DictionaryNodeListAndParaOptions)configNode.DictionaryNodeOptions;
+			Assert.IsTrue(options.DisplayEachInAParagraph, "Did not set");
 		}
 
 		///<summary/>

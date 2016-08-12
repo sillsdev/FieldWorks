@@ -126,7 +126,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			m_migrator.MigrateFrom83Alpha(configModel); // SUT
 			for (var node = examplesOS; !configModel.SharedItems.Contains(node); node = node.Parent)
 				Assert.NotNull(node, "ExamplesOS should be freshly-shared (under subsenses)");
-			Assert.That(examplesOS.DictionaryNodeOptions, Is.TypeOf(typeof(DictionaryNodeComplexFormOptions)), "Freshly-shared nodes should be included");
+			Assert.That(examplesOS.DictionaryNodeOptions, Is.TypeOf(typeof(DictionaryNodeListAndParaOptions)), "Freshly-shared nodes should be included");
 		}
 
 		[Test]
@@ -138,9 +138,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
 			m_migrator.MigrateFrom83Alpha(configModel);
 			Assert.AreEqual(ConfigurableDictionaryNode.StyleTypes.Character, configExamplesNode.StyleType);
-			Assert.IsTrue(configExamplesNode.DictionaryNodeOptions is DictionaryNodeComplexFormOptions, "wrong type");
-			var options = (DictionaryNodeComplexFormOptions)configExamplesNode.DictionaryNodeOptions;
-			Assert.IsFalse(options.DisplayEachComplexFormInAParagraph, "Default is *not* in paragraph");
+			Assert.IsTrue(configExamplesNode.DictionaryNodeOptions is DictionaryNodeListAndParaOptions, "wrong type");
+			var options = (DictionaryNodeListAndParaOptions)configExamplesNode.DictionaryNodeOptions;
+			Assert.IsFalse(options.DisplayEachInAParagraph, "Default is *not* in paragraph");
 		}
 
 		[Test]

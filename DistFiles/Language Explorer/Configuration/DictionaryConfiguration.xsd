@@ -79,6 +79,7 @@
 				<xs:attribute type="xs:boolean" name="stackPictures" use="required"/>
 			</xs:complexType>
 		</xs:element>
+		<!-- Deprecated. Kept only for migration purposes -->
 		<xs:element name="ReferringSenseOptions" minOccurs="0">
 			<xs:complexType>
 			   <xs:sequence>

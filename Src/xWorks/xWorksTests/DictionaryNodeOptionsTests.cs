@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var clone = genericClone as DictionaryNodeListOptions;
 			Assert.NotNull(clone, "Incorrect subclass returned; expected DictionaryNodeListOptions");
-			Assert.Null(clone as DictionaryNodeComplexFormOptions, "Incorrect subclass returned; did not expect DictionaryNodeComplexFormOptions");
+			Assert.Null(clone as DictionaryNodeListAndParaOptions, "Incorrect subclass returned; did not expect DictionaryNodeListAndParaOptions");
 			Assert.AreNotSame(orig, clone, "Not deep cloned; shallow cloned");
 			Assert.AreEqual(orig.ListId, clone.ListId);
 			AssertListWasDeepCloned(orig.Options, clone.Options);
@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void CanDeepCloneComplexFormOptions()
 		{
-			var orig = new DictionaryNodeComplexFormOptions
+			var orig = new DictionaryNodeListAndParaOptions
 			{
 				ListId = DictionaryNodeListOptions.ListIds.Minor,
 				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
@@ -78,17 +78,17 @@ namespace SIL.FieldWorks.XWorks
 					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "Optn2", IsEnabled = false },
 					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "Optn3", IsEnabled = true },
 				},
-				DisplayEachComplexFormInAParagraph = true
+				DisplayEachInAParagraph = true
 			};
 
 			// SUT
 			var genericClone = orig.DeepClone();
 
-			var clone = genericClone as DictionaryNodeComplexFormOptions;
-			Assert.NotNull(clone, "Incorrect subclass returned; expected DictionaryNodeComplexFormOptions");
+			var clone = genericClone as DictionaryNodeListAndParaOptions;
+			Assert.NotNull(clone, "Incorrect subclass returned; expected DictionaryNodeListAndParaOptions");
 			Assert.AreNotSame(orig, clone, "Not deep cloned; shallow cloned");
 			Assert.AreEqual(orig.ListId, clone.ListId);
-			Assert.AreEqual(orig.DisplayEachComplexFormInAParagraph, clone.DisplayEachComplexFormInAParagraph);
+			Assert.AreEqual(orig.DisplayEachInAParagraph, clone.DisplayEachInAParagraph);
 			AssertListWasDeepCloned(orig.Options, clone.Options);
 		}
 

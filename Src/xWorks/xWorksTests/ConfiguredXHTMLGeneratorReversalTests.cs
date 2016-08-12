@@ -527,7 +527,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "SubentriesOS",
 				CSSClassNameOverride = "subentries",
-				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions {DisplayEachComplexFormInAParagraph = true},
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions {DisplayEachInAParagraph = true},
 				Children = new List<ConfigurableDictionaryNode> {formNode}
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
