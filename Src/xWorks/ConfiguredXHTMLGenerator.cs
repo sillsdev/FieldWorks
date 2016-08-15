@@ -1558,18 +1558,13 @@ namespace SIL.FieldWorks.XWorks
 					if (config.ReferencedOrDirectChildren.Any(
 							x => x.FieldDescription == "VariantEntryTypesRS" && x.IsEnabled && (x.Children != null && x.Children.Any(y => y.IsEnabled))))
 					{
-						IEnumerable<ILexEntryRef> variants = collection.Cast<ILexEntryRef>();
-						IEnumerable variantTypes = variants.Select(x => x.VariantEntryTypesRS.FirstOrDefault()).Distinct();
-						List<ILexEntryRef> sortedVariants = new List<ILexEntryRef>();
-						foreach (var variantType in variantTypes)
-						{
-							foreach (var variant in variants)
-							{
-								if (variant.VariantEntryTypesRS.FirstOrDefault() == variantType)
-									sortedVariants.Add(variant);
-							}
-						}
-						collection = sortedVariants.Where(x => pubDecorator == null || !pubDecorator.IsExcludedObject(x));
+						// Order the variants by type and then guid, excluding variants that are not in the publication.
+						// This is using guid to order variants in a consistent way to fix LT-17384. Though perhaps another sort key would be better, such as ICmObject.SortKey or ICmObject.SortKey2.
+						collection = collection.Cast<ILexEntryRef>()
+								.OrderBy(variant => variant.VariantEntryTypesRS.FirstOrDefault())
+								.ThenBy(variant => variant.Guid)
+								.Where(variant => pubDecorator == null || !pubDecorator.IsExcludedObject(variant));
+
 						var variantFormTypes = settings.Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.ToList();
 						using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings {ConformanceLevel = ConformanceLevel.Fragment}))
 						{
@@ -1599,7 +1594,7 @@ namespace SIL.FieldWorks.XWorks
 									}
 								}
 							}
-							foreach (var entry in sortedVariants.Where(item => !item.VariantEntryTypesRS.Any()))
+							foreach (var entry in collection.Cast<ILexEntryRef>().Where(item => !item.VariantEntryTypesRS.Any()))
 							{
 								foreach (var child in config.Children)
 								{

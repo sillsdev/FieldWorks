@@ -170,7 +170,7 @@ namespace SIL.FieldWorks.XWorks
 			var reversalEntry = CreateInterestingEnglishReversalEntry("speechRevForm", "parol", "speech:gloss");
 			var variantEntry = reversalEntry.ReferringSenses.First().Owner as ILexEntry;
 			var paroleEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "parole", "speech");
-			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, paroleEntry.SensesOS[0], variantEntry, true);
+			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, paroleEntry.SensesOS[0], variantEntry, Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Last() as ILexEntryType);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(reversalEntry, mainRevEntryNode, null, DefaultSettings);
 			const string referringSenseXpath = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']";
@@ -193,7 +193,7 @@ namespace SIL.FieldWorks.XWorks
 			var variantEntry = reversalEntry.ReferringSenses.First().Owner as ILexEntry;
 			var paroleEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "parole", "speech");
 			paroleEntry.SummaryDefinition.SetAnalysisDefaultWritingSystem("summDefn");
-			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, paroleEntry, variantEntry, true);
+			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, paroleEntry, variantEntry, Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Last() as ILexEntryType);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(reversalEntry, mainRevEntryNode, null, DefaultSettings);
 			const string referringSenseXpath = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']";

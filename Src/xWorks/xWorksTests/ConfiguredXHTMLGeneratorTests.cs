@@ -331,7 +331,7 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
 			var variant = CreateInterestingLexEntry(Cache);
-			CreateVariantForm(Cache, entry, variant, true); // we need a real Variant Type to pass the list options test
+			CreateVariantForm(Cache, entry, variant, Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.First() as ILexEntryType); // we need a real Variant Type to pass the list options test
 			// Create a folder in the project to hold the media files
 			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
 			Cache.LangProject.MediaOC.Add(folder);
@@ -5854,7 +5854,7 @@ namespace SIL.FieldWorks.XWorks
 			entryTestsubentry.DoNotPublishInRC.Add(typeMain);
 			CreateComplexForm(Cache, entryEntry, entryTestsubentry, true);
 			var bizarroVariant = CreateInterestingLexEntry(Cache, "bizarre", "myVariant");
-			CreateVariantForm(Cache, entryEntry, bizarroVariant, true);
+			CreateVariantForm(Cache, entryEntry, bizarroVariant, Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.First() as ILexEntryType);
 			bizarroVariant.DoNotPublishInRC.Add(typeTest);
 
 			// Note that the decorators must be created (or refreshed) *after* the data exists.
@@ -6135,13 +6135,13 @@ namespace SIL.FieldWorks.XWorks
 			AddHeadwordToEntry(entryEntry, "entry", m_wsFr, Cache);
 
 			var bizarroVariant = CreateInterestingLexEntry(Cache, "entry1", "myVariant");
-			CreateVariantForm(Cache, entryEntry, bizarroVariant, true); //Spelling Variant
+			var a=CreateVariantForm(Cache, entryEntry, bizarroVariant, Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Last() as ILexEntryType);
 
 			var secondVariant = CreateInterestingLexEntry(Cache, "entry2", "myVariant");
-			CreateVariantForm(Cache, entryEntry, secondVariant); //Crazy Variant
+			var b=CreateVariantForm(Cache, entryEntry, secondVariant); //Crazy Variant
 
 			var thirdVariant = CreateInterestingLexEntry(Cache, "entry3", "myVariant");
-			CreateVariantForm(Cache, entryEntry, thirdVariant, true); //Spelling Variant
+			var c=CreateVariantForm(Cache, entryEntry, thirdVariant, Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Last() as ILexEntryType);
 
 			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
 			var pubMain = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual, typeMain);
@@ -7194,6 +7194,93 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(-1, idxPart, "Part relation should not exist for individuel");
 		}
 
+		/// <summary>
+		/// Use reflection to set the guid on a variant form. May not work for all kinds of tests or appropriately be editing the database. Returns a variant form and the original guid.
+		/// </summary>
+		public static Tuple<ILexEntryRef, Guid> CreateVariantFormWithGuid(FdoCache cache, IVariantComponentLexeme main, ILexEntry variantForm, Guid guid, ILexEntryType typeToUse = null)
+		{
+			var variant = CreateVariantForm(cache, main, variantForm, typeToUse);
+			var originalGuid = SetGuidOnILexEntryRef(variant, guid);
+			return new Tuple<ILexEntryRef, Guid>(variant, originalGuid);
+		}
+
+		/// <summary>
+		/// May break things. Returns original guid.
+		/// </summary>
+		public static Guid SetGuidOnILexEntryRef(ILexEntryRef lexEntryRef, Guid newGuid)
+		{
+			var originalGuid = lexEntryRef.Guid;
+			var refGuidField = ReflectionHelper.GetField(lexEntryRef, "m_guid");
+			ReflectionHelper.SetField(refGuidField, "m_guid", newGuid);
+			return originalGuid;
+		}
+
+		/// <summary>
+		/// LT-17384.
+		/// </summary>
+		[Test]
+		public void GenerateXHTMLForEntry_VariantsOfEntryAreOrdered()
+		{
+			var lexentry = CreateInterestingLexEntry(Cache);
+
+			var lexEntryTypeFactory = Cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>() as ILexEntryTypeFactory;
+			var lexEntryType = lexEntryTypeFactory.Create();
+
+			// This is some test data, with guids set to try to pevent the data from naturally being sorted by guid.
+			var variantFormsTestData = new List<Tuple<ILexEntryRef, Guid>>()
+			{
+				CreateVariantFormWithGuid(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordA"), new Guid("00000000-0000-0000-0000-000000000002"), Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.First() as ILexEntryType),
+				CreateVariantFormWithGuid(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordB"), new Guid("00000000-0000-0000-0000-000000000001"), Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.First() as ILexEntryType),
+				CreateVariantFormWithGuid(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordC"), new Guid("00000000-0000-0000-0000-000000000004"), Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.First() as ILexEntryType),
+				CreateVariantFormWithGuid(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordD"), new Guid("00000000-0000-0000-0000-000000000003"), Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.First() as ILexEntryType),
+			};
+
+			var variantTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+			};
+			var variantTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				CSSClassNameOverride = "variantentrytypes",
+				Children = new List<ConfigurableDictionaryNode> { variantTypeNameNode },
+			};
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				SubField = "MLHeadWord",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var variantFormNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
+				FieldDescription = "VariantFormEntryBackRefs",
+				Children = new List<ConfigurableDictionaryNode> { formNode, variantTypeNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { variantFormNode },
+				FieldDescription = "LexEntry"
+			};
+
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
+
+			// Test that variantformentrybackref items are in an order corresponding to their guids.
+			Assert.That(result.IndexOf("headwordB", StringComparison.InvariantCulture), Is.LessThan(result.IndexOf("headwordA", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
+			Assert.That(result.IndexOf("headwordA", StringComparison.InvariantCulture), Is.LessThan(result.IndexOf("headwordD", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
+			Assert.That(result.IndexOf("headwordD", StringComparison.InvariantCulture), Is.LessThan(result.IndexOf("headwordC", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
+
+			// Clean up database state for teardown by setting guids back to their original state.
+			variantFormsTestData.ForEach(variant => SetGuidOnILexEntryRef(variant.Item1, variant.Item2));
+		}
+
 		[Test]
 		public void GenerateAdjustedPageNumbers_NoAdjacentWhenUpButtonConsumesAllEntries()
 		{
@@ -7551,14 +7638,14 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// 'internal static' so Reversal tests can use it
 		/// </summary>
-		internal static ILexEntryRef CreateVariantForm(FdoCache cache, IVariantComponentLexeme main, ILexEntry variantForm, bool useKnownType = false)
+		internal static ILexEntryRef CreateVariantForm(FdoCache cache, IVariantComponentLexeme main, ILexEntry variantForm, ILexEntryType typeToUse=null)
 		{
 			var owningList = cache.LangProject.LexDbOA.VariantEntryTypesOA;
 			Assert.IsNotNull(owningList, "No VariantEntryTypes property on Lexicon object.");
 			ILexEntryType varType;
-			if (useKnownType)
+			if (typeToUse!=null)
 			{
-				varType = owningList.PossibilitiesOS.Last() as ILexEntryType;
+				varType = typeToUse;
 			}
 			else
 			{
