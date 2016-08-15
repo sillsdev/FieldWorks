@@ -1159,7 +1159,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var wsFontInfo = projectStyle.FontInfoForWs(wsId);
 			var defaultFontInfo = projectStyle.DefaultCharacterStyleInfo;
-			// set fontName to the wsFontInfo value if set, otherwise the defaultFontInfo if set, or null
+
+			// set fontName to the wsFontInfo publicly accessible InheritableStyleProp value if set, otherwise the
+			// defaultFontInfo if set, or null.
 			var fontName = wsFontInfo.m_fontName.ValueIsSet ? wsFontInfo.m_fontName.Value
 				: defaultFontInfo.FontName.ValueIsSet ? defaultFontInfo.FontName.Value : null;
 
@@ -1183,14 +1185,16 @@ namespace SIL.FieldWorks.XWorks
 				declaration.Add(fontFamily);
 			}
 
+			// For the following additions, wsFontInfo is publicly accessible InheritableStyleProp value if set (ie. m_fontSize, m_bold, etc.),
+			// checks for explicit overrides. Otherwise the defaultFontInfo if set (ie. FontSize, Bold, etc), or null.
 			AddInfoFromWsOrDefaultValue(wsFontInfo.m_fontSize, defaultFontInfo.FontSize, "font-size", UnitType.Point, declaration);
 			AddInfoFromWsOrDefaultValue(wsFontInfo.m_bold, defaultFontInfo.Bold, "font-weight", "bold", "normal", declaration);
 			AddInfoFromWsOrDefaultValue(wsFontInfo.m_italic, defaultFontInfo.Italic, "font-style", "italic", "normal", declaration);
 			AddInfoFromWsOrDefaultValue(wsFontInfo.m_fontColor, defaultFontInfo.FontColor, "color", declaration);
 			AddInfoFromWsOrDefaultValue(wsFontInfo.m_backColor, defaultFontInfo.BackColor, "background-color", declaration);
 			AddInfoFromWsOrDefaultValue(wsFontInfo.m_superSub, defaultFontInfo.SuperSub, declaration);
-			AddInfoForUnderline(wsFontInfo, defaultFontInfo, declaration);
 
+			AddInfoForUnderline(wsFontInfo, defaultFontInfo, declaration);
 		}
 
 		/// <summary>
@@ -1300,6 +1304,9 @@ namespace SIL.FieldWorks.XWorks
 					termList.AddTerm(new PrimitiveTerm(UnitType.Ident, "solid"));
 					fontProp.Term = termList;
 					declaration.Add(fontProp);
+
+					// The wsFontInfo is publicly accessible InheritableStyleProp value if set, checks for explicit overrides.
+					// Otherwise the defaultFontInfo if set, or null.
 					AddInfoFromWsOrDefaultValue(wsFont.m_underlineColor, defaultFont.UnderlineColor, "border-bottom-color", declaration);
 					goto case FwUnderlineType.kuntSingle; //fall through to single
 				}
@@ -1308,6 +1315,9 @@ namespace SIL.FieldWorks.XWorks
 					var fontProp = new Property("text-decoration");
 					fontProp.Term = new PrimitiveTerm(UnitType.Ident, "underline");
 					declaration.Add(fontProp);
+
+					// The wsFontInfo is publicly accessible InheritableStyleProp value if set, checks for explicit overrides.
+					// Otherwise the defaultFontInfo if set, or null.
 					AddInfoFromWsOrDefaultValue(wsFont.m_underlineColor, defaultFont.UnderlineColor, "text-decoration-color", declaration);
 					break;
 				}
@@ -1316,6 +1326,9 @@ namespace SIL.FieldWorks.XWorks
 					var fontProp = new Property("text-decoration");
 					fontProp.Term = new PrimitiveTerm(UnitType.Ident, "line-through");
 					declaration.Add(fontProp);
+
+					// The wsFontInfo is publicly accessible InheritableStyleProp value if set, checks for explicit overrides.
+					// Otherwise the defaultFontInfo if set, or null.
 					AddInfoFromWsOrDefaultValue(wsFont.m_underlineColor, defaultFont.UnderlineColor, "text-decoration-color", declaration);
 					break;
 				}
@@ -1331,6 +1344,9 @@ namespace SIL.FieldWorks.XWorks
 																  underlineType == FwUnderlineType.kuntDashed ? "dashed" : "dotted"));
 					fontProp.Term = termList;
 					declaration.Add(fontProp);
+
+					// The wsFontInfo is publicly accessible InheritableStyleProp value if set, checks for explicit overrides.
+					// Otherwise the defaultFontInfo if set, or null.
 					AddInfoFromWsOrDefaultValue(wsFont.m_underlineColor, defaultFont.UnderlineColor, "border-bottom-color", declaration);
 					break;
 				}
