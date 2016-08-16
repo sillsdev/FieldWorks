@@ -111,19 +111,19 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Etymology" isEnabled="false" before="(" after=") " between=" " field="EtymologyOS" cssClassNameOverride="etymologies">
-	  <ConfigurationItem name="Preceding Annotation" isEnabled="true" before="" between=" " after=" " field="PrecComment">
+	<ConfigurationItem name="Etymology" isEnabled="true" before="(" after=") " between=" " field="EtymologyOS" cssClassNameOverride="etymologies">
+	  <ConfigurationItem name="Preceding Annotation" isEnabled="true" field="PrecComment">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Source Language" after=" " between=" " isEnabled="true" field="LanguageRS" cssClassNameOverride="languages">
-		<ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
+	  <ConfigurationItem name="Source Language" after=" " between=", " isEnabled="true" field="LanguageRS" cssClassNameOverride="languages">
+		<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Name" between=" " after=" " isEnabled="false" field="Name">
+		<ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -149,7 +149,7 @@
 		  <Option id="analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Bibliographic Source" isEnabled="true" before="" between=" " after=" " field="Bibliography">
+	  <ConfigurationItem name="Bibliographic Source" isEnabled="false" before="" between=" " after=" " field="Bibliography">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="analysis" isEnabled="true" />
 		</WritingSystemOptions>
@@ -921,19 +921,19 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Etymology" isEnabled="false" before="(" after=") " between=" " field="EtymologyOS" cssClassNameOverride="etymologies">
-	  <ConfigurationItem name="Preceding Annotation" isEnabled="true" before="" between=" " after=" " field="PrecComment">
+	<ConfigurationItem name="Etymology" isEnabled="true" before="(" after=") " between=" " field="EtymologyOS" cssClassNameOverride="etymologies">
+	  <ConfigurationItem name="Preceding Annotation" isEnabled="true" field="PrecComment">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Source Language" after=" " between=" " isEnabled="true" field="LanguageRS" cssClassNameOverride="languages">
-		<ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
+	  <ConfigurationItem name="Source Language" after=" " between=", " isEnabled="true" field="LanguageRS" cssClassNameOverride="languages">
+		<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Name" between=" " after=" " isEnabled="false" field="Name">
+		<ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -959,7 +959,7 @@
 		  <Option id="analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Bibliographic Source" isEnabled="true" before="" between=" " after=" " field="Bibliography">
+	  <ConfigurationItem name="Bibliographic Source" isEnabled="false" before="" between=" " after=" " field="Bibliography">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="analysis" isEnabled="true" />
 		</WritingSystemOptions>
@@ -1828,19 +1828,19 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Etymology" isEnabled="false" before="(" after=") " between=" " field="EtymologyOS" cssClassNameOverride="etymologies">
-	  <ConfigurationItem name="Preceding Annotation" isEnabled="true" before="" between=" " after=" " field="PrecComment">
+	<ConfigurationItem name="Etymology" isEnabled="true" before="(" after=") " between=" " field="EtymologyOS" cssClassNameOverride="etymologies">
+	  <ConfigurationItem name="Preceding Annotation" isEnabled="true" field="PrecComment">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Source Language" after=" " between=" " isEnabled="true" field="LanguageRS" cssClassNameOverride="languages">
-		<ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
+	  <ConfigurationItem name="Source Language" after=" " between=", " isEnabled="true" field="LanguageRS" cssClassNameOverride="languages">
+		<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Name" between=" " after=" " isEnabled="false" field="Name">
+		<ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -1866,7 +1866,7 @@
 		  <Option id="analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Bibliographic Source" isEnabled="true" before="" between=" " after=" " field="Bibliography">
+	  <ConfigurationItem name="Bibliographic Source" isEnabled="false" before="" between=" " after=" " field="Bibliography">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="analysis" isEnabled="true" />
 		</WritingSystemOptions>

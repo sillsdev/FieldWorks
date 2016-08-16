@@ -467,7 +467,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.True(configNode.IsEnabled, "Source Language node should be enabled by default");
 			Assert.That(configNode.CSSClassNameOverride, Is.EqualTo("languages"), "Should have changed the css override");
 			// Just checking that some 'contexts' have been filled in by the new default config.
-			Assert.That(configNode.Between, Is.EqualTo(" "));
+			Assert.That(configNode.Between, Is.EqualTo(", "));
 			Assert.That(configNode.After, Is.EqualTo(" "));
 			Assert.That(configNode.Before, Is.Null);
 			var childNodes = configNode.Children;
@@ -481,7 +481,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.False(nameNode.IsEnabled, "Name node should not be enabled by default");
 			TestForWritingSystemOptionsType(nameNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
 			var langNotesNode = etymChildren.Find(node => node.FieldDescription == "LanguageNotes");
-			Assert.That(langNotesNode.IsEnabled, Is.False, "LanguageNotes node should not be enabled by default");
+			Assert.That(langNotesNode.IsEnabled, Is.True, "LanguageNotes node should be enabled by default");
 			TestForWritingSystemOptionsType(langNotesNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
 			configNode = etymChildren.Find(node => node.Label == "Source Form");
 			Assert.IsNotNull(configNode, "Should have changed the name of the old Etymological Form node");
@@ -503,7 +503,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			configNode = etymChildren.Find(node => node.Label == "Bibliographic Source");
 			Assert.IsNotNull(configNode, "Should have added Bibliographic Source node");
 			Assert.That(configNode.FieldDescription, Is.EqualTo("Bibliography"));
-			Assert.That(configNode.IsEnabled, Is.True, "Bibliography node should be enabled");
+			Assert.That(configNode.IsEnabled, Is.False, "Bibliography node should not be enabled");
 			TestForWritingSystemOptionsType(configNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
 		}
 

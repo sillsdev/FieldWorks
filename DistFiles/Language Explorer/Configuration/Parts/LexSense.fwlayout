@@ -25,7 +25,7 @@
 			<part ref="PhonologyNoteAllA" label="Phonology Note"   visibility="ifdata" />
 			<part ref="SemanticsNoteAllA" label="Semantics Note"   visibility="ifdata" />
 			<part ref="SocioLinguisticsNoteAllA" label="Sociolinguistics Note"   visibility="ifdata" />
-			<part ref="ExtendedNotes" param="Normal"/>
+			<part ref="ExtendedNotes" param="Normal" visibility="ifdata" />
 			<part ref="Source"   visibility="ifdata" />
 			<part ref="UsageTypes"   visibility="ifdata" />
 			<part ref="SenseType"   visibility="ifdata" />

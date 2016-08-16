@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					MigrateNewDefaultNodes(oldConfigPart, currentDefaultConfigPart);
 					goto case 9;
 				case 9:
-					UpgradeEtymologyCluster(oldConfigPart, oldConfig.IsReversal);
+					UpgradeEtymologyCluster(oldConfigPart, oldConfig);
 					break;
 				default:
 					m_logger.WriteLine(string.Format(
@@ -133,8 +133,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		/// Three old nodes will need deleting: Etymological Form, Comment and Source
 		/// </summary>
 		/// <param name="oldConfigPart"></param>
-		/// <param name="isReversal"></param>
-		private static void UpgradeEtymologyCluster(ConfigurableDictionaryNode oldConfigPart, bool isReversal)
+		/// <param name="oldConfig"></param>
+		private static void UpgradeEtymologyCluster(ConfigurableDictionaryNode oldConfigPart, DictionaryConfigurationModel oldConfig)
 		{
 			if (oldConfigPart.Children == null || oldConfigPart.Children.Count == 0)
 				return; // safety net
@@ -150,13 +150,17 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				// modify main node
 				var etymSequence = "EtymologyOS";
-				if (isReversal)
+				if (oldConfig.IsReversal)
 				{
 					node.SubField = etymSequence;
 					node.FieldDescription = "Entry";
+					node.IsEnabled = true;
 				}
 				else
+				{
 					node.FieldDescription = etymSequence;
+					node.IsEnabled = !IsHybrid(oldConfig);
+				}
 				node.CSSClassNameOverride = "etymologies";
 				node.Before = "(";
 				node.Between = " ";
@@ -165,10 +169,20 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				// enable Gloss node
 				node.Children.Find(n => n.Label == "Gloss").IsEnabled = true;
 
+				// enable Source Language Notes
+				var notesList = node.Children.Find(n => n.FieldDescription == "LanguageNotes");
+				if(notesList != null) // ran into some cases where this node didn't exist in reversal config!
+					notesList.IsEnabled = true;
+
 				// remove old children
 				var nodesToRemove = new[] {"Etymological Form", "Comment", "Source"};
 				node.Children.RemoveAll(n => nodesToRemove.Contains(n.Label));
 			}
+		}
+
+		private static bool IsHybrid(DictionaryConfigurationModel model)
+		{
+			return !model.IsRootBased && ConfigHasSubentriesNode(model);
 		}
 
 		/// <summary>
