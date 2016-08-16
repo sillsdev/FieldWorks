@@ -3077,9 +3077,9 @@
     <value>User_Interface/Field_Descriptions/Lists/Extended_Note_Types/Status_field_Extended-Notes.htm</value>
     <comment>Extended Note - List -Status</comment>
   </data>
-  <data name="khtpField-lexiconEdit-LexExampleSentence-Translations" xml:space="preserve">
+  <data name="khtpField-lexiconEdit-LexExtendedNote-Translations" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Extended_Note/Translation_field_(Extended_Note).htm</value>
-    <comment>Extended Note - Lexicon -Examples - Translation</comment>
+    <comment>Extended Note - Lexicon -Examples - Translation no content</comment>
   </data>
   <data name="khtpField-lexiconEdit-LexExtendedNote-" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Extended_Note/Extended_Note_field.htm</value>
@@ -3245,5 +3245,9 @@
   <data name="khtpField-languagesListEdit-CmPossibility-Status" xml:space="preserve">
     <value>/User_Interface/Field_Descriptions/Lists/Languages/status_field_Languages.htm</value>
     <comment>Languages list - Status</comment>
+  </data>
+  <data name="khtpField-lexiconEdit-LexExtendedNote-Translation" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Extended_Note/Translation_field_(Extended_Note).htm</value>
+    <comment>Extended Note - Lexicon -Examples - Translation - with Content</comment>
   </data>
 </root>
