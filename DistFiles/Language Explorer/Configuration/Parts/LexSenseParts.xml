@@ -708,7 +708,7 @@
 	</bin>
 	<bin class="LexExtendedNote">
 		<part id="LexExtendedNote-Detail-Type" type="Detail">
-			<slice field="ExtendedNoteType" label="Type" editor="possAtomicReference" menu="mnuDataTree-ExtendedNote" />
+			<slice field="ExtendedNoteType" label="Type" editor="possAtomicReference" menu="mnuDataTree-Help" />
 		</part>
 		<part id="LexExtendedNote-Detail-DiscussionAllA" type="Detail">
 			<slice field="Discussion" label="Discussion" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
