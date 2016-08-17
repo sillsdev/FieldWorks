@@ -610,7 +610,7 @@ function Toggle(node, path, imgOffset)
 					<xsl:text>&#xa0;&#xa0;(Reason: This is a duplicate parse and has been pruned.)</xsl:text>
 				</span>
 			</xsl:when>
-			<xsl:when test="name() != 'WordSynthesisTrace' or $moreToShow != 'Y'">
+			<xsl:when test="name() != 'WordSynthesisTrace' and $moreToShow != 'Y'">
 				<xsl:for-each select="FailureReason">
 					<span style="unicode-bidi:embed">
 						<xsl:attribute name="style">
@@ -839,6 +839,15 @@ function Toggle(node, path, imgOffset)
 								<xsl:text>' conflicts with the following required parts of speech: </xsl:text>
 								<xsl:value-of select="RequiredPos"/>
 								<xsl:text>.</xsl:text>
+							</xsl:when>
+							<xsl:when test="@type = 'nonPartialRuleAfterFinalTemplate'">
+								<xsl:text>Further derivation is prohibited after a final template.</xsl:text>
+							</xsl:when>
+							<xsl:when test="@type = 'partialRuleAfterNonFinalTemplate'">
+								<xsl:text>Further derivation is required after a non-final template, but this affix is not derivational.</xsl:text>
+							</xsl:when>
+							<xsl:when test="@type = 'maxAppCount'">
+								<xsl:text>An affix cannot be applied more than once.</xsl:text>
 							</xsl:when>
 						</xsl:choose>
 						<xsl:text>)</xsl:text>

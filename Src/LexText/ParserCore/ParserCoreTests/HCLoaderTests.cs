@@ -88,6 +88,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private IPartOfSpeech m_noun;
 		private IPartOfSpeech m_verb;
 		private IPartOfSpeech m_adj;
+		private IPartOfSpeech m_particle;
 		private IFsFeatStrucType m_inflType;
 		private IPhNCFeatures m_vowel;
 		private IPhNCFeatures m_cons;
@@ -107,6 +108,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_noun = AddPartOfSpeech("N");
 			m_verb = AddPartOfSpeech("V");
 			m_adj = AddPartOfSpeech("A");
+			m_particle = AddPartOfSpeech("P");
 
 			Cache.LanguageProject.MorphologicalDataOA.ParserParameters = "<ParserParameters><ActiveParser>HC</ActiveParser><HC><NoDefaultCompounding>true</NoDefaultCompounding><AcceptUnspecifiedGraphemes>false</AcceptUnspecifiedGraphemes></HC></ParserParameters>";
 
@@ -589,6 +591,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			Assert.That(rule.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[POS:V]"));
 			Assert.That(rule.Gloss, Is.EqualTo("gloss"));
+			Assert.That(rule.IsPartial, Is.True);
 		}
 
 		[Test]
@@ -652,6 +655,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(rule.OutSyntacticFeatureStruct.ToString(), Is.EqualTo("ANY"));
 			Assert.That(rule.Gloss, Is.EqualTo("gloss"));
 			Assert.That(rule.Allomorphs[0].RequiredMprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"fromExceptFeat", "inflClass", "inflSubclass"}));
+			Assert.That(rule.IsPartial, Is.True);
 		}
 
 		[Test]
@@ -722,6 +726,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public void Stem()
 		{
 			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphBoundStem, "sag", "gloss", new SandboxGenericMSA {MsaType = MsaType.kStem, MainPOS = m_verb});
+			IMoInflClass inflClass = AddInflectionClass(m_verb, "inflClass");
+			AddInflectiononSubclass(inflClass, "inflSubclass");
+			var msa = (IMoStemMsa) entry.MorphoSyntaxAnalysesOC.First();
+			msa.InflectionClassRA = inflClass;
 			var allo = (IMoStemAllomorph) entry.LexemeFormOA;
 			allo.PhoneEnvRC.Add(AddEnvironment("/ [V] _ [V]#"));
 			allo.PhoneEnvRC.Add(AddEnvironment("/ [C] _ [C]"));
@@ -732,6 +740,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			LexEntry hcEntry = m_lang.Strata[0].Entries.First();
 
 			Assert.That(hcEntry.Gloss, Is.EqualTo("gloss"));
+			Assert.That(hcEntry.SyntacticFeatureStruct.ToString(), Is.EqualTo("[POS:V]"));
+			Assert.That(hcEntry.MprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"inflClass"}));
 			Assert.That(hcEntry.Allomorphs.Count, Is.EqualTo(1));
 
 			RootAllomorph hcAllo = hcEntry.PrimaryAllomorph;
@@ -739,16 +749,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(hcAllo.StemName.ToString(), Is.EqualTo("stemName"));
 			Assert.That(hcAllo.IsBound, Is.True);
 			Assert.That(hcAllo.Environments.Select(e => e.ToEnvString()), Is.EquivalentTo(new[]
-				{
-					"/ [cons:-, Type:segment, voc:+] _ [cons:-, Type:segment, voc:+][AnchorType:RightSide, Type:anchor]",
-					"/ [cons:+, Type:segment, voc:-] _ [cons:+, Type:segment, voc:-]"
-				}));
+			{
+				"/ " + VowelFS + " _ " + VowelFS + RightAnchorFS,
+				"/ " + ConsFS + " _ " + ConsFS
+			}));
 		}
 
 		[Test]
 		public void StemNoMorphTypeSet()
 		{
-			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphBoundStem, "sag", "gloss", new SandboxGenericMSA { MsaType = MsaType.kStem, MainPOS = m_verb });
+			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphBoundStem, "sag", "gloss", new SandboxGenericMSA {MsaType = MsaType.kStem, MainPOS = m_verb});
 			entry.LexemeFormOA.MorphTypeRA = null;
 			LoadLanguage();
 
@@ -756,9 +766,49 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 
 		[Test]
+		public void PartialStem()
+		{
+			AddEntry(MoMorphTypeTags.kguidMorphBoundStem, "sag", "gloss", new SandboxGenericMSA {MsaType = MsaType.kStem, MainPOS = null});
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(1));
+			LexEntry hcEntry = m_lang.Strata[0].Entries.First();
+			Assert.That(hcEntry.SyntacticFeatureStruct.ToString(), Is.EqualTo("ANY"));
+			Assert.That(hcEntry.IsPartial, Is.True);
+		}
+
+		[Test]
 		public void Enclitic()
 		{
-			AddEntry(MoMorphTypeTags.kguidMorphEnclitic, "ɯd", "gloss", new SandboxGenericMSA {MsaType = MsaType.kStem});
+			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphEnclitic, "ɯd", "gloss", new SandboxGenericMSA {MsaType = MsaType.kStem, MainPOS = m_particle});
+			var msa = (IMoStemMsa) entry.MorphoSyntaxAnalysesOC.First();
+			msa.FromPartsOfSpeechRC.Add(m_noun);
+			var allo = (IMoStemAllomorph) entry.LexemeFormOA;
+			allo.PhoneEnvRC.Add(AddEnvironment("/ [V] _ #"));
+			allo.PhoneEnvRC.Add(AddEnvironment("/ #[C] _ [C]"));
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[1].MorphologicalRules.Count, Is.EqualTo(1));
+			var rule = (AffixProcessRule) m_lang.Strata[1].MorphologicalRules[0];
+			Assert.That(rule.RequiredSyntacticFeatureStruct.ToString(), Is.EqualTo("[POS:N]"));
+			Assert.That(rule.Allomorphs.Count, Is.EqualTo(2));
+
+			AffixProcessAllomorph hcAllo = rule.Allomorphs[0];
+			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] {AnyStar + VowelFS + SuffixNull}));
+			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] {"<stem>", "+ɯd"}));
+			Assert.That(hcAllo.Environments.Select(e => e.ToEnvString()), Is.EquivalentTo(new[] {"/ _ " + RightAnchorFS}));
+
+			hcAllo = rule.Allomorphs[1];
+			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] {PrefixNull + ConsFS + SuffixNull}));
+			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] {"<stem>", "+ɯd"}));
+			Assert.That(hcAllo.Environments.Select(e => e.ToEnvString()), Is.EquivalentTo(new[] {"/ _ " + ConsFS}));
+		}
+
+		[Test]
+		public void EncliticAffixAllomorph()
+		{
+			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphSuffix, "ɯd", "gloss", new SandboxGenericMSA {MsaType = MsaType.kUnclassified});
+			entry.LexemeFormOA.MorphTypeRA = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphEnclitic);
 			LoadLanguage();
 
 			Assert.That(m_lang.Strata[1].MorphologicalRules.Count, Is.EqualTo(1));
@@ -768,22 +818,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			AffixProcessAllomorph hcAllo = rule.Allomorphs[0];
 			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] {AnyPlus}));
 			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] {"<stem>", "+ɯd"}));
-		}
-
-		[Test]
-		public void EncliticAffixAllomorph()
-		{
-			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphSuffix, "ɯd", "gloss", new SandboxGenericMSA { MsaType = MsaType.kUnclassified });
-			entry.LexemeFormOA.MorphTypeRA = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphEnclitic);
-			LoadLanguage();
-
-			Assert.That(m_lang.Strata[1].MorphologicalRules.Count, Is.EqualTo(1));
-			var rule = (AffixProcessRule)m_lang.Strata[1].MorphologicalRules[0];
-			Assert.That(rule.Allomorphs.Count, Is.EqualTo(1));
-
-			AffixProcessAllomorph hcAllo = rule.Allomorphs[0];
-			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] { AnyPlus }));
-			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] { "<stem>", "+ɯd" }));
 		}
 
 		[Test]
@@ -1070,12 +1104,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			AffixProcessAllomorph hcAllo = rule.Allomorphs[0];
 			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] {"(" + ConsFS + ConsFS + ")[2,]", "[round:+, Type:segment, voc:+]", AnyStar}));
 			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[]
-				{
-					"<1>",
-					"+a+",
-					"<2> -> [round:-, Type:segment, voc:+]",
-					"[cons:+, cont:-, nasal:+, poa:velar, Type:segment, vd:+, voc:-]"
-				}));
+			{
+				"<1>",
+				"+a+",
+				"<2> -> [round:-, Type:segment, voc:+]",
+				"[cons:+, cont:-, nasal:+, poa:velar, Type:segment, vd:+, voc:-]"
+			}));
 		}
 
 		[Test]
@@ -1108,10 +1142,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			AffixProcessAllomorph hcAllo = rule.Allomorphs[0];
 			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] { AnyStar }));
 			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[]
-				{
-					"<1>",
-					"+a"
-				}));
+			{
+				"<1>",
+				"+a"
+			}));
 		}
 
 		[Test]
@@ -1132,21 +1166,29 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			type.GlossAppend.SetAnalysisDefaultWritingSystem(".pl");
 			type.InflFeatsOA = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
 			CreateFeatStruc(Cache.LanguageProject.MsFeatureSystemOA, m_inflType, type.InflFeatsOA, new FS {{"nounAgr", new FS {{"num", "pl"}}}});
-			entry.CreateVariantEntryAndBackRef(type, Cache.TsStrFactory.MakeString("sau", Cache.DefaultVernWs));
+			ILexEntryRef entryRef = entry.CreateVariantEntryAndBackRef(type, Cache.TsStrFactory.MakeString("sau", Cache.DefaultVernWs));
+			entryRef.VariantEntryTypesRS.Add(Cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypFreeVar));
 			LoadLanguage();
 
-			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(2));
-			LexEntry hcEntry = m_lang.Strata[0].Entries.First();
+			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(3));
+			LexEntry hcEntry = m_lang.Strata[0].Entries.ElementAt(0);
 			Assert.That(hcEntry.Gloss, Is.EqualTo("gloss"));
 			Assert.That(hcEntry.Allomorphs.Count, Is.EqualTo(1));
 			Assert.That(hcEntry.PrimaryAllomorph.Shape.ToString(m_lang.Strata[0].CharacterDefinitionTable, false), Is.EqualTo("sag"));
 
-			hcEntry = m_lang.Strata[0].Entries.Last();
+			hcEntry = m_lang.Strata[0].Entries.ElementAt(1);
 			Assert.That(hcEntry.Gloss, Is.EqualTo("gloss.pl"));
 			Assert.That(hcEntry.Allomorphs.Count, Is.EqualTo(1));
 			Assert.That(hcEntry.PrimaryAllomorph.Shape.ToString(m_lang.Strata[0].CharacterDefinitionTable, false), Is.EqualTo("sau"));
 			Assert.That(hcEntry.SyntacticFeatureStruct.ToString(), Is.EqualTo("[Head:[nounAgr:[num:pl]], POS:V]"));
 			Assert.That(hcEntry.MprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"Plural Variant"}));
+
+			hcEntry = m_lang.Strata[0].Entries.ElementAt(2);
+			Assert.That(hcEntry.Gloss, Is.EqualTo("gloss"));
+			Assert.That(hcEntry.Allomorphs.Count, Is.EqualTo(1));
+			Assert.That(hcEntry.PrimaryAllomorph.Shape.ToString(m_lang.Strata[0].CharacterDefinitionTable, false), Is.EqualTo("sau"));
+			Assert.That(hcEntry.SyntacticFeatureStruct.ToString(), Is.EqualTo("[POS:V]"));
+			Assert.That(hcEntry.MprFeatures, Is.Empty);
 		}
 
 		[Test]

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -89,7 +90,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					if (GetMorphs(wordAnalysis, out morphs))
 					{
 						analyses.Add(new ParseAnalysis(morphs.Select(mi =>
-							new ParseMorph(mi.Form, mi.Msa, mi.LexEntryRef != null ? mi.LexEntryRef.VariantEntryTypesRS[0] as ILexEntryInflType : null))));
+							new ParseMorph(mi.Form, mi.Msa, mi.InflType))));
 					}
 				}
 				result = new ParseResult(analyses);
@@ -176,7 +177,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					{
 						List<MorphInfo> morphs;
 						if (GetMorphs(wordAnalysis, out morphs))
-							wordformElem.Add(new XElement("Analysis", morphs.Select(mi => CreateAllomorphElement("Morph", mi.Form, mi.Msa, mi.IsCircumfix))));
+							wordformElem.Add(new XElement("Analysis", morphs.Select(mi => CreateAllomorphElement("Morph", mi.Form, mi.Msa, mi.InflType, mi.IsCircumfix))));
 					}
 					if (tracing)
 						wordformElem.Add(new XElement("Trace", trace));
@@ -304,9 +305,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					return false;
 				}
 
-				var lexEntryRefID = (int?) allomorph.Morpheme.Properties["LexEntryRefID"] ?? 0;
-				ILexEntryRef lexEntryRef = null;
-				if (lexEntryRefID > 0 && !m_cache.ServiceLocator.GetInstance<ILexEntryRefRepository>().TryGetObject(lexEntryRefID, out lexEntryRef))
+				var inflTypeID = (int?) allomorph.Morpheme.Properties["InflTypeID"] ?? 0;
+				ILexEntryInflType inflType = null;
+				if (inflTypeID > 0 && !m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().TryGetObject(inflTypeID, out inflType))
 				{
 					result = null;
 					return false;
@@ -317,7 +318,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						Form = form,
 						String = formStr,
 						Msa = msa,
-						LexEntryRef = lexEntryRef,
+						InflType = inflType,
 						IsCircumfix = formID2 > 0
 					};
 
@@ -387,17 +388,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return "unknown";
 		}
 
-		internal static XElement CreateAllomorphElement(string name, IMoForm form, IMoMorphSynAnalysis msa, bool circumfix)
+		internal static XElement CreateAllomorphElement(string name, IMoForm form, IMoMorphSynAnalysis msa, ILexEntryInflType inflType, bool circumfix)
 		{
 			Guid morphTypeGuid = circumfix ? MoMorphTypeTags.kguidMorphCircumfix : (form.MorphTypeRA == null ? Guid.Empty : form.MorphTypeRA.Guid);
 			var elem = new XElement(name, new XAttribute("id", form.Hvo), new XAttribute("type", GetMorphTypeString(morphTypeGuid)),
 				new XElement("Form", circumfix ? form.OwnerOfClass<ILexEntry>().HeadWord.Text : form.GetFormWithMarkers(form.Cache.DefaultVernWs)),
 				new XElement("LongName", form.LongName));
-			elem.Add(CreateMorphemeElement(msa));
+			elem.Add(CreateMorphemeElement(msa, inflType));
 			return elem;
 		}
 
-		internal static XElement CreateMorphemeElement(IMoMorphSynAnalysis msa)
+		internal static XElement CreateMorphemeElement(IMoMorphSynAnalysis msa, ILexEntryInflType inflType)
 		{
 			var msaElem = new XElement("Morpheme", new XAttribute("id", msa.Hvo));
 			switch (msa.ClassID)
@@ -445,7 +446,23 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 
 			msaElem.Add(new XElement("HeadWord", msa.OwnerOfClass<ILexEntry>().HeadWord.Text));
-			msaElem.Add(new XElement("Gloss", msa.GetGlossOfFirstSense()));
+
+			var glossSB = new StringBuilder();
+			if (inflType != null)
+			{
+				string prepend = inflType.GlossPrepend.BestAnalysisAlternative.Text;
+				if (prepend != "***")
+					glossSB.Append(prepend);
+			}
+			ILexSense sense = msa.OwnerOfClass<ILexEntry>().SenseWithMsa(msa);
+			glossSB.Append(sense == null ? ParserCoreStrings.ksQuestions : sense.Gloss.BestAnalysisAlternative.Text);
+			if (inflType != null)
+			{
+				string append = inflType.GlossAppend.BestAnalysisAlternative.Text;
+				if (append != "***")
+					glossSB.Append(append);
+			}
+			msaElem.Add(new XElement("Gloss", glossSB.ToString()));
 			return msaElem;
 		}
 
@@ -475,7 +492,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			public IMoForm Form { get; set; }
 			public string String { get; set; }
 			public IMoMorphSynAnalysis Msa { get; set; }
-			public ILexEntryRef LexEntryRef { get; set; }
+			public ILexEntryInflType InflType { get; set; }
 			public bool IsCircumfix { get; set; }
 		}
 		#endregion

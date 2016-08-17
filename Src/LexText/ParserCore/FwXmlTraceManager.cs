@@ -266,6 +266,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					}
 					break;
 
+				case FailureReason.MaxApplicationCount:
+					trace.Add(new XElement("FailureReason", new XAttribute("type", "maxAppCount")));
+					break;
+
+				case FailureReason.NonPartialRuleProhibitedAfterFinalTemplate:
+					trace.Add(new XElement("FailureReason", new XAttribute("type", "nonPartialRuleAfterFinalTemplate")));
+					break;
+
+				case FailureReason.NonPartialRuleRequiredAfterNonFinalTemplate:
+					trace.Add(new XElement("FailureReason", new XAttribute("type", "partialRuleAfterNonFinalTemplate")));
+					break;
+
 				default:
 					return;
 			}
@@ -388,7 +400,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			IMoMorphSynAnalysis msa;
 			if (msaID == 0 || !m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().TryGetObject(msaID, out msa))
 				return null;
-			return HCParser.CreateMorphemeElement(msa);
+
+			var inflTypeID = (int?) morpheme.Properties["InflTypeID"] ?? 0;
+			ILexEntryInflType inflType = null;
+			if (inflTypeID != 0 && !m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().TryGetObject(inflTypeID, out inflType))
+				return null;
+
+			return HCParser.CreateMorphemeElement(msa, inflType);
 		}
 
 		private static XElement CreateMorphologicalRuleElement(IMorphologicalRule rule)
@@ -417,18 +435,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				if (!m_cache.ServiceLocator.GetInstance<IMoInflAffixSlotRepository>().TryGetObject(slotID, out slot))
 					return null;
 
-				var inflTypeID = (int) allomorph.Morpheme.Properties["InflTypeID"];
-				ILexEntryInflType inflType;
-				if (!m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().TryGetObject(inflTypeID, out inflType))
+				var nullInflTypeID = (int) allomorph.Morpheme.Properties["InflTypeID"];
+				ILexEntryInflType nullInflType;
+				if (!m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().TryGetObject(nullInflTypeID, out nullInflType))
 					return null;
 
 				var isPrefix = (bool) allomorph.Properties["IsPrefix"];
 				return new XElement("Allomorph", new XAttribute("id", 0), new XAttribute("type", isPrefix ? MoMorphTypeTags.kMorphPrefix : MoMorphTypeTags.kMorphSuffix),
 					new XElement("Form", "^0"),
 					new XElement("Morpheme", new XAttribute("id", 0), new XAttribute("type", "infl"),
-						new XElement("HeadWord", string.Format("Automatically generated null affix for the {0} irregularly inflected form", inflType.Name.BestAnalysisAlternative.Text)),
-						new XElement("Gloss", (inflType.GlossPrepend.BestAnalysisAlternative.Text == "***" ? "" : inflType.GlossPrepend.BestAnalysisAlternative.Text)
-							+ (inflType.GlossAppend.BestAnalysisAlternative.Text == "***" ? "" : inflType.GlossAppend.BestAnalysisAlternative.Text)),
+						new XElement("HeadWord", string.Format("Automatically generated null affix for the {0} irregularly inflected form", nullInflType.Name.BestAnalysisAlternative.Text)),
+						new XElement("Gloss", (nullInflType.GlossPrepend.BestAnalysisAlternative.Text == "***" ? "" : nullInflType.GlossPrepend.BestAnalysisAlternative.Text)
+							+ (nullInflType.GlossAppend.BestAnalysisAlternative.Text == "***" ? "" : nullInflType.GlossAppend.BestAnalysisAlternative.Text)),
 						new XElement("Category", slot.OwnerOfClass<IPartOfSpeech>().Abbreviation.BestAnalysisAlternative.Text),
 						new XElement("Slot", new XAttribute("optional", slot.Optional), slot.Name.BestAnalysisAlternative.Text)));
 			}
@@ -445,7 +463,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (!m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().TryGetObject(msaID, out msa))
 				return null;
 
-			return HCParser.CreateAllomorphElement("Allomorph", form, msa, formID2 != 0);
+			var inflTypeID = (int?) allomorph.Morpheme.Properties["InflTypeID"] ?? 0;
+			ILexEntryInflType inflType = null;
+			if (inflTypeID != 0 && !m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().TryGetObject(inflTypeID, out inflType))
+				return null;
+
+			return HCParser.CreateAllomorphElement("Allomorph", form, msa, inflType, formID2 != 0);
 		}
 	}
 }
