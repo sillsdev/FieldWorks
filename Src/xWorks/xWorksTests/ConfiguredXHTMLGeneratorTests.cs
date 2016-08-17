@@ -4163,6 +4163,23 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderForSuffixWithNewBaseLetter()
+		{
+			var entry = CreateInterestingSuffix(Cache, " ba");
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				// SUT
+				var last = "A a";
+				XHTMLWriter.WriteStartElement("TestElement");
+				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
+				XHTMLWriter.WriteEndElement();
+				XHTMLWriter.Flush();
+				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='fr' and text()='B b']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
+			}
+		}
+
+		[Test]
 		public void GenerateLetterHeaderIfNeeded_GeneratesNoHeaderIfPreviousHeaderDoesMatch()
 		{
 			var entry = CreateInterestingLexEntry(Cache);
@@ -7396,6 +7413,23 @@ namespace SIL.FieldWorks.XWorks
 			AddHeadwordToEntry(entry, headword, wsFr, cache);
 			entry.Comment.set_String(wsEn, cache.TsStrFactory.MakeString("Comment", wsEn));
 			AddSenseToEntry(entry, gloss, wsEn, cache);
+			return entry;
+		}
+
+		/// <summary>
+		/// Creates an ILexEntry object, optionally with specified headword and gloss
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="headword">Optional: defaults to 'Citation'</param>
+		/// <param name="gloss">Optional: defaults to 'gloss'</param>
+		/// <returns></returns>
+		internal static ILexEntry CreateInterestingSuffix(FdoCache cache, string headword = "ba", string gloss = "gloss")
+		{
+			var entry = CreateInterestingLexEntry(cache, headword, gloss);
+			var wsEn = cache.WritingSystemFactory.GetWsFromStr("en");
+			var suffixType = cache.LangProject.LexDbOA.MorphTypesOA.FindOrCreatePossibility("suffix", wsEn);
+			entry.LexemeFormOA = cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>().Create();
+			entry.LexemeFormOA.MorphTypeRA = suffixType as IMoMorphType;
 			return entry;
 		}
 

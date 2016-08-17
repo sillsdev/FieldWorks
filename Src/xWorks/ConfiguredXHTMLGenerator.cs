@@ -606,9 +606,9 @@ namespace SIL.FieldWorks.XWorks
 			if (lexEntry == null)
 			{
 				var revEntry = entry as IReversalIndexEntry;
-				return revEntry != null ? revEntry.ReversalForm.BestAnalysisAlternative.Text : string.Empty;
+				return revEntry != null ? revEntry.ReversalForm.BestAnalysisAlternative.Text.TrimStart() : string.Empty;
 			}
-			return lexEntry.HomographForm;
+			return lexEntry.HomographForm.TrimStart();
 		}
 
 		/// <summary>
