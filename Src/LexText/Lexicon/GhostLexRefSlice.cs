@@ -107,14 +107,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					ent.EntryRefsOS.Add(ler);
 					if (fForVariant)
 					{
+						Debug.Assert(!ent.VariantEntryRefs.Any());
+						const string unspecVariantEntryTypeGuid = "3942addb-99fd-43e9-ab7d-99025ceb0d4e";
 						// The slice this is part of should only be displayed for lex entries with no VariantEntryRefs.
-						Debug.Assert(ent.VariantEntryRefs.Count() == 0);
-						if (!ent.VariantEntryRefs.Any())
-						{
-							ler.VariantEntryTypesRS.Add(ent.Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[0] as ILexEntryType);
-							ler.RefType = LexEntryRefTags.krtVariant;
-							ler.HideMinorEntry = 0;
-						}
+						var type = ent.Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS
+								.First(lrt => lrt.Guid.ToString() == unspecVariantEntryTypeGuid) as ILexEntryType;
+						ler.VariantEntryTypesRS.Add(type);
+						ler.RefType = LexEntryRefTags.krtVariant;
+						ler.HideMinorEntry = 0;
 					}
 					else
 					{
