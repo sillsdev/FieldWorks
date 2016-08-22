@@ -183,6 +183,97 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 		///<summary/>
 		[Test]
+		public void ConvertLayoutTreeNodeToConfigNode_SubsensesGetsConvertedSenseChildren()
+		{
+			var oldExampleSentenceNode = new ConfigurableDictionaryNode
+			{
+				Label = "Example Sentences"
+			};
+
+			var oldAfterSubSensesNode = new ConfigurableDictionaryNode
+			{
+				Label = "After Subsenses"
+			};
+
+			var oldExampleNode = new ConfigurableDictionaryNode
+			{
+				Label = "Examples",
+				Children = new List<ConfigurableDictionaryNode> { oldExampleSentenceNode }
+			};
+
+			var oldSubsensesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Subsenses"
+			};
+
+			var oldSensesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Senses",
+				Children = new List<ConfigurableDictionaryNode> { oldExampleNode, oldSubsensesNode, oldAfterSubSensesNode }
+			};
+			oldAfterSubSensesNode.Parent = oldSensesNode;
+			oldExampleNode.Parent = oldSensesNode;
+			oldSubsensesNode.Parent = oldSensesNode;
+			var oldMainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { oldSensesNode }
+			};
+			oldSensesNode.Parent = oldMainEntryNode;
+
+			var exampleSentenceNode = new ConfigurableDictionaryNode
+			{
+				Label = "Example Sentences",
+				FieldDescription = "ExampleSentences"
+			};
+
+			var exampleNode = new ConfigurableDictionaryNode
+			{
+				Label = "Examples",
+				FieldDescription = "ExamplesOS",
+				Children = new List<ConfigurableDictionaryNode> { exampleSentenceNode }
+			};
+
+			var newAfterSubSensesNode = new ConfigurableDictionaryNode
+			{
+				Label = "After Subsenses",
+				FieldDescription = "PostSubsenses"
+			};
+
+			var newSubsensesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Subsenses",
+				FieldDescription = "SensesOS",
+				Children = new List<ConfigurableDictionaryNode> { exampleNode }
+			};
+			newSubsensesNode.Children.Add(newAfterSubSensesNode.DeepCloneUnderParent(newSubsensesNode));
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Senses",
+				FieldDescription = "SensesOS",
+				Children = new List<ConfigurableDictionaryNode> { exampleNode, newSubsensesNode, newAfterSubSensesNode }
+			};
+			newSubsensesNode.Parent = sensesNode;
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+			var model = new DictionaryConfigurationModel { Version = PreHistoricMigrator.VersionPre83, Parts = new List<ConfigurableDictionaryNode> { oldMainEntryNode } };
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			using (m_migrator.SetTestLogger = new SimpleLogger())
+			{
+				m_migrator.CopyDefaultsIntoConfigNode(model, oldSubsensesNode, newSubsensesNode);
+			}
+			Assert.AreEqual(oldSubsensesNode.Children[0].Children[0].FieldDescription, "ExampleSentences", "Defaults not copied in for fields before Subsenses");
+			Assert.AreEqual(oldSubsensesNode.Children[2].FieldDescription, "PostSubsenses", "Defaults not copied into fields following Subsenses");
+		}
+
+		///<summary/>
+		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_StyleWorks()
 		{
 			ConfigurableDictionaryNode configNode = null;

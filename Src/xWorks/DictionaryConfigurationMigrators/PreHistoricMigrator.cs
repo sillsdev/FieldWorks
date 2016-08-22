@@ -602,7 +602,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			if (convertedNode.Parent == null)
 				convertedNode.After = convertedNode.Between = convertedNode.Before = null;
 
-			if (convertedNode.Children == null)
+			if (convertedNode.Children == null || !convertedNode.Children.Any())
 			{
 				// if the new default node has children and the converted node doesn't, they need to be added
 				if (currentDefaultNode.Children != null && currentDefaultNode.Children.Any())
@@ -610,8 +610,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					convertedNode.Children = new List<ConfigurableDictionaryNode>(currentDefaultNode.Children);
 					if (convertedNode.Label == "Subsenses")
 					{
-						convertedNode.Children = new List<ConfigurableDictionaryNode>(convertedNode.Parent.Children.Select(node => node.DeepCloneUnderSameParent()));
-						convertedNode.Children.ForEach(child => child.Parent = convertedNode);
+						convertedNode.Children = new List<ConfigurableDictionaryNode>(convertedNode.Parent.Children.Select(node => node.DeepCloneUnderParent(convertedNode)));
+						CopyDefaultsIntoChildren(convertedModel, convertedNode, currentDefaultNode);
 					}
 				}
 				return;
@@ -870,6 +870,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			try
 			{
 				var parentType = DictionaryConfigurationController.GetLookupClassForCustomFieldParent(node.Parent, Cache);
+				if (parentType == null)
+					return 0;
 				var flid = metaDataCache.GetFieldId(parentType, node.FieldDescription, false);
 				return flid;
 			}

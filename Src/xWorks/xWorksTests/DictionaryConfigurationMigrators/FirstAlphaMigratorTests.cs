@@ -189,6 +189,23 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		}
 
 		[Test]
+		public void MigrateFrom83Alpha_NullFieldDescriptionIsLogged()
+		{
+			var cpFormChild = new ConfigurableDictionaryNode { Label = "Complex Form", FieldDescription = null };
+			var referenceHwChild = new ConfigurableDictionaryNode { Label = "Referenced Headword", FieldDescription = "HeadWord" };
+			var configParent = new ConfigurableDictionaryNode
+			{
+				Label = "Parent",
+				FieldDescription = "Parent",
+				Children = new List<ConfigurableDictionaryNode> { referenceHwChild, cpFormChild }
+			};
+			cpFormChild.Parent = configParent;
+			var configModel = new DictionaryConfigurationModel { Version = 2, Parts = new List<ConfigurableDictionaryNode> { configParent } };
+			m_migrator.MigrateFrom83Alpha(configModel);
+			Assert.That(m_logger.Content, Is.StringContaining("'Parent > Complex Form' reached the Alpha2 migration with a null FieldDescription."));
+		}
+
+		[Test]
 		public void MigrateFrom83Alpha_UpdatesSharedItems()
 		{
 			var cpFormChild = new ConfigurableDictionaryNode { Label = "Complex Form", FieldDescription = "OwningEntry", SubField = "MLHeadWord" };
