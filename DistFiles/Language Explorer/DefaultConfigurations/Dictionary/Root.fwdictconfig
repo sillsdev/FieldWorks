@@ -488,12 +488,22 @@
 			<Option id="30115b33-608a-4506-9f9c-2457cab4f4a8" isEnabled="true" />
 			<Option id="5dd29371-fdb0-497a-a2fb-7ca69b00ad4f" isEnabled="true" />
 		</ComplexFormOptions>
-		<ConfigurationItem name="Note Type" isEnabled="false" between=" " after=" " field="ExtendedNoteTypeRA" subField="Name" cssClassNameOverride="notetype">
+		<ConfigurationItem name="Note Type" isEnabled="false" between=" " after=" Note: " field="ExtendedNoteTypeRA" cssClassNameOverride="notetype">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 				<Option id="all analysis" isEnabled="true" />
 			</WritingSystemOptions>
+			<ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+					<Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+			</ConfigurationItem>
+			<ConfigurationItem name="Name" isEnabled="false" between=" " field="Name">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+					<Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+			</ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Discussion" isEnabled="true" style="Strong" between=" " after=" " field="Discussion" cssClassNameOverride="discussion">
+		<ConfigurationItem name="Discussion" isEnabled="true" style="none" between=" " after=" " field="Discussion" cssClassNameOverride="discussion">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 				<Option id="all analysis" isEnabled="true" />
 			</WritingSystemOptions>
@@ -1444,12 +1454,22 @@
 			<Option id="30115b33-608a-4506-9f9c-2457cab4f4a8" isEnabled="true" />
 			<Option id="5dd29371-fdb0-497a-a2fb-7ca69b00ad4f" isEnabled="true" />
 		</ComplexFormOptions>
-		<ConfigurationItem name="Note Type" isEnabled="false" between=" " after=" " field="ExtendedNoteTypeRA" subField="Name" cssClassNameOverride="notetype">
+		<ConfigurationItem name="Note Type" isEnabled="false" between=" " after=" Note: " field="ExtendedNoteTypeRA" cssClassNameOverride="notetype">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 				<Option id="all analysis" isEnabled="true" />
 			</WritingSystemOptions>
+			<ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+					<Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+			</ConfigurationItem>
+			<ConfigurationItem name="Name" isEnabled="false" between=" " field="Name">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+					<Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+			</ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Discussion" isEnabled="true" style="Strong" between=" " after=" " field="Discussion" cssClassNameOverride="discussion">
+		<ConfigurationItem name="Discussion" isEnabled="true" style="none" between=" " after=" " field="Discussion" cssClassNameOverride="discussion">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 				<Option id="all analysis" isEnabled="true" />
 			</WritingSystemOptions>
@@ -2345,12 +2365,22 @@
 			<Option id="30115b33-608a-4506-9f9c-2457cab4f4a8" isEnabled="true" />
 			<Option id="5dd29371-fdb0-497a-a2fb-7ca69b00ad4f" isEnabled="true" />
 		</ComplexFormOptions>
-		<ConfigurationItem name="Note Type" isEnabled="false" between=" " after=" " field="ExtendedNoteTypeRA" subField="Name" cssClassNameOverride="notetype">
+		<ConfigurationItem name="Note Type" isEnabled="false" between=" " after=" Note: " field="ExtendedNoteTypeRA" cssClassNameOverride="notetype">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 				<Option id="all analysis" isEnabled="true" />
 			</WritingSystemOptions>
+			<ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+					<Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+			</ConfigurationItem>
+			<ConfigurationItem name="Name" isEnabled="false" between=" " field="Name">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+					<Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+			</ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Discussion" isEnabled="true" style="Strong" between=" " after=" " field="Discussion" cssClassNameOverride="discussion">
+		<ConfigurationItem name="Discussion" isEnabled="true" style="none" between=" " after=" " field="Discussion" cssClassNameOverride="discussion">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 				<Option id="all analysis" isEnabled="true" />
 			</WritingSystemOptions>
@@ -2919,12 +2949,22 @@
 			<Option id="30115b33-608a-4506-9f9c-2457cab4f4a8" isEnabled="true" />
 			<Option id="5dd29371-fdb0-497a-a2fb-7ca69b00ad4f" isEnabled="true" />
 		</ComplexFormOptions>
-		<ConfigurationItem name="Note Type" isEnabled="false" between=" " after=" " field="ExtendedNoteTypeRA" subField="Name" cssClassNameOverride="notetype">
+		<ConfigurationItem name="Note Type" isEnabled="false" between=" " after=" Note: " field="ExtendedNoteTypeRA" cssClassNameOverride="notetype">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 				<Option id="all analysis" isEnabled="true" />
 			</WritingSystemOptions>
+			<ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+					<Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+			</ConfigurationItem>
+			<ConfigurationItem name="Name" isEnabled="false" between=" " field="Name">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+					<Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+			</ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Discussion" isEnabled="true" style="Strong" between=" " after=" " field="Discussion" cssClassNameOverride="discussion">
+		<ConfigurationItem name="Discussion" isEnabled="true" style="none" between=" " after=" " field="Discussion" cssClassNameOverride="discussion">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 				<Option id="all analysis" isEnabled="true" />
 			</WritingSystemOptions>
@@ -3611,12 +3651,22 @@
 	  			<Option id="30115b33-608a-4506-9f9c-2457cab4f4a8" isEnabled="true" />
 	  			<Option id="5dd29371-fdb0-497a-a2fb-7ca69b00ad4f" isEnabled="true" />
 	  		</ComplexFormOptions>
-	  		<ConfigurationItem name="Note Type" isEnabled="false" between=" " after=" " field="ExtendedNoteTypeRA" subField="Name" cssClassNameOverride="notetype">
+	  		<ConfigurationItem name="Note Type" isEnabled="false" between=" " after=" Note: " field="ExtendedNoteTypeRA" cssClassNameOverride="notetype">
 	  			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 	  				<Option id="all analysis" isEnabled="true" />
 	  			</WritingSystemOptions>
+				<ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
+					<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+						<Option id="analysis" isEnabled="true" />
+					</WritingSystemOptions>
+				</ConfigurationItem>
+				<ConfigurationItem name="Name" isEnabled="false" between=" " field="Name">
+					<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+						<Option id="analysis" isEnabled="true" />
+					</WritingSystemOptions>
+				</ConfigurationItem>
 	  		</ConfigurationItem>
-	  		<ConfigurationItem name="Discussion" isEnabled="true" style="Strong" between=" " after=" " field="Discussion" cssClassNameOverride="discussion">
+	  		<ConfigurationItem name="Discussion" isEnabled="true" style="none" between=" " after=" " field="Discussion" cssClassNameOverride="discussion">
 	  			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 	  				<Option id="all analysis" isEnabled="true" />
 	  			</WritingSystemOptions>
