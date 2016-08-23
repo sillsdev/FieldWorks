@@ -118,6 +118,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					goto case 9;
 				case 9:
 					UpgradeEtymologyCluster(oldConfigPart, oldConfig);
+					goto case 10;
+				case 10:
+					MigrateNewDefaultNodes(oldConfigPart, currentDefaultConfigPart);
 					break;
 				default:
 					m_logger.WriteLine(string.Format(

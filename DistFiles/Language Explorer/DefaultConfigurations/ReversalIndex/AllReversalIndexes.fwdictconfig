@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<DictionaryConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="All Reversal Indexes" writingSystem="" version="10" lastModified="2016-07-27" allPublications="true" isRootBased="false">
+<DictionaryConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="All Reversal Indexes" writingSystem="" version="11" lastModified="2016-08-23" allPublications="true" isRootBased="false">
 	<ConfigurationItem name="Reversal Entry" isEnabled="true" style="Reversal-Normal" styleType="paragraph" field="ReversalIndexEntry" cssClassNameOverride="reversalindexentry">
 		<ConfigurationItem name="Reversal Form" isEnabled="true" style="Reversal-Headword" between=" " after="  " field="ReversalForm">
 			<WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
@@ -24,6 +24,18 @@
 				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 					<Option id="vernacular" isEnabled="true" />
 				</WritingSystemOptions>
+			</ConfigurationItem>
+			<ConfigurationItem name="Dialect Labels" isEnabled="true" before=" [" after="]" between=", " field="DialectLabelsRS">
+				<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
+					<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+					  <Option id="best vernoranal" isEnabled="true" />
+					</WritingSystemOptions>
+				</ConfigurationItem>
+				<ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
+					<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+					  <Option id="best vernoranal" isEnabled="true" />
+					</WritingSystemOptions>
+				</ConfigurationItem>
 			</ConfigurationItem>
 			<ConfigurationItem name="Lexeme Form" isEnabled="false" between=" " after=" " field="Entry" subField="LexemeFormOA" cssClassNameOverride="lexemeform">
 				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -231,6 +243,18 @@
 							<Option id="vernacular" isEnabled="true" />
 						</WritingSystemOptions>
 					</ConfigurationItem>
+					<ConfigurationItem name="Dialect Labels" isEnabled="true" before=" [" after="]" between=", " field="DialectLabelsRS">
+						<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
+							<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+							  <Option id="best vernoranal" isEnabled="true" />
+							</WritingSystemOptions>
+						</ConfigurationItem>
+						<ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
+							<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+							  <Option id="best vernoranal" isEnabled="true" />
+							</WritingSystemOptions>
+						</ConfigurationItem>
+					</ConfigurationItem>
 					<ConfigurationItem name="Summary Definition" isEnabled="false" between=" " after=" " field="SummaryDefinition">
 						<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 							<Option id="analysis" isEnabled="true" />
@@ -256,6 +280,18 @@
 						<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 							<Option id="vernacular" isEnabled="true" />
 						</WritingSystemOptions>
+					</ConfigurationItem>
+					<ConfigurationItem name="Dialect Labels" isEnabled="true" before=" [" after="]" between=", " field="DialectLabelsRS">
+						<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
+							<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+							  <Option id="best vernoranal" isEnabled="true" />
+							</WritingSystemOptions>
+						</ConfigurationItem>
+						<ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
+							<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+							  <Option id="best vernoranal" isEnabled="true" />
+							</WritingSystemOptions>
+						</ConfigurationItem>
 					</ConfigurationItem>
 					<ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="true" between=" " after=" " field="GlossOrSummary">
 						<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -387,6 +423,18 @@
 						<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 							<Option id="vernacular" isEnabled="true" />
 						</WritingSystemOptions>
+					</ConfigurationItem>
+					<ConfigurationItem name="Dialect Labels" isEnabled="true" before=" [" after="]" between=", " field="DialectLabelsRS">
+						<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
+							<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+							  <Option id="best vernoranal" isEnabled="true" />
+							</WritingSystemOptions>
+						</ConfigurationItem>
+						<ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
+							<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+							  <Option id="best vernoranal" isEnabled="true" />
+							</WritingSystemOptions>
+						</ConfigurationItem>
 					</ConfigurationItem>
 					<ConfigurationItem name="Gloss" isEnabled="false" between=" " after=" " field="Gloss">
 						<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -633,6 +681,18 @@
 						<Option id="vernacular" isEnabled="true" />
 					</WritingSystemOptions>
 				</ConfigurationItem>
+				<ConfigurationItem name="Dialect Labels" isEnabled="true" before=" [" after="]" between=", " field="DialectLabelsRS">
+					<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
+						<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+						  <Option id="best vernoranal" isEnabled="true" />
+						</WritingSystemOptions>
+					</ConfigurationItem>
+					<ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
+						<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+						  <Option id="best vernoranal" isEnabled="true" />
+						</WritingSystemOptions>
+					</ConfigurationItem>
+				</ConfigurationItem>
 				<ConfigurationItem name="Lexeme Form" isEnabled="false" between=" " after=" " field="Entry" subField="LexemeFormOA" cssClassNameOverride="lexemeform">
 					<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 						<Option id="vernacular" isEnabled="true" />
@@ -839,6 +899,18 @@
 								<Option id="vernacular" isEnabled="true" />
 							</WritingSystemOptions>
 						</ConfigurationItem>
+						<ConfigurationItem name="Dialect Labels" isEnabled="true" before=" [" after="]" between=", " field="DialectLabelsRS">
+							<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
+								<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+								  <Option id="best vernoranal" isEnabled="true" />
+								</WritingSystemOptions>
+							</ConfigurationItem>
+							<ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
+								<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+								  <Option id="best vernoranal" isEnabled="true" />
+								</WritingSystemOptions>
+							</ConfigurationItem>
+						</ConfigurationItem>
 						<ConfigurationItem name="Summary Definition" isEnabled="false" between=" " after=" " field="SummaryDefinition">
 							<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 								<Option id="analysis" isEnabled="true" />
@@ -864,6 +936,18 @@
 							<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 								<Option id="vernacular" isEnabled="true" />
 							</WritingSystemOptions>
+						</ConfigurationItem>
+						<ConfigurationItem name="Dialect Labels" isEnabled="true" before=" [" after="]" between=", " field="DialectLabelsRS">
+							<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
+								<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+								  <Option id="best vernoranal" isEnabled="true" />
+								</WritingSystemOptions>
+							</ConfigurationItem>
+							<ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
+								<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+								  <Option id="best vernoranal" isEnabled="true" />
+								</WritingSystemOptions>
+							</ConfigurationItem>
 						</ConfigurationItem>
 						<ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="true" between=" " after=" " field="GlossOrSummary">
 							<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -995,6 +1079,18 @@
 							<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 								<Option id="vernacular" isEnabled="true" />
 							</WritingSystemOptions>
+						</ConfigurationItem>
+						<ConfigurationItem name="Dialect Labels" isEnabled="true" before=" [" after="]" between=", " field="DialectLabelsRS">
+							<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
+								<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+								  <Option id="best vernoranal" isEnabled="true" />
+								</WritingSystemOptions>
+							</ConfigurationItem>
+							<ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
+								<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+								  <Option id="best vernoranal" isEnabled="true" />
+								</WritingSystemOptions>
+							</ConfigurationItem>
 						</ConfigurationItem>
 						<ConfigurationItem name="Gloss" isEnabled="false" between=" " after=" " field="Gloss">
 							<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">

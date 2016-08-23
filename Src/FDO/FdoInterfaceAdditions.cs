@@ -5994,5 +5994,10 @@ namespace SIL.FieldWorks.FDO
 		/// Returns the entryRefs for the entry/owning entry for the sense
 		/// </summary>
 		IFdoOwningSequence<ILexEntryRef> PrimaryEntryRefs { get; }
+
+		/// <summary>
+		/// Returns the dialect labels for the entry or sense
+		/// </summary>
+		IFdoReferenceSequence<ICmPossibility> DialectLabelsRS { get; }
 	}
 }

@@ -9742,5 +9742,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
+		public IFdoReferenceSequence<ICmPossibility> DialectLabelsRS
+		{
+			get
+			{
+				var entry = Item as ILexEntry;
+				if (entry != null)
+				{
+					return entry.DialectLabelsRS;
+				}
+				var sense = Item as ILexSense;
+				if (sense == null)
+					return null;
+				return sense.DialectLabelsRS;
+			}
+		}
 	}
 }
