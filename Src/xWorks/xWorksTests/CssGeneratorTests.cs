@@ -1418,6 +1418,50 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForConfiguration_GeneratesComplexFormTypesBeforeBetweenAfter()
+		{
+			var complexFormTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				Before = "<",
+				Between = ",",
+				After = ">"
+			};
+			var complexFormTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ComplexEntryTypesRS",
+				CSSClassNameOverride = "complexformtypes",
+				Children = new List<ConfigurableDictionaryNode> { complexFormTypeNameNode },
+			};
+			var complexFormNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VisibleComplexFormBackRefs",
+				Children = new List<ConfigurableDictionaryNode> { complexFormTypeNode }
+			};
+			var mainHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				CSSClassNameOverride = "entry"
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode, complexFormNode },
+				FieldDescription = "LexEntry"
+			};
+
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
+			PopulateFieldsForTesting(entry);
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .visiblecomplexformbackrefs> .complexformtypes .complexformtype> .name:before{.*content:'<';.*}",
+				RegexOptions.Singleline).Success, "Before not generated.");
+			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .visiblecomplexformbackrefs> .complexformtypes .complexformtype .name> .nam\+ .nam:before{.*content:',';.*}",
+				RegexOptions.Singleline).Success, "Between not generated.");
+			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .visiblecomplexformbackrefs> .complexformtypes .complexformtype> .name:after{.*content:'>';.*}",
+				RegexOptions.Singleline).Success, "After not generated.");
+		}
+
+		[Test]
 		public void GenerateCssForConfiguration_SenseComplexFormsNotSubEntriesHeadWord()
 		{
 			var form = new ConfigurableDictionaryNode

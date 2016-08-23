@@ -1551,15 +1551,16 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
-				IEnumerable<ILexEntryRef> variants = collection.Cast<ILexEntryRef>();
-				var variantOptions = config.DictionaryNodeOptions as DictionaryNodeListOptions;
-				if (variantOptions != null && variantOptions.ListId == DictionaryNodeListOptions.ListIds.Variant)
+				ConfigurableDictionaryNode complexEntryTypeNode;
+				ConfigurableDictionaryNode variantEntryTypeNode;
+				if (IsVariantEntryType(config, out variantEntryTypeNode))
 				{
 					if (config.ReferencedOrDirectChildren.Any(
 							x => x.FieldDescription == "VariantEntryTypesRS" && x.IsEnabled && (x.Children != null && x.Children.Any(y => y.IsEnabled))))
 					{
+						IEnumerable<ILexEntryRef> variants = collection.Cast<ILexEntryRef>();
 						IEnumerable variantTypes = variants.Select(x => x.VariantEntryTypesRS.FirstOrDefault()).Distinct();
-						ArrayList sortedVariants = new ArrayList();
+						List<ILexEntryRef> sortedVariants = new List<ILexEntryRef>();
 						foreach (var variantType in variantTypes)
 						{
 							foreach (var variant in variants)
@@ -1568,27 +1569,134 @@ namespace SIL.FieldWorks.XWorks
 									sortedVariants.Add(variant);
 							}
 						}
-						collection = sortedVariants;
+						collection = sortedVariants.Where(x => pubDecorator == null || !pubDecorator.IsExcludedObject(x));
+						var variantFormTypes = settings.Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.ToList();
+						using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings {ConformanceLevel = ConformanceLevel.Fragment}))
+						{
+							foreach (var variantFormType in variantFormTypes)
+							{
+								foreach (var colItem in collection)
+								{
+									if (((ILexEntryRef)colItem).VariantEntryTypesRS.Contains(variantFormType))
+									{
+										if (previousType != variantFormType.SortKey)
+										{
+											xw.WriteRaw(WriteRawElementContents("span",
+												GenerateCollectionItemContent(variantEntryTypeNode, pubDecorator, variantFormType,
+													variantFormType.Owner, settings, ref previousType), variantEntryTypeNode));
+											previousType = variantFormType.SortKey;
+										}
+
+										xw.WriteStartElement(GetElementNameForProperty(config));
+										WriteCollectionItemClassAttribute(config, xw);
+
+										foreach (var child in config.Children.Where(x => x.FieldDescription != "VariantEntryTypesRS"))
+										{
+											xw.WriteRaw(GenerateXHTMLForFieldByReflection(colItem, child, pubDecorator, settings));
+										}
+
+										xw.WriteEndElement();
+									}
+								}
+							}
+							foreach (var entry in sortedVariants.Where(item => !item.VariantEntryTypesRS.Any()))
+							{
+								foreach (var child in config.Children)
+								{
+									xw.WriteRaw(GenerateXHTMLForFieldByReflection(entry, child, pubDecorator, settings));
+								}
+							}
+							xw.Flush();
+						}
 					}
 					else
 					{
 						Debug.WriteLine("Unable to sort " + config.FieldDescription + " By LexRefType.");
 					}
 				}
-				foreach (var item in collection)
+				else if (IsComplexEntryType(config, out complexEntryTypeNode))
 				{
-					if (pubDecorator != null && item is ICmObject && pubDecorator.IsExcludedObject((ICmObject)item))
+					var complexFormTypes = settings.Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.ToList();
+					using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
 					{
-						// Don't show examples or subentries that have been marked to exclude from publication.
-						// See https://jira.sil.org/browse/LT-15697 and https://jira.sil.org/browse/LT-16775.
-						continue;
+						var entriesWithNoType = new List<ILexEntryRef>();
+						foreach (var complexFormType in complexFormTypes)
+						{
+							foreach (var colItem in collection)
+							{
+								if (((ILexEntryRef)colItem).ComplexEntryTypesRS.Contains(complexFormType))
+								{
+									if (previousType != complexFormType.SortKey)
+									{
+										xw.WriteRaw(WriteRawElementContents("span", GenerateCollectionItemContent(complexEntryTypeNode, pubDecorator, complexFormType,
+											complexFormType.Owner, settings, ref previousType), complexEntryTypeNode));
+										previousType = complexFormType.SortKey;
+									}
+
+									xw.WriteStartElement(GetElementNameForProperty(config));
+									WriteCollectionItemClassAttribute(config, xw);
+
+									foreach (var child in config.Children.Where(x => x.FieldDescription != "ComplexEntryTypesRS"))
+									{
+										xw.WriteRaw(GenerateXHTMLForFieldByReflection(colItem, child, pubDecorator, settings));
+									}
+
+									xw.WriteEndElement();
+								}
+							}
+						}
+						foreach (var entry in entriesWithNoType.Distinct())
+						{
+							foreach (var child in config.Children)
+							{
+								xw.WriteRaw(GenerateXHTMLForFieldByReflection(entry, child, pubDecorator, settings));
+							}
+						}
+						xw.Flush();
 					}
-					bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings, ref previousType));
+				}
+				else
+				{
+					foreach (var item in collection)
+					{
+						if (pubDecorator != null && item is ICmObject && pubDecorator.IsExcludedObject((ICmObject) item))
+						{
+							// Don't show examples or subentries that have been marked to exclude from publication.
+							// See https://jira.sil.org/browse/LT-15697 and https://jira.sil.org/browse/LT-16775.
+							continue;
+						}
+						bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings, ref previousType));
+					}
 				}
 			}
 			if (bldr.Length > 0)
 				return WriteRawElementContents("span", bldr.ToString(), config);
 			return String.Empty;
+		}
+
+		private static bool IsComplexEntryType(ConfigurableDictionaryNode config, out ConfigurableDictionaryNode complexEntryTypeNode)
+		{
+			complexEntryTypeNode = null;
+			if (config.FieldDescription == "VisibleComplexFormBackRefs" && config.ReferencedOrDirectChildren != null)
+			{
+				complexEntryTypeNode = config.ReferencedOrDirectChildren.FirstOrDefault(
+					child => child.FieldDescription == "ComplexEntryTypesRS" && child.IsEnabled && child.Children != null &&
+					child.Children.Any(x => x.IsEnabled));
+				return complexEntryTypeNode != null;
+			}
+			return false;
+		}
+
+		private static bool IsVariantEntryType(ConfigurableDictionaryNode config, out ConfigurableDictionaryNode variantEntryTypeNode)
+		{
+			variantEntryTypeNode = null;
+			var variantOptions = config.DictionaryNodeOptions as DictionaryNodeListOptions;
+			if (variantOptions != null && variantOptions.ListId == DictionaryNodeListOptions.ListIds.Variant)
+			{
+				variantEntryTypeNode = config.Children.FirstOrDefault(x => x.FieldDescription == "VariantEntryTypesRS");
+				return true;
+			}
+			return false;
 		}
 
 		/// <summary>
@@ -1856,38 +1964,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				foreach (var child in config.ReferencedOrDirectChildren)
 				{
-					var content = "";
-					if (child.FieldDescription == "VariantEntryTypesRS" && child.IsEnabled && child.Children != null && child.Children.Any(x => x.IsEnabled))
-					{
-						var firstOrDefaultVariantEntryType = ((ILexEntryRef) item).VariantEntryTypesRS.FirstOrDefault();
-						if (firstOrDefaultVariantEntryType != null)
-						{
-							string currentVariantType = firstOrDefaultVariantEntryType.ToString();
-							if (previousType != currentVariantType)
-							{
-								content = GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
-								previousType = currentVariantType;
-							}
-						}
-					}
-					else if (child.FieldDescription == "ComplexEntryTypesRS" && child.IsEnabled && child.Children != null && child.Children.Any(x => x.IsEnabled))
-					{
-						var firstOrDefaultComplexEntryType = ((ILexEntryRef)item).ComplexEntryTypesRS.FirstOrDefault();
-						if (firstOrDefaultComplexEntryType != null)
-						{
-							string currentComplexFormType = firstOrDefaultComplexEntryType.ToString();
-							if (previousType != currentComplexFormType)
-							{
-								content = GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
-								previousType = currentComplexFormType;
-							}
-						}
-					}
-					else
-					{
-						content = GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
-					}
-					bldr.Append(content);
+					bldr.Append(GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings));
 				}
 			}
 			if (bldr.Length == 0)

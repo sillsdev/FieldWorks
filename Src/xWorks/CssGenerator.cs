@@ -583,6 +583,9 @@ namespace SIL.FieldWorks.XWorks
 			string parentSelector, ConfigurableDictionaryNode configNode,
 			out string baseSelection, FdoCache cache, Mediator mediator)
 		{
+			if (configNode.CSSClassNameOverride == "complexformtypes")
+				parentSelector = parentSelector.Replace(".visiblecomplexformbackrefs .visiblecomplexformbackref", ".visiblecomplexformbackrefs");
+
 			var rules = new List<StyleRule>();
 			var fwStyles = FontHeightAdjuster.StyleSheetFromMediator(mediator);
 			// simpleSelector is used for nodes that use before and after.  Collection type nodes produce wrong
