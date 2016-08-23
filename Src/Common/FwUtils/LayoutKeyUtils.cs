@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// This marks the beginning of a tag added to layout names (and param values) when an
 		/// entire top-level layout type is copied (i.e. this suffix is added when a user makes
-		/// a named copy of an entire layout; e.g. 'My Stem-based Dictionary').
+		/// a named copy of an entire layout; e.g. 'My Lexeme-based Dictionary').
 		/// </summary>
 		public const char kcMarkLayoutCopy = '#';
 

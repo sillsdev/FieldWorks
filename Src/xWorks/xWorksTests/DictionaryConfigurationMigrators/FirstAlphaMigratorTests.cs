@@ -846,7 +846,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				Version = FirstAlphaMigrator.VersionAlpha2,
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode },
-				FilePath = "./Stem" + DictionaryConfigurationModel.FileExtension
+				FilePath = "./Lexeme" + DictionaryConfigurationModel.FileExtension
 			};
 			m_migrator.MigrateFrom83Alpha(model);
 			Assert.IsFalse(model.IsRootBased);

@@ -2609,7 +2609,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		/// <summary>
 		/// Gets the complex form entries, that is, the entries which should be shown
-		/// in the visible complex forms list for this entry in stem-based view, and in data entry view.
+		/// in the visible complex forms list for this entry in lexeme-based view, and in data entry view.
 		/// This is a backreference (virtual) property.  It returns the list of ids for all the
 		/// LexEntry objects that own a LexEntryRef that refers to this LexEntry in its
 		/// ShowComplexFormsIn field and that is a complex entry type.

@@ -264,7 +264,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 			// Stem-based treats Complex Forms as Main Entries. Previously, they had all been configured by the same Main Entries node,
 			// but now, they are configured in a separate "Main Entries (Complex Forms)" node.
-			if (Path.GetFileNameWithoutExtension(currentDefaultModel.FilePath) == "Stem")
+			if (Path.GetFileNameWithoutExtension(currentDefaultModel.FilePath) == "Lexeme")
 			{
 				convertedModel.Parts.Insert(0, convertedModel.Parts[0].DeepCloneUnderSameParent()); // Split Main into Main and Main (Complex)
 				CopyDefaultsIntoConfigNode(convertedModel, convertedModel.Parts[0], currentDefaultModel.Parts[0]); // Main Entry

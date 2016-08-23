@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
 			Directory.CreateDirectory(configSettingsDir);
 			File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{
-				@"<layoutType label='Stem-based (complex forms as main entries)' layout='publishStem'><configure class='LexEntry' label='Main Entry' layout='publishStemEntry' />",
+				@"<layoutType label='Lexeme-based (complex forms as main entries)' layout='publishStem'><configure class='LexEntry' label='Main Entry' layout='publishStemEntry' />",
 				@"<configure class='LexEntry' label='Minor Entry' layout='publishStemMinorEntry' hideConfig='true' /></layoutType>'"});
 			var migrator = new DictionaryConfigurationMigrator(m_mediator);
 			migrator.MigrateOldConfigurationsIfNeeded(); // SUT
@@ -85,7 +85,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
 			Directory.CreateDirectory(configSettingsDir);
 			File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{
-				@"<layoutType label='Stem-based (complex forms as main entries)' layout='publishStem'><configure class='LexEntry' label='Main Entry' layout='publishStemEntry' />",
+				@"<layoutType label='Lexeme-based (complex forms as main entries)' layout='publishStem'><configure class='LexEntry' label='Main Entry' layout='publishStemEntry' />",
 				@"<configure class='LexEntry' label='Minor Entry' layout='publishStemMinorEntry' hideConfig='true' /></layoutType>'"});
 			var migrator = new DictionaryConfigurationMigrator(m_mediator);
 			Assert.DoesNotThrow(() => migrator.MigrateOldConfigurationsIfNeeded(), "ArgumentException indicates localized labels."); // SUT

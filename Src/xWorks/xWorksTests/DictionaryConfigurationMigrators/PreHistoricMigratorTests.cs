@@ -316,7 +316,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		}
 
 		/// <summary>
-		/// In Stem-Based dictionaries, Complex Forms are displayed as Main Entries. Ensure that the converted configuration for
+		/// In Lexeme-Based dictionaries, Complex Forms are displayed as Main Entries. Ensure that the converted configuration for
 		/// Main Entry is also used for the new Main Entry (Complex Forms) node.
 		/// </summary>
 		[Test]
@@ -340,7 +340,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			CssGeneratorTests.PopulateFieldsForTesting(convertedModel);
 
 			var currentDefaultModel = BuildCurrentDefaultMinorEntryNodes();
-			currentDefaultModel.FilePath = "./Stem" + DictionaryConfigurationModel.FileExtension;
+			currentDefaultModel.FilePath = "./Lexeme" + DictionaryConfigurationModel.FileExtension;
 			currentDefaultModel.Parts[1].Label = MainEntryComplexLabel;
 			var currentDefaultMainNode = new ConfigurableDictionaryNode
 			{
@@ -358,7 +358,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			CssGeneratorTests.PopulateFieldsForTesting(currentDefaultModel);
 
 			m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, currentDefaultModel);
-			Assert.IsFalse(convertedModel.IsRootBased, "Stem-based should not be Root-based!");
+			Assert.IsFalse(convertedModel.IsRootBased, "Lexeme-based should not be Root-based!");
 			Assert.AreEqual(3, convertedModel.Parts.Count, "Number of top-level nodes");
 			convertedMainNode = convertedModel.Parts[0];
 			Assert.AreEqual("Main Entry", convertedMainNode.Label);

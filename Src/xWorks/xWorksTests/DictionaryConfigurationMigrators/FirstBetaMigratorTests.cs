@@ -306,7 +306,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				}
 			};
 			var stemDefault = m_migrator.LoadBetaDefaultForAlphaConfig(stemModel); // SUT
-			Assert.That(stemDefault.Label, Is.StringContaining("Stem"));
+			Assert.That(stemDefault.Label, Is.StringContaining("Lexeme"));
 		}
 
 		[Test]

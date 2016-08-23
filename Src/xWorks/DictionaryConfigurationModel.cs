@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.XWorks
 		public List<ConfigurableDictionaryNode> SharedItems { get; set; }
 
 		/// <summary>
-		/// Name of this dictionary configuration. eg "Stem-based"
+		/// Name of this dictionary configuration. eg "Lexeme-based"
 		/// </summary>
 		[XmlAttribute(AttributeName = "name")]
 		public string Label { get; set; }

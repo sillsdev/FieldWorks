@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<DictionaryConfiguration name="Stem-based (complex forms as main entries)" allPublications="true" isRootBased="false" version="10" lastModified="2016-07-27">
+<DictionaryConfiguration name="Lexeme-based (complex forms as main entries)" allPublications="true" isRootBased="false" version="10" lastModified="2016-07-27">
   <!-- Main entries in the dictionary have historically been written out with class="entry" -->
   <ConfigurationItem name="Main Entry" isEnabled="true" style="Dictionary-Normal" styleType="paragraph" field="LexEntry" cssClassNameOverride="entry">
 	<!-- using a different CSS Class for the main HeadWord and the HeadWords for subentries, references, and (variant|complex) forms
@@ -2410,7 +2410,7 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Subsenses" between="  " after=" " isEnabled="true" field="SensesOS" cssClassNameOverride="senses">
 	  	<SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=") " parentSenseNumberingStyle="%." numberingStyle="%d" numberSingleSense="false" showSingleGramInfoFirst="true"/>
-		<ReferenceItem>MainEntrySubsenses</ReferenceItem>
+	  	<ReferenceItem>MainEntrySubsenses</ReferenceItem>
 	  </ConfigurationItem>
 	</ConfigurationItem>
 	<ConfigurationItem name="Bibliography" between=" " after=" " isEnabled="false" field="Bibliography">

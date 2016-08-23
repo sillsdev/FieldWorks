@@ -67,9 +67,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				configPath = Path.Combine(dictionaryFolder, "Hybrid" + DictionaryConfigurationModel.FileExtension);
 			}
-			else // Must be stem
+			else // Must be Lexeme
 			{
-				configPath = Path.Combine(dictionaryFolder, "Stem" + DictionaryConfigurationModel.FileExtension);
+				configPath = Path.Combine(dictionaryFolder, "Lexeme" + DictionaryConfigurationModel.FileExtension);
 			}
 			return new DictionaryConfigurationModel(configPath, Cache);
 		}

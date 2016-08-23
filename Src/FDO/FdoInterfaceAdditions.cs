@@ -1199,7 +1199,7 @@ namespace SIL.FieldWorks.FDO
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the complex form entries, that is, the entries which should be shown
-		/// in the complex forms list for this entry in stem-based view.
+		/// in the complex forms list for this entry in lexeme-based view.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		IEnumerable<ILexEntry> VisibleComplexFormEntries { get; }

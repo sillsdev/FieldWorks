@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <template format="sf">
-	<FxtDocumentDescription dataLabel="Full Lexicon (stem-based)" formatLabel="SFM" defaultExtension="db" filter="Standard Format files (*.db)|*.db|All files (*.*)|*.*">
-Export using the Multi-Dictionary Formatter stem-based standard. This exports subentries as separate entries. This can be imported into Lexique Pro for publishing dictionaries, either on the Web or in print. (Note the exported file actually includes writing system designators as part of the SFM code, so it is not pure MDF.)
+	<FxtDocumentDescription dataLabel="Full Lexicon (lexeme-based)" formatLabel="SFM" defaultExtension="db" filter="Standard Format files (*.db)|*.db|All files (*.*)|*.*">
+Export using the Multi-Dictionary Formatter lexeme-based standard. This exports subentries as separate entries. This can be imported into Lexique Pro for publishing dictionaries, either on the Web or in print. (Note the exported file actually includes writing system designators as part of the SFM code, so it is not pure MDF.)
 	</FxtDocumentDescription>
 	<class name="LangProject">
 		<group objProperty="LexDbOA"  preload="PreloadForLexiconExport">

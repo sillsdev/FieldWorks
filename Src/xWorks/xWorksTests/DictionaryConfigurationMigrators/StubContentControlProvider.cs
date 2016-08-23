@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 						</control>
 						<!-- The following configureLayouts node is only required to help migrate old configurations to the new format -->
 						<configureLayouts>
-							<layoutType label='Stem-based (complex forms as main entries)' layout='publishStem'>
+							<layoutType label='Lexeme-based (complex forms as main entries)' layout='publishStem'>
 								<configure class='LexEntry' label='Main Entry' layout='publishStemEntry' />
 								<configure class='LexEntry' label='Minor Entry' layout='publishStemMinorEntry' hideConfig='true' />
 							</layoutType>

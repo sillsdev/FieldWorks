@@ -737,7 +737,7 @@ namespace SIL.FieldWorks.XWorks
 		private List<ListViewItem> GetMinorEntryTypes()
 		{
 			var result = GetVariantTypes();
-			// TODO pH 2014.05: AddRange iff this is Root-Based (not Stem-Based)
+			// TODO pH 2014.05: AddRange iff this is Root-Based (not Lexeme-Based)
 			result.AddRange(GetComplexFormTypes());
 			return result;
 		}

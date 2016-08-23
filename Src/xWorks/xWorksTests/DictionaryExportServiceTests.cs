@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			Assert.AreEqual(1, DictionaryExportService.CountTimesGenerated(Cache, configModel, minorEntry.Hvo),
-				"Stem-based hidden minor entry should still be generated");
+				"Lexeme-based hidden minor entry should still be generated");
 			Assert.AreEqual(1, DictionaryExportService.CountTimesGenerated(Cache, configModel, mainEntry.Hvo), "Main entry should still be generated");
 		}
 	}

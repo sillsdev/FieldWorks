@@ -4445,7 +4445,7 @@ namespace SIL.FieldWorks.XWorks
 
 		//
 		// *** Configuration nodes look like this:
-		//"<layoutType label=\"Stem-based (complex forms as main entries)\" layout=\"publishStem\">" +
+		//"<layoutType label=\"Lexeme-based (complex forms as main entries)\" layout=\"publishStem\">" +
 		//    "<configure class=\"LexEntry\" label=\"Main Entry\" layout=\"publishStemEntry\"/>" +
 		//    "<configure class=\"LexEntry\" label=\"Minor Entry\" layout=\"publishStemMinorEntry\"/>" +
 		//"</layoutType>" +

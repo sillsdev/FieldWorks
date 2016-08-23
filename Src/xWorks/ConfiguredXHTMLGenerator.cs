@@ -652,12 +652,12 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// If entry is either a Complex Form or a Variant (or both).
 		/// For Root-based configs, this means the entry is a Minor Entry.
-		/// For Stem-based configs, this means the entry is a Main Entry if Complex, but Minor Entry if Variant.
+		/// For Lexeme-based configs, this means the entry is a Main Entry if Complex, but Minor Entry if Variant.
 		/// </summary>
 		internal static bool IsComplexFormOrVariant(ICmObject entry)
 		{
 			// owning an ILexEntryRef denotes Complex Forms or Variants
-			// In Stem-based configurations, Complex Forms are considered Main Entries, but are still independently configurable
+			// In Lexeme-based configurations, Complex Forms are considered Main Entries, but are still independently configurable
 			return entry is ILexEntry && ((ILexEntry)entry).EntryRefsOS.Any();
 		}
 
