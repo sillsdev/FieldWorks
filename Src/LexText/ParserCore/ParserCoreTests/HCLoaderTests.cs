@@ -745,7 +745,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(hcEntry.Allomorphs.Count, Is.EqualTo(1));
 
 			RootAllomorph hcAllo = hcEntry.PrimaryAllomorph;
-			Assert.That(hcAllo.Shape.ToString(m_lang.Strata[0].CharacterDefinitionTable, false), Is.EqualTo("sag"));
+			Assert.That(hcAllo.Segments.ToString(), Is.EqualTo("sag"));
 			Assert.That(hcAllo.StemName.ToString(), Is.EqualTo("stemName"));
 			Assert.That(hcAllo.IsBound, Is.True);
 			Assert.That(hcAllo.Environments.Select(e => e.ToEnvString()), Is.EquivalentTo(new[]
@@ -833,7 +833,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(hcEntry.Allomorphs.Count, Is.EqualTo(1));
 
 			RootAllomorph hcAllo = hcEntry.PrimaryAllomorph;
-			Assert.That(hcAllo.Shape.ToString(m_lang.Strata[0].CharacterDefinitionTable, false), Is.EqualTo("sag"));
+			Assert.That(hcAllo.Segments.ToString(), Is.EqualTo("sag"));
 		}
 
 		[Test]
@@ -849,7 +849,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(hcEntry.Allomorphs.Count, Is.EqualTo(1));
 
 			RootAllomorph hcAllo = hcEntry.PrimaryAllomorph;
-			Assert.That(hcAllo.Shape.ToString(m_lang.Strata[0].CharacterDefinitionTable, false), Is.EqualTo("sag"));
+			Assert.That(hcAllo.Segments.ToString(), Is.EqualTo("sag"));
 		}
 
 		[Test]
@@ -1174,19 +1174,19 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			LexEntry hcEntry = m_lang.Strata[0].Entries.ElementAt(0);
 			Assert.That(hcEntry.Gloss, Is.EqualTo("gloss"));
 			Assert.That(hcEntry.Allomorphs.Count, Is.EqualTo(1));
-			Assert.That(hcEntry.PrimaryAllomorph.Shape.ToString(m_lang.Strata[0].CharacterDefinitionTable, false), Is.EqualTo("sag"));
+			Assert.That(hcEntry.PrimaryAllomorph.Segments.ToString(), Is.EqualTo("sag"));
 
 			hcEntry = m_lang.Strata[0].Entries.ElementAt(1);
 			Assert.That(hcEntry.Gloss, Is.EqualTo("gloss.pl"));
 			Assert.That(hcEntry.Allomorphs.Count, Is.EqualTo(1));
-			Assert.That(hcEntry.PrimaryAllomorph.Shape.ToString(m_lang.Strata[0].CharacterDefinitionTable, false), Is.EqualTo("sau"));
+			Assert.That(hcEntry.PrimaryAllomorph.Segments.ToString(), Is.EqualTo("sau"));
 			Assert.That(hcEntry.SyntacticFeatureStruct.ToString(), Is.EqualTo("[Head:[nounAgr:[num:pl]], POS:V]"));
 			Assert.That(hcEntry.MprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"Plural Variant"}));
 
 			hcEntry = m_lang.Strata[0].Entries.ElementAt(2);
 			Assert.That(hcEntry.Gloss, Is.EqualTo("gloss"));
 			Assert.That(hcEntry.Allomorphs.Count, Is.EqualTo(1));
-			Assert.That(hcEntry.PrimaryAllomorph.Shape.ToString(m_lang.Strata[0].CharacterDefinitionTable, false), Is.EqualTo("sau"));
+			Assert.That(hcEntry.PrimaryAllomorph.Segments.ToString(), Is.EqualTo("sau"));
 			Assert.That(hcEntry.SyntacticFeatureStruct.ToString(), Is.EqualTo("[POS:V]"));
 			Assert.That(hcEntry.MprFeatures, Is.Empty);
 		}

@@ -577,8 +577,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private RootAllomorph LoadRootAllomorph(IMoStemAllomorph allo, IMoMorphSynAnalysis msa)
 		{
-			Shape shape = Segment(FormatForm(allo.Form.VernacularDefaultWritingSystem.Text));
-			var hcAllo = new RootAllomorph(shape);
+			string form = FormatForm(allo.Form.VernacularDefaultWritingSystem.Text);
+			Shape shape = Segment(form);
+			var hcAllo = new RootAllomorph(new Segments(m_table, form, shape));
 
 			foreach (IPhEnvironment env in allo.PhoneEnvRC)
 			{
