@@ -11,3 +11,4 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("CoreImplTests")]
 [assembly: InternalsVisibleTo("TestUtils")]
 [assembly: InternalsVisibleTo("LfMerge.Tests")]
+[assembly: InternalsVisibleTo("LfMerge.Core.Tests")]
