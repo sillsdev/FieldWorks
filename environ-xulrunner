@@ -1,7 +1,8 @@
-# search for xulrunner, select the latest, and add its location to LD_LIBRARY_PATH
-# (the search order must be the same as in Geckfx-Core/XULRunnerLocator.cs)
-XULRUNNER=/usr/lib/xulrunner-geckofx-29
-if [ ! -d ${XULRUNNER} ]; then XULRUNNER=/usr/lib/xulrunner-29.0.1; fi
-LD_LIBRARY_PATH="${XULRUNNER}:${LD_LIBRARY_PATH}"
-GECKOFX=/usr/lib/cli/geckofx-29
-LD_PRELOAD=${GECKOFX}/geckofix.so
+if [ "$RUNMODE" = "INSTALLED" ]
+then
+	XULRUNNER=$(find $(pwd) -name libxul.so | grep -v /packages/)
+else
+	XULRUNNER=${BASE}/Output_${ARCH}/${BUILD}/Firefox
+fi
+LD_LIBRARY_PATH=${XULRUNNER}:${LD_LIBRARY_PATH}
+LD_PRELOAD=libgeckofix.so

@@ -183,7 +183,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		{
 			if (m_destinationFolder.Text.IndexOfAny(Path.GetInvalidPathChars()) != -1)
 			{
-				SystemSounds.Beep.Play();
+				MiscUtils.ErrorBeep();
 				var fixText = m_destinationFolder.Text;
 				for (; ; )
 				{

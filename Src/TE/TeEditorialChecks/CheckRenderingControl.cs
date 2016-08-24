@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 				// Move to the previous row in the grid (if we're not already at the top).
 				int currRow = m_dataGridView.CurrentCellAddress.Y;
 				if (currRow <= 0 || m_dataGridView.RowCount <= 0)
-					System.Media.SystemSounds.Beep.Play();
+					MiscUtils.ErrorBeep();
 				else
 					m_dataGridView.CurrentCell = m_dataGridView[0, --currRow];
 
@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 				// Move to the next row in the grid (if we're not already at the bottom).
 				int currRow = m_dataGridView.CurrentCellAddress.Y;
 				if (currRow >= m_dataGridView.RowCount - 1)
-					System.Media.SystemSounds.Beep.Play();
+					MiscUtils.ErrorBeep();
 				else
 					m_dataGridView.CurrentCell = m_dataGridView[0, ++currRow];
 

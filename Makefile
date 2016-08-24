@@ -232,6 +232,7 @@ install-tree: fieldworks-flex.1.gz fieldworks-te.1.gz unicodechareditor.1.gz
 	install -m 644 DistFiles/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 DistFiles/Linux/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 $(OUT_DIR)/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
+	install -m 644 $(OUT_DIR)/Firefox/*.* $(DESTDIR)/usr/lib/fieldworks/Firefox
 	install -m 644 $(OUT_DIR)/{*.compmap,components.map} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 Lib/src/icu/install$(ARCH)/lib/lib* $(DESTDIR)/usr/lib/fieldworks
 	# Create temporary symlinks for shared Icu libs on Dictionary branch

@@ -47,5 +47,5 @@
   <Import Project="FieldWorks.targets" Condition="Exists('FieldWorks.targets')"/>
   <Import Project="mkall.targets"/>
   <Import Project="Localize.targets"/>
-
+  <Import Project="NuGet.targets"/>
 </Project>

@@ -150,6 +150,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
+    <Reference Include="Geckofx-Core">
+      <HintPath>..\..\..\..\Output\Debug\Geckofx-Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms">
+      <HintPath>..\..\..\..\Output\Debug\Geckofx-Winforms.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
@@ -232,14 +238,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
     </Reference>
-    <Reference Include="Geckofx-Core" Condition="'$(OS)'=='Unix'">
-      <Package>Geckofx-Core</Package>
-      <HintPath>..\..\..\..\Downloads\Geckofx-Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Geckofx-Winforms" Condition="'$(OS)'=='Unix'">
-      <Package>Geckofx-WinForms</Package>
-      <HintPath>..\..\..\..\Downloads\Geckofx-Winforms.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\CommonAssemblyInfo.cs">
@@ -311,15 +309,9 @@
     <Compile Include="SimpleMatchDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="XmlBrowseRDEView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="XmlBrowseView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="XmlBrowseViewBase.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="XmlBrowseRDEView.cs" />
+    <Compile Include="XmlBrowseView.cs" />
+    <Compile Include="XmlBrowseViewBase.cs" />
     <Compile Include="XmlBrowseViewBaseVc.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -330,16 +322,12 @@
     <Compile Include="XmlRDEBrowseViewVc.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="XmlSeqView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="XmlSeqView.cs" />
     <Compile Include="XmlVc.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="XmlVcDisplayVec.cs" />
-    <Compile Include="XmlView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="XmlView.cs" />
     <Compile Include="XMLViewsDataCache.cs" />
     <Compile Include="XMLViewsStrings.Designer.cs">
       <AutoGen>True</AutoGen>
