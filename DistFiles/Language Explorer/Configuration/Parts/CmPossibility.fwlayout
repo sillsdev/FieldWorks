@@ -303,6 +303,15 @@
 	</part>
   </layout>
 
+  <layout class="CmPossibility" type="detail" name="DialectEdit">
+	<part ref="NameAllVA" label="Full Name">
+	</part>
+	<part ref="AbbreviationAllVA">
+	</part>
+	<part ref="DescriptionAllVA" label="Short Description">
+	</part>
+  </layout>
+
   <layout class="CmLocation" type="detail" name="default">
 	<part ref="NameAllVA" label="Location Name">
 	</part>

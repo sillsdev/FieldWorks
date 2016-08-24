@@ -744,6 +744,7 @@
 			<item command="CmdJumpToNotebookEditWithFilter"/>
 
 			<item command="CmdJumpToConfidenceList"/>
+			<item command="CmdJumpToDialectLabelsList"/>
 			<item command="CmdJumpToDiscChartMarkerList"/>
 			<item command="CmdJumpToDiscChartTemplateList"/>
 			<item command="CmdJumpToEducationList"/>

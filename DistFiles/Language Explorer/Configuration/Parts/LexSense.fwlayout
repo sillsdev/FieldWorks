@@ -10,6 +10,7 @@
 			<part ref="DefinitionAllA"/>
 			<part ref="RestrictionsAllA"   visibility="ifdata" />
 			<part ref="MsaCombo"/>
+			<part ref="DialectLabelsSense" visibility="ifdata"/>
 			<part ref="ComplexFormEntries" visibility="ifdata"/>
 			<part ref="VisibleComplexFormEntries" visibility="ifdata"/>
 			<part ref="Subentries" visibility="ifdata"/>

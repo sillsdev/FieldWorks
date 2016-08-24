@@ -279,6 +279,11 @@
 		<part id="LexSense-Jt-BibliographyForSense" type="jtview">
 			<string field="Bibliography" ws="$ws=analysis"/>
 		</part>
+		<part id="LexSense-Jt-DialectLabelsSense" type="jtview">
+			<para>
+				<seq field="DialectLabels" layout="BestAbbrVA" sep="; "/>
+			</para>
+		</part>
 		<part id="LexSense-Jt-DiscourseNoteForSense" type="jtview">
 			<string class="LexSense" field="DiscourseNote" ws="analysis"/>
 		</part>
@@ -429,6 +434,14 @@
 				<deParams ws="best analysis" />
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Sense Types" tool="senseTypeEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="LexSense-Detail-DialectLabelsSense" type="Detail">
+			<slice field="DialectLabels" label="Dialect Labels (Sense)" editor="possVectorReference" menu="mnuDataTree-Help">
+				<deParams ws="best vernoranal" displayProperty="BestAbbreviation" changeRequiresRefresh="true"/>
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the Dialect Labels list" tool="dialectsListEdit" />
 				</chooserInfo>
 			</slice>
 		</part>

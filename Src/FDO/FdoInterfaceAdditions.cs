@@ -672,6 +672,11 @@ namespace SIL.FieldWorks.FDO
 		/// that exposes certain LexSense- and LexEntry-specific fields.
 		/// </summary>
 		IEnumerable<ISenseOrEntry> PrimarySensesOrEntries { get; }
+
+		/// <summary>
+		/// This is a virtual property.  It returns the list of all Dialect Labels for this variant's Owner
+		/// </summary>
+		IFdoReferenceSequence<ICmPossibility> VariantEntryDialectLabels { get; }
 	}
 
 	public partial interface ILexReference

@@ -216,6 +216,11 @@
 			</div>
 		</part>
 
+		<part id="LexEntry-Jt-DialectLabelsEntry" type="jtview">
+			<para>
+				<seq field="DialectLabels" layout="BestAbbrVA" sep="; "/>
+			</para>
+		</part>
 		<part id="LexEntry-Jt-EtymologyPrecComment" type="jtview">
 			<seq field="Etymology" layout="PrecComment">
 				<para>
@@ -833,6 +838,14 @@
 				<deParams displayProperty="HeadWord"/>
 			</slice>
 		</part>
+		<part id="LexEntry-Detail-DialectLabelsEntry" type="Detail">
+			<slice field="DialectLabels" label="Dialect Labels (Entry)" editor="possVectorReference" menu="mnuDataTree-Help">
+				<deParams ws="best vernoranal" displayProperty="BestAbbreviation" changeRequiresRefresh="true"/>
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the Dialect Labels list" tool="dialectsListEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
 		<part id="LexEntry-Detail-VisibleComplexFormEntries" type="Detail">
 			<slice field="VisibleComplexFormBackRefs" label="Referenced Complex Forms" tooltip="Complex forms shown in this field are shown as references in this component entry in Dictionary." menu="mnuReorderVector" reorder="true"
 				   editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice" helpTopicID="khtpField-ReferencedComplexForms-PubLevel">
@@ -1120,7 +1133,7 @@
 			<if field="RefType" intequals="0">
 				<slice field="ComponentLexemes" label="Variant of" editor="Custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice"
 					   menu="mnuDataTree-Help" helpTopicID="khtpField-LexEntryRef-VariantOf">
-					<deParams displayProperty='HeadWord' />
+					<deParams displayProperty='HeadWordPlusDialect' />
 				</slice>
 			</if>
 		</part>
@@ -1145,14 +1158,22 @@
 		<part id="LexEntryRef-Detail-RefVariantForm" type="Detail">
 			<obj class="LexEntryRef" field="OwningEntry" layout="AsVariantForm" menu="mnuDataTree-Help"/>
 		</part>
+		<part id="LexEntryRef-Detail-RefVariantDialectsEntry" type="Detail">
+			<slice field="VariantEntryDialectLabels" label="Dialect Labels (Entry)" editor="possVectorReference" sameObject="true" menu="mnuDataTree-Help">
+			  <deParams ws="best vernoranal" displayProperty="BestAbbreviation" changeRequiresRefresh="true" />
+			  <chooserInfo>
+				<chooserLink type="goto" label="Edit the Dialect Labels List" tool="dialectsListEdit" />
+			  </chooserInfo>
+			</slice>
+		</part>
 		<part id="LexEntryRef-Detail-RefVariantEntryTypes" type="Detail">
 			<if field="RefType" intequals="0">
-		<slice field="VariantEntryTypes" label="Variant Type" editor="possVectorReference" sameObject="true" menu="mnuDataTree-Help">
-		  <deParams ws="best analysis" changeRequiresRefresh="true" />
-		  <chooserInfo>
-			<chooserLink type="goto" label="Edit the Variant Types" tool="variantEntryTypeEdit" />
-		  </chooserInfo>
-		</slice>
+				<slice field="VariantEntryTypes" label="Variant Type" editor="possVectorReference" sameObject="true" menu="mnuDataTree-Help">
+				  <deParams ws="best analysis" changeRequiresRefresh="true" />
+				  <chooserInfo>
+					<chooserLink type="goto" label="Edit the Variant Types" tool="variantEntryTypeEdit" />
+				  </chooserInfo>
+				</slice>
 			</if>
 		</part>
 		<part id="LexEntryRef-Detail-RefComplexEntryTypes" type="Detail">

@@ -99,6 +99,10 @@
 	  <string field="Abbreviation" ws="best analysis">
 	  </string>
 	</part>
+	<part id="CmPossibility-Jt-BestAbbrVA" type="JtView">
+	  <string field="Abbreviation" ws="best vernoranal">
+	  </string>
+	</part>
 	<part id="CmPossibility-Jt-Name" type="JtView">
 	  <string field="Name" ws="best analorvern" />
 	</part>
