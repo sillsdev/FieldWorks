@@ -585,6 +585,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (configNode.CSSClassNameOverride == "complexformtypes")
 				parentSelector = parentSelector.Replace(".visiblecomplexformbackrefs .visiblecomplexformbackref", ".visiblecomplexformbackrefs");
+			else if (configNode.CSSClassNameOverride == "variantentrytypes" && configNode.Parent.DisplayLabel == "Variant Forms")
+				parentSelector = parentSelector.Replace(".variantformentrybackrefs .variantformentrybackref", ".variantformentrybackrefs");
 
 			var rules = new List<StyleRule>();
 			var fwStyles = FontHeightAdjuster.StyleSheetFromMediator(mediator);
@@ -640,9 +642,8 @@ namespace SIL.FieldWorks.XWorks
 							betweenSelector = String.Format("{0}> {1}>{2}.sensecontent+{2}:before", parentSelector, collectionSelector, " span");
 						else if (configNode.FieldDescription == "PicturesOfSenses")
 							betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, " div");
-						else
+						else if (configNode.DisplayLabel != "Variant Forms")
 							betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, " span");
-
 						betweenRule = new StyleRule(dec) { Value = betweenSelector };
 					}
 					rules.Add(betweenRule);

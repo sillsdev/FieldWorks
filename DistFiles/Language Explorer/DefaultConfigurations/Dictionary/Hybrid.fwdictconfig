@@ -481,7 +481,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Referenced Complex Forms" isEnabled="false" before="" between=" " after=" " field="VisibleComplexFormBackRefs">
+	  <ConfigurationItem name="Referenced Complex Forms" isEnabled="false" before="" between=", " after=" " field="VisibleComplexFormBackRefs">
 		<ConfigurationItem name="Complex Form Type" isEnabled="true" before="" after="" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 		  <ConfigurationItem name="Abbreviation" isEnabled="true" before="" between=" " after=" " field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1420,7 +1420,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Referenced Complex Forms" isEnabled="false" before="" between=" " after=" " field="VisibleComplexFormBackRefs">
+	  <ConfigurationItem name="Referenced Complex Forms" isEnabled="false" before="" between=", " after=" " field="VisibleComplexFormBackRefs">
 		<ConfigurationItem name="Complex Form Type" isEnabled="true" before="" after="" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 		  <ConfigurationItem name="Abbreviation" isEnabled="true" before="" between=" " after=" " field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -2336,7 +2336,7 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Referenced Complex Forms" between=" " after=" " isEnabled="true" field="VisibleComplexFormBackRefs">
+		<ConfigurationItem name="Referenced Complex Forms" between=", " after=" " isEnabled="true" field="VisibleComplexFormBackRefs">
 		  <ComplexFormOptions list="complex" displayEachComplexFormInParagraph="true">
 			<Option id="" isEnabled="false"/>
 		  </ComplexFormOptions>
@@ -3271,7 +3271,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Referenced Complex Forms" isEnabled="false" before="" between=" " after=" " field="VisibleComplexFormBackRefs">
+	  <ConfigurationItem name="Referenced Complex Forms" isEnabled="false" before="" between=", " after=" " field="VisibleComplexFormBackRefs">
 		<ConfigurationItem name="Complex Form Type" isEnabled="true" before="" after="" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 		  <ConfigurationItem name="Abbreviation" isEnabled="true" before="" between=" " after=" " field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -4049,7 +4049,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Referenced Complex Forms" between=" " after=" " isEnabled="true" field="VisibleComplexFormBackRefs">
+	  <ConfigurationItem name="Referenced Complex Forms" between=", " after=" " isEnabled="true" field="VisibleComplexFormBackRefs">
 		<ConfigurationItem name="Complex Form Type" after="" isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 		  <ConfigurationItem name="Abbreviation" between=" " after=" " isEnabled="true" field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -4604,7 +4604,7 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Referenced Complex Forms" between=" " after=" " isEnabled="true" field="VisibleComplexFormBackRefs">
+		<ConfigurationItem name="Referenced Complex Forms" between=", " after=" " isEnabled="true" field="VisibleComplexFormBackRefs">
 		  <ComplexFormOptions list="complex" displayEachComplexFormInParagraph="true">
 			<Option isEnabled="false" id=""/>
 		  </ComplexFormOptions>

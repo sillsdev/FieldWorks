@@ -1630,7 +1630,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Referenced Complex Forms" between=" " after=" " isEnabled="true" field="VisibleComplexFormBackRefs">
+	  <ConfigurationItem name="Referenced Complex Forms" between=", " after=" " isEnabled="true" field="VisibleComplexFormBackRefs">
 		<ConfigurationItem name="Complex Form Type" after="" isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 		  <ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -2577,7 +2577,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Referenced Complex Forms" between=" " after=" " isEnabled="true" field="VisibleComplexFormBackRefs">
+	  <ConfigurationItem name="Referenced Complex Forms" between=", " after=" " isEnabled="true" field="VisibleComplexFormBackRefs">
 		<ConfigurationItem name="Complex Form Type" after="" isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 		  <ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -3875,7 +3875,7 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Referenced Complex Forms" between=" " after=" " isEnabled="true" field="VisibleComplexFormBackRefs">
+		<ConfigurationItem name="Referenced Complex Forms" between=", " after=" " isEnabled="true" field="VisibleComplexFormBackRefs">
 		  <ConfigurationItem name="Complex Form Type" after="" isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 			<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 			  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
