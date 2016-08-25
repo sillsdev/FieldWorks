@@ -19,6 +19,7 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using XCore;
 using DCM = SIL.FieldWorks.XWorks.DictionaryConfigurationMigrator;
+using DCL = SIL.FieldWorks.XWorks.DictionaryConfigurationListener;
 
 namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 {
@@ -137,12 +138,12 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		{
 			// If the project already has up-to-date configurations then we don't need to migrate
 			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
-			var newDictionaryConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+			var newDictionaryConfigLoc = Path.Combine(configSettingsDir, DCL.DictionaryConfigurationDirectoryName);
 			if (DCM.ConfigFilesInDir(newDictionaryConfigLoc).Any())
 			{
 				return false;
 			}
-			var newReversalIndexConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+			var newReversalIndexConfigLoc = Path.Combine(configSettingsDir, DCL.ReversalIndexConfigurationDirectoryName);
 			if (DCM.ConfigFilesInDir(newReversalIndexConfigLoc).Any())
 			{
 				return false;
@@ -185,6 +186,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			const string extension = DictionaryConfigurationModel.FileExtension;
 			var projectPath = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), m_configDirSuffixBeingMigrated);
 			var alphaConfigsPath = Path.Combine(FwDirectoryFinder.FlexFolder, AlphaConfigFolder);
+
+			var newDictionaryConfigLoc = Path.Combine(FwDirectoryFinder.DefaultConfigurations, DCL.DictionaryConfigurationDirectoryName);
+			var newReversalConfigLoc = Path.Combine(FwDirectoryFinder.DefaultConfigurations, DCL.ReversalIndexConfigurationDirectoryName);
 			const string defaultStemName = "Stem" + extension;
 			const string defaultRootName = "Root" + extension;
 			const string defaultReversalName = "AllReversalIndexes" + extension;
@@ -193,19 +197,22 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				case "publishStem":
 				{
 					convertedModel.FilePath = Path.Combine(projectPath, defaultStemName);
-					alpha83DefaultModel = new DictionaryConfigurationModel(Path.Combine(alphaConfigsPath, defaultStemName), Cache);
+					alpha83DefaultModel = DCM.LoadConfigWithCurrentDefaults(Path.Combine(alphaConfigsPath, defaultStemName), Cache,
+						Path.Combine(newDictionaryConfigLoc, "Lexeme.fwdictconfig"));
 					break;
 				}
 				case "publishRoot":
 				{
 					convertedModel.FilePath = Path.Combine(projectPath, defaultRootName);
-					alpha83DefaultModel = new DictionaryConfigurationModel(Path.Combine(alphaConfigsPath, defaultRootName), Cache);
+					alpha83DefaultModel = DCM.LoadConfigWithCurrentDefaults(Path.Combine(alphaConfigsPath, defaultRootName), Cache,
+						Path.Combine(newDictionaryConfigLoc, "Root.fwdictconfig"));
 					break;
 				}
 				case "publishReversal":
 				{
 					convertedModel.FilePath = Path.Combine(projectPath, defaultReversalName);
-					alpha83DefaultModel = new DictionaryConfigurationModel(Path.Combine(alphaConfigsPath, defaultReversalName), Cache);
+					alpha83DefaultModel = DCM.LoadConfigWithCurrentDefaults(Path.Combine(alphaConfigsPath, defaultReversalName), Cache,
+						Path.Combine(newReversalConfigLoc, "AllReversalIndexes.fwdictconfig"));
 					break;
 				}
 				default:
@@ -218,13 +225,15 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					{
 						var customFileName = string.Format("{0}-Stem-{1}{2}", convertedModel.Label, layout.Substring(customSuffixIndex), extension);
 						convertedModel.FilePath = Path.Combine(projectPath, customFileName);
-						alpha83DefaultModel = new DictionaryConfigurationModel(Path.Combine(alphaConfigsPath, defaultStemName), Cache);
+						alpha83DefaultModel = DCM.LoadConfigWithCurrentDefaults(Path.Combine(alphaConfigsPath, defaultStemName), Cache,
+							Path.Combine(newDictionaryConfigLoc, "Lexeme.fwdictconfig"));
 					}
 					else if (customSuffixIndex > 0 && layout.StartsWith("publishRoot"))
 					{
 						var customFileName = string.Format("{0}-Root-{1}{2}", convertedModel.Label, layout.Substring(customSuffixIndex), extension);
 						convertedModel.FilePath = Path.Combine(projectPath, customFileName);
-						alpha83DefaultModel = new DictionaryConfigurationModel(Path.Combine(alphaConfigsPath, defaultRootName), Cache);
+						alpha83DefaultModel = DCM.LoadConfigWithCurrentDefaults(Path.Combine(alphaConfigsPath, defaultRootName), Cache,
+							Path.Combine(newDictionaryConfigLoc, "Root.fwdictconfig"));
 					}
 					else if (layout.StartsWith("publishReversal")) // a reversal index for a specific language or a copied Reversal Index Config
 					{
@@ -246,7 +255,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 							? string.Format("{0}-{1}-{2}{3}", convertedModel.Label, reversalIndex, layout.Substring(customSuffixIndex), extension)
 							: string.Format("{0}{1}", reversalIndex, extension);
 						convertedModel.FilePath = Path.Combine(projectPath, customFileName);
-						alpha83DefaultModel = new DictionaryConfigurationModel(Path.Combine(alphaConfigsPath, defaultReversalName), Cache);
+						alpha83DefaultModel = DCM.LoadConfigWithCurrentDefaults(Path.Combine(alphaConfigsPath, defaultReversalName), Cache,
+							Path.Combine(newReversalConfigLoc, "AllReversalIndexes.fwdictconfig"));
 					}
 					else
 						throw new NotImplementedException("Classified Dictionary migration or something has not yet been implemented.");
@@ -257,28 +267,28 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		}
 
 		/// <remarks>Internal only for tests; production entry point is MigrateOldConfigurationsIfNeeded()</remarks>
-		internal void CopyNewDefaultsIntoConvertedModel(DictionaryConfigurationModel convertedModel, DictionaryConfigurationModel currentDefaultModel)
+		internal void CopyNewDefaultsIntoConvertedModel(DictionaryConfigurationModel convertedModel, DictionaryConfigurationModel alphaDefaultModel)
 		{
 			convertedModel.SharedItems = convertedModel.SharedItems ?? new List<ConfigurableDictionaryNode>();
-			convertedModel.IsRootBased = currentDefaultModel.IsRootBased;
+			convertedModel.IsRootBased = alphaDefaultModel.IsRootBased;
 
 			// Stem-based treats Complex Forms as Main Entries. Previously, they had all been configured by the same Main Entries node,
 			// but now, they are configured in a separate "Main Entries (Complex Forms)" node.
-			if (Path.GetFileNameWithoutExtension(currentDefaultModel.FilePath) == "Lexeme")
+			if (Path.GetFileNameWithoutExtension(alphaDefaultModel.FilePath) == "Stem")
 			{
 				convertedModel.Parts.Insert(0, convertedModel.Parts[0].DeepCloneUnderSameParent()); // Split Main into Main and Main (Complex)
-				CopyDefaultsIntoConfigNode(convertedModel, convertedModel.Parts[0], currentDefaultModel.Parts[0]); // Main Entry
-				CopyDefaultsIntoMinorEntryNode(convertedModel, convertedModel.Parts[1], currentDefaultModel.Parts[1], 0); // Main Entry (Complex Forms)
-				convertedModel.Parts[1].Style = currentDefaultModel.Parts[1].Style; // Main Entry had no style in the old model
+				CopyDefaultsIntoConfigNode(convertedModel, convertedModel.Parts[0], alphaDefaultModel.Parts[0]); // Main Entry
+				CopyDefaultsIntoMinorEntryNode(convertedModel, convertedModel.Parts[1], alphaDefaultModel.Parts[1], 0); // Main Entry (Complex Forms)
+				convertedModel.Parts[1].Style = alphaDefaultModel.Parts[1].Style; // Main Entry had no style in the old model
 				for (var i = 2; i < convertedModel.Parts.Count; ++i)
 				{
-					CopyDefaultsIntoMinorEntryNode(convertedModel, convertedModel.Parts[i], currentDefaultModel.Parts[2], // Minor Entry (Variants)
+					CopyDefaultsIntoMinorEntryNode(convertedModel, convertedModel.Parts[i], alphaDefaultModel.Parts[2], // Minor Entry (Variants)
 						DictionaryNodeListOptions.ListIds.Variant);
 				}
 			}
 			else
 			{
-				if (currentDefaultModel.Label == DictionaryConfigurationModel.AllReversalIndexes
+				if (alphaDefaultModel.Label == DictionaryConfigurationModel.AllReversalIndexes
 					&& convertedModel.Label != DictionaryConfigurationModel.AllReversalIndexes)
 				{
 					// If this is a WS-specific Reversal Index, set its WS
@@ -289,13 +299,13 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					convertedModel.WritingSystem = "";
 				}
 
-				CopyDefaultsIntoConfigNode(convertedModel, convertedModel.Parts[0], currentDefaultModel.Parts[0]); // copy defaults into Main Entry
+				CopyDefaultsIntoConfigNode(convertedModel, convertedModel.Parts[0], alphaDefaultModel.Parts[0]); // copy defaults into Main Entry
 				for (var i = 1; i < convertedModel.Parts.Count; ++i)
 				{
 					// Any copies of the minor entry node in the model we are converting should use the defaults from the minor entry nodes,
 					// split into Complex Forms and Variants
-					var currentDefaultComplexNode = currentDefaultModel.Parts[1];
-					var currentDefaultVariantNode = currentDefaultModel.Parts[2];
+					var currentDefaultComplexNode = alphaDefaultModel.Parts[1];
+					var currentDefaultVariantNode = alphaDefaultModel.Parts[2];
 
 					var convertedNode = convertedModel.Parts[i];
 					var selectedMinorEntryTypes = ((DictionaryNodeListOptions)convertedNode.DictionaryNodeOptions).Options;

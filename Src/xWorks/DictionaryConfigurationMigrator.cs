@@ -138,5 +138,49 @@ namespace SIL.FieldWorks.XWorks
 					PerformActionOnNodes(node.Children, action);
 			}
 		}
+
+		/// <summary>
+		/// This method will copy configuration node values from newDefaultModelPath over the matching nodes in oldDefaultModelPath.
+		/// </summary>
+		/// <remarks>Intended to be used only on defaults, not on data with user changes.</remarks>
+		internal static DictionaryConfigurationModel LoadConfigWithCurrentDefaults(string oldDefaultModelPath, FdoCache cache, string newDefaultPath)
+		{
+			var oldDefaultConfigs = new DictionaryConfigurationModel(oldDefaultModelPath, cache);
+			var newDefaultConfigs = new DictionaryConfigurationModel(newDefaultPath, cache);
+			return LoadConfigWithCurrentDefaults(oldDefaultConfigs, newDefaultConfigs);
+		}
+
+		/// <summary>
+		/// This method will copy configuration node values from newDefaultConfigs over the matching nodes in oldDefaultConfigs
+		/// </summary>
+		/// <remarks>Intended to be used only on defaults, not on data with user changes.</remarks>
+		internal static DictionaryConfigurationModel LoadConfigWithCurrentDefaults(DictionaryConfigurationModel oldDefaultConfigs,
+			DictionaryConfigurationModel newDefaultConfigs)
+		{
+			foreach (var partNode in oldDefaultConfigs.Parts)
+			{
+				OverwriteDefaultsWithMatchingNode(partNode, newDefaultConfigs.Parts);
+			}
+			return oldDefaultConfigs;
+		}
+
+		private static void OverwriteDefaultsWithMatchingNode(ConfigurableDictionaryNode oldDefaultNode, List<ConfigurableDictionaryNode> newDefaultList)
+		{
+			var matchingPart = newDefaultList.FirstOrDefault(m => m.Label == oldDefaultNode.Label && m.LabelSuffix == oldDefaultNode.LabelSuffix && m.FieldDescription == oldDefaultNode.FieldDescription);
+			if (matchingPart == null)
+				return;
+			oldDefaultNode.After = matchingPart.After;
+			oldDefaultNode.Before = matchingPart.Before;
+			oldDefaultNode.Between = matchingPart.Between;
+			oldDefaultNode.Style = matchingPart.Style;
+			oldDefaultNode.IsEnabled = matchingPart.IsEnabled;
+			if (oldDefaultNode.Children != null)
+			{
+				foreach (var child in oldDefaultNode.Children)
+				{
+					OverwriteDefaultsWithMatchingNode(child, matchingPart.ReferencedOrDirectChildren);
+				}
+			}
+		}
 	}
 }
