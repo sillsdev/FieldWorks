@@ -583,6 +583,7 @@ namespace SIL.FieldWorks.XWorks
 			string parentSelector, ConfigurableDictionaryNode configNode,
 			out string baseSelection, FdoCache cache, Mediator mediator)
 		{
+			// TODO: REFACTOR this method to handle certain nodes more specifically. The options type should be used to branch into node specific code.
 			if (configNode.CSSClassNameOverride == "complexformtypes")
 				parentSelector = parentSelector.Replace(".visiblecomplexformbackrefs .visiblecomplexformbackref", ".visiblecomplexformbackrefs");
 			else if (configNode.CSSClassNameOverride == "variantentrytypes" && configNode.Parent.DisplayLabel == "Variant Forms")
