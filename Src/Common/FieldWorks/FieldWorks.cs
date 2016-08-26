@@ -159,7 +159,8 @@ namespace SIL.FieldWorks
 			try
 			{
 #region Initialize XULRunner - required to use the geckofx WebBrowser Control (GeckoWebBrowser).
-				Xpcom.Initialize("Firefox");
+				var exePath = Path.GetDirectoryName(Application.ExecutablePath);
+				Xpcom.Initialize(Path.Combine(exePath, "Firefox"));
 				GeckoPreferences.User["gfx.font_rendering.graphite.enabled"] = true;
 				// Set default browser for XWebBrowser to use GeckoFX.
 				// This can still be changed per instance by passing a parameter to the constructor.

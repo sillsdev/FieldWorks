@@ -225,6 +225,7 @@ install-tree: fieldworks-flex.1.gz fieldworks-te.1.gz unicodechareditor.1.gz
 	install -d $(DESTDIR)/usr/bin
 	install -d $(DESTDIR)/usr/lib/fieldworks
 	install -d $(DESTDIR)/usr/lib/fieldworks/icu-bin
+	install -d $(DESTDIR)/usr/lib/fieldworks/Firefox
 	install -d $(DESTDIR)/usr/share/fieldworks
 	install -d $(DESTDIR)/usr/share/man/man1
 	install -d $(DESTDIR)/var/lib/fieldworks
