@@ -20,7 +20,7 @@
 	  </WritingSystemOptions>
 	</ConfigurationItem>
 	<ConfigurationItem name="Secondary Homograph Number" style="" after=" " isEnabled="false" field="HomographNumber"/>
-	<ConfigurationItem name="Dialect Labels" isEnabled="true" after=" " field="DialectLabelsRS">
+	<ConfigurationItem name="Dialect Labels" isEnabled="true" before=" [" after="]" field="DialectLabelsRS">
 		<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 			<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 			  <Option id="best vernoranal" isEnabled="true" />
@@ -88,7 +88,7 @@
 		  <Option id="vernacular" isEnabled="true"/>
 		</WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Dialect Labels" isEnabled="true" after=" " field="VariantEntryDialectLabels">
+		<ConfigurationItem name="Dialect Labels" isEnabled="true" before=" [" after="]" field="VariantEntryDialectLabels">
 			<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 				<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 					<Option id="best vernoranal" isEnabled="true" />
@@ -432,6 +432,18 @@
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
+		</ConfigurationItem>
+		<ConfigurationItem name="Dialect Labels" isEnabled="true" before=" [" after="]" field="VariantEntryDialectLabels">
+			<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
+				<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+					<Option id="best vernoranal" isEnabled="true" />
+				</WritingSystemOptions>
+			</ConfigurationItem>
+			<ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
+				<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+					<Option id="best vernoranal" isEnabled="true" />
+				</WritingSystemOptions>
+			</ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Variant Pronunciations" before=" " between=", " isEnabled="false" field="OwningEntry" subField="PronunciationsOS" cssClassNameOverride="variantpronunciations">
 		  <ConfigurationItem name="Pronunciation" before="[" between=" " after="]" isEnabled="true" field="Form">
@@ -864,6 +876,18 @@
 	  </WritingSystemOptions>
 	</ConfigurationItem>
 	<ConfigurationItem name="Secondary Homograph Number" after=" " isEnabled="false" field="HomographNumber"/>
+	<ConfigurationItem name="Dialect Labels" isEnabled="true" before=" [" after="]" field="DialectLabelsRS">
+		<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
+			<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+			  <Option id="best vernoranal" isEnabled="true" />
+			</WritingSystemOptions>
+		</ConfigurationItem>
+		<ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
+			<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+			  <Option id="best vernoranal" isEnabled="true" />
+			</WritingSystemOptions>
+		</ConfigurationItem>
+	</ConfigurationItem>
 	<ConfigurationItem name="Pronunciations" between=", " after=" " isEnabled="true" field="PronunciationsOS" cssClassNameOverride="pronunciations">
 	  <ConfigurationItem name="Pronunciation" before="[" between=" " after="]" isEnabled="true" field="Form">
 		<WritingSystemOptions writingSystemType="pronunciation" displayWSAbreviation="false">
@@ -920,7 +944,7 @@
 				<Option id="vernacular" isEnabled="true"/>
 			</WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Dialect Labels" isEnabled="true" after=" " field="VariantEntryDialectLabels">
+		<ConfigurationItem name="Dialect Labels" isEnabled="true" before=" [" after="]" field="VariantEntryDialectLabels">
 			<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 				<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 					<Option id="best vernoranal" isEnabled="true" />
@@ -1147,7 +1171,7 @@
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Dialect Labels" isEnabled="true" after=" " field="DialectLabelsRS">
+		<ConfigurationItem name="Dialect Labels" isEnabled="true" before=" [" after="]" field="DialectLabelsRS">
 			<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 				<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 				  <Option id="best vernoranal" isEnabled="true" />
@@ -1358,6 +1382,18 @@
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
+		</ConfigurationItem>
+		<ConfigurationItem name="Dialect Labels" isEnabled="true" before=" [" after="]" field="VariantEntryDialectLabels">
+			<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
+				<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+					<Option id="best vernoranal" isEnabled="true" />
+				</WritingSystemOptions>
+			</ConfigurationItem>
+			<ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
+				<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+					<Option id="best vernoranal" isEnabled="true" />
+				</WritingSystemOptions>
+			</ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Variant Pronunciations" before=" " between=", " isEnabled="false" field="OwningEntry" subField="PronunciationsOS" cssClassNameOverride="variantpronunciations">
 		  <ConfigurationItem name="Pronunciation" before="[" between=" " after="]" isEnabled="true" field="Form">
@@ -1805,7 +1841,7 @@
 	  </WritingSystemOptions>
 	</ConfigurationItem>
 	<ConfigurationItem name="Secondary Homograph Number" after=" " isEnabled="false" field="HomographNumber"/>
-	<ConfigurationItem name="Dialect Labels" isEnabled="true" after=" " field="DialectLabelsRS">
+	<ConfigurationItem name="Dialect Labels" isEnabled="true" before=" [" after="]" field="DialectLabelsRS">
 		<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 			<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 			  <Option id="best vernoranal" isEnabled="true" />
@@ -1873,7 +1909,7 @@
 				<Option id="vernacular" isEnabled="true"/>
 			</WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Dialect Labels" isEnabled="true" after=" " field="VariantEntryDialectLabels">
+		<ConfigurationItem name="Dialect Labels" isEnabled="true" before=" [" after="]" field="VariantEntryDialectLabels">
 			<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 				<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 					<Option id="best vernoranal" isEnabled="true" />
@@ -2059,7 +2095,7 @@
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Dialect Labels" isEnabled="true" after=" " field="DialectLabelsRS">
+		<ConfigurationItem name="Dialect Labels" isEnabled="true" before=" [" after="]" field="DialectLabelsRS">
 			<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 				<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 				  <Option id="best vernoranal" isEnabled="true" />
@@ -2270,6 +2306,18 @@
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
+		</ConfigurationItem>
+		<ConfigurationItem name="Dialect Labels" isEnabled="true" before=" [" after="]" field="VariantEntryDialectLabels">
+			<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
+				<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+					<Option id="best vernoranal" isEnabled="true" />
+				</WritingSystemOptions>
+			</ConfigurationItem>
+			<ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
+				<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+					<Option id="best vernoranal" isEnabled="true" />
+				</WritingSystemOptions>
+			</ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Variant Pronunciations" before=" " between=", " isEnabled="false" field="OwningEntry" subField="PronunciationsOS" cssClassNameOverride="variantpronunciations">
 		  <ConfigurationItem name="Pronunciation" before="[" between=" " after="]" isEnabled="true" field="Form">
@@ -2847,6 +2895,18 @@
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
+		</ConfigurationItem>
+		<ConfigurationItem name="Dialect Labels" isEnabled="true" before=" [" after="]" field="VariantEntryDialectLabels">
+			<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
+				<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+					<Option id="best vernoranal" isEnabled="true" />
+				</WritingSystemOptions>
+			</ConfigurationItem>
+			<ConfigurationItem name="Name" between=" " isEnabled="false" field="Name">
+				<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+					<Option id="best vernoranal" isEnabled="true" />
+				</WritingSystemOptions>
+			</ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Variant Pronunciations" before=" " between=", " isEnabled="false" field="OwningEntry" subField="PronunciationsOS" cssClassNameOverride="variantpronunciations">
 		  <ConfigurationItem name="Pronunciation" before="[" between=" " after="]" isEnabled="true" field="Form">
