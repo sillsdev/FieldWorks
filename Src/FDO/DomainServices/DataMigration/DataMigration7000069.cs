@@ -357,7 +357,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 
 			string variantXml = "<rt class=\"LexEntryType\" guid=\"" + unspecVariantEntryTypeGuid + "\"" +
 			" ownerguid=\"" + cmPossListGuidForVariantEntryType + "\"><Abbreviation><AUni ws=\"en\">unspec. var. of</AUni></" +
-			"Abbreviation><IsProtected val=\"true\" /><Name><AUni ws=\"en\">&#60;Unspecified Variant&#62;</AUni></" +
+			"Abbreviation><IsProtected val=\"true\" /><Name><AUni ws=\"en\">Unspecified Variant</AUni></" +
 			"Name><ReverseAbbr><AUni ws=\"en\">unspec. var.</AUni></ReverseAbbr></rt>";
 			var newDefaultVariantType = new DomainObjectDTO(unspecVariantEntryTypeGuid, "LexEntryType", variantXml);
 			repoDto.Add(newDefaultVariantType);
@@ -365,7 +365,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			string complexXml = "<rt class=\"LexEntryType\" guid=\"" + unspecComplexEntryTypeGuid + "\"" +
 						" ownerguid=\"" + cmPossListGuidForComplexFormType  + "\"><Abbreviation><AUni ws=\"en\">unspec. comp. form of</AUni>" +
 						"</Abbreviation><Description><AStr ws=\"en\"><Run ws=\"en\"></Run></AStr></Description><IsProtected val=\"true\"" +
-						" /><Name><AUni ws=\"en\">&#60;Unspecified Complex Form&#62;</AUni></Name>" +
+						" /><Name><AUni ws=\"en\">Unspecified Complex Form</AUni></Name>" +
 						"<ReverseAbbr><AUni ws=\"en\">unspec. comp. form</AUni></ReverseAbbr></rt>";
 			var newDefaultComplexType = new DomainObjectDTO(unspecComplexEntryTypeGuid, "LexEntryType", complexXml);
 			repoDto.Add(newDefaultComplexType);

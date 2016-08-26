@@ -839,6 +839,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				return;		// don't change
 			m_LastSelectedField = field;
 
+			const string defaultVariantType = "Unspecified Variant";
+			const string defaultComplexFormType = "Unspecified Complex Form";
+
 			// fill the combo box with current values in the DB
 			cbFunction.Items.Clear();
 			m_htNameToAbbr.Clear();
@@ -926,33 +929,24 @@ namespace SIL.FieldWorks.LexText.Controls
 					foreach (var let in m_cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities)
 					{
 						AddAbbrAndNameInfo(let.Abbreviation, let.Name, null, null);
-						//int wsActual;
-						//ITsString tssAnal = let.Name. GetAlternativeOrBestTss(m_cache.DefaultAnalWs, out wsActual);
-						//name = tssAnal.Text;
-						//string ws = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(wsActual);
-						//AddAbbrAndNameInfo(null, name, ws, null, null, null);
 					}
+					pos = cbFunction.FindString(defaultVariantType);
 				}
 				else if (field.ID == "sub")
 				{
 					lblFunction.Text = LexTextControls.ksComplexFormType;
-					// fill the comboBox with the names of the Variant objects
+					// fill the comboBox with the names of the Complex Form objects
 					foreach (var let in m_cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities)
 					{
 						AddAbbrAndNameInfo(let.Abbreviation, let.Name, null, null);
-						//int wsActual;
-						//ITsString tssAnal = let.Name.GetAlternativeOrBestTss(m_cache.DefaultAnalWs, out wsActual);
-						//name = tssAnal.Text;
-						//string ws = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(wsActual);
-						//AddAbbrAndNameInfo(null, name, ws, null, null, null);
 					}
+					pos = cbFunction.FindString(defaultComplexFormType);
 				}
 
-
 				// now select the one with the correct abbreviation
-				pos = -1;
-				if (m_refFuncString.Length > 0)
+				if (pos == -1 && m_refFuncString.Length > 0)
 					pos = cbFunction.FindString(m_refFuncString);
+
 				cbFunction.SelectedIndex = pos >= 0 ? pos : 0;
 				cbFunction.Text = cbFunction.SelectedItem as string;
 			}

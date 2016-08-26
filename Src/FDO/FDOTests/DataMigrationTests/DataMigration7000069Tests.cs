@@ -218,7 +218,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			Assert.IsNotNull(nameElt);
 			objAUniAttr = nameElt.Element("AUni");
 			Assert.IsNotNull(objAUniAttr);
-			Assert.AreEqual("<Unspecified Variant>", objAUniAttr.Value);
+			Assert.AreEqual("Unspecified Variant", objAUniAttr.Value);
 
 			lexEntryObjs = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("LexEntryType").First(
 											e => e.Guid.ToString() == "fec038ed-6a8c-4fa5-bc96-a4f515a98c50").Xml);
@@ -233,7 +233,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			Assert.IsNotNull(nameElt);
 			objAUniAttr = nameElt.Element("AUni");
 			Assert.IsNotNull(objAUniAttr);
-			Assert.AreEqual("<Unspecified Complex Form>", objAUniAttr.Value);
+			Assert.AreEqual("Unspecified Complex Form", objAUniAttr.Value);
 		}
 
 		/// ------------------------------------------------------------------------------------

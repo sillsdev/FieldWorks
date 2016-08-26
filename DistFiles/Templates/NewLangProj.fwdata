@@ -314,13 +314,13 @@
 </Abbreviation>
 <IsProtected val="true" />
 <Name>
-<AUni ws="en">&lt;Unspecified Variant&gt;</AUni>
+<AUni ws="en">Unspecified Variant</AUni>
 </Name>
 <ReverseAbbr>
 <AUni ws="en">unspec. var. of</AUni>
 </ReverseAbbr>
 <ReverseName>
-<AUni ws="en">&lt;Unspecified Variant&gt; of</AUni>
+<AUni ws="en">Unspecified Variant of</AUni>
 </ReverseName>
 </rt>
 <rt class="CmRow" guid="47a43063-ba83-4be2-9604-46a7701a9385" ownerguid="bb7dd3d8-ea5e-11de-8cc5-0013722f8dec">
@@ -2006,13 +2006,13 @@
 </Description>
 <IsProtected val="true" />
 <Name>
-<AUni ws="en">&lt;Unspecified Complex Form&gt;</AUni>
+<AUni ws="en">Unspecified Complex Form</AUni>
 </Name>
 <ReverseAbbr>
 <AUni ws="en">unspec. comp. form of</AUni>
 </ReverseAbbr>
 <ReverseName>
-<AUni ws="en">&lt;Unspecified Complex Form&gt; of</AUni>
+<AUni ws="en">Unspecified Complex Form of</AUni>
 </ReverseName>
 </rt>
 <rt class="CmPossibility" guid="b228eb56-ea5e-11de-9e54-0013722f8dec" ownerguid="b21f61f8-ea5e-11de-907d-0013722f8dec">

@@ -122,7 +122,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					else
 					{
 						ler.RefType = LexEntryRefTags.krtComplexForm;
-						ler.ComplexEntryTypesRS.Add(ent.Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS[0] as ILexEntryType);
+						const string unspecComplexFormEntryTypeGuid = "fec038ed-6a8c-4fa5-bc96-a4f515a98c50";
+						var type = ent.Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS
+							.First(lrt => lrt.Guid.ToString() == unspecComplexFormEntryTypeGuid) as ILexEntryType;
+						ler.ComplexEntryTypesRS.Add(type);
 						ler.HideMinorEntry = 0; // LT-10928
 						// Logic similar to this is in EntrySequenceReferenceLauncher.AddNewObjectsToProperty()
 						// (when LER already exists so slice is not ghost)
