@@ -5,8 +5,8 @@
 	guid. Be sure to validate any changes against ../Styles.dtd.
 	*********************************************************************************************
 -->
-<Styles date="2016-02-02" DTDver="64DE4B02-14DA-42F6-8C1C-CF21E41D3EF7" label="Flex Dictionary">
-	<markup version="4831DC54-CBF2-4C47-A5C7-D0512F54EDE3">
+<Styles date="2016-08-26" DTDver="64DE4B02-14DA-42F6-8C1C-CF21E41D3EF7" label="Flex Dictionary">
+	<markup version="19C6785D-2F17-405A-A855-F05B71BBC9AD">
 		<!--
 		The 'Normal' entry is here mainly as a placeholder, so the DTD will allow things to be based on it.
 		Logically Normal should probably be internal, but it's 'general' in existing projects, and the
