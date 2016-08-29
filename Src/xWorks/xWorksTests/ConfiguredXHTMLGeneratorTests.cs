@@ -331,7 +331,7 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
 			var variant = CreateInterestingLexEntry(Cache);
-			CreateVariantForm(Cache, entry, variant, Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.First() as ILexEntryType); // we need a real Variant Type to pass the list options test
+			CreateVariantForm(Cache, entry, variant, "Spelling Variant"); // we need a real Variant Type to pass the list options test
 			// Create a folder in the project to hold the media files
 			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
 			Cache.LangProject.MediaOC.Add(folder);
@@ -2763,7 +2763,7 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathThruNoteType, 0);
 		}
 
-		private ILexExtendedNote AddExampleToExtendedNote(ILexSense sense, string noteType, string discussion, string examples, string translation = null)
+		private void AddExampleToExtendedNote(ILexSense sense, string noteType, string discussion, string examples, string translation = null)
 		{
 			var extendedNoteFact = Cache.ServiceLocator.GetInstance<ILexExtendedNoteFactory>();
 			var extendedNote = extendedNoteFact.Create();
@@ -2784,7 +2784,6 @@ namespace SIL.FieldWorks.XWorks
 				cmTranslation.Translation.set_String(m_wsEn, Cache.TsStrFactory.MakeString(translation, m_wsEn));
 				example.TranslationsOC.Add(cmTranslation);
 			}
-			return extendedNote;
 		}
 
 		private ICmPossibility CreateExtendedNoteType(string name)
@@ -5433,7 +5432,6 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
 			Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings), "Having an empty complexentrytype list after the click event should not cause crash.");
 		}
 
@@ -5854,7 +5852,7 @@ namespace SIL.FieldWorks.XWorks
 			entryTestsubentry.DoNotPublishInRC.Add(typeMain);
 			CreateComplexForm(Cache, entryEntry, entryTestsubentry, true);
 			var bizarroVariant = CreateInterestingLexEntry(Cache, "bizarre", "myVariant");
-			CreateVariantForm(Cache, entryEntry, bizarroVariant, Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.First() as ILexEntryType);
+			CreateVariantForm(Cache, entryEntry, bizarroVariant, "Spelling Variant");
 			bizarroVariant.DoNotPublishInRC.Add(typeTest);
 
 			// Note that the decorators must be created (or refreshed) *after* the data exists.
@@ -6129,23 +6127,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_GeneratesVariantEntryTypesLabelWithNoRepetition()
 		{
-			var typeMain = CreatePublicationType("main");
-
-			var entryEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(entryEntry, "entry", m_wsFr, Cache);
-
-			var bizarroVariant = CreateInterestingLexEntry(Cache, "entry1", "myVariant");
-			var a=CreateVariantForm(Cache, entryEntry, bizarroVariant, Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Last() as ILexEntryType);
-
-			var secondVariant = CreateInterestingLexEntry(Cache, "entry2", "myVariant");
-			var b=CreateVariantForm(Cache, entryEntry, secondVariant); //Crazy Variant
-
-			var thirdVariant = CreateInterestingLexEntry(Cache, "entry3", "myVariant");
-			var c=CreateVariantForm(Cache, entryEntry, thirdVariant, Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Last() as ILexEntryType);
-
-			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
-			var pubMain = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual, typeMain);
-
 			var variantTypeNameNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Name",
@@ -6174,12 +6155,25 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode, variantNode },
 				FieldDescription = "LexEntry"
 			};
-
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
-			var output = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryEntry, mainEntryNode, pubMain, settings);
-			const string matchVariantRef = "//span[@class='variantentrytypes']/span[@class='variantentrytype']/span[@class='name']/span[@lang='en']";
-			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchVariantRef, 2);
+
+			var entryEntry = CreateInterestingLexEntry(Cache);
+
+			var ve1 = CreateInterestingLexEntry(Cache, "variantEntry1");
+			var ve2 = CreateInterestingLexEntry(Cache, "variantEntry2");
+			var ve3 = CreateInterestingLexEntry(Cache, "variantEntry3");
+			var ve4 = CreateInterestingLexEntry(Cache, "variantEntry4");
+			// (specifying GUID's to ensure GUID sort does not muss up Type grouping)
+			using (CreateVariantForm(Cache, entryEntry, ve1, new Guid("00000000-0000-0000-0000-000000000001"), "Free Variant")) // unique Type; generated
+			using (CreateVariantForm(Cache, entryEntry, ve2, new Guid("00000000-0000-0000-0000-000000000002"), "Spelling Variant")) // unique Type; generated
+			using (CreateVariantForm(Cache, entryEntry, ve3, new Guid("00000000-0000-0000-0000-000000000003"), "Free Variant")) // repeat Type; consolidated
+			using (CreateVariantForm(Cache, entryEntry, ve4, new Guid("00000000-0000-0000-0000-000000000004"), null)) // no Type; none generated
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+				var output = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryEntry, mainEntryNode, null, settings);
+				const string matchVariantRef = "//span[@class='variantentrytypes']/span[@class='variantentrytype']/span[@class='name']/span[@lang='en']";
+				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchVariantRef, 2);
+			}
 		}
 
 		[Test]
@@ -7195,27 +7189,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Use reflection to set the guid on a variant form. May not work for all kinds of tests or appropriately be editing the database. Returns a variant form and the original guid.
-		/// </summary>
-		public static Tuple<ILexEntryRef, Guid> CreateVariantFormWithGuid(FdoCache cache, IVariantComponentLexeme main, ILexEntry variantForm, Guid guid, ILexEntryType typeToUse = null)
-		{
-			var variant = CreateVariantForm(cache, main, variantForm, typeToUse);
-			var originalGuid = SetGuidOnILexEntryRef(variant, guid);
-			return new Tuple<ILexEntryRef, Guid>(variant, originalGuid);
-		}
-
-		/// <summary>
-		/// May break things. Returns original guid.
-		/// </summary>
-		public static Guid SetGuidOnILexEntryRef(ILexEntryRef lexEntryRef, Guid newGuid)
-		{
-			var originalGuid = lexEntryRef.Guid;
-			var refGuidField = ReflectionHelper.GetField(lexEntryRef, "m_guid");
-			ReflectionHelper.SetField(refGuidField, "m_guid", newGuid);
-			return originalGuid;
-		}
-
-		/// <summary>
 		/// LT-17384.
 		/// </summary>
 		[Test]
@@ -7223,62 +7196,57 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var lexentry = CreateInterestingLexEntry(Cache);
 
-			var lexEntryTypeFactory = Cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>() as ILexEntryTypeFactory;
-			var lexEntryType = lexEntryTypeFactory.Create();
-
-			// This is some test data, with guids set to try to pevent the data from naturally being sorted by guid.
-			var variantFormsTestData = new List<Tuple<ILexEntryRef, Guid>>()
+			// Because we are testing a sort by Guid, set the Guids instead of leaving them to chance.
+			using (CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordA"), new Guid("00000000-0000-0000-0000-000000000002")))
+			using (CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordB"), new Guid("00000000-0000-0000-0000-000000000001")))
+			using (CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordC"), new Guid("00000000-0000-0000-0000-000000000004")))
+			using (CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordD"), new Guid("00000000-0000-0000-0000-000000000003")))
 			{
-				CreateVariantFormWithGuid(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordA"), new Guid("00000000-0000-0000-0000-000000000002"), Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.First() as ILexEntryType),
-				CreateVariantFormWithGuid(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordB"), new Guid("00000000-0000-0000-0000-000000000001"), Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.First() as ILexEntryType),
-				CreateVariantFormWithGuid(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordC"), new Guid("00000000-0000-0000-0000-000000000004"), Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.First() as ILexEntryType),
-				CreateVariantFormWithGuid(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordD"), new Guid("00000000-0000-0000-0000-000000000003"), Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.First() as ILexEntryType),
-			};
+				var variantTypeNameNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "Name",
+					DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+				};
+				var variantTypeNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "VariantEntryTypesRS",
+					CSSClassNameOverride = "variantentrytypes",
+					Children = new List<ConfigurableDictionaryNode> { variantTypeNameNode },
+				};
+				var formNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "OwningEntry",
+					SubField = "MLHeadWord",
+					IsEnabled = true,
+					DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+				};
+				var variantFormNode = new ConfigurableDictionaryNode
+				{
+					DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
+					FieldDescription = "VariantFormEntryBackRefs",
+					Children = new List<ConfigurableDictionaryNode> { formNode, variantTypeNode }
+				};
+				var mainEntryNode = new ConfigurableDictionaryNode
+				{
+					Children = new List<ConfigurableDictionaryNode> { variantFormNode },
+					FieldDescription = "LexEntry"
+				};
 
-			var variantTypeNameNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "Name",
-				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
-			};
-			var variantTypeNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "VariantEntryTypesRS",
-				CSSClassNameOverride = "variantentrytypes",
-				Children = new List<ConfigurableDictionaryNode> { variantTypeNameNode },
-			};
-			var formNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "OwningEntry",
-				SubField = "MLHeadWord",
-				IsEnabled = true,
-				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
-			};
-			var variantFormNode = new ConfigurableDictionaryNode
-			{
-				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
-				FieldDescription = "VariantFormEntryBackRefs",
-				Children = new List<ConfigurableDictionaryNode> { formNode, variantTypeNode }
-			};
-			var mainEntryNode = new ConfigurableDictionaryNode
-			{
-				Children = new List<ConfigurableDictionaryNode> { variantFormNode },
-				FieldDescription = "LexEntry"
-			};
+				DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
+				CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 
-			DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
-			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+				//SUT
+				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
 
-			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
-
-			// Test that variantformentrybackref items are in an order corresponding to their guids.
-			Assert.That(result.IndexOf("headwordB", StringComparison.InvariantCulture), Is.LessThan(result.IndexOf("headwordA", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
-			Assert.That(result.IndexOf("headwordA", StringComparison.InvariantCulture), Is.LessThan(result.IndexOf("headwordD", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
-			Assert.That(result.IndexOf("headwordD", StringComparison.InvariantCulture), Is.LessThan(result.IndexOf("headwordC", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
-
-			// Clean up database state for teardown by setting guids back to their original state.
-			variantFormsTestData.ForEach(variant => SetGuidOnILexEntryRef(variant.Item1, variant.Item2));
+				// Test that variantformentrybackref items are in an order corresponding to their guids.
+				Assert.That(result.IndexOf("headwordB", StringComparison.InvariantCulture),
+					Is.LessThan(result.IndexOf("headwordA", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
+				Assert.That(result.IndexOf("headwordA", StringComparison.InvariantCulture),
+					Is.LessThan(result.IndexOf("headwordD", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
+				Assert.That(result.IndexOf("headwordD", StringComparison.InvariantCulture),
+					Is.LessThan(result.IndexOf("headwordC", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
+			}
 		}
 
 		[Test]
@@ -7635,49 +7603,72 @@ namespace SIL.FieldWorks.XWorks
 			return entry;
 		}
 
+		internal sealed class TempGuidOn<T> : IDisposable where T : ICmObject
+		{
+			public T Item { get; private set; }
+			private readonly Guid originalGuid;
+
+			public TempGuidOn(T item, Guid tempGuid)
+			{
+				Item = item;
+				originalGuid = item.Guid;
+				SetGuidOn(item, tempGuid);
+			}
+
+			public void Dispose()
+			{
+				SetGuidOn(Item, originalGuid);
+			}
+
+			private static void SetGuidOn(ICmObject item, Guid newGuid)
+			{
+				var refGuidField = ReflectionHelper.GetField(item, "m_guid");
+				ReflectionHelper.SetField(refGuidField, "m_guid", newGuid);
+			}
+		}
+
+		/// <summary>
+		/// Use reflection to set the guid on a variant form. May not work for all kinds of tests or appropriately be editing the database.
+		/// Because changing the Guid causes teardown problem, it must be reset prior to teardown (hence the Disposable <returns/>)
+		/// </summary>
+		internal static TempGuidOn<ILexEntryRef> CreateVariantForm(FdoCache cache, IVariantComponentLexeme main, ILexEntry variantForm, Guid guid,
+			string type = TestVariantName)
+		{
+			return new TempGuidOn<ILexEntryRef>(CreateVariantForm(cache, main, variantForm, type), guid);
+		}
+
 		/// <summary>
 		/// 'internal static' so Reversal tests can use it
 		/// </summary>
-		internal static ILexEntryRef CreateVariantForm(FdoCache cache, IVariantComponentLexeme main, ILexEntry variantForm, ILexEntryType typeToUse=null)
+		internal static ILexEntryRef CreateVariantForm(FdoCache cache, IVariantComponentLexeme main, ILexEntry variantForm, string type = TestVariantName)
 		{
 			var owningList = cache.LangProject.LexDbOA.VariantEntryTypesOA;
 			Assert.IsNotNull(owningList, "No VariantEntryTypes property on Lexicon object.");
-			ILexEntryType varType;
-			if (typeToUse!=null)
-			{
-				varType = typeToUse;
-			}
-			else
+			var varType = owningList.PossibilitiesOS.LastOrDefault(poss => poss.Name.AnalysisDefaultWritingSystem.Text == type) as ILexEntryType;
+			if (varType == null && type != null) // if this type doesn't exist, create it
 			{
 				varType = cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>().Create();
 				owningList.PossibilitiesOS.Add(varType);
-				var ws = cache.DefaultAnalWs;
-				varType.Name.set_String(ws, TestVariantName);
+				varType.Name.set_String(cache.DefaultAnalWs, type);
 			}
-			return variantForm.MakeVariantOf(main, varType);
+			var refOut = variantForm.MakeVariantOf(main, varType);
+			// ILexEntry.MakeVariantOf sets a Type even if null is specified. But we want to test typeless variants, so clear them if null is specified.
+			if (type == null)
+				refOut.VariantEntryTypesRS.Clear();
+			return refOut;
 		}
 
-		internal static ILexEntryRef CreateComplexForm(FdoCache fdoCache, ICmObject main, ILexEntry complexForm, bool subentry)
+		/// <summary>
+		/// Use reflection to set the guid on a complex form. May not work for all kinds of tests or appropriately be editing the database.
+		/// Because changing the Guid causes teardown problem, it must be reset prior to teardown (hence the Disposable <returns/>)
+		/// </summary>
+		internal static TempGuidOn<ILexEntryRef> CreateComplexForm(FdoCache cache, IVariantComponentLexeme main, ILexEntry complexForm, Guid guid,
+			bool subentry)
 		{
-			var complexEntryRef = fdoCache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
-			complexForm.EntryRefsOS.Add(complexEntryRef);
-			var complexEntryType = (ILexEntryType) fdoCache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS[0];
-			var complexEntryTypeAbbrText = complexEntryType.Abbreviation.BestAnalysisAlternative.Text;
-			var complexEntryTypeRevAbbr = complexEntryType.ReverseAbbr;
-			// If there is no reverseAbbr, generate one from the forward abbr (e.g. "comp. of") by trimming the trailing " of"
-			if(complexEntryTypeRevAbbr.BestAnalysisAlternative.Equals(complexEntryTypeRevAbbr.NotFoundTss))
-				complexEntryTypeRevAbbr.SetAnalysisDefaultWritingSystem(complexEntryTypeAbbrText.Substring(0, complexEntryTypeAbbrText.Length - 3));
-			complexEntryRef.ComplexEntryTypesRS.Add(complexEntryType);
-			complexEntryRef.RefType = LexEntryRefTags.krtComplexForm;
-			complexEntryRef.ComponentLexemesRS.Add(main);
-			if (subentry)
-				complexEntryRef.PrimaryLexemesRS.Add(main);
-			else
-				complexEntryRef.ShowComplexFormsInRS.Add(main);
-			return complexEntryRef;
+			return new TempGuidOn<ILexEntryRef>(CreateComplexForm(cache, main, complexForm, subentry), guid);
 		}
 
-		internal static ILexEntryRef CreateComplexForm(FdoCache fdoCache, ICmObject main, ILexEntry complexForm, bool subentry, byte complexFormTypeIndex)
+		internal static ILexEntryRef CreateComplexForm(FdoCache fdoCache, ICmObject main, ILexEntry complexForm, bool subentry, byte complexFormTypeIndex = 0)
 		{
 			var complexEntryRef = fdoCache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
 			complexForm.EntryRefsOS.Add(complexEntryRef);

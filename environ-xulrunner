@@ -5,4 +5,6 @@ else
 	XULRUNNER=${BASE}/Output_${ARCH}/${BUILD}/Firefox
 fi
 LD_LIBRARY_PATH=${XULRUNNER}:${LD_LIBRARY_PATH}
+# REVIEW (Hasso) 2016.08: setting LD_PRELOAD here generates 5500 failed load attempts in a Jenkins build,
+# so perhaps we should wait to preload until later in the build (and also when we run FLEx)
 LD_PRELOAD=libgeckofix.so

@@ -4,8 +4,6 @@
 
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.FDOTests;
-using System.Linq;
-using SIL.FieldWorks.FDO;
 
 // ReSharper disable InconsistentNaming
 
@@ -22,7 +20,7 @@ namespace SIL.FieldWorks.XWorks
 			configModel.IsRootBased = true;
 			var mainEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
 			var minorEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
-			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, mainEntry, minorEntry, Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.First() as ILexEntryType);
+			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, mainEntry, minorEntry, "Dialectal Variant");
 
 			Assert.AreEqual(1, DictionaryExportService.CountTimesGenerated(Cache, configModel, minorEntry.Hvo), "Should be generated once");
 
@@ -41,7 +39,7 @@ namespace SIL.FieldWorks.XWorks
 			configModel.IsRootBased = false;
 			var mainEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
 			var minorEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
-			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, mainEntry, minorEntry, Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.First() as ILexEntryType);
+			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, mainEntry, minorEntry, "Dialectal Variant");
 
 			Assert.AreEqual(1, DictionaryExportService.CountTimesGenerated(Cache, configModel, minorEntry.Hvo), "Should be generated once");
 
