@@ -50,8 +50,9 @@ namespace SIL.FieldWorks.XWorks
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			LoadBulletUnicodes();
 			LoadNumberingStyles();
-			GenerateCssForDefaultStyles(mediator, mediatorstyleSheet, styleSheet, model, cache);
+			GenerateCssForDefaultStyles(mediator, mediatorstyleSheet, styleSheet, model);
 			MakeLinksLookLikePlainText(styleSheet);
+			GenerateBidirectionalCssShim(styleSheet);
 			GenerateCssForAudioWs(styleSheet, cache);
 			foreach(var configNode in model.Parts.Where(x => x.IsEnabled).Concat(model.SharedItems.Where(x => x.Parent != null)))
 			{
@@ -62,12 +63,12 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static void GenerateCssForDefaultStyles(Mediator mediator, FwStyleSheet mediatorstyleSheet,
-			StyleSheet styleSheet, DictionaryConfigurationModel model, FdoCache cache)
+			StyleSheet styleSheet, DictionaryConfigurationModel model)
 		{
 			if (mediatorstyleSheet == null) return;
 			if (mediatorstyleSheet.Styles.Contains("Normal"))
 			{
-				GenerateCssForWsSpanWithNormalStyle(styleSheet, mediator, cache);
+				GenerateCssForWsSpanWithNormalStyle(styleSheet, mediator);
 			}
 			if (mediatorstyleSheet.Styles.Contains(DictionaryNormal))
 			{
@@ -89,7 +90,34 @@ namespace SIL.FieldWorks.XWorks
 			styleSheet.Rules.Add(rule);
 		}
 
-		private static void GenerateCssForWsSpanWithNormalStyle(StyleSheet styleSheet, Mediator mediator, FdoCache cache)
+		/// <summary>
+		/// Generate a CSS Shim needed to make bidirectional text render properly in browsers older than Firefox 47
+		/// See https://www.w3.org/International/articles/inline-bidi-markup/#cssshim
+		/// </summary>
+		private static void GenerateBidirectionalCssShim(StyleSheet styleSheet)
+		{
+			var rule = new StyleRule { Value = "[dir='ltr'], [dir='rtl']" };
+			rule.Declarations.Properties.AddRange(new []
+			{
+				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "-webkit-isolate") },
+				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "-moz-isolate") },
+				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "-ms-isolate") },
+				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "isolate") }
+			});
+			styleSheet.Rules.Add(rule);
+			rule = new StyleRule { Value = "bdo[dir='ltr'], bdo[dir='rtl']" };
+			rule.Declarations.Properties.AddRange(new []
+			{
+				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "bidi-override") },
+				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "-webkit-isolate-override") },
+				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "-moz-isolate-override") },
+				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "-ms-isolate-override") },
+				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "isolate-override") }
+			});
+			styleSheet.Rules.Add(rule);
+		}
+
+		private static void GenerateCssForWsSpanWithNormalStyle(StyleSheet styleSheet, Mediator mediator)
 		{
 			// Generate the rules for the programmatic default style info (
 			var defaultStyleProps = GetOnlyCharacterStyle(GenerateCssStyleFromFwStyleSheet("Normal", DefaultStyle, mediator));

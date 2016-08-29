@@ -240,6 +240,21 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForConfiguration_GeneratesShimForBidirectionalText()
+		{
+			var mainEntryNode = new ConfigurableDictionaryNode { FieldDescription = "LexEntry" };
+			PopulateFieldsForTesting(mainEntryNode);
+
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.That(cssResult, Contains.Substring("[dir='ltr'], [dir='rtl']"));
+			Assert.That(Regex.Match(cssResult, @"bdo\[dir='ltr'\], bdo\[dir='rtl'\]\s*{[^}]*unicode-bidi:\s*-moz-isolate-override;").Success,
+				"Missing at least one BiDirectional Override rule");
+			// If that much is found, it should be ok. No need to test all 9 rules.
+		}
+
+		[Test]
 		public void GenerateCssForConfiguration_BeforeAfterSpanConfigGeneratesBeforeAfterCss()
 		{
 			var headwordNode = new ConfigurableDictionaryNode
