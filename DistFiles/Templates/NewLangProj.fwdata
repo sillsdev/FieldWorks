@@ -312,6 +312,11 @@
 <Abbreviation>
 <AUni ws="en">unspec. var.</AUni>
 </Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A variant form that hasn't been labeled as a specific kind of variant.</Run>
+</AStr>
+</Description>
 <IsProtected val="true" />
 <Name>
 <AUni ws="en">Unspecified Variant</AUni>
@@ -2001,7 +2006,7 @@
 </Abbreviation>
 <Description>
 <AStr ws="en">
-<Run ws="en"></Run>
+<Run ws="en">A complex form that hasn't been labeled as a specific kind of complex form.</Run>
 </AStr>
 </Description>
 <IsProtected val="true" />
