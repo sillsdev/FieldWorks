@@ -96,7 +96,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private static void GenerateBidirectionalCssShim(StyleSheet styleSheet)
 		{
-			var rule = new StyleRule { Value = "[dir='ltr'], [dir='rtl']" };
+			var rule = new StyleRule { Value = "*[dir='ltr'], *[dir='rtl']" };
 			rule.Declarations.Properties.AddRange(new []
 			{
 				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "-webkit-isolate") },
