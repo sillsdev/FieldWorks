@@ -1531,6 +1531,63 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForConfiguration_GeneratesVariantNameSuffixBeforeBetweenAfter()
+		{
+			var variantFormTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				Before = "<",
+				Between = ",",
+				After = ">"
+			};
+			var variantFormTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				CSSClassNameOverride = "variantentrytypes",
+				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNameNode },
+			};
+			var variantNode = new ConfigurableDictionaryNode
+			{
+				Label = "Variant Forms",
+				LabelSuffix = "Inflectional Variants",
+				FieldDescription = "VariantFormEntryBackRefs",
+				IsDuplicate = true,
+				Before = "[",
+				Between = "; ",
+				After = "]",
+				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNode }
+			};
+			var mainHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				CSSClassNameOverride = "entry"
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode, variantNode },
+				FieldDescription = "LexEntry"
+			};
+
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
+			PopulateFieldsForTesting(entry);
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .variantformentrybackrefs_inflectional-variants:before{.*content:'\[';.*}",
+				RegexOptions.Singleline).Success, "Before not generated for Variant Entry.");
+			Assert.IsTrue(Regex.Match(cssResult, @".lexentry .variantformentrybackrefs_inflectional-variants> .variantformentrybackref_inflectional-variants\+ .variantformentrybackref_inflectional-variants:before{.*content:'\; ';.*}",
+				RegexOptions.Singleline).Success, "Between not generated Variant Entry.");
+			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .variantformentrybackrefs_inflectional-variants:after{.*content:'\]';.*}",
+				RegexOptions.Singleline).Success, "After not generated Variant Entry.");
+			Assert.False(Regex.Match(cssResult, @".lexentry .variantformentrybackrefs_inflectional-variants> .span\+ .span:before").Success);
+			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .variantformentrybackrefs_inflectional-variants> .variantentrytypes .variantentrytype> .name:before{.*content:'<';.*}",
+				RegexOptions.Singleline).Success, "Before not generated Variant Entry Type.");
+			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .variantformentrybackrefs_inflectional-variants> .variantentrytypes .variantentrytype .name> .nam\+ .nam:before{.*content:',';.*}",
+				RegexOptions.Singleline).Success, "Between not generated Variant Entry Type.");
+			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .variantformentrybackrefs_inflectional-variants> .variantentrytypes .variantentrytype> .name:after{.*content:'>';.*}",
+				RegexOptions.Singleline).Success, "After not generated Variant Entry Type.");
+		}
+
+		[Test]
 		public void GenerateCssForConfiguration_SenseComplexFormsNotSubEntriesHeadWord()
 		{
 			var form = new ConfigurableDictionaryNode

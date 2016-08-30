@@ -1564,7 +1564,6 @@ namespace SIL.FieldWorks.XWorks
 								.OrderBy(variant => variant.VariantEntryTypesRS.FirstOrDefault())
 								.ThenBy(variant => variant.Guid)
 								.Where(variant => pubDecorator == null || !pubDecorator.IsExcludedObject(variant));
-
 						var variantFormTypes = settings.Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.ToList();
 						using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings {ConformanceLevel = ConformanceLevel.Fragment}))
 						{
@@ -1578,28 +1577,16 @@ namespace SIL.FieldWorks.XWorks
 										{
 											xw.WriteRaw(WriteRawElementContents("span",
 												GenerateCollectionItemContent(variantEntryTypeNode, pubDecorator, variantFormType,
-													variantFormType.Owner, settings, ref previousType), variantEntryTypeNode));
+													variantFormType.Owner, settings, ref previousType, ""), variantEntryTypeNode));
 											previousType = variantFormType.SortKey;
 										}
-
-										xw.WriteStartElement(GetElementNameForProperty(config));
-										WriteCollectionItemClassAttribute(config, xw);
-
-										foreach (var child in config.Children.Where(x => x.FieldDescription != "VariantEntryTypesRS"))
-										{
-											xw.WriteRaw(GenerateXHTMLForFieldByReflection(colItem, child, pubDecorator, settings));
-										}
-
-										xw.WriteEndElement();
+										xw.WriteRaw(GenerateCollectionItemContent(config, pubDecorator, colItem, collectionOwner, settings, ref previousType, "VariantEntryTypesRS"));
 									}
 								}
 							}
 							foreach (var entry in collection.Cast<ILexEntryRef>().Where(item => !item.VariantEntryTypesRS.Any()))
 							{
-								foreach (var child in config.Children)
-								{
-									xw.WriteRaw(GenerateXHTMLForFieldByReflection(entry, child, pubDecorator, settings));
-								}
+								xw.WriteRaw(GenerateCollectionItemContent(config, pubDecorator, entry, collectionOwner, settings, ref previousType, "VariantEntryTypesRS"));
 							}
 							xw.Flush();
 						}
@@ -1624,28 +1611,16 @@ namespace SIL.FieldWorks.XWorks
 									if (previousType != complexFormType.SortKey)
 									{
 										xw.WriteRaw(WriteRawElementContents("span", GenerateCollectionItemContent(complexEntryTypeNode, pubDecorator, complexFormType,
-											complexFormType.Owner, settings, ref previousType), complexEntryTypeNode));
+											complexFormType.Owner, settings, ref previousType, ""), complexEntryTypeNode));
 										previousType = complexFormType.SortKey;
 									}
-
-									xw.WriteStartElement(GetElementNameForProperty(config));
-									WriteCollectionItemClassAttribute(config, xw);
-
-									foreach (var child in config.Children.Where(x => x.FieldDescription != "ComplexEntryTypesRS"))
-									{
-										xw.WriteRaw(GenerateXHTMLForFieldByReflection(colItem, child, pubDecorator, settings));
-									}
-
-									xw.WriteEndElement();
+									xw.WriteRaw(GenerateCollectionItemContent(config, pubDecorator, colItem, collectionOwner, settings, ref previousType, "ComplexEntryTypesRS"));
 								}
 							}
 						}
 						foreach (var entry in entriesWithNoType.Distinct())
 						{
-							foreach (var child in config.Children)
-							{
-								xw.WriteRaw(GenerateXHTMLForFieldByReflection(entry, child, pubDecorator, settings));
-							}
+							xw.WriteRaw(GenerateCollectionItemContent(config, pubDecorator, entry, collectionOwner, settings, ref previousType, "ComplexEntryTypesRS"));
 						}
 						xw.Flush();
 					}
@@ -1660,7 +1635,7 @@ namespace SIL.FieldWorks.XWorks
 							// See https://jira.sil.org/browse/LT-15697 and https://jira.sil.org/browse/LT-16775.
 							continue;
 						}
-						bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings, ref previousType));
+						bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings, ref previousType, ""));
 					}
 				}
 			}
@@ -1921,7 +1896,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static string GenerateCollectionItemContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
-			object item, object collectionOwner, GeneratorSettings settings, ref string previousType)
+			object item, object collectionOwner, GeneratorSettings settings, ref string previousType, string factoredTypeField)
 		{
 			if (item is IMultiStringAccessor)
 				return GenerateXHTMLForStrings((IMultiStringAccessor)item, config, settings);
@@ -1957,7 +1932,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
-				foreach (var child in config.ReferencedOrDirectChildren)
+				// If a type field has been factored out and generated then skip generating it here
+				foreach (var child in config.ReferencedOrDirectChildren.Where(child => child.FieldDescription != factoredTypeField))
 				{
 					bldr.Append(GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings));
 				}
@@ -2003,7 +1979,7 @@ namespace SIL.FieldWorks.XWorks
 						reference.OwnerType.MappingType == Convert.ToInt32(MappingTypes.kmtSenseSequence) ||
 						reference.OwnerType.MappingType == Convert.ToInt32(MappingTypes.kmtEntryOrSenseSequence)))
 					{
-						var content = GenerateCollectionItemContent(child, publicationDecorator, target, reference, settings, ref previousType);
+						var content = GenerateCollectionItemContent(child, publicationDecorator, target, reference, settings, ref previousType, "");
 						bldr.Append(content);
 						if (LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)reference.OwnerType.MappingType) &&
 							LexRefDirection(reference, collectionOwner) == ":r")

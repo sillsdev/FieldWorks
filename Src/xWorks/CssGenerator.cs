@@ -612,11 +612,7 @@ namespace SIL.FieldWorks.XWorks
 			out string baseSelection, FdoCache cache, Mediator mediator)
 		{
 			// TODO: REFACTOR this method to handle certain nodes more specifically. The options type should be used to branch into node specific code.
-			if (configNode.CSSClassNameOverride == "complexformtypes")
-				parentSelector = parentSelector.Replace(".visiblecomplexformbackrefs .visiblecomplexformbackref", ".visiblecomplexformbackrefs");
-			else if (configNode.CSSClassNameOverride == "variantentrytypes" && configNode.Parent.DisplayLabel == "Variant Forms")
-				parentSelector = parentSelector.Replace(".variantformentrybackrefs .variantformentrybackref", ".variantformentrybackrefs");
-
+			parentSelector = GetParentForFactoredReference(parentSelector, configNode);
 			var rules = new List<StyleRule>();
 			var fwStyles = FontHeightAdjuster.StyleSheetFromMediator(mediator);
 			// simpleSelector is used for nodes that use before and after.  Collection type nodes produce wrong
@@ -671,7 +667,9 @@ namespace SIL.FieldWorks.XWorks
 							betweenSelector = String.Format("{0}> {1}>{2}.sensecontent+{2}:before", parentSelector, collectionSelector, " span");
 						else if (configNode.FieldDescription == "PicturesOfSenses")
 							betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, " div");
-						else if (configNode.DisplayLabel != "Variant Forms")
+						// Skip between selector for factored references
+						else if (configNode.FieldDescription != "VariantFormEntryBackRefs" && configNode.FieldDescription != "VisibleVariantEntryRefs" &&
+							configNode.SubField != "VariantFormEntryBackRefs")
 							betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, " span");
 						betweenRule = new StyleRule(dec) { Value = betweenSelector };
 					}
@@ -714,6 +712,23 @@ namespace SIL.FieldWorks.XWorks
 				rules.Add(afterRule);
 			}
 			return rules;
+		}
+
+		private static string GetParentForFactoredReference(string parentSelector, ConfigurableDictionaryNode configNode)
+		{
+			if (configNode.CSSClassNameOverride == "complexformtypes")
+				parentSelector = parentSelector.Replace(".visiblecomplexformbackrefs .visiblecomplexformbackref", ".visiblecomplexformbackrefs");
+			else if (configNode.CSSClassNameOverride == "variantentrytypes" && ((configNode.Parent.Label == "Variant Forms" ||
+				configNode.Parent.Label == "Variants of Sense") && !configNode.Parent.IsDuplicate))
+				parentSelector = parentSelector.Replace(".variantformentrybackrefs .variantformentrybackref", ".variantformentrybackrefs");
+			else if (configNode.CSSClassNameOverride == "variantentrytypes" && (configNode.Parent.Label == "Variant Forms" && configNode.Parent.IsDuplicate))
+				parentSelector = parentSelector.Replace(".variantformentrybackrefs_inflectional-variants .variantformentrybackref_inflectional-variants",
+				".variantformentrybackrefs_inflectional-variants");
+			else if (configNode.CSSClassNameOverride == "variantentrytypes" && configNode.Parent.Label == "Variant of")
+				parentSelector = parentSelector.Replace(".visiblevariantentryrefs .visiblevariantentryref", ".visiblevariantentryrefs");
+			else if (configNode.CSSClassNameOverride == "variantentrytypes" && configNode.Parent.Label == "Variants (of Entry)")
+				parentSelector = parentSelector.Replace(".entry_variantformentrybackrefs .entry_variantformentrybackref", ".entry_variantformentrybackrefs");
+			return parentSelector;
 		}
 
 		/// <summary>
