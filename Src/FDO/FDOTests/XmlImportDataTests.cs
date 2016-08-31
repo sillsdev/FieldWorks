@@ -2020,6 +2020,67 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		///--------------------------------------------------------------------------------------
 		/// <summary>
+		/// Tests the method ImportData() with the 'Create missing link entries' flag turned off and with
+		/// a missing Component Lexeme link.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ImportWithoutCreatingMissingLinkEntries_ComponentLexemes()
+		{
+			var input = @"<LexDb xmlns:msxsl='urn:schemas-microsoft-com:xslt' xmlns:user='urn:my-scripts'>
+				<Entries>
+					<LexEntry>
+						<LexemeForm>
+							<MoStemAllomorph>
+								<MorphType>
+									<Link ws='en' name='stem' />
+								</MorphType>
+								<Form>
+									<AUni ws='fr'>a</AUni>
+								</Form>
+							</MoStemAllomorph>
+						</LexemeForm>
+						<EntryRefs>
+							<LexEntryRef>
+								<ComponentLexemes>
+									<Link ws='fr' entry='ab' />
+								</ComponentLexemes>
+							</LexEntryRef>
+						</EntryRefs>
+					</LexEntry>
+				</Entries>
+			</LexDb>";
+			Assert.AreEqual(0, m_cache.LangProject.LexDbOA.Entries.Count(), "The lexicon starts out empty.");
+			UndoableUnitOfWorkHelper.Do("do", "undo", m_cache.ActionHandlerAccessor, () =>
+			{
+				// The 'real' import process loads default reference types
+				// The test will create the ones we need, but we need a list to put them in!
+				m_cache.LangProject.LexDbOA.ReferencesOA = m_cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+			});
+			var xid = new XmlImportData(m_cache, false); // false -> fCreateMissingLinks flag (this is the new default)
+			var sbLog = new StringBuilder();
+			using (var rdr = new StringReader(input))
+			{
+				xid.ImportData(rdr, new StringWriter(sbLog), null);
+			}
+			// The main entries is 'a'. The xslt has already created it.
+			// Because the fCreateMissingLinks flag is false, the import should NOT create entry ab,
+			// but WILL put a message in a's ImportResidue.
+			Assert.AreEqual(1, m_cache.LangProject.LexDbOA.Entries.Count());
+			string sLog = sbLog.ToString();
+			Assert.IsFalse(String.IsNullOrEmpty(sLog), "There should be some log information!");
+			string[] rgsLog = sLog.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+			const string msg = "data stream: Could not create {0} link to entry \"{1}\", because it does not exist.";
+			var msgb = string.Format(msg, "Components", "ab");
+			CollectionAssert.Contains(rgsLog, msgb);
+			var le = m_cache.LangProject.LexDbOA.Entries.First(e => e.LexemeFormOA.Form.BestVernacularAlternative.Text == "a");
+			Assert.NotNull(le, "Should be an 'a' lexeme");
+			var dsLen = "data stream: ".Length;
+			Assert.AreEqual(msgb.Substring(dsLen), le.ImportResidue.Text, "Message about Components should be in entry Import Residue");
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
 		/// Tests that a lexentry with multiple complex forms retains the order of the subentries
 		/// </summary>
 		///--------------------------------------------------------------------------------------

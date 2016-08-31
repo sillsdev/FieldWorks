@@ -649,7 +649,7 @@
     <value>7</value>
   </data>
   <data name="m_chkCreateMissingLinks.Text" xml:space="preserve">
-    <value>Create entries for missing Lexical Relation/Cross Reference targets</value>
+    <value>Create entries for missing reference targets.</value>
   </data>
   <data name="&gt;&gt;m_chkCreateMissingLinks.Name" xml:space="preserve">
     <value>m_chkCreateMissingLinks</value>
