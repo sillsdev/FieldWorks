@@ -1722,6 +1722,31 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			}
 		}
 
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_DuplicatedConvertedNodesDoesNotBreakOriginal()
+		{
+			const string refEntriesPath = "//ConfigurationItem[@name='Minor Entry']/ConfigurationItem[@name='Components']/ConfigurationItem[@name='Referenced Entries']/";
+			using (var convertedModelFile = new TempFile())
+			{
+				var convertedMinorEntry = BuildConvertedReferenceEntryNodes(true, true, true, true);
+				var componentsDup = convertedMinorEntry.Parts[0].Children[0].Children[0].DuplicateAmongSiblings();
+				componentsDup.Children.First(c => c.Label == "Gloss").Before = null;
+				componentsDup.Children.First(c => c.Label == "Gloss").After = null;
+				componentsDup.Children.First(c => c.Label == "Gloss").Between = null;
+				componentsDup.Children.First(c => c.Label == "Summary Definition").Before = null;
+				componentsDup.Children.First(c => c.Label == "Summary Definition").After = null;
+				componentsDup.Children.First(c => c.Label == "Summary Definition").Between = null;
+				convertedMinorEntry.FilePath = convertedModelFile.Path;
+				var defaultMinorEntry = BuildCurrentDefaultReferenceEntryNodes(false, false);
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntry, defaultMinorEntry);
+				convertedMinorEntry.Save();
+				// There should be one node with Before on Gloss (or Summary Definition) and one with no such content
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Gloss (or Summary Definition)' and @before]", 1);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Gloss (or Summary Definition)']", 2);
+			}
+		}
+
 		#endregion
 
 		private static DictionaryConfigurationModel BuildConvertedComplexEntryTypeNodes()

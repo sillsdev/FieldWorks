@@ -651,7 +651,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		/// </summary>
 		private void ConvertReferencedEntries(ConfigurableDictionaryNode convertedNode, ConfigurableDictionaryNode defaultNode)
 		{
-			var newChildren = new List<ConfigurableDictionaryNode>(defaultNode.Children);
+			var newChildren = new List<ConfigurableDictionaryNode>(defaultNode.Children.Select(n => n.DeepCloneUnderParent(convertedNode)));
 			var newHeadword = newChildren.First(child => child.Label == "Referenced Headword");
 			var oldHeadwordNode = convertedNode.Children.First(child => child.Label == "Referenced Headword");
 			// Usually "Referenced Sense Headword" but in one case it is "Referenced Sense"
@@ -716,6 +716,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		private bool IsFieldValid(string field, string type, out bool isCustom)
 		{
 			isCustom = false;
+			if (type == null)
+				return false;
 			try
 			{
 				// Convert an interface type name to a class type name if necessary.
