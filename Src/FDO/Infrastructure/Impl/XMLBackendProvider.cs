@@ -10,13 +10,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using Palaso.IO.FileLock;
 using Palaso.Reporting;
+using SIL.CoreImpl;
+using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
@@ -625,7 +626,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 									keepReading = reader.IsStartElement();
 									// But, add updated data for the modified record.
 									DataSortingService.WriteElement(writer,
-										DataSortingService.SortMainElement(sortableProperties, DataSortingService.Utf8.GetString(dirtballXml)));
+										DataSortingService.SortMainElement(sortableProperties,
+											DataSortingService.Utf8.GetString(dirtballXml)));
 									workItem.Dirtballs.Remove(currentGuid);
 									transferUntouched = false;
 								}
@@ -640,7 +642,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 							foreach (var newbieXml in workItem.Newbies.Values)
 							{
 								DataSortingService.WriteElement(writer,
-									DataSortingService.SortMainElement(sortableProperties, DataSortingService.Utf8.GetString(newbieXml)));
+									DataSortingService.SortMainElement(sortableProperties,
+										DataSortingService.Utf8.GetString(newbieXml)));
 							}
 						}
 
@@ -651,9 +654,20 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			}
 			catch (Exception e)
 			{
-				ReportProblem(String.Format(Strings.ksCannotSave, ProjectId.Path, e.Message), tempPathname);
+				ReportProblem(String.Format(Strings.ksCannotSave, ProjectId.Path, e.Message,
+					e.GetType(), ApplicationName), tempPathname);
 			}
 			CopyTempFileToOriginal(fUseLocalTempFile, ProjectId.Path, tempPathname);
+		}
+
+		private static string ApplicationName
+		{
+			get
+			{
+				var attributes = Assembly.GetEntryAssembly().GetCustomAttributes(
+					typeof(AssemblyTitleAttribute), true).ToArray() as AssemblyTitleAttribute[];
+				return attributes.Length > 0 ? attributes[0].Title : "FieldWorks";
+			}
 		}
 
 		private void CopyTempFileToOriginal(bool fUseLocalTempFile, string mainPathname, string tempPathname)
@@ -686,7 +700,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			catch (Exception e)
 			{
 				// Here we keep the temp file...we got far enough that it may be useful.
-				ReportProblem(String.Format(Strings.ksCannotWriteBackup, ProjectId.Path, e.Message), null);
+				ReportProblem(String.Format(Strings.ksCannotWriteBackup, ProjectId.Path, e.Message,
+					e.GetType(), ApplicationName), null);
 				return;
 			}
 			m_lastWriteTime = File.GetLastWriteTimeUtc(mainPathname);
@@ -699,7 +714,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			File.SetLastWriteTimeUtc(mainPathname, m_lastWriteTime);
 		}
 
-		private bool IsLocalDrive(string path)
+		private static bool IsLocalDrive(string path)
 		{
 			if (path.StartsWith("\\\\"))
 				return false;

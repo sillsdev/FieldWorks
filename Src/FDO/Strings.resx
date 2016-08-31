@@ -611,12 +611,12 @@ Your changes to this entry will be discarded when you exit the project.</value>
     <value>an empty feature structure</value>
   </data>
   <data name="ksCannotSave" xml:space="preserve">
-    <value>FieldWorks cannot save your changes to {0}. It may be marked Read-only, or you may not have permission to write to the output directory. The file system reports
-{1}</value>
+    <value>{3} cannot save your changes to {0}. It may be marked Read-only, or you may not have permission to write to the output directory. The file system reports
+{1} ({2})</value>
   </data>
   <data name="ksCannotWriteBackup" xml:space="preserve">
-    <value>FieldWorks cannot save your changes, because it does not have permission to replace the file {0}. It may be marked Read-only, or you may not have permission to write in the folder. The file system reports
-{1}</value>
+    <value>{3} cannot save your changes, because it does not have permission to replace the file {0}. It may be marked Read-only, or you may not have permission to write in the folder. The file system reports
+{1} ({2})</value>
   </data>
   <data name="ksFileModifiedByOther" xml:space="preserve">
     <value>FieldWorks cannot safely save your changes, because another program has modified the file. Expected write time {0} but found {1}.</value>
