@@ -1526,6 +1526,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		private const string GlsAfter = "G.after";
 		private const string HwBetween = "H.between";
 		private const string GlsBetween = "G.between";
+		private const string GlsStyle = "G.Style";
 
 		private static DictionaryConfigurationModel BuildConvertedReferenceEntryNodes(bool enableHeadword,
 			bool enableSummaryDef, bool enableSenseHeadWord, bool enableGloss)
@@ -1533,7 +1534,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var headWord = new ConfigurableDictionaryNode { Label = "Referenced Headword", IsEnabled = enableHeadword, Before = HwBefore};
 			var summaryDef = new ConfigurableDictionaryNode { Label = "Summary Definition", IsEnabled = enableSummaryDef, Before = GlsBefore};
 			var senseHeadWord = new ConfigurableDictionaryNode { Label = "Referenced Sense Headword", IsEnabled = enableSenseHeadWord, Between = HwBetween, After = HwAfter };
-			var gloss = new ConfigurableDictionaryNode { Label = "Gloss", IsEnabled = enableGloss, Between = GlsBetween, After = GlsAfter};
+			var gloss = new ConfigurableDictionaryNode { Label = "Gloss", IsEnabled = enableGloss, Between = GlsBetween, After = GlsAfter, Style = GlsStyle};
 			var referencedEntriesNode = new ConfigurableDictionaryNode
 			{
 				Label = "Referenced Entries",
@@ -1734,16 +1735,22 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				componentsDup.Children.First(c => c.Label == "Gloss").Before = null;
 				componentsDup.Children.First(c => c.Label == "Gloss").After = null;
 				componentsDup.Children.First(c => c.Label == "Gloss").Between = null;
+				componentsDup.Children.First(c => c.Label == "Gloss").Style = null;
 				componentsDup.Children.First(c => c.Label == "Summary Definition").Before = null;
 				componentsDup.Children.First(c => c.Label == "Summary Definition").After = null;
 				componentsDup.Children.First(c => c.Label == "Summary Definition").Between = null;
+				componentsDup.Children.First(c => c.Label == "Summary Definition").Style = null;
+
 				convertedMinorEntry.FilePath = convertedModelFile.Path;
 				var defaultMinorEntry = BuildCurrentDefaultReferenceEntryNodes(false, false);
 				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntry, defaultMinorEntry);
 				convertedMinorEntry.Save();
 				// There should be one node with Before on Gloss (or Summary Definition) and one with no such content
-				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Gloss (or Summary Definition)' and @before]", 1);
 				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Gloss (or Summary Definition)']", 2);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Gloss (or Summary Definition)' and @before]", 1);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Gloss (or Summary Definition)' and @after]", 1);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Gloss (or Summary Definition)' and @between]", 1);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Gloss (or Summary Definition)' and @style]", 1);
 			}
 		}
 

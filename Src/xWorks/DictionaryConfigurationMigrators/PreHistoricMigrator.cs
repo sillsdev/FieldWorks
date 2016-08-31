@@ -675,6 +675,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			newGloss.Before = !string.IsNullOrEmpty(oldGlossNode.Before) ? oldGlossNode.Before : oldSummaryNode.Before;
 			newGloss.Between = !string.IsNullOrEmpty(oldGlossNode.Between) ? oldGlossNode.Between : oldSummaryNode.Between;
 			newGloss.After = !string.IsNullOrEmpty(oldGlossNode.After) ? oldGlossNode.After : oldSummaryNode.After;
+			newGloss.Style = !string.IsNullOrEmpty(oldGlossNode.Style) ? oldGlossNode.Style : oldSummaryNode.Style;
 			// Set the new gloss options based off the old summary definition (or old gloss) settings
 			oldOptions = oldSummaryNode.DictionaryNodeOptions ?? oldGlossNode.DictionaryNodeOptions;
 			if (oldHeadwordNode.DictionaryNodeOptions != null)
