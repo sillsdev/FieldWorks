@@ -239,9 +239,23 @@ namespace SIL.FieldWorks.XWorks
 			parent.Children = new List<ConfigurableDictionaryNode> { groupNode };
 
 			// SUT
-			var duplicate = groupNode.DuplicateAmongSiblings(parent.Children);
+			var duplicate = groupNode.DuplicateAmongSiblings();
 			Assert.AreEqual(1, groupNode.Children.Count);
 			Assert.IsNull(duplicate.Children);
+		}
+
+		[Test]
+		public void DuplicateGroupNodeParentDoesDuplicateGroupNodeChildren()
+		{
+			var parent = new ConfigurableDictionaryNode();
+			var groupNode = new ConfigurableDictionaryNode { Parent = parent, DictionaryNodeOptions = new DictionaryNodeGroupingOptions() };
+			var nodeB = new ConfigurableDictionaryNode { Parent = groupNode };
+			groupNode.Children = new List<ConfigurableDictionaryNode> { nodeB };
+			parent.Children = new List<ConfigurableDictionaryNode> { groupNode };
+
+			// SUT
+			var duplicate = parent.DuplicateAmongSiblings(new List<ConfigurableDictionaryNode>());
+			VerifyDuplication(duplicate, parent);
 		}
 
 		[Test]

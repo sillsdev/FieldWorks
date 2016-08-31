@@ -194,13 +194,13 @@ namespace SIL.FieldWorks.XWorks
 			// Deep-clone Parts
 			if (Parts != null)
 			{
-				clone.Parts = Parts.Select(node => node.DeepCloneUnderSameParent()).ToList();
+				clone.Parts = Parts.Select(node => node.DeepCloneUnderSameParent(true)).ToList();
 			}
 
 			// Deep-clone SharedItems
 			if (SharedItems != null)
 			{
-				clone.SharedItems = SharedItems.Select(node => node.DeepCloneUnderSameParent()).ToList();
+				clone.SharedItems = SharedItems.Select(node => node.DeepCloneUnderSameParent(true)).ToList();
 			}
 
 			// Clone Publications

@@ -620,7 +620,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					convertedNode.Children = new List<ConfigurableDictionaryNode>(currentDefaultNode.Children);
 					if (convertedNode.Label == "Subsenses")
 					{
-						convertedNode.Children = new List<ConfigurableDictionaryNode>(convertedNode.Parent.Children.Select(node => node.DeepCloneUnderParent(convertedNode)));
+						// considering these clone recursive because we are presently copying the entire model
+						convertedNode.Children = new List<ConfigurableDictionaryNode>(convertedNode.Parent.Children.Select(
+							node => node.DeepCloneUnderParent(convertedNode, true)));
 						CopyDefaultsIntoChildren(convertedModel, convertedNode, currentDefaultNode);
 					}
 				}

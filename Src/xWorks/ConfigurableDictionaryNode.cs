@@ -270,17 +270,21 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Clone this node. Point to the same Parent object. Deep-clone Children and DictionaryNodeOptions.
 		/// </summary>
-		/// <remarks>Grouping node children are not cloned</remarks>
-		internal ConfigurableDictionaryNode DeepCloneUnderSameParent()
+		/// <remarks>
+		/// Grouping node children are cloned only if this is a recursive call.
+		/// </remarks>
+		internal ConfigurableDictionaryNode DeepCloneUnderSameParent(bool isRecursiveCall = false)
 		{
-			return DeepCloneUnderParent(Parent);
+			return DeepCloneUnderParent(Parent, isRecursiveCall);
 		}
 
 		/// <summary>
 		/// Clone this node, point to the given Parent. Deep-clone Children and DictionaryNodeOptions
 		/// </summary>
-		/// <remarks>Grouping node children are not cloned</remarks>
-		internal ConfigurableDictionaryNode DeepCloneUnderParent(ConfigurableDictionaryNode parent)
+		/// <remarks>
+		/// Grouping node children are cloned only if this is a recursive call.
+		/// </remarks>
+		internal ConfigurableDictionaryNode DeepCloneUnderParent(ConfigurableDictionaryNode parent, bool isRecursiveCall = false)
 		{
 			var clone = new ConfigurableDictionaryNode();
 
@@ -296,25 +300,18 @@ namespace SIL.FieldWorks.XWorks
 			}
 			clone.Parent = parent;
 
-			// Deep-clone Children, but not of groups.
+			// Deep-clone Children
 			if (Children != null)
 			{
-				if (!(DictionaryNodeOptions is DictionaryNodeGroupingOptions))
+				if (isRecursiveCall || !(DictionaryNodeOptions is DictionaryNodeGroupingOptions))
 				{
-					var clonedChildren = new List<ConfigurableDictionaryNode>();
-					foreach (var child in Children)
-					{
-						var clonedChild = child.DeepCloneUnderSameParent();
-						// Cloned children should point to their newly-cloned parent
-						clonedChild.Parent = clone;
-						clonedChildren.Add(clonedChild);
-					}
-					clone.Children = clonedChildren;
+					// Cloned children should point to their newly-cloned parent
+					clone.Children = Children.Select(child => child.DeepCloneUnderParent(clone, true)).ToList();
 				}
 				else
 				{
 					// Cloning children of a group creates problems because the children can be moved out of the group.
-					// Also the only expected use of cloning a group is to get a new group to put different children under
+					// Also the only expected use of cloning a group is to get a new group to group different children.
 					clone.Children = null;
 				}
 			}

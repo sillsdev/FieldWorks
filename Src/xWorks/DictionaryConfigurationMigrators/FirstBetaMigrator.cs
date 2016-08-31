@@ -206,7 +206,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				else
 				{
 					int indexOfNewChild = defaultNode.Children.FindIndex(n => n.Label == newChild.Label);
-					InsertNewNodeIntoOldConfig(oldConfigNode, newChild.DeepCloneUnderParent(oldConfigNode), defaultNode, indexOfNewChild);
+					InsertNewNodeIntoOldConfig(oldConfigNode, newChild.DeepCloneUnderParent(oldConfigNode, true), defaultNode, indexOfNewChild);
 				}
 			}
 		}
@@ -231,15 +231,15 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			// Next find any groups at this level and move the matching children defaultChildren into the group
 			foreach (var group in defaultNode.Children.Where(n => n.DictionaryNodeOptions is DictionaryNodeGroupingOptions))
 			{
-				var groupChildList = new List<ConfigurableDictionaryNode>();
+				// DeepClone skips children for grouping nodes. We want this, because we are going to move children in from the old configNode.
 				var groupNode = group.DeepCloneUnderParent(oldConfigNode);
-				groupNode.Children = groupChildList;
+				groupNode.Children = new List<ConfigurableDictionaryNode>();
 				for (var i = oldConfigNode.Children.Count - 1; i >= 0; --i)
 				{
 					var oldChild = oldConfigNode.Children[i];
 					if (group.Children.Any(groupChild => groupChild.Label == oldChild.Label))
 					{
-						groupChildList.Insert(0, oldChild);
+						groupNode.Children.Insert(0, oldChild);
 						oldChild.Parent = groupNode;
 						oldConfigNode.Children.RemoveAt(i);
 					}
