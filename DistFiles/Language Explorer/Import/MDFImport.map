@@ -93,8 +93,8 @@ Field Descriptions
 <field sfm="bb" name="Bibliography" type="string" lang="English">
 <meaning app="fw.sil.org" id="sbib"/>
 </field>
-<field sfm="bw" name="Borrowed word (loan)" type="string" lang="English">
-<meaning app="fw.sil.org" id="sires"/>
+<field sfm="bw" name="Borrowed word (language)" type="string" lang="English">
+<meaning app="fw.sil.org" id="etsl"/>
 </field>
 <field sfm="ce" name="Cross-ref. gloss (English)" type="string" lang="English">
 <meaning app="fw.sil.org" id="eires"/>

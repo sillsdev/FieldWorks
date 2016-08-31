@@ -2089,7 +2089,7 @@
     <value>4</value>
   </data>
   <data name="label2.Text" xml:space="preserve">
-    <value>Indicate any markup you have used in your data to identify character styles, writing systems, or direct formatting.</value>
+    <value>Indicate any markup you have used in your data to identify embedded character styles, writing systems, or direct formatting within fields.</value>
   </data>
   <data name="&gt;&gt;label2.Name" xml:space="preserve">
     <value>label2</value>

@@ -3371,6 +3371,13 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 					return m_cache.LangProject.LocationsOA;
 				case LexSenseTags.kflidStatus:						//CmPossibility
 					return m_cache.LangProject.StatusOA;
+				case LexEtymologyTags.kflidLanguage:				//CmPossibility
+					return m_cache.LangProject.LexDbOA.LanguagesOA;
+				case LexEntryTags.kflidDialectLabels:				//CmPossibility
+				case LexSenseTags.kflidDialectLabels:				//CmPossibility (purposeful fall-through)
+					return m_cache.LangProject.LexDbOA.DialectLabelsOA;
+				case LexExtendedNoteTags.kflidExtendedNoteType:		//CmPossibility
+					return m_cache.LangProject.LexDbOA.ExtendedNoteTypesOA;
 				default:
 					if (m_mdc.IsCustom(flid))
 					{

@@ -574,7 +574,7 @@
 		</Limitations>
 
 		<Extras>
-		  <Extra>Flex will create an Alternate Form in the entry with the
+		  <Extra>FLEx will create an Allomorph in the entry with the
 		  underlying form. It will have Is Abstract Form set to true. The
 		  Morph Type will be set based on the affix markers on the underlying
 		  form.</Extra>
@@ -584,10 +584,90 @@
   </Class>
 
   <Class name="Etymology" partOf="Entry Subentry">
-	<Field MDF="\ec" id="etc" multi="yes" property="Comment"
-		   signature="MultiString" type="string" uiname="Etymology Comment">
+	<Field MDF="\ea" id="eta" multi="yes" property="PrecComment"
+		   signature="MultiString" type="string" uiname="Etymology Preceding Annotation">
 	  <Help>
-		<Usage>When you have a marker that has a comment for the etymology of
+		<Usage>When you have a marker that has the annotation that precedes the form in the etymology of this entry.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>No</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\ea &lt; </Example>
+		  <Example>\es Old English </Example>
+			<Example></Example>
+		  <Example>\ea from </Example>
+		  <Example>\es Latin </Example>
+		  <Example>\et gustus </Example>
+		  <Example>\eg "tasting" </Example>
+		</Examples>
+
+	  </Help>
+	</Field>
+
+	<Field MDF="\eb" id="etb" multi="yes" property="Bibliography"
+		   signature="MultiString" type="string" uiname="Etymology Bibliographic Source">
+	  <Help>
+		<Usage>When you have a marker that shows the bibliographic citation for the etymology of this entry (not normally for printing).</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\eb Stevenson, Angus, ed.  Oxford Dictionary of English (3 ed.).  London: Oxford University Press, 2010.</Example>
+		</Examples>
+
+	  </Help>
+	</Field>
+
+	<Field MDF="\ec" id="etc" multi="yes" property="Note"
+		   signature="MultiString" type="string" uiname="Etymology Note">
+	  <Help>
+		<Usage>When you have a marker that has a note to the compiler for the etymology of
+		this entry (not normally for printing).</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\ec Need to find the reference for this.</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>There are separate fields for comments intended for the compiler (Etymology Note) versus comments intended
+		  to print in the dictionary after the etymology (Etymology Following Comment).</Limitation>
+		</Limitations>
+	  </Help>
+	</Field>
+
+	<Field MDF="\et" id="etf" list="no" multi="yes" property="Form"
+		   signature="MultiString" type="string" uiname="Etymology Source Form">
+	  <Help>
+		<Usage>When you have a marker that has the original form for the etymology of
 		this entry.</Usage>
 
 		<Settings>Set the Language Descriptor to the language of this
@@ -602,26 +682,24 @@
 		<Multilingual>Yes</Multilingual>
 
 		<Examples>
-		  <Example>\ec This was in use up until around 1890.</Example>
+		  <Example>\et gustus</Example>
 		</Examples>
 
 		<Limitations>
-		  <Limitation>Flex only allows one etymology cluster per entry, with a
-		  form, comment, gloss, and source.</Limitation>
+		  <Limitation>FLEx now allows more than one etymology cluster per entry, but it is not yet fully implemented.</Limitation>
 		</Limitations>
 	  </Help>
 	</Field>
 
-	<Field MDF="\et" id="etf" list="no" multi="yes" property="Form"
-		   signature="MultiUnicode" type="string" uiname="Etymology Form">
+	<Field MDF="\efc" id="etfc" multi="yes" property="Comment"
+		   signature="MultiString" type="string" uiname="Following Comment">
 	  <Help>
-		<Usage>When you have a marker that has the form of the etymology of
-		this entry.</Usage>
+		<Usage>When you have a marker that has a comment to be printed at the end of the etymology information of this entry.</Usage>
 
 		<Settings>Set the Language Descriptor to the language of this
 		field.</Settings>
 
-		<Mapping>No</Mapping>
+		<Mapping>Yes</Mapping>
 
 		<Appends>Yes, appends field contents into a single field.</Appends>
 
@@ -630,26 +708,25 @@
 		<Multilingual>Yes</Multilingual>
 
 		<Examples>
-		  <Example>\et gustus</Example>
+		  <Example>\efc This was in use up until around 1890.</Example>
 		</Examples>
 
 		<Limitations>
-		  <Limitation>Flex only allows one etymology cluster per entry, with a
-		  form, comment, gloss, and source.</Limitation>
+		  <Limitation>There are separate fields for comments intended for the compiler (Etymology Note) versus comments intended to print in the dictionary after the etymology (Etymology Following Comment).</Limitation>
 		</Limitations>
 	  </Help>
 	</Field>
 
 	<Field MDF="\eg" id="etg" multi="yes" property="Gloss"
-		   signature="MultiUnicode" type="string" uiname="Etymology Gloss">
+		   signature="MultiString" type="string" uiname="Etymology Gloss">
 	  <Help>
-		<Usage>When you have a marker that has a gloss for the etymology of
+		<Usage>When you have a marker that has a gloss for the original form in the etymology of
 		this entry.</Usage>
 
 		<Settings>Set the Language Descriptor to the language of this
 		field.</Settings>
 
-		<Mapping>No</Mapping>
+		<Mapping>Yes</Mapping>
 
 		<Appends>Yes, appends field contents into a single field.</Appends>
 
@@ -661,46 +738,70 @@
 		  <Example>\eg taste</Example>
 		</Examples>
 
+	  </Help>
+	</Field>
+
+	<Field MDF="\es" id="ets" multi="yes" property="LanguageNotes" signature="MultiString"
+		   type="string" uiname="Etymology Source Language Notes">
+	  <Help>
+		<Usage>When you have a marker that lists the source languages (as free-form
+		data) for the etymology of this entry.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single field.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\es Latin(?)</Example>
+		</Examples>
+
 		<Limitations>
-		  <Limitation>Flex only allows one etymology cluster per entry, with a
-		  form, comment, gloss, and source.</Limitation>
+		  <Limitation>The Source Language field is for list reference items.  The Source
+			Language Notes field is for free-form information about Source Languages.
+			Normally a single entry would use one or the other but not both.</Limitation>
+
 		</Limitations>
 	  </Help>
 	</Field>
 
-	<Field MDF="\es" id="ets" multi="no" property="Source" signature="Unicode"
-		   type="string" uiname="Etymology Source">
+	<Field MDF="\esl" id="etsl" list="yes" multi="yes" property="Language" signature="CmPossibility"
+		   type="string" uiname="Etymology Source Language">
 	  <Help>
-		<Usage>When you have a marker that has a source for the etymology of
-		this entry.</Usage>
+		<Usage>When you have a marker that lists the source languages for the etymology of
+		this entry in a standardized way, as list-reference items.</Usage>
 
 		<Settings>Set the Language Descriptor to the language of this
 		field.</Settings>
 
 		<Mapping>No</Mapping>
 
-		<Appends>Yes, appends field contents into a single field.</Appends>
+		<Appends>Yes, adds a new language link for each
+		field.</Appends>
 
-		<List>No</List>
+		<List>Yes</List>
 
 		<Multilingual>No</Multilingual>
 
 		<Examples>
-		  <Example>\es Latin</Example>
+		  <Example>\esl Latin</Example>
 		</Examples>
 
 		<Limitations>
-		  <Limitation>Flex only allows one etymology cluster per entry, with a
-		  form, comment, gloss, and source.</Limitation>
+		  <Limitation>The Source Language field is for list reference items.  The Source
+			Language Notes field is for free-form information about Source Languages.
+			Normally a single entry would use one or the other but not both.</Limitation>
 
-		  <Limitation>Flex currently displays this field only in the first
-		  analysis language, so if your source is in some other language,
-		  there may be display problems. Setting the Language Descriptor for
-		  this field simply selects the right encoding converter to use for
-		  converting the contents to Unicode.</Limitation>
 		</Limitations>
 	  </Help>
 	</Field>
+
   </Class>
 
   <Class name="Example" partOf="Sense">
@@ -732,7 +833,7 @@
 	<Field MDF="\rf" id="ref" list="no" multi="no" property="Reference"
 		   signature="String" type="string" uiname="Reference">
 	  <Help>
-		<Usage>When you have a marker that has a reference for this example
+		<Usage>When you have a marker that indicates the reference for this example
 		sentence.</Usage>
 
 		<Settings>Set the Language Descriptor to the language of this
@@ -747,7 +848,7 @@
 		<Multilingual>No</Multilingual>
 
 		<Examples>
-		  <Example>\rf Santa Lucia</Example>
+		  <Example>\rf Bear and Fly 7.02</Example>
 		</Examples>
 	  </Help>
 	</Field>
@@ -778,7 +879,7 @@
 				<Examples>
 					<Example>\xe My name is Sally.</Example>
 
-					<Example>\xn Yo me llamo Sally.</Example>
+					<Example>\xn Me llamo Sally.</Example>
 				</Examples>
 
 				<RelatedFields>

@@ -20,6 +20,7 @@ Export using the Multi-Dictionary Formatter root-based standard. This includes s
 			<objVector objProperty="EntryRefsOS"/>
 			<refObjVector field="VariantFormEntryBackRefs" virtual="true" itemLabel="" itemProperty="" classtag="VariantBackRef"/>
 			<objVector objProperty="PronunciationsOS"/>
+			<objVector objProperty="EtymologyOS"/>
 			<objVector objProperty="LexEntryReferences" virtual="true"/>
 			<multilingualStringElement name="co" simpleProperty="Comment"/>
 			<generateCustom class="LexEntry" fieldType="mlstring">
@@ -72,6 +73,21 @@ Export using the Multi-Dictionary Formatter root-based standard. This includes s
 	<class name="LexPronunciation">
 		<multilingualStringElement name="ph" simpleProperty="Form"/>
 		<!--todo cvpattern, tone, Media, Location-->
+	</class>
+
+	<class name="LexEtymology">
+		<multilingualStringElement name="et" simpleProperty="Form"/>
+		<multilingualStringElement name="ea" simpleProperty="PrecComment"/>
+		<ifnot field="Language" lengthequals="0">
+			<element name="esl">
+				<objVector objProperty="LanguageRS" sep="; "/>
+			</element>
+		</ifnot>
+		<multilingualStringElement name="es" simpleProperty="LanguageNotes"/>
+		<multilingualStringElement name="eg" simpleProperty="Gloss"/>
+		<multilingualStringElement name="efc" simpleProperty="Comment"/>
+		<multilingualStringElement name="ec" simpleProperty="Note"/>
+		<multilingualStringElement name="eb" simpleProperty="Bibliography"/>
 	</class>
 
 	<class name="LexSense">
@@ -207,6 +223,10 @@ Export using the Multi-Dictionary Formatter root-based standard. This includes s
 
 	<class name="LexEntryType-Reverse">
 		<string simpleProperty="ReverseAbbr" ws="analysis"/>
+	</class>
+
+	<class name="CmPossibility">
+		<string simpleProperty="Name" ws="analysis"/>
 	</class>
 
 </template>
