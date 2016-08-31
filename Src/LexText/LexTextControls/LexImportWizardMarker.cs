@@ -839,16 +839,12 @@ namespace SIL.FieldWorks.LexText.Controls
 				return;		// don't change
 			m_LastSelectedField = field;
 
-			const string defaultVariantType = "Unspecified Variant";
-			const string defaultComplexFormType = "Unspecified Complex Form";
-
 			// fill the combo box with current values in the DB
 			cbFunction.Items.Clear();
 			m_htNameToAbbr.Clear();
 			if (field.IsRef)
 			{
 				lblFunction.Text = LexTextControls.ksLexicalRelationType;
-				int pos = -1;
 				//string abbr, name, reverseAbbr, reverseName;
 				rbAbbrAbbr.Checked = true;
 				rbAbbrName.Checked = false;
@@ -930,7 +926,6 @@ namespace SIL.FieldWorks.LexText.Controls
 					{
 						AddAbbrAndNameInfo(let.Abbreviation, let.Name, null, null);
 					}
-					pos = cbFunction.FindString(defaultVariantType);
 				}
 				else if (field.ID == "sub")
 				{
@@ -940,11 +935,11 @@ namespace SIL.FieldWorks.LexText.Controls
 					{
 						AddAbbrAndNameInfo(let.Abbreviation, let.Name, null, null);
 					}
-					pos = cbFunction.FindString(defaultComplexFormType);
 				}
 
 				// now select the one with the correct abbreviation
-				if (pos == -1 && m_refFuncString.Length > 0)
+				var pos = -1;
+				if (m_refFuncString.Length > 0)
 					pos = cbFunction.FindString(m_refFuncString);
 
 				cbFunction.SelectedIndex = pos >= 0 ? pos : 0;
