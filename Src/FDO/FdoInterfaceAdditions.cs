@@ -1117,6 +1117,12 @@ namespace SIL.FieldWorks.FDO
 		/// or its owning LexEntry.
 		/// </summary>
 		IEnumerable<ILexEntryRef> MainEntryRefs { get; }
+
+		/// <summary>
+		/// This is a virtual property that ensures that a Sense shows its owning Entry's
+		/// DialectLabels if it has none of its own.
+		/// </summary>
+		IFdoReferenceSequence<ICmPossibility> DialectLabelsSenseOrEntry { get; }
 	}
 
 	/// <summary>

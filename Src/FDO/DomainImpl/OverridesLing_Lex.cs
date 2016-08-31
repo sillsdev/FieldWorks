@@ -5384,12 +5384,25 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				var tisb = HeadWord.GetIncBldr();
 				tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, m_cache.DefaultVernWs);
-				foreach (var poss in DialectLabelsRS)
+				foreach (var poss in DialectLabelsSenseOrEntry)
 				{
 					tisb.Append(" ");
 					tisb.AppendTsString(poss.Abbreviation.BestVernacularAnalysisAlternative);
 				}
 				return tisb.GetString();
+			}
+		}
+
+		/// <summary>
+		/// This is a virtual property that ensures that a Sense shows its owning Entry's
+		/// DialectLabels if it has none of its own.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceSequence, "CmPossibility")]
+		public IFdoReferenceSequence<ICmPossibility> DialectLabelsSenseOrEntry
+		{
+			get
+			{
+				return DialectLabelsRS.Count == 0 ? Entry.DialectLabelsRS : DialectLabelsRS;
 			}
 		}
 
@@ -8897,7 +8910,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				return ((ILexEntry) Owner).DialectLabelsRS;
+				return Owner is ILexEntry ? ((ILexEntry) Owner).DialectLabelsRS : ((ILexSense)Owner).DialectLabelsSenseOrEntry;
 			}
 		}
 
@@ -9754,7 +9767,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				var sense = Item as ILexSense;
 				if (sense == null)
 					return null;
-				return sense.DialectLabelsRS;
+				return sense.DialectLabelsSenseOrEntry;
 			}
 		}
 	}
