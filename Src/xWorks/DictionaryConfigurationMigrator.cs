@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.XWorks
 		Justification="Cache is a reference")]
 	public class DictionaryConfigurationMigrator
 	{
-		public const int VersionCurrent = 11;
+		public const int VersionCurrent = 12;
 		internal const string NodePathSeparator = " > ";
 		private readonly Inventory m_layoutInventory;
 		private readonly Inventory m_partInventory;

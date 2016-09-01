@@ -3,7 +3,7 @@
  xsi:noNamespaceSchemaLocation="../../Configuration/DictionaryConfiguration.xsd"
  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
  name="Hybrid (complex forms as main entries and mini subentries)"
- version="11" lastModified="2016-08-23"
+ version="12" lastModified="2016-08-31"
  allPublications="true" isRootBased="false">
   <ConfigurationItem name="Main Entry" isEnabled="true" style="Dictionary-Normal" styleType="paragraph" field="LexEntry" cssClassNameOverride="entry">
 	<!-- using a different CSS Class for the main HeadWord and the HeadWords for subentries, references, and (variant|complex) forms
@@ -270,6 +270,15 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Variants of Sense" isEnabled="false" before="(" between="; " after=") " field="VariantFormEntryBackRefs">
+	  	<ListTypeOptions list="variant">
+	  		<Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="true" />
+	  		<Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
+	  		<Option id="4343b1ef-b54f-4fa4-9998-271319a6d74c" isEnabled="true" />
+	  		<Option id="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c" isEnabled="true" />
+	  		<Option id="837ebe72-8c1d-4864-95d9-fa313c499d78" isEnabled="true" />
+	  		<Option id="a32f1d1c-4832-46a2-9732-c2276d6547e8" isEnabled="true" />
+	  		<Option id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed" isEnabled="true" />
+	  	</ListTypeOptions>
 		<ConfigurationItem name="Variant Type" isEnabled="true" before="" between=", " after=" " field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
 		  <ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1233,6 +1242,15 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Variants of Sense" isEnabled="false" before="(" between="; " after=") " field="VariantFormEntryBackRefs">
+	  	<ListTypeOptions list="variant">
+	  		<Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="true" />
+	  		<Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
+	  		<Option id="4343b1ef-b54f-4fa4-9998-271319a6d74c" isEnabled="true" />
+	  		<Option id="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c" isEnabled="true" />
+	  		<Option id="837ebe72-8c1d-4864-95d9-fa313c499d78" isEnabled="true" />
+	  		<Option id="a32f1d1c-4832-46a2-9732-c2276d6547e8" isEnabled="true" />
+	  		<Option id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed" isEnabled="true" />
+	  	</ListTypeOptions>
 		<ConfigurationItem name="Variant Type" isEnabled="true" before="" between=", " after=" " field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
 		  <ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -2161,6 +2179,15 @@
 		  </ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Variants of Sense" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
+			<ListTypeOptions list="variant">
+				<Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="true" />
+				<Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
+				<Option id="4343b1ef-b54f-4fa4-9998-271319a6d74c" isEnabled="true" />
+				<Option id="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c" isEnabled="true" />
+				<Option id="837ebe72-8c1d-4864-95d9-fa313c499d78" isEnabled="true" />
+				<Option id="a32f1d1c-4832-46a2-9732-c2276d6547e8" isEnabled="true" />
+				<Option id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed" isEnabled="true" />
+			</ListTypeOptions>
 			<ConfigurationItem name="Variant Type" between=", " after=" " isEnabled="true" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
 				<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 				  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -3108,6 +3135,15 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Variants of Sense" isEnabled="false" before="(" between="; " after=") " field="VariantFormEntryBackRefs">
+	  	<ListTypeOptions list="variant">
+	  		<Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="true" />
+	  		<Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
+	  		<Option id="4343b1ef-b54f-4fa4-9998-271319a6d74c" isEnabled="true" />
+	  		<Option id="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c" isEnabled="true" />
+	  		<Option id="837ebe72-8c1d-4864-95d9-fa313c499d78" isEnabled="true" />
+	  		<Option id="a32f1d1c-4832-46a2-9732-c2276d6547e8" isEnabled="true" />
+	  		<Option id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed" isEnabled="true" />
+	  	</ListTypeOptions>
 		<ConfigurationItem name="Variant Type" isEnabled="true" before="" between=", " after=" " field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
 		  <ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -3897,6 +3933,15 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Variants of Sense" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
+	  	<ListTypeOptions list="variant">
+	  		<Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="true" />
+	  		<Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
+	  		<Option id="4343b1ef-b54f-4fa4-9998-271319a6d74c" isEnabled="true" />
+	  		<Option id="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c" isEnabled="true" />
+	  		<Option id="837ebe72-8c1d-4864-95d9-fa313c499d78" isEnabled="true" />
+	  		<Option id="a32f1d1c-4832-46a2-9732-c2276d6547e8" isEnabled="true" />
+	  		<Option id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed" isEnabled="true" />
+	  	</ListTypeOptions>
 		<ConfigurationItem name="Variant Type" between=", " after=" " isEnabled="true" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
 		  <ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -4477,6 +4522,15 @@
 		  </ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Variants of Sense" before="(" between="; " after=") " isEnabled="false" field="VariantFormEntryBackRefs">
+		  <ListTypeOptions list="variant">
+			   <Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="true" />
+			   <Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
+			   <Option id="4343b1ef-b54f-4fa4-9998-271319a6d74c" isEnabled="true" />
+			   <Option id="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c" isEnabled="true" />
+			   <Option id="837ebe72-8c1d-4864-95d9-fa313c499d78" isEnabled="true" />
+			   <Option id="a32f1d1c-4832-46a2-9732-c2276d6547e8" isEnabled="true" />
+			   <Option id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed" isEnabled="true" />
+		  </ListTypeOptions>	
 		  <ConfigurationItem name="Variant Type" between=", " after=" " isEnabled="true" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
 			<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 			  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">

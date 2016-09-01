@@ -398,6 +398,70 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		}
 
 		[Test]
+		public void MigrateFrom83Alpha_SenseVariantListTypeOptionsAreMigrated()
+		{
+			var alphaVariantFormTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				CSSClassNameOverride = "variantentrytypes",
+				IsEnabled = true
+			};
+			var alphaVariantFormsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs",
+				Children = new List<ConfigurableDictionaryNode> { alphaVariantFormTypeNode },
+				IsEnabled = true
+			};
+			var alphaSensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Children = new List<ConfigurableDictionaryNode> { alphaVariantFormsNode }
+			};
+			var alphaMainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { alphaSensesNode }
+			};
+			var alphaModel = new DictionaryConfigurationModel { Version = FirstAlphaMigrator.VersionAlpha3, Parts = new List<ConfigurableDictionaryNode> { alphaMainEntryNode } };
+
+			var variantFormTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				CSSClassNameOverride = "variantentrytypes",
+				IsEnabled = true
+			};
+			var variantFormsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, DictionaryNodeListOptions.ListIds.Variant),
+				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNode },
+				IsEnabled = true
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Children = new List<ConfigurableDictionaryNode> { variantFormsNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+
+			var defaultModel = new DictionaryConfigurationModel { Version = DictionaryConfigurationMigrator.VersionCurrent, Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+
+			CssGeneratorTests.PopulateFieldsForTesting(alphaModel);
+			CssGeneratorTests.PopulateFieldsForTesting(defaultModel);
+			// SUT
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModel);
+
+			var migratedSenseVariantNode = alphaModel.Parts[0].Children[0].Children[0];
+			Assert.True(migratedSenseVariantNode.DictionaryNodeOptions != null, "ListTypeOptions not migrated");
+		}
+
+		[Test]
 		public void MigrateFromConfig83AlphaToBeta10_UpdatesEtymologyCluster()
 		{
 			var formNode = new ConfigurableDictionaryNode

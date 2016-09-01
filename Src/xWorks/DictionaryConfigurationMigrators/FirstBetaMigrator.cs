@@ -120,6 +120,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					UpgradeEtymologyCluster(oldConfigPart, oldConfig);
 					goto case 10;
 				case 10:
+				case 11:
 					MigrateNewDefaultNodes(oldConfigPart, currentDefaultConfigPart);
 					break;
 				default:
@@ -195,6 +196,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		{
 			if (oldConfigNode.Children == null || defaultNode.Children == null)
 				return;
+			if (defaultNode.FieldDescription == "VariantFormEntryBackRefs" && oldConfigNode.DictionaryNodeOptions == null
+				&& defaultNode.DictionaryNodeOptions != null)
+				oldConfigNode.DictionaryNodeOptions = defaultNode.DictionaryNodeOptions;
 			// First recurse into each matching child node
 			foreach (var newChild in defaultNode.Children)
 			{
