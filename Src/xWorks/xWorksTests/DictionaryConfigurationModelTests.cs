@@ -13,6 +13,7 @@ using System.Xml.Schema;
 using NUnit.Framework;
 using Palaso.IO;
 using Palaso.TestUtilities;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -1098,6 +1099,29 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Assert.AreEqual(model.Publications[i], clone.Publications[i]);
 			}
+		}
+
+		[Test]
+		public void DeepClone_ConnectsSharedItemsWithinNewModel()
+		{
+			const string sharedSubsName = "SharedSubentries";
+			var subentriesNode = new ConfigurableDictionaryNode { FieldDescription = "Subentries", ReferenceItem = sharedSubsName };
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { subentriesNode },
+				FieldDescription = "LexEntry"
+			};
+			var sharedSubentriesNode = new ConfigurableDictionaryNode { Label = sharedSubsName, FieldDescription = "Subentries" };
+			var model = CreateSimpleSharingModel(mainEntryNode, sharedSubentriesNode);
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+			// SUT
+			var clonedModel = model.DeepClone();
+			var clonedMainEntry = clonedModel.Parts[0];
+			var clonedSubentries = clonedMainEntry.Children[0];
+			Assert.AreEqual(sharedSubsName, clonedSubentries.ReferenceItem, "ReferenceItem should have been cloned");
+			Assert.AreSame(clonedModel.SharedItems[0], clonedSubentries.ReferencedNode, "ReferencedNode should have been cloned");
+			Assert.AreSame(clonedSubentries, clonedModel.SharedItems[0].Parent, "SharedItems' Parents should connect to their new masters");
+			Assert.AreNotSame(model.SharedItems[0], clonedModel.SharedItems[0], "SharedItems were not deep cloned");
 		}
 
 		internal static DictionaryConfigurationModel CreateSimpleSharingModel(ConfigurableDictionaryNode part, ConfigurableDictionaryNode sharedItem)

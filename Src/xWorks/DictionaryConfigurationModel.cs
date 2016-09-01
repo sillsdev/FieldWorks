@@ -191,16 +191,17 @@ namespace SIL.FieldWorks.XWorks
 				property.SetValue(clone, originalValue, null);
 			}
 
-			// Deep-clone Parts
-			if (Parts != null)
-			{
-				clone.Parts = Parts.Select(node => node.DeepCloneUnderSameParent(true)).ToList();
-			}
-
 			// Deep-clone SharedItems
 			if (SharedItems != null)
 			{
-				clone.SharedItems = SharedItems.Select(node => node.DeepCloneUnderSameParent(true)).ToList();
+				clone.SharedItems = SharedItems.Select(node => node.DeepCloneUnderParent(null, true)).ToList();
+			}
+
+			// Deep-clone Parts
+			if (Parts != null)
+			{
+				clone.Parts = Parts.Select(node => node.DeepCloneUnderParent(null, true)).ToList();
+				SpecifyParentsAndReferences(clone.Parts, clone.SharedItems);
 			}
 
 			// Clone Publications

@@ -206,9 +206,9 @@ namespace SIL.FieldWorks.XWorks
 		public void DuplicateIsPutImmediatelyAfterOriginal()
 		{
 			var parent = new ConfigurableDictionaryNode();
-			var nodeA = new ConfigurableDictionaryNode() { Parent = parent };
-			var nodeB = new ConfigurableDictionaryNode() { Parent = parent };
-			parent.Children = new List<ConfigurableDictionaryNode>() { nodeA, nodeB };
+			var nodeA = new ConfigurableDictionaryNode { Parent = parent };
+			var nodeB = new ConfigurableDictionaryNode { Parent = parent };
+			parent.Children = new List<ConfigurableDictionaryNode> { nodeA, nodeB };
 			Assert.That(parent.Children[0], Is.SameAs(nodeA));
 
 			// SUT
@@ -221,9 +221,9 @@ namespace SIL.FieldWorks.XWorks
 		public void DuplicateLastItemDoesNotThrow()
 		{
 			var parent = new ConfigurableDictionaryNode();
-			var nodeA = new ConfigurableDictionaryNode() { Parent = parent };
-			var nodeB = new ConfigurableDictionaryNode() { Parent = parent };
-			parent.Children = new List<ConfigurableDictionaryNode>() { nodeA, nodeB };
+			var nodeA = new ConfigurableDictionaryNode { Parent = parent };
+			var nodeB = new ConfigurableDictionaryNode { Parent = parent };
+			parent.Children = new List<ConfigurableDictionaryNode> { nodeA, nodeB };
 
 			// SUT
 			Assert.DoesNotThrow(() => nodeB.DuplicateAmongSiblings(), "problem with edge case");
@@ -259,11 +259,21 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void DuplicateSharedNodeParentMaintainsLink()
+		{
+			var sharedItem = new ConfigurableDictionaryNode { Label = "Shared" };
+			var masterParent = new ConfigurableDictionaryNode { ReferenceItem = "Shared", ReferencedNode = sharedItem };
+			var clone = masterParent.DeepCloneUnderSameParent(true); // SUT: pretend this is a recursive call
+			Assert.AreEqual(masterParent.ReferenceItem, clone.ReferenceItem);
+			Assert.AreSame(masterParent.ReferencedNode, clone.ReferencedNode);
+		}
+
+		[Test]
 		public void CanDuplicateRootNode()
 		{
-			var rootNodeA = new ConfigurableDictionaryNode() { Parent = null, Before="beforeA" };
-			var rootNodeB = new ConfigurableDictionaryNode() { Parent = null };
-			var rootNodes = new List<ConfigurableDictionaryNode>() { rootNodeA, rootNodeB };
+			var rootNodeA = new ConfigurableDictionaryNode { Parent = null, Before="beforeA" };
+			var rootNodeB = new ConfigurableDictionaryNode { Parent = null };
+			var rootNodes = new List<ConfigurableDictionaryNode> { rootNodeA, rootNodeB };
 
 			// SUT
 			var duplicate = rootNodeA.DuplicateAmongSiblings(rootNodes);
@@ -275,8 +285,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void CanUnlink()
 		{
-			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
-			var node = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = parent };
+			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
+			var node = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>(), Parent = parent };
 			parent.Children.Add(node);
 			// SUT
 			node.UnlinkFromParent();
@@ -290,8 +300,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void CanUnlinkTwice()
 		{
-			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
-			var node = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = parent };
+			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
+			var node = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>(), Parent = parent };
 			parent.Children.Add(node);
 			node.UnlinkFromParent();
 			Assert.That(node.Parent, Is.Null); // node is now at the root of a hierarchy
@@ -302,10 +312,10 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void CanChangeSuffix()
 		{
-			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
+			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
 
 			var originallabel = "originalLabel";
-			var node = new ConfigurableDictionaryNode() { Parent = parent, Label = originallabel, LabelSuffix = "orig"};
+			var node = new ConfigurableDictionaryNode { Parent = parent, Label = originallabel, LabelSuffix = "orig"};
 			parent.Children.Add(node);
 
 			var newSuffix = "new";

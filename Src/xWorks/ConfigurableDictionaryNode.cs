@@ -298,6 +298,7 @@ namespace SIL.FieldWorks.XWorks
 				var originalValue = property.GetValue(this, null);
 				property.SetValue(clone, originalValue, null);
 			}
+			clone.ReferencedNode = ReferencedNode; // GetProperties() doesn't return internal properties; copy here
 			clone.Parent = parent;
 
 			// Deep-clone Children

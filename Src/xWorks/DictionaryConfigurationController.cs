@@ -146,14 +146,8 @@ namespace SIL.FieldWorks.XWorks
 		private static List<DictionaryConfigurationModel> GetDictionaryConfigurationModels(FdoCache cache, string defaultPath, string projectPath)
 		{
 			var configurationPaths = ListDictionaryConfigurationChoices(defaultPath, projectPath);
-			var configurationModels = new List<DictionaryConfigurationModel>();
-			foreach(var path in configurationPaths)
-			{
-				var model = new DictionaryConfigurationModel(path, cache);
-				MergeCustomFieldsIntoDictionaryModel(model, cache);
-				configurationModels.Add(model);
-			}
-			configurationModels.Sort((lhs, rhs) => String.Compare(lhs.Label, rhs.Label));
+			var configurationModels = configurationPaths.Select(path => new DictionaryConfigurationModel(path, cache)).ToList();
+			configurationModels.Sort((lhs, rhs) => string.Compare(lhs.Label, rhs.Label, StringComparison.InvariantCulture));
 			return configurationModels;
 		}
 
@@ -366,7 +360,6 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				// Update our Views
 				View.SetChoices(_dictionaryConfigurations);
-				MergeCustomFieldsIntoDictionaryModel(_model, cache);
 				SaveModel();
 				SelectCurrentConfigurationAndRefresh();
 			};
