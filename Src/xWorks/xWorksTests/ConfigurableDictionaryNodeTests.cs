@@ -40,7 +40,6 @@ namespace SIL.FieldWorks.XWorks
 
 		private static void VerifyDuplication(ConfigurableDictionaryNode clone, ConfigurableDictionaryNode node)
 		{
-			Assert.That(clone.Parent, Is.EqualTo(node.Parent));
 			Assert.That(clone.Parent, Is.SameAs(node.Parent));
 			VerifyDuplicationInner(clone, node);
 		}
@@ -107,11 +106,11 @@ namespace SIL.FieldWorks.XWorks
 		public void DuplicateIsPutAmongSiblings()
 		{
 			var parent = new ConfigurableDictionaryNode();
-			var childA = new ConfigurableDictionaryNode() { After = "after", IsEnabled = true, Parent = parent };
-			var grandchildA = new ConfigurableDictionaryNode() { Before = "childBefore", Parent = childA };
-			childA.Children = new List<ConfigurableDictionaryNode>() { grandchildA };
-			var childB = new ConfigurableDictionaryNode() { After = "nodeBAfter", Parent = parent };
-			parent.Children = new List<ConfigurableDictionaryNode>() { childA, childB };
+			var childA = new ConfigurableDictionaryNode { After = "after", IsEnabled = true, Parent = parent };
+			var grandchildA = new ConfigurableDictionaryNode { Before = "childBefore", Parent = childA };
+			childA.Children = new List<ConfigurableDictionaryNode> { grandchildA };
+			var childB = new ConfigurableDictionaryNode { After = "nodeBAfter", Parent = parent };
+			parent.Children = new List<ConfigurableDictionaryNode> { childA, childB };
 
 			// SUT
 			var duplicate = childA.DuplicateAmongSiblings();
@@ -123,8 +122,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void DuplicatesAreMarkedAsSuch()
 		{
-			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>() };
-			var node = new ConfigurableDictionaryNode() { Parent = parent };
+			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>() };
+			var node = new ConfigurableDictionaryNode { Parent = parent };
 			parent.Children.Add(node);
 			Assert.That(node.IsDuplicate, Is.False);
 
@@ -137,11 +136,11 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void DuplicatesHaveUniqueLabelSuffixes()
 		{
-			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>() };
+			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>() };
 			var nodeToDuplicateLabel = "node";
-			var nodeToDuplicate = new ConfigurableDictionaryNode() { Parent = parent, Label = nodeToDuplicateLabel, LabelSuffix = null};
-			var otherNodeA = new ConfigurableDictionaryNode() { Parent = parent, Label = "node", LabelSuffix = "1" };
-			var otherNodeB = new ConfigurableDictionaryNode() { Parent = parent, Label = "node", LabelSuffix = "B" };
+			var nodeToDuplicate = new ConfigurableDictionaryNode { Parent = parent, Label = nodeToDuplicateLabel, LabelSuffix = null};
+			var otherNodeA = new ConfigurableDictionaryNode { Parent = parent, Label = "node", LabelSuffix = "1" };
+			var otherNodeB = new ConfigurableDictionaryNode { Parent = parent, Label = "node", LabelSuffix = "B" };
 			parent.Children.Add(nodeToDuplicate);
 			parent.Children.Add(otherNodeA);
 			parent.Children.Add(otherNodeB);
@@ -263,9 +262,21 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var sharedItem = new ConfigurableDictionaryNode { Label = "Shared" };
 			var masterParent = new ConfigurableDictionaryNode { ReferenceItem = "Shared", ReferencedNode = sharedItem };
-			var clone = masterParent.DeepCloneUnderSameParent(true); // SUT: pretend this is a recursive call
+			var clone = masterParent.DeepCloneUnderParent(null, true); // SUT: pretend this is a recursive call
 			Assert.AreEqual(masterParent.ReferenceItem, clone.ReferenceItem);
 			Assert.AreSame(masterParent.ReferencedNode, clone.ReferencedNode);
+		}
+
+		[Test]
+		public void DuplicateSharedNodeDeepClones()
+		{
+			var sharedChild = new ConfigurableDictionaryNode { Label = "kid" };
+			var sharedItem = new ConfigurableDictionaryNode { Label = "Shared", Children = new List<ConfigurableDictionaryNode> { sharedChild } };
+			var masterParent = new ConfigurableDictionaryNode { ReferenceItem = "Shared", ReferencedNode = sharedItem };
+			var clone = masterParent.DeepCloneUnderSameParent(); // SUT
+			Assert.Null(clone.ReferenceItem);
+			Assert.Null(clone.ReferencedNode);
+			VerifyDuplicationList(clone.Children, masterParent.ReferencedOrDirectChildren, clone);
 		}
 
 		[Test]
@@ -328,10 +339,10 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void CanAddInitialSuffix()
 		{
-			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
+			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
 
 			var originallabel = "originalLabel";
-			var node = new ConfigurableDictionaryNode() { Parent = parent, Label = originallabel, LabelSuffix = null };
+			var node = new ConfigurableDictionaryNode { Parent = parent, Label = originallabel, LabelSuffix = null };
 			parent.Children.Add(node);
 
 			var newSuffix = "new";
@@ -344,8 +355,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void ReportSuccessfulChangedSuffix()
 		{
-			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
-			var node = new ConfigurableDictionaryNode() { Parent = parent, Label = "originalLabel",LabelSuffix = "blah" };
+			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
+			var node = new ConfigurableDictionaryNode { Parent = parent, Label = "originalLabel",LabelSuffix = "blah" };
 			parent.Children.Add(node);
 
 			// SUT
@@ -356,11 +367,11 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void CantHaveTwoSiblingsWithSameNonNullSuffix()
 		{
-			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
+			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
 			var originalLabel = "originalLabel";
 			var originalSuffix = "originalSuffix";
-			var node = new ConfigurableDictionaryNode() { Parent = parent, Label = originalLabel, LabelSuffix = originalSuffix};
-			var otherNode = new ConfigurableDictionaryNode() { Parent = parent, Label = originalLabel, LabelSuffix = "otherSuffix"};
+			var node = new ConfigurableDictionaryNode { Parent = parent, Label = originalLabel, LabelSuffix = originalSuffix};
+			var otherNode = new ConfigurableDictionaryNode { Parent = parent, Label = originalLabel, LabelSuffix = "otherSuffix"};
 			parent.Children.Add(node);
 			parent.Children.Add(otherNode);
 
@@ -373,10 +384,10 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void CanRequestChangingSuffixToSameSuffix()
 		{
-			var parent = new ConfigurableDictionaryNode() { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
+			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>(), Parent = null };
 			var originalLabel = "originalLabel";
 			var originalSuffix = "blah";
-			var node = new ConfigurableDictionaryNode() { Parent = parent, Label = originalLabel, LabelSuffix = originalSuffix };
+			var node = new ConfigurableDictionaryNode { Parent = parent, Label = originalLabel, LabelSuffix = originalSuffix };
 			parent.Children.Add(node);
 
 			// SUT
@@ -388,8 +399,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void CanChangeSuffixOfRootNode()
 		{
-			var rootNode = new ConfigurableDictionaryNode() { Parent = null, Label = "rootNode",LabelSuffix = "orig" };
-			var rootNodes = new List<ConfigurableDictionaryNode>() { rootNode };
+			var rootNode = new ConfigurableDictionaryNode { Parent = null, Label = "rootNode",LabelSuffix = "orig" };
+			var rootNodes = new List<ConfigurableDictionaryNode> { rootNode };
 
 			// SUT
 			var result = rootNode.ChangeSuffix("new", rootNodes);
@@ -515,11 +526,11 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void HasCorrectDisplayLabel()
 		{
-			var nodeWithNullSuffix = new ConfigurableDictionaryNode() {Label = "label", LabelSuffix = null};
+			var nodeWithNullSuffix = new ConfigurableDictionaryNode {Label = "label", LabelSuffix = null};
 			// SUT
 			Assert.That(nodeWithNullSuffix.DisplayLabel, Is.EqualTo("label"), "DisplayLabel should omit parentheses and suffix if suffix is null");
 
-			var nodeWithSuffix = new ConfigurableDictionaryNode() { Label = "label2", LabelSuffix = "suffix2" };
+			var nodeWithSuffix = new ConfigurableDictionaryNode { Label = "label2", LabelSuffix = "suffix2" };
 			// SUT
 			Assert.That(nodeWithSuffix.DisplayLabel, Is.EqualTo("label2 (suffix2)"), "DisplayLabel should include suffix");
 		}
