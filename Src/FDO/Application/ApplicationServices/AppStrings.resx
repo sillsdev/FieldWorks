@@ -148,10 +148,10 @@
     <value>Warning: Cannot create desired Lexical Reference Type: &lt;Link {0}/&gt;.</value>
   </data>
   <data name="ksCannotResolveCrossRef" xml:space="preserve">
-    <value>Warning: Cannot resolve a link for a cross reference from "{0}" to "{1}".</value>
+    <value>Info: Cannot resolve a link for a cross reference from "{0}" to "{1}".</value>
   </data>
   <data name="ksCannotResolveLexRelation" xml:space="preserve">
-    <value>Warning: Cannot resolve a link for a lexical relation from "{0}" to "{1}".</value>
+    <value>Info: Cannot resolve a link for a lexical relation from "{0}" to "{1}".</value>
   </data>
   <data name="ksCreatingWritingSystem" xml:space="preserve">
     <value>Info: Creating new writing system for "{0}".</value>
