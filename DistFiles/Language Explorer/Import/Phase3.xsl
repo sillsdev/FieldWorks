@@ -277,11 +277,11 @@ DoEtymology
 				<xsl:with-param name="eNameOut">Form</xsl:with-param>		<!-- eNameOut: element name to output -->
 			  </xsl:call-template>
 			</xsl:if>
-			<!-- Comment -->
+			<!-- Etymology Note -->
 			<xsl:if test="etc">
 			  <xsl:call-template name="JoinOnWS">
 				<xsl:with-param name="abbr" select="etc"/>	                    <!-- Abbr: element name to look for -->
-				<xsl:with-param name="eNameOut">Comment</xsl:with-param>		<!-- eNameOut: element name to output -->
+				<xsl:with-param name="eNameOut">Note</xsl:with-param>		<!-- eNameOut: element name to output -->
 			  </xsl:call-template>
 			</xsl:if>
 			<!-- Gloss -->

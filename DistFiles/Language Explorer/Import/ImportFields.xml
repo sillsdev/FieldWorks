@@ -692,7 +692,7 @@
 	</Field>
 
 	<Field MDF="\efc" id="etfc" multi="yes" property="Comment"
-		   signature="MultiString" type="string" uiname="Following Comment">
+		   signature="MultiString" type="string" uiname="Etymology Following Comment">
 	  <Help>
 		<Usage>When you have a marker that has a comment to be printed at the end of the etymology information of this entry.</Usage>
 
