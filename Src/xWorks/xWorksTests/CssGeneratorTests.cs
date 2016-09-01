@@ -248,10 +248,9 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			Assert.That(cssResult, Contains.Substring("*[dir='ltr'], *[dir='rtl']"));
-			Assert.That(Regex.Match(cssResult, @"bdo\[dir='ltr'\], bdo\[dir='rtl'\]\s*{[^}]*unicode-bidi:\s*-moz-isolate-override;").Success,
-				"Missing at least one BiDirectional Override rule");
-			// If that much is found, it should be ok. No need to test all 9 rules.
+			Assert.That(Regex.Match(cssResult, @"\*\[dir='ltr'\], \*\[dir='rtl'\]\s*{[^}]*unicode-bidi:\s*-moz-isolate;").Success, "Missing -moz-isolate rule");
+			Assert.That(Regex.Match(cssResult, @"\*\[dir='ltr'\], \*\[dir='rtl'\]\s*{[^}]*unicode-bidi:\s*-ms-isolate;").Success, "Missing -ms-isolate rule");
+			Assert.That(Regex.Match(cssResult, @"\*\[dir='ltr'\], \*\[dir='rtl'\]\s*{[^}]*unicode-bidi:\s*isolate;").Success, "Missing isolate rule");
 		}
 
 		[Test]

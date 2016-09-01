@@ -99,20 +99,9 @@ namespace SIL.FieldWorks.XWorks
 			var rule = new StyleRule { Value = "*[dir='ltr'], *[dir='rtl']" };
 			rule.Declarations.Properties.AddRange(new []
 			{
-				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "-webkit-isolate") },
-				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "-moz-isolate") },
+				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "isolate") },
 				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "-ms-isolate") },
-				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "isolate") }
-			});
-			styleSheet.Rules.Add(rule);
-			rule = new StyleRule { Value = "bdo[dir='ltr'], bdo[dir='rtl']" };
-			rule.Declarations.Properties.AddRange(new []
-			{
-				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "bidi-override") },
-				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "-webkit-isolate-override") },
-				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "-moz-isolate-override") },
-				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "-ms-isolate-override") },
-				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "isolate-override") }
+				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "-moz-isolate") }
 			});
 			styleSheet.Rules.Add(rule);
 		}
