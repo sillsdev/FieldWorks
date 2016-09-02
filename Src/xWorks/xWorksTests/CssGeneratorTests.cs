@@ -88,65 +88,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		/// <summary>Populate fields that need to be populated on node and its children, including Parent, Label, and IsEnabled</summary>
-		internal static void PopulateFieldsForTesting(ConfigurableDictionaryNode node)
-		{
-			Assert.NotNull(node);
-			PopulateFieldsForTesting(new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { node } });
-		}
-
-		/// <summary>Populate fields that need to be populated on node and its children, including Parent, Label, and IsEnabled</summary>
-		internal static void PopulateFieldsForTesting(DictionaryConfigurationModel model)
-		{
-			Assert.NotNull(model);
-			PopulateFieldsForTesting(model.Parts.Concat(model.SharedItems));
-			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems);
-		}
-
-		private static void PopulateFieldsForTesting(IEnumerable<ConfigurableDictionaryNode> nodes)
-		{
-			foreach (var node in nodes)
-			{
-				// avoid test problems in ConfigurableDictionaryNode.GetHashCode() if no Label is set
-				if (string.IsNullOrEmpty(node.Label))
-					node.Label = node.FieldDescription;
-
-				node.IsEnabled = true;
-				if (node.DictionaryNodeOptions != null)
-					EnableAllListOptions(node.DictionaryNodeOptions);
-
-				if (node.Children != null)
-					PopulateFieldsForTesting(node.Children);
-			}
-		}
-
-		private static void EnableAllListOptions(DictionaryNodeOptions options)
-		{
-			List<DictionaryNodeListOptions.DictionaryNodeOption> checkList = null;
-			if (options is DictionaryNodeSenseOptions || options is DictionaryNodePictureOptions || options is DictionaryNodeGroupingOptions)
-			{
-				return;
-			}
-			if (options is DictionaryNodeListOptions) // also covers DictionaryNodeListAndParaOptions
-			{
-				checkList = ((DictionaryNodeListOptions) options).Options;
-			}
-			else if (options is DictionaryNodeWritingSystemOptions)
-			{
-				checkList = ((DictionaryNodeWritingSystemOptions) options).Options;
-			}
-			else
-			{
-				Assert.Fail("Unknown subclass of DictionaryNodeOptions");
-			}
-			if (checkList == null)
-				return;
-			foreach (var nodeOption in checkList)
-			{
-				nodeOption.IsEnabled = true;
-			}
-		}
-
 		[Test]
 		public void GenerateCssForConfiguration_NullModelThrowsNullArgument()
 		{
@@ -2724,89 +2665,43 @@ namespace SIL.FieldWorks.XWorks
 							  "Dictionary-Minor Paragraph Style for node with paragraph options not generated.");
 		}
 
-		private TestStyle GenerateStyle(string name)
+		[Test]
+		public void GenerateCssForConfiguration_DictionaryMinorUnusedDoesNotOverride()
 		{
-			var fontInfo = new FontInfo();
-			fontInfo.m_fontColor.ExplicitValue = FontColor;
-			fontInfo.m_backColor.ExplicitValue = FontBGColor;
-			fontInfo.m_fontName.ExplicitValue = FontName;
-			fontInfo.m_italic.ExplicitValue = true;
-			fontInfo.m_bold.ExplicitValue = true;
-			fontInfo.m_fontSize.ExplicitValue = FontSize;
-			var style = new TestStyle(fontInfo, Cache) { Name = name, IsParagraphStyle = false };
-			SafelyAddStyleToSheetAndTable(name, style);
-			return style;
-		}
+			var minorStyle = GenerateEmptyParagraphStyle("Dictionary-Minor");
+			var secStyle = GenerateEmptyParagraphStyle("Dictionary-Secondary");
+			var vernWs = Cache.ServiceLocator.WritingSystemManager.GetStrFromWs(Cache.DefaultVernWs);
 
-		private void SafelyAddStyleToSheetAndTable(string name, TestStyle style)
-		{
-			if (m_styleSheet.Styles.Contains(name))
-				m_styleSheet.Styles.Remove(name);
-			m_styleSheet.Styles.Add(style);
-			if (m_owningTable.ContainsKey(name))
-				m_owningTable.Remove(name);
-			m_owningTable.Add(name, style);
-		}
-
-		private void GenerateBulletStyle(string name)
-		{
-			var fontInfo = new FontInfo();
-			fontInfo.m_fontColor.ExplicitValue = Color.Green;
-			fontInfo.m_fontSize.ExplicitValue = 14000;
-			var bulletinfo = new BulletInfo
+			var minorEntryNode = new ConfigurableDictionaryNode
 			{
-				m_numberScheme = (VwBulNum)105,
-				FontInfo = fontInfo
+				Label = "Minor Entry (Variants)",
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "minorentryvariant",
+				Style = "Dictionary-Secondary",
+				StyleType = ConfigurableDictionaryNode.StyleTypes.Paragraph
 			};
-			var inherbullt = new InheritableStyleProp<BulletInfo>(bulletinfo);
-			var style = new TestStyle(inherbullt, Cache) { Name = name, IsParagraphStyle = true };
-
-			var fontInfo1 = new FontInfo();
-			fontInfo1.m_fontColor.ExplicitValue = Color.Red;
-			fontInfo1.m_fontSize.ExplicitValue = 12000;
-			style.SetDefaultFontInfo(fontInfo1);
-
-			SafelyAddStyleToSheetAndTable(name, style);
-		}
-
-		private void GenerateNumberingStyle(string name, VwBulNum schemeType)
-		{
-			var fontInfo = new FontInfo();
-			fontInfo.m_fontColor.ExplicitValue = Color.Green;
-			fontInfo.m_fontSize.ExplicitValue = 14000;
-			var bulletinfo = new BulletInfo
+			// mainEntry node is just a placeholder
+			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				m_numberScheme = schemeType,
-				FontInfo = fontInfo
+				FieldDescription = "LexEntry"
 			};
-			var inherbullt = new InheritableStyleProp<BulletInfo>(bulletinfo);
-			var style = new TestStyle(inherbullt, Cache) { Name = name, IsParagraphStyle = true };
-
-			var fontInfo1 = new FontInfo();
-			fontInfo1.m_fontColor.ExplicitValue = Color.Red;
-			fontInfo1.m_fontSize.ExplicitValue = 12000;
-			style.SetDefaultFontInfo(fontInfo1);
-
-			SafelyAddStyleToSheetAndTable(name, style);
-		}
-
-		private void GenerateSenseStyle(string name)
-		{
-			var fontInfo = new FontInfo
+			var model = new DictionaryConfigurationModel
 			{
-				m_backColor = { ExplicitValue = FontBGColor },
-				m_fontName = { ExplicitValue = FontName },
-				m_italic = { ExplicitValue = true },
-				m_bold = { ExplicitValue = true },
-				m_fontSize = { ExplicitValue = FontSize }
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode, minorEntryNode }
 			};
-			var style = new TestStyle(fontInfo, Cache) { Name = name, IsParagraphStyle = true };
-			// Padding style settings
-			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, LeadingIndent);
-			style.SetExplicitParaIntProp((int)FwTextPropType.ktptTrailingIndent, 0, TrailingIndent);
-			style.SetExplicitParaIntProp((int)FwTextPropType.ktptSpaceBefore, 0, PadTop);
-			style.SetExplicitParaIntProp((int)FwTextPropType.ktptSpaceAfter, 0, PadBottom);
-			SafelyAddStyleToSheetAndTable(name, style);
+			PopulateFieldsForTesting(model);
+			SetStyleFontColor(minorStyle, Color.Blue); // set Dictionary-Minor to Blue
+			SetStyleFontColor(secStyle, Color.Green); // set Dictionary-Secondary to Green
+
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			StringAssert.DoesNotContain("color:#00F;", cssResult, "Dictionary-Minor Paragraph Style should not be generated.");
+			// The problem we are testing for occurred in the section of CssGenerator labeled:
+			// "Then generate the rules for all the writing system overrides"
+			// So I chose to check specifically for one of the default writing systems; DefaultAnalWs would have worked too.
+			var vernStyle = "span[lang|=\"" + vernWs + "\"]{color:#008000;}";
+			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(@"div.minorentryvariant " + vernStyle),
+				"Dictionary-Secondary Paragraph Style should be generated.");
 		}
 
 		[Test]
@@ -3383,6 +3278,152 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsFalse(Regex.IsMatch(cssPara, regexAfter, RegexOptions.Multiline), "The css for paragraphed senses should not have a senses:after rule");
 		}
 
+		#region Test Helper Methods
+
+		/// <summary>Populate fields that need to be populated on node and its children, including Parent, Label, and IsEnabled</summary>
+		internal static void PopulateFieldsForTesting(ConfigurableDictionaryNode node)
+		{
+			Assert.NotNull(node);
+			PopulateFieldsForTesting(new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { node } });
+		}
+
+		/// <summary>Populate fields that need to be populated on node and its children, including Parent, Label, and IsEnabled</summary>
+		internal static void PopulateFieldsForTesting(DictionaryConfigurationModel model)
+		{
+			Assert.NotNull(model);
+			PopulateFieldsForTesting(model.Parts.Concat(model.SharedItems));
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems);
+		}
+
+		private static void PopulateFieldsForTesting(IEnumerable<ConfigurableDictionaryNode> nodes)
+		{
+			foreach (var node in nodes)
+			{
+				// avoid test problems in ConfigurableDictionaryNode.GetHashCode() if no Label is set
+				if (string.IsNullOrEmpty(node.Label))
+					node.Label = node.FieldDescription;
+
+				node.IsEnabled = true;
+				if (node.DictionaryNodeOptions != null)
+					EnableAllListOptions(node.DictionaryNodeOptions);
+
+				if (node.Children != null)
+					PopulateFieldsForTesting(node.Children);
+			}
+		}
+
+		private static void EnableAllListOptions(DictionaryNodeOptions options)
+		{
+			List<DictionaryNodeListOptions.DictionaryNodeOption> checkList = null;
+			if (options is DictionaryNodeSenseOptions || options is DictionaryNodePictureOptions || options is DictionaryNodeGroupingOptions)
+			{
+				return;
+			}
+			if (options is DictionaryNodeListOptions) // also covers DictionaryNodeListAndParaOptions
+			{
+				checkList = ((DictionaryNodeListOptions)options).Options;
+			}
+			else if (options is DictionaryNodeWritingSystemOptions)
+			{
+				checkList = ((DictionaryNodeWritingSystemOptions)options).Options;
+			}
+			else
+			{
+				Assert.Fail("Unknown subclass of DictionaryNodeOptions");
+			}
+			if (checkList == null)
+				return;
+			foreach (var nodeOption in checkList)
+			{
+				nodeOption.IsEnabled = true;
+			}
+		}
+
+		private TestStyle GenerateStyle(string name)
+		{
+			var fontInfo = new FontInfo();
+			fontInfo.m_fontColor.ExplicitValue = FontColor;
+			fontInfo.m_backColor.ExplicitValue = FontBGColor;
+			fontInfo.m_fontName.ExplicitValue = FontName;
+			fontInfo.m_italic.ExplicitValue = true;
+			fontInfo.m_bold.ExplicitValue = true;
+			fontInfo.m_fontSize.ExplicitValue = FontSize;
+			var style = new TestStyle(fontInfo, Cache) { Name = name, IsParagraphStyle = false };
+			SafelyAddStyleToSheetAndTable(name, style);
+			return style;
+		}
+
+		private void SafelyAddStyleToSheetAndTable(string name, TestStyle style)
+		{
+			if (m_styleSheet.Styles.Contains(name))
+				m_styleSheet.Styles.Remove(name);
+			m_styleSheet.Styles.Add(style);
+			if (m_owningTable.ContainsKey(name))
+				m_owningTable.Remove(name);
+			m_owningTable.Add(name, style);
+		}
+
+		private void GenerateBulletStyle(string name)
+		{
+			var fontInfo = new FontInfo();
+			fontInfo.m_fontColor.ExplicitValue = Color.Green;
+			fontInfo.m_fontSize.ExplicitValue = 14000;
+			var bulletinfo = new BulletInfo
+			{
+				m_numberScheme = (VwBulNum)105,
+				FontInfo = fontInfo
+			};
+			var inherbullt = new InheritableStyleProp<BulletInfo>(bulletinfo);
+			var style = new TestStyle(inherbullt, Cache) { Name = name, IsParagraphStyle = true };
+
+			var fontInfo1 = new FontInfo();
+			fontInfo1.m_fontColor.ExplicitValue = Color.Red;
+			fontInfo1.m_fontSize.ExplicitValue = 12000;
+			style.SetDefaultFontInfo(fontInfo1);
+
+			SafelyAddStyleToSheetAndTable(name, style);
+		}
+
+		private void GenerateNumberingStyle(string name, VwBulNum schemeType)
+		{
+			var fontInfo = new FontInfo();
+			fontInfo.m_fontColor.ExplicitValue = Color.Green;
+			fontInfo.m_fontSize.ExplicitValue = 14000;
+			var bulletinfo = new BulletInfo
+			{
+				m_numberScheme = schemeType,
+				FontInfo = fontInfo
+			};
+			var inherbullt = new InheritableStyleProp<BulletInfo>(bulletinfo);
+			var style = new TestStyle(inherbullt, Cache) { Name = name, IsParagraphStyle = true };
+
+			var fontInfo1 = new FontInfo();
+			fontInfo1.m_fontColor.ExplicitValue = Color.Red;
+			fontInfo1.m_fontSize.ExplicitValue = 12000;
+			style.SetDefaultFontInfo(fontInfo1);
+
+			SafelyAddStyleToSheetAndTable(name, style);
+		}
+
+		private void GenerateSenseStyle(string name)
+		{
+			var fontInfo = new FontInfo
+			{
+				m_backColor = { ExplicitValue = FontBGColor },
+				m_fontName = { ExplicitValue = FontName },
+				m_italic = { ExplicitValue = true },
+				m_bold = { ExplicitValue = true },
+				m_fontSize = { ExplicitValue = FontSize }
+			};
+			var style = new TestStyle(fontInfo, Cache) { Name = name, IsParagraphStyle = true };
+			// Padding style settings
+			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, LeadingIndent);
+			style.SetExplicitParaIntProp((int)FwTextPropType.ktptTrailingIndent, 0, TrailingIndent);
+			style.SetExplicitParaIntProp((int)FwTextPropType.ktptSpaceBefore, 0, PadTop);
+			style.SetExplicitParaIntProp((int)FwTextPropType.ktptSpaceAfter, 0, PadBottom);
+			SafelyAddStyleToSheetAndTable(name, style);
+		}
+
 		private TestStyle GenerateEmptyStyle(string name)
 		{
 			var fontInfo = new FontInfo();
@@ -3464,6 +3505,11 @@ namespace SIL.FieldWorks.XWorks
 			SafelyAddStyleToSheetAndTable(name, style);
 		}
 
+		private void SetStyleFontColor(TestStyle style, Color color)
+		{
+			style.SetDefaultFontInfo(new FontInfo() { m_fontColor = { ExplicitValue = color } });
+		}
+
 		private void VerifyFontInfoInCss(Color color, Color bgcolor, string fontName, bool bold, bool italic, int size, string css)
 		{
 			Assert.That(css, Contains.Substring("color:" + HtmlColor.FromRgb(color.R, color.G, color.B)), "font color missing");
@@ -3537,28 +3583,28 @@ namespace SIL.FieldWorks.XWorks
 			switch (superscript)
 			{
 				case (FwSuperscriptVal.kssvSub):
-				{
-					Assert.That(css, Contains.Substring("font-size:58%"), "subscript did not affect size");
-					Assert.That(css, Contains.Substring("position:relative;"), "subscript was not applied");
-					Assert.That(css, Contains.Substring("top:0.3em;"), "subscript was not applied");
-					break;
-				}
-				case (FwSuperscriptVal.kssvSuper):
-				{
-					Assert.That(css, Contains.Substring("font-size:58%"), "superscript did not affect size");
-					Assert.That(css, Contains.Substring("position:relative;"), "superscript was not applied");
-					Assert.That(css, Contains.Substring("top:-0.6em;"), "superscript was not applied");
-					break;
-				}
-				case (FwSuperscriptVal.kssvOff):
-				{
-					//superscript and subscript are disabled either by having the value of vertical-align:initial, or by having no vertical-align at all.
-					if (css.Contains("vertical-align"))
 					{
-						Assert.That(css, Contains.Substring("vertical-align:initial;"), "superscript was not disabled");
+						Assert.That(css, Contains.Substring("font-size:58%"), "subscript did not affect size");
+						Assert.That(css, Contains.Substring("position:relative;"), "subscript was not applied");
+						Assert.That(css, Contains.Substring("top:0.3em;"), "subscript was not applied");
+						break;
 					}
-					break;
-				}
+				case (FwSuperscriptVal.kssvSuper):
+					{
+						Assert.That(css, Contains.Substring("font-size:58%"), "superscript did not affect size");
+						Assert.That(css, Contains.Substring("position:relative;"), "superscript was not applied");
+						Assert.That(css, Contains.Substring("top:-0.6em;"), "superscript was not applied");
+						break;
+					}
+				case (FwSuperscriptVal.kssvOff):
+					{
+						//superscript and subscript are disabled either by having the value of vertical-align:initial, or by having no vertical-align at all.
+						if (css.Contains("vertical-align"))
+						{
+							Assert.That(css, Contains.Substring("vertical-align:initial;"), "superscript was not disabled");
+						}
+						break;
+					}
 			}
 		}
 
@@ -3571,6 +3617,9 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(css, Contains.Substring("border-left-width:" + leading / 1000 + "pt"));
 			Assert.That(css, Contains.Substring("border-right-width:" + trailing / 1000 + "pt"));
 		}
+
+		#endregion // Test Helper Methods
+
 	}
 
 	internal class TestStyle : BaseStyleInfo

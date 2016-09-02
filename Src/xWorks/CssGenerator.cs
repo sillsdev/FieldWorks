@@ -65,19 +65,16 @@ namespace SIL.FieldWorks.XWorks
 		private static void GenerateCssForDefaultStyles(Mediator mediator, FwStyleSheet mediatorstyleSheet,
 			StyleSheet styleSheet, DictionaryConfigurationModel model)
 		{
-			if (mediatorstyleSheet == null) return;
+			if (mediatorstyleSheet == null)
+				return;
+
 			if (mediatorstyleSheet.Styles.Contains("Normal"))
-			{
 				GenerateCssForWsSpanWithNormalStyle(styleSheet, mediator);
-			}
+
 			if (mediatorstyleSheet.Styles.Contains(DictionaryNormal))
-			{
 				GenerateDictionaryNormalParagraphCss(styleSheet, mediator);
-			}
-			if (mediatorstyleSheet.Styles.Contains(DictionaryMinor))
-			{
-				GenerateDictionaryMinorParagraphCss(styleSheet, mediator, model);
-			}
+
+			GenerateDictionaryMinorParagraphCss(styleSheet, mediator, model);
 		}
 
 		private static void MakeLinksLookLikePlainText(StyleSheet styleSheet)
@@ -147,7 +144,7 @@ namespace SIL.FieldWorks.XWorks
 					minorRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictionaryMinorStyle));
 					styleSheet.Rules.Add(minorRule);
 					// Then generate the rules for all the writing system overrides
-					GenerateCssForWritingSystems(string.Format("div.{0} span", GetClassAttributeForConfig(minorEntryNode)), DictionaryMinor, styleSheet, mediator);
+					GenerateCssForWritingSystems(string.Format("div.{0} span", GetClassAttributeForConfig(minorEntryNode)), styleName, styleSheet, mediator);
 				}
 			}
 		}
