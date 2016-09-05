@@ -60,6 +60,12 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			set { checkBoxDisplayOption.Checked = value; }
 		}
 
+		public bool DisplayOptionCheckBox2Checked
+		{
+			get { return checkBoxDisplayOption2.Checked; }
+			set { checkBoxDisplayOption2.Checked = value; }
+		}
+
 		public List<ListViewItem> AvailableItems
 		{
 			set
@@ -77,6 +83,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		/// <summary>Label for the "DisplayOption" CheckBox below the list, eg "Disp WS Abbrevs" or "Disp Complex Forms in Paragraphs"</summary>
 		public string DisplayOptionCheckBoxLabel { set { checkBoxDisplayOption.Text = value; } }
 
+		public string DisplayOptionCheckBox2Label { set { checkBoxDisplayOption2.Text = value; } }
+
 		/// <summary>Label for the list, eg "Writing Systems:" or "Complex Form Types:"</summary>
 		public string ListViewLabel { set { labelListView.Text = value; } }
 
@@ -87,11 +95,21 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		/// <summary>Whether or not the single "display option" checkbox below the list is visible</summary>
 		public bool DisplayOptionCheckBoxVisible { set { checkBoxDisplayOption.Visible = value; } }
 
+		/// <summary>Whether or not the single "display option2" checkbox below the list is visible</summary>
+		public bool DisplayOptionCheckBox2Visible { set { checkBoxDisplayOption2.Visible = value; } }
+
 		/// <summary>Whether or not the single "display option" checkbox below the list is enabled</summary>
 		public bool DisplayOptionCheckBoxEnabled
 		{
 			get { return checkBoxDisplayOption.Enabled; }
 			set { checkBoxDisplayOption.Enabled = value; }
+		}
+
+		/// <summary>Whether or not the single "display option" checkbox below the list is enabled</summary>
+		public bool DisplayOptionCheckBox2Enabled
+		{
+			get { return checkBoxDisplayOption2.Enabled; }
+			set { checkBoxDisplayOption2.Enabled = value; }
 		}
 
 		/// <note>
@@ -137,6 +155,12 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		{
 			add { checkBoxDisplayOption.CheckedChanged += value; }
 			remove { checkBoxDisplayOption.CheckedChanged -= value; }
+		}
+
+		public event EventHandler DisplayOptionCheckBox2Changed
+		{
+			add { checkBoxDisplayOption2.CheckedChanged += value; }
+			remove { checkBoxDisplayOption2.CheckedChanged -= value; }
 		}
 	}
 }

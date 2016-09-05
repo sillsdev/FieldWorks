@@ -197,7 +197,7 @@ namespace SIL.FieldWorks.XWorks
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			var rule = new StyleRule();
 			var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
-			var listAndParaOpts = configNode.DictionaryNodeOptions as DictionaryNodeListAndParaOptions;
+			var listAndParaOpts = configNode.DictionaryNodeOptions as IParaOption;
 			if (senseOptions != null)
 			{
 				// Try to generate the css for the sense number before the baseSelection is updated because
@@ -407,7 +407,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static void GenerateCssFromListAndParaOptions(ConfigurableDictionaryNode configNode,
-			DictionaryNodeListAndParaOptions listAndParaOpts, StyleSheet styleSheet, ref string baseSelection, FdoCache cache, Mediator mediator)
+			IParaOption listAndParaOpts, StyleSheet styleSheet, ref string baseSelection, FdoCache cache, Mediator mediator)
 		{
 			var blockDeclarations = string.IsNullOrEmpty(configNode.Style)
 				? new List<StyleDeclaration> { new StyleDeclaration() }

@@ -104,7 +104,11 @@ namespace SIL.FieldWorks.XWorks
 			UserControl optionsView = null;
 			if (Options != null)
 			{
-				if (Options is DictionaryNodeWritingSystemOptions)
+				if (Options is DictionaryNodeWritingSystemAndParaOptions)
+				{
+					optionsView = LoadWsAndParaOptions((DictionaryNodeWritingSystemAndParaOptions)Options);
+				}
+				else if (Options is DictionaryNodeWritingSystemOptions)
 				{
 					optionsView = LoadWsOptions((DictionaryNodeWritingSystemOptions) Options);
 				}
@@ -334,6 +338,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// Displaying WS Abbreviations is available only when multiple WS's are selected.
 			wsOptionsView.DisplayOptionCheckBoxEnabled = (availableWSs.Count(item => item.Checked) >= 2);
+			wsOptionsView.DisplayOptionCheckBox2Enabled = false;
 
 			// Prevent events from firing while the view is being initialized
 			wsOptionsView.Load += WritingSystemEventHandlerAdder(wsOptionsView, wsOptions);
@@ -344,6 +349,57 @@ namespace SIL.FieldWorks.XWorks
 			var optionsView = new ButtonOverPanel { PanelContents = wsOptionsView };
 			optionsView.ButtonClicked += (o, e) => HandleHeadwordNumbersButton();
 			return optionsView;
+		}
+
+
+		private UserControl LoadWsAndParaOptions(DictionaryNodeWritingSystemAndParaOptions wsapoptions)
+		{
+			var wsapOptionsView = new ListOptionsView
+			{
+				DisplayOptionCheckBoxChecked = wsapoptions.DisplayWritingSystemAbbreviations,
+				DisplayOptionCheckBox2Checked = wsapoptions.DisplayEachInAParagraph
+			};
+
+			var availableWSs = LoadAvailableWsList(wsapoptions);
+
+			wsapOptionsView.AvailableItems = availableWSs;
+
+			// Displaying WS Abbreviations is available only when multiple WS's are selected.
+			wsapOptionsView.DisplayOptionCheckBoxEnabled = (availableWSs.Count(item => item.Checked) >= 2);
+
+			wsapOptionsView.DisplayOptionCheckBox2Enabled = true;
+			wsapOptionsView.DisplayOptionCheckBox2Label = xWorksStrings.ksDisplayNoteInParagraphs;
+			wsapOptionsView.DisplayOptionCheckBox2Checked = wsapoptions.DisplayEachInAParagraph;
+			ToggleViewForShowInPara(wsapoptions.DisplayEachInAParagraph);
+
+			// Prevent events from firing while the view is being initialized
+			wsapOptionsView.Load += WritingSystemEventHandlerAdder(wsapOptionsView, wsapoptions);
+			wsapOptionsView.Load += WritingSystemAndParaEventHandlerAdder(wsapOptionsView, wsapoptions);
+
+			if (!m_node.IsHeadWord)
+				return wsapOptionsView;
+			// show the Configure Headword Numbers... button
+			var optionsView = new ButtonOverPanel { PanelContents = wsapOptionsView };
+			optionsView.ButtonClicked += (o, e) => HandleHeadwordNumbersButton();
+			return optionsView;
+		}
+
+		private EventHandler WritingSystemAndParaEventHandlerAdder(IDictionaryListOptionsView wsapOptionsView, DictionaryNodeWritingSystemAndParaOptions wsapOptions)
+		{
+			return (o, args) =>
+			{
+				wsapOptionsView.DisplayOptionCheckBox2Changed += (sender, e) => DisplayInParaChecked(wsapOptionsView, wsapOptions);
+				wsapOptionsView.Load -= WritingSystemAndParaEventHandlerAdder(wsapOptionsView, wsapOptions);
+			};
+		}
+
+		private void DisplayInParaChecked(IDictionaryListOptionsView wsapOptionsView,
+			DictionaryNodeWritingSystemAndParaOptions wsapOptions)
+		{
+			wsapOptions.DisplayEachInAParagraph = wsapOptionsView.DisplayOptionCheckBox2Checked;
+			m_node.Style = ParagraphStyleForSubentries(wsapOptions.DisplayEachInAParagraph, m_node.FieldDescription);
+			ToggleViewForShowInPara(wsapOptions.DisplayEachInAParagraph);
+			RefreshPreview();
 		}
 
 		private EventHandler WritingSystemEventHandlerAdder(IDictionaryListOptionsView wsOptionsView, DictionaryNodeWritingSystemOptions wsOptions)
@@ -451,6 +507,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				LoadParagraphOptions(listAndParaOptions, listOptionsView);
 			}
+			listOptionsView.DisplayOptionCheckBox2Enabled = false;
 			// REVIEW (Hasso) 2016.02: could this if block be replaced by config file changes?
 			if (listOptions.ListId == DictionaryNodeListOptions.ListIds.Complex ||
 				listOptions.ListId == DictionaryNodeListOptions.ListIds.Minor)
@@ -580,11 +637,12 @@ namespace SIL.FieldWorks.XWorks
 		private static string ParagraphStyleForSubentries(bool showInParagraph, string field)
 		{
 			string styleName = null;
+			var noteInParaStyles = new List<string>() { "AnthroNote", "DiscourseNote", "PhonologyNote", "GrammarNote", "SemanticsNote", "SocioLinguisticsNote" };
 			if (showInParagraph)
 			{
 				if (field == "SubentriesOS") // only Reversal Subentries use SubentriesOS
 					styleName = "Reversal-Subentry";
-				else if (field == "ExamplesOS")
+				else if (field == "ExamplesOS" || noteInParaStyles.Contains(field))
 					styleName = "Bulleted List";
 				else if (field == "ExtendedNoteOS" || field == "SensesOS")
 					styleName = "Dictionary-Sense";
@@ -600,7 +658,8 @@ namespace SIL.FieldWorks.XWorks
 			var optionsView = new ListOptionsView
 			{
 				ListViewVisible = false,
-				DisplayOptionCheckBoxLabel = SenseOptionsView.ksShowGrammarFirst
+				DisplayOptionCheckBoxLabel = SenseOptionsView.ksShowGrammarFirst,
+				DisplayOptionCheckBox2Enabled = false
 			};
 
 			// The option to show grammatical info first is stored on the Sense node, which should be Grammatical Info's direct parent

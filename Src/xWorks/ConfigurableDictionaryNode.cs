@@ -172,6 +172,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Type specific configuration options for this configurable node;
 		/// </summary>
 		[XmlElement("WritingSystemOptions", typeof(DictionaryNodeWritingSystemOptions))]
+		[XmlElement("WritingSystemAndParaOptions", typeof(DictionaryNodeWritingSystemAndParaOptions))]
 		[XmlElement("ReferringSenseOptions", typeof(DictionaryNodeReferringSenseOptions))]
 		[XmlElement("ListTypeOptions", typeof(DictionaryNodeListOptions))]
 		[XmlElement("ComplexFormOptions", typeof(DictionaryNodeListAndParaOptions))]
