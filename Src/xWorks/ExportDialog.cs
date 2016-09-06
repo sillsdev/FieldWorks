@@ -1814,7 +1814,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void ProcessWebonaryExport()
 		{
-			FwXWindow.ShowPublishToWebonaryDialog(m_mediator);
+			FwXWindow.ShowUploadToWebonaryDialog(m_mediator);
 		}
 
 		private bool SelectOption(string exportFormat)

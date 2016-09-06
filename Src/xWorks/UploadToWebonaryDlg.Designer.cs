@@ -7,7 +7,7 @@ using SIL.FieldWorks.Common.Widgets;
 
 namespace SIL.FieldWorks.XWorks
 {
-	partial class PublishToWebonaryDlg
+	partial class UploadToWebonaryDlg
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.XWorks
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PublishToWebonaryDlg));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UploadToWebonaryDlg));
 			this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.explanationLabel = new System.Windows.Forms.LinkLabel();
 			this.publishButton = new System.Windows.Forms.Button();
@@ -254,7 +254,7 @@ namespace SIL.FieldWorks.XWorks
 			this.reversalsCheckedListBox.CheckOnClick = true;
 			this.reversalsCheckedListBox.SelectedIndexChanged += new System.EventHandler(this.reversalsCheckedListBox_SelectedIndexChanged);
 			// 
-			// PublishToWebonaryDlg
+			// UploadToWebonaryDlg
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -262,7 +262,7 @@ namespace SIL.FieldWorks.XWorks
 			this.Controls.Add(this.tableLayoutPanel);
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
-			this.Name = "PublishToWebonaryDlg";
+			this.Name = "UploadToWebonaryDlg";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
 			this.tableLayoutPanel.ResumeLayout(false);
 			this.tableLayoutPanel.PerformLayout();

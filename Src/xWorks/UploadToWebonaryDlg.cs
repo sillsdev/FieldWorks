@@ -18,10 +18,10 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// Dialog for publishing data to Webonary web site.
 	/// </summary>
-	public partial class PublishToWebonaryDlg : Form, IPublishToWebonaryView
+	public partial class UploadToWebonaryDlg : Form, IUploadToWebonaryView
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
-		private readonly PublishToWebonaryController m_controller;
+		private readonly UploadToWebonaryController m_controller;
 		// Mono 3 handles the display of the size gripper differently than .NET SWF and so the dialog needs to be taller. Part of LT-16433.
 		private const int m_additionalMinimumHeightForMono = 26;
 
@@ -30,13 +30,13 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected Mediator Mediator { get; set; }
 
-		public PublishToWebonaryDlg()
+		public UploadToWebonaryDlg()
 		{
 			InitializeComponent();
 			LoadFromModel();
 		}
 
-		public PublishToWebonaryDlg(PublishToWebonaryController controller, PublishToWebonaryModel model, Mediator mediator)
+		public UploadToWebonaryDlg(UploadToWebonaryController controller, UploadToWebonaryModel model, Mediator mediator)
 		{
 			InitializeComponent();
 
@@ -60,8 +60,8 @@ namespace SIL.FieldWorks.XWorks
 			// Restore the location and size from last time we called this dialog.
 			if (Mediator != null && Mediator.PropertyTable != null)
 			{
-				object locWnd = Mediator.PropertyTable.GetValue("PublishToWebonaryDlg_Location");
-				object szWnd = Mediator.PropertyTable.GetValue("PublishToWebonaryDlg_Size");
+				object locWnd = Mediator.PropertyTable.GetValue("UploadToWebonaryDlg_Location");
+				object szWnd = Mediator.PropertyTable.GetValue("UploadToWebonaryDlg_Size");
 				if (locWnd != null && szWnd != null)
 				{
 					Rectangle rect = new Rectangle((Point) locWnd, (Size) szWnd);
@@ -156,7 +156,7 @@ namespace SIL.FieldWorks.XWorks
 			SetSelectedReversals(selectedReversals);
 		}
 
-		public PublishToWebonaryModel Model { get; set; }
+		public UploadToWebonaryModel Model { get; set; }
 
 		private void LoadFromModel()
 		{
@@ -251,12 +251,12 @@ namespace SIL.FieldWorks.XWorks
 				minimumFormHeightToShowLog += m_additionalMinimumHeightForMono;
 			this.MinimumSize = new Size(this.MinimumSize.Width, minimumFormHeightToShowLog);
 
-			m_controller.PublishToWebonary(Model, this);
+			m_controller.UploadToWebonary(Model, this);
 		}
 
 		private void helpButton_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpPublishToWebonary");
+			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpUploadToWebonary");
 		}
 
 		/// <summary>
@@ -307,10 +307,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (Mediator != null)
 			{
-				Mediator.PropertyTable.SetProperty("PublishToWebonaryDlg_Location", Location, false);
-				Mediator.PropertyTable.SetPropertyPersistence("PublishToWebonaryDlg_Location", true);
-				Mediator.PropertyTable.SetProperty("PublishToWebonaryDlg_Size", Size, false);
-				Mediator.PropertyTable.SetPropertyPersistence("PublishToWebonaryDlg_Size", true);
+				Mediator.PropertyTable.SetProperty("UploadToWebonaryDlg_Location", Location, false);
+				Mediator.PropertyTable.SetPropertyPersistence("UploadToWebonaryDlg_Location", true);
+				Mediator.PropertyTable.SetProperty("UploadToWebonaryDlg_Size", Size, false);
+				Mediator.PropertyTable.SetPropertyPersistence("UploadToWebonaryDlg_Size", true);
 			}
 			base.OnClosing(e);
 		}
@@ -329,11 +329,11 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// Interface for controller to interact with the dialog
 	/// </summary>
-	public interface IPublishToWebonaryView
+	public interface IUploadToWebonaryView
 	{
 		void UpdateStatus(string statusString);
 		void SetStatusCondition(WebonaryStatusCondition condition);
-		PublishToWebonaryModel Model { get; set; }
+		UploadToWebonaryModel Model { get; set; }
 	}
 
 	/// <summary>

@@ -17,10 +17,10 @@ using SIL.Utils;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// Currently serves as the controller and the model for the PublishToWebonaryView
+	/// Currently serves as the controller and the model for the UploadToWebonaryView
 	/// </summary>
 	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule", Justification="Cache and Mediator are references")]
-	public class PublishToWebonaryController : IDisposable
+	public class UploadToWebonaryController : IDisposable
 	{
 		private readonly FdoCache m_cache;
 		private readonly Mediator m_mediator;
@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected Func<IWebonaryClient> CreateWebClient = () => new WebonaryClient();
 
-		public PublishToWebonaryController(FdoCache cache, Mediator mediator)
+		public UploadToWebonaryController(FdoCache cache, Mediator mediator)
 		{
 			m_cache = cache;
 			m_mediator = mediator;
@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.XWorks
 			GC.SuppressFinalize(this);
 		}
 
-		~PublishToWebonaryController()
+		~UploadToWebonaryController()
 		{
 			Dispose(false);
 		}
@@ -81,7 +81,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Exports the dictionary xhtml and css for the publication and configuration that the user had selected in the dialog.
 		/// </summary>
-		private void ExportDictionaryContent(string tempDirectoryToCompress, PublishToWebonaryModel model, IPublishToWebonaryView webonaryView)
+		private void ExportDictionaryContent(string tempDirectoryToCompress, UploadToWebonaryModel model, IUploadToWebonaryView webonaryView)
 		{
 			webonaryView.UpdateStatus(String.Format(xWorksStrings.ExportingEntriesToWebonary, model.SelectedPublication, model.SelectedConfiguration));
 			var xhtmlPath = Path.Combine(tempDirectoryToCompress, "configured.xhtml");
@@ -90,7 +90,7 @@ namespace SIL.FieldWorks.XWorks
 			webonaryView.UpdateStatus(xWorksStrings.ExportingEntriesToWebonaryCompleted);
 		}
 
-		internal static void CompressExportedFiles(string tempDirectoryToCompress, string zipFileToUpload, IPublishToWebonaryView webonaryView)
+		internal static void CompressExportedFiles(string tempDirectoryToCompress, string zipFileToUpload, IUploadToWebonaryView webonaryView)
 		{
 			webonaryView.UpdateStatus(xWorksStrings.BeginCompressingDataForWebonary);
 			using(var zipFile = new ZipFile())
@@ -105,7 +105,7 @@ namespace SIL.FieldWorks.XWorks
 		/// This method will recurse into a directory and add files into the zip file with their relative path
 		/// to the original dirToCompress.
 		/// </summary>
-		private static void RecursivelyAddFilesToZip(ZipFile zipFile, string dirToCompress, string dirInZip, IPublishToWebonaryView webonaryView)
+		private static void RecursivelyAddFilesToZip(ZipFile zipFile, string dirToCompress, string dirInZip, IUploadToWebonaryView webonaryView)
 		{
 			foreach(var file in Directory.EnumerateFiles(dirToCompress))
 			{
@@ -127,7 +127,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Exports the reversal xhtml and css for the reversals that the user had selected in the dialog
 		/// </summary>
-		private void ExportReversalContent(string tempDirectoryToCompress, PublishToWebonaryModel model, IPublishToWebonaryView webonaryView)
+		private void ExportReversalContent(string tempDirectoryToCompress, UploadToWebonaryModel model, IUploadToWebonaryView webonaryView)
 		{
 			if (model.Reversals == null)
 				return;
@@ -160,7 +160,7 @@ namespace SIL.FieldWorks.XWorks
 			return string.Format("https://{0}.{1}/wp-json/webonary/import", siteName, server);
 		}
 
-		internal void UploadToWebonary(string zipFileToUpload, PublishToWebonaryModel model, IPublishToWebonaryView view)
+		internal void UploadToWebonary(string zipFileToUpload, UploadToWebonaryModel model, IUploadToWebonaryView view)
 		{
 			if (zipFileToUpload == null)
 				throw new ArgumentNullException("zipFileToUpload");
@@ -240,12 +240,12 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void ExportOtherFilesContent(string tempDirectoryToCompress, PublishToWebonaryModel logTextbox, object outputLogTextbox)
+		private void ExportOtherFilesContent(string tempDirectoryToCompress, UploadToWebonaryModel logTextbox, object outputLogTextbox)
 		{
 			//TODO:Copy the user selected other files into the temp directory
 		}
 
-		public void PublishToWebonary(PublishToWebonaryModel model, IPublishToWebonaryView view)
+		public void UploadToWebonary(UploadToWebonaryModel model, IUploadToWebonaryView view)
 		{
 			view.UpdateStatus("Publishing to Webonary.");
 			view.SetStatusCondition(WebonaryStatusCondition.None);
@@ -302,7 +302,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Filename of zip file to upload to webonary, based on a particular model.
 		/// If there are any characters that might cause a problem, null is returned.
 		/// </summary>
-		internal static string UploadFilename(PublishToWebonaryModel basedOnModel, IPublishToWebonaryView view)
+		internal static string UploadFilename(UploadToWebonaryModel basedOnModel, IUploadToWebonaryView view)
 		{
 			if (basedOnModel == null)
 				throw new ArgumentNullException("basedOnModel");

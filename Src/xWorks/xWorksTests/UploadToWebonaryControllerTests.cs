@@ -27,7 +27,7 @@ using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
-	public class PublishToWebonaryControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
+	public class UploadToWebonaryControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
 	{
 		private FwXApp m_application;
 		private FwXWindow m_window;
@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.XWorks
 			m_mediator = m_window.Mediator;
 			m_mediator.AddColleague(new StubContentControlProvider());
 			m_window.LoadUI(configFilePath);
-			// set up clerk to allow DictionaryPublicationDecorator to be created during the PublishToWebonaryController driven export
+			// set up clerk to allow DictionaryPublicationDecorator to be created during the UploadToWebonaryController driven export
 			const string reversalIndexClerk = @"<?xml version='1.0' encoding='UTF-8'?>
 			<root>
 				<clerks>
@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.XWorks
 			m_mediator.PropertyTable.SetProperty("ActiveClerk", m_Clerk);
 			m_mediator.PropertyTable.SetProperty("ToolForAreaNamed_lexicon", "lexiconDictionary");
 			Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
-			// setup style sheet and style to allow the css to generate during the PublishToWebonaryController driven export
+			// setup style sheet and style to allow the css to generate during the UploadToWebonaryController driven export
 			m_styleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
 			m_owningTable = new StyleInfoTable("AbbySomebody", (IWritingSystemManager)Cache.WritingSystemFactory);
 			var fontInfo = new FontInfo();
@@ -112,7 +112,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		~PublishToWebonaryControllerTests()
+		~UploadToWebonaryControllerTests()
 		{
 			Dispose(false);
 		}
@@ -125,19 +125,19 @@ namespace SIL.FieldWorks.XWorks
 		#endregion Environment
 
 		[Test]
-		public void PublishToWebonaryUsesViewConfigAndPub()
+		public void UploadToWebonaryUsesViewConfigAndPub()
 		{
 			using (var controller = SetUpController())
 			{
 				var mockView = SetUpView();
 				//SUT
-				Assert.DoesNotThrow(() => controller.PublishToWebonary(mockView.Model, mockView));
+				Assert.DoesNotThrow(() => controller.UploadToWebonary(mockView.Model, mockView));
 				Assert.That(mockView.StatusStrings.Any(s => s.Contains(mockView.Model.SelectedPublication) && s.Contains(mockView.Model.SelectedConfiguration)));
 			}
 		}
 
 		[Test]
-		public void PublishToWebonaryExportsXhtmlAndCss()
+		public void UploadToWebonaryExportsXhtmlAndCss()
 		{
 			using (var controller = SetUpController())
 			{
@@ -167,7 +167,7 @@ namespace SIL.FieldWorks.XWorks
 				var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 				entry.CitationForm.set_String(wsFr, Cache.TsStrFactory.MakeString("Headword", wsFr));
 				//SUT
-				Assert.DoesNotThrow(() => controller.PublishToWebonary(mockView.Model, mockView));
+				Assert.DoesNotThrow(() => controller.UploadToWebonary(mockView.Model, mockView));
 
 				// The names of the files being sent to webonary are listed while logging the zip
 				Assert.That(mockView.StatusStrings.Any(s => s.Contains("configured.xhtml")), "xhtml not logged as compressed");
@@ -180,35 +180,35 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		[Test]
 		[Category("ByHand")] // ByHand since uses local webonary instance
-		public void PublishToWebonaryDoesNotCrashWithoutAllItsInfo()
+		public void UploadToWebonaryDoesNotCrashWithoutAllItsInfo()
 		{
 			using (var controller = SetUpController())
 			{
 				var view = SetUpView();
 				var model = view.Model;
 
-				Assert.DoesNotThrow(() => controller.PublishToWebonary(model, view));
+				Assert.DoesNotThrow(() => controller.UploadToWebonary(model, view));
 				Assert.That(view.StatusStrings.Any(s => s.Contains("Publishing")), "Inform that the process has started");
 				model.SiteName = null;
-				Assert.DoesNotThrow(() => controller.PublishToWebonary(model, view));
+				Assert.DoesNotThrow(() => controller.UploadToWebonary(model, view));
 				model.SiteName = "site";
 				model.UserName = null;
-				Assert.DoesNotThrow(() => controller.PublishToWebonary(model, view));
+				Assert.DoesNotThrow(() => controller.UploadToWebonary(model, view));
 				model.UserName = "user";
 				model.Password = null;
-				Assert.DoesNotThrow(() => controller.PublishToWebonary(model, view));
+				Assert.DoesNotThrow(() => controller.UploadToWebonary(model, view));
 				model.Password = "password";
 				model.SelectedPublication = null;
-				Assert.DoesNotThrow(() => controller.PublishToWebonary(model, view));
+				Assert.DoesNotThrow(() => controller.UploadToWebonary(model, view));
 				model.SelectedPublication = "Test publication";
 				model.SelectedConfiguration = null;
-				Assert.DoesNotThrow(() => controller.PublishToWebonary(model, view));
+				Assert.DoesNotThrow(() => controller.UploadToWebonary(model, view));
 			}
 		}
 
 		[Test]
 		[Ignore("Until get working. Doesn't seem to put together the right kind of data to not get an error yet.")]
-		public void PublishToWebonaryCanCompleteWithoutError()
+		public void UploadToWebonaryCanCompleteWithoutError()
 		{
 			using (var controller = SetUpController())
 			{
@@ -217,7 +217,7 @@ namespace SIL.FieldWorks.XWorks
 				model.UserName = "webonary";
 				model.Password = "webonary";
 				//SUT
-				Assert.DoesNotThrow(() => controller.PublishToWebonary(model, mockView));
+				Assert.DoesNotThrow(() => controller.UploadToWebonary(model, mockView));
 				mockView.StatusStrings.ForEach(Console.WriteLine); // Remove this output line once this test works.
 				Assert.That(String.IsNullOrEmpty(mockView.StatusStrings.Find(s => s.Contains("Error") || s.Contains("ERROR") || s.Contains("error"))));
 			}
@@ -269,11 +269,11 @@ namespace SIL.FieldWorks.XWorks
 		[Ignore("Used for manual testing against a real Webonary instance")]
 		public void RealUploadWithBadDataReportsErrorInProcessing()
 		{
-			using (var controller = new MockPublishToWebonaryController(Cache, m_mediator))
+			using (var controller = new MockUploadToWebonaryController(Cache, m_mediator))
 			{
 				var view = new MockWebonaryDlg
 				{
-					Model = new PublishToWebonaryModel(m_mediator)
+					Model = new UploadToWebonaryModel(m_mediator)
 					{
 						UserName = "webonary",
 						Password = "webonary"
@@ -296,7 +296,7 @@ namespace SIL.FieldWorks.XWorks
 		[Ignore("Takes too long to timeout. Enable if want to test.")]
 		public void RealUploadToWebonaryHandlesNetworkErrors()
 		{
-			using (var controller = new MockPublishToWebonaryController(Cache, m_mediator))
+			using (var controller = new MockUploadToWebonaryController(Cache, m_mediator))
 			{
 				var view = new MockWebonaryDlg();
 				var filepath = "../../Src/xWorks/xWorksTests/lubwisi-d-new.zip";
@@ -329,10 +329,10 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void UploadToWebonaryThrowsOnNullInput()
 		{
-			using (var controller = new MockPublishToWebonaryController(Cache, m_mediator, null, null))
+			using (var controller = new MockUploadToWebonaryController(Cache, m_mediator, null, null))
 			{
 				var view = new MockWebonaryDlg();
-				var model = new PublishToWebonaryModel(m_mediator);
+				var model = new UploadToWebonaryModel(m_mediator);
 				Assert.Throws<ArgumentNullException>(() => controller.UploadToWebonary(null, model, view));
 				Assert.Throws<ArgumentNullException>(() => controller.UploadToWebonary("notNull", null, view));
 				Assert.Throws<ArgumentNullException>(() => controller.UploadToWebonary("notNull", model, null));
@@ -343,11 +343,11 @@ namespace SIL.FieldWorks.XWorks
 		public void UploadToWebonaryReportsFailedAuthentication()
 		{
 			var responseText = Encoding.UTF8.GetBytes("Wrong username or password.\nauthentication failed\n");
-			using (var controller = new MockPublishToWebonaryController(Cache, m_mediator, null, responseText))
+			using (var controller = new MockUploadToWebonaryController(Cache, m_mediator, null, responseText))
 			{
 				var view = new MockWebonaryDlg()
 				{
-					Model = new PublishToWebonaryModel(m_mediator)
+					Model = new UploadToWebonaryModel(m_mediator)
 					{
 						UserName = "nouser",
 						Password = "nopassword"
@@ -365,11 +365,11 @@ namespace SIL.FieldWorks.XWorks
 		public void UploadToWebonaryReportsIncorrectSiteName()
 		{
 			// Test for a successful response indicating that a redirect should happen
-			using (var controller = new MockPublishToWebonaryController(Cache, m_mediator, null, new byte[] {}, HttpStatusCode.Found))
+			using (var controller = new MockUploadToWebonaryController(Cache, m_mediator, null, new byte[] {}, HttpStatusCode.Found))
 			{
 				var view = new MockWebonaryDlg()
 				{
-					Model = new PublishToWebonaryModel(m_mediator)
+					Model = new UploadToWebonaryModel(m_mediator)
 					{
 						SiteName = "test",
 						UserName = "software",
@@ -383,11 +383,11 @@ namespace SIL.FieldWorks.XWorks
 			// Test with an exception which indicates a redirect should happen
 			var redirectException = new WebonaryClient.WebonaryException(new WebException("Redirected."));
 			redirectException.StatusCode = HttpStatusCode.Redirect;
-			using (var controller = new MockPublishToWebonaryController(Cache, m_mediator, redirectException, new byte[] { }))
+			using (var controller = new MockUploadToWebonaryController(Cache, m_mediator, redirectException, new byte[] { }))
 			{
 				var view = new MockWebonaryDlg()
 				{
-					Model = new PublishToWebonaryModel(m_mediator)
+					Model = new UploadToWebonaryModel(m_mediator)
 					{
 						SiteName = "test",
 						UserName = "software",
@@ -404,11 +404,11 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var ex = new WebonaryClient.WebonaryException(new WebException("Unable to connect to Webonary.  Please check your username and password and your Internet connection."));
 			ex.StatusCode = HttpStatusCode.BadRequest;
-			using (var controller = new MockPublishToWebonaryController(Cache, m_mediator, ex, null))
+			using (var controller = new MockUploadToWebonaryController(Cache, m_mediator, ex, null))
 			{
 				var view = new MockWebonaryDlg()
 				{
-					Model = new PublishToWebonaryModel(m_mediator)
+					Model = new UploadToWebonaryModel(m_mediator)
 					{
 						SiteName = "test-india",
 						UserName = "software",
@@ -424,11 +424,11 @@ namespace SIL.FieldWorks.XWorks
 		public void UploadToWebonaryReportsSuccess()
 		{
 			var success = "Upload successful.";
-			using (var controller = new MockPublishToWebonaryController(Cache, m_mediator, null, Encoding.UTF8.GetBytes(success)))
+			using (var controller = new MockUploadToWebonaryController(Cache, m_mediator, null, Encoding.UTF8.GetBytes(success)))
 			{
 				var view = new MockWebonaryDlg()
 				{
-					Model = new PublishToWebonaryModel(m_mediator)
+					Model = new UploadToWebonaryModel(m_mediator)
 					{
 						UserName = "webonary",
 						Password = "webonary"
@@ -444,11 +444,11 @@ namespace SIL.FieldWorks.XWorks
 		public void UploadToWebonaryErrorInProcessingHandled()
 		{
 			var webonaryProcessingErrorContent = Encoding.UTF8.GetBytes("Error processing data: bad data.");
-			using (var controller = new MockPublishToWebonaryController(Cache, m_mediator, null, webonaryProcessingErrorContent))
+			using (var controller = new MockUploadToWebonaryController(Cache, m_mediator, null, webonaryProcessingErrorContent))
 			{
 				var view = new MockWebonaryDlg
 				{
-					Model = new PublishToWebonaryModel(m_mediator)
+					Model = new UploadToWebonaryModel(m_mediator)
 					{
 						UserName = "webonary",
 						Password = "webonary"
@@ -464,44 +464,44 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void IsSupportedWebonaryFile_reportsAccurately()
 		{
-			Assert.True(PublishToWebonaryController.IsSupportedWebonaryFile("foo.xhtml"));
-			Assert.True(PublishToWebonaryController.IsSupportedWebonaryFile("foo.css"));
-			Assert.True(PublishToWebonaryController.IsSupportedWebonaryFile("foo.html"));
-			Assert.True(PublishToWebonaryController.IsSupportedWebonaryFile("foo.htm"));
-			Assert.True(PublishToWebonaryController.IsSupportedWebonaryFile("foo.json"));
-			Assert.True(PublishToWebonaryController.IsSupportedWebonaryFile("foo.xml"));
+			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.xhtml"));
+			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.css"));
+			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.html"));
+			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.htm"));
+			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.json"));
+			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.xml"));
 
-			Assert.True(PublishToWebonaryController.IsSupportedWebonaryFile("foo.jpg"));
-			Assert.True(PublishToWebonaryController.IsSupportedWebonaryFile("foo.jpeg"));
-			Assert.True(PublishToWebonaryController.IsSupportedWebonaryFile("foo.gif"));
-			Assert.True(PublishToWebonaryController.IsSupportedWebonaryFile("foo.png"));
+			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.jpg"));
+			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.jpeg"));
+			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.gif"));
+			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.png"));
 
-			Assert.True(PublishToWebonaryController.IsSupportedWebonaryFile("foo.mp3"));
-			Assert.True(PublishToWebonaryController.IsSupportedWebonaryFile("foo.MP4")); // avoid failure because of capitalization
+			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.mp3"));
+			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.MP4")); // avoid failure because of capitalization
 
-			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.wmf"));
-			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.tif"));
-			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.tiff"));
-			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.ico"));
-			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.pcx"));
-			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.cgm"));
+			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.wmf"));
+			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.tif"));
+			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.tiff"));
+			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.ico"));
+			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.pcx"));
+			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.cgm"));
 
-			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.wav"));
-			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.snd"));
-			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.au"));
-			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.aif"));
-			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.aifc"));
-			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.wma"));
+			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.wav"));
+			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.snd"));
+			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.au"));
+			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.aif"));
+			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.aifc"));
+			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.wma"));
 
-			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.avi"));
-			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.wmv"));
-			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.wvx"));
-			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.mpg"));
-			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.mpe"));
-			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.m1v"));
-			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.mp2"));
-			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.mpv2"));
-			Assert.False(PublishToWebonaryController.IsSupportedWebonaryFile("foo.mpa"));
+			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.avi"));
+			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.wmv"));
+			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.wvx"));
+			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.mpg"));
+			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.mpe"));
+			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.m1v"));
+			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.mp2"));
+			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.mpv2"));
+			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.mpa"));
 		}
 
 		[Test]
@@ -539,7 +539,7 @@ namespace SIL.FieldWorks.XWorks
 				File.WriteAllText(xhtmlPath, xhtmlContent);
 
 				// SUT
-				PublishToWebonaryController.CompressExportedFiles(tempDirectoryToCompress, zipFileToUpload, view);
+				UploadToWebonaryController.CompressExportedFiles(tempDirectoryToCompress, zipFileToUpload, view);
 
 				// Verification
 				const string unsupported = ".*nsupported.*";
@@ -576,20 +576,20 @@ namespace SIL.FieldWorks.XWorks
 			var model = view.Model;
 			model.SiteName = "mySiteName";
 			var expectedFilename = "mySiteName.zip";
-			var actualFilename = PublishToWebonaryController.UploadFilename(model, view);
+			var actualFilename = UploadToWebonaryController.UploadFilename(model, view);
 			Assert.That(actualFilename, Is.EqualTo(expectedFilename), "Incorrect filename for webonary export.");
 		}
 
 		[Test]
 		public void UploadFilename_ThrowsForBadInput()
 		{
-			Assert.Throws<ArgumentNullException>(() => PublishToWebonaryController.UploadFilename(null, null));
+			Assert.Throws<ArgumentNullException>(() => UploadToWebonaryController.UploadFilename(null, null));
 			var view = SetUpView();
 			var model = view.Model;
 			model.SiteName = null;
-			Assert.Throws<ArgumentException>(() => PublishToWebonaryController.UploadFilename(model, view));
+			Assert.Throws<ArgumentException>(() => UploadToWebonaryController.UploadFilename(model, view));
 			model.SiteName = "";
-			Assert.Throws<ArgumentException>(() => PublishToWebonaryController.UploadFilename(model, view));
+			Assert.Throws<ArgumentException>(() => UploadToWebonaryController.UploadFilename(model, view));
 		}
 
 		[TestCase("my.Site")]
@@ -607,7 +607,7 @@ namespace SIL.FieldWorks.XWorks
 			model.SiteName = sitename;
 
 			// SUT
-			var result = PublishToWebonaryController.UploadFilename(model, view);
+			var result = UploadToWebonaryController.UploadFilename(model, view);
 
 			Assert.That(result, Is.Null, "Fail on invalid characters.");
 			Assert.That(view.StatusStrings.Any(s => s.Contains("Invalid characters found in sitename")), "Inform that there was a problem");
@@ -618,7 +618,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var originalPub = m_mediator.PropertyTable.GetStringProperty("SelectedPublication", "Main Dictionary");
 			m_mediator.PropertyTable.SetProperty("SelectedPublication", originalPub); // just in case we fell back on the default
-			using (var controller = new MockPublishToWebonaryController(Cache, m_mediator))
+			using (var controller = new MockUploadToWebonaryController(Cache, m_mediator))
 			{
 				controller.ActivatePublication("Wiktionary");
 				Assert.AreEqual("Wiktionary", m_mediator.PropertyTable.GetStringProperty("SelectedPublication", null), "Didn't activate temp publication");
@@ -638,7 +638,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Helper.
 		/// </summary>
-		public PublishToWebonaryModel SetUpModel()
+		public UploadToWebonaryModel SetUpModel()
 		{
 			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
 
@@ -650,7 +650,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 			};
 
-			return new PublishToWebonaryModel(m_mediator)
+			return new UploadToWebonaryModel(m_mediator)
 			{
 				SiteName = "site",
 				UserName = "user",
@@ -664,12 +664,12 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Helper.
 		/// </summary>
-		public PublishToWebonaryController SetUpController()
+		public UploadToWebonaryController SetUpController()
 		{
-			return new MockPublishToWebonaryController(Cache, m_mediator, null, Encoding.UTF8.GetBytes("Upload successful"));
+			return new MockUploadToWebonaryController(Cache, m_mediator, null, Encoding.UTF8.GetBytes("Upload successful"));
 		}
 
-		internal class MockWebonaryDlg : IPublishToWebonaryView
+		internal class MockWebonaryDlg : IUploadToWebonaryView
 		{
 			// Collect the status messages that are generated during the export
 			public List<string> StatusStrings = new List<string>();
@@ -694,10 +694,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 			}
 
-			public PublishToWebonaryModel Model { get; set; }
+			public UploadToWebonaryModel Model { get; set; }
 		}
 
-		public class MockPublishToWebonaryController : PublishToWebonaryController
+		public class MockUploadToWebonaryController : UploadToWebonaryController
 		{
 			/// <summary>
 			/// URI to upload data to.
@@ -709,7 +709,7 @@ namespace SIL.FieldWorks.XWorks
 			/// </summary>
 			/// <param name="cache"></param>
 			/// <param name="mediator"></param>
-			public MockPublishToWebonaryController(FdoCache cache, Mediator mediator)
+			public MockUploadToWebonaryController(FdoCache cache, Mediator mediator)
 				: base(cache, mediator)
 			{
 			}
@@ -717,7 +717,7 @@ namespace SIL.FieldWorks.XWorks
 			/// <summary>
 			/// Tests using this constructor do not need to be marked [ByHand]; an exception, response, and response code can all be set.
 			/// </summary>
-			public MockPublishToWebonaryController(FdoCache cache, Mediator mediator, WebonaryClient.WebonaryException exceptionResponse,
+			public MockUploadToWebonaryController(FdoCache cache, Mediator mediator, WebonaryClient.WebonaryException exceptionResponse,
 				byte[] responseContents, HttpStatusCode responseStatus = HttpStatusCode.OK) : base(cache, mediator)
 			{
 				CreateWebClient = () => new MockWebonaryClient(exceptionResponse, responseContents, responseStatus);

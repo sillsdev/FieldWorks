@@ -907,7 +907,7 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>Do you want to continue?</value>
     <comment>whether to continue with the resetting of a configuration</comment>
   </data>
-  <data name="PublishToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0__publication_using_the__1__configuration" xml:space="preserve">
+  <data name="UploadToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0__publication_using_the__1__configuration" xml:space="preserve">
     <value>Exporting entries for the {0} publication using the {1} configuration</value>
     <comment>Displayed in the log when exporting to webonary</comment>
   </data>
@@ -921,11 +921,11 @@ If you are not the one designated user who adds fields, or you are making some o
   </data>
   <data name="BeginCompressingDataForWebonary" xml:space="preserve">
     <value>Compressing data before sending to Webonary.</value>
-    <comment>Displayed in the log box of PublishToWebonaryDlg when data is being zipped up.</comment>
+    <comment>Displayed in the log box of UploadToWebonaryDlg when data is being zipped up.</comment>
   </data>
   <data name="FinishedCompressingDataForWebonary" xml:space="preserve">
     <value>Compression complete.</value>
-    <comment>Displayed in the PublishToWebonaryDlg log box</comment>
+    <comment>Displayed in the UploadToWebonaryDlg log box</comment>
   </data>
   <data name="ConfigurationTreeControl_SelectAllChildren" xml:space="preserve">
     <value>Select All Children</value>
@@ -945,20 +945,20 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>Export of reversal completed.</value>
   </data>
   <data name="PublicationEntriesLabel" xml:space="preserve">
-    <value>Pressing Publish will send {0} dictionary entries{1} to Webonary.</value>
-    <comment>Message displayed in publish to webonary dialog to inform user about what data will be uploaded. 0 will be a number. 1 will be either blank or a combination of ReversalEntries, ReversalEntries_Last, and ReversalEntries_Only</comment>
+    <value>Pressing Submit will send {0} dictionary entries{1} to Webonary.</value>
+    <comment>Message displayed in Upload to Webonary dialog to inform user about what data will be uploaded. 0 will be a number. 1 will be either blank or a combination of ReversalEntries, ReversalEntries_Last, and ReversalEntries_Only</comment>
   </data>
   <data name="ReversalEntries" xml:space="preserve">
     <value>, {0} {1} reversal entries</value>
-    <comment>Part of message displayed in publish to webonary dialog to inform user about what data will be uploaded. Will be inserted into the PublicationEntriesLabel string. 0 is a number. 1 is the name of a language or a reversal index configuration name. This string will be used in cases where there are more than one reversal index configuration to report the count for, and this is not the last one.</comment>
+    <comment>Part of message displayed in Upload to Webonary dialog to inform user about what data will be uploaded. Will be inserted into the PublicationEntriesLabel string. 0 is a number. 1 is the name of a language or a reversal index configuration name. This string will be used in cases where there are more than one reversal index configuration to report the count for, and this is not the last one.</comment>
   </data>
   <data name="ReversalEntries_Last" xml:space="preserve">
     <value>, and {0} {1} reversal entries</value>
-    <comment>Part of message displayed in publish to webonary dialog to inform user about what data will be uploaded. Will be inserted into the PublicationEntriesLabel string. 0 is a number. 1 is the name of a language or a reversal index configuration name. This string will be used in cases where there are more than one reversal index configuration to report the count for, and this is the last one.</comment>
+    <comment>Part of message displayed in Upload to Webonary dialog to inform user about what data will be uploaded. Will be inserted into the PublicationEntriesLabel string. 0 is a number. 1 is the name of a language or a reversal index configuration name. This string will be used in cases where there are more than one reversal index configuration to report the count for, and this is the last one.</comment>
   </data>
   <data name="ReversalEntries_Only" xml:space="preserve">
     <value> and {0} {1} reversal entries</value>
-    <comment>Part of message displayed in publish to webonary dialog to inform user about what data will be uploaded. Will be inserted into the PublicationEntriesLabel string. 0 is a number. 1 is the name of a language or a reversal index configuration name. This string will be used in cases where there is just one reversal index configuration to report the count for.</comment>
+    <comment>Part of message displayed in Upload to Webonary dialog to inform user about what data will be uploaded. Will be inserted into the PublicationEntriesLabel string. 0 is a number. 1 is the name of a language or a reversal index configuration name. This string will be used in cases where there is just one reversal index configuration to report the count for.</comment>
   </data>
   <data name="ksGeneratingDisplayFragments" xml:space="preserve">
     <value>Generating the display fragments for individual entries</value>
