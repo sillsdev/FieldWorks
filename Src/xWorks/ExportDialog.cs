@@ -1227,7 +1227,7 @@ namespace SIL.FieldWorks.XWorks
 			m_rgFxtTypes.Add(ft);
 			// We can't actually disable a list item, but we can make it look and act like it's
 			// disabled.
-			if (ItemDisabled(ft.m_ft, ft.m_filtered))
+			if (ItemDisabled(ft.m_ft, ft.m_filtered, ft.m_sFormat))
 				item.ForeColor = SystemColors.GrayText;
 		}
 
@@ -1280,15 +1280,17 @@ namespace SIL.FieldWorks.XWorks
 
 		protected virtual bool ItemDisabled(string tag)
 		{
-			return ItemDisabled(m_rgFxtTypes[FxtIndex(tag)].m_ft, m_rgFxtTypes[FxtIndex(tag)].m_filtered);
+			return ItemDisabled(m_rgFxtTypes[FxtIndex(tag)].m_ft, m_rgFxtTypes[FxtIndex(tag)].m_filtered, m_rgFxtTypes[FxtIndex(tag)].m_sFormat);
 		}
 
-		private bool ItemDisabled(FxtTypes ft, bool isFiltered)
+		private bool ItemDisabled(FxtTypes ft, bool isFiltered, string formatType)
 		{
 			//enable unless the type is pathway & pathway is not installed, or if the type is lift and it is filtered, but there is no filter available, or if the filter excludes all items
 			bool fFilterAvailable = DetermineIfFilterIsAvailable();
 			return (ft == FxtTypes.kftPathway && !PathwayUtils.IsPathwayInstalled) ||
-				   (ft == FxtTypes.kftLift && isFiltered && fFilterAvailable);
+				   (ft == FxtTypes.kftLift && isFiltered && fFilterAvailable) ||
+				   (ft == FxtTypes.kftConfigured && (formatType == "htm" || formatType == "sfm")) ||
+				   (ft == FxtTypes.kftReversal && formatType == "sfm");
 		}
 
 		private bool DetermineIfFilterIsAvailable()
