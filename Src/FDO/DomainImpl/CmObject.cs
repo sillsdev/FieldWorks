@@ -2266,6 +2266,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			var seq = GetNonModelPropertyForSDA(flid);
 			if (seq is IFdoList<ICmObject>)
 				((IFdoList<ICmObject>)seq).Replace(start, numberToDelete, thingsToAdd);
+			else if (seq is IFdoList<ICmPossibility>)
+				((IFdoList<ICmPossibility>)seq).Replace(start, numberToDelete, thingsToAdd);
 			else
 				throw new InvalidOperationException("Attempted to perform Replace on a property that is not a known sequence: " + flid);
 		}
