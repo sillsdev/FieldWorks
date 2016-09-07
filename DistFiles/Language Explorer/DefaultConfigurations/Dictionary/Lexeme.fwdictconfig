@@ -351,9 +351,9 @@
 		<ConfigurationItem name="Reference" after=" " isEnabled="false" field="Reference"/>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Encyclopedic Info." before=" [" between=" " after="]" isEnabled="true" field="EncyclopedicInfo">
-		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		<WritingSystemAndParaOptions writingSystemType="analysis" displayWSAbreviation="false" displayInParagraph="false">
 		  <Option id="all analysis" isEnabled="true"/>
-		</WritingSystemOptions>
+		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Restrictions" before="Restrictions: " between=" " after=". " isEnabled="true" field="Restrictions">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -595,9 +595,9 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="General Note" between=" " after=" " isEnabled="false" field="GeneralNote">
-		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		<WritingSystemAndParaOptions writingSystemType="analysis" displayWSAbreviation="false" displayInParagraph="false">
 		  <Option id="all analysis" isEnabled="true"/>
-		</WritingSystemOptions>
+		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Scientific Name" after=" " isEnabled="true" field="ScientificName"/>
 	  <ConfigurationItem name="Source" after=" " isEnabled="false" field="Source"/>
@@ -1322,9 +1322,9 @@
 		<ConfigurationItem name="Reference" after=" " isEnabled="false" field="Reference"/>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Encyclopedic Info." before=" [" between=" " after="]" isEnabled="true" field="EncyclopedicInfo">
-		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		<WritingSystemAndParaOptions writingSystemType="analysis" displayWSAbreviation="false" displayInParagraph="false">
 		  <Option id="all analysis" isEnabled="true"/>
-		</WritingSystemOptions>
+		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Restrictions" before="Restrictions: " between=" " after=". " isEnabled="true" field="Restrictions">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1566,9 +1566,9 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="General Note" between=" " after=" " isEnabled="false" field="GeneralNote">
-		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		<WritingSystemAndParaOptions writingSystemType="analysis" displayWSAbreviation="false" displayInParagraph="false">
 		  <Option id="all analysis" isEnabled="true"/>
-		</WritingSystemOptions>
+		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Scientific Name" after=" " isEnabled="true" field="ScientificName"/>
 	  <ConfigurationItem name="Source" after=" " isEnabled="false" field="Source"/>
@@ -2267,9 +2267,9 @@
 		<ConfigurationItem name="Reference" after=" " isEnabled="false" field="Reference"/>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Encyclopedic Info." before=" [" between=" " after="]" isEnabled="true" field="EncyclopedicInfo">
-		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		<WritingSystemAndParaOptions writingSystemType="analysis" displayWSAbreviation="false" displayInParagraph="false">
 		  <Option id="all analysis" isEnabled="true"/>
-		</WritingSystemOptions>
+		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Restrictions" before="Restrictions: " between=" " after=". " isEnabled="true" field="Restrictions">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -2511,9 +2511,9 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="General Note" between=" " after=" " isEnabled="false" field="GeneralNote">
-		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		<WritingSystemAndParaOptions writingSystemType="analysis" displayWSAbreviation="false" displayInParagraph="false">
 		  <Option id="all analysis" isEnabled="true"/>
-		</WritingSystemOptions>
+		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Scientific Name" after=" " isEnabled="true" field="ScientificName"/>
 	  <ConfigurationItem name="Source" after=" " isEnabled="false" field="Source"/>
@@ -2865,9 +2865,9 @@
 		<ConfigurationItem name="Reference" after=" " isEnabled="false" field="Reference"/>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Encyclopedic Info." before=" [" between=" " after="]" isEnabled="true" field="EncyclopedicInfo">
-		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		<WritingSystemAndParaOptions writingSystemType="analysis" displayWSAbreviation="false" displayInParagraph="false">
 		  <Option id="all analysis" isEnabled="true"/>
-		</WritingSystemOptions>
+		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Restrictions" before="Restrictions: " between=" " after=". " isEnabled="true" field="Restrictions">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -3109,9 +3109,9 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="General Note" between=" " after=" " isEnabled="false" field="GeneralNote">
-		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		<WritingSystemAndParaOptions writingSystemType="analysis" displayWSAbreviation="false" displayInParagraph="false">
 		  <Option id="all analysis" isEnabled="true"/>
-		</WritingSystemOptions>
+		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Scientific Name" after=" " isEnabled="true" field="ScientificName"/>
 	  <ConfigurationItem name="Source" after=" " isEnabled="false" field="Source"/>

@@ -637,7 +637,7 @@ namespace SIL.FieldWorks.XWorks
 		private static string ParagraphStyleForSubentries(bool showInParagraph, string field)
 		{
 			string styleName = null;
-			var noteInParaStyles = new List<string>() { "AnthroNote", "DiscourseNote", "PhonologyNote", "GrammarNote", "SemanticsNote", "SocioLinguisticsNote" };
+			var noteInParaStyles = new List<string>() { "AnthroNote", "DiscourseNote", "PhonologyNote", "GrammarNote", "SemanticsNote", "SocioLinguisticsNote", "GeneralNote", "EncyclopedicInfo" };
 			if (showInParagraph)
 			{
 				if (field == "SubentriesOS") // only Reversal Subentries use SubentriesOS

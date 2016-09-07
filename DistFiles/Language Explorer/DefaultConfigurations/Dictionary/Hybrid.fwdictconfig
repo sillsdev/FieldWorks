@@ -218,9 +218,9 @@
 		<ConfigurationItem name="Reference" isEnabled="false" before="" after=" " field="Reference" />
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Encyclopedic Info." isEnabled="true" style="Dictionary-Contrasting" before=" (" between=" " after=") " field="EncyclopedicInfo">
-		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		<WritingSystemAndParaOptions writingSystemType="analysis" displayWSAbreviation="false" displayInParagraph="false">
 		  <Option id="all analysis" isEnabled="true" />
-		</WritingSystemOptions>
+		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Lexical Relations" isEnabled="false" before="" between="; " after=". " field="LexSenseReferences">
 		<ListTypeOptions list="sense">
@@ -449,9 +449,9 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="General Note" isEnabled="false" before="" between=" " after=" " field="GeneralNote">
-		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		<WritingSystemAndParaOptions writingSystemType="analysis" displayWSAbreviation="false"  displayInParagraph="false">
 		  <Option id="all analysis" isEnabled="true" />
-		</WritingSystemOptions>
+		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Source" isEnabled="false" before="" after=" " field="Source" />
 	  <ConfigurationItem name="Semantic Domains" isEnabled="false" before="(sem. domains: " between=", " after=".) " field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
@@ -1202,9 +1202,9 @@
 		<ConfigurationItem name="Reference" isEnabled="false" before="" after=" " field="Reference" />
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Encyclopedic Info." isEnabled="true" before=" [" between=" " after="]" field="EncyclopedicInfo">
-		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		<WritingSystemAndParaOptions writingSystemType="analysis" displayWSAbreviation="false" displayInParagraph="false">
 		  <Option id="all analysis" isEnabled="true" />
-		</WritingSystemOptions>
+		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Lexical Relations" isEnabled="false" before="" between="; " after=". " field="LexSenseReferences">
 		<ListTypeOptions list="sense">
@@ -1433,9 +1433,9 @@
  		</ConfigurationItem>
  	  </ConfigurationItem>
 	  <ConfigurationItem name="General Note" isEnabled="false" before="" between=" " after=" " field="GeneralNote">
-		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		<WritingSystemAndParaOptions writingSystemType="analysis" displayWSAbreviation="false" displayInParagraph="false">
 		  <Option id="all analysis" isEnabled="true" />
-		</WritingSystemOptions>
+		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Source" isEnabled="false" before="" after=" " field="Source" />
 	  <ConfigurationItem name="Semantic Domains" isEnabled="false" before="(sem. domains: " between=", " after=".) " field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
@@ -2131,9 +2131,9 @@
 		  <ConfigurationItem name="Reference" after=" " isEnabled="false" field="Reference"/>
 		</ConfigurationItem>
 		<ConfigurationItem name="Encyclopedic Info." before=" [" between=" " after="]" isEnabled="true" field="EncyclopedicInfo">
-		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <WritingSystemAndParaOptions writingSystemType="analysis" displayWSAbreviation="false" displayInParagraph="false">
 			<Option id="all analysis" isEnabled="true"/>
-		  </WritingSystemOptions>
+		  </WritingSystemAndParaOptions>
 		</ConfigurationItem>
 		<ConfigurationItem name="Lexical Relations" between="; " after=". " isEnabled="true" field="LexSenseReferences">
 		  <ListTypeOptions list="sense">
@@ -2370,9 +2370,9 @@
 	  		</ConfigurationItem>
 	  	</ConfigurationItem>
 		<ConfigurationItem name="General Note" between=" " after=" " isEnabled="false" field="GeneralNote">
-		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <WritingSystemAndParaOptions writingSystemType="analysis" displayWSAbreviation="false" displayInParagraph="false">
 			<Option id="all analysis" isEnabled="true"/>
-		  </WritingSystemOptions>
+		  </WritingSystemAndParaOptions>
 		</ConfigurationItem>
 		<ConfigurationItem name="Source" after=" " isEnabled="false" field="Source"/>
 		<ConfigurationItem name="Semantic Domains" before="(sem. domains: " between=", " after=".) " isEnabled="true" field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
@@ -3107,9 +3107,9 @@
 		<ConfigurationItem name="Reference" isEnabled="false" before="" after=" " field="Reference" />
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Encyclopedic Info." isEnabled="true" before=" [" between=" " after="]" field="EncyclopedicInfo">
-		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		<WritingSystemAndParaOptions writingSystemType="analysis" displayWSAbreviation="false" displayInParagraph="false">
 		  <Option id="all analysis" isEnabled="true" />
-		</WritingSystemOptions>
+		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Lexical Relations" isEnabled="false" before="" between="; " after=". " field="LexSenseReferences">
 		<ListTypeOptions list="sense">
@@ -3338,9 +3338,9 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="General Note" isEnabled="false" before="" between=" " after=" " field="GeneralNote">
-		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		<WritingSystemAndParaOptions writingSystemType="analysis" displayWSAbreviation="false" displayInParagraph="false">
 		  <Option id="all analysis" isEnabled="true" />
-		</WritingSystemOptions>
+		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Source" isEnabled="false" before="" after=" " field="Source" />
 	  <ConfigurationItem name="Semantic Domains" isEnabled="false" before="(sem. domains: " between=", " after=".) " field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
@@ -3892,9 +3892,9 @@
 		<ConfigurationItem name="Reference" after=" " isEnabled="false" field="Reference"/>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Encyclopedic Info." before=" [" between=" " after="]" isEnabled="true" field="EncyclopedicInfo">
-		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		<WritingSystemAndParaOptions writingSystemType="analysis" displayWSAbreviation="false" displayInParagraph="false">
 		  <Option id="all analysis" isEnabled="true"/>
-		</WritingSystemOptions>
+		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Restrictions" before="Restrictions: " between=" " after=". " isEnabled="true" field="Restrictions">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -4136,9 +4136,9 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="General Note" between=" " after=" " isEnabled="false" field="GeneralNote">
-		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		<WritingSystemAndParaOptions writingSystemType="analysis" displayWSAbreviation="false" displayInParagraph="false">
 		  <Option id="all analysis" isEnabled="true"/>
-		</WritingSystemOptions>
+		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Scientific Name" after=" " isEnabled="true" field="ScientificName"/>
 	  <ConfigurationItem name="Source" after=" " isEnabled="false" field="Source"/>
@@ -4486,9 +4486,9 @@
 		  <ConfigurationItem name="Reference" after=" " isEnabled="false" field="Reference"/>
 		</ConfigurationItem>
 		<ConfigurationItem name="Encyclopedic Info." before=" [" between=" " after="]" isEnabled="false" field="EncyclopedicInfo">
-		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <WritingSystemAndParaOptions writingSystemType="analysis" displayWSAbreviation="false" displayInParagraph="false">
 			<Option id="all analysis" isEnabled="true"/>
-		  </WritingSystemOptions>
+		  </WritingSystemAndParaOptions>
 		</ConfigurationItem>
 		<ConfigurationItem name="Lexical Relations" between="; " after=". " isEnabled="false" field="LexSenseReferences">
 		  <ListTypeOptions list="sense">
@@ -4725,9 +4725,9 @@
 	  		</ConfigurationItem>
 	  	</ConfigurationItem>
 		<ConfigurationItem name="General Note" between=" " after=" " isEnabled="false" field="GeneralNote">
-		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <WritingSystemAndParaOptions writingSystemType="analysis" displayWSAbreviation="false" displayInParagraph="false">
 			<Option id="all analysis" isEnabled="true"/>
-		  </WritingSystemOptions>
+		  </WritingSystemAndParaOptions>
 		</ConfigurationItem>
 		<ConfigurationItem name="Source" after=" " isEnabled="false" field="Source"/>
 		<ConfigurationItem name="Semantic Domains" before="(sem. domains: " between=", " after=".) " isEnabled="false" field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
