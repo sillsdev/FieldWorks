@@ -562,16 +562,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 				else
 				{
-					// reset them to m_sMDFImportMap and dbfile + .map
-					m_SettingsFileName.Items.Clear();
-					m_SettingsFileName.Items.Add(m_sMDFImportMap);
-					m_SettingsFileName.SelectedIndex = 0;
-					m_SaveAsFileName.Text = RemoveTheFileExtension(m_DatabaseFileName.Text) + "-import-settings.map";
-					if (System.IO.File.Exists(m_SaveAsFileName.Text))
-					{
-						int pos = m_SettingsFileName.Items.Add(m_SaveAsFileName.Text);
-						m_SettingsFileName.SelectedIndex = pos;
-					}
+					SetDefaultSettings();
 				}
 			}
 			m_dirtyInputFile = !(m_processedInputFile == m_DatabaseFileName.Text);
@@ -583,6 +574,20 @@ namespace SIL.FieldWorks.LexText.Controls
 				//					NextButtonEnabled = true;
 				//				else
 				//					NextButtonEnabled = false;
+			}
+		}
+
+		private void SetDefaultSettings()
+		{
+			// reset them to m_sMDFImportMap and dbfile + .map
+			m_SettingsFileName.Items.Clear();
+			m_SettingsFileName.Items.Add(m_sMDFImportMap);
+			m_SettingsFileName.SelectedIndex = 0;
+			m_SaveAsFileName.Text = RemoveTheFileExtension(m_DatabaseFileName.Text) + "-import-settings.map";
+			if (System.IO.File.Exists(m_SaveAsFileName.Text))
+			{
+				int pos = m_SettingsFileName.Items.Add(m_SaveAsFileName.Text);
+				m_SettingsFileName.SelectedIndex = pos;
 			}
 		}
 
@@ -2360,6 +2365,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		private bool UsesInvalidFileNames(bool runSilent)
 		{
 			bool fStayHere = false;
+			if (!File.Exists(m_SettingsFileName.Text))
+			{
+				SetDefaultSettings();
+			}
 			if (m_isPhaseInputFile)
 			{
 				;
