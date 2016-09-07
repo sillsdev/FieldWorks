@@ -305,7 +305,7 @@ namespace SIL.FieldWorks.XWorks
 			clone.Parent = parent;
 
 			// Deep-clone Children
-			if (Children != null)
+			if (Children != null && Children.Any())
 			{
 				if (isRecursiveCall || !(DictionaryNodeOptions is DictionaryNodeGroupingOptions))
 				{
@@ -319,12 +319,12 @@ namespace SIL.FieldWorks.XWorks
 					clone.Children = null;
 				}
 			}
-			else if (!isRecursiveCall && ReferencedOrDirectChildren != null)
+			else if (!isRecursiveCall && ReferencedNode != null && ReferencedNode.Children != null)
 			{
-				// Allow users to configure copies of, e.g., Subentries separately
+				// Allow users to configure copies of Shared nodes (e.g. Subentries) separately
 				clone.ReferencedNode = null;
 				clone.ReferenceItem = null;
-				clone.Children = ReferencedOrDirectChildren.Select(child => child.DeepCloneUnderParent(clone, true)).ToList();
+				clone.Children = ReferencedNode.Children.Select(child => child.DeepCloneUnderParent(clone, true)).ToList();
 			}
 
 			// Deep-clone DictionaryNodeOptions

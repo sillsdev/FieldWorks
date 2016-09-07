@@ -272,7 +272,11 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var sharedChild = new ConfigurableDictionaryNode { Label = "kid" };
 			var sharedItem = new ConfigurableDictionaryNode { Label = "Shared", Children = new List<ConfigurableDictionaryNode> { sharedChild } };
-			var masterParent = new ConfigurableDictionaryNode { ReferenceItem = "Shared", ReferencedNode = sharedItem };
+			var masterParent = new ConfigurableDictionaryNode
+			{
+				ReferenceItem = "Shared", ReferencedNode = sharedItem,
+				Children = new List<ConfigurableDictionaryNode>() // just because we haven't any doesn't mean the list is null!
+			};
 			var clone = masterParent.DeepCloneUnderSameParent(); // SUT
 			Assert.Null(clone.ReferenceItem);
 			Assert.Null(clone.ReferencedNode);
