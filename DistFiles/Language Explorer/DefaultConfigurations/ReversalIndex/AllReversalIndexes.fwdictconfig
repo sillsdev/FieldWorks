@@ -62,6 +62,9 @@
 						</WritingSystemOptions>
 					</ConfigurationItem>
 				</ConfigurationItem>
+				<ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+				<ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
+				</ConfigurationItem>
 			</ConfigurationItem>
 			<ConfigurationItem name="Variants (of Entry)" isEnabled="false" before="(" between="; " after=") " field="Entry" subField="VariantFormEntryBackRefs">
 				<ListTypeOptions list="variant">
@@ -109,6 +112,9 @@
 								<Option id="analysis" isEnabled="true" />
 							</WritingSystemOptions>
 						</ConfigurationItem>
+					</ConfigurationItem>
+					<ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+					<ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
 					</ConfigurationItem>
 				</ConfigurationItem>
 				<ConfigurationItem name="Comment" isEnabled="false" between=" " after=" " field="Summary">
@@ -168,6 +174,9 @@
 								<Option id="analysis" isEnabled="true" />
 							</WritingSystemOptions>
 						</ConfigurationItem>
+					</ConfigurationItem>
+					<ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+					<ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
 					</ConfigurationItem>
 				</ConfigurationItem>
 				<ConfigurationItem name="Comment" isEnabled="false" between=" " after=" " field="Summary">
@@ -727,6 +736,9 @@
 							</WritingSystemOptions>
 						</ConfigurationItem>
 					</ConfigurationItem>
+					<ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+					<ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
+					</ConfigurationItem>
 				</ConfigurationItem>
 				<ConfigurationItem name="Variants (of Entry)" isEnabled="false" before="(" between="; " after=") " field="Entry" subField="VariantFormEntryBackRefs">
 					<ListTypeOptions list="variant">
@@ -774,6 +786,9 @@
 									<Option id="analysis" isEnabled="true" />
 								</WritingSystemOptions>
 							</ConfigurationItem>
+						</ConfigurationItem>
+						<ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+						<ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
 						</ConfigurationItem>
 					</ConfigurationItem>
 					<ConfigurationItem name="Comment" isEnabled="false" between=" " after=" " field="Summary">
@@ -833,6 +848,9 @@
 									<Option id="analysis" isEnabled="true" />
 								</WritingSystemOptions>
 							</ConfigurationItem>
+						</ConfigurationItem>
+						<ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+						<ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
 						</ConfigurationItem>
 					</ConfigurationItem>
 					<ConfigurationItem name="Comment" isEnabled="false" between=" " after=" " field="Summary">
