@@ -105,13 +105,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			set { checkBoxDisplayOption.Enabled = value; }
 		}
 
-		/// <summary>Whether or not the single "display option" checkbox below the list is enabled</summary>
-		public bool DisplayOptionCheckBox2Enabled
-		{
-			get { return checkBoxDisplayOption2.Enabled; }
-			set { checkBoxDisplayOption2.Enabled = value; }
-		}
-
 		/// <note>
 		/// Although it seems daft to hide the ListView in a ListOptionsView, Referenced Complex Forms always uses the single checkbox,
 		/// but only sometimes uses the list of checkboxes.  So we hide the list when it is not in use.

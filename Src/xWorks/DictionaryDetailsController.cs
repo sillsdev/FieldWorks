@@ -338,7 +338,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// Displaying WS Abbreviations is available only when multiple WS's are selected.
 			wsOptionsView.DisplayOptionCheckBoxEnabled = (availableWSs.Count(item => item.Checked) >= 2);
-			wsOptionsView.DisplayOptionCheckBox2Enabled = false;
+			wsOptionsView.DisplayOptionCheckBox2Visible = false;
 
 			// Prevent events from firing while the view is being initialized
 			wsOptionsView.Load += WritingSystemEventHandlerAdder(wsOptionsView, wsOptions);
@@ -367,7 +367,7 @@ namespace SIL.FieldWorks.XWorks
 			// Displaying WS Abbreviations is available only when multiple WS's are selected.
 			wsapOptionsView.DisplayOptionCheckBoxEnabled = (availableWSs.Count(item => item.Checked) >= 2);
 
-			wsapOptionsView.DisplayOptionCheckBox2Enabled = true;
+			wsapOptionsView.DisplayOptionCheckBox2Visible = true;
 			wsapOptionsView.DisplayOptionCheckBox2Label = xWorksStrings.ksDisplayNoteInParagraphs;
 			wsapOptionsView.DisplayOptionCheckBox2Checked = wsapoptions.DisplayEachInAParagraph;
 			ToggleViewForShowInPara(wsapoptions.DisplayEachInAParagraph);
@@ -507,7 +507,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				LoadParagraphOptions(listAndParaOptions, listOptionsView);
 			}
-			listOptionsView.DisplayOptionCheckBox2Enabled = false;
+			listOptionsView.DisplayOptionCheckBox2Visible = false;
 			// REVIEW (Hasso) 2016.02: could this if block be replaced by config file changes?
 			if (listOptions.ListId == DictionaryNodeListOptions.ListIds.Complex ||
 				listOptions.ListId == DictionaryNodeListOptions.ListIds.Minor)
@@ -659,7 +659,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				ListViewVisible = false,
 				DisplayOptionCheckBoxLabel = SenseOptionsView.ksShowGrammarFirst,
-				DisplayOptionCheckBox2Enabled = false
+				DisplayOptionCheckBox2Visible = false
 			};
 
 			// The option to show grammatical info first is stored on the Sense node, which should be Grammatical Info's direct parent
