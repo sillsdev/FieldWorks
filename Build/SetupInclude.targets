@@ -225,13 +225,15 @@
 	  <Output TaskParameter="Value" PropertyName="msbuild-props"/>
 	</CreateProperty>
 
-	<CreateProperty Value="LongRunning,ByHand,SmokeTest" Condition="'$(runAllTests)'==''">
+	<!-- to locally exclude some additional categories, set the environment variable, e.g.
+		ExtraExcludedCategories=",FailsOnTrusty" -->
+	<CreateProperty Value="LongRunning,ByHand,SmokeTest$(ExtraExcludedCategories)" Condition="'$(runAllTests)'==''">
+	  <Output TaskParameter="Value" PropertyName="excludedCategories"/>
+	</CreateProperty>
+	<CreateProperty Value="ByHand,SmokeTest$(ExtraExcludedCategories)" Condition="'$(runAllTests)'!=''">
 	  <Output TaskParameter="Value" PropertyName="excludedCategories"/>
 	</CreateProperty>
 	<CreateProperty Value="$(excludedCategories),DesktopRequired" Condition="'$(desktopNotAvailable)'=='true'">
-	  <Output TaskParameter="Value" PropertyName="excludedCategories"/>
-	</CreateProperty>
-	<CreateProperty Value="ByHand,SmokeTest" Condition="'$(runAllTests)'!=''">
 	  <Output TaskParameter="Value" PropertyName="excludedCategories"/>
 	</CreateProperty>
 	<CreateProperty Value="$(excludedCategories),ExcludeOnLinux64" Condition="'$(arch)'=='x86_64'">
