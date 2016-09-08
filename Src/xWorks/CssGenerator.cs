@@ -189,10 +189,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Generates css rules for a configuration node and adds them to the given stylesheet (recursive).
 		/// </summary>
-		private static void GenerateCssFromConfigurationNode(ConfigurableDictionaryNode configNode,
-																			  StyleSheet styleSheet,
-																			  string baseSelection,
-																			  Mediator mediator)
+		private static void GenerateCssFromConfigurationNode(ConfigurableDictionaryNode configNode, StyleSheet styleSheet,
+			string baseSelection, Mediator mediator)
 		{
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			var rule = new StyleRule();
@@ -409,10 +407,15 @@ namespace SIL.FieldWorks.XWorks
 		private static void GenerateCssFromListAndParaOptions(ConfigurableDictionaryNode configNode,
 			IParaOption listAndParaOpts, StyleSheet styleSheet, ref string baseSelection, FdoCache cache, Mediator mediator)
 		{
-			var blockDeclarations = string.IsNullOrEmpty(configNode.Style)
-				? new List<StyleDeclaration> { new StyleDeclaration() }
-				: GenerateCssStyleFromFwStyleSheet(configNode.Style, 0, configNode, mediator, true);
 			var selectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, cache, mediator);
+			List<StyleDeclaration> blockDeclarations;
+			if (string.IsNullOrEmpty(configNode.Style))
+				blockDeclarations = new List<StyleDeclaration> {new StyleDeclaration()};
+			else
+			{
+				blockDeclarations = GenerateCssStyleFromFwStyleSheet(configNode.Style, 0, configNode, mediator, true);
+				GenerateCssForWritingSystems(baseSelection + " span", configNode.Style, styleSheet, mediator);
+			}
 			var styleRules = selectors as StyleRule[] ?? selectors.ToArray();
 			if (listAndParaOpts.DisplayEachInAParagraph)
 			{

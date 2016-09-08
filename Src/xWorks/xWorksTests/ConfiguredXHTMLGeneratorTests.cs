@@ -7995,14 +7995,22 @@ namespace SIL.FieldWorks.XWorks
 						.Union(cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS).Select(item => item.Guid.ToString())));
 					break;
 				case DictionaryNodeListOptions.ListIds.Variant:
+					isComplex = false;
 					dnoList = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(
 						new [] { XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString() }
 						.Union(cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Select(item => item.Guid.ToString())));
 					break;
 				case DictionaryNodeListOptions.ListIds.Complex:
+					isComplex = true;
 					dnoList = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(
 						new [] { XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString() }
 						.Union(cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.Select(item => item.Guid.ToString())));
+					break;
+				case DictionaryNodeListOptions.ListIds.Note:
+					isComplex = true;
+					dnoList = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(
+						new[] { XmlViewsUtils.GetGuidForUnspecifiedExtendedNoteType().ToString() }
+						.Union(cache.LangProject.LexDbOA.ExtendedNoteTypesOA.PossibilitiesOS.Select(item => item.Guid.ToString())));
 					break;
 				default:
 					throw new NotImplementedException(string.Format("Unknown list id {0}", listName));

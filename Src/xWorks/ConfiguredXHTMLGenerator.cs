@@ -1916,7 +1916,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else if (listOptions is DictionaryNodeListAndParaOptions)
 			{
-				foreach (var child in config.ReferencedOrDirectChildren)
+				foreach (var child in config.ReferencedOrDirectChildren.Where(child => child.FieldDescription != factoredTypeField))
 				{
 					string content;
 					if (child.FieldDescription == "LookupComplexEntryType")
