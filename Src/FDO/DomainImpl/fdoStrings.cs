@@ -113,10 +113,12 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// ------------------------------------------------------------------------------------
 		public virtual ITsString NotFoundTss
 		{
-			get
-			{
-				return TsStringUtils.MakeTss(Strings.ksStars, m_object.Cache.WritingSystemFactory.UserWs);
-			}
+			get { return StringServices.GetNotFoundTss(m_object.Cache); }
+		}
+
+		public virtual string NotFoundTssText
+		{
+			get { return NotFoundTss.Text; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -231,7 +233,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var result = RawUserDefaultWritingSystem;
-				if (result != null && result.Length > 0 && result.Text != NotFoundTss.Text)
+				if (!TsStringUtils.IsNullOrEmpty(result) && result.Text != NotFoundTssText)
 					return result;
 
 				return BestAnalysisVernacularAlternative;

@@ -77,7 +77,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				// see if we can find an abbreviation.
 				IText text = (IText)stText.Owner;
 				tssName = text.Abbreviation.BestVernacularAnalysisAlternative;
-				if (tssName != null && tssName.Length > 0 && tssName.Text != text.Abbreviation.NotFoundTss.Text)
+				if (tssName != null && tssName.Length > 0 && tssName.Text != text.Abbreviation.NotFoundTssText)
 					fUsingAbbreviation = true;
 			}
 
@@ -86,7 +86,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 			ITsStrBldr bldr = tssName.GetBldr();
 			// If we didn't find a "best", reset to an empty string.
-			if (bldr.Length > 0 && bldr.Text == stText.Title.NotFoundTss.Text)
+			if (bldr.Length > 0 && bldr.Text == stText.Title.NotFoundTssText)
 				bldr.ReplaceTsString(0, bldr.Length, null);
 			// Truncate to 8 chars, if the user hasn't specified an abbreviation.
 			if (!fUsingAbbreviation && bldr.Length > 8)

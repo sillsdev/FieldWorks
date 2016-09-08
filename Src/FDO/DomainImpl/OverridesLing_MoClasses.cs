@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			(from sense in ((ILexEntry)Owner).SensesOS
 			 where sense.MorphoSyntaxAnalysisRA == this
 			 select sense.Gloss.AnalysisDefaultWritingSystem.Text)
-						.DefaultIfEmpty(Strings.ksQuestions).FirstOrDefault();
+						.DefaultIfEmpty(StringServices.QuestionMarks).FirstOrDefault();
 		}
 
 		/// <summary>
@@ -530,12 +530,12 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					if (featFrom != null)
 						tisb.AppendTsString(featFrom.ShortNameTSS);
 					else
-						tisb.AppendTsString(m_cache.MakeUserTss(Strings.ksQuestions));
+						tisb.AppendTsString(StringServices.GetQuestionMarksTss(m_cache));
 					tisb.AppendTsString(m_cache.MakeUserTss(" > "));
 					if (featTo != null)
 						tisb.AppendTsString(featTo.ShortNameTSS);
 					else
-						tisb.AppendTsString(m_cache.MakeUserTss(Strings.ksQuestions));
+						tisb.AppendTsString(StringServices.GetQuestionMarksTss(m_cache));
 					return tisb.GetString();
 				}
 				else
@@ -566,8 +566,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				}
 				if (ToProdRestrictRC.Count > 0)
 				{
-					if (tisb.Text == null || tisb.Text.Length == 0)
-						tisb.AppendTsString(m_cache.MakeUserTss(Strings.ksQuestions));
+					if (string.IsNullOrEmpty(tisb.Text))
+						tisb.AppendTsString(StringServices.GetQuestionMarksTss(m_cache));
 					tisb.AppendTsString(m_cache.MakeUserTss(" > "));
 					bool fFirst = true;
 					foreach (CmPossibility pss in ToProdRestrictRC)
@@ -578,9 +578,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						fFirst = false;
 					}
 				}
-				else if (tisb.Text != null && tisb.Text.Length > 0)
+				else if (!string.IsNullOrEmpty(tisb.Text))
 				{
-					tisb.AppendTsString(m_cache.MakeUserTss(String.Format(" > {0}", Strings.ksQuestions)));
+					tisb.AppendTsString(m_cache.MakeUserTss(String.Format(" > {0}", StringServices.QuestionMarks)));
 				}
 				else
 				{
@@ -891,7 +891,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				}
 				else
 				{
-					tisb.AppendTsString(m_cache.MakeUserTss(Strings.ksQuestions));
+					tisb.AppendTsString(StringServices.GetQuestionMarksTss(m_cache));
 				}
 				tisb.AppendTsString(m_cache.MakeUserTss(" > "));
 				if (posTo != null)
@@ -903,7 +903,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				}
 				else
 				{
-					tisb.AppendTsString(m_cache.MakeUserTss(Strings.ksQuestions));
+					tisb.AppendTsString(StringServices.GetQuestionMarksTss(m_cache));
 				}
 				return tisb.GetString();
 			}
@@ -937,7 +937,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				}
 				else
 				{
-					tisb.AppendTsString(m_cache.MakeUserTss(Strings.ksQuestions));
+					tisb.AppendTsString(StringServices.GetQuestionMarksTss(m_cache));
 				}
 				tisb.AppendTsString(m_cache.MakeUserTss(" > "));
 				if (icTo != null)
@@ -949,7 +949,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				}
 				else
 				{
-					tisb.AppendTsString(m_cache.MakeUserTss(Strings.ksQuestions));
+					tisb.AppendTsString(StringServices.GetQuestionMarksTss(m_cache));
 				}
 				return tisb.GetString();
 			}
@@ -1273,7 +1273,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (pos != null)
 				tisb.Append(pos.Abbreviation.AnalysisDefaultWritingSystem.Text);
 			else
-				tisb.Append(Strings.ksQuestions);
+				tisb.Append(StringServices.QuestionMarks);
 		}
 
 		/// <summary>
@@ -2343,8 +2343,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var retval = ChooserNameTS.Text;
-				if (retval == null || retval == String.Empty)
-					retval = Strings.ksQuestions;
+				if (string.IsNullOrEmpty(retval))
+					retval = StringServices.QuestionMarks;
 				return retval;
 			}
 		}
@@ -2887,7 +2887,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var result = ShortNameTSS.Text;
-				return String.IsNullOrEmpty(result) ? Strings.ksQuestions : result;
+				return String.IsNullOrEmpty(result) ? StringServices.QuestionMarks : result;
 			}
 		}
 
@@ -3306,7 +3306,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				var form = Form.VernacularDefaultWritingSystem;
 				if (form == null || string.IsNullOrEmpty(form.Text))
-					return Strings.ksQuestions;		// was "??", not "???"
+					return StringServices.QuestionMarks;		// was "??", not "???"
 
 				return form.Text;
 			}
@@ -3403,9 +3403,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if (tss != null || tss.Length > 0)
 					return tss;
 
-				return Cache.TsStrFactory.MakeString(
-					Strings.ksQuestions,
-					Cache.DefaultUserWs);
+				return StringServices.GetQuestionMarksTss(Cache);
 			}
 		}
 
@@ -4586,7 +4584,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var result = ShortNameTSS.Text;
-				return String.IsNullOrEmpty(result) ? Strings.ksQuestions : result;
+				return String.IsNullOrEmpty(result) ? StringServices.QuestionMarks : result;
 			}
 		}
 

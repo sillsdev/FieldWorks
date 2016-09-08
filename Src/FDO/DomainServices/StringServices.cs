@@ -25,7 +25,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	{
 		// Mono is slow with multiple string calls to the resources,
 		// therefore we need a cached member variable.
-		private static string m_CacheQuestions;
+		private static string s_CacheQuestions;
+		private static string s_CacheNotFound;
+
+		private static ITsString s_CacheQuestionsTss;
+		private static ITsString s_CacheNotFoundTss;
+
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -369,9 +374,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			}
 
 			// Give up.
-			tsb.AppendTsString(entry.Cache.TsStrFactory.MakeString(
-				DefaultHomographString(),
-				entry.Cache.DefaultUserWs));
+			tsb.AppendTsString(GetQuestionMarksTss(entry.Cache));
 		}
 
 		/// <summary>
@@ -434,9 +437,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// </summary>
 		public static string DefaultHomographString()
 		{
-			if (m_CacheQuestions == null)
-				m_CacheQuestions = Strings.ksQuestions;
-			return m_CacheQuestions;
+			return QuestionMarks;
 		}
 
 		/// <summary>
@@ -831,6 +832,61 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				return null;
 
 			return modified ? tisb.GetString() : str;
+		}
+
+		/// <summary>
+		/// Gets the question marks string
+		/// </summary>
+		internal static string QuestionMarks
+		{
+			get
+			{
+				if (s_CacheQuestions == null)
+					s_CacheQuestions = Strings.ksQuestions;
+				return s_CacheQuestions;
+			}
+		}
+
+		/// <summary>
+		/// Gets the not found text.
+		/// </summary>
+		internal static string NotFound
+		{
+			get
+			{
+				if (s_CacheNotFound == null)
+					s_CacheNotFound = Strings.ksStars;
+				return s_CacheNotFound;
+			}
+		}
+
+		/// <summary>
+		/// Gets the question mark TsString
+		/// </summary>
+		internal static ITsString GetQuestionMarksTss(FdoCache cache)
+		{
+			if (s_CacheQuestionsTss == null)
+				s_CacheQuestionsTss = cache.MakeUserTss(QuestionMarks);
+			return s_CacheQuestionsTss;
+		}
+
+		/// <summary>
+		/// Gets the not found TsString.
+		/// </summary>
+		internal static ITsString GetNotFoundTss(FdoCache cache)
+		{
+			if (s_CacheNotFoundTss == null)
+				s_CacheNotFoundTss = cache.MakeUserTss(NotFound);
+			return s_CacheNotFoundTss;
+		}
+
+		/// <summary>
+		/// Resets the cached strings. This needs to be called when the User WS changes.
+		/// </summary>
+		public static void ResetCachedStrings()
+		{
+			s_CacheNotFoundTss = null;
+			s_CacheQuestionsTss = null;
 		}
 	}
 }

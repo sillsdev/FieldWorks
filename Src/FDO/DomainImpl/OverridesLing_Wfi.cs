@@ -779,9 +779,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if (tss != null && tss.Length != 0)
 					return tss;
 
-				return Cache.TsStrFactory.MakeString(
-					Strings.ksQuestions,
-					Cache.DefaultUserWs);
+				return StringServices.GetQuestionMarksTss(Cache);
 			}
 		}
 

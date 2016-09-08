@@ -300,7 +300,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						var homographs = Services.GetInstance<ILexEntryRepository>().CollectHomographs(
 							le.HomographFormKey,
 							le.PrimaryMorphType);
-						if (le.HomographFormKey == Strings.ksQuestions)
+						if (le.HomographFormKey == StringServices.QuestionMarks)
 						{
 							homographs.ForEach(lex => lex.HomographNumber = 0);
 							le.HomographNumber = 0; // just to be sure if homographs is empty
@@ -1997,11 +1997,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 			// When the homograph form is not set: it is empty, or entirely non-word forming characters
 			// if not, set the homograph number to 0.
-			if (newHf == Strings.ksQuestions)
+			if (newHf == StringServices.QuestionMarks)
 				HomographNumber = 0;
 
 			// When the old and new homograph form was not set, the homograph numbers should remain 0
-			if (newHf == Strings.ksQuestions && oldHf == Strings.ksQuestions)
+			if (newHf == StringServices.QuestionMarks && oldHf == StringServices.QuestionMarks)
 				return;
 
 			// This test used to be at the top of this method, but LT-13152 showed
@@ -2033,7 +2033,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				// down to one item, the survivor will not be a homograph.
 				oldHomographs[0].HomographNumber = 0;
 			}
-			else if (oldHf != Strings.ksQuestions)
+			else if (oldHf != StringServices.QuestionMarks)
 			{   // When the old homograph form is set, adjust the homograph numbers.
 				for (int i = 0; i < oldHomographs.Count; i++)
 					oldHomographs[i].HomographNumber = i + 1;
@@ -5962,7 +5962,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if (tss.Text == Strings.ksStars)
 					tss = null;
 
-				return tss == null || tss.Length == 0 ? Strings.ksQuestions : tss.Text;
+				return tss == null || tss.Length == 0 ? StringServices.QuestionMarks : tss.Text;
 			}
 		}
 
@@ -6313,9 +6313,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				}
 				else
 				{
-					var ws = m_cache.DefaultUserWs;
-					var name = Strings.ksQuestions;		// was "??", not "???"
-					return m_cache.TsStrFactory.MakeString(name, ws);
+					return StringServices.GetQuestionMarksTss(m_cache);
 				}
 			}
 		}
@@ -6873,7 +6871,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					if (name != null && name.Length > 0)
 						return name;
 					name = Name.BestAnalysisVernacularAlternative;
-					if (name != null && name.Length > 0 && name.Text != Name.NotFoundTss.Text)
+					if (name != null && name.Length > 0 && name.Text != Name.NotFoundTssText)
 						return name;
 				}
 				if (Abbreviation != null)
@@ -6885,12 +6883,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					if (abbrev != null && abbrev.Length > 0)
 						return abbrev;
 					abbrev = Abbreviation.BestAnalysisVernacularAlternative;
-					if (abbrev != null && abbrev.Length > 0 && abbrev.Text != Abbreviation.NotFoundTss.Text)
+					if (abbrev != null && abbrev.Length > 0 && abbrev.Text != Abbreviation.NotFoundTssText)
 						return abbrev;
 				}
-				return Cache.TsStrFactory.MakeString(
-					Strings.ksQuestions,
-					m_cache.DefaultUserWs);
+				return StringServices.GetQuestionMarksTss(Cache);
 			}
 		}
 

@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					sBookAbbrev = BookAbbrev.BestAnalysisAlternative.Text;
 
 				// UBS book code
-				if (string.IsNullOrEmpty(sBookAbbrev) || sBookAbbrev == BookAbbrev.NotFoundTss.Text)
+				if (string.IsNullOrEmpty(sBookAbbrev) || sBookAbbrev == BookAbbrev.NotFoundTssText)
 					sBookAbbrev = ScrReference.NumberToBookCode(IndexInOwner + 1);
 				System.Diagnostics.Debug.Assert(sBookAbbrev != null && sBookAbbrev != String.Empty);
 
@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					sBookName = BookName.BestAnalysisAlternative.Text;
 
 				// UBS code, if all else fails.
-				if (string.IsNullOrEmpty(sBookName) || sBookName == BookName.NotFoundTss.Text)
+				if (string.IsNullOrEmpty(sBookName) || sBookName == BookName.NotFoundTssText)
 					sBookName = ScrReference.NumberToBookCode(IndexInOwner + 1);
 				System.Diagnostics.Debug.Assert(sBookName != null && sBookName != String.Empty);
 

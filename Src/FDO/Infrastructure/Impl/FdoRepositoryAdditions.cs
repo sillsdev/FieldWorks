@@ -1371,7 +1371,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		List<ILexEntry> ILexEntryRepositoryInternal.CollectHomographs(string sForm, int hvo, List<ILexEntry> entries,
 														  IMoMorphType morphType, bool fMatchLexForms)
 		{
-			if (sForm == null || sForm == String.Empty || sForm == Strings.ksQuestions)		// was "??", not "???"
+			if (string.IsNullOrEmpty(sForm) || sForm == StringServices.QuestionMarks)		// was "??", not "???"
 				return new List<ILexEntry>(0);
 			if (entries.Count == 0)
 				return new List<ILexEntry>(0);

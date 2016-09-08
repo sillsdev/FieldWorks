@@ -15,15 +15,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Windows.Forms;
 using System.IO;
+using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
 using SIL.CoreImpl.Properties;
 using SIL.FieldWorks.Common.Framework;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
+using SIL.Utils;
 using XCore;
 #if !__MonoCS__
 using NetSparkle;
@@ -123,6 +124,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem = ws;
 				// Reload the mediator's string table with the appropriate language data.
 				m_mediator.StringTbl.Reload(m_sNewUserWs);
+				StringServices.ResetCachedStrings();
 			}
 
 			// Handle installing/uninstalling plugins.

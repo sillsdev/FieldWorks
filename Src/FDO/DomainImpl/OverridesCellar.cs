@@ -482,8 +482,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					if (Name.UserDefaultWritingSystem != null && Name.UserDefaultWritingSystem.Text != null)
 						return Name.UserDefaultWritingSystem.Text;
 
-					if (Name.NotFoundTss != null && Name.NotFoundTss.Text != null)
-						return Name.NotFoundTss.Text;
+					if (Name.NotFoundTss != null && Name.NotFoundTssText != null)
+						return Name.NotFoundTssText;
 				}
 
 				return string.Empty;
@@ -1233,7 +1233,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			string s;
 			foreach (ICmPossibility poss in possibilityList)
 			{
-				string sNotFound = poss.Abbreviation.NotFoundTss.Text;
+				string sNotFound = poss.Abbreviation.NotFoundTssText;
 
 				s = poss.AbbrevHierarchyString;
 				if (!string.IsNullOrEmpty(s) && s != sNotFound)
@@ -1323,7 +1323,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		private ITsString BestVernOrAnalysisName()
 		{
 			return BestAlternative(m_cache, this, WritingSystemServices.kwsFirstVernOrAnal,
-								   CmPossibilityTags.kflidName, Strings.ksQuestions);
+								   CmPossibilityTags.kflidName, StringServices.QuestionMarks);
 		}
 
 		/// <summary>
@@ -1334,7 +1334,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		private ITsString BestVernacularName()
 		{
 			return BestAlternative(m_cache, this, WritingSystemServices.kwsFirstVern,
-								   CmPossibilityTags.kflidName, Strings.ksQuestions);
+								   CmPossibilityTags.kflidName, StringServices.QuestionMarks);
 		}
 	}
 	#endregion
@@ -1515,7 +1515,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					strPossibility = ((ICmPossibility)categoryObj).Name.GetAlternativeOrBestTss(ws, out dummy).Text;
 				else
 					strPossibility = ((ICmPossibility)categoryObj).Abbreviation.GetAlternativeOrBestTss(ws, out dummy).Text;
-				bool fTextFound = !string.IsNullOrEmpty(strPossibility) && !strPossibility.Equals(Name.NotFoundTss.Text);
+				bool fTextFound = !string.IsNullOrEmpty(strPossibility) && !strPossibility.Equals(Name.NotFoundTssText);
 				if (fTextFound)
 					strBldr.Insert(0, strPossibility);
 
@@ -1676,7 +1676,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			return BestAlternative(cache, pss,
 								   WritingSystemServices.kwsFirstAnal,
-								   (int)CmPossibilityTags.kflidName, Strings.ksQuestions);
+								   (int)CmPossibilityTags.kflidName, StringServices.QuestionMarks);
 		}
 
 		/// <summary>
@@ -1690,7 +1690,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			// JohnT: how about this for a default?
 			// "a " + this.GetType().Name + " with no name"
-			return BestAnalysisOrVernName(cache, pss, Strings.ksQuestions);
+			return BestAnalysisOrVernName(cache, pss, StringServices.QuestionMarks);
 		}
 
 		/// <summary>
@@ -1735,7 +1735,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 			if (tss == null || tss.Length == 0)
 			{
-				tss = TsStringUtils.MakeTss(Strings.ksQuestions, cache.WritingSystemFactory.UserWs);
+				tss = StringServices.GetQuestionMarksTss(cache);
 				// JohnT: how about this?
 				//return TsStringUtils.MakeTss("a " + this.GetType().Name + " with no name", cache.WritingSystemFactory.UserWs);
 			}
@@ -1759,7 +1759,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 			if (tss == null || tss.Length == 0)
 			{
-				tss = TsStringUtils.MakeTss(Strings.ksQuestions, cache.WritingSystemFactory.UserWs);
+				tss = StringServices.GetQuestionMarksTss(cache);
 			}
 			return tss;
 		}
@@ -2275,7 +2275,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if (feature != null)
 					tisb.AppendTsString(tsf.MakeString(feature.Name.BestAnalysisAlternative.Text, analWs));
 				else
-					tisb.AppendTsString(tsf.MakeString(Strings.ksQuestions, analWs));
+					tisb.AppendTsString(tsf.MakeString(StringServices.QuestionMarks, analWs));
 
 				tisb.AppendTsString(tsf.MakeString(" : ", analWs));
 
@@ -2283,7 +2283,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if (value != null)
 					tisb.AppendTsString(tsf.MakeString(value.Name.BestAnalysisAlternative.Text, analWs));
 				else
-					tisb.AppendTsString(tsf.MakeString(Strings.ksQuestions, analWs));
+					tisb.AppendTsString(tsf.MakeString(StringServices.QuestionMarks, analWs));
 
 				tisb.AppendTsString(tsf.MakeString("]", analWs));
 
