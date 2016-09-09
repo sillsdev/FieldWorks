@@ -145,7 +145,7 @@
     <value>Warning: Ignoring extra character at the end of &lt;Binary&gt; data.</value>
   </data>
   <data name="ksCannotCreateLexRefType" xml:space="preserve">
-    <value>Info: Cannot create desired Lexical Reference Type: &lt;Link {0}/&gt;.</value>
+    <value>Info: Cannot create desired Lexical Reference Type: "{0}".</value>
   </data>
   <data name="ksCannotResolveCrossRef" xml:space="preserve">
     <value>Info: Cannot resolve a link for a cross reference from "{0}" to "{1}".</value>
@@ -184,7 +184,7 @@
     <value>Confidence Level</value>
   </data>
   <data name="ksCannotResolveLink" xml:space="preserve">
-    <value>Info: Cannot resolve &lt;Link {0}/&gt;</value>
+    <value>Info: Cannot resolve a link to entry '{0}'.</value>
   </data>
   <data name="ksCreatingReversalIndex" xml:space="preserve">
     <value>Info: Creating Reversal Index for the {0} ("{1}") language.</value>
