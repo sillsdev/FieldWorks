@@ -647,7 +647,7 @@ namespace SIL.FieldWorks.XWorks
 								for (var i = enabledWsOptions.Count() - 1; i > 0; i--)
 								{
 									betweenSelector = (i == enabledWsOptions.Count() - 1 ? string.Empty : (betweenSelector + ",")) +
-									String.Format("{0}> {1}> span[lang|='{2}']:before", parentSelector, collectionSelector,
+									String.Format("{0}> {1}> span+span[lang|='{2}']:before", parentSelector, collectionSelector,
 									enabledWsOptions[i].Id);
 								}
 							}

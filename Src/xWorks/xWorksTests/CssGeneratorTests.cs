@@ -453,6 +453,51 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForConfiguration_DefinitionOrGlossBeforeAfterConfigGeneratesBeforeAfterCss()
+		{
+			var wsOpts = new DictionaryNodeWritingSystemOptions
+			{
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				{
+					new DictionaryNodeListOptions.DictionaryNodeOption {Id = "fr"},
+					new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en"}
+				}
+			};
+			var definitionOrGloss = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "DefinitionOrGloss",
+				Before = "<",
+				Between = ",",
+				After = ">",
+				DictionaryNodeOptions = wsOpts
+			};
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				Children = new List<ConfigurableDictionaryNode> { definitionOrGloss }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "lexentry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+
+			PopulateFieldsForTesting(mainEntryNode);
+			GeneratePseudoStyle(CssGenerator.BeforeAfterBetweenStyleName);
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .senses .sense> .definitionorgloss> span:first-child:before{.*content:'<';.*}",
+				RegexOptions.Singleline).Success, "Before not generated.");
+			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .senses .sense> .definitionorgloss> span\+span\[lang\|=\'en\']:before{.*content:',';.*}",
+				RegexOptions.Singleline).Success, "Between not generated.");
+			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .senses .sense> .definitionorgloss> span:last-child:after{.*content:'>';.*}",
+				RegexOptions.Singleline).Success, "After not generated.");
+		}
+
+		[Test]
 		public void GenerateCssForStyleName_CharacterStyleWorks()
 		{
 			GenerateStyle("Dictionary-Vernacular");
@@ -2080,7 +2125,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry>\s*\.lexemeform>\s*span\[lang\|=\'fr\'\]:before{.*content:','.*}", RegexOptions.Singleline).Success,
+			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry>\s*\.lexemeform>\s*span\+span\[lang\|=\'fr\'\]:before{.*content:','.*}", RegexOptions.Singleline).Success,
 							  "Between Multi-WritingSystem without Abbr selector not generated.");
 		}
 
