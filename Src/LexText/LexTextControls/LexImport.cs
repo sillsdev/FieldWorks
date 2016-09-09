@@ -10,14 +10,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Xml;
 using System.Xml.Xsl;
-using System.Xml.XPath;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Controls;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -75,13 +73,14 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="dlg">The progress dialog.</param>
 		/// <param name="parameters">The parameters: 1) runToCompletion, 2) last step,
 		/// 3) start phase, 4) database file name, 5) number of entries, 6) true to display
-		/// the import report, 7) name of phase 1 HTML report file, 8) name of phase 1 file.
+		/// the import report, 7) name of phase 1 HTML report file, 8) name of phase 1 file,
+		/// 9) true to create entries for missing link targets.
 		/// </param>
 		/// <returns><c>true</c> if import was successful, otherwise <c>false</c>.</returns>
 		/// ------------------------------------------------------------------------------------
 		public object Import(IThreadedProgress dlg, object[] parameters)
 		{
-			Debug.Assert(parameters.Length == 8);
+			Debug.Assert(parameters.Length == 9);
 			bool runToCompletion = (bool)parameters[0];
 			int lastStep = (int)parameters[1];
 			int startPhase = (int)parameters[2];
@@ -90,6 +89,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_fDisplayImportReport = (bool)parameters[5];
 			m_sPhase1HtmlReport = (string)parameters[6];
 			m_sPhase1FileName = (string)parameters[7];
+			var fCreateMissingLinks = (bool) parameters[8];
 
 			string sErrorMsg = LexTextControls.ksTransformProblem_X;
 			bool fAttemptedXml = false;
@@ -166,7 +166,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					dlg.Step(1);
 					// There's no way to cancel from here on out.
 					dlg.AllowCancel = false;
-					xid = new XmlImportData(m_cache);
+					xid = new XmlImportData(m_cache, fCreateMissingLinks);
 					fAttemptedXml = true;
 					if (startPhase == 4 && processedInputFile.Length == 0)
 						processedInputFile = m_sPhase4Output;

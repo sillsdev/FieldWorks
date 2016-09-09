@@ -4,12 +4,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -20,6 +22,12 @@ using DCM = SIL.FieldWorks.XWorks.DictionaryConfigurationMigrator;
 
 namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 {
+	/// <summary>
+	/// The PreHistoricMigrator is responsible for migrating a pre-8.3Alpha db with the old layout
+	/// system into the new configuration system. Other migrators will take it from there. Part of
+	/// the process involves comparing converted nodes to the static 8.3Alpha configuration files
+	/// stored in {DistFiles}/Language Explorer/AlphaConfigs.
+	/// </summary>
 	public class PreHistoricMigrator : IDictionaryConfigurationMigrator, ILayoutConverter
 	{
 		private Mediator m_mediator;
@@ -31,7 +39,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		/// Dictionary of custom fields for each parent field type: Key is parent field type (Type; e.g. ILexEntry)
 		/// Value is Dictionary of custom fields: Key is custom field Label, Value is custom field Name
 		/// Dictionary&lt;parent field type, Dictionary&lt;custom field label, custom field name&gt;&gt;
-		/// Backwards because a freshly-migrated Dictionayr Configuration comes with Labels but not Field Names.
+		/// Backwards because a freshly-migrated Dictionary Configuration comes with Labels but not Field Names.
 		/// Needed because we can't look Custom Fields' Names up in our shipping Configurations as we do for standard Fields. Cached for performance.
 		/// </summary>
 		private Dictionary<string, Dictionary<string, string>> m_classToCustomFieldsLabelToName;
@@ -56,13 +64,19 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		}
 
 		public const int VersionPre83 = -1;
+		public const int VersionAlpha1 = 1;
+
+		/// <summary>
+		/// Name of the folder where the static 8.3Alpha1 configuration files are stored
+		/// for migration of older dbs.
+		/// </summary>
+		private const string AlphaConfigFolder = "AlphaConfigs";
 
 		public void MigrateIfNeeded(SimpleLogger logger, Mediator mediator, string appVersion)
 		{
 			m_logger = logger;
 			m_mediator = mediator;
 			Cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
-			StringTable = mediator.StringTbl;
 			LayoutLevels = new LayoutLevels();
 			m_layoutInventory = Inventory.GetInventory("layouts", Cache.ProjectId.Name);
 			m_partInventory = Inventory.GetInventory("parts", Cache.ProjectId.Name);
@@ -78,25 +92,26 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
 				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
 					"Undo Migrate old Dictionary Configurations", "Redo Migrate old Dictionary Configurations",
-					Cache.ActionHandlerAccessor,
-					() =>
-					{
-						var configureLayouts = GetConfigureLayoutsNodeForTool("lexiconDictionary");
-						LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
-					});
+					Cache.ActionHandlerAccessor, PerformMigrationUOW);
 				m_logger.WriteLine(string.Format("Migrating Reversal Index configurations, if any - {0}",
 					DateTime.Now.ToString("h:mm:ss")));
 				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName;
 				Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
 				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
 					"Undo Migrate old Reversal Configurations", "Redo Migrate old Reversal Configurations",
-					Cache.ActionHandlerAccessor,
-					() =>
-					{
-						var configureLayouts = GetConfigureLayoutsNodeForTool("reversalToolEditComplete");
-						LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
-					});
+					Cache.ActionHandlerAccessor, PerformMigrationUOW);
 			}
+		}
+
+		/// <summary>Perform the migration for Dictionary or Reversal (depending on m_configDirSuffixBeingMigrated.</summary>
+		/// <remarks>Must be called in an UndoableUnitOfWork.</remarks>
+		private void PerformMigrationUOW()
+		{
+			var tool = m_configDirSuffixBeingMigrated == DictionaryConfigurationListener.DictionaryConfigurationDirectoryName
+				? "lexiconDictionary"
+				: "reversalToolEditComplete";
+			var configureLayouts = GetConfigureLayoutsNodeForTool(tool);
+			LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
 		}
 
 		/// <summary>
@@ -159,17 +174,17 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 		/// <summary>
 		/// This method will take a skeleton model which has been already converted from LayoutTreeNodes
-		/// and fill in data that we did not convert for some reason. It will use the current shipping
-		/// default model for the layout which the old model used. (eg. publishStem)
+		/// and fill in data that we did not convert for some reason. It will use the static 8.3Alpha1
+		/// shipping model for the layout which the old model used. (eg. publishStem)
 		/// </summary>
 		internal void CopyNewDefaultsIntoConvertedModel(string layout, DictionaryConfigurationModel convertedModel)
 		{
 			if (convertedModel.Version != VersionPre83)
 				return;
-			DictionaryConfigurationModel currentDefaultModel;
+			DictionaryConfigurationModel alpha83DefaultModel;
 			const string extension = DictionaryConfigurationModel.FileExtension;
 			var projectPath = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), m_configDirSuffixBeingMigrated);
-			var defaultPath = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(m_configDirSuffixBeingMigrated);
+			var alphaConfigsPath = Path.Combine(FwDirectoryFinder.FlexFolder, AlphaConfigFolder);
 			const string defaultStemName = "Stem" + extension;
 			const string defaultRootName = "Root" + extension;
 			const string defaultReversalName = "AllReversalIndexes" + extension;
@@ -178,19 +193,19 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				case "publishStem":
 				{
 					convertedModel.FilePath = Path.Combine(projectPath, defaultStemName);
-					currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultStemName), Cache);
+					alpha83DefaultModel = new DictionaryConfigurationModel(Path.Combine(alphaConfigsPath, defaultStemName), Cache);
 					break;
 				}
 				case "publishRoot":
 				{
 					convertedModel.FilePath = Path.Combine(projectPath, defaultRootName);
-					currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultRootName), Cache);
+					alpha83DefaultModel = new DictionaryConfigurationModel(Path.Combine(alphaConfigsPath, defaultRootName), Cache);
 					break;
 				}
 				case "publishReversal":
 				{
 					convertedModel.FilePath = Path.Combine(projectPath, defaultReversalName);
-					currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultReversalName), Cache);
+					alpha83DefaultModel = new DictionaryConfigurationModel(Path.Combine(alphaConfigsPath, defaultReversalName), Cache);
 					break;
 				}
 				default:
@@ -203,13 +218,13 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					{
 						var customFileName = string.Format("{0}-Stem-{1}{2}", convertedModel.Label, layout.Substring(customSuffixIndex), extension);
 						convertedModel.FilePath = Path.Combine(projectPath, customFileName);
-						currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultStemName), Cache);
+						alpha83DefaultModel = new DictionaryConfigurationModel(Path.Combine(alphaConfigsPath, defaultStemName), Cache);
 					}
 					else if (customSuffixIndex > 0 && layout.StartsWith("publishRoot"))
 					{
 						var customFileName = string.Format("{0}-Root-{1}{2}", convertedModel.Label, layout.Substring(customSuffixIndex), extension);
 						convertedModel.FilePath = Path.Combine(projectPath, customFileName);
-						currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultRootName), Cache);
+						alpha83DefaultModel = new DictionaryConfigurationModel(Path.Combine(alphaConfigsPath, defaultRootName), Cache);
 					}
 					else if (layout.StartsWith("publishReversal")) // a reversal index for a specific language or a copied Reversal Index Config
 					{
@@ -231,20 +246,21 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 							? string.Format("{0}-{1}-{2}{3}", convertedModel.Label, reversalIndex, layout.Substring(customSuffixIndex), extension)
 							: string.Format("{0}{1}", reversalIndex, extension);
 						convertedModel.FilePath = Path.Combine(projectPath, customFileName);
-						currentDefaultModel = new DictionaryConfigurationModel(Path.Combine(defaultPath, defaultReversalName), Cache);
+						alpha83DefaultModel = new DictionaryConfigurationModel(Path.Combine(alphaConfigsPath, defaultReversalName), Cache);
 					}
 					else
 						throw new NotImplementedException("Classified Dictionary migration or something has not yet been implemented.");
 					break;
 				}
 			}
-			CopyNewDefaultsIntoConvertedModel(convertedModel, currentDefaultModel);
+			CopyNewDefaultsIntoConvertedModel(convertedModel, alpha83DefaultModel);
 		}
 
 		/// <remarks>Internal only for tests; production entry point is MigrateOldConfigurationsIfNeeded()</remarks>
 		internal void CopyNewDefaultsIntoConvertedModel(DictionaryConfigurationModel convertedModel, DictionaryConfigurationModel currentDefaultModel)
 		{
 			convertedModel.SharedItems = convertedModel.SharedItems ?? new List<ConfigurableDictionaryNode>();
+			convertedModel.IsRootBased = currentDefaultModel.IsRootBased;
 
 			// Stem-based treats Complex Forms as Main Entries. Previously, they had all been configured by the same Main Entries node,
 			// but now, they are configured in a separate "Main Entries (Complex Forms)" node.
@@ -312,11 +328,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				}
 			}
 
-			// add any SharedItems that may have been missed
-			var missedSharedItems = currentDefaultModel.SharedItems.Where(dsi => convertedModel.SharedItems.All(csi => dsi.Label != csi.Label));
-			convertedModel.SharedItems.AddRange(missedSharedItems);
-
-			convertedModel.Version = currentDefaultModel.Version; // Migration is complete; update the version
+			convertedModel.Version = VersionAlpha1; // Pre83 Migration is complete; update the version
 		}
 
 		private void CopyDefaultsIntoChildren(DictionaryConfigurationModel convertedModel, ConfigurableDictionaryNode convertedNode, ConfigurableDictionaryNode currentDefaultNode)
@@ -396,8 +408,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			}
 
 			// LT-17356 Converting the Label in HandleChildNodeRenaming() requires more info than we have there.
-			// ENHANCE (Hasso) 2106.05: localize? (worthwhile only after migration in general works in a localized interface)
+			// ReSharper disable LocalizableElement - Justification: node.Parent.Text should not be localized during migration.
 			if (node.Label == "Bibliography" && node.Parent.Text == "Referenced Senses")
+				// ReSharper restore LocalizableElement
 			{
 				convertedNode.Label = node.ClassName == "LexEntry" ? "Bibliography (Entry)" : "Bibliography (Sense)";
 			}
@@ -457,7 +470,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				options = new DictionaryNodeWritingSystemOptions
 				{
 					DisplayWritingSystemAbbreviations = node.ShowWsLabels,
-					WsType = MigrateWsType(node.WsType),
+					WsType = DictionaryConfigurationController.GetWsTypeFromMagicWsName(node.WsType),
 					Options = MigrateWsOptions(node.WsLabel)
 				};
 			}
@@ -559,7 +572,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		/// into the converted node and add any children that are new in the current defaults to the converted node. The order of children
 		/// in the converted node is maintained.
 		/// </summary>
-		private void CopyDefaultsIntoConfigNode(DictionaryConfigurationModel convertedModel, ConfigurableDictionaryNode convertedNode, ConfigurableDictionaryNode currentDefaultNode)
+		internal void CopyDefaultsIntoConfigNode(DictionaryConfigurationModel convertedModel, ConfigurableDictionaryNode convertedNode, ConfigurableDictionaryNode currentDefaultNode)
 		{
 			if (convertedNode.Label != currentDefaultNode.Label)
 			{
@@ -593,7 +606,14 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				// if the new default node has children and the converted node doesn't, they need to be added
 				if (currentDefaultNode.Children != null && currentDefaultNode.Children.Any())
+				{
 					convertedNode.Children = new List<ConfigurableDictionaryNode>(currentDefaultNode.Children);
+					if (convertedNode.Label == "Subsenses")
+					{
+						convertedNode.Children = new List<ConfigurableDictionaryNode>(convertedNode.Parent.Children.Select(node => node.DeepCloneUnderSameParent()));
+						convertedNode.Children.ForEach(child => child.Parent = convertedNode);
+					}
+				}
 				return;
 			}
 			// if there are child lists to merge then merge them
@@ -601,25 +621,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				CopyDefaultsIntoChildren(convertedModel, convertedNode, currentDefaultNode);
 			}
-			else if (currentDefaultNode.ReferencedNode != null)
-			{
-				if (ReferenceEquals(currentDefaultNode.ReferencedNode.Parent, currentDefaultNode))
-				{
-					m_logger.WriteLine(string.Format("Sharing node '{0}' using key '{1}'",
-						DCM.BuildPathStringFromNode(convertedNode), convertedNode.ReferenceItem));
-					CopyDefaultsIntoChildren(convertedModel, convertedNode, currentDefaultNode.ReferencedNode);
-					DictionaryConfigurationController.ShareNodeAsReference(convertedModel.SharedItems, convertedNode,
-						currentDefaultNode.ReferencedNode.CSSClassNameOverride);
-				}
-				else
-				{
-					m_logger.WriteLine(string.Format("Configuration for '{0}' will follow '{1}'",
-						DCM.BuildPathStringFromNode(convertedNode), DCM.BuildPathStringFromNode(currentDefaultNode.ReferencedNode.Parent)));
-					// No need for any processing here; since we set ReferenceItem above, shared nodes will be linked next time this model is loaded
-				}
-				convertedNode.Children = null; // Nodes with referenced children do not need direct children
-			}
-			else // if the converted node children and default doesn't
+			else // if the converted node has children and default doesn't
 			{
 				throw new Exception("These nodes are not likely to match the convertedModel.");
 			}
@@ -726,42 +728,55 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		/// <summary>
 		/// Some configuration nodes had name changes in the new verison
 		/// </summary>
+		/// <remarks>
+		/// If we have later version label changes, we should no longer have to change this
+		/// method. Later changes will go in FirstAlphaMigrator.HandleNodeWiseChanges().
+		/// The only reason to put changes here is if we discover that the PreHistoricMigrator
+		/// crashes loading an old database.
+		/// </remarks>
 		private static string HandleChildNodeRenaming(int version, ConfigurableDictionaryNode child)
 		{
-			// If you add to this method (i.e. we have later version label changes), don't forget to
-			// also modify HandleLabelChanges() in FirstAlphaMigrator.
-			var result = child.Label;
-			if (version == VersionPre83)
+			if (version != VersionPre83) // safety valve; shouldn't ever happen
 			{
-				if (child.Label == "Components" && child.Parent.Label == "Component References")
-					result = "Referenced Entries";
-				// Don't rename Components > Complex Form Type > Abbreviation,
-				// but do rename Subentries > CFT > Abbreviations to Reverse Abbreviation
-				if (child.Label == "Abbreviation" && child.Parent.Label == "Complex Form Type" && child.Parent.Parent.Label == "Subentries") // not renamed in "Components CFTs"
-					result = "Reverse Abbreviation";
-
-				if (child.Label == "Features" && child.Parent.Label == "Grammatical Info.")
-					result = "Inflection Features";
-
-				if (child.Label == "Form" && child.Parent.Label == "Reversal Entry")
-					result = "Reversal Form";
-
-				if (child.Label == "Category" && child.Parent.Label == "Reversal Entry")
-					result = "Reversal Category";
-
-				if (child.Label == "Type" && child.Parent.Label == "Variants (of Entry)")
-					result = "Variant Type";
-
-				if (child.Label == "Homograph Number")
-					result = "Secondary Homograph Number";
-
-				if (child.Label == "Headword" && child.Parent.Label == "Referenced Senses" || child.Label == "Form" && child.Parent.Label == "Subentry Under Reference")
-					result = "Referenced Headword";
-
-				if (child.Label == "Example" && child.Parent.Label == "Examples")
-					result = "Example Sentence"; // LT-17354
+				Debug.Assert(false, "PreHistoricMigrator should not be running on this file!");
+				return child.Label;
 			}
-			return result;
+			switch (child.Label)
+			{
+				case "Components":
+					if (child.Parent.Label == "Component References")
+						return "Referenced Entries";
+					break;
+				case "Abbreviation":
+					// Don't rename Components -> Complex Form Type -> Abbreviation,
+					// but do rename Subentries -> CFT -> Abbreviations to Reverse Abbreviation
+					if (child.Parent.Label == "Complex Form Type" &&
+						child.Parent.Parent.Label == "Subentries")
+						return "Reverse Abbreviation";
+					break;
+				case "Features":
+					if (child.Parent.Label == "Grammatical Info.")
+						return "Inflection Features";
+					break;
+				case "Form":
+					if (child.Parent.Label == "Reversal Entry")
+						return "Reversal Form";
+					if (child.Parent.Label == "Subentry Under Reference")
+						return "Referenced Headword";
+					break;
+				case "Category":
+					if (child.Parent.Label == "Reversal Entry")
+						return "Reversal Category";
+					break;
+				case "Type":
+					if (child.Parent.Label == "Variants (of Entry)")
+						return "Variant Type";
+					break;
+				case "Homograph Number":
+					return "Secondary Homograph Number";
+				//case "Headword": now handled in FirstAlphaMigrator
+			}
+			return child.Label;
 		}
 
 		private void SetupCustomFieldNameDictionaries()
@@ -984,22 +999,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			return wsLabel.Split(',').Select(item => new DictionaryNodeListOptions.DictionaryNodeOption { Id = item.Trim(), IsEnabled = true }).ToList();
 		}
 
-		private DictionaryNodeWritingSystemOptions.WritingSystemType MigrateWsType(string wsType)
-		{
-			switch (wsType)
-			{
-				case "analysis":
-				case "analysisform": return DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis;
-				case "vernacular": return DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular;
-				case "vernacular analysis":
-				case "analysis vernacular":
-				case "vernoranal": return DictionaryNodeWritingSystemOptions.WritingSystemType.Both;
-				case "pronunciation": return DictionaryNodeWritingSystemOptions.WritingSystemType.Pronunciation;
-				case "reversal": return DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal;
-				default: throw new ArgumentException(string.Format("Unknown writing system type {0}", wsType), wsType);
-			}
-		}
-
 		private void MigratePublicationLayoutSelection(string oldLayout, string newPath)
 		{
 			if (oldLayout.Equals(m_mediator.PropertyTable.GetStringProperty("DictionaryPublicationLayout", string.Empty)))
@@ -1019,7 +1018,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		}
 
 		public FdoCache Cache { get; private set; }
-		public StringTable StringTable { get; private set; }
+		public StringTable StringTable { get { return null; } } // used solely for l10n of nodes, which is a hindrance to migration.
 		public LayoutLevels LayoutLevels { get; private set; }
 
 		public void ExpandWsTaggedNodes(string sWsTag)

@@ -65,6 +65,11 @@ namespace GenerateHCConfig
 			Console.WriteLine(errorText);
 		}
 
+		public void DisplayCircularRefBreakerReport(string msg, string caption)
+		{
+			Console.WriteLine("{0}: {1}", caption, msg);
+		}
+
 		public bool Retry(string msg, string caption)
 		{
 			throw new NotImplementedException();

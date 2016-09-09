@@ -56,6 +56,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private readonly IWritingSystemManager m_wsManager;
 		private readonly int m_wsEn;
 		private readonly int m_wsBestAnalVern;
+		private readonly int m_wsBestVernAnal;
 		private Dictionary<Guid, string> m_CmPossibilityListsReferencedByFields = new Dictionary<Guid, string>();
 		private Dictionary<Guid, string> m_ListsGuidToRangeName = new Dictionary<Guid, string>();
 		private readonly ICmPossibilityListRepository m_repoCmPossibilityLists;
@@ -75,6 +76,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				m_wsEn = cache.DefaultUserWs;
 			m_wsManager = cache.ServiceLocator.WritingSystemManager;
 			m_wsBestAnalVern = (int)SpecialWritingSystemCodes.BestAnalysisOrVernacular;
+			m_wsBestVernAnal = (int)SpecialWritingSystemCodes.BestVernacularOrAnalysis;
 		}
 
 		/// <summary>
@@ -253,8 +255,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			WriteString(w, "field", "type=\"import-residue\"", "form", entry.ImportResidue);
 			foreach (var alt in entry.AlternateFormsOS)
 				WriteAlternateForm(w, alt);
-			if (entry.EtymologyOA != null)
-				WriteEtymology(w, entry.EtymologyOA);
+			foreach (var etym in entry.EtymologyOS)
+				WriteEtymology(w, etym);
+			foreach (var dialect in entry.DialectLabelsRS)
+				WriteTrait(w, RangeNames.sDbDialectLabelsOA, dialect.Abbreviation, m_wsBestVernAnal);
 			foreach (var er in entry.EntryRefsOS)
 				WriteLexEntryRef(w, er);
 			foreach (var ler in entry.LexEntryReferences)
@@ -560,6 +564,15 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (target.Hvo == hvoOpen)
 						continue;
 				}
+				// If this is a unidirectional type relation, only show elements if the
+				//  first element is the currently open object.
+				if (nMappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseUnidirectional ||
+					nMappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryUnidirectional ||
+					nMappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional)
+				{
+					if (hvoOpen != lref.TargetsRS[0].Hvo)
+						break;
+				}
 				slr.CrossRefHvo = target.Hvo;
 				w.Write("<relation");
 				WriteLiftDates(w, lref);
@@ -662,11 +675,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			w.Write("<etymology");
 			WriteLiftDates(w, ety);
 			w.Write(" type=\"{0}\"", MakeSafeAndNormalizedAttribute(GetProperty(ety, "LiftType").ToString()));
-			w.Write(" source=\"{0}\"", MakeSafeAndNormalizedAttribute(GetProperty(ety, "LiftSource").ToString()));
+			w.Write(" source=\"{0}\"", string.Empty);
 			w.WriteLine(">");
 			WriteAllForms(w, null, null, "form", ety.Form);
 			WriteAllForms(w, null, null, "gloss", ety.Gloss);
 			WriteAllForms(w, "field", "type=\"comment\"", "form", ety.Comment);
+			WriteAllForms(w, "field", "type=\"preccomment\"", "form", ety.PrecComment);
+			foreach (var lang in ety.LanguageRS)
+				WritePossibilityLiftTrait(RangeNames.sDbLanguagesOA, w, lang.Hvo);
+			WriteAllForms(w, "field", "type=\"note\"", "form", ety.Note);
+			WriteAllForms(w, "field", "type=\"bibliography\"", "form", ety.Bibliography);
+			WriteAllForms(w, "field", "type=\"languagenotes\"", "form", ety.LanguageNotes);
 			WriteLiftResidue(w, ety);
 			w.WriteLine("</etymology>");
 		}
@@ -781,6 +800,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			WriteString(w, "note", "type=\"source\"", "form", sense.Source);
 			foreach (var anthro in sense.AnthroCodesRC)
 				WriteTrait(w, RangeNames.sAnthroListOA, anthro.Abbreviation, m_wsBestAnalVern);
+			foreach (var dialect in sense.DialectLabelsRS)
+				WriteTrait(w, RangeNames.sDbDialectLabelsOA, dialect.Abbreviation, m_wsBestVernAnal);
 			foreach (var dom in sense.DomainTypesRC)
 				WriteTrait(w, RangeNames.sDbDomainTypesOA, dom.Name, m_wsBestAnalVern);
 			foreach (var reversal in sense.ReversalEntriesRC)
@@ -2514,9 +2535,15 @@ namespace SIL.FieldWorks.LexText.Controls
 		public const string sDbComplexEntryTypesOA = "complex-form-types";
 
 		/// <summary> </summary>
+		public const string sDbDialectLabelsOA = "dialect-labels";
+
+		/// <summary> </summary>
 		public const string sDbDomainTypesOA = "domain-type";
 		/// <summary> </summary>
 		public const string sDbDomainTypesOAold1 = "domaintype";
+
+		/// <summary> </summary>
+		public const string sDbLanguagesOA = "languages";
 
 		/// <summary> </summary>
 		public const string sDbMorphTypesOAold = "MorphType";
@@ -2630,7 +2657,11 @@ namespace SIL.FieldWorks.LexText.Controls
 
 				case "ComplexEntryTypes": rangeName = sDbComplexEntryTypesOA; break;
 
+				case "DialectLabels": rangeName = sDbDialectLabelsOA; break;
+
 				case "DomainTypes": rangeName = sDbDomainTypesOA; break;
+
+				case "Languages": rangeName = sDbLanguagesOA; break;
 
 				case "MorphTypes": rangeName = sDbMorphTypesOA; break;
 
@@ -2690,8 +2721,10 @@ namespace SIL.FieldWorks.LexText.Controls
 				//=========================================================================================
 				//lists under m_cache.LangProject.LexDbOA
 				case sDbComplexEntryTypesOA:
+				case sDbDialectLabelsOA:
 				case sDbDomainTypesOA:
 				case sDbDomainTypesOAold1:
+				case sDbLanguagesOA:
 				case sDbMorphTypesOAold:
 				case sDbMorphTypesOA:
 				case sDbPublicationTypesOA:

@@ -635,7 +635,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Gets the biblical key terms localization files.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		static public string[] KeyTermsLocalizationFiles
+		public static string[] KeyTermsLocalizationFiles
 		{
 			get
 			{
@@ -652,7 +652,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static string DefaultConfigurations
 		{
-			get { return Path.Combine(Path.Combine(CodeDirectory, "Language Explorer"), "DefaultConfigurations"); }
+			get { return Path.Combine(FlexFolder, "DefaultConfigurations"); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -661,7 +661,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// given ICU locale.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		static public string GetKeyTermsLocFilename(string locale)
+		public static string GetKeyTermsLocFilename(string locale)
 		{
 			return Path.Combine(TeFolder, ksBiblicaltermsLocFilePrefix + locale +
 				ksBiblicaltermsLocFileExtension);
@@ -672,7 +672,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Extracts the locale identifier (string) from a key terms localization file name.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		static public string GetLocaleFromKeyTermsLocFile(string locFilename)
+		public static string GetLocaleFromKeyTermsLocFile(string locFilename)
 		{
 			return Path.GetFileName(locFilename).Replace(ksBiblicaltermsLocFilePrefix,
 				String.Empty).Replace(ksBiblicaltermsLocFileExtension, String.Empty);

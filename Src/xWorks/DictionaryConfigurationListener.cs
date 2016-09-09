@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainImpl;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -226,6 +227,12 @@ namespace SIL.FieldWorks.XWorks
 			return GetCurrentConfiguration(mediator, true, innerConfigDir);
 		}
 
+		private static void SetConfigureHomographParameters(string currentConfig, FdoCache cache)
+		{
+			var model = new DictionaryConfigurationModel(currentConfig, cache);
+			DictionaryConfigurationController.SetConfigureHomographParameters(model, cache);
+		}
+
 		/// <summary>
 		/// Returns the path to the current Dictionary or ReversalIndex configuration file, based on client specification or the current tool
 		/// Guarantees that the path is set to an existing configuration file, which may cause a redisplay of the XHTML view if fUpdate is true.
@@ -243,12 +250,15 @@ namespace SIL.FieldWorks.XWorks
 			var isDictionary = innerConfigDir == DictionaryConfigurationDirectoryName;
 			var pubLayoutPropName = isDictionary ? "DictionaryPublicationLayout" : "ReversalIndexPublicationLayout";
 			var currentConfig = mediator.PropertyTable.GetStringProperty(pubLayoutPropName, string.Empty);
+			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			if (!string.IsNullOrEmpty(currentConfig) && File.Exists(currentConfig))
+			{
+				SetConfigureHomographParameters(currentConfig, cache);
 				return currentConfig;
+			}
 			var defaultPublication = isDictionary ? "Root" : "AllReversalIndexes";
 			var defaultConfigDir = GetDefaultConfigurationDirectory(innerConfigDir);
 			var projectConfigDir = GetProjectConfigurationDirectory(mediator, innerConfigDir);
-			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			// If no configuration has yet been selected or the previous selection is invalid,
 			// and the value is "publishSomething", try to use the new "Something" config
 			if (currentConfig != null && currentConfig.StartsWith("publish", StringComparison.Ordinal))

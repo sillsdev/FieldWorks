@@ -17,6 +17,7 @@ namespace SIL.FieldWorks.XWorks
 	[XmlInclude(typeof(DictionaryNodeWritingSystemOptions))]
 	[XmlInclude(typeof(DictionaryNodeComplexFormOptions))]
 	[XmlInclude(typeof(DictionaryNodePictureOptions))]
+	[XmlInclude(typeof(DictionaryNodeGroupingOptions))]
 	public abstract class DictionaryNodeOptions
 	{
 		/// <summary>
@@ -55,6 +56,10 @@ namespace SIL.FieldWorks.XWorks
 		// Example values: ""->none; %O->1.2.3; %d->1, 2, 3
 		[XmlAttribute(AttributeName = "numberingStyle")]
 		public string NumberingStyle { get; set; }
+
+		// Example values: ""->none; %j->Joined; %.->Separated by dot
+		[XmlAttribute(AttributeName = "parentSenseNumberingStyle")]
+		public string ParentSenseNumberingStyle { get; set; }
 
 		[XmlAttribute(AttributeName = "numberAfter")]
 		public string AfterNumber { get; set; }
@@ -102,7 +107,10 @@ namespace SIL.FieldWorks.XWorks
 			Sense,
 			/// <summary>Lexical Relations, including Reverses, having to do with Entry</summary>
 			[XmlEnum("entry")]
-			Entry
+			Entry,
+			/// <summary>Extended Note Types</summary>
+			[XmlEnum("note")]
+			Note
 		}
 
 		public class DictionaryNodeOption
@@ -259,6 +267,21 @@ namespace SIL.FieldWorks.XWorks
 		public override DictionaryNodeOptions DeepClone()
 		{
 			return DeepCloneInto(new DictionaryNodePictureOptions());
+		}
+	}
+
+	/// <summary>Options for allowing the grouping of nodes which are not related in the model</summary>
+	public class DictionaryNodeGroupingOptions : DictionaryNodeOptions
+	{
+		[XmlText]
+		public string Description { get; set; }
+
+		[XmlAttribute(AttributeName = "displayGroupInParagraph")]
+		public bool DisplayGroupInParagraph { get; set; }
+
+		public override DictionaryNodeOptions DeepClone()
+		{
+			return DeepCloneInto(new DictionaryNodeGroupingOptions());
 		}
 	}
 }

@@ -166,6 +166,7 @@
 	<item id="CmdDataTree-Insert-Pronunciation">Add a pronunciation field to this entry.</item>
 	<item id="CmdInsertMediaFile">Add a sound or movie file to the pronunciation, creating the pronunciation if necessary.</item>
 	<item id="CmdInsertText">Add a new text to the corpus.</item>
+	<item id="CmdDataTree-Insert-Etymology">Add a set of etymological fields to this entry.</item>
 	<item id="CmdInsertFeatureType">Create a new feature type.</item>
 	<item id="CmdInsertPhonologicalClosedFeature">Add a phonological feature.</item>
 	<item id="CmdInsertClosedFeature">Add a feature.</item>

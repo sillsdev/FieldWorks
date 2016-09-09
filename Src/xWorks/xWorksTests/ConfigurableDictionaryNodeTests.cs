@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.XWorks
 		public void ChildlessCanDeepClone()
 		{
 			var parent = new ConfigurableDictionaryNode();
-			var child = new ConfigurableDictionaryNode { After = "after", IsEnabled = true, SubField = "sub", IsCustomField = true, Parent = parent };
+			var child = new ConfigurableDictionaryNode { After = "after", IsEnabled = true, SubField = "sub", IsCustomField = true, HideCustomFields = true, Parent = parent };
 			parent.Children = new List<ConfigurableDictionaryNode> { child };
 			// SUT
 			var clone = child.DeepCloneUnderSameParent();
@@ -57,6 +57,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(clone.ReferenceItem, Is.EqualTo(node.ReferenceItem));
 			Assert.That(clone.IsEnabled, Is.EqualTo(node.IsEnabled));
 			Assert.That(clone.IsCustomField, Is.EqualTo(node.IsCustomField));
+			Assert.That(clone.HideCustomFields, Is.EqualTo(node.HideCustomFields));
 			Assert.That(clone.Label, Is.EqualTo(node.Label));
 			// Intentionally-omitted fields: IsDuplicate, LabelSuffix
 
@@ -154,6 +155,54 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void DuplicatesGroupingNodeChildrenAffectSuffixes()
+		{
+			var nodeToDuplicateLabel = "node";
+			var nodeToDuplicate = new ConfigurableDictionaryNode { Label = nodeToDuplicateLabel, LabelSuffix = null };
+			var dupUnderGroup = new ConfigurableDictionaryNode { Label = nodeToDuplicateLabel, LabelSuffix = "1" };
+			var groupingNode = new ConfigurableDictionaryNode
+			{
+				Label = "groupNode", DictionaryNodeOptions = new DictionaryNodeGroupingOptions(),
+				Children = new List<ConfigurableDictionaryNode> { dupUnderGroup }
+			};
+			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { nodeToDuplicate, groupingNode } };
+			CssGeneratorTests.PopulateFieldsForTesting(parent);
+
+			// SUT
+			var duplicate = nodeToDuplicate.DuplicateAmongSiblings();
+			var inGroupDup = dupUnderGroup.DuplicateAmongSiblings();
+			Assert.That(duplicate.Label, Is.EqualTo(nodeToDuplicateLabel), "should not have changed original node label");
+			Assert.That(nodeToDuplicate.LabelSuffix, Is.Null, "should not have changed original node label suffix");
+			Assert.That(duplicate.LabelSuffix, Is.EqualTo("2"), "(1) was used in the group, so the suffix should be 2");
+			Assert.That(inGroupDup.LabelSuffix, Is.EqualTo("3"), "(2) was used in the group parent, so the suffix should be 3");
+		}
+
+		[Test]
+		public void DuplicatesSharedGroupingNodeChildrenAffectSuffixes()
+		{
+			var nodeToDuplicateLabel = "node";
+			var nodeToDuplicate = new ConfigurableDictionaryNode { FieldDescription = nodeToDuplicateLabel };
+			var dupUnderShardGroup = new ConfigurableDictionaryNode { FieldDescription = nodeToDuplicateLabel, LabelSuffix = "1" };
+			var sharedNode = new ConfigurableDictionaryNode
+			{
+				Label = "Shared",
+				Children = new List<ConfigurableDictionaryNode> { dupUnderShardGroup },
+				DictionaryNodeOptions = new DictionaryNodeGroupingOptions()
+			};
+			var sharedGroupRefNode = new ConfigurableDictionaryNode { ReferenceItem = "Shared", DictionaryNodeOptions = new DictionaryNodeGroupingOptions() };
+			var root = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { sharedGroupRefNode, nodeToDuplicate } };
+			CssGeneratorTests.PopulateFieldsForTesting(DictionaryConfigurationModelTests.CreateSimpleSharingModel(root, sharedNode));
+
+			// SUT
+			var duplicate = nodeToDuplicate.DuplicateAmongSiblings();
+			var inGroupDup = dupUnderShardGroup.DuplicateAmongSiblings();
+			Assert.That(duplicate.Label, Is.EqualTo(nodeToDuplicateLabel), "should not have changed original node label");
+			Assert.That(nodeToDuplicate.LabelSuffix, Is.Null, "should not have changed original node label suffix");
+			Assert.That(duplicate.LabelSuffix, Is.EqualTo("2"), "(1) was used in the group, so the suffix should be 2");
+			Assert.That(inGroupDup.LabelSuffix, Is.EqualTo("3"), "(2) was used in the group parent, so the suffix should be 3");
+		}
+
+		[Test]
 		public void DuplicateIsPutImmediatelyAfterOriginal()
 		{
 			var parent = new ConfigurableDictionaryNode();
@@ -178,6 +227,21 @@ namespace SIL.FieldWorks.XWorks
 
 			// SUT
 			Assert.DoesNotThrow(() => nodeB.DuplicateAmongSiblings(), "problem with edge case");
+		}
+
+		[Test]
+		public void DuplicateGroupNodeDoesNotDuplicateChildren()
+		{
+			var parent = new ConfigurableDictionaryNode();
+			var groupNode = new ConfigurableDictionaryNode { Parent = parent, DictionaryNodeOptions = new DictionaryNodeGroupingOptions() };
+			var nodeB = new ConfigurableDictionaryNode { Parent = groupNode };
+			groupNode.Children = new List<ConfigurableDictionaryNode> { nodeB };
+			parent.Children = new List<ConfigurableDictionaryNode> { groupNode };
+
+			// SUT
+			var duplicate = groupNode.DuplicateAmongSiblings(parent.Children);
+			Assert.AreEqual(1, groupNode.Children.Count);
+			Assert.IsNull(duplicate.Children);
 		}
 
 		[Test]
@@ -434,6 +498,18 @@ namespace SIL.FieldWorks.XWorks
 			var nodeWithSuffix = new ConfigurableDictionaryNode() { Label = "label2", LabelSuffix = "suffix2" };
 			// SUT
 			Assert.That(nodeWithSuffix.DisplayLabel, Is.EqualTo("label2 (suffix2)"), "DisplayLabel should include suffix");
+		}
+
+		[Test]
+		public void HasCorrectDisplayLabelForGroup()
+		{
+			var nodeWithNullSuffix = new ConfigurableDictionaryNode { Label = "label", LabelSuffix = null, DictionaryNodeOptions = new DictionaryNodeGroupingOptions() };
+			// SUT
+			Assert.That(nodeWithNullSuffix.DisplayLabel, Is.EqualTo("[label]"), "GroupingNodes should be bracketed");
+
+			var nodeWithSuffix = new ConfigurableDictionaryNode { Label = "label2", LabelSuffix = "suffix2", DictionaryNodeOptions = new DictionaryNodeGroupingOptions() };
+			// SUT
+			Assert.That(nodeWithSuffix.DisplayLabel, Is.EqualTo("[label2 (suffix2)]"), "Suffic should be inside the bracket for a grouping node");
 		}
 
 		[Test]

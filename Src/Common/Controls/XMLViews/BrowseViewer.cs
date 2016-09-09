@@ -2931,8 +2931,8 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		// Note: often we also want to update LayoutCache.LayoutVersionNumber.
-		// (last updated by JohnT, March 12, 2013, for 7.3 beta release)
-		internal const int kBrowseViewVersion = 16;
+		// (last updated by GordonM, June 10, 2016, for Etymology cluster update)
+		internal const int kBrowseViewVersion = 17;
 
 		/// <summary>
 		/// Column has been added or removed, update all child windows.

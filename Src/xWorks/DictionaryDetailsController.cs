@@ -110,11 +110,16 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else if (Options is DictionaryNodeSenseOptions)
 				{
-					optionsView = LoadSenseOptions((DictionaryNodeSenseOptions) Options, node.Parent != null && node.FieldDescription == node.Parent.FieldDescription);
+					optionsView = LoadSenseOptions((DictionaryNodeSenseOptions)Options, node.Parent != null && node.FieldDescription == node.Parent.FieldDescription,
+						node.Parent != null && node.Parent.Label == "MainEntrySubsenses");
 				}
 				else if (Options is DictionaryNodeListOptions)
 				{
 					optionsView = LoadListOptions((DictionaryNodeListOptions) Options);
+				}
+				else if (Options is DictionaryNodeGroupingOptions)
+				{
+					optionsView = LoadGroupingOptions((DictionaryNodeGroupingOptions)Options);
 				}
 				else if (Options is DictionaryNodePictureOptions)
 				{
@@ -138,7 +143,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// Notify users of shared nodes
-			if (node.ReferencedNode != null)
+			if (node.ReferencedNode != null) //REVIEW: make sure ReferencedNodes always have no options
 			{
 				var nodePath = DictionaryConfigurationMigrator.BuildPathStringFromNode(node, false);
 				if (node.IsMasterParent) // node is the Master Parent
@@ -363,21 +368,20 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>Initialize options for DictionaryNodeSenseOptions</summary>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "senseOptionsView is disposed by its parent")]
-		private UserControl LoadSenseOptions(DictionaryNodeSenseOptions senseOptions, bool isSubsense)
+		private UserControl LoadSenseOptions(DictionaryNodeSenseOptions senseOptions, bool isSubsense, bool isSubSubsense)
 		{
 			// initialize SenseOptionsView
 			//For senses disallow the 1 1.2 1.2.3 option, that is now handled in subsenses
-			var disallowedNumberingStyles = string.Empty;
-			if (!isSubsense)
-			{
-				disallowedNumberingStyles = "%O";
-			}
+			var disallowedNumberingStyles = "%O";
 			var senseOptionsView = new SenseOptionsView(isSubsense)
 			{
 				BeforeText = senseOptions.BeforeNumber,
 				// load list of available NumberingStyles before setting NumberingStyle's value
-				NumberingStyles = XmlVcDisplayVec.SupportedNumberingStyles.Where(prop => prop.FormatString != disallowedNumberingStyles).ToList(),
+				NumberingStyles = disallowedNumberingStyles == string.Empty
+									? XmlVcDisplayVec.SupportedNumberingStyles
+									: XmlVcDisplayVec.SupportedNumberingStyles.Where(prop => prop.FormatString != disallowedNumberingStyles).ToList(),
 				NumberingStyle = senseOptions.NumberingStyle,
+				ParentSenseNumberingStyleVisible = false,
 				AfterText = senseOptions.AfterNumber,
 				NumberSingleSense = senseOptions.NumberEvenASingleSense,
 				ShowGrammarFirst = senseOptions.ShowSharedGrammarInfoFirst,
@@ -385,6 +389,12 @@ namespace SIL.FieldWorks.XWorks
 				FirstSenseInline = senseOptions.DisplayFirstSenseInline
 			};
 
+			if (isSubsense)
+			{
+				senseOptionsView.ParentSenseNumberingStyleVisible = true;
+				senseOptionsView.ParentSenseNumberingStyles = XmlVcDisplayVec.SupportedParentSenseNumberStyles;
+				senseOptionsView.ParentSenseNumberingStyle = senseOptions.ParentSenseNumberingStyle;
+			}
 			// load character Style (number) and paragraph Style (sense)
 			senseOptionsView.SetStyles(m_charStyles, senseOptions.NumberStyle);
 			View.SetStyles(m_paraStyles, m_node.Style, true);
@@ -396,9 +406,10 @@ namespace SIL.FieldWorks.XWorks
 
 			// Register eventhandlers
 			senseOptionsView.BeforeTextChanged += (sender, e) => { senseOptions.BeforeNumber = senseOptionsView.BeforeText; RefreshPreview(); };
-			senseOptionsView.NumberingStyleChanged += (sender, e) => SenseNumbingStyleChanged(senseOptions, senseOptionsView);
+			senseOptionsView.NumberingStyleChanged += (sender, e) => SenseNumbingStyleChanged(senseOptions, senseOptionsView, isSubsense, isSubSubsense);
 			senseOptionsView.AfterTextChanged += (sender, e) => { senseOptions.AfterNumber = senseOptionsView.AfterText; RefreshPreview(); };
 			senseOptionsView.NumberStyleChanged += (sender, e) => { senseOptions.NumberStyle = senseOptionsView.NumberStyle; RefreshPreview(); };
+			senseOptionsView.ParentSenseNumberingStyleChanged += (sender, e) => ParentSenseNumbingStyleChanged(senseOptions, senseOptionsView, isSubsense, isSubSubsense);
 			// ReSharper disable ImplicitlyCapturedClosure
 			// Justification: senseOptions, senseOptionsView, and all of these lambda functions will all disappear at the same time.
 			senseOptionsView.StyleButtonClick += (sender, e) => HandleStylesBtn((ComboBox)sender, senseOptionsView.NumberStyle);
@@ -497,6 +508,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				listOptionsView.DisplayOptionCheckBoxLabel = xWorksStrings.ksDisplayExamplesInParagraphs;
 			}
+			else if (m_node.FieldDescription == "ExtendedNoteOS")
+			{
+				listOptionsView.DisplayOptionCheckBoxLabel = xWorksStrings.ksDisplayExtendedNoteInParagraphs;
+			}
 			listOptionsView.DisplayOptionCheckBoxChecked = complexFormOptions.DisplayEachComplexFormInAParagraph;
 			ToggleViewForShowInPara(complexFormOptions.DisplayEachComplexFormInAParagraph);
 		}
@@ -531,6 +546,37 @@ namespace SIL.FieldWorks.XWorks
 			};
 		}
 
+		private UserControl LoadGroupingOptions(DictionaryNodeGroupingOptions options)
+		{
+			var groupOptionsView = new GroupingOptionsView
+			{
+				Description = options.Description,
+				DisplayInParagraph = options.DisplayGroupInParagraph
+			};
+			ToggleViewForShowInPara(options.DisplayGroupInParagraph);
+			groupOptionsView.Load += GroupingEventHandlerAdder(groupOptionsView, options);
+			return groupOptionsView;
+		}
+
+		private EventHandler GroupingEventHandlerAdder(IDictionaryGroupingOptionsView groupOptionsView, DictionaryNodeGroupingOptions groupOptions)
+		{
+			return (o, args) =>
+			{
+				groupOptionsView.DisplayInParagraphChanged += (sender, e) =>
+				{
+					groupOptions.DisplayGroupInParagraph = groupOptionsView.DisplayInParagraph;
+					ToggleViewForShowInPara(groupOptions.DisplayGroupInParagraph);
+					RefreshPreview();
+				};
+
+				groupOptionsView.DescriptionChanged += (sender, e) =>
+				{
+					groupOptions.Description = groupOptionsView.Description;
+				};
+				groupOptionsView.Load -= GroupingEventHandlerAdder(groupOptionsView, groupOptions);
+			};
+		}
+
 		private static string ParagraphStyleForSubentries(bool showInParagraph, string field)
 		{
 			string styleName = null;
@@ -540,6 +586,8 @@ namespace SIL.FieldWorks.XWorks
 					styleName = "Reversal-Subentry";
 				else if (field == "ExamplesOS")
 					styleName = "Bulleted List";
+				else if (field == "ExtendedNoteOS" || field == "SensesOS")
+					styleName = "Dictionary-Sense";
 				else
 					styleName = "Dictionary-Subentry";
 			}
@@ -671,6 +719,9 @@ namespace SIL.FieldWorks.XWorks
 				case DictionaryNodeListOptions.ListIds.Complex:
 					listLabel = xWorksStrings.ksComplexFormTypes;
 					return GetComplexFormTypes();
+				case DictionaryNodeListOptions.ListIds.Note:
+					listLabel = xWorksStrings.ksExtendedNoteTypes;
+					return GetNoteTypes();
 				case DictionaryNodeListOptions.ListIds.Variant:
 					listLabel = xWorksStrings.ksVariantTypes;
 					return GetVariantTypes();
@@ -698,6 +749,17 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Checked = true,
 				Tag = XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString()
+			});
+			return result;
+		}
+
+		private List<ListViewItem> GetNoteTypes()
+		{
+			var result = FlattenSortAndConvertList(m_cache.LangProject.LexDbOA.ExtendedNoteTypesOA);
+			result.Insert(0, new ListViewItem("<" + xWorksStrings.ksNoExtendedNoteType + ">")
+			{
+				Checked = true,
+				Tag = XmlViewsUtils.GetGuidForUnspecifiedExtendedNoteType().ToString()
 			});
 			return result;
 		}
@@ -749,14 +811,17 @@ namespace SIL.FieldWorks.XWorks
 							SubClass = LexReferenceInfo.TypeSubClass.Forward
 						}.StorageString.Substring(1) // substring removes the leading "+";
 					});
-					listViewItemS.Add(new ListViewItem(lexRelType.ReverseName.BestAnalysisVernacularAlternative.Text)
+					if (!LexRefTypeTags.IsUnidirectional(mappingType))
 					{
-						Checked = true,
-						Tag = new LexReferenceInfo(true, relType.Guid)
+						listViewItemS.Add(new ListViewItem(lexRelType.ReverseName.BestAnalysisVernacularAlternative.Text)
 						{
-							SubClass = LexReferenceInfo.TypeSubClass.Reverse
-						}.StorageString.Substring(1)
-					});
+							Checked = true,
+							Tag = new LexReferenceInfo(true, relType.Guid)
+							{
+								SubClass = LexReferenceInfo.TypeSubClass.Reverse
+							}.StorageString.Substring(1)
+						});
+					}
 				}
 				else
 				{
@@ -777,6 +842,7 @@ namespace SIL.FieldWorks.XWorks
 					case LexRefTypeTags.MappingTypes.kmtEntryPair:
 					case LexRefTypeTags.MappingTypes.kmtEntryCollection:
 					case LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair:
+					case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
 						if (listId == DictionaryNodeListOptions.ListIds.Entry)
 							lexRelTypesSubset.AddRange(listViewItemS);
 						break;
@@ -785,6 +851,7 @@ namespace SIL.FieldWorks.XWorks
 					case LexRefTypeTags.MappingTypes.kmtSensePair:
 					case LexRefTypeTags.MappingTypes.kmtSenseCollection:
 					case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair:
+					case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
 						if (listId == DictionaryNodeListOptions.ListIds.Sense)
 							lexRelTypesSubset.AddRange(listViewItemS);
 						break;
@@ -984,10 +1051,28 @@ namespace SIL.FieldWorks.XWorks
 		#endregion ListChanges
 
 		#region SenseChanges
-		private void SenseNumbingStyleChanged(DictionaryNodeSenseOptions senseOptions, IDictionarySenseOptionsView senseOptionsView)
+		private void SenseNumbingStyleChanged(DictionaryNodeSenseOptions senseOptions, IDictionarySenseOptionsView senseOptionsView, bool isSubsense, bool isSubSubsense)
 		{
+			var hc = m_cache.ServiceLocator.GetInstance<HomographConfiguration>();
+			if (isSubSubsense)
+				hc.ksSubSubSenseNumberStyle = senseOptionsView.NumberingStyle;
+			else if (isSubsense)
+				hc.ksSubSenseNumberStyle = senseOptionsView.NumberingStyle;
+			else
+				hc.ksSenseNumberStyle = senseOptionsView.NumberingStyle;
 			senseOptions.NumberingStyle = senseOptionsView.NumberingStyle;
 			senseOptionsView.NumberMetaConfigEnabled = !string.IsNullOrEmpty(senseOptions.NumberingStyle);
+			RefreshPreview();
+		}
+
+		private void ParentSenseNumbingStyleChanged(DictionaryNodeSenseOptions senseOptions, IDictionarySenseOptionsView senseOptionsView, bool isSubsense, bool isSubSubsense)
+		{
+			var hc = m_cache.ServiceLocator.GetInstance<HomographConfiguration>();
+			if (isSubSubsense)
+				hc.ksParentSubSenseNumberStyle = senseOptionsView.ParentSenseNumberingStyle;
+			else if (isSubsense)
+				hc.ksParentSenseNumberStyle = senseOptionsView.ParentSenseNumberingStyle;
+			senseOptions.ParentSenseNumberingStyle = senseOptionsView.ParentSenseNumberingStyle;
 			RefreshPreview();
 		}
 

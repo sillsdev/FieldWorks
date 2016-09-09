@@ -18,6 +18,10 @@ namespace SIL.FieldWorks.XWorks
 
 		string NumberingStyle { get; set; }
 
+		string ParentSenseNumberingStyle { get; set; }
+
+		bool ParentSenseNumberingStyleVisible { set; }
+
 		string BeforeText { get; set; }
 
 		string AfterText { get; set; }
@@ -36,6 +40,8 @@ namespace SIL.FieldWorks.XWorks
 		event EventHandler BeforeTextChanged;
 
 		event EventHandler NumberingStyleChanged;
+
+		event EventHandler ParentSenseNumberingStyleChanged;
 
 		event EventHandler AfterTextChanged;
 

@@ -19,6 +19,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 	public class FirstAlphaMigrator : IDictionaryConfigurationMigrator
 	{
 		private SimpleLogger m_logger;
+		internal const int VersionAlpha2 = 5;
+		internal const int VersionAlpha3 = 8;
 
 		public FirstAlphaMigrator() : this(null, null)
 		{
@@ -38,7 +40,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			var foundOne = string.Format("{0}: Configuration was found in need of migration. - {1}",
 				appVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss"));
-			foreach (var config in GetConfigsNeedingMigratingFrom83())
+			foreach (var config in DCM.GetConfigsNeedingMigration(Cache, VersionAlpha3))
 			{
 				m_logger.WriteLine(foundOne);
 				m_logger.WriteLine(string.Format("Migrating {0} configuration '{1}' from version {2} to {3}.",
@@ -50,20 +52,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			}
 		}
 
-		internal List<DictionaryConfigurationModel> GetConfigsNeedingMigratingFrom83()
-		{
-			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
-			var dictionaryConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
-			var reversalIndexConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
-			var projectConfigPaths = new List<string>(DCM.ConfigFilesInDir(dictionaryConfigLoc));
-			projectConfigPaths.AddRange(DCM.ConfigFilesInDir(reversalIndexConfigLoc));
-			return projectConfigPaths.Select(path => new DictionaryConfigurationModel(path, null))
-				.Where(model => model.Version < DCM.VersionCurrent).ToList();
-		}
-
 		internal void MigrateFrom83Alpha(DictionaryConfigurationModel alphaModel)
 		{
-			if (alphaModel.Version == -1 || alphaModel.Version == 1) // original migration neglected to update the version number; -1 is the same as 1
+			// original migration neglected to update the version number; -1 (Pre83) is the same as 1 (Alpha1)
+			if (alphaModel.Version == PreHistoricMigrator.VersionPre83 || alphaModel.Version == PreHistoricMigrator.VersionAlpha1)
 				RemoveNonLoadableData(alphaModel.PartsAndSharedItems);
 			// now that it's safe to specify them, it would be helpful to have parents in certain steps:
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(alphaModel.Parts, alphaModel.SharedItems);
@@ -81,18 +73,29 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					goto case 4;
 				case 4:
 					HandleNodewiseChanges(alphaModel.PartsAndSharedItems, 4, alphaModel.IsReversal);
+					goto case VersionAlpha2;
+				case VersionAlpha2:
+					HandleNodewiseChanges(alphaModel.PartsAndSharedItems, VersionAlpha2, alphaModel.IsReversal);
+					goto case 6;
+				case 6:
+					HandleNodewiseChanges(alphaModel.PartsAndSharedItems, 6, alphaModel.IsReversal);
+					goto case 7;
+				case 7:
+					var fileName = Path.GetFileNameWithoutExtension(alphaModel.FilePath);
+					if (!alphaModel.IsRootBased)
+						alphaModel.IsRootBased = fileName == "Root";
 					break;
 				default:
 					m_logger.WriteLine(string.Format(
 						"Unable to migrate {0}: no migration instructions for version {1}", alphaModel.Label, alphaModel.Version));
 					break;
 			}
-			alphaModel.Version = DCM.VersionCurrent;
+			alphaModel.Version = VersionAlpha3;
 		}
 
 		private static void RemoveNonLoadableData(IEnumerable<ConfigurableDictionaryNode> nodes)
 		{
-			PerformActionOnNodes(nodes, node =>
+			DCM.PerformActionOnNodes(nodes, node =>
 			{
 				node.ReferenceItem = null;
 				var rsOptions = node.DictionaryNodeOptions as DictionaryNodeReferringSenseOptions;
@@ -111,7 +114,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				m_logger.DecreaseIndent();
 				return;
 			}
-			PerformActionOnNodes(model.Parts, SetReferenceItem);
+			DCM.PerformActionOnNodes(model.Parts, SetReferenceItem);
 			if (model.IsReversal)
 			{
 				var reversalSubEntries = FindMainEntryDescendant(model, "SubentriesOS");
@@ -128,7 +131,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				DictionaryConfigurationController.ShareNodeAsReference(model.SharedItems, mainEntrySubEntries, "mainentrysubentries");
 			}
 			// Remove direct children from nodes with referenced children
-			PerformActionOnNodes(model.PartsAndSharedItems, n => { if (!string.IsNullOrEmpty(n.ReferenceItem)) n.Children = null; });
+			DCM.PerformActionOnNodes(model.PartsAndSharedItems, n => { if (!string.IsNullOrEmpty(n.ReferenceItem)) n.Children = null; });
 		}
 
 		private static void AddSubsubEntriesOptionsIfNeeded(ConfigurableDictionaryNode mainEntrySubEntries)
@@ -224,34 +227,25 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			}
 		}
 
-		/// <remarks>If you add Label changes to this method, don't forget to modify HandleChildNodeRenaming() in PreHistoricMigrator, too</remarks>
+		/// <remarks>
+		/// Handles various kinds of configuration node changes that happened post-8.3Alpha1.
+		/// It should no longer be necessary to add changes in two places
+		/// [except: see caveat on PreHistoricMigrator.HandleChildNodeRenaming()]
+		/// </remarks>
 		private static void HandleNodewiseChanges(IEnumerable<ConfigurableDictionaryNode> nodes, int version, bool isReversal)
 		{
+			var newHeadword = isReversal ? "ReversalName" : "HeadWordRef";
 			switch (version)
 			{
 				case 2:
-					var newHeadword = isReversal ? "ReversalName" : "HeadWordRef";
-					PerformActionOnNodes(nodes, n =>
+					DCM.PerformActionOnNodes(nodes, n =>
 					{
-						if (n.Label == "Referenced Headword")
-						{
-							n.FieldDescription = newHeadword;
-							if (isReversal && n.DictionaryNodeOptions == null)
-								n.DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
-								{
-									WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
-									Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-									{
-										new DictionaryNodeListOptions.DictionaryNodeOption { Id = "vernacular", IsEnabled = true }
-									}
-								};
-						}
-						else if (n.FieldDescription == "OwningEntry" && n.SubField == "MLHeadWord")
+						if (n.FieldDescription == "OwningEntry" && n.SubField == "MLHeadWord")
 							n.SubField = newHeadword;
 					});
 					break;
 				case 3:
-					PerformActionOnNodes(nodes, n =>
+					DCM.PerformActionOnNodes(nodes, n =>
 					{
 						if (n.Label == "Gloss (or Summary Definition)")
 							n.FieldDescription = "GlossOrSummary";
@@ -269,7 +263,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					});
 					break;
 				case 4:
-					PerformActionOnNodes(nodes, n =>
+					DCM.PerformActionOnNodes(nodes, n =>
 					{
 						switch (n.FieldDescription)
 						{
@@ -284,17 +278,182 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 						}
 					});
 					break;
+				case VersionAlpha2:
+					DCM.PerformActionOnNodes(nodes, n =>
+					{
+						if (n.FieldDescription == "VisibleVariantEntryRefs" && n.Label == "Variant Of")
+							n.Label = "Variant of";
+						else if (n.FieldDescription.Contains("EntryType"))
+						{
+							var parentFd = n.Parent.FieldDescription;
+							if (n.FieldDescription == "LookupComplexEntryType")
+							{
+								if (parentFd == "ComplexFormEntryRefs")
+								{
+									// set type children to RevAbbr/RevName
+									SetEntryTypeChildrenBackward(n);
+								}
+								else
+								{
+									// set type children to Abbr/Name
+									SetEntryTypeChildrenForward(n);
+								}
+							}
+							else if (parentFd.EndsWith("BackRefs") || parentFd == "ComplexFormsNotSubentries")
+							{
+								// set type children to Abbr/Name
+								SetEntryTypeChildrenForward(n);
+							}
+							else
+							{
+								// set type children to RevAbbr/RevName
+								SetEntryTypeChildrenBackward(n);
+							}
+						}
+						else if (n.Label == "Headword" && n.Parent.FieldDescription == "ReferringSenses")
+						{
+							n.Label = "Referenced Headword";
+						}
+						else if (n.Label == "Subsenses" && n.Parent.FieldDescription == "SensesOS")
+						{
+							var senseNode = (DictionaryNodeSenseOptions)n.DictionaryNodeOptions;
+							if (senseNode != null)
+							{
+								senseNode.ParentSenseNumberingStyle = "%.";
+								senseNode.NumberingStyle = "%d";
+								n.DictionaryNodeOptions = senseNode;
+							}
+						}
+						else if (n.Label == "Allomorphs" && n.FieldDescription == "Owner")
+						{
+							n.FieldDescription = "Entry";
+						}
+						if (n.Label == "Referenced Headword")
+						{
+							n.FieldDescription = newHeadword;
+							if (isReversal && n.DictionaryNodeOptions == null)
+								n.DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+								{
+									WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
+									Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+									{
+										new DictionaryNodeListOptions.DictionaryNodeOption { Id = "vernacular", IsEnabled = true }
+									}
+								};
+						}
+					});
+					break;
+				case 6:
+					DCM.PerformActionOnNodes(nodes, n =>
+					{
+						if (isReversal && n.Label == "Pronunciation" && n.Parent.Label == "Pronunciations")
+						{
+							var parent = n.Parent;
+							parent.Before = "[";
+							parent.Between = " ";
+							parent.After = "] ";
+							n.Before = "";
+							n.Between = "";
+							n.After = " ";
+						}
+						UpdatePicturesChildren(n);
+					});
+					break;
 			}
 		}
 
-		private static void PerformActionOnNodes(IEnumerable<ConfigurableDictionaryNode> nodes, Action<ConfigurableDictionaryNode> action)
+		/// <summary>
+		/// If node is a Pictures node, update its child nodes by removing Sense Number and adding Headword and Gloss.
+		/// Part of LT-12572.
+		/// </summary>
+		private static void UpdatePicturesChildren(ConfigurableDictionaryNode node)
 		{
-			foreach (var node in nodes)
-			{
-				action(node);
-				if (node.Children != null)
-					PerformActionOnNodes(node.Children, action);
-			}
+			if (node == null)
+				return;
+			if (node.Label != "Pictures")
+				return;
+
+			node.Children.RemoveAll(child => child.Label == "Sense Number");
+
+			var analysisWsOptions = new DictionaryNodeWritingSystemOptions
+				{
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis,
+					DisplayWritingSystemAbbreviations = false,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+						{
+							new DictionaryNodeListOptions.DictionaryNodeOption {Id = "analysis", IsEnabled = true}
+						}
+				};
+
+			var vernacularWsOptions = new DictionaryNodeWritingSystemOptions
+				{
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular,
+					DisplayWritingSystemAbbreviations = false,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+						{
+							new DictionaryNodeListOptions.DictionaryNodeOption {Id = "vernacular", IsEnabled = true}
+						}
+				};
+
+			var headwordNode = new ConfigurableDictionaryNode
+				{
+					After = "  ", Between = " ", Label = "Headword", FieldDescription = "Owner",
+					SubField="OwnerOutlineName", CSSClassNameOverride="headword",
+					Style="Dictionary-Headword",
+					IsEnabled = true, DictionaryNodeOptions = vernacularWsOptions
+				};
+
+			var glossNode = new ConfigurableDictionaryNode
+				{
+					After = " ", Between = " ", Label = "Gloss", FieldDescription = "Owner",
+					SubField="Gloss",
+					IsEnabled = true, DictionaryNodeOptions = analysisWsOptions
+				};
+
+			node.Children.Add(headwordNode);
+			node.Children.Add(glossNode);
+		}
+
+		/// <summary>
+		/// Swap out node Label and FieldDescription, checks for null node and empty strings
+		/// in case only one of the parameters needs changing.
+		/// </summary>
+		private static void SwapOutNodeLabelAndField(ConfigurableDictionaryNode node, string label, string fieldDescription)
+		{
+			if (node == null)
+				return;
+			if (!string.IsNullOrEmpty(label))
+				node.Label = label;
+			if (!string.IsNullOrEmpty(fieldDescription))
+				node.FieldDescription = fieldDescription;
+		}
+
+		private const string Abbr = "Abbreviation"; // good for label and field
+		private const string Name = "Name"; // good for label and field
+		private const string ReversePrefix = "Reverse "; // for reverse labels
+		private const string RevAbbr = "ReverseAbbr";
+		private const string RevName = "ReverseName";
+
+		/// <summary>
+		/// Makes sure EntryType node contains Abbreviation and Name nodes
+		/// </summary>
+		private static void SetEntryTypeChildrenForward(ConfigurableDictionaryNode entryTypeNode)
+		{
+			var abbrNode = entryTypeNode.Children.Find(node => node.FieldDescription == RevAbbr);
+			SwapOutNodeLabelAndField(abbrNode, Abbr, Abbr);
+			var nameNode = entryTypeNode.Children.Find(node => node.FieldDescription == RevName);
+			SwapOutNodeLabelAndField(nameNode, Name, Name);
+		}
+
+		/// <summary>
+		/// Makes sure EntryType node contains ReverseAbbr and ReverseName nodes
+		/// </summary>
+		private static void SetEntryTypeChildrenBackward(ConfigurableDictionaryNode entryTypeNode)
+		{
+			var abbrNode = entryTypeNode.Children.Find(node => node.FieldDescription == Abbr);
+			SwapOutNodeLabelAndField(abbrNode, ReversePrefix + Abbr, RevAbbr);
+			var nameNode = entryTypeNode.Children.Find(node => node.FieldDescription == Name);
+			SwapOutNodeLabelAndField(nameNode, ReversePrefix + Name, RevName);
 		}
 	}
 }

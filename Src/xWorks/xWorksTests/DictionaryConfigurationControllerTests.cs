@@ -28,6 +28,7 @@ namespace SIL.FieldWorks.XWorks
 	public class DictionaryConfigurationControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private const string m_field = "LexEntry";
+		private const int AnalysisWsId = -5;
 
 		#region Setup and Teardown
 		private DictionaryConfigurationModel m_model;
@@ -486,6 +487,20 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		private static ConfigurableDictionaryNode AddGroupingNodeToNode(ConfigurableDictionaryNode rootNode, int index, int groupChildren)
+		{
+			var groupNode = new ConfigurableDictionaryNode
+			{
+				Label = rootNode.Label + "-group" + index,
+				Children = new List<ConfigurableDictionaryNode>(),
+				Parent = rootNode,
+				DictionaryNodeOptions = new DictionaryNodeGroupingOptions()
+			};
+			AddChildrenToNode(groupNode, groupChildren);
+			rootNode.Children.Insert(index, groupNode);
+			return groupNode;
+		}
+
 		private static TreeNode BasicTreeNodeVerification(DictionaryConfigurationController controller, ConfigurableDictionaryNode rootNode)
 		{
 			Assert.That(controller.View.TreeControl.Tree.Nodes[0].Tag, Is.EqualTo(rootNode), "root TreeNode does not corresponded to expected dictionary configuration node");
@@ -608,19 +623,103 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary/>
 		[Test]
-		public void Reorder_ReordersSiblings()
+		[TestCase(1, 0, 0)] // Move sibling from index 1 up one
+		[TestCase(0, 1, 1)] // Move sibling from index 0 down one
+		public void Reorder_ReordersSiblings(int movingChildOriginalPos, int movingChildExpectedPos, int direction)
 		{
-			var movingChildOriginalPosition = 1;
-			var movingChildExpectedPosition = 0;
-			var directionToMoveChild = DictionaryConfigurationController.Direction.Up;
+			var directionToMove = direction == 0
+				? DictionaryConfigurationController.Direction.Up
+				: DictionaryConfigurationController.Direction.Down;
+			using (var view = new TestConfigurableDictionaryView())
+			{
+				var controller = new DictionaryConfigurationController { View = view, _model = m_model };
+				var rootNode = new ConfigurableDictionaryNode { Label = "root", Children = new List<ConfigurableDictionaryNode>() };
+				AddChildrenToNode(rootNode, 2);
+				var movingChild = rootNode.Children[movingChildOriginalPos];
+				var otherChild = rootNode.Children[movingChildExpectedPos];
+				m_model.Parts = new List<ConfigurableDictionaryNode> { rootNode };
+				// SUT
+				controller.Reorder(movingChild, directionToMove);
+				Assert.That(rootNode.Children[movingChildExpectedPos], Is.EqualTo(movingChild), "movingChild should have been moved");
+				Assert.That(rootNode.Children[movingChildOriginalPos], Is.Not.EqualTo(movingChild), "movingChild should not still be in original position");
+				Assert.That(rootNode.Children[movingChildOriginalPos], Is.EqualTo(otherChild), "unexpected child in original movingChild position");
+				Assert.That(rootNode.Children.Count, Is.EqualTo(2), "unexpected number of reordered siblings");
+			}
+		}
 
-			MoveSiblingAndVerifyPosition(movingChildOriginalPosition, movingChildExpectedPosition, directionToMoveChild);
+		/// <summary/>
+		[Test]
+		[TestCase(0, 0, 0, 1)] // move child from 0 down into group with no children
+		[TestCase(2, 0, 0, 0)] // move child from 2 up into group with no children
+		[TestCase(0, 0, 1, 1)] // move child from 0 down into group with existing child
+		[TestCase(2, 1, 1, 0)] // move child from 2 up into group with existing child
+		public void Reorder_ChildrenMoveIntoGroupingNodes(int movingChildOriginalPos, int expectedIndexUnderGroup, int groupChildren, int direction)
+		{
+			var directionToMove = direction == 0
+				? DictionaryConfigurationController.Direction.Up
+				: DictionaryConfigurationController.Direction.Down;
+			using (var view = new TestConfigurableDictionaryView())
+			{
+				var controller = new DictionaryConfigurationController { View = view, _model = m_model };
+				var rootNode = new ConfigurableDictionaryNode { Label = "root", Children = new List<ConfigurableDictionaryNode>() };
+				AddChildrenToNode(rootNode, 2);
+				var groupNode = AddGroupingNodeToNode(rootNode, 1, groupChildren);
+				var movingChild = rootNode.Children[movingChildOriginalPos];
+				m_model.Parts = new List<ConfigurableDictionaryNode> { rootNode };
+				// SUT
+				controller.Reorder(movingChild, directionToMove);
+				Assert.AreEqual(1 + groupChildren, groupNode.Children.Count, "child not moved under the grouping node");
+				Assert.That(groupNode.Children[expectedIndexUnderGroup], Is.EqualTo(movingChild), "movingChild should have been moved");
+				Assert.AreEqual(2, rootNode.Children.Count, "movingChild should not still be under original parent");
+				Assert.AreEqual(movingChild.Parent, groupNode, "moved child did not have its parent updated");
+			}
+		}
 
-			movingChildOriginalPosition = 0;
-			movingChildExpectedPosition = 1;
-			directionToMoveChild = DictionaryConfigurationController.Direction.Down;
+		/// <summary/>
+		[Test]
+		[TestCase(0, 0, 0)] // move child from group index 0 up above the group
+		[TestCase(1, 1, 1)] // move child from group index 1 down below the group
+		public void Reorder_ChildrenMoveOutOfGroupingNodes(int movingChildOriginalPos, int expectedIndexUnderParent, int direction)
+		{
+			var directionToMove = direction == 0
+				? DictionaryConfigurationController.Direction.Up
+				: DictionaryConfigurationController.Direction.Down;
 
-			MoveSiblingAndVerifyPosition(movingChildOriginalPosition, movingChildExpectedPosition, directionToMoveChild);
+			using (var view = new TestConfigurableDictionaryView())
+			{
+				var controller = new DictionaryConfigurationController { View = view, _model = m_model };
+				var rootNode = new ConfigurableDictionaryNode { Label = "root", Children = new List<ConfigurableDictionaryNode>() };
+				var groupNode = AddGroupingNodeToNode(rootNode, 0, 2); // add two children under the group
+				var movingChild = groupNode.Children[movingChildOriginalPos];
+				m_model.Parts = new List<ConfigurableDictionaryNode> { rootNode };
+				// SUT
+				controller.Reorder(movingChild, directionToMove);
+				Assert.AreEqual(2, rootNode.Children.Count, "child not moved out of the grouping node");
+				Assert.That(rootNode.Children[expectedIndexUnderParent], Is.EqualTo(movingChild), "movingChild should have been moved");
+				Assert.AreEqual(1, groupNode.Children.Count, "movingChild should not still be under the grouping node");
+				Assert.AreEqual(movingChild.Parent, rootNode, "moved child did not have its parent updated");
+			}
+		}
+
+		/// <summary/>
+		[Test]
+		public void Reorder_GroupWontMoveIntoGroupingNodes([Values(0, 1)]int direction)
+		{
+			var directionToMove = direction == 0
+				? DictionaryConfigurationController.Direction.Up
+				: DictionaryConfigurationController.Direction.Down;
+			using (var view = new TestConfigurableDictionaryView())
+			{
+				var controller = new DictionaryConfigurationController { View = view, _model = m_model };
+				var rootNode = new ConfigurableDictionaryNode { Label = "root", Children = new List<ConfigurableDictionaryNode>() };
+				AddGroupingNodeToNode(rootNode, 0, 0);
+				var middleGroupNode = AddGroupingNodeToNode(rootNode, 1, 0);
+				AddGroupingNodeToNode(rootNode, 2, 0);
+				m_model.Parts = new List<ConfigurableDictionaryNode> { rootNode };
+				// SUT
+				controller.Reorder(middleGroupNode, directionToMove);
+				Assert.AreEqual(3, rootNode.Children.Count, "Root has too few children, group must have moved into a group");
+			}
 		}
 
 		[Test]
@@ -662,7 +761,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetCustomFieldsForType_EntryCustomFieldIsRepresented()
 		{
-			using (new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+			using (new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), AnalysisWsId,
 				CellarPropertyType.MultiString, Guid.Empty))
 			{
 				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache, "LexEntry");
@@ -681,13 +780,17 @@ namespace SIL.FieldWorks.XWorks
 					"LexEntry");
 				CollectionAssert.IsNotEmpty(customFieldNodes, "The custom field configuration node was not inserted for a PossibilityListReference");
 				Assert.AreEqual(customFieldNodes[0].Label, "CustomListItem", "Custom field did not get inserted correctly.");
-				CollectionAssert.IsNotEmpty(customFieldNodes[0].Children, "ListItem Child nodes not created");
-				Assert.AreEqual(2, customFieldNodes[0].Children.Count, "custom list type nodes should get a child for Name and Abbreviation");
-				CollectionAssert.IsNotEmpty(customFieldNodes[0].Children.Where(t => t.Label == "Name" && !t.IsCustomField),
+				var cfChildren = customFieldNodes[0].Children;
+				CollectionAssert.IsNotEmpty(cfChildren, "ListItem Child nodes not created");
+				Assert.AreEqual(2, cfChildren.Count, "custom list type nodes should get a child for Name and Abbreviation");
+				Assert.AreEqual(" ", cfChildren[0].After, "Name and abbreviation not seperated by a space");
+				CollectionAssert.IsNotEmpty(cfChildren.Where(t => t.Label == "Name" && !t.IsCustomField),
 					"No standard Name node found on custom possibility list reference");
-				CollectionAssert.IsNotEmpty(customFieldNodes[0].Children.Where(t => t.Label == "Abbreviation" && !t.IsCustomField),
+				CollectionAssert.IsNotEmpty(cfChildren.Where(t => t.Label == "Abbreviation" && !t.IsCustomField),
 					"No standard Abbreviation node found on custom possibility list reference");
-				Assert.IsNotNull(customFieldNodes[0].Children[0].DictionaryNodeOptions as DictionaryNodeWritingSystemOptions, "No writing system node on possibility list custom node");
+				var wsOptions = cfChildren[0].DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+				Assert.IsNotNull(wsOptions, "No writing system node on possibility list custom node");
+				CollectionAssert.IsNotEmpty(wsOptions.Options.Where(o => o.IsEnabled), "No default writing system added.");
 			}
 		}
 
@@ -744,23 +847,37 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void MoveSiblingAndVerifyPosition(int movingChildOriginalPosition, int movingChildExpectedPosition,
-			DictionaryConfigurationController.Direction directionToMoveChild)
+		[Test]
+		public void GetCustomFieldsForType_SenseOrEntry()
 		{
-			using (var view = new TestConfigurableDictionaryView())
+			using (new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexSense"), 0,
+				CellarPropertyType.ReferenceCollection, Guid.Empty))
+			using (new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+				CellarPropertyType.ReferenceCollection, Guid.Empty))
 			{
-				var controller = new DictionaryConfigurationController { View = view, _model = m_model };
-				var rootNode = new ConfigurableDictionaryNode { Label = "root", Children = new List<ConfigurableDictionaryNode>() };
-				AddChildrenToNode(rootNode, 2);
-				var movingChild = rootNode.Children[movingChildOriginalPosition];
-				var otherChild = rootNode.Children[movingChildExpectedPosition];
-				m_model.Parts = new List<ConfigurableDictionaryNode>() { rootNode };
-				// SUT
-				controller.Reorder(movingChild, directionToMoveChild);
-				Assert.That(rootNode.Children[movingChildExpectedPosition], Is.EqualTo(movingChild), "movingChild should have been moved");
-				Assert.That(rootNode.Children[movingChildOriginalPosition], Is.Not.EqualTo(movingChild), "movingChild should not still be in original position");
-				Assert.That(rootNode.Children[movingChildOriginalPosition], Is.EqualTo(otherChild), "unexpected child in original movingChild position");
-				Assert.That(rootNode.Children.Count, Is.EqualTo(2), "unexpected number of reordered siblings");
+				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache, "SenseOrEntry");
+				Assert.AreEqual(customFieldNodes, DictionaryConfigurationController.GetCustomFieldsForType(Cache, "ISenseOrEntry"));
+				CollectionAssert.IsNotEmpty(customFieldNodes);
+				CollectionAssert.AllItemsAreUnique(customFieldNodes);
+				Assert.IsTrue(customFieldNodes.Count == 2, "Incorrect number of nodes created from the custom fields.");
+				Assert.IsTrue(customFieldNodes[0].Label == "CustomCollection");
+				Assert.IsTrue(customFieldNodes[1].Label == "CustomString");
+			}
+		}
+
+		[Test]
+		public void GetCustomFieldsForType_InterfacesAndReferencesAreAliased()
+		{
+			using (new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), AnalysisWsId,
+				CellarPropertyType.MultiString, Guid.Empty))
+			{
+				var customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache, "ILexEntry");
+				CollectionAssert.IsNotEmpty(customFieldNodes);
+				Assert.IsTrue(customFieldNodes[0].Label == "CustomString");
+				customFieldNodes = DictionaryConfigurationController.GetCustomFieldsForType(Cache, "LexEntryRef");
+				Assert.AreEqual(customFieldNodes, DictionaryConfigurationController.GetCustomFieldsForType(Cache, "ILexEntryRef"));
+				CollectionAssert.IsNotEmpty(customFieldNodes);
+				Assert.IsTrue(customFieldNodes[0].Label == "CustomString");
 			}
 		}
 
@@ -789,11 +906,39 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <summary>
+		/// Ensure the string that displays the publications associated with the current dictionary configuration is correct.
+		/// </summary>
+		[Test]
+		public void GetThePublicationsForTheCurrentConfiguration()
+		{
+			var controller = new DictionaryConfigurationController { _model = m_model };
+
+			//ensure this is handled gracefully when the publications have not been initialized.
+			Assert.AreEqual(controller.AffectedPublications, xWorksStrings.ksNone1);
+
+			m_model.Publications = new List<string> { "A" };
+			Assert.AreEqual(controller.AffectedPublications, "A");
+
+			m_model.Publications = new List<string> { "A", "B" };
+			Assert.AreEqual(controller.AffectedPublications, "A, B");
+		}
+
+		[Test]
+		public void DisplaysAllPublicationsIfSet()
+		{
+			var controller = new DictionaryConfigurationController { _model = m_model };
+			m_model.Publications = new List<string> { "A", "B" };
+			m_model.AllPublications = true;
+
+			Assert.That(controller.AffectedPublications, Is.EqualTo("All publications"), "Show that it's all-publications if so.");
+		}
+
 		[Test]
 		public void MergeCustomFieldsIntoDictionaryModel_NewFieldsAreAdded()
 		{
-			using (new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
-				CellarPropertyType.ReferenceCollection, Guid.Empty))
+			using (new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"),
+				WritingSystemServices.GetMagicWsIdFromName("analysis vernacular"), CellarPropertyType.MultiString, Guid.Empty))
 			{
 				var model = new DictionaryConfigurationModel
 				{
@@ -804,18 +949,24 @@ namespace SIL.FieldWorks.XWorks
 				};
 				//SUT
 				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache);
-				Assert.IsNotNull(model.Parts[0].Children, "Custom Field did not add to children");
-				CollectionAssert.IsNotEmpty(model.Parts[0].Children, "Custom Field did not add to children");
-				Assert.AreEqual(model.Parts[0].Children[0].Label, "CustomString");
-				Assert.AreEqual(model.Parts[0].Children[0].FieldDescription, "CustomString");
-				Assert.AreEqual(model.Parts[0].Children[0].IsCustomField, true);
+				var children = model.Parts[0].Children;
+				Assert.IsNotNull(children, "Custom Field did not add to children");
+				CollectionAssert.IsNotEmpty(children, "Custom Field did not add to children");
+				var cfNode = children[0];
+				Assert.AreEqual(cfNode.Label, "CustomString");
+				Assert.AreEqual(cfNode.FieldDescription, "CustomString");
+				Assert.AreEqual(cfNode.IsCustomField, true);
+				var wsOptions = cfNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+				Assert.NotNull(wsOptions, "WritingSystemOptions not added");
+				Assert.AreEqual(wsOptions.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Both, "WritingSystemOptions is the wrong type");
+				CollectionAssert.IsNotEmpty(wsOptions.Options.Where(o => o.IsEnabled), "WsOptions not populated with any choices");
 			}
 		}
 
 		[Test]
 		public void MergeCustomFieldsIntoDictionaryModel_FieldsAreNotDuplicated()
 		{
-			using (new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+			using (new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), AnalysisWsId,
 				CellarPropertyType.ReferenceCollection, Guid.Empty))
 			{
 				var model = new DictionaryConfigurationModel();
@@ -823,7 +974,15 @@ namespace SIL.FieldWorks.XWorks
 				{
 					Label = "CustomString",
 					FieldDescription = "CustomString",
-					IsCustomField = true
+					IsCustomField = true,
+					DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+					{
+						DisplayWritingSystemAbbreviations = true,
+						Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+						{
+							new DictionaryNodeListOptions.DictionaryNodeOption() { Id = "en", IsEnabled = true }
+						}
+					}
 				};
 				var entryNode = new ConfigurableDictionaryNode
 				{
@@ -832,10 +991,16 @@ namespace SIL.FieldWorks.XWorks
 					Children = new List<ConfigurableDictionaryNode> { customNode }
 				};
 				model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+				CssGeneratorTests.PopulateFieldsForTesting(model);
 
 				//SUT
 				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache);
 				Assert.AreEqual(1, model.Parts[0].Children.Count, "Only the existing custom field node should be present");
+				var wsOptions = model.Parts[0].Children[0].DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+				Assert.NotNull(wsOptions, "Writing system options lost in merge");
+				Assert.IsTrue(wsOptions.DisplayWritingSystemAbbreviations, "WsAbbreviation lost in merge");
+				Assert.AreEqual("en", wsOptions.Options[0].Id);
+				Assert.IsTrue(wsOptions.Options[0].IsEnabled, "Selected writing system lost in merge");
 			}
 		}
 
@@ -872,35 +1037,6 @@ namespace SIL.FieldWorks.XWorks
 				Assert.AreEqual(customNode.FieldDescription, "CustomString");
 				Assert.AreEqual(customNode.IsCustomField, true);
 			}
-		}
-
-		/// <summary>
-		/// Ensure the string that displays the publications associated with the current
-		/// dictionary configuration is correct.
-		/// </summary>
-		[Test]
-		public void GetThePublicationsForTheCurrentConfiguration()
-		{
-			var controller = new DictionaryConfigurationController { _model = m_model };
-
-			//ensure this is handled gracefully when the publications have not been initialized.
-			Assert.AreEqual(controller.AffectedPublications, xWorksStrings.ksNone1);
-
-			m_model.Publications = new List<string> { "A" };
-			Assert.AreEqual(controller.AffectedPublications, "A");
-
-			m_model.Publications = new List<string> { "A", "B" };
-			Assert.AreEqual(controller.AffectedPublications, "A, B");
-		}
-
-		[Test]
-		public void DisplaysAllPublicationsIfSet()
-		{
-			var controller = new DictionaryConfigurationController { _model = m_model };
-			m_model.Publications = new List<string> { "A", "B" };
-			m_model.AllPublications = true;
-
-			Assert.That(controller.AffectedPublications, Is.EqualTo("All publications"), "Show that it's all-publications if so.");
 		}
 
 		[Test]
@@ -948,6 +1084,28 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache);
 			Assert.AreEqual(0, model.Parts[0].Children[0].Children.Count, "The custom field in the model should have been removed since it isn't in the project(cache)");
+		}
+
+		[Test]
+		public void MergecustomFieldsIntoModel_RefTypesUseOwningEntry()
+		{
+			var variantFormsNode = new ConfigurableDictionaryNode { FieldDescription = "VariantFormEntryBackRefs" };
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { variantFormsNode }
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryNode } };
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+			using (new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+				CellarPropertyType.ReferenceCollection, Guid.Empty))
+			{
+				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache); // SUT
+				Assert.AreEqual(1, variantFormsNode.Children.Count);
+				var customNode = variantFormsNode.Children[0];
+				Assert.AreEqual("OwningEntry", customNode.FieldDescription);
+				Assert.AreEqual("CustomCollection", customNode.SubField);
+			}
 		}
 
 		[Test]

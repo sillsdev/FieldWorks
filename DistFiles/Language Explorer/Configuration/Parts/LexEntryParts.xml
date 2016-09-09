@@ -2,6 +2,10 @@
 <!-- Nonstandard parts for LexEntry. -->
 <PartInventory>
 	<bin class="LexEntry">
+		<part id="LexEntry-Detail-ChangeHandler" type="detail">
+			<RecordChangeHandler assemblyPath="LexEdDll.dll" listName="RecordClerk-entries"
+				class="SIL.FieldWorks.XWorks.LexEd.LexEntryChangeHandler"/>
+		</part>
 		<part id="LexEntry-Detail-LexemeForm" type="detail">
 			<obj field="LexemeForm" layout="AsLexemeFormBasic" menu="mnuDataTree-Help" ghost="Form" ghostWs="vernacular"
 				 ghostLabel="Lexeme Form" ghostClass="MoStemAllomorph" ghostInitMethod="SetMorphTypeToRoot" />
@@ -20,6 +24,10 @@
 			<seq field="Pronunciations" layout="Normal" ghost="Form" ghostWs="pronunciation" ghostLabel="Pronunciation"
 				 menu="mnuDataTree-Pronunciation" />
 		</part>
+		<part id="LexEntry-Detail-Etymologies" type="detail">
+			<seq field="Etymology" layout="Normal" ghost="Form" ghostWs="analysis" ghostLabel="Etymology"
+				 menu="mnuDataTree-Etymology" />
+		</part>
 		<part id="LexEntry-Detail-RestrictionsAllA" type="Detail">
 			<slice field="Restrictions" label="Restrictions" editor="multistring" ws="all analysis"
 				   menu="mnuDataTree-Help" />
@@ -37,6 +45,15 @@
 	</part>
 	<part id="LexEntry-Detail-PublishIn" type="Detail">
 		<slice field="PublishIn" label="Publish In" tooltip="Remove a publication from this field to completely exclude this entry from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
+			menu="mnuDataTree-Help">
+			<deParams displayProperty="ShortName" ws="best analysis" />
+			<chooserInfo>
+				<chooserLink type="goto" label="Edit the Publications list" tool="publicationsEdit" />
+			</chooserInfo>
+		</slice>
+	</part>
+	<part id="LexEntry-Detail-PublishInForPronunciations" type="Detail">
+		<slice field="PublishIn" label="Publish In" tooltip="Remove a publication from this field to completely exclude this pronunciation from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
 			menu="mnuDataTree-Help">
 			<deParams displayProperty="ShortName" ws="best analysis" />
 			<chooserInfo>
@@ -199,33 +216,61 @@
 			</div>
 		</part>
 
+		<part id="LexEntry-Jt-EtymologyPrecComment" type="jtview">
+			<seq field="Etymology" layout="PrecComment">
+				<para>
+					<string field="PrecComment" ws="best analysis"/>
+				</para>
+			</seq>
+		</part>
+		<part id="LexEntry-Jt-EtymologyNote" type="jtview">
+			<seq field="Etymology" layout="Note">
+				<para>
+					<string field="Note" ws="best analysis"/>
+				</para>
+			</seq>
+		</part>
+		<part id="LexEntry-Jt-EtymologyBibliography" type="jtview">
+			<seq field="Etymology" layout="Bibliography">
+				<para>
+					<string field="Bibliography" ws="best analysis"/>
+				</para>
+			</seq>
+		</part>
 		<part id="LexEntry-Jt-EtymologyGloss" type="jtview">
-			<obj field="Etymology" layout="empty">
+			<seq field="Etymology" layout="Gloss">
 				<para>
 					<string field="Gloss" ws="best analysis"/>
 				</para>
-			</obj>
+			</seq>
 		</part>
-		<part id="LexEntry-Jt-EtymologySource" type="jtview">
-			<obj field="Etymology" layout="empty">
+		<part id="LexEntry-Jt-EtymologyLanguage" type="jtview">
+			<seq field="Etymology" layout="empty">
 				<para>
-					<string field="Source" ws="$ws=vernacular"/>
+					<seq field="Language" layout="Abbreviation" sep="; "/>
 				</para>
-			</obj>
+			</seq>
+		</part>
+		<part id="LexEntry-Jt-EtymologyLanguageNotes" type="jtview">
+			<seq field="Etymology" layout="LanguageNotes">
+				<para>
+					<string field="LanguageNotes" ws="best analysis"/>
+				</para>
+			</seq>
 		</part>
 		<part id="LexEntry-Jt-EtymologyForm" type="jtview">
-			<obj field="Etymology" layout="empty">
+			<seq field="Etymology" layout="Form">
 				<para>
-					<string field="Form" ws="best vernacular"/>
+					<string field="Form" ws="best analorvern"/>
 				</para>
-			</obj>
+			</seq>
 		</part>
 		<part id="LexEntry-Jt-EtymologyComment" type="jtview">
-			<obj field="Etymology" layout="empty">
+			<seq field="Etymology" layout="Comment">
 				<para>
 					<string field="Comment" ws="best analysis"/>
 				</para>
-			</obj>
+			</seq>
 		</part>
 		<!-- ForEntryOrSense parts (BulkEdit) -->
 		<!-- 1. Entry Fields -->
@@ -254,6 +299,12 @@
 		<part id="LexEntry-Jt-Pronunciation" type="jtview">
 			<seq field="Pronunciations" layout="Pronunciation"/>
 		</part>
+		<part id="LexEntry-Jt-Etymology" type="jtview">
+			<seq field="Etymology" layout="Etymology"/>
+		</part>
+		<part id="LexEntry-Jt-PronunciationMediaFile" type="jtview">
+			<seq field="Pronunciations" layout="PronunciationMediaFileName"/>
+		</part>
 		<part id="LexEntry-Jt-CVPattern" type="jtview">
 			<seq field="Pronunciations" layout="CVPattern"/>
 		</part>
@@ -262,6 +313,9 @@
 		</part>
 		<part id="LexEntry-Jt-Location" type="jtview">
 			<seq field="Pronunciations" layout="Location"/>
+		</part>
+		<part id="LexEntry-Jt-PublishInForPronunciations" type="JtView">
+			<seq field="Pronunciations" layout="PublishInForPronunciations"/>
 		</part>
 		<part id="LexEntry-Jt-BibliographyForEntry" type="jtview">
 			<string field="Bibliography" ws="$ws=analysis"/>
@@ -566,7 +620,7 @@
 			<seq field="AllSenses" layout="DomainsOfSensesForSense"/>
 		</part>
 		<part id="LexEntry-Jt-ReversalEntriesForSense" type="jtview">
-			<seq field="Senses" layout="ReversalEntriesForSense"/>
+			<seq field="AllSenses" layout="ReversalEntriesForSense"/>
 		</part>
 		<part id="LexEntry-Jt-ReversalEntriesForSenseEdit" type="jtview">
 			<seq field="Senses" layout="ReversalEntriesForSenseEdit"/>
@@ -654,6 +708,9 @@
 		<part id="LexEntry-Jt-PronunciationsPub">
 			<seq field="Pronunciations" layout="publication" />
 		</part>
+		<part id="LexEntry-Jt-EtymologiesPub">
+			<seq field="Etymology" layout="etymology" />
+		</part>
 		<part id="LexEntry-Jt-HomographNumber" type="JtView">
 			<if field="HomographNumber" intgreaterthan="0">
 				<int field="HomographNumber"/>
@@ -669,6 +726,9 @@
 		<part id="LexEntry-Jt-VariantsBrowse" type="jtview">
 			<seq field="VariantFormEntries" layout="MLHeadWord"/>
 		</part>
+		<part id="LexEntry-Jt-VariantCommentBrowse" type="jtview">
+			<seq field="VariantEntryRefs" layout="Comment"/>
+		</part>
 		<part id="LexEntry-Jt-PrimaryLexemesBrowse" type="jtview">
 			<seq field="EntryRefs" layout="PrimaryLexemesBrowse"/>
 		</part>
@@ -683,6 +743,9 @@
 		</part>
 		<part id="LexEntry-Jt-ComponentsBrowse" type="jtview">
 			<seq field="EntryRefs" layout="ComponentsBrowse"/>
+		</part>
+		<part id="LexEntry-Jt-ComplexFormCommentBrowse" type="jtview">
+			<seq field="ComplexFormEntryRefs" layout="Comment"/>
 		</part>
 		<part id="LexEntryType-Jt-ReverseAbbr">
 			<string field="ReverseAbbr" ws="best analorvern" />
@@ -722,6 +785,9 @@
 		<part id="LexEntry-Jt-Pronunciations">
 			<seq field="Pronunciations" layout="FormOnly" inheritSeps="true" />
 		</part>
+		<part id="LexEntry-Jt-Etymologies">
+			<seq field="Etymology" layout="Form" inheritSeps="true" />
+		</part>
 		<part id="LexEntry-Jt-LexReferences">
 			<seq class="LexEntry" field="MinimalLexReferences" layout="publication" inheritSeps="true" />
 		</part>
@@ -760,10 +826,6 @@
 		</part>
 		<part id="LexEntry-Detail-CurrentLexReferences" type="detail">
 			<slice label="Cross References" field="LexEntryReferences" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.LexReferenceMultiSlice" />
-		</part>
-		<part id="LexEntry-Detail-Etymology" type="detail">
-			<obj field="Etymology" menu="mnuDataTree-Help" ghost="Form" ghostWs="vernacular" ghostLabel="Etymology"
-				 ghostAbbe="et" />
 		</part>
 		<part id="LexEntry-Detail-ComplexFormEntries" type="Detail">
 			<slice field="ComplexFormEntries" label="Complex Forms" menu="mnuReorderVector" reorder="true"
@@ -877,14 +939,98 @@
   </bin>
 
 	<bin class="LexEtymology">
-		<part id="LexEtymology-Detail-FormAllWs" type="Detail">
-			<slice field="Form" label="Etymology" editor="multistring" ws="vernacular analysis" menu="mnuDataTree-Help" />
+		<part id="LexEtymology-Jt-Summary" type="jtview">
+			<para>
+				<properties>
+					<forecolor value="ControlDarkDark" />
+					<fontsize value="10000"/>
+					<style value="UiElement"/>
+					<bold value="on" />
+				</properties>
+				<lit>Etymology</lit>
+			</para>
 		</part>
-		<part id="LexEtymology-Detail-CommentAllA" type="Detail">
-			<slice field="Comment" label="Comment" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+		<part id="LexEtymology-Jt-SummaryCollapsed" type="jtview">
+			<para>
+				<properties>
+					<forecolor value="ControlDarkDark" />
+					<fontsize value="10000"/>
+					<bold value="on" />
+				</properties>
+				<span>
+					<properties>
+						<style value="UiElement"/>
+					</properties>
+					<lit>Etymology</lit>
+					<lit> - </lit>
+				</span>
+				<choice>
+					<where field="LanguageNotes" stringaltequals="" ws="all analysis">
+						<string field="Gloss" ws="best analysis"/>
+					</where>
+					<otherwise>
+						<string field="LanguageNotes" ws="best analysis"/>
+						<lit> - </lit>
+						<string field="Gloss" ws="best analysis"/>
+					</otherwise>
+				</choice>
+			</para>
 		</part>
-		<part id="LexEtymology-Detail-GlossAllA" type="Detail">
+		<part id="LexEtymology-Detail-PrecComment" type="Detail">
+			<slice field="PrecComment" label="Preceding Annotation" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexEtymology-Detail-Language" type="Detail">
+			<slice field="Language" label="Source Language" editor="possVectorReference" menu="mnuDataTree-Help" indent="true">
+				<deParams ws="best analysis" changeRequiresRefresh="true" />
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the Languages List" tool="languagesListEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="LexEtymology-Detail-LanguageNotes" type="Detail">
+			<slice field="LanguageNotes" label="Source Language Notes" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexEtymology-Detail-Form" type="Detail">
+			<slice field="Form" label="Source Form" editor="multistring" ws="analysis vernacular" menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexEtymology-Detail-Gloss" type="Detail">
 			<slice field="Gloss" label="Gloss" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexEtymology-Detail-Comment" type="Detail">
+			<slice field="Comment" label="Following Comment" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexEtymology-Detail-Bibliography" type="Detail">
+			<slice field="Bibliography" label="Bibliographic Source" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexEtymology-Detail-Note" type="Detail">
+			<slice field="Note" label="Etymology Note" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexEtymology-Jt-PrecComment" type="JtView">
+			<string field="PrecComment"  ws="$ws=analysis" />
+		</part>
+		<part id="LexEtymology-Jt-Language" type="JtView">
+			<seq field="Language" layout="BrowseAbbr" ws="$ws=analysis" />
+		</part>
+		<part id="LexEtymology-Jt-LanguageNotes" type="JtView">
+			<string field="LanguageNotes"  ws="$ws=analysis" />
+		</part>
+		<part id="LexEtymology-Jt-FormOnly" type="JtView">
+			<string field="Form" ws="$ws=analysis" />
+		</part>
+		<part id="LexEtymology-Jt-Gloss" type="JtView">
+			<string field="Gloss"  ws="$ws=analysis" />
+		</part>
+		<part id="LexEtymology-Jt-Comment" type="JtView">
+			<string field="Comment"  ws="$ws=analysis" />
+		</part>
+		<part id="LexEtymology-Jt-Bibliography" type="JtView">
+			<string field="Bibliography"  ws="$ws=analysis" />
+		</part>
+		<part id="LexEtymology-Jt-Note" type="JtView">
+			<string field="Note"  ws="$ws=analysis" />
+		</part>
+		<part id="LexEtymology-Jt-$fieldName" type="jtview"><!-- for ChildPartGenerator -->
+			<obj class="LexEtymology" field="OwningEntry" layout="$fieldName"/>
 		</part>
 	</bin>
 
@@ -900,11 +1046,23 @@
 				</chooserInfo>
 			</slice>
 		</part>
+		<part id="LexPronunciation-Jt-PronunciationMediaFileName" type="jtview">
+			<seq field="MediaFiles" layout="MediaFileName" />
+		</part>
 		<part id="LexPronunciation-Detail-CVPattern" type="Detail">
 			<slice field="CVPattern" label="CVPattern" editor="String" sameObject="true"/><!-- assume same object as preceding field for formatting lines on display -->
 		</part>
 		<part id="LexPronunciation-Detail-Tone" type="Detail">
 			<slice field="Tone" label="Tone" editor="String" sameObject="true"/><!-- assume same object as preceding field for formatting lines on display -->
+		</part>
+		<part id="LexPronunciation-Detail-PublishIn" type="Detail">
+			<slice field="PublishIn" label="Publish In" tooltip="Remove a publication from this field to completely exclude this pronunciation from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
+				menu="mnuDataTree-Help">
+				<deParams displayProperty="ShortName" ws="best analysis" />
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the Publications list" tool="publicationsEdit" />
+				</chooserInfo>
+			</slice>
 		</part>
 		<part id="LexPronunciation-Jt-FormOnly" type="JtView">
 			<string field="Form" ws="pronunciation" />
@@ -1147,6 +1305,13 @@
 		<part id="CmMedia-Detail-Label" type="Detail">
 			<slice label="Label" field="Label" editor="multistring" ws="all analysis" menu="mnuDataTree-CmMedia" sameObject="true"/><!-- assume same object as preceding field for formatting lines on display -->
 		</part>
+		<part id="CmMedia-Jt-MediaFileName" type="jtview">
+			<obj field="MediaFile" layout="MediaFilePath"/>
+		</part>
+	</bin>
+
+	<bin class="CmFile">
+		<part id="CmFile-Jt-MediaFilePath" type="jtview"><string field="InternalPath" /></part>
 	</bin>
 
 	<!-- STUFF ADDED FOR NEW CONFIGURATION WORK -->
@@ -1169,7 +1334,7 @@
 		</part>
 
 		<part id="LexEntry-Jt-EtymologyConfig">
-			<obj field="Etymology" layout="publishStemEtymology" />
+			<seq field="Etymology" layout="publishStemForLexEntry" inheritSeps="true" />
 		</part>
 
 		<part id="LexEntry-Jt-LexReferencesConfig">
@@ -1332,6 +1497,15 @@
 	</bin>
 
 	<bin class="LexEtymology">
+		<part id="LexEtymology-Jt-PrecCommentPub">
+			<configureMlString field="PrecComment" />
+		</part>
+		<part id="LexEtymology-Jt-LanguagePub">
+			<seq field="Language" layout="Abbreviation"/>
+		</part>
+		<part id="LexEtymology-Jt-LanguageNotesPub">
+			<configureMlString field="LanguageNotes" />
+		</part>
 		<part id="LexEtymology-Jt-FormPub">
 			<configureMlString field="Form" />
 		</part>
@@ -1341,8 +1515,14 @@
 		<part id="LexEtymology-Jt-CommentPub">
 			<configureMlString field="Comment" />
 		</part>
+		<part id="LexEtymology-Jt-NotePub">
+			<configureMlString field="Note" />
+		</part>
+		<part id="LexEtymology-Jt-BibliographyPub">
+			<configureMlString field="Bibliography" />
+		</part>
 		<part id="LexEtymology-Jt-SourcePub">
-			<string field="Source" />
+			<configureMlString field="LanguageNotes" />
 		</part>
 	</bin>
 

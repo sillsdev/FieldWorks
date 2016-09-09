@@ -12,7 +12,6 @@ using SIL.FieldWorks.FDO;
 using XCore;
 using System.Net;
 using System.Text;
-using Palaso.Extensions;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
@@ -20,20 +19,46 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// Currently serves as the controller and the model for the PublishToWebonaryView
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Cache and Mediator are references")]
-	public class PublishToWebonaryController
+	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule", Justification="Cache and Mediator are references")]
+	public class PublishToWebonaryController : IDisposable
 	{
 		private readonly FdoCache m_cache;
 		private readonly Mediator m_mediator;
 		private readonly DictionaryExportService m_exportService;
+		private DictionaryExportService.PublicationActivator m_publicationActivator;
+		/// <summary>
+		/// This action creates the WebClient for accessing webonary. Protected to enable a mock client for unit testing.
+		/// </summary>
+		protected Func<IWebonaryClient> CreateWebClient = () => new WebonaryClient();
 
 		public PublishToWebonaryController(FdoCache cache, Mediator mediator)
 		{
 			m_cache = cache;
 			m_mediator = mediator;
 			m_exportService = new DictionaryExportService(mediator);
+			m_publicationActivator = new DictionaryExportService.PublicationActivator(mediator);
 		}
+
+		#region Disposal
+		protected virtual void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (disposing && m_publicationActivator != null)
+				m_publicationActivator.Dispose();
+			m_publicationActivator = null;
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		~PublishToWebonaryController()
+		{
+			Dispose(false);
+		}
+		#endregion Disposal
 
 		public int CountDictionaryEntries(DictionaryConfigurationModel config)
 		{
@@ -46,6 +71,11 @@ namespace SIL.FieldWorks.XWorks
 		public SortedDictionary<string,int> GetCountsOfReversalIndexes(IEnumerable<string> requestedIndexes)
 		{
 			return m_exportService.GetCountsOfReversalIndexes(requestedIndexes);
+		}
+
+		public void ActivatePublication(string publication)
+		{
+			m_publicationActivator.ActivatePublication(publication);
 		}
 
 		/// <summary>
@@ -103,9 +133,10 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			foreach (var reversal in model.SelectedReversals)
 			{
+				var revWsRFC5646 = model.Reversals.Where(prop => prop.Value.Label == reversal).Select(prop => prop.Value.WritingSystem).FirstOrDefault();
 				webonaryView.UpdateStatus(string.Format(xWorksStrings.ExportingReversalsToWebonary, reversal));
-				var reversalWs = m_cache.LangProject.AnalysisWritingSystems.FirstOrDefault(ws => ws.DisplayLabel == reversal);
-				// The reversalWs should always match the Display label of one of the AnalysisWritingSystems, this exception is for future programming errors
+				var reversalWs = m_cache.LangProject.AnalysisWritingSystems.FirstOrDefault(ws => ws.RFC5646 == revWsRFC5646);
+				// The reversalWs should always match the RFC5646 of one of the AnalysisWritingSystems, this exception is for future programming errors
 				if (reversalWs == null)
 				{
 					throw new ApplicationException(string.Format("Could not locate reversal writing system for {0}", reversal));
@@ -113,7 +144,7 @@ namespace SIL.FieldWorks.XWorks
 				var xhtmlPath = Path.Combine(tempDirectoryToCompress, string.Format("reversal_{0}.xhtml", reversalWs.RFC5646));
 				var configurationFile = Path.Combine(m_mediator.PropertyTable.UserSettingDirectory, "ReversalIndex", reversal + DictionaryConfigurationModel.FileExtension);
 				var configuration = new DictionaryConfigurationModel(configurationFile, m_cache);
-				m_exportService.ExportReversalContent(xhtmlPath, reversal, configuration);
+				m_exportService.ExportReversalContent(xhtmlPath, revWsRFC5646, configuration);
 				webonaryView.UpdateStatus(xWorksStrings.ExportingReversalsToWebonaryCompleted);
 			}
 		}
@@ -140,7 +171,8 @@ namespace SIL.FieldWorks.XWorks
 
 			view.UpdateStatus("Connecting to Webonary.");
 			var targetURI = DestinationURI(model.SiteName);
-			using (var client = new WebClient())
+
+			using (var client = CreateWebClient())
 			{
 				var credentials = string.Format("{0}:{1}", model.UserName, model.Password);
 				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes(credentials)));
@@ -148,18 +180,31 @@ namespace SIL.FieldWorks.XWorks
 				byte[] response = null;
 				try
 				{
-					response = client.UploadFile(targetURI, zipFileToUpload);
+					response = client.UploadFileToWebonary(targetURI, zipFileToUpload);
 				}
-				catch (WebException e)
+				catch (WebonaryClient.WebonaryException e)
 				{
-					const string errorMessage = "Unable to connect to Webonary.  Please check your username and password and your Internet connection.";
-					view.UpdateStatus(string.Format("An error occurred uploading your data: {0}{1}{2}", errorMessage, Environment.NewLine, e.Message));
+					if (e.StatusCode == HttpStatusCode.Redirect)
+					{
+						view.UpdateStatus("Error: There has been an error accessing webonary. Is your sitename correct?");
+					}
+					else
+					{
+						const string errorMessage = "Unable to connect to Webonary.  Please check your username and password and your Internet connection.";
+						view.UpdateStatus(string.Format("An error occurred uploading your data: {0}{1}{2}:{3}",
+							errorMessage, Environment.NewLine, e.StatusCode, e.Message));
+					}
 					view.SetStatusCondition(WebonaryStatusCondition.Error);
 					return;
 				}
 				var responseText = Encoding.ASCII.GetString(response);
 
-				if (responseText.Contains("Upload successful"))
+				if (client.ResponseStatusCode == HttpStatusCode.Found)
+				{
+					view.UpdateStatus("Error: There has been an error accessing webonary. Is your sitename correct?");
+					view.SetStatusCondition(WebonaryStatusCondition.Error);
+				}
+				else if (responseText.Contains("Upload successful"))
 				{
 					if (!responseText.Contains("error"))
 					{
@@ -182,13 +227,16 @@ namespace SIL.FieldWorks.XWorks
 					view.UpdateStatus("Error: Wrong username or password");
 					view.SetStatusCondition(WebonaryStatusCondition.Error);
 				}
-				if (responseText.Contains("User doesn't have permission to import data"))
+				else if (responseText.Contains("User doesn't have permission to import data"))
 				{
 					view.UpdateStatus("Error: User doesn't have permission to import data");
 					view.SetStatusCondition(WebonaryStatusCondition.Error);
 				}
-
-				view.UpdateStatus(string.Format("Response from server:{0}{1}{0}", Environment.NewLine, responseText));
+				else // Unknown error, display the server response, but cut it off at 100 characters
+				{
+					view.UpdateStatus(string.Format("Response from server:{0}{1}{0}", Environment.NewLine,
+						responseText.Substring(0, Math.Min(100, responseText.Length))));
+				}
 			}
 		}
 
@@ -202,7 +250,7 @@ namespace SIL.FieldWorks.XWorks
 			view.UpdateStatus("Publishing to Webonary.");
 			view.SetStatusCondition(WebonaryStatusCondition.None);
 
-			if(string.IsNullOrEmpty(model.SiteName))
+			if (string.IsNullOrEmpty(model.SiteName))
 			{
 				view.UpdateStatus("Error: No site name specified.");
 				view.SetStatusCondition(WebonaryStatusCondition.Error);

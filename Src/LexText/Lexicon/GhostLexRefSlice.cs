@@ -109,25 +109,32 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					{
 						// The slice this is part of should only be displayed for lex entries with no VariantEntryRefs.
 						Debug.Assert(ent.VariantEntryRefs.Count() == 0);
-						ler.VariantEntryTypesRS.Add(ent.Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[0] as ILexEntryType);
-						ler.RefType = LexEntryRefTags.krtVariant;
-						ler.HideMinorEntry = 0;
+						if (!ent.VariantEntryRefs.Any())
+						{
+							ler.VariantEntryTypesRS.Add(ent.Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[0] as ILexEntryType);
+							ler.RefType = LexEntryRefTags.krtVariant;
+							ler.HideMinorEntry = 0;
+						}
 					}
 					else
 					{
 						// The slice this is part of should only be displayed for lex entries with no ComplexEntryRefs.
 						Debug.Assert(ent.ComplexFormEntryRefs.Count() == 0);
-						//ler.ComplexEntryTypesRS.Append(ent.Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS[0].Hvo);
-						ler.RefType = LexEntryRefTags.krtComplexForm;
-						ler.HideMinorEntry = 0; // LT-10928
-						// Logic similar to this is in EntrySequenceReferenceLauncher.AddNewObjectsToProperty()
-						// (when LER already exists so slice is not ghost)
-						ler.PrimaryLexemesRS.Add(newObj);
-						// Since it's a new LER, we can't know it to be a derivative, so by default it is visible.
-						// but do NOT do that here, it's now built into the process of adding it to PrimaryLexemes,
-						// and we don't want to do it twice.
-						// ler.ShowComplexFormsInRS.Add(newObj);
-						ent.ChangeRootToStem();
+						if (!ent.ComplexFormEntryRefs.Any())
+						{
+							//ler.ComplexEntryTypesRS.Append(ent.Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS[0].Hvo);
+							ler.RefType = LexEntryRefTags.krtComplexForm;
+							ler.ComplexEntryTypesRS.Add(ent.Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS[0] as ILexEntryType);
+							ler.HideMinorEntry = 0; // LT-10928
+							// Logic similar to this is in EntrySequenceReferenceLauncher.AddNewObjectsToProperty()
+							// (when LER already exists so slice is not ghost)
+							ler.PrimaryLexemesRS.Add(newObj);
+							// Since it's a new LER, we can't know it to be a derivative, so by default it is visible.
+							// but do NOT do that here, it's now built into the process of adding it to PrimaryLexemes,
+							// and we don't want to do it twice.
+							// ler.ShowComplexFormsInRS.Add(newObj);
+							ent.ChangeRootToStem();
+						}
 					}
 					// Must do this AFTER setting the RefType (so dependent virtual properties can be updated properly)
 					ler.ComponentLexemesRS.Add(newObj);

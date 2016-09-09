@@ -1264,6 +1264,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private const string sUnspecComplexFormType = "a0000000-dd15-4a03-9032-b40faaa9a754";
 		private const string sUnspecVariantType = "b0000000-c40e-433e-80b5-31da08771344";
+		private const string sUnspecExtendedNoteType = "c0000000-dd15-4a03-9032-b40faaa9a754";
 
 		/// <summary>
 		/// Returns a 'fake' Guid used to filter unspecified Complex Form types in
@@ -1283,6 +1284,16 @@ namespace SIL.FieldWorks.Common.Controls
 		public static Guid GetGuidForUnspecifiedVariantType()
 		{
 			return new Guid(sUnspecVariantType);
+		}
+
+		/// <summary>
+		/// Returns a 'fake' Guid used to filter unspecified Extended Note types in
+		/// XmlVc. Setup in configuration files by XmlDocConfigureDlg.
+		/// </summary>
+		/// <returns></returns>
+		public static Guid GetGuidForUnspecifiedExtendedNoteType()
+		{
+			return new Guid(sUnspecExtendedNoteType);
 		}
 	}
 

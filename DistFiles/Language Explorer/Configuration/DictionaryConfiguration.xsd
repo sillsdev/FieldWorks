@@ -24,12 +24,14 @@
 		<xs:attribute type="xs:integer" name="version" use="required"/>
 		<xs:attribute type="xs:date" name="lastModified"/>
 		<xs:attribute type="xs:boolean" name="allPublications" use="optional"/>
+		<xs:attribute type="xs:boolean" name="isRootBased" use="required"/>
 	</xs:complexType>
 </xs:element>
 <xs:complexType name="SenseOptionsType">
 	<xs:attribute type="xs:string" name="numberStyle"/>
 	<xs:attribute type="xs:string" name="numberBefore"/>
 	<xs:attribute type="xs:string" name="numberingStyle"/>
+	<xs:attribute type="xs:string" name="parentSenseNumberingStyle"/>
 	<xs:attribute type="xs:string" name="numberAfter"/>
 	<xs:attribute type="xs:boolean" name="numberSingleSense"/>
 	<xs:attribute type="xs:boolean" name="showSingleGramInfoFirst"/>
@@ -51,7 +53,7 @@
 				<xs:sequence>
 					<xs:element name="Option" type="OptionListItemType" maxOccurs="unbounded" minOccurs="0"/>
 				</xs:sequence>
-				<xs:attribute type="listIdType" name="list" use="required"/>
+				<xs:attribute type="listIdType" name="list" use="optional"/>
 			</xs:complexType>
 		</xs:element>
 		<xs:element name="ComplexFormOptions" minOccurs="0">
@@ -85,6 +87,15 @@
 			   </xs:sequence>
 			</xs:complexType>
 		</xs:element>
+		<xs:element name="GroupingOptions" minOccurs="0">
+			<xs:complexType>
+			   <xs:simpleContent>
+					<xs:extension base="xs:string">
+						<xs:attribute type="xs:boolean" name="displayGroupInParagraph" use="optional"/>
+					</xs:extension>
+			   </xs:simpleContent>
+			</xs:complexType>
+		</xs:element>
 		<xs:choice minOccurs="0" maxOccurs="1">
 			<xs:element name="ConfigurationItem" type="ConfigurationItemType" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="ReferenceItem">
@@ -101,6 +112,7 @@
 	<xs:attribute type="xs:boolean" name="isEnabled" use="required"/>
 	<xs:attribute type="xs:boolean" name="isDuplicate" use="optional"/>
 	<xs:attribute type="xs:boolean" name="isCustomField" use="optional"/>
+	<xs:attribute type="xs:boolean" name="hideCustomFields" use="optional"/>
 	<xs:attributeGroup ref="itemStyle"/>
 	<xs:attribute type="xs:string" name="field" use="required"/>
 	<xs:attribute type="xs:string" name="subField" use="optional"/>
@@ -129,6 +141,7 @@
 		<xs:enumeration value="variant"/>
 		<xs:enumeration value="sense"/>
 		<xs:enumeration value="entry"/>
+		<xs:enumeration value="note"/>
 	</xs:restriction>
 </xs:simpleType>
 <xs:complexType name="OptionListItemType">

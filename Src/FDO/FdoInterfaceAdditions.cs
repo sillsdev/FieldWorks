@@ -941,6 +941,18 @@ namespace SIL.FieldWorks.FDO
 	}
 
 	/// <summary>
+	/// Non-model interface additions for ILexPronunciation.
+	/// </summary>
+	public partial interface ILexPronunciation
+	{
+		/// <summary>
+		/// The publications from which this is not excluded, that is, the ones in which it
+		/// SHOULD be published.
+		/// </summary>
+		IFdoSet<ICmPossibility> PublishIn { get; }
+	}
+
+	/// <summary>
 	/// Non-model interface additions for ILexSense.
 	/// </summary>
 	public partial interface ILexSense : IVariantComponentLexeme
@@ -4598,6 +4610,12 @@ namespace SIL.FieldWorks.FDO
 		/// ------------------------------------------------------------------------------------
 		void InsertORCAt(ITsStrBldr tsStrBldr, int ich);
 
+		/// <summary>
+		/// The publications from which this is not excluded, that is, the ones in which it
+		/// SHOULD be published.
+		/// </summary>
+		IFdoSet<ICmPossibility> PublishIn { get; }
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Update the properties of a CmPicture with the given file, caption, and folder.
@@ -5966,5 +5984,10 @@ namespace SIL.FieldWorks.FDO
 		/// Returns the SummaryDefinition on Entry, or Gloss on Sense
 		/// </summary>
 		IMultiAccessorBase GlossOrSummary { get; }
+
+		/// <summary>
+		/// Returns the entryRefs for the entry/owning entry for the sense
+		/// </summary>
+		IFdoOwningSequence<ILexEntryRef> PrimaryEntryRefs { get; }
 	}
 }

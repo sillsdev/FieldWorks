@@ -270,10 +270,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			//LangProject.StatusOA.ItemClsid = CmPossibilityTags.kClassId;
 			lexDb.SenseTypesOA = listFactory.Create();
 			lexDb.SenseTypesOA.ItemClsid = CmPossibilityTags.kClassId;
+			lexDb.PublicationTypesOA = listFactory.Create();
+			lexDb.PublicationTypesOA.ItemClsid = CmPossibilityTags.kClassId;
+			SetMinimalPublicationType(lexDb);
 
 			AddMorphTypes(lexDb);
 
-			var mdcManaged = servLoc.GetInstance<IFwMetaDataCacheManaged>();
 			var listFactoryInternal = listFactory as ICmPossibilityListFactoryInternal;
 			lexDb.ComplexEntryTypesOA = listFactoryInternal.Create(
 				new Guid("1ee09905-63dd-4c7a-a9bd-1d496743ccd6"),
@@ -284,9 +286,94 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				dataReader.GetNextRealHvo());
 			lexDb.VariantEntryTypesOA.ItemClsid = LexEntryTypeTags.kClassId;
 			AddEntryTypes(lexDb);
+			lexDb.ExtendedNoteTypesOA = listFactoryInternal.Create(
+				new Guid("ed6b2dcc-e82f-4631-b61a-6b630de332d0"),
+				dataReader.GetNextRealHvo());
+			lexDb.ExtendedNoteTypesOA.ItemClsid = CmPossibilityTags.kClassId;
+			AddExtendedNoteTypes(lexDb);
+			lexDb.LanguagesOA = listFactoryInternal.Create(
+			new Guid("487c15b0-2ced-4417-8b77-9075f4a21e5f"),
+			dataReader.GetNextRealHvo());
+			lexDb.LanguagesOA.ItemClsid = CmPossibilityTags.kClassId;
+			lexDb.DialectLabelsOA = listFactoryInternal.Create(
+			new Guid("a3a8188b-ab00-4a43-b925-a1eed62287ba"),
+			dataReader.GetNextRealHvo());
+			lexDb.DialectLabelsOA.ItemClsid = CmPossibilityTags.kClassId;
 
 			// TODO: add lexDb.Introduction, lexDb.Domain/Subentry/Sense,
 			// lexDb.AllomorphConditions, lexDb.Status
+		}
+
+		private static void SetMinimalPublicationType(ILexDb lexDb)
+		{
+			var servLoc = lexDb.Cache.ServiceLocator;
+			var wsMgr = servLoc.WritingSystemManager;
+			var eng = wsMgr.UserWritingSystem.Handle;
+			lexDb.PublicationTypesOA.Name.set_String(eng, "Publications");
+			var possibilityFactory = servLoc.GetInstance<ICmPossibilityFactory>() as ICmPossibilityFactoryInternal;
+			var dataReader = (IDataReader)servLoc.GetInstance<IDataSetup>();
+			var poss = possibilityFactory.Create(
+				Guid.NewGuid(),
+				dataReader.GetNextRealHvo(),
+				lexDb.PublicationTypesOA, 0);
+			poss.Name.set_String(eng, "Main Dictionary");
+			poss.Abbreviation.set_String(eng, "Main");
+			poss.IsProtected = true;
+		}
+
+		private static void AddExtendedNoteTypes(ILexDb lexDb)
+		{
+			var cache = lexDb.Cache;
+			var servLoc = cache.ServiceLocator;
+			var dataReader = (IDataReader)servLoc.GetInstance<IDataSetup>();
+			var tsf = cache.TsStrFactory;
+			var eng = servLoc.WritingSystemManager.UserWritingSystem;
+
+			var typesList = lexDb.ExtendedNoteTypesOA;
+			var possibilityFactory = servLoc.GetInstance<ICmPossibilityFactory>() as ICmPossibilityFactoryInternal;
+			for (var i = 1; i <= 5; i++)
+			{
+				var guid = Guid.Empty;
+				ITsString name = null;
+				ITsString abbr = null;
+				switch (i)
+				{
+					case 1:
+						guid = new Guid("2f06d436-b1e0-47ae-a42e-1f7b893c5fc2");
+						name = tsf.MakeString("Collocation", eng.Handle);
+						abbr = tsf.MakeString("Coll.", eng.Handle);
+						break;
+					case 2:
+						guid = new Guid("7ad06e7d-15d1-42b0-ae19-9c05b7c0b181");
+						name = tsf.MakeString("Cultural", eng.Handle);
+						abbr = tsf.MakeString("Cult.", eng.Handle);
+						break;
+					case 3:
+						guid = new Guid("d3d28628-60c9-4917-8185-ba64c59f20c3");
+						name = tsf.MakeString("Discourse", eng.Handle);
+						abbr = tsf.MakeString("Disc.", eng.Handle);
+						break;
+					case 4:
+						guid = new Guid("30115b33-608a-4506-9f9c-2457cab4f4a8");
+						name = tsf.MakeString("Grammar", eng.Handle);
+						abbr = tsf.MakeString("Gram.", eng.Handle);
+						break;
+					case 5:
+						guid = new Guid("5dd29371-fdb0-497a-a2fb-7ca69b00ad4f");
+						name = tsf.MakeString("Semantic", eng.Handle);
+						abbr = tsf.MakeString("Sem.", eng.Handle);
+						break;
+				}
+
+				// Create the ExtendedNoteType.
+				var poss = possibilityFactory.Create(
+					guid,
+					dataReader.GetNextRealHvo(),
+					typesList,
+					i - 1); // Zero based ord.
+				poss.Name.set_String(eng.Handle, name);
+				poss.Abbreviation.set_String(eng.Handle, abbr);
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------

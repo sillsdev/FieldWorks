@@ -79,6 +79,13 @@ namespace SIL.FieldWorks.XWorks
 		public string WritingSystem { get; set; }
 
 		/// <summary>
+		/// Whether the configuration is Root-based or not. Copying a configuration should
+		/// maintain the same value here.
+		/// </summary>
+		[XmlAttribute(AttributeName = "isRootBased")]
+		public bool IsRootBased { get; set; }
+
+		/// <summary>
 		/// File where data is stored
 		/// </summary>
 		[XmlIgnore]
@@ -153,7 +160,16 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Default constructor for easier testing.
 		/// </summary>
-		internal DictionaryConfigurationModel() { SharedItems = new List<ConfigurableDictionaryNode>(); }
+		internal DictionaryConfigurationModel()
+		{
+			SharedItems = new List<ConfigurableDictionaryNode>();
+		}
+
+		internal DictionaryConfigurationModel(bool isRootBased)
+			: this()
+		{
+			IsRootBased = isRootBased;
+		}
 
 		/// <summary>Loads a DictionaryConfigurationModel from the given path</summary>
 		public DictionaryConfigurationModel(string path, FdoCache cache)

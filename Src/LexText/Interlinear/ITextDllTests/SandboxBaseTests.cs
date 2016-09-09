@@ -387,7 +387,7 @@ namespace SIL.FieldWorks.IText
 					var handlerList =  handler.ComboList.Items;
 
 					Assert.That(handlerList[0].ToString(), Is.EqualTo("Add New Sense for blondeEntry ..."));
-					Assert.That(handlerList[1].ToString(), Is.EqualTo("  fair haired, ??? , blondEntry+dial.var."));
+					Assert.That(handlerList[1].ToString(), Is.EqualTo("  fair haired, ???, blondEntry+dial.var."));
 					Assert.That(handlerList[2].ToString(), Is.EqualTo("    Add New Sense..."));
 				}
 			}

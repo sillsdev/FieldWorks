@@ -259,6 +259,15 @@
 				</para>
 			</seq>
 		</part>
+		<part id="LexSense-Jt-PublishInForPicture" type="jtview">
+			<slice field="PublishIn" label="Publish In" tooltip="Remove a publication from this field to completely exclude this picture from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
+				menu="mnuDataTree-Help">
+				<deParams displayProperty="ShortName" ws="best analysis" />
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the Publications list" tool="publicationsEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
 		<part id="LexSense-Jt-StatusForSense" type="jtview">
 			<obj class="LexSense" field="Status" layout="empty">
 				<string field="Name" ws="best analysis"/>
@@ -323,6 +332,9 @@
 		<part id="LexSense-Jt-PublishInForExamples" type="JtView">
 			<seq field="Examples" layout="PublishInForExamples"/>
 		</part>
+		<part id="LexSense-Jt-PublishInForPicture" type="JtView">
+			<seq field="Picture" layout="PublishInForPicture"/>
+		</part>
 		<part id="LexSense-Jt-Example" type="jtview">
 			<seq field="Examples" layout="Example"/>
 		</part>
@@ -334,6 +346,19 @@
 		</part>
 		<part id="LexSense-Jt-ExampleTranslationType">
 			<seq field="Examples" layout="ExampleTranslationType"/>
+		</part>
+		<part id="LexEntry-Jt-ExtendedNote" type="jtview">
+			<seq field="ExtendedNote" layout="ExtendedNote"/>
+		</part>
+		<part id="LexSense-Jt-ExtNoteType" type="jtview">
+			<seq field="ExtendedNote" layout="ExtendedNoteType" />
+		</part>
+		<part id="LexSense-Jt-ExtNoteDiscussion" type="jtview">
+			<seq field="ExtendedNote" layout="Discussion">
+				<para>
+					<string field="Discussion" ws="best analysis"/>
+				</para>
+			</seq>
 		</part>
 		<part id="LexSense-Jt-LexicalRelationsForSense" type="jtview">
 			<seq field="MinimalLexReferences" layout="ShowInPara"/>
@@ -555,6 +580,10 @@
 			<seq field="Examples" ghost="Example" ghostWs="vernacular" ghostLabel="Example" ghostAbbe="ex"
 				menu="mnuDataTree-Examples"/>
 		</part>
+		<part id="LexSense-Detail-ExtendedNotes" type="detail">
+			<seq field="ExtendedNote" ghost="Discussion" ghostWs="analysis" ghostLabel="Extended Note" ghostAbbe="ext"
+				menu="mnuDataTree-ExtendedNotes"/>
+		</part>
 		<part id="LexSense-Jt-HeadWord" type="jtview">
 			<string field="HeadWord"/>
 		</part>
@@ -675,6 +704,18 @@
 		</part>
 		<part id="LexSense-Jt-StemComplexFormsConfig">
 			<seq field="VisibleComplexFormBackRefs" layout="publishStemSenseComplexFormRef" inheritSeps="true" targetclass="LexEntryRef"/>
+		</part>
+	</bin>
+	<bin class="LexExtendedNote">
+		<part id="LexExtendedNote-Detail-Type" type="Detail">
+			<slice field="ExtendedNoteType" label="Type" editor="possAtomicReference" menu="mnuDataTree-ExtendedNote" />
+		</part>
+		<part id="LexExtendedNote-Detail-DiscussionAllA" type="Detail">
+			<slice field="Discussion" label="Discussion" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexExtendedNote-Detail-Examples" type="detail">
+			<seq field="Examples" ghost="Example" ghostWs="vernacular" ghostLabel="Example" ghostAbbe="ex"
+				menu="mnuDataTree-ExtendedNote-Examples"/>
 		</part>
 	</bin>
 	<bin class="LexExampleSentence">
@@ -823,6 +864,15 @@
 		<part id="CmPicture-Detail-Thumbnail" type="detail">
 			<slice label="Picture" editor="picture" thumbnail="true" menu="mnuDataTree-Picture" />
 		</part>
+		<part id="CmPicture-Detail-PublishIn" type="detail">
+			<slice field="PublishIn" label="Publish In" tooltip="Remove a publication from this field to completely exclude this picture from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
+				menu="mnuDataTree-Help">
+				<deParams displayProperty="ShortName" ws="best analysis" />
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the Publications list" tool="publicationsEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
 	</bin>
 	<bin class="CmSemanticDomain">
 		<part id="CmSemanticDomain-Jt-ReferringSenses">
@@ -936,7 +986,46 @@
 			<obj field="$fieldName" layout="Name"/>
 		</part>
 	</bin>
-
+	
+	<bin class="LexExtendedNote">
+		<part id="LexExtendedNote-Jt-Summary" type="jtview" menu="mnuDataTree-ExtendedNote">
+			<para>
+				<properties>
+					<forecolor value="ControlDarkDark" />
+					<fontsize value="10000"/>
+					<style value="UiElement"/>
+					<bold value="on" />
+				</properties>
+				<lit>Extended Note</lit>
+			</para>
+		</part>
+		<part id="LexExtendedNote-Jt-SummaryCollapsed" type="jtview" menu="mnuDataTree-ExtendedNote">
+			<para>
+				<properties>
+					<forecolor value="ControlDarkDark" />
+					<fontsize value="10000"/>
+					<bold value="on" />
+				</properties>
+				<span>
+					<properties>
+						<style value="UiElement"/>
+					</properties>
+					<lit>Extended Note</lit>
+					<lit> - </lit>
+				</span>
+				<obj field="ExtendedNoteType" layout="Abbreviation"/>
+				<lit> - </lit>
+				<string field="Discussion" ws="best analysis"/>
+			</para>
+		</part>
+		<part id="LexExtendedNote-Jt-Discussion" type="jtview">
+			<string field="Discussion" ws="$ws=analysis"/>
+		</part>
+		<part id="LexExtendedNote-Jt-ExtNoteType" type="jtview">
+			<obj class="LexExtendedNote" field="ExtendedNoteType" targetclass="CmPossibility"/>
+		</part>
+	</bin>
+	
 	<bin class="LexReference">
 		<part id="LexReference-Jt-SenseTargetsConfig" type="jtview">
 			<choice>
@@ -1005,6 +1094,15 @@
 		</part>
 		<part id="CmPicture-Jt-SenseNumber" type="jtview">
 			<string field="SenseNumberTSS" />
+		</part>
+		<part id="CmPicture-Jt-PublishInForPicture" type="jtview">
+			<slice field="PublishIn" label="Publish In" tooltip="Remove a publication from this field to completely exclude this picture from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
+				menu="mnuDataTree-Help">
+				<deParams displayProperty="ShortName" ws="best analysis" />
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the Publications list" tool="publicationsEdit" />
+				</chooserInfo>
+			</slice>
 		</part>
 	</bin>
 

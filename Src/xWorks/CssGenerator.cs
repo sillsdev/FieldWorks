@@ -3,18 +3,17 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
-using ControlExtenders;
 using ExCSS;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 using XCore;
 using Property = ExCSS.Property;
 
@@ -32,7 +31,10 @@ namespace SIL.FieldWorks.XWorks
 		internal const string DictionaryNormal = "Dictionary-Normal";
 		internal const string DictionaryMinor = "Dictionary-Minor";
 		internal const string WritingSystemPrefix = "writingsystemprefix";
+		internal const string WritingSystemStyleName = "Writing System Abbreviation";
 		private static readonly Dictionary<string, string> BulletSymbolsCollection = new Dictionary<string, string>();
+		private static readonly Dictionary<string, string> NumberingStylesCollection = new Dictionary<string, string>();
+
 		/// <summary>
 		/// Generate all the css rules necessary to represent every enabled portion of the given configuration
 		/// </summary>
@@ -47,6 +49,7 @@ namespace SIL.FieldWorks.XWorks
 			var mediatorstyleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			LoadBulletUnicodes();
+			LoadNumberingStyles();
 			GenerateCssForDefaultStyles(mediator, mediatorstyleSheet, styleSheet, model, cache);
 			MakeLinksLookLikePlainText(styleSheet);
 			GenerateCssForAudioWs(styleSheet, cache);
@@ -94,19 +97,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				defaultStyleProps.Add(new Property("font-size") { Term = new PrimitiveTerm(UnitType.Point, FontInfo.kDefaultFontSize) });
 			}
-			var defaultRule = new StyleRule { Value = "span" };
+			var defaultRule = new StyleRule { Value = "body" };
 			defaultRule.Declarations.Properties.AddRange(defaultStyleProps);
 			styleSheet.Rules.Add(defaultRule);
 			// Then generate the rules for all the writing system overrides
-			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
-			{
-				// We want only the character type settings from the "Normal" style since we're applying them
-				// to a span, not a div (or a paragraph).  See https://jira.sil.org/browse/LT-16796.
-				var wsRule = new StyleRule { Value = "span" + String.Format("[lang|=\"{0}\"]", aws.RFC5646) };
-				var styleDecls = GenerateCssStyleFromFwStyleSheet("Normal", aws.Handle, mediator);
-				wsRule.Declarations.Properties.AddRange(GetOnlyCharacterStyle(styleDecls));
-				styleSheet.Rules.Add(wsRule);
-			}
+			GenerateCssForWritingSystems("span", "Normal", styleSheet, mediator);
 		}
 
 		private static void GenerateDictionaryNormalParagraphCss(StyleSheet styleSheet, Mediator mediator)
@@ -115,6 +110,8 @@ namespace SIL.FieldWorks.XWorks
 			var dictNormalStyle = GenerateCssStyleFromFwStyleSheet(DictionaryNormal, 0, mediator);
 			dictNormalRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictNormalStyle));
 			styleSheet.Rules.Add(dictNormalRule);
+			// Then generate the rules for all the writing system overrides
+			GenerateCssForWritingSystems("div.entry span", DictionaryNormal, styleSheet, mediator);
 		}
 
 		private static void GenerateDictionaryMinorParagraphCss(StyleSheet styleSheet, Mediator mediator, DictionaryConfigurationModel model)
@@ -132,7 +129,24 @@ namespace SIL.FieldWorks.XWorks
 					var minorRule = new StyleRule { Value = string.Format("div.{0}", GetClassAttributeForConfig(minorEntryNode)) };
 					minorRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictionaryMinorStyle));
 					styleSheet.Rules.Add(minorRule);
+					// Then generate the rules for all the writing system overrides
+					GenerateCssForWritingSystems(string.Format("div.{0} span", GetClassAttributeForConfig(minorEntryNode)), DictionaryMinor, styleSheet, mediator);
 				}
+			}
+		}
+
+		private static void GenerateCssForWritingSystems(string selector, string styleName, StyleSheet styleSheet, Mediator mediator)
+		{
+			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			// Generate the rules for all the writing system overrides
+			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			{
+				// We want only the character type settings from the styleName style since we're applying them
+				// to a span.
+				var wsRule = new StyleRule { Value = selector + String.Format("[lang|=\"{0}\"]", aws.RFC5646) };
+				var styleDecls = GenerateCssStyleFromFwStyleSheet(styleName, aws.Handle, mediator);
+				wsRule.Declarations.Properties.AddRange(GetOnlyCharacterStyle(styleDecls));
+				styleSheet.Rules.Add(wsRule);
 			}
 		}
 
@@ -181,16 +195,32 @@ namespace SIL.FieldWorks.XWorks
 			{
 				GenerateCssFromComplexFormOptions(configNode, complexFormOpts, styleSheet, ref baseSelection, cache, mediator);
 			}
+			else if (configNode.DictionaryNodeOptions is DictionaryNodeGroupingOptions
+					&& ((DictionaryNodeGroupingOptions)configNode.DictionaryNodeOptions).DisplayGroupInParagraph)
+			{
+				// In a grouping node with DisplayGroupInParagraph on we should add the block display
+				GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, cache, mediator);
+				rule.Value = baseSelection;
+				rule.Declarations.Add(new Property("display"){ Term = new PrimitiveTerm(UnitType.Ident, "block") });
+				// if the configuration node defines a style then add all the rules generated from that style
+				if (!String.IsNullOrEmpty(configNode.Style))
+				{
+					//Generate the rules for the paragraph style
+					rule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, configNode,
+						mediator)));
+				}
+				styleSheet.Rules.Add(rule);
+			}
 			else
 			{
-				var pictureOptions = configNode.DictionaryNodeOptions as DictionaryNodePictureOptions;
-				if (pictureOptions != null)
+				if (configNode.DictionaryNodeOptions is DictionaryNodePictureOptions)
 				{
-					GenerateCssFromPictureOptions(configNode, pictureOptions, styleSheet, baseSelection);
+					GenerateCssFromPictureOptions(configNode, (DictionaryNodePictureOptions)configNode.DictionaryNodeOptions, styleSheet, baseSelection);
 				}
 				var selectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection,
 					cache, mediator);
 				rule.Value = baseSelection;
+
 				// if the configuration node defines a style then add all the rules generated from that style
 				if (!String.IsNullOrEmpty(configNode.Style))
 				{
@@ -204,7 +234,7 @@ namespace SIL.FieldWorks.XWorks
 					GenerateCssFromWsOptions(configNode, wsOptions, styleSheet, baseSelection, mediator);
 					if (wsOptions.DisplayWritingSystemAbbreviations)
 					{
-						GenerateCssForWritingSystemPrefix(styleSheet, baseSelection);
+						GenerateCssForWritingSystemPrefix(configNode, styleSheet, baseSelection, mediator);
 					}
 				}
 				styleSheet.Rules.AddRange(CheckRangeOfRulesForEmpties(selectors));
@@ -302,8 +332,9 @@ namespace SIL.FieldWorks.XWorks
 					// Apply the paragraph style information to all but the first sensecontent block, if requested
 					Value = senseOptions.DisplayFirstSenseInline ? string.Format("{0} + {1}", senseContentSelector, ".sensecontent") : senseContentSelector
 				};
+
 				styleSheet.Rules.Add(senseParaRule);
-				GenerateCssforBulletedList(configNode, styleSheet, senseParaRule.Value, mediator);
+				GenerateCssforBulletedList(configNode, styleSheet, senseParaRule.Value, mediator, styleDeclaration);
 			}
 			else
 			{
@@ -333,12 +364,17 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="styleSheet">Stylesheet to add the new rule</param>
 		/// <param name="bulletSelector">Style name for the bullet property</param>
 		/// <param name="mediator">mediator to get the styles</param>
-		private static void GenerateCssforBulletedList(ConfigurableDictionaryNode configNode, StyleSheet styleSheet, string bulletSelector, Mediator mediator)
+		/// <param name="styleDeclaration">Style properties collection</param>
+		private static void GenerateCssforBulletedList(ConfigurableDictionaryNode configNode, StyleSheet styleSheet, string bulletSelector, Mediator mediator, StyleDeclaration styleDeclaration)
 		{
 			if (configNode.Style != null)
 			{
-				var bulletRule = new StyleRule { Value = bulletSelector + ":not(:first-child):before" };
-				var styleDeclaration = GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, mediator);
+				if (styleDeclaration.Properties.Count == 0)
+					styleDeclaration = GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, mediator);
+				GenerateCssForCounterReset(styleSheet, bulletSelector, styleDeclaration, false);
+				var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
+				var senseSufixRule = senseOptions != null && senseOptions.DisplayFirstSenseInline ? ":not(:first-child):before" : ":before";
+				var bulletRule = new StyleRule { Value = bulletSelector + senseSufixRule };
 				bulletRule.Declarations.Properties.AddRange(GetOnlyBulletContent(styleDeclaration));
 				var projectStyles = FontHeightAdjuster.StyleSheetFromMediator(mediator);
 				BaseStyleInfo projectStyle = projectStyles.Styles[configNode.Style];
@@ -350,7 +386,9 @@ namespace SIL.FieldWorks.XWorks
 					bulletRule.Declarations.Add(new Property("color") { Term = new PrimitiveTerm(UnitType.RGB, wsFontInfo.FontColor.Value.Name) });
 				}
 				if (!IsEmptyRule(bulletRule))
+				{
 					styleSheet.Rules.Add(bulletRule);
+				}
 			}
 		}
 
@@ -370,9 +408,10 @@ namespace SIL.FieldWorks.XWorks
 					declaration.Add(new Property("display") { Term = new PrimitiveTerm(UnitType.Ident, "block") });
 					var blockRule = new StyleRule(declaration)
 					{
-						Value = i == 1 ? baseSelection.Replace("sensecontent", "sensecontent + .sensecontent") : baseSelection
+						Value = baseSelection
 					};
 					styleSheet.Rules.Add(blockRule);
+					GenerateCssForCounterReset(styleSheet, baseSelection, declaration, true);
 					var bulletRule = AdjustRuleIfParagraphNumberScheme(blockRule, configNode, mediator);
 					styleSheet.Rules.AddRange(RemoveBeforeAfterSelectorRules(styleRules));
 					styleSheet.Rules.Add(bulletRule);
@@ -391,6 +430,30 @@ namespace SIL.FieldWorks.XWorks
 						styleSheet.Rules.Add(complexContentRule);
 					styleSheet.Rules.AddRange(styleRules);
 				}
+			}
+		}
+
+		/// <summary>
+		/// Generates Counter reset style properties
+		/// </summary>
+		/// <param name="styleSheet">Stylesheet to add the new rule</param>
+		/// <param name="baseSelection">Style name for the bullet property</param>
+		/// <param name="declaration">Style properties collection</param>
+		/// <param name="isSplitBySpace">Split baseSelection by space/greater than</param>
+		private static void GenerateCssForCounterReset(StyleSheet styleSheet, string baseSelection, StyleDeclaration declaration, bool isSplitBySpace)
+		{
+			var resetSection = GetOnlyCounterResetContent(declaration);
+			if (!string.IsNullOrEmpty(resetSection))
+			{
+				string bulletParentSelector = baseSelection.Substring(0, baseSelection.LastIndexOf('>') - 1);
+				if (isSplitBySpace)
+					bulletParentSelector = baseSelection.Substring(0, baseSelection.LastIndexOf(' '));
+				var resetRule = new StyleRule {Value = bulletParentSelector};
+				resetRule.Declarations.Add(new Property("counter-reset")
+				{
+					Term = new PrimitiveTerm(UnitType.Attribute, resetSection)
+				});
+				styleSheet.Rules.Add(resetRule);
 			}
 		}
 
@@ -420,6 +483,10 @@ namespace SIL.FieldWorks.XWorks
 					var contentInRule = rule.Declarations.FirstOrDefault(p => p.Name == "content");
 					if (contentInRule != null)
 						rule.Declarations.Remove(contentInRule);
+					// remove the bullet counter-increment if present in the base rule
+					var counterIncrement = rule.Declarations.FirstOrDefault(p => p.Name == "counter-increment");
+					if (counterIncrement != null)
+						rule.Declarations.Remove(counterIncrement);
 					return bulletRule;
 				}
 			}
@@ -444,13 +511,12 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private static void GenerateCssForWritingSystemPrefix(StyleSheet styleSheet, string baseSelection)
+		private static void GenerateCssForWritingSystemPrefix(ConfigurableDictionaryNode configNode, StyleSheet styleSheet, string baseSelection, Mediator mediator)
 		{
-			var wsRule1 = new StyleRule {Value = string.Format("{0}.{1}", baseSelection, WritingSystemPrefix)};
-			wsRule1.Declarations.Properties.Add(new Property("font-style") {Term = new PrimitiveTerm(UnitType.Attribute, "normal")});
-			wsRule1.Declarations.Properties.Add(new Property("font-size") {Term = new PrimitiveTerm(UnitType.Point, 10)});
+			var wsRule1 = new StyleRule { Value = string.Format("{0}.{1}", baseSelection, WritingSystemPrefix)};
+			wsRule1.Declarations.Properties.AddRange(GetOnlyCharacterStyle(GenerateCssStyleFromFwStyleSheet(WritingSystemStyleName, 0, configNode, mediator)));
 			styleSheet.Rules.Add(wsRule1);
-			var wsRule2=new StyleRule {Value = wsRule1.Value + ":after"};
+			var wsRule2 = new StyleRule { Value = string.Format("{0}.{1}:after", baseSelection, WritingSystemPrefix) };
 			wsRule2.Declarations.Properties.Add(new Property("content"){Term = new PrimitiveTerm(UnitType.String, " ")});
 			styleSheet.Rules.Add(wsRule2);
 		}
@@ -535,7 +601,7 @@ namespace SIL.FieldWorks.XWorks
 					// content is generated before each item which follows an item of the same name
 					// eg. .complexformrefs>.complexformref + .complexformref:before { content: "," }
 					var dec = new StyleDeclaration();
-					dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, configNode.Between) });
+					dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, SpecialCharacterHandling.MakeSafeCss(configNode.Between)) });
 					if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
 						dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, mediator));
 					var collectionSelector = "." + GetClassAttributeForConfig(configNode);
@@ -569,6 +635,8 @@ namespace SIL.FieldWorks.XWorks
 						}
 						else if (senseOptions != null && senseOptions.ShowSharedGrammarInfoFirst)
 							betweenSelector = String.Format("{0}> {1}>{2}.sensecontent+{2}:before", parentSelector, collectionSelector, " span");
+						else if (configNode.FieldDescription == "PicturesOfSenses")
+							betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, " div");
 						else
 							betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, " span");
 
@@ -576,28 +644,40 @@ namespace SIL.FieldWorks.XWorks
 					}
 					rules.Add(betweenRule);
 				}
-				if ((configNode.FieldDescription == "SenseNumberTSS" || configNode.FieldDescription == "Caption") && parentSelector == ".entry> .pictures .picture")
+				// Headword, Gloss, and Caption are contained in a captionContent area.
+				if (configNode.Parent.DictionaryNodeOptions is DictionaryNodePictureOptions)
+				{
 					baseSelection = parentSelector + "> " + ".captionContent " + SelectClassName(configNode, cache);
+					simpleSelector = parentSelector + "> " + ".captionContent " + SelectBareClassName(configNode, cache);
+				}
 				else
+				{
 					baseSelection = parentSelector + "> " + SelectClassName(configNode, cache);
-				simpleSelector = parentSelector + "> " + SelectBareClassName(configNode, cache);
+					simpleSelector = parentSelector + "> " + SelectBareClassName(configNode, cache);
+				}
 			}
 			if(!String.IsNullOrEmpty(configNode.Before))
 			{
 				var dec = new StyleDeclaration();
-				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, configNode.Before) });
+				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, SpecialCharacterHandling.MakeSafeCss(configNode.Before)) });
 				if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
 					dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, mediator));
-				var beforeRule = new StyleRule(dec) { Value = GetBaseSelectionWithSelectors(simpleSelector, ":before") };
+				var selectorBase = simpleSelector;
+				if (configNode.FieldDescription == "PicturesOfSenses")
+					selectorBase += "> div:first-child";
+				var beforeRule = new StyleRule(dec) { Value = GetBaseSelectionWithSelectors(selectorBase, ":before") };
 				rules.Add(beforeRule);
 			}
 			if(!String.IsNullOrEmpty(configNode.After))
 			{
 				var dec = new StyleDeclaration();
-				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, configNode.After) });
+				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, SpecialCharacterHandling.MakeSafeCss(configNode.After)) });
 				if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
 					dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, mediator));
-				var afterRule = new StyleRule(dec) { Value = GetBaseSelectionWithSelectors(simpleSelector, ":after") };
+				var selectorBase = simpleSelector;
+				if (configNode.FieldDescription == "PicturesOfSenses")
+					selectorBase += "> div:last-child";
+				var afterRule = new StyleRule(dec) { Value = GetBaseSelectionWithSelectors(selectorBase, ":after") };
 				rules.Add(afterRule);
 			}
 			return rules;
@@ -677,7 +757,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var classNameBase = GetClassAttributeBase(configNode).ToLower();
 			string singularBase;
-			if(classNameBase.EndsWith("entries"))
+			if(classNameBase.EndsWith("ies"))
 				singularBase = classNameBase.Remove(classNameBase.Length - 3) + "y";
 			else if (classNameBase.EndsWith("analyses"))
 				singularBase = classNameBase.Remove(classNameBase.Length - 2) + "is";
@@ -719,9 +799,18 @@ namespace SIL.FieldWorks.XWorks
 			// use the FieldDescription as the class name, and append a '_' followed by the SubField if it is defined.
 			// Note that custom fields can have spaces in their names, which CSS can't handle.  Convert spaces to hyphens,
 			// which CSS allows but FieldWorks doesn't use (except maybe in custom fields).
-			return string.IsNullOrEmpty(configNode.CSSClassNameOverride)
-				? configNode.FieldDescription.Replace(' ', '-') + (string.IsNullOrEmpty(configNode.SubField) ? "" : "_" + configNode.SubField)
-				: configNode.CSSClassNameOverride;
+			if (string.IsNullOrEmpty(configNode.CSSClassNameOverride))
+			{
+				var classAttribute = string.Empty;
+				if (configNode.DictionaryNodeOptions is DictionaryNodeGroupingOptions)
+				{
+					classAttribute += "grouping_";
+				}
+				classAttribute += configNode.FieldDescription.Replace(' ', '-') +
+					(string.IsNullOrEmpty(configNode.SubField) ? "" : "_" + configNode.SubField);
+				return classAttribute;
+			}
+			return configNode.CSSClassNameOverride;
 		}
 
 		private static string GetClassAttributeDupSuffix(ConfigurableDictionaryNode configNode)
@@ -744,7 +833,7 @@ namespace SIL.FieldWorks.XWorks
 		internal static StyleDeclaration GetOnlyParagraphStyle(StyleDeclaration fullStyleDeclaration)
 		{
 			var declaration = new StyleDeclaration();
-			foreach(var prop in fullStyleDeclaration.Where(prop => !prop.Name.Contains("font") && !prop.Name.Contains("color")))
+			foreach(var prop in fullStyleDeclaration.Where(prop => !prop.Name.Contains("font") && !prop.Name.Contains("color") && !prop.Name.Contains("content") && !prop.Name.Contains("counter-increment")))
 			{
 				declaration.Add(prop);
 			}
@@ -754,11 +843,17 @@ namespace SIL.FieldWorks.XWorks
 		internal static StyleDeclaration GetOnlyBulletContent(StyleDeclaration fullStyleDeclaration)
 		{
 			var declaration = new StyleDeclaration();
-			foreach (var prop in fullStyleDeclaration.Where(prop => prop.Name.Contains("content")))
+			foreach (var prop in fullStyleDeclaration.Where(prop => prop.Name.Contains("content") || prop.Name.Contains("counter-increment")))
 			{
 				declaration.Add(prop);
 			}
 			return declaration;
+		}
+
+		internal static string GetOnlyCounterResetContent(StyleDeclaration fullStyleDeclaration)
+		{
+			var counterProp = fullStyleDeclaration.FirstOrDefault(prop => prop.Name.Contains("counter-increment"));
+			return counterProp != null ? counterProp.Term.ToString() : string.Empty;
 		}
 
 		/// <summary>
@@ -904,6 +999,15 @@ namespace SIL.FieldWorks.XWorks
 					string selectedBullet = BulletSymbolsCollection[numScheme];
 					declaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, selectedBullet) });
 				}
+				else if (NumberingStylesCollection.ContainsKey(exportStyleInfo.NumberScheme.ToString()))
+				{
+					if (node != null)
+					{
+						string selectedNumStyle = NumberingStylesCollection[numScheme];
+						declaration.Add(new Property("counter-increment") { Term = new PrimitiveTerm(UnitType.Attribute, " " + node.Label.ToLower()) });
+						declaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.Attribute, string.Format(" counter({0}, {1}) {2}", node.Label.ToLower(), selectedNumStyle, @"' '")) });
+					}
+				}
 			}
 			var styleList = new List<StyleDeclaration> {declaration};
 			if (calculateFirstSenseStyle && ancestorIndents.Ancestor != null)
@@ -925,6 +1029,11 @@ namespace SIL.FieldWorks.XWorks
 
 			if (exportStyleInfo.DirectionIsRightToLeft != TriStateBool.triNotSet)
 			{
+				// REVIEW (Hasso) 2016.07: I think the only time this matters is when the user has paragraphs (senses, subentries, etc)
+				// REVIEW (cont) whose directions oppose Dictionary-Normal. In this case, O Pesky Users, we will need to know which direction the
+				// REVIEW (cont) paragraph is going when we generate the innermost strings. Implementing this will be pricy for paragraphy
+				// REVIEW (cont) dictionaries, but beneficial for only our small bidirectional contingency. Alas, O Pesky Users.
+				// REVIEW (cont) But we may need a CSS fix for bidirectionality until we can get GeckoFx 47+. O Fair Quill, Delicate Parchment.
 				declaration.Add(new Property("direction") { Term = new PrimitiveTerm(UnitType.Ident, exportStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue ? "rtl" : "ltr") });
 			}
 
@@ -1017,7 +1126,22 @@ namespace SIL.FieldWorks.XWorks
 			BulletSymbolsCollection.Add("124", "\\2713");
 		}
 
+		/// <summary>
+		/// Mapping the numbering styles with the content's number format
+		/// </summary>
+		private static void LoadNumberingStyles()
+		{
+			if (NumberingStylesCollection.Count > 0)
+				return;
 
+			NumberingStylesCollection.Add("kvbnNumberBase", "decimal");
+			NumberingStylesCollection.Add("kvbnArabic", "decimal");
+			NumberingStylesCollection.Add("kvbnRomanLower", "lower-roman");
+			NumberingStylesCollection.Add("kvbnRomanUpper", "upper-roman");
+			NumberingStylesCollection.Add("kvbnLetterLower", "lower-alpha");
+			NumberingStylesCollection.Add("kvbnLetterUpper", "upper-alpha");
+			NumberingStylesCollection.Add("kvbnArabic01", "decimal-leading-zero");
+		}
 
 		/// <summary>
 		/// In the FwStyles values were stored in millipoints to avoid expensive floating point calculations in c++ code.
@@ -1036,7 +1160,7 @@ namespace SIL.FieldWorks.XWorks
 			var wsFontInfo = projectStyle.FontInfoForWs(wsId);
 			var defaultFontInfo = projectStyle.DefaultCharacterStyleInfo;
 			// set fontName to the wsFontInfo value if set, otherwise the defaultFontInfo if set, or null
-			var fontName = wsFontInfo.FontName.ValueIsSet ? wsFontInfo.FontName.Value
+			var fontName = wsFontInfo.m_fontName.ValueIsSet ? wsFontInfo.m_fontName.Value
 				: defaultFontInfo.FontName.ValueIsSet ? defaultFontInfo.FontName.Value : null;
 
 			// fontName still null means not set in Normal Style, then get default fonts from WritingSystems configuration.
@@ -1059,12 +1183,12 @@ namespace SIL.FieldWorks.XWorks
 				declaration.Add(fontFamily);
 			}
 
-			AddInfoFromWsOrDefaultValue(wsFontInfo.FontSize, defaultFontInfo.FontSize, "font-size", UnitType.Point, declaration);
-			AddInfoFromWsOrDefaultValue(wsFontInfo.Bold, defaultFontInfo.Bold, "font-weight", "bold", "normal", declaration);
-			AddInfoFromWsOrDefaultValue(wsFontInfo.Italic, defaultFontInfo.Italic, "font-style", "italic", "normal", declaration);
-			AddInfoFromWsOrDefaultValue(wsFontInfo.FontColor, defaultFontInfo.FontColor, "color", declaration);
-			AddInfoFromWsOrDefaultValue(wsFontInfo.BackColor, defaultFontInfo.BackColor, "background-color", declaration);
-			AddInfoFromWsOrDefaultValue(wsFontInfo.SuperSub, defaultFontInfo.SuperSub, declaration);
+			AddInfoFromWsOrDefaultValue(wsFontInfo.m_fontSize, defaultFontInfo.FontSize, "font-size", UnitType.Point, declaration);
+			AddInfoFromWsOrDefaultValue(wsFontInfo.m_bold, defaultFontInfo.Bold, "font-weight", "bold", "normal", declaration);
+			AddInfoFromWsOrDefaultValue(wsFontInfo.m_italic, defaultFontInfo.Italic, "font-style", "italic", "normal", declaration);
+			AddInfoFromWsOrDefaultValue(wsFontInfo.m_fontColor, defaultFontInfo.FontColor, "color", declaration);
+			AddInfoFromWsOrDefaultValue(wsFontInfo.m_backColor, defaultFontInfo.BackColor, "background-color", declaration);
+			AddInfoFromWsOrDefaultValue(wsFontInfo.m_superSub, defaultFontInfo.SuperSub, declaration);
 			AddInfoForUnderline(wsFontInfo, defaultFontInfo, declaration);
 
 		}
@@ -1078,9 +1202,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="trueValue"></param>
 		/// <param name="falseValue"></param>
 		/// <param name="declaration"></param>
-		private static void AddInfoFromWsOrDefaultValue(IStyleProp<bool> wsFontInfo,
-																		IStyleProp<bool> defaultFontInfo, string propName, string trueValue,
-																		string falseValue, StyleDeclaration declaration)
+		private static void AddInfoFromWsOrDefaultValue(InheritableStyleProp<bool> wsFontInfo, IStyleProp<bool> defaultFontInfo,
+														string propName, string trueValue, string falseValue,
+														StyleDeclaration declaration)
 		{
 			bool fontValue;
 			if(!GetFontValue(wsFontInfo, defaultFontInfo, out fontValue))
@@ -1097,8 +1221,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="defaultFontInfo"></param>
 		/// <param name="propName"></param>
 		/// <param name="declaration"></param>
-		private static void AddInfoFromWsOrDefaultValue(IStyleProp<Color> wsFontInfo,
-																		IStyleProp<Color> defaultFontInfo, string propName, StyleDeclaration declaration)
+		private static void AddInfoFromWsOrDefaultValue(InheritableStyleProp<Color> wsFontInfo, IStyleProp<Color> defaultFontInfo,
+														string propName, StyleDeclaration declaration)
 		{
 			Color fontValue;
 			if(!GetFontValue(wsFontInfo, defaultFontInfo, out fontValue))
@@ -1118,9 +1242,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="propName"></param>
 		/// <param name="termType"></param>
 		/// <param name="declaration"></param>
-		private static void AddInfoFromWsOrDefaultValue(IStyleProp<int> wsFontInfo,
-																		IStyleProp<int> defaultFontInfo, string propName, UnitType termType,
-																		StyleDeclaration declaration)
+		private static void AddInfoFromWsOrDefaultValue(InheritableStyleProp<int> wsFontInfo, IStyleProp<int> defaultFontInfo,
+														string propName, UnitType termType, StyleDeclaration declaration)
 		{
 			int fontValue;
 			if(!GetFontValue(wsFontInfo, defaultFontInfo, out fontValue))
@@ -1136,8 +1259,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="wsFontInfo"></param>
 		/// <param name="defaultFontInfo"></param>
 		/// <param name="declaration"></param>
-		private static void AddInfoFromWsOrDefaultValue(IStyleProp<FwSuperscriptVal> wsFontInfo,
-																		IStyleProp<FwSuperscriptVal> defaultFontInfo, StyleDeclaration declaration)
+		private static void AddInfoFromWsOrDefaultValue(InheritableStyleProp<FwSuperscriptVal> wsFontInfo,
+														IStyleProp<FwSuperscriptVal> defaultFontInfo, StyleDeclaration declaration)
 		{
 			FwSuperscriptVal fontValue;
 			if(!GetFontValue(wsFontInfo, defaultFontInfo, out fontValue))
@@ -1163,7 +1286,7 @@ namespace SIL.FieldWorks.XWorks
 		private static void AddInfoForUnderline(FontInfo wsFont, ICharacterStyleInfo defaultFont, StyleDeclaration declaration)
 		{
 			FwUnderlineType underlineType;
-			if(!GetFontValue(wsFont.Underline, defaultFont.Underline, out underlineType))
+			if(!GetFontValue(wsFont.m_underline, defaultFont.Underline, out underlineType))
 				return;
 			switch(underlineType)
 			{
@@ -1177,7 +1300,7 @@ namespace SIL.FieldWorks.XWorks
 					termList.AddTerm(new PrimitiveTerm(UnitType.Ident, "solid"));
 					fontProp.Term = termList;
 					declaration.Add(fontProp);
-					AddInfoFromWsOrDefaultValue(wsFont.UnderlineColor, defaultFont.UnderlineColor, "border-bottom-color", declaration);
+					AddInfoFromWsOrDefaultValue(wsFont.m_underlineColor, defaultFont.UnderlineColor, "border-bottom-color", declaration);
 					goto case FwUnderlineType.kuntSingle; //fall through to single
 				}
 				case(FwUnderlineType.kuntSingle):
@@ -1185,7 +1308,7 @@ namespace SIL.FieldWorks.XWorks
 					var fontProp = new Property("text-decoration");
 					fontProp.Term = new PrimitiveTerm(UnitType.Ident, "underline");
 					declaration.Add(fontProp);
-					AddInfoFromWsOrDefaultValue(wsFont.UnderlineColor, defaultFont.UnderlineColor, "text-decoration-color", declaration);
+					AddInfoFromWsOrDefaultValue(wsFont.m_underlineColor, defaultFont.UnderlineColor, "text-decoration-color", declaration);
 					break;
 				}
 				case(FwUnderlineType.kuntStrikethrough):
@@ -1193,7 +1316,7 @@ namespace SIL.FieldWorks.XWorks
 					var fontProp = new Property("text-decoration");
 					fontProp.Term = new PrimitiveTerm(UnitType.Ident, "line-through");
 					declaration.Add(fontProp);
-					AddInfoFromWsOrDefaultValue(wsFont.UnderlineColor, defaultFont.UnderlineColor, "text-decoration-color", declaration);
+					AddInfoFromWsOrDefaultValue(wsFont.m_underlineColor, defaultFont.UnderlineColor, "text-decoration-color", declaration);
 					break;
 				}
 				case (FwUnderlineType.kuntDashed):
@@ -1208,7 +1331,7 @@ namespace SIL.FieldWorks.XWorks
 																  underlineType == FwUnderlineType.kuntDashed ? "dashed" : "dotted"));
 					fontProp.Term = termList;
 					declaration.Add(fontProp);
-					AddInfoFromWsOrDefaultValue(wsFont.UnderlineColor, defaultFont.UnderlineColor, "border-bottom-color", declaration);
+					AddInfoFromWsOrDefaultValue(wsFont.m_underlineColor, defaultFont.UnderlineColor, "border-bottom-color", declaration);
 					break;
 				}
 			}
@@ -1223,7 +1346,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="defaultFontInfo">default font info</param>
 		/// <param name="fontValue">the value retrieved from the given font infos</param>
 		/// <returns>true if fontValue was defined in one of the info objects</returns>
-		private static bool GetFontValue<T>(IStyleProp<T> wsFontInfo, IStyleProp<T> defaultFontInfo,
+		private static bool GetFontValue<T>(InheritableStyleProp<T> wsFontInfo, IStyleProp<T> defaultFontInfo,
 													out T fontValue)
 		{
 			fontValue = default(T);

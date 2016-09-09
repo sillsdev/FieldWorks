@@ -25,7 +25,7 @@ using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
 using XCore;
 
-// ReSharper disable InconsistentNaming
+// ReSharper disable InconsistentNaming - Justification: Underscores are standard for test names but nowhere else in our code
 namespace SIL.FieldWorks.XWorks
 {
 	public class CssGeneratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.XWorks
 		private static void EnableAllListOptions(DictionaryNodeOptions options)
 		{
 			List<DictionaryNodeListOptions.DictionaryNodeOption> checkList = null;
-			if (options is DictionaryNodeSenseOptions || options is DictionaryNodePictureOptions)
+			if (options is DictionaryNodeSenseOptions || options is DictionaryNodePictureOptions || options is DictionaryNodeGroupingOptions)
 			{
 				return;
 			}
@@ -266,6 +266,111 @@ namespace SIL.FieldWorks.XWorks
 							  "css before rule with Z content not found on headword");
 			Assert.IsTrue(Regex.Match(cssResult, @"\.mainheadword>\s*span\s*:\s*last-child:after\s*{\s*content\s*:\s*'A';\s*}").Success,
 							  "css after rule with A content not found on headword");
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_BeforeAfterSpanConfigGeneratesApostropheBeforeBetweenAfterCss()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				Label = "Headword",
+				CSSClassNameOverride = "mainheadword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				Before = "'beforeText'",
+				Between = "'betweenText'",
+				After = "'afterText'"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				FieldDescription = "LexEntry"
+			};
+			PopulateFieldsForTesting(mainEntryNode);
+			GenerateEmptyPseudoStyle(CssGenerator.BeforeAfterBetweenStyleName);
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			// Check result for before, between and after rules
+			Assert.IsTrue(Regex.Match(cssResult, @"\.mainheadword>\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'\\\s*'beforeText\\'\s*';\s*}").Success,
+							  "css before rule with 'beforeText' content not found on headword");
+			Assert.IsTrue(Regex.Match(cssResult, @"\.mainheadword>\s*.mainheadwor\s*\+\s*.mainheadwor:before\s*{\s*content\s*:\s*'\\\s*'betweenText\\'\s*';\s*}").Success,
+							  "css before rule with 'betweenText' content not found on headword");
+			Assert.IsTrue(Regex.Match(cssResult, @"\.mainheadword>\s*span\s*:\s*last-child:after\s*{\s*content\s*:\s*'\\\s*'afterText\\'\s*';\s*}").Success,
+							  "css after rule with 'afterText' content not found on headword");
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_BeforeAfterGroupingSpanWorks()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				Label = "Headword",
+				CSSClassNameOverride = "mh",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				Before = "Z",
+				After = "A"
+			};
+			var groupingNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "hwg",
+				Children = new List<ConfigurableDictionaryNode> {headwordNode},
+				Before = "{",
+				After = "}",
+				DictionaryNodeOptions = new DictionaryNodeGroupingOptions()
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { groupingNode },
+				FieldDescription = "LexEntry"
+			};
+			PopulateFieldsForTesting(mainEntryNode);
+			GenerateEmptyPseudoStyle(CssGenerator.BeforeAfterBetweenStyleName);
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			// Check the result for before and after rules for the group
+			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg\s*:before\s*{\s*content\s*:\s*'{';\s*}").Success,
+							  "css before rule for the grouping node was not generated");
+			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg\s*:after\s*{\s*content\s*:\s*'}';\s*}").Success,
+							  "css after rule for the grouping node was not generated");
+			// Check result for before and after rules equivalent to .headword span:first-child{content:'Z';} and .headword span:last-child{content:'A'}
+			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg>\s*\.mh>\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'Z';\s*}").Success,
+							  "css before rule with Z content not found on headword");
+			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg>\s*\.mh>\s*span\s*:\s*last-child:after\s*{\s*content\s*:\s*'A';\s*}").Success,
+							  "css after rule with A content not found on headword");
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_BeforeAfterGroupingParagraphWorks()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				Label = "Headword",
+				CSSClassNameOverride = "mh",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+			};
+			var groupingNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "hwg",
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				DictionaryNodeOptions = new DictionaryNodeGroupingOptions { DisplayGroupInParagraph = true }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { groupingNode },
+				FieldDescription = "LexEntry"
+			};
+			PopulateFieldsForTesting(mainEntryNode);
+			GenerateEmptyPseudoStyle(CssGenerator.BeforeAfterBetweenStyleName);
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			// Check the result for before and after rules for the group
+			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg\s*{\s*display\s*:\s*block;\s*}").Success,
+							  "paragraph selection did not result in block display for css");
 		}
 
 		[Test]
@@ -2117,9 +2222,187 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.entry*\>\s*.*pictures.*picture*\>\s*.captionContent\s*.caption*\{.*margin-left:\s*24pt", RegexOptions.Singleline).Success,
 							  "css for caption did not contain valid margin attribute");
 		}
+
+		/// <summary>
+		/// The css for a picture sub fields  Before Between After Css is Generated.
+		/// </summary>
+		[Test]
+		public void GenerateCssForConfiguration_PictureSubfieldsBeforeBetweenAfterIsAreGenerated()
+		{
+			TestStyle style = GenerateStyle("Normal");
+			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, LeadingIndent);
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			var pictureFileNode = new ConfigurableDictionaryNode { FieldDescription = "PictureFileRA" };
+			var senseNumberNode = new ConfigurableDictionaryNode
+			{
+				Before = "[",
+				After = "]",
+				Between = ", ",
+				FieldDescription = "SenseNumberTSS"
+			};
+			var captionNode = new ConfigurableDictionaryNode
+			{
+				Before = "{",
+				After = "}",
+				Between = " ",
+				FieldDescription = "Caption",
+				Style = "Normal"
+			};
+			var memberNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = new DictionaryNodePictureOptions { MaximumWidth = 1 },
+				CSSClassNameOverride = "pictures",
+				FieldDescription = "Pictures",
+				Children = new List<ConfigurableDictionaryNode> { pictureFileNode, senseNumberNode, captionNode }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+			};
+			var rootNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SIL.FieldWorks.XWorks.TestPictureClass",
+				CSSClassNameOverride = "entry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode, memberNode }
+			};
+			PopulateFieldsForTesting(rootNode);
+
+			var config = new DictionaryConfigurationModel()
+			{
+				Parts = new List<ConfigurableDictionaryNode> { rootNode }
+			};
+
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(config, m_mediator);
+
+			var senseNumberBefore = @".entry> .pictures .picture> .captionContent .sensenumbertss:before\{\s*content:'\[';";
+			Assert.IsTrue(Regex.Match(cssResult, senseNumberBefore, RegexOptions.Singleline).Success, "expected Sense Number before rule is generated");
+
+			var senseNumberAfter = @".entry> .pictures .picture> .captionContent .sensenumbertss:after\{\s*content:'\]';";
+			Assert.IsTrue(Regex.Match(cssResult, senseNumberAfter, RegexOptions.Singleline).Success, "expected Sense Number after rule is generated");
+
+			var senseNumberBetween = @".entry> .pictures .picture .sensenumbertss> .sensenumberts\+ .sensenumberts:before\{\s*content:', ';";
+			Assert.IsTrue(Regex.Match(cssResult, senseNumberBetween, RegexOptions.Singleline).Success, "expected Sense Number between rule is generated");
+
+			var captionBefore = @".entry> .pictures .picture> .captionContent .caption:before\{\s*content:'\{';";
+			Assert.IsTrue(Regex.Match(cssResult, captionBefore, RegexOptions.Singleline).Success, "expected Caption before rule is generated");
+
+			var captionAfter = @".entry> .pictures .picture> .captionContent .caption:after\{\s*content:'\}';";
+			Assert.IsTrue(Regex.Match(cssResult, captionAfter, RegexOptions.Singleline).Success, "expected Caption after rule is generated");
+
+			var captionBetween = @".entry> .pictures .picture .caption> .captio\+ .captio:before\{\s*content:' ';";
+			Assert.IsTrue(Regex.Match(cssResult, captionBetween, RegexOptions.Singleline).Success, "expected Caption between rule is generated");
+		}
+
+		/// <summary>
+		/// The css for a picture Before Between After Css is Generated.
+		/// </summary>
+		[Test]
+		public void GenerateCssForConfiguration_PictureBeforeBetweenAfterIsAreGenerated()
+		{
+			TestStyle style = GenerateStyle("Normal");
+			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, LeadingIndent);
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+
+			var memberNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = new DictionaryNodePictureOptions { MaximumWidth = 1 },
+				CSSClassNameOverride = "pictures",
+				FieldDescription = "PicturesOfSenses",
+				Before = "[",
+				After = "]",
+				Between = ", "
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+			};
+			var rootNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SIL.FieldWorks.XWorks.TestPictureClass",
+				CSSClassNameOverride = "entry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode, memberNode }
+			};
+			PopulateFieldsForTesting(rootNode);
+
+			var config = new DictionaryConfigurationModel()
+			{
+				Parts = new List<ConfigurableDictionaryNode> { rootNode }
+			};
+
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(config, m_mediator);
+
+			var pictureBefore = @".entry> .pictures> div:first-child:before\{\s*content:'\[';";
+			Assert.IsTrue(Regex.Match(cssResult, pictureBefore, RegexOptions.Singleline).Success, "expected Picture before rule is generated");
+
+			var pictureAfter = @".entry> .pictures> div:last-child:after\{\s*content:'\]';";
+			Assert.IsTrue(Regex.Match(cssResult, pictureAfter, RegexOptions.Singleline).Success, "expected Picture after rule is generated");
+
+			var pictureBetween = @".entry> .pictures> div\+ div:before\{\s*content:', ';";
+			Assert.IsTrue(Regex.Match(cssResult, pictureBetween, RegexOptions.Singleline).Success, "expected Picture between rule is generated");
+		}
+
+
+		/// <summary>
+		/// Part of LT-12572.
+		/// </summary>
+		[Test]
+		public void GenerateCssForConfiguration_PictureWritesRulesForHeadwordAndGlossInCaptionArea()
+		{
+			TestStyle style = GenerateStyle("Normal");
+			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, LeadingIndent);
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+
+			var captionNode = new ConfigurableDictionaryNode { FieldDescription = "Caption", Style = "Normal" };
+			var headwordNode = new ConfigurableDictionaryNode {
+				FieldDescription = "Owner",
+				SubField="OwnerOutlineName",
+				Style = "Normal",
+				CSSClassNameOverride="headword"
+			};
+			var glossNode = new ConfigurableDictionaryNode {
+
+				FieldDescription = "Owner",
+				SubField="Gloss",
+				Style = "Normal",
+			};
+
+			var memberNode = new ConfigurableDictionaryNode
+				{
+					DictionaryNodeOptions = new DictionaryNodePictureOptions { MaximumWidth = 1 },
+					CSSClassNameOverride = "pictures",
+					FieldDescription = "Pictures",
+					Children = new List<ConfigurableDictionaryNode> { captionNode, headwordNode, glossNode }
+				};
+			var rootNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "SIL.FieldWorks.XWorks.TestPictureClass",
+					CSSClassNameOverride = "entry",
+					Children = new List<ConfigurableDictionaryNode> { memberNode }
+				};
+			PopulateFieldsForTesting(rootNode);
+
+			var config = new DictionaryConfigurationModel()
+				{
+					Parts = new List<ConfigurableDictionaryNode> { rootNode }
+				};
+
+			// SUT
+			var cssWithPictureRules = CssGenerator.GenerateCssFromConfiguration(config, m_mediator);
+
+			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.entry.*pictures.*picture> .captionContent .caption", RegexOptions.Singleline).Success,
+				"css for image did not contain expected rule");
+			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.entry.*pictures.*picture> .captionContent .headword", RegexOptions.Singleline).Success,
+				"css for image did not contain expected headword rule");
+			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.entry.*pictures.*picture> .captionContent .owner_gloss", RegexOptions.Singleline).Success,
+				"css for image did not contain expected gloss rule");
+		}
+
 		[Test]
 		public void GenerateCssForConfiguration_GlossWithMultipleWs()
 		{
+			GenerateStyle("Writing System Abbreviation");
 			var glossNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Gloss",
@@ -2148,9 +2431,11 @@ namespace SIL.FieldWorks.XWorks
 			sense.Gloss.set_String(wsEn, Cache.TsStrFactory.MakeString("gloss", wsEn));
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(".lexentry> .senses .sense> .gloss> span.writingsystemprefix{font-style:normal;font-size:10pt;}"));
+			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(".lexentry> .senses .sense> .gloss> span.writingsystemprefix" +
+				"{font-family:\'foofoo\',serif;font-size:10pt;font-weight:bold;font-style:italic;color:#00F;"));
 			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(".lexentry> .senses .sense> .gloss> span.writingsystemprefix:after{content:' ';}"));
 		}
+
 		[Test]
 		public void GenerateCssForConfiguration_WsSpanWithNormalStyle()
 		{
@@ -2186,7 +2471,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			PopulateFieldsForTesting(testEntryNode);
 			// Default (no ws) style info
-			const string defaultStyle = "span{font-size:10pt;}";
+			const string defaultStyle = "body{font-size:10pt;}";
 			const string englishStyle = "span[lang|=\"en\"]{font-family:'english',serif;color:#F00;}";
 			const string frenchStyle = "span[lang|=\"fr\"]{font-family:'french',serif;color:#008000;}";
 			//SUT
@@ -2315,6 +2600,27 @@ namespace SIL.FieldWorks.XWorks
 			SafelyAddStyleToSheetAndTable(name, style);
 		}
 
+		private void GenerateNumberingStyle(string name, VwBulNum schemeType)
+		{
+			var fontInfo = new FontInfo();
+			fontInfo.m_fontColor.ExplicitValue = Color.Green;
+			fontInfo.m_fontSize.ExplicitValue = 14000;
+			var bulletinfo = new BulletInfo
+			{
+				m_numberScheme = schemeType,
+				FontInfo = fontInfo
+			};
+			var inherbullt = new InheritableStyleProp<BulletInfo>(bulletinfo);
+			var style = new TestStyle(inherbullt, Cache) { Name = name, IsParagraphStyle = true };
+
+			var fontInfo1 = new FontInfo();
+			fontInfo1.m_fontColor.ExplicitValue = Color.Red;
+			fontInfo1.m_fontSize.ExplicitValue = 12000;
+			style.SetDefaultFontInfo(fontInfo1);
+
+			SafelyAddStyleToSheetAndTable(name, style);
+		}
+
 		private void GenerateSenseStyle(string name)
 		{
 			var fontInfo = new FontInfo
@@ -2358,8 +2664,137 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(model);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			const string regExPected = @".lexentry>\s.senses\s>\s.sensecontent:not\(:first-child\):before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*}";
+			const string regExPected = @".lexentry>\s.senses\s>\s.sensecontent:before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*}";
 			Assert.IsTrue(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success, "Bulleted style not generated.");
+		}
+
+		[Test]
+		public void GenerateCssForBulletStyleForSensesWithDisplayFirstSenseInline()
+		{
+			GenerateBulletStyle("Bulleted List");
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					NumberStyle = "Dictionary-SenseNum",
+					DisplayEachSenseInAParagraph = true,
+					DisplayFirstSenseInline = true
+				},
+				Style = "Bulleted List"
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "lexentry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
+			PopulateFieldsForTesting(model);
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			const string regExPected = @".lexentry>\s.senses\s>\s.sensecontent\s.\s.sensecontent:not\(:first-child\):before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*}";
+			Assert.IsTrue(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success, "Bulleted style not generated.");
+		}
+
+		[Test]
+		public void GenerateCssForNumberingStyleForSenses()
+		{
+			GenerateNumberingStyle("Numbered List", VwBulNum.kvbnArabic);
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					NumberStyle = "Dictionary-SenseNum",
+					DisplayEachSenseInAParagraph = true
+				},
+				Style = "Numbered List"
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "lexentry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
+			PopulateFieldsForTesting(model);
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			const string regexExpected = @".lexentry>\s.senses{.*counter-reset:\ssensesos;.*}.*.lexentry>\s.senses\s>\s.sensecontent:before{.*counter-increment:\ssensesos;.*content:\scounter.sensesos,\sdecimal.\s'\s';.*font-size:14pt;.*color:Green;.*}";
+			Assert.IsTrue(Regex.Match(cssResult, regexExpected, RegexOptions.Singleline).Success, "Numbering style not generated for Senses.");
+		}
+
+		[Test]
+		public void GenerateCssForNumberingStyleForSubentries()
+		{
+			GenerateNumberingStyle("Numbered List", VwBulNum.kvbnRomanUpper);
+			var dictNodeOptions = new DictionaryNodeComplexFormOptions
+			{
+				DisplayEachComplexFormInAParagraph = true,
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
+			};
+			dictNodeOptions.Options.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = "a0000000-dd15-4a03-9032-b40faaa9a754" });
+			dictNodeOptions.Options.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = "1f6ae209-141a-40db-983c-bee93af0ca3c" });
+			var subentriesConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Subentries",
+				DictionaryNodeOptions = dictNodeOptions,
+				Style = "Numbered List"
+			};
+			var entryConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { subentriesConfig }
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryConfig } };
+			PopulateFieldsForTesting(entryConfig);
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			const string regexExpected = @".lexentry>\s.subentries{.*counter-reset:[\s]subentries;.*}.*.lexentry>\s.subentries\s.subentry:before{.*counter-increment:[\s]subentries;.*content:\scounter.subentries,\supper-roman.\s'\s';.*font-size:14pt;.*color:Green;.*}";
+			Assert.IsTrue(Regex.Match(cssResult, regexExpected, RegexOptions.Singleline).Success,
+				"Numbering style not generated for Subentry.");
+		}
+
+		[Test]
+		public void GenerateCssForNumberingStyleForExamples()
+		{
+			GenerateNumberingStyle("Numbered List", VwBulNum.kvbnLetterUpper);
+			var dictNodeOptions = new DictionaryNodeComplexFormOptions
+			{
+				DisplayEachComplexFormInAParagraph = true,
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
+			};
+			dictNodeOptions.Options.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = "a0000000-dd15-4a03-9032-b40faaa9a754" });
+			dictNodeOptions.Options.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = "1f6ae209-141a-40db-983c-bee93af0ca3c" });
+			var examples = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ExamplesOS",
+				DictionaryNodeOptions = dictNodeOptions,
+				Style = "Numbered List"
+			};
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true },
+				Children = new List<ConfigurableDictionaryNode> { examples }
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "lexentry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
+			PopulateFieldsForTesting(entry);
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			const string regexExpected = @".lexentry>\s.senses\s>\s.sensecontent\s>\s.sense>\s.examplesos{.*counter-reset:[\s]examplesos;.*}.*.lexentry>\s.senses\s>\s.sensecontent\s>\s.sense>\s.examplesos\s.exampleso:before{.*counter-increment:[\s]examplesos;.*content:[\s]counter.examplesos,[\s]upper-alpha.\s'\s';.*font-size:14pt;.*color:Green;.*}";
+			Assert.IsTrue(Regex.Match(cssResult, regexExpected, RegexOptions.Singleline).Success, "Numbering style not generated for Examples.");
 		}
 
 		[Test]
@@ -2463,7 +2898,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			const string regExPected = @".lexentry>\s.senses\s*>\s*.sensecontent\s*>\s*.sense>\s.senses\s>\s.sensecontent:not\(:first-child\):before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*}";
+			const string regExPected = @".lexentry>\s.senses\s*>\s*.sensecontent\s*>\s*.sense>\s.senses\s>\s.sensecontent:before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*}";
 			Assert.IsTrue(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success, "Bulleted style for SubSenses not generated.");
 		}
 
@@ -2521,46 +2956,82 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForCustomFieldUnderISenseOrEntry()
+		{
+			var customConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Costume", DictionaryNodeOptions = new DictionaryNodeListOptions(),
+				Style = "FooStyle", IsCustomField = true
+			};
+			var targets = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ConfigTargets",
+				Children = new List<ConfigurableDictionaryNode> { customConfig }
+			};
+			var crossRefs = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MinimalLexReferences", CSSClassNameOverride = "mlrs",
+				Children = new List<ConfigurableDictionaryNode> { targets }
+			};
+			var entryConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { crossRefs }
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryConfig } };
+			PopulateFieldsForTesting(model);
+			using (new CustomFieldForTest(Cache, "Costume", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0, CellarPropertyType.Nil, Guid.Empty))
+			{
+				// SUT
+				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+				const string regexExpected1 = @"\.lexentry>\s.mlrs\s\.mlr>\s\.configtargets\s\.configtarget>\s\.costume{[^}]*}";
+				Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success, "expected costume rule not generated");
+			}
+		}
+
+		[Test]
 		public void GenerateCssForCustomFieldWithSpaces()
 		{
 			var nameConfig = new ConfigurableDictionaryNode
 			{
-				Label = "Name",
 				FieldDescription = "Name",
 				Style = "FooStyle",
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions()
 			};
 			var abbrConfig = new ConfigurableDictionaryNode
 			{
-				Label = "Abbreviation",
 				FieldDescription = "Abbreviation",
 				Style = "FooStyle",
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions()
 			};
 			var customConfig = new ConfigurableDictionaryNode
 			{
-				Label = "Custom Location", FieldDescription = "Custom Location", DictionaryNodeOptions = new DictionaryNodeListOptions(),
-				Style = "FooStyle",
+				FieldDescription = "Custom Location", DictionaryNodeOptions = new DictionaryNodeListOptions(),
+				Style = "FooStyle", IsCustomField = true,
 				Children = new List<ConfigurableDictionaryNode> { nameConfig, abbrConfig }
 			};
 			var entryConfig = new ConfigurableDictionaryNode
 			{
-				Label = "Main Entry", FieldDescription = "LexEntry",
+				FieldDescription = "LexEntry",
 				Children = new List<ConfigurableDictionaryNode> { customConfig }
 			};
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryConfig } };
-			PopulateFieldsForTesting(entryConfig);
-			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			var regexExpected1 = @"\.lexentry>\s\.custom-location{[^}]*}";
-			Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success,
-				"expected custom-location rule not generated");
-			var regexExpected2 = @"\.lexentry>\s\.custom-location>\s\.name{[^}]*}";
-			Assert.IsTrue(Regex.Match(cssResult, regexExpected2, RegexOptions.Singleline).Success,
-				"expected custom-location>name rule not generated");
-			var regexExpected3 = @"\.lexentry>\s\.custom-location>\s\.abbreviation{[^}]*}";
-			Assert.IsTrue(Regex.Match(cssResult, regexExpected3, RegexOptions.Singleline).Success,
-				"expected custom-location>abbreviation rule not generated");
+			PopulateFieldsForTesting(model);
+			using (new CustomFieldForTest(Cache, "Custom Location", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+				CellarPropertyType.ReferenceCollection, Guid.Empty))
+			{
+				// SUT
+				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+				const string regexExpected1 = @"\.lexentry>\s\.custom-location \.custom-locatio{[^}]*}";
+				Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success,
+					"expected custom-location rule not generated");
+				const string regexExpected2 = @"\.lexentry>\s\.custom-location \.custom-locatio>\s\.name{[^}]*}";
+				Assert.IsTrue(Regex.Match(cssResult, regexExpected2, RegexOptions.Singleline).Success,
+					"expected custom-location>name rule not generated");
+				const string regexExpected3 = @"\.lexentry>\s\.custom-location \.custom-locatio>\s\.abbreviation{[^}]*}";
+				Assert.IsTrue(Regex.Match(cssResult, regexExpected3, RegexOptions.Singleline).Success,
+					"expected custom-location>abbreviation rule not generated");
+			}
 		}
 
 		[Test]
@@ -2568,7 +3039,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var noteConfig = new ConfigurableDictionaryNode
 			{
-				Label = "Note",
 				FieldDescription = "Note",
 				IsDuplicate = true,
 				LabelSuffix = "Test One",
@@ -2577,12 +3047,11 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var entryConfig = new ConfigurableDictionaryNode
 			{
-				Label = "Main Entry",
 				FieldDescription = "LexEntry",
 				Children = new List<ConfigurableDictionaryNode> { noteConfig }
 			};
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryConfig } };
-			PopulateFieldsForTesting(entryConfig);
+			PopulateFieldsForTesting(model);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			var regexExpected1 = @"\.lexentry>\s\.note_test-one{[^}]*}";
@@ -2595,7 +3064,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var noteConfig = new ConfigurableDictionaryNode
 			{
-				Label = "Note",
 				FieldDescription = "Note",
 				IsDuplicate = true,
 				LabelSuffix = "#Test",
@@ -2604,12 +3072,11 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var entryConfig = new ConfigurableDictionaryNode
 			{
-				Label = "Main Entry",
 				FieldDescription = "LexEntry",
 				Children = new List<ConfigurableDictionaryNode> { noteConfig }
 			};
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryConfig } };
-			PopulateFieldsForTesting(entryConfig);
+			PopulateFieldsForTesting(model);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			var regexExpected1 = @"\.lexentry>\s\.note_-test{[^}]*}";
@@ -2622,7 +3089,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var noteConfig = new ConfigurableDictionaryNode
 			{
-				Label = "Note",
 				FieldDescription = "Note",
 				IsDuplicate = true,
 				LabelSuffix = "#Test#",
@@ -2631,12 +3097,11 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var entryConfig = new ConfigurableDictionaryNode
 			{
-				Label = "Main Entry",
 				FieldDescription = "LexEntry",
 				Children = new List<ConfigurableDictionaryNode> { noteConfig }
 			};
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryConfig } };
-			PopulateFieldsForTesting(entryConfig);
+			PopulateFieldsForTesting(model);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			var regexExpected1 = @"\.lexentry>\s\.note_-test-{[^}]*}";
@@ -2939,7 +3404,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 	}
 
-	class TestStyle : BaseStyleInfo
+	internal class TestStyle : BaseStyleInfo
 	{
 		public TestStyle(FontInfo defaultFontInfo, FdoCache cache)
 			: base(cache)

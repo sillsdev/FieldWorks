@@ -7382,9 +7382,8 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_flidType == (int)CellarPropertyType.Unicode)
 			{
 				var ustring = m_sda.get_UnicodeProp(hvoStringOwner, m_flid);
-				// Enhance: For the time being Default Analysis Ws is sufficient because this is most likely
-				// an Etymology.Source field. If there is ever a Unicode vernacular field that is
-				// made Bulk Editable, we will need to rethink this code.
+				// Enhance: For the time being Default Analysis Ws is sufficient. If there is ever
+				// a Unicode vernacular field that is made Bulk Editable, we will need to rethink this code.
 				return m_cache.TsStrFactory.MakeString(ustring ?? string.Empty, m_cache.DefaultAnalWs);
 			}
 			return m_sda.get_StringProp(hvoStringOwner, m_flid);

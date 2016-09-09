@@ -3,38 +3,25 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections;
 using System.Diagnostics;
-
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
-	/// <summary>
-	/// Summary description for ReversalIndexEntryChangeHandler.
-	/// </summary>
-	public class ReversalIndexEntryChangeHandler : IRecordChangeHandler, IFWDisposable
+	/// <summary/>
+	public class ReversalIndexEntryChangeHandler : IRecordChangeHandler
 	{
 		#region Data members
 
 		/// <summary>Reversal entry being monitored for changes.</summary>
-		protected IReversalIndexEntry m_rie = null;
+		protected IReversalIndexEntry m_rie;
 		/// <summary>original citation form</summary>
-		protected string m_originalForm = null;
+		protected string m_originalForm;
 		/// <summary></summary>
-		protected IRecordListUpdater m_rlu = null;
+		protected IRecordListUpdater m_rlu;
 
 		#endregion Data members
-
-		#region Construction
-
-		public ReversalIndexEntryChangeHandler()
-		{
-		}
-
-		#endregion Construction
 
 		#region IDisposable & Co. implementation
 		// Region last reviewed: never
@@ -51,34 +38,20 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed = false;
-
-		/// <summary>
 		/// See if the object has been disposed.
 		/// </summary>
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
+		public bool IsDisposed { get; private set; }
 
 		/// <summary>
 		/// Finalizer, in case client doesn't dispose it.
-		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
+		/// Force Dispose(false) if not already called
 		/// </summary>
-		/// <remarks>
-		/// In case some clients forget to dispose it directly.
-		/// </remarks>
 		~ReversalIndexEntryChangeHandler()
 		{
 			Dispose(false);
 			// The base class finalizer is called automatically.
 		}
 
-		/// <summary>
-		///
-		/// </summary>
 		/// <remarks>Must not be virtual.</remarks>
 		public void Dispose()
 		{
@@ -114,9 +87,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </remarks>
 		protected virtual void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
-			if (m_isDisposed)
+			if (IsDisposed)
 				return;
 
 			if (disposing)
@@ -134,7 +107,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			m_originalForm = null;
 			m_rlu = null;
 
-			m_isDisposed = true;
+			IsDisposed = true;
 		}
 
 		#endregion IDisposable & Co. implementation
@@ -142,7 +115,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		#region IRecordChangeHandler implementation
 
 		/// <summary>
-		/// Let users know it is beiong dispsoed
+		/// Let users know it is being disposed
 		/// </summary>
 		public event EventHandler Disposed;
 
@@ -155,12 +128,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary></summary>
-		public void Setup(object o, IRecordListUpdater rlu)
+		public void Setup(object record, IRecordListUpdater rlu, FdoCache cache)
 		{
 			CheckDisposed();
 
-			Debug.Assert(o != null && o is IReversalIndexEntry);
-			IReversalIndexEntry rie = o as IReversalIndexEntry;
+			Debug.Assert(record is IReversalIndexEntry);
+			var rie = (IReversalIndexEntry)record;
 			if (m_rlu == null && rlu != null && m_rie == rie)
 			{
 				m_rlu = rlu;
@@ -171,7 +144,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				m_rie = rie;
 				Debug.Assert(m_rie != null);
-				int ws = m_rie.Services.WritingSystemManager.GetWsFromStr(m_rie.ReversalIndex.WritingSystem);
+				var ws = m_rie.Services.WritingSystemManager.GetWsFromStr(m_rie.ReversalIndex.WritingSystem);
 				m_originalForm = m_rie.ReversalForm.get_String(ws).Text;
 				if (rlu != null)
 				{
@@ -200,8 +173,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				return;
 			}
 
-			int ws = m_rie.Services.WritingSystemManager.GetWsFromStr(m_rie.ReversalIndex.WritingSystem);
-			string currentForm = m_rie.ReversalForm.get_String(ws).Text;
+			var ws = m_rie.Services.WritingSystemManager.GetWsFromStr(m_rie.ReversalIndex.WritingSystem);
+			var currentForm = m_rie.ReversalForm.get_String(ws).Text;
 			if (currentForm == m_originalForm)
 				return; // No relevant changes, so do nothing.
 

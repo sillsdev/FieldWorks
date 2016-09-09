@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Xml;
 using ECInterfaces;
 using SilEncConverters40;
 
@@ -153,6 +154,7 @@ namespace Sfm2Xml
 		/// </summary>
 		public Converter()
 		{
+			m_options = new Dictionary<string, bool>(); // maps options (for now a checkbox Checked value) to a key string
 			m_Languages = new Hashtable(); // maps the langId to a ClsLanguage object
 //			m_LangIdToXmlLang = new Hashtable(); // maps the 'id' of a langDef element to the 'xml:lang'
 			m_LangsToIgnore = new Hashtable();	// langDef 'id' values to ignore
@@ -188,6 +190,9 @@ namespace Sfm2Xml
 		{
 			get { return m_NumElements; }
 		}
+
+		// Container for options section of map file:
+		protected Dictionary<String, bool> m_options;
 
 		// Container for languages section of map file:
 		protected Hashtable m_Languages;
@@ -303,8 +308,19 @@ namespace Sfm2Xml
 			return valid;
 		}
 
+		/// <summary>
+		/// Returns the Options section of the .map file as a dictionary of booleans
+		/// keyed by the string referring to the appropriate checkbox.
+		/// </summary>
+		protected Dictionary<string, bool> GetOptions
+		{
+			get { return m_options; }
+		}
 
-		protected Hashtable TESTLanguages
+		/// <summary>
+		/// Returns a hashtable of the entries in the Languages section of the .map file.
+		/// </summary>
+		protected Hashtable GetLanguages
 		{
 			get { return m_Languages; }
 		}
@@ -741,6 +757,35 @@ namespace Sfm2Xml
 			if (m_Languages.Count == 0)
 			{
 				Log.AddError(Sfm2XmlStrings.NoValidLanguagesDefined);
+				success = false;
+			}
+			return success;
+		}
+
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
+		protected bool ReadOptions(XmlDocument xmlMap)
+		{
+			bool success = true;
+			var optionList = xmlMap.SelectNodes("sfmMapping/options/option");
+			foreach (XmlNode optionNode in optionList)
+			{
+				var option = new LexImportOption();
+				if (!option.ReadXmlNode(optionNode))
+					continue;
+				if (m_options.ContainsKey(option.Id))
+				{
+					Log.AddError(String.Format(Sfm2XmlStrings.DuplicateId0InOptions, option.Id));
+					success = false;
+				}
+				else
+				{
+					m_options.Add(option.Id, option.IsChecked);
+				}
+			}
+			if (m_options.Count == 0)
+			{
+				Log.AddError(Sfm2XmlStrings.NoValidOptionsDefined);
 				success = false;
 			}
 			return success;

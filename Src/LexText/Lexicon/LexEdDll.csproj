@@ -328,6 +328,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>LexEdStrings.resx</DependentUpon>
     </Compile>
+    <Compile Include="LexEntryChangeHandler.cs" />
     <Compile Include="LexEntryImages.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -381,6 +382,15 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="LexReferenceTreeRootView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LexReferenceUnidirectionalLauncher.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LexReferenceUnidirectionalSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LexReferenceUnidirectionalView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="LiftImportFailureServices.cs" />

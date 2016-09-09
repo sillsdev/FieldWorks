@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -22,7 +23,7 @@ namespace SIL.FieldWorks.XWorks
 		Justification="Cache is a reference")]
 	public class DictionaryConfigurationMigrator
 	{
-		public const int VersionCurrent = 5;
+		public const int VersionCurrent = 10;
 		internal const string NodePathSeparator = " > ";
 		private readonly Inventory m_layoutInventory;
 		private readonly Inventory m_partInventory;
@@ -37,7 +38,8 @@ namespace SIL.FieldWorks.XWorks
 			m_migrators = new List<IDictionaryConfigurationMigrator>
 			{
 				new PreHistoricMigrator(),
-				new FirstAlphaMigrator()
+				new FirstAlphaMigrator(),
+				new FirstBetaMigrator()
 			};
 		}
 
@@ -114,6 +116,27 @@ namespace SIL.FieldWorks.XWorks
 		internal SimpleLogger SetTestLogger
 		{
 			set { m_logger = value; }
+		}
+
+		internal static List<DictionaryConfigurationModel> GetConfigsNeedingMigration(FdoCache cache, int targetVersion)
+		{
+			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(cache.ProjectId.Path));
+			var dictionaryConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+			var reversalIndexConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+			var projectConfigPaths = new List<string>(ConfigFilesInDir(dictionaryConfigLoc));
+			projectConfigPaths.AddRange(ConfigFilesInDir(reversalIndexConfigLoc));
+			return projectConfigPaths.Select(path => new DictionaryConfigurationModel(path, null))
+				.Where(model => model.Version < targetVersion).ToList();
+		}
+
+		internal static void PerformActionOnNodes(IEnumerable<ConfigurableDictionaryNode> nodes, Action<ConfigurableDictionaryNode> action)
+		{
+			foreach (var node in nodes)
+			{
+				action(node);
+				if (node.Children != null)
+					PerformActionOnNodes(node.Children, action);
+			}
 		}
 	}
 }

@@ -145,7 +145,7 @@ Export using the Multi-Dictionary Formatter stem-based standard. This exports su
 		</ifnot>
 		<ifnot field="ComplexEntryTypes" lengthequals="0">
 			<element name="ct">
-				<objVector objProperty="ComplexEntryTypesRS" sep="; "/>
+				<objVector objProperty="ComplexEntryTypesRS" classtag="Reverse" sep="; "/>
 			</element>
 		</ifnot>
 		<refVector field="ComponentLexemes" itemLabel="mn" itemProperty="ReferenceName"/>
@@ -163,7 +163,7 @@ Export using the Multi-Dictionary Formatter stem-based standard. This exports su
 	<class name="LexEntryRef-Subentry">
 		<refAtomic simpleProperty="Owner" itemLabel="se" itemProperty="ReferenceName"/>
 		<element name="cet">
-			<objVector objProperty="ComplexEntryTypesRS" classtag="Reverse" sep="; "/>
+			<objVector objProperty="ComplexEntryTypesRS" sep="; "/>
 		</element>
 	</class>
 

@@ -298,6 +298,7 @@
     </Compile>
     <Compile Include="DictionaryConfigurationMigrator.cs" />
     <Compile Include="DictionaryConfigurationMigrators\FirstAlphaMigrator.cs" />
+    <Compile Include="DictionaryConfigurationMigrators\FirstBetaMigrator.cs" />
     <Compile Include="DictionaryConfigurationMigrators\IDictionaryConfigurationMigrator.cs" />
     <Compile Include="DictionaryConfigurationMigrators\PreHistoricMigrator.cs" />
     <Compile Include="DictionaryConfigurationNodeRenameDlg.cs">
@@ -314,6 +315,12 @@
       <DependentUpon>DictionaryConfigurationTreeControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DictionaryDetailsController.cs" />
+    <Compile Include="DictionaryDetailsView\GroupingOptionsView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DictionaryDetailsView\GroupingOptionsView.Designer.cs">
+      <DependentUpon>GroupingOptionsView.cs</DependentUpon>
+    </Compile>
     <Compile Include="DictionaryDetailsView\LabelOverPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -352,7 +359,9 @@
     <Compile Include="GlobalSettingServices.cs" />
     <Compile Include="IDictionaryDetailsView.cs" />
     <Compile Include="IDictionarySenseOptionsView.cs" />
+    <Compile Include="IDictionaryGroupingOptionsView.cs" />
     <Compile Include="ILayoutConverter.cs" />
+    <Compile Include="IWebonaryClient.cs" />
     <Compile Include="LegacyConfigurationUtils.cs" />
     <Compile Include="PalasoErrorReportingAdapter.cs" />
     <Compile Include="ConcDecorator.cs" />
@@ -462,6 +471,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UnicodeCharacterEditingHelper.cs" />
+    <Compile Include="WebonaryClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="WordsUsedOnlyElsewhereFilter.cs" />
     <Compile Include="XhtmlDocView.cs">
       <SubType>UserControl</SubType>
@@ -520,6 +532,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DictionaryConfigurationTreeControl.resx">
       <DependentUpon>DictionaryConfigurationTreeControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DictionaryDetailsView\GroupingOptionsView.resx">
+      <DependentUpon>GroupingOptionsView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DictionaryDetailsView\LabelOverPanel.resx">
       <DependentUpon>LabelOverPanel.cs</DependentUpon>

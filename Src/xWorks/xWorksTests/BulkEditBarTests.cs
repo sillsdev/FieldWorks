@@ -904,8 +904,8 @@ namespace SIL.FieldWorks.XWorks
 			m_bv.ShowColumn("Location");
 			// make sure column got added.
 			Assert.AreEqual(cOriginal + 1, m_bv.ColumnSpecs.Count);
-			m_bulkEditBar.SetTargetField("Locations");
-			Assert.AreEqual("Locations", m_bulkEditBar.SelectedTargetFieldItem.ToString());
+			m_bulkEditBar.SetTargetField("Pronunciation-Location");
+			Assert.AreEqual("Pronunciation-Location", m_bulkEditBar.SelectedTargetFieldItem.ToString());
 			// check number of options and first is "jungle" (or Empty?)
 			FwComboBox listChoiceControl = m_bulkEditBar.GetTabControlChild("m_listChoiceControl") as FwComboBox;
 			Assert.IsNotNull(listChoiceControl);

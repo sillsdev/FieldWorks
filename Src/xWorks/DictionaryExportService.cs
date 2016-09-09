@@ -42,9 +42,9 @@ namespace SIL.FieldWorks.XWorks
 		internal static int CountTimesGenerated(FdoCache cache, DictionaryConfigurationModel config, int hvo)
 		{
 			var entry = (ILexEntry)cache.ServiceLocator.GetObject(hvo);
-			if (!ConfiguredXHTMLGenerator.IsMinorEntry(entry))
+			if (!ConfiguredXHTMLGenerator.IsComplexFormOrVariant(entry))
 				return config.Parts[0].IsEnabled ? 1 : 0;
-			if (!entry.PublishAsMinorEntry)
+			if (!entry.PublishAsMinorEntry && config.IsRootBased)
 				return 0;
 			var matchingMinorParts = 0;
 			for (var i = 1; i < config.Parts.Count; i++)
@@ -91,11 +91,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public void ExportReversalContent(string xhtmlPath, string reversalName = null, DictionaryConfigurationModel configuration = null,
+		public void ExportReversalContent(string xhtmlPath, string reversalWs = null, DictionaryConfigurationModel configuration = null,
 			IThreadedProgress progress = null)
 		{
 			using (ClerkActivator.ActivateClerkMatchingExportType(ReversalType, m_mediator))
-			using (ReversalIndexActivator.ActivateReversalIndex(reversalName, m_mediator, m_cache))
+			using (ReversalIndexActivator.ActivateReversalIndex(reversalWs, m_mediator, m_cache))
 			{
 				configuration = configuration ?? new DictionaryConfigurationModel(
 					DictionaryConfigurationListener.GetCurrentConfiguration(m_mediator, "ReversalIndex"), m_cache);
@@ -207,12 +207,12 @@ namespace SIL.FieldWorks.XWorks
 				ActivateReversalIndexIfNeeded(m_sCurrentRevIdxGuid, m_mediator, m_clerk, out dummy);
 			}
 
-			public static ReversalIndexActivator ActivateReversalIndex(string reversalName, Mediator mediator, FdoCache cache)
+			public static ReversalIndexActivator ActivateReversalIndex(string reversalWs, Mediator mediator, FdoCache cache)
 			{
-				if (reversalName == null)
+				if (reversalWs == null)
 					return null;
 				var reversalGuid = cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances()
-					.First(revIdx => revIdx.ShortName == reversalName).Guid;
+					.First(revIdx => revIdx.WritingSystem == reversalWs).Guid;
 				return ActivateReversalIndex(reversalGuid, mediator);
 			}
 
@@ -238,6 +238,32 @@ namespace SIL.FieldWorks.XWorks
 				if (clerk != null)
 					clerk.OnPropertyChanged("ReversalIndexGuid");
 				return true;
+			}
+		}
+
+		[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule", Justification = "m_mediator is a reference")]
+		internal sealed class PublicationActivator : IDisposable
+		{
+			private readonly string m_currentPublication;
+			private readonly Mediator m_mediator;
+
+			public PublicationActivator(Mediator mediator)
+			{
+				m_currentPublication = mediator.PropertyTable.GetStringProperty("SelectedPublication", null);
+				m_mediator = mediator;
+			}
+
+			public void Dispose()
+			{
+				if (!string.IsNullOrEmpty(m_currentPublication))
+					m_mediator.PropertyTable.SetProperty("SelectedPublication", m_currentPublication, false);
+			}
+
+			public void ActivatePublication(string publication)
+			{
+				// Don't publish the property change: doing so may refresh the Dictionary (or Reversal) preview in the main window;
+				// we want to activate the Publication for export purposes only.
+				m_mediator.PropertyTable.SetProperty("SelectedPublication", publication, false);
 			}
 		}
 	}

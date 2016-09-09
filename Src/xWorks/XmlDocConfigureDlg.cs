@@ -236,13 +236,6 @@ namespace SIL.FieldWorks.XWorks
 #endif
 		}
 
-		//void m_cfgSenses_VisibleChanged(object sender, EventArgs e)
-		//{
-		//    // Seems at resolutions other than 96dpi this control changes its minimumSize
-		//    // when it first becomes visible, so at that point we need to adjust it.
-		//    m_cfgSenses.Height = m_cfgSenses.MinimumSize.Height;
-		//}
-
 		/// <summary>
 		/// Initialize the dialog after creating it.
 		/// </summary>

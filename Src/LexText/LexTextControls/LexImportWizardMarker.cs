@@ -860,9 +860,11 @@ namespace SIL.FieldWorks.LexText.Controls
 							case (int)MappingTypes.kmtEntryCollection:
 							case (int)MappingTypes.kmtEntryPair:
 							case (int)MappingTypes.kmtEntrySequence:
+							case (int)MappingTypes.kmtEntryUnidirectional:
 							case (int)MappingTypes.kmtEntryOrSenseCollection:
 							case (int)MappingTypes.kmtEntryOrSensePair:
 							case (int)MappingTypes.kmtEntryOrSenseSequence:
+							case (int)MappingTypes.kmtEntryOrSenseUnidirectional:
 								//abbr = lrt.Abbreviation.AnalysisDefaultWritingSystem.Text;
 								//name = lrt.Name.AnalysisDefaultWritingSystem.Text;
 								//AddAbbrAndNameInfo(abbr, name, "en", null, null, null);
@@ -893,9 +895,11 @@ namespace SIL.FieldWorks.LexText.Controls
 							case (int)MappingTypes.kmtSenseCollection:
 							case (int)MappingTypes.kmtSensePair:
 							case (int)MappingTypes.kmtSenseSequence:
+							case (int)MappingTypes.kmtSenseUnidirectional:
 							case (int)MappingTypes.kmtEntryOrSenseCollection:
 							case (int)MappingTypes.kmtEntryOrSensePair:
 							case (int)MappingTypes.kmtEntryOrSenseSequence:
+							case (int)MappingTypes.kmtEntryOrSenseUnidirectional:
 								//abbr = lrt.Abbreviation.AnalysisDefaultWritingSystem.Text;
 								//name = lrt.Name.AnalysisDefaultWritingSystem.Text;
 								//AddAbbrAndNameInfo(abbr, name, "en", null, null, null);
@@ -949,11 +953,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				pos = -1;
 				if (m_refFuncString.Length > 0)
 					pos = cbFunction.FindString(m_refFuncString);
-				if (pos >= 0)
-				{
-					cbFunction.SelectedIndex = pos;
-					cbFunction.Text = cbFunction.SelectedItem as string;
-				}
+				cbFunction.SelectedIndex = pos >= 0 ? pos : 0;
+				cbFunction.Text = cbFunction.SelectedItem as string;
 			}
 			// The radio buttons for abbr and Name are set when initialized - so don't reset them
 		}

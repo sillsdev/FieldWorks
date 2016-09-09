@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -216,6 +217,11 @@ namespace SIL.FieldWorks.XWorks
 		private static IDictionarySenseOptionsView GetSenseOptionsView(IDictionaryDetailsView view)
 		{
 			return ((TestDictionaryDetailsView)view).OptionsView as IDictionarySenseOptionsView;
+		}
+
+		private static IDictionaryGroupingOptionsView GetGroupingOptionsView(IDictionaryDetailsView view)
+		{
+			return ((TestDictionaryDetailsView)view).OptionsView as IDictionaryGroupingOptionsView;
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "ListOptionsView is disposed by its parent")]
@@ -1028,6 +1034,99 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "optionsView is disposed by its parent")]
+		public void LoadSenseOptions_NumberingStyleList()
+		{
+			var subSubSenseConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					DisplayEachSenseInAParagraph = false,
+					BeforeNumber = "",
+					AfterNumber = ") ",
+					NumberingStyle = "%a",
+					NumberEvenASingleSense = true,
+					ShowSharedGrammarInfoFirst = true
+				}
+			};
+			var subSenseConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					DisplayEachSenseInAParagraph = false,
+					BeforeNumber = "",
+					AfterNumber = ") ",
+					NumberingStyle = "%A",
+					NumberEvenASingleSense = true,
+					ShowSharedGrammarInfoFirst = true
+				},
+				Children = new List<ConfigurableDictionaryNode> { subSubSenseConfig }
+			};
+			var senseConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					DisplayEachSenseInAParagraph = true,
+					DisplayFirstSenseInline = true,
+					BeforeNumber = "",
+					AfterNumber = ") ",
+					NumberingStyle = "%d",
+					NumberEvenASingleSense = true,
+					ShowSharedGrammarInfoFirst = true
+				},
+				Children = new List<ConfigurableDictionaryNode> { subSenseConfig }
+			};
+			var entryConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { senseConfig }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(entryConfig);
+
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			using (var view = controller.View)
+			{
+				controller.LoadNode(null, senseConfig);
+				var expectedNumberingStyle = XmlVcDisplayVec.SupportedNumberingStyles.Where(prop => prop.FormatString != "%O").ToList();
+
+				var optionsView = GetSenseOptionsView(view);
+				var realView = optionsView as SenseOptionsView;
+				Assert.IsNotNull(realView);
+				var outputNumberingStyle = realView.DropdownNumberingStyles.Cast<NumberingStyleComboItem>().ToList();
+				Assert.AreEqual(expectedNumberingStyle.Count(), outputNumberingStyle.Count, "Sense number's numbering style should be same count.");
+				Assert.AreEqual(expectedNumberingStyle.First().Label, outputNumberingStyle.First().Label, "Sense number's numbering style should have 'none' option.");
+				Assert.IsTrue(expectedNumberingStyle.All(c => outputNumberingStyle.Count(p => p.Label == c.Label) == 1), "Sense number's numbering style should be same.");
+
+				controller.LoadNode(null, subSenseConfig);
+
+				expectedNumberingStyle = XmlVcDisplayVec.SupportedNumberingStyles.Where(prop => prop.FormatString != "%O").ToList();
+
+				optionsView = GetSenseOptionsView(view);
+				realView = optionsView as SenseOptionsView;
+				Assert.IsNotNull(realView);
+				outputNumberingStyle = realView.DropdownNumberingStyles.Cast<NumberingStyleComboItem>().ToList();
+				Assert.AreEqual(expectedNumberingStyle.Count, outputNumberingStyle.Count, "SubSense number's numbering style should be same count.");
+				Assert.AreEqual(expectedNumberingStyle.First().Label, outputNumberingStyle.First().Label, "SubSense number's numbering style should have 'none' option.");
+				Assert.IsTrue(expectedNumberingStyle.All(c => outputNumberingStyle.Count(p => p.Label == c.Label) == 1), "SubSense number's numbering style should be same.");
+
+				controller.LoadNode(null, subSubSenseConfig);
+
+				expectedNumberingStyle = XmlVcDisplayVec.SupportedNumberingStyles.Where(prop => prop.FormatString != "%O").ToList();
+
+				optionsView = GetSenseOptionsView(view);
+				realView = optionsView as SenseOptionsView;
+				Assert.IsNotNull(realView);
+				outputNumberingStyle = realView.DropdownNumberingStyles.Cast<NumberingStyleComboItem>().ToList();
+				Assert.AreEqual(expectedNumberingStyle.Count(), outputNumberingStyle.Count, "SubSubSense number's numbering style should be same count.");
+				Assert.AreEqual(expectedNumberingStyle.First().Label, outputNumberingStyle.First().Label, "SubSubSense number's numbering style should have 'none' option.");
+				Assert.IsTrue(expectedNumberingStyle.All(c => outputNumberingStyle.Count(p => p.Label == c.Label) == 1), "SubSubSense number's numbering style should be same.");
+			}
+		}
+
+		[Test]
 		public void CheckNamedWsUnchecksDefault()
 		{
 			var wsOptions = new DictionaryNodeWritingSystemOptions
@@ -1222,5 +1321,38 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 		#endregion SharedItem tests
+		#region GroupingNode tests
+
+		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "optionsView is disposed by its parent")]
+		public void LoadGroupingOptions_SetsAllInfo()
+		{
+			var groupConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "grouper",
+				DictionaryNodeOptions = new DictionaryNodeGroupingOptions
+				{
+					DisplayGroupInParagraph = true,
+					Description = "Test"
+				}
+			};
+			var entryConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> {groupConfig}
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(entryConfig);
+
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			controller.LoadNode(null, groupConfig);
+			using (var view = controller.View)
+			{
+				var optionsView = GetGroupingOptionsView(view);
+				Assert.IsTrue(optionsView.DisplayInParagraph);
+				Assert.That(optionsView.Description, Is.StringMatching("Test"));
+			}
+		}
+		#endregion
 	}
 }

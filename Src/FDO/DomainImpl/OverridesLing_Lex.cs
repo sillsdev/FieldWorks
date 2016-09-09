@@ -152,6 +152,44 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		/// <summary>
 		/// Gets all the bulk-editable things that might be used as the destination of a bulk edit to
+		/// etymology. This includes the entries that do not have etymologies.
+		/// Note that this implementation is only possible because there are no other possible owners for LexEtymology.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceSequence, "CmObject")]
+		public IEnumerable<ICmObject> AllPossibleEtymologies
+		{
+			get
+			{
+				// Optimize JohnT: are we likely to modify any of the iterators while iterating? If not
+				// we may not need the ToList().
+				return Cache.ServiceLocator.GetInstance<ILexEtymologyRepository>().AllInstances().Cast<ICmObject>()
+					.Concat((from entry in Cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances()
+							 where entry.EtymologyOS.Count == 0
+							 select entry).Cast<ICmObject>())
+					.ToList();
+			}
+		}
+
+		/// <summary>
+		/// Gets all the bulk-editable things that might be used as the destination of a bulk edit to
+		/// extended note. This includes the senses that do not have extended notes.
+		/// Note that this implementation is only possible because there are no other possible owners for LexExtendedNote.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceSequence, "CmObject")]
+		public IEnumerable<ICmObject> AllPossibleExtendedNotes
+		{
+			get
+			{
+				return Cache.ServiceLocator.GetInstance<ILexExtendedNoteRepository>().AllInstances().Cast<ICmObject>()
+					.Concat((from sense in Cache.ServiceLocator.GetInstance<ILexSenseRepository>().AllInstances()
+						where sense.ExtendedNoteOS.Count == 0
+						select sense))
+					.ToList();
+			}
+		}
+
+		/// <summary>
+		/// Gets all the bulk-editable things that might be used as the destination of a bulk edit to
 		/// Allomorphs. This includes the entries that do not have allomorphs. It does NOT include
 		/// MoForms that are the LexemeForm of some entry. (Possibly the name should indicate this better somehow?)
 		/// </summary>
@@ -194,44 +232,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				return m_cache.ServiceLocator.GetInstance<ILexEntryRefRepository>().AllInstances();
 			}
 		}
-
-		/// <summary>
-		/// Get (create if necessary, in a non-undoable UOW if necessary) PublicationTypesOA in the default state.
-		/// </summary>
-		[ModelProperty(CellarPropertyType.OwningAtomic, 5005024, "CmPossibilityList")]
-		public ICmPossibilityList PublicationTypesOA
-		{
-			get
-			{
-				if (PublicationTypesOA_Generated != null)
-					return PublicationTypesOA_Generated;
-				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor,
-					() =>
-						{
-							PublicationTypesOA_Generated = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
-							var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-							// Note: we don't need to localize here because we are deliberately creating a minimal English
-							// version of the list. The user can fill in other writing systems if desired.
-							PublicationTypesOA_Generated.Name.set_String(wsEn, "Publications");
-							var mainDict = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-							PublicationTypesOA_Generated.PossibilitiesOS.Add(mainDict);
-							mainDict.Name.set_String(wsEn, "Main Dictionary");
-
-							// The following are not explicitly tested.
-							PublicationTypesOA_Generated.ItemClsid = CmPossibilityTags.kClassId;
-							PublicationTypesOA_Generated.Depth = 1;
-							PublicationTypesOA_Generated.IsSorted = true;
-							PublicationTypesOA_Generated.PreventChoiceAboveLevel = 0;
-
-							mainDict.Abbreviation.set_String(wsEn, "Main");
-							mainDict.IsProtected = true;
-						}
-					);
-				return PublicationTypesOA_Generated;
-			}
-			set { PublicationTypesOA_Generated = value; }
-		}
-
 
 		/// <summary>
 		/// Allows user to convert LexEntryType to LexEntryInflType.
@@ -598,11 +598,41 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 	}
 
+	internal partial class LexExtendedNote
+	{
+		public override ICmObject ReferenceTargetOwner(int flid)
+		{
+			if (flid == Cache.MetaDataCacheAccessor.GetFieldId2(LexExtendedNoteTags.kClassId, "ExtendedNoteType", false))
+				return Cache.LangProject.LexDbOA.ExtendedNoteTypesOA;
+			return base.ReferenceTargetOwner(flid);
+		}
+	}
+
 	/// <summary>
 	///
 	/// </summary>
 	internal partial class LexPronunciation
 	{
+		protected override void AddObjectSideEffectsInternal(AddObjectEventArgs e)
+		{
+			if (e.Flid == LexPronunciationTags.kflidDoNotPublishIn)
+			{
+				var uowService = ((IServiceLocatorInternal)Services).UnitOfWorkService;
+				uowService.RegisterVirtualAsModified(this, "PublishIn", PublishIn.Cast<ICmObject>());
+			}
+			base.AddObjectSideEffectsInternal(e);
+		}
+
+		protected override void RemoveObjectSideEffectsInternal(RemoveObjectEventArgs e)
+		{
+			if (e.Flid == LexPronunciationTags.kflidDoNotPublishIn)
+			{
+				var uowService = ((IServiceLocatorInternal)Services).UnitOfWorkService;
+				uowService.RegisterVirtualAsModified(this, "PublishIn", PublishIn.Cast<ICmObject>());
+			}
+			base.RemoveObjectSideEffectsInternal(e);
+		}
+
 		/// <summary>
 		/// Object owner. This virtual may seem redundant with CmObject.Owner, but it is important,
 		/// because we can correctly indicate the destination class. This is used (at least) in
@@ -612,6 +642,19 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		public ILexEntry OwningEntry
 		{
 			get { return (ILexEntry)Owner; }
+		}
+
+		/// <summary>
+		/// The publications from which this is not excluded, that is, the ones in which it
+		/// SHOULD be published.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceCollection, "CmPossibility")]
+		public IFdoSet<ICmPossibility> PublishIn
+		{
+			get
+			{
+				return new FdoInvertSet<ICmPossibility>(DoNotPublishInRC, Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS);
+			}
 		}
 
 		/// <summary>
@@ -682,13 +725,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		public override ICmObject ReferenceTargetOwner(int flid)
 		{
-			switch (flid)
-			{
-				case LexPronunciationTags.kflidLocation:
-					return m_cache.LangProject.LocationsOA;
-				default:
-					return base.ReferenceTargetOwner(flid);
-			}
+			if (flid == m_cache.MetaDataCacheAccessor.GetFieldId2(LexPronunciationTags.kClassId, "PublishIn", false))
+				return m_cache.LangProject.LexDbOA.PublicationTypesOA;
+			if (flid == LexPronunciationTags.kflidLocation)
+				return m_cache.LangProject.LocationsOA;
+			return base.ReferenceTargetOwner(flid);
 		}
 	}
 
@@ -704,6 +745,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		public override ICmObject ReferenceTargetOwner(int flid)
 		{
+			if (flid == LexEntryTags.kflidDialectLabels)
+				return Cache.LangProject.LexDbOA.DialectLabelsOA;
 			if (flid == Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "PublishIn", false) ||
 				flid == Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "ShowMainEntryIn", false))
 				return Cache.LangProject.LexDbOA.PublicationTypesOA;
@@ -777,7 +820,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				ler = Services.GetInstance<ILexEntryRefFactory>().Create();
 				EntryRefsOS.Add(ler);
-
+				ler.ComplexEntryTypesRS.Add(Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS[0] as ILexEntryType);
 				ler.RefType = LexEntryRefTags.krtComplexForm;
 				ler.HideMinorEntry = 0; // LT-10928
 				ChangeRootToStem();
@@ -1251,7 +1294,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			ler.HideMinorEntry = 0;
 			ler.ComponentLexemesRS.Add(componentLexeme);
 			if (variantType != null)
+			{
 				ler.VariantEntryTypesRS.Add(variantType);
+			}
+			else
+			{
+				ler.VariantEntryTypesRS.Add(Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[0] as ILexEntryType);
+			}
 			return ler;
 		}
 
@@ -1565,9 +1614,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						CopyObject<IMoForm>.CloneFdoObjects(AlternateFormsOS, newForm => leNew.AlternateFormsOS.Add(newForm));
 						CopyObject<ILexPronunciation>.CloneFdoObjects(PronunciationsOS, newPron => leNew.PronunciationsOS.Add(newPron));
 						CopyObject<ILexEntryRef>.CloneFdoObjects(EntryRefsOS, newEr => leNew.EntryRefsOS.Add(newEr));
-
-						if (EtymologyOA != null)
-							CopyObject<ILexEtymology>.CloneFdoObject(EtymologyOA, newEtymology => leNew.EtymologyOA = newEtymology);
+						CopyObject<ILexEtymology>.CloneFdoObjects(EtymologyOS, newEty => leNew.EtymologyOS.Add(newEty));
 
 						UpdateReferencesForSenseMove(this, leNew, ls);
 
@@ -5373,8 +5420,111 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				tisb.SetStrPropValue((int) FwTextPropType.ktptNamedStyle,
 					HomographConfiguration.ksSenseReferenceNumberStyle);
 				tisb.Append(" ");
-				tisb.Append(SenseNumber);
+				var referencedSenseNumber = FormatSenseNumber();
+				tisb.Append(referencedSenseNumber);
 			}
+		}
+
+		private string FormatSenseNumber()
+		{
+			string number = "";
+			if (Owner is ILexEntry)
+			{
+				number = FormatParentSense((ILexEntry)Owner, this);
+			}
+			else
+			{
+				var ls = Owner as LexSense;
+				number = FormatSubSense(ls, this);
+			}
+			return number;
+		}
+
+		private string FormatParentSense(ILexEntry parent, ILexSense child)
+		{
+			var hc = Services.GetInstance<HomographConfiguration>();
+			if (hc.ksSenseNumberStyle == "")
+				return "";
+			string senseIdx = (parent.SensesOS.IndexOf(child) + 1).ToString();
+			senseIdx = GetSenseNumber(senseIdx, hc.ksSenseNumberStyle, "");
+			return senseIdx;
+		}
+
+		private string FormatSubSense(ILexSense parent, ILexSense child)
+		{
+			var hc = Services.GetInstance<HomographConfiguration>();
+			string senseIdx = string.Empty;
+			if (parent.Owner is LexEntry)
+			{
+				//SubSense
+				if (hc.ksSubSenseNumberStyle != "")
+				{
+					senseIdx = (parent.SensesOS.IndexOf(child) + 1).ToString();
+					senseIdx = GetSenseNumber(senseIdx, hc.ksSubSenseNumberStyle, hc.ksParentSenseNumberStyle);
+				}
+				//Sense
+				return FormatParentSense((ILexEntry)parent.Owner, parent) + senseIdx;
+			}
+			//SubSubSense
+			if (hc.ksSubSubSenseNumberStyle == "")
+				return senseIdx;
+			senseIdx = (parent.SensesOS.IndexOf(child) + 1).ToString();
+			senseIdx = GetSenseNumber(senseIdx, hc.ksSubSubSenseNumberStyle, hc.ksParentSubSenseNumberStyle);
+			senseIdx = FormatSubSense((ILexSense)parent.Owner, parent) + senseIdx;
+			return senseIdx;
+		}
+
+		private string GetSenseNumber(string senseNumber, string numberingStyle, string parentNumberingStyle)
+		{
+			string nextNumber;
+			switch (numberingStyle)
+			{
+				case "%a":
+				case "%A":
+					nextNumber = GetAlphaSenseCounter(numberingStyle, Convert.ToByte(senseNumber));
+					break;
+				case "%i":
+				case "%I":
+					nextNumber = GetRomanSenseCounter(numberingStyle, Convert.ToByte(senseNumber));
+					break;
+				default: // handles %d and %O. We no longer support "%z" (1  b  iii) because users can hand-configure its equivalent
+					nextNumber = senseNumber;
+					break;
+			}
+			nextNumber = GenerateSenseOutlineNumber(parentNumberingStyle, nextNumber);
+			return nextNumber;
+		}
+
+		private string GenerateSenseOutlineNumber(string parentNumberingStyle, string nextNumber)
+		{
+			string fprmattedNumber;
+			if (parentNumberingStyle == "%j")
+				fprmattedNumber = string.Format("{0}", nextNumber);
+			else if (parentNumberingStyle == "%.")
+				fprmattedNumber = string.Format(".{0}", nextNumber);
+			else
+				fprmattedNumber = nextNumber;
+
+			return fprmattedNumber;
+		}
+
+		private string GetAlphaSenseCounter(string numberingStyle, byte senseNumber)
+		{
+			var asciiBytes = 64; // char 'A'
+			asciiBytes = asciiBytes + senseNumber;
+			var nextNumber = ((char)(asciiBytes)).ToString();
+			if (numberingStyle == "%a")
+				nextNumber = nextNumber.ToLower();
+			return nextNumber;
+		}
+
+		private static string GetRomanSenseCounter(string numberingStyle, int senseNumber)
+		{
+			string roman = string.Empty;
+			roman = RomanNumerals.IntToRoman(senseNumber);
+			if (numberingStyle == "%i")
+				roman = roman.ToLower();
+			return roman;
 		}
 
 		/// <summary>
@@ -5698,6 +5848,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					return m_cache.LangProject.LexDbOA.UsageTypesOA;
 				case LexSenseTags.kflidDomainTypes:
 					return m_cache.LangProject.LexDbOA.DomainTypesOA;
+				case LexSenseTags.kflidDialectLabels:
+					return m_cache.LangProject.LexDbOA.DialectLabelsOA;
 				case LexSenseTags.kflidStatus:
 					return m_cache.LangProject.StatusOA;
 				case LexSenseTags.kflidSemanticDomains:
@@ -9272,6 +9424,16 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	internal partial class LexEtymology
 	{
 		/// <summary>
+		/// Override to handle reference props of this class.
+		/// </summary>
+		public override ICmObject ReferenceTargetOwner(int flid)
+		{
+			if (flid == Cache.MetaDataCacheAccessor.GetFieldId2(LexEtymologyTags.kClassId, "Language", false))
+				return Cache.LangProject.LexDbOA.LanguagesOA;
+			return base.ReferenceTargetOwner(flid);
+		}
+
+		/// <summary>
 		/// The LiftResidue field stores XML with an outer element &lt;lift-residue&gt; enclosing
 		/// the actual residue.  This returns the actual residue, minus the outer element.
 		/// </summary>
@@ -9333,28 +9495,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
-		/// <summary>
-		/// Provide something for the LIFT source attribute.
-		/// </summary>
-		public string LiftSource
-		{
-			get
-			{
-				string sSource = this.Source;
-				if (String.IsNullOrEmpty(sSource))
-				{
-					IWritingSystem ws = LiftFormWritingSystem;
-					if (ws != null)
-					{
-						sSource = ws.DisplayLabel;
-					}
-				}
-				if (string.IsNullOrEmpty(sSource))
-					return "UNKNOWN";
-				return sSource;
-			}
-		}
-
 		private IWritingSystem LiftFormWritingSystem
 		{
 			get
@@ -9381,21 +9521,27 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// Object owner. This virtual may seem redundant with CmObject.Owner, but it is important,
+		/// because we can correctly indicate the destination class. This is used (at least) in
+		/// PartGenerator.GeneratePartsFromLayouts to determine that it needs to generate parts for LexEntry.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceAtomic, "LexEntry")]
+		public ILexEntry OwningEntry
+		{
+			get { return (ILexEntry)Owner; }
+		}
+
+		/// <summary>
 		/// Override of ShortName
 		/// </summary>
 		public override string ShortName
 		{
 			get
 			{
-				if (!string.IsNullOrEmpty(Source))
-				{
-					return String.Format("{0} ({1})",
-						this.Form.BestVernacularAnalysisAlternative.Text, this.Source);
-				}
-				else
-				{
-					return this.Form.BestVernacularAnalysisAlternative.Text;
-				}
+				return LanguageNotes.BestAnalysisAlternative.Text == "***" ?
+					Form.BestVernacularAnalysisAlternative.Text :
+					string.Format("{0} ({1})",
+						Form.BestVernacularAnalysisAlternative.Text, LanguageNotes.BestAnalysisAlternative.Text);
 			}
 		}
 
@@ -9406,20 +9552,15 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				if (!string.IsNullOrEmpty(Source))
-				{
-					ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
-					tisb.AppendTsString(this.Form.BestVernacularAnalysisAlternative);
-					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
-					tisb.Append(" (");
-					tisb.Append(this.Source);
-					tisb.Append(")");
-					return tisb.GetString();
-				}
-				else
-				{
-					return this.Form.BestVernacularAnalysisAlternative;
-				}
+				if (LanguageNotes.BestAnalysisAlternative.Text == "***")
+					return Form.BestVernacularAnalysisAlternative;
+				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+				tisb.AppendTsString(Form.BestVernacularAnalysisAlternative);
+				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
+				tisb.Append(" (");
+				tisb.AppendTsString(LanguageNotes.BestAnalysisAlternative);
+				tisb.Append(")");
+				return tisb.GetString();
 			}
 		}
 	}
@@ -9534,5 +9675,22 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				return sense.Gloss;
 			}
 		}
+
+		public IFdoOwningSequence<ILexEntryRef> PrimaryEntryRefs
+		{
+			get
+			{
+				var entry = Item as ILexEntry;
+				if (entry != null)
+				{
+					return entry.EntryRefsOS;
+				}
+				var sense = Item as ILexSense;
+				if (sense == null)
+					return null;
+				return sense.Entry.EntryRefsOS;
+			}
+		}
+
 	}
 }

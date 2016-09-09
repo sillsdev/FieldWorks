@@ -8,9 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using Sfm2Xml;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -504,11 +502,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private string m_mapFile;		// file to use for the mdf mapfile
 		private string m_dataFile;		// this is the data file
-//		private string m_fwFile;		// this is the FW Import Fields file
-//		private int m_numColumns;		// number of columns in the display (used for sorting)
 		private ArrayList m_SortOrder;	// current ascending/descending flag (bool)
 		private string m_rootDir;
-		//private FdoCache m_cache;
 
 		public static string AutoDescriptionText() { return LexTextControls.ksImportResidue_Auto;}
 		public Hashtable ContentMappingItems { get { return m_htMarkerData; }}
@@ -1378,46 +1373,66 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// <summary>
 	/// Quick and dirty class for reading the InFieldMarkers section of the 'map' file.
 	/// </summary>
-	class IFMReader : Sfm2Xml.Converter
+	class IFMReader : Converter
 	{
 		public Hashtable IFMS(string mapFile, Hashtable languages)
 		{
-			System.Xml.XmlDocument xmlMap = new System.Xml.XmlDocument();
+			var xmlMap = new XmlDocument();
 			try
 			{
 				// pull out the clsLanguage objects and put in local hash for them
 				foreach(DictionaryEntry entry in languages)
 				{
-					Sfm2Xml.LanguageInfoUI lang = entry.Value as Sfm2Xml.LanguageInfoUI;
-					this.m_Languages.Add(lang.Key, lang.ClsLanguage);
+					var lang = entry.Value as LanguageInfoUI;
+					m_Languages.Add(lang.Key, lang.ClsLanguage);
 				}
 				xmlMap.Load(mapFile);
-				this.ReadInFieldMarkers(xmlMap);
-				return this.InFieldMarkerHashTable;
+				ReadInFieldMarkers(xmlMap);
+				return InFieldMarkerHashTable;
 			}
-			catch// (System.Xml.XmlException e)
+			catch
 			{
 			}
 			return null;
 		}
 	}
 
+	/// <summary>
+	/// Quick and dirty class for reading the Options section of the 'map' file.
+	/// </summary>
+	class OptionConverter : Converter
+	{
+		public Dictionary<string, bool> Options(string mapFile)
+		{
+			var xmlMap = new XmlDocument();
+			try
+			{
+				xmlMap.Load(mapFile);
+				ReadOptions(xmlMap);
+				return base.GetOptions;
+			}
+			catch
+			{
+			}
+			return null;
+		}
+	}
 
 	/// <summary>
 	/// Quick and dirty class for reading the Languages section of the 'map' file.
 	/// </summary>
-	class LangConverter : Sfm2Xml.Converter
+	class LangConverter : Converter
 	{
 		public Hashtable Languages(string mapFile)
 		{
-			System.Xml.XmlDocument xmlMap = new System.Xml.XmlDocument();
+			var xmlMap = new XmlDocument();
 			try
 			{
 				xmlMap.Load(mapFile);
-				this.ReadLanguages(xmlMap);
-				return this.TESTLanguages;
+				ReadLanguages(xmlMap);
+				return base.GetLanguages;
 			}
-			catch// (System.Xml.XmlException e)
+			catch
 			{
 			}
 			return null;

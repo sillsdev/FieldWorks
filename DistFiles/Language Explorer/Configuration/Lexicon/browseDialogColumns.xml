@@ -54,10 +54,16 @@
 		chooserFilter="complexListMultiple"
 		bulkEdit="semanticDomainListMultiple" field="LexSense.SemanticDomains" list="SemanticDomainList" displayNameProperty="AbbrAndNameTSS"/>
 	<column layout="NumberOfSensesForEntry" label="Number of Senses (Entry)" sortType="integer" blankPossible="false" visibility="dialog"/>
-	<column layout="EtymologyGloss" label="Etymology - Gloss"  multipara="true" ws="$ws=analysis" transduce="LexEntry.Etymology.Gloss" editable="false" visibility="dialog" />
-	<column layout="EtymologySource" label="Etymology - Source"  multipara="true" transduce="LexEntry.Etymology.Source" editable="false" visibility="dialog" />
-	<column layout="EtymologyForm" label="Etymology - Form"  multipara="true" ws="$ws=vernacular" transduce="LexEntry.Etymology.Form" editable="false" visibility="dialog" />
-	<column layout="EtymologyComment" label="Etymology - Comment"  multipara="true" ws="$ws=analysis" transduce="LexEntry.Etymology.Comment" editable="false" visibility="dialog" />
+	<column layout="EtymologyPrecComment" label="Etymology - Preceding Annotation"  multipara="true" ws="$ws=analysis" transduce="LexEtymology.PrecComment" ghostListField="LexDb.AllPossibleEtymologies" editable="false" visibility="dialog" />
+	<column layout="EtymologyLanguage" label="Etymology - Source Language"  multipara="true" field="LexEtymology.Language" width="72000" visibility="dialog" chooserFilter="complexListMultiple" list="LexDb.Languages" displayNameProperty="AbbrAndNameTSS" />
+	<column layout="EtymologyLanguageNotes" label="Etymology - Language Notes"  multipara="true" ws="$ws=analysis" transduce="LexEtymology.LanguageNotes" ghostListField="LexDb.AllPossibleEtymologies" editable="false" visibility="dialog" />
+	<column layout="EtymologyForm" label="Etymology - Source Form"  multipara="true" ws="$ws=analysis vernacular" transduce="LexEtymology.Form" ghostListField="LexDb.AllPossibleEtymologies" editable="false" visibility="dialog" />
+	<column layout="EtymologyGloss" label="Etymology - Gloss"  multipara="true" ws="$ws=analysis" transduce="LexEtymology.Gloss" ghostListField="LexDb.AllPossibleEtymologies" editable="false" visibility="dialog" />
+	<column layout="EtymologyComment" label="Etymology - Following Comment"  multipara="true" ws="$ws=analysis" transduce="LexEtymology.Comment" ghostListField="LexDb.AllPossibleEtymologies" editable="false" visibility="dialog" />
+	<column layout="EtymologyBibliography" label="Etymology - Bibliographic Source"  multipara="true" ws="$ws=analysis" transduce="LexEtymology.Bibliography" ghostListField="LexDb.AllPossibleEtymologies" editable="false" visibility="dialog" />
+	<column layout="EtymologyNote" label="Etymology - Note"  multipara="true" ws="$ws=analysis" transduce="LexEtymology.Note" ghostListField="LexDb.AllPossibleEtymologies" editable="false" visibility="dialog" />
+	<column layout="ExtNoteType" label="Ext. Note Type"  multipara="true" ws="$ws=analysis" transduce="LexExtendedNote.ExtendedNoteType" ghostListField="LexDb.AllPossibleExtendedNotes" editable="false" visibility="dialog" />
+	<column layout="ExtNoteDiscussion" label="Ext. Note Discussion"  multipara="true" ws="$ws=analysis" transduce="LexExtendedNote.Discussion" ghostListField="LexDb.AllPossibleExtendedNotes" editable="false" visibility="dialog" />
 
 	<column layout="BibliographyForEntry" label="Bibliography (Entry)" transduce="LexEntry.Bibliography" ws="$ws=analysis" visibility="dialog"/>
 	<column layout="LiteralMeaningForEntry" label="Literal Meaning" transduce="LexEntry.LiteralMeaning" ws="$ws=analysis" visibility="dialog"/>
@@ -67,11 +73,12 @@
 	<column layout="DateModifiedForEntry" label="Date Modified" sortType="date" blankPossible="false" visibility="dialog"/>
 	<column layout="Pronunciation" label="Pronunciations" multipara="true" editable="false" ws="$ws=vernacular"
 			transduce="LexPronunciation.Form" ghostListField="LexDb.AllPossiblePronunciations" cansortbylength="true" visibility="dialog"/>
+	<column layout="PronunciationMediaFile" label="Pronunciation-Media File" multipara="true" editable="true" visibility="dialog" ws="$ws=analysis"/>
 	<column layout="CVPattern" label="CV Patterns" multipara="true" editable="false" ws="$ws=pronunciation"
 			transduce="LexPronunciation.CVPattern" ghostListField="LexDb.AllPossiblePronunciations"  cansortbylength="true" visibility="dialog"/>
 	<column layout="Tone" label="Tones" multipara="true" editable="false" ws="$ws=pronunciation"
 			transduce="LexPronunciation.Tone" ghostListField="LexDb.AllPossiblePronunciations" cansortbylength="true" visibility="dialog"/>
-	<column layout="Location" label="Locations" multipara="true" visibility="dialog"
+	<column layout="Location" label="Pronunciation-Location" multipara="true" visibility="dialog" ws="$ws=vernacular analysis"
 			bulkEdit="atomicFlatListItem" field="LexPronunciation.Location" ghostListField="LexDb.AllPossiblePronunciations" list="LangProject.Locations"/>
 	<column layout="SummaryDefinitionForEntry" label="Summary Definition" transduce="LexEntry.SummaryDefinition" ws="$ws=analysis" visibility="dialog"/>
 	<column layout="PictureCaptionForSense" label="Picture-Caption"  multipara="true" editable="false" visibility="dialog" ws="$ws=vernacular analysis" />

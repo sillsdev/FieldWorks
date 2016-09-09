@@ -144,7 +144,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_parserWorker = new ParserWorker(cache, HandleTaskUpdate, idleQueue, dataDir);
 			m_parserWorker.ParseFiler.WordformUpdated += ParseFiler_WordformUpdated;
 
-			m_thread = new ConsumerThread<ParserPriority, ParserWork>(Work) {IsBackground = true};
+			m_thread = new ConsumerThread<ParserPriority, ParserWork>(Work);
 			ReloadGrammarAndLexicon();
 			m_thread.Start();
 		}

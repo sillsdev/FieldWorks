@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
 using SIL.Utils;
 
@@ -47,17 +48,21 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
+				string localizedLabel;
 				if (StringTable == null)
 				{
-					if (LabelSuffix == null)
-						return Label;
-					return string.Format("{0} ({1})", Label, LabelSuffix);
+					localizedLabel = LabelSuffix == null ? Label : string.Format("{0} ({1})", Label, LabelSuffix);
 				}
-				var localLabel = StringTable.LocalizeAttributeValue(Label);
-				if (LabelSuffix == null)
-					return localLabel;
-				var localSuffix = StringTable.LocalizeAttributeValue(LabelSuffix);
-				return string.Format("{0} ({1})", localLabel, localSuffix);
+				else
+				{
+					localizedLabel = LabelSuffix == null ? StringTable.LocalizeAttributeValue(Label) : string.Format("{0} ({1})",
+						StringTable.LocalizeAttributeValue(Label), StringTable.LocalizeAttributeValue(LabelSuffix));
+				}
+				if (DictionaryNodeOptions is DictionaryNodeGroupingOptions)
+				{
+					return string.Format("[{0}]", localizedLabel);
+				}
+				return localizedLabel;
 			}
 		}
 
@@ -73,7 +78,7 @@ namespace SIL.FieldWorks.XWorks
 		[XmlAttribute(AttributeName = "isDuplicate")]
 		public bool IsDuplicate { get; set; } // REVIEW (Hasso) 2014.04: could we use get { return !string.IsNullOrEmpty(NameSuffix); }?
 
-		/// <summary>ShouldSerialize[Attribute] is a magic method to prevent serializing the default value. May not work until Mono 3.3.0</summary>
+		/// <summary>ShouldSerialize[Attribute] is a magic method to prevent serializing the default value</summary>
 		public bool ShouldSerializeIsDuplicate() { return IsDuplicate; }
 
 		/// <summary>
@@ -82,8 +87,17 @@ namespace SIL.FieldWorks.XWorks
 		[XmlAttribute(AttributeName = "isCustomField")]
 		public bool IsCustomField { get; set; }
 
-		/// <summary>ShouldSerialize[Attribute] is a magic method to prevent serializing the default value. May not work until Mono 3.3.0</summary>
+		/// <summary>ShouldSerialize[Attribute] is a magic method to prevent serializing the default value</summary>
 		public bool ShouldSerializeIsCustomField() { return IsCustomField; }
+
+		/// <summary>
+		/// Should we hide custom fields which would show as children of this node.
+		/// </summary>
+		[XmlAttribute(AttributeName = "hideCustomFields")]
+		public bool HideCustomFields { get; set; }
+
+		/// <summary>ShouldSerialize[Attribute] is a magic method to prevent serializing the default value</summary>
+		public bool ShouldSerializeHideCustomFields() { return HideCustomFields; }
 
 		/// <summary>
 		/// The style to apply to the data configured by this node
@@ -110,7 +124,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// ShouldSerialize[Attribute] is a magic method to prevent serialization of the default value.
 		/// XMLSerializer looks for this method to determine whether to serialize each Element and Attribute.
-		/// May not work in Mono until Mono 3.3.0.
 		/// </summary>
 		public bool ShouldSerializeStyleType()
 		{
@@ -164,6 +177,7 @@ namespace SIL.FieldWorks.XWorks
 		[XmlElement("ComplexFormOptions", typeof(DictionaryNodeComplexFormOptions))]
 		[XmlElement("SenseOptions", typeof(DictionaryNodeSenseOptions))]
 		[XmlElement("PictureOptions", typeof(DictionaryNodePictureOptions))]
+		[XmlElement("GroupingOptions", typeof(DictionaryNodeGroupingOptions))]
 		public DictionaryNodeOptions DictionaryNodeOptions { get; set; }
 
 		/// <summary>
@@ -256,33 +270,53 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Clone this node. Point to the same Parent object. Deep-clone Children and DictionaryNodeOptions.
 		/// </summary>
+		/// <remarks>Grouping node children are not cloned</remarks>
 		internal ConfigurableDictionaryNode DeepCloneUnderSameParent()
+		{
+			return DeepCloneUnderParent(Parent);
+		}
+
+		/// <summary>
+		/// Clone this node, point to the given Parent. Deep-clone Children and DictionaryNodeOptions
+		/// </summary>
+		/// <remarks>Grouping node children are not cloned</remarks>
+		internal ConfigurableDictionaryNode DeepCloneUnderParent(ConfigurableDictionaryNode parent)
 		{
 			var clone = new ConfigurableDictionaryNode();
 
-			// Copy everything over at first, importantly handling strings, bools, and Parent.
-			var properties = typeof (ConfigurableDictionaryNode).GetProperties();
+			// Copy everything over at first, importantly handling strings, bools.
+			var properties = typeof(ConfigurableDictionaryNode).GetProperties();
 			foreach (var property in properties)
 			{
-				// Skip read-only properties (eg DisplayLabel)
-				if (!property.CanWrite)
+				// Skip Parent and read-only properties (eg DisplayLabel)
+				if (!property.CanWrite || property.Name == "Parent")
 					continue;
 				var originalValue = property.GetValue(this, null);
 				property.SetValue(clone, originalValue, null);
 			}
+			clone.Parent = parent;
 
-			// Deep-clone Children
+			// Deep-clone Children, but not of groups.
 			if (Children != null)
 			{
-				var clonedChildren = new List<ConfigurableDictionaryNode>();
-				foreach (var child in Children)
+				if (!(DictionaryNodeOptions is DictionaryNodeGroupingOptions))
 				{
-					var clonedChild = child.DeepCloneUnderSameParent();
-					// Cloned children should point to their newly-cloned parent
-					clonedChild.Parent = clone;
-					clonedChildren.Add(clonedChild);
+					var clonedChildren = new List<ConfigurableDictionaryNode>();
+					foreach (var child in Children)
+					{
+						var clonedChild = child.DeepCloneUnderSameParent();
+						// Cloned children should point to their newly-cloned parent
+						clonedChild.Parent = clone;
+						clonedChildren.Add(clonedChild);
+					}
+					clone.Children = clonedChildren;
 				}
-				clone.Children = clonedChildren;
+				else
+				{
+					// Cloning children of a group creates problems because the children can be moved out of the group.
+					// Also the only expected use of cloning a group is to get a new group to put different children under
+					clone.Children = null;
+				}
 			}
 
 			// Deep-clone DictionaryNodeOptions
@@ -340,7 +374,8 @@ namespace SIL.FieldWorks.XWorks
 
 			// Provide a suffix to distinguish among similar dictionary items.
 			int suffix = 1;
-			while (siblings.Exists(sibling => sibling.Label == this.Label && sibling.LabelSuffix == suffix.ToString()))
+			// Check that no siblings have a matching suffix, and that no children of grouping siblings have a matching suffix
+			while (duplicate.NodeWithSameDisplayLabelExists(suffix.ToString(), siblings))
 			{
 				suffix++;
 			}
@@ -373,11 +408,27 @@ namespace SIL.FieldWorks.XWorks
 
 		public bool ChangeSuffix(string newSuffix, List<ConfigurableDictionaryNode> siblings)
 		{
-			if (siblings.Exists(sibling => !ReferenceEquals(sibling, this) && sibling.Label == this.Label && sibling.LabelSuffix == newSuffix))
+			if (NodeWithSameDisplayLabelExists(newSuffix, siblings))
 				return false;
 
 			LabelSuffix = newSuffix;
 			return true;
+		}
+
+		private bool NodeWithSameDisplayLabelExists(string newSuffix, List<ConfigurableDictionaryNode> siblings)
+		{
+			// gather the sibling nodes and all related children of grouping nodes together for comparison
+			if (Parent != null && Parent.DictionaryNodeOptions is DictionaryNodeGroupingOptions)
+			{
+				siblings = Parent.IsSharedItem ? Parent.Parent.Parent.ReferencedOrDirectChildren : Parent.Parent.ReferencedOrDirectChildren;
+			}
+			var setForUniqueNodes = new List<ConfigurableDictionaryNode>(siblings);
+			foreach (var sibling in siblings.Where(sibling => sibling.DictionaryNodeOptions is DictionaryNodeGroupingOptions))
+			{
+				if(sibling.ReferencedOrDirectChildren != null)
+					setForUniqueNodes.AddRange(sibling.ReferencedOrDirectChildren);
+			}
+			return setForUniqueNodes.Exists(node => !ReferenceEquals(node, this) && node.Label == Label && node.LabelSuffix == newSuffix);
 		}
 	}
 }

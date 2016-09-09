@@ -782,14 +782,14 @@ namespace SIL.FieldWorks.XWorks
 			{
 				CheckDisposed();
 
-				if (m_rch != null)
+				if (m_rch != null && !ReferenceEquals(m_rch, value))
 				{
 					// Store it, since we need to clear out the
 					// data member to avoid an infinite loop in calling its Dispose method,
 					// which then tries to call this setter with null.
-					var gonner = m_rch;
+					var goner = m_rch;
 					m_rch = null;
-					gonner.Dispose();
+					goner.Dispose();
 				}
 				m_rch = value;
 			}

@@ -1639,25 +1639,26 @@ namespace SIL.FieldWorks.XWorks
 
 			private void ExportLexEntryTypeFields(TextWriter w, ILexEntryType item)
 			{
-				if (item != null)
-					ExportMultiUnicode(w, item.ReverseAbbr);
+				if (item == null)
+					return;
+				ExportMultiUnicode(w, item.ReverseName);
+				ExportMultiUnicode(w, item.ReverseAbbr);
 			}
 
 			private void ExportLexEntryInflTypeFields(TextWriter w, ILexEntryInflType item)
 			{
 				if (item == null)
 					return;
-				ExportMultiUnicode(w, item.ReverseAbbr);
+				ExportLexEntryTypeFields(w, item);
 				ExportMultiUnicode(w, item.GlossAppend);
 			}
 
 			private void ExportLexRefTypeFields(TextWriter w, ILexRefType item)
 			{
-				if (item != null)
-				{
-					ExportMultiUnicode(w, item.ReverseName);
-					ExportMultiUnicode(w, item.ReverseAbbreviation);
-				}
+				if (item == null)
+					return;
+				ExportMultiUnicode(w, item.ReverseName);
+				ExportMultiUnicode(w, item.ReverseAbbreviation);
 			}
 
 			private void ExportPartOfSpeechFields(TextWriter w, IPartOfSpeech item)

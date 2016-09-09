@@ -26,6 +26,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private ILexSense m_kickS1;
 		private ILexEntry m_rightCorrect; // homograph 1
 		private ILexSense m_rightCorrectS2;
+		private ILexSense m_rightCorrectSubSense;
+		private ILexSense m_rightCorrectSubSubSense;
 		private ILexEntry m_rightDirection; // homograph 2
 		private ILexSense m_rightDirectionS1;
 		private int m_wsVern;
@@ -48,6 +50,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 						m_kickS1 = m_kick.SensesOS[0];
 						m_rightCorrect = MakeEntry("right", "correct");
 						m_rightCorrectS2 = MakeSense(m_rightCorrect, "morally perfect");
+						m_rightCorrectSubSense = MakeSense(m_rightCorrectS2, "test");
+						m_rightCorrectSubSubSense = MakeSense(m_rightCorrectSubSense, "test");
 						m_rightDirection = MakeEntry("right", "turn right");
 						m_rightDirectionS1 = m_rightDirection.SensesOS[0];
 					});
@@ -76,6 +80,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			lme.SensesOS.Add(sense);
+			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss, Cache.DefaultAnalWs);
+			return sense;
+		}
+
+		private ILexSense MakeSense(ILexSense parentSense, string gloss)
+		{
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			parentSense.SensesOS.Add(sense);
 			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss, Cache.DefaultAnalWs);
 			return sense;
 		}
@@ -176,6 +188,28 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				() => m_hc.ShowSenseNumberReversal = false);
 
 		}
+
+		/// <summary>
+		/// Check the sense number formatting.
+		/// </summary>
+		[Test]
+		public void SenseNumberFormatting()
+		{
+			ResetConfiguration();
+			m_hc.ksSenseNumberStyle = "%A";
+			m_hc.ksSubSenseNumberStyle = "%a";
+			m_hc.ksParentSenseNumberStyle = "%j";
+			m_hc.ksParentSubSenseNumberStyle = "%.";
+
+			VerifyTss(m_rightCorrectSubSubSense.OwnerOutlineNameForWs(m_wsVern),
+				new[]
+					{
+						new Run("right", m_wsVern, ""),
+						new Run("1", m_wsVern, HomographConfiguration.ksHomographNumberStyle),
+						new Run(" Ba.1", m_wsAnalysis, "Sense-Reference-Number")
+					});
+		}
+
 		private void TrySenseOutlineName(Func<ILexSense, int, ITsString> reader, HomographConfiguration.HeadwordVariant hv,
 			Action turnOffSenseNumber)
 		{

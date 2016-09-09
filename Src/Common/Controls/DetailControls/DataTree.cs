@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -23,7 +23,6 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using XCore;
 
@@ -72,8 +71,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected FdoCache m_cache;
 		/// <summary>use SetContextMenuHandler() to subscribe to this event (if you want to provide a Context menu for this DataTree)</summary>
 		protected event SliceShowMenuRequestHandler ShowContextMenuEvent;
-		//protected AutoDataTreeMenuHandler m_autoHandler;
-		/// <summary></summary>
 		/// <summary>the descendent object that is being displayed</summary>
 		protected ICmObject m_descendant;
 		/// <summary></summary>
@@ -991,7 +988,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						// Do it for the old object.
 						m_rch.Fixup(true);
 						// Root has changed, so reset the handler.
-						m_rch.Setup(m_root, m_rlu);
+						m_rch.Setup(m_root, m_rlu, m_cache);
 					}
 					Invalidate(); // clears any lines left over behind slices.
 					CreateSlices(true);
@@ -1170,12 +1167,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		protected void InitializeBasic(FdoCache cache, bool fHasSplitter)
 		{
-			//in a normal user application, this auto menu handler will not be used.
-			//instead, the client of this control will call SetContextMenuHandler()
-			//with a customized handler.
-			// m_autoHandler = new AutoDataTreeMenuHandler(this);
-			// we never use auto anymore			SetContextMenuHandler(new SliceShowMenuRequestHandler(m_autoHandler.GetSliceContextMenu));
-
 			// This has to be created before we start adding slices, so they can be put into it.
 			// (Otherwise we would normally do this in initializeComponent.)
 			m_fHasSplitter = fHasSplitter;
@@ -1263,10 +1254,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_fDisposing = true; // 'Disposing' isn't until we call base dispose.
 				if (m_rch != null)
 				{
-					if (m_rch.HasRecordListUpdater)
-						m_rch.Fixup(false);		// no need to refresh record list on shutdown.
-					else
-						// It's fine to dispose it, after all, because m_rch has no other owner.
+					m_rch.Fixup(false); // no need to refresh record list on shutdown.
+					if (!m_rch.HasRecordListUpdater) // if m_rch has no other owner, dispose it.
 						m_rch.Dispose();
 				}
 				if (m_tooltip != null)
@@ -1287,7 +1276,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_rch = null;
 			m_rootLayoutName = null;
 			m_smallImages = null; // Client has to deal with it, since it gave it to us.
-			// protected AutoDataTreeMenuHandler m_autoHandler; // No tusing this data member.
 			m_layoutInventory = null;
 			m_partInventory = null;
 			m_sliceFilter = null;
@@ -2298,14 +2286,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						break;
 
 					case "RecordChangeHandler":
-						// No, since it isn't owned by the data tree, even though it created it.
-						//if (m_rch != null && m_rch is IDisposable)
-						//	(m_rch as IDisposable).Dispose();
 						if (m_rch != null && !m_rch.HasRecordListUpdater)
 						{
-							// The above version of the Dispose call was bad,
-							// when m_rlu 'owned' the m_rch.
-							// Now, we know there is no 'owning' m_rlu, so we have to do it.
+							// Nobody else 'owns' m_rch, so it is our responsibility to dispose it.
 							m_rch.Dispose();
 							m_rch = null;
 						}
@@ -2317,7 +2300,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						m_rlu = null;
 						ResetRecordListUpdater();
 						// m_rlu may still be null, but that appears to be just fine.
-						m_rch.Setup(obj, m_rlu);
+						m_rch.Setup(obj, m_rlu, m_cache);
+						Debug.Assert(m_rch != null && !m_rch.IsDisposed);
 						return NodeTestResult.kntrNothing;
 				}
 			}
@@ -2341,9 +2325,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		void m_rch_Disposed(object sender, EventArgs e)
 		{
-			// It was disposed, so clear out the data member.
-			if (m_rch != null)
-				m_rch.Disposed -= m_rch_Disposed;
+			// m_rch may not be the same RCH that was disposed, but if it was, unregister the event and clear out the data member.
+			if (!ReferenceEquals(sender, m_rch))
+				return;
+			m_rch.Disposed -= m_rch_Disposed;
 			m_rch = null;
 		}
 
@@ -3029,17 +3014,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var e = new SliceMenuRequestArgs(slice, fHotLinkOnly);
 			return ShowContextMenuEvent(this, e);
 		}
-
-		///// <summary>
-		///// this is called by a client which normally provides its own custom menu, in order to allow it to
-		///// fall back on an auto menu during development, before the custom menu has been defined.
-		///// </summary>
-		///// <param name="sender"></param>
-		///// <param name="e"></param>
-		//		public ContextMenu GetAutoMenu (object sender, SIL.FieldWorks.Common.Framework.DetailControls.SliceMenuRequestArgs e)
-		//		{
-		//			return m_autoHandler.GetSliceContextMenu(sender, e);
-		//		}
 
 		/// <summary>
 		/// Set the handler which will be invoked when the user right-clicks on the

@@ -337,7 +337,8 @@ namespace SIL.FieldWorks.XWorks
 															 "Dictionary");
 					Directory.CreateDirectory(projConfigs);
 					// override every shipped config with a config that does not have the TestPub publication
-					var shippedFileList = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"));
+					var shippedFileList = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"),
+						"*" + DictionaryConfigurationModel.FileExtension);
 					var overrideCount = 0;
 					foreach(var shippedFile in shippedFileList)
 					{

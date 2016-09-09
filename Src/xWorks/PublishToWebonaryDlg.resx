@@ -310,7 +310,7 @@
     <value>17, 17</value>
   </metadata>
   <data name="webonaryPasswordTextbox.ToolTip" xml:space="preserve">
-    <value>Password for managing this dictionary on the webonary site</value>
+    <value>Your password on the Webonary site</value>
   </data>
   <data name="&gt;&gt;webonaryPasswordTextbox.Name" xml:space="preserve">
     <value>webonaryPasswordTextbox</value>
@@ -337,7 +337,7 @@
     <value>6</value>
   </data>
   <data name="webonaryUsernameTextbox.ToolTip" xml:space="preserve">
-    <value>Username for managing this dictionary on the webonary site</value>
+    <value>Your username on the Webonary site</value>
   </data>
   <data name="&gt;&gt;webonaryUsernameTextbox.Name" xml:space="preserve">
     <value>webonaryUsernameTextbox</value>
@@ -472,13 +472,13 @@
     <value>2</value>
   </data>
   <data name="siteNameLabel.Text" xml:space="preserve">
-    <value>Site name:</value>
+    <value>Site URL:</value>
   </data>
   <data name="siteNameLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleLeft</value>
   </data>
   <data name="siteNameLabel.ToolTip" xml:space="preserve">
-    <value>The URL to get to this dictionary</value>
+    <value>The URL to get to this dictionary on Webonary</value>
   </data>
   <data name="&gt;&gt;siteNameLabel.Name" xml:space="preserve">
     <value>siteNameLabel</value>

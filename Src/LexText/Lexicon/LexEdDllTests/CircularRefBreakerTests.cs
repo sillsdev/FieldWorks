@@ -1,7 +1,10 @@
-﻿using NUnit.Framework;
+﻿// Copyright (c) 2016 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.XWorks.LexEd;
 using System.Collections.Generic;
 
@@ -12,21 +15,21 @@ namespace LexEdDllTests
 		[Test]
 		public void BreakCircularEntryRefs()
 		{
-			var a = MakeEntry("a", "a");
-			var b = MakeEntry("b", "b");
-			var c = MakeEntry("c", "c");
-			var d = MakeEntry("d", "d");
-			var ab = MakeEntry("ab", "ab");
-			var ac = MakeEntry("ac", "ac");
-			var abcd = MakeEntry("abcd", "abcd");
+			var a = TestUtils.MakeEntry(Cache, "a", "a");
+			var b = TestUtils.MakeEntry(Cache, "b", "b");
+			var c = TestUtils.MakeEntry(Cache, "c", "c");
+			var d = TestUtils.MakeEntry(Cache, "d", "d");
+			var ab = TestUtils.MakeEntry(Cache, "ab", "ab");
+			var ac = TestUtils.MakeEntry(Cache, "ac", "ac");
+			var abcd = TestUtils.MakeEntry(Cache, "abcd", "abcd");
 			// Create some reasonable component references
-			AddComplexFormComponents(ab, new List<ICmObject> {a, b});
-			AddComplexFormComponents(ac, new List<ICmObject> {a.SensesOS[0], c.SensesOS[0]});
-			AddComplexFormComponents(abcd, new List<ICmObject> {a, b, c, d.SensesOS[0]});
+			TestUtils.AddComplexFormComponents(Cache, ab, new List<ICmObject> {a, b});
+			TestUtils.AddComplexFormComponents(Cache, ac, new List<ICmObject> {a.SensesOS[0], c.SensesOS[0]});
+			TestUtils.AddComplexFormComponents(Cache, abcd, new List<ICmObject> {a, b, c, d.SensesOS[0]});
 			// Create circular component references
-			AddComplexFormComponents(a, new List<ICmObject> {ab.SensesOS[0], ac});
-			AddComplexFormComponents(b, new List<ICmObject> {ab});
-			AddComplexFormComponents(c, new List<ICmObject> {ac.SensesOS[0]});
+			TestUtils.AddComplexFormComponents(Cache, a, new List<ICmObject> {ab.SensesOS[0], ac});
+			TestUtils.AddComplexFormComponents(Cache, b, new List<ICmObject> {ab});
+			TestUtils.AddComplexFormComponents(Cache, c, new List<ICmObject> {ac.SensesOS[0]});
 			// SUT
 			var breaker = new CircularRefBreaker();
 			Assert.DoesNotThrow(() => breaker.Process(Cache), "The BreakCircularRefs.Process(cache) method does not throw an exception");
@@ -50,42 +53,5 @@ namespace LexEdDllTests
 			Assert.AreEqual(3, breaker.Count, "There should have been 3 LexEntryRef objects to process for this test");
 			Assert.AreEqual(0, breaker.Circular, "There should have been 0 circular references fixed");
 		}
-
-		private void AddComplexFormComponents(ILexEntry entry, List<ICmObject> list)
-		{
-			UndoableUnitOfWorkHelper.Do("undo", "redo", m_actionHandler, () =>
-			{
-				var dummy = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
-				var ler = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
-				dummy.EntryRefsOS.Add(ler);
-				ler.RefType = LexEntryRefTags.krtComplexForm;
-				foreach (var item in list)
-				{
-					ler.ComponentLexemesRS.Add(item);
-					ler.PrimaryLexemesRS.Add(item);
-				}
-				// Change the owner to the real entry: this bypasses the check for circular references in FdoList.Add().
-				entry.EntryRefsOS.Add(ler);
-				dummy.Delete();
-			});
-		}
-
-		private ILexEntry MakeEntry(string lf, string gloss)
-		{
-			ILexEntry entry = null;
-			UndoableUnitOfWorkHelper.Do("undo", "redo", m_actionHandler, () =>
-			{
-				entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
-				var form = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
-				entry.LexemeFormOA = form;
-				form.Form.VernacularDefaultWritingSystem =
-					Cache.TsStrFactory.MakeString(lf, Cache.DefaultVernWs);
-				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
-				entry.SensesOS.Add(sense);
-				sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss, Cache.DefaultAnalWs);
-			});
-			return entry;
-		}
-
 	}
 }

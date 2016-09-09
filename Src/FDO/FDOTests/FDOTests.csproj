@@ -298,6 +298,7 @@
     <Compile Include="DataMigrationTests\DataMigration7000063Tests.cs" />
     <Compile Include="DataMigrationTests\DataMigration7000065Tests.cs" />
     <Compile Include="DataMigrationTests\DataMigration7000066Tests.cs" />
+    <Compile Include="DataMigrationTests\DataMigration7000069Tests.cs" />
     <Compile Include="DataMigrationTests\DataMigration7000067Tests.cs" />
     <Compile Include="DataSortingServiceTests.cs" />
     <Compile Include="DataStoreInitializationServicesTests.cs" />
@@ -306,6 +307,7 @@
     <Compile Include="DummyProgressDlg.cs" />
     <Compile Include="DuplicateAnalysisFixerTests.cs" />
     <Compile Include="DuplicateWordformFixerTests.cs" />
+    <Compile Include="FdoBackendProviderTests.cs" />
     <Compile Include="FdoFactoryAdditionsTests.cs" />
     <Compile Include="FeatureSystemTests.cs" />
     <Compile Include="FwSetupFixtureClass.cs" />
@@ -420,6 +422,16 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="TestData\DataMigration7000042C.xml" />
+    <Content Include="TestData\DataMigration7000042D.xml" />
+    <Content Include="TestData\DataMigration7000042E.xml" />
+    <Content Include="TestData\DataMigration7000069_Dialects.xml" />
+    <Content Include="TestData\DataMigration7000069_Etymology.xml" />
+    <Content Include="TestData\DataMigration7000069_CustomExemplar.xml" />
+    <Content Include="TestData\DataMigration7000069_CustomUsageNote.xml" />
+    <Content Include="TestData\DataMigration7000069.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="TestData\DataMigration7000067TestData.xml" />
     <Content Include="TestData\DataMigration7000058_NonEmptyGlossAppend.xml" />
     <Content Include="TestData\DataMigration7000058_EmptyGlossAppend.xml" />
@@ -440,6 +452,8 @@
     </Content>
     <Content Include="TestData\DataMigration7000066_CustomPropertyMagnet.xml" />
     <Content Include="TestData\DataMigration7000066_RegularPropertyMagnet.xml" />
+    <Content Include="TestData\DataMigration7000069_ExtendedNote.xml" />
+    <Content Include="TestData\DataMigration7000069_UnspecComplexAndVariantType.xml" />
     <None Include="BackupRestore\BackupTestProject\BackupTestProject.fwdata" />
     <None Include="BackupRestore\BackupTestProject\BackupTestProject.fwdata.bak" />
     <None Include="BackupRestore\BackupTestProject\SupportingFiles\GrkPolyComp.kmp" />

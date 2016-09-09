@@ -183,6 +183,9 @@
       <Name>XMLUtils</Name>
       <HintPath>..\..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
     </Reference>
+    <Reference Include="xWorksTests">
+      <HintPath>..\..\..\..\..\Output\Debug\xWorksTests.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -204,6 +207,8 @@
     <Compile Include="VectorReferenceLauncherTests.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="SliceFactoryTests.cs" />
+    <None Include="Test.fwlayout" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -221,6 +226,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TestParts.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

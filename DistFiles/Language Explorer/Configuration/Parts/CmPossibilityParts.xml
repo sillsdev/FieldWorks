@@ -313,6 +313,12 @@
 	<part id="LexEntryType-Detail-ReverseAbbrAllA" type="Detail">
 		<slice field="ReverseAbbr" label="Reverse Abbr." editor="multistring" ws="all analysis"  menu="mnuDataTree-Help"/>
 	</part>
+	<part id="LexEntryType-Jt-ReverseName" type="JtView">
+		<string field="ReverseName" ws="analysis"/>
+	</part>
+	<part id="LexEntryType-Detail-ReverseNameAllA" type="Detail">
+		<slice field="ReverseName" label="Reverse Name" editor="multistring" ws="all analysis"  menu="mnuDataTree-Help"/>
+	</part>
 	<part id="LexEntryType-Detail-Subtypes" type="Detail">
 		<!-- We want to display the SubPossibilities field only if the owning list has depth greater than 1 -->
 		<choice>
@@ -397,7 +403,7 @@
 	<part id="LexRefType-Detail-MappingType" type="Detail">
 		<slice field="MappingType" label="Reference set type" editor="enumComboBox"  menu="mnuDataTree-Help" refreshDataTreeOnChange="true">
 			<deParams>
-				<stringList group="MappingType" ids="SenseCollection, SensePair, SensePair2, SenseTree, SenseSequence, EntryCollection, EntryPair, EntryPair2, EntryTree, EntrySequence, EntrySenseCollection, EntrySensePair, EntrySensePair2, EntrySenseTree, EntrySenseSequence"/>
+				<stringList group="MappingType" ids="SenseCollection, SensePair, SensePair2, SenseTree, SenseSequence, EntryCollection, EntryPair, EntryPair2, EntryTree, EntrySequence, EntrySenseCollection, EntrySensePair, EntrySensePair2, EntrySenseTree, EntrySenseSequence, SenseUnidirectional, EntryUnidirectional, EntrySenseUnidirectional"/>
 			</deParams>
 		</slice>
 	</part>

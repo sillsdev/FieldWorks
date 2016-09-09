@@ -65,6 +65,9 @@ namespace SIL.FieldWorks.LexText.Controls
 											 m_dictExceptFeats);
 				}
 			}
+			if (m_cache.LangProject.LexDbOA.DialectLabelsOA != null)
+				InitializePossibilityMap(m_cache.LangProject.LexDbOA.DialectLabelsOA.PossibilitiesOS,
+										 m_dictDialect);
 			if (m_cache.LangProject.LexDbOA.DomainTypesOA != null)
 				InitializePossibilityMap(m_cache.LangProject.LexDbOA.DomainTypesOA.PossibilitiesOS,
 										 m_dictDomainType);
@@ -83,6 +86,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_cache.LangProject.LocationsOA != null)
 				InitializePossibilityMap(m_cache.LangProject.LocationsOA.PossibilitiesOS,
 										 m_dictLocation);
+			if (m_cache.LangProject.LexDbOA.LanguagesOA != null)
+				InitializePossibilityMap(m_cache.LangProject.LexDbOA.LanguagesOA.PossibilitiesOS,
+										 m_dictLanguage);
 			if (m_cache.LangProject.PhonologicalDataOA != null)
 			{
 				foreach (IPhEnvironment env in m_cache.LangProject.PhonologicalDataOA.EnvironmentsOS)
@@ -3128,6 +3134,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryTree:
 				case (int)LexRefTypeTags.MappingTypes.kmtSenseTree:
+				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
+				case (int)LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
+				case (int)LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
 					StoreTreeRelation(refsAsYetUnmatched, lrt, rgRelation);
 					break;
 			}

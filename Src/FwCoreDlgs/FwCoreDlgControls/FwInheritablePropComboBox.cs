@@ -92,10 +92,9 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			get
 			{
 				CheckDisposed();
-				return SelectedIndex == 0 || ForeColor.ToArgb() != SystemColors.WindowText.ToArgb();
+				return m_ShowingInheritedProperties ? SelectedIndex == 0 || ForeColor.ToArgb() != SystemColors.WindowText.ToArgb() : false;
 			}
 			set { ; }
-
 		}
 
 		/// ------------------------------------------------------------------------------------

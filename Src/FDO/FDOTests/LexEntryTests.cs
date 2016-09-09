@@ -807,7 +807,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.That(newEntry.AlternateFormsOS[1].Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("alt2"));
 			Assert.That(newEntry.PronunciationsOS[0].Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("pron"));
 			Assert.That(newEntry.EntryRefsOS, Has.Count.EqualTo(1));
-			Assert.That(newEntry.EtymologyOA, Is.Not.Null);
+			Assert.That(newEntry.EtymologyOS, Has.Count.EqualTo(1));
 		}
 
 		// Reflect changes in VerifyCopiedProperties
@@ -882,7 +882,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private ILexEtymology MakeEtymology(ILexEntry entry)
 		{
 			var form = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
-			entry.EtymologyOA = form;
+			entry.EtymologyOS.Add(form);;
 			return form;
 		}
 		private IMoStemAllomorph MakeLexemeForm(ILexEntry entry)

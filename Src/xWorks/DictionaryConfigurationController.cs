@@ -153,7 +153,7 @@ namespace SIL.FieldWorks.XWorks
 				MergeCustomFieldsIntoDictionaryModel(model, cache);
 				configurationModels.Add(model);
 			}
-			configurationModels.Sort((lhs, rhs) => string.Compare(lhs.Label, rhs.Label));
+			configurationModels.Sort((lhs, rhs) => String.Compare(lhs.Label, rhs.Label));
 			return configurationModels;
 		}
 
@@ -376,6 +376,7 @@ namespace SIL.FieldWorks.XWorks
 				if (_model == args.ConfigurationPicked)
 					return;
 				_model = args.ConfigurationPicked;
+				SetConfigureHomographParameters(_model, cache);
 				RefreshView(); // isChangeInDictionaryModel: true, because we update the current config in the PropertyTable when we save the model.
 			};
 
@@ -481,6 +482,36 @@ namespace SIL.FieldWorks.XWorks
 			MasterRefreshRequired = m_isDirty = false;
 		}
 
+		/// <summary>
+		/// Sets Parameters for Numbering styles.
+		/// </summary>
+		/// <param name="model"></param>
+		/// <param name="cache"></param>
+		public static void SetConfigureHomographParameters(DictionaryConfigurationModel model, FdoCache cache)
+		{
+			var hc = cache.ServiceLocator.GetInstance<HomographConfiguration>();
+			if (model.Parts.Count == 0) return;
+			var mainEntryNode = model.Parts[0];
+			//Sense Node
+			string senseType = (mainEntryNode.DisplayLabel == "Reversal Entry") ? "Referenced Senses" : "Senses";
+			var senseNode = mainEntryNode.Children.Where(prop => prop.Label == senseType).FirstOrDefault();
+			if (senseNode == null) return;
+			var senseOptions = (DictionaryNodeSenseOptions)senseNode.DictionaryNodeOptions;
+			hc.ksSenseNumberStyle = senseOptions.NumberingStyle;
+			//SubSense Node
+			var subSenseNode = senseNode.Children.Where(prop => prop.Label == "Subsenses").FirstOrDefault();
+			if (subSenseNode == null) return;
+			var subSenseOptions = (DictionaryNodeSenseOptions)subSenseNode.DictionaryNodeOptions;
+			hc.ksSubSenseNumberStyle = subSenseOptions.NumberingStyle;
+			hc.ksParentSenseNumberStyle = subSenseOptions.ParentSenseNumberingStyle;
+			//SubSubSense Node
+			var subSubSenseNode = subSenseNode.ReferencedOrDirectChildren.Where(prop => prop.Label == "Subsenses").FirstOrDefault();
+			if (subSubSenseNode == null) return;
+			var subSubSenseOptions = (DictionaryNodeSenseOptions)subSubSenseNode.DictionaryNodeOptions;
+			hc.ksSubSubSenseNumberStyle = subSubSenseOptions.NumberingStyle;
+			hc.ksParentSubSenseNumberStyle = subSubSenseOptions.ParentSenseNumberingStyle;
+		}
+
 		private void SetManagerTypeInfo(DictionaryConfigurationManagerDlg dialog)
 		{
 			dialog.HelpTopic = DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(_mediator) == xWorksStrings.Dictionary
@@ -524,7 +555,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				default:
 				{
-					throw new NotImplementedException(string.Format("Default entry for {0} type not implemented.", configurationType));
+					throw new NotImplementedException(String.Format("Default entry for {0} type not implemented.", configurationType));
 				}
 			}
 		}
@@ -592,7 +623,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Whether node can be moved among its siblings.
+		/// Whether node can be moved among its siblings, or if it can be moved out of a grouping node.
 		/// </summary>
 		public static bool CanReorder(ConfigurableDictionaryNode node, Direction direction)
 		{
@@ -605,10 +636,10 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 
 			var nodeIndex = parent.Children.IndexOf(node);
-			if (direction == Direction.Up && nodeIndex == 0)
+			if (direction == Direction.Up && nodeIndex == 0 && !(parent.DictionaryNodeOptions is DictionaryNodeGroupingOptions))
 				return false;
 			var lastSiblingIndex = parent.Children.Count - 1;
-			if (direction == Direction.Down && nodeIndex == lastSiblingIndex)
+			if (direction == Direction.Down && nodeIndex == lastSiblingIndex && !(parent.DictionaryNodeOptions is DictionaryNodeGroupingOptions))
 				return false;
 
 			return true;
@@ -678,10 +709,57 @@ namespace SIL.FieldWorks.XWorks
 			if (direction == Direction.Down)
 				newNodeIndex = nodeIndex + 1;
 
-			parent.Children.RemoveAt(nodeIndex);
-			parent.Children.Insert(newNodeIndex, node);
-
+			var movingOutOfGroup = (newNodeIndex == -1 || newNodeIndex >= parent.Children.Count) &&
+				parent.DictionaryNodeOptions is DictionaryNodeGroupingOptions;
+			if (movingOutOfGroup)
+			{
+				MoveNodeOutOfGroup(node, direction, parent, nodeIndex);
+			}
+			else if (parent.Children[newNodeIndex].DictionaryNodeOptions is DictionaryNodeGroupingOptions &&
+				!(node.DictionaryNodeOptions is DictionaryNodeGroupingOptions))
+			{
+				MoveNodeIntoGroup(node, direction, parent, newNodeIndex, nodeIndex);
+			}
+			else
+			{
+				parent.Children.RemoveAt(nodeIndex);
+				parent.Children.Insert(newNodeIndex, node);
+			}
 			RefreshView();
+		}
+
+		private static void MoveNodeIntoGroup(ConfigurableDictionaryNode node, Direction direction,
+			ConfigurableDictionaryNode parent, int newNodeIndex, int nodeIndex)
+		{
+			var targetGroupNode = parent.Children[newNodeIndex];
+			parent.Children.RemoveAt(nodeIndex);
+			if (targetGroupNode.Children == null)
+				targetGroupNode.Children = new List<ConfigurableDictionaryNode>();
+			if (direction == Direction.Up)
+			{
+				targetGroupNode.Children.Add(node);
+			}
+			else
+			{
+				targetGroupNode.Children.Insert(0, node);
+			}
+			node.Parent = targetGroupNode;
+		}
+
+		private static void MoveNodeOutOfGroup(ConfigurableDictionaryNode node, Direction direction,
+			ConfigurableDictionaryNode parent, int nodeIndex)
+		{
+			parent.Children.RemoveAt(nodeIndex);
+			var indexOfParentGroup = parent.Parent.Children.IndexOf(parent);
+			if (direction == Direction.Down)
+			{
+				parent.Parent.Children.Insert(indexOfParentGroup + 1, node);
+			}
+			else
+			{
+				parent.Parent.Children.Insert(indexOfParentGroup, node);
+			}
+			node.Parent = parent.Parent;
 		}
 
 		/// <summary>
@@ -692,7 +770,7 @@ namespace SIL.FieldWorks.XWorks
 			node.ReferencedNode = sharedItems.FirstOrDefault(
 				si => si.Label == referenceItem && si.FieldDescription == node.FieldDescription && si.SubField == node.SubField);
 			if (node.ReferencedNode == null)
-				throw new KeyNotFoundException(string.Format("Could not find Referenced Node named {0} for field {1}.{2}",
+				throw new KeyNotFoundException(String.Format("Could not find Referenced Node named {0} for field {1}.{2}",
 					referenceItem, node.FieldDescription, node.SubField));
 			node.ReferenceItem = referenceItem;
 			if (node.ReferencedNode.Parent != null)
@@ -707,28 +785,28 @@ namespace SIL.FieldWorks.XWorks
 		public static void ShareNodeAsReference(List<ConfigurableDictionaryNode> sharedItems, ConfigurableDictionaryNode node, string cssClass = null)
 		{
 			if (node.ReferencedNode != null)
-				throw new InvalidOperationException(string.Format("Node {0} is already shared as {1}",
+				throw new InvalidOperationException(String.Format("Node {0} is already shared as {1}",
 					DictionaryConfigurationMigrator.BuildPathStringFromNode(node), node.ReferenceItem ?? node.ReferencedNode.Label));
 			if (node.Children == null || !node.Children.Any())
 				return; // no point sharing Children there aren't any
 			var dupItem = sharedItems.FirstOrDefault(item => item.FieldDescription == node.FieldDescription && item.SubField == node.SubField);
 			if (dupItem != null)
 			{
-				var fullField = string.IsNullOrEmpty(node.SubField)
+				var fullField = String.IsNullOrEmpty(node.SubField)
 					? node.FieldDescription
-					: string.Format("{0}.{1}", node.FieldDescription, node.SubField);
-				MessageBoxUtils.Show(string.Format(xWorksStrings.InadvisableToShare,
+					: String.Format("{0}.{1}", node.FieldDescription, node.SubField);
+				MessageBoxUtils.Show(String.Format(xWorksStrings.InadvisableToShare,
 					node.DisplayLabel, fullField, DictionaryConfigurationMigrator.BuildPathStringFromNode(dupItem.Parent)));
 				return;
 			}
 
 			// ENHANCE (Hasso) 2016.03: enforce that the specified node is part of *this* model (incl shared items)
-			var key = string.IsNullOrEmpty(node.ReferenceItem) ? string.Format("Shared{0}", node.Label) : node.ReferenceItem;
-			cssClass = string.IsNullOrEmpty(cssClass) ? string.Format("shared{0}", CssGenerator.GetClassAttributeForConfig(node)) : cssClass.ToLowerInvariant();
+			var key = String.IsNullOrEmpty(node.ReferenceItem) ? String.Format("Shared{0}", node.Label) : node.ReferenceItem;
+			cssClass = String.IsNullOrEmpty(cssClass) ? String.Format("shared{0}", CssGenerator.GetClassAttributeForConfig(node)) : cssClass.ToLowerInvariant();
 			// Ensure the shared node's Label and CSSClassNameOverride are both unique within this Configuration
 			if (sharedItems.Any(item => item.Label == key || item.CSSClassNameOverride == cssClass))
 			{
-				throw new ArgumentException(string.Format("A SharedItem already exists with the Label '{0}' or the class '{1}'", key, cssClass));
+				throw new ArgumentException(String.Format("A SharedItem already exists with the Label '{0}' or the class '{1}'", key, cssClass));
 			}
 			var sharedItem = new ConfigurableDictionaryNode
 			{
@@ -821,8 +899,10 @@ namespace SIL.FieldWorks.XWorks
 			for (var i = options.Count - 1; i >= 0; --i)
 			{
 				Guid guid;
-				if (Guid.TryParse(options[i].Id, out guid) && !possibilities.Contains(guid))
-					options.RemoveAt(i);
+				// Truncate any :r or :f from the end of the guid
+				var isValidGuid = Guid.TryParse(options[i].Id.Substring(0, Math.Min(options[i].Id.Length, 36)), out guid);
+				if (!isValidGuid || !possibilities.Contains(guid))
+					options.RemoveAt(i); //Guid was invalid, or not present in the current possibilities
 			}
 		}
 
@@ -831,7 +911,7 @@ namespace SIL.FieldWorks.XWorks
 			var styles = cache.LangProject.StylesOC.ToDictionary(style => style.Name);
 			foreach (var part in model.PartsAndSharedItems)
 			{
-				if (part.IsMainEntry && string.IsNullOrEmpty(part.Style))
+				if (part.IsMainEntry && String.IsNullOrEmpty(part.Style))
 					part.Style = "Dictionary-Normal";
 				EnsureValidStylesInConfigNodes(part, styles);
 			}
@@ -839,7 +919,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private static void EnsureValidStylesInConfigNodes(ConfigurableDictionaryNode node, Dictionary<string, IStStyle> styles)
 		{
-			if (!string.IsNullOrEmpty(node.Style) && !styles.ContainsKey(node.Style))
+			if (!String.IsNullOrEmpty(node.Style) && !styles.ContainsKey(node.Style))
 				node.Style = null;
 			if (node.DictionaryNodeOptions != null)
 				EnsureValidStylesInNodeOptions(node.DictionaryNodeOptions, styles);
@@ -855,7 +935,7 @@ namespace SIL.FieldWorks.XWorks
 			var senseOptions = options as DictionaryNodeSenseOptions;
 			if (senseOptions == null)
 				return;
-			if (!string.IsNullOrEmpty(senseOptions.NumberStyle) && !styles.ContainsKey(senseOptions.NumberStyle))
+			if (!String.IsNullOrEmpty(senseOptions.NumberStyle) && !styles.ContainsKey(senseOptions.NumberStyle))
 				senseOptions.NumberStyle = null;
 		}
 
@@ -884,7 +964,7 @@ namespace SIL.FieldWorks.XWorks
 				// This is only expected to happen to our testers, we don't need to recover, just inform the testers.
 				if (part.FieldDescription == null)
 				{
-					throw new ApplicationException(string.Format("{0} is corrupt. {1} has no FieldDescription. Deleting this configuration file may fix the problem.",
+					throw new ApplicationException(String.Format("{0} is corrupt. {1} has no FieldDescription. Deleting this configuration file may fix the problem.",
 						model.FilePath, part.Label));
 				}
 				var customFields = GetCustomFieldsForType(cache, part.FieldDescription);
@@ -951,23 +1031,31 @@ namespace SIL.FieldWorks.XWorks
 				// Also generate a mapping for the corresponding FDO interface (metadata does not contain this)
 				var cfOwnerInterfaceName = cfOwnerClassName.Insert(0, "I");
 				// Map the class name and then the interface name to the custom field id list
-				if(classToCustomFields.ContainsKey(cfOwnerClassName))
+				if (classToCustomFields.ContainsKey(cfOwnerClassName))
 					classToCustomFields[cfOwnerClassName].Add(customFieldId);
 				else
-					classToCustomFields[cfOwnerClassName] = new List<int> { customFieldId };
-
-				if(classToCustomFields.ContainsKey(cfOwnerInterfaceName))
-					classToCustomFields[cfOwnerInterfaceName].Add(customFieldId);
-				else
-					classToCustomFields[cfOwnerInterfaceName] = new List<int> { customFieldId };
+				{
+					classToCustomFields[cfOwnerInterfaceName] = classToCustomFields[cfOwnerClassName] = new List<int> { customFieldId };
+					if (cfOwnerClassName == "LexEntry")
+						classToCustomFields["ILexEntryRef"] = classToCustomFields["LexEntryRef"] = classToCustomFields["LexEntry"];
+				}
 			}
+			var senseOrEntryFields = new List<int>();
+			if (classToCustomFields.ContainsKey("LexSense"))
+				senseOrEntryFields.AddRange(classToCustomFields["LexSense"]);
+			if (classToCustomFields.ContainsKey("LexEntry"))
+				senseOrEntryFields.AddRange(classToCustomFields["LexEntry"]);
+			if (senseOrEntryFields.Any())
+				classToCustomFields["SenseOrEntry"] = classToCustomFields["ISenseOrEntry"] = senseOrEntryFields;
 			return classToCustomFields;
 		}
 
 		private static void MergeCustomFieldLists(ConfigurableDictionaryNode parent, List<ConfigurableDictionaryNode> customFieldNodes)
 		{
-			if (parent.IsSubordinateParent)
-				return; // If parent has Referenced Children but is not the Master Parent, return; fields will be merged under the Master Parent
+			// If parent has Referenced Children but is not the Master Parent, return; fields will be merged under the Master Parent
+			// If the node is set to hide the custom fields then we will not merge the nodes, but they should still appear under children
+			if (parent.IsSubordinateParent || parent.HideCustomFields)
+				return;
 			parent = parent.ReferencedNode ?? parent;
 			// Set the parent on the customFieldNodes (needed for Contains and to make any new fields valid when added)
 			foreach(var customField in customFieldNodes)
@@ -1006,21 +1094,23 @@ namespace SIL.FieldWorks.XWorks
 			Dictionary<string, List<int>> customFieldMap = null)
 		{
 			customFieldMap = customFieldMap ?? BuildCustomFieldMap(cache);
-			var customFieldIds = customFieldMap.ContainsKey(className)
-												 ? customFieldMap[className]
-												 : new List<int>();
+			if (!customFieldMap.ContainsKey(className))
+				return new List<ConfigurableDictionaryNode>();
 
 			var customFieldList = new List<ConfigurableDictionaryNode>();
 			var metaDataCache = (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor;
-			foreach(var field in customFieldIds)
+			var isEntryRefType = className.EndsWith("EntryRef");
+			foreach(var field in customFieldMap[className])
 			{
 				var configNode = new ConfigurableDictionaryNode
 				{
 					Label = metaDataCache.GetFieldLabel(field),
 					IsCustomField = true,
 					IsEnabled = false,
-					FieldDescription = metaDataCache.GetFieldName(field),
-					DictionaryNodeOptions = BuildOptionsForType(metaDataCache.GetFieldType(field))
+					// Custom fields in the Map under LexEntryRef are actually LexEntry CustomFields; look for them under OwningEntry
+					FieldDescription = isEntryRefType ? "OwningEntry" : metaDataCache.GetFieldName(field),
+					SubField = isEntryRefType ? metaDataCache.GetFieldName(field) : null,
+					DictionaryNodeOptions = BuildOptionsForType(metaDataCache, field)
 				};
 				var listId = metaDataCache.GetFieldListRoot(field);
 				if(listId != Guid.Empty)
@@ -1048,7 +1138,8 @@ namespace SIL.FieldWorks.XWorks
 				{
 					Label = "Name",
 					FieldDescription = "Name",
-					DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions { WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis },
+					After = " ",
+					DictionaryNodeOptions = BuildWsOptionsForWsType("analysis"),
 					Parent = configNode,
 					IsCustomField = false // the parent node may be for a custom field, but this node is for a standard CmPossibility field
 				},
@@ -1056,20 +1147,24 @@ namespace SIL.FieldWorks.XWorks
 				{
 					Label = "Abbreviation",
 					FieldDescription = "Abbreviation",
-					DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions { WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis },
+					DictionaryNodeOptions = BuildWsOptionsForWsType("analysis"),
 					Parent = configNode,
 					IsCustomField = false // the parent node may be for a custom field, but this node is for a standard CmPossibility field
 				}
 			};
 		}
 
-		private static DictionaryNodeOptions BuildOptionsForType(int fieldType)
+		private static DictionaryNodeOptions BuildOptionsForType(IFwMetaDataCacheManaged metaDataCache, int fieldId)
 		{
+			var fieldType = metaDataCache.GetFieldType(fieldId);
 			switch(fieldType)
 			{
 				case (int)CellarPropertyType.MultiString:
 				case (int)CellarPropertyType.MultiUnicode:
-					return new DictionaryNodeWritingSystemOptions();
+				{
+					var wsTypeId = WritingSystemServices.GetMagicWsNameFromId(metaDataCache.GetFieldWs(fieldId));
+					return BuildWsOptionsForWsType(wsTypeId);
+				}
 				case (int)CellarPropertyType.OwningCollection:
 				case (int)CellarPropertyType.OwningSequence:
 				case (int)CellarPropertyType.ReferenceCollection:
@@ -1078,6 +1173,17 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return null;
 		}
+
+		private static DictionaryNodeOptions BuildWsOptionsForWsType(string wsTypeId)
+		{
+			var wsOptions = new DictionaryNodeWritingSystemOptions
+			{
+				WsType = GetWsTypeFromMagicWsName(wsTypeId),
+				Options = { new DictionaryNodeListOptions.DictionaryNodeOption { Id = wsTypeId, IsEnabled = true } },
+			};
+			return wsOptions;
+		}
+
 		#endregion ModelSynchronization
 
 		public static void EnableNodeAndDescendants(ConfigurableDictionaryNode node)
@@ -1215,6 +1321,28 @@ namespace SIL.FieldWorks.XWorks
 					return start;
 			}
 			return null;
+		}
+
+		public static DictionaryNodeWritingSystemOptions.WritingSystemType GetWsTypeFromMagicWsName(string wsType)
+		{
+			switch (wsType)
+			{
+				case "best analysis":
+				case "all analysis":
+				case "analysis":
+				case "analysisform": return DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis;
+				case "best vernacular":
+				case "all vernacular":
+				case "vernacular": return DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular;
+				case "vernacular analysis":
+				case "analysis vernacular":
+				case "best vernoranal":
+				case "best analorvern":
+				case "vernoranal": return DictionaryNodeWritingSystemOptions.WritingSystemType.Both;
+				case "pronunciation": return DictionaryNodeWritingSystemOptions.WritingSystemType.Pronunciation;
+				case "reversal": return DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal;
+				default: throw new ArgumentException(String.Format("Unknown writing system type {0}", wsType), wsType);
+			}
 		}
 	}
 }

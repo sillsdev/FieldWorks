@@ -102,6 +102,14 @@ namespace SIL.FieldWorks.FDO
 		ILexRefType Create(Guid guid, ILexRefType owner);
 	}
 
+	public partial interface ILexReferenceFactory
+	{
+		/// <summary>
+		/// Constructor to build a ILexReference with specific attributes
+		/// </summary>
+		ILexReference Create(Guid guid, ILexRefType owner);
+	}
+
 	/// <summary>
 	/// Internal interface for use by merging code to create a copy of a CmPerson that exists in another project.
 	/// </summary>

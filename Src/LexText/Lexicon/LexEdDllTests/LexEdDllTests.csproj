@@ -95,6 +95,7 @@
     </Compile>
     <Compile Include="FlexBridgeListenerTests.cs" />
     <Compile Include="GoldEticGuidFixerTests.cs" />
+    <Compile Include="LexEntryChangeHandlerTests.cs" />
     <Compile Include="LexReferenceTreeRootLauncherTests.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -102,6 +103,7 @@
     <Compile Include="ReversalEntryBulkEditTests.cs" />
     <Compile Include="SortReversalSubEntriesTests.cs" />
     <Compile Include="CircularRefBreakerTests.cs" />
+    <Compile Include="TestUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Controls\XMLViews\XMLViews.csproj">
@@ -111,6 +113,10 @@
     <ProjectReference Include="..\..\..\Common\CoreImpl\CoreImpl.csproj">
       <Project>{4C7D6B65-A331-4ED7-9B53-3301E714F8E7}</Project>
       <Name>CoreImpl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\Framework\Framework.csproj">
+      <Project>{C4A415C6-AB60-4118-BE82-5777C0877A8B}</Project>
+      <Name>Framework</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\FwCoreDlgs\FwCoreDlgs.csproj">
       <Project>{17090FC0-6BDA-409A-A99A-5AE7F35647ED}</Project>

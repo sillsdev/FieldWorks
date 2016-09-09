@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.XWorks
 			set { m_selectedConfiguration = value; }
 		}
 
-		public IEnumerable<string> SelectedReversals { get; set; }
+		public ICollection<string> SelectedReversals { get; set; }
 
 
 		public List<string> Publications { get; set; }
@@ -154,9 +154,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// This method will split the given reversal string and return the resulting list
 		/// </summary>
-		private IEnumerable<string> SplitReversalSettingString(string savedReversalList)
+		private static ICollection<string> SplitReversalSettingString(string savedReversalList)
 		{
-			if(!String.IsNullOrEmpty(savedReversalList))
+			if(!string.IsNullOrEmpty(savedReversalList))
 			{
 				return savedReversalList.Split(new[] { ReversalSeperator }, StringSplitOptions.RemoveEmptyEntries);
 			}

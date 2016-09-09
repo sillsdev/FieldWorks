@@ -158,6 +158,7 @@
     <Compile Include="LanguageInfoUI.cs" />
     <Compile Include="LexImportField.cs" />
     <Compile Include="LexImportFields.cs" />
+    <Compile Include="LexImportOption.cs" />
     <Compile Include="Log.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -8,6 +8,7 @@
 			<part ref="GlossAllA"/>
 			<part ref="ReversalEntries"   visibility="ifdata" />
 			<part ref="DefinitionAllA"/>
+			<part ref="RestrictionsAllA"   visibility="ifdata" />
 			<part ref="MsaCombo"/>
 			<part ref="ComplexFormEntries" visibility="ifdata"/>
 			<part ref="VisibleComplexFormEntries" visibility="ifdata"/>
@@ -22,9 +23,9 @@
 			<part ref="GeneralNoteAllA" label="General Note"   visibility="ifdata" />
 			<part ref="GrammarNoteAllA" label="Grammar Note"   visibility="ifdata" />
 			<part ref="PhonologyNoteAllA" label="Phonology Note"   visibility="ifdata" />
-			<part ref="RestrictionsAllA"   visibility="ifdata" />
 			<part ref="SemanticsNoteAllA" label="Semantics Note"   visibility="ifdata" />
 			<part ref="SocioLinguisticsNoteAllA" label="Sociolinguistics Note"   visibility="ifdata" />
+			<part ref="ExtendedNotes" param="Normal"/>
 			<part ref="Source"   visibility="ifdata" />
 			<part ref="UsageTypes"   visibility="ifdata" />
 			<part ref="SenseType"   visibility="ifdata" />
@@ -57,11 +58,31 @@
 		<part ref="PublishIn"   visibility="ifdata" />
 	</layout>
 
+	<layout class="LexExtendedNote" type="detail" name="Normal">
+		<part ref="NormalSummary" param="Summary" collapsedLayout="SummaryCollapsed" expansion="expanded" menu="mnuDataTree-ExtendedNote" hotlinks="mnuDataTree-ExtendedNote-Hotlinks">
+			<indent>
+				<part ref="Type" label="Type" />
+				<part ref="DiscussionAllA" label="Discussion" />
+				<part ref="Examples" param="Notes"/>
+			</indent>
+		</part>
+	</layout>
+
+	<layout class="LexExampleSentence" type="detail" name="Notes">
+		<!-- menu="mnuDataTree-ExtendedNote-Examples" -->
+		<part ref="ExampleAllV" label="Example" expansion="expanded" menu="mnuDataTree-Example">
+			<indent>
+				<part ref="TranslationsAllA" expansion="expanded" param="Translation"/>
+			</indent>
+		</part>
+	</layout>
+
 	<layout class="CmPicture" type="detail" name="Normal">
 		<part ref="Picture" label="Picture"/>
 		<part ref="Thumbnail" label="Thumbnail" visibility="never"/>
 		<part ref="CaptionA" label="Caption"/>
 		<part ref="FileName" label="File"/>
+		<part ref="PublishIn" label="Publish In"/>
 	</layout>
 	<layout class="CmFile" type="detail" name="Normal">
 		<part ref="FileName" label="File"/>
@@ -79,6 +100,10 @@
 				<part ref="Type"/>
 			</indent>
 		</part>
+	</layout>
+
+	<layout class="CmTranslation" type="detail" name="Translation">
+		<part ref="TranslationAllA" />
 	</layout>
 
 	<layout class="LexReference" type="detail" name="ShowSingleReference">
@@ -1297,5 +1322,4 @@
 		<part ref="SenseNumber" label="Sense Number" visibility="ifdata" before="" after=" " css="pictureSense"/>
 		<part ref="CaptionPub" label="Caption" visibility="ifdata" before="" after="" ws="vernacular" wsType="vernacular analysis" css="pictureLabel"/>
 	</layout>
-
 </LayoutInventory>
