@@ -1260,8 +1260,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_fDisposing = true; // 'Disposing' isn't until we call base dispose.
 				if (m_rch != null)
 				{
-					m_rch.Fixup(false); // no need to refresh record list on shutdown.
-					if (!m_rch.HasRecordListUpdater) // if m_rch has no other owner, dispose it.
+					if (m_rch.HasRecordListUpdater)
+						m_rch.Fixup(false);		// no need to refresh record list on shutdown.
+					else
+						// It's fine to dispose it, after all, because m_rch has no other owner.
 						m_rch.Dispose();
 				}
 				if (m_tooltip != null)

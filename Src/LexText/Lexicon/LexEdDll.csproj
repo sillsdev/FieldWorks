@@ -328,7 +328,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>LexEdStrings.resx</DependentUpon>
     </Compile>
-    <Compile Include="LexEntryChangeHandler.cs" />
     <Compile Include="LexEntryImages.cs">
       <SubType>UserControl</SubType>
     </Compile>
