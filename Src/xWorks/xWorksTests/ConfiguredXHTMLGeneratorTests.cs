@@ -4120,6 +4120,64 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_VariantTypeIsUncheckedAndHeadwordIsChecked()
+		{
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var variantForm = CreateInterestingLexEntry(Cache);
+			CreateVariantForm(Cache, mainEntry, variantForm);
+			var crazyVariant = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.FirstOrDefault(variant => variant.Name.BestAnalysisAlternative.Text == TestVariantName);
+			Assert.IsNotNull(crazyVariant);
+
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
+				IsEnabled = true
+			};
+			var refNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ConfigReferencedEntries",
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				CSSClassNameOverride = "referencedentries",
+				IsEnabled = true
+			};
+			var variantFormTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+			};
+			var variantFormTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				CSSClassNameOverride = "variantentrytypes",
+				IsEnabled = false,
+				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNameNode },
+			};
+			var variantsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Variant, new[] { crazyVariant }),
+				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNode, refNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { variantsNode }
+			};
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
+				"/div[@class='lexentry']/span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@class='referencedentries']" +
+				"/span[@class='referencedentry']/span[@class='headword']/span[@lang='fr']/span[@lang='fr' and text()='Citation']", 1);
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_ReferencedComplexFormsUnderSensesIncludesSubentriesAndOtherReferencedComplexForms()
 		{
 			var complexFormNode = new ConfigurableDictionaryNode

@@ -1556,7 +1556,7 @@ namespace SIL.FieldWorks.XWorks
 				if (IsVariantEntryType(config, out variantEntryTypeNode))
 				{
 					if (config.ReferencedOrDirectChildren.Any(
-							x => x.FieldDescription == "VariantEntryTypesRS" && x.IsEnabled && (x.Children != null && x.Children.Any(y => y.IsEnabled))))
+							x => x.IsEnabled && (x.Children != null && x.Children.Any(y => y.IsEnabled))))
 					{
 						// Order the variants by type and then guid, excluding variants that are not in the publication.
 						// This is using guid to order variants in a consistent way to fix LT-17384. Though perhaps another sort key would be better, such as ICmObject.SortKey or ICmObject.SortKey2.
@@ -1573,7 +1573,7 @@ namespace SIL.FieldWorks.XWorks
 								{
 									if (((ILexEntryRef)colItem).VariantEntryTypesRS.Contains(variantFormType))
 									{
-										if (previousType != variantFormType.SortKey)
+										if (previousType != variantFormType.SortKey && variantEntryTypeNode.IsEnabled)
 										{
 											xw.WriteRaw(WriteRawElementContents("span",
 												GenerateCollectionItemContent(variantEntryTypeNode, pubDecorator, variantFormType,
