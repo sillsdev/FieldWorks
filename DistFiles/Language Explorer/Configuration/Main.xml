@@ -65,7 +65,7 @@
 			<parameters title="FieldWorks Project Utilities" filename="Language Explorer/Configuration/UtilityCatalogInclude.xml"/>
 		</command>
 		<command id="CmdArchiveWithRamp" label="_Archive with RAMP (SIL)..." message="ArchiveWithRamp" icon="ArchiveWithRamp"/>
-		<command id="CmdPublishToWebonary" label="Upload to _Webonary..." message="PublishToWebonary"/>
+		<command id="CmdUploadToWebonary" label="Upload to _Webonary..." message="UploadToWebonary"/>
 		<command id="CmdPageSetup" label="Page Setup..." message="PageSetup"/>
 		<command id="CmdImportSFMLexicon" label="_Standard Format Lexicon..." message="SFMImport"/>
 		<command id="CmdImportSFMNotebook" label="Standard Format _Notebook data..." message="LaunchConnectedDialog">
@@ -463,7 +463,7 @@
 			</menu>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdArchiveWithRamp" />
-			<item command="CmdPublishToWebonary" />
+			<item command="CmdUploadToWebonary" />
 			<item label="-" translate="do not translate"/>
 			<item command="CmdPageSetup"/>
 			<item command="CmdPrint"/>

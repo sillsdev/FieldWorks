@@ -337,7 +337,7 @@ namespace SIL.FieldWorks.XWorks
 	}
 
 	/// <summary>
-	/// Condition of status of publishing to webonary.
+	/// Condition of status of uploading to webonary.
 	/// </summary>
 	public enum WebonaryStatusCondition
 	{

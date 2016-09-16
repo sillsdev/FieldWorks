@@ -247,7 +247,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public void UploadToWebonary(UploadToWebonaryModel model, IUploadToWebonaryView view)
 		{
-			view.UpdateStatus("Publishing to Webonary.");
+			view.UpdateStatus("Uploading to Webonary.");
 			view.SetStatusCondition(WebonaryStatusCondition.None);
 
 			if (string.IsNullOrEmpty(model.SiteName))
