@@ -260,7 +260,7 @@ namespace SIL.FieldWorks.XWorks
 			var testNode = new ConfigurableDictionaryNode
 			{
 				DictionaryNodeOptions =
-					new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = true }
+					new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = true }
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
 			controller.LoadNode(null, testNode);
@@ -277,13 +277,40 @@ namespace SIL.FieldWorks.XWorks
 			var testNode = new ConfigurableDictionaryNode
 			{
 				DictionaryNodeOptions =
-					new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = false }
+					new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = false }
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
 			controller.LoadNode(null, testNode);
 			using (var view = controller.View)
 			{
 				// SUT
+				AssertShowingCharacterStyles(view);
+			}
+		}
+		#endregion
+
+		#region Note tests
+		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "optionsView is a reference only")]
+		public void NoteLoadsParagraphStylesWhenShowInParaSet()
+		{
+			var wsOptions = new DictionaryNodeWritingSystemAndParaOptions();
+			{
+				wsOptions.DisplayEachInAParagraph = true;
+			};
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
+			using (var view = controller.View)
+			{
+				var optionsView = GetListOptionsView(view);
+				Assert.IsTrue(optionsView.DisplayOptionCheckBox2Checked, "'Display each Note in a separate paragraph' should be checked.");
+				//// Events are not actually fired during tests, so they must be run manually
+				AssertShowingParagraphStyles(view);
+
+				optionsView.DisplayOptionCheckBox2Checked = false;
+				ReflectionHelper.CallMethod(controller, "DisplayInParaChecked", GetListOptionsView(view), wsOptions);
+
+				Assert.IsFalse(wsOptions.DisplayEachInAParagraph, "DisplayEachInAParagraph should be false.");
 				AssertShowingCharacterStyles(view);
 			}
 		}
@@ -467,11 +494,11 @@ namespace SIL.FieldWorks.XWorks
 			AssertShowingCharacterStyles(controller.View);
 
 			// Load paragraph styles
-			node.DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
+			node.DictionaryNodeOptions = new DictionaryNodeListAndParaOptions
 			{
 				ListId = DictionaryNodeListOptions.ListIds.Complex,
 				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
-				DisplayEachComplexFormInAParagraph = true
+				DisplayEachInAParagraph = true
 			};
 			controller.LoadNode(null, node); // SUT
 			AssertShowingParagraphStyles(controller.View);
@@ -493,11 +520,11 @@ namespace SIL.FieldWorks.XWorks
 			// Load paragraph styles
 			var node = new ConfigurableDictionaryNode
 			{
-				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions
 				{
 					ListId = DictionaryNodeListOptions.ListIds.Complex,
 					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
-					DisplayEachComplexFormInAParagraph = true
+					DisplayEachInAParagraph = true
 				}
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
@@ -695,7 +722,7 @@ namespace SIL.FieldWorks.XWorks
 			testNode = new ConfigurableDictionaryNode
 			{
 				IsEnabled = true,
-				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = true}
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = true}
 			};
 			controller.LoadNode(null, testNode);
 			Assert.False(controller.View.SurroundingCharsVisible, "Context should now be hidden");

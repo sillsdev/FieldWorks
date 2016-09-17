@@ -15,7 +15,8 @@ namespace SIL.FieldWorks.XWorks
 	[XmlInclude(typeof(DictionaryNodeSenseOptions))]
 	[XmlInclude(typeof(DictionaryNodeListOptions))]
 	[XmlInclude(typeof(DictionaryNodeWritingSystemOptions))]
-	[XmlInclude(typeof(DictionaryNodeComplexFormOptions))]
+	[XmlInclude(typeof(DictionaryNodeListAndParaOptions))]
+	[XmlInclude(typeof(DictionaryNodeWritingSystemAndParaOptions))]
 	[XmlInclude(typeof(DictionaryNodePictureOptions))]
 	[XmlInclude(typeof(DictionaryNodeGroupingOptions))]
 	public abstract class DictionaryNodeOptions
@@ -157,17 +158,34 @@ namespace SIL.FieldWorks.XWorks
 		}
 	}
 
-	/// <summary>Options for Referenced Complex Forms</summary>
-	public class DictionaryNodeComplexFormOptions : DictionaryNodeListOptions
+	/// <summary>Options for items that may be displayed in paragraphs</summary>
+	public class DictionaryNodeListAndParaOptions : DictionaryNodeListOptions, IParaOption
 	{
 		[XmlAttribute(AttributeName = "displayEachComplexFormInParagraph")]
-		public bool DisplayEachComplexFormInAParagraph { get; set; }
+		public bool DisplayEachInAParagraph { get; set; }
 
 		public override DictionaryNodeOptions DeepClone()
 		{
-			return DeepCloneInto(new DictionaryNodeComplexFormOptions());
+			return DeepCloneInto(new DictionaryNodeListAndParaOptions());
 		}
 	}
+
+	public class DictionaryNodeWritingSystemAndParaOptions : DictionaryNodeWritingSystemOptions, IParaOption
+	{
+		[XmlAttribute(AttributeName = "displayInParagraph")]
+		public bool DisplayEachInAParagraph { get; set; }
+
+		public override DictionaryNodeOptions DeepClone()
+		{
+			return DeepCloneInto(new DictionaryNodeWritingSystemAndParaOptions());
+		}
+	}
+
+	public interface IParaOption
+	{
+		bool DisplayEachInAParagraph { get; set; }
+	}
+
 
 	/// <summary>Options for selecting and ordering WritingSystems</summary>
 	public class DictionaryNodeWritingSystemOptions : DictionaryNodeOptions

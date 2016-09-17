@@ -93,8 +93,8 @@ Field Descriptions
 <field sfm="bb" name="Bibliography" type="string" lang="English">
 <meaning app="fw.sil.org" id="sbib"/>
 </field>
-<field sfm="bw" name="Borrowed word (loan)" type="string" lang="English">
-<meaning app="fw.sil.org" id="sires"/>
+<field sfm="bw" name="Borrowed word (language)" type="string" lang="English">
+<meaning app="fw.sil.org" id="etsl"/>
 </field>
 <field sfm="ce" name="Cross-ref. gloss (English)" type="string" lang="English">
 <meaning app="fw.sil.org" id="eires"/>
@@ -286,7 +286,7 @@ Field Descriptions
 <meaning app="fw.sil.org" id="seme"/>
 </field>
 <field sfm="se" name="Subentry" type="string" lang="Vernacular">
-<meaning app="fw.sil.org" id="sub" funcWS="en" func="Derivative"/>
+<meaning app="fw.sil.org" id="sub" funcWS="en" func="Unspecified Complex Form"/>
 </field>
 <field sfm="sg" name="Singular form" type="string" lang="Vernacular">
 <meaning app="fw.sil.org" id="sires"/>
@@ -322,7 +322,7 @@ Field Descriptions
 <meaning app="fw.sil.org" id="sires"/>
 </field>
 <field sfm="va" name="Variant" type="string" lang="Vernacular">
-<meaning app="fw.sil.org" id="var" funcWS="en" func="Irregularly Inflected Form" />
+<meaning app="fw.sil.org" id="var" funcWS="en" func="Unspecified Variant" />
 </field>
 <field sfm="ve" name="Variant Comment" type="string" lang="English">
 <meaning app="fw.sil.org" id="varc"/>

@@ -50,8 +50,9 @@ namespace SIL.FieldWorks.XWorks
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			LoadBulletUnicodes();
 			LoadNumberingStyles();
-			GenerateCssForDefaultStyles(mediator, mediatorstyleSheet, styleSheet, model, cache);
+			GenerateCssForDefaultStyles(mediator, mediatorstyleSheet, styleSheet, model);
 			MakeLinksLookLikePlainText(styleSheet);
+			GenerateBidirectionalCssShim(styleSheet);
 			GenerateCssForAudioWs(styleSheet, cache);
 			foreach(var configNode in model.Parts.Where(x => x.IsEnabled).Concat(model.SharedItems.Where(x => x.Parent != null)))
 			{
@@ -62,21 +63,18 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static void GenerateCssForDefaultStyles(Mediator mediator, FwStyleSheet mediatorstyleSheet,
-			StyleSheet styleSheet, DictionaryConfigurationModel model, FdoCache cache)
+			StyleSheet styleSheet, DictionaryConfigurationModel model)
 		{
-			if (mediatorstyleSheet == null) return;
+			if (mediatorstyleSheet == null)
+				return;
+
 			if (mediatorstyleSheet.Styles.Contains("Normal"))
-			{
-				GenerateCssForWsSpanWithNormalStyle(styleSheet, mediator, cache);
-			}
+				GenerateCssForWsSpanWithNormalStyle(styleSheet, mediator);
+
 			if (mediatorstyleSheet.Styles.Contains(DictionaryNormal))
-			{
 				GenerateDictionaryNormalParagraphCss(styleSheet, mediator);
-			}
-			if (mediatorstyleSheet.Styles.Contains(DictionaryMinor))
-			{
-				GenerateDictionaryMinorParagraphCss(styleSheet, mediator, model);
-			}
+
+			GenerateDictionaryMinorParagraphCss(styleSheet, mediator, model);
 		}
 
 		private static void MakeLinksLookLikePlainText(StyleSheet styleSheet)
@@ -89,7 +87,23 @@ namespace SIL.FieldWorks.XWorks
 			styleSheet.Rules.Add(rule);
 		}
 
-		private static void GenerateCssForWsSpanWithNormalStyle(StyleSheet styleSheet, Mediator mediator, FdoCache cache)
+		/// <summary>
+		/// Generate a CSS Shim needed to make bidirectional text render properly in browsers older than Firefox 47
+		/// See https://www.w3.org/International/articles/inline-bidi-markup/#cssshim
+		/// </summary>
+		private static void GenerateBidirectionalCssShim(StyleSheet styleSheet)
+		{
+			var rule = new StyleRule { Value = "*[dir='ltr'], *[dir='rtl']" };
+			rule.Declarations.Properties.AddRange(new []
+			{
+				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "isolate") },
+				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "-ms-isolate") },
+				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "-moz-isolate") }
+			});
+			styleSheet.Rules.Add(rule);
+		}
+
+		private static void GenerateCssForWsSpanWithNormalStyle(StyleSheet styleSheet, Mediator mediator)
 		{
 			// Generate the rules for the programmatic default style info (
 			var defaultStyleProps = GetOnlyCharacterStyle(GenerateCssStyleFromFwStyleSheet("Normal", DefaultStyle, mediator));
@@ -130,7 +144,7 @@ namespace SIL.FieldWorks.XWorks
 					minorRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictionaryMinorStyle));
 					styleSheet.Rules.Add(minorRule);
 					// Then generate the rules for all the writing system overrides
-					GenerateCssForWritingSystems(string.Format("div.{0} span", GetClassAttributeForConfig(minorEntryNode)), DictionaryMinor, styleSheet, mediator);
+					GenerateCssForWritingSystems(string.Format("div.{0} span", GetClassAttributeForConfig(minorEntryNode)), styleName, styleSheet, mediator);
 				}
 			}
 		}
@@ -183,7 +197,7 @@ namespace SIL.FieldWorks.XWorks
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			var rule = new StyleRule();
 			var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
-			var complexFormOpts = configNode.DictionaryNodeOptions as DictionaryNodeComplexFormOptions;
+			var listAndParaOpts = configNode.DictionaryNodeOptions as IParaOption;
 			if (senseOptions != null)
 			{
 				// Try to generate the css for the sense number before the baseSelection is updated because
@@ -191,9 +205,9 @@ namespace SIL.FieldWorks.XWorks
 				// children of collections. Also set display:block on span
 				GenerateCssForSenses(configNode, senseOptions, styleSheet, ref baseSelection, mediator);
 			}
-			else if (complexFormOpts != null)
+			else if (listAndParaOpts != null)
 			{
-				GenerateCssFromComplexFormOptions(configNode, complexFormOpts, styleSheet, ref baseSelection, cache, mediator);
+				GenerateCssFromListAndParaOptions(configNode, listAndParaOpts, styleSheet, ref baseSelection, cache, mediator);
 			}
 			else if (configNode.DictionaryNodeOptions is DictionaryNodeGroupingOptions
 					&& ((DictionaryNodeGroupingOptions)configNode.DictionaryNodeOptions).DisplayGroupInParagraph)
@@ -392,15 +406,15 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private static void GenerateCssFromComplexFormOptions(ConfigurableDictionaryNode configNode,
-			DictionaryNodeComplexFormOptions complexFormOpts, StyleSheet styleSheet, ref string baseSelection, FdoCache cache, Mediator mediator)
+		private static void GenerateCssFromListAndParaOptions(ConfigurableDictionaryNode configNode,
+			IParaOption listAndParaOpts, StyleSheet styleSheet, ref string baseSelection, FdoCache cache, Mediator mediator)
 		{
 			var blockDeclarations = string.IsNullOrEmpty(configNode.Style)
 				? new List<StyleDeclaration> { new StyleDeclaration() }
 				: GenerateCssStyleFromFwStyleSheet(configNode.Style, 0, configNode, mediator, true);
 			var selectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, cache, mediator);
 			var styleRules = selectors as StyleRule[] ?? selectors.ToArray();
-			if (complexFormOpts.DisplayEachComplexFormInAParagraph)
+			if (listAndParaOpts.DisplayEachInAParagraph)
 			{
 				for (var i = 0; i < blockDeclarations.Count; ++i)
 				{
@@ -583,6 +597,8 @@ namespace SIL.FieldWorks.XWorks
 			string parentSelector, ConfigurableDictionaryNode configNode,
 			out string baseSelection, FdoCache cache, Mediator mediator)
 		{
+			// TODO: REFACTOR this method to handle certain nodes more specifically. The options type should be used to branch into node specific code.
+			parentSelector = GetParentForFactoredReference(parentSelector, configNode);
 			var rules = new List<StyleRule>();
 			var fwStyles = FontHeightAdjuster.StyleSheetFromMediator(mediator);
 			// simpleSelector is used for nodes that use before and after.  Collection type nodes produce wrong
@@ -637,9 +653,10 @@ namespace SIL.FieldWorks.XWorks
 							betweenSelector = String.Format("{0}> {1}>{2}.sensecontent+{2}:before", parentSelector, collectionSelector, " span");
 						else if (configNode.FieldDescription == "PicturesOfSenses")
 							betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, " div");
-						else
+						// Skip between selector for factored references
+						else if (configNode.FieldDescription != "VariantFormEntryBackRefs" && configNode.FieldDescription != "VisibleVariantEntryRefs" &&
+							configNode.SubField != "VariantFormEntryBackRefs")
 							betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, " span");
-
 						betweenRule = new StyleRule(dec) { Value = betweenSelector };
 					}
 					rules.Add(betweenRule);
@@ -681,6 +698,23 @@ namespace SIL.FieldWorks.XWorks
 				rules.Add(afterRule);
 			}
 			return rules;
+		}
+
+		private static string GetParentForFactoredReference(string parentSelector, ConfigurableDictionaryNode configNode)
+		{
+			if (configNode.CSSClassNameOverride == "complexformtypes")
+				parentSelector = parentSelector.Replace(".visiblecomplexformbackrefs .visiblecomplexformbackref", ".visiblecomplexformbackrefs");
+			else if (configNode.CSSClassNameOverride == "variantentrytypes" && ((configNode.Parent.Label == "Variant Forms" ||
+				configNode.Parent.Label == "Variants of Sense") && !configNode.Parent.IsDuplicate))
+				parentSelector = parentSelector.Replace(".variantformentrybackrefs .variantformentrybackref", ".variantformentrybackrefs");
+			else if (configNode.CSSClassNameOverride == "variantentrytypes" && (configNode.Parent.Label == "Variant Forms" && configNode.Parent.IsDuplicate))
+				parentSelector = parentSelector.Replace(".variantformentrybackrefs_inflectional-variants .variantformentrybackref_inflectional-variants",
+				".variantformentrybackrefs_inflectional-variants");
+			else if (configNode.CSSClassNameOverride == "variantentrytypes" && configNode.Parent.Label == "Variant of")
+				parentSelector = parentSelector.Replace(".visiblevariantentryrefs .visiblevariantentryref", ".visiblevariantentryrefs");
+			else if (configNode.CSSClassNameOverride == "variantentrytypes" && configNode.Parent.Label == "Variants (of Entry)")
+				parentSelector = parentSelector.Replace(".entry_variantformentrybackrefs .entry_variantformentrybackref", ".entry_variantformentrybackrefs");
+			return parentSelector;
 		}
 
 		/// <summary>
@@ -1159,7 +1193,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var wsFontInfo = projectStyle.FontInfoForWs(wsId);
 			var defaultFontInfo = projectStyle.DefaultCharacterStyleInfo;
-			// set fontName to the wsFontInfo value if set, otherwise the defaultFontInfo if set, or null
+
+			// set fontName to the wsFontInfo publicly accessible InheritableStyleProp value if set, otherwise the
+			// defaultFontInfo if set, or null.
 			var fontName = wsFontInfo.m_fontName.ValueIsSet ? wsFontInfo.m_fontName.Value
 				: defaultFontInfo.FontName.ValueIsSet ? defaultFontInfo.FontName.Value : null;
 
@@ -1183,14 +1219,16 @@ namespace SIL.FieldWorks.XWorks
 				declaration.Add(fontFamily);
 			}
 
+			// For the following additions, wsFontInfo is publicly accessible InheritableStyleProp value if set (ie. m_fontSize, m_bold, etc.),
+			// checks for explicit overrides. Otherwise the defaultFontInfo if set (ie. FontSize, Bold, etc), or null.
 			AddInfoFromWsOrDefaultValue(wsFontInfo.m_fontSize, defaultFontInfo.FontSize, "font-size", UnitType.Point, declaration);
 			AddInfoFromWsOrDefaultValue(wsFontInfo.m_bold, defaultFontInfo.Bold, "font-weight", "bold", "normal", declaration);
 			AddInfoFromWsOrDefaultValue(wsFontInfo.m_italic, defaultFontInfo.Italic, "font-style", "italic", "normal", declaration);
 			AddInfoFromWsOrDefaultValue(wsFontInfo.m_fontColor, defaultFontInfo.FontColor, "color", declaration);
 			AddInfoFromWsOrDefaultValue(wsFontInfo.m_backColor, defaultFontInfo.BackColor, "background-color", declaration);
 			AddInfoFromWsOrDefaultValue(wsFontInfo.m_superSub, defaultFontInfo.SuperSub, declaration);
-			AddInfoForUnderline(wsFontInfo, defaultFontInfo, declaration);
 
+			AddInfoForUnderline(wsFontInfo, defaultFontInfo, declaration);
 		}
 
 		/// <summary>
@@ -1300,6 +1338,9 @@ namespace SIL.FieldWorks.XWorks
 					termList.AddTerm(new PrimitiveTerm(UnitType.Ident, "solid"));
 					fontProp.Term = termList;
 					declaration.Add(fontProp);
+
+					// The wsFontInfo is publicly accessible InheritableStyleProp value if set, checks for explicit overrides.
+					// Otherwise the defaultFontInfo if set, or null.
 					AddInfoFromWsOrDefaultValue(wsFont.m_underlineColor, defaultFont.UnderlineColor, "border-bottom-color", declaration);
 					goto case FwUnderlineType.kuntSingle; //fall through to single
 				}
@@ -1308,6 +1349,9 @@ namespace SIL.FieldWorks.XWorks
 					var fontProp = new Property("text-decoration");
 					fontProp.Term = new PrimitiveTerm(UnitType.Ident, "underline");
 					declaration.Add(fontProp);
+
+					// The wsFontInfo is publicly accessible InheritableStyleProp value if set, checks for explicit overrides.
+					// Otherwise the defaultFontInfo if set, or null.
 					AddInfoFromWsOrDefaultValue(wsFont.m_underlineColor, defaultFont.UnderlineColor, "text-decoration-color", declaration);
 					break;
 				}
@@ -1316,6 +1360,9 @@ namespace SIL.FieldWorks.XWorks
 					var fontProp = new Property("text-decoration");
 					fontProp.Term = new PrimitiveTerm(UnitType.Ident, "line-through");
 					declaration.Add(fontProp);
+
+					// The wsFontInfo is publicly accessible InheritableStyleProp value if set, checks for explicit overrides.
+					// Otherwise the defaultFontInfo if set, or null.
 					AddInfoFromWsOrDefaultValue(wsFont.m_underlineColor, defaultFont.UnderlineColor, "text-decoration-color", declaration);
 					break;
 				}
@@ -1331,6 +1378,9 @@ namespace SIL.FieldWorks.XWorks
 																  underlineType == FwUnderlineType.kuntDashed ? "dashed" : "dotted"));
 					fontProp.Term = termList;
 					declaration.Add(fontProp);
+
+					// The wsFontInfo is publicly accessible InheritableStyleProp value if set, checks for explicit overrides.
+					// Otherwise the defaultFontInfo if set, or null.
 					AddInfoFromWsOrDefaultValue(wsFont.m_underlineColor, defaultFont.UnderlineColor, "border-bottom-color", declaration);
 					break;
 				}

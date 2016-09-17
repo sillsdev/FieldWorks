@@ -5,8 +5,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+#if !__MonoCS__
 using System.Windows.Automation;
 using System.Windows.Automation.Provider;
+#endif
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -49,9 +51,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		protected BaseFragmentProvider(IChildControlNavigation parent, SimpleRootSite site)
 		{
 			m_parent = parent;
+#if !__MonoCS__
 			if (parent != null)
 				m_rootProvider = parent.FragmentRoot;
 			else
+#endif
 				m_rootProvider = this as IRawElementProviderFragmentRoot;
 			m_site = site;
 		}
@@ -70,6 +74,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_childControlFactory = childControlFactory(this as TFragmentProvider);
 		}
 
+#if !__MonoCS__
 		/// <summary>
 		/// Gets a base provider for this element.
 		/// </summary>
@@ -117,6 +122,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get { return m_rootProvider; }
 		}
+#endif
 
 		/// <summary>
 		/// Gets or sets a value indicating whether the child controls have been computed.
@@ -159,6 +165,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (!ComputedChildElements)
 				DetectChildElements();
 
+#if !__MonoCS__
 			switch (direction)
 			{
 				case NavigateDirection.Parent: return m_parent;
@@ -167,6 +174,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				case NavigateDirection.NextSibling: return GetNextSibling();
 				case NavigateDirection.PreviousSibling: return GetPreviousSibling();
 			}
+#endif
 			return null;
 		}
 
@@ -256,11 +264,13 @@ namespace SIL.FieldWorks.Common.RootSites
 				return value;
 			}
 
+#if !__MonoCS__
 			// Switching construct to go get the right property from a virtual method.
 			if (propertyId == AutomationElementIdentifiers.NameProperty.Id)
 			{
 				return GetName();
 			}
+#endif
 			// Add further cases here to support more properties.
 			// Do note that it may be more efficient to handle static properties
 			// by adding them to the static props list instead of using methods.
@@ -285,11 +295,13 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </returns>
 		public virtual int[] GetRuntimeId()
 		{
+#if !__MonoCS__
 			if (m_parent != null)
 			{
 				int index = m_parent.IndexOf(this);
 				return new[] {AutomationInteropProvider.AppendRuntimeId, index};
 			}
+#endif
 			return new int[0];
 		}
 
@@ -301,6 +313,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <returns></returns>
 		public IRawElementProviderFragment Navigate(IRawElementProviderFragment child, NavigateDirection direction)
 		{
+#if !__MonoCS__
 			int index = IndexOf(child);
 
 			switch (direction)
@@ -314,6 +327,7 @@ namespace SIL.FieldWorks.Common.RootSites
 						return m_embeddedControls[index + 1];
 					break;
 			}
+#endif
 
 			return null;
 		}

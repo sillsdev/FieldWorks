@@ -520,12 +520,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			return newEntry;
 		}
 		/// <summary>
-		/// Create a new entry with the given guid owned by the given owner.
+		/// Create a new entry with the given guid.
 		/// </summary>
-		public ILexEntry Create(Guid guid, ILexDb owner)
+		public ILexEntry Create(Guid guid, ILexDb ignored)
 		{
-			if (owner == null) throw new ArgumentNullException("owner");
-
 			ILexEntry le;
 			if (guid == Guid.Empty)
 			{

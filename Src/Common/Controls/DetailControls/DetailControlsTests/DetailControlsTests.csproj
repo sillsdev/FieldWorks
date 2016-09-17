@@ -204,6 +204,9 @@
     </EmbeddedResource>
     <Compile Include="PhoneEnvReferenceViewTests.cs" />
     <Compile Include="SliceTests.cs" />
+    <Compile Include="AtomicReferenceLauncherTests.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="VectorReferenceLauncherTests.cs">
       <SubType>UserControl</SubType>
     </Compile>

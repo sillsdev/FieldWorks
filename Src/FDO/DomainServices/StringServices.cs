@@ -23,6 +23,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	/// </summary>
 	public static class StringServices
 	{
+		// Mono is slow with multiple string calls to the resources,
+		// therefore we need a cached member variable.
+		private static string m_CacheQuestions;
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the empty name of the file.
@@ -366,7 +370,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 			// Give up.
 			tsb.AppendTsString(entry.Cache.TsStrFactory.MakeString(
-				Strings.ksQuestions,
+				DefaultHomographString(),
 				entry.Cache.DefaultUserWs));
 		}
 
@@ -430,7 +434,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// </summary>
 		public static string DefaultHomographString()
 		{
-			return Strings.ksQuestions;
+			if (m_CacheQuestions == null)
+				m_CacheQuestions = Strings.ksQuestions;
+			return m_CacheQuestions;
 		}
 
 		/// <summary>

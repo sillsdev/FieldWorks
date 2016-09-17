@@ -462,7 +462,7 @@
     <value>Choose Subentries to display in Root-based views</value>
   </data>
   <data name="ksChooseVisibleComplexForms" xml:space="preserve">
-    <value>Choose Complex Forms to display in Stem-based views</value>
+    <value>Choose Complex Forms to display in Lexeme-based views</value>
   </data>
   <data name="ksAddAComplexForm" xml:space="preserve">
     <value>Add a Complex Form...</value>

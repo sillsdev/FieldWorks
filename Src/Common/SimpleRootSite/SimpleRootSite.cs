@@ -15,7 +15,6 @@ using System.Drawing.Printing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Windows.Automation.Provider;
 using Accessibility;
 using Palaso.UI.WindowsForms.Keyboarding.Interfaces;
 using Palaso.WritingSystems;
@@ -24,6 +23,9 @@ using Palaso.UI.WindowsForms.Keyboarding.Types;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
+#if !__MonoCS__
+using System.Windows.Automation.Provider;
+#endif
 using XCore;
 
 namespace SIL.FieldWorks.Common.RootSites
@@ -472,8 +474,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_messageSequencer = new MessageSequencer(this);
 			m_graphicsManager = CreateGraphicsManager();
 			m_orientationManager = CreateOrientationManager();
+#if !__MonoCS__
 			if (UIAutomationServerProviderFactory == null)
 				UIAutomationServerProviderFactory = () => new SimpleRootSiteDataProvider(this);
+#endif
 			SubscribeToRootSiteEventHandlerEvents();
 
 		}
@@ -6204,6 +6208,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			base.WndProc(ref msg);
 		}
 
+#if !__MonoCS__
 		#region UIAutomationServerProvider
 
 		/// <summary>
@@ -6214,6 +6219,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{ get; set; }
 
 		#endregion
+#endif
 
 		/// <summary>
 		/// Required by interface, but not used, because we don't user the MessageSequencer

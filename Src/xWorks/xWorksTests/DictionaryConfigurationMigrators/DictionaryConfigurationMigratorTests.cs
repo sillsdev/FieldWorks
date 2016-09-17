@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
 			Directory.CreateDirectory(configSettingsDir);
 			File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{
-				@"<layoutType label='Stem-based (complex forms as main entries)' layout='publishStem'><configure class='LexEntry' label='Main Entry' layout='publishStemEntry' />",
+				@"<layoutType label='Lexeme-based (complex forms as main entries)' layout='publishStem'><configure class='LexEntry' label='Main Entry' layout='publishStemEntry' />",
 				@"<configure class='LexEntry' label='Minor Entry' layout='publishStemMinorEntry' hideConfig='true' /></layoutType>'"});
 			var migrator = new DictionaryConfigurationMigrator(m_mediator);
 			migrator.MigrateOldConfigurationsIfNeeded(); // SUT
@@ -85,7 +85,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
 			Directory.CreateDirectory(configSettingsDir);
 			File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{
-				@"<layoutType label='Stem-based (complex forms as main entries)' layout='publishStem'><configure class='LexEntry' label='Main Entry' layout='publishStemEntry' />",
+				@"<layoutType label='Lexeme-based (complex forms as main entries)' layout='publishStem'><configure class='LexEntry' label='Main Entry' layout='publishStemEntry' />",
 				@"<configure class='LexEntry' label='Minor Entry' layout='publishStemMinorEntry' hideConfig='true' /></layoutType>'"});
 			var migrator = new DictionaryConfigurationMigrator(m_mediator);
 			Assert.DoesNotThrow(() => migrator.MigrateOldConfigurationsIfNeeded(), "ArgumentException indicates localized labels."); // SUT
@@ -146,6 +146,54 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.AreEqual("LexEntry > Senses > SharedSenses > Subsenses", DictionaryConfigurationMigrator.BuildPathStringFromNode(subsenses));
 			Assert.AreEqual("LexEntry > Senses > Subsenses", DictionaryConfigurationMigrator.BuildPathStringFromNode(subsenses, false));
 			Assert.AreEqual("LexEntry", DictionaryConfigurationMigrator.BuildPathStringFromNode(mainEntry));
+		}
+
+		[Test]
+		public void StoredDefaultsUpdatedFromCurrentDefaults()
+		{
+			var subsenses = new ConfigurableDictionaryNode { Label = "Subsenses", FieldDescription = "SensesOS" };
+			var inBoth = new ConfigurableDictionaryNode
+			{
+				Label = "In Both",
+				FieldDescription = "Both"
+			};
+			var inOld = new ConfigurableDictionaryNode
+			{
+				Label = "inOld",
+				FieldDescription = "OnlyOld",
+				Children = new List<ConfigurableDictionaryNode> { subsenses }
+			};
+			var senses = new ConfigurableDictionaryNode { Label = "Senses", FieldDescription = "SensesOS",Children = new List<ConfigurableDictionaryNode> { inOld, inBoth }};
+			var mainEntry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+			var oldModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntry } };
+			CssGeneratorTests.PopulateFieldsForTesting(oldModel); // PopulateFieldsForTesting populates each node's Label with its FieldDescription sets all isEnabled to true
+			var newMain = mainEntry.DeepCloneUnderSameParent();
+			newMain.Children[0].Before = "{";
+			newMain.Children[0].Between = ",";
+			newMain.Children[0].After = "}";
+			newMain.Children[0].Style = "Stylish";
+			newMain.Children[0].IsEnabled = false;
+			newMain.Children[0].Children.RemoveAt(0); // Remove inOld
+			var newModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { newMain } };
+
+			// Verify valid starting point
+			Assert.AreNotEqual("{", oldModel.Parts[0].Children[0].Before, "Invalid preconditions");
+			Assert.AreNotEqual("}", oldModel.Parts[0].Children[0].After, "Invalid preconditions");
+			Assert.AreNotEqual(",", oldModel.Parts[0].Children[0].Between, "Invalid preconditions");
+			Assert.AreNotEqual("Stylish", oldModel.Parts[0].Children[0].Style, "Invalid preconditions");
+			Assert.True(oldModel.Parts[0].Children[0].IsEnabled, "Invalid preconditions");
+
+			DictionaryConfigurationMigrator.LoadConfigWithCurrentDefaults(oldModel, newModel); // SUT
+			Assert.AreEqual(2, oldModel.Parts[0].Children[0].Children.Count, "Old non-matching part was not retained");
+			Assert.AreEqual("{", oldModel.Parts[0].Children[0].Before, "Before not copied from new defaults");
+			Assert.AreEqual("}", oldModel.Parts[0].Children[0].After, "After not copied from new defaults");
+			Assert.AreEqual(",", oldModel.Parts[0].Children[0].Between, "Between not copied from new defaults");
+			Assert.AreEqual("Stylish", oldModel.Parts[0].Children[0].Style, "Style not copied from new defaults");
+			Assert.False(oldModel.Parts[0].Children[0].IsEnabled, "IsEnabled value not copied from new defaults");
 		}
 	}
 }

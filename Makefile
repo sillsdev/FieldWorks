@@ -225,6 +225,7 @@ install-tree: fieldworks-flex.1.gz fieldworks-te.1.gz unicodechareditor.1.gz
 	install -d $(DESTDIR)/usr/bin
 	install -d $(DESTDIR)/usr/lib/fieldworks
 	install -d $(DESTDIR)/usr/lib/fieldworks/icu-bin
+	install -d $(DESTDIR)/usr/lib/fieldworks/Firefox
 	install -d $(DESTDIR)/usr/share/fieldworks
 	install -d $(DESTDIR)/usr/share/man/man1
 	install -d $(DESTDIR)/var/lib/fieldworks
@@ -232,6 +233,7 @@ install-tree: fieldworks-flex.1.gz fieldworks-te.1.gz unicodechareditor.1.gz
 	install -m 644 DistFiles/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 DistFiles/Linux/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 $(OUT_DIR)/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
+	install -m 644 $(OUT_DIR)/Firefox/*.* $(DESTDIR)/usr/lib/fieldworks/Firefox
 	install -m 644 $(OUT_DIR)/{*.compmap,components.map} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 Lib/src/icu/install$(ARCH)/lib/lib* $(DESTDIR)/usr/lib/fieldworks
 	# Create temporary symlinks for shared Icu libs on Dictionary branch
@@ -278,8 +280,12 @@ install-tree: fieldworks-flex.1.gz fieldworks-te.1.gz unicodechareditor.1.gz
 install-menuentries:
 	# Add to Applications menu
 	install -d $(DESTDIR)/usr/share/pixmaps
+	install -d $(DESTDIR)/usr/share/icons/hicolor/64x64/apps
+	install -d $(DESTDIR)/usr/share/icons/hicolor/128x128/apps
 	install -d $(DESTDIR)/usr/share/applications
 	install -m 644 Src/LexText/LexTextExe/LT.png $(DESTDIR)/usr/share/pixmaps/fieldworks-flex.png
+	install -m 644 Src/LexText/LexTextExe/LT64.png $(DESTDIR)/usr/share/icons/hicolor/64x64/apps/fieldworks-flex.png
+	install -m 644 Src/LexText/LexTextExe/LT128.png $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/fieldworks-flex.png
 	install -m 644 Src/TeExe/Res/TE.png $(DESTDIR)/usr/share/pixmaps/fieldworks-te.png
 	desktop-file-install --dir $(DESTDIR)/usr/share/applications Lib/linux/fieldworks-te.desktop
 	desktop-file-install --dir $(DESTDIR)/usr/share/applications Lib/linux/fieldworks-flex.desktop
@@ -294,7 +300,10 @@ uninstall: uninstall-menuentries
 	rm -rf $(DESTDIR)/usr/bin/{te,flex} $(DESTDIR)/usr/lib/fieldworks $(DESTDIR)/usr/share/fieldworks
 
 uninstall-menuentries:
-	rm -f $(DESTDIR)/usr/share/pixmaps/fieldworks-{te,flex}.png
+	rm -f $(DESTDIR)/usr/share/pixmaps/fieldworks-te.png
+	rm -f $(DESTDIR)/usr/share/pixmaps/fieldworks-flex.png
+	rm -f $(DESTDIR)/usr/share/icons/hicolor/64x64/apps/fieldworks-flex.png
+	rm -f $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/fieldworks-flex.png
 	rm -f $(DESTDIR)/usr/share/applications/fieldworks-{te,flex}.desktop
 
 installable-COM-all:

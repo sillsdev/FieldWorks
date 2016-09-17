@@ -6985,6 +6985,7 @@ namespace SIL.FieldWorks.Common.Controls
 							var newForms = new Dictionary<IMoForm, ILexEntry>();
 							int interval = Math.Min(80, Math.Max(itemsToChange.Count()/50, 1));
 							int i = 0;
+							var rgmsaOld = new List<IMoMorphSynAnalysis>();
 							foreach (int hvoLexEntry in itemsToChange)
 							{
 								// Guess we're 80% done when through all but deleting leftover objects and moving
@@ -7018,6 +7019,13 @@ namespace SIL.FieldWorks.Common.Controls
 									var entry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(hvoLexEntry);
 									var affix = m_cache.ServiceLocator.GetInstance<IMoAffixAllomorphRepository>().GetObject(hvoLexemeForm);
 									var stem = stemAlloFactory.Create();
+									rgmsaOld.Clear();
+									foreach (var msa in entry.MorphoSyntaxAnalysesOC)
+									{
+										if (!(msa is IMoStemMsa))
+											rgmsaOld.Add(msa);
+									}
+									entry.ReplaceObsoleteMsas(rgmsaOld);
 									SwapFormValues(entry, affix, stem, hvoSelMorphType, idsToDel);
 									foreach (var env in affix.PhoneEnvRC)
 										stem.PhoneEnvRC.Add(env);
@@ -7029,6 +7037,13 @@ namespace SIL.FieldWorks.Common.Controls
 									var entry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(hvoLexEntry);
 									var stem = m_cache.ServiceLocator.GetInstance<IMoStemAllomorphRepository>().GetObject(hvoLexemeForm);
 									var affix = afxAlloFactory.Create();
+									rgmsaOld.Clear();
+									foreach (var msa in entry.MorphoSyntaxAnalysesOC)
+									{
+										if (msa is IMoStemMsa)
+											rgmsaOld.Add(msa);
+									}
+									entry.ReplaceObsoleteMsas(rgmsaOld);
 									SwapFormValues(entry, stem, affix, hvoSelMorphType, idsToDel);
 									foreach (var env in stem.PhoneEnvRC)
 										affix.PhoneEnvRC.Add(env);

@@ -45,9 +45,18 @@
 	<xs:attribute type="writingSystemType" name="writingSystemType" use="required"/>
 	<xs:attribute type="xs:boolean" name="displayWSAbreviation" use="optional"/>
 </xs:complexType>
+	<xs:complexType name="WritingSystemAndParaOptionsType">
+	<xs:sequence>
+		<xs:element name="Option" type="OptionListItemType" maxOccurs="unbounded" minOccurs="0"/>
+	</xs:sequence>
+	<xs:attribute type="writingSystemType" name="writingSystemType" use="required"/>
+	<xs:attribute type="xs:boolean" name="displayWSAbreviation" use="optional"/>
+	<xs:attribute type="xs:boolean" name="displayInParagraph" use="optional"/>
+</xs:complexType>
 <xs:complexType name="ConfigurationItemType">
 	<xs:sequence>
 		<xs:element type="WritingSystemOptionsType" name="WritingSystemOptions" minOccurs="0"/>
+		<xs:element type="WritingSystemAndParaOptionsType" name="WritingSystemAndParaOptions" minOccurs="0"/>
 		<xs:element name="ListTypeOptions" minOccurs="0">
 			<xs:complexType>
 				<xs:sequence>
@@ -79,6 +88,7 @@
 				<xs:attribute type="xs:boolean" name="stackPictures" use="required"/>
 			</xs:complexType>
 		</xs:element>
+		<!-- Deprecated. Kept only for migration purposes -->
 		<xs:element name="ReferringSenseOptions" minOccurs="0">
 			<xs:complexType>
 			   <xs:sequence>

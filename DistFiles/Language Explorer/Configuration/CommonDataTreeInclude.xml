@@ -85,6 +85,9 @@
 	<menu id="PaneBar-ShowHiddenFields-charttempEdit" label="">
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-charttempEdit" defaultVisible="true" settingsGroup="local"/>
 	</menu>
+	<menu id="PaneBar-ShowHiddenFields-dialectsListEdit" label="">
+		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-dialectsListEdit" defaultVisible="true" settingsGroup="local"/>
+	</menu>
 	<menu id="PaneBar-ShowHiddenFields-educationEdit" label="">
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-educationEdit" defaultVisible="true" settingsGroup="local"/>
 	</menu>

@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.XWorks
 		public List<ConfigurableDictionaryNode> SharedItems { get; set; }
 
 		/// <summary>
-		/// Name of this dictionary configuration. eg "Stem-based"
+		/// Name of this dictionary configuration. eg "Lexeme-based"
 		/// </summary>
 		[XmlAttribute(AttributeName = "name")]
 		public string Label { get; set; }
@@ -191,16 +191,17 @@ namespace SIL.FieldWorks.XWorks
 				property.SetValue(clone, originalValue, null);
 			}
 
-			// Deep-clone Parts
-			if (Parts != null)
-			{
-				clone.Parts = Parts.Select(node => node.DeepCloneUnderSameParent()).ToList();
-			}
-
 			// Deep-clone SharedItems
 			if (SharedItems != null)
 			{
-				clone.SharedItems = SharedItems.Select(node => node.DeepCloneUnderSameParent()).ToList();
+				clone.SharedItems = SharedItems.Select(node => node.DeepCloneUnderParent(null, true)).ToList();
+			}
+
+			// Deep-clone Parts
+			if (Parts != null)
+			{
+				clone.Parts = Parts.Select(node => node.DeepCloneUnderParent(null, true)).ToList();
+				SpecifyParentsAndReferences(clone.Parts, clone.SharedItems);
 			}
 
 			// Clone Publications

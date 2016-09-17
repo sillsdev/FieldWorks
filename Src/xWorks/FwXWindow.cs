@@ -1193,7 +1193,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="display">Display properties</param>
 		/// <returns>true (handled)</returns>
 		/// ------------------------------------------------------------------------------------
-		public bool OnDisplayPublishToWebonary(object command, ref UIItemDisplayProperties display)
+		public bool OnDisplayUploadToWebonary(object command, ref UIItemDisplayProperties display)
 		{
 			display.Enabled = true;
 			return true;
@@ -1206,14 +1206,14 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="command">Not used</param>
 		/// <returns>true (handled)</returns>
 		/// ------------------------------------------------------------------------------------
-		public bool OnPublishToWebonary(object command)
+		public bool OnUploadToWebonary(object command)
 		{
 			CheckDisposed();
-			ShowPublishToWebonaryDialog(m_mediator);
+			ShowUploadToWebonaryDialog(m_mediator);
 			return true;
 		}
 
-		internal static void ShowPublishToWebonaryDialog(Mediator mediator)
+		internal static void ShowUploadToWebonaryDialog(Mediator mediator)
 		{
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 
@@ -1228,14 +1228,14 @@ namespace SIL.FieldWorks.XWorks
 			var reversals = DictionaryConfigurationController.GetDictionaryConfigurationLabels(cache, defaultConfigDir, projectConfigDir);
 
 			// show dialog
-			var model = new PublishToWebonaryModel(mediator)
+			var model = new UploadToWebonaryModel(mediator)
 			{
 				Reversals = reversals,
 				Configurations = configurations,
 				Publications = publications
 			};
-			using (var controller = new PublishToWebonaryController(cache, mediator))
-			using (var dialog = new PublishToWebonaryDlg(controller, model, mediator))
+			using (var controller = new UploadToWebonaryController(cache, mediator))
+			using (var dialog = new UploadToWebonaryDlg(controller, model, mediator))
 			{
 				dialog.ShowDialog();
 			}

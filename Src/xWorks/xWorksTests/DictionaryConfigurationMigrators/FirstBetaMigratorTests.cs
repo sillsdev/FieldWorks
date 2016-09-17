@@ -306,7 +306,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				}
 			};
 			var stemDefault = m_migrator.LoadBetaDefaultForAlphaConfig(stemModel); // SUT
-			Assert.That(stemDefault.Label, Is.StringContaining("Stem"));
+			Assert.That(stemDefault.Label, Is.StringContaining("Lexeme"));
 		}
 
 		[Test]
@@ -398,6 +398,70 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		}
 
 		[Test]
+		public void MigrateFrom83Alpha_SenseVariantListTypeOptionsAreMigrated()
+		{
+			var alphaVariantFormTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				CSSClassNameOverride = "variantentrytypes",
+				IsEnabled = true
+			};
+			var alphaVariantFormsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs",
+				Children = new List<ConfigurableDictionaryNode> { alphaVariantFormTypeNode },
+				IsEnabled = true
+			};
+			var alphaSensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Children = new List<ConfigurableDictionaryNode> { alphaVariantFormsNode }
+			};
+			var alphaMainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { alphaSensesNode }
+			};
+			var alphaModel = new DictionaryConfigurationModel { Version = FirstAlphaMigrator.VersionAlpha3, Parts = new List<ConfigurableDictionaryNode> { alphaMainEntryNode } };
+
+			var variantFormTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				CSSClassNameOverride = "variantentrytypes",
+				IsEnabled = true
+			};
+			var variantFormsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, DictionaryNodeListOptions.ListIds.Variant),
+				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNode },
+				IsEnabled = true
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Children = new List<ConfigurableDictionaryNode> { variantFormsNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+
+			var defaultModel = new DictionaryConfigurationModel { Version = DictionaryConfigurationMigrator.VersionCurrent, Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+
+			CssGeneratorTests.PopulateFieldsForTesting(alphaModel);
+			CssGeneratorTests.PopulateFieldsForTesting(defaultModel);
+			// SUT
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModel);
+
+			var migratedSenseVariantNode = alphaModel.Parts[0].Children[0].Children[0];
+			Assert.True(migratedSenseVariantNode.DictionaryNodeOptions != null, "ListTypeOptions not migrated");
+		}
+
+		[Test]
 		public void MigrateFromConfig83AlphaToBeta10_UpdatesEtymologyCluster()
 		{
 			var formNode = new ConfigurableDictionaryNode
@@ -467,7 +531,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.True(configNode.IsEnabled, "Source Language node should be enabled by default");
 			Assert.That(configNode.CSSClassNameOverride, Is.EqualTo("languages"), "Should have changed the css override");
 			// Just checking that some 'contexts' have been filled in by the new default config.
-			Assert.That(configNode.Between, Is.EqualTo(" "));
+			Assert.That(configNode.Between, Is.EqualTo(", "));
 			Assert.That(configNode.After, Is.EqualTo(" "));
 			Assert.That(configNode.Before, Is.Null);
 			var childNodes = configNode.Children;
@@ -481,7 +545,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.False(nameNode.IsEnabled, "Name node should not be enabled by default");
 			TestForWritingSystemOptionsType(nameNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
 			var langNotesNode = etymChildren.Find(node => node.FieldDescription == "LanguageNotes");
-			Assert.That(langNotesNode.IsEnabled, Is.False, "LanguageNotes node should not be enabled by default");
+			Assert.That(langNotesNode.IsEnabled, Is.True, "LanguageNotes node should be enabled by default");
 			TestForWritingSystemOptionsType(langNotesNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
 			configNode = etymChildren.Find(node => node.Label == "Source Form");
 			Assert.IsNotNull(configNode, "Should have changed the name of the old Etymological Form node");
@@ -503,7 +567,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			configNode = etymChildren.Find(node => node.Label == "Bibliographic Source");
 			Assert.IsNotNull(configNode, "Should have added Bibliographic Source node");
 			Assert.That(configNode.FieldDescription, Is.EqualTo("Bibliography"));
-			Assert.That(configNode.IsEnabled, Is.True, "Bibliography node should be enabled");
+			Assert.That(configNode.IsEnabled, Is.False, "Bibliography node should not be enabled");
 			TestForWritingSystemOptionsType(configNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
 		}
 

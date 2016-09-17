@@ -360,9 +360,9 @@ namespace SIL.FieldWorks.Resources {
         /// <summary>
         ///   Looks up a localized string similar to User_Interface/Menus/File/Publish_to_Webonary.htm.
         /// </summary>
-        internal static string khtpPublishToWebonary {
+        internal static string khtpUploadToWebonary {
             get {
-                return ResourceManager.GetString("khtpPublishToWebonary", resourceCulture);
+                return ResourceManager.GetString("khtpUploadToWebonary", resourceCulture);
             }
         }
         

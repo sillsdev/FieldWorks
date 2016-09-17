@@ -172,9 +172,10 @@ namespace SIL.FieldWorks.XWorks
 		/// Type specific configuration options for this configurable node;
 		/// </summary>
 		[XmlElement("WritingSystemOptions", typeof(DictionaryNodeWritingSystemOptions))]
+		[XmlElement("WritingSystemAndParaOptions", typeof(DictionaryNodeWritingSystemAndParaOptions))]
 		[XmlElement("ReferringSenseOptions", typeof(DictionaryNodeReferringSenseOptions))]
 		[XmlElement("ListTypeOptions", typeof(DictionaryNodeListOptions))]
-		[XmlElement("ComplexFormOptions", typeof(DictionaryNodeComplexFormOptions))]
+		[XmlElement("ComplexFormOptions", typeof(DictionaryNodeListAndParaOptions))]
 		[XmlElement("SenseOptions", typeof(DictionaryNodeSenseOptions))]
 		[XmlElement("PictureOptions", typeof(DictionaryNodePictureOptions))]
 		[XmlElement("GroupingOptions", typeof(DictionaryNodeGroupingOptions))]
@@ -270,7 +271,10 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Clone this node. Point to the same Parent object. Deep-clone Children and DictionaryNodeOptions.
 		/// </summary>
-		/// <remarks>Grouping node children are not cloned</remarks>
+		/// <remarks>
+		/// Grouping node children are cloned only in recursive calls.
+		/// Referenced children are cloned only if this is NOT a recursive call.
+		/// </remarks>
 		internal ConfigurableDictionaryNode DeepCloneUnderSameParent()
 		{
 			return DeepCloneUnderParent(Parent);
@@ -279,8 +283,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Clone this node, point to the given Parent. Deep-clone Children and DictionaryNodeOptions
 		/// </summary>
-		/// <remarks>Grouping node children are not cloned</remarks>
-		internal ConfigurableDictionaryNode DeepCloneUnderParent(ConfigurableDictionaryNode parent)
+		/// <remarks>
+		/// Grouping node children are cloned only if this is a recursive call.
+		/// Referenced children are cloned only if this is NOT a recursive call.
+		/// </remarks>
+		internal ConfigurableDictionaryNode DeepCloneUnderParent(ConfigurableDictionaryNode parent, bool isRecursiveCall = false)
 		{
 			var clone = new ConfigurableDictionaryNode();
 
@@ -294,29 +301,30 @@ namespace SIL.FieldWorks.XWorks
 				var originalValue = property.GetValue(this, null);
 				property.SetValue(clone, originalValue, null);
 			}
+			clone.ReferencedNode = ReferencedNode; // GetProperties() doesn't return internal properties; copy here
 			clone.Parent = parent;
 
-			// Deep-clone Children, but not of groups.
+			// Deep-clone Children
 			if (Children != null)
 			{
-				if (!(DictionaryNodeOptions is DictionaryNodeGroupingOptions))
+				if (isRecursiveCall || !(DictionaryNodeOptions is DictionaryNodeGroupingOptions))
 				{
-					var clonedChildren = new List<ConfigurableDictionaryNode>();
-					foreach (var child in Children)
-					{
-						var clonedChild = child.DeepCloneUnderSameParent();
-						// Cloned children should point to their newly-cloned parent
-						clonedChild.Parent = clone;
-						clonedChildren.Add(clonedChild);
-					}
-					clone.Children = clonedChildren;
+					// Cloned children should point to their newly-cloned parent
+					clone.Children = Children.Select(child => child.DeepCloneUnderParent(clone, true)).ToList();
 				}
 				else
 				{
 					// Cloning children of a group creates problems because the children can be moved out of the group.
-					// Also the only expected use of cloning a group is to get a new group to put different children under
+					// Also the only expected use of cloning a group is to get a new group to group different children.
 					clone.Children = null;
 				}
+			}
+			else if (!isRecursiveCall && ReferencedOrDirectChildren != null)
+			{
+				// Allow users to configure copies of, e.g., Subentries separately
+				clone.ReferencedNode = null;
+				clone.ReferenceItem = null;
+				clone.Children = ReferencedOrDirectChildren.Select(child => child.DeepCloneUnderParent(clone, true)).ToList();
 			}
 
 			// Deep-clone DictionaryNodeOptions

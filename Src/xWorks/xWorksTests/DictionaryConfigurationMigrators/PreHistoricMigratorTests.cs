@@ -183,6 +183,97 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 		///<summary/>
 		[Test]
+		public void ConvertLayoutTreeNodeToConfigNode_SubsensesGetsConvertedSenseChildren()
+		{
+			var oldExampleSentenceNode = new ConfigurableDictionaryNode
+			{
+				Label = "Example Sentences"
+			};
+
+			var oldAfterSubSensesNode = new ConfigurableDictionaryNode
+			{
+				Label = "After Subsenses"
+			};
+
+			var oldExampleNode = new ConfigurableDictionaryNode
+			{
+				Label = "Examples",
+				Children = new List<ConfigurableDictionaryNode> { oldExampleSentenceNode }
+			};
+
+			var oldSubsensesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Subsenses"
+			};
+
+			var oldSensesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Senses",
+				Children = new List<ConfigurableDictionaryNode> { oldExampleNode, oldSubsensesNode, oldAfterSubSensesNode }
+			};
+			oldAfterSubSensesNode.Parent = oldSensesNode;
+			oldExampleNode.Parent = oldSensesNode;
+			oldSubsensesNode.Parent = oldSensesNode;
+			var oldMainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { oldSensesNode }
+			};
+			oldSensesNode.Parent = oldMainEntryNode;
+
+			var exampleSentenceNode = new ConfigurableDictionaryNode
+			{
+				Label = "Example Sentences",
+				FieldDescription = "ExampleSentences"
+			};
+
+			var exampleNode = new ConfigurableDictionaryNode
+			{
+				Label = "Examples",
+				FieldDescription = "ExamplesOS",
+				Children = new List<ConfigurableDictionaryNode> { exampleSentenceNode }
+			};
+
+			var newAfterSubSensesNode = new ConfigurableDictionaryNode
+			{
+				Label = "After Subsenses",
+				FieldDescription = "PostSubsenses"
+			};
+
+			var newSubsensesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Subsenses",
+				FieldDescription = "SensesOS",
+				Children = new List<ConfigurableDictionaryNode> { exampleNode }
+			};
+			newSubsensesNode.Children.Add(newAfterSubSensesNode.DeepCloneUnderParent(newSubsensesNode));
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Senses",
+				FieldDescription = "SensesOS",
+				Children = new List<ConfigurableDictionaryNode> { exampleNode, newSubsensesNode, newAfterSubSensesNode }
+			};
+			newSubsensesNode.Parent = sensesNode;
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+			var model = new DictionaryConfigurationModel { Version = PreHistoricMigrator.VersionPre83, Parts = new List<ConfigurableDictionaryNode> { oldMainEntryNode } };
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			using (m_migrator.SetTestLogger = new SimpleLogger())
+			{
+				m_migrator.CopyDefaultsIntoConfigNode(model, oldSubsensesNode, newSubsensesNode);
+			}
+			Assert.AreEqual(oldSubsensesNode.Children[0].Children[0].FieldDescription, "ExampleSentences", "Defaults not copied in for fields before Subsenses");
+			Assert.AreEqual(oldSubsensesNode.Children[2].FieldDescription, "PostSubsenses", "Defaults not copied into fields following Subsenses");
+		}
+
+		///<summary/>
+		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_StyleWorks()
 		{
 			ConfigurableDictionaryNode configNode = null;
@@ -225,7 +316,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		}
 
 		/// <summary>
-		/// In Stem-Based dictionaries, Complex Forms are displayed as Main Entries. Ensure that the converted configuration for
+		/// In Lexeme-Based dictionaries, Complex Forms are displayed as Main Entries. Ensure that the converted configuration for
 		/// Main Entry is also used for the new Main Entry (Complex Forms) node.
 		/// </summary>
 		[Test]
@@ -267,7 +358,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			CssGeneratorTests.PopulateFieldsForTesting(currentDefaultModel);
 
 			m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, currentDefaultModel);
-			Assert.IsFalse(convertedModel.IsRootBased, "Stem-based should not be Root-based!");
+			Assert.IsFalse(convertedModel.IsRootBased, "Lexeme-based should not be Root-based!");
 			Assert.AreEqual(3, convertedModel.Parts.Count, "Number of top-level nodes");
 			convertedMainNode = convertedModel.Parts[0];
 			Assert.AreEqual("Main Entry", convertedMainNode.Label);
@@ -682,9 +773,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(node);
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created");
 
-			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeComplexFormOptions, "wrong type");
-			var options = (DictionaryNodeComplexFormOptions)configNode.DictionaryNodeOptions;
-			Assert.IsTrue(options.DisplayEachComplexFormInAParagraph, "Did not set");
+			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeListAndParaOptions, "wrong type");
+			var options = (DictionaryNodeListAndParaOptions)configNode.DictionaryNodeOptions;
+			Assert.IsTrue(options.DisplayEachInAParagraph, "Did not set");
 		}
 
 		///<summary/>
@@ -1435,6 +1526,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		private const string GlsAfter = "G.after";
 		private const string HwBetween = "H.between";
 		private const string GlsBetween = "G.between";
+		private const string GlsStyle = "G.Style";
 
 		private static DictionaryConfigurationModel BuildConvertedReferenceEntryNodes(bool enableHeadword,
 			bool enableSummaryDef, bool enableSenseHeadWord, bool enableGloss)
@@ -1442,7 +1534,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var headWord = new ConfigurableDictionaryNode { Label = "Referenced Headword", IsEnabled = enableHeadword, Before = HwBefore};
 			var summaryDef = new ConfigurableDictionaryNode { Label = "Summary Definition", IsEnabled = enableSummaryDef, Before = GlsBefore};
 			var senseHeadWord = new ConfigurableDictionaryNode { Label = "Referenced Sense Headword", IsEnabled = enableSenseHeadWord, Between = HwBetween, After = HwAfter };
-			var gloss = new ConfigurableDictionaryNode { Label = "Gloss", IsEnabled = enableGloss, Between = GlsBetween, After = GlsAfter};
+			var gloss = new ConfigurableDictionaryNode { Label = "Gloss", IsEnabled = enableGloss, Between = GlsBetween, After = GlsAfter, Style = GlsStyle};
 			var referencedEntriesNode = new ConfigurableDictionaryNode
 			{
 				Label = "Referenced Entries",
@@ -1628,6 +1720,37 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntry, defaultMinorEntry);
 				convertedMinorEntry.Save();
 				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Gloss (or Summary Definition)' and @isEnabled='true']", 1);
+			}
+		}
+
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_DuplicatedConvertedNodesDoesNotBreakOriginal()
+		{
+			const string refEntriesPath = "//ConfigurationItem[@name='Minor Entry']/ConfigurationItem[@name='Components']/ConfigurationItem[@name='Referenced Entries']/";
+			using (var convertedModelFile = new TempFile())
+			{
+				var convertedMinorEntry = BuildConvertedReferenceEntryNodes(true, true, true, true);
+				var componentsDup = convertedMinorEntry.Parts[0].Children[0].Children[0].DuplicateAmongSiblings();
+				componentsDup.Children.First(c => c.Label == "Gloss").Before = null;
+				componentsDup.Children.First(c => c.Label == "Gloss").After = null;
+				componentsDup.Children.First(c => c.Label == "Gloss").Between = null;
+				componentsDup.Children.First(c => c.Label == "Gloss").Style = null;
+				componentsDup.Children.First(c => c.Label == "Summary Definition").Before = null;
+				componentsDup.Children.First(c => c.Label == "Summary Definition").After = null;
+				componentsDup.Children.First(c => c.Label == "Summary Definition").Between = null;
+				componentsDup.Children.First(c => c.Label == "Summary Definition").Style = null;
+
+				convertedMinorEntry.FilePath = convertedModelFile.Path;
+				var defaultMinorEntry = BuildCurrentDefaultReferenceEntryNodes(false, false);
+				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntry, defaultMinorEntry);
+				convertedMinorEntry.Save();
+				// There should be one node with Before on Gloss (or Summary Definition) and one with no such content
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Gloss (or Summary Definition)']", 2);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Gloss (or Summary Definition)' and @before]", 1);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Gloss (or Summary Definition)' and @after]", 1);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Gloss (or Summary Definition)' and @between]", 1);
+				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(refEntriesPath + "ConfigurationItem[@name='Gloss (or Summary Definition)' and @style]", 1);
 			}
 		}
 

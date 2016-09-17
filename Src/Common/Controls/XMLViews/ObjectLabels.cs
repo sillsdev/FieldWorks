@@ -496,11 +496,18 @@ namespace SIL.FieldWorks.Common.Controls
 							tssAbbr = muaAbbr.BestVernacularAnalysisAlternative;
 							break;
 					}
-					if ((m_displayNameProperty != null)
-						&& ((m_displayNameProperty == "LongName") || (m_displayNameProperty == "AbbrAndNameTSS")))
+					if (m_displayNameProperty != null)
 					{
-						tisb.AppendTsString(tssAbbr);
-						tisb.AppendTsString(tsf.MakeString(" - ", userWs));
+						if(m_displayNameProperty == "LongName" || m_displayNameProperty == "AbbrAndNameTSS")
+						{
+							tisb.AppendTsString(tssAbbr);
+							tisb.AppendTsString(tsf.MakeString(" - ", userWs));
+						}
+						else if (m_displayNameProperty == "BestAbbreviation")
+						{
+							tisb.AppendTsString(tssAbbr);
+							return tisb.GetString(); // don't want any more than this
+						}
 					}
 					switch (m_bestWs)
 					{

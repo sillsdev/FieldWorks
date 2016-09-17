@@ -2502,6 +2502,24 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// For "Variant Of" section of lexicon edit, shows Headword + a sequence of dialect label abbreviations.
+		/// </summary>
+		public ITsString HeadWordPlusDialect
+		{
+			get
+			{
+				var tisb = HeadWord.GetIncBldr();
+				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultVernWs);
+				foreach (var poss in DialectLabelsRS)
+				{
+					tisb.Append(" ");
+					tisb.AppendTsString(poss.Abbreviation.BestVernacularAnalysisAlternative);
+				}
+				return tisb.GetString();
+			}
+		}
+
+		/// <summary>
 		/// Virtual property allows Headword to be read through cache.
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.MultiUnicode)]
@@ -2609,7 +2627,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		/// <summary>
 		/// Gets the complex form entries, that is, the entries which should be shown
-		/// in the visible complex forms list for this entry in stem-based view, and in data entry view.
+		/// in the visible complex forms list for this entry in lexeme-based view, and in data entry view.
 		/// This is a backreference (virtual) property.  It returns the list of ids for all the
 		/// LexEntry objects that own a LexEntryRef that refers to this LexEntry in its
 		/// ShowComplexFormsIn field and that is a complex entry type.
@@ -5354,6 +5372,37 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				tisb.Append(")");
 				return tisb.GetString();
 
+			}
+		}
+
+		/// <summary>
+		/// For "Variant Of" section of lexicon edit, shows Headword + a sequence of dialect label abbreviations.
+		/// </summary>
+		public ITsString HeadWordPlusDialect
+		{
+			get
+			{
+				var tisb = HeadWord.GetIncBldr();
+				tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, m_cache.DefaultVernWs);
+				foreach (var poss in DialectLabelsSenseOrEntry)
+				{
+					tisb.Append(" ");
+					tisb.AppendTsString(poss.Abbreviation.BestVernacularAnalysisAlternative);
+				}
+				return tisb.GetString();
+			}
+		}
+
+		/// <summary>
+		/// This is a virtual property that ensures that a Sense shows its owning Entry's
+		/// DialectLabels if it has none of its own.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceSequence, "CmPossibility")]
+		public IFdoReferenceSequence<ICmPossibility> DialectLabelsSenseOrEntry
+		{
+			get
+			{
+				return DialectLabelsRS.Count == 0 ? Entry.DialectLabelsRS : DialectLabelsRS;
 			}
 		}
 
@@ -8853,6 +8902,18 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
+		/// <summary>
+		/// This is a virtual property.  It returns the list of all Dialect Labels for this variant's Owner
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceSequence, "CmPossibility")]
+		public IFdoReferenceSequence<ICmPossibility> VariantEntryDialectLabels
+		{
+			get
+			{
+				return Owner is ILexEntry ? ((ILexEntry) Owner).DialectLabelsRS : ((ILexSense)Owner).DialectLabelsSenseOrEntry;
+			}
+		}
+
 		private void UpdateComplexFormEntryBackRefs(ICmObject thingAddedOrRemoved, bool fAdded)
 		{
 			var entry = thingAddedOrRemoved as LexEntry;
@@ -8958,6 +9019,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				case LexEntryRefTags.kflidVariantEntryTypes:
 					return m_cache.LangProject.LexDbOA.VariantEntryTypesOA;
 			}
+			if (flid == Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryRefTags.kClassId, "VariantEntryDialectLabels", false))
+				return Cache.LangProject.LexDbOA.DialectLabelsOA;
 			return null;
 		}
 
@@ -9692,5 +9755,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
+		public IFdoReferenceSequence<ICmPossibility> DialectLabelsRS
+		{
+			get
+			{
+				var entry = Item as ILexEntry;
+				if (entry != null)
+				{
+					return entry.DialectLabelsRS;
+				}
+				var sense = Item as ILexSense;
+				if (sense == null)
+					return null;
+				return sense.DialectLabelsSenseOrEntry;
+			}
+		}
 	}
 }

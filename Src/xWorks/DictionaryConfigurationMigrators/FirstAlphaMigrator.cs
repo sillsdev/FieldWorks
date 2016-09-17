@@ -64,21 +64,21 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				case -1:
 				case 1:
 				case 2:
-					HandleNodewiseChanges(alphaModel.PartsAndSharedItems, 2, alphaModel.IsReversal);
+					HandleNodewiseChanges(alphaModel.PartsAndSharedItems, m_logger, 2, alphaModel.IsReversal);
 					goto case 3;
 				case 3:
-					HandleNodewiseChanges(alphaModel.PartsAndSharedItems, 3, alphaModel.IsReversal);
+					HandleNodewiseChanges(alphaModel.PartsAndSharedItems, m_logger, 3, alphaModel.IsReversal);
 					DCM.SetWritingSystemForReversalModel(alphaModel, Cache);
 					AddSharedNodesToAlphaConfigurations(alphaModel);
 					goto case 4;
 				case 4:
-					HandleNodewiseChanges(alphaModel.PartsAndSharedItems, 4, alphaModel.IsReversal);
+					HandleNodewiseChanges(alphaModel.PartsAndSharedItems, m_logger, 4, alphaModel.IsReversal);
 					goto case VersionAlpha2;
 				case VersionAlpha2:
-					HandleNodewiseChanges(alphaModel.PartsAndSharedItems, VersionAlpha2, alphaModel.IsReversal);
+					HandleNodewiseChanges(alphaModel.PartsAndSharedItems, m_logger, VersionAlpha2, alphaModel.IsReversal);
 					goto case 6;
 				case 6:
-					HandleNodewiseChanges(alphaModel.PartsAndSharedItems, 6, alphaModel.IsReversal);
+					HandleNodewiseChanges(alphaModel.PartsAndSharedItems, m_logger, 6, alphaModel.IsReversal);
 					goto case 7;
 				case 7:
 					var fileName = Path.GetFileNameWithoutExtension(alphaModel.FilePath);
@@ -138,7 +138,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		{
 			if (mainEntrySubEntries.DictionaryNodeOptions == null)
 			{
-				mainEntrySubEntries.DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
+				mainEntrySubEntries.DictionaryNodeOptions = new DictionaryNodeListAndParaOptions
 				{
 					ListId = DictionaryNodeListOptions.ListIds.Complex
 				};
@@ -211,7 +211,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					configNode.ReferenceItem = "MainEntrySubentries";
 					if (configNode.DictionaryNodeOptions == null)
 					{
-						configNode.DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
+						configNode.DictionaryNodeOptions = new DictionaryNodeListAndParaOptions
 						{
 							ListId = DictionaryNodeListOptions.ListIds.Complex
 						};
@@ -232,7 +232,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		/// It should no longer be necessary to add changes in two places
 		/// [except: see caveat on PreHistoricMigrator.HandleChildNodeRenaming()]
 		/// </remarks>
-		private static void HandleNodewiseChanges(IEnumerable<ConfigurableDictionaryNode> nodes, int version, bool isReversal)
+		private static void HandleNodewiseChanges(IEnumerable<ConfigurableDictionaryNode> nodes, ISimpleLogger logger, int version, bool isReversal)
 		{
 			var newHeadword = isReversal ? "ReversalName" : "HeadWordRef";
 			switch (version)
@@ -273,7 +273,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 							case "ExamplesOS":
 								n.CSSClassNameOverride = "examplescontents";
 								n.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
-								n.DictionaryNodeOptions = new DictionaryNodeComplexFormOptions(); // allow to be shown in paragraph
+								n.DictionaryNodeOptions = new DictionaryNodeListAndParaOptions(); // allow to be shown in paragraph
 								break;
 						}
 					});
@@ -281,6 +281,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				case VersionAlpha2:
 					DCM.PerformActionOnNodes(nodes, n =>
 					{
+						if (n.FieldDescription == null)
+						{
+							logger.WriteLine(string.Format("Warning: '{0}' reached the Alpha2 migration with a null FieldDescription.", DCM.BuildPathStringFromNode(n)));
+							return;
+						}
 						if (n.FieldDescription == "VisibleVariantEntryRefs" && n.Label == "Variant Of")
 							n.Label = "Variant of";
 						else if (n.FieldDescription.Contains("EntryType"))

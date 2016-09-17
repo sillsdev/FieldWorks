@@ -56,6 +56,9 @@
 		<command id="CmdJumpToConfidenceList" label="Show in {0} list" message="JumpToTool">
 			<parameters tool="confidenceEdit" className="CmPossibility" ownerClass="LangProject" ownerField="ConfidenceLevels"/>
 		</command>
+		<command id="CmdJumpToDialectLabelsList" label="Show in {0} list" message="JumpToTool">
+			<parameters tool="dialectsListEdit" className="CmPossibility" ownerClass="LexDb" ownerField="DialectLabels"/>
+		</command>
 		<command id="CmdJumpToDiscChartMarkerList" label="Show in {0} list" message="JumpToTool">
 			<parameters tool="chartmarkEdit" className="CmPossibility" ownerClass="DsDiscourseData" ownerField="ChartMarkers"/>
 		</command>
@@ -425,6 +428,16 @@
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
 					</recordList>
 					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best analysis" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="DialectsList">
+					<recordList owner="LexDb" property="DialectLabels">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
+					</recordList>
+					<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="false" ws="best vernoranal" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
 					<filters/>
 					<sortMethods>
 						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>

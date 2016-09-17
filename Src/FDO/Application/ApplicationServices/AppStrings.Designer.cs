@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Warning: Cannot resolve a link for a cross reference from &quot;{0}&quot; to &quot;{1}&quot;..
+        ///   Looks up a localized string similar to Info: Cannot resolve a link for a cross reference from &quot;{0}&quot; to &quot;{1}&quot;..
         /// </summary>
         internal static string ksCannotResolveCrossRef {
             get {
@@ -106,7 +106,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Warning: Cannot resolve a link for a lexical relation from &quot;{0}&quot; to &quot;{1}&quot;..
+        ///   Looks up a localized string similar to Info: Cannot resolve a link for a lexical relation from &quot;{0}&quot; to &quot;{1}&quot;..
         /// </summary>
         internal static string ksCannotResolveLexRelation {
             get {

@@ -67,9 +67,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				configPath = Path.Combine(dictionaryFolder, "Hybrid" + DictionaryConfigurationModel.FileExtension);
 			}
-			else // Must be stem
+			else // Must be Lexeme
 			{
-				configPath = Path.Combine(dictionaryFolder, "Stem" + DictionaryConfigurationModel.FileExtension);
+				configPath = Path.Combine(dictionaryFolder, "Lexeme" + DictionaryConfigurationModel.FileExtension);
 			}
 			return new DictionaryConfigurationModel(configPath, Cache);
 		}
@@ -117,7 +117,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					MigrateNewDefaultNodes(oldConfigPart, currentDefaultConfigPart);
 					goto case 9;
 				case 9:
-					UpgradeEtymologyCluster(oldConfigPart, oldConfig.IsReversal);
+					UpgradeEtymologyCluster(oldConfigPart, oldConfig);
+					goto case 10;
+				case 10:
+				case 11:
+					MigrateNewDefaultNodes(oldConfigPart, currentDefaultConfigPart);
 					break;
 				default:
 					m_logger.WriteLine(string.Format(
@@ -133,8 +137,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		/// Three old nodes will need deleting: Etymological Form, Comment and Source
 		/// </summary>
 		/// <param name="oldConfigPart"></param>
-		/// <param name="isReversal"></param>
-		private static void UpgradeEtymologyCluster(ConfigurableDictionaryNode oldConfigPart, bool isReversal)
+		/// <param name="oldConfig"></param>
+		private static void UpgradeEtymologyCluster(ConfigurableDictionaryNode oldConfigPart, DictionaryConfigurationModel oldConfig)
 		{
 			if (oldConfigPart.Children == null || oldConfigPart.Children.Count == 0)
 				return; // safety net
@@ -150,13 +154,17 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				// modify main node
 				var etymSequence = "EtymologyOS";
-				if (isReversal)
+				if (oldConfig.IsReversal)
 				{
 					node.SubField = etymSequence;
 					node.FieldDescription = "Entry";
+					node.IsEnabled = true;
 				}
 				else
+				{
 					node.FieldDescription = etymSequence;
+					node.IsEnabled = !IsHybrid(oldConfig);
+				}
 				node.CSSClassNameOverride = "etymologies";
 				node.Before = "(";
 				node.Between = " ";
@@ -165,10 +173,20 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				// enable Gloss node
 				node.Children.Find(n => n.Label == "Gloss").IsEnabled = true;
 
+				// enable Source Language Notes
+				var notesList = node.Children.Find(n => n.FieldDescription == "LanguageNotes");
+				if(notesList != null) // ran into some cases where this node didn't exist in reversal config!
+					notesList.IsEnabled = true;
+
 				// remove old children
 				var nodesToRemove = new[] {"Etymological Form", "Comment", "Source"};
 				node.Children.RemoveAll(n => nodesToRemove.Contains(n.Label));
 			}
+		}
+
+		private static bool IsHybrid(DictionaryConfigurationModel model)
+		{
+			return !model.IsRootBased && ConfigHasSubentriesNode(model);
 		}
 
 		/// <summary>
@@ -178,6 +196,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		{
 			if (oldConfigNode.Children == null || defaultNode.Children == null)
 				return;
+			if (defaultNode.FieldDescription == "VariantFormEntryBackRefs" && oldConfigNode.DictionaryNodeOptions == null
+				&& defaultNode.DictionaryNodeOptions != null)
+				oldConfigNode.DictionaryNodeOptions = defaultNode.DictionaryNodeOptions;
 			// First recurse into each matching child node
 			foreach (var newChild in defaultNode.Children)
 			{
@@ -189,7 +210,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				else
 				{
 					int indexOfNewChild = defaultNode.Children.FindIndex(n => n.Label == newChild.Label);
-					InsertNewNodeIntoOldConfig(oldConfigNode, newChild.DeepCloneUnderParent(oldConfigNode), defaultNode, indexOfNewChild);
+					InsertNewNodeIntoOldConfig(oldConfigNode, newChild.DeepCloneUnderParent(oldConfigNode, true), defaultNode, indexOfNewChild);
 				}
 			}
 		}
@@ -214,15 +235,15 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			// Next find any groups at this level and move the matching children defaultChildren into the group
 			foreach (var group in defaultNode.Children.Where(n => n.DictionaryNodeOptions is DictionaryNodeGroupingOptions))
 			{
-				var groupChildList = new List<ConfigurableDictionaryNode>();
+				// DeepClone skips children for grouping nodes. We want this, because we are going to move children in from the old configNode.
 				var groupNode = group.DeepCloneUnderParent(oldConfigNode);
-				groupNode.Children = groupChildList;
+				groupNode.Children = new List<ConfigurableDictionaryNode>();
 				for (var i = oldConfigNode.Children.Count - 1; i >= 0; --i)
 				{
 					var oldChild = oldConfigNode.Children[i];
 					if (group.Children.Any(groupChild => groupChild.Label == oldChild.Label))
 					{
-						groupChildList.Insert(0, oldChild);
+						groupNode.Children.Insert(0, oldChild);
 						oldChild.Parent = groupNode;
 						oldConfigNode.Children.RemoveAt(i);
 					}

@@ -491,6 +491,35 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Assert.AreEqual(0, primResult.Count,
 				"Modifications of ComponentLexemes, should remove the one PrimaryLexeme.");
 		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that Targets returns an empty array if the object is invalid (hvo less than 1).
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void CheckTargetsReturnsNothingIfObjectIsInvalid()
+		{
+			// Setup test
+			var entry1 = CreateSimpleEntry("form1", "gloss1");
+			var entry2 = CreateSimpleEntry("form2", "gloss2");
+			var secondaryEntry = CreateSimpleEntry("phrase form", "phrase gloss");
+			AddComponentEntryRef(entry1, secondaryEntry);
+			AddComponentEntryRef(entry2, secondaryEntry);
+			var obj = AddPrimaryEntryRef(entry2, secondaryEntry);
+
+			// and initialize launcher
+			MockLauncher.Initialize(Cache, obj, LexEntryRefTags.kflidComponentLexemes,
+				"ComponentLexemesRS", m_wsAnalStr);
+			obj.Delete();
+
+			// SUT
+			Cache.ActionHandlerAccessor.EndUndoTask();
+			var targets = MockLauncher.Targets;
+
+			// Verify results
+			CollectionAssert.IsEmpty(targets, "Should return empty array");
+		}
 	}
 
 	public class MockVectorReferenceLauncher : VectorReferenceLauncher

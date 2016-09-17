@@ -2370,7 +2370,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				ICmObject cmo = GetEntryOrSense(ws, sForm, sSenseNumber, flid);
 				if (cmo != null)
 					return cmo;
-				var owner = pend.FieldInformation.Owner; // at this point, owner should be either ILexEntry or ILexSense
+				var owner = pend.FieldInformation.Owner; // at this point, owner should be either ILexEntry or ILexSense or ILexEntryRef
 				var msg = GetDidNotCreateEntryMessage(flid, sForm);
 				var dsLen = msg.IndexOf(": ") + 2; // strip off "datastream: " or "{filename}: "
 				AppendMessageToImportResidue(owner, msg.Substring(dsLen), ws);
@@ -2975,9 +2975,9 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 						ICmObject cmo = GetEntryOrSense(ws, sForm, sSenseNumber, flid);
 						if (cmo != null)
 							return cmo.Hvo;
-						var owner = pend.FieldInformation.Owner; // at this point, owner should be either ILexEntry or ILexSense
+						var owner = pend.FieldInformation.Owner; // at this point, owner should be either ILexEntry or ILexSense or ILexEntryRef
 						var msg = GetDidNotCreateEntryMessage(flid, sForm);
-						var dsLen = "data stream: ".Length;
+						var dsLen = msg.IndexOf(": ") + 2; // strip off "datastream: " or "{filename}: "
 						AppendMessageToImportResidue(owner, msg.Substring(dsLen), ws);
 						return 0;
 					}
@@ -3005,6 +3005,8 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 
 		private void AppendMessageToImportResidue(ICmObject owner, string msgToAppend, int ws)
 		{
+			if (owner is ILexEntryRef)
+				owner = owner.Owner;
 			Debug.Assert(owner is ILexEntry || owner is ILexSense);
 			if (owner is ILexEntry)
 			{
@@ -3371,6 +3373,13 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 					return m_cache.LangProject.LocationsOA;
 				case LexSenseTags.kflidStatus:						//CmPossibility
 					return m_cache.LangProject.StatusOA;
+				case LexEtymologyTags.kflidLanguage:				//CmPossibility
+					return m_cache.LangProject.LexDbOA.LanguagesOA;
+				case LexEntryTags.kflidDialectLabels:				//CmPossibility
+				case LexSenseTags.kflidDialectLabels:				//CmPossibility (purposeful fall-through)
+					return m_cache.LangProject.LexDbOA.DialectLabelsOA;
+				case LexExtendedNoteTags.kflidExtendedNoteType:		//CmPossibility
+					return m_cache.LangProject.LexDbOA.ExtendedNoteTypesOA;
 				default:
 					if (m_mdc.IsCustom(flid))
 					{

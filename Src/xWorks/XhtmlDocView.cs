@@ -77,7 +77,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				AddMoreEntriesToPage(true, (GeckoWebBrowser)m_mainView.NativeBrowser);
 			}
-			else if (browser.Window.ScrollY >= browser.Window.DomWindow.GetScrollMaxYAttribute())
+			else if (browser.Window.ScrollY >= browser.Window.ScrollMaxY)
 			{
 				AddMoreEntriesToPage(false, (GeckoWebBrowser)m_mainView.NativeBrowser);
 			}
@@ -105,7 +105,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				case DOWN:
 				{
-					if (browser.Window.ScrollY >= browser.Window.DomWindow.GetScrollMaxYAttribute())
+					if (browser.Window.ScrollY >= browser.Window.ScrollMaxY)
 					{
 						AddMoreEntriesToPage(false, (GeckoWebBrowser)m_mainView.NativeBrowser);
 					}
@@ -126,7 +126,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				case PAGEDOWN:
 				{
-					if (browser.Window.ScrollY >= browser.Window.DomWindow.GetScrollMaxYAttribute())
+					if (browser.Window.ScrollY >= browser.Window.ScrollMaxY)
 					{
 						var currentPage = GetTopCurrentPageButton(browser.Document.Body);
 						if (currentPage.NextSibling != null)

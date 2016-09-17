@@ -6,6 +6,7 @@
 		<part ref="ChangeHandler"/>
 		<part label="Lexeme Form" ref="LexemeForm"/>
 		<part label="Citation Form" ref="CitationFormAllV"/>
+		<part ref="DialectLabelsEntry" visibility="ifdata"/>
 		<part ref="ComplexFormEntries" visibility="ifdata"/>
 		<part ref="EntryRefs" param="Normal" visibility="ifdata"/>
 		<part ref="EntryRefsGhostComponents" visibility="always"/>
@@ -113,6 +114,7 @@
 
 	<layout class="LexEntryRef" type="detail" name="VariantSection">
 		<part ref="RefVariantForm"/>
+		<part ref="RefVariantDialectsEntry"/>
 		<part ref="RefVariantEntryTypes"/>
 		<part ref="RefShowMinorEntry"/>
 		<part ref="RefSummary" visibility="ifdata"/>

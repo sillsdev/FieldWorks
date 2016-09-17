@@ -3077,9 +3077,9 @@
     <value>User_Interface/Field_Descriptions/Lists/Extended_Note_Types/Status_field_Extended-Notes.htm</value>
     <comment>Extended Note - List -Status</comment>
   </data>
-  <data name="khtpField-lexiconEdit-LexExampleSentence-Translations" xml:space="preserve">
+  <data name="khtpField-lexiconEdit-LexExtendedNote-Translations" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Extended_Note/Translation_field_(Extended_Note).htm</value>
-    <comment>Extended Note - Lexicon -Examples - Translation</comment>
+    <comment>Extended Note - Lexicon -Examples - Translation no content</comment>
   </data>
   <data name="khtpField-lexiconEdit-LexExtendedNote-" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Extended_Note/Extended_Note_field.htm</value>
@@ -3245,5 +3245,45 @@
   <data name="khtpField-languagesListEdit-CmPossibility-Status" xml:space="preserve">
     <value>/User_Interface/Field_Descriptions/Lists/Languages/status_field_Languages.htm</value>
     <comment>Languages list - Status</comment>
+  </data>
+  <data name="khtpField-lexiconEdit-LexExtendedNote-Translation" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Extended_Note/Translation_field_(Extended_Note).htm</value>
+    <comment>Extended Note - Lexicon -Examples - Translation - with Content</comment>
+  </data>
+  <data name="khtpChoose-lexiconEdit-LexEntry-DialectLabels" xml:space="preserve">
+    <value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_a_dialect_label.htm</value>
+    <comment>Choose Dialect label (Entry)</comment>
+  </data>
+  <data name="khtpChoose-lexiconEdit-LexEntryRef-VariantEntryDialectLabels" xml:space="preserve">
+    <value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_a_dialect_label.htm</value>
+    <comment>Choose Dialect label (Variant)</comment>
+  </data>
+  <data name="khtpChoose-lexiconEdit-LexSense-DialectLabels" xml:space="preserve">
+    <value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_a_dialect_label.htm</value>
+    <comment>Choose Dialect label (Sense)</comment>
+  </data>
+  <data name="khtpField-dialectsListEdit-CmPossibility-Abbreviation" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lists/Dialect_Labels/Abbreviation_field_(Dialect_Labels).htm</value>
+    <comment>Dialect Labels List: Abbreviation</comment>
+  </data>
+  <data name="khtpField-dialectsListEdit-CmPossibility-Description" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lists/Dialect_Labels/Short_Description_field_(Dialect_Labels).htm</value>
+    <comment>Dialect Labels List: Short Description:</comment>
+  </data>
+  <data name="khtpField-dialectsListEdit-CmPossibility-Name" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lists/Dialect_Labels/Full_Name_field_(Dialect_Labels).htm</value>
+    <comment>Dialect Labels List: Full Name:</comment>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEntry-DialectLabels" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Dialect_Labels_Entry.htm</value>
+    <comment>Dialect Labels (Entry)</comment>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEntryRef-VariantEntryDialectLabels" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Variants_level_fields/Dialect_Labels_(Entry)_variant.htm</value>
+    <comment>Dialect Labels (Entry) variant</comment>
+  </data>
+  <data name="khtpField-lexiconEdit-LexSense-DialectLabels" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Dialect_Labels_(Sense).htm</value>
+    <comment>Dialect Labels (Sense)</comment>
   </data>
 </root>

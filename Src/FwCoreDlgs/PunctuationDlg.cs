@@ -697,7 +697,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			if (m_txtCellEdit.Text != bldr.ToString())
 			{
-				System.Media.SystemSounds.Beep.Play();
+				MiscUtils.ErrorBeep();
 				m_txtCellEdit.TextChanged -= CellEditTextBoxTextChanged;
 				m_txtCellEdit.Text = bldr.ToString();
 				m_txtCellEdit.TextChanged += CellEditTextBoxTextChanged;

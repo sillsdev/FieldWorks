@@ -672,6 +672,11 @@ namespace SIL.FieldWorks.FDO
 		/// that exposes certain LexSense- and LexEntry-specific fields.
 		/// </summary>
 		IEnumerable<ISenseOrEntry> PrimarySensesOrEntries { get; }
+
+		/// <summary>
+		/// This is a virtual property.  It returns the list of all Dialect Labels for this variant's Owner
+		/// </summary>
+		IFdoReferenceSequence<ICmPossibility> VariantEntryDialectLabels { get; }
 	}
 
 	public partial interface ILexReference
@@ -1112,6 +1117,12 @@ namespace SIL.FieldWorks.FDO
 		/// or its owning LexEntry.
 		/// </summary>
 		IEnumerable<ILexEntryRef> MainEntryRefs { get; }
+
+		/// <summary>
+		/// This is a virtual property that ensures that a Sense shows its owning Entry's
+		/// DialectLabels if it has none of its own.
+		/// </summary>
+		IFdoReferenceSequence<ICmPossibility> DialectLabelsSenseOrEntry { get; }
 	}
 
 	/// <summary>
@@ -1199,7 +1210,7 @@ namespace SIL.FieldWorks.FDO
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the complex form entries, that is, the entries which should be shown
-		/// in the complex forms list for this entry in stem-based view.
+		/// in the complex forms list for this entry in lexeme-based view.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		IEnumerable<ILexEntry> VisibleComplexFormEntries { get; }
@@ -5989,5 +6000,10 @@ namespace SIL.FieldWorks.FDO
 		/// Returns the entryRefs for the entry/owning entry for the sense
 		/// </summary>
 		IFdoOwningSequence<ILexEntryRef> PrimaryEntryRefs { get; }
+
+		/// <summary>
+		/// Returns the dialect labels for the entry or sense
+		/// </summary>
+		IFdoReferenceSequence<ICmPossibility> DialectLabelsRS { get; }
 	}
 }

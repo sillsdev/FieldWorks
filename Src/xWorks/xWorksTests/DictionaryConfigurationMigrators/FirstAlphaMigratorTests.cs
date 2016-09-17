@@ -126,7 +126,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			m_migrator.MigrateFrom83Alpha(configModel); // SUT
 			for (var node = examplesOS; !configModel.SharedItems.Contains(node); node = node.Parent)
 				Assert.NotNull(node, "ExamplesOS should be freshly-shared (under subsenses)");
-			Assert.That(examplesOS.DictionaryNodeOptions, Is.TypeOf(typeof(DictionaryNodeComplexFormOptions)), "Freshly-shared nodes should be included");
+			Assert.That(examplesOS.DictionaryNodeOptions, Is.TypeOf(typeof(DictionaryNodeListAndParaOptions)), "Freshly-shared nodes should be included");
 		}
 
 		[Test]
@@ -138,9 +138,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
 			m_migrator.MigrateFrom83Alpha(configModel);
 			Assert.AreEqual(ConfigurableDictionaryNode.StyleTypes.Character, configExamplesNode.StyleType);
-			Assert.IsTrue(configExamplesNode.DictionaryNodeOptions is DictionaryNodeComplexFormOptions, "wrong type");
-			var options = (DictionaryNodeComplexFormOptions)configExamplesNode.DictionaryNodeOptions;
-			Assert.IsFalse(options.DisplayEachComplexFormInAParagraph, "Default is *not* in paragraph");
+			Assert.IsTrue(configExamplesNode.DictionaryNodeOptions is DictionaryNodeListAndParaOptions, "wrong type");
+			var options = (DictionaryNodeListAndParaOptions)configExamplesNode.DictionaryNodeOptions;
+			Assert.IsFalse(options.DisplayEachInAParagraph, "Default is *not* in paragraph");
 		}
 
 		[Test]
@@ -186,6 +186,23 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			m_migrator.MigrateFrom83Alpha(configModel);
 			Assert.AreEqual("ReversalName", referenceHwChild.FieldDescription);
 			Assert.AreEqual("ReversalName", cpFormChild.SubField);
+		}
+
+		[Test]
+		public void MigrateFrom83Alpha_NullFieldDescriptionIsLogged()
+		{
+			var cpFormChild = new ConfigurableDictionaryNode { Label = "Complex Form", FieldDescription = null };
+			var referenceHwChild = new ConfigurableDictionaryNode { Label = "Referenced Headword", FieldDescription = "HeadWord" };
+			var configParent = new ConfigurableDictionaryNode
+			{
+				Label = "Parent",
+				FieldDescription = "Parent",
+				Children = new List<ConfigurableDictionaryNode> { referenceHwChild, cpFormChild }
+			};
+			cpFormChild.Parent = configParent;
+			var configModel = new DictionaryConfigurationModel { Version = 2, Parts = new List<ConfigurableDictionaryNode> { configParent } };
+			m_migrator.MigrateFrom83Alpha(configModel);
+			Assert.That(m_logger.Content, Is.StringContaining("'Parent > Complex Form' reached the Alpha2 migration with a null FieldDescription."));
 		}
 
 		[Test]
@@ -829,7 +846,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				Version = FirstAlphaMigrator.VersionAlpha2,
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode },
-				FilePath = "./Stem" + DictionaryConfigurationModel.FileExtension
+				FilePath = "./Lexeme" + DictionaryConfigurationModel.FileExtension
 			};
 			m_migrator.MigrateFrom83Alpha(model);
 			Assert.IsFalse(model.IsRootBased);

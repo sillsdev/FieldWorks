@@ -2770,7 +2770,7 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 		</owning>
 		<owning num="23" id="ComplexEntryTypes" card="atomic" sig="CmPossibilityList">
 		  <comment>
-			<para>This Complex Entry Types list is used to classify a LexEntryRef via the ComplexEntryTypes property. ItemClsid should be set to LexEntryType, IsSorted to true, and Depth to 127. The list will typically be flat, but the user is free to introduce a hierarchy if desirable. When entries use this list, they will be displayed as subentries in the dictionary. Entries using this list will be displayed as subentries in the dictionary; usually at the end of the major entry and will typically produce a separate major entry in the dictionary referring to the main entry. The display is dependent on whether a root-based or stem-based view of the dictionary is being printed. The initial list may have:</para>
+			<para>This Complex Entry Types list is used to classify a LexEntryRef via the ComplexEntryTypes property. ItemClsid should be set to LexEntryType, IsSorted to true, and Depth to 127. The list will typically be flat, but the user is free to introduce a hierarchy if desirable. When entries use this list, they will be displayed as subentries in the dictionary. Entries using this list will be displayed as subentries in the dictionary; usually at the end of the major entry and will typically produce a separate major entry in the dictionary referring to the main entry. The display is dependent on whether a root-based or lexeme-based view of the dictionary is being printed. The initial list may have:</para>
 			<para>Acronym</para>
 			<para>Compound</para>
 			<para>Contractions</para>

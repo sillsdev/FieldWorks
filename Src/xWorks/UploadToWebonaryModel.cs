@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.XWorks
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 		Justification="Mediator is a reference")]
 
-	public class PublishToWebonaryModel
+	public class UploadToWebonaryModel
 	{
 		// This value gets used by the microsoft encryption library to increase the complexity of the encryption
 		private const string EntropyValue = @"61:3nj 42 ebg68";
@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private Mediator Mediator { get; set; }
 
-		public PublishToWebonaryModel(Mediator mediator)
+		public UploadToWebonaryModel(Mediator mediator)
 		{
 			Mediator = mediator;
 			LoadFromSettings();

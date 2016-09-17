@@ -1,9 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: Utils.cs
-// Responsibility: TE Team
 
 using System;
 using System.Collections.Generic;
@@ -25,11 +22,7 @@ using Microsoft.Win32;
 
 namespace SIL.Utils
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Summary description for Utils.
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary/>
 	public static class MiscUtils
 	{
 		/// <summary>
@@ -37,38 +30,18 @@ namespace SIL.Utils
 		/// </summary>
 		public const int kdzmpInch = 72000;
 
-		private static readonly Regex kXmlCharEntity = new Regex(@"&#x([0-9a-f]{1,4});", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
 		/// <summary>
-		/// Like string.IndexOf, returns the place where the subsequence occurs (or -1).
-		/// Throws if source or target is null or target is empty.
+		/// Unit tests can set this to true to suppress error beeps
 		/// </summary>
-		public static int IndexOfSubArray(this byte[] source, byte[] target)
-		{
-			return IndexOfSubArray(source, target, 0);
-			//byte first = target[0];
-			//int targetLength = target.Length;
-			//if (targetLength == 1)
-			//	return Array.IndexOf(source, first); // probably more efficient, and code below won't work.
-			//int lastStartPosition = source.Length - targetLength;
-			//for (int i = 0; i <= lastStartPosition; i++)
-			//{
-			//	if (source[i] != first)
-			//		continue;
-			//	for (int j = 1; j < targetLength; j++)
-			//		if (source[i + j] != target[j])
-			//			break;
-			//		else if (j == targetLength - 1)
-			//			return i;
-			//}
-			//return -1;
-		}
+		internal static bool SuppressBeep { private get; set; }
+
+		private static readonly Regex kXmlCharEntity = new Regex(@"&#x([0-9a-f]{1,4});", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
 		/// <summary>
 		/// Like string.IndexOf, returns the place where the subsequence occurs (or -1).
 		/// Throws if source or target is null or target is empty, or idxStart is negative.
 		/// </summary>
-		public static int IndexOfSubArray(this byte[] source, byte[] target, int idxStart)
+		public static int IndexOfSubArray(this byte[] source, byte[] target, int idxStart = 0)
 		{
 			byte first = target[0];
 			int targetLength = target.Length;
@@ -481,7 +454,8 @@ namespace SIL.Utils
 		/// ------------------------------------------------------------------------------------
 		public static void ErrorBeep()
 		{
-			System.Media.SystemSounds.Beep.Play();
+			if (!SuppressBeep)
+				System.Media.SystemSounds.Beep.Play();
 		}
 
 		/// ------------------------------------------------------------------------------------

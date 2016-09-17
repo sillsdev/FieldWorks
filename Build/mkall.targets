@@ -10,7 +10,7 @@
 	<UsingTask TaskName="GenerateTestCoverageReport" AssemblyFile="FwBuildTasks.dll"/>
 
 	<!-- Make all of FieldWorks. -->
-	<Target Name="mkall" DependsOnTargets="initLinux;initWindows;LinuxRegistry;CopyDlls;allCpp;allCsharp;ensureTLBsUpToDate">
+	<Target Name="mkall" DependsOnTargets="CopyDlls;initLinux;initWindows;LinuxRegistry;allCpp;allCsharp;ensureTLBsUpToDate">
 		<Message Text="Finished mkall Target."/>
 		<CreateItem Condition="'$(action)'=='test'" Include="$(dir-outputBase)/*-nunit-output.xml">
 			<Output TaskParameter="Include" ItemName="NUnitReportFiles"/>
@@ -134,7 +134,7 @@
 		<Unitpp Condition="'$(action)'=='test'"
 				FixturePath="$(dir-outputBase)/testFwKernel"
 				FudgeFactor="$(timeoutFudgeFactor)"
-				Timeout="60000">
+				Timeout="75000">
 			<Output TaskParameter="FailedSuites" ItemName="FailedSuites"/>
 		</Unitpp>
 		<Message Text="Finished building testFwKernel." Condition="'$(action)'!='test'"/>
@@ -189,7 +189,7 @@
 		<Unitpp Condition="'$(action)'=='test'"
 				FixturePath="$(dir-outputBase)/testViews"
 				FudgeFactor="$(timeoutFudgeFactor)"
-				Timeout="60000">
+				Timeout="75000">
 			<Output TaskParameter="FailedSuites" ItemName="FailedSuites"/>
 		</Unitpp>
 		<Message Text="Finished building testViews." Condition="'$(action)'!='test'"/>
@@ -293,10 +293,6 @@
 		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.0~alpha3.tcbuildtag</PalasoDownloadUrl>
 		<!-- PalasoPrecise64v26Cont is the libpalaso-2.6 branch build of Palaso for Linux development. Update when appropriate. -->
 		<PalasoDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/fw-8.3.0~alpha3.tcbuildtag</PalasoDownloadUrl>
-		<!-- bt399 is the GeckoFX 29 build for Windows -->
-		<GeckoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt399/fw-8.2.tcbuildtag</GeckoDownloadUrl>
-		<!-- bt400 is the XULRunner 29 build for Windows -->
-		<XULRunnerDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt400/fw-8.2.tcbuildtag</XULRunnerDownloadUrl>
 		<!--Todo: use PalasoDownloadUrl, when it refers to somewhere that has the IPCFramework.-->
 		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
 		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt278/fw-8.2.tcbuildtag</IPCFrameworkDownloadUrl>
@@ -319,7 +315,7 @@
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>
 	</PropertyGroup>
 
-	<Target Name="downloadDlls">
+	<Target Name="downloadDlls" DependsOnTargets="RestoreNuGetPackages">
 		<MakeDir Directories="$(fwrt)/Downloads"/>
 		<Message Text="Downloading artifacts from Palaso libpalaso-2.6 branch build."/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
@@ -353,18 +349,6 @@
 					  Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/taglib-sharp.dll" LocalFilename="$(fwrt)/Downloads/taglib-sharp.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/irrKlang.NET4.dll" LocalFilename="$(fwrt)/Downloads/irrKlang.NET4.dll"/>
-
-		<Message Text="Downloading pinned artifacts for GeckoFX and XULRunner." Condition="'$(OS)'=='Windows_NT'" />
-		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Core.dll" LocalFilename="$(fwrt)/Downloads/Geckofx-Core.dll"
-					  Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Winforms.dll" LocalFilename="$(fwrt)/Downloads/Geckofx-Winforms.dll"
-					  Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Winforms.pdb" LocalFilename="$(fwrt)/Downloads/Geckofx-Winforms.pdb"
-					  Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Core.dll.config" LocalFilename="$(fwrt)/Downloads/Geckofx-Core.dll.config"
-					  Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(XULRunnerDownloadUrl)/xulrunner-29.0.1.en-US.win32.zip" LocalFilename="$(fwrt)/Downloads/xulrunner-29.0.1.en-US.win32.zip"
-					  Condition="'$(OS)'=='Windows_NT'"/>
 
 		<Message Text="Downloading artifacts from Chorus chorus-2.5 branch build."/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
@@ -485,10 +469,6 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Machine.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Collections.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.HermitCrab.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Geckofx-Core.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Geckofx-Core.dll.config" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Geckofx-Winforms.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Geckofx-Winforms.pdb" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/gennorm2.exe" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/icudt$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/icuin$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
@@ -534,10 +514,25 @@
 		<!-- Copy the downloaded artifacts -->
 		<Copy SourceFiles="@(DownloadedFiles)" DestinationFolder="$(dir-outputBase)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
-
-		<!-- XULRunner files -->
-		<Message Text="Unzipping XULRunner." Condition="'$(OS)'=='Windows_NT'"/>
-		<Unzip ZipFilename="$(fwrt)/Downloads/xulrunner-29.0.1.en-US.win32.zip" ToDir="$(dir-outputBase)" Condition="'$(OS)'=='Windows_NT'"/>
+		<!-- NuGet packages. Property- and ItemGroups are inside the target so $(arch) and *'s are read properly -->
+		<PropertyGroup>
+			<Architecture Condition="'$(arch)'=='x86_64'">64</Architecture>
+			<Architecture Condition="'$(arch)'!='x86_64'">32</Architecture>
+			<GeckoDir Condition="'$(OS)'=='Windows_NT'">$(fwrt)/packages/Geckofx45.45.0.20</GeckoDir><!--yes, this version is missing the terminal .0-->
+			<GeckoDir Condition="'$(OS)'!='Windows_NT'">$(fwrt)/packages/Geckofx45.$(Architecture).Linux.45.0.21.0</GeckoDir>
+		</PropertyGroup>
+		<ItemGroup>
+			<NuGottenFiles Include="$(GeckoDir)/lib/net40/Geckofx-Core.dll"/>
+			<NuGottenFiles Include="$(GeckoDir)/lib/net40/Geckofx-Core.pdb" Condition="'$(OS)'=='Windows_NT'"/>
+			<NuGottenFiles Include="$(GeckoDir)/lib/net40/Geckofx-Core.dll.mdb" Condition="'$(OS)'!='Windows_NT'"/>
+			<NuGottenFiles Include="$(GeckoDir)/lib/net40/Geckofx-Winforms.dll"/>
+			<NuGottenFiles Include="$(GeckoDir)/lib/net40/Geckofx-Winforms.pdb" Condition="'$(OS)'=='Windows_NT'"/>
+			<NuGottenFiles Include="$(GeckoDir)/lib/net40/Geckofx-Winforms.dll.mdb" Condition="'$(OS)'!='Windows_NT'"/>
+			<NuGottenFiles Include="$(GeckoDir)/build/Geckofx-Core.dll.config" Condition="'$(OS)'!='Windows_NT'"/>
+			<NuGottenFiles Include="$(GeckoDir)/content/**/*.*"/>
+		</ItemGroup>
+		<Copy SourceFiles="@(NuGottenFiles)" DestinationFolder="$(dir-outputBase)/%(RecursiveDir)"
+			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 	</Target>
 
 	<Target Name="setRegistryValues" DependsOnTargets="initLinux;initWindows;setKeysInHKLM;setKeysInHKCU"/>

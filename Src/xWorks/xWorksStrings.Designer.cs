@@ -1077,6 +1077,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Display each Note in a separate paragraph.
+        /// </summary>
+        internal static string ksDisplayNoteInParagraphs {
+            get {
+                return ResourceManager.GetString("ksDisplayNoteInParagraphs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Display each Subentry in a paragraph.
         /// </summary>
         internal static string ksDisplaySubentriesInParagraphs {
@@ -2113,21 +2122,11 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pressing Publish will send {0} dictionary entries{1} to Webonary..
+        ///   Looks up a localized string similar to Pressing Submit will send {0} dictionary entries{1} to Webonary..
         /// </summary>
         internal static string PublicationEntriesLabel {
             get {
                 return ResourceManager.GetString("PublicationEntriesLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Exporting entries for the {0} publication using the {1} configuration.
-        /// </summary>
-        internal static string PublishToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0__publication_using_the__1__configuration {
-            get {
-                return ResourceManager.GetString("PublishToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0_" +
-                        "_publication_using_the__1__configuration", resourceCulture);
             }
         }
         
@@ -2417,6 +2416,16 @@ namespace SIL.FieldWorks.XWorks {
         internal static string UpdatingTheDisplay {
             get {
                 return ResourceManager.GetString("UpdatingTheDisplay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exporting entries for the {0} publication using the {1} configuration.
+        /// </summary>
+        internal static string UploadToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0__publication_using_the__1__configuration {
+            get {
+                return ResourceManager.GetString("UploadToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0__" +
+                        "publication_using_the__1__configuration", resourceCulture);
             }
         }
         

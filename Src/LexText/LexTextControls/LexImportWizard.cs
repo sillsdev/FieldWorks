@@ -269,7 +269,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				m_SaveAsFileName.Text = string.Empty;	// empty if not found already
 			}
-			ReadOptionInfoFromMapFile();
 			AllowQuickFinishButton();	// show it if it's valid
 
 			// Copied from the previous LexImport dlg constructor (ImportLexicon.cs)
@@ -2455,6 +2454,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					tabSteps.SelectedIndex = 6;	// 0-7
 					UpdateStepLabel();
 				}
+				ReadOptionInfoFromMapFile();
 			}
 			else if (CurrentStepNumber == 4)
 			{

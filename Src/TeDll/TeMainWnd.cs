@@ -7190,7 +7190,7 @@ namespace SIL.FieldWorks.TE
 			using (new WaitCursor(this))
 			{
 				if (!TheBTSplitWrapper.BTDraftView.TeEditingHelper.GoToNextMissingBtFootnoteMkr(ActiveEditingHelper))
-					SystemSounds.Beep.Play();
+					MiscUtils.ErrorBeep();
 			}
 			return true;
 		}
