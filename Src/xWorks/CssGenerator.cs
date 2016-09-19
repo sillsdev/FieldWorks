@@ -231,15 +231,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				var selectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection,
 					cache, mediator);
-				rule.Value = baseSelection;
 
-				// if the configuration node defines a style then add all the rules generated from that style
-				if (!String.IsNullOrEmpty(configNode.Style))
-				{
-					//Generate the rules for the default font info
-					rule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, configNode,
-						mediator));
-				}
 				var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 				if (wsOptions != null)
 				{
@@ -248,6 +240,16 @@ namespace SIL.FieldWorks.XWorks
 					{
 						GenerateCssForWritingSystemPrefix(configNode, styleSheet, baseSelection, mediator);
 					}
+				}
+				rule.Value = baseSelection;
+
+				// if the configuration node defines a style then add all the rules generated from that style
+				if (!String.IsNullOrEmpty(configNode.Style))
+				{
+					//Generate the rules for the default font info
+					rule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, configNode,
+						mediator));
+					GenerateCssForWritingSystems(baseSelection + " span", configNode.Style, styleSheet, mediator);
 				}
 				styleSheet.Rules.AddRange(CheckRangeOfRulesForEmpties(selectors));
 				if (!IsEmptyRule(rule))
@@ -419,9 +421,8 @@ namespace SIL.FieldWorks.XWorks
 			var styleRules = selectors as StyleRule[] ?? selectors.ToArray();
 			if (listAndParaOpts.DisplayEachInAParagraph)
 			{
-				for (var i = 0; i < blockDeclarations.Count; ++i)
+				foreach (var declaration in blockDeclarations)
 				{
-					var declaration = blockDeclarations[i];
 					declaration.Add(new Property("display") { Term = new PrimitiveTerm(UnitType.Ident, "block") });
 					var blockRule = new StyleRule(declaration)
 					{

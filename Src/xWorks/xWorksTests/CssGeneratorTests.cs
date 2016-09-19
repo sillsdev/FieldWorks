@@ -2637,6 +2637,56 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForConfiguration_NormalStyleForWsDoesNotOverrideNodeStyle()
+		{
+			// Set up Normal style to default to Green, except for English which is Red
+			var normalStyle = GenerateEmptyStyle("Normal");
+			normalStyle.IsParagraphStyle = true;
+			var engFontInfo = new FontInfo { m_fontName = { ExplicitValue = "english" }, m_fontColor = { ExplicitValue = Color.Red } };
+			normalStyle.SetWsStyle(engFontInfo, Cache.WritingSystemFactory.GetWsFromStr("en"));
+			var defFontInfo = new FontInfo { m_fontColor = { ExplicitValue = Color.Green } };
+			normalStyle.SetDefaultFontInfo(defFontInfo);
+
+			// Set up Dictionary-Contrasting to be Yellow
+			var nodeStyle = GenerateEmptyStyle("Dictionary-Contrasting");
+			nodeStyle.IsParagraphStyle = true;
+			defFontInfo = new FontInfo { m_fontColor = { ExplicitValue = Color.Yellow } };
+			nodeStyle.SetDefaultFontInfo(defFontInfo);
+
+			// Normally the Definition node would have ws options, but we need to test
+			// the case of a node that doesn't have ws options
+			var definitionNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Definition",
+				Style = "Dictionary-Contrasting"
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Children = new List<ConfigurableDictionaryNode> { definitionNode }
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { entryNode }
+			};
+			PopulateFieldsForTesting(entryNode);
+			// Default (no ws) style info
+			const string englishGeneralStyle = "span[lang|=\"en\"]{font-family:'english',serif;color:#F00;}";
+			const string definitionSelector = ".lexentry> .senses .sense> .definition";
+			const string englishSpecificStyle = " span[lang|=\"en\"]{color:#FF0;}";
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(englishGeneralStyle));
+			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(definitionSelector + englishSpecificStyle));
+		}
+
+		[Test]
 		public void GenerateCssForConfiguration_GenerateDictionaryNormalParagraphStyle()
 		{
 			GenerateNormalStyle("Dictionary-Normal");

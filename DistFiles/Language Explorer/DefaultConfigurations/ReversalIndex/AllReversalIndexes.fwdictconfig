@@ -376,7 +376,7 @@
 					<Option id="reversal" isEnabled="true" />
 				</WritingSystemOptions>
 			</ConfigurationItem>
-			<ConfigurationItem name="Examples" style="Bulleted List" styleType="paragraph" isEnabled="false" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
+			<ConfigurationItem name="Examples" styleType="character" isEnabled="false" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
 				<ComplexFormOptions displayEachComplexFormInParagraph="false"/>
 				<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
 					<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -668,7 +668,7 @@
 				</ConfigurationItem>
 			</ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Reversal Subentries" isEnabled="true" style="Reversal-Subentry" field="SubentriesOS" cssClassNameOverride="Subentries" >
+		<ConfigurationItem name="Reversal Subentries" style="Reversal-Subentry" styleType="paragraph" isEnabled="true" field="SubentriesOS" cssClassNameOverride="Subentries" >
 	  <ComplexFormOptions displayEachComplexFormInParagraph="true" />
 	  <ReferenceItem>AllReversalSubentries</ReferenceItem>
 	</ConfigurationItem>
@@ -1050,7 +1050,7 @@
 						<Option id="reversal" isEnabled="true" />
 					</WritingSystemOptions>
 				</ConfigurationItem>
-				<ConfigurationItem name="Examples" style="Bulleted List" styleType="paragraph" isEnabled="false" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
+				<ConfigurationItem name="Examples" styleType="character" isEnabled="false" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
 					<ComplexFormOptions displayEachComplexFormInParagraph="false"/>
 					<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
 						<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -1342,7 +1342,7 @@
 					</ConfigurationItem>
 				</ConfigurationItem>
 			</ConfigurationItem>
-	<ConfigurationItem name="Reversal Subsubentries" isEnabled="true" style="Reversal-Subentry" field="SubentriesOS" cssClassNameOverride="Subentries" >
+	<ConfigurationItem name="Reversal Subsubentries" isEnabled="true" style="Reversal-Subentry" styleType="character" field="SubentriesOS" cssClassNameOverride="Subentries" >
 	  <ComplexFormOptions displayEachComplexFormInParagraph="false" />
 	  <ReferenceItem>AllReversalSubentries</ReferenceItem>
 		</ConfigurationItem>
