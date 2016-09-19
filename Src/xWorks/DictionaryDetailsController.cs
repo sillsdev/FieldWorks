@@ -139,12 +139,7 @@ namespace SIL.FieldWorks.XWorks
 				// Special Grammatical Info. options are needed only if the parent is Senses.
 				optionsView = LoadGrammaticalInfoOptions();
 			}
-			else
-			{
-				// else, show only the default details (style, before, between, after)
-				if (m_node.IsReadonlyMainEntry)
-					View.StylesEnabled = false;
-			}
+			// else, show only the default details (style, before, between, after)
 
 			// Notify users of shared nodes
 			if (node.ReferencedNode != null) //REVIEW: make sure ReferencedNodes always have no options
