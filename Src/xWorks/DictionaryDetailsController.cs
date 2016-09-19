@@ -637,12 +637,11 @@ namespace SIL.FieldWorks.XWorks
 		private static string ParagraphStyleForSubentries(bool showInParagraph, string field)
 		{
 			string styleName = null;
-			var noteInParaStyles = new List<string>() { "AnthroNote", "DiscourseNote", "PhonologyNote", "GrammarNote", "SemanticsNote", "SocioLinguisticsNote", "GeneralNote", "EncyclopedicInfo" };
 			if (showInParagraph)
 			{
 				if (field == "SubentriesOS") // only Reversal Subentries use SubentriesOS
 					styleName = "Reversal-Subentry";
-				else if (field == "ExamplesOS" || noteInParaStyles.Contains(field))
+				else if (field == "ExamplesOS" || DictionaryConfigurationModel.NoteInParaStyles.Contains(field))
 					styleName = "Bulleted List";
 				else if (field == "ExtendedNoteOS" || field == "SensesOS")
 					styleName = "Dictionary-Sense";
