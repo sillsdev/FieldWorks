@@ -1034,7 +1034,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			var oc = new OptionConverter();
 			var options = oc.Options(m_SettingsFileName.Text);
-
+			if (options == null) return;
 			foreach (var option in options)
 			{
 				switch (option.Key)
