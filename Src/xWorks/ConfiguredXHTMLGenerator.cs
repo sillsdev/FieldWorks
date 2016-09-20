@@ -2649,7 +2649,23 @@ namespace SIL.FieldWorks.XWorks
 				writer.WriteStartElement("a");
 				writer.WriteAttributeString("href", "#g" + linkDestination);
 			}
-			writer.WriteString(text);
+			const char txtlineSplit = (Char)8232; //Line-Seperator Decimal Code
+			if (text.Contains(txtlineSplit))
+			{
+				var txtContents = text.Split(txtlineSplit);
+				for (int i = 0; i < txtContents.Count(); i++)
+				{
+					writer.WriteString(txtContents[i]);
+					if (i == txtContents.Count() - 1)
+						break;
+					writer.WriteStartElement("br");
+					writer.WriteEndElement();
+				}
+			}
+			else
+			{
+				writer.WriteString(text);
+			}
 			if (linkDestination != Guid.Empty)
 			{
 				writer.WriteEndElement(); // </a>
