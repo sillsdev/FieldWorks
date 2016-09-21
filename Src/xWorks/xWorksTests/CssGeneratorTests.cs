@@ -817,6 +817,17 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForStyleName_ParagraphLineSpacingExactlyWorks()
+		{
+			int exactly = -12000;
+			var style = GenerateParagraphStyle("Dictionary-Paragraph-LineSpacingExactly");
+			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLineHeight, (int)FwTextPropVar.ktpvMilliPoint, exactly);
+			//SUT
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-LineSpacingExactly", CssGenerator.DefaultStyle, m_mediator);
+			Assert.That(styleDeclaration.ToString(), Contains.Substring("line-height:12pt;"));
+		}
+
+		[Test]
 		public void GenerateCssForConfiguration_ConfigWithCharStyleWorks()
 		{
 			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
