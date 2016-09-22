@@ -1556,7 +1556,7 @@ namespace SIL.FieldWorks.XWorks
 				if (IsVariantEntryType(config, out variantEntryTypeNode))
 				{
 					if (config.ReferencedOrDirectChildren.Any(
-							x => x.FieldDescription == "VariantEntryTypesRS" && x.IsEnabled && (x.Children != null && x.Children.Any(y => y.IsEnabled))))
+							x => x.IsEnabled && (x.Children != null && x.Children.Any(y => y.IsEnabled))))
 					{
 						// Order the variants by type and then guid, excluding variants that are not in the publication.
 						// This is using guid to order variants in a consistent way to fix LT-17384. Though perhaps another sort key would be better, such as ICmObject.SortKey or ICmObject.SortKey2.
@@ -1573,7 +1573,7 @@ namespace SIL.FieldWorks.XWorks
 								{
 									if (((ILexEntryRef)colItem).VariantEntryTypesRS.Contains(variantFormType))
 									{
-										if (previousType != variantFormType.SortKey)
+										if (previousType != variantFormType.SortKey && variantEntryTypeNode.IsEnabled)
 										{
 											xw.WriteRaw(WriteRawElementContents("span",
 												GenerateCollectionItemContent(variantEntryTypeNode, pubDecorator, variantFormType,
@@ -1916,7 +1916,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else if (listOptions is DictionaryNodeListAndParaOptions)
 			{
-				foreach (var child in config.ReferencedOrDirectChildren)
+				foreach (var child in config.ReferencedOrDirectChildren.Where(child => child.FieldDescription != factoredTypeField))
 				{
 					string content;
 					if (child.FieldDescription == "LookupComplexEntryType")
@@ -2649,7 +2649,23 @@ namespace SIL.FieldWorks.XWorks
 				writer.WriteStartElement("a");
 				writer.WriteAttributeString("href", "#g" + linkDestination);
 			}
-			writer.WriteString(text);
+			const char txtlineSplit = (Char)8232; //Line-Seperator Decimal Code
+			if (text.Contains(txtlineSplit))
+			{
+				var txtContents = text.Split(txtlineSplit);
+				for (int i = 0; i < txtContents.Count(); i++)
+				{
+					writer.WriteString(txtContents[i]);
+					if (i == txtContents.Count() - 1)
+						break;
+					writer.WriteStartElement("br");
+					writer.WriteEndElement();
+				}
+			}
+			else
+			{
+				writer.WriteString(text);
+			}
 			if (linkDestination != Guid.Empty)
 			{
 				writer.WriteEndElement(); // </a>

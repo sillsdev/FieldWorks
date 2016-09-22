@@ -95,7 +95,6 @@
     </Compile>
     <Compile Include="FlexBridgeListenerTests.cs" />
     <Compile Include="GoldEticGuidFixerTests.cs" />
-    <Compile Include="LexEntryChangeHandlerTests.cs" />
     <Compile Include="LexReferenceTreeRootLauncherTests.cs">
       <SubType>UserControl</SubType>
     </Compile>

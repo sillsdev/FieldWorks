@@ -2,10 +2,6 @@
 <!-- Nonstandard parts for LexEntry. -->
 <PartInventory>
 	<bin class="LexEntry">
-		<part id="LexEntry-Detail-ChangeHandler" type="detail">
-			<RecordChangeHandler assemblyPath="LexEdDll.dll" listName="RecordClerk-entries"
-				class="SIL.FieldWorks.XWorks.LexEd.LexEntryChangeHandler"/>
-		</part>
 		<part id="LexEntry-Detail-LexemeForm" type="detail">
 			<obj field="LexemeForm" layout="AsLexemeFormBasic" menu="mnuDataTree-Help" ghost="Form" ghostWs="vernacular"
 				 ghostLabel="Lexeme Form" ghostClass="MoStemAllomorph" ghostInitMethod="SetMorphTypeToRoot" />

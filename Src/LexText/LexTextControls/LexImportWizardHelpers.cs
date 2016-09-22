@@ -1413,6 +1413,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			catch
 			{
+				var xmlFile = mapFile.Split('\\');
+				MessageBox.Show(String.Format("Xml file {0} is invalid.", xmlFile[xmlFile.Length - 1]));
 			}
 			return null;
 		}

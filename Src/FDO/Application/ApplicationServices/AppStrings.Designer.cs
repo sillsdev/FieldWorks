@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Warning: Cannot create desired Lexical Reference Type: &lt;Link {0}/&gt;..
+        ///   Looks up a localized string similar to Info: Cannot create desired Lexical Reference Type: &quot;{0}&quot;..
         /// </summary>
         internal static string ksCannotCreateLexRefType {
             get {
@@ -115,7 +115,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Warning: Cannot resolve &lt;Link {0}/&gt;.
+        ///   Looks up a localized string similar to Info: Cannot resolve a link to entry &apos;{0}&apos;..
         /// </summary>
         internal static string ksCannotResolveLink {
             get {

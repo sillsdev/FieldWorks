@@ -88,6 +88,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		private ConfiguredXHTMLGenerator.GeneratorSettings DefaultSettings
+		{
+			get { return new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null); }
+		}
+
 		[Test]
 		public void GenerateCssForConfiguration_NullModelThrowsNullArgument()
 		{
@@ -445,6 +450,51 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(cssResult, Contains.Substring(".lexentry> .senses:after"));
 			Assert.That(cssResult, Is.Not.StringContaining(".lexentry> .senses .sense:after"));
 			Assert.That(cssResult, Is.Not.StringContaining(".lexentry> .senses .sense:last-child:after"));
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_DefinitionOrGlossBeforeAfterConfigGeneratesBeforeAfterCss()
+		{
+			var wsOpts = new DictionaryNodeWritingSystemOptions
+			{
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				{
+					new DictionaryNodeListOptions.DictionaryNodeOption {Id = "fr"},
+					new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en"}
+				}
+			};
+			var definitionOrGloss = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "DefinitionOrGloss",
+				Before = "<",
+				Between = ",",
+				After = ">",
+				DictionaryNodeOptions = wsOpts
+			};
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				Children = new List<ConfigurableDictionaryNode> { definitionOrGloss }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "lexentry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+
+			PopulateFieldsForTesting(mainEntryNode);
+			GeneratePseudoStyle(CssGenerator.BeforeAfterBetweenStyleName);
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .senses .sense> .definitionorgloss> span:first-child:before{.*content:'<';.*}",
+				RegexOptions.Singleline).Success, "Before not generated.");
+			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .senses .sense> .definitionorgloss> span\+span\[lang\|=\'en\']:before{.*content:',';.*}",
+				RegexOptions.Singleline).Success, "Between not generated.");
+			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .senses .sense> .definitionorgloss> span:last-child:after{.*content:'>';.*}",
+				RegexOptions.Singleline).Success, "After not generated.");
 		}
 
 		[Test]
@@ -964,8 +1014,7 @@ namespace SIL.FieldWorks.XWorks
 			using (var XHTMLWriter = XmlWriter.Create(xhtmResult))
 			{
 				XHTMLWriter.WriteStartElement("body");
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
-				var content = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testNode, null, settings);
+				var content = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testNode, null, DefaultSettings);
 				XHTMLWriter.WriteRaw(content);
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
@@ -1007,8 +1056,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(cssResult, Is.Not.StringContaining(".headword"));
 			Assert.That(cssResult, Contains.Substring(".tailwind"));
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testParentNode, null, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testParentNode, null, DefaultSettings);
 			const string positiveTest = "//*[@class='tailwind']";
 			const string negativeTest = "//*[@class='headword']";
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(negativeTest);
@@ -1049,8 +1097,7 @@ namespace SIL.FieldWorks.XWorks
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .gloss"));
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testEntryNode, null, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testEntryNode, null, DefaultSettings);
 			const string positiveTest = "/*[@class='lexentry']/span[@class='senses']/span[@class='sense']/span[@class='gloss']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(positiveTest, 1);
 		}
@@ -2078,7 +2125,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry>\s*\.lexemeform>\s*span\[lang\|=\'fr\'\]:before{.*content:','.*}", RegexOptions.Singleline).Success,
+			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry>\s*\.lexemeform>\s*span\+span\[lang\|=\'fr\'\]:before{.*content:','.*}", RegexOptions.Singleline).Success,
 							  "Between Multi-WritingSystem without Abbr selector not generated.");
 		}
 
@@ -2587,6 +2634,56 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(defaultStyle + englishStyle + frenchStyle));
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_NormalStyleForWsDoesNotOverrideNodeStyle()
+		{
+			// Set up Normal style to default to Green, except for English which is Red
+			var normalStyle = GenerateEmptyStyle("Normal");
+			normalStyle.IsParagraphStyle = true;
+			var engFontInfo = new FontInfo { m_fontName = { ExplicitValue = "english" }, m_fontColor = { ExplicitValue = Color.Red } };
+			normalStyle.SetWsStyle(engFontInfo, Cache.WritingSystemFactory.GetWsFromStr("en"));
+			var defFontInfo = new FontInfo { m_fontColor = { ExplicitValue = Color.Green } };
+			normalStyle.SetDefaultFontInfo(defFontInfo);
+
+			// Set up Dictionary-Contrasting to be Yellow
+			var nodeStyle = GenerateEmptyStyle("Dictionary-Contrasting");
+			nodeStyle.IsParagraphStyle = true;
+			defFontInfo = new FontInfo { m_fontColor = { ExplicitValue = Color.Yellow } };
+			nodeStyle.SetDefaultFontInfo(defFontInfo);
+
+			// Normally the Definition node would have ws options, but we need to test
+			// the case of a node that doesn't have ws options
+			var definitionNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Definition",
+				Style = "Dictionary-Contrasting"
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Children = new List<ConfigurableDictionaryNode> { definitionNode }
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { entryNode }
+			};
+			PopulateFieldsForTesting(entryNode);
+			// Default (no ws) style info
+			const string englishGeneralStyle = "span[lang|=\"en\"]{font-family:'english',serif;color:#F00;}";
+			const string definitionSelector = ".lexentry> .senses .sense> .definition";
+			const string englishSpecificStyle = " span[lang|=\"en\"]{color:#FF0;}";
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(englishGeneralStyle));
+			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(definitionSelector + englishSpecificStyle));
 		}
 
 		[Test]
@@ -3278,6 +3375,53 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsFalse(Regex.IsMatch(cssPara, regexAfter, RegexOptions.Multiline), "The css for paragraphed senses should not have a senses:after rule");
 		}
 
+		[Test]
+		public void GenerateCssForConfiguration_SpecificLanguageColorIsNotOverridenByParagraphStyle()
+		{
+			var discussionNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Discussion",
+				CSSClassNameOverride = "discussion",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" },
+										DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis)
+			};
+			var extNoteNode = new ConfigurableDictionaryNode
+			{
+				Label = "Extended Note",
+				FieldDescription = "ExtendedNoteOS",
+				CSSClassNameOverride = "extendednotecontents",
+				Children = new List<ConfigurableDictionaryNode> { discussionNode },
+				Style = "Dictionary-Sense",
+				StyleType = ConfigurableDictionaryNode.StyleTypes.Paragraph,
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, DictionaryNodeListOptions.ListIds.Note)
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { extNoteNode },
+				FieldDescription = "LexEntry"
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			PopulateFieldsForTesting(model);
+			var vernWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultVernWs);
+			Assert.AreEqual("fr", vernWs.RFC5646); // just verifying
+			// Set Dictionary-Sense to default to Green
+			var greenFontInfo = new FontInfo {m_fontColor = {ExplicitValue = Color.Green}};
+			var newteststyle = GenerateStyleFromFontInfo(Cache, "Dictionary-Sense", greenFontInfo);
+			// But make it Blue, if we're doing French
+			var blueFontInfo = new FontInfo {m_fontColor = {ExplicitValue = Color.Blue}};
+			newteststyle.SetWsStyle(blueFontInfo, vernWs.Handle);
+			SafelyAddStyleToSheetAndTable(newteststyle.Name, newteststyle);
+
+			//SUT
+			var result = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			// default (analysis ws) rule
+			const string regexPrimary = @"^\.lexentry> \.extendednotecontents\{\s*color:#008000;";
+			// specific (embedded vernacular ws) rule affecting any span inside .extendednotecontents (at any level)
+			const string regexSpecific = @"^\.lexentry> \.extendednotecontents span\[lang|='fr']\{\s*color:#00F";
+			Assert.IsTrue(Regex.IsMatch(result, regexPrimary, RegexOptions.Multiline), "The css for the default color should be there.");
+			Assert.IsTrue(Regex.IsMatch(result, regexSpecific, RegexOptions.Multiline), "The css for the specific language color should be there.");
+		}
+
 		#region Test Helper Methods
 
 		/// <summary>Populate fields that need to be populated on node and its children, including Parent, Label, and IsEnabled</summary>
@@ -3348,9 +3492,14 @@ namespace SIL.FieldWorks.XWorks
 			fontInfo.m_italic.ExplicitValue = true;
 			fontInfo.m_bold.ExplicitValue = true;
 			fontInfo.m_fontSize.ExplicitValue = FontSize;
-			var style = new TestStyle(fontInfo, Cache) { Name = name, IsParagraphStyle = false };
+			var style = GenerateStyleFromFontInfo(Cache, name, fontInfo);
 			SafelyAddStyleToSheetAndTable(name, style);
 			return style;
+		}
+
+		private static TestStyle GenerateStyleFromFontInfo(FdoCache cache, string name, FontInfo fontInfo, bool isParagraphStyle = false)
+		{
+			return new TestStyle(fontInfo, cache) { Name = name, IsParagraphStyle = isParagraphStyle };
 		}
 
 		private void SafelyAddStyleToSheetAndTable(string name, TestStyle style)

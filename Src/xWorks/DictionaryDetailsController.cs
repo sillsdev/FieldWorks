@@ -139,12 +139,7 @@ namespace SIL.FieldWorks.XWorks
 				// Special Grammatical Info. options are needed only if the parent is Senses.
 				optionsView = LoadGrammaticalInfoOptions();
 			}
-			else
-			{
-				// else, show only the default details (style, before, between, after)
-				if (m_node.IsReadonlyMainEntry)
-					View.StylesEnabled = false;
-			}
+			// else, show only the default details (style, before, between, after)
 
 			// Notify users of shared nodes
 			if (node.ReferencedNode != null) //REVIEW: make sure ReferencedNodes always have no options
@@ -338,7 +333,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// Displaying WS Abbreviations is available only when multiple WS's are selected.
 			wsOptionsView.DisplayOptionCheckBoxEnabled = (availableWSs.Count(item => item.Checked) >= 2);
-			wsOptionsView.DisplayOptionCheckBox2Enabled = false;
+			wsOptionsView.DisplayOptionCheckBox2Visible = false;
 
 			// Prevent events from firing while the view is being initialized
 			wsOptionsView.Load += WritingSystemEventHandlerAdder(wsOptionsView, wsOptions);
@@ -367,7 +362,7 @@ namespace SIL.FieldWorks.XWorks
 			// Displaying WS Abbreviations is available only when multiple WS's are selected.
 			wsapOptionsView.DisplayOptionCheckBoxEnabled = (availableWSs.Count(item => item.Checked) >= 2);
 
-			wsapOptionsView.DisplayOptionCheckBox2Enabled = true;
+			wsapOptionsView.DisplayOptionCheckBox2Visible = true;
 			wsapOptionsView.DisplayOptionCheckBox2Label = xWorksStrings.ksDisplayNoteInParagraphs;
 			wsapOptionsView.DisplayOptionCheckBox2Checked = wsapoptions.DisplayEachInAParagraph;
 			ToggleViewForShowInPara(wsapoptions.DisplayEachInAParagraph);
@@ -507,7 +502,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				LoadParagraphOptions(listAndParaOptions, listOptionsView);
 			}
-			listOptionsView.DisplayOptionCheckBox2Enabled = false;
+			listOptionsView.DisplayOptionCheckBox2Visible = false;
 			// REVIEW (Hasso) 2016.02: could this if block be replaced by config file changes?
 			if (listOptions.ListId == DictionaryNodeListOptions.ListIds.Complex ||
 				listOptions.ListId == DictionaryNodeListOptions.ListIds.Minor)
@@ -637,12 +632,11 @@ namespace SIL.FieldWorks.XWorks
 		private static string ParagraphStyleForSubentries(bool showInParagraph, string field)
 		{
 			string styleName = null;
-			var noteInParaStyles = new List<string>() { "AnthroNote", "DiscourseNote", "PhonologyNote", "GrammarNote", "SemanticsNote", "SocioLinguisticsNote", "GeneralNote", "EncyclopedicInfo" };
 			if (showInParagraph)
 			{
 				if (field == "SubentriesOS") // only Reversal Subentries use SubentriesOS
 					styleName = "Reversal-Subentry";
-				else if (field == "ExamplesOS" || noteInParaStyles.Contains(field))
+				else if (field == "ExamplesOS" || DictionaryConfigurationModel.NoteInParaStyles.Contains(field))
 					styleName = "Bulleted List";
 				else if (field == "ExtendedNoteOS" || field == "SensesOS")
 					styleName = "Dictionary-Sense";
@@ -659,7 +653,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				ListViewVisible = false,
 				DisplayOptionCheckBoxLabel = SenseOptionsView.ksShowGrammarFirst,
-				DisplayOptionCheckBox2Enabled = false
+				DisplayOptionCheckBox2Visible = false
 			};
 
 			// The option to show grammatical info first is stored on the Sense node, which should be Grammatical Info's direct parent

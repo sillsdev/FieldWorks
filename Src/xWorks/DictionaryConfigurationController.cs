@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
@@ -12,6 +13,7 @@ using System.Text;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
@@ -915,21 +917,53 @@ namespace SIL.FieldWorks.XWorks
 			if (!String.IsNullOrEmpty(node.Style) && !styles.ContainsKey(node.Style))
 				node.Style = null;
 			if (node.DictionaryNodeOptions != null)
-				EnsureValidStylesInNodeOptions(node.DictionaryNodeOptions, styles);
-			if (node.Children != null)
+				EnsureValidStylesInNodeOptions(node, styles);
+			if (node.Children == null)
+				return;
+			foreach (var child in node.Children)
+				EnsureValidStylesInConfigNodes(child, styles);
+		}
+
+		private static void EnsureValidStylesInNodeOptions(ConfigurableDictionaryNode node, Dictionary<string, IStStyle> styles)
+		{
+			var options = node.DictionaryNodeOptions;
+			var senseOptions = options as DictionaryNodeSenseOptions;
+			if (senseOptions != null)
 			{
-				foreach (var child in node.Children)
-					EnsureValidStylesInConfigNodes(child, styles);
+				if (!String.IsNullOrEmpty(senseOptions.NumberStyle) && !styles.ContainsKey(senseOptions.NumberStyle))
+					senseOptions.NumberStyle = null;
+				return;
+			}
+			var paraOptions = options as IParaOption;
+			var nodeStyle = node.Style;
+			if (paraOptions != null && !String.IsNullOrEmpty(nodeStyle))
+			{
+				// Everywhere else we're deleting styles from nodes if the styles dictionary doesn't contain it.
+				// Do the same here.
+				if (!styles.ContainsKey(nodeStyle))
+				{
+					node.Style = null;
+					return;
+				}
+				if (paraOptions.DisplayEachInAParagraph)
+				{
+					node.StyleType = ConfigurableDictionaryNode.StyleTypes.Paragraph;
+					if (!IsParagraphStyle(nodeStyle, styles))
+						node.Style = null;
+				}
+				else
+				{
+					node.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
+					if (IsParagraphStyle(nodeStyle, styles))
+						node.Style = null;
+				}
 			}
 		}
 
-		private static void EnsureValidStylesInNodeOptions(DictionaryNodeOptions options, Dictionary<string, IStStyle> styles)
+		private static bool IsParagraphStyle(string styleName, Dictionary<string, IStStyle> styles)
 		{
-			var senseOptions = options as DictionaryNodeSenseOptions;
-			if (senseOptions == null)
-				return;
-			if (!String.IsNullOrEmpty(senseOptions.NumberStyle) && !styles.ContainsKey(senseOptions.NumberStyle))
-				senseOptions.NumberStyle = null;
+			var style = styles[styleName];
+			return style.Type == StyleType.kstParagraph;
 		}
 
 		public static List<string> GetAllPublications(FdoCache cache)

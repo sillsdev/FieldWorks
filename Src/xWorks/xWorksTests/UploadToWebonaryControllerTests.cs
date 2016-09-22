@@ -188,7 +188,7 @@ namespace SIL.FieldWorks.XWorks
 				var model = view.Model;
 
 				Assert.DoesNotThrow(() => controller.UploadToWebonary(model, view));
-				Assert.That(view.StatusStrings.Any(s => s.Contains("Publishing")), "Inform that the process has started");
+				Assert.That(view.StatusStrings.Any(s => s.Contains("Uploading")), "Inform that the process has started");
 				model.SiteName = null;
 				Assert.DoesNotThrow(() => controller.UploadToWebonary(model, view));
 				model.SiteName = "site";

@@ -92,6 +92,12 @@ namespace SIL.FieldWorks.XWorks
 		public string FilePath { get; set; }
 
 		/// <summary>
+		/// Field Descriptions of configuration nodes for notes which should have paragraph styles
+		/// </summary>
+		[XmlIgnore]
+		internal static List<string> NoteInParaStyles = new List<string>() { "AnthroNote", "DiscourseNote", "PhonologyNote", "GrammarNote", "SemanticsNote", "SocioLinguisticsNote", "GeneralNote", "EncyclopedicInfo" };
+
+		/// <summary>
 		/// Checks which folder this will be saved in to determine if it is a reversal
 		/// </summary>
 		internal bool IsReversal

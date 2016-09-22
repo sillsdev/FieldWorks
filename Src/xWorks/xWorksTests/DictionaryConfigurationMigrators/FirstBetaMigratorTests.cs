@@ -462,6 +462,60 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		}
 
 		[Test]
+		public void MigrateFrom83Alpha_NoteInParaOptionsAreMigrated()
+		{
+			var alphaAnthroNoteNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "AnthroNote",
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions(),
+				Children = new List<ConfigurableDictionaryNode>(),
+				IsEnabled = true
+			};
+			var alphaSensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Children = new List<ConfigurableDictionaryNode> { alphaAnthroNoteNode }
+			};
+			var alphaMainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { alphaSensesNode }
+			};
+			var alphaModel = new DictionaryConfigurationModel { Version = FirstAlphaMigrator.VersionAlpha3, Parts = new List<ConfigurableDictionaryNode> { alphaMainEntryNode } };
+
+			var anthroNoteNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "AnthroNote",
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemAndParaOptions(),
+				Children = new List<ConfigurableDictionaryNode>(),
+				IsEnabled = true
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Children = new List<ConfigurableDictionaryNode> { anthroNoteNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+
+			var defaultModel = new DictionaryConfigurationModel { Version = DictionaryConfigurationMigrator.VersionCurrent, Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+
+			CssGeneratorTests.PopulateFieldsForTesting(alphaModel);
+			CssGeneratorTests.PopulateFieldsForTesting(defaultModel);
+			// SUT
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModel);
+
+			var migratedNoteDictionaryOptionsNode = alphaModel.Parts[0].Children[0].Children[0];
+			Assert.True(migratedNoteDictionaryOptionsNode.DictionaryNodeOptions != null, "DictionaryNodeOptions should not be null");
+			Assert.True(migratedNoteDictionaryOptionsNode.DictionaryNodeOptions is DictionaryNodeWritingSystemAndParaOptions, "Config node should have WritingSystemOptions");
+		}
+
+		[Test]
 		public void MigrateFromConfig83AlphaToBeta10_UpdatesEtymologyCluster()
 		{
 			var formNode = new ConfigurableDictionaryNode

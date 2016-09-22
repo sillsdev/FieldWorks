@@ -2610,6 +2610,60 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_LineSeperatorUnicodeCharBecomesBrElement()
+		{
+			var translationNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Translation",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var translationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "TranslationsOC",
+				CSSClassNameOverride = "translations",
+				Children = new List<ConfigurableDictionaryNode> { translationNode }
+			};
+			var exampleNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Example",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var examplesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ExampleSentences",
+				Children = new List<ConfigurableDictionaryNode> { exampleNode, translationsNode }
+			};
+			var otherRcfsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ComplexFormsNotSubentries",
+				Children = new List<ConfigurableDictionaryNode> { examplesNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { otherRcfsNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			const string example = "Example\u2028Sentence On Variant Form";
+			const string translation = "Translation\u2028of the Sentence";
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var minorEntry = CreateInterestingLexEntry(Cache);
+			CreateComplexForm(Cache, mainEntry, minorEntry, false);
+			AddExampleToSense(minorEntry.SensesOS[0], example, translation);
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
+			const string xpathThruExampleSentence = "/div[@class='lexentry']/span[@class='complexformsnotsubentries']/span[@class='complexformsnotsubentry']/span[@class='examplesentences']/span[@class='examplesentence']";
+			var oneSenseWithExample = string.Format(xpathThruExampleSentence + "//span[@lang='fr']//br");
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithExample, 1);
+			var oneExampleSentenceTranslation = string.Format(
+				xpathThruExampleSentence + "/span[@class='translations']/span[@class='translation']//span[@lang='en']//br");
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneExampleSentenceTranslation, 1);
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_ExtendedNoteChildrenAreGenerated()
 		{
 			var translationNode = new ConfigurableDictionaryNode
@@ -4117,6 +4171,64 @@ namespace SIL.FieldWorks.XWorks
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
 				"/div[@class='lexentry']/span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']//span[@lang='fr']/span[@lang='fr']", 2);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_VariantTypeIsUncheckedAndHeadwordIsChecked()
+		{
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var variantForm = CreateInterestingLexEntry(Cache);
+			CreateVariantForm(Cache, mainEntry, variantForm);
+			var crazyVariant = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.FirstOrDefault(variant => variant.Name.BestAnalysisAlternative.Text == TestVariantName);
+			Assert.IsNotNull(crazyVariant);
+
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
+				IsEnabled = true
+			};
+			var refNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ConfigReferencedEntries",
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				CSSClassNameOverride = "referencedentries",
+				IsEnabled = true
+			};
+			var variantFormTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+			};
+			var variantFormTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				CSSClassNameOverride = "variantentrytypes",
+				IsEnabled = false,
+				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNameNode },
+			};
+			var variantsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Variant, new[] { crazyVariant }),
+				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNode, refNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { variantsNode }
+			};
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
+				"/div[@class='lexentry']/span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@class='referencedentries']" +
+				"/span[@class='referencedentry']/span[@class='headword']/span[@lang='fr']/span[@lang='fr' and text()='Citation']", 1);
 		}
 
 		[Test]
@@ -7995,14 +8107,22 @@ namespace SIL.FieldWorks.XWorks
 						.Union(cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS).Select(item => item.Guid.ToString())));
 					break;
 				case DictionaryNodeListOptions.ListIds.Variant:
+					isComplex = false;
 					dnoList = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(
 						new [] { XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString() }
 						.Union(cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Select(item => item.Guid.ToString())));
 					break;
 				case DictionaryNodeListOptions.ListIds.Complex:
+					isComplex = true;
 					dnoList = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(
 						new [] { XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString() }
 						.Union(cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.Select(item => item.Guid.ToString())));
+					break;
+				case DictionaryNodeListOptions.ListIds.Note:
+					isComplex = true;
+					dnoList = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(
+						new[] { XmlViewsUtils.GetGuidForUnspecifiedExtendedNoteType().ToString() }
+						.Union(cache.LangProject.LexDbOA.ExtendedNoteTypesOA.PossibilitiesOS.Select(item => item.Guid.ToString())));
 					break;
 				default:
 					throw new NotImplementedException(string.Format("Unknown list id {0}", listName));

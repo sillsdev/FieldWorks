@@ -196,8 +196,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		{
 			if (oldConfigNode.Children == null || defaultNode.Children == null)
 				return;
-			if (defaultNode.FieldDescription == "VariantFormEntryBackRefs" && oldConfigNode.DictionaryNodeOptions == null
-				&& defaultNode.DictionaryNodeOptions != null)
+			if (((defaultNode.FieldDescription == "VariantFormEntryBackRefs" && oldConfigNode.DictionaryNodeOptions == null) ||
+				DictionaryConfigurationModel.NoteInParaStyles.Contains(defaultNode.FieldDescription)) && defaultNode.DictionaryNodeOptions != null)
 				oldConfigNode.DictionaryNodeOptions = defaultNode.DictionaryNodeOptions;
 			// First recurse into each matching child node
 			foreach (var newChild in defaultNode.Children)

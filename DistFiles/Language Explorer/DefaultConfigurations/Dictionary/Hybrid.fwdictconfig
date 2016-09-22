@@ -189,7 +189,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Examples" style="Bulleted List" styleType="paragraph" isEnabled="true" before="" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
+	  <ConfigurationItem name="Examples" styleType="character" isEnabled="true" before="" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
 		<ComplexFormOptions displayEachComplexFormInParagraph="false"/>
 		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -419,7 +419,7 @@
 				<Option id="all analysis" isEnabled="true" />
 			</WritingSystemOptions>
 		</ConfigurationItem>
-	  	<ConfigurationItem name="Examples" isEnabled="true" style="Bulleted List" styleType="character" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
+	  	<ConfigurationItem name="Examples" isEnabled="true" styleType="character" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
 	  		<ComplexFormOptions displayEachComplexFormInParagraph="false" />
 	  		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
 				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -776,7 +776,7 @@
           </ConfigurationItem>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Other Referenced Complex Forms" isEnabled="true" style="Dictionary-Subentry" styleType="character" before="" between=", " after=" " field="ComplexFormsNotSubentries">
+      <ConfigurationItem name="Other Referenced Complex Forms" isEnabled="true" styleType="character" before="" between=", " after=" " field="ComplexFormsNotSubentries">
         <ComplexFormOptions list="complex" displayEachComplexFormInParagraph="false">
           <Option id="" isEnabled="false" />
         </ComplexFormOptions>
@@ -903,7 +903,7 @@
 	</ConfigurationItem>
 	<ConfigurationItem name="Date Created" isEnabled="false" before="created on: " after=" " field="DateCreated" />
 	<ConfigurationItem name="Date Modified" isEnabled="false" before="modified on: " after=" " field="DateModified" />
-	<ConfigurationItem name="Minor Subentries" style="Dictionary-Subentry" isEnabled="true" field="Subentries">
+	<ConfigurationItem name="Minor Subentries" style="Dictionary-Subentry" styleType="paragraph" isEnabled="true" field="Subentries">
 	  <ComplexFormOptions list="complex" displayEachComplexFormInParagraph="true">
 		<Option isEnabled="true" id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
 		<Option isEnabled="true" id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
@@ -1173,7 +1173,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-      <ConfigurationItem name="Examples" style="Bulleted List" styleType="paragraph" isEnabled="true" before="" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
+      <ConfigurationItem name="Examples" styleType="character" isEnabled="true" before="" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
 		<ComplexFormOptions displayEachComplexFormInParagraph="false"/>
 		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -1403,7 +1403,7 @@
  				<Option id="all analysis" isEnabled="true" />
  			</WritingSystemOptions>
  		</ConfigurationItem>
- 	  	<ConfigurationItem name="Examples" isEnabled="true" style="Bulleted List" styleType="character" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
+ 	  	<ConfigurationItem name="Examples" isEnabled="true" styleType="character" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
  	  		<ComplexFormOptions displayEachComplexFormInParagraph="false" />
  	  		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
  				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -1792,9 +1792,6 @@
         </ConfigurationItem>
       </ConfigurationItem>
       <ConfigurationItem name="Referenced Complex Forms" isEnabled="false" styleType="character" before=" " between=", " after=" " field="VisibleComplexFormBackRefs">
-        <ComplexFormOptions list="complex" displayEachComplexFormInParagraph="false">
-          <Option id="" isEnabled="false" />
-        </ComplexFormOptions>
         <ConfigurationItem name="Complex Form Type" isEnabled="true" between=", " after=" " field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
           <ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
             <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1923,7 +1920,7 @@
 	</ConfigurationItem>
 	<ConfigurationItem name="Date Created" isEnabled="false" before="created on: " after=" " field="DateCreated" />
 	<ConfigurationItem name="Date Modified" isEnabled="false" before="modified on: " after=" " field="DateModified" />
-	<ConfigurationItem name="Minor Subentries" style="Dictionary-Subentry" isEnabled="true" field="Subentries">
+	<ConfigurationItem name="Minor Subentries" style="Dictionary-Subentry" styleType="paragraph" isEnabled="true" field="Subentries">
 	  <ComplexFormOptions list="complex" displayEachComplexFormInParagraph="true">
 		<Option isEnabled="true" id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
 		<Option isEnabled="true" id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
@@ -2102,7 +2099,7 @@
 			<Option id="all analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-	  	<ConfigurationItem name="Examples" style="Bulleted List" styleType="paragraph" between="  " after=" " isEnabled="true" field="ExamplesOS" cssClassNameOverride="examplescontents">
+	  	<ConfigurationItem name="Examples" styleType="character" between="  " after=" " isEnabled="true" field="ExamplesOS" cssClassNameOverride="examplescontents">
 	  	  <ComplexFormOptions displayEachComplexFormInParagraph="false"/>
 	  	  <ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -2340,7 +2337,7 @@
 	  				<Option id="all analysis" isEnabled="true" />
 	  			</WritingSystemOptions>
 	  		</ConfigurationItem>
-	  		<ConfigurationItem name="Examples" isEnabled="true" style="Bulleted List" styleType="character" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
+	  		<ConfigurationItem name="Examples" isEnabled="true" styleType="character" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
 	  			<ComplexFormOptions displayEachComplexFormInParagraph="false" />
 	  			<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
 	  				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -2436,9 +2433,6 @@
 		  </ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Referenced Complex Forms" between=", " after=" " isEnabled="true" field="VisibleComplexFormBackRefs">
-		  <ComplexFormOptions list="complex" displayEachComplexFormInParagraph="true">
-			<Option id="" isEnabled="false"/>
-		  </ComplexFormOptions>
 		  <ConfigurationItem name="Complex Form Type" between=", " after=" " isEnabled="false" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 			<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 			  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -2828,7 +2822,7 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Subsubentries" after=" " isEnabled="true" field="Subentries">
+	  <ConfigurationItem name="Subsubentries" styleType="character" after=" " isEnabled="true" field="Subentries">
 		<ComplexFormOptions list="complex" displayEachComplexFormInParagraph="false">
 		  <Option isEnabled="false" id=""/>
 		</ComplexFormOptions>
@@ -3078,7 +3072,7 @@
 			</WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Examples" style="Bulleted List" styleType="paragraph" isEnabled="true" before="" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
+	  <ConfigurationItem name="Examples" styleType="character" isEnabled="true" before="" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
 	  	<ComplexFormOptions displayEachComplexFormInParagraph="false"/>
 		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -3308,7 +3302,7 @@
 				<Option id="all analysis" isEnabled="true" />
 			</WritingSystemOptions>
 		</ConfigurationItem>
-	  	<ConfigurationItem name="Examples" isEnabled="true" style="Bulleted List" styleType="character" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
+	  	<ConfigurationItem name="Examples" isEnabled="true" styleType="character" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
 	  		<ComplexFormOptions displayEachComplexFormInParagraph="false" />
 	  		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
 				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -3718,9 +3712,6 @@
 	<ConfigurationItem name="Date Created" isEnabled="false" before="created on: " after=" " field="DateCreated" />
 	<ConfigurationItem name="Date Modified" isEnabled="false" before="modified on: " after=" " field="DateModified" />
 	<ConfigurationItem name="Referenced Complex Forms" isEnabled="false" before=" " between=", " after=" " field="VisibleComplexFormBackRefs">
-	  <ComplexFormOptions list="complex" displayEachComplexFormInParagraph="false">
-		<Option id="" isEnabled="false" />
-	  </ComplexFormOptions>
 	  <ConfigurationItem name="Complex Form Type" isEnabled="true" between=", " after=" " field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 		<ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -3863,7 +3854,7 @@
 		  <Option id="all analysis" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Examples" style="Bulleted List" styleType="paragraph" between="  " after=" " isEnabled="true" field="ExamplesOS" cssClassNameOverride="examplescontents">
+	  <ConfigurationItem name="Examples" styleType="character" between="  " after=" " isEnabled="true" field="ExamplesOS" cssClassNameOverride="examplescontents">
 		<ComplexFormOptions displayEachComplexFormInParagraph="false"/>
 		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -4106,7 +4097,7 @@
 				<Option id="all analysis" isEnabled="true" />
 			</WritingSystemOptions>
 		</ConfigurationItem>
-	  	<ConfigurationItem name="Examples" isEnabled="true" style="Bulleted List" styleType="character" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
+	  	<ConfigurationItem name="Examples" isEnabled="true" styleType="character" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
 	  		<ComplexFormOptions displayEachComplexFormInParagraph="false" />
 	  		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
 				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -4258,7 +4249,7 @@
 		  <ConfigurationItem name="Reference" after=" " isEnabled="false" field="Reference"/>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Subentries" style="Dictionary-Subentry" isEnabled="false" field="Subentries">
+	  <ConfigurationItem name="Subentries" styleType="character" isEnabled="false" field="Subentries">
 		<ComplexFormOptions list="complex" displayEachComplexFormInParagraph="false">
 		  <Option isEnabled="true" id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
 		  <Option isEnabled="true" id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
@@ -4457,7 +4448,7 @@
 			<Option id="all analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-	  	<ConfigurationItem name="Examples" style="Bulleted List" styleType="paragraph" between="  " after=" " isEnabled="false" field="ExamplesOS" cssClassNameOverride="examplescontents">
+	  	<ConfigurationItem name="Examples" styleType="character" between="  " after=" " isEnabled="false" field="ExamplesOS" cssClassNameOverride="examplescontents">
 	  	  <ComplexFormOptions displayEachComplexFormInParagraph="false"/>
 	  	  <ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -4695,7 +4686,7 @@
 	  				<Option id="all analysis" isEnabled="true" />
 	  			</WritingSystemOptions>
 	  		</ConfigurationItem>
-	  		<ConfigurationItem name="Examples" isEnabled="true" style="Bulleted List" styleType="character" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
+	  		<ConfigurationItem name="Examples" isEnabled="true" styleType="character" between="  " after=" " field="ExamplesOS" cssClassNameOverride="examplescontents">
 	  			<ComplexFormOptions displayEachComplexFormInParagraph="false" />
 	  			<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" between=" " after=" " field="Example">
 	  				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -4791,9 +4782,6 @@
 		  </ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Referenced Complex Forms" between=", " after=" " isEnabled="false" field="VisibleComplexFormBackRefs">
-		  <ComplexFormOptions list="complex" displayEachComplexFormInParagraph="true">
-			<Option isEnabled="false" id=""/>
-		  </ComplexFormOptions>
 		  <ConfigurationItem name="Complex Form Type" between=", " after=" " isEnabled="false" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 			<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 			  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -5183,7 +5171,7 @@
 		  </WritingSystemOptions>
 	    </ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Subsubentries" after=" " isEnabled="true" field="Subentries">
+	  <ConfigurationItem name="Subsubentries" styleType="character" after=" " isEnabled="true" field="Subentries">
 		<ComplexFormOptions list="complex" displayEachComplexFormInParagraph="false">
 		  <Option isEnabled="true" id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
 		  <Option isEnabled="true" id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
