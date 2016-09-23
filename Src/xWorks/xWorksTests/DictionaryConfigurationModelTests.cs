@@ -13,11 +13,13 @@ using System.Xml.Schema;
 using NUnit.Framework;
 using SIL.IO;
 using SIL.TestUtilities;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
+
 // ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.XWorks
@@ -29,13 +31,13 @@ namespace SIL.FieldWorks.XWorks
 			<DictionaryConfiguration name=""Root"" version=""1"" lastModified=""2014-02-13"">";
 		private const string XmlOpenTagsThruRootWithAllPublications = @"<?xml version=""1.0"" encoding=""utf-8""?>
 			<DictionaryConfiguration allPublications=""true"" name=""Root"" version=""1"" lastModified=""2014-02-13"">";
-		private const string XmlOpenTagsThruHeadword =
+		internal const string XmlOpenTagsThruHeadword =
 				XmlOpenTagsThruRoot +
 				@"<ConfigurationItem name=""Main Entry"" isEnabled=""true"" field=""LexEntry"">
 					<ConfigurationItem name=""Testword"" nameSuffix=""2b""
 							before=""["" between="", "" after=""] "" style=""Dictionary-Headword"" isEnabled=""true"" field=""HeadWord"">";
 
-		private const string XmlCloseTagsFromHeadword = @"
+		internal const string XmlCloseTagsFromHeadword = @"
 					</ConfigurationItem>
 				</ConfigurationItem>
 				<SharedItems/>" +
@@ -45,12 +47,28 @@ namespace SIL.FieldWorks.XWorks
 		private const string m_reference = "Reference";
 		private const string m_field = "LexEntry";
 
-		private static readonly DictionaryConfigurationModel m_model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode>() };
-
 		[TestFixtureSetUp]
 		public void DictionaryConfigModelFixtureSetup()
 		{
 			CreateStandardStyles();
+		}
+
+		private void CreateStandardStyles()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var fact = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
+				CreateStyle(fact, "Dictionary-Headword", StyleType.kstCharacter);	// needed by Load_LoadsBasicsAndDetails
+				CreateStyle(fact, "bold", StyleType.kstCharacter);					// needed by Load_LoadsSenseOptions
+			});
+		}
+
+		private void CreateStyle(IStStyleFactory fact, string name, StyleType type)
+		{
+			var st = fact.Create();
+			Cache.LangProject.StylesOC.Add(st);
+			st.Name = name;
+			st.Type = type;
 		}
 
 		[Test]
@@ -187,7 +205,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void Load_LoadsComplexFormOptions()
+		public void Load_LoadsListAndParaOptions()
 		{
 			DictionaryConfigurationModel model;
 			using (var modelFile = new TempFile(new[]
@@ -208,18 +226,18 @@ namespace SIL.FieldWorks.XWorks
 
 			// The following assertions are based on the specific test data loaded from the file
 			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
-			Assert.IsInstanceOf(typeof(DictionaryNodeComplexFormOptions), testNodeOptions);
-			var cfOptions = (DictionaryNodeComplexFormOptions)testNodeOptions;
-			Assert.AreEqual(DictionaryNodeListOptions.ListIds.Complex, cfOptions.ListId);
-			Assert.IsTrue(cfOptions.DisplayEachComplexFormInAParagraph);
+			Assert.IsInstanceOf(typeof(DictionaryNodeListAndParaOptions), testNodeOptions);
+			var lpOptions = (DictionaryNodeListAndParaOptions)testNodeOptions;
+			Assert.AreEqual(DictionaryNodeListOptions.ListIds.Complex, lpOptions.ListId);
+			Assert.IsTrue(lpOptions.DisplayEachInAParagraph);
 			// There are six complex form types by default in the language project.  (The second and third
 			// guids above are used by two of those default types.)  Ones that are missing in the configuration
 			// data are added in, ones that the configuration has but which don't exist in the language project
 			// are removed.  Note that the first one above (a0000000-dd15-4a03-9032-b40faaa9a754) is a special
 			// value used to indicate "No Complex Form Type".  The fourth value does not exist.
-			Assert.AreEqual(7, cfOptions.Options.Count);
-			Assert.AreEqual(7, cfOptions.Options.Count(option => option.IsEnabled));
-			Assert.AreEqual("a0000000-dd15-4a03-9032-b40faaa9a754", cfOptions.Options[0].Id);
+			Assert.AreEqual(7, lpOptions.Options.Count);
+			Assert.AreEqual(7, lpOptions.Options.Count(option => option.IsEnabled));
+			Assert.AreEqual("a0000000-dd15-4a03-9032-b40faaa9a754", lpOptions.Options[0].Id);
 		}
 
 		[Test]
@@ -239,11 +257,11 @@ namespace SIL.FieldWorks.XWorks
 
 			// The following assertions are based on the specific test data loaded from the file
 			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
-			Assert.IsInstanceOf(typeof(DictionaryNodeComplexFormOptions), testNodeOptions);
-			var cfOptions = (DictionaryNodeComplexFormOptions)testNodeOptions;
-			Assert.AreEqual(DictionaryNodeListOptions.ListIds.None, cfOptions.ListId);
-			Assert.That(cfOptions.Options, Is.Null.Or.Empty);
-			Assert.IsFalse(cfOptions.DisplayEachComplexFormInAParagraph);
+			Assert.IsInstanceOf(typeof(DictionaryNodeListAndParaOptions), testNodeOptions);
+			var lpOptions = (DictionaryNodeListAndParaOptions)testNodeOptions;
+			Assert.AreEqual(DictionaryNodeListOptions.ListIds.None, lpOptions.ListId);
+			Assert.That(lpOptions.Options, Is.Null.Or.Empty);
+			Assert.IsFalse(lpOptions.DisplayEachInAParagraph);
 		}
 
 		[Test]
@@ -394,15 +412,42 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void ShippedFilesHaveNoRedundantChildrenOrOrphans([Values("Dictionary", "ReversalIndex")] string subFolder)
+		{
+			var shippedConfigfolder = Path.Combine(FwDirectoryFinder.FlexFolder, "DefaultConfigurations", subFolder);
+			foreach(var shippedFile in Directory.EnumerateFiles(shippedConfigfolder, "*"+DictionaryConfigurationModel.FileExtension))
+			{
+				var model = new DictionaryConfigurationModel(shippedFile, Cache);
+				VerifyNoRedundantChildren(model.Parts);
+				if (model.SharedItems != null)
+				{
+					VerifyNoRedundantChildren(model.SharedItems);
+					foreach(var si in model.SharedItems)
+						Assert.NotNull(si.Parent, "Shared item {0} is an orphan", si.Label);
+				}
+			}
+		}
+
+		private static void VerifyNoRedundantChildren(List<ConfigurableDictionaryNode> nodes)
+		{
+			foreach (var node in nodes)
+			{
+				Assert.That(string.IsNullOrEmpty(node.ReferenceItem) || node.Children == null || !node.Children.Any());
+				if(node.Children != null)
+					VerifyNoRedundantChildren(node.Children);
+			}
+		}
+
+		[Test]
 		public void Save_BasicValidatesAgainstSchema()
 		{
 			var modelFile = Path.GetTempFileName();
 			var model = new DictionaryConfigurationModel
-				{
-					FilePath = modelFile,
-					Version = 0,
-					Label = "root"
-				};
+			{
+				FilePath = modelFile,
+				Version = 0,
+				Label = "root"
+			};
 			//SUT
 			model.Save();
 			ValidateAgainstSchema(modelFile);
@@ -416,6 +461,16 @@ namespace SIL.FieldWorks.XWorks
 			foreach(var shippedFile in Directory.EnumerateFiles(shippedConfigfolder, "*"+DictionaryConfigurationModel.FileExtension))
 			{
 				ValidateAgainstSchema(shippedFile);
+			}
+		}
+
+		[Test]
+		public void ShippedFilesHaveCurrentVersion([Values("Dictionary", "ReversalIndex")] string subFolder)
+		{
+			var shippedConfigfolder = Path.Combine(FwDirectoryFinder.FlexFolder, "DefaultConfigurations", subFolder);
+			foreach(var shippedFile in Directory.EnumerateFiles(shippedConfigfolder, "*"+DictionaryConfigurationModel.FileExtension))
+			{
+				Assert.AreEqual(DictionaryConfigurationMigrator.VersionCurrent, new DictionaryConfigurationModel(shippedFile, Cache).Version);
 			}
 		}
 
@@ -524,13 +579,11 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry",
 				ReferenceItem = reference
 			};
-
 			var oneRefConfigNode = new ConfigurableDictionaryNode
 			{
 				Label = reference,
 				FieldDescription = "LexEntry",
 			};
-
 			var model = new DictionaryConfigurationModel
 			{
 				FilePath = modelFile,
@@ -539,7 +592,6 @@ namespace SIL.FieldWorks.XWorks
 				Parts = new List<ConfigurableDictionaryNode> { oneConfigNode },
 				SharedItems = new List<ConfigurableDictionaryNode> { oneRefConfigNode }
 			};
-			model.SpecifyParentsAndReferences(model.Parts);
 
 			//SUT
 			model.Save();
@@ -701,7 +753,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void Save_ConfigWithComplexFormOptionsValidatesAgainstSchema()
+		public void Save_ConfigWithListAndParaOptionsValidatesAgainstSchema()
 		{
 			var modelFile = Path.GetTempFileName();
 			var oneConfigNode = new ConfigurableDictionaryNode
@@ -710,7 +762,7 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true,
 				Before = "[",
 				FieldDescription = "LexEntry",
-				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions
 				{
 					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
 					{
@@ -814,7 +866,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Label = "Entry",
 				FieldDescription = "LexEntry",
-				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions
 				{
 					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
 					{
@@ -856,7 +908,7 @@ namespace SIL.FieldWorks.XWorks
 		public void SpecifyParentsAndReferences_ThrowsOnNullArgument()
 		{
 			// SUT
-			Assert.Throws<ArgumentNullException>(() => m_model.SpecifyParentsAndReferences(null));
+			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationModel.SpecifyParentsAndReferences(null));
 		}
 
 		[Test]
@@ -870,7 +922,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var parts = new List<ConfigurableDictionaryNode> {rootNode};
 			// SUT
-			m_model.SpecifyParentsAndReferences(parts);
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(parts);
 			Assert.That(parts[0].Parent, Is.Null, "Shouldn't have changed parent of a root node");
 		}
 
@@ -893,7 +945,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var parts = new List<ConfigurableDictionaryNode> { rootNode };
 			// SUT
-			m_model.SpecifyParentsAndReferences(parts);
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(parts);
 			Assert.That(grandchild.Parent, Is.EqualTo(childA), "Parent should have been set");
 			Assert.That(childA.Parent, Is.EqualTo(rootNode), "Parent should have been set");
 			Assert.That(childB.Parent, Is.EqualTo(rootNode), "Parent should have been set");
@@ -903,15 +955,15 @@ namespace SIL.FieldWorks.XWorks
 		public void SpecifyParentsAndReferences_ThrowsIfReferenceItemDNE()
 		{
 			var configNode = new ConfigurableDictionaryNode { FieldDescription = "LexEntry", ReferenceItem = "DNE" };
-			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { configNode } };
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { configNode }, SharedItems = null };
 
 			// SUT (DNE b/c no SharedItems)
-			Assert.Throws<ArgumentNullException>(() => model.SpecifyParentsAndReferences(model.Parts), "No SharedItems!");
+			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems), "No SharedItems!");
 
 			model.SharedItems = new List<ConfigurableDictionaryNode>();
 
 			// SUT (DNE b/c SharedItems doesn't contain what was requested)
-			Assert.Throws<KeyNotFoundException>(() => model.SpecifyParentsAndReferences(model.Parts), "No matching item!");
+			Assert.Throws<KeyNotFoundException>(() => DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems), "No matching item!");
 		}
 
 		[Test]
@@ -919,21 +971,17 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var configNode = new ConfigurableDictionaryNode { FieldDescription = m_field, ReferenceItem = m_reference };
 			var refConfigNode = new ConfigurableDictionaryNode { FieldDescription = "SensesOS", Label = m_reference };
-			var model = new DictionaryConfigurationModel
-			{
-				Parts = new List<ConfigurableDictionaryNode> { configNode },
-				SharedItems = new List<ConfigurableDictionaryNode> { refConfigNode }
-			};
+			var model = CreateSimpleSharingModel(configNode, refConfigNode);
 
 			// SUT (Field is different)
-			Assert.Throws<KeyNotFoundException>(() => model.SpecifyParentsAndReferences(model.Parts));
+			Assert.Throws<KeyNotFoundException>(() => DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems));
 			Assert.IsNull(configNode.ReferencedNode, "ReferencedNode should not have been set");
 
 			refConfigNode.FieldDescription = m_field;
 			refConfigNode.SubField = "SensesOS";
 
 			// SUT (SubField is different)
-			Assert.Throws<KeyNotFoundException>(() => model.SpecifyParentsAndReferences(model.Parts));
+			Assert.Throws<KeyNotFoundException>(() => DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems));
 			Assert.IsNull(configNode.ReferencedNode, "ReferencedNode should not have been set");
 		}
 
@@ -942,20 +990,16 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var oneConfigNode = new ConfigurableDictionaryNode { FieldDescription = m_field, ReferenceItem = m_reference };
 			var oneRefConfigNode = new ConfigurableDictionaryNode { FieldDescription = m_field, Label = m_reference };
-			var model = new DictionaryConfigurationModel
-			{
-				Parts = new List<ConfigurableDictionaryNode> { oneConfigNode },
-				SharedItems = new List<ConfigurableDictionaryNode> { oneRefConfigNode }
-			};
+			var model = CreateSimpleSharingModel(oneConfigNode, oneRefConfigNode);
 
 			// SUT
-			model.SpecifyParentsAndReferences(model.Parts);
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems);
 
 			Assert.AreSame(oneRefConfigNode, oneConfigNode.ReferencedNode);
 		}
 
 		[Test]
-		public void SpecifyParentsAndReferences_UpdatesParentPropertyOfReferencedNodeOnce()
+		public void SpecifyParentsAndReferences_RefsPreferFirstParentIfSameLevel()
 		{
 			var configNodeOne = new ConfigurableDictionaryNode { FieldDescription = m_field, ReferenceItem = m_reference };
 			var configNodeTwo = new ConfigurableDictionaryNode { FieldDescription = m_field, ReferenceItem = m_reference };
@@ -967,31 +1011,28 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 			// SUT
-			model.SpecifyParentsAndReferences(model.Parts);
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems);
 
-			Assert.AreSame(configNodeOne, refdConfigNode.Parent, "The Referenced node's 'Parent' should be the first to reference");
+			Assert.AreSame(configNodeOne, refdConfigNode.Parent, "The Referenced node's 'Parent' should be the first to reference (breadth first)");
 		}
 
 		[Test]
-		public void SpecifyParentsAndReferences_SpecifiesParentsOfSharedItems()
+		public void SpecifyParentsAndReferences_RefsPreferShallowestParentEvenIfNotFirst()
 		{
-			var configNode = new ConfigurableDictionaryNode { FieldDescription = m_field, ReferenceItem = m_reference };
-			var refdConfigNodeChild = new ConfigurableDictionaryNode();
-			var refdConfigNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = m_field, Label = m_reference,
-				Children = new List<ConfigurableDictionaryNode> { refdConfigNodeChild }
-			};
+			var configNodeKid = new ConfigurableDictionaryNode { FieldDescription = m_field, ReferenceItem = m_reference };
+			var configNodeOne = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { configNodeKid } };
+			var configNodeTwo = new ConfigurableDictionaryNode { FieldDescription = m_field, ReferenceItem = m_reference };
+			var refdConfigNode = new ConfigurableDictionaryNode { FieldDescription = m_field, Label = m_reference };
 			var model = new DictionaryConfigurationModel
 			{
-				Parts = new List<ConfigurableDictionaryNode> { configNode },
+				Parts = new List<ConfigurableDictionaryNode> { configNodeOne, configNodeTwo },
 				SharedItems = new List<ConfigurableDictionaryNode> { refdConfigNode }
 			};
 
 			// SUT
-			model.SpecifyParentsAndReferences(model.Parts);
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems);
 
-			Assert.AreSame(refdConfigNode, refdConfigNodeChild.Parent);
+			Assert.AreSame(configNodeTwo, refdConfigNode.Parent, "The Referenced node's 'Parent' should be the first to reference (breadth first)");
 		}
 
 		[Test]
@@ -1004,17 +1045,26 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = m_field, Label = m_reference,
 				Children = new List<ConfigurableDictionaryNode> { refdConfigNodeChild }
 			};
-			var model = new DictionaryConfigurationModel
-			{
-				Parts = new List<ConfigurableDictionaryNode> { configNode },
-				SharedItems = new List<ConfigurableDictionaryNode> { refdConfigNode }
-			};
+			var model = CreateSimpleSharingModel(configNode, refdConfigNode);
 
 			// SUT
-			model.SpecifyParentsAndReferences(model.Parts);
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems);
 
 			Assert.AreSame(refdConfigNode, refdConfigNodeChild.Parent);
 			Assert.AreSame(refdConfigNode, refdConfigNodeChild.ReferencedNode);
+		}
+
+		[Test]
+		public void LinkReferencedNode()
+		{
+			var configNode = new ConfigurableDictionaryNode { FieldDescription = m_field };
+			var refConfigNode = new ConfigurableDictionaryNode { FieldDescription = m_field, Label = m_reference };
+			var model = CreateSimpleSharingModel(configNode, refConfigNode);
+
+			// SUT
+			DictionaryConfigurationController.LinkReferencedNode(model.SharedItems, configNode, m_reference);
+			Assert.AreEqual(refConfigNode.Label, configNode.ReferenceItem);
+			Assert.AreSame(refConfigNode, configNode.ReferencedNode);
 		}
 
 		[Test]
@@ -1052,349 +1102,35 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void IsHeadWord_NullArgument_Throws()
+		public void DeepClone_ConnectsSharedItemsWithinNewModel()
 		{
-			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationModel.IsHeadWord(null));
-		}
-
-		[Test]
-		public void IsHeadWord_HeadWord_True()
-		{
-			Assert.True(DictionaryConfigurationModel.IsHeadWord(new ConfigurableDictionaryNode
-			{
-				Label = "Headword", FieldDescription = "MLHeadWord", CSSClassNameOverride = "headword"
-			}));
-		}
-
-		[Test]
-		public void IsHeadWord_NonStandardHeadWord_True()
-		{
-			Assert.True(DictionaryConfigurationModel.IsHeadWord(new ConfigurableDictionaryNode
-			{
-				Label = "Other Form", FieldDescription = "MLHeadWord", CSSClassNameOverride = "headword"
-			}));
-			Assert.True(DictionaryConfigurationModel.IsHeadWord(new ConfigurableDictionaryNode
-			{
-				Label = "Referenced Headword", FieldDescription = "ReversalName", CSSClassNameOverride = "headword"
-			}));
-			Assert.True(DictionaryConfigurationModel.IsHeadWord(new ConfigurableDictionaryNode
-			{
-				Label = "Headword", FieldDescription = "OwningEntry", SubField = "MLHeadWord", CSSClassNameOverride = "headword"
-			}));
-			Assert.True(DictionaryConfigurationModel.IsHeadWord(new ConfigurableDictionaryNode
-			{
-				Label = "Headword", FieldDescription = "MLHeadWord", CSSClassNameOverride = "mainheadword"
-			}));
-		}
-
-		[Test]
-		public void IsHeadWord_NonHeadWord_False()
-		{
-			Assert.False(DictionaryConfigurationModel.IsHeadWord(new ConfigurableDictionaryNode
-			{
-				Label = "Headword", FieldDescription = "OwningEntry", CSSClassNameOverride = "alternateform"
-			}));
-		}
-
-		[Test]
-		public void IsMainEntry_NullArgument_Throws()
-		{
-			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationModel.IsMainEntry(null));
-			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationModel.IsReadonlyMainEntry(null));
-		}
-
-		[Test]
-		public void IsMainEntry_MainEntry_True()
-		{
-			var mainEntryNode = new ConfigurableDictionaryNode{ FieldDescription = "LexEntry", CSSClassNameOverride = "entry", Parent = null };
-			Assert.True(DictionaryConfigurationModel.IsMainEntry(mainEntryNode), "Main Entry");
-			Assert.True(DictionaryConfigurationModel.IsReadonlyMainEntry(mainEntryNode), "Readonly Main Entry");
-		}
-
-		[Test]
-		public void IsMainEntry_StemBasedMainEntry_ComplexForms_True_ButNotReadonly()
-		{
+			const string sharedSubsName = "SharedSubentries";
+			var subentriesNode = new ConfigurableDictionaryNode { FieldDescription = "Subentries", ReferenceItem = sharedSubsName };
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LexEntry", CSSClassNameOverride = "mainentrycomplex", DictionaryNodeOptions = new DictionaryNodeListOptions(),
-				Parent = null
+				Children = new List<ConfigurableDictionaryNode> { subentriesNode },
+				FieldDescription = "LexEntry"
 			};
-			Assert.True(DictionaryConfigurationModel.IsMainEntry(mainEntryNode), "Main Entry");
-			Assert.False(DictionaryConfigurationModel.IsReadonlyMainEntry(mainEntryNode), "Stem's Complex Main Entry should be duplicable");
-		}
-
-		[Test]
-		public void IsMainEntry_MainReversalIndexEntry_True()
-		{
-			var mainEntryNode = new ConfigurableDictionaryNode { FieldDescription = "ReversalIndexEntry", CSSClassNameOverride = "reversalindexentry", Parent = null };
-			Assert.True(DictionaryConfigurationModel.IsMainEntry(mainEntryNode), "Main Entry");
-			Assert.True(DictionaryConfigurationModel.IsReadonlyMainEntry(mainEntryNode), "Readonly Main Entry");
-		}
-
-		[Test]
-		public void IsMainEntry_MinorEntry_False()
-		{
-			var minorEntryNode = new ConfigurableDictionaryNode{ FieldDescription = "LexEntry", CSSClassNameOverride = "minorentry", Parent = null };
-			Assert.False(DictionaryConfigurationModel.IsMainEntry(minorEntryNode), "Main Entry");
-			Assert.False(DictionaryConfigurationModel.IsReadonlyMainEntry(minorEntryNode), "Readonly Main Entry");
-		}
-
-		[Test]
-		public void IsMainEntry_OtherEntry_False()
-		{
-			var mainEntryNode = new ConfigurableDictionaryNode{ FieldDescription = "LexEntry", CSSClassNameOverride = "entry", Parent = null };
-			var someNode = new ConfigurableDictionaryNode{ FieldDescription = "MLHeadWord", CSSClassNameOverride = "mainheadword", Parent = mainEntryNode };
-			Assert.False(DictionaryConfigurationModel.IsMainEntry(someNode), "Main Entry");
-			Assert.False(DictionaryConfigurationModel.IsReadonlyMainEntry(someNode), "Readonly Main Entry");
-		}
-
-		[Test]
-		public void EnsureValidStylesInModelRemovesMissingStyles()
-		{
-			var senseNode = new ConfigurableDictionaryNode
-			{
-				Label = "Senses",
-				FieldDescription = "SensesOS",
-				IsEnabled = true,
-				DictionaryNodeOptions = new DictionaryNodeSenseOptions
-				{
-					DisplayEachSenseInAParagraph = true,
-					NumberStyle = "Green-Dictionary-SenseNumber",
-					NumberingStyle = "%d",
-					NumberEvenASingleSense = false,
-					ShowSharedGrammarInfoFirst = true
-				},
-				StyleType = ConfigurableDictionaryNode.StyleTypes.Paragraph,
-				Style = "Orange-Sense-Paragraph"
-			};
-			var entryNode = new ConfigurableDictionaryNode
-			{
-				Label = "Entry",
-				FieldDescription = "LexEntry",
-				IsEnabled = true,
-				Style = "Dictionary-Continuation",
-				Children = new List<ConfigurableDictionaryNode> { senseNode }
-			};
-			var model = new DictionaryConfigurationModel
-			{
-				FilePath = "/no/such/file",
-				Version = 0,
-				Label = "Root",
-				Parts = new List<ConfigurableDictionaryNode> { entryNode },
-			};
-			model.EnsureValidStylesInModel(Cache);
-			//SUT
-			Assert.IsNull(entryNode.Style, "Missing style should be removed.");
-			Assert.IsNull(senseNode.Style, "Missing style should be removed.");
-			Assert.IsNull((senseNode.DictionaryNodeOptions as DictionaryNodeSenseOptions).NumberStyle, "Missing style should be removed.");
-		}
-
-		private void CreateStandardStyles()
-		{
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-			{
-				var fact = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
-				CreateStyle(fact, "Dictionary-Normal", SIL.FieldWorks.Common.COMInterfaces.StyleType.kstParagraph);		// needed by EnsureValidStylesInModelRemovesMissingStyles
-				CreateStyle(fact, "Sense-Paragraph", SIL.FieldWorks.Common.COMInterfaces.StyleType.kstParagraph);
-				CreateStyle(fact, "Dictionary-SenseNumber", SIL.FieldWorks.Common.COMInterfaces.StyleType.kstCharacter);
-				CreateStyle(fact, "Dictionary-Headword", SIL.FieldWorks.Common.COMInterfaces.StyleType.kstCharacter);	// needed by Load_LoadsBasicsAndDetails
-				CreateStyle(fact, "bold", SIL.FieldWorks.Common.COMInterfaces.StyleType.kstCharacter);					// needed by Load_LoadsSenseOptions
-			});
-		}
-
-		private void CreateStyle(IStStyleFactory fact, string name, SIL.FieldWorks.Common.COMInterfaces.StyleType type)
-		{
-			var st = fact.Create();
-			Cache.LangProject.StylesOC.Add(st);
-			st.Name = name;
-			st.Type = type;
-		}
-
-		[Test]
-		public void CheckNewAndDeleteddVariantTypes()
-		{
-			var minorEntryVariantNode = new ConfigurableDictionaryNode
-			{
-				Label = "Minor Entry (Variants)",
-				FieldDescription = "LexEntry",
-				IsEnabled = true,
-				DictionaryNodeOptions = new DictionaryNodeListOptions
-				{
-					ListId = DictionaryNodeListOptions.ListIds.Variant,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-					{
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id="01234567-89ab-cdef-0123-456789abcdef", IsEnabled = true },
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id="024b62c9-93b3-41a0-ab19-587a0030219a", IsEnabled = true },
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id="4343b1ef-b54f-4fa4-9998-271319a6d74c", IsEnabled = true },
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c", IsEnabled = true },
-					},
-				},
-			};
-			var variantsNode = new ConfigurableDictionaryNode
-			{
-				Label = "Variant Forms",
-				FieldDescription = "VariantFormEntryBackRefs",
-				IsEnabled = true,
-				DictionaryNodeOptions = new DictionaryNodeListOptions
-				{
-					ListId = DictionaryNodeListOptions.ListIds.Variant,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-					{
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id="01234567-89ab-cdef-0123-456789abcdef", IsEnabled = true },
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id="024b62c9-93b3-41a0-ab19-587a0030219a", IsEnabled = true },
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id="4343b1ef-b54f-4fa4-9998-271319a6d74c", IsEnabled = true },
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c", IsEnabled = true },
-					},
-				},
-			};
-			var entryNode = new ConfigurableDictionaryNode
-			{
-				Label = "Main Entry",
-				FieldDescription = "LexEntry",
-				IsEnabled = true,
-				Style = "Dictionary-Normal",
-				Children = new List<ConfigurableDictionaryNode> { variantsNode }
-			};
-			var model = new DictionaryConfigurationModel
-			{
-				FilePath = "/no/such/file",
-				Version = 0,
-				Label = "Root",
-				Parts = new List<ConfigurableDictionaryNode> { entryNode, minorEntryVariantNode },
-			};
-			var newType = CreateNewVariantType("Absurd Variant");
+			var sharedSubentriesNode = new ConfigurableDictionaryNode { Label = sharedSubsName, FieldDescription = "Subentries" };
+			var model = CreateSimpleSharingModel(mainEntryNode, sharedSubentriesNode);
+			CssGeneratorTests.PopulateFieldsForTesting(model);
 			// SUT
-			try
-			{
-				DictionaryConfigurationModel.MergeTypesIntoDictionaryModel(Cache, model);
-				var opts1 = (variantsNode.DictionaryNodeOptions as DictionaryNodeListOptions).Options;
-				// We have options for the standard six variant types (including the last three shown above, plus one for the
-				// new type we added, plus one for the "No Variant Type" pseudo-type for a total of eight.
-				Assert.AreEqual(8, opts1.Count, "Properly merged variant types to options list in major entry child node");
-				Assert.AreEqual(newType.Guid.ToString(), opts1[6].Id, "New type appears near end of options list in major entry child node");
-				Assert.AreEqual("b0000000-c40e-433e-80b5-31da08771344", opts1[7].Id, "'No Variant Type' type appears at end of options list in major entry child node");
-				var opts2 = (minorEntryVariantNode.DictionaryNodeOptions as DictionaryNodeListOptions).Options;
-				Assert.AreEqual(8, opts2.Count, "Properly merged variant types to options list in minor entry top node");
-				Assert.AreEqual(newType.Guid.ToString(), opts2[6].Id, "New type appears near end of options list in minor entry top node");
-				Assert.AreEqual("b0000000-c40e-433e-80b5-31da08771344", opts2[7].Id, "'No Variant Type' type appears near end of options list in minor entry top node");
-			}
-			finally
-			{
-				// Don't mess up other unit tests with an extra variant type.
-				RemoveNewVariantType(newType);
-			}
+			var clonedModel = model.DeepClone();
+			var clonedMainEntry = clonedModel.Parts[0];
+			var clonedSubentries = clonedMainEntry.Children[0];
+			Assert.AreEqual(sharedSubsName, clonedSubentries.ReferenceItem, "ReferenceItem should have been cloned");
+			Assert.AreSame(clonedModel.SharedItems[0], clonedSubentries.ReferencedNode, "ReferencedNode should have been cloned");
+			Assert.AreSame(clonedSubentries, clonedModel.SharedItems[0].Parent, "SharedItems' Parents should connect to their new masters");
+			Assert.AreNotSame(model.SharedItems[0], clonedModel.SharedItems[0], "SharedItems were not deep cloned");
 		}
 
-		[Test]
-		public void CheckNewAndDeletedReferenceTypes()
+		internal static DictionaryConfigurationModel CreateSimpleSharingModel(ConfigurableDictionaryNode part, ConfigurableDictionaryNode sharedItem)
 		{
-			var lexicalRelationNode = new ConfigurableDictionaryNode
+			return new DictionaryConfigurationModel
 			{
-				Label = "Lexical Relations",
-				FieldDescription = "LexSenseReferences",
-				IsEnabled = true,
-				DictionaryNodeOptions = new DictionaryNodeListOptions
-				{
-					ListId = DictionaryNodeListOptions.ListIds.Sense,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
-					{
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id="0b5b04c8-3900-4537-9eec-1346d10507d7", IsEnabled = true },
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id="1ac9f08e-ed72-4775-a18e-3b1330da8618", IsEnabled = true },
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id="854fc2a8-c0e0-4b72-8611-314a21467fe4", IsEnabled = true }
-					},
-				},
+				Parts = new List<ConfigurableDictionaryNode> { part },
+				SharedItems = new List<ConfigurableDictionaryNode> { sharedItem }
 			};
-			var senseNode = new ConfigurableDictionaryNode
-			{
-				Label = "Senses",
-				FieldDescription = "SensesOS",
-				IsEnabled = true,
-				DictionaryNodeOptions = new DictionaryNodeSenseOptions
-				{
-					DisplayEachSenseInAParagraph = true,
-					NumberingStyle = "%d",
-					NumberEvenASingleSense = false,
-					ShowSharedGrammarInfoFirst = true
-				},
-				Children = new List<ConfigurableDictionaryNode> {lexicalRelationNode}
-			};
-			var entryNode = new ConfigurableDictionaryNode
-			{
-				Label = "Main Entry",
-				FieldDescription = "LexEntry",
-				IsEnabled = true,
-				Style = "Dictionary-Normal",
-				Children = new List<ConfigurableDictionaryNode> { senseNode }
-			};
-			var model = new DictionaryConfigurationModel
-			{
-				FilePath = "/no/such/file",
-				Version = 0,
-				Label = "Root",
-				Parts = new List<ConfigurableDictionaryNode> { entryNode },
-			};
-			var newType = MakeRefType("Part", null, (int)LexRefTypeTags.MappingTypes.kmtSenseCollection);
-			// SUT
-			try
-			{
-				DictionaryConfigurationModel.MergeTypesIntoDictionaryModel(Cache, model);
-				var opts1 = (lexicalRelationNode.DictionaryNodeOptions as DictionaryNodeListOptions).Options;
-				Assert.AreEqual(1, opts1.Count, "Properly merged reference types to options list in lexical relation node");
-				Assert.AreEqual(newType.Guid.ToString(), opts1[0].Id, "New type appears in the list in lexical relation node");
-			}
-			finally
-			{
-				// Don't mess up other unit tests with an extra reference type.
-				RemoveNewReferenceType(newType);
-			}
-		}
-
-		private ILexEntryType CreateNewVariantType(string name)
-		{
-			ILexEntryType poss = null;
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-			{
-				var fact = Cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>();
-				poss = fact.Create();
-				Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Add(poss);
-				poss.Name.SetAnalysisDefaultWritingSystem(name);
-			});
-			return poss;
-		}
-
-		ILexRefType MakeRefType(string name, string reverseName, int mapType)
-		{
-			ILexRefType result = null;
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-			{
-				if (Cache.LangProject.LexDbOA.ReferencesOA == null)
-					Cache.LangProject.LexDbOA.ReferencesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
-				result = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
-				Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(result);
-				result.Name.AnalysisDefaultWritingSystem = AnalysisTss(name);
-				if (reverseName != null)
-					result.ReverseName.AnalysisDefaultWritingSystem = AnalysisTss(reverseName);
-				result.MappingType = mapType;
-			});
-			return result;
-		}
-		private ITsString AnalysisTss(string form)
-		{
-			return Cache.TsStrFactory.MakeString(form, Cache.DefaultAnalWs);
-		}
-		private void RemoveNewVariantType(ILexEntryType newType)
-		{
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-			{
-					Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Remove(newType);
-			});
-		}
-		private void RemoveNewReferenceType(ILexRefType newType)
-		{
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-			{
-				Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Remove(newType);
-			});
 		}
 	}
 }

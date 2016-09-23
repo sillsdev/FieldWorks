@@ -228,6 +228,24 @@ namespace SIL.Utils
 		/// Get an optional attribute value from an XmlNode, and look up its localized value in the
 		/// given StringTable.
 		/// </summary>
+		/// <param name="tbl"></param>
+		/// <param name="node"></param>
+		/// <param name="attrName"></param>
+		/// <param name="defaultString"></param>
+		/// <returns></returns>
+		public static string GetLocalizedAttributeValue(StringTable tbl, XmlNode node,
+			string attrName, string defaultString)
+		{
+			string sValue = GetOptionalAttributeValue(node, attrName, defaultString);
+			if (tbl == null)
+				return sValue;
+			return tbl.LocalizeAttributeValue(sValue);
+		}
+
+		/// <summary>
+		/// Get an optional attribute value from an XmlNode, and look up its localized value in the
+		/// standard StringTable.
+		/// </summary>
 		/// <param name="node"></param>
 		/// <param name="attrName"></param>
 		/// <param name="defaultString"></param>
@@ -235,8 +253,7 @@ namespace SIL.Utils
 		public static string GetLocalizedAttributeValue(XmlNode node,
 			string attrName, string defaultString)
 		{
-			string sValue = GetOptionalAttributeValue(node, attrName, defaultString);
-			return StringTable.Table.LocalizeAttributeValue(sValue);
+			return GetLocalizedAttributeValue(StringTable.Table, node, attrName, defaultString);
 		}
 
 		/// <summary>

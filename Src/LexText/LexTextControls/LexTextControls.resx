@@ -932,9 +932,6 @@ Each feature has two values (+ and -).</value>
   <data name="ksNotApplicable" xml:space="preserve">
     <value>&lt;Not Applicable&gt;</value>
   </data>
-  <data name="ksUnknownComplexForm" xml:space="preserve">
-    <value>&lt;Unknown Complex Form&gt;</value>
-  </data>
   <data name="ksCannotSoTryAgain" xml:space="preserve">
     <value>The program cannot perform this operation due to an internal problem.
 If you see this message again, exit the import wizard (saving your settings) and try again.</value>
@@ -1346,7 +1343,13 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
   <data name="ksLocationsAdded" xml:space="preserve">
     <value>The following Locations were added to the language project:</value>
   </data>
+  <data name="ksLanguagesAdded" xml:space="preserve">
+    <value>The following Languages were added to the language project:</value>
+  </data>
   <data name="ksNonMatchingRelation" xml:space="preserve">
     <value>The LIFT ranges file had a conflicting value ({0} instead of {1}) for the {2} of the lexical relation {3}. The value in the LIFT file was ignored.</value>
+  </data>
+  <data name="ksDialectsAdded" xml:space="preserve">
+    <value>The following Dialect labels were added to the language project:</value>
   </data>
 </root>

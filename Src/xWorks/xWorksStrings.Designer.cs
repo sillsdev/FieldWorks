@@ -160,6 +160,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Click to jump to {0}..
+        /// </summary>
+        internal static string ClickToJumpTo {
+            get {
+                return ResourceManager.GetString("ClickToJumpTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Configuration.
         /// </summary>
         internal static string Configuration {
@@ -528,6 +537,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to It is inadvisable to share &apos;{0}&apos; because a shared node with the same field ({1}) already exists ({2}). No changes have been made..
+        /// </summary>
+        internal static string InadvisableToShare {
+            get {
+                return ResourceManager.GetString("InadvisableToShare", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The root node in your configuration is invalid. The field attribute &apos;{0}&apos; must match a class name..
         /// </summary>
         internal static string InvalidRootConfigurationNode {
@@ -591,7 +609,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All Entries.
+        ///   Looks up a localized string similar to All.
         /// </summary>
         internal static string ksAllEntries {
             get {
@@ -807,7 +825,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Choose the location and name of the LIFT export folder FLEx will use.  You can make a new folder, or choose one which already contains LIFT data (e.g. a WeSay project folder).
+        ///   Looks up a localized string similar to Choose or create a folder (with your project name) for FLEx to put all the files into for this LIFT export.  Any LIFT data in an existing folder will be overwritten..
         /// </summary>
         internal static string ksChooseLIFTExportFolder {
             get {
@@ -816,7 +834,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Choose where to save the LIFT files.
+        ///   Looks up a localized string similar to Choose where to save the files that constitute a LIFT export.
         /// </summary>
         internal static string ksChooseLIFTFolderTitle {
             get {
@@ -857,6 +875,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string ksConfigureList {
             get {
                 return ResourceManager.GetString("ksConfigureList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configure now....
+        /// </summary>
+        internal static string ksConfigureNow {
+            get {
+                return ResourceManager.GetString("ksConfigureNow", resourceCulture);
             }
         }
         
@@ -1023,6 +1050,42 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Display each subsense in a paragraph.
+        /// </summary>
+        internal static string ksDisplayEachSubsenseInAParagraph {
+            get {
+                return ResourceManager.GetString("ksDisplayEachSubsenseInAParagraph", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display each Example in a paragraph.
+        /// </summary>
+        internal static string ksDisplayExamplesInParagraphs {
+            get {
+                return ResourceManager.GetString("ksDisplayExamplesInParagraphs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display each Extended Note in a paragraph.
+        /// </summary>
+        internal static string ksDisplayExtendedNoteInParagraphs {
+            get {
+                return ResourceManager.GetString("ksDisplayExtendedNoteInParagraphs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display each Note in a separate paragraph.
+        /// </summary>
+        internal static string ksDisplayNoteInParagraphs {
+            get {
+                return ResourceManager.GetString("ksDisplayNoteInParagraphs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Display each Subentry in a paragraph.
         /// </summary>
         internal static string ksDisplaySubentriesInParagraphs {
@@ -1082,6 +1145,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string ksExportingLift {
             get {
                 return ResourceManager.GetString("ksExportingLift", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extended Note Types:.
+        /// </summary>
+        internal static string ksExtendedNoteTypes {
+            get {
+                return ResourceManager.GetString("ksExtendedNoteTypes", resourceCulture);
             }
         }
         
@@ -1348,6 +1420,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No Extended Note Type.
+        /// </summary>
+        internal static string ksNoExtendedNoteType {
+            get {
+                return ResourceManager.GetString("ksNoExtendedNoteType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No List Name.
         /// </summary>
         internal static string ksNoListName {
@@ -1452,6 +1533,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string ksParagraphStyleForContent {
             get {
                 return ResourceManager.GetString("ksParagraphStyleForContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show parent sense number.
+        /// </summary>
+        internal static string ksParentSenseNumberingStyle {
+            get {
+                return ResourceManager.GetString("ksParentSenseNumberingStyle", resourceCulture);
             }
         }
         
@@ -1674,6 +1764,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to starting with second subsense.
+        /// </summary>
+        internal static string ksStartingWithTheSecondSubsense {
+            get {
+                return ResourceManager.GetString("ksStartingWithTheSecondSubsense", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Subsense Number Configuration.
         /// </summary>
         internal static string ksSubsenseNumberConfig {
@@ -1842,7 +1941,8 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} otherwise uses the same configuration as {1}..
+        ///   Looks up a localized string similar to {0} uses the same configuration for subfields as
+        ///{1}..
         /// </summary>
         internal static string ksUsesTheSameConfigurationAs {
             get {
@@ -2022,21 +2122,11 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pressing Publish will send {0} entries and {1} reversal entries to Webonary..
+        ///   Looks up a localized string similar to Pressing Submit will send {0} dictionary entries{1} to Webonary..
         /// </summary>
         internal static string PublicationEntriesLabel {
             get {
                 return ResourceManager.GetString("PublicationEntriesLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Exporting entries for the {0} publication using the {1} configuration.
-        /// </summary>
-        internal static string PublishToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0__publication_using_the__1__configuration {
-            get {
-                return ResourceManager.GetString("PublishToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0_" +
-                        "_publication_using_the__1__configuration", resourceCulture);
             }
         }
         
@@ -2123,6 +2213,33 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to , {0} {1} reversal entries.
+        /// </summary>
+        internal static string ReversalEntries {
+            get {
+                return ResourceManager.GetString("ReversalEntries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to , and {0} {1} reversal entries.
+        /// </summary>
+        internal static string ReversalEntries_Last {
+            get {
+                return ResourceManager.GetString("ReversalEntries_Last", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  and {0} {1} reversal entries.
+        /// </summary>
+        internal static string ReversalEntries_Only {
+            get {
+                return ResourceManager.GetString("ReversalEntries_Only", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reversal Index.
         /// </summary>
         internal static string ReversalIndex {
@@ -2159,6 +2276,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to See {0} for a list of affected nodes..
+        /// </summary>
+        internal static string SeeAffectedNodesUnder {
+            get {
+                return ResourceManager.GetString("SeeAffectedNodesUnder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select Custom Field.
         /// </summary>
         internal static string SelectCustomField {
@@ -2186,6 +2312,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Configuring the subfields of {0} also affects:{1}..
+        /// </summary>
+        internal static string SharesWithTheseNodes {
+            get {
+                return ResourceManager.GetString("SharesWithTheseNodes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sorted by {0}.
         /// </summary>
         internal static string SortedBy {
@@ -2209,6 +2344,24 @@ namespace SIL.FieldWorks.XWorks {
         internal static string ThankYouForCheckingOutFlex {
             get {
                 return ResourceManager.GetString("ThankYouForCheckingOutFlex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This configuration is shared. Hover for details..
+        /// </summary>
+        internal static string ThisConfigurationIsShared {
+            get {
+                return ResourceManager.GetString("ThisConfigurationIsShared", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This item is configured somewhere else. Hover for details..
+        /// </summary>
+        internal static string ThisIsConfiguredElsewhere {
+            get {
+                return ResourceManager.GetString("ThisIsConfiguredElsewhere", resourceCulture);
             }
         }
         
@@ -2263,6 +2416,16 @@ namespace SIL.FieldWorks.XWorks {
         internal static string UpdatingTheDisplay {
             get {
                 return ResourceManager.GetString("UpdatingTheDisplay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exporting entries for the {0} publication using the {1} configuration.
+        /// </summary>
+        internal static string UploadToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0__publication_using_the__1__configuration {
+            get {
+                return ResourceManager.GetString("UploadToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0__" +
+                        "publication_using_the__1__configuration", resourceCulture);
             }
         }
         

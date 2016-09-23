@@ -24,16 +24,19 @@
 		<xs:attribute type="xs:integer" name="version" use="required"/>
 		<xs:attribute type="xs:date" name="lastModified"/>
 		<xs:attribute type="xs:boolean" name="allPublications" use="optional"/>
+		<xs:attribute type="xs:boolean" name="isRootBased" use="required"/>
 	</xs:complexType>
 </xs:element>
 <xs:complexType name="SenseOptionsType">
 	<xs:attribute type="xs:string" name="numberStyle"/>
 	<xs:attribute type="xs:string" name="numberBefore"/>
 	<xs:attribute type="xs:string" name="numberingStyle"/>
+	<xs:attribute type="xs:string" name="parentSenseNumberingStyle"/>
 	<xs:attribute type="xs:string" name="numberAfter"/>
 	<xs:attribute type="xs:boolean" name="numberSingleSense"/>
 	<xs:attribute type="xs:boolean" name="showSingleGramInfoFirst"/>
 	<xs:attribute type="xs:boolean" name="displayEachSenseInParagraph"/>
+	<xs:attribute type="xs:boolean" name="displayFirstSenseInline"/>
 </xs:complexType>
 <xs:complexType name="WritingSystemOptionsType">
 	<xs:sequence>
@@ -42,15 +45,24 @@
 	<xs:attribute type="writingSystemType" name="writingSystemType" use="required"/>
 	<xs:attribute type="xs:boolean" name="displayWSAbreviation" use="optional"/>
 </xs:complexType>
+	<xs:complexType name="WritingSystemAndParaOptionsType">
+	<xs:sequence>
+		<xs:element name="Option" type="OptionListItemType" maxOccurs="unbounded" minOccurs="0"/>
+	</xs:sequence>
+	<xs:attribute type="writingSystemType" name="writingSystemType" use="required"/>
+	<xs:attribute type="xs:boolean" name="displayWSAbreviation" use="optional"/>
+	<xs:attribute type="xs:boolean" name="displayInParagraph" use="optional"/>
+</xs:complexType>
 <xs:complexType name="ConfigurationItemType">
 	<xs:sequence>
 		<xs:element type="WritingSystemOptionsType" name="WritingSystemOptions" minOccurs="0"/>
+		<xs:element type="WritingSystemAndParaOptionsType" name="WritingSystemAndParaOptions" minOccurs="0"/>
 		<xs:element name="ListTypeOptions" minOccurs="0">
 			<xs:complexType>
 				<xs:sequence>
 					<xs:element name="Option" type="OptionListItemType" maxOccurs="unbounded" minOccurs="0"/>
 				</xs:sequence>
-				<xs:attribute type="listIdType" name="list" use="required"/>
+				<xs:attribute type="listIdType" name="list" use="optional"/>
 			</xs:complexType>
 		</xs:element>
 		<xs:element name="ComplexFormOptions" minOccurs="0">
@@ -76,12 +88,22 @@
 				<xs:attribute type="xs:boolean" name="stackPictures" use="required"/>
 			</xs:complexType>
 		</xs:element>
+		<!-- Deprecated. Kept only for migration purposes -->
 		<xs:element name="ReferringSenseOptions" minOccurs="0">
 			<xs:complexType>
 			   <xs:sequence>
 					<xs:element type="WritingSystemOptionsType" name="WritingSystemOptions"/>
 					<xs:element type="SenseOptionsType" name="SenseOptions"/>
 			   </xs:sequence>
+			</xs:complexType>
+		</xs:element>
+		<xs:element name="GroupingOptions" minOccurs="0">
+			<xs:complexType>
+			   <xs:simpleContent>
+					<xs:extension base="xs:string">
+						<xs:attribute type="xs:boolean" name="displayGroupInParagraph" use="optional"/>
+					</xs:extension>
+			   </xs:simpleContent>
 			</xs:complexType>
 		</xs:element>
 		<xs:choice minOccurs="0" maxOccurs="1">
@@ -100,6 +122,7 @@
 	<xs:attribute type="xs:boolean" name="isEnabled" use="required"/>
 	<xs:attribute type="xs:boolean" name="isDuplicate" use="optional"/>
 	<xs:attribute type="xs:boolean" name="isCustomField" use="optional"/>
+	<xs:attribute type="xs:boolean" name="hideCustomFields" use="optional"/>
 	<xs:attributeGroup ref="itemStyle"/>
 	<xs:attribute type="xs:string" name="field" use="required"/>
 	<xs:attribute type="xs:string" name="subField" use="optional"/>
@@ -128,6 +151,7 @@
 		<xs:enumeration value="variant"/>
 		<xs:enumeration value="sense"/>
 		<xs:enumeration value="entry"/>
+		<xs:enumeration value="note"/>
 	</xs:restriction>
 </xs:simpleType>
 <xs:complexType name="OptionListItemType">

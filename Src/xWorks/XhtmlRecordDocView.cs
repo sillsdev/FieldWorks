@@ -3,10 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using Gecko;
@@ -74,6 +72,26 @@ namespace SIL.FieldWorks.XWorks
 			{
 				XhtmlDocView.HandleDomRightClick(browser, e, element, m_propertyTable, m_mediator, m_configObjectName);
 			}
+		}
+
+		/// <summary>
+		/// Enable the 'File Print...' menu option for the LexEdit dictionary preview
+		/// </summary>
+		public bool OnDisplayPrint(object parameter, UIItemDisplayProperties display)
+		{
+			display.Enabled = display.Visible = true;
+			return true;
+		}
+
+		/// <summary>
+		/// Handle the 'File Print...' menu item click (defined in the Lexicon areaConfiguration.xml)
+		/// </summary>
+		/// <param name="commandObject"></param>
+		/// <returns></returns>
+		public bool OnPrint(object commandObject)
+		{
+			XhtmlDocView.PrintPage(m_mainView);
+			return true;
 		}
 
 		protected override void ShowRecord()

@@ -533,6 +533,20 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
+		/// <summary>Returns the list of parent sense number styles</summary>
+		public static List<NumberingStyleComboItem> SupportedParentSenseNumberStyles
+		{
+			get
+			{
+				return new List<NumberingStyleComboItem>
+				{
+					new NumberingStyleComboItem(XMLViewsStrings.ksNone, ""),
+					new NumberingStyleComboItem("Joined", "%j"),
+					new NumberingStyleComboItem("Separated by dot", "%."),
+				};
+			}
+		}
+
 		/// <summary>
 		/// Takes a coded number string and interprets it.
 		/// Only the first code in the string is interpreted.

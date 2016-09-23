@@ -16,6 +16,7 @@ using System.Xml;
 
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
@@ -157,6 +158,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 		private ReferenceTracker m_rglinks = new ReferenceTracker();
 		private TextReader m_rdrInput;
 		private TextWriter m_wrtrLog;
+		private bool m_createLinks;
 
 
 		/// ------------------------------------------------------------------------------------
@@ -164,13 +166,14 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 		/// Constructor.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public XmlImportData(FdoCache cache)
+		public XmlImportData(FdoCache cache, bool fCreateMissingLinks)
 		{
 			m_cache = cache;
 			m_sda = cache.DomainDataByFlid as ISilDataAccessManaged;
 			m_mdc = cache.DomainDataByFlid.MetaDataCache as IFwMetaDataCacheManaged;
 			m_wsf = cache.WritingSystemFactory;
 			m_tsf = cache.TsStrFactory;
+			m_createLinks = fCreateMissingLinks;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -434,11 +437,11 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			CopyMultiUnicode(leOld.CitationForm, leNew.CitationForm);
 			CopyMultiString(leOld.Comment, leNew.Comment);
 			CopyMultiString(leOld.LiteralMeaning, leNew.LiteralMeaning);
-			CopyMultiUnicode(leOld.Restrictions, leNew.Restrictions);
+			CopyMultiString(leOld.Restrictions, leNew.Restrictions);
 			CopyMultiString(leOld.SummaryDefinition, leNew.SummaryDefinition);
-			ILexEtymology ety = leOld.EtymologyOA;
-			if (leNew.EtymologyOA == null && ety != null)
-				leNew.EtymologyOA = ety;
+			ILexEtymology[] rgety = leOld.EtymologyOS.ToArray();
+			for (int i = 0; i < rgety.Length; ++i)
+				leNew.EtymologyOS.Add(rgety[i]);
 			IMoForm[] rgmf = leOld.AlternateFormsOS.ToArray();
 			for (int i = 0; i < rgmf.Length; ++i)
 				leNew.AlternateFormsOS.Add(rgmf[i]);
@@ -1316,22 +1319,12 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 						s = s.Replace('\n', StringUtils.kChHardLB);
 						if (fi.Owner is ILexEntry)
 						{
-							ITsString tss = (fi.Owner as ILexEntry).ImportResidue;
-							if (tss.Length > 0)
-							{
-								ITsIncStrBldr tisb = tss.GetIncBldr();
-								tisb.Append("; ");
-								tisb.Append(s);
-								tss = tisb.GetString();
-							}
-							else
-							{
-								tss = m_cache.TsStrFactory.MakeString(s, m_cache.DefaultUserWs);
-							}
-							(fi.Owner as ILexEntry).ImportResidue = tss;
+							AppendMessageToImportResidue(fi.Owner, s, m_cache.DefaultUserWs);
 						}
 						else if (fi.Owner is ILexSense)
 						{
+							// Review gjm: Why do we do nothing in this case?! (we could replace all this
+							// if - else if stuff with the one "AppendMessage..." line.
 						}
 					}
 					xrdr.ReadEndElement();
@@ -1972,6 +1965,9 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryTree:
 				case (int)LexRefTypeTags.MappingTypes.kmtSenseTree:
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
+				case (int)LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
+				case (int)LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
+				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
 					break;
 				default:
 					// not part of any sequence; if we have a pending sequence finish it.
@@ -2084,18 +2080,23 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			// preference to the one imported as the one that links in the file probably mean).
 			FillEntryMap();
 
+			var subentryOrderMap = new Dictionary<int, List<ICmObject>>();
 			foreach (var pend in m_rglinks.Links)
 			{
 				int flid = pend.FieldInformation.FieldId;
 				if (flid == kflidCrossReferences || flid == kflidLexicalRelations)
 				{
-					ICmObject cmoTarget = ResolveLexReferenceLink(pend.LinkAttributes, flid);
+					ICmObject cmoTarget = ResolveLexReferenceLink(pend, flid);
 					if (cmoTarget == null)
 					{
-						if (flid == kflidCrossReferences)
-							LogMessage(AppStrings.ksCannottResolveCrossRef, pend.LineNumber);
-						else
-							LogMessage(AppStrings.ksCannotResolveLexRelation, pend.LineNumber);
+						string dummy;
+						var tform = GetLexFormAndSenseNumber(pend.LinkAttributes, out dummy);
+						var sform = GetLinkOwnerForm(pend);
+						var msgFormat = flid == kflidCrossReferences ?
+							AppStrings.ksCannotResolveCrossRef :
+							AppStrings.ksCannotResolveLexRelation;
+						var msg = string.Format(msgFormat, sform, tform);
+						LogMessage(msg, pend.LineNumber);
 						continue;
 					}
 					bool fReverse;
@@ -2193,7 +2194,24 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 							}
 						}
 						if (fAdd)
+						{
+							var lexEntryRef = pend.FieldInformation.Owner as ILexEntryRef;
+							// RefType of 0 indicates that the type is a variant and not a subentry
+							if (lexEntryRef != null && lexEntryRef.RefType != 0)
+							{
+								List<ICmObject> existing;
+								subentryOrderMap.TryGetValue(hvo, out existing);
+								if (existing == null)
+								{
+									subentryOrderMap[hvo] = new List<ICmObject> { pend.FieldInformation.ParentOfOwner.Owner };
+								}
+								else if (!existing.Contains(pend.FieldInformation.ParentOfOwner.Owner))
+								{
+									existing.Add(pend.FieldInformation.ParentOfOwner.Owner);
+								}
+							}
 							m_sda.Replace(hvoOwner, flid, chvo, chvo, new int[] { hvo }, 1);
+						}
 					}
 					cmoTargetPrev = null;
 					cmoOwnerPrev = null;
@@ -2202,7 +2220,23 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 					lrPrev = null;
 				}
 			}
+			foreach (var entryOrderPair in subentryOrderMap.Where(kvp => kvp.Value.Count > 1))
+			{
+				var mainEntry = m_repoCmObject.GetObject(entryOrderPair.Key);
+				VirtualOrderingServices.SetVO(mainEntry, m_cache.ServiceLocator.GetInstance<Virtuals>().LexEntrySubentries, entryOrderPair.Value.Where(item => item.IsValidObject));
+			}
 			FinalizeLrSeq(lrSeqInfo);
+		}
+
+		private string GetLinkOwnerForm(PendingLink pend)
+		{
+			var owner = pend.FieldInformation.Owner; // either Entry or Sense
+			Debug.Assert(owner is ILexEntry || owner is ILexSense, "Link owner should be either entry or sense.");
+			if (owner is ILexEntry)
+			{
+				return ((ILexEntry) owner).HomographForm;
+			}
+			return ((ILexSense) owner).FullReferenceName.Text;
 		}
 
 		private ILexReference FindMatchingLexRef(ILexRefType lrt, ICmObject cmoOwner,
@@ -2251,7 +2285,10 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				case (int)LexRefTypeTags.MappingTypes.kmtEntrySequence:
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence:
 				case (int)LexRefTypeTags.MappingTypes.kmtSenseSequence:
-					throw new ApplicationException("FindMatchingLexRef should not be called for sequences or trees");
+				case (int)LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
+				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
+				case (int)LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
+					throw new ApplicationException("FindMatchingLexRef should not be called for sequences, trees, or unidirectional");
 			}
 			return null;
 		}
@@ -2318,8 +2355,9 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 		/// </summary>
 		private Dictionary<WsString, ILexEntry> m_mapFormEntry = null;
 
-		private ICmObject ResolveLexReferenceLink(Dictionary<string, string> dictAttrs, int flid)
+		private ICmObject ResolveLexReferenceLink(PendingLink pend, int flid)
 		{
+			var dictAttrs = pend.LinkAttributes;
 			string sWs;
 			if (dictAttrs.TryGetValue("wsv", out sWs))
 			{
@@ -2328,8 +2366,14 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				string sForm = GetLexFormAndSenseNumber(dictAttrs, out sSenseNumber);
 				if (ws == 0 || String.IsNullOrEmpty(sForm))
 					return null;
-				else
-					return GetEntryOrSense(ws, sForm, sSenseNumber, flid);
+				// this line may still return null if m_createLinks is false
+				ICmObject cmo = GetEntryOrSense(ws, sForm, sSenseNumber, flid);
+				if (cmo != null)
+					return cmo;
+				var owner = pend.FieldInformation.Owner; // at this point, owner should be either ILexEntry or ILexSense or ILexEntryRef
+				var msg = GetDidNotCreateEntryMessage(flid, sForm);
+				var dsLen = msg.IndexOf(": ") + 2; // strip off "datastream: " or "{filename}: "
+				AppendMessageToImportResidue(owner, msg.Substring(dsLen), ws);
 			}
 			return null;
 		}
@@ -2359,12 +2403,10 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 						return GetIndicatedSense(sSenseNumber, le);
 				}
 			}
-			// no match...create one.
+			// no match...create one...or don't depending on m_createLinks
 			le = CreateLexEntryForReference(ws, sn, flid);
-			if (String.IsNullOrEmpty(sSenseNumber))
-				return le;
-			else
-				return le.SensesOS[0];
+			if (le == null) return null; // didn't create an entry
+			return String.IsNullOrEmpty(sSenseNumber) ? (ICmObject) le : le.SensesOS[0];
 		}
 
 		private string GetLexFormAndSenseNumber(Dictionary<string, string> dictAttrs,
@@ -2415,54 +2457,25 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				sForm = sForm.Substring(0, idx);
 				m_nHomograph = Int32.Parse(sHomograph);
 			}
+			if (!m_createLinks)
+			{
+				if (m_wrtrLog != null)
+					LogMessage(GetDidNotCreateEntryMessage(flid, sForm));
+				return null;
+			}
 			int clsidForm;
 			IMoMorphType morphType = MorphServices.FindMorphType(
 				m_cache, ref sForm, out clsidForm);
-			SandboxGenericMSA msa = new SandboxGenericMSA();
+			var msa = new SandboxGenericMSA();
 			if (clsidForm == MoStemAllomorphTags.kClassId)
 				msa.MsaType = MsaType.kStem;
 			else
 				msa.MsaType = MsaType.kUnclassified;
-			ITsString tssForm = m_cache.TsStrFactory.MakeString(sForm, ws);
+			var tssForm = m_cache.TsStrFactory.MakeString(sForm, ws);
 			ILexEntry le = m_factLexEntry.Create(morphType, tssForm, (ITsString)null, msa);
 			IncrementCreatedClidCount(LexEntryTags.kClassId);
 			ITsString tssResidue;
-			string sMsg;
-			if (flid == kflidLexicalRelations)
-			{
-				tssResidue = m_cache.TsStrFactory.MakeString(
-					AppStrings.ksCheckCreatedForLexicalRelation, m_cache.DefaultUserWs);
-				sMsg = String.Format(AppStrings.ksCreatedForLexicalRelation,
-					m_sFilename, le.Hvo, sForm);
-			}
-			else if (flid == kflidCrossReferences)
-			{
-				tssResidue = m_cache.TsStrFactory.MakeString(
-					AppStrings.ksCheckCreatedForCrossReference, m_cache.DefaultUserWs);
-				sMsg = String.Format(AppStrings.ksCreatedForCrossReference,
-					m_sFilename, le.Hvo, sForm);
-			}
-			else if (flid == LexEntryRefTags.kflidComponentLexemes)
-			{
-				tssResidue = m_cache.TsStrFactory.MakeString(
-					AppStrings.ksCheckCreatedForComponentsLink, m_cache.DefaultUserWs);
-				sMsg = String.Format(AppStrings.ksCreatedForComponentsLink,
-					m_sFilename, le.Hvo, sForm);
-			}
-			else if (flid == LexEntryRefTags.kflidPrimaryLexemes)
-			{
-				tssResidue = m_cache.TsStrFactory.MakeString(
-					AppStrings.ksCheckCreatedForShowSubentryUnderLink, m_cache.DefaultUserWs);
-				sMsg = String.Format(AppStrings.ksCreatedForShowSubentryUnderLink,
-					m_sFilename, le.Hvo, sForm);
-			}
-			else //if (flid != 0)
-			{
-				tssResidue = m_cache.TsStrFactory.MakeString(
-					AppStrings.ksCheckCreatedForLinkTarget, m_cache.DefaultUserWs);
-				sMsg = String.Format(AppStrings.ksCreatedForLinkTarget,
-					m_sFilename, le.Hvo, sForm);
-			}
+			var sMsg = GetCreatedEntryMessage(flid, m_cache.DefaultUserWs, le.Hvo, sForm, out tssResidue);
 			le.ImportResidue = tssResidue;
 			le.SensesOS[0].ImportResidue = tssResidue;
 			if (m_wrtrLog != null)
@@ -2470,6 +2483,56 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			WsString wss = new WsString(ws, sOrigForm);
 			m_mapFormEntry[wss] = le;
 			return le;
+		}
+
+		private string GetDidNotCreateEntryMessage(int flid, string sForm)
+		{
+			switch (flid)
+			{
+				case kflidLexicalRelations:
+					return String.Format(AppStrings.ksNotCreatedForLexicalRelation,
+						m_sFilename, sForm);
+				case kflidCrossReferences:
+					return String.Format(AppStrings.ksNotCreatedForCrossReference,
+						m_sFilename, sForm);
+				case LexEntryRefTags.kflidComponentLexemes:
+					return String.Format(AppStrings.ksNotCreatedForComponentsLink,
+						m_sFilename, sForm);
+				case LexEntryRefTags.kflidPrimaryLexemes:
+					return String.Format(AppStrings.ksNotCreatedForShowSubentryUnderLink,
+						m_sFilename, sForm);
+				default:
+					return String.Format(AppStrings.ksNotCreatedForLinkTarget,
+						m_sFilename, sForm);
+			}
+		}
+
+		private string GetCreatedEntryMessage(int flid, int userWs, int hvo, string sForm, out ITsString tssResidue)
+		{
+			var tsFact = m_cache.TsStrFactory;
+			switch (flid)
+			{
+				case kflidLexicalRelations:
+					tssResidue = tsFact.MakeString(AppStrings.ksCheckCreatedForLexicalRelation, userWs);
+					return String.Format(AppStrings.ksCreatedForLexicalRelation,
+						m_sFilename, hvo, sForm);
+				case kflidCrossReferences:
+					tssResidue = tsFact.MakeString(AppStrings.ksCheckCreatedForCrossReference, userWs);
+					return String.Format(AppStrings.ksCreatedForCrossReference,
+						m_sFilename, hvo, sForm);
+				case LexEntryRefTags.kflidComponentLexemes:
+					tssResidue = tsFact.MakeString(AppStrings.ksCheckCreatedForComponentsLink, userWs);
+					return String.Format(AppStrings.ksCreatedForComponentsLink,
+						m_sFilename, hvo, sForm);
+				case LexEntryRefTags.kflidPrimaryLexemes:
+					tssResidue = tsFact.MakeString(AppStrings.ksCheckCreatedForShowSubentryUnderLink, userWs);
+					return String.Format(AppStrings.ksCreatedForShowSubentryUnderLink,
+						m_sFilename, hvo, sForm);
+				default:
+					tssResidue = tsFact.MakeString(AppStrings.ksCheckCreatedForLinkTarget, userWs);
+					return String.Format(AppStrings.ksCreatedForLinkTarget,
+						m_sFilename, hvo, sForm);
+			}
 		}
 
 		/// <summary>
@@ -2909,13 +2972,16 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				{
 					if (fHandleForm)
 					{
-						ICmObject cmo = GetEntryOrSense(ws, sForm, sSenseNumber, pend.FieldInformation.FieldId);
-						return cmo.Hvo;
-					}
-					else
-					{
+						ICmObject cmo = GetEntryOrSense(ws, sForm, sSenseNumber, flid);
+						if (cmo != null)
+							return cmo.Hvo;
+						var owner = pend.FieldInformation.Owner; // at this point, owner should be either ILexEntry or ILexSense or ILexEntryRef
+						var msg = GetDidNotCreateEntryMessage(flid, sForm);
+						var dsLen = msg.IndexOf(": ") + 2; // strip off "datastream: " or "{filename}: "
+						AppendMessageToImportResidue(owner, msg.Substring(dsLen), ws);
 						return 0;
 					}
+					return 0;
 				}
 				if (ws != 0 && (!String.IsNullOrEmpty(sName) || !String.IsNullOrEmpty(sAbbr)))
 				{
@@ -2935,6 +3001,35 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				}
 			}
 			return 0;
+		}
+
+		private void AppendMessageToImportResidue(ICmObject owner, string msgToAppend, int ws)
+		{
+			if (owner is ILexEntryRef)
+				owner = owner.Owner;
+			Debug.Assert(owner is ILexEntry || owner is ILexSense);
+			if (owner is ILexEntry)
+			{
+				var entry = (ILexEntry)owner;
+				entry.ImportResidue = SafeAppendToTsString(entry.ImportResidue, msgToAppend, ws);
+			}
+			else if (owner is ILexSense)
+			{
+				var sense = (ILexSense)owner;
+				sense.ImportResidue = SafeAppendToTsString(sense.ImportResidue, msgToAppend, ws);
+			}
+		}
+
+		private ITsString SafeAppendToTsString(ITsString existing, string toAppend, int ws)
+		{
+			var tsFact = m_cache.TsStrFactory;
+			var newTsStr = tsFact.MakeString(toAppend, ws);
+			if (existing == null || existing.Length == 0)
+				return newTsStr;
+			ITsStrBldr tisb = existing.GetBldr();
+			tisb.Append(tsFact.MakeString("; ", ws));
+			tisb.Append(newTsStr);
+			return tisb.GetString();
 		}
 
 		private int FindInOtherMapOrCreateListItem(int flid, int ws, string sName, string sAbbr,
@@ -3278,6 +3373,13 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 					return m_cache.LangProject.LocationsOA;
 				case LexSenseTags.kflidStatus:						//CmPossibility
 					return m_cache.LangProject.StatusOA;
+				case LexEtymologyTags.kflidLanguage:				//CmPossibility
+					return m_cache.LangProject.LexDbOA.LanguagesOA;
+				case LexEntryTags.kflidDialectLabels:				//CmPossibility
+				case LexSenseTags.kflidDialectLabels:				//CmPossibility (purposeful fall-through)
+					return m_cache.LangProject.LexDbOA.DialectLabelsOA;
+				case LexExtendedNoteTags.kflidExtendedNoteType:		//CmPossibility
+					return m_cache.LangProject.LexDbOA.ExtendedNoteTypesOA;
 				default:
 					if (m_mdc.IsCustom(flid))
 					{

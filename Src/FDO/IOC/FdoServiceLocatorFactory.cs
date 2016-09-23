@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.FDO.IOC
 				.For<IDataMigrationManager>()
 				.Use<FdoDataMigrationManager>();
 
-			// Add FdoCache
+			// Add HomographConfiguration
 			registry
 				.For<HomographConfiguration>()
 				.LifecycleIs(new SingletonLifecycle())

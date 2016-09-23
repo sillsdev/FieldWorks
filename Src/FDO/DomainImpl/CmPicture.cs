@@ -20,7 +20,9 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using System.Text;
 using SIL.FieldWorks.FDO.DomainServices;
 using System.Diagnostics;
+using System.Linq;
 using SIL.CoreImpl;
+using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
@@ -287,10 +289,54 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		#endregion
 
 		#region Overridden methods
+
 		// JohnT: this was once overridden to delete the associated CmFile also, if nothing else uses it.
 		// However we can no longer be sure of this without searching all strings in the system to see whether
 		// any contain embedded links to the file. For now we are just accepting that some CmFiles will leak.
 		//internal override void OnBeforeObjectDeleted()
+
+		protected override void AddObjectSideEffectsInternal(AddObjectEventArgs e)
+		{
+			if (e.Flid == CmPictureTags.kflidDoNotPublishIn)
+			{
+				var uowService = ((IServiceLocatorInternal)Services).UnitOfWorkService;
+				uowService.RegisterVirtualAsModified(this, "PublishIn", PublishIn.Cast<ICmObject>());
+			}
+			base.AddObjectSideEffectsInternal(e);
+		}
+
+		protected override void RemoveObjectSideEffectsInternal(RemoveObjectEventArgs e)
+		{
+			if (e.Flid == CmPictureTags.kflidDoNotPublishIn)
+			{
+				var uowService = ((IServiceLocatorInternal)Services).UnitOfWorkService;
+				uowService.RegisterVirtualAsModified(this, "PublishIn", PublishIn.Cast<ICmObject>());
+			}
+			base.RemoveObjectSideEffectsInternal(e);
+		}
+
+		/// <summary>
+		/// The publications from which this is not excluded, that is, the ones in which it
+		/// SHOULD be published.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceCollection, "CmPossibility")]
+		public IFdoSet<ICmPossibility> PublishIn
+		{
+			get
+			{
+				return new FdoInvertSet<ICmPossibility>(DoNotPublishInRC, Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS);
+			}
+		}
+
+		/// <summary>
+		/// Overridden to handle ref props of this class.
+		/// </summary>
+		public override ICmObject ReferenceTargetOwner(int flid)
+		{
+			if (flid == m_cache.MetaDataCacheAccessor.GetFieldId2(CmPictureTags.kClassId, "PublishIn", false))
+				return m_cache.LangProject.LexDbOA.PublicationTypesOA;
+			return base.ReferenceTargetOwner(flid);
+		}
 
 		#endregion
 

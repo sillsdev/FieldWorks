@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ldml>
+	<identity>
+		<version
+			number="" />
+		<generation
+			date="2016-07-15T19:48:43" />
+		<language
+			type="qaa" />
+		<variant
+			type="x-got" />
+	</identity>
+	<collations />
+	<special xmlns:palaso="urn://palaso.org/ldmlExtensions/v1">
+		<palaso:abbreviation
+			value="Got" />
+		<palaso:defaultFontFamily
+			value="Code2001" />
+		<palaso:languageName
+			value="Gothic" />
+		<palaso:version
+			value="2" />
+	</special>
+	<special xmlns:fw="urn://fieldworks.sil.org/ldmlExtensions/v1">
+		<fw:graphiteEnabled
+			value="False" />
+	</special>
+</ldml>

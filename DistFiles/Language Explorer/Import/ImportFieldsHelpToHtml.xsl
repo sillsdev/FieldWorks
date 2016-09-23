@@ -29,7 +29,7 @@
 						<xsl:with-param name="Content" select="Help/Settings"/>
 					</xsl:call-template>
 					<xsl:call-template name="OutputLine">
-						<xsl:with-param name="sLabel" select="'Interprets character mapping'"/>
+						<xsl:with-param name="sLabel" select="'Applies embedded character formatting'"/>
 						<xsl:with-param name="Content" select="Help/Mapping"/>
 					</xsl:call-template>
 					<xsl:call-template name="OutputLine">

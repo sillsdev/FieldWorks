@@ -129,6 +129,11 @@
     <Compile Include="ReversalEntryBulkEditTests.cs" />
     <Compile Include="SortReversalSubEntriesTests.cs" />
     <Compile Include="CircularRefBreakerTests.cs" />
+    <Compile Include="TestUtils.cs" />
+    <ProjectReference Include="..\..\..\Common\Framework\Framework.csproj">
+      <Project>{C4A415C6-AB60-4118-BE82-5777C0877A8B}</Project>
+      <Name>Framework</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

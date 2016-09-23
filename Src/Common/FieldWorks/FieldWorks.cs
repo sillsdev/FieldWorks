@@ -192,28 +192,11 @@ namespace SIL.FieldWorks
 			try
 			{
 #region Initialize XULRunner - required to use the geckofx WebBrowser Control (GeckoWebBrowser).
-				string xulRunnerLocation;
-				if (MiscUtils.IsUnix)
-				{
-					xulRunnerLocation = XULRunnerLocator.GetXULRunnerLocation();
-					if (String.IsNullOrEmpty(xulRunnerLocation))
-					throw new ApplicationException("The XULRunner library is missing or has the wrong version");
-				var librarySearchPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH") ?? String.Empty;
-				if (!librarySearchPath.Contains(xulRunnerLocation))
-					throw new ApplicationException("LD_LIBRARY_PATH must contain " + xulRunnerLocation);
-				}
-				else
-				{
-				// LT-16559: Specifying a hint path is necessary on Windows, but causes a crash in Xpcom.Initialize on Linux. Go figure.
-					xulRunnerLocation = XULRunnerLocator.GetXULRunnerLocation("xulrunner");
-				if (string.IsNullOrEmpty(xulRunnerLocation))
-					throw new ApplicationException("The XULRunner library is missing or has the wrong version");
-				}
-
-				Xpcom.Initialize(xulRunnerLocation);
+				var exePath = Path.GetDirectoryName(Application.ExecutablePath);
+				Xpcom.Initialize(Path.Combine(exePath, "Firefox"));
 				GeckoPreferences.User["gfx.font_rendering.graphite.enabled"] = true;
-				//Set default browser for XWebBrowser to use GeckoFX.
-				//This can still be changed per instance by passing a parameter to the constructor.
+				// Set default browser for XWebBrowser to use GeckoFX.
+				// This can still be changed per instance by passing a parameter to the constructor.
 				XWebBrowser.DefaultBrowserType = XWebBrowser.BrowserType.GeckoFx;
 #endregion Initialize XULRunner
 
@@ -425,7 +408,7 @@ namespace SIL.FieldWorks
 					// Doing the shutdown here seems cleaner than using an ApplicationExit
 					// delegate.
 					var foo = new GeckoWebBrowser();
-					Xpcom.Shutdown();
+					Xpcom.Shutdown(); // REVIEW pH 2016.07: likely not necessary with Gecko45
 				}
 			}
 			return 0;

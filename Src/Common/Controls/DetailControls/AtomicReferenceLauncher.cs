@@ -122,10 +122,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		protected virtual ICmObject Target
+		protected internal virtual ICmObject Target
 		{
 			get
 			{
+				if (!m_obj.IsValidObject)
+					return null;
 				var hvo = m_cache.DomainDataByFlid.get_ObjectProp(m_obj.Hvo, m_flid);
 				return hvo > 0 ? m_cache.ServiceLocator.GetObject(hvo) : null;
 			}

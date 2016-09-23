@@ -1,8 +1,10 @@
-# Generated files
+# Generated or Downloaded (as part of the build process)
 GeneratedAssemblyInfo.cs
 Collection.cpp
 Build/FieldWorks.targets
 Build/GlobalInclude.properties
+Build/NuGet.exe
+Build/packages.config
 Src/Common/COMInterfaces/FwKernel.cs
 Src/Common/COMInterfaces/Views.cs
 Src/Common/CoreImpl/CellarPropertyType.cs
@@ -19,6 +21,7 @@ DistFiles/SIL/Repository/
 Downloads/
 Installer/
 Localizations/
+packages/
 Bin/_setLatestBuildConfig.bat
 Bin/_setroot.bat
 Lib/debug/DebugProcs.lib
@@ -112,7 +115,6 @@ Src/Generic/libGeneric
 Src/Language/libLanguage
 Lib/src/HermitCrab.NET/HermitCrabExe/bin
 Lib/src/HermitCrab.NET/HermitCrab/bin
-Downloads/*
 xulrunner/*
 
 DistFiles/ReleaseData/

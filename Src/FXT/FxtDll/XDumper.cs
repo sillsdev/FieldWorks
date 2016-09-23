@@ -2525,6 +2525,15 @@ namespace SIL.FieldWorks.Common.FXT
 					if (rghvo[i] == hvoOpen)
 						continue;
 				}
+				// If this is a unidirectional type relation, only process elements if the
+				//  first element is the currently open object.
+				if (nMappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseUnidirectional ||
+					nMappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryUnidirectional ||
+					nMappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional)
+				{
+					if (hvoOpen != rghvo[0])
+						break;
+				}
 				slr.CrossRefHvo = rghvo[i];
 				DoChildren(contentsStream, slr, classNode, null);
 

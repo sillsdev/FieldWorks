@@ -340,7 +340,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Choose Complex Forms to display in Stem-based views.
+        ///   Looks up a localized string similar to Choose Complex Forms to display in Lexeme-based views.
         /// </summary>
         internal static string ksChooseVisibleComplexForms {
             get {

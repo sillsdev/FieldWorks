@@ -355,7 +355,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					// case "integer": // added back in to behave as "int" above
 					throw new Exception("use of obsolete editor type (message->lit, integer->int)");
 				case "autocustom":
-					slice = MakeAutoCustomSlice(cache, obj, caller);
+					slice = MakeAutoCustomSlice(cache, obj, caller, node);
 					if (slice == null)
 						return null;
 					break;
@@ -398,7 +398,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "slice is a reference")]
-		static Slice MakeAutoCustomSlice(FdoCache cache, ICmObject obj, XmlNode caller)
+		static Slice MakeAutoCustomSlice(FdoCache cache, ICmObject obj, XmlNode caller, XmlNode configurationNode)
 		{
 			IFwMetaDataCache mdc = cache.DomainDataByFlid.MetaDataCache;
 			int flid = GetCustomFieldFlid(caller, mdc, obj);
@@ -453,12 +453,99 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				case CellarPropertyType.ReferenceCollection:
 				case CellarPropertyType.ReferenceSequence:
 					slice = new ReferenceVectorSlice(cache, obj, flid);
+					SetConfigurationDisplayPropertyIfNeeded(configurationNode, obj, flid, cache.MainCacheAccessor, cache.LangProject.Services, cache.MetaDataCacheAccessor);
 					break;
 			}
 			if (slice == null)
 				throw new Exception("unhandled field type in MakeAutoCustomSlice");
 			slice.Label = mdc.GetFieldLabel(flid);
 			return slice;
+		}
+
+		/// <summary>
+		/// Set configuration displayProperty from cmObjectCustomFieldFlid set elements' OwningList DisplayOption.
+		///
+		/// If cmObjectCustomFieldFlid refers to a set of elements (in cmObject), then examine the setting on the owning list of the
+		/// elements to determine which property of each element to use when
+		/// displaying each element in a slice, and record that information in configurationNode. This information is used
+		/// in DetailControls.VectorReferenceVc.Display().
+		/// Addresses LT-15705.
+		/// </summary>
+		internal static void SetConfigurationDisplayPropertyIfNeeded(XmlNode configurationNode, ICmObject cmObject, int cmObjectCustomFieldFlid, ISilDataAccess mainCacheAccessor, IFdoServiceLocator fdoServiceLocator, IFwMetaDataCache metadataCache)
+		{
+			var fieldType = metadataCache.GetFieldType(cmObjectCustomFieldFlid);
+
+			if (!(fieldType == (int)CellarPropertyType.ReferenceCollection ||
+				fieldType == (int)CellarPropertyType.OwningCollection ||
+				fieldType == (int)CellarPropertyType.ReferenceSequence ||
+				fieldType == (int)CellarPropertyType.OwningSequence))
+			{
+				return;
+			}
+
+			var element = FetchFirstElementFromSet(cmObject, cmObjectCustomFieldFlid, mainCacheAccessor, fdoServiceLocator);
+			if (element == null)
+				return;
+
+			var displayOption = element.OwningList.DisplayOption;
+			string propertyNameToGetAndShow = null;
+			switch ((PossNameType)displayOption)
+			{
+				case SIL.FieldWorks.FDO.PossNameType.kpntName:
+					propertyNameToGetAndShow = "ShortNameTSS";
+					break;
+				case SIL.FieldWorks.FDO.PossNameType.kpntNameAndAbbrev:
+					propertyNameToGetAndShow = "AbbrAndNameTSS";
+					break;
+				case SIL.FieldWorks.FDO.PossNameType.kpntAbbreviation:
+					propertyNameToGetAndShow = "AbbrevHierarchyString";
+					break;
+				default:
+					break;
+			}
+			if (propertyNameToGetAndShow == null)
+				return;
+
+			SetDisplayPropertyInXMLConfiguration(configurationNode, propertyNameToGetAndShow);
+		}
+
+		/// <summary>
+		/// Edit or build XML in configurationNode to set displayProperty to displayPropertyValue.
+		/// Just update an existing deParams node's displayProperty attribute if there is one already.
+		/// </summary>
+		private static void SetDisplayPropertyInXMLConfiguration(XmlNode configurationNode, string displayPropertyValue)
+		{
+			var displayPropertyAttribute = configurationNode.OwnerDocument.CreateNode(XmlNodeType.Attribute, "displayProperty", "");
+			displayPropertyAttribute.Value = displayPropertyValue;
+
+			if (configurationNode["deParams"] == null)
+			{
+				var deParamsNode = configurationNode.OwnerDocument.CreateNode(XmlNodeType.Element, "deParams", "");
+				deParamsNode.Attributes.SetNamedItem(displayPropertyAttribute);
+				configurationNode.AppendChild(deParamsNode);
+				return;
+			}
+
+			if (configurationNode["deParams"].Attributes["displayProperty"] == null)
+			{
+				configurationNode["deParams"].Attributes.SetNamedItem(displayPropertyAttribute);
+				return;
+			}
+
+			configurationNode["deParams"].Attributes["displayProperty"].Value = displayPropertyValue;
+		}
+
+		/// <summary>
+		/// For a set of elements in cmObject that are referred to by setFlid, return the first element, or null.
+		/// </summary>
+		private static ICmPossibility FetchFirstElementFromSet(ICmObject cmObject, int setFlid, ISilDataAccess mainCacheAccessor, IFdoServiceLocator fdoServiceLocator)
+		{
+			var elementCount = mainCacheAccessor.get_VecSize(cmObject.Hvo, setFlid);
+			if (elementCount == 0)
+				return null;
+
+			var firstElementHvo = mainCacheAccessor.get_VecItem(cmObject.Hvo, setFlid, 0);
+			return fdoServiceLocator.GetObject(firstElementHvo) as ICmPossibility;
 		}
 
 		static internal int GetCustomFieldFlid(XmlNode caller, IFwMetaDataCache mdc, ICmObject obj)

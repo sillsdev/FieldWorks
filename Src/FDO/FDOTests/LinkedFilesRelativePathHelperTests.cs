@@ -54,15 +54,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void GetFullFilePathFromRelativeLFPath()
 		{
 			var linkedFilesRootDir = Path.Combine(FwDirectoryFinder.ProjectsDirectory, "TestProject", "LinkedFiles");
-			var fullLFPath = LinkedFilesRelativePathHelper.GetFullFilePathFromRelativeLFPath(String.Format("%lf%{0}AudioVisual{0}StarWars.mvi", Path.DirectorySeparatorChar), linkedFilesRootDir);
-			var audioVisualFile = Path.Combine(linkedFilesRootDir, "AudioVisual", "StarWars.mvi");
+			var fullLFPath = LinkedFilesRelativePathHelper.GetFullFilePathFromRelativeLFPath(string.Format("%lf%{0}AudioVisual{0}StarWars(1).mvi", Path.DirectorySeparatorChar), linkedFilesRootDir);
+			var audioVisualFile = Path.Combine(linkedFilesRootDir, "AudioVisual", "StarWars(1).mvi");
 			Assert.AreEqual(audioVisualFile, fullLFPath);
 
 			//if a fully rooted path is passed in the return value should be null.
 			var projectRootDir = FwDirectoryFinder.DataDirectory;
 			fullLFPath = LinkedFilesRelativePathHelper.GetFullFilePathFromRelativeLFPath(projectRootDir, linkedFilesRootDir);
 			Assert.True(string.IsNullOrEmpty(fullLFPath));
-
 		}
 
 		/// ------------------------------------------------------------------------------------

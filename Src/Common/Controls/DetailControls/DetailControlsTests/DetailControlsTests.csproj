@@ -155,6 +155,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Downloads\SIL.Core.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.TestUtilities, Version=3.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Output\Debug\SIL.TestUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Downloads\SIL.WritingSystems.dll</HintPath>
@@ -194,6 +198,9 @@
     <Reference Include="FwUtilsTests">
       <HintPath>..\..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
     </Reference>
+    <Reference Include="xWorksTests">
+      <HintPath>..\..\..\..\..\Output\Debug\xWorksTests.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -212,9 +219,14 @@
     </EmbeddedResource>
     <Compile Include="PhoneEnvReferenceViewTests.cs" />
     <Compile Include="SliceTests.cs" />
+    <Compile Include="AtomicReferenceLauncherTests.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="VectorReferenceLauncherTests.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="SliceFactoryTests.cs" />
+    <None Include="Test.fwlayout" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -232,6 +244,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TestParts.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

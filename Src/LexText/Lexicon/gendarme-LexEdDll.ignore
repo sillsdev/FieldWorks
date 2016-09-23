@@ -33,6 +33,7 @@ M: System.Void SIL.FieldWorks.XWorks.LexEd.LexReferencePairLauncher::HandleChoos
 M: System.Void SIL.FieldWorks.XWorks.LexEd.LexReferenceSequenceLauncher::HandleChooser()
 M: System.Void SIL.FieldWorks.XWorks.LexEd.LexReferenceTreeBranchesLauncher::HandleChooser()
 M: System.Void SIL.FieldWorks.XWorks.LexEd.LexReferenceTreeRootLauncher::HandleChooser()
+M: System.Void SIL.FieldWorks.XWorks.LexEd.LexReferenceUnidirectionalLauncher::HandleChooser()
 
 # GetEnumerator() returns an object
 M: System.Collections.IEnumerator SIL.FieldWorks.XWorks.LexEd.ReversalEntryGoSearchEngine/<GetStrings>*::System.Collections.IEnumerable.GetEnumerator()

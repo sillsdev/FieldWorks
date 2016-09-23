@@ -1164,7 +1164,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="display">Display properties</param>
 		/// <returns>true (handled)</returns>
 		/// ------------------------------------------------------------------------------------
-		public bool OnDisplayPublishToWebonary(object command, ref UIItemDisplayProperties display)
+		public bool OnDisplayUploadToWebonary(object command, ref UIItemDisplayProperties display)
 		{
 			display.Enabled = true;
 			return true;
@@ -1177,14 +1177,14 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="command">Not used</param>
 		/// <returns>true (handled)</returns>
 		/// ------------------------------------------------------------------------------------
-		public bool OnPublishToWebonary(object command)
+		public bool OnUploadToWebonary(object command)
 		{
 			CheckDisposed();
-			ShowPublishToWebonaryDialog(m_mediator, PropTable);
+			ShowUploadToWebonaryDialog(m_mediator, PropTable);
 			return true;
 		}
 
-		internal static void ShowPublishToWebonaryDialog(Mediator mediator, PropertyTable propertyTable)
+		internal static void ShowUploadToWebonaryDialog(Mediator mediator, PropertyTable propertyTable)
 		{
 			var cache = propertyTable.GetValue<FdoCache>("cache");
 
@@ -1199,15 +1199,14 @@ namespace SIL.FieldWorks.XWorks
 			var reversals = DictionaryConfigurationController.GetDictionaryConfigurationLabels(cache, defaultConfigDir, projectConfigDir);
 
 			// show dialog
-			var controller = new PublishToWebonaryController(cache, propertyTable, mediator);
-
-			var model = new PublishToWebonaryModel(propertyTable)
+			var model = new UploadToWebonaryModel(propertyTable)
 			{
 				Reversals = reversals,
 				Configurations = configurations,
 				Publications = publications
 			};
-			using(var dialog = new PublishToWebonaryDlg(controller, model, propertyTable))
+			using (var controller = new UploadToWebonaryController(cache, propertyTable, mediator))
+			using (var dialog = new UploadToWebonaryDlg(controller, model, propertyTable))
 			{
 				dialog.ShowDialog();
 			}

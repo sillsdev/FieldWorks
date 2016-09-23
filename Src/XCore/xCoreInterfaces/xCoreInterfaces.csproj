@@ -117,9 +117,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
-    <Reference Include="Palaso">
-      <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
-    </Reference>
     <Reference Include="XMLUtils, Version=6.1.1.30296, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>

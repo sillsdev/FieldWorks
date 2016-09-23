@@ -132,7 +132,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		protected override string DtdRequiredVersion
 		{
-			get { return "B8521229-70FB-4DD9-A022-434714B8DE4B"; }
+			get { return "64DE4B02-14DA-42F6-8C1C-CF21E41D3EF7"; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1551,56 +1551,59 @@ namespace SIL.FieldWorks.Common.Framework
 					string.Format(ResourceHelper.GetResourceString("kstidUpdatingStylesStatusMsg"),
 					styleName);
 
+				XmlAttributeCollection attributesWithBasedOn = styleTag.Attributes;
 				if (style.Type == StyleType.kstParagraph)
 				{
-					XmlAttributeCollection paraAttributes =
-						styleTag.SelectSingleNode("paragraph").Attributes;
+					attributesWithBasedOn = styleTag.SelectSingleNode("paragraph").Attributes;
+				}
+				else if (style.Type == StyleType.kstCharacter && attributesWithBasedOn.GetNamedItem("basedOn") == null)
+				{
+					continue;
+				}
 
+				if (styleName != StyleServices.NormalStyleName)
+				{
+					string sBasedOnStyleName = GetBasedOn(attributesWithBasedOn, styleName);
 
-					if (styleName != StyleServices.NormalStyleName)
-					{
-						string sBasedOnStyleName = GetBasedOn(paraAttributes, styleName);
+					if (String.IsNullOrEmpty(sBasedOnStyleName))
+						ReportInvalidInstallation(String.Format(
+							FrameworkStrings.ksMissingBasedOnStyle, styleName, ResourceFileName));
 
-						if (String.IsNullOrEmpty(sBasedOnStyleName))
-							ReportInvalidInstallation(String.Format(
-								FrameworkStrings.ksMissingBasedOnStyle, styleName, ResourceFileName));
+					if (!m_htUpdatedStyles.ContainsKey(sBasedOnStyleName))
+						ReportInvalidInstallation(String.Format(
+							FrameworkStrings.ksUnknownBasedOnStyle, styleName, sBasedOnStyleName));
 
-						if (!m_htUpdatedStyles.ContainsKey(sBasedOnStyleName))
-							ReportInvalidInstallation(String.Format(
-								FrameworkStrings.ksUnknownBasedOnStyle, styleName, sBasedOnStyleName));
+					var basedOnStyle = m_htUpdatedStyles[sBasedOnStyleName];
+					if (basedOnStyle.Hvo == style.Hvo)
+						ReportInvalidInstallation(String.Format(
+							FrameworkStrings.ksNoBasedOnSelf, styleName, ResourceFileName));
 
-						var basedOnStyle = m_htUpdatedStyles[sBasedOnStyleName];
-						if (basedOnStyle.Hvo == style.Hvo)
-							ReportInvalidInstallation(String.Format(
-								FrameworkStrings.ksNoBasedOnSelf, styleName, ResourceFileName));
+					style.BasedOnRA = basedOnStyle;
+				}
 
-						style.BasedOnRA = basedOnStyle;
-					}
+				string sNextStyleName = null;
+				if (m_htReservedStyles.ContainsKey(styleName))
+				{
+					ReservedStyleInfo info = m_htReservedStyles[styleName];
+					sNextStyleName = info.nextStyle;
+				}
+				else
+				{
+					XmlNode next = attributesWithBasedOn.GetNamedItem("next");
+					if (next != null)
+						sNextStyleName = next.Value.Replace("_", " ");
+				}
 
-					string sNextStyleName = null;
-					if (m_htReservedStyles.ContainsKey(styleName))
-					{
-						ReservedStyleInfo info = m_htReservedStyles[styleName];
-						sNextStyleName = info.nextStyle;
-					}
+				if (!string.IsNullOrEmpty(sNextStyleName))
+				{
+					if (!m_htUpdatedStyles.ContainsKey(sNextStyleName))
+						ReportInvalidInstallation(String.Format(
+							FrameworkStrings.ksUnknownNextStyle, styleName, sNextStyleName, ResourceFileName));
+
+					if (m_htUpdatedStyles.ContainsKey(sNextStyleName))
+						style.NextRA = m_htUpdatedStyles[sNextStyleName];
 					else
-					{
-						XmlNode next = paraAttributes.GetNamedItem("next");
-						if (next != null)
-							sNextStyleName = next.Value.Replace("_", " ");
-					}
-
-					if (!string.IsNullOrEmpty(sNextStyleName))
-					{
-						if (!m_htUpdatedStyles.ContainsKey(sNextStyleName))
-							ReportInvalidInstallation(String.Format(
-								FrameworkStrings.ksUnknownNextStyle, styleName, sNextStyleName, ResourceFileName));
-
-						if (m_htUpdatedStyles.ContainsKey(sNextStyleName))
-							style.NextRA = m_htUpdatedStyles[sNextStyleName];
-						else
-							style.NextRA = null;
-					}
+						style.NextRA = null;
 				}
 			}
 			SetBasedOnAndNextPropsReserved();

@@ -155,12 +155,10 @@
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="Geckofx-Core">
-      <Package>Geckofx-Core</Package>
-      <HintPath>..\..\Downloads\Geckofx-Core.dll</HintPath>
+      <HintPath>..\..\Output\Debug\Geckofx-Core.dll</HintPath>
     </Reference>
     <Reference Include="Geckofx-Winforms">
-      <Package>Geckofx-WinForms</Package>
-      <HintPath>..\..\Downloads\Geckofx-Winforms.dll</HintPath>
+      <HintPath>..\..\Output\Debug\Geckofx-Winforms.dll</HintPath>
     </Reference>
     <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -301,6 +299,10 @@
       <DependentUpon>DictionaryConfigurationManagerDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="DictionaryConfigurationMigrator.cs" />
+    <Compile Include="DictionaryConfigurationMigrators\FirstAlphaMigrator.cs" />
+    <Compile Include="DictionaryConfigurationMigrators\FirstBetaMigrator.cs" />
+    <Compile Include="DictionaryConfigurationMigrators\IDictionaryConfigurationMigrator.cs" />
+    <Compile Include="DictionaryConfigurationMigrators\PreHistoricMigrator.cs" />
     <Compile Include="DictionaryConfigurationNodeRenameDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -315,6 +317,18 @@
       <DependentUpon>DictionaryConfigurationTreeControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DictionaryDetailsController.cs" />
+    <Compile Include="DictionaryDetailsView\GroupingOptionsView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DictionaryDetailsView\GroupingOptionsView.Designer.cs">
+      <DependentUpon>GroupingOptionsView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DictionaryDetailsView\LabelOverPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DictionaryDetailsView\LabelOverPanel.Designer.cs">
+      <DependentUpon>LabelOverPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="DictionaryDetailsView\ButtonOverPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -348,7 +362,9 @@
     <Compile Include="SilErrorReportingAdapter.cs" />
     <Compile Include="IDictionaryDetailsView.cs" />
     <Compile Include="IDictionarySenseOptionsView.cs" />
+    <Compile Include="IDictionaryGroupingOptionsView.cs" />
     <Compile Include="ILayoutConverter.cs" />
+    <Compile Include="IWebonaryClient.cs" />
     <Compile Include="LegacyConfigurationUtils.cs" />
     <Compile Include="ConcDecorator.cs" />
     <Compile Include="CustomListDlg.cs">
@@ -419,14 +435,14 @@
     <Compile Include="NotebookExportDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PublishToWebonaryController.cs" />
-    <Compile Include="PublishToWebonaryDlg.cs">
+    <Compile Include="UploadToWebonaryController.cs" />
+    <Compile Include="UploadToWebonaryDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PublishToWebonaryDlg.Designer.cs">
-      <DependentUpon>PublishToWebonaryDlg.cs</DependentUpon>
+    <Compile Include="UploadToWebonaryDlg.Designer.cs">
+      <DependentUpon>UploadToWebonaryDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="PublishToWebonaryModel.cs" />
+    <Compile Include="UploadToWebonaryModel.cs" />
     <Compile Include="SemanticDomainRdeTreeBarHandler.cs" />
     <Compile Include="RecordBarListHandler.cs">
       <SubType>Code</SubType>
@@ -457,6 +473,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UnicodeCharacterEditingHelper.cs" />
+    <Compile Include="WebonaryClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="WordsUsedOnlyElsewhereFilter.cs" />
     <Compile Include="XhtmlDocView.cs">
       <SubType>UserControl</SubType>
@@ -516,6 +535,12 @@
     <EmbeddedResource Include="DictionaryConfigurationTreeControl.resx">
       <DependentUpon>DictionaryConfigurationTreeControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="DictionaryDetailsView\GroupingOptionsView.resx">
+      <DependentUpon>GroupingOptionsView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DictionaryDetailsView\LabelOverPanel.resx">
+      <DependentUpon>LabelOverPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DictionaryDetailsView\ButtonOverPanel.resx">
       <DependentUpon>ButtonOverPanel.cs</DependentUpon>
     </EmbeddedResource>
@@ -555,8 +580,8 @@
       <DependentUpon>LiftExportMessageDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="PublishToWebonaryDlg.resx">
-      <DependentUpon>PublishToWebonaryDlg.cs</DependentUpon>
+    <EmbeddedResource Include="UploadToWebonaryDlg.resx">
+      <DependentUpon>UploadToWebonaryDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="RecordBrowseView.resx">
@@ -603,6 +628,7 @@
     <Content Include="Resources\FWLastArrow.bmp" />
     <Content Include="Resources\FWLeftArrow.bmp" />
     <Content Include="Resources\FWRightArrow.bmp" />
+    <Compile Include="DictionaryConfigurationUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -643,4 +669,5 @@
   <ItemGroup>
     <None Include="gendarme-xWorks.ignore" />
   </ItemGroup>
+  <ItemGroup />
 </Project>

@@ -177,9 +177,6 @@
       <Name>SimpleRootSite</Name>
       <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
     </Reference>
-    <Reference Include="Palaso">
-      <HintPath>..\..\..\Output\Debug\Palaso.dll</HintPath>
-    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>

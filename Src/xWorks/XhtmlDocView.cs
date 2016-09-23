@@ -8,13 +8,19 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Linq;
 using Gecko;
 using Gecko.DOM;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FdoUi;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
 using SIL.Windows.Forms.HtmlBrowser;
@@ -59,7 +65,22 @@ namespace SIL.FieldWorks.XWorks
 					browser.DomClick += OnDomClick;
 					browser.DomKeyPress += OnDomKeyPress;
 					browser.DocumentCompleted += OnDocumentCompleted;
+					browser.DomMouseScroll += OnMouseWheel;
 				}
+			}
+		}
+
+		private void OnMouseWheel(object sender, DomMouseEventArgs domMouseEventArgs)
+		{
+			var scrollDelta = domMouseEventArgs.Detail;
+			var browser = (GeckoWebBrowser)m_mainView.NativeBrowser;
+			if (scrollDelta < 0 && browser.Window.ScrollY == 0)
+			{
+				AddMoreEntriesToPage(true, (GeckoWebBrowser)m_mainView.NativeBrowser);
+			}
+			else if (browser.Window.ScrollY >= browser.Window.ScrollMaxY)
+			{
+				AddMoreEntriesToPage(false, (GeckoWebBrowser)m_mainView.NativeBrowser);
 			}
 		}
 
@@ -68,7 +89,58 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void OnDomKeyPress(object sender, DomKeyEventArgs e)
 		{
-			System.Diagnostics.Debug.WriteLine(String.Format(@"DEBUG: OnDomKeyPress({0}, {1})", sender, e));
+			var browser = (GeckoWebBrowser) m_mainView.NativeBrowser;
+			const int UP = 38;
+			const int DOWN = 40;
+			const int PAGEUP = 33;
+			const int PAGEDOWN = 34;
+			switch (e.KeyCode)
+			{
+				case UP:
+				{
+					if (browser.Window.ScrollY == 0)
+					{
+						AddMoreEntriesToPage(true, (GeckoWebBrowser)m_mainView.NativeBrowser);
+					}
+					break;
+				}
+				case DOWN:
+				{
+					if (browser.Window.ScrollY >= browser.Window.ScrollMaxY)
+					{
+						AddMoreEntriesToPage(false, (GeckoWebBrowser)m_mainView.NativeBrowser);
+					}
+					break;
+				}
+				case PAGEUP:
+				{
+					if (browser.Window.ScrollY == 0)
+					{
+						var currentPage = GetTopCurrentPageButton(browser.Document.Body);
+						if (currentPage.PreviousSibling != null)
+						{
+							var itemIndex = int.Parse(((GeckoHtmlElement)currentPage.PreviousSibling).Attributes["endIndex"].NodeValue);
+							Clerk.JumpToRecord(PublicationDecorator.GetEntriesToPublish(m_propertyTable, Clerk.VirtualFlid)[itemIndex]);
+						}
+					}
+					break;
+				}
+				case PAGEDOWN:
+				{
+					if (browser.Window.ScrollY >= browser.Window.ScrollMaxY)
+					{
+						var currentPage = GetTopCurrentPageButton(browser.Document.Body);
+						if (currentPage.NextSibling != null)
+						{
+							var itemIndex = int.Parse(((GeckoHtmlElement)currentPage.NextSibling).Attributes["startIndex"].NodeValue);
+							Clerk.JumpToRecord(PublicationDecorator.GetEntriesToPublish(m_propertyTable, Clerk.VirtualFlid)[itemIndex]);
+						}
+					}
+					break;
+				}
+				default:
+					break;
+			}
 		}
 
 		/// <summary>
@@ -86,7 +158,11 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			if (e.Button == GeckoMouseButton.Left)
 			{
-				// Select the entry represented by the current element.  [LT-16982]
+				if (HandleClickOnPageButton(Clerk, element))
+				{
+					return;
+				}
+				// Handle button clicks or select the entry represented by the current element.
 				HandleDomLeftClick(Clerk, e, element);
 			}
 			else if (e.Button == GeckoMouseButton.Right)
@@ -108,6 +184,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <summary>
+		/// Handle the user left clicking on the document view by jumping to an entry, playing a media element, or adjusting the view
+		/// </summary>
+		/// <remarks>internal so that it can be re-used by the XhtmlRecordDocView</remarks>
 		internal static void HandleDomLeftClick(RecordClerk clerk, DomMouseEventArgs e, GeckoElement element)
 		{
 			GeckoElement dummy;
@@ -130,6 +210,131 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 			e.Handled = true;
+		}
+
+		private void AddMoreEntriesToPage(bool goingUp, GeckoWebBrowser browser)
+		{
+			var browserElement = browser.Document.Body;
+			var entriesToPublish = PublicationDecorator.GetEntriesToPublish(m_propertyTable, Clerk.VirtualFlid);
+			// Right-to-Left for the overall layout is determined by Dictionary-Normal
+			var dictionaryNormalStyle = new ExportStyleInfo(FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable).Styles["Dictionary-Normal"]);
+			var isNormalRightToLeft = dictionaryNormalStyle.DirectionIsRightToLeft == TriStateBool.triTrue; // default is LTR
+			// Get the current page
+			if (goingUp)
+			{
+				// Use the up/down info to select the adjacentPage
+				Tuple<int, int> newCurPageRange;
+				Tuple<int, int> newAdjPageRange;
+				// Gecko xpath seems to be sensitive to namespaces, using * instead of span helps
+				var currentPageButton = GetTopCurrentPageButton(browserElement);
+				if(currentPageButton == null)
+					return;
+				var adjacentPageButton = (GeckoHtmlElement)currentPageButton.PreviousSibling;
+				if (adjacentPageButton == null)
+					return;
+				var oldCurPageRange = new Tuple<int, int>(int.Parse(currentPageButton.Attributes["startIndex"].NodeValue), int.Parse(currentPageButton.Attributes["endIndex"].NodeValue));
+				var oldAdjPageRange = new Tuple<int, int>(int.Parse(adjacentPageButton.Attributes["startIndex"].NodeValue), int.Parse(adjacentPageButton.Attributes["endIndex"].NodeValue));
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, "", isNormalRightToLeft);
+				var entries = ConfiguredXHTMLGenerator.GenerateNextFewEntries(PublicationDecorator, entriesToPublish, GetCurrentConfiguration(false), settings, oldCurPageRange,
+					oldAdjPageRange, ConfiguredXHTMLGenerator.EntriesToAddCount, out newCurPageRange, out newAdjPageRange);
+				// Load entries above
+				foreach (var entry in entries)
+				{
+					var entryElement = browserElement.OwnerDocument.CreateHtmlElement("div");
+					var entryDoc = XDocument.Parse(entry);
+					foreach (var attribute in entryDoc.Root.Attributes())
+					{
+						entryElement.SetAttribute(attribute.Name.ToString(), attribute.Value);
+					}
+					entryElement.InnerHtml = string.Join("", entryDoc.Root.Elements().Select(x => x.ToString(SaveOptions.DisableFormatting)));
+					// Get the div of the first entry element
+					var before = browserElement.SelectFirst("*[contains(@class, 'entry')]");
+					before.ParentElement.InsertBefore(entryElement, before);
+				}
+				ChangeHtmlForCurrentAndAdjacentButtons(newCurPageRange, newAdjPageRange, currentPageButton, true);
+			}
+			else
+			{
+				// Use the up/down info to select the adjacentPage
+				Tuple<int, int> newCurrentPageRange;
+				Tuple<int, int> newAdjPageRange;
+				// Gecko xpath seems to be sensitive to namespaces, using * instead of span helps
+				var currentPageButton = GetBottomCurrentPageButton(browserElement);
+				if (currentPageButton == null)
+					throw new ArgumentException(@"No page buttons found in the document element is a part of", "element");
+				var adjPage = (GeckoHtmlElement)currentPageButton.NextSibling;
+				if (adjPage == null)
+					return;
+				var currentPageRange = new Tuple<int, int>(int.Parse(currentPageButton.Attributes["startIndex"].NodeValue), int.Parse(currentPageButton.Attributes["endIndex"].NodeValue));
+				var adjacentPageRange = new Tuple<int, int>(int.Parse(adjPage.Attributes["startIndex"].NodeValue), int.Parse(adjPage.Attributes["endIndex"].NodeValue));
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, "", isNormalRightToLeft);
+				var entries = ConfiguredXHTMLGenerator.GenerateNextFewEntries(PublicationDecorator, entriesToPublish, GetCurrentConfiguration(false), settings, currentPageRange,
+					adjacentPageRange, ConfiguredXHTMLGenerator.EntriesToAddCount, out newCurrentPageRange, out newAdjPageRange);
+				// Load entries above
+				foreach (var entry in entries)
+				{
+					var entryElement = browserElement.OwnerDocument.CreateHtmlElement("div"); var entryDoc = XDocument.Parse(entry);
+					foreach (var attribute in entryDoc.Root.Attributes())
+					{
+						entryElement.SetAttribute(attribute.Name.ToString(), attribute.Value);
+					}
+					entryElement.InnerHtml = string.Join("", entryDoc.Root.Elements().Select(x => x.ToString(SaveOptions.DisableFormatting)));
+
+					var buttonDiv = currentPageButton.ParentElement;
+					buttonDiv.ParentNode.InsertBefore(entryElement, buttonDiv);
+				}
+				ChangeHtmlForCurrentAndAdjacentButtons(newCurrentPageRange, newAdjPageRange, currentPageButton, false);
+			}
+			m_mainView.Refresh();
+		}
+
+		private void ChangeHtmlForCurrentAndAdjacentButtons(Tuple<int, int> newCurrentPageRange, Tuple<int, int> newAdjacentPageRange, GeckoElement pageButtonElement, bool goingUp)
+		{
+			GeckoHtmlElement currentPageTop = GetTopCurrentPageButton(pageButtonElement);
+			var adjPageTop = goingUp ? (GeckoHtmlElement)currentPageTop.PreviousSibling : (GeckoHtmlElement)currentPageTop.NextSibling;
+			GeckoHtmlElement currentPageBottom = GetBottomCurrentPageButton(pageButtonElement);
+			var adjPageBottom = goingUp ? (GeckoHtmlElement)currentPageBottom.PreviousSibling : (GeckoHtmlElement)currentPageBottom.NextSibling;
+			currentPageTop.SetAttribute("startIndex", newCurrentPageRange.Item1.ToString());
+			currentPageBottom.SetAttribute("startIndex", newCurrentPageRange.Item1.ToString());
+			currentPageTop.SetAttribute("endIndex", newCurrentPageRange.Item2.ToString());
+			currentPageBottom.SetAttribute("endIndex", newCurrentPageRange.Item2.ToString());
+			if (newAdjacentPageRange != null)
+			{
+				adjPageTop.SetAttribute("startIndex", newAdjacentPageRange.Item1.ToString());
+				adjPageBottom.SetAttribute("startIndex", newAdjacentPageRange.Item1.ToString());
+				adjPageTop.SetAttribute("endIndex", newAdjacentPageRange.Item2.ToString());
+				adjPageBottom.SetAttribute("endIndex", newAdjacentPageRange.Item2.ToString());
+			}
+			else
+			{
+				adjPageTop.Parent.RemoveChild(adjPageTop);
+				adjPageBottom.Parent.RemoveChild(adjPageBottom);
+			}
+		}
+
+		private static GeckoHtmlElement GetBottomCurrentPageButton(GeckoElement pageButtonElement)
+		{
+			// from the parent node select the second instance of the current page (the one with the id)
+			return (GeckoHtmlElement)pageButtonElement.OwnerDocument.Body.SelectFirst("(//*[@class='pagebutton' and @id])[2]");
+		}
+
+		private static GeckoHtmlElement GetTopCurrentPageButton(GeckoElement element)
+		{
+			// The page with the id is the current page, select the first one on the page
+			return (GeckoHtmlElement)element.OwnerDocument.Body.SelectFirst("//*[@class='pagebutton' and @id]");
+		}
+
+		private static bool HandleClickOnPageButton(RecordClerk clerk, GeckoElement element)
+		{
+			if (element.HasAttribute("class") && element.Attributes["class"].NodeValue.Equals("pagebutton"))
+			{
+				if(!element.HasAttribute("firstEntryGuid"))
+					throw new ArgumentException(@"The element passed to this method should have a firstEntryGuid.", "element");
+				var firstEntryOnPage = element.Attributes["firstEntryGuid"].NodeValue;
+				clerk.JumpToRecord(new Guid(firstEntryOnPage));
+				return true;
+			}
+			return false;
 		}
 
 		/// <summary>
@@ -323,7 +528,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Populate the list of publications for the first dictionary titlebar menu.
 		/// </summary>
-		/// <returns></returns>
 		public bool OnDisplayPublications(object parameter, ref UIListDisplayProperties display)
 		{
 			List<string> inConfig;
@@ -347,6 +551,18 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Populate a list of reversal index configurations for display in the reversal index configuration
+		/// chooser drop-down list in the Reversal Indexes area.
+		/// Omit the "All Reversal Indexes" item (LT-17170).
+		/// </summary>
+		public bool OnDisplayReversalIndexList(object parameter, ref UIListDisplayProperties display)
+		{
+			var handled = OnDisplayConfigurations(parameter, ref display);
+			DictionaryConfigurationUtils.RemoveAllReversalChoiceFromList(ref display);
+			return handled;
+		}
+
+		/// <summary>
 		/// Populate the list of dictionary configuration views for the second dictionary titlebar menu.
 		/// </summary>
 		/// <remarks>The areaconfiguration.xml defines the "Configurations" menu and the XWorksViews event handling calls this</remarks>
@@ -354,7 +570,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			IDictionary<string, string> hasPub;
 			IDictionary<string, string> doesNotHavePub;
-			var allConfigurations = GatherBuiltInAndUserConfigurations();
+			var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(Cache, m_configObjectName);
 			SplitConfigurationsByPublication(allConfigurations,
 														GetCurrentPublication(),
 														out hasPub, out doesNotHavePub);
@@ -376,6 +592,35 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Enable the 'File Print...' menu option for the Dictionary view
+		/// </summary>
+		public bool OnDisplayPrint(object parameter, UIItemDisplayProperties display)
+		{
+			display.Enabled = display.Visible = true;
+			return true;
+		}
+
+		/// <summary>
+		/// Handle the 'File Print...' menu item click (defined in the Lexicon areaConfiguration.xml)
+		/// </summary>
+		/// <param name="commandObject"></param>
+		/// <returns></returns>
+		public bool OnPrint(object commandObject)
+		{
+			CloseContextMenuIfOpen(); // not sure if this is necessary or not
+			PrintPage(m_mainView);
+			return true;
+		}
+
+		internal static void PrintPage(XWebBrowser browser)
+		{
+			var geckoBrowser = browser.NativeBrowser as GeckoWebBrowser;
+			if (geckoBrowser == null)
+				return;
+			geckoBrowser.Window.Print();
+		}
+
+		/// <summary>
 		/// Read in the parameters to determine which sequence/collection we are editing.
 		/// </summary>
 		protected override void ReadParameters()
@@ -392,56 +637,6 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected override void SetupDataContext()
 		{
-		}
-
-		/// <summary>
-		/// Stores the configuration name as the key, and the file path as the value
-		/// User configuration files with the same name as a shipped configuration will trump the shipped
-		/// </summary>
-		/// <seealso cref="DictionaryConfigurationController.ListDictionaryConfigurationChoices()"/>
-		/// <returns></returns>
-		internal SortedDictionary<string, string> GatherBuiltInAndUserConfigurations()
-		{
-			var configurations = new SortedDictionary<string, string>();
-			var defaultConfigs = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, m_configObjectName),
-																			"*" + DictionaryConfigurationModel.FileExtension);
-			// for every configuration file in the DefaultConfigurations folder add an entry
-			AddOrOverrideConfiguration(defaultConfigs, configurations);
-			var projectConfigPath = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder),
-																m_configObjectName);
-			if(Directory.Exists(projectConfigPath))
-			{
-				var projectConfigs = Directory.EnumerateFiles(projectConfigPath, "*" + DictionaryConfigurationModel.FileExtension);
-				// for every configuration in the projects configurations folder either override a shipped configuration or add an entry
-				AddOrOverrideConfiguration(projectConfigs, configurations);
-			}
-			return configurations;
-		}
-
-		/// <summary>
-		/// Reads just the configuration name out of each configuration file and either adds it to the configurations
-		/// dictionary by name or overwrites a previous entry with a new file location.
-		/// </summary>
-		private static void AddOrOverrideConfiguration(IEnumerable<string> configFiles,
-																	  IDictionary<string, string> configurations)
-		{
-			foreach(var configFile in configFiles)
-			{
-				using(var fileStream = new FileStream(configFile, FileMode.Open, FileAccess.Read))
-				using(var reader = XmlReader.Create(fileStream))
-				{
-					do
-					{
-						reader.Read();
-					} while(reader.NodeType != XmlNodeType.Element);
-					// Get the root xml element to grab the "name" value
-					var configName = reader["name"];
-					if(configName == null)
-						throw new InvalidDataException(String.Format("{0} is an invalid configuration file",
-																					configFile));
-					configurations[configName] = configFile;
-				}
-			}
 		}
 
 		/// <summary>
@@ -533,7 +728,7 @@ namespace SIL.FieldWorks.XWorks
 			if(publication == xWorksStrings.AllEntriesPublication)
 				return GetCurrentConfiguration(false);
 			var currentConfig = GetCurrentConfiguration(false);
-			var allConfigurations = GatherBuiltInAndUserConfigurations();
+			var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(Cache,m_configObjectName);
 			IDictionary<string, string> hasPub;
 			IDictionary<string, string> doesNotHavePub;
 			SplitConfigurationsByPublication(allConfigurations,
@@ -553,7 +748,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public void OnPropertyChanged(string name)
 		{
-			switch(name)
+			switch (name)
 			{
 				case "SelectedPublication":
 					var pubDecorator = PublicationDecorator;
@@ -564,14 +759,13 @@ namespace SIL.FieldWorks.XWorks
 				case "ReversalIndexPublicationLayout":
 					var currentConfig = GetCurrentConfiguration(false);
 					if (name == "ReversalIndexPublicationLayout")
-						currentConfig = GetCurrentConfigForReversalIndex(currentConfig);
+						DictionaryConfigurationUtils.SetReversalIndexGuidBasedOnReversalIndexConfiguration(m_propertyTable, Cache);
 					var currentPublication = GetCurrentPublication();
 					var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? xWorksStrings.AllEntriesPublication;
-					if(validPublication != currentPublication)
+					if (validPublication != currentPublication)
 					{
 						m_propertyTable.SetProperty("SelectedPublication", validPublication, false);
 					}
-					SetReversalIndexOnPropertyDlg();
 					UpdateContent(PublicationDecorator, currentConfig);
 					break;
 				case "ActiveClerkSelectedObject":
@@ -579,12 +773,30 @@ namespace SIL.FieldWorks.XWorks
 					if (browser != null)
 					{
 						RemoveStyleFromPreviousSelectedEntryOnView(browser);
+						LoadPageIfNecessary(browser);
+						Clerk.SelectedRecordChanged(true);
 						SetActiveSelectedEntryOnView(browser);
 					}
 					break;
 				default:
 					// Not sure what other properties might change, but I'm not doing anything.
 					break;
+			}
+		}
+
+		private void LoadPageIfNecessary(GeckoWebBrowser browser)
+		{
+			var currentObjectHvo = Clerk.CurrentObjectHvo;
+			var currentObjectIndex = Array.IndexOf(PublicationDecorator.GetEntriesToPublish(m_propertyTable, Clerk.VirtualFlid), currentObjectHvo);
+			if (currentObjectIndex < 0 || browser == null || browser.Document == null) // If the current item is not to be displayed (invalid, not in this publication) just quit
+				return;
+			var currentPage = GetTopCurrentPageButton(browser.Document.Body);
+			if (currentPage == null)
+				return;
+			var currentPageRange = new Tuple<int, int>(int.Parse(currentPage.Attributes["startIndex"].NodeValue), int.Parse(currentPage.Attributes["endIndex"].NodeValue));
+			if (currentObjectIndex < currentPageRange.Item1 || currentObjectIndex > currentPageRange.Item2)
+			{
+				OnMasterRefresh(this); // Reload the page
 			}
 		}
 
@@ -617,48 +829,27 @@ namespace SIL.FieldWorks.XWorks
 			var currSelectedByGuid = browser.Document.GetHtmlElementById("g" + currentObjectGuid);
 			if (currSelectedByGuid != null)
 			{
-				currSelectedByGuid.ScrollIntoView(true);
+				// Adjust active item to be lower down on the page.
+				var currElementRect = currSelectedByGuid.GetBoundingClientRect();
+				var currElementTop = currElementRect.Top + browser.Window.ScrollY;
+				var currElementBottom = currElementRect.Bottom + browser.Window.ScrollY;
+				var yPosition = currElementTop - (browser.Height / 4);
+
+				// Scroll only if current element is not visible on browser window
+				if (currElementTop < browser.Window.ScrollY || currElementBottom > (browser.Window.ScrollY + browser.Height))
+					browser.Window.ScrollTo(0, yPosition);
+
 				currSelectedByGuid.SetAttribute("style", "background-color:LightYellow");
 				m_selectedObjectID = currentObjectGuid;
 			}
 		}
 
 		/// <summary>
-		/// Method to handle the reversalIndex selection from the Pane-Bar combo box, It is special scenario for Reversal Index
-		/// </summary>
-		/// <param name="currentConfig">Configuration from ReversalIndexPublicationLayout, Which may be default</param>
-		/// <returns></returns>
-		private string GetCurrentConfigForReversalIndex(string currentConfig)
-		{
-			var allConfigurations = GatherBuiltInAndUserConfigurations();
-			var reversalIndexGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_propertyTable, "ReversalIndexGuid");
-			var currentReversalIndex = Cache.ServiceLocator.GetObject(reversalIndexGuid) as IReversalIndex;
-			if (currentReversalIndex != null && allConfigurations.Keys.Contains(currentReversalIndex.ShortName))
-			{
-				currentConfig = allConfigurations[currentReversalIndex.ShortName];
-				SetCurrentConfiguration(currentConfig, false);
-				SetReversalIndexOnPropertyDlg();
-			}
-			return currentConfig;
-		}
-
-
-		/// <summary>
 		/// Method which set the current writing system when selected in ConfigureReversalIndexDialog
 		/// </summary>
 		private void SetReversalIndexOnPropertyDlg() // REVIEW (Hasso) 2016.01: this seems to sabotage whatever is selected in the Config dialog
 		{
-			var currWsPath = m_propertyTable.GetStringProperty("ReversalIndexPublicationLayout", string.Empty);
-			var currWsName = Path.GetFileNameWithoutExtension(currWsPath);
-			var currentAnalysisWsList = Cache.LanguageProject.CurrentAnalysisWritingSystems;
-			var wsObj = currentAnalysisWsList.FirstOrDefault(ws => ws.DisplayLabel == currWsName);
-			if (wsObj == null || wsObj.DisplayLabel.ToLower().Contains("audio"))
-				return;
-			var riRepo = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
-			var mHvoRevIdx = riRepo.FindOrCreateIndexForWs(wsObj.Handle).Hvo;
-			var revGuid = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(mHvoRevIdx).Guid;
-			m_propertyTable.SetProperty("ReversalIndexGuid", revGuid.ToString(), true);
-			m_propertyTable.SetPropertyPersistence("ReversalIndexGuid", true);
+			DictionaryConfigurationUtils.SetReversalIndexGuidBasedOnReversalIndexConfiguration(m_propertyTable, Cache);
 		}
 
 		public void OnMasterRefresh(object sender)
@@ -681,6 +872,49 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
+		/// <summary>
+		/// Implements the command that just does Find, without Replace.
+		/// </summary>
+		public bool OnFindAndReplaceText(object argument)
+		{
+			using (var findDlg = new BasicFindDialog())
+			{
+				findDlg.FindNext += FindDlgFindNextHandler;
+				findDlg.ShowDialog(this);
+			}
+			return true;
+		}
+
+		void FindDlgFindNextHandler(object sender, IBasicFindView view)
+		{
+			if (m_mainView != null)
+			{
+				var geckoBrowser = m_mainView.NativeBrowser as GeckoWebBrowser;
+				var field = typeof(GeckoWebBrowser).GetField("WebBrowser", BindingFlags.Instance | BindingFlags.NonPublic);
+				nsIWebBrowser browser = (nsIWebBrowser)field.GetValue(geckoBrowser);
+				var browserFind = Xpcom.QueryInterface<nsIWebBrowserFind>(browser);
+				browserFind.SetSearchStringAttribute(Icu.Normalize(view.SearchText, Icu.UNormalizationMode.UNORM_NFD));
+				try
+				{
+					browserFind.SetWrapFindAttribute(true);
+					browserFind.FindNext();
+				}
+				catch (Exception e)
+				{
+					view.StatusText = e.Message;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Enables the command that just does Find, without Replace.
+		/// </summary>
+		public virtual bool OnDisplayFindAndReplaceText(object commandObject, ref UIItemDisplayProperties display)
+		{
+			display.Enabled = display.Visible = true;
+			return true; //we've handled this
+		}
+
 		public bool OnShowAllEntries(object args)
 		{
 			m_propertyTable.SetProperty("SelectedPublication", xWorksStrings.AllEntriesPublication, true);
@@ -697,8 +931,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
-				using (new WaitCursor(this.ParentForm))
-				using (var progressDlg = new SIL.FieldWorks.Common.Controls.ProgressDialogWithTask(this.ParentForm))
+				using (new WaitCursor(ParentForm))
+				using (var progressDlg = new Common.Controls.ProgressDialogWithTask(this.ParentForm))
 				{
 					progressDlg.AllowCancel = true;
 					progressDlg.CancelLabelText = xWorksStrings.ksCancelingPublicationLabel;
@@ -737,7 +971,7 @@ namespace SIL.FieldWorks.XWorks
 			if (progress != null)
 			{
 				progress.Minimum = 0;
-				var entryCount = entriesToPublish.Length;
+				var entryCount = ConfiguredXHTMLGenerator.EntriesPerPage;
 				progress.Maximum = entryCount + 1 + entryCount / 100;
 				progress.Position++;
 			}
@@ -809,7 +1043,7 @@ namespace SIL.FieldWorks.XWorks
 		private void SetConfigViewTitle()
 		{
 			var maxViewWidth = Width/2 - kSpaceForMenuButton;
-			var allConfigurations = GatherBuiltInAndUserConfigurations();
+			var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(Cache, m_configObjectName);
 			string curViewName;
 			var currentConfig = GetCurrentConfiguration(false);
 			if(allConfigurations.ContainsValue(currentConfig))

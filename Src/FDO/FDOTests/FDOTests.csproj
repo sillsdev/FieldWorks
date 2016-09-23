@@ -290,8 +290,9 @@
     <Compile Include="DataMigrationTests\DataMigration7000063Tests.cs" />
     <Compile Include="DataMigrationTests\DataMigration7000065Tests.cs" />
     <Compile Include="DataMigrationTests\DataMigration7000066Tests.cs" />
-    <Compile Include="DataMigrationTests\DataMigration7000067Tests.cs" />
     <Compile Include="DataMigrationTests\DataMigration7000069Tests.cs" />
+    <Compile Include="DataMigrationTests\DataMigration7000067Tests.cs" />
+    <Compile Include="DataMigrationTests\DataMigration7000070Tests.cs" />
     <Compile Include="DataMigrationTests\WritingSystemIdMigratorTests.cs" />
     <Compile Include="DataSortingServiceTests.cs" />
     <Compile Include="DataStoreInitializationServicesTests.cs" />
@@ -299,6 +300,7 @@
     <Compile Include="DummyProgressDlg.cs" />
     <Compile Include="DuplicateAnalysisFixerTests.cs" />
     <Compile Include="DuplicateWordformFixerTests.cs" />
+    <Compile Include="FdoBackendProviderTests.cs" />
     <Compile Include="FdoFactoryAdditionsTests.cs" />
     <Compile Include="FeatureSystemTests.cs" />
     <Compile Include="FwSetupFixtureClass.cs" />
@@ -403,11 +405,24 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="gendarme-FDOTests.ignore" />
+    <None Include="TestData\x-kal-fonipa_7000043.ldml" />
+    <None Include="TestData\x-kal_7000043.ldml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="TestData\DataMigration7000042C.xml" />
+    <Content Include="TestData\DataMigration7000042D.xml" />
+    <Content Include="TestData\DataMigration7000042E.xml" />
+    <Content Include="TestData\DataMigration7000069_Dialects.xml" />
+    <Content Include="TestData\DataMigration7000069_Etymology.xml" />
+    <Content Include="TestData\DataMigration7000069_CustomExemplar.xml" />
+    <Content Include="TestData\DataMigration7000069_CustomUsageNote.xml" />
+    <Content Include="TestData\DataMigration7000069.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="TestData\DataMigration7000070.xml" />
     <Content Include="TestData\DataMigration7000067TestData.xml" />
     <Content Include="TestData\DataMigration7000058_NonEmptyGlossAppend.xml" />
     <Content Include="TestData\DataMigration7000058_EmptyGlossAppend.xml" />
@@ -428,6 +443,8 @@
     </Content>
     <Content Include="TestData\DataMigration7000066_CustomPropertyMagnet.xml" />
     <Content Include="TestData\DataMigration7000066_RegularPropertyMagnet.xml" />
+    <Content Include="TestData\DataMigration7000069_ExtendedNote.xml" />
+    <Content Include="TestData\DataMigration7000069_UnspecComplexAndVariantType.xml" />
     <None Include="BackupRestore\BackupTestProject\BackupTestProject.fwdata" />
     <None Include="BackupRestore\BackupTestProject\BackupTestProject.fwdata.bak" />
     <None Include="BackupRestore\BackupTestProject\SupportingFiles\GrkPolyComp.kmp" />
@@ -449,6 +466,8 @@
     <None Include="BackupRestore\LinkedFilesTestProject\WritingSystemStore\id.ldml" />
     <None Include="BackupRestore\RestoreProjectPresenterTests\RestoreProjectPresenterTests.fwbackup" />
     <None Include="BackupRestore\RestoreServiceTestsZipFileDir\TestRestoreFWProject.fwbackup" />
+    <None Include="TestData\am-Ethi-fonipa_7000069.ldml" />
+    <None Include="TestData\am-Ethi_7000069.ldml" />
     <None Include="TestData\ClosingTagSpansBuffer.fwdata" />
     <None Include="TestData\CorruptedXMLFileTest.fwdata" />
     <None Include="TestData\DataMigration7000010Tests.xml" />
@@ -526,6 +545,8 @@
     <Content Include="TestData\DataMigration7000042B.xml" />
     <Content Include="TestData\DataMigration7000044.xml" />
     <None Include="TestData\DuplicateGuids.fwdata" />
+    <None Include="TestData\en_7000043.ldml" />
+    <None Include="TestData\en_7000069.ldml" />
     <None Include="TestData\SlightlyCorruptedXMLFile.fwdata" />
     <None Include="TestData\FeatureSystem2.xml" />
     <None Include="TestData\FeatureSystem3.xml" />

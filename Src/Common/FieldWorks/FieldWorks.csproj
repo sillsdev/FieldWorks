@@ -108,14 +108,10 @@
       <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
     <Reference Include="Geckofx-Core">
-      <Package>Geckofx-Core</Package>
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Downloads\Geckofx-Core.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\Geckofx-Core.dll</HintPath>
     </Reference>
     <Reference Include="Geckofx-Winforms">
-      <Package>Geckofx-WinForms</Package>
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Downloads\Geckofx-Winforms.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\Geckofx-Winforms.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

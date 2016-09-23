@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.Xml;
 using SIL.Utils;
@@ -169,17 +170,31 @@ namespace SIL.FieldWorks.Common.Controls
 			return key;
 		}
 
-		// For most parts, the key is the ref attribute, but if that is $child, it's a custom field and
-		// the label is the best way to distinguish. On the other hand, we need to be able to distinguish
-		// parts that have been duplicated too, so we have a second sort of key that also uses the dup attribute.
-		// This allows us to compare different oldConfigured nodes with the relevant newMaster node to see
-		// if this one is a duplicate node.
-		private string GetKeyWithDup(XmlNode node)
+		/// <summary>
+		/// For most parts, the key is the ref attribute, but if that is $child, it's a custom field and
+		/// the label is the best way to distinguish. On the other hand, we need to be able to distinguish
+		/// parts that have been duplicated too, so we have a second sort of key that also uses the dup attribute.
+		/// This allows us to compare different oldConfigured nodes with the relevant newMaster node to see
+		/// if this one is a duplicate node.
+		/// </summary>
+		/// <param name="node">XmlNode from old configured parts Dictionary</param>
+		/// <param name="isInitializing">When building the parts dictionary this should be true</param>
+		/// <returns>Key with dup value</returns>
+		private string GetKeyWithDup(XmlNode node, bool isInitializing)
 		{
 			var key = Utils.XmlUtils.GetOptionalAttributeValue(node, RefAttr, string.Empty);
 			if (key == ChildStr)
 				key = Utils.XmlUtils.GetOptionalAttributeValue(node, LabelAttr, ChildStr);
 			var dup = Utils.XmlUtils.GetOptionalAttributeValue(node, DupAttr, string.Empty);
+			if (isInitializing && m_labelAttrSuffix.ContainsKey(key + dup))
+			{
+				if (!dup.Contains(".")) return key + dup;
+				var numCount = dup.Split('.');
+				var numIncr = Int32.Parse(numCount[numCount.Length - 1]) + 1;
+				dup = String.Join(".", dup + "-" + numIncr);
+				//Updating dup value in node attribute
+				if (node.Attributes != null) node.Attributes["dup"].Value = dup;
+			}
 			return key + dup;
 		}
 
@@ -194,9 +209,10 @@ namespace SIL.FieldWorks.Common.Controls
 					continue;
 				var baseKey = GetKey(child);
 				m_oldPartsFound[baseKey] = false;
-				var dupKey = GetKeyWithDup(child);
+				var dupKey = GetKeyWithDup(child, true);
 				if (dupKey == baseKey)
 					continue;
+
 				m_labelAttrSuffix.Add(dupKey, LayoutKeyUtils.GetPossibleLabelSuffix(child));
 				m_partLevelParamAttrSuffix.Add(dupKey, LayoutKeyUtils.GetPossibleParamSuffix(child));
 			}
@@ -241,7 +257,7 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					XmlNode copy = CopyToOutput(child);
 					CopySafeAttrs(copy, oldNode);
-					var dupKey = GetKeyWithDup(oldNode);
+					var dupKey = GetKeyWithDup(oldNode, false);
 					if (dupKey != key)
 					{
 						// This duplicate may have suffixes to attach

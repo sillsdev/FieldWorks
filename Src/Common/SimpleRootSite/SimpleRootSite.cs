@@ -353,6 +353,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_messageSequencer = new MessageSequencer(this);
 			m_graphicsManager = CreateGraphicsManager();
 			m_orientationManager = CreateOrientationManager();
+#if !__MonoCS__
+#endif
 			SubscribeToRootSiteEventHandlerEvents();
 		}
 
@@ -6131,6 +6133,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			base.WndProc(ref msg);
 		}
 
+#if !__MonoCS__
+#endif
 		/// <summary>
 		/// Required by interface, but not used, because we don't user the MessageSequencer
 		/// to sequence OnPaint calls.

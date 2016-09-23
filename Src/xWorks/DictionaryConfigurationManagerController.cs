@@ -466,7 +466,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Whether a configuration is, or is a customization of, a shipped default configuration,
-		/// such as the shipped Root-based, Stem-based, or Bartholomew configurations.
+		/// such as the shipped Root-based, Lexeme-based, or Bartholomew configurations.
 		/// </summary>
 		public bool IsConfigurationACustomizedShippedDefault(DictionaryConfigurationModel configuration)
 		{

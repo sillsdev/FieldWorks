@@ -245,6 +245,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				// If it has a parameter tag, strip it off.
 				string wsSpec = StringServices.GetWsSpecWithoutPrefix(xa.Value);
 				int wsMagicOut; // required output arg not used.
+				// LT-16301 If the user specifies a ws (like 'fr') the Get for a magic wsid crashes
+				// before we get to interpret the wsSpec, so convert the default to an actual ws first.
+				if (wsid < 0)
+					wsid = ActualWs(cache, sda, wsid, hvo, flid);
 				wsid = InterpretWsLabel(cache, sda, wsSpec, cache.ServiceLocator.WritingSystemManager.Get(wsid),
 					hvo,
 					flid,

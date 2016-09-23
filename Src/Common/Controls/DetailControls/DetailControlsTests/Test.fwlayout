@@ -18,7 +18,7 @@
 		<part ref="Senses" visibility="ifdata" param="GlossSn" expansion="expanded"/>
 		<part ref="Etymology" visibility="ifdata" expansion="expanded" param="empty">
 			<part ref="Form" visibility="ifdata"/>
-			<part ref="Source" visibility="ifdata"/>
+			<part ref="LanguageNotes" visibility="ifdata"/>
 		</part>
 	</layout>
 	<layout class="LexSense" type="detail" name="GlossSn" expansion="expanded">

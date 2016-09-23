@@ -5,8 +5,8 @@
 	guid. Be sure to validate any changes against ../Styles.dtd.
 	*********************************************************************************************
 -->
-<Styles date="2016-02-02" DTDver="B8521229-70FB-4DD9-A022-434714B8DE4B" label="Flex Dictionary">
-	<markup version="4831DC54-CBF2-4C47-A5C7-D0512F54EDE3">
+<Styles date="2016-08-26" DTDver="64DE4B02-14DA-42F6-8C1C-CF21E41D3EF7" label="Flex Dictionary">
+	<markup version="19C6785D-2F17-405A-A855-F05B71BBC9AD">
 		<!--
 		The 'Normal' entry is here mainly as a placeholder, so the DTD will allow things to be based on it.
 		Logically Normal should probably be internal, but it's 'general' in existing projects, and the
@@ -15,7 +15,7 @@
 			<usage wsId="en">Normal is a parent style that all other paragraph styles are usually based on.</usage>
 			<help category="Paragraph_Elements"/>
 			<font size="10 pt"/>
-			<paragraph next="Normal" lineSpacing="12 pt" lineSpacingType="atleast" spaceBefore="0 pt" spaceAfter="6 pt"/>
+			<paragraph next="Normal" lineHeight="10000" lineHeightUnit="rel" spaceBefore="0 pt" spaceAfter="6 pt"/>
 		</tag>
 		<!-- These are currently also defined in NewLangProj. This definition will supercede that -->
 		<tag id="Heading_1" guid="77997501-47D3-4574-AE1D-7300107DFB73" userlevel="1" context="general" type="paragraph">
@@ -40,19 +40,19 @@
 			<usage wsId="en">A numbered list of paragraphs</usage>
 			<help category="Paragraph_Elements"/>
 			<font/>
-			<paragraph basedOn="Normal" next="Numbered_List" bulNumScheme="Arabic" bulNumStartAt="1" firstLine="-18 pt"/>
+			<paragraph basedOn="Normal" next="Numbered_List" bulNumScheme="Arabic" bulNumStartAt="1" indentLeft="36 pt" firstLine="-9 pt"/>
 		</tag>
 		<tag id="Bulleted_List" guid="3C8C511B-4683-4289-88D0-024F66540F6F" userlevel="1" context="general" type="paragraph">
 			<usage wsId="en">A bulleted list of paragraphs</usage>
 			<help category="Paragraph_Elements"/>
 			<font/>
-			<paragraph basedOn="Normal" next="Bulleted_List" bulNumScheme="Bullet:1" bulNumStartAt="1" firstLine="-18 pt"/>
+			<paragraph basedOn="Normal" next="Bulleted_List" bulNumScheme="Bullet:1" bulNumStartAt="1" indentLeft="36 pt" firstLine="-9 pt"/>
 		</tag>
 		<tag id="Block_Quote" guid="879D3C6F-8E62-4887-A4AF-27FEB88C2AF1" userlevel="1" context="general" type="paragraph">
 			<usage wsId="en">Extended (paragraph size or larger) quotation</usage>
 			<help category="Paragraph_Elements"/>
 			<font/>
-			<paragraph basedOn="Normal" next="Block_Quote" indentLeft="36 pt" indentRight="36 pt"/>
+			<paragraph basedOn="Normal" next="Block_Quote" indentLeft="45 pt" indentRight="36 pt"/>
 		</tag>
 		<tag id="Disabled_Text" guid="1B25E2A0-5F78-40D1-943A-2B14CACCF860" userlevel="1" context="general" type="character">
 			<usage wsId="en">Material marked as being disabled (no longer active)</usage>
@@ -93,7 +93,7 @@
 			<usage wsId="en">Letter headings in the dictionary.</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font bold="true" size="14 pt"/>
-			<paragraph basedOn="Normal" next="Normal" spaceBefore="12 pt" spaceAfter="3 pt"/>
+			<paragraph basedOn="Dictionary-Normal" next="Dictionary-Normal" spaceBefore="12 pt" spaceAfter="3 pt"/>
 		</tag>
 		<tag id="Dictionary-Context" guid="89670D4F-71D4-4878-B2FF-815E45512BE1" userlevel="1" context="internalConfigureView" type="character">
 			<usage wsId="en">Base style for Before/After/Between content in Dictionary and Reversal views.</usage>
@@ -116,7 +116,7 @@
 			<usage wsId="en">Each paragraph of Sense information that is added to the entry if senses are formatted as paragraphs.</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font/>
-			<paragraph basedOn="Dictionary-Normal" indentLeft="45 pt" hanging="0 pt" spaceBefore="0 pt" firstLine="-18 pt"/>
+			<paragraph basedOn="Dictionary-Normal" indentLeft="45 pt" spaceBefore="0 pt" firstLine="-18 pt"/>
 		</tag>
 		<tag id="Dictionary-SenseNumber" guid="164123A0-CA12-4C44-BD69-D5FB9D4B1A0B" userlevel="1" context="internalConfigureView" type="character">
 			<usage wsId="en">The number before each sense in an entry.</usage>
@@ -187,11 +187,17 @@
 			<help category="Flex_Dictionary_Styles"/>
 			<font bold="true"/>
 		</tag>
+		<tag id="Reversal-Normal" guid="80a47ed1-1e29-40d4-9aa0-d3041a8ca9dc" userlevel="1" context="internalConfigureView" type="paragraph">
+			<usage wsId="en">Base style for everything in the Reversal view.</usage>
+			<help category="Flex_Dictionary_Styles"/>
+			<font/>
+			<paragraph basedOn="Normal" indentLeft="9 pt" hanging="36 pt" spaceBefore="1 pt" spaceAfter="2 pt"/>
+		</tag>
 		<tag id="Reversal-Subentry" guid="501C3363-065D-465A-BAAD-15D0787F9DED" userlevel="1" context="internalConfigureView" type="paragraph">
 			<usage wsId="en">Each paragraph of Subentry information that is added to a reversal entry if there are subentries.</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font/>
-			<paragraph basedOn="Dictionary-Normal" indentLeft="45 pt" hanging="0 pt" spaceBefore="0 pt"/>
+			<paragraph basedOn="Reversal-Normal" indentLeft="45 pt" hanging="0 pt" spaceBefore="0 pt"/>
 		</tag>
 		<tag id="Reversal-Vernacular" guid="282F9AE7-D4DC-4C9B-93B5-413A7D3986B1" userlevel="1" context="internalConfigureView" type="character">
 			<usage wsId="en">Used for items in reversal entries that contain vernacular text.</usage>
@@ -209,7 +215,7 @@
 				<override wsId="pt" family="Microsoft Sans Serif" size="10 pt"/>
 			</font>
 		</tag>
-		<tag id="Homograph-Number" guid="6ED2CB3D-F6DB-4AF5-9DE9-75669CE26F46" userlevel="1" context="internalConfigureView" type="character">
+		<tag id="Homograph-Number" guid="6ED2CB3D-F6DB-4AF5-9DE9-75669CE26F46" userlevel="1" context="internalConfigureView" type="character" basedOn="Dictionary-Headword">
 			<usage wsId="en">Used for homograph numbers</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font subscript="true" bold="true"/>

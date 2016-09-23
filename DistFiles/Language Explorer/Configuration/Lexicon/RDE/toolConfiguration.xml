@@ -178,10 +178,13 @@
 										<column layout="DomainsOfSensesForSense" label="Semantic Domains" width="72000" multipara="true" visibility="dialog"
 											displayNameProperty="AbbrAndNameTSS" editable="false"/>
 										<column layout="NumberOfSensesForEntry" label="Number of Senses (Entry)" sortType="integer" blankPossible="false" visibility="dialog" editable="false"/>
+										<column layout="EtymologyPrecComment" label="Etymology - Preceding Annotation"  multipara="true" ws="$ws=analysis" editable="false" visibility="dialog" />
+										<column layout="EtymologySource" label="Etymology - Source Language"  multipara="true" ws="$ws=analysis" editable="false" visibility="dialog" />
+										<column layout="EtymologyForm" label="Etymology - Source Form"  multipara="true" ws="$ws=vernacular analysis" editable="false" visibility="dialog" />
 										<column layout="EtymologyGloss" label="Etymology - Gloss"  multipara="true" ws="$ws=analysis" editable="false" visibility="dialog" />
-										<column layout="EtymologySource" label="Etymology - Source"  multipara="true" editable="false" visibility="dialog" />
-										<column layout="EtymologyForm" label="Etymology - Form"  multipara="true" ws="$ws=vernacular" editable="false" visibility="dialog" />
-										<column layout="EtymologyComment" label="Etymology - Comment"  multipara="true" ws="$ws=analysis" editable="false" visibility="dialog" />
+										<column layout="EtymologyComment" label="Etymology - Following Comment"  multipara="true" ws="$ws=analysis" editable="false" visibility="dialog" />
+										<column layout="EtymologyBibliography" label="Etymology - Bibliographic Source"  multipara="true" ws="$ws=analysis" editable="false" visibility="dialog" />
+										<column layout="EtymologyNote" label="Etymology - Note"  multipara="true" ws="$ws=analysis" editable="false" visibility="dialog" />
 										<column layout="BibliographyForEntry" label="Bibliography (Entry)" transduce="LexEntry.Bibliography" ws="$ws=analysis" visibility="dialog"/>
 										<column layout="LiteralMeaningForEntry" label="Literal Meaning" transduce="LexEntry.LiteralMeaning" ws="$ws=analysis" visibility="dialog"/>
 										<column layout="NoteForEntry" label="Note" transduce="LexEntry.Comment" ws="$ws=analysis" visibility="dialog"/>
@@ -301,8 +304,8 @@
 		  <control>
 			<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
 			<parameters area="lexicon" id="EntryOrSenseBulkEdit" clerk="entriesOrChildren" filterBar="true" bulkEdit="true" selectColumn="true"
-							bulkEditListItemsClasses="LexEntry,LexSense,LexEntryRef,LexPronunciation,MoForm,LexExampleSentence,CmTranslation"
-							bulkEditListItemsGhostFields="LexDb.AllPossiblePronunciations,LexDb.AllPossibleAllomorphs,LexDb.AllExampleSentenceTargets,LexDb.AllExampleTranslationTargets,LexDb.AllComplexEntryRefPropertyTargets">
+							bulkEditListItemsClasses="LexEntry,LexSense,LexEntryRef,LexPronunciation,LexEtymology,MoForm,LexExampleSentence,CmTranslation"
+							bulkEditListItemsGhostFields="LexDb.AllPossiblePronunciations,LexDb.AllPossibleEtymologies,LexDb.AllPossibleAllomorphs,LexDb.AllExampleSentenceTargets,LexDb.AllExampleTranslationTargets,LexDb.AllComplexEntryRefPropertyTargets">
 			  <!--include browse view columns-->
 			  <columns generate="childPartsForParentLayouts">
 				<include path="../browseDialogColumns.xml" query="doc/browseColumns/column">

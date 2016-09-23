@@ -4,12 +4,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainImpl;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -228,6 +229,12 @@ namespace SIL.FieldWorks.XWorks
 			return GetCurrentConfiguration(propertyTable, true, innerConfigDir);
 		}
 
+		private static void SetConfigureHomographParameters(string currentConfig, FdoCache cache)
+		{
+			var model = new DictionaryConfigurationModel(currentConfig, cache);
+			DictionaryConfigurationController.SetConfigureHomographParameters(model, cache);
+		}
+
 		/// <summary>
 		/// Returns the path to the current Dictionary or ReversalIndex configuration file, based on client specification or the current tool
 		/// Guarantees that the path is set to an existing configuration file, which may cause a redisplay of the XHTML view if fUpdate is true.
@@ -245,8 +252,12 @@ namespace SIL.FieldWorks.XWorks
 			var isDictionary = innerConfigDir == DictionaryConfigurationDirectoryName;
 			var pubLayoutPropName = isDictionary ? "DictionaryPublicationLayout" : "ReversalIndexPublicationLayout";
 			var currentConfig = propertyTable.GetStringProperty(pubLayoutPropName, string.Empty);
+			var cache = propertyTable.GetValue<FdoCache>("cache");
 			if (!string.IsNullOrEmpty(currentConfig) && File.Exists(currentConfig))
+			{
+				SetConfigureHomographParameters(currentConfig, cache);
 				return currentConfig;
+			}
 			var defaultPublication = isDictionary ? "Root" : "AllReversalIndexes";
 			var defaultConfigDir = GetDefaultConfigurationDirectory(innerConfigDir);
 			var projectConfigDir = GetProjectConfigurationDirectory(propertyTable, innerConfigDir);
@@ -257,7 +268,6 @@ namespace SIL.FieldWorks.XWorks
 				var selectedPublication = currentConfig.Replace("publish", string.Empty);
 				if (!isDictionary)
 				{
-					var cache = propertyTable.GetValue<FdoCache>("cache");
 					var languageCode = selectedPublication.Replace("Reversal-", string.Empty);
 					selectedPublication = cache.ServiceLocator.WritingSystemManager.Get(languageCode).DisplayLabel;
 				}
@@ -270,6 +280,15 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (!File.Exists(currentConfig))
 			{
+				if (defaultPublication == "AllReversalIndexes")
+				{
+					// check in projectConfigDir for files whose name = default analysis ws
+					if (TryMatchingReversalConfigByWritingSystem(projectConfigDir, cache, out currentConfig))
+					{
+						propertyTable.SetProperty(pubLayoutPropName, currentConfig, fUpdate);
+						return currentConfig;
+					}
+				}
 				// select the project's Root configuration if available; otherwise, select the default Root configuration
 				currentConfig = Path.Combine(projectConfigDir, defaultPublication + DictionaryConfigurationModel.FileExtension);
 				if (!File.Exists(currentConfig))
@@ -277,9 +296,24 @@ namespace SIL.FieldWorks.XWorks
 					currentConfig = Path.Combine(defaultConfigDir, defaultPublication + DictionaryConfigurationModel.FileExtension);
 				}
 			}
-			Debug.Assert(File.Exists(currentConfig));
-			propertyTable.SetProperty(pubLayoutPropName, currentConfig, fUpdate);
+			if (File.Exists(currentConfig))
+			{
+				propertyTable.SetProperty(pubLayoutPropName, currentConfig, fUpdate);
+			}
+			else
+			{
+				propertyTable.RemoveProperty(pubLayoutPropName);
+			}
 			return currentConfig;
+		}
+
+		private static bool TryMatchingReversalConfigByWritingSystem(string projectConfigDir, FdoCache cache, out string currentConfig)
+		{
+			var displayName = cache.LangProject.DefaultAnalysisWritingSystem.DisplayLabel;
+			var fileList = Directory.EnumerateFiles(projectConfigDir);
+			var fileName = fileList.FirstOrDefault(fname => Path.GetFileNameWithoutExtension(fname) == displayName);
+			currentConfig = fileName ?? string.Empty;
+			return !string.IsNullOrEmpty(currentConfig);
 		}
 
 		/// <summary>

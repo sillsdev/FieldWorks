@@ -134,6 +134,7 @@
     <Reference Include="SilUtils">
       <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml" />
     <Reference Include="TestUtils">
       <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
     </Reference>
@@ -146,6 +147,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LayoutKeyUtilsTests.cs" />
     <None Include="App.config" />
     <Compile Include="CaseFunctionsTest.cs" />
     <Compile Include="FwDirectoryFinderTests.cs" />

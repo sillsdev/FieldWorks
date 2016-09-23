@@ -19,6 +19,23 @@ namespace SIL.FieldWorks.PaObjects
 			return (msa == null || msa.StringCount == 0 ? null : new PaMultiString(msa, svcloc));
 		}
 
+		/// <summary>
+		/// Append to the PaMultiString the contents of the tsMultiString.
+		/// For each writing system the contents will end up in a comma seperated list
+		/// </summary>
+		public static void Append(PaMultiString paMultiString, ITsMultiString tsMultiString, IFdoServiceLocator svcloc)
+		{
+			for (int i = 0; i < tsMultiString.StringCount; ++i)
+			{
+				int hvoWs;
+				var tss = tsMultiString.GetStringFromIndex(i, out hvoWs);
+
+				// hvoWs should *always* be found in AllWritingSystems.
+				var ws = svcloc.WritingSystems.AllWritingSystems.SingleOrDefault(w => w.Handle == hvoWs);
+				paMultiString.AddString(ws == null ? null : ws.Id, tss.Text);
+			}
+		}
+
 		/// ------------------------------------------------------------------------------------
 		public List<string> Texts { get; set; }
 
@@ -45,6 +62,25 @@ namespace SIL.FieldWorks.PaObjects
 				// hvoWs should *always* be found in AllWritingSystems.
 				var ws = svcloc.WritingSystems.AllWritingSystems.SingleOrDefault(w => w.Handle == hvoWs);
 				WsIds.Add(ws == null ? null : ws.Id);
+			}
+		}
+
+		private void AddString(string ws, string text)
+		{
+			if (Texts == null)
+			{
+				Texts = new List<string>();
+				WsIds = new List<string>();
+			}
+			var index = WsIds.IndexOf(ws);
+			if (index >= 0)
+			{
+				Texts[index] = Texts[index] + string.Format(", {0}", text);
+			}
+			else
+			{
+				Texts.Add(text);
+				WsIds.Add(ws);
 			}
 		}
 

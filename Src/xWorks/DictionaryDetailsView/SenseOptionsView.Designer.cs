@@ -71,84 +71,101 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SenseOptionsView));
 			this.checkBoxSenseInPara = new System.Windows.Forms.CheckBox();
 			this.checkBoxShowGrammarFirst = new System.Windows.Forms.CheckBox();
-			this.checkBoxNumberSingleSense = new System.Windows.Forms.CheckBox();
-			this.dropDownStyle = new System.Windows.Forms.ComboBox();
+			this.checkBoxFirstSenseInline = new System.Windows.Forms.CheckBox();
+			this.labelStyle = new System.Windows.Forms.Label();
+			this.labelAfter = new System.Windows.Forms.Label();
+			this.labelNumberingStyle = new System.Windows.Forms.Label();
+			this.labelBefore = new System.Windows.Forms.Label();
 			this.dropDownNumberingStyle = new System.Windows.Forms.ComboBox();
 			this.textBoxAfter = new System.Windows.Forms.TextBox();
 			this.textBoxBefore = new System.Windows.Forms.TextBox();
-			this.labelBefore = new System.Windows.Forms.Label();
-			this.labelAfter = new System.Windows.Forms.Label();
-			this.labelStyle = new System.Windows.Forms.Label();
-			this.labelNumberingStyle = new System.Windows.Forms.Label();
-			this.groupBoxSenseNumber = new System.Windows.Forms.GroupBox();
+			this.checkBoxNumberSingleSense = new System.Windows.Forms.CheckBox();
+			this.dropDownStyle = new System.Windows.Forms.ComboBox();
 			this.buttonStyles = new System.Windows.Forms.Button();
+			this.groupBoxSenseNumber = new System.Windows.Forms.GroupBox();
+			this.labelParentSenseNumberStyle = new System.Windows.Forms.Label();
+			this.dropDownParentSenseNumberStyle = new System.Windows.Forms.ComboBox();
 			this.groupBoxSenseNumber.SuspendLayout();
 			this.SuspendLayout();
-			// 
+			//
 			// checkBoxSenseInPara
-			// 
+			//
 			resources.ApplyResources(this.checkBoxSenseInPara, "checkBoxSenseInPara");
 			this.checkBoxSenseInPara.Name = "checkBoxSenseInPara";
 			this.checkBoxSenseInPara.UseVisualStyleBackColor = true;
-			// 
+			//
 			// checkBoxShowGrammarFirst
-			// 
+			//
 			resources.ApplyResources(this.checkBoxShowGrammarFirst, "checkBoxShowGrammarFirst");
 			this.checkBoxShowGrammarFirst.Name = "checkBoxShowGrammarFirst";
 			this.checkBoxShowGrammarFirst.UseVisualStyleBackColor = true;
-			// 
-			// checkBoxNumberSingleSense
-			// 
-			resources.ApplyResources(this.checkBoxNumberSingleSense, "checkBoxNumberSingleSense");
-			this.checkBoxNumberSingleSense.Name = "checkBoxNumberSingleSense";
-			this.checkBoxNumberSingleSense.UseVisualStyleBackColor = true;
-			// 
-			// dropDownStyle
-			// 
-			resources.ApplyResources(this.dropDownStyle, "dropDownStyle");
-			this.dropDownStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.dropDownStyle.FormattingEnabled = true;
-			this.dropDownStyle.Name = "dropDownStyle";
-			// 
+			//
+			// checkBoxFirstSenseInline
+			//
+			resources.ApplyResources(this.checkBoxFirstSenseInline, "checkBoxFirstSenseInline");
+			this.checkBoxFirstSenseInline.Name = "checkBoxFirstSenseInline";
+			this.checkBoxFirstSenseInline.UseVisualStyleBackColor = true;
+			//
+			// labelStyle
+			//
+			resources.ApplyResources(this.labelStyle, "labelStyle");
+			this.labelStyle.Name = "labelStyle";
+			//
+			// labelAfter
+			//
+			resources.ApplyResources(this.labelAfter, "labelAfter");
+			this.labelAfter.Name = "labelAfter";
+			//
+			// labelNumberingStyle
+			//
+			resources.ApplyResources(this.labelNumberingStyle, "labelNumberingStyle");
+			this.labelNumberingStyle.Name = "labelNumberingStyle";
+			//
+			// labelBefore
+			//
+			resources.ApplyResources(this.labelBefore, "labelBefore");
+			this.labelBefore.Name = "labelBefore";
+			//
 			// dropDownNumberingStyle
-			// 
+			//
 			resources.ApplyResources(this.dropDownNumberingStyle, "dropDownNumberingStyle");
 			this.dropDownNumberingStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.dropDownNumberingStyle.FormattingEnabled = true;
 			this.dropDownNumberingStyle.Name = "dropDownNumberingStyle";
-			// 
+			//
 			// textBoxAfter
-			// 
+			//
 			resources.ApplyResources(this.textBoxAfter, "textBoxAfter");
 			this.textBoxAfter.Name = "textBoxAfter";
-			// 
+			//
 			// textBoxBefore
-			// 
+			//
 			resources.ApplyResources(this.textBoxBefore, "textBoxBefore");
 			this.textBoxBefore.Name = "textBoxBefore";
-			// 
-			// labelBefore
-			// 
-			resources.ApplyResources(this.labelBefore, "labelBefore");
-			this.labelBefore.Name = "labelBefore";
-			// 
-			// labelAfter
-			// 
-			resources.ApplyResources(this.labelAfter, "labelAfter");
-			this.labelAfter.Name = "labelAfter";
-			// 
-			// labelStyle
-			// 
-			resources.ApplyResources(this.labelStyle, "labelStyle");
-			this.labelStyle.Name = "labelStyle";
-			// 
-			// labelNumberingStyle
-			// 
-			resources.ApplyResources(this.labelNumberingStyle, "labelNumberingStyle");
-			this.labelNumberingStyle.Name = "labelNumberingStyle";
-			// 
+			//
+			// checkBoxNumberSingleSense
+			//
+			resources.ApplyResources(this.checkBoxNumberSingleSense, "checkBoxNumberSingleSense");
+			this.checkBoxNumberSingleSense.Name = "checkBoxNumberSingleSense";
+			this.checkBoxNumberSingleSense.UseVisualStyleBackColor = false;
+			//
+			// dropDownStyle
+			//
+			resources.ApplyResources(this.dropDownStyle, "dropDownStyle");
+			this.dropDownStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.dropDownStyle.FormattingEnabled = true;
+			this.dropDownStyle.Name = "dropDownStyle";
+			//
+			// buttonStyles
+			//
+			resources.ApplyResources(this.buttonStyles, "buttonStyles");
+			this.buttonStyles.Name = "buttonStyles";
+			this.buttonStyles.UseVisualStyleBackColor = true;
+			//
 			// groupBoxSenseNumber
-			// 
+			//
+			this.groupBoxSenseNumber.Controls.Add(this.labelParentSenseNumberStyle);
+			this.groupBoxSenseNumber.Controls.Add(this.dropDownParentSenseNumberStyle);
 			this.groupBoxSenseNumber.Controls.Add(this.buttonStyles);
 			this.groupBoxSenseNumber.Controls.Add(this.dropDownStyle);
 			this.groupBoxSenseNumber.Controls.Add(this.checkBoxNumberSingleSense);
@@ -162,22 +179,29 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			resources.ApplyResources(this.groupBoxSenseNumber, "groupBoxSenseNumber");
 			this.groupBoxSenseNumber.Name = "groupBoxSenseNumber";
 			this.groupBoxSenseNumber.TabStop = false;
-			// 
-			// buttonStyles
-			// 
-			resources.ApplyResources(this.buttonStyles, "buttonStyles");
-			this.buttonStyles.Name = "buttonStyles";
-			this.buttonStyles.UseVisualStyleBackColor = true;
-			// 
+			//
+			// labelParentSenseNumberStyle
+			//
+			resources.ApplyResources(this.labelParentSenseNumberStyle, "labelParentSenseNumberStyle");
+			this.labelParentSenseNumberStyle.Name = "labelParentSenseNumberStyle";
+			//
+			// dropDownParentSenseNumberStyle
+			//
+			this.dropDownParentSenseNumberStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.dropDownParentSenseNumberStyle.FormattingEnabled = true;
+			resources.ApplyResources(this.dropDownParentSenseNumberStyle, "dropDownParentSenseNumberStyle");
+			this.dropDownParentSenseNumberStyle.Name = "dropDownParentSenseNumberStyle";
+			//
 			// SenseOptionsView
-			// 
+			//
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.groupBoxSenseNumber);
+			this.Controls.Add(this.checkBoxFirstSenseInline);
 			this.Controls.Add(this.checkBoxSenseInPara);
 			this.Controls.Add(this.checkBoxShowGrammarFirst);
-			this.MaximumSize = new System.Drawing.Size(0, 170);
-			this.MinimumSize = new System.Drawing.Size(305, 170);
+			this.MaximumSize = new System.Drawing.Size(0, 193);
+			this.MinimumSize = new System.Drawing.Size(305, 220);
 			this.Name = "SenseOptionsView";
 			this.groupBoxSenseNumber.ResumeLayout(false);
 			this.groupBoxSenseNumber.PerformLayout();
@@ -190,16 +214,19 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 
 		private System.Windows.Forms.CheckBox checkBoxSenseInPara;
 		private System.Windows.Forms.CheckBox checkBoxShowGrammarFirst;
-		private System.Windows.Forms.CheckBox checkBoxNumberSingleSense;
-		private System.Windows.Forms.ComboBox dropDownStyle;
+		private System.Windows.Forms.CheckBox checkBoxFirstSenseInline;
+		private System.Windows.Forms.Label labelStyle;
+		private System.Windows.Forms.Label labelAfter;
+		private System.Windows.Forms.Label labelNumberingStyle;
+		private System.Windows.Forms.Label labelBefore;
 		private System.Windows.Forms.ComboBox dropDownNumberingStyle;
 		private System.Windows.Forms.TextBox textBoxAfter;
 		private System.Windows.Forms.TextBox textBoxBefore;
-		private System.Windows.Forms.Label labelBefore;
-		private System.Windows.Forms.Label labelAfter;
-		private System.Windows.Forms.Label labelStyle;
-		private System.Windows.Forms.Label labelNumberingStyle;
-		private System.Windows.Forms.GroupBox groupBoxSenseNumber;
+		private System.Windows.Forms.CheckBox checkBoxNumberSingleSense;
+		private System.Windows.Forms.ComboBox dropDownStyle;
 		private System.Windows.Forms.Button buttonStyles;
+		private System.Windows.Forms.GroupBox groupBoxSenseNumber;
+		private System.Windows.Forms.Label labelParentSenseNumberStyle;
+		private System.Windows.Forms.ComboBox dropDownParentSenseNumberStyle;
 	}
 }

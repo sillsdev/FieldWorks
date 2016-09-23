@@ -564,10 +564,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static string DefaultConfigurations
 		{
-			get
-			{
-				return Path.Combine(Path.Combine(CodeDirectory, "Language Explorer"), "DefaultConfigurations");
-			}
+			get { return Path.Combine(FlexFolder, "DefaultConfigurations"); }
 		}
 
 		/// <summary>

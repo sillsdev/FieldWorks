@@ -148,6 +148,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\FxtDll.dll</HintPath>
     </Reference>
+    <Reference Include="Geckofx-Core">
+      <HintPath>..\..\..\Output\Debug\Geckofx-Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms">
+      <HintPath>..\..\..\Output\Debug\Geckofx-Winforms.dll</HintPath>
+    </Reference>
     <Reference Include="MessageBoxExLib">
       <Name>MessageBoxExLib</Name>
       <HintPath>..\..\..\Output\Debug\MessageBoxExLib.dll</HintPath>
@@ -255,17 +261,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
-    <Reference Include="Geckofx-Core">
-      <Package>Geckofx-Core</Package>
-      <HintPath>..\..\..\Downloads\Geckofx-Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Geckofx-Winforms">
-      <Package>Geckofx-WinForms</Package>
-      <HintPath>..\..\..\Downloads\Geckofx-Winforms.dll</HintPath>
-    </Reference>
     <Reference Include="SIL.Windows.Forms">
       <HintPath>..\..\..\Downloads\SIL.Windows.Forms.dll</HintPath>
-    </Reference>
+	</Reference>
     <Reference Include="FwCoreDlgControls">
       <HintPath>..\..\..\Output\Debug\FwCoreDlgControls.dll</HintPath>
     </Reference>
@@ -300,9 +298,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="PatternVcBase.cs" />
-    <Compile Include="PatternView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="PatternView.cs" />
     <Compile Include="PhonologicalFeatureChooserDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -372,9 +368,7 @@
     <Compile Include="DataNotebook\StringFieldOptions.Designer.cs">
       <DependentUpon>StringFieldOptions.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataNotebook\NotebookImportWiz.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="DataNotebook\NotebookImportWiz.cs" />
     <Compile Include="DataNotebook\NotebookImportWiz.Designer.cs">
       <DependentUpon>NotebookImportWiz.cs</DependentUpon>
     </Compile>
@@ -432,9 +426,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="LexImport.cs" />
-    <Compile Include="LexImportWizard.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="LexImportWizard.cs" />
     <Compile Include="LexImportWizardCharMarkerDlg.cs">
       <SubType>Form</SubType>
     </Compile>

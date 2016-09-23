@@ -1330,11 +1330,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				cch = bldr.Length;
 				bldr.ReplaceTsString(cch, cch, InflectionClassRA.Abbreviation.BestAnalysisVernacularAlternative);
 				cch = bldr.Length;
-				bldr.ReplaceTsString(cch, cch, TsStringUtils.MakeTss(") ", userWs));
-			}
-			else
-			{
-				bldr.ReplaceTsString(cch, cch, TsStringUtils.MakeTss(" ", userWs));
+				bldr.ReplaceTsString(cch, cch, TsStringUtils.MakeTss(")", userWs));
 			}
 			cch = bldr.Length;
 			var features = MsFeaturesOA;

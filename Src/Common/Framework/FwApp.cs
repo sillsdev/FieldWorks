@@ -86,15 +86,13 @@ namespace SIL.FieldWorks.Common.Framework
 	/// ----------------------------------------------------------------------------------------
 	public interface IRecordChangeHandler : IFWDisposable
 	{
-		/// <summary>Initialize the object with the record and the list to which it belongs.
-		/// </summary>
-		void Setup(object /*"record"*/ o, IRecordListUpdater rlu);
-		/// <summary>Fix the record for any changes, possibly refreshing the list to which it
-		/// belongs.</summary>
+		/// <summary>Initialize the object with the record and the list to which it belongs.</summary>
+		void Setup(object record, IRecordListUpdater rlu, FdoCache cache);
+		/// <summary>Fix the record for any changes, possibly refreshing the list to which it belongs.</summary>
 		void Fixup(bool fRefreshList);
 
 		/// <summary>
-		/// True, if the updater was not null in the Setup call, otherwise false.
+		/// True if the updater was not null in the Setup call, otherwise false.
 		/// </summary>
 		bool HasRecordListUpdater
 		{

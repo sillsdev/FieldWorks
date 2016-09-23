@@ -19,10 +19,10 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// Dialog for publishing data to Webonary web site.
 	/// </summary>
-	public partial class PublishToWebonaryDlg : Form, IPublishToWebonaryView
+	public partial class UploadToWebonaryDlg : Form, IUploadToWebonaryView
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
-		private readonly PublishToWebonaryController m_controller;
+		private readonly UploadToWebonaryController m_controller;
 		// Mono 3 handles the display of the size gripper differently than .NET SWF and so the dialog needs to be taller. Part of LT-16433.
 		private const int m_additionalMinimumHeightForMono = 26;
 
@@ -31,13 +31,13 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected PropertyTable PropertyTable { get; set; }
 
-		public PublishToWebonaryDlg()
+		public UploadToWebonaryDlg()
 		{
 			InitializeComponent();
 			LoadFromModel();
 		}
 
-		public PublishToWebonaryDlg(PublishToWebonaryController controller, PublishToWebonaryModel model, PropertyTable propertyTable)
+		public UploadToWebonaryDlg(UploadToWebonaryController controller, UploadToWebonaryModel model, PropertyTable propertyTable)
 		{
 			InitializeComponent();
 
@@ -60,8 +60,8 @@ namespace SIL.FieldWorks.XWorks
 			// Restore the location and size from last time we called this dialog.
 			if (PropertyTable != null)
 			{
-				object locWnd = PropertyTable.GetValue<object>("PublishToWebonaryDlg_Location");
-				object szWnd = PropertyTable.GetValue<object>("PublishToWebonaryDlg_Size");
+				object locWnd = PropertyTable.GetValue<object>("UploadToWebonaryDlg_Location");
+				object szWnd = PropertyTable.GetValue<object>("UploadToWebonaryDlg_Size");
 				if (locWnd != null && szWnd != null)
 				{
 					Rectangle rect = new Rectangle((Point) locWnd, (Size) szWnd);
@@ -79,8 +79,27 @@ namespace SIL.FieldWorks.XWorks
 
 		private void UpdateEntriesToBePublishedLabel()
 		{
-			howManyPubsAlertLabel.Text = string.Format(xWorksStrings.PublicationEntriesLabel,
-				m_controller.CountDictionaryEntries(), m_controller.CountReversalIndexEntries(GetSelectedReversals()));
+			var countOfDictionaryEntries = m_controller.CountDictionaryEntries(GetSelectedDictionaryModel());
+
+			var reversalCounts = m_controller.GetCountsOfReversalIndexes(GetSelectedReversals());
+			string middle = "";
+			foreach (var reversalIndex in reversalCounts.Keys)
+			{
+				// Use commas and conjunctions as appropriate depending on if this reversal is the first and/or last in the set.
+				if (reversalIndex == reversalCounts.Keys.Last())
+				{
+					if (reversalIndex == reversalCounts.Keys.First())
+						middle += string.Format(xWorksStrings.ReversalEntries_Only, reversalCounts[reversalIndex], reversalIndex);
+					else
+						middle += string.Format(xWorksStrings.ReversalEntries_Last, reversalCounts[reversalIndex], reversalIndex);
+				}
+				else
+				{
+					middle += string.Format(xWorksStrings.ReversalEntries, reversalCounts[reversalIndex], reversalIndex);
+				}
+			}
+
+			howManyPubsAlertLabel.Text = string.Format(xWorksStrings.PublicationEntriesLabel, countOfDictionaryEntries, middle);
 		}
 
 		private void PopulatePublicationsList()
@@ -93,8 +112,11 @@ namespace SIL.FieldWorks.XWorks
 
 		private void publicationBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			PopulateConfigurationsListBySelectedPublication();
-			PopulateReversalsCheckboxList();
+			var selectedPublication = publicationBox.SelectedItem.ToString();
+			m_controller.ActivatePublication(selectedPublication);
+			PopulateConfigurationsListByPublication(selectedPublication);
+			PopulateReversalsCheckboxListByPublication(selectedPublication);
+			UpdateEntriesToBePublishedLabel();
 		}
 
 		private void configurationBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -107,32 +129,34 @@ namespace SIL.FieldWorks.XWorks
 			UpdateEntriesToBePublishedLabel();
 		}
 
-		private void PopulateConfigurationsListBySelectedPublication()
+		private void PopulateConfigurationsListByPublication(string publication)
 		{
-			var selectedConfiguration =
-				Model.Configurations.Where(prop => prop.Value.Publications.Contains(publicationBox.SelectedItem.ToString())).ToList();
+			var selectedConfiguration = (configurationBox.SelectedItem ?? string.Empty).ToString();
+			var availableConfigurations = Model.Configurations.Where(prop => prop.Value.Publications.Contains(publication))
+				.Select(prop => prop.Value.Label).ToList();
 			configurationBox.Items.Clear();
-			foreach (var config in selectedConfiguration)
+			foreach (var config in availableConfigurations)
 			{
-				configurationBox.Items.Add(config.Value.Label);
+				configurationBox.Items.Add(config);
 			}
-			if (selectedConfiguration.Count > 0)
+			if (availableConfigurations.Contains(selectedConfiguration))
+				configurationBox.SelectedItem = selectedConfiguration;
+			else if (availableConfigurations.Count > 0)
 				configurationBox.SelectedIndex = 0;
 		}
 
-		private void PopulateReversalsCheckboxList()
+		private void PopulateReversalsCheckboxListByPublication(string publication)
 		{
-			var selectedConfiguration =
-				Model.Reversals.Where(prop => prop.Value.Publications.Contains(publicationBox.SelectedItem.ToString())).ToList();
+			var selectedReversals = GetSelectedReversals();
+			var availableReversals = Model.Reversals.Where(prop => prop.Value.Publications.Contains(publication)
+				&& prop.Value.Label != DictionaryConfigurationModel.AllReversalIndexes).Select(prop => prop.Value.Label).ToList();
 			reversalsCheckedListBox.Items.Clear();
-			foreach (var reversal in selectedConfiguration)
-			{
-				if (reversal.Value.Label != DictionaryConfigurationModel.AllReversalIndexes)
-				reversalsCheckedListBox.Items.Add(reversal.Value.Label);
-			}
+			foreach (var reversal in availableReversals)
+				reversalsCheckedListBox.Items.Add(reversal);
+			SetSelectedReversals(selectedReversals);
 		}
 
-		public PublishToWebonaryModel Model { get; set; }
+		public UploadToWebonaryModel Model { get; set; }
 
 		private void LoadFromModel()
 		{
@@ -155,7 +179,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					publicationBox.SelectedIndex = 0;
 				}
-				PopulateReversalsCheckboxList();
+				PopulateReversalsCheckboxListByPublication(publicationBox.SelectedItem.ToString());
 				SetSelectedReversals(Model.SelectedReversals);
 				if(!String.IsNullOrEmpty(Model.SelectedConfiguration))
 				{
@@ -165,6 +189,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					configurationBox.SelectedIndex = 0;
 				}
+				UpdateEntriesToBePublishedLabel();
 			}
 		}
 
@@ -186,7 +211,7 @@ namespace SIL.FieldWorks.XWorks
 			Model.SaveToSettings();
 		}
 
-		private void SetSelectedReversals(IEnumerable<string> selectedReversals)
+		private void SetSelectedReversals(ICollection<string> selectedReversals)
 		{
 			if(selectedReversals == null)
 				return;
@@ -200,9 +225,14 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private IEnumerable<string> GetSelectedReversals()
+		private List<string> GetSelectedReversals()
 		{
 			return (from object item in reversalsCheckedListBox.CheckedItems select item.ToString()).ToList();
+		}
+
+		private DictionaryConfigurationModel GetSelectedDictionaryModel()
+		{
+			return Model.Configurations[configurationBox.SelectedItem.ToString()];
 		}
 
 		private void publishButton_Click(object sender, EventArgs e)
@@ -221,12 +251,12 @@ namespace SIL.FieldWorks.XWorks
 				minimumFormHeightToShowLog += m_additionalMinimumHeightForMono;
 			this.MinimumSize = new Size(this.MinimumSize.Width, minimumFormHeightToShowLog);
 
-			m_controller.PublishToWebonary(Model, this);
+			m_controller.UploadToWebonary(Model, this);
 		}
 
 		private void helpButton_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpPublishToWebonary");
+			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpUploadToWebonary");
 		}
 
 		/// <summary>
@@ -277,10 +307,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (PropertyTable != null)
 			{
-				PropertyTable.SetProperty("PublishToWebonaryDlg_Location", Location, false);
-				PropertyTable.SetPropertyPersistence("PublishToWebonaryDlg_Location", true);
-				PropertyTable.SetProperty("PublishToWebonaryDlg_Size", Size, false);
-				PropertyTable.SetPropertyPersistence("PublishToWebonaryDlg_Size", true);
+				PropertyTable.SetProperty("UploadToWebonaryDlg_Location", Location, false);
+				PropertyTable.SetPropertyPersistence("UploadToWebonaryDlg_Location", true);
+				PropertyTable.SetProperty("UploadToWebonaryDlg_Size", Size, false);
+				PropertyTable.SetPropertyPersistence("UploadToWebonaryDlg_Size", true);
 			}
 			base.OnClosing(e);
 		}
@@ -299,15 +329,15 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// Interface for controller to interact with the dialog
 	/// </summary>
-	public interface IPublishToWebonaryView
+	public interface IUploadToWebonaryView
 	{
 		void UpdateStatus(string statusString);
 		void SetStatusCondition(WebonaryStatusCondition condition);
-		PublishToWebonaryModel Model { get; set; }
+		UploadToWebonaryModel Model { get; set; }
 	}
 
 	/// <summary>
-	/// Condition of status of publishing to webonary.
+	/// Condition of status of uploading to webonary.
 	/// </summary>
 	public enum WebonaryStatusCondition
 	{

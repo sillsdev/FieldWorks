@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -90,15 +91,13 @@ namespace SIL.FieldWorks.XWorks
 			GenerateStyles();
 
 			m_staticDDController = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			m_staticDDController.LoadNode(new ConfigurableDictionaryNode());
+			m_staticDDController.LoadNode(null, new ConfigurableDictionaryNode());
 		}
 		[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
    Justification = "member is disposed through the property")]
 		internal class TestDictionaryDetailsView : IDictionaryDetailsView
 		{
 			private List<StyleComboItem> m_styles;
-			private string m_selectedStyle;
-			private bool m_usingParaStyles;
 
 #pragma warning disable 67
 			public event EventHandler StyleSelectionChanged;
@@ -114,27 +113,26 @@ namespace SIL.FieldWorks.XWorks
 			public bool StylesVisible { get; set; }
 			public bool StylesEnabled { get; set; }
 			public bool SurroundingCharsVisible { get; set; }
-			private UserControl _mOptionsView = null;
+			private UserControl m_optionsView;
 			public UserControl OptionsView
 			{
-				get { return _mOptionsView; }
+				get { return m_optionsView; }
 				set
 				{
-					if (_mOptionsView != null)
-						_mOptionsView.Dispose();
-					_mOptionsView = value;
+					if (m_optionsView != null)
+						m_optionsView.Dispose();
+					m_optionsView = value;
 				}
 			}
 			public bool Visible { get; set; }
-			public Control TopLevelControl { get; private set; }
+			public Control TopLevelControl { get { return null; } }
 			public bool IsDisposed { get; private set; }
 			public bool Enabled { get; set; }
 
 			public void SetStyles(List<StyleComboItem> styles, string selectedStyle, bool usingParaStyles)
 			{
 				m_styles = styles;
-				m_selectedStyle = selectedStyle;
-				m_usingParaStyles = usingParaStyles;
+				Style = selectedStyle;
 			}
 
 			public void SuspendLayout() { }
@@ -149,9 +147,21 @@ namespace SIL.FieldWorks.XWorks
 
 			public IList<ListViewItem> GetListViewItems()
 			{
-				IDictionaryListOptionsView listOptionsView = OptionsView as IDictionaryListOptionsView;
+				var listOptionsView = OptionsView as IDictionaryListOptionsView;
 				var listView = (ListView)ReflectionHelper.GetField(listOptionsView, "listView");
 				return listView.Items.Cast<ListViewItem>().ToList();
+			}
+
+			public string GetTooltipFromOverPanel()
+			{
+				if (OptionsView is ButtonOverPanel)
+					throw new NotImplementedException();
+				var labelOverPanel = OptionsView as LabelOverPanel;
+				if (labelOverPanel == null)
+					return null;
+				var tip = (ToolTip)ReflectionHelper.GetField(labelOverPanel, "m_tt");
+				var label = (Control)ReflectionHelper.GetField(labelOverPanel, "label");
+				return tip.GetToolTip(label);
 			}
 
 			public void Dispose()
@@ -200,23 +210,28 @@ namespace SIL.FieldWorks.XWorks
 
 		private static IList<StyleComboItem> GetAvailableStyles(IDictionaryDetailsView view)
 		{
-			return (view as TestDictionaryDetailsView).GetStyles();
+			return ((TestDictionaryDetailsView)view).GetStyles();
 		}
 
 		private static IDictionaryListOptionsView GetListOptionsView(IDictionaryDetailsView view)
 		{
-			return (view as TestDictionaryDetailsView).OptionsView as IDictionaryListOptionsView;
+			return ((TestDictionaryDetailsView)view).OptionsView as IDictionaryListOptionsView;
 		}
 
 		private static IDictionarySenseOptionsView GetSenseOptionsView(IDictionaryDetailsView view)
 		{
-			return (view as TestDictionaryDetailsView).OptionsView as IDictionarySenseOptionsView;
+			return ((TestDictionaryDetailsView)view).OptionsView as IDictionarySenseOptionsView;
+		}
+
+		private static IDictionaryGroupingOptionsView GetGroupingOptionsView(IDictionaryDetailsView view)
+		{
+			return ((TestDictionaryDetailsView)view).OptionsView as IDictionaryGroupingOptionsView;
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "ListOptionsView is disposed by its parent")]
 		private static IList<ListViewItem> GetListViewItems(IDictionaryDetailsView view)
 		{
-			return (view as TestDictionaryDetailsView).GetListViewItems();
+			return ((TestDictionaryDetailsView)view).GetListViewItems();
 		}
 
 		private static void AssertShowingCharacterStyles(IDictionaryDetailsView view)
@@ -242,6 +257,69 @@ namespace SIL.FieldWorks.XWorks
 		}
 		#endregion Helpers
 
+		#region Example tests
+		[Test]
+		public void ExampleLoadsParagraphStylesWhenShowInParaSet()
+		{
+			var testNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions =
+					new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = true }
+			};
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			controller.LoadNode(null, testNode);
+			using (var view = controller.View)
+			{
+				// SUT
+				AssertShowingParagraphStyles(view);
+			}
+		}
+
+		[Test]
+		public void ExampleLoadsCharacterStylesWhenShowInParaNotSet()
+		{
+			var testNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions =
+					new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = false }
+			};
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			controller.LoadNode(null, testNode);
+			using (var view = controller.View)
+			{
+				// SUT
+				AssertShowingCharacterStyles(view);
+			}
+		}
+		#endregion
+
+		#region Note tests
+		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "optionsView is a reference only")]
+		public void NoteLoadsParagraphStylesWhenShowInParaSet()
+		{
+			var wsOptions = new DictionaryNodeWritingSystemAndParaOptions();
+			{
+				wsOptions.DisplayEachInAParagraph = true;
+			};
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
+			using (var view = controller.View)
+			{
+				var optionsView = GetListOptionsView(view);
+				Assert.IsTrue(optionsView.DisplayOptionCheckBox2Checked, "'Display each Note in a separate paragraph' should be checked.");
+				//// Events are not actually fired during tests, so they must be run manually
+				AssertShowingParagraphStyles(view);
+
+				optionsView.DisplayOptionCheckBox2Checked = false;
+				ReflectionHelper.CallMethod(controller, "DisplayInParaChecked", GetListOptionsView(view), wsOptions);
+
+				Assert.IsFalse(wsOptions.DisplayEachInAParagraph, "DisplayEachInAParagraph should be false.");
+				AssertShowingCharacterStyles(view);
+			}
+		}
+		#endregion
+
 		#region Sense tests
 		[Test]
 		public void SenseLoadsParagraphStylesWhenShowInParaSet()
@@ -252,7 +330,7 @@ namespace SIL.FieldWorks.XWorks
 					new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true }
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			controller.LoadNode(testNode);
+			controller.LoadNode(null, testNode);
 			using (var view = controller.View)
 			{
 				// SUT
@@ -269,7 +347,7 @@ namespace SIL.FieldWorks.XWorks
 					new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = false }
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			controller.LoadNode(testNode);
+			controller.LoadNode(null, testNode);
 			using (var view = controller.View)
 			{
 				// SUT
@@ -283,7 +361,7 @@ namespace SIL.FieldWorks.XWorks
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			using(var view = controller.View)
 			{
-				controller.LoadNode(new ConfigurableDictionaryNode());
+				controller.LoadNode(null, new ConfigurableDictionaryNode());
 				AssertShowingCharacterStyles(view);
 			}
 		}
@@ -320,7 +398,7 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			controller.LoadNode(mainEntryNode);
+			controller.LoadNode(null, mainEntryNode);
 			Assert.AreEqual(true, controller.IsAllParentsChecked(pronunciation));
 
 			controller.View.Dispose();
@@ -351,10 +429,10 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(minorEntryNode);
 
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			controller.LoadNode(mainEntryNode);
+			controller.LoadNode(null, mainEntryNode);
 			Assert.AreEqual(true, controller.IsAllParentsChecked(mainEntryNode));
 
-			controller.LoadNode(minorEntryNode);
+			controller.LoadNode(null, minorEntryNode);
 			// LT-16459 if IsAllParentsChecked returns false, Minor Entry types are all disabled
 			Assert.AreEqual(true, controller.IsAllParentsChecked(minorEntryNode));
 
@@ -394,10 +472,10 @@ namespace SIL.FieldWorks.XWorks
 				IsEnabled = true
 			};
 
-			new DictionaryConfigurationModel().SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			controller.LoadNode(mainEntryNode);
+			controller.LoadNode(null, mainEntryNode);
 			Assert.AreEqual(false, controller.IsAllParentsChecked(pronunciation));
 
 			controller.View.Dispose();
@@ -416,17 +494,17 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			node.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
-			controller.LoadNode(node);
+			controller.LoadNode(null, node);
 			AssertShowingCharacterStyles(controller.View);
 
 			// Load paragraph styles
-			node.DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
+			node.DictionaryNodeOptions = new DictionaryNodeListAndParaOptions
 			{
 				ListId = DictionaryNodeListOptions.ListIds.Complex,
 				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
-				DisplayEachComplexFormInAParagraph = true
+				DisplayEachInAParagraph = true
 			};
-			controller.LoadNode(node); // SUT
+			controller.LoadNode(null, node); // SUT
 			AssertShowingParagraphStyles(controller.View);
 
 			// Load character styles
@@ -435,7 +513,7 @@ namespace SIL.FieldWorks.XWorks
 				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
 			};
 			node.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
-			controller.LoadNode(node); // SUT
+			controller.LoadNode(null, node); // SUT
 			AssertShowingCharacterStyles(controller.View);
 			controller.View.Dispose();
 		}
@@ -443,18 +521,19 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void LoadNode_AllowsStyleOverride()
 		{
-			var node = new ConfigurableDictionaryNode();
-
 			// Load paragraph styles
-			node.DictionaryNodeOptions = new DictionaryNodeComplexFormOptions
+			var node = new ConfigurableDictionaryNode
 			{
-				ListId = DictionaryNodeListOptions.ListIds.Complex,
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
-				DisplayEachComplexFormInAParagraph = true
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Complex,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
+					DisplayEachInAParagraph = true
+				}
 			};
-
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			controller.LoadNode(node);
+			// SUT
+			controller.LoadNode(null, node);
 			AssertShowingParagraphStyles(controller.View);
 
 			//Load character styles
@@ -464,7 +543,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			// SUT
 			node.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
-			controller.LoadNode(node);
+			controller.LoadNode(null, node);
 			AssertShowingCharacterStyles(controller.View);
 			controller.View.Dispose();
 		}
@@ -484,7 +563,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.DoesNotThrow(() =>
 			{
 				// SUT
-				controller.LoadNode(node);
+				controller.LoadNode(null, node);
 			});
 			controller.View.Dispose();
 		}
@@ -507,7 +586,7 @@ namespace SIL.FieldWorks.XWorks
 			parentSenseNode.Children = new List<ConfigurableDictionaryNode> { childGramarNode };
 
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			controller.LoadNode(childGramarNode);
+			controller.LoadNode(null, childGramarNode);
 			using(var view = controller.View)
 			{
 				var optionsView = GetListOptionsView(view);
@@ -534,7 +613,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// SUT is LoadNode.  `using ... .View` to ensure disposal
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			Assert.DoesNotThrow(() => { using(controller.View) { controller.LoadNode(childGramarNode); } });
+			Assert.DoesNotThrow(() => { using(controller.View) { controller.LoadNode(null, childGramarNode); } });
 		}
 		#endregion Sense tests
 
@@ -589,7 +668,7 @@ namespace SIL.FieldWorks.XWorks
 			var node = new ConfigurableDictionaryNode { DictionaryNodeOptions = listOptions };
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			// SUT
-			controller.LoadNode(node);
+			controller.LoadNode(null, node);
 			using (var view = controller.View)
 			{
 				var listViewItems = GetListViewItems(view);
@@ -601,7 +680,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(1, listOptions.Options.Count, "Loading the node should not affect the original list");
 
 			listOptions.Options[0].IsEnabled = false;
-			controller.LoadNode(node); // SUT
+			controller.LoadNode(null, node); // SUT
 			using (var view = controller.View)
 			{
 				var listViewItems = GetListViewItems(view);
@@ -621,7 +700,7 @@ namespace SIL.FieldWorks.XWorks
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true }
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			controller.LoadNode(testNode);
+			controller.LoadNode(null, testNode);
 			Assert.False(controller.View.SurroundingCharsVisible, "Context should start hidden");
 			testNode = new ConfigurableDictionaryNode
 			{
@@ -629,7 +708,7 @@ namespace SIL.FieldWorks.XWorks
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions(),
 				Parent = testNode
 			};
-			controller.LoadNode(testNode);
+			controller.LoadNode(null, testNode);
 			Assert.True(controller.View.SurroundingCharsVisible, "Context should now be visible");
 			controller.View.Dispose();
 		}
@@ -642,14 +721,14 @@ namespace SIL.FieldWorks.XWorks
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = false }
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			controller.LoadNode(testNode);
+			controller.LoadNode(null, testNode);
 			Assert.True(controller.View.SurroundingCharsVisible, "Context should start visible");
 			testNode = new ConfigurableDictionaryNode
 			{
 				IsEnabled = true,
-				DictionaryNodeOptions = new DictionaryNodeComplexFormOptions { DisplayEachComplexFormInAParagraph = true}
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = true}
 			};
-			controller.LoadNode(testNode);
+			controller.LoadNode(null, testNode);
 			Assert.False(controller.View.SurroundingCharsVisible, "Context should now be hidden");
 			controller.View.Dispose();
 		}
@@ -664,10 +743,10 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var node = new ConfigurableDictionaryNode { DictionaryNodeOptions = listOptions };
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			controller.LoadNode(node);
+			controller.LoadNode(null, node);
 			Assert.NotNull(((TestDictionaryDetailsView)controller.View).OptionsView, "Test setup failed, OptionsView shoud not be null");
 			var optionlessNode = new ConfigurableDictionaryNode();
-			controller.LoadNode(optionlessNode);
+			controller.LoadNode(null, optionlessNode);
 			Assert.Null(((TestDictionaryDetailsView)controller.View).OptionsView, "OptionsView should be set to null after loading a node without options");
 			controller.View.Dispose();
 		}
@@ -706,7 +785,7 @@ namespace SIL.FieldWorks.XWorks
 		private void VerifyCannotUncheckOnlyCheckedItemInList(DictionaryNodeOptions options)
 		{
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			controller.LoadNode(new ConfigurableDictionaryNode { DictionaryNodeOptions = options });
+			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = options });
 			using (var view = controller.View)
 			{
 				// Verify setup
@@ -743,7 +822,7 @@ namespace SIL.FieldWorks.XWorks
 		private void VerifyCannotMoveTopItemUp(DictionaryNodeOptions options)
 		{
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			controller.LoadNode(new ConfigurableDictionaryNode { DictionaryNodeOptions = options });
+			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = options });
 			using (var view = controller.View)
 			{
 				var listViewItems = GetListViewItems(view);
@@ -781,7 +860,7 @@ namespace SIL.FieldWorks.XWorks
 		private void VerifyCannotMoveBottomItemDown(DictionaryNodeOptions options)
 		{
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			controller.LoadNode(new ConfigurableDictionaryNode { DictionaryNodeOptions = options });
+			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = options });
 			using (var view = controller.View)
 			{
 				var listViewItems = GetListViewItems(view);
@@ -812,7 +891,7 @@ namespace SIL.FieldWorks.XWorks
 				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			controller.LoadNode(new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
+			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
 			using (var view = controller.View)
 			{
 				// Verify setup
@@ -847,7 +926,7 @@ namespace SIL.FieldWorks.XWorks
 				DisplayWritingSystemAbbreviations = true
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			controller.LoadNode(new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
+			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
 			using (var view = controller.View)
 			{
 				// Verify setup
@@ -893,6 +972,7 @@ namespace SIL.FieldWorks.XWorks
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions
 				{
 					DisplayEachSenseInAParagraph = true,
+					DisplayFirstSenseInline = true,
 					BeforeNumber = "",
 					AfterNumber = ") ",
 					NumberingStyle = "%d",
@@ -909,12 +989,13 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(entryConfig);
 
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			controller.LoadNode(senseConfig);
+			controller.LoadNode(null, senseConfig);
 			using (var view = controller.View)
 			{
 				var optionsView = GetSenseOptionsView(view);
 				Assert.IsNotNull(optionsView, "DictionaryNodeSenseOptions should cause SenseOptionsView to be created");
 				Assert.IsTrue(optionsView.SenseInPara, "checkbox set properly for showing senses in paragraph for Sense");
+				Assert.IsTrue(optionsView.FirstSenseInline, "checkbox for showing first senses in line with the entry");
 				Assert.AreEqual("", optionsView.BeforeText, "proper text before number loads for Sense");
 				Assert.AreEqual(") ", optionsView.AfterText, "proper text after number loads for Sense");
 				Assert.AreEqual("%d", optionsView.NumberingStyle, "proper numbering style loads for Sense");
@@ -928,20 +1009,25 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if (control is GroupBox && control.Name == "groupBoxSenseNumber")
 					{
-						Assert.AreEqual("Sense Number Configuration", control.Text, "groupBoxSenseNumber has the right Text for Sense");
+						Assert.AreEqual("Sense Number Configuration", control.Text, "groupBoxSenseNumber has incorrect Text for Sense");
 						++controlsChecked;
 					}
 					else if (control is CheckBox && control.Name == "checkBoxSenseInPara")
 					{
-						Assert.IsTrue(control.Enabled && control.Visible, "checkBoxSenseInPara is enabled and visible for Sense");
+						Assert.IsTrue(control.Enabled && control.Visible, "checkBoxSenseInPara should be enabled and visible for Sense");
+						++controlsChecked;
+					}
+					else if (control is CheckBox && control.Name == "checkBoxFirstSenseInline")
+					{
+						Assert.IsTrue(control.Enabled && control.Visible, "checkBoxFirstSenseInline should be enabled and visible for Sense");
 						++controlsChecked;
 					}
 				}
-				Assert.AreEqual(2, controlsChecked, "Checked two controls for Sense");
+				Assert.AreEqual(3, controlsChecked, "Matched incorrect number of controls for Sense");
 			}
 
 			var controller2 = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			controller2.LoadNode(subSenseConfig);
+			controller2.LoadNode(null, subSenseConfig);
 			using (var view = controller2.View)
 			{
 				var optionsView = GetSenseOptionsView(view);
@@ -960,16 +1046,114 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if (control is GroupBox && control.Name == "groupBoxSenseNumber")
 					{
-						Assert.AreEqual(xWorksStrings.ksSubsenseNumberConfig, control.Text, "groupBoxSenseNumber has the right Text for Subsense");
+						Assert.AreEqual(xWorksStrings.ksSubsenseNumberConfig, control.Text, "groupBoxSenseNumber has incorrect Text for Subsense");
 						++controlsChecked;
 					}
 					else if (control is CheckBox && control.Name == "checkBoxSenseInPara")
 					{
-						Assert.IsFalse(control.Enabled || control.Visible, "checkBoxSenseInPara is disabled and invisible for Subsense");
+						Assert.IsTrue(control.Enabled && control.Visible, "checkBoxSenseInPara should be enabled and visible for Subsense");
+						++controlsChecked;
+					}
+					else if (control is CheckBox && control.Name == "checkBoxFirstSenseInline")
+					{
+						Assert.IsFalse(control.Enabled || control.Visible, "checkBoxFirstSenseInline should be disabled and invisible when no paras");
 						++controlsChecked;
 					}
 				}
-				Assert.AreEqual(2, controlsChecked, "Checked two controls for Subsense");
+				Assert.AreEqual(3, controlsChecked, "Matched incorrect number of controls for Subsense");
+			}
+		}
+
+		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "optionsView is disposed by its parent")]
+		public void LoadSenseOptions_NumberingStyleList()
+		{
+			var subSubSenseConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					DisplayEachSenseInAParagraph = false,
+					BeforeNumber = "",
+					AfterNumber = ") ",
+					NumberingStyle = "%a",
+					NumberEvenASingleSense = true,
+					ShowSharedGrammarInfoFirst = true
+				}
+			};
+			var subSenseConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					DisplayEachSenseInAParagraph = false,
+					BeforeNumber = "",
+					AfterNumber = ") ",
+					NumberingStyle = "%A",
+					NumberEvenASingleSense = true,
+					ShowSharedGrammarInfoFirst = true
+				},
+				Children = new List<ConfigurableDictionaryNode> { subSubSenseConfig }
+			};
+			var senseConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					DisplayEachSenseInAParagraph = true,
+					DisplayFirstSenseInline = true,
+					BeforeNumber = "",
+					AfterNumber = ") ",
+					NumberingStyle = "%d",
+					NumberEvenASingleSense = true,
+					ShowSharedGrammarInfoFirst = true
+				},
+				Children = new List<ConfigurableDictionaryNode> { subSenseConfig }
+			};
+			var entryConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { senseConfig }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(entryConfig);
+
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			using (var view = controller.View)
+			{
+				controller.LoadNode(null, senseConfig);
+				var expectedNumberingStyle = XmlVcDisplayVec.SupportedNumberingStyles.Where(prop => prop.FormatString != "%O").ToList();
+
+				var optionsView = GetSenseOptionsView(view);
+				var realView = optionsView as SenseOptionsView;
+				Assert.IsNotNull(realView);
+				var outputNumberingStyle = realView.DropdownNumberingStyles.Cast<NumberingStyleComboItem>().ToList();
+				Assert.AreEqual(expectedNumberingStyle.Count(), outputNumberingStyle.Count, "Sense number's numbering style should be same count.");
+				Assert.AreEqual(expectedNumberingStyle.First().Label, outputNumberingStyle.First().Label, "Sense number's numbering style should have 'none' option.");
+				Assert.IsTrue(expectedNumberingStyle.All(c => outputNumberingStyle.Count(p => p.Label == c.Label) == 1), "Sense number's numbering style should be same.");
+
+				controller.LoadNode(null, subSenseConfig);
+
+				expectedNumberingStyle = XmlVcDisplayVec.SupportedNumberingStyles.Where(prop => prop.FormatString != "%O").ToList();
+
+				optionsView = GetSenseOptionsView(view);
+				realView = optionsView as SenseOptionsView;
+				Assert.IsNotNull(realView);
+				outputNumberingStyle = realView.DropdownNumberingStyles.Cast<NumberingStyleComboItem>().ToList();
+				Assert.AreEqual(expectedNumberingStyle.Count, outputNumberingStyle.Count, "SubSense number's numbering style should be same count.");
+				Assert.AreEqual(expectedNumberingStyle.First().Label, outputNumberingStyle.First().Label, "SubSense number's numbering style should have 'none' option.");
+				Assert.IsTrue(expectedNumberingStyle.All(c => outputNumberingStyle.Count(p => p.Label == c.Label) == 1), "SubSense number's numbering style should be same.");
+
+				controller.LoadNode(null, subSubSenseConfig);
+
+				expectedNumberingStyle = XmlVcDisplayVec.SupportedNumberingStyles.Where(prop => prop.FormatString != "%O").ToList();
+
+				optionsView = GetSenseOptionsView(view);
+				realView = optionsView as SenseOptionsView;
+				Assert.IsNotNull(realView);
+				outputNumberingStyle = realView.DropdownNumberingStyles.Cast<NumberingStyleComboItem>().ToList();
+				Assert.AreEqual(expectedNumberingStyle.Count(), outputNumberingStyle.Count, "SubSubSense number's numbering style should be same count.");
+				Assert.AreEqual(expectedNumberingStyle.First().Label, outputNumberingStyle.First().Label, "SubSubSense number's numbering style should have 'none' option.");
+				Assert.IsTrue(expectedNumberingStyle.All(c => outputNumberingStyle.Count(p => p.Label == c.Label) == 1), "SubSubSense number's numbering style should be same.");
 			}
 		}
 
@@ -982,7 +1166,7 @@ namespace SIL.FieldWorks.XWorks
 				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			controller.LoadNode(new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
+			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
 			using (var view = controller.View)
 			{
 				// Verify setup
@@ -1014,7 +1198,7 @@ namespace SIL.FieldWorks.XWorks
 				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			controller.LoadNode(new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
+			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
 			using (var view = controller.View)
 			{
 				// Verify setup
@@ -1047,7 +1231,7 @@ namespace SIL.FieldWorks.XWorks
 				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			controller.LoadNode(new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
+			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
 			using (var view = controller.View)
 			{
 				var listViewItems = GetListViewItems(view);
@@ -1079,7 +1263,7 @@ namespace SIL.FieldWorks.XWorks
 				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			controller.LoadNode(new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
+			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
 			using (var view = controller.View)
 			{
 				var listViewItems = GetListViewItems(view);
@@ -1100,5 +1284,106 @@ namespace SIL.FieldWorks.XWorks
 		}
 		#endregion Writing System tests
 		#endregion List tests
+
+		#region SharedItem tests
+		[Test]
+		public void UsersAreNotifiedOfSharedItems()
+		{
+			var subEntryHeadword = new ConfigurableDictionaryNode { FieldDescription = "HeadWord" };
+			var sensesUnderSubentries = new ConfigurableDictionaryNode { FieldDescription = "SensesOS", ReferenceItem = "SharedSenses" };
+			var subsubEntries = new ConfigurableDictionaryNode { FieldDescription = "Subentries", ReferenceItem = "SharedSubentries"};
+			var sharedSubentries = new ConfigurableDictionaryNode
+			{
+				Label = "SharedSubentries", FieldDescription = "Subentries",
+				Children = new List<ConfigurableDictionaryNode> { subEntryHeadword, sensesUnderSubentries, subsubEntries }
+			};
+			var subSenseGloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss" };
+			var subsenses = new ConfigurableDictionaryNode { FieldDescription = "SensesOS", ReferenceItem = "SharedSenses" };
+			var subentriesUnderSenses = new ConfigurableDictionaryNode { FieldDescription = "Subentries", ReferenceItem = "SharedSubentries"};
+			var sharedSenses = new ConfigurableDictionaryNode
+			{
+				Label = "SharedSenses", FieldDescription = "SensesOS",
+				Children = new List<ConfigurableDictionaryNode> { subSenseGloss, subsenses, subentriesUnderSenses }
+			};
+			var mainEntryHeadword = new ConfigurableDictionaryNode { FieldDescription = "HeadWord" };
+			var senses = new ConfigurableDictionaryNode { FieldDescription = "SensesOS", ReferenceItem = "SharedSenses" };
+			var subentries = new ConfigurableDictionaryNode { FieldDescription = "Subentries", ReferenceItem = "SharedSubentries"};
+			var mainEntry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> {  mainEntryHeadword, senses, subentries }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntry },
+				SharedItems = new List<ConfigurableDictionaryNode> { sharedSenses, sharedSubentries }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(model); // PopulateFieldsForTesting populates each node's Label with its FieldDescription
+
+			using (var view = new TestDictionaryDetailsView())
+			{
+				var controller = new DictionaryDetailsController(view, m_propertyTable);
+				// SUT (actually, ensures that messages will show after the user selects a different Config in the ConfigDlg)
+				controller.LoadNode(new DictionaryConfigurationModel(), mainEntry);
+				Assert.IsNullOrEmpty(view.GetTooltipFromOverPanel(), "Unshared nodes require no explanation");
+
+				controller.LoadNode(model, mainEntry); // SUT (unshared node)
+				Assert.IsNullOrEmpty(view.GetTooltipFromOverPanel(), "Unshared nodes require no explanation");
+
+				controller.LoadNode(model, subentries); // SUT (Master Parent)
+				var tooltip = view.GetTooltipFromOverPanel();
+				StringAssert.Contains("LexEntry > SensesOS > Subentries", tooltip);
+				StringAssert.Contains("LexEntry > Subentries > Subentries", tooltip);
+				StringAssert.DoesNotContain("LexEntry > Subentries" + Environment.NewLine, tooltip, "The Master Parent itself shouldn't be listed");
+				StringAssert.DoesNotContain("LexEntry > Subentries > Subentries > Subentries", tooltip, "Node finder shouldn't recurse indefinitely");
+				StringAssert.DoesNotContain("SharedSubentries", tooltip, "The SharedItem's name should not be in the path");
+
+				controller.LoadNode(model, subsubEntries); // SUT (Subordinate Parent)
+				tooltip = view.GetTooltipFromOverPanel();
+				StringAssert.Contains("LexEntry > Subentries.", tooltip, "Tooltip should indicate the Master Parent's location");
+				StringAssert.Contains("LexEntry > Subentries > Subentries", tooltip, "Tooltip should indicate the node's full path");
+				StringAssert.DoesNotContain("LexEntry > Senses", tooltip, "No other nodes should be listed");
+				StringAssert.DoesNotContain("LexEntry > Subentries > Subentries >", tooltip, "No other nodes should be listed");
+
+				controller.LoadNode(model, subEntryHeadword); // SUT (shared child)
+				tooltip = view.GetTooltipFromOverPanel();
+				StringAssert.Contains("LexEntry > Subentries", tooltip, "Tooltip should indicate the Master Parent's location");
+				StringAssert.DoesNotContain("LexEntry > Subentries > ", tooltip, "No other nodes should be listed");
+			}
+		}
+		#endregion SharedItem tests
+		#region GroupingNode tests
+
+		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "optionsView is disposed by its parent")]
+		public void LoadGroupingOptions_SetsAllInfo()
+		{
+			var groupConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "grouper",
+				DictionaryNodeOptions = new DictionaryNodeGroupingOptions
+				{
+					DisplayGroupInParagraph = true,
+					Description = "Test"
+				}
+			};
+			var entryConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> {groupConfig}
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(entryConfig);
+
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
+			controller.LoadNode(null, groupConfig);
+			using (var view = controller.View)
+			{
+				var optionsView = GetGroupingOptionsView(view);
+				Assert.IsTrue(optionsView.DisplayInParagraph);
+				Assert.That(optionsView.Description, Is.StringMatching("Test"));
+			}
+		}
+		#endregion
 	}
 }

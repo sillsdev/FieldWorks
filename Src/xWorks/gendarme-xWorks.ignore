@@ -26,7 +26,14 @@ M: System.Boolean SIL.FieldWorks.XWorks.RecordClerk::get_SkipShowRecord()
 M: System.Boolean SIL.FieldWorks.XWorks.RecordClerk::SetCurrentFromRelatedClerk()
 M: System.Void SIL.FieldWorks.XWorks.RecordView::InitBase(XCore.Mediator,XCore.PropertyTable,System.Xml.XmlNode)
 M: System.Boolean SIL.FieldWorks.XWorks.DTMenuHandler::OnDataTreeCopy(System.Object)
+M: System.String SIL.FieldWorks.XWorks.ConfiguredXHTMLGenerator::GenerateXHTMLForFieldByReflection(System.Object,SIL.FieldWorks.XWorks.ConfigurableDictionaryNode,SIL.FieldWorks.XWorks.DictionaryPublicationDecorator,SIL.FieldWorks.XWorks.ConfiguredXHTMLGenerator/GeneratorSettings,SIL.FieldWorks.XWorks.ConfiguredXHTMLGenerator/SenseInfo,System.Boolean)
 M: System.Void SIL.FieldWorks.XWorks.ConfiguredXHTMLGenerator::InsertGramInfoBeforeSenses(SIL.FieldWorks.FDO.ILexSense,SIL.FieldWorks.XWorks.ConfigurableDictionaryNode,SIL.FieldWorks.XWorks.DictionaryPublicationDecorator,SIL.FieldWorks.XWorks.ConfiguredXHTMLGenerator/GeneratorSettings)
+# GeckoElements are disposed by the GeckoDocument
+M: System.Void SIL.FieldWorks.XWorks.XhtmlDocView::AddMoreEntriesToPage(System.Boolean,Gecko.GeckoWebBrowser)
+M: System.Void SIL.FieldWorks.XWorks.XhtmlDocView::ChangeHtmlForCurrentAndAdjacentButtons(System.Tuple`2<System.Int32,System.Int32>,System.Tuple`2<System.Int32,System.Int32>,Gecko.GeckoElement,System.Boolean)
+M: System.Boolean SIL.FieldWorks.XWorks.XhtmlDocView::HandleClickOnAddMoreEntriesButton(Gecko.GeckoElement)
+M: System.Void SIL.FieldWorks.XWorks.XhtmlDocView::LoadPageIfNecessary(Gecko.GeckoWebBrowser)
+M: System.Void SIL.FieldWorks.XWorks.XhtmlDocView::OnDomKeyPress(System.Object,Gecko.DomKeyEventArgs)
 
 # added to control and disposed there
 M: System.Void SIL.FieldWorks.XWorks.GeneratedHtmlViewer::InitHtmlControl()

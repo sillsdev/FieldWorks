@@ -193,19 +193,6 @@ namespace SIL.Utils
 		#endregion
 
 		#region Properties
-		/// <summary>
-		/// Gets or sets a value indicating whether this is a background thread.
-		/// NOTE: A foreground thread will exit when all of its work has been completed.
-		/// </summary>
-		/// <seealso cref="WaitForNextRequest"/>
-		/// <value>
-		/// 	<c>true</c> if this is a background thread, otherwise <c>false</c>.
-		/// </value>
-		public bool IsBackground
-		{
-			get { return m_thread.IsBackground; }
-			set { m_thread.IsBackground = value; }
-		}
 
 		/// <summary>
 		/// if there has been an error, this will return the exception that stopped it.
@@ -253,24 +240,6 @@ namespace SIL.Utils
 		#endregion
 
 		#region Public methods
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Indicates to the thread that it should stay alive until it gets a request to enqueue
-		/// work.
-		/// </summary>
-		/// <returns><c>true</c> if the thread is still alive and is waiting for work;
-		/// <c>false</c> if the thread is dead</returns>
-		/// ------------------------------------------------------------------------------------
-		public bool WaitForNextRequest()
-		{
-			lock (SyncRoot)
-			{
-				if (!IsAlive)
-					return false;
-				m_fWaitForNextRequest = true;
-				return true;
-			}
-		}
 
 		/// <summary>
 		/// Enqueues the work.
@@ -346,7 +315,6 @@ namespace SIL.Utils
 				m_isIdle = false;
 				m_idleEvent.Reset();
 				m_hasWork = true;
-				m_fWaitForNextRequest = false;
 				m_workEvent.Set();
 			}
 		}
@@ -470,7 +438,7 @@ namespace SIL.Utils
 			{
 				if (m_initHandler != null)
 					m_initHandler();
-				var events = new WaitHandle[] { m_stopEvent, m_workEvent };
+				var events = new WaitHandle[] {m_stopEvent, m_workEvent};
 				while (WaitHandle.WaitAny(events) != 0)
 				{
 					m_workHandler(this);
@@ -479,26 +447,10 @@ namespace SIL.Utils
 						// if there is no work, signal that the thread is idle
 						if (!m_stopRequested && !m_hasWork)
 						{
-							if (IsBackground)
-							{
-								m_isIdle = true;
-								m_idleEvent.Set();
-							}
-							else if (!m_fWaitForNextRequest)
-							{
-								break;
-							}
+							m_idleEvent.Set();
+							m_isIdle = true;
 						}
 					}
-				}
-
-				lock (SyncRoot)
-				{
-					// If another thread was waiting for the idle event, we need to make sure
-					// we signal that thread that this thread is "idling" even though it's
-					// technically exiting.
-					m_isIdle = true;
-					m_idleEvent.Set();
 				}
 			}
 			catch (ThreadInterruptedException)
@@ -511,6 +463,20 @@ namespace SIL.Utils
 			{
 				lock (SyncRoot)
 					m_unhandledException = error;
+			}
+			finally
+			{
+				lock (SyncRoot)
+				{
+					// If another thread was waiting for the idle event, we need to make sure
+					// we signal that thread that this thread is "idling" even though it's
+					// technically exiting.
+					if (!m_isIdle)
+					{
+						m_isIdle = true;
+						m_idleEvent.Set();
+					}
+				}
 			}
 		}
 

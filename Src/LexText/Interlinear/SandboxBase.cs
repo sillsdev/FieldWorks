@@ -1011,6 +1011,8 @@ namespace SIL.FieldWorks.IText
 			m_editMonitor = new SandboxEditMonitor(this); // after creating sec cache.
 			m_propertyTable.SetProperty("FirstControlToHandleMessages", this, PropertyTable.SettingsGroup.LocalSettings, false);
 			m_propertyTable.SetPropertyPersistence("FirstControlToHandleMessages", false);
+#if !__MonoCS__
+#endif
 			}
 
 		public SandboxBase(FdoCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)

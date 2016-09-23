@@ -181,7 +181,7 @@
     <value>5</value>
   </data>
   <data name="publishButton.Text" xml:space="preserve">
-    <value>Publish</value>
+    <value>Submit</value>
   </data>
   <data name="&gt;&gt;publishButton.Name" xml:space="preserve">
     <value>publishButton</value>
@@ -310,7 +310,7 @@
     <value>17, 17</value>
   </metadata>
   <data name="webonaryPasswordTextbox.ToolTip" xml:space="preserve">
-    <value>Password for managing this dictionary on the webonary site</value>
+    <value>Your password on the Webonary site</value>
   </data>
   <data name="&gt;&gt;webonaryPasswordTextbox.Name" xml:space="preserve">
     <value>webonaryPasswordTextbox</value>
@@ -337,7 +337,7 @@
     <value>6</value>
   </data>
   <data name="webonaryUsernameTextbox.ToolTip" xml:space="preserve">
-    <value>Username for managing this dictionary on the webonary site</value>
+    <value>Your username on the Webonary site</value>
   </data>
   <data name="&gt;&gt;webonaryUsernameTextbox.Name" xml:space="preserve">
     <value>webonaryUsernameTextbox</value>
@@ -367,7 +367,7 @@
     <value>Right</value>
   </data>
   <data name="webonarySiteNameTextbox.ToolTip" xml:space="preserve">
-    <value>The web address for your published dictionary</value>
+    <value>The web address for your Webonary dictionary</value>
   </data>
   <data name="&gt;&gt;webonarySiteNameTextbox.Name" xml:space="preserve">
     <value>webonarySiteNameTextbox</value>
@@ -472,13 +472,13 @@
     <value>2</value>
   </data>
   <data name="siteNameLabel.Text" xml:space="preserve">
-    <value>Site name:</value>
+    <value>Site URL:</value>
   </data>
   <data name="siteNameLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleLeft</value>
   </data>
   <data name="siteNameLabel.ToolTip" xml:space="preserve">
-    <value>The URL to get to this dictionary</value>
+    <value>The URL to get to this dictionary on Webonary</value>
   </data>
   <data name="&gt;&gt;siteNameLabel.Name" xml:space="preserve">
     <value>siteNameLabel</value>
@@ -802,7 +802,7 @@
     <value>23</value>
   </data>
   <data name="howManyPubsAlertLabel.Text" xml:space="preserve">
-    <value>Pressing Publish will send {0} entries and {1} reversal entries to Webonary.</value>
+    <value>Pressing Submit will send {0} entries and {1} reversal entries to Webonary.</value>
   </data>
   <data name="&gt;&gt;howManyPubsAlertLabel.Name" xml:space="preserve">
     <value>howManyPubsAlertLabel</value>
@@ -965,7 +965,7 @@
     <value>408, 375</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
-    <value>Publish to Webonary</value>
+    <value>Upload to Webonary</value>
   </data>
   <data name="&gt;&gt;toolTip.Name" xml:space="preserve">
     <value>toolTip</value>
@@ -974,7 +974,7 @@
     <value>System.Windows.Forms.ToolTip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>PublishToWebonaryDlg</value>
+    <value>UploadToWebonaryDlg</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
     <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>

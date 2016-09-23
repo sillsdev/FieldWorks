@@ -196,6 +196,7 @@
     </Reference>
     <Reference Include="Reporting">
       <HintPath>..\..\Output\Debug\Reporting.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
   </ItemGroup>
   <ItemGroup>

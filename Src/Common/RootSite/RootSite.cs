@@ -24,6 +24,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
+#if !__MonoCS__
+#endif
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -117,6 +119,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			base.AutoScroll = true;
 
 			InitializeComponent();
+#if !__MonoCS__
+#endif
 			// RootSite shouldn't handle tabs like a control
 			AcceptsTab = true;
 			AcceptsReturn = true;
@@ -1171,6 +1175,8 @@ namespace SIL.FieldWorks.Common.RootSites
 	}
 	#endregion
 
+#if !__MonoCS__
+#endif
 	#region Class RootSiteGroup
 	/// ------------------------------------------------------------------------------------
 	/// <summary>

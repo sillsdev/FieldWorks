@@ -26,6 +26,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.buttonDown = new System.Windows.Forms.Button();
 			this.checkBoxDisplayOption = new System.Windows.Forms.CheckBox();
 			this.labelListView = new System.Windows.Forms.Label();
+			this.checkBoxDisplayOption2 = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
 			// 
 			// listView
@@ -68,10 +69,17 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			resources.ApplyResources(this.labelListView, "labelListView");
 			this.labelListView.Name = "labelListView";
 			// 
+			// checkBoxDisplayOption2
+			// 
+			resources.ApplyResources(this.checkBoxDisplayOption2, "checkBoxDisplayOption2");
+			this.checkBoxDisplayOption2.Name = "checkBoxDisplayOption2";
+			this.checkBoxDisplayOption2.UseVisualStyleBackColor = true;
+			// 
 			// ListOptionsView
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this.checkBoxDisplayOption2);
 			this.Controls.Add(this.checkBoxDisplayOption);
 			this.Controls.Add(this.buttonDown);
 			this.Controls.Add(this.buttonUp);
@@ -92,6 +100,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		private System.Windows.Forms.CheckBox checkBoxDisplayOption;
 		private System.Windows.Forms.Label labelListView;
 		private System.Windows.Forms.ColumnHeader invisibleHeaderToSetColWidth;
+		private System.Windows.Forms.CheckBox checkBoxDisplayOption2;
 
 	}
 }

@@ -65,7 +65,7 @@
 			<parameters title="FieldWorks Project Utilities" filename="Language Explorer/Configuration/UtilityCatalogInclude.xml"/>
 		</command>
 		<command id="CmdArchiveWithRamp" label="_Archive with RAMP (SIL)..." message="ArchiveWithRamp" icon="ArchiveWithRamp"/>
-		<command id="CmdPublishToWebonary" label="Publish to _Webonary..." message="PublishToWebonary"/>
+		<command id="CmdUploadToWebonary" label="Upload to _Webonary..." message="UploadToWebonary"/>
 		<command id="CmdPageSetup" label="Page Setup..." message="PageSetup"/>
 		<command id="CmdImportSFMLexicon" label="_Standard Format Lexicon..." message="SFMImport"/>
 		<command id="CmdImportSFMNotebook" label="Standard Format _Notebook data..." message="LaunchConnectedDialog">
@@ -463,7 +463,7 @@
 			</menu>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdArchiveWithRamp" />
-			<item command="CmdPublishToWebonary" />
+			<item command="CmdUploadToWebonary" />
 			<item label="-" translate="do not translate"/>
 			<item command="CmdPageSetup"/>
 			<item command="CmdPrint"/>
@@ -744,14 +744,17 @@
 			<item command="CmdJumpToNotebookEditWithFilter"/>
 
 			<item command="CmdJumpToConfidenceList"/>
+			<item command="CmdJumpToDialectLabelsList"/>
 			<item command="CmdJumpToDiscChartMarkerList"/>
 			<item command="CmdJumpToDiscChartTemplateList"/>
 			<item command="CmdJumpToEducationList"/>
 			<item command="CmdJumpToRoleList"/>
+			<item command="CmdJumpToExtNoteTypeList"/>
 			<item command="CmdJumpToComplexEntryTypeList"/>
 			<item command="CmdJumpToVariantEntryTypeList"/>
 			<item command="CmdJumpToTextMarkupTagsList"/>
 			<item command="CmdJumpToLexRefTypeList"/>
+			<item command="CmdJumpToLanguagesList"/>
 			<item command="CmdJumpToLocationList"/>
 			<item command="CmdJumpToPublicationList"/>
 			<item command="CmdJumpToMorphTypeList"/>
@@ -791,7 +794,7 @@
 				<item command="CmdPublicationsJumpToDefault"/>
 			</menu>
 			<menu id="ReversalIndexPaneMenu" icon="MenuWidget" alignment="left">
-			<menu inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" list="ReversalIndexList" property="ReversalIndexGuid" />
+			<menu inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" list="ReversalIndexList" property="ReversalIndexPublicationLayout" />
 			<item label="-" translate="do not translate"/>
 			<item command="CmdConfigureDictionary"/>
 			</menu>

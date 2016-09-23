@@ -12,7 +12,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.FwUtils;
@@ -259,11 +258,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_vectorRefView.ReloadVector();
 		}
 
-		protected virtual IEnumerable<ICmObject> Targets
+		protected internal virtual IEnumerable<ICmObject> Targets
 		{
 			get
 			{
-				if (m_obj == null)
+				if (m_obj == null || !m_obj.IsValidObject)
 					return new ICmObject[0];
 				return from hvo in ((ISilDataAccessManaged) m_cache.DomainDataByFlid).VecProp(m_obj.Hvo, m_flid)
 					   select m_cache.ServiceLocator.GetObject(hvo);

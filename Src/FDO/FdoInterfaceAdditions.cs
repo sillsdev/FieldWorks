@@ -672,6 +672,11 @@ namespace SIL.FieldWorks.FDO
 		/// that exposes certain LexSense- and LexEntry-specific fields.
 		/// </summary>
 		IEnumerable<ISenseOrEntry> PrimarySensesOrEntries { get; }
+
+		/// <summary>
+		/// This is a virtual property.  It returns the list of all Dialect Labels for this variant's Owner
+		/// </summary>
+		IFdoReferenceSequence<ICmPossibility> VariantEntryDialectLabels { get; }
 	}
 
 	public partial interface ILexReference
@@ -941,6 +946,18 @@ namespace SIL.FieldWorks.FDO
 	}
 
 	/// <summary>
+	/// Non-model interface additions for ILexPronunciation.
+	/// </summary>
+	public partial interface ILexPronunciation
+	{
+		/// <summary>
+		/// The publications from which this is not excluded, that is, the ones in which it
+		/// SHOULD be published.
+		/// </summary>
+		IFdoSet<ICmPossibility> PublishIn { get; }
+	}
+
+	/// <summary>
 	/// Non-model interface additions for ILexSense.
 	/// </summary>
 	public partial interface ILexSense : IVariantComponentLexeme
@@ -1091,9 +1108,21 @@ namespace SIL.FieldWorks.FDO
 		IEnumerable<ILexEntry> Subentries { get; }
 
 		/// <summary>
-		/// This is a entry reference property. It returns the list of all the LexEntryRef objects that refer to this LexSense.
+		/// This is an entry reference property. It returns the list of all the LexEntryRef objects that refer to this LexSense.
 		/// </summary>
 		IEnumerable<ILexEntryRef> EntryRefsWithThisMainSense { get; }
+
+		/// <summary>
+		/// This property returns the list of all the LexEntryRef objects that refer to this LexSense
+		/// or its owning LexEntry.
+		/// </summary>
+		IEnumerable<ILexEntryRef> MainEntryRefs { get; }
+
+		/// <summary>
+		/// This is a virtual property that ensures that a Sense shows its owning Entry's
+		/// DialectLabels if it has none of its own.
+		/// </summary>
+		IFdoReferenceSequence<ICmPossibility> DialectLabelsSenseOrEntry { get; }
 	}
 
 	/// <summary>
@@ -1181,7 +1210,7 @@ namespace SIL.FieldWorks.FDO
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the complex form entries, that is, the entries which should be shown
-		/// in the complex forms list for this entry in stem-based view.
+		/// in the complex forms list for this entry in lexeme-based view.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		IEnumerable<ILexEntry> VisibleComplexFormEntries { get; }
@@ -1262,6 +1291,15 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.MultiUnicode)]
 		IMultiAccessorBase MLHeadWord
+		{
+			get;
+		}
+
+		/// <summary>
+		/// Virtual property allows Headword to be read through cache using the DictionaryReference homograph number configuration
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.MultiUnicode)]
+		IMultiAccessorBase HeadWordRef
 		{
 			get;
 		}
@@ -4565,6 +4603,12 @@ namespace SIL.FieldWorks.FDO
 		/// ------------------------------------------------------------------------------------
 		void InsertORCAt(ITsStrBldr tsStrBldr, int ich);
 
+		/// <summary>
+		/// The publications from which this is not excluded, that is, the ones in which it
+		/// SHOULD be published.
+		/// </summary>
+		IFdoSet<ICmPossibility> PublishIn { get; }
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Update the properties of a CmPicture with the given file, caption, and folder.
@@ -5905,6 +5949,11 @@ namespace SIL.FieldWorks.FDO
 		Guid EntryGuid { get; }
 
 		/// <summary>
+		/// The HeadWordRef property if wrapping LexEntry, or the HeadWord virtual property for LexSense
+		/// </summary>
+		ITsString HeadWordRef { get; }
+
+		/// <summary>
 		/// The HeadWord property if wrapping LexEntry, or the HeadWord virtual property for LexSense
 		/// </summary>
 		ITsString HeadWord { get; }
@@ -5928,5 +5977,15 @@ namespace SIL.FieldWorks.FDO
 		/// Returns the SummaryDefinition on Entry, or Gloss on Sense
 		/// </summary>
 		IMultiAccessorBase GlossOrSummary { get; }
+
+		/// <summary>
+		/// Returns the entryRefs for the entry/owning entry for the sense
+		/// </summary>
+		IFdoOwningSequence<ILexEntryRef> PrimaryEntryRefs { get; }
+
+		/// <summary>
+		/// Returns the dialect labels for the entry or sense
+		/// </summary>
+		IFdoReferenceSequence<ICmPossibility> DialectLabelsRS { get; }
 	}
 }

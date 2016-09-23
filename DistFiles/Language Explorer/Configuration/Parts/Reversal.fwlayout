@@ -215,7 +215,7 @@
 	</layout>
 
 	<layout class="LexEntry" type="jtview" name="publishRIELexEntryEtymology" tagForWs="true">
-		<part ref="EtymologyConfig" param="publishEtymologyForReversal" label="Etymology" visibility="ifdata" before=" " after="" css="etymology"/>
+		<part ref="EtymologyConfig" param="publishForReversal" label="Etymology" visibility="ifdata" before=" " after="" ws="analysis" wsType="analysis" css="etymologies"/>
 	</layout>
 	<layout class="LexEntry" type="jtview" name="publishRIELexEntryCrossReferences" tagForWs="true">
 		<part ref="LexReferencesConfig" param="publishEntryRefForReversal" label="Cross References" field="LexReferences" visibility="ifdata" sep=";" before="" after="." css="crossrefs"/>
@@ -446,11 +446,14 @@
 		<part ref="AbbreviationPub" label="Entry Type Abbreviation" before="" after="" ws="analysis" wsType="analysis" hideConfig="true"/><!-- by default, preceded by open parenthesis -->
 	</layout>
 
-	<layout class="LexEtymology" type="jtview" name="publishEtymologyForReversal" tagForWs="true">
-		<part ref="FormPub" label="Etymological Form" before=" " after="" visibility="ifdata" ws="vernacular" wsType="vernacular" css="etymology-form"/>
+	<layout class="LexEtymology" type="jtview" name="publishForReversal" tagForWs="true">
+		<part ref="PrecCommentPub" label="Preceding Annotation" before=" " after="" visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-preccomment"/>
+		<part ref="LanguagePub" label="Source Language" before=" " after="" visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-language"/>
+		<part ref="FormPub" label="Source Form" before=" " after="" visibility="ifdata" ws="vernacular" wsType="vernacular" css="etymology-form"/>
 		<part ref="GlossPub" label="Gloss" before=" " after="" visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-gloss"/>
-		<part ref="CommentPub" label="Comment" before=" " after="" visibility="ifdata" ws="analysis" wsType="analysisform" css="etymology-comment"/>
-		<part ref="SourcePub" label="Source" before=" " after="" visibility="never" css="etymology-source"/>
+		<part ref="CommentPub" label="Following Comment" before=" " after="" visibility="ifdata" ws="analysis" wsType="analysisform" css="etymology-comment"/>
+		<part ref="BibliographyPub" label="Bibliographic Source" before=" " after="" visibility="ifdata" ws="analysis" wsType="analysisform" css="etymology-bibliography"/>
+		<part ref="NotePub" label="Etymology Note" before=" " after="" visibility="ifdata" ws="analysis" wsType="analysisform" css="etymology-note"/>
 	</layout>
 
 	<layout class="MoMorphSynAnalysis" type="jtview" name="publishForReversal" tagForWs="true">

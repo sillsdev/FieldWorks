@@ -13,5 +13,8 @@
 				<slice label="Bibliography" editor="string" field="Bibliography" ws="analysis"/>
 			</slice>
 		</part>
+		<part id="LexEtymology-Detail-LanguageNotes" type="Detail">
+			<slice field="LanguageNotes" label="Source Language Notes" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+		</part>
 	</bin>
 </PartInventory>

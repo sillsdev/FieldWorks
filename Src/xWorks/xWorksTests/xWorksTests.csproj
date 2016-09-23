@@ -272,7 +272,11 @@
     <Compile Include="DictionaryConfigurationControllerTests.cs" />
     <Compile Include="DictionaryConfigurationListenerTests.cs" />
     <Compile Include="DictionaryConfigurationManagerControllerTests.cs" />
-    <Compile Include="DictionaryConfigurationMigratorTests.cs" />
+    <Compile Include="DictionaryConfigurationMigrators\DictionaryConfigurationMigratorTests.cs" />
+    <Compile Include="DictionaryConfigurationMigrators\FirstAlphaMigratorTests.cs" />
+    <Compile Include="DictionaryConfigurationMigrators\FirstBetaMigratorTests.cs" />
+    <Compile Include="DictionaryConfigurationMigrators\PreHistoricMigratorTests.cs" />
+    <Compile Include="DictionaryConfigurationMigrators\StubContentControlProvider.cs" />
     <Compile Include="DictionaryConfigurationModelTests.cs" />
     <Compile Include="DictionaryConfigViewerStub.cs" />
     <Compile Include="DictionaryDetailsControllerTests.cs" />
@@ -287,8 +291,8 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="MacroListenerTests.cs" />
-    <Compile Include="PublishToWebonaryControllerTests.cs" />
-    <Compile Include="PublishToWebonaryModelTests.cs" />
+    <Compile Include="UploadToWebonaryControllerTests.cs" />
+    <Compile Include="UploadToWebonaryModelTests.cs" />
     <Compile Include="UnicodeCharacterEditingHelperTests.cs" />
     <Compile Include="WordsUsedOnlyElsewhereFilterTests.cs" />
     <Compile Include="XhtmlDocViewTests.cs" />
@@ -298,6 +302,8 @@
     <Compile Include="..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="DictionaryConfigurationUtilsTests.cs" />
+    <Compile Include="DictionaryExportServiceTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -341,4 +347,5 @@
   <ItemGroup>
     <None Include="gendarme-xWorksTests.ignore" />
   </ItemGroup>
+  <ItemGroup />
 </Project>

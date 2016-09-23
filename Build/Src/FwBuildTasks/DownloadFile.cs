@@ -113,35 +113,42 @@ namespace SIL.FieldWorks.Build.Tasks
 				// Send the request to the server and retrieve the
 				// WebResponse object
 				response = (HttpWebResponse) request.GetResponse();
-
-				lastModified = response.LastModified;
-				if (File.Exists(localFilename) && lastModified == File.GetLastWriteTime(localFilename))
-					return bytesProcessed;
-
-				// Once the WebResponse object has been retrieved,
-				// get the stream object associated with the response's data
-				remoteStream = response.GetResponseStream();
-
-				// Create the local file
-				localStream = File.Create(localFilename);
-
-				// Allocate a 1k buffer
-				var buffer = new byte[1024];
-				int bytesRead;
-
-				// Simple do/while loop to read from stream until
-				// no bytes are returned
-				do
+				if (response.StatusCode == HttpStatusCode.OK)
 				{
-					// Read data (up to 1k) from the stream
-					bytesRead = remoteStream.Read(buffer, 0, buffer.Length);
+					lastModified = response.LastModified;
+					if (File.Exists(localFilename) && lastModified == File.GetLastWriteTime(localFilename))
+						return bytesProcessed;
 
-					// Write the data to the local file
-					localStream.Write(buffer, 0, bytesRead);
+					// Once the WebResponse object has been retrieved,
+					// get the stream object associated with the response's data
+					remoteStream = response.GetResponseStream();
 
-					// Increment total bytes processed
-					bytesProcessed += bytesRead;
-				} while (bytesRead > 0);
+					// Create the local file
+					localStream = File.Create(localFilename);
+
+					// Allocate a 1k buffer
+					var buffer = new byte[1024];
+					int bytesRead;
+
+					// Simple do/while loop to read from stream until
+					// no bytes are returned
+					do
+					{
+						// Read data (up to 1k) from the stream
+						bytesRead = remoteStream.Read(buffer, 0, buffer.Length);
+
+						// Write the data to the local file
+						localStream.Write(buffer, 0, bytesRead);
+
+						// Increment total bytes processed
+						bytesProcessed += bytesRead;
+					} while (bytesRead > 0);
+				}
+				else
+				{
+					Log.LogWarning("Unexpected Server Response[{0}] when downloading {1}", response.StatusCode, Path.GetFileName(localFilename));
+					success = false;
+				}
 			}
 			catch (WebException wex)
 			{

@@ -93,23 +93,33 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		/// <summary>
 		/// Wipe out the current BEP's file(s), since it is about to be created ex-nihilo.
 		/// </summary>
-		/// <param name="backendParameters"></param>
-		private static void DeleteDatabase(BackendStartupParameter backendParameters)
+		private static void DeleteDatabase(BackendStartupParameter backendParameters, bool assertThatDbWasDeleted = true)
 		{
 			string pathname = string.Empty;
 			if(backendParameters.ProjectId.Type != FDOBackendProviderType.kMemoryOnly)
 				pathname = backendParameters.ProjectId.Path;
 			if(backendParameters.ProjectId.Type != FDOBackendProviderType.kMemoryOnly &&
-			File.Exists(pathname))
+				File.Exists(pathname))
 			{
-				File.Delete(pathname);
-				//The File.Delete command returns before the OS has actually removed the file,
-				//this causes re-creation of the file to fail intermittently so we'll wait a bit for it to be gone.
-				for(var i = 0; File.Exists(pathname) && i < 5; ++i)
+				try
 				{
-					Thread.Sleep(10);
+					File.Delete(pathname);
+					//The File.Delete command returns before the OS has actually removed the file,
+					//this causes re-creation of the file to fail intermittently so we'll wait a bit for it to be gone.
+					for (var i = 0; File.Exists(pathname) && i < 5; ++i)
+					{
+						Thread.Sleep(10);
+					}
 				}
-				Assert.That(!File.Exists(pathname), "Database file failed to be deleted.");
+				catch (IOException)
+				{
+					// Don't crash, fail the assert if we couldn't delete the file
+				}
+				// We want to assert during the setup of test conditions because the test isn't valid if we don't start clean
+				// If we fail to delete the files after the test (beause the OS hangs on to the handle too long for instance)
+				//  this is not cause to fail the test.
+				if (assertThatDbWasDeleted)
+					Assert.That(!File.Exists(pathname), "Database file failed to be deleted.");
 			}
 		}
 
@@ -137,6 +147,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			var sourceBackendStartupParameters = GenerateBackendStartupParameters(false, sourceType);
 			var targetBackendStartupParameters = GenerateBackendStartupParameters(true, targetType);
 
+			// Make sure we start from a clean slate
 			DeleteDatabase(sourceBackendStartupParameters);
 
 			// Set up data source, but only do it once.
@@ -167,6 +178,9 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 					CompareResults(sourceGuids, targetCache);
 				}
 			}
+			// Try to clean up after ourselves
+			DeleteDatabase(sourceBackendStartupParameters, false);
+			DeleteDatabase(targetBackendStartupParameters, false);
 		}
 
 		/// <summary>
@@ -200,6 +214,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 
 			var sourceGuids = new List<Guid>();
 
+			// Make sure we start from a clean slate
 			DeleteDatabase(sourceBackendStartupParameters);
 			DeleteDatabase(targetBackendStartupParameters);
 
@@ -231,6 +246,9 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 				CompareResults(sourceGuids, targetCache);
 			}
 			sourceGuids.Clear();
+			// Try to clean up after ourselves
+			DeleteDatabase(sourceBackendStartupParameters, false);
+			DeleteDatabase(targetBackendStartupParameters, false);
 		}
 		#endregion
 	}

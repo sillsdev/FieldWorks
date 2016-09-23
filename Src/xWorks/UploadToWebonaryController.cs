@@ -17,39 +17,73 @@ using SIL.Utils;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// Currently serves as the controller and the model for the PublishToWebonaryView
+	/// Currently serves as the controller and the model for the UploadToWebonaryView
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Cache and PropertyTable are references")]
-	public class PublishToWebonaryController
+	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule", Justification="Cache and PropertyTable are references")]
+	public class UploadToWebonaryController : IDisposable
 	{
 		private readonly FdoCache m_cache;
 		private readonly PropertyTable m_propertyTable;
 		private readonly DictionaryExportService m_exportService;
+		private DictionaryExportService.PublicationActivator m_publicationActivator;
+		/// <summary>
+		/// This action creates the WebClient for accessing webonary. Protected to enable a mock client for unit testing.
+		/// </summary>
+		protected Func<IWebonaryClient> CreateWebClient = () => new WebonaryClient();
 
 		public PropertyTable PropertyTable { private get; set; }
 
-		public PublishToWebonaryController(FdoCache cache, PropertyTable propertyTable, Mediator mediator)
+		public UploadToWebonaryController(FdoCache cache, PropertyTable propertyTable, Mediator mediator)
 		{
 			m_cache = cache;
 			m_propertyTable = propertyTable;
 			m_exportService = new DictionaryExportService(propertyTable, mediator);
+			m_publicationActivator = new DictionaryExportService.PublicationActivator(propertyTable);
 		}
 
-		public int CountDictionaryEntries()
+		#region Disposal
+		protected virtual void Dispose(bool disposing)
 		{
-			return m_exportService.CountDictionaryEntries();
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (disposing && m_publicationActivator != null)
+				m_publicationActivator.Dispose();
+			m_publicationActivator = null;
 		}
 
-		public int CountReversalIndexEntries(IEnumerable<string> indexes)
+		public void Dispose()
 		{
-			return m_exportService.CountReversalIndexEntries(indexes);
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		~UploadToWebonaryController()
+		{
+			Dispose(false);
+		}
+		#endregion Disposal
+
+		public int CountDictionaryEntries(DictionaryConfigurationModel config)
+		{
+			return m_exportService.CountDictionaryEntries(config);
+		}
+
+		/// <summary>
+		/// Table of reversal indexes and their counts.
+		/// </summary>
+		public SortedDictionary<string,int> GetCountsOfReversalIndexes(IEnumerable<string> requestedIndexes)
+		{
+			return m_exportService.GetCountsOfReversalIndexes(requestedIndexes);
+		}
+
+		public void ActivatePublication(string publication)
+		{
+			m_publicationActivator.ActivatePublication(publication);
 		}
 
 		/// <summary>
 		/// Exports the dictionary xhtml and css for the publication and configuration that the user had selected in the dialog.
 		/// </summary>
-		private void ExportDictionaryContent(string tempDirectoryToCompress, PublishToWebonaryModel model, IPublishToWebonaryView webonaryView)
+		private void ExportDictionaryContent(string tempDirectoryToCompress, UploadToWebonaryModel model, IUploadToWebonaryView webonaryView)
 		{
 			webonaryView.UpdateStatus(String.Format(xWorksStrings.ExportingEntriesToWebonary, model.SelectedPublication, model.SelectedConfiguration));
 			var xhtmlPath = Path.Combine(tempDirectoryToCompress, "configured.xhtml");
@@ -58,7 +92,7 @@ namespace SIL.FieldWorks.XWorks
 			webonaryView.UpdateStatus(xWorksStrings.ExportingEntriesToWebonaryCompleted);
 		}
 
-		internal static void CompressExportedFiles(string tempDirectoryToCompress, string zipFileToUpload, IPublishToWebonaryView webonaryView)
+		internal static void CompressExportedFiles(string tempDirectoryToCompress, string zipFileToUpload, IUploadToWebonaryView webonaryView)
 		{
 			webonaryView.UpdateStatus(xWorksStrings.BeginCompressingDataForWebonary);
 			using(var zipFile = new ZipFile())
@@ -73,7 +107,7 @@ namespace SIL.FieldWorks.XWorks
 		/// This method will recurse into a directory and add files into the zip file with their relative path
 		/// to the original dirToCompress.
 		/// </summary>
-		private static void RecursivelyAddFilesToZip(ZipFile zipFile, string dirToCompress, string dirInZip, IPublishToWebonaryView webonaryView)
+		private static void RecursivelyAddFilesToZip(ZipFile zipFile, string dirToCompress, string dirInZip, IUploadToWebonaryView webonaryView)
 		{
 			foreach(var file in Directory.EnumerateFiles(dirToCompress))
 			{
@@ -95,23 +129,24 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Exports the reversal xhtml and css for the reversals that the user had selected in the dialog
 		/// </summary>
-		private void ExportReversalContent(string tempDirectoryToCompress, PublishToWebonaryModel model, IPublishToWebonaryView webonaryView)
+		private void ExportReversalContent(string tempDirectoryToCompress, UploadToWebonaryModel model, IUploadToWebonaryView webonaryView)
 		{
 			if (model.Reversals == null)
 				return;
 			foreach (var reversal in model.SelectedReversals)
 			{
+				var revWsRFC5646 = model.Reversals.Where(prop => prop.Value.Label == reversal).Select(prop => prop.Value.WritingSystem).FirstOrDefault();
 				webonaryView.UpdateStatus(string.Format(xWorksStrings.ExportingReversalsToWebonary, reversal));
-				var reversalWs = m_cache.LangProject.AnalysisWritingSystems.FirstOrDefault(ws => ws.DisplayLabel == reversal);
-				// The reversalWs should always match the Display label of one of the AnalysisWritingSystems, this exception is for future programming errors
+				var reversalWs = m_cache.LangProject.AnalysisWritingSystems.FirstOrDefault(ws => ws.LanguageTag == revWsRFC5646);
+				// The reversalWs should always match the RFC5646 of one of the AnalysisWritingSystems, this exception is for future programming errors
 				if (reversalWs == null)
 				{
 					throw new ApplicationException(string.Format("Could not locate reversal writing system for {0}", reversal));
 				}
 				var xhtmlPath = Path.Combine(tempDirectoryToCompress, string.Format("reversal_{0}.xhtml", reversalWs.IcuLocale));
-				var configurationFile = Path.Combine(m_propertyTable.UserSettingDirectory, "ReversalIndex", reversal + ".fwdictconfig");
+				var configurationFile = Path.Combine(m_propertyTable.UserSettingDirectory, "ReversalIndex", reversal + DictionaryConfigurationModel.FileExtension);
 				var configuration = new DictionaryConfigurationModel(configurationFile, m_cache);
-				m_exportService.ExportReversalContent(xhtmlPath, reversal, configuration);
+				m_exportService.ExportReversalContent(xhtmlPath, revWsRFC5646, configuration);
 				webonaryView.UpdateStatus(xWorksStrings.ExportingReversalsToWebonaryCompleted);
 			}
 		}
@@ -121,15 +156,13 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal virtual string DestinationURI(string siteName)
 		{
-			// TODO use specified site with respect to webonary domain, rather than using value
-			// for current testing. eg $siteName.webonary.org/something or
-			// www.webonary.org/$sitename/wp-json/something .
+			// To do local testing set the WEBONARYSERVER environment variable to something like 192.168.33.10
 			var server = Environment.GetEnvironmentVariable("WEBONARYSERVER");
-			server = string.IsNullOrEmpty(server) ? "192.168.33.10" : server;
+			server = string.IsNullOrEmpty(server) ? "webonary.org" : server;
 			return string.Format("https://{0}.{1}/wp-json/webonary/import", siteName, server);
 		}
 
-		internal void UploadToWebonary(string zipFileToUpload, PublishToWebonaryModel model, IPublishToWebonaryView view)
+		internal void UploadToWebonary(string zipFileToUpload, UploadToWebonaryModel model, IUploadToWebonaryView view)
 		{
 			if (zipFileToUpload == null)
 				throw new ArgumentNullException("zipFileToUpload");
@@ -140,7 +173,8 @@ namespace SIL.FieldWorks.XWorks
 
 			view.UpdateStatus("Connecting to Webonary.");
 			var targetURI = DestinationURI(model.SiteName);
-			using (var client = new WebClient())
+
+			using (var client = CreateWebClient())
 			{
 				var credentials = string.Format("{0}:{1}", model.UserName, model.Password);
 				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes(credentials)));
@@ -148,18 +182,31 @@ namespace SIL.FieldWorks.XWorks
 				byte[] response = null;
 				try
 				{
-					response = client.UploadFile(targetURI, zipFileToUpload);
+					response = client.UploadFileToWebonary(targetURI, zipFileToUpload);
 				}
-				catch (WebException e)
+				catch (WebonaryClient.WebonaryException e)
 				{
-					const string errorMessage = "Unable to connect to Webonary.  Please check your username and password and your Internet connection.";
-					view.UpdateStatus(string.Format("An error occurred uploading your data: {0}{1}{2}", errorMessage, Environment.NewLine, e.Message));
+					if (e.StatusCode == HttpStatusCode.Redirect)
+					{
+						view.UpdateStatus("Error: There has been an error accessing webonary. Is your sitename correct?");
+					}
+					else
+					{
+						const string errorMessage = "Unable to connect to Webonary.  Please check your username and password and your Internet connection.";
+						view.UpdateStatus(string.Format("An error occurred uploading your data: {0}{1}{2}:{3}",
+							errorMessage, Environment.NewLine, e.StatusCode, e.Message));
+					}
 					view.SetStatusCondition(WebonaryStatusCondition.Error);
 					return;
 				}
 				var responseText = Encoding.ASCII.GetString(response);
 
-				if (responseText.Contains("Upload successful"))
+				if (client.ResponseStatusCode == HttpStatusCode.Found)
+				{
+					view.UpdateStatus("Error: There has been an error accessing webonary. Is your sitename correct?");
+					view.SetStatusCondition(WebonaryStatusCondition.Error);
+				}
+				else if (responseText.Contains("Upload successful"))
 				{
 					if (!responseText.Contains("error"))
 					{
@@ -182,27 +229,30 @@ namespace SIL.FieldWorks.XWorks
 					view.UpdateStatus("Error: Wrong username or password");
 					view.SetStatusCondition(WebonaryStatusCondition.Error);
 				}
-				if (responseText.Contains("User doesn't have permission to import data"))
+				else if (responseText.Contains("User doesn't have permission to import data"))
 				{
 					view.UpdateStatus("Error: User doesn't have permission to import data");
 					view.SetStatusCondition(WebonaryStatusCondition.Error);
 				}
-
-				view.UpdateStatus(string.Format("Response from server:{0}{1}{0}", Environment.NewLine, responseText));
+				else // Unknown error, display the server response, but cut it off at 100 characters
+				{
+					view.UpdateStatus(string.Format("Response from server:{0}{1}{0}", Environment.NewLine,
+						responseText.Substring(0, Math.Min(100, responseText.Length))));
+				}
 			}
 		}
 
-		private void ExportOtherFilesContent(string tempDirectoryToCompress, PublishToWebonaryModel logTextbox, object outputLogTextbox)
+		private void ExportOtherFilesContent(string tempDirectoryToCompress, UploadToWebonaryModel logTextbox, object outputLogTextbox)
 		{
 			//TODO:Copy the user selected other files into the temp directory
 		}
 
-		public void PublishToWebonary(PublishToWebonaryModel model, IPublishToWebonaryView view)
+		public void UploadToWebonary(UploadToWebonaryModel model, IUploadToWebonaryView view)
 		{
-			view.UpdateStatus("Publishing to Webonary.");
+			view.UpdateStatus("Uploading to Webonary.");
 			view.SetStatusCondition(WebonaryStatusCondition.None);
 
-			if(string.IsNullOrEmpty(model.SiteName))
+			if (string.IsNullOrEmpty(model.SiteName))
 			{
 				view.UpdateStatus("Error: No site name specified.");
 				view.SetStatusCondition(WebonaryStatusCondition.Error);
@@ -254,7 +304,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Filename of zip file to upload to webonary, based on a particular model.
 		/// If there are any characters that might cause a problem, null is returned.
 		/// </summary>
-		internal static string UploadFilename(PublishToWebonaryModel basedOnModel, IPublishToWebonaryView view)
+		internal static string UploadFilename(UploadToWebonaryModel basedOnModel, IUploadToWebonaryView view)
 		{
 			if (basedOnModel == null)
 				throw new ArgumentNullException("basedOnModel");
@@ -279,9 +329,9 @@ namespace SIL.FieldWorks.XWorks
 			var supportedFileExtensions = new List<string>
 			{
 				".xhtml", ".css", ".html", ".htm", ".json", ".xml",
-				".jpg", ".jpeg", ".gif", ".png", ".mp3"
+				".jpg", ".jpeg", ".gif", ".png", ".mp3", ".mp4", ".3gp"
 			};
-			return supportedFileExtensions.Any(path.EndsWith);
+			return supportedFileExtensions.Any(path.ToLowerInvariant().EndsWith);
 		}
 	}
 }

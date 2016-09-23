@@ -236,13 +236,6 @@ namespace SIL.FieldWorks.XWorks
 #endif
 		}
 
-		//void m_cfgSenses_VisibleChanged(object sender, EventArgs e)
-		//{
-		//    // Seems at resolutions other than 96dpi this control changes its minimumSize
-		//    // when it first becomes visible, so at that point we need to adjust it.
-		//    m_cfgSenses.Height = m_cfgSenses.MinimumSize.Height;
-		//}
-
 		/// <summary>
 		/// Initialize the dialog after creating it.
 		/// </summary>
@@ -2989,7 +2982,7 @@ namespace SIL.FieldWorks.XWorks
 			public LayoutTreeNode(XmlNode config, ILayoutConverter converter, string classParent)
 			{
 				m_xnConfig = config;
-				m_sLabel = XmlUtils.GetLocalizedAttributeValue(config, "label", null);
+				m_sLabel = XmlUtils.GetLocalizedAttributeValue(converter.StringTable, config, "label", null);
 				if (config.Name == "configure")
 				{
 					m_sClassName = XmlUtils.GetManditoryAttributeValue(config, "class");
@@ -4447,7 +4440,7 @@ namespace SIL.FieldWorks.XWorks
 
 		//
 		// *** Configuration nodes look like this:
-		//"<layoutType label=\"Stem-based (complex forms as main entries)\" layout=\"publishStem\">" +
+		//"<layoutType label=\"Lexeme-based (complex forms as main entries)\" layout=\"publishStem\">" +
 		//    "<configure class=\"LexEntry\" label=\"Main Entry\" layout=\"publishStemEntry\"/>" +
 		//    "<configure class=\"LexEntry\" label=\"Minor Entry\" layout=\"publishStemMinorEntry\"/>" +
 		//"</layoutType>" +

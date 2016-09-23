@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Xsl;
 using Microsoft.Win32;
+using SIL.Reporting;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
@@ -496,10 +497,8 @@ namespace SIL.FieldWorks.XWorks
 				m_exportItems.Add(sel);
 			using (EnsureViewInfo())
 			{
-
 				if (!PrepareForExport())
 					return;
-
 				bool fLiftExport = m_exportItems[0].SubItems[2].Text == "lift";
 				string sFileName;
 				string sDirectory;
@@ -716,6 +715,8 @@ namespace SIL.FieldWorks.XWorks
 			using (new WaitCursor(this))
 				using (var progressDlg = new ProgressDialogWithTask(this))
 				{
+				UsageReporter.SendEvent(m_areaOrig + @"Export", @"Export", ft.m_ft.ToString(),
+					string.Format("{0} {1} {2}", ft.m_sDataType, ft.m_sFormat, ft.m_filtered ? "filtered" : "unfiltered"), 0);
 					try
 					{
 						progressDlg.Title = String.Format(xWorksStrings.Exporting0,
@@ -1228,7 +1229,7 @@ namespace SIL.FieldWorks.XWorks
 			m_rgFxtTypes.Add(ft);
 			// We can't actually disable a list item, but we can make it look and act like it's
 			// disabled.
-			if (ItemDisabled(ft.m_ft, ft.m_filtered))
+			if (ItemDisabled(ft.m_ft, ft.m_filtered, ft.m_sFormat))
 				item.ForeColor = SystemColors.GrayText;
 		}
 
@@ -1281,15 +1282,17 @@ namespace SIL.FieldWorks.XWorks
 
 		protected virtual bool ItemDisabled(string tag)
 		{
-			return ItemDisabled(m_rgFxtTypes[FxtIndex(tag)].m_ft, m_rgFxtTypes[FxtIndex(tag)].m_filtered);
+			return ItemDisabled(m_rgFxtTypes[FxtIndex(tag)].m_ft, m_rgFxtTypes[FxtIndex(tag)].m_filtered, m_rgFxtTypes[FxtIndex(tag)].m_sFormat);
 		}
 
-		private bool ItemDisabled(FxtTypes ft, bool isFiltered)
+		private bool ItemDisabled(FxtTypes ft, bool isFiltered, string formatType)
 		{
 			//enable unless the type is pathway & pathway is not installed, or if the type is lift and it is filtered, but there is no filter available, or if the filter excludes all items
 			bool fFilterAvailable = DetermineIfFilterIsAvailable();
 			return (ft == FxtTypes.kftPathway && !PathwayUtils.IsPathwayInstalled) ||
-				   (ft == FxtTypes.kftLift && isFiltered && fFilterAvailable);
+				   (ft == FxtTypes.kftLift && isFiltered && fFilterAvailable) ||
+				   (ft == FxtTypes.kftConfigured && (formatType == "htm" || formatType == "sfm")) ||
+				   (ft == FxtTypes.kftReversal && formatType == "sfm");
 		}
 
 		private bool DetermineIfFilterIsAvailable()
@@ -1640,25 +1643,26 @@ namespace SIL.FieldWorks.XWorks
 
 			private void ExportLexEntryTypeFields(TextWriter w, ILexEntryType item)
 			{
-				if (item != null)
-					ExportMultiUnicode(w, item.ReverseAbbr);
+				if (item == null)
+					return;
+				ExportMultiUnicode(w, item.ReverseName);
+				ExportMultiUnicode(w, item.ReverseAbbr);
 			}
 
 			private void ExportLexEntryInflTypeFields(TextWriter w, ILexEntryInflType item)
 			{
 				if (item == null)
 					return;
-				ExportMultiUnicode(w, item.ReverseAbbr);
+				ExportLexEntryTypeFields(w, item);
 				ExportMultiUnicode(w, item.GlossAppend);
 			}
 
 			private void ExportLexRefTypeFields(TextWriter w, ILexRefType item)
 			{
-				if (item != null)
-				{
-					ExportMultiUnicode(w, item.ReverseName);
-					ExportMultiUnicode(w, item.ReverseAbbreviation);
-				}
+				if (item == null)
+					return;
+				ExportMultiUnicode(w, item.ReverseName);
+				ExportMultiUnicode(w, item.ReverseAbbreviation);
 			}
 
 			private void ExportPartOfSpeechFields(TextWriter w, IPartOfSpeech item)
@@ -1812,7 +1816,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void ProcessWebonaryExport()
 		{
-			FwXWindow.ShowPublishToWebonaryDialog(m_mediator, m_propertyTable);
+			FwXWindow.ShowUploadToWebonaryDialog(m_mediator, m_propertyTable);
 		}
 
 		private bool SelectOption(string exportFormat)

@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.XWorks
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 		Justification="PropertyTable is a reference")]
 
-	public class PublishToWebonaryModel
+	public class UploadToWebonaryModel
 	{
 		// This value gets used by the microsoft encryption library to increase the complexity of the encryption
 		private const string EntropyValue = @"61:3nj 42 ebg68";
@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.XWorks
 			set { m_selectedConfiguration = value; }
 		}
 
-		public IEnumerable<string> SelectedReversals { get; set; }
+		public ICollection<string> SelectedReversals { get; set; }
 
 
 		public List<string> Publications { get; set; }
@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private PropertyTable PropertyTable { get; set; }
 
-		public PublishToWebonaryModel(PropertyTable propertyTable)
+		public UploadToWebonaryModel(PropertyTable propertyTable)
 		{
 			PropertyTable = propertyTable;
 			LoadFromSettings();
@@ -152,9 +152,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// This method will split the given reversal string and return the resulting list
 		/// </summary>
-		private IEnumerable<string> SplitReversalSettingString(string savedReversalList)
+		private static ICollection<string> SplitReversalSettingString(string savedReversalList)
 		{
-			if(!String.IsNullOrEmpty(savedReversalList))
+			if(!string.IsNullOrEmpty(savedReversalList))
 			{
 				return savedReversalList.Split(new[] { ReversalSeperator }, StringSplitOptions.RemoveEmptyEntries);
 			}

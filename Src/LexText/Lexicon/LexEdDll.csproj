@@ -387,6 +387,15 @@
     <Compile Include="LexReferenceTreeRootView.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="LexReferenceUnidirectionalLauncher.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LexReferenceUnidirectionalSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LexReferenceUnidirectionalView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="LiftImportFailureServices.cs" />
     <Compile Include="MSADlgLauncher.cs">
       <SubType>UserControl</SubType>

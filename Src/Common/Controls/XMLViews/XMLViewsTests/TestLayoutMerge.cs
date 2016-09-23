@@ -221,5 +221,27 @@ namespace XMLViewsTests
 			</layout>",
 			string.Empty);
 		}
+
+		/// <summary>
+		/// LT-17178 Duplicates of child nodes do not appear when migrating from 8.2.4 to 8.3 build
+		/// </summary>
+		[Test]
+		public void SpecialAttrsOverridden_DuplicateLocationNodes()
+		{
+			TestMerge(
+			@"<layout>
+				<part ref='LocationConfig' label='Location' before='' after=' ' visibility='ifdata' style='Dictionary-Contrasting' param='publishStemLocation' />
+				<part ref='LocationConfig' label='Location (1)' before='' after=' ' visibility='ifdata' style='Dictionary-Contrasting' param='publishStemLocation%01' dup='1' />
+			</layout>",
+			@"<layout>
+				<part ref='LocationConfig' label='Location' before='' after=' ' visibility='ifdata' style='Dictionary-Contrasting' param='publishStemLocation%01' dup='1.0' />
+				<part ref='LocationConfig' label='Location (1)' before='' after=' ' visibility='ifdata' style='Dictionary-Contrasting' param='publishStemLocation%01' dup='1.0' />
+			</layout>",
+			@"<layout>
+				<part ref='LocationConfig' label='Location' before='' after=' ' visibility='ifdata' style='Dictionary-Contrasting' param='publishStemLocation%01' dup='1.0' />
+				<part ref='LocationConfig' label='Location (1)' before='' after=' ' visibility='ifdata' style='Dictionary-Contrasting' param='publishStemLocation%01' dup='1.0-1' />
+			</layout>",
+			string.Empty);
+		}
 	}
 }
