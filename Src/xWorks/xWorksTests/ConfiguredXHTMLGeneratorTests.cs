@@ -5998,7 +5998,7 @@ namespace SIL.FieldWorks.XWorks
 				CSSClassNameOverride = "headword",
 				SubField = "HeadWordRef",
 				IsEnabled = true,
-				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "vernacular" })
 			};
 			var variantTypeNameNode = new ConfigurableDictionaryNode
 			{
@@ -6250,10 +6250,17 @@ namespace SIL.FieldWorks.XWorks
 				CSSClassNameOverride = "variantentrytypes",
 				Children = new List<ConfigurableDictionaryNode> { variantTypeNameNode },
 			};
+			var variantNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
+				SubField = "HeadWordRef",
+				CSSClassNameOverride = "headword"
+			};
 			var variantNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "VariantFormEntryBackRefs",
-				Children = new List<ConfigurableDictionaryNode> { variantTypeNode },
+				Children = new List<ConfigurableDictionaryNode> { variantTypeNode, variantNameNode },
 				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant)
 			};
 			var mainHeadwordNode = new ConfigurableDictionaryNode
@@ -6319,10 +6326,17 @@ namespace SIL.FieldWorks.XWorks
 				CSSClassNameOverride = "complexformtypes",
 				Children = new List<ConfigurableDictionaryNode> { complexFormTypeNameNode },
 			};
+			var complexFormNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
+				SubField = "HeadWordRef",
+				CSSClassNameOverride = "headword"
+			};
 			var complexFormNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "VisibleComplexFormBackRefs",
-				Children = new List<ConfigurableDictionaryNode> { complexFormTypeNode },
+				Children = new List<ConfigurableDictionaryNode> { complexFormTypeNode, complexFormNameNode },
 				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex)
 			};
 			var mainHeadwordNode = new ConfigurableDictionaryNode
