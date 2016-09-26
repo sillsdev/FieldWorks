@@ -61,8 +61,8 @@ namespace SIL.FieldWorks.Common.Controls
 		private Dictionary<string, bool> m_oldPartsFound;
 		private Set<XmlNode> m_insertedMissing; // missing nodes we already inserted.
 		Set<string> m_safeAttrs = new Set<string>(
-			new string[] { "before", "after", "sep", "ws", "style", "showLabels", "number", "numstyle", "numsingle", "visibility",
-				"singlegraminfofirst", "showasindentedpara", "reltypeseq", "dup","entrytypeseq" });
+			new [] { "before", "after", "sep", "ws", "style", "showLabels", "number", "numstyle", "numsingle", "visibility",
+				"singlegraminfofirst", "showasindentedpara", "reltypeseq", "dup", "entrytypeseq", "flowType" });
 
 		private const string NameAttr = "name";
 		private const string LabelAttr = "label";
@@ -304,8 +304,24 @@ namespace SIL.FieldWorks.Common.Controls
 			if (oldConfiguredPartRef.Attributes == null)
 				return;
 			foreach (XmlAttribute xa in oldConfiguredPartRef.Attributes)
+			{
 				if (m_safeAttrs.Contains(xa.Name))
+				{
 					Utils.XmlUtils.SetAttribute(copy, xa.Name, xa.Value);
+				}
+				else if (NeedsAsParaParamSet(copy, xa))
+				{
+					// If the param value has a known suffix in the oldConfigured part, we should keep that suffix during migration
+					Utils.XmlUtils.SetAttribute(copy, ParamAttr,
+						xa.Value.Substring(0, xa.Value.IndexOf("_AsPara", StringComparison.Ordinal) + "_AsPara".Length)); // truncate after _AsPara
+				}
+			}
+		}
+
+		private static bool NeedsAsParaParamSet(XmlNode copy, XmlAttribute xa)
+		{
+			return xa.Name == ParamAttr && xa.Value.Contains("_AsPara")
+				&& copy.Attributes != null && copy.Attributes[ParamAttr] != null && !copy.Attributes[ParamAttr].Value.Contains("_AsPara");
 		}
 
 		/// <summary>

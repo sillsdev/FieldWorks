@@ -120,6 +120,22 @@ namespace XMLViewsTests
 		}
 
 		[Test]
+		public void SenseInParaMigratedCorrectly()
+		{
+			TestMerge(
+			@"<layout>
+				<part ref='SensesConfig' label='Senses' param='publishRoot'/>
+			</layout>",
+			@"<layout>
+				<part ref='SensesConfig' label='Senses' param='publishRoot_AsPara' flowType='divInPara'/>
+			</layout>",
+			@"<layout>
+				<part ref='SensesConfig' label='Senses' param='publishRoot_AsPara' flowType='divInPara'/>
+			</layout>",
+			string.Empty);
+		}
+
+		[Test]
 		public void UserCreatedConfigsPreserveParamSuffix()
 		{
 			TestMerge(

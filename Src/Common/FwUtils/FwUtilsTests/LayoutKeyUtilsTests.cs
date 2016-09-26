@@ -32,9 +32,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			suffix = LayoutKeyUtils.GetSuffixedPartOfNamedViewOrDuplicateNode(keyAttributes, keyValues, out stdKeyValues);
 			Assert.That(suffix, Is.StringMatching("#Stem01"));
 			Assert.That(stdKeyValues[2], Is.StringMatching("test_AsPara"));
-			keyValues[2] = "test%01_1.0.0";
+			keyValues[2] = "test-en";
 			suffix = LayoutKeyUtils.GetSuffixedPartOfNamedViewOrDuplicateNode(keyAttributes, keyValues, out stdKeyValues);
-			Assert.That(suffix, Is.StringMatching("%01_1.0.0"));
+			Assert.That(suffix, Is.StringMatching("en"));
 			Assert.That(stdKeyValues[2], Is.StringMatching("test"));
 		}
 
