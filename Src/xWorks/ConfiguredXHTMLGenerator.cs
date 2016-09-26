@@ -1663,9 +1663,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var dummy = string.Empty;
 			var lexEntryTypes = isComplex
-				? settings.Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.ToList()
-				: settings.Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.ToList();
-			foreach (var lexEntryType in lexEntryTypes)
+				? settings.Cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities
+				: settings.Cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities;
+			foreach (var lexEntryType in lexEntryTypes) // REVIEW (Hasso): worthwhile to check IsListItemSelected here?
 			{
 				var innerBldr = new StringBuilder();
 				foreach (var lexEntRef in lerCollection)
