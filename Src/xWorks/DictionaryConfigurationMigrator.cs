@@ -161,6 +161,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				OverwriteDefaultsWithMatchingNode(partNode, newDefaultConfigs.Parts);
 			}
+			oldDefaultConfigs.FilePath = newDefaultConfigs.FilePath;
+			oldDefaultConfigs.Label = newDefaultConfigs.Label;
 			return oldDefaultConfigs;
 		}
 
