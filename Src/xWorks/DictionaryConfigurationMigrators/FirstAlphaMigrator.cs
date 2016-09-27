@@ -291,7 +291,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 						else if (n.FieldDescription.Contains("EntryType"))
 						{
 							var parentFd = n.Parent.FieldDescription;
-							if (n.FieldDescription == "LookupComplexEntryType")
+							if (n.FieldDescription == "LookupComplexEntryType" ||
+								isReversal && (n.FieldDescription == "VariantEntryTypesRS" || n.FieldDescription == "ComplexEntryTypesRS"))
 							{
 								if (parentFd == "ComplexFormEntryRefs")
 								{
