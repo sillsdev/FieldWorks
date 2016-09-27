@@ -771,12 +771,12 @@ namespace FixFwDataDllTests
 
 			// check that the msa was there originally
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 2); // , false); todo: update palaso with better version of this
+				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 2);
 			// And that it was deleted.
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 1); // , false); todo: update palaso with better version of this
+				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 1);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexSense\"]/MorphoSyntaxAnalysis/objsur", 1);// , false); todo: update palaso with better version of this
+				"//rt[@class=\"LexSense\"]/MorphoSyntaxAnalysis/objsur", 1);
 		}
 
 		[Test]

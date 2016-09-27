@@ -1175,8 +1175,6 @@ namespace SIL.FieldWorks.Common.RootSites
 	}
 	#endregion
 
-#if !__MonoCS__
-#endif
 	#region Class RootSiteGroup
 	/// ------------------------------------------------------------------------------------
 	/// <summary>

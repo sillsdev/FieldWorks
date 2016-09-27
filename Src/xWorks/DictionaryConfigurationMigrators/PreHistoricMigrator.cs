@@ -54,18 +54,19 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		/// </summary>
 		internal string m_configDirSuffixBeingMigrated;
 
-		public PreHistoricMigrator(Mediator mediator) : this(null, mediator, null)
-		{
-			m_mediator = mediator;
-		}
+		/// <summary>
+		/// The mediator is needed to retrieve information about the prehistoric configurations
+		/// </summary>
+		public PreHistoricMigrator(Mediator mediator) : this(null, mediator, null) {}
 
 		/// <summary>
 		/// Constructor for tests
 		/// </summary>
-		internal PreHistoricMigrator(FdoCache cache, Mediator m_mediator, PropertyTable propertyTable)
+		internal PreHistoricMigrator(FdoCache cache, Mediator mediator, PropertyTable propertyTable)
 		{
 			Cache = cache;
 			m_propertyTable = propertyTable;
+			m_mediator = mediator;
 		}
 
 		public const int VersionPre83 = -1;

@@ -4807,7 +4807,7 @@ namespace SIL.FieldWorks.XWorks
 				var entryDataPath = string.Format("/div[@class='lexentry']/span[@class='mlrs']/span[@class='mlr']/span[@class='configtargets']/span[@class='configtarget']/span[@class='entrycstring']/span[text()='{0}']", entryCustomData);
 				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(entryDataPath, 1);
 				var senseDataPath = string.Format("/div[@class='lexentry']/span[@class='mlrs']/span[@class='mlr']/span[@class='configtargets']/span[@class='configtarget']/span[@class='sensecstring']/span[text()='{0}']", senseCustomData);
-				AssertThatXmlIn.String(result).HasNoMatchForXpath(senseDataPath);//, "Ref is to Entry; should be no Sense Custom Data"); todo: ReEnable after palaso update
+				AssertThatXmlIn.String(result).HasNoMatchForXpath(senseDataPath, message:"Ref is to Entry; should be no Sense Custom Data");
 			}
 		}
 
@@ -4853,7 +4853,7 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				var entryDataPath = string.Format("/div[@class='lexentry']/span[@class='mlrs']/span[@class='mlr']/span[@class='configtargets']/span[@class='configtarget']/span[@class='entrycstring']/span[text()='{0}']", entryCustomData);
-				AssertThatXmlIn.String(result).HasNoMatchForXpath(entryDataPath);//, "Ref is to Sense; should be no Entry Custom Data"); todo: re-enable after palaso update
+				AssertThatXmlIn.String(result).HasNoMatchForXpath(entryDataPath, message: "Ref is to Sense; should be no Entry Custom Data");
 				var senseDataPath = string.Format("/div[@class='lexentry']/span[@class='mlrs']/span[@class='mlr']/span[@class='configtargets']/span[@class='configtarget']/span[@class='sensecstring']/span[text()='{0}']", senseCustomData);
 				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseDataPath, 1);
 			}
