@@ -517,6 +517,71 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForConfiguration_WithBulletStyleOnNoteAndWritingSystemsCss()
+		{
+			var wsOpts = new DictionaryNodeWritingSystemAndParaOptions
+			{
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				{
+					new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en"},
+					new DictionaryNodeListOptions.DictionaryNodeOption {Id = "fr"}
+				},
+				DisplayWritingSystemAbbreviations = true,
+				DisplayEachInAParagraph = true
+			};
+			var wsOpts1 = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr", "en" });
+			((DictionaryNodeWritingSystemOptions)wsOpts).DisplayWritingSystemAbbreviations = true;
+			GenerateBulletStyle("Bulleted List");
+			var anthroNote = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "AnthroNote",
+				Before = "<",
+				Between = ",",
+				After = ">",
+				DictionaryNodeOptions = wsOpts,
+				Style = "Bulleted List"
+			};
+			var definitionOrGloss = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Bibliography",
+				Before = "<",
+				Between = ",",
+				After = ">",
+				DictionaryNodeOptions = wsOpts,
+				Style = "Bulleted List"
+			};
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				Children = new List<ConfigurableDictionaryNode> { anthroNote, definitionOrGloss }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "lexentry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+
+			PopulateFieldsForTesting(mainEntryNode);
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .senses .sense>.*.anthronote{.*font-size:12pt;.*color:#F00;.*content:'\\25A0';.*}",
+				RegexOptions.Singleline).Success, "AnthoNote content not generated.");
+			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .senses .sense>.*.anthronote>.*span.writingsystemprefix.~.span.writingsystemprefix:before",
+				RegexOptions.Singleline).Success, "AnthoNote between content not generated.");
+			Assert.IsFalse(Regex.Match(cssResult, @".lexentry> .senses .sense> .anthronote:after",
+				RegexOptions.Singleline).Success, "AnthoNote after content should not generated.");
+			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .senses .sense> .bibliography> span{.*font-size:12pt;.*color:#F00;.*content:'\\25A0';.*}",
+				RegexOptions.Singleline).Success, "Bibliography content not generated.");
+			Assert.IsFalse(Regex.Match(cssResult, @".lexentry> .senses .sense>.*.bibliography>.*span.writingsystemprefix.~.span.writingsystemprefix:before",
+				RegexOptions.Singleline).Success, "Bibliography between content should not generated.");
+			Assert.IsFalse(Regex.Match(cssResult, @".lexentry> .senses .sense>.*.bibliography:after",
+				RegexOptions.Singleline).Success, "Bibliography after content should not generated.");
+		}
+
+		[Test]
 		public void GenerateCssForStyleName_ParagraphMarginIsAbsolute_NoParent_Works()
 		{
 			GenerateParagraphStyle("Dictionary-Paragraph-Padding");
