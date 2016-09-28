@@ -128,10 +128,15 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
+			if (Clerk == null || m_mainView == null)
+				return;
 			if (hvo == Clerk.CurrentObjectHvo)
 			{
 				var gb = m_mainView.NativeBrowser as GeckoWebBrowser;
-				gb.Document.Body.SetAttribute("style", "background-color:#DEDEDE");
+				if (gb != null && gb.Document != null)
+				{
+					gb.Document.Body.SetAttribute("style", "background-color:#DEDEDE");
+				}
 				if (!m_mediator.IdleQueue.Contains(ShowRecordOnIdle))
 				{
 					m_mediator.IdleQueue.Add(IdleQueuePriority.High, ShowRecordOnIdle);
