@@ -268,6 +268,9 @@ namespace SIL.FieldWorks.XWorks
 			entry2SubentryB.SubentriesOS.Add(subsubentry);
 			subsubentry.ReversalForm.set_String(wsEn, "Reversal 2b || !2b Form");
 			m_waterH2O.ReversalEntriesRC.Add(subsubentry);
+			var senseLessIndexEntry = m_revIndexEntryFactory.Create();
+			index.EntriesOC.Add(senseLessIndexEntry);
+			senseLessIndexEntry.ReversalForm.set_String(wsEn, "Reversal Form NoSense");
 			return index;
 		}
 
@@ -305,14 +308,15 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetSortedAndFilteredReversalEntries_ExcludesSubentriesAndUnpublishable()
 		{
+			// This test relies on the objects set up during the test FixtureSetup
 			Mediator.PropertyTable.SetProperty("currentContentControl", "reversalToolEditComplete");
 			Mediator.PropertyTable.SetProperty("ReversalIndexGuid", m_revIndex.Guid.ToString());
 
-			Assert.AreEqual(5, m_revDecorator.VecProp(m_revIndex.Hvo, ObjectListPublisher.OwningFlid).Length,
-				"there should be 5 Reversal Entries and Sub[sub]entries");
+			Assert.AreEqual(6, m_revDecorator.VecProp(m_revIndex.Hvo, ObjectListPublisher.OwningFlid).Length,
+				"there should be 6 Reversal Entries and Sub[sub]entries");
 			var entries = m_revDecorator.GetEntriesToPublish(Mediator, ObjectListPublisher.OwningFlid, "Reversal Index");
 			// "Reversal Form" is linked to m_nolanryan which is excluded from publication
-			Assert.AreEqual(1, entries.Length, "there should be only 1 main Reversal Entry that can be published");
+			Assert.AreEqual(2, entries.Length, "there should be only 2 main Reversal Entry that can be published");
 			var entry = Cache.ServiceLocator.GetObject(entries[0]) as IReversalIndexEntry;
 			Assert.IsNotNull(entry, "the single reversal entry really is a reversal entry");
 			Assert.AreEqual("Reversal 2 Form", entry.ShortName, "'Reversal 2 Form' is the sole publishable main reversal entry");
@@ -324,6 +328,25 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual("Reversal 2b Form", subentry.ShortName, "'Reversal 2b Form' is the only publishable subentry of 'Reversal 2 Form'");
 			Assert.IsTrue(m_revDecorator.IsExcludedObject(entry.SubentriesOS[0]), "First subentry ('Reversal 2a Form') should be excluded");
 			Assert.IsFalse(m_revDecorator.IsExcludedObject(entry.SubentriesOS[1]), "Second subentry ('Reversal 2b Form') should not be excluded')");
+		}
+
+		[Test]
+		public void GetSortedAndFilteredReversalEntries_IncludesSenselessReversalEntries()
+		{
+			// This test relies on the objects set up during the test FixtureSetup
+			Mediator.PropertyTable.SetProperty("currentContentControl", "reversalToolEditComplete");
+			Mediator.PropertyTable.SetProperty("ReversalIndexGuid", m_revIndex.Guid.ToString());
+
+			Assert.AreEqual(6, m_revDecorator.VecProp(m_revIndex.Hvo, ObjectListPublisher.OwningFlid).Length,
+				"there should be 6 Reversal Entries and Sub[sub]entries");
+			var entries = m_revDecorator.GetEntriesToPublish(Mediator, ObjectListPublisher.OwningFlid, "Reversal Index");
+			// "Reversal Form" is linked to m_nolanryan which is excluded from publication
+			Assert.AreEqual(2, entries.Length, "there should be only 2 main Reversal Entry that can be published");
+			var entry = Cache.ServiceLocator.GetObject(entries[1]) as IReversalIndexEntry;
+			Assert.IsNotNull(entry, "the single reversal entry really is a reversal entry");
+			Assert.IsFalse(entry.ReferringSenses.Any(), "Test setup is broken, this entry should have no senses");
+			// SUT
+			Assert.IsFalse(m_revDecorator.IsExcludedObject(entry), "A reversal index entry with no senses should not be excluded");
 		}
 
 		/// <summary>

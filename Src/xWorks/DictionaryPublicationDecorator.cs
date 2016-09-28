@@ -506,6 +506,9 @@ namespace SIL.FieldWorks.XWorks
 
 		private bool IsPublishableReversalEntry(IReversalIndexEntry revEntry)
 		{
+			// We should still display reversal entries that have no senses
+			if (!revEntry.ReferringSenses.Any())
+				return true;
 			foreach (var sense in revEntry.ReferringSenses)
 			{
 				if (!m_excludedItems.Contains(sense.Hvo))
