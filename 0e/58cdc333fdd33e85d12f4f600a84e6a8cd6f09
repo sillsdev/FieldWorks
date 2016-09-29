@@ -1,0 +1,8 @@
+Code-Review+2: Jason Naylor <jason_naylor@sil.org>
+Verified-Linux+1: Jenkins CI <jenkins@sil.org>
+Verified+1: Jenkins CI <jenkins@sil.org>
+Submitted-by: Automatic Submission <gerrit@sil.org>
+Submitted-at: Thu, 29 Sep 2016 18:01:10 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/4592
+Project: FieldWorks
+Branch: refs/heads/feature/Dictionary
