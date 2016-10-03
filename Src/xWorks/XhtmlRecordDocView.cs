@@ -128,7 +128,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			if (Clerk == null || m_mainView == null)
+			if (Clerk == null || m_mainView == null || m_mediator == null)
 				return;
 			if (hvo == Clerk.CurrentObjectHvo)
 			{
