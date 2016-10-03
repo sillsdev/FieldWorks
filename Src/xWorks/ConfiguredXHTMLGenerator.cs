@@ -2031,15 +2031,14 @@ namespace SIL.FieldWorks.XWorks
 			ILexEntry subEntry, object mainEntryOrSense, GeneratorSettings settings)
 		{
 			if (!config.IsEnabled)
-				return String.Empty;
+				return string.Empty;
 
 			var mainEntry = mainEntryOrSense as ILexEntry ?? ((ILexSense)mainEntryOrSense).Entry;
-			var entryRefs = subEntry.ComplexFormEntryRefs.Where(entryRef => entryRef.PrimaryEntryRoots.Contains(mainEntry));
-			var complexEntryRef = entryRefs.FirstOrDefault();
-			if (complexEntryRef == null)
-				return String.Empty;
-
-			return GenerateXHTMLForCollection(complexEntryRef.ComplexEntryTypesRS, config, publicationDecorator, subEntry, settings);
+			var complexEntryRef = subEntry.ComplexFormEntryRefs.FirstOrDefault(entryRef => entryRef.PrimaryLexemesRS.Contains(mainEntry) // subsubentries
+																				|| entryRef.PrimaryEntryRoots.Contains(mainEntry)); // subs under sense
+			return complexEntryRef == null
+				? string.Empty
+				: GenerateXHTMLForCollection(complexEntryRef.ComplexEntryTypesRS, config, publicationDecorator, subEntry, settings);
 		}
 
 		private static string GenerateSenseNumberSpanIfNeeded(ConfigurableDictionaryNode senseConfigNode, bool isSingle, ref SenseInfo info)

@@ -5415,7 +5415,7 @@ namespace SIL.FieldWorks.XWorks
 			var complexRefAbbr = subentryRef.ComplexEntryTypesRS[0].Abbreviation.BestAnalysisAlternative.Text;
 			var complexRefRevAbbr = subentryRef.ComplexEntryTypesRS[0].ReverseAbbr.BestAnalysisAlternative.Text;
 
-			var revAbbrevNode  = new ConfigurableDictionaryNode
+			var revAbbrevNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReverseAbbr",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
@@ -5450,6 +5450,76 @@ namespace SIL.FieldWorks.XWorks
 					complexRefRevAbbr);
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(fwdNameXpath);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(revNameXpath, 1);
+		}
+
+		/// <param name="isUnderSense">
+		/// Whether the subentry is under a sense of the main entry. We do *not* support subentries under senses of subentries.
+		/// </param>
+		[Test]
+		public void GenerateXHTMLForEntry_GeneratesComplexFormTypeForSubsubentry([Values(true, false)] bool isUnderSense)
+		{
+			var lexentry = CreateInterestingLexEntry(Cache);
+
+			var subentry = CreateInterestingLexEntry(Cache);
+			var otherComplexRefRevAbbr = CreateComplexForm(Cache, isUnderSense ? (ICmObject)lexentry : lexentry.SensesOS.First(), subentry, true, 1)
+				.ComplexEntryTypesRS[0].ReverseAbbr.BestAnalysisAlternative.Text;
+
+			var subsubentry = CreateInterestingLexEntry(Cache);
+			var subsubentryRef = CreateComplexForm(Cache, subentry, subsubentry, true, 2);
+
+			var complexRefAbbr = subsubentryRef.ComplexEntryTypesRS[0].Abbreviation.BestAnalysisAlternative.Text;
+			var complexRefRevAbbr = subsubentryRef.ComplexEntryTypesRS[0].ReverseAbbr.BestAnalysisAlternative.Text;
+
+			var subsubentryNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions(),
+				FieldDescription = "Subentries", ReferenceItem = "Subentries"
+			};
+			var revAbbrevNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ReverseAbbr",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var refTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LookupComplexEntryType",
+				CSSClassNameOverride = "complexformtypes",
+				Children = new List<ConfigurableDictionaryNode> { revAbbrevNode }
+			};
+			var sharedSubentryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { refTypeNode, subsubentryNode },
+				FieldDescription = "Subentries"
+			};
+			var subentryNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions(),
+				ReferenceItem = "Subentries", FieldDescription = "Subentries"
+			};
+			var senseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				Children = new List<ConfigurableDictionaryNode> { subentryNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { senseNode, subentryNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(DictionaryConfigurationModelTests.CreateSimpleSharingModel(mainEntryNode, sharedSubentryNode));
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
+			const string fwdNameXpath =
+				"//span[@class='subentries subentries']/span[@class='subentry subentry']/span[@class='subentries subentries']/span[@class='subentry subentry']"
+				+ "/span[@class='complexformtypes']/span[@class='complexformtype']/span/span[@lang='en' and text()='{0}']";
+			const string revNameXpath =
+				"//span[@class='subentries subentries']/span[@class='subentry subentry']/span[@class='subentries subentries']/span[@class='subentry subentry']"
+				+ "/span[@class='complexformtypes']/span[@class='complexformtype']/span[@class='reverseabbr']/span[@lang='en' and text()='{0}']";
+			AssertThatXmlIn.String(result).HasNoMatchForXpath(string.Format(fwdNameXpath, complexRefAbbr));
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(string.Format(revNameXpath, complexRefRevAbbr), 1);
+			AssertThatXmlIn.String(result).HasNoMatchForXpath(string.Format(revNameXpath, otherComplexRefRevAbbr), "should be confined to subentry");
 		}
 
 		[Test]
