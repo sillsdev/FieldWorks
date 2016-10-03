@@ -973,7 +973,7 @@ If you are not the one designated user who adds fields, or you are making some o
     <comment>this message is displayed on a progress report dialog</comment>
   </data>
   <data name="ksErrorDisplayingPublication" xml:space="preserve">
-    <value>Cannot generate the display the current publication</value>
+    <value>Cannot generate the display for the current publication</value>
   </data>
   <data name="ksObtainingEntriesToDisplay" xml:space="preserve">
     <value>Obtaining the list of entries to display</value>

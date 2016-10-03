@@ -427,7 +427,8 @@
 		</part>
 		<part id="LexSense-Detail-ReversalEntries" type="detail">
 			<slice field="ReversalEntries" label="Reversal Entries" editor="Custom" assemblyPath="LexEdDll.dll"
-				class="SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice" menu="mnuDataTree-Help" />
+				class="SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice" menu="mnuDataTree-Help"
+				tooltip="Translation equivalent used in the finder list (Reversal Index)."/>
 		</part>
 		<part id="LexSense-Detail-SenseType" type="Detail">
 			<slice field="SenseType" label="Sense Type" editor="possAtomicReference" menu="mnuDataTree-Help">
@@ -499,7 +500,7 @@
 			<slice id="LexSenseId" editor="jtview" expansion="expanded" menu="mnuDataTree-Help" />
 		</part>
 		<part id="LexSense-Detail-GlossAllA" type="detail">
-			<slice field="Gloss" label="Gloss" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" sideEffectMethod="AdjustDerivedAnalysis">
+			<slice field="Gloss" label="Gloss" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" sideEffectMethod="AdjustDerivedAnalysis" tooltip="Short translation equivalent for this lexeme.  Used in interlinear texts, and in the dictionary article when Definition is empty.">
 				<properties>
 					<bold value="on" />
 					<fontsize value="100%" />
@@ -516,7 +517,8 @@
 		</part>
 
 		<part id="LexSense-Detail-DefinitionAllA" type="detail">
-			<slice field="Definition" label="Definition" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+			<slice field="Definition" label="Definition" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"
+			tooltip="Full meaning of this lexeme.  Used in the dictionary article."/>
 		</part>
 		<part id="LexSense-Detail-MsaCombo" type="detail">
 			<slice field="MorphoSyntaxAnalysis" label="Grammatical Info." abrev="gfn" editor="msaReferenceComboBox"
