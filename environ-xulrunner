@@ -1,11 +1,11 @@
 if [ "$RUNMODE" = "INSTALLED" ]
 then
-	XULRUNNER="/usr/lib/fieldworks/Firefox"
+	GECKOFX="/usr/lib/fieldworks"
 else
-	XULRUNNER="${BASE}/Output_${ARCH}/${BUILD}/Firefox"
+	GECKOFX="${BASE}/Output_${ARCH}/${BUILD}"
 fi
+XULRUNNER="${GECKOFX}/Firefox"
 LD_LIBRARY_PATH="${XULRUNNER}:${LD_LIBRARY_PATH}"
-GECKOFX="${XULRUNNER}/.."
 if [ "$RUNMODE" != "PACKAGE" ]
 then
 	LD_PRELOAD=libgeckofix.so
