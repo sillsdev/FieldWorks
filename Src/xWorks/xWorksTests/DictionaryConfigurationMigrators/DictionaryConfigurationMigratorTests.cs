@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		{
 			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
 			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName,
-				"Stem" + DictionaryConfigurationModel.FileExtension);
+				"Lexeme" + DictionaryConfigurationModel.FileExtension);
 			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
 			Directory.CreateDirectory(configSettingsDir);
 			File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{
@@ -81,7 +81,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
 			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName,
-				"Stem" + DictionaryConfigurationModel.FileExtension);
+				"Lexeme" + DictionaryConfigurationModel.FileExtension);
 			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
 			Directory.CreateDirectory(configSettingsDir);
 			File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{

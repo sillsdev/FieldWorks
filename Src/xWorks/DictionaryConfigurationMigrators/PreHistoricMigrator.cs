@@ -189,16 +189,17 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 			var newDictionaryConfigLoc = Path.Combine(FwDirectoryFinder.DefaultConfigurations, DCL.DictionaryConfigurationDirectoryName);
 			var newReversalConfigLoc = Path.Combine(FwDirectoryFinder.DefaultConfigurations, DCL.ReversalIndexConfigurationDirectoryName);
-			const string defaultStemName = "Stem" + extension;
+			const string defaultLexemeName = "Lexeme" + extension;
 			const string defaultRootName = "Root" + extension;
 			const string defaultReversalName = "AllReversalIndexes" + extension;
 			switch (layout)
 			{
 				case "publishStem":
 				{
-					convertedModel.FilePath = Path.Combine(projectPath, defaultStemName);
-					alpha83DefaultModel = DCM.LoadConfigWithCurrentDefaults(Path.Combine(alphaConfigsPath, defaultStemName), Cache,
-						Path.Combine(newDictionaryConfigLoc, "Lexeme.fwdictconfig"));
+					convertedModel.FilePath = Path.Combine(projectPath, defaultLexemeName);
+					// Though the name change from Stem to Lexeme happened after we shipped the Alpha we will change the name here for pre-Alpha projects
+					alpha83DefaultModel = DCM.LoadConfigWithCurrentDefaults(Path.Combine(alphaConfigsPath, "Stem.fwdictconfig"), Cache,
+						Path.Combine(newDictionaryConfigLoc, defaultLexemeName));
 					break;
 				}
 				case "publishRoot":
@@ -225,8 +226,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					{
 						var customFileName = string.Format("{0}-Stem-{1}{2}", convertedModel.Label, layout.Substring(customSuffixIndex), extension);
 						convertedModel.FilePath = Path.Combine(projectPath, customFileName);
-						alpha83DefaultModel = DCM.LoadConfigWithCurrentDefaults(Path.Combine(alphaConfigsPath, defaultStemName), Cache,
-							Path.Combine(newDictionaryConfigLoc, "Lexeme.fwdictconfig"));
+						alpha83DefaultModel = DCM.LoadConfigWithCurrentDefaults(Path.Combine(alphaConfigsPath, "Stem.fwdictconfig"), Cache,
+							Path.Combine(newDictionaryConfigLoc, defaultLexemeName));
 					}
 					else if (customSuffixIndex > 0 && layout.StartsWith("publishRoot"))
 					{
