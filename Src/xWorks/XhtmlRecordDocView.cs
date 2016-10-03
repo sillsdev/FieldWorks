@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Xml;
 using Gecko;
 using Palaso.UI.WindowsForms.HtmlBrowser;
+using SIL.FieldWorks.Common.COMInterfaces;
 using XCore;
 using SIL.Utils;
 
@@ -18,7 +19,7 @@ namespace SIL.FieldWorks.XWorks
 	/// XhtmlRecordDocView implements a RecordView (view showing one object at a time from a sequence)
 	/// in which the single object is displayed using generated XHTML in a (Gecko) browser.
 	/// </summary>
-	public class XhtmlRecordDocView : RecordView
+	public class XhtmlRecordDocView : RecordView, IVwNotifyChange
 	{
 		private XWebBrowser m_mainView;
 		internal string m_configObjectName;
@@ -37,6 +38,8 @@ namespace SIL.FieldWorks.XWorks
 			if (browser != null)
 				browser.DomClick += OnDomClick;
 			m_fullyInitialized = true;
+			// Add ourselves as a listener for changes to the item we are displaying
+			Clerk.VirtualListPublisher.AddNotification(this);
 		}
 
 		/// <summary>
@@ -118,6 +121,28 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_mainView.DocumentText = "<html><body></body></html>";
 			}
+		}
+
+		/// <summary>
+		/// If the item we are showing changes update the view.
+		/// </summary>
+		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
+		{
+			if (hvo == Clerk.CurrentObjectHvo)
+			{
+				var gb = m_mainView.NativeBrowser as GeckoWebBrowser;
+				gb.Document.Body.SetAttribute("style", "background-color:#DEDEDE");
+				if (!m_mediator.IdleQueue.Contains(ShowRecordOnIdle))
+				{
+					m_mediator.IdleQueue.Add(IdleQueuePriority.High, ShowRecordOnIdle);
+				}
+			}
+		}
+
+		private bool ShowRecordOnIdle(object arg)
+		{
+			ShowRecord();
+			return true;
 		}
 	}
 }
