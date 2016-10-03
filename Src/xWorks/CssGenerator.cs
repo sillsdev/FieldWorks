@@ -206,6 +206,15 @@ namespace SIL.FieldWorks.XWorks
 			else if (listAndParaOpts != null)
 			{
 				GenerateCssFromListAndParaOptions(configNode, listAndParaOpts, styleSheet, ref baseSelection, cache, mediator);
+				var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+				if (wsOptions != null && wsOptions.DisplayWritingSystemAbbreviations)
+				{
+					if (DictionaryConfigurationModel.NoteInParaStyles.Contains(configNode.FieldDescription))
+					{
+						baseSelection = baseSelection + "> span";
+					}
+					GenerateCssForWritingSystemPrefix(configNode, styleSheet, baseSelection, mediator);
+				}
 			}
 			else if (configNode.DictionaryNodeOptions is DictionaryNodeGroupingOptions
 					&& ((DictionaryNodeGroupingOptions)configNode.DictionaryNodeOptions).DisplayGroupInParagraph)
@@ -431,6 +440,9 @@ namespace SIL.FieldWorks.XWorks
 					styleSheet.Rules.Add(blockRule);
 					GenerateCssForCounterReset(styleSheet, baseSelection, declaration, true);
 					var bulletRule = AdjustRuleIfParagraphNumberScheme(blockRule, configNode, mediator);
+					styleSheet.Rules.AddRange(DictionaryConfigurationModel.NoteInParaStyles.Contains(configNode.FieldDescription)
+					? RemoveBeforeAndAfterForNoteInParaRules(styleRules)
+					: RemoveBeforeAfterSelectorRules(styleRules));
 					styleSheet.Rules.AddRange(RemoveBeforeAfterSelectorRules(styleRules));
 					styleSheet.Rules.Add(bulletRule);
 				}
@@ -449,6 +461,12 @@ namespace SIL.FieldWorks.XWorks
 					styleSheet.Rules.AddRange(styleRules);
 				}
 			}
+		}
+
+
+		private static IEnumerable<StyleRule> RemoveBeforeAndAfterForNoteInParaRules(IEnumerable<StyleRule> rules)
+		{
+			return rules.Where(rule => rule.Value.Contains("~"));
 		}
 
 		/// <summary>
@@ -778,7 +796,12 @@ namespace SIL.FieldWorks.XWorks
 					// for multi-lingual strings each language's string will have the contents generated in a span
 					if(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions)
 					{
-						return "." + GetClassAttributeForConfig(configNode) + "> span";
+						string spanStyle = string.Empty;
+						if (!DictionaryConfigurationModel.NoteInParaStyles.Contains(configNode.FieldDescription))
+						{
+							spanStyle = "> span";
+						}
+						return "." + GetClassAttributeForConfig(configNode) + spanStyle;
 					}
 					goto default;
 				}
