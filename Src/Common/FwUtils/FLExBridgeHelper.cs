@@ -243,8 +243,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private static void LaunchFlexBridge(IIPCHost host, string command, string args, Action onNonBlockerCommandComplete,
 			ref bool changesReceived, ref string projectName)
 		{
+			ProcessStartInfo processStartInfo = null;
+			if (MiscUtils.IsUnix)
+			{
+				processStartInfo = new ProcessStartInfo(FwDirectoryFinder.FlexBridgeFolder + "/run-in-environ", FullFieldWorksBridgePath() + " " + args);
+			}
+			else
+			{
+				processStartInfo = new ProcessStartInfo(FullFieldWorksBridgePath(), args);
+			}
+
 			// Launch the bridge process.
-			using (Process.Start(FullFieldWorksBridgePath(), args))
+			using (Process.Start(processStartInfo))
 			{
 			}
 
