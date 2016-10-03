@@ -1564,7 +1564,7 @@ namespace SIL.FieldWorks.XWorks
 								.OrderBy(variant => variant.VariantEntryTypesRS.FirstOrDefault())
 								.ThenBy(variant => variant.Guid)
 								.Where(variant => pubDecorator == null || !pubDecorator.IsExcludedObject(variant));
-						var variantFormTypes = settings.Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.ToList();
+						var variantFormTypes = settings.Cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities;
 						using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings {ConformanceLevel = ConformanceLevel.Fragment}))
 						{
 							foreach (var variantFormType in variantFormTypes)
@@ -1598,7 +1598,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else if (IsComplexEntryType(config, out complexEntryTypeNode))
 				{
-					var complexFormTypes = settings.Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.ToList();
+					var complexFormTypes = settings.Cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities;
 					using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
 					{
 						var entriesWithNoType = new List<ILexEntryRef>();
