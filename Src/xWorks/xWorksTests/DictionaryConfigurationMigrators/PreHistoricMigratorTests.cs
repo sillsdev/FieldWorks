@@ -408,7 +408,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				var hasVariantNode = isOriginal || isVariant || !isComplex;
 				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(MinorEntryComplexXpath, hasComplexNode ? 1 : 0);
 				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(MinorEntryVariantXpath, hasVariantNode ? 1 : 0);
-				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(MinorEntryOldXpath, "All old Minor Entry nodes should have been split");
+				AssertThatXmlIn.File(convertedModelFile.Path).HasNoMatchForXpath(MinorEntryOldXpath,
+					message: "All old Minor Entry nodes should have been split");
 			}
 		}
 

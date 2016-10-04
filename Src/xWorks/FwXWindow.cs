@@ -1326,9 +1326,8 @@ namespace SIL.FieldWorks.XWorks
 				if (m_app is FwXApp)
 					((FwXApp)m_app).OnMasterRefresh(null);
 
-				ReversalIndexServices.CreateReversalIndexConfigurationFile(m_app.Cache.ServiceLocator.WritingSystemManager,
-					m_app.Cache, FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory,
-					dlg.OriginalProjectName);
+				ReversalIndexServices.CreateOrRemoveReversalIndexConfigurationFiles(m_app.Cache.ServiceLocator.WritingSystemManager,
+					m_app.Cache, FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory, dlg.OriginalProjectName);
 				var selectedWsObj = dlg.AnalysisWsList.SelectedItem as IWritingSystem;
 				SetReversalIndexGuid(selectedWsObj);
 			}

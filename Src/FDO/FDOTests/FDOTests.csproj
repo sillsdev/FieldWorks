@@ -173,6 +173,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
     </Reference>
+    <Reference Include="Palaso.TestUtilities, Version=2.6.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\Palaso.TestUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="PhonEnvValidator, Version=3.2.0.9, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\PhonEnvValidator.dll</HintPath>
@@ -225,7 +229,7 @@
       <Name>System.XML</Name>
     </Reference>
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="TestUtils, Version=5.5.0.24598, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="TestUtils, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\TestUtils.dll</HintPath>
     </Reference>
@@ -303,6 +307,7 @@
     <Compile Include="DataSortingServiceTests.cs" />
     <Compile Include="DataStoreInitializationServicesTests.cs" />
     <Compile Include="Db4oServerInfoTests.cs" />
+    <Compile Include="DomainObjectServicesTests.cs" />
     <Compile Include="DummyFdoUI.cs" />
     <Compile Include="DummyProgressDlg.cs" />
     <Compile Include="DuplicateAnalysisFixerTests.cs" />

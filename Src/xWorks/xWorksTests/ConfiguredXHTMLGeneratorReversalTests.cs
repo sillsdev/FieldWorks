@@ -236,7 +236,7 @@ namespace SIL.FieldWorks.XWorks
 				assertIt.HasSpecifiedNumberOfMatchesForXpath(string.Format(typeAndHeadwordXpath, "sp. var. of", "Variante Entrie"), 1);
 				// verify there is no heading on the typeless variant
 				assertIt.HasNoMatchForXpath(string.Format(entryRefWithSiblingXpath + "span]" + primaryLexemeBit + headwordBit, null, "Invariant Entry"),
-					"Invariant Entry is the only typeless entry ref; it should not have any preceding siblings (Types or other Entry Refs)");
+					message: "Invariant Entry is the only typeless entry ref; it should not have any preceding siblings (Types or other Entry Refs)");
 			}
 		}
 
