@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			realStyle.Function = FunctionValues.Table;
 			realStyle.Structure = StructureValues.Heading;
 			StyleInfo basedOn = new StyleInfo(realStyle);
-
+			basedOn.UserLevel = 1;
 			StyleInfo testInfo = new StyleInfo("New Style", basedOn,
 				StyleType.kstParagraph, Cache);
 
@@ -55,6 +55,53 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			Assert.AreEqual(ContextValues.Intro, style.Context);
 			Assert.AreEqual(StructureValues.Heading, style.Structure);
 			Assert.AreEqual(FunctionValues.Table, style.Function);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests saving a copy style info to the DB. In this case the context should be gotten
+		/// from the based-on style.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void SaveToDB_CopyInfo()
+		{
+			StyleInfoTable styleTable = new StyleInfoTable("Normal", Cache.ServiceLocator.WritingSystemManager);
+			var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
+			var normalStyle = styleFactory.Create();
+			Cache.LanguageProject.StylesOC.Add(normalStyle);
+			normalStyle.Name = "Normal";
+			normalStyle.Context = ContextValues.Internal;
+			normalStyle.Function = FunctionValues.Prose;
+			normalStyle.Structure = StructureValues.Undefined;
+			StyleInfo normal = new StyleInfo(normalStyle);
+			styleTable.Add("Normal", normal);
+
+			var realStyle = styleFactory.Create();
+			Cache.LanguageProject.StylesOC.Add(realStyle);
+			realStyle.Name = "Paragraph";
+			realStyle.Context = ContextValues.Text;
+			realStyle.Function = FunctionValues.Prose;
+			realStyle.Structure = StructureValues.Body;
+			realStyle.BasedOnRA = normalStyle;
+			StyleInfo styleToCopyFrom = new StyleInfo(realStyle);
+			styleTable.Add("Dictionary-Normal", styleToCopyFrom);
+
+			StyleInfo testInfo = new StyleInfo(styleToCopyFrom, "Copy of Dictionary-Normal");
+			styleTable.Add("Copy Dictionary-Normal", testInfo);
+			styleTable.ConnectStyles();
+
+			// simulate a save to the DB for the test style.
+			var style = styleFactory.Create();
+			Cache.LanguageProject.StylesOC.Add(style);
+			testInfo.SaveToDB(style, false, false);
+
+			Assert.AreEqual(ContextValues.Text, testInfo.Context);
+			Assert.AreEqual(StructureValues.Body, testInfo.Structure);
+			Assert.AreEqual(FunctionValues.Prose, testInfo.Function);
+			Assert.AreEqual(ContextValues.Text, style.Context);
+			Assert.AreEqual(StructureValues.Body, style.Structure);
+			Assert.AreEqual(FunctionValues.Prose, style.Function);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -120,7 +167,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			realStyle.Function = FunctionValues.Table;
 			realStyle.Structure = StructureValues.Heading;
 			StyleInfo basedOn = new StyleInfo(realStyle);
-
+			basedOn.UserLevel = 1;
 			StyleInfo testInfo1 = new StyleInfo("New Style 1", basedOn,
 				StyleType.kstParagraph, Cache);
 			StyleInfo testInfo2 = new StyleInfo("New Style 2", testInfo1,

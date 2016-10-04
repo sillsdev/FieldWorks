@@ -625,7 +625,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 						// If the based-on style cannot be inherited from, then this style must
 						// be a copy of another style, from which it will have inherited its
 						// context, structure, and function.
-						if (basedOn.CanInheritFrom)
+						if (basedOn.CanInheritFrom && basedOn.UserLevel > 0)
 						{
 							m_context = basedOn.Context;
 							m_structure = basedOn.Structure;
