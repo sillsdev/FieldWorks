@@ -216,6 +216,44 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_SortByHeadwordWithSpecificWsGeneratesLetterHeadings()
+		{
+			var firstAEntry = CreateInterestingLexEntry(Cache, "alpha1");
+			// PublicationDecorator is used to force generation of Letter Headings when there is only one entry
+			var flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
+			var mainHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
+				CSSClassNameOverride = "entry"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode },
+				FieldDescription = "LexEntry"
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+			string xhtmlPath = null;
+			const string letterHeadingXPath = "//div[@class='letHead']";
+			try
+			{
+				var clerk = (RecordClerk)m_mediator.PropertyTable.GetValue("ActiveClerk", null);
+				clerk.SortName = "Headword (fr)";
+				xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new[] { firstAEntry.Hvo }, pubEverything, model, m_mediator);
+				AssertThatXmlIn.File(xhtmlPath).HasSpecifiedNumberOfMatchesForXpath(letterHeadingXPath, 1);
+			}
+			finally
+			{
+				DeleteTempXhtmlAndCssFiles(xhtmlPath);
+			}
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_LexemeFormConfigurationGeneratesCorrectResult()
 		{
 			var headwordNode = new ConfigurableDictionaryNode

@@ -205,7 +205,9 @@ namespace SIL.FieldWorks.XWorks
 
 		private static bool IsClerkSortingByHeadword(RecordClerk clerk)
 		{
-			return (clerk.SortName == "Headword" || clerk.SortName == "Lexeme Form" || clerk.SortName == "Citation Form" || clerk.SortName == "Form" || clerk.SortName == "Reversal Form");
+			if (clerk.SortName == null) return false;
+			return clerk.SortName.StartsWith("Headword") || clerk.SortName.StartsWith("Lexeme Form") || clerk.SortName.StartsWith("Citation Form")
+				|| clerk.SortName.StartsWith("Form") || clerk.SortName.StartsWith("Reversal Form");
 		}
 
 		private static bool IsNormalRtl(Mediator mediator)
