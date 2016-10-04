@@ -18,6 +18,7 @@ using SIL.Keyboarding;
 using SIL.PlatformUtilities;
 using SIL.Reporting;
 using SIL.Utils;
+using SIL.Windows.Forms.Keyboarding;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -912,9 +913,19 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (chsFirst < ' ' || chsFirst == (char)VwSpecialChars.kscDelForward)
 				return;
 
+			if (Control == null)
+				return;
+
 			// We need to disable type-ahead when using a Keyman keyboard since it can
 			// mess with the keyboard functionality. (FWR-2205)
-			if (Control == null || KeyboardHelper.ActiveKeymanKeyboard != string.Empty)
+			bool activeKbIsKeyMan = false;
+			if (Keyboard.Controller != null && Keyboard.Controller.ActiveKeyboard != null)
+			{
+				activeKbIsKeyMan =
+					Keyboard.Controller.ActiveKeyboard.Format == KeyboardFormat.Keyman ||
+					Keyboard.Controller.ActiveKeyboard.Format == KeyboardFormat.CompiledKeyman;
+			}
+			if (activeKbIsKeyMan)
 				return;
 
 			// Collect any characters that are currently in the message queue

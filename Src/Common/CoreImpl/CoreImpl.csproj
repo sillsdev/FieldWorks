@@ -128,7 +128,6 @@
     <Compile Include="CmObjectFields.cs" />
     <Compile Include="CellarPropertyType.cs" />
     <Compile Include="CellarPropertyTypeFilter.cs" />
-    <Compile Include="KeyboardHelper.cs" />
     <Compile Include="CoreWritingSystemDefinition.cs" />
     <Compile Include="WritingSystemManager.cs" />
     <Compile Include="CoreGlobalWritingSystemRepository.cs" />
