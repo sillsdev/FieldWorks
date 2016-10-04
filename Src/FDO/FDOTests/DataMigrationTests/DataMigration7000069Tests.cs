@@ -229,6 +229,12 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			Assert.IsNotNull(objAUniAttr);
 			Assert.AreEqual("unspec. comp. form of", objAUniAttr.Value);
 
+			nameElt = lexEntryObjs.Element("ReverseAbbr");
+			Assert.IsNotNull(nameElt);
+			objAUniAttr = nameElt.Element("AUni");
+			Assert.IsNotNull(objAUniAttr);
+			Assert.AreEqual("unspec. comp. form", objAUniAttr.Value);
+
 			nameElt = lexEntryObjs.Element("Name");
 			Assert.IsNotNull(nameElt);
 			objAUniAttr = nameElt.Element("AUni");

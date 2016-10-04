@@ -526,6 +526,93 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				ownObjSurGuidAttr.Value = newGuid;
 			UpdateDTO(dtoRepos, dto, rtElem.ToString());
 		}
+
+		/// <summary>
+		/// Creates a CmPossibilityList with all the basic properties filled in for the xml (necessary for S/R) and adds it to the dto
+		/// </summary>
+		/// <param name="dtoRepo">the created list will be added to this IDomainObjectDTORepository</param>
+		/// <param name="listGuid">guid to use for this list</param>
+		/// <param name="ownerGuid">guid of the object that owns this list</param>
+		/// <param name="languageAbbrAndNames">Tuple of language id, abbreviation, and name for the list</param>
+		/// <param name="createTime">DateTime to use as the DateCreated and DateModified for this list</param>
+		/// <param name="wsSelector">e.g. WritingSystemServices.kwsVernAnals</param>
+		/// <param name="possibilityItems">array of guids for possibilityItems to add if any</param>
+		/// <param name="itemType">the class id of items which this list can contain, defaults to 7 (CmPossibility)</param>
+		public static void CreatePossibilityList(IDomainObjectDTORepository dtoRepo, string listGuid, string ownerGuid,
+			Tuple<string, string, string>[] languageAbbrAndNames, DateTime createTime, int wsSelector, string[] possibilityItems = null, int itemType = 7)
+		{
+			var sb = new StringBuilder();
+			sb.AppendFormat("<rt class=\"CmPossibilityList\" guid=\"{0}\" ownerguid=\"{1}\">", listGuid,
+							ownerGuid);
+			sb.Append("<Abbreviation>");
+			foreach (var abbr in languageAbbrAndNames)
+			{
+				sb.Append(string.Format("<AUni ws=\"{0}\">{1}</AUni>", abbr.Item1, abbr.Item2));
+			}
+			sb.Append("</Abbreviation>");
+			sb.AppendFormat("<DateCreated val=\"{0:yyyy-MM-dd HH:mm:ss.fff}\" />", createTime);
+			sb.AppendFormat("<DateModified val=\"{0:yyyy-MM-dd HH:mm:ss.fff}\" />", createTime);
+			sb.Append("<Depth val=\"1\" />");
+			sb.Append("<DisplayOption val=\"-1073741824\" />");
+			sb.Append("<IsClosed val=\"False\" />");
+			sb.Append("<IsSorted val=\"True\" />");
+			sb.Append("<IsVernacular val=\"False\" />");
+			sb.Append("<ListVersion val=\"00000000-0000-0000-0000-000000000000\" />");
+			sb.AppendFormat("<ItemClsid val=\"{0}\" />", itemType);
+			sb.Append("<Name>");
+			foreach (var abbr in languageAbbrAndNames)
+			{
+				sb.Append(string.Format("<AUni ws=\"{0}\">{1}</AUni>", abbr.Item1, abbr.Item3));
+			}
+			sb.Append("</Name>");
+			if (possibilityItems != null)
+			{
+				sb.Append("<Possibilities>");
+				foreach (var possibilityGuid in possibilityItems)
+				{
+					sb.Append(string.Format("<objsur guid=\"{0}\" t=\"o\" />", possibilityGuid));
+				}
+				sb.Append("</Possibilities>");
+			}
+			sb.Append("<PreventChoiceAboveLevel val=\"-1073741824\" />");
+			sb.Append("<PreventDuplicates val=\"True\" />");
+			sb.Append("<PreventNodeChoices val=\"True\" />");
+			sb.Append("<UseExtendedFields val=\"False\" />");
+			sb.Append(string.Format("<WsSelector val=\"{0}\" />", wsSelector));
+			sb.Append("</rt>");
+
+			var newList = new DomainObjectDTO(listGuid, "CmPossibilityList", sb.ToString());
+			dtoRepo.Add(newList);
+		}
+
+		/// <summary>
+		/// Creates a CmPossibility with all the basic properties filled in for the xml (necessary for S/R) and adds it to the dto
+		/// </summary>
+		public static DomainObjectDTO CreatePossibility(IDomainObjectDTORepository repoDto, string listGuid, string possibilityGuid, string name,
+			string abbr, DateTime createTime, string className = "CmPossibility")
+		{
+			var sb = new StringBuilder();
+			sb.AppendFormat("<rt class=\"{0}\" guid=\"{1}\" ownerguid=\"{2}\">", className, possibilityGuid, listGuid);
+			sb.Append("<Abbreviation>");
+			sb.AppendFormat("<AUni ws=\"en\">{0}</AUni>", abbr);
+			sb.Append("</Abbreviation>");
+			sb.Append(string.Format("<DateCreated val=\"{0:yyyy-MM-dd HH:mm:ss.fff}\" />", createTime));
+			sb.Append(string.Format("<DateModified val=\"{0:yyyy-MM-dd HH:mm:ss.fff}\" />", createTime));
+			sb.Append("<BackColor val=\"-1073741824\" />");
+			sb.Append("<ForeColor val=\"-1073741824\" />");
+			sb.Append("<IsProtected val=\"True\" />");
+			sb.Append("<Hidden val=\"False\" />");
+			sb.Append("<Name>");
+			sb.AppendFormat("<AUni ws=\"en\">{0}</AUni>", name);
+			sb.Append("</Name>");
+			sb.Append("<SortSpec val=\"-1073741824\" />");
+			sb.Append("<UnderColor val=\"-1073741824\" />");
+			sb.Append("<UnderStyle val=\"-1073741824\" />");
+			sb.Append("</rt>");
+			var dtoCmPossibility = new DomainObjectDTO(possibilityGuid, className, sb.ToString());
+			repoDto.Add(dtoCmPossibility);
+			return dtoCmPossibility;
+		}
 	}
 
 	/// <summary>
