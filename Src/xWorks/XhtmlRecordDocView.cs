@@ -103,6 +103,9 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			base.ShowRecord();
 			var cmo = Clerk.CurrentObject;
+			// Don't steal focus
+			Enabled = false;
+			m_mainView.DocumentCompleted += EnableRecordDocView;
 			if (cmo != null && cmo.Hvo > 0)
 			{
 				var configurationFile = DictionaryConfigurationListener.GetCurrentConfiguration(m_mediator);
@@ -121,6 +124,12 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_mainView.DocumentText = "<html><body></body></html>";
 			}
+		}
+
+		private void EnableRecordDocView(object sender, WebBrowserDocumentCompletedEventArgs e)
+		{
+			Enabled = true;
+			m_mainView.DocumentCompleted -= EnableRecordDocView;
 		}
 
 		/// <summary>
