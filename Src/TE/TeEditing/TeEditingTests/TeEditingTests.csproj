@@ -146,7 +146,7 @@
     </Reference>
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
-      <HintPath>..\..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="PrintLayout, Version=6.1.1.27582, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

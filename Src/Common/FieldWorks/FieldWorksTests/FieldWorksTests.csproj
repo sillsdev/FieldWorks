@@ -117,7 +117,7 @@
     <Reference Include="System.Core" />
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
-      <HintPath>..\..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="TestUtils, Version=6.1.1.27323, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

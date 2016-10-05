@@ -117,7 +117,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="nunit.framework">
-      <HintPath>..\..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="TeEditorialChecks">
       <HintPath>..\..\..\..\Output\Debug\TeEditorialChecks.dll</HintPath>
