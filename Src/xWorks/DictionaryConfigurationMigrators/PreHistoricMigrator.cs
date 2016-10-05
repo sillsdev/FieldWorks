@@ -189,9 +189,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 			var newDictionaryConfigLoc = Path.Combine(FwDirectoryFinder.DefaultConfigurations, DCL.DictionaryConfigurationDirectoryName);
 			var newReversalConfigLoc = Path.Combine(FwDirectoryFinder.DefaultConfigurations, DCL.ReversalIndexConfigurationDirectoryName);
-			const string defaultLexemeName = "Lexeme" + extension;
-			const string defaultRootName = "Root" + extension;
-			const string defaultReversalName = "AllReversalIndexes" + extension;
+			const string defaultLexemeName = DCM.LexemeFileName + extension;
+			const string defaultRootName = DCM.RootFileName + extension;
+			const string defaultReversalName = DCM.ReversalFileName + extension;
 			switch (layout)
 			{
 				case "publishStem":
@@ -275,7 +275,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 			// Stem-based treats Complex Forms as Main Entries. Previously, they had all been configured by the same Main Entries node,
 			// but now, they are configured in a separate "Main Entries (Complex Forms)" node.
-			if (Path.GetFileNameWithoutExtension(alphaDefaultModel.FilePath) == "Stem")
+			if (Path.GetFileNameWithoutExtension(alphaDefaultModel.FilePath) == DCM.LexemeFileName)
 			{
 				convertedModel.Parts.Insert(0, convertedModel.Parts[0].DeepCloneUnderSameParent()); // Split Main into Main and Main (Complex)
 				CopyDefaultsIntoConfigNode(convertedModel, convertedModel.Parts[0], alphaDefaultModel.Parts[0]); // Main Entry

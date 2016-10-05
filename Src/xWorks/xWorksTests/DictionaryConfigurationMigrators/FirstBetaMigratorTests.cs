@@ -268,7 +268,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var rootModel = new DictionaryConfigurationModel { IsRootBased = true };
 			var rootDefault = m_migrator.LoadBetaDefaultForAlphaConfig(rootModel); // SUT
 			Assert.IsTrue(rootDefault.IsRootBased);
-			Assert.That(rootDefault.Label, Is.StringContaining("Root"));
+			Assert.That(rootDefault.Label, Is.StringContaining(DictionaryConfigurationMigrator.RootFileName));
 
 			var subEntry = new ConfigurableDictionaryNode
 			{

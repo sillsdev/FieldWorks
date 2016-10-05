@@ -61,15 +61,15 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			}
 			else if (config.IsRootBased)
 			{
-				configPath = Path.Combine(dictionaryFolder, "Root" + DictionaryConfigurationModel.FileExtension);
+				configPath = Path.Combine(dictionaryFolder, DCM.RootFileName + DictionaryConfigurationModel.FileExtension);
 			}
 			else if(ConfigHasSubentriesNode(config)) // Hybrid configs have subentries
 			{
-				configPath = Path.Combine(dictionaryFolder, "Hybrid" + DictionaryConfigurationModel.FileExtension);
+				configPath = Path.Combine(dictionaryFolder, DCM.HybridFileName + DictionaryConfigurationModel.FileExtension);
 			}
 			else // Must be Lexeme
 			{
-				configPath = Path.Combine(dictionaryFolder, "Lexeme" + DictionaryConfigurationModel.FileExtension);
+				configPath = Path.Combine(dictionaryFolder, DCM.LexemeFileName + DictionaryConfigurationModel.FileExtension);
 			}
 			return new DictionaryConfigurationModel(configPath, Cache);
 		}

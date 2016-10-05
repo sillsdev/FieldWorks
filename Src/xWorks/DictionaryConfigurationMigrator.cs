@@ -25,6 +25,11 @@ namespace SIL.FieldWorks.XWorks
 	{
 		public const int VersionCurrent = 12;
 		internal const string NodePathSeparator = " > ";
+		public const string RootFileName = "Root";
+		public const string HybridFileName = "Hybrid";
+		public const string LexemeFileName = "Lexeme";
+		public const string ReversalFileName = "AllReversalIndexes";
+
 		private readonly Inventory m_layoutInventory;
 		private readonly Inventory m_partInventory;
 		private readonly Mediator m_mediator;

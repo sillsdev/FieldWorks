@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2016 SIL International
+// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -5696,7 +5696,7 @@ namespace SIL.FieldWorks.XWorks
 			const string refTypeXpath = "//span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='complexformtypes']/span[@class='complexformtype']";
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(refTypeXpath);
 			const string headwordXpath = "//span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='headword']";
-			AssertThatXmlIn.String(result).HasAtLeastOneMatchForXpath(headwordXpath);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(headwordXpath, 1);
 		}
 
 		[Test]
@@ -5738,7 +5738,7 @@ namespace SIL.FieldWorks.XWorks
 			const string refTypeXpath = "//span[@class='subentries']/span[@class='subentry']/span[@class='complexformtypes']/span[@class='complexformtype']";
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(refTypeXpath);
 			const string headwordXpath = "//span[@class='subentries']/span[@class='subentry']/span[@class='headword']";
-			AssertThatXmlIn.String(result).HasAtLeastOneMatchForXpath(headwordXpath);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(headwordXpath, 1);
 		}
 
 		[Test]
@@ -5833,7 +5833,7 @@ namespace SIL.FieldWorks.XWorks
 			const string refTypeXpath = "//span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@class='variantentrytypesrs']/span[@class='variantentrytypesr']";
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(refTypeXpath);
 			const string headwordXpath = "//span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@class='headword']";
-			AssertThatXmlIn.String(result).HasAtLeastOneMatchForXpath(headwordXpath);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(headwordXpath, 1);
 		}
 
 		[Test]
@@ -5922,7 +5922,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
 			const string headwordXpath = "//span[@class='reffingsubs sharedsubentries']/span[@class='reffingsub sharedsubentry']/span[@class='headword']";
-			AssertThatXmlIn.String(result).HasAtLeastOneMatchForXpath(headwordXpath);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(headwordXpath, 1);
 		}
 
 		[Test]
@@ -6956,9 +6956,7 @@ namespace SIL.FieldWorks.XWorks
 			//Generate 21 entries for the test
 			for (var i = 0; i < 21; ++i)
 			{
-				var entry = CreateInterestingLexEntry(Cache);
-				AddHeadwordToEntry(entry, "a" + i, m_wsFr, Cache);
-				hvos[i] = entry.Hvo;
+				hvos[i] = CreateInterestingLexEntry(Cache, "a" + i).Hvo;
 			}
 			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
 			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
@@ -6991,8 +6989,8 @@ namespace SIL.FieldWorks.XWorks
 				var xhtml = File.ReadAllText(xhtmlPath);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(pagesDivXPath, 2);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(pageButtonXPath, 6); // 3 pages on top and bottom
-				AssertThatXmlIn.String(xhtml).HasAtLeastOneMatchForXpath(firstPageButtonXPath);
-				AssertThatXmlIn.String(xhtml).HasAtLeastOneMatchForXpath(lastPageButtonXPath);
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(firstPageButtonXPath, 2);
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(lastPageButtonXPath, 2);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(entryXPath, 8); // 8 entries per page
 			}
 			finally
