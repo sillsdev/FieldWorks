@@ -52,7 +52,7 @@
 			<usage wsId="en">Extended (paragraph size or larger) quotation</usage>
 			<help category="Paragraph_Elements"/>
 			<font/>
-			<paragraph basedOn="Normal" next="Block_Quote" indentLeft="45 pt" indentRight="36 pt"/>
+			<paragraph basedOn="Normal" next="Block_Quote" indentLeft="45 pt" indentRight="36 pt" firstLine="0pt"/>
 		</tag>
 		<tag id="Disabled_Text" guid="1B25E2A0-5F78-40D1-943A-2B14CACCF860" userlevel="1" context="general" type="character">
 			<usage wsId="en">Material marked as being disabled (no longer active)</usage>
