@@ -6475,7 +6475,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var firstComplexForm = CreateInterestingLexEntry(Cache, "entry1", "myComplexForm");
 			CreateComplexForm(Cache, entryEntry, firstComplexForm, false); //Compound
-			CreateComplexForm(Cache, entryEntry, firstComplexForm, false, 3); //Idiom
+			CreateComplexForm(Cache, entryEntry, firstComplexForm, false, 4); //Idiom
 
 			var secondComplexForm = CreateInterestingLexEntry(Cache, "entry2", "myComplexForm");
 			CreateComplexForm(Cache, entryEntry, secondComplexForm, false); //Compound
@@ -7902,7 +7902,7 @@ namespace SIL.FieldWorks.XWorks
 			return new TempGuidOn<ILexEntryRef>(CreateComplexForm(cache, main, complexForm, subentry), guid);
 		}
 
-		internal static ILexEntryRef CreateComplexForm(FdoCache fdoCache, ICmObject main, ILexEntry complexForm, bool subentry, byte complexFormTypeIndex = 0)
+		internal static ILexEntryRef CreateComplexForm(FdoCache fdoCache, ICmObject main, ILexEntry complexForm, bool subentry, byte complexFormTypeIndex = 1)
 		{
 			var complexEntryRef = fdoCache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
 			complexForm.EntryRefsOS.Add(complexEntryRef);

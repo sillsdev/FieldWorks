@@ -1677,15 +1677,15 @@ namespace SIL.FieldWorks.XWorks
 			{
 				DictionaryConfigurationController.MergeTypesIntoDictionaryModel(model, Cache);
 				var opts1 = ((DictionaryNodeListOptions)variantsNode.DictionaryNodeOptions).Options;
-				// We have options for the standard six variant types (including the last three shown above, plus one for the
+				// We have options for the standard seven variant types (including the last three shown above, plus one for the
 				// new type we added, plus one for the "No Variant Type" pseudo-type for a total of eight.
-				Assert.AreEqual(8, opts1.Count, "Properly merged variant types to options list in major entry child node");
-				Assert.AreEqual(newType.Guid.ToString(), opts1[6].Id, "New type appears near end of options list in major entry child node");
-				Assert.AreEqual("b0000000-c40e-433e-80b5-31da08771344", opts1[7].Id, "'No Variant Type' type appears at end of options list in major entry child node");
+				Assert.AreEqual(9, opts1.Count, "Properly merged variant types to options list in major entry child node");
+				Assert.AreEqual(newType.Guid.ToString(), opts1[7].Id, "New type appears near end of options list in major entry child node");
+				Assert.AreEqual("b0000000-c40e-433e-80b5-31da08771344", opts1[8].Id, "'No Variant Type' type appears at end of options list in major entry child node");
 				var opts2 = ((DictionaryNodeListOptions)minorEntryVariantNode.DictionaryNodeOptions).Options;
-				Assert.AreEqual(8, opts2.Count, "Properly merged variant types to options list in minor entry top node");
-				Assert.AreEqual(newType.Guid.ToString(), opts2[6].Id, "New type appears near end of options list in minor entry top node");
-				Assert.AreEqual("b0000000-c40e-433e-80b5-31da08771344", opts2[7].Id, "'No Variant Type' type appears near end of options list in minor entry top node");
+				Assert.AreEqual(9, opts2.Count, "Properly merged variant types to options list in minor entry top node");
+				Assert.AreEqual(newType.Guid.ToString(), opts2[7].Id, "New type appears near end of options list in minor entry top node");
+				Assert.AreEqual("b0000000-c40e-433e-80b5-31da08771344", opts2[8].Id, "'No Variant Type' type appears near end of options list in minor entry top node");
 			}
 			finally
 			{

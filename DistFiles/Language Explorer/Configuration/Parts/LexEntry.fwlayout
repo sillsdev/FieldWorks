@@ -3,6 +3,7 @@
 <LayoutInventory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation='ViewsLayout.xsd'>
 	<layout class="LexEntry" type="detail" name="Normal">
+		<part ref="ChangeHandler"/>
 		<part label="Lexeme Form" ref="LexemeForm"/>
 		<part label="Citation Form" ref="CitationFormAllV"/>
 		<part ref="DialectLabelsEntry" visibility="ifdata"/>

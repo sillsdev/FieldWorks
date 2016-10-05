@@ -95,6 +95,7 @@
     </Compile>
     <Compile Include="FlexBridgeListenerTests.cs" />
     <Compile Include="GoldEticGuidFixerTests.cs" />
+    <Compile Include="LexEntryChangeHandlerTests.cs" />
     <Compile Include="LexReferenceTreeRootLauncherTests.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -118,7 +119,7 @@
       <Name>Framework</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\FwCoreDlgs\FwCoreDlgs.csproj">
-      <Project>{17090FC0-6BDA-409A-A99A-5AE7F35647ED}</Project>
+      <Project>{17090fc0-6bda-409a-a99a-5ae7f35647ed}</Project>
       <Name>FwCoreDlgs</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\xWorks\xWorks.csproj">

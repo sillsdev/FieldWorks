@@ -199,8 +199,8 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(DictionaryNodeListOptions.ListIds.Variant, listOptions.ListId);
 			// The first guid (b0000000-c40e-433e-80b5-31da08771344) is a special marker for
 			// "No Variant Type".  The second guid does not exist, so it gets removed from the list.
-			Assert.AreEqual(7, listOptions.Options.Count);
-			Assert.AreEqual(7, listOptions.Options.Count(option => option.IsEnabled));
+			Assert.AreEqual(8, listOptions.Options.Count);
+			Assert.AreEqual(8, listOptions.Options.Count(option => option.IsEnabled));
 			Assert.AreEqual("b0000000-c40e-433e-80b5-31da08771344", listOptions.Options[0].Id);
 		}
 
@@ -230,13 +230,13 @@ namespace SIL.FieldWorks.XWorks
 			var lpOptions = (DictionaryNodeListAndParaOptions)testNodeOptions;
 			Assert.AreEqual(DictionaryNodeListOptions.ListIds.Complex, lpOptions.ListId);
 			Assert.IsTrue(lpOptions.DisplayEachInAParagraph);
-			// There are six complex form types by default in the language project.  (The second and third
+			// There are seven complex form types by default in the language project.  (The second and third
 			// guids above are used by two of those default types.)  Ones that are missing in the configuration
 			// data are added in, ones that the configuration has but which don't exist in the language project
 			// are removed.  Note that the first one above (a0000000-dd15-4a03-9032-b40faaa9a754) is a special
 			// value used to indicate "No Complex Form Type".  The fourth value does not exist.
-			Assert.AreEqual(7, lpOptions.Options.Count);
-			Assert.AreEqual(7, lpOptions.Options.Count(option => option.IsEnabled));
+			Assert.AreEqual(8, lpOptions.Options.Count);
+			Assert.AreEqual(8, lpOptions.Options.Count(option => option.IsEnabled));
 			Assert.AreEqual("a0000000-dd15-4a03-9032-b40faaa9a754", lpOptions.Options[0].Id);
 		}
 
