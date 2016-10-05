@@ -594,13 +594,6 @@ STDMETHODIMP ActionHandler::Undo(UndoResult * pures)
 
 	try // to ensure in progress gets cleared.
 	{
-		int handle;
-		// Start a 'transaction' if possible to group together all the stuff we're going to Undo.
-		if (m_qundg)
-		{
-			m_qundg->BeginGroup(&handle);
-		}
-
 		// Loop through all of the actions that are about to be undone and see if any of them
 		// require a refresh.
 		Vector<long> vhvoCreatedObjects;
@@ -637,8 +630,6 @@ STDMETHODIMP ActionHandler::Undo(UndoResult * pures)
 		// dlh testing
 		if (*pures == kuresError || * pures == kuresFailed)
 		{
-			if (m_qundg)
-				m_qundg->CancelGroup(handle);
 			EmptyStack();
 		}
 		else // normal success case
@@ -649,8 +640,6 @@ STDMETHODIMP ActionHandler::Undo(UndoResult * pures)
 				m_iuactCurr = m_viSeqStart[m_iCurrSeq] - 1;
 				m_iCurrSeq = m_iCurrSeq - 1;
 			}
-			if (m_qundg)
-				m_qundg->EndGroup(handle);
 		}
 
 		// Delete any marks that now point after current undo action
@@ -755,13 +744,6 @@ STDMETHODIMP ActionHandler::Redo(UndoResult * pures)
 
 	try // to ensure in progress gets cleared.
 	{
-		int handle;
-		// Start a 'transaction' if possible to group together all the stuff we're going to Undo.
-		if (m_qundg)
-		{
-			m_qundg->BeginGroup(&handle);
-		}
-
 		// Determine the last action to be redone; The last action to redo is the action
 		// before the next redo sequence. Or the last existing action if there is not a
 		// redo sequence after the sequence we are about to redo.
@@ -804,8 +786,6 @@ STDMETHODIMP ActionHandler::Redo(UndoResult * pures)
 		// dlh testing
 		if (*pures == kuresError || * pures == kuresFailed)
 		{
-			if (m_qundg)
-				m_qundg->CancelGroup(handle);
 			EmptyStack();
 		}
 		else // normal success case
@@ -817,8 +797,6 @@ STDMETHODIMP ActionHandler::Redo(UndoResult * pures)
 			{
 				m_iuactCurr = m_viSeqStart[m_iCurrSeq + 1] - 1;
 			}
-			if (m_qundg)
-				m_qundg->EndGroup(handle);
 		}
 
 
@@ -1436,34 +1414,6 @@ STDMETHODIMP ActionHandler::get_RedoableSequenceCount(int * pcAct)
 	*pcAct = m_viSeqStart.Size() - m_iCurrSeq - 1;
 	END_COM_METHOD(g_factActh, IID_IActionHandler);
 }
-
-/*----------------------------------------------------------------------------------------------
-	This will return the current UndoGrouper for the AH - if one exists, otherwise returns null.
-----------------------------------------------------------------------------------------------*/
-STDMETHODIMP ActionHandler::get_UndoGrouper(IUndoGrouper ** ppundg)
-{
-	BEGIN_COM_METHOD;
-	ChkComOutPtr(ppundg);
-
-	*ppundg = m_qundg;
-	AddRefObj(*ppundg);
-
-	END_COM_METHOD(g_factActh, IID_IActionHandler);
-}
-
-/*----------------------------------------------------------------------------------------------
-// This will set the UndoGrouper for this AH.
-----------------------------------------------------------------------------------------------*/
-STDMETHODIMP ActionHandler::put_UndoGrouper(IUndoGrouper * pundg)
-{
-	BEGIN_COM_METHOD;
-	ChkComArgPtrN(pundg);
-
-	m_qundg = pundg;
-
-	END_COM_METHOD(g_factActh, IID_IActionHandler);
-}
-
 
 
 // Explicit instantiation

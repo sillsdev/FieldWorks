@@ -56,7 +56,6 @@ OBJ_KERNELTESTSUITE=\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\TsStrFactory.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\TsPropsFactory.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\TextServ.obj\
-	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\TsMultiStr.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\usepch\TextProps1.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\ActionHandler.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\UniscribeEngine.obj\
@@ -65,10 +64,8 @@ OBJ_KERNELTESTSUITE=\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\RomRenderSegment.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\GraphiteEngine.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\GraphiteSegment.obj\
-	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\LgSimpleEngines.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\LgIcuCharPropEngine.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\LgUnicodeCollater.obj\
-	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\LgKeymanHandler.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\FwStyledText.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\WriteXml.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\FwXml.obj\
@@ -104,7 +101,6 @@ $(FWKERNELTEST_SRC)\Collection.cpp: $(FWKERNELTEST_SRC)\testFwKernel.h\
  $(FWKERNELTEST_SRC)\TestTsTextProps.h\
  $(FWKERNELTEST_SRC)\MockLgWritingSystemFactory.h\
  $(FWKERNELTEST_SRC)\MockLgWritingSystem.h\
- $(FWKERNELTEST_SRC)\TestRegexMatcher.h\
  $(FWKERNELTEST_SRC)\TestLgCollatingEngine.h\
  $(FWKERNELTEST_SRC)\TestLgIcuCharPropEngine.h\
  $(FWKERNELTEST_SRC)\TestUniscribeEngine.h\

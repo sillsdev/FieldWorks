@@ -1060,27 +1060,6 @@ namespace SIL.FieldWorks.FDO.CoreTests
 			Assert.IsFalse(m_actionHandler.get_TasksSinceMark(false));
 		}
 
-		/// <summary>
-		/// Make sure UndoGrouper 'getter' is not yet supported at all.
-		/// </summary>
-		[Test]
-		[ExpectedException(typeof(NotSupportedException))]
-		public void get_UndoGrouperTest()
-		{
-			var grouper = m_actionHandler.UndoGrouper;
-			Assert.IsNull(grouper, "Can't get here.");
-		}
-
-		/// <summary>
-		/// Make sure UndoGrouper 'setter' is not yet supported at all.
-		/// </summary>
-		[Test]
-		[ExpectedException(typeof(NotSupportedException))]
-		public void set_UndoGrouperTest()
-		{
-			m_actionHandler.UndoGrouper = null;
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Test TopMarkHandle

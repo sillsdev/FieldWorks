@@ -209,18 +209,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			}
 		}
 
-		public IUndoGrouper UndoGrouper
-		{
-			get
-			{
-				throw new NotImplementedException();
-			}
-			set
-			{
-				throw new NotImplementedException();
-			}
-		}
-
 		public bool IsUndoOrRedoInProgress
 		{
 			get

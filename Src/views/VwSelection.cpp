@@ -13174,10 +13174,6 @@ STDMETHODIMP VwTextSelection::GetHardAndSoftParaProps(int cttpMax, ITsTextProps 
 		CheckHr(qtpbHard->SetStrPropValue(ktptNamedStyle, sbstrEmpty));
 		CheckHr(qtpbHard->GetTextProps(prgpttpHard + ittp));
 
-		byte rgb[1000];  // TODO: delete
-		int cb;
-		prgpttpHard[ittp]->SerializeRgb(rgb, 1000, &cb);
-
 		// Apply the named style to the parent, which gives the soft formatting.
 		ITsPropsBldrPtr qtpbStyle;
 		qtpbStyle.CreateInstance(CLSID_TsPropsBldr);

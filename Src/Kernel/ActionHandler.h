@@ -64,9 +64,6 @@ public:
 	STDMETHOD(get_UndoableSequenceCount)(int * pcAct);
 	STDMETHOD(get_RedoableSequenceCount)(int * pcAct);
 
-	STDMETHOD(get_UndoGrouper)(IUndoGrouper ** ppundg);
-	STDMETHOD(put_UndoGrouper)(IUndoGrouper * pundg);
-
 	STDMETHOD(get_IsUndoOrRedoInProgress)(ComBool * pfInProgress);
 	STDMETHOD(get_SuppressSelections)(ComBool * pfSupressSel);
 
@@ -127,9 +124,6 @@ protected:
 	// For marking the stack with a range of temporary undo-tasks that are private to a
 	// data-entry field editor (AfDeFieldEditor).
 	Vector<int> m_viMarks;
-
-	// keep a ref to the undo interface if given
-	IUndoGrouperPtr m_qundg;
 
 	// True for the duration of an Undo/Redo operation. Used to suppress
 	// recording any new actions.

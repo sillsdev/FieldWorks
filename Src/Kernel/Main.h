@@ -126,7 +126,6 @@ struct OverriddenCharProps
 #include "TsStrFactory.h"
 #include "TsPropsFactory.h"
 #include "TextServ.h"
-#include "TsMultiStr.h"
 #include "ActionHandler.h"
 // Engines
 #include "LgIcuCharPropEngine.h"
@@ -139,8 +138,6 @@ class GraphiteEngine;
 DEFINE_COM_PTR(GraphiteEngine);
 #include "RomRenderSegment.h"
 #include "RomRenderEngine.h"
-#include "LgSimpleEngines.h"
-#include "LgNumericEngine.h"
 #if !WIN32
 #include "UniscribeLinux.h"
 #endif
@@ -148,14 +145,12 @@ DEFINE_COM_PTR(GraphiteEngine);
 #include "UniscribeEngine.h"
 #include "GraphiteSegment.h"
 #include "GraphiteEngine.h"
-#include "RegexMatcherWrapper.h"
 
 // Other tools
 #include "FwStyledText.h"
 #include "StringToNumHelpers.h"
 #include "WriteXml.h"		// From AppCore.
 #include "xmlparse.h"
-#include "LgKeymanHandler.h"
 #include "LgIcuWrappers.h"
 
 #if WIN32

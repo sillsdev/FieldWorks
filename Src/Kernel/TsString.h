@@ -536,11 +536,6 @@ public:
 	STDMETHODIMP GetBldr(ITsStrBldr ** pptsb);
 	STDMETHODIMP GetIncBldr(ITsIncStrBldr ** pptisb);
 
-	// Serialization.
-	STDMETHODIMP GetFactoryClsid(CLSID * pclsid);
-	STDMETHODIMP SerializeFmt(IStream * pstrm);
-	STDMETHODIMP SerializeFmtRgb(byte * prgb, int cbMax, int * pcb);
-
 	// Equality
 	STDMETHODIMP Equals(ITsString * ptss, ComBool * pfEqual);
 
@@ -570,7 +565,6 @@ public:
 	void NoteNormalized(FwNormalizationMode nm);
 
 protected:
-	void SerializeFmtCore(DataWriter * pdwrt);
 	bool IsKnownNormalized(FwNormalizationMode nm);
 	byte GetFlagByte()
 	{
@@ -664,11 +658,6 @@ public:
 	// Create an ITsString from the current state.
 	STDMETHOD(GetString)(ITsString **pptss);
 
-	// Serialization.
-	STDMETHOD(GetBldrClsid)(CLSID * pclsid);
-	STDMETHOD(SerializeFmt)(IStream * pstrm);
-	STDMETHOD(SerializeFmtRgb)(BYTE * prgb, int cbMax, int * pcbNeeded);
-
 protected:
 	TsStrBldr()
 	{
@@ -682,7 +671,6 @@ protected:
 	void EditIntProp(ITsTextProps * pttp, int ttpt, int nVar, int nVal, ITsTextProps ** ppttp);
 	void EditStrProp(ITsTextProps * pttp, int ttpt, BSTR bstrVal, ITsTextProps ** ppttp);
 
-	void SerializeFmtCore(DataWriter * pdwrt);
 #ifdef DEBUG
 	void DebugDumpRunInfo(bool fShowEncodingStack);
 #endif // DEBUG
@@ -735,11 +723,6 @@ public:
 	// Get an ITsString from the current state.
 	STDMETHOD(GetString)(ITsString ** pptss);
 
-	// Serialization.
-	STDMETHOD(GetIncBldrClsid)(CLSID * pclsid);
-	STDMETHOD(SerializeFmt)(IStream * pstrm);
-	STDMETHOD(SerializeFmtRgb)(BYTE * prgb, int cbMax, int * pcbNeeded);
-
 	STDMETHOD(ClearProps)();
 
 protected:
@@ -754,7 +737,6 @@ protected:
 	~TsIncStrBldr(void);
 
 	void Init(const OLECHAR * prgch, int cch, const TxtRun * prgrun, int crun);
-	void SerializeFmtCore(DataWriter * pdwrt);
 
 #ifdef DEBUG
 	// The following four methods are used to support AssertValid()

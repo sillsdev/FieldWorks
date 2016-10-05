@@ -1000,17 +1000,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		}
 
 		/// <summary>
-		/// This will return the current UndoGrouper for the AH if one exists, otherwise returns null.
-		/// This will set the UndoGrouper for this AH.
-		///</summary>
-		/// <returns>A IUndoGrouper </returns>
-		public IUndoGrouper UndoGrouper
-		{
-			get { throw new NotSupportedException("'UndoGrouper getter' is not supported."); }
-			set { throw new NotSupportedException("'UndoGrouper setter' is not supported."); }
-		}
-
-		/// <summary>
 		/// Tells whether an Undo or Redo operation is in progress. During such operations,
 		/// actions should not be added to the sequence, and some other side effect tasks
 		/// may be suppressed. For example, we don't update modify times when a data field

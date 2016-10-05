@@ -683,7 +683,7 @@ typedef struct TsRunInfo
 	created from instances of TsStrFactory, TsStrBldr and TsIncStrBldr.
 	Hungarian: tss
 ----------------------------------------------------------------------------------------------*/
-DeclareInterface(TsString, Unknown, 295B2E11-B149-49C5-9BE9-9F46185609AA)
+DeclareInterface(TsString, Unknown, 3A489F46-368A-49E7-A308-39EE5D45F92F)
 {
 	// Fetch the raw text.
 	[propget, id(0)] HRESULT Text(
@@ -786,16 +786,6 @@ DeclareInterface(TsString, Unknown, 295B2E11-B149-49C5-9BE9-9F46185609AA)
 	// and the string. Data is copied to the builder.
 	HRESULT GetIncBldr(
 		[out, retval] ITsIncStrBldr ** pptisb);
-
-	// Serialization.
-	HRESULT GetFactoryClsid(
-		[out, retval] CLSID * pclsid);
-	HRESULT SerializeFmt(
-		[in] IStream * pstrm);
-	HRESULT SerializeFmtRgb(
-		[out, size_is(cbMax)] BYTE * prgb,
-		[in] int cbMax,
-		[out, retval] int * pcbNeeded);
 
 	// Equality
 	HRESULT Equals(
@@ -905,7 +895,7 @@ DeclareInterface(TsString, Unknown, 295B2E11-B149-49C5-9BE9-9F46185609AA)
 	obtaining a builder object with a call to GetBldr.
 	Hungarian: ttp
 ----------------------------------------------------------------------------------------------*/
-DeclareInterface(TsTextProps, Unknown, 4FA0B99A-5A56-41A4-BE8B-B89BC62251A5)
+DeclareInterface(TsTextProps, Unknown, B16F0485-8322-408B-B73E-F0E978664869)
 {
 
 	// Fetch the number of integer properties.
@@ -946,27 +936,6 @@ DeclareInterface(TsTextProps, Unknown, 4FA0B99A-5A56-41A4-BE8B-B89BC62251A5)
 	HRESULT GetBldr(
 		[out, retval] ITsPropsBldr ** pptpb);
 
-	// Serialization.
-	HRESULT GetFactoryClsid(
-		[out, retval] CLSID * pclsid);
-	HRESULT Serialize(
-		[in] IStream * pstrm);
-	// If cbMax is not large enough, S_FALSE is returned and *pcb is set to the required size.
-	HRESULT SerializeRgb(
-		[out, size_is(cbMax)] BYTE * prgb,
-		[in] int cbMax,
-		[out, retval] int * pcb);
-	// Serialize a set of text property objects as would be needed for a string object in
-	// the database. It is assumed that for any runs for which we want to use duplicated property
-	// information, the ITsTextProps themselves are redundant in rgpttp.
-	HRESULT SerializeRgPropsRgb(
-		[in] int cpttp,
-		[in] ITsTextProps ** rgpttp,
-		[in] int * rgich,
-		[out, size_is(cbMax)] BYTE * prgb,
-		[in] int cbMax,
-		[out, retval] int * pcb);
-
 	// Write the text properties to the stream in standard FieldWorks XML format.  Indent the
 	// number of spaces given by cchIndent, which may be zero.
 	// Note that this is for standalone text property objects, not for those embedded inside
@@ -989,28 +958,8 @@ DeclareInterface(TsTextProps, Unknown, 4FA0B99A-5A56-41A4-BE8B-B89BC62251A5)
 	provided by the factory.
 	Hungarian: tsf
 ----------------------------------------------------------------------------------------------*/
-DeclareInterface(TsStrFactory, Unknown, C10EA417-8317-4048-AC90-103F8BDFB325)
+DeclareInterface(TsStrFactory, Unknown, 721A8D21-9900-4CB0-B4C0-9380A23140E3)
 {
-	HRESULT DeserializeStringStreams(
-		[in] IStream * pstrmTxt,
-		[in] IStream * pstrmFmt,
-		[out, retval] ITsString ** pptss);
-	HRESULT DeserializeString(
-		[in] BSTR bstrTxt,
-		[in] IStream * pstrmFmt,
-		[out, retval] ITsString ** pptss);
-	HRESULT DeserializeStringRgb(
-		[in] BSTR bstrTxt,
-		[in, size_is(cbFmt)] const BYTE * prgbFmt,
-		[in] int cbFmt,
-		[out, retval] ITsString ** pptss);
-	HRESULT DeserializeStringRgch(
-		[in, size_is(*pcchTxt)] const OLECHAR * prgchTxt,
-		[in, out] int * pcchTxt,
-		[in, size_is(*pcbFmt)] const BYTE * prgbFmt,
-		[in, out] int * pcbFmt,
-		[out, retval] ITsString ** pptss);
-
 	// Creates a simple ITsString from the BSTR with writing system. The default old writing
 	// system is assumed for this string. If ws is zero, the ws/ows stack is empty. If the string
 	// length is zero, properties are not set.
@@ -1044,30 +993,6 @@ DeclareInterface(TsStrFactory, Unknown, C10EA417-8317-4048-AC90-103F8BDFB325)
 	HRESULT GetIncBldr(
 		[out, retval] ITsIncStrBldr ** pptisb);
 
-	// Run information
-	// Fetch the number of runs in the given format prgch.
-	[propget] HRESULT RunCount(
-		[in, size_is(cbFmt)] const BYTE * prgbFmt,
-		[in] int cbFmt,
-		[out, retval] int * pcrun);
-
-	// Fetch the run information at a given character position relative to the format prgch.
-	// ich must be a valid character postion.
-	HRESULT FetchRunInfoAt(
-		[in, size_is(cbFmt)] const BYTE * prgbFmt,
-		[in] int cbFmt,
-		[in] int ich,
-		[out] TsRunInfo * ptri,
-		[out, retval] ITsTextProps ** ppttp);
-	// Fetch the run information for a particular run in for format prgch. irun must be a valid
-	// run index.
-	HRESULT FetchRunInfo(
-		[in, size_is(cbFmt)] const BYTE * prgbFmt,
-		[in] int cbFmt,
-		[in] int irun,
-		[out] TsRunInfo * ptri,
-		[out, retval] ITsTextProps ** ppttp);
-
 	// Return an empty string in the specified writing system.
 	// These are typically cached so a new object does not have to be created every time.
 	HRESULT EmptyString(
@@ -1083,26 +1008,8 @@ DeclareInterface(TsStrFactory, Unknown, C10EA417-8317-4048-AC90-103F8BDFB325)
 	property builder.
 	Hungarian: tpf
 ----------------------------------------------------------------------------------------------*/
-DeclareInterface(TsPropsFactory, Unknown, 8DCE56A6-CFF1-4402-95FE-2B574912B54E)
+DeclareInterface(TsPropsFactory, Unknown, FF3D947F-1D35-487B-A769-5B6C68722054)
 {
-	HRESULT DeserializeProps(
-		[in] IStream * pstrm,
-		[out, retval] ITsTextProps ** ppttp);
-	HRESULT DeserializePropsRgb(
-		[in, size_is(*pcb)] const BYTE * prgb,
-		[in, out] int * pcb,
-		[out, retval] ITsTextProps ** ppttp);
-	// Create a set of TsTextProps from the string. DOES NOT create a separate object for
-	// runs that have duplicate properties; the return array will point to duplicate copies
-	// of the TsTextProps.
-	HRESULT DeserializeRgPropsRgb(
-		[in] int cpttpMax,
-		[in, size_is(*pcb)] const BYTE * prgb,
-		[in, out] int * pcb,
-		[out] int * pcpttpRet,
-		[out, size_is(cpttpMax)] ITsTextProps ** rgpttp,
-		[out, size_is(cpttpMax)] int * rgich);
-
 	// Creates a property object containing ws writing system, ows old writing system, and a character
 	// style (kstpCharStyle) value passed as a BSTR.  The ws value may be zero which means
 	// no writing system is specified.  bstrStyle may be NULL.  If ws is zero, ows must also be zero.
@@ -1144,7 +1051,7 @@ DeclareInterface(TsPropsFactory, Unknown, 8DCE56A6-CFF1-4402-95FE-2B574912B54E)
 ----------------------------------------------------------------------------------------------*/
 // REVIEW: ShonK, JeffG(JeffG): Should TsStrBldr derive off of TsStrBase?  and
 // Should Strbuilder(s) accept TsPropsBldrs
-DeclareInterface(TsStrBldr, Unknown, F1EF76E6-BE04-11d3-8D9A-005004DEFEC4)
+DeclareInterface(TsStrBldr, Unknown, 71D84C4A-10A2-4A7C-B58C-D01386DAE5F7)
 {
 	// With the exception of the Replace*, PushEcoding, GetString methods, all other methods are
 	// the same as the methods with the same names found on ITsString. Please refer to ITsString
@@ -1252,16 +1159,6 @@ DeclareInterface(TsStrBldr, Unknown, F1EF76E6-BE04-11d3-8D9A-005004DEFEC4)
 
 	HRESULT Clear(
 		);
-
-	// Serialization.
-	HRESULT GetBldrClsid(
-		[out, retval] CLSID * pclsid);
-	HRESULT SerializeFmt(
-		[in] IStream * pstrm);
-	HRESULT SerializeFmtRgb(
-		[out, size_is(cbMax)] BYTE * prgb,
-		[in] int cbMax,
-		[out, retval] int * pcbNeeded);
 };
 
 
@@ -1275,7 +1172,7 @@ DeclareInterface(TsStrBldr, Unknown, F1EF76E6-BE04-11d3-8D9A-005004DEFEC4)
 	An ITsString object and be created by calling GetString.
 	Hungarian: tisb
 ----------------------------------------------------------------------------------------------*/
-DeclareInterface(TsIncStrBldr, Unknown, F1EF76E7-BE04-11d3-8D9A-005004DEFEC4)
+DeclareInterface(TsIncStrBldr, Unknown, 87ECD3CD-6011-485F-8651-DBA0B79245AF)
 {
 	// Fetch the raw text.
 	[propget, id(0)] HRESULT Text(
@@ -1315,15 +1212,6 @@ DeclareInterface(TsIncStrBldr, Unknown, F1EF76E7-BE04-11d3-8D9A-005004DEFEC4)
 	HRESULT Clear(
 		);
 
-	// Serialization.
-	HRESULT GetIncBldrClsid(
-		[out, retval] CLSID * pclsid);
-	HRESULT SerializeFmt(
-		[in] IStream * pstrm);
-	HRESULT SerializeFmtRgb(
-		[out, size_is(cbMax)] BYTE * prgb,
-		[in] int cbMax,
-		[out, retval] int * pcbNeeded);
 	// Set a string property by passing a byte array and length.
 	// In some cases easier to use from C#.
 	HRESULT SetStrPropValueRgch(
@@ -1438,27 +1326,27 @@ DeclareInterface(TsMultiString, Unknown, DD409520-C212-11d3-9BB7-00400541F9E9)
 	CoClass definitions.
 ***********************************************************************************************/
 #ifndef NO_COCLASSES
-DeclareCoClass(TsStrFactory, F1EF76E9-BE04-11d3-8D9A-005004DEFEC4)
+DeclareCoClass(TsStrFactory, F3359BD1-EFA1-49E6-A82E-E55893FE63E0)
 {
 	interface ITsStrFactory;
 	interface IMarshal;
 };
 
 
-DeclareCoClass(TsPropsFactory, F1EF76EA-BE04-11d3-8D9A-005004DEFEC4)
+DeclareCoClass(TsPropsFactory, 396D737F-3BFD-4BDA-A8CA-8242098EF798)
 {
 	interface ITsPropsFactory;
 	interface IMarshal;
 };
 
 
-DeclareCoClass(TsStrBldr, F1EF76EB-BE04-11d3-8D9A-005004DEFEC4)
+DeclareCoClass(TsStrBldr, 426038D4-2E52-4329-B697-FB926FF7538C)
 {
 	interface ITsStrBldr;
 };
 
 
-DeclareCoClass(TsIncStrBldr, F1EF76EC-BE04-11d3-8D9A-005004DEFEC4)
+DeclareCoClass(TsIncStrBldr, BD8EFD5A-2ACC-40AC-B73B-051344525B5B)
 {
 	interface ITsIncStrBldr;
 };
@@ -1467,10 +1355,5 @@ DeclareCoClass(TsIncStrBldr, F1EF76EC-BE04-11d3-8D9A-005004DEFEC4)
 DeclareCoClass(TsPropsBldr, F1EF76ED-BE04-11d3-8D9A-005004DEFEC4)
 {
 	interface ITsPropsBldr;
-};
-
-DeclareCoClass(TsMultiString, 7A1B89C0-C2D6-11d3-9BB7-00400541F9E9)
-{
-	interface ITsMultiString;
 };
 #endif // !NO_COCLASSES

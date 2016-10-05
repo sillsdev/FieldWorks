@@ -76,16 +76,13 @@ FWKERNEL_OBJ := \
 	$(KERNEL_OBJ)/TsStrFactory.o \
 	$(KERNEL_OBJ)/TsPropsFactory.o \
 	$(KERNEL_OBJ)/TextServ.o \
-	$(KERNEL_OBJ)/TsMultiStr.o \
 	$(KERNEL_OBJ)/ActionHandler.o \
 	$(KERNEL_OBJ)/LgUnicodeCollater.o \
 	$(KERNEL_OBJ)/RomRenderEngine.o \
 	$(KERNEL_OBJ)/RomRenderSegment.o \
 	$(KERNEL_OBJ)/GraphiteEngine.o \
 	$(KERNEL_OBJ)/GraphiteSegment.o \
-	$(KERNEL_OBJ)/LgSimpleEngines.o \
 	$(KERNEL_OBJ)/LgIcuCharPropEngine.o \
-	$(KERNEL_OBJ)/LgKeymanHandler.o \
 	$(KERNEL_OBJ)/LocaleIndex.o \
 	$(GENERIC_OBJ)/ModuleEntry.o \
 	$(GENERIC_OBJ)/TextProps1.o \

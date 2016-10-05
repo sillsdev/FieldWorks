@@ -49,41 +49,17 @@ struct TsStrProp
 	}
 };
 
-
-/*----------------------------------------------------------------------------------------------
-	ITsTextPropsRaw exposes the SerializeCore method indirectly through SerializeDataWriter to
-	other object methods such as: TsIncStrBldr::Serialize() and TsIncStrBldr::SerlializeRgb().
-	Hungarian: ttpr
-----------------------------------------------------------------------------------------------*/
-interface ITsTextPropsRaw : public ITsTextProps
-{
-public:
-	// SerializeCore accepts a DataWriter which uses polymorphism to hide a stream or
-	// byte buffer.
-	STDMETHOD(SerializeDataWriter)(DataWriter * pdwrt) = 0;
-};
-
-
-/*----------------------------------------------------------------------------------------------
-	IID for ITsTextPropsRaw
-----------------------------------------------------------------------------------------------*/
-interface __declspec(uuid("31BDA5F0-D286-11d3-9BBC-00400541F9E9")) ITsTextPropsRaw;
-#define IID_ITsTextPropsRaw __uuidof(ITsTextPropsRaw)
-DEFINE_COM_PTR(ITsTextPropsRaw);
-
-
 /*----------------------------------------------------------------------------------------------
 	Implementation of ITsTextProps. This is a thread-safe, "agile" component.
 	Hungarian: zttp
 ----------------------------------------------------------------------------------------------*/
-class TsTextProps : public ITsTextPropsRaw
+class TsTextProps : public ITsTextProps
 {
 public:
 	static void Create(const TsIntProp * prgtip, int ctip, const TsStrProp * prgtsp, int ctsp,
 		TsTextProps ** ppzttp);
 	static void Create(const TsIntProp * prgtip, int ctip, const TsStrProp * prgtsp, int ctsp,
 		ITsTextProps ** ppttp);
-	static void DeserializeDataReader(DataReader * pdrdr, ITsTextProps ** ppttp);
 	static void CreateCanonical(const TsIntProp * prgtip, int ctip, const TsStrProp * prgtsp, int ctsp,
 		TsTextProps ** ppzttp);
 	// IUnknown methods.
@@ -104,16 +80,9 @@ public:
 
 	STDMETHOD(GetBldr)(ITsPropsBldr ** pptpb);
 
-	STDMETHOD(GetFactoryClsid)(CLSID * pclsid);
-	STDMETHOD(Serialize)(IStream * pstrm);
-	STDMETHOD(SerializeRgb)(byte * prgb, int cbMax, int * pcb);
-	STDMETHOD(SerializeRgPropsRgb)(int cpttp, ITsTextProps ** rgpttp, int * rgich,
-		BYTE * prgb, int cbMax, int * pcb);
 	STDMETHOD(WriteAsXml)(IStream * pstrm, ILgWritingSystemFactory * pwsf, int cchIndent);
 
 	// ITsTextPropsRaw methods.
-
-	STDMETHOD(SerializeDataWriter)(DataWriter * pdwrt);
 
 	HRESULT GetStrPropValueInternal(int tpt, BSTR * pbstrVal);
 	bool FindIntProp(int tpt, int * pitip);
@@ -165,8 +134,6 @@ protected:
 		return reinterpret_cast<TsStrProp *>((byte *)(this + 1) + m_ctip * isizeof(TsIntProp)) +
 			itsp;
 	}
-
-	void SerializeCore(DataWriter * pdwrt);
 
 #ifdef DEBUG
 	const OLECHAR * StrPropValue(int tpt);

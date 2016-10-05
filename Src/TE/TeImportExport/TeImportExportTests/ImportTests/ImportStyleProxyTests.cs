@@ -142,14 +142,11 @@ namespace SIL.FieldWorks.TE.ImportTests
 
 			// Test retrieval of ParaProps and TsTextProps
 			Assert.IsNotNull(proxy1.TsTextProps);
-			Assert.IsNotNull(proxy1.ParaProps);
 			Assert.IsNotNull(proxy2.TsTextProps);
-			Assert.IsNull(proxy2.ParaProps, "No para props for a char style");
 			// Besides returning the props, retrieving ParaProps or TsTextProps adds a
 			// previously unmapped style to the stylesheet, so that proxy becomes mapped
 			// Next two calls force creation of new styles
 			Assert.IsNotNull(proxy3.TsTextProps); // has benefit of SetFormat
-			Assert.IsNull(proxy4.ParaProps); // no benefit of SetFormat
 			Assert.IsFalse(proxy3.IsUnknownMapping,
 				"Tom Bogle style should be created when getting TsTextProps");
 			Assert.IsFalse(proxy4.IsUnknownMapping,
@@ -185,7 +182,6 @@ namespace SIL.FieldWorks.TE.ImportTests
 			int cStylesX = m_styleSheet.CStyles;
 			// These calls should not add new style
 			Assert.IsNull(proxy.TsTextProps); //no props returned
-			Assert.IsNull(proxy.ParaProps); //no props returned
 			Assert.AreEqual(ContextValues.EndMarker, proxy.Context);
 			Assert.IsTrue(proxy.IsUnknownMapping, "Xnote* should not exist");
 			Assert.AreEqual(cStylesX, m_styleSheet.CStyles);
@@ -209,9 +205,9 @@ namespace SIL.FieldWorks.TE.ImportTests
 				StyleType.kstParagraph, wsVern, ContextValues.General, m_styleSheet);
 			Assert.IsTrue(proxy.IsUnknownMapping, "MyNewStyle style not should exist in DB");
 
-			// Besides returning the props, retrieval of ParaProps forces creation of a real style
+			// Besides returning the props, retrieval of TsTextProps forces creation of a real style
 			// in stylesheet
-			byte[] rgParaProps = proxy.ParaProps;
+			ITsTextProps ttps = proxy.TsTextProps;
 			Assert.IsFalse(proxy.IsUnknownMapping, "style should be created when getting ParaProps");
 			Assert.AreEqual(nStylesOrig + 1, m_styleSheet.CStyles);
 

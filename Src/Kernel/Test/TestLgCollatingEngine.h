@@ -23,15 +23,14 @@ namespace TestFwKernel
 	 ******************************************************************************************/
 	class TestLgCollatingEngine : public unitpp::suite
 	{
-		ILgCollatingEnginePtr m_qcoleng0;
-		ILgCollatingEnginePtr m_qcoleng1;
+		ILgCollatingEnginePtr m_qcoleng;
 
 		void testNullArgs()
 		{
-			unitpp::assert_true("m_qcoleng0", m_qcoleng0.Ptr());
+			unitpp::assert_true("m_qcoleng0", m_qcoleng.Ptr());
 			HRESULT hr;
 			try{
-				CheckHr(hr = m_qcoleng0->get_SortKey(NULL, fcoDefault, NULL));
+				CheckHr(hr = m_qcoleng->get_SortKey(NULL, fcoDefault, NULL));
 				unitpp::assert_eq("Unicode:get_SortKey(NULL, fcoDefault, NULL) HRESULT", E_POINTER, hr);
 			}
 			catch(Throwable& thr)
@@ -39,7 +38,7 @@ namespace TestFwKernel
 				unitpp::assert_eq("Unicode:get_SortKey(NULL, fcoDefault, NULL) HRESULT", E_POINTER, thr.Result());
 			}
 			try{
-				CheckHr(hr = m_qcoleng0->SortKeyRgch(NULL, 0, fcoDefault, 0, NULL, NULL));
+				CheckHr(hr = m_qcoleng->SortKeyRgch(NULL, 0, fcoDefault, 0, NULL, NULL));
 				unitpp::assert_eq("Unicode:SortKeyRgch(NULL, 0, fcoDefault, 0, NULL, NULL) HRESULT", E_POINTER, hr);
 			}
 			catch(Throwable& thr)
@@ -47,7 +46,7 @@ namespace TestFwKernel
 				unitpp::assert_eq("Unicode:SortKeyRgch(NULL, 0, fcoDefault, 0, NULL, NULL) HRESULT", E_POINTER, thr.Result());
 			}
 			try{
-				CheckHr(hr = m_qcoleng0->Compare(NULL, NULL, fcoDefault, NULL));
+				CheckHr(hr = m_qcoleng->Compare(NULL, NULL, fcoDefault, NULL));
 				unitpp::assert_eq("Unicode:Compare(NULL, NULL, fcoDefault, NULL) HRESULT", E_POINTER, hr);
 			}
 			catch(Throwable& thr)
@@ -55,64 +54,26 @@ namespace TestFwKernel
 				unitpp::assert_eq("Unicode:Compare(NULL, NULL, fcoDefault, NULL) HRESULT", E_POINTER, thr.Result());
 			}
 			try{
-				CheckHr(hr = m_qcoleng0->get_WritingSystemFactory(NULL));
+				CheckHr(hr = m_qcoleng->get_WritingSystemFactory(NULL));
 				unitpp::assert_eq("Unicode:get_WritingSystemFactory(NULL) HRESULT", E_POINTER, hr);
 			}
 			catch(Throwable& thr)
 			{
 				unitpp::assert_eq("Unicode:get_WritingSystemFactory(NULL) HRESULT", E_POINTER, thr.Result());
 			}
-			CheckHr(hr = m_qcoleng0->putref_WritingSystemFactory(NULL));
+			CheckHr(hr = m_qcoleng->putref_WritingSystemFactory(NULL));
 			unitpp::assert_eq("Unicode:putref_WritingSystemFactory(NULL) HRESULT", S_OK, hr);
-
-			unitpp::assert_true("m_qcoleng1", m_qcoleng1.Ptr());
-			try{
-				CheckHr(hr = m_qcoleng1->get_SortKey(NULL, fcoDefault, NULL));
-				unitpp::assert_eq("System:get_SortKey(NULL, fcoDefault, NULL) HRESULT", E_POINTER, hr);
-			}
-			catch(Throwable& thr)
-			{
-				unitpp::assert_eq("System:get_SortKey(NULL, fcoDefault, NULL) HRESULT", E_POINTER, thr.Result());
-			}
-			try{
-				CheckHr(hr = m_qcoleng1->SortKeyRgch(NULL, 0, fcoDefault, 0, NULL, NULL));
-				unitpp::assert_eq("System:SortKeyRgch(NULL, 0, fcoDefault, 0, NULL, NULL) HRESULT", E_POINTER, hr);
-			}
-			catch(Throwable& thr)
-			{
-				unitpp::assert_eq("System:SortKeyRgch(NULL, 0, fcoDefault, 0, NULL, NULL) HRESULT", E_POINTER, thr.Result());
-			}
-			try{
-				CheckHr(hr = m_qcoleng1->Compare(NULL, NULL, fcoDefault, NULL));
-				unitpp::assert_eq("System:Compare(NULL, NULL, fcoDefault, NULL) HRESULT", E_POINTER, hr);
-			}
-			catch(Throwable& thr)
-			{
-				unitpp::assert_eq("System:Compare(NULL, NULL, fcoDefault, NULL) HRESULT", E_POINTER, thr.Result());
-			}
-			try{
-				CheckHr(hr = m_qcoleng1->get_WritingSystemFactory(NULL));
-				unitpp::assert_eq("System:get_WritingSystemFactory(NULL) HRESULT", E_POINTER, hr);
-			}
-			catch(Throwable& thr)
-			{
-				unitpp::assert_eq("System:get_WritingSystemFactory(NULL) HRESULT", E_POINTER, thr.Result());
-			}
-			CheckHr(hr = m_qcoleng1->putref_WritingSystemFactory(NULL));
-			unitpp::assert_eq("System:putref_WritingSystemFactory(NULL) HRESULT", S_OK, hr);
 		}
 
 	public:
 		TestLgCollatingEngine();
 		virtual void SuiteSetup()
 		{
-			LgUnicodeCollater::CreateCom(NULL, IID_ILgCollatingEngine, (void **)&m_qcoleng0);
-			LgSystemCollater::CreateCom(NULL, IID_ILgCollatingEngine, (void **)&m_qcoleng1);
+			LgUnicodeCollater::CreateCom(NULL, IID_ILgCollatingEngine, (void **)&m_qcoleng);
 		}
 		virtual void SuiteTeardown()
 		{
-			m_qcoleng0.Clear();
-			m_qcoleng1.Clear();
+			m_qcoleng.Clear();
 		}
 	};
 

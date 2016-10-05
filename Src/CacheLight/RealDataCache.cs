@@ -47,6 +47,7 @@ namespace SIL.FieldWorks.CacheLight
 		private IFwMetaDataCache m_metaDataCache;
 		private IActionHandler m_actionhandler;
 		private ILgWritingSystemFactory m_lgWritingSystemFactory;
+		private readonly ITsStrFactory m_tsf;
 
 		// Field ids that need to be set if a test uses them--e.g. if it calls ReplaceWithTsString
 		private int m_paraContentsFlid;
@@ -139,6 +140,22 @@ namespace SIL.FieldWorks.CacheLight
 		#endregion Properties
 
 		#region Construction and Initialization
+
+		/// <summary>
+		/// Constructs the object.
+		/// </summary>
+		public RealDataCache()
+			: this(TsStrFactoryClass.Create())
+		{
+		}
+
+		/// <summary>
+		/// Constructs the object.
+		/// </summary>
+		public RealDataCache(ITsStrFactory tsf)
+		{
+			m_tsf = tsf;
+		}
 
 		#endregion Construction and Initialization
 
@@ -1057,7 +1074,7 @@ namespace SIL.FieldWorks.CacheLight
 		{
 			CheckDisposed();
 
-			var tsms = TsMultiStringClass.Create();
+			var tsms = new TsMultiString(m_tsf);
 			foreach (var key in m_extendedKeyCache.Keys)
 			{
 				if (key.Hvo == hvo && key.Flid == tag)

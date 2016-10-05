@@ -56,9 +56,6 @@
     <ClInclude Include="TestLgIcuCharPropEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TestRegexMatcher.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TestRomRenderEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>

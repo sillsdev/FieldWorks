@@ -424,30 +424,6 @@ namespace TestFwKernel
 				unitpp::assert_eq("GetIncBldr(NULL) HRESULT", E_POINTER, thr.Result());
 			}
 			try{
-				CheckHr(hr = m_qtssEmpty->GetFactoryClsid(NULL));
-				unitpp::assert_eq("GetFactoryClsid(NULL) HRESULT", E_POINTER, hr);
-			}
-			catch(Throwable& thr)
-			{
-				unitpp::assert_eq("GetFactoryClsid(NULL) HRESULT", E_POINTER, thr.Result());
-			}
-			try{
-				CheckHr(hr = m_qtssEmpty->SerializeFmt(NULL));
-				unitpp::assert_eq("SerializeFmt(NULL) HRESULT", E_POINTER, hr);
-			}
-			catch(Throwable& thr)
-			{
-				unitpp::assert_eq("SerializeFmt(NULL) HRESULT", E_POINTER, thr.Result());
-			}
-			try{
-				CheckHr(hr = m_qtssEmpty->SerializeFmtRgb(NULL, 0, NULL));
-				unitpp::assert_eq("SerializeFmtRgb(NULL, 0, NULL) HRESULT", E_POINTER, hr);
-			}
-			catch(Throwable& thr)
-			{
-				unitpp::assert_eq("SerializeFmtRgb(NULL, 0, NULL) HRESULT", E_POINTER, thr.Result());
-			}
-			try{
 				CheckHr(hr = m_qtssEmpty->Equals(NULL, NULL));
 				unitpp::assert_eq("Equals(NULL, NULL) HRESULT", E_POINTER, hr);
 			}

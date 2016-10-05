@@ -774,12 +774,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public int RedoableSequenceCount  { get { return 0; } }
 
-		public IUndoGrouper UndoGrouper
-		{
-			get { return null;}
-			set {}
-		}
-
 		public bool IsUndoOrRedoInProgress { get { return false; } }
 
 		public bool SuppressSelections  { get { return false; } }

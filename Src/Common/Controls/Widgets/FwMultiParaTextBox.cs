@@ -691,18 +691,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			throw new NotImplementedException();
 		}
 
-		public IUndoGrouper UndoGrouper
-		{
-			get
-			{
-				throw new NotImplementedException();
-			}
-			set
-			{
-				throw new NotImplementedException();
-			}
-		}
-
 		public int UndoableActionCount
 		{
 			get { return 0; }

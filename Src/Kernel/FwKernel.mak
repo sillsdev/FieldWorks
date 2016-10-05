@@ -47,10 +47,8 @@ OBJ_FWKERNEL=\
 	$(INT_DIR)\autopch\TsStrFactory.obj\
 	$(INT_DIR)\autopch\TsPropsFactory.obj\
 	$(INT_DIR)\autopch\TextServ.obj\
-	$(INT_DIR)\autopch\TsMultiStr.obj\
 	$(INT_DIR)\usepch\TextProps1.obj\
 	$(INT_DIR)\autopch\ActionHandler.obj\
-	$(INT_DIR)\genpch\RegexMatcherWrapper.obj\
 	$(INT_DIR)\autopch\LgIcuWrappers.obj\
 	$(INT_DIR)\autopch\UniscribeEngine.obj\
 	$(INT_DIR)\autopch\UniscribeSegment.obj\
@@ -58,10 +56,8 @@ OBJ_FWKERNEL=\
 	$(INT_DIR)\autopch\GraphiteSegment.obj\
 	$(INT_DIR)\autopch\RomRenderEngine.obj\
 	$(INT_DIR)\autopch\RomRenderSegment.obj\
-	$(INT_DIR)\autopch\LgSimpleEngines.obj\
 	$(INT_DIR)\autopch\LgIcuCharPropEngine.obj\
 	$(INT_DIR)\autopch\LgUnicodeCollater.obj\
-	$(INT_DIR)\autopch\LgKeymanHandler.obj\
 	$(INT_DIR)\autopch\ModuleEntry.obj\
 	$(INT_DIR)\autopch\FwStyledText.obj\
 	$(INT_DIR)\autopch\WriteXml.obj\

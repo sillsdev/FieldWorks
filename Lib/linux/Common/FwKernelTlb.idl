@@ -136,7 +136,6 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76E0-BE04-11d3-8D9A-0050
 
 
 interface ITsString;
-interface IUndoGrouper;		
 interface IFwMetaDataCache;
 
 typedef [v1_enum] enum UndoResult
@@ -225,7 +224,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IUndoAction") cpp_q
 
 
 
-cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IActionHandler") cpp_quote(",") cpp_quote("0F8EA3BE-C982-40f8-B674-25B8482EB222") cpp_quote(");") [ uuid("0F8EA3BE-C982-40f8-B674-25B8482EB222"), object, pointer_default(unique) ] interface IActionHandler : IUnknown
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IActionHandler") cpp_quote(",") cpp_quote("7E8BC421-4CB2-4CF9-8C4C-73A5FD87CA7A") cpp_quote(");") [ uuid("7E8BC421-4CB2-4CF9-8C4C-73A5FD87CA7A"), object, pointer_default(unique) ] interface IActionHandler : IUnknown
 {
 	
 	
@@ -414,14 +413,6 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IActionHandler") cp
 		[out, retval] int * pcSeq);
 
 	
-	[propget] HRESULT UndoGrouper(
-		[out, retval] IUndoGrouper ** ppundg);
-
-	
-	[propput] HRESULT UndoGrouper(
-		[in] IUndoGrouper * pundg);
-
-	
 	
 	
 	
@@ -435,11 +426,11 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IActionHandler") cp
 		[out, retval] ComBool * pfSupressSel);
 };
 
-cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("6A46D810-7F14-4151-80F5-0B13FFC1F917") cpp_quote(",") cpp_quote("ActionHandler") cpp_quote(");") [ uuid(6A46D810-7F14-4151-80F5-0B13FFC1F917) ] coclass ActionHandler
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("CF0F1C0B-0E44-4C1E-9912-2048ED12C2B4") cpp_quote(",") cpp_quote("ActionHandler") cpp_quote(");") [ uuid(CF0F1C0B-0E44-4C1E-9912-2048ED12C2B4) ] coclass ActionHandler
 {
 	interface IActionHandler;
 };
-#line 319 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 310 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
 
 
@@ -826,50 +817,9 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("24636FD1-DB8D-4b2c-B4C0-44C2
 {
 	interface IDebugReport;
 };
-#line 706 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 697 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
-#line 708 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IUndoGrouper") cpp_quote(",") cpp_quote("C38348D3-392C-4e02-BD50-A01DC4189E1D") cpp_quote(");") [ uuid("C38348D3-392C-4e02-BD50-A01DC4189E1D"), object, pointer_default(unique) ] interface IUndoGrouper : IUnknown
-{
-	
-	
-	HRESULT BeginGroup(
-		[out, retval] int * phndl);
-
-	
-	HRESULT EndGroup(
-		[in] int hndl);
-
-	
-	
-	HRESULT CancelGroup(
-		[in] int hndl);
-};
-
-
-
-#line 749 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 699 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
 
 
@@ -890,7 +840,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IComDisposable") cp
 
 
 
-#line 770 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 720 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
 #line 21 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
@@ -1579,7 +1529,7 @@ typedef struct TsRunInfo
 
 
 
-cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsString") cpp_quote(",") cpp_quote("295B2E11-B149-49C5-9BE9-9F46185609AA") cpp_quote(");") [ uuid("295B2E11-B149-49C5-9BE9-9F46185609AA"), object, pointer_default(unique) ] interface ITsString : IUnknown
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsString") cpp_quote(",") cpp_quote("3A489F46-368A-49E7-A308-39EE5D45F92F") cpp_quote(");") [ uuid("3A489F46-368A-49E7-A308-39EE5D45F92F"), object, pointer_default(unique) ] interface ITsString : IUnknown
 {
 	
 	[propget, id(0)] HRESULT Text(
@@ -1682,16 +1632,6 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsString") cpp_quo
 	
 	HRESULT GetIncBldr(
 		[out, retval] ITsIncStrBldr ** pptisb);
-
-	
-	HRESULT GetFactoryClsid(
-		[out, retval] CLSID * pclsid);
-	HRESULT SerializeFmt(
-		[in] IStream * pstrm);
-	HRESULT SerializeFmtRgb(
-		[out, size_is(cbMax)] BYTE * prgb,
-		[in] int cbMax,
-		[out, retval] int * pcbNeeded);
 
 	
 	HRESULT Equals(
@@ -1801,7 +1741,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsString") cpp_quo
 
 
 
-cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsTextProps") cpp_quote(",") cpp_quote("4FA0B99A-5A56-41A4-BE8B-B89BC62251A5") cpp_quote(");") [ uuid("4FA0B99A-5A56-41A4-BE8B-B89BC62251A5"), object, pointer_default(unique) ] interface ITsTextProps : IUnknown
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsTextProps") cpp_quote(",") cpp_quote("B16F0485-8322-408B-B73E-F0E978664869") cpp_quote(");") [ uuid("B16F0485-8322-408B-B73E-F0E978664869"), object, pointer_default(unique) ] interface ITsTextProps : IUnknown
 {
 
 	
@@ -1843,27 +1783,6 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsTextProps") cpp_
 		[out, retval] ITsPropsBldr ** pptpb);
 
 	
-	HRESULT GetFactoryClsid(
-		[out, retval] CLSID * pclsid);
-	HRESULT Serialize(
-		[in] IStream * pstrm);
-	
-	HRESULT SerializeRgb(
-		[out, size_is(cbMax)] BYTE * prgb,
-		[in] int cbMax,
-		[out, retval] int * pcb);
-	
-	
-	
-	HRESULT SerializeRgPropsRgb(
-		[in] int cpttp,
-		[in] ITsTextProps ** rgpttp,
-		[in] int * rgich,
-		[out, size_is(cbMax)] BYTE * prgb,
-		[in] int cbMax,
-		[out, retval] int * pcb);
-
-	
 	
 	
 	
@@ -1885,28 +1804,8 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsTextProps") cpp_
 
 
 
-cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsStrFactory") cpp_quote(",") cpp_quote("C10EA417-8317-4048-AC90-103F8BDFB325") cpp_quote(");") [ uuid("C10EA417-8317-4048-AC90-103F8BDFB325"), object, pointer_default(unique) ] interface ITsStrFactory : IUnknown
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsStrFactory") cpp_quote(",") cpp_quote("721A8D21-9900-4CB0-B4C0-9380A23140E3") cpp_quote(");") [ uuid("721A8D21-9900-4CB0-B4C0-9380A23140E3"), object, pointer_default(unique) ] interface ITsStrFactory : IUnknown
 {
-	HRESULT DeserializeStringStreams(
-		[in] IStream * pstrmTxt,
-		[in] IStream * pstrmFmt,
-		[out, retval] ITsString ** pptss);
-	HRESULT DeserializeString(
-		[in] BSTR bstrTxt,
-		[in] IStream * pstrmFmt,
-		[out, retval] ITsString ** pptss);
-	HRESULT DeserializeStringRgb(
-		[in] BSTR bstrTxt,
-		[in, size_is(cbFmt)] const BYTE * prgbFmt,
-		[in] int cbFmt,
-		[out, retval] ITsString ** pptss);
-	HRESULT DeserializeStringRgch(
-		[in, size_is(*pcchTxt)] const OLECHAR * prgchTxt,
-		[in, out] int * pcchTxt,
-		[in, size_is(*pcbFmt)] const BYTE * prgbFmt,
-		[in, out] int * pcbFmt,
-		[out, retval] ITsString ** pptss);
-
 	
 	
 	
@@ -1942,30 +1841,6 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsStrFactory") cpp
 
 	
 	
-	[propget] HRESULT RunCount(
-		[in, size_is(cbFmt)] const BYTE * prgbFmt,
-		[in] int cbFmt,
-		[out, retval] int * pcrun);
-
-	
-	
-	HRESULT FetchRunInfoAt(
-		[in, size_is(cbFmt)] const BYTE * prgbFmt,
-		[in] int cbFmt,
-		[in] int ich,
-		[out] TsRunInfo * ptri,
-		[out, retval] ITsTextProps ** ppttp);
-	
-	
-	HRESULT FetchRunInfo(
-		[in, size_is(cbFmt)] const BYTE * prgbFmt,
-		[in] int cbFmt,
-		[in] int irun,
-		[out] TsRunInfo * ptri,
-		[out, retval] ITsTextProps ** ppttp);
-
-	
-	
 	HRESULT EmptyString(
 		[in] int ws,
 		[out, retval] ITsString ** pptss);
@@ -1979,26 +1854,8 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsStrFactory") cpp
 
 
 
-cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsPropsFactory") cpp_quote(",") cpp_quote("8DCE56A6-CFF1-4402-95FE-2B574912B54E") cpp_quote(");") [ uuid("8DCE56A6-CFF1-4402-95FE-2B574912B54E"), object, pointer_default(unique) ] interface ITsPropsFactory : IUnknown
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsPropsFactory") cpp_quote(",") cpp_quote("FF3D947F-1D35-487B-A769-5B6C68722054") cpp_quote(");") [ uuid("FF3D947F-1D35-487B-A769-5B6C68722054"), object, pointer_default(unique) ] interface ITsPropsFactory : IUnknown
 {
-	HRESULT DeserializeProps(
-		[in] IStream * pstrm,
-		[out, retval] ITsTextProps ** ppttp);
-	HRESULT DeserializePropsRgb(
-		[in, size_is(*pcb)] const BYTE * prgb,
-		[in, out] int * pcb,
-		[out, retval] ITsTextProps ** ppttp);
-	
-	
-	
-	HRESULT DeserializeRgPropsRgb(
-		[in] int cpttpMax,
-		[in, size_is(*pcb)] const BYTE * prgb,
-		[in, out] int * pcb,
-		[out] int * pcpttpRet,
-		[out, size_is(cpttpMax)] ITsTextProps ** rgpttp,
-		[out, size_is(cpttpMax)] int * rgich);
-
 	
 	
 	
@@ -2040,7 +1897,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsPropsFactory") c
 
 
 
-cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsStrBldr") cpp_quote(",") cpp_quote("F1EF76E6-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(");") [ uuid("F1EF76E6-BE04-11d3-8D9A-005004DEFEC4"), object, pointer_default(unique) ] interface ITsStrBldr : IUnknown
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsStrBldr") cpp_quote(",") cpp_quote("71D84C4A-10A2-4A7C-B58C-D01386DAE5F7") cpp_quote(");") [ uuid("71D84C4A-10A2-4A7C-B58C-D01386DAE5F7"), object, pointer_default(unique) ] interface ITsStrBldr : IUnknown
 {
 	
 	
@@ -2148,16 +2005,6 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsStrBldr") cpp_qu
 
 	HRESULT Clear(
 		);
-
-	
-	HRESULT GetBldrClsid(
-		[out, retval] CLSID * pclsid);
-	HRESULT SerializeFmt(
-		[in] IStream * pstrm);
-	HRESULT SerializeFmtRgb(
-		[out, size_is(cbMax)] BYTE * prgb,
-		[in] int cbMax,
-		[out, retval] int * pcbNeeded);
 };
 
 
@@ -2171,7 +2018,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsStrBldr") cpp_qu
 
 
 
-cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsIncStrBldr") cpp_quote(",") cpp_quote("F1EF76E7-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(");") [ uuid("F1EF76E7-BE04-11d3-8D9A-005004DEFEC4"), object, pointer_default(unique) ] interface ITsIncStrBldr : IUnknown
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsIncStrBldr") cpp_quote(",") cpp_quote("87ECD3CD-6011-485F-8651-DBA0B79245AF") cpp_quote(");") [ uuid("87ECD3CD-6011-485F-8651-DBA0B79245AF"), object, pointer_default(unique) ] interface ITsIncStrBldr : IUnknown
 {
 	
 	[propget, id(0)] HRESULT Text(
@@ -2211,15 +2058,6 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsIncStrBldr") cpp
 	HRESULT Clear(
 		);
 
-	
-	HRESULT GetIncBldrClsid(
-		[out, retval] CLSID * pclsid);
-	HRESULT SerializeFmt(
-		[in] IStream * pstrm);
-	HRESULT SerializeFmtRgb(
-		[out, size_is(cbMax)] BYTE * prgb,
-		[in] int cbMax,
-		[out, retval] int * pcbNeeded);
 	
 	
 	HRESULT SetStrPropValueRgch(
@@ -2334,27 +2172,27 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsMultiString") cp
 
 
 
-cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76E9-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(",") cpp_quote("TsStrFactory") cpp_quote(");") [ uuid(F1EF76E9-BE04-11d3-8D9A-005004DEFEC4) ] coclass TsStrFactory
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F3359BD1-EFA1-49E6-A82E-E55893FE63E0") cpp_quote(",") cpp_quote("TsStrFactory") cpp_quote(");") [ uuid(F3359BD1-EFA1-49E6-A82E-E55893FE63E0) ] coclass TsStrFactory
 {
 	interface ITsStrFactory;
 	interface IMarshal;
 };
 
 
-cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76EA-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(",") cpp_quote("TsPropsFactory") cpp_quote(");") [ uuid(F1EF76EA-BE04-11d3-8D9A-005004DEFEC4) ] coclass TsPropsFactory
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("396D737F-3BFD-4BDA-A8CA-8242098EF798") cpp_quote(",") cpp_quote("TsPropsFactory") cpp_quote(");") [ uuid(396D737F-3BFD-4BDA-A8CA-8242098EF798) ] coclass TsPropsFactory
 {
 	interface ITsPropsFactory;
 	interface IMarshal;
 };
 
 
-cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76EB-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(",") cpp_quote("TsStrBldr") cpp_quote(");") [ uuid(F1EF76EB-BE04-11d3-8D9A-005004DEFEC4) ] coclass TsStrBldr
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("426038D4-2E52-4329-B697-FB926FF7538C") cpp_quote(",") cpp_quote("TsStrBldr") cpp_quote(");") [ uuid(426038D4-2E52-4329-B697-FB926FF7538C) ] coclass TsStrBldr
 {
 	interface ITsStrBldr;
 };
 
 
-cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76EC-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(",") cpp_quote("TsIncStrBldr") cpp_quote(");") [ uuid(F1EF76EC-BE04-11d3-8D9A-005004DEFEC4) ] coclass TsIncStrBldr
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("BD8EFD5A-2ACC-40AC-B73B-051344525B5B") cpp_quote(",") cpp_quote("TsIncStrBldr") cpp_quote(");") [ uuid(BD8EFD5A-2ACC-40AC-B73B-051344525B5B) ] coclass TsIncStrBldr
 {
 	interface ITsIncStrBldr;
 };
@@ -2364,12 +2202,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 {
 	interface ITsPropsBldr;
 };
-
-cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-00400541F9E9") cpp_quote(",") cpp_quote("TsMultiString") cpp_quote(");") [ uuid(7A1B89C0-C2D6-11d3-9BB7-00400541F9E9) ] coclass TsMultiString
-{
-	interface ITsMultiString;
-};
-#line 1477 "c:\\develop\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
+#line 1360 "c:\\develop\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
 
 #line 22 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Render.idh"
@@ -3645,12 +3478,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 	
 	interface IRenderEngine;
 	interface ILgCharacterPropertyEngine;
-	interface ILgStringConverter;
-	interface ILgTokenizer;
-	interface ILgSpellCheckFactory;
-	interface ILgSpellChecker;
 	interface ILgCollatingEngine;
-	interface ILgSearchEngine;
 	interface ICollation;
 	interface ILgWritingSystem;
 	interface ILgWritingSystemFactory;
@@ -4522,492 +4350,6 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 
 
 
-
-
-
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgSearchEngine") cpp_quote(",") cpp_quote("09FCA8D5-5BF6-4BFF-A317-E0126410D79A") cpp_quote(");") [ uuid("09FCA8D5-5BF6-4BFF-A317-E0126410D79A"), object, pointer_default(unique) ] interface ILgSearchEngine : IUnknown
-	{
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		HRESULT SetPattern(
-			[in] BSTR bstrPattern,
-			[in] ComBool fIgnoreCase,
-			[in] ComBool fIgnoreModifiers,
-			[in] ComBool fUseSoundAlike,
-			[in] ComBool fUseWildCards);
-
-		
-		
-		
-		HRESULT SetReplacePattern(
-			[in] BSTR bstrPattern);
-
-		
-		
-		
-		HRESULT ShowPatternDialog(
-			[in] BSTR bstrTitle,  
-			[in] ILgWritingSystem * pwse,	
-			[in] ComBool fForReplace,   
-			[out, retval] ComBool * pfGoAhead); 
-
-		
-		
-		HRESULT FindString(
-			[in] BSTR bstrSource,
-			[in] int ichFirst,  
-			[out] int * ichMinFound,
-			[out] int * ichLimFound,
-			[out, retval] ComBool * pfFound);
-
-		
-		
-		
-		
-		
-		
-		HRESULT FindReplace(
-			[in] BSTR bstrSource,
-			[in] int ichFirst,  
-			[out] int * ichMinFound,
-			[out] int * ichLimFound,
-			[out, retval] BSTR * pbstrReplacement);  
-
-		
-		
-
-		
-
-	};
-
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgStringConverter") cpp_quote(",") cpp_quote("8BE2C911-6A81-48B5-A27F-B8CE63983082") cpp_quote(");") [ uuid("8BE2C911-6A81-48B5-A27F-B8CE63983082"), object, pointer_default(unique) ] interface ILgStringConverter : IUnknown
-	{
-		
-		
-		
-		
-		
-		
-		HRESULT ConvertString(
-			[in] BSTR bstrIn,
-			[out,retval] BSTR * pbstrOut);
-
-		
-		
-		
-		
-		
-		
-		
-		
-		[restricted] HRESULT ConvertStringRgch(
-			[in, size_is(cch)] const OLECHAR * prgch,
-			[in] int cch,
-			[in] int cchMax,
-			[out, size_is(cchMax)] OLECHAR * prgchOut,
-			[out] int * pcchOut);
-	};
-
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgTokenizer") cpp_quote(",") cpp_quote("577C6DA1-CFC1-4AFB-82B2-AF818EC2FE9F") cpp_quote(");") [ uuid("577C6DA1-CFC1-4AFB-82B2-AF818EC2FE9F"), object, pointer_default(unique) ] interface ILgTokenizer : IUnknown
-	{
-		
-		
-		
-		
-		
-		
-		
-		
-		[restricted] HRESULT GetToken(
-			[in, size_is(cch)] OLECHAR * prgchInput,
-			[in] int cch,
-			[out] int * pichMin,
-			[out] int * pichLim);
-
-		
-		
-		
-		
-		
-		[propget] HRESULT TokenStart(
-			[in] BSTR bstrInput,
-			[in] int ichFirst,
-			[out, retval] int *pichMin);
-		
-		
-		
-		
-		
-		
-		
-		[propget] HRESULT TokenEnd(
-			[in] BSTR bstrInput,
-			[in] int ichFirst,
-			[out, retval] int *pichLim);
-		
-		
-	};
-
-	
-	
-	
-	typedef [v1_enum] enum LgSpellCheckOptions
-	{
-		fsplcNil                   = 0x00000,
-		fsplcSuggestFromUserDict   = 0x00001,
-		fsplcIgnoreAllCaps         = 0x00002,
-		fsplcIgnoreMixedDigits     = 0x00004,
-		fsplcIgnoreRomanNumerals   = 0x00008,
-		fsplcFindUncappedSentences = 0x00010,
-		fsplcFindMissingSpaces     = 0x00020,
-		fsplcFindRepeatWord        = 0x00040,
-		fsplcFindExtraSpaces       = 0x00080,
-		fsplcFindSpacesBeforePunc  = 0x00100,
-		fsplcFindSpacesAfterPunc   = 0x00200,
-		fsplcFindInitialNumerals   = 0x00800,
-		fsplcQuickSuggest          = 0x02000,
-		fsplcUseAllOpenUdr         = 0x04000,
-		fsplcSglStepSugg           = 0x10000,
-		fsplcIgnoreSingleLetter    = 0x20000,
-	} LgSpellCheckOptions;
-
-	
-	
-	typedef [v1_enum] enum LgSpellCheckResults
-	{
-		scrsNoErrors                    =  0,  
-		scrsUnknownInputWord            =  1,  
-		scrsReturningChangeAlways       =  2,  
-		scrsReturningChangeOnce         =  3,  
-		scrsInvalidHyphenation          =  4,  
-		scrsErrorCapitalization         =  5,  
-		scrsWordConsideredAbbreviation  =  6,  
-		scrsHyphChangesSpelling         =  7,  
-		scrsNoMoreSuggestions           =  8,  
-		scrsMoreInfoThanBufferCouldHold =  9,  
-		scrsNoSentenceStartCap          = 10,  
-		scrsRepeatWord                  = 11,  
-		scrsExtraSpaces                 = 12,  
-		scrsMissingSpace                = 13,  
-		scrsInitialNumeral              = 14,  
-
-	} LgSpellCheckResults;
-
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgSpellChecker") cpp_quote(",") cpp_quote("E3661AF5-26C6-4907-9243-610DAD84D9D4") cpp_quote(");") [ uuid("E3661AF5-26C6-4907-9243-610DAD84D9D4"), object, pointer_default(unique) ] interface ILgSpellChecker : IUnknown
-	{
-		
-		HRESULT Init(
-			[in] LPCOLESTR pszwCustom);
-
-		
-		HRESULT SetOptions(
-			[in] int grfsplc);
-
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		HRESULT Check(
-			[in, size_is(cchw)] const OLECHAR * prgchw,
-			[in] int cchw,
-			[out] int * pichMinBad,
-			[out] int * pichLimBad,
-			[out] BSTR * pbstrBad,
-			[out] BSTR * pbstrSuggest,
-			[out] int * pscrs);
-
-		
-		
-		
-		
-		
-		HRESULT Suggest(
-			[in, size_is(cchw)] const OLECHAR * prgchw,
-			[in] int cchw,
-			[in] ComBool fFirst,
-			[out] BSTR *pbstrSuggest);
-
-		
-		
-		HRESULT IgnoreAll(
-			[in] LPCOLESTR pszw);
-
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		HRESULT Change(
-			[in] LPCOLESTR pszwSrc,
-			[in] LPCOLESTR pszwDst,
-			ComBool fAll);
-
-		
-		
-		
-		
-		
-		
-		
-		HRESULT AddToUser(
-			[in] LPCOLESTR pszw);
-
-		
-		HRESULT FlushIgnoreList();
-		
-		
-		HRESULT FlushChangeList(
-			[in] ComBool fAll);
-	};
-
-	
-
-
-
-
-
-
-
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgSpellCheckFactory") cpp_quote(",") cpp_quote("9F9298F5-FD41-44B0-83BA-BED9F56CF974") cpp_quote(");") [ uuid("9F9298F5-FD41-44B0-83BA-BED9F56CF974"), object, pointer_default(unique) ] interface ILgSpellCheckFactory : IUnknown
-	{
-		
-		[propget] HRESULT Checker(
-			[out, retval] ILgSpellChecker ** ppspchk);
-	};
-
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgNumericEngine") cpp_quote(",") cpp_quote("CBBF35E1-CE39-4EEC-AEBD-5B4AAAA52B6C") cpp_quote(");") [ uuid("CBBF35E1-CE39-4EEC-AEBD-5B4AAAA52B6C"), object, pointer_default(unique) ] interface ILgNumericEngine : IUnknown
-	{
-		
-		[propget] HRESULT IntToString(
-			[in] int n,
-			[out, retval] BSTR * bstr);
-		
-		
-		[propget] HRESULT IntToPrettyString(
-			[in] int n,
-			[out, retval] BSTR * bstr);
-
-		
-		
-		
-		
-		
-		[propget] HRESULT StringToInt(
-			[in] BSTR bstr,
-			[out, retval] int * pn);
-
-		
-		
-		
-		
-		
-		
-		[restricted] HRESULT StringToIntRgch(
-			[in, size_is(cch)] OLECHAR * prgch,
-			[in] int cch,
-			[out] int * pn,
-			[out] int * pichUnused);
-
-		
-
-		
-		[propget] HRESULT DblToString(
-			[in] double dbl,
-			[in] int cchFracDigits, 
-			[out, retval] BSTR * bstr);
-
-		
-		[propget] HRESULT DblToPrettyString(
-			[in] double dbl,
-			[in] int cchFracDigits, 
-			[out, retval] BSTR * bstr);
-
-		
-		[propget] HRESULT DblToExpString(
-			[in] double dbl,
-			[in] int cchFracDigits, 
-			[out, retval] BSTR * bstr);
-
-		
-		
-		
-		
-		
-		[propget] HRESULT StringToDbl(
-			[in] BSTR bstr,
-			[out, retval] double * pdbl);
-
-		
-		
-		
-		
-		[restricted] HRESULT StringToDblRgch(
-			[in, size_is(cch)] OLECHAR * prgch,
-			[in] int cch,
-			[out] double * pdbl,
-			[out] int * pichUnused);
-	};
-
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgWritingSystemFactory") cpp_quote(",") cpp_quote("22376578-BFEB-4c46-8D72-C9154890DD16") cpp_quote(");") [ uuid("22376578-BFEB-4c46-8D72-C9154890DD16"), object, pointer_default(unique) ] interface ILgWritingSystemFactory : IUnknown
 	{
 		
@@ -5069,41 +4411,6 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 		[propput] HRESULT UserWs(
 			[in] int ws);
 	};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgKeymanHandler") cpp_quote(",") cpp_quote("3F42144B-509F-4def-8DD3-6D8D26677001") cpp_quote(");") [ uuid("3F42144B-509F-4def-8DD3-6D8D26677001"), object, pointer_default(unique) ] interface ILgKeymanHandler : IUnknown
-{
-
-	
-	
-	
-	
-	
-	HRESULT Init(
-		[in] ComBool fForce);
-
-	
-	
-	HRESULT Close();
-
-	
-	[propget] HRESULT ActiveKeyboardName(
-		[out, retval] BSTR * pbstrName);
-};
 
 
 
@@ -5284,64 +4591,6 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgIcuResourceBundl
 
 
 
-
-
-
-
-
-
-
-
-
-cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IRegexMatcher") cpp_quote(",") cpp_quote("6C62CCF0-4EE1-493C-8092-319B6CFBEEBC") cpp_quote(");") [ uuid("6C62CCF0-4EE1-493C-8092-319B6CFBEEBC"), object, pointer_default(unique) ] interface IRegexMatcher : IUnknown
-{
-	
-	
-	HRESULT Init(
-		[in] BSTR bstrPattern,
-		[in] ComBool fMatchCase);
-	
-	
-	HRESULT Reset(
-		[in] BSTR bstrInput);
-	
-	
-	
-	HRESULT Find(
-		[in] int ich,
-		[out, retval] ComBool * pfFound);
-	
-	
-	
-	[propget] HRESULT Start(
-		[in] int igroup,
-		[out, retval] int * pich);
-	
-	
-	
-	[propget] HRESULT End(
-		[in] int igroup,
-		[out, retval] int * pich);
-	
-	[propget] HRESULT ErrorMessage(
-		[out, retval] BSTR * pbstrMsg);
-}
-
-
-
-
-
-	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("13D5C6D3-39D9-4BDA-A3F8-A5CAF6A6940A") cpp_quote(",") cpp_quote("RegexMatcherWrapper") cpp_quote(");") [ uuid(13D5C6D3-39D9-4BDA-A3F8-A5CAF6A6940A) ] coclass RegexMatcherWrapper
-	{
-		interface IRegexMatcher;
-	};
-
-	
-	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("E361F805-C902-4306-A5D8-F7802B0E7365") cpp_quote(",") cpp_quote("LgSystemCollater") cpp_quote(");") [ uuid(E361F805-C902-4306-A5D8-F7802B0E7365) ] coclass LgSystemCollater
-	{
-		interface ILgCollatingEngine;
-	};
-
 	
 	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("0D9900D2-1693-481F-AA70-7EA64F264EC4") cpp_quote(",") cpp_quote("LgUnicodeCollater") cpp_quote(");") [ uuid(0D9900D2-1693-481F-AA70-7EA64F264EC4) ] coclass LgUnicodeCollater
 	{
@@ -5356,38 +4605,6 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IRegexMatcher") cpp
 		interface IMarshal;
 	};
 
-	
-	
-	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7CE7CE94-AC47-42A5-823F-2F8EF51A9007") cpp_quote(",") cpp_quote("LgCPWordTokenizer") cpp_quote(");") [ uuid(7CE7CE94-AC47-42A5-823F-2F8EF51A9007) ] coclass LgCPWordTokenizer
-	{
-		interface ILgTokenizer;
-	};
-
-	
-	
-	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("818445E2-0282-4688-8BB7-147FAACFF73A") cpp_quote(",") cpp_quote("LgWfiSpellChecker") cpp_quote(");") [ uuid(818445E2-0282-4688-8BB7-147FAACFF73A) ] coclass LgWfiSpellChecker
-	{
-		interface ILgSpellCheckFactory;
-	};
-
-	
-	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("5CF96DA5-299E-4FC5-A990-2D2FCEE7834D") cpp_quote(",") cpp_quote("LgMSWordSpellChecker") cpp_quote(");") [ uuid(5CF96DA5-299E-4FC5-A990-2D2FCEE7834D) ] coclass LgMSWordSpellChecker
-	{
-		interface ILgSpellCheckFactory;
-	};
-
-	
-	
-	
-	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("FF22A7AB-223E-4D04-B648-0AE40588261D") cpp_quote(",") cpp_quote("LgNumericEngine") cpp_quote(");") [ uuid(FF22A7AB-223E-4D04-B648-0AE40588261D) ] coclass LgNumericEngine
-	{
-		interface ILgNumericEngine;
-	};
-
-	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("69ACA99C-F852-4C2C-9B5F-FF83238A17A5") cpp_quote(",") cpp_quote("LgKeymanHandler") cpp_quote(");") [ uuid(69ACA99C-F852-4C2C-9B5F-FF83238A17A5) ] coclass LgKeymanHandler
-	{
-		interface ILgKeymanHandler;
-	};
 	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("9E729461-F80D-4796-BA17-086BC61907F1") cpp_quote(",") cpp_quote("LgIcuConverterEnumerator") cpp_quote(");") [ uuid(9E729461-F80D-4796-BA17-086BC61907F1) ] coclass LgIcuConverterEnumerator
 	{
 		interface ILgIcuConverterEnumerator;
@@ -5404,7 +4621,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IRegexMatcher") cpp
 	{
 		interface ILgIcuLocaleEnumerator;
 	};
-#line 1800 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Language.idh"
+#line 1184 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Language.idh"
 
 #line 24 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 };

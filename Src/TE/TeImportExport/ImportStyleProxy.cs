@@ -95,15 +95,6 @@ namespace SIL.FieldWorks.TE
 		protected ITsTextProps m_ttpRunProps;
 
 		/// <summary>
-		/// TextProps for a paragraph of text to be tagged with this (paragraph) style.
-		/// For char style proxy, this is empty and not used; for para style this contains the
-		/// paragraph style name. These props are used in the StyleRules item of an StPara.
-		/// The data format is serialized bytes of an ITsTextProps.
-		/// </summary>
-		protected byte [] m_rgbParaProps;
-		private const int kcbFmtBufMax = 1024;
-
-		/// <summary>
 		/// Formatting properties for this (potential) style.
 		/// If style name is not yet in TE stylesheet, we hold type and formatting info here
 		/// for if/when the style must be added.
@@ -365,23 +356,6 @@ namespace SIL.FieldWorks.TE
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the paragraph properties for this proxy as a serialized array of bytes,
-		/// creating a real style on-the-fly if necessary.
-		/// </summary>
-		/// <remarks>REVIEW: This won't be necessary if we decide to replace it with Props.
-		/// </remarks>
-		/// ------------------------------------------------------------------------------------
-		public byte[] ParaProps
-		{
-			get
-			{
-				AddStyleToStylesheet();
-				return m_rgbParaProps;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Gets the style associated with this proxy, if one exists. If this is a proxy for a
 		/// non-existent style, this returns null (the style will NOT be created).
 		/// </summary>
@@ -434,7 +408,6 @@ namespace SIL.FieldWorks.TE
 			if (m_Context == ContextValues.EndMarker || m_sStyleName == null || m_sStyleName == string.Empty)
 			{	// props are not relevant for end markers or markers with no style name
 				m_ttpRunProps = m_ws == 0 ? null : StyleUtils.CharStyleTextProps(null, m_ws);
-				m_rgbParaProps = null;
 				return;
 			}
 			Debug.Assert(m_StyleType == StyleType.kstCharacter || m_StyleType == StyleType.kstParagraph);
@@ -444,20 +417,6 @@ namespace SIL.FieldWorks.TE
 			// style, they contain only the writing system.
 			m_ttpRunProps = StyleUtils.CharStyleTextProps(
 				(m_StyleType == StyleType.kstCharacter) ? m_sStyleName : null, m_ws);
-
-			// For char style, the paragraph props are empty; for para style, they contain the
-			// para style name.
-			if (m_StyleType == StyleType.kstParagraph)
-			{
-				ITsTextProps props = StyleUtils.ParaStyleTextProps(m_sStyleName);
-				using (ArrayPtr rgbFmtBufPtr = MarshalEx.ArrayToNative<byte>(kcbFmtBufMax))
-				{
-					int nBytes = props.SerializeRgb(rgbFmtBufPtr, kcbFmtBufMax);
-					m_rgbParaProps = MarshalEx.NativeToArray<byte>(rgbFmtBufPtr, nBytes);
-				}
-			}
-			else
-				m_rgbParaProps = null;
 		}
 
 		/// ------------------------------------------------------------------------------------

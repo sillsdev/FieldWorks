@@ -240,30 +240,6 @@ namespace TestFwKernel
 			{
 				unitpp::assert_eq("GetString(NULL) HRESULT", E_POINTER, thr.Result());
 			}
-			try{
-				CheckHr(hr = m_pztsb0->GetBldrClsid(NULL));
-				unitpp::assert_eq("GetBldrClsid(NULL) HRESULT", E_POINTER, hr);
-			}
-			catch(Throwable& thr)
-			{
-				unitpp::assert_eq("GetBldrClsid(NULL) HRESULT", E_POINTER, thr.Result());
-			}
-			try{
-				CheckHr(hr = m_pztsb0->SerializeFmt(NULL));
-				unitpp::assert_eq("SerializeFmt(NULL) HRESULT", E_POINTER, hr);
-			}
-			catch(Throwable& thr)
-			{
-				unitpp::assert_eq("SerializeFmt(NULL) HRESULT", E_POINTER, thr.Result());
-			}
-			try{
-				CheckHr(hr = m_pztsb0->SerializeFmtRgb(NULL, 0, NULL));
-				unitpp::assert_eq("SerializeFmtRgb(NULL, 0, NULL) HRESULT", E_POINTER, hr);
-			}
-			catch(Throwable& thr)
-			{
-				unitpp::assert_eq("SerializeFmtRgb(NULL, 0, NULL) HRESULT", E_POINTER, thr.Result());
-			}
 		}
 
 	public:

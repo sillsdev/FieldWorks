@@ -8,7 +8,6 @@ using System.IO;
 using NUnit.Framework;
 using SIL.FieldWorks.CacheLight;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 using System.Text;
 using SIL.CoreImpl;
@@ -64,8 +63,8 @@ namespace SIL.FieldWorks.CacheLightTests
 		public virtual void FixtureTearDown()
 		{
 			FileUtils.Manager.Reset();
-					m_realDataCache.Dispose();
-			}
+			m_realDataCache.Dispose();
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -602,9 +601,6 @@ namespace SIL.FieldWorks.CacheLightTests
 
 			var tsms = SilDataAccess.get_MultiStringProp(hvo, tag);
 			Assert.AreEqual(tsms.StringCount, 2);
-
-			// TsMultiString's are required to be created and released by same thread
-			System.Runtime.InteropServices.Marshal.ReleaseComObject(tsms);
 		}
 
 		/// <summary>

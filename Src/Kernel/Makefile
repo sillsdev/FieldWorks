@@ -71,15 +71,12 @@ OBJ_FWKERNEL = \
 	$(INT_DIR)/TsTextProps.o \
 	$(INT_DIR)/TsStrFactory.o \
 	$(INT_DIR)/TsPropsFactory.o \
-	$(INT_DIR)/TsMultiStr.o \
 	$(INT_DIR)/TextServ.o \
 	$(INT_DIR)/ActionHandler.o \
 	$(INT_DIR)/DebugReport.o \
 	$(INT_DIR)/LgIcuWrappers.o \
-	$(INT_DIR)/LgSimpleEngines.o \
 	$(INT_DIR)/LgIcuCharPropEngine.o \
 	$(INT_DIR)/LgUnicodeCollater.o \
-	$(INT_DIR)/LgKeymanHandler.o \
 	$(INT_DIR)/LocaleIndex.o \
 	$(INT_DIR)/UniscribeLinux.o \
 	$(INT_DIR)/UniscribeSegment.o \

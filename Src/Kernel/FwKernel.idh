@@ -12,7 +12,6 @@ Last reviewed: never
 -------------------------------------------------------------------------------*//*:End Ignore*/
 
 interface ITsString;
-interface IUndoGrouper;		// used by ActionHandler
 interface IFwMetaDataCache;
 
 typedef [v1_enum] enum UndoResult
@@ -101,7 +100,7 @@ DeclareInterface(UndoAction, Unknown, B831F535-0D5F-42c8-BF9F-7F5ECA2C4657)
 
 	@h3{Hungarian: acth}
 *******************************************************************************************/
-DeclareInterface(ActionHandler, Unknown, 0F8EA3BE-C982-40f8-B674-25B8482EB222)
+DeclareInterface(ActionHandler, Unknown, 7E8BC421-4CB2-4CF9-8C4C-73A5FD87CA7A)
 {
 	// Begin a sequence of actions that will be treated as one task for the purposes
 	// of undo and redo. If there is already such a task in process, this sequence will be
@@ -289,14 +288,6 @@ DeclareInterface(ActionHandler, Unknown, 0F8EA3BE-C982-40f8-B674-25B8482EB222)
 	[propget] HRESULT RedoableSequenceCount(
 		[out, retval] int * pcSeq);
 
-	// This will return the current UndoGrouper for the AH - if one exists, otherwise returns null.
-	[propget] HRESULT UndoGrouper(
-		[out, retval] IUndoGrouper ** ppundg);
-
-	// This will set the UndoGrouper for this AH.
-	[propput] HRESULT UndoGrouper(
-		[in] IUndoGrouper * pundg);
-
 	// Tells whether an Undo or Redo operation is in progress. During such operations,
 	// actions should not be added to the sequence, and some other side-effect tasks
 	// may be suppressed. For example, we don't update modify times when a data field
@@ -311,7 +302,7 @@ DeclareInterface(ActionHandler, Unknown, 0F8EA3BE-C982-40f8-B674-25B8482EB222)
 		[out, retval] ComBool * pfSupressSel);
 };
 #ifndef NO_COCLASSES
-DeclareCoClass(ActionHandler, 6A46D810-7F14-4151-80F5-0B13FFC1F917)
+DeclareCoClass(ActionHandler, CF0F1C0B-0E44-4C1E-9912-2048ED12C2B4)
 {
 	interface IActionHandler;
 };
@@ -705,47 +696,6 @@ DeclareCoClass(DebugReport, 24636FD1-DB8D-4b2c-B4C0-44C2592CA482)
 #endif // !NO_COCLASSES
 
 #endif // DEBUG
-
-/*******************************************************************************************
-	Interface IUndoGrouper
-	This interface supports grouping a seq. of Undo and/or Redo actions into a transaction.
-	Note that it is NOT used for the grouping of the original 'doing' of the actions; that
-	is the responsibility of the code that is executing the original actions. Rather, it
-	is used by the ActionHandler during an actual Undo or Redo operation to group the
-	(possibly several) UndoActions that make up a single action-handler Undo/Redo.
-
-	@h3{When to implement}
-	The existing implementation in IOleDbEncap is sufficient.
-
-	@h3{When to use}
-	Pass the instance of this to the ActionHandler if you have one. All other calls will be
-	made by the ActionHandler.
-
-	@h3{How to obtain an instance}
-	QueryInterface on IOleDbEncap.
-
-	@h3{Hungarian: undg}
-*******************************************************************************************/
-DeclareInterface(UndoGrouper, Unknown, C38348D3-392C-4e02-BD50-A01DC4189E1D)
-{
-	// Called before the seq of undo actions is undone or redone. (Begin Transaction)
-	// Returns a handle that must be passed to the corresponding EndGroup or CancelGroup.
-	HRESULT BeginGroup(
-		[out, retval] int * phndl);
-
-	// Called to end a seq of undo actions. (End Transaction)
-	HRESULT EndGroup(
-		[in] int hndl);
-
-	// Call following and error condition to return things to the state where it was when the
-	// BeginGroup was called. (Rollback)
-	HRESULT CancelGroup(
-		[in] int hndl);
-};
-
-#ifndef NO_COCLASSES
-
-#endif /*!NO_COCLASSES*/
 
 /*******************************************************************************************
 	Interface IComDisposable

@@ -1125,17 +1125,9 @@ namespace SIL.FieldWorks.TE.ImportTests
 				ScrStyleNames.MainBookTitle, "de", null);
 			int wsExpected = Cache.ServiceLocator.WritingSystemManager.GetWsFromStr("de");
 			m_importer.AddImportStyleProxyForMapping(mapping, m_importer.HtStyleProxy);
-			ImportStyleProxy proxy = ((ImportStyleProxy)m_importer.HtStyleProxy[@"\hello"]);
+			ImportStyleProxy proxy = m_importer.HtStyleProxy[@"\hello"];
 			Assert.AreEqual(StyleType.kstParagraph, proxy.StyleType);
-			ITsPropsFactory pillowtex = TsPropsFactoryClass.Create();
-			int cb = proxy.ParaProps.Length;
-			ITsTextProps proxyParaProps = pillowtex.DeserializePropsRgb(proxy.ParaProps, ref cb);
-			string sHowDifferent;
-			if (!TsTextPropsHelper.PropsAreEqual(StyleUtils.ParaStyleTextProps(ScrStyleNames.MainBookTitle),
-				proxyParaProps, out sHowDifferent))
-			{
-				Assert.Fail(sHowDifferent);
-			}
+			Assert.AreEqual(ScrStyleNames.MainBookTitle, proxy.StyleId);
 			Assert.AreEqual(wsExpected, proxy.TsTextProps.GetWs());
 		}
 
@@ -1152,16 +1144,8 @@ namespace SIL.FieldWorks.TE.ImportTests
 			ImportMappingInfo mapping = new ImportMappingInfo(@"\bye", MarkerDomain.Note,
 				ScrStyleNames.MainBookTitle, "blah", null);
 			m_importer.AddImportStyleProxyForMapping(mapping, m_importer.HtStyleProxy);
-			ImportStyleProxy proxy = ((ImportStyleProxy)m_importer.HtStyleProxy[@"\bye"]);
-			ITsPropsFactory chrysler = TsPropsFactoryClass.Create();
-			int cb = proxy.ParaProps.Length;
-			ITsTextProps proxyParaProps = chrysler.DeserializePropsRgb(proxy.ParaProps, ref cb);
-			string sHowDifferent;
-			if (!TsTextPropsHelper.PropsAreEqual(StyleUtils.ParaStyleTextProps(ScrStyleNames.MainBookTitle),
-				proxyParaProps, out sHowDifferent))
-			{
-				Assert.Fail(sHowDifferent);
-			}
+			ImportStyleProxy proxy = m_importer.HtStyleProxy[@"\bye"];
+			Assert.AreEqual(ScrStyleNames.MainBookTitle, proxy.StyleId);
 			Assert.AreEqual(m_wsAnal, proxy.TsTextProps.GetWs());
 		}
 

@@ -165,7 +165,7 @@ namespace SIL.FieldWorks.CacheLight
 		{
 			CheckDisposed();
 
-			m_realDataCache = new RealDataCache {CheckWithMDC = false};
+			m_realDataCache = new RealDataCache(m_itsf) {CheckWithMDC = false};
 
 			try
 			{

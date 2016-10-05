@@ -29,11 +29,6 @@ public:
 	STDMETHOD_(UCOMINT32, Release)(void);
 
 	// ITsPropsFactory methods.
-	STDMETHOD(DeserializeProps)(IStream * pstrm, ITsTextProps ** ppttp);
-	STDMETHOD(DeserializePropsRgb)(const byte * prgb, int * pcb, ITsTextProps ** ppttp);
-	STDMETHOD(DeserializeRgPropsRgb)(int cpttpMax, const BYTE * prgb, int * pcb,
-		int * pcpttpRet, ITsTextProps ** rgpttp, int * rgich);
-
 	STDMETHOD(MakeProps)(BSTR bstrStyle, int ws, int ows, ITsTextProps ** ppttp);
 	STDMETHOD(MakePropsRgch)(const OLECHAR * prgchStyle, int cch, int ws, int ows,
 		ITsTextProps ** ppttp);

@@ -27,9 +27,6 @@
     <ClCompile Include="TextServ.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TsMultiStr.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TsPropsFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -48,15 +45,6 @@
     <ClCompile Include="LgIcuWrappers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LgKeymanHandler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LgNumericEngine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LgSimpleEngines.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="LocaleIndex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -73,9 +61,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UniscribeSegment.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RegexMatcherWrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GraphiteEngine.cpp">
@@ -111,16 +96,10 @@
     <ClInclude Include="DebugReport.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IcuCleanupManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Main.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TextServ.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TsMultiStr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TsPropsFactory.h">
@@ -144,15 +123,6 @@
     <ClInclude Include="LgIcuWrappers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LgKeymanHandler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LgNumericEngine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LgSimpleEngines.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LgUnicodeCollateInit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -160,9 +130,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LocaleIndex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RegexMatcherWrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RomRenderEngine.h">
