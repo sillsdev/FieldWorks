@@ -102,32 +102,19 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			{
 				CheckDisposed();
 
-				// This gets called during initialization with null. If we get
-				// an Enumerator, it locks root.res. For some reason the
-				// destructor for the enumerator doesn't get called for a long
-				// time.
+				// This gets called during initialization with null.
 				if (value == null)
 					return; // Probably initialization.
-				ILgIcuLocaleEnumerator locEnum = LgIcuLocaleEnumeratorClass.Create();
-
-				try
+				string displayName;
+				if (Icu.TryGetDisplayName(value, out displayName))
 				{
-					int cloc = locEnum.Count;
-					for (int iloc = 0; iloc < cloc; iloc++)
-					{
-						if (locEnum.get_Name(iloc) == value)
-						{
-							Text = locEnum.get_DisplayName(iloc, m_displayLocaleId);
-							m_selectedLocale = value;
-							return;
-						}
-					}
+					Text = displayName;
+					m_selectedLocale = value;
+				}
+				else
+				{
 					// Client should make sure it is a valid id. Failing this, make a warning.
 					Text = FwCoreDlgControls.kstidError;
-				}
-				finally
-				{
-					Marshal.ReleaseComObject(locEnum);
 				}
 			}
 		}
@@ -139,56 +126,19 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// <returns></returns>
 		public bool IsCustomLocale(string localeId)
 		{
-			ILgIcuResourceBundle rbroot = LgIcuResourceBundleClass.Create();
-			try
+			using (var rbroot = new IcuResourceBundle(null, "en"))
+			using (IcuResourceBundle rbCustom = rbroot.GetSubsection("Custom"))
+			using (IcuResourceBundle rbCustomLocales = rbCustom.GetSubsection("LocalesAdded"))
 			{
-#if !__MonoCS__
-				rbroot.Init(null, "en");
-#else
-	// TODO-Linux: fix Mono bug
-				rbroot.Init("", "en");
-#endif
-				ILgIcuResourceBundle rbCustom = rbroot.get_GetSubsection("Custom");
-				if (rbCustom != null)
-				{
-					ILgIcuResourceBundle rbCustomLocales = rbCustom.get_GetSubsection("LocalesAdded");
-					Marshal.ReleaseComObject(rbCustom);
-					if (rbCustomLocales == null)
-						return false; // Should never be.
-					while (rbCustomLocales.HasNext)
-					{
-						ILgIcuResourceBundle rbItem = rbCustomLocales.Next;
-						if (rbItem.String == localeId)
-						{
-							Marshal.ReleaseComObject(rbItem);
-							Marshal.ReleaseComObject(rbCustomLocales);
-							return true;
-						}
-						Marshal.ReleaseComObject(rbItem);
-					}
-					Marshal.ReleaseComObject(rbCustomLocales);
-				}
-				// Now, compare the locale againt all known locales -- it may not exist at all yet!
-				// If not, it is considered custom.
-				ILgIcuLocaleEnumerator locEnum = LgIcuLocaleEnumeratorClass.Create();
+				if (rbCustomLocales.GetStringContents().Contains(localeId))
+					return true;
+			}
 
-				int cloc = locEnum.Count;
-				for (int iloc = 0; iloc < cloc; iloc++)
-				{
-					if (localeId == locEnum.get_Name(iloc))
-					{
-						Marshal.ReleaseComObject(locEnum);
-						return false;
-					}
-				}
-				//Didn't find in either list...custom.
-				Marshal.ReleaseComObject(locEnum);
-				return true;
-			}
-			finally
-			{
-				Marshal.ReleaseComObject(rbroot);
-			}
+			// Next, check if ICU knows about this locale. If ICU doesn't know about it, it is considered custom.
+			string displayNameIgnored;
+			if (Icu.TryGetDisplayName(localeId, out displayNameIgnored))
+				return false;
+			return true;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -263,7 +213,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		protected override void OnClick(EventArgs e)
 		{
-			ILgIcuLocaleEnumerator locEnum = LgIcuLocaleEnumeratorClass.Create();
 			var menu = components.ContextMenuStrip("contextMenu");
 
 			// Create the various collections we use in the process of assembling
@@ -272,21 +221,12 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			m_mainItems = new List<LocaleMenuItemData>();
 			m_itemData = new Dictionary<ToolStripMenuItem, LocaleMenuItemData>();
 
-			int cloc = locEnum.Count;
-			for(int iloc = 0; iloc < cloc; iloc++)
+			var localeDataByLanguage = Icu.GetLocalesByLanguage(m_displayLocaleId);
+			foreach (KeyValuePair<string, IList<IcuIdAndName>> localeData in localeDataByLanguage)
 			{
-				string langid = locEnum.get_Language(iloc);
-				string localeid = locEnum.get_Name(iloc);
-				string displayName = locEnum.get_DisplayName(iloc, m_displayLocaleId);
-				List<LocaleMenuItemData> mainItems;
-				if (!m_locales.TryGetValue(langid, out mainItems))
-				{
-					mainItems = new List<LocaleMenuItemData>();
-					m_locales[langid] = mainItems;
-				}
-				// Todo: second arg should be display name.
-				var data = new LocaleMenuItemData(localeid, displayName);
-				mainItems.Add(data);
+				string langid = localeData.Key;
+				IList<IcuIdAndName> items = localeData.Value;
+				m_locales[langid] = items.Select(idAndName => new LocaleMenuItemData(idAndName.Id, idAndName.Name)).ToList();
 			}
 
 			// Generate the secondary items. For each key in m_locales,
@@ -366,7 +306,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			else
 				menu.Show(this, new Point(0, Height));
 
-			Marshal.ReleaseComObject(locEnum);
 			base.OnClick(e); // Review JohnT: is this useful or harmful or neither? MS recommends it.
 		}
 

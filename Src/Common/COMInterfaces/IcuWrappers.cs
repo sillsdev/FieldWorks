@@ -756,35 +756,20 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// </summary>
 		/// <param name="icuLocale">Code for the ICU locale.</param>
 		/// <returns>
-		/// string containing all the exemplar characters (typically only lowercase
-		/// word-forming characters)
+		/// A string containing all the exemplar characters (typically only lowercase
+		/// word-forming characters), or an empty string if the given locale is unknown to ICU.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
 		public static string GetExemplarCharacters(string icuLocale)
 		{
-			ILgIcuResourceBundle rbExemplarCharacters = null;
-			ILgIcuResourceBundle rbLangDef = null;
-			try
+			using (var rbLangDef = new IcuResourceBundle(null, icuLocale))
 			{
-				rbLangDef = LgIcuResourceBundleClass.Create();
-				rbLangDef.Init(null, icuLocale);
-
-				// if the name of the resource bundle doesn't match the LocaleAbbr
+				// If the locale of the resource bundle doesn't match the LocaleAbbr,
 				// it loaded something else as a default (e.g. "en").
-				// in that case we don't want to use the resource bundle so release it.
-				if (rbLangDef.Name != icuLocale)
+				// In that case we don't want to use the resource bundle, so ignore it.
+				if (rbLangDef.LocaleId != icuLocale)
 					return string.Empty;
-
-				rbExemplarCharacters = rbLangDef.get_GetSubsection("ExemplarCharacters");
-				return rbExemplarCharacters.String;
-			}
-			finally
-			{
-				if (rbExemplarCharacters != null)
-					Marshal.FinalReleaseComObject(rbExemplarCharacters);
-
-				if (rbLangDef != null)
-					Marshal.FinalReleaseComObject(rbLangDef);
+				return rbLangDef.GetStringByKey("ExemplarCharacters");
 			}
 		}
 
@@ -1166,6 +1151,25 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			return string.Empty;
 		}
 
+		/// <summary>
+		/// Gets the displayable name following the TryGet pattern (returning a bool for success/failure).
+		/// </summary>
+		public static bool TryGetDisplayName(string localeID, out string displayName)
+		{
+			// We could almost just call GetDisplayName and return false if it returns string.Empty, but
+			// that could fail if there are any locales whose localized display name is an empty string.
+			// So we duplicate the code instead, checking the actual ICU error code for our success/failure.
+			string uilocale = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+			uilocale = uilocale.Replace('-', '_');
+
+			UErrorCode uerr;
+			GetDisplayName(localeID, uilocale, out displayName, out uerr);
+			if (IsSuccess(uerr))
+				return true;
+			displayName = string.Empty;
+			return false;
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>Get the displayable Name.</summary>
 		/// ------------------------------------------------------------------------------------
@@ -1308,6 +1312,51 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			{
 				Marshal.FreeCoTaskMem(resPtr);
 			}
+		}
+
+		/// <summary>
+		/// Get all locale IDs, and display names in the given locale, that ICU knows about.
+		/// Pass "null" to displayLocale parameter to use the user's default locale.
+		/// </summary>
+		/// <param name="displayLocale">Locale ID in which to display the locale names (e.g., if this is "fr", then the "en" locale will have the display name "anglais").</param>
+		/// <returns>An IEnumerable of locale IDs and display names.</returns>
+		public static IEnumerable<IcuIdAndName> GetLocaleIdsAndNames(string displayLocale = null)
+		{
+			// Unlike for converters and transliterators, the ICU API doesn't have an enumeration function for locales.
+			// So this one we do the "old-fashioned" way, getting a count and getting locales by numeric index.
+			int localeCount = CountAvailableLocales();
+			for (int i = 0; i < localeCount; i++)
+			{
+				string id = GetAvailableLocale(i);
+				string name;
+				UErrorCode status;
+				GetDisplayName(id, displayLocale, out name, out status);
+				if (IsSuccess(status))
+					yield return new IcuIdAndName(id, name);
+			}
+		}
+
+		/// <summary>
+		/// Get a dictionary, keyed by language ID, with values being a list of locale IDs and names (as returned by GetLocaleIdsAndNames).
+		/// This allows "en-GB" and "en-US" to be grouped together under "English" in a menu, for example.
+		/// </summary>
+		/// <param name="displayLocale">Locale ID in which to display the locale names (e.g., if this is "fr", then the "en" locale will have the display name "anglais").</param>
+		/// <returns>A dictionary whose keys are language IDs (2- or 3-letter ISO codes) and whose values are a list of the IcuIdAndName objects that GetLocaleIdsAndNames returns.</returns>
+		public static IDictionary<string, IList<IcuIdAndName>> GetLocalesByLanguage(string displayLocale = null)
+		{
+			Dictionary<string, IList<IcuIdAndName>> result = new Dictionary<string, IList<IcuIdAndName>>();
+			foreach (var idAndName in GetLocaleIdsAndNames(displayLocale))
+			{
+				string languageCode = GetLanguageCode(idAndName.Id);
+				IList<IcuIdAndName> entries;
+				if (!result.TryGetValue(languageCode, out entries))
+				{
+					entries = new List<IcuIdAndName>();
+					result[languageCode] = entries;
+				}
+				entries.Add(idAndName);
+			}
+			return result;
 		}
 
 		#endregion // Locale related
@@ -2013,6 +2062,610 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		}
 
 		#endregion Break iterator
+
+		#region Resource bundles
+		// UResourceBundle * ures_open (const char *package, const char *locale, UErrorCode *status)
+		[DllImport(kIcuUcDllName, EntryPoint = "ures_open" + VersionSuffix,
+			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		private static extern IntPtr ures_open(string package, string locale, out UErrorCode status);
+
+		/// <summary>
+		/// Initialize a resource bundle. Caller must call CloseResourceBundle later to avoid memory leaks.
+		/// </summary>
+		/// <param name="package">The name of the ICU resource bundle to open (can be null to open the "default" bundle).</param>
+		/// <param name="locale">The ICU locale whose resources should be loaded (null for the default locale).</param>
+		/// <returns></returns>
+		public static IntPtr OpenResourceBundle(string package, string locale)
+		{
+			UErrorCode status;
+			IntPtr resourceBundle = ures_open(package, locale, out status);
+			if (IsFailure(status))
+				return IntPtr.Zero;
+			return resourceBundle;
+		}
+
+		// void ures_close (UResourceBundle *resourceBundle)
+		[DllImport(kIcuUcDllName, EntryPoint = "ures_close" + VersionSuffix,
+			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		private static extern void ures_close(IntPtr resourceBundle);
+
+		/// <summary>
+		/// Close a previously-opened resource bundle.
+		/// </summary>
+		/// <param name="resourceBundle">The previously-opened resource bundle.</param>
+		public static void CloseResourceBundle(IntPtr resourceBundle)
+		{
+			if (resourceBundle != IntPtr.Zero)
+				ures_close(resourceBundle);
+		}
+
+		// const char * ures_getKey (const UResourceBundle *resourceBundle)
+		[DllImport(kIcuUcDllName, EntryPoint = "ures_getKey" + VersionSuffix,
+			 CallingConvention = CallingConvention.Cdecl)]
+		// Do NOT free the memory returned by this ICU function.
+		private static extern IntPtr ures_getKey(IntPtr resourceBundle);
+
+		/// <summary> Get the key of the bundle. (Icu getKey.) </summary>
+		/// <returns>A System.String </returns>
+		public static string GetResourceBundleKey(IntPtr resourceBundle)
+		{
+			IntPtr keyPtr = ures_getKey(resourceBundle);
+			if (keyPtr == IntPtr.Zero)
+				return String.Empty;
+			return Marshal.PtrToStringAnsi(keyPtr);
+		}
+
+		// const UChar * ures_getString (const UResourceBundle *resourceBundle, int32_t *len, UErrorCode *status)
+		[DllImport(kIcuUcDllName, EntryPoint = "ures_getString" + VersionSuffix,
+			 CallingConvention = CallingConvention.Cdecl)]
+		// Do NOT free the memory returned by this ICU function.
+		private static extern IntPtr ures_getString(IntPtr resourceBundle, out int len, out UErrorCode status);
+
+		/// <summary>
+		/// If a resource bundle is just a single string, get that string. (Icu getString.)
+		/// If you are using this function, consider refactoring to use GetResourceBundleStringByKey on the parent resource bundle instead.
+		/// </summary>
+		/// <param name="resourceBundle">The resource bundle</param>
+		/// <returns>A System.String containing the string that this bundle contained, or String.Empty if this bundle was not just a single string.</returns>
+		public static string GetResourceBundleString(IntPtr resourceBundle)
+		{
+			int len;
+			UErrorCode status;
+			IntPtr resultPtr = ures_getString(resourceBundle, out len, out status);
+			if (IsFailure(status) || resultPtr == IntPtr.Zero)
+				return String.Empty;
+			return Marshal.PtrToStringUni(resultPtr, len);
+		}
+
+		// const char * ures_getLocale (const UResourceBundle *resourceBundle, UErrorCode *status)
+		[DllImport(kIcuUcDllName, EntryPoint = "ures_getLocale" + VersionSuffix,
+			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		// Do NOT free the memory returned by this ICU function.
+		private static extern IntPtr ures_getLocale(IntPtr resourceBundle, out UErrorCode status);
+
+		/// <summary>
+		/// Get the locale ID of the bundle. (Icu getLocale.)
+		/// Note that the Key and String of the bundle are often more useful.
+		/// </summary>
+		/// <param name="resourceBundle">The resource bundle</param>
+		/// <returns>A System.String containing the locale ID</returns>
+		public static string GetResourceBundleLocaleId(IntPtr resourceBundle)
+		{
+			UErrorCode status;
+			IntPtr resultPtr = ures_getLocale(resourceBundle, out status);
+			if (IsFailure(status) || resultPtr == IntPtr.Zero)
+				return String.Empty;
+			return Marshal.PtrToStringAnsi(resultPtr);
+		}
+
+		// UResourceBundle * ures_getByKey (const UResourceBundle *resourceBundle, const char *key, UResourceBundle *fillIn, UErrorCode *status)
+		[DllImport(kIcuUcDllName, EntryPoint = "ures_getByKey" + VersionSuffix,
+			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		private static extern IntPtr ures_getByKey(IntPtr resourceBundle, string key, IntPtr fillIn, out UErrorCode status);
+
+		/// <summary>
+		/// Get a subsection of the current resource bundle, identified by a string key.
+		/// </summary>
+		/// <param name="resourceBundle">The resource bundle to fetch from</param>
+		/// <param name="key">String name of the subsection to get</param>
+		/// <returns>A new ResourceBundle pointer representing the subsection. Closing it properly is the responsibility of the caller.</returns>
+		public static IntPtr GetResourceBundleSubsection(IntPtr resourceBundle, string key)
+		{
+			UErrorCode status;
+			IntPtr subsection = ures_getByKey(resourceBundle, key, IntPtr.Zero, out status);
+			if (IsFailure(status))
+				return IntPtr.Zero;
+			return subsection;
+		}
+
+		// const UChar * ures_getStringByKey (const UResourceBundle *resourceBundle, const char *key, int32_t *len, UErrorCode *status)
+		[DllImport(kIcuUcDllName, EntryPoint = "ures_getStringByKey" + VersionSuffix,
+			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		// Do NOT free the memory returned by this ICU function.
+		private static extern IntPtr ures_getStringByKey(IntPtr resourceBundle, string key, out int len, out UErrorCode status);
+
+		/// <summary>Get a named string from the resource bundle</summary>
+		/// <param name="resourceBundle">The resource bundle to fetch from</param>
+		/// <param name='key'>The name of the string to retrieve</param>
+		/// <returns>A System.String containing the returned string, or String.Empty if the string was not found (or if that key represented a different
+		/// type of data, such as a number or a resource bundle subsection). May also throw IcuException in exceptional error situations.</returns>
+		public static string GetResourceBundleStringByKey(IntPtr resourceBundle, string key)
+		{
+			int len;
+			UErrorCode status;
+			IntPtr resultPtr = ures_getStringByKey(resourceBundle, key, out len, out status);
+			if (IsFailure(status))
+			{
+				if (status == UErrorCode.U_MISSING_RESOURCE_ERROR || status == UErrorCode.U_INVALID_FORMAT_ERROR)
+					return String.Empty;
+				throw new IcuException(string.Format("ures_getByKey('{0}','{1}') failed with error {2}", resourceBundle, key, status), status);
+			}
+			if (resultPtr == IntPtr.Zero)
+				return String.Empty;
+			return Marshal.PtrToStringUni(resultPtr, len);
+		}
+
+		// void ures_resetIterator (UResourceBundle *resourceBundle)
+		[DllImport(kIcuUcDllName, EntryPoint = "ures_resetIterator" + VersionSuffix,
+			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		private static extern void ures_resetIterator(IntPtr resourceBundle);
+
+		/// <summary>
+		/// Reset a resource bundle's internal iterator to the start of its items.
+		/// NOTE: There's no corresponding EndResourceBundleIteration function, as the ICU C API does not require it.
+		/// Also note that this is not thread-safe: if two threads share a resourceBundle, they will interfere with each other's iterations.
+		/// </summary>
+		/// <param name="resourceBundle"></param>
+		public static void BeginResourceBundleIteration(IntPtr resourceBundle)
+		{
+			ures_resetIterator(resourceBundle);
+		}
+
+		// const UChar * ures_getNextString (UResourceBundle *resourceBundle, int32_t *len, const char **key, UErrorCode *status)
+		[DllImport(kIcuUcDllName, EntryPoint = "ures_getNextString" + VersionSuffix,
+			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		// Do NOT free the memory returned by this ICU function.
+		private static extern IntPtr ures_getNextString(IntPtr resourceBundle, out int len, out IntPtr key, out UErrorCode status);
+
+		/// <summary>
+		/// Get next string in a resource bundle, or NULL if its internal iterator has reached the end of the bundle (or if an error occurred).
+		/// Note that this is not thread-safe: if two threads share a resourceBundle, they will interfere with each other's iterations.
+		/// </summary>
+		/// <param name="resourceBundle">The resource bundle we're iterating over</param>
+		/// <param name="key">Out parameter: the key associated with the result string, or NULL if the result string had no key in this resource bundle.</param>
+		/// <returns>The next string contained in the resource bundle, or NULL if there are no more strings to return.</returns>
+		public static string GetNextStringInResourceBundleIteration(IntPtr resourceBundle, out string key)
+		{
+			int ignoreLen;
+			IntPtr keyPtr;
+			UErrorCode status;
+			IntPtr resultPtr = ures_getNextString(resourceBundle, out ignoreLen, out keyPtr, out status);
+			if (IsFailure(status) || resultPtr == IntPtr.Zero)
+			{
+				key = string.Empty;
+				return null;
+			}
+			if (keyPtr == IntPtr.Zero)
+				key = String.Empty;
+			else
+				key = Marshal.PtrToStringAnsi(keyPtr);
+			return Marshal.PtrToStringUni(resultPtr);
+		}
+
+		/// <summary>
+		/// Get next string in a resource bundle, or NULL if its internal iterator has reached the end of the bundle (or if an error occurred).
+		/// Note that this is not thread-safe: if two threads share a resourceBundle, they will interfere with each other's iterations.
+		/// This overload should be used if you don't care about the keys in the bundle, but only about its contents.
+		/// </summary>
+		/// <param name="resourceBundle">The resource bundle we're iterating over</param>
+		/// <returns>The next string contained in the resource bundle, or NULL if there are no more strings to return.</returns>
+		public static string GetNextStringInResourceBundleIteration(IntPtr resourceBundle)
+		{
+			string ignoredKey;
+			return GetNextStringInResourceBundleIteration(resourceBundle, out ignoredKey);
+		}
+
+		#endregion Resource bundles
+
+		#region Converters
+		// TODO: Write public methods
+		// UEnumeration * ucnv_openAllNames (UErrorCode *pErrorCode)
+		[DllImport(kIcuUcDllName, EntryPoint = "ucnv_openAllNames" + VersionSuffix,
+			 CallingConvention = CallingConvention.Cdecl)]
+		private static extern IntPtr ucnv_openAllNames(out UErrorCode errorCode);
+
+		/// <summary>
+		/// Get an ICU UEnumeration pointer that will enumerate all converter IDs (canonical names).
+		/// </summary>
+		/// <returns>The opaque UEnumeration pointer. Closing it properly is the responsibility of the caller.</returns>
+		public static IntPtr GetConverterEnumerator()
+		{
+			UErrorCode status;
+			IntPtr result = ucnv_openAllNames(out status);
+			if (IsFailure(status))
+				throw new IcuException(string.Format("ucnv_openAllNames() failed with error {0}", status), status);
+			return result;
+		}
+
+		//[DllImport(kIcuUcDllName, EntryPoint = "ucnv_getAvailableName" + VersionSuffix,
+		// CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		//private static extern string ucnv_getAvailableName(int iconv);
+
+		[DllImport(kIcuUcDllName, EntryPoint = "ucnv_getStandardName" + VersionSuffix,
+		 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		// Do NOT free the memory returned by this ICU function.
+		private static extern IntPtr ucnv_getStandardName(string name, string standard, out UErrorCode errorCode);
+
+		/// <summary>
+		/// Get the standard name for an encoding converter, accoding to some standard.
+		/// </summary>
+		/// <param name="name">The canonical name of the converter</param>
+		/// <param name="standard">The name of the standard, e.g. "IANA"</param>
+		/// <returns>The name as a System.String, or null if ucnv_getStandardName could not determine a name.</returns>
+		public static string GetConverterStandardName(string name, string standard)
+		{
+			UErrorCode status;
+			IntPtr resultPtr = ucnv_getStandardName(name, standard, out status);
+			if (IsFailure(status))
+				throw new IcuException(string.Format("ucnv_getStandardName(\"{0}\", \"{1}\") failed with error {2}", name, standard, status), status);
+			if (resultPtr == IntPtr.Zero)
+				return null;
+			return Marshal.PtrToStringAnsi(resultPtr);
+		}
+
+		/// <summary>
+		/// Return all IDs (canonical names) and names (standard IANA names) of the converters that ICU knows about.
+		/// </summary>
+		/// <returns>An IEnumerable of IcuIdAndName objects, which have Id and Name properties.</returns>
+		public static IEnumerable<IcuIdAndName> GetConverterIdsAndNames()
+		{
+			IntPtr icuEnumerator = IntPtr.Zero;
+			try
+			{
+				icuEnumerator = GetConverterEnumerator();
+				string id;
+				string name;
+				while ((id = NextEnumeratorString(icuEnumerator)) != null)
+				{
+					name = GetConverterStandardName(id, "IANA");
+					if (name != null)
+						yield return new IcuIdAndName(id, name);
+				}
+			}
+			finally
+			{
+				if (icuEnumerator != IntPtr.Zero)
+					CloseEnumerator(icuEnumerator);
+			}
+		}
+
+		#endregion Converters
+
+		#region Transliterator enumeration
+		// UEnumeration * utrans_openIDs (UErrorCode *pErrorCode)
+		[DllImport(kIcuinDllName, EntryPoint = "utrans_openIDs" + VersionSuffix,
+			 CallingConvention = CallingConvention.Cdecl)]
+		private static extern IntPtr utrans_openIDs(out UErrorCode errorCode);
+
+		/// <summary>
+		/// Get an ICU UEnumeration pointer that will enumerate all transliterator IDs.
+		/// </summary>
+		/// <returns>The opaque UEnumeration pointer. Closing it properly is the responsibility of the caller.</returns>
+		public static IntPtr GetTransliteratorEnumerator()
+		{
+			UErrorCode status;
+			IntPtr result = utrans_openIDs(out status);
+			if (IsFailure(status))
+				throw new IcuException(string.Format("utrans_openIDs() failed with error {0}", status), status);
+			return result;
+		}
+
+		// int32_t uenum_count (UEnumeration *en, UErrorCode *status)
+		[DllImport(kIcuUcDllName, EntryPoint = "uenum_count" + VersionSuffix,
+			 CallingConvention = CallingConvention.Cdecl)]
+		private static extern int uenum_count(IntPtr uenum, out UErrorCode errorCode);
+
+		/// <summary>
+		/// Count the number of items in an ICU enumerator. May have to pre-fetch all the enumerator's items, so use this only when necessary.
+		/// </summary>
+		/// <param name="uenum">The opaque UEnumeration pointer whose contents should be counted.</param>
+		/// <returns>The total number of items this UEnumeration will return.</returns>
+		public static int CountEnumeratorContents(IntPtr uenum)
+		{
+			UErrorCode status;
+			int result = uenum_count(uenum, out status);
+			if (IsFailure(status))
+				throw new IcuException(string.Format("uenum_count() failed with error {0}", status), status);
+			return result;
+		}
+
+		// const UChar * uenum_unext (UEnumeration *en, int32_t *resultLength, UErrorCode *status)
+		[DllImport(kIcuUcDllName, EntryPoint = "uenum_unext" + VersionSuffix,
+			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		// Do NOT free the memory returned by this ICU function.
+		private static extern IntPtr uenum_unext(IntPtr uenum, out int resultLen, out UErrorCode errorCode);
+
+		/// <summary>
+		/// Advance the enumerator to the next string and return it. Returns NULL if the enumerator is exhausted.
+		/// </summary>
+		/// <param name="uenum">The opaque UEnumeration pointer to advance.</param>
+		/// <returns>The next Unicode string returned by the enumerator, or NULL if no more strings are available.</returns>
+		public static string NextEnumeratorString(IntPtr uenum)
+		{
+			UErrorCode status;
+			int len;
+			IntPtr resultPtr = uenum_unext(uenum, out len, out status);
+			if (IsFailure(status))
+				throw new IcuException(string.Format("uenum_unext() failed with error {0}", status), status);
+			if (resultPtr == IntPtr.Zero)
+				return null;
+			return Marshal.PtrToStringUni(resultPtr, len);
+		}
+
+		// void uenum_close (UEnumeration *en)
+		[DllImport(kIcuUcDllName, EntryPoint = "uenum_close" + VersionSuffix,
+			 CallingConvention = CallingConvention.Cdecl)]
+		private static extern void uenum_close(IntPtr uenum);
+
+		/// <summary>
+		/// Close an ICU UEnumerator. This is the responsibility of the code that obtained the UEnumerator.
+		/// </summary>
+		/// <param name="uenum">The opaque UEnumeration pointer to close.</param>
+		public static void CloseEnumerator(IntPtr uenum)
+		{
+			uenum_close(uenum);
+		}
+
+		/// <summary>
+		/// Count available transliterator IDs. DEPRECATED. If you are using this code, try switching to an LgIcuTransliteratorEnumerator instead.
+		/// </summary>
+		/// <returns>How many transliterator IDs (and thus, how many transliterators) are known to ICU.</returns>
+		public static int CountTransliteratorIDs()
+		{
+			IntPtr uenum = IntPtr.Zero;
+			try
+			{
+				uenum = GetTransliteratorEnumerator();
+				return CountEnumeratorContents(uenum);
+			}
+			finally
+			{
+				if (uenum != IntPtr.Zero)
+					CloseEnumerator(uenum);
+			}
+		}
+
+		// No public APIs for the next three functions because they are NOT intended to be used anywhere outside GetTransliteratorDisplayName().
+
+		// UMessageFormat * umsg_open (const UChar *pattern, int32_t patternLength, const char *locale, UParseError *parseError, UErrorCode *status)
+		// Open a message formatter with given pattern and for the given locale.
+		[DllImport(kIcuinDllName, EntryPoint = "umsg_open" + VersionSuffix,
+		 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		private static extern IntPtr umsg_open(string pattern, int patternLen, string locale, out UParseError parseError, out UErrorCode status);
+
+		// UMessageFormat * umsg_close (UMessageFormat *format)
+		// Close a message formatter.
+		[DllImport(kIcuinDllName, EntryPoint = "umsg_close" + VersionSuffix,
+		 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		private static extern void umsg_close(IntPtr format);
+
+		// int32_t umsg_format (const UMessageFormat *fmt, UChar *result, int32_t resultLength, UErrorCode *status, ...)
+		// We hardcode it to take 3 parameters, an int and two strings, because that's how we'll be calling it from GetTransliteratorDisplayName.
+		// The alternative is to use the completely undocumented __arglist keyword, and that's not worth the danger given that we only call this function from one place.
+		[DllImport(kIcuinDllName, EntryPoint = "umsg_format" + VersionSuffix,
+		 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		private static extern int umsg_format(IntPtr format, StringBuilder result, int resultLen, out UErrorCode status, double arg0, string arg1, string arg2);
+
+		private static int MessageFormat(IntPtr format, out string result, out UErrorCode status, double arg0, string arg1, string arg2)
+		{
+			StringBuilder builder = new StringBuilder(255);
+			int actualLen = umsg_format(format, builder, 256, out status, arg0, arg1, arg2);
+			if (IsSuccess(status) && actualLen <= 255)
+			{
+				result = builder.ToString();
+				return actualLen;
+			}
+			StringBuilder largerBuilder = new StringBuilder(actualLen);
+			actualLen = umsg_format(format, largerBuilder, actualLen+1, out status, arg0, arg1, arg2);
+			if (IsSuccess(status))
+			{
+				result = builder.ToString();
+				return actualLen;
+			}
+			result = string.Empty;
+			return 0;
+		}
+
+		//[DllImport(kIcuinDllName, EntryPoint = "utrans_getDisplayName" + VersionSuffix,
+		// CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		//private static extern string utrans_getDisplayName(int iconv); // This doesn't exist in the C API. We've had to, more or less, implement it ourselves via Resource Bundle API.
+
+		/// <summary>
+		/// Reimplementation of TransliteratorIDParser::IDtoSTV from the ICU C++ API. Parses a transliterator ID in one of several formats
+		/// and returns the source, target and variant components of the ID. Valid formats are T, T/V, S-T, S-T/V, or S/V-T. If source is
+		/// missing, it will be set to "Any". If target or variant is missing, they will be the empty string. (If target is missing, the
+		/// ID is not well-formed, but this function will not throw an exception). If variant is present, the slash will be included in
+		/// </summary>
+		/// <param name="transId">Transliterator ID to parse</param>
+		/// <param name="source">"Any" if source was missing, otherwise source component of the ID</param>
+		/// <param name="target">Empty string if no target, otherwise target component of the ID (should always be present in a well-formed ID)</param>
+		/// <param name="variant">Empty string if no variant, otherwise variant component of the ID, *with a '/' as its first character*.</param>
+		/// <returns>True if source was present, false if source was missing.</returns>
+		private static bool ParseTransliteratorID(string transId, out string source, out string target, out string variant)
+		{
+			// This is a straight port of the TransliteratorIDParser::IDtoSTV logic, with basically no changes
+			source = "Any";
+			int tgtSep = transId.IndexOf("-");
+			int varSep = transId.IndexOf("/");
+			if (varSep < 0)
+				varSep = transId.Length;
+
+			bool isSourcePresent = false;
+			if (tgtSep < 0)
+			{
+				// Form: T/V or T (or /V)
+				target = transId.Substring(0, varSep);
+				variant = transId.Substring(varSep);
+			}
+			else if (tgtSep < varSep)
+			{
+				// Form: S-T/V or S-T (or -T/V or -T)
+				if (tgtSep > 0)
+				{
+					source = transId.Substring(0, tgtSep);
+					isSourcePresent = true;
+				}
+				target = transId.Substring(tgtSep + 1, varSep - tgtSep - 1);
+				variant = transId.Substring(varSep);
+			}
+			else
+			{
+				// Form: S/V-T or /V-T
+				if (varSep > 0)
+				{
+					source = transId.Substring(0, varSep);
+					isSourcePresent = true;
+				}
+				variant = transId.Substring(varSep, tgtSep - varSep);
+				target = transId.Substring(tgtSep + 1);
+			}
+
+			// The above Substring calls have all left the variant either empty or looking like "/V". In the original C++
+			// implementation, we removed the leading "/". But here, we keep it because the only code that needs to call
+			// this is GetTransliteratorDisplayName, which wants the leading "/" on variant names.
+			//if (variant.Length > 0)
+			//	variant = variant.Substring(1);
+
+			return isSourcePresent; // This is currently not used, but we return it anyway for compatibility with original C++ implementation
+		}
+
+		/// <summary>
+		/// Get a display name for a transliterator. This reimplements the logic from the C++ Transliterator::getDisplayName method,
+		/// since the ICU C API doesn't expose a utrans_getDisplayName() call. (Unfortunately).
+		/// Note that if no text is found for the given locale, ICU will (by default) fallback to the root locale. However, the
+		/// root locale's strings for transliterator display names are ugly and not suitable for displaying to the user. Therefore,
+		/// if we have to fallback, we fallback to the "en" locale instead of the root locale.
+		/// </summary>
+		/// <param name="transId">The translator's system ID in ICU, as returned (one at a time) by utrans_openIDs().</param>
+		/// <param name="localeName">The ICU name of the locale in which to calculate the display name.</param>
+		/// <returns>A name suitable for displaying to the user in the given locale, or in English if no translated text is present in the given locale.</returns>
+		public static string GetTransliteratorDisplayName(string transId, string localeName)
+		{
+			const string translitDisplayNameRBKeyPrefix = "%Translit%%";  // See RB_DISPLAY_NAME_PREFIX in translit.cpp in ICU source code
+			const string scriptDisplayNameRBKeyPrefix = "%Translit%";  // See RB_SCRIPT_DISPLAY_NAME_PREFIX in translit.cpp in ICU source code
+			const string translitResourceBundleName = "ICUDATA-translit";
+			const string translitDisplayNamePatternKey = "TransliteratorNamePattern";
+
+			string source;
+			string target;
+			string variant;
+			ParseTransliteratorID(transId, out source, out target, out variant);
+			if (target.Length < 1)
+				return transId;  // Malformed ID? Give up
+
+			IntPtr translitBundle = IntPtr.Zero;
+			IntPtr translitBundleFallback = IntPtr.Zero;
+			try
+			{
+				translitBundle = OpenResourceBundle(translitResourceBundleName, localeName);
+				translitBundleFallback = OpenResourceBundle(translitResourceBundleName, "en");
+				string pattern = GetResourceBundleStringByKey(translitBundle, translitDisplayNamePatternKey);
+				// If we don't find a MessageFormat pattern in our locale, try the English fallback
+				if (String.IsNullOrEmpty(pattern))
+					pattern = GetResourceBundleStringByKey(translitBundleFallback, translitDisplayNamePatternKey);
+				// Still can't find a pattern? Then we won't be able to format the ID, so just return it
+				if (String.IsNullOrEmpty(pattern))
+					return transId;
+
+				// First check if there is a specific localized name for this transliterator, and if so, just return it.
+				// Note that we need to check whether the string we got still starts with the "%Translit%%" prefix, because
+				// if so, it means that we got a value from the root locale's bundle, which isn't actually localized.
+				string translitLocalizedName = GetResourceBundleStringByKey(translitBundle,
+					translitDisplayNameRBKeyPrefix + transId);
+				if (!String.IsNullOrEmpty(translitLocalizedName) && !translitLocalizedName.StartsWith(translitDisplayNameRBKeyPrefix))
+					return translitLocalizedName;
+
+				// There was no specific localized name for this transliterator (which will be true of most cases). Build one.
+				UParseError parseErrorIgnored;
+				UErrorCode status;
+				IntPtr messageFormatter = umsg_open(pattern, pattern.Length, localeName, out parseErrorIgnored, out status);
+				if (IsFailure(status))
+					return transId;
+
+				// Try getting localized display names for the source and target, if possible.
+				string localizedSource = GetResourceBundleStringByKey(translitBundle, scriptDisplayNameRBKeyPrefix + source);
+				if (String.IsNullOrEmpty(localizedSource))
+				{
+					localizedSource = source; // Can't localize
+				}
+				else
+				{
+					// As with the transliterator name, we need to check that the string we got didn't come from the root bundle
+					// (which just returns a string that still contains the ugly %Translit% prefix). If it did, fall back to English.
+					if (localizedSource.StartsWith(scriptDisplayNameRBKeyPrefix))
+						localizedSource = GetResourceBundleStringByKey(translitBundleFallback, scriptDisplayNameRBKeyPrefix + source);
+					if (String.IsNullOrEmpty(localizedSource) || localizedSource.StartsWith(scriptDisplayNameRBKeyPrefix))
+						localizedSource = source;
+				}
+
+				// Same thing for target
+				string localizedTarget = GetResourceBundleStringByKey(translitBundle, scriptDisplayNameRBKeyPrefix + target);
+				if (String.IsNullOrEmpty(localizedTarget))
+				{
+					localizedTarget = target; // Can't localize
+				}
+				else
+				{
+					if (localizedTarget.StartsWith(scriptDisplayNameRBKeyPrefix))
+						localizedTarget = GetResourceBundleStringByKey(translitBundleFallback, scriptDisplayNameRBKeyPrefix + target);
+					if (String.IsNullOrEmpty(localizedTarget) || localizedTarget.StartsWith(scriptDisplayNameRBKeyPrefix))
+						localizedTarget = target;
+				}
+
+				string displayName;
+				int ignoreLen;
+				MessageFormat(messageFormatter, out displayName, out status, 2.0, localizedSource, localizedTarget);
+				if (IsSuccess(status))
+					return displayName + variant; // Variant is either empty string or starts with "/"
+				else
+					return transId; // If formatting fails, the transliterator's ID is still our final fallback
+			}
+			finally
+			{
+				if (translitBundle != IntPtr.Zero)
+					CloseResourceBundle(translitBundle);
+				if (translitBundleFallback != IntPtr.Zero)
+					CloseResourceBundle(translitBundleFallback);
+			}
+		}
+
+		/// <summary>
+		/// Get the IDs and display names of all transliterators registered with ICU.
+		/// Display names will be in the locale specified by the displayLocale parameter; omit it or pass in null to use the default locale.
+		/// </summary>
+		public static IEnumerable<IcuIdAndName> GetTransliteratorIdsAndNames(string displayLocale = null)
+		{
+			IntPtr icuEnumerator = IntPtr.Zero;
+			try
+			{
+				icuEnumerator = GetTransliteratorEnumerator();
+				while (true)
+				{
+					string id = NextEnumeratorString(icuEnumerator);
+					if (id == null)
+						break;
+					string name = GetTransliteratorDisplayName(id, displayLocale);
+					yield return new IcuIdAndName(id, name);
+				}
+			}
+			finally
+			{
+				if (icuEnumerator != IntPtr.Zero)
+					CloseEnumerator(icuEnumerator);
+			}
+		}
+
+		#endregion Transliterator enumeration
 
 		private static bool IsSuccess(UErrorCode errorCode)
 		{

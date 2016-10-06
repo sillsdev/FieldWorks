@@ -15,6 +15,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SilEncConverters40;
+using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -473,17 +474,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						// fill in combo items.
 						cboSpec.BeginUpdate();
 						cboSpec.Items.Clear();
-						ILgIcuConverterEnumerator lice = LgIcuConverterEnumeratorClass.Create();
-						int cconv = lice.Count;
-
 						try
 						{
-							for (int i = 0; i < cconv; i++)
+							// TODO: Why does bare "Icu.GetConverterIdsAndNames" not work in the next line?
+							// It picks up icu.net's Icu class instead of COMInterfaces's Icu class. But why?
+							foreach (IcuIdAndName idAndName in Common.COMInterfaces.Icu.GetConverterIdsAndNames())
 							{
-								string name = lice.get_ConverterName(i);
-								string id = lice.get_ConverterId(i);
-								if (!String.IsNullOrEmpty(name))
-									cboSpec.Items.Add(new CnvtrSpecComboItem(name, id));
+								if (!String.IsNullOrEmpty(idAndName.Name))
+									cboSpec.Items.Add(new CnvtrSpecComboItem(idAndName.Name, idAndName.Id));
 							}
 						}
 						catch (Exception ee)
@@ -503,13 +501,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						// fill in combo items.
 						cboSpec.BeginUpdate();
 						cboSpec.Items.Clear();
-						ILgIcuTransliteratorEnumerator lite = LgIcuTransliteratorEnumeratorClass.Create();
-						int ctrans = lite.Count;
-						for (int i = 0; i < ctrans; i++)
+						foreach (IcuIdAndName idAndName in Common.COMInterfaces.Icu.GetTransliteratorIdsAndNames())
 						{
-							string name = lite.get_TransliteratorName(i);
-							string id = lite.get_TransliteratorId(i);
-							cboSpec.Items.Add(new CnvtrSpecComboItem(name, id));
+							cboSpec.Items.Add(new CnvtrSpecComboItem(idAndName.Name, idAndName.Id));
 						}
 						cboSpec.EndUpdate();
 						break;

@@ -121,6 +121,7 @@
     <Compile Include="ComWrapper.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="IcuIdAndName.cs" />
     <Compile Include="INormalizationCharacterFactory.cs" />
     <Compile Include="IBidiCharacterFactory.cs" />
     <Compile Include="FwKernel.cs">
@@ -133,6 +134,7 @@
     <Compile Include="IUcdCharacter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="IcuResourceBundle.cs" />
     <Compile Include="MarshalEx.cs">
       <SubType>Code</SubType>
     </Compile>
