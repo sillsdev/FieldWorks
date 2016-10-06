@@ -835,6 +835,42 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		}
 
 		[Test]
+		public void MigrateFromConfigV5toV6_UpdatesReferencedHeadwordForSubentryUnder()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				Label = "Form",
+				FieldDescription = "HeadWordRef"
+			};
+			var subentryUnder = new ConfigurableDictionaryNode
+			{
+				Label = "Subentry Under",
+				FieldDescription = "NonTrivialEntryRoots",
+				Children = new List<ConfigurableDictionaryNode> { headwordNode }
+			};
+			var components = new ConfigurableDictionaryNode
+			{
+				Label = "Components",
+				FieldDescription = "ComplexFormEntryRefs",
+				Children = new List<ConfigurableDictionaryNode> { subentryUnder }
+			};
+			var minorEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Minor Entry (Complex Forms)",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { components }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Version = PreHistoricMigrator.VersionAlpha1,
+				FilePath = string.Empty,
+				Parts = new List<ConfigurableDictionaryNode> { minorEntryNode }
+			};
+			m_migrator.MigrateFrom83Alpha(model);
+			Assert.AreEqual("Referenced Headword", headwordNode.Label);
+		}
+
+		[Test]
 		public void MigrateFromConfigV5toV6_SwapsReverseAbbrAndAbbreviation_ReversalIndexes()
 		{
 			var revAbbrNode = new ConfigurableDictionaryNode { Label = "Reverse Abbreviation", FieldDescription = "ReverseAbbr" };
