@@ -65,7 +65,7 @@
       <HintPath>lib\IDLImporter.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="NVelocity">
       <HintPath>lib\NVelocity.dll</HintPath>
