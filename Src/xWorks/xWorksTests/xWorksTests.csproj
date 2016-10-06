@@ -149,6 +149,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
     </Reference>
+    <Reference Include="Palaso.TestUtilities, Version=2.6.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\Palaso.TestUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="RootSite, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
