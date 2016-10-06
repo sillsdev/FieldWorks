@@ -340,7 +340,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			CssGeneratorTests.PopulateFieldsForTesting(convertedModel);
 
 			var currentDefaultModel = BuildCurrentDefaultMinorEntryNodes();
-			currentDefaultModel.FilePath = "./Stem" + DictionaryConfigurationModel.FileExtension;
+			currentDefaultModel.FilePath = "./" + DictionaryConfigurationMigrator.LexemeFileName + DictionaryConfigurationModel.FileExtension;
 			currentDefaultModel.Parts[1].Label = MainEntryComplexLabel;
 			var currentDefaultMainNode = new ConfigurableDictionaryNode
 			{

@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				case 7:
 					var fileName = Path.GetFileNameWithoutExtension(alphaModel.FilePath);
 					if (!alphaModel.IsRootBased)
-						alphaModel.IsRootBased = fileName == "Root";
+						alphaModel.IsRootBased = fileName == DCM.RootFileName;
 					break;
 				default:
 					m_logger.WriteLine(string.Format(
