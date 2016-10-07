@@ -1667,7 +1667,7 @@ namespace SIL.FieldWorks.XWorks
 			var lexEntryTypes = isComplex
 				? settings.Cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities
 				: settings.Cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities;
-			foreach (var lexEntryType in lexEntryTypes) // REVIEW (Hasso): worthwhile to check IsListItemSelected here?
+			foreach (var lexEntryType in lexEntryTypes.Where(lexEntryType => config.DictionaryNodeOptions == null || IsListItemSelectedForExport(config, lexEntryType, null)))
 			{
 				var innerBldr = new StringBuilder();
 				foreach (var lexEntRef in lerCollection)
@@ -2267,6 +2267,7 @@ namespace SIL.FieldWorks.XWorks
 			var entryTypeGuids = new Set<Guid>();
 			var entryRef = listItem as ILexEntryRef;
 			var entry = listItem as ILexEntry;
+			var entryType = listItem as ILexEntryType;
 			var note = listItem as ILexExtendedNote;
 			if (entryRef != null)
 			{
@@ -2283,6 +2284,10 @@ namespace SIL.FieldWorks.XWorks
 				if (listId == DictionaryNodeListOptions.ListIds.Complex || listId == DictionaryNodeListOptions.ListIds.Minor)
 					foreach (var complexFormEntryRef in entry.ComplexFormEntryRefs)
 						GetComplexFormTypeGuidsForEntryRef(complexFormEntryRef, entryTypeGuids);
+			}
+			else if (entryType != null)
+			{
+				entryTypeGuids.Add(entryType.Guid);
 			}
 			else if (note != null)
 			{
