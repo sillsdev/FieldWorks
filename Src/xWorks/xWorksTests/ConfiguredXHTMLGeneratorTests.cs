@@ -5499,11 +5499,11 @@ namespace SIL.FieldWorks.XWorks
 			var lexentry = CreateInterestingLexEntry(Cache);
 
 			var subentry = CreateInterestingLexEntry(Cache);
-			var otherComplexRefRevAbbr = CreateComplexForm(Cache, isUnderSense ? (ICmObject)lexentry : lexentry.SensesOS.First(), subentry, true, 1)
+			var otherComplexRefRevAbbr = CreateComplexForm(Cache, isUnderSense ? (ICmObject)lexentry : lexentry.SensesOS.First(), subentry, true, 2)
 				.ComplexEntryTypesRS[0].ReverseAbbr.BestAnalysisAlternative.Text;
 
 			var subsubentry = CreateInterestingLexEntry(Cache);
-			var subsubentryRef = CreateComplexForm(Cache, subentry, subsubentry, true, 2);
+			var subsubentryRef = CreateComplexForm(Cache, subentry, subsubentry, true, 4);
 
 			var complexRefAbbr = subsubentryRef.ComplexEntryTypesRS[0].Abbreviation.BestAnalysisAlternative.Text;
 			var complexRefRevAbbr = subsubentryRef.ComplexEntryTypesRS[0].ReverseAbbr.BestAnalysisAlternative.Text;
@@ -6473,8 +6473,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var typeMain = CreatePublicationType("main");
 
-			var entryEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(entryEntry, "entry", m_wsFr, Cache);
+			var entryEntry = CreateInterestingLexEntry(Cache, "entry");
 
 			var firstComplexForm = CreateInterestingLexEntry(Cache, "entry1", "myComplexForm");
 			CreateComplexForm(Cache, entryEntry, firstComplexForm, false); //Compound

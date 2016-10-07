@@ -1600,6 +1600,11 @@ namespace SIL.FieldWorks.XWorks
 			return String.Empty;
 		}
 
+		internal static bool IsFactoredReference(ConfigurableDictionaryNode node, out ConfigurableDictionaryNode typeChild)
+		{
+			return IsVariantEntryType(node, out typeChild) || IsComplexEntryType(node, out typeChild) || IsPrimaryEntryReference(node, out typeChild);
+		}
+
 		private static bool IsComplexEntryType(ConfigurableDictionaryNode config, out ConfigurableDictionaryNode complexEntryTypeNode)
 		{
 			complexEntryTypeNode = null;

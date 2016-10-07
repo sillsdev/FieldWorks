@@ -214,9 +214,9 @@ namespace SIL.FieldWorks.XWorks
 			var refer3 = CXGTests.CreateInterestingLexEntry(Cache, "CompSense Entry", "Component Sense").SensesOS.First();
 			var refer4 = CXGTests.CreateInterestingLexEntry(Cache, "Invariant Entry");
 			var refer5 = CXGTests.CreateInterestingLexEntry(Cache, "Variante Entrie");
-			using (CXGTests.CreateComplexForm(Cache, refer1, primaryEntry, new Guid("00000000-0000-0000-aaaa-000000000000"), true)) // Compound
-			using (CXGTests.CreateVariantForm(Cache, refer2, primaryEntry, new Guid("00000000-0000-0000-bbbb-000000000000"), "Free Variant"))
 			using (CXGTests.CreateComplexForm(Cache, refer3, primaryEntry, new Guid("00000000-0000-0000-cccc-000000000000"), true)) // Compound
+			using (CXGTests.CreateVariantForm(Cache, refer2, primaryEntry, new Guid("00000000-0000-0000-bbbb-000000000000"), "Free Variant"))
+			using (CXGTests.CreateComplexForm(Cache, refer1, primaryEntry, new Guid("00000000-0000-0000-aaaa-000000000000"), true)) // Compound
 			using (CXGTests.CreateVariantForm(Cache, refer4, primaryEntry, new Guid("00000000-0000-0000-dddd-000000000000"), null)) // no Variant Type
 			using (CXGTests.CreateVariantForm(Cache, refer5, primaryEntry, new Guid("00000000-0000-0000-eeee-000000000000"), "Spelling Variant"))
 			{
