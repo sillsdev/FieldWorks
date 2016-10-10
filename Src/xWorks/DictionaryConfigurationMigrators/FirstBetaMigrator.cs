@@ -36,9 +36,21 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			var foundOne = string.Format("{0}: Configuration was found in need of migration. - {1}",
 				appVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss"));
+			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
+			var dictionaryConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+			var stemPath = Path.Combine(dictionaryConfigLoc, "Stem" + DictionaryConfigurationModel.FileExtension);
+			var lexemePath = Path.Combine(dictionaryConfigLoc, "Lexeme" + DictionaryConfigurationModel.FileExtension);
+			if (File.Exists(stemPath) && !File.Exists(lexemePath))
+			{
+				File.Move(stemPath, lexemePath);
+			}
 			foreach (var config in DictionaryConfigurationMigrator.GetConfigsNeedingMigration(Cache, DCM.VersionCurrent))
 			{
 				m_logger.WriteLine(foundOne);
+				if (config.Label.StartsWith("Stem-"))
+				{
+					config.Label = config.Label.Replace("Stem-", "Lexeme-");
+				}
 				m_logger.WriteLine(string.Format("Migrating {0} configuration '{1}' from version {2} to {3}.",
 					config.IsReversal ? "Reversal Index" : "Dictionary", config.Label, config.Version, DCM.VersionCurrent));
 				m_logger.IncreaseIndent();

@@ -3,10 +3,18 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using NUnit.Framework;
+using Palaso.IO;
+using Palaso.TestUtilities;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
+using XCore;
 
 // ReSharper disable InconsistentNaming
 
@@ -17,6 +25,38 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		private const string KidField = "kiddo";
 		private FirstBetaMigrator m_migrator;
 		private SimpleLogger m_logger;
+
+		private MockFwXApp m_application;
+		private string m_configFilePath;
+		private MockFwXWindow m_window;
+		private Mediator m_mediator;
+
+		[TestFixtureSetUp]
+		public override void FixtureSetup()
+		{
+			base.FixtureSetup();
+			Cache.ProjectId.Path = Path.Combine(Path.GetTempPath(), Cache.ProjectId.Name, Cache.ProjectId.Name + @".junk");
+			FwRegistrySettings.Init();
+			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
+			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
+			m_window = new MockFwXWindow(m_application, m_configFilePath);
+			m_window.Init(Cache); // initializes Mediator values
+			m_mediator = m_window.Mediator;
+			m_mediator.AddColleague(new StubContentControlProvider());
+			m_window.LoadUI(m_configFilePath); // actually loads UI here; needed for non-null stylesheet
+			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, m_application, Cache.ProjectId.Path);
+		}
+
+		[TestFixtureTearDown]
+		public override void FixtureTeardown()
+		{
+			DirectoryUtilities.DeleteDirectoryRobust(Cache.ProjectId.Path);
+			base.FixtureTeardown();
+			m_application.Dispose();
+			m_window.Dispose();
+			m_mediator.Dispose();
+			FwRegistrySettings.Release();
+		}
 
 		[SetUp]
 		public void SetUp()
@@ -41,6 +81,27 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode>() }); // SUT
 			Assert.AreEqual(DictionaryConfigurationMigrator.VersionCurrent, alphaModel.Version);
+		}
+
+		[Test]
+		public void MigrateFrom83Alpha_MoveStemToLexeme()
+		{
+			using (var tempFolder = TemporaryFolder.TrackExisting(Path.GetDirectoryName(Cache.ProjectId.Path)))
+			{
+				var configLocations = FdoFileHelper.GetConfigSettingsDir(tempFolder.Path);
+				configLocations = Path.Combine(configLocations, "Dictionary");
+				Directory.CreateDirectory(configLocations);
+				const string content =
+@"<DictionaryConfiguration xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema'
+name='Stem-based (complex forms as main entries)' version='8' lastModified='2016-10-05' allPublications='true'>
+  <ConfigurationItem name='Main Entry' isEnabled='true' style='Dictionary-Normal' styleType='paragraph' field='LexEntry' cssClassNameOverride='entry'/>
+</DictionaryConfiguration>";
+				var actualFilePath = Path.Combine(configLocations, "Stem" + DictionaryConfigurationModel.FileExtension);
+				var convertedFilePath = Path.Combine(configLocations, "Lexeme" + DictionaryConfigurationModel.FileExtension);
+				File.WriteAllText(actualFilePath, content);
+				m_migrator.MigrateIfNeeded(m_logger, m_mediator, "Test App Version"); // SUT
+				Assert.IsTrue(File.Exists(convertedFilePath));
+			}
 		}
 
 		[Test]
