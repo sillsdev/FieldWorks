@@ -316,7 +316,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 								SetEntryTypeChildrenBackward(n);
 							}
 						}
-						else if (n.Label == "Headword" && n.Parent.FieldDescription == "ReferringSenses")
+						else if ((n.Label == "Headword" && n.Parent.FieldDescription == "ReferringSenses") ||
+							(n.Label == "Form" && n.Parent.Label.StartsWith("Subentry Under")))
 						{
 							n.Label = "Referenced Headword";
 						}
