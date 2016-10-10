@@ -2081,7 +2081,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void GenerateCssForConfiguration_PrimaryEntryReferencesTypeBeforeAndAfterWork()
+		public void GenerateCssForConfiguration_PrimaryEntryReferencesTypeContextWorks()
 		{
 			const string lang2 = "ru";
 			var reverseName = new ConfigurableDictionaryNode
@@ -2095,14 +2095,21 @@ namespace SIL.FieldWorks.XWorks
 			var entrytypes = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "EntryTypes",
-				Children = new List<ConfigurableDictionaryNode> { reverseName }
+				Children = new List<ConfigurableDictionaryNode> { reverseName },
+				Before = "b4",
+				Between = "twixt",
+				After = "farther back"
+			};
+			var headword = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "TestHeadword", Between = "bh", After = "ah"
 			};
 			var primaryentry = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "EntryRefsWithThisMainSense",
+				FieldDescription = "EntryRefsWithThisMainSense", Style = "FooStyle",
 				Before = "[",
 				After = "]",
-				Children = new List<ConfigurableDictionaryNode> { entrytypes }
+				Children = new List<ConfigurableDictionaryNode> { entrytypes, headword }
 			};
 			var senses = new ConfigurableDictionaryNode
 			{
@@ -2118,17 +2125,14 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			const string thisMainSense =
-				@"\.reversalindexentry>\s*\.referringsenses\s*\.referringsense>\s*\.entryrefswiththismainsense>\s*\.entrytypes .entrytype";
-			const string before = thisMainSense + @"> .reversename> span:first-child:before{.*content:'beef'.*}";
-			const string between = thisMainSense + @"> .reversename> span+span\[lang|='" + lang2 + @"'\]:before{.*content:'viet'.*}";
-			const string after = thisMainSense + @"> .reversename> span:last-child:after{.*content:'aft'.*}";
-			Assert.IsTrue(Regex.Match(cssResult, before, RegexOptions.Singleline).Success,
-				string.Format("Expected{0}{1}{0}but got{0}{2}", Environment.NewLine, before, cssResult));
-			Assert.IsTrue(Regex.Match(cssResult, between, RegexOptions.Singleline).Success,
-				string.Format("Expected{0}{1}{0}but got{0}{2}", Environment.NewLine, between, cssResult));
-			Assert.IsTrue(Regex.Match(cssResult, after, RegexOptions.Singleline).Success,
-				string.Format("Expected{0}{1}{0}but got{0}{2}", Environment.NewLine, after, cssResult));
+			const string thisMainSense = @"\.reversalindexentry>\s*\.referringsenses\s*\.referringsense>\s*\.entryrefswiththismainsense";
+			VerifyRegex(cssResult, thisMainSense + @">\s*\.entrytypes:before{\s*content:'b4';\s*}"); // TODO? (Hasso) 2016.10: put on .types .type first-child
+			VerifyRegex(cssResult, thisMainSense + @"\s*\.entrytypes>\s*\.entrytype\+\s*\.entrytype:before{\s*content:'twixt';\s*}");
+			VerifyRegex(cssResult, thisMainSense + @">\s*\.entrytypes:after{\s*content:'farther back';\s*}");
+			const string entryType = thisMainSense + @">\s*\.entrytypes \.entrytype";
+			VerifyRegex(cssResult, entryType + @">\s*\.reversename>\s*span:first-child:before{\s*content:'beef';\s*}");
+			VerifyRegex(cssResult, entryType + @">\s*\.reversename>\s*span+span\[lang|='" + lang2 + @"'\]:before{\s*content:'viet';\s*}");
+			VerifyRegex(cssResult, entryType + @">\s*\.reversename>\s*span:last-child:after{\s*content:'aft';\s*}");
 		}
 
 		[Test]
@@ -3852,6 +3856,14 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(css, Contains.Substring("border-bottom-width:" + bottom / 1000 + "pt"));
 			Assert.That(css, Contains.Substring("border-left-width:" + leading / 1000 + "pt"));
 			Assert.That(css, Contains.Substring("border-right-width:" + trailing / 1000 + "pt"));
+		}
+
+		// ReSharper disable UnusedParameter.Local -- these parameters are very important.
+		private static void VerifyRegex(string input, string pattern, RegexOptions options = RegexOptions.Singleline)
+		// ReSharper restore UnusedParameter.Local
+		{
+			Assert.IsTrue(Regex.Match(input, pattern, options).Success,
+				string.Format("Expected{0}{1}{0}but got{0}{2}", Environment.NewLine, pattern, input));
 		}
 
 		#endregion // Test Helper Methods

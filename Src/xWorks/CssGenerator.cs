@@ -653,7 +653,7 @@ namespace SIL.FieldWorks.XWorks
 						var parent = configNode.Parent;
 						ConfigurableDictionaryNode typeNode;
 						// If wsOptions are enabled generate a between rule which will not put content between the abbreviation and the ws data
-						if (wsOptions != null)
+						if (wsOptions != null || IsFactoredReferenceType(configNode)) // REVIEW (Hasso) 2016.10: all Factored References should have ListOptions
 						{
 							if (wsOptions.DisplayWritingSystemAbbreviations)
 							{
@@ -677,10 +677,10 @@ namespace SIL.FieldWorks.XWorks
 							betweenSelector = String.Format("{0}> {1}>{2}.sensecontent+{2}:before", parentSelector, collectionSelector, " span");
 						else if (configNode.FieldDescription == "PicturesOfSenses")
 							betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, " div");
-						// Skip between selector for factored references
-						else if (parent == null
-							|| !ConfiguredXHTMLGenerator.IsFactoredReference(parent, out typeNode) || !ReferenceEquals(typeNode, configNode))
+						else if (!IsFactoredReferenceType(configNode)) // Skip between selector for factored references
+						{
 							betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, " span");
+						}
 						betweenRule = new StyleRule(dec) { Value = betweenSelector };
 					}
 					rules.Add(betweenRule);
@@ -729,14 +729,19 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private static string GetParentForFactoredReference(string parentSelector, ConfigurableDictionaryNode configNode)
 		{
-			var parent = configNode.Parent;
-			ConfigurableDictionaryNode typeNode;
-			if (parent == null || !ConfiguredXHTMLGenerator.IsFactoredReference(parent, out typeNode) || !ReferenceEquals(typeNode, configNode))
+			if(!IsFactoredReferenceType(configNode))
 				return parentSelector;
 
-			var parentPlural = GetClassAttributeForConfig(parent);
-			var parentSingular = GetClassAttributeForCollectionItem(parent);
+			var parentPlural = GetClassAttributeForConfig(configNode.Parent);
+			var parentSingular = GetClassAttributeForCollectionItem(configNode.Parent);
 			return parentSelector.Replace(string.Format(".{0} .{1}", parentPlural, parentSingular), '.' + parentPlural);
+		}
+
+		private static bool IsFactoredReferenceType(ConfigurableDictionaryNode configNode)
+		{
+			var parent = configNode.Parent;
+			ConfigurableDictionaryNode typeNode;
+			return parent != null && ConfiguredXHTMLGenerator.IsFactoredReference(parent, out typeNode) && ReferenceEquals(typeNode, configNode);
 		}
 
 		/// <summary>
