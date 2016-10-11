@@ -645,15 +645,14 @@ namespace SIL.FieldWorks.XWorks
 					var collectionSelector = "." + GetClassAttributeForConfig(configNode);
 					var itemSelector = " ." + GetClassAttributeForCollectionItem(configNode);
 					var betweenSelector = String.Format("{0} {1}>{2}+{2}:before", parentSelector, collectionSelector, itemSelector);
-					var betweenRule = new StyleRule(dec) { Value = betweenSelector };
-					if (configNode.DictionaryNodeOptions != null)
+					ConfigurableDictionaryNode dummy;
+					// use default (class-named) between selector for factored references, because "span+span" erroneously matches Type spans
+					if (configNode.DictionaryNodeOptions != null && !ConfiguredXHTMLGenerator.IsFactoredReference(configNode, out dummy))
 					{
 						var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 						var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
-						var parent = configNode.Parent;
-						ConfigurableDictionaryNode typeNode;
 						// If wsOptions are enabled generate a between rule which will not put content between the abbreviation and the ws data
-						if (wsOptions != null || IsFactoredReferenceType(configNode)) // REVIEW (Hasso) 2016.10: all Factored References should have ListOptions
+						if (wsOptions != null)
 						{
 							if (wsOptions.DisplayWritingSystemAbbreviations)
 							{
@@ -677,12 +676,10 @@ namespace SIL.FieldWorks.XWorks
 							betweenSelector = String.Format("{0}> {1}>{2}.sensecontent+{2}:before", parentSelector, collectionSelector, " span");
 						else if (configNode.FieldDescription == "PicturesOfSenses")
 							betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, " div");
-						else if (!IsFactoredReferenceType(configNode)) // Skip between selector for factored references
-						{
+						else
 							betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, " span");
-						}
-						betweenRule = new StyleRule(dec) { Value = betweenSelector };
 					}
+					var betweenRule = new StyleRule(dec) { Value = betweenSelector };
 					rules.Add(betweenRule);
 				}
 				// Headword, Gloss, and Caption are contained in a captionContent area.
