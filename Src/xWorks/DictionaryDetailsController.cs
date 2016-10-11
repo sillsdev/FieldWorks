@@ -195,7 +195,7 @@ namespace SIL.FieldWorks.XWorks
 						PanelContents = optionsView,
 						LabelText = xWorksStrings.ThisConfigurationIsShared,
 						LabelToolTip = string.Format(xWorksStrings.SeeAffectedNodesUnder,
-							DictionaryConfigurationMigrator.BuildPathStringFromNode(masterParent, false))
+							DictionaryConfigurationMigrator.BuildPathStringFromNode(masterParent), false)
 					};
 				}
 			}
