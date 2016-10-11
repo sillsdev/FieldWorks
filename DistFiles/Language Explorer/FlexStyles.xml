@@ -129,7 +129,7 @@
 			<font/>
 			<paragraph basedOn="Dictionary-Normal" indentLeft="21 pt" hanging="0 pt" spaceBefore="0 pt"/>
 		</tag>
-		<tag id="Dictionary-Subsubentry" guid="90B94E23-3E77-4460-94FD-C1997ED9A81F" userlevel="1" context="internalConfigureView" type="paragraph">
+		<tag id="Dictionary-Subsubentry" guid="693AEDEB-1F1A-4F1F-B6CD-4A2A96A1DC37" userlevel="1" context="internalConfigureView" type="paragraph">
 			<usage wsId="en">Each paragraph of Subsubentry information that is added to the entry if there are subsubentries.</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font/>
