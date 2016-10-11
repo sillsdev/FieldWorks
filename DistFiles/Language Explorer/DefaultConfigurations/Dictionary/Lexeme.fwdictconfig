@@ -536,7 +536,7 @@
 		  <Option id="all analysis" isEnabled="true"/>
 		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Extended Note" isEnabled="true" style="Dictionary-Sense" styleType="paragraph" between=" " after=" " field="ExtendedNoteOS" cssClassNameOverride="extendednotecontents">
+	  <ConfigurationItem name="Extended Note" isEnabled="true" style="Block Quote" styleType="paragraph" between=" " after=" " field="ExtendedNoteOS" cssClassNameOverride="extendednotecontents">
 		<ComplexFormOptions list="note" displayEachComplexFormInParagraph="true">
 			<Option id="c0000000-dd15-4a03-9032-b40faaa9a754" isEnabled="true" />
 			<Option id="2f06d436-b1e0-47ae-a42e-1f7b893c5fc2" isEnabled="true" />
@@ -1525,7 +1525,7 @@
 		  <Option id="all analysis" isEnabled="true"/>
 		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Extended Note" isEnabled="true" style="Dictionary-Sense" styleType="paragraph" between=" " after=" " field="ExtendedNoteOS" cssClassNameOverride="extendednotecontents">
+	  <ConfigurationItem name="Extended Note" isEnabled="true" style="Block Quote" styleType="paragraph" between=" " after=" " field="ExtendedNoteOS" cssClassNameOverride="extendednotecontents">
 		<ComplexFormOptions list="note" displayEachComplexFormInParagraph="true">
 			<Option id="c0000000-dd15-4a03-9032-b40faaa9a754" isEnabled="true" />
 			<Option id="2f06d436-b1e0-47ae-a42e-1f7b893c5fc2" isEnabled="true" />
@@ -2479,7 +2479,7 @@
 		  <Option id="all analysis" isEnabled="true"/>
 		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Extended Note" isEnabled="true" style="Dictionary-Sense" styleType="paragraph" between=" " after=" " field="ExtendedNoteOS" cssClassNameOverride="extendednotecontents">
+	  <ConfigurationItem name="Extended Note" isEnabled="true" style="Block Quote" styleType="paragraph" between=" " after=" " field="ExtendedNoteOS" cssClassNameOverride="extendednotecontents">
 		<ComplexFormOptions list="note" displayEachComplexFormInParagraph="true">
 			<Option id="c0000000-dd15-4a03-9032-b40faaa9a754" isEnabled="true" />
 			<Option id="2f06d436-b1e0-47ae-a42e-1f7b893c5fc2" isEnabled="true" />
@@ -3086,7 +3086,7 @@
 		  <Option id="all analysis" isEnabled="true"/>
 		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Extended Note" isEnabled="true" style="Dictionary-Sense" styleType="paragraph" between=" " after=" " field="ExtendedNoteOS" cssClassNameOverride="extendednotecontents">
+	  <ConfigurationItem name="Extended Note" isEnabled="true" style="Block Quote" styleType="paragraph" between=" " after=" " field="ExtendedNoteOS" cssClassNameOverride="extendednotecontents">
 		<ComplexFormOptions list="note" displayEachComplexFormInParagraph="true">
 			<Option id="c0000000-dd15-4a03-9032-b40faaa9a754" isEnabled="true" />
 			<Option id="2f06d436-b1e0-47ae-a42e-1f7b893c5fc2" isEnabled="true" />
