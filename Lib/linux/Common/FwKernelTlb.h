@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 8.00.0603 */
-/* at Thu Oct 06 09:44:30 2016
+/* at Fri Oct 07 15:58:26 2016
  */
 /* Compiler settings for C:\develop\fwrepo\fw\Output\Common\FwKernelTlb.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
@@ -1500,28 +1500,6 @@ LgIcuLocaleEnumerator
             /* [in] */ ComBool fWriteObjData,
             /* [in] */ ComBool fUseRFC4646) = 0;
         
-        virtual HRESULT STDMETHODCALLTYPE get_StringProperty( 
-            /* [in] */ int iRun,
-            /* [in] */ int tpt,
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE get_StringPropertyAt( 
-            /* [in] */ int ich,
-            /* [in] */ int tpt,
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE get_WritingSystem( 
-            /* [in] */ int irun,
-            /* [retval][out] */ int *pws) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE get_WritingSystemAt( 
-            /* [in] */ int ich,
-            /* [retval][out] */ int *pws) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE get_IsRunOrc( 
-            /* [in] */ int iRun,
-            /* [retval][out] */ ComBool *pfIsOrc) = 0;
-        
     };
     
     
@@ -1695,33 +1673,6 @@ LgIcuLocaleEnumerator
             /* [in] */ ComBool fWriteObjData,
             /* [in] */ ComBool fUseRFC4646);
         
-        HRESULT ( STDMETHODCALLTYPE *get_StringProperty )( 
-            ITsString * This,
-            /* [in] */ int iRun,
-            /* [in] */ int tpt,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        HRESULT ( STDMETHODCALLTYPE *get_StringPropertyAt )( 
-            ITsString * This,
-            /* [in] */ int ich,
-            /* [in] */ int tpt,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        HRESULT ( STDMETHODCALLTYPE *get_WritingSystem )( 
-            ITsString * This,
-            /* [in] */ int irun,
-            /* [retval][out] */ int *pws);
-        
-        HRESULT ( STDMETHODCALLTYPE *get_WritingSystemAt )( 
-            ITsString * This,
-            /* [in] */ int ich,
-            /* [retval][out] */ int *pws);
-        
-        HRESULT ( STDMETHODCALLTYPE *get_IsRunOrc )( 
-            ITsString * This,
-            /* [in] */ int iRun,
-            /* [retval][out] */ ComBool *pfIsOrc);
-        
         END_INTERFACE
     } ITsStringVtbl;
 
@@ -1828,21 +1779,6 @@ LgIcuLocaleEnumerator
 
 #define ITsString_WriteAsXmlExtended(This,pstrm,pwsf,cchIndent,ws,fWriteObjData,fUseRFC4646)	\
     ( (This)->lpVtbl -> WriteAsXmlExtended(This,pstrm,pwsf,cchIndent,ws,fWriteObjData,fUseRFC4646) ) 
-
-#define ITsString_get_StringProperty(This,iRun,tpt,pbstr)	\
-    ( (This)->lpVtbl -> get_StringProperty(This,iRun,tpt,pbstr) ) 
-
-#define ITsString_get_StringPropertyAt(This,ich,tpt,pbstr)	\
-    ( (This)->lpVtbl -> get_StringPropertyAt(This,ich,tpt,pbstr) ) 
-
-#define ITsString_get_WritingSystem(This,irun,pws)	\
-    ( (This)->lpVtbl -> get_WritingSystem(This,irun,pws) ) 
-
-#define ITsString_get_WritingSystemAt(This,ich,pws)	\
-    ( (This)->lpVtbl -> get_WritingSystemAt(This,ich,pws) ) 
-
-#define ITsString_get_IsRunOrc(This,iRun,pfIsOrc)	\
-    ( (This)->lpVtbl -> get_IsRunOrc(This,iRun,pfIsOrc) ) 
 
 #endif /* COBJMACROS */
 
@@ -4065,12 +4001,12 @@ DebugReport;
             /* [in] */ int iv,
             /* [out] */ int *ptpt,
             /* [out] */ int *pnVar,
-            /* [out] */ int *pnVal) = 0;
+            /* [retval][out] */ int *pnVal) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE GetIntPropValues( 
             /* [in] */ int tpt,
             /* [out] */ int *pnVar,
-            /* [out] */ int *pnVal) = 0;
+            /* [retval][out] */ int *pnVal) = 0;
         
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_StrPropCount( 
             /* [retval][out] */ int *pcv) = 0;
@@ -4078,11 +4014,11 @@ DebugReport;
         virtual HRESULT STDMETHODCALLTYPE GetStrProp( 
             /* [in] */ int iv,
             /* [out] */ int *ptpt,
-            /* [out] */ BSTR *pbstrVal) = 0;
+            /* [retval][out] */ BSTR *pbstrVal) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE GetStrPropValue( 
             /* [in] */ int tpt,
-            /* [out] */ BSTR *pbstrVal) = 0;
+            /* [retval][out] */ BSTR *pbstrVal) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE SetIntPropValues( 
             /* [in] */ int tpt,
@@ -4133,13 +4069,13 @@ DebugReport;
             /* [in] */ int iv,
             /* [out] */ int *ptpt,
             /* [out] */ int *pnVar,
-            /* [out] */ int *pnVal);
+            /* [retval][out] */ int *pnVal);
         
         HRESULT ( STDMETHODCALLTYPE *GetIntPropValues )( 
             ITsPropsBldr * This,
             /* [in] */ int tpt,
             /* [out] */ int *pnVar,
-            /* [out] */ int *pnVal);
+            /* [retval][out] */ int *pnVal);
         
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_StrPropCount )( 
             ITsPropsBldr * This,
@@ -4149,12 +4085,12 @@ DebugReport;
             ITsPropsBldr * This,
             /* [in] */ int iv,
             /* [out] */ int *ptpt,
-            /* [out] */ BSTR *pbstrVal);
+            /* [retval][out] */ BSTR *pbstrVal);
         
         HRESULT ( STDMETHODCALLTYPE *GetStrPropValue )( 
             ITsPropsBldr * This,
             /* [in] */ int tpt,
-            /* [out] */ BSTR *pbstrVal);
+            /* [retval][out] */ BSTR *pbstrVal);
         
         HRESULT ( STDMETHODCALLTYPE *SetIntPropValues )( 
             ITsPropsBldr * This,

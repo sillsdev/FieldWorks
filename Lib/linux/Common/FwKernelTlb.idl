@@ -1705,32 +1705,6 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsString") cpp_quo
 		[in] int ws,
 		[in] ComBool fWriteObjData,
 		[in] ComBool fUseRFC4646);
-
-	
-	
-
-	
-	HRESULT get_StringProperty(
-		[in] int iRun,
-		[in] int tpt,
-		[out, retval] BSTR * pbstr);
-	
-	HRESULT get_StringPropertyAt(
-		[in] int ich,
-		[in] int tpt,
-		[out, retval] BSTR * pbstr);
-	
-	HRESULT get_WritingSystem(
-		[in] int irun,
-		[out, retval] int * pws);
-	
-	HRESULT get_WritingSystemAt(
-		[in] int ich,
-		[out, retval] int * pws);
-	
-	HRESULT get_IsRunOrc(
-		[in] int iRun,
-		[out, retval] ComBool * pfIsOrc);
 };
 
 
@@ -2083,13 +2057,13 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsPropsBldr") cpp_
 		[in] int iv,
 		[out] int * ptpt,
 		[out] int * pnVar,
-		[out] int * pnVal);
+		[out, retval] int * pnVal);
 	
 	
 	HRESULT GetIntPropValues(
 		[in] int tpt,
 		[out] int * pnVar,
-		[out] int * pnVal);
+		[out, retval] int * pnVal);
 
 	
 	[propget] HRESULT StrPropCount(
@@ -2098,12 +2072,12 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsPropsBldr") cpp_
 	HRESULT GetStrProp(
 		[in] int iv,
 		[out] int * ptpt,
-		[out] BSTR * pbstrVal);
+		[out, retval] BSTR * pbstrVal);
 	
 	
 	HRESULT GetStrPropValue(
 		[in] int tpt,
-		[out] BSTR * pbstrVal);
+		[out, retval] BSTR * pbstrVal);
 
 
 	
@@ -2202,7 +2176,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 {
 	interface ITsPropsBldr;
 };
-#line 1360 "c:\\develop\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
+#line 1334 "c:\\develop\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
 
 #line 22 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Render.idh"

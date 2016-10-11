@@ -859,32 +859,6 @@ DeclareInterface(TsString, Unknown, 3A489F46-368A-49E7-A308-39EE5D45F92F)
 		[in] int ws,
 		[in] ComBool fWriteObjData,
 		[in] ComBool fUseRFC4646);
-
-	// Optimizations/shortcuts (there are other ways to do these things, but they are high-frequency
-	// and having these shortcuts minimizes round trips to unmanaged code).
-
-	// Shortcut to get the indicated string property for the indicated run.
-	HRESULT get_StringProperty(
-		[in] int iRun,
-		[in] int tpt,
-		[out, retval] BSTR * pbstr);
-	// Shortcut to get the indicated string property for the indicated character position.
-	HRESULT get_StringPropertyAt(
-		[in] int ich,
-		[in] int tpt,
-		[out, retval] BSTR * pbstr);
-	// Shortcut to get WS at given run
-	HRESULT get_WritingSystem(
-		[in] int irun,
-		[out, retval] int * pws);
-	// Shortcut to get WS at given ich
-	HRESULT get_WritingSystemAt(
-		[in] int ich,
-		[out, retval] int * pws);
-	// Shortcut to determine whether a run is an ORC
-	HRESULT get_IsRunOrc(
-		[in] int iRun,
-		[out, retval] ComBool * pfIsOrc);
 };
 
 
@@ -1237,13 +1211,13 @@ DeclareInterface(TsPropsBldr, Unknown, F1EF76E8-BE04-11d3-8D9A-005004DEFEC4)
 		[in] int iv,
 		[out] int * ptpt,
 		[out] int * pnVar,
-		[out] int * pnVal);
+		[out, retval] int * pnVal);
 	// Fetch the variation and value of an integer property.  If an invalid tpt value is passed,
 	// return S_FALSE and set both *pnVar and *pnVal to -1.
 	HRESULT GetIntPropValues(
 		[in] int tpt,
 		[out] int * pnVar,
-		[out] int * pnVal);
+		[out, retval] int * pnVal);
 
 	// Fetch the number of string properties.
 	[propget] HRESULT StrPropCount(
@@ -1252,12 +1226,12 @@ DeclareInterface(TsPropsBldr, Unknown, F1EF76E8-BE04-11d3-8D9A-005004DEFEC4)
 	HRESULT GetStrProp(
 		[in] int iv,
 		[out] int * ptpt,
-		[out] BSTR * pbstrVal);
+		[out, retval] BSTR * pbstrVal);
 	// Fetch the value of a string property.  If an invalid tpt value is passed, return S_FALSE
 	// and set *pbstrVal to NULL.
 	HRESULT GetStrPropValue(
 		[in] int tpt,
-		[out] BSTR * pbstrVal);
+		[out, retval] BSTR * pbstrVal);
 
 
 	// Set an integer property.  If nVar and nVal are -1, the integer property is deleted.

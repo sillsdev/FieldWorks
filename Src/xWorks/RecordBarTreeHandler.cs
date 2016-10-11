@@ -19,6 +19,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Filters;
 using SIL.Utils;

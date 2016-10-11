@@ -268,7 +268,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			get
 			{
 				if (s_Null == null)
-					s_Null = new ArrayPtr(0);
+					s_Null = new ArrayPtr(IntPtr.Zero);
 				return s_Null;
 			}
 		}

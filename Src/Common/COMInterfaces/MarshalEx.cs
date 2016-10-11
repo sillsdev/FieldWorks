@@ -235,7 +235,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		static public void StringToNative(ArrayPtr arrayPtr, int nMaxSize, string str,
 			bool fUnicode)
 		{
-			Debug.Assert(str.Length < nMaxSize);
+			Debug.Assert(str.Length <= nMaxSize);
 			// Marshal.SizeOf(typeof(char)) always returns 1, so we have to deal with
 			// unmanaged wchar ourself...
 			// System.Char is 16bit
@@ -247,7 +247,8 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 				{
 					Marshal.WriteInt16(current, i * elemSize, (short)str[i]);
 				}
-				Marshal.WriteInt16(current, str.Length * elemSize, 0);
+				if (str.Length < nMaxSize)
+					Marshal.WriteInt16(current, str.Length * elemSize, 0);
 			}
 			else
 			{
@@ -257,7 +258,8 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 				{
 					Marshal.WriteByte(current, i * elemSize, (byte)str[i]);
 				}
-				Marshal.WriteByte(current, str.Length * elemSize, 0);
+				if (str.Length < nMaxSize)
+					Marshal.WriteByte(current, str.Length * elemSize, 0);
 			}
 		}
 
@@ -276,9 +278,9 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		static public string NativeToString(ArrayPtr nativeData, int cElem, bool fUnicode)
 		{
 			if (fUnicode)
-				return Marshal.PtrToStringUni((IntPtr)nativeData);
+				return Marshal.PtrToStringUni((IntPtr)nativeData, cElem);
 			else
-				return Marshal.PtrToStringAnsi((IntPtr)nativeData);
+				return Marshal.PtrToStringAnsi((IntPtr)nativeData, cElem);
 		}
 
 		/// ------------------------------------------------------------------------------------

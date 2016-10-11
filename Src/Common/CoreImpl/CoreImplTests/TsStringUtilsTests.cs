@@ -543,8 +543,8 @@ namespace SIL.CoreImpl
 			tssBldr.Replace(tssBldr.Length, tssBldr.Length, "This string has a font size property.", tppBldr.GetTextProps());
 			var tss = tssBldr.GetString();
 			// Confirm that the ITsString has the font size property set.
-			int value, nvar;
-			tppBldr.GetIntPropValues((int)FwTextPropType.ktptWs, out nvar, out value);
+			int nvar;
+			int value = tppBldr.GetIntPropValues((int)FwTextPropType.ktptWs, out nvar);
 			Assert.AreEqual(17, value);
 			Assert.IsTrue(FindIntPropInTss(tss, (int)FwTextPropType.ktptFontSize));
 
@@ -553,7 +553,7 @@ namespace SIL.CoreImpl
 			// Confirm that the ITsString has had the font size property removed.
 			Assert.IsFalse(FindIntPropInTss(newTss, (int)FwTextPropType.ktptFontSize));
 			// Confirm that the writing system property is still the same.
-			newTss.get_PropertiesAt(0).GetBldr().GetIntPropValues((int)FwTextPropType.ktptWs, out nvar, out value);
+			value = newTss.get_PropertiesAt(0).GetBldr().GetIntPropValues((int)FwTextPropType.ktptWs, out nvar);
 			Assert.AreEqual(17, value);
 			Assert.AreEqual("This string has a font size property.", newTss.Text);
 		}
@@ -574,8 +574,8 @@ namespace SIL.CoreImpl
 			tssBldr.Replace(0, 0, string.Empty, tppBldr.GetTextProps());
 			var tss = tssBldr.GetString();
 			// Confirm that the ITsString has the font size property set.
-			int value, nvar;
-			tppBldr.GetIntPropValues((int)FwTextPropType.ktptWs, out nvar, out value);
+			int nvar;
+			int value = tppBldr.GetIntPropValues((int)FwTextPropType.ktptWs, out nvar);
 			Assert.AreEqual(17, value);
 			Assert.IsTrue(FindIntPropInTss(tss, (int)FwTextPropType.ktptFontSize));
 
@@ -584,7 +584,7 @@ namespace SIL.CoreImpl
 			// Confirm that the ITsString has had the font size property removed.
 			Assert.IsFalse(FindIntPropInTss(newTss, (int)FwTextPropType.ktptFontSize));
 			// Confirm that the writing system property is still the same.
-			newTss.get_PropertiesAt(0).GetBldr().GetIntPropValues((int)FwTextPropType.ktptWs, out nvar, out value);
+			value = newTss.get_PropertiesAt(0).GetBldr().GetIntPropValues((int)FwTextPropType.ktptWs, out nvar);
 			Assert.AreEqual(17, value);
 			Assert.IsNull(newTss.Text);
 		}

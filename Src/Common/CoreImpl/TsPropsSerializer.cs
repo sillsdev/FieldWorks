@@ -91,7 +91,7 @@ namespace SIL.CoreImpl
 			StringBuilder bulletProps = new StringBuilder(fontProps.IntPropCount * 3 + fontProps.StrPropCount * 20);
 			for (int i = 0; i < fontProps.IntPropCount; i++)
 			{
-				fontProps.GetIntProp(i, out type, out var, out intValue);
+				intValue = fontProps.GetIntProp(i, out type, out var);
 				bulletProps.Append((char)type);
 				WriteIntToStrBuilder(bulletProps, intValue);
 			}
@@ -99,7 +99,7 @@ namespace SIL.CoreImpl
 			// Add the string properties to the bullet props string
 			for (int i = 0; i < fontProps.StrPropCount; i++)
 			{
-				fontProps.GetStrProp(i, out type, out strValue);
+				strValue = fontProps.GetStrProp(i, out type);
 				bulletProps.Append((char)type);
 				bulletProps.Append(strValue);
 				bulletProps.Append('\u0000');
@@ -156,7 +156,7 @@ namespace SIL.CoreImpl
 				{
 					for (int i = 0; i < wsProps.StrPropCount; i++)
 					{
-						wsProps.GetStrProp(i, out type, out strValue);
+						strValue = wsProps.GetStrProp(i, out type);
 						wsStyleProps.Append((char)type);
 						wsStyleProps.Append((char)strValue.Length);
 						wsStyleProps.Append(strValue);
@@ -168,7 +168,7 @@ namespace SIL.CoreImpl
 				// Add the integer properties to the ws props string
 				for (int i = 0; i < wsProps.IntPropCount; i++)
 				{
-					wsProps.GetIntProp(i, out type, out var, out intValue);
+					intValue = wsProps.GetIntProp(i, out type, out var);
 					wsStyleProps.Append((char)type);
 					wsStyleProps.Append((char)var);
 					WriteIntToStrBuilder(wsStyleProps, intValue);

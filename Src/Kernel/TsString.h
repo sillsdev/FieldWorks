@@ -557,11 +557,6 @@ public:
 	STDMETHODIMP GetRawPtrs(const OLECHAR ** pprgch, int * pcch, const TxtRun ** pprgrun,
 		int * pcrun);
 	STDMETHODIMP GetSubstring(int ichMin, int ichLim, ITsString ** pptssRet);
-	STDMETHODIMP get_StringProperty(int irun, int tpt, BSTR * pbstr);
-	STDMETHODIMP get_StringPropertyAt(int ich, int tpt, BSTR * pbstr);
-	STDMETHODIMP get_WritingSystem(int irun, int * pws);
-	STDMETHODIMP get_WritingSystemAt(int ich, int * pws);
-	STDMETHODIMP get_IsRunOrc(int iRun, ComBool * pfIsOrc);
 	void NoteNormalized(FwNormalizationMode nm);
 
 protected:

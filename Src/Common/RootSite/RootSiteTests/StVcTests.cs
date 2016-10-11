@@ -14,7 +14,6 @@ using NUnit.Framework;
 
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -37,7 +36,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Possible footnote fragments
 		/// </summary>
 		///  ----------------------------------------------------------------------------------------
-		private enum FootnoteFrags: int
+		private enum FootnoteFrags
 		{
 			/// <summary>Scripture</summary>
 			kfrScripture = 100, // debug is easier if different range from tags
@@ -264,8 +263,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			propsBldr.SetStrPropValueRgch(1, objData, objData.Length);
 
 			// Get the guid property as a string.
-			string sObjData;
-			propsBldr.GetStrPropValue(1, out sObjData);
+			string sObjData = propsBldr.GetStrPropValue(1);
 
 			StVc vc = new StVc(Cache.WritingSystemFactory.UserWs) { Cache = Cache };
 			ITsString footnoteMarker = vc.GetStrForGuid(sObjData.Substring(1));
