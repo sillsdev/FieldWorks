@@ -235,7 +235,7 @@ namespace SIL.FieldWorks.XWorks
 				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, "", isNormalRightToLeft);
 				var entries = ConfiguredXHTMLGenerator.GenerateNextFewEntries(PublicationDecorator, entriesToPublish, GetCurrentConfiguration(false), settings, oldCurPageRange,
 					oldAdjPageRange, ConfiguredXHTMLGenerator.EntriesToAddCount, out newCurPageRange, out newAdjPageRange);
-				// Load entries above
+				// Load entries above the first entry
 				foreach (var entry in entries)
 				{
 					var entryElement = browserElement.OwnerDocument.CreateHtmlElement("div");
@@ -259,7 +259,7 @@ namespace SIL.FieldWorks.XWorks
 				// Gecko xpath seems to be sensitive to namespaces, using * instead of span helps
 				var currentPageButton = GetBottomCurrentPageButton(browserElement);
 				if (currentPageButton == null)
-					throw new ArgumentException(@"No page buttons found in the document element is a part of", "element");
+					return;
 				var adjPage = (GeckoHtmlElement)currentPageButton.NextSibling;
 				if (adjPage == null)
 					return;
@@ -268,7 +268,7 @@ namespace SIL.FieldWorks.XWorks
 				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, "", isNormalRightToLeft);
 				var entries = ConfiguredXHTMLGenerator.GenerateNextFewEntries(PublicationDecorator, entriesToPublish, GetCurrentConfiguration(false), settings, currentPageRange,
 					adjacentPageRange, ConfiguredXHTMLGenerator.EntriesToAddCount, out newCurrentPageRange, out newAdjPageRange);
-				// Load entries above
+				// Load entries above the lower navigation buttons
 				foreach (var entry in entries)
 				{
 					var entryElement = browserElement.OwnerDocument.CreateHtmlElement("div"); var entryDoc = XDocument.Parse(entry);
