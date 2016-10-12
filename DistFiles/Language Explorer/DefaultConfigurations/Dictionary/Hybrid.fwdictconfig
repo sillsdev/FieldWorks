@@ -42,7 +42,7 @@
 		  <Option id="pronunciation" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="CV Pattern" isEnabled="false" before=" " between=" " after="" field="CVPattern" />
+	  <ConfigurationItem name="CV Pattern" isEnabled="false" before="" between=" " after="" field="CVPattern" />
 	  <ConfigurationItem name="Tone" isEnabled="false" before=" " between=" " after="" field="Tone" />
 	  <ConfigurationItem name="Location" isEnabled="false" style="Dictionary-Contrasting" before=" " between=" " after="" field="LocationRA" cssClassNameOverride="location">
 		<ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
@@ -119,7 +119,7 @@
 	<ConfigurationItem name="Senses" isEnabled="true" before=" " between="  " after="" field="SensesOS" cssClassNameOverride="senses">
 	  <SenseOptions numberStyle="Dictionary-SenseNumber" numberBefore="" numberingStyle="%d" numberAfter=". " numberSingleSense="false" showSingleGramInfoFirst="true" displayEachSenseInParagraph="false" />
 	  <ConfigurationItem name="Grammatical Info." isEnabled="true" style="Dictionary-Contrasting" before="" between="" after=" " field="MorphoSyntaxAnalysisRA" cssClassNameOverride="morphosyntaxanalysis">
-		<ConfigurationItem name="Category Info." isEnabled="true" style="Classified-POS" before=" " between=" " after="" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
+		<ConfigurationItem name="Category Info." isEnabled="true" before="" between=" " after="" style="Classified-POS" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true" />
 		  </WritingSystemOptions>
@@ -291,7 +291,7 @@
 	  		<Option id="a32f1d1c-4832-46a2-9732-c2276d6547e8" isEnabled="true" />
 	  		<Option id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed" isEnabled="true" />
 	  	</ListTypeOptions>
-		<ConfigurationItem name="Variant Type" isEnabled="true" before="" between=", " after=" " field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
+		<ConfigurationItem name="Variant Type" isEnabled="true" before="" between=", " after="" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
 		  <ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true" />
@@ -303,7 +303,7 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Variant Form" before="" between=", " after="" style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		<ConfigurationItem name="Variant Form" before=" " between=", " after="" style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true" />
 		  </WritingSystemOptions>
@@ -326,7 +326,7 @@
 			  <Option id="pronunciation" isEnabled="true" />
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="CV Pattern" isEnabled="false" before=" " between=" " after="" field="CVPattern" />
+		  <ConfigurationItem name="CV Pattern" isEnabled="false" before="" between=" " after="" field="CVPattern" />
 		  <ConfigurationItem name="Tone" isEnabled="false" before=" " between=" " after="" field="Tone" />
 		  <ConfigurationItem name="Location" isEnabled="false" style="Dictionary-Contrasting" before=" " between=" " after="" field="LocationRA" cssClassNameOverride="location">
 			<ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
@@ -340,8 +340,8 @@
 			  </WritingSystemOptions>
 			</ConfigurationItem>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
-			<ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
+		  <ConfigurationItem name="Pronunciation Media" before=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+			<ConfigurationItem name="Media Files" isEnabled="true" field="MediaFileRA"/>
 		  </ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Comment" isEnabled="false" before=" " between=" " after="" field="Summary">
@@ -515,7 +515,7 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Referenced Complex Forms" isEnabled="false" before="" between=", " after=" " field="VisibleComplexFormBackRefs">
-		<ConfigurationItem name="Complex Form Type" isEnabled="true" between=", " after=" " field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
+		<ConfigurationItem name="Complex Form Type" isEnabled="true" between=", " after="" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 		  <ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true" />
@@ -527,7 +527,7 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Complex Form" before="" between=" " after="" style="Dictionary-CrossReferences" isEnabled="true"  field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		<ConfigurationItem name="Complex Form" before=" " between=" " after="" style="Dictionary-CrossReferences" isEnabled="true"  field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true" />
 		  </WritingSystemOptions>
@@ -570,7 +570,7 @@
 		  <ConfigurationItem name="Reference" isEnabled="false" before=" " between=" " after="" field="Reference" />
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Minor Subentries" styleType="character" isEnabled="false" field="Subentries">
+	  <ConfigurationItem name="Minor Subentries" styleType="character" isEnabled="true" field="Subentries">
 		<ComplexFormOptions list="complex" displayEachComplexFormInParagraph="false">
 		  <Option isEnabled="true" id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
 		  <Option isEnabled="true" id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
@@ -597,7 +597,7 @@
 		<Option id="analysis" isEnabled="true" />
 	  </WritingSystemOptions>
 	</ConfigurationItem>
-    <ConfigurationItem name="References Section" isEnabled="true" styleType="character" before="" after="" field="ReferencesSection">
+    <ConfigurationItem name="References Section" isEnabled="true" before="" after="" styleType="paragraph" style="Block Quote" field="ReferencesSection">
       <GroupingOptions displayGroupInParagraph="true" />
       <ConfigurationItem name="Note" isEnabled="true" style="Dictionary-CrossReferences" before="" between=" " after=" " field="Comment">
         <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -638,7 +638,7 @@
               <Option id="pronunciation" isEnabled="true" />
             </WritingSystemOptions>
           </ConfigurationItem>
-          <ConfigurationItem name="CV Pattern" isEnabled="false" before=" " between=" " after="" field="CVPattern" />
+          <ConfigurationItem name="CV Pattern" isEnabled="false" before="" between=" " after="" field="CVPattern" />
           <ConfigurationItem name="Tone" isEnabled="false" before=" " between=" " after="" field="Tone" />
           <ConfigurationItem name="Location" isEnabled="false" style="Dictionary-Contrasting" before=" " between=" " after="" field="LocationRA" cssClassNameOverride="location">
             <ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
@@ -652,8 +652,8 @@
               </WritingSystemOptions>
             </ConfigurationItem>
           </ConfigurationItem>
-          <ConfigurationItem name="Pronunciation Media" isEnabled="true" after=" " field="MediaFilesOS" cssClassNameOverride="mediafiles">
-            <ConfigurationItem name="Media Files" isEnabled="true" after=" " field="MediaFileRA" />
+          <ConfigurationItem name="Pronunciation Media" before=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+            <ConfigurationItem name="Media Files" isEnabled="true" field="MediaFileRA" />
           </ConfigurationItem>
         </ConfigurationItem>
         <ConfigurationItem name="Comment" isEnabled="false" before=" " between=" " after="" field="Summary">
@@ -701,7 +701,7 @@
               <Option id="pronunciation" isEnabled="true" />
             </WritingSystemOptions>
           </ConfigurationItem>
-          <ConfigurationItem name="CV Pattern" isEnabled="false" before=" " between=" " after="" field="CVPattern" />
+          <ConfigurationItem name="CV Pattern" isEnabled="false" before="" between=" " after="" field="CVPattern" />
           <ConfigurationItem name="Tone" isEnabled="false" before=" " between=" " after="" field="Tone" />
           <ConfigurationItem name="Location" isEnabled="false" style="Dictionary-Contrasting" before=" " between=" " after="" field="LocationRA" cssClassNameOverride="location">
             <ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
@@ -715,8 +715,8 @@
               </WritingSystemOptions>
             </ConfigurationItem>
           </ConfigurationItem>
-          <ConfigurationItem name="Pronunciation Media" isEnabled="true" after=" " field="MediaFilesOS" cssClassNameOverride="mediafiles">
-            <ConfigurationItem name="Media Files" isEnabled="true" after=" " field="MediaFileRA" />
+          <ConfigurationItem name="Pronunciation Media" before=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+            <ConfigurationItem name="Media Files" isEnabled="true" field="MediaFileRA" />
           </ConfigurationItem>
         </ConfigurationItem>
         <ConfigurationItem name="Comment" isEnabled="false" before=" " between=" " after="" field="Summary">
@@ -792,7 +792,7 @@
         <ComplexFormOptions list="complex" displayEachComplexFormInParagraph="false">
           <Option id="" isEnabled="false" />
         </ComplexFormOptions>
-        <ConfigurationItem name="Complex Form Type" isEnabled="false" between=", " after=" " field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
+        <ConfigurationItem name="Complex Form Type" isEnabled="false" between=", " after="" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
           <ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
             <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
               <Option id="analysis" isEnabled="true" />
@@ -810,7 +810,7 @@
           </WritingSystemOptions>
         </ConfigurationItem>
         <ConfigurationItem name="Grammatical Info." isEnabled="true" style="Dictionary-Contrasting" before="" between=", " after=" " field="MorphoSyntaxAnalyses">
-          <ConfigurationItem name="Category Info." isEnabled="true" style="Classified-POS" before=" " between=" " after="" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
+          <ConfigurationItem name="Category Info." isEnabled="true" before="" between=" " after="" style="Classified-POS" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
             <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
               <Option id="analysis" isEnabled="true" />
             </WritingSystemOptions>
@@ -936,7 +936,7 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	  <!-- Using cssClassNameOverride="headword" to show the Configure Headword Numbers button -->
-	  <ConfigurationItem name="Headword" between=" " after="  " style="Dictionary-Headword" isEnabled="false" field="Owner" subField="OwnerOutlineName" cssClassNameOverride="headword">
+	  <ConfigurationItem name="Headword" between=" " after="" style="Dictionary-Headword" isEnabled="false" field="Owner" subField="OwnerOutlineName" cssClassNameOverride="headword">
 	  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		<Option id="vernacular" isEnabled="true"/>
 	  </WritingSystemOptions>
@@ -958,7 +958,7 @@
 	  <Option isEnabled="true" id="35cee792-74c8-444e-a9b7-ed0461d4d3b7"/>
 	  <Option isEnabled="false" id="9466d126-246e-400b-8bba-0703e09bc567"/>
 	</ListTypeOptions>
-	<ConfigurationItem name="Headword" isEnabled="true" style="Dictionary-Headword" before="" between=" " after="  " field="MLHeadWord" cssClassNameOverride="headword">
+	<ConfigurationItem name="Headword" isEnabled="true" style="Dictionary-Headword" before="" between=" " after=" " field="MLHeadWord" cssClassNameOverride="headword">
 	  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		<Option id="vernacular" isEnabled="true" />
 	  </WritingSystemOptions>
@@ -992,7 +992,7 @@
 		  <Option id="pronunciation" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="CV Pattern" isEnabled="false" before=" " between=" " after="" field="CVPattern" />
+	  <ConfigurationItem name="CV Pattern" isEnabled="false" before="" between=" " after="" field="CVPattern" />
 	  <ConfigurationItem name="Tone" isEnabled="false" before=" " between=" " after="" field="Tone" />
 	  <ConfigurationItem name="Location" isEnabled="false" style="Dictionary-Contrasting" before=" " between=" " after="" field="LocationRA" cssClassNameOverride="location">
 		<ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
@@ -1011,8 +1011,8 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
-		<ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
+	  <ConfigurationItem name="Pronunciation Media" before=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+		<ConfigurationItem name="Media Files" isEnabled="true" field="MediaFileRA"/>
 	  </ConfigurationItem>
 	</ConfigurationItem>
 	<ConfigurationItem name="Etymology" isEnabled="false" before="(" between=" " after=") " field="EtymologyOS" cssClassNameOverride="etymologies">
@@ -1070,7 +1070,7 @@
         <ListTypeOptions list="variant">
           <Option id="" isEnabled="false" />
         </ListTypeOptions>
-        <ConfigurationItem name="Variant Type" isEnabled="true" before="" between=", " after=" " field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
+        <ConfigurationItem name="Variant Type" isEnabled="true" before="" between=", " after="" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
           <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" style="Dictionary-CrossReferences" between=" " field="ReverseAbbr">
             <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
               <Option id="analysis" isEnabled="true" />
@@ -1112,10 +1112,10 @@
           </WritingSystemOptions>
         </ConfigurationItem>
     </ConfigurationItem>
- 	<ConfigurationItem name="Senses" isEnabled="true" before="" between="  " after=" " field="SensesOS" cssClassNameOverride="senses">
+ 	<ConfigurationItem name="Senses" isEnabled="true" before=" " between="  " after="" field="SensesOS" cssClassNameOverride="senses">
 	  <SenseOptions numberStyle="Dictionary-SenseNumber" numberBefore="" numberingStyle="%d" numberAfter=". " numberSingleSense="false" showSingleGramInfoFirst="true" displayEachSenseInParagraph="false" />
 	  <ConfigurationItem name="Grammatical Info." isEnabled="true" style="Dictionary-Contrasting" before="" between="" after=" " field="MorphoSyntaxAnalysisRA" cssClassNameOverride="morphosyntaxanalysis">
-		<ConfigurationItem name="Category Info." isEnabled="true" before=" " between=" " after="" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
+		<ConfigurationItem name="Category Info." isEnabled="true" before="" between=" " after="" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true" />
 		  </WritingSystemOptions>
@@ -1287,7 +1287,7 @@
 	  		<Option id="a32f1d1c-4832-46a2-9732-c2276d6547e8" isEnabled="true" />
 	  		<Option id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed" isEnabled="true" />
 	  	</ListTypeOptions>
-		<ConfigurationItem name="Variant Type" isEnabled="true" before="" between=", " after=" " field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
+		<ConfigurationItem name="Variant Type" isEnabled="true" before="" between=", " after="" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
 		  <ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true" />
@@ -1299,7 +1299,7 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Variant Form" before="" between=", " after="" style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		<ConfigurationItem name="Variant Form" before=" " between=", " after="" style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true" />
 		  </WritingSystemOptions>
@@ -1322,7 +1322,7 @@
 			  <Option id="pronunciation" isEnabled="true" />
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="CV Pattern" isEnabled="false" before=" " between=" " after="" field="CVPattern" />
+		  <ConfigurationItem name="CV Pattern" isEnabled="false" before="" between=" " after="" field="CVPattern" />
 		  <ConfigurationItem name="Tone" isEnabled="false" before=" " between=" " after="" field="Tone" />
 		  <ConfigurationItem name="Location" isEnabled="false" style="Dictionary-Contrasting" before=" " between=" " after="" field="LocationRA" cssClassNameOverride="location">
 			<ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
@@ -1336,8 +1336,8 @@
 			  </WritingSystemOptions>
 			</ConfigurationItem>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
-			<ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
+		  <ConfigurationItem name="Pronunciation Media" before=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+			<ConfigurationItem name="Media Files" isEnabled="true" field="MediaFileRA"/>
 		  </ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Comment" isEnabled="false" before=" " between=" " after="" field="Summary">
@@ -1511,7 +1511,7 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Referenced Complex Forms" isEnabled="false" before="" between=", " after=" " field="VisibleComplexFormBackRefs">
-		<ConfigurationItem name="Complex Form Type" isEnabled="true" between=", " after=" " field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
+		<ConfigurationItem name="Complex Form Type" isEnabled="true" between=", " after="" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 		  <ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true" />
@@ -1523,7 +1523,7 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Complex Form" isEnabled="true" before="" between=" " after="" style="Dictionary-CrossReferences" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		<ConfigurationItem name="Complex Form" isEnabled="true" before=" " between=" " after="" style="Dictionary-CrossReferences" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true" />
 		  </WritingSystemOptions>
@@ -1581,7 +1581,7 @@
 		<Option id="analysis" isEnabled="true" />
 	  </WritingSystemOptions>
 	</ConfigurationItem>
-    <ConfigurationItem name="References Section" isEnabled="true" styleType="character" before="" after="" field="ReferencesSection">
+    <ConfigurationItem name="References Section" isEnabled="true" before="" after="" styleType="paragraph" style="Block Quote" field="ReferencesSection">
       <GroupingOptions displayGroupInParagraph="true" />
 	  <ConfigurationItem name="Note" isEnabled="true" style="Dictionary-CrossReferences" before="" between=" " after=" " field="Comment">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1622,7 +1622,7 @@
               <Option id="pronunciation" isEnabled="true" />
             </WritingSystemOptions>
           </ConfigurationItem>
-          <ConfigurationItem name="CV Pattern" isEnabled="false" before=" " between=" " after="" field="CVPattern" />
+          <ConfigurationItem name="CV Pattern" isEnabled="false" before="" between=" " after="" field="CVPattern" />
           <ConfigurationItem name="Tone" isEnabled="false" before=" " between=" " after="" field="Tone" />
           <ConfigurationItem name="Location" isEnabled="false" style="Dictionary-Contrasting" before=" " between=" " after="" field="LocationRA" cssClassNameOverride="location">
             <ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
@@ -1636,8 +1636,8 @@
               </WritingSystemOptions>
             </ConfigurationItem>
           </ConfigurationItem>
-          <ConfigurationItem name="Pronunciation Media" isEnabled="true" after=" " field="MediaFilesOS" cssClassNameOverride="mediafiles">
-            <ConfigurationItem name="Media Files" isEnabled="true" after=" " field="MediaFileRA" />
+          <ConfigurationItem name="Pronunciation Media" before=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+            <ConfigurationItem name="Media Files" isEnabled="true" field="MediaFileRA" />
           </ConfigurationItem>
         </ConfigurationItem>
         <ConfigurationItem name="Comment" isEnabled="false" before=" " between=" " after="" field="Summary">
@@ -1685,7 +1685,7 @@
               <Option id="pronunciation" isEnabled="true" />
             </WritingSystemOptions>
           </ConfigurationItem>
-          <ConfigurationItem name="CV Pattern" isEnabled="false" before=" " between=" " after="" field="CVPattern" />
+          <ConfigurationItem name="CV Pattern" isEnabled="false" before="" between=" " after="" field="CVPattern" />
           <ConfigurationItem name="Tone" isEnabled="false" before=" " between=" " after="" field="Tone" />
           <ConfigurationItem name="Location" isEnabled="false" style="Dictionary-Contrasting" before=" " between=" " after="" field="LocationRA" cssClassNameOverride="location">
             <ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
@@ -1699,8 +1699,8 @@
               </WritingSystemOptions>
             </ConfigurationItem>
           </ConfigurationItem>
-          <ConfigurationItem name="Pronunciation Media" isEnabled="true" after=" " field="MediaFilesOS" cssClassNameOverride="mediafiles">
-            <ConfigurationItem name="Media Files" isEnabled="true" after=" " field="MediaFileRA" />
+          <ConfigurationItem name="Pronunciation Media" before=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+            <ConfigurationItem name="Media Files" isEnabled="true" field="MediaFileRA" />
           </ConfigurationItem>
         </ConfigurationItem>
         <ConfigurationItem name="Comment" isEnabled="false" before=" " between=" " after="" field="Summary">
@@ -1773,7 +1773,7 @@
         </ConfigurationItem>
       </ConfigurationItem>
       <ConfigurationItem name="Component References" isEnabled="true" hideCustomFields="true" before="(" between=", " after=") " field="ComplexFormEntryRefs">
-        <ConfigurationItem name="Complex Form Type" isEnabled="true" between=", " after=" " field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
+        <ConfigurationItem name="Complex Form Type" isEnabled="true" between=", " after="" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
           <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" style="Dictionary-CrossReferences" between=" " field="ReverseAbbr">
             <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
               <Option id="analysis" isEnabled="true" />
@@ -1785,7 +1785,7 @@
             </WritingSystemOptions>
           </ConfigurationItem>
         </ConfigurationItem>
-        <ConfigurationItem name="Referenced Entries" isEnabled="true" before="" between=", " after="" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
+        <ConfigurationItem name="Referenced Entries" isEnabled="true" before=" " between=", " after="" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
           <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" before="" between=" " after="" field="HeadWordRef" cssClassNameOverride="headword">
             <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
               <Option id="vernacular" isEnabled="true" />
@@ -1804,7 +1804,7 @@
         </ConfigurationItem>
       </ConfigurationItem>
       <ConfigurationItem name="Referenced Complex Forms" isEnabled="false" styleType="character" before=" " between=", " after=" " field="VisibleComplexFormBackRefs">
-        <ConfigurationItem name="Complex Form Type" isEnabled="true" between=", " after=" " field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
+        <ConfigurationItem name="Complex Form Type" isEnabled="true" between=", " after="" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
           <ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
             <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
               <Option id="analysis" isEnabled="true" />
@@ -1816,13 +1816,13 @@
             </WritingSystemOptions>
           </ConfigurationItem>
         </ConfigurationItem>
-        <ConfigurationItem name="Complex Form" isEnabled="true" style="Dictionary-CrossReferences" before="" between=" " after="" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+        <ConfigurationItem name="Complex Form" isEnabled="true" style="Dictionary-CrossReferences" before=" " between=" " after="" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
           <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
             <Option id="vernacular" isEnabled="true" />
           </WritingSystemOptions>
         </ConfigurationItem>
         <ConfigurationItem name="Grammatical Info." isEnabled="true" style="Dictionary-Contrasting" before="" between=", " after=" " field="MorphoSyntaxAnalyses">
-          <ConfigurationItem name="Category Info." isEnabled="true" before=" " between=" " after="" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
+          <ConfigurationItem name="Category Info." isEnabled="true" before="" between=" " after="" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
             <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
               <Option id="analysis" isEnabled="true" />
             </WritingSystemOptions>
@@ -1953,7 +1953,7 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	  <!-- Using cssClassNameOverride="headword" to show the Configure Headword Numbers button -->
-	  <ConfigurationItem name="Headword" between=" " after="  " style="Dictionary-Headword" isEnabled="false" field="Owner" subField="OwnerOutlineName" cssClassNameOverride="headword">
+	  <ConfigurationItem name="Headword" between=" " after="" style="Dictionary-Headword" isEnabled="false" field="Owner" subField="OwnerOutlineName" cssClassNameOverride="headword">
 	  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		<Option id="vernacular" isEnabled="true"/>
 	  </WritingSystemOptions>
@@ -1969,22 +1969,22 @@
 	<ListTypeOptions list="variant">
 	  <Option isEnabled="false" id=""/>
 	</ListTypeOptions>
-	<ConfigurationItem name="Headword" isEnabled="true" style="Dictionary-Headword" before="" between=" " after="  " field="MLHeadWord" cssClassNameOverride="headword">
+	<ConfigurationItem name="Headword" isEnabled="true" style="Dictionary-Headword" before="" between=" " after=" " field="MLHeadWord" cssClassNameOverride="headword">
 	  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		<Option id="vernacular" isEnabled="true" />
 	  </WritingSystemOptions>
 	</ConfigurationItem>
-	<ConfigurationItem name="Lexeme Form" isEnabled="false" before=" " between=" " after="" field="LexemeFormOA" cssClassNameOverride="lexemeform">
+	<ConfigurationItem name="Lexeme Form" isEnabled="false" before="" between=" " after="" field="LexemeFormOA" cssClassNameOverride="lexemeform">
 	  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		<Option id="vernacular" isEnabled="true" />
 	  </WritingSystemOptions>
 	</ConfigurationItem>
-	<ConfigurationItem name="Citation Form" isEnabled="false" before=" " between=" " after="" field="CitationForm">
+	<ConfigurationItem name="Citation Form" isEnabled="false" before="" between=" " after="" field="CitationForm">
 	  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		<Option id="all vernacular" isEnabled="true" />
 	  </WritingSystemOptions>
 	</ConfigurationItem>
-	<ConfigurationItem name="Secondary Homograph Number" isEnabled="false" before=" " between=" " after="" field="HomographNumber" />
+	<ConfigurationItem name="Secondary Homograph Number" isEnabled="false" before="" between=" " after=" " field="HomographNumber" />
 	<ConfigurationItem name="Dialect Labels" isEnabled="true" before="[" after="] " field="DialectLabelsRS">
 		<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 			<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
@@ -2003,7 +2003,7 @@
 		  <Option id="pronunciation" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="CV Pattern" isEnabled="false" before=" " between=" " after="" field="CVPattern" />
+	  <ConfigurationItem name="CV Pattern" isEnabled="false" before="" between=" " after="" field="CVPattern" />
 	  <ConfigurationItem name="Tone" isEnabled="false" before=" " between=" " after="" field="Tone" />
 	  <ConfigurationItem name="Location" isEnabled="false" style="Dictionary-Contrasting" before=" " between=" " after="" field="LocationRA" cssClassNameOverride="location">
 		<ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
@@ -2022,11 +2022,11 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
-		<ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
+	  <ConfigurationItem name="Pronunciation Media" before=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+		<ConfigurationItem name="Media Files" isEnabled="true" field="MediaFileRA"/>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Etymology" isEnabled="false" before="(" between=" " after=") " field="EtymologyOS" cssClassNameOverride="etymologies">
+	<ConfigurationItem name="Etymology" isEnabled="false" before=" (" between=" " after=") " field="EtymologyOS" cssClassNameOverride="etymologies">
 	  <ConfigurationItem name="Preceding Annotation" isEnabled="true" field="PrecComment">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="analysis" isEnabled="true" />
@@ -2081,7 +2081,7 @@
 	  <ListTypeOptions list="variant">
 		<Option id="" isEnabled="false" />
 	  </ListTypeOptions>
-	  <ConfigurationItem name="Variant Type" isEnabled="true" before="" between=", " after=" " field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
+	  <ConfigurationItem name="Variant Type" isEnabled="true" before="" between=", " after="" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
 		<ConfigurationItem name="Reverse Abbreviation" isEnabled="true" style="Dictionary-CrossReferences" between=" " field="ReverseAbbr">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true" />
@@ -2134,10 +2134,10 @@
 		<Option id="analysis" isEnabled="true" />
 	  </WritingSystemOptions>
 	</ConfigurationItem>
-	<ConfigurationItem name="Senses" isEnabled="true" before="" between="  " after=" " field="SensesOS" cssClassNameOverride="senses">
+	<ConfigurationItem name="Senses" isEnabled="true" before=" " between="  " after="" field="SensesOS" cssClassNameOverride="senses">
 	  <SenseOptions numberStyle="Dictionary-SenseNumber" numberBefore="" numberingStyle="%d" numberAfter=". " numberSingleSense="false" showSingleGramInfoFirst="true" displayEachSenseInParagraph="false" />
 	  <ConfigurationItem name="Grammatical Info." isEnabled="true" style="Dictionary-Contrasting" before="" between="" after=" " field="MorphoSyntaxAnalysisRA" cssClassNameOverride="morphosyntaxanalysis">
-		<ConfigurationItem name="Category Info." isEnabled="true" before=" " between=" " after="" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
+		<ConfigurationItem name="Category Info." isEnabled="true" before="" between=" " after="" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true" />
 		  </WritingSystemOptions>
@@ -2184,7 +2184,7 @@
 		  <Option id="all analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Restrictions" isEnabled="false" before=" Restrictions: " between=" " after="." field="Restrictions">
+	  <ConfigurationItem name="Restrictions" isEnabled="false" before=" (" between=" " after=")" field="Restrictions">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="all analysis" isEnabled="true" />
 		</WritingSystemOptions>
@@ -2309,7 +2309,7 @@
 	  		<Option id="a32f1d1c-4832-46a2-9732-c2276d6547e8" isEnabled="true" />
 	  		<Option id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed" isEnabled="true" />
 	  	</ListTypeOptions>
-		<ConfigurationItem name="Variant Type" isEnabled="true" before="" between=", " after=" " field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
+		<ConfigurationItem name="Variant Type" isEnabled="true" before="" between=", " after="" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
 		  <ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true" />
@@ -2321,7 +2321,7 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Variant Form" before="" between=", " after="" style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		<ConfigurationItem name="Variant Form" before=" " between=", " after="" style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true" />
 		  </WritingSystemOptions>
@@ -2344,7 +2344,7 @@
 			  <Option id="pronunciation" isEnabled="true" />
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="CV Pattern" isEnabled="false" before=" " between=" " after="" field="CVPattern" />
+		  <ConfigurationItem name="CV Pattern" isEnabled="false" before="" between=" " after="" field="CVPattern" />
 		  <ConfigurationItem name="Tone" isEnabled="false" before=" " between=" " after="" field="Tone" />
 		  <ConfigurationItem name="Location" isEnabled="false" style="Dictionary-Contrasting" before=" " between=" " after="" field="LocationRA" cssClassNameOverride="location">
 			<ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
@@ -2358,8 +2358,8 @@
 			  </WritingSystemOptions>
 			</ConfigurationItem>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
-			<ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
+		  <ConfigurationItem name="Pronunciation Media" before=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+			<ConfigurationItem name="Media Files" isEnabled="true" field="MediaFileRA"/>
 		  </ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Comment" isEnabled="false" before=" " between=" " after="" field="Summary">
@@ -2408,7 +2408,7 @@
 		  <Option id="all analysis" isEnabled="true" />
 		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Extended Note" isEnabled="true" style="Block Quote" styleType="paragraph" before=" " between=" " after="" field="ExtendedNoteOS" cssClassNameOverride="extendednotecontents">
+	  <ConfigurationItem name="Extended Note" isEnabled="false" style="Block Quote" styleType="paragraph" before=" " between=" " after="" field="ExtendedNoteOS" cssClassNameOverride="extendednotecontents">
 		<ComplexFormOptions list="note" displayEachComplexFormInParagraph="true">
 			<Option id="c0000000-dd15-4a03-9032-b40faaa9a754" isEnabled="true" />
 			<Option id="2f06d436-b1e0-47ae-a42e-1f7b893c5fc2" isEnabled="true" />
@@ -2533,7 +2533,7 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Referenced Complex Forms" isEnabled="false" before="" between=", " after=" " field="VisibleComplexFormBackRefs">
-		<ConfigurationItem name="Complex Form Type" isEnabled="true" between=", " after=" " field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
+		<ConfigurationItem name="Complex Form Type" isEnabled="true" between=", " after="" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 		  <ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true" />
@@ -2545,7 +2545,7 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Complex Form" isEnabled="true" style="Dictionary-CrossReferences" before="" between=" " after="" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		<ConfigurationItem name="Complex Form" isEnabled="true" style="Dictionary-CrossReferences" before=" " between=" " after="" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true" />
 		  </WritingSystemOptions>
@@ -2588,12 +2588,12 @@
 		  <ConfigurationItem name="Reference" isEnabled="false" before=" " between=" " after="" field="Reference" />
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Subsenses" between="  " after=" " isEnabled="true" field="SensesOS" cssClassNameOverride="senses">
+	  <ConfigurationItem name="Subsenses" between="  " after=" " isEnabled="false" field="SensesOS" cssClassNameOverride="senses">
 	 	<SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=" " parentSenseNumberingStyle="%." numberingStyle="" numberSingleSense="false" showSingleGramInfoFirst="true"/>
 		<ReferenceItem>MainEntrySubsenses</ReferenceItem>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Variant Forms" nameSuffix="Inflectional Variants" isEnabled="true" isDuplicate="true" before="	[" between="; " after="] " field="VariantFormEntryBackRefs">
+	<ConfigurationItem name="Variant Forms" nameSuffix="Inflectional Variants" isEnabled="false" isDuplicate="true" before="	[" between="; " after="] " field="VariantFormEntryBackRefs">
 		<ListTypeOptions list="variant">
 			<Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="false" />
 			<Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="false" />
@@ -2603,7 +2603,7 @@
 			<Option id="a32f1d1c-4832-46a2-9732-c2276d6547e8" isEnabled="true" />
 			<Option id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed" isEnabled="false" />
 		</ListTypeOptions>
-		<ConfigurationItem name="Variant Type" isEnabled="true" before="" between=", " after=" " field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
+		<ConfigurationItem name="Variant Type" isEnabled="true" before="" between=", " after="" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
 			<ConfigurationItem name="Abbreviation" isEnabled="true" style="Dictionary-CrossReferences" between=" " field="Abbreviation">
 				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 					<Option id="analysis" isEnabled="true" />
@@ -2615,7 +2615,7 @@
 				</WritingSystemOptions>
 			</ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Variant Form" before="" between=", " after="" style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		<ConfigurationItem name="Variant Form" before=" " between=", " after="" style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 				<Option id="vernacular" isEnabled="true" />
 			</WritingSystemOptions>
@@ -2638,7 +2638,7 @@
 					<Option id="pronunciation" isEnabled="true" />
 				</WritingSystemOptions>
 			</ConfigurationItem>
-			<ConfigurationItem name="CV Pattern" isEnabled="false" before=" " between=" " after="" field="CVPattern" />
+			<ConfigurationItem name="CV Pattern" isEnabled="false" before="" between=" " after="" field="CVPattern" />
 			<ConfigurationItem name="Tone" isEnabled="false" before=" " between=" " after="" field="Tone" />
 			<ConfigurationItem name="Location" isEnabled="false" style="Dictionary-Contrasting" before=" " between=" " after="" field="LocationRA" cssClassNameOverride="location">
 				<ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
@@ -2652,8 +2652,8 @@
 					</WritingSystemOptions>
 				</ConfigurationItem>
 			</ConfigurationItem>
-			<ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
-				<ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
+			<ConfigurationItem name="Pronunciation Media" before=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+				<ConfigurationItem name="Media Files" isEnabled="true" field="MediaFileRA"/>
 			</ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Comment" isEnabled="false" before=" " between=" " after="" field="Summary">
@@ -2667,7 +2667,7 @@
 		</WritingSystemOptions>
 		</ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Variant Forms" isEnabled="true" before="" between="; " after=" " field="VariantFormEntryBackRefs">
+	<ConfigurationItem name="Variant Forms" isEnabled="false" before="" between="; " after=" " field="VariantFormEntryBackRefs">
 		<ListTypeOptions list="variant">
 			<Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="false" />
 			<Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
@@ -2677,7 +2677,7 @@
 			<Option id="a32f1d1c-4832-46a2-9732-c2276d6547e8" isEnabled="false" />
 			<Option id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed" isEnabled="true" />
 		</ListTypeOptions>
-		<ConfigurationItem name="Variant Type" isEnabled="true" before="" between=", " after=" " field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
+		<ConfigurationItem name="Variant Type" isEnabled="true" before="" between=", " after="" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
 			<ConfigurationItem name="Abbreviation" isEnabled="true" style="Dictionary-CrossReferences" between=" " field="Abbreviation">
 				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 					<Option id="analysis" isEnabled="true" />
@@ -2689,7 +2689,7 @@
 				</WritingSystemOptions>
 			</ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Variant Form" before="" between=", " after="" style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		<ConfigurationItem name="Variant Form" before=" " between=", " after="" style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 				<Option id="vernacular" isEnabled="true" />
 			</WritingSystemOptions>
@@ -2712,7 +2712,7 @@
 					<Option id="pronunciation" isEnabled="true" />
 				</WritingSystemOptions>
 			</ConfigurationItem>
-			<ConfigurationItem name="CV Pattern" isEnabled="false" before=" " between=" " after="" field="CVPattern" />
+			<ConfigurationItem name="CV Pattern" isEnabled="false" before="" between=" " after="" field="CVPattern" />
 			<ConfigurationItem name="Tone" isEnabled="false" before=" " between=" " after="" field="Tone" />
 			<ConfigurationItem name="Location" isEnabled="false" style="Dictionary-Contrasting" before=" " between=" " after="" field="LocationRA" cssClassNameOverride="location">
 				<ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
@@ -2726,8 +2726,8 @@
 					</WritingSystemOptions>
 				</ConfigurationItem>
 			</ConfigurationItem>
-			<ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
-				<ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
+			<ConfigurationItem name="Pronunciation Media" before=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+				<ConfigurationItem name="Media Files" isEnabled="true" field="MediaFileRA"/>
 			</ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Comment" isEnabled="false" before=" " between=" " after="" field="Summary">
@@ -2741,12 +2741,12 @@
 			</WritingSystemOptions>
 		</ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Note" isEnabled="true" style="Dictionary-CrossReferences" before=" [" between=" " after="] " field="Comment">
+	<ConfigurationItem name="Note" isEnabled="false" style="Dictionary-CrossReferences" before=" [" between=" " after="] " field="Comment">
 	  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		<Option id="all analysis" isEnabled="true" />
 	  </WritingSystemOptions>
 	</ConfigurationItem>
-	<ConfigurationItem name="Cross References" isEnabled="true" before="" between="; " after=". " field="MinimalLexReferences">
+	<ConfigurationItem name="Cross References" isEnabled="false" before="" between="; " after=". " field="MinimalLexReferences">
 	  <ListTypeOptions list="entry">
 		<Option id="" isEnabled="false" />
 	  </ListTypeOptions>
@@ -2847,7 +2847,7 @@
 	<ConfigurationItem name="Date Created" isEnabled="false" before="created on: " after=" " field="DateCreated" />
 	<ConfigurationItem name="Date Modified" isEnabled="false" before="modified on: " after=" " field="DateModified" />
 	<ConfigurationItem name="Referenced Complex Forms" isEnabled="false" before=" " between=", " after=" " field="VisibleComplexFormBackRefs">
-	  <ConfigurationItem name="Complex Form Type" isEnabled="true" between=", " after=" " field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
+	  <ConfigurationItem name="Complex Form Type" isEnabled="true" between=", " after="" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 		<ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true" />
@@ -2859,13 +2859,13 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Complex Form" isEnabled="true" style="Dictionary-CrossReferences" before="" between=" " after="" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+	  <ConfigurationItem name="Complex Form" isEnabled="true" style="Dictionary-CrossReferences" before=" " between=" " after="" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		  <Option id="vernacular" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Grammatical Info." isEnabled="true" style="Dictionary-Contrasting" before="" between=", " after=" " field="MorphoSyntaxAnalyses">
-		<ConfigurationItem name="Category Info." isEnabled="true" before=" " between=" " after="" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
+		<ConfigurationItem name="Category Info." isEnabled="true" before="" between=" " after="" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true" />
 		  </WritingSystemOptions>
@@ -2939,12 +2939,12 @@
 	  <ConfigurationItem name="Grammatical Info." before="" after=" " style="Dictionary-Contrasting" isEnabled="true" field="MorphoSyntaxAnalysisRA" cssClassNameOverride="morphosyntaxanalysis">
 		<ConfigurationItem name="Gram Info (Name)" before=" " between=" " after="" isEnabled="false" field="InterlinearNameTSS" cssClassNameOverride="graminfoname"/>
 		<ConfigurationItem name="Gram Info (Abbrev)" before=" " between=" " after="" isEnabled="false" field="InterlinearAbbrTSS" cssClassNameOverride="graminfoabbrev"/>
-		<ConfigurationItem name="Category Info." before=" " between=" " after="" isEnabled="true" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
+		<ConfigurationItem name="Category Info." isEnabled="true" before="" between=" " after="" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Slots (for Infl. Affixes)" before=": " between=", " isEnabled="true" field="Slots">
+		<ConfigurationItem name="Slots (for Infl. Affixes)" before=": " between=", " isEnabled="false" field="Slots">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -2959,10 +2959,10 @@
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Inflection Features" after=" " isEnabled="false" field="FeaturesTSS" cssClassNameOverride="inflectionfeatures"/>
-		<ConfigurationItem name="Exception Features" after=" " isEnabled="false" field="ExceptionFeaturesTSS" cssClassNameOverride="exceptionfeatures"/>
+		<ConfigurationItem name="Inflection Features" before=" " isEnabled="false" field="FeaturesTSS" cssClassNameOverride="inflectionfeatures"/>
+		<ConfigurationItem name="Exception Features" before=" " isEnabled="false" field="ExceptionFeaturesTSS" cssClassNameOverride="exceptionfeatures"/>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Sense Type" before="(" after=") " style="Dictionary-Contrasting" isEnabled="true" field="SenseTypeRA" cssClassNameOverride="sensetype">
+	  <ConfigurationItem name="Sense Type" before="(" after=") " style="Dictionary-Contrasting" isEnabled="false" field="SenseTypeRA" cssClassNameOverride="sensetype">
 		<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -2989,7 +2989,13 @@
 		  <Option id="all analysis" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Examples" styleType="character" before=" " between="  " after="" isEnabled="true" field="ExamplesOS" cssClassNameOverride="examplescontents">
+	  <ConfigurationItem name="Restrictions" before=" (" between=" " after=")" isEnabled="true" field="Restrictions">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="all analysis" isEnabled="true"/>
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+	  <ConfigurationItem name="Scientific Name" before=" " isEnabled="true" field="ScientificName"/>
+	  <ConfigurationItem name="Examples" styleType="character" before=" " between="  " after=" " isEnabled="true" field="ExamplesOS" cssClassNameOverride="examplescontents">
 		<ComplexFormOptions displayEachComplexFormInParagraph="false"/>
 		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" before=" " between=" " after="" field="Example">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -3017,17 +3023,12 @@
 		</ConfigurationItem>
 		<ConfigurationItem name="Reference" after=" " isEnabled="false" field="Reference"/>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Encyclopedic Info." before=" [" between=" " after="]" isEnabled="true" field="EncyclopedicInfo">
+	  <ConfigurationItem name="Encyclopedic Info." before=" [" between=" " after="]" isEnabled="false" field="EncyclopedicInfo">
 		<WritingSystemAndParaOptions writingSystemType="analysis" displayWSAbreviation="false" displayInParagraph="false">
 		  <Option id="all analysis" isEnabled="true"/>
 		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Restrictions" before=" Restrictions: " between=" " after="." isEnabled="true" field="Restrictions">
-		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-		  <Option id="all analysis" isEnabled="true"/>
-		</WritingSystemOptions>
-	  </ConfigurationItem>
-	  <ConfigurationItem name="Lexical Relations" between="; " after=". " isEnabled="true" field="LexSenseReferences">
+	  <ConfigurationItem name="Lexical Relations" between="; " after=". " isEnabled="false" field="LexSenseReferences">
 		<ListTypeOptions list="sense">
 		  <Option isEnabled="true" id="b7862f14-ea5e-11de-8d47-0013722f8dec"/>
 		  <Option isEnabled="true" id="b7921ac2-ea5e-11de-880d-0013722f8dec" />
@@ -3094,7 +3095,7 @@
 			</ConfigurationItem>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variants of Sense" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
+	  <ConfigurationItem name="Variants of Sense" before="(" between="; " after=") " isEnabled="false" field="VariantFormEntryBackRefs">
 	  	<ListTypeOptions list="variant">
 	  		<Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="true" />
 	  		<Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
@@ -3104,7 +3105,7 @@
 	  		<Option id="a32f1d1c-4832-46a2-9732-c2276d6547e8" isEnabled="true" />
 	  		<Option id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed" isEnabled="true" />
 	  	</ListTypeOptions>
-		<ConfigurationItem name="Variant Type" between=", " after=" " isEnabled="true" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
+		<ConfigurationItem name="Variant Type" between=", " after="" isEnabled="true" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
 		  <ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true"/>
@@ -3116,7 +3117,7 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Variant Form" between=", " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		<ConfigurationItem name="Variant Form" before=" " between=", " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -3139,9 +3140,9 @@
 			  <Option id="pronunciation" isEnabled="true"/>
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="CV Pattern" after=" " isEnabled="false" field="CVPattern"/>
-		  <ConfigurationItem name="Tone" after=" " isEnabled="false" field="Tone"/>
-		  <ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="false" field="LocationRA" cssClassNameOverride="location">
+		  <ConfigurationItem name="CV Pattern" before="" isEnabled="false" field="CVPattern"/>
+		  <ConfigurationItem name="Tone" before=" " isEnabled="false" field="Tone"/>
+		  <ConfigurationItem name="Location" before=" " style="Dictionary-Contrasting" isEnabled="false" field="LocationRA" cssClassNameOverride="location">
 			<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 			  <WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 				<Option id="analysis" isEnabled="true"/>
@@ -3153,8 +3154,8 @@
 			  </WritingSystemOptions>
 			</ConfigurationItem>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
-			<ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
+		  <ConfigurationItem name="Pronunciation Media" before=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+			<ConfigurationItem name="Media Files" isEnabled="true" field="MediaFileRA"/>
 		  </ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Comment" before=" " between=" " isEnabled="false" field="Summary">
@@ -3203,7 +3204,7 @@
 		  <Option id="all analysis" isEnabled="true"/>
 		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Extended Note" isEnabled="true" style="Block Quote" styleType="paragraph" before=" " between=" " after="" field="ExtendedNoteOS" cssClassNameOverride="extendednotecontents">
+	  <ConfigurationItem name="Extended Note" isEnabled="false" style="Block Quote" styleType="paragraph" before=" " between=" " after="" field="ExtendedNoteOS" cssClassNameOverride="extendednotecontents">
 		<ComplexFormOptions list="note" displayEachComplexFormInParagraph="true">
 			<Option id="c0000000-dd15-4a03-9032-b40faaa9a754" isEnabled="true" />
 			<Option id="2f06d436-b1e0-47ae-a42e-1f7b893c5fc2" isEnabled="true" />
@@ -3266,9 +3267,8 @@
 		  <Option id="all analysis" isEnabled="true"/>
 		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Scientific Name" after=" " isEnabled="true" field="ScientificName"/>
 	  <ConfigurationItem name="Source" after=" " isEnabled="false" field="Source"/>
-	  <ConfigurationItem name="Semantic Domains" before="(sem. domains: " between=", " after=".) " isEnabled="true" field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
+	  <ConfigurationItem name="Semantic Domains" before="(sem. domains: " between=", " after=".) " isEnabled="false" field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
 		<ConfigurationItem name="Abbreviation" between=" " after=" - " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -3292,7 +3292,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Academic Domains" before="ac. domains: " between=", " after=" " isEnabled="true" field="DomainTypesRC" cssClassNameOverride="academicdomains">
+	  <ConfigurationItem name="Academic Domains" before="ac. domains: " between=", " after=" " isEnabled="false" field="DomainTypesRC" cssClassNameOverride="academicdomains">
 		<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -3304,7 +3304,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Usages" before="{" between=", " after="} " isEnabled="true" field="UsageTypesRC" cssClassNameOverride="usages">
+	  <ConfigurationItem name="Usages" before="{" between=", " after="} " isEnabled="false" field="UsageTypesRC" cssClassNameOverride="usages">
 		<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -3328,8 +3328,8 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Referenced Complex Forms" between=", " after=" " isEnabled="true" field="VisibleComplexFormBackRefs">
-		<ConfigurationItem name="Complex Form Type" between=", " after=" " isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
+	  <ConfigurationItem name="Referenced Complex Forms" between=", " after=" " isEnabled="false" field="VisibleComplexFormBackRefs">
+		<ConfigurationItem name="Complex Form Type" between=", " after="" isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 		  <ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true"/>
@@ -3341,7 +3341,7 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Complex Form" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		<ConfigurationItem name="Complex Form" before=" " between=" " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -3402,17 +3402,17 @@
 	  </ConfigurationItem>
 	</ConfigurationItem>
 	<ConfigurationItem name="MainEntrySubentries" isEnabled="true" field="Subentries" cssClassNameOverride="mainentrysubentries">
-	  <ConfigurationItem name="Headword" between=" " after="  " style="Dictionary-Headword" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
+	  <ConfigurationItem name="Headword" between=" " after=" " style="Dictionary-Headword" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
 		<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		  <Option id="vernacular" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Lexeme Form" before=" " between=" " after="" isEnabled="false" field="LexemeFormOA" cssClassNameOverride="lexemeform">
+	  <ConfigurationItem name="Lexeme Form" before="" between=" " after="" isEnabled="false" field="LexemeFormOA" cssClassNameOverride="lexemeform">
 		<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		  <Option id="vernacular" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Citation Form" before=" " between=" " after="" isEnabled="false" field="CitationForm">
+	  <ConfigurationItem name="Citation Form" before="" between=" " after="" isEnabled="false" field="CitationForm">
 		<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		  <Option id="all vernacular" isEnabled="true"/>
 		</WritingSystemOptions>
@@ -3443,14 +3443,14 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Pronunciations" between=", " after=" " isEnabled="false" field="PronunciationsOS" cssClassNameOverride="pronunciations">
-		<ConfigurationItem name="Pronunciation" before="[" between=" " after="]" isEnabled="true" field="Form">
+		<ConfigurationItem name="Pronunciation" before="[" between=" " after="] " isEnabled="true" field="Form">
 		  <WritingSystemOptions writingSystemType="pronunciation" displayWSAbreviation="false">
 			<Option id="pronunciation" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="CV Pattern" after=" " isEnabled="false" field="CVPattern"/>
-		<ConfigurationItem name="Tone" after=" " isEnabled="false" field="Tone"/>
-		<ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="true" field="LocationRA" cssClassNameOverride="location">
+		<ConfigurationItem name="CV Pattern" before="" isEnabled="false" field="CVPattern"/>
+		<ConfigurationItem name="Tone" before=" " isEnabled="false" field="Tone"/>
+		<ConfigurationItem name="Location" before=" " style="Dictionary-Contrasting" isEnabled="true" field="LocationRA" cssClassNameOverride="location">
 		  <ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 			<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true"/>
@@ -3467,11 +3467,11 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
-		  <ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
+		<ConfigurationItem name="Pronunciation Media" before=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+		  <ConfigurationItem name="Media Files" isEnabled="true" field="MediaFileRA"/>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Etymology" isEnabled="false" before="(" between=" " after=") " field="EtymologyOS" cssClassNameOverride="etymologies">
+	  <ConfigurationItem name="Etymology" isEnabled="false" before=" (" between=" " after=") " field="EtymologyOS" cssClassNameOverride="etymologies">
 		<ConfigurationItem name="Preceding Annotation" isEnabled="true" field="PrecComment">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true" />
@@ -3522,17 +3522,17 @@
 		</ConfigurationItem>
 -->
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Senses" between="  " after=" " isEnabled="true" field="SensesOS" cssClassNameOverride="senses">
+	  <ConfigurationItem name="Senses" before=" " between="  " after="" isEnabled="true" field="SensesOS" cssClassNameOverride="senses">
 		<SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=". " numberingStyle="%d" numberSingleSense="false" showSingleGramInfoFirst="true"/>
 		<ConfigurationItem name="Grammatical Info." before="" after=" " style="Dictionary-Contrasting" isEnabled="true" field="MorphoSyntaxAnalysisRA" cssClassNameOverride="morphosyntaxanalysis">
 		  <ConfigurationItem name="Gram Info (Name)" before=" " between=" " after="" isEnabled="false" field="InterlinearNameTSS" cssClassNameOverride="graminfoname"/>
 		  <ConfigurationItem name="Gram Info (Abbrev)" before=" " between=" " after="" isEnabled="false" field="InterlinearAbbrTSS" cssClassNameOverride="graminfoabbrev"/>
-		  <ConfigurationItem name="Category Info." before=" " between=" " after="" isEnabled="true" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
+		  <ConfigurationItem name="Category Info." isEnabled="true" before="" between=" " after="" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true"/>
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Slots (for Infl. Affixes)" before=": " between=", " isEnabled="true" field="Slots">
+		  <ConfigurationItem name="Slots (for Infl. Affixes)" before=": " between=", " isEnabled="false" field="Slots">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true"/>
 			</WritingSystemOptions>
@@ -3547,10 +3547,10 @@
 			  <Option id="analysis" isEnabled="true"/>
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Inflection Features" after=" " isEnabled="false" field="FeaturesTSS" cssClassNameOverride="inflectionfeatures"/>
-		  <ConfigurationItem name="Exception Features" after=" " isEnabled="false" field="ExceptionFeaturesTSS" cssClassNameOverride="exceptionfeatures"/>
+		  <ConfigurationItem name="Inflection Features" before=" " isEnabled="false" field="FeaturesTSS" cssClassNameOverride="inflectionfeatures"/>
+		  <ConfigurationItem name="Exception Features" before=" " isEnabled="false" field="ExceptionFeaturesTSS" cssClassNameOverride="exceptionfeatures"/>
 		</ConfigurationItem>
-		<ConfigurationItem name="Sense Type" before="(" after=") " style="Dictionary-Contrasting" isEnabled="true" field="SenseTypeRA" cssClassNameOverride="sensetype">
+		<ConfigurationItem name="Sense Type" before="(" after=") " style="Dictionary-Contrasting" isEnabled="false" field="SenseTypeRA" cssClassNameOverride="sensetype">
 		  <ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true"/>
@@ -3572,12 +3572,12 @@
 			<Option id="all analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Restrictions" before=" Restrictions: " between=" " after="." isEnabled="true" field="Restrictions">
+		<ConfigurationItem name="Restrictions" before=" (" between=" " after=")" isEnabled="true" field="Restrictions">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="all analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Scientific Name" after=" " isEnabled="false" field="ScientificName"/>
+		<ConfigurationItem name="Scientific Name" after=" " isEnabled="true" field="ScientificName"/>
 		<ConfigurationItem name="Gloss" before=" " between=" " after="" isEnabled="false" field="Gloss">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="all analysis" isEnabled="true"/>
@@ -3693,7 +3693,7 @@
 			   <Option id="a32f1d1c-4832-46a2-9732-c2276d6547e8" isEnabled="true" />
 			   <Option id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed" isEnabled="true" />
 		  </ListTypeOptions>	
-		  <ConfigurationItem name="Variant Type" between=", " after=" " isEnabled="true" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
+		  <ConfigurationItem name="Variant Type" between=", " after="" isEnabled="true" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
 			<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 			  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 				<Option id="analysis" isEnabled="true"/>
@@ -3705,7 +3705,7 @@
 			  </WritingSystemOptions>
 			</ConfigurationItem>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Variant Form" between=", " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		  <ConfigurationItem name="Variant Form" before=" " between=", " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			  <Option id="vernacular" isEnabled="true"/>
 			</WritingSystemOptions>
@@ -3728,9 +3728,9 @@
 				<Option id="pronunciation" isEnabled="true"/>
 			  </WritingSystemOptions>
 			</ConfigurationItem>
-			<ConfigurationItem name="CV Pattern" after=" " isEnabled="false" field="CVPattern"/>
-			<ConfigurationItem name="Tone" after=" " isEnabled="false" field="Tone"/>
-			<ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="false" field="LocationRA" cssClassNameOverride="location">
+			<ConfigurationItem name="CV Pattern" before="" isEnabled="false" field="CVPattern"/>
+			<ConfigurationItem name="Tone" before=" " isEnabled="false" field="Tone"/>
+			<ConfigurationItem name="Location" before=" " style="Dictionary-Contrasting" isEnabled="false" field="LocationRA" cssClassNameOverride="location">
 			  <ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 				<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 				  <Option id="analysis" isEnabled="true"/>
@@ -3742,8 +3742,8 @@
 				</WritingSystemOptions>
 			  </ConfigurationItem>
 			</ConfigurationItem>
-			<ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
-			  <ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
+			<ConfigurationItem name="Pronunciation Media" before=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+			  <ConfigurationItem name="Media Files" isEnabled="true" field="MediaFileRA"/>
 			</ConfigurationItem>
 		  </ConfigurationItem>
 		  <ConfigurationItem name="Comment" before=" " between=" " isEnabled="false" field="Summary">
@@ -3917,7 +3917,7 @@
 		  </ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Referenced Complex Forms" between=", " after=" " isEnabled="false" field="VisibleComplexFormBackRefs">
-		  <ConfigurationItem name="Complex Form Type" between=", " after=" " isEnabled="false" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
+		  <ConfigurationItem name="Complex Form Type" between=", " after="" isEnabled="false" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 			<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 			  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 				<Option id="analysis" isEnabled="true"/>
@@ -3929,7 +3929,7 @@
 			  </WritingSystemOptions>
 			</ConfigurationItem>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Complex Form" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		  <ConfigurationItem name="Complex Form" before=" " between=" " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			  <Option id="vernacular" isEnabled="true"/>
 			</WritingSystemOptions>
@@ -4009,7 +4009,7 @@
 		  <Option id="a32f1d1c-4832-46a2-9732-c2276d6547e8" isEnabled="true" />
 		  <Option id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed" isEnabled="false" />
 		</ListTypeOptions>
-		<ConfigurationItem name="Variant Type" isEnabled="true" before="" between=", " after=" " field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
+		<ConfigurationItem name="Variant Type" isEnabled="true" before="" between=", " after="" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
 		  <ConfigurationItem name="Abbreviation" isEnabled="true" style="Dictionary-CrossReferences" between=" " field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true" />
@@ -4021,7 +4021,7 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Variant Form" isEnabled="true" style="Dictionary-CrossReferences" before="" between=", " after="" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		<ConfigurationItem name="Variant Form" isEnabled="true" style="Dictionary-CrossReferences" before=" " between=", " after="" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true" />
 		  </WritingSystemOptions>
@@ -4044,7 +4044,7 @@
 			  <Option id="pronunciation" isEnabled="true" />
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="CV Pattern" isEnabled="false" before=" " between=" " after="" field="CVPattern" />
+		  <ConfigurationItem name="CV Pattern" isEnabled="false" before="" between=" " after="" field="CVPattern" />
 		  <ConfigurationItem name="Tone" isEnabled="false" before=" " between=" " after="" field="Tone" />
 		  <ConfigurationItem name="Location" isEnabled="false" style="Dictionary-Contrasting" before=" " between=" " after="" field="LocationRA" cssClassNameOverride="location">
 			<ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
@@ -4058,8 +4058,8 @@
 			  </WritingSystemOptions>
 			</ConfigurationItem>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
-			<ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
+		  <ConfigurationItem name="Pronunciation Media" before=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+			<ConfigurationItem name="Media Files" isEnabled="true" field="MediaFileRA"/>
 		  </ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Comment" isEnabled="false" before=" " between=" " after="" field="Summary">
@@ -4083,7 +4083,7 @@
 		  <Option isEnabled="false" id="a32f1d1c-4832-46a2-9732-c2276d6547e8"/>
 		  <Option isEnabled="true" id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed"/>
 		</ListTypeOptions>
-		<ConfigurationItem name="Variant Type" between=", " after=" " isEnabled="true" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
+		<ConfigurationItem name="Variant Type" between=", " after="" isEnabled="true" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
 		  <ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true"/>
@@ -4095,7 +4095,7 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Variant Form" between=", " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		<ConfigurationItem name="Variant Form" before=" " between=", " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -4118,9 +4118,9 @@
 			  <Option id="pronunciation" isEnabled="true"/>
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="CV Pattern" after=" " isEnabled="false" field="CVPattern"/>
-		  <ConfigurationItem name="Tone" after=" " isEnabled="false" field="Tone"/>
-		  <ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="false" field="LocationRA" cssClassNameOverride="location">
+		  <ConfigurationItem name="CV Pattern" before="" isEnabled="false" field="CVPattern"/>
+		  <ConfigurationItem name="Tone" before=" " isEnabled="false" field="Tone"/>
+		  <ConfigurationItem name="Location" before=" " style="Dictionary-Contrasting" isEnabled="false" field="LocationRA" cssClassNameOverride="location">
 			<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 			  <WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 				<Option id="analysis" isEnabled="true"/>
@@ -4132,8 +4132,8 @@
 			  </WritingSystemOptions>
 			</ConfigurationItem>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Pronunciation Media" after=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
-			<ConfigurationItem name="Media Files" after=" " isEnabled="true" field="MediaFileRA"/>
+		  <ConfigurationItem name="Pronunciation Media" before=" " isEnabled="true" field="MediaFilesOS" cssClassNameOverride="mediafiles">
+			<ConfigurationItem name="Media Files" isEnabled="true" field="MediaFileRA"/>
 		  </ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Comment" before=" " between=" " isEnabled="false" field="Summary">
@@ -4251,7 +4251,7 @@
 		<ComplexFormOptions list="complex" displayEachComplexFormInParagraph="true">
 		  <Option isEnabled="false" id=""/>
 		</ComplexFormOptions>
-		<ConfigurationItem name="Complex Form Type" between=", " after=" " isEnabled="false" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
+		<ConfigurationItem name="Complex Form Type" between=", " after="" isEnabled="false" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 		  <ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true"/>
@@ -4263,7 +4263,7 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Complex Form" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		<ConfigurationItem name="Complex Form" before=" " between=" " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -4295,7 +4295,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	    <!-- Using cssClassNameOverride="headword" to show the Configure Headword Numbers button -->
-	    <ConfigurationItem name="Headword" between=" " after="  " style="Dictionary-Headword" isEnabled="false" field="Owner" subField="OwnerOutlineName" cssClassNameOverride="headword">
+	    <ConfigurationItem name="Headword" between=" " after="" style="Dictionary-Headword" isEnabled="false" field="Owner" subField="OwnerOutlineName" cssClassNameOverride="headword">
 	    <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		  <Option id="vernacular" isEnabled="true"/>
 	    </WritingSystemOptions>
@@ -4306,8 +4306,8 @@
 		  </WritingSystemOptions>
 	    </ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Minor Subsubentries" styleType="character" after=" " isEnabled="true" field="Subentries">
-		<ComplexFormOptions list="complex" displayEachComplexFormInParagraph="false">
+	  <ConfigurationItem name="Minor Subsubentries" styleType="character" after="" isEnabled="true" style="Dictionary-Subsubentry" field="Subentries">
+		<ComplexFormOptions list="complex" displayEachComplexFormInParagraph="true">
 		  <Option isEnabled="true" id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
 		  <Option isEnabled="true" id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
 		  <Option isEnabled="true" id="73266a3a-48e8-4bd7-8c84-91c730340b7d"/>
