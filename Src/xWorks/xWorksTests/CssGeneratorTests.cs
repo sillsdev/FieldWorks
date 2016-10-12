@@ -1527,12 +1527,12 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .visiblecomplexformbackrefs> .complexformtypes .complexformtype> .name:before{\s*content:'<';\s*}",
-				RegexOptions.Singleline).Success, "Before not generated:" + Environment.NewLine + cssResult);
-			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .visiblecomplexformbackrefs> .complexformtypes .complexformtype .name> .nam\+ .nam:before{\s*content:',';\s*}",
-				RegexOptions.Singleline).Success, "Between not generated:" + Environment.NewLine + cssResult);
-			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .visiblecomplexformbackrefs> .complexformtypes .complexformtype> .name:after{\s*content:'>';\s*}",
-				RegexOptions.Singleline).Success, "After not generated:" + Environment.NewLine + cssResult);
+			VerifyRegex(cssResult, @".lexentry> .visiblecomplexformbackrefs> .complexformtypes .complexformtype> .name:before{\s*content:'<';\s*}",
+				"Before not generated:");
+			VerifyRegex(cssResult, @".lexentry> .visiblecomplexformbackrefs> .complexformtypes .complexformtype> .name> .nam\+ .nam:before{\s*content:',';\s*}",
+				"Between not generated:");
+			VerifyRegex(cssResult, @".lexentry> .visiblecomplexformbackrefs> .complexformtypes .complexformtype> .name:after{\s*content:'>';\s*}",
+				"After not generated:");
 		}
 
 		[Test]
@@ -1576,14 +1576,14 @@ namespace SIL.FieldWorks.XWorks
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .variantformentrybackrefs:before{.*content:'\[';.*}",
 				RegexOptions.Singleline).Success, "Before not generated for Variant Entry.");
-			Assert.IsTrue(Regex.Match(cssResult, @".lexentry .variantformentrybackrefs> .variantformentrybackref\+ .variantformentrybackref:before{.*content:'\; ';.*}",
+			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .variantformentrybackrefs> .variantformentrybackref\+ .variantformentrybackref:before{.*content:'\; ';.*}",
 				RegexOptions.Singleline).Success, "Between not generated Variant Entry.");
 			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .variantformentrybackrefs:after{.*content:'\]';.*}",
 				RegexOptions.Singleline).Success, "After not generated Variant Entry.");
 			Assert.False(Regex.Match(cssResult, @".lexentry .variantformentrybackrefs> .span\+ .span:before").Success);
 			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .variantformentrybackrefs .variantformentrybackref> .variantentrytypes .variantentrytype> .name:before{.*content:'<';.*}",
 				RegexOptions.Singleline).Success, "Before not generated Variant Entry Type.");
-			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .variantformentrybackrefs .variantformentrybackref> .variantentrytypes .variantentrytype .name> .nam\+ .nam:before{.*content:',';.*}",
+			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .variantformentrybackrefs .variantformentrybackref> .variantentrytypes .variantentrytype> .name> .nam\+ .nam:before{.*content:',';.*}",
 				RegexOptions.Singleline).Success, "Between not generated Variant Entry Type.");
 			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .variantformentrybackrefs .variantformentrybackref> .variantentrytypes .variantentrytype> .name:after{.*content:'>';.*}",
 				RegexOptions.Singleline).Success, "After not generated Variant Entry Type.");
@@ -1632,20 +1632,20 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .variantformentrybackrefs_inflectional-variants:before{.*content:'\[';.*}",
-				RegexOptions.Singleline).Success, "Before not generated for Variant Entry." + Environment.NewLine + cssResult);
-			Assert.True(Regex.Match(cssResult, @".lexentry .variantformentrybackrefs_inflectional-variants> .variantformentrybackref_inflectional-variants\+ .variantformentrybackref_inflectional-variants:before{.*content:'\; ';.*}",
-				RegexOptions.Singleline).Success, "Between should have been generated using class selectors because this element has type factoring." + Environment.NewLine + cssResult);
-			Assert.False(Regex.Match(cssResult, @".lexentry> .variantformentrybackrefs_inflectional-variants> span\+ span:before").Success,
-				"Between should not have been generated because this element has type factoring." + Environment.NewLine + cssResult);
-			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .variantformentrybackrefs_inflectional-variants:after{.*content:'\]';.*}",
-				RegexOptions.Singleline).Success, "After not generated Variant Entry." + Environment.NewLine + cssResult);
-			Assert.True(Regex.Match(cssResult, @".lexentry> .variantformentrybackrefs_inflectional-variants> .variantentrytypes .variantentrytype> .name:before{.*content:'<';.*}",
-				RegexOptions.Singleline).Success, "Before not generated Variant Entry Type:" + Environment.NewLine + cssResult);
-			Assert.True(Regex.Match(cssResult, @".lexentry> .variantformentrybackrefs_inflectional-variants> .variantentrytypes .variantentrytype .name> .nam\+ .nam:before{.*content:',';.*}",
-				RegexOptions.Singleline).Success, "Between not generated Variant Entry Type:" + Environment.NewLine + cssResult);
-			Assert.True(Regex.Match(cssResult, @".lexentry> .variantformentrybackrefs_inflectional-variants> .variantentrytypes .variantentrytype> .name:after{.*content:'>';.*}",
-				RegexOptions.Singleline).Success, "After not generated Variant Entry Type:" + Environment.NewLine + cssResult);
+			VerifyRegex(cssResult, @".lexentry> .variantformentrybackrefs_inflectional-variants:before{.*content:'\[';.*}",
+				"Before not generated for Variant Entry.");
+			VerifyRegex(cssResult, @".lexentry> .variantformentrybackrefs_inflectional-variants> .variantformentrybackref_inflectional-variants\+ .variantformentrybackref_inflectional-variants:before{.*content:'\; ';.*}",
+				"Between should have been generated using class selectors because this element has type factoring.");
+			Assert.False(Regex.Match(cssResult, @".lexentry>? .variantformentrybackrefs_inflectional-variants>? span\+ span:before").Success,
+				"Between should not have been generated using generic spans because this element has type factoring." + Environment.NewLine + cssResult);
+			VerifyRegex(cssResult, @".lexentry> .variantformentrybackrefs_inflectional-variants:after{.*content:'\]';.*}",
+				"After not generated Variant Entry.");
+			VerifyRegex(cssResult, @".lexentry> .variantformentrybackrefs_inflectional-variants> .variantentrytypes .variantentrytype> .name:before{.*content:'<';.*}",
+				"Before not generated Variant Entry Type:");
+			VerifyRegex(cssResult, @".lexentry> .variantformentrybackrefs_inflectional-variants> .variantentrytypes .variantentrytype> .name> .nam\+ .nam:before{.*content:',';.*}",
+				"Between not generated Variant Entry Type:");
+			VerifyRegex(cssResult, @".lexentry> .variantformentrybackrefs_inflectional-variants> .variantentrytypes .variantentrytype> .name:after{.*content:'>';.*}",
+				"After not generated Variant Entry Type:");
 		}
 
 		[Test]
@@ -2158,8 +2158,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry\s*\.senses>\s*\.sense\s*\+\s*\.sense:before{.*content:','.*}", RegexOptions.Singleline).Success,
-				"Between selector not generated.{0}{0}{1}", Environment.NewLine, cssResult);
+			VerifyRegex(cssResult, @".*\.lexentry>\s*\.senses>\s*\.sense\s*\+\s*\.sense:before{.*content:','.*}", "Between selector not generated.");
 		}
 
 		[Test]
@@ -2333,9 +2332,8 @@ namespace SIL.FieldWorks.XWorks
 				PopulateFieldsForTesting(entry);
 				// SUT
 				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-				Assert.IsTrue(Regex.Match(cssResult,
-						@".*\.lexentry\s*\.senses>\s*\.sense\s*\+\s*\.sense:before{.*content:',';.*font-size:10pt;.*color:#00F.*}", RegexOptions.Singleline).Success,
-					"Between selector with format not generated.{0}{0}{1}", Environment.NewLine, cssResult);
+				VerifyRegex(cssResult, @".*\.lexentry>\s*\.senses>\s*\.sense\s*\+\s*\.sense:before{.*content:',';.*font-size:10pt;.*color:#00F.*}",
+					"Between selector with format not generated.");
 			}
 		}
 
@@ -2529,7 +2527,7 @@ namespace SIL.FieldWorks.XWorks
 			var senseNumberAfter = @".entry> .pictures .picture> .captionContent .sensenumbertss:after\{\s*content:'\]';";
 			Assert.IsTrue(Regex.Match(cssResult, senseNumberAfter, RegexOptions.Singleline).Success, "expected Sense Number after rule is generated");
 
-			var senseNumberBetween = @".entry> .pictures .picture .sensenumbertss> .sensenumberts\+ .sensenumberts:before\{\s*content:', ';";
+			var senseNumberBetween = @".entry> .pictures .picture> .sensenumbertss> .sensenumberts\+ .sensenumberts:before\{\s*content:', ';";
 			Assert.IsTrue(Regex.Match(cssResult, senseNumberBetween, RegexOptions.Singleline).Success, "expected Sense Number between rule is generated");
 
 			var captionBefore = @".entry> .pictures .picture> .captionContent .caption:before\{\s*content:'\{';";
@@ -2538,7 +2536,7 @@ namespace SIL.FieldWorks.XWorks
 			var captionAfter = @".entry> .pictures .picture> .captionContent .caption:after\{\s*content:'\}';";
 			Assert.IsTrue(Regex.Match(cssResult, captionAfter, RegexOptions.Singleline).Success, "expected Caption after rule is generated");
 
-			var captionBetween = @".entry> .pictures .picture .caption> .captio\+ .captio:before\{\s*content:' ';";
+			var captionBetween = @".entry> .pictures .picture> .caption> .captio\+ .captio:before\{\s*content:' ';";
 			Assert.IsTrue(Regex.Match(cssResult, captionBetween, RegexOptions.Singleline).Success, "expected Caption between rule is generated");
 		}
 
@@ -3413,7 +3411,7 @@ namespace SIL.FieldWorks.XWorks
 			var regexItem3 = @".entry> .pronunciations .pronunciation> .form> span:last-child:after\{\s*content:'\]';\s*\}";
 			Assert.IsTrue(Regex.Match(cssResult, regexItem3, RegexOptions.Singleline).Success, "expected collection item after rule is generated");
 
-			var regexCollection1 = @".entry .pronunciations> .pronunciation\+ .pronunciation:before\{\s*content:', ';\s*\}";
+			var regexCollection1 = @".entry> .pronunciations> .pronunciation\+ .pronunciation:before\{\s*content:', ';\s*\}";
 			Assert.IsTrue(Regex.Match(cssResult, regexCollection1, RegexOptions.Singleline).Success, "expected collection between rule is generated");
 
 			// The following two checks test the fix for LT-17048.  The preceding four checks should be the same before and after the fix.
