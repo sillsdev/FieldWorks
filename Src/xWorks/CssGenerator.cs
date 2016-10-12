@@ -618,6 +618,7 @@ namespace SIL.FieldWorks.XWorks
 		private static IEnumerable<StyleRule> GenerateSelectorsFromNode(
 			string parentSelector, ConfigurableDictionaryNode configNode,
 			out string baseSelection, FdoCache cache, Mediator mediator)
+			// REVIEW (Hasso) 2016.10: parentSelector and baseSelector could be combined into a single `ref` parameter
 		{
 			// TODO: REFACTOR this method to handle certain nodes more specifically. The options type should be used to branch into node specific code.
 			parentSelector = GetParentForFactoredReference(parentSelector, configNode);
@@ -678,6 +679,13 @@ namespace SIL.FieldWorks.XWorks
 							betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, " div");
 						else
 							betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, " span");
+					}
+					else if (IsFactoredReferenceType(configNode))
+					{
+						// Between factored Type goes between a reference (last in the list for its Type)
+						// and its immediately-following Type "list" (label on the following list of references)
+						betweenSelector = string.Format("{0}> .{1}+{2}:before",
+							parentSelector, GetClassAttributeForCollectionItem(configNode.Parent), collectionSelector);
 					}
 					var betweenRule = new StyleRule(dec) { Value = betweenSelector };
 					rules.Add(betweenRule);

@@ -281,7 +281,7 @@
 			</ConfigurationItem>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variants of Sense" isEnabled="false" before="(" between="; " after=") " field="VariantFormEntryBackRefs">
+	  <ConfigurationItem name="Variants of Sense" isEnabled="false" before="(" between=";" after=") " field="VariantFormEntryBackRefs">
 	  	<ListTypeOptions list="variant">
 	  		<Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="true" />
 	  		<Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
@@ -303,7 +303,7 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Variant Form" before=" " between=", " after="" style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
+		<ConfigurationItem name="Variant Form" before=" " between=", " style="Dictionary-CrossReferences" isEnabled="true" field="OwningEntry" subField="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true" />
 		  </WritingSystemOptions>
@@ -604,7 +604,7 @@
           <Option id="all analysis" isEnabled="true" />
         </WritingSystemOptions>
       </ConfigurationItem>
-      <ConfigurationItem name="Variant Forms" nameSuffix="Inflectional Variants" isEnabled="true" isDuplicate="true" before="[" between="; " after="] " field="VariantFormEntryBackRefs">
+      <ConfigurationItem name="Variant Forms" nameSuffix="Inflectional Variants" isEnabled="true" isDuplicate="true" before="[" between=";" after="] " field="VariantFormEntryBackRefs">
         <ListTypeOptions list="variant">
           <Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="false" />
           <Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="false" />
@@ -667,7 +667,7 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Variant Forms" isEnabled="true" before="" between="; " after=" " field="VariantFormEntryBackRefs">
+      <ConfigurationItem name="Variant Forms" isEnabled="true" before="" between=";" after=" " field="VariantFormEntryBackRefs">
         <ListTypeOptions list="variant">
           <Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="false" />
           <Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
@@ -1277,7 +1277,7 @@
 			</ConfigurationItem>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variants of Sense" isEnabled="false" before="(" between="; " after=") " field="VariantFormEntryBackRefs">
+	  <ConfigurationItem name="Variants of Sense" isEnabled="false" before="(" between=";" after=") " field="VariantFormEntryBackRefs">
 	  	<ListTypeOptions list="variant">
 	  		<Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="true" />
 	  		<Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
@@ -1588,7 +1588,7 @@
 			<Option id="all analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-      <ConfigurationItem name="Variant Forms" nameSuffix="Inflectional Variants" isEnabled="true" isDuplicate="true" before=" [" between="; " after="] " field="VariantFormEntryBackRefs">
+      <ConfigurationItem name="Variant Forms" nameSuffix="Inflectional Variants" isEnabled="true" isDuplicate="true" before=" [" between=";" after="] " field="VariantFormEntryBackRefs">
         <ListTypeOptions list="variant">
           <Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="false" />
           <Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="false" />
@@ -1651,7 +1651,7 @@
           </WritingSystemOptions>
         </ConfigurationItem>
       </ConfigurationItem>
-      <ConfigurationItem name="Variant Forms" isEnabled="true" before=" " between="; " after=" " field="VariantFormEntryBackRefs">
+      <ConfigurationItem name="Variant Forms" isEnabled="true" before=" " between=";" after=" " field="VariantFormEntryBackRefs">
         <ListTypeOptions list="variant">
           <Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="false" />
           <Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
@@ -2299,7 +2299,7 @@
 			</ConfigurationItem>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variants of Sense" isEnabled="false" before="(" between="; " after=") " field="VariantFormEntryBackRefs">
+	  <ConfigurationItem name="Variants of Sense" isEnabled="false" before="(" between=";" after=") " field="VariantFormEntryBackRefs">
 	  	<ListTypeOptions list="variant">
 	  		<Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="true" />
 	  		<Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
@@ -2593,7 +2593,7 @@
 		<ReferenceItem>MainEntrySubsenses</ReferenceItem>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Variant Forms" nameSuffix="Inflectional Variants" isEnabled="false" isDuplicate="true" before="	[" between="; " after="] " field="VariantFormEntryBackRefs">
+	<ConfigurationItem name="Variant Forms" nameSuffix="Inflectional Variants" isEnabled="false" isDuplicate="true" before="	[" between=";" after="] " field="VariantFormEntryBackRefs">
 		<ListTypeOptions list="variant">
 			<Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="false" />
 			<Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="false" />
@@ -2667,7 +2667,7 @@
 		</WritingSystemOptions>
 		</ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Variant Forms" isEnabled="false" before="" between="; " after=" " field="VariantFormEntryBackRefs">
+	<ConfigurationItem name="Variant Forms" isEnabled="false" before="" between=";" after=" " field="VariantFormEntryBackRefs">
 		<ListTypeOptions list="variant">
 			<Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="false" />
 			<Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
@@ -3095,7 +3095,7 @@
 			</ConfigurationItem>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variants of Sense" before="(" between="; " after=") " isEnabled="false" field="VariantFormEntryBackRefs">
+	  <ConfigurationItem name="Variants of Sense" before="(" between=";" after=") " isEnabled="false" field="VariantFormEntryBackRefs">
 	  	<ListTypeOptions list="variant">
 	  		<Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="true" />
 	  		<Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
@@ -3683,7 +3683,7 @@
 			</ConfigurationItem>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Variants of Sense" before="(" between="; " after=") " isEnabled="false" field="VariantFormEntryBackRefs">
+		<ConfigurationItem name="Variants of Sense" before="(" between=";" after=") " isEnabled="false" field="VariantFormEntryBackRefs">
 		  <ListTypeOptions list="variant">
 			   <Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="true" />
 			   <Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
@@ -3999,7 +3999,7 @@
 		  <Option id="all analysis" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variant Forms" nameSuffix="Inflectional Variants" isEnabled="false" isDuplicate="true" before="[" between="; " after="] " field="VariantFormEntryBackRefs">
+	  <ConfigurationItem name="Variant Forms" nameSuffix="Inflectional Variants" isEnabled="false" isDuplicate="true" before="[" between=";" after="] " field="VariantFormEntryBackRefs">
 		<ListTypeOptions list="variant">
 		  <Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="false" />
 		  <Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="false" />
@@ -4073,7 +4073,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variant Forms" before="(" between="; " after=") " isEnabled="false" field="VariantFormEntryBackRefs">
+	  <ConfigurationItem name="Variant Forms" before="(" between=";" after=") " isEnabled="false" field="VariantFormEntryBackRefs">
 		<ListTypeOptions list="variant">
 		  <Option isEnabled="false" id="b0000000-c40e-433e-80b5-31da08771344"/>
 		  <Option isEnabled="true" id="024b62c9-93b3-41a0-ab19-587a0030219a"/>

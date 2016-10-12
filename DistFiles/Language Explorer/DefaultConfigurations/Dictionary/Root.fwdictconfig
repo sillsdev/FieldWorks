@@ -61,7 +61,7 @@
 		<ConfigurationItem name="Media Files" isEnabled="true" field="MediaFileRA"/>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Variant Forms" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
+	<ConfigurationItem name="Variant Forms" before="(" between=";" after=") " isEnabled="true" field="VariantFormEntryBackRefs">
 		<ListTypeOptions list="variant">
 			<Option isEnabled="true" id="b0000000-c40e-433e-80b5-31da08771344"/>
 			<Option isEnabled="true" id="024b62c9-93b3-41a0-ab19-587a0030219a"/>
@@ -427,7 +427,7 @@
 			</ConfigurationItem>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variants of Sense" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
+	  <ConfigurationItem name="Variants of Sense" before="(" between=";" after=") " isEnabled="true" field="VariantFormEntryBackRefs">
 	  	<ListTypeOptions list="variant">
 	  		<Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="true" />
 	  		<Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
@@ -995,7 +995,7 @@
 		<ConfigurationItem name="Media Files" isEnabled="true" field="MediaFileRA"/>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Variant Forms" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
+	<ConfigurationItem name="Variant Forms" before="(" between=";" after=") " isEnabled="true" field="VariantFormEntryBackRefs">
 		<ListTypeOptions list="variant">
 			<Option isEnabled="true" id="b0000000-c40e-433e-80b5-31da08771344"/>
 			<Option isEnabled="true" id="024b62c9-93b3-41a0-ab19-587a0030219a"/>
@@ -1462,7 +1462,7 @@
 			</ConfigurationItem>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variants of Sense" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
+	  <ConfigurationItem name="Variants of Sense" before="(" between=";" after=") " isEnabled="true" field="VariantFormEntryBackRefs">
 	  	<ListTypeOptions list="variant">
 	  		<Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="true" />
 	  		<Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
@@ -1975,7 +1975,7 @@
 		<ConfigurationItem name="Media Files" isEnabled="true" field="MediaFileRA"/>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Variant Forms" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
+	<ConfigurationItem name="Variant Forms" before="(" between=";" after=") " isEnabled="true" field="VariantFormEntryBackRefs">
 		<ListTypeOptions list="variant">
 			<Option isEnabled="true" id="b0000000-c40e-433e-80b5-31da08771344"/>
 			<Option isEnabled="true" id="024b62c9-93b3-41a0-ab19-587a0030219a"/>
@@ -2442,7 +2442,7 @@
 			</ConfigurationItem>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variants of Sense" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
+	  <ConfigurationItem name="Variants of Sense" before="(" between=";" after=") " isEnabled="true" field="VariantFormEntryBackRefs">
 	  	<ListTypeOptions list="variant">
 	  		<Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="true" />
 	  		<Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
@@ -3047,7 +3047,7 @@
 			</ConfigurationItem>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variants of Sense" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
+	  <ConfigurationItem name="Variants of Sense" before="(" between=";" after=") " isEnabled="true" field="VariantFormEntryBackRefs">
 	  	<ListTypeOptions list="variant">
 	  		<Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="true" />
 	  		<Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
@@ -3440,7 +3440,7 @@
 		  <ConfigurationItem name="Media Files" isEnabled="true" field="MediaFileRA"/>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variant Forms" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
+	  <ConfigurationItem name="Variant Forms" before="(" between=";" after=") " isEnabled="true" field="VariantFormEntryBackRefs">
 		<ListTypeOptions list="variant">
 		  <Option isEnabled="true" id="b0000000-c40e-433e-80b5-31da08771344"/>
 		  <Option isEnabled="true" id="024b62c9-93b3-41a0-ab19-587a0030219a"/>
@@ -3794,7 +3794,7 @@
 			</ConfigurationItem>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Variants of Sense" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
+		<ConfigurationItem name="Variants of Sense" before="(" between=";" after=") " isEnabled="true" field="VariantFormEntryBackRefs">
 		  <ListTypeOptions list="variant">
 			   <Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="true" />
 			   <Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />

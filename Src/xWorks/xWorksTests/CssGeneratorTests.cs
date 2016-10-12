@@ -2107,7 +2107,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var primaryentry = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "EntryRefsWithThisMainSense", Style = "FooStyle",
+				FieldDescription = "EntryRefsWithThisMainSense",
 				Before = "[",
 				After = "]",
 				Children = new List<ConfigurableDictionaryNode> { entrytypes, headword }
@@ -2128,8 +2128,11 @@ namespace SIL.FieldWorks.XWorks
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
 			const string thisMainSense = @"\.reversalindexentry>\s*\.referringsenses\s*\.referringsense>\s*\.entryrefswiththismainsense";
 			VerifyRegex(cssResult, thisMainSense + @">\s*\.entrytypes:before{\s*content:'b4';\s*}"); // TODO? (Hasso) 2016.10: put on .types .type first-child
-			// TODO (Hasso) 2016.10: VerifyRegex(cssResult, thisMainSense + @">\s*\.entryrefswiththismainsens\s*\+\s*.entrytype:before{\s*content:'twixt';\s*}");
+			VerifyRegex(cssResult, thisMainSense + @">\s*\.entryrefswiththismainsens\s*\+\s*.entrytypes:before{\s*content:'twixt';\s*}",
+				"Until everything else is restructured under the yet-to-be-added Targets node, Factoring Type.Between goes between typed factions");
 			VerifyRegex(cssResult, thisMainSense + @">\s*\.entrytypes:after{\s*content:'farther back';\s*}");
+			VerifyRegex(cssResult, thisMainSense + @"\s*\.entryrefswiththismainsens>\s*\.testheadword:after{\s*content:'ah';\s*}",
+				"Headword's selector should *not* have changed due to factoring");
 			const string entryType = thisMainSense + @">\s*\.entrytypes \.entrytype";
 			VerifyRegex(cssResult, entryType + @">\s*\.reversename>\s*span:first-child:before{\s*content:'beef';\s*}");
 			VerifyRegex(cssResult, entryType + @">\s*\.reversename>\s*span+span\[lang|='" + lang2 + @"'\]:before{\s*content:'viet';\s*}");
@@ -3860,11 +3863,12 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// ReSharper disable UnusedParameter.Local -- these parameters are very important.
-		private static void VerifyRegex(string input, string pattern, RegexOptions options = RegexOptions.Singleline)
+		private static void VerifyRegex(string input, string pattern, string message = null, RegexOptions options = RegexOptions.Singleline)
 		// ReSharper restore UnusedParameter.Local
 		{
 			Assert.IsTrue(Regex.Match(input, pattern, options).Success,
-				string.Format("Expected{0}{1}{0}but got{0}{2}", Environment.NewLine, pattern, input));
+				string.Format("{3}Expected{0}{1}{0}but got{0}{2}", Environment.NewLine, pattern, input,
+					message == null ? string.Empty : message + Environment.NewLine));
 		}
 
 		#endregion // Test Helper Methods
