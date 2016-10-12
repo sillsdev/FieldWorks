@@ -570,7 +570,7 @@
 		  <ConfigurationItem name="Reference" isEnabled="false" before=" " between=" " after="" field="Reference" />
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Minor Subentries" styleType="character" isEnabled="true" field="Subentries">
+	  <ConfigurationItem name="Minor Subentries" isEnabled="true" before="  " between=";  " after="" styleType="character" field="Subentries">
 		<ComplexFormOptions list="complex" displayEachComplexFormInParagraph="false">
 		  <Option isEnabled="true" id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
 		  <Option isEnabled="true" id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
