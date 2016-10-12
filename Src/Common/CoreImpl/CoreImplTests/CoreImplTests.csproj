@@ -131,6 +131,8 @@
     <Compile Include="DebugProcsTests.cs" />
     <Compile Include="DirectoryFinderTests.cs" />
     <Compile Include="IVwCacheDaTests.cs" />
+    <Compile Include="TsPropsBldrTests.cs" />
+    <Compile Include="TsStrBldrTests.cs" />
     <Compile Include="TsStrFactoryTests.cs" />
     <Compile Include="TsStringTests.cs" />
     <Compile Include="TsTextPropsTests.cs" />

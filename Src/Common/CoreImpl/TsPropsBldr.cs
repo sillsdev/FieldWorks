@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using SIL.FieldWorks.Common.COMInterfaces;
 
 namespace SIL.CoreImpl
@@ -30,24 +31,38 @@ namespace SIL.CoreImpl
 		/// </summary>
 		public void SetIntPropValues(int tpt, int nVar, int nVal)
 		{
-			throw new NotImplementedException();
+			bool delete = nVar == -1 && nVal == -1;
+
+			if (!delete && tpt == (int) FwTextPropType.ktptWs && nVal <= 0)
+				throw new ArgumentOutOfRangeException("nVal", "The specified writing system code is invalid.");
+
+			if (delete)
+				IntProperties.Remove(tpt);
+			else
+				IntProperties[tpt] = new TsIntPropValue(nVar, nVal);
 		}
 
 		/// <summary>
-		/// Sets a string property. If value is empty, the string property is deleted.
+		/// Sets a string property. If value is null or empty, the string property is deleted.
 		/// </summary>
 		public void SetStrPropValue(int tpt, string bstrVal)
 		{
-			throw new NotImplementedException();
+			if (string.IsNullOrEmpty(bstrVal))
+				StringProperties.Remove(tpt);
+			else
+				StringProperties[tpt] = bstrVal;
 		}
 
 		/// <summary>
-		/// Set a string property. If value is empty, the string property is deleted.
+		/// Set a string property. If value is null or empty, the string property is deleted.
 		/// This method is only used by Views.
 		/// </summary>
 		public void SetStrPropValueRgch(int tpt, byte[] rgchVal, int nValLength)
 		{
-			throw new NotImplementedException();
+			if (rgchVal == null || nValLength == 0)
+				StringProperties.Remove(tpt);
+			else
+				StringProperties[tpt] = Encoding.Unicode.GetString(rgchVal, 0, nValLength);
 		}
 
 		/// <summary>

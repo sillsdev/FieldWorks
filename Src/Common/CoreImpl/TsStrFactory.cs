@@ -42,7 +42,7 @@ namespace SIL.CoreImpl
 			if (ttp == null)
 				throw new ArgumentNullException("ttp");
 
-			return new TsString(rgch == null ? null : rgch.Substring(0, cch), new TsRun(cch, (TsTextProps) ttp));
+			return new TsString(rgch == null ? null : rgch.Substring(0, cch), (TsTextProps) ttp);
 		}
 
 		/// <summary>

@@ -23,12 +23,12 @@ namespace SIL.CoreImpl
 		/// Initializes a new instance of the <see cref="TsIncStrBldr"/> class.
 		/// </summary>
 		public TsIncStrBldr()
-			: this(null, TsRun.EmptyRun)
+			: this(null, TsRun.EmptyRun.ToEnumerable())
 		{
 		}
 
-		internal TsIncStrBldr(string text, TsRun run)
-			: this(text, run.ToEnumerable())
+		internal TsIncStrBldr(string text, TsTextProps textProps)
+			: this(text, new TsRun(text == null ? 0 : text.Length, textProps).ToEnumerable())
 		{
 		}
 

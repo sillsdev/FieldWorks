@@ -46,10 +46,10 @@ namespace SIL.CoreImpl
 		/// </summary>
 		public int get_RunAt(int ich)
 		{
+			ThrowIfCharOffsetOutOfRange("ich", ich, Length);
+
 			if (ich == Length)
 				return Runs.Count - 1;
-
-			ThrowIfCharOffsetOutOfRange("ich", ich);
 
 			int lower = 0;
 			int upper = Runs.Count - 1;
@@ -83,7 +83,7 @@ namespace SIL.CoreImpl
 		/// </summary>
 		public ITsTextProps FetchRunInfoAt(int ich, out TsRunInfo tri)
 		{
-			ThrowIfCharOffsetOutOfRange("ich", ich);
+			ThrowIfCharOffsetOutOfRange("ich", ich, Length);
 
 			return FetchRunInfo(get_RunAt(ich), out tri);
 		}
@@ -115,9 +115,8 @@ namespace SIL.CoreImpl
 		/// </summary>
 		public string GetChars(int ichMin, int ichLim)
 		{
-			ThrowIfCharOffsetOutOfRange("ichMin", ichMin);
-			ThrowIfCharLimitOutOfRange("ichLim", ichLim);
-			ThrowIfCharOffsetGreaterThanLimit("ichMin", ichMin, ichLim);
+			ThrowIfCharOffsetOutOfRange("ichMin", ichMin, ichLim);
+			ThrowIfCharOffsetOutOfRange("ichLim", ichLim, Length);
 
 			int len = ichLim - ichMin;
 			return len == 0 ? null : Text.Substring(ichMin, len);
@@ -130,9 +129,8 @@ namespace SIL.CoreImpl
 		{
 			if (rgch.IntPtr == IntPtr.Zero)
 				throw new ArgumentNullException("rgch");
-			ThrowIfCharOffsetOutOfRange("ichMin", ichMin);
-			ThrowIfCharLimitOutOfRange("ichLim", ichLim);
-			ThrowIfCharOffsetGreaterThanLimit("ichMin", ichMin, ichLim);
+			ThrowIfCharOffsetOutOfRange("ichMin", ichMin, ichLim);
+			ThrowIfCharOffsetOutOfRange("ichLim", ichLim, Length);
 
 			string str = GetChars(ichMin, ichLim);
 			if (str != null)
@@ -144,7 +142,7 @@ namespace SIL.CoreImpl
 		/// </summary>
 		public ITsTextProps get_PropertiesAt(int ich)
 		{
-			ThrowIfCharOffsetOutOfRange("ich", ich);
+			ThrowIfCharOffsetOutOfRange("ich", ich, Length);
 
 			return get_Properties(get_RunAt(ich));
 		}
@@ -168,6 +166,15 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
+		/// Throws an exception if the parameter is null.
+		/// </summary>
+		protected void ThrowIfParamNull(string paramName, object param)
+		{
+			if (param == null)
+				throw new ArgumentNullException(paramName);
+		}
+
+		/// <summary>
 		/// Throws an exception if the run index is out of range.
 		/// </summary>
 		protected void ThrowIfRunIndexOutOfRange(string paramName, int irun)
@@ -180,28 +187,10 @@ namespace SIL.CoreImpl
 		/// <summary>
 		/// Throws an exception if the character offset is out of range.
 		/// </summary>
-		protected void ThrowIfCharOffsetOutOfRange(string paramName, int ich)
+		protected void ThrowIfCharOffsetOutOfRange(string paramName, int ichMin, int ichLim)
 		{
-			if (ich < 0 || ich > Length)
+			if (ichMin < 0 || ichMin > ichLim)
 				throw new ArgumentOutOfRangeException(paramName);
-		}
-
-		/// <summary>
-		/// Throws an exception if the character limit is out of range.
-		/// </summary>
-		protected void ThrowIfCharLimitOutOfRange(string paramName, int ichLim)
-		{
-			if (ichLim < 0 || ichLim > Length)
-				throw new ArgumentOutOfRangeException(paramName);
-		}
-
-		/// <summary>
-		/// Throws an exception if the character offset is greater than the limit.
-		/// </summary>
-		protected void ThrowIfCharOffsetGreaterThanLimit(string paramName, int ichMin, int ichLim)
-		{
-			if (ichMin > ichLim)
-				throw new ArgumentException("The character offset cannot be greater than the limit.", paramName);
 		}
 	}
 }

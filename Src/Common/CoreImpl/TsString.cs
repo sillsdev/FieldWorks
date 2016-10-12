@@ -20,18 +20,18 @@ namespace SIL.CoreImpl
 		private readonly string m_text;
 		private readonly TsRun[] m_runs;
 
-		internal TsString(string text, TsRun run)
-			: this(text, run.ToEnumerable())
-		{
-		}
-
 		internal TsString(int ws)
 			: this(null, ws)
 		{
 		}
 
 		internal TsString(string text, int ws)
-			: this(text, new TsRun(text == null ? 0 : text.Length, new TsTextProps(ws)).ToEnumerable())
+			: this(text, new TsTextProps(ws))
+		{
+		}
+
+		internal TsString(string text, TsTextProps textProps)
+			: this(text, new TsRun(text == null ? 0 : text.Length, textProps).ToEnumerable())
 		{
 		}
 
@@ -150,9 +150,8 @@ namespace SIL.CoreImpl
 		/// </summary>
 		public ITsString GetSubstring(int ichMin, int ichLim)
 		{
-			ThrowIfCharOffsetOutOfRange("ichMin", ichMin);
-			ThrowIfCharLimitOutOfRange("ichLim", ichLim);
-			ThrowIfCharOffsetGreaterThanLimit("ichMin", ichMin, ichLim);
+			ThrowIfCharOffsetOutOfRange("ichMin", ichMin, ichLim);
+			ThrowIfCharOffsetOutOfRange("ichLim", ichLim, Length);
 
 			if (ichMin == 0 && ichLim == Length)
 				return this;

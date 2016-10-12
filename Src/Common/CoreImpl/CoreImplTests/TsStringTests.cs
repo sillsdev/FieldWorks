@@ -14,6 +14,7 @@ namespace SIL.CoreImpl
 	{
 		private const string EnglishText = "This is a test!";
 		private const string SpanishText = "¡Esto es una prueba!";
+		// the space goes in the English run
 		private const string CombinedText = EnglishText + " " + SpanishText;
 		private const int EnglishWS = 1;
 		private const int SpanishWS = 2;
@@ -120,7 +121,7 @@ namespace SIL.CoreImpl
 		public void GetChars_IchMinGreaterThanIchLim_Throws()
 		{
 			TsString tss = CreateTwoRunString();
-			Assert.That(() => tss.GetChars(25, 24), Throws.ArgumentException);
+			Assert.That(() => tss.GetChars(25, 24), Throws.InstanceOf<ArgumentOutOfRangeException>());
 		}
 
 		[Test]
@@ -180,7 +181,7 @@ namespace SIL.CoreImpl
 		{
 			TsString tss = CreateTwoRunString();
 			using (ArrayPtr rgch = MarshalEx.StringToNative(10, true))
-				Assert.That(() => tss.FetchChars(25, 24, rgch), Throws.ArgumentException);
+				Assert.That(() => tss.FetchChars(25, 24, rgch), Throws.InstanceOf<ArgumentOutOfRangeException>());
 		}
 
 		[Test]
@@ -593,7 +594,7 @@ namespace SIL.CoreImpl
 		public void GetSubstring_IchMinGreaterThanIchLim_Throws()
 		{
 			TsString tss = CreateTwoRunString();
-			Assert.That(() => tss.GetSubstring(25, 24), Throws.ArgumentException);
+			Assert.That(() => tss.GetSubstring(25, 24), Throws.InstanceOf<ArgumentOutOfRangeException>());
 		}
 
 		private static TsString CreateEmptyString()
@@ -608,7 +609,7 @@ namespace SIL.CoreImpl
 				{(int) FwTextPropType.ktptWs, new TsIntPropValue((int) FwTextPropVar.ktpvDefault, EnglishWS)},
 				{(int) FwTextPropType.ktptBold, new TsIntPropValue((int) FwTextPropVar.ktpvEnum, (int) FwTextToggleVal.kttvForceOn)}
 			};
-			return new TsString(EnglishText, new TsRun(EnglishText.Length, new TsTextProps(intProps, null)));
+			return new TsString(EnglishText, new TsTextProps(intProps, null));
 		}
 
 		private static TsString CreateTwoRunString()

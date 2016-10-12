@@ -9,7 +9,7 @@ namespace SIL.CoreImpl
 	/// <summary>
 	/// This class represents a run of text in a <see cref="TsString"/>.
 	/// </summary>
-	internal class TsRun : IEquatable<TsRun>
+	internal struct TsRun : IEquatable<TsRun>
 	{
 		private static readonly TsRun EmptyRunInternal = new TsRun(0, TsTextProps.EmptyProps);
 		public static TsRun EmptyRun
@@ -38,13 +38,12 @@ namespace SIL.CoreImpl
 
 		public bool Equals(TsRun other)
 		{
-			return other != null && m_ichLim == other.m_ichLim && m_textProps.Equals(other.m_textProps);
+			return m_ichLim == other.m_ichLim && m_textProps.Equals(other.m_textProps);
 		}
 
 		public override bool Equals(object obj)
 		{
-			var other = obj as TsRun;
-			return other != null && Equals(other);
+			return obj is TsRun && Equals((TsRun) obj);
 		}
 
 		public override int GetHashCode()
