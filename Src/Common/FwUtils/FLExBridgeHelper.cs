@@ -246,7 +246,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 			ProcessStartInfo processStartInfo = null;
 			if (MiscUtils.IsUnix)
 			{
-				processStartInfo = new ProcessStartInfo(FwDirectoryFinder.FlexBridgeFolder + "/run-in-environ", FullFieldWorksBridgePath() + " " + args);
+				string flexbridgeLauncher = FwDirectoryFinder.FlexBridgeFolder + "/flexbridge";
+				if (!File.Exists(flexbridgeLauncher))
+				{
+					Console.WriteLine("Warning: Attempting to use non-existent flexbridge launcher {0}", flexbridgeLauncher);
+				}
+				processStartInfo = new ProcessStartInfo(flexbridgeLauncher, args);
 			}
 			else
 			{
