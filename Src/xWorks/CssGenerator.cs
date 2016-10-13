@@ -618,6 +618,7 @@ namespace SIL.FieldWorks.XWorks
 		private static IEnumerable<StyleRule> GenerateSelectorsFromNode(
 			string parentSelector, ConfigurableDictionaryNode configNode,
 			out string baseSelection, FdoCache cache, Mediator mediator)
+			// REVIEW (Hasso) 2016.10: parentSelector and baseSelector could be combined into a single `ref` parameter
 		{
 			// TODO: REFACTOR this method to handle certain nodes more specifically. The options type should be used to branch into node specific code.
 			parentSelector = GetParentForFactoredReference(parentSelector, configNode);
@@ -645,8 +646,9 @@ namespace SIL.FieldWorks.XWorks
 					var collectionSelector = "." + GetClassAttributeForConfig(configNode);
 					var itemSelector = " ." + GetClassAttributeForCollectionItem(configNode);
 					var betweenSelector = String.Format("{0} {1}>{2}+{2}:before", parentSelector, collectionSelector, itemSelector);
-					var betweenRule = new StyleRule(dec) { Value = betweenSelector };
-					if (configNode.DictionaryNodeOptions != null)
+					ConfigurableDictionaryNode dummy;
+					// use default (class-named) between selector for factored references, because "span+span" erroneously matches Type spans
+					if (configNode.DictionaryNodeOptions != null && !ConfiguredXHTMLGenerator.IsFactoredReference(configNode, out dummy))
 					{
 						var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 						var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
@@ -675,12 +677,17 @@ namespace SIL.FieldWorks.XWorks
 							betweenSelector = String.Format("{0}> {1}>{2}.sensecontent+{2}:before", parentSelector, collectionSelector, " span");
 						else if (configNode.FieldDescription == "PicturesOfSenses")
 							betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, " div");
-						// Skip between selector for factored references
-						else if (configNode.FieldDescription != "VariantFormEntryBackRefs" && configNode.FieldDescription != "VisibleVariantEntryRefs" &&
-							configNode.SubField != "VariantFormEntryBackRefs")
+						else
 							betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, " span");
-						betweenRule = new StyleRule(dec) { Value = betweenSelector };
 					}
+					else if (IsFactoredReferenceType(configNode))
+					{
+						// Between factored Type goes between a reference (last in the list for its Type)
+						// and its immediately-following Type "list" (label on the following list of references)
+						betweenSelector = string.Format("{0}> .{1}+{2}:before",
+							parentSelector, GetClassAttributeForCollectionItem(configNode.Parent), collectionSelector);
+					}
+					var betweenRule = new StyleRule(dec) { Value = betweenSelector };
 					rules.Add(betweenRule);
 				}
 				// Headword, Gloss, and Caption are contained in a captionContent area.
@@ -722,21 +729,24 @@ namespace SIL.FieldWorks.XWorks
 			return rules;
 		}
 
+		/// <summary>
+		/// If configNode is the Type node for a factored collection of references, strip the collection singular selector from the parent selector
+		/// </summary>
 		private static string GetParentForFactoredReference(string parentSelector, ConfigurableDictionaryNode configNode)
 		{
-			if (configNode.CSSClassNameOverride == "complexformtypes")
-				parentSelector = parentSelector.Replace(".visiblecomplexformbackrefs .visiblecomplexformbackref", ".visiblecomplexformbackrefs");
-			else if (configNode.CSSClassNameOverride == "variantentrytypes" && ((configNode.Parent.Label == "Variant Forms" ||
-				configNode.Parent.Label == "Variants of Sense") && !configNode.Parent.IsDuplicate))
-				parentSelector = parentSelector.Replace(".variantformentrybackrefs .variantformentrybackref", ".variantformentrybackrefs");
-			else if (configNode.CSSClassNameOverride == "variantentrytypes" && (configNode.Parent.Label == "Variant Forms" && configNode.Parent.IsDuplicate))
-				parentSelector = parentSelector.Replace(".variantformentrybackrefs_inflectional-variants .variantformentrybackref_inflectional-variants",
-				".variantformentrybackrefs_inflectional-variants");
-			else if (configNode.CSSClassNameOverride == "variantentrytypes" && configNode.Parent.Label == "Variant of")
-				parentSelector = parentSelector.Replace(".visiblevariantentryrefs .visiblevariantentryref", ".visiblevariantentryrefs");
-			else if (configNode.CSSClassNameOverride == "variantentrytypes" && configNode.Parent.Label == "Variants (of Entry)")
-				parentSelector = parentSelector.Replace(".entry_variantformentrybackrefs .entry_variantformentrybackref", ".entry_variantformentrybackrefs");
-			return parentSelector;
+			if(!IsFactoredReferenceType(configNode))
+				return parentSelector;
+
+			var parentPlural = GetClassAttributeForConfig(configNode.Parent);
+			var parentSingular = GetClassAttributeForCollectionItem(configNode.Parent);
+			return parentSelector.Replace(string.Format(".{0} .{1}", parentPlural, parentSingular), '.' + parentPlural);
+		}
+
+		private static bool IsFactoredReferenceType(ConfigurableDictionaryNode configNode)
+		{
+			var parent = configNode.Parent;
+			ConfigurableDictionaryNode typeNode;
+			return parent != null && ConfiguredXHTMLGenerator.IsFactoredReference(parent, out typeNode) && ReferenceEquals(typeNode, configNode);
 		}
 
 		/// <summary>

@@ -4,23 +4,23 @@
   <ConfigurationItem name="Main Entry" isEnabled="true" style="Dictionary-Normal" styleType="paragraph" field="LexEntry" cssClassNameOverride="entry">
 	<!-- using a different CSS Class for the main HeadWord and the HeadWords for subentries, references, and (variant|complex) forms
 	 prevents styles for the main HeadWord from leaking onto other HeadWords -->
-	<ConfigurationItem name="Headword" between=" " after="  " style="Dictionary-Headword" isEnabled="true" field="MLHeadWord" cssClassNameOverride="mainheadword">
+	<ConfigurationItem name="Headword" between=" " after=" " style="Dictionary-Headword" isEnabled="true" field="MLHeadWord" cssClassNameOverride="mainheadword">
 	  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		<Option id="vernacular" isEnabled="true"/>
 	  </WritingSystemOptions>
 	</ConfigurationItem>
-	<ConfigurationItem name="Lexeme Form" between=" " after=" " isEnabled="false" field="LexemeFormOA" cssClassNameOverride="lexemeform">
+	<ConfigurationItem name="Lexeme Form" between=" " after="" isEnabled="false" field="LexemeFormOA" cssClassNameOverride="lexemeform">
 	  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		<Option id="vernacular" isEnabled="true"/>
 	  </WritingSystemOptions>
 	</ConfigurationItem>
-	<ConfigurationItem name="Citation Form" between=" " after=" " isEnabled="false" field="CitationForm">
+	<ConfigurationItem name="Citation Form" between=" " after="" isEnabled="false" field="CitationForm">
 	  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		<Option id="all vernacular" isEnabled="true"/>
 	  </WritingSystemOptions>
 	</ConfigurationItem>
 	<ConfigurationItem name="Secondary Homograph Number" style="" after=" " isEnabled="false" field="HomographNumber"/>
-	<ConfigurationItem name="Dialect Labels" isEnabled="true" before=" [" after="]" field="DialectLabelsRS">
+	<ConfigurationItem name="Dialect Labels" isEnabled="true" before="[" after="] " field="DialectLabelsRS">
 		<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 			<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 			  <Option id="best vernoranal" isEnabled="true" />
@@ -61,7 +61,7 @@
 		<ConfigurationItem name="Media Files" isEnabled="true" field="MediaFileRA"/>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Variant Forms" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
+	<ConfigurationItem name="Variant Forms" before="(" between=";" after=") " isEnabled="true" field="VariantFormEntryBackRefs">
 		<ListTypeOptions list="variant">
 			<Option isEnabled="true" id="b0000000-c40e-433e-80b5-31da08771344"/>
 			<Option isEnabled="true" id="024b62c9-93b3-41a0-ab19-587a0030219a"/>
@@ -427,7 +427,7 @@
 			</ConfigurationItem>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variants of Sense" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
+	  <ConfigurationItem name="Variants of Sense" before="(" between=";" after=") " isEnabled="true" field="VariantFormEntryBackRefs">
 	  	<ListTypeOptions list="variant">
 	  		<Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="true" />
 	  		<Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
@@ -536,7 +536,7 @@
 		  <Option id="all analysis" isEnabled="true"/>
 		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Extended Note" isEnabled="true" style="Dictionary-Sense" styleType="paragraph" between=" " after=" " field="ExtendedNoteOS" cssClassNameOverride="extendednotecontents">
+	  <ConfigurationItem name="Extended Note" isEnabled="true" style="Block Quote" styleType="paragraph" between=" " after=" " field="ExtendedNoteOS" cssClassNameOverride="extendednotecontents">
 		<ComplexFormOptions list="note" displayEachComplexFormInParagraph="true">
 			<Option id="c0000000-dd15-4a03-9032-b40faaa9a754" isEnabled="true" />
 			<Option id="2f06d436-b1e0-47ae-a42e-1f7b893c5fc2" isEnabled="true" />
@@ -899,23 +899,23 @@
 	  <Option isEnabled="true" id="35cee792-74c8-444e-a9b7-ed0461d4d3b7"/>
 	  <Option isEnabled="true" id="9466d126-246e-400b-8bba-0703e09bc567"/>
 	</ListTypeOptions>
-	<ConfigurationItem name="Headword" between=" " after="  " style="Dictionary-Headword" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
+	<ConfigurationItem name="Headword" between=" " after=" " style="Dictionary-Headword" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
 	  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		<Option id="vernacular" isEnabled="true"/>
 	  </WritingSystemOptions>
 	</ConfigurationItem>
-	<ConfigurationItem name="Lexeme Form" between=" " after=" " isEnabled="false" field="LexemeFormOA" cssClassNameOverride="lexemeform">
+	<ConfigurationItem name="Lexeme Form" between=" " after="" isEnabled="false" field="LexemeFormOA" cssClassNameOverride="lexemeform">
 	  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		<Option id="vernacular" isEnabled="true"/>
 	  </WritingSystemOptions>
 	</ConfigurationItem>
-	<ConfigurationItem name="Citation Form" between=" " after=" " isEnabled="false" field="CitationForm">
+	<ConfigurationItem name="Citation Form" between=" " after="" isEnabled="false" field="CitationForm">
 	  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		<Option id="all vernacular" isEnabled="true"/>
 	  </WritingSystemOptions>
 	</ConfigurationItem>
 	<ConfigurationItem name="Secondary Homograph Number" after=" " isEnabled="false" field="HomographNumber"/>
-	<ConfigurationItem name="Dialect Labels" isEnabled="true" before=" [" after="]" field="DialectLabelsRS">
+	<ConfigurationItem name="Dialect Labels" isEnabled="true" before="[" after="] " field="DialectLabelsRS">
 		<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 			<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 			  <Option id="best vernoranal" isEnabled="true" />
@@ -956,7 +956,7 @@
 		<ConfigurationItem name="Media Files" isEnabled="true" field="MediaFileRA"/>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Variant Forms" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
+	<ConfigurationItem name="Variant Forms" before="(" between=";" after=") " isEnabled="true" field="VariantFormEntryBackRefs">
 		<ListTypeOptions list="variant">
 			<Option isEnabled="true" id="b0000000-c40e-433e-80b5-31da08771344"/>
 			<Option isEnabled="true" id="024b62c9-93b3-41a0-ab19-587a0030219a"/>
@@ -1416,7 +1416,7 @@
 			</ConfigurationItem>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variants of Sense" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
+	  <ConfigurationItem name="Variants of Sense" before="(" between=";" after=") " isEnabled="true" field="VariantFormEntryBackRefs">
 	  	<ListTypeOptions list="variant">
 	  		<Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="true" />
 	  		<Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
@@ -1525,7 +1525,7 @@
 		  <Option id="all analysis" isEnabled="true"/>
 		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Extended Note" isEnabled="true" style="Dictionary-Sense" styleType="paragraph" between=" " after=" " field="ExtendedNoteOS" cssClassNameOverride="extendednotecontents">
+	  <ConfigurationItem name="Extended Note" isEnabled="true" style="Block Quote" styleType="paragraph" between=" " after=" " field="ExtendedNoteOS" cssClassNameOverride="extendednotecontents">
 		<ComplexFormOptions list="note" displayEachComplexFormInParagraph="true">
 			<Option id="c0000000-dd15-4a03-9032-b40faaa9a754" isEnabled="true" />
 			<Option id="2f06d436-b1e0-47ae-a42e-1f7b893c5fc2" isEnabled="true" />
@@ -1894,23 +1894,23 @@
 	  <Option isEnabled="true" id="a32f1d1c-4832-46a2-9732-c2276d6547e8"/>
 	  <Option isEnabled="true" id="0c4663b3-4d9a-47af-b9a1-c8565d8112ed"/>
 	</ListTypeOptions>
-	<ConfigurationItem name="Headword" between=" " after="  " style="Dictionary-Headword" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
+	<ConfigurationItem name="Headword" between=" " after=" " style="Dictionary-Headword" isEnabled="true" field="MLHeadWord" cssClassNameOverride="headword">
 	  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		<Option id="vernacular" isEnabled="true"/>
 	  </WritingSystemOptions>
 	</ConfigurationItem>
-	<ConfigurationItem name="Lexeme Form" between=" " after=" " isEnabled="false" field="LexemeFormOA" cssClassNameOverride="lexemeform">
+	<ConfigurationItem name="Lexeme Form" between=" " after="" isEnabled="false" field="LexemeFormOA" cssClassNameOverride="lexemeform">
 	  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		<Option id="vernacular" isEnabled="true"/>
 	  </WritingSystemOptions>
 	</ConfigurationItem>
-	<ConfigurationItem name="Citation Form" between=" " after=" " isEnabled="false" field="CitationForm">
+	<ConfigurationItem name="Citation Form" between=" " after="" isEnabled="false" field="CitationForm">
 	  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		<Option id="all vernacular" isEnabled="true"/>
 	  </WritingSystemOptions>
 	</ConfigurationItem>
 	<ConfigurationItem name="Secondary Homograph Number" after=" " isEnabled="false" field="HomographNumber"/>
-	<ConfigurationItem name="Dialect Labels" isEnabled="true" before=" [" after="]" field="DialectLabelsRS">
+	<ConfigurationItem name="Dialect Labels" isEnabled="true" before="[" after="] " field="DialectLabelsRS">
 		<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 			<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 			  <Option id="best vernoranal" isEnabled="true" />
@@ -1928,9 +1928,9 @@
 		  <Option id="pronunciation" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="CV Pattern" after=" " isEnabled="false" field="CVPattern"/>
-	  <ConfigurationItem name="Tone" after=" " isEnabled="false" field="Tone"/>
-	  <ConfigurationItem name="Location" after=" " style="Dictionary-Contrasting" isEnabled="false" field="LocationRA" cssClassNameOverride="location">
+	  <ConfigurationItem name="CV Pattern" after="" isEnabled="false" field="CVPattern"/>
+	  <ConfigurationItem name="Tone" before=" " isEnabled="false" field="Tone"/>
+	  <ConfigurationItem name="Location" before=" " style="Dictionary-Contrasting" isEnabled="false" field="LocationRA" cssClassNameOverride="location">
 		<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -1951,7 +1951,7 @@
 		<ConfigurationItem name="Media Files" isEnabled="true" field="MediaFileRA"/>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Variant Forms" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
+	<ConfigurationItem name="Variant Forms" before="(" between=";" after=") " isEnabled="true" field="VariantFormEntryBackRefs">
 		<ListTypeOptions list="variant">
 			<Option isEnabled="true" id="b0000000-c40e-433e-80b5-31da08771344"/>
 			<Option isEnabled="true" id="024b62c9-93b3-41a0-ab19-587a0030219a"/>
@@ -2135,7 +2135,7 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Variant of" between=", " after=" " isEnabled="true" field="VisibleVariantEntryRefs">
+	<ConfigurationItem name="Variant of" before=" " between=", " after=" " isEnabled="true" field="VisibleVariantEntryRefs">
 	  <ListTypeOptions list="variant">
 		<Option isEnabled="true" id="b0000000-c40e-433e-80b5-31da08771344"/>
 		<Option isEnabled="true" id="024b62c9-93b3-41a0-ab19-587a0030219a"/>
@@ -2370,7 +2370,7 @@
 			</ConfigurationItem>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variants of Sense" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
+	  <ConfigurationItem name="Variants of Sense" before="(" between=";" after=") " isEnabled="true" field="VariantFormEntryBackRefs">
 	  	<ListTypeOptions list="variant">
 	  		<Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="true" />
 	  		<Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
@@ -2479,7 +2479,7 @@
 		  <Option id="all analysis" isEnabled="true"/>
 		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Extended Note" isEnabled="true" style="Dictionary-Sense" styleType="paragraph" between=" " after=" " field="ExtendedNoteOS" cssClassNameOverride="extendednotecontents">
+	  <ConfigurationItem name="Extended Note" isEnabled="true" style="Block Quote" styleType="paragraph" between=" " after=" " field="ExtendedNoteOS" cssClassNameOverride="extendednotecontents">
 		<ComplexFormOptions list="note" displayEachComplexFormInParagraph="true">
 			<Option id="c0000000-dd15-4a03-9032-b40faaa9a754" isEnabled="true" />
 			<Option id="2f06d436-b1e0-47ae-a42e-1f7b893c5fc2" isEnabled="true" />
@@ -2747,7 +2747,7 @@
 		  <Option id="vernacular" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Grammatical Info." between=", " after=" " style="Dictionary-Contrasting" isEnabled="true" field="MorphoSyntaxAnalyses">
+	  <ConfigurationItem name="Grammatical Info." between=", " after=" " style="Dictionary-Contrasting" isEnabled="false" field="MorphoSyntaxAnalyses">
 		<ConfigurationItem name="Gram Info (Name)" between=" " after=" " isEnabled="false" field="InterlinearNameTSS" cssClassNameOverride="graminfoname"/>
 		<ConfigurationItem name="Gram Info (Abbrev)" between=" " after=" " isEnabled="false" field="InterlinearAbbrTSS" cssClassNameOverride="graminfoabbrev"/>
 		<ConfigurationItem name="Category Info." between=" " after=" " isEnabled="true" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
@@ -2977,7 +2977,7 @@
 			</ConfigurationItem>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variants of Sense" before="(" between="; " after=") " isEnabled="true" field="VariantFormEntryBackRefs">
+	  <ConfigurationItem name="Variants of Sense" before="(" between=";" after=") " isEnabled="true" field="VariantFormEntryBackRefs">
 	  	<ListTypeOptions list="variant">
 	  		<Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="true" />
 	  		<Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
@@ -3086,7 +3086,7 @@
 		  <Option id="all analysis" isEnabled="true"/>
 		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Extended Note" isEnabled="true" style="Dictionary-Sense" styleType="paragraph" between=" " after=" " field="ExtendedNoteOS" cssClassNameOverride="extendednotecontents">
+	  <ConfigurationItem name="Extended Note" isEnabled="true" style="Block Quote" styleType="paragraph" between=" " after=" " field="ExtendedNoteOS" cssClassNameOverride="extendednotecontents">
 		<ComplexFormOptions list="note" displayEachComplexFormInParagraph="true">
 			<Option id="c0000000-dd15-4a03-9032-b40faaa9a754" isEnabled="true" />
 			<Option id="2f06d436-b1e0-47ae-a42e-1f7b893c5fc2" isEnabled="true" />

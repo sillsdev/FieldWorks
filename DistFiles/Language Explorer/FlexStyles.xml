@@ -116,7 +116,7 @@
 			<usage wsId="en">Each paragraph of Sense information that is added to the entry if senses are formatted as paragraphs.</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font/>
-			<paragraph basedOn="Dictionary-Normal" indentLeft="33 pt" spaceBefore="0 pt" firstLine="-12 pt"/>
+			<paragraph basedOn="Dictionary-Normal" indentLeft="21 pt" spaceBefore="0 pt" hanging="12 pt"/>
 		</tag>
 		<tag id="Dictionary-SenseNumber" guid="164123A0-CA12-4C44-BD69-D5FB9D4B1A0B" userlevel="1" context="internalConfigureView" type="character">
 			<usage wsId="en">The number before each sense in an entry.</usage>
