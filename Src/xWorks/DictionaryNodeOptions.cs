@@ -289,13 +289,13 @@ namespace SIL.FieldWorks.XWorks
 	}
 
 	/// <summary>Options for allowing the grouping of nodes which are not related in the model</summary>
-	public class DictionaryNodeGroupingOptions : DictionaryNodeOptions
+	public class DictionaryNodeGroupingOptions : DictionaryNodeOptions, IParaOption
 	{
 		[XmlText]
 		public string Description { get; set; }
 
 		[XmlAttribute(AttributeName = "displayGroupInParagraph")]
-		public bool DisplayGroupInParagraph { get; set; }
+		public bool DisplayEachInAParagraph { get; set; }
 
 		public override DictionaryNodeOptions DeepClone()
 		{

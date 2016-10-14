@@ -1360,7 +1360,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "grouper",
 				DictionaryNodeOptions = new DictionaryNodeGroupingOptions
 				{
-					DisplayGroupInParagraph = true,
+					DisplayEachInAParagraph = true,
 					Description = "Test"
 				}
 			};

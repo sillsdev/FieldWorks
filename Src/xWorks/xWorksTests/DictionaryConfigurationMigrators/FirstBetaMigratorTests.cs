@@ -297,7 +297,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				Style = style,
 				Label = label,
 				FieldDescription = group,
-				DictionaryNodeOptions = new DictionaryNodeGroupingOptions { Description = description, DisplayGroupInParagraph = true }
+				DictionaryNodeOptions = new DictionaryNodeGroupingOptions { Description = description, DisplayEachInAParagraph = true }
 			};
 			var defaultModelWithGroup = new DictionaryConfigurationModel
 			{

@@ -313,7 +313,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "hwg",
 				Children = new List<ConfigurableDictionaryNode> { headwordNode },
-				DictionaryNodeOptions = new DictionaryNodeGroupingOptions { DisplayGroupInParagraph = true }
+				DictionaryNodeOptions = new DictionaryNodeGroupingOptions { DisplayEachInAParagraph = true }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
