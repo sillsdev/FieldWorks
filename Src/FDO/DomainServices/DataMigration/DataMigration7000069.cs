@@ -273,11 +273,11 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				if (refTypeElt == null) continue;
 				if (refTypeElt.FirstAttribute.Value == "0" && complexEntryTypeElt == null)
 				{
-					AddRefType(data, repoDto, dto, "ComplexEntryTypes", unspecComplexEntryTypeGuid);
+					AddRefType(data, repoDto, dto, "ComplexEntryTypes", unspecComplexEntryTypeGuid, false);
 				}
 				else if (refTypeElt.FirstAttribute.Value == "1" && varientEntryTypeElt == null)
 				{
-					AddRefType(data, repoDto, dto, "VariantEntryTypes", unspecVariantEntryTypeGuid);
+					AddRefType(data, repoDto, dto, "VariantEntryTypes", unspecVariantEntryTypeGuid, false);
 				}
 			}
 
@@ -288,12 +288,12 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				if (nameElt != null && nameElt.Value.StartsWith("Variant Types"))
 				{
 					cmPossListGuidForVariantEntryType = dto.Guid;
-					AddRefType(data, repoDto, dto, "Possibilities", unspecVariantEntryTypeGuid);
+					AddRefType(data, repoDto, dto, "Possibilities", unspecVariantEntryTypeGuid, true);
 				}
 				else if (nameElt != null && nameElt.Value.StartsWith("Complex Form Types"))
 				{
 					cmPossListGuidForComplexFormType = dto.Guid;
-					AddRefType(data, repoDto, dto, "Possibilities", unspecComplexEntryTypeGuid);
+					AddRefType(data, repoDto, dto, "Possibilities", unspecComplexEntryTypeGuid, true);
 				}
 			}
 
@@ -325,7 +325,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			repoDto.Update(entryTypeDto);
 		}
 
-		private static void AddRefType(XElement data, IDomainObjectDTORepository repoDto, DomainObjectDTO dto, string tagName, string guid)
+		private static void AddRefType(XElement data, IDomainObjectDTORepository repoDto, DomainObjectDTO dto, string tagName, string guid, bool owned)
 		{
 			var varElementTag = data.Element(tagName);
 			if (varElementTag == null)
@@ -333,6 +333,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				var varTypeReference = new XElement(tagName);
 				var typeReference = new XElement("objsur");
 				typeReference.SetAttributeValue("guid", guid);
+				typeReference.SetAttributeValue("t", owned ? "o" : "r");
 				varTypeReference.Add(typeReference);
 				data.Add(varTypeReference);
 				DataMigrationServices.UpdateDTO(repoDto, dto, data.ToString());
@@ -342,7 +343,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				varElementTag = data.Element(tagName);
 				var typeObject = new XElement("objsur");
 				typeObject.SetAttributeValue("guid", guid);
-				typeObject.SetAttributeValue("t", "o");
+				typeObject.SetAttributeValue("t", owned ? "o" : "r");
 				if (varElementTag != null) varElementTag.Add(typeObject);
 				DataMigrationServices.UpdateDTO(repoDto, dto, data.ToString());
 			}

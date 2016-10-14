@@ -157,85 +157,97 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			var defTypeElt = data.Element("ComplexEntryTypes");
 			Assert.IsNotNull(defTypeElt);
 			Assert.That(defTypeElt != null && defTypeElt.HasElements, "Should have components (or variants)");
-			var objSurAttr = defTypeElt.Element("objsur");
-			Assert.IsNotNull(objSurAttr);
-			Assert.AreEqual("fec038ed-6a8c-4fa5-bc96-a4f515a98c50", objSurAttr.FirstAttribute.Value);
-
+			var objSurElem = defTypeElt.Element("objsur");
+			Assert.IsNotNull(objSurElem);
+			Assert.AreEqual("fec038ed-6a8c-4fa5-bc96-a4f515a98c50", objSurElem.FirstAttribute.Value);
+			var refTypeAttr = objSurElem.Attribute("t");
+			Assert.IsNotNull(refTypeAttr, "The type attribute should be set on the 'objsur' element for the default c.f.");
+			Assert.AreEqual(refTypeAttr.Value, "r");
 			data = XElement.Parse(defaultRefs[1].Xml);
 			defTypeElt = data.Element("VariantEntryTypes");
 			Assert.IsNotNull(defTypeElt);
 			Assert.That(defTypeElt != null && defTypeElt.HasElements, "Should have components (or variants)");
-			objSurAttr = defTypeElt.Element("objsur");
-			Assert.IsNotNull(objSurAttr);
-			Assert.AreEqual("3942addb-99fd-43e9-ab7d-99025ceb0d4e", objSurAttr.FirstAttribute.Value);
+			objSurElem = defTypeElt.Element("objsur");
+			Assert.IsNotNull(objSurElem);
+			Assert.AreEqual("3942addb-99fd-43e9-ab7d-99025ceb0d4e", objSurElem.FirstAttribute.Value);
+			refTypeAttr = objSurElem.Attribute("t");
+			Assert.IsNotNull(refTypeAttr, "The type attribute should be set on the 'objsur' element for the default variant");
+			Assert.AreEqual(refTypeAttr.Value, "r");
 
 			// Make sure new default types are added in possiblities
 
-			var possibilityObjs = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").First(
+			var typeListElem = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").First(
 											e => e.Guid.ToString() == "bb372467-5230-43ef-9cc7-4d40b053fb94").Xml);
 
-			var nameElt = possibilityObjs.Element("Name");
+			var nameElt = typeListElem.Element("Name");
 			Assert.IsNotNull(nameElt);
 			var objAUniAttr = nameElt.Element("AUni");
 			Assert.IsNotNull(objAUniAttr);
 			Assert.AreEqual("Variant Types", objAUniAttr.Value);
 
-			var possElt = possibilityObjs.Element("Possibilities");
+			var possElt = typeListElem.Element("Possibilities");
 			Assert.IsNotNull(possElt);
 			var objSurInPossAttr = possElt.Descendants("objsur").ToList();
 			Assert.AreEqual(2, objSurInPossAttr.Count);
-			var uniString1 = objSurInPossAttr.First(e => e.Attribute("guid").Value == "3942addb-99fd-43e9-ab7d-99025ceb0d4e");
-			Assert.IsNotNull(uniString1);
+			var defaultTypeElem = objSurInPossAttr.First(e => e.Attribute("guid").Value == "3942addb-99fd-43e9-ab7d-99025ceb0d4e");
+			Assert.IsNotNull(defaultTypeElem);
+			refTypeAttr = defaultTypeElem.Attribute("t");
+			Assert.IsNotNull(refTypeAttr, "The type attribute should be set on the 'objsur' element for the entry type in the list");
+			Assert.AreEqual(refTypeAttr.Value, "o", "the type should be owned by the list");
 
-			possibilityObjs = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").First(
+
+			typeListElem = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").First(
 											e => e.Guid.ToString() == "1ee09905-63dd-4c7a-a9bd-1d496743ccd6").Xml);
 
-			nameElt = possibilityObjs.Element("Name");
+			nameElt = typeListElem.Element("Name");
 			Assert.IsNotNull(nameElt);
 			objAUniAttr = nameElt.Element("AUni");
 			Assert.IsNotNull(objAUniAttr);
 			Assert.AreEqual("Complex Form Types", objAUniAttr.Value);
 
-			possElt = possibilityObjs.Element("Possibilities");
+			possElt = typeListElem.Element("Possibilities");
 			Assert.IsNotNull(possElt);
 			objSurInPossAttr = possElt.Descendants("objsur").ToList();
 			Assert.AreEqual(2, objSurInPossAttr.Count);
-			uniString1 = objSurInPossAttr.First(e => e.Attribute("guid").Value == "fec038ed-6a8c-4fa5-bc96-a4f515a98c50");
-			Assert.IsNotNull(uniString1);
+			defaultTypeElem = objSurInPossAttr.First(e => e.Attribute("guid").Value == "fec038ed-6a8c-4fa5-bc96-a4f515a98c50");
+			Assert.IsNotNull(defaultTypeElem);
+			refTypeAttr = defaultTypeElem.Attribute("t");
+			Assert.IsNotNull(refTypeAttr, "The type attribute should be set on the 'objsur' element for the entry type in the list");
+			Assert.AreEqual(refTypeAttr.Value, "o", "the type should be owned by the list");
 
 			// Make sure new default types are added in LexEntryType
 
-			var lexEntryObjs = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("LexEntryType").First(
+			var lexEntryTypeElem = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("LexEntryType").First(
 											e => e.Guid.ToString() == "3942addb-99fd-43e9-ab7d-99025ceb0d4e").Xml);
 
-			nameElt = lexEntryObjs.Element("Abbreviation");
+			nameElt = lexEntryTypeElem.Element("Abbreviation");
 			Assert.IsNotNull(nameElt);
 			objAUniAttr = nameElt.Element("AUni");
 			Assert.IsNotNull(objAUniAttr);
 			Assert.AreEqual("unspec. var. of", objAUniAttr.Value);
 
-			nameElt = lexEntryObjs.Element("Name");
+			nameElt = lexEntryTypeElem.Element("Name");
 			Assert.IsNotNull(nameElt);
 			objAUniAttr = nameElt.Element("AUni");
 			Assert.IsNotNull(objAUniAttr);
 			Assert.AreEqual("Unspecified Variant", objAUniAttr.Value);
 
-			lexEntryObjs = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("LexEntryType").First(
+			lexEntryTypeElem = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("LexEntryType").First(
 											e => e.Guid.ToString() == "fec038ed-6a8c-4fa5-bc96-a4f515a98c50").Xml);
 
-			nameElt = lexEntryObjs.Element("Abbreviation");
+			nameElt = lexEntryTypeElem.Element("Abbreviation");
 			Assert.IsNotNull(nameElt);
 			objAUniAttr = nameElt.Element("AUni");
 			Assert.IsNotNull(objAUniAttr);
 			Assert.AreEqual("unspec. comp. form of", objAUniAttr.Value);
 
-			nameElt = lexEntryObjs.Element("ReverseAbbr");
+			nameElt = lexEntryTypeElem.Element("ReverseAbbr");
 			Assert.IsNotNull(nameElt);
 			objAUniAttr = nameElt.Element("AUni");
 			Assert.IsNotNull(objAUniAttr);
 			Assert.AreEqual("unspec. comp. form", objAUniAttr.Value);
 
-			nameElt = lexEntryObjs.Element("Name");
+			nameElt = lexEntryTypeElem.Element("Name");
 			Assert.IsNotNull(nameElt);
 			objAUniAttr = nameElt.Element("AUni");
 			Assert.IsNotNull(objAUniAttr);
