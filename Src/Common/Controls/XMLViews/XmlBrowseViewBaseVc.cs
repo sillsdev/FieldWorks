@@ -296,6 +296,11 @@ namespace SIL.FieldWorks.Common.Controls
 							savedCols = FixVersion16Columns(savedCols);
 							savedCols = savedCols.Replace("root version=\"15\"", "root version=\"16\"");
 							mediator.PropertyTable.SetProperty(colListId, savedCols);
+							goto case 16;
+						case 16:
+							savedCols = FixVersion17Columns(savedCols);
+							savedCols = savedCols.Replace("root version=\"16\"", "root version=\"17\"");
+							mediator.PropertyTable.SetProperty(colListId, savedCols);
 							doc.LoadXml(savedCols);
 							break;
 						default:
@@ -319,6 +324,22 @@ namespace SIL.FieldWorks.Common.Controls
 				doc = null;
 			}
 			return doc;
+		}
+
+		/// <summary>
+		/// Handles the changes we made to browse columns (other than additions) between roughly 7.3 (March 12, 2013) and
+		/// 8.3 (version 17, June 15, 2016).
+		/// </summary>
+		/// <param name="savedColsInput"></param>
+		/// <returns></returns>
+		internal static string FixVersion17Columns(string savedColsInput)
+		{
+			var savedCols = savedColsInput;
+			savedCols = ChangeAttrValue(savedCols, "EtymologyGloss", "transduce", "LexEntry.Etymology.Gloss", "LexEtymology.Gloss");
+			savedCols = ChangeAttrValue(savedCols, "EtymologySource", "transduce", "LexEntry.Etymology.Source", "LexEtymology.Source");
+			savedCols = ChangeAttrValue(savedCols, "EtymologyForm", "transduce", "LexEntry.Etymology.Form", "LexEtymology.Form");
+			savedCols = ChangeAttrValue(savedCols, "EtymologyComment", "transduce", "LexEntry.Etymology.Comment", "LexEtymology.Comment");
+			return savedCols;
 		}
 
 		/// <summary>

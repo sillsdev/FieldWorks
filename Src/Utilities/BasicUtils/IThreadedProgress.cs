@@ -25,6 +25,13 @@ namespace SIL.Utils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Gets a value indicating whether the task has been canceled.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		bool IsCanceling { get; }
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// If progress dialog is already showing, we run the background task using it (without
 		/// creating a separate thread). Otherwise we display a new progress dialog as a modal
 		/// dialog and start the background task in a separate thread.

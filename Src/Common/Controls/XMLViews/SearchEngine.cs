@@ -77,7 +77,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			m_cache = cache;
 			m_searcher = new StringSearcher<int>(type, m_cache.ServiceLocator.WritingSystemManager);
-			m_thread = new ConsumerThread<int, SearchField[]>(HandleWork) { IsBackground = true };
+			m_thread = new ConsumerThread<int, SearchField[]>(HandleWork);
 			m_synchronizationContext = SynchronizationContext.Current;
 			m_syncRoot = new object();
 			m_indexObjPos = new Dictionary<Tuple<int, int>, int>();

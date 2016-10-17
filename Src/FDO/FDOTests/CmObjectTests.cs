@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using Rhino.Mocks.Constraints;
 using SIL.FieldWorks.FDO.Infrastructure;
 using Is = NUnit.Framework.Is;
 

@@ -284,6 +284,7 @@ Face::Table::Table(const Face & face, const Tag n, uint32 version) throw()
     if (!TtfUtil::CheckTable(n, _p, _sz))
     {
         this->~Table();     // Make sure we release the table buffer even if the table filed it's checks
+        _p = 0; // Manually clear since g++ 5.4 optimizes it away in releaseBuffers().
         return;
     }
 

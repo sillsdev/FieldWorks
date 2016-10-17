@@ -14,6 +14,7 @@ using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.Common.FwUtils;
+// ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -1040,6 +1041,28 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			"      <AUni ws=\"fr\"></AUni>" + Environment.NewLine +
 			"    </Abbreviation>" + Environment.NewLine +
 			"    <Possibilities>" + Environment.NewLine +
+			"      <LexEntryType guid=\"3942addb-99fd-43e9-ab7d-99025ceb0d4e\">" + Environment.NewLine +
+			"        <Name>" + Environment.NewLine +
+			"          <AUni ws=\"en\">Unspecified Variant</AUni>" + Environment.NewLine +
+			"          <AUni ws=\"fr\">Variant Non spécifié</AUni>" + Environment.NewLine +
+			"        </Name>" + Environment.NewLine +
+			"        <Abbreviation>" + Environment.NewLine +
+			"          <AUni ws=\"en\">unspec. var. of</AUni>" + Environment.NewLine +
+			"          <AUni ws=\"fr\">var. non préc. de</AUni>" + Environment.NewLine +
+			"        </Abbreviation>" + Environment.NewLine +
+			"        <Description>" + Environment.NewLine +
+			"          <AStr ws=\"en\">" + Environment.NewLine +
+			"            <Run ws=\"en\">A Unspecified Variant description</Run>" + Environment.NewLine +
+			"          </AStr>" + Environment.NewLine +
+			"          <AStr ws=\"fr\">" + Environment.NewLine +
+			"            <Run ws=\"fr\">Une description Unspecified Variant</Run>" + Environment.NewLine +
+			"          </AStr>" + Environment.NewLine +
+			"        </Description>" + Environment.NewLine +
+			"        <ReverseAbbr>" + Environment.NewLine +
+			"          <AUni ws=\"en\">unspec. var.</AUni>" + Environment.NewLine +
+			"          <AUni ws=\"fr\">var. non préc.</AUni>" + Environment.NewLine +
+			"        </ReverseAbbr>" + Environment.NewLine +
+			"      </LexEntryType>" + Environment.NewLine +
 			"      <LexEntryType guid=\"024b62c9-93b3-41a0-ab19-587a0030219a\">" + Environment.NewLine +
 			"        <Name>" + Environment.NewLine +
 			"          <AUni ws=\"en\">Dialectal Variant</AUni>" + Environment.NewLine +
@@ -1203,7 +1226,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			xtl.m_wsEn = m_wsEn;
 			xtl.FillInMapForPossibilities(mapNameToItem, listTypes.PossibilitiesOS);
 
-			Assert.AreEqual(6, mapNameToItem.Count, "We should start with six variant types.");
+			Assert.AreEqual(7, mapNameToItem.Count, "We should start with seven variant types.");
 			int countSubtypeItems = 0;
 			foreach (var key in mapNameToItem.Keys)
 			{
@@ -1244,7 +1267,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			var mapNameToItem2 = new Dictionary<string, ICmPossibility>();
 			xtl.FillInMapForPossibilities(mapNameToItem2, listTypes.PossibilitiesOS);
-			Assert.AreEqual(6, mapNameToItem2.Count, "Import should not add any new items: there should still be six variant types.");
+			Assert.AreEqual(7, mapNameToItem2.Count, "Import should not add any new items: there should still be seven variant types.");
 
 			int countNoFrench = 0;
 			foreach (var key in mapNameToItem.Keys)
@@ -1267,9 +1290,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				var inflType = item as ILexEntryInflType;
 				if (inflType != null)
 				{
-					var ga = inflType.GlossAppend;
-					var cws = ga.StringCount;
-					var ui = ga.UiString;
 					var glossEnglish = inflType.GlossAppend.get_String(m_wsEn).Text;
 					var glossFrench = inflType.GlossAppend.get_String(m_wsFr).Text;
 					if (String.IsNullOrEmpty(glossEnglish))
@@ -1287,19 +1307,19 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			// Finally, just to be exhaustive, let's examine a few specific values.
 
-			var type = mapNameToItem[":Dialectal Variant"] as ILexEntryType;
+			var type = (ILexEntryType)mapNameToItem[":Dialectal Variant"];
 			var frenchName = type.Name.get_String(m_wsFr).Text;
 			Assert.AreEqual("Variante Dialectale", frenchName);
 			var typeinfl = type as ILexEntryInflType;
 			Assert.IsNull(typeinfl);
 
-			type = mapNameToItem[":Free Variant"] as ILexEntryType;
+			type = (ILexEntryType)mapNameToItem[":Free Variant"];
 			frenchName = type.Name.get_String(m_wsFr).Text;
 			Assert.AreEqual("Variante Gratuitement", frenchName);
 			typeinfl = type as ILexEntryInflType;
 			Assert.IsNull(typeinfl);
 
-			type = mapNameToItem[":Irregular Inflectional Variant"] as ILexEntryType;
+			type = (ILexEntryType)mapNameToItem[":Irregular Inflectional Variant"];
 			frenchName = type.Name.get_String(m_wsFr).Text.Normalize(System.Text.NormalizationForm.FormC);
 			Assert.AreEqual("Irrégulière Forme Fléchie", frenchName);
 			typeinfl = type as ILexEntryInflType;
@@ -1307,7 +1327,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var frenchGlossAppend = typeinfl.GlossAppend.get_String(m_wsFr).Text;
 			Assert.IsNullOrEmpty(frenchGlossAppend, "Irregular Inflectional Variant should not have a GlossAppend value.");
 
-			type = mapNameToItem[":Plural Variant"] as ILexEntryType;
+			type = (ILexEntryType)mapNameToItem[":Plural Variant"];
 			frenchName = type.Name.get_String(m_wsFr).Text;
 			Assert.AreEqual("Pluriel", frenchName);
 			typeinfl = type as ILexEntryInflType;
@@ -1315,7 +1335,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			frenchGlossAppend = typeinfl.GlossAppend.get_String(m_wsFr).Text;
 			Assert.AreEqual(".plu", frenchGlossAppend);
 
-			type = mapNameToItem[":Past Variant"] as ILexEntryType;
+			type = (ILexEntryType)mapNameToItem[":Past Variant"];
 			frenchName = type.Name.get_String(m_wsFr).Text.Normalize(System.Text.NormalizationForm.FormC);
 			Assert.AreEqual("Passé", frenchName);
 			typeinfl = type as ILexEntryInflType;
@@ -1323,7 +1343,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			frenchGlossAppend = typeinfl.GlossAppend.get_String(m_wsFr).Text;
 			Assert.AreEqual(".pas", frenchGlossAppend);
 
-			type = mapNameToItem[":Spelling Variant"] as ILexEntryType;
+			type = (ILexEntryType)mapNameToItem[":Spelling Variant"];
 			frenchName = type.Name.get_String(m_wsFr).Text;
 			Assert.AreEqual("Orthographe Variant", frenchName);
 			typeinfl = type as ILexEntryInflType;

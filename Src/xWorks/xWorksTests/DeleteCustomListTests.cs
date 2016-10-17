@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -19,27 +19,21 @@ using SIL.FieldWorks.FDO.FDOTests;
 
 namespace SIL.FieldWorks.XWorks
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Tests for the method object DeleteCustomList.
+	/// Some methods and fields refactored out so they can be shared with other unit tests.
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	[TestFixture]
-	public class DeleteCustomListTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
+	public class DeleteCustomListTestsBase : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-
 		#region Member Variables
 
-		private ICmPossibilityListRepository m_listRepo;
-		private ICmPossibilityFactory m_possFact;
-		private ICmPossibilityList m_testList;
-		private DeleteListHelper m_helper;
-		private ITsStrFactory m_tsFact;
-		private int m_userWs;
+		protected ICmPossibilityListRepository m_listRepo;
+		protected ICmPossibilityFactory m_possFact;
+		protected ICmPossibilityList m_testList;
+		protected DeleteListHelper m_helper;
+		protected ITsStrFactory m_tsFact;
+		protected int m_userWs;
 
 		#endregion
-
-		#region Setup and Helper Methods
 
 		protected override void CreateTestData()
 		{
@@ -55,7 +49,7 @@ namespace SIL.FieldWorks.XWorks
 			m_helper = new DeleteListHelper(Cache);
 		}
 
-		private void CreateCustomList()
+		protected void CreateCustomList()
 		{
 			const string name = "Test Custom List";
 			const string description = "Test Custom list description";
@@ -67,7 +61,7 @@ namespace SIL.FieldWorks.XWorks
 			m_testList.Description.set_String(m_userWs, listDesc);
 
 			// Set various properties of CmPossibilityList
-			m_testList.DisplayOption = 1; // kpntNameAndAbbrev
+			m_testList.DisplayOption = (int)SIL.FieldWorks.FDO.PossNameType.kpntNameAndAbbrev;
 			m_testList.PreventDuplicates = true;
 			m_testList.IsSorted = true;
 			m_testList.WsSelector = WritingSystemServices.kwsAnals;
@@ -75,13 +69,24 @@ namespace SIL.FieldWorks.XWorks
 			m_testList.Depth = 127;
 		}
 
-		private ICmCustomItem CreateCustomItemAddToList(ICmPossibilityList owningList, string itemName)
+		protected ICmCustomItem CreateCustomItemAddToList(ICmPossibilityList owningList, string itemName)
 		{
 			var item = Cache.ServiceLocator.GetInstance<ICmCustomItemFactory>().Create();
 			owningList.PossibilitiesOS.Add(item);
 			item.Name.set_String(m_userWs, m_tsFact.MakeString(itemName, m_userWs));
 			return item;
 		}
+	}
+
+	/// ----------------------------------------------------------------------------------------
+	/// <summary>
+	/// Tests for the method object DeleteCustomList.
+	/// </summary>
+	/// ----------------------------------------------------------------------------------------
+	[TestFixture]
+	public class DeleteCustomListTests : DeleteCustomListTestsBase
+	{
+		#region Setup and Helper Methods
 
 		private FieldDescription CreateCustomAtomicReferenceFieldInLexEntry(Guid listGuid)
 		{

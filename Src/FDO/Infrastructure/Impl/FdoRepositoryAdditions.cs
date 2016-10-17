@@ -11,6 +11,7 @@
 // </remarks>
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -246,7 +247,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			return m_classesWithNewInstancesThisSession.Contains(classId);
 		}
 
-		private SimpleBag<ICmObject> m_focusedObjects;
+		private SimpleBag<ICmObject> m_focusedObjects = new SimpleBag<ICmObject>();
 
 		/// <summary>
 		/// See interface defn.
@@ -1168,7 +1169,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		// A temporary cache for fast lookup of headwords (for sorting).
 		// Cleared
-		Dictionary<ILexEntry, string> m_cachedHeadwords = new Dictionary<ILexEntry, string>();
+		private ConcurrentDictionary<ILexEntry, string> m_cachedHeadwords = new ConcurrentDictionary<ILexEntry, string>();
 
 		internal void SomeHeadWordChanged()
 		{
@@ -1181,6 +1182,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (m_cachedHeadwords.TryGetValue(entry, out result))
 				return result;
 			result = entry.HeadWord.Text;
+			Debug.Assert(result != null);
 			m_cachedHeadwords[entry] = result;
 			return result;
 		}

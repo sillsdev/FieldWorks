@@ -166,6 +166,33 @@
 			<parameters field="Senses" className="LexSense"/>
 		</command>
 		<!--
+	Extended Notes
+	-->
+		<command id="CmdDataTree-MoveUp-ExtNote" label="Move Extended Note _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+			<parameters field="ExtendedNote" className="LexExtendedNote"/>
+		</command>
+		<command id="CmdDataTree-MoveDown-ExtNote" label="Move Extended Note _Down" message="MoveDownObjectInSequence" icon="MoveDown">
+			<parameters field="ExtendedNote" className="LexExtendedNote"/>
+		</command>
+		<command id="CmdDataTree-Insert-ExtNote" label="Insert Extended Note" message="DataTreeInsert">
+			<parameters field="ExtendedNote" className="LexExtendedNote"/>
+		</command>
+		<command id="CmdDataTree-Delete-ExtNote" label="Delete Extended Note" message="DataTreeDelete" icon="Delete">
+			<parameters field="ExtendedNote" className="LexExtendedNote"/>
+		</command>
+		<command id="CmdDataTree-Insert-ExampleInNote" label="Insert Example in Note" message="DataTreeInsert">
+			<parameters field="Examples" className="LexExampleSentence" ownerClass="LexExtendedNote"/>
+		</command>
+		<command id="CmdDataTree-Delete-ExampleInNote" label="Delete Example from Note" message="DataTreeDelete" icon="Delete">
+			<parameters field="Examples" className="LexExampleSentence" ownerClass="LexExtendedNote"/>
+		</command>
+		<command id="CmdDataTree-MoveUp-ExampleInNote" label="Move Example _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+			<parameters field="Examples" className="LexExampleSentence" ownerClass="LexExtendedNote"/>
+		</command>
+		<command id="CmdDataTree-MoveDown-ExampleInNote" label="Move Example _Down" message="MoveDownObjectInSequence" icon="MoveDown">
+			<parameters field="Examples" className="LexExampleSentence" ownerClass="LexExtendedNote"/>
+		</command>
+		<!--
 	Examples
 	-->
 		<command id="CmdDataTree-MoveUp-Example" label="Move Example _Up" message="MoveUpObjectInSequence" icon="MoveUp">
@@ -226,10 +253,16 @@
 		<!--
 			Etymology
 		-->
-		<command id="CmdDataTree-Insert-Etymology" label="Insert Etymology" message="DataTreeInsert">
+		<command id="CmdDataTree-Insert-Etymology" label="_Etymology" message="DataTreeInsert">
+			<parameters field="Etymology" className="LexEtymology" ownerClass="LexEntry"/>
+		</command>
+		<command id="CmdDataTree-Delete-Etymology" label="Delete this Etymology" message="DataTreeDelete" icon="Delete">
 			<parameters field="Etymology" className="LexEtymology"/>
 		</command>
-		<command id="CmdDataTree-Delete-Etymology" label="Delete Etymology" message="DataTreeDelete" icon="Delete">
+		<command id="CmdDataTree-MoveUp-Etymology" label="Move Etymology _Up" message="MoveUpObjectInSequence" icon="MoveUp">
+			<parameters field="Etymology" className="LexEtymology"/>
+		</command>
+		<command id="CmdDataTree-MoveDown-Etymology" label="Move Etymology _Down" message="MoveDownObjectInSequence" icon="MoveDown">
 			<parameters field="Etymology" className="LexEtymology"/>
 		</command>
 		<!--
@@ -409,6 +442,7 @@
 		<menu id="mnuDataTree-Sense">
 			<item command="CmdDataTree-Insert-Example"/>
 			<item command="CmdFindExampleSentence"/>
+			<item command="CmdDataTree-Insert-ExtNote"/>
 			<item command="CmdDataTree-Insert-SenseBelow"/>
 			<item command="CmdDataTree-Insert-SubSense"/>
 			<item command="CmdInsertPicture" label="Insert _Picture"  defaultVisible="false"/>
@@ -445,6 +479,16 @@
 			<item label="-" translate="do not translate"/>
 			<item command="CmdFindExampleSentence"/>
 		</menu>
+		<menu id="mnuDataTree-Example-ForNotes">
+			<item command="CmdDataTree-Insert-Example" label="Insert new Example in Note"/>
+			<item command="CmdDataTree-Insert-Translation"/>
+			<item command="CmdDataTree-Delete-Example"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-MoveUp-Example"/>
+			<item command="CmdDataTree-MoveDown-Example"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdFindExampleSentence"/>
+		</menu>
 		<menu id="mnuDataTree-Translations">
 			<item command="CmdDataTree-Insert-Translation"/>
 			<!-- <item command="CmdDataTree-Help"/> -->
@@ -452,6 +496,27 @@
 		<menu id="mnuDataTree-Translation">
 			<item command="CmdDataTree-Delete-Translation"/>
 			<!-- <item command="CmdDataTree-Help"/> -->
+		</menu>
+		<menu id="mnuDataTree-ExtendedNotes">
+			<item command="CmdDataTree-Insert-ExtNote"/>
+		</menu>
+		<menu id="mnuDataTree-ExtendedNote">
+			<item command="CmdDataTree-Delete-ExtNote"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-MoveUp-ExtNote"/>
+			<item command="CmdDataTree-MoveDown-ExtNote"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-Insert-ExampleInNote"/>
+		</menu>
+		<menu id="mnuDataTree-ExtendedNote-Hotlinks">
+			<item command="CmdDataTree-Insert-ExtNote" label="Insert Extended Note"/>
+		</menu>
+		<menu id="mnuDataTree-ExtendedNote-Examples">
+			<item command="CmdDataTree-Insert-ExampleInNote"/>
+			<item command="CmdDataTree-Delete-ExampleInNote"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-MoveUp-ExampleInNote"/>
+			<item command="CmdDataTree-MoveDown-ExampleInNote"/>
 		</menu>
 		<menu id="mnuDataTree-Pronunciation">
 			<item command="CmdDataTree-Insert-Pronunciation" label="Insert _Pronunciation"/>
@@ -479,15 +544,22 @@
 			<item command="CmdDataTree-Insert-SubSense"/>
 			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
-		<menu id="mnuDataTree-InsertEtymology">
-			<item command="CmdDataTree-Insert-Etymology"/>
-			<!-- <item command="CmdDataTree-Help"/> -->
+		<menu id="mnuDataTree-Etymology">
+			<item command="CmdDataTree-Insert-Etymology" label="Insert _Etymology"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-MoveUp-Etymology"/>
+			<item command="CmdDataTree-MoveDown-Etymology"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-Delete-Etymology"/>
 		</menu>
 		<menu id="mnuDataTree-DeleteEtymology">
 			<item command="CmdDataTree-Delete-Etymology"/>
 			<!-- <item command="CmdDataTree-Help"/> -->
 		</menu>
-	<menu id="mnuDataTree-DeleteAddLexReference">
+		<menu id="mnuDataTree-Etymology-Hotlinks">
+			<item command="CmdDataTree-Insert-Etymology" label="Insert _Etymology"/>
+		</menu>
+		<menu id="mnuDataTree-DeleteAddLexReference">
 	  <item command="CmdDataTree-Delete-LexReference"/>
 	  <item command="CmdDataTree-Add-ToLexReference"/>
 	  <item command="CmdDataTree-EditDetails-LexReference"/>

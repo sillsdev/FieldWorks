@@ -125,6 +125,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private IWritingSystem m_topVernWs;
 		private LinkLabel linkLbl_useDefaultFolder;
 		private String m_defaultLinkedFilesFolder;
+		/// <summary>Read-only Property created for m_lstAnalWs</summary>
+		public CheckedListBox AnalysisWsList
+		{
+			get { return m_lstAnalWs; }
+		}
+		/// <summary>Read-only Property created for m_sOrigProjName</summary>
+		public string OriginalProjectName
+		{
+			get { return m_sOrigProjName; }
+		}
+
 		#endregion
 
 		#region Construction and initialization

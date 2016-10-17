@@ -845,7 +845,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (field.IsRef)
 			{
 				lblFunction.Text = LexTextControls.ksLexicalRelationType;
-				int pos = -1;
 				//string abbr, name, reverseAbbr, reverseName;
 				rbAbbrAbbr.Checked = true;
 				rbAbbrName.Checked = false;
@@ -860,9 +859,11 @@ namespace SIL.FieldWorks.LexText.Controls
 							case (int)MappingTypes.kmtEntryCollection:
 							case (int)MappingTypes.kmtEntryPair:
 							case (int)MappingTypes.kmtEntrySequence:
+							case (int)MappingTypes.kmtEntryUnidirectional:
 							case (int)MappingTypes.kmtEntryOrSenseCollection:
 							case (int)MappingTypes.kmtEntryOrSensePair:
 							case (int)MappingTypes.kmtEntryOrSenseSequence:
+							case (int)MappingTypes.kmtEntryOrSenseUnidirectional:
 								//abbr = lrt.Abbreviation.AnalysisDefaultWritingSystem.Text;
 								//name = lrt.Name.AnalysisDefaultWritingSystem.Text;
 								//AddAbbrAndNameInfo(abbr, name, "en", null, null, null);
@@ -893,9 +894,11 @@ namespace SIL.FieldWorks.LexText.Controls
 							case (int)MappingTypes.kmtSenseCollection:
 							case (int)MappingTypes.kmtSensePair:
 							case (int)MappingTypes.kmtSenseSequence:
+							case (int)MappingTypes.kmtSenseUnidirectional:
 							case (int)MappingTypes.kmtEntryOrSenseCollection:
 							case (int)MappingTypes.kmtEntryOrSensePair:
 							case (int)MappingTypes.kmtEntryOrSenseSequence:
+							case (int)MappingTypes.kmtEntryOrSenseUnidirectional:
 								//abbr = lrt.Abbreviation.AnalysisDefaultWritingSystem.Text;
 								//name = lrt.Name.AnalysisDefaultWritingSystem.Text;
 								//AddAbbrAndNameInfo(abbr, name, "en", null, null, null);
@@ -922,38 +925,25 @@ namespace SIL.FieldWorks.LexText.Controls
 					foreach (var let in m_cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities)
 					{
 						AddAbbrAndNameInfo(let.Abbreviation, let.Name, null, null);
-						//int wsActual;
-						//ITsString tssAnal = let.Name. GetAlternativeOrBestTss(m_cache.DefaultAnalWs, out wsActual);
-						//name = tssAnal.Text;
-						//string ws = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(wsActual);
-						//AddAbbrAndNameInfo(null, name, ws, null, null, null);
 					}
 				}
 				else if (field.ID == "sub")
 				{
 					lblFunction.Text = LexTextControls.ksComplexFormType;
-					// fill the comboBox with the names of the Variant objects
+					// fill the comboBox with the names of the Complex Form objects
 					foreach (var let in m_cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities)
 					{
 						AddAbbrAndNameInfo(let.Abbreviation, let.Name, null, null);
-						//int wsActual;
-						//ITsString tssAnal = let.Name.GetAlternativeOrBestTss(m_cache.DefaultAnalWs, out wsActual);
-						//name = tssAnal.Text;
-						//string ws = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(wsActual);
-						//AddAbbrAndNameInfo(null, name, ws, null, null, null);
 					}
 				}
 
-
 				// now select the one with the correct abbreviation
-				pos = -1;
+				var pos = -1;
 				if (m_refFuncString.Length > 0)
 					pos = cbFunction.FindString(m_refFuncString);
-				if (pos >= 0)
-				{
-					cbFunction.SelectedIndex = pos;
-					cbFunction.Text = cbFunction.SelectedItem as string;
-				}
+
+				cbFunction.SelectedIndex = pos >= 0 ? pos : 0;
+				cbFunction.Text = cbFunction.SelectedItem as string;
 			}
 			// The radio buttons for abbr and Name are set when initialized - so don't reset them
 		}

@@ -1,15 +1,17 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
+// ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -17,7 +19,7 @@ namespace SIL.FieldWorks.XWorks
 	/// Tests of the decorator for dictionary views.
 	/// </summary>
 	[TestFixture]
-	public class DictionaryPublicationDecoratorTests : MemoryOnlyBackendProviderTestBase
+	public class DictionaryPublicationDecoratorTests : XWorksAppTestBase
 	{
 		ILexEntryFactory m_entryFactory;
 		ILexSenseFactory m_senseFactory;
@@ -26,6 +28,8 @@ namespace SIL.FieldWorks.XWorks
 		private ILexRefTypeFactory m_lexRefTypeFactory;
 		private ILexReferenceFactory m_lexRefFactory;
 		private ICmPossibilityListFactory m_possListFactory;
+		private IReversalIndexFactory m_revIndexFactory;
+		private IReversalIndexEntryFactory m_revIndexEntryFactory;
 
 		private ICmPossibility m_mainDict; // the publication we test on.
 
@@ -81,7 +85,6 @@ namespace SIL.FieldWorks.XWorks
 		private ILexReference m_problemSynonyms;
 		private ILexReference m_bodyParts;
 		private ILexReference m_torsoParts;
-		private DictionaryPublicationDecorator m_decorator;
 
 		private ICmSemanticDomain m_domainBadWords;
 		private ICmSemanticDomain m_domainTemperature;
@@ -97,14 +100,18 @@ namespace SIL.FieldWorks.XWorks
 		private ILexEntry m_edSuffix;
 
 		private MockPublisher m_publisher;
+		private MockPublisher m_revPublisher;
+		private DictionaryPublicationDecorator m_decorator;
+		private DictionaryPublicationDecorator m_revDecorator;
+
+		private IReversalIndex m_revIndex;
 
 		const int kmainFlid = 89999956;
 
 		private int m_flidReferringSenses;
 
-		public override void FixtureSetup()
+		protected override void Init()
 		{
-			base.FixtureSetup();
 			m_entryFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			m_senseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
 			m_exampleFactory = Cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>();
@@ -112,9 +119,15 @@ namespace SIL.FieldWorks.XWorks
 			m_lexRefTypeFactory = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>();
 			m_lexRefFactory = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>();
 			m_possListFactory = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>();
+			m_revIndexFactory = Cache.ServiceLocator.GetInstance<IReversalIndexFactory>();
+			m_revIndexEntryFactory = Cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>();
 
 			m_flidReferringSenses = Cache.MetaDataCacheAccessor.GetFieldId2(CmSemanticDomainTags.kClassId, "ReferringSenses",
 				false);
+			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
+			var configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
+			m_window = new MockFwXWindow(m_application, configFilePath);
+			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
 
 			UndoableUnitOfWorkHelper.Do("do", "undo", Cache.ActionHandlerAccessor,
 				() =>
@@ -142,7 +155,7 @@ namespace SIL.FieldWorks.XWorks
 						m_waterH2O = m_water.SensesOS[0];
 						m_hotWater = MakeEntry("hot water", "trouble", false);
 						m_hotWaterComponents = MakeEntryRef(m_hotWater, new ICmObject[] { m_trouble, m_waterH2O },
-							new[] { m_trouble, m_waterH2O },
+							new ICmObject[] { m_trouble, m_waterH2O },
 							LexEntryRefTags.krtComplexForm);
 
 						m_blank2 = MakeEntry("blank", "vacant", false);
@@ -187,28 +200,28 @@ namespace SIL.FieldWorks.XWorks
 						m_bluer = m_blueColor.SensesOS[0];
 						m_sky = MakeEntry("sky", "interface between atmosphere and space", false, true); // true excludes as headword
 						m_skyReal = m_sky.SensesOS[0];
-						m_blueSky = MakeEntry("blue sky", "clear, huge potential", false, false);
+						m_blueSky = MakeEntry("blue sky", "clear, huge potential", false);
 						m_blueSkyComponents = MakeEntryRef(m_blueSky, new ICmObject[] { m_blueColor, m_skyReal },
-							new[] { m_bluer, m_skyReal },
+							new ICmObject[] { m_bluer, m_skyReal },
 							LexEntryRefTags.krtComplexForm);
 
-						m_ringBell = MakeEntry("ring", "bell", false, false);
+						m_ringBell = MakeEntry("ring", "bell", false);
 						m_ringCircle = MakeEntry("ring", "circle", false, true);
-						m_ringGold = MakeEntry("ring", "gold", false, false);
+						m_ringGold = MakeEntry("ring", "gold", false);
 
 						m_blackVerb = MakeEntry("black", "darken", false, true);
-						m_blackColor = MakeEntry("black", "dark", false, false);
+						m_blackColor = MakeEntry("black", "dark", false);
 
-						m_hotArm = MakeEntry("hotarm", "pitcher", false, false);
+						m_hotArm = MakeEntry("hotarm", "pitcher", false);
 						m_hotArmComponents = MakeEntryRef(m_hotArm, new ICmObject[] { m_hot, m_arm },
-												new[] { m_hot, m_arm },
+												new ICmObject[] { m_hot, m_arm },
 												LexEntryRefTags.krtComplexForm);
 						m_hotArm.DoNotPublishInRC.Add(m_mainDict);
 						m_hotArmComponents.ShowComplexFormsInRS.Add(m_hot);
 
-						m_nolanryan = MakeEntry("Nolan_Ryan", "pitcher", false, false);
+						m_nolanryan = MakeEntry("Nolan_Ryan", "pitcher", false);
 						m_nolanryanComponents = MakeEntryRef(m_nolanryan, new ICmObject[] { m_hot },
-												new[] { m_hot },
+												new ICmObject[] { m_hot },
 												LexEntryRefTags.krtVariant);
 						m_nolanryanComponents.VariantEntryTypesRS.Add(
 							(ILexEntryType)Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[0]);
@@ -217,10 +230,48 @@ namespace SIL.FieldWorks.XWorks
 						m_edName = MakeEntry("ed", "someone called ed", false);
 						m_edSuffix = MakeEntry("ed", "past", false, false, true);
 
+						m_revIndex = CreateInterestingReversalEntries();
+
 						m_publisher = new MockPublisher((ISilDataAccessManaged)Cache.DomainDataByFlid, kmainFlid);
 						m_publisher.SetOwningPropValue(Cache.LangProject.LexDbOA.Entries.Select(le => le.Hvo).ToArray());
 						m_decorator = new DictionaryPublicationDecorator(Cache, m_publisher, ObjectListPublisher.OwningFlid);
+
+						m_revPublisher = new MockPublisher((ISilDataAccessManaged)Cache.DomainDataByFlid, kmainFlid);
+						m_revPublisher.SetOwningPropValue(m_revIndex.AllEntries.Select(rie => rie.Hvo).ToArray());
+						m_revDecorator = new DictionaryPublicationDecorator(Cache, m_revPublisher, ObjectListPublisher.OwningFlid);
 					});
+		}
+
+		private IReversalIndex CreateInterestingReversalEntries()
+		{
+			var index = m_revIndexFactory.Create();
+			Cache.LangProject.LexDbOA.ReversalIndexesOC.Add(index);
+			index.WritingSystem = "en";
+			var indexEntry = m_revIndexEntryFactory.Create();
+			index.EntriesOC.Add(indexEntry);
+			var wsEn = Cache.ServiceLocator.WritingSystemManager.Get("en").Handle;
+			indexEntry.ReversalForm.set_String(wsEn, "Reversal Form");
+			m_nolanryan.AllSenses[0].ReversalEntriesRC.Add(indexEntry);
+			var indexEntry2 = m_revIndexEntryFactory.Create();
+			index.EntriesOC.Add(indexEntry2);
+			indexEntry2.ReversalForm.set_String(wsEn, "Reversal 2 Form");
+			m_water.AllSenses[0].ReversalEntriesRC.Add(indexEntry2);
+			var entry2SubentryA = m_revIndexEntryFactory.Create();
+			indexEntry2.SubentriesOS.Add(entry2SubentryA);
+			entry2SubentryA.ReversalForm.set_String(wsEn, "Reversal 2a Form");
+			m_water2.AllSenses[0].ReversalEntriesRC.Add(entry2SubentryA);
+			var entry2SubentryB = m_revIndexEntryFactory.Create();
+			indexEntry2.SubentriesOS.Add(entry2SubentryB);
+			entry2SubentryB.ReversalForm.set_String(wsEn, "Reversal 2b Form");
+			m_hotWater.AllSenses[0].ReversalEntriesRC.Add(entry2SubentryB);
+			var subsubentry = m_revIndexEntryFactory.Create();
+			entry2SubentryB.SubentriesOS.Add(subsubentry);
+			subsubentry.ReversalForm.set_String(wsEn, "Reversal 2b || !2b Form");
+			m_waterH2O.ReversalEntriesRC.Add(subsubentry);
+			var senseLessIndexEntry = m_revIndexEntryFactory.Create();
+			index.EntriesOC.Add(senseLessIndexEntry);
+			senseLessIndexEntry.ReversalForm.set_String(wsEn, "Reversal Form NoSense");
+			return index;
 		}
 
 		private ILexReference MakeLexRef(ILexRefType owner, ICmObject[] targets)
@@ -230,6 +281,72 @@ namespace SIL.FieldWorks.XWorks
 			foreach (var obj in targets)
 				result.TargetsRS.Add(obj);
 			return result;
+		}
+
+		/// <summary>
+		/// DictionaryConfigurationListener was sending a localized configuration type to a switch
+		/// statement in GetEntriesToPublish(), causing any localized version to not match a valid configuration.
+		/// This test prevents a reoccurrence of that problem.
+		/// </summary>
+		[Test]
+		public void GetEntriesToPublish_WorksWithFrenchUI()
+		{
+			Mediator.PropertyTable.SetProperty("currentContentControl", "lexiconEdit");
+
+			var englishEntries = m_decorator.GetEntriesToPublish(Mediator, ObjectListPublisher.OwningFlid);
+			Assert.That(englishEntries.Length, Is.GreaterThan(0));
+
+			// Set UI Language to French
+			var wsm = Cache.ServiceLocator.WritingSystemManager;
+			wsm.UserWritingSystem = wsm.Get("fr");
+
+			// SUT
+			var frenchEntries = m_decorator.GetEntriesToPublish(Mediator, ObjectListPublisher.OwningFlid);
+			Assert.That(englishEntries.Length, Is.EqualTo(frenchEntries.Length));
+		}
+
+		[Test]
+		public void GetSortedAndFilteredReversalEntries_ExcludesSubentriesAndUnpublishable()
+		{
+			// This test relies on the objects set up during the test FixtureSetup
+			Mediator.PropertyTable.SetProperty("currentContentControl", "reversalToolEditComplete");
+			Mediator.PropertyTable.SetProperty("ReversalIndexGuid", m_revIndex.Guid.ToString());
+
+			Assert.AreEqual(6, m_revDecorator.VecProp(m_revIndex.Hvo, ObjectListPublisher.OwningFlid).Length,
+				"there should be 6 Reversal Entries and Sub[sub]entries");
+			var entries = m_revDecorator.GetEntriesToPublish(Mediator, ObjectListPublisher.OwningFlid, "Reversal Index");
+			// "Reversal Form" is linked to m_nolanryan which is excluded from publication
+			Assert.AreEqual(2, entries.Length, "there should be only 2 main Reversal Entry that can be published");
+			var entry = Cache.ServiceLocator.GetObject(entries[0]) as IReversalIndexEntry;
+			Assert.IsNotNull(entry, "the single reversal entry really is a reversal entry");
+			Assert.AreEqual("Reversal 2 Form", entry.ShortName, "'Reversal 2 Form' is the sole publishable main reversal entry");
+			Assert.AreEqual(2, entry.SubentriesOS.Count, "'Reversal 2 Form' has two subentries");
+			// "Reversal 2a Form" is linked to m_water2 which is excluded from publication
+			var vec = m_revDecorator.VecProp(entry.Hvo, ReversalIndexEntryTags.kflidSubentries);
+			Assert.AreEqual(1, vec.Length, "Only one of the subentries is publishable");
+			var subentry = Cache.ServiceLocator.GetObject(vec[0]) as IReversalIndexEntry;
+			Assert.AreEqual("Reversal 2b Form", subentry.ShortName, "'Reversal 2b Form' is the only publishable subentry of 'Reversal 2 Form'");
+			Assert.IsTrue(m_revDecorator.IsExcludedObject(entry.SubentriesOS[0]), "First subentry ('Reversal 2a Form') should be excluded");
+			Assert.IsFalse(m_revDecorator.IsExcludedObject(entry.SubentriesOS[1]), "Second subentry ('Reversal 2b Form') should not be excluded')");
+		}
+
+		[Test]
+		public void GetSortedAndFilteredReversalEntries_IncludesSenselessReversalEntries()
+		{
+			// This test relies on the objects set up during the test FixtureSetup
+			Mediator.PropertyTable.SetProperty("currentContentControl", "reversalToolEditComplete");
+			Mediator.PropertyTable.SetProperty("ReversalIndexGuid", m_revIndex.Guid.ToString());
+
+			Assert.AreEqual(6, m_revDecorator.VecProp(m_revIndex.Hvo, ObjectListPublisher.OwningFlid).Length,
+				"there should be 6 Reversal Entries and Sub[sub]entries");
+			var entries = m_revDecorator.GetEntriesToPublish(Mediator, ObjectListPublisher.OwningFlid, "Reversal Index");
+			// "Reversal Form" is linked to m_nolanryan which is excluded from publication
+			Assert.AreEqual(2, entries.Length, "there should be only 2 main Reversal Entry that can be published");
+			var entry = Cache.ServiceLocator.GetObject(entries[1]) as IReversalIndexEntry;
+			Assert.IsNotNull(entry, "the single reversal entry really is a reversal entry");
+			Assert.IsFalse(entry.ReferringSenses.Any(), "Test setup is broken, this entry should have no senses");
+			// SUT
+			Assert.IsFalse(m_revDecorator.IsExcludedObject(entry), "A reversal index entry with no senses should not be excluded");
 		}
 
 		/// <summary>
@@ -276,9 +393,9 @@ namespace SIL.FieldWorks.XWorks
 			// They should be filtered from the top-level list of entries managed by the wrapped decorator
 			var mainEntryList = m_decorator.VecProp(Cache.LangProject.LexDbOA.Hvo, ObjectListPublisher.OwningFlid);
 			Assert.That(mainEntryList.Length,
-				Is.EqualTo(Cache.LangProject.LexDbOA.Entries.Where(
+				Is.EqualTo(Cache.LangProject.LexDbOA.Entries.Count(
 					le => le.DoNotPublishInRC.Count == 0 &&
-					le.DoNotShowMainEntryInRC.Count == 0).Count()));
+					le.DoNotShowMainEntryInRC.Count == 0)));
 		}
 
 		[Test]
@@ -522,9 +639,9 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(propChangeInfo.cvDel, Is.EqualTo(cvDel));
 		}
 
-		class MockNotifyChange : IVwNotifyChange
+		private class MockNotifyChange : IVwNotifyChange
 		{
-			public PropChangeInfo LastPropChanged { get; set; }
+			public PropChangeInfo LastPropChanged { get; private set; }
 
 			public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 			{
@@ -571,14 +688,10 @@ namespace SIL.FieldWorks.XWorks
 			return result;
 		}
 
-		private ILexEntry MakeEntry(string form, string gloss, bool fExclude, bool hwExclude, bool suffix = false)
+		private ILexEntry MakeEntry(string form, string gloss, bool fExclude, bool hwExclude = false, bool suffix = false)
 		{
 			var entry = MakeEntry();
-			IMoForm lexform;
-			if (suffix)
-				lexform = MakeSuffix(entry);
-			else
-				lexform = MakeLexemeForm(entry);
+			var lexform = suffix ? MakeSuffix(entry) : MakeLexemeForm(entry);
 			lexform.Form.VernacularDefaultWritingSystem = VernacularTss(form);
 			MakeSense(entry, gloss);
 			if (fExclude)
@@ -586,11 +699,6 @@ namespace SIL.FieldWorks.XWorks
 			if (hwExclude)
 				entry.DoNotShowMainEntryInRC.Add(m_mainDict);
 			return entry;
-		}
-
-		private ILexEntry MakeEntry(string form, string gloss, bool fExclude)
-		{
-			return MakeEntry(form, gloss, fExclude, false);
 		}
 
 		ILexExampleSentence MakeExample(ILexSense sense, string text, bool fExclude)

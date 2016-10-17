@@ -65,7 +65,7 @@
       <HintPath>lib\IDLImporter.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="NVelocity">
       <HintPath>lib\NVelocity.dll</HintPath>
@@ -96,6 +96,7 @@
     <Compile Include="FdoGenerate\TypeInfo.cs" />
     <Compile Include="ExtractIIDsTask.cs" />
     <Compile Include="GenerateNUnitReports.cs" />
+    <Compile Include="GenerateTestCoverageReport.cs" />
     <Compile Include="IdlImp.cs" />
     <Compile Include="LocalizeFieldWorks.cs" />
     <Compile Include="LocalizeFieldWorksTests.cs" />

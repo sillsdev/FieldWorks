@@ -10,7 +10,7 @@ using System.Drawing;
 using NMock;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils.Attributes;
+using SIL.Utils.Attributes;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {
@@ -191,6 +191,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
+	[InitializeRealKeyboardController(InitDummyAfterTests = true)]
 	public class IsSelectionVisibleTests: ScrollTestsBase
 	{
 		/// ------------------------------------------------------------------------------------

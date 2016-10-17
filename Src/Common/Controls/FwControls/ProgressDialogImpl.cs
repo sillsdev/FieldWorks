@@ -10,6 +10,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
@@ -59,6 +60,8 @@ namespace SIL.FieldWorks.Common.Controls
 			InitializeComponent();
 
 			Message = string.Empty;
+			lblCancel.AutoSize = false;
+			lblCancel.Text = string.Empty;
 			m_fRestartable = false;
 			if (owner == null)
 				StartPosition = FormStartPosition.CenterScreen;
@@ -174,6 +177,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public void Step(int step)
 		{
+			CheckDisposed();
 			Position += step;
 		}
 
@@ -184,8 +188,16 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public string Title
 		{
-			get { return Text; }
-			set { Text = value; }
+			get
+			{
+				CheckDisposed();
+				return Text;
+			}
+			set
+			{
+				CheckDisposed();
+				Text = value;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -239,12 +251,13 @@ namespace SIL.FieldWorks.Common.Controls
 			get
 			{
 				CheckDisposed();
-				return btnCancel.Visible;
+				return btnCancel.Visible && lblCancel.Visible;
 			}
 			set
 			{
 				CheckDisposed();
 				btnCancel.Visible = value;
+				lblCancel.Visible = value;
 
 				if (Visible && value)
 				{
@@ -274,13 +287,40 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets or sets a label for Canceling button.
+		/// </summary>
+		/// <returns>The status message</returns>
+		/// ------------------------------------------------------------------------------------
+		public string CancelLabelText
+		{
+			get
+			{
+				CheckDisposed();
+				return lblCancel.Text;
+			}
+			set
+			{
+				CheckDisposed();
+				lblCancel.Text = value;
+				Size sz = new Size(lblCancel.Width, int.MaxValue);
+				sz = TextRenderer.MeasureText(lblCancel.Text, lblCancel.Font, sz, TextFormatFlags.WordBreak);
+				lblCancel.Height = sz.Height;
+			}
+		}
+
 		/// <summary>
 		/// Gets an object to be used for ensuring that required tasks are invoked on the main
 		/// UI thread.
 		/// </summary>
 		public ISynchronizeInvoke SynchronizeInvoke
 		{
-			get { return this; }
+			get
+			{
+				CheckDisposed();
+				return this;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -290,7 +330,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public Form Form
 		{
-			get { return this; }
+			get
+			{
+				CheckDisposed();
+				return this;
+			}
 		}
 
 		/// <summary>
@@ -298,8 +342,16 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public bool IsIndeterminate
 		{
-			get { return progressBar.Style == ProgressBarStyle.Marquee; }
-			set { progressBar.Style = value ? ProgressBarStyle.Marquee : ProgressBarStyle.Continuous; }
+			get
+			{
+				CheckDisposed();
+				return progressBar.Style == ProgressBarStyle.Marquee;
+			}
+			set
+			{
+				CheckDisposed();
+				progressBar.Style = value ? ProgressBarStyle.Marquee : ProgressBarStyle.Continuous;
+			}
 		}
 		#endregion
 
@@ -328,6 +380,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		protected override void OnVisibleChanged(EventArgs e)
 		{
+			CheckDisposed();
 			base.OnVisibleChanged(e);
 
 			if (Visible)
@@ -345,6 +398,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		protected virtual void OnCancel()
 		{
+			CheckDisposed();
 			if (Canceling != null)
 			{
 				var cea = new CancelEventArgs();

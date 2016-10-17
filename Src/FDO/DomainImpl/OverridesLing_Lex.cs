@@ -152,6 +152,44 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		/// <summary>
 		/// Gets all the bulk-editable things that might be used as the destination of a bulk edit to
+		/// etymology. This includes the entries that do not have etymologies.
+		/// Note that this implementation is only possible because there are no other possible owners for LexEtymology.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceSequence, "CmObject")]
+		public IEnumerable<ICmObject> AllPossibleEtymologies
+		{
+			get
+			{
+				// Optimize JohnT: are we likely to modify any of the iterators while iterating? If not
+				// we may not need the ToList().
+				return Cache.ServiceLocator.GetInstance<ILexEtymologyRepository>().AllInstances().Cast<ICmObject>()
+					.Concat((from entry in Cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances()
+							 where entry.EtymologyOS.Count == 0
+							 select entry).Cast<ICmObject>())
+					.ToList();
+			}
+		}
+
+		/// <summary>
+		/// Gets all the bulk-editable things that might be used as the destination of a bulk edit to
+		/// extended note. This includes the senses that do not have extended notes.
+		/// Note that this implementation is only possible because there are no other possible owners for LexExtendedNote.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceSequence, "CmObject")]
+		public IEnumerable<ICmObject> AllPossibleExtendedNotes
+		{
+			get
+			{
+				return Cache.ServiceLocator.GetInstance<ILexExtendedNoteRepository>().AllInstances().Cast<ICmObject>()
+					.Concat((from sense in Cache.ServiceLocator.GetInstance<ILexSenseRepository>().AllInstances()
+						where sense.ExtendedNoteOS.Count == 0
+						select sense))
+					.ToList();
+			}
+		}
+
+		/// <summary>
+		/// Gets all the bulk-editable things that might be used as the destination of a bulk edit to
 		/// Allomorphs. This includes the entries that do not have allomorphs. It does NOT include
 		/// MoForms that are the LexemeForm of some entry. (Possibly the name should indicate this better somehow?)
 		/// </summary>
@@ -194,44 +232,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				return m_cache.ServiceLocator.GetInstance<ILexEntryRefRepository>().AllInstances();
 			}
 		}
-
-		/// <summary>
-		/// Get (create if necessary, in a non-undoable UOW if necessary) PublicationTypesOA in the default state.
-		/// </summary>
-		[ModelProperty(CellarPropertyType.OwningAtomic, 5005024, "CmPossibilityList")]
-		public ICmPossibilityList PublicationTypesOA
-		{
-			get
-			{
-				if (PublicationTypesOA_Generated != null)
-					return PublicationTypesOA_Generated;
-				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor,
-					() =>
-						{
-							PublicationTypesOA_Generated = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
-							var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-							// Note: we don't need to localize here because we are deliberately creating a minimal English
-							// version of the list. The user can fill in other writing systems if desired.
-							PublicationTypesOA_Generated.Name.set_String(wsEn, "Publications");
-							var mainDict = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-							PublicationTypesOA_Generated.PossibilitiesOS.Add(mainDict);
-							mainDict.Name.set_String(wsEn, "Main Dictionary");
-
-							// The following are not explicitly tested.
-							PublicationTypesOA_Generated.ItemClsid = CmPossibilityTags.kClassId;
-							PublicationTypesOA_Generated.Depth = 1;
-							PublicationTypesOA_Generated.IsSorted = true;
-							PublicationTypesOA_Generated.PreventChoiceAboveLevel = 0;
-
-							mainDict.Abbreviation.set_String(wsEn, "Main");
-							mainDict.IsProtected = true;
-						}
-					);
-				return PublicationTypesOA_Generated;
-			}
-			set { PublicationTypesOA_Generated = value; }
-		}
-
 
 		/// <summary>
 		/// Allows user to convert LexEntryType to LexEntryInflType.
@@ -598,11 +598,41 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 	}
 
+	internal partial class LexExtendedNote
+	{
+		public override ICmObject ReferenceTargetOwner(int flid)
+		{
+			if (flid == Cache.MetaDataCacheAccessor.GetFieldId2(LexExtendedNoteTags.kClassId, "ExtendedNoteType", false))
+				return Cache.LangProject.LexDbOA.ExtendedNoteTypesOA;
+			return base.ReferenceTargetOwner(flid);
+		}
+	}
+
 	/// <summary>
 	///
 	/// </summary>
 	internal partial class LexPronunciation
 	{
+		protected override void AddObjectSideEffectsInternal(AddObjectEventArgs e)
+		{
+			if (e.Flid == LexPronunciationTags.kflidDoNotPublishIn)
+			{
+				var uowService = ((IServiceLocatorInternal)Services).UnitOfWorkService;
+				uowService.RegisterVirtualAsModified(this, "PublishIn", PublishIn.Cast<ICmObject>());
+			}
+			base.AddObjectSideEffectsInternal(e);
+		}
+
+		protected override void RemoveObjectSideEffectsInternal(RemoveObjectEventArgs e)
+		{
+			if (e.Flid == LexPronunciationTags.kflidDoNotPublishIn)
+			{
+				var uowService = ((IServiceLocatorInternal)Services).UnitOfWorkService;
+				uowService.RegisterVirtualAsModified(this, "PublishIn", PublishIn.Cast<ICmObject>());
+			}
+			base.RemoveObjectSideEffectsInternal(e);
+		}
+
 		/// <summary>
 		/// Object owner. This virtual may seem redundant with CmObject.Owner, but it is important,
 		/// because we can correctly indicate the destination class. This is used (at least) in
@@ -612,6 +642,19 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		public ILexEntry OwningEntry
 		{
 			get { return (ILexEntry)Owner; }
+		}
+
+		/// <summary>
+		/// The publications from which this is not excluded, that is, the ones in which it
+		/// SHOULD be published.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceCollection, "CmPossibility")]
+		public IFdoSet<ICmPossibility> PublishIn
+		{
+			get
+			{
+				return new FdoInvertSet<ICmPossibility>(DoNotPublishInRC, Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS);
+			}
 		}
 
 		/// <summary>
@@ -682,13 +725,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		public override ICmObject ReferenceTargetOwner(int flid)
 		{
-			switch (flid)
-			{
-				case LexPronunciationTags.kflidLocation:
-					return m_cache.LangProject.LocationsOA;
-				default:
-					return base.ReferenceTargetOwner(flid);
-			}
+			if (flid == m_cache.MetaDataCacheAccessor.GetFieldId2(LexPronunciationTags.kClassId, "PublishIn", false))
+				return m_cache.LangProject.LexDbOA.PublicationTypesOA;
+			if (flid == LexPronunciationTags.kflidLocation)
+				return m_cache.LangProject.LocationsOA;
+			return base.ReferenceTargetOwner(flid);
 		}
 	}
 
@@ -704,6 +745,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		public override ICmObject ReferenceTargetOwner(int flid)
 		{
+			if (flid == LexEntryTags.kflidDialectLabels)
+				return Cache.LangProject.LexDbOA.DialectLabelsOA;
 			if (flid == Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "PublishIn", false) ||
 				flid == Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "ShowMainEntryIn", false))
 				return Cache.LangProject.LexDbOA.PublicationTypesOA;
@@ -777,7 +820,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				ler = Services.GetInstance<ILexEntryRefFactory>().Create();
 				EntryRefsOS.Add(ler);
-
+				ler.ComplexEntryTypesRS.Add(Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS[0] as ILexEntryType);
 				ler.RefType = LexEntryRefTags.krtComplexForm;
 				ler.HideMinorEntry = 0; // LT-10928
 				ChangeRootToStem();
@@ -957,6 +1000,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// Convenience accessor for the owned sequence of Senses
+		/// </summary>
+		public IFdoOwningSequence<ILexSense> Senses { get { return SensesOS; } }
+
+		/// <summary>
 		/// Initialize the DateCreated and DateModified values in the constructor.
 		/// </summary>
 		partial void SetDefaultValuesInConstruction()
@@ -967,9 +1015,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// This is a backreference (virtual) property.  It returns the list of ids for all the
-		/// LexEntryRef objects that refer to this LexEntry in ShowComplexFormIn  and are complex
-		/// forms.
+		/// This is a backreference (virtual) property.  It returns the list of all the LexEntryRef
+		/// objects that refer to this LexEntry in ShowComplexFormIn  and are complex forms.
 		/// Enhance JohnT: Generate PropChanged on this for changes to any of
 		///     LexEntry.EntryRefs, LexEntryRef.RefType, LexEntryRef.PrimaryEntryOrSense,
 		///     or anything that affects GetVariantEntryRefsWithMainEntryOrSense.
@@ -1247,7 +1294,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			ler.HideMinorEntry = 0;
 			ler.ComponentLexemesRS.Add(componentLexeme);
 			if (variantType != null)
+			{
 				ler.VariantEntryTypesRS.Add(variantType);
+			}
+			else
+			{
+				ler.VariantEntryTypesRS.Add(Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[0] as ILexEntryType);
+			}
 			return ler;
 		}
 
@@ -1561,9 +1614,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						CopyObject<IMoForm>.CloneFdoObjects(AlternateFormsOS, newForm => leNew.AlternateFormsOS.Add(newForm));
 						CopyObject<ILexPronunciation>.CloneFdoObjects(PronunciationsOS, newPron => leNew.PronunciationsOS.Add(newPron));
 						CopyObject<ILexEntryRef>.CloneFdoObjects(EntryRefsOS, newEr => leNew.EntryRefsOS.Add(newEr));
-
-						if (EtymologyOA != null)
-							CopyObject<ILexEtymology>.CloneFdoObject(EtymologyOA, newEtymology => leNew.EtymologyOA = newEtymology);
+						CopyObject<ILexEtymology>.CloneFdoObjects(EtymologyOS, newEty => leNew.EtymologyOS.Add(newEty));
 
 						UpdateReferencesForSenseMove(this, leNew, ls);
 
@@ -2451,10 +2502,28 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// For "Variant Of" section of lexicon edit, shows Headword + a sequence of dialect label abbreviations.
+		/// </summary>
+		public ITsString HeadWordPlusDialect
+		{
+			get
+			{
+				var tisb = HeadWord.GetIncBldr();
+				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultVernWs);
+				foreach (var poss in DialectLabelsRS)
+				{
+					tisb.Append(" ");
+					tisb.AppendTsString(poss.Abbreviation.BestVernacularAnalysisAlternative);
+				}
+				return tisb.GetString();
+			}
+		}
+
+		/// <summary>
 		/// Virtual property allows Headword to be read through cache.
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.MultiUnicode)]
-		public VirtualStringAccessor MLHeadWord
+		public IMultiAccessorBase MLHeadWord
 		{
 			get
 			{
@@ -2466,7 +2535,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Virtual property allows HeadWordRef to be read through cache.
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.MultiUnicode)]
-		public VirtualStringAccessor HeadWordRef
+		public IMultiAccessorBase HeadWordRef
 		{
 			get
 			{
@@ -2475,14 +2544,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
-		/// Virtual property allows HeadWordReversal to be read through cache.
+		/// Virtual property allows ReversalName to be read through cache.
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.MultiUnicode)]
-		public VirtualStringAccessor HeadWordReversal
+		public VirtualStringAccessor ReversalName
 		{
 			get
 			{
-				return new VirtualStringAccessor(this, Cache.ServiceLocator.GetInstance<Virtuals>().LexEntryHeadWordReversal, HeadWordReversalForWs);
+				return new VirtualStringAccessor(this, Cache.ServiceLocator.GetInstance<Virtuals>().LexEntryReversalName, HeadWordReversalForWs);
 			}
 		}
 
@@ -2508,7 +2577,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Get the minimal set of LexReferences for this entry.
 		/// This is a virtual, backreference property.
 		/// </summary>
-		[VirtualProperty(CellarPropertyType.ReferenceCollection, "MinimalLexReferences")]
+		[VirtualProperty(CellarPropertyType.ReferenceCollection, "LexReference")]
 		public List<ILexReference> MinimalLexReferences
 		{
 			get
@@ -2558,7 +2627,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		/// <summary>
 		/// Gets the complex form entries, that is, the entries which should be shown
-		/// in the visible complex forms list for this entry in stem-based view, and in data entry view.
+		/// in the visible complex forms list for this entry in lexeme-based view, and in data entry view.
 		/// This is a backreference (virtual) property.  It returns the list of ids for all the
 		/// LexEntry objects that own a LexEntryRef that refers to this LexEntry in its
 		/// ShowComplexFormsIn field and that is a complex entry type.
@@ -2627,7 +2696,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
-		/// The name of a lexical entry as used in cross-refs in the reversls view.  This includes
+		/// The name of a lexical entry as used in cross-refs in the reversals view.  This includes
 		/// CitationFormWithAffixType (in this implementation) with the homograph number
 		/// (if non-zero)appended as a subscript (or superscript, or prepended, or not at all...see HomographConfiguration)
 		/// </summary>
@@ -2880,7 +2949,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				return EntryRefsOS.Cast<LexEntryRef>().Any(ler => ler.HideMinorEntry == 0);
+				return EntryRefsOS.Any(ler => ler.HideMinorEntry == 0);
 			}
 			set
 			{
@@ -3119,6 +3188,12 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					select lexRef;
 			}
 		}
+
+		/// <summary>
+		/// Fake property. Implemented in ConfiguredXHTMLGenerator to enable showing
+		/// ComplexEntry types for subentries. Needed here to enable CSSGenerator functionality.
+		/// </summary>
+		public IFdoReferenceSequence<ILexEntryType> LookupComplexEntryType { get { throw new NotImplementedException("LookupComplexEntryType is hard-coded in ConfiguredXHTMLGenerator"); } }
 
 		/// <summary>
 		/// If this entry is a complex one, the primary lexemes (under which it is shown as a subentry).
@@ -3731,20 +3806,36 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			m_MLOwnerOutlineNameFlid = Cache.MetaDataCache.GetFieldId("LexSense", "MLOwnerOutlineName", false);
 		}
 
-		internal IEnumerable<ILexEntryRef> EntryRefsWithThisMainSense
+		[VirtualProperty(CellarPropertyType.ReferenceCollection, "LexEntryRef")]
+		public IEnumerable<ILexEntryRef> EntryRefsWithThisMainSense
 		{
 			get
 			{
 				((ICmObjectRepositoryInternal)Services.ObjectRepository).EnsureCompleteIncomingRefsFrom(
 					LexEntryRefTags.kflidComponentLexemes);
+				// We need to use an actual List<> here instead of using yield so that code that calls
+				// this property by reflection can figure out the type of the returned value.
+				var list = new List<ILexEntryRef>();
 				foreach (var item in m_incomingRefs)
 				{
 					var sequence = item as FdoReferenceSequence<ICmObject>;
-					if (sequence == null)
-						continue;
-					if (sequence.Flid == LexEntryRefTags.kflidComponentLexemes)
-						yield return sequence.MainObject as ILexEntryRef;
+					if (sequence != null && sequence.Flid == LexEntryRefTags.kflidComponentLexemes)
+						list.Add(sequence.MainObject as ILexEntryRef);
 				}
+				return list;
+			}
+		}
+
+		/// <summary>
+		/// This property returns the list of all the LexEntryRef objects that refer to this LexSense
+		/// or its owning LexEntry.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceCollection, "LexEntryRef")]
+		public IEnumerable<ILexEntryRef> MainEntryRefs
+		{
+			get
+			{
+				return OwningEntry.EntryRefsOS;
 			}
 		}
 
@@ -4458,9 +4549,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// This is a backreference (virtual) property.  It returns the list of ids for all the
-		/// LexEntryRef objects that refer to this LexSense in ShowComplexFormIn  and are complex
-		/// forms.
+		/// This is a backreference (virtual) property.  It returns the list of all the LexEntryRef
+		/// objects that refer to this LexSense in ShowComplexFormIn  and are complex forms.
 		/// Enhance JohnT: Generate PropChanged on this for changes to any of
 		///     LexEntry.EntryRefs, LexEntryRef.RefType, LexEntryRef.PrimaryEntryOrSense,
 		///     or anything that affects GetVariantEntryRefsWithMainEntryOrSense.
@@ -5285,6 +5375,37 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
+		/// <summary>
+		/// For "Variant Of" section of lexicon edit, shows Headword + a sequence of dialect label abbreviations.
+		/// </summary>
+		public ITsString HeadWordPlusDialect
+		{
+			get
+			{
+				var tisb = HeadWord.GetIncBldr();
+				tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, m_cache.DefaultVernWs);
+				foreach (var poss in DialectLabelsSenseOrEntry)
+				{
+					tisb.Append(" ");
+					tisb.AppendTsString(poss.Abbreviation.BestVernacularAnalysisAlternative);
+				}
+				return tisb.GetString();
+			}
+		}
+
+		/// <summary>
+		/// This is a virtual property that ensures that a Sense shows its owning Entry's
+		/// DialectLabels if it has none of its own.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceSequence, "CmPossibility")]
+		public IFdoReferenceSequence<ICmPossibility> DialectLabelsSenseOrEntry
+		{
+			get
+			{
+				return DialectLabelsRS.Count == 0 ? Entry.DialectLabelsRS : DialectLabelsRS;
+			}
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>Returns a TsString with the entry headword and a sense number if there
 		/// are more than one senses.
@@ -5348,8 +5469,111 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				tisb.SetStrPropValue((int) FwTextPropType.ktptNamedStyle,
 					HomographConfiguration.ksSenseReferenceNumberStyle);
 				tisb.Append(" ");
-				tisb.Append(SenseNumber);
+				var referencedSenseNumber = FormatSenseNumber();
+				tisb.Append(referencedSenseNumber);
 			}
+		}
+
+		private string FormatSenseNumber()
+		{
+			string number = "";
+			if (Owner is ILexEntry)
+			{
+				number = FormatParentSense((ILexEntry)Owner, this);
+			}
+			else
+			{
+				var ls = Owner as LexSense;
+				number = FormatSubSense(ls, this);
+			}
+			return number;
+		}
+
+		private string FormatParentSense(ILexEntry parent, ILexSense child)
+		{
+			var hc = Services.GetInstance<HomographConfiguration>();
+			if (hc.ksSenseNumberStyle == "")
+				return "";
+			string senseIdx = (parent.SensesOS.IndexOf(child) + 1).ToString();
+			senseIdx = GetSenseNumber(senseIdx, hc.ksSenseNumberStyle, "");
+			return senseIdx;
+		}
+
+		private string FormatSubSense(ILexSense parent, ILexSense child)
+		{
+			var hc = Services.GetInstance<HomographConfiguration>();
+			string senseIdx = string.Empty;
+			if (parent.Owner is LexEntry)
+			{
+				//SubSense
+				if (hc.ksSubSenseNumberStyle != "")
+				{
+					senseIdx = (parent.SensesOS.IndexOf(child) + 1).ToString();
+					senseIdx = GetSenseNumber(senseIdx, hc.ksSubSenseNumberStyle, hc.ksParentSenseNumberStyle);
+				}
+				//Sense
+				return FormatParentSense((ILexEntry)parent.Owner, parent) + senseIdx;
+			}
+			//SubSubSense
+			if (hc.ksSubSubSenseNumberStyle == "")
+				return senseIdx;
+			senseIdx = (parent.SensesOS.IndexOf(child) + 1).ToString();
+			senseIdx = GetSenseNumber(senseIdx, hc.ksSubSubSenseNumberStyle, hc.ksParentSubSenseNumberStyle);
+			senseIdx = FormatSubSense((ILexSense)parent.Owner, parent) + senseIdx;
+			return senseIdx;
+		}
+
+		private string GetSenseNumber(string senseNumber, string numberingStyle, string parentNumberingStyle)
+		{
+			string nextNumber;
+			switch (numberingStyle)
+			{
+				case "%a":
+				case "%A":
+					nextNumber = GetAlphaSenseCounter(numberingStyle, Convert.ToByte(senseNumber));
+					break;
+				case "%i":
+				case "%I":
+					nextNumber = GetRomanSenseCounter(numberingStyle, Convert.ToByte(senseNumber));
+					break;
+				default: // handles %d and %O. We no longer support "%z" (1  b  iii) because users can hand-configure its equivalent
+					nextNumber = senseNumber;
+					break;
+			}
+			nextNumber = GenerateSenseOutlineNumber(parentNumberingStyle, nextNumber);
+			return nextNumber;
+		}
+
+		private string GenerateSenseOutlineNumber(string parentNumberingStyle, string nextNumber)
+		{
+			string fprmattedNumber;
+			if (parentNumberingStyle == "%j")
+				fprmattedNumber = string.Format("{0}", nextNumber);
+			else if (parentNumberingStyle == "%.")
+				fprmattedNumber = string.Format(".{0}", nextNumber);
+			else
+				fprmattedNumber = nextNumber;
+
+			return fprmattedNumber;
+		}
+
+		private string GetAlphaSenseCounter(string numberingStyle, byte senseNumber)
+		{
+			var asciiBytes = 64; // char 'A'
+			asciiBytes = asciiBytes + senseNumber;
+			var nextNumber = ((char)(asciiBytes)).ToString();
+			if (numberingStyle == "%a")
+				nextNumber = nextNumber.ToLower();
+			return nextNumber;
+		}
+
+		private static string GetRomanSenseCounter(string numberingStyle, int senseNumber)
+		{
+			string roman = string.Empty;
+			roman = RomanNumerals.IntToRoman(senseNumber);
+			if (numberingStyle == "%i")
+				roman = roman.ToLower();
+			return roman;
 		}
 
 		/// <summary>
@@ -5429,7 +5653,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Get the minimal set of LexReferences for this sense.
 		/// This is a virtual, backreference property.
 		/// </summary>
-		[VirtualProperty(CellarPropertyType.ReferenceCollection, "MinimalLexReferences")]
+		[VirtualProperty(CellarPropertyType.ReferenceCollection, "LexReference")]
 		public List<ILexReference> MinimalLexReferences
 		{
 			get
@@ -5673,6 +5897,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					return m_cache.LangProject.LexDbOA.UsageTypesOA;
 				case LexSenseTags.kflidDomainTypes:
 					return m_cache.LangProject.LexDbOA.DomainTypesOA;
+				case LexSenseTags.kflidDialectLabels:
+					return m_cache.LangProject.LexDbOA.DialectLabelsOA;
 				case LexSenseTags.kflidStatus:
 					return m_cache.LangProject.StatusOA;
 				case LexSenseTags.kflidSemanticDomains:
@@ -5789,6 +6015,19 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				return;
 
 			LexEntry.SafelyReplaceSequenceReferences(objOld, this, sequenceRefs);
+		}
+
+		public IMultiStringAccessor DefinitionOrGloss
+		{
+			get
+			{
+				if(Definition.StringCount != 0)
+				{
+					if(Definition.BestAnalysisAlternative.Text != Strings.ksStars)
+						return Definition;
+				}
+				return Gloss;
+			}
 		}
 	}
 
@@ -8058,6 +8297,33 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
+
+		/// <summary>
+		/// Object owner. This virtual may seem redundant with CmObject.Owner, but it is important,
+		/// because we can correctly indicate the destination class. This is used for dictionary configuration.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceAtomic, "LexRefType")]
+		public ILexRefType OwnerType
+		{
+			// using 'as LexRefType' to enforce consistancy with MetaData from the VirtualProperty
+			// also there will always ever only be one.
+			get { return Owner as LexRefType; }
+		}
+
+		[VirtualProperty(CellarPropertyType.ReferenceCollection, "SenseOrEntry")]
+		public IEnumerable<ISenseOrEntry> ConfigTargets
+		{
+			get
+			{
+				var wrappedTargets = new List<ISenseOrEntry>();
+				if(TargetsRS.Count > 0)
+				{
+					wrappedTargets.AddRange(TargetsRS.Select(target => new SenseOrEntry(target)));
+				}
+				return wrappedTargets;
+			}
+		}
+
 		/// <summary>
 		/// This supports a virtual property for displaying lexical references in a browse column.
 		/// See LT-4859 for justification.
@@ -8446,6 +8712,17 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get { return ((ILexEntry) Owner).HeadWord; }
 		}
 
+		/// <summary>Concatenates VariantEntryTypesRS and ComplexEntryTypesRS</summary>
+		public IEnumerable<ILexEntryType> EntryTypes {
+			get
+			{
+				var allEntryTypes = new List<ILexEntryType>();
+				allEntryTypes.AddRange(VariantEntryTypesRS);
+				allEntryTypes.AddRange(ComplexEntryTypesRS);
+				return allEntryTypes;
+			}
+		}
+
 		/// <summary>
 		/// This is the same as PrimaryEntryRoots, except that if the only Component is (or is a sense of) the only PrimaryEntryRoot,
 		/// it produces an empty list.
@@ -8621,6 +8898,18 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
+		/// <summary>
+		/// This is a virtual property.  It returns the list of all Dialect Labels for this variant's Owner
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceSequence, "CmPossibility")]
+		public IFdoReferenceSequence<ICmPossibility> VariantEntryDialectLabels
+		{
+			get
+			{
+				return Owner is ILexEntry ? ((ILexEntry) Owner).DialectLabelsRS : ((ILexSense)Owner).DialectLabelsSenseOrEntry;
+			}
+		}
+
 		private void UpdateComplexFormEntryBackRefs(ICmObject thingAddedOrRemoved, bool fAdded)
 		{
 			var entry = thingAddedOrRemoved as LexEntry;
@@ -8726,6 +9015,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				case LexEntryRefTags.kflidVariantEntryTypes:
 					return m_cache.LangProject.LexDbOA.VariantEntryTypesOA;
 			}
+			if (flid == Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryRefTags.kClassId, "VariantEntryDialectLabels", false))
+				return Cache.LangProject.LexDbOA.DialectLabelsOA;
 			return null;
 		}
 
@@ -8954,7 +9245,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// This is a virtual property.  It returns the list of ids for all the example
+		/// This is a virtual property.  It returns the list all the example
 		/// sentences owned by top-level senses owned by the owner of this LexEntryRef.
 		/// Enhance JohnT: implement automatic update when senses or examples change.
 		/// </summary>
@@ -8965,6 +9256,69 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				return from sense in ((ILexEntry) Owner).SensesOS from example in sense.ExamplesOS select example;
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// This is a virtual property.  It returns a list of the DefinitionOrGloss values for
+		/// for all the top-level senses owned by the owner of this LexEntryRef.
+		/// Enhance JohnT: implement automatic update when senses, Definitions, or Glosses change.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public IEnumerable<IMultiStringAccessor> DefinitionOrGloss
+		{
+			get
+			{
+				return from sense in ((ILexEntry)Owner).SensesOS select sense.DefinitionOrGloss;
+			}
+		}
+
+		/// <summary>
+		/// Virtual property for configuration, wraps <see cref="ComponentLexemesRS"/> collection objects in read only interface
+		/// that exposes certain LexSense- and LexEntry-specific fields.
+		/// </summary>
+		public IEnumerable<ISenseOrEntry> ConfigReferencedEntries
+		{
+			get
+			{
+				var wrappedTargets = new List<ISenseOrEntry>();
+				if(ComponentLexemesRS.Count > 0)
+				{
+					wrappedTargets.AddRange(ComponentLexemesRS.Select(target => new SenseOrEntry(target)));
+				}
+				return wrappedTargets;
+			}
+		}
+
+		/// <summary>
+		/// Virtual property for configuration, wraps <see cref="PrimaryLexemesRS"/> collection objects in read only interface
+		/// that exposes certain LexSense- and LexEntry-specific fields.
+		/// </summary>
+		public IEnumerable<ISenseOrEntry> PrimarySensesOrEntries
+		{
+			get
+			{
+				var wrappedTargets = new List<ISenseOrEntry>();
+				if (RefType == LexEntryRefTags.krtComplexForm)
+				{
+					if(PrimaryLexemesRS.Count > 0)
+					{
+						wrappedTargets.AddRange(PrimaryLexemesRS.Select(target => new SenseOrEntry(target)));
+					}
+					if (wrappedTargets.Count == 0 && ShowComplexFormsInRS.Count > 0)
+					{
+						wrappedTargets.AddRange(ShowComplexFormsInRS.Select(target => new SenseOrEntry(target)));
+					}
+				}
+				else
+				{
+					if (ComponentLexemesRS.Count > 0)
+					{
+						wrappedTargets.AddRange(ComponentLexemesRS.Select(target => new SenseOrEntry(target)));
+					}
+				}
+				return wrappedTargets;
 			}
 		}
 	}
@@ -9129,6 +9483,16 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	internal partial class LexEtymology
 	{
 		/// <summary>
+		/// Override to handle reference props of this class.
+		/// </summary>
+		public override ICmObject ReferenceTargetOwner(int flid)
+		{
+			if (flid == Cache.MetaDataCacheAccessor.GetFieldId2(LexEtymologyTags.kClassId, "Language", false))
+				return Cache.LangProject.LexDbOA.LanguagesOA;
+			return base.ReferenceTargetOwner(flid);
+		}
+
+		/// <summary>
 		/// The LiftResidue field stores XML with an outer element &lt;lift-residue&gt; enclosing
 		/// the actual residue.  This returns the actual residue, minus the outer element.
 		/// </summary>
@@ -9190,28 +9554,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
-		/// <summary>
-		/// Provide something for the LIFT source attribute.
-		/// </summary>
-		public string LiftSource
-		{
-			get
-			{
-				string sSource = this.Source;
-				if (String.IsNullOrEmpty(sSource))
-				{
-					IWritingSystem ws = LiftFormWritingSystem;
-					if (ws != null)
-					{
-						sSource = ws.DisplayLabel;
-					}
-				}
-				if (string.IsNullOrEmpty(sSource))
-					return "UNKNOWN";
-				return sSource;
-			}
-		}
-
 		private IWritingSystem LiftFormWritingSystem
 		{
 			get
@@ -9238,21 +9580,27 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// Object owner. This virtual may seem redundant with CmObject.Owner, but it is important,
+		/// because we can correctly indicate the destination class. This is used (at least) in
+		/// PartGenerator.GeneratePartsFromLayouts to determine that it needs to generate parts for LexEntry.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceAtomic, "LexEntry")]
+		public ILexEntry OwningEntry
+		{
+			get { return (ILexEntry)Owner; }
+		}
+
+		/// <summary>
 		/// Override of ShortName
 		/// </summary>
 		public override string ShortName
 		{
 			get
 			{
-				if (!string.IsNullOrEmpty(Source))
-				{
-					return String.Format("{0} ({1})",
-						this.Form.BestVernacularAnalysisAlternative.Text, this.Source);
-				}
-				else
-				{
-					return this.Form.BestVernacularAnalysisAlternative.Text;
-				}
+				return LanguageNotes.BestAnalysisAlternative.Text == "***" ?
+					Form.BestVernacularAnalysisAlternative.Text :
+					string.Format("{0} ({1})",
+						Form.BestVernacularAnalysisAlternative.Text, LanguageNotes.BestAnalysisAlternative.Text);
 			}
 		}
 
@@ -9263,20 +9611,159 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				if (!string.IsNullOrEmpty(Source))
+				if (LanguageNotes.BestAnalysisAlternative.Text == "***")
+					return Form.BestVernacularAnalysisAlternative;
+				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+				tisb.AppendTsString(Form.BestVernacularAnalysisAlternative);
+				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
+				tisb.Append(" (");
+				tisb.AppendTsString(LanguageNotes.BestAnalysisAlternative);
+				tisb.Append(")");
+				return tisb.GetString();
+			}
+		}
+	}
+
+	internal class SenseOrEntry : ISenseOrEntry
+	{
+		public SenseOrEntry(ICmObject target)
+		{
+			Item = target;
+		}
+
+		/// <summary>
+		/// The actual ILexSense or ILexEntry object.
+		/// </summary>
+		public ICmObject Item { get; private set; }
+
+		public Guid EntryGuid
+		{
+			get
+			{
+				var entry = Item as ILexEntry;
+				return entry != null ? entry.Guid : ((ILexSense)Item).Entry.Guid;
+			}
+		}
+
+		public ITsString HeadWord
+		{
+			get
+			{
+				var entry = Item as ILexEntry;
+				if(entry != null)
 				{
-					ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
-					tisb.AppendTsString(this.Form.BestVernacularAnalysisAlternative);
-					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
-					tisb.Append(" (");
-					tisb.Append(this.Source);
-					tisb.Append(")");
-					return tisb.GetString();
+					return entry.HeadWord;
 				}
-				else
+				return ((LexSense)Item).OwnerOutlineName;
+			}
+		}
+
+		public ITsString HeadWordRef
+		{
+			get
+			{
+				var entry = Item as ILexEntry;
+				if (entry != null)
 				{
-					return this.Form.BestVernacularAnalysisAlternative;
+					return entry.HeadWordRef.BestVernacularAlternative;
 				}
+				return ((LexSense)Item).OwnerOutlineName;
+			}
+		}
+
+		public IMultiAccessorBase ReversalName
+		{
+			get
+			{
+				var entry = Item as LexEntry;
+				if(entry != null)
+				{
+					return entry.ReversalName;
+				}
+				var sense = Item as LexSense;
+				if(sense != null)
+				{
+					return sense.ReversalName;
+				}
+				return null;
+			}
+		}
+
+		public IMultiString SummaryDefinition
+		{
+			get
+			{
+				var entry = Item as ILexEntry;
+				if(entry != null)
+				{
+					return entry.SummaryDefinition;
+				}
+				return null;
+			}
+		}
+
+		public IMultiUnicode Gloss
+		{
+			get
+			{
+				var sense = Item as ILexSense;
+				if(sense != null)
+				{
+					return sense.Gloss;
+				}
+				return null;
+			}
+		}
+
+		public IMultiAccessorBase GlossOrSummary
+		{
+			get
+			{
+				var entry = Item as ILexEntry;
+				if(entry != null)
+				{
+					return entry.SummaryDefinition;
+				}
+				var sense = Item as ILexSense;
+				if (sense == null)
+					return null;
+				// LT-17202 Change fallback order
+				// But do have a fallback as per LT-16485
+				if (sense.Gloss == null || sense.Gloss.BestAnalysisAlternative.Equals(sense.Gloss.NotFoundTss))
+					return sense.Definition;
+				return sense.Gloss;
+			}
+		}
+
+		public IFdoOwningSequence<ILexEntryRef> PrimaryEntryRefs
+		{
+			get
+			{
+				var entry = Item as ILexEntry;
+				if (entry != null)
+				{
+					return entry.EntryRefsOS;
+				}
+				var sense = Item as ILexSense;
+				if (sense == null)
+					return null;
+				return sense.Entry.EntryRefsOS;
+			}
+		}
+
+		public IFdoReferenceSequence<ICmPossibility> DialectLabelsRS
+		{
+			get
+			{
+				var entry = Item as ILexEntry;
+				if (entry != null)
+				{
+					return entry.DialectLabelsRS;
+				}
+				var sense = Item as ILexSense;
+				if (sense == null)
+					return null;
+				return sense.DialectLabelsSenseOrEntry;
 			}
 		}
 	}

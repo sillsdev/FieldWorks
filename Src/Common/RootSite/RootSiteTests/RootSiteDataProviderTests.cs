@@ -720,7 +720,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				Assert.AreSame(firstButtonChild, lastButtonChild);
 			}
 		}
-	}
+		}
 
 	#endregion
 	}

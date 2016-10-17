@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{536ED718-EA3A-4ABA-A120-392442A0A4BC}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GenerateHCConfig</RootNamespace>
+    <AssemblyName>GenerateHCConfig</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\Output\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>67</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\Output\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>67</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <NoWin32Manifest>true</NoWin32Manifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BasicUtils">
+      <HintPath>..\..\Output\Debug\BasicUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="COMInterfaces">
+      <HintPath>..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="CoreImpl">
+      <HintPath>..\..\Output\Debug\CoreImpl.dll</HintPath>
+    </Reference>
+    <Reference Include="FDO">
+      <HintPath>..\..\Output\Debug\FDO.dll</HintPath>
+    </Reference>
+    <Reference Include="ParserCore">
+      <HintPath>..\..\Output\Debug\ParserCore.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Collections">
+      <HintPath>..\..\Output\Debug\SIL.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.HermitCrab">
+      <HintPath>..\..\Output\Debug\SIL.HermitCrab.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Machine">
+      <HintPath>..\..\Output\Debug\SIL.Machine.dll</HintPath>
+    </Reference>
+    <Reference Include="SilUtils">
+      <HintPath>..\..\Output\Debug\SilUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="FwUtils">
+      <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="ConsoleLogger.cs" />
+    <Compile Include="NullFdoDirectories.cs" />
+    <Compile Include="NullThreadedProgress.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="ProjectIdentifier.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <Import Project="BuildInclude.targets" />
+</Project>

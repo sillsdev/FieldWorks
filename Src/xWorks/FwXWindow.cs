@@ -4,10 +4,6 @@
 //
 // File: FwXWindow.cs
 // Responsibility: FLEx Team
-//
-// <remarks>
-//	This just wraps the FieldWorks-agnostic XWindow in a form that FwApp can swallow.
-// </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -21,6 +17,9 @@ using System.Text;
 using System.Windows.Forms;
 using L10NSharp;
 using Microsoft.Win32;
+using Palaso.IO;
+using Palaso.Reporting;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
@@ -37,8 +36,6 @@ using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks.Archiving;
-using Palaso.IO;
-using Palaso.Reporting;
 using SIL.Utils;
 using XCore;
 
@@ -49,9 +46,8 @@ using NetSparkle;
 
 namespace SIL.FieldWorks.XWorks
 {
-
 	/// <summary>
-	/// Summary description for FwXWindow.
+	/// This just wraps the FieldWorks-agnostic XWindow in a form that FwApp can swallow.
 	/// </summary>
 	public class FwXWindow : XWindow, IFwMainWnd, ISettings, IRecordListOwner,
 		IMainWindowDelegatedFunctions, IMainWindowDelegateCallbacks, IFindAndReplaceContext
@@ -991,7 +987,7 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		protected bool OnStartLogging(object args)
 		{
-			return true;
+					return true;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1127,6 +1123,28 @@ namespace SIL.FieldWorks.XWorks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Handle click on Archive With RAMP menu item
+		/// </summary>
+		/// <param name="command">Not used</param>
+		/// <returns>true (handled)</returns>
+		/// ------------------------------------------------------------------------------------
+		public bool OnArchiveWithRamp(object command)
+		{
+			CheckDisposed();
+
+			// show the RAMP dialog
+			var filesToArchive = m_app.FwManager.ArchiveProjectWithRamp(m_app, this);
+
+			// if there are no files to archive, return now.
+			if((filesToArchive == null) || (filesToArchive.Count == 0))
+				return true;
+
+			ReapRamp ramp = new ReapRamp();
+			return ramp.ArchiveNow(this, MainMenuStrip.Font, Icon, filesToArchive, m_mediator, m_app, Cache);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Update Archive With RAMP menu item
 		/// </summary>
 		/// <param name="args">the toolbar/menu item properties</param>
@@ -1160,26 +1178,60 @@ namespace SIL.FieldWorks.XWorks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Handle click on Archive With RAMP menu item
+		/// Handle whether to enable menu item.
+		/// </summary>
+		/// <param name="command">Not used</param>
+		/// <param name="display">Display properties</param>
+		/// <returns>true (handled)</returns>
+		/// ------------------------------------------------------------------------------------
+		public bool OnDisplayUploadToWebonary(object command, ref UIItemDisplayProperties display)
+		{
+			display.Enabled = true;
+			return true;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handle click on menu item
 		/// </summary>
 		/// <param name="command">Not used</param>
 		/// <returns>true (handled)</returns>
 		/// ------------------------------------------------------------------------------------
-		public bool OnArchiveWithRamp(object command)
+		public bool OnUploadToWebonary(object command)
 		{
 			CheckDisposed();
-
-			// prompt the user to select or create a FieldWorks backup
-			var filesToArchive = m_app.FwManager.ArchiveProjectWithRamp(m_app, this);
-
-			// if there are no files to archive, return now.
-			if((filesToArchive == null) || (filesToArchive.Count == 0))
-				return true;
-
-			// show the RAMP dialog
-			ReapRamp ramp = new ReapRamp();
-			return ramp.ArchiveNow(this, MainMenuStrip.Font, Icon, filesToArchive, m_mediator, m_app, Cache);
+			ShowUploadToWebonaryDialog(m_mediator);
+			return true;
 		}
+
+		internal static void ShowUploadToWebonaryDialog(Mediator mediator)
+		{
+			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+
+			var publications = cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p.Name.BestAnalysisAlternative.Text).ToList();
+
+			var projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+			var defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+			var configurations = DictionaryConfigurationController.GetDictionaryConfigurationLabels(cache, defaultConfigDir, projectConfigDir);
+			// Now collect all the reversal configurations into the reversals variable
+			projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+			defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+			var reversals = DictionaryConfigurationController.GetDictionaryConfigurationLabels(cache, defaultConfigDir, projectConfigDir);
+
+			// show dialog
+			var model = new UploadToWebonaryModel(mediator)
+			{
+				Reversals = reversals,
+				Configurations = configurations,
+				Publications = publications
+			};
+			using (var controller = new UploadToWebonaryController(cache, mediator))
+			using (var dialog = new UploadToWebonaryDlg(controller, model, mediator))
+			{
+				dialog.ShowDialog();
+			}
+		}
+
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1223,7 +1275,6 @@ namespace SIL.FieldWorks.XWorks
 			FdoCache cache = Cache;
 			bool fDbRenamed = false;
 			string sProject = cache.ProjectId.Name;
-			string sProjectOrig = sProject;
 			string sLinkedFilesRootDir = cache.LangProject.LinkedFilesRootDir;
 			using (var dlg = new FwProjPropertiesDlg(cache, m_app, m_app, FontHeightAdjuster.StyleSheetFromMediator(Mediator)))
 			{
@@ -1265,7 +1316,33 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (m_app is FwXApp)
 					((FwXApp)m_app).OnMasterRefresh(null);
+
+				ReversalIndexServices.CreateOrRemoveReversalIndexConfigurationFiles(m_app.Cache.ServiceLocator.WritingSystemManager,
+					m_app.Cache, FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory, dlg.OriginalProjectName);
+				var selectedWsObj = dlg.AnalysisWsList.SelectedItem as IWritingSystem;
+				SetReversalIndexGuid(selectedWsObj);
 			}
+		}
+
+		/// <summary>
+		/// Method which set the index to the WS property
+		/// </summary>
+		/// <param name="selectedWsObj">selected writing system</param>
+		private void SetReversalIndexGuid(IWritingSystem selectedWsObj)
+		{
+			if (selectedWsObj != null)
+			{
+				if (selectedWsObj.DisplayLabel.ToLower().IndexOf("audio", StringComparison.Ordinal) == -1)
+				{
+					var revGuid = ReversalIndexServices.GetOrCreateWsGuid(selectedWsObj, Cache);
+					m_mediator.PropertyTable.SetProperty("ReversalIndexGuid", revGuid.ToString());
+				}
+				else
+				{
+					m_mediator.PropertyTable.SetProperty("ReversalIndexGuid", Guid.Empty.ToString());
+				}
+			}
+			m_mediator.PropertyTable.SetPropertyPersistence("ReversalIndexGuid", true);
 		}
 
 		/// <summary>
@@ -1287,8 +1364,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return oldName;
 		}
-
-
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1739,9 +1814,11 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		protected bool OnFormatStyle(object args)
 		{
+			var stylesXmlAccessor = new LexText.FlexStylesXmlAccessor(Cache.LanguageProject.LexDbOA);
+
 			ShowStylesDialog(ParaStyleListHelper != null ? ParaStyleListHelper.SelectedStyle.Name : null,
 				CharStyleListHelper != null ? CharStyleListHelper.SelectedStyle.Name : null,
-				null);
+				stylesXmlAccessor.SetPropsToFactorySettings);
 			return true;
 		}
 
@@ -1752,7 +1829,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="paraStyleName">Name of the initially selected paragraph style.</param>
 		/// <param name="charStyleName">Name of the initially selected character style.</param>
 		/// <param name="setPropsToFactorySettings">Delegate to set style info properties back
-		/// to the default facotry settings</param>
+		/// to the default factory settings</param>
 		/// <returns>true if refresh should be called to reload the cache</returns>
 		/// ------------------------------------------------------------------------------------
 		public bool ShowStylesDialog(string paraStyleName, string charStyleName,
@@ -2112,7 +2189,6 @@ namespace SIL.FieldWorks.XWorks
 				if (this.OwnedForms.Length > 0 && this.OwnedForms[0] is FwFindReplaceDlg)
 					this.OwnedForms[0].Close();
 			}
-
 			base.OnPropertyChanged(name);
 		}
 

@@ -81,6 +81,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private bool m_fShowTEStyleTypes = false;
 		private object m_lastStyleTypeEntryForOtherApp;
 		private bool m_fOkToSaveTabsToStyle = true;
+		private static string m_oldStyle = "Dictionary-Normal";
 		#endregion
 
 		#region Constructors and initialization
@@ -115,10 +116,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <c>true</c> the passed-in value for this parameter will be ignored and the display
 		/// will automatically be BiDi enabled. If this value is false, then simple "Left" and
 		/// "Right" labels will be used in the display, rather than "Leading" and "Trailing".</param>
-		/// <param name="normalStyleName">Name of the normal style.</param>
+		/// <param name="normalStyleName">Name of the normal style. Selected when the dialog starts if there is no paragraph style.</param>
 		/// <param name="customUserLevel">The custom user level.</param>
 		/// <param name="userMeasurementType">User's prefered measurement units.</param>
-		/// <param name="paraStyleName">Name of the currently selected paragraph style.</param>
+		/// <param name="paraStyleName">Name of the currently selected paragraph style. Selected when the dialog starts.</param>
 		/// <param name="charStyleName">Name of the currently selected character style.</param>
 		/// <param name="hvoRootObject">The hvo of the root object in the current view.</param>
 		/// <param name="app">The application.</param>
@@ -187,6 +188,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			// Select the current paragraph style in the list (or fall back to Normal)
 			CurrentStyle = (!string.IsNullOrEmpty(paraStyleName)) ? paraStyleName : normalStyleName;
+
+			m_fontTab.StyleDataChanged += OnStyleDataChanged;
+			m_paragraphTab.StyleDataChanged += OnStyleDataChanged;
+			m_bulletsTab.StyleDataChanged += OnStyleDataChanged;
+			m_borderTab.StyleDataChanged += OnStyleDataChanged;
 		}
 
 		/// <summary>
@@ -202,60 +208,47 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="owner">parent window</param>
 		/// <param name="app"></param>
 		/// <param name="helpTopicProvider"></param>
+		/// <param name="setPropsToFactorySettings">Method to be called if user requests to reset a style to factory settings.</param>
 		public static void RunStylesDialogForCombo(ComboBox combo, Action fixCombo, string defaultStyle,
 			FwStyleSheet stylesheet, int nMaxStyleLevel, int hvoAppRoot, FdoCache cache,
-			IWin32Window owner, IApp app, IHelpTopicProvider helpTopicProvider)
+			IWin32Window owner, IApp app, IHelpTopicProvider helpTopicProvider,
+			Action<StyleInfo> setPropsToFactorySettings)
 		{
-			var sci = combo.SelectedItem as StyleComboItem;
-			string charStyleName = combo.SelectedItem as string;
-			if (sci != null)
-				charStyleName = (sci != null && sci.Style != null) ? sci.Style.Name : "";
-			var paraStyleName = stylesheet.GetDefaultBasedOnStyleName();
-			// Although we call this 'paraStyleName', it's actual function is to determine the style that
-			// will be selected in the dialog when it launches. We want that to be the one from the style
-			// combo we are editing, whether it's a paragraph or character one.
-			if (!string.IsNullOrEmpty(charStyleName))
-				paraStyleName = charStyleName;
-			// ReSharper disable ConvertToConstant.Local
-			bool fRightToLeft = false;
-			// ReSharper restore ConvertToConstant.Local
-			IVwRootSite site = null;		// Do we need something better?  We don't have anything!
-			// ReSharper disable RedundantAssignment
-			var selectedStyle = "";
-			// ReSharper restore RedundantAssignment
+			var comboStartingSelectedStyle = combo == null ? defaultStyle : GetStyleName(combo.SelectedItem);
+			var dialogStartingSelectedStyle = stylesheet.GetDefaultBasedOnStyleName();
+			if (!string.IsNullOrEmpty(comboStartingSelectedStyle))
+				dialogStartingSelectedStyle = comboStartingSelectedStyle;
+			const bool fRightToLeft = false;
 			using (var stylesDlg = new FwStylesDlg(
-				site,
+				null,
 				cache,
 				stylesheet,
-				// ReSharper disable ConditionIsAlwaysTrueOrFalse
 				fRightToLeft,
-				// ReSharper restore ConditionIsAlwaysTrueOrFalse
 				cache.ServiceLocator.WritingSystems.AllWritingSystems.Any(ws => ws.RightToLeftScript),
 				stylesheet.GetDefaultBasedOnStyleName(),
 				nMaxStyleLevel,
 				app.MeasurementSystem,
-				paraStyleName,
-				charStyleName,
+				dialogStartingSelectedStyle,
+				comboStartingSelectedStyle,
 				hvoAppRoot,
 				app,
 				helpTopicProvider))
 			{
 				stylesDlg.ShowTEStyleTypes = false;
 				stylesDlg.CanSelectParagraphBackgroundColor = false;
-				if (stylesDlg.ShowDialog(owner) == DialogResult.OK &&
-					((stylesDlg.ChangeType & StyleChangeType.DefChanged) > 0 ||
-					 (stylesDlg.ChangeType & StyleChangeType.Added) > 0))
+				stylesDlg.SetPropsToFactorySettings = setPropsToFactorySettings;
+				if (stylesDlg.ShowDialog(owner) == DialogResult.OK && stylesDlg.ChangeType != StyleChangeType.None)
 				{
 					app.Synchronize(SyncMsg.ksyncStyle);
-					selectedStyle = stylesDlg.SelectedStyle;
-					var oldStyle = GetStyleName(combo.SelectedItem);
+					var selectedStyle = stylesDlg.SelectedStyle;
+					m_oldStyle = comboStartingSelectedStyle;
 					if (fixCombo != null)
 						fixCombo();
 					if (string.IsNullOrEmpty(selectedStyle))
 						selectedStyle = defaultStyle;
 					// Make the requested change if possible...otherwise restore the previous selction.
-					if (!SelectStyle(combo, selectedStyle))
-						SelectStyle(combo, oldStyle);
+					if (combo != null && !SelectStyle(combo, selectedStyle))
+						SelectStyle(combo, m_oldStyle);
 				}
 			}
 		}
@@ -466,10 +459,47 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				EnsureParagraphStyleTabs();
 
 			UpdateTabsForStyle(styleInfo);
-
-			// Enable/disable the delete button based on the style being built-in
-			m_btnDelete.Enabled = !styleInfo.IsBuiltIn;
 			m_btnCopy.Enabled = styleInfo.CanInheritFrom;
+			RefreshDeleteAndResetButton();
+		}
+
+		private void RefreshDeleteAndResetButton()
+		{
+			StyleListItem selectedItem = m_styleListHelper.SelectedStyle;
+			// Depending on how we got here (like in the middle of Deleting and then
+			// selecting a new style), there might not be a currently selected style.
+			// Handle that situation gracefully.
+			if (selectedItem == null)
+			{
+				m_btnDelete.Enabled = false;
+				return;
+			}
+
+			StyleInfo styleInfo = (StyleInfo)selectedItem.StyleInfo;
+			if (styleInfo == null)
+			{
+				m_btnDelete.Enabled = false;
+				return;
+			}
+
+			if (IsStyleUserCreated(styleInfo))
+			{
+				m_btnDelete.Text = "&Delete";
+				m_btnDelete.Enabled = true;
+			}
+			else
+			{
+				m_btnDelete.Text = "&Reset";
+				m_btnDelete.Enabled = IsCurrentStyleResettable();
+			}
+		}
+
+		/// <summary>
+		/// Is the style created by the user, as opposed to a style that ships with FW?
+		/// </summary>
+		private bool IsStyleUserCreated(StyleInfo styleInfo)
+		{
+			return !styleInfo.IsBuiltIn;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -490,6 +520,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_bulletsTab.UpdateForStyle(styleInfo);
 				m_borderTab.UpdateForStyle(styleInfo);
 			}
+			m_generalTab.UpdateForStyle(styleInfo);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -502,7 +533,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			RemoveParagraphStyleTabs();
 			if (m_tabControl.TabPages.Contains(m_tbFont))
 				m_tabControl.TabPages.Remove(m_tbFont);
-			m_btnDelete.Enabled = false;
+			RefreshDeleteAndResetButton();
 			m_btnCopy.Enabled = false;
 		}
 
@@ -553,7 +584,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_styleListHelper.Refresh();
 			if (m_lstStyles.SelectedValue == null)
 			{
-				m_btnDelete.Enabled = false;
+				RefreshDeleteAndResetButton();
 				m_btnCopy.Enabled = false;
 				// Treat a non-existent style (from an empty list) as a character
 				// style -- hide several tab pages, and force the General tab.
@@ -686,6 +717,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the Click event of the m_btnDelete control.
+		/// Note that this contol might be being used for Delete or Reset depending
+		/// on the context.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		private void m_btnDelete_Click(object sender, EventArgs e)
@@ -694,6 +727,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (m_styleListHelper.SelectedStyle == null)
 				return;
 			StyleInfo style = (StyleInfo)m_styleListHelper.SelectedStyle.StyleInfo;
+
+			if (IsStyleUserCreated(style))
+			{
+				DeleteStyle(style);
+				return;
+			}
+
+			if (IsCurrentStyleResettable())
+				ResetStyle(style);
+		}
+
+		private void DeleteStyle(StyleInfo style)
+		{
 			if (style.IsBuiltIn)
 				return;
 
@@ -719,7 +765,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			else
 			{
-				m_btnDelete.Enabled = false;
+				m_cboTypes.SelectedIndex = 1; // All Styles
+				CurrentStyle = m_oldStyle;
+				RefreshDeleteAndResetButton();
 				m_btnCopy.Enabled = false;
 			}
 		}
@@ -939,16 +987,24 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		void contextMenuStyles_Opening(object sender, System.ComponentModel.CancelEventArgs e)
 		{
+			resetToolStripMenuItem.Enabled = IsCurrentStyleResettable();
+		}
+
+		/// <summary>
+		/// Can this FwStylesDialog reset the currently selected style?
+		/// </summary>
+		private bool IsCurrentStyleResettable()
+		{
 			StyleListItem selectedItem = m_styleListHelper.SelectedStyle;
 			if (SetPropsToFactorySettings == null || selectedItem.StyleInfo == null ||
 				!(selectedItem.StyleInfo is StyleInfo))
 			{
-				resetToolStripMenuItem.Enabled = false;
+				return false;
 			}
 			else
 			{
 				StyleInfo styleInfo = (StyleInfo)selectedItem.StyleInfo;
-				resetToolStripMenuItem.Enabled = (styleInfo.RealStyle != null &&
+				return (styleInfo.RealStyle != null &&
 					styleInfo.RealStyle.IsBuiltIn && styleInfo.IsModified);
 			}
 		}
@@ -974,7 +1030,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Handles the Click event of the m_btnHelp control.
+		/// Handles a Click event
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
@@ -985,6 +1041,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			StyleListItem selectedItem = m_styleListHelper.SelectedStyle;
 			Debug.Assert(selectedItem.StyleInfo != null && selectedItem.StyleInfo is StyleInfo);
 			StyleInfo styleInfo = (StyleInfo)selectedItem.StyleInfo;
+			ResetStyle(styleInfo);
+		}
+
+		private void ResetStyle(StyleInfo styleInfo)
+		{
 			Debug.Assert(styleInfo.RealStyle != null && styleInfo.RealStyle.IsBuiltIn &&
 				styleInfo.RealStyle.IsModified);
 			SetPropsToFactorySettings(styleInfo);
@@ -1186,6 +1247,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_tabControl.TabPages.Remove(m_tbParagraph);
 		}
 
+		/// <summary>
+		/// Handles the event of style information being changed by the dialog.
+		/// (Like if the user clicks Bold on the Font tab or changes Indentation on the Paragraph tab.)
+		/// </summary>
+		private void OnStyleDataChanged(object sender, EventArgs args)
+		{
+			RefreshDeleteAndResetButton();
+		}
 		#endregion
 	}
 	#endregion // FwStylesDlg class

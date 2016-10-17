@@ -482,6 +482,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				UIAutomationServerProviderFactory = () => new SimpleRootSiteDataProvider(this);
 #endif
 			SubscribeToRootSiteEventHandlerEvents();
+
 		}
 
 #if DEBUG
@@ -584,9 +585,9 @@ namespace SIL.FieldWorks.Common.RootSites
 				}
 				if (components != null)
 					components.Dispose();
-#if __MonoCS__
+				#if __MonoCS__
 				KeyboardController.Unregister(this);
-#endif
+				#endif
 			}
 
 			if (m_vdrb != null && Marshal.IsComObject(m_vdrb))
@@ -962,6 +963,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			set
 			{
 				CheckDisposed();
+
 				// If this is read-only, it should not try to handle keyboard input in general.
 				if (EditingHelper.Editable && value)
 					KeyboardController.Unregister(this);

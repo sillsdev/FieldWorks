@@ -25,6 +25,9 @@
 		<command id="CmdInsertPicture" label="_Picture" message="InsertPicture">
 			<parameters field="Pictures" className="LexSense"/>
 		</command>
+		<command id="CmdInsertExtNote" label="_Extended Note" message="DataTreeInsert">
+			<parameters field="ExtendedNote" className="LexExtendedNote" ownerClass="LexSense"/>
+		</command>
 		<command id="CmdInsertMediaFile" label="_Sound or Movie" message="InsertMediaFile">
 			<parameters field="MediaFiles" className="LexPronunciation"/>
 		</command>
@@ -40,20 +43,13 @@
 		<command id="CmdChangeToVariant" label="Lexeme Form is a variant" message="ConvertEntryIntoVariant">
 			<parameters className="LexEntry" restrictToTool="lexiconEdit"/>
 		</command>
-		<command id="CmdInsertReversalIndex" label="Reversal Index" message="InsertReversalIndex">
-			<parameters className="ReversalIndex"/>
-		</command>
-		<command id="CmdDeleteReversalIndex" label="Delete Reversal Index" message="DeleteReversalIndex" icon="Delete">
-			<parameters className="ReversalIndex"/>
-		</command>
 		<command id="CmdInsertReversalEntry" label="Reversal Entry" message="InsertItemInVector" icon="reversalEntry">
 			<parameters className="ReversalIndexEntry"/>
 		</command>
 		<command id="CmdGoToReversalEntry" label="_Find reversal entry..." message="GotoReversalEntry" icon="gotoReversalEntry" shortcut="Ctrl+F">
 			<parameters title="Go To Entry" formlabel="Go _To..." okbuttonlabel="_Go"/>
 		</command>
-		<command id="CmdConfigureXmlDocView" label="{0}" message="ConfigureXmlDocView"/>
-		<command id="CmdConfigureDictionary" label="Configure {0}" message="ConfigureXmlDocView"/>
+		<command id="CmdConfigureDictionary" label="Configure {0}" message="ConfigureDictionary"/>
 	</commands>
 	<!-- ********************************************************** -->
 	<!-- ************************ lists *********************** -->
@@ -187,17 +183,17 @@
 			<item command="CmdInsertSense" defaultVisible="false"/>
 			<item command="CmdInsertVariant" defaultVisible="false"/>
 			<item command="CmdDataTree-Insert-AlternateForm" label="A_llomorph" defaultVisible="false"/>
-			<item command="CmdInsertReversalIndex" defaultVisible="false"/>
 			<item command="CmdInsertReversalEntry" defaultVisible="false"/>
 			<item command="CmdDataTree-Insert-Pronunciation" defaultVisible="false"/>
 			<item command="CmdInsertMediaFile" defaultVisible="false"/>
+			<item command="CmdDataTree-Insert-Etymology" defaultVisible="false"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdInsertSubsense" defaultVisible="false"/>
 			<item command="CmdInsertPicture" defaultVisible="false"/>
+			<item command="CmdInsertExtNote" defaultVisible="false"/>
 		</menu>
 		<menu id="Edit">
 			<item command="CmdGoToReversalEntry" defaultVisible="false"/>
-			<item command="CmdDeleteReversalIndex" defaultVisible="false"/>
 		</menu>
 		<menu id="View">
 			<item label="Show _Dictionary Preview" boolProperty="Show_DictionaryPubPreview" defaultVisible="false"/>
@@ -205,7 +201,7 @@
 		</menu>
 		<!-- This is really the Tools-Configure submenu.-->
 		<menu id="Configure">
-			<item label="{0}" command="CmdConfigureXmlDocView" defaultVisible="false"/>
+			<item label="{0}" command="CmdConfigureDictionary" defaultVisible="false"/>
 		</menu>
 		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menuAddOn/*"/>
 	</menuAddOn>
@@ -223,6 +219,7 @@
 				<item label="Insert A_llomorph" command="CmdDataTree-Insert-AlternateForm"/>
 				<item label="Insert _Pronunciation" command="CmdDataTree-Insert-Pronunciation"/>
 				<item label="Insert Sound or Movie _File" command="CmdInsertMediaFile"/>
+				<item label="Insert _Etymology" command="CmdDataTree-Insert-Etymology"/>
 				<item label="-" translate="do not translate"/>
 				<item command="CmdChangeToComplexForm"/>
 				<item command="CmdChangeToVariant"/>
@@ -235,15 +232,17 @@
 		<menu id="PaneBar-Dictionary" label="">
 		<!-- *** Put any alignment="right" menus in first. *** -->
 			<menu id="LexEntryPaneMenu" icon="MenuWidget" alignment="right">
-				<menu list="Layouts" inline="true" emptyAllowed="true"
+				<menu list="Configurations" inline="true" emptyAllowed="true"
 					  behavior="singlePropertyAtomicValue" property="DictionaryPublicationLayout"/>
 				<item label="-" translate="do not translate"/>
 				<item command="CmdConfigureDictionary"/>
 			</menu>
 			<menu id="LexEntryPaneMenu" icon="MenuWidget" alignment="left">
+				<item command="CmdShowAllPublications"/>
 				<menu list="Publications" inline="true" emptyAllowed="true"
 					  behavior="singlePropertyAtomicValue" property="SelectedPublication"/>
-				<item command="CmdShowAllPublications"/>
+				<item label="-" translate="do not translate"/> <!-- separator -->
+				<item command="CmdPublicationsJumpToDefault"/>
 			</menu>
 		</menu>
 		<menu id="PaneBar-ReversalEntryDetail" label="">
@@ -350,6 +349,7 @@
 								<LexEntry sourceField="Entries">
 									<LexEntryRef sourceField="AllEntryRefs" altSourceField="ComplexEntryTypes:AllComplexEntryRefPropertyTargets;VariantEntryTypes:AllVariantEntryRefPropertyTargets"/>
 									<LexPronunciation sourceField="AllPossiblePronunciations"/>
+									<LexEtymology sourceField="AllPossibleEtymologies"/>
 									<MoForm sourceField="AllPossibleAllomorphs"/>
 									<LexSense sourceField="AllSenses">
 										<LexExampleSentence sourceField="AllExampleSentenceTargets">
@@ -366,6 +366,12 @@
 										<int class="LexPronunciation" field="Self"/>
 									</seq>
 									<!-- NOTE: AllPossiblePronunciations can also have LexEntry items, since it is a ghost field -->
+								</part>
+								<part id="LexEntry-Jt-AllPossibleEtymologies" type="jtview">
+									<seq class="LexEntry" field="Etymology" firstOnly="true" layout="empty">
+										<int class="LexEtymology" field="Self"/>
+									</seq>
+									<!-- NOTE: AllPossibleEtymologies can also have LexEntry items, since it is a ghost field -->
 								</part>
 								<part id="LexEntry-Jt-AllComplexEntryRefPropertyTargets" type="jtview">
 									<seq class="LexEntry" field="EntryRefs" firstOnly="true" layout="empty">

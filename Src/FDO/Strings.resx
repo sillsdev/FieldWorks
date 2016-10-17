@@ -879,4 +879,16 @@ To restore from this backup, install version {1} of FieldWorks.
   <data name="ksUsedXTimesInAffixProcessRules" xml:space="preserve">
     <value>{0}. Being used {1} times by affix process rules.</value>
   </data>
+  <data name="ksFoundNCircularReferences" xml:space="preserve">
+    <value>Found {0} circular references in {1} entry references</value>
+  </data>
+  <data name="ksRemovingCircularComponentLexeme" xml:space="preserve">
+    <value>Removing {0} as component lexeme for {1}</value>
+  </data>
+  <data name="ksAlsoEmptyComplexFormInfo" xml:space="preserve">
+    <value>Also removing empty Complex Form Info from {0}</value>
+  </data>
+  <data name="ksCircularRefsFixed" xml:space="preserve">
+    <value>Circular Reference Fixed</value>
+  </data>
 </root>

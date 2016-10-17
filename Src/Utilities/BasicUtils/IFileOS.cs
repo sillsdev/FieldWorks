@@ -138,5 +138,11 @@ namespace SIL.Utils
 
 		/// <summary/>
 		void CreateDirectory(string directory);
+
+		/// <summary>
+		/// Returns the length of the file
+		/// </summary>
+		/// <param name="filePath"></param>
+		long FileLength(string filePath);
 	}
 }

@@ -931,7 +931,6 @@ namespace SIL.FieldWorks.IText
 				 e.KeyCode == Keys.Right || e.KeyCode == Keys.Left) &&
 				((e.KeyCode & Keys.Shift) != Keys.Shift) && ((e.KeyCode & Keys.Control) != Keys.Control))
 			{
-				//MessageBox.Show("Processing arrow keys!", "What's Going On Here??");
 				// It's an arrow key, but is it in a translation line or note?
 				// Get the current selection so we can obtain the actual translation or note objects
 				SelLevInfo[] rgvsli;
@@ -1180,6 +1179,7 @@ namespace SIL.FieldWorks.IText
 		/// <returns>
 		/// true if the information was found, false otherwise.
 		/// </returns>
+		/// <remarks>If a tag specifies a translation, but curSeg is null this will return false. Similar for curNote.</remarks>
 		private bool GetLineInfo(ISegment curSeg, INote curNote, int tag, int ichAnchor, int ichEnd, int wid,
 						out int id, out int lineNum, out WhichEnd where, out bool isRightToLeft, out bool hasPrompt)
 		{
@@ -1197,14 +1197,28 @@ namespace SIL.FieldWorks.IText
 			{
 				case SegmentTags.kflidFreeTranslation:
 					id = InterlinLineChoices.kflidFreeTrans;
+					if (curSeg == null)
+					{
+						Debug.WriteLine("Moving from a non-exisiting segment in interlinear Doc.");
+						return false;
+					}
 					where = ExtremePositionInString(ichAnchor, ichEnd, curSeg.FreeTranslation.get_String(wid).Length, isRightToLeft);
 					break;
 				case SegmentTags.kflidLiteralTranslation:
 					id = InterlinLineChoices.kflidLitTrans;
+					if (curSeg == null)
+					{
+						Debug.WriteLine("Moving from a non-exisiting segment in interlinear Doc.");
+						return false;
+					}
 					where = ExtremePositionInString(ichAnchor, ichEnd, curSeg.LiteralTranslation.get_String(wid).Length, isRightToLeft);
 					break;
 				case NoteTags.kflidContent:
-					Debug.Assert(curNote != null, "Moving from a non-exisiting note in interlinear Doc.");
+					if (curNote == null)
+					{
+						Debug.WriteLine("Moving from a non-exisiting note in interlinear Doc.");
+						return false;
+					}
 					id = InterlinLineChoices.kflidNote;
 					where = ExtremePositionInString(ichAnchor, ichEnd, curNote.Content.get_String(wid).Length, isRightToLeft);
 					break;
@@ -1243,10 +1257,10 @@ namespace SIL.FieldWorks.IText
 		{
 			curParaIndex = rgvsli[clev - 2].ihvo;
 			var curPara = (IStTxtPara)RootStText.ParagraphsOS[curParaIndex];
-			Debug.Assert(curPara != null, "Moving from a non-exisiting paragraph in interlinear Doc.");
+			Debug.WriteLineIf(curPara != null, "Moving from a non-exisiting paragraph in interlinear Doc.");
 			curSegIndex = rgvsli[clev - 3].ihvo;
-			curSeg = curPara.SegmentsOS[curSegIndex];
-			Debug.Assert(curSeg != null, "Moving from a non-exisiting segment in interlinear Doc.");
+			curSeg = curSegIndex < curPara.SegmentsOS.Count && curSegIndex >= 0 ? curPara.SegmentsOS[curSegIndex] : null;
+			Debug.WriteLineIf(curSeg != null, "Moving from a non-exisiting segment in interlinear Doc.");
 			curNote = null;
 			curNoteIndex = -1;
 			if (tag == NoteTags.kflidContent)

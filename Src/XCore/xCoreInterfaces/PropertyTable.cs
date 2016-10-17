@@ -418,7 +418,6 @@ namespace XCore
 			CheckDisposed();
 			if (!Monitor.TryEnter(m_properties))
 			{
-				MiscUtils.ErrorBeep();
 				TraceVerboseLine(">>>>>>>*****  colision: <A>  ********<<<<<<<<<<<");
 				Monitor.Enter(m_properties);
 			}

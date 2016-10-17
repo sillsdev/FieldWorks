@@ -348,7 +348,29 @@ Are you SURE you want to delete the field {2}?</value>
     <value>{0} can be configured in more detail.</value>
   </data>
   <data name="ksUsesTheSameConfigurationAs" xml:space="preserve">
-    <value>{0} otherwise uses the same configuration as {1}.</value>
+    <value>{0} uses the same configuration for subfields as
+{1}.</value>
+    <comment>{0} and {1} are both configuration nodes</comment>
+  </data>
+  <data name="ksConfigureNow" xml:space="preserve">
+    <value>Configure now...</value>
+  </data>
+  <data name="ClickToJumpTo" xml:space="preserve">
+    <value>Click to jump to {0}.</value>
+  </data>
+  <data name="ThisIsConfiguredElsewhere" xml:space="preserve">
+    <value>This item is configured somewhere else. Hover for details.</value>
+  </data>
+  <data name="ThisConfigurationIsShared" xml:space="preserve">
+    <value>This configuration is shared. Hover for details.</value>
+  </data>
+  <data name="SharesWithTheseNodes" xml:space="preserve">
+    <value>Configuring the subfields of {0} also affects:{1}.</value>
+    <comment>{0} is the name of this node. {1} is a list of affected nodes.</comment>
+  </data>
+  <data name="SeeAffectedNodesUnder" xml:space="preserve">
+    <value>See {0} for a list of affected nodes.</value>
+    <comment>{0} is the node whose tooltip is SharesWithTheseNodes</comment>
   </data>
   <data name="ksBefore" xml:space="preserve">
     <value>Before:</value>
@@ -377,6 +399,12 @@ Are you SURE you want to delete the field {2}?</value>
   <data name="ksUnspecified" xml:space="preserve">
     <value>(unspecified)</value>
   </data>
+  <data name="ksDisplayComplexFormsInParagraphs" xml:space="preserve">
+    <value>Display each Complex Form in a paragraph</value>
+  </data>
+  <data name="ksDisplayExtendedNoteInParagraphs" xml:space="preserve">
+    <value>Display each Extended Note in a paragraph</value>
+  </data>
   <data name="ksCantPromoteGroupToTemplate" xml:space="preserve">
     <value>You cannot promote part of one discourse chart template to a new template. In fact, currently we do not support having more than one template at all.</value>
   </data>
@@ -388,11 +416,32 @@ Are you SURE you want to delete the field {2}?</value>
   </data>
   <data name="MoveDown" xml:space="preserve">
     <value>Move Down</value>
-    <comment>context menu item</comment>
+    <comment>action on a tree view item</comment>
   </data>
   <data name="MoveUp" xml:space="preserve">
     <value>Move Up</value>
-    <comment>context menu item</comment>
+    <comment>action on a tree view item</comment>
+  </data>
+  <data name="Duplicate" xml:space="preserve">
+    <value>Duplicate</value>
+    <comment>action on a tree view item</comment>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+    <comment>action on a tree view item</comment>
+  </data>
+  <data name="EditLabel" xml:space="preserve">
+    <value>Edit Label</value>
+    <comment>action on a tree view item</comment>
+  </data>
+  <data name="HighlightAffectedContent" xml:space="preserve">
+    <value>Highlight affected content</value>
+  </data>
+  <data name="RemoveHighlighting" xml:space="preserve">
+    <value>Remove highlighting from affected content</value>
+  </data>
+  <data name="ConfigureReferencedHeadwordsTooltip" xml:space="preserve">
+    <value>Configure homograph numbers on all headwords and sense numbers on headwords in cross references</value>
   </data>
   <data name="kstidExportingLists" xml:space="preserve">
     <value>Writing possibility list contents</value>
@@ -636,6 +685,10 @@ Are you sure you want to delete this list?</value>
     <value>Configure {0} View...</value>
     <comment>Sole item in right-click menu in Dictionary view</comment>
   </data>
+  <data name="ksInspect" xml:space="preserve">
+    <value>Inspect entry</value>
+    <comment>Second item in ctrl-right-click menu in Dictionary view</comment>
+  </data>
   <data name="ksCtrlClickJumpTooltip" xml:space="preserve">
     <value>Ctrl+Click to jump</value>
     <comment>Message shows in Dictionary view when mouse is over a link to another entry.</comment>
@@ -667,6 +720,9 @@ Are you sure you want to delete this list?</value>
   <data name="ksComplexFormTypes" xml:space="preserve">
     <value>Complex Form Types:</value>
   </data>
+  <data name="ksExtendedNoteTypes" xml:space="preserve">
+    <value>Extended Note Types:</value>
+  </data>
   <data name="ksMinorEntryTypes" xml:space="preserve">
     <value>Minor Entry Types:</value>
   </data>
@@ -676,19 +732,25 @@ Are you sure you want to delete this list?</value>
   <data name="ksNoComplexFormType" xml:space="preserve">
     <value>No Complex Form Type</value>
   </data>
+  <data name="ksNoExtendedNoteType" xml:space="preserve">
+    <value>No Extended Note Type</value>
+  </data>
+  <data name="ksNoConfiguration" xml:space="preserve">
+    <value>The dictionary display configuration has not been set.</value>
+  </data>
   <data name="ksNoVariantType" xml:space="preserve">
     <value>No Variant Type</value>
   </data>
   <data name="ksVariantTypes" xml:space="preserve">
-    <value>Variant Types</value>
+    <value>Variant Types:</value>
   </data>
   <data name="ksDictConfigMultiCopyOf" xml:space="preserve">
     <value>Copy of {0} ({1})</value>
     <comment>{1} is a number to distinguish an earlier copy.  {0} is the name of a stored dictionary configuration that is being copied.</comment>
   </data>
   <data name="ksAllEntries" xml:space="preserve">
-    <value>All Entries</value>
-    <comment>Used in Dictionary View pane when Main Dictionary publication is selected.</comment>
+    <value>All</value>
+    <comment>Used in Dictionary View pane when no Dictionary Publication is selected.</comment>
   </data>
   <data name="ksPublicationEntries" xml:space="preserve">
     <value>{0} {1}</value>
@@ -796,5 +858,171 @@ If you are not the one designated user who adds fields, or you are making some o
   </data>
   <data name="ksIllegalXmlChars" xml:space="preserve">
     <value>Characters with hexadecimal values 0x0 through 0x1f are illegal in XML documents and have been removed.</value>
+  </data>
+  <data name="FailedToRename" xml:space="preserve">
+    <value>Failed to rename. Use a name that is not already in use.</value>
+    <comment>String similar 'Failed to rename. Use a name that is not already in use'
+</comment>
+  </data>
+  <data name="Allpublications" xml:space="preserve">
+    <value>All publications</value>
+  </data>
+  <data name="ConfigureTitle" xml:space="preserve">
+    <value>Configure {0}</value>
+    <comment>{0} is a type of configuration, like Dictionary or Reversal Index</comment>
+  </data>
+  <data name="Dictionary" xml:space="preserve">
+    <value>Dictionary</value>
+  </data>
+  <data name="ReversalIndex" xml:space="preserve">
+    <value>Reversal Index</value>
+  </data>
+  <data name="AllEntriesPublication" xml:space="preserve">
+    <value>$$all_entries$$</value>
+    <comment>Do Not Translate</comment>
+  </data>
+  <data name="InvalidRootConfigurationNode" xml:space="preserve">
+    <value>The root node in your configuration is invalid. The field attribute '{0}' must match a class name.</value>
+    <comment>low priority for localizing, helpful to developers of dictionary configuration files, hopefully users will never see this.</comment>
+  </data>
+  <data name="NoConfigsMatchPub" xml:space="preserve">
+    <value>No configurations match the current publication.</value>
+    <comment>If a user selects a publication, but has deselected that publication from all their configurations, this will be the content of the dictionary preview pane.</comment>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Reset</value>
+    <comment>As in setting some settings back to what they were before customization.</comment>
+  </data>
+  <data name="YouAreResetting" xml:space="preserve">
+    <value>You are resetting the following to factory defaults:</value>
+  </data>
+  <data name="Configuration" xml:space="preserve">
+    <value>Configuration</value>
+    <comment>A generic description of a Dictionary Configuration or a Reversal Index Configuration.</comment>
+  </data>
+  <data name="WantContinue" xml:space="preserve">
+    <value>Do you want to continue?</value>
+    <comment>whether to continue with the resetting of a configuration</comment>
+  </data>
+  <data name="UploadToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0__publication_using_the__1__configuration" xml:space="preserve">
+    <value>Exporting entries for the {0} publication using the {1} configuration</value>
+    <comment>Displayed in the log when exporting to webonary</comment>
+  </data>
+  <data name="ExportingEntriesToWebonary" xml:space="preserve">
+    <value>Exporting entries for the {0} publication using the {1} configuration</value>
+    <comment>Displayed in the log box when exporting to Webonary</comment>
+  </data>
+  <data name="ExportingEntriesToWebonaryCompleted" xml:space="preserve">
+    <value>Export of lexicon completed.</value>
+    <comment>Displayed in the log box when exporting to Webonary after all entries are exported</comment>
+  </data>
+  <data name="BeginCompressingDataForWebonary" xml:space="preserve">
+    <value>Compressing data before sending to Webonary.</value>
+    <comment>Displayed in the log box of UploadToWebonaryDlg when data is being zipped up.</comment>
+  </data>
+  <data name="FinishedCompressingDataForWebonary" xml:space="preserve">
+    <value>Compression complete.</value>
+    <comment>Displayed in the UploadToWebonaryDlg log box</comment>
+  </data>
+  <data name="ConfigurationTreeControl_SelectAllChildren" xml:space="preserve">
+    <value>Select All Children</value>
+    <comment>Hidden context menu command (Ctrl+Right Click) for selecting a node and all its children in the Configuration Dialog</comment>
+  </data>
+  <data name="ConfigurationTreeControl_ClearAllChildren" xml:space="preserve">
+    <value>Clear All Children</value>
+    <comment>Hidden context menu command (Ctrl+Right Click) for clearing a node and all its children in the Configuration Dialog</comment>
+  </data>
+  <data name="ksDisplaySubentriesInParagraphs" xml:space="preserve">
+    <value>Display each Subentry in a paragraph</value>
+  </data>
+  <data name="ExportingReversalsToWebonary" xml:space="preserve">
+    <value>Exporting entries for {0} reversal.</value>
+  </data>
+  <data name="ExportingReversalsToWebonaryCompleted" xml:space="preserve">
+    <value>Export of reversal completed.</value>
+  </data>
+  <data name="PublicationEntriesLabel" xml:space="preserve">
+    <value>Pressing Submit will send {0} dictionary entries{1} to Webonary.</value>
+    <comment>Message displayed in Upload to Webonary dialog to inform user about what data will be uploaded. 0 will be a number. 1 will be either blank or a combination of ReversalEntries, ReversalEntries_Last, and ReversalEntries_Only</comment>
+  </data>
+  <data name="ReversalEntries" xml:space="preserve">
+    <value>, {0} {1} reversal entries</value>
+    <comment>Part of message displayed in Upload to Webonary dialog to inform user about what data will be uploaded. Will be inserted into the PublicationEntriesLabel string. 0 is a number. 1 is the name of a language or a reversal index configuration name. This string will be used in cases where there are more than one reversal index configuration to report the count for, and this is not the last one.</comment>
+  </data>
+  <data name="ReversalEntries_Last" xml:space="preserve">
+    <value>, and {0} {1} reversal entries</value>
+    <comment>Part of message displayed in Upload to Webonary dialog to inform user about what data will be uploaded. Will be inserted into the PublicationEntriesLabel string. 0 is a number. 1 is the name of a language or a reversal index configuration name. This string will be used in cases where there are more than one reversal index configuration to report the count for, and this is the last one.</comment>
+  </data>
+  <data name="ReversalEntries_Only" xml:space="preserve">
+    <value> and {0} {1} reversal entries</value>
+    <comment>Part of message displayed in Upload to Webonary dialog to inform user about what data will be uploaded. Will be inserted into the PublicationEntriesLabel string. 0 is a number. 1 is the name of a language or a reversal index configuration name. This string will be used in cases where there is just one reversal index configuration to report the count for.</comment>
+  </data>
+  <data name="ksGeneratingDisplayFragments" xml:space="preserve">
+    <value>Generating the display fragments for individual entries</value>
+    <comment>message displayed on progress report dialog</comment>
+  </data>
+  <data name="ksArrangingDisplayFragments" xml:space="preserve">
+    <value>Putting the display fragments together with the letter headers</value>
+    <comment>this message is displayed on a progress report dialog</comment>
+  </data>
+  <data name="ksGeneratingStyleInfo" xml:space="preserve">
+    <value>Generating the styles information</value>
+    <comment>this message is displayed on a progress report dialog</comment>
+  </data>
+  <data name="ksErrorDisplayingPublication" xml:space="preserve">
+    <value>Cannot generate the display for the current publication</value>
+  </data>
+  <data name="ksObtainingEntriesToDisplay" xml:space="preserve">
+    <value>Obtaining the list of entries to display</value>
+    <comment>this message is displayed in a progress report dialog</comment>
+  </data>
+  <data name="ksPreparingPublicationDisplay" xml:space="preserve">
+    <value>Preparing to display the publication view</value>
+    <comment>this is the title for a progress report dialog</comment>
+  </data>
+  <data name="ksSubsenseNumberConfig" xml:space="preserve">
+    <value>Subsense Number Configuration</value>
+  </data>
+  <data name="ksNumberSingleSubsense" xml:space="preserve">
+    <value>Number even a single subsense</value>
+  </data>
+  <data name="ksHideGramInfoIfSameAsParent" xml:space="preserve">
+    <value>Hide subsense grammatical info if same as parent</value>
+  </data>
+  <data name="ksCancelingPublicationLabel" xml:space="preserve">
+    <value>Click Cancel to stop loading the Dictionary view and move to Lexicon Edit.</value>
+  </data>
+  <data name="ReversalIndexConfigurationDlgTitle" xml:space="preserve">
+    <value>Reversal Index Configuration Manager</value>
+  </data>
+  <data name="YouAreResettingReversal" xml:space="preserve">
+    <value>You are resetting the following to the 'All Reversal Indexes' settings:</value>
+  </data>
+  <data name="DictionaryConfigurationMangager_ReversalConfigurations_GroupLabel" xml:space="preserve">
+    <value>Reversal Configurations</value>
+    <comment>Label for the group box which contains the reversal configurations</comment>
+  </data>
+  <data name="InadvisableToShare" xml:space="preserve">
+    <value>It is inadvisable to share '{0}' because a shared node with the same field ({1}) already exists ({2}). No changes have been made.</value>
+    <comment>{0} is the node the user has requested to share. {3} is the field these nodes control. {2} is an existing shared node.</comment>
+  </data>
+  <data name="ksDisplayExamplesInParagraphs" xml:space="preserve">
+    <value>Display each Example in a paragraph</value>
+  </data>
+  <data name="ksDisplayEachSubsenseInAParagraph" xml:space="preserve">
+    <value>Display each subsense in a paragraph</value>
+  </data>
+   <data name="ksDisplayNoteInParagraphs" xml:space="preserve">
+    <value>Display each Note in a separate paragraph</value>
+  </data>
+  <data name="ksStartingWithTheSecondSubsense" xml:space="preserve">
+    <value>starting with second subsense</value>
+    <comment>This directly follows ksDisplayEachSubsenseInAParagraph</comment>
+  </data>
+  <data name="ksParentSenseNumberingStyle" xml:space="preserve">
+    <value>Show parent sense number</value>
   </data>
 </root>

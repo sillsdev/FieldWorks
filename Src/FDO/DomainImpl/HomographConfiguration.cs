@@ -61,6 +61,31 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		public const string ksSenseReferenceNumberStyle = "Sense-Reference-Number";
 
 		/// <summary>
+		/// The style used for sense number.
+		/// </summary>
+		public string ksSenseNumberStyle = "%d";
+
+		/// <summary>
+		/// The style used for sub sense number.
+		/// </summary>
+		public string ksSubSenseNumberStyle = "%d";
+
+		/// <summary>
+		/// The style used for sub sub sense number.
+		/// </summary>
+		public string ksSubSubSenseNumberStyle = "%d";
+
+		/// <summary>
+		/// The style used for parent sense number.
+		/// </summary>
+		public string ksParentSenseNumberStyle = "%.";
+
+		/// <summary>
+		/// The style used for parent sub sense number.
+		/// </summary>
+		public string ksParentSubSenseNumberStyle = "%.";
+
+		/// <summary>
 		/// True to display homograph numbers before the headword; false (default) to display after.
 		/// This is a global setting that affects all varieties of headword.
 		/// </summary>

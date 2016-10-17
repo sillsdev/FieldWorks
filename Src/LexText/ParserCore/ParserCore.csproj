@@ -169,13 +169,6 @@
       <Name>System</Name>
     </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
-    </Reference>
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms">
-      <Name>System.Windows.Forms</Name>
-    </Reference>
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
@@ -202,8 +195,9 @@
     <Compile Include="FwXmlTraceManager.cs" />
     <Compile Include="HCLoader.cs" />
     <Compile Include="HCParser.cs" />
+    <Compile Include="IHCLoadErrorLogger.cs" />
     <Compile Include="InvalidAffixProcessException.cs" />
-    <Compile Include="InvalidReduplicationEnvironmentException.cs" />
+    <Compile Include="InvalidReduplicationFormException.cs" />
     <Compile Include="IParser.cs" />
     <Compile Include="ParserModelChangeListener.cs">
       <SubType>Code</SubType>

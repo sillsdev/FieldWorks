@@ -2,13 +2,9 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Collections;
-using System.Xml;	// XmlNode
-
-using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace Sfm2Xml
 {
@@ -17,10 +13,10 @@ namespace Sfm2Xml
 	/// </summary>
 	public class STATICS
 	{
-		static public string MapFileVersion { get { return "6.0"; } }	// this maps to FW release 6.0, prev release was 5.4.1
+		static public string MapFileVersion { get { return "6.1"; } }	// this maps to FW release 8.3Beta, prev release was 6.0
 
 		/// <summary>
-		/// Determine if the passed in string represents a 'true' of 'false' string
+		/// Determine if the passed in string represents a 'true' or 'false' string
 		/// and return it.  If it's not determined, then return the default value.
 		/// </summary>
 		/// <param name="text">string to examine for t or f</param>
@@ -136,29 +132,53 @@ namespace Sfm2Xml
 		/// </summary>
 		/// <param name="uiLangs">list of language information</param>
 		/// <param name="ILexFields"></param>
+		/// <param name="ICustomFields"></param>
 		/// <param name="sfmInfo"></param>
 		/// <param name="listInFieldMarkers"></param>
-		/// <param name="m_SaveAsFileName"></param>
+		/// <param name="saveAsFileName"></param>
+		/// <param name="listOptions">records checkbox values</param>
 		static public void NewMapFileBuilder(
 			Hashtable uiLangs,
 			ILexImportFields ILexFields,
 			ILexImportFields ICustomFields,
 			List<FieldHierarchyInfo> sfmInfo,
-			List<Sfm2Xml.ClsInFieldMarker> listInFieldMarkers,	// was lvInFieldMarkers
-			string saveAsFileName
+			List<ClsInFieldMarker> listInFieldMarkers,	// was lvInFieldMarkers
+			string saveAsFileName,
+			List<ILexImportOption> listOptions = null // list of import options
 			)
 		{
 			string nl = System.Environment.NewLine;
-			//string mapFileVersion = "6.0";	// this maps to FW release 6.0, prev release was 5.4.1
 			System.Text.StringBuilder XMLText = new System.Text.StringBuilder(8192);
 
 			AddSectionComment("Created via the Lexical Import process: " + System.DateTime.Now.ToString(), ref XMLText);
 			XMLText.Append("<sfmMapping version=\""+MapFileVersion+"\">" + nl);			// Start of the map file
-			AddSectionComment("Global Settings", ref XMLText);
+			// ====================================================================
 			// Global Settings section of XML map file
+			// ====================================================================
+			AddSectionComment("Global Settings", ref XMLText);
 			XMLText.Append("<settings>" + nl);
 			XMLText.Append("<meaning app=\"fw.sil.org\"/>" + nl);
 			XMLText.Append("</settings>" + nl);
+			// ====================================================================
+			// Import Options section of XML map file
+			// ====================================================================
+			AddSectionComment("Import Options", ref XMLText);
+			XMLText.Append("<options>" + nl);
+			if (listOptions == null)
+				listOptions = new List<ILexImportOption>();
+			foreach (var importOption in listOptions)
+			{
+				switch (importOption.Type)
+				{
+					case "Checkbox":
+						XMLText.Append(importOption.ToXmlString() + nl);
+						break;
+					default:
+						Debug.Fail("Unknown LexImportOption Type: " + importOption.Type);
+						continue;
+				}
+			}
+			XMLText.Append("</options>" + nl);
 			// ====================================================================
 			// Languages section of XML map file
 			// ====================================================================

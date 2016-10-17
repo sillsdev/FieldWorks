@@ -1,10 +1,8 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
@@ -215,6 +213,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Assert.AreEqual("Bibliography", (m_dtree.Controls[2] as Slice).Label);
 			Assert.AreEqual(0, (m_dtree.Controls[1] as Slice).Indent); // was 1, but indent currently suppressed.
 		}
+
 		/// <summary></summary>
 		[Test]
 		[Ignore("Collapsed nodes are currently not implemented")]
@@ -282,8 +281,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_parent.Dispose();
 			m_parent = null;
 
-			ILexEtymology lm = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
-			m_entry.EtymologyOA = lm;
+			var etymology = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
+			m_entry.EtymologyOS.Add(etymology);
 
 			m_parent = new Form();
 			m_dtree = new DataTree();
@@ -293,16 +292,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// Adding an etymology gets us just no more slices so far,
 			// because it doesn't have a form or source
 			Assert.AreEqual(3, m_dtree.Controls.Count);
-			//Assert.AreEqual("Etymology", (m_dtree.Controls[3] as Slice).Label);
 			m_parent.Close();
 			m_parent.Dispose();
 			m_parent = null;
 
-			lm.Source = "source";
-			// Again set both because I'm not sure which it really
-			// should be.
-			lm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeTss("rubbish", Cache.DefaultVernWs);
-			lm.Form.AnalysisDefaultWritingSystem = TsStringUtils.MakeTss("rubbish", Cache.DefaultAnalWs);
+			etymology.LanguageNotes.AnalysisDefaultWritingSystem = TsStringUtils.MakeTss("source language", Cache.DefaultAnalWs);
+			etymology.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeTss("rubbish", Cache.DefaultVernWs);
 
 			m_parent = new Form();
 			m_dtree = new DataTree();
@@ -312,7 +307,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// When the etymology has something we get two more.
 			Assert.AreEqual(5, m_dtree.Controls.Count);
 			Assert.AreEqual("Form", (m_dtree.Controls[3] as Slice).Label);
-			Assert.AreEqual("Source", (m_dtree.Controls[4] as Slice).Label);
+			Assert.AreEqual("Source Language Notes", (m_dtree.Controls[4] as Slice).Label);
 		}
 	}
 }

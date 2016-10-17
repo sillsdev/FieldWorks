@@ -1,0 +1,35 @@
+<LayoutInventory>
+  <layout class="LexEntry" type="jtview" name="publishStemEntry#stem-785" version="0">
+    <sublayout name="publishStemPara#Stem-785" group="para" style="Dictionary-Normal" />
+  </layout>
+  <layout class="LexEntry" type="jtview" name="publishStemPara#stem-785" css="$fwstyle=Dictionary-Normal" version="0">
+    <part ref="MLHeadWordPub" label="Headword" before="Headword: " sep=" " after="  " ws="vernacular" wsType="vernacular" style="Dictionary-Headword" css="headword" visibility="ifdata" comment="Headword is a smart field. It is the lexeme form unless there is a citation form. Includes Homograph number and affix marking." />
+    <part ref="SensesConfig" label="Senses" sep="  " number="%O) " numstyle="bold" numsingle="no" singlegraminfofirst="yes" param="publishStem#stem-785" css="senses" cssNumber="xsensenumber" parastyle="Dictionary-Sense" preventnullstyle="true" disallowCharStyle="true" />
+  </layout>
+  <layout class="LexSense" type="jtview" name="publishStem#stem-785" version="0">
+    <part ref="MorphoSyntaxAnalysisConfig" label="Grammatical Info." before="Part of Speech: " after=" " sep="" visibility="ifdata" style="Dictionary-Contrasting" singlegraminfofirst="yes" param="publishStem#stem-785" css="grammatical-info" />
+    <part ref="SmartDefinitionPub" label="Definition (or Gloss)" before="Definition: " after=" " visibility="ifdata" ws="analysis" wsType="analysis" sep=" " showLabels="false" css="definition" />
+    <part ref="SensesConfig" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="ifdata" recurseConfig="false" param="publishStem#stem-785" css="subsenses" cssNumber="xsensenumber" parastyle="Dictionary-Sense" />
+  </layout>
+  <layout class="MoMorphSynAnalysis" type="jtview" name="publishStem#stem-785" version="0">
+    <part ref="PartOfSpeechPub" label="Category Info." visibility="ifdata" before="" after=" " ws="analysis" css="partofspeech" />
+  </layout>
+  <layout class="LexEntry" type="jtview" name="publishStemMinorEntry#stem-785" version="0">
+    <part ref="MinorEntryConfig" label="Minor Entry" visibility="ifdata" param="publishStemMinorPara#stem-785" entrytype="minor" flowType="para" style="Dictionary-Normal" css="minorentries" after=" " entrytypeseq="-b0000000-c40e-433e-80b5-31da08771344,+024b62c9-93b3-41a0-ab19-587a0030219a" />
+  </layout>
+  <layout class="LexEntry" type="jtview" name="publishStemMinorPara#stem-785" css="$fwstyle=Dictionary-Minor" version="0">
+    <part ref="MLHeadWordPub" label="Headword" before="" sep=" " after="  " ws="vernacular" wsType="vernacular" style="Dictionary-Headword" css="headword-minor" visibility="ifdata" comment="Headword is a smart field. It is the lexeme form unless there is a citation form. Includes Homograph number." />
+    <part ref="SensesConfig" label="Senses" sep="  " number="%O) " numstyle="bold" numsingle="no" singlegraminfofirst="yes" visibility="never" param="publishStemMinor#stem-785" css="senses-minor" parastyle="Dictionary-Sense" preventnullstyle="true" disallowCharStyle="true" />
+  </layout>
+  <layout class="LexSense" type="jtview" name="publishStemMinor#stem-785" version="0">
+    <part ref="MorphoSyntaxAnalysisConfig" label="Grammatical Info." before="" after=" " sep="" visibility="ifdata" style="Dictionary-Contrasting" singlegraminfofirst="yes" param="publishStemMinor#stem-785" css="grammatical-info-minor" />
+    <part ref="SmartDefinitionPub" label="Definition (or Gloss)" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" sep=" " showLabels="false" css="definition-minor" />
+  </layout>
+  <layout class="MoMorphSynAnalysis" type="jtview" name="publishStemMinor#stem-785" version="0">
+    <part ref="PartOfSpeechPub" label="Category Info." visibility="ifdata" before="" after=" " ws="analysis" css="partofspeech-minor" />
+  </layout>
+  <layoutType label="My Stem-based" layout="publishStem#Stem-785" version="0">
+    <configure class="LexEntry" label="Main Entry" layout="publishStemEntry#Stem-785" />
+    <configure class="LexEntry" label="Minor Entry" layout="publishStemMinorEntry#Stem-785" hideConfig="true" />
+  </layoutType>
+</LayoutInventory>

@@ -2,10 +2,12 @@
 *.cpp	diff=cpp
 *.h	diff=cpp
 *.idh	diff=cpp
+*.fwdictconfig	diff=xml
 
 *.config -whitespace
 *.csproj -whitespace
 *.Designer.cs -whitespace
+*.fwdictconfig -whitespace
 *.patch -whitespace
 *.ReSharper -whitespace
 *.resx -whitespace

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<NuGetToolsPath>$(MSBuildThisFileDirectory)</NuGetToolsPath>
+		<PackagesConfigSource Condition="'$(OS)'=='Windows_NT'">$(NuGetToolsPath)packages-windows.config</PackagesConfigSource>
+		<PackagesConfigSource Condition="'$(OS)'!='Windows_NT'">$(NuGetToolsPath)packages-linux.config</PackagesConfigSource>
+		<PackagesConfig>$(NuGetToolsPath)packages.config</PackagesConfig>
+
+		<!-- NuGet command -->
+		<NuGetExePath>$(NuGetToolsPath)NuGet.exe</NuGetExePath>
+		<NuGetCommand Condition="'$(OS)' == 'Windows_NT'">"$(NuGetExePath)"</NuGetCommand>
+		<NuGetCommand Condition="'$(OS)' != 'Windows_NT'">mono --runtime=v4.0.30319 $(NuGetExePath)</NuGetCommand>
+
+		<!-- Command to download packages -->
+		<RestoreCommand>$(NuGetCommand) restore "$(PackagesConfig)" -NonInteractive -PackagesDirectory "$(fwrt)/packages"</RestoreCommand>
+	</PropertyGroup>
+
+	<Target Name="RestoreNuGetPackages" DependsOnTargets="CheckPrerequisites">
+		<Copy SourceFiles="$(PackagesConfigSource)" DestinationFiles="$(PackagesConfig)"/>
+		<Exec Command="$(RestoreCommand)"/>
+	</Target>
+
+	<PropertyGroup>
+		<NuGetUrl Condition="'$(OS)' == 'Windows_NT'">https://nuget.org/NuGet.exe</NuGetUrl>
+		<NuGetUrl Condition="'$(OS)' != 'Windows_NT'">"https://drive.google.com/uc?export=download&amp;id=0BwTQrVjXe5wbQUhfcEFSbnktUzQ"</NuGetUrl>
+	</PropertyGroup>
+
+	<Target Name="CheckPrerequisites">
+		<!--
+		Take advantage of MsBuild's build dependency tracking to make sure that we download nuget.exe only once ever.
+		This effectively acts as a lock that makes sure that the download operation will only happen once and all
+		parallel builds will have to wait for it to complete.
+		-->
+		<MsBuild Targets="_DownloadNuGet" Projects="$(MSBuildThisFileFullPath)" Properties="Configuration=NOT_IMPORTANT;" />
+	</Target>
+
+	<Target Name="_DownloadNuGet" Condition="!Exists('$(NuGetExePath)')">
+		<DownloadNuGet OutputFilename="$(NuGetExePath)" Condition="'$(OS)' == 'Windows_NT'" />
+		<Exec Command="wget -O NuGet.exe $(NuGetUrl) || curl -o NuGet.exe -L $(NuGetUrl)" WorkingDirectory="$(NuGetToolsPath)" Condition="'$(OS)' != 'Windows_NT'" />
+	</Target>
+
+	<UsingTask TaskName="DownloadNuGet" TaskFactory="CodeTaskFactory"
+		AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll"
+		Condition=" '$(OS)' == 'Windows_NT' ">
+		<ParameterGroup>
+			<OutputFilename ParameterType="System.String" Required="true" />
+		</ParameterGroup>
+		<Task>
+			<Reference Include="System.Core" />
+			<Using Namespace="System" />
+			<Using Namespace="System.IO" />
+			<Using Namespace="System.Net" />
+			<Using Namespace="Microsoft.Build.Framework" />
+			<Using Namespace="Microsoft.Build.Utilities" />
+			<Code Type="Fragment" Language="cs">
+				<![CDATA[
+				try {
+					OutputFilename = Path.GetFullPath(OutputFilename);
+
+					Log.LogMessage("Downloading latest version of NuGet.exe...");
+					WebClient webClient = new WebClient();
+					webClient.DownloadFile("$(NuGetUrl)", OutputFilename);
+
+					return true;
+				}
+				catch (Exception ex) {
+					Log.LogErrorFromException(ex);
+					return false;
+				}
+			]]>
+			</Code>
+		</Task>
+	</UsingTask>
+
+	<Target Name="CleanNuGet">
+		<ForceDelete Files="$(NuGetExePath)"/>
+		<ForceDelete Files="$(fwrt)/packages/"/>
+		<ForceDelete Files="$(dir-outputBase)/Firefox/"/>
+		<ForceDelete Files="$(dir-outputBase)/Geckofx-*.*"/>
+		<Message Text="cleaned $(NuGetExePath) et al."/>
+	</Target>
+</Project>

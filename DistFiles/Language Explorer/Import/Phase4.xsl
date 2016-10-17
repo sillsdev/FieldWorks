@@ -522,35 +522,63 @@ Main template
 
 			<!-- Form -->
 			<xsl:when test="name(.)='Form'">
-				<xsl:if test="not(preceding-sibling::Form)">
-				   <xsl:variable name="elementName">
-					<xsl:call-template name="DoParentBasedElementName">
-					  <xsl:with-param name="defaultNumber" select="5035"/>
-					</xsl:call-template>
-				  </xsl:variable>
-				  <xsl:element name="{$elementName}">
-					<xsl:call-template name="DoAUni"/>
+			  <xsl:if test="not(preceding-sibling::Form)">
+				<xsl:variable name="elementName">
+				  <xsl:call-template name="DoParentBasedElementName">
+					<xsl:with-param name="defaultNumber" select="5035"/>
+				  </xsl:call-template>
+				</xsl:variable>
+				<xsl:element name="{$elementName}">
+				  <!-- Based on the parent name, put out a different type of data -->
+				  <xsl:choose>
+					<xsl:when test="name(..)='LexEtymology'">
+					  <xsl:call-template name="DoAStr"/>
+					  <xsl:for-each select="following-sibling::Form">
+						<xsl:call-template name="DoAStr"/>
+					  </xsl:for-each>
+					</xsl:when>
+					<xsl:otherwise>
+					  <xsl:call-template name="DoAUni"/>
 					  <xsl:for-each select="following-sibling::Form">
 						<xsl:call-template name="DoAUni"/>
 					  </xsl:for-each>
-				  </xsl:element>
-				</xsl:if>
+					</xsl:otherwise>
+				  </xsl:choose>
+				</xsl:element>
+			  </xsl:if>
 			</xsl:when>
 			<!-- Gloss -->
 			<xsl:when test="name(.)='Gloss'">
-				<xsl:if test="not(preceding-sibling::Gloss)">
-				   <xsl:variable name="elementName">
-					<xsl:call-template name="DoParentBasedElementName">
-					  <xsl:with-param name="defaultNumber" select="5016"/>
-					</xsl:call-template>
-				   </xsl:variable>
-				   <xsl:element name="{$elementName}">
+			  <xsl:if test="not(preceding-sibling::Gloss)">
+				<xsl:variable name="elementName">
+				<xsl:call-template name="DoParentBasedElementName">
+				  <xsl:with-param name="defaultNumber" select="5016"/>
+				</xsl:call-template>
+				</xsl:variable>
+				<xsl:element name="{$elementName}">
+				<!-- Based on the parent name, put out a different type of data -->
+				<xsl:choose>
+				  <xsl:when test="name(..)='LexEtymology'">
+					<xsl:call-template name="DoAStr"/>
+					<xsl:for-each select="following-sibling::Gloss">
+					  <xsl:call-template name="DoAStr"/>
+					</xsl:for-each>
+				  </xsl:when>
+				  <xsl:otherwise>
+					<xsl:call-template name="DoAUni"/>
+					<xsl:for-each select="following-sibling::Gloss">
 					  <xsl:call-template name="DoAUni"/>
-					  <xsl:for-each select="following-sibling::Gloss">
-						<xsl:call-template name="DoAUni"/>
-					  </xsl:for-each>
-				   </xsl:element>
-				</xsl:if>
+					</xsl:for-each>
+				  </xsl:otherwise>
+				</xsl:choose>
+				</xsl:element>
+			  </xsl:if>
+			</xsl:when>
+			<!-- (Etymology) LanguageNotes -->
+			<xsl:when test="name(.)='LanguageNotes'">
+				<xsl:element name="LanguageNotes">
+					<xsl:call-template name="DoAStr"/>
+				</xsl:element>
 			</xsl:when>
 			<!-- LexemeForm -->
 			<xsl:when test="name(.)='LexemeForm'">
@@ -629,6 +657,12 @@ Main template
 					</Link>
 				</MorphType>
 			</xsl:when>
+			<!-- (Etymology) Note -->
+			<xsl:when test="name(.)='Note'">
+				<xsl:element name="Note">
+					<xsl:call-template name="DoAStr"/>
+				</xsl:element>
+			</xsl:when>
 			<!-- PartOfSpeech -->
 			<xsl:when test="name(.)='PartOfSpeech'">
 				<xsl:choose>
@@ -643,6 +677,12 @@ Main template
 						</PartOfSpeech>
 					</xsl:otherwise>
 				</xsl:choose>
+			</xsl:when>
+			<!-- (Etymology) PrecComment -->
+			<xsl:when test="name(.)='PrecComment'">
+				<xsl:element name="PrecComment">
+					<xsl:call-template name="DoAStr"/>
+				</xsl:element>
 			</xsl:when>
 			<!-- ImportEntryResidue -->
 			<xsl:when test="name(.)='ImportEntryResidue'">
@@ -696,15 +736,7 @@ Main template
 				   </xsl:call-template>
 				 </xsl:variable>
 				<xsl:element name="{$elementName}">
-				  <!-- Based on the parent name, put out different type of data -->
-				  <xsl:choose>
-					<xsl:when test="name(..)='LexEtymology'">
-					  <xsl:call-template name="DoUni"/>
-					</xsl:when>
-					<xsl:otherwise>
-					  <xsl:call-template name="DoStr"/>
-					</xsl:otherwise>
-				  </xsl:choose>
+				  <xsl:call-template name="DoStr"/>
 				</xsl:element>
 			</xsl:when>
 			<!-- SemanticDomains -->
@@ -1173,6 +1205,8 @@ Revision History
 04-Mar-2005    Andy Black  Began working on Initial Draft
 XX-Mar-2005    dlh - Adding functionality...
 08-Aug-2006    Bev - Senses to Senses5016 inside LexSense
-20-Nov-2009	   SRMc - remove class numbers from element names
+20-Nov-2009    SRMc - remove class numbers from element names
+30-Aug-2016    GJM - Etymology Form, Gloss and Source become MultiString,
+   Source changed to LanguageNotes, added new fields: PrecComment, Language, Note
 ================================================================
  -->

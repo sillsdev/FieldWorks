@@ -1,4 +1,5 @@
-<TestTimeoutValues defaultTimeLimit="35">
+<!-- Timeouts for NUnit tests are read from this file. Timeouts for Unit++ tests are read from mkall.targets -->
+<TestTimeoutValues defaultTimeLimit="70">
 	<TimeoutGroup timeLimit="540"><!--9 minutes-->
 		<Project name="FDOTests"/>
 		<Project name="xWorksTests"/>
@@ -27,26 +28,4 @@
 		<Project name="TeEditingTests"/>
 		<Project name="TeScrInitializerTests"/>
 	</TimeoutGroup>
-	<TimeoutGroup timeLimit="60">
-		<Project name="BasicUtilsTests"/>
-		<Project name="CacheLightTests"/>
-		<Project name="CheckAdminPrivilege"/>
-		<Project name="CoreImplTests"/>
-		<Project name="DetailControlsTests"/>
-		<Project name="FieldWorksTests:"/>
-		<Project name="FrameworkTests"/>
-		<Project name="FwPrintLayoutComponentsTests"/>
-		<Project name="FxtDllTests"/>
-		<Project name="LexEdDllTests"/>
-		<Project name="LexTextDllTests"/>
-		<Project name="NotesViewTests"/>
-		<Project name="ParserCoreTests"/>
-		<Project name="ParserUITests"/>
-		<Project name="PhraseTranslationHelperTests"/>
-		<Project name="ScrControlsTests"/>
-		<Project name="TeDialogsTests"/>
-		<Project name="TePrintLayoutComponentsTests"/>
-		<Project name="TePrintLayoutTests"/>
-		<Project name="XMLViewsTests"/>
-	</TimeoutGroup>
-</TestTimeoutValues>	
+</TestTimeoutValues>

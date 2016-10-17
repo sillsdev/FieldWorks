@@ -162,7 +162,7 @@
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="RootSite">
       <Name>RootSite</Name>

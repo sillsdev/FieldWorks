@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<languageproject version="7000062">
+<languageproject version="7000069">
 <rt class="CmPossibility" guid="00951e6f-2523-4ac9-a649-ad42c659cf83" ownerguid="d9d55b12-ea5e-11de-95ef-0013722f8dec">
 <Abbreviation>
 <AUni ws="en">Evnt</AUni>
@@ -18,7 +18,7 @@
 </rt>
 <rt class="LexEntryInflType" guid="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c" ownerguid="bb372467-5230-43ef-9cc7-4d40b053fb94">
 <Abbreviation>
-<AUni ws="en">irreg. infl. of</AUni>
+<AUni ws="en">irreg. infl.</AUni>
 </Abbreviation>
 <Description>
 <AStr ws="en">
@@ -28,13 +28,19 @@
 <Discussion>
 <objsur guid="b6f4c056-ea5e-11de-8a9c-0013722f8dec" t="o" />
 </Discussion>
+<GlossAppend>
+<AUni ws="en">.irr.infl</AUni>
+</GlossAppend>
 <IsProtected val="true" />
 <Name>
 <AUni ws="en">Irregularly Inflected Form</AUni>
 </Name>
 <ReverseAbbr>
-<AUni ws="en">irreg. infl.</AUni>
+<AUni ws="en">irreg. infl. of</AUni>
 </ReverseAbbr>
+<ReverseName>
+<AUni ws="en">Irregularly Inflected Form of</AUni>
+</ReverseName>
 <SubPossibilities>
 <objsur guid="a32f1d1c-4832-46a2-9732-c2276d6547e8" t="o" />
 <objsur guid="837ebe72-8c1d-4864-95d9-fa313c499d78" t="o" />
@@ -42,7 +48,7 @@
 </rt>
 <rt class="LexEntryType" guid="024b62c9-93b3-41a0-ab19-587a0030219a" ownerguid="bb372467-5230-43ef-9cc7-4d40b053fb94">
 <Abbreviation>
-<AUni ws="en">dial. var. of</AUni>
+<AUni ws="en">dial. var.</AUni>
 </Abbreviation>
 <Description>
 <AStr ws="en">
@@ -57,8 +63,11 @@
 <AUni ws="en">Dialectal Variant</AUni>
 </Name>
 <ReverseAbbr>
-<AUni ws="en">dial. var.</AUni>
+<AUni ws="en">dial. var. of</AUni>
 </ReverseAbbr>
+<ReverseName>
+<AUni ws="en">Dialectal Variant of</AUni>
+</ReverseName>
 </rt>
 <rt class="CmRow" guid="0288b729-8eb0-41ad-b27c-9534c64900a5" ownerguid="bb95ab3e-ea5e-11de-94f6-0013722f8dec">
 <Cells>
@@ -77,7 +86,7 @@
 </rt>
 <rt class="LexEntryType" guid="0c4663b3-4d9a-47af-b9a1-c8565d8112ed" ownerguid="bb372467-5230-43ef-9cc7-4d40b053fb94">
 <Abbreviation>
-<AUni ws="en">sp. var. of</AUni>
+<AUni ws="en">sp. var.</AUni>
 </Abbreviation>
 <Description>
 <AStr ws="en">
@@ -92,8 +101,11 @@
 <AUni ws="en">Spelling Variant</AUni>
 </Name>
 <ReverseAbbr>
-<AUni ws="en">sp. var.</AUni>
+<AUni ws="en">sp. var. of</AUni>
 </ReverseAbbr>
+<ReverseName>
+<AUni ws="en">Spelling Variant of</AUni>
+</ReverseName>
 </rt>
 <rt class="MoMorphType" guid="0cc8c35a-cee9-434d-be58-5d29130fba5b" ownerguid="d7f713d8-e8cf-11d3-9764-00c04f186933">
 <Abbreviation>
@@ -159,6 +171,7 @@
 <AUni ws="en">Complex Form Types</AUni>
 </Name>
 <Possibilities>
+<objsur guid="fec038ed-6a8c-4fa5-bc96-a4f515a98c50" t="o" />
 <objsur guid="1f6ae209-141a-40db-983c-bee93af0ca3c" t="o" />
 <objsur guid="73266a3a-48e8-4bd7-8c84-91c730340b7d" t="o" />
 <objsur guid="98c273c4-f723-4fb0-80df-eede2204dfca" t="o" />
@@ -171,7 +184,7 @@
 </rt>
 <rt class="LexEntryType" guid="1f6ae209-141a-40db-983c-bee93af0ca3c" ownerguid="1ee09905-63dd-4c7a-a9bd-1d496743ccd6">
 <Abbreviation>
-<AUni ws="en">comp. of</AUni>
+<AUni ws="en">comp.</AUni>
 </Abbreviation>
 <Description>
 <AStr ws="en">
@@ -186,8 +199,11 @@
 <AUni ws="en">Compound</AUni>
 </Name>
 <ReverseAbbr>
-<AUni ws="en">comp.</AUni>
+<AUni ws="en">comp. of</AUni>
 </ReverseAbbr>
+<ReverseName>
+<AUni ws="en">Compound of</AUni>
+</ReverseName>
 </rt>
 <rt class="CmAnnotationDefn" guid="20cf6c1c-9389-4380-91f5-dfa057003d51" ownerguid="8d4cbd80-0dca-4a83-8a1f-9db3aa4cff54">
 <Abbreviation>
@@ -234,7 +250,7 @@
 </rt>
 <rt class="LexEntryType" guid="35cee792-74c8-444e-a9b7-ed0461d4d3b7" ownerguid="1ee09905-63dd-4c7a-a9bd-1d496743ccd6">
 <Abbreviation>
-<AUni ws="en">ph. v. of</AUni>
+<AUni ws="en">ph. v.</AUni>
 </Abbreviation>
 <Description>
 <AStr ws="en">
@@ -249,8 +265,11 @@
 <AUni ws="en">Phrasal Verb</AUni>
 </Name>
 <ReverseAbbr>
-<AUni ws="en">ph. v.</AUni>
+<AUni ws="en">ph. v. of</AUni>
 </ReverseAbbr>
+<ReverseName>
+<AUni ws="en">Phrasal Verb of</AUni>
+</ReverseName>
 </rt>
 <rt class="PhBdryMarker" guid="3bde17ce-e39a-4bae-8a5c-a8d96fd4cb56" ownerguid="be7fe79c-ea5e-11de-8151-0013722f8dec">
 <Codes>
@@ -268,7 +287,7 @@
 <rt class="CmAgentEvaluation" guid="41581e3a-7ed3-41ac-94c7-6e91dbcc108b" ownerguid="67e9b8bf-c312-458e-89c3-6e9326e48aa0" />
 <rt class="LexEntryType" guid="4343b1ef-b54f-4fa4-9998-271319a6d74c" ownerguid="bb372467-5230-43ef-9cc7-4d40b053fb94">
 <Abbreviation>
-<AUni ws="en">fr. var. of</AUni>
+<AUni ws="en">fr. var.</AUni>
 </Abbreviation>
 <Description>
 <AStr ws="en">
@@ -283,8 +302,31 @@
 <AUni ws="en">Free Variant</AUni>
 </Name>
 <ReverseAbbr>
-<AUni ws="en">fr. var.</AUni>
+<AUni ws="en">fr. var. of</AUni>
 </ReverseAbbr>
+<ReverseName>
+<AUni ws="en">Free Variant of</AUni>
+</ReverseName>
+</rt>
+<rt class="LexEntryType" guid="3942addb-99fd-43e9-ab7d-99025ceb0d4e" ownerguid="bb372467-5230-43ef-9cc7-4d40b053fb94">
+<Abbreviation>
+<AUni ws="en">unspec. var.</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A variant form that hasn't been labeled as a specific kind of variant.</Run>
+</AStr>
+</Description>
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Unspecified Variant</AUni>
+</Name>
+<ReverseAbbr>
+<AUni ws="en">unspec. var. of</AUni>
+</ReverseAbbr>
+<ReverseName>
+<AUni ws="en">Unspecified Variant of</AUni>
+</ReverseName>
 </rt>
 <rt class="CmRow" guid="47a43063-ba83-4be2-9604-46a7701a9385" ownerguid="bb7dd3d8-ea5e-11de-8cc5-0013722f8dec">
 <Cells>
@@ -483,7 +525,7 @@
 </rt>
 <rt class="LexEntryType" guid="73266a3a-48e8-4bd7-8c84-91c730340b7d" ownerguid="1ee09905-63dd-4c7a-a9bd-1d496743ccd6">
 <Abbreviation>
-<AUni ws="en">contr. of</AUni>
+<AUni ws="en">contr.</AUni>
 </Abbreviation>
 <Description>
 <AStr ws="en">
@@ -498,8 +540,11 @@
 <AUni ws="en">Contraction</AUni>
 </Name>
 <ReverseAbbr>
-<AUni ws="en">contr.</AUni>
+<AUni ws="en">contr. of</AUni>
 </ReverseAbbr>
+<ReverseName>
+<AUni ws="en">Contraction of</AUni>
+</ReverseName>
 </rt>
 <rt class="CmCell" guid="7bf38df2-e180-4d74-ae16-df959a81eea6" ownerguid="c2f0eb83-212b-4c1b-b357-f28bcd96053e">
 <Contents>
@@ -638,7 +683,7 @@
 </rt>
 <rt class="LexEntryInflType" guid="837ebe72-8c1d-4864-95d9-fa313c499d78" ownerguid="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c">
 <Abbreviation>
-<AUni ws="en">pst. of</AUni>
+<AUni ws="en">pst.</AUni>
 </Abbreviation>
 <Description>
 <AStr ws="en">
@@ -656,8 +701,11 @@
 <AUni ws="en">Past</AUni>
 </Name>
 <ReverseAbbr>
-<AUni ws="en">pst.</AUni>
+<AUni ws="en">pst. of</AUni>
 </ReverseAbbr>
+<ReverseName>
+<AUni ws="en">Past of</AUni>
+</ReverseName>
 </rt>
 <rt class="CmAgentEvaluation" guid="8caa11bb-cac4-4836-a081-1666245106b9" ownerguid="9303883a-ad5c-4ccf-97a5-4add391f8dcb" />
 <rt class="CmAnnotationDefn" guid="8d4cbd80-0dca-4a83-8a1f-9db3aa4cff54" ownerguid="ea346c01-022f-4f34-b938-219ce7b65b73">
@@ -691,7 +739,7 @@
 </rt>
 <rt class="LexEntryType" guid="9466d126-246e-400b-8bba-0703e09bc567" ownerguid="1ee09905-63dd-4c7a-a9bd-1d496743ccd6">
 <Abbreviation>
-<AUni ws="en">say. of</AUni>
+<AUni ws="en">say.</AUni>
 </Abbreviation>
 <Description>
 <AStr ws="en">
@@ -706,12 +754,15 @@
 <AUni ws="en">Saying</AUni>
 </Name>
 <ReverseAbbr>
-<AUni ws="en">say.</AUni>
+<AUni ws="en">say. of</AUni>
 </ReverseAbbr>
+<ReverseName>
+<AUni ws="en">Saying of</AUni>
+</ReverseName>
 </rt>
 <rt class="LexEntryType" guid="98c273c4-f723-4fb0-80df-eede2204dfca" ownerguid="1ee09905-63dd-4c7a-a9bd-1d496743ccd6">
 <Abbreviation>
-<AUni ws="en">der. of</AUni>
+<AUni ws="en">der.</AUni>
 </Abbreviation>
 <Description>
 <AStr ws="en">
@@ -726,8 +777,11 @@
 <AUni ws="en">Derivative</AUni>
 </Name>
 <ReverseAbbr>
-<AUni ws="en">der.</AUni>
+<AUni ws="en">der. of</AUni>
 </ReverseAbbr>
+<ReverseName>
+<AUni ws="en">Derivative of</AUni>
+</ReverseName>
 </rt>
 <rt class="CmCell" guid="9a942f8d-aa92-40c3-8163-ef3638192bf0" ownerguid="47a43063-ba83-4be2-9604-46a7701a9385">
 <Contents>
@@ -760,7 +814,7 @@
 </rt>
 <rt class="LexEntryInflType" guid="a32f1d1c-4832-46a2-9732-c2276d6547e8" ownerguid="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c">
 <Abbreviation>
-<AUni ws="en">pl. of</AUni>
+<AUni ws="en">pl.</AUni>
 </Abbreviation>
 <Description>
 <AStr ws="en">
@@ -778,8 +832,11 @@
 <AUni ws="en">Plural</AUni>
 </Name>
 <ReverseAbbr>
-<AUni ws="en">pl.</AUni>
+<AUni ws="en">pl. of</AUni>
 </ReverseAbbr>
+<ReverseName>
+<AUni ws="en">Plural of</AUni>
+</ReverseName>
 </rt>
 <rt class="CmFilter" guid="abc71f1c-dd0b-4f57-add8-9200ac20a653" ownerguid="af1d4e34-ea5e-11de-8ec5-0013722f8dec">
 <App val="a7d421e1-1dd3-11d5-b720-0010a4b54856" />
@@ -928,9 +985,18 @@
 <ComplexEntryTypes>
 <objsur guid="1ee09905-63dd-4c7a-a9bd-1d496743ccd6" t="o" />
 </ComplexEntryTypes>
+<DialectLabels>
+<objsur guid="a3a8188b-ab00-4a43-b925-a1eed62287ba" t="o" />
+</DialectLabels>
 <DomainTypes>
 <objsur guid="b0a1eb98-ea5e-11de-888e-0013722f8dec" t="o" />
 </DomainTypes>
+<ExtendedNoteTypes>
+<objsur guid="ed6b2dcc-e82f-4631-b61a-6b630de332d0" t="o" />
+</ExtendedNoteTypes>
+<Languages>
+<objsur guid="487c15b0-2ced-4417-8b77-9075f4a21e5f" t="o" />
+</Languages>
 <MorphTypes>
 <objsur guid="d7f713d8-e8cf-11d3-9764-00c04f186933" t="o" />
 </MorphTypes>
@@ -988,6 +1054,120 @@
 <ForeColor val="-1073741824" />
 <Name>
 <AUni ws="en">primary</AUni>
+</Name>
+<UnderColor val="-1073741824" />
+</rt>
+<rt class="CmPossibilityList" guid="487c15b0-2ced-4417-8b77-9075f4a21e5f" ownerguid="af26d792-ea5e-11de-8f7e-0013722f8dec">
+<Abbreviation>
+<AUni ws="en">Lgs</AUni>
+<AUni ws="es">Ids</AUni>
+<AUni ws="fr">Lgs</AUni>
+</Abbreviation>
+<Depth val="1" />
+<IsSorted val="true" />
+<ItemClsid val="7" />
+<Name>
+<AUni ws="en">Languages</AUni>
+<AUni ws="es">Idiomas</AUni>
+<AUni ws="fr">Langues</AUni>
+</Name>
+<Possibilities>
+</Possibilities>
+<PreventDuplicates val="true" />
+<WsSelector val="-3" />
+</rt>
+<rt class="CmPossibilityList" guid="a3a8188b-ab00-4a43-b925-a1eed62287ba" ownerguid="af26d792-ea5e-11de-8f7e-0013722f8dec">
+<Abbreviation>
+<AUni ws="en">Dials</AUni>
+</Abbreviation>
+<Depth val="1" />
+<IsSorted val="true" />
+<ItemClsid val="7" />
+<Name>
+<AUni ws="en">Dialect Labels</AUni>
+</Name>
+<Possibilities>
+</Possibilities>
+<PreventDuplicates val="true" />
+<WsSelector val="-6" />
+</rt>
+<rt class="CmPossibilityList" guid="ed6b2dcc-e82f-4631-b61a-6b630de332d0" ownerguid="af26d792-ea5e-11de-8f7e-0013722f8dec">
+<Abbreviation>
+<AUni ws="en">ExtNoteTyp</AUni>
+</Abbreviation>
+<Depth val="1" />
+<IsSorted val="true" />
+<ItemClsid val="7" />
+<Name>
+<AUni ws="en">Extended Note Types</AUni>
+</Name>
+<Possibilities>
+<objsur guid="2f06d436-b1e0-47ae-a42e-1f7b893c5fc2" t="o" />
+<objsur guid="7ad06e7d-15d1-42b0-ae19-9c05b7c0b181" t="o" />
+<objsur guid="d3d28628-60c9-4917-8185-ba64c59f20c3" t="o" />
+<objsur guid="30115b33-608a-4506-9f9c-2457cab4f4a8" t="o" />
+<objsur guid="5dd29371-fdb0-497a-a2fb-7ca69b00ad4f" t="o" />
+</Possibilities>
+<PreventDuplicates val="true" />
+<WsSelector val="-3" />
+</rt>
+<rt class="CmPossibility" guid="2f06d436-b1e0-47ae-a42e-1f7b893c5fc2" ownerguid="ed6b2dcc-e82f-4631-b61a-6b630de332d0">
+<Abbreviation>
+<AUni ws="en">Coll.</AUni>
+</Abbreviation>
+<BackColor val="-1073741824" />
+<ForeColor val="-1073741824" />
+<IsProtected val="True" />
+<Name>
+<AUni ws="en">Collocation</AUni>
+</Name>
+<UnderColor val="-1073741824" />
+</rt>
+<rt class="CmPossibility" guid="7ad06e7d-15d1-42b0-ae19-9c05b7c0b181" ownerguid="ed6b2dcc-e82f-4631-b61a-6b630de332d0">
+<Abbreviation>
+<AUni ws="en">Cult.</AUni>
+</Abbreviation>
+<BackColor val="-1073741824" />
+<ForeColor val="-1073741824" />
+<IsProtected val="True" />
+<Name>
+<AUni ws="en">Cultural</AUni>
+</Name>
+<UnderColor val="-1073741824" />
+</rt>
+<rt class="CmPossibility" guid="d3d28628-60c9-4917-8185-ba64c59f20c3" ownerguid="ed6b2dcc-e82f-4631-b61a-6b630de332d0">
+<Abbreviation>
+<AUni ws="en">Disc.</AUni>
+</Abbreviation>
+<BackColor val="-1073741824" />
+<ForeColor val="-1073741824" />
+<IsProtected val="True" />
+<Name>
+<AUni ws="en">Discourse</AUni>
+</Name>
+<UnderColor val="-1073741824" />
+</rt>
+<rt class="CmPossibility" guid="30115b33-608a-4506-9f9c-2457cab4f4a8" ownerguid="ed6b2dcc-e82f-4631-b61a-6b630de332d0">
+<Abbreviation>
+<AUni ws="en">Gram.</AUni>
+</Abbreviation>
+<BackColor val="-1073741824" />
+<ForeColor val="-1073741824" />
+<IsProtected val="True" />
+<Name>
+<AUni ws="en">Grammar</AUni>
+</Name>
+<UnderColor val="-1073741824" />
+</rt>
+<rt class="CmPossibility" guid="5dd29371-fdb0-497a-a2fb-7ca69b00ad4f" ownerguid="ed6b2dcc-e82f-4631-b61a-6b630de332d0">
+<Abbreviation>
+<AUni ws="en">Sem.</AUni>
+</Abbreviation>
+<BackColor val="-1073741824" />
+<ForeColor val="-1073741824" />
+<IsProtected val="True" />
+<Name>
+<AUni ws="en">Semantic</AUni>
 </Name>
 <UnderColor val="-1073741824" />
 </rt>
@@ -1799,7 +1979,7 @@
 </rt>
 <rt class="LexEntryType" guid="b2276dec-b1a6-4d82-b121-fd114c009c59" ownerguid="1ee09905-63dd-4c7a-a9bd-1d496743ccd6">
 <Abbreviation>
-<AUni ws="en">id. of</AUni>
+<AUni ws="en">id.</AUni>
 </Abbreviation>
 <Description>
 <AStr ws="en">
@@ -1814,8 +1994,31 @@
 <AUni ws="en">Idiom</AUni>
 </Name>
 <ReverseAbbr>
-<AUni ws="en">id.</AUni>
+<AUni ws="en">id. of</AUni>
 </ReverseAbbr>
+<ReverseName>
+<AUni ws="en">Idiom of</AUni>
+</ReverseName>
+</rt>
+<rt class="LexEntryType" guid="fec038ed-6a8c-4fa5-bc96-a4f515a98c50" ownerguid="1ee09905-63dd-4c7a-a9bd-1d496743ccd6">
+<Abbreviation>
+<AUni ws="en">unspec. comp. form</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A complex form that hasn't been labeled as a specific kind of complex form.</Run>
+</AStr>
+</Description>
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Unspecified Complex Form</AUni>
+</Name>
+<ReverseAbbr>
+<AUni ws="en">unspec. comp. form of</AUni>
+</ReverseAbbr>
+<ReverseName>
+<AUni ws="en">Unspecified Complex Form of</AUni>
+</ReverseName>
 </rt>
 <rt class="CmPossibility" guid="b228eb56-ea5e-11de-9e54-0013722f8dec" ownerguid="b21f61f8-ea5e-11de-907d-0013722f8dec">
 <Abbreviation>
@@ -3884,6 +4087,7 @@
 <AUni ws="en">Variant Types</AUni>
 </Name>
 <Possibilities>
+<objsur guid="3942addb-99fd-43e9-ab7d-99025ceb0d4e" t="o" />
 <objsur guid="024b62c9-93b3-41a0-ab19-587a0030219a" t="o" />
 <objsur guid="4343b1ef-b54f-4fa4-9998-271319a6d74c" t="o" />
 <objsur guid="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c" t="o" />

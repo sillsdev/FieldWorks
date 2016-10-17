@@ -397,7 +397,7 @@ namespace SIL.FieldWorks.TE
 				return false;
 
 			if (FindNextMatch(m_lastFindString) != FindResult.MatchFound)
-				SystemSounds.Beep.Play();
+				MiscUtils.ErrorBeep();
 			return true;
 		}
 		#endregion

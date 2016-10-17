@@ -115,6 +115,14 @@ namespace SIL.FieldWorks.FDO
 		}
 
 		/// <summary>
+		/// Displays the circular reference breaker report.
+		/// </summary>
+		public void DisplayCircularRefBreakerReport(string report, string caption)
+		{
+			// Informational only
+		}
+
+		/// <summary>
 		/// Reports duplicate guids to the user
 		/// </summary>
 		/// <param name="errorText">The error text.</param>

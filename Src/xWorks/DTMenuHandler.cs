@@ -1256,6 +1256,10 @@ namespace SIL.FieldWorks.XWorks
 							{
 								insertPos = ent.EntryRefsOS.Count;
 								ent.EntryRefsOS.Add(ler);
+								const string unspecVariantEntryTypeGuid = "3942addb-99fd-43e9-ab7d-99025ceb0d4e";
+								var type = ent.Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS
+									.First(lrt => lrt.Guid.ToString() == unspecVariantEntryTypeGuid) as ILexEntryType;
+								ler.VariantEntryTypesRS.Add(type);
 								ler.RefType = LexEntryRefTags.krtVariant;
 								ler.HideMinorEntry = 0;
 							}
@@ -1263,6 +1267,10 @@ namespace SIL.FieldWorks.XWorks
 							{
 								insertPos = 0;
 								ent.EntryRefsOS.Insert(insertPos, ler);
+								const string unspecComplexFormEntryTypeGuid = "fec038ed-6a8c-4fa5-bc96-a4f515a98c50";
+								var type = ent.Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS
+									.First(lrt => lrt.Guid.ToString() == unspecComplexFormEntryTypeGuid) as ILexEntryType;
+								ler.ComplexEntryTypesRS.Add(type);
 								ler.RefType = LexEntryRefTags.krtComplexForm;
 								ler.HideMinorEntry = 0; // LT-10928
 								ent.ChangeRootToStem();

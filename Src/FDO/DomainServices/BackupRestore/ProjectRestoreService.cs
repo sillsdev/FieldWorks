@@ -171,7 +171,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 					UncompressFilesContainedInFolderandSubFolders(FdoFileHelper.GetZipfileFormattedPath(zipEntryStartsWith),
 						m_restoreSettings.ProjectSupportingFilesPath);
 			}
-
 			if (m_restoreSettings.IncludeConfigurationSettings)
 				UncompressFilesMatchingPath(FdoFileHelper.ksConfigurationSettingsDir + "/", m_restoreSettings.FlexConfigurationSettingsPath);
 
@@ -615,8 +614,21 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 						var strbldr = new StringBuilder(fileName);
 						if (m_restoreSettings.CreateNewProject)
 							strbldr.Replace(m_restoreSettings.Backup.ProjectName, m_restoreSettings.ProjectName);
+
+						//Contruct the path where the file will be unzipped too.
+						var zipFileLinkFilesPath = FdoFileHelper.GetZipfileFormattedPath(patternToMatch.Replace("/", ""));
+						var filenameWithSubFolders = entry.Name.Substring(zipFileLinkFilesPath.Length);
+						String pathForFileSubFolders = "";
+						if (!fileName.Equals(filenameWithSubFolders)) //if they are equal the file is in the root of LinkedFiles
+						{
+							pathForFileSubFolders = GetPathForSubFolders(filenameWithSubFolders, fileName.Length);
+						}
+						var destFolderZipFilePath = FdoFileHelper.GetZipfileFormattedPath(destinationDirectory);
+						var pathRoot = Path.GetPathRoot(destinationDirectory);
+						var pathforfileunzip = Path.Combine(pathRoot, destFolderZipFilePath, pathForFileSubFolders);
+
 						//then restore the file to the temp directory and copy it to the final location
-						UnzipFileToRestoreFolder(zipIn, strbldr.ToString(), entry.Size, destinationDirectory, entry.DateTime);
+						UnzipFileToRestoreFolder(zipIn, strbldr.ToString(), entry.Size, pathforfileunzip, entry.DateTime);
 					}
 				}
 			}

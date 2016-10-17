@@ -171,6 +171,17 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// change the label for a Tree relationship.
 			switch ((LexRefTypeTags.MappingTypes)lrt.MappingType)
 			{
+				case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
+				case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
+				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
+					if (chvoTargets > 0)
+					{
+						int hvoFirst = sda.get_VecItem(lr.Hvo, LexReferenceTags.kflidTargets, 0);
+						if (hvoFirst != m_obj.Hvo)
+							return;
+					}
+					break;
+
 				case LexRefTypeTags.MappingTypes.kmtSenseTree:
 				case LexRefTypeTags.MappingTypes.kmtEntryTree:
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
@@ -205,6 +216,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				case LexRefTypeTags.MappingTypes.kmtSenseCollection:
 					sXml +=	" class=\"SIL.FieldWorks.XWorks.LexEd.LexReferenceCollectionSlice\"";
 					break;
+				case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
+					sXml += " class=\"SIL.FieldWorks.XWorks.LexEd.LexReferenceUnidirectionalSlice\"";
+					break;
 				case LexRefTypeTags.MappingTypes.kmtSensePair:
 				case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair: // Sense Pair with different Forward/Reverse names
 				case LexRefTypeTags.MappingTypes.kmtEntryPair:
@@ -236,6 +250,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					//sMenu = "mnuDataTree-DeleteFromLexEntryReference"; we used to have distinct strings in the menu
 					sMenu = "mnuDataTree-DeleteAddLexReference";
 					break;
+				case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
+					sXml += " class=\"SIL.FieldWorks.XWorks.LexEd.LexReferenceUnidirectionalSlice\"";
+					//sMenu = "mnuDataTree-DeleteFromLexEntryReference"; we used to have distinct strings in the menu
+					sMenu = "mnuDataTree-DeleteAddLexReference";
+					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryTree:
 					//sMenu = "mnuDataTree-DeleteFromLexEntryReference"; we used to have distinct strings in the menu
 					sMenu = "mnuDataTree-DeleteAddLexReference";
@@ -252,6 +271,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection:
 					sXml +=	" class=\"SIL.FieldWorks.XWorks.LexEd.LexReferenceCollectionSlice\"";
+					if (m_obj is ILexEntry)
+						//sMenu = "mnuDataTree-DeleteFromLexEntryReference"; we used to have distinct strings in the menu
+						sMenu = "mnuDataTree-DeleteAddLexReference";
+					break;
+				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
+					sXml += " class=\"SIL.FieldWorks.XWorks.LexEd.LexReferenceUnidirectionalSlice\"";
 					if (m_obj is ILexEntry)
 						//sMenu = "mnuDataTree-DeleteFromLexEntryReference"; we used to have distinct strings in the menu
 						sMenu = "mnuDataTree-DeleteAddLexReference";
@@ -340,6 +365,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						case LexRefTypeTags.MappingTypes.kmtSenseTree:
 						case LexRefTypeTags.MappingTypes.kmtSenseSequence:
 						case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair:
+						case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
 							continue;
 						default:
 							break;
@@ -354,6 +380,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						case LexRefTypeTags.MappingTypes.kmtEntryTree:
 						case LexRefTypeTags.MappingTypes.kmtEntrySequence:
 						case LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair:
+						case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
 							continue;
 						default:
 							break;
@@ -374,12 +401,15 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					case LexRefTypeTags.MappingTypes.kmtSenseCollection:
 					case LexRefTypeTags.MappingTypes.kmtSensePair:
 					case LexRefTypeTags.MappingTypes.kmtSenseSequence:
+					case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
 					case LexRefTypeTags.MappingTypes.kmtEntryCollection:
 					case LexRefTypeTags.MappingTypes.kmtEntryPair:
 					case LexRefTypeTags.MappingTypes.kmtEntrySequence:
+					case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
 					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection:
 					case LexRefTypeTags.MappingTypes.kmtEntryOrSensePair:
 					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence:
+					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
 						label = string.Format(formatName, name);
 						break;
 					case LexRefTypeTags.MappingTypes.kmtSenseTree:
@@ -665,6 +695,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					case LexRefTypeTags.MappingTypes.kmtSenseCollection:
 					case LexRefTypeTags.MappingTypes.kmtSensePair:
 					case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair:
+					case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
 					// Sense pair with different Forward/Reverse names
 					case LexRefTypeTags.MappingTypes.kmtSenseSequence:
 					case LexRefTypeTags.MappingTypes.kmtSenseTree:
@@ -676,6 +707,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					case LexRefTypeTags.MappingTypes.kmtEntryCollection:
 					case LexRefTypeTags.MappingTypes.kmtEntryPair:
 					case LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair:
+					case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
 					// Entry pair with different Forward/Reverse names
 					case LexRefTypeTags.MappingTypes.kmtEntrySequence:
 					case LexRefTypeTags.MappingTypes.kmtEntryTree:
@@ -686,6 +718,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection:
 					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence:
 					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
+					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
 						dlg = new LinkEntryOrSenseDlg();
 						sTitle = String.Format(LexEdStrings.ksIdentifyXLexEntryOrSense, lrt.Name.BestAnalysisAlternative.Text);
 						break;
@@ -815,6 +848,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 							case LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection:
 							case LexRefTypeTags.MappingTypes.kmtEntryCollection:
 							case LexRefTypeTags.MappingTypes.kmtSenseCollection:
+							case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
 								if (lr.TargetsRS.Count > 2)
 								{
 									tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);

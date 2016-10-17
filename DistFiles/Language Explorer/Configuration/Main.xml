@@ -65,7 +65,8 @@
 			<parameters title="FieldWorks Project Utilities" filename="Language Explorer/Configuration/UtilityCatalogInclude.xml"/>
 		</command>
 		<command id="CmdArchiveWithRamp" label="_Archive with RAMP (SIL)..." message="ArchiveWithRamp" icon="ArchiveWithRamp"/>
-    <command id="CmdPageSetup" label="Page Setup..." message="PageSetup"/>
+		<command id="CmdUploadToWebonary" label="Upload to _Webonary..." message="UploadToWebonary"/>
+		<command id="CmdPageSetup" label="Page Setup..." message="PageSetup"/>
 		<command id="CmdImportSFMLexicon" label="_Standard Format Lexicon..." message="SFMImport"/>
 		<command id="CmdImportSFMNotebook" label="Standard Format _Notebook data..." message="LaunchConnectedDialog">
 			<parameters>
@@ -106,7 +107,7 @@
 		<command id="CmdViewIncorrectWords" label="View Incorrect Words in Use" message="ViewIncorrectWords"/>
 		<command id="CmdChangeSpelling" label="Change Spelling..." message="LaunchRespellerDlg"/>
 		<command id="CmdUseVernSpellingDictionary" label="Show Vernacular Spelling _Errors" message="UseVernSpellingDictionary"/>
-		<command id="CmdConfigHomographs" label="Homograph Number..." message="ConfigureHomographs"/>
+		<command id="CmdConfigHeadwordNumbers" label="Headword Numbers..." message="ConfigureHeadwordNumbers"/>
 		<command id="CmdRestoreDefaults" label="Restore Defaults..." message="RestoreDefaultLayouts"/>
 		<command id="CmdToolsOptions" label="_Options..." message="LaunchConnectedDialog">
 			<parameters>
@@ -181,6 +182,9 @@
 		</command>
 		<command id="CmdPOSJumpToDefault" label="Show in Category Edit" message="JumpToTool">
 			<parameters tool="posEdit" className="PartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech" />
+		</command>
+		<command id="CmdPublicationsJumpToDefault" label="Edit Publications" message="JumpToTool">
+			<parameters tool="publicationsEdit" className="ICmPossibility" ownerClass="LangProject" ownerField="PublicationTypes" />
 		</command>
 		<command id="CmdWordPOSJumpToDefault" label="Show Word Category in Category Edit" message="JumpToTool">
 			<parameters tool="posEdit" className="WordPartOfSpeech" ownerClass="LangProject" ownerField="PartsOfSpeech" />
@@ -311,6 +315,7 @@
 			<parameters file="Play_all"/>
 		</command>
 		<command id="CmdAddToLexicon" label="Add to Dictionary..." message="AddToLexicon" icon="majorEntry"/>
+		<command id="CmdConfigureXmlDocView" label="{0}" message="ConfigureXmlDocView"/>
 		<!-- F1 is omitted because used for Help-->
 		<command id="CmdMacroF2" label="F2" message="Macro" shortcut="F2">
 			<parameters key="2"/>
@@ -456,8 +461,9 @@
 				<item command="CmdDeleteProject"/>
 				<item command="CmdCreateProjectShortcut"/>
 			</menu>
-      <item label="-" translate="do not translate"/>
-      <item command="CmdArchiveWithRamp" />
+			<item label="-" translate="do not translate"/>
+			<item command="CmdArchiveWithRamp" />
+			<item command="CmdUploadToWebonary" />
 			<item label="-" translate="do not translate"/>
 			<item command="CmdPageSetup"/>
 			<item command="CmdPrint"/>
@@ -589,7 +595,7 @@
 				<include path="Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*"/>
 				<include path="Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='Configure']/*"/>
 				<item command="CmdConfigureColumns" defaultVisible="false"/>
-				<item command="CmdConfigHomographs"/>
+				<item command="CmdConfigHeadwordNumbers"/>
 				<item command="CmdRestoreDefaults"/>
 				<item label="-" translate="do not translate"/>
 				<!-- This Setup Writing Systems... is a copy of the one on the Format menu -->
@@ -738,14 +744,17 @@
 			<item command="CmdJumpToNotebookEditWithFilter"/>
 
 			<item command="CmdJumpToConfidenceList"/>
+			<item command="CmdJumpToDialectLabelsList"/>
 			<item command="CmdJumpToDiscChartMarkerList"/>
 			<item command="CmdJumpToDiscChartTemplateList"/>
 			<item command="CmdJumpToEducationList"/>
 			<item command="CmdJumpToRoleList"/>
+			<item command="CmdJumpToExtNoteTypeList"/>
 			<item command="CmdJumpToComplexEntryTypeList"/>
 			<item command="CmdJumpToVariantEntryTypeList"/>
 			<item command="CmdJumpToTextMarkupTagsList"/>
 			<item command="CmdJumpToLexRefTypeList"/>
+			<item command="CmdJumpToLanguagesList"/>
 			<item command="CmdJumpToLocationList"/>
 			<item command="CmdJumpToPublicationList"/>
 			<item command="CmdJumpToMorphTypeList"/>
@@ -777,8 +786,20 @@
 			<item label="Sorted By Length" boolProperty="SortedByLength"/>
 		</menu>
 		<menu id="PaneBar-ReversalIndicesMenu">
-			<menu id="ReversalIndexPaneMenu" label="_Reversal Indexes" list="ReversalIndexList" behavior="singlePropertyAtomicValue" property="ReversalIndexGuid" icon="MenuWidget"/>
+			<menu id="ReversalIndexPaneMenu" icon="MenuWidget" alignment="right">
+				<item command="CmdShowAllPublications"/>
+				<menu list="Publications" inline="true" emptyAllowed="true"
+					  behavior="singlePropertyAtomicValue" property="SelectedPublication"/>
+				<item label="-" translate="do not translate"/> <!-- separator -->
+				<item command="CmdPublicationsJumpToDefault"/>
+			</menu>
+			<menu id="ReversalIndexPaneMenu" icon="MenuWidget" alignment="left">
+			<menu inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" list="ReversalIndexList" property="ReversalIndexPublicationLayout" />
+			<item label="-" translate="do not translate"/>
+			<item command="CmdConfigureDictionary"/>
+			</menu>
 		</menu>
+
 		<menu id="mnuEnvReferenceChoices">
 			<item command="CmdJumpToEnvironmentList"/>
 			<item command="CmdShowEnvironmentErrorMessage"/>
@@ -952,6 +973,7 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 			<parameters contextHelpPath="ContextHelp.xml"/>
 		</listener>
 		<listener assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.MacroListener"/>
+		<listener assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.DictionaryConfigurationListener"/>
 		<!--<listener assemblyPath="xCore.dll" class="XCore.ProgressListener" />-->
 	</listeners>
 	<!-- ********************************************************** -->

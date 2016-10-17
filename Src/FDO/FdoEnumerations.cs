@@ -65,7 +65,13 @@ namespace SIL.FieldWorks.FDO
 		/// <summary></summary>
 		kmtEntryOrSenseTree = 13,
 		/// <summary></summary>
-		kmtEntryOrSenseSequence = 14
+		kmtEntryOrSenseSequence = 14,
+		/// <summary></summary>
+		kmtSenseUnidirectional = 15,
+		/// <summary></summary>
+		kmtEntryUnidirectional = 16,
+		/// <summary></summary>
+		kmtEntryOrSenseUnidirectional = 17
 	};
 	#endregion
 

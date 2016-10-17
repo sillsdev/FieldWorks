@@ -10,7 +10,6 @@ using System.Xml;
 
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
@@ -60,11 +59,22 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (sourceObject is ILexExampleSentence)
 			{
 				m_les = sourceObject as ILexExampleSentence;
-				m_owningSense = (ILexSense)m_les.Owner;
+				if (m_les.Owner is ILexSense)
+				{
+					m_owningSense = (ILexSense)m_les.Owner;
+				}
+				else if (m_les.Owner is ILexExtendedNote)
+				{
+					m_owningSense = (ILexSense)m_les.Owner.Owner;
+				}
 			}
 			else if (sourceObject is ILexSense)
 			{
 				m_owningSense = sourceObject as ILexSense;
+			}
+			else if (sourceObject is ILexExtendedNote)
+			{
+				m_owningSense = sourceObject.Owner as ILexSense;
 			}
 			else
 			{
@@ -197,7 +207,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 							}
 							// copy the segment string into the new LexExampleSentence
 							// Enhance: bold the relevant occurrence(s).
-							newLexExample.Example.VernacularDefaultWritingSystem = seg.BaselineText;
+							// LT-11388 Make sure baseline text gets copied into correct ws
+							var baseWs = GetBestVernWsForNewExample(seg);
+							newLexExample.Example.set_String(baseWs, seg.BaselineText);
 							if (seg.FreeTranslation.AvailableWritingSystemIds.Length > 0)
 							{
 								var trans = m_cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(newLexExample,
@@ -227,6 +239,17 @@ namespace SIL.FieldWorks.XWorks.LexEd
 							newLexExample.Reference = tsb.GetString();
 						}
 					});
+		}
+
+		private int GetBestVernWsForNewExample(ISegment seg)
+		{
+			var baseWs = seg.BaselineText.get_WritingSystem(0);
+			if (baseWs < 1)
+				return m_cache.DefaultVernWs;
+
+			var possibleWss = m_cache.ServiceLocator.WritingSystems.VernacularWritingSystems;
+			var wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(baseWs);
+			return possibleWss.Contains(wsObj) ? baseWs : m_cache.DefaultVernWs;
 		}
 
 		private void btnHelp_Click(object sender, EventArgs e)

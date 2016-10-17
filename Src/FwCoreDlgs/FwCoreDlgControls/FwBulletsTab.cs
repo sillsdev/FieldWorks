@@ -33,6 +33,11 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// </summary>
 		public event EventHandler ChangedToUnspecified;
 
+		/// <summary>
+		/// Fires when a change is made on this tab to style data.
+		/// </summary>
+		public event EventHandler StyleDataChanged;
+
 		/// <summary></summary>
 		/// <returns></returns>
 		public delegate IFontDialog FontDialogHandler(object sender, EventArgs args);
@@ -429,6 +434,9 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 			m_preview.SetProps(propsFirst, propsBldr.GetTextProps());
 			m_preview.Refresh();
+
+			if (StyleDataChanged != null)
+				StyleDataChanged(this, null);
 		}
 
 		/// ------------------------------------------------------------------------------------

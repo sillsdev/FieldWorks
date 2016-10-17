@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<languageproject version="7000068">
+
+	<rt class="LexEntry" guid="7ecbb299-bf35-4795-a5cc-8d38ce8b891c">
+		<Restrictions>
+			<AUni ws="fr">Restrictions sur une entrée</AUni>
+		</Restrictions>
+		<Pronunciations>
+			<objsur guid="01049427-9d47-4e2b-bb83-efe7089ab6e2" t="o" />
+		</Pronunciations>
+	</rt>
+
+	<rt class="LexEntry" guid="7ecbb299-bf35-4795-a5cc-8d38ce8b891d">
+		<CitationForm>
+			<AUni ws="en">My English citation form</AUni>
+		</CitationForm>
+	</rt>
+
+	<rt class="LexSense" guid="e3c2d179-3ccd-431e-ac2e-100bdb883680" ownerguid="7ecbb299-bf35-4795-a5cc-8d38ce8b891c">
+		<Restrictions>
+			<AUni ws="en">Sense restriction in English</AUni>
+			<AUni ws="fr">Restriction en français sur un sens</AUni>
+		</Restrictions>
+		<Pictures>
+			<objsur guid="e7219d1c-c2cc-4956-9389-0d161cc57a07" t="o" />
+		</Pictures>
+	</rt>
+
+	<rt class="LexSense" guid="e3c2d179-3ccd-431e-ac2e-100bdb883681" ownerguid="7ecbb299-bf35-4795-a5cc-8d38ce8b891d">
+		<Gloss>
+			<AUni ws="en">Gloss for sense with no Restrictions</AUni>
+		</Gloss>
+	</rt>
+
+	<rt class="LexEntryType" guid="024b62c9-93b3-41a0-ab19-587a0030219a">
+		<Abbreviation>
+			<AUni ws="en">dial. var. of</AUni>
+		</Abbreviation>
+		<Name>
+			<AUni ws="en">Dialectal Variant</AUni>
+		</Name>
+		<ReverseAbbr>
+			<AUni ws="en">dial. var.</AUni>
+		</ReverseAbbr>
+	</rt>
+
+	<rt class="LexEntryInflType" guid="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c">
+		<SubPossibilities>
+			<objsur t="o" guid="837ebe72-8c1d-4864-95d9-fa313c499d78" />
+		</SubPossibilities>
+		<Name>
+			<AUni ws="en">Irregularly Inflected Form</AUni>
+		</Name>
+	</rt>
+
+	<rt class="LexEntryInflType" guid="837ebe72-8c1d-4864-95d9-fa313c499d78" ownerguid="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c">
+		<Abbreviation>
+			<AUni ws="en">pst. of</AUni>
+			<AUni ws="fr">pss. de</AUni>
+		</Abbreviation>
+		<Name>
+			<AUni ws="en">Past</AUni>
+			<AUni ws="fr">Passé</AUni>
+		</Name>
+		<ReverseAbbr>
+			<AUni ws="en">pst.</AUni>
+			<AUni ws="fr">pss.</AUni>
+		</ReverseAbbr>
+	</rt>
+
+	<rt class="LexPronunciation" guid="01049427-9d47-4e2b-bb83-efe7089ab6e2" ownerguid="7ecbb299-bf35-4795-a5cc-8d38ce8b891c">
+		<Form>
+			<AUni ws="fr-fonipa">se pronõse kəm sa</AUni>
+			<AUni ws="fr-Zxxx-x-audio">12345A LexPronunciation.wav</AUni>
+		</Form>
+	</rt>
+
+	<rt class="CmPicture" guid="e7219d1c-c2cc-4956-9389-0d161cc57a07" ownerguid="7ecbb299-bf35-4795-a5cc-8d38ce8b891c">
+		<Caption>
+			<AStr ws="fr">
+				<Run ws="fr">grenouille</Run>
+			</AStr>
+		</Caption>
+	</rt>
+
+  <rt class="LexEntryRef" guid="43be38f8-1a0d-4828-aa77-080d7c7bf368" ownerguid="7ecbb299-bf35-4795-a5cc-8d38ce8b891c">
+    <HideMinorEntry val="0" />
+    <RefType val="1" />
+  </rt>
+
+  <rt class="LexEntryRef" guid="43be38f8-1a0d-4828-aa77-080d7c7bf369" ownerguid="7ecbb299-bf35-4795-a5cc-8d38ce8b891d">
+	  <ComponentLexemes>
+		  <objsur guid="7ecbb299-bf35-4795-a5cc-8d38ce8b891c" t="r" />
+	  </ComponentLexemes>
+	  <HideMinorEntry val="0" />
+    <RefType val="1" />
+  </rt>
+</languageproject>

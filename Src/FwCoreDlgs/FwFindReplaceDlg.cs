@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Palaso.UI.WindowsForms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Drawing;
@@ -21,7 +22,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
-using Palaso.UI.WindowsForms;
 using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs

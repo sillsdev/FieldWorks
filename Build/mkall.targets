@@ -7,9 +7,10 @@
 	<UsingTask TaskName="Unzip" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="Zip" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="ForceDelete" AssemblyFile="FwBuildTasks.dll"/>
+	<UsingTask TaskName="GenerateTestCoverageReport" AssemblyFile="FwBuildTasks.dll"/>
 
 	<!-- Make all of FieldWorks. -->
-	<Target Name="mkall" DependsOnTargets="initLinux;initWindows;LinuxRegistry;allCpp;allCsharp;CopyDlls;ensureTLBsUpToDate">
+	<Target Name="mkall" DependsOnTargets="CopyDlls;initLinux;initWindows;LinuxRegistry;allCpp;allCsharp;ensureTLBsUpToDate">
 		<Message Text="Finished mkall Target."/>
 		<CreateItem Condition="'$(action)'=='test'" Include="$(dir-outputBase)/*-nunit-output.xml">
 			<Output TaskParameter="Include" ItemName="NUnitReportFiles"/>
@@ -133,7 +134,7 @@
 		<Unitpp Condition="'$(action)'=='test'"
 				FixturePath="$(dir-outputBase)/testFwKernel"
 				FudgeFactor="$(timeoutFudgeFactor)"
-				Timeout="60000">
+				Timeout="75000">
 			<Output TaskParameter="FailedSuites" ItemName="FailedSuites"/>
 		</Unitpp>
 		<Message Text="Finished building testFwKernel." Condition="'$(action)'!='test'"/>
@@ -188,7 +189,7 @@
 		<Unitpp Condition="'$(action)'=='test'"
 				FixturePath="$(dir-outputBase)/testViews"
 				FudgeFactor="$(timeoutFudgeFactor)"
-				Timeout="60000">
+				Timeout="75000">
 			<Output TaskParameter="FailedSuites" ItemName="FailedSuites"/>
 		</Unitpp>
 		<Message Text="Finished building testViews." Condition="'$(action)'!='test'"/>
@@ -292,29 +293,29 @@
 		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/PalasoWin32lfmergeStrongnameContinuous/lastSuccessful</PalasoDownloadUrl>
 		<!-- lfmerge branch build of Palaso for Linux development. Update when appropriate. -->
 		<PalasoDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64lfmergeContinuous/lastSuccessful</PalasoDownloadUrl>
-		<!-- bt399 is the GeckoFX 29 build for Windows -->
-		<GeckoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt399/fw-8.2.tcbuildtag</GeckoDownloadUrl>
-		<!-- bt400 is the XULRunner 29 build for Windows -->
-		<XULRunnerDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt400/fw-8.2.tcbuildtag</XULRunnerDownloadUrl>
 		<!--Todo: use PalasoDownloadUrl, when it refers to somewhere that has the IPCFramework.-->
 		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
 		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt278/fw-8.2.tcbuildtag</IPCFrameworkDownloadUrl>
 		<!-- bt279 is the develop branch build of IPCFramework for Linux development. Update when appropriate. -->
 		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt279/fw-8.2.tcbuildtag</IPCFrameworkDownloadUrl>
+		<!-- bt393 is the master branch build of ExCss for Windows development. Update when appropriate. -->
+		<ExCssDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt393/fw-8.3.0~alpha3.tcbuildtag</ExCssDownloadUrl>
+		<!-- bt395 is the master branch build of ExCss for Linux development. Update when appropriate. -->
+		<ExCssDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt395/fw-8.3.0~alpha3.tcbuildtag</ExCssDownloadUrl>
 		<!-- bt469 is the master branch build of icucil for Windows development. Update when appropriate. -->
 		<IcuDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt14/fw-8.2.tcbuildtag</IcuDownloadUrl>
 		<!-- Libraries_IcucilPrecise64icu54Continuous is the ICU 54 master branch build of icucil for Linux development. Update when appropriate. -->
 		<IcuDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/Libraries_IcucilPrecise64icu54Continuous/fw-8.2.tcbuildtag</IcuDownloadUrl>
 		<ProtoBufNetDownloadUrl>https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/protobuf-net/protobuf-net%20r668.zip</ProtoBufNetDownloadUrl>
 		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1/</DownloadsSilOrgDownloadUrl>
-		<HermitCrabDownloadUrl>http://build.palaso.org/guestAuth/repository/download/bt410/fw-8.2.tcbuildtag</HermitCrabDownloadUrl>
+		<HermitCrabDownloadUrl>http://build.palaso.org/guestAuth/repository/download/bt410/fw-8.3.tcbuildtag</HermitCrabDownloadUrl>
 		<Icu4cDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/Libraries_Icu4cWin32FieldWorksContinuous/fw-8.2.tcbuildtag</Icu4cDownloadUrl>
 		<!-- Windows/.Net and Linux/Mono use different extensions for debug information files. -->
 		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>
 	</PropertyGroup>
 
-	<Target Name="downloadDlls">
+	<Target Name="downloadDlls" DependsOnTargets="RestoreNuGetPackages">
 		<MakeDir Directories="$(fwrt)/Downloads"/>
 		<Message Text="Downloading artifacts from Palaso lfmerge build."/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
@@ -349,18 +350,7 @@
 		<DownloadFile Address="$(PalasoDownloadUrl)/NDesk.DBus.dll.config" LocalFilename="$(fwrt)/Downloads/NDesk.DBus.dll.config"
 					  Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/taglib-sharp.dll" LocalFilename="$(fwrt)/Downloads/taglib-sharp.dll"/>
-
-		<Message Text="Downloading pinned artifacts for GeckoFX and XULRunner." Condition="'$(OS)'=='Windows_NT'" />
-		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Core.dll" LocalFilename="$(fwrt)/Downloads/Geckofx-Core.dll"
-					  Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Winforms.dll" LocalFilename="$(fwrt)/Downloads/Geckofx-Winforms.dll"
-					  Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Winforms.pdb" LocalFilename="$(fwrt)/Downloads/Geckofx-Winforms.pdb"
-					  Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(GeckoDownloadUrl)/Geckofx-Core.dll.config" LocalFilename="$(fwrt)/Downloads/Geckofx-Core.dll.config"
-					  Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(XULRunnerDownloadUrl)/xulrunner-29.0.1.en-US.win32.zip" LocalFilename="$(fwrt)/Downloads/xulrunner-29.0.1.en-US.win32.zip"
-					  Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/irrKlang.NET4.dll" LocalFilename="$(fwrt)/Downloads/irrKlang.NET4.dll"/>
 
 		<Message Text="Downloading artifacts from Chorus lfmerge build."/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
@@ -371,6 +361,12 @@
 
 		<Message Text="Downloading pinned artifacts for IPCFramework."/>
 		<DownloadFile Address="$(IPCFrameworkDownloadUrl)/IPCFramework.dll" LocalFilename="$(fwrt)/Downloads/IPCFramework.dll"/>
+
+		<Message Text="Downloading artifacts for ExCss."/>
+		<DownloadFile Address="$(ExCssDownloadUrl)/ExCSS.dll" LocalFilename="$(fwrt)/Downloads/ExCSS.dll" Condition="'$(OS)'=='Unix'"/>
+		<DownloadFile Address="$(ExCssDownloadUrl)/ExCss.dll" LocalFilename="$(fwrt)/Downloads/ExCSS.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(ExCssDownloadUrl)/ExCSS.dll.mdb" LocalFilename="$(fwrt)/Downloads/ExCSS.dll.mdb" Condition="'$(OS)'=='Unix'"/>
+		<DownloadFile Address="$(ExCssDownloadUrl)/ExCss.pdb" LocalFilename="$(fwrt)/Downloads/ExCss.pdb" Condition="'$(OS)'=='Windows_NT'"/>
 
 		<Message Text="Downloading pinned artifacts for ICU.NET."/>
 		<DownloadFile Address="$(IcuDownloadUrl)/icu.net.dll" LocalFilename="$(fwrt)/Downloads/icu.net.dll"/>
@@ -440,6 +436,9 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.Media.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.Media.dll.mdb" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.Media.pdb" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.TestUtilities.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.TestUtilities.dll.mdb" Condition="'$(OS)'=='Unix'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.TestUtilities.pdb" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.dll.mdb" Condition="'$(OS)'=='Unix'"/>
@@ -459,11 +458,17 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/Enchant.Net.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Enchant.Net.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/IPCFramework.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/ExCss.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/ExCss.pdb" Condition="'$(OS)'=='Windows_NT'"/>
+		<!-- xBuild and MsBuild generate different case artifacts's off the same solution file. (sigh) -->
+		<DownloadedFiles Include="$(fwrt)/Downloads/ExCSS.dll" Condition="'$(OS)'=='Unix'"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/ExCSS.dll.mdb" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/ibusdotnet.dll" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/NDesk.DBus.dll" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/NDesk.DBus.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Ionic.Zip.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/taglib-sharp.dll"/>
+		<DownloadedFiles Include="$(fwrt)/Downloads/irrKlang.NET4.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/FormattedEditor.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/HelpSystem.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/HtmlEditor.dll"/>
@@ -475,10 +480,6 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Machine.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Collections.dll"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.HermitCrab.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Geckofx-Core.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Geckofx-Core.dll.config" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Geckofx-Winforms.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Geckofx-Winforms.pdb" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/gennorm2.exe" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/icudt$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/icuin$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
@@ -517,10 +518,25 @@
 		<!-- Copy the downloaded artifacts -->
 		<Copy SourceFiles="@(DownloadedFiles)" DestinationFolder="$(dir-outputBase)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
-
-		<!-- XULRunner files -->
-		<Message Text="Unzipping XULRunner." Condition="'$(OS)'=='Windows_NT'"/>
-		<Unzip ZipFilename="$(fwrt)/Downloads/xulrunner-29.0.1.en-US.win32.zip" ToDir="$(dir-outputBase)" Condition="'$(OS)'=='Windows_NT'"/>
+		<!-- NuGet packages. Property- and ItemGroups are inside the target so $(arch) and *'s are read properly -->
+		<PropertyGroup>
+			<Architecture Condition="'$(arch)'=='x86_64'">64</Architecture>
+			<Architecture Condition="'$(arch)'!='x86_64'">32</Architecture>
+			<GeckoDir Condition="'$(OS)'=='Windows_NT'">$(fwrt)/packages/Geckofx45.45.0.20</GeckoDir><!--yes, this version is missing the terminal .0-->
+			<GeckoDir Condition="'$(OS)'!='Windows_NT'">$(fwrt)/packages/Geckofx45.$(Architecture).Linux.45.0.21.0</GeckoDir>
+		</PropertyGroup>
+		<ItemGroup>
+			<NuGottenFiles Include="$(GeckoDir)/lib/net40/Geckofx-Core.dll"/>
+			<NuGottenFiles Include="$(GeckoDir)/lib/net40/Geckofx-Core.pdb" Condition="'$(OS)'=='Windows_NT'"/>
+			<NuGottenFiles Include="$(GeckoDir)/lib/net40/Geckofx-Core.dll.mdb" Condition="'$(OS)'!='Windows_NT'"/>
+			<NuGottenFiles Include="$(GeckoDir)/lib/net40/Geckofx-Winforms.dll"/>
+			<NuGottenFiles Include="$(GeckoDir)/lib/net40/Geckofx-Winforms.pdb" Condition="'$(OS)'=='Windows_NT'"/>
+			<NuGottenFiles Include="$(GeckoDir)/lib/net40/Geckofx-Winforms.dll.mdb" Condition="'$(OS)'!='Windows_NT'"/>
+			<NuGottenFiles Include="$(GeckoDir)/build/Geckofx-Core.dll.config" Condition="'$(OS)'!='Windows_NT'"/>
+			<NuGottenFiles Include="$(GeckoDir)/content/**/*.*"/>
+		</ItemGroup>
+		<Copy SourceFiles="@(NuGottenFiles)" DestinationFolder="$(dir-outputBase)/%(RecursiveDir)"
+			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 	</Target>
 
 	<Target Name="setRegistryValues" DependsOnTargets="initLinux;initWindows;setKeysInHKLM;setKeysInHKCU"/>

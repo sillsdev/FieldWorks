@@ -349,8 +349,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			/// a slice node with editor 'string' or 'multistring' as appropriate.
 			/// AddSeqNode is similar, except that it may display layouts of multiple objects.
 			/// </summary>
-			static void RestoreSelection(int ich, DataTree datatree, object[] key,
-				int hvoNewObj, int flidObjProp, int flidStringProp, int ws)
+			static void RestoreSelection(int ich, DataTree datatree, object[] key, int hvoNewObj, int flidStringProp, int ws)
 			{
 				// To be written.
 				foreach (Slice slice in datatree.Slices)
@@ -465,7 +464,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				int hvoNewObj = MakeRealObject(tssTyped);
 
 				// Now try to make a suitable selection in the slice that replaces this.
-				RestoreSelection(ich, datatree, parentKey, hvoNewObj, flidEmptyProp, flidStringProp, wsToCreate);
+				RestoreSelection(ich, datatree, parentKey, hvoNewObj, flidStringProp, wsToCreate);
 			}
 		}
 

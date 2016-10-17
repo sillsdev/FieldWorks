@@ -147,7 +147,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (m_ctrl == null)
 			{
-				SystemSounds.Beep.Play();
+				MiscUtils.ErrorBeep();
 				return;
 			}
 

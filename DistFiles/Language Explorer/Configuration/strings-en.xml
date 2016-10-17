@@ -18,6 +18,7 @@
 	<string id="LexEntry" txt="Entry"/>
 	<string id="LexSense" txt="Sense"/>
 	<string id="LexExampleSentence" txt="Example"/>
+	<string id="LexExtendedNote" txt="Extended Note"/>
 	<string id="LexEtymology" txt="Etymology"/>
 	<string id="ReversalIndex" txt="Reversal Index"/>
 	<string id="ReversalIndexEntry" txt="Reversal Entry"/>
@@ -85,8 +86,10 @@
 	<string id="ConfidenceLevels" txt="Confidence Level"/>
 	<string id="DomainTypes" txt="Academic Domain"/>
 	<string id="Education" txt="Education Level"/>
+	<string id="ExtendedNoteTypes" txt="Extended Note Type"/>
 	<string id="Roles" txt="Role"/>
 	<string id="GenreList" txt="Genre"/>
+	<string id="Languages" txt="Language"/>
 	<string id="ProdRestrict" txt="Exception &quot;Feature&quot;"/>
 	<string id="Positions" txt="Position"/>
 	<string id="PublicationTypes" txt="Publication"/>
@@ -128,6 +131,7 @@
 	<string id="LexSense-Plural" txt="Senses"/>
 	<string id="LexPronunciation-Plural" txt="Pronunciations"/>
 	<string id="LexExampleSentence-Plural" txt="Examples"/>
+	<string id="LexExtendedNote-Plural" txt="Extended Notes"/>
 	<string id="CmTranslation-Plural" txt="Translations"/>
 	<string id="MoForm-Plural" txt="Allomorphs"/>
 	<string id="PubSettings" txt="Publication Settings"/>
@@ -180,6 +184,7 @@
 	<string id="No-ListItems" txt="No List items"/>
 	<string id="No-EducationLevels" txt="No Education Levels"/>
 	<string id="No-Roles" txt="No Roles"/>
+	<string id="No-Languages" txt="No Languages"/>
 	<string id="No-FsFeatStrucTypes" txt="No Feature Types"/>
 	<string id="No-Genres" txt="No Genres"/>
 	<string id="No-LexicalRelations" txt="No Lexical Relations"/>
@@ -345,6 +350,9 @@
 	<string id="EntrySensePair2" txt="Entry/Sense Pair - 2 relation names"/>
 	<string id="EntrySenseTree" txt="Entry/Sense Tree"/>
 	<string id="EntrySenseSequence" txt="Entry/Sense Sequence/scale"/>
+	<string id="SenseUnidirectional" txt="Sense Unidirectional"/>
+	<string id="EntryUnidirectional" txt="Entry Unidirectional"/>
+	<string id="EntrySenseUnidirectional" txt="Entry/Sense Unidirectional"/>
   </group>
   <group id="LabelAbbreviations">
 <!-- (sorted by abbreviation) -->
@@ -358,6 +366,7 @@
 	<string id="Antonym" txt="an"/>
 <!-- Lexical Relation -->
 	<string id="Bibliography" txt="bb"/>
+	<string id="Bibliographic Source" txt="bs"/>
 	<string id="Compare" txt="cf"/>
 <!-- Lexical Relation -->
 	<string id="Cross References" txt="cf"/>
@@ -368,8 +377,11 @@
 	<string id="Definition" txt="dϰ"/>
 	<string id="Summary Definition" txt="df"/>
 	<string id="Date Modified" txt="dt"/>
+	<string id="Etymology Note" txt="en"/>
+	<string id="Discussion" txt="enn"/>
 	<string id="Etymology" txt="et"/>
 	<string id="Encyclopedic Info" txt="eϰ"/>
+	<string id="Following Comment" txt="fc"/>
 	<string id="Specifics" txt="gs"/>
 <!-- Lexical Relation: specifics relation (to this whole) -->
 	<string id="Gloss" txt="gϰ"/>
@@ -392,6 +404,7 @@
 	<string id="Note" txt="nt"/>
 	<string id="General Note" txt="nt"/>
 	<string id="Restrictions" txt="oϰ"/>
+	<string id="Preceding Annotation" txt="pa"/>
 	<string id="Pronunciation" txt="ph"/>
 	<string id="Category Info." txt="ps"/>
 <!-- (Part of Speech) -->
@@ -403,7 +416,10 @@
 	<string id="Lexical Relations" txt="rl"/>
 	<string id="Scientific Name" txt="sc"/>
 	<string id="Semantic Domains" txt="sd"/>
+	<string id="Source Form" txt="sf"/>
 	<string id="Slots" txt="sl"/>
+	<string id="Source Language" txt="slg"/>
+	<string id="Source Language Notes" txt="slgn"/>
 	<string id="Semantics Note" txt="sm"/>
 	<string id="Sense Number" txt="sn"/>
 	<string id="Source" txt="so"/>

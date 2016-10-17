@@ -7,14 +7,14 @@
 
 using System;
 using System.IO;
-using System.Media;
 using System.Windows.Forms;
+using Palaso.Reporting;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
-using Palaso.Reporting;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 {
@@ -182,7 +182,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		{
 			if (m_destinationFolder.Text.IndexOfAny(Path.GetInvalidPathChars()) != -1)
 			{
-				SystemSounds.Beep.Play();
+				MiscUtils.ErrorBeep();
 				var fixText = m_destinationFolder.Text;
 				for (; ; )
 				{

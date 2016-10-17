@@ -90,6 +90,10 @@
 			<item command="CmdInsertSubsubrecord" defaultVisible="false"/>
 			<item command="CmdAddToLexicon" label="Entry..." defaultVisible="false"/>
 		</menu>
+		<!-- This is really the Tools-Configure submenu.-->
+		<menu id="Configure">
+			<item label="{0}" command="CmdConfigureXmlDocView" defaultVisible="false"/>
+		</menu>
 		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menuAddOn/*"/>
 	</menuAddOn>
 	<!-- ********************************************************** -->

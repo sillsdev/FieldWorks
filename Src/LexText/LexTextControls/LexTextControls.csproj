@@ -148,6 +148,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\FxtDll.dll</HintPath>
     </Reference>
+    <Reference Include="Geckofx-Core">
+      <HintPath>..\..\..\Output\Debug\Geckofx-Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms">
+      <HintPath>..\..\..\Output\Debug\Geckofx-Winforms.dll</HintPath>
+    </Reference>
     <Reference Include="MessageBoxExLib">
       <Name>MessageBoxExLib</Name>
       <HintPath>..\..\..\Output\Debug\MessageBoxExLib.dll</HintPath>
@@ -251,13 +257,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
-    <Reference Include="Geckofx-Core">
-      <Package>Geckofx-Core</Package>
-      <HintPath>..\..\..\Downloads\Geckofx-Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Geckofx-Winforms">
-      <Package>Geckofx-WinForms</Package>
-      <HintPath>..\..\..\Downloads\Geckofx-Winforms.dll</HintPath>
+    <Reference Include="FwCoreDlgControls">
+      <HintPath>..\..\..\Output\Debug\FwCoreDlgControls.dll</HintPath>
     </Reference>
     <Reference Include="PalasoUIWindowsForms">
       <HintPath>..\..\..\Downloads\PalasoUIWindowsForms.dll</HintPath>

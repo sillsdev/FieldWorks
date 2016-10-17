@@ -162,6 +162,14 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the default value for this property.
+		/// It is not clear what this means. It might be that the default value is used for
+		/// storing the value of the style property this object inherits from, so that in the
+		/// event that the inherited style property information is needed, the default value
+		/// can be referred to.
+		/// If there is no inheritance being used, then when saving a change to this property,
+		/// the default value is examined so that the property can be converted to an inherited
+		/// property if the new value is the same as the default value.
+		/// The default value is also used in the event that a not-inheriting property starts to inherit.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public T DefaultValue
@@ -1345,18 +1353,30 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			return fontName;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Sets all properties to inherited.
+		/// Set all properties to inherited. In other words, set all property values to the
+		/// values of the properties in the style this style is based on.
+		/// Also set the "default value" of properties, and the values to those
+		/// default values, if this style is not based on another style (like Normal).
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <remarks>
+		/// Set default values at the end, rather than at the beginning of the method, so that when we
+		/// are resetting the Normal style, or another style not based on anything but
+		/// itself, the style properties will have their values set to the default values. It is
+		/// important that inheritance be turned on for this to work.
+		///
+		/// Note that in the case of using this method as part of resetting a style to factory defaults,
+		/// the Normal style should have the defaults set before applying the settings in the styles XML.
+		/// But regular styles should not first have their property default values set, or it will allow their
+		/// XML property value settings to be lost by being converted from explicit to inherited values if
+		/// they match the default value (such as in FwFontTab UpdateForStyle()).
+		/// </remarks>
 		protected void SetAllPropertiesToInherited()
 		{
-			SetAllDefaults();
-			BaseStyleInfo basedOn = m_basedOnStyle ?? this;
-			m_defaultFontInfo.SetAllPropertiesToInherited(basedOn.m_defaultFontInfo);
+			var basedOn = m_basedOnStyle ?? this;
+			m_defaultFontInfo.ResetAllPropertiesToInherited(basedOn.m_defaultFontInfo);
 			foreach (FontInfo fontInfoOverride in m_fontInfoOverrides.Values)
-				fontInfoOverride.SetAllPropertiesToInherited(basedOn.m_defaultFontInfo);
+				fontInfoOverride.ResetAllPropertiesToInherited(basedOn.m_defaultFontInfo);
 			m_rtl.ResetToInherited(basedOn.m_rtl);
 			m_keepWithNext.ResetToInherited(basedOn.m_keepWithNext);
 			m_keepTogether.ResetToInherited(basedOn.m_keepTogether);
@@ -1371,13 +1391,43 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			m_border.ResetToInherited(basedOn.m_border);
 			m_borderColor.ResetToInherited(basedOn.m_borderColor);
 			m_bulletInfo.ResetToInherited(basedOn.m_bulletInfo);
+
+			if (BasedOnStyle == null)
+				SetAllDefaults();
+		}
+
+		/// <summary>
+		/// Set all the values of inherited properties to the inherited value, leave explicit values alone
+		/// </summary>
+		private void SetNonExplicitPropertiesToInherited()
+		{
+			var basedOn = m_basedOnStyle ?? this;
+			m_defaultFontInfo.InheritAllProperties(basedOn.m_defaultFontInfo);
+			foreach (FontInfo fontInfoOverride in m_fontInfoOverrides.Values)
+				fontInfoOverride.InheritAllProperties(basedOn.m_defaultFontInfo);
+			m_rtl.InheritValue(basedOn.m_rtl);
+			m_keepWithNext.InheritValue(basedOn.m_keepWithNext);
+			m_keepTogether.InheritValue(basedOn.m_keepTogether);
+			m_widowOrphanControl.InheritValue(basedOn.m_widowOrphanControl);
+			m_alignment.InheritValue(basedOn.m_alignment);
+			m_lineSpacing.InheritValue(basedOn.m_lineSpacing);
+			m_spaceBefore.InheritValue(basedOn.m_spaceBefore);
+			m_spaceAfter.InheritValue(basedOn.m_spaceAfter);
+			m_firstLineIndent.InheritValue(basedOn.m_firstLineIndent);
+			m_leadingIndent.InheritValue(basedOn.m_leadingIndent);
+			m_trailingIndent.InheritValue(basedOn.m_trailingIndent);
+			m_border.InheritValue(basedOn.m_border);
+			m_borderColor.InheritValue(basedOn.m_borderColor);
+			m_bulletInfo.InheritValue(basedOn.m_bulletInfo);
 		}
 		#endregion
 
 		#region private/internal methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Sets any inherited property to the defaults.
+		/// Sets any inherited property to the defaults. For a property that
+		/// is not inherited, this only sets the default value of the property, but
+		/// it does not set the value to the default value.
 		/// </summary>
 		/// <remarks>After calling this method, it should be safe to access the
 		/// InheritableStyleProp.Value property for any property of this style. These defaults
@@ -1638,6 +1688,14 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		public bool WidowOrphanControl
 		{
 			get { return m_widowOrphanControl.Value; }
+		}
+
+		/// <summary>
+		/// Gets the value of BulletInfo
+		/// </summary>
+		public BulletInfo BulletInfo
+		{
+			get { return m_bulletInfo.Value; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2016,6 +2074,22 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			return overridesString.ToString();
 		}
 		#endregion
+
+		/// <summary>
+		/// If the based on style name is set then set the actual based on style member to the item in the styleInfoCollection
+		/// </summary>
+		public void SetBasedOnStyleAndInheritValues(FwStyleSheet.StyleInfoCollection styleInfoCollection)
+		{
+			if (string.IsNullOrEmpty(m_basedOnStyleName) || m_basedOnStyleName == Name)
+			{
+				return;
+			}
+			if (styleInfoCollection.Contains(m_basedOnStyleName))
+			{
+				m_basedOnStyle = styleInfoCollection[m_basedOnStyleName];
+				SetNonExplicitPropertiesToInherited();
+			}
+		}
 	}
 	#endregion
 }

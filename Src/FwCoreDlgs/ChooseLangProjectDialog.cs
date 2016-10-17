@@ -302,7 +302,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 
 			// Simple check for host already present by name.
-			if (IsDisposed || m_networkNeighborhood.Nodes.ContainsKey((entry.HostName)))
+			if (IsDisposed || m_networkNeighborhood.Nodes.ContainsKey((entry.HostName)) || entry.AddressList.Length == 0)
 				return;
 
 			// Handle misbehaving host entries who have no ipaddress

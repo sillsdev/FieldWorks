@@ -336,7 +336,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Makes the target method accessible to XmlViews clients.
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.MultiString)]
-		public VirtualStringAccessor MLPartOfSpeech
+		public ITsMultiString MLPartOfSpeech
 		{
 			get { return new VirtualStringAccessor(this, m_MLPartOfSpeechFlid, PartOfSpeechForWsTSS); }
 		}
@@ -345,7 +345,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Makes the target method accessible to XmlViews clients.
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.MultiString)]
-		public VirtualStringAccessor MLInflectionClass
+		public ITsMultiString MLInflectionClass
 		{
 			get { return new VirtualStringAccessor(this, m_MLInflectionClassFlid, InflectionClassForWsTSS); }
 		}
@@ -1330,11 +1330,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				cch = bldr.Length;
 				bldr.ReplaceTsString(cch, cch, InflectionClassRA.Abbreviation.BestAnalysisVernacularAlternative);
 				cch = bldr.Length;
-				bldr.ReplaceTsString(cch, cch, TsStringUtils.MakeTss(") ", userWs));
-			}
-			else
-			{
-				bldr.ReplaceTsString(cch, cch, TsStringUtils.MakeTss(" ", userWs));
+				bldr.ReplaceTsString(cch, cch, TsStringUtils.MakeTss(")", userWs));
 			}
 			cch = bldr.Length;
 			var features = MsFeaturesOA;
@@ -3528,6 +3524,12 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				return nkey;
 			}
 		}
+
+		///<summary>Needed only for Allomorph types; placeholder to keep the compiler happy</summary>
+		public virtual IFdoReferenceCollection<IPhEnvironment> AllomorphEnvironments
+		{
+			get { return Cache.ServiceLocator.GetInstance<IFdoReferenceCollection<IPhEnvironment>>(); }
+		}
 	}
 
 	internal partial class MoStemAllomorph
@@ -3639,6 +3641,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			((Infrastructure.Impl.MoStemAllomorphRepository) Services.GetInstance<IMoStemAllomorphRepository>()).ClearMonomorphemicMorphData();
 		}
+
+		public override IFdoReferenceCollection<IPhEnvironment> AllomorphEnvironments { get { return PhoneEnvRC; } }
 	}
 
 	internal partial class MoAffixForm
@@ -3729,9 +3733,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 	}
 
-	/// <summary>
-	///
-	/// </summary>
+	/// <summary/>
 	internal partial class MoAffixAllomorph
 	{
 		/// <summary>
@@ -3809,6 +3811,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 			return base.IsFieldRelevant(flid, propsToMonitor);
 		}
+
+		public override IFdoReferenceCollection<IPhEnvironment> AllomorphEnvironments { get { return PhoneEnvRC; } }
 	}
 
 	internal partial class MoAffixProcess
@@ -3855,16 +3859,12 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			IsAbstract = true;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gives an object an opportunity to do any class-specific side-effect work when it has
 		/// been cloned with DomainServices.CopyObject. In this case, the creation of a MoAffixProcess
 		/// adds default initial values that are not wanted in the cloned copy, so PostClone()
 		/// removes them.
 		/// </summary>
-		/// <param name="copyMap"></param>
-		/// ------------------------------------------------------------------------------------
-
 		public override void PostClone(Dictionary<int, ICmObject> copyMap)
 		{
 			foreach (var cmObject in copyMap.Values)

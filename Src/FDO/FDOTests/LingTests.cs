@@ -2445,11 +2445,10 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			var variantEntryTypes = Cache.LangProject.LexDbOA.VariantEntryTypesOA;
 			Assert.That(variantEntryTypes, Is.Not.Null);
 			Assert.That(variantEntryTypes, Is.EqualTo(Cache.LangProject.LexDbOA.VariantEntryTypesOA), "should not make a new one each time!");
-			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			Assert.That(variantEntryTypes.PossibilitiesOS.Count, Is.EqualTo(6));
+			Assert.That(variantEntryTypes.PossibilitiesOS.Count, Is.EqualTo(7));
 			var letFactory = Cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>();
-			var lexEntryType1 = variantEntryTypes.PossibilitiesOS[0] as ILexEntryType;
-			var lexEntryType2 = variantEntryTypes.PossibilitiesOS[1] as ILexEntryType;
+			var lexEntryType1 = (ILexEntryType)variantEntryTypes.PossibilitiesOS[0];
+			var lexEntryType2 = (ILexEntryType)variantEntryTypes.PossibilitiesOS[1];
 			var lexEntryType1Sub1 = letFactory.Create();
 			lexEntryType1.SubPossibilitiesOS.Add(lexEntryType1Sub1);
 
@@ -2468,9 +2467,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			ler2.VariantEntryTypesRS.Add(lexEntryType1);
 
 			var progressBar = new DummyProgressDlg();
-			var itemsToChange = new List<ILexEntryType>();
-			itemsToChange.Add(lexEntryType1);
-			itemsToChange.Add(lexEntryType1Sub1);
+			var itemsToChange = new List<ILexEntryType> { lexEntryType1, lexEntryType1Sub1 };
 
 			Cache.LangProject.LexDbOA.ConvertLexEntryInflTypes(progressBar, itemsToChange);
 			var leit1 = ler1.VariantEntryTypesRS[0];
@@ -2483,11 +2480,11 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			variantEntryTypes = Cache.LangProject.LexDbOA.VariantEntryTypesOA;
 			Assert.That(variantEntryTypes, Is.Not.Null);
 			Assert.That(variantEntryTypes, Is.EqualTo(Cache.LangProject.LexDbOA.VariantEntryTypesOA), "should not make a new one each time!");
-			Assert.That(variantEntryTypes.PossibilitiesOS.Count, Is.EqualTo(6));
+			Assert.That(variantEntryTypes.PossibilitiesOS.Count, Is.EqualTo(7));
 
-			lexEntryType1 = variantEntryTypes.PossibilitiesOS[0] as ILexEntryType;
+			lexEntryType1 = (ILexEntryType)variantEntryTypes.PossibilitiesOS[0];
 			Assert.AreEqual(LexEntryInflTypeTags.kClassId, lexEntryType1.ClassID, "first type should be irregularly inflected form");
-			lexEntryType1Sub1 = lexEntryType1.SubPossibilitiesOS[0] as ILexEntryType;
+			lexEntryType1Sub1 = (ILexEntryType)lexEntryType1.SubPossibilitiesOS[0];
 			Assert.AreEqual(LexEntryInflTypeTags.kClassId, lexEntryType1Sub1.ClassID, "first sub-type of first type should be irregularly inflected form");
 		}
 
@@ -2500,10 +2497,10 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			var variantEntryTypes = Cache.LangProject.LexDbOA.VariantEntryTypesOA;
 			Assert.That(variantEntryTypes, Is.Not.Null);
 			Assert.That(variantEntryTypes, Is.EqualTo(Cache.LangProject.LexDbOA.VariantEntryTypesOA), "should not make a new one each time!");
-			Assert.That(variantEntryTypes.PossibilitiesOS.Count, Is.EqualTo(6));
+			Assert.That(variantEntryTypes.PossibilitiesOS.Count, Is.EqualTo(7));
 			var leitFactory = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeFactory>();
-			var lexEntryInflType1 = variantEntryTypes.PossibilitiesOS[3] as ILexEntryInflType;
-			var lexEntryInflType2 = variantEntryTypes.PossibilitiesOS[4] as ILexEntryInflType;
+			var lexEntryInflType1 = (ILexEntryInflType)variantEntryTypes.PossibilitiesOS[3];
+			var lexEntryInflType2 = (ILexEntryInflType)variantEntryTypes.PossibilitiesOS[4];
 			var lexEntryInflType1Sub1 = leitFactory.Create();
 			lexEntryInflType1.SubPossibilitiesOS.Insert(0, lexEntryInflType1Sub1);
 
@@ -2522,9 +2519,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			ler2.VariantEntryTypesRS.Add(lexEntryInflType1);
 
 			var progressBar = new DummyProgressDlg();
-			var itemsToChange = new List<ILexEntryType>();
-			itemsToChange.Add(lexEntryInflType1);
-			itemsToChange.Add(lexEntryInflType1Sub1);
+			var itemsToChange = new List<ILexEntryType> { lexEntryInflType1, lexEntryInflType1Sub1 };
 
 			Cache.LangProject.LexDbOA.ConvertLexEntryTypes(progressBar, itemsToChange);
 			var let1 = ler1.VariantEntryTypesRS[0];
@@ -2537,11 +2532,11 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			variantEntryTypes = Cache.LangProject.LexDbOA.VariantEntryTypesOA;
 			Assert.That(variantEntryTypes, Is.Not.Null);
 			Assert.That(variantEntryTypes, Is.EqualTo(Cache.LangProject.LexDbOA.VariantEntryTypesOA), "should not make a new one each time!");
-			Assert.That(variantEntryTypes.PossibilitiesOS.Count, Is.EqualTo(6));
+			Assert.That(variantEntryTypes.PossibilitiesOS.Count, Is.EqualTo(7));
 
-			var lexEntryType1 = variantEntryTypes.PossibilitiesOS[3] as ILexEntryType;
+			var lexEntryType1 = (ILexEntryType)variantEntryTypes.PossibilitiesOS[3];
 			Assert.AreEqual(LexEntryTypeTags.kClassId, lexEntryType1.ClassID, "third type should be variant");
-			var lexEntryType1Sub1 = lexEntryType1.SubPossibilitiesOS[0] as ILexEntryType;
+			var lexEntryType1Sub1 = (ILexEntryType)lexEntryType1.SubPossibilitiesOS[0];
 			Assert.AreEqual(LexEntryTypeTags.kClassId, lexEntryType1Sub1.ClassID, "third's first type should be variant");
 		}
 	}

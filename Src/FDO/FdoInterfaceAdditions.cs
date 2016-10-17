@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2013 SIL International
+// Copyright (c) 2008-2014 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -14,12 +14,13 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using System.Collections;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SILUBS.SharedScrUtils;
 
 // Add additional methods/properties to domain object in this file.
@@ -640,11 +641,42 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		IEnumerable<ILexEntry> PrimaryEntryRoots { get; }
 
+		/// <summary>Concatenates VariantEntryTypesRS and ComplexEntryTypesRS</summary>
+		IEnumerable<ILexEntryType> EntryTypes { get; }
+
 		/// <summary>
 		/// This is the same as PrimaryEntryRoots, except that if the only Component is (or is a sense of) the only PrimaryEntryRoot,
 		/// it produces an empty list.
 		/// </summary>
 		IEnumerable<ILexEntry> NonTrivialEntryRoots { get; }
+
+		/// <summary>
+		/// Accessor for the entry that owns this ILexEntryRef
+		/// </summary>
+		ILexEntry OwningEntry { get; }
+
+		/// <returns>this.Owner.SensesOS.ExamplesOS</returns>
+		IEnumerable<ILexExampleSentence> ExampleSentences { get; }
+
+		/// <returns>this.Owner.SensesOS.DefinitionOrGloss</returns>
+		IEnumerable<IMultiStringAccessor>  DefinitionOrGloss { get; }
+
+		/// <summary>
+		/// Virtual property for configuration, wraps <see cref="ComponentLexemesRS"/> collection objects in read only interface
+		/// that exposes certain LexSense- and LexEntry-specific fields.
+		/// </summary>
+		IEnumerable<ISenseOrEntry> ConfigReferencedEntries { get; }
+
+		/// <summary>
+		/// Virtual property for configuration, wraps <see cref="PrimaryLexemesRS"/> collection objects in read only interface
+		/// that exposes certain LexSense- and LexEntry-specific fields.
+		/// </summary>
+		IEnumerable<ISenseOrEntry> PrimarySensesOrEntries { get; }
+
+		/// <summary>
+		/// This is a virtual property.  It returns the list of all Dialect Labels for this variant's Owner
+		/// </summary>
+		IFdoReferenceSequence<ICmPossibility> VariantEntryDialectLabels { get; }
 	}
 
 	public partial interface ILexReference
@@ -681,6 +713,17 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="hvoMember"></param>
 		/// <returns></returns>
 		int SequenceIndex(int hvoMember);
+
+		/// <summary>
+		/// The ILexRefType that references this ILexReference in a member or member collection
+		/// </summary>
+		ILexRefType OwnerType { get; }
+
+		/// <summary>
+		/// Virtual property for configuration, wraps <see cref="TargetsRS"/> collection objects in read only interface
+		/// that exposes certain LexSense- and LexEntry-specific fields.
+		/// </summary>
+		IEnumerable<ISenseOrEntry> ConfigTargets { get; }
 	}
 
 	public partial interface ICmMajorObject
@@ -903,6 +946,18 @@ namespace SIL.FieldWorks.FDO
 	}
 
 	/// <summary>
+	/// Non-model interface additions for ILexPronunciation.
+	/// </summary>
+	public partial interface ILexPronunciation
+	{
+		/// <summary>
+		/// The publications from which this is not excluded, that is, the ones in which it
+		/// SHOULD be published.
+		/// </summary>
+		IFdoSet<ICmPossibility> PublishIn { get; }
+	}
+
+	/// <summary>
 	/// Non-model interface additions for ILexSense.
 	/// </summary>
 	public partial interface ILexSense : IVariantComponentLexeme
@@ -1029,6 +1084,45 @@ namespace SIL.FieldWorks.FDO
 		/// Note this is called on SFM export by mdf.xml so needs to be a property.
 		/// </summary>
 		IEnumerable<ILexReference> LexSenseReferences { get; }
+
+		/// <summary>
+		/// Convenience method for returning the contents of the Definition field or of the
+		/// Gloss field if the Definition is undefined.
+		/// </summary>
+		IMultiStringAccessor DefinitionOrGloss { get; }
+
+		/// <summary>
+		/// This is a backreference (virtual) property.  It returns the list of all the LexEntryRef
+		/// objects that refer to this LexSense in ShowComplexFormIn  and are complex forms.
+		/// </summary>
+		IEnumerable<ILexEntryRef> VisibleComplexFormBackRefs { get; }
+
+		/// <summary>
+		/// This returns a subset of VisibleComplexFormBackRefs, specifically those that are NOT also subentries.
+		/// </summary>
+		IEnumerable<ILexEntryRef> ComplexFormsNotSubentries { get; }
+
+		/// <summary>
+		/// This returns the subentries of this sense
+		/// </summary>
+		IEnumerable<ILexEntry> Subentries { get; }
+
+		/// <summary>
+		/// This is an entry reference property. It returns the list of all the LexEntryRef objects that refer to this LexSense.
+		/// </summary>
+		IEnumerable<ILexEntryRef> EntryRefsWithThisMainSense { get; }
+
+		/// <summary>
+		/// This property returns the list of all the LexEntryRef objects that refer to this LexSense
+		/// or its owning LexEntry.
+		/// </summary>
+		IEnumerable<ILexEntryRef> MainEntryRefs { get; }
+
+		/// <summary>
+		/// This is a virtual property that ensures that a Sense shows its owning Entry's
+		/// DialectLabels if it has none of its own.
+		/// </summary>
+		IFdoReferenceSequence<ICmPossibility> DialectLabelsSenseOrEntry { get; }
 	}
 
 	/// <summary>
@@ -1116,7 +1210,7 @@ namespace SIL.FieldWorks.FDO
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the complex form entries, that is, the entries which should be shown
-		/// in the complex forms list for this entry in stem-based view.
+		/// in the complex forms list for this entry in lexeme-based view.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		IEnumerable<ILexEntry> VisibleComplexFormEntries { get; }
@@ -1129,10 +1223,7 @@ namespace SIL.FieldWorks.FDO
 		/// ------------------------------------------------------------------------------------
 		IEnumerable<ILexEntry> Subentries { get; }
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <returns></returns>
+		/// <summary/>
 		IMoMorphSynAnalysis FindOrCreateDefaultMsa();
 
 		/// <summary>
@@ -1150,10 +1241,7 @@ namespace SIL.FieldWorks.FDO
 			get;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="ls"></param>
+		/// <summary/>
 		void MoveSenseToCopy(ILexSense ls);
 
 		/// <summary>
@@ -1174,73 +1262,73 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		IFdoSet<ICmPossibility> ShowMainEntryIn { get; }
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		string CitationFormWithAffixType
 		{
 			get;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		string HomographForm
 		{
 			get;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		string HomographFormKey
 		{
 			get;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		ITsString HeadWord
 		{
 			get;
 		}
 
 		/// <summary>
-		///
+		/// Virtual property allows Headword to be read through cache.
 		/// </summary>
+		[VirtualProperty(CellarPropertyType.MultiUnicode)]
+		IMultiAccessorBase MLHeadWord
+		{
+			get;
+		}
+
+		/// <summary>
+		/// Virtual property allows Headword to be read through cache using the DictionaryReference homograph number configuration
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.MultiUnicode)]
+		IMultiAccessorBase HeadWordRef
+		{
+			get;
+		}
+
+		/// <summary/>
 		IMoMorphType PrimaryMorphType
 		{
 			get;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		bool IsMorphTypesMixed
 		{
 			get;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		List<IMoMorphType> MorphTypes
 		{
 			get;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		IMoForm[] AllAllomorphs
 		{
 			get;
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		List<ILexSense> AllSenses
 		{
 			get;
@@ -1292,6 +1380,12 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		IEnumerable<ILexEntryRef> ComplexFormEntryRefs { get; }
+
+		/// <summary>
+		/// Fake property. Implemented in ConfiguredXHTMLGenerator to enable showing
+		/// ComplexEntry types for subentries. Needed here to enable CSSGenerator functionality.
+		/// </summary>
+		IFdoReferenceSequence<ILexEntryType> LookupComplexEntryType { get; }
 
 		/// <summary>
 		/// This is a backreference (virtual) property.  It returns the list of ids for all the
@@ -1376,6 +1470,36 @@ namespace SIL.FieldWorks.FDO
 		/// Note this is called on SFM export by mdf.xml so needs to be a property.
 		/// </summary>
 		IEnumerable<ILexReference> LexEntryReferences { get; }
+
+		/// <summary>
+		/// Collection of the pictures of senses
+		/// </summary>
+		IEnumerable<ICmPicture> PicturesOfSenses { get; }
+
+		/// <summary>
+		/// Get the minimal set of LexReferences for this entry.
+		/// This is a virtual, backreference property.
+		/// </summary>
+		List<ILexReference> MinimalLexReferences { get; }
+
+		/// <summary>
+		/// This is a backreference (virtual) property.  It returns the list of all the LexEntryRef
+		/// objects that refer to this LexEntry in ShowComplexFormIn  and are complex forms.
+		/// </summary>
+		IEnumerable<ILexEntryRef> VisibleComplexFormBackRefs { get; }
+
+		/// <summary>
+		/// This returns a subset of VisibleComplexFormBackRefs, specifically those that are NOT also subentries.
+		/// </summary>
+		IEnumerable<ILexEntryRef> ComplexFormsNotSubentries { get; }
+
+		/// <summary>
+		/// This is a virtual property.  It returns the list of all the LexEntryRef
+		/// objects owned by this LexEntry that have HideMinorEntry set to zero and that define
+		/// this LexEntry as a variant.
+		/// </summary>
+		/// <value>The visible variant entry refs.</value>
+		IEnumerable<ILexEntryRef> VisibleVariantEntryRefs { get; }
 	}
 
 	/// <summary>
@@ -1529,6 +1653,15 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="ws">The ws.</param>
 		/// <returns></returns>
 		ITsString PartOfSpeechForWsTSS(int ws);
+
+		/// <summary/>
+		ITsMultiString MLPartOfSpeech { get; }
+
+		/// <summary/>
+		ITsMultiString MLInflectionClass { get; }
+
+		/// <summary/>
+		IEnumerable<IMoInflAffixSlot> Slots { get; }
 	}
 
 	/// <summary>
@@ -1961,23 +2094,20 @@ namespace SIL.FieldWorks.FDO
 		/// Return a marked form in the desired writing system.
 		/// </summary>
 		string GetFormWithMarkers(int ws);
+
+		/// <returns>PhoneEnvRC on <see cref="IMoStemAllomorph"/> or <see cref="IMoAffixAllomorph"/> for Dictionary publication</returns>
+		IFdoReferenceCollection<IPhEnvironment> AllomorphEnvironments { get; }
 	}
 
-	/// <summary>
-	///
-	/// </summary>
+	/// <summary/>
 	public partial interface IMoInflAffixTemplate : ICloneableCmObject
 	{
 	}
 
-	/// <summary>
-	///
-	/// </summary>
+	/// <summary/>
 	public partial interface IMoInflAffixSlot
 	{
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		IEnumerable<IMoInflAffMsa> Affixes { get; }
 		/// <summary>
 		/// Get a list of inflectional affix LexEntries which do not already refer to this slot
@@ -4503,6 +4633,12 @@ namespace SIL.FieldWorks.FDO
 		/// ------------------------------------------------------------------------------------
 		void InsertORCAt(ITsStrBldr tsStrBldr, int ich);
 
+		/// <summary>
+		/// The publications from which this is not excluded, that is, the ones in which it
+		/// SHOULD be published.
+		/// </summary>
+		IFdoSet<ICmPossibility> PublishIn { get; }
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Update the properties of a CmPicture with the given file, caption, and folder.
@@ -4515,6 +4651,11 @@ namespace SIL.FieldWorks.FDO
 		/// caption</param>
 		/// ------------------------------------------------------------------------------------
 		void UpdatePicture(string srcFilename, ITsString captionTss, string sFolder, int ws);
+
+		/// <summary>
+		/// Get the sense number of the owning LexSense.
+		/// </summary>
+		ITsString SenseNumberTSS { get; }
 	}
 
 	/// ----------------------------------------------------------------------------------------
@@ -5821,5 +5962,60 @@ namespace SIL.FieldWorks.FDO
 		/// RoledParticipant object. Caller is responsible to make UOW.
 		/// </summary>
 		IRnRoledPartic MakeDefaultRoledParticipant();
+	}
+
+	/// <summary>
+	/// Interface wrapping some fields of ILexSense and ILexEntry used for dictionary configuration and display
+	/// </summary>
+	public interface ISenseOrEntry
+	{
+		/// <summary>
+		/// The actual ILexSense or ILexEntry object.
+		/// </summary>
+		ICmObject Item { get; }
+		/// <summary>
+		/// The Guid if LexEntry; the owning entry's Guid if LexSense
+		/// </summary>
+		Guid EntryGuid { get; }
+
+		/// <summary>
+		/// The HeadWordRef property if wrapping LexEntry, or the HeadWord virtual property for LexSense
+		/// </summary>
+		ITsString HeadWordRef { get; }
+
+		/// <summary>
+		/// The HeadWord property if wrapping LexEntry, or the HeadWord virtual property for LexSense
+		/// </summary>
+		ITsString HeadWord { get; }
+
+		/// <summary>
+		/// ReversalName from either LexEntry or LexSense
+		/// </summary>
+		IMultiAccessorBase ReversalName { get; }
+
+		/// <summary>
+		/// The SummaryDefinition property if wrapping LexEntry, or null for LexSense
+		/// </summary>
+		IMultiString SummaryDefinition { get; }
+
+		/// <summary>
+		/// The Gloss property if wrapping LexSense, or null for LexEntry
+		/// </summary>
+		IMultiUnicode Gloss { get; }
+
+		/// <summary>
+		/// Returns the SummaryDefinition on Entry, or Gloss on Sense
+		/// </summary>
+		IMultiAccessorBase GlossOrSummary { get; }
+
+		/// <summary>
+		/// Returns the entryRefs for the entry/owning entry for the sense
+		/// </summary>
+		IFdoOwningSequence<ILexEntryRef> PrimaryEntryRefs { get; }
+
+		/// <summary>
+		/// Returns the dialect labels for the entry or sense
+		/// </summary>
+		IFdoReferenceSequence<ICmPossibility> DialectLabelsRS { get; }
 	}
 }

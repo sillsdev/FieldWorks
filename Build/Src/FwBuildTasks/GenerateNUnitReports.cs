@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -132,7 +131,7 @@ namespace FwBuildTasks
 						GenerateFailureReport(testCaseName, testCaseNode);
 						break;
 					default:
-						throw new ApplicationException("Unimplemented NUnit testresult");
+						throw new ApplicationException(String.Format("Unimplemented NUnit testresult: {0}", testResult));
 				}
 			}
 		}

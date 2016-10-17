@@ -204,7 +204,6 @@
       <DependentUpon>Db4oSendReceiveDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="FlexHelpTopicProvider.cs" />
-    <Compile Include="FlexStylesXmlAccessor.cs" />
     <Compile Include="ImageHolder.cs">
       <SubType>UserControl</SubType>
     </Compile>

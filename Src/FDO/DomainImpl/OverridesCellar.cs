@@ -1615,6 +1615,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
+		public ITsString VernOrAnalAbbrTSS
+		{
+			get { return BestVernOrAnalysisAbbreviation(Cache, this); }
+		}
+
 		/// <summary>
 		/// Gets a TsString that represents the shortname of this object.
 		/// </summary>
@@ -1740,6 +1745,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				//return TsStringUtils.MakeTss("a " + this.GetType().Name + " with no name", cache.WritingSystemFactory.UserWs);
 			}
 			return tss;
+		}
+
+		/// <summary>
+		/// Return the Abbreviation for the specified CmPossibility (or '???' if it has no name
+		/// or pss is null). Return the best available vernacular or analysis abbreviation (in that order).
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="pss"></param>
+		/// <returns></returns>
+		internal static ITsString BestVernOrAnalysisAbbreviation(FdoCache cache, ICmPossibility pss)
+		{
+			return BestAlternative(cache, pss,
+								   WritingSystemServices.kwsFirstVernOrAnal,
+								   CmPossibilityTags.kflidAbbreviation, Strings.ksQuestions);
 		}
 
 		/// <summary>

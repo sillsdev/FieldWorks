@@ -1561,7 +1561,7 @@ namespace SIL.FieldWorks.IText
 		{
 			try
 			{
-				XmlImportData xid = new XmlImportData(m_cache);
+				XmlImportData xid = new XmlImportData(m_cache, true);
 				xid.ImportData(m_nextInput, m_progress);
 				return true;
 			}

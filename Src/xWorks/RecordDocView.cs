@@ -481,7 +481,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			if (m_configObjectName == null || m_configObjectName == "")
+			if (string.IsNullOrEmpty(m_configObjectName))
 			{
 				display.Enabled = display.Visible = false;
 				return true;
@@ -495,6 +495,7 @@ namespace SIL.FieldWorks.XWorks
 			display.Text = String.Format(display.Text, m_configObjectName + "...");
 			return true; //we've handled this
 		}
+
 		/// <summary>
 		/// Launch the configure dialog.
 		/// </summary>
@@ -503,12 +504,11 @@ namespace SIL.FieldWorks.XWorks
 		public bool OnConfigureXmlDocView(object commandObject)
 		{
 			CheckDisposed();
-
-			using (XmlDocConfigureDlg dlg = new XmlDocConfigureDlg())
+			string sProp = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "layoutProperty");
+			if(String.IsNullOrEmpty(sProp))
+				sProp = "DictionaryPublicationLayout";
+			using(var dlg = new XmlDocConfigureDlg())
 			{
-				string sProp = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "layoutProperty");
-				if (String.IsNullOrEmpty(sProp))
-					sProp = "DictionaryPublicationLayout";
 				dlg.SetConfigDlgInfo(m_configurationParameters, Cache, StyleSheet,
 					this.FindForm() as IMainWindowDelegateCallbacks, m_mediator, sProp);
 				if (dlg.ShowDialog(this) == DialogResult.OK)

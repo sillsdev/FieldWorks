@@ -101,8 +101,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[ExpectedException(typeof(FileNotFoundException))]
-		[Ignore("TE-2917: We no longer throw exceptions if the picture file cannot be found")]
 		public void CmFileFinder_OrigFileMissing()
 		{
 			// Setup
@@ -112,7 +110,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.IsFalse(FileUtils.IsFileReadable(m_internalPath), "Test cannot proceed. Unable to delete Original file.");
 
 			// Test
-			DomainObjectServices.FindOrCreateFile(folder, m_internalPath);
+			Assert.DoesNotThrow(()=>DomainObjectServices.FindOrCreateFile(folder, m_internalPath));
 		}
 
 		/// ------------------------------------------------------------------------------------

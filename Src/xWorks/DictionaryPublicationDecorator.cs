@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2012-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,16 +7,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -51,7 +50,6 @@ namespace SIL.FieldWorks.XWorks
 		private int m_senseOutlineFlid;
 		private int m_mlOwnerOutlineFlid;
 		private int m_publishAsMinorEntryFlid;
-		private int m_doNotShowMainEntryInFlid;
 		private int m_headwordRefFlid;
 		private int m_headwordReversalFlid;
 		private int m_reversalNameFlid;
@@ -64,13 +62,13 @@ namespace SIL.FieldWorks.XWorks
 
 		HashSet<int> m_lexRefFieldsToFilter = new HashSet<int>();
 		HashSet<int> m_lexEntryRefFieldsToFilter = new HashSet<int>();
+		HashSet<int> m_reversalEntryFieldsToFilter = new HashSet<int>();
 
 		private List<IVwNotifyChange> m_notifees = new List<IVwNotifyChange>(); // the things we have to notify of PropChanges.
 
 		/// <summary>
 		/// Make one. By default we filter to the main dictionary.
 		/// </summary>
-		/// <param name="cache"></param>
 		public DictionaryPublicationDecorator(FdoCache cache, ISilDataAccessManaged domainDataByFlid, int mainFlid)
 			: this(cache, domainDataByFlid, mainFlid, cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0])
 		{}
@@ -79,8 +77,6 @@ namespace SIL.FieldWorks.XWorks
 		/// Create one. The SDA passed MAY be the DomainDataByFlid of the cache, but it is usually another
 		/// decorator.
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="domainDataByFlid"></param>
 		public DictionaryPublicationDecorator(FdoCache cache, ISilDataAccessManaged domainDataByFlid, int mainFlid, ICmPossibility publication)
 			: base(domainDataByFlid)
 		{
@@ -96,9 +92,8 @@ namespace SIL.FieldWorks.XWorks
 			m_senseOutlineFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexSenseTags.kClassId, "LexSenseOutline", false);
 			m_mlOwnerOutlineFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexSenseTags.kClassId, "MLOwnerOutlineName", false);
 			m_publishAsMinorEntryFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "PublishAsMinorEntry", false);
-			m_doNotShowMainEntryInFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "DoNotShowMainEntryIn", false);
 			m_headwordRefFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "HeadWordRef", false);
-			m_headwordReversalFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "HeadWordReversal", false);
+			m_headwordReversalFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "ReversalName", false);
 			m_reversalNameFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexSenseTags.kClassId, "ReversalName", false);
 			Publication = publication;
 			BuildExcludedObjects();
@@ -203,8 +198,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (tag == m_publishAsMinorEntryFlid)
 			{
-				return VecProp(hvo, LexEntryTags.kflidEntryRefs).Select(hvoLer => m_lerRepo.GetObject(hvoLer))
-					.Any(ler => ler.HideMinorEntry == 0);
+				return VecProp(hvo, LexEntryTags.kflidEntryRefs).Select(hvoLer => m_lerRepo.GetObject(hvoLer)).Any(ler => ler.HideMinorEntry == 0);
 			}
 			return base.get_BooleanProp(hvo, tag);
 		}
@@ -229,7 +223,7 @@ namespace SIL.FieldWorks.XWorks
 				if (m_homographNumbers.TryGetValue(hvo, out hn))
 				{
 					var entry = m_entryRepo.GetObject(hvo);
-					return FDO.DomainServices.StringServices.HeadWordForWsAndHn(entry, Cache.DefaultVernWs, hn);
+					return StringServices.HeadWordForWsAndHn(entry, Cache.DefaultVernWs, hn);
 				}
 				// In case it's one we somehow don't know about, we'll let the base method try to get the real HN.
 			}
@@ -260,7 +254,7 @@ namespace SIL.FieldWorks.XWorks
 				if (m_homographNumbers.TryGetValue(hvo, out hn))
 				{
 					var entry = m_entryRepo.GetObject(hvo);
-					return FDO.DomainServices.StringServices.HeadWordForWsAndHn(entry, ws, hn, "",
+					return StringServices.HeadWordForWsAndHn(entry, ws, hn, "",
 						HomographConfiguration.HeadwordVariant.Main);
 				}
 				// In case it's one we somehow don't know about, we'll let the base method try to get the real HN.
@@ -271,7 +265,7 @@ namespace SIL.FieldWorks.XWorks
 				if (m_homographNumbers.TryGetValue(hvo, out hn))
 				{
 					var entry = m_entryRepo.GetObject(hvo);
-					return FDO.DomainServices.StringServices.HeadWordForWsAndHn(entry, ws, hn, "",
+					return StringServices.HeadWordForWsAndHn(entry, ws, hn, "",
 						HomographConfiguration.HeadwordVariant.DictionaryCrossRef);
 				}
 				// In case it's one we somehow don't know about, we'll let the base method try to get the real HN.
@@ -282,7 +276,7 @@ namespace SIL.FieldWorks.XWorks
 				if (m_homographNumbers.TryGetValue(hvo, out hn))
 				{
 					var entry = m_entryRepo.GetObject(hvo);
-					return FDO.DomainServices.StringServices.HeadWordForWsAndHn(entry, ws, hn, "",
+					return StringServices.HeadWordForWsAndHn(entry, ws, hn, "",
 						HomographConfiguration.HeadwordVariant.ReversalCrossRef);
 				}
 				// In case it's one we somehow don't know about, we'll let the base method try to get the real HN.
@@ -364,6 +358,8 @@ namespace SIL.FieldWorks.XWorks
 						m_lexRefFieldsToFilter.Add(flid);
 					else if (dstCls == LexEntryRefTags.kClassId)
 						m_lexEntryRefFieldsToFilter.Add(flid);
+					else if (dstCls == ReversalIndexEntryTags.kClassId)
+						m_reversalEntryFieldsToFilter.Add(flid);
 				}
 			}
 			m_fieldsToFilter.Add(LexEntryRefTags.kflidComponentLexemes);
@@ -423,6 +419,35 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal ICmPossibility Publication { get; set; }
 
+		/// <summary>Returns HVO's of the entries to publish. If there are none, returns an empty array.</summary>
+		public int[] GetEntriesToPublish(Mediator mediator, int virtualFlid, string dictionaryType = null)
+		{
+			if (dictionaryType == null)
+			{
+				dictionaryType = DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(mediator);
+			}
+			// LT-16426: Listener here needs to return a non-localized version or all non-English dictionaries will be empty!
+			switch (dictionaryType)
+			{
+				case "Dictionary":
+					return VecProp(Cache.LangProject.LexDbOA.Hvo, virtualFlid);
+				case "Reversal Index":
+				{
+					var reversalIndexGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(mediator, "ReversalIndexGuid");
+					if (reversalIndexGuid != Guid.Empty)
+					{
+						var currentReversalIndex = Cache.ServiceLocator.GetObject(reversalIndexGuid) as IReversalIndex;
+						if (currentReversalIndex != null)
+						{
+							return GetSortedAndFilteredReversalEntries(currentReversalIndex.Hvo, virtualFlid);
+						}
+					}
+					break;
+				}
+			}
+			return new int[] { };
+		}
+
 		public override int[] VecProp(int hvo, int tag)
 		{
 			var result = base.VecProp(hvo, tag);
@@ -449,7 +474,47 @@ namespace SIL.FieldWorks.XWorks
 			{
 				return result.Where(IsPublishablePicture).ToArray();
 			}
+			if (m_reversalEntryFieldsToFilter.Contains(tag))
+			{
+				return result.Where(IsPublishableReversalEntry).ToArray();
+			}
 			return result;
+		}
+
+		/// <summary>
+		/// Get the list of ReversalIndexEntries sorted and filtered the way the user has set it up.
+		/// The default is presumably sorted by the writing system collator on ShortName.
+		/// </summary>
+		private int[] GetSortedAndFilteredReversalEntries(int currentReversalIndexHvo, int virtualFlid)
+		{
+			// Get the list of ReversalIndexItem objects sorted and filtered as set by the reversal bulk edit.
+			var result = base.VecProp(currentReversalIndexHvo, virtualFlid);
+			// Is there ever any more filtering that we need to do?  It would be done here.
+			return result.Where(IsMainReversalEntry).Where(IsPublishableReversalEntry).ToArray();
+		}
+
+		private bool IsMainReversalEntry(int hvo)
+		{
+			var entry = Cache.ServiceLocator.GetObject(hvo) as IReversalIndexEntry;
+			return entry != null && entry.Owner is IReversalIndex; // Subentries are owned by other Entries
+		}
+
+		private bool IsPublishableReversalEntry(int hvo)
+		{
+			return IsPublishableReversalEntry((IReversalIndexEntry)Cache.ServiceLocator.GetObject(hvo));
+		}
+
+		private bool IsPublishableReversalEntry(IReversalIndexEntry revEntry)
+		{
+			// We should still display reversal entries that have no senses
+			if (!revEntry.ReferringSenses.Any())
+				return true;
+			foreach (var sense in revEntry.ReferringSenses)
+			{
+				if (!m_excludedItems.Contains(sense.Hvo))
+					return true;	// At least one sense in one entry allows publication.
+			}
+			return false;	// nobody wants us.
 		}
 
 		/// <summary>
@@ -527,6 +592,28 @@ namespace SIL.FieldWorks.XWorks
 			// It probably isn't necessary to rebuild the fields, but one day we might be able to add a relevant custom field??
 			BuildFieldsToFilter();
 			BuildHomographInfo();
+		}
+
+		/// <summary>
+		/// Return whether this object is explicitly excluded by the publication filtering.
+		/// This is needed by ConfiguredXHTMLGenerator, which uses reflection to obtain data internally.
+		/// </summary>
+		internal bool IsExcludedObject(ICmObject item)
+		{
+			if (item is IReversalIndexEntry)
+				return !IsPublishableReversalEntry((IReversalIndexEntry)item);
+			if (item is ILexEntryRef)
+				return !IsPublishableReference((ILexEntryRef) item);
+			return m_excludedItems.Contains(item.Hvo);
+		}
+
+		private bool IsPublishableReference(ILexEntryRef entryRef)
+		{
+			// A reference is not publishable if its owner is excluded
+			if (m_excludedItems.Contains(entryRef.Owner.Hvo))
+				return false;
+			// A reference is also not publishable if all of its PrimarySensesOrEntries are excluded
+			return entryRef.PrimarySensesOrEntries.Any(senseOrEntry => !m_excludedItems.Contains(senseOrEntry.Item.Hvo));
 		}
 	}
 }

@@ -35,7 +35,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// </summary>
 		/// <param name="keyTerm">The key term.</param>
 		/// <param name="rules">Optional dictionary of (English) key terms to rules indicating
-		/// special handling neeeded.</param>
+		/// special handling needed.</param>
 		/// ------------------------------------------------------------------------------------
 		public KeyTermMatchBuilder(IKeyTerm keyTerm, Dictionary<string, KeyTermRule> rules)
 		{
