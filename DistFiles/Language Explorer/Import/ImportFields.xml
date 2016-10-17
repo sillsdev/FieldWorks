@@ -307,7 +307,7 @@
 		   property="ImportResidue" signature="String" type="string"
 		   uiname="Import Residue (Entry)">
 	  <Help>
-		<Usage>When you have a marker that doesn't have an adequate desination
+		<Usage>When you have a marker that doesn't have an adequate destination
 		in a FieldWorks entry.</Usage>
 
 		<Settings>Set the Language Descriptor to the language of this
@@ -1816,7 +1816,7 @@
 		   property="ImportResidue" signature="String" type="string"
 		   uiname="Import Residue (Sense)">
 	  <Help>
-		<Usage>When you have a marker that doesn't have an adequate desination
+		<Usage>When you have a marker that doesn't have an adequate destination
 		in a FieldWorks sense.</Usage>
 
 		<Settings>Set the Language Descriptor to the language of this
@@ -2581,7 +2581,7 @@
 		   property="ImportResidue" signature="String" type="string"
 		   uiname="Import Residue (Subentry)">
 	  <Help>
-		<Usage>When you have a marker that doesn't have an adequate desination
+		<Usage>When you have a marker that doesn't have an adequate destination
 		in a FieldWorks subentry.</Usage>
 
 		<Settings>Set the Language Descriptor to the language of this
@@ -2820,7 +2820,7 @@
 		   property="ImportResidue" signature="String" type="string"
 		   uiname="Import Residue (Variant)">
 	  <Help>
-		<Usage>When you have a marker that doesn't have an adequate desination
+		<Usage>When you have a marker that doesn't have an adequate destination
 		in a FieldWorks variant.</Usage>
 
 		<Settings>Set the Language Descriptor to the language of this
