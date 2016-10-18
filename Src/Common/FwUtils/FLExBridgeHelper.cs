@@ -243,18 +243,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private static void LaunchFlexBridge(IIPCHost host, string command, string args, Action onNonBlockerCommandComplete,
 			ref bool changesReceived, ref string projectName)
 		{
-			ProcessStartInfo processStartInfo = null;
+			string flexbridgeLauncher = FullFieldWorksBridgePath();
 			if (MiscUtils.IsUnix)
 			{
-				processStartInfo = new ProcessStartInfo(FwDirectoryFinder.FlexBridgeFolder + "/run-in-environ", FullFieldWorksBridgePath() + " " + args);
+				flexbridgeLauncher = FwDirectoryFinder.FlexBridgeFolder + "/flexbridge";
 			}
-			else
+			if (!File.Exists(flexbridgeLauncher))
 			{
-				processStartInfo = new ProcessStartInfo(FullFieldWorksBridgePath(), args);
+				Console.WriteLine("Warning: Attempting to use non-existent flexbridge launcher {0}", flexbridgeLauncher);
 			}
 
 			// Launch the bridge process.
-			using (Process.Start(processStartInfo))
+			using (Process.Start(flexbridgeLauncher, args))
 			{
 			}
 
