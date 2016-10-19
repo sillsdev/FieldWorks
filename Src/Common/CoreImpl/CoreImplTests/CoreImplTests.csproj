@@ -126,6 +126,7 @@
     <Compile Include="TsSerializerTestsBase.cs" />
     <Compile Include="TsStrBldrTests.cs" />
     <Compile Include="TsStrFactoryTests.cs" />
+    <Compile Include="TsStringNormalizationTests.cs" />
     <Compile Include="TsStringTests.cs" />
     <Compile Include="TsTextPropsTests.cs" />
     <Compile Include="WritingSystemManagerTests.cs" />

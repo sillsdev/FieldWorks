@@ -1903,6 +1903,15 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 			IntPtr result, int resultLength, out UErrorCode errorCode);
 
 		/// <summary>
+		/// Decompose a single UTF-32 code point using the specified normalizer.
+		/// According to the ICU docs, this is significantly faster than calling Char.ConvertFromUtf32 and decomposing the resulting string.
+		/// </summary>
+		[DllImport(kIcuUcDllName, EntryPoint = "unorm2_getDecomposition" + VersionSuffix,
+			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		private static extern int unorm2_getDecomposition(IntPtr normalizer, int source,
+			IntPtr result, int resultLength, out UErrorCode errorCode);
+
+		/// <summary>
 		/// Check whether a string is normalized according to the given mode and options.
 		/// </summary>
 		[DllImport(kIcuUcDllName, EntryPoint = "unorm2_isNormalized" + VersionSuffix,
@@ -1914,6 +1923,49 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 		[DllImport(kIcuUcDllName, EntryPoint = "unorm2_getCombiningClass" + VersionSuffix,
 			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 		private static extern byte unorm2_getCombiningClass(IntPtr normalizer, int ch);
+
+		// UBool unorm2_hasBoundaryAfter (const UNormalizer2 *norm2, UChar32 c)
+		[DllImport(kIcuUcDllName, EntryPoint = "unorm2_hasBoundaryAfter" + VersionSuffix,
+			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		private static extern byte unorm2_hasBoundaryAfter(IntPtr normalizer, Int32 codepoint);
+
+		// UBool unorm2_hasBoundaryBefore (const UNormalizer2 *norm2, UChar32 c)
+		[DllImport(kIcuUcDllName, EntryPoint = "unorm2_hasBoundaryBefore" + VersionSuffix,
+			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		private static extern byte unorm2_hasBoundaryBefore(IntPtr normalizer, Int32 codepoint);
+
+		/// <summary>
+		/// Tests if the character always has a normalization boundary before it, regardless of context.
+		/// A "normalization boundary" is a point where the string segments before and after it cannot interact,
+		/// and therefore dividing the string at that boundary and normalizing each segment independently would
+		/// produce the same result as normalizing the entire string as a whole.
+		/// </summary>
+		/// <param name="norm">The ICU normalizer to use for this check</param>
+		/// <param name="codepoint">The Unicode codepoint to check, as a 32-bit int (use Char.ConvertToUtf32(str, idx) to get this)</param>
+		/// <returns>True if this character will always have a normalization boundary before it.</returns>
+		public static bool HasNormalizationBoundaryBefore(IntPtr norm, int codepoint)
+		{
+			byte result = unorm2_hasBoundaryBefore(norm, codepoint);
+			return result != 0;
+		}
+
+		/// <summary>
+		/// Tests if the character always has a normalization boundary after it, regardless of context.
+		/// A "normalization boundary" is a point where the string segments before and after it cannot interact,
+		/// and therefore dividing the string at that boundary and normalizing each segment independently would
+		/// produce the same result as normalizing the entire string as a whole.
+		/// NOTE: The ICU documentation states that this function may be significantly slower than its Before counterpart.
+		/// If possible, prefer HasNormalizationBoundaryBefore() over using this function.
+		/// </summary>
+		/// <param name="norm">The ICU normalizer to use for this check</param>
+		/// <param name="codepoint">The Unicode codepoint to check, as a 32-bit int (use Char.ConvertToUtf32(str, idx) to get this)</param>
+		/// <returns>True if this character will always have a normalization boundary after it.</returns>
+		public static bool HasNormalizationBoundaryAfter(IntPtr norm, int codepoint)
+		{
+			byte result = unorm2_hasBoundaryAfter(norm, codepoint);
+			return result != 0;
+		}
+
 
 		/// <summary>
 		/// Normalization mode constants.
@@ -1959,7 +2011,11 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 			UNORM2_COMPOSE_CONTIGUOUS = 3
 		}
 
-		private static IntPtr GetIcuNormalizer(UNormalizationMode mode)
+		/// <summary>
+		/// Get an opaque pointer to the Icu normalizer object for a given mode (NFC, NFD, etc.)
+		/// Used in several parts of the TsString normalization code.
+		/// </summary>
+		public static IntPtr GetIcuNormalizer(UNormalizationMode mode)
 		{
 			var err = UErrorCode.U_ZERO_ERROR;
 			IntPtr normalizer = IntPtr.Zero;
@@ -1993,20 +2049,13 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 		}
 
 		/// <summary>
-		/// Normalize the string according to the given mode.
+		/// Normalize the string with the given ICU normalizer.
 		/// </summary>
-		/// <param name="src"></param>
-		/// <param name="mode"></param>
-		/// <returns></returns>
-		public static string Normalize(string src, UNormalizationMode mode)
+		public static string Normalize(string src, IntPtr norm)
 		{
 			if (string.IsNullOrEmpty(src))
 				return "";
 
-			if (mode == UNormalizationMode.UNORM_NONE)
-				return src;
-
-			IntPtr norm = GetIcuNormalizer(mode);
 			int length = src.Length + 10;
 			IntPtr resPtr = Marshal.AllocCoTaskMem(length * 2);
 			try
@@ -2041,6 +2090,18 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 		}
 
 		/// <summary>
+		/// Normalize the string according to the given mode.
+		/// </summary>
+		public static string Normalize(string src, UNormalizationMode mode)
+		{
+			if (mode == UNormalizationMode.UNORM_NONE)
+				return src;
+
+			IntPtr norm = GetIcuNormalizer(mode);
+			return Normalize(src, norm);
+		}
+
+		/// <summary>
 		/// Check whether the string is normalized according to the given mode.
 		/// </summary>
 		/// <param name="src"></param>
@@ -2057,6 +2118,45 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 			if (IsFailure(err))
 				throw new IcuException("unorm2_isNormalized() failed with code " + err, err);
 			return fIsNorm != 0;
+		}
+
+		/// <summary>
+		/// Get the decomposition of a UTF-32 character according to the given normalizer (which should be either an NFD or an NFKD normalizer).
+		/// This is significantly faster than calling Char.ConvertFromUtf32 and normalizing the resulting string.
+		/// </summary>
+		/// <returns>A string, not an int codepoint -- because if the normalizer is NFKD, one codepoint could become multiple characters (e.g., the "ffi" ligature will decompose into f, f, i, and so on).</returns>
+		public static string GetDecompositionFromUtf32(IntPtr norm, int sourceCodepoint)
+		{
+			int length = 16; // Should be enough for almost any decomposition
+			IntPtr resPtr = Marshal.AllocCoTaskMem(length * 2);
+			try
+			{
+				UErrorCode err;
+				int outLength = unorm2_getDecomposition(norm, sourceCodepoint, resPtr, length, out err);
+				if (IsFailure(err) && err != UErrorCode.U_BUFFER_OVERFLOW_ERROR)
+					throw new IcuException("unorm2_getDecomposition() failed with code " + err, err);
+				if (outLength < 0)
+				{
+					// ICU API says that a negative value means "there is no decomposition for this character"
+					return Char.ConvertFromUtf32(sourceCodepoint);
+				}
+				else if (outLength >= length)
+				{
+					err = UErrorCode.U_ZERO_ERROR; // ignore possible U_BUFFER_OVERFLOW_ERROR
+					Marshal.FreeCoTaskMem(resPtr);
+					length = outLength + 1; // allow room for the terminating NUL (FWR-505)
+					resPtr = Marshal.AllocCoTaskMem(length * 2);
+					unorm2_getDecomposition(norm, sourceCodepoint, resPtr, length, out err);
+				}
+				if (IsFailure(err))
+					throw new IcuException("unorm2_getDecomposition() failed with code " + err, err);
+
+				return Marshal.PtrToStringUni(resPtr, outLength);
+			}
+			finally
+			{
+				Marshal.FreeCoTaskMem(resPtr);
+			}
 		}
 
 		/// <summary>

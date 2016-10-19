@@ -269,6 +269,155 @@ namespace SIL.CoreImpl
 			string xml = TsStringSerializer.SerializeTsStringToXml(tss, WritingSystemManager, EnWS);
 			Assert.That(StripNewLines(xml), Is.EqualTo("<AStr ws=\"en\"><Run ws=\"en\" namedStyle=\"Monkey\">This is a </Run><Run ws=\"es\">Laa yra la m\u00E9n</Run></AStr>"));
 		}
+
+		#endregion
+
+		#region Stacked diacritics tests ported from C++
+		private const string COMBINING_GRAVE_ACCENT = "\u0300";        // cc 230
+		private const string COMBINING_CIRCUMFLEX_ACCENT = "\u0302";   // cc 230
+		private const string COMBINING_TILDE = "\u0303";               // cc 230
+		private const string COMBINING_MACRON = "\u0304";              // cc 230
+		private const string COMBINING_DOT_ABOVE = "\u0307";           // cc 230
+		private const string COMBINING_DIAERESIS = "\u0308";           // cc 230
+		private const string COMBINING_DOUBLE_ACUTE_ACCENT = "\u030B"; // cc 230
+		private const string COMBINING_INVERTED_BREVE = "\u0311";      // cc 230
+		private const string COMBINING_OVERLINE = "\u0305";            // not involved in any compositions with characters; cc 230
+		private const string COMBINING_GRAVE_ACCENT_BELOW = "\u0316";  // cc 220
+		private const string COMBINING_ACUTE_ACCENT_BELOW = "\u0317";  // cc 220
+		private const string COMBINING_LEFT_TACK_BELOW = "\u0318";     // cc 220
+		private const string COMBINING_DOWN_TACK_BELOW = "\u031E";     // cc 220
+		private const string COMBINING_MINUS_SIGN_BELOW = "\u0320";    // cc 220
+		private const string COMBINING_RING_BELOW = "\u0325";          // cc 220
+		private const string COMBINING_TILDE_BELOW = "\u0330";         // cc 220
+		private const string COMBINING_SQUARE_BELOW = "\u033B";        // cc 220
+		private const string COMBINING_SEAGULL_BELOW = "\u033C";       // cc 220
+		private const string a_WITH_DOT_ABOVE  = "\u0227";             // composition of a + COMBINING_DOT_ABOVE
+		private const string o_WITH_DOT_ABOVE  = "\u022F";             // composition of o + COMBINING_DOT_ABOVE
+		private const string o_WITH_CIRCUMFLEX = "\u00F4";             // composition of o + COMBINING_CIRCUMFLEX_ACCENT
+		private const string o_WITH_DIAERESIS  = "\u00F6";             // composition of o + COMBINING_DIAERESIS
+		private const string e_WITH_GRAVE = "\u00E8";                  // composition of e + COMBINING_GRAVE_ACCENT
+
+		private TsString CreateStackedDiacriticsInput(bool singleRun)
+		{
+			string stackedDiacriticsInput = "Stacked diacritics: W" +
+				"e" + COMBINING_DOUBLE_ACUTE_ACCENT + COMBINING_RING_BELOW + COMBINING_GRAVE_ACCENT_BELOW +
+				"lc" + COMBINING_LEFT_TACK_BELOW + COMBINING_MINUS_SIGN_BELOW +
+				"o" + COMBINING_CIRCUMFLEX_ACCENT +
+				"m" + COMBINING_SEAGULL_BELOW + COMBINING_GRAVE_ACCENT + COMBINING_DIAERESIS + COMBINING_MACRON +
+				"e" + COMBINING_GRAVE_ACCENT +
+				" to" + COMBINING_DIAERESIS + COMBINING_CIRCUMFLEX_ACCENT +
+				" Wo" + COMBINING_DOT_ABOVE + COMBINING_INVERTED_BREVE +
+				"r" + COMBINING_SQUARE_BELOW +
+				"l" + COMBINING_TILDE +
+				"d" + COMBINING_DOWN_TACK_BELOW + COMBINING_TILDE_BELOW +
+				"Pa" + COMBINING_DOT_ABOVE + COMBINING_OVERLINE + COMBINING_DOUBLE_ACUTE_ACCENT +
+				"d" + COMBINING_ACUTE_ACCENT_BELOW +
+				"!";
+
+			var temp = new TsString(stackedDiacriticsInput, EnWS);
+			var builder = new TsStrBldr();
+			builder.ReplaceTsString(0, 0, temp);
+			builder.SetIntPropValues(0, stackedDiacriticsInput.Length, (int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 20000);
+			builder.SetIntPropValues(0, stackedDiacriticsInput.Length, (int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)FwTextColor.kclrGreen);
+			if (singleRun)
+				return (TsString)builder.GetString();
+
+			// green from 0-22
+			builder.SetIntPropValues(22, 23, (int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)FwTextColor.kclrRed);
+			builder.SetIntPropValues(23, 24, (int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, 0x00ff602f);
+			// green from 24-30
+			builder.SetIntPropValues(30, 31, (int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)FwTextColor.kclrBlue);
+			// green from 31-33
+			builder.SetIntPropValues(33, 34, (int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)FwTextColor.kclrRed);
+			// green from 34-42
+			builder.SetIntPropValues(42, 43, (int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)FwTextColor.kclrBlack);
+			// green from 43-47
+			builder.SetIntPropValues(47, 48, (int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)FwTextColor.kclrBlack);
+			// green from 48-51
+			builder.SetIntPropValues(51, 52, (int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)FwTextColor.kclrBlue);
+			// green from 52-53
+			builder.SetIntPropValues(53, 54, (int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)FwTextColor.kclrRed);
+			// green from 54-58
+			builder.SetIntPropValues(58, 59, (int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)FwTextColor.kclrRed);
+			builder.SetIntPropValues(59, 60, (int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)FwTextColor.kclrBlack);
+			// green from 60-61
+			builder.SetIntPropValues(61, 62, (int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)FwTextColor.kclrBlack);
+			// green from 62-63
+
+			return (TsString)builder.GetString();
+		}
+
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test that strings with stacked diacritics in a single run serialize properly.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void Serialization_StackedDiacriticsSingleRun_ProducesCorrectXML()
+		{
+			string expectedXML = "<Str>" +
+				"<Run ws=\"en\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"green\">" +
+				"Stacked diacritics: W" +
+				"e" + COMBINING_RING_BELOW + COMBINING_GRAVE_ACCENT_BELOW + COMBINING_DOUBLE_ACUTE_ACCENT +
+				"lc" + COMBINING_LEFT_TACK_BELOW + COMBINING_MINUS_SIGN_BELOW +
+				o_WITH_CIRCUMFLEX +
+				"m" + COMBINING_SEAGULL_BELOW + COMBINING_GRAVE_ACCENT + COMBINING_DIAERESIS + COMBINING_MACRON +
+				e_WITH_GRAVE +
+				" t" + o_WITH_DIAERESIS + COMBINING_CIRCUMFLEX_ACCENT +
+				" W" + o_WITH_DOT_ABOVE + COMBINING_INVERTED_BREVE +
+				"r" + COMBINING_SQUARE_BELOW +
+				"l" + COMBINING_TILDE +
+				"d" + COMBINING_DOWN_TACK_BELOW + COMBINING_TILDE_BELOW +
+				"P" + a_WITH_DOT_ABOVE + COMBINING_OVERLINE + COMBINING_DOUBLE_ACUTE_ACCENT +
+				"d" + COMBINING_ACUTE_ACCENT_BELOW +
+				"!" +
+				"</Run>" +
+				"</Str>";
+
+			TsString tss = CreateStackedDiacriticsInput(singleRun: true);
+			string xml = TsStringSerializer.SerializeTsStringToXml(tss, WritingSystemManager);
+			Assert.That(StripNewLines(xml), Is.EqualTo(StripNewLines(expectedXML)));
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test that strings with stacked diacritics in multiple runs serialize properly.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void Serialization_StackedDiacriticsMultipleRuns_ProducesCorrectXML()
+		{
+			string expectedXML = "<Str>" +
+				"<Run ws=\"en\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"green\">Stacked diacritics: We</Run>" +
+				"<Run ws=\"en\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"2f60ff\">" + COMBINING_RING_BELOW + "</Run>" +
+				"<Run ws=\"en\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"green\">" + COMBINING_GRAVE_ACCENT_BELOW + "</Run>" +
+				"<Run ws=\"en\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"red\">" + COMBINING_DOUBLE_ACUTE_ACCENT + "</Run>" +
+				"<Run ws=\"en\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"green\">lc" + COMBINING_LEFT_TACK_BELOW + COMBINING_MINUS_SIGN_BELOW + "o</Run>" +
+				"<Run ws=\"en\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"blue\">" + COMBINING_CIRCUMFLEX_ACCENT + "</Run>" +
+				"<Run ws=\"en\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"green\">m" + COMBINING_SEAGULL_BELOW + "</Run>" +
+				"<Run ws=\"en\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"red\">" + COMBINING_GRAVE_ACCENT + "</Run>" +
+				"<Run ws=\"en\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"green\">" + COMBINING_DIAERESIS + COMBINING_MACRON + e_WITH_GRAVE + " t" + o_WITH_DIAERESIS + "</Run>" +
+				"<Run ws=\"en\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"black\">" + COMBINING_CIRCUMFLEX_ACCENT + "</Run>" +
+				"<Run ws=\"en\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"green\"> W" + o_WITH_DOT_ABOVE + "</Run>" +
+				"<Run ws=\"en\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"black\">" + COMBINING_INVERTED_BREVE + "</Run>" +
+				"<Run ws=\"en\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"green\">r" + COMBINING_SQUARE_BELOW + "l</Run>" +
+				"<Run ws=\"en\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"blue\">" + COMBINING_TILDE + "</Run>" +
+				"<Run ws=\"en\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"green\">d</Run>" +
+				"<Run ws=\"en\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"red\">" + COMBINING_DOWN_TACK_BELOW + "</Run>" +
+				"<Run ws=\"en\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"green\">" + COMBINING_TILDE_BELOW + "P" + a_WITH_DOT_ABOVE + "</Run>" +
+				"<Run ws=\"en\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"red\">" + COMBINING_OVERLINE + "</Run>" +
+				"<Run ws=\"en\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"black\">" + COMBINING_DOUBLE_ACUTE_ACCENT + "</Run>" +
+				"<Run ws=\"en\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"green\">d</Run>" +
+				"<Run ws=\"en\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"black\">" + COMBINING_ACUTE_ACCENT_BELOW + "</Run>" +
+				"<Run ws=\"en\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"green\">!</Run>" +
+				"</Str>";
+
+			TsString tss = CreateStackedDiacriticsInput(singleRun: false);
+			string xml = TsStringSerializer.SerializeTsStringToXml(tss, WritingSystemManager);
+			Assert.That(StripNewLines(xml), Is.EqualTo(expectedXML));
+		}
+
 		#endregion
 
 		#region DeserializeTsStringFromXml tests
