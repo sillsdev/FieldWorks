@@ -60,9 +60,7 @@ OBJ_FWKERNEL=\
 	$(INT_DIR)\autopch\LgUnicodeCollater.obj\
 	$(INT_DIR)\autopch\ModuleEntry.obj\
 	$(INT_DIR)\autopch\FwStyledText.obj\
-	$(INT_DIR)\autopch\WriteXml.obj\
 	$(INT_DIR)\autopch\DebugReport.obj\
-	$(INT_DIR)\autopch\FwXml.obj\
 	$(INT_DIR)\autopch\dlldatax.obj\
 
 

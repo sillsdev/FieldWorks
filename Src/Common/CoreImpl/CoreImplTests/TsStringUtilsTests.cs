@@ -2283,7 +2283,7 @@ namespace SIL.CoreImpl
 			var result = TsStringUtils.GetXmlRep(tssClean, m_wsf, 0, true); // 0 means Str not AStr
 
 			// Confirm that the xml output has 'ws' information in it.
-			Assert.AreEqual(String.Format("<Str>{0}<Run ws=\"en\"></Run>{0}</Str>{0}", Environment.NewLine), result);
+			Assert.AreEqual(String.Format("<Str>{0}<Run ws=\"en\"></Run>{0}</Str>", Environment.NewLine), result);
 		}
 
 		/// <summary>

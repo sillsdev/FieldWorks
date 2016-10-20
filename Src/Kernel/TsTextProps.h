@@ -80,8 +80,6 @@ public:
 
 	STDMETHOD(GetBldr)(ITsPropsBldr ** pptpb);
 
-	STDMETHOD(WriteAsXml)(IStream * pstrm, ILgWritingSystemFactory * pwsf, int cchIndent);
-
 	// ITsTextPropsRaw methods.
 
 	HRESULT GetStrPropValueInternal(int tpt, BSTR * pbstrVal);

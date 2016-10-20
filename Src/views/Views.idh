@@ -1663,7 +1663,7 @@ Last reviewed:
 
 		@H3{Hungarian: rootb}
 	*******************************************************************************************/
-	DeclareInterface(VwRootBox, VwNotifyChange, A8944421-3A75-4DD5-A469-2EE251228A26)
+	DeclareInterface(VwRootBox, VwNotifyChange, A42600E7-F097-4903-97EA-149C153DD335)
 	{
 		//:> Initialization
 
@@ -1758,30 +1758,6 @@ Last reviewed:
 		// @H3{Warning} Use of this method has not been extensively tested, if at all.
 		HRESULT GetRootVariant(
 			[out, retval] VARIANT * pv);
-
-		//:> Serialization
-
-		// Write the contents of the box to a stream, from which it can be read back
-		// and reconstructed. Links to the underlying objects
-		// are not recorded.
-
-		// @H3{Warning} This capability is not implemented.
-		HRESULT Serialize(
-			[in] IStream* pstrm);
-		// Read the contents of the box from a stream which was created using Serialize.
-		// Links to the underlying objects are not restored.
-
-		// @H3{Warning} This capability is not implemented.
-		HRESULT Deserialize(
-			[in] IStream* pstrm);
-
-		// Write the contents of the box to a stream in the form of (possibly) multiple
-		// <StTxtPara> elements, which are suitable for including in the <Body> elements
-		// of a WorldPad XML document.  (When WorldPad can handle other element types in
-		// addition to <StTxtPara>, then those may be written by this method as well.)
-		// @param pstrm Pointer to an IStream object for output.
-		HRESULT WriteWpx(
-			[in] IStream * pstrm);
 
 		// Selections
 		[propget] HRESULT Selection(
@@ -2388,7 +2364,7 @@ Last reviewed:
 	}
 
 #ifndef NO_COCLASSES
-	DeclareCoClass(VwRootBox, 705C1A9A-D6DC-4C3F-9B29-85F0C4F4B7BE)
+	DeclareCoClass(VwRootBox, 7C0C6A3C-38B3-4266-AF94-A3A1CBAAD1FC)
 	{
 		interface IVwRootBox;
 	};

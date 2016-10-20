@@ -119,7 +119,6 @@
     <Compile Include="Set.cs" />
     <Compile Include="SimpleBag.cs" />
     <Compile Include="SmallDictionary.cs" />
-    <Compile Include="TextWriterStream.cs" />
     <Compile Include="Unicode.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="ViewSizeEvents.cs" />

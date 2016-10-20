@@ -13,7 +13,6 @@ using System.Linq;
 using System.Runtime.InteropServices; // needed for Marshal
 using System.Xml;
 using System.Text.RegularExpressions;
-using System.IO;
 using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
 using System.Xml.Linq;
@@ -52,27 +51,9 @@ namespace SIL.CoreImpl
 		/// The XML representation of <paramref name="tss"/>.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
-		public static string GetXmlRep(ITsString tss, ILgWritingSystemFactory wsf, int ws, bool fWriteObjData)
+		public static string GetXmlRep(ITsString tss, ILgWritingSystemFactory wsf, int ws, bool fWriteObjData = true)
 		{
-			return tss.GetXmlString(wsf, 0, ws, fWriteObjData);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Get an XML representation of the given ITsString.
-		/// </summary>
-		/// <param name="tss">The ITsString object</param>
-		/// <param name="wsf">Writing system factory so that we can convert writing system
-		/// integer codes (which are database object ids) to the corresponding strings.</param>
-		/// <param name="ws">If nonzero, the writing system for a multilingual string (&lt;AStr&gt;).
-		/// If zero, then this is a monolingual string (&lt;Str&gt;).</param>
-		/// <returns>
-		/// The XML representation of <paramref name="tss"/>.
-		/// </returns>
-		/// ------------------------------------------------------------------------------------
-		public static string GetXmlRep(ITsString tss, ILgWritingSystemFactory wsf, int ws)
-		{
-			return GetXmlRep(tss, wsf, ws, true);
+			return TsStringSerializer.SerializeTsStringToXml(tss, wsf, ws, fWriteObjData);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -85,12 +66,7 @@ namespace SIL.CoreImpl
 		/// ------------------------------------------------------------------------------------
 		public static string GetXmlRep(ITsTextProps ttp, ILgWritingSystemFactory wsf)
 		{
-			using (var writer = new StringWriter())
-			{
-				var stream = new TextWriterStream(writer);
-				ttp.WriteAsXml(stream, wsf, 0);
-				return writer.ToString();
-			}
+			return TsPropsSerializer.SerializePropsToXml(ttp, wsf);
 		}
 
 		/// ------------------------------------------------------------------------------------

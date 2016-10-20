@@ -342,14 +342,6 @@ namespace TestFwKernel
 			{
 				unitpp::assert_eq("Equals(NULL, NULL) HRESULT", E_POINTER, thr.Result());
 			}
-			try{
-				CheckHr(hr = m_qtssEmpty->WriteAsXml(NULL, NULL, 0, 0, 0));
-				unitpp::assert_eq("WriteAsXml(NULL, NULL, 0, 0, 0) HRESULT", E_POINTER, hr);
-			}
-			catch(Throwable& thr)
-			{
-				unitpp::assert_eq("WriteAsXml(NULL, NULL, 0, 0, 0) HRESULT", E_POINTER, thr.Result());
-			}
 		}
 
 		/*--------------------------------------------------------------------------------------
@@ -1018,74 +1010,6 @@ namespace TestFwKernel
 		}
 
 
-		/*--------------------------------------------------------------------------------------
-			Test that WriteAsXml writes strings in NFSC normalized form.
-		--------------------------------------------------------------------------------------*/
-		void testWriteAsXml()
-		{
-			HRESULT hr;
-
-			ITsStrBldrPtr qtsb;
-			ITsStringPtr qtssInput1;
-			ITsStringPtr qtssInput2;
-
-			StrUni stuInput = L"a" COMBINING_DIAERESIS COMBINING_DIAERESIS COMBINING_DIAERESIS
-				COMBINING_DOT_BELOW a_WITH_DIAERESIS COMBINING_DOT_BELOW;
-
-			m_qtsf->MakeStringRgch(stuInput.Chars(), stuInput.Length(), m_wsEng, &qtssInput1);
-			StrAnsi staOutput1;
-			// knmNFSC : expand, reorder, compose =>
-			// a_WITH_DOT_BELOW COMBINING_DIAERESIS COMBINING_DIAERESIS COMBINING_DIAERESIS
-			//		a_WITH_DOT_BELOW COMBINING_DIAERESIS
-			staOutput1.Format("<Str>%n<Run ws=\"en\">"
-				"\xE1\xBA\xA1\xCC\x88\xCC\x88\xCC\x88\xE1\xBA\xA1\xCC\x88</Run>%n</Str>%n");
-			StrAnsiStreamPtr qstas1;
-			StrAnsiStream::Create(&qstas1);
-			qtssInput1->WriteAsXml(qstas1.Ptr(), m_qwsf, 0, 0, TRUE);
-			unitpp::assert_true("WriteAsXml test 1", staOutput1 == qstas1->m_sta);
-
-			// The initial a is plain; first dieresis is red, second green, third blue;
-			// dot and following a-diaresis are bold; final dot is plain
-			hr = qtssInput1->GetBldr(&qtsb);
-			// This makes multiple runs, in each case with the underdot having different props
-			// from the a and the diaeresis.
-			qtsb->SetIntPropValues(1,2, ktptForeColor, ktpvDefault, kclrRed);
-			qtsb->SetIntPropValues(2,3, ktptForeColor, ktpvDefault, kclrGreen);
-			qtsb->SetIntPropValues(3,4, ktptForeColor, ktpvDefault, kclrBlue);
-			qtsb->SetIntPropValues(4,6, ktptBold, ktpvEnum, kttvForceOn);
-			hr = qtsb->GetString(&qtssInput2);
-			/*
-			  XML OUTPUT OF UNNORMALIZED STRING:
-			  <Str>%n
-			  <Run ws="en">a</Run>%n
-			  <Run ws="en" forecolor="red">\xCC\x88</Run>%n
-			  <Run ws="en" forecolor="green">\xCC\x88</Run>%n
-			  <Run ws="en" forecolor="blue">\xCC\x88</Run>%n
-			  <Run ws="en" bold="on">\xCC\xA3\xC3\xA4</Run>%n
-			  <Run ws="en">\xCC\xA3</Run>%n
-			  </Str>%n
-			*/
-			// knmNFSC : expand, reorder, compose is blocked by run boundaries =>
-			// a COMBINING_DOT_BELOW COMBINING_DIAERESIS COMBINING_DIAERESIS COMBINING_DIAERESIS
-			//		a COMBINING_DOT_BELOW COMBINING_DIAERESIS
-			StrAnsi staOutput2;
-			staOutput2.Format("<Str>%n"
-				"<Run ws=\"en\">a</Run>%n"
-				"<Run ws=\"en\" bold=\"on\">\xCC\xA3</Run>%n"
-				"<Run ws=\"en\" forecolor=\"red\">\xCC\x88</Run>%n"
-				"<Run ws=\"en\" forecolor=\"green\">\xCC\x88</Run>%n"
-				"<Run ws=\"en\" forecolor=\"blue\">\xCC\x88</Run>%n"
-				"<Run ws=\"en\" bold=\"on\">a</Run>%n"
-				"<Run ws=\"en\">\xCC\xA3</Run>%n"
-				"<Run ws=\"en\" bold=\"on\">\xCC\x88</Run>%n"
-				"</Str>%n");
-			StrAnsiStreamPtr qstas2;
-			StrAnsiStream::Create(&qstas2);
-			qtssInput2->WriteAsXml(qstas2.Ptr(), m_qwsf, 0, 0, TRUE);
-			unitpp::assert_true("WriteAsXml test 2", staOutput2 == qstas2->m_sta);
-		}
-
-
 #define COMBINING_GRAVE_ACCENT L"\x0300"		// cc 230
 #define COMBINING_CIRCUMFLEX_ACCENT L"\x0302"	// cc 230
 #define COMBINING_TILDE L"\x0303"				// cc 230
@@ -1180,31 +1104,6 @@ namespace TestFwKernel
 				stuNFC == sbstrNFC.Chars());
 			unitpp::assert_true("StackedDiacritics - Single run output NFSC",
 				stuNFC == sbstrNFSC.Chars());
-			StrAnsiStreamPtr qstas1;
-			StrAnsiStream::Create(&qstas1);
-			qtssInput->WriteAsXml(qstas1.Ptr(), m_qwsf, 0, 0, TRUE);
-			StrAnsiStreamPtr qstasNFC;
-			StrAnsiStream::Create(&qstasNFC);
-			qtssNFC->WriteAsXml(qstasNFC.Ptr(), m_qwsf, 0, 0, TRUE);
-			StrAnsiStreamPtr qstasNFSC;
-			StrAnsiStream::Create(&qstasNFSC);
-			qtssNFSC->WriteAsXml(qstasNFSC.Ptr(), m_qwsf, 0, 0, TRUE);
-			StrAnsi staOutput1;
-			staOutput1.Format("<Str>%n"
-				"<Run ws=\"x-stk\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"green\">"
-				"Stacked diacritics: We" "\xCC" "\xA5" "\xCC" "\x96" "\xCC" "\x8B" "lc"
-				"\xCC" "\x98" "\xCC" "\xA0" "\xC3" "\xB4" "m" "\xCC" "\xBC" "\xCC" "\x80"
-				"\xCC" "\x88" "\xCC" "\x84" "\xC3" "\xA8" " t" "\xC3" "\xB6" "\xCC" "\x82"
-				" W" "\xC8" "\xAF" "\xCC" "\x91" "r" "\xCC" "\xBB" "l" "\xCC" "\x83" "d"
-				"\xCC" "\x9E" "\xCC" "\xB0" "P" "\xC8" "\xA7" "\xCC" "\x85" "\xCC" "\x8B"
-				"d" "\xCC" "\x97" "!</Run>%n"
-				"</Str>%n");
-			unitpp::assert_true("Stacked diacritics single run XML output",
-				staOutput1 == qstas1->m_sta);
-			unitpp::assert_true("Stacked diacritics NFC single run XML output",
-				staOutput1 == qstasNFC->m_sta);
-			unitpp::assert_true("Stacked diacritics NFSC single run XML output",
-				staOutput1 == qstasNFSC->m_sta);
 
 			// green from 0-22
 			qtsb->SetIntPropValues(22, 23, ktptForeColor, ktpvDefault, kclrRed);
@@ -1258,73 +1157,6 @@ namespace TestFwKernel
 				L"!");
 			unitpp::assert_true("StackedDiacritics - Multiple run output NFSC",
 				stuNFSC2 == sbstrNFSC.Chars());
-
-			StrAnsiStreamPtr qstas2;
-			StrAnsiStream::Create(&qstas2);
-			qtssInput->WriteAsXml(qstas2.Ptr(), m_qwsf, 0, 0, TRUE);
-
-			StrAnsiStreamPtr qstasNFC2;
-			StrAnsiStream::Create(&qstasNFC2);
-			qtssNFC->WriteAsXml(qstasNFC2.Ptr(), m_qwsf, 0, 0, TRUE);
-
-			StrAnsiStreamPtr qstasNFSC2;
-			StrAnsiStream::Create(&qstasNFSC2);
-			qtssNFSC->WriteAsXml(qstasNFSC2.Ptr(), m_qwsf, 0, 0, TRUE);
-
-			StrAnsi staOutput2;
-			staOutput2.Format("<Str>%n"
-				"<Run ws=\"x-stk\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"green\">"
-					"Stacked diacritics: We</Run>%n"
-			   "<Run ws=\"x-stk\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"2f60ff\">"
-					"\xCC\xA5</Run>%n"
-				"<Run ws=\"x-stk\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"green\">"
-					"\xCC\x96</Run>%n"
-				"<Run ws=\"x-stk\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"red\">"
-					"\xCC\x8B</Run>%n"
-				"<Run ws=\"x-stk\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"green\">"
-					"lc\xCC\x98\xCC\xA0o</Run>%n"
-				"<Run ws=\"x-stk\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"blue\">"
-					"\xCC\x82</Run>%n"
-				"<Run ws=\"x-stk\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"green\">"
-					"m\xCC\xBC</Run>%n"
-				"<Run ws=\"x-stk\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"red\">"
-					"\xCC\x80</Run>%n"
-				"<Run ws=\"x-stk\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"green\">"
-					"\xCC\x88\xCC\x84\xC3\xA8 t\xC3\xB6</Run>%n"
-				"<Run ws=\"x-stk\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"black\">"
-					"\xCC\x82</Run>%n"
-				"<Run ws=\"x-stk\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"green\">"
-					" W\xC8\xAF</Run>%n"
-				"<Run ws=\"x-stk\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"black\">"
-					"\xCC\x91</Run>%n"
-				"<Run ws=\"x-stk\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"green\">"
-					"r\xCC\xBBl</Run>%n"
-				"<Run ws=\"x-stk\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"blue\">"
-					"\xCC\x83</Run>%n"
-				"<Run ws=\"x-stk\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"green\">"
-					"d</Run>%n"
-				"<Run ws=\"x-stk\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"red\">"
-					"\xCC\x9E</Run>%n"
-				"<Run ws=\"x-stk\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"green\">"
-					"\xCC\xB0P\xC8\xA7</Run>%n"
-				"<Run ws=\"x-stk\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"red\">"
-					"\xCC\x85</Run>%n"
-				"<Run ws=\"x-stk\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"black\">"
-					"\xCC\x8B</Run>%n"
-				"<Run ws=\"x-stk\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"green\">"
-					"d</Run>%n"
-				"<Run ws=\"x-stk\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"black\">"
-					"\xCC\x97</Run>%n"
-				"<Run ws=\"x-stk\" fontsize=\"20000\" fontsizeUnit=\"mpt\" forecolor=\"green\">"
-					"!</Run>%n"
-				"</Str>%n");
-
-			unitpp::assert_true("Stacked diacritics multiple run XML output",
-				staOutput2 == qstas2->m_sta);
-			unitpp::assert_true("Stacked diacritics NFC multiple run XML output",
-				staOutput1 == qstasNFC2->m_sta);
-			unitpp::assert_true("Stacked diacritics NFSC multiple run XML output",
-				staOutput2 == qstasNFSC2->m_sta);
 		}
 
 		/*--------------------------------------------------------------------------------------

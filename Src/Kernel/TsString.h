@@ -539,14 +539,6 @@ public:
 	// Equality
 	STDMETHODIMP Equals(ITsString * ptss, ComBool * pfEqual);
 
-	// XML Export.
-	STDMETHODIMP WriteAsXml(IStream * pstrm, ILgWritingSystemFactory * pwsf,
-		int cchIndent, int ws, ComBool fWriteObjData);
-	STDMETHODIMP GetXmlString(ILgWritingSystemFactory * pwsf,
-		int cchIndent, int ws, ComBool fWriteObjData, BSTR * pbstr);
-	STDMETHODIMP WriteAsXmlExtended(IStream * pstrm, ILgWritingSystemFactory * pwsf,
-		int cchIndent, int ws, ComBool fWriteObjData, ComBool fUseRFC4646);
-
 	// Normalization
 	STDMETHODIMP get_IsNormalizedForm(FwNormalizationMode nm, ComBool * pfRet);
 	STDMETHODIMP get_NormalizedForm(FwNormalizationMode nm, ITsString ** pptssRet);

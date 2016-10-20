@@ -683,7 +683,7 @@ typedef struct TsRunInfo
 	created from instances of TsStrFactory, TsStrBldr and TsIncStrBldr.
 	Hungarian: tss
 ----------------------------------------------------------------------------------------------*/
-DeclareInterface(TsString, Unknown, 3A489F46-368A-49E7-A308-39EE5D45F92F)
+DeclareInterface(TsString, Unknown, BC00014B-842F-4A4A-B3F4-2ED3B0BAADF8)
 {
 	// Fetch the raw text.
 	[propget, id(0)] HRESULT Text(
@@ -792,24 +792,6 @@ DeclareInterface(TsString, Unknown, 3A489F46-368A-49E7-A308-39EE5D45F92F)
 		[in] ITsString * ptss,
 		[out, retval] ComBool * pfEqual);
 
-	// Write the string to the stream in standard FieldWorks XML format.  Indent the
-	// number of spaces given by cchIndent, which may be zero.
-	HRESULT WriteAsXml(
-		[in] IStream * pstrm,
-		[in] ILgWritingSystemFactory * pwsf,
-		[in] int cchIndent,
-		[in] int ws,
-		[in] ComBool fWriteObjData);
-
-	// Return a string in standard FieldWorks XML format. Indent the
-	// number of spaces given by cchIndent, which may be zero.
-	HRESULT GetXmlString(
-		[in] ILgWritingSystemFactory * pwsf,
-		[in] int cchIndent,
-		[in] int ws,
-		[in] ComBool fWriteObjData,
-		[out, retval] BSTR * pbstr);
-
 	// Return whether the string is already in the specified normal form.
 	// Note that a string may be considered to be in NFC
 	// even though its text (the plain character sequence) is not.
@@ -849,16 +831,6 @@ DeclareInterface(TsString, Unknown, 3A489F46-368A-49E7-A308-39EE5D45F92F)
 		[in] int ichMin,
 		[in] int ichLim,
 		[out, retval] ITsString ** pptssRet);
-
-	// Write the string to the stream in standard FieldWorks XML format.  Indent the
-	// number of spaces given by cchIndent, which may be zero.
-	HRESULT WriteAsXmlExtended(
-		[in] IStream * pstrm,
-		[in] ILgWritingSystemFactory * pwsf,
-		[in] int cchIndent,
-		[in] int ws,
-		[in] ComBool fWriteObjData,
-		[in] ComBool fUseRFC4646);
 };
 
 
@@ -869,7 +841,7 @@ DeclareInterface(TsString, Unknown, 3A489F46-368A-49E7-A308-39EE5D45F92F)
 	obtaining a builder object with a call to GetBldr.
 	Hungarian: ttp
 ----------------------------------------------------------------------------------------------*/
-DeclareInterface(TsTextProps, Unknown, B16F0485-8322-408B-B73E-F0E978664869)
+DeclareInterface(TsTextProps, Unknown, 9B804BE2-0F75-4182-AC97-77F477546AB0)
 {
 
 	// Fetch the number of integer properties.
@@ -909,15 +881,6 @@ DeclareInterface(TsTextProps, Unknown, B16F0485-8322-408B-B73E-F0E978664869)
 	// TsTextProps.)
 	HRESULT GetBldr(
 		[out, retval] ITsPropsBldr ** pptpb);
-
-	// Write the text properties to the stream in standard FieldWorks XML format.  Indent the
-	// number of spaces given by cchIndent, which may be zero.
-	// Note that this is for standalone text property objects, not for those embedded inside
-	// strings: those are handled by the ITsString method itself.
-	HRESULT WriteAsXml(
-		[in] IStream * pstrm,
-		[in] ILgWritingSystemFactory * pwsf,
-		[in] int cchIndent);
 };
 
 

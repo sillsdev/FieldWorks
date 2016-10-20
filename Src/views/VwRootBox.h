@@ -108,11 +108,6 @@ public:
 	STDMETHOD(putref_Overlay)(IVwOverlay * pvo);
 	STDMETHOD(get_Overlay)(IVwOverlay ** ppvo);
 
-	// Serialization
-	STDMETHOD(Serialize)(IStream * pstrm);
-	STDMETHOD(Deserialize)(IStream * pstrm);
-	STDMETHOD(WriteWpx)(IStream * pstrm);
-
 	// Selections
 	STDMETHOD(get_Selection)(IVwSelection** ppsel);
 	STDMETHOD(DestroySelection)();
@@ -470,7 +465,6 @@ protected:
 	void ProcessHeaderSpecials(ITsString *ptss, ITsString ** pptssRet, int nPageNo,
 		int nPageTotal);
 	void ClearNotifiers();
-	void WriteWpxBoxes(IStream * pstrm, VwBox * pbox);
 	VwBox * GetBoxDisplaying(HVO hvoObj);
 	// Do nothing, FixSync is only relevant for child boxes.
 	virtual void FixSync(VwSynchronizer *psync, VwRootBox * prootb){}

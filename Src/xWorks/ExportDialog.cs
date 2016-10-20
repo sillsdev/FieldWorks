@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Xsl;
 using Microsoft.Win32;
+using SIL.CoreImpl;
 using SIL.Reporting;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -946,8 +947,7 @@ namespace SIL.FieldWorks.XWorks
 			DateTime dtValidate = DateTime.Now;
 			TimeSpan exportDelta = new TimeSpan(dtExport.Ticks - dtStart.Ticks);
 			TimeSpan validateDelta = new TimeSpan(dtValidate.Ticks - dtExport.Ticks);
-			Debug.WriteLine(String.Format("Export time = {0}, Validation time = {1}",
-				exportDelta, validateDelta));
+			Debug.WriteLine("Export time = {0}, Validation time = {1}", exportDelta, validateDelta);
 #endif
 			return null;
 		}
@@ -1501,29 +1501,25 @@ namespace SIL.FieldWorks.XWorks
 			/// --------------------------------------------------------------------------------
 			public void ExportTranslatedLists(TextWriter w)
 			{
-				// Writing out TsStrings requires a Stream, not a Writer...
-				var stream = new TextWriterStream(w);
 				w.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-				w.WriteLine(String.Format("<Lists date=\"{0}\">", DateTime.Now.ToString()));
+				w.WriteLine("<Lists date=\"{0}\">", DateTime.Now);
 				foreach (var list in m_lists)
-					ExportTranslatedList(w, stream, list);
+					ExportTranslatedList(w, list);
 				w.WriteLine("</Lists>");
 			}
 
-			private void ExportTranslatedList(TextWriter w, TextWriterStream stream,
-				ICmPossibilityList list)
+			private void ExportTranslatedList(TextWriter w, ICmPossibilityList list)
 			{
 				string owner = list.Owner.ClassName;
 				string field = m_cache.MetaDataCacheAccessor.GetFieldName(list.OwningFlid);
 				string itemClass = m_cache.MetaDataCacheAccessor.GetClassName(list.ItemClsid);
-				w.WriteLine(String.Format("<List owner=\"{0}\" field=\"{1}\" itemClass=\"{2}\">",
-					owner, field, itemClass));
+				w.WriteLine("<List owner=\"{0}\" field=\"{1}\" itemClass=\"{2}\">", owner, field, itemClass);
 				ExportMultiUnicode(w, list.Name);
 				ExportMultiUnicode(w, list.Abbreviation);
-				ExportMultiString(w, stream, list.Description);
+				ExportMultiString(w, list.Description);
 				w.WriteLine("<Possibilities>");
 				foreach (var item in list.PossibilitiesOS)
-					ExportTranslatedItem(w, stream, item, list.OwningFlid);
+					ExportTranslatedItem(w, item, list.OwningFlid);
 				w.WriteLine("</Possibilities>");
 				w.WriteLine("</List>");
 			}
@@ -1534,9 +1530,8 @@ namespace SIL.FieldWorks.XWorks
 				if (String.IsNullOrEmpty(sEnglish))
 					return;
 				string sField = m_cache.MetaDataCacheAccessor.GetFieldName(mu.Flid);
-				w.WriteLine(String.Format("<{0}>", sField));
-				w.WriteLine(String.Format("<AUni ws=\"en\">{0}</AUni>",
-					XmlUtils.MakeSafeXml(sEnglish)));
+				w.WriteLine("<{0}>", sField);
+				w.WriteLine("<AUni ws=\"en\">{0}</AUni>", XmlUtils.MakeSafeXml(sEnglish));
 				foreach (int ws in m_mapWsCode.Keys)
 				{
 					string sValue = mu.get_String(ws).Text;
@@ -1544,39 +1539,36 @@ namespace SIL.FieldWorks.XWorks
 						sValue = String.Empty;
 					else
 						sValue = Icu.Normalize(sValue, Icu.UNormalizationMode.UNORM_NFC);
-					w.WriteLine(String.Format("<AUni ws=\"{0}\">{1}</AUni>",
-						m_mapWsCode[ws], XmlUtils.MakeSafeXml(sValue)));
+					w.WriteLine("<AUni ws=\"{0}\">{1}</AUni>", m_mapWsCode[ws], XmlUtils.MakeSafeXml(sValue));
 				}
-				w.WriteLine(String.Format("</{0}>", sField));
+				w.WriteLine("</{0}>", sField);
 			}
 
-			private void ExportMultiString(TextWriter w, TextWriterStream stream,
-				IMultiString ms)
+			private void ExportMultiString(TextWriter w, IMultiString ms)
 			{
 				ITsString tssEnglish = ms.get_String(m_wsEn);
 				if (tssEnglish.Length == 0)
 					return;
 				string sField = m_cache.MetaDataCacheAccessor.GetFieldName(ms.Flid);
-				w.WriteLine(String.Format("<{0}>", sField));
-				tssEnglish.WriteAsXml(stream, m_cache.WritingSystemFactory, 0, m_wsEn, false);
+				w.WriteLine("<{0}>", sField);
+				w.WriteLine(TsStringSerializer.SerializeTsStringToXml(tssEnglish, m_cache.WritingSystemFactory, m_wsEn, false));
 				foreach (int ws in m_mapWsCode.Keys)
 				{
 					ITsString tssValue = ms.get_String(ws);
-					tssValue.WriteAsXml(stream, m_cache.WritingSystemFactory, 0, ws, false);
+					w.WriteLine(TsStringSerializer.SerializeTsStringToXml(tssValue, m_cache.WritingSystemFactory, ws, false));
 				}
-				w.WriteLine(String.Format("</{0}>", sField));
+				w.WriteLine("</{0}>", sField);
 			}
 
-			private void ExportTranslatedItem(TextWriter w, TextWriterStream stream,
-				ICmPossibility item, int listFlid)
+			private void ExportTranslatedItem(TextWriter w, ICmPossibility item, int listFlid)
 			{
 				if (m_flidsForGuids.ContainsKey(listFlid))
-					w.WriteLine(String.Format("<{0} guid=\"{1}\">", item.ClassName, item.Guid));
+					w.WriteLine("<{0} guid=\"{1}\">", item.ClassName, item.Guid);
 				else
-					w.WriteLine(String.Format("<{0}>", item.ClassName));
+					w.WriteLine("<{0}>", item.ClassName);
 				ExportMultiUnicode(w, item.Name);
 				ExportMultiUnicode(w, item.Abbreviation);
-				ExportMultiString(w, stream, item.Description);
+				ExportMultiString(w, item.Description);
 				switch (item.ClassID)
 				{
 					case CmLocationTags.kClassId:
@@ -1586,7 +1578,7 @@ namespace SIL.FieldWorks.XWorks
 						ExportPersonFields(w, item as ICmPerson);
 						break;
 					case CmSemanticDomainTags.kClassId:
-						ExportSemanticDomainFields(w, stream, item as ICmSemanticDomain);
+						ExportSemanticDomainFields(w, item as ICmSemanticDomain);
 						break;
 					case LexEntryTypeTags.kClassId:
 						ExportLexEntryTypeFields(w, item as ILexEntryType);
@@ -1605,10 +1597,10 @@ namespace SIL.FieldWorks.XWorks
 				{
 					w.WriteLine("<SubPossibilities>");
 					foreach (var subItem in item.SubPossibilitiesOS)
-						ExportTranslatedItem(w, stream, subItem, listFlid);
+						ExportTranslatedItem(w, subItem, listFlid);
 					w.WriteLine("</SubPossibilities>");
 				}
-				w.WriteLine(String.Format("</{0}>", item.ClassName));
+				w.WriteLine("</{0}>", item.ClassName);
 			}
 
 			private void ExportLocationFields(TextWriter w, ICmLocation item)
@@ -1623,8 +1615,7 @@ namespace SIL.FieldWorks.XWorks
 					ExportMultiUnicode(w, item.Alias);
 			}
 
-			private void ExportSemanticDomainFields(TextWriter w, TextWriterStream stream,
-				ICmSemanticDomain item)
+			private void ExportSemanticDomainFields(TextWriter w, ICmSemanticDomain item)
 			{
 				if (item != null && item.QuestionsOS.Count > 0)
 				{
@@ -1634,7 +1625,7 @@ namespace SIL.FieldWorks.XWorks
 						w.WriteLine("<CmDomainQ>");
 						ExportMultiUnicode(w, domainQ.Question);
 						ExportMultiUnicode(w, domainQ.ExampleWords);
-						ExportMultiString(w, stream, domainQ.ExampleSentences);
+						ExportMultiString(w, domainQ.ExampleSentences);
 						w.WriteLine("</CmDomainQ>");
 					}
 					w.WriteLine("</Questions>");

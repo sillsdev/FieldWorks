@@ -149,7 +149,6 @@ DEFINE_COM_PTR(GraphiteEngine);
 // Other tools
 #include "FwStyledText.h"
 #include "StringToNumHelpers.h"
-#include "WriteXml.h"		// From AppCore.
 #include "xmlparse.h"
 #include "LgIcuWrappers.h"
 
@@ -165,6 +164,5 @@ DEFINE_COM_PTR(GraphiteEngine);
 #endif
 #include "StringToNumHelpers.h"
 #include "../Cellar/FwXml.h"
-#include "WriteXml.h"		// From AppCore.
 
 #endif // !Main_H

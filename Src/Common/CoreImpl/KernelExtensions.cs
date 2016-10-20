@@ -311,6 +311,47 @@ namespace SIL.CoreImpl
 		{
 			return tss.get_StringPropertyAt(ich, (int)FwTextPropType.ktptNamedStyle);
 		}
+
+		/// <summary>
+		/// Gets the string property value.
+		/// </summary>
+		public static string get_StringProperty(this ITsString tss, int iRun, int tpt)
+		{
+			return tss.get_Properties(iRun).GetStrPropValue(tpt);
+		}
+
+		/// <summary>
+		/// Gets the string property value at the specified character offset.
+		/// </summary>
+		public static string get_StringPropertyAt(this ITsString tss, int ich, int tpt)
+		{
+			return tss.get_StringProperty(tss.get_RunAt(ich), tpt);
+		}
+
+		/// <summary>
+		/// Gets the writing system.
+		/// </summary>
+		public static int get_WritingSystem(this ITsString tss, int irun)
+		{
+			int var;
+			return tss.get_Properties(irun).GetIntPropValues((int) FwTextPropType.ktptWs, out var);
+		}
+
+		/// <summary>
+		/// Gets the writing system at the specified character offset.
+		/// </summary>
+		public static int get_WritingSystemAt(this ITsString tss, int ich)
+		{
+			return tss.get_WritingSystem(tss.get_RunAt(ich));
+		}
+
+		/// <summary>
+		/// Determines if the specified run is an ORC character.
+		/// </summary>
+		public static bool get_IsRunOrc(this ITsString tss, int iRun)
+		{
+			return tss.get_RunText(iRun) == "\ufffc";
+		}
 		#endregion
 
 		#region Extensions for TsStrBldr
@@ -407,6 +448,124 @@ namespace SIL.CoreImpl
 			int dummy;
 			return charStyleTextProps.GetIntPropValues((int)FwTextPropType.ktptWs, out dummy);
 		}
+
+
+		/// <summary>
+		/// Attempts to get the value of the specified int property.
+		/// </summary>
+		public static bool TryGetIntValue(this ITsTextProps textProps, FwTextPropType tpt, out FwTextPropVar var, out int value)
+		{
+			int v;
+			value = textProps.GetIntPropValues((int) tpt, out v);
+			if (v == -1 && value == -1)
+			{
+				var = FwTextPropVar.ktpvDefault;
+				return false;
+			}
+
+			var = (FwTextPropVar) v;
+			return true;
+		}
+
+		/// <summary>
+		/// Gets the int property at the specified index.
+		/// </summary>
+		public static int GetIntProperty(this ITsTextProps textProps, int index, out FwTextPropType tpt, out FwTextPropVar var)
+		{
+			int t, v;
+			int value = textProps.GetIntProp(index, out t, out v);
+			tpt = (FwTextPropType) t;
+			var = (FwTextPropVar) v;
+			return value;
+		}
+
+		/// <summary>
+		/// Attempts to get the value of the specified string property.
+		/// </summary>
+		public static bool TryGetStringValue(this ITsTextProps textProps, FwTextPropType tpt, out string value)
+		{
+			value = textProps.GetStrPropValue((int) tpt);
+			return value != null;
+		}
+
+		/// <summary>
+		/// Gets the string property at the specified index.
+		/// </summary>
+		public static string GetStringProperty(this ITsTextProps textProps, int index, out FwTextPropType tpt)
+		{
+			int t;
+			string value = textProps.GetStrProp(index, out t);
+			tpt = (FwTextPropType) t;
+			return value;
+		}
+		#endregion
+
+		#region ITsStrFactory methods
+
+		/// <summary>
+		/// Creates an <see cref="ITsString"/> with the specified text and properties.
+		/// </summary>
+		public static ITsString MakeStringWithProps(this ITsStrFactory tsf, string text, ITsTextProps textProps)
+		{
+			return tsf.MakeStringWithPropsRgch(text, text == null ? 0 : text.Length, textProps);
+		}
+
+		#endregion
+
+		#region ITsPropsBldr methods
+
+		/// <summary>
+		/// Sets the specified property to the specified int value.
+		/// </summary>
+		public static void SetIntValue(this ITsPropsBldr tpb, FwTextPropType tpt, FwTextPropVar var, int value)
+		{
+			tpb.SetIntPropValues((int) tpt, (int) var, value);
+		}
+
+		/// <summary>
+		/// Sets the specified property to the specified string value.
+		/// </summary>
+		public static void SetStringValue(this ITsPropsBldr tpb, FwTextPropType tpt, string value)
+		{
+			tpb.SetStrPropValue((int) tpt, value);
+		}
+
+		/// <summary>
+		/// Sets the specified property to the string value represented by the specified byte array.
+		/// </summary>
+		public static void SetStringValue(this ITsPropsBldr tpb, FwTextPropType tpt, byte[] value)
+		{
+			tpb.SetStrPropValueRgch((int) tpt, value, value == null ? 0 : value.Length);
+		}
+
+		#endregion
+
+		#region ITsIncStrBldr methods
+
+		/// <summary>
+		/// Sets the specified property to the specified int value.
+		/// </summary>
+		public static void SetIntValue(this ITsIncStrBldr tisb, FwTextPropType tpt, FwTextPropVar var, int value)
+		{
+			tisb.SetIntPropValues((int) tpt, (int) var, value);
+		}
+
+		/// <summary>
+		/// Sets the specified property to the specified string value.
+		/// </summary>
+		public static void SetStringValue(this ITsIncStrBldr tisb, FwTextPropType tpt, string value)
+		{
+			tisb.SetStrPropValue((int) tpt, value);
+		}
+
+		/// <summary>
+		/// Sets the specified property to the string value represented by the specified byte array.
+		/// </summary>
+		public static void SetStringValue(this ITsIncStrBldr tisb, FwTextPropType tpt, byte[] value)
+		{
+			tisb.SetStrPropValueRgch((int) tpt, value, value == null ? 0 : value.Length);
+		}
+
 		#endregion
 
 		#region Private helper methods

@@ -67,7 +67,6 @@ OBJ_VIEWSTESTSUITE=\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwBaseVirtualHandler.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwLazyBox.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwPattern.obj\
-	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\WriteXml.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\FwStyledText.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwSynchronizer.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwTextStore.obj\

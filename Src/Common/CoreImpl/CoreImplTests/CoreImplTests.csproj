@@ -134,6 +134,8 @@
     <Compile Include="TsIncStrBldrTests.cs" />
     <Compile Include="TsPropsBldrTests.cs" />
     <Compile Include="TsPropsFactoryTests.cs" />
+    <Compile Include="TsPropsSerializerTests.cs" />
+    <Compile Include="TsSerializerTestsBase.cs" />
     <Compile Include="TsStrBldrTests.cs" />
     <Compile Include="TsStrFactoryTests.cs" />
     <Compile Include="TsStringTests.cs" />

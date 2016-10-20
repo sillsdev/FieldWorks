@@ -6,9 +6,12 @@
 // Responsibility: SteenwykT
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Text;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -23,6 +26,734 @@ namespace SIL.CoreImpl
 	/// ----------------------------------------------------------------------------------------
 	public static class TsPropsSerializer
 	{
+		#region Public Serialization Methods
+
+		/// <summary>
+		/// Serializes the <see cref="ITsTextProps"/> to standard FieldWorks XML format.
+		/// </summary>
+		public static string SerializePropsToXml(ITsTextProps textProps, ILgWritingSystemFactory lgwsf, bool indent = false)
+		{
+			var xml = new StringBuilder();
+			var settings = new XmlWriterSettings
+			{
+				OmitXmlDeclaration = true,
+				Indent = true,
+				IndentChars = indent ? "  " : string.Empty,
+				NewLineChars = Environment.NewLine
+			};
+			using (var writer = XmlWriter.Create(xml, settings))
+			{
+				writer.WriteStartElement("Prop");
+				if (textProps.IntPropCount > 0 || textProps.StrPropCount > 0)
+				{
+					for (int i = 0; i < textProps.IntPropCount; i++)
+					{
+						FwTextPropType tpt;
+						FwTextPropVar var;
+						int value = textProps.GetIntProperty(i, out tpt, out var);
+						WriteIntProperty(writer, lgwsf, tpt, var, value);
+					}
+
+					for (int i = 0; i < textProps.StrPropCount; i++)
+					{
+						FwTextPropType tpt;
+						string value = textProps.GetStringProperty(i, out tpt);
+						WriteStringProperty(writer, tpt, value);
+					}
+
+					string bulNumFontInfo;
+					if (textProps.TryGetStringValue(FwTextPropType.ktptBulNumFontInfo, out bulNumFontInfo))
+						WriteBulNumFontInfo(writer, bulNumFontInfo);
+
+					string wsStyles;
+					if (textProps.TryGetStringValue(FwTextPropType.ktptWsStyle, out wsStyles))
+						WriteWsStyles(writer, lgwsf, wsStyles);
+				}
+				writer.WriteString(string.Empty);
+				writer.WriteEndElement();
+			}
+			return xml.ToString();
+		}
+
+		#endregion
+
+		#region Serialization Helper Methods
+
+		internal static void WriteIntProperty(XmlWriter writer, ILgWritingSystemFactory lgwsf, FwTextPropType tpt, FwTextPropVar var, int value)
+		{
+			switch (tpt)
+			{
+				case FwTextPropType.ktptBackColor:
+					writer.WriteAttributeString("backcolor", GetColorString(value));
+					break;
+				case FwTextPropType.ktptBold:
+					writer.WriteAttributeString("bold", GetToggleValueString(value));
+					break;
+				case FwTextPropType.ktptWs:
+				case FwTextPropType.ktptBaseWs:
+					if (value > 0)
+					{
+						string id = lgwsf.GetStrFromWs(value);
+						writer.WriteAttributeString(tpt == FwTextPropType.ktptWs ? "ws" : "wsBase", Icu.Normalize(id, Icu.UNormalizationMode.UNORM_NFC));
+					}
+					break;
+				case FwTextPropType.ktptFontSize:
+					writer.WriteAttributeString("fontsize", value.ToString());
+					if (var != FwTextPropVar.ktpvDefault)
+						writer.WriteAttributeString("fontsizeUnit", GetVariationString(var));
+					break;
+				case FwTextPropType.ktptForeColor:
+					writer.WriteAttributeString("forecolor", GetColorString(value));
+					break;
+				case FwTextPropType.ktptItalic:
+					writer.WriteAttributeString("italic", GetToggleValueString(value));
+					break;
+				case FwTextPropType.ktptOffset:
+					writer.WriteAttributeString("offset", value.ToString());
+					writer.WriteAttributeString("offsetUnit", GetVariationString(var));
+					break;
+				case FwTextPropType.ktptSuperscript:
+					writer.WriteAttributeString("superscript", GetSuperscriptString(value));
+					break;
+				case FwTextPropType.ktptUnderColor:
+					writer.WriteAttributeString("undercolor", GetColorString(value));
+					break;
+				case FwTextPropType.ktptUnderline:
+					writer.WriteAttributeString("underline", GetUnderlineTypeString(value));
+					break;
+				case FwTextPropType.ktptSpellCheck:
+					writer.WriteAttributeString("spellcheck", GetSpellingModeString(value));
+					break;
+
+				// Paragraph-level properties
+				case FwTextPropType.ktptAlign:
+					writer.WriteAttributeString("align", GetAlignmentTypeString(value));
+					break;
+				case FwTextPropType.ktptFirstIndent:
+					writer.WriteAttributeString("firstIndent", value.ToString());
+					break;
+				case FwTextPropType.ktptLeadingIndent:
+					writer.WriteAttributeString("leadingIndent", value.ToString());
+					break;
+				case FwTextPropType.ktptTrailingIndent:
+					writer.WriteAttributeString("trailingIndent", value.ToString());
+					break;
+				case FwTextPropType.ktptSpaceBefore:
+					writer.WriteAttributeString("spaceBefore", value.ToString());
+					break;
+				case FwTextPropType.ktptSpaceAfter:
+					writer.WriteAttributeString("spaceAfter", value.ToString());
+					break;
+				case FwTextPropType.ktptTabDef:
+					writer.WriteAttributeString("tabDef", value.ToString());
+					break;
+				case FwTextPropType.ktptLineHeight:
+					writer.WriteAttributeString("lineHeight", Math.Abs(value).ToString());
+					writer.WriteAttributeString("lineHeightUnit", GetVariationString(var));
+					// negative means "exact" internally
+					if (var == FwTextPropVar.ktpvMilliPoint)
+						writer.WriteAttributeString("lineHeightType", value < 0 ? "exact" : "atLeast");
+					break;
+				case FwTextPropType.ktptParaColor:
+					writer.WriteAttributeString("paracolor", GetColorString(value));
+					break;
+
+				// Properties from Views
+				case FwTextPropType.ktptRightToLeft:
+					writer.WriteAttributeString("rightToLeft", value.ToString());
+					break;
+				case FwTextPropType.ktptPadLeading:
+					writer.WriteAttributeString("padLeading", value.ToString());
+					break;
+				case FwTextPropType.ktptPadTrailing:
+					writer.WriteAttributeString("padTrailing", value.ToString());
+					break;
+				case FwTextPropType.ktptMarginTop:
+					writer.WriteAttributeString("MarginTop", value.ToString());
+					break;
+				case FwTextPropType.ktptPadTop:
+					writer.WriteAttributeString("padTop", value.ToString());
+					break;
+				case FwTextPropType.ktptPadBottom:
+					writer.WriteAttributeString("padBottom", value.ToString());
+					break;
+
+				case FwTextPropType.ktptBorderTop:
+					writer.WriteAttributeString("borderTop", value.ToString());
+					break;
+				case FwTextPropType.ktptBorderBottom:
+					writer.WriteAttributeString("borderBottom", value.ToString());
+					break;
+				case FwTextPropType.ktptBorderLeading:
+					writer.WriteAttributeString("borderLeading", value.ToString());
+					break;
+				case FwTextPropType.ktptBorderTrailing:
+					writer.WriteAttributeString("borderTrailing", value.ToString());
+					break;
+				case FwTextPropType.ktptBorderColor:
+					writer.WriteAttributeString("borderColor", GetColorString(value));
+					break;
+				case FwTextPropType.ktptBulNumScheme:
+					writer.WriteAttributeString("bulNumScheme", value.ToString());
+					break;
+				case FwTextPropType.ktptBulNumStartAt:
+					writer.WriteAttributeString("bulNumStartAt", (value == int.MinValue ? 0 : value).ToString());
+					break;
+				case FwTextPropType.ktptDirectionDepth:
+					writer.WriteAttributeString("directionDepth", value.ToString());
+					break;
+				case FwTextPropType.ktptKeepWithNext:
+					writer.WriteAttributeString("keepWithNext", value.ToString());
+					break;
+				case FwTextPropType.ktptKeepTogether:
+					writer.WriteAttributeString("keepTogether", value.ToString());
+					break;
+				case FwTextPropType.ktptHyphenate:
+					writer.WriteAttributeString("hyphenate", value.ToString());
+					break;
+				case FwTextPropType.ktptWidowOrphanControl:
+					writer.WriteAttributeString("widowOrphan", value.ToString());
+					break;
+				case FwTextPropType.ktptMaxLines:
+					writer.WriteAttributeString("maxLines", value.ToString());
+					break;
+				case FwTextPropType.ktptCellBorderWidth:
+					writer.WriteAttributeString("cellBorderWidth", value.ToString());
+					break;
+				case FwTextPropType.ktptCellSpacing:
+					writer.WriteAttributeString("cellSpacing", value.ToString());
+					break;
+				case FwTextPropType.ktptCellPadding:
+					writer.WriteAttributeString("cellPadding", value.ToString());
+					break;
+				case FwTextPropType.ktptEditable:
+					writer.WriteAttributeString("editable", GetEditableString(value));
+					break;
+				case FwTextPropType.ktptSetRowDefaults:
+					writer.WriteAttributeString("setRowDefaults", value.ToString());
+					break;
+				case FwTextPropType.ktptRelLineHeight:
+					writer.WriteAttributeString("relLineHeight", value.ToString());
+					break;
+			}
+		}
+
+		internal static void WriteStringProperty(XmlWriter writer, FwTextPropType tpt, string value)
+		{
+			switch (tpt)
+			{
+				case FwTextPropType.ktptCharStyle:
+					writer.WriteAttributeString("charStyle", Icu.Normalize(value, Icu.UNormalizationMode.UNORM_NFC));
+					break;
+				case FwTextPropType.ktptFontFamily:
+					writer.WriteAttributeString("fontFamily", Icu.Normalize(value, Icu.UNormalizationMode.UNORM_NFC));
+					break;
+				case FwTextPropType.ktptObjData:
+					if (string.IsNullOrEmpty(value))
+						break;
+					switch ((FwObjDataTypes) value[0])
+					{
+						case FwObjDataTypes.kodtPictEvenHot:
+						case FwObjDataTypes.kodtPictOddHot:
+							// The caller is responsible for writing out the picture data.  (This is an
+							// antique kludge that isn't really used in practice, but some of our test data
+							// still exercises it.)
+							writer.WriteAttributeString("type", "picture");
+							break;
+						case FwObjDataTypes.kodtNameGuidHot:
+							writer.WriteAttributeString("link", GetGuidString(value));
+							break;
+						case FwObjDataTypes.kodtExternalPathName:
+							writer.WriteAttributeString("externalLink", Icu.Normalize(value.Substring(1), Icu.UNormalizationMode.UNORM_NFC));
+							break;
+						case FwObjDataTypes.kodtOwnNameGuidHot:
+							writer.WriteAttributeString("ownlink", GetGuidString(value));
+							break;
+						case FwObjDataTypes.kodtEmbeddedObjectData:
+							// This is only used for copying to the clipboard
+							// We assume that the buffer contains valid XML and that the receiving code
+							// knows what to do with it!
+							writer.WriteAttributeString("embedded", Icu.Normalize(value.Substring(1), Icu.UNormalizationMode.UNORM_NFC));
+							break;
+						case FwObjDataTypes.kodtContextString:
+							// This is a generated context-sensitive string.  The next 8 characters give a
+							// GUID, which is from to a known set of GUIDs that have special meaning to a
+							// view contructor.
+							writer.WriteAttributeString("contextString", GetGuidString(value));
+							break;
+						case FwObjDataTypes.kodtGuidMoveableObjDisp:
+							// This results in a call-back to the VC, with a new VwEnv, to create any
+							// display it wants of the object specified by the Guid (see
+							// IVwViewConstructor.DisplayEmbeddedObject).  The display will typically
+							// occur immediately following the paragraph line that contains the ORC,
+							// which functions as an anchor, but may be moved down past following text
+							// to improve page breaking.
+							writer.WriteAttributeString("moveableObj", GetGuidString(value));
+							break;
+					}
+					break;
+
+				// Properties from Views
+				case FwTextPropType.ktptNamedStyle:
+					writer.WriteAttributeString("namedStyle", Icu.Normalize(value, Icu.UNormalizationMode.UNORM_NFC));
+					break;
+				case FwTextPropType.ktptBulNumTxtBef:
+					writer.WriteAttributeString("bulNumTxtBef", Icu.Normalize(value, Icu.UNormalizationMode.UNORM_NFC));
+					break;
+				case FwTextPropType.ktptBulNumTxtAft:
+					writer.WriteAttributeString("bulNumTxtAft", Icu.Normalize(value, Icu.UNormalizationMode.UNORM_NFC));
+					break;
+				case FwTextPropType.ktptBulNumFontInfo:
+					// BulNumFontInfo is written separately.
+					break;
+				case FwTextPropType.ktptWsStyle:
+					// WsStyle is written separately.
+					break;
+				case FwTextPropType.ktptFontVariations:
+					writer.WriteAttributeString("fontVariations", Icu.Normalize(value, Icu.UNormalizationMode.UNORM_NFC));
+					break;
+				case FwTextPropType.ktptParaStyle:
+					writer.WriteAttributeString("paraStyle", Icu.Normalize(value, Icu.UNormalizationMode.UNORM_NFC));
+					break;
+				case FwTextPropType.ktptTabList:
+					writer.WriteAttributeString("tabList", Icu.Normalize(value, Icu.UNormalizationMode.UNORM_NFC));
+					break;
+				case FwTextPropType.ktptTags:
+					const int guidLength = 16;
+					byte[] bytes = Encoding.Unicode.GetBytes(value);
+					int guidCount = bytes.Length / guidLength;
+					var sb = new StringBuilder();
+					for (int i = 0; i < guidCount; i++)
+					{
+						if (i > 0)
+							sb.Append(" ");
+						var guid = new Guid(bytes.SubArray(i * guidLength, guidLength));
+						sb.Append(guid);
+					}
+					writer.WriteAttributeString("tags", sb.ToString());
+					break;
+			}
+		}
+
+		private static void WriteBulNumFontInfo(XmlWriter writer, string bulNumFontInfo)
+		{
+			if (string.IsNullOrEmpty(bulNumFontInfo))
+				return;
+
+			writer.WriteStartElement("BulNumFontInfo");
+			foreach (KeyValuePair<string, string> kvp in DecodeBulNumFontInfo(bulNumFontInfo))
+				writer.WriteAttributeString(kvp.Key, kvp.Value);
+			writer.WriteString(string.Empty);
+			writer.WriteEndElement();
+		}
+
+		private static IEnumerable<KeyValuePair<string, string>> DecodeBulNumFontInfo(string bulNumFontInfo)
+		{
+			// Write the integer valued properties in alphabetical order
+			var props = new SortedDictionary<string, string>();
+			var otherProps = new List<KeyValuePair<string, string>>();
+			int i = 0;
+			while (i < bulNumFontInfo.Length)
+			{
+				var tpt = (FwTextPropType) bulNumFontInfo[i];
+				i++;
+				if (tpt == FwTextPropType.ktptFontFamily)
+				{
+					string fontFamily = bulNumFontInfo.Substring(i, bulNumFontInfo.Length - i - 1);
+					otherProps.Add(new KeyValuePair<string, string>("fontFamily", fontFamily));
+					break;
+				}
+
+				int value = bulNumFontInfo[i] + (bulNumFontInfo[i + 1] << 16);
+				i += 2;
+				switch (tpt)
+				{
+					case FwTextPropType.ktptItalic:
+						props["italic"] = GetToggleValueString(value);
+						break;
+					case FwTextPropType.ktptBold:
+						props["bold"] = GetToggleValueString(value);
+						break;
+					case FwTextPropType.ktptSuperscript:
+						props["superscript"] = GetSuperscriptString(value);
+						break;
+					case FwTextPropType.ktptUnderline:
+						props["underline"] = GetUnderlineTypeString(value);
+						break;
+					case FwTextPropType.ktptFontSize:
+						props["fontsize"] = string.Format("{0}mpt", value);
+						break;
+					case FwTextPropType.ktptOffset:
+						props["offset"] = string.Format("{0}mpt", value);
+						break;
+					case FwTextPropType.ktptForeColor:
+						props["forecolor"] = GetColorString(value);
+						break;
+					case FwTextPropType.ktptBackColor:
+						props["backcolor"] = GetColorString(value);
+						break;
+					case FwTextPropType.ktptUnderColor:
+						props["undercolor"] = GetColorString(value);
+						break;
+					default:
+						otherProps.Add(new KeyValuePair<string, string>(string.Format("prop_{0}", (int) tpt), value.ToString()));
+						break;
+				}
+			}
+
+			return props.Concat(otherProps);
+		}
+
+		private static void WriteWsStyles(XmlWriter writer, ILgWritingSystemFactory lgwsf, string wsStyles)
+		{
+			IDictionary<int, WSStyleInfo> wsStyleInfos = DecodeWSStyles(wsStyles);
+			if (wsStyleInfos.Count == 0)
+				return;
+
+			writer.WriteStartElement("WsStyles9999");
+			foreach (KeyValuePair<int, WSStyleInfo> kvp in wsStyleInfos)
+			{
+				string id = lgwsf.GetStrFromWs(kvp.Key);
+				// TODO: should we throw here?
+				if (string.IsNullOrEmpty(id))
+					continue;
+				writer.WriteStartElement("WsProp");
+				writer.WriteAttributeString("ws", Icu.Normalize(id, Icu.UNormalizationMode.UNORM_NFC));
+				WSStyleInfo wsStyleInfo = kvp.Value;
+				WriteStringPropertyIfSpecified(writer, FwTextPropType.ktptFontFamily, wsStyleInfo.FontFamily);
+				WriteStringPropertyIfSpecified(writer, FwTextPropType.ktptFontVariations, wsStyleInfo.FontVariations);
+				WriteIntPropertyIfSpecified(writer, lgwsf, FwTextPropType.ktptFontSize, FwTextPropVar.ktpvMilliPoint, wsStyleInfo.FontSize);
+				WriteIntPropertyIfSpecified(writer, lgwsf, FwTextPropType.ktptBold, FwTextPropVar.ktpvEnum, wsStyleInfo.Bold);
+				WriteIntPropertyIfSpecified(writer, lgwsf, FwTextPropType.ktptItalic, FwTextPropVar.ktpvEnum, wsStyleInfo.Italic);
+				WriteIntPropertyIfSpecified(writer, lgwsf, FwTextPropType.ktptSuperscript, FwTextPropVar.ktpvEnum, wsStyleInfo.Superscript);
+				WriteIntPropertyIfSpecified(writer, lgwsf, FwTextPropType.ktptForeColor, FwTextPropVar.ktpvDefault, wsStyleInfo.ForeColor);
+				WriteIntPropertyIfSpecified(writer, lgwsf, FwTextPropType.ktptBackColor, FwTextPropVar.ktpvDefault, wsStyleInfo.BackColor);
+				WriteIntPropertyIfSpecified(writer, lgwsf, FwTextPropType.ktptUnderColor, FwTextPropVar.ktpvDefault, wsStyleInfo.UnderColor);
+				WriteIntPropertyIfSpecified(writer, lgwsf, FwTextPropType.ktptUnderline, FwTextPropVar.ktpvEnum, wsStyleInfo.Underline);
+				WriteIntPropertyIfSpecified(writer, lgwsf, FwTextPropType.ktptOffset, FwTextPropVar.ktpvMilliPoint, wsStyleInfo.Offset);
+				writer.WriteString(string.Empty);
+				writer.WriteEndElement();
+			}
+			writer.WriteEndElement();
+		}
+
+		private static void WriteIntPropertyIfSpecified(XmlWriter writer, ILgWritingSystemFactory lgwsf, FwTextPropType tpt, FwTextPropVar var, int value)
+		{
+			if (value != (int) FwTextPropConstants.knNinch)
+				WriteIntProperty(writer, lgwsf, tpt, var, value);
+		}
+
+		private static void WriteStringPropertyIfSpecified(XmlWriter writer, FwTextPropType tpt, string value)
+		{
+			if (!string.IsNullOrEmpty(value))
+				WriteStringProperty(writer, tpt, value);
+		}
+
+		private static IDictionary<int, WSStyleInfo> DecodeWSStyles(string wsStyles)
+		{
+			var results = new SortedDictionary<int, WSStyleInfo>();
+			int i = 0;
+			while (i < wsStyles.Length)
+			{
+				int ws = wsStyles[i] | (wsStyles[i + 1] << 16);
+				i += 2;
+
+				var wsStyleInfo = new WSStyleInfo();
+
+				int len = wsStyles[i];
+				i++;
+				if (len > 0)
+					wsStyleInfo.FontFamily = ConvertSpecialFontNames(wsStyles.Substring(i, len));
+				i += len;
+
+				var propCount = (short) wsStyles[i];
+				i++;
+
+				if (propCount < 0)
+				{
+					// The next batch of properties are additional string properties;
+					// propCount = -1 * the number of them.
+					for (int j = propCount; j < 0; j++)
+					{
+						var tpt = (FwTextPropType) wsStyles[i];
+						i++;
+						len = wsStyles[i];
+						i++;
+						if (tpt == FwTextPropType.ktptFontVariations)
+							wsStyleInfo.FontVariations = wsStyles.Substring(i, len);
+						i += len;
+					}
+
+					propCount = (short) wsStyles[i];
+					i++;
+				}
+
+				// Integer properties
+				for (int j = 0; j < propCount; j++)
+				{
+					var tpt = (FwTextPropType) wsStyles[i];
+					i++;
+					var var = (FwTextPropVar) wsStyles[i];
+					i++;
+					int value = wsStyles[i] | (wsStyles[i + 1] << 16);
+					i += 2;
+
+					// Load the property. Ignore any unexpected property or variation, for the
+					// sake of forwards compatibility.
+					switch (tpt)
+					{
+						case FwTextPropType.ktptFontSize:
+							if (var == FwTextPropVar.ktpvMilliPoint)
+								wsStyleInfo.FontSize = value;
+							break;
+						case FwTextPropType.ktptBold:
+							if (var == FwTextPropVar.ktpvEnum)
+								wsStyleInfo.Bold = value;
+							break;
+						case FwTextPropType.ktptItalic:
+							if (var == FwTextPropVar.ktpvEnum)
+								wsStyleInfo.Italic = value;
+							break;
+						case FwTextPropType.ktptSuperscript:
+							if (var == FwTextPropVar.ktpvEnum)
+								wsStyleInfo.Superscript = value;
+							break;
+						case FwTextPropType.ktptForeColor:
+							if (var == FwTextPropVar.ktpvDefault)
+								wsStyleInfo.ForeColor = value;
+							break;
+						case FwTextPropType.ktptBackColor:
+							if (var == FwTextPropVar.ktpvDefault)
+								wsStyleInfo.BackColor = value;
+							break;
+						case FwTextPropType.ktptUnderColor:
+							if (var == FwTextPropVar.ktpvDefault)
+								wsStyleInfo.UnderColor = value;
+							break;
+						case FwTextPropType.ktptUnderline:
+							if (var == FwTextPropVar.ktpvEnum)
+								wsStyleInfo.Underline = value;
+							break;
+						case FwTextPropType.ktptOffset:
+							if (var == FwTextPropVar.ktpvMilliPoint)
+								wsStyleInfo.Offset = value;
+							break;
+					}
+				}
+
+				results[ws] = wsStyleInfo;
+			}
+
+			return results;
+		}
+
+		private class WSStyleInfo
+		{
+			public WSStyleInfo()
+			{
+				FontFamily = string.Empty;
+				FontVariations = string.Empty;
+				FontSize = (int) FwTextPropConstants.knNinch;
+				Bold = (int) FwTextPropConstants.knNinch;
+				Italic = (int) FwTextPropConstants.knNinch;
+				Superscript = (int) FwTextPropConstants.knNinch;
+				ForeColor = (int) FwTextPropConstants.knNinch;
+				BackColor = (int) FwTextPropConstants.knNinch;
+				UnderColor = (int) FwTextPropConstants.knNinch;
+				Underline = (int) FwTextPropConstants.knNinch;
+				Offset = (int) FwTextPropConstants.knNinch;
+			}
+
+			public string FontFamily { get; set; }
+			public string FontVariations { get; set; }
+			public int FontSize { get; set; }
+			public int Bold { get; set; }
+			public int Italic { get; set; }
+			public int Superscript { get; set; }
+			public int ForeColor { get; set; }
+			public int BackColor { get; set; }
+			public int UnderColor { get; set; }
+			public int Underline { get; set; }
+			public int Offset { get; set; }
+		}
+
+		private static string ConvertSpecialFontNames(string fontFamily)
+		{
+			switch (fontFamily)
+			{
+				case "<default serif>":
+					return "<default font>";
+				case "<default sans serif>":
+					return "<default heading font>";
+				case "<default body>":
+					return "<default publication font>";
+				case "<default monospace>":
+				case "<default fixed>":
+					return "Courier New";
+				default:
+					return fontFamily;
+			}
+		}
+
+		private static string GetColorString(int color)
+		{
+			switch ((FwTextColor) color)
+			{
+				case FwTextColor.kclrWhite:
+					return "white";
+				case FwTextColor.kclrBlack:
+					return "black";
+				case FwTextColor.kclrRed:
+					return "red";
+				case FwTextColor.kclrGreen:
+					return "green";
+				case FwTextColor.kclrBlue:
+					return "blue";
+				case FwTextColor.kclrYellow:
+					return "yellow";
+				case FwTextColor.kclrMagenta:
+					return "magenta";
+				case FwTextColor.kclrCyan:
+					return "cyan";
+				case FwTextColor.kclrTransparent:
+					return "transparent";
+				default:
+					int blue = (color >> 16) & 0xff;
+					int green = (color >> 8) & 0xff;
+					int red = color & 0xff;
+					return string.Format("{0}{1}{2}", red.ToString("x2"), green.ToString("x2"), blue.ToString("x2"));
+			}
+		}
+
+		private static string GetToggleValueString(int value)
+		{
+			switch ((FwTextToggleVal) value)
+			{
+				case FwTextToggleVal.kttvOff:
+					return "off";
+				case FwTextToggleVal.kttvForceOn:
+					return "on";
+				case FwTextToggleVal.kttvInvert:
+					return "invert";
+				default:
+					return value.ToString();
+			}
+		}
+
+		/// <summary>
+		/// Gets the string representation of the property variation type. The variation is used
+		/// to indicate how to interpret an int property value.
+		/// </summary>
+		private static string GetVariationString(FwTextPropVar var)
+		{
+			switch (var)
+			{
+				case FwTextPropVar.ktpvMilliPoint:
+					return "mpt";
+				case FwTextPropVar.ktpvRelative:
+					return "rel";
+				default:
+					return ((int) var).ToString();
+			}
+		}
+
+		private static string GetSuperscriptString(int value)
+		{
+			switch ((FwSuperscriptVal) value)
+			{
+				case FwSuperscriptVal.kssvOff:
+					return "off";
+				case FwSuperscriptVal.kssvSuper:
+					return "super";
+				case FwSuperscriptVal.kssvSub:
+					return "sub";
+				default:
+					return value.ToString();
+			}
+		}
+
+		private static string GetUnderlineTypeString(int value)
+		{
+			switch ((FwUnderlineType) value)
+			{
+				case FwUnderlineType.kuntNone:
+					return "none";
+				case FwUnderlineType.kuntDotted:
+					return "dotted";
+				case FwUnderlineType.kuntDashed:
+					return "dashed";
+				case FwUnderlineType.kuntStrikethrough:
+					return "strikethrough";
+				case FwUnderlineType.kuntSingle:
+					return "single";
+				case FwUnderlineType.kuntDouble:
+					return "double";
+				case FwUnderlineType.kuntSquiggle:
+					return "squiggle";
+				default:
+					return value.ToString();
+			}
+		}
+
+		private static string GetSpellingModeString(int value)
+		{
+			switch ((SpellingModes) value)
+			{
+				case SpellingModes.ksmNormalCheck:
+					return "normal";
+				case SpellingModes.ksmDoNotCheck:
+					return "doNotCheck";
+				case SpellingModes.ksmForceCheck:
+					return "forceCheck";
+				default:
+					return value.ToString();
+			}
+		}
+
+		private static string GetAlignmentTypeString(int value)
+		{
+			switch ((FwTextAlign) value)
+			{
+				case FwTextAlign.ktalLeading:
+					return "leading";
+				case FwTextAlign.ktalLeft:
+					return "left";
+				case FwTextAlign.ktalCenter:
+					return "center";
+				case FwTextAlign.ktalRight:
+					return "right";
+				case FwTextAlign.ktalTrailing:
+					return "trailing";
+				case FwTextAlign.ktalJustify:
+					return "justify";
+				default:
+					return value.ToString();
+			}
+		}
+
+		private static string GetEditableString(int value)
+		{
+			switch ((TptEditable) value)
+			{
+				case TptEditable.ktptNotEditable:
+					return "not";
+				case TptEditable.ktptIsEditable:
+					return "is";
+				case TptEditable.ktptSemiEditable:
+					return "semi";
+				default:
+					return value.ToString();
+			}
+		}
+
+		private static string GetGuidString(string value)
+		{
+			Guid guid = MiscUtils.GetGuidFromObjData(value.Substring(1));
+			return guid.ToString();
+		}
+
+		#endregion
+
 		#region Public Deserialization Methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

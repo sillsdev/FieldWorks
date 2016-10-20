@@ -69,7 +69,6 @@ LINK_LIBS = \
 
 OBJ_APPCORE = \
 	$(INT_DIR)/FwStyledText.o \
-	$(INT_DIR)/WriteXml.o \
 
 OBJ_ALL = $(OBJ_APPCORE)
 

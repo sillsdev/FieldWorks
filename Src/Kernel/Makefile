@@ -85,13 +85,11 @@ OBJ_FWKERNEL = \
 	$(INT_DIR)/GraphiteEngine.o \
 	$(INT_DIR)/RomRenderEngine.o \
 	$(INT_DIR)/RomRenderSegment.o \
-	$(INT_DIR)/FwXml.o \
 
 OBJ_OTHER = \
 	$(GENERIC_OBJ)/ModuleEntry.o \
 	$(GENERIC_OBJ)/TextProps1.o \
 	$(APPCORE_OBJ)/FwStyledText.o \
-	$(APPCORE_OBJ)/WriteXml.o \
 
 # === Targets ===
 

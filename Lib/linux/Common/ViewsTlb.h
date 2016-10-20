@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 8.00.0603 */
-/* at Fri Oct 07 15:58:59 2016
+/* at Thu Oct 27 09:18:27 2016
  */
 /* Compiler settings for C:\develop\fwrepo\fw\Output\Common\ViewsTlb.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
@@ -908,10 +908,10 @@ enum VwBoundaryMark
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 IVwRootBox
 ,
-A8944421-3A75-4DD5-A469-2EE251228A26
+A42600E7-F097-4903-97EA-149C153DD335
 );
 ATTACH_GUID_TO_CLASS(class,
-705C1A9A-D6DC-4C3F-9B29-85F0C4F4B7BE
+7C0C6A3C-38B3-4266-AF94-A3A1CBAAD1FC
 ,
 VwRootBox
 );
@@ -5380,7 +5380,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
-    MIDL_INTERFACE("A8944421-3A75-4DD5-A469-2EE251228A26")
+    MIDL_INTERFACE("A42600E7-F097-4903-97EA-149C153DD335")
     IVwRootBox : public IVwNotifyChange
     {
     public:
@@ -5426,15 +5426,6 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
         virtual HRESULT STDMETHODCALLTYPE GetRootVariant( 
             /* [retval][out] */ VARIANT *pv) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE Serialize( 
-            /* [in] */ IStream *pstrm) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE Deserialize( 
-            /* [in] */ IStream *pstrm) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE WriteWpx( 
-            /* [in] */ IStream *pstrm) = 0;
         
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Selection( 
             /* [retval][out] */ IVwSelection **ppsel) = 0;
@@ -5776,18 +5767,6 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         HRESULT ( STDMETHODCALLTYPE *GetRootVariant )( 
             IVwRootBox * This,
             /* [retval][out] */ VARIANT *pv);
-        
-        HRESULT ( STDMETHODCALLTYPE *Serialize )( 
-            IVwRootBox * This,
-            /* [in] */ IStream *pstrm);
-        
-        HRESULT ( STDMETHODCALLTYPE *Deserialize )( 
-            IVwRootBox * This,
-            /* [in] */ IStream *pstrm);
-        
-        HRESULT ( STDMETHODCALLTYPE *WriteWpx )( 
-            IVwRootBox * This,
-            /* [in] */ IStream *pstrm);
         
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Selection )( 
             IVwRootBox * This,
@@ -6158,15 +6137,6 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 
 #define IVwRootBox_GetRootVariant(This,pv)	\
     ( (This)->lpVtbl -> GetRootVariant(This,pv) ) 
-
-#define IVwRootBox_Serialize(This,pstrm)	\
-    ( (This)->lpVtbl -> Serialize(This,pstrm) ) 
-
-#define IVwRootBox_Deserialize(This,pstrm)	\
-    ( (This)->lpVtbl -> Deserialize(This,pstrm) ) 
-
-#define IVwRootBox_WriteWpx(This,pstrm)	\
-    ( (This)->lpVtbl -> WriteWpx(This,pstrm) ) 
 
 #define IVwRootBox_get_Selection(This,ppsel)	\
     ( (This)->lpVtbl -> get_Selection(This,ppsel) ) 
@@ -8287,7 +8257,7 @@ VwUndoDa;
 
 #ifdef __cplusplus
 
-class DECLSPEC_UUID("705C1A9A-D6DC-4C3F-9B29-85F0C4F4B7BE")
+class DECLSPEC_UUID("7C0C6A3C-38B3-4266-AF94-A3A1CBAAD1FC")
 VwRootBox;
 #endif
 

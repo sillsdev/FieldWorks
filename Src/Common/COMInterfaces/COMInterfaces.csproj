@@ -143,7 +143,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="FwKernelExtensions.cs" />
     <Compile Include="UcdProperty.cs">
       <SubType>Code</SubType>
     </Compile>

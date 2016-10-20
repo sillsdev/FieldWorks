@@ -189,14 +189,12 @@ class GrEngine;
 #include "AfColorTable.h"
 #include "AfGfx.h"
 #include "VwPattern.h"
-#include "WriteXml.h"
 #include "FwStyledText.h"
 #include "VwAccessRoot.h"
 #include "VwSynchronizer.h"
 #include "VwTextStore.h"
 #else
 #include "StringToNumHelpers.h"
-#include "WriteXml.h"
 #include "FwStyledText.h"
 #endif
 #include "AfColorTable.h"

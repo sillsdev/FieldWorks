@@ -39,7 +39,6 @@ namespace SIL.FieldWorks.Common.Controls
 		private TextWriter m_writer = null;
 		private FdoCache m_cache = null;
 		private FwStyleSheet m_stylesheet;
-		private TextWriterStream m_strm = null;
 		private string m_sFormat = null;
 		private StringCollection m_rgElementTags = new StringCollection();
 		private StringCollection m_rgClassNames = new StringCollection();
@@ -115,7 +114,6 @@ namespace SIL.FieldWorks.Common.Controls
 			string sFormat, string sOutPath, string sBodyClass)
 		{
 			m_writer = w;
-			m_strm = new TextWriterStream(w);
 			m_cache = cache;
 			m_stylesheet = Widgets.FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 			m_mdc = cache.MetaDataCacheAccessor;
@@ -258,9 +256,7 @@ namespace SIL.FieldWorks.Common.Controls
 			CurrentContext ccOld = WriteFieldStartTag(tag);
 
 			ITsString tss = DataAccess.get_StringProp(CurrentObject(), tag);
-			int cchIndent = TabsToIndent() * 4;
-			tss.WriteAsXmlExtended(m_strm, m_cache.WritingSystemFactory, cchIndent, 0,
-				false, false);
+			WriteTsString(tss, TabsToIndent());
 
 			WriteFieldEndTag(tag, ccOld);
 		}
@@ -316,9 +312,7 @@ namespace SIL.FieldWorks.Common.Controls
 			CurrentContext ccOld = WriteFieldStartTag(tag);
 
 			ITsString tss = DataAccess.get_MultiStringAlt(CurrentObject(), tag, ws);
-			int cchIndent = TabsToIndent()*4;
-			tss.WriteAsXmlExtended(m_strm, m_cache.WritingSystemFactory, cchIndent,
-				ws, false, false);
+			WriteTsString(tss, TabsToIndent());
 			// See if the string uses any styles that require us to export some more data.
 			for (int irun = 0; irun < tss.RunCount; irun++)
 			{
@@ -363,7 +357,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="flags"></param>
 		public override void AddTimeProp(int tag, uint flags)
 		{
-			string sField = m_sda.MetaDataCache.GetFieldName((int)tag);
+			string sField = m_sda.MetaDataCache.GetFieldName(tag);
 			m_sTimeField = GetFieldXmlElementName(sField, tag/1000);
 		}
 
@@ -374,15 +368,9 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CellarPropertyType cpt = (CellarPropertyType)m_mdc.GetFieldType(m_tagCurrent);
 			if (cpt == CellarPropertyType.GenDate)
-			{
-				int cchIndent = TabsToIndent() * 4;
-				tss.WriteAsXmlExtended(m_strm, m_cache.WritingSystemFactory, cchIndent, 0,
-					false, false);
-			}
+				WriteTsString(tss, TabsToIndent());
 			else
-			{
 				base.AddTsString(tss);
-			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -411,12 +399,24 @@ namespace SIL.FieldWorks.Common.Controls
 			IndentLine();
 			m_writer.WriteLine("<{0}{1}>", sElement, attrs);
 
-			int cchIndent = (TabsToIndent() + 1) * 4;
-			tss.WriteAsXmlExtended(m_strm, m_cache.WritingSystemFactory, cchIndent, 0,
-								   false, false);
+			WriteTsString(tss, TabsToIndent() + 1);
 
 			IndentLine();
 			m_writer.WriteLine("</{0}>", sElement);
+		}
+
+		private void WriteTsString(ITsString tss, int tabs)
+		{
+			string xml = TsStringSerializer.SerializeTsStringToXml(tss, m_cache.WritingSystemFactory, writeObjData: false, indent: true);
+			using (var reader = new StringReader(xml))
+			{
+				string line;
+				while ((line = reader.ReadLine()) != null)
+				{
+					m_writer.Write(new string(' ', tabs * 4));
+					m_writer.WriteLine(line);
+				}
+			}
 		}
 
 		/// <summary>
@@ -1176,7 +1176,6 @@ namespace SIL.FieldWorks.Common.Controls
 				m_writer.WriteLine("</{0}>", sDataType);
 			}
 			m_writer.Close();
-			m_strm = null;
 			m_writer = null;
 		}
 

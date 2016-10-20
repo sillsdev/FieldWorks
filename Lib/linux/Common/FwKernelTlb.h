@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 8.00.0603 */
-/* at Fri Oct 07 15:58:26 2016
+/* at Thu Oct 27 09:17:57 2016
  */
 /* Compiler settings for C:\develop\fwrepo\fw\Output\Common\FwKernelTlb.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
@@ -861,12 +861,12 @@ typedef struct TsRunInfo
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 ITsString
 ,
-3A489F46-368A-49E7-A308-39EE5D45F92F
+BC00014B-842F-4A4A-B3F4-2ED3B0BAADF8
 );
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 ITsTextProps
 ,
-B16F0485-8322-408B-B73E-F0E978664869
+9B804BE2-0F75-4182-AC97-77F477546AB0
 );
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 ITsStrFactory
@@ -1372,7 +1372,7 @@ LgIcuLocaleEnumerator
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
-    MIDL_INTERFACE("3A489F46-368A-49E7-A308-39EE5D45F92F")
+    MIDL_INTERFACE("BC00014B-842F-4A4A-B3F4-2ED3B0BAADF8")
     ITsString : public IUnknown
     {
     public:
@@ -1460,20 +1460,6 @@ LgIcuLocaleEnumerator
             /* [in] */ ITsString *ptss,
             /* [retval][out] */ ComBool *pfEqual) = 0;
         
-        virtual HRESULT STDMETHODCALLTYPE WriteAsXml( 
-            /* [in] */ IStream *pstrm,
-            /* [in] */ ILgWritingSystemFactory *pwsf,
-            /* [in] */ int cchIndent,
-            /* [in] */ int ws,
-            /* [in] */ ComBool fWriteObjData) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetXmlString( 
-            /* [in] */ ILgWritingSystemFactory *pwsf,
-            /* [in] */ int cchIndent,
-            /* [in] */ int ws,
-            /* [in] */ ComBool fWriteObjData,
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsNormalizedForm( 
             /* [in] */ FwNormalizationMode nm,
             /* [retval][out] */ ComBool *pfRet) = 0;
@@ -1491,14 +1477,6 @@ LgIcuLocaleEnumerator
             /* [in] */ int ichMin,
             /* [in] */ int ichLim,
             /* [retval][out] */ ITsString **pptssRet) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE WriteAsXmlExtended( 
-            /* [in] */ IStream *pstrm,
-            /* [in] */ ILgWritingSystemFactory *pwsf,
-            /* [in] */ int cchIndent,
-            /* [in] */ int ws,
-            /* [in] */ ComBool fWriteObjData,
-            /* [in] */ ComBool fUseRFC4646) = 0;
         
     };
     
@@ -1626,22 +1604,6 @@ LgIcuLocaleEnumerator
             /* [in] */ ITsString *ptss,
             /* [retval][out] */ ComBool *pfEqual);
         
-        HRESULT ( STDMETHODCALLTYPE *WriteAsXml )( 
-            ITsString * This,
-            /* [in] */ IStream *pstrm,
-            /* [in] */ ILgWritingSystemFactory *pwsf,
-            /* [in] */ int cchIndent,
-            /* [in] */ int ws,
-            /* [in] */ ComBool fWriteObjData);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetXmlString )( 
-            ITsString * This,
-            /* [in] */ ILgWritingSystemFactory *pwsf,
-            /* [in] */ int cchIndent,
-            /* [in] */ int ws,
-            /* [in] */ ComBool fWriteObjData,
-            /* [retval][out] */ BSTR *pbstr);
-        
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsNormalizedForm )( 
             ITsString * This,
             /* [in] */ FwNormalizationMode nm,
@@ -1663,15 +1625,6 @@ LgIcuLocaleEnumerator
             /* [in] */ int ichMin,
             /* [in] */ int ichLim,
             /* [retval][out] */ ITsString **pptssRet);
-        
-        HRESULT ( STDMETHODCALLTYPE *WriteAsXmlExtended )( 
-            ITsString * This,
-            /* [in] */ IStream *pstrm,
-            /* [in] */ ILgWritingSystemFactory *pwsf,
-            /* [in] */ int cchIndent,
-            /* [in] */ int ws,
-            /* [in] */ ComBool fWriteObjData,
-            /* [in] */ ComBool fUseRFC4646);
         
         END_INTERFACE
     } ITsStringVtbl;
@@ -1759,12 +1712,6 @@ LgIcuLocaleEnumerator
 #define ITsString_Equals(This,ptss,pfEqual)	\
     ( (This)->lpVtbl -> Equals(This,ptss,pfEqual) ) 
 
-#define ITsString_WriteAsXml(This,pstrm,pwsf,cchIndent,ws,fWriteObjData)	\
-    ( (This)->lpVtbl -> WriteAsXml(This,pstrm,pwsf,cchIndent,ws,fWriteObjData) ) 
-
-#define ITsString_GetXmlString(This,pwsf,cchIndent,ws,fWriteObjData,pbstr)	\
-    ( (This)->lpVtbl -> GetXmlString(This,pwsf,cchIndent,ws,fWriteObjData,pbstr) ) 
-
 #define ITsString_get_IsNormalizedForm(This,nm,pfRet)	\
     ( (This)->lpVtbl -> get_IsNormalizedForm(This,nm,pfRet) ) 
 
@@ -1776,9 +1723,6 @@ LgIcuLocaleEnumerator
 
 #define ITsString_GetSubstring(This,ichMin,ichLim,pptssRet)	\
     ( (This)->lpVtbl -> GetSubstring(This,ichMin,ichLim,pptssRet) ) 
-
-#define ITsString_WriteAsXmlExtended(This,pstrm,pwsf,cchIndent,ws,fWriteObjData,fUseRFC4646)	\
-    ( (This)->lpVtbl -> WriteAsXmlExtended(This,pstrm,pwsf,cchIndent,ws,fWriteObjData,fUseRFC4646) ) 
 
 #endif /* COBJMACROS */
 
@@ -3048,7 +2992,7 @@ DebugReport;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
-    MIDL_INTERFACE("B16F0485-8322-408B-B73E-F0E978664869")
+    MIDL_INTERFACE("9B804BE2-0F75-4182-AC97-77F477546AB0")
     ITsTextProps : public IUnknown
     {
     public:
@@ -3080,11 +3024,6 @@ DebugReport;
         
         virtual HRESULT STDMETHODCALLTYPE GetBldr( 
             /* [retval][out] */ ITsPropsBldr **pptpb) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE WriteAsXml( 
-            /* [in] */ IStream *pstrm,
-            /* [in] */ ILgWritingSystemFactory *pwsf,
-            /* [in] */ int cchIndent) = 0;
         
     };
     
@@ -3143,12 +3082,6 @@ DebugReport;
             ITsTextProps * This,
             /* [retval][out] */ ITsPropsBldr **pptpb);
         
-        HRESULT ( STDMETHODCALLTYPE *WriteAsXml )( 
-            ITsTextProps * This,
-            /* [in] */ IStream *pstrm,
-            /* [in] */ ILgWritingSystemFactory *pwsf,
-            /* [in] */ int cchIndent);
-        
         END_INTERFACE
     } ITsTextPropsVtbl;
 
@@ -3192,9 +3125,6 @@ DebugReport;
 
 #define ITsTextProps_GetBldr(This,pptpb)	\
     ( (This)->lpVtbl -> GetBldr(This,pptpb) ) 
-
-#define ITsTextProps_WriteAsXml(This,pstrm,pwsf,cchIndent)	\
-    ( (This)->lpVtbl -> WriteAsXml(This,pstrm,pwsf,cchIndent) ) 
 
 #endif /* COBJMACROS */
 

@@ -67,8 +67,6 @@ OBJ_KERNELTESTSUITE=\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\LgIcuCharPropEngine.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\LgUnicodeCollater.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\FwStyledText.obj\
-	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\WriteXml.obj\
-	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\FwXml.obj\
 
 OBJ_ALL=$(OBJ_KERNELTESTSUITE)
 

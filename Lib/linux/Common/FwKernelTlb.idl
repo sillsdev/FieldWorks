@@ -1529,7 +1529,7 @@ typedef struct TsRunInfo
 
 
 
-cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsString") cpp_quote(",") cpp_quote("3A489F46-368A-49E7-A308-39EE5D45F92F") cpp_quote(");") [ uuid("3A489F46-368A-49E7-A308-39EE5D45F92F"), object, pointer_default(unique) ] interface ITsString : IUnknown
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsString") cpp_quote(",") cpp_quote("BC00014B-842F-4A4A-B3F4-2ED3B0BAADF8") cpp_quote(");") [ uuid("BC00014B-842F-4A4A-B3F4-2ED3B0BAADF8"), object, pointer_default(unique) ] interface ITsString : IUnknown
 {
 	
 	[propget, id(0)] HRESULT Text(
@@ -1640,24 +1640,6 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsString") cpp_quo
 
 	
 	
-	HRESULT WriteAsXml(
-		[in] IStream * pstrm,
-		[in] ILgWritingSystemFactory * pwsf,
-		[in] int cchIndent,
-		[in] int ws,
-		[in] ComBool fWriteObjData);
-
-	
-	
-	HRESULT GetXmlString(
-		[in] ILgWritingSystemFactory * pwsf,
-		[in] int cchIndent,
-		[in] int ws,
-		[in] ComBool fWriteObjData,
-		[out, retval] BSTR * pbstr);
-
-	
-	
 	
 	
 	
@@ -1695,16 +1677,6 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsString") cpp_quo
 		[in] int ichMin,
 		[in] int ichLim,
 		[out, retval] ITsString ** pptssRet);
-
-	
-	
-	HRESULT WriteAsXmlExtended(
-		[in] IStream * pstrm,
-		[in] ILgWritingSystemFactory * pwsf,
-		[in] int cchIndent,
-		[in] int ws,
-		[in] ComBool fWriteObjData,
-		[in] ComBool fUseRFC4646);
 };
 
 
@@ -1715,7 +1687,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsString") cpp_quo
 
 
 
-cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsTextProps") cpp_quote(",") cpp_quote("B16F0485-8322-408B-B73E-F0E978664869") cpp_quote(");") [ uuid("B16F0485-8322-408B-B73E-F0E978664869"), object, pointer_default(unique) ] interface ITsTextProps : IUnknown
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsTextProps") cpp_quote(",") cpp_quote("9B804BE2-0F75-4182-AC97-77F477546AB0") cpp_quote(");") [ uuid("9B804BE2-0F75-4182-AC97-77F477546AB0"), object, pointer_default(unique) ] interface ITsTextProps : IUnknown
 {
 
 	
@@ -1755,15 +1727,6 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsTextProps") cpp_
 	
 	HRESULT GetBldr(
 		[out, retval] ITsPropsBldr ** pptpb);
-
-	
-	
-	
-	
-	HRESULT WriteAsXml(
-		[in] IStream * pstrm,
-		[in] ILgWritingSystemFactory * pwsf,
-		[in] int cchIndent);
 };
 
 
@@ -2176,7 +2139,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 {
 	interface ITsPropsBldr;
 };
-#line 1334 "c:\\develop\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
+#line 1297 "c:\\develop\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
 
 #line 22 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Render.idh"

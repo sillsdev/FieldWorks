@@ -732,7 +732,7 @@ namespace SIL.FieldWorks.XWorks
 					Assert.AreEqual("</Abbreviation>", r.ReadLine());
 					Assert.AreEqual("<Description>", r.ReadLine());
 					Assert.AreEqual("<AStr ws=\"en\">", r.ReadLine());
-					Assert.AreEqual("<Run ws=\"en\">Use this domain for words related to the moon. In your culture people may believe things about the moon. For instance in European culture people used to believe that the moon caused people to become crazy. So in English we have words like &quot;moon-struck&quot; and &quot;lunatic.&quot; You should include such words in this domain.</Run>", r.ReadLine());
+					Assert.AreEqual("<Run ws=\"en\">Use this domain for words related to the moon. In your culture people may believe things about the moon. For instance in European culture people used to believe that the moon caused people to become crazy. So in English we have words like \"moon-struck\" and \"lunatic.\" You should include such words in this domain.</Run>", r.ReadLine());
 					Assert.AreEqual("</AStr>", r.ReadLine());
 					Assert.AreEqual("<AStr ws=\"fr\">", r.ReadLine());
 					Assert.AreEqual("<Run ws=\"fr\"></Run>", r.ReadLine());

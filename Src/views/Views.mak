@@ -66,7 +66,6 @@ OBJ_VIEWS=\
 	$(INT_DIR)\autopch\VwUndo.obj\
 	$(INT_DIR)\autopch\VwLazyBox.obj\
 	$(INT_DIR)\autopch\VwPattern.obj\
-	$(INT_DIR)\autopch\WriteXml.obj\
 	$(INT_DIR)\autopch\FwStyledText.obj\
 	$(INT_DIR)\autopch\VwSynchronizer.obj\
 	$(INT_DIR)\autopch\VwTextStore.obj\

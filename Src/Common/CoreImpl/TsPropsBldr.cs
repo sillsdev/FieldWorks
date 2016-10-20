@@ -60,9 +60,16 @@ namespace SIL.CoreImpl
 		public void SetStrPropValueRgch(int tpt, byte[] rgchVal, int nValLength)
 		{
 			if (rgchVal == null || nValLength == 0)
+			{
 				StringProperties.Remove(tpt);
+			}
 			else
-				StringProperties[tpt] = Encoding.Unicode.GetString(rgchVal, 0, nValLength);
+			{
+				var sb = new StringBuilder();
+				for (int i = 0; i < nValLength; i += 2)
+					sb.Append((char) (rgchVal[i] << 8 | rgchVal[i + 1]));
+				StringProperties[tpt] = sb.ToString();
+			}
 		}
 
 		/// <summary>

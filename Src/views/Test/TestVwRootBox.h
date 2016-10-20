@@ -116,30 +116,6 @@ namespace TestViews
 			}
 			try
 			{
-				CheckHr(hr = m_qrootb->Serialize(NULL));
-				unitpp::assert_eq("Serialize(NULL) HRESULT", E_POINTER, hr);
-			}
-			catch(Throwable& thr){
-				unitpp::assert_eq("Serialize(NULL) HRESULT", E_POINTER, thr.Result());
-			}
-			try
-			{
-				CheckHr(hr = m_qrootb->Deserialize(NULL));
-				unitpp::assert_eq("Deserialize(NULL) HRESULT", E_POINTER, hr);
-			}
-			catch(Throwable& thr){
-				unitpp::assert_eq("Deserialize(NULL) HRESULT", E_POINTER, thr.Result());
-			}
-			try
-			{
-				CheckHr(hr = m_qrootb->WriteWpx(NULL));
-				unitpp::assert_eq("WriteWpx(NULL) HRESULT", E_POINTER, hr);
-			}
-			catch(Throwable& thr){
-				unitpp::assert_eq("WriteWpx(NULL) HRESULT", E_POINTER, thr.Result());
-			}
-			try
-			{
 				CheckHr(hr = m_qrootb->get_Selection(NULL));
 				unitpp::assert_eq("get_Selection(NULL) HRESULT", E_POINTER, hr);
 			}

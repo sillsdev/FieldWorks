@@ -429,7 +429,6 @@ public:
 	virtual void Search(VwPattern * ppat, IVwSearchKiller * pxserkl = NULL);
 	void MakeSourceNfd();
 
-	void WriteWpxText(IStream * pstrm);
 	virtual OLECHAR * Name()
 	{
 		static OleStringLiteral name(L"Paragraph");
