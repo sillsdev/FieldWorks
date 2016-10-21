@@ -327,6 +327,43 @@ namespace SIL.CoreImpl
 		}
 
 		[Test]
+		public void SetProperties_OneRunBldrPartialRangeFromStartToMiddle_CreatesOneExtraRun()
+		{
+			TsStrBldr tsb = CreateOneRunBldr();
+			Assert.That(GetWS(tsb, 0), Is.EqualTo(EnglishWS));
+			Assert.That(tsb.RunCount, Is.EqualTo(1));
+			tsb.SetProperties(0, 1, new TsTextProps(SpanishWS));
+			Assert.That(tsb.RunCount, Is.EqualTo(2));
+			Assert.That(GetWS(tsb, 0), Is.EqualTo(SpanishWS));
+			Assert.That(GetWS(tsb, 1), Is.EqualTo(EnglishWS));
+		}
+
+		[Test]
+		public void SetProperties_OneRunBldrPartialRangeFromMiddleToEnd_CreatesOneExtraRun()
+		{
+			TsStrBldr tsb = CreateOneRunBldr();
+			Assert.That(GetWS(tsb, 0), Is.EqualTo(EnglishWS));
+			Assert.That(tsb.RunCount, Is.EqualTo(1));
+			tsb.SetProperties(1, tsb.Length, new TsTextProps(SpanishWS));
+			Assert.That(tsb.RunCount, Is.EqualTo(2));
+			Assert.That(GetWS(tsb, 0), Is.EqualTo(EnglishWS));
+			Assert.That(GetWS(tsb, 1), Is.EqualTo(SpanishWS));
+		}
+
+		[Test]
+		public void SetProperties_OneRunBldrPartialRangeFromMiddleToMiddle_CreatesTwoExtraRuns()
+		{
+			TsStrBldr tsb = CreateOneRunBldr();
+			Assert.That(GetWS(tsb, 0), Is.EqualTo(EnglishWS));
+			Assert.That(tsb.RunCount, Is.EqualTo(1));
+			tsb.SetProperties(1, tsb.Length - 1, new TsTextProps(SpanishWS));
+			Assert.That(tsb.RunCount, Is.EqualTo(3));
+			Assert.That(GetWS(tsb, 0), Is.EqualTo(EnglishWS));
+			Assert.That(GetWS(tsb, 1), Is.EqualTo(SpanishWS));
+			Assert.That(GetWS(tsb, 2), Is.EqualTo(EnglishWS));
+		}
+
+		[Test]
 		public void SetProperties_TwoRunBldrRangeOverlapsBoth_UpdatesProperties()
 		{
 			TsStrBldr tsb = CreateMixedWSBldr();
@@ -411,6 +448,173 @@ namespace SIL.CoreImpl
 			Assert.That(ichLim, Is.EqualTo(6));
 			tsb.GetBoundsOfRun(1, out ichMin, out ichLim);
 			Assert.That(ichMin, Is.EqualTo(6));
+			Assert.That(ichLim, Is.EqualTo(tsb.Length));
+		}
+
+		[Test]
+		public void SetProperties_TwoRunBldrReplacesFirstWithoutOverlappingSecond_UpdatesProperties()
+		{
+			TsStrBldr tsb = CreateMixedWSBldr();
+			tsb.SetProperties(0, EnglishFont1Text.Length + 1, new TsTextProps(FrenchWS));
+			Assert.That(tsb.RunCount, Is.EqualTo(2));
+			Assert.That(tsb.get_RunText(0), Is.EqualTo("This is a test! "));
+			Assert.That(GetWS(tsb, 0), Is.EqualTo(FrenchWS));
+			Assert.That(GetWS(tsb, 1), Is.EqualTo(SpanishWS));
+			int ichMin, ichLim;
+			tsb.GetBoundsOfRun(0, out ichMin, out ichLim);
+			Assert.That(ichMin, Is.EqualTo(0));
+			Assert.That(ichLim, Is.EqualTo(EnglishFont1Text.Length + 1));
+			tsb.GetBoundsOfRun(1, out ichMin, out ichLim);
+			Assert.That(ichMin, Is.EqualTo(EnglishFont1Text.Length + 1));
+			Assert.That(ichLim, Is.EqualTo(tsb.Length));
+		}
+
+		[Test]
+		public void SetProperties_TwoRunBldrReplacesFirstAndOverlapsSecondByOneCharacter_UpdatesProperties()
+		{
+			TsStrBldr tsb = CreateMixedWSBldr();
+			tsb.SetProperties(0, EnglishFont1Text.Length + 2, new TsTextProps(FrenchWS));
+			Assert.That(tsb.RunCount, Is.EqualTo(2));
+			Assert.That(tsb.get_RunText(0), Is.EqualTo("This is a test! ¡"));
+			Assert.That(GetWS(tsb, 0), Is.EqualTo(FrenchWS));
+			Assert.That(GetWS(tsb, 1), Is.EqualTo(SpanishWS));
+			int ichMin, ichLim;
+			tsb.GetBoundsOfRun(0, out ichMin, out ichLim);
+			Assert.That(ichMin, Is.EqualTo(0));
+			Assert.That(ichLim, Is.EqualTo(EnglishFont1Text.Length + 2));
+			tsb.GetBoundsOfRun(1, out ichMin, out ichLim);
+			Assert.That(ichMin, Is.EqualTo(EnglishFont1Text.Length + 2));
+			Assert.That(ichLim, Is.EqualTo(tsb.Length));
+		}
+
+		[Test]
+		public void SetProperties_TwoRunBldrAlmostReplacesFirstButLeavesJustOneCharacter_UpdatesProperties()
+		{
+			TsStrBldr tsb = CreateMixedWSBldr();
+			tsb.SetProperties(0, EnglishFont1Text.Length, new TsTextProps(FrenchWS));
+			Assert.That(tsb.RunCount, Is.EqualTo(3));
+			Assert.That(tsb.get_RunText(0), Is.EqualTo("This is a test!"));
+			Assert.That(GetWS(tsb, 0), Is.EqualTo(FrenchWS));
+			Assert.That(tsb.get_RunText(1), Is.EqualTo(" "));
+			Assert.That(GetWS(tsb, 1), Is.EqualTo(EnglishWS));
+			Assert.That(GetWS(tsb, 2), Is.EqualTo(SpanishWS));
+			int ichMin, ichLim;
+			tsb.GetBoundsOfRun(0, out ichMin, out ichLim);
+			Assert.That(ichMin, Is.EqualTo(0));
+			Assert.That(ichLim, Is.EqualTo(EnglishFont1Text.Length));
+			tsb.GetBoundsOfRun(1, out ichMin, out ichLim);
+			Assert.That(ichMin, Is.EqualTo(EnglishFont1Text.Length));
+			Assert.That(ichLim, Is.EqualTo(EnglishFont1Text.Length + 1));
+			tsb.GetBoundsOfRun(2, out ichMin, out ichLim);
+			Assert.That(ichMin, Is.EqualTo(EnglishFont1Text.Length + 1));
+			Assert.That(ichLim, Is.EqualTo(tsb.Length));
+		}
+
+		[Test]
+		public void SetProperties_TwoRunBldrReplacesFirstWithoutOverlappingSecondSamePropertiesAsFirst_UpdatesProperties()
+		{
+			TsStrBldr tsb = CreateMixedWSBldr();
+			tsb.SetProperties(0, EnglishFont1Text.Length + 1, new TsTextProps(EnglishWS));
+			Assert.That(tsb.RunCount, Is.EqualTo(2));
+			Assert.That(tsb.get_RunText(0), Is.EqualTo("This is a test! "));
+			Assert.That(GetWS(tsb, 0), Is.EqualTo(EnglishWS));
+			Assert.That(tsb.get_RunText(1), Is.EqualTo("¡Esto es una prueba!"));
+			Assert.That(GetWS(tsb, 1), Is.EqualTo(SpanishWS));
+			int ichMin, ichLim;
+			tsb.GetBoundsOfRun(0, out ichMin, out ichLim);
+			Assert.That(ichMin, Is.EqualTo(0));
+			Assert.That(ichLim, Is.EqualTo(EnglishFont1Text.Length + 1));
+			tsb.GetBoundsOfRun(1, out ichMin, out ichLim);
+			Assert.That(ichMin, Is.EqualTo(EnglishFont1Text.Length + 1));
+			Assert.That(ichLim, Is.EqualTo(tsb.Length));
+		}
+
+		[Test]
+		public void SetProperties_TwoRunBldrReplacesFirstAndOverlapsSecondByOneCharacterSamePropertiesAsFirst_UpdatesProperties()
+		{
+			TsStrBldr tsb = CreateMixedWSBldr();
+			tsb.SetProperties(0, EnglishFont1Text.Length + 2, new TsTextProps(EnglishWS));
+			Assert.That(tsb.RunCount, Is.EqualTo(2));
+			Assert.That(tsb.get_RunText(0), Is.EqualTo("This is a test! ¡"));
+			Assert.That(GetWS(tsb, 0), Is.EqualTo(EnglishWS));
+			Assert.That(tsb.get_RunText(1), Is.EqualTo("Esto es una prueba!"));
+			Assert.That(GetWS(tsb, 1), Is.EqualTo(SpanishWS));
+			int ichMin, ichLim;
+			tsb.GetBoundsOfRun(0, out ichMin, out ichLim);
+			Assert.That(ichMin, Is.EqualTo(0));
+			Assert.That(ichLim, Is.EqualTo(EnglishFont1Text.Length + 2));
+			tsb.GetBoundsOfRun(1, out ichMin, out ichLim);
+			Assert.That(ichMin, Is.EqualTo(EnglishFont1Text.Length + 2));
+			Assert.That(ichLim, Is.EqualTo(tsb.Length));
+		}
+
+		[Test]
+		public void SetProperties_TwoRunBldrAlmostReplacesFirstButLeavesJustOneCharacterSamePropertiesAsFirst_UpdatesProperties()
+		{
+			TsStrBldr tsb = CreateMixedWSBldr();
+			tsb.SetProperties(0, EnglishFont1Text.Length, new TsTextProps(EnglishWS));
+			Assert.That(tsb.RunCount, Is.EqualTo(2));
+			Assert.That(tsb.get_RunText(0), Is.EqualTo("This is a test! "));
+			Assert.That(GetWS(tsb, 0), Is.EqualTo(EnglishWS));
+			Assert.That(tsb.get_RunText(1), Is.EqualTo("¡Esto es una prueba!"));
+			Assert.That(GetWS(tsb, 1), Is.EqualTo(SpanishWS));
+			int ichMin, ichLim;
+			tsb.GetBoundsOfRun(0, out ichMin, out ichLim);
+			Assert.That(ichMin, Is.EqualTo(0));
+			Assert.That(ichLim, Is.EqualTo(EnglishFont1Text.Length + 1));
+			tsb.GetBoundsOfRun(1, out ichMin, out ichLim);
+			Assert.That(ichMin, Is.EqualTo(EnglishFont1Text.Length + 1));
+			Assert.That(ichLim, Is.EqualTo(tsb.Length));
+		}
+
+		[Test]
+		public void SetProperties_TwoRunBldrReplacesFirstWithoutOverlappingSecondSamePropertiesAsSecond_UpdatesProperties()
+		{
+			TsStrBldr tsb = CreateMixedWSBldr();
+			tsb.SetProperties(0, EnglishFont1Text.Length + 1, new TsTextProps(SpanishWS));
+			Assert.That(tsb.RunCount, Is.EqualTo(1));
+			Assert.That(tsb.get_RunText(0), Is.EqualTo("This is a test! ¡Esto es una prueba!"));
+			Assert.That(GetWS(tsb, 0), Is.EqualTo(SpanishWS));
+			int ichMin, ichLim;
+			tsb.GetBoundsOfRun(0, out ichMin, out ichLim);
+			Assert.That(ichMin, Is.EqualTo(0));
+			Assert.That(ichLim, Is.EqualTo(tsb.Length));
+		}
+
+		[Test]
+		public void SetProperties_TwoRunBldrReplacesFirstAndOverlapsSecondByOneCharacterSamePropertiesAsSecond_UpdatesProperties()
+		{
+			TsStrBldr tsb = CreateMixedWSBldr();
+			tsb.SetProperties(0, EnglishFont1Text.Length + 2, new TsTextProps(SpanishWS));
+			Assert.That(tsb.RunCount, Is.EqualTo(1));
+			Assert.That(tsb.get_RunText(0), Is.EqualTo("This is a test! ¡Esto es una prueba!"));
+			Assert.That(GetWS(tsb, 0), Is.EqualTo(SpanishWS));
+			int ichMin, ichLim;
+			tsb.GetBoundsOfRun(0, out ichMin, out ichLim);
+			Assert.That(ichMin, Is.EqualTo(0));
+			Assert.That(ichLim, Is.EqualTo(tsb.Length));
+		}
+
+		[Test]
+		public void SetProperties_TwoRunBldrAlmostReplacesFirstButLeavesJustOneCharacterSamePropertiesAsSecond_UpdatesProperties()
+		{
+			TsStrBldr tsb = CreateMixedWSBldr();
+			tsb.SetProperties(0, EnglishFont1Text.Length, new TsTextProps(SpanishWS));
+			Assert.That(tsb.RunCount, Is.EqualTo(3));
+			Assert.That(tsb.get_RunText(0), Is.EqualTo("This is a test!"));
+			Assert.That(GetWS(tsb, 0), Is.EqualTo(SpanishWS));
+			Assert.That(tsb.get_RunText(1), Is.EqualTo(" "));
+			Assert.That(GetWS(tsb, 1), Is.EqualTo(EnglishWS));
+			Assert.That(GetWS(tsb, 2), Is.EqualTo(SpanishWS));
+			int ichMin, ichLim;
+			tsb.GetBoundsOfRun(0, out ichMin, out ichLim);
+			Assert.That(ichMin, Is.EqualTo(0));
+			Assert.That(ichLim, Is.EqualTo(EnglishFont1Text.Length));
+			tsb.GetBoundsOfRun(1, out ichMin, out ichLim);
+			Assert.That(ichMin, Is.EqualTo(EnglishFont1Text.Length));
+			Assert.That(ichLim, Is.EqualTo(EnglishFont1Text.Length + 1));
+			tsb.GetBoundsOfRun(2, out ichMin, out ichLim);
+			Assert.That(ichMin, Is.EqualTo(EnglishFont1Text.Length + 1));
 			Assert.That(ichLim, Is.EqualTo(tsb.Length));
 		}
 

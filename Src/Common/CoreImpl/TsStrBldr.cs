@@ -144,6 +144,11 @@ namespace SIL.CoreImpl
 			// dich is the amount that indices >= ichLim should be adjusted by after the replace.
 			int dich = insertText.Length - ichLim + ichMin;
 
+			SetPropertiesInternal(ichMin, ichLim, minRunIndex, limRunIndex, dich, insertRuns);
+		}
+
+		private void SetPropertiesInternal(int ichMin, int ichLim, int minRunIndex, int limRunIndex, int dich, IList<TsRun> insertRuns)
+		{
 			// Ensure ichMin is on a run boundary.
 			if (ichMin > GetRunIchMin(minRunIndex))
 			{
@@ -223,21 +228,10 @@ namespace SIL.CoreImpl
 			}
 
 			int minRunIndex = get_RunAt(ichMin);
-			int limRunIndex = get_RunAt(ichLim - 1);
-			if (GetRunIchMin(minRunIndex) < ichMin && !m_runs[minRunIndex].TextProps.Equals(textProps))
-			{
-				m_runs[minRunIndex] = new TsRun(ichMin, m_runs[minRunIndex].TextProps);
-				minRunIndex++;
-			}
+			int limRunIndex = get_RunAt(ichLim);
 
-			if (m_runs[limRunIndex].IchLim == ichLim || m_runs[limRunIndex].TextProps.Equals(textProps))
-			{
-				ichLim = m_runs[limRunIndex].IchLim;
-				limRunIndex++;
-			}
-
-			m_runs.RemoveRange(minRunIndex, limRunIndex - minRunIndex);
-			m_runs.Insert(minRunIndex, new TsRun(ichLim, textProps));
+			TsRun run = new TsRun(ichLim - ichMin, textProps);
+			SetPropertiesInternal(ichMin, ichLim, minRunIndex, limRunIndex, 0, new[] { run });
 		}
 
 		/// <summary>
@@ -261,7 +255,7 @@ namespace SIL.CoreImpl
 
 		/// <summary>
 		/// Set the string property value for the range of characters.
-		/// If the varation is -1 and the value is empty, then the string property is removed.
+		/// If the value is null or empty, then the string property is removed.
 		/// </summary>
 		public void SetStrPropValue(int ichMin, int ichLim, int tpt, string bstrVal)
 		{
