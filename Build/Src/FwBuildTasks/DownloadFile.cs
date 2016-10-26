@@ -5,10 +5,11 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Threading;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
-namespace SIL.FieldWorks.Build.Tasks
+namespace FwBuildTasks
 {
 	/// <summary>
 	/// Downloads a file from a web address. Params specify the web address, the local path for the file,
@@ -19,109 +20,153 @@ namespace SIL.FieldWorks.Build.Tasks
 	/// </summary>
 	public class DownloadFile : Task
 	{
+		/// <summary>times to retry failed downloads</summary>
+		protected const int Retries = 3;
+
+		/// <summary>time to wait before retrying failed downloads (one minute = 60,000ms)</summary>
+		protected const int RetryWaitTime = 60000;
+
+		/// <summary>HTTP address to download from</summary>
 		[Required]
-		public String Address // HTTP address to download from
+		public string Address
 		{ get; set; }
 
+		/// <summary>Directory into which to download the file</summary>
 		[Required]
-		public String LocalFilename // Local file to which the downloaded file will be saved
+		public string DownloadsDir
 		{ get; set; }
 
-		public String Username // Credential for HTTP authentication
+		/// <summary>Local file to which the downloaded file will be saved (if different from the remote name)</summary>
+		public string LocalFilename
 		{ get; set; }
 
-		public String Password // Credential for HTTP authentication
+		/// <summary>Credential for HTTP authentication</summary>
+		public string Username
+		{ get; set; }
+
+		/// <summary>Credential for HTTP authentication</summary>
+		public string Password
 		{ get; set; }
 
 		public override bool Execute()
 		{
-			// This doesn't seem to work reliably..can return true even when only network cable is unplugged.
-			// Left in in case it works in some cases. But the main way of dealing with disconnect is the
-			// same algorithm in the WebException handler.
-			if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
-			{
-				if (File.Exists(LocalFilename))
-				{
-					Log.LogWarning("Could not retrieve latest {0}. No network connection. Keeping existing file.", LocalFilename);
-					return true; // don't stop the build
-				}
-				else
-				{
-					Log.LogError("Could not retrieve latest {0}. No network connection.", Address);
-					return false; // Presumably can't continue
-				}
-			}
-
-			bool success;
-			var read = DoDownloadFile(Address, LocalFilename, Username, Password, out success);
-
-			if (success)
-			{
-				if (read == 0)
-					Log.LogMessage(MessageImportance.Normal, "The local file {0} is up-to-date.", LocalFilename);
-				else
-					Log.LogMessage(MessageImportance.Low, "{0} bytes written", read);
-			}
-			else
-			{
-				if (File.Exists(LocalFilename))
-				{
-					Log.LogWarning("Could not download {0} using local file.", Address);
-					success = true;
-				}
-				else
-				{
-					Log.LogError("Could not download {0}", Address);
-				}
-			}
-
-			return success;
+			var localPathname = Path.Combine(DownloadsDir, LocalFilename ?? GetFilenameFromUrl(Address));
+			return ProcessDownloadFile(Address, localPathname);
 		}
 
-		public int DoDownloadFile(String remoteFilename, String localFilename, String httpUsername, String httpPassword, out bool success)
+		public static string GetFilenameFromUrl(string url)
 		{
-			// Function will return the number of bytes processed
-			// to the caller. Initialize to 0 here.
-			int bytesProcessed = 0;
-			success = true;
+			var fileName = Path.GetFileName(url) ?? string.Empty;
+			var iq = fileName.IndexOf('?');
+			if (iq > 0)
+				fileName = fileName.Substring(0, iq); // trim any trailing query
+			return fileName;
+		}
+
+		/// <summary>
+		/// Downloads the file from remoteFilename to localFilename, using the member-property username and password, if any.
+		/// Retries a default of three times.
+		/// Returns true if the file was downloaded successfully or already existed.
+		/// </summary>
+		public bool ProcessDownloadFile(string remoteUrl, string localPathname)
+		{
+			for (var retries = Retries; retries >= 0; --retries)
+			{
+				// This doesn't seem to work reliably..can return true even when only network cable is unplugged.
+				// Left in in case it works in some cases. But the main way of dealing with disconnect is the
+				// same algorithm in the WebException handler.
+				if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+				{
+					if (File.Exists(localPathname))
+					{
+						Log.LogWarning("Could not retrieve latest {0}. No network connection. Keeping existing file.", remoteUrl);
+						return true; // don't stop or delay the build
+					}
+					if (retries > 0)
+					{
+						Log.LogMessage(MessageImportance.High, "Could not retrieve latest {0}. No network connection. Trying {1} more times.", remoteUrl, retries);
+						Thread.Sleep(RetryWaitTime); // wait a minute
+					}
+					continue;
+				}
+
+				bool success;
+				var read = DoDownloadFile(remoteUrl, localPathname, Username, Password, out success);
+
+				if (success)
+				{
+					if (read == 0)
+						Log.LogMessage(MessageImportance.Normal, "The local file {0} is up-to-date with {1}.", localPathname, remoteUrl);
+					else
+						Log.LogMessage(MessageImportance.Low, "{0} bytes written to {1} from {2}", read, localPathname, remoteUrl);
+					return true;
+				}
+
+				if (File.Exists(localPathname))
+				{
+					Log.LogWarning("Could not download {0}; using local file.", remoteUrl);
+					return true; // don't stop or delay the build
+				}
+				if (retries > 0)
+				{
+					Log.LogMessage(MessageImportance.High, "Could not download {0}. Trying {1} more times.", remoteUrl, retries);
+					Thread.Sleep(RetryWaitTime); // wait a minute
+				}
+			}
+
+			Log.LogError("Could not retrieve latest {0}. Exceeded retry count.", remoteUrl);
+			return false; // Presumably can't continue without the local file
+		}
+
+		/// <summary>
+		/// Downloads the file from remoteFilename to localFilename, using the specified username and password, if any.
+		/// Does not throw or log errors (only warns). Retrying or marking an utter failure is the client's responsibility.
+		/// Returns the number of bytes processed (0 if the file was up-to-date).
+		/// </summary>
+		public int DoDownloadFile(string remoteFilename, string localFilename, string httpUsername, string httpPassword, out bool success)
+		{
+			// Function will return the number of bytes processed to the caller. Initialize to 0 here.
+			var bytesProcessed = 0;
+			success = false; // presumably can't continue until the file has been downloaded
 
 			// Assign values to these objects here so that they can
 			// be referenced in the finally block
 			Stream remoteStream = null;
 			Stream localStream = null;
 			HttpWebResponse response = null;
-			DateTime lastModified = DateTime.Now;
+			var lastModified = DateTime.Now;
 
-			// Use a try/catch/finally block as both the WebRequest and Stream
-			// classes throw exceptions upon error
+			// Use a try/catch/finally block as both the WebRequest and Stream classes throw exceptions upon error
 			try
 			{
 				// Create a request for the specified remote file name
-				WebRequest request = WebRequest.Create(remoteFilename);
+				var request = WebRequest.Create(remoteFilename);
 				// If a username or password have been given, use them
 				if (!string.IsNullOrEmpty(httpUsername) || !string.IsNullOrEmpty(httpPassword))
 				{
-					string username = httpUsername;
-					string password = httpPassword;
+					var username = httpUsername;
+					var password = httpPassword;
 					request.Credentials = new NetworkCredential(username, password);
 				}
 
 				// Prevent caching of requests so that we always download latest
-				var cacheControl = request.Headers[HttpRequestHeader.CacheControl];
 				request.Headers[HttpRequestHeader.CacheControl] = "no-cache";
 
-				// Send the request to the server and retrieve the
-				// WebResponse object
+				// Send the request to the server and retrieve the WebResponse object
 				response = (HttpWebResponse) request.GetResponse();
 				if (response.StatusCode == HttpStatusCode.OK)
 				{
 					lastModified = response.LastModified;
 					if (File.Exists(localFilename) && lastModified == File.GetLastWriteTime(localFilename))
+					{
+						success = true;
 						return bytesProcessed;
+					}
 
-					// Once the WebResponse object has been retrieved,
-					// get the stream object associated with the response's data
+					// Once the WebResponse object has been retrieved, get the stream object associated with the response's data
 					remoteStream = response.GetResponseStream();
+					if (remoteStream == null)
+						return 0;
 
 					// Create the local file
 					localStream = File.Create(localFilename);
@@ -129,9 +174,7 @@ namespace SIL.FieldWorks.Build.Tasks
 					// Allocate a 1k buffer
 					var buffer = new byte[1024];
 					int bytesRead;
-
-					// Simple do/while loop to read from stream until
-					// no bytes are returned
+					// Simple do/while loop to read from stream until no bytes are returned
 					do
 					{
 						// Read data (up to 1k) from the stream
@@ -143,11 +186,11 @@ namespace SIL.FieldWorks.Build.Tasks
 						// Increment total bytes processed
 						bytesProcessed += bytesRead;
 					} while (bytesRead > 0);
+					success = true; // The file has been downloaded; we can continue
 				}
 				else
 				{
 					Log.LogWarning("Unexpected Server Response[{0}] when downloading {1}", response.StatusCode, Path.GetFileName(localFilename));
-					success = false;
 				}
 			}
 			catch (WebException wex)
@@ -155,50 +198,37 @@ namespace SIL.FieldWorks.Build.Tasks
 				if (wex.Status == WebExceptionStatus.ConnectFailure || wex.Status == WebExceptionStatus.NameResolutionFailure)
 				{
 					// We probably don't have a network connection (despite the check in the caller).
-					if (File.Exists(localFilename))
-					{
-						Log.LogMessage("Could not retrieve latest {0}. No network connection. Keeping existing file.", localFilename);
-					}
-					else
-					{
-						Log.LogError("Could not retrieve latest {0}. No network connection.", remoteFilename);
-						success = false; // Presumably can't continue
-					}
+					Log.LogWarning("Could not retrieve latest {0}. No network connection.", remoteFilename);
 					return 0;
 				}
-				string html = "";
+				string html = null;
 				if (wex.Response != null)
-				{
-					using (var sr = new StreamReader(wex.Response.GetResponseStream()))
-						html = sr.ReadToEnd();
-					Log.LogMessage("Could not download from {0}. Server responds {1}", remoteFilename, html);
-				}
+					using (var errStream = wex.Response.GetResponseStream())
+						if(errStream != null)
+							using (var sr = new StreamReader(errStream))
+								html = sr.ReadToEnd();
+				if (html != null)
+					Log.LogWarning("Could not download from {0}. Server responds {1}", remoteFilename, html);
 				else
-				{
-					Log.LogMessage("Could not download from {0}. no server response. Exception {1}. Status {2}",
-						remoteFilename, wex.Message, wex.Status);
-				}
-				success = false;
+					Log.LogWarning("Could not download from {0}. Exception {1}. Status {2}", remoteFilename, wex.Message, wex.Status);
 				return 0;
 			}
 			catch (Exception e)
 			{
 				Log.LogError(e.Message);
 				Log.LogMessage(MessageImportance.Normal, e.StackTrace);
-				success = false;
 			}
 			finally
 			{
-				// Close the response and streams objects here
-				// to make sure they're closed even if an exception
-				// is thrown at some point
+				// Close the response and streams objects here to make sure they're closed even if an exception is thrown at some point
 				if (response != null) response.Close();
 				if (remoteStream != null) remoteStream.Close();
 				if (localStream != null)
 				{
 					localStream.Close();
-					var fi = new FileInfo(localFilename);
-					fi.LastWriteTime = lastModified;
+					// ReSharper disable once ObjectCreationAsStatement
+					// Justification: all we need to do with the new FileInfo is set LastWriteTime, which is saved immediately
+					new FileInfo(localFilename) { LastWriteTime = lastModified };
 				}
 			}
 

@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 
-	<UsingTask TaskName="Unitpp" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="RegisterForTests" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="DownloadFile" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="Unzip" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="Zip" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="ForceDelete" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="GenerateTestCoverageReport" AssemblyFile="FwBuildTasks.dll"/>
-
 	<!-- Make all of FieldWorks. -->
 	<Target Name="mkall" DependsOnTargets="CopyDlls;initLinux;initWindows;LinuxRegistry;allCpp;allCsharp;ensureTLBsUpToDate">
 		<Message Text="Finished mkall Target."/>
@@ -263,6 +255,8 @@
 	</Target>
 
 	<ItemGroup>
+		<GeneratedFiles Include="$(fwrt)/Build/FieldWorks.targets"/>
+		<GeneratedFiles Include="$(fwrt)/Build/packages.config"/>
 		<GeneratedFiles Include="$(fwrt)/Src/**/Collection.cpp"/>
 		<GeneratedFiles Include="$(fwrt)/Src/**/asserts.log"/>
 		<GeneratedFiles Include="$(fwrt)/Src/Common/COMInterfaces/FwKernel.cs"/>
@@ -277,7 +271,6 @@
 		<ForceDelete Files="$(fwrt)/Output" Condition="'$(OS)'=='Unix'"/>
 		<!-- remove other directories and files created during the build process -->
 		<ForceDelete Files="@(IcuDataFiles)"/>
-		<ForceDelete Files="$(fwrt)/Bin/FieldWorks.targets"/>
 		<ForceDelete Files="@(GeneratedFiles)"/>
 		<ForceDelete Files="$(fwrt)/DistFiles/Icu$(IcuVersion).zip"/>
 
@@ -285,236 +278,218 @@
 	</Target>
 
 	<PropertyGroup>
+		<MasterVersionInfo>$(fwrt)/Src/MasterVersionInfo.txt</MasterVersionInfo>
+		<TeamCityUrl>http://build.palaso.org/</TeamCityUrl>
+		<!-- Update when appropriate. -->
+		<FLExBridgeBuildType Condition="'$(OS)'=='Windows_NT'">FLExBridge_FLExBridgeDevelopWin32Continuous</FLExBridgeBuildType>
+		<!-- Precise builds are used for all Linux development. Update when appropriate. -->
+		<FLExBridgeBuildType Condition="'$(OS)'=='Unix'">FLExBridge_FLExBridgeDevelopPrecise64Continuous</FLExBridgeBuildType>
+
 		<!-- bt2 is the master branch build of Chorus for Windows development. Update when appropriate. -->
-		<ChorusDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt2/.lastSuccessful</ChorusDownloadUrl>
-		<!-- bt323 is the master branch build of Chorus for Linux development. Update when appropriate. -->
-		<ChorusDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt323/.lastSuccessful</ChorusDownloadUrl>
+		<ChorusBuildType Condition="'$(OS)'=='Windows_NT'">bt2</ChorusBuildType>
+		<!-- bt323 is the master branch (strong name) build of Chorus for Linux development. Update when appropriate. -->
+		<ChorusBuildType Condition="'$(OS)'=='Unix'">bt323</ChorusBuildType>
 		<!-- bt223 is the master branch build of Palaso for Windows development. Update when appropriate. -->
-		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt223/.lastSuccessful</PalasoDownloadUrl>
+		<PalasoBuildType Condition="'$(OS)'=='Windows_NT'">bt223</PalasoBuildType>
 		<!-- bt322 is the master branch build of Palaso for Linux development. Update when appropriate. -->
-		<PalasoDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt322/.lastSuccessful</PalasoDownloadUrl>
-		<!--Todo: use PalasoDownloadUrl, when it refers to somewhere that has the IPCFramework.-->
+		<PalasoBuildType Condition="'$(OS)'=='Unix'">bt322</PalasoBuildType>
+		<!--Todo: use PalasoBuildType, when it refers to somewhere that has the IPCFramework.-->
 		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
-		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt278/.lastSuccessful</IPCFrameworkDownloadUrl>
+		<IPCFrameworkBuildType Condition="'$(OS)'=='Windows_NT'">bt278</IPCFrameworkBuildType>
 		<!-- bt279 is the develop branch build of IPCFramework for Linux development. Update when appropriate. -->
-		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt279/.lastSuccessful</IPCFrameworkDownloadUrl>
+		<IPCFrameworkBuildType Condition="'$(OS)'=='Unix'">bt279</IPCFrameworkBuildType>
 		<!-- bt393 is the master branch build of ExCss for Windows development. Update when appropriate. -->
-		<ExCssDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt393/.lastSuccessful</ExCssDownloadUrl>
+		<ExCssBuildType Condition="'$(OS)'=='Windows_NT'">bt393</ExCssBuildType>
+		<ExCss Condition="'$(OS)'=='Windows_NT'">ExCss</ExCss>
 		<!-- bt395 is the master branch build of ExCss for Linux development. Update when appropriate. -->
-		<ExCssDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt395/.lastSuccessful</ExCssDownloadUrl>
+		<ExCssBuildType Condition="'$(OS)'=='Unix'">bt395</ExCssBuildType>
+		<ExCss Condition="'$(OS)'=='Unix'">ExCSS</ExCss>
 		<!-- bt469 is the master branch build of icucil for Windows development. Update when appropriate. -->
-		<IcuDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt14/fw-9.0.tcbuildtag</IcuDownloadUrl>
+		<IcuBuildType Condition="'$(OS)'=='Windows_NT'">bt14</IcuBuildType>
 		<!-- Libraries_IcucilPrecise64icu54Continuous is the ICU 54 master branch build of icucil for Linux development. Update when appropriate. -->
-		<IcuDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/Libraries_IcucilPrecise64icu54Continuous/fw-9.0.tcbuildtag</IcuDownloadUrl>
+		<IcuBuildType Condition="'$(OS)'=='Unix'">Libraries_IcucilPrecise64icu54Continuous</IcuBuildType>
+		<Icu4cBuildType Condition="'$(OS)'=='Windows_NT'">Libraries_Icu4cWin32FieldWorksContinuous</Icu4cBuildType>
+		<HermitCrabBuildType>bt410</HermitCrabBuildType>
+		<HermitCrabBuildTag>fw-8.2.tcbuildtag</HermitCrabBuildTag>
 		<ProtoBufNetDownloadUrl>https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/protobuf-net/protobuf-net%20r668.zip</ProtoBufNetDownloadUrl>
-		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1/</DownloadsSilOrgDownloadUrl>
-		<HermitCrabDownloadUrl>http://build.palaso.org/guestAuth/repository/download/bt410/fw-8.2.tcbuildtag</HermitCrabDownloadUrl>
-		<Icu4cDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/Libraries_Icu4cWin32FieldWorksContinuous/.lastSuccessful</Icu4cDownloadUrl>
+		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1</DownloadsSilOrgDownloadUrl>
+		<DownloadsSilOrgOSDownloadUrl Condition="'$(OS)'=='Windows_NT'">$(DownloadsSilOrgDownloadUrl)/Windows</DownloadsSilOrgOSDownloadUrl>
+		<DownloadsSilOrgOSDownloadUrl Condition="'$(OS)'=='Unix'">$(DownloadsSilOrgDownloadUrl)/Linux</DownloadsSilOrgOSDownloadUrl>
 		<NUnitDownloadUrl>http://github.com/nunit/nunitv2/releases/download/2.6.4/NUnit-2.6.4.zip</NUnitDownloadUrl>
 		<!-- Windows/.Net and Linux/Mono use different extensions for debug information files. -->
 		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>
+		<DownloadsDir>$(fwrt)/Downloads</DownloadsDir>
 	</PropertyGroup>
 
+
 	<Target Name="downloadDlls" DependsOnTargets="RestoreNuGetPackages">
-		<MakeDir Directories="$(fwrt)/Downloads"/>
-		<Message Text="Downloading latest successful artifacts for Palaso."/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Core.dll" LocalFilename="$(fwrt)/Downloads/SIL.Core.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Core.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Core.$(DebugInfo)"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Lift.dll" LocalFilename="$(fwrt)/Downloads/SIL.Lift.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Lift.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Lift.$(DebugInfo)"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Media.dll" LocalFilename="$(fwrt)/Downloads/SIL.Media.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Media.dll.config" LocalFilename="$(fwrt)/Downloads/SIL.Media.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Media.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Media.$(DebugInfo)"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Windows.Forms.dll" LocalFilename="$(fwrt)/Downloads/SIL.Windows.Forms.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Windows.Forms.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Windows.Forms.$(DebugInfo)"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Windows.Forms.GeckoBrowserAdapter.dll" LocalFilename="$(fwrt)/Downloads/SIL.Windows.Forms.GeckoBrowserAdapter.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Windows.Forms.GeckoBrowserAdapter.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Windows.Forms.GeckoBrowserAdapter.$(DebugInfo)" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Windows.Forms.GeckoBrowserAdapter.dll" LocalFilename="$(fwrt)/Downloads/SIL.Windows.Forms.GeckoBrowserAdapter.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Windows.Forms.GeckoBrowserAdapter.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Windows.Forms.GeckoBrowserAdapter.$(DebugInfo)" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Archiving.dll" LocalFilename="$(fwrt)/Downloads/SIL.Archiving.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Archiving.dll.config" LocalFilename="$(fwrt)/Downloads/SIL.Archiving.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Archiving.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Archiving.$(DebugInfo)"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Ionic.Zip.dll" LocalFilename="$(fwrt)/Downloads/Ionic.Zip.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Keyman7Interop.dll" LocalFilename="$(fwrt)/Downloads/Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/KeymanLink.dll" LocalFilename="$(fwrt)/Downloads/KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.WritingSystems.dll" LocalFilename="$(fwrt)/Downloads/SIL.WritingSystems.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.WritingSystems.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.WritingSystems.$(DebugInfo)"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Windows.Forms.WritingSystems.dll" LocalFilename="$(fwrt)/Downloads/SIL.Windows.Forms.WritingSystems.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Windows.Forms.WritingSystems.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Windows.Forms.WritingSystems.$(DebugInfo)"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Windows.Forms.Keyboarding.dll" LocalFilename="$(fwrt)/Downloads/SIL.Windows.Forms.Keyboarding.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Windows.Forms.Keyboarding.dll.config" LocalFilename="$(fwrt)/Downloads/SIL.Windows.Forms.Keyboarding.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Windows.Forms.Keyboarding.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Windows.Forms.Keyboarding.$(DebugInfo)"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Lexicon.dll" LocalFilename="$(fwrt)/Downloads/SIL.Lexicon.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Lexicon.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Lexicon.$(DebugInfo)"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.TestUtilities.dll" LocalFilename="$(fwrt)/Downloads/SIL.TestUtilities.dll"/>
+		<MakeDir Directories="$(DownloadsDir)"/>
+		<Message Text="Downloading artifacts for Palaso, including  L10NSharp, Enchant.Net, ibusdotnet, NDesk.DBus, Spart, and Newtonsoft.Json."/>
+		<ItemGroup>
+			<PalasoFiles Include="SIL.Core.dll"/>
+			<PalasoFiles Include="SIL.Core.$(DebugInfo)"/>
+			<PalasoFiles Include="SIL.Lift.dll"/>
+			<PalasoFiles Include="SIL.Lift.$(DebugInfo)"/>
+			<PalasoFiles Include="SIL.Media.dll"/>
+			<PalasoFiles Include="SIL.Media.dll.config" Condition="'$(OS)'=='Unix'"/>
+			<PalasoFiles Include="SIL.Media.$(DebugInfo)"/>
+			<PalasoFiles Include="SIL.Windows.Forms.dll"/>
+			<PalasoFiles Include="SIL.Windows.Forms.$(DebugInfo)"/>
+			<PalasoFiles Include="SIL.Windows.Forms.GeckoBrowserAdapter.dll"/>
+			<PalasoFiles Include="SIL.Windows.Forms.GeckoBrowserAdapter.$(DebugInfo)"/>
+			<PalasoFiles Include="SIL.Archiving.dll"/>
+			<PalasoFiles Include="SIL.Archiving.dll.config" Condition="'$(OS)'=='Unix'"/>
+			<PalasoFiles Include="SIL.Archiving.$(DebugInfo)"/>
+			<PalasoFiles Include="Ionic.Zip.dll"/>
+			<PalasoFiles Include="Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
+			<PalasoFiles Include="KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
+			<PalasoFiles Include="SIL.WritingSystems.dll"/>
+			<PalasoFiles Include="SIL.WritingSystems.$(DebugInfo)"/>
+			<PalasoFiles Include="SIL.Windows.Forms.WritingSystems.dll"/>
+			<PalasoFiles Include="SIL.Windows.Forms.WritingSystems.$(DebugInfo)"/>
+			<PalasoFiles Include="SIL.Windows.Forms.Keyboarding.dll"/>
+			<PalasoFiles Include="SIL.Windows.Forms.Keyboarding.dll.config" Condition="'$(OS)'=='Unix'"/>
+			<PalasoFiles Include="SIL.Windows.Forms.Keyboarding.$(DebugInfo)"/>
+			<PalasoFiles Include="SIL.Lexicon.dll"/>
+			<PalasoFiles Include="SIL.Lexicon.$(DebugInfo)"/>
+			<PalasoFiles Include="SIL.TestUtilities.dll"/>
+			<PalasoFiles Include="L10NSharp.dll"/>
+			<PalasoFiles Include="Commons.Xml.Relaxng.dll"/>
+			<PalasoFiles Include="irrKlang.NET4.dll" Condition="'$(OS)'=='Windows_NT'"/>
+			<PalasoFiles Include="Enchant.Net.dll"/>
+			<PalasoFiles Include="Enchant.Net.dll.config" Condition="'$(OS)'=='Unix'"/>
+			<PalasoFiles Include="ibusdotnet.dll" Condition="'$(OS)'=='Unix'"/>
+			<PalasoFiles Include="NDesk.DBus.dll" Condition="'$(OS)'=='Unix'"/>
+			<PalasoFiles Include="NDesk.DBus.dll.config" Condition="'$(OS)'=='Unix'"/>
+			<PalasoFiles Include="taglib-sharp.dll"/>
+			<PalasoFiles Include="Spart.dll"/>
+			<PalasoFiles Include="Newtonsoft.Json.dll"/>
+		</ItemGroup>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(PalasoBuildType)" FlexBridgeBuildType="$(FLExBridgeBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="@(PalasoFiles)" DownloadsDir="$(DownloadsDir)"/>
 
-		<Message Text="Downloading latest successful artifacts for L10NSharp, Enchant.Net, ibusdotnet, NDesk.DBus, Spart, and Newtonsoft.Json."/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/L10NSharp.dll" LocalFilename="$(fwrt)/Downloads/L10NSharp.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Commons.Xml.Relaxng.dll" LocalFilename="$(fwrt)/Downloads/Commons.Xml.Relaxng.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/irrKlang.NET4.dll" LocalFilename="$(fwrt)/Downloads/irrKlang.NET4.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Enchant.Net.dll" LocalFilename="$(fwrt)/Downloads/Enchant.Net.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Enchant.Net.dll.config" LocalFilename="$(fwrt)/Downloads/Enchant.Net.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/ibusdotnet.dll" LocalFilename="$(fwrt)/Downloads/ibusdotnet.dll"
-					  Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/NDesk.DBus.dll" LocalFilename="$(fwrt)/Downloads/NDesk.DBus.dll"
-					  Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/NDesk.DBus.dll.config" LocalFilename="$(fwrt)/Downloads/NDesk.DBus.dll.config"
-					  Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/taglib-sharp.dll" LocalFilename="$(fwrt)/Downloads/taglib-sharp.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Spart.dll" LocalFilename="$(fwrt)/Downloads/Spart.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Newtonsoft.Json.dll" LocalFilename="$(fwrt)/Downloads/Newtonsoft.Json.dll"/>
+		<Message Text="Downloading artifacts for Chorus."/>
+		<ItemGroup>
+			<ChorusFiles Include="Autofac.dll"/>
+			<ChorusFiles Include="Chorus.exe"/>
+			<ChorusFiles Include="ChorusHub.exe" Condition="'$(OS)'=='Unix'"/>
+			<ChorusFiles Include="LibChorus.dll"/>
+			<ChorusFiles Include="Vulcan.Uczniowie.HelpProvider.dll"/>
+		</ItemGroup>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(ChorusBuildType)" FlexBridgeBuildType="$(FLExBridgeBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="@(ChorusFiles)" DownloadsDir="$(DownloadsDir)"/>
 
-		<Message Text="Downloading latest successful artifacts for Chorus."/>
+		<Message Text="Downloading an artifact for IPCFramework."/>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(IPCFrameworkBuildType)" FlexBridgeBuildType="$(FLExBridgeBuildType)" ProjectId="IpcLibrary" VersionInfo="$(MasterVersionInfo)" Artifacts="IPCFramework.dll" DownloadsDir="$(DownloadsDir)"/>
 
-		<Message Text="Downloading latest successful artifacts from Chorus master build."/>
-		<DownloadFile Address="$(ChorusDownloadUrl)/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
-		<DownloadFile Address="$(ChorusDownloadUrl)/Chorus.exe" LocalFilename="$(fwrt)/Downloads/Chorus.exe"/>
-		<DownloadFile Address="$(ChorusDownloadUrl)/ChorusHub.exe" LocalFilename="$(fwrt)/Downloads/ChorusHub.exe" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(ChorusDownloadUrl)/LibChorus.dll" LocalFilename="$(fwrt)/Downloads/LibChorus.dll"/>
-		<DownloadFile Address="$(ChorusDownloadUrl)/Vulcan.Uczniowie.HelpProvider.dll" LocalFilename="$(fwrt)/Downloads/Vulcan.Uczniowie.HelpProvider.dll"/>
+		<!-- Due to platform-specific casing, ExCSS or ExCss is included in a variable -->
+		<Message Text="Downloading artifacts for ExCss."/>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(ExCssBuildType)" FlexBridgeBuildType="$(FLExBridgeBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="$(ExCss).dll;$(ExCss).$(DebugInfo)" DownloadsDir="$(DownloadsDir)"/>
 
-		<Message Text="Downloading latest successful artifacts for IPCFramework."/>
-		<DownloadFile Address="$(IPCFrameworkDownloadUrl)/IPCFramework.dll" LocalFilename="$(fwrt)/Downloads/IPCFramework.dll"/>
+		<Message Text="Downloading artifact(s) for ICU.NET."/>
+		<ItemGroup>
+			<IcuFiles Include="icu.net.dll"/>
+			<IcuFiles Include="icu.net.dll.config" Condition="'$(OS)'=='Unix'"/>
+		</ItemGroup>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(IcuBuildType)" FlexBridgeBuildType="$(FLExBridgeBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="@(IcuFiles)" DownloadsDir="$(DownloadsDir)"/>
 
-		<Message Text="Downloading latest successful artifacts for ExCss."/>
-		<DownloadFile Address="$(ExCssDownloadUrl)/ExCSS.dll" LocalFilename="$(fwrt)/Downloads/ExCSS.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(ExCssDownloadUrl)/ExCss.dll" LocalFilename="$(fwrt)/Downloads/ExCSS.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(ExCssDownloadUrl)/ExCSS.dll.mdb" LocalFilename="$(fwrt)/Downloads/ExCSS.dll.mdb" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(ExCssDownloadUrl)/ExCss.pdb" LocalFilename="$(fwrt)/Downloads/ExCss.pdb" Condition="'$(OS)'=='Windows_NT'"/>
+		<Message Text="Downloading artifacts for icu4c." Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(Icu4cBuildType)" FlexBridgeBuildType="$(FLExBridgeBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="gennorm2.exe;icudt$(IcuVersion).dll;icuin$(IcuVersion).dll;icutu$(IcuVersion).dll;icuuc$(IcuVersion).dll;icudt.lib;icuin.lib;icuuc.lib" DownloadsDir="$(DownloadsDir)" Condition="'$(OS)'=='Windows_NT'"/>
 
-		<Message Text="Downloading latest successful artifacts for ICU.NET"/>
-		<DownloadFile Address="$(IcuDownloadUrl)/icu.net.dll" LocalFilename="$(fwrt)/Downloads/icu.net.dll"/>
-		<DownloadFile Address="$(IcuDownloadUrl)/icu.net.dll.config" LocalFilename="$(fwrt)/Downloads/icu.net.dll.config" Condition="'$(OS)'=='Unix'"/>
+		<Message Text="Downloading artifacts for HermitCrab." />
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(HermitCrabBuildType)" Tag="$(HermitCrabBuildTag)" FlexBridgeBuildType="$(FLExBridgeBuildType)" ProjectId="HermitCrab" VersionInfo="$(MasterVersionInfo)" Artifacts="QuickGraph.dll;SIL.Machine.dll;SIL.Collections.dll;SIL.HermitCrab.dll" DownloadsDir="$(DownloadsDir)"/>
 
 		<Message Text="Downloading protobuf-net." />
-		<ForceDelete Files="$(fwrt)/Downloads/protobuf-net/" />
-		<DownloadFile Address="$(ProtoBufNetDownloadUrl)" LocalFilename="$(fwrt)/Downloads/protobuf-net.zip" />
-		<Unzip ZipFilename="$(fwrt)/Downloads/protobuf-net.zip" ToDir="$(fwrt)/Downloads/protobuf-net/" />
-		<ForceDelete Files="$(fwrt)/Downloads/protobuf-net/CoreOnly/" />
-		<ForceDelete Files="$(fwrt)/Downloads/protobuf-net/ProtoGen/" />
-		<ForceDelete Files="$(fwrt)/Downloads/protobuf-net/Precompile/" />
-		<ForceDelete Files="$(fwrt)/Downloads/protobuf-net/*.txt" />
+		<ForceDelete Files="$(DownloadsDir)/protobuf-net/" />
+		<DownloadFile Address="$(ProtoBufNetDownloadUrl)" DownloadsDir="$(DownloadsDir)" LocalFilename="protobuf-net.zip"/>
+		<Unzip ZipFilename="$(DownloadsDir)/protobuf-net.zip" ToDir="$(DownloadsDir)/protobuf-net/" />
+		<ForceDelete Files="$(DownloadsDir)/protobuf-net/CoreOnly/" />
+		<ForceDelete Files="$(DownloadsDir)/protobuf-net/ProtoGen/" />
+		<ForceDelete Files="$(DownloadsDir)/protobuf-net/Precompile/" />
+		<ForceDelete Files="$(DownloadsDir)/protobuf-net/*.txt" />
 
 		<Message Text="Downloading ParaTExt DLLs." />
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Paratext.LexicalContracts.dll" LocalFilename="$(fwrt)/Downloads/Paratext.LexicalContracts.dll"/>
-		<!-- Windows downloads -->
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/FormattedEditor.dll" LocalFilename="$(fwrt)/Downloads/FormattedEditor.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/HelpSystem.dll" LocalFilename="$(fwrt)/Downloads/HelpSystem.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/HtmlEditor.dll" LocalFilename="$(fwrt)/Downloads/HtmlEditor.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/NetLoc.dll" LocalFilename="$(fwrt)/Downloads/NetLoc.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/ParatextShared.dll" LocalFilename="$(fwrt)/Downloads/ParatextShared.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/Utilities.dll" LocalFilename="$(fwrt)/Downloads/Utilities.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<!-- Linux downloads -->
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Linux/FormattedEditor.dll" LocalFilename="$(fwrt)/Downloads/FormattedEditor.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Linux/HelpSystem.dll" LocalFilename="$(fwrt)/Downloads/HelpSystem.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Linux/HtmlEditor.dll" LocalFilename="$(fwrt)/Downloads/HtmlEditor.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Linux/NetLoc.dll" LocalFilename="$(fwrt)/Downloads/NetLoc.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Linux/ParatextShared.dll" LocalFilename="$(fwrt)/Downloads/ParatextShared.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Linux/Utilities.dll" LocalFilename="$(fwrt)/Downloads/Utilities.dll" Condition="'$(OS)'=='Unix'"/>
-
-		<Message Text="Downloading latest successful artifacts for HermitCrab." />
-		<DownloadFile Address="$(HermitCrabDownloadUrl)/QuickGraph.dll" LocalFilename="$(fwrt)/Downloads/QuickGraph.dll"/>
-		<DownloadFile Address="$(HermitCrabDownloadUrl)/SIL.Machine.dll" LocalFilename="$(fwrt)/Downloads/SIL.Machine.dll"/>
-		<DownloadFile Address="$(HermitCrabDownloadUrl)/SIL.Collections.dll" LocalFilename="$(fwrt)/Downloads/SIL.Collections.dll"/>
-		<DownloadFile Address="$(HermitCrabDownloadUrl)/SIL.HermitCrab.dll" LocalFilename="$(fwrt)/Downloads/SIL.HermitCrab.dll"/>
-
-		<Message Text="Downloading latest successful artifacts for icu4c." Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(Icu4cDownloadUrl)/gennorm2.exe" LocalFilename="$(fwrt)/Downloads/gennorm2.exe" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(Icu4cDownloadUrl)/icudt$(IcuVersion).dll" LocalFilename="$(fwrt)/Downloads/icudt$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(Icu4cDownloadUrl)/icuin$(IcuVersion).dll" LocalFilename="$(fwrt)/Downloads/icuin$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(Icu4cDownloadUrl)/icutu$(IcuVersion).dll" LocalFilename="$(fwrt)/Downloads/icutu$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(Icu4cDownloadUrl)/icuuc$(IcuVersion).dll" LocalFilename="$(fwrt)/Downloads/icuuc$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(Icu4cDownloadUrl)/icudt.lib" LocalFilename="$(fwrt)/Downloads/icudt.lib" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(Icu4cDownloadUrl)/icuin.lib" LocalFilename="$(fwrt)/Downloads/icuin.lib" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(Icu4cDownloadUrl)/icuuc.lib" LocalFilename="$(fwrt)/Downloads/icuuc.lib" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)/Paratext.LexicalContracts.dll" DownloadsDir="$(DownloadsDir)"/>
+		<DownloadFile Address="$(DownloadsSilOrgOSDownloadUrl)/FormattedEditor.dll" DownloadsDir="$(DownloadsDir)"/>
+		<DownloadFile Address="$(DownloadsSilOrgOSDownloadUrl)/HelpSystem.dll" DownloadsDir="$(DownloadsDir)"/>
+		<DownloadFile Address="$(DownloadsSilOrgOSDownloadUrl)/HtmlEditor.dll" DownloadsDir="$(DownloadsDir)"/>
+		<DownloadFile Address="$(DownloadsSilOrgOSDownloadUrl)/NetLoc.dll" DownloadsDir="$(DownloadsDir)"/>
+		<DownloadFile Address="$(DownloadsSilOrgOSDownloadUrl)/ParatextShared.dll" DownloadsDir="$(DownloadsDir)"/>
+		<DownloadFile Address="$(DownloadsSilOrgOSDownloadUrl)/Utilities.dll" DownloadsDir="$(DownloadsDir)"/>
 
 		<Message Text="Downloading NUnit." />
-		<DownloadFile Address="$(NUnitDownloadUrl)" LocalFilename="$(fwrt)/Downloads/NUnit-2.6.4.zip" />
+		<DownloadFile Address="$(NUnitDownloadUrl)" DownloadsDir="$(DownloadsDir)"/>
 	</Target>
 
 	<!-- item group for downloads, to allow easy copying -->
 	<!-- wildcards don't work unless the files have already been downloaded once -->
 	<ItemGroup>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Autofac.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Chorus.exe"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/ChorusHub.exe" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/LibChorus.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Vulcan.Uczniowie.HelpProvider.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/Autofac.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/Chorus.exe"/>
+		<DownloadedFiles Include="$(DownloadsDir)/ChorusHub.exe" Condition="'$(OS)'=='Unix'"/>
+		<DownloadedFiles Include="$(DownloadsDir)/LibChorus.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/Vulcan.Uczniowie.HelpProvider.dll"/>
 		<!-- we need to explicitly specify the important files, otherwise they'll be ignored
 		if they don't exist by the time this ItemGroup is read -->
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Core.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Core.dll.mdb" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Core.pdb" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Lift.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Lift.dll.mdb" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Lift.pdb" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Media.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Media.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Media.dll.mdb" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Media.pdb" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Windows.Forms.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Windows.Forms.dll.mdb" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Windows.Forms.pdb" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Windows.Forms.GeckoBrowserAdapter.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Windows.Forms.GeckoBrowserAdapter.dll.mdb" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Windows.Forms.GeckoBrowserAdapter.pdb" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.dll.mdb" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.pdb" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.WritingSystems.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.WritingSystems.dll.mdb" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.WritingSystems.pdb" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Windows.Forms.WritingSystems.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Windows.Forms.WritingSystems.dll.mdb" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Windows.Forms.WritingSystems.pdb" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Windows.Forms.Keyboarding.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Windows.Forms.Keyboarding.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Windows.Forms.Keyboarding.dll.mdb" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Windows.Forms.Keyboarding.pdb" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Lexicon.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Lexicon.dll.mdb" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Lexicon.pdb" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.TestUtilities.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/icu.net.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/icu.net.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/L10NSharp.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Commons.Xml.Relaxng.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/irrKlang.NET4.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Enchant.Net.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Enchant.Net.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/IPCFramework.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/ExCss.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/ExCss.pdb" Condition="'$(OS)'=='Windows_NT'"/>
-		<!-- xBuild and MsBuild generate different case artifacts's off the same solution file. (sigh) -->
-		<DownloadedFiles Include="$(fwrt)/Downloads/ExCSS.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/ExCSS.dll.mdb" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/ibusdotnet.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/NDesk.DBus.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/NDesk.DBus.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Ionic.Zip.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/taglib-sharp.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Spart.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Newtonsoft.Json.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/FormattedEditor.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/HelpSystem.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/HtmlEditor.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/NetLoc.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Paratext.LexicalContracts.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/ParatextShared.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Utilities.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/QuickGraph.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Machine.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Collections.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.HermitCrab.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/gennorm2.exe" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/icudt$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/icuin$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/icutu$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/icuuc$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Core.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Core.$(DebugInfo)"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Lift.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Lift.$(DebugInfo)"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Media.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Media.dll.config" Condition="'$(OS)'=='Unix'"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Media.$(DebugInfo)"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Windows.Forms.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Windows.Forms.$(DebugInfo)"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Windows.Forms.GeckoBrowserAdapter.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Windows.Forms.GeckoBrowserAdapter.$(DebugInfo)"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Archiving.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Archiving.dll.config" Condition="'$(OS)'=='Unix'"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Archiving.$(DebugInfo)"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.WritingSystems.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.WritingSystems.$(DebugInfo)"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Windows.Forms.WritingSystems.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Windows.Forms.WritingSystems.$(DebugInfo)"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Windows.Forms.Keyboarding.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Windows.Forms.Keyboarding.dll.config" Condition="'$(OS)'=='Unix'"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Windows.Forms.Keyboarding.$(DebugInfo)"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Lexicon.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Lexicon.$(DebugInfo)"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.TestUtilities.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/icu.net.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/icu.net.dll.config" Condition="'$(OS)'=='Unix'"/>
+		<DownloadedFiles Include="$(DownloadsDir)/Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(DownloadsDir)/KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(DownloadsDir)/L10NSharp.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/Commons.Xml.Relaxng.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/irrKlang.NET4.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(DownloadsDir)/Enchant.Net.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/Enchant.Net.dll.config" Condition="'$(OS)'=='Unix'"/>
+		<DownloadedFiles Include="$(DownloadsDir)/IPCFramework.dll"/>
+		<!-- xBuild and MsBuild generate different case artifacts off the same solution file. (sigh) -->
+		<DownloadedFiles Include="$(DownloadsDir)/$(ExCss).dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/$(ExCss).$(DebugInfo)"/>
+		<DownloadedFiles Include="$(DownloadsDir)/ibusdotnet.dll" Condition="'$(OS)'=='Unix'"/>
+		<DownloadedFiles Include="$(DownloadsDir)/NDesk.DBus.dll" Condition="'$(OS)'=='Unix'"/>
+		<DownloadedFiles Include="$(DownloadsDir)/NDesk.DBus.dll.config" Condition="'$(OS)'=='Unix'"/>
+		<DownloadedFiles Include="$(DownloadsDir)/Ionic.Zip.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/taglib-sharp.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/Spart.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/Newtonsoft.Json.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/FormattedEditor.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/HelpSystem.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/HtmlEditor.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/NetLoc.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/Paratext.LexicalContracts.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/ParatextShared.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/Utilities.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/QuickGraph.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Machine.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Collections.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.HermitCrab.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/gennorm2.exe" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(DownloadsDir)/icudt$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(DownloadsDir)/icuin$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(DownloadsDir)/icutu$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(DownloadsDir)/icuuc$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
 	</ItemGroup>
 
 	<Target Name="CopyDlls" DependsOnTargets="downloadDlls">
@@ -533,26 +508,26 @@
 		<!-- Windows dynamically loaded libraries -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/xample.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<Copy SourceFiles="$(fwrt)/Downloads/Commons.Xml.Relaxng.dll" DestinationFolder="$(dir-outputBase)"
+		<Copy SourceFiles="$(DownloadsDir)/Commons.Xml.Relaxng.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<!-- ICU libs -->
-		<Copy SourceFiles="$(fwrt)/Downloads/icudt.lib" DestinationFolder="$(fwrt)/Lib"
+		<Copy SourceFiles="$(DownloadsDir)/icudt.lib" DestinationFolder="$(fwrt)/Lib"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<Copy SourceFiles="$(fwrt)/Downloads/icuin.lib" DestinationFolder="$(fwrt)/Lib"
+		<Copy SourceFiles="$(DownloadsDir)/icuin.lib" DestinationFolder="$(fwrt)/Lib"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<Copy SourceFiles="$(fwrt)/Downloads/icuuc.lib" DestinationFolder="$(fwrt)/Lib"
+		<Copy SourceFiles="$(DownloadsDir)/icuuc.lib" DestinationFolder="$(fwrt)/Lib"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<!-- Hunspell dlls -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/Windows/libhunspell.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<!-- NUnit dlls -->
-		<Unzip ZipFilename="$(fwrt)/Downloads/NUnit-2.6.4.zip" ToDir="$(fwrt)/Downloads/" />
-		<CreateItem Include="$(fwrt)/Downloads/NUnit-2.6.4/**/*">
+		<Unzip ZipFilename="$(DownloadsDir)/NUnit-2.6.4.zip" ToDir="$(DownloadsDir)/" />
+		<CreateItem Include="$(DownloadsDir)/NUnit-2.6.4/**/*">
 			<Output TaskParameter="Include" ItemName="NUnitFiles"/>
 		</CreateItem>
 		<Copy SourceFiles="@(NUnitFiles)" DestinationFolder="$(fwrt)/Bin/NUnit/%(RecursiveDir)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
-		<ForceDelete Files="$(fwrt)/Downloads/NUnit-2.6.4/" />
+		<ForceDelete Files="$(DownloadsDir)/NUnit-2.6.4/" />
 		<!-- Copy the downloaded artifacts -->
 		<Copy SourceFiles="@(DownloadedFiles)" DestinationFolder="$(dir-outputBase)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
@@ -631,27 +606,27 @@
 	</PropertyGroup>
 
 	<Target Name="updateTemplateLdmlFiles">
-		<DownloadFile Address="$(SldrUrl)bn" LocalFilename="$(fwrt)/DistFiles/Templates/bn.ldml"/>
-		<DownloadFile Address="$(SldrUrl)de" LocalFilename="$(fwrt)/DistFiles/Templates/de.ldml"/>
-		<DownloadFile Address="$(SldrUrl)en" LocalFilename="$(fwrt)/DistFiles/Templates/en.ldml"/>
-		<DownloadFile Address="$(SldrUrl)es" LocalFilename="$(fwrt)/DistFiles/Templates/es.ldml"/>
-		<DownloadFile Address="$(SldrUrl)fa" LocalFilename="$(fwrt)/DistFiles/Templates/fa.ldml"/>
-		<DownloadFile Address="$(SldrUrl)fr" LocalFilename="$(fwrt)/DistFiles/Templates/fr.ldml"/>
-		<!-- DownloadFile Address="$(SldrUrl)grc" LocalFilename="$(fwrt)/DistFiles/Templates/grc.ldml"/ -->
-		<!-- DownloadFile Address="$(SldrUrl)hbo" LocalFilename="$(fwrt)/DistFiles/Templates/hbo.ldml"/ -->
-		<DownloadFile Address="$(SldrUrl)hi" LocalFilename="$(fwrt)/DistFiles/Templates/hi.ldml"/>
-		<DownloadFile Address="$(SldrUrl)id" LocalFilename="$(fwrt)/DistFiles/Templates/id.ldml"/>
-		<DownloadFile Address="$(SldrUrl)km" LocalFilename="$(fwrt)/DistFiles/Templates/km.ldml"/>
-		<DownloadFile Address="$(SldrUrl)ko" LocalFilename="$(fwrt)/DistFiles/Templates/ko.ldml"/>
-		<DownloadFile Address="$(SldrUrl)ms" LocalFilename="$(fwrt)/DistFiles/Templates/ms.ldml"/>
-		<DownloadFile Address="$(SldrUrl)ne" LocalFilename="$(fwrt)/DistFiles/Templates/ne.ldml"/>
-		<DownloadFile Address="$(SldrUrl)pt" LocalFilename="$(fwrt)/DistFiles/Templates/pt.ldml"/>
-		<DownloadFile Address="$(SldrUrl)ru" LocalFilename="$(fwrt)/DistFiles/Templates/ru.ldml"/>
-		<DownloadFile Address="$(SldrUrl)te" LocalFilename="$(fwrt)/DistFiles/Templates/te.ldml"/>
-		<DownloadFile Address="$(SldrUrl)th" LocalFilename="$(fwrt)/DistFiles/Templates/th.ldml"/>
-		<DownloadFile Address="$(SldrUrl)tr" LocalFilename="$(fwrt)/DistFiles/Templates/tr.ldml"/>
-		<DownloadFile Address="$(SldrUrl)vi" LocalFilename="$(fwrt)/DistFiles/Templates/vi.ldml"/>
-		<DownloadFile Address="$(SldrUrl)zh-CN" LocalFilename="$(fwrt)/DistFiles/Templates/zh-CN.ldml"/>
+		<DownloadFile Address="$(SldrUrl)bn" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="bn.ldml"/>
+		<DownloadFile Address="$(SldrUrl)de" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="de.ldml"/>
+		<DownloadFile Address="$(SldrUrl)en" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="en.ldml"/>
+		<DownloadFile Address="$(SldrUrl)es" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="es.ldml"/>
+		<DownloadFile Address="$(SldrUrl)fa" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="fa.ldml"/>
+		<DownloadFile Address="$(SldrUrl)fr" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="fr.ldml"/>
+		<!-- DownloadFile Address="$(SldrUrl)grc" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="grc.ldml"/ -->
+		<!-- DownloadFile Address="$(SldrUrl)hbo" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="hbo.ldml"/ -->
+		<DownloadFile Address="$(SldrUrl)hi" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="hi.ldml"/>
+		<DownloadFile Address="$(SldrUrl)id" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="id.ldml"/>
+		<DownloadFile Address="$(SldrUrl)km" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="km.ldml"/>
+		<DownloadFile Address="$(SldrUrl)ko" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="ko.ldml"/>
+		<DownloadFile Address="$(SldrUrl)ms" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="ms.ldml"/>
+		<DownloadFile Address="$(SldrUrl)ne" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="ne.ldml"/>
+		<DownloadFile Address="$(SldrUrl)pt" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="pt.ldml"/>
+		<DownloadFile Address="$(SldrUrl)ru" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="ru.ldml"/>
+		<DownloadFile Address="$(SldrUrl)te" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="te.ldml"/>
+		<DownloadFile Address="$(SldrUrl)th" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="th.ldml"/>
+		<DownloadFile Address="$(SldrUrl)tr" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="tr.ldml"/>
+		<DownloadFile Address="$(SldrUrl)vi" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="vi.ldml"/>
+		<DownloadFile Address="$(SldrUrl)zh-CN" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="zh-CN.ldml"/>
 	</Target>
 
 	<ItemGroup>
