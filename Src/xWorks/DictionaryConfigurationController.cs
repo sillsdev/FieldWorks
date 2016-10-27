@@ -768,6 +768,7 @@ namespace SIL.FieldWorks.XWorks
 				throw new KeyNotFoundException(String.Format("Could not find Referenced Node named {0} for field {1}.{2}",
 					referenceItem, node.FieldDescription, node.SubField));
 			node.ReferenceItem = referenceItem;
+			node.ReferencedNode.IsEnabled = true;
 			if (node.ReferencedNode.Parent != null)
 				return false;
 			node.ReferencedNode.Parent = node;
