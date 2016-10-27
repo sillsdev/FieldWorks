@@ -4,7 +4,9 @@ Collection.cpp
 Build/FieldWorks.targets
 Build/GlobalInclude.properties
 Build/NuGet.exe
+Build/nunit.framework.dll
 Build/packages.config
+Build/*.pdb
 Src/Common/COMInterfaces/FwKernel.cs
 Src/Common/COMInterfaces/Views.cs
 Src/Common/CoreImpl/CellarPropertyType.cs

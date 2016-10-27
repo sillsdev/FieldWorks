@@ -65,11 +65,14 @@ namespace FwBuildTasks
 
 		public override bool Execute()
 		{
-			if (!string.IsNullOrEmpty(Tag))
+			// If the user specified a tag or query, it overrides whatever we might find by querying TeamCity
+			if (!string.IsNullOrEmpty(Tag) || string.IsNullOrEmpty(Query))
 			{
+				if (string.IsNullOrEmpty(Tag))
+					Tag = DefaultTag;
 				if (!string.IsNullOrEmpty(BuildType))
 					return DownloadAllFiles();
-				Log.LogError("Cannot use a Tag without a BuildType");
+				Log.LogError("Cannot use a Tag or Query without a BuildType");
 				return false;
 			}
 
@@ -79,7 +82,7 @@ namespace FwBuildTasks
 					return DownloadAllFiles();
 				case TeamCityQueryResult.Failed:
 					return false;
-				case TeamCityQueryResult.NoResult:
+				case TeamCityQueryResult.FellThrough:
 					if (string.IsNullOrEmpty(BuildType))
 					{
 						Log.LogError("Insufficient information to identify a build:{0}FlexBridgeBuildType: {1}{0}ProjectId: {2}{0}BuildType: {3}"
@@ -105,6 +108,7 @@ namespace FwBuildTasks
 
 		protected TeamCityQueryResult QueryTeamCity()
 		{
+			// First, look for a relevant dependency in FlexBridgeBuildType, if any
 			if (!string.IsNullOrEmpty(FlexBridgeBuildType))
 			{
 				if (string.IsNullOrEmpty(ProjectId) && string.IsNullOrEmpty(BuildType))
@@ -206,7 +210,7 @@ namespace FwBuildTasks
 			// REVIEW (Hasso) 2016.10: using .lastSuccessful should be a WARNING on package builds (may lead to bit rot)
 			// If all else fails, use the default "tag" .lastSuccessful
 			Tag = DefaultTag;
-			return TeamCityQueryResult.NoResult;
+			return TeamCityQueryResult.FellThrough;
 		}
 
 		/// <returns>an array of FlexBridgeBuildType's TcDependencies, filtered by ProjectId (or BuildType); null on any error</returns>
@@ -349,9 +353,11 @@ namespace FwBuildTasks
 						using (var sr = new StreamReader(errorResponseStream))
 							html = sr.ReadToEnd();
 						Log.LogWarning("Unexpected response from {0}. Server responds {1}", url, html);
+						return false; // The server is available, but it is likely the requested resource does not exist; don't keep trying
 					}
 					else
 					{
+						// Possibly a DNS error or some network outage between us and the server.
 						Log.LogWarning("No response from {0}. Exception {1}. Status {2}.", url, e.Message, e.Status);
 					}
 					if (retries > 0)
@@ -380,7 +386,7 @@ namespace FwBuildTasks
 		{
 			Found,
 			Failed,
-			NoResult
+			FellThrough
 		}
 
 		public struct TcDependency

@@ -90,16 +90,15 @@ namespace FwBuildTasks
 					continue;
 				}
 
-				bool success;
-				var read = DoDownloadFile(remoteUrl, localPathname, Username, Password, out success);
+				var success = DoDownloadFile(remoteUrl, localPathname, Username, Password);
 
-				if (success)
+				switch (success)
 				{
-					if (read == 0)
+					case Result.UpToDate:
 						Log.LogMessage(MessageImportance.Normal, "The local file {0} is up-to-date with {1}.", localPathname, remoteUrl);
-					else
-						Log.LogMessage(MessageImportance.Low, "{0} bytes written to {1} from {2}", read, localPathname, remoteUrl);
-					return true;
+						return true;
+					case Result.Downloaded:
+						return true;
 				}
 
 				if (File.Exists(localPathname))
@@ -107,14 +106,15 @@ namespace FwBuildTasks
 					Log.LogWarning("Could not download {0}; using local file.", remoteUrl);
 					return true; // don't stop or delay the build
 				}
-				if (retries > 0)
-				{
-					Log.LogMessage(MessageImportance.High, "Could not download {0}. Trying {1} more times.", remoteUrl, retries);
-					Thread.Sleep(RetryWaitTime); // wait a minute
-				}
+				if (success == Result.FinalFailure || retries <= 0)
+					break; // log error and return false
+
+				// The server had no response. Perhaps there are network problems that will clear up in a minute or two.
+				Log.LogMessage(MessageImportance.High, "Could not download {0}. Trying {1} more times.", remoteUrl, retries);
+				Thread.Sleep(RetryWaitTime); // wait a minute
 			}
 
-			Log.LogError("Could not retrieve latest {0}. Exceeded retry count.", remoteUrl);
+			Log.LogError("Could not retrieve latest {0}", remoteUrl);
 			return false; // Presumably can't continue without the local file
 		}
 
@@ -123,12 +123,8 @@ namespace FwBuildTasks
 		/// Does not throw or log errors (only warns). Retrying or marking an utter failure is the client's responsibility.
 		/// Returns the number of bytes processed (0 if the file was up-to-date).
 		/// </summary>
-		public int DoDownloadFile(string remoteFilename, string localFilename, string httpUsername, string httpPassword, out bool success)
+		public Result DoDownloadFile(string remoteFilename, string localFilename, string httpUsername, string httpPassword)
 		{
-			// Function will return the number of bytes processed to the caller. Initialize to 0 here.
-			var bytesProcessed = 0;
-			success = false; // presumably can't continue until the file has been downloaded
-
 			// Assign values to these objects here so that they can
 			// be referenced in the finally block
 			Stream remoteStream = null;
@@ -158,22 +154,19 @@ namespace FwBuildTasks
 				{
 					lastModified = response.LastModified;
 					if (File.Exists(localFilename) && lastModified == File.GetLastWriteTime(localFilename))
-					{
-						success = true;
-						return bytesProcessed;
-					}
+						return Result.UpToDate;
 
 					// Once the WebResponse object has been retrieved, get the stream object associated with the response's data
 					remoteStream = response.GetResponseStream();
 					if (remoteStream == null)
-						return 0;
+						return Result.NoResponse;
 
 					// Create the local file
 					localStream = File.Create(localFilename);
 
 					// Allocate a 1k buffer
 					var buffer = new byte[1024];
-					int bytesRead;
+					int bytesRead, totalBytesRead = 0;
 					// Simple do/while loop to read from stream until no bytes are returned
 					do
 					{
@@ -184,9 +177,10 @@ namespace FwBuildTasks
 						localStream.Write(buffer, 0, bytesRead);
 
 						// Increment total bytes processed
-						bytesProcessed += bytesRead;
+						totalBytesRead += bytesRead;
 					} while (bytesRead > 0);
-					success = true; // The file has been downloaded; we can continue
+					Log.LogMessage(MessageImportance.Low, "{0} bytes written to {1} from {2}", totalBytesRead, localFilename, remoteFilename);
+					return Result.Downloaded;
 				}
 				else
 				{
@@ -199,7 +193,7 @@ namespace FwBuildTasks
 				{
 					// We probably don't have a network connection (despite the check in the caller).
 					Log.LogWarning("Could not retrieve latest {0}. No network connection.", remoteFilename);
-					return 0;
+					return Result.NoResponse;
 				}
 				string html = null;
 				if (wex.Response != null)
@@ -208,10 +202,12 @@ namespace FwBuildTasks
 							using (var sr = new StreamReader(errStream))
 								html = sr.ReadToEnd();
 				if (html != null)
+				{
 					Log.LogWarning("Could not download from {0}. Server responds {1}", remoteFilename, html);
-				else
-					Log.LogWarning("Could not download from {0}. Exception {1}. Status {2}", remoteFilename, wex.Message, wex.Status);
-				return 0;
+					return Result.FinalFailure; // The server responded, but did not return the requested resource. It probably won't next time, either, so give up now.
+				}
+				Log.LogWarning("Could not download from {0}. Exception {1}. Status {2}", remoteFilename, wex.Message, wex.Status);
+				return Result.NoResponse;
 			}
 			catch (Exception e)
 			{
@@ -231,9 +227,15 @@ namespace FwBuildTasks
 					new FileInfo(localFilename) { LastWriteTime = lastModified };
 				}
 			}
+			return Result.NoResponse;
+		}
 
-			// Return total bytes processed to caller.
-			return bytesProcessed;
+		public enum Result
+		{
+			NoResponse,
+			UpToDate,
+			Downloaded,
+			FinalFailure
 		}
 	}
 }
