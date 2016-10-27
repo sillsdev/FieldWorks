@@ -249,8 +249,8 @@ STDMETHODIMP RomRenderEngine::FindBreakPoint(
 	// check whether an line break at the very end is allowed.
 	// Note that this time we're getting at most MAX_MEASURE chars, so we don't
 	// have to check for buffer overflow.
-	GetAvailChars(pts, ws, ichMinNew, ichLimBacktrack, MAX_MEASURE, twsh, qcpe,
-		prgch, &ichLimSegCur, &eat);
+	GetAvailChars(pts, ws, ichMinNew, ichLimBacktrack, MAX_MEASURE, twsh, prgch,
+		&ichLimSegCur, &eat);
 
 	// Measure all the characters we got, or all we are allowed to use, whichever
 	// is less.
@@ -277,11 +277,9 @@ STDMETHODIMP RomRenderEngine::FindBreakPoint(
 
 	int cchLineEst; // Calculate the estimated number of characters to fill line.
 	int cchMaxText = ichLimBacktrack - ichMinNew;
-#ifdef ICU_LINEBREAKING
 	int ichTempBreak;
 	LgLineBreak lbWeight;
-	LgGeneralCharCategory cc;
-#endif /*ICU_LINEBREAKING*/
+	int cc;
 
 	// Now, if it is a short text or already contains all candidate characters,
 	// we have the actual width; otherwise, we have
@@ -320,7 +318,7 @@ STDMETHODIMP RomRenderEngine::FindBreakPoint(
 			prglbsForString = vlbs.Begin();
 		}
 		GetAvailChars(pts, ws, ichLimSegCur, ichLimBacktrack,
-			ichMinNew + cchLineEst + MAX_MEASURE - ichLimSegCur, twsh, qcpe,
+			ichMinNew + cchLineEst + MAX_MEASURE - ichLimSegCur, twsh,
 			prgch + ichLimSegCur - ichMinNew, &ichLimSegCur, &eat);
 		cchMeasure = ichLimSegCur - ichMinNew;
 		qrrs->SetLim(cchMeasure);
@@ -328,10 +326,8 @@ STDMETHODIMP RomRenderEngine::FindBreakPoint(
 		CheckHr(qrrs->get_Width(ichMinNew, pvg, &dxWidthMeasure));
 	}
 
-#ifdef ICU_LINEBREAKING
 	//updating the BreakIterator text for calculating line breaks later
 	CheckHr(qcpe->put_LineBreakText(prgch, ichLimSegCur-ichMinNew));
-#endif /*ICU_LINEBREAKING*/
 
 	// Update this with the results of the latest measurement.
 	if (!dxWidthMeasure)
@@ -363,10 +359,7 @@ STDMETHODIMP RomRenderEngine::FindBreakPoint(
 			// We want to get line break info for the character at ichLimSegCur - 1, relative to
 			// the string as a whole. Offset relative to buffer is less by ichMinNew.
 			int ichBuf = ichLimSegCur - ichMinNew - 1;
-#ifndef ICU_LINEBREAKING
-			CheckHr(qcpe->GetLineBreakInfo(prgch, ichLimSegCur - ichMinNew + 1,
-				ichBuf, ichBuf + 1, prglbsForString, &ichForceBreak));
-#else
+
 			//updating the BreakIterator text for calculating line breaks
 			CheckHr(qcpe->put_LineBreakText(prgch, ichLimSegCur-ichMinNew+1));
 			CheckHr(qcpe->LineBreakAfter(ichBuf, &ichTempBreak, &lbWeight));
@@ -376,12 +369,8 @@ STDMETHODIMP RomRenderEngine::FindBreakPoint(
 // Also it got one more result than we need.
 //			CheckHr(qcpe->GetLineBreakInfo(prgch + ichLimSegCur - 1, 2, 0, 2, prglbsForString,
 //				&ichForceBreak));
-			CheckHr(qcpe->get_GeneralCategory(prgch[ichBuf], &cc));
-			if ((ichTempBreak == ichBuf+1) && (cc == kccZs))
-#endif /*ICU_LINEBREAKING*/
-#ifndef ICU_LINEBREAKING
-			if (prglbsForString[0] & kflbsBrk)
-#endif /*ICU_LINEBREAKING*/
+			cc = u_charType(prgch[ichBuf]);
+			if ((ichTempBreak == ichBuf+1) && (cc == U_SPACE_SEPARATOR))
 			{
 				// Backtrack posn is also a line break
 				*pest = kestOkayBreak;
@@ -413,18 +402,10 @@ STDMETHODIMP RomRenderEngine::FindBreakPoint(
 		// We want to get line break info for the character at ichLimSegCur - 1, relative to
 		// the string as a whole. Offset relative to buffer is less by ichMinNew.
 		int ichBuf = ichLimSegCur - ichMinNew - 1;
-#ifndef ICU_LINEBREAKING
-		CheckHr(qcpe->GetLineBreakInfo(prgch, ichLimSegCur - ichMinNew,
-			ichBuf, ichBuf + 1, prglbsForString, &ichForceBreak));
-#else
 		CheckHr(qcpe->LineBreakAfter(ichBuf, &ichTempBreak, &lbWeight));
 
-		CheckHr(qcpe->get_GeneralCategory(prgch[ichBuf], &cc));
-		if ((ichTempBreak == ichBuf+1) && (cc == kccZs))
-#endif /*ICU_LINEBREAKING*/
-#ifndef ICU_LINEBREAKING
-		if (prglbsForString[0] & kflbsBrk)
-#endif /*ICU_LINEBREAKING*/
+		cc = u_charType(prgch[ichBuf]);
+		if ((ichTempBreak == ichBuf + 1) && (cc == U_SPACE_SEPARATOR))
 		{
 			// WS break is also a line break
 			*pest = kestOkayBreak;
@@ -486,13 +467,8 @@ LFindEarlierBreak:
 			// don't try hyphen break if we already tried word break.
 			// This engine can't (yet) find a hyphen break that is not
 			// a word break.
-#ifndef ICU_LINEBREAKING
-			FindLineBreak(prglbsForString, 0, ichLimSegCur - ichMinNew, lbTry, false,
-				ichBreak, ichDim);
-#else
 			FindLineBreak(prgch, qcpe, 0, ichLimSegCur - ichMinNew, lbTry, false,
 				ichBreak, ichDim);
-#endif /*ICU_LINEBREAKING*/
 			if (ichBreak >= 0)
 			{
 				if (ichDim < 0)
@@ -534,13 +510,8 @@ LFindEarlierBreak:
 
 	bool fLookAhead = true;
 	if (cchLineEst > ichBreak)
-#ifndef ICU_LINEBREAKING
-		FindLineBreak(prglbsForString, ichBreak + 1, cchLineEst, lbTry, true, ichNewBreak,
-			ichNewDim);
-#else
 		FindLineBreak(prgch, qcpe, ichBreak + 1, cchLineEst, lbTry, true, ichNewBreak,
 			ichNewDim);
-#endif /*ICU_LINEBREAKING*/
 	else
 		ichNewBreak = 0;
 	if (ichNewBreak >= 0)
@@ -553,13 +524,8 @@ LFindEarlierBreak:
 			fLookAhead = false;
 			for (;;)
 			{
-#ifndef ICU_LINEBREAKING
-				FindLineBreak(prglbsForString, ichBreak + 1, ichNewDim, lbTry, true,
-					ichNewBreak, ichNewDim);
-#else
 				FindLineBreak(prgch, qcpe, ichBreak + 1, ichNewDim, lbTry, true,
 					ichNewBreak, ichNewDim);
-#endif /*ICU_LINEBREAKING*/
 				if (ichNewBreak < 0)
 					break;		// no more breaks possible: use the first one found above
 				qrrs->SetLim(ichNewDim + 1);
@@ -585,13 +551,8 @@ LFindEarlierBreak:
 		ichDim = ichNewDim;
 		for (;;)
 		{
-#ifndef ICU_LINEBREAKING
-			FindLineBreak(prglbsForString, ichBreak + 1, ichLimSegCur - ichMinNew, lbTry,
-				false, ichNewBreak, ichNewDim);
-#else
 			FindLineBreak(prgch, qcpe, ichBreak + 1, ichLimSegCur - ichMinNew, lbTry,
 				false, ichNewBreak, ichNewDim);
-#endif /*ICU_LINEBREAKING*/
 			if (ichNewBreak < 0)
 				break;  // no more breaks possible
 			qrrs->SetLim(ichNewDim + 1);
@@ -633,9 +594,8 @@ LFindEarlierBreak:
 	{
 		while (ichBreak >= 0)
 		{
-			LgBidiCategory bic;
-			CheckHr(qcpe->get_BidiCategory(prgch[ichBreak], &bic));
-			if (bic != kbicWS)
+			UCharDirection dir = u_charDirection(prgch[ichBreak]);
+			if (dir != U_WHITE_SPACE_NEUTRAL)
 				break;
 			ichBreak--;
 			*pest = kestMoreWhtsp;  // we can fit more white space on the line
@@ -672,8 +632,8 @@ LFindEarlierBreak:
 ----------------------------------------------------------------------------------------------*/
 void RomRenderEngine::GetAvailChars(IVwTextSource * pts,int ws,
 	int ichMin, int ichLimSeg, int cchMax,
-	LgTrailingWsHandling twsh, ILgCharacterPropertyEngine * pcpe,
-	OLECHAR * prgch, int * pichLimSegCur, EndAvailType * peat)
+	LgTrailingWsHandling twsh, OLECHAR * prgch, int * pichLimSegCur,
+	EndAvailType * peat)
 {
 	LgCharRenderProps chrp;
 	OLECHAR * pch = prgch;
@@ -729,9 +689,8 @@ void RomRenderEngine::GetAvailChars(IVwTextSource * pts,int ws,
 			{
 				// TODO 1441 (SharonC): if the overall paragraph direction is right-to-left,
 				// the space characters should be reversed.
-				LgBidiCategory bic;
-				CheckHr(pcpe->get_BidiCategory(*pch, &bic));
-				if (bic != kbicWS)
+				UCharDirection dir = u_charDirection(*pch);
+				if (dir != U_WHITE_SPACE_NEUTRAL)
 				{
 					*peat = keatOnlyWs;
 					*pichLimSegCur = ichMin + pch - prgch;
@@ -778,13 +737,8 @@ LReturn:
 	This is not an interface method, since it is called only within this module.
 ----------------------------------------------------------------------------------------------*/
 void RomRenderEngine::FindLineBreak(
-
-#ifndef ICU_LINEBREAKING
-	const byte * prglbs,		// line break status array for string in which range lies
-#else
 	const OLECHAR * prgch,
 	const ILgCharacterPropertyEnginePtr qcpe,
-#endif /*ICU_LINEBREAKING*/
 	const int ichMin,			// index of first character of string to be considered
 	const int ichLim,			// index of (last+1) character of string to be considered
 	const LgLineBreak lbrkRequired,	// type of line break required (word, hyphen, letter etc)
@@ -792,13 +746,9 @@ void RomRenderEngine::FindLineBreak(
 	int & ichBreak,		// (out) index of first char after which break is possible (-1 if none)
 	int & ichDim)		// (out) index of latest non-space character (-1 if none)
 {
-#ifndef ICU_LINEBREAKING
-	AssertPtrSize(prglbs, ichLim); // (this includes asserting ichLim >= 0)
-#else
 	AssertPtrSize(prgch, ichLim);
 	LgLineBreak lbWeight;
-	LgGeneralCharCategory cc;
-#endif /*ICU_LINEBREAKING*/
+	int cc;
 	Assert(ichMin >= 0);
 	ichBreak = -1;
 	ichDim = -1;
@@ -809,79 +759,6 @@ void RomRenderEngine::FindLineBreak(
 	{
 		return;
 	}
-#ifndef ICU_LINEBREAKING
-	switch (lbrkRequired)
-	{
-	case klbWsBreak:
-	case klbWordBreak:
-	case klbHyphenBreak:
-		// Note that at present we do not handle hyphenation, so breaks of this kind are
-		// typically between words.
-		if (fBackFromEnd)
-		{
-			for (ich = ichLim; --ich >= ichMin;)
-			{
-				if (prglbs[ich] & kflbsBrk)
-				{
-					ichBreak = ich;
-					break;
-				}
-			}
-		}
-		else
-		{
-			for (ich = ichMin; ich < ichLim; ++ich)
-			{
-				if (prglbs[ich] & kflbsBrk)
-				{
-					ichBreak = ich;
-					break;
-				}
-			}
-		}
-		break;
-	case klbLetterBreak:
-		if (fBackFromEnd)
-		{
-			for (ich = ichLim; --ich >= ichMin;)
-			{
-				if (prglbs[ich] & (kflbsBrkL | kflbsBrk))
-				{
-					ichBreak = ich;
-					break;
-				}
-			}
-		}
-		else
-		{
-			for (ich = ichMin; ich < ichLim; ++ich)
-			{
-				if (prglbs[ich] & (kflbsBrkL | kflbsBrk))
-				{
-					ichBreak = ich;
-					break;
-				}
-			}
-		}
-		break;
-	case klbClipBreak:
-		// Simply find the index of the first non-space, or the last character if all spaces.
-		// (This is the same for either value of fBackFromEnd.)
-		for (ich = ichMin; ich < ichLim; ++ich)
-		{
-			if (!(prglbs[ich] & kflbsSpace))
-			{
-				ichBreak = ich;
-				break;
-			}
-		}
-		if (ichBreak < 0)
-			ichBreak = ichLim - 1;
-		break;
-	default:
-		ThrowInternalError(E_INVALIDARG, "Invalid line break type");
-	}
-#else
 	switch (lbrkRequired)
 	{
 	case klbNoBreak:
@@ -915,8 +792,8 @@ void RomRenderEngine::FindLineBreak(
 	case klbClipBreak:
 		for (ich = ichMin; ich < ichLim; ich++)
 		{
-			qcpe->get_GeneralCategory(prgch[ich], &cc);
-			if (cc != kccZs)
+			cc = u_charType(prgch[ich]);
+			if (cc != U_SPACE_SEPARATOR)
 			{
 				ichBreak = ich;
 				break;
@@ -935,24 +812,15 @@ void RomRenderEngine::FindLineBreak(
 		ThrowInternalError(E_INVALIDARG, "Invalid line break type");
 #endif
 	}
-#endif /*ICU_LINEBREAKING*/
 	if (ichBreak >= 0)
 	{
 		// a break point was found
-#ifndef ICU_LINEBREAKING
-		for (ichDim = ichBreak; ichDim >= ichMin; --ichDim)
-		{
-			if (!(prglbs[ichDim] & kflbsSpace))
-				break;
-		}
-#else
 		for (ichDim = ichBreak; ichDim >= ichMin; ichDim--)
 		{
-			qcpe->get_GeneralCategory(prgch[ichDim], &cc);
-			if (cc != kccZs)
+			cc = u_charType(prgch[ichDim]);
+			if (cc != U_SPACE_SEPARATOR)
 				break;
 		}
-#endif /*ICU_LINEBREAKING*/
 		if (ichDim < ichMin)
 			ichDim = -1;	// all chars up to and including the break point were spaces
 	}

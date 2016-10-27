@@ -2733,8 +2733,6 @@ public:  // we can make anything public since the whole class is private to this
 				OLECHAR chmarker = m_fParaRtl ? 0x200f : 0x200e; // RLM : LRM
 				OLECHAR * rgch = NewObj OLECHAR[*pdichwLimSeg];
 				CheckHr(m_pts->Fetch(ichwMin, ichwMin + *pdichwLimSeg, rgch));
-				ILgCharacterPropertyEnginePtr qcpe;
-				qcpe.CreateInstance(CLSID_LgIcuCharPropEngine);
 
 				// We're looking for a sequence of the marker character, some white space, and another marker.
 				// this loop can find a marker that is the last character of the segment with no following white
@@ -2751,12 +2749,8 @@ public:  // we can make anything public since the whole class is private to this
 					}
 					else
 					{
-						ComBool fIsSep;
-						CheckHr(qcpe->get_IsSeparator(rgch[i], &fIsSep));
-						if (!fIsSep)
-						{
+						if (!StrUtil::IsSeparator(rgch[i]))
 							ichfirstMarker = -1; // reset the search
-						}
 					}
 				}
 				delete[] rgch;
@@ -5019,19 +5013,13 @@ bool VwParagraphBox::WsNearStartOfLine(IVwTextSource * pts, VwBox * pboxStartOfL
 	if (!psbox)
 		return true;
 
-	// NOTE: This depends only on the Unicode general category, not on the language.
-	ILgCharacterPropertyEnginePtr qchprpeng;
-	qchprpeng.CreateInstance(CLSID_LgIcuCharPropEngine);
-
 	int ichMin = psbox->IchMin();
-	ComBool fIsSep;
 
 	OLECHAR * rgch = NewObj OLECHAR[ichChange - ichMin];
 	CheckHr(pts->Fetch(ichMin, ichChange, rgch));
 	for (int ich = 0; ich < ichChange - ichMin; ich++)
 	{
-		CheckHr(qchprpeng->get_IsSeparator(rgch[ich], &fIsSep));
-		if (fIsSep)
+		if (StrUtil::IsSeparator(rgch[ich]))
 		{
 			delete[] rgch;
 			return true;
@@ -8460,7 +8448,7 @@ public:
 				if (ch == L'\xFEFF' || ch == L'\xFFFC')
 					isWordForming = true;
 				else
-					CheckHr(m_qcpe->get_IsNumber(ch, &isWordForming));
+					isWordForming = StrUtil::IsNumber(ch);
 			}
 			if (isWordForming)
 			{

@@ -213,11 +213,9 @@ STDMETHODIMP LgUnicodeCollater::SortKeyRgch(const OLECHAR * prgchSource, int cch
 	//Enter weight 1's into sort key
 	for (pchSource = prgchSource; pchSource < pchLimSource; pchSource++)
 	{
-		ComBool fHasDecomp;
 		// If there is no decomposition, this routine copies the one character we passed into
 		// rgchDecomp.  Otherwise, it puts the decomposition there.
-		CheckHr(m_qcpe->FullDecompRgch(*pchSource, MAXDECOMP, rgchDecomp, &cchDecomp,
-						&fHasDecomp));
+		FullDecompRgch(*pchSource, MAXDECOMP, rgchDecomp, &cchDecomp);
 		pchLim = rgchDecomp + cchDecomp;
 		for (pch = rgchDecomp; pch < pchLim; pch++)
 		{
@@ -275,11 +273,9 @@ STDMETHODIMP LgUnicodeCollater::SortKeyRgch(const OLECHAR * prgchSource, int cch
 	//last character is padded with zero.
 	for (pchSource = prgchSource; pchSource < pchLimSource; pchSource++)
 	{
-		ComBool fHasDecomp;
 		// If there is no decomposition, this routine copies the one character we passed into
 		// rgchDecomp.  Otherwise, it puts the decomposition there.
-		CheckHr(m_qcpe->FullDecompRgch(*pchSource, MAXDECOMP, rgchDecomp, &cchDecomp,
-												&fHasDecomp));
+		FullDecompRgch(*pchSource, MAXDECOMP, rgchDecomp, &cchDecomp);
 		pchLim = rgchDecomp + cchDecomp;
 		for (pch = rgchDecomp; pch < pchLim; pch++)
 		{
@@ -338,11 +334,9 @@ STDMETHODIMP LgUnicodeCollater::SortKeyRgch(const OLECHAR * prgchSource, int cch
 	//Treating weight 3's like weight 2's
 	for (pchSource = prgchSource; pchSource < pchLimSource; pchSource++)
 	{
-		ComBool fHasDecomp;
 		// If there is no decomposition, this routine copies the one character we passed into
 		// rgchDecomp.  Otherwise, it puts the decomposition there.
-		CheckHr(m_qcpe->FullDecompRgch(*pchSource, MAXDECOMP, rgchDecomp, &cchDecomp,
-												&fHasDecomp));
+		FullDecompRgch(*pchSource, MAXDECOMP, rgchDecomp, &cchDecomp);
 		pchLim = rgchDecomp + cchDecomp;
 		for (pch = rgchDecomp; pch < pchLim; pch++)
 		{
@@ -612,4 +606,27 @@ bool LgUnicodeCollater::PackWeights(OLECHAR *&pchKey, int &cchOut, int cchMaxOut
 	}
 	fEven = !fEven;
 	return true;
+}
+
+void LgUnicodeCollater::FullDecompRgch(int ch, int cchMax1, OLECHAR * prgch, int * pcch)
+{
+	UChar32 uch = ch;
+	UnicodeString ustrSrc = uch;
+	UErrorCode uerr = U_ZERO_ERROR;
+	const Normalizer2* norm = SilUtil::GetIcuNormalizer(UNORM_NFD);
+	UnicodeString ustrResult = norm->normalize(ustrSrc, uerr);
+	Assert(U_SUCCESS(uerr));
+	if (ustrSrc == ustrResult) //meaning that the character has no decomposition
+	{
+		if (prgch)
+			*prgch = (OLECHAR)ch;
+		*pcch = 1;
+		return;
+	}
+
+	Assert((cchMax1 >= ustrResult.length()) || (cchMax1 <= 0));
+
+	*pcch = ustrResult.length();
+	if (cchMax1 > 0)
+		ustrResult.extract(0, ustrResult.length(), prgch);
 }

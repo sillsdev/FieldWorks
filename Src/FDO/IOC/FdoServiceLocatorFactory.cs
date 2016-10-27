@@ -290,7 +290,6 @@ namespace SIL.FieldWorks.FDO.IOC
 		IFdoServiceLocator, IServiceLocatorInternal, IDisposable
 	{
 		private Container m_container;
-		private ILgCharacterPropertyEngine m_lgpe;
 
 		/// <summary>
 		/// Constructor
@@ -330,7 +329,7 @@ namespace SIL.FieldWorks.FDO.IOC
 		/// <summary/>
 		private void Dispose(bool fDisposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + " *******");
+			Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + " *******");
 			if (fDisposing && !IsDisposed)
 			{
 				// dispose managed and unmanaged objects
@@ -349,7 +348,6 @@ namespace SIL.FieldWorks.FDO.IOC
 				}
 			}
 			m_container = null;
-			m_lgpe = null;
 			IsDisposed = true;
 		}
 		#endregion
@@ -576,20 +574,6 @@ namespace SIL.FieldWorks.FDO.IOC
 			get
 			{
 				return GetInstance<IdentityMap>();
-			}
-		}
-
-		/// <summary>
-		/// Shortcut to the Unicode character property engine.
-		/// </summary>
-		public ILgCharacterPropertyEngine UnicodeCharProps
-		{
-			get
-			{
-				if (m_lgpe == null)
-					m_lgpe = LgIcuCharPropEngineClass.Create();
-
-				return m_lgpe; // m_baseServiceLocator.GetInstance<ILgCharacterPropertyEngine>();
 			}
 		}
 		#endregion

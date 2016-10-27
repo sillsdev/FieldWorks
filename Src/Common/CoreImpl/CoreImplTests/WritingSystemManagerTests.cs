@@ -314,14 +314,12 @@ namespace SIL.CoreImpl
 			Assert.IsNotNull(cpe);
 			Assert.IsTrue(cpe.get_IsWordForming('\''));
 			Assert.IsFalse(cpe.get_IsWordForming('"'));
-			Assert.AreEqual(0x0804, cpe.Locale);
 
 			ws.CharacterSets.Clear();
 			cpe = wsManager.get_CharPropEngine(ws.Handle);
 			Assert.IsNotNull(cpe);
 			Assert.IsFalse(cpe.get_IsWordForming('\''));
 			Assert.IsFalse(cpe.get_IsWordForming('"'));
-			Assert.AreEqual(0x0804, cpe.Locale);
 			wsManager.Save();
 		}
 

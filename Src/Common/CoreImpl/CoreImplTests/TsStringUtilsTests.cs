@@ -11,7 +11,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text; // for ILgWritingSystemFactory
 using System.Xml;
-using NMock;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -942,22 +941,9 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_IchOutOfRange()
 		{
-			var tss = TsStringUtils.MakeTss("funky munky", m_wsf.UserWs);
-			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
-			Assert.Throws(typeof(ArgumentOutOfRangeException), () => tss.FindWordBoundary(4000, cpe));
-			Assert.Throws(typeof(ArgumentOutOfRangeException), () => tss.FindWordBoundary(-1, cpe));
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests the FindWordBoundary method when the character property engine is null
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void FindWordBoundary_NullCharacterPropertyEngine()
-		{
-			var tss = TsStringUtils.MakeTss("funky munky", m_wsf.UserWs);
-			Assert.Throws(typeof(ArgumentNullException), () => tss.FindWordBoundary(0, null));
+			ITsString tss = TsStringUtils.MakeTss("funky munky", m_wsf.UserWs);
+			Assert.Throws(typeof(ArgumentOutOfRangeException), () => tss.FindWordBoundary(4000));
+			Assert.Throws(typeof(ArgumentOutOfRangeException), () => tss.FindWordBoundary(-1));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -968,9 +954,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_AlreadyAtStartOfWord()
 		{
-			var tss = TsStringUtils.MakeTss("A munky", m_wsf.UserWs);
-			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
-			Assert.AreEqual(2, tss.FindWordBoundary(2, cpe));
+			ITsString tss = TsStringUtils.MakeTss("A munky", m_wsf.UserWs);
+			Assert.AreEqual(2, tss.FindWordBoundary(2));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -981,9 +966,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_AtStartOfString()
 		{
-			var tss = TsStringUtils.MakeTss("Another munky", m_wsf.UserWs);
-			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
-			Assert.AreEqual(0, tss.FindWordBoundary(0, cpe));
+			ITsString tss = TsStringUtils.MakeTss("Another munky", m_wsf.UserWs);
+			Assert.AreEqual(0, tss.FindWordBoundary(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -994,9 +978,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_AtEndOfString()
 		{
-			var tss = TsStringUtils.MakeTss("One guy", m_wsf.UserWs);
-			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
-			Assert.AreEqual(7, tss.FindWordBoundary(7, cpe));
+			ITsString tss = TsStringUtils.MakeTss("One guy", m_wsf.UserWs);
+			Assert.AreEqual(7, tss.FindWordBoundary(7));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1007,10 +990,9 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_MiddleOfWord()
 		{
-			var tss = TsStringUtils.MakeTss("Happiness is good.", m_wsf.UserWs);
-			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
-			Assert.AreEqual(0, tss.FindWordBoundary(4, cpe));
-			Assert.AreEqual(13, tss.FindWordBoundary(tss.Length - 3, cpe));
+			ITsString tss = TsStringUtils.MakeTss("Happiness is good.", m_wsf.UserWs);
+			Assert.AreEqual(0, tss.FindWordBoundary(4));
+			Assert.AreEqual(13, tss.FindWordBoundary(tss.Length - 3));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1022,9 +1004,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_EndOfWord()
 		{
-			var tss = TsStringUtils.MakeTss("Gold is good.", m_wsf.UserWs);
-			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
-			Assert.AreEqual(5, tss.FindWordBoundary(4, cpe));
+			ITsString tss = TsStringUtils.MakeTss("Gold is good.", m_wsf.UserWs);
+			Assert.AreEqual(5, tss.FindWordBoundary(4));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1035,11 +1016,10 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_AroundPunctuation()
 		{
-			var tss = TsStringUtils.MakeTss("God 'is good.'", m_wsf.UserWs);
-			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
-			Assert.AreEqual(tss.Length, tss.FindWordBoundary(tss.Length - 2, cpe));
-			Assert.AreEqual(tss.Length, tss.FindWordBoundary(tss.Length - 1, cpe));
-			Assert.AreEqual(tss.Length, tss.FindWordBoundary(tss.Length, cpe));
+			ITsString tss = TsStringUtils.MakeTss("God 'is good.'", m_wsf.UserWs);
+			Assert.AreEqual(tss.Length, tss.FindWordBoundary(tss.Length - 2));
+			Assert.AreEqual(tss.Length, tss.FindWordBoundary(tss.Length - 1));
+			Assert.AreEqual(tss.Length, tss.FindWordBoundary(tss.Length));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1051,9 +1031,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_EndOfSentence()
 		{
-			var tss = TsStringUtils.MakeTss("Good. Yeah!", m_wsf.UserWs);
-			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
-			Assert.AreEqual(6, tss.FindWordBoundary(4, cpe));
+			ITsString tss = TsStringUtils.MakeTss("Good. Yeah!", m_wsf.UserWs);
+			Assert.AreEqual(6, tss.FindWordBoundary(4));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1064,11 +1043,10 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_AroundNumbers()
 		{
-			var tss = TsStringUtils.MakeTss("Gideon had 300 men.", m_wsf.UserWs);
-			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
-			Assert.AreEqual(11, tss.FindWordBoundary(11, cpe));
-			Assert.AreEqual(11, tss.FindWordBoundary(12, cpe));
-			Assert.AreEqual(15, tss.FindWordBoundary(14, cpe));
+			ITsString tss = TsStringUtils.MakeTss("Gideon had 300 men.", m_wsf.UserWs);
+			Assert.AreEqual(11, tss.FindWordBoundary(11));
+			Assert.AreEqual(11, tss.FindWordBoundary(12));
+			Assert.AreEqual(15, tss.FindWordBoundary(14));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1082,11 +1060,10 @@ namespace SIL.CoreImpl
 			ITsStrBldr bldr = TsStrBldrClass.Create();
 			bldr.Replace(0, 0, "12", StyleUtils.CharStyleTextProps("Chap Num", m_wsf.UserWs));
 			bldr.Replace(bldr.Length, bldr.Length, "Some text", StyleUtils.CharStyleTextProps(null, m_wsf.UserWs));
-			var tss = bldr.GetString();
-			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
-			Assert.AreEqual(0, tss.FindWordBoundary(0, cpe, "Chap Num"), "Failed to find position following chapter number when ich == 0");
+			ITsString tss = bldr.GetString();
+			Assert.AreEqual(0, tss.FindWordBoundary(0, "Chap Num"), "Failed to find position following chapter number when ich == 0");
 			for (var ich = 1; ich < 4; ich++)
-				Assert.AreEqual(2, tss.FindWordBoundary(ich, cpe, "Chap Num"), "Failed to find position following chapter number when ich == " + ich);
+				Assert.AreEqual(2, tss.FindWordBoundary(ich, "Chap Num"), "Failed to find position following chapter number when ich == " + ich);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1103,12 +1080,11 @@ namespace SIL.CoreImpl
 			var ichEndOfPrecedingText = bldr.Length;
 			bldr.Replace(bldr.Length, bldr.Length, "2", StyleUtils.CharStyleTextProps("Chap Num", m_wsf.UserWs));
 			bldr.Replace(bldr.Length, bldr.Length, "Following text", StyleUtils.CharStyleTextProps(null, m_wsf.UserWs));
-			var tss = bldr.GetString();
-			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
-			Assert.AreEqual(ichEndOfPrecedingText - 6, tss.FindWordBoundary(ichEndOfPrecedingText - 3, cpe, "Chap Num"));
-			Assert.AreEqual(ichEndOfPrecedingText, tss.FindWordBoundary(ichEndOfPrecedingText - 2, cpe, "Chap Num"));
-			Assert.AreEqual(ichEndOfPrecedingText, tss.FindWordBoundary(ichEndOfPrecedingText - 1, cpe, "Chap Num"));
-			Assert.AreEqual(ichEndOfPrecedingText, tss.FindWordBoundary(ichEndOfPrecedingText, cpe, "Chap Num"));
+			ITsString tss = bldr.GetString();
+			Assert.AreEqual(ichEndOfPrecedingText - 6, tss.FindWordBoundary(ichEndOfPrecedingText - 3, "Chap Num"));
+			Assert.AreEqual(ichEndOfPrecedingText, tss.FindWordBoundary(ichEndOfPrecedingText - 2, "Chap Num"));
+			Assert.AreEqual(ichEndOfPrecedingText, tss.FindWordBoundary(ichEndOfPrecedingText - 1, "Chap Num"));
+			Assert.AreEqual(ichEndOfPrecedingText, tss.FindWordBoundary(ichEndOfPrecedingText, "Chap Num"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1122,11 +1098,10 @@ namespace SIL.CoreImpl
 			ITsStrBldr bldr = TsStrBldrClass.Create();
 			bldr.Replace(0, 0, "a2b", StyleUtils.CharStyleTextProps("Chap Num", m_wsf.UserWs));
 			bldr.Replace(bldr.Length, bldr.Length, "Some text", StyleUtils.CharStyleTextProps(null, m_wsf.UserWs));
-			var tss = bldr.GetString();
-			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
-			Assert.AreEqual(0, tss.FindWordBoundary(0, cpe, "Chap Num"), "Failed to find position following invalid chapter number when ich == 0");
+			ITsString tss = bldr.GetString();
+			Assert.AreEqual(0, tss.FindWordBoundary(0, "Chap Num"), "Failed to find position following invalid chapter number when ich == 0");
 			for (var ich = 1; ich < 5; ich++)
-				Assert.AreEqual(3, tss.FindWordBoundary(ich, cpe, "Chap Num"), "Failed to find position following invalid chapter number when ich == " + ich);
+				Assert.AreEqual(3, tss.FindWordBoundary(ich, "Chap Num"), "Failed to find position following invalid chapter number when ich == " + ich);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1141,12 +1116,11 @@ namespace SIL.CoreImpl
 			bldr.Replace(0, 0, "2", StyleUtils.CharStyleTextProps("Chap Num", m_wsf.UserWs));
 			bldr.Replace(1, 1, "5", StyleUtils.CharStyleTextProps("Vers Num", m_wsf.UserWs));
 			bldr.Replace(bldr.Length, bldr.Length, "Some text", StyleUtils.CharStyleTextProps(null, m_wsf.UserWs));
-			var tss = bldr.GetString();
-			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
-			Assert.AreEqual(0, tss.FindWordBoundary(0, cpe, "Chap Num", "Vers Num"));
-			Assert.AreEqual(1, tss.FindWordBoundary(1, cpe, "Chap Num", "Vers Num"));
-			Assert.AreEqual(2, tss.FindWordBoundary(2, cpe, "Chap Num", "Vers Num"));
-			Assert.AreEqual(2, tss.FindWordBoundary(3, cpe, "Chap Num", "Vers Num"));
+			ITsString tss = bldr.GetString();
+			Assert.AreEqual(0, tss.FindWordBoundary(0, "Chap Num", "Vers Num"));
+			Assert.AreEqual(1, tss.FindWordBoundary(1, "Chap Num", "Vers Num"));
+			Assert.AreEqual(2, tss.FindWordBoundary(2, "Chap Num", "Vers Num"));
+			Assert.AreEqual(2, tss.FindWordBoundary(3, "Chap Num", "Vers Num"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1160,11 +1134,10 @@ namespace SIL.CoreImpl
 			ITsStrBldr bldr = TsStrBldrClass.Create();
 			bldr.Replace(0, 0, "51", StyleUtils.CharStyleTextProps("Vers Num", m_wsf.UserWs));
 			bldr.Replace(bldr.Length, bldr.Length, "Some text", StyleUtils.CharStyleTextProps(null, m_wsf.UserWs));
-			var tss = bldr.GetString();
-			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
-			Assert.AreEqual(0, tss.FindWordBoundary(0, cpe, "Vers Num"), "Failed to find position following verse number when ich == 0");
+			ITsString tss = bldr.GetString();
+			Assert.AreEqual(0, tss.FindWordBoundary(0, "Vers Num"), "Failed to find position following verse number when ich == 0");
 			for (var ich = 1; ich < 4; ich++)
-				Assert.AreEqual(2, tss.FindWordBoundary(ich, cpe, "Vers Num"), "Failed to find position following verse number when ich == " + ich);
+				Assert.AreEqual(2, tss.FindWordBoundary(ich, "Vers Num"), "Failed to find position following verse number when ich == " + ich);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1178,11 +1151,10 @@ namespace SIL.CoreImpl
 			ITsStrBldr bldr = TsStrBldrClass.Create();
 			bldr.Replace(0, 0, "a1b", StyleUtils.CharStyleTextProps("Vers Num", m_wsf.UserWs));
 			bldr.Replace(bldr.Length, bldr.Length, "Some text", StyleUtils.CharStyleTextProps(null, m_wsf.UserWs));
-			var tss = bldr.GetString();
-			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
-			Assert.AreEqual(0, tss.FindWordBoundary(0, cpe, "Vers Num"), "Failed to find position following invalid verse number when ich == 0");
+			ITsString tss = bldr.GetString();
+			Assert.AreEqual(0, tss.FindWordBoundary(0, "Vers Num"), "Failed to find position following invalid verse number when ich == 0");
 			for (var ich = 1; ich < 5; ich++)
-				Assert.AreEqual(3, tss.FindWordBoundary(ich, cpe, "Vers Num"), "Failed to find position following invalid verse number when ich == " + ich);
+				Assert.AreEqual(3, tss.FindWordBoundary(ich, "Vers Num"), "Failed to find position following invalid verse number when ich == " + ich);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1196,11 +1168,10 @@ namespace SIL.CoreImpl
 			ITsStrBldr bldr = TsStrBldrClass.Create();
 			bldr.Replace(0, 0, "5-8", StyleUtils.CharStyleTextProps("Vers Num", m_wsf.UserWs));
 			bldr.Replace(bldr.Length, bldr.Length, "Some text", StyleUtils.CharStyleTextProps(null, m_wsf.UserWs));
-			var tss = bldr.GetString();
-			var cpe = m_wsf.get_CharPropEngine(m_wsf.UserWs);
-			Assert.AreEqual(0, tss.FindWordBoundary(0, cpe, "Vers Num"), "Failed to find position following verse bridge when ich == 0");
+			ITsString tss = bldr.GetString();
+			Assert.AreEqual(0, tss.FindWordBoundary(0, "Vers Num"), "Failed to find position following verse bridge when ich == 0");
 			for (var ich = 1; ich < 5; ich++)
-				Assert.AreEqual(3, tss.FindWordBoundary(ich, cpe, "Vers Num"), "Failed to find position following verse bridge when ich == " + ich);
+				Assert.AreEqual(3, tss.FindWordBoundary(ich, "Vers Num"), "Failed to find position following verse bridge when ich == " + ich);
 		}
 		#endregion
 
@@ -1346,10 +1317,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_SingleLineSeparator()
 		{
-			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
-			cpe.SetupResult("get_GeneralCategory", LgGeneralCharCategory.kccZl, typeof(int));
-			Assert.AreEqual("\u2028", TsStringUtils.ValidateCharacterSequence("\u2028",
-				(ILgCharacterPropertyEngine)cpe.MockInstance));
+			Assert.AreEqual("\u2028", TsStringUtils.ValidateCharacterSequence("\u2028"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1360,10 +1328,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_SingleSpace()
 		{
-			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
-			cpe.SetupResult("get_GeneralCategory", LgGeneralCharCategory.kccZs, typeof(int));
-			Assert.AreEqual(" ", TsStringUtils.ValidateCharacterSequence(" ",
-				(ILgCharacterPropertyEngine)cpe.MockInstance));
+			Assert.AreEqual(" ", TsStringUtils.ValidateCharacterSequence(" "));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1374,10 +1339,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_SingleFormatCharacter()
 		{
-			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
-			cpe.SetupResult("get_GeneralCategory", LgGeneralCharCategory.kccCf, typeof(int));
-			Assert.AreEqual("\u200c", TsStringUtils.ValidateCharacterSequence("\u200c",
-				(ILgCharacterPropertyEngine)cpe.MockInstance));
+			Assert.AreEqual("\u200c", TsStringUtils.ValidateCharacterSequence("\u200c"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1388,15 +1350,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_SingleLetter()
 		{
-			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
-			cpe.SetupResult("get_GeneralCategory", LgGeneralCharCategory.kccLl, typeof(int));
-			cpe.SetupResult("get_IsLetter", true, typeof(int));
-			cpe.SetupResult("get_IsNumber", false, typeof(int));
-			cpe.SetupResult("get_IsPunctuation", false, typeof(int));
-			cpe.SetupResult("get_IsSymbol", false, typeof(int));
-			cpe.SetupResult("get_IsMark", false, typeof(int));
-			Assert.AreEqual("c", TsStringUtils.ValidateCharacterSequence("c",
-				(ILgCharacterPropertyEngine)cpe.MockInstance));
+			Assert.AreEqual("c", TsStringUtils.ValidateCharacterSequence("c"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1407,15 +1361,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_SingleNumber()
 		{
-			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
-			cpe.SetupResult("get_GeneralCategory", LgGeneralCharCategory.kccLl, typeof(int));
-			cpe.SetupResult("get_IsLetter", false, typeof(int));
-			cpe.SetupResult("get_IsNumber", true, typeof(int));
-			cpe.SetupResult("get_IsPunctuation", false, typeof(int));
-			cpe.SetupResult("get_IsSymbol", false, typeof(int));
-			cpe.SetupResult("get_IsMark", false, typeof(int));
-			Assert.AreEqual("2", TsStringUtils.ValidateCharacterSequence("2",
-				(ILgCharacterPropertyEngine)cpe.MockInstance));
+			Assert.AreEqual("2", TsStringUtils.ValidateCharacterSequence("2"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1426,15 +1372,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_SinglePUA()
 		{
-			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
-			cpe.SetupResult("get_GeneralCategory", LgGeneralCharCategory.kccCo, typeof(int));
-			cpe.SetupResult("get_IsLetter", false, typeof(int));
-			cpe.SetupResult("get_IsNumber", false, typeof(int));
-			cpe.SetupResult("get_IsPunctuation", false, typeof(int));
-			cpe.SetupResult("get_IsSymbol", false, typeof(int));
-			cpe.SetupResult("get_IsMark", false, typeof(int));
-			Assert.AreEqual("\uE000", TsStringUtils.ValidateCharacterSequence("\uE000",
-				(ILgCharacterPropertyEngine)cpe.MockInstance));
+			Assert.AreEqual("\uE000", TsStringUtils.ValidateCharacterSequence("\uE000"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1445,15 +1383,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_SingleUndefinedChar()
 		{
-			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
-			cpe.SetupResult("get_GeneralCategory", LgGeneralCharCategory.kccCn, typeof(int));
-			cpe.SetupResult("get_IsLetter", false, typeof(int));
-			cpe.SetupResult("get_IsNumber", false, typeof(int));
-			cpe.SetupResult("get_IsPunctuation", false, typeof(int));
-			cpe.SetupResult("get_IsSymbol", false, typeof(int));
-			cpe.SetupResult("get_IsMark", false, typeof(int));
-			Assert.AreEqual(string.Empty, TsStringUtils.ValidateCharacterSequence("\uE000",
-				(ILgCharacterPropertyEngine)cpe.MockInstance));
+			Assert.AreEqual(string.Empty, TsStringUtils.ValidateCharacterSequence("\u2065"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1464,15 +1394,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_SinglePunctuation()
 		{
-			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
-			cpe.SetupResult("get_GeneralCategory", LgGeneralCharCategory.kccPs, typeof(int));
-			cpe.SetupResult("get_IsLetter", false, typeof(int));
-			cpe.SetupResult("get_IsNumber", false, typeof(int));
-			cpe.SetupResult("get_IsPunctuation", true, typeof(int));
-			cpe.SetupResult("get_IsSymbol", false, typeof(int));
-			cpe.SetupResult("get_IsMark", false, typeof(int));
-			Assert.AreEqual("(", TsStringUtils.ValidateCharacterSequence("(",
-				(ILgCharacterPropertyEngine)cpe.MockInstance));
+			Assert.AreEqual("(", TsStringUtils.ValidateCharacterSequence("("));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1483,15 +1405,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_SingleSymbol()
 		{
-			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
-			cpe.SetupResult("get_GeneralCategory", LgGeneralCharCategory.kccSc, typeof(int));
-			cpe.SetupResult("get_IsLetter", false, typeof(int));
-			cpe.SetupResult("get_IsNumber", false, typeof(int));
-			cpe.SetupResult("get_IsPunctuation", false, typeof(int));
-			cpe.SetupResult("get_IsSymbol", true, typeof(int));
-			cpe.SetupResult("get_IsMark", false, typeof(int));
-			Assert.AreEqual("$", TsStringUtils.ValidateCharacterSequence("$",
-				(ILgCharacterPropertyEngine)cpe.MockInstance));
+			Assert.AreEqual("$", TsStringUtils.ValidateCharacterSequence("$"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1502,18 +1416,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_BaseCharacterPlusDiacritic()
 		{
-			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLl, (int)'n');
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccMn, 0x0301);
-			cpe.SetupResultForParams("get_IsLetter", true, (int)'n');
-			cpe.SetupResultForParams("get_IsLetter", false, 0x0301);
-			cpe.SetupResult("get_IsNumber", false, typeof(int));
-			cpe.SetupResult("get_IsPunctuation", false, typeof(int));
-			cpe.SetupResult("get_IsSymbol", false, typeof(int));
-			cpe.SetupResultForParams("get_IsMark", false, (int)'n');
-			cpe.SetupResultForParams("get_IsMark", true, 0x0301);
-			Assert.AreEqual("n\u0301", TsStringUtils.ValidateCharacterSequence("n\u0301",
-				(ILgCharacterPropertyEngine)cpe.MockInstance));
+			Assert.AreEqual("n\u0301", TsStringUtils.ValidateCharacterSequence("n\u0301"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1524,25 +1427,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_BaseCharacterPlusMultipleDiacritics()
 		{
-			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLl, 0x05E9);
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccMn, 0x05C1);
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccMn, 0x05B4);
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccMn, 0x0596);
-			cpe.SetupResultForParams("get_IsLetter", true, 0x05E9);
-			cpe.SetupResultForParams("get_IsLetter", false, 0x05C1);
-			cpe.SetupResultForParams("get_IsLetter", false, 0x05B4);
-			cpe.SetupResultForParams("get_IsLetter", false, 0x0596);
-			cpe.SetupResult("get_IsNumber", false, typeof(int));
-			cpe.SetupResult("get_IsPunctuation", false, typeof(int));
-			cpe.SetupResult("get_IsSymbol", false, typeof(int));
-			cpe.SetupResultForParams("get_IsMark", false, 0x05E9);
-			cpe.SetupResultForParams("get_IsMark", true, 0x05C1);
-			cpe.SetupResultForParams("get_IsMark", true, 0x05B4);
-			cpe.SetupResultForParams("get_IsMark", true, 0x0596);
 			Assert.AreEqual("\u05E9\u05C1\u05B4\u0596",
-				TsStringUtils.ValidateCharacterSequence("\u05E9\u05C1\u05B4\u0596",
-				(ILgCharacterPropertyEngine)cpe.MockInstance));
+				TsStringUtils.ValidateCharacterSequence("\u05E9\u05C1\u05B4\u0596"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1553,15 +1439,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_SingleDiacritic()
 		{
-			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
-			cpe.SetupResult("get_GeneralCategory", LgGeneralCharCategory.kccMn, typeof(int));
-			cpe.SetupResult("get_IsLetter", false, typeof(int));
-			cpe.SetupResult("get_IsNumber", false, typeof(int));
-			cpe.SetupResult("get_IsPunctuation", false, typeof(int));
-			cpe.SetupResult("get_IsSymbol", false, typeof(int));
-			cpe.SetupResult("get_IsMark", true, typeof(int));
-			Assert.AreEqual(string.Empty, TsStringUtils.ValidateCharacterSequence("\u0301",
-				(ILgCharacterPropertyEngine)cpe.MockInstance));
+			Assert.AreEqual(string.Empty, TsStringUtils.ValidateCharacterSequence("\u0301"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1572,17 +1450,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_MultipleLetters()
 		{
-			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLl, (int)'n');
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLl, (int)'o');
-			cpe.SetupResultForParams("get_IsLetter", true, (int)'n');
-			cpe.SetupResultForParams("get_IsLetter", true, (int)'o');
-			cpe.SetupResult("get_IsNumber", false, typeof(int));
-			cpe.SetupResult("get_IsPunctuation", false, typeof(int));
-			cpe.SetupResult("get_IsSymbol", false, typeof(int));
-			cpe.SetupResult("get_IsMark", false, typeof(int));
-			Assert.AreEqual("n", TsStringUtils.ValidateCharacterSequence("no",
-				(ILgCharacterPropertyEngine)cpe.MockInstance));
+			Assert.AreEqual("n", TsStringUtils.ValidateCharacterSequence("no"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1593,18 +1461,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_DiacriticBeforeLetter()
 		{
-			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLl, 0x0301);
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLl, (int)'o');
-			cpe.SetupResultForParams("get_IsLetter", false, 0x0301);
-			cpe.SetupResultForParams("get_IsLetter", true, (int)'o');
-			cpe.SetupResult("get_IsNumber", false, typeof(int));
-			cpe.SetupResult("get_IsPunctuation", false, typeof(int));
-			cpe.SetupResult("get_IsSymbol", false, typeof(int));
-			cpe.SetupResultForParams("get_IsMark", true, 0x0301);
-			cpe.SetupResultForParams("get_IsMark", false, (int)'o');
-			Assert.AreEqual("o", TsStringUtils.ValidateCharacterSequence("\u0301o",
-				(ILgCharacterPropertyEngine)cpe.MockInstance));
+			Assert.AreEqual("o", TsStringUtils.ValidateCharacterSequence("\u0301o"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1616,22 +1473,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_MultipleBaseCharsThatComposeIntoASingleBaseChar()
 		{
-			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLo, 0x1100);
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLo, 0x1161);
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLo, 0x11B7);
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLo, 0xAC10);
-			cpe.SetupResultForParams("get_IsLetter", true, 0x1100);
-			cpe.SetupResultForParams("get_IsLetter", true, 0x1161);
-			cpe.SetupResultForParams("get_IsLetter", true, 0x11B7);
-			cpe.SetupResultForParams("get_IsLetter", true, 0xAC10);
-			cpe.SetupResult("get_IsNumber", false, typeof(int));
-			cpe.SetupResult("get_IsPunctuation", false, typeof(int));
-			cpe.SetupResult("get_IsSymbol", true, typeof(int));
-			cpe.SetupResult("get_IsMark", false, typeof(int));
 			Assert.AreEqual("\uAC10",
-				TsStringUtils.ValidateCharacterSequence("\u1100\u1161\u11B7",
-				(ILgCharacterPropertyEngine)cpe.MockInstance));
+				TsStringUtils.ValidateCharacterSequence("\u1100\u1161\u11B7"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1643,23 +1486,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void IsValidChar_SingleBaseCharThatDecomposesIntoMultipleBaseChars()
 		{
-			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLo, 0x1100);
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLo, 0x1161);
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLo, 0x11B7);
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLo, 0xAC10);
-			cpe.SetupResultForParams("get_IsLetter", true, 0x1100);
-			cpe.SetupResultForParams("get_IsLetter", true, 0x1161);
-			cpe.SetupResultForParams("get_IsLetter", true, 0x11B7);
-			cpe.SetupResultForParams("get_IsLetter", true, 0xAC10);
-			cpe.SetupResult("get_IsNumber", false, typeof(int));
-			cpe.SetupResult("get_IsPunctuation", false, typeof(int));
-			cpe.SetupResult("get_IsSymbol", true, typeof(int));
-			cpe.SetupResult("get_IsMark", false, typeof(int));
-			cpe.SetupResultForParams("NormalizeD", "\u1100\u1161\u11B7", "\uAC10");
-			cpe.SetupResultForParams("NormalizeD", "\u1100\u1161\u11B7", "\u1100\u1161\u11B7");
-			Assert.IsTrue(ReflectionHelper.GetBoolResult(typeof(TsStringUtils), "IsValidChar",
-				"\uAC10", (ILgCharacterPropertyEngine)cpe.MockInstance));
+			Assert.That(TsStringUtils.IsValidChar("\uAC10"), Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1671,23 +1498,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void IsValidChar_MultipleBaseCharsThatComposeIntoASingleBaseChar()
 		{
-			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLo, 0x1100);
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLo, 0x1161);
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLo, 0x11B7);
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLo, 0xAC10);
-			cpe.SetupResultForParams("get_IsLetter", true, 0x1100);
-			cpe.SetupResultForParams("get_IsLetter", true, 0x1161);
-			cpe.SetupResultForParams("get_IsLetter", true, 0x11B7);
-			cpe.SetupResultForParams("get_IsLetter", true, 0xAC10);
-			cpe.SetupResult("get_IsNumber", false, typeof(int));
-			cpe.SetupResult("get_IsPunctuation", false, typeof(int));
-			cpe.SetupResult("get_IsSymbol", true, typeof(int));
-			cpe.SetupResult("get_IsMark", false, typeof(int));
-			cpe.SetupResultForParams("NormalizeD", "\u1100\u1161\u11B7", "\uAC10");
-			cpe.SetupResultForParams("NormalizeD", "\u1100\u1161\u11B7", "\u1100\u1161\u11B7");
-			Assert.IsTrue(ReflectionHelper.GetBoolResult(typeof(TsStringUtils), "IsValidChar",
-				"\u1100\u1161\u11B7", (ILgCharacterPropertyEngine)cpe.MockInstance));
+			Assert.That(TsStringUtils.IsValidChar("\u1100\u1161\u11B7"), Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1699,28 +1510,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_MultipleBaseCharsJoinedByZWJ()
 		{
-			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLl, 0x05E9);
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccMn, 0x05C1);
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccMn, 0x05B4);
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccMn, 0x0596);
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccCf, 0x200D);
-			cpe.SetupResultForParams("get_IsLetter", true, 0x05E9);
-			cpe.SetupResultForParams("get_IsLetter", false, 0x05C1);
-			cpe.SetupResultForParams("get_IsLetter", false, 0x05B4);
-			cpe.SetupResultForParams("get_IsLetter", false, 0x0596);
-			cpe.SetupResultForParams("get_IsLetter", false, 0x200D);
-			cpe.SetupResult("get_IsNumber", false, typeof(int));
-			cpe.SetupResult("get_IsPunctuation", false, typeof(int));
-			cpe.SetupResult("get_IsSymbol", true, typeof(int));
-			cpe.SetupResultForParams("get_IsMark", false, 0x05E9);
-			cpe.SetupResultForParams("get_IsMark", true, 0x05C1);
-			cpe.SetupResultForParams("get_IsMark", true, 0x05B4);
-			cpe.SetupResultForParams("get_IsMark", true, 0x0596);
-			cpe.SetupResultForParams("get_IsMark", false, 0x200D);
 			Assert.AreEqual("\u05E9\u05C1\u05B4\u200D\u0596",
-				TsStringUtils.ValidateCharacterSequence("\u05E9\u05C1\u05B4\u200D\u0596",
-				(ILgCharacterPropertyEngine)cpe.MockInstance));
+				TsStringUtils.ValidateCharacterSequence("\u05E9\u05C1\u05B4\u200D\u0596"));
 
 		}
 
@@ -1733,28 +1524,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_MultipleBaseCharsJoinedByZWNJ()
 		{
-			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLl, 0x05E9);
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccMn, 0x05C1);
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccMn, 0x05B4);
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccMn, 0x0596);
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccCf, 0x200C);
-			cpe.SetupResultForParams("get_IsLetter", true, 0x05E9);
-			cpe.SetupResultForParams("get_IsLetter", false, 0x05C1);
-			cpe.SetupResultForParams("get_IsLetter", false, 0x05B4);
-			cpe.SetupResultForParams("get_IsLetter", false, 0x0596);
-			cpe.SetupResultForParams("get_IsLetter", false, 0x200C);
-			cpe.SetupResult("get_IsNumber", false, typeof(int));
-			cpe.SetupResult("get_IsPunctuation", false, typeof(int));
-			cpe.SetupResult("get_IsSymbol", true, typeof(int));
-			cpe.SetupResultForParams("get_IsMark", false, 0x05E9);
-			cpe.SetupResultForParams("get_IsMark", true, 0x05C1);
-			cpe.SetupResultForParams("get_IsMark", true, 0x05B4);
-			cpe.SetupResultForParams("get_IsMark", true, 0x0596);
-			cpe.SetupResultForParams("get_IsMark", false, 0x200C);
 			Assert.AreEqual("\u05E9\u05C1\u05B4\u200C\u0596",
-				TsStringUtils.ValidateCharacterSequence("\u05E9\u05C1\u05B4\u200C\u0596",
-				(ILgCharacterPropertyEngine)cpe.MockInstance));
+				TsStringUtils.ValidateCharacterSequence("\u05E9\u05C1\u05B4\u200C\u0596"));
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -1765,15 +1536,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_AllowZwnj()
 		{
-			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccCf, 0x200C);
-			cpe.SetupResultForParams("get_IsLetter", false, 0x200C);
-			cpe.SetupResultForParams("get_IsNumber", false, 0x200C);
-			cpe.SetupResultForParams("get_IsPunctuation", false, 0x200C);
-			cpe.SetupResultForParams("get_IsSymbol", true, 0x200C);
-			cpe.SetupResultForParams("get_IsMark", false, 0x200C);
 			Assert.AreEqual("\u200C",
-				TsStringUtils.ValidateCharacterSequence("\u200C", (ILgCharacterPropertyEngine)cpe.MockInstance));
+				TsStringUtils.ValidateCharacterSequence("\u200C"));
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -1784,15 +1548,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ValidateCharacterSequence_AllowZwnjAndZwj()
 		{
-			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccCf, 0x200D);
-			cpe.SetupResultForParams("get_IsLetter", false, 0x200D);
-			cpe.SetupResultForParams("get_IsNumber", false, 0x200D);
-			cpe.SetupResultForParams("get_IsPunctuation", false, 0x200D);
-			cpe.SetupResultForParams("get_IsSymbol", true, 0x200D);
-			cpe.SetupResultForParams("get_IsMark", false, 0x200D);
 			Assert.AreEqual("\u200D",
-				TsStringUtils.ValidateCharacterSequence("\u200D", (ILgCharacterPropertyEngine)cpe.MockInstance));
+				TsStringUtils.ValidateCharacterSequence("\u200D"));
 		}
 		#endregion
 
@@ -1806,16 +1563,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ParseCharString_Simple()
 		{
-			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
-			cpe.SetupResult("get_GeneralCategory", LgGeneralCharCategory.kccLl, typeof(int));
-			cpe.SetupResult("get_IsLetter", true, typeof(int));
-			cpe.SetupResult("get_IsNumber", false, typeof(int));
-			cpe.SetupResult("get_IsPunctuation", false, typeof(int));
-			cpe.SetupResult("get_IsSymbol", false, typeof(int));
-			cpe.SetupResult("get_IsMark", false, typeof(int));
 			List<string> invalidChars;
-			var validChars = TsStringUtils.ParseCharString("a b c", " ",
-				(ILgCharacterPropertyEngine)cpe.MockInstance, out invalidChars);
+			List<string> validChars = TsStringUtils.ParseCharString("a b c", " ", out invalidChars);
 			Assert.AreEqual(3, validChars.Count);
 			Assert.AreEqual("a", validChars[0]);
 			Assert.AreEqual("b", validChars[1]);
@@ -1832,20 +1581,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void ParseCharString_LeadingSpace()
 		{
-			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLl, (int)'a');
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccLl, (int)'b');
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccZs, (int)' ');
-			cpe.SetupResultForParams("get_IsLetter", true, (int)'a');
-			cpe.SetupResultForParams("get_IsLetter", true, (int)'b');
-			cpe.SetupResultForParams("get_IsLetter", false, (int)' ');
-			cpe.SetupResult("get_IsNumber", false, typeof(int));
-			cpe.SetupResult("get_IsPunctuation", false, typeof(int));
-			cpe.SetupResult("get_IsSymbol", false, typeof(int));
-			cpe.SetupResult("get_IsMark", false, typeof(int));
 			List<string> invalidChars;
-			var validChars = TsStringUtils.ParseCharString("  a b", " ",
-				(ILgCharacterPropertyEngine)cpe.MockInstance, out invalidChars);
+			List<string> validChars = TsStringUtils.ParseCharString("  a b", " ", out invalidChars);
 			Assert.AreEqual(3, validChars.Count);
 			Assert.AreEqual(" ", validChars[0]);
 			Assert.AreEqual("a", validChars[1]);
@@ -1864,16 +1601,8 @@ namespace SIL.CoreImpl
 		//	ExpectedMessage = "The character \u0301 (U+0301) is not valid\r\nParameter name: chars")]
 		public void ParseCharString_BogusCharacter()
 		{
-			var cpe = new DynamicMock(typeof(ILgCharacterPropertyEngine));
-			cpe.SetupResultForParams("get_GeneralCategory", LgGeneralCharCategory.kccMn, 0x0301);
-			cpe.SetupResultForParams("get_IsLetter", false, 0x0301);
-			cpe.SetupResult("get_IsNumber", false, typeof(int));
-			cpe.SetupResult("get_IsPunctuation", false, typeof(int));
-			cpe.SetupResult("get_IsSymbol", false, typeof(int));
-			cpe.SetupResultForParams("get_IsMark", true, 0x0301);
 			List<string> invalidChars;
-			var validChars = TsStringUtils.ParseCharString("\u0301", " ",
-				(ILgCharacterPropertyEngine)cpe.MockInstance, out invalidChars);
+			List<string> validChars = TsStringUtils.ParseCharString("\u0301", " ", out invalidChars);
 			Assert.AreEqual(0, validChars.Count);
 			Assert.AreEqual(1, invalidChars.Count);
 			Assert.AreEqual("\u0301", invalidChars[0]);

@@ -8,12 +8,8 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using XCore;
 
 namespace SIL.FieldWorks.TE
 {
@@ -23,9 +19,9 @@ namespace SIL.FieldWorks.TE
 	public class SymbolChooserDlg : Form, IFWDisposable
 	{
 		private IHelpTopicProvider m_helpTopicProvider;
-		private System.Windows.Forms.Panel panel1;
-		private SIL.FieldWorks.Common.Controls.CharacterGrid charGrid;
-		private System.Windows.Forms.Label lblFontName;
+		private Panel panel1;
+		private Common.Controls.CharacterGrid charGrid;
+		private Label lblFontName;
 		private Button btnHelp;
 		private Button btnCancel;
 		private Button btnOK;
@@ -50,16 +46,12 @@ namespace SIL.FieldWorks.TE
 		/// the font used in the glyph grid.
 		/// </summary>
 		/// <param name="font">Font used in the glyph grid.</param>
-		/// <param name="cpe">An ILgCharacterPropertyEngine. Set this to null to use the
-		/// .Net methods for determining whether or not a codepoint should be added to
-		/// the grid.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		public SymbolChooserDlg(Font font, ILgCharacterPropertyEngine cpe, IHelpTopicProvider helpTopicProvider)
+		public SymbolChooserDlg(Font font, IHelpTopicProvider helpTopicProvider)
 			: this()
 		{
 			m_helpTopicProvider = helpTopicProvider;
-			charGrid.CharPropEngine = cpe;
 			charGrid.Font = font;
 			lblFontName.Text = font.Name;
 		}

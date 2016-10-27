@@ -615,7 +615,7 @@ namespace SIL.FieldWorks.IText
 					continue; // report?
 				var input = new ByteReader(path);
 				var converterStage1 = GetSfmConverter();
-				var stage1 = converterStage1.Convert(input, m_mappings, m_cache.WritingSystemFactory);
+				var stage1 = converterStage1.Convert(input, m_mappings, m_cache.ServiceLocator.WritingSystemManager);
 				// Skip actual import if SHIFT was held down.
 				if (secretShiftText.Visible == true)
 					continue;

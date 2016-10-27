@@ -1,4 +1,4 @@
-#line 1 "C:\\Repositories\\fwroot\\fw\\src\\Kernel\\FwKernelTlb.idl"
+#line 1 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 
 
 
@@ -14,7 +14,7 @@ import "oaidl.idl";
 import "ocidl.idl";
 import "objidl.idl";
 
-#line 1 "C:\\Repositories\\fwroot\\fw\\src\\Generic\\common.idh"
+#line 1 "C:\\develop\\fwrepo\\fw\\src\\Generic\\common.idh"
 
 
 
@@ -117,11 +117,11 @@ cpp_quote("// This is for code that uses a 64-bit integer for SilTime.")
 cpp_quote("typedef __int64 SilTime;")
 cpp_quote("#endif")
 cpp_quote("")
-#line 17 "C:\\Repositories\\fwroot\\fw\\src\\Kernel\\FwKernelTlb.idl"
+#line 17 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 
 cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76E0-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(",") cpp_quote("FwKernelLib") cpp_quote(");") [ uuid(F1EF76E0-BE04-11d3-8D9A-005004DEFEC4), version(1.0), helpstring("FieldWorks Kernel") ] library FwKernelLib
 {
-	#line 1 "c:\\repositories\\fwroot\\fw\\src\\kernel\\FwKernel.idh"
+	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
 
 
@@ -538,7 +538,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("CF0F1C0B-0E44-4C1E-9912-2048
 {
 	interface IActionHandler;
 };
-#line 418 "c:\\repositories\\fwroot\\fw\\src\\kernel\\FwKernel.idh"
+#line 418 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
 
 
@@ -1694,9 +1694,9 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("24636FD1-DB8D-4b2c-B4C0-44C2
 {
 	interface IDebugReport;
 };
-#line 1574 "c:\\repositories\\fwroot\\fw\\src\\kernel\\FwKernel.idh"
+#line 1574 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
-#line 1576 "c:\\repositories\\fwroot\\fw\\src\\kernel\\FwKernel.idh"
+#line 1576 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
 
 
@@ -1717,10 +1717,10 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IComDisposable") cp
 
 
 
-#line 1597 "c:\\repositories\\fwroot\\fw\\src\\kernel\\FwKernel.idh"
+#line 1597 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
-#line 21 "C:\\Repositories\\fwroot\\fw\\src\\Kernel\\FwKernelTlb.idl"
-	#line 1 "c:\\repositories\\fwroot\\fw\\src\\kernel\\TextServ.idh"
+#line 21 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
 
 
 
@@ -3182,7 +3182,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwStylesheet") cpp
 
 
 
-#line 1463 "c:\\repositories\\fwroot\\fw\\src\\kernel\\TextServ.idh"
+#line 1463 "c:\\develop\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
 };
 
 
@@ -3220,10 +3220,10 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 {
 	interface ITsPropsBldr;
 };
-#line 1501 "c:\\repositories\\fwroot\\fw\\src\\kernel\\TextServ.idh"
+#line 1501 "c:\\develop\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
 
-#line 22 "C:\\Repositories\\fwroot\\fw\\src\\Kernel\\FwKernelTlb.idl"
-	#line 1 "c:\\repositories\\fwroot\\fw\\src\\kernel\\Render.idh"
+#line 22 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Render.idh"
 
 
 
@@ -3712,7 +3712,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 	{
 		interface IVwGraphicsWin32;
 	};
-	#line 490 "c:\\repositories\\fwroot\\fw\\src\\kernel\\Render.idh"
+	#line 490 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Render.idh"
 
 
 	
@@ -4328,7 +4328,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 	{
 		interface IRenderEngine;
 	};
-	#line 1106 "c:\\repositories\\fwroot\\fw\\src\\kernel\\Render.idh"
+	#line 1106 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Render.idh"
 
 
 	
@@ -4453,10 +4453,10 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 
 
 
-#line 1231 "c:\\repositories\\fwroot\\fw\\src\\kernel\\Render.idh"
+#line 1231 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Render.idh"
 
-#line 23 "C:\\Repositories\\fwroot\\fw\\src\\Kernel\\FwKernelTlb.idl"
-	#line 1 "c:\\repositories\\fwroot\\fw\\src\\kernel\\Language.idh"
+#line 23 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Language.idh"
 
 
 
@@ -4506,81 +4506,6 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 	
 
 	
-	
-	typedef [v1_enum] enum LgGeneralCharCategory
-	{
-		kccLu, 
-		kccLl, 
-		kccLt, 
-		kccLm, 
-		kccLo, 
-
-		kccMn, 
-		kccMc, 
-		kccMe, 
-
-		kccNd, 
-		kccNl, 
-		kccNo, 
-
-		kccZs, 
-		kccZl, 
-		kccZp, 
-
-		kccCc, 
-		kccCf, 
-		kccCs, 
-		kccCo, 
-		kccCn, 
-
-		kccPc, 
-		kccPd, 
-		kccPs, 
-		kccPe, 
-		kccPi, 
-			   
-		kccPf, 
-			   
-		kccPo, 
-
-		kccSm, 
-		kccSc, 
-		kccSk, 
-		kccSo, 
-	} LgGeneralCharCategory;  
-
-	
-	typedef [v1_enum] enum LgBidiCategory
-	{
-		
-		kbicL,   
-		kbicLRE, 
-		kbicLRO, 
-		kbicR,   
-		kbicAL,  
-		kbicRLE, 
-		kbicRLO, 
-		kbicPDF, 
-
-		
-		kbicEN,  
-		kbicES,  
-		kbicET,  
-		kbicAN,  
-		kbicCS,  
-
-		
-		kbicNSM, 
-		kbicBN,  
-		kbicB,   
-		kbicS,   
-
-		
-		kbicWS,  
-		kbicON,  
-	} LgBidiCategory;  
-
-	
 	typedef [v1_enum] enum LgLBP
 	{
 				 
@@ -4614,38 +4539,6 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 		klbpXX,  
 		klbpZW   
 	} LgLBP;  
-
-	
-	typedef [v1_enum] enum LgDecompMapTag
-	{
-		kdtNoTag,
-		kdtFont,
-		kdtNoBreak,
-		kdtInitial,
-		kdtMedial,
-		kdtFinal,
-		kdtIsolated,
-		kdtCircle,
-		kdtSuper,
-		kdtSub,
-		kdtVertical,
-		kdtWide,
-		kdtNarrow,
-		kdtSmall,
-		kdtSquare,
-		kdtFraction,
-		kdtCompat
-	} LgDecompMapTag;	
-
-	
-	typedef [v1_enum] enum LgXMLTag
-	{
-		kxmlInvalid,
-		kxmlChardefs,
-		kxmlDef,
-		kxmlUdata,
-		kxmlLinebrk
-	} LgXMLTag;		
 
 	
 
@@ -4893,307 +4786,12 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 	{
 		
 		
-		[propget] HRESULT GeneralCategory(
-			[in] int ch,
-			[out, retval] LgGeneralCharCategory * pcc);
-
-		
-		
-		
-		[propget] HRESULT BidiCategory(
-			[in] int ch,
-			[out, retval] LgBidiCategory * pbic);
-
-		
-		
-		
-		[propget] HRESULT IsLetter(
-			[in] int ch,
-			[out, retval] ComBool *pfRet);
-		
-		
-		
 		
 		
 		
 		[propget] HRESULT IsWordForming(
 			[in] int ch,
 			[out, retval] ComBool *pfRet);
-		
-		[propget] HRESULT IsPunctuation(
-			[in] int ch,
-			[out, retval] ComBool *pfRet);
-		
-		[propget] HRESULT IsNumber(
-			[in] int ch,
-			[out, retval] ComBool *pfRet);
-		
-		[propget] HRESULT IsSeparator(
-			[in] int ch,
-			[out, retval] ComBool *pfRet);
-		
-		[propget] HRESULT IsSymbol(
-			[in] int ch,
-			[out, retval] ComBool *pfRet);
-		
-		[propget] HRESULT IsMark(
-			[in] int ch,
-			[out, retval] ComBool *pfRet);
-		
-		[propget] HRESULT IsOther(
-			[in] int ch,
-			[out, retval] ComBool *pfRet);
-
-
-		
-		[propget] HRESULT IsUpper(
-			[in] int ch,
-			[out, retval] ComBool *pfRet);
-		
-		
-		[propget] HRESULT IsLower(
-			[in] int ch,
-			[out, retval] ComBool *pfRet);
-		
-		
-		
-		
-		[propget] HRESULT IsTitle(
-			[in] int ch,
-			[out, retval] ComBool *pfRet);
-		
-		[propget] HRESULT IsModifier(
-			[in] int ch,
-			[out, retval] ComBool *pfRet);
-		
-		[propget] HRESULT IsOtherLetter(
-			[in] int ch,
-			[out, retval] ComBool *pfRet);
-
-		
-		
-		
-		[propget] HRESULT IsOpen(
-			[in] int ch,
-			[out, retval] ComBool *pfRet);
-		
-		
-		
-		[propget] HRESULT IsClose(  
-			[in] int ch,
-			[out, retval] ComBool *pfRet);
-		
-		
-		
-		[propget] HRESULT IsWordMedial(
-			[in] int ch,
-			[out, retval] ComBool *pfRet);
-
-		
-		[propget] HRESULT IsControl(
-			[in] int ch,
-			[out, retval] ComBool *pfRet);
-
-		
-		
-		
-		
-		
-		
-		
-		
-		[propget] HRESULT ToLowerCh(
-				  [in] int ch,
-				  [out, retval] int * pch);
-		
-		
-		
-		
-		
-		
-		
-		
-		[propget] HRESULT ToUpperCh(
-				  [in] int ch,
-				  [out, retval] int * pch);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		[propget] HRESULT ToTitleCh(
-				  [in] int ch,
-				  [out, retval] int * pch);
-
-		
-		
-		
-		
-		HRESULT ToLower(
-				  [in] BSTR bstr,
-				  [out, retval] BSTR * pbstr);
-		
-		
-		
-		
-		HRESULT ToUpper(
-				  [in] BSTR bstr,
-				  [out, retval] BSTR * pbstr);
-		
-		
-		
-		
-		
-		
-		
-		
-		HRESULT ToTitle(
-				  [in] BSTR bstr,
-				  [out, retval] BSTR * pbstr);
-
-		
-		
-		
-		
-		
-		
-		[restricted] HRESULT ToLowerRgch(
-				  [in, size_is(cchIn)] OLECHAR * prgchIn,
-				  [in] int cchIn,
-				  [out, size_is(cchOut)] OLECHAR * prgchOut,
-				  [in] int cchOut,
-				  [out] int * pcchRet);
-		
-		
-		
-		
-		
-		
-		[restricted] HRESULT ToUpperRgch(
-				  [in, size_is(cchIn)] OLECHAR * prgchIn,
-				  [in] int cchIn,
-				  [out, size_is(cchOut)] OLECHAR * prgchOut,
-				  [in] int cchOut,
-				  [out] int * pcchRet);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		[restricted] HRESULT ToTitleRgch(
-				  [in, size_is(cchIn)] OLECHAR * prgchIn,
-				  [in] int cchIn,
-				  [out, size_is(cchOut)] OLECHAR * prgchOut,
-				  [in] int cchOut,
-				  [out] int * pcchRet);
-
-		
-		
-		
-		
-		
-		
-		
-		[propget] HRESULT IsUserDefinedClass(
-			[in] int ch,
-			[in] int chClass,
-			[out, retval] ComBool * pfRet);
-
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		[propget] HRESULT SoundAlikeKey(
-			[in] BSTR bstrValue,
-			[out, retval] BSTR * pbstrKey);
-
-		
-		
-		
-		
-		
-		
-		[propget] HRESULT CharacterName(
-			[in] int ch,
-			[out, retval] BSTR * pbstrName);
-
-		
-		
-		
-		[propget] HRESULT Decomposition(
-			[in] int ch,
-			[out, retval] BSTR * pbstr);
-		
-		
-		
-		[restricted] HRESULT DecompositionRgch(
-			[in] int ch,
-			[in] int cchMax,
-			[out] OLECHAR * prgch,
-			[out] int * pcch,
-			[out] ComBool * pfHasDecomp);
-
-		
-		
-		
-		[propget] HRESULT FullDecomp(
-			[in] int ch,
-			[out, retval] BSTR * pbstrOut);
-		
-		
-		
-		[restricted] HRESULT FullDecompRgch(
-			[in] int ch,
-			[in] int cchMax,
-			[out] OLECHAR * prgch,
-			[out] int * pcch,
-			[out] ComBool * pfHasDecomp);
-
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		[propget] HRESULT NumericValue(
-			[in] int ch,
-			[out, retval] int * pn);
-
-		
-		
-		
-		[propget] HRESULT CombiningClass(
-			[in] int ch,
-			[out, retval] int * pn);
-
-		
-		
-		
-		
-		[propget] HRESULT Comment(
-			[in] int ch,
-			[out, retval] BSTR * pbstr);
 
 		
 		
@@ -5204,14 +4802,6 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 			[in, size_is(cchIn)] const OLECHAR * prgchIn,
 			[in] int cchIn,
 			[out, size_is(cchIn)] byte * prglbOut);
-
-		
-		
-		
-		[restricted] HRESULT GetLineBreakStatus(
-			[in, size_is(cb)] const byte * prglbpIn,
-			[in] int cb,
-			[out, size_is(cb)] byte * prglbsOut);
 
 		
 		
@@ -5237,61 +4827,6 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 			[in] int ichLim,
 			[out, size_is(ichLim - ichMin)] byte * prglbsOut,
 			[out] int * pichBreak);
-
-		
-		
-		
-		
-		HRESULT StripDiacritics(
-			  [in] BSTR bstr,
-			  [out, retval] BSTR * pbstr);
-		
-		
-		
-		
-		[restricted] HRESULT StripDiacriticsRgch(
-			[in, size_is(cchIn)] OLECHAR * prgchIn,
-			[in] int cchIn,
-			[out, size_is(cchMaxOut)] OLECHAR * prgchOut,
-			[in] int cchMaxOut,
-			[out] int * pcchOut);
-
-		
-		
-		
-		[restricted] HRESULT NormalizeKdRgch(
-			[in, size_is(cchIn)] OLECHAR * prgchIn,
-			[in] int cchIn,
-			[out, size_is(cchMaxOut)] OLECHAR * prgchOut,
-			[in] int cchMaxOut,
-			[out] int * pcchOut);
-
-		
-		
-		
-		HRESULT NormalizeD(
-			  [in] BSTR bstr,
-			  [out, retval] BSTR * pbstr);
-		
-		
-		
-		[restricted] HRESULT NormalizeDRgch(
-			[in, size_is(cchIn)] OLECHAR * prgchIn,
-			[in] int cchIn,
-			[out, size_is(cchMaxOut)] OLECHAR * prgchOut,
-			[in] int cchMaxOut,
-			[out] int * pcchOut);
-
-		
-		[propget] HRESULT Locale(
-			[out, retval] int * pnLocale);
-
-		
-		
-		
-		
-		[propput] HRESULT Locale(
-			[in] int nLocale);
 
 		
 		
@@ -5639,7 +5174,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgIcuResourceBundl
 	{
 		interface ILgIcuLocaleEnumerator;
 	};
-#line 1184 "c:\\repositories\\fwroot\\fw\\src\\kernel\\Language.idh"
+#line 719 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Language.idh"
 
-#line 24 "C:\\Repositories\\fwroot\\fw\\src\\Kernel\\FwKernelTlb.idl"
+#line 24 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 };

@@ -46,8 +46,6 @@ namespace SIL.FieldWorks.TE
 		private System.Windows.Forms.RadioButton optSymbol;
 		private System.Windows.Forms.RadioButton optAlpha;
 		private System.Windows.Forms.CheckBox chkShowRef;
-		// This must be disposed of properly as a COM object.
-		private ILgCharacterPropertyEngine m_cpe = null;
 		private bool m_fRestartSequence;
 		private CheckBox chkShowCustomSymbol;
 
@@ -93,7 +91,6 @@ namespace SIL.FieldWorks.TE
 			// Must not be run more than once.
 			if (IsDisposed)
 			{
-				Debug.Assert(m_cpe == null);
 				return;
 			}
 
@@ -104,7 +101,6 @@ namespace SIL.FieldWorks.TE
 					components.Dispose();
 				}
 			}
-			m_cpe = null;
 			base.Dispose( disposing );
 		}
 
@@ -419,22 +415,6 @@ namespace SIL.FieldWorks.TE
 				return FootnoteMarkerTypes.SymbolicFootnoteMarker;
 			}
 		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Get the Unicode character properties engine.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Browsable(false)]
-		private ILgCharacterPropertyEngine UnicodeCharProps
-		{
-			get
-			{
-				if (m_cpe == null)
-					m_cpe = m_cache.ServiceLocator.UnicodeCharProps;
-				return m_cpe;
-			}
-		}
 		#endregion
 
 		#region Event Handler Methods
@@ -514,7 +494,7 @@ namespace SIL.FieldWorks.TE
 		private void btnChooseSymbol_Click(object sender, System.EventArgs e)
 		{
 			using (Font fnt = new Font(txtMarker.Font.Name, 20))
-			using (SymbolChooserDlg dlg = new SymbolChooserDlg(fnt, UnicodeCharProps, m_helpTopicProvider))
+			using (SymbolChooserDlg dlg = new SymbolChooserDlg(fnt, m_helpTopicProvider))
 			{
 				// Make the initial character in the symbol dialog the last character in the
 				// marker string.
@@ -573,9 +553,9 @@ namespace SIL.FieldWorks.TE
 		{
 			LogicalFont logfont = new LogicalFont(txtMarker.Font);
 			bool fSymbolFont = (logfont.lfCharSet == (byte)TextMetricsCharacterSet.Symbol);
-			if (UnicodeCharProps.get_IsSeparator(e.KeyChar) || (!fSymbolFont &&
-				(UnicodeCharProps.get_IsLetter(e.KeyChar) ||
-				UnicodeCharProps.get_IsNumber(e.KeyChar))))
+			if (Icu.IsSeparator(e.KeyChar) || (!fSymbolFont &&
+				(Icu.IsLetter(e.KeyChar) ||
+				Icu.IsNumeric(e.KeyChar))))
 			{
 				e.Handled = true;
 				MiscUtils.ErrorBeep();

@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -133,7 +132,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void AddSingleCharacter_InvalidManualEntry_BogusChar()
 		{
-			m_dlg.ManualCharEntryTextBox.Text = "\u5678"; // see DummyCharPropEngine.get_GeneralCategory
+			m_dlg.ManualCharEntryTextBox.Text = "\u2065";
 
 			Assert.AreEqual(String.Empty, m_dlg.ManualCharEntryTextBox.Text,
 				"The manual entry text box should be cleared.");
@@ -245,7 +244,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public DummyValidCharactersDlg()
 		{
-			ReflectionHelper.SetField(this, "m_chrPropEng", new DummyCharPropEngine());
 			MessageBoxText = new List<string>();
 		}
 

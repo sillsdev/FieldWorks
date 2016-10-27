@@ -1256,7 +1256,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			GetBaselineTexts();
 			m_wordFinder = new ParagraphAnalysisFinder(m_baseline,
-				m_para.Services.WritingSystemFactory);
+				m_para.Services.WritingSystemManager);
 
 			AnalyzeNewText();
 

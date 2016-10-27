@@ -13,14 +13,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Globalization;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using Icu;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
@@ -626,7 +624,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		#region Data members
 		private readonly CoreWritingSystemDefinition m_ws;
-		private ILgCharacterPropertyEngine m_chrPropEng;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private readonly IApp m_app;
 		private Font m_fntForSpecialChar;
@@ -725,8 +722,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (cache != null)
 				m_wsManager = cache.ServiceLocator.WritingSystemManager;
 
-			m_chrPropEng = LgIcuCharPropEngineClass.Create();
-
 			m_lblWsName.Text = string.Format(m_lblWsName.Text, wsName);
 
 			// TE-6839: Temporarily remove Unicode tab (not yet implemented).
@@ -798,11 +793,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_validCharsGridMngr.Dispose();
 				if (m_chkBoxColHdrHandler != null)
 					m_chkBoxColHdrHandler.Dispose();
-				if (m_chrPropEng != null && Marshal.IsComObject(m_chrPropEng))
-				{
-					Marshal.ReleaseComObject(m_chrPropEng);
-					m_chrPropEng = null;
-				}
 				if (m_openFileDialog != null)
 					m_openFileDialog.Dispose();
 				if (components != null)
@@ -1060,7 +1050,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				if (txt == txtManualCharEntry)
 				{
-					chr = m_chrPropEng.NormalizeD(txtManualCharEntry.Text);
+					chr = Common.FwKernelInterfaces.Icu.Normalize(txtManualCharEntry.Text, Common.FwKernelInterfaces.Icu.UNormalizationMode.UNORM_NFD);
 					fClearText = true;
 				}
 				else
@@ -1070,7 +1060,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					if (int.TryParse(txt.Text, NumberStyles.HexNumber, null, out codepoint))
 					{
 						chr = ((char) codepoint).ToString(CultureInfo.InvariantCulture);
-						if (m_chrPropEng.get_IsMark(chr[0]))
+						if (Common.FwKernelInterfaces.Icu.IsMark(chr[0]))
 						{
 							ShowMessageBox(FwCoreDlgs.kstidLoneDiacriticNotValid);
 							return;
@@ -1128,7 +1118,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					try
 					{
 						if (!string.IsNullOrEmpty(chr))
-						chr = m_chrPropEng.NormalizeD(chr);
+						chr = Common.FwKernelInterfaces.Icu.Normalize(chr, Common.FwKernelInterfaces.Icu.UNormalizationMode.UNORM_NFD);
 					}
 					catch
 					{
@@ -1248,14 +1238,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			if (txtManualCharEntry.Text.Length > 0)
 			{
-				string origCharsKd = m_chrPropEng.NormalizeD(txtManualCharEntry.Text);
+				string origCharsKd = Common.FwKernelInterfaces.Icu.Normalize(txtManualCharEntry.Text, Common.FwKernelInterfaces.Icu.UNormalizationMode.UNORM_NFD);
 				int savSelStart = txtManualCharEntry.SelectionStart;
-				string newChars = TsStringUtils.ValidateCharacterSequence(origCharsKd, m_chrPropEng);
+				string newChars = TsStringUtils.ValidateCharacterSequence(origCharsKd);
 
 				if (newChars.Length == 0)
 				{
 					string s = origCharsKd.Trim();
-					if (s.Length > 0 && m_chrPropEng.get_IsMark(s[0]))
+					if (s.Length > 0 && Common.FwKernelInterfaces.Icu.IsMark(s[0]))
 						ShowMessageBox(FwCoreDlgs.kstidLoneDiacriticNotValid);
 					else
 						IssueBeep();
@@ -1304,10 +1294,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void VerifyCharInRange(FwTextBox textbox, Label lbl)
 		{
-			string txt = textbox.Text.Length >= 1 ? m_chrPropEng.NormalizeD(textbox.Text) : String.Empty;
+			string txt = textbox.Text.Length >= 1 ? Common.FwKernelInterfaces.Icu.Normalize(textbox.Text, Common.FwKernelInterfaces.Icu.UNormalizationMode.UNORM_NFD) : String.Empty;
 			int chrCode = (txt.Length >= 1 ? txt[0] : 0);
 
-			if (txt.Length > 1 || (chrCode > 0 && m_chrPropEng.get_IsMark(chrCode)))
+			if (txt.Length > 1 || (chrCode > 0 && Common.FwKernelInterfaces.Icu.IsMark(chrCode)))
 			{
 				IssueBeep();
 				lbl.ForeColor = Color.Red;
@@ -1785,9 +1775,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					string chr;
 					if (!normalizedChars.TryGetValue(txtTokSub.Text, out chr))
 					{
-						chr = m_chrPropEng.NormalizeD(txtTokSub.Text);
+						chr = Common.FwKernelInterfaces.Icu.Normalize(txtTokSub.Text, Common.FwKernelInterfaces.Icu.UNormalizationMode.UNORM_NFD);
 						if (chr == "\n" || chr == "\r" || !TsStringUtils.IsCharacterDefined(chr)
-							|| !TsStringUtils.IsValidChar(chr, m_chrPropEng))
+							|| !TsStringUtils.IsValidChar(chr))
 						{
 							chr = string.Empty;
 						}

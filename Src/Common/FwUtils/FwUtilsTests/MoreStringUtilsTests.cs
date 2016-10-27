@@ -5,14 +5,12 @@
 // File: MoreStringUtilsTests.cs
 // Responsibility: TE Team
 
-using System;
 using System.Collections.Generic;
 
 using NUnit.Framework;
 
 using SIL.CoreImpl;
 using SIL.FieldWorks.Test.TestUtils;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -34,10 +32,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void ParseCharString_BogusDigraph()
 		{
-			DummyCharPropEngine cpe = new DummyCharPropEngine();
 			List<string> invalidChars;
-			List<string> validChars = TsStringUtils.ParseCharString("ch a b c", " ", cpe,
-				out invalidChars);
+			List<string> validChars = TsStringUtils.ParseCharString("ch a b c", " ", out invalidChars);
 			Assert.AreEqual(3, validChars.Count);
 			Assert.AreEqual("a", validChars[0]);
 			Assert.AreEqual("b", validChars[1]);
@@ -56,8 +52,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void ParseCharString_IgnoreDigraph()
 		{
-			DummyCharPropEngine cpe = new DummyCharPropEngine();
-			List<string> validChars = TsStringUtils.ParseCharString("ch a c", " ", cpe);
+			List<string> validChars = TsStringUtils.ParseCharString("ch a c", " ");
 			Assert.AreEqual(2, validChars.Count);
 			Assert.AreEqual("a", validChars[0]);
 			Assert.AreEqual("c", validChars[1]);

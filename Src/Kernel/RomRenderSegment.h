@@ -169,10 +169,6 @@ protected:
 	int m_nDirDepth;
 	bool m_fReversed;	// for upstream white-space at the end of the line
 
-	// Added from UniscribeSegment.h
-	// Character property engine used by IsValidInsertionPoint() and ArrowKeyPosition().
-	ILgCharacterPropertyEnginePtr m_qcpe;
-
 	// Static methods
 
 	// Constructors/destructors/etc.

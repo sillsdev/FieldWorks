@@ -810,7 +810,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (possiblePhrase == null || possiblePhrase.Length == 0 || m_firstWordToPhrases == null)
 				return;
 			string firstWordLowered;
-			var firstWord = ParagraphParser.FirstWord(possiblePhrase, m_cache.WritingSystemFactory, out firstWordLowered);
+			var firstWord = ParagraphParser.FirstWord(possiblePhrase, m_cache.ServiceLocator.WritingSystemManager, out firstWordLowered);
 			if (firstWordLowered == null || firstWordLowered.Length == possiblePhrase.Length)
 				return;
 			HashSet<ITsString> phrases;
@@ -829,7 +829,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (possiblePhrase == null || possiblePhrase.Length == 0 || m_firstWordToPhrases == null)
 				return;
 			string firstWordLowered;
-			var firstWord = ParagraphParser.FirstWord(possiblePhrase, m_cache.WritingSystemFactory, out firstWordLowered);
+			var firstWord = ParagraphParser.FirstWord(possiblePhrase, m_cache.ServiceLocator.WritingSystemManager, out firstWordLowered);
 			if (firstWordLowered.Length == possiblePhrase.Length)
 				return;
 			HashSet<ITsString> phrases;
@@ -1540,15 +1540,14 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (tssWf == null || tssWf.Length == 0)
 				return null;
 
-			var wsVern = TsStringUtils.GetWsAtOffset(tssWf, 0);
-			var icuEngine = cache.LanguageWritingSystemFactoryAccessor.get_CharPropEngine(wsVern);
-			var wf = icuEngine.ToLower(tssWf.Text);
+			CoreWritingSystemDefinition wsVern = cache.ServiceLocator.WritingSystemManager.Get(tssWf.get_WritingSystemAt(0));
+			string wf = Icu.ToLower(tssWf.Text, wsVern.IcuLocale);
 			ILexEntry matchingEntry = null;
 
 			// Check for Lexeme form.
 			matchingEntry = (
 				from e in cache.LanguageProject.LexDbOA.Entries
-				where e.LexemeFormOA != null && GetLowercaseStringFromMultiUnicodeSafely(icuEngine, e.LexemeFormOA.Form, wsVern) == wf
+				where e.LexemeFormOA != null && GetLowercaseStringFromMultiUnicodeSafely(e.LexemeFormOA.Form, wsVern) == wf
 				orderby e.HomographNumber
 				select e
 				).FirstOrDefault();
@@ -1557,7 +1556,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (matchingEntry == null)
 				matchingEntry = (
 					from e in cache.LanguageProject.LexDbOA.Entries
-					where GetLowercaseStringFromMultiUnicodeSafely(icuEngine, e.CitationForm, wsVern) == wf
+					where GetLowercaseStringFromMultiUnicodeSafely(e.CitationForm, wsVern) == wf
 					orderby e.HomographNumber
 					select e
 					).FirstOrDefault();
@@ -1568,7 +1567,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					from e in cache.LanguageProject.LexDbOA.Entries
 					where (
 						from af in e.AlternateFormsOS
-						where GetLowercaseStringFromMultiUnicodeSafely(icuEngine, af.Form, wsVern) == wf
+						where GetLowercaseStringFromMultiUnicodeSafely(af.Form, wsVern) == wf
 						select af
 						).FirstOrDefault() != null
 					orderby e.HomographNumber
@@ -1599,16 +1598,16 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			return matchingEntry;
 		}
 
-		private string GetLowercaseStringFromMultiUnicodeSafely(ILgCharacterPropertyEngine icuEngine, IMultiUnicode form, int ws)
+		private string GetLowercaseStringFromMultiUnicodeSafely(IMultiUnicode form, CoreWritingSystemDefinition ws)
 		{
 			if (form == null)
 				return string.Empty;
 
-			var formTsstring = form.get_String(ws);
+			ITsString formTsstring = form.get_String(ws.Handle);
 			if (formTsstring == null || formTsstring.Length == 0)
 				return string.Empty;
 
-			return icuEngine.ToLower(formTsstring.Text);
+			return Icu.ToLower(formTsstring.Text, ws.IcuLocale);
 		}
 	}
 	#endregion

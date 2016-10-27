@@ -114,8 +114,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		protected VwBaseVc m_basicViewVc;
 		/// <summary></summary>
 		protected SelectionHelper m_SelectionHelper;
-		/// <summary></summary>
-		private ILgCharacterPropertyEngine m_vernLgCharPropEngine;
 
 		///// <summary>HVO of dummy root object</summary>
 		//public const int kHvoRoot = 1001;
@@ -178,7 +176,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			m_basicViewVc = null;
 			m_SelectionHelper = null;
-			m_vernLgCharPropEngine = null;
 		}
 
 		#region Component Designer generated code
@@ -791,27 +788,6 @@ namespace SIL.FieldWorks.Common.RootSites
 				}
 
 				return nSelWidth;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public ILgCharacterPropertyEngine CharPropEngine
-		{
-			get
-			{
-				CheckDisposed();
-
-				if (m_vernLgCharPropEngine == null)
-				{
-					m_vernLgCharPropEngine =
-						m_fdoCache.WritingSystemFactory.get_CharPropEngine(
-						m_fdoCache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
-
-				}
-				return m_vernLgCharPropEngine;
 			}
 		}
 

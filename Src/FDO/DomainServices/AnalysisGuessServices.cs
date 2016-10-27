@@ -650,9 +650,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (occurrence.Analysis is IWfiWordform && occurrence.Index == 0)
 			{
 				ITsString tssWfBaseline = occurrence.BaselineText;
-				var tracker = new CpeTracker(Cache.WritingSystemFactory, tssWfBaseline);
-				ILgCharacterPropertyEngine cpe = tracker.CharPropEngine(0);
-				string sLower = cpe.ToLower(tssWfBaseline.Text);
+				CoreWritingSystemDefinition ws = Cache.ServiceLocator.WritingSystemManager.Get(tssWfBaseline.get_WritingSystemAt(0));
+				string sLower = Icu.ToLower(tssWfBaseline.Text, ws.IcuLocale);
 				// don't bother looking up the lowercased wordform if the instanceOf is already in lowercase form.
 				if (sLower != tssWfBaseline.Text)
 				{

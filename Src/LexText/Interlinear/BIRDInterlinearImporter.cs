@@ -285,7 +285,7 @@ namespace SIL.FieldWorks.IText
 				offset += phraseText.Length;
 				var bldr = newTextPara.Contents.GetBldr();
 				var oldText = (bldr.Text ?? "").Trim();
-				if (oldText.Length > 0 && !TsStringUtils.IsEndOfSentenceChar(oldText[oldText.Length - 1], LgGeneralCharCategory.kccPo))
+				if (oldText.Length > 0 && !TsStringUtils.IsEndOfSentenceChar(oldText[oldText.Length - 1], Icu.UCharCategory.U_OTHER_PUNCTUATION))
 				{
 					// 'segment' does not end with recognizable EOS character. Add our special one.
 					bldr.Replace(bldr.Length, bldr.Length, "\x00A7", null);

@@ -4585,6 +4585,10 @@ namespace StrUtil
 
 	void FixForSqlQuotedString(StrUni & stu);
 
+	bool IsSeparator(int ch);
+	bool IsNumber(int ch);
+	bool IsMark(int ch);
+
 }; // end namespace StrUtil
 
 #endif //!UTILSTRING_H

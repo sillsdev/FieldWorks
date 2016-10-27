@@ -5450,3 +5450,21 @@ void StrUtil::FixForSqlQuotedString(StrUni & stu)
 		ich = stu.FindCh('\'', ich + 2);
 	}
 }
+
+bool StrUtil::IsSeparator(int ch)
+{
+	int cc = u_charType(ch);
+	return cc >= U_SPACE_SEPARATOR && cc <= U_PARAGRAPH_SEPARATOR;
+}
+
+bool StrUtil::IsNumber(int ch)
+{
+	int cc = u_charType(ch);
+	return cc >= U_DECIMAL_DIGIT_NUMBER && cc <= U_OTHER_NUMBER;
+}
+
+bool StrUtil::IsMark(int ch)
+{
+	int cc = u_charType(ch);
+	return cc >= U_NON_SPACING_MARK && cc <= U_COMBINING_SPACING_MARK;
+}

@@ -3507,8 +3507,7 @@ namespace SIL.FieldWorks.TE
 			{
 				for (int j = 0; j < stringsRev.Count; j++)
 				{
-					ParagraphCorrelation pc = new ParagraphCorrelation(stringsCurr[i], stringsRev[j],
-						Cache.ServiceLocator.UnicodeCharProps);
+					ParagraphCorrelation pc = new ParagraphCorrelation(stringsCurr[i], stringsRev[j]);
 					factors[i,j] = pc.CorrelationFactor;
 				}
 			}

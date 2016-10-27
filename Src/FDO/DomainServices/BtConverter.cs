@@ -19,8 +19,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private IList<TsStringSegment> m_BtSegs; // How the BT would break into segments if we did that.
 		private readonly Set<int> m_labelSegIndexes = new Set<int>(); // indexes into m_segments that are (verse/chapter) labels.
 		private readonly IStTxtPara m_para;
-		private readonly FdoCache m_cache;
-		private readonly ILgCharacterPropertyEngine m_cpe;
 		private readonly IScripture m_scr;
 		private readonly int m_wsBt;
 
@@ -34,8 +32,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private BtConverter(IStTxtPara para, int wsBt)
 		{
 			m_para = para;
-			m_cache = para.Cache;
-			m_cpe = m_cache.ServiceLocator.UnicodeCharProps;
 			m_scr = para.Cache.LangProject.TranslatedScriptureOA;
 			m_wsBt = wsBt;
 		}
@@ -203,8 +199,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		bool IsWhite(char c)
 		{
-			LgGeneralCharCategory cc = m_cpe.get_GeneralCategory(c);
-			return cc == LgGeneralCharCategory.kccZs;
+			return Icu.GetCharType(c) == Icu.UCharCategory.U_SPACE_SEPARATOR;
 		}
 
 		// Get the segments of the paragraph, making sure they are real and have at least empty (but real)

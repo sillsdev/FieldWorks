@@ -78,6 +78,7 @@
     <ClCompile Include="GraphiteSegment.cpp" />
     <ClCompile Include="LgIcuCharPropEngine.cpp" />
     <ClCompile Include="LgIcuWrappers.cpp" />
+    <ClCompile Include="LgUnicodeCollater.cpp" />
     <ClCompile Include="LocaleIndex.cpp" />
     <ClCompile Include="RomRenderEngine.cpp" />
     <ClCompile Include="RomRenderSegment.cpp" />

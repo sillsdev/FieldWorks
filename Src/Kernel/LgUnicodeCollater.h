@@ -172,6 +172,7 @@ protected:
 	// Other protected methods
 	virtual int FindColel(OLECHAR ch);
 	bool PackWeights(OLECHAR *&pchKey, int &cchOut, int cchMaxOut, int nWeight, bool &fEven);
+	void FullDecompRgch(int ch, int cchMax1, OLECHAR * prgch, int * pcch);
 
 };
 #endif  //LGUNICODECOLLATER_INCLUDED

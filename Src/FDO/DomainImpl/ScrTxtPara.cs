@@ -994,7 +994,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				//If previous character is neither white space nor a chapter number...
 				ITsString tss = (wsAlt == 0) ? Contents : GetOrCreateBT().Translation.get_String(wsAlt);
 				ITsTextProps ttp = tss.get_PropertiesAt(ichIns - 1);
-				if (!m_cache.ServiceLocator.UnicodeCharProps.get_IsSeparator(tss.Text[ichIns - 1]) &&
+				if (!Icu.IsSeparator(tss.Text[ichIns - 1]) &&
 					ttp.Style() != ScrStyleNames.ChapterNumber)
 				{
 					//add a space.

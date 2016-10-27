@@ -306,7 +306,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				ILgCharacterPropertyEngine cpe = TsStringUtils.GetCharPropEngineAtOffset(tss, wsf, ich);
 				char ch = text[ich];
-				if (!cpe.get_IsWordForming(ch) && !cpe.get_IsNumber(ch) && ch != 0xfffc)
+				if (!cpe.get_IsWordForming(ch) && !Icu.IsNumeric(ch) && ch != 0xfffc)
 					break;
 			}
 			return ich;

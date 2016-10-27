@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public override bool IsLower(char ch)
 		{
-			return m_charPropEngine.get_IsLower(ch);
+			return Icu.GetCharType(ch) == Icu.UCharCategory.U_LOWERCASE_LETTER;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public override bool IsUpper(char ch)
 		{
-			return m_charPropEngine.get_IsUpper(ch);
+			return Icu.GetCharType(ch) == Icu.UCharCategory.U_UPPERCASE_LETTER;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -88,8 +88,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public override bool IsDiacritic(char cc)
 		{
-			LgGeneralCharCategory cat = m_charPropEngine.get_GeneralCategory(cc);
-			return (cat == LgGeneralCharCategory.kccMc || cat == LgGeneralCharCategory.kccMn);
+			return Icu.IsDiacritic(cc);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -103,7 +102,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public override bool IsPunctuation(char cc)
 		{
-			return m_charPropEngine.get_IsPunctuation(cc);
+			return Icu.IsPunct(cc);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -117,7 +116,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public override bool IsTitle(char ch)
 		{
-			return m_charPropEngine.get_IsTitle(ch);
+			return Icu.GetCharType(ch) == Icu.UCharCategory.U_TITLECASE_LETTER;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -148,7 +147,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			// Be careful to make sure that zwnj and zwj are included here for
 			// indic scripts since they should not break words.
-			return m_charPropEngine.get_IsWordMedial(cc);
+			return Icu.GetCharType(cc) == Icu.UCharCategory.U_CONNECTOR_PUNCTUATION;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -160,8 +159,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public override List<WordAndPunct> WordAndPuncts(string text)
 		{
-			char cc;
-			int punctOffset;
 			List<WordAndPunct> waps = new List<WordAndPunct>();
 
 			for (int i = 0; i < text.Length; )
@@ -169,7 +166,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				WordAndPunct wap = new WordAndPunct();
 
 				// Ignore any initial separator characters
-				while (i < text.Length && m_charPropEngine.get_IsSeparator(text[i]))
+				while (i < text.Length && Icu.IsSeparator(text[i]))
 					i++;
 
 				if (i == text.Length)
@@ -178,6 +175,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				wap.Offset = i;
 				bool isFirstCharacterInWord = true;
 
+				char cc;
 				while (i < text.Length)
 				{
 					cc = text[i];
@@ -198,7 +196,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						}
 						break;
 					}
-					else if (m_charPropEngine.get_IsNumber(cc))
+					if (Icu.IsNumeric(cc))
 					{
 						// allow digits in words
 					}
@@ -211,12 +209,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 				wap.Word = text.Substring(wap.Offset, i - wap.Offset);
 
-				punctOffset = i;
+				int punctOffset = i;
 
 				while (i < text.Length)
 				{
 					cc = text[i];
-					if (IsWordFormingCharacter(cc) || m_charPropEngine.get_IsNumber(cc))
+					if (IsWordFormingCharacter(cc) || Icu.IsNumeric(cc))
 						break;
 					i = i + 1;
 				}

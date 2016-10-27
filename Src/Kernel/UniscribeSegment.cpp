@@ -1009,18 +1009,13 @@ STDMETHODIMP UniscribeSegment::IsValidInsertionPoint(int ichBase, IVwGraphics * 
 		}
 		else
 		{
-			// Make sure we have a LgCharPropEngine that we can use
-			if (!m_qcpe)
-				CheckHr(LgIcuCharPropEngine::GetUnicodeCharProps(&m_qcpe));
-
 			// Handle (diacritic) marks properly.
 			UChar32 uch32;
-			LgGeneralCharCategory gcc;
 			bool fSurrogate = FromSurrogate(rgch[0], rgch[1], (uint *)&uch32);
 			if (!fSurrogate)
 				uch32 = (unsigned)rgch[0];
-			CheckHr(m_qcpe->get_GeneralCategory(uch32, &gcc));
-			if (gcc >= kccMn && gcc <= kccMe)
+			int gcc = u_charType(uch32);
+			if (gcc >= U_NON_SPACING_MARK && gcc <= U_COMBINING_SPACING_MARK)
 			{
 				*pipvr = kipvrBad;
 				return S_OK;

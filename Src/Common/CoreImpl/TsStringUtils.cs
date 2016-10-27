@@ -86,7 +86,6 @@ namespace SIL.CoreImpl
 		/// <summary>
 		/// Tells whether the full character (starting) at ich is a white-space character.
 		/// </summary>
-		/// <param name="cpe">The character property engine.</param>
 		/// <param name="text">The text.</param>
 		/// <param name="ich">The character index.</param>
 		/// <returns>
@@ -94,9 +93,9 @@ namespace SIL.CoreImpl
 		///		otherwise, <c>false</c>.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
-		public static bool IsWhite(ILgCharacterPropertyEngine cpe, string text, int ich)
+		public static bool IsWhite(string text, int ich)
 		{
-			return cpe.get_GeneralCategory(StringUtils.FullCharAt(text, ich)) == LgGeneralCharCategory.kccZs;
+			return Icu.GetCharType(StringUtils.FullCharAt(text, ich)) == Icu.UCharCategory.U_SPACE_SEPARATOR;
 		}
 
 		#region Handling ORCs
@@ -259,14 +258,13 @@ namespace SIL.CoreImpl
 		/// <param name="chars">The string containing a delimited list of characters.</param>
 		/// <param name="delimiter">The delimiter (passed as a string, but really just a single
 		/// character).</param>
-		/// <param name="cpe">The character property engine.</param>
 		/// <param name="invalidCharacters">The invalid characters.</param>
 		/// <returns>List of unique characters</returns>
 		/// ------------------------------------------------------------------------------------
-		public static List<string> ParseCharString(string chars, string delimiter, ILgCharacterPropertyEngine cpe, out List<string> invalidCharacters)
+		public static List<string> ParseCharString(string chars, string delimiter, out List<string> invalidCharacters)
 		{
 			invalidCharacters = new List<string>();
-			return ParseCharString(chars, delimiter, cpe, invalidCharacters);
+			return ParseCharString(chars, delimiter, invalidCharacters);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -278,11 +276,10 @@ namespace SIL.CoreImpl
 		/// <param name="chars">The string containing a delimited list of characters.</param>
 		/// <param name="delimiter">The delimiter (passed as a string, but really just a single
 		/// character).</param>
-		/// <param name="cpe">The character property engine.</param>
 		/// ------------------------------------------------------------------------------------
-		public static List<string> ParseCharString(string chars, string delimiter, ILgCharacterPropertyEngine cpe)
+		public static List<string> ParseCharString(string chars, string delimiter)
 		{
-			return ParseCharString(chars, delimiter, cpe, null);
+			return ParseCharString(chars, delimiter, null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -293,13 +290,12 @@ namespace SIL.CoreImpl
 		/// <param name="chars">The string containing a delimited list of characters.</param>
 		/// <param name="delimiter">The delimiter (passed as a string, but really just a single
 		/// character).</param>
-		/// <param name="cpe">The character property engine.</param>
 		/// <param name="invalidCharacters">List of bogus characters (digraphs, undefined
 		/// Unicode characters, lone diacritics, etc.)encountered. if set to <c>null</c> ignores
 		/// bogus characters.</param>
 		/// <returns>List of unique characters</returns>
 		/// ------------------------------------------------------------------------------------
-		private static List<string> ParseCharString(string chars, string delimiter, ILgCharacterPropertyEngine cpe, List<string> invalidCharacters)
+		private static List<string> ParseCharString(string chars, string delimiter, List<string> invalidCharacters)
 		{
 			if (string.IsNullOrEmpty(chars))
 				return new List<string>();
@@ -313,7 +309,7 @@ namespace SIL.CoreImpl
 
 			foreach (string chr in charsArray)
 			{
-				if (IsValidChar(chr, cpe))
+				if (IsValidChar(chr))
 				{
 					if (!charsList.Contains(chr))
 						charsList.Add(chr);
@@ -340,9 +336,8 @@ namespace SIL.CoreImpl
 		/// initial base character followed by zero or more legally placed combining marks.
 		/// </summary>
 		/// <param name="chr">The string to check.</param>
-		/// <param name="cpe">The character property engine.</param>
 		/// ------------------------------------------------------------------------------------
-		public static bool IsValidChar(string chr, ILgCharacterPropertyEngine cpe)
+		public static bool IsValidChar(string chr)
 		{
 			// We need to decompose the results in order to check for equality because
 			// it is possible (Korean is the only example of this we know of) for multiple base
@@ -353,8 +348,8 @@ namespace SIL.CoreImpl
 			// properly for Korean, if the valid characters list contains the composed
 			// characters, the check would need to account for this and try to compose the data
 			// being checked.)
-			string ch = ValidateCharacterSequence(chr, cpe);
-			return (ch.Length == 0) ? false : (cpe.NormalizeD(ch) == cpe.NormalizeD(chr));
+			string ch = ValidateCharacterSequence(chr);
+			return ch.Length != 0 && Icu.Normalize(ch, Icu.UNormalizationMode.UNORM_NFD) == Icu.Normalize(chr, Icu.UNormalizationMode.UNORM_NFD);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -363,15 +358,15 @@ namespace SIL.CoreImpl
 		/// remaining characters.
 		/// </summary>
 		/// <param name="origChars">The original string of characters.</param>
-		/// <param name="cpe">The character property engine.</param>
 		/// ------------------------------------------------------------------------------------
-		public static string ValidateCharacterSequence(string origChars, ILgCharacterPropertyEngine cpe)
+		public static string ValidateCharacterSequence(string origChars)
 		{
 			// Allow spaces (Zs), hard line breaks (Zl), and other formatting characters (Cf) in
 			// isolation only.
 			if (origChars.Length == 1)
 			{
-				if (cpe.get_GeneralCategory(origChars[0]) == LgGeneralCharCategory.kccZl || cpe.get_GeneralCategory(origChars[0]) == LgGeneralCharCategory.kccZs || cpe.get_GeneralCategory(origChars[0]) == LgGeneralCharCategory.kccCf)
+				if (Icu.GetCharType(origChars[0]) == Icu.UCharCategory.U_LINE_SEPARATOR || Icu.GetCharType(origChars[0]) == Icu.UCharCategory.U_SPACE_SEPARATOR
+					|| Icu.GetCharType(origChars[0]) == Icu.UCharCategory.U_FORMAT_CHAR)
 				{
 					return origChars;
 				}
@@ -388,7 +383,7 @@ namespace SIL.CoreImpl
 				if (!baseFound)
 				{
 					// If this is not a valid base character, keep looking.
-					if (!cpe.get_IsLetter(chr) && !cpe.get_IsNumber(chr) && cpe.get_GeneralCategory(chr) != LgGeneralCharCategory.kccCo && !cpe.get_IsPunctuation(chr) && !cpe.get_IsSymbol(chr))
+					if (!Icu.IsLetter(chr) && !Icu.IsNumeric(chr) && Icu.GetCharType(chr) != Icu.UCharCategory.U_PRIVATE_USE_CHAR && !Icu.IsPunct(chr) && !Icu.IsSymbol(chr))
 						continue;
 
 					baseFound = true;
@@ -398,12 +393,12 @@ namespace SIL.CoreImpl
 				{
 					// If this is not a diacritic or a ZWJ or ZWNJ between diacritics,
 					// discard the rest of the string.
-					if (IsMark(chr, cpe))
+					if (Icu.IsMark(chr))
 					{
 						fPrecedingCharWasMark = true;
 					}
 
-					else if ((chr == '\u200C' || chr == '\u200D') && fPrecedingCharWasMark && origChars.Length > ich + 1 && IsMark(origChars[ich + 1], cpe))
+					else if ((chr == '\u200C' || chr == '\u200D') && fPrecedingCharWasMark && origChars.Length > ich + 1 && Icu.IsMark(origChars[ich + 1]))
 					{
 						fPrecedingCharWasMark = false;
 					}
@@ -428,19 +423,6 @@ namespace SIL.CoreImpl
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Determines whether the specified character is a mark (either as defined by the
-		/// character property engine or as overridden by the language definition.
-		/// </summary>
-		/// <param name="chr">The character.</param>
-		/// <param name="cpe">The character property engine.</param>
-		/// ------------------------------------------------------------------------------------
-		private static bool IsMark(char chr, ILgCharacterPropertyEngine cpe)
-		{
-			return cpe.get_IsMark(chr);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Determines whether the given character is used to end a sentence.
 		/// </summary>
 		/// <param name="ch">The character.</param>
@@ -449,7 +431,7 @@ namespace SIL.CoreImpl
 		/// 	<c>true</c> if the character ends a sentence; otherwise, <c>false</c>.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
-		public static bool IsEndOfSentenceChar(int ch, LgGeneralCharCategory cc)
+		public static bool IsEndOfSentenceChar(int ch, Icu.UCharCategory cc)
 		{
 			// The preliminary check of cc is just for efficiency. All these characters have this property.
 			// EXCLAMATION MARK
@@ -489,7 +471,7 @@ namespace SIL.CoreImpl
 			// FULLWIDTH QUESTION MARK
 			// HALFWIDTH IDEOGRAPHIC FULL STOP
 			// Except this is not a normal punctuation character.
-			return (cc == LgGeneralCharCategory.kccPo && (ch == 0x0021 || ch == 0x002E || ch == 0x003F || ch == 0x055C || ch == 0x055E || ch == 0x0589 || ch == 0x061F || ch == 0x06D4 || ch == 0x0700 || ch == 0x0701 || ch == 0x0702 || ch == 0x0964 || ch == 0x0965 || ch == 0x104A || ch == 0x104B || ch == 0x1362 || ch == 0x1367 || ch == 0x1368 || ch == 0x166E || ch == 0x1803 || ch == 0x1809 || ch == 0x1944 || ch == 0x1945 || ch == 0x203C || ch == 0x203D || ch == 0x2047 || ch == 0x2048 || ch == 0x2049 || ch == 0x3002 || ch == 0xFE52 || ch == 0xFE56 || ch == 0xFE57 || ch == 0xFF01 || ch == 0xFF0E || ch == 0xFF1F || ch == 0xFF61)) || ch == 0x00A7;
+			return (cc == Icu.UCharCategory.U_OTHER_PUNCTUATION && (ch == 0x0021 || ch == 0x002E || ch == 0x003F || ch == 0x055C || ch == 0x055E || ch == 0x0589 || ch == 0x061F || ch == 0x06D4 || ch == 0x0700 || ch == 0x0701 || ch == 0x0702 || ch == 0x0964 || ch == 0x0965 || ch == 0x104A || ch == 0x104B || ch == 0x1362 || ch == 0x1367 || ch == 0x1368 || ch == 0x166E || ch == 0x1803 || ch == 0x1809 || ch == 0x1944 || ch == 0x1945 || ch == 0x203C || ch == 0x203D || ch == 0x2047 || ch == 0x2048 || ch == 0x2049 || ch == 0x3002 || ch == 0xFE52 || ch == 0xFE56 || ch == 0xFE57 || ch == 0xFF01 || ch == 0xFF0E || ch == 0xFF1F || ch == 0xFF61)) || ch == 0x00A7;
 			// SECTION SIGN (used for forced segment breaks w/o punctuation)
 		}
 
@@ -1465,12 +1447,12 @@ namespace SIL.CoreImpl
 					{
 						int ichWfCharLim = ichWordForm + 1;
 
-						while (ichWfCharLim < wordForm.Length && !wordTracker.CharPropEngine(ichWfCharLim).get_IsLetter(wordForm[ichWfCharLim]) && wordTracker.CharPropEngine(ichWfCharLim).get_IsWordForming(wordForm[ichWfCharLim]))
+						while (ichWfCharLim < wordForm.Length && !Icu.IsLetter(wordForm[ichWfCharLim]) && wordTracker.CharPropEngine(ichWfCharLim).get_IsWordForming(wordForm[ichWfCharLim]))
 						{
 							ichWfCharLim++;
 						}
 
-						while (ichLimT < sourceText.Length && !sourceTracker.CharPropEngine(ichLimT).get_IsLetter(sourceText[ichLimT]) && sourceTracker.CharPropEngine(ichLimT).get_IsWordForming(sourceText[ichLimT]))
+						while (ichLimT < sourceText.Length && !Icu.IsLetter(sourceText[ichLimT]) && sourceTracker.CharPropEngine(ichLimT).get_IsWordForming(sourceText[ichLimT]))
 						{
 							ichLimT++;
 						}
@@ -1717,11 +1699,10 @@ namespace SIL.CoreImpl
 				// See if there is white space at the end of the bit that would be treated as
 				// deleted if we adjusted ichMin. If so, do it....
 				int ichLookForSpace = ichMin + offsetIchMin + Math.Max(cvIns, cvDel) - 1;
-				var cpe = LgIcuCharPropEngineClass.Create();
-				if (cpe.get_IsSeparator(longerString.GetChars(ichLookForSpace, ichLookForSpace + 1)[0]))
+				if (Icu.IsSeparator(longerString.GetChars(ichLookForSpace, ichLookForSpace + 1)[0]))
 				{
 					// ...unless it would ALSO be a whole word delete if we did not change ichMin
-					if (!cpe.get_IsSeparator(longerString.GetChars(ichLookForSpace - offsetIchMin, ichLookForSpace - offsetIchMin + 1)[0]))
+					if (!Icu.IsSeparator(longerString.GetChars(ichLookForSpace - offsetIchMin, ichLookForSpace - offsetIchMin + 1)[0]))
 
 						ichMin += offsetIchMin;
 				}
@@ -1799,38 +1780,6 @@ namespace SIL.CoreImpl
 		public static bool IsNullOrEmpty(ITsString testMe)
 		{
 			return testMe == null || testMe.Length <= 0;
-		}
-	}
-	#endregion
-
-	#region CharacterProperty class
-	/// <summary>
-	///
-	/// </summary>
-	public class CharacterProperty
-	{
-		/// <summary></summary>
-		public LgGeneralCharCategory m_generalCharCategory;
-		/// <summary></summary>
-		public bool m_isLetter;
-		/// <summary></summary>
-		public bool m_isWordforming;
-		/// <summary></summary>
-		public bool m_isPunctuation;
-
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="generalCharCategory"></param>
-		/// <param name="isLetter"></param>
-		/// <param name="isWordforming"></param>
-		/// <param name="isPunctuation"></param>
-		public CharacterProperty(LgGeneralCharCategory generalCharCategory, bool isLetter, bool isWordforming, bool isPunctuation)
-		{
-			m_generalCharCategory = generalCharCategory;
-			m_isLetter = isLetter;
-			m_isWordforming = isWordforming;
-			m_isPunctuation = isPunctuation;
 		}
 	}
 	#endregion

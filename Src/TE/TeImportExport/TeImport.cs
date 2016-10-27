@@ -5,7 +5,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -901,9 +900,6 @@ namespace SIL.FieldWorks.TE
 		protected int m_iNextBtPara;
 		/// <summary>Annotation type for translator notes</summary>
 		private ICmAnnotationDefn m_scrTranslatorAnnotationDef;
-
-		/// <summary>cached copy of the ICU character properties</summary>
-		private ILgCharacterPropertyEngine m_cpe;
 
 		/// <summary> segment to be evaluated to determine whether it is a marker or footnote
 		/// text (see TE-5002)</summary>
@@ -2379,7 +2375,7 @@ namespace SIL.FieldWorks.TE
 						ich < m_sSegmentText.Length;
 						ich++)
 					{
-						if (UnicodeCharProps.get_IsPunctuation(m_sSegmentText[ich]))
+						if (Icu.IsPunct(m_sSegmentText[ich]))
 						{
 							string sSave = m_sSegmentText.Substring(ich + 1);
 							m_sSegmentText = m_sSegmentText.Substring(0, ich + 1);
@@ -3006,7 +3002,7 @@ namespace SIL.FieldWorks.TE
 			if (ichMarker > 0)
 			{
 				string s = strbldr.GetChars(ichMarker - 1, ichMarker);
-				if (UnicodeCharProps.get_IsSeparator(s[0]))
+				if (Icu.IsSeparator(s[0]))
 					ichMarker--;
 			}
 			if (m_CurrBTFootnote != null)
@@ -3391,7 +3387,7 @@ namespace SIL.FieldWorks.TE
 			{
 				// First trim trailing space if necessary
 				string s = bldr.Text;
-				if (UnicodeCharProps.get_IsSeparator(s[s.Length - 1]))
+				if (Icu.IsSeparator(s[s.Length - 1]))
 					bldr.Replace(s.Length - 1, s.Length, null, null);
 
 				AddTextToPara(kHardLineBreak, props, bldr);
@@ -3793,10 +3789,10 @@ namespace SIL.FieldWorks.TE
 				}
 				int cchLength = strbldr.Length;
 				// Remove extra space.
-				if (cchLength > 0 && UnicodeCharProps.get_IsSeparator(sText[0]))
+				if (cchLength > 0 && Icu.IsSeparator(sText[0]))
 				{
 					string s = strbldr.GetChars(cchLength - 1, cchLength);
-					if (UnicodeCharProps.get_IsSeparator(s[0]))
+					if (Icu.IsSeparator(s[0]))
 						sText = sText.Substring(1);
 				}
 
@@ -4188,7 +4184,7 @@ namespace SIL.FieldWorks.TE
 			if (length == 0)
 				return;
 			string s = bldr.GetChars(length - 1, length);
-			if (UnicodeCharProps.get_IsSeparator(s[0]))
+			if (Icu.IsSeparator(s[0]))
 			{
 				// remove the trailing space from the builder
 				bldr.Replace(length - 1, length, null, null);
@@ -4223,7 +4219,7 @@ namespace SIL.FieldWorks.TE
 			ITsStrBldr strbldr = m_ParaBldr.StringBuilder;
 			int ichMarker = m_ParaBldr.Length;
 			bool fInsertSpaceAfterCaller = false;
-			if (UnicodeCharProps.get_IsSeparator(m_ParaBldr.FinalCharInPara))
+			if (Icu.IsSeparator(m_ParaBldr.FinalCharInPara))
 				ichMarker--;
 			else if (m_settings.ImportTypeEnum == TypeOfImport.Other)
 			{
@@ -4364,22 +4360,6 @@ namespace SIL.FieldWorks.TE
 		protected override bool InMainImportDomain
 		{
 			get { return m_prevImportDomain != ImportDomain.Main; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Get the Unicode character properties engine.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Browsable(false)]
-		private ILgCharacterPropertyEngine UnicodeCharProps
-		{
-			get
-			{
-				if (m_cpe == null)
-					m_cpe = m_cache.ServiceLocator.UnicodeCharProps;
-				return m_cpe;
-			}
 		}
 		#endregion
 
@@ -4566,7 +4546,6 @@ namespace SIL.FieldWorks.TE
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_cpe = null;
 			m_settings = null;
 			m_SOWrapper = null;
 			m_sSegmentText = null;

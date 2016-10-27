@@ -4,9 +4,9 @@
 
 
  /* File created by MIDL compiler version 8.00.0603 */
-/* at Fri Oct 28 14:00:36 2016
+/* at Tue Nov 01 11:04:30 2016
  */
-/* Compiler settings for C:\Repositories\fwroot\fw\Output\Common\FwKernelTlb.idl:
+/* Compiler settings for C:\develop\fwrepo\fw\Output\Common\FwKernelTlb.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
@@ -1271,65 +1271,6 @@ IJustifyingRenderer
 
 
 typedef /* [v1_enum] */ 
-enum LgGeneralCharCategory
-    {
-        kccLu	= 0,
-        kccLl	= ( kccLu + 1 ) ,
-        kccLt	= ( kccLl + 1 ) ,
-        kccLm	= ( kccLt + 1 ) ,
-        kccLo	= ( kccLm + 1 ) ,
-        kccMn	= ( kccLo + 1 ) ,
-        kccMc	= ( kccMn + 1 ) ,
-        kccMe	= ( kccMc + 1 ) ,
-        kccNd	= ( kccMe + 1 ) ,
-        kccNl	= ( kccNd + 1 ) ,
-        kccNo	= ( kccNl + 1 ) ,
-        kccZs	= ( kccNo + 1 ) ,
-        kccZl	= ( kccZs + 1 ) ,
-        kccZp	= ( kccZl + 1 ) ,
-        kccCc	= ( kccZp + 1 ) ,
-        kccCf	= ( kccCc + 1 ) ,
-        kccCs	= ( kccCf + 1 ) ,
-        kccCo	= ( kccCs + 1 ) ,
-        kccCn	= ( kccCo + 1 ) ,
-        kccPc	= ( kccCn + 1 ) ,
-        kccPd	= ( kccPc + 1 ) ,
-        kccPs	= ( kccPd + 1 ) ,
-        kccPe	= ( kccPs + 1 ) ,
-        kccPi	= ( kccPe + 1 ) ,
-        kccPf	= ( kccPi + 1 ) ,
-        kccPo	= ( kccPf + 1 ) ,
-        kccSm	= ( kccPo + 1 ) ,
-        kccSc	= ( kccSm + 1 ) ,
-        kccSk	= ( kccSc + 1 ) ,
-        kccSo	= ( kccSk + 1 ) 
-    } 	LgGeneralCharCategory;
-
-typedef /* [v1_enum] */ 
-enum LgBidiCategory
-    {
-        kbicL	= 0,
-        kbicLRE	= ( kbicL + 1 ) ,
-        kbicLRO	= ( kbicLRE + 1 ) ,
-        kbicR	= ( kbicLRO + 1 ) ,
-        kbicAL	= ( kbicR + 1 ) ,
-        kbicRLE	= ( kbicAL + 1 ) ,
-        kbicRLO	= ( kbicRLE + 1 ) ,
-        kbicPDF	= ( kbicRLO + 1 ) ,
-        kbicEN	= ( kbicPDF + 1 ) ,
-        kbicES	= ( kbicEN + 1 ) ,
-        kbicET	= ( kbicES + 1 ) ,
-        kbicAN	= ( kbicET + 1 ) ,
-        kbicCS	= ( kbicAN + 1 ) ,
-        kbicNSM	= ( kbicCS + 1 ) ,
-        kbicBN	= ( kbicNSM + 1 ) ,
-        kbicB	= ( kbicBN + 1 ) ,
-        kbicS	= ( kbicB + 1 ) ,
-        kbicWS	= ( kbicS + 1 ) ,
-        kbicON	= ( kbicWS + 1 ) 
-    } 	LgBidiCategory;
-
-typedef /* [v1_enum] */ 
 enum LgLBP
     {
         klbpAI	= 0,
@@ -1362,38 +1303,6 @@ enum LgLBP
         klbpXX	= ( klbpSY + 1 ) ,
         klbpZW	= ( klbpXX + 1 ) 
     } 	LgLBP;
-
-typedef /* [v1_enum] */ 
-enum LgDecompMapTag
-    {
-        kdtNoTag	= 0,
-        kdtFont	= ( kdtNoTag + 1 ) ,
-        kdtNoBreak	= ( kdtFont + 1 ) ,
-        kdtInitial	= ( kdtNoBreak + 1 ) ,
-        kdtMedial	= ( kdtInitial + 1 ) ,
-        kdtFinal	= ( kdtMedial + 1 ) ,
-        kdtIsolated	= ( kdtFinal + 1 ) ,
-        kdtCircle	= ( kdtIsolated + 1 ) ,
-        kdtSuper	= ( kdtCircle + 1 ) ,
-        kdtSub	= ( kdtSuper + 1 ) ,
-        kdtVertical	= ( kdtSub + 1 ) ,
-        kdtWide	= ( kdtVertical + 1 ) ,
-        kdtNarrow	= ( kdtWide + 1 ) ,
-        kdtSmall	= ( kdtNarrow + 1 ) ,
-        kdtSquare	= ( kdtSmall + 1 ) ,
-        kdtFraction	= ( kdtSquare + 1 ) ,
-        kdtCompat	= ( kdtFraction + 1 ) 
-    } 	LgDecompMapTag;
-
-typedef /* [v1_enum] */ 
-enum LgXMLTag
-    {
-        kxmlInvalid	= 0,
-        kxmlChardefs	= ( kxmlInvalid + 1 ) ,
-        kxmlDef	= ( kxmlChardefs + 1 ) ,
-        kxmlUdata	= ( kxmlDef + 1 ) ,
-        kxmlLinebrk	= ( kxmlUdata + 1 ) 
-    } 	LgXMLTag;
 
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 ILgWritingSystem
@@ -8844,183 +8753,14 @@ GraphiteEngine;
     ILgCharacterPropertyEngine : public IUnknown
     {
     public:
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_GeneralCategory( 
-            /* [in] */ int ch,
-            /* [retval][out] */ LgGeneralCharCategory *pcc) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_BidiCategory( 
-            /* [in] */ int ch,
-            /* [retval][out] */ LgBidiCategory *pbic) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsLetter( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsWordForming( 
             /* [in] */ int ch,
             /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsPunctuation( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsNumber( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsSeparator( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsSymbol( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsMark( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsOther( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsUpper( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsLower( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsTitle( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsModifier( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsOtherLetter( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsOpen( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsClose( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsWordMedial( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsControl( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_ToLowerCh( 
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pch) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_ToUpperCh( 
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pch) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_ToTitleCh( 
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pch) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE ToLower( 
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE ToUpper( 
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE ToTitle( 
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE ToLowerRgch( 
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchOut,
-            /* [out] */ int *pcchRet) = 0;
-        
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE ToUpperRgch( 
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchOut,
-            /* [out] */ int *pcchRet) = 0;
-        
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE ToTitleRgch( 
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchOut,
-            /* [out] */ int *pcchRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsUserDefinedClass( 
-            /* [in] */ int ch,
-            /* [in] */ int chClass,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_SoundAlikeKey( 
-            /* [in] */ BSTR bstrValue,
-            /* [retval][out] */ BSTR *pbstrKey) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_CharacterName( 
-            /* [in] */ int ch,
-            /* [retval][out] */ BSTR *pbstrName) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Decomposition( 
-            /* [in] */ int ch,
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE DecompositionRgch( 
-            /* [in] */ int ch,
-            /* [in] */ int cchMax,
-            /* [out] */ OLECHAR *prgch,
-            /* [out] */ int *pcch,
-            /* [out] */ ComBool *pfHasDecomp) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_FullDecomp( 
-            /* [in] */ int ch,
-            /* [retval][out] */ BSTR *pbstrOut) = 0;
-        
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE FullDecompRgch( 
-            /* [in] */ int ch,
-            /* [in] */ int cchMax,
-            /* [out] */ OLECHAR *prgch,
-            /* [out] */ int *pcch,
-            /* [out] */ ComBool *pfHasDecomp) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_NumericValue( 
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pn) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_CombiningClass( 
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pn) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Comment( 
-            /* [in] */ int ch,
-            /* [retval][out] */ BSTR *pbstr) = 0;
         
         virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE GetLineBreakProps( 
             /* [size_is][in] */ const OLECHAR *prgchIn,
             /* [in] */ int cchIn,
             /* [size_is][out] */ byte *prglbOut) = 0;
-        
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE GetLineBreakStatus( 
-            /* [size_is][in] */ const byte *prglbpIn,
-            /* [in] */ int cb,
-            /* [size_is][out] */ byte *prglbsOut) = 0;
         
         virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE GetLineBreakInfo( 
             /* [size_is][in] */ const OLECHAR *prgchIn,
@@ -9029,41 +8769,6 @@ GraphiteEngine;
             /* [in] */ int ichLim,
             /* [size_is][out] */ byte *prglbsOut,
             /* [out] */ int *pichBreak) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE StripDiacritics( 
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE StripDiacriticsRgch( 
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchMaxOut,
-            /* [out] */ int *pcchOut) = 0;
-        
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE NormalizeKdRgch( 
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchMaxOut,
-            /* [out] */ int *pcchOut) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE NormalizeD( 
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE NormalizeDRgch( 
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchMaxOut,
-            /* [out] */ int *pcchOut) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Locale( 
-            /* [retval][out] */ int *pnLocale) = 0;
-        
-        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_Locale( 
-            /* [in] */ int nLocale) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE GetLineBreakText( 
             /* [in] */ int cchMax,
@@ -9105,223 +8810,16 @@ GraphiteEngine;
         ULONG ( STDMETHODCALLTYPE *Release )( 
             ILgCharacterPropertyEngine * This);
         
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_GeneralCategory )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ LgGeneralCharCategory *pcc);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_BidiCategory )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ LgBidiCategory *pbic);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsLetter )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsWordForming )( 
             ILgCharacterPropertyEngine * This,
             /* [in] */ int ch,
             /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsPunctuation )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsNumber )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsSeparator )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsSymbol )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsMark )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsOther )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsUpper )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsLower )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsTitle )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsModifier )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsOtherLetter )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsOpen )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsClose )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsWordMedial )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsControl )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ToLowerCh )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pch);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ToUpperCh )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pch);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ToTitleCh )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pch);
-        
-        HRESULT ( STDMETHODCALLTYPE *ToLower )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        HRESULT ( STDMETHODCALLTYPE *ToUpper )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        HRESULT ( STDMETHODCALLTYPE *ToTitle )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *ToLowerRgch )( 
-            ILgCharacterPropertyEngine * This,
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchOut,
-            /* [out] */ int *pcchRet);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *ToUpperRgch )( 
-            ILgCharacterPropertyEngine * This,
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchOut,
-            /* [out] */ int *pcchRet);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *ToTitleRgch )( 
-            ILgCharacterPropertyEngine * This,
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchOut,
-            /* [out] */ int *pcchRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsUserDefinedClass )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [in] */ int chClass,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_SoundAlikeKey )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ BSTR bstrValue,
-            /* [retval][out] */ BSTR *pbstrKey);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_CharacterName )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ BSTR *pbstrName);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Decomposition )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *DecompositionRgch )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [in] */ int cchMax,
-            /* [out] */ OLECHAR *prgch,
-            /* [out] */ int *pcch,
-            /* [out] */ ComBool *pfHasDecomp);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_FullDecomp )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ BSTR *pbstrOut);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *FullDecompRgch )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [in] */ int cchMax,
-            /* [out] */ OLECHAR *prgch,
-            /* [out] */ int *pcch,
-            /* [out] */ ComBool *pfHasDecomp);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_NumericValue )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pn);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_CombiningClass )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pn);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Comment )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ BSTR *pbstr);
         
         /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *GetLineBreakProps )( 
             ILgCharacterPropertyEngine * This,
             /* [size_is][in] */ const OLECHAR *prgchIn,
             /* [in] */ int cchIn,
             /* [size_is][out] */ byte *prglbOut);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *GetLineBreakStatus )( 
-            ILgCharacterPropertyEngine * This,
-            /* [size_is][in] */ const byte *prglbpIn,
-            /* [in] */ int cb,
-            /* [size_is][out] */ byte *prglbsOut);
         
         /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *GetLineBreakInfo )( 
             ILgCharacterPropertyEngine * This,
@@ -9331,48 +8829,6 @@ GraphiteEngine;
             /* [in] */ int ichLim,
             /* [size_is][out] */ byte *prglbsOut,
             /* [out] */ int *pichBreak);
-        
-        HRESULT ( STDMETHODCALLTYPE *StripDiacritics )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *StripDiacriticsRgch )( 
-            ILgCharacterPropertyEngine * This,
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchMaxOut,
-            /* [out] */ int *pcchOut);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *NormalizeKdRgch )( 
-            ILgCharacterPropertyEngine * This,
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchMaxOut,
-            /* [out] */ int *pcchOut);
-        
-        HRESULT ( STDMETHODCALLTYPE *NormalizeD )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *NormalizeDRgch )( 
-            ILgCharacterPropertyEngine * This,
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchMaxOut,
-            /* [out] */ int *pcchOut);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Locale )( 
-            ILgCharacterPropertyEngine * This,
-            /* [retval][out] */ int *pnLocale);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_Locale )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int nLocale);
         
         HRESULT ( STDMETHODCALLTYPE *GetLineBreakText )( 
             ILgCharacterPropertyEngine * This,
@@ -9420,149 +8876,14 @@ GraphiteEngine;
     ( (This)->lpVtbl -> Release(This) ) 
 
 
-#define ILgCharacterPropertyEngine_get_GeneralCategory(This,ch,pcc)	\
-    ( (This)->lpVtbl -> get_GeneralCategory(This,ch,pcc) ) 
-
-#define ILgCharacterPropertyEngine_get_BidiCategory(This,ch,pbic)	\
-    ( (This)->lpVtbl -> get_BidiCategory(This,ch,pbic) ) 
-
-#define ILgCharacterPropertyEngine_get_IsLetter(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsLetter(This,ch,pfRet) ) 
-
 #define ILgCharacterPropertyEngine_get_IsWordForming(This,ch,pfRet)	\
     ( (This)->lpVtbl -> get_IsWordForming(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsPunctuation(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsPunctuation(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsNumber(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsNumber(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsSeparator(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsSeparator(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsSymbol(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsSymbol(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsMark(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsMark(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsOther(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsOther(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsUpper(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsUpper(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsLower(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsLower(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsTitle(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsTitle(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsModifier(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsModifier(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsOtherLetter(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsOtherLetter(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsOpen(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsOpen(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsClose(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsClose(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsWordMedial(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsWordMedial(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsControl(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsControl(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_ToLowerCh(This,ch,pch)	\
-    ( (This)->lpVtbl -> get_ToLowerCh(This,ch,pch) ) 
-
-#define ILgCharacterPropertyEngine_get_ToUpperCh(This,ch,pch)	\
-    ( (This)->lpVtbl -> get_ToUpperCh(This,ch,pch) ) 
-
-#define ILgCharacterPropertyEngine_get_ToTitleCh(This,ch,pch)	\
-    ( (This)->lpVtbl -> get_ToTitleCh(This,ch,pch) ) 
-
-#define ILgCharacterPropertyEngine_ToLower(This,bstr,pbstr)	\
-    ( (This)->lpVtbl -> ToLower(This,bstr,pbstr) ) 
-
-#define ILgCharacterPropertyEngine_ToUpper(This,bstr,pbstr)	\
-    ( (This)->lpVtbl -> ToUpper(This,bstr,pbstr) ) 
-
-#define ILgCharacterPropertyEngine_ToTitle(This,bstr,pbstr)	\
-    ( (This)->lpVtbl -> ToTitle(This,bstr,pbstr) ) 
-
-#define ILgCharacterPropertyEngine_ToLowerRgch(This,prgchIn,cchIn,prgchOut,cchOut,pcchRet)	\
-    ( (This)->lpVtbl -> ToLowerRgch(This,prgchIn,cchIn,prgchOut,cchOut,pcchRet) ) 
-
-#define ILgCharacterPropertyEngine_ToUpperRgch(This,prgchIn,cchIn,prgchOut,cchOut,pcchRet)	\
-    ( (This)->lpVtbl -> ToUpperRgch(This,prgchIn,cchIn,prgchOut,cchOut,pcchRet) ) 
-
-#define ILgCharacterPropertyEngine_ToTitleRgch(This,prgchIn,cchIn,prgchOut,cchOut,pcchRet)	\
-    ( (This)->lpVtbl -> ToTitleRgch(This,prgchIn,cchIn,prgchOut,cchOut,pcchRet) ) 
-
-#define ILgCharacterPropertyEngine_get_IsUserDefinedClass(This,ch,chClass,pfRet)	\
-    ( (This)->lpVtbl -> get_IsUserDefinedClass(This,ch,chClass,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_get_SoundAlikeKey(This,bstrValue,pbstrKey)	\
-    ( (This)->lpVtbl -> get_SoundAlikeKey(This,bstrValue,pbstrKey) ) 
-
-#define ILgCharacterPropertyEngine_get_CharacterName(This,ch,pbstrName)	\
-    ( (This)->lpVtbl -> get_CharacterName(This,ch,pbstrName) ) 
-
-#define ILgCharacterPropertyEngine_get_Decomposition(This,ch,pbstr)	\
-    ( (This)->lpVtbl -> get_Decomposition(This,ch,pbstr) ) 
-
-#define ILgCharacterPropertyEngine_DecompositionRgch(This,ch,cchMax,prgch,pcch,pfHasDecomp)	\
-    ( (This)->lpVtbl -> DecompositionRgch(This,ch,cchMax,prgch,pcch,pfHasDecomp) ) 
-
-#define ILgCharacterPropertyEngine_get_FullDecomp(This,ch,pbstrOut)	\
-    ( (This)->lpVtbl -> get_FullDecomp(This,ch,pbstrOut) ) 
-
-#define ILgCharacterPropertyEngine_FullDecompRgch(This,ch,cchMax,prgch,pcch,pfHasDecomp)	\
-    ( (This)->lpVtbl -> FullDecompRgch(This,ch,cchMax,prgch,pcch,pfHasDecomp) ) 
-
-#define ILgCharacterPropertyEngine_get_NumericValue(This,ch,pn)	\
-    ( (This)->lpVtbl -> get_NumericValue(This,ch,pn) ) 
-
-#define ILgCharacterPropertyEngine_get_CombiningClass(This,ch,pn)	\
-    ( (This)->lpVtbl -> get_CombiningClass(This,ch,pn) ) 
-
-#define ILgCharacterPropertyEngine_get_Comment(This,ch,pbstr)	\
-    ( (This)->lpVtbl -> get_Comment(This,ch,pbstr) ) 
 
 #define ILgCharacterPropertyEngine_GetLineBreakProps(This,prgchIn,cchIn,prglbOut)	\
     ( (This)->lpVtbl -> GetLineBreakProps(This,prgchIn,cchIn,prglbOut) ) 
 
-#define ILgCharacterPropertyEngine_GetLineBreakStatus(This,prglbpIn,cb,prglbsOut)	\
-    ( (This)->lpVtbl -> GetLineBreakStatus(This,prglbpIn,cb,prglbsOut) ) 
-
 #define ILgCharacterPropertyEngine_GetLineBreakInfo(This,prgchIn,cchIn,ichMin,ichLim,prglbsOut,pichBreak)	\
     ( (This)->lpVtbl -> GetLineBreakInfo(This,prgchIn,cchIn,ichMin,ichLim,prglbsOut,pichBreak) ) 
-
-#define ILgCharacterPropertyEngine_StripDiacritics(This,bstr,pbstr)	\
-    ( (This)->lpVtbl -> StripDiacritics(This,bstr,pbstr) ) 
-
-#define ILgCharacterPropertyEngine_StripDiacriticsRgch(This,prgchIn,cchIn,prgchOut,cchMaxOut,pcchOut)	\
-    ( (This)->lpVtbl -> StripDiacriticsRgch(This,prgchIn,cchIn,prgchOut,cchMaxOut,pcchOut) ) 
-
-#define ILgCharacterPropertyEngine_NormalizeKdRgch(This,prgchIn,cchIn,prgchOut,cchMaxOut,pcchOut)	\
-    ( (This)->lpVtbl -> NormalizeKdRgch(This,prgchIn,cchIn,prgchOut,cchMaxOut,pcchOut) ) 
-
-#define ILgCharacterPropertyEngine_NormalizeD(This,bstr,pbstr)	\
-    ( (This)->lpVtbl -> NormalizeD(This,bstr,pbstr) ) 
-
-#define ILgCharacterPropertyEngine_NormalizeDRgch(This,prgchIn,cchIn,prgchOut,cchMaxOut,pcchOut)	\
-    ( (This)->lpVtbl -> NormalizeDRgch(This,prgchIn,cchIn,prgchOut,cchMaxOut,pcchOut) ) 
-
-#define ILgCharacterPropertyEngine_get_Locale(This,pnLocale)	\
-    ( (This)->lpVtbl -> get_Locale(This,pnLocale) ) 
-
-#define ILgCharacterPropertyEngine_put_Locale(This,nLocale)	\
-    ( (This)->lpVtbl -> put_Locale(This,nLocale) ) 
 
 #define ILgCharacterPropertyEngine_GetLineBreakText(This,cchMax,prgchOut,pcchOut)	\
     ( (This)->lpVtbl -> GetLineBreakText(This,cchMax,prgchOut,pcchOut) ) 
@@ -10002,223 +9323,16 @@ GraphiteEngine;
         ULONG ( STDMETHODCALLTYPE *Release )( 
             ILgIcuCharPropEngine * This);
         
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_GeneralCategory )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ LgGeneralCharCategory *pcc);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_BidiCategory )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ LgBidiCategory *pbic);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsLetter )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsWordForming )( 
             ILgIcuCharPropEngine * This,
             /* [in] */ int ch,
             /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsPunctuation )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsNumber )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsSeparator )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsSymbol )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsMark )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsOther )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsUpper )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsLower )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsTitle )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsModifier )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsOtherLetter )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsOpen )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsClose )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsWordMedial )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsControl )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ToLowerCh )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pch);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ToUpperCh )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pch);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ToTitleCh )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pch);
-        
-        HRESULT ( STDMETHODCALLTYPE *ToLower )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        HRESULT ( STDMETHODCALLTYPE *ToUpper )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        HRESULT ( STDMETHODCALLTYPE *ToTitle )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *ToLowerRgch )( 
-            ILgIcuCharPropEngine * This,
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchOut,
-            /* [out] */ int *pcchRet);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *ToUpperRgch )( 
-            ILgIcuCharPropEngine * This,
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchOut,
-            /* [out] */ int *pcchRet);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *ToTitleRgch )( 
-            ILgIcuCharPropEngine * This,
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchOut,
-            /* [out] */ int *pcchRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsUserDefinedClass )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [in] */ int chClass,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_SoundAlikeKey )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ BSTR bstrValue,
-            /* [retval][out] */ BSTR *pbstrKey);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_CharacterName )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ BSTR *pbstrName);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Decomposition )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *DecompositionRgch )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [in] */ int cchMax,
-            /* [out] */ OLECHAR *prgch,
-            /* [out] */ int *pcch,
-            /* [out] */ ComBool *pfHasDecomp);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_FullDecomp )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ BSTR *pbstrOut);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *FullDecompRgch )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [in] */ int cchMax,
-            /* [out] */ OLECHAR *prgch,
-            /* [out] */ int *pcch,
-            /* [out] */ ComBool *pfHasDecomp);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_NumericValue )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pn);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_CombiningClass )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ int *pn);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Comment )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ BSTR *pbstr);
         
         /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *GetLineBreakProps )( 
             ILgIcuCharPropEngine * This,
             /* [size_is][in] */ const OLECHAR *prgchIn,
             /* [in] */ int cchIn,
             /* [size_is][out] */ byte *prglbOut);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *GetLineBreakStatus )( 
-            ILgIcuCharPropEngine * This,
-            /* [size_is][in] */ const byte *prglbpIn,
-            /* [in] */ int cb,
-            /* [size_is][out] */ byte *prglbsOut);
         
         /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *GetLineBreakInfo )( 
             ILgIcuCharPropEngine * This,
@@ -10228,48 +9342,6 @@ GraphiteEngine;
             /* [in] */ int ichLim,
             /* [size_is][out] */ byte *prglbsOut,
             /* [out] */ int *pichBreak);
-        
-        HRESULT ( STDMETHODCALLTYPE *StripDiacritics )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *StripDiacriticsRgch )( 
-            ILgIcuCharPropEngine * This,
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchMaxOut,
-            /* [out] */ int *pcchOut);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *NormalizeKdRgch )( 
-            ILgIcuCharPropEngine * This,
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchMaxOut,
-            /* [out] */ int *pcchOut);
-        
-        HRESULT ( STDMETHODCALLTYPE *NormalizeD )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ BSTR bstr,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *NormalizeDRgch )( 
-            ILgIcuCharPropEngine * This,
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ OLECHAR *prgchOut,
-            /* [in] */ int cchMaxOut,
-            /* [out] */ int *pcchOut);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Locale )( 
-            ILgIcuCharPropEngine * This,
-            /* [retval][out] */ int *pnLocale);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_Locale )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int nLocale);
         
         HRESULT ( STDMETHODCALLTYPE *GetLineBreakText )( 
             ILgIcuCharPropEngine * This,
@@ -10328,149 +9400,14 @@ GraphiteEngine;
     ( (This)->lpVtbl -> Release(This) ) 
 
 
-#define ILgIcuCharPropEngine_get_GeneralCategory(This,ch,pcc)	\
-    ( (This)->lpVtbl -> get_GeneralCategory(This,ch,pcc) ) 
-
-#define ILgIcuCharPropEngine_get_BidiCategory(This,ch,pbic)	\
-    ( (This)->lpVtbl -> get_BidiCategory(This,ch,pbic) ) 
-
-#define ILgIcuCharPropEngine_get_IsLetter(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsLetter(This,ch,pfRet) ) 
-
 #define ILgIcuCharPropEngine_get_IsWordForming(This,ch,pfRet)	\
     ( (This)->lpVtbl -> get_IsWordForming(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsPunctuation(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsPunctuation(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsNumber(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsNumber(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsSeparator(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsSeparator(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsSymbol(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsSymbol(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsMark(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsMark(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsOther(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsOther(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsUpper(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsUpper(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsLower(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsLower(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsTitle(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsTitle(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsModifier(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsModifier(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsOtherLetter(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsOtherLetter(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsOpen(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsOpen(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsClose(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsClose(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsWordMedial(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsWordMedial(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsControl(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsControl(This,ch,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_ToLowerCh(This,ch,pch)	\
-    ( (This)->lpVtbl -> get_ToLowerCh(This,ch,pch) ) 
-
-#define ILgIcuCharPropEngine_get_ToUpperCh(This,ch,pch)	\
-    ( (This)->lpVtbl -> get_ToUpperCh(This,ch,pch) ) 
-
-#define ILgIcuCharPropEngine_get_ToTitleCh(This,ch,pch)	\
-    ( (This)->lpVtbl -> get_ToTitleCh(This,ch,pch) ) 
-
-#define ILgIcuCharPropEngine_ToLower(This,bstr,pbstr)	\
-    ( (This)->lpVtbl -> ToLower(This,bstr,pbstr) ) 
-
-#define ILgIcuCharPropEngine_ToUpper(This,bstr,pbstr)	\
-    ( (This)->lpVtbl -> ToUpper(This,bstr,pbstr) ) 
-
-#define ILgIcuCharPropEngine_ToTitle(This,bstr,pbstr)	\
-    ( (This)->lpVtbl -> ToTitle(This,bstr,pbstr) ) 
-
-#define ILgIcuCharPropEngine_ToLowerRgch(This,prgchIn,cchIn,prgchOut,cchOut,pcchRet)	\
-    ( (This)->lpVtbl -> ToLowerRgch(This,prgchIn,cchIn,prgchOut,cchOut,pcchRet) ) 
-
-#define ILgIcuCharPropEngine_ToUpperRgch(This,prgchIn,cchIn,prgchOut,cchOut,pcchRet)	\
-    ( (This)->lpVtbl -> ToUpperRgch(This,prgchIn,cchIn,prgchOut,cchOut,pcchRet) ) 
-
-#define ILgIcuCharPropEngine_ToTitleRgch(This,prgchIn,cchIn,prgchOut,cchOut,pcchRet)	\
-    ( (This)->lpVtbl -> ToTitleRgch(This,prgchIn,cchIn,prgchOut,cchOut,pcchRet) ) 
-
-#define ILgIcuCharPropEngine_get_IsUserDefinedClass(This,ch,chClass,pfRet)	\
-    ( (This)->lpVtbl -> get_IsUserDefinedClass(This,ch,chClass,pfRet) ) 
-
-#define ILgIcuCharPropEngine_get_SoundAlikeKey(This,bstrValue,pbstrKey)	\
-    ( (This)->lpVtbl -> get_SoundAlikeKey(This,bstrValue,pbstrKey) ) 
-
-#define ILgIcuCharPropEngine_get_CharacterName(This,ch,pbstrName)	\
-    ( (This)->lpVtbl -> get_CharacterName(This,ch,pbstrName) ) 
-
-#define ILgIcuCharPropEngine_get_Decomposition(This,ch,pbstr)	\
-    ( (This)->lpVtbl -> get_Decomposition(This,ch,pbstr) ) 
-
-#define ILgIcuCharPropEngine_DecompositionRgch(This,ch,cchMax,prgch,pcch,pfHasDecomp)	\
-    ( (This)->lpVtbl -> DecompositionRgch(This,ch,cchMax,prgch,pcch,pfHasDecomp) ) 
-
-#define ILgIcuCharPropEngine_get_FullDecomp(This,ch,pbstrOut)	\
-    ( (This)->lpVtbl -> get_FullDecomp(This,ch,pbstrOut) ) 
-
-#define ILgIcuCharPropEngine_FullDecompRgch(This,ch,cchMax,prgch,pcch,pfHasDecomp)	\
-    ( (This)->lpVtbl -> FullDecompRgch(This,ch,cchMax,prgch,pcch,pfHasDecomp) ) 
-
-#define ILgIcuCharPropEngine_get_NumericValue(This,ch,pn)	\
-    ( (This)->lpVtbl -> get_NumericValue(This,ch,pn) ) 
-
-#define ILgIcuCharPropEngine_get_CombiningClass(This,ch,pn)	\
-    ( (This)->lpVtbl -> get_CombiningClass(This,ch,pn) ) 
-
-#define ILgIcuCharPropEngine_get_Comment(This,ch,pbstr)	\
-    ( (This)->lpVtbl -> get_Comment(This,ch,pbstr) ) 
 
 #define ILgIcuCharPropEngine_GetLineBreakProps(This,prgchIn,cchIn,prglbOut)	\
     ( (This)->lpVtbl -> GetLineBreakProps(This,prgchIn,cchIn,prglbOut) ) 
 
-#define ILgIcuCharPropEngine_GetLineBreakStatus(This,prglbpIn,cb,prglbsOut)	\
-    ( (This)->lpVtbl -> GetLineBreakStatus(This,prglbpIn,cb,prglbsOut) ) 
-
 #define ILgIcuCharPropEngine_GetLineBreakInfo(This,prgchIn,cchIn,ichMin,ichLim,prglbsOut,pichBreak)	\
     ( (This)->lpVtbl -> GetLineBreakInfo(This,prgchIn,cchIn,ichMin,ichLim,prglbsOut,pichBreak) ) 
-
-#define ILgIcuCharPropEngine_StripDiacritics(This,bstr,pbstr)	\
-    ( (This)->lpVtbl -> StripDiacritics(This,bstr,pbstr) ) 
-
-#define ILgIcuCharPropEngine_StripDiacriticsRgch(This,prgchIn,cchIn,prgchOut,cchMaxOut,pcchOut)	\
-    ( (This)->lpVtbl -> StripDiacriticsRgch(This,prgchIn,cchIn,prgchOut,cchMaxOut,pcchOut) ) 
-
-#define ILgIcuCharPropEngine_NormalizeKdRgch(This,prgchIn,cchIn,prgchOut,cchMaxOut,pcchOut)	\
-    ( (This)->lpVtbl -> NormalizeKdRgch(This,prgchIn,cchIn,prgchOut,cchMaxOut,pcchOut) ) 
-
-#define ILgIcuCharPropEngine_NormalizeD(This,bstr,pbstr)	\
-    ( (This)->lpVtbl -> NormalizeD(This,bstr,pbstr) ) 
-
-#define ILgIcuCharPropEngine_NormalizeDRgch(This,prgchIn,cchIn,prgchOut,cchMaxOut,pcchOut)	\
-    ( (This)->lpVtbl -> NormalizeDRgch(This,prgchIn,cchIn,prgchOut,cchMaxOut,pcchOut) ) 
-
-#define ILgIcuCharPropEngine_get_Locale(This,pnLocale)	\
-    ( (This)->lpVtbl -> get_Locale(This,pnLocale) ) 
-
-#define ILgIcuCharPropEngine_put_Locale(This,nLocale)	\
-    ( (This)->lpVtbl -> put_Locale(This,nLocale) ) 
 
 #define ILgIcuCharPropEngine_GetLineBreakText(This,cchMax,prgchOut,pcchOut)	\
     ( (This)->lpVtbl -> GetLineBreakText(This,cchMax,prgchOut,pcchOut) ) 

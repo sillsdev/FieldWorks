@@ -172,7 +172,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 			foreach (string chr in charSet.Characters)
 			{
-				if (TsStringUtils.IsValidChar(chr, m_cpe))
+				if (TsStringUtils.IsValidChar(chr))
 					AddCharacter(chr, validCharType);
 				else
 					invalidChars.Add(chr);
@@ -246,7 +246,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				int count = 0;
 				foreach (string chStr in m_wordFormingCharacters)
 				{
-					if (chStr.Length > 1 || m_cpe.get_IsLetter(chStr[0]))
+					if (chStr.Length > 1 || Icu.IsLetter(chStr[0]))
 						count++;
 				}
 				return count;
@@ -292,7 +292,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			if (string.IsNullOrEmpty(chr))
 				return false;
-			return (m_wordFormingCharacters.Contains(chr) || m_cpe.get_IsWordForming(chr[0]));
+			return m_wordFormingCharacters.Contains(chr) || m_cpe.get_IsWordForming(chr[0]);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -306,7 +306,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (chr == 0)
 				return false;
 
-			return (m_wordFormingCharacters.Contains(chr.ToString(CultureInfo.InvariantCulture)) || m_cpe.get_IsWordForming(chr));
+			return m_wordFormingCharacters.Contains(chr.ToString(CultureInfo.InvariantCulture)) || m_cpe.get_IsWordForming(chr);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -344,26 +344,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (code == 0x200C || code == 0x200D)
 				return true; // Zero-width non-joiner or zero-width joiner
 
-			LgGeneralCharCategory chrCategory = m_cpe.get_GeneralCategory(code);
-
-			if (chrCategory == LgGeneralCharCategory.kccSc ||
-				chrCategory == LgGeneralCharCategory.kccSk ||
-				chrCategory == LgGeneralCharCategory.kccSm ||
-				chrCategory == LgGeneralCharCategory.kccSo)
-			{
+			if (Icu.IsSymbol(code))
 				return true; // symbol
-			}
 
-			if (chrCategory == LgGeneralCharCategory.kccPc ||
-					chrCategory == LgGeneralCharCategory.kccPd ||
-					chrCategory == LgGeneralCharCategory.kccPe ||
-					chrCategory == LgGeneralCharCategory.kccPf ||
-					chrCategory == LgGeneralCharCategory.kccPi ||
-					chrCategory == LgGeneralCharCategory.kccPo ||
-					chrCategory == LgGeneralCharCategory.kccPs)
-			{
+			if (Icu.IsPunct(code))
 				return true; // punctuation
-			}
 
 			return false;
 		}

@@ -12,6 +12,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using Sfm2Xml;
 using SilEncConverters40;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -132,7 +133,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected EncConverters m_encConverters;
 		protected ITsStrFactory m_tsf;
 		protected ByteReader m_reader;
-		protected ILgWritingSystemFactory m_wsf;
+		protected WritingSystemManager m_wsManager;
 		protected XmlWriter m_writer;
 		protected List<string> m_openElements = new List<string>();
 		protected string m_pendingMarker; // marker pushed back because not the extra one we were looking for
@@ -145,10 +146,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_docStructure = docStructure;
 		}
 
-		public byte[] Convert(ByteReader reader, List<TMapping> mappings, ILgWritingSystemFactory wsf)
+		public byte[] Convert(ByteReader reader, List<TMapping> mappings, WritingSystemManager wsManager)
 		{
 			m_reader = reader;
-			m_wsf = wsf;
+			m_wsManager = wsManager;
 			m_tsf = TsStrFactoryClass.Create();
 			using (var output = new MemoryStream())
 			{

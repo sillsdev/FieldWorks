@@ -75,8 +75,8 @@ public:
 	// Other public methods
 	void GetAvailChars(IVwTextSource * pts, int ws,
 		int ichMin, int ichLimSeg, int cchMax,
-		LgTrailingWsHandling twsh, ILgCharacterPropertyEngine * pcpe,
-		OLECHAR *prgch, int *pichLimSegMax, EndAvailType *peat);
+		LgTrailingWsHandling twsh, OLECHAR *prgch, int *pichLimSegMax,
+		EndAvailType *peat);
 
 protected:
 	// Member variables
@@ -98,11 +98,7 @@ protected:
 	// Other protected methods
 //	void AdjustEndForWidth(IVwGraphics * pvg);
 	void FindLineBreak(
-#ifndef ICU_LINEBREAKING
-		const byte * prglbs,
-#else
 		const OLECHAR * prgch, const ILgCharacterPropertyEnginePtr qcpe,
-#endif /*ICU_LINEBREAKING*/
 		const int ichMin, const int ichLim,
 		const LgLineBreak lbrkRequired, const bool fBackFromEnd, int & ichBreak, int & ichDim);
 };

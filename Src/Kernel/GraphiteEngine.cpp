@@ -362,9 +362,6 @@ STDMETHODIMP GraphiteEngine::FindBreakPoint(
 	InterpretChrp(chrp);
 	int ws = chrp.ws;
 
-	ILgCharacterPropertyEnginePtr qcpe;
-	CheckHr(m_qwsf->get_CharPropEngine(ws, &qcpe));
-
 	int segmentLen = ichLimBacktrack - ichMinSeg;
 	LgEndSegmentType est = kestNoMore;
 	int i = 0;
@@ -405,9 +402,8 @@ STDMETHODIMP GraphiteEngine::FindBreakPoint(
 			if (twsh == ktwshOnlyWs)
 			{
 				// break if we hit non-whitespace
-				LgBidiCategory bic;
-				CheckHr(qcpe->get_BidiCategory(segStr[i], &bic));
-				if (bic != kbicWS)
+				UCharDirection dir = u_charDirection(segStr[i]);
+				if (dir != U_WHITE_SPACE_NEUTRAL)
 				{
 					est = kestOkayBreak;
 					segmentLen = i;
@@ -545,9 +541,8 @@ STDMETHODIMP GraphiteEngine::FindBreakPoint(
 		while (s != NULL)
 		{
 			int ich = gr_cinfo_base(gr_seg_cinfo(segment, gr_slot_before(s)));
-			LgBidiCategory bic;
-			CheckHr(qcpe->get_BidiCategory(segStr[ich], &bic));
-			if (bic != kbicWS)
+			UCharDirection dir = u_charDirection(segStr[ich]);
+			if (dir != U_WHITE_SPACE_NEUTRAL)
 				break;
 
 			wsSlot = s;
@@ -593,9 +588,8 @@ STDMETHODIMP GraphiteEngine::FindBreakPoint(
 			// check if this is a whitespace only segment
 			for (i = 0; i < segmentLen; i++)
 			{
-				LgBidiCategory bic;
-				CheckHr(qcpe->get_BidiCategory(segStr[i], &bic));
-				if (bic != kbicWS)
+				UCharDirection dir = u_charDirection(segStr[i]);
+				if (dir != U_WHITE_SPACE_NEUTRAL)
 				{
 					wsOnly = false;
 					break;

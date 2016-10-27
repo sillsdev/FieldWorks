@@ -159,7 +159,6 @@
     <Compile Include="NMockConstraints.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="PUAHelper.cs" />
     <Compile Include="TempSFFileMaker.cs">
       <SubType>Code</SubType>
     </Compile>

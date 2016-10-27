@@ -2116,7 +2116,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							continue; // bizarre, just for defensiveness.
 						var picture = (ICmPicture) obj;
 						var caption = picture.Caption.get_String(Cache.DefaultVernWs);
-						var wordMaker = new WordMaker(caption, Cache.LanguageWritingSystemFactoryAccessor);
+						var wordMaker = new WordMaker(caption, Cache.ServiceLocator.WritingSystemManager);
 						for (; ; )
 						{
 							int ichMin;

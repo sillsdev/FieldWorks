@@ -7,7 +7,6 @@
 
 using System;
 using System.Collections;
-using System.Runtime.InteropServices;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
@@ -142,7 +141,6 @@ namespace SIL.CoreImpl
 		private string m_lower = string.Empty;
 		private string m_title = string.Empty;
 
-		private static LgIcuCharPropEngine s_charPropEngine;
 		#endregion
 
 		#region Historically Underlying Data Attributes
@@ -542,8 +540,6 @@ namespace SIL.CoreImpl
 		/// <returns>Whether the character was completely loaded from Icu.</returns>
 		public bool RefreshFromIcu(bool loadBlankNames)
 		{
-			InitTheCom();
-
 			if(!Icu.IsValidCodepoint(m_codepoint))
 				return false;
 
@@ -560,16 +556,14 @@ namespace SIL.CoreImpl
 				return false;
 
 			// Set several properties
-			m_generalCategory =
-				UcdProperty.GetInstance(s_charPropEngine.get_GeneralCategory(parsedCodepoint));
-			m_canonicalCombiningClass =
-				UcdProperty.GetInstance(s_charPropEngine.get_CombiningClass(parsedCodepoint));
-			m_bidiClass =UcdProperty.GetInstance(s_charPropEngine.get_BidiCategory(parsedCodepoint));
+			m_generalCategory = Icu.GetGeneralCategoryInfo(parsedCodepoint);
+			m_canonicalCombiningClass = Icu.GetCombiningClassInfo(parsedCodepoint);
+			m_bidiClass = Icu.GetBidiClassInfo(parsedCodepoint);
 
-			m_decomposition = ConvertToHexString(s_charPropEngine.get_Decomposition(parsedCodepoint));
-			m_decompositionType = Icu.GetDecompositionType(parsedCodepoint);
-			m_numericType = Icu.GetNumericType(parsedCodepoint);
-			if( m_numericType != UcdProperty.GetInstance(Icu.UNumericType.U_NT_NONE) )
+			m_decomposition = ConvertToHexString(Icu.GetDecomposition(parsedCodepoint));
+			m_decompositionType = Icu.GetDecompositionTypeInfo(parsedCodepoint);
+			m_numericType = Icu.GetNumericTypeInfo(parsedCodepoint);
+			if (m_numericType != UcdProperty.GetInstance(Icu.UNumericType.U_NT_NONE))
 				m_numericValue = decimalToFraction(Icu.u_GetNumericValue(parsedCodepoint));
 			else
 				m_numericValue = "";
@@ -578,13 +572,13 @@ namespace SIL.CoreImpl
 			BidiMirrored = Icu.u_IsMirrored(parsedCodepoint);
 
 			// Set upper, lower, and title
-			m_upper = PUACharacter.ConvertToHexString(s_charPropEngine.get_ToUpperCh(parsedCodepoint));
-			m_lower = PUACharacter.ConvertToHexString(s_charPropEngine.get_ToLowerCh(parsedCodepoint));
-			m_title = PUACharacter.ConvertToHexString(s_charPropEngine.get_ToTitleCh(parsedCodepoint));
+			m_upper = ConvertToHexString(Icu.ToUpper(parsedCodepoint));
+			m_lower = ConvertToHexString(Icu.ToLower(parsedCodepoint));
+			m_title = ConvertToHexString(Icu.ToTitle(parsedCodepoint));
 
 			// We don't have to do the following (if they already exist, we may delete the values)
 			//unicode1Name
-			m_isoComment = s_charPropEngine.get_Comment(parsedCodepoint);
+			m_isoComment = string.Empty;
 
 			return true;
 		}
@@ -723,31 +717,6 @@ namespace SIL.CoreImpl
 				int Dnext = D*(int)Znext + Dprev;
 				return decimalToFraction(Znext, Dnext, D);
 			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Release the character property engine.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static void ReleaseTheCom()
-		{
-			if (s_charPropEngine != null)
-			{
-				Marshal.ReleaseComObject(s_charPropEngine);
-				s_charPropEngine = null;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Inits the COM.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private static void InitTheCom()
-		{
-			if (s_charPropEngine == null)
-				s_charPropEngine = LgIcuCharPropEngineClass.Create();
 		}
 		#endregion
 

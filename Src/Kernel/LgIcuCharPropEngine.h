@@ -67,64 +67,10 @@ public:
 	STDMETHOD(get_InitializationData)(BSTR * pbstr);
 
 	//:> ILgCharacterPropertyEngine
-	STDMETHOD(get_GeneralCategory)(int ch, LgGeneralCharCategory * pcc); //
-	STDMETHOD(get_BidiCategory)(int ch, LgBidiCategory * pbic); //
-	STDMETHOD(get_IsLetter)(int ch, ComBool *pfRet);
 	STDMETHOD(get_IsWordForming)(int ch, ComBool *pfRet);
-	STDMETHOD(get_IsPunctuation)(int ch, ComBool *pfRet); //
-	STDMETHOD(get_IsNumber)(int ch, ComBool *pfRet); //
-	STDMETHOD(get_IsSeparator)(int ch, ComBool *pfRet); //
-	STDMETHOD(get_IsSymbol)(int ch, ComBool *pfRet); //
-	STDMETHOD(get_IsMark)(int ch, ComBool *pfRet); //
-	STDMETHOD(get_IsOther)(int ch, ComBool *pfRet); //
-	STDMETHOD(get_IsUpper)(int ch, ComBool *pfRet); //
-	STDMETHOD(get_IsLower)(int ch, ComBool *pfRet); //
-	STDMETHOD(get_IsTitle)(int ch, ComBool *pfRet); //
-	STDMETHOD(get_IsModifier)(int ch, ComBool *pfRet); //
-	STDMETHOD(get_IsOtherLetter)(int ch, ComBool *pfRet); //
-	STDMETHOD(get_IsOpen)(int ch, ComBool *pfRet); //
-	STDMETHOD(get_IsClose)(int ch, ComBool *pfRet); //
-	STDMETHOD(get_IsWordMedial)(int ch, ComBool *pfRet); //
-	STDMETHOD(get_IsControl)(int ch, ComBool *pfRet); //
-	STDMETHOD(get_ToLowerCh)(int ch, int *pch); //
-	STDMETHOD(get_ToUpperCh)(int ch, int *pch); //
-	STDMETHOD(get_ToTitleCh)(int ch, int *pch); //
-	STDMETHOD(ToLower)(BSTR bstr, BSTR * pbstr); //
-	STDMETHOD(ToUpper)(BSTR bstr, BSTR * pbstr); //
-	STDMETHOD(ToTitle)(BSTR bstr, BSTR * pbstr); //
-	STDMETHOD(ToLowerRgch)(OLECHAR * prgchIn,  int cchIn,
-						   OLECHAR * prgchOut, int cchOut, int * cchRet); //
-	STDMETHOD(ToUpperRgch)(OLECHAR * prgchIn,  int cchIn,
-						   OLECHAR * prgchOut, int cchOut, int * cchRet); //
-	STDMETHOD(ToTitleRgch)(OLECHAR * prgchIn,  int cchIn,
-						   OLECHAR * prgchOut, int cchOut, int * cchRet); //
-	STDMETHOD(get_IsUserDefinedClass)(int ch, int chClass, ComBool * pfRet); //
-	STDMETHOD(get_SoundAlikeKey)(BSTR bstrValue, BSTR * pbstrKey); //
-	STDMETHOD(get_CharacterName)(int ch, BSTR * pbstrName); //
-	STDMETHOD(get_Decomposition)(int ch, BSTR * pbstr); //**
-	STDMETHOD(DecompositionRgch)(int ch, int cchMax, OLECHAR * prgch,
-		int * pcch, ComBool * pfHasDecomp); //**
-	STDMETHOD(get_FullDecomp)(int ch, BSTR * pbstrOut);	 //**
-	STDMETHOD(FullDecompRgch)(int ch, int cchMax, OLECHAR * prgch,
-		int * pcch, ComBool * pfHasDecomp); //**
-	STDMETHOD(get_NumericValue)(int ch, int * pn); //
-	STDMETHOD(get_CombiningClass)(int ch, int * pn); //
-	STDMETHOD(get_Comment)(int ch, BSTR * pbstr); //
 	STDMETHOD(GetLineBreakProps)(const OLECHAR * prgchIn, int cchIn, byte * prglbpOut);//**
-	STDMETHOD(GetLineBreakStatus)(const byte * prglbpIn, int cb, byte * prglbsOut);//**
 	STDMETHOD(GetLineBreakInfo)(const OLECHAR * prgchIn, int cchIn, int ichMin,
 		int ichLim, byte * prglbsOut, int * pichBreak);//**
-//	STDMETHOD(NormalizeKd)(BSTR bstr, BSTR * pbstr); //**
-	STDMETHOD(NormalizeKdRgch)(OLECHAR * prgchIn, int cchIn, OLECHAR * prgchOut,
-		int cchMaxOut, int * pcchOut); //**
-	STDMETHOD(NormalizeD)(BSTR bstr, BSTR * pbstr); //**
-	STDMETHOD(NormalizeDRgch)(OLECHAR * prgchIn, int cchIn, OLECHAR * prgchOut,
-		int cchMaxOut, int * pcchOut); //**
-	STDMETHOD(StripDiacritics)(BSTR bstr, BSTR * pbstr); //
-	STDMETHOD(StripDiacriticsRgch)(OLECHAR * prgchIn, int cchIn, OLECHAR * prgchOut,
-		int cchMaxOut, int * pcchOut); //
-	STDMETHOD(put_Locale)(int nLocale); //
-	STDMETHOD(get_Locale)(int * pnLocale); //
 	STDMETHOD(put_LineBreakText)(OLECHAR * prgchIn, int cchMax); //**
 	STDMETHOD(GetLineBreakText)(int cchMax, OLECHAR * prgchOut, int * pcchOut); //**
 	STDMETHOD(LineBreakBefore)(int ichIn, int * pichOut, LgLineBreak * plbWeight); //**
@@ -138,19 +84,9 @@ public:
 
 	//:> Other public methods
 
-	LgGeneralCharCategory GenCategory(int ch); //
 	bool IsPlausibleUnicodeRgch(OLECHAR * prgch, int cch); //
 	bool IsPlausibleUnicodeCh(int ch); //
 	void CheckUnicodeChar(int ch); //
-	void ConvertCase(BSTR bstr, BSTR * pbstr, LgGeneralCharCategory ccTo); //
-	void ConvertCaseRgch(OLECHAR * prgchIn, int cchIn,
-		OLECHAR * prgchOut, int cchOut, int * cchRet, LgGeneralCharCategory ccTo); //
-	LgGeneralCharCategory ConvertCharCategory(int nICUCat); //
-	LgBidiCategory ConvertBidiCategory(int nICUCat); //
-	void OLECHARToUChar(OLECHAR *prgchIn, UChar *src, int cchIn); //
-	void UCharToOLECHAR(UChar *src, OLECHAR *prgchIn, int srcLength); //
-	void SetCharOverrideTables(OverriddenCharProps * pocpData); //
-	void WCharToUChar(const wchar *wchIn, UChar *uchOut, int cchIn); //
 
 protected:
 	//:> Member variables
@@ -161,7 +97,6 @@ protected:
 	Set<int> m_siWordformingOverrides;
 
 	int m_cchBrkMax;  // Measures the size of the text in the BreakIterator.
-	OverriddenCharProps * m_pocpData;
 
 #if WIN32
 	IUnknownPtr m_qunkMarshaler;
@@ -172,12 +107,6 @@ protected:
 	static const byte s_rglbs[32][32]; // Look-up table for GetLineBreakStatus.
 
 	//:> Constructors/destructors/etc.
-
-	//:> Other protected methods
-	CharacterPropertyObject * GetOverrideChar(UChar32 chIn); //
-	void Normalize(UNormalizationMode mode, BSTR bstr, BSTR * pbstr);
-	void NormalizeRgch(UNormalizationMode mode, OLECHAR * prgchIn, int cchIn,
-		OLECHAR * prgchOut, int cchMaxOut, int * pcchOut);
 
 	void CleanupBreakIterator();
 	void SetupBreakIterator();

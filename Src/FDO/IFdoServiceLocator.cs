@@ -83,11 +83,6 @@ namespace SIL.FieldWorks.FDO
 		/// Shortcut to the writing system factory that gives meaning to writing systems.
 		/// </summary>
 		ILgWritingSystemFactory WritingSystemFactory { get; }
-
-		/// <summary>
-		/// Shortcut to the Unicode character property engine.
-		/// </summary>
-		ILgCharacterPropertyEngine UnicodeCharProps { get; }
 	}
 
 	/// <summary>

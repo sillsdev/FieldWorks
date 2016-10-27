@@ -149,16 +149,13 @@ namespace SIL.CoreImpl
 		/// </summary>
 		/// <param name="tss">the structured string of the paragraph or translation</param>
 		/// <param name="ich">the given index</param>
-		/// <param name="unicodeCharProps">The Unicode character property engine.</param>
 		/// <param name="specialStyles">The special styles.</param>
 		/// <returns>adjusted character index</returns>
 		/// ------------------------------------------------------------------------------------
-		public static int FindWordBoundary(this ITsString tss, int ich, ILgCharacterPropertyEngine unicodeCharProps, params string[] specialStyles)
+		public static int FindWordBoundary(this ITsString tss, int ich, params string[] specialStyles)
 		{
 			if (ich < 0 || ich > tss.Length)
 				throw new ArgumentOutOfRangeException("ich");
-			if (unicodeCharProps == null)
-				throw new ArgumentNullException("unicodeCharProps");
 
 			if (ich == 0 || ich == tss.Length)
 				return ich;
@@ -175,9 +172,9 @@ namespace SIL.CoreImpl
 			while (ich < text.Length)
 			{
 				// if the current character is space...
-				if (unicodeCharProps.get_IsSeparator(text[ich]))
+				if (Icu.IsSeparator(text[ich]))
 					ich++;
-				else if (unicodeCharProps.get_IsPunctuation(text[ich]) && ich > 0 && !unicodeCharProps.get_IsSeparator(text[ich - 1]))
+				else if (Icu.IsPunct(text[ich]) && ich > 0 && !Icu.IsSeparator(text[ich - 1]))
 				{
 					// if word-final punctuation advance
 					ich++;
@@ -193,7 +190,7 @@ namespace SIL.CoreImpl
 			{
 				// While the insertion point is in the middle of a word then back up to the
 				// start of the word or the start of a paragraph.
-				while (ich > 0 && !unicodeCharProps.get_IsSeparator(text[ich - 1]) && !specialStyles.Contains(tss.StyleAt(ich - 1)))
+				while (ich > 0 && !Icu.IsSeparator(text[ich - 1]) && !specialStyles.Contains(tss.StyleAt(ich - 1)))
 				{
 					ich--;
 				}
@@ -217,9 +214,8 @@ namespace SIL.CoreImpl
 			if (second.Length == 0)
 				return first;
 
-			var tsb = first.GetBldr();
-			var cpe = LgIcuCharPropEngineClass.Create();
-			if (!(IsWhite(cpe, second.Text[0]) || IsWhite(cpe, first.Text.Last())))
+			ITsStrBldr tsb = first.GetBldr();
+			if (!(IsWhite(second.Text[0]) || IsWhite(first.Text.Last())))
 				tsb.Replace(first.Length, first.Length, " ", null);
 
 			tsb.ReplaceTsString(tsb.Length, tsb.Length, second);
@@ -567,9 +563,9 @@ namespace SIL.CoreImpl
 		#endregion
 
 		#region Private helper methods
-		private static bool IsWhite(LgIcuCharPropEngine cpe, char ch)
+		private static bool IsWhite(char ch)
 		{
-			return cpe.get_GeneralCategory(ch) == LgGeneralCharCategory.kccZs;
+			return Icu.GetCharType(ch) == Icu.UCharCategory.U_SPACE_SEPARATOR;
 		}
 		#endregion
 	}

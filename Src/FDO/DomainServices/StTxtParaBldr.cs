@@ -32,8 +32,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private ITsStrBldr m_ParaStrBldr;
 		/// <summary>TsTextProps for the paragraph.</summary>
 		private string m_ParaStyleName;
-		/// <summary>Unicode character properties engine</summary>
-		private ILgCharacterPropertyEngine m_cpe;
 		#endregion
 
 		#region Constructors
@@ -266,10 +264,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public void TrimTrailingSpaceInPara()
 		{
-			if (m_cpe == null)
-				m_cpe = m_cache.ServiceLocator.UnicodeCharProps;
 			// check if the last char sent to the builder is a space
-			if (Length != 0 && m_cpe.get_IsSeparator(FinalCharInPara))
+			if (Length != 0 && Icu.IsSeparator(FinalCharInPara))
 				m_ParaStrBldr.Replace(Length - 1, Length, null, null);
 		}
 		#endregion

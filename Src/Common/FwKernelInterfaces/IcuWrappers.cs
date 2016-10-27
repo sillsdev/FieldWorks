@@ -372,6 +372,8 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 			return null;
 		}
 
+		#region character information
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// get the numeric value for the Unicode digit
@@ -437,7 +439,7 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Determines whether the specified character code is alphabetic, based on the
+		/// Determines whether the specified character code is a diacritic, based on the
 		/// Icu.UProperty.UCHAR_DIACRITIC property.
 		/// </summary>
 		/// <param name="characterCode">The character code.</param>
@@ -471,6 +473,56 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 				nAns == (int)UCharCategory.U_OTHER_SYMBOL;
 		}
 
+		/// <summary>
+		/// Determines whether the specified character is a separator.
+		/// </summary>
+		public static bool IsSeparator(int characterCode)
+		{
+			switch (GetCharType(characterCode))
+			{
+				case UCharCategory.U_SPACE_SEPARATOR:
+				case UCharCategory.U_LINE_SEPARATOR:
+				case UCharCategory.U_PARAGRAPH_SEPARATOR:
+					return true;
+				default:
+					return false;
+			}
+		}
+
+		/// <summary>
+		/// Determines whether the specified character is a letter.
+		/// </summary>
+		public static bool IsLetter(int characterCode)
+		{
+			switch (GetCharType(characterCode))
+			{
+				case UCharCategory.U_UPPERCASE_LETTER:
+				case UCharCategory.U_LOWERCASE_LETTER:
+				case UCharCategory.U_TITLECASE_LETTER:
+				case UCharCategory.U_MODIFIER_LETTER:
+				case UCharCategory.U_OTHER_LETTER:
+					return true;
+				default:
+					return false;
+			}
+		}
+
+		/// <summary>
+		/// Determines whether the specified character is a mark.
+		/// </summary>
+		public static bool IsMark(int characterCode)
+		{
+			switch (GetCharType(characterCode))
+			{
+				case UCharCategory.U_NON_SPACING_MARK:
+				case UCharCategory.U_ENCLOSING_MARK:
+				case UCharCategory.U_COMBINING_SPACING_MARK:
+					return true;
+				default:
+					return false;
+			}
+		}
+
 		///<summary>
 		/// Get the general character category value for the given code point.
 		///</summary>
@@ -481,6 +533,17 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 			return (UCharCategory)u_charType(ch);
 		}
 
+		[DllImport(kIcuUcDllName, EntryPoint = "u_charType" + VersionSuffix,
+			 CallingConvention = CallingConvention.Cdecl)]
+		private static extern int u_charDirection(int characterCode);
+
+		/// <summary>
+		/// Gets the bidirectional category for te specified character.
+		/// </summary>
+		public static UCharDirection GetCharDirectionType(int ch)
+		{
+			return (UCharDirection) u_charDirection(ch);
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -496,24 +559,48 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the decomposition type of the given character.
+		/// Gets the decomposition type information of the given character.
 		/// </summary>
 		/// <param name="characterCode">The character code.</param>
 		/// ------------------------------------------------------------------------------------
-		public static UcdProperty GetDecompositionType(int characterCode)
+		public static UcdProperty GetDecompositionTypeInfo(int characterCode)
 		{
 			return UcdProperty.GetInstance((UDecompositionType)u_getIntPropertyValue(characterCode, UProperty.UCHAR_DECOMPOSITION_TYPE));
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the numeric type of the given character.
+		/// Gets the numeric type information of the given character.
 		/// </summary>
 		/// <param name="characterCode">The character code.</param>
 		/// ------------------------------------------------------------------------------------
-		public static UcdProperty GetNumericType(int characterCode)
+		public static UcdProperty GetNumericTypeInfo(int characterCode)
 		{
 			return UcdProperty.GetInstance((UNumericType)u_getIntPropertyValue(characterCode, UProperty.UCHAR_NUMERIC_TYPE));
+		}
+
+		/// <summary>
+		/// Gets the general category information of the specified character.
+		/// </summary>
+		public static UcdProperty GetGeneralCategoryInfo(int characterCode)
+		{
+			return UcdProperty.GetInstance(GetCharType(characterCode));
+		}
+
+		/// <summary>
+		/// Gets the bidi class information of the specified character.
+		/// </summary>
+		public static UcdProperty GetBidiClassInfo(int characterCode)
+		{
+			return UcdProperty.GetInstance(GetCharDirectionType(characterCode));
+		}
+
+		/// <summary>
+		/// Gets the combining class information of the specified character.
+		/// </summary>
+		public static UcdProperty GetCombiningClassInfo(int characterCode)
+		{
+			return UcdProperty.GetInstance(GetCombiningClass(characterCode));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -682,7 +769,7 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 		/// ------------------------------------------------------------------------------------
 		public static bool IsSpace(string chr)
 		{
-			return (!string.IsNullOrEmpty(chr) && chr.Length == 1 && IsSpace(chr[0]));
+			return !string.IsNullOrEmpty(chr) && chr.Length == 1 && IsSpace(chr[0]);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -770,6 +857,8 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 				return rbLangDef.GetStringByKey("ExemplarCharacters");
 			}
 		}
+
+		#endregion
 
 		#region Locale related
 		/// ------------------------------------------------------------------------------------
@@ -1359,70 +1448,7 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 
 		#endregion // Locale related
 
-		#region case related
-
-		/// <summary>Return the lower case equivalent of the string.</summary>
-		[DllImport(kIcuUcDllName, EntryPoint = "u_strToLower" + VersionSuffix,
-			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private static extern int u_strToLower(IntPtr dest,
-			 int destCapacity, string src, int srcLength, [MarshalAs(UnmanagedType.LPStr)] string locale, out UErrorCode errorCode);
-
-		/// <summary>Return the title case equivalent of the string.</summary>
-		[DllImport(kIcuUcDllName, EntryPoint = "u_strToTitle" + VersionSuffix,
-			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private static extern int u_strToTitle(IntPtr dest,
-			int destCapacity, string src, int srcLength, IntPtr titleIter, [MarshalAs(UnmanagedType.LPStr)] string locale, out UErrorCode errorCode);
-
-		/// <summary>Return the upper case equivalent of the string.</summary>
-		[DllImport(kIcuUcDllName, EntryPoint = "u_strToUpper" + VersionSuffix,
-			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private static extern int u_strToUpper(IntPtr dest,
-			int destCapacity, string src, int srcLength, [MarshalAs(UnmanagedType.LPStr)] string locale, out UErrorCode errorCode);
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Convert the string to lower case, using the convention of the specified locale.
-		/// This may be null for the universal locale, or "" for a 'root' locale (whatever that means).
-		/// </summary>
-		/// <param name="src"></param>
-		/// <param name="locale"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public static string ToLower(string src, string locale)
-		{
-			if (src == null)
-				return "";
-
-			int length = src.Length + 10;
-			IntPtr resPtr = Marshal.AllocCoTaskMem(length * 2);
-			try
-			{
-				UErrorCode err;
-				int outLength = u_strToLower(resPtr, length, src, src.Length, locale, out err);
-				if (IsFailure(err) && err != UErrorCode.U_BUFFER_OVERFLOW_ERROR)
-					throw new IcuException("u_strToLower() failed with code " + err, err);
-				if (outLength > length)
-				{
-					Marshal.FreeCoTaskMem(resPtr);
-					length = outLength + 1;
-					resPtr = Marshal.AllocCoTaskMem(length * 2);
-					u_strToLower(resPtr, length, src, src.Length, locale, out err);
-				}
-				if (IsFailure(err))
-					throw new IcuException("u_strToLower() failed with code " + err, err);
-
-				string result = Marshal.PtrToStringUni(resPtr);
-				// Strip any garbage left over at the end of the string.
-				if (err == UErrorCode.U_STRING_NOT_TERMINATED_WARNING && result != null)
-					return result.Substring(0, outLength);
-				return result;
-
-			}
-			finally
-			{
-				Marshal.FreeCoTaskMem(resPtr);
-			}
-		}
+		#region collation
 
 		/// <summary>
 		/// Open a UCollator for comparing strings.
@@ -1659,6 +1685,93 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 			return ucol_strcoll(coll, source, source.Length, target, target.Length);
 		}
 
+		#endregion
+
+		#region case related
+
+		/// <summary>Return the lower case equivalent of the string.</summary>
+		[DllImport(kIcuUcDllName, EntryPoint = "u_strToLower" + VersionSuffix,
+			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		private static extern int u_strToLower(IntPtr dest,
+			 int destCapacity, string src, int srcLength, [MarshalAs(UnmanagedType.LPStr)] string locale, out UErrorCode errorCode);
+
+		/// <summary>Return the title case equivalent of the string.</summary>
+		[DllImport(kIcuUcDllName, EntryPoint = "u_strToTitle" + VersionSuffix,
+			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		private static extern int u_strToTitle(IntPtr dest,
+			int destCapacity, string src, int srcLength, IntPtr titleIter, [MarshalAs(UnmanagedType.LPStr)] string locale, out UErrorCode errorCode);
+
+		/// <summary>Return the upper case equivalent of the string.</summary>
+		[DllImport(kIcuUcDllName, EntryPoint = "u_strToUpper" + VersionSuffix,
+			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		private static extern int u_strToUpper(IntPtr dest,
+			int destCapacity, string src, int srcLength, [MarshalAs(UnmanagedType.LPStr)] string locale, out UErrorCode errorCode);
+
+		[DllImport(kIcuUcDllName, EntryPoint = "u_toupper" + VersionSuffix,
+			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		private static extern int u_toupper(int ch);
+
+		[DllImport(kIcuUcDllName, EntryPoint = "u_tolower" + VersionSuffix,
+			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		private static extern int u_tolower(int ch);
+
+		[DllImport(kIcuUcDllName, EntryPoint = "u_totitle" + VersionSuffix,
+			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		private static extern int u_totitle(int ch);
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Convert the string to lower case, using the convention of the specified locale.
+		/// This may be null for the universal locale, or "" for a 'root' locale (whatever that means).
+		/// </summary>
+		/// <param name="src"></param>
+		/// <param name="locale"></param>
+		/// <returns></returns>
+		/// ------------------------------------------------------------------------------------
+		public static string ToLower(string src, string locale)
+		{
+			if (src == null)
+				return "";
+
+			int length = src.Length + 10;
+			IntPtr resPtr = Marshal.AllocCoTaskMem(length * 2);
+			try
+			{
+				UErrorCode err;
+				int outLength = u_strToLower(resPtr, length, src, src.Length, locale, out err);
+				if (IsFailure(err) && err != UErrorCode.U_BUFFER_OVERFLOW_ERROR)
+					throw new IcuException("u_strToLower() failed with code " + err, err);
+				if (outLength > length)
+				{
+					Marshal.FreeCoTaskMem(resPtr);
+					length = outLength + 1;
+					resPtr = Marshal.AllocCoTaskMem(length * 2);
+					u_strToLower(resPtr, length, src, src.Length, locale, out err);
+				}
+				if (IsFailure(err))
+					throw new IcuException("u_strToLower() failed with code " + err, err);
+
+				string result = Marshal.PtrToStringUni(resPtr);
+				// Strip any garbage left over at the end of the string.
+				if (err == UErrorCode.U_STRING_NOT_TERMINATED_WARNING && result != null)
+					return result.Substring(0, outLength);
+				return result;
+
+			}
+			finally
+			{
+				Marshal.FreeCoTaskMem(resPtr);
+			}
+		}
+
+		/// <summary>
+		/// Converts the character to lower case.
+		/// </summary>
+		public static int ToLower(int ch)
+		{
+			return u_tolower(ch);
+		}
+
 		/// <summary>
 		/// Convert the string to title case, using the convention of the specified locale.
 		/// This may be null for the universal locale, or "" for a 'root' locale (whatever that means).
@@ -1713,6 +1826,14 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 		}
 
 		/// <summary>
+		/// Converts the character to title case.
+		/// </summary>
+		public static int ToTitle(int ch)
+		{
+			return u_totitle(ch);
+		}
+
+		/// <summary>
 		/// Convert the string to upper case, using the convention of the specified locale.
 		/// This may be null for the universal locale, or "" for a 'root' locale (whatever that means).
 		/// </summary>
@@ -1755,6 +1876,14 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 			}
 		}
 
+		/// <summary>
+		/// Converts the character to upper case.
+		/// </summary>
+		public static int ToUpper(int ch)
+		{
+			return u_toupper(ch);
+		}
+
 		#endregion
 
 		#region normalization
@@ -1781,6 +1910,10 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 		// Note that ICU's UBool type is typedef to an 8-bit integer.
 		private static extern byte unorm2_isNormalized(IntPtr normalizer, string source, int sourceLength,
 			out UErrorCode errorCode);
+
+		[DllImport(kIcuUcDllName, EntryPoint = "unorm2_getCombiningClass" + VersionSuffix,
+			 CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		private static extern byte unorm2_getCombiningClass(IntPtr normalizer, int ch);
 
 		/// <summary>
 		/// Normalization mode constants.
@@ -1924,6 +2057,27 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 			if (IsFailure(err))
 				throw new IcuException("unorm2_isNormalized() failed with code " + err, err);
 			return fIsNorm != 0;
+		}
+
+		/// <summary>
+		/// Gets the combining class for the specified character.
+		/// </summary>
+		public static int GetCombiningClass(int ch)
+		{
+			IntPtr norm = GetIcuNormalizer(UNormalizationMode.UNORM_NFC);
+			return unorm2_getCombiningClass(norm, ch);
+		}
+
+		/// <summary>
+		/// Gets the decomposition of the specified character.
+		/// </summary>
+		public static string GetDecomposition(int ch)
+		{
+			int type = u_getIntPropertyValue(ch, UProperty.UCHAR_DECOMPOSITION_TYPE);
+			UNormalizationMode mode = UNormalizationMode.UNORM_NFD;
+			if (type != (int) UDecompositionType.U_DT_NONE)
+				mode = UNormalizationMode.UNORM_NFKD;
+			return Normalize(char.ConvertFromUtf32(ch), mode);
 		}
 
 		#endregion
@@ -3350,6 +3504,61 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 			U_FINAL_PUNCTUATION = 29,
 			///<summary>One higher than the last enum UCharCategory constant.</summary>
 			U_CHAR_CATEGORY_COUNT
+		}
+
+		/// <summary>
+		/// BIDI direction constants
+		/// </summary>
+		public enum UCharDirection
+		{
+			/// <summary></summary>
+			U_LEFT_TO_RIGHT = 0,
+			/// <summary></summary>
+			U_RIGHT_TO_LEFT = 1,
+			/// <summary></summary>
+			U_EUROPEAN_NUMBER = 2,
+			/// <summary></summary>
+			U_EUROPEAN_NUMBER_SEPARATOR = 3,
+			/// <summary></summary>
+			U_EUROPEAN_NUMBER_TERMINATOR = 4,
+			/// <summary></summary>
+			U_ARABIC_NUMBER = 5,
+			/// <summary></summary>
+			U_COMMON_NUMBER_SEPARATOR = 6,
+			/// <summary></summary>
+			U_BLOCK_SEPARATOR = 7,
+			/// <summary></summary>
+			U_SEGMENT_SEPARATOR = 8,
+			/// <summary></summary>
+			U_WHITE_SPACE_NEUTRAL = 9,
+			/// <summary></summary>
+			U_OTHER_NEUTRAL = 10,
+			/// <summary></summary>
+			U_LEFT_TO_RIGHT_EMBEDDING = 11,
+			/// <summary></summary>
+			U_LEFT_TO_RIGHT_OVERRIDE = 12,
+			/// <summary></summary>
+			U_RIGHT_TO_LEFT_ARABIC = 13,
+			/// <summary></summary>
+			U_RIGHT_TO_LEFT_EMBEDDING = 14,
+			/// <summary></summary>
+			U_RIGHT_TO_LEFT_OVERRIDE = 15,
+			/// <summary></summary>
+			U_POP_DIRECTIONAL_FORMAT = 16,
+			/// <summary></summary>
+			U_DIR_NON_SPACING_MARK = 17,
+			/// <summary></summary>
+			U_BOUNDARY_NEUTRAL = 18,
+			/// <summary></summary>
+			U_FIRST_STRONG_ISOLATE = 19,
+			/// <summary></summary>
+			U_LEFT_TO_RIGHT_ISOLATE = 20,
+			/// <summary></summary>
+			U_RIGHT_TO_LEFT_ISOLATE = 21,
+			/// <summary></summary>
+			U_POP_DIRECTIONAL_ISOLATE = 22,
+			/// <summary></summary>
+			U_CHAR_DIRECTION_COUNT
 		}
 	}
 	// JT notes on how to pass arguments

@@ -3656,7 +3656,6 @@ public:
 	int m_ichEnd;
 	VwSelChangeType m_nHowChanged;
 	VwShiftStatus m_ss;
-	ILgCharacterPropertyEnginePtr m_qcpe; // default ICU CPE; use only where wordforming overrides are not important.
 
 	OnTypingMethod(VwTextSelection * psel, IVwGraphics * pvg, const wchar * pchInput,
 		int cchInput, VwShiftStatus ss, int * pwsPending)
@@ -3698,7 +3697,6 @@ public:
 		m_chFirst = pchInput[0]; // don't use m_pchInput; has BS and DEL removed. Want original first.
 		m_pwsPending = pwsPending;
 		m_fSelectionHidden = false;
-		m_qcpe.CreateInstance(CLSID_LgIcuCharPropEngine);
 	}
 
 	~OnTypingMethod()
@@ -4201,9 +4199,7 @@ public:
 			else
 				uch32 = (unsigned)prgch[ich];
 
-			LgGeneralCharCategory gcc;
-			CheckHr(m_qcpe->get_GeneralCategory(uch32, &gcc));
-			if (gcc >= kccMn && gcc <= kccMe && ich > ichMin)
+			if (StrUtil::IsMark(uch32) && ich > ichMin)
 			{
 				++cchMark;
 				if (ichLim < cchProp)
@@ -10547,9 +10543,7 @@ int VwTextSelection::ForwardOneChar(int ichLogIP, VwParagraphBox * pvpboxIP, boo
 ----------------------------------------------------------------------------------------------*/
 static CharacterType GetCharacterType(ILgCharacterPropertyEngine * pcpe, OLECHAR chw)
 {
-	ComBool fIsSeparator;
-	CheckHr(pcpe->get_IsSeparator(chw, &fIsSeparator));
-	if (fIsSeparator)
+	if (StrUtil::IsSeparator(chw))
 		return kSpace;
 
 	ComBool fIsLetter;
@@ -10557,9 +10551,7 @@ static CharacterType GetCharacterType(ILgCharacterPropertyEngine * pcpe, OLECHAR
 	if (fIsLetter)
 		return kAlpha;
 
-	ComBool fIsNumber;
-	CheckHr(pcpe->get_IsNumber(chw, &fIsNumber));
-	return fIsNumber ? kAlpha : kPunc;
+	return StrUtil::IsNumber(chw) ? kAlpha : kPunc;
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -12455,8 +12447,7 @@ void VwTextSelection::FindWordBoundaries(int & ichMinWord, int & ichLimWord)
 			break;
 		ILgCharacterPropertyEnginePtr qcpe;
 		GetCpeFromRootAndProps(m_qrootb, qttpCurrent, &qcpe);
-		ComBool isDigit;
-		CheckHr(qcpe->get_IsNumber(ch, &isDigit));
+		bool isDigit = StrUtil::IsNumber(ch);
 		ComBool isWordForming;
 		CheckHr(qcpe->get_IsWordForming(ch, &isWordForming));
 		if (!isWordForming && !isDigit)
@@ -12473,8 +12464,7 @@ void VwTextSelection::FindWordBoundaries(int & ichMinWord, int & ichLimWord)
 			break;
 		ILgCharacterPropertyEnginePtr qcpe;
 		GetCpeFromRootAndProps(m_qrootb, qttpCurrent, &qcpe);
-		ComBool isDigit;
-		qcpe->get_IsNumber(ch, &isDigit);
+		bool isDigit = StrUtil::IsNumber(ch);
 		ComBool isWordForming;
 		qcpe->get_IsWordForming(ch, &isWordForming);
 		if (!isWordForming && !isDigit)

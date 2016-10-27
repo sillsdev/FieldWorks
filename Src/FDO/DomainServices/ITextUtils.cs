@@ -345,7 +345,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private void Init(FdoCache cache)
 		{
 			m_cache = cache;
-			m_paragraphTextScanner = new WordMaker(null, cache.WritingSystemFactory);
+			m_paragraphTextScanner = new WordMaker(null, cache.ServiceLocator.WritingSystemManager);
 			m_wfr = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 			m_wordfactory = m_cache.ServiceLocator.GetInstance<IWfiWordformFactory>();
 			m_cbaf = m_cache.ServiceLocator.GetInstance<ICmBaseAnnotationFactory>();
@@ -369,7 +369,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			m_paraWs = TsStringUtils.GetFirstVernacularWs(m_para.Cache.LanguageProject.VernWss, m_para.Services.WritingSystemFactory, m_para.Contents);
 			if (m_paraWs <= 0)
 				m_paraWs = m_cache.DefaultVernWs;
-			m_wordMaker = new WordMaker(m_tssPara, para.Cache.WritingSystemFactory);
+			m_wordMaker = new WordMaker(m_tssPara, para.Cache.ServiceLocator.WritingSystemManager);
 			m_paragraphTextScanner.Tss = m_tssPara;
 		}
 
@@ -471,7 +471,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 				// NOTE: for phrase annotations, use the first word as a key (LT-5856)
 				string annFirstWordformLowered;
-				ITsString firstWord = FirstWord(analysis.Wordform.Form.get_String(m_paraWs), Cache.WritingSystemFactory,
+				ITsString firstWord = FirstWord(analysis.Wordform.Form.get_String(m_paraWs), Cache.ServiceLocator.WritingSystemManager,
 												out annFirstWordformLowered);
 				if (firstWord != null)
 				{
@@ -592,12 +592,12 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Returns the first word in the given tssWordAnn and its lower case form.
 		/// </summary>
 		/// <param name="tssWordAnn"></param>
-		/// <param name="wsf"></param>
+		/// <param name="wsManager"></param>
 		/// <param name="firstFormLowered"></param>
 		/// <returns>null if we couldn't find a word in the given tssWordAnn</returns>
-		static internal ITsString FirstWord(ITsString tssWordAnn, ILgWritingSystemFactory wsf, out string firstFormLowered)
+		internal static ITsString FirstWord(ITsString tssWordAnn, WritingSystemManager wsManager, out string firstFormLowered)
 		{
-			WordMaker wordScanner = new WordMaker(tssWordAnn, wsf);
+			WordMaker wordScanner = new WordMaker(tssWordAnn, wsManager);
 			int ichMinFirstWord;
 			int ichLimFirstWord;
 			ITsString firstWord = wordScanner.NextWord(out ichMinFirstWord, out ichLimFirstWord);
@@ -615,11 +615,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="cache"></param>
 		/// <param name="tssWordAnn"></param>
 		/// <returns></returns>
-		static internal bool IsPhrase(FdoCache cache, ITsString tssWordAnn)
+		internal static bool IsPhrase(FdoCache cache, ITsString tssWordAnn)
 		{
 			string firstFormLowered;
-			ITsString firstWord = FirstWord(tssWordAnn,
-											cache.WritingSystemFactory, out firstFormLowered);
+			ITsString firstWord = FirstWord(tssWordAnn, cache.ServiceLocator.WritingSystemManager, out firstFormLowered);
 			// Handle null values without crashing.  See LT-6309 for how this can happen.
 			return firstWord != null && firstWord.Length < tssWordAnn.Length;
 		}
@@ -1371,17 +1370,19 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		// Range of characters for which m_cpe is known to be valid. Don't use if ich is outside
 		// this range except for things like white-space testing that don't depend on WS.
 		ILgCharacterPropertyEngine m_cpe;
+		private readonly WritingSystemManager m_wsManager;
 		static Dictionary<string, string> s_wordformToLower = new Dictionary<string, string>();
 
 		/// <summary>
 		/// Start it off analyzing a string.
 		/// </summary>
 		/// <param name="tss"></param>
-		/// <param name="wsf"></param>
-		public WordMaker(ITsString tss, ILgWritingSystemFactory wsf)
+		/// <param name="wsManager"></param>
+		public WordMaker(ITsString tss, WritingSystemManager wsManager)
 		{
 			Init(tss);
-			m_tracker = new CpeTracker(wsf, tss);
+			m_wsManager = wsManager;
+			m_tracker = new CpeTracker(m_wsManager, tss);
 			m_cpe = m_tracker.CharPropEngine(0); // a default for functions that don't depend on wordforming.
 		}
 
@@ -1482,7 +1483,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					 WordWs(tssA) == WordWs(tssB)));
 		}
 
-		static internal int WordWs(ITsString tss)
+		internal static int WordWs(ITsString tss)
 		{
 			return TsStringUtils.GetWsAtOffset(tss, 0);
 		}
@@ -1497,7 +1498,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (!s_wordformToLower.TryGetValue(str, out strLower))
 			{
 				// add the lowercase form to this dictionary.
-				strLower = m_cpe.ToLower(str);
+				CoreWritingSystemDefinition ws = m_wsManager.Get(tss.get_WritingSystemAt(0));
+				strLower = Icu.ToLower(str, ws.IcuLocale);
 				s_wordformToLower[str] = strLower;
 			}
 			return strLower;
@@ -1556,7 +1558,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <returns></returns>
 		public bool IsWhite(int ich)
 		{
-			return TsStringUtils.IsWhite(m_cpe, m_st, ich) || StringUtils.FullCharAt(m_st, ich) == AnalysisOccurrence.KchZws;
+			return TsStringUtils.IsWhite(m_st, ich) || StringUtils.FullCharAt(m_st, ich) == AnalysisOccurrence.KchZws;
 		}
 
 		/// <summary>
@@ -1574,7 +1576,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				isLabel = true;
 			//The character is wordforming if it is not a label And it is either word forming or a number (numbers added for LT-10746)
 			return !isLabel && (m_tracker.CharPropEngine(ich).get_IsWordForming(StringUtils.FullCharAt(m_st, ich)) ||
-								  m_tracker.CharPropEngine(ich).get_IsNumber(StringUtils.FullCharAt(m_st, ich)));
+								  Icu.IsNumeric(StringUtils.FullCharAt(m_st, ich)));
 		}
 
 		/// <summary>
@@ -1706,7 +1708,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			int ichLimSeg = 0;
 
 			int ch = 0;
-			LgGeneralCharCategory cc = 0;
 			if (String.IsNullOrEmpty(m_paraText))
 				return;
 			m_prevCh = 0; // not numeric or period
@@ -1716,7 +1717,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				m_prevCh = ch;
 				ch = StringUtils.FullCharAt(m_paraText, ich);
 				m_cpe = m_cpeTracker.CharPropEngine(ich);
-				cc = m_cpe.get_GeneralCategory(ch);
+				Icu.UCharCategory cc = Icu.GetCharType(ch);
 
 				// don't try to deduce this from cc, it can be overiden.
 				bool fIsLetter = m_cpe.get_IsWordForming(ch);// || m_cpe.get_IsNumber(ch); //Numbers are now wordforming in Analysis [LT-10746]
@@ -1770,7 +1771,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 							state = SegParseState.ProcessingLabel;
 							break;
 						}
-						if (cc == LgGeneralCharCategory.kccZs)
+						if (cc == Icu.UCharCategory.U_SPACE_SEPARATOR)
 						{
 							// We will end the segment here, provided we find valid content for
 							// a following segment.
@@ -1810,7 +1811,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 							ichStartSeg = ichLimSeg;
 							state = SegParseState.BuildingSegment;
 						}
-						else if (cc == LgGeneralCharCategory.kccZs)
+						else if (cc == Icu.UCharCategory.U_SPACE_SEPARATOR)
 						{
 							// found sequence of trailing spaces, put all in prev segment,
 							// but only if we haven't seen a non-blank.
@@ -1826,7 +1827,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					case SegParseState.ProcessingLabel:
 						// A label segment is allowed to absorb following white space, but anything else non-label
 						// will break it.
-						if (fIsLabel || cc == LgGeneralCharCategory.kccZs)
+						if (fIsLabel || cc == Icu.UCharCategory.U_SPACE_SEPARATOR)
 							break;
 						m_ichMinSegBreaks.Add(ich);
 						ichLimSeg = ich;
@@ -1842,7 +1843,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		}
 
-		private bool IsEosChar(int ch, LgGeneralCharCategory cc, int ich)
+		private bool IsEosChar(int ch, Icu.UCharCategory cc, int ich)
 		{
 			if (ch == 0x002E) // full stop
 				return !IsSpecialPeriod(ich);
@@ -1886,8 +1887,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			}
 			// No following period, so not an ellipsis. Special exactly if numbers on both sides.
 			// No need currently to ensure correct cpe, category is not yet ws-dependent.
-			return m_cpe.get_GeneralCategory(m_prevCh) == LgGeneralCharCategory.kccNd &&
-				   m_cpe.get_GeneralCategory(chNext) == LgGeneralCharCategory.kccNd;
+			return Icu.GetCharType(m_prevCh) == Icu.UCharCategory.U_DECIMAL_DIGIT_NUMBER &&
+				   Icu.GetCharType(chNext) == Icu.UCharCategory.U_DECIMAL_DIGIT_NUMBER;
 		}
 
 		/// <summary>

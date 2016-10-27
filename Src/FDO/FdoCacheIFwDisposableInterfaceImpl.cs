@@ -125,13 +125,7 @@ namespace SIL.FieldWorks.FDO
 				CustomProperties.Clear();
 
 				if (m_serviceLocator != null)
-				{
 					m_serviceLocator.WritingSystemManager.Save();
-
-					ILgCharacterPropertyEngine cpe = m_serviceLocator.UnicodeCharProps;
-					if (cpe != null)
-						Marshal.ReleaseComObject(cpe);
-				}
 
 				var tsf = TsStrFactory;
 				if (tsf != null)

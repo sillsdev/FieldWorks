@@ -4783,11 +4783,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		protected int m_ianalysis;
 
-		public ParagraphAnalysisFinder(ITsString baseline, ILgWritingSystemFactory wsf)
+		public ParagraphAnalysisFinder(ITsString baseline, WritingSystemManager wsManager)
 		{
 			Baseline = baseline;
 			m_length = Baseline.Length;
-			m_wordMaker = new WordMaker(Baseline, wsf);
+			m_wordMaker = new WordMaker(Baseline, wsManager);
 		}
 
 		public ITsString Baseline { get; private set; }
@@ -4878,7 +4878,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		/// <param name="seg"></param>
 		public ParagraphOffsetsMethod(ISegment seg)
-			: base(seg.BaselineText, seg.Services.WritingSystemFactory)
+			: base(seg.BaselineText, seg.Services.WritingSystemManager)
 		{
 			m_segment = seg;
 		}

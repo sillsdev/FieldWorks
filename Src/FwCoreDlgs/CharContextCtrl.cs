@@ -654,7 +654,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					if (m_fileData[i].IndexOfAny(controlChars) >= 0)
 						throw new Exception(FWCoreDlgsErrors.ksInvalidControlCharacterFound);
-					m_fileData[i] = CharPropEngine.NormalizeD(m_fileData[i]);
+					m_fileData[i] = Common.FwKernelInterfaces.Icu.Normalize(m_fileData[i], Common.FwKernelInterfaces.Icu.UNormalizationMode.UNORM_NFD);
 				}
 			}
 		}

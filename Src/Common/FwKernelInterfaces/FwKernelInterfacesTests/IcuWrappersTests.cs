@@ -253,9 +253,8 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 		public void CharacterPropertyOverrides()
 		{
 			Icu.InitIcuDataDir();
-			var cpe = LgIcuCharPropEngineClass.Create();
-			var result = cpe.get_GeneralCategory('\xF171');
-			Assert.That(result, Is.EqualTo(LgGeneralCharCategory.kccMn));
+			Icu.UCharCategory result = Icu.GetCharType('\xF171');
+			Assert.That(result, Is.EqualTo(Icu.UCharCategory.U_NON_SPACING_MARK));
 		}
 
 	}
