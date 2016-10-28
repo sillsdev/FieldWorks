@@ -7,7 +7,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Media;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;

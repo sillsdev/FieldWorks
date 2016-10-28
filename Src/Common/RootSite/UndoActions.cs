@@ -9,7 +9,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Reporting;

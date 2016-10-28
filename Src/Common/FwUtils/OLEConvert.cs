@@ -14,12 +14,13 @@
 //
 // EB/2009-08-20: The only method we currently use is OLECvt.ToOLE_IPictureDisp.
 // If we need the other methods we should copy the interface definitions from
-// stdole to COMInterfaces/ComWrapper.cs since stdole isn't available on Linux.
+// stdole to ViewsInterfaces/ComWrapper.cs since stdole isn't available on Linux.
 
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

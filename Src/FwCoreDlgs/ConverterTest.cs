@@ -14,7 +14,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using ECInterfaces;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
@@ -22,6 +22,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SilEncConverters40;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

@@ -6,7 +6,6 @@ using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {

@@ -9,8 +9,8 @@ using System;
 
 using NUnit.Framework;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;

@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.SharpViews
 		/// <summary>
 		/// We paint images as "background" so that any adjacent text can overlap them slightly if necessary.
 		/// </summary>
-		public override void PaintBackground(Common.COMInterfaces.IVwGraphics vg, PaintTransform ptrans)
+		public override void PaintBackground(Common.ViewsInterfaces.IVwGraphics vg, PaintTransform ptrans)
 		{
 			base.PaintBackground(vg, ptrans); // might paint some pad or border around the block.
 			Rect bounds = ptrans.ToPaint(new Rect(Left + GapLeading(ptrans), Top + GapTop(ptrans),

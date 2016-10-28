@@ -84,9 +84,9 @@
     <Reference Include="Accessibility">
       <Name>Accessibility</Name>
     </Reference>
-    <Reference Include="COMInterfaces">
-      <Name>COMInterfaces</Name>
-      <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    <Reference Include="ViewsInterfaces">
+      <Name>ViewsInterfaces</Name>
+      <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="Controls.Design">
       <Name>Controls.Design</Name>
@@ -101,7 +101,7 @@
     <Reference Include="ManagedLgIcuCollator">
       <HintPath>..\..\..\..\Output\Debug\ManagedLgIcuCollator.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" >
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\DistFiles/Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="ParatextShared, Version=7.5.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -168,6 +168,9 @@
     <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" Condition="'$(OS)'=='Unix'" />
     <Reference Include="SIL.Windows.Forms">
       <HintPath>..\..\..\..\Downloads\SIL.Windows.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -555,7 +558,4 @@
   <PropertyGroup>
     <DistFiles>../../../../DistFiles</DistFiles>
   </PropertyGroup>
-  <ItemGroup>
-    <Folder Include="FileDialog\" />
-  </ItemGroup>
 </Project>

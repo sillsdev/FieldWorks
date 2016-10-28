@@ -98,9 +98,6 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
-    </Reference>
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
@@ -114,8 +111,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces">
-      <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    <Reference Include="ViewsInterfaces">
+      <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="CoreImpl">
       <SpecificVersion>False</SpecificVersion>
@@ -145,11 +142,6 @@
     </Reference>
     <Reference Include="LexTextControls">
       <HintPath>..\..\..\..\Output\Debug\LexTextControls.dll</HintPath>
-    </Reference>
-    <Reference Include="MessageBoxExLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\MessageBoxExLib.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
@@ -185,6 +177,9 @@
     <Reference Include="XMLViews, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\..\Output\Debug\XMLViews.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -124,9 +124,9 @@
       <HintPath>..\..\..\Output\Debug\ParserUI.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="COMInterfaces">
-      <Name>COMInterfaces</Name>
-      <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    <Reference Include="ViewsInterfaces">
+      <Name>ViewsInterfaces</Name>
+      <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="DnbXCoreAdapterLibrary">
       <Name>FlexUIAdapter</Name>

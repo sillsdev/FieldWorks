@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.FDO.Application.ApplicationServices

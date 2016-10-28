@@ -1,9 +1,6 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwStyleSheet.cs
-// Responsibility: FW Team
 //
 // <remarks>
 // Implementation of FwStyleSheet
@@ -25,7 +22,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.Utils;
 
@@ -856,114 +853,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		#endregion
 
 		#region Other Methods
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a font face name for a style. This is the real font face name, not the magic
-		/// font name.
-		/// </summary>
-		/// <param name="name">Style name whose font face name to return.</param>
-		/// <param name="iws">Writing system</param>
-		/// <param name="cache">Cache from which the writing system factory is obtained.
-		/// </param>
-		/// <returns>The font face name of the specified style name and writing system.</returns>
-		/// ------------------------------------------------------------------------------------
-		public string GetFaceNameFromStyle(string name, int iws, FdoCache cache)
-		{
-			return GetFaceNameFromStyle(name, iws, cache.WritingSystemFactory);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a font face name for a style. This is the real font face name, not the magic
-		/// font name.
-		/// </summary>
-		/// <param name="stylename">Style name whose font face name to return.</param>
-		/// <param name="iws">Writing system</param>
-		/// <param name="wsf">Writing System Factory (probably from the cache).</param>
-		/// <returns>The font face name of the specified style name and writing system.</returns>
-		/// ------------------------------------------------------------------------------------
-		public string GetFaceNameFromStyle(string stylename, int iws, ILgWritingSystemFactory wsf)
-		{
-			LgCharRenderProps chrps = GetStyleChrps(stylename, iws, wsf);
-			return GetFaceNameFromChrps(chrps);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Helper method tpo get the face name from the properties used to render characters.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private string GetFaceNameFromChrps(LgCharRenderProps chrps)
-		{
-			return MarshalEx.UShortToString(chrps.szFaceName).Trim();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the information about the properties that will be used to render characters in
-		/// the given writing system for the given style.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private LgCharRenderProps GetStyleChrps(string stylename, int ws, ILgWritingSystemFactory wsf)
-		{
-			ITsPropsBldr ttpBldr = TsPropsBldrClass.Create();
-			if (stylename != null)
-				ttpBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, stylename);
-
-			// Make sure we handle the magic writing systems
-			if (ws == WritingSystemServices.kwsAnal)
-				ws = m_fdoCache.DefaultAnalWs;
-			else if (ws == WritingSystemServices.kwsVern)
-				ws = m_fdoCache.DefaultVernWs;
-
-			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, ws);
-			ITsTextProps ttp = ttpBldr.GetTextProps();
-
-			// JohnT: I'm not completely sure why this is necessary, since the property store is created
-			// and used entirely on the current thread. However, the stylesheet (this) is typically
-			// created on the main UI thread, and apparently the linkage from the property store to 'this'
-			// when we set its StyleSheet to be 'this' fails. It fails in a very bizarre way, telling us
-			// that the property store does not implement IVwPropertyStore. See FWR-1918.
-			// Some more sophisticated trick may be needed if it is ever the case that the stylesheet
-			// is NOT created on the main UI thread.
-			return m_fdoCache.ServiceLocator.GetInstance<IFdoUI>().SynchronizeInvoke.Invoke(() => GetChrps(ws, ttp, wsf));
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the font face name of the special UI style's font using the specified cache and
-		/// writing system.
-		/// </summary>
-		/// <param name="ws">The writing system identifier.</param>
-		/// <param name="overrideDefaultSize">If 0, the default size from the style sheet will
-		/// be used. If greater than 0, this represents the em-size, in points, of the font to
-		/// return.</param>
-		/// ------------------------------------------------------------------------------------
-		public Font GetUiFontForWritingSystem(int ws, float overrideDefaultSize)
-		{
-			LgCharRenderProps chrps = StyleSheetWithUiStyle.GetStyleChrps(StyleServices.UiElementStylename, ws,
-				m_fdoCache.WritingSystemFactory);
-			string faceName = GetFaceNameFromChrps(chrps);
-			// ENHANCE: Handle irregular font styles
-			return new Font(faceName,
-				overrideDefaultSize > 0 ? overrideDefaultSize : (chrps.dympHeight / 1000f));
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the character rendering properties for the given writing system and text props.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private LgCharRenderProps GetChrps(int iws, ITsTextProps ttp, ILgWritingSystemFactory wsf)
-		{
-			IVwPropertyStore vwps = VwPropertyStoreClass.Create();
-			vwps.Stylesheet = this;
-			LgCharRenderProps chrps = vwps.get_ChrpFor(ttp);
-			ILgWritingSystem ws = wsf.get_EngineOrNull(iws);
-			ws.InterpretChrp(ref chrps);
-			return chrps;
-		}
-
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Find the style with specified name

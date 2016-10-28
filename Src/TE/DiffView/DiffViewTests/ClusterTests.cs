@@ -10,9 +10,9 @@ using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.TE
 {

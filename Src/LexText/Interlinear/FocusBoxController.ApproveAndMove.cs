@@ -15,9 +15,10 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using System.Diagnostics;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using XCore;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.IText
 {

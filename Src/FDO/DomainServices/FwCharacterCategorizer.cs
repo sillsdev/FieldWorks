@@ -10,9 +10,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FDO.DomainServices

@@ -13,13 +13,11 @@ using System.Windows.Forms;
 using System.Linq;
 
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Resources;
-using XCore;
 using SIL.FieldWorks.FwCoreDlgs;
 
 namespace SIL.FieldWorks.LexText.Controls.DataNotebook

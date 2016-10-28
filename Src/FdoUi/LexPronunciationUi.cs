@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using XCore;

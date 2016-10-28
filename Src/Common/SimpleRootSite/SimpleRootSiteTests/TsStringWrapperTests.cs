@@ -1,15 +1,12 @@
-﻿// Copyright (c) 2007-2013 SIL International
+﻿// Copyright (c) 2007-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TsStringWrapperTests.cs
-// Responsibility:
-// --------------------------------------------------------------------------------------------
+
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Test.TestUtils;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests

@@ -12,10 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.CoreImpl;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.TE

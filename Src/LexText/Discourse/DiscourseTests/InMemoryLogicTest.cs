@@ -9,7 +9,7 @@ using System.Linq;
 using System.Windows.Forms;
 using NUnit.Framework;
 
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 

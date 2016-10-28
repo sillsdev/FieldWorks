@@ -5,18 +5,17 @@
 // File: MoreRootSiteTests.cs
 // Responsibility: FW team
 // --------------------------------------------------------------------------------------------
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-using NMock;
+using Rhino.Mocks;
 using NUnit.Framework;
 
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.CoreImpl;
 using System;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
@@ -986,31 +985,27 @@ namespace SIL.FieldWorks.Common.RootSites
 			Assert.IsNotNull(pict);
 
 			ShowForm(Lng.English, DummyBasicViewVc.DisplayType.kNormal);
-			DynamicMock mockedSelection = new DynamicMock(typeof(IVwSelection));
-			mockedSelection.ExpectAndReturn("IsValid", true);
+			var mockedSelection = MockRepository.GenerateMock<IVwSelection>();
+			mockedSelection.Expect(s => s.IsValid).Return(true);
 			VwChangeInfo changeInfo = new VwChangeInfo();
 			changeInfo.hvo = 0;
-			mockedSelection.ExpectAndReturn("CompleteEdits", true, new object[] {changeInfo},
-				new string[] {typeof(VwChangeInfo).FullName + "&"}, new object[] {changeInfo});
-			mockedSelection.ExpectAndReturn("CLevels", 2, false);
-			mockedSelection.ExpectAndReturn("CLevels", 2, true);
+			mockedSelection.Expect(s => s.CompleteEdits(out changeInfo)).IgnoreArguments().Return(true);
+			mockedSelection.Expect(s => s.CLevels(true)).Return(2);
+			mockedSelection.Expect(s => s.CLevels(false)).Return(2);
 			string sIntType = typeof(int).FullName;
 			string intRef = sIntType + "&";
-			mockedSelection.ExpectAndReturn("PropInfo", null,
-				new object[] { false, 0, null, null, null, null, null },
-				new string[] {typeof(bool).FullName, sIntType, intRef, intRef, intRef,
-					intRef, typeof(IVwPropertyStore).FullName + "&"},
-				new object[] { false, 0, pict.Hvo, CmPictureTags.kflidCaption, 0, 0, null });
-			mockedSelection.ExpectAndReturn("PropInfo", null,
-				new object[] { true, 0, null, null, null, null, null },
-				new string[] {typeof(bool).FullName, sIntType, intRef, intRef, intRef,
-					intRef, typeof(IVwPropertyStore).FullName + "&"},
-				new object[] { true, 0, pict.Hvo, CmPictureTags.kflidCaption, 0, 0, null });
-			mockedSelection.ExpectAndReturn(2, "EndBeforeAnchor", false);
+			int ignoreOut;
+			IVwPropertyStore outPropStore;
+			mockedSelection.Expect(s => s.PropInfo(false, 0, out ignoreOut, out ignoreOut, out ignoreOut, out ignoreOut, out outPropStore))
+				.OutRef(pict.Hvo, CmPictureTags.kflidCaption, 0, 0, null);
+			mockedSelection.Expect(
+				s => s.PropInfo(true, 0, out ignoreOut, out ignoreOut, out ignoreOut, out ignoreOut, out outPropStore))
+				.OutRef(pict.Hvo, CmPictureTags.kflidCaption, 0, 0, null);
+			mockedSelection.Expect(s => s.EndBeforeAnchor).Return(false);
 
 			DummyBasicView.DummyEditingHelper editingHelper =
 				(DummyBasicView.DummyEditingHelper)m_basicView.EditingHelper;
-			editingHelper.m_mockedSelection = (IVwSelection)mockedSelection.MockInstance;
+			editingHelper.m_mockedSelection = (IVwSelection)mockedSelection;
 			editingHelper.m_fOverrideGetParaPropStores = true;
 
 			IVwSelection vwsel;

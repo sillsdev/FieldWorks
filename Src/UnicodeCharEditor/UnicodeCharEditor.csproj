@@ -71,10 +71,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces, Version=6.1.1.21220, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\COMInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="CoreImpl, Version=6.1.1.19981, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\CoreImpl.dll</HintPath>
@@ -91,23 +87,18 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SilUtils.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="xCoreInterfaces, Version=6.1.1.20001, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="XMLUtils, Version=6.1.1.19992, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\XMLUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -9,12 +9,8 @@
 // </remarks>
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
-
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgControls

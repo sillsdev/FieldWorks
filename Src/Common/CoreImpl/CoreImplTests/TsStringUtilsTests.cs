@@ -13,7 +13,7 @@ using System.Text; // for ILgWritingSystemFactory
 using System.Xml;
 using NMock;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 

@@ -81,9 +81,9 @@
 	  <Name>AccessibilityHelper</Name>
 	  <HintPath>..\..\..\Output\Release\AccessibilityHelper.dll</HintPath>
 	</Reference>
-	<Reference Include="COMInterfaces">
-	  <Name>COMInterfaces</Name>
-	  <HintPath>..\..\..\Output\Release\COMInterfaces.dll</HintPath>
+	<Reference Include="ViewsInterfaces">
+	  <Name>ViewsInterfaces</Name>
+	  <HintPath>..\..\..\Output\Release\ViewsInterfaces.dll</HintPath>
 	</Reference>
 	<Reference Include="GuiTestDriver">
 	  <Name>GuiTestDriver</Name>

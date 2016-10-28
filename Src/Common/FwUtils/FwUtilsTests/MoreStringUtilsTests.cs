@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// More tests for the StringUtils class (could not be done in COMInterfacesTests because
+	/// More tests for the StringUtils class (could not be done in ViewsInterfacesTests because
 	/// of additional dependencies).
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------

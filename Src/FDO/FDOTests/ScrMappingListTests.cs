@@ -9,11 +9,8 @@ using System;
 
 using NUnit.Framework;
 using Rhino.Mocks;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;

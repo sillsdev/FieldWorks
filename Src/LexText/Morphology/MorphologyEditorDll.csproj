@@ -106,9 +106,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces">
-      <Name>COMInterfaces</Name>
-      <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    <Reference Include="ViewsInterfaces">
+      <Name>ViewsInterfaces</Name>
+      <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CoreImpl, Version=6.1.0.24520, Culture=neutral, processorArchitecture=MSIL">
@@ -255,6 +255,9 @@
       <Name>xWorks</Name>
       <HintPath>..\..\..\Output\Debug\xWorks.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

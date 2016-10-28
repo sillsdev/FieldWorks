@@ -29,10 +29,10 @@ no exception: Create an infl affix slot with no affixes in it and then use this 
 */
 
 using System;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.COMInterfaces;
 using XCore;
 
 namespace SIL.FieldWorks.WordWorks.Parser

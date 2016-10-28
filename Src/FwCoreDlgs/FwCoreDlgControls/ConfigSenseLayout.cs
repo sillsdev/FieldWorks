@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Drawing.Text;
-using SIL.FieldWorks.FDO.DomainServices;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 

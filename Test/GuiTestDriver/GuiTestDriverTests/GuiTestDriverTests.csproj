@@ -80,9 +80,9 @@
 	  <HintPath>..\..\..\Output\Release\AccessibilityHelper.dll</HintPath>
 	</Reference>
 	<Reference Include="BasicUtils, Version=4.9.0.20328, Culture=neutral, processorArchitecture=MSIL" />
-	<Reference Include="COMInterfaces, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="ViewsInterfaces, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Release\COMInterfaces.dll</HintPath>
+	  <HintPath>..\..\..\Output\Release\ViewsInterfaces.dll</HintPath>
 	</Reference>
 	<Reference Include="GuiTestDriver, Version=4.1.2530.28879, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>

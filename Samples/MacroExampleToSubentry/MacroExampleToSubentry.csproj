@@ -31,8 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="COMInterfaces">
-      <HintPath>..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    <Reference Include="ViewsInterfaces">
+      <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="FDO">
       <HintPath>..\..\Output\Debug\FDO.dll</HintPath>

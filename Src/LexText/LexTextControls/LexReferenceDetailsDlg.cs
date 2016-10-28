@@ -3,16 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Drawing;
-using System.Collections;
-using System.ComponentModel;
 using System.Windows.Forms;
-using System.Diagnostics;
-
-using SIL.FieldWorks.Common.Framework;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using XCore;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.LexText.Controls
 {

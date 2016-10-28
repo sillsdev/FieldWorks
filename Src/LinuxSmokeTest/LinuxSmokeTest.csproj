@@ -60,9 +60,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces, Version=6.9.2.0, Culture=neutral, PublicKeyToken=null">
+    <Reference Include="ViewsInterfaces, Version=6.9.2.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\COMInterfaces.dll</HintPath>
+      <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="FieldWorks, Version=6.9.4.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>

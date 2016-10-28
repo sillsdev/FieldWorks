@@ -6,7 +6,7 @@ using Microsoft.Practices.ServiceLocation;
 using System;
 
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.FDO

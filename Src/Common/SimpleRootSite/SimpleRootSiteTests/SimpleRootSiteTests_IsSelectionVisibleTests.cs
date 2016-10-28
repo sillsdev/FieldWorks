@@ -5,11 +5,12 @@
 // File: SimpleRootSiteTests_IsSelectionVisibleTests.cs
 // Responsibility:
 
+using Rhino.Mocks;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using NMock;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils.Attributes;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
@@ -98,12 +99,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		Justification="Unit test. Variable disposed in Teardown method")]
 	public class ScrollTestsBase
 	{
-		private readonly string[] kLocationArgs = new string[]{typeof(IVwGraphics).FullName,
-																  typeof(Rect).FullName, typeof(Rect).FullName, typeof(Rect).FullName + "&",
-																  typeof(Rect).FullName + "&", typeof(bool).FullName + "&", typeof(bool).FullName + "&"};
 		internal IVwRootBox m_rootb;
 		internal DummyRootSite m_site;
-		internal DynamicMock m_mockSelection;
 		internal IVwSelection m_selection;
 
 		/// ------------------------------------------------------------------------------------
@@ -116,16 +113,15 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			m_site = new DummyRootSite();
 
-			DynamicMock rootb = new DynamicMock(typeof(IVwRootBox));
-			rootb.SetupResult("Height", 10000);
-			rootb.SetupResult("Width", m_site.ClientRectangle.X);
-			rootb.SetupResult("IsPropChangedInProgress", false);
-			m_rootb = (IVwRootBox)rootb.MockInstance;
+			var rootb = MockRepository.GenerateMock<IVwRootBox>();
+			rootb.Expect(rb => rb.Height).Return(10000);
+			rootb.Expect(rb => rb.Width).Return(m_site.ClientRectangle.X);
+			rootb.Expect(rb => rb.IsPropChangedInProgress).Return(false);
 
-			m_site.RootBox = m_rootb;
+			m_site.RootBox = rootb;
 
-			m_mockSelection = new DynamicMock(typeof(IVwSelection));
-			m_mockSelection.SetupResult("IsValid", true);
+			m_selection = MockRepository.GenerateMock<IVwSelection>();
+			m_selection.Expect(s => s.IsValid).Return(true);
 			m_site.CreateControl();
 			m_site.ScrollMinSize = new Size(m_site.ClientRectangle.Width, 10000);
 		}
@@ -153,15 +149,17 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		protected void SetLocation(Rect rcPrimary, bool fEndBeforeAnchor, Point scrollPos,
 			bool fIsRange)
 		{
-			m_mockSelection.SetupResult("Location", null, kLocationArgs,
-				new object[]{null, null, null, new Rect(rcPrimary.left - scrollPos.X,
-								rcPrimary.top - scrollPos.Y, rcPrimary.right - scrollPos.X,
-								rcPrimary.bottom - scrollPos.Y), new Rect(0, 0, 0, 0), false,
-								fEndBeforeAnchor});
-			m_mockSelection.SetupResult("IsRange", fIsRange);
-			m_mockSelection.SetupResult("SelType", VwSelType.kstText);
-			m_mockSelection.SetupResult("EndBeforeAnchor", fEndBeforeAnchor);
-			m_selection = (IVwSelection)m_mockSelection.MockInstance;
+			m_selection.Expect(s =>
+			{
+				Rect outRect;
+				bool outJunk;
+				s.Location(null, new Rect(), new Rect(), out rcPrimary, out outRect, out outJunk,
+					out fEndBeforeAnchor);
+			}).IgnoreArguments().OutRef(new Rect(rcPrimary.left - scrollPos.X, rcPrimary.top - scrollPos.Y, rcPrimary.right - scrollPos.X,
+								rcPrimary.bottom - scrollPos.Y), new Rect(0, 0, 0, 0), false, fEndBeforeAnchor);
+			m_selection.Expect(s => s.IsRange).Return(fIsRange);
+			m_selection.Expect(s => s.SelType).Return(VwSelType.kstText);
+			m_selection.Expect(s => s.EndBeforeAnchor).Return(fEndBeforeAnchor);
 			m_site.ScrollPosition = scrollPos;
 		}
 

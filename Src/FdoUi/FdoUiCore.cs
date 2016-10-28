@@ -12,9 +12,10 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
@@ -1819,7 +1820,6 @@ namespace SIL.FieldWorks.FdoUi
 			{
 				int wsAnal = DefaultWs;
 
-				ITsStrFactory tsf = m_cache.TsStrFactory;
 				var msa = m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().GetObject(hvo);
 
 				switch (frag)

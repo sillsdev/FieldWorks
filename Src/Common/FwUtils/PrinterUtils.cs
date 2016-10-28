@@ -8,11 +8,8 @@
 // <remarks>
 // </remarks>
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing.Printing;
-using System.Text;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

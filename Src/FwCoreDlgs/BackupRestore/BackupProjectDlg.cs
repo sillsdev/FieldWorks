@@ -6,7 +6,6 @@
 // Responsibility: FW Team
 using System;
 using System.IO;
-using System.Media;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;

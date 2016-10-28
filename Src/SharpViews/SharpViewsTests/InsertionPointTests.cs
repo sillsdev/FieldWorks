@@ -7,7 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.SharpViews.Builders;
 using SIL.FieldWorks.SharpViews.Hookups;
 using SIL.FieldWorks.SharpViews.Paragraphs;

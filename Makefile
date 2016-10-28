@@ -56,7 +56,8 @@ alltargets: \
 	nativetargets \
 	FwResources \
 	Utilities-BasicUtils \
-	common-COMInterfaces \
+	common-ViewsInterfaces \
+	common-FwKernelInterfaces \
 	common-Utils \
 	Utilities-MessageBoxExLib \
 	Utilities-XMLUtils \
@@ -156,7 +157,8 @@ clean: \
 	views-Test-clean \
 	kernel-Test-clean \
 	language-Test-clean \
-	common-COMInterfaces-clean \
+	common-ViewsInterfaces-clean \
+	common-FwKernelInterfaces-clean \
 	common-SimpleRootSite-clean \
 	common-RootSite-clean \
 	common-Framework-clean \
@@ -203,10 +205,12 @@ idl: idl-do
 # extracting the GUIDs is now done with a xbuild target, please run 'xbuild /t:generateLinuxIdlFiles'
 
 idl-do:
-	$(MAKE) -C$(SRC)/Common/COMInterfaces -f IDLMakefile all
+	$(MAKE) -C$(SRC)/Common/ViewsInterfaces -f IDLMakefile all
+	$(MAKE) -C$(SRC)/Common/FwKernelInterfaces -f IDLMakefile all
 
 idl-clean:
-	$(MAKE) -C$(SRC)/Common/COMInterfaces -f IDLMakefile clean
+	$(MAKE) -C$(SRC)/Common/ViewsInterfaces -f IDLMakefile clean
+	$(MAKE) -C$(SRC)/Common/FwKernelInterfaces -f IDLMakefile clean
 
 fieldworks-flex.1.gz: DistFiles/Linux/fieldworks-flex.1.xml
 	docbook2x-man DistFiles/Linux/fieldworks-flex.1.xml
@@ -500,10 +504,14 @@ DbAccessFirebird-check:
 	$(MAKE) -C$(SRC)/DbAccessFirebird check
 
 # $(MAKE) Common items
-common-COMInterfaces:
-	(cd $(BUILD_ROOT)/Build && xbuild /t:COMInterfaces)
-common-COMInterfaces-clean:
-	(cd $(BUILD_ROOT)/Build && xbuild /t:COMInterfaces /property:action=clean)
+common-ViewsInterfaces:
+	(cd $(BUILD_ROOT)/Build && xbuild /t:ViewsInterfaces)
+common-ViewsInterfaces-clean:
+	(cd $(BUILD_ROOT)/Build && xbuild /t:ViewsInterfaces /property:action=clean)
+common-ViewsInterfaces:
+	(cd $(BUILD_ROOT)/Build && xbuild /t:FwKernelInterfaces)
+common-ViewsInterfaces-clean:
+	(cd $(BUILD_ROOT)/Build && xbuild /t:FwKernelInterfaces /property:action=clean)
 
 common-Utils:
 	$(MAKE) -C$(SRC)/Common/Utils all

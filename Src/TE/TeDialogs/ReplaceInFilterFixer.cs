@@ -8,8 +8,9 @@
 // <remarks>
 // </remarks>
 
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.TE

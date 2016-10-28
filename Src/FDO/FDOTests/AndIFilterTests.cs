@@ -6,10 +6,7 @@
 // Responsibility: TE Team
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 

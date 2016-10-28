@@ -14,7 +14,7 @@ using System.Xml.Schema;
 using System.Windows.Forms;
 
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls; // for ProgressDialogWithTask
 using SIL.Utils;
 using SIL.FieldWorks.Resources;

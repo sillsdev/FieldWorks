@@ -13,7 +13,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;

@@ -14,9 +14,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
-using System.Xml;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 {

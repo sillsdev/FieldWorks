@@ -12,7 +12,6 @@
 
 using System;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 
 namespace SIL.FieldWorks.FDO.Infrastructure
 {

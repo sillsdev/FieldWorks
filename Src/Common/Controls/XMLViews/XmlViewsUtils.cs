@@ -8,12 +8,13 @@ using System.Xml;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Text; // StringBuilder
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Filters;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -93,7 +94,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns>true if we found a value associated with the given key. false if result is in *{key}* format.</returns>
 		public static bool TryFindString(string group, string key, out string result)
 		{
-			result = StringTable.Table.GetString(key, group);
+			result = StringTable.Table.GetString(key, @group);
 			return FoundStringTableString(key, result);
 		}
 
@@ -302,7 +303,7 @@ namespace SIL.FieldWorks.Common.Controls
 		public static string DateTimeCompString(DateTime dt)
 		{
 			string format = "u";	// 2000-08-17 23:32:32Z
-			return dt.ToString(format, System.Globalization.DateTimeFormatInfo.InvariantInfo);
+			return dt.ToString(format, DateTimeFormatInfo.InvariantInfo);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -601,7 +602,7 @@ namespace SIL.FieldWorks.Common.Controls
 		static private void AddSeparator(ref string item, int ichInsert, XmlNode layout)
 		{
 			string separator = XmlUtils.GetOptionalAttributeValue(layout, "sep");
-			if (string.IsNullOrEmpty(separator))
+			if (String.IsNullOrEmpty(separator))
 				return;
 			bool fCheckForEmptyItems = XmlUtils.GetOptionalBooleanAttributeValue(layout, "checkForEmptyItems", false);
 			if (item == null || ichInsert < 0 || ichInsert > item.Length || fCheckForEmptyItems && item.Length == 0)
@@ -631,7 +632,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			string stClassName = XmlUtils.GetOptionalAttributeValue(frag,"class");
 			string stFieldName = XmlUtils.GetManditoryAttributeValue(frag,"field");
-			if (string.IsNullOrEmpty(stClassName))
+			if (String.IsNullOrEmpty(stClassName))
 			{
 				int clid = sda.get_IntProp(hvo, CmObjectTags.kflidClass);
 				return sda.MetaDataCache.GetFieldId2(clid, stFieldName, true);
@@ -669,7 +670,7 @@ namespace SIL.FieldWorks.Common.Controls
 			foreach (int ws in wsIds)
 			{
 				string val = sda.get_MultiStringAlt(hvo, flid, ws).Text;
-				if (string.IsNullOrEmpty(val))
+				if (String.IsNullOrEmpty(val))
 					continue; // doesn't even count as 'first'
 				if (fLabel)
 				{
@@ -734,7 +735,7 @@ namespace SIL.FieldWorks.Common.Controls
 			string sWs = XmlUtils.GetOptionalAttributeValue(frag, "ws");
 			if (sWs != null && sWs == "current")
 			{
-				if (!s_fMultiFirst && !string.IsNullOrEmpty(s_sMultiSep))
+				if (!s_fMultiFirst && !String.IsNullOrEmpty(s_sMultiSep))
 				{
 					return s_sMultiSep;
 				}
@@ -1282,6 +1283,32 @@ namespace SIL.FieldWorks.Common.Controls
 		public static Guid GetGuidForUnspecifiedExtendedNoteType()
 		{
 			return new Guid(sUnspecExtendedNoteType);
+		}
+
+		/// <summary>
+		/// Get a Time property value coverted to a DateTime value.
+		/// </summary>
+		public static DateTime GetTimeProperty(ISilDataAccess sda, int hvo, int flid)
+		{
+			long silTime;
+			try
+			{
+				silTime = sda.get_TimeProp(hvo, flid);
+				return SilTime.ConvertFromSilTime(silTime);
+			}
+			catch
+			{
+				return DateTime.MinValue;
+			}
+		}
+
+		/// <summary>
+		/// Set a Time property to a given DateTime value.
+		/// </summary>
+		public static void SetTimeProperty(ISilDataAccess sda, int hvo, int flid, DateTime dt)
+		{
+			long silTime = SilTime.ConvertToSilTime(dt);
+			sda.SetTime(hvo, flid, silTime);
 		}
 	}
 

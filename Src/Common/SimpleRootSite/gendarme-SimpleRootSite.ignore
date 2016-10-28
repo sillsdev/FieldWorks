@@ -25,7 +25,7 @@ M: System.Void SIL.FieldWorks.Common.RootSites.SimpleRootSite::RegisterForInputL
 R: Gendarme.Rules.Portability.NewLineLiteralRule
 
 # dealing with key press
-M: System.Void SIL.FieldWorks.Common.RootSites.EditingHelper::OnCharAux(System.String,SIL.FieldWorks.Common.COMInterfaces.VwShiftStatus,System.Windows.Forms.Keys)
+M: System.Void SIL.FieldWorks.Common.RootSites.EditingHelper::OnCharAux(System.String,SIL.FieldWorks.Common.ViewsInterfaces.VwShiftStatus,System.Windows.Forms.Keys)
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule

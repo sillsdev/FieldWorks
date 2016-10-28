@@ -4,7 +4,8 @@
 
 using System.Runtime.InteropServices;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Keyboarding;
 using SIL.Utils;
 using SIL.Windows.Forms.Keyboarding;

@@ -8,16 +8,11 @@
 // <remarks>
 // </remarks>
 
-using System;
-
 using NUnit.Framework;
-
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {

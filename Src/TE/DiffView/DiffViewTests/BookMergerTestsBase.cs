@@ -9,15 +9,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 
 using NUnit.Framework;
-
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.Test.TestUtils;
-using SILUBS.SharedScrUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.TE

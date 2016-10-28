@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.SharpViews.Hookups;
 using SIL.FieldWorks.SharpViews.Selections;
 using SIL.Utils;
@@ -86,7 +86,7 @@ namespace SIL.FieldWorks.SharpViews.Paragraphs
 		///// overlap, we figure the cumulative width of each box as we paint it, and fine-tune positions of later ones.
 		///// </summary>
 		///// Todo: clipping; restrict to page; bullets and numbers.
-		//public override void Paint(SIL.FieldWorks.Common.COMInterfaces.IVwGraphics vg, PaintTransform ptrans)
+		//public override void Paint(SIL.FieldWorks.Common.ViewsInterfaces.IVwGraphics vg, PaintTransform ptrans)
 		//{
 		//    foreach (ParaLine line in Lines)
 		//    {

@@ -23,7 +23,7 @@ M: System.Void SIL.FieldWorks.Common.Controls.FilterBar::MakeIntCombo(SIL.FieldW
 M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::ShowFuncButtons()
 M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::ShowAnyAllNoneButtons(SIL.FieldWorks.Common.Controls.ListMatchOptions,System.Boolean)
 M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::InitHelpBrowser()
-M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::SetFontForDialog(System.Int32[],SIL.FieldWorks.Common.COMInterfaces.IVwStylesheet,SIL.FieldWorks.Common.COMInterfaces.ILgWritingSystemFactory)
+M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::SetFontForDialog(System.Int32[],SIL.FieldWorks.Common.ViewsInterfaces.IVwStylesheet,SIL.FieldWorks.Common.ViewsInterfaces.ILgWritingSystemFactory)
 M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::ReplaceTreeView(System.String)
 M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::SetFontFromWritingSystem(System.Int32)
 M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::AddChooserCommand(SIL.FieldWorks.Common.Controls.ChooserCommand)

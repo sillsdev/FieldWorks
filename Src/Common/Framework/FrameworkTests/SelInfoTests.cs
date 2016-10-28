@@ -14,7 +14,7 @@ using System.Diagnostics;
 
 using NUnit.Framework;
 
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Test.TestUtils;
 

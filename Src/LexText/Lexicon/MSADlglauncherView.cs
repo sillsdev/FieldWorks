@@ -2,19 +2,12 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Diagnostics;
-
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FdoUi;
-using XCore;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {

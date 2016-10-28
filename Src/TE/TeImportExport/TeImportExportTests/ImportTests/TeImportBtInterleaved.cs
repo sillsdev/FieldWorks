@@ -15,7 +15,7 @@ using System.Text.RegularExpressions;
 using NUnit.Framework;
 
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;

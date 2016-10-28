@@ -14,10 +14,11 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using XCore;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Widgets;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor

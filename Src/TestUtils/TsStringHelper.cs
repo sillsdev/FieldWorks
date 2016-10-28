@@ -10,8 +10,8 @@
 
 using System;
 using System.Text;
-using SIL.FieldWorks.Common.COMInterfaces;
 using NMock.Constraints;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Test.TestUtils
 {

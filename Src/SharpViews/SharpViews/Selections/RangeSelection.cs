@@ -9,7 +9,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.SharpViews.Hookups;
 using SIL.FieldWorks.SharpViews.Paragraphs;

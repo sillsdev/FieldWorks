@@ -108,11 +108,6 @@
       <ExecutableExtension>.exe</ExecutableExtension>
       <HintPath>..\..\..\Downloads\Chorus.exe</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces">
-      <Name>COMInterfaces</Name>
-      <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="CoreImpl, Version=6.1.1.18549, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -233,7 +228,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>/usr/lib/fieldworks/SilEncConverters40.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SilUtils, Version=9.0.0.23922, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
@@ -258,6 +253,10 @@
       <Name>System.XML</Name>
     </Reference>
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="ViewsInterfaces, Version=9.0.0.23923, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
+    </Reference>
     <Reference Include="Widgets">
       <Name>Widgets</Name>
       <HintPath>..\..\..\Output\Debug\Widgets.dll</HintPath>
@@ -287,6 +286,9 @@
     <Reference Include="LexTextDll">
       <Name>LexTextDll</Name>
       <HintPath>..\..\..\Output\Debug\LexTextDll.dll</HintPath>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

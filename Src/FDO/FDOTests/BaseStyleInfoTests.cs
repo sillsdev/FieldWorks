@@ -5,14 +5,12 @@
 // File: BaseStyleInfoTests.cs
 // Responsibility: TE Team
 
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Common.COMInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {

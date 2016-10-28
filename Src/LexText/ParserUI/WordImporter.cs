@@ -13,11 +13,11 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.LexText.Controls
 {

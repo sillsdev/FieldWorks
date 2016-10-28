@@ -105,14 +105,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces">
-      <Name>COMInterfaces</Name>
-      <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="COMInterfacesTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
-    </Reference>
     <Reference Include="CoreImpl, Version=6.1.0.26542, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
@@ -177,7 +169,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Downloads\SIL.WritingSystems.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SilUtils, Version=9.0.0.15674, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
@@ -196,12 +188,19 @@
       <Name>TestUtils</Name>
       <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
     </Reference>
+    <Reference Include="ViewsInterfaces, Version=9.0.0.15846, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
+    </Reference>
     <Reference Include="xCoreInterfaces">
       <Name>xCoreInterfaces</Name>
       <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="FwUtilsTests">
       <HintPath>..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

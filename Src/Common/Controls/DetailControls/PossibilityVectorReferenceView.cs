@@ -12,8 +12,9 @@ using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {

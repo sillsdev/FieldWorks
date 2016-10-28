@@ -3,13 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Xml;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;

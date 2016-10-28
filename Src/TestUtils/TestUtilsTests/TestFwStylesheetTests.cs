@@ -13,7 +13,8 @@ using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Test.TestUtils
 {
@@ -48,7 +49,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 		[Test]
 		public void TestGetStyleRgch()
 		{
-			IVwStylesheet stylesheet = (IVwStylesheet)new TestFwStylesheet();
+			IVwStylesheet stylesheet = new TestFwStylesheet();
 			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
 			propsBldr.SetStrPropValue((int)FwTextStringProp.kstpFontFamily, "Times");
 			ITsTextProps props1 = propsBldr.GetTextProps();

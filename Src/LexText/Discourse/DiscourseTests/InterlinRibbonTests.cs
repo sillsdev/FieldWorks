@@ -7,8 +7,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using NUnit.Framework;
-
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils.Attributes;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;

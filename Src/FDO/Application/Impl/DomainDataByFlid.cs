@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 using System.Linq;
 using System.Diagnostics;
 
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;

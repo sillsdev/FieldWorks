@@ -10,7 +10,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;

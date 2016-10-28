@@ -14,10 +14,11 @@ using System;
 using System.Diagnostics;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Lexicon;
 using SIL.WritingSystems;

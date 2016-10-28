@@ -14,7 +14,7 @@ using System.Runtime.InteropServices; // needed for Marshal
 using System.Xml;
 using System.Text.RegularExpressions;
 using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using System.Xml.Linq;
 
 namespace SIL.CoreImpl

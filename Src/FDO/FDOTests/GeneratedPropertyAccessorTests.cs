@@ -18,7 +18,6 @@ using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FDO.CoreTests.GeneratedModelTests
 {

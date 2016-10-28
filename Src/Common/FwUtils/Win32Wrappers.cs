@@ -1,23 +1,23 @@
 // --------------------------------------------------------------------------------------------
-// Copyright (c) 2007-2015 SIL International
+// Copyright (c) 2007-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: Win32.cs
 //
 // <remarks>
 // Declaration of wrappers for Win32 methods
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms.VisualStyles;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+#if __MonoCS__
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using SIL.FieldWorks.Common.COMInterfaces;
+#endif
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

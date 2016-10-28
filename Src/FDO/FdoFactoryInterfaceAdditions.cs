@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.FDO

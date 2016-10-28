@@ -3,13 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
 using System.Xml;
 using NUnit.Framework;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {

@@ -9,7 +9,7 @@ using System.Threading;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.TestUtilities;
 using SIL.Utils;
 

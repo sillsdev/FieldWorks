@@ -12,9 +12,8 @@ using System;
 using System.Text;
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
@@ -173,36 +172,6 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 
 			// attempting to delete this built-in style should throw an exception
 			m_styleSheet.Delete(hvoStyle);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests the GetFaceNameFromStyle method.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void GetFontFaceNameFromStyle()
-		{
-			// Get the default font names
-			CoreWritingSystemDefinition defaultVernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
-			string defaultSerif = defaultVernWs.DefaultFontName;
-
-			// do the tests
-			m_styleSheet.SetStyleFont("Section Head", "Helvetica");
-			Assert.AreEqual("Helvetica", m_styleSheet.GetFaceNameFromStyle("Section Head",
-				defaultVernWs.Handle, m_wsf));
-
-			m_styleSheet.SetStyleFont("Paragraph", "Symbol");
-			Assert.AreEqual("Symbol", m_styleSheet.GetFaceNameFromStyle("Paragraph",
-				defaultVernWs.Handle, m_wsf));
-
-			m_styleSheet.SetStyleFont("Intro Section Head", StyleServices.DefaultFont);
-			Assert.AreEqual(defaultSerif, m_styleSheet.GetFaceNameFromStyle(
-				"Intro Section Head", defaultVernWs.Handle, m_wsf));
-
-			m_styleSheet.SetStyleFont("Intro Paragraph", StyleServices.DefaultFont);
-			Assert.AreEqual(defaultSerif, m_styleSheet.GetFaceNameFromStyle("Intro Paragraph",
-				defaultVernWs.Handle, m_wsf));
 		}
 
 		///--------------------------------------------------------------------------------------

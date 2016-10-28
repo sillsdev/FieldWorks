@@ -7,8 +7,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

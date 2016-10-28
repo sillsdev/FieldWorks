@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Diagnostics;
 
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
 

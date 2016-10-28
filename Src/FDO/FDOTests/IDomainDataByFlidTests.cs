@@ -15,11 +15,9 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.Application.Impl;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.CoreTests.DomainDataByFlidTest
 {

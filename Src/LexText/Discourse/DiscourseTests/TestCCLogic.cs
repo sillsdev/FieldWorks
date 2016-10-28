@@ -226,7 +226,7 @@ namespace SIL.FieldWorks.Discourse
 
 	//    #region IUndoRedoTaskHelper Members
 
-	//    public void AddAction(Common.COMInterfaces.IUndoAction action)
+	//    public void AddAction(Common.ViewsInterfaces.IUndoAction action)
 	//    {
 	//        m_events.Add(new object[] { "add Undo Action", action });
 	//    }

@@ -117,10 +117,6 @@
       <Name>BasicUtils</Name>
       <HintPath>..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces">
-      <Name>COMInterfaces</Name>
-      <HintPath>..\..\Output\Debug\COMInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="WeifenLuo.WinFormsUI.Docking, Version=2.3.1.15724, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
@@ -132,6 +128,9 @@
     <Reference Include="XMLViews, Version=1.0.3918.25652, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\XMLViews.dll</HintPath>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

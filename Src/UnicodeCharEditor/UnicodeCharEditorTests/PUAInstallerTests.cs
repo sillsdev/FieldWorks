@@ -16,8 +16,8 @@ using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
 using ICSharpCode.SharpZipLib.Zip;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 

@@ -8,9 +8,9 @@ using System.IO;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.CacheLight;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 using System.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.CacheLightTests
 {

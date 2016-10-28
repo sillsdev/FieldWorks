@@ -12,14 +12,12 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
-using XCore;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

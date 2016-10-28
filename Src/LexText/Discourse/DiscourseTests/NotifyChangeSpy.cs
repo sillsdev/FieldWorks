@@ -4,7 +4,7 @@
 
 using System;
 using System.Collections.Generic;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Discourse
 {

@@ -8,7 +8,6 @@
 using System;
 
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Test.TestUtils;
 using SILUBS.SharedScrUtils;
 using System.Collections.Generic;
@@ -16,6 +15,7 @@ using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {

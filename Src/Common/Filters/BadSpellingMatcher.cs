@@ -2,15 +2,14 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Xml;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Filters
 {
@@ -40,7 +39,7 @@ namespace SIL.FieldWorks.Filters
 		/// <returns></returns>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="GetDictionary() returns a reference")]
-		public override bool Matches(SIL.FieldWorks.Common.COMInterfaces.ITsString arg)
+		public override bool Matches(ITsString arg)
 		{
 			var dict = SpellingHelper.GetSpellChecker(m_ws, WritingSystemFactory);
 			return new SpellCheckMethod(arg, dict, m_ws, WritingSystemFactory.get_CharPropEngine(m_ws)).Run();

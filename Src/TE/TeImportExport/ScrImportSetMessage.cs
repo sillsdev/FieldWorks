@@ -10,14 +10,8 @@
 // </remarks>
 
 using System;
-using System.Drawing;
-using System.Collections;
-using System.ComponentModel;
 using System.Windows.Forms;
-using System.Resources;
-
 using SIL.Utils;
-using SIL.FieldWorks.Common.Drawing;
 
 namespace SIL.FieldWorks.TE
 {

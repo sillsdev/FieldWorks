@@ -5,7 +5,7 @@
 using System;
 using System.Diagnostics;
 using Microsoft.Practices.ServiceLocation;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;

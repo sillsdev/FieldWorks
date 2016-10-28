@@ -98,13 +98,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces">
-      <Name>COMInterfaces</Name>
-      <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    <Reference Include="ViewsInterfaces">
+      <Name>ViewsInterfaces</Name>
+      <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfacesTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="ViewsInterfacesTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\ViewsInterfacesTests.dll</HintPath>
     </Reference>
     <Reference Include="FDO">
       <Name>FDO</Name>
@@ -180,6 +180,9 @@
     </Reference>
     <Reference Include="FwUtilsTests">
       <HintPath>..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
   </ItemGroup>

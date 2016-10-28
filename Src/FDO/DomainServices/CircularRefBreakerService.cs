@@ -11,8 +11,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {

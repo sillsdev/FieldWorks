@@ -15,7 +15,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using System.Text;
 
 namespace SIL.FieldWorks.Common.Widgets
 {

@@ -91,11 +91,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces">
-      <Name>COMInterfaces</Name>
-      <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="CoreImpl, Version=6.1.1.26049, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
@@ -126,6 +121,10 @@
       <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="ViewsInterfaces, Version=9.0.0.23923, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
+    </Reference>
     <Reference Include="xCore">
       <Name>xCore</Name>
       <HintPath>..\..\..\Output\Debug\xCore.dll</HintPath>
@@ -196,6 +195,9 @@
     <Reference Include="FixFwDataDll">
       <Name>FixFwDataDll</Name>
       <HintPath>..\..\..\Output\Debug\FixFwDataDll.dll</HintPath>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -416,7 +418,6 @@
     <None Include="Resources\LexEntryParts.xml" />
     <None Include="gendarme-LexTextDll.ignore" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

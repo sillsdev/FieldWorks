@@ -5,9 +5,9 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using SIL.Collections;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.Collections;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;

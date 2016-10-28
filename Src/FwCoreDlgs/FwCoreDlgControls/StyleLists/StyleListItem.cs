@@ -6,14 +6,10 @@
 // Responsibility: TE Team
 
 using System;
-using System.Diagnostics;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {

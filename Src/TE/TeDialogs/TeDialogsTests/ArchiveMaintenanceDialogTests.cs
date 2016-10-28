@@ -10,13 +10,12 @@ using System.Windows.Forms;
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
-
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.TE
 {

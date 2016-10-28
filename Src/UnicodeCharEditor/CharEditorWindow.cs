@@ -16,12 +16,11 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using XCore;
 using System.Collections;
 using System.Resources;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.UnicodeCharEditor

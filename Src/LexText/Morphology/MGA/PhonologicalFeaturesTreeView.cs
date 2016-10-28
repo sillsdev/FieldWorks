@@ -17,7 +17,7 @@ using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Diagnostics;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.CoreImpl;
 
 

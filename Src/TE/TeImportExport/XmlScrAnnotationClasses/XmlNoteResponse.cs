@@ -8,13 +8,11 @@
 // <remarks>
 // </remarks>
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml.Serialization;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
 using System.Diagnostics;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.TE

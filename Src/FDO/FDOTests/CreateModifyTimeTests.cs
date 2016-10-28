@@ -7,7 +7,6 @@
 
 using System;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.FDO.FDOTests

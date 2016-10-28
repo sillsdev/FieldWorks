@@ -85,9 +85,9 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\Output\Release\AccessibilityHelper.dll</HintPath>
 	</Reference>
-	<Reference Include="COMInterfaces, Version=6.1.0.29026, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="ViewsInterfaces, Version=6.1.0.29026, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\Output\Release\COMInterfaces.dll</HintPath>
+	  <HintPath>..\..\Output\Release\ViewsInterfaces.dll</HintPath>
 	</Reference>
 	<Reference Include="FDO, Version=6.1.0.29136, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>

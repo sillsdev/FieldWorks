@@ -19,7 +19,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Xml;
 
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils; // Needed for Set class.
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;

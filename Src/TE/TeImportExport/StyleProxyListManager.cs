@@ -8,11 +8,9 @@
 // <remarks>
 // </remarks>
 
-using System;
 using System.Collections.Generic;
-using System.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.ScriptureUtils;
 

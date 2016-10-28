@@ -11,7 +11,7 @@
 
 using System;
 using System.Diagnostics;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;

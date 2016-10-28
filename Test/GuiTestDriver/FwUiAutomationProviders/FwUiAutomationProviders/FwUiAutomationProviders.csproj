@@ -41,9 +41,9 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\..\Output\Release\AccessibilityHelper.dll</HintPath>
 	</Reference>
-	<Reference Include="COMInterfaces, Version=5.5.0.26041, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="ViewsInterfaces, Version=5.5.0.26041, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Release\COMInterfaces.dll</HintPath>
+	  <HintPath>..\..\..\..\Output\Release\ViewsInterfaces.dll</HintPath>
 	</Reference>
 	<Reference Include="ISymWrapper" />
 	<Reference Include="RootSite, Version=5.5.0.26118, Culture=neutral, processorArchitecture=MSIL">

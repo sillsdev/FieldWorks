@@ -5,9 +5,8 @@
 using System;
 using System.Drawing;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils

@@ -5,11 +5,11 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.Infrastructure;
 

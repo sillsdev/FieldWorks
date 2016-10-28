@@ -8,8 +8,7 @@
 // <remarks>
 // </remarks>
 
-using System;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Test.TestUtils
 {

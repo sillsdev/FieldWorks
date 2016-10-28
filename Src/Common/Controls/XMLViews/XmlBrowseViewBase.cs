@@ -17,11 +17,12 @@ using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.Application;
 using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
 using XCore;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Controls
 {

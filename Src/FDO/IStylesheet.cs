@@ -4,7 +4,7 @@
 
 using System;
 using System.Drawing;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.FDO

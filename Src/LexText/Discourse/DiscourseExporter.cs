@@ -8,9 +8,10 @@ using System.Xml;
 
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using System.Collections.Generic;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.IText;
 
 namespace SIL.FieldWorks.Discourse

@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.CoreImpl;
@@ -16,6 +15,7 @@ using System.Collections.Generic;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SILUBS.SharedScrUtils;
 using System;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using XCore;
 using SIL.Utils;
 

@@ -36,7 +36,7 @@
 	<WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="COMInterfaces, Version=6.9.2.16182, Culture=neutral, processorArchitecture=MSIL">
+	<Reference Include="ViewsInterfaces, Version=6.9.2.16182, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
 	<Reference Include="FDO, Version=7.1.0.19329, Culture=neutral, processorArchitecture=MSIL">

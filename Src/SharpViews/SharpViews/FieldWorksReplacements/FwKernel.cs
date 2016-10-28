@@ -13,7 +13,7 @@
 // IDL/IDH file.
 // </remarks>
 // --------------------------------------------------------------------------------------------
-namespace SIL.FieldWorks.Common.COMInterfaces
+namespace SIL.FieldWorks.Common.ViewsInterfaces
 {
 	using SIL.Utils;
 	using SIL.Utils.ComTypes;

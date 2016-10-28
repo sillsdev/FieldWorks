@@ -9,7 +9,7 @@ using System;
 using System.Collections;
 using System.Runtime.InteropServices;
 using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.CoreImpl
 {

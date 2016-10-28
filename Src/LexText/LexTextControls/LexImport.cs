@@ -12,10 +12,9 @@ using System.Xml;
 using System.Xml.Xsl;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.LexText.Controls

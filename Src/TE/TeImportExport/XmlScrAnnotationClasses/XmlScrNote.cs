@@ -13,15 +13,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
 using SILUBS.SharedScrUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using System.Xml;
 using System.Diagnostics;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.TE
 {

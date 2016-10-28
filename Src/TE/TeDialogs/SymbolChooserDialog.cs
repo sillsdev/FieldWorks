@@ -9,9 +9,10 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using XCore;
 
 namespace SIL.FieldWorks.TE

@@ -9,11 +9,8 @@
 // </remarks>
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
 
 namespace SIL.CoreImpl
 {

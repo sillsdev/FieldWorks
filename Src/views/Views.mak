@@ -35,6 +35,7 @@ PATH=$(COM_OUT_DIR);$(PATH)
 RCFILE=Views.rc
 DEFFILE=Views.def
 LINK_LIBS= Generic.lib $(LINK_LIBS)
+PS_OBJ_DEPS= $(OBJ_DIR)\Common\FwKernel\FwKernelPs_p.obj $(OBJ_DIR)\Common\FwKernel\FwKernelPs_i.obj
 
 # === Object Lists ===
 
@@ -73,13 +74,13 @@ OBJ_VIEWS=\
 	$(INT_DIR)\autopch\dlldatax.obj\
 
 
-OBJ_AUTOPCH=$(OBJ_VIEWS) $(OBJ_GENERIC)
+OBJ_AUTOPCH=$(OBJ_VIEWS) $(OBJ_GENERIC) $(PS_OBJ_DEPS)
 
 IDL_MAIN=$(COM_OUT_DIR)\ViewsTlb.idl
 
 PS_MAIN=ViewsPs
 
-OBJ_ALL= $(OBJ_VIEWS) $(OBJ_GENERIC) $(OBJ_NOPCH) $(OBJ_GENPCH)
+OBJ_ALL= $(OBJ_VIEWS) $(OBJ_GENERIC) $(OBJ_NOPCH) $(OBJ_GENPCH) $(PS_OBJ_DEPS)
 
 # === Targets ===
 !INCLUDE "$(BUILD_ROOT)\bld\_targ.mak"

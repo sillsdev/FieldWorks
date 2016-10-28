@@ -10,7 +10,6 @@
 // </remarks>
 
 using System;
-using System.IO;
 using System.Text;
 
 using SIL.Utils;

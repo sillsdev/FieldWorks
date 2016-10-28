@@ -98,9 +98,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+      <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="ViewsInterfaces, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="CoreImpl, Version=6.1.0.24960, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -138,6 +142,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -162,6 +169,7 @@
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="CachePair.cs" />
     <Compile Include="ConsoleProgress.cs" />
     <Compile Include="FLExBridgeHelper.cs" />
     <Compile Include="GeneratedFwUtils.cs" />
@@ -207,7 +215,9 @@
     <Compile Include="ClipboardUtils.cs" />
     <Compile Include="ThreadHelper.cs" />
     <Compile Include="ImagePicture.cs" />
-    <Compile Include="OLEConvert.cs" />
+    <Compile Include="OLEConvert.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="PrinterUtils.cs" />
     <Compile Include="ManagedPictureFactory.cs" />
     <Compile Include="GraphicsManager.cs" />
@@ -245,7 +255,4 @@
     <DistFiles>../../../DistFiles</DistFiles>
   </PropertyGroup>
   <Import Project="BuildInclude.targets" />
-  <ItemGroup>
-    <Folder Include="Pathway\" />
-  </ItemGroup>
 </Project>

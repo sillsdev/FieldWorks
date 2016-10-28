@@ -14,7 +14,7 @@ using System.Diagnostics;
 using System.Drawing.Printing;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
@@ -24,6 +24,7 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks
 {

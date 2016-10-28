@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.SharpViews.Paragraphs;
 using SIL.FieldWorks.SharpViews.Selections;
 using SIL.Utils;

@@ -10,7 +10,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
 

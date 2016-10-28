@@ -2,14 +2,11 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
-using SIL.FieldWorks.FDO.Infrastructure;
 using System.IO;
 using System.Collections.Generic;
 

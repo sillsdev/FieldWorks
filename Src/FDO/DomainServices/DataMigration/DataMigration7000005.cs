@@ -9,7 +9,6 @@
 // </remarks>
 
 using System;
-using System.Collections.Generic;
 using System.Xml.Linq;
 using System.Linq;
 using System.Xml.XPath;

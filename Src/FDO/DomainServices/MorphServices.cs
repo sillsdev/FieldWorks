@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.Utils;

@@ -14,7 +14,6 @@ using System.Diagnostics;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
@@ -24,6 +23,7 @@ using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.TE.ImportTests
 {

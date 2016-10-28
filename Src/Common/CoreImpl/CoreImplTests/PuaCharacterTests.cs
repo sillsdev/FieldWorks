@@ -9,7 +9,6 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
 using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
 
 namespace SIL.CoreImpl
 {

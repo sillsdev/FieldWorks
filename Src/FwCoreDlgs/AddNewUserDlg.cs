@@ -12,7 +12,6 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.Drawing;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

@@ -8,7 +8,7 @@ using System.IO;
 using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;

@@ -8,7 +8,7 @@ using System;
 using System.Text;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Reporting;
 
 namespace SIL.FieldWorks.XWorks.LexEd

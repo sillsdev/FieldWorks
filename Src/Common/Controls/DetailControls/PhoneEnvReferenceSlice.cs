@@ -10,9 +10,10 @@
 // </remarks>
 using System;
 using System.Diagnostics;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Utils;
 using XCore;
 

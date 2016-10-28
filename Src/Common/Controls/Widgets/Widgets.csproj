@@ -100,9 +100,9 @@
       <Name>BasicUtils</Name>
       <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces">
-      <Name>COMInterfaces</Name>
-      <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    <Reference Include="ViewsInterfaces">
+      <Name>ViewsInterfaces</Name>
+      <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="CoreImpl, Version=6.1.0.15882, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -176,6 +176,9 @@
     </Reference>
     <Reference Include="SIL.Windows.Forms">
       <HintPath>..\..\..\..\Downloads\SIL.Windows.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

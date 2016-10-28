@@ -35,7 +35,7 @@
 	<WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="COMInterfaces, Version=6.9.2.19640, Culture=neutral, processorArchitecture=MSIL" />
+	<Reference Include="ViewsInterfaces, Version=6.9.2.19640, Culture=neutral, processorArchitecture=MSIL" />
 	<Reference Include="FDO, Version=6.9.2.19747, Culture=neutral, processorArchitecture=MSIL" />
 	<Reference Include="FwControls, Version=6.9.2.19745, Culture=neutral, processorArchitecture=MSIL" />
 	<Reference Include="nunit.framework, Version=2.5.3.9345, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">

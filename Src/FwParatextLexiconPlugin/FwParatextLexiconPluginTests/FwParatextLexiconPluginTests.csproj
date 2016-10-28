@@ -42,9 +42,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces">
-      <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="CoreImpl">
       <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
     </Reference>
@@ -83,6 +80,9 @@
     <Reference Include="TestUtils, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\TestUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

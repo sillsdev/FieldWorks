@@ -9,16 +9,14 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.Utils;
 using System.Reflection;
 using Rhino.Mocks;
-using System.Collections;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.CoreTests
 {

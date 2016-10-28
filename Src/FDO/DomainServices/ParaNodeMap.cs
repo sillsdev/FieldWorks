@@ -9,10 +9,7 @@
 // </remarks>
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
-using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {

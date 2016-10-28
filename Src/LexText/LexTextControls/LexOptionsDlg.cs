@@ -19,10 +19,10 @@ using System.IO;
 using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Reporting;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.FwUtils;
 using XCore;
 #if !__MonoCS__
 using NetSparkle;

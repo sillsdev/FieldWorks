@@ -13,7 +13,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

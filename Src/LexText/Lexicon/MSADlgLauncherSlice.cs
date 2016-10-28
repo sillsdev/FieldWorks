@@ -11,7 +11,7 @@ using System.Xml;
 using System.Diagnostics;
 
 using XCore;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls;

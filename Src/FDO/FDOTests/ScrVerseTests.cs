@@ -6,11 +6,10 @@
 // Responsibility: TE Team
 
 using NUnit.Framework;
-
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {

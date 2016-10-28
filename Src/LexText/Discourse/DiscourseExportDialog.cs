@@ -12,7 +12,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using XCore;
 using SIL.Utils;
 using SIL.FieldWorks.XWorks;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Discourse
 {

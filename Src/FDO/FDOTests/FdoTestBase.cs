@@ -13,13 +13,12 @@
 using System;
 using System.IO;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Test.TestUtils;
-using SIL.Utils;
 using SIL.CoreImpl;
 using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {

@@ -92,8 +92,8 @@
     <Reference Include="Aga.Controls">
       <HintPath>..\..\..\DistFiles\Aga.Controls.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    <Reference Include="ViewsInterfaces, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="DetailControls, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -261,6 +261,9 @@
     <Reference Include="xWorks, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\Output\Debug\xWorks.dll</HintPath>
       <SpecificVersion>false</SpecificVersion>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

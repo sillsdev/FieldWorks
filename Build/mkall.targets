@@ -259,8 +259,8 @@
 		<GeneratedFiles Include="$(fwrt)/Build/packages.config"/>
 		<GeneratedFiles Include="$(fwrt)/Src/**/Collection.cpp"/>
 		<GeneratedFiles Include="$(fwrt)/Src/**/asserts.log"/>
-		<GeneratedFiles Include="$(fwrt)/Src/Common/COMInterfaces/FwKernel.cs"/>
-		<GeneratedFiles Include="$(fwrt)/Src/Common/COMInterfaces/Views.cs"/>
+		<GeneratedFiles Include="$(fwrt)/Src/Common/FwKernelInterfaces/FwKernel.cs"/>
+		<GeneratedFiles Include="$(fwrt)/Src/Common/ViewsInterfaces/Views.cs"/>
 		<GeneratedFiles Include="$(fwrt)/Src/FDO/DomainImpl/GeneratedFactoryImplementations.cs"/>
 		<GeneratedFiles Include="$(fwrt)/Src/FDO/DomainImpl/FDOGenerated.cs"/>
 	</ItemGroup>

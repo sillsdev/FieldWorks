@@ -10,7 +10,7 @@
 // </remarks>
 
 using System;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.FDO.DomainServices

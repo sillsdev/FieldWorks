@@ -109,8 +109,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces, Version=5.5.0.18125, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    <Reference Include="ViewsInterfaces, Version=5.5.0.18125, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="CoreImpl, Version=6.1.0.19861, Culture=neutral, processorArchitecture=MSIL">
@@ -223,6 +223,9 @@
     </Reference>
     <Reference Include="SIL.Windows.Forms">
       <HintPath>..\..\..\Downloads\SIL.Windows.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

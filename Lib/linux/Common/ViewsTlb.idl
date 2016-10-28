@@ -17,7 +17,7 @@ import "oaidl.idl";
 import "ocidl.idl";
 import "objidl.idl";
 
-#line 1 "C:\\develop\\fwrepo\\fw\\Src\\Generic\\common.idh"
+#line 1 "C:\\Repositories\\fwroot\\fw\\Src\\Generic\\common.idh"
 
 
 
@@ -128,10 +128,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	
 	importlib("FwKernelTlb.tlb");	
 
-	#line 1 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
-
-
-
+	#line 1 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 
 
@@ -161,7 +158,6 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	interface IVwViewConstructor;
 	interface IVwRootSite;
 	interface ISilDataAccess;
-	interface IStructuredTextDataAccess;
 	interface IVwCacheDa;
 	interface IVwRootBox;
 	interface IVwPropertyStore;
@@ -178,100 +174,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 
 	typedef int HVO; 
 	typedef int PropTag; 
-	
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwNotifyChange") cpp_quote(",") cpp_quote("6C456541-C2B6-11d3-8078-0000C0FB81B5") cpp_quote(");") [ uuid("6C456541-C2B6-11d3-8078-0000C0FB81B5"), object, pointer_default(unique) ] interface IVwNotifyChange : IUnknown
-	{
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		HRESULT PropChanged(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[in] int ivMin,
-			[in] int cvIns,
-			[in] int cvDel);
-	};
-
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ICheckWord") cpp_quote(",") cpp_quote("69F4D944-C786-47EC-94F7-15193EED6758") cpp_quote(");") [ uuid("69F4D944-C786-47EC-94F7-15193EED6758"), object, pointer_default(unique) ] interface ICheckWord : IUnknown
-	{
-		HRESULT Check(
-			[in] LPCOLESTR pszWord,
-			[out, retval] ComBool * pfCorrect);
-	}
-
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IGetSpellChecker") cpp_quote(",") cpp_quote("F0A60670-D280-45EA-A5C5-F0B84C027EFC") cpp_quote(");") [ uuid("F0A60670-D280-45EA-A5C5-F0B84C027EFC"), object, pointer_default(unique) ] interface IGetSpellChecker : IUnknown
-	{
-		HRESULT GetChecker(
-			[in] LPCOLESTR pszDictId,
-			[out, retval] ICheckWord ** pcw);
-	}
 
 	
 	
@@ -289,18 +192,6 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 		kstPicture = 2,
 	} VwSelType;
 
-	
-	
-	
-	
-	
-	
-	typedef [v1_enum] enum PropChangeType
-	{
-		kpctNotifyMeThenAll,
-		kpctNotifyAll,
-		kpctNotifyAllButMe,
-	} PropChangeType;
 
 	
 	
@@ -563,717 +454,236 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 
 
 	
+	typedef [v1_enum] enum VwShiftStatus
+	{
+		kfssNone = 0,
+
+		kfssShift = 1,
+		kfssControl = 2,
+
+		kgrfssShiftControl = kfssShift | kfssControl,
+	} VwShiftStatus;
+
+	
+	
+
+	
+	
+	typedef struct VwSelLevInfo
+	{
+		
+		PropTag tag;
+		
+		
+		int cpropPrevious;
+		
+		
+		
+		int ihvo;
+		
+		
+		
+		
+		int hvo;
+		
+		
+		int ws;
+		
+		
+		
+		int ich;
+	} VwSelLevInfo; 
+
+	
+
+	typedef struct VwChangeInfo
+	{
+		HVO hvo; 
+		PropTag tag; 
+		int ivIns; 
+		int cvIns; 
+		int cvDel; 
+	} VwChangeInfo; 
+
+	
+	typedef [v1_enum] enum VwUnit { 
+		kunPoint1000 = 0,	
+		kunPercent100 = 1,	
+		kunRelative = 2		
+	} VwUnit;
+
+	
+	typedef struct {
+		int nVal;
+		VwUnit unit;
+	} VwLength; 
+
+	
+	typedef [v1_enum] enum VwAlignment {
+		kvaLeft,
+		kvaCenter,
+		kvaRight,
+		kvaJustified
+	} VwAlignment; 
+
+	
+	typedef [v1_enum] enum VwFramePosition {
+		kvfpVoid = 0x00,
+		kvfpAbove = 0x01,
+		kvfpBelow = 0x02,
+		kvfpLhs = 0x04,
+		kvfpRhs = 0x08,
+
+		kvfpHsides = kvfpAbove | kvfpBelow,
+		kvfpVsides = kvfpLhs | kvfpRhs,
+		kvfpBox = kvfpHsides | kvfpVsides
+	} VwFramePosition; 
+
+	
+	
+	
+	
+	
+	
+	typedef [v1_enum] enum VwRule {
+		kvrlNone = 0x00,
+		kvrlGroups = 0x01,
+		kvrlRowNoGroups = 0x02, 
+		kvrlRows = kvrlGroups | kvrlRowNoGroups,
+		kvrlColsNoGroups = 0x04, 
+		kvrlCols = kvrlGroups | kvrlColsNoGroups,
+		kvrlAll = kvrlRows | kvrlCols,
+	} VwRule; 
+
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+
+	
+
+	
+
+	
+	
+	
+
+	
+	
+	typedef [v1_enum] enum VwStyleProperty
+	{
+	
+	
+
+		kspNamedStyle = 133,
+		kspMarginLeading = 19,
+		kspMarginTrailing = 20,
+		kspMarginTop = 21,
+		kspMarginBottom = 22,
+		kspMaxLines = 151,
+
+		kspWsStyle = 156,
+		kspRelLineHeight = 160,
+	} VwStyleProperty;
+
+	
+	
+	typedef [v1_enum] enum VwFontAbsoluteSize
+	{
+		kvfsXXSmall, kvfsXSmall, kvfsSmall, kvfsNormal, kvfsLarge,
+		kvfsXLarge, kvfsXXLarge, kvfsSmaller, kvfsLarger
+	} VwFontAbsoluteSize;
+
+	
+	
+	typedef [v1_enum] enum VwFontWeight {
+		kvfw100 = 100,
+		kvfw200 = 200,
+		kvfw300 = 300,
+		kvfw400 = 400,
+		kvfw500 = 500,
+		kvfw600 = 600,
+		kvfw700 = 700,
+		kvfw800 = 800,
+		kvfw900 = 900,
+		kvfwNormal = 400,
+		kvfwBold = 700,
+		kvfwBolder = -1,
+		kvfwLighter = -2
+	} VwFontWeight;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ISilDataAccess") cpp_quote(",") cpp_quote("26E6E70E-53EB-4372-96F1-0F4707CCD1EB") cpp_quote(");") [ uuid("26E6E70E-53EB-4372-96F1-0F4707CCD1EB"), object, pointer_default(unique) ] interface ISilDataAccess : IUnknown
+	
+	
+	typedef [v1_enum] enum VwSpecialAttrTags
 	{
 		
 		
+		ktagNotAnAttr = -1,
 		
 		
-		
-		[propget] HRESULT ObjectProp(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[out, retval] HVO * phvo);
-		
-		
-		
-		
-		[propget] HRESULT VecItem(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[in] int index, 
-			[out, retval] HVO * phvo);
-		
-		[propget] HRESULT VecSize(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[out, retval] int * pchvo);
-		
-		[propget] HRESULT VecSizeAssumeCached(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[out, retval] int * pchvo);
-		
-		HRESULT VecProp(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[in] int chvoMax,
-			[out] int * pchvo,
-			[out, size_is(chvoMax), length_is(*pchvo)] HVO * prghvo);
-
-
-		
-		
-		
-		
-		
-		
-		
-		HRESULT BinaryPropRgb(
-			[in] HVO obj,
-			[in] PropTag tag,
-			[out, size_is(cbMax)] byte * prgb,
-			[in] int cbMax,
-			[out] int * pcb);
-		
-		
-		
-		
-		[propget] HRESULT GuidProp(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[out, retval] GUID * puid);
-		
-		
-		
-		[propget] HRESULT ObjFromGuid(
-			[in] GUID uid,
-			[out, retval] HVO * pHvo);
-		
-		
-		
-		[propget] HRESULT IntProp(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[out, retval] int * pn);
-		
-		
-		
-		[propget] HRESULT Int64Prop(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[out, retval] __int64 * plln);
-		
-		
-		[propget] HRESULT BooleanProp(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[out, retval] ComBool * pn);
-		
-		
-		[propget] HRESULT MultiStringAlt(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[in] int ws,
-			[out, retval] ITsString ** pptss);
-		
-		
-		[propget] HRESULT MultiStringProp(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[out, retval] ITsMultiString ** pptms);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		[propget] HRESULT Prop(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[out, retval] VARIANT * pvar);
-		
-		
-		[propget] HRESULT StringProp(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[out, retval] ITsString ** pptss);
-		
-		
-		
-		[propget] HRESULT TimeProp(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[out, retval] __int64 * ptim);
-		
-		
-		
-		
-		[propget] HRESULT UnicodeProp(
-			[in] HVO obj,
-			[in] PropTag tag,
-			[out, retval] BSTR * pbstr);
-		
-		[propput] HRESULT UnicodeProp(
-			[in] HVO obj,
-			[in] PropTag tag,
-			[in] BSTR bstr);
-		
-		
-		
-		
-		
-		HRESULT UnicodePropRgch(
-			[in] HVO obj,
-			[in] PropTag tag,
-			[out, size_is(cchMax)] OLECHAR * prgch,
-			[in] int cchMax,
-			[out] int * pcch);
-		
-		
-		
-		[propget] HRESULT UnknownProp(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[out, retval] IUnknown ** ppunk);
-
-		
-		
-		
-		
-		
-		
-		
-		HRESULT BeginUndoTask(
-			[in] BSTR bstrUndo,
-			[in] BSTR bstrRedo);
-
-		
-		
-		HRESULT EndUndoTask();
-
-		
-		
-		
-		HRESULT ContinueUndoTask();
-
-		
-		
-		HRESULT EndOuterUndoTask();
-
-		
-		HRESULT Rollback();
-
-		
-		
-		HRESULT BreakUndoTask(
-			[in] BSTR bstrUndo,
-			[in] BSTR bstrRedo);
-
-		
-		
-		HRESULT BeginNonUndoableTask();
-
-		
-		HRESULT EndNonUndoableTask();
-
-		
-		
-		HRESULT GetActionHandler(
-			[out, retval] IActionHandler ** ppacth);
-
-		
-		
-		HRESULT SetActionHandler(
-			[in] IActionHandler * pacth);
-
-		
-		
-		
-		
-		
-		HRESULT DeleteObj(
-			[in] HVO hvoObj);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-
-		
-		HRESULT DeleteObjOwner(
-			[in] HVO hvoOwner,
-			[in] HVO hvoObj,
-			[in] PropTag tag,
-			[in] int ihvo);
-		
-		
-		
-		
-		
-		
-		
-		
-
-		
-		HRESULT InsertNew(
-			[in] HVO hvoObj,
-			[in] PropTag tag,
-			[in] int ihvo,
-			[in] int chvo,
-			[in] IVwStylesheet * pss);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-
-		
-		HRESULT MakeNewObject(
-			[in] int clid,
-			[in] HVO hvoOwner,
-			[in] PropTag tag,
-			[in] int ord,
-			[out, retval] HVO * phvoNew);
-
-		
-		
-		
-		
-
-		
-		HRESULT MoveOwnSeq(
-			[in] HVO hvoSrcOwner,
-			[in] PropTag tagSrc,
-			[in] int ihvoStart,
-			[in] int ihvoEnd,
-			[in] HVO hvoDstOwner,
-			[in] PropTag tagDst,
-			[in] int ihvoDstStart);
-
-		
-		
-		
-		
-
-		
-		HRESULT MoveOwn(
-			[in] HVO hvoSrcOwner,
-			[in] PropTag tagSrc,
-			[in] HVO hvo,
-			[in] HVO hvoDstOwner,
-			[in] PropTag tagDst,
-			[in] int ihvoDstStart);
-
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-
-		
-		
-		HRESULT Replace(
-			[in] HVO hvoObj,
-			[in] PropTag tag,
-			[in] int ihvoMin,
-			[in] int ihvoLim,
-			[in, size_is(chvo)] HVO * prghvo,
-			[in] int chvo);
-
-		
-		
-
-		
-		
-		HRESULT SetObjProp(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[in] HVO hvoObj);
-
-		
-		
-		
-		HRESULT RemoveObjRefs(
-			[in] HVO hvo);
-
-		
-
-		
-		
-		HRESULT SetBinary(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[in, size_is(cb)] byte * prgb,
-			[in] int cb);
-
-		
-
-		
-		
-		HRESULT SetGuid(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[in] GUID uid);
+		ktagGapInAttrs = -2
+	} VwSpecialAttrTags;
 
-		
-
-		
-		
-		HRESULT SetInt(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[in] int n);
-
-		
-
-		
-		
-		HRESULT SetInt64(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[in] __int64 lln);
-
-		
-		
-		
-		HRESULT SetBoolean(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[in] ComBool n);
-
-		
-
-		
-		
-		HRESULT SetMultiStringAlt(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[in] int ws,
-			[in] ITsString * ptss);
-
-		
-
-		
-		
-		HRESULT SetString(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[in] ITsString * ptss);
-
-		
-
-		
-		
-		HRESULT SetTime(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[in] __int64 lln);
-
-		
-
-		
-		
-		HRESULT SetUnicode(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[in, size_is(cch)] OLECHAR * prgch,
-			[in] int cch);
-
-		
-		
-		
-		
-
-		
-		
-		HRESULT SetUnknown(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[in] IUnknown * punk);
-
-		
-		
-		
-		HRESULT AddNotification(
-			[in] IVwNotifyChange * pnchng);
-
-		
-		
-		
-		
-		
-
-		
-		
-		
-
-		
-		
-
-		
-		
-		
-		
-		HRESULT PropChanged(
-			[in] IVwNotifyChange * pnchng,
-			[in] int pct,
-			[in] HVO hvo,
-			[in] int tag,
-			[in] int ivMin,
-			[in] int cvIns,
-			[in] int cvDel);
-
-		
-		HRESULT RemoveNotification(
-			[in] IVwNotifyChange * pnchng);
-
-		
-		
-		
-		HRESULT GetDisplayIndex(
-			[in] HVO hvoOwn,
-			[in] int tag,
-			[in] int ihvo,
-			[out, retval] int * ihvoDisp);
-
-		
-		
-		[propget] HRESULT WritingSystemFactory(
-			[out, retval] ILgWritingSystemFactory ** ppwsf);
-
-		
-		
-		[propputref] HRESULT WritingSystemFactory(
-			[in] ILgWritingSystemFactory * pwsf);
-
-		
-		
-		
-
-		
-
-		
-		
-		
-		[propget] HRESULT WritingSystemsOfInterest(
-			[in] int cwsMax,
-			[out, size_is(cwsMax)] int * pws,
-			[out, retval] int * pcws);
-
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-
-		
-		
-
-		
-		
-
-		
-		HRESULT InsertRelExtra(
-			[in] HVO hvoSrc,
-			[in] PropTag tag,
-			[in] int ihvo,
-			[in] HVO hvoDst,
-			[in] BSTR bstrExtra);
-
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-
-		
-		
+	typedef [v1_enum] enum VwClearInfoAction
+	{
+		kciaRemoveObjectInfoOnly = 0,		
+		kciaRemoveObjectAndOwnedInfo = 1,	
+											
+		kciaRemoveAllObjectInfo = 2,		
+											
+	} VwClearInfoAction;
 
-		
-		
 
-		
-		HRESULT UpdateRelExtra(
-			[in] HVO hvoSrc,
-			[in] PropTag tag,
-			[in] int ihvo,
-			[in] BSTR bstrExtra);
 
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 
-		
-		HRESULT GetRelExtra(
-			[in] HVO hvoSrc,
-			[in] PropTag tag,
-			[in] int ihvo,
-			[out, retval] BSTR * pbstrExtra);
 
-		
-		
-		
-		
-		[propget] HRESULT IsPropInCache(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[in] int cpt,
-			[in] int ws,
-			[out, retval] ComBool * pfCached);
 
-		
-		
-		
-		
 
-		
-		
-		HRESULT IsDirty(
-			[out, retval] ComBool * pf);
 
-		
-		HRESULT ClearDirty();
 
-		
-		
-		
-		
-		
-		[propget] HRESULT MetaDataCache(
-			[out, retval] IFwMetaDataCache ** ppmdc);
 
-		
-		
-		
-		[propputref] HRESULT MetaDataCache(
-			[in] IFwMetaDataCache * pmdc);
 
-		
-		
-		
-		
-		
-		
-		[propget] HRESULT IsValidObject(
-			[in] HVO hvo,
-			[out, retval] ComBool * pfValid);
 
-		
-		
-		
-		
-		[propget] HRESULT IsDummyId(
-			[in] HVO hvo,
-			[out, retval] ComBool * pfDummy);
+#line 526 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
-		
-		
-		
-		
-		
-		
-		
-		HRESULT GetObjIndex(
-			[in] HVO hvoOwn,
-			[in] int flid,
-			[in] HVO hvo,
-			[out, retval] int * ihvo);
+	
+	
+	typedef [v1_enum] enum VwSelectionState
+	{
+		vssDisabled, 
+		vssOutOfFocus, 
+		vssEnabled, 
+		vssLim,
+	} VwSelectionState;
 
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		HRESULT GetOutlineNumber(
-			[in] HVO hvo,
-			[in] int flid,
-			[in] ComBool fFinPer,
-			[out, retval] BSTR * pbstr);
+	
+	
+	typedef [v1_enum] enum VwPrepDrawResult
+	{
+		kxpdrNormal, 
+		kxpdrAdjust, 
+		kxpdrInvalidate, 
+		kxpdrLim,
+	} VwPrepDrawResult; 
 
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		HRESULT MoveString(
-			[in] int hvoSource,
-			[in] PropTag flidSrc,
-			[in] int wsSrc,
-			[in] int ichMin,
-			[in] int ichLim,
-			[in] HVO hvoDst,
-			[in] PropTag flidDst,
-			[in] int wsDst,
-			[in] int ichDest,
-			[in] ComBool fDstIsNew);
-	};
+	
+	typedef [v1_enum] enum VwBoundaryMark
+	{
+		none,	
+		endOfParagraph,	
+		endOfSection, 
+		endOfParagraphHighlighted, 
+		endofSectionHighlighted, 
+	} VwBoundaryMark;
 
 	
 
@@ -1291,29 +701,194 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 
 
 
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IStructuredTextDataAccess") cpp_quote(",") cpp_quote("A2A4F9FA-D4E8-4bfb-B6B7-5F45DAF2DC0C") cpp_quote(");") [ uuid("A2A4F9FA-D4E8-4bfb-B6B7-5F45DAF2DC0C"), object, pointer_default(unique) ] interface IStructuredTextDataAccess : IUnknown
+
+
+
+
+
+
+
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwVirtualHandler") cpp_quote(",") cpp_quote("581E3FE0-F0C0-42A7-96C7-76B23B8BE580") cpp_quote(");") [ uuid("581E3FE0-F0C0-42A7-96C7-76B23B8BE580"), object, pointer_default(unique) ] interface IVwVirtualHandler : IUnknown
 	{
 		
-		[propget] HRESULT ParaContentsFlid(
-			[out, retval] PropTag * pflid);
+		[propget] HRESULT ClassName(
+			[out, retval] BSTR * pbstr);
+		
+		
+		
+		
+		[propput] HRESULT ClassName(
+			[in] BSTR bstr);
+		
+		[propget] HRESULT FieldName(
+			[out, retval] BSTR * pbstr);
+		
+		
+		
+		[propput] HRESULT FieldName(
+			[in] BSTR bstr);
+		
+		
+		[propget] HRESULT Tag(
+			[out, retval] PropTag * ptag);
+		
+		
+		
+		[propput] HRESULT Tag(
+			[in] PropTag tag);
+		
+		[propget] HRESULT Type(
+			[out, retval] int * pcpt);
+		
+		
+		[propput] HRESULT Type(
+			[in] int cpt);
+		
+		[propget] HRESULT Writeable(
+			[out, retval] ComBool * pf);
+		
+		
+		
+		
+		
+		[propput] HRESULT Writeable(
+			[in] ComBool f);
+		
+		[propget] HRESULT ComputeEveryTime(
+			[out, retval] ComBool * pf);
+		
+		
+		
+		
+		
+		
+		
+		[propput] HRESULT ComputeEveryTime(
+			[in] ComBool f);
+		
+		
+		
+		
+		
+		
+		HRESULT Load(
+			[in] HVO hvo,
+			[in] PropTag tag,
+			[in] int ws,
+			[in] IVwCacheDa * pcda);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		HRESULT Replace(
+			[in] HVO hvo,
+			[in] PropTag tag,
+			[in] int ihvoMin,
+			[in] int ihvoLim,
+			[in, size_is(chvo)] HVO * prghvo,
+			[in] int chvo,
+			[in] ISilDataAccess * psda);
+		
+		
+		
+		
+		
+		
+		
+		HRESULT WriteObj(
+			[in] HVO hvo,
+			[in] PropTag tag,
+			[in] int ws,
+			[in] IUnknown * punk,
+			[in] ISilDataAccess * psda);
+		
+		
+		
+		
+		
+		HRESULT WriteInt64(
+			[in] HVO hvo,
+			[in] PropTag tag,
+			[in] __int64 val,
+			[in] ISilDataAccess * psda);
+		
+		
+		
+		
+		
+		
+		HRESULT WriteUnicode(
+			[in] HVO hvo,
+			[in] PropTag tag,
+			[in] BSTR bstr,
+			[in] ISilDataAccess * psda);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		HRESULT PreLoad(
+			[in] int chvo,
+			[in, size_is(chvo)] HVO * prghvo,
+			[in] PropTag tag,
+			[in] int ws,
+			[in] IVwCacheDa * pcda);
+		
+		
+		
+		HRESULT Initialize(
+			[in] BSTR bstrData);
 
 		
-		[propget] HRESULT ParaPropertiesFlid(
-			[out, retval] PropTag * pflid);
+		
+		
+		HRESULT DoesResultDependOnProp(
+			[in] HVO hvoObj, 
+			[in] HVO hvoChange, 
+			[in] PropTag tag, 
+			[in] int ws, 
+			[out, retval] ComBool * pfDepends);
 
 		
-		[propget] HRESULT TextParagraphsFlid(
-			[out, retval] PropTag * pflid);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		HRESULT SetLoadForAllOfClass(
+			[in] ComBool fLoadAll);
 	};
-
-	typedef [v1_enum] enum VwClearInfoAction
-	{
-		kciaRemoveObjectInfoOnly = 0,		
-		kciaRemoveObjectAndOwnedInfo = 1,	
-											
-		kciaRemoveAllObjectInfo = 2,		
-											
-	} VwClearInfoAction;
 
 	
 
@@ -1511,251 +1086,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 		interface IVwCacheDa;
 		interface IStructuredTextDataAccess;
 	};
-	#line 1384 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
-
-
-	
-	typedef [v1_enum] enum VwShiftStatus
-	{
-		kfssNone = 0,
-
-		kfssShift = 1,
-		kfssControl = 2,
-
-		kgrfssShiftControl = kfssShift | kfssControl,
-	} VwShiftStatus;
-
-	
-	
-
-	
-	
-	typedef struct VwSelLevInfo
-	{
-		
-		PropTag tag;
-		
-		
-		int cpropPrevious;
-		
-		
-		
-		int ihvo;
-		
-		
-		
-		
-		int hvo;
-		
-		
-		int ws;
-		
-		
-		
-		int ich;
-	} VwSelLevInfo; 
-
-	
-
-	typedef struct VwChangeInfo
-	{
-		HVO hvo; 
-		PropTag tag; 
-		int ivIns; 
-		int cvIns; 
-		int cvDel; 
-	} VwChangeInfo; 
-
-	
-	typedef [v1_enum] enum VwUnit { 
-		kunPoint1000 = 0,	
-		kunPercent100 = 1,	
-		kunRelative = 2		
-	} VwUnit;
-
-	
-	typedef struct {
-		int nVal;
-		VwUnit unit;
-	} VwLength; 
-
-	
-	typedef [v1_enum] enum VwAlignment {
-		kvaLeft,
-		kvaCenter,
-		kvaRight,
-		kvaJustified
-	} VwAlignment; 
-
-	
-	typedef [v1_enum] enum VwFramePosition {
-		kvfpVoid = 0x00,
-		kvfpAbove = 0x01,
-		kvfpBelow = 0x02,
-		kvfpLhs = 0x04,
-		kvfpRhs = 0x08,
-
-		kvfpHsides = kvfpAbove | kvfpBelow,
-		kvfpVsides = kvfpLhs | kvfpRhs,
-		kvfpBox = kvfpHsides | kvfpVsides
-	} VwFramePosition; 
-
-	
-	
-	
-	
-	
-	
-	typedef [v1_enum] enum VwRule {
-		kvrlNone = 0x00,
-		kvrlGroups = 0x01,
-		kvrlRowNoGroups = 0x02, 
-		kvrlRows = kvrlGroups | kvrlRowNoGroups,
-		kvrlColsNoGroups = 0x04, 
-		kvrlCols = kvrlGroups | kvrlColsNoGroups,
-		kvrlAll = kvrlRows | kvrlCols,
-	} VwRule; 
-
-	
-	
-	
-	typedef [v1_enum] enum VwBulNum {
-		kvbnNone = 0,
-		kvbnNumberBase = 10,	
-		kvbnArabic = kvbnNumberBase,
-		kvbnRomanUpper,
-		kvbnRomanLower,
-		kvbnLetterUpper,
-		kvbnLetterLower,
-		kvbnArabic01,
-		kvbnNumberMax,
-		
-		
-		kvbnBulletBase = 100,	
-		kvbnBullet = kvbnBulletBase,
-		kvbnBulletMax = kvbnBulletBase + 100 
-	} VwBulNum; 
-
-	
-	
-	
-	
-	
-	
-	
-	
-
-	
-	
-	
-
-	
-
-	
-
-	
-	
-	
-
-	
-	
-	typedef [v1_enum] enum VwStyleProperty
-	{
-	
-	
-
-		kspNamedStyle = 133,
-		kspMarginLeading = 19,
-		kspMarginTrailing = 20,
-		kspMarginTop = 21,
-		kspMarginBottom = 22,
-		kspMaxLines = 151,
-
-		kspWsStyle = 156,
-		kspRelLineHeight = 160,
-	} VwStyleProperty;
-
-	
-	
-	typedef [v1_enum] enum VwFontAbsoluteSize
-	{
-		kvfsXXSmall, kvfsXSmall, kvfsSmall, kvfsNormal, kvfsLarge,
-		kvfsXLarge, kvfsXXLarge, kvfsSmaller, kvfsLarger
-	} VwFontAbsoluteSize;
-
-	
-	
-	typedef [v1_enum] enum VwFontWeight {
-		kvfw100 = 100,
-		kvfw200 = 200,
-		kvfw300 = 300,
-		kvfw400 = 400,
-		kvfw500 = 500,
-		kvfw600 = 600,
-		kvfw700 = 700,
-		kvfw800 = 800,
-		kvfw900 = 900,
-		kvfwNormal = 400,
-		kvfwBold = 700,
-		kvfwBolder = -1,
-		kvfwLighter = -2
-	} VwFontWeight;
-
-
-	
-	
-	typedef [v1_enum] enum VwSpecialAttrTags
-	{
-		
-		
-		ktagNotAnAttr = -1,
-		
-		
-		ktagGapInAttrs = -2
-	} VwSpecialAttrTags;
-
-
-
-
-
-
-
-
-
-
-
-
-#line 1598 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
-
-	
-	
-	typedef [v1_enum] enum VwSelectionState
-	{
-		vssDisabled, 
-		vssOutOfFocus, 
-		vssEnabled, 
-		vssLim,
-	} VwSelectionState;
-
-	
-	
-	typedef [v1_enum] enum VwPrepDrawResult
-	{
-		kxpdrNormal, 
-		kxpdrAdjust, 
-		kxpdrInvalidate, 
-		kxpdrLim,
-	} VwPrepDrawResult; 
-
-	
-	typedef [v1_enum] enum VwBoundaryMark
-	{
-		none,	
-		endOfParagraph,	
-		endOfSection, 
-		endOfParagraphHighlighted, 
-		endofSectionHighlighted, 
-	} VwBoundaryMark;
+	#line 959 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 	
 
@@ -2503,7 +1834,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwRootBox;
 	};
-#line 2376 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
+#line 1707 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 	
 
@@ -4169,196 +3500,6 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	};
 
 	
-	typedef [v1_enum] enum StyleType
-	{
-		kstParagraph = 0,
-		kstCharacter,
-		kstLim
-	} StyleType;
-
-
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwStylesheet") cpp_quote(",") cpp_quote("D77C0DBC-C7BC-441d-9587-1E3664E1BCD3") cpp_quote(");") [ uuid("D77C0DBC-C7BC-441d-9587-1E3664E1BCD3"), object, pointer_default(unique) ] interface IVwStylesheet : IUnknown
-	{
-		
-		
-		HRESULT GetDefaultBasedOnStyleName(
-			[out, retval] BSTR * pbstrNormal);
-
-		
-		HRESULT GetDefaultStyleForContext(
-			[in] int nContext,
-			[in] ComBool fCharStyle,
-			[out, retval] BSTR * pbstrStyleName);
-
-		
-		
-		HRESULT PutStyle(
-			[in] BSTR bstrName,
-			[in] BSTR bstrUsage,
-			[in] HVO hvoStyle,
-			[in] HVO hvoBasedOn,
-			[in] HVO hvoNext,
-			[in] int nType,
-			[in] ComBool fBuiltIn,
-			[in] ComBool fModified,
-			[in] ITsTextProps * pttp);
-		
-
-		
-		
-		
-		
-		
-		HRESULT GetStyleRgch(
-			[in] int cch,
-			[in, size_is(cch)] OLECHAR * prgchName,
-			[out, retval] ITsTextProps ** ppttp);
-
-		
-		
-		
-		
-		HRESULT GetNextStyle(
-			[in] BSTR bstrName,
-			[out, retval] BSTR * pbstrNext);
-		
-		
-		HRESULT GetBasedOn(
-			[in] BSTR bstrName,
-			[out, retval] BSTR * pbstrBasedOn);
-		
-		
-		
-		
-		
-		
-		HRESULT GetType(
-			[in] BSTR bstrName,
-			[out, retval] int * pnType);
-
-		
-		
-		
-		
-		HRESULT GetContext(
-			[in] BSTR bstrName,
-			[out, retval] int * pnContext);
-
-		
-		
-		HRESULT IsBuiltIn(
-			[in] BSTR bstrName,
-			[out, retval] ComBool * pfBuiltIn);
-
-		
-		
-		HRESULT IsModified(
-			[in] BSTR bstrName,
-			[out, retval] ComBool * pfModified);
-
-		
-
-		
-		
-		
-		[propget] HRESULT DataAccess(
-			[out, retval] ISilDataAccess ** ppsda);
-
-		
-		HRESULT MakeNewStyle(
-			[out, retval] HVO * phvoNewStyle);
-
-		
-		HRESULT Delete(
-			[in] HVO hvoStyle);
-		
-		[propget] HRESULT CStyles(
-			[out, retval] int * pcttp);
-		
-		[propget] HRESULT NthStyle(
-			[in] int ihvo,
-			[out, retval] HVO * phvo);
-
-		
-		[propget] HRESULT NthStyleName(
-			[in] int ihvo,
-			[out, retval] BSTR * pbstrStyleName);
-
-		
-		
-		
-		[propget] HRESULT NormalFontStyle(
-			[out, retval] ITsTextProps ** ppttp);
-
-		
-		[propget] HRESULT IsStyleProtected(
-			[in] BSTR bstrName,
-			[out, retval] ComBool * pfProtected);
-
-		
-		
-		
-		
-		HRESULT CacheProps(
-			[in] int cch,
-			[in, size_is(cch)] OLECHAR * prgchName,
-			[in] HVO hvoStyle,
-			[in] ITsTextProps * pttp);
-
-
-		
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#line 4222 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
-	};
-
-	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("CCE2A7ED-464C-4ec7-A0B0-E3C1F6B94C5A") cpp_quote(",") cpp_quote("VwStylesheet") cpp_quote(");") [ uuid(CCE2A7ED-464C-4ec7-A0B0-E3C1F6B94C5A) ] coclass VwStylesheet
-	{
-		interface IVwStylesheet;
-	};
-#line 4229 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
-
-	
 
 
 
@@ -4428,12 +3569,13 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 
 	};
 
+
 	
 	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("CB59916A-C532-4a57-8CB4-6E1508B4DEC1") cpp_quote(",") cpp_quote("VwPropertyStore") cpp_quote(");") [ uuid(CB59916A-C532-4a57-8CB4-6E1508B4DEC1) ] coclass VwPropertyStore
 	{
 		interface IVwPropertyStore;
 	};
-	#line 4306 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
+	#line 3448 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 	
 	typedef [v1_enum] enum VwOverlayFlags
@@ -4717,7 +3859,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwOverlay;
 	};
-	#line 4590 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
+	#line 3732 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 	
 	
@@ -4929,7 +4071,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwPrintContext;
 	};
-	#line 4802 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
+	#line 3944 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 
 	
@@ -5240,7 +4382,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwPattern;
 	};
-	#line 5113 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
+	#line 4255 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 
 	
@@ -5274,7 +4416,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 		interface IVwTxtSrcInit2;
 		interface IVwTextSource;
 	};
-	#line 5147 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
+	#line 4289 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 
 	
@@ -5306,7 +4448,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 		interface IVwTxtSrcInit;
 		interface IVwTextSource;
 	};
-	#line 5179 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
+	#line 4321 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 	
 
@@ -5348,7 +4490,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwSearchKiller;
 	};
-	#line 5221 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
+	#line 4363 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 	
 
@@ -5428,7 +4570,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwDrawRootBuffered;
 	};
-	#line 5301 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
+	#line 4443 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 	
 
@@ -5476,7 +4618,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwSynchronizer;
 	};
-	#line 5349 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
+	#line 4491 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 
 
@@ -5645,7 +4787,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("1CD09E06-6978-4969-A1FC-4627
 {
 	interface IVwLayoutStream;
 };
-#line 5518 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
+#line 4660 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 
 
@@ -5758,221 +4900,8 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwLayoutManager") 
 	{
 		interface IPictureFactory;
 	};
-#line 5631 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
+#line 4773 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwVirtualHandler") cpp_quote(",") cpp_quote("581E3FE0-F0C0-42A7-96C7-76B23B8BE580") cpp_quote(");") [ uuid("581E3FE0-F0C0-42A7-96C7-76B23B8BE580"), object, pointer_default(unique) ] interface IVwVirtualHandler : IUnknown
-	{
-		
-		[propget] HRESULT ClassName(
-			[out, retval] BSTR * pbstr);
-		
-		
-		
-		
-		[propput] HRESULT ClassName(
-			[in] BSTR bstr);
-		
-		[propget] HRESULT FieldName(
-			[out, retval] BSTR * pbstr);
-		
-		
-		
-		[propput] HRESULT FieldName(
-			[in] BSTR bstr);
-		
-		
-		[propget] HRESULT Tag(
-			[out, retval] PropTag * ptag);
-		
-		
-		
-		[propput] HRESULT Tag(
-			[in] PropTag tag);
-		
-		[propget] HRESULT Type(
-			[out, retval] int * pcpt);
-		
-		
-		[propput] HRESULT Type(
-			[in] int cpt);
-		
-		[propget] HRESULT Writeable(
-			[out, retval] ComBool * pf);
-		
-		
-		
-		
-		
-		[propput] HRESULT Writeable(
-			[in] ComBool f);
-		
-		[propget] HRESULT ComputeEveryTime(
-			[out, retval] ComBool * pf);
-		
-		
-		
-		
-		
-		
-		
-		[propput] HRESULT ComputeEveryTime(
-			[in] ComBool f);
-		
-		
-		
-		
-		
-		
-		HRESULT Load(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[in] int ws,
-			[in] IVwCacheDa * pcda);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		HRESULT Replace(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[in] int ihvoMin,
-			[in] int ihvoLim,
-			[in, size_is(chvo)] HVO * prghvo,
-			[in] int chvo,
-			[in] ISilDataAccess * psda);
-		
-		
-		
-		
-		
-		
-		
-		HRESULT WriteObj(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[in] int ws,
-			[in] IUnknown * punk,
-			[in] ISilDataAccess * psda);
-		
-		
-		
-		
-		
-		HRESULT WriteInt64(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[in] __int64 val,
-			[in] ISilDataAccess * psda);
-		
-		
-		
-		
-		
-		
-		HRESULT WriteUnicode(
-			[in] HVO hvo,
-			[in] PropTag tag,
-			[in] BSTR bstr,
-			[in] ISilDataAccess * psda);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		HRESULT PreLoad(
-			[in] int chvo,
-			[in, size_is(chvo)] HVO * prghvo,
-			[in] PropTag tag,
-			[in] int ws,
-			[in] IVwCacheDa * pcda);
-		
-		
-		
-		HRESULT Initialize(
-			[in] BSTR bstrData);
-
-		
-		
-		
-		HRESULT DoesResultDependOnProp(
-			[in] HVO hvoObj, 
-			[in] HVO hvoChange, 
-			[in] PropTag tag, 
-			[in] int ws, 
-			[out, retval] ComBool * pfDepends);
-
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		HRESULT SetLoadForAllOfClass(
-			[in] ComBool fLoadAll);
-	};
-
-	
-	
-	typedef [v1_enum] enum FieldSource
-	{
-		kModel = 0, 
-		kCustom = 1, 
-		kVirtual = 2, 
-	} FieldSource;
 
 	
 
@@ -5992,7 +4921,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwLayoutManager") 
 	{
 		interface IVwWindow;
 	};
-	#line 5865 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
+	#line 4794 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
 
 
 typedef [v1_enum] enum VwMouseEvent
@@ -6060,6 +4989,15 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IViewInputMgr") cpp
 	
 	HRESULT OnTextChange();
 }
+
+
+
+
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("CCE2A7ED-464C-4ec7-A0B0-E3C1F6B94C5A") cpp_quote(",") cpp_quote("VwStylesheet") cpp_quote(");") [ uuid(CCE2A7ED-464C-4ec7-A0B0-E3C1F6B94C5A) ] coclass VwStylesheet
+{
+	interface IVwStylesheet;
+};
 
 #line 28 ".\\ViewsTlb.idl"
 

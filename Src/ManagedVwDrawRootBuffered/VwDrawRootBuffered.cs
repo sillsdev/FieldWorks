@@ -4,12 +4,11 @@
 
 using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using System.Diagnostics.CodeAnalysis;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Views
 {

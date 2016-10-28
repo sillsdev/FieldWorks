@@ -7,7 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using XCore;
@@ -42,7 +43,7 @@ namespace SIL.FieldWorks.XWorks
 			Subitem = subitem;
 		}
 
-		internal override void ViewChangedSelectedRecord(SIL.FieldWorks.Common.FwUtils.FwObjectSelectionEventArgs e, SIL.FieldWorks.Common.COMInterfaces.IVwSelection sel)
+		internal override void ViewChangedSelectedRecord(SIL.FieldWorks.Common.FwUtils.FwObjectSelectionEventArgs e, SIL.FieldWorks.Common.ViewsInterfaces.IVwSelection sel)
 		{
 			base.ViewChangedSelectedRecord(e, sel);
 			UsedToSyncRelatedClerk = false;

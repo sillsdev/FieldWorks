@@ -50,14 +50,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces, Version=5.3.0.14160, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="COMInterfacesTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
-    </Reference>
     <Reference Include="CoreImpl, Version=7.0.0.28278, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
@@ -82,8 +74,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Bin\Rhino\Rhino.Mocks.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtils, Version=7.0.0.18725, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SilUtils, Version=9.0.0.27741, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -91,6 +84,10 @@
     <Reference Include="TestUtils, Version=5.3.0.14184, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="ViewsInterfaces, Version=9.0.0.28969, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="xCoreInterfaces, Version=7.0.0.40578, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -103,6 +100,9 @@
     </Reference>
     <Reference Include="FwUtilsTests">
       <HintPath>..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

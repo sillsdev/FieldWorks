@@ -8,10 +8,10 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using XCore;
 

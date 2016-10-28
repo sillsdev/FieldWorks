@@ -65,21 +65,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces, Version=6.1.0.25513, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="COMInterfacesTests, Version=6.1.1.17705, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
-    </Reference>
     <Reference Include="CoreImpl, Version=6.1.0.26994, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
-    </Reference>
-    <Reference Include="Ethnologue, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\Ethnologue.dll</HintPath>
     </Reference>
     <Reference Include="nmock, Version=1.0.3551.16891, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -116,12 +104,13 @@
     <Reference Include="FwUtilsTests">
       <HintPath>..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
     </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -130,7 +119,6 @@
     </Compile>
     <Compile Include="DebugProcsTests.cs" />
     <Compile Include="DirectoryFinderTests.cs" />
-    <Compile Include="IVwCacheDaTests.cs" />
     <Compile Include="TsIncStrBldrTests.cs" />
     <Compile Include="TsPropsBldrTests.cs" />
     <Compile Include="TsPropsFactoryTests.cs" />

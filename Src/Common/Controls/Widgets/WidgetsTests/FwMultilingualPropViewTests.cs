@@ -8,7 +8,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Test.TestUtils;
 
@@ -49,7 +50,7 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			public ITsString GetMultiStringAlt(int tag, int ws)
 			{
-				var bldr = COMInterfaces.TsStrBldrClass.Create();
+				var bldr = TsStrBldrClass.Create();
 				bldr.SetIntPropValues(0, bldr.Length, (int)FwTextPropType.ktptWs, 0, m_list[0]);
 				return bldr.GetString();
 			}

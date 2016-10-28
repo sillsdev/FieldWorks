@@ -13,7 +13,7 @@ using System.Text;
 using System.Xml;
 using ICSharpCode.SharpZipLib.Zip;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using System.Globalization;
 using SIL.Utils;

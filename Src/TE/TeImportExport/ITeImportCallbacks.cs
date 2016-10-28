@@ -8,12 +8,6 @@
 // <remarks>
 // </remarks>
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.TE;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SILUBS.SharedScrUtils;
 

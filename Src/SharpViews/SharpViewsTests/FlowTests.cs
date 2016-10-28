@@ -8,7 +8,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.SharpViews.Builders;
 using SIL.FieldWorks.SharpViews.Paragraphs;
 

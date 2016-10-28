@@ -11,9 +11,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using SIL.FieldWorks.Common.COMInterfaces;
 using System.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils

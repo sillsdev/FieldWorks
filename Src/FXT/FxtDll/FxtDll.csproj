@@ -113,9 +113,6 @@
     <Reference Include="BasicUtils">
       <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces">
-      <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="CoreImpl">
       <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
     </Reference>
@@ -124,6 +121,9 @@
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -13,7 +13,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Xml;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.CoreImpl;
 using SIL.WritingSystems;
 

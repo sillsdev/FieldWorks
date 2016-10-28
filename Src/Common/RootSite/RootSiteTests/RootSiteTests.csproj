@@ -107,13 +107,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\CacheLight.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces">
-      <Name>COMInterfaces</Name>
-      <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="COMInterfacesTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\Rhino.Mocks.dll</HintPath>
+    </Reference>
+    <Reference Include="ViewsInterfaces">
+      <Name>ViewsInterfaces</Name>
+      <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="ViewsInterfacesTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\ViewsInterfacesTests.dll</HintPath>
     </Reference>
     <Reference Include="CoreImpl, Version=6.1.0.15795, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -134,10 +138,6 @@
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
-    </Reference>
-    <Reference Include="NMock">
-      <Name>NMock</Name>
-      <HintPath>..\..\..\..\Bin\nmock\NMock.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
@@ -191,6 +191,9 @@
     </Reference>
     <Reference Include="FwUtilsTests">
       <HintPath>..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -106,14 +106,17 @@
     <Reference Include="FwCoreDlgs">
       <HintPath>..\..\..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces">
-      <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="FwUtilsTests">
       <HintPath>..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Framework">
+      <HintPath>..\..\..\Common\Framework\Framework.csproj</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -130,10 +133,6 @@
     <Compile Include="SortReversalSubEntriesTests.cs" />
     <Compile Include="CircularRefBreakerTests.cs" />
     <Compile Include="TestUtils.cs" />
-    <ProjectReference Include="..\..\..\Common\Framework\Framework.csproj">
-      <Project>{C4A415C6-AB60-4118-BE82-5777C0877A8B}</Project>
-      <Name>Framework</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

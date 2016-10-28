@@ -96,9 +96,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces">
-      <Name>COMInterfaces</Name>
-      <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    <Reference Include="ViewsInterfaces">
+      <Name>ViewsInterfaces</Name>
+      <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="CoreImpl, Version=6.1.0.20425, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -263,9 +263,12 @@
     </Reference>
     <Reference Include="SIL.Windows.Forms">
       <HintPath>..\..\..\Downloads\SIL.Windows.Forms.dll</HintPath>
-	</Reference>
+    </Reference>
     <Reference Include="FwCoreDlgControls">
       <HintPath>..\..\..\Output\Debug\FwCoreDlgControls.dll</HintPath>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -298,7 +301,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="PatternVcBase.cs" />
-    <Compile Include="PatternView.cs" />
+    <Compile Include="PatternView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="PhonologicalFeatureChooserDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -368,7 +373,9 @@
     <Compile Include="DataNotebook\StringFieldOptions.Designer.cs">
       <DependentUpon>StringFieldOptions.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataNotebook\NotebookImportWiz.cs" />
+    <Compile Include="DataNotebook\NotebookImportWiz.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="DataNotebook\NotebookImportWiz.Designer.cs">
       <DependentUpon>NotebookImportWiz.cs</DependentUpon>
     </Compile>
@@ -426,7 +433,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="LexImport.cs" />
-    <Compile Include="LexImportWizard.cs" />
+    <Compile Include="LexImportWizard.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="LexImportWizardCharMarkerDlg.cs">
       <SubType>Form</SubType>
     </Compile>

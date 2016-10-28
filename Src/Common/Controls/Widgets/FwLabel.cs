@@ -9,15 +9,12 @@
 // </remarks>
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Widgets

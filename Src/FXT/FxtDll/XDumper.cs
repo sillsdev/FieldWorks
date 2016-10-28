@@ -13,7 +13,6 @@ using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.Utils;
@@ -22,6 +21,7 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
 using System.Linq;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.FXT

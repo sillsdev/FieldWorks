@@ -7,10 +7,9 @@
 // --------------------------------------------------------------------------------------------
 using System.Drawing;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {

@@ -110,9 +110,9 @@
 					HintPath = "..\..\..\Output\Debug\RootSite.dll"
 				/>
 				<Reference
-					Name = "COMInterfaces"
-					AssemblyName = "COMInterfaces"
-					HintPath = "..\..\..\Output\Debug\COMInterfaces.dll"
+					Name = "ViewsInterfaces"
+					AssemblyName = "ViewsInterfaces"
+					HintPath = "..\..\..\Output\Debug\ViewsInterfaces.dll"
 				/>
 				<Reference
 					Name = "ViewsInterop"

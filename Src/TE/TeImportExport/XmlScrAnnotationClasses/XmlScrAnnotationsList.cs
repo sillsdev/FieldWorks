@@ -7,10 +7,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Security.Principal;
 using System.Xml.Serialization;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;

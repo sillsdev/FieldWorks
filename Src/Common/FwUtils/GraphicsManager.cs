@@ -13,8 +13,8 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Drawing;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Reporting;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 
 namespace SIL.CoreImpl

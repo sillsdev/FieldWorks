@@ -11,8 +11,9 @@
 using System;
 using System.Runtime.Serialization;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

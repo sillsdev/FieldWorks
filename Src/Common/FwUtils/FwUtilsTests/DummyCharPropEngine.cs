@@ -6,8 +6,9 @@
 // Responsibility: TE Team
 
 using System;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using NMock;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

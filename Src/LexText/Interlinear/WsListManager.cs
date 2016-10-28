@@ -8,8 +8,9 @@ using System.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using System.Collections.Generic;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.IText

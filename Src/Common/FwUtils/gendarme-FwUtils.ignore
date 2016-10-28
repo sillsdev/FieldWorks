@@ -9,10 +9,13 @@ M: Microsoft.Win32.RegistryKey SIL.FieldWorks.Common.FwUtils.RegistryHelper::get
 M: Microsoft.Win32.RegistryKey SIL.FieldWorks.Common.FwUtils.RegistryHelper::get_CompanyKeyLocalMachineForWriting()
 
 # Factory method. Caller need to dispose
-M: SIL.FieldWorks.Common.COMInterfaces.IPicture SIL.FieldWorks.Common.FwUtils.ManagedPictureFactory::ImageFromBytes(System.Byte[],System.Int32)
+M: SIL.FieldWorks.Common.FwKernelInterfaces.IPicture SIL.FieldWorks.Common.FwUtils.ManagedPictureFactory::ImageFromBytes(System.Byte[],System.Int32)
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
+
+# reference only; object will be disposed in parent
+T: SIL.FieldWorks.Common.FwUtils.CachePair
 
 # reference only, we don't create the object
 T: SIL.FieldWorks.Common.FwUtils.RegistryGroup

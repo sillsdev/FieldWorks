@@ -13,7 +13,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices; // Needed for Marshal
 using System.Reflection; // To load meta data cache file data.
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+
 //using SIL.Utils;
 
 /* From Field$ table

@@ -8,9 +8,9 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using System.Runtime.InteropServices; // needed for Marshal
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.CacheLight
 {

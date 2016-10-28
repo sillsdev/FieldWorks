@@ -18,7 +18,6 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.TE
 {

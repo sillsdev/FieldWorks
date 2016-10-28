@@ -11,8 +11,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Resources;
@@ -20,7 +21,6 @@ using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
-using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

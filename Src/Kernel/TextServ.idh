@@ -1259,6 +1259,210 @@ DeclareInterface(TsMultiString, Unknown, DD409520-C212-11d3-9BB7-00400541F9E9)
 		[in] ITsString * ptss);
 };
 
+// A style may be one of two possible style types - Paragraph or Character.
+typedef [v1_enum] enum StyleType
+{
+	kstParagraph = 0,
+	kstCharacter,
+	kstLim
+} StyleType;
+
+// Possible values of the ktptBulNumScheme property. See the ${VwStyleProperty}
+// enumeration. Members of the enumeration can specify a particular style for
+// numbering paragraphs, or one of the standard FieldWorks bullets.
+typedef [v1_enum] enum VwBulNum {
+	kvbnNone = 0,
+	kvbnNumberBase = 10,	// Number styles
+	kvbnArabic = kvbnNumberBase,
+	kvbnRomanUpper,
+	kvbnRomanLower,
+	kvbnLetterUpper,
+	kvbnLetterLower,
+	kvbnArabic01,
+	kvbnNumberMax,
+	// Make no attempt to give names to all the bullets.  Just identify them with
+	// kvbnBulletBase + x, where x is the kctidFbnCbBullet combo-box selection.
+	kvbnBulletBase = 100,	// Bullets.
+	kvbnBullet = kvbnBulletBase,
+	kvbnBulletMax = kvbnBulletBase + 100 // allow up to 100 bullet types
+} VwBulNum; // Hungarian vbn
+
+/*******************************************************************************************
+	Interface IVwStylesheet
+	Represents a style sheet expressed as a collection of named TsTextProps objects.
+
+	@h3{When to implement}
+	Usually you will use a standard implementation. It may be useful to make your own
+	subclass of ${AfStyleSheet}, with a custom data source. Or, you could make your own if
+	you want a completely different way of managing styles.
+
+	@h3{When to use}
+	The main use is to pass as an argument to ${IVwRootBox#SetRootObjects}, thus specifying
+	what named styles mean within a particular view.
+
+	@h3{How to obtain an instance}
+	Use NewObj on ${AfStyleSheet} (or a subclass). A common case is to create an
+	${AfDbStylesheet} and initialize it with the information in the database about the
+	stylesheet for a particular language project.
+
+	@h3{Hungarian: vss}
+*******************************************************************************************/
+DeclareInterface(VwStylesheet, Unknown, D77C0DBC-C7BC-441d-9587-1E3664E1BCD3)
+{
+	// Gets the name of the default paragraph style to use as the base for new styles
+	// (Usually "Normal")
+	HRESULT GetDefaultBasedOnStyleName(
+		[out, retval] BSTR * pbstrNormal);
+
+	// Gets the style name that is the default style to use for the given context
+	HRESULT GetDefaultStyleForContext(
+		[in] int nContext,
+		[in] ComBool fCharStyle,
+		[out, retval] BSTR * pbstrStyleName);
+
+	// Put the DEFINITION of a style--that is, the properties that are explicitly set
+	// for this style, excluding inherited items.
+	HRESULT PutStyle(
+		[in] BSTR bstrName,
+		[in] BSTR bstrUsage,
+		[in] HVO hvoStyle,
+		[in] HVO hvoBasedOn,
+		[in] HVO hvoNext,
+		[in] int nType,
+		[in] ComBool fBuiltIn,
+		[in] ComBool fModified,
+		[in] ITsTextProps * pttp);
+	//:> ENHANCE EberhardB: Add parameter for usage
+
+	// Retrieve the EFFECT of a style--that is, the net effect of the named style
+	// and everything it inherits from. (That is, all the modifications they make
+	// to the overall system defaults--it does not have to include every possible property.)
+	// If there is no such name recored, set ppttp to NULL and return S_FALSE.
+	// Comparisons are case sensitive (A != a).
+	HRESULT GetStyleRgch(
+		[in] int cch,
+		[in, size_is(cch)] OLECHAR * prgchName,
+		[out, retval] ITsTextProps ** ppttp);
+
+	// Retrieve the name of the style that should be applied to the next paragraph,
+	// if Enter is pressed when the selection is an IP at the end of a paragraph
+	// that has the named paragraph style bstrName.
+	// @error E_INVALIDARG if the name is not the name of a valid style.
+	HRESULT GetNextStyle(
+		[in] BSTR bstrName,
+		[out, retval] BSTR * pbstrNext);
+	// Retrieve the name of the style on which bstrName is based.
+	// @error E_INVALIDARG if the name is not the name of a valid style.
+	HRESULT GetBasedOn(
+		[in] BSTR bstrName,
+		[out, retval] BSTR * pbstrBasedOn);
+	// Retrieve information about whether bstrName is a character or paragraph style.
+	// The result is a member of the ${StyleType} enumeration (this should probably
+	// be moved to this IDH file?), that is, kstParagraph or kstCharacter.
+	// We could have used a boolean, but were not entirely sure we would never have
+	// more types. Also,the enumeration makes it clear what each means.
+	// @error E_INVALIDARG if the name is not the name of a valid style.
+	HRESULT GetType(
+		[in] BSTR bstrName,
+		[out, retval] int * pnType);
+
+	// Retrieve the "context" of the style.
+	// The result is a context, the meaning of whose value is application-specific.
+	// Context 0 means general, or undefined.
+	// @error E_INVALIDARG if the name is not the name of a valid style.
+	HRESULT GetContext(
+		[in] BSTR bstrName,
+		[out, retval] int * pnContext);
+
+	// Sets the pfBuiltIn parameter to true if the style is a predefined style
+	// @error E_INVALIDARG if the name is not the name of a valid style.
+	HRESULT IsBuiltIn(
+		[in] BSTR bstrName,
+		[out, retval] ComBool * pfBuiltIn);
+
+	// Sets the pfModified parameter to true if the (built-in) style was modified by the user
+	// @error E_INVALIDARG if the name is not the name of a valid style.
+	HRESULT IsModified(
+		[in] BSTR bstrName,
+		[out, retval] ComBool * pfModified);
+
+	// ENHANCE EberhardB: Add method for usage
+
+	// Return the associated Data Access object in which the style definitions are stored.
+	// ENHANCE JohnT: get rid of this! It is currently needed in practice, but has no good
+	// place in this interface. An IVwStyleSheet does not HAVE to be stored in an ISilDataAccess.
+	[propget] HRESULT DataAccess(
+		[out, retval] ISilDataAccess ** ppsda);
+
+	// Return an HVO for a newly created style.
+	HRESULT MakeNewStyle(
+		[out, retval] HVO * phvoNewStyle);
+
+	// Remove style.
+	HRESULT Delete(
+		[in] HVO hvoStyle);
+	// Get the total number of styles in the style sheet.
+	[propget] HRESULT CStyles(
+		[out, retval] int * pcttp);
+	// Get the HVO of the Nth style (in an arbitrary order).
+	[propget] HRESULT NthStyle(
+		[in] int ihvo,
+		[out, retval] HVO * phvo);
+
+	// Get the Name of the Nth style (in an arbitrary order).
+	[propget] HRESULT NthStyleName(
+		[in] int ihvo,
+		[out, retval] BSTR * pbstrStyleName);
+
+	// A special style that contains only the parts of "Normal" that relate to the Font tab.
+	// This is automatically maintained as "Normal" is edited.  If there is no "Normal" style,
+	// sets *ppttp to NULL. This is not currently considered an error.
+	[propget] HRESULT NormalFontStyle(
+		[out, retval] ITsTextProps ** ppttp);
+
+	// Return true if the given style is one that is protected within the style sheet.
+	[propget] HRESULT IsStyleProtected(
+		[in] BSTR bstrName,
+		[out, retval] ComBool * pfProtected);
+
+	// Cache a new value for the properties of the specified style, without writing it
+	// out anywhere or marking the style as 'dirty'. This is typically used when making
+	// explicit the implicit default values of 'Normal', which should not lead to an
+	// undoable action.
+	HRESULT CacheProps(
+		[in] int cch,
+		[in, size_is(cch)] OLECHAR * prgchName,
+		[in] HVO hvoStyle,
+		[in] ITsTextProps * pttp);
+
+
+	// ENHANCE JohnT: add the following:
+#if 0
+	// ENHANCE JohnT: we probably also need a method to retrieve a style defn.
+
+	// Put the DEFINITION of a style--that is, the properties that are explicitly set
+	// for this style, excluding inherited items.
+	[propput] HRESULT Style(
+		[in] BSTR bstrName,
+		[in] ITsTextProps * pttp);
+	// Retrieve the EFFECT of a style--that is, the net effect of the named style
+	// and everything it inherits from. (That is, all the modifications they make
+	// to the overall system defaults--it does not have to include every possible property.)
+	[propget] HRESULT Style(
+		[in] BSTR bstrName,
+		[out, retval] ITsTextProps ** ppttp);
+	// Retrieve all styles
+	HRESULT GetStyle(
+		[in] int ittp,
+		[out] BSTR * pbstrName,
+		[out] ITsTextProps ** ppttp);
+	// Remove style
+	HRESULT Delete(
+		[in] BSTR bstrName);
+#endif
+};
+
+
 /***********************************************************************************************
 	CoClass definitions.
 ***********************************************************************************************/

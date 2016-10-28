@@ -11,7 +11,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -21,6 +21,7 @@ using SIL.FieldWorks.FdoUi;
 using XCore;
 using SIL.FieldWorks.Common.Controls;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {

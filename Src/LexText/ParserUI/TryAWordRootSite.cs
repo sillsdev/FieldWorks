@@ -8,13 +8,14 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Drawing;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.XWorks;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.IText;
 using XCore;
 

@@ -8,11 +8,12 @@
 //
 // <remarks>
 // </remarks>
+
+using Rhino.Mocks;
 using System.Drawing;
 using System.Windows.Forms;
 using NUnit.Framework;
-using NMock;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Test.TestUtils;
 
 namespace SIL.FieldWorks.Common.RootSites
@@ -50,7 +51,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		[Test]
 		public void AdjustScrollRange()
 		{
-			DynamicMock rootBox = new DynamicMock(typeof(IVwRootBox));
+			var rootBox = MockRepository.GenerateMock<IVwRootBox>();
 			// This was taken out because it doesn't seem like the views code does this
 			// anymore. It just calls AdjustScrollRange for the original view that changed.
 			// Done as a part of TE-3576
@@ -69,12 +70,17 @@ namespace SIL.FieldWorks.Common.RootSites
 			//rootBox.ExpectAndReturn("Height", 1000);
 			//rootBox.ExpectAndReturn("Width", 100);
 			// result for bt pane
-			rootBox.ExpectAndReturn("Height", 1100);
-			rootBox.ExpectAndReturn("Width", 100);
-			rootBox.ExpectAndReturn("Height", 900);
-			rootBox.ExpectAndReturn("Width", 100);
-			rootBox.ExpectAndReturn("Height", 950);
-			rootBox.ExpectAndReturn("Width", 100);
+			rootBox.Expect(r => r.Height).Return(1100);
+			rootBox.Expect(r => r.Width).Return(100);
+			//rootBox.Expect(r => r.Height).Return(1100);
+			//rootBox.Expect(r => r.Height).Return(1100);
+			//rootBox.Expect(r => r.Height).Return(1100);
+			//rootBox.ExpectAndReturn("Height", 1100);
+			//rootBox.ExpectAndReturn("Width", 100);
+			//rootBox.ExpectAndReturn("Height", 900);
+			//rootBox.ExpectAndReturn("Width", 100);
+			//rootBox.ExpectAndReturn("Height", 950);
+			//rootBox.ExpectAndReturn("Width", 100);
 
 			using (DummyBasicView stylePane = new DummyBasicView(),
 				draftPane = new DummyBasicView(),
@@ -82,9 +88,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				using (RootSiteGroup group = new RootSiteGroup())
 				{
-					PrepareView(stylePane, 50, 300, (IVwRootBox)rootBox.MockInstance);
-					PrepareView(draftPane, 150, 300, (IVwRootBox)rootBox.MockInstance);
-					PrepareView(btPane, 150, 300, (IVwRootBox)rootBox.MockInstance);
+					PrepareView(stylePane, 50, 300, (IVwRootBox)rootBox);
+					PrepareView(draftPane, 150, 300, (IVwRootBox)rootBox);
+					PrepareView(btPane, 150, 300, (IVwRootBox)rootBox);
 
 					group.AddToSyncGroup(stylePane);
 					group.AddToSyncGroup(draftPane);

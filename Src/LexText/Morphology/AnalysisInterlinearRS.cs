@@ -13,12 +13,13 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.IText;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {

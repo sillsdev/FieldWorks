@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.HermitCrab;

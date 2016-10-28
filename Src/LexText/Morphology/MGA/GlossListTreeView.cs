@@ -20,7 +20,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.LexText.Controls.MGA

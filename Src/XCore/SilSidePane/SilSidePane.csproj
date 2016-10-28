@@ -163,8 +163,8 @@
     <Reference Include="BasicUtils">
       <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces">
-      <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    <Reference Include="ViewsInterfaces">
+      <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="CoreImpl">
       <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>

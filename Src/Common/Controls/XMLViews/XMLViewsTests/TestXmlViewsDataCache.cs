@@ -4,11 +4,12 @@
 
 using System.Collections.Generic;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.CoreTests;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace XMLViewsTests
 {

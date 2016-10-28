@@ -5,7 +5,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using System.Xml.XPath;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;

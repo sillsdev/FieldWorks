@@ -13,8 +13,7 @@
 using System;
 
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 
 namespace SIL.FieldWorks.FDO.FDOTests

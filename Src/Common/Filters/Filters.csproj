@@ -87,9 +87,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ViewsInterfaces, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="CoreImpl, Version=6.1.0.17300, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -140,6 +140,9 @@
     <Reference Include="ManagedLgIcuCollator">
       <Name>ManagedLgIcuCollator</Name>
       <HintPath>..\..\..\Output\Debug\ManagedLgIcuCollator.dll</HintPath>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

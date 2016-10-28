@@ -17,7 +17,7 @@ using System.Windows.Forms;
 using SilEncConverters40;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
@@ -733,11 +733,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private static string GetDictionaryName(String languageId)
 		{
-			Common.COMInterfaces.Icu.UErrorCode err;
+			Common.FwKernelInterfaces.Icu.UErrorCode err;
 			string country;
-			Common.COMInterfaces.Icu.GetDisplayCountry(languageId, "en", out country, out err);
+			Common.FwKernelInterfaces.Icu.GetDisplayCountry(languageId, "en", out country, out err);
 			string languageName;
-			Common.COMInterfaces.Icu.GetDisplayLanguage(languageId, "en", out languageName, out err);
+			Common.FwKernelInterfaces.Icu.GetDisplayLanguage(languageId, "en", out languageName, out err);
 			var languageAndCountry = new StringBuilder(languageName);
 			if (!string.IsNullOrEmpty(country))
 				languageAndCountry.AppendFormat(" ({0})", country);
@@ -1969,7 +1969,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (baseLocale == null)
 				baseLocale = "";
 
-			string sortRules = Common.COMInterfaces.Icu.GetCollationRules(baseLocale);
+			string sortRules = Common.FwKernelInterfaces.Icu.GetCollationRules(baseLocale);
 			m_sortRulesTextBox.Tss = m_tsf.MakeString(sortRules == null ? "" : sortRules.Replace("&", Environment.NewLine + "&").Trim(),
 				CurrentWritingSystem.Handle);
 

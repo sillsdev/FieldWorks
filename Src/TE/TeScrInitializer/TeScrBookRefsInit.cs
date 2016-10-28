@@ -11,11 +11,9 @@ using System.Diagnostics;
 using System.Xml;
 
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
 

@@ -18,7 +18,7 @@ using System.Windows.Forms;
 using NUnit.Framework;
 
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Test.TestUtils;
 
 namespace SIL.FieldWorks.Common.RootSites

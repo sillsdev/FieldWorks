@@ -12,9 +12,6 @@
 using System;
 using System.Text;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
-using System.Diagnostics;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

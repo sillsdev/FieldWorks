@@ -8,12 +8,12 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using System.Linq;
-
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Controls

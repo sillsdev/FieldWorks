@@ -11,7 +11,6 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.IO;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils.Pathway
 {

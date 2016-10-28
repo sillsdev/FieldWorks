@@ -37,7 +37,7 @@ T: SIL.FieldWorks.Common.Widgets.FwPopupMessageFilter
 R: Gendarme.Rules.Portability.NewLineLiteralRule
 
 # dealing with keyboard input
-M: System.Void SIL.FieldWorks.Common.Widgets.TextBoxEditingHelper::OnCharAux(System.String,SIL.FieldWorks.Common.COMInterfaces.VwShiftStatus,System.Windows.Forms.Keys)
+M: System.Void SIL.FieldWorks.Common.Widgets.TextBoxEditingHelper::OnCharAux(System.String,SIL.FieldWorks.Common.ViewsInterfaces.VwShiftStatus,System.Windows.Forms.Keys)
 
 #-----------------------------------------------------------------------------------------------
 R: SIL.Gendarme.Rules.DebugDispose.EnsureDebugDisposeMissDispStatementRule

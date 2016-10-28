@@ -9,8 +9,8 @@ using System;
 using System.Linq;
 using NUnit.Framework;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.FDO.CoreTests.MultiFooTests

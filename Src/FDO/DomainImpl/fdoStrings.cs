@@ -21,7 +21,7 @@ using System.Xml;
 using System.Diagnostics;
 using System.Xml.Linq;
 
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using SIL.CoreImpl;

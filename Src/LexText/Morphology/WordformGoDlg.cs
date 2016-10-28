@@ -5,11 +5,12 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor

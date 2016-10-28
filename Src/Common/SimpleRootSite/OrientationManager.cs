@@ -5,9 +5,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using System.Drawing;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

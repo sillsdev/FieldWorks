@@ -114,13 +114,13 @@
     <Reference Include="CacheLight, Version=1.0.4002.31848, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="COMInterfaces">
-      <Name>COMInterfaces</Name>
-      <HintPath>..\..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    <Reference Include="ViewsInterfaces">
+      <Name>ViewsInterfaces</Name>
+      <HintPath>..\..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfacesTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="ViewsInterfacesTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
+      <HintPath>..\..\..\..\..\Output\Debug\ViewsInterfacesTests.dll</HintPath>
     </Reference>
     <Reference Include="CoreImpl, Version=6.1.1.36573, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -182,6 +182,9 @@
     </Reference>
     <Reference Include="FDOTests">
       <HintPath>..\..\..\..\..\Output\Debug\FDOTests.dll</HintPath>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -112,14 +112,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\CacheLightTests.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces">
-      <Name>COMInterfaces</Name>
+    <Reference Include="ViewsInterfaces">
+      <Name>ViewsInterfaces</Name>
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfacesTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="ViewsInterfacesTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\ViewsInterfacesTests.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
@@ -182,6 +182,9 @@
     </Reference>
     <Reference Include="FwUtils">
       <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

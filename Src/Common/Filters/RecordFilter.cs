@@ -48,8 +48,9 @@ using System.Linq;
 using System.Xml;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.Filters

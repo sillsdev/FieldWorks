@@ -14,8 +14,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO; // for Win32 message defns.
 using System.Windows.Forms;
-
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 

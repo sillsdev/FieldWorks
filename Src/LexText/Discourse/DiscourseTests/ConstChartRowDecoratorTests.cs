@@ -13,7 +13,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.Discourse

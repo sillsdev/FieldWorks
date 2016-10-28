@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 			m_mock.Expect("Method",
 				new object[] { new IgnoreOrderConstraint(0, 1, 2 )},
 				new string[] { typeof(int[]).FullName });
-			m_mock.AdditionalReferences = new string[] { "COMInterfacesTests.dll" };
+			m_mock.AdditionalReferences = new string[] { "ViewsInterfacesTests.dll" };
 		}
 
 		/// ------------------------------------------------------------------------------------

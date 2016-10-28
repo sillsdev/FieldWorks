@@ -13,16 +13,14 @@ using System;
 using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.Utils;
 using SIL.CoreImpl;
-using XCore;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
 {

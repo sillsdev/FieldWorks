@@ -66,13 +66,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces, Version=5.1.0.19833, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ViewsInterfaces, Version=5.1.0.19833, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfacesTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="ViewsInterfacesTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\ViewsInterfacesTests.dll</HintPath>
     </Reference>
     <Reference Include="CoreImpl, Version=7.1.0.23468, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -141,6 +141,9 @@
     </Reference>
     <Reference Include="SilUtils">
       <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

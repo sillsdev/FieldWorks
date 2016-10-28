@@ -8,9 +8,6 @@
 //		Hand made additions to the generated partial constant classes go here.
 
 using System;
-using System.Drawing;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO
 {

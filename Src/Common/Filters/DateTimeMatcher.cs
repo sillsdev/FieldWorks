@@ -3,13 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Globalization;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Filters
 {

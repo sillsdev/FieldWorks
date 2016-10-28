@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.ScriptureUtils;

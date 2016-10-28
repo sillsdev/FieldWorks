@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.ComTypes;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.CoreImpl
 {

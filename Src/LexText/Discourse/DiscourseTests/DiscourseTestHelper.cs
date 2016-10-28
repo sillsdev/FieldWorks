@@ -8,8 +8,9 @@ using System.Linq;
 using NUnit.Framework;
 
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using System.Xml;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 

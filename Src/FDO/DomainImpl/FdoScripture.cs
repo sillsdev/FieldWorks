@@ -16,7 +16,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SILUBS.SharedScrUtils;

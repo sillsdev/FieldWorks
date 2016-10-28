@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -18,6 +18,7 @@ using SIL.Utils;
 using System.Xml;
 using SIL.CoreImpl;
 using System.Linq;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FdoUi
 {

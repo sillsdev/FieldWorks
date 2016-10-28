@@ -15,7 +15,7 @@ using System.Collections;
 using System.Diagnostics;
 
 using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.RootSites

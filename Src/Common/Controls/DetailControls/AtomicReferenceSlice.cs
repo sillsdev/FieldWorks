@@ -12,10 +12,11 @@ using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using XCore;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {

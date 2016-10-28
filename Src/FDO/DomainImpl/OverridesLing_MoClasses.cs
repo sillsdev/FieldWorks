@@ -16,7 +16,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Collections.Generic;
 using System.Xml; // XMLWriter
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;

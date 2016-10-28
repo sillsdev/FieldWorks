@@ -19,7 +19,8 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.Utils;
 using System.Reflection;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {

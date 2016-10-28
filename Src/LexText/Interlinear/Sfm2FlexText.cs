@@ -11,7 +11,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using Sfm2Xml;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.FDO.DomainServices;
 using SilEncConverters40;

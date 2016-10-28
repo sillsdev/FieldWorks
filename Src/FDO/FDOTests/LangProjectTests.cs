@@ -9,10 +9,10 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {

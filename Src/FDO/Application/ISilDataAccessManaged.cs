@@ -3,8 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using System;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.Application
 {

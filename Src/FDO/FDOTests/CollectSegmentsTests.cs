@@ -4,14 +4,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {

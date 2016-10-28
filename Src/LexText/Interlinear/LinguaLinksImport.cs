@@ -18,7 +18,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using ECInterfaces;
@@ -28,6 +28,7 @@ using SIL.Utils;
 using SilEncConverters40;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using System.Xml.Serialization;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 
 namespace SIL.FieldWorks.IText

@@ -8,7 +8,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.FwUtils;
@@ -17,6 +17,7 @@ using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using XCore;
 using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {

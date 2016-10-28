@@ -10,7 +10,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;

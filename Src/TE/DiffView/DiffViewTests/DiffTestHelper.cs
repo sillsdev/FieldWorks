@@ -8,10 +8,7 @@
 // <remarks>
 // </remarks>
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SILUBS.SharedScrUtils;
 using NUnit.Framework;

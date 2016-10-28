@@ -7,11 +7,9 @@
 
 using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {

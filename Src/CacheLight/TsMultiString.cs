@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.CacheLight

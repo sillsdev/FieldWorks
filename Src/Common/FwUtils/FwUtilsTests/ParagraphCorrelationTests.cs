@@ -10,7 +10,8 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

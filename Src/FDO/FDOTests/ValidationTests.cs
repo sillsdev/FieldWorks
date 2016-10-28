@@ -9,12 +9,10 @@
 // <remarks>
 // </remarks>
 
-using System;
 using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.DomainServices;
 using System.Collections.Generic;
-using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.FDO.FDOTests

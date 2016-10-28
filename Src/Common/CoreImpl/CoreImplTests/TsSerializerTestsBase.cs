@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.CoreImpl

@@ -78,9 +78,9 @@
 	<Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
-	<Reference Include="COMInterfaces">
-	  <Name>COMInterfaces</Name>
-	  <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+	<Reference Include="ViewsInterfaces">
+	  <Name>ViewsInterfaces</Name>
+	  <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
 	</Reference>
 	<Reference Include="FDO">
 	  <Name>FDO</Name>

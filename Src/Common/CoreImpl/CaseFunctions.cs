@@ -5,7 +5,7 @@
 // File: CaseFunctions.cs
 // Responsibility: FW Team
 // ---------------------------------------------------------------------------------------------
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.CoreImpl
 {

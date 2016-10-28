@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.WritingSystems;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;

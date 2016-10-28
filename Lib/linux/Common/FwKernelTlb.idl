@@ -1,4 +1,4 @@
-#line 1 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+#line 1 "C:\\Repositories\\fwroot\\fw\\src\\Kernel\\FwKernelTlb.idl"
 
 
 
@@ -14,7 +14,7 @@ import "oaidl.idl";
 import "ocidl.idl";
 import "objidl.idl";
 
-#line 1 "C:\\develop\\fwrepo\\fw\\src\\Generic\\common.idh"
+#line 1 "C:\\Repositories\\fwroot\\fw\\src\\Generic\\common.idh"
 
 
 
@@ -117,11 +117,11 @@ cpp_quote("// This is for code that uses a 64-bit integer for SilTime.")
 cpp_quote("typedef __int64 SilTime;")
 cpp_quote("#endif")
 cpp_quote("")
-#line 17 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+#line 17 "C:\\Repositories\\fwroot\\fw\\src\\Kernel\\FwKernelTlb.idl"
 
 cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76E0-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(",") cpp_quote("FwKernelLib") cpp_quote(");") [ uuid(F1EF76E0-BE04-11d3-8D9A-005004DEFEC4), version(1.0), helpstring("FieldWorks Kernel") ] library FwKernelLib
 {
-	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+	#line 1 "c:\\repositories\\fwroot\\fw\\src\\kernel\\FwKernel.idh"
 
 
 
@@ -135,8 +135,19 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76E0-BE04-11d3-8D9A-0050
 
 
 
-interface ITsString;
+
+
+
+
 interface IFwMetaDataCache;
+interface ILgWritingSystemFactory;
+interface ITsMultiString;
+interface ITsString;
+interface ITsTextProps;
+interface IVwStylesheet;
+
+typedef int HVO; 
+typedef int PropTag; 
 
 typedef [v1_enum] enum UndoResult
 {
@@ -149,6 +160,102 @@ typedef [v1_enum] enum UndoResult
 	kuresError,			
 						
 } UndoResult;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ICheckWord") cpp_quote(",") cpp_quote("69F4D944-C786-47EC-94F7-15193EED6758") cpp_quote(");") [ uuid("69F4D944-C786-47EC-94F7-15193EED6758"), object, pointer_default(unique) ] interface ICheckWord : IUnknown
+{
+	HRESULT Check(
+		[in] LPCOLESTR pszWord,
+		[out, retval] ComBool * pfCorrect);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IGetSpellChecker") cpp_quote(",") cpp_quote("F0A60670-D280-45EA-A5C5-F0B84C027EFC") cpp_quote(");") [ uuid("F0A60670-D280-45EA-A5C5-F0B84C027EFC"), object, pointer_default(unique) ] interface IGetSpellChecker : IUnknown
+{
+	HRESULT GetChecker(
+		[in] LPCOLESTR pszDictId,
+		[out, retval] ICheckWord ** pcw);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwNotifyChange") cpp_quote(",") cpp_quote("6C456541-C2B6-11d3-8078-0000C0FB81B5") cpp_quote(");") [ uuid("6C456541-C2B6-11d3-8078-0000C0FB81B5"), object, pointer_default(unique) ] interface IVwNotifyChange : IUnknown
+{
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	HRESULT PropChanged(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] int ivMin,
+		[in] int cvIns,
+		[in] int cvDel);
+};
 
 
 
@@ -426,11 +533,734 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IActionHandler") cp
 		[out, retval] ComBool * pfSupressSel);
 };
 
+
 cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("CF0F1C0B-0E44-4C1E-9912-2048ED12C2B4") cpp_quote(",") cpp_quote("ActionHandler") cpp_quote(");") [ uuid(CF0F1C0B-0E44-4C1E-9912-2048ED12C2B4) ] coclass ActionHandler
 {
 	interface IActionHandler;
 };
-#line 310 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 418 "c:\\repositories\\fwroot\\fw\\src\\kernel\\FwKernel.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ISilDataAccess") cpp_quote(",") cpp_quote("26E6E70E-53EB-4372-96F1-0F4707CCD1EB") cpp_quote(");") [ uuid("26E6E70E-53EB-4372-96F1-0F4707CCD1EB"), object, pointer_default(unique) ] interface ISilDataAccess : IUnknown
+{
+	
+	
+	
+	
+	
+	[propget] HRESULT ObjectProp(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[out, retval] HVO * phvo);
+	
+	
+	
+	
+	[propget] HRESULT VecItem(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] int index, 
+		[out, retval] HVO * phvo);
+	
+	[propget] HRESULT VecSize(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[out, retval] int * pchvo);
+	
+	[propget] HRESULT VecSizeAssumeCached(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[out, retval] int * pchvo);
+	
+	HRESULT VecProp(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] int chvoMax,
+		[out] int * pchvo,
+		[out, size_is(chvoMax), length_is(*pchvo)] HVO * prghvo);
+
+
+	
+	
+	
+	
+	
+	
+	
+	HRESULT BinaryPropRgb(
+		[in] HVO obj,
+		[in] PropTag tag,
+		[out, size_is(cbMax)] byte * prgb,
+		[in] int cbMax,
+		[out] int * pcb);
+	
+	
+	
+	
+	[propget] HRESULT GuidProp(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[out, retval] GUID * puid);
+	
+	
+	
+	[propget] HRESULT ObjFromGuid(
+		[in] GUID uid,
+		[out, retval] HVO * pHvo);
+	
+	
+	
+	[propget] HRESULT IntProp(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[out, retval] int * pn);
+	
+	
+	
+	[propget] HRESULT Int64Prop(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[out, retval] __int64 * plln);
+	
+	
+	[propget] HRESULT BooleanProp(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[out, retval] ComBool * pn);
+	
+	
+	[propget] HRESULT MultiStringAlt(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] int ws,
+		[out, retval] ITsString ** pptss);
+	
+	
+	[propget] HRESULT MultiStringProp(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[out, retval] ITsMultiString ** pptms);
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	[propget] HRESULT Prop(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[out, retval] VARIANT * pvar);
+	
+	
+	[propget] HRESULT StringProp(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[out, retval] ITsString ** pptss);
+	
+	
+	
+	[propget] HRESULT TimeProp(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[out, retval] __int64 * ptim);
+	
+	
+	
+	
+	[propget] HRESULT UnicodeProp(
+		[in] HVO obj,
+		[in] PropTag tag,
+		[out, retval] BSTR * pbstr);
+	
+	[propput] HRESULT UnicodeProp(
+		[in] HVO obj,
+		[in] PropTag tag,
+		[in] BSTR bstr);
+	
+	
+	
+	
+	
+	HRESULT UnicodePropRgch(
+		[in] HVO obj,
+		[in] PropTag tag,
+		[out, size_is(cchMax)] OLECHAR * prgch,
+		[in] int cchMax,
+		[out] int * pcch);
+	
+	
+	
+	[propget] HRESULT UnknownProp(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[out, retval] IUnknown ** ppunk);
+
+	
+	
+	
+	
+	
+	
+	
+	HRESULT BeginUndoTask(
+		[in] BSTR bstrUndo,
+		[in] BSTR bstrRedo);
+
+	
+	
+	HRESULT EndUndoTask();
+
+	
+	
+	
+	HRESULT ContinueUndoTask();
+
+	
+	
+	HRESULT EndOuterUndoTask();
+
+	
+	HRESULT Rollback();
+
+	
+	
+	HRESULT BreakUndoTask(
+		[in] BSTR bstrUndo,
+		[in] BSTR bstrRedo);
+
+	
+	
+	HRESULT BeginNonUndoableTask();
+
+	
+	HRESULT EndNonUndoableTask();
+
+	
+	
+	HRESULT GetActionHandler(
+		[out, retval] IActionHandler ** ppacth);
+
+	
+	
+	HRESULT SetActionHandler(
+		[in] IActionHandler * pacth);
+
+	
+	
+	
+	
+	
+	HRESULT DeleteObj(
+		[in] HVO hvoObj);
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	HRESULT DeleteObjOwner(
+		[in] HVO hvoOwner,
+		[in] HVO hvoObj,
+		[in] PropTag tag,
+		[in] int ihvo);
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	HRESULT InsertNew(
+		[in] HVO hvoObj,
+		[in] PropTag tag,
+		[in] int ihvo,
+		[in] int chvo,
+		[in] IVwStylesheet * pss);
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	HRESULT MakeNewObject(
+		[in] int clid,
+		[in] HVO hvoOwner,
+		[in] PropTag tag,
+		[in] int ord,
+		[out, retval] HVO * phvoNew);
+
+	
+	
+	
+	
+
+	
+	HRESULT MoveOwnSeq(
+		[in] HVO hvoSrcOwner,
+		[in] PropTag tagSrc,
+		[in] int ihvoStart,
+		[in] int ihvoEnd,
+		[in] HVO hvoDstOwner,
+		[in] PropTag tagDst,
+		[in] int ihvoDstStart);
+
+	
+	
+	
+	
+
+	
+	HRESULT MoveOwn(
+		[in] HVO hvoSrcOwner,
+		[in] PropTag tagSrc,
+		[in] HVO hvo,
+		[in] HVO hvoDstOwner,
+		[in] PropTag tagDst,
+		[in] int ihvoDstStart);
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	HRESULT Replace(
+		[in] HVO hvoObj,
+		[in] PropTag tag,
+		[in] int ihvoMin,
+		[in] int ihvoLim,
+		[in, size_is(chvo)] HVO * prghvo,
+		[in] int chvo);
+
+	
+	
+
+	
+	
+	HRESULT SetObjProp(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] HVO hvoObj);
+
+	
+	
+	
+	HRESULT RemoveObjRefs(
+		[in] HVO hvo);
+
+	
+
+	
+	
+	HRESULT SetBinary(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in, size_is(cb)] byte * prgb,
+		[in] int cb);
+
+	
+
+	
+	
+	HRESULT SetGuid(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] GUID uid);
+
+	
+
+	
+	
+	HRESULT SetInt(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] int n);
+
+	
+
+	
+	
+	HRESULT SetInt64(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] __int64 lln);
+
+	
+	
+	
+	HRESULT SetBoolean(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] ComBool n);
+
+	
+
+	
+	
+	HRESULT SetMultiStringAlt(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] int ws,
+		[in] ITsString * ptss);
+
+	
+
+	
+	
+	HRESULT SetString(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] ITsString * ptss);
+
+	
+
+	
+	
+	HRESULT SetTime(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] __int64 lln);
+
+	
+
+	
+	
+	HRESULT SetUnicode(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in, size_is(cch)] OLECHAR * prgch,
+		[in] int cch);
+
+	
+	
+	
+	
+
+	
+	
+	HRESULT SetUnknown(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] IUnknown * punk);
+
+	
+	
+	
+	HRESULT AddNotification(
+		[in] IVwNotifyChange * pnchng);
+
+	
+	
+	
+	
+	
+
+	
+	
+	
+
+	
+	
+
+	
+	
+	
+	
+	HRESULT PropChanged(
+		[in] IVwNotifyChange * pnchng,
+		[in] int pct,
+		[in] HVO hvo,
+		[in] int tag,
+		[in] int ivMin,
+		[in] int cvIns,
+		[in] int cvDel);
+
+	
+	HRESULT RemoveNotification(
+		[in] IVwNotifyChange * pnchng);
+
+	
+	
+	
+	HRESULT GetDisplayIndex(
+		[in] HVO hvoOwn,
+		[in] int tag,
+		[in] int ihvo,
+		[out, retval] int * ihvoDisp);
+
+	
+	
+	[propget] HRESULT WritingSystemFactory(
+		[out, retval] ILgWritingSystemFactory ** ppwsf);
+
+	
+	
+	[propputref] HRESULT WritingSystemFactory(
+		[in] ILgWritingSystemFactory * pwsf);
+
+	
+	
+	
+
+	
+
+	
+	
+	
+	[propget] HRESULT WritingSystemsOfInterest(
+		[in] int cwsMax,
+		[out, size_is(cwsMax)] int * pws,
+		[out, retval] int * pcws);
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	HRESULT InsertRelExtra(
+		[in] HVO hvoSrc,
+		[in] PropTag tag,
+		[in] int ihvo,
+		[in] HVO hvoDst,
+		[in] BSTR bstrExtra);
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+
+	
+	
+
+	
+	HRESULT UpdateRelExtra(
+		[in] HVO hvoSrc,
+		[in] PropTag tag,
+		[in] int ihvo,
+		[in] BSTR bstrExtra);
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	HRESULT GetRelExtra(
+		[in] HVO hvoSrc,
+		[in] PropTag tag,
+		[in] int ihvo,
+		[out, retval] BSTR * pbstrExtra);
+
+	
+	
+	
+	
+	[propget] HRESULT IsPropInCache(
+		[in] HVO hvo,
+		[in] PropTag tag,
+		[in] int cpt,
+		[in] int ws,
+		[out, retval] ComBool * pfCached);
+
+	
+	
+	
+	
+
+	
+	
+	HRESULT IsDirty(
+		[out, retval] ComBool * pf);
+
+	
+	HRESULT ClearDirty();
+
+	
+	
+	
+	
+	
+	[propget] HRESULT MetaDataCache(
+		[out, retval] IFwMetaDataCache ** ppmdc);
+
+	
+	
+	
+	[propputref] HRESULT MetaDataCache(
+		[in] IFwMetaDataCache * pmdc);
+
+	
+	
+	
+	
+	
+	
+	[propget] HRESULT IsValidObject(
+		[in] HVO hvo,
+		[out, retval] ComBool * pfValid);
+
+	
+	
+	
+	
+	[propget] HRESULT IsDummyId(
+		[in] HVO hvo,
+		[out, retval] ComBool * pfDummy);
+
+	
+	
+	
+	
+	
+	
+	
+	HRESULT GetObjIndex(
+		[in] HVO hvoOwn,
+		[in] int flid,
+		[in] HVO hvo,
+		[out, retval] int * ihvo);
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	HRESULT GetOutlineNumber(
+		[in] HVO hvo,
+		[in] int flid,
+		[in] ComBool fFinPer,
+		[out, retval] BSTR * pbstr);
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	HRESULT MoveString(
+		[in] int hvoSource,
+		[in] PropTag flidSrc,
+		[in] int wsSrc,
+		[in] int ichMin,
+		[in] int ichLim,
+		[in] HVO hvoDst,
+		[in] PropTag flidDst,
+		[in] int wsDst,
+		[in] int ichDest,
+		[in] ComBool fDstIsNew);
+};
+
+
+
+typedef [v1_enum] enum FieldSource
+{
+	kModel = 0, 
+	kCustom = 1, 
+	kVirtual = 2, 
+} FieldSource;
 
 
 
@@ -738,6 +1568,53 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IFwMetaDataCache") 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IStructuredTextDataAccess") cpp_quote(",") cpp_quote("A2A4F9FA-D4E8-4bfb-B6B7-5F45DAF2DC0C") cpp_quote(");") [ uuid("A2A4F9FA-D4E8-4bfb-B6B7-5F45DAF2DC0C"), object, pointer_default(unique) ] interface IStructuredTextDataAccess : IUnknown
+{
+	
+	[propget] HRESULT ParaContentsFlid(
+		[out, retval] PropTag * pflid);
+
+	
+	[propget] HRESULT ParaPropertiesFlid(
+		[out, retval] PropTag * pflid);
+
+	
+	[propget] HRESULT TextParagraphsFlid(
+		[out, retval] PropTag * pflid);
+};
+
+
+
+
+
+
+
+
+typedef [v1_enum] enum PropChangeType
+{
+	kpctNotifyMeThenAll,
+	kpctNotifyAll,
+	kpctNotifyAllButMe,
+} PropChangeType;
+
+
+
+
+
+
 typedef [v1_enum] enum CrtReportType
 {
 	Warn    = 0x0,	
@@ -817,9 +1694,9 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("24636FD1-DB8D-4b2c-B4C0-44C2
 {
 	interface IDebugReport;
 };
-#line 697 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 1574 "c:\\repositories\\fwroot\\fw\\src\\kernel\\FwKernel.idh"
 
-#line 699 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 1576 "c:\\repositories\\fwroot\\fw\\src\\kernel\\FwKernel.idh"
 
 
 
@@ -840,10 +1717,10 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IComDisposable") cp
 
 
 
-#line 720 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 1597 "c:\\repositories\\fwroot\\fw\\src\\kernel\\FwKernel.idh"
 
-#line 21 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
-	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
+#line 21 "C:\\Repositories\\fwroot\\fw\\src\\Kernel\\FwKernelTlb.idl"
+	#line 1 "c:\\repositories\\fwroot\\fw\\src\\kernel\\TextServ.idh"
 
 
 
@@ -2106,6 +2983,210 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ITsMultiString") cp
 };
 
 
+typedef [v1_enum] enum StyleType
+{
+	kstParagraph = 0,
+	kstCharacter,
+	kstLim
+} StyleType;
+
+
+
+
+typedef [v1_enum] enum VwBulNum {
+	kvbnNone = 0,
+	kvbnNumberBase = 10,	
+	kvbnArabic = kvbnNumberBase,
+	kvbnRomanUpper,
+	kvbnRomanLower,
+	kvbnLetterUpper,
+	kvbnLetterLower,
+	kvbnArabic01,
+	kvbnNumberMax,
+	
+	
+	kvbnBulletBase = 100,	
+	kvbnBullet = kvbnBulletBase,
+	kvbnBulletMax = kvbnBulletBase + 100 
+} VwBulNum; 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwStylesheet") cpp_quote(",") cpp_quote("D77C0DBC-C7BC-441d-9587-1E3664E1BCD3") cpp_quote(");") [ uuid("D77C0DBC-C7BC-441d-9587-1E3664E1BCD3"), object, pointer_default(unique) ] interface IVwStylesheet : IUnknown
+{
+	
+	
+	HRESULT GetDefaultBasedOnStyleName(
+		[out, retval] BSTR * pbstrNormal);
+
+	
+	HRESULT GetDefaultStyleForContext(
+		[in] int nContext,
+		[in] ComBool fCharStyle,
+		[out, retval] BSTR * pbstrStyleName);
+
+	
+	
+	HRESULT PutStyle(
+		[in] BSTR bstrName,
+		[in] BSTR bstrUsage,
+		[in] HVO hvoStyle,
+		[in] HVO hvoBasedOn,
+		[in] HVO hvoNext,
+		[in] int nType,
+		[in] ComBool fBuiltIn,
+		[in] ComBool fModified,
+		[in] ITsTextProps * pttp);
+	
+
+	
+	
+	
+	
+	
+	HRESULT GetStyleRgch(
+		[in] int cch,
+		[in, size_is(cch)] OLECHAR * prgchName,
+		[out, retval] ITsTextProps ** ppttp);
+
+	
+	
+	
+	
+	HRESULT GetNextStyle(
+		[in] BSTR bstrName,
+		[out, retval] BSTR * pbstrNext);
+	
+	
+	HRESULT GetBasedOn(
+		[in] BSTR bstrName,
+		[out, retval] BSTR * pbstrBasedOn);
+	
+	
+	
+	
+	
+	
+	HRESULT GetType(
+		[in] BSTR bstrName,
+		[out, retval] int * pnType);
+
+	
+	
+	
+	
+	HRESULT GetContext(
+		[in] BSTR bstrName,
+		[out, retval] int * pnContext);
+
+	
+	
+	HRESULT IsBuiltIn(
+		[in] BSTR bstrName,
+		[out, retval] ComBool * pfBuiltIn);
+
+	
+	
+	HRESULT IsModified(
+		[in] BSTR bstrName,
+		[out, retval] ComBool * pfModified);
+
+	
+
+	
+	
+	
+	[propget] HRESULT DataAccess(
+		[out, retval] ISilDataAccess ** ppsda);
+
+	
+	HRESULT MakeNewStyle(
+		[out, retval] HVO * phvoNewStyle);
+
+	
+	HRESULT Delete(
+		[in] HVO hvoStyle);
+	
+	[propget] HRESULT CStyles(
+		[out, retval] int * pcttp);
+	
+	[propget] HRESULT NthStyle(
+		[in] int ihvo,
+		[out, retval] HVO * phvo);
+
+	
+	[propget] HRESULT NthStyleName(
+		[in] int ihvo,
+		[out, retval] BSTR * pbstrStyleName);
+
+	
+	
+	
+	[propget] HRESULT NormalFontStyle(
+		[out, retval] ITsTextProps ** ppttp);
+
+	
+	[propget] HRESULT IsStyleProtected(
+		[in] BSTR bstrName,
+		[out, retval] ComBool * pfProtected);
+
+	
+	
+	
+	
+	HRESULT CacheProps(
+		[in] int cch,
+		[in, size_is(cch)] OLECHAR * prgchName,
+		[in] HVO hvoStyle,
+		[in] ITsTextProps * pttp);
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#line 1463 "c:\\repositories\\fwroot\\fw\\src\\kernel\\TextServ.idh"
+};
+
+
+
 
 
 
@@ -2139,10 +3220,10 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 {
 	interface ITsPropsBldr;
 };
-#line 1297 "c:\\develop\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
+#line 1501 "c:\\repositories\\fwroot\\fw\\src\\kernel\\TextServ.idh"
 
-#line 22 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
-	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Render.idh"
+#line 22 "C:\\Repositories\\fwroot\\fw\\src\\Kernel\\FwKernelTlb.idl"
+	#line 1 "c:\\repositories\\fwroot\\fw\\src\\kernel\\Render.idh"
 
 
 
@@ -2631,7 +3712,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 	{
 		interface IVwGraphicsWin32;
 	};
-	#line 490 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Render.idh"
+	#line 490 "c:\\repositories\\fwroot\\fw\\src\\kernel\\Render.idh"
 
 
 	
@@ -3247,7 +4328,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 	{
 		interface IRenderEngine;
 	};
-	#line 1106 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Render.idh"
+	#line 1106 "c:\\repositories\\fwroot\\fw\\src\\kernel\\Render.idh"
 
 
 	
@@ -3372,10 +4453,10 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 
 
 
-#line 1231 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Render.idh"
+#line 1231 "c:\\repositories\\fwroot\\fw\\src\\kernel\\Render.idh"
 
-#line 23 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
-	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Language.idh"
+#line 23 "C:\\Repositories\\fwroot\\fw\\src\\Kernel\\FwKernelTlb.idl"
+	#line 1 "c:\\repositories\\fwroot\\fw\\src\\kernel\\Language.idh"
 
 
 
@@ -4558,7 +5639,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgIcuResourceBundl
 	{
 		interface ILgIcuLocaleEnumerator;
 	};
-#line 1184 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Language.idh"
+#line 1184 "c:\\repositories\\fwroot\\fw\\src\\kernel\\Language.idh"
 
-#line 24 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+#line 24 "C:\\Repositories\\fwroot\\fw\\src\\Kernel\\FwKernelTlb.idl"
 };

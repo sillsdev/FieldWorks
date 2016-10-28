@@ -8,7 +8,7 @@ using System.Linq;
 using System.Windows.Forms;
 using NUnit.Framework;
 using Rhino.Mocks;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -19,6 +19,7 @@ using SIL.Utils;
 using SIL.WritingSystems;
 using XCore;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.IText
 {

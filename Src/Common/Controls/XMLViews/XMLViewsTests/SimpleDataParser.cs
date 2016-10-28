@@ -7,8 +7,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace XMLViewsTests
 {

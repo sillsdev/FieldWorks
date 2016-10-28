@@ -1,9 +1,7 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LexImportWizard.cs
-// Responsibility: FLEx Team
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,20 +13,18 @@ using System.Reflection;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using Sfm2Xml;
-// For Registry and RegistryKey.
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;	// FW WS stuff
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
 using SilEncConverters40;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls

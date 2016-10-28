@@ -75,9 +75,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ViewsInterfaces, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="CoreImpl, Version=6.9.4.17937, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -199,6 +199,9 @@
     <Reference Include="Framework">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

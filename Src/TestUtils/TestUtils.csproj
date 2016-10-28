@@ -113,7 +113,6 @@
       <Name>System</Name>
     </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
@@ -126,12 +125,6 @@
     <Reference Include="BasicUtilsTests">
       <HintPath>..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces">
-      <HintPath>..\..\Output\Debug\COMInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="COMInterfacesTests">
-      <HintPath>..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
-    </Reference>
     <Reference Include="CoreImpl">
       <HintPath>..\..\Output\Debug\CoreImpl.dll</HintPath>
     </Reference>
@@ -143,6 +136,9 @@
     </Reference>
     <Reference Include="SilUtils">
       <HintPath>..\..\Output\Debug\SilUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

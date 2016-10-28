@@ -18,7 +18,7 @@ using SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Filters;
@@ -28,6 +28,7 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
 using SilEncConverters40;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -5384,20 +5385,6 @@ namespace SIL.FieldWorks.Common.Controls
 				sda.SetBoolean(hvoOwner, m_flid, newVal != 0);
 			else
 				sda.SetInt(hvoOwner, m_flid, newVal);
-		}
-
-		void FixSpellingStatus(int hvoItem, int val)
-		{
-			int defVernWS = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
-			ITsString tss = m_cache.DomainDataByFlid.get_MultiStringAlt(hvoItem,
-				WfiWordformTags.kflidForm,
-				defVernWS);
-			if (tss == null || tss.Length == 0)
-				return; // probably can't happen?
-			SpellingHelper.SetSpellingStatus(tss.Text,
-				defVernWS,
-				m_cache.WritingSystemFactory,
-				((int)val == (int)SpellingStatusStates.correct));
 		}
 
 		public override void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)

@@ -12,7 +12,7 @@ using System;
 using System.Collections;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SILUBS.SharedScrUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using System.Collections.Generic;
 using SIL.CoreImpl;
 using Logos.Utility;

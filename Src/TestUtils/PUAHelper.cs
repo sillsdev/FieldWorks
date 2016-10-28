@@ -8,7 +8,7 @@
 using System.IO;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Test.TestUtils
 {

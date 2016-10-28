@@ -10,17 +10,11 @@
 
 using System;
 using System.Diagnostics;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
-
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgControls

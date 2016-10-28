@@ -7,8 +7,9 @@
 
 using System;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Test.TestUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Filters
 {

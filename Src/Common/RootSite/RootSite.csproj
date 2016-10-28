@@ -109,9 +109,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces">
-      <Name>COMInterfaces</Name>
-      <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    <Reference Include="ViewsInterfaces">
+      <Name>ViewsInterfaces</Name>
+      <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="CoreImpl, Version=6.1.0.15646, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -183,6 +183,9 @@
       <Name>xCoreInterfaces</Name>
       <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
     </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs">
@@ -212,11 +215,9 @@
     </Compile>
     <Compile Include="RequestSelectionHelper.cs" />
     <Compile Include="RootSite.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
-    <Compile Include="RootSiteControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="RootSiteControl.cs" />
     <Compile Include="RootSiteEditingHelper.cs">
       <SubType>Code</SubType>
     </Compile>

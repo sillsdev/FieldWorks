@@ -7,11 +7,11 @@
 
 using System;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.Utils;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {

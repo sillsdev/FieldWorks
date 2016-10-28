@@ -8,13 +8,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SIL.FieldWorks.Common.COMInterfaces;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
 using SIL.Utils;
 using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {

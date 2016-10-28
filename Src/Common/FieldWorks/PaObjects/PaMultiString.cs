@@ -4,9 +4,9 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.PaToFdoInterfaces;
-using SIL.FieldWorks.Common.COMInterfaces;
 
 namespace SIL.FieldWorks.PaObjects
 {

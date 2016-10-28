@@ -100,10 +100,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces">
-      <Name>COMInterfaces</Name>
+    <Reference Include="ViewsInterfaces">
+      <Name>ViewsInterfaces</Name>
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\COMInterfaces.dll</HintPath>
+      <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="Controls.Design, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -244,6 +244,9 @@
     <Reference Include="Mono.Posix" Condition="'$(OS)'=='Unix'" />
     <Reference Include="SIL.Windows.Forms">
       <HintPath>..\..\Downloads\SIL.Windows.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -12,10 +12,11 @@ using System.Drawing;
 using System.Windows.Forms;
  // needed for Marshal
 using System.Windows.Forms.VisualStyles;
-
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
@@ -136,12 +137,12 @@ namespace SIL.FieldWorks.TE
 
 			if (m_styleSheet is FwStyleSheet)
 			{
-				string fontFace = ((FwStyleSheet)m_styleSheet).GetFaceNameFromStyle(
-					ScrStyleNames.FootnoteMarker,
+				using (var font = FontHeightAdjuster.GetFontForStyle(ScrStyleNames.FootnoteMarker, m_styleSheet,
 					cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle,
-					cache.LanguageWritingSystemFactoryAccessor);
-
-				txtMarker.Font = new Font(fontFace, 10);
+					cache.LanguageWritingSystemFactoryAccessor))
+				{
+					txtMarker.Font = new Font(font.Name, 10);
+				}
 			}
 			txtMarker.MaxLength = kMaxMarkerLength;
 

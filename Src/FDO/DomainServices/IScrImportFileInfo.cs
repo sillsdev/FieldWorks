@@ -5,7 +5,6 @@
 // File: IScrImportFileInfo.cs
 // Responsibility: TE Team
 
-using System;
 namespace SIL.FieldWorks.FDO.DomainServices
 {
 	/// ----------------------------------------------------------------------------------------

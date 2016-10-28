@@ -15,7 +15,6 @@ using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using ECInterfaces;
 using SilEncConverters40;
-using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

@@ -11,7 +11,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -21,6 +21,7 @@ using XCore;
 using SIL.FieldWorks.FDO;
 using System.Collections.Generic;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks
 {

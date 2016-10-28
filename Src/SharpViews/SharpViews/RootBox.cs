@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.SharpViews.Builders;
 using SIL.FieldWorks.SharpViews.Hookups;

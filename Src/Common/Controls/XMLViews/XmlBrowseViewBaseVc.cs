@@ -23,10 +23,11 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.Filters;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Resources; // for check-box icons.
 using SIL.FieldWorks.Common.RootSites;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Controls

@@ -22,7 +22,7 @@ using System.Runtime.InteropServices;
 
 using SIL.Utils;
 
-namespace SIL.FieldWorks.Common.COMInterfaces
+namespace SIL.FieldWorks.Common.ViewsInterfaces
 {
 	#region ArrayPtr class
 	/// ----------------------------------------------------------------------------------------

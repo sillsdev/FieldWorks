@@ -17,7 +17,7 @@ using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Collections.Generic;
 using XCore;

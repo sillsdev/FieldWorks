@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,9 +13,9 @@ using System.Reflection;
 using System.Resources;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
@@ -24,7 +24,6 @@ using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Resources;
 using SIL.ObjectBrowser;
 using WeifenLuo.WinFormsUI.Docking;
-using XCore;
 
 namespace FDOBrowser
 {

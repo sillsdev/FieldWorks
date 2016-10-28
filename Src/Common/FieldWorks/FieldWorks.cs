@@ -27,10 +27,11 @@ using Gecko;
 using Microsoft.Win32;
 using SIL.CoreImpl;
 using SIL.CoreImpl.Properties;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
@@ -150,7 +151,7 @@ namespace SIL.FieldWorks
 				return;
 
 			// We read the registry value and set an environment variable ICU_DATA here so that
-			// COMInterfaces.dll is independent of WinForms.
+			// FwKernelInterfaces.dll is independent of WinForms.
 			string icuDirValueName = string.Format("Icu{0}DataDir", Icu.Version);
 			using(var userKey = RegistryHelper.CompanyKey)
 			using(var machineKey = RegistryHelper.CompanyKeyLocalMachine)

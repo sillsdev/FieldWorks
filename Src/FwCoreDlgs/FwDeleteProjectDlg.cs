@@ -11,7 +11,6 @@ using System.Windows.Forms;
 using SIL.Utils;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Common.FwUtils;
-using XCore;
 using SIL.FieldWorks.FDO;
 using System.IO;
 

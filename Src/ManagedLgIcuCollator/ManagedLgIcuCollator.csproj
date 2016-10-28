@@ -61,15 +61,19 @@
     <Compile Include="LgIcuCollator.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="COMInterfaces, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\COMInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="BasicUtils, Version=6.1.0.19723, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
+    <Reference Include="FwKernelInterfaces, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="ViewsInterfaces, Version=9.0.0.19446, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

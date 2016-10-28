@@ -94,9 +94,9 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="COMInterfaces">
-      <Name>COMInterfaces</Name>
-      <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    <Reference Include="ViewsInterfaces">
+      <Name>ViewsInterfaces</Name>
+      <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
@@ -116,8 +116,8 @@
     <Reference Include="BasicUtilsTests">
       <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfacesTests">
-      <HintPath>..\..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
+    <Reference Include="ViewsInterfacesTests">
+      <HintPath>..\..\..\..\Output\Debug\ViewsInterfacesTests.dll</HintPath>
     </Reference>
     <Reference Include="CoreImpl">
       <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
@@ -145,8 +145,12 @@
     <Reference Include="SIL.Core">
       <HintPath>..\..\..\..\Downloads\SIL.Core.dll</HintPath>
     </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IVwCacheDaTests.cs" />
     <Compile Include="LayoutKeyUtilsTests.cs" />
     <None Include="App.config" />
     <Compile Include="CaseFunctionsTest.cs" />
@@ -196,7 +200,4 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-  <ItemGroup>
-    <Folder Include="Attributes\" />
-  </ItemGroup>
 </Project>

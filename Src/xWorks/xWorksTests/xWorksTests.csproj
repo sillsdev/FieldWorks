@@ -94,8 +94,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    <Reference Include="ViewsInterfaces, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="DetailControls, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
@@ -181,9 +181,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfacesTests, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
+    <Reference Include="ViewsInterfacesTests, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\ViewsInterfacesTests.dll</HintPath>
     </Reference>
     <Reference Include="CoreImpl, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
@@ -249,6 +249,9 @@
     <Reference Include="xWorks, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\Output\Debug\xWorks.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -347,5 +350,4 @@
   <ItemGroup>
     <None Include="gendarme-xWorksTests.ignore" />
   </ItemGroup>
-  <ItemGroup />
 </Project>

@@ -6,7 +6,6 @@
 // Responsibility: TE Team
 
 using System.Collections.Generic;
-using System.Diagnostics;
 using NUnit.Framework;
 
 using SIL.CoreImpl;

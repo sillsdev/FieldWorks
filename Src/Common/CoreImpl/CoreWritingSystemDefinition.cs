@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using SIL.Extensions;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 using SIL.WritingSystems;
 

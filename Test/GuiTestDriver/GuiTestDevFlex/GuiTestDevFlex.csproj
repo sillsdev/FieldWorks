@@ -82,9 +82,9 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Output\Release\AccessibilityHelper.dll</HintPath>
 	</Reference>
-	<Reference Include="COMInterfaces">
-	  <Name>COMInterfaces</Name>
-	  <HintPath>..\..\..\Output\Release\COMInterfaces.dll</HintPath>
+	<Reference Include="ViewsInterfaces">
+	  <Name>ViewsInterfaces</Name>
+	  <HintPath>..\..\..\Output\Release\ViewsInterfaces.dll</HintPath>
 	</Reference>
 	<Reference Include="GuiTestDriver, Version=6.1.3615.30107, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>

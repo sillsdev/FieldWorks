@@ -5,12 +5,8 @@
 // File: SCScriptureText.cs
 // Responsibility: TE Team
 
-using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Diagnostics;
-
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SILUBS.SharedScrUtils;
 using SilEncConverters40;

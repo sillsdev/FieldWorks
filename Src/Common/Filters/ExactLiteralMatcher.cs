@@ -3,10 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Filters
 {
@@ -50,7 +48,7 @@ namespace SIL.FieldWorks.Filters
 			return p == m_target;
 		}
 
-		public bool Matches(SIL.FieldWorks.Common.COMInterfaces.ITsString arg)
+		public bool Matches(ITsString arg)
 		{
 			return Accept(arg);
 		}
@@ -82,12 +80,12 @@ namespace SIL.FieldWorks.Filters
 			return true;
 		}
 
-		public SIL.FieldWorks.Common.COMInterfaces.ITsString MakeValid()
+		public ITsString MakeValid()
 		{
 			throw new NotImplementedException();
 		}
 
-		public SIL.FieldWorks.Common.COMInterfaces.ITsString Label
+		public ITsString Label
 		{
 			get
 			{
@@ -100,7 +98,7 @@ namespace SIL.FieldWorks.Filters
 		}
 
 		private ILgWritingSystemFactory m_wsf = null;
-		public SIL.FieldWorks.Common.COMInterfaces.ILgWritingSystemFactory WritingSystemFactory
+		public ILgWritingSystemFactory WritingSystemFactory
 		{
 			get
 			{

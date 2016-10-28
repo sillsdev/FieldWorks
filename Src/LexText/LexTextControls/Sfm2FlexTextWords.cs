@@ -11,8 +11,8 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 using Sfm2Xml;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SilEncConverters40;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.LexText.Controls
 {

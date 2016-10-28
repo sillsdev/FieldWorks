@@ -6,9 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml;
-
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.CacheLight
 {

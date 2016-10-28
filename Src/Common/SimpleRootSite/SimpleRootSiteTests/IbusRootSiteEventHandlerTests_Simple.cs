@@ -6,7 +6,8 @@ using System;
 using System.Drawing;
 using IBusDotNet;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils.Attributes;
 using SIL.Windows.Forms.Keyboarding;
 

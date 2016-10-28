@@ -14,7 +14,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace SIL.FieldWorks.Common.COMInterfaces
+namespace SIL.FieldWorks.Common.ViewsInterfaces
 {
 	/// <summary>
 	/// Helper methods for marshalling of COM objects

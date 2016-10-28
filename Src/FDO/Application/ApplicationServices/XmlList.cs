@@ -16,7 +16,7 @@ using System.Text;
 using System.Xml;
 
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 

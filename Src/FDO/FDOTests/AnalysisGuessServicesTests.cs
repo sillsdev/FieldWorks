@@ -8,16 +8,12 @@
 // <remarks>
 // </remarks>
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.FDO.FDOTests

@@ -5,7 +5,6 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -13,6 +12,7 @@ using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
 using XCore;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.LexText.Controls
 {

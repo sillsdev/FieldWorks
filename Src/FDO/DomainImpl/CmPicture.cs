@@ -16,8 +16,7 @@
 using System;
 using System.IO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.COMInterfaces;
-using System.Text;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using System.Diagnostics;
 using System.Linq;

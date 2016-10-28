@@ -12,9 +12,10 @@
 using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Utils;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {

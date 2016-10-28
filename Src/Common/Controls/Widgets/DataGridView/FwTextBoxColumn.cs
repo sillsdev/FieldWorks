@@ -16,10 +16,10 @@ using System.Drawing;
 using System.ComponentModel;
 
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -367,10 +367,10 @@ namespace SIL.FieldWorks.Common.Widgets
 			string faceName;
 			if (m_styleSheet != null)
 			{
-				// When there is a stylesheet, use it to get the font face name for the style
-				// name specified in the text props. If there is no style name in the text props,
-				// GetFaceNameFromStyle() should return the font face for the normal style.
-				faceName = m_styleSheet.GetFaceNameFromStyle(styleName, ws, m_cache);
+				using (var font = FontHeightAdjuster.GetFontForStyle(styleName, m_styleSheet, ws, m_cache.WritingSystemFactory))
+				{
+					faceName = font == null ? null : font.Name;
+				}
 			}
 			else
 			{

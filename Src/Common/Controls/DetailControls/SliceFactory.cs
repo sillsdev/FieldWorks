@@ -12,7 +12,7 @@ using System;
 using System.Xml;
 using System.IO;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -22,6 +22,7 @@ using SIL.FieldWorks.Common.Controls;
 using XCore;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {

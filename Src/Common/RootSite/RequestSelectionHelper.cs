@@ -6,9 +6,10 @@
 // Responsibility: TE Team
 // --------------------------------------------------------------------------------------------
 using System.Diagnostics;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using System.Runtime.InteropServices;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

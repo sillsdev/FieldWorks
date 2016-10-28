@@ -14,7 +14,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// <summary>
 	/// This class implements the DotNet Acessibility interface by wrapping the COM IAccessible interface
 	/// implemented by the root box.
-	/// It is uncomfortably similar to COMInterfaces.AccessibleObjectFromIAccessible, but was developed
+	/// It is uncomfortably similar to ViewsInterfaces.AccessibleObjectFromIAccessible, but was developed
 	/// independently since we (JohnT and Dan) didn't find AccessibleObjectFromIAccessible until later.
 	/// The most important difference is that this version stores the root site as well as its
 	/// AccessibleRootObject. This handles the problem that DotNet apparently only asks any one object

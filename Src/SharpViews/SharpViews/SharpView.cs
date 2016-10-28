@@ -5,7 +5,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.SharpViews.FieldWorksReplacements;
 using SIL.FieldWorks.SharpViews.Selections;
 using XCore;

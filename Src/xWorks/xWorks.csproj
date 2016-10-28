@@ -106,8 +106,8 @@
     <Reference Include="Accessibility">
       <Name>Accessibility</Name>
     </Reference>
-    <Reference Include="COMInterfaces, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    <Reference Include="ViewsInterfaces, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="DetailControls, Version=6.1.1.30508, Culture=neutral, PublicKeyToken=null">
@@ -171,10 +171,6 @@
     <Reference Include="LexTextControls, Version=7.1.0.28634, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="MessageBoxExLib, Version=8.0.8.15166, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\MessageBoxExLib.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
@@ -216,7 +212,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Security" />
     <Reference Include="System.Windows.Forms" />
@@ -250,10 +245,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwCoreDlgControls.dll</HintPath>
     </Reference>
-    <Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SharedScrUtils.dll</HintPath>
-    </Reference>
     <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SilUtils.dll</HintPath>
@@ -269,6 +260,9 @@
     <Reference Include="XMLViews, Version=1.0.3685.30465, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Output\Debug\XMLViews.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -669,5 +663,4 @@
   <ItemGroup>
     <None Include="gendarme-xWorks.ignore" />
   </ItemGroup>
-  <ItemGroup />
 </Project>

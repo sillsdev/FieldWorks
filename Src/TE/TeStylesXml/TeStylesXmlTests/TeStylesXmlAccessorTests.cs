@@ -16,8 +16,8 @@ using NUnit.Framework;
 
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Common.FwUtils;

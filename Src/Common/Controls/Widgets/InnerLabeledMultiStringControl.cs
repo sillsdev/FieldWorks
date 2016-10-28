@@ -6,8 +6,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;		// controls and etc...
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.DomainServices;
 

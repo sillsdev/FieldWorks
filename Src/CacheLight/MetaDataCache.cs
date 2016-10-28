@@ -12,10 +12,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices; // needed for Marshal
 using System.Xml;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 using System.Text;
 using System.IO;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.CacheLight
 {

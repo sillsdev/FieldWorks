@@ -9,19 +9,13 @@
 // </remarks>
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
-
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgControls

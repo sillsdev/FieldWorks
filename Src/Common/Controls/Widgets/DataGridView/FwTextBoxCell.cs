@@ -1,16 +1,15 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwTextBoxCell.cs
-// Responsibility: TE Team
 
 using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+#if __MonoCS__
+using System.Drawing;
 using System.Diagnostics.CodeAnalysis;
+#endif
 
 namespace SIL.FieldWorks.Common.Widgets
 {

@@ -4,9 +4,9 @@
 
 
  /* File created by MIDL compiler version 8.00.0603 */
-/* at Thu Oct 27 09:18:27 2016
+/* at Fri Oct 28 14:00:56 2016
  */
-/* Compiler settings for C:\develop\fwrepo\fw\Output\Common\ViewsTlb.idl:
+/* Compiler settings for C:\Repositories\fwroot\fw\Output\Common\ViewsTlb.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
@@ -41,13 +41,6 @@
 
 /* Forward Declarations */ 
 
-#ifndef __IVwNotifyChange_FWD_DEFINED__
-#define __IVwNotifyChange_FWD_DEFINED__
-typedef interface IVwNotifyChange IVwNotifyChange;
-
-#endif 	/* __IVwNotifyChange_FWD_DEFINED__ */
-
-
 #ifndef __IVwSelection_FWD_DEFINED__
 #define __IVwSelection_FWD_DEFINED__
 typedef interface IVwSelection IVwSelection;
@@ -60,13 +53,6 @@ typedef interface IVwSelection IVwSelection;
 typedef interface IVwEmbeddedWindow IVwEmbeddedWindow;
 
 #endif 	/* __IVwEmbeddedWindow_FWD_DEFINED__ */
-
-
-#ifndef __IVwStylesheet_FWD_DEFINED__
-#define __IVwStylesheet_FWD_DEFINED__
-typedef interface IVwStylesheet IVwStylesheet;
-
-#endif 	/* __IVwStylesheet_FWD_DEFINED__ */
 
 
 #ifndef __IVwEnv_FWD_DEFINED__
@@ -88,20 +74,6 @@ typedef interface IVwViewConstructor IVwViewConstructor;
 typedef interface IVwRootSite IVwRootSite;
 
 #endif 	/* __IVwRootSite_FWD_DEFINED__ */
-
-
-#ifndef __ISilDataAccess_FWD_DEFINED__
-#define __ISilDataAccess_FWD_DEFINED__
-typedef interface ISilDataAccess ISilDataAccess;
-
-#endif 	/* __ISilDataAccess_FWD_DEFINED__ */
-
-
-#ifndef __IStructuredTextDataAccess_FWD_DEFINED__
-#define __IStructuredTextDataAccess_FWD_DEFINED__
-typedef interface IStructuredTextDataAccess IStructuredTextDataAccess;
-
-#endif 	/* __IStructuredTextDataAccess_FWD_DEFINED__ */
 
 
 #ifndef __IVwCacheDa_FWD_DEFINED__
@@ -174,20 +146,6 @@ typedef interface IVwLayoutManager IVwLayoutManager;
 #endif 	/* __IVwLayoutManager_FWD_DEFINED__ */
 
 
-#ifndef __ICheckWord_FWD_DEFINED__
-#define __ICheckWord_FWD_DEFINED__
-typedef interface ICheckWord ICheckWord;
-
-#endif 	/* __ICheckWord_FWD_DEFINED__ */
-
-
-#ifndef __IGetSpellChecker_FWD_DEFINED__
-#define __IGetSpellChecker_FWD_DEFINED__
-typedef interface IGetSpellChecker IGetSpellChecker;
-
-#endif 	/* __IGetSpellChecker_FWD_DEFINED__ */
-
-
 #ifndef __VwCacheDa_FWD_DEFINED__
 #define __VwCacheDa_FWD_DEFINED__
 
@@ -234,18 +192,6 @@ typedef struct VwInvertedRootBox VwInvertedRootBox;
 #endif /* __cplusplus */
 
 #endif 	/* __VwInvertedRootBox_FWD_DEFINED__ */
-
-
-#ifndef __VwStylesheet_FWD_DEFINED__
-#define __VwStylesheet_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class VwStylesheet VwStylesheet;
-#else
-typedef struct VwStylesheet VwStylesheet;
-#endif /* __cplusplus */
-
-#endif 	/* __VwStylesheet_FWD_DEFINED__ */
 
 
 #ifndef __VwPropertyStore_FWD_DEFINED__
@@ -441,6 +387,18 @@ typedef interface IViewInputMgr IViewInputMgr;
 #endif 	/* __IViewInputMgr_FWD_DEFINED__ */
 
 
+#ifndef __VwStylesheet_FWD_DEFINED__
+#define __VwStylesheet_FWD_DEFINED__
+
+#ifdef __cplusplus
+typedef class VwStylesheet VwStylesheet;
+#else
+typedef struct VwStylesheet VwStylesheet;
+#endif /* __cplusplus */
+
+#endif 	/* __VwStylesheet_FWD_DEFINED__ */
+
+
 /* header files for imported files */
 #include "oaidl.h"
 #include "ocidl.h"
@@ -528,26 +486,10 @@ extern RPC_IF_HANDLE __MIDL_itf_ViewsTlb_0000_0000_v0_0_s_ifspec;
 
 
 
-
 typedef int HVO;
 
 typedef int PropTag;
 
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-IVwNotifyChange
-,
-6C456541-C2B6-11d3-8078-0000C0FB81B5
-);
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-ICheckWord
-,
-69F4D944-C786-47EC-94F7-15193EED6758
-);
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-IGetSpellChecker
-,
-F0A60670-D280-45EA-A5C5-F0B84C027EFC
-);
 typedef /* [v1_enum] */ 
 enum VwSpecialChars
     {
@@ -561,14 +503,6 @@ enum VwSelType
         kstText	= 1,
         kstPicture	= 2
     } 	VwSelType;
-
-typedef /* [v1_enum] */ 
-enum PropChangeType
-    {
-        kpctNotifyMeThenAll	= 0,
-        kpctNotifyAll	= ( kpctNotifyMeThenAll + 1 ) ,
-        kpctNotifyAllButMe	= ( kpctNotifyAll + 1 ) 
-    } 	PropChangeType;
 
 typedef /* [v1_enum] */ 
 enum VwDelProbType
@@ -699,39 +633,6 @@ enum VwBoxType
         kvbtLazy	= ( kvbtIntegerPicture + 1 ) 
     } 	VwBoxType;
 
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-ISilDataAccess
-,
-26E6E70E-53EB-4372-96F1-0F4707CCD1EB
-);
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-IStructuredTextDataAccess
-,
-A2A4F9FA-D4E8-4bfb-B6B7-5F45DAF2DC0C
-);
-typedef /* [v1_enum] */ 
-enum VwClearInfoAction
-    {
-        kciaRemoveObjectInfoOnly	= 0,
-        kciaRemoveObjectAndOwnedInfo	= 1,
-        kciaRemoveAllObjectInfo	= 2
-    } 	VwClearInfoAction;
-
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-IVwCacheDa
-,
-B9ADC49A-E28B-4858-8C04-53E0D2E5A76F
-);
-ATTACH_GUID_TO_CLASS(class,
-81EE73B1-BE31-49cf-BC02-6030113AC56F
-,
-VwCacheDa
-);
-ATTACH_GUID_TO_CLASS(class,
-5BEEFFC6-E88C-4258-A269-D58390A1F2C9
-,
-VwUndoDa
-);
 typedef /* [v1_enum] */ 
 enum VwShiftStatus
     {
@@ -768,7 +669,7 @@ enum VwUnit
         kunRelative	= 2
     } 	VwUnit;
 
-typedef /* [public][public][public][public][public] */ struct __MIDL___MIDL_itf_ViewsTlb_0001_0072_0001
+typedef /* [public][public][public][public][public] */ struct __MIDL___MIDL_itf_ViewsTlb_0000_0000_0001
     {
     int nVal;
     VwUnit unit;
@@ -807,23 +708,6 @@ enum VwRule
         kvrlCols	= ( kvrlGroups | kvrlColsNoGroups ) ,
         kvrlAll	= ( kvrlRows | kvrlCols ) 
     } 	VwRule;
-
-typedef /* [v1_enum] */ 
-enum VwBulNum
-    {
-        kvbnNone	= 0,
-        kvbnNumberBase	= 10,
-        kvbnArabic	= kvbnNumberBase,
-        kvbnRomanUpper	= ( kvbnArabic + 1 ) ,
-        kvbnRomanLower	= ( kvbnRomanUpper + 1 ) ,
-        kvbnLetterUpper	= ( kvbnRomanLower + 1 ) ,
-        kvbnLetterLower	= ( kvbnLetterUpper + 1 ) ,
-        kvbnArabic01	= ( kvbnLetterLower + 1 ) ,
-        kvbnNumberMax	= ( kvbnArabic01 + 1 ) ,
-        kvbnBulletBase	= 100,
-        kvbnBullet	= kvbnBulletBase,
-        kvbnBulletMax	= ( kvbnBulletBase + 100 ) 
-    } 	VwBulNum;
 
 typedef /* [v1_enum] */ 
 enum VwStyleProperty
@@ -878,6 +762,14 @@ enum VwSpecialAttrTags
     } 	VwSpecialAttrTags;
 
 typedef /* [v1_enum] */ 
+enum VwClearInfoAction
+    {
+        kciaRemoveObjectInfoOnly	= 0,
+        kciaRemoveObjectAndOwnedInfo	= 1,
+        kciaRemoveAllObjectInfo	= 2
+    } 	VwClearInfoAction;
+
+typedef /* [v1_enum] */ 
 enum VwSelectionState
     {
         vssDisabled	= 0,
@@ -905,6 +797,26 @@ enum VwBoundaryMark
         endofSectionHighlighted	= ( endOfParagraphHighlighted + 1 ) 
     } 	VwBoundaryMark;
 
+GENERIC_DECLARE_SMART_INTERFACE_PTR(
+IVwVirtualHandler
+,
+581E3FE0-F0C0-42A7-96C7-76B23B8BE580
+);
+GENERIC_DECLARE_SMART_INTERFACE_PTR(
+IVwCacheDa
+,
+B9ADC49A-E28B-4858-8C04-53E0D2E5A76F
+);
+ATTACH_GUID_TO_CLASS(class,
+81EE73B1-BE31-49cf-BC02-6030113AC56F
+,
+VwCacheDa
+);
+ATTACH_GUID_TO_CLASS(class,
+5BEEFFC6-E88C-4258-A269-D58390A1F2C9
+,
+VwUndoDa
+);
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 IVwRootBox
 ,
@@ -968,24 +880,6 @@ GENERIC_DECLARE_SMART_INTERFACE_PTR(
 IVwSelection
 ,
 4F8B678D-C5BA-4a2f-B9B3-2780956E3616
-);
-typedef /* [v1_enum] */ 
-enum StyleType
-    {
-        kstParagraph	= 0,
-        kstCharacter	= ( kstParagraph + 1 ) ,
-        kstLim	= ( kstCharacter + 1 ) 
-    } 	StyleType;
-
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-IVwStylesheet
-,
-D77C0DBC-C7BC-441d-9587-1E3664E1BCD3
-);
-ATTACH_GUID_TO_CLASS(class,
-CCE2A7ED-464C-4ec7-A0B0-E3C1F6B94C5A
-,
-VwStylesheet
 );
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 IVwPropertyStore
@@ -1153,19 +1047,6 @@ ATTACH_GUID_TO_CLASS(class,
 PictureFactory
 );
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
-IVwVirtualHandler
-,
-581E3FE0-F0C0-42A7-96C7-76B23B8BE580
-);
-typedef /* [v1_enum] */ 
-enum FieldSource
-    {
-        kModel	= 0,
-        kCustom	= 1,
-        kVirtual	= 2
-    } 	FieldSource;
-
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
 IVwWindow
 ,
 8856396c-63a9-4bc7-ad47-87ec8b6ef5a4
@@ -1190,96 +1071,13 @@ IViewInputMgr
 ,
 e41668f7-d506-4c8a-a5d7-feae5630797e
 );
+ATTACH_GUID_TO_CLASS(class,
+CCE2A7ED-464C-4ec7-A0B0-E3C1F6B94C5A
+,
+VwStylesheet
+);
 
 #define LIBID_Views __uuidof(Views)
-
-#ifndef __IVwNotifyChange_INTERFACE_DEFINED__
-#define __IVwNotifyChange_INTERFACE_DEFINED__
-
-/* interface IVwNotifyChange */
-/* [unique][object][uuid] */ 
-
-
-#define IID_IVwNotifyChange __uuidof(IVwNotifyChange)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("6C456541-C2B6-11d3-8078-0000C0FB81B5")
-    IVwNotifyChange : public IUnknown
-    {
-    public:
-        virtual HRESULT STDMETHODCALLTYPE PropChanged( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ int ivMin,
-            /* [in] */ int cvIns,
-            /* [in] */ int cvDel) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct IVwNotifyChangeVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            IVwNotifyChange * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            IVwNotifyChange * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            IVwNotifyChange * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *PropChanged )( 
-            IVwNotifyChange * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ int ivMin,
-            /* [in] */ int cvIns,
-            /* [in] */ int cvDel);
-        
-        END_INTERFACE
-    } IVwNotifyChangeVtbl;
-
-    interface IVwNotifyChange
-    {
-        CONST_VTBL struct IVwNotifyChangeVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define IVwNotifyChange_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define IVwNotifyChange_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define IVwNotifyChange_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define IVwNotifyChange_PropChanged(This,hvo,tag,ivMin,cvIns,cvDel)	\
-    ( (This)->lpVtbl -> PropChanged(This,hvo,tag,ivMin,cvIns,cvDel) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __IVwNotifyChange_INTERFACE_DEFINED__ */
-
 
 #ifndef __IVwSelection_INTERFACE_DEFINED__
 #define __IVwSelection_INTERFACE_DEFINED__
@@ -2015,314 +1813,6 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 #endif 	/* __IVwEmbeddedWindow_INTERFACE_DEFINED__ */
 
 
-#ifndef __IVwStylesheet_INTERFACE_DEFINED__
-#define __IVwStylesheet_INTERFACE_DEFINED__
-
-/* interface IVwStylesheet */
-/* [unique][object][uuid] */ 
-
-
-#define IID_IVwStylesheet __uuidof(IVwStylesheet)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("D77C0DBC-C7BC-441d-9587-1E3664E1BCD3")
-    IVwStylesheet : public IUnknown
-    {
-    public:
-        virtual HRESULT STDMETHODCALLTYPE GetDefaultBasedOnStyleName( 
-            /* [retval][out] */ BSTR *pbstrNormal) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetDefaultStyleForContext( 
-            /* [in] */ int nContext,
-            /* [in] */ ComBool fCharStyle,
-            /* [retval][out] */ BSTR *pbstrStyleName) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE PutStyle( 
-            /* [in] */ BSTR bstrName,
-            /* [in] */ BSTR bstrUsage,
-            /* [in] */ HVO hvoStyle,
-            /* [in] */ HVO hvoBasedOn,
-            /* [in] */ HVO hvoNext,
-            /* [in] */ int nType,
-            /* [in] */ ComBool fBuiltIn,
-            /* [in] */ ComBool fModified,
-            /* [in] */ /* external definition not present */ ITsTextProps *pttp) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetStyleRgch( 
-            /* [in] */ int cch,
-            /* [size_is][in] */ OLECHAR *prgchName,
-            /* [retval][out] */ /* external definition not present */ ITsTextProps **ppttp) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetNextStyle( 
-            /* [in] */ BSTR bstrName,
-            /* [retval][out] */ BSTR *pbstrNext) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetBasedOn( 
-            /* [in] */ BSTR bstrName,
-            /* [retval][out] */ BSTR *pbstrBasedOn) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetType( 
-            /* [in] */ BSTR bstrName,
-            /* [retval][out] */ int *pnType) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetContext( 
-            /* [in] */ BSTR bstrName,
-            /* [retval][out] */ int *pnContext) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE IsBuiltIn( 
-            /* [in] */ BSTR bstrName,
-            /* [retval][out] */ ComBool *pfBuiltIn) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE IsModified( 
-            /* [in] */ BSTR bstrName,
-            /* [retval][out] */ ComBool *pfModified) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_DataAccess( 
-            /* [retval][out] */ ISilDataAccess **ppsda) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE MakeNewStyle( 
-            /* [retval][out] */ HVO *phvoNewStyle) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE Delete( 
-            /* [in] */ HVO hvoStyle) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_CStyles( 
-            /* [retval][out] */ int *pcttp) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_NthStyle( 
-            /* [in] */ int ihvo,
-            /* [retval][out] */ HVO *phvo) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_NthStyleName( 
-            /* [in] */ int ihvo,
-            /* [retval][out] */ BSTR *pbstrStyleName) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_NormalFontStyle( 
-            /* [retval][out] */ /* external definition not present */ ITsTextProps **ppttp) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsStyleProtected( 
-            /* [in] */ BSTR bstrName,
-            /* [retval][out] */ ComBool *pfProtected) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE CacheProps( 
-            /* [in] */ int cch,
-            /* [size_is][in] */ OLECHAR *prgchName,
-            /* [in] */ HVO hvoStyle,
-            /* [in] */ /* external definition not present */ ITsTextProps *pttp) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct IVwStylesheetVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            IVwStylesheet * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            IVwStylesheet * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            IVwStylesheet * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetDefaultBasedOnStyleName )( 
-            IVwStylesheet * This,
-            /* [retval][out] */ BSTR *pbstrNormal);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetDefaultStyleForContext )( 
-            IVwStylesheet * This,
-            /* [in] */ int nContext,
-            /* [in] */ ComBool fCharStyle,
-            /* [retval][out] */ BSTR *pbstrStyleName);
-        
-        HRESULT ( STDMETHODCALLTYPE *PutStyle )( 
-            IVwStylesheet * This,
-            /* [in] */ BSTR bstrName,
-            /* [in] */ BSTR bstrUsage,
-            /* [in] */ HVO hvoStyle,
-            /* [in] */ HVO hvoBasedOn,
-            /* [in] */ HVO hvoNext,
-            /* [in] */ int nType,
-            /* [in] */ ComBool fBuiltIn,
-            /* [in] */ ComBool fModified,
-            /* [in] */ /* external definition not present */ ITsTextProps *pttp);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetStyleRgch )( 
-            IVwStylesheet * This,
-            /* [in] */ int cch,
-            /* [size_is][in] */ OLECHAR *prgchName,
-            /* [retval][out] */ /* external definition not present */ ITsTextProps **ppttp);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetNextStyle )( 
-            IVwStylesheet * This,
-            /* [in] */ BSTR bstrName,
-            /* [retval][out] */ BSTR *pbstrNext);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetBasedOn )( 
-            IVwStylesheet * This,
-            /* [in] */ BSTR bstrName,
-            /* [retval][out] */ BSTR *pbstrBasedOn);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetType )( 
-            IVwStylesheet * This,
-            /* [in] */ BSTR bstrName,
-            /* [retval][out] */ int *pnType);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetContext )( 
-            IVwStylesheet * This,
-            /* [in] */ BSTR bstrName,
-            /* [retval][out] */ int *pnContext);
-        
-        HRESULT ( STDMETHODCALLTYPE *IsBuiltIn )( 
-            IVwStylesheet * This,
-            /* [in] */ BSTR bstrName,
-            /* [retval][out] */ ComBool *pfBuiltIn);
-        
-        HRESULT ( STDMETHODCALLTYPE *IsModified )( 
-            IVwStylesheet * This,
-            /* [in] */ BSTR bstrName,
-            /* [retval][out] */ ComBool *pfModified);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_DataAccess )( 
-            IVwStylesheet * This,
-            /* [retval][out] */ ISilDataAccess **ppsda);
-        
-        HRESULT ( STDMETHODCALLTYPE *MakeNewStyle )( 
-            IVwStylesheet * This,
-            /* [retval][out] */ HVO *phvoNewStyle);
-        
-        HRESULT ( STDMETHODCALLTYPE *Delete )( 
-            IVwStylesheet * This,
-            /* [in] */ HVO hvoStyle);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_CStyles )( 
-            IVwStylesheet * This,
-            /* [retval][out] */ int *pcttp);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_NthStyle )( 
-            IVwStylesheet * This,
-            /* [in] */ int ihvo,
-            /* [retval][out] */ HVO *phvo);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_NthStyleName )( 
-            IVwStylesheet * This,
-            /* [in] */ int ihvo,
-            /* [retval][out] */ BSTR *pbstrStyleName);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_NormalFontStyle )( 
-            IVwStylesheet * This,
-            /* [retval][out] */ /* external definition not present */ ITsTextProps **ppttp);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsStyleProtected )( 
-            IVwStylesheet * This,
-            /* [in] */ BSTR bstrName,
-            /* [retval][out] */ ComBool *pfProtected);
-        
-        HRESULT ( STDMETHODCALLTYPE *CacheProps )( 
-            IVwStylesheet * This,
-            /* [in] */ int cch,
-            /* [size_is][in] */ OLECHAR *prgchName,
-            /* [in] */ HVO hvoStyle,
-            /* [in] */ /* external definition not present */ ITsTextProps *pttp);
-        
-        END_INTERFACE
-    } IVwStylesheetVtbl;
-
-    interface IVwStylesheet
-    {
-        CONST_VTBL struct IVwStylesheetVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define IVwStylesheet_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define IVwStylesheet_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define IVwStylesheet_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define IVwStylesheet_GetDefaultBasedOnStyleName(This,pbstrNormal)	\
-    ( (This)->lpVtbl -> GetDefaultBasedOnStyleName(This,pbstrNormal) ) 
-
-#define IVwStylesheet_GetDefaultStyleForContext(This,nContext,fCharStyle,pbstrStyleName)	\
-    ( (This)->lpVtbl -> GetDefaultStyleForContext(This,nContext,fCharStyle,pbstrStyleName) ) 
-
-#define IVwStylesheet_PutStyle(This,bstrName,bstrUsage,hvoStyle,hvoBasedOn,hvoNext,nType,fBuiltIn,fModified,pttp)	\
-    ( (This)->lpVtbl -> PutStyle(This,bstrName,bstrUsage,hvoStyle,hvoBasedOn,hvoNext,nType,fBuiltIn,fModified,pttp) ) 
-
-#define IVwStylesheet_GetStyleRgch(This,cch,prgchName,ppttp)	\
-    ( (This)->lpVtbl -> GetStyleRgch(This,cch,prgchName,ppttp) ) 
-
-#define IVwStylesheet_GetNextStyle(This,bstrName,pbstrNext)	\
-    ( (This)->lpVtbl -> GetNextStyle(This,bstrName,pbstrNext) ) 
-
-#define IVwStylesheet_GetBasedOn(This,bstrName,pbstrBasedOn)	\
-    ( (This)->lpVtbl -> GetBasedOn(This,bstrName,pbstrBasedOn) ) 
-
-#define IVwStylesheet_GetType(This,bstrName,pnType)	\
-    ( (This)->lpVtbl -> GetType(This,bstrName,pnType) ) 
-
-#define IVwStylesheet_GetContext(This,bstrName,pnContext)	\
-    ( (This)->lpVtbl -> GetContext(This,bstrName,pnContext) ) 
-
-#define IVwStylesheet_IsBuiltIn(This,bstrName,pfBuiltIn)	\
-    ( (This)->lpVtbl -> IsBuiltIn(This,bstrName,pfBuiltIn) ) 
-
-#define IVwStylesheet_IsModified(This,bstrName,pfModified)	\
-    ( (This)->lpVtbl -> IsModified(This,bstrName,pfModified) ) 
-
-#define IVwStylesheet_get_DataAccess(This,ppsda)	\
-    ( (This)->lpVtbl -> get_DataAccess(This,ppsda) ) 
-
-#define IVwStylesheet_MakeNewStyle(This,phvoNewStyle)	\
-    ( (This)->lpVtbl -> MakeNewStyle(This,phvoNewStyle) ) 
-
-#define IVwStylesheet_Delete(This,hvoStyle)	\
-    ( (This)->lpVtbl -> Delete(This,hvoStyle) ) 
-
-#define IVwStylesheet_get_CStyles(This,pcttp)	\
-    ( (This)->lpVtbl -> get_CStyles(This,pcttp) ) 
-
-#define IVwStylesheet_get_NthStyle(This,ihvo,phvo)	\
-    ( (This)->lpVtbl -> get_NthStyle(This,ihvo,phvo) ) 
-
-#define IVwStylesheet_get_NthStyleName(This,ihvo,pbstrStyleName)	\
-    ( (This)->lpVtbl -> get_NthStyleName(This,ihvo,pbstrStyleName) ) 
-
-#define IVwStylesheet_get_NormalFontStyle(This,ppttp)	\
-    ( (This)->lpVtbl -> get_NormalFontStyle(This,ppttp) ) 
-
-#define IVwStylesheet_get_IsStyleProtected(This,bstrName,pfProtected)	\
-    ( (This)->lpVtbl -> get_IsStyleProtected(This,bstrName,pfProtected) ) 
-
-#define IVwStylesheet_CacheProps(This,cch,prgchName,hvoStyle,pttp)	\
-    ( (This)->lpVtbl -> CacheProps(This,cch,prgchName,hvoStyle,pttp) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __IVwStylesheet_INTERFACE_DEFINED__ */
-
-
 #ifndef __IVwEnv_INTERFACE_DEFINED__
 #define __IVwEnv_INTERFACE_DEFINED__
 
@@ -2451,7 +1941,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             /* [out] */ int *pihvo) = 0;
         
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_DataAccess( 
-            /* [retval][out] */ ISilDataAccess **ppsda) = 0;
+            /* [retval][out] */ /* external definition not present */ ISilDataAccess **ppsda) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE AddWindow( 
             /* [in] */ IVwEmbeddedWindow *pew,
@@ -2750,7 +2240,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_DataAccess )( 
             IVwEnv * This,
-            /* [retval][out] */ ISilDataAccess **ppsda);
+            /* [retval][out] */ /* external definition not present */ ISilDataAccess **ppsda);
         
         HRESULT ( STDMETHODCALLTYPE *AddWindow )( 
             IVwEnv * This,
@@ -3232,10 +2722,10 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
         virtual HRESULT STDMETHODCALLTYPE DoHotLinkAction( 
             /* [in] */ BSTR bstrData,
-            /* [in] */ ISilDataAccess *psda) = 0;
+            /* [in] */ /* external definition not present */ ISilDataAccess *psda) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE GetIdFromGuid( 
-            /* [in] */ ISilDataAccess *psda,
+            /* [in] */ /* external definition not present */ ISilDataAccess *psda,
             /* [in] */ GUID *puid,
             /* [retval][out] */ HVO *phvo) = 0;
         
@@ -3331,11 +2821,11 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         HRESULT ( STDMETHODCALLTYPE *DoHotLinkAction )( 
             IVwViewConstructor * This,
             /* [in] */ BSTR bstrData,
-            /* [in] */ ISilDataAccess *psda);
+            /* [in] */ /* external definition not present */ ISilDataAccess *psda);
         
         HRESULT ( STDMETHODCALLTYPE *GetIdFromGuid )( 
             IVwViewConstructor * This,
-            /* [in] */ ISilDataAccess *psda,
+            /* [in] */ /* external definition not present */ ISilDataAccess *psda,
             /* [in] */ GUID *puid,
             /* [retval][out] */ HVO *phvo);
         
@@ -3877,1138 +3367,6 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 #endif 	/* __IVwRootSite_INTERFACE_DEFINED__ */
 
 
-#ifndef __ISilDataAccess_INTERFACE_DEFINED__
-#define __ISilDataAccess_INTERFACE_DEFINED__
-
-/* interface ISilDataAccess */
-/* [unique][object][uuid] */ 
-
-
-#define IID_ISilDataAccess __uuidof(ISilDataAccess)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("26E6E70E-53EB-4372-96F1-0F4707CCD1EB")
-    ISilDataAccess : public IUnknown
-    {
-    public:
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_ObjectProp( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [retval][out] */ HVO *phvo) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_VecItem( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ int index,
-            /* [retval][out] */ HVO *phvo) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_VecSize( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [retval][out] */ int *pchvo) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_VecSizeAssumeCached( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [retval][out] */ int *pchvo) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE VecProp( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ int chvoMax,
-            /* [out] */ int *pchvo,
-            /* [length_is][size_is][out] */ HVO *prghvo) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE BinaryPropRgb( 
-            /* [in] */ HVO obj,
-            /* [in] */ PropTag tag,
-            /* [size_is][out] */ byte *prgb,
-            /* [in] */ int cbMax,
-            /* [out] */ int *pcb) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_GuidProp( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [retval][out] */ GUID *puid) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_ObjFromGuid( 
-            /* [in] */ GUID uid,
-            /* [retval][out] */ HVO *pHvo) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IntProp( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [retval][out] */ int *pn) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Int64Prop( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [retval][out] */ __int64 *plln) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_BooleanProp( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [retval][out] */ ComBool *pn) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_MultiStringAlt( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ int ws,
-            /* [retval][out] */ /* external definition not present */ ITsString **pptss) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_MultiStringProp( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [retval][out] */ /* external definition not present */ ITsMultiString **pptms) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Prop( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [retval][out] */ VARIANT *pvar) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_StringProp( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [retval][out] */ /* external definition not present */ ITsString **pptss) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_TimeProp( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [retval][out] */ __int64 *ptim) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_UnicodeProp( 
-            /* [in] */ HVO obj,
-            /* [in] */ PropTag tag,
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_UnicodeProp( 
-            /* [in] */ HVO obj,
-            /* [in] */ PropTag tag,
-            /* [in] */ BSTR bstr) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE UnicodePropRgch( 
-            /* [in] */ HVO obj,
-            /* [in] */ PropTag tag,
-            /* [size_is][out] */ OLECHAR *prgch,
-            /* [in] */ int cchMax,
-            /* [out] */ int *pcch) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_UnknownProp( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [retval][out] */ IUnknown **ppunk) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE BeginUndoTask( 
-            /* [in] */ BSTR bstrUndo,
-            /* [in] */ BSTR bstrRedo) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE EndUndoTask( void) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE ContinueUndoTask( void) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE EndOuterUndoTask( void) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE Rollback( void) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE BreakUndoTask( 
-            /* [in] */ BSTR bstrUndo,
-            /* [in] */ BSTR bstrRedo) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE BeginNonUndoableTask( void) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE EndNonUndoableTask( void) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetActionHandler( 
-            /* [retval][out] */ /* external definition not present */ IActionHandler **ppacth) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SetActionHandler( 
-            /* [in] */ /* external definition not present */ IActionHandler *pacth) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE DeleteObj( 
-            /* [in] */ HVO hvoObj) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE DeleteObjOwner( 
-            /* [in] */ HVO hvoOwner,
-            /* [in] */ HVO hvoObj,
-            /* [in] */ PropTag tag,
-            /* [in] */ int ihvo) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE InsertNew( 
-            /* [in] */ HVO hvoObj,
-            /* [in] */ PropTag tag,
-            /* [in] */ int ihvo,
-            /* [in] */ int chvo,
-            /* [in] */ IVwStylesheet *pss) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE MakeNewObject( 
-            /* [in] */ int clid,
-            /* [in] */ HVO hvoOwner,
-            /* [in] */ PropTag tag,
-            /* [in] */ int ord,
-            /* [retval][out] */ HVO *phvoNew) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE MoveOwnSeq( 
-            /* [in] */ HVO hvoSrcOwner,
-            /* [in] */ PropTag tagSrc,
-            /* [in] */ int ihvoStart,
-            /* [in] */ int ihvoEnd,
-            /* [in] */ HVO hvoDstOwner,
-            /* [in] */ PropTag tagDst,
-            /* [in] */ int ihvoDstStart) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE MoveOwn( 
-            /* [in] */ HVO hvoSrcOwner,
-            /* [in] */ PropTag tagSrc,
-            /* [in] */ HVO hvo,
-            /* [in] */ HVO hvoDstOwner,
-            /* [in] */ PropTag tagDst,
-            /* [in] */ int ihvoDstStart) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE Replace( 
-            /* [in] */ HVO hvoObj,
-            /* [in] */ PropTag tag,
-            /* [in] */ int ihvoMin,
-            /* [in] */ int ihvoLim,
-            /* [size_is][in] */ HVO *prghvo,
-            /* [in] */ int chvo) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SetObjProp( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ HVO hvoObj) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE RemoveObjRefs( 
-            /* [in] */ HVO hvo) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SetBinary( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [size_is][in] */ byte *prgb,
-            /* [in] */ int cb) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SetGuid( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ GUID uid) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SetInt( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ int n) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SetInt64( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ __int64 lln) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SetBoolean( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ ComBool n) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SetMultiStringAlt( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ int ws,
-            /* [in] */ /* external definition not present */ ITsString *ptss) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SetString( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ /* external definition not present */ ITsString *ptss) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SetTime( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ __int64 lln) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SetUnicode( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [size_is][in] */ OLECHAR *prgch,
-            /* [in] */ int cch) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE SetUnknown( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ IUnknown *punk) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE AddNotification( 
-            /* [in] */ IVwNotifyChange *pnchng) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE PropChanged( 
-            /* [in] */ IVwNotifyChange *pnchng,
-            /* [in] */ int pct,
-            /* [in] */ HVO hvo,
-            /* [in] */ int tag,
-            /* [in] */ int ivMin,
-            /* [in] */ int cvIns,
-            /* [in] */ int cvDel) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE RemoveNotification( 
-            /* [in] */ IVwNotifyChange *pnchng) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetDisplayIndex( 
-            /* [in] */ HVO hvoOwn,
-            /* [in] */ int tag,
-            /* [in] */ int ihvo,
-            /* [retval][out] */ int *ihvoDisp) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_WritingSystemFactory( 
-            /* [retval][out] */ /* external definition not present */ ILgWritingSystemFactory **ppwsf) = 0;
-        
-        virtual /* [propputref] */ HRESULT STDMETHODCALLTYPE putref_WritingSystemFactory( 
-            /* [in] */ /* external definition not present */ ILgWritingSystemFactory *pwsf) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_WritingSystemsOfInterest( 
-            /* [in] */ int cwsMax,
-            /* [size_is][out] */ int *pws,
-            /* [retval][out] */ int *pcws) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE InsertRelExtra( 
-            /* [in] */ HVO hvoSrc,
-            /* [in] */ PropTag tag,
-            /* [in] */ int ihvo,
-            /* [in] */ HVO hvoDst,
-            /* [in] */ BSTR bstrExtra) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE UpdateRelExtra( 
-            /* [in] */ HVO hvoSrc,
-            /* [in] */ PropTag tag,
-            /* [in] */ int ihvo,
-            /* [in] */ BSTR bstrExtra) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetRelExtra( 
-            /* [in] */ HVO hvoSrc,
-            /* [in] */ PropTag tag,
-            /* [in] */ int ihvo,
-            /* [retval][out] */ BSTR *pbstrExtra) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsPropInCache( 
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ int cpt,
-            /* [in] */ int ws,
-            /* [retval][out] */ ComBool *pfCached) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE IsDirty( 
-            /* [retval][out] */ ComBool *pf) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE ClearDirty( void) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_MetaDataCache( 
-            /* [retval][out] */ /* external definition not present */ IFwMetaDataCache **ppmdc) = 0;
-        
-        virtual /* [propputref] */ HRESULT STDMETHODCALLTYPE putref_MetaDataCache( 
-            /* [in] */ /* external definition not present */ IFwMetaDataCache *pmdc) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsValidObject( 
-            /* [in] */ HVO hvo,
-            /* [retval][out] */ ComBool *pfValid) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsDummyId( 
-            /* [in] */ HVO hvo,
-            /* [retval][out] */ ComBool *pfDummy) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetObjIndex( 
-            /* [in] */ HVO hvoOwn,
-            /* [in] */ int flid,
-            /* [in] */ HVO hvo,
-            /* [retval][out] */ int *ihvo) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetOutlineNumber( 
-            /* [in] */ HVO hvo,
-            /* [in] */ int flid,
-            /* [in] */ ComBool fFinPer,
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE MoveString( 
-            /* [in] */ int hvoSource,
-            /* [in] */ PropTag flidSrc,
-            /* [in] */ int wsSrc,
-            /* [in] */ int ichMin,
-            /* [in] */ int ichLim,
-            /* [in] */ HVO hvoDst,
-            /* [in] */ PropTag flidDst,
-            /* [in] */ int wsDst,
-            /* [in] */ int ichDest,
-            /* [in] */ ComBool fDstIsNew) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct ISilDataAccessVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ISilDataAccess * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ISilDataAccess * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            ISilDataAccess * This);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ObjectProp )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [retval][out] */ HVO *phvo);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_VecItem )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ int index,
-            /* [retval][out] */ HVO *phvo);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_VecSize )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [retval][out] */ int *pchvo);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_VecSizeAssumeCached )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [retval][out] */ int *pchvo);
-        
-        HRESULT ( STDMETHODCALLTYPE *VecProp )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ int chvoMax,
-            /* [out] */ int *pchvo,
-            /* [length_is][size_is][out] */ HVO *prghvo);
-        
-        HRESULT ( STDMETHODCALLTYPE *BinaryPropRgb )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO obj,
-            /* [in] */ PropTag tag,
-            /* [size_is][out] */ byte *prgb,
-            /* [in] */ int cbMax,
-            /* [out] */ int *pcb);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_GuidProp )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [retval][out] */ GUID *puid);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ObjFromGuid )( 
-            ISilDataAccess * This,
-            /* [in] */ GUID uid,
-            /* [retval][out] */ HVO *pHvo);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IntProp )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [retval][out] */ int *pn);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Int64Prop )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [retval][out] */ __int64 *plln);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_BooleanProp )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [retval][out] */ ComBool *pn);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_MultiStringAlt )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ int ws,
-            /* [retval][out] */ /* external definition not present */ ITsString **pptss);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_MultiStringProp )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [retval][out] */ /* external definition not present */ ITsMultiString **pptms);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Prop )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [retval][out] */ VARIANT *pvar);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_StringProp )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [retval][out] */ /* external definition not present */ ITsString **pptss);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_TimeProp )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [retval][out] */ __int64 *ptim);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_UnicodeProp )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO obj,
-            /* [in] */ PropTag tag,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_UnicodeProp )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO obj,
-            /* [in] */ PropTag tag,
-            /* [in] */ BSTR bstr);
-        
-        HRESULT ( STDMETHODCALLTYPE *UnicodePropRgch )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO obj,
-            /* [in] */ PropTag tag,
-            /* [size_is][out] */ OLECHAR *prgch,
-            /* [in] */ int cchMax,
-            /* [out] */ int *pcch);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_UnknownProp )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [retval][out] */ IUnknown **ppunk);
-        
-        HRESULT ( STDMETHODCALLTYPE *BeginUndoTask )( 
-            ISilDataAccess * This,
-            /* [in] */ BSTR bstrUndo,
-            /* [in] */ BSTR bstrRedo);
-        
-        HRESULT ( STDMETHODCALLTYPE *EndUndoTask )( 
-            ISilDataAccess * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *ContinueUndoTask )( 
-            ISilDataAccess * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *EndOuterUndoTask )( 
-            ISilDataAccess * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *Rollback )( 
-            ISilDataAccess * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *BreakUndoTask )( 
-            ISilDataAccess * This,
-            /* [in] */ BSTR bstrUndo,
-            /* [in] */ BSTR bstrRedo);
-        
-        HRESULT ( STDMETHODCALLTYPE *BeginNonUndoableTask )( 
-            ISilDataAccess * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *EndNonUndoableTask )( 
-            ISilDataAccess * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetActionHandler )( 
-            ISilDataAccess * This,
-            /* [retval][out] */ /* external definition not present */ IActionHandler **ppacth);
-        
-        HRESULT ( STDMETHODCALLTYPE *SetActionHandler )( 
-            ISilDataAccess * This,
-            /* [in] */ /* external definition not present */ IActionHandler *pacth);
-        
-        HRESULT ( STDMETHODCALLTYPE *DeleteObj )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvoObj);
-        
-        HRESULT ( STDMETHODCALLTYPE *DeleteObjOwner )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvoOwner,
-            /* [in] */ HVO hvoObj,
-            /* [in] */ PropTag tag,
-            /* [in] */ int ihvo);
-        
-        HRESULT ( STDMETHODCALLTYPE *InsertNew )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvoObj,
-            /* [in] */ PropTag tag,
-            /* [in] */ int ihvo,
-            /* [in] */ int chvo,
-            /* [in] */ IVwStylesheet *pss);
-        
-        HRESULT ( STDMETHODCALLTYPE *MakeNewObject )( 
-            ISilDataAccess * This,
-            /* [in] */ int clid,
-            /* [in] */ HVO hvoOwner,
-            /* [in] */ PropTag tag,
-            /* [in] */ int ord,
-            /* [retval][out] */ HVO *phvoNew);
-        
-        HRESULT ( STDMETHODCALLTYPE *MoveOwnSeq )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvoSrcOwner,
-            /* [in] */ PropTag tagSrc,
-            /* [in] */ int ihvoStart,
-            /* [in] */ int ihvoEnd,
-            /* [in] */ HVO hvoDstOwner,
-            /* [in] */ PropTag tagDst,
-            /* [in] */ int ihvoDstStart);
-        
-        HRESULT ( STDMETHODCALLTYPE *MoveOwn )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvoSrcOwner,
-            /* [in] */ PropTag tagSrc,
-            /* [in] */ HVO hvo,
-            /* [in] */ HVO hvoDstOwner,
-            /* [in] */ PropTag tagDst,
-            /* [in] */ int ihvoDstStart);
-        
-        HRESULT ( STDMETHODCALLTYPE *Replace )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvoObj,
-            /* [in] */ PropTag tag,
-            /* [in] */ int ihvoMin,
-            /* [in] */ int ihvoLim,
-            /* [size_is][in] */ HVO *prghvo,
-            /* [in] */ int chvo);
-        
-        HRESULT ( STDMETHODCALLTYPE *SetObjProp )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ HVO hvoObj);
-        
-        HRESULT ( STDMETHODCALLTYPE *RemoveObjRefs )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo);
-        
-        HRESULT ( STDMETHODCALLTYPE *SetBinary )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [size_is][in] */ byte *prgb,
-            /* [in] */ int cb);
-        
-        HRESULT ( STDMETHODCALLTYPE *SetGuid )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ GUID uid);
-        
-        HRESULT ( STDMETHODCALLTYPE *SetInt )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ int n);
-        
-        HRESULT ( STDMETHODCALLTYPE *SetInt64 )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ __int64 lln);
-        
-        HRESULT ( STDMETHODCALLTYPE *SetBoolean )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ ComBool n);
-        
-        HRESULT ( STDMETHODCALLTYPE *SetMultiStringAlt )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ int ws,
-            /* [in] */ /* external definition not present */ ITsString *ptss);
-        
-        HRESULT ( STDMETHODCALLTYPE *SetString )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ /* external definition not present */ ITsString *ptss);
-        
-        HRESULT ( STDMETHODCALLTYPE *SetTime )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ __int64 lln);
-        
-        HRESULT ( STDMETHODCALLTYPE *SetUnicode )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [size_is][in] */ OLECHAR *prgch,
-            /* [in] */ int cch);
-        
-        HRESULT ( STDMETHODCALLTYPE *SetUnknown )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ IUnknown *punk);
-        
-        HRESULT ( STDMETHODCALLTYPE *AddNotification )( 
-            ISilDataAccess * This,
-            /* [in] */ IVwNotifyChange *pnchng);
-        
-        HRESULT ( STDMETHODCALLTYPE *PropChanged )( 
-            ISilDataAccess * This,
-            /* [in] */ IVwNotifyChange *pnchng,
-            /* [in] */ int pct,
-            /* [in] */ HVO hvo,
-            /* [in] */ int tag,
-            /* [in] */ int ivMin,
-            /* [in] */ int cvIns,
-            /* [in] */ int cvDel);
-        
-        HRESULT ( STDMETHODCALLTYPE *RemoveNotification )( 
-            ISilDataAccess * This,
-            /* [in] */ IVwNotifyChange *pnchng);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetDisplayIndex )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvoOwn,
-            /* [in] */ int tag,
-            /* [in] */ int ihvo,
-            /* [retval][out] */ int *ihvoDisp);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_WritingSystemFactory )( 
-            ISilDataAccess * This,
-            /* [retval][out] */ /* external definition not present */ ILgWritingSystemFactory **ppwsf);
-        
-        /* [propputref] */ HRESULT ( STDMETHODCALLTYPE *putref_WritingSystemFactory )( 
-            ISilDataAccess * This,
-            /* [in] */ /* external definition not present */ ILgWritingSystemFactory *pwsf);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_WritingSystemsOfInterest )( 
-            ISilDataAccess * This,
-            /* [in] */ int cwsMax,
-            /* [size_is][out] */ int *pws,
-            /* [retval][out] */ int *pcws);
-        
-        HRESULT ( STDMETHODCALLTYPE *InsertRelExtra )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvoSrc,
-            /* [in] */ PropTag tag,
-            /* [in] */ int ihvo,
-            /* [in] */ HVO hvoDst,
-            /* [in] */ BSTR bstrExtra);
-        
-        HRESULT ( STDMETHODCALLTYPE *UpdateRelExtra )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvoSrc,
-            /* [in] */ PropTag tag,
-            /* [in] */ int ihvo,
-            /* [in] */ BSTR bstrExtra);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetRelExtra )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvoSrc,
-            /* [in] */ PropTag tag,
-            /* [in] */ int ihvo,
-            /* [retval][out] */ BSTR *pbstrExtra);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsPropInCache )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ int cpt,
-            /* [in] */ int ws,
-            /* [retval][out] */ ComBool *pfCached);
-        
-        HRESULT ( STDMETHODCALLTYPE *IsDirty )( 
-            ISilDataAccess * This,
-            /* [retval][out] */ ComBool *pf);
-        
-        HRESULT ( STDMETHODCALLTYPE *ClearDirty )( 
-            ISilDataAccess * This);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_MetaDataCache )( 
-            ISilDataAccess * This,
-            /* [retval][out] */ /* external definition not present */ IFwMetaDataCache **ppmdc);
-        
-        /* [propputref] */ HRESULT ( STDMETHODCALLTYPE *putref_MetaDataCache )( 
-            ISilDataAccess * This,
-            /* [in] */ /* external definition not present */ IFwMetaDataCache *pmdc);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsValidObject )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [retval][out] */ ComBool *pfValid);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsDummyId )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [retval][out] */ ComBool *pfDummy);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetObjIndex )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvoOwn,
-            /* [in] */ int flid,
-            /* [in] */ HVO hvo,
-            /* [retval][out] */ int *ihvo);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetOutlineNumber )( 
-            ISilDataAccess * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ int flid,
-            /* [in] */ ComBool fFinPer,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        HRESULT ( STDMETHODCALLTYPE *MoveString )( 
-            ISilDataAccess * This,
-            /* [in] */ int hvoSource,
-            /* [in] */ PropTag flidSrc,
-            /* [in] */ int wsSrc,
-            /* [in] */ int ichMin,
-            /* [in] */ int ichLim,
-            /* [in] */ HVO hvoDst,
-            /* [in] */ PropTag flidDst,
-            /* [in] */ int wsDst,
-            /* [in] */ int ichDest,
-            /* [in] */ ComBool fDstIsNew);
-        
-        END_INTERFACE
-    } ISilDataAccessVtbl;
-
-    interface ISilDataAccess
-    {
-        CONST_VTBL struct ISilDataAccessVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define ISilDataAccess_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define ISilDataAccess_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define ISilDataAccess_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define ISilDataAccess_get_ObjectProp(This,hvo,tag,phvo)	\
-    ( (This)->lpVtbl -> get_ObjectProp(This,hvo,tag,phvo) ) 
-
-#define ISilDataAccess_get_VecItem(This,hvo,tag,index,phvo)	\
-    ( (This)->lpVtbl -> get_VecItem(This,hvo,tag,index,phvo) ) 
-
-#define ISilDataAccess_get_VecSize(This,hvo,tag,pchvo)	\
-    ( (This)->lpVtbl -> get_VecSize(This,hvo,tag,pchvo) ) 
-
-#define ISilDataAccess_get_VecSizeAssumeCached(This,hvo,tag,pchvo)	\
-    ( (This)->lpVtbl -> get_VecSizeAssumeCached(This,hvo,tag,pchvo) ) 
-
-#define ISilDataAccess_VecProp(This,hvo,tag,chvoMax,pchvo,prghvo)	\
-    ( (This)->lpVtbl -> VecProp(This,hvo,tag,chvoMax,pchvo,prghvo) ) 
-
-#define ISilDataAccess_BinaryPropRgb(This,obj,tag,prgb,cbMax,pcb)	\
-    ( (This)->lpVtbl -> BinaryPropRgb(This,obj,tag,prgb,cbMax,pcb) ) 
-
-#define ISilDataAccess_get_GuidProp(This,hvo,tag,puid)	\
-    ( (This)->lpVtbl -> get_GuidProp(This,hvo,tag,puid) ) 
-
-#define ISilDataAccess_get_ObjFromGuid(This,uid,pHvo)	\
-    ( (This)->lpVtbl -> get_ObjFromGuid(This,uid,pHvo) ) 
-
-#define ISilDataAccess_get_IntProp(This,hvo,tag,pn)	\
-    ( (This)->lpVtbl -> get_IntProp(This,hvo,tag,pn) ) 
-
-#define ISilDataAccess_get_Int64Prop(This,hvo,tag,plln)	\
-    ( (This)->lpVtbl -> get_Int64Prop(This,hvo,tag,plln) ) 
-
-#define ISilDataAccess_get_BooleanProp(This,hvo,tag,pn)	\
-    ( (This)->lpVtbl -> get_BooleanProp(This,hvo,tag,pn) ) 
-
-#define ISilDataAccess_get_MultiStringAlt(This,hvo,tag,ws,pptss)	\
-    ( (This)->lpVtbl -> get_MultiStringAlt(This,hvo,tag,ws,pptss) ) 
-
-#define ISilDataAccess_get_MultiStringProp(This,hvo,tag,pptms)	\
-    ( (This)->lpVtbl -> get_MultiStringProp(This,hvo,tag,pptms) ) 
-
-#define ISilDataAccess_get_Prop(This,hvo,tag,pvar)	\
-    ( (This)->lpVtbl -> get_Prop(This,hvo,tag,pvar) ) 
-
-#define ISilDataAccess_get_StringProp(This,hvo,tag,pptss)	\
-    ( (This)->lpVtbl -> get_StringProp(This,hvo,tag,pptss) ) 
-
-#define ISilDataAccess_get_TimeProp(This,hvo,tag,ptim)	\
-    ( (This)->lpVtbl -> get_TimeProp(This,hvo,tag,ptim) ) 
-
-#define ISilDataAccess_get_UnicodeProp(This,obj,tag,pbstr)	\
-    ( (This)->lpVtbl -> get_UnicodeProp(This,obj,tag,pbstr) ) 
-
-#define ISilDataAccess_put_UnicodeProp(This,obj,tag,bstr)	\
-    ( (This)->lpVtbl -> put_UnicodeProp(This,obj,tag,bstr) ) 
-
-#define ISilDataAccess_UnicodePropRgch(This,obj,tag,prgch,cchMax,pcch)	\
-    ( (This)->lpVtbl -> UnicodePropRgch(This,obj,tag,prgch,cchMax,pcch) ) 
-
-#define ISilDataAccess_get_UnknownProp(This,hvo,tag,ppunk)	\
-    ( (This)->lpVtbl -> get_UnknownProp(This,hvo,tag,ppunk) ) 
-
-#define ISilDataAccess_BeginUndoTask(This,bstrUndo,bstrRedo)	\
-    ( (This)->lpVtbl -> BeginUndoTask(This,bstrUndo,bstrRedo) ) 
-
-#define ISilDataAccess_EndUndoTask(This)	\
-    ( (This)->lpVtbl -> EndUndoTask(This) ) 
-
-#define ISilDataAccess_ContinueUndoTask(This)	\
-    ( (This)->lpVtbl -> ContinueUndoTask(This) ) 
-
-#define ISilDataAccess_EndOuterUndoTask(This)	\
-    ( (This)->lpVtbl -> EndOuterUndoTask(This) ) 
-
-#define ISilDataAccess_Rollback(This)	\
-    ( (This)->lpVtbl -> Rollback(This) ) 
-
-#define ISilDataAccess_BreakUndoTask(This,bstrUndo,bstrRedo)	\
-    ( (This)->lpVtbl -> BreakUndoTask(This,bstrUndo,bstrRedo) ) 
-
-#define ISilDataAccess_BeginNonUndoableTask(This)	\
-    ( (This)->lpVtbl -> BeginNonUndoableTask(This) ) 
-
-#define ISilDataAccess_EndNonUndoableTask(This)	\
-    ( (This)->lpVtbl -> EndNonUndoableTask(This) ) 
-
-#define ISilDataAccess_GetActionHandler(This,ppacth)	\
-    ( (This)->lpVtbl -> GetActionHandler(This,ppacth) ) 
-
-#define ISilDataAccess_SetActionHandler(This,pacth)	\
-    ( (This)->lpVtbl -> SetActionHandler(This,pacth) ) 
-
-#define ISilDataAccess_DeleteObj(This,hvoObj)	\
-    ( (This)->lpVtbl -> DeleteObj(This,hvoObj) ) 
-
-#define ISilDataAccess_DeleteObjOwner(This,hvoOwner,hvoObj,tag,ihvo)	\
-    ( (This)->lpVtbl -> DeleteObjOwner(This,hvoOwner,hvoObj,tag,ihvo) ) 
-
-#define ISilDataAccess_InsertNew(This,hvoObj,tag,ihvo,chvo,pss)	\
-    ( (This)->lpVtbl -> InsertNew(This,hvoObj,tag,ihvo,chvo,pss) ) 
-
-#define ISilDataAccess_MakeNewObject(This,clid,hvoOwner,tag,ord,phvoNew)	\
-    ( (This)->lpVtbl -> MakeNewObject(This,clid,hvoOwner,tag,ord,phvoNew) ) 
-
-#define ISilDataAccess_MoveOwnSeq(This,hvoSrcOwner,tagSrc,ihvoStart,ihvoEnd,hvoDstOwner,tagDst,ihvoDstStart)	\
-    ( (This)->lpVtbl -> MoveOwnSeq(This,hvoSrcOwner,tagSrc,ihvoStart,ihvoEnd,hvoDstOwner,tagDst,ihvoDstStart) ) 
-
-#define ISilDataAccess_MoveOwn(This,hvoSrcOwner,tagSrc,hvo,hvoDstOwner,tagDst,ihvoDstStart)	\
-    ( (This)->lpVtbl -> MoveOwn(This,hvoSrcOwner,tagSrc,hvo,hvoDstOwner,tagDst,ihvoDstStart) ) 
-
-#define ISilDataAccess_Replace(This,hvoObj,tag,ihvoMin,ihvoLim,prghvo,chvo)	\
-    ( (This)->lpVtbl -> Replace(This,hvoObj,tag,ihvoMin,ihvoLim,prghvo,chvo) ) 
-
-#define ISilDataAccess_SetObjProp(This,hvo,tag,hvoObj)	\
-    ( (This)->lpVtbl -> SetObjProp(This,hvo,tag,hvoObj) ) 
-
-#define ISilDataAccess_RemoveObjRefs(This,hvo)	\
-    ( (This)->lpVtbl -> RemoveObjRefs(This,hvo) ) 
-
-#define ISilDataAccess_SetBinary(This,hvo,tag,prgb,cb)	\
-    ( (This)->lpVtbl -> SetBinary(This,hvo,tag,prgb,cb) ) 
-
-#define ISilDataAccess_SetGuid(This,hvo,tag,uid)	\
-    ( (This)->lpVtbl -> SetGuid(This,hvo,tag,uid) ) 
-
-#define ISilDataAccess_SetInt(This,hvo,tag,n)	\
-    ( (This)->lpVtbl -> SetInt(This,hvo,tag,n) ) 
-
-#define ISilDataAccess_SetInt64(This,hvo,tag,lln)	\
-    ( (This)->lpVtbl -> SetInt64(This,hvo,tag,lln) ) 
-
-#define ISilDataAccess_SetBoolean(This,hvo,tag,n)	\
-    ( (This)->lpVtbl -> SetBoolean(This,hvo,tag,n) ) 
-
-#define ISilDataAccess_SetMultiStringAlt(This,hvo,tag,ws,ptss)	\
-    ( (This)->lpVtbl -> SetMultiStringAlt(This,hvo,tag,ws,ptss) ) 
-
-#define ISilDataAccess_SetString(This,hvo,tag,ptss)	\
-    ( (This)->lpVtbl -> SetString(This,hvo,tag,ptss) ) 
-
-#define ISilDataAccess_SetTime(This,hvo,tag,lln)	\
-    ( (This)->lpVtbl -> SetTime(This,hvo,tag,lln) ) 
-
-#define ISilDataAccess_SetUnicode(This,hvo,tag,prgch,cch)	\
-    ( (This)->lpVtbl -> SetUnicode(This,hvo,tag,prgch,cch) ) 
-
-#define ISilDataAccess_SetUnknown(This,hvo,tag,punk)	\
-    ( (This)->lpVtbl -> SetUnknown(This,hvo,tag,punk) ) 
-
-#define ISilDataAccess_AddNotification(This,pnchng)	\
-    ( (This)->lpVtbl -> AddNotification(This,pnchng) ) 
-
-#define ISilDataAccess_PropChanged(This,pnchng,pct,hvo,tag,ivMin,cvIns,cvDel)	\
-    ( (This)->lpVtbl -> PropChanged(This,pnchng,pct,hvo,tag,ivMin,cvIns,cvDel) ) 
-
-#define ISilDataAccess_RemoveNotification(This,pnchng)	\
-    ( (This)->lpVtbl -> RemoveNotification(This,pnchng) ) 
-
-#define ISilDataAccess_GetDisplayIndex(This,hvoOwn,tag,ihvo,ihvoDisp)	\
-    ( (This)->lpVtbl -> GetDisplayIndex(This,hvoOwn,tag,ihvo,ihvoDisp) ) 
-
-#define ISilDataAccess_get_WritingSystemFactory(This,ppwsf)	\
-    ( (This)->lpVtbl -> get_WritingSystemFactory(This,ppwsf) ) 
-
-#define ISilDataAccess_putref_WritingSystemFactory(This,pwsf)	\
-    ( (This)->lpVtbl -> putref_WritingSystemFactory(This,pwsf) ) 
-
-#define ISilDataAccess_get_WritingSystemsOfInterest(This,cwsMax,pws,pcws)	\
-    ( (This)->lpVtbl -> get_WritingSystemsOfInterest(This,cwsMax,pws,pcws) ) 
-
-#define ISilDataAccess_InsertRelExtra(This,hvoSrc,tag,ihvo,hvoDst,bstrExtra)	\
-    ( (This)->lpVtbl -> InsertRelExtra(This,hvoSrc,tag,ihvo,hvoDst,bstrExtra) ) 
-
-#define ISilDataAccess_UpdateRelExtra(This,hvoSrc,tag,ihvo,bstrExtra)	\
-    ( (This)->lpVtbl -> UpdateRelExtra(This,hvoSrc,tag,ihvo,bstrExtra) ) 
-
-#define ISilDataAccess_GetRelExtra(This,hvoSrc,tag,ihvo,pbstrExtra)	\
-    ( (This)->lpVtbl -> GetRelExtra(This,hvoSrc,tag,ihvo,pbstrExtra) ) 
-
-#define ISilDataAccess_get_IsPropInCache(This,hvo,tag,cpt,ws,pfCached)	\
-    ( (This)->lpVtbl -> get_IsPropInCache(This,hvo,tag,cpt,ws,pfCached) ) 
-
-#define ISilDataAccess_IsDirty(This,pf)	\
-    ( (This)->lpVtbl -> IsDirty(This,pf) ) 
-
-#define ISilDataAccess_ClearDirty(This)	\
-    ( (This)->lpVtbl -> ClearDirty(This) ) 
-
-#define ISilDataAccess_get_MetaDataCache(This,ppmdc)	\
-    ( (This)->lpVtbl -> get_MetaDataCache(This,ppmdc) ) 
-
-#define ISilDataAccess_putref_MetaDataCache(This,pmdc)	\
-    ( (This)->lpVtbl -> putref_MetaDataCache(This,pmdc) ) 
-
-#define ISilDataAccess_get_IsValidObject(This,hvo,pfValid)	\
-    ( (This)->lpVtbl -> get_IsValidObject(This,hvo,pfValid) ) 
-
-#define ISilDataAccess_get_IsDummyId(This,hvo,pfDummy)	\
-    ( (This)->lpVtbl -> get_IsDummyId(This,hvo,pfDummy) ) 
-
-#define ISilDataAccess_GetObjIndex(This,hvoOwn,flid,hvo,ihvo)	\
-    ( (This)->lpVtbl -> GetObjIndex(This,hvoOwn,flid,hvo,ihvo) ) 
-
-#define ISilDataAccess_GetOutlineNumber(This,hvo,flid,fFinPer,pbstr)	\
-    ( (This)->lpVtbl -> GetOutlineNumber(This,hvo,flid,fFinPer,pbstr) ) 
-
-#define ISilDataAccess_MoveString(This,hvoSource,flidSrc,wsSrc,ichMin,ichLim,hvoDst,flidDst,wsDst,ichDest,fDstIsNew)	\
-    ( (This)->lpVtbl -> MoveString(This,hvoSource,flidSrc,wsSrc,ichMin,ichLim,hvoDst,flidDst,wsDst,ichDest,fDstIsNew) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __ISilDataAccess_INTERFACE_DEFINED__ */
-
-
-#ifndef __IStructuredTextDataAccess_INTERFACE_DEFINED__
-#define __IStructuredTextDataAccess_INTERFACE_DEFINED__
-
-/* interface IStructuredTextDataAccess */
-/* [unique][object][uuid] */ 
-
-
-#define IID_IStructuredTextDataAccess __uuidof(IStructuredTextDataAccess)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("A2A4F9FA-D4E8-4bfb-B6B7-5F45DAF2DC0C")
-    IStructuredTextDataAccess : public IUnknown
-    {
-    public:
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_ParaContentsFlid( 
-            /* [retval][out] */ PropTag *pflid) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_ParaPropertiesFlid( 
-            /* [retval][out] */ PropTag *pflid) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_TextParagraphsFlid( 
-            /* [retval][out] */ PropTag *pflid) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct IStructuredTextDataAccessVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            IStructuredTextDataAccess * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            IStructuredTextDataAccess * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            IStructuredTextDataAccess * This);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ParaContentsFlid )( 
-            IStructuredTextDataAccess * This,
-            /* [retval][out] */ PropTag *pflid);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ParaPropertiesFlid )( 
-            IStructuredTextDataAccess * This,
-            /* [retval][out] */ PropTag *pflid);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_TextParagraphsFlid )( 
-            IStructuredTextDataAccess * This,
-            /* [retval][out] */ PropTag *pflid);
-        
-        END_INTERFACE
-    } IStructuredTextDataAccessVtbl;
-
-    interface IStructuredTextDataAccess
-    {
-        CONST_VTBL struct IStructuredTextDataAccessVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define IStructuredTextDataAccess_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define IStructuredTextDataAccess_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define IStructuredTextDataAccess_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define IStructuredTextDataAccess_get_ParaContentsFlid(This,pflid)	\
-    ( (This)->lpVtbl -> get_ParaContentsFlid(This,pflid) ) 
-
-#define IStructuredTextDataAccess_get_ParaPropertiesFlid(This,pflid)	\
-    ( (This)->lpVtbl -> get_ParaPropertiesFlid(This,pflid) ) 
-
-#define IStructuredTextDataAccess_get_TextParagraphsFlid(This,pflid)	\
-    ( (This)->lpVtbl -> get_TextParagraphsFlid(This,pflid) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __IStructuredTextDataAccess_INTERFACE_DEFINED__ */
-
-
 #ifndef __IVwCacheDa_INTERFACE_DEFINED__
 #define __IVwCacheDa_INTERFACE_DEFINED__
 
@@ -5388,33 +3746,33 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             /* [in] */ IVwRootSite *pvrs) = 0;
         
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_DataAccess( 
-            /* [retval][out] */ ISilDataAccess **ppsda) = 0;
+            /* [retval][out] */ /* external definition not present */ ISilDataAccess **ppsda) = 0;
         
         virtual /* [propputref] */ HRESULT STDMETHODCALLTYPE putref_DataAccess( 
-            /* [in] */ ISilDataAccess *psda) = 0;
+            /* [in] */ /* external definition not present */ ISilDataAccess *psda) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE SetRootObjects( 
             /* [size_is][in] */ HVO *prghvo,
             /* [size_is][in] */ IVwViewConstructor **prgpvwvc,
             /* [size_is][in] */ int *prgfrag,
-            /* [in] */ IVwStylesheet *pss,
+            /* [in] */ /* external definition not present */ IVwStylesheet *pss,
             /* [in] */ int chvo) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE SetRootObject( 
             /* [in] */ HVO hvo,
             /* [in] */ IVwViewConstructor *pvwvc,
             /* [in] */ int frag,
-            /* [in] */ IVwStylesheet *pss) = 0;
+            /* [in] */ /* external definition not present */ IVwStylesheet *pss) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE SetRootVariant( 
             /* [in] */ VARIANT v,
-            /* [in] */ IVwStylesheet *pss,
+            /* [in] */ /* external definition not present */ IVwStylesheet *pss,
             /* [in] */ IVwViewConstructor *pvwvc,
             /* [in] */ int frag) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE SetRootString( 
             /* [in] */ /* external definition not present */ ITsString *ptss,
-            /* [in] */ IVwStylesheet *pss,
+            /* [in] */ /* external definition not present */ IVwStylesheet *pss,
             /* [in] */ IVwViewConstructor *pvwvc,
             /* [in] */ int frag) = 0;
         
@@ -5634,7 +3992,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             /* [in] */ /* external definition not present */ IVwGraphics *pvg) = 0;
         
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Stylesheet( 
-            /* [retval][out] */ IVwStylesheet **ppvss) = 0;
+            /* [retval][out] */ /* external definition not present */ IVwStylesheet **ppvss) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE SetTableColWidths( 
             /* [size_is][in] */ VwLength *prgvlen,
@@ -5653,7 +4011,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             /* [out] */ HVO *phvo,
             /* [out] */ IVwViewConstructor **ppvwvc,
             /* [out] */ int *pfrag,
-            /* [out] */ IVwStylesheet **ppss) = 0;
+            /* [out] */ /* external definition not present */ IVwStylesheet **ppss) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE DrawRoot2( 
             /* [in] */ /* external definition not present */ IVwGraphics *pvg,
@@ -5684,7 +4042,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         virtual HRESULT STDMETHODCALLTYPE RestartSpellChecking( void) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE SetSpellingRepository( 
-            /* [in] */ IGetSpellChecker *pgsp) = 0;
+            /* [in] */ /* external definition not present */ IGetSpellChecker *pgsp) = 0;
         
     };
     
@@ -5695,25 +4053,24 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
     {
         BEGIN_INTERFACE
         
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+        /* [id][restricted][funcdescattr] */ HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
             IVwRootBox * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
+            /* [in][idldescattr] */ struct GUID *riid,
+            /* [out][idldescattr] */ void **ppvObj);
         
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+        /* [id][restricted][funcdescattr] */ unsigned long ( STDMETHODCALLTYPE *AddRef )( 
             IVwRootBox * This);
         
-        ULONG ( STDMETHODCALLTYPE *Release )( 
+        /* [id][restricted][funcdescattr] */ unsigned long ( STDMETHODCALLTYPE *Release )( 
             IVwRootBox * This);
         
-        HRESULT ( STDMETHODCALLTYPE *PropChanged )( 
+        /* [id][funcdescattr] */ HRESULT ( STDMETHODCALLTYPE *PropChanged )( 
             IVwRootBox * This,
-            /* [in] */ HVO hvo,
-            /* [in] */ PropTag tag,
-            /* [in] */ int ivMin,
-            /* [in] */ int cvIns,
-            /* [in] */ int cvDel);
+            /* [in][idldescattr] */ signed INT hvo,
+            /* [in][idldescattr] */ signed INT tag,
+            /* [in][idldescattr] */ signed INT ivMin,
+            /* [in][idldescattr] */ signed INT cvIns,
+            /* [in][idldescattr] */ signed INT cvDel);
         
         HRESULT ( STDMETHODCALLTYPE *SetSite )( 
             IVwRootBox * This,
@@ -5721,18 +4078,18 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_DataAccess )( 
             IVwRootBox * This,
-            /* [retval][out] */ ISilDataAccess **ppsda);
+            /* [retval][out] */ /* external definition not present */ ISilDataAccess **ppsda);
         
         /* [propputref] */ HRESULT ( STDMETHODCALLTYPE *putref_DataAccess )( 
             IVwRootBox * This,
-            /* [in] */ ISilDataAccess *psda);
+            /* [in] */ /* external definition not present */ ISilDataAccess *psda);
         
         HRESULT ( STDMETHODCALLTYPE *SetRootObjects )( 
             IVwRootBox * This,
             /* [size_is][in] */ HVO *prghvo,
             /* [size_is][in] */ IVwViewConstructor **prgpvwvc,
             /* [size_is][in] */ int *prgfrag,
-            /* [in] */ IVwStylesheet *pss,
+            /* [in] */ /* external definition not present */ IVwStylesheet *pss,
             /* [in] */ int chvo);
         
         HRESULT ( STDMETHODCALLTYPE *SetRootObject )( 
@@ -5740,19 +4097,19 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             /* [in] */ HVO hvo,
             /* [in] */ IVwViewConstructor *pvwvc,
             /* [in] */ int frag,
-            /* [in] */ IVwStylesheet *pss);
+            /* [in] */ /* external definition not present */ IVwStylesheet *pss);
         
         HRESULT ( STDMETHODCALLTYPE *SetRootVariant )( 
             IVwRootBox * This,
             /* [in] */ VARIANT v,
-            /* [in] */ IVwStylesheet *pss,
+            /* [in] */ /* external definition not present */ IVwStylesheet *pss,
             /* [in] */ IVwViewConstructor *pvwvc,
             /* [in] */ int frag);
         
         HRESULT ( STDMETHODCALLTYPE *SetRootString )( 
             IVwRootBox * This,
             /* [in] */ /* external definition not present */ ITsString *ptss,
-            /* [in] */ IVwStylesheet *pss,
+            /* [in] */ /* external definition not present */ IVwStylesheet *pss,
             /* [in] */ IVwViewConstructor *pvwvc,
             /* [in] */ int frag);
         
@@ -6015,7 +4372,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Stylesheet )( 
             IVwRootBox * This,
-            /* [retval][out] */ IVwStylesheet **ppvss);
+            /* [retval][out] */ /* external definition not present */ IVwStylesheet **ppvss);
         
         HRESULT ( STDMETHODCALLTYPE *SetTableColWidths )( 
             IVwRootBox * This,
@@ -6039,7 +4396,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             /* [out] */ HVO *phvo,
             /* [out] */ IVwViewConstructor **ppvwvc,
             /* [out] */ int *pfrag,
-            /* [out] */ IVwStylesheet **ppss);
+            /* [out] */ /* external definition not present */ IVwStylesheet **ppss);
         
         HRESULT ( STDMETHODCALLTYPE *DrawRoot2 )( 
             IVwRootBox * This,
@@ -6079,7 +4436,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
         HRESULT ( STDMETHODCALLTYPE *SetSpellingRepository )( 
             IVwRootBox * This,
-            /* [in] */ IGetSpellChecker *pgsp);
+            /* [in] */ /* external definition not present */ IGetSpellChecker *pgsp);
         
         END_INTERFACE
     } IVwRootBoxVtbl;
@@ -6094,8 +4451,8 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 #ifdef COBJMACROS
 
 
-#define IVwRootBox_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+#define IVwRootBox_QueryInterface(This,riid,ppvObj)	\
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObj) ) 
 
 #define IVwRootBox_AddRef(This)	\
     ( (This)->lpVtbl -> AddRef(This) ) 
@@ -6339,7 +4696,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             /* [retval][out] */ /* external definition not present */ LgCharRenderProps *pchrp) = 0;
         
         virtual /* [propputref] */ HRESULT STDMETHODCALLTYPE putref_Stylesheet( 
-            /* [in] */ IVwStylesheet *pvps) = 0;
+            /* [in] */ /* external definition not present */ IVwStylesheet *pvps) = 0;
         
         virtual /* [propputref] */ HRESULT STDMETHODCALLTYPE putref_WritingSystemFactory( 
             /* [in] */ /* external definition not present */ ILgWritingSystemFactory *pwsf) = 0;
@@ -6392,7 +4749,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
         
         /* [propputref] */ HRESULT ( STDMETHODCALLTYPE *putref_Stylesheet )( 
             IVwPropertyStore * This,
-            /* [in] */ IVwStylesheet *pvps);
+            /* [in] */ /* external definition not present */ IVwStylesheet *pvps);
         
         /* [propputref] */ HRESULT ( STDMETHODCALLTYPE *putref_WritingSystemFactory )( 
             IVwPropertyStore * This,
@@ -7433,26 +5790,26 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             /* [in] */ int ihvoLim,
             /* [size_is][in] */ HVO *prghvo,
             /* [in] */ int chvo,
-            /* [in] */ ISilDataAccess *psda) = 0;
+            /* [in] */ /* external definition not present */ ISilDataAccess *psda) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE WriteObj( 
             /* [in] */ HVO hvo,
             /* [in] */ PropTag tag,
             /* [in] */ int ws,
             /* [in] */ IUnknown *punk,
-            /* [in] */ ISilDataAccess *psda) = 0;
+            /* [in] */ /* external definition not present */ ISilDataAccess *psda) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE WriteInt64( 
             /* [in] */ HVO hvo,
             /* [in] */ PropTag tag,
             /* [in] */ __int64 val,
-            /* [in] */ ISilDataAccess *psda) = 0;
+            /* [in] */ /* external definition not present */ ISilDataAccess *psda) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE WriteUnicode( 
             /* [in] */ HVO hvo,
             /* [in] */ PropTag tag,
             /* [in] */ BSTR bstr,
-            /* [in] */ ISilDataAccess *psda) = 0;
+            /* [in] */ /* external definition not present */ ISilDataAccess *psda) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE PreLoad( 
             /* [in] */ int chvo,
@@ -7558,7 +5915,7 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             /* [in] */ int ihvoLim,
             /* [size_is][in] */ HVO *prghvo,
             /* [in] */ int chvo,
-            /* [in] */ ISilDataAccess *psda);
+            /* [in] */ /* external definition not present */ ISilDataAccess *psda);
         
         HRESULT ( STDMETHODCALLTYPE *WriteObj )( 
             IVwVirtualHandler * This,
@@ -7566,21 +5923,21 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
             /* [in] */ PropTag tag,
             /* [in] */ int ws,
             /* [in] */ IUnknown *punk,
-            /* [in] */ ISilDataAccess *psda);
+            /* [in] */ /* external definition not present */ ISilDataAccess *psda);
         
         HRESULT ( STDMETHODCALLTYPE *WriteInt64 )( 
             IVwVirtualHandler * This,
             /* [in] */ HVO hvo,
             /* [in] */ PropTag tag,
             /* [in] */ __int64 val,
-            /* [in] */ ISilDataAccess *psda);
+            /* [in] */ /* external definition not present */ ISilDataAccess *psda);
         
         HRESULT ( STDMETHODCALLTYPE *WriteUnicode )( 
             IVwVirtualHandler * This,
             /* [in] */ HVO hvo,
             /* [in] */ PropTag tag,
             /* [in] */ BSTR bstr,
-            /* [in] */ ISilDataAccess *psda);
+            /* [in] */ /* external definition not present */ ISilDataAccess *psda);
         
         HRESULT ( STDMETHODCALLTYPE *PreLoad )( 
             IVwVirtualHandler * This,
@@ -8073,170 +6430,6 @@ e41668f7-d506-4c8a-a5d7-feae5630797e
 #endif 	/* __IVwLayoutManager_INTERFACE_DEFINED__ */
 
 
-#ifndef __ICheckWord_INTERFACE_DEFINED__
-#define __ICheckWord_INTERFACE_DEFINED__
-
-/* interface ICheckWord */
-/* [unique][object][uuid] */ 
-
-
-#define IID_ICheckWord __uuidof(ICheckWord)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("69F4D944-C786-47EC-94F7-15193EED6758")
-    ICheckWord : public IUnknown
-    {
-    public:
-        virtual HRESULT STDMETHODCALLTYPE Check( 
-            /* [in] */ LPCOLESTR pszWord,
-            /* [retval][out] */ ComBool *pfCorrect) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct ICheckWordVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ICheckWord * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ICheckWord * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            ICheckWord * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *Check )( 
-            ICheckWord * This,
-            /* [in] */ LPCOLESTR pszWord,
-            /* [retval][out] */ ComBool *pfCorrect);
-        
-        END_INTERFACE
-    } ICheckWordVtbl;
-
-    interface ICheckWord
-    {
-        CONST_VTBL struct ICheckWordVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define ICheckWord_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define ICheckWord_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define ICheckWord_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define ICheckWord_Check(This,pszWord,pfCorrect)	\
-    ( (This)->lpVtbl -> Check(This,pszWord,pfCorrect) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __ICheckWord_INTERFACE_DEFINED__ */
-
-
-#ifndef __IGetSpellChecker_INTERFACE_DEFINED__
-#define __IGetSpellChecker_INTERFACE_DEFINED__
-
-/* interface IGetSpellChecker */
-/* [unique][object][uuid] */ 
-
-
-#define IID_IGetSpellChecker __uuidof(IGetSpellChecker)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("F0A60670-D280-45EA-A5C5-F0B84C027EFC")
-    IGetSpellChecker : public IUnknown
-    {
-    public:
-        virtual HRESULT STDMETHODCALLTYPE GetChecker( 
-            /* [in] */ LPCOLESTR pszDictId,
-            /* [retval][out] */ ICheckWord **pcw) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct IGetSpellCheckerVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            IGetSpellChecker * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            IGetSpellChecker * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            IGetSpellChecker * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetChecker )( 
-            IGetSpellChecker * This,
-            /* [in] */ LPCOLESTR pszDictId,
-            /* [retval][out] */ ICheckWord **pcw);
-        
-        END_INTERFACE
-    } IGetSpellCheckerVtbl;
-
-    interface IGetSpellChecker
-    {
-        CONST_VTBL struct IGetSpellCheckerVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define IGetSpellChecker_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define IGetSpellChecker_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define IGetSpellChecker_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define IGetSpellChecker_GetChecker(This,pszDictId,pcw)	\
-    ( (This)->lpVtbl -> GetChecker(This,pszDictId,pcw) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __IGetSpellChecker_INTERFACE_DEFINED__ */
-
-
 #define CLSID_VwCacheDa __uuidof(VwCacheDa)
 
 #ifdef __cplusplus
@@ -8267,14 +6460,6 @@ VwRootBox;
 
 class DECLSPEC_UUID("73BCAB14-2537-4b7d-B1C7-7E3DD7A089AD")
 VwInvertedRootBox;
-#endif
-
-#define CLSID_VwStylesheet __uuidof(VwStylesheet)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("CCE2A7ED-464C-4ec7-A0B0-E3C1F6B94C5A")
-VwStylesheet;
 #endif
 
 #define CLSID_VwPropertyStore __uuidof(VwPropertyStore)
@@ -9640,6 +7825,14 @@ VwWindow;
 
 #endif 	/* __IViewInputMgr_INTERFACE_DEFINED__ */
 
+
+#define CLSID_VwStylesheet __uuidof(VwStylesheet)
+
+#ifdef __cplusplus
+
+class DECLSPEC_UUID("CCE2A7ED-464C-4ec7-A0B0-E3C1F6B94C5A")
+VwStylesheet;
+#endif
 #endif /* __Views_LIBRARY_DEFINED__ */
 
 /* Additional Prototypes for ALL interfaces */

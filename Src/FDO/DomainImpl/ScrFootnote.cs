@@ -8,7 +8,7 @@
 using System;
 
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.Infrastructure;

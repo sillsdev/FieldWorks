@@ -4,9 +4,9 @@
 
 using System.Collections.Generic;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.Common.COMInterfaces;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls

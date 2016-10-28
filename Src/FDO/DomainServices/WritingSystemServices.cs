@@ -15,7 +15,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;

@@ -7,12 +7,12 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using XCore;
 using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 
 namespace SIL.FieldWorks.LexText.Controls

@@ -12,7 +12,7 @@
 
 using System;
 using System.Collections.Generic;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch;
 using SIL.Utils;

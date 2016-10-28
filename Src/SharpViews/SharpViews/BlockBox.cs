@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.SharpViews
 			Width = transform.MpToPixelsX(MpWidth) + SurroundWidth(transform);
 		}
 
-		public override void PaintBackground(Common.COMInterfaces.IVwGraphics vg, PaintTransform ptrans)
+		public override void PaintBackground(Common.ViewsInterfaces.IVwGraphics vg, PaintTransform ptrans)
 		{
 			base.PaintBackground(vg, ptrans); // might paint some pad or border around the block.
 			Rectangle paintRect = ptrans.ToPaint(new Rectangle(Left + GapLeading(ptrans), Top + GapTop(ptrans),

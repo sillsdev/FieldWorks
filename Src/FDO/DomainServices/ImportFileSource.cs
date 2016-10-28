@@ -8,12 +8,8 @@
 // <remarks>
 // </remarks>
 
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
-using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {

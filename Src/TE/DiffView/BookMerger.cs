@@ -16,11 +16,11 @@ using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
 using System.Diagnostics;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.TE
 {

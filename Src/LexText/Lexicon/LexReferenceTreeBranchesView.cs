@@ -10,9 +10,10 @@ using System.Data;
 using System.Windows.Forms;
 
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using System.Collections.Generic;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {

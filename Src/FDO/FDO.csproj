@@ -90,6 +90,10 @@
     <Reference Include="BasicUtils">
       <HintPath>..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
+    <Reference Include="FwKernelInterfaces, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Downloads\SIL.Core.dll</HintPath>
@@ -102,19 +106,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Downloads\SIL.WritingSystems.dll</HintPath>
     </Reference>
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Runtime.Serialization">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="COMInterfaces">
-      <Name>COMInterfaces</Name>
-      <HintPath>..\..\Output\Debug\COMInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="PhonEnvValidator">
       <Name>PhonEnvValidator</Name>
       <HintPath>..\..\Output\Debug\PhonEnvValidator.dll</HintPath>
@@ -480,7 +478,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
-    <Compile Include="UserProfiles.cs" />
+    <Compile Include="Features.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <EmbeddedResource Include="Application\ApplicationServices\AppStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -555,7 +553,6 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <DistFiles>../../DistFiles</DistFiles>

@@ -5,7 +5,6 @@
 // File: FilteredScrBookRepository.cs
 // Responsibility: steenwykt
 
-using System;
 using System.Collections.Generic;
 using SIL.FieldWorks.FDO.DomainServices;
 

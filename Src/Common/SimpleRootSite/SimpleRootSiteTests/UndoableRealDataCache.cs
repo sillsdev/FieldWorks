@@ -7,7 +7,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using SIL.CoreImpl;
 using SIL.FieldWorks.CacheLight;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {

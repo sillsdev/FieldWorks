@@ -8,8 +8,6 @@
 using System;
 using System.Reflection;
 using NUnit.Framework;
-using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.FDO.FDOTests

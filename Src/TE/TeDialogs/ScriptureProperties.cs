@@ -14,7 +14,8 @@ using System.Text;
 
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;

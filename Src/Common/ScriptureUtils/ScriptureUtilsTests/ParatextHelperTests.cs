@@ -1,9 +1,6 @@
-// Copyright (c) 2011-2013 SIL International
+// Copyright (c) 2011-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ParatextHelperTests.cs
-// Responsibility: FW Team
 
 using System;
 using System.Collections.Generic;
@@ -12,7 +9,6 @@ using System.Linq;
 using NUnit.Framework;
 using Paratext;
 using Paratext.LexicalClient;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;

@@ -64,10 +64,6 @@
       <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="COMInterfaces, Version=5.5.0.19430, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="CoreImpl, Version=6.1.0.28024, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
@@ -100,10 +96,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\FwCoreDlgControls.dll</HintPath>
     </Reference>
-    <Reference Include="FwCoreDlgs, Version=6.1.1.21572, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
-    </Reference>
     <Reference Include="FwResources, Version=5.5.0.19421, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -111,10 +103,6 @@
     <Reference Include="FwUtils, Version=5.5.0.19431, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="ITextDll, Version=5.5.0.22279, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\ITextDll.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -124,16 +112,8 @@
       <HintPath>..\..\..\Output\Debug\ParatextShared.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Reporting, Version=1.0.3481.19439, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\Reporting.dll</HintPath>
-    </Reference>
     <Reference Include="RootSite, Version=5.5.0.19483, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="ScrControls, Version=5.5.0.22233, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Output\Debug\ScrControls.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="ScriptureUtils, Version=5.5.0.19446, Culture=neutral, processorArchitecture=MSIL">
@@ -179,9 +159,6 @@
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
@@ -195,17 +172,12 @@
       <HintPath>..\..\..\Output\Debug\TeResources.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Widgets, Version=5.5.0.19485, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Output\Debug\Widgets.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="xCoreInterfaces, Version=5.5.0.19444, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="XMLUtils, Version=5.5.0.24833, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
+    <Reference Include="FwKernelInterfaces">
+      <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

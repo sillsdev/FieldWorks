@@ -4,7 +4,6 @@
 R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
 
 # reference only; object will be disposed in parent
-T: SIL.FieldWorks.FDO.CachePair
 T: SIL.FieldWorks.FDO.DomainServices.ParagraphParser
 T: SIL.FieldWorks.FDO.Infrastructure.Impl.FDOBackendProvider
 T: SIL.FieldWorks.FDO.Infrastructure.Impl.UnitOfWorkService

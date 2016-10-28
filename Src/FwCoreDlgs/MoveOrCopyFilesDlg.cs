@@ -8,7 +8,6 @@ using System.IO;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
