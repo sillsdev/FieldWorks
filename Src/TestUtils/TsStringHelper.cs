@@ -9,6 +9,7 @@
 // </remarks>
 
 using System;
+using System.Collections.Generic;
 using System.Text;
 using SIL.FieldWorks.Common.COMInterfaces;
 using NMock.Constraints;
@@ -51,11 +52,25 @@ namespace SIL.FieldWorks.Test.TestUtils
 		/// </summary>
 		/// <param name="tssExpected">expected</param>
 		/// <param name="tssActual">actual</param>
-		/// <param name="sHowDifferent">Human(geek)-readable string telling how the TsStrings
-		/// are different, or null if they are the same</param>
+		/// <param name="sHowDifferent">Human(geek)-readable string telling how the TsStrings are different, or null if they are the same</param>
 		/// <returns>True if TsStrings match, false otherwise</returns>
 		/// ------------------------------------------------------------------------------------
-		public static bool TsStringsAreEqual(ITsString tssExpected, ITsString tssActual,
+		public static bool TsStringsAreEqual(ITsString tssExpected, ITsString tssActual, out string sHowDifferent)
+		{
+			return TsStringsAreEqual(tssExpected, tssActual, new Dictionary<int, int>(), out sHowDifferent);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Compares two TsStrings
+		/// </summary>
+		/// <param name="tssExpected">expected</param>
+		/// <param name="tssActual">actual</param>
+		/// <param name="propsWithWiggleRoom">dictionary of format properties that needn't be exact, along with their acceptable errors</param>
+		/// <param name="sHowDifferent">Human(geek)-readable string telling how the TsStrings are different, or null if they are the same</param>
+		/// <returns>True if TsStrings match, false otherwise</returns>
+		/// ------------------------------------------------------------------------------------
+		public static bool TsStringsAreEqual(ITsString tssExpected, ITsString tssActual, IDictionary<int, int> propsWithWiggleRoom,
 			out string sHowDifferent)
 		{
 			sHowDifferent = null;
@@ -69,12 +84,9 @@ namespace SIL.FieldWorks.Test.TestUtils
 						Environment.NewLine, tssActual.Text);
 					return false;
 				}
-				else
-				{
-					return true;
-				}
+				return true;
 			}
-			if (tssExpected != null && tssActual == null)
+			if (tssActual == null)
 			{
 				sHowDifferent = string.Format("TsStrings differ.{0}\tExpected <{1}>, but was <null>.",
 					Environment.NewLine, tssExpected.Text);
@@ -132,8 +144,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 				}
 
 				string sDetails;
-				if (!TsTextPropsHelper.PropsAreEqual(tssExpected.get_Properties(iRun),
-					tssActual.get_Properties(iRun), out sDetails))
+				if (!TsTextPropsHelper.PropsAreEqual(tssExpected.get_Properties(iRun), tssActual.get_Properties(iRun), propsWithWiggleRoom, out sDetails))
 				{
 					sHowDifferent = string.Format("TsStrings differ in format of run {1}.{0}\t{2}",
 						Environment.NewLine, iRun + 1, sDetails);
@@ -145,6 +156,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 			return true;
 		}
 	}
+
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// This class is for tests where TsString parameters are necessary. It compares the value
