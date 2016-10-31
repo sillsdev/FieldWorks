@@ -5,11 +5,15 @@
 		<SolutionPath Condition="$(SolutionPath) == '' Or $(SolutionPath) == '*Undefined*'">$(SolutionDir)/$(Solution)</SolutionPath>
 		<NuGetUrl>https://nuget.org/NuGet.exe</NuGetUrl>
 
-		<!-- Enable the restore command to run before builds -->
-		<RestorePackages Condition="  '$(RestorePackages)' == '' ">true</RestorePackages>
-
-		<!-- Determines if package restore consent is required to restore packages -->
-		<RequireRestoreConsent Condition=" '$(RequireRestoreConsent)' != 'false' ">false</RequireRestoreConsent>
+		<!-- NuGet command -->
+		<NuGetExePath>$(NuGetToolsPath)NuGet.exe</NuGetExePath>
+		<NuGetCommand Condition="'$(OS)' == 'Windows_NT'">"$(NuGetExePath)"</NuGetCommand>
+		<!--
+		NuGet has trouble when Ubuntu 16.04 pbuilder sets the home directory to /nonexistent, and
+		just setting -ConfigFile is not enough to make nuget not work with config files in the home directory.
+		Setting XDG_CONFIG_HOME prevents nuget from working with config files the home directory.
+		-->
+		<NuGetCommand Condition=" '$(OS)' != 'Windows_NT' ">[ -d $HOME ] || export XDG_CONFIG_HOME=$(mktemp -d); mono --runtime=v4.0.30319 $(NuGetExePath)</NuGetCommand>
 
 		<!-- Download NuGet.exe if it does not already exist -->
 		<DownloadNuGetExe Condition=" '$(DownloadNuGetExe)' == '' ">true</DownloadNuGetExe>
