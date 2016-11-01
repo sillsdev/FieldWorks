@@ -1,23 +1,13 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: WordImporter.cs
-// Responsibility: John Hatton
-// Last reviewed:
-//
-// <remarks>
-// Implements WordImporter
-// </remarks>
 
-using System;
 using System.IO;
 using System.Collections.Generic;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -26,22 +16,13 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// </summary>
 	public class WordImporter
 	{
-		private ILgCharacterPropertyEngine m_lgCharPropEngineVern;
-		private FdoCache m_cache;
-		private int m_ws;
+		private readonly FdoCache m_cache;
+		private readonly CoreWritingSystemDefinition m_ws;
 
 		public WordImporter(FdoCache cache)
 		{
 			m_cache = cache;
-			m_ws = cache.DefaultVernWs;
-
-			//the following comment is from the FDO Scripture class, so the answer may appear there.
-
-			// Get a default character property engine.
-			// REVIEW SteveMc(TomB): We need the cpe for the primary vernacular writing system. What
-			// should we be passing as the second param (i.e., the old writing system)? For now,
-			// 0 seems to work.
-			m_lgCharPropEngineVern = m_cache.LanguageWritingSystemFactoryAccessor.get_CharPropEngine(m_cache.DefaultVernWs);
+			m_ws = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 		}
 
 		public void PopulateWordset(string path, IWfiWordSet wordSet)
@@ -76,10 +57,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Collect up a set of unique WfiWordforms.
 		/// </summary>
-		/// <param name="wfi"></param>
-		/// <param name="ws"></param>
-		/// <param name="wordforms">Table of unique wordforms.</param>
-		/// <param name="buffer"></param>
 		private void GetUniqueWords(Dictionary<string, IWfiWordform> wordforms, string buffer)
 		{
 			int start = -1; // -1 means we're still looking for a word to start.
@@ -87,7 +64,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			int totalLengh = buffer.Length;
 			for(int i = 0; i < totalLengh; i++)
 			{
-				bool isWordforming = m_lgCharPropEngineVern.get_IsWordForming(buffer[i]);
+				bool isWordforming = m_ws.get_IsWordForming(buffer[i]);
 				if (isWordforming)
 				{
 					length++;
@@ -101,7 +78,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					string word = buffer.Substring(start, length);
 					if (!wordforms.ContainsKey(word))
 					{
-						var tss = m_cache.TsStrFactory.MakeString(word, m_ws);
+						ITsString tss = m_cache.TsStrFactory.MakeString(word, m_ws.Handle);
 						wordforms.Add(word, WfiWordformServices.FindOrCreateWordform(m_cache, tss));
 					}
 					length = 0;

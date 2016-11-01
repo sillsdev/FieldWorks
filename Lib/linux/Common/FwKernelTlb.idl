@@ -4570,7 +4570,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 
 
 
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgWritingSystem") cpp_quote(",") cpp_quote("FF923C7E-A7C1-4760-B8E5-7A6D28F4AECB") cpp_quote(");") [ uuid("FF923C7E-A7C1-4760-B8E5-7A6D28F4AECB"), object, pointer_default(unique) ] interface ILgWritingSystem : IUnknown
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgWritingSystem") cpp_quote(",") cpp_quote("9C0513AB-1AB9-4741-9C49-FA65FA83B7CC") cpp_quote(");") [ uuid("9C0513AB-1AB9-4741-9C49-FA65FA83B7CC"), object, pointer_default(unique) ] interface ILgWritingSystem : IUnknown
 	{
 		
 		[propget] HRESULT Id(
@@ -4615,17 +4615,22 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 
 		
 		
-		[propget] HRESULT CharPropEngine(
-			[out, retval] ILgCharacterPropertyEngine ** pppropeng);
-
-		
-		
 		HRESULT InterpretChrp(
 			[in, out] LgCharRenderProps * pchrp);
 
 		
 		[propget] HRESULT UseNfcContext(
 			[out, retval] ComBool * pUseNfc);
+
+		
+		
+		[propget] HRESULT IsWordForming(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+
+		
+		[propget] HRESULT IcuLocale(
+			[out, retval] BSTR *pbstr);
 	};
 
 	
@@ -4768,30 +4773,10 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgCharacterPropertyEngine") cpp_quote(",") cpp_quote("890C5B18-6E95-438E-8ADE-A4FFADDF0684") cpp_quote(");") [ uuid("890C5B18-6E95-438E-8ADE-A4FFADDF0684"), object, pointer_default(unique) ] interface ILgCharacterPropertyEngine : IUnknown
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgLineBreaker") cpp_quote(",") cpp_quote("F8D5FDE9-9695-4D63-8843-E27FD880BFF0") cpp_quote(");") [ uuid("F8D5FDE9-9695-4D63-8843-E27FD880BFF0"), object, pointer_default(unique) ] interface ILgLineBreaker : IUnknown
 	{
-		
-		
-		
-		
-		
-		[propget] HRESULT IsWordForming(
-			[in] int ch,
-			[out, retval] ComBool *pfRet);
+		HRESULT Initialize(
+			[in] BSTR bstrLocale);
 
 		
 		
@@ -4839,7 +4824,6 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 			[in, size_is(cchMax)] OLECHAR * prgchIn,
 			[in] int cchMax);
 
-
 		
 		
 		
@@ -4874,43 +4858,14 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 
 
 
-
-
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgIcuCharPropEngine") cpp_quote(",") cpp_quote("E8689492-7622-427b-8518-6339294FD227") cpp_quote(");") [ uuid("E8689492-7622-427b-8518-6339294FD227"), object, pointer_default(unique) ] interface ILgIcuCharPropEngine : ILgCharacterPropertyEngine
-	{
-		HRESULT Initialize(
-			[in] BSTR bstrLanguage,
-			[in] BSTR bstrScript,
-			[in] BSTR bstrCountry,
-			[in] BSTR bstrVariant);
-
-		HRESULT InitCharOverrides(
-			[in] BSTR bstrWsCharsList);
-	}
-
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgWritingSystemFactory") cpp_quote(",") cpp_quote("22376578-BFEB-4c46-8D72-C9154890DD16") cpp_quote(");") [ uuid("22376578-BFEB-4c46-8D72-C9154890DD16"), object, pointer_default(unique) ] interface ILgWritingSystemFactory : IUnknown
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgWritingSystemFactory") cpp_quote(",") cpp_quote("CC2BD14F-ACCE-4246-9192-9C29441A5A09") cpp_quote(");") [ uuid("CC2BD14F-ACCE-4246-9192-9C29441A5A09"), object, pointer_default(unique) ] interface ILgWritingSystemFactory : IUnknown
 	{
 		
 		
 		
 		
 		[propget] HRESULT Engine(
-			[in] BSTR bstrIcuLocale,
+			[in] BSTR bstrId,
 			[out, retval] ILgWritingSystem ** ppwseng);
 
 		
@@ -4925,11 +4880,17 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 		
 		HRESULT GetWsFromStr(
 			[in] BSTR bstr,
-			[out, retval] int * pwsId);
+			[out, retval] int * pws);
 		
 		
 		HRESULT GetStrFromWs(
-			[in] int wsId,
+			[in] int ws,
+			[out, retval] BSTR * pbstr);
+
+		
+		
+		HRESULT GetIcuLocaleFromWs(
+			[in] int ws,
 			[out, retval] BSTR * pbstr);
 
 		
@@ -4940,10 +4901,6 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 			[out, size_is(cws)] int * rgws,
 			[in] int cws);
 
-		
-		[propget] HRESULT CharPropEngine(
-			[in] int ws,
-			[out, retval] ILgCharacterPropertyEngine ** pplcpe);
 		
 		[propget] HRESULT Renderer(
 			[in] int ws,
@@ -5150,12 +5107,9 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgIcuResourceBundl
 		interface ILgCollatingEngine;
 	};
 
-	
-	
-	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("30D75676-A10F-48FE-9627-EBF4061EA49D") cpp_quote(",") cpp_quote("LgIcuCharPropEngine") cpp_quote(");") [ uuid(30D75676-A10F-48FE-9627-EBF4061EA49D) ] coclass LgIcuCharPropEngine
+	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("94FBFA34-21E5-4A1E-B576-BA5D76CC051A") cpp_quote(",") cpp_quote("LgLineBreaker") cpp_quote(");") [ uuid(94FBFA34-21E5-4A1E-B576-BA5D76CC051A) ] coclass LgLineBreaker
 	{
-		interface ILgIcuCharPropEngine;
-		interface IMarshal;
+		interface ILgLineBreaker;
 	};
 
 	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("9E729461-F80D-4796-BA17-086BC61907F1") cpp_quote(",") cpp_quote("LgIcuConverterEnumerator") cpp_quote(");") [ uuid(9E729461-F80D-4796-BA17-086BC61907F1) ] coclass LgIcuConverterEnumerator
@@ -5174,7 +5128,6 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgIcuResourceBundl
 	{
 		interface ILgIcuLocaleEnumerator;
 	};
-#line 719 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Language.idh"
-
+#line 673 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Language.idh"
 #line 24 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 };

@@ -23,7 +23,7 @@ namespace SIL.CoreImpl
 
 		private readonly Dictionary<Tuple<string, bool, bool>, IRenderEngine> m_renderEngines = new Dictionary<Tuple<string, bool, bool>, IRenderEngine>();
 		private IRenderEngine m_uniscribeEngine;
-		private ILgCharacterPropertyEngine m_cpe;
+		private readonly HashSet<int> m_wordFormingOverrides = new HashSet<int>();
 
 		private readonly object m_syncRoot = new object();
 
@@ -55,25 +55,47 @@ namespace SIL.CoreImpl
 
 		private void SetupCollectionChangeListeners()
 		{
-			Variants.CollectionChanged += VariantsChanged;
 			CharacterSets.CollectionChanged += CharacterSetsChanged;
 		}
 
 		private void CharacterSetsChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			m_cpe = null;
 			CharacterSetDefinition mainCharSet;
 			MainCharacterSet = CharacterSets.TryGet("main", out mainCharSet) ? mainCharSet : null;
+			m_wordFormingOverrides.Clear();
+			if (MainCharacterSet != null)
+				AddWordFormingOverrides(MainCharacterSet.Characters);
 		}
 
 		private void MainCharacterSetChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			m_cpe = null;
+			switch (e.Action)
+			{
+				case NotifyCollectionChangedAction.Add:
+					AddWordFormingOverrides(e.NewItems.Cast<string>());
+					break;
+				case NotifyCollectionChangedAction.Remove:
+					RemoveWordFormingOverrides(e.OldItems.Cast<string>());
+					break;
+				case NotifyCollectionChangedAction.Replace:
+					RemoveWordFormingOverrides(e.OldItems.Cast<string>());
+					AddWordFormingOverrides(e.NewItems.Cast<string>());
+					break;
+				case NotifyCollectionChangedAction.Reset:
+					m_wordFormingOverrides.Clear();
+					AddWordFormingOverrides(MainCharacterSet.Characters);
+					break;
+			}
 		}
 
-		private void VariantsChanged(object sender, NotifyCollectionChangedEventArgs e)
+		private void AddWordFormingOverrides(IEnumerable<string> chars)
 		{
-			m_cpe = null;
+			m_wordFormingOverrides.UnionWith(chars.Select(c => char.ConvertToUtf32(c, 0)));
+		}
+
+		private void RemoveWordFormingOverrides(IEnumerable<string> chars)
+		{
+			m_wordFormingOverrides.ExceptWith(chars.Select(c => char.ConvertToUtf32(c, 0)));
 		}
 
 		private CharacterSetDefinition MainCharacterSet
@@ -230,6 +252,18 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
+		/// Return true if character is considered to be part of a word (by default, this
+		/// corresponds to Unicode general category Mc, Mn, and categories starting with L).
+		/// </summary>
+		public bool get_IsWordForming(int ch)
+		{
+			if (m_wordFormingOverrides.Contains(ch))
+				return true;
+
+			return TsStringUtils.IsWordForming(ch);
+		}
+
+		/// <summary>
 		/// Apply any changes to the chrp before it is used for real: currently,
 		/// interpret the magic font names.
 		/// </summary>
@@ -250,33 +284,6 @@ namespace SIL.CoreImpl
 				chrp.dympHeight = (chrp.dympHeight * 2) / 3;
 				// Make sure no way it can happen twice!
 				chrp.ssv = (int) FwSuperscriptVal.kssvOff;
-			}
-		}
-
-		/// <summary>
-		/// Get the engine used to find character properties, including figuring out where line
-		/// breaks are allowed.
-		/// </summary>
-		/// <value></value>
-		/// <returns>A ILgCharacterPropertyEngine </returns>
-		public ILgCharacterPropertyEngine CharPropEngine
-		{
-			get
-			{
-				lock (m_syncRoot)
-				{
-					if (m_cpe == null)
-					{
-						string language, script, region, variant;
-						IetfLanguageTag.TryGetParts(LanguageTag, out language, out script, out region, out variant);
-						LgIcuCharPropEngine cpe = LgIcuCharPropEngineClass.Create();
-						cpe.Initialize(language, script, region, variant);
-						if (MainCharacterSet != null)
-							cpe.InitCharOverrides(string.Join("\ufffc", MainCharacterSet.Characters));
-						m_cpe = cpe;
-					}
-					return m_cpe;
-				}
 			}
 		}
 
@@ -408,11 +415,6 @@ namespace SIL.CoreImpl
 				ClearRenderers();
 			}
 
-			if (e.PropertyName == GetPropertyName(() => Language) || e.PropertyName == GetPropertyName(() => Script)
-				|| e.PropertyName == GetPropertyName(() => Region))
-			{
-				m_cpe = null;
-			}
 			base.OnPropertyChanged(e);
 		}
 

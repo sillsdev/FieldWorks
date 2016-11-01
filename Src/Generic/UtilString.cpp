@@ -5468,3 +5468,22 @@ bool StrUtil::IsMark(int ch)
 	int cc = u_charType(ch);
 	return cc >= U_NON_SPACING_MARK && cc <= U_COMBINING_SPACING_MARK;
 }
+
+bool StrUtil::IsWordForming(int ch)
+{
+	int cc = u_charType(ch);
+	switch (cc)
+	{
+		case U_UPPERCASE_LETTER:
+		case U_LOWERCASE_LETTER:
+		case U_TITLECASE_LETTER:
+		case U_MODIFIER_LETTER:
+		case U_OTHER_LETTER:
+		case U_NON_SPACING_MARK:
+		case U_COMBINING_SPACING_MARK:
+		case U_MODIFIER_SYMBOL:
+			return true;
+		default:
+			return false;
+	}
+}

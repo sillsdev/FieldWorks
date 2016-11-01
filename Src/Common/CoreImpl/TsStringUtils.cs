@@ -29,12 +29,12 @@ namespace SIL.CoreImpl
 	{
 		/// <summary>Regular expression used to check whether a string appears to be a URL (as
 		/// opposed to a file path)</summary>
-		public static readonly Regex kRegexUrl = new Regex("^[a-z]+://", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+		public static readonly Regex RegexUrl = new Regex("^[a-z]+://", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-		private static readonly RecentItemsCache<Tuple<XElement, ILgWritingSystemFactory>, ITsTextProps> s_recentTextProps = new RecentItemsCache<Tuple<XElement, ILgWritingSystemFactory>, ITsTextProps>(100);
-		private static readonly FwObjDataTypes[] s_hotObjectTypes = new[] { FwObjDataTypes.kodtNameGuidHot, FwObjDataTypes.kodtOwnNameGuidHot };
-		private static readonly FwObjDataTypes[] s_ownedObjectTypes = new[] { FwObjDataTypes.kodtGuidMoveableObjDisp, FwObjDataTypes.kodtOwnNameGuidHot };
-		private static readonly FwObjDataTypes[] s_footnoteAndPicObjectTypes = new[] { FwObjDataTypes.kodtGuidMoveableObjDisp, FwObjDataTypes.kodtOwnNameGuidHot, FwObjDataTypes.kodtNameGuidHot };
+		private static readonly RecentItemsCache<Tuple<XElement, ILgWritingSystemFactory>, ITsTextProps> RecentTextProps = new RecentItemsCache<Tuple<XElement, ILgWritingSystemFactory>, ITsTextProps>(100);
+		private static readonly FwObjDataTypes[] HotObjectTypes = { FwObjDataTypes.kodtNameGuidHot, FwObjDataTypes.kodtOwnNameGuidHot };
+		private static readonly FwObjDataTypes[] OwnedObjectTypes = { FwObjDataTypes.kodtGuidMoveableObjDisp, FwObjDataTypes.kodtOwnNameGuidHot };
+		private static readonly FwObjDataTypes[] FootnoteAndPicObjectTypes = { FwObjDataTypes.kodtGuidMoveableObjDisp, FwObjDataTypes.kodtOwnNameGuidHot, FwObjDataTypes.kodtNameGuidHot };
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -79,23 +79,37 @@ namespace SIL.CoreImpl
 		/// ------------------------------------------------------------------------------------
 		public static ITsTextProps GetTextProps(XElement xml, ILgWritingSystemFactory wsf)
 		{
-			return s_recentTextProps.GetItem(new Tuple<XElement, ILgWritingSystemFactory>(xml, wsf), tuple => { return TsPropsSerializer.DeserializePropsFromXml(tuple.Item1, tuple.Item2); });
+			return RecentTextProps.GetItem(new Tuple<XElement, ILgWritingSystemFactory>(xml, wsf), tuple => TsPropsSerializer.DeserializePropsFromXml(tuple.Item1, tuple.Item2));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tells whether the full character (starting) at ich is a white-space character.
+		/// Determines whether the specified character is word-forming.
 		/// </summary>
-		/// <param name="text">The text.</param>
-		/// <param name="ich">The character index.</param>
-		/// <returns>
-		/// 	<c>true</c> if the specified characters in the text is whitespace;
-		///		otherwise, <c>false</c>.
-		/// </returns>
-		/// ------------------------------------------------------------------------------------
-		public static bool IsWhite(string text, int ich)
+		public static bool IsWordForming(int ch, ILgWritingSystemFactory wsf, int wsHandle)
 		{
-			return Icu.GetCharType(StringUtils.FullCharAt(text, ich)) == Icu.UCharCategory.U_SPACE_SEPARATOR;
+			ILgWritingSystem ws = wsf.get_EngineOrNull(wsHandle);
+			return ws == null ? IsWordForming(ch) : ws.get_IsWordForming(ch);
+		}
+
+		/// <summary>
+		/// Determines whether the specified character is word-forming.
+		/// </summary>
+		public static bool IsWordForming(int ch)
+		{
+			switch (Icu.GetCharType(ch))
+			{
+				case Icu.UCharCategory.U_UPPERCASE_LETTER:
+				case Icu.UCharCategory.U_LOWERCASE_LETTER:
+				case Icu.UCharCategory.U_TITLECASE_LETTER:
+				case Icu.UCharCategory.U_MODIFIER_LETTER:
+				case Icu.UCharCategory.U_OTHER_LETTER:
+				case Icu.UCharCategory.U_NON_SPACING_MARK:
+				case Icu.UCharCategory.U_COMBINING_SPACING_MARK:
+				case Icu.UCharCategory.U_MODIFIER_SYMBOL:
+					return true;
+				default:
+					return false;
+			}
 		}
 
 		#region Handling ORCs
@@ -178,10 +192,9 @@ namespace SIL.CoreImpl
 				return -1;
 
 			int iRun = 0;
-			Guid guid;
 			while (iRun < tssBldr.RunCount)
 			{
-				guid = GetGuidFromRun(tssBldr.GetString(), iRun);
+				Guid guid = GetGuidFromRun(tssBldr.GetString(), iRun);
 
 				if (guid == guidToRemove)
 				{
@@ -388,7 +401,6 @@ namespace SIL.CoreImpl
 
 					baseFound = true;
 				}
-
 				else
 				{
 					// If this is not a diacritic or a ZWJ or ZWNJ between diacritics,
@@ -414,8 +426,7 @@ namespace SIL.CoreImpl
 					}
 				}
 
-				if (baseFound)
-					newChars.Append(chr);
+				newChars.Append(chr);
 			}
 
 			return newChars.ToString();
@@ -569,7 +580,7 @@ namespace SIL.CoreImpl
 		/// ------------------------------------------------------------------------------------
 		public static Guid GetOwnedGuidFromRun(ITsString tss, int iRun, out FwObjDataTypes odt, out TsRunInfo tri, out ITsTextProps ttp)
 		{
-			return GetGuidFromRun(tss, iRun, out odt, out tri, out ttp, s_ownedObjectTypes);
+			return GetGuidFromRun(tss, iRun, out odt, out tri, out ttp, OwnedObjectTypes);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -706,7 +717,7 @@ namespace SIL.CoreImpl
 		public static Guid GetHotObjectGuidFromProps(ITsTextProps ttp)
 		{
 			FwObjDataTypes odt;
-			return GetGuidFromProps(ttp, s_hotObjectTypes, out odt);
+			return GetGuidFromProps(ttp, HotObjectTypes, out odt);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -720,7 +731,7 @@ namespace SIL.CoreImpl
 		public static Guid GetUsefulGuidFromProps(ITsTextProps ttp)
 		{
 			FwObjDataTypes odt;
-			return GetGuidFromProps(ttp, s_footnoteAndPicObjectTypes, out odt);
+			return GetGuidFromProps(ttp, FootnoteAndPicObjectTypes, out odt);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -765,7 +776,7 @@ namespace SIL.CoreImpl
 		public static Guid GetHotGuidFromObjData(string sObjData)
 		{
 			FwObjDataTypes odt = (FwObjDataTypes)Convert.ToByte(sObjData[0]);
-			if (s_hotObjectTypes.Contains(odt))
+			if (HotObjectTypes.Contains(odt))
 			{
 				return MiscUtils.GetGuidFromObjData(sObjData.Substring(1));
 			}
@@ -827,7 +838,7 @@ namespace SIL.CoreImpl
 				string sRef = sProp.Substring(1);
 				if (!String.IsNullOrEmpty(sRef))
 				{
-					Match matchURL = kRegexUrl.Match(sRef);
+					Match matchURL = RegexUrl.Match(sRef);
 					if (!matchURL.Success)
 						sRef = "file://" + sRef.Replace('\\', '/');
 					return sRef;
@@ -888,7 +899,7 @@ namespace SIL.CoreImpl
 		public static ITsString RemoveIntProp(ITsString tss, int intProp)
 		{
 			if (tss == null)
-				return tss;
+				return null;
 
 			ITsStrBldr tssBldr = tss.GetBldr();
 			// Note that the RunCount of the builder may CHANGE during this loop; don't cache the run count.
@@ -901,7 +912,7 @@ namespace SIL.CoreImpl
 				{
 					int var;
 					int propType;
-					int propValue = tpp.GetIntProp(iProp, out propType, out var);
+					tpp.GetIntProp(iProp, out propType, out var);
 					if (propType == intProp)
 					{
 						ITsPropsBldr ttpBldr = tpp.GetBldr();
@@ -978,7 +989,7 @@ namespace SIL.CoreImpl
 		public static ITsString GetCleanTsString(ITsString tss, IEnumerable<string> stylesToRemove, bool fStopOnRemovedStyle, bool fPreserveUnknownOrcs, bool fTrimSpaces)
 		{
 			if (tss == null)
-				return tss;
+				return null;
 
 			ITsStrBldr tssBldr = TsStrBldrClass.Create();
 			for (int iRun = 0; iRun < tss.RunCount; iRun++)
@@ -1089,14 +1100,14 @@ namespace SIL.CoreImpl
 				while (ich < tss.Length)
 				{
 					int cchMatch = 0;
-					int ichEnd = tss.Text.IndexOf(separator[0], ich);
+					int ichEnd = tss.Text.IndexOf(separator[0], ich, StringComparison.Ordinal);
 					if (ichEnd < 0)
 						ichEnd = tss.Length;
 					else
 						cchMatch = separator[0].Length;
 					for (int i = 1; i < separator.Length; ++i)
 					{
-						int ichEnd2 = tss.Text.IndexOf(separator[i], ich);
+						int ichEnd2 = tss.Text.IndexOf(separator[i], ich, StringComparison.Ordinal);
 						if (ichEnd2 < 0)
 							ichEnd2 = tss.Length;
 						if (ichEnd2 < ichEnd)
@@ -1145,10 +1156,8 @@ namespace SIL.CoreImpl
 
 			if (tssInput == null)
 				return null;
-			string untrimmedString = tssInput.Text;
-			if (String.IsNullOrEmpty(untrimmedString))
+			if (tssInput.Length == 0)
 				return tssInput;
-			ILgCharacterPropertyEngine charProps = null;
 
 			int ichMin;
 			bool fFoundWordFormingChar = false;
@@ -1156,11 +1165,9 @@ namespace SIL.CoreImpl
 			{
 				// Trim leading non-word forming characters from string.
 				ichMin = -1;
-				for (int ich = 0; ich < untrimmedString.Length; ich++)
+				for (int ich = 0; ich < tssInput.Length; ich++)
 				{
-					charProps = GetCharPropEngineAtOffset(tssInput, writingSystemFactory, ich);
-
-					if (charProps != null && charProps.get_IsWordForming(untrimmedString[ich]))
+					if (tssInput.IsCharWordForming(ich, writingSystemFactory))
 					{
 						// first word-forming character found
 						ichMin = ich;
@@ -1169,7 +1176,7 @@ namespace SIL.CoreImpl
 					}
 				}
 				if (ichMin == -1)
-					return MakeTss("", GetWsAtOffset(tssInput, 0));
+					return MakeTss("", tssInput.get_WritingSystemAt(0));
 				// no word-forming characters found in the string
 			}
 
@@ -1182,10 +1189,9 @@ namespace SIL.CoreImpl
 				// Trim trailing non-word forming characters from string.
 				strLength = 1;
 				int iMin = (ichMin == 0) ? -1 : ichMin;
-				for (int ich = untrimmedString.Length - 1; ich > iMin; ich--)
+				for (int ich = tssInput.Length - 1; ich > iMin; ich--)
 				{
-					charProps = GetCharPropEngineAtOffset(tssInput, writingSystemFactory, ich);
-					if (charProps != null && charProps.get_IsWordForming(untrimmedString[ich]))
+					if (tssInput.IsCharWordForming(ich, writingSystemFactory))
 					{
 						// last word-forming character found
 						strLength = ich - ichMin + 1;
@@ -1200,7 +1206,7 @@ namespace SIL.CoreImpl
 			}
 
 			else
-				strLength = untrimmedString.Length - ichMin;
+				strLength = tssInput.Length - ichMin;
 
 			return tssInput.Substring(ichMin, strLength);
 		}
@@ -1249,15 +1255,6 @@ namespace SIL.CoreImpl
 		public static int GetWsOfRun(ITsString tss, int irun)
 		{
 			return tss.get_WritingSystem(irun);
-		}
-
-		/// <summary>
-		/// Get the character property engine that should be used for interpreting the character at ich.
-		/// </summary>
-		public static ILgCharacterPropertyEngine GetCharPropEngineAtOffset(ITsString tss, ILgWritingSystemFactory wsf, int ich)
-		{
-			int ws = GetWsAtOffset(tss, ich);
-			return (ws > 0) ? wsf.get_CharPropEngine(ws) : null;
 		}
 
 		/// <summary>
@@ -1412,19 +1409,15 @@ namespace SIL.CoreImpl
 
 			int ichWordForm = 0;
 			bool fMatchInProgress = false;
-			CpeTracker sourceTracker = new CpeTracker(wsf, sourceTss);
-			CpeTracker wordTracker = new CpeTracker(wsf, wordFormTss);
-			string wordForm = wordFormTss.Text;
-			string sourceText = sourceTss.Text;
-			bool fWordFormAndSrcAreBothNormalized = wordForm.IsNormalized() && sourceText.IsNormalized();
+			bool fWordFormAndSrcAreBothNormalized = wordFormTss.get_IsNormalizedForm(FwNormalizationMode.knmNFC) && sourceTss.get_IsNormalizedForm(FwNormalizationMode.knmNFC);
 			bool fPrevCharWasWordForming = false;
 			// Must use local temp variable because some callers pass same variable as both
 			// ichMin and ichLim.
 			int ichLimT;
-			for (int ichSrc = 0; ichSrc < sourceText.Length; ichSrc = ichLimT)
+			for (int ichSrc = 0; ichSrc < sourceTss.Length; ichSrc = ichLimT)
 			{
-				ichLimT = ichSrc + 1;
-				bool fWordForming = sourceTracker.CharPropEngine(ichSrc).get_IsWordForming(sourceText[ichSrc]);
+				ichLimT = sourceTss.NextCharIndex(ichSrc);
+				bool fWordForming = sourceTss.IsCharWordForming(ichSrc, wsf);
 				if (!fMatchInProgress && fPrevCharWasWordForming && fWordForming && fMatchWholeWord)
 					continue;
 
@@ -1432,32 +1425,30 @@ namespace SIL.CoreImpl
 				if (!fMatchInProgress && !fWordForming)
 					continue;
 
-				bool fMatch = (wordForm[ichWordForm] == sourceText[ichSrc]);
-
+				bool fMatch = wordFormTss.CharAt(ichWordForm) == sourceTss.CharAt(ichSrc);
 				if (fMatch)
 				{
-					ichWordForm++;
+					ichWordForm = wordFormTss.NextCharIndex(ichWordForm);
 				}
-
 				else
 				{
-					if (sourceText[ichSrc] == StringUtils.kChObject)
+					if (sourceTss.CharAt(ichSrc) == StringUtils.kChObject)
 						fMatch = true;
 					else if (!fWordFormAndSrcAreBothNormalized)
 					{
-						int ichWfCharLim = ichWordForm + 1;
+						int ichWfCharLim = wordFormTss.NextCharIndex(ichWordForm);
 
-						while (ichWfCharLim < wordForm.Length && !Icu.IsLetter(wordForm[ichWfCharLim]) && wordTracker.CharPropEngine(ichWfCharLim).get_IsWordForming(wordForm[ichWfCharLim]))
+						while (ichWfCharLim < wordFormTss.Length && !Icu.IsLetter(wordFormTss.CharAt(ichWfCharLim)) && wordFormTss.IsCharWordForming(ichWfCharLim, wsf))
 						{
-							ichWfCharLim++;
+							ichWfCharLim = wordFormTss.NextCharIndex(ichWfCharLim);
 						}
 
-						while (ichLimT < sourceText.Length && !Icu.IsLetter(sourceText[ichLimT]) && sourceTracker.CharPropEngine(ichLimT).get_IsWordForming(sourceText[ichLimT]))
+						while (ichLimT < sourceTss.Length && !Icu.IsLetter(sourceTss.CharAt(ichLimT)) && sourceTss.IsCharWordForming(ichLimT, wsf))
 						{
-							ichLimT++;
+							ichLimT = sourceTss.NextCharIndex(ichLimT);
 						}
 
-						if (wordForm.Substring(ichWordForm, ichWfCharLim - ichWordForm).Normalize() == sourceText.Substring(ichSrc, ichLimT - ichSrc).Normalize())
+						if (wordFormTss.Text.Substring(ichWordForm, ichWfCharLim - ichWordForm).Normalize() == sourceTss.Text.Substring(ichSrc, ichLimT - ichSrc).Normalize())
 						{
 							ichWordForm = ichWfCharLim;
 							fMatch = true;
@@ -1471,7 +1462,7 @@ namespace SIL.CoreImpl
 					// word-forming, then this is a bogus match, so we keep looking.
 					if (!fMatchInProgress)
 					{
-						if (ichSrc == 0 || !sourceTracker.CharPropEngine(ichSrc - 1).get_IsWordForming(sourceText[ichSrc - 1]) || !fMatchWholeWord)
+						if (ichSrc == 0 || !sourceTss.IsCharWordForming(sourceTss.PrevCharIndex(ichSrc), wsf) || !fMatchWholeWord)
 						{
 							ichMin = ichSrc;
 							fMatchInProgress = true;
@@ -1481,9 +1472,9 @@ namespace SIL.CoreImpl
 							ichWordForm = 0;
 					}
 
-					if (fMatchInProgress && ichWordForm == wordForm.Length)
+					if (fMatchInProgress && ichWordForm == wordFormTss.Length)
 					{
-						if (++ichSrc < sourceText.Length && sourceTracker.CharPropEngine(ichSrc).get_IsWordForming(sourceText[ichSrc]) && fMatchWholeWord)
+						if (++ichSrc < sourceTss.Length && sourceTss.IsCharWordForming(ichSrc, wsf) && fMatchWholeWord)
 						{
 							ichWordForm = 0;
 							fMatchInProgress = false;
@@ -1780,80 +1771,6 @@ namespace SIL.CoreImpl
 		public static bool IsNullOrEmpty(ITsString testMe)
 		{
 			return testMe == null || testMe.Length <= 0;
-		}
-	}
-	#endregion
-
-	#region CpeTracker class
-	/// <summary>
-	/// This class is used to obtain the right character property engine while iterating over
-	/// the characters of a string. It is most effective for consecutive rather than random
-	/// character access.
-	/// </summary>
-	public class CpeTracker
-	{
-		private ITsString m_tssText;
-		// string we're processing.
-		private int m_ichMinCpe;
-		// range over which current m_cpe is valid.
-		private int m_ichLimCpe;
-		private int m_wsCpe;
-		// ws for which m_cpe is valid.
-		private ILgCharacterPropertyEngine m_cpe;
-		private ILgWritingSystemFactory m_wsf;
-
-		/// <summary>
-		/// make the compiler happy.
-		/// </summary>
-		public CpeTracker(ILgWritingSystemFactory wsf, ITsString tss)
-		{
-			m_wsf = wsf;
-			m_tssText = tss;
-			m_ichLimCpe = 0;
-			// ensures first request will fail.
-		}
-
-		/// <summary>
-		/// Get a suitable CPE for the specified character of the original string.
-		/// </summary>
-		/// <param name="ich"></param>
-		/// <returns></returns>
-		public ILgCharacterPropertyEngine CharPropEngine(int ich)
-		{
-			if (ich >= m_ichMinCpe && ich < m_ichLimCpe)
-				return m_cpe;
-			int ws;
-			if (m_tssText == null)
-			{
-				ws = m_wsf.UserWs;
-				// pick an arbitrary one, for any index.
-				m_ichMinCpe = 0;
-				m_ichLimCpe = int.MaxValue;
-			}
-
-			else
-			{
-				int irun = m_tssText.get_RunAt(ich);
-				m_tssText.GetBoundsOfRun(irun, out m_ichMinCpe, out m_ichLimCpe);
-				ws = m_tssText.get_WritingSystem(irun);
-			}
-			// different run, but may not differ in ws.
-			if (ws != m_wsCpe)
-			{
-				m_wsCpe = ws;
-				if (ws == -1)
-				{
-					// Bizarrely, the run has no WS specified. This happens occasionally in poorly-written tests.
-					// Maybe there's some other way. Fall back to a default engine.
-					m_cpe = LgIcuCharPropEngineClass.Create();
-				}
-
-				else
-				{
-					m_cpe = m_wsf.get_CharPropEngine(ws);
-				}
-			}
-			return m_cpe;
 		}
 	}
 	#endregion

@@ -11,15 +11,12 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -146,7 +143,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (nonSpellingError)
 				itemAdd.Enabled = false;
 			menu.Items.Insert(iMenuItem++, itemAdd);
-			itemAdd.Image = SIL.FieldWorks.Resources.ResourceHelper.SpellingIcon;
+			itemAdd.Image = Resources.ResourceHelper.SpellingIcon;
 			itemAdd.Click += spellingMenuItemClick;
 			return iMenuItem;
 		}
@@ -227,8 +224,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			ILgWritingSystemFactory wsf = rootsite.RootBox.DataAccess.WritingSystemFactory;
 
 			// May need to enlarge the word beyond what GrowToWord does, if there is adjacent wordforming material.
-			int ichMinAdjust = AdjustWordBoundary(wsf, tss, ichMin, -1, 0) + 1; // further expanded start of word.
-			int ichLimAdjust = AdjustWordBoundary(wsf, tss, ichLim - 1, 1, tss.Length); // further expanded lim of word.
+			int ichMinAdjust = AdjustWordBoundary(wsf, tss, false, ichMin, 0) + 1; // further expanded start of word.
+			int ichLimAdjust = AdjustWordBoundary(wsf, tss, true, ichLim - 1, tss.Length); // further expanded lim of word.
 			// From the ends we can strip stuff with different spell-checking properties.
 			IVwStylesheet styles = rootsite.RootBox.Stylesheet;
 			int spellProps = SpellCheckProps(tss, ichMin, styles);
@@ -291,22 +288,21 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Given a start character position that is within a word, and an delta that is +/- 1,
+		/// Given a start character position that is within a word, and a direction
 		/// return the index of the first non-wordforming (and non-number) character in that direction,
 		/// or -1 if the start of the string is reached, or string.Length if the end is reached.
 		/// For our purposes here, ORC (0xfffc) is considered word-forming.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private int AdjustWordBoundary(ILgWritingSystemFactory wsf, ITsString tss, int ichStart,
-			int delta, int lim)
+		private int AdjustWordBoundary(ILgWritingSystemFactory wsf, ITsString tss, bool forward,
+			int ichStart, int lim)
 		{
-			string text = tss.Text;
 			int ich;
-			for (ich = ichStart + delta; !BeyondLim(ich, delta, lim); ich += delta)
+			for (ich = NextCharIndex(tss, forward, ichStart); !BeyondLim(forward, ich, lim); ich = NextCharIndex(tss, forward, ich))
 			{
-				ILgCharacterPropertyEngine cpe = TsStringUtils.GetCharPropEngineAtOffset(tss, wsf, ich);
-				char ch = text[ich];
-				if (!cpe.get_IsWordForming(ch) && !Icu.IsNumeric(ch) && ch != 0xfffc)
+				int ch = tss.CharAt(ich);
+				ILgWritingSystem ws = wsf.get_EngineOrNull(tss.get_WritingSystemAt(ich));
+				if (!ws.get_IsWordForming(ch) && !Icu.IsNumeric(ch) && ch != 0xfffc)
 					break;
 			}
 			return ich;
@@ -317,9 +313,14 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Determins whether ich has passed the limit
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private bool BeyondLim(int ich, int delta, int lim)
+		private static bool BeyondLim(bool forward, int ich, int lim)
 		{
-			return (delta < 0) ? (ich < lim) : (ich >= lim);
+			return forward ? ich >= lim : ich < lim;
+		}
+
+		private static int NextCharIndex(ITsString tss, bool forward, int ich)
+		{
+			return forward ? tss.NextCharIndex(ich) : tss.PrevCharIndex(ich);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -638,13 +639,13 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// </summary>
 	public class SpellCorrectMenuItem : ToolStripMenuItem
 	{
-		IVwRootBox m_rootb;
-		int m_hvoObj;
-		int m_tag;
-		int m_wsAlt; // 0 if not multilingual--not yet implemented.
-		int m_ichMin; // where to make the change.
-		int m_ichLim; // end of string to replace
-		ITsString m_tssReplacement;
+		private readonly IVwRootBox m_rootb;
+		private readonly int m_hvoObj;
+		private readonly int m_tag;
+		private readonly int m_wsAlt; // 0 if not multilingual--not yet implemented.
+		private readonly int m_ichMin; // where to make the change.
+		private readonly int m_ichLim; // end of string to replace
+		private readonly ITsString m_tssReplacement;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

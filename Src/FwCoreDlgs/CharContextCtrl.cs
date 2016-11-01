@@ -65,7 +65,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Dictionary<string, List<ContextInfo>> m_contextInfoLists;
 		private FdoCache m_cache;
 		private IWritingSystemContainer m_wsContainer;
-		private ILgCharacterPropertyEngine m_charPropEng;
 		private IApp m_app;
 		private CoreWritingSystemDefinition m_ws;
 		private int m_gridRowHeight;
@@ -95,23 +94,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			gridContext.GridColor = ColorHelper.CalculateColor(SystemColors.WindowText,
 				SystemColors.Window, 35);
 			m_sInitialScanMsgLabel = lblScanMsg.Text;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the character property engine to use for this control.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private ILgCharacterPropertyEngine CharPropEngine
-		{
-			get
-			{
-				if (m_wsContainer.DefaultVernacularWritingSystem != null)
-					return m_wsContainer.DefaultVernacularWritingSystem.CharPropEngine;
-				if (m_charPropEng == null)
-					m_charPropEng = LgIcuCharPropEngineClass.Create();
-				return m_charPropEng;
-			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -319,7 +301,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private CharacterCategorizer CharacterCategorizer
 		{
-			get { return new FwCharacterCategorizer(ValidCharacters, CharPropEngine); }
+			get { return new FwCharacterCategorizer(ValidCharacters); }
 		}
 		#endregion
 

@@ -1978,23 +1978,6 @@ namespace SIL.CoreImpl
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests the GetCharPropEngineAtOffset method when the ich is pointing to a newline
-		/// character that is in the tss. (TE-8335)
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void GetCharPropEngineAtOffset_AtNewline()
-		{
-			var ws = m_wsf.get_Engine("en");
-			ITsStrBldr bldr = TsStrBldrClass.Create();
-			bldr.Replace(0, 0, "This is my text", StyleUtils.CharStyleTextProps(null, ws.Handle));
-			bldr.Replace(4, 4, Environment.NewLine, StyleUtils.CharStyleTextProps(null, -1));
-			Assert.IsNull(TsStringUtils.GetCharPropEngineAtOffset(bldr.GetString(),
-			m_wsf, 4));
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Tests that result of GetXmlRep with a Empty TsString.
 		/// Confirming that a ws info is produced
 		/// </summary>

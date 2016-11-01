@@ -1366,10 +1366,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		int m_ich; // current position in string, initially 0, advances to char after word or end.
 		int m_cch; // length of string
 		string m_st; // text of m_tss
-		private CpeTracker m_tracker;
-		// Range of characters for which m_cpe is known to be valid. Don't use if ich is outside
-		// this range except for things like white-space testing that don't depend on WS.
-		ILgCharacterPropertyEngine m_cpe;
 		private readonly WritingSystemManager m_wsManager;
 		static Dictionary<string, string> s_wordformToLower = new Dictionary<string, string>();
 
@@ -1382,8 +1378,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			Init(tss);
 			m_wsManager = wsManager;
-			m_tracker = new CpeTracker(m_wsManager, tss);
-			m_cpe = m_tracker.CharPropEngine(0); // a default for functions that don't depend on wordforming.
 		}
 
 		/// <summary>
@@ -1558,7 +1552,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <returns></returns>
 		public bool IsWhite(int ich)
 		{
-			return TsStringUtils.IsWhite(m_st, ich) || StringUtils.FullCharAt(m_st, ich) == AnalysisOccurrence.KchZws;
+			int ch = char.ConvertToUtf32(m_st, ich);
+			return Icu.GetCharType(ch) == Icu.UCharCategory.U_SPACE_SEPARATOR || ch == AnalysisOccurrence.KchZws;
 		}
 
 		/// <summary>
@@ -1575,8 +1570,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (sStyleName == "Chapter Number" || sStyleName == "Verse Number")
 				isLabel = true;
 			//The character is wordforming if it is not a label And it is either word forming or a number (numbers added for LT-10746)
-			return !isLabel && (m_tracker.CharPropEngine(ich).get_IsWordForming(StringUtils.FullCharAt(m_st, ich)) ||
-								  Icu.IsNumeric(StringUtils.FullCharAt(m_st, ich)));
+			return !isLabel && (m_tss.IsCharWordForming(ich, m_wsManager) || Icu.IsNumeric(m_tss.CharAt(ich)));
 		}
 
 		/// <summary>
@@ -1636,13 +1630,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	internal abstract class SegmentBreaker
 	{
 		private readonly List<int> m_ichMinSegBreaks = new List<int>();
-		private readonly CpeTracker m_cpeTracker;
-		private readonly string m_paraText;
 		/// <summary></summary>
 		protected readonly ITsString m_tssText;
-		private ILgCharacterPropertyEngine m_cpe;
-		private int m_csegs = 0;
+		private int m_csegs;
 		private int m_prevCh;
+		private readonly ILgWritingSystemFactory m_wsf;
 
 		// The idea here is that certain characters more-or-less mark the end of a segment:
 		// basically, sentence-terminating characters like period, question-mark, and so forth.
@@ -1679,11 +1671,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		protected SegmentBreaker(ITsString text, ILgWritingSystemFactory wsf)
 		{
 			m_tssText = text;
-			m_cpeTracker = new CpeTracker(wsf, text);
-			// Make sure this is always something.
-			m_cpe = m_cpeTracker.CharPropEngine(0);
-
-			m_paraText = (m_tssText == null || m_tssText.Text == null) ? string.Empty : m_tssText.Text;
+			m_wsf = wsf;
 		}
 
 		/// <summary>
@@ -1708,19 +1696,19 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			int ichLimSeg = 0;
 
 			int ch = 0;
-			if (String.IsNullOrEmpty(m_paraText))
+			if (m_tssText.Length == 0)
 				return;
 			m_prevCh = 0; // not numeric or period
 
-			for (int ich = 0; ich < m_paraText.Length; ich = Surrogates.NextChar(m_paraText, ich))
+			for (int ich = 0; ich < m_tssText.Length; ich = m_tssText.NextCharIndex(ich))
 			{
 				m_prevCh = ch;
-				ch = StringUtils.FullCharAt(m_paraText, ich);
-				m_cpe = m_cpeTracker.CharPropEngine(ich);
+				ch = m_tssText.CharAt(ich);
 				Icu.UCharCategory cc = Icu.GetCharType(ch);
 
 				// don't try to deduce this from cc, it can be overiden.
-				bool fIsLetter = m_cpe.get_IsWordForming(ch);// || m_cpe.get_IsNumber(ch); //Numbers are now wordforming in Analysis [LT-10746]
+				int wsHandle = m_tssText.get_WritingSystemAt(ich);
+				bool fIsLetter = TsStringUtils.IsWordForming(ch, m_wsf, wsHandle);
 				bool fIsLabel = IsLabelText(m_tssText, m_tssText.get_RunAt(ich), TreatOrcsAsLabel);
 				if (ch == StringUtils.kChHardLB)
 				{
@@ -1838,8 +1826,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				}
 			}
 			// We reached the end of the loop. Make a segment out of anything left over.
-			if (ichStartSeg < m_paraText.Length)
-				CreateSegment(ichStartSeg, m_paraText.Length);
+			if (ichStartSeg < m_tssText.Length)
+				CreateSegment(ichStartSeg, m_tssText.Length);
 
 		}
 
@@ -1869,21 +1857,21 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (m_prevCh == 0x002E)
 				return true;
 			// Can't be special if no following character.
-			if (ich >= m_paraText.Length - 1)
+			if (ich >= m_tssText.Length - 1)
 				return false;
-			int chNext = StringUtils.FullCharAt(m_paraText, ich + 1); // +1 is safe because ch at ich is period (not half of surrogate)
+			int chNext = m_tssText.CharAt(ich + 1); // +1 is safe because ch at ich is period (not half of surrogate)
 			if (chNext == 0x002E)
 			{
 				// At least two periods...do we have three?
-				if (ich >= m_paraText.Length - 2)
+				if (ich >= m_tssText.Length - 2)
 					return false; // only 2, not ellipsis
-				if (StringUtils.FullCharAt(m_paraText, ich + 2) != 0x002E)
+				if (m_tssText.CharAt(ich + 2) != 0x002E)
 					return false; // exactly two periods is never special
-				if (ich >= m_paraText.Length - 3)
+				if (ich >= m_tssText.Length - 3)
 					return true; // exactly 3 by end of string, this is the start of an ellipsis.
 				// If the fourth character is a period, we do NOT have a proper ellipsis, so the first period is NOT special
 				// If it IS NOT a period, we have exactly three, so it IS special.
-				return StringUtils.FullCharAt(m_paraText, ich + 3) != 0x002E;
+				return m_tssText.CharAt(ich + 3) != 0x002E;
 			}
 			// No following period, so not an ellipsis. Special exactly if numbers on both sides.
 			// No need currently to ensure correct cpe, category is not yet ws-dependent.

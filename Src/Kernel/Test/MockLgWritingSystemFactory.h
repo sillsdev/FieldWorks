@@ -104,6 +104,18 @@ public:
 		return S_FALSE;
 	}
 
+	STDMETHOD(GetIcuLocaleFromWs)(int ws, BSTR * pbstr)
+	{
+		StrUni stu;
+		if (m_hmwsLocale.Retrieve(ws, &stu))
+		{
+			stu.GetBstr(pbstr);
+			return S_OK;
+		}
+
+		return S_FALSE;
+	}
+
 	STDMETHOD(get_NumberOfWs)(int * pcws)
 	{
 		*pcws = m_setws.Size();
@@ -125,16 +137,6 @@ public:
 		for ( ; iws < cws; ++iws)
 			rgws[iws] = 0;
 		return S_OK;
-	}
-
-	STDMETHOD(get_CharPropEngine)(int ws, ILgCharacterPropertyEngine ** pplcpe)
-	{
-		ILgWritingSystemPtr qws;
-		CheckHr(get_EngineOrNull(ws, &qws));
-		if (qws)
-			return qws->get_CharPropEngine(pplcpe);
-
-		return E_INVALIDARG;
 	}
 
 	STDMETHOD(get_Renderer)(int ws, IVwGraphics * pvg, IRenderEngine ** ppre)

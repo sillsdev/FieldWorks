@@ -61,7 +61,7 @@ using namespace fwutil;	// Rect and Point classes
 #include "TextServ.h"
 #include "ActionHandler.h"
 // Engines
-#include "LgIcuCharPropEngine.h"
+#include "LgLineBreaker.h"
 #include "LgUnicodeCollater.h"
 class RomRenderEngine;
 DEFINE_COM_PTR(RomRenderEngine);

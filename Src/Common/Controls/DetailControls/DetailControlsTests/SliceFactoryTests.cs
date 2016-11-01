@@ -71,7 +71,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			public ICmObjectIdFactory ObjectIdFactory { get{throw new NotImplementedException();} }
 			public IFwMetaDataCacheManaged MetaDataCache  { get{throw new NotImplementedException();} }
 			public ILgWritingSystemFactory WritingSystemFactory { get{throw new NotImplementedException();} }
-			public ILgCharacterPropertyEngine UnicodeCharProps { get{throw new NotImplementedException();} }
 			public IEnumerable<object> GetAllInstances(Type serviceType)
 			{throw new NotImplementedException();}
 			public IEnumerable<TService> GetAllInstances<TService>()

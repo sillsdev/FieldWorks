@@ -660,6 +660,14 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
+		/// Gets the ICU locale from the handle.
+		/// </summary>
+		public string GetIcuLocaleFromWs(int ws)
+		{
+			return Get(ws).IcuLocale;
+		}
+
+		/// <summary>
 		/// Get the number of writing systems currently installed in the system
 		/// </summary>
 		/// <value></value>
@@ -695,16 +703,6 @@ namespace SIL.CoreImpl
 				wss[i] = 0;
 
 			MarshalEx.ArrayToNative(rgws, cws, wss);
-		}
-
-		/// <summary>
-		/// Get the char prop engine for a particular WS
-		/// </summary>
-		/// <param name="ws"></param>
-		/// <returns></returns>
-		public ILgCharacterPropertyEngine get_CharPropEngine(int ws)
-		{
-			return Get(ws).CharPropEngine;
 		}
 
 		/// <summary>

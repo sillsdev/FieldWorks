@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.Utils;
 
 namespace SIL.CoreImpl
 {
@@ -344,6 +345,52 @@ namespace SIL.CoreImpl
 		public static bool get_IsRunOrc(this ITsString tss, int iRun)
 		{
 			return tss.get_RunText(iRun) == "\ufffc";
+		}
+
+		/// <summary>
+		/// Determines whether the character at the specified index in the string is wordforming.
+		/// </summary>
+		public static bool IsCharWordForming(this ITsString tss, int ich, ILgWritingSystemFactory wsf)
+		{
+			if (ich < 0 || ich >= tss.Length)
+				throw new ArgumentOutOfRangeException("ich");
+
+			int wsHandle = tss.get_WritingSystemAt(ich);
+			int ch = char.ConvertToUtf32(tss.Text, ich);
+			return TsStringUtils.IsWordForming(ch, wsf, wsHandle);
+		}
+
+		/// <summary>
+		/// Gets the UTF-32 character at the specified index.
+		/// </summary>
+		public static int CharAt(this ITsString tss, int ich)
+		{
+			if (ich < 0 || ich >= tss.Length)
+				throw new ArgumentOutOfRangeException("ich");
+
+			return char.ConvertToUtf32(tss.Text, ich);
+		}
+
+		/// <summary>
+		/// Gets the index of the next full character.
+		/// </summary>
+		public static int NextCharIndex(this ITsString tss, int ich)
+		{
+			if (ich < 0 || ich >= tss.Length)
+				throw new ArgumentOutOfRangeException("ich");
+
+			return Surrogates.NextChar(tss.Text, ich);
+		}
+
+		/// <summary>
+		/// Gets the index of the previous full character.
+		/// </summary>
+		public static int PrevCharIndex(this ITsString tss, int ich)
+		{
+			if (ich < 0 || ich >= tss.Length)
+				throw new ArgumentOutOfRangeException("ich");
+
+			return Surrogates.PrevChar(tss.Text, ich);
 		}
 		#endregion
 

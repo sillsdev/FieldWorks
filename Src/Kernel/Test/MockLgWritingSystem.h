@@ -158,27 +158,6 @@ public:
 		return S_OK;
 	}
 
-	STDMETHOD(get_CharPropEngine)(ILgCharacterPropertyEngine ** pppropeng)
-	{
-		if (!m_qcpe)
-		{
-			SmartBstr sbstrLanguage;
-			SmartBstr sbstrScript;
-			SmartBstr sbstrCountry;
-			SmartBstr sbstrVariant;
-			m_id.GetBstr(&sbstrLanguage);
-			ILgIcuCharPropEnginePtr qzcpe;
-			qzcpe.CreateInstance(CLSID_LgIcuCharPropEngine);
-			qzcpe->Initialize(sbstrLanguage, sbstrScript, sbstrCountry, sbstrVariant);
-			qzcpe->QueryInterface(IID_ILgCharacterPropertyEngine, (void **)&m_qcpe);
-		}
-		*pppropeng = m_qcpe.Ptr();
-		if (*pppropeng)
-			(*pppropeng)->AddRef();
-
-		return S_OK;
-	}
-
 	STDMETHOD(InterpretChrp)(LgCharRenderProps * pchrp)
 	{
 		ReplaceChrpFontName(pchrp);
@@ -188,6 +167,18 @@ public:
 	STDMETHOD(get_UseNfcContext)(ComBool * pUseNfc)
 	{
 		*pUseNfc = true;
+		return S_OK;
+	}
+
+	STDMETHOD(get_IsWordForming)(int ch, ComBool * pfRet)
+	{
+		*pfRet = StrUtil::IsWordForming(ch);
+		return S_OK;
+	}
+
+	STDMETHOD(get_IcuLocale)(BSTR * pbstr)
+	{
+		m_id.GetBstr(pbstr);
 		return S_OK;
 	}
 
@@ -210,7 +201,6 @@ private:
 	int m_handle;
 	StrUni m_id;
 	IRenderEnginePtr m_qrenengUni;
-	ILgCharacterPropertyEnginePtr m_qcpe;
 	StrUni m_stuDefFont;
 	StrUni m_stuDefHeadFont;
 	StrUni m_stuDefPubFont;

@@ -111,7 +111,7 @@ Description:
 		(Note: use wseng when you need to distinguish the interface/object from the writing
 		system's integer code, which uses ws as its Hungarian.)
 	*******************************************************************************************/
-	DeclareInterface(LgWritingSystem, Unknown, FF923C7E-A7C1-4760-B8E5-7A6D28F4AECB)
+	DeclareInterface(LgWritingSystem, Unknown, 9C0513AB-1AB9-4741-9C49-FA65FA83B7CC)
 	{
 		// The identifier for this writing system.
 		[propget] HRESULT Id(
@@ -154,11 +154,6 @@ Description:
 		[propget] HRESULT DefaultFontName(
 			[out, retval] BSTR * pbstr);
 
-		// Get the engine used to find character properties, including figuring out where line
-		// breaks are allowed.
-		[propget] HRESULT CharPropEngine(
-			[out, retval] ILgCharacterPropertyEngine ** pppropeng);
-
 		// Apply any changes to the chrp before it is used for real: currently,
 		// interpret the magic font names.
 		HRESULT InterpretChrp(
@@ -167,6 +162,16 @@ Description:
 		// Returns true to pass NFC text to the keyboard, otherwise we pass NFD.
 		[propget] HRESULT UseNfcContext(
 			[out, retval] ComBool * pUseNfc);
+
+		// Return true if character is considered to be part of a word (by default, this
+		// corresponds to Unicode general category Mc, Mn, and categories starting with L.
+		[propget] HRESULT IsWordForming(
+			[in] int ch,
+			[out, retval] ComBool *pfRet);
+
+		// The ICU locale for this writing system.
+		[propget] HRESULT IcuLocale(
+			[out, retval] BSTR *pbstr);
 	};
 
 	//:>****************************************************************************************
@@ -293,46 +298,26 @@ Description:
 	};
 
 	/*******************************************************************************************
-		Interface ILgCharacterPropertyEngine
-		This interface provides information about character properties and converting between
-		characters.
-
-		Note the use of int rather than OLECHAR throughout for character codes. This allows
-		for the possibility of characters not in plane 0, though the current base implementation
-		considers all characters outside plane 0 to be unassigned.
-
-		In general, routines which take a single character as input return E_INVALIDARG if the
-		character is outside the extended Unicode range (i.e., it could not be represented as
-		two surrogate pair characters).
+		Interface ILgLineBreaker
+		This interface is used to determine possible line break positions in a string.
 
 		@h3{When to implement}
 		Clients should not normally implement this interface. There are standard implementations
-		in Language.dll.
+		in FwKernel.dll.
 
 		@h3{When to use}
-		Use this interface when you need to know properties of characters, such as whether a
-		character is a letter, how it behaves in the Unicode bidi algorithm, how it combines
-		with other characters, whether it is a symbol, separator, etc, its case, how it
-		might decompose, and so forth. A particularly important use is to determine possible
-		line break positions in a string.
+		Use this interface to determine possible line break positions in a string.
 
 		@h3{How to obtain an instance}
-		Obtain a collating engine from the writing system using
-		${LgWritingSystem#get_CharPropEngine}. Obtain a default Unicode char props engine from
-		${LgWritingSystemFactory#get_UnicodeCharProps}.
+		For now the only way is to create one using CoCreateInstance, with
+		CLSID_LgLineBreaker.
 
-		@h3{Hungarian: propeng}
+		@h3{Hungarian: linbrk}
 	*******************************************************************************************/
-	DeclareInterface(LgCharacterPropertyEngine, Unknown, 890C5B18-6E95-438E-8ADE-A4FFADDF0684)
+	DeclareInterface(LgLineBreaker, Unknown, F8D5FDE9-9695-4D63-8843-E27FD880BFF0)
 	{
-		// Return true if character is considered to be part of a word (by default, this
-		// corresponds to Unicode general category Mc, Mn, and categories starting with L.
-		// ENHANCE: Eventually, this method may need to be altered or replaced to acocunt
-		// for the reality that some languages have context rules to determine whether a
-		// character is word-forming or not (e.g., apostrophes).
-		[propget] HRESULT IsWordForming(
-			[in] int ch,
-			[out, retval] ComBool *pfRet);
+		HRESULT Initialize(
+			[in] BSTR bstrLocale);
 
 		// Get line breaking properties (from enumeration LgLBP) for an array of characters.
 		// This passes an array in, and an array with the same number of elements out, to
@@ -380,7 +365,6 @@ Description:
 			[in, size_is(cchMax)] OLECHAR * prgchIn,
 			[in] int cchMax);
 
-
 		// Finds the nearest line break immediately before the given index (ichIn).  The
 		// function returns not only a location but the weight of the line break (currently not
 		// implemented).  See http://www.unicode.org/unicode/reports/tr14/ for more information
@@ -401,35 +385,6 @@ Description:
 	};
 
 	/*******************************************************************************************
-		Interface ILgIcuCharPropEngine
-		This interface provides initialization functions for an ICU character property engine.
-
-		@h3{When to implement}
-		Clients should not normally implement this interface. There are standard implementations
-		in Language.dll.
-
-		@h3{When to use}
-		Use this interface when you need to initialize an ICU character property engine.
-
-		@h3{How to obtain an instance}
-		For now the only way is to create one using CoCreateInstance, with
-		CLSID_LgIcuCharPropEngine.
-
-		@h3{Hungarian: ipropeng}
-	*******************************************************************************************/
-	DeclareInterface(LgIcuCharPropEngine, LgCharacterPropertyEngine, E8689492-7622-427b-8518-6339294FD227)
-	{
-		HRESULT Initialize(
-			[in] BSTR bstrLanguage,
-			[in] BSTR bstrScript,
-			[in] BSTR bstrCountry,
-			[in] BSTR bstrVariant);
-
-		HRESULT InitCharOverrides(
-			[in] BSTR bstrWsCharsList);
-	}
-
-	/*******************************************************************************************
 		Interface ILgWritingSystemFactory
 		Knows how to find an writing system engine from an writing system integer or an ICU
 		Locale string.
@@ -444,14 +399,14 @@ Description:
 
 		@h3{Hungarian: wsf}
 	*******************************************************************************************/
-	DeclareInterface(LgWritingSystemFactory, Unknown, 22376578-BFEB-4c46-8D72-C9154890DD16)
+	DeclareInterface(LgWritingSystemFactory, Unknown, CC2BD14F-ACCE-4246-9192-9C29441A5A09)
 	{
-		// Get the actual writing system object for a given ICU Locale string.
-		// The current implementation returns any existing writing system for that ICU Locale,
+		// Get the actual writing system object for a given Id string.
+		// The current implementation returns any existing writing system for that Id,
 		// or creates one with default settings if one is not already known.
 		// (Use ${#get_EngineOrNull} to avoid automatic creation of a new engine.)
 		[propget] HRESULT Engine(
-			[in] BSTR bstrIcuLocale,
+			[in] BSTR bstrId,
 			[out, retval] ILgWritingSystem ** ppwseng);
 
 		// Get the actual writing system object for a given code, or returns NULL if one does
@@ -462,15 +417,21 @@ Description:
 			[in] int ws,
 			[out, retval] ILgWritingSystem ** ppwseng);
 
-		// Get an writing system ID from an ICULocale, or 0 if no such writing system exists.
+		// Get an writing system handle from an Id, or 0 if no such writing system exists.
 		// Return S_FALSE if the writing system does not exist.
 		HRESULT GetWsFromStr(
 			[in] BSTR bstr,
-			[out, retval] int * pwsId);
-		// Get the ICULocale for the writing system if it exists, or NULL if it doesn't.
+			[out, retval] int * pws);
+		// Get the Id for the writing system if it exists, or NULL if it doesn't.
 		// Return S_FALSE if the writing system does not exist.
 		HRESULT GetStrFromWs(
-			[in] int wsId,
+			[in] int ws,
+			[out, retval] BSTR * pbstr);
+
+		// Get the ICU locale for the writing system if it exists, or NULL if it doesn't.
+		// Return S_FALSE if the writing system does not exist.
+		HRESULT GetIcuLocaleFromWs(
+			[in] int ws,
 			[out, retval] BSTR * pbstr);
 
 		// Get the number of writing systems currently installed in the system
@@ -481,10 +442,6 @@ Description:
 			[out, size_is(cws)] int * rgws,
 			[in] int cws);
 
-		// Get the char prop engine for a particular WS
-		[propget] HRESULT CharPropEngine(
-			[in] int ws,
-			[out, retval] ILgCharacterPropertyEngine ** pplcpe);
 		// Get the renderer for a particular WS
 		[propget] HRESULT Renderer(
 			[in] int ws,
@@ -691,12 +648,9 @@ DeclareInterface(LgIcuResourceBundle, Unknown, C243C72A-0D15-44D9-ABCB-A6E875A76
 		interface ILgCollatingEngine;
 	};
 
-	// The *new* standrad character property engine, which gives answers based purely on
-	// Unicode (thanks to ICU).
-	DeclareCoClass(LgIcuCharPropEngine, 30D75676-A10F-48FE-9627-EBF4061EA49D)
+	DeclareCoClass(LgLineBreaker, 94FBFA34-21E5-4A1E-B576-BA5D76CC051A)
 	{
-		interface ILgIcuCharPropEngine;
-		interface IMarshal;
+		interface ILgLineBreaker;
 	};
 
 	DeclareCoClass(LgIcuConverterEnumerator, 9E729461-F80D-4796-BA17-086BC61907F1)

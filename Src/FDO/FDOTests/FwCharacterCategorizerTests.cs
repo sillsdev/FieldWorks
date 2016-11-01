@@ -5,7 +5,6 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.WritingSystems;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -21,24 +20,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	[TestFixture]
 	public class FwCharacterCategorizerTests : MemoryOnlyBackendProviderTestBase
 	{
-		#region Member variables
-		private int m_wsEn;
-		#endregion
-
-		#region Test setup and tear down
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Set up before each test is run.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public override void TestSetup()
-		{
-			base.TestSetup();
-
-			m_wsEn = Cache.WritingSystemFactory.get_Engine("en").Handle;
-		}
-		#endregion
-
 		#region Tests
 		///--------------------------------------------------------------------------------------
 		/// <summary>
@@ -55,9 +36,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"1", "2", "3", "4", "5"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"'", "-", "#"}});
 			ValidCharacters validChars = ValidCharacters.Load(ws);
-			ILgCharacterPropertyEngine lgCharPropEngineEn = Cache.WritingSystemFactory.get_CharPropEngine(m_wsEn);
 
-			var categorizer = new FwCharacterCategorizer(validChars, lgCharPropEngineEn);
+			var categorizer = new FwCharacterCategorizer(validChars);
 			Assert.IsTrue(categorizer.IsPunctuation('#'));
 			Assert.IsFalse(categorizer.IsWordFormingCharacter('#'));
 		}
@@ -77,9 +57,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"1", "2", "3", "4", "5"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"'", "-", "#"}});
 			ValidCharacters validChars = ValidCharacters.Load(ws);
-			ILgCharacterPropertyEngine lgCharPropEngineEn = Cache.WritingSystemFactory.get_CharPropEngine(m_wsEn);
 
-			var categorizer = new FwCharacterCategorizer(validChars, lgCharPropEngineEn);
+			var categorizer = new FwCharacterCategorizer(validChars);
 
 			List<WordAndPunct> wordsAndPunc = categorizer.WordAndPuncts("abc.de");
 
@@ -104,9 +83,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"1", "2", "3", "4", "5"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"-", " "}});
 			ValidCharacters validChars = ValidCharacters.Load(ws);
-			ILgCharacterPropertyEngine lgCharPropEngineEn = Cache.WritingSystemFactory.get_CharPropEngine(m_wsEn);
 
-			var categorizer = new FwCharacterCategorizer(validChars, lgCharPropEngineEn);
+			var categorizer = new FwCharacterCategorizer(validChars);
 
 			List<WordAndPunct> wordsAndPunc = categorizer.WordAndPuncts(" ");
 			Assert.AreEqual(0, wordsAndPunc.Count);
@@ -130,9 +108,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"1", "2", "3", "4", "5"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"-", " "}});
 			ValidCharacters validChars = ValidCharacters.Load(ws);
-			ILgCharacterPropertyEngine lgCharPropEngineEn = Cache.WritingSystemFactory.get_CharPropEngine(m_wsEn);
 
-			var categorizer = new FwCharacterCategorizer(validChars, lgCharPropEngineEn);
+			var categorizer = new FwCharacterCategorizer(validChars);
 
 			List<WordAndPunct> wordsAndPunc = categorizer.WordAndPuncts("");
 
@@ -155,9 +132,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"1", "2", "3", "4", "5"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {"'", "-", "#"}});
 			ValidCharacters validChars = ValidCharacters.Load(ws);
-			ILgCharacterPropertyEngine lgCharPropEngineEn = Cache.WritingSystemFactory.get_CharPropEngine(m_wsEn);
 
-			var categorizer = new FwCharacterCategorizer(validChars, lgCharPropEngineEn);
+			var categorizer = new FwCharacterCategorizer(validChars);
 
 			List<WordAndPunct> wordsAndPunc = categorizer.WordAndPuncts("abc.de");
 

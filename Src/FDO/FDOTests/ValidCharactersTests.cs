@@ -8,7 +8,6 @@ using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.WritingSystems;
 
@@ -412,8 +411,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			CoreWritingSystemDefinition ws = m_wsManager.Create("en-US");
 			ValidCharacters validChars = ValidCharacters.Load(ws);
-			var cpe = new DummyCharPropEngine();
-			ReflectionHelper.SetField(validChars, "m_cpe", cpe);
 			Assert.AreEqual(ValidCharacterType.WordForming,
 							ReflectionHelper.GetResult(validChars, "GetNaturalCharType", (int) 'a'));
 			Assert.AreEqual(ValidCharacterType.WordForming,

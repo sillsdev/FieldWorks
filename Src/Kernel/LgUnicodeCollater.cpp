@@ -180,12 +180,6 @@ STDMETHODIMP LgUnicodeCollater::SortKeyRgch(const OLECHAR * prgchSource, int cch
 		ThrowInternalError(E_INVALIDARG, "Invalid collating options");
 	ChkComArgPtr(pcchKey);
 
-	// Create a pointer to LgCharacterPropertyEngine to access get_FullDecomp
-	// ENHANCE JohnT: Should this be the default character property engine or a ws-specific one?
-	if (!m_qcpe) //m_qcpe is initialized to null in constructor.
-	{
-		CheckHr(LgIcuCharPropEngine::GetUnicodeCharProps(&m_qcpe));
-	}
 	const OLECHAR * pchSource;	// points to next char to process, in prgchSource
 	OLECHAR * pch;			// points to next char to process, in rgchDecomp
 	OLECHAR * pchLim;

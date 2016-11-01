@@ -4588,6 +4588,7 @@ namespace StrUtil
 	bool IsSeparator(int ch);
 	bool IsNumber(int ch);
 	bool IsMark(int ch);
+	bool IsWordForming(int ch);
 
 }; // end namespace StrUtil
 

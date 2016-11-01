@@ -74,7 +74,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private readonly List<string> m_wordFormingCharacters = new List<string>();
 		private readonly List<string> m_numericCharacters = new List<string>();
 		private readonly List<string> m_otherCharacters = new List<string>();
-		private readonly ILgCharacterPropertyEngine m_cpe;
 		private TsStringComparer m_comparer;
 
 		#endregion
@@ -97,7 +96,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		protected ValidCharacters()
 		{
-			m_cpe = LgIcuCharPropEngineClass.Create();
 		}
 
 		#region Methods and Properties to load and initialize the class
@@ -292,7 +290,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			if (string.IsNullOrEmpty(chr))
 				return false;
-			return m_wordFormingCharacters.Contains(chr) || m_cpe.get_IsWordForming(chr[0]);
+			return m_wordFormingCharacters.Contains(chr) || TsStringUtils.IsWordForming(chr[0]);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -306,7 +304,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (chr == 0)
 				return false;
 
-			return m_wordFormingCharacters.Contains(chr.ToString(CultureInfo.InvariantCulture)) || m_cpe.get_IsWordForming(chr);
+			return m_wordFormingCharacters.Contains(chr.ToString(CultureInfo.InvariantCulture)) || TsStringUtils.IsWordForming(chr);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -320,7 +318,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (string.IsNullOrEmpty(chr))
 				return false;
 
-			return m_wordFormingCharacters.Contains(chr) && !m_cpe.get_IsWordForming(chr[0]);
+			return m_wordFormingCharacters.Contains(chr) && !TsStringUtils.IsWordForming(chr[0]);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -493,7 +491,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		protected virtual ValidCharacterType GetNaturalCharType(int codepoint)
 		{
-			if (m_cpe.get_IsWordForming(codepoint))
+			if (TsStringUtils.IsWordForming(codepoint))
 				return ValidCharacterType.WordForming;
 			if (Icu.IsNumeric(codepoint))
 			{

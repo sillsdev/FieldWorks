@@ -39,9 +39,6 @@
     <ClCompile Include="TsTextProps.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LgIcuCharPropEngine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="LgIcuWrappers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -70,6 +67,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LgUnicodeCollater.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LgLineBreaker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -117,12 +117,6 @@
     <ClInclude Include="TsTextProps.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LgIcuCharPropEngine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LgIcuCharPropertyInit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LgIcuWrappers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -157,6 +151,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UniscribeSegment.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LgLineBreaker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

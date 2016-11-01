@@ -8,8 +8,8 @@
 // <remarks>
 // </remarks>
 
-using System;
 using System.Collections.Generic;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SILUBS.SharedScrUtils;
 
@@ -24,11 +24,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	public class FwCharacterCategorizer : CharacterCategorizer
 	{
 		#region Member variables
-
-		/// <summary>character property engine</summary>
-		private ILgCharacterPropertyEngine m_charPropEngine;
 		/// <summary>valid characters (used to determine word-forming characters)</summary>
-		private ValidCharacters m_validChars;
+		private readonly ValidCharacters m_validChars;
 		#endregion
 
 		/// ------------------------------------------------------------------------------------
@@ -37,16 +34,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// </summary>
 		/// <param name="validChars">The valid characters. If null, will fall back on the
 		/// specified character property engine.</param>
-		/// <param name="charPropEngine">The character property engine.</param>
 		/// ------------------------------------------------------------------------------------
-		public FwCharacterCategorizer(ValidCharacters validChars,
-			ILgCharacterPropertyEngine charPropEngine)
+		public FwCharacterCategorizer(ValidCharacters validChars)
 		{
-			if (charPropEngine == null)
-				throw new ArgumentNullException("charPropEngine");
-
 			m_validChars = validChars;
-			m_charPropEngine = charPropEngine;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -130,7 +121,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public override bool IsWordFormingCharacter(char cc)
 		{
-			return m_validChars != null ? m_validChars.IsWordForming(cc) : m_charPropEngine.get_IsWordForming(cc);
+			return m_validChars != null ? m_validChars.IsWordForming(cc) : TsStringUtils.IsWordForming(cc);
 		}
 
 		/// ------------------------------------------------------------------------------------

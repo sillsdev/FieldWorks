@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 8.00.0603 */
-/* at Tue Nov 01 11:04:30 2016
+/* at Tue Nov 01 16:05:52 2016
  */
 /* Compiler settings for C:\develop\fwrepo\fw\Output\Common\FwKernelTlb.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
@@ -383,13 +383,6 @@ typedef interface IRenderingFeatures IRenderingFeatures;
 #endif 	/* __IRenderingFeatures_FWD_DEFINED__ */
 
 
-#ifndef __ILgCharacterPropertyEngine_FWD_DEFINED__
-#define __ILgCharacterPropertyEngine_FWD_DEFINED__
-typedef interface ILgCharacterPropertyEngine ILgCharacterPropertyEngine;
-
-#endif 	/* __ILgCharacterPropertyEngine_FWD_DEFINED__ */
-
-
 #ifndef __ILgCollatingEngine_FWD_DEFINED__
 #define __ILgCollatingEngine_FWD_DEFINED__
 typedef interface ILgCollatingEngine ILgCollatingEngine;
@@ -404,11 +397,11 @@ typedef interface ILgWritingSystem ILgWritingSystem;
 #endif 	/* __ILgWritingSystem_FWD_DEFINED__ */
 
 
-#ifndef __ILgIcuCharPropEngine_FWD_DEFINED__
-#define __ILgIcuCharPropEngine_FWD_DEFINED__
-typedef interface ILgIcuCharPropEngine ILgIcuCharPropEngine;
+#ifndef __ILgLineBreaker_FWD_DEFINED__
+#define __ILgLineBreaker_FWD_DEFINED__
+typedef interface ILgLineBreaker ILgLineBreaker;
 
-#endif 	/* __ILgIcuCharPropEngine_FWD_DEFINED__ */
+#endif 	/* __ILgLineBreaker_FWD_DEFINED__ */
 
 
 #ifndef __ILgIcuConverterEnumerator_FWD_DEFINED__
@@ -451,16 +444,16 @@ typedef struct LgUnicodeCollater LgUnicodeCollater;
 #endif 	/* __LgUnicodeCollater_FWD_DEFINED__ */
 
 
-#ifndef __LgIcuCharPropEngine_FWD_DEFINED__
-#define __LgIcuCharPropEngine_FWD_DEFINED__
+#ifndef __LgLineBreaker_FWD_DEFINED__
+#define __LgLineBreaker_FWD_DEFINED__
 
 #ifdef __cplusplus
-typedef class LgIcuCharPropEngine LgIcuCharPropEngine;
+typedef class LgLineBreaker LgLineBreaker;
 #else
-typedef struct LgIcuCharPropEngine LgIcuCharPropEngine;
+typedef struct LgLineBreaker LgLineBreaker;
 #endif /* __cplusplus */
 
-#endif 	/* __LgIcuCharPropEngine_FWD_DEFINED__ */
+#endif 	/* __LgLineBreaker_FWD_DEFINED__ */
 
 
 #ifndef __LgIcuConverterEnumerator_FWD_DEFINED__
@@ -1307,7 +1300,7 @@ enum LgLBP
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 ILgWritingSystem
 ,
-FF923C7E-A7C1-4760-B8E5-7A6D28F4AECB
+9C0513AB-1AB9-4741-9C49-FA65FA83B7CC
 );
 typedef /* [v1_enum] */ 
 enum LgCollatingOptions
@@ -1324,19 +1317,14 @@ ILgCollatingEngine
 D27A3D8C-D3FE-4E25-9097-8F4A1FB30361
 );
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
-ILgCharacterPropertyEngine
+ILgLineBreaker
 ,
-890C5B18-6E95-438E-8ADE-A4FFADDF0684
-);
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-ILgIcuCharPropEngine
-,
-E8689492-7622-427b-8518-6339294FD227
+F8D5FDE9-9695-4D63-8843-E27FD880BFF0
 );
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 ILgWritingSystemFactory
 ,
-22376578-BFEB-4c46-8D72-C9154890DD16
+CC2BD14F-ACCE-4246-9192-9C29441A5A09
 );
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 ILgIcuConverterEnumerator
@@ -1364,9 +1352,9 @@ ATTACH_GUID_TO_CLASS(class,
 LgUnicodeCollater
 );
 ATTACH_GUID_TO_CLASS(class,
-30D75676-A10F-48FE-9627-EBF4061EA49D
+94FBFA34-21E5-4A1E-B576-BA5D76CC051A
 ,
-LgIcuCharPropEngine
+LgLineBreaker
 );
 ATTACH_GUID_TO_CLASS(class,
 9E729461-F80D-4796-BA17-086BC61907F1
@@ -1846,12 +1834,12 @@ LgIcuLocaleEnumerator
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
-    MIDL_INTERFACE("22376578-BFEB-4c46-8D72-C9154890DD16")
+    MIDL_INTERFACE("CC2BD14F-ACCE-4246-9192-9C29441A5A09")
     ILgWritingSystemFactory : public IUnknown
     {
     public:
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Engine( 
-            /* [in] */ BSTR bstrIcuLocale,
+            /* [in] */ BSTR bstrId,
             /* [retval][out] */ ILgWritingSystem **ppwseng) = 0;
         
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_EngineOrNull( 
@@ -1860,10 +1848,14 @@ LgIcuLocaleEnumerator
         
         virtual HRESULT STDMETHODCALLTYPE GetWsFromStr( 
             /* [in] */ BSTR bstr,
-            /* [retval][out] */ int *pwsId) = 0;
+            /* [retval][out] */ int *pws) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE GetStrFromWs( 
-            /* [in] */ int wsId,
+            /* [in] */ int ws,
+            /* [retval][out] */ BSTR *pbstr) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetIcuLocaleFromWs( 
+            /* [in] */ int ws,
             /* [retval][out] */ BSTR *pbstr) = 0;
         
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_NumberOfWs( 
@@ -1872,10 +1864,6 @@ LgIcuLocaleEnumerator
         virtual HRESULT STDMETHODCALLTYPE GetWritingSystems( 
             /* [size_is][out] */ int *rgws,
             /* [in] */ int cws) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_CharPropEngine( 
-            /* [in] */ int ws,
-            /* [retval][out] */ ILgCharacterPropertyEngine **pplcpe) = 0;
         
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Renderer( 
             /* [in] */ int ws,
@@ -1916,7 +1904,7 @@ LgIcuLocaleEnumerator
         
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Engine )( 
             ILgWritingSystemFactory * This,
-            /* [in] */ BSTR bstrIcuLocale,
+            /* [in] */ BSTR bstrId,
             /* [retval][out] */ ILgWritingSystem **ppwseng);
         
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_EngineOrNull )( 
@@ -1927,11 +1915,16 @@ LgIcuLocaleEnumerator
         HRESULT ( STDMETHODCALLTYPE *GetWsFromStr )( 
             ILgWritingSystemFactory * This,
             /* [in] */ BSTR bstr,
-            /* [retval][out] */ int *pwsId);
+            /* [retval][out] */ int *pws);
         
         HRESULT ( STDMETHODCALLTYPE *GetStrFromWs )( 
             ILgWritingSystemFactory * This,
-            /* [in] */ int wsId,
+            /* [in] */ int ws,
+            /* [retval][out] */ BSTR *pbstr);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetIcuLocaleFromWs )( 
+            ILgWritingSystemFactory * This,
+            /* [in] */ int ws,
             /* [retval][out] */ BSTR *pbstr);
         
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_NumberOfWs )( 
@@ -1942,11 +1935,6 @@ LgIcuLocaleEnumerator
             ILgWritingSystemFactory * This,
             /* [size_is][out] */ int *rgws,
             /* [in] */ int cws);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_CharPropEngine )( 
-            ILgWritingSystemFactory * This,
-            /* [in] */ int ws,
-            /* [retval][out] */ ILgCharacterPropertyEngine **pplcpe);
         
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Renderer )( 
             ILgWritingSystemFactory * This,
@@ -1991,26 +1979,26 @@ LgIcuLocaleEnumerator
     ( (This)->lpVtbl -> Release(This) ) 
 
 
-#define ILgWritingSystemFactory_get_Engine(This,bstrIcuLocale,ppwseng)	\
-    ( (This)->lpVtbl -> get_Engine(This,bstrIcuLocale,ppwseng) ) 
+#define ILgWritingSystemFactory_get_Engine(This,bstrId,ppwseng)	\
+    ( (This)->lpVtbl -> get_Engine(This,bstrId,ppwseng) ) 
 
 #define ILgWritingSystemFactory_get_EngineOrNull(This,ws,ppwseng)	\
     ( (This)->lpVtbl -> get_EngineOrNull(This,ws,ppwseng) ) 
 
-#define ILgWritingSystemFactory_GetWsFromStr(This,bstr,pwsId)	\
-    ( (This)->lpVtbl -> GetWsFromStr(This,bstr,pwsId) ) 
+#define ILgWritingSystemFactory_GetWsFromStr(This,bstr,pws)	\
+    ( (This)->lpVtbl -> GetWsFromStr(This,bstr,pws) ) 
 
-#define ILgWritingSystemFactory_GetStrFromWs(This,wsId,pbstr)	\
-    ( (This)->lpVtbl -> GetStrFromWs(This,wsId,pbstr) ) 
+#define ILgWritingSystemFactory_GetStrFromWs(This,ws,pbstr)	\
+    ( (This)->lpVtbl -> GetStrFromWs(This,ws,pbstr) ) 
+
+#define ILgWritingSystemFactory_GetIcuLocaleFromWs(This,ws,pbstr)	\
+    ( (This)->lpVtbl -> GetIcuLocaleFromWs(This,ws,pbstr) ) 
 
 #define ILgWritingSystemFactory_get_NumberOfWs(This,pcws)	\
     ( (This)->lpVtbl -> get_NumberOfWs(This,pcws) ) 
 
 #define ILgWritingSystemFactory_GetWritingSystems(This,rgws,cws)	\
     ( (This)->lpVtbl -> GetWritingSystems(This,rgws,cws) ) 
-
-#define ILgWritingSystemFactory_get_CharPropEngine(This,ws,pplcpe)	\
-    ( (This)->lpVtbl -> get_CharPropEngine(This,ws,pplcpe) ) 
 
 #define ILgWritingSystemFactory_get_Renderer(This,ws,pvg,ppre)	\
     ( (This)->lpVtbl -> get_Renderer(This,ws,pvg,ppre) ) 
@@ -8738,176 +8726,6 @@ GraphiteEngine;
 #endif 	/* __IRenderingFeatures_INTERFACE_DEFINED__ */
 
 
-#ifndef __ILgCharacterPropertyEngine_INTERFACE_DEFINED__
-#define __ILgCharacterPropertyEngine_INTERFACE_DEFINED__
-
-/* interface ILgCharacterPropertyEngine */
-/* [unique][object][uuid] */ 
-
-
-#define IID_ILgCharacterPropertyEngine __uuidof(ILgCharacterPropertyEngine)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("890C5B18-6E95-438E-8ADE-A4FFADDF0684")
-    ILgCharacterPropertyEngine : public IUnknown
-    {
-    public:
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsWordForming( 
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet) = 0;
-        
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE GetLineBreakProps( 
-            /* [size_is][in] */ const OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ byte *prglbOut) = 0;
-        
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE GetLineBreakInfo( 
-            /* [size_is][in] */ const OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [in] */ int ichMin,
-            /* [in] */ int ichLim,
-            /* [size_is][out] */ byte *prglbsOut,
-            /* [out] */ int *pichBreak) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetLineBreakText( 
-            /* [in] */ int cchMax,
-            /* [out] */ OLECHAR *prgchOut,
-            /* [out] */ int *pcchOut) = 0;
-        
-        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_LineBreakText( 
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchMax) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE LineBreakBefore( 
-            /* [in] */ int ichIn,
-            /* [out] */ int *pichOut,
-            /* [out] */ LgLineBreak *plbWeight) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE LineBreakAfter( 
-            /* [in] */ int ichIn,
-            /* [out] */ int *pichOut,
-            /* [out] */ LgLineBreak *plbWeight) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct ILgCharacterPropertyEngineVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ILgCharacterPropertyEngine * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            ILgCharacterPropertyEngine * This);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsWordForming )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *GetLineBreakProps )( 
-            ILgCharacterPropertyEngine * This,
-            /* [size_is][in] */ const OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [size_is][out] */ byte *prglbOut);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *GetLineBreakInfo )( 
-            ILgCharacterPropertyEngine * This,
-            /* [size_is][in] */ const OLECHAR *prgchIn,
-            /* [in] */ int cchIn,
-            /* [in] */ int ichMin,
-            /* [in] */ int ichLim,
-            /* [size_is][out] */ byte *prglbsOut,
-            /* [out] */ int *pichBreak);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetLineBreakText )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int cchMax,
-            /* [out] */ OLECHAR *prgchOut,
-            /* [out] */ int *pcchOut);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_LineBreakText )( 
-            ILgCharacterPropertyEngine * This,
-            /* [size_is][in] */ OLECHAR *prgchIn,
-            /* [in] */ int cchMax);
-        
-        HRESULT ( STDMETHODCALLTYPE *LineBreakBefore )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ichIn,
-            /* [out] */ int *pichOut,
-            /* [out] */ LgLineBreak *plbWeight);
-        
-        HRESULT ( STDMETHODCALLTYPE *LineBreakAfter )( 
-            ILgCharacterPropertyEngine * This,
-            /* [in] */ int ichIn,
-            /* [out] */ int *pichOut,
-            /* [out] */ LgLineBreak *plbWeight);
-        
-        END_INTERFACE
-    } ILgCharacterPropertyEngineVtbl;
-
-    interface ILgCharacterPropertyEngine
-    {
-        CONST_VTBL struct ILgCharacterPropertyEngineVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define ILgCharacterPropertyEngine_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define ILgCharacterPropertyEngine_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define ILgCharacterPropertyEngine_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define ILgCharacterPropertyEngine_get_IsWordForming(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsWordForming(This,ch,pfRet) ) 
-
-#define ILgCharacterPropertyEngine_GetLineBreakProps(This,prgchIn,cchIn,prglbOut)	\
-    ( (This)->lpVtbl -> GetLineBreakProps(This,prgchIn,cchIn,prglbOut) ) 
-
-#define ILgCharacterPropertyEngine_GetLineBreakInfo(This,prgchIn,cchIn,ichMin,ichLim,prglbsOut,pichBreak)	\
-    ( (This)->lpVtbl -> GetLineBreakInfo(This,prgchIn,cchIn,ichMin,ichLim,prglbsOut,pichBreak) ) 
-
-#define ILgCharacterPropertyEngine_GetLineBreakText(This,cchMax,prgchOut,pcchOut)	\
-    ( (This)->lpVtbl -> GetLineBreakText(This,cchMax,prgchOut,pcchOut) ) 
-
-#define ILgCharacterPropertyEngine_put_LineBreakText(This,prgchIn,cchMax)	\
-    ( (This)->lpVtbl -> put_LineBreakText(This,prgchIn,cchMax) ) 
-
-#define ILgCharacterPropertyEngine_LineBreakBefore(This,ichIn,pichOut,plbWeight)	\
-    ( (This)->lpVtbl -> LineBreakBefore(This,ichIn,pichOut,plbWeight) ) 
-
-#define ILgCharacterPropertyEngine_LineBreakAfter(This,ichIn,pichOut,plbWeight)	\
-    ( (This)->lpVtbl -> LineBreakAfter(This,ichIn,pichOut,plbWeight) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __ILgCharacterPropertyEngine_INTERFACE_DEFINED__ */
-
-
 #ifndef __ILgCollatingEngine_INTERFACE_DEFINED__
 #define __ILgCollatingEngine_INTERFACE_DEFINED__
 
@@ -9107,7 +8925,7 @@ GraphiteEngine;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
-    MIDL_INTERFACE("FF923C7E-A7C1-4760-B8E5-7A6D28F4AECB")
+    MIDL_INTERFACE("9C0513AB-1AB9-4741-9C49-FA65FA83B7CC")
     ILgWritingSystem : public IUnknown
     {
     public:
@@ -9136,14 +8954,18 @@ GraphiteEngine;
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_DefaultFontName( 
             /* [retval][out] */ BSTR *pbstr) = 0;
         
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_CharPropEngine( 
-            /* [retval][out] */ ILgCharacterPropertyEngine **pppropeng) = 0;
-        
         virtual HRESULT STDMETHODCALLTYPE InterpretChrp( 
             /* [out][in] */ LgCharRenderProps *pchrp) = 0;
         
         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_UseNfcContext( 
             /* [retval][out] */ ComBool *pUseNfc) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsWordForming( 
+            /* [in] */ int ch,
+            /* [retval][out] */ ComBool *pfRet) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IcuLocale( 
+            /* [retval][out] */ BSTR *pbstr) = 0;
         
     };
     
@@ -9199,10 +9021,6 @@ GraphiteEngine;
             ILgWritingSystem * This,
             /* [retval][out] */ BSTR *pbstr);
         
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_CharPropEngine )( 
-            ILgWritingSystem * This,
-            /* [retval][out] */ ILgCharacterPropertyEngine **pppropeng);
-        
         HRESULT ( STDMETHODCALLTYPE *InterpretChrp )( 
             ILgWritingSystem * This,
             /* [out][in] */ LgCharRenderProps *pchrp);
@@ -9210,6 +9028,15 @@ GraphiteEngine;
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_UseNfcContext )( 
             ILgWritingSystem * This,
             /* [retval][out] */ ComBool *pUseNfc);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsWordForming )( 
+            ILgWritingSystem * This,
+            /* [in] */ int ch,
+            /* [retval][out] */ ComBool *pfRet);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IcuLocale )( 
+            ILgWritingSystem * This,
+            /* [retval][out] */ BSTR *pbstr);
         
         END_INTERFACE
     } ILgWritingSystemVtbl;
@@ -9258,14 +9085,17 @@ GraphiteEngine;
 #define ILgWritingSystem_get_DefaultFontName(This,pbstr)	\
     ( (This)->lpVtbl -> get_DefaultFontName(This,pbstr) ) 
 
-#define ILgWritingSystem_get_CharPropEngine(This,pppropeng)	\
-    ( (This)->lpVtbl -> get_CharPropEngine(This,pppropeng) ) 
-
 #define ILgWritingSystem_InterpretChrp(This,pchrp)	\
     ( (This)->lpVtbl -> InterpretChrp(This,pchrp) ) 
 
 #define ILgWritingSystem_get_UseNfcContext(This,pUseNfc)	\
     ( (This)->lpVtbl -> get_UseNfcContext(This,pUseNfc) ) 
+
+#define ILgWritingSystem_get_IsWordForming(This,ch,pfRet)	\
+    ( (This)->lpVtbl -> get_IsWordForming(This,ch,pfRet) ) 
+
+#define ILgWritingSystem_get_IcuLocale(This,pbstr)	\
+    ( (This)->lpVtbl -> get_IcuLocale(This,pbstr) ) 
 
 #endif /* COBJMACROS */
 
@@ -9278,64 +9108,89 @@ GraphiteEngine;
 #endif 	/* __ILgWritingSystem_INTERFACE_DEFINED__ */
 
 
-#ifndef __ILgIcuCharPropEngine_INTERFACE_DEFINED__
-#define __ILgIcuCharPropEngine_INTERFACE_DEFINED__
+#ifndef __ILgLineBreaker_INTERFACE_DEFINED__
+#define __ILgLineBreaker_INTERFACE_DEFINED__
 
-/* interface ILgIcuCharPropEngine */
+/* interface ILgLineBreaker */
 /* [unique][object][uuid] */ 
 
 
-#define IID_ILgIcuCharPropEngine __uuidof(ILgIcuCharPropEngine)
+#define IID_ILgLineBreaker __uuidof(ILgLineBreaker)
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
-    MIDL_INTERFACE("E8689492-7622-427b-8518-6339294FD227")
-    ILgIcuCharPropEngine : public ILgCharacterPropertyEngine
+    MIDL_INTERFACE("F8D5FDE9-9695-4D63-8843-E27FD880BFF0")
+    ILgLineBreaker : public IUnknown
     {
     public:
         virtual HRESULT STDMETHODCALLTYPE Initialize( 
-            /* [in] */ BSTR bstrLanguage,
-            /* [in] */ BSTR bstrScript,
-            /* [in] */ BSTR bstrCountry,
-            /* [in] */ BSTR bstrVariant) = 0;
+            /* [in] */ BSTR bstrLocale) = 0;
         
-        virtual HRESULT STDMETHODCALLTYPE InitCharOverrides( 
-            /* [in] */ BSTR bstrWsCharsList) = 0;
+        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE GetLineBreakProps( 
+            /* [size_is][in] */ const OLECHAR *prgchIn,
+            /* [in] */ int cchIn,
+            /* [size_is][out] */ byte *prglbOut) = 0;
+        
+        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE GetLineBreakInfo( 
+            /* [size_is][in] */ const OLECHAR *prgchIn,
+            /* [in] */ int cchIn,
+            /* [in] */ int ichMin,
+            /* [in] */ int ichLim,
+            /* [size_is][out] */ byte *prglbsOut,
+            /* [out] */ int *pichBreak) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetLineBreakText( 
+            /* [in] */ int cchMax,
+            /* [out] */ OLECHAR *prgchOut,
+            /* [out] */ int *pcchOut) = 0;
+        
+        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_LineBreakText( 
+            /* [size_is][in] */ OLECHAR *prgchIn,
+            /* [in] */ int cchMax) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE LineBreakBefore( 
+            /* [in] */ int ichIn,
+            /* [out] */ int *pichOut,
+            /* [out] */ LgLineBreak *plbWeight) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE LineBreakAfter( 
+            /* [in] */ int ichIn,
+            /* [out] */ int *pichOut,
+            /* [out] */ LgLineBreak *plbWeight) = 0;
         
     };
     
     
 #else 	/* C style interface */
 
-    typedef struct ILgIcuCharPropEngineVtbl
+    typedef struct ILgLineBreakerVtbl
     {
         BEGIN_INTERFACE
         
         HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ILgIcuCharPropEngine * This,
+            ILgLineBreaker * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
             _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ILgIcuCharPropEngine * This);
+            ILgLineBreaker * This);
         
         ULONG ( STDMETHODCALLTYPE *Release )( 
-            ILgIcuCharPropEngine * This);
+            ILgLineBreaker * This);
         
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsWordForming )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ int ch,
-            /* [retval][out] */ ComBool *pfRet);
+        HRESULT ( STDMETHODCALLTYPE *Initialize )( 
+            ILgLineBreaker * This,
+            /* [in] */ BSTR bstrLocale);
         
         /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *GetLineBreakProps )( 
-            ILgIcuCharPropEngine * This,
+            ILgLineBreaker * This,
             /* [size_is][in] */ const OLECHAR *prgchIn,
             /* [in] */ int cchIn,
             /* [size_is][out] */ byte *prglbOut);
         
         /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *GetLineBreakInfo )( 
-            ILgIcuCharPropEngine * This,
+            ILgLineBreaker * This,
             /* [size_is][in] */ const OLECHAR *prgchIn,
             /* [in] */ int cchIn,
             /* [in] */ int ichMin,
@@ -9344,45 +9199,34 @@ GraphiteEngine;
             /* [out] */ int *pichBreak);
         
         HRESULT ( STDMETHODCALLTYPE *GetLineBreakText )( 
-            ILgIcuCharPropEngine * This,
+            ILgLineBreaker * This,
             /* [in] */ int cchMax,
             /* [out] */ OLECHAR *prgchOut,
             /* [out] */ int *pcchOut);
         
         /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_LineBreakText )( 
-            ILgIcuCharPropEngine * This,
+            ILgLineBreaker * This,
             /* [size_is][in] */ OLECHAR *prgchIn,
             /* [in] */ int cchMax);
         
         HRESULT ( STDMETHODCALLTYPE *LineBreakBefore )( 
-            ILgIcuCharPropEngine * This,
+            ILgLineBreaker * This,
             /* [in] */ int ichIn,
             /* [out] */ int *pichOut,
             /* [out] */ LgLineBreak *plbWeight);
         
         HRESULT ( STDMETHODCALLTYPE *LineBreakAfter )( 
-            ILgIcuCharPropEngine * This,
+            ILgLineBreaker * This,
             /* [in] */ int ichIn,
             /* [out] */ int *pichOut,
             /* [out] */ LgLineBreak *plbWeight);
         
-        HRESULT ( STDMETHODCALLTYPE *Initialize )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ BSTR bstrLanguage,
-            /* [in] */ BSTR bstrScript,
-            /* [in] */ BSTR bstrCountry,
-            /* [in] */ BSTR bstrVariant);
-        
-        HRESULT ( STDMETHODCALLTYPE *InitCharOverrides )( 
-            ILgIcuCharPropEngine * This,
-            /* [in] */ BSTR bstrWsCharsList);
-        
         END_INTERFACE
-    } ILgIcuCharPropEngineVtbl;
+    } ILgLineBreakerVtbl;
 
-    interface ILgIcuCharPropEngine
+    interface ILgLineBreaker
     {
-        CONST_VTBL struct ILgIcuCharPropEngineVtbl *lpVtbl;
+        CONST_VTBL struct ILgLineBreakerVtbl *lpVtbl;
     };
 
     
@@ -9390,43 +9234,36 @@ GraphiteEngine;
 #ifdef COBJMACROS
 
 
-#define ILgIcuCharPropEngine_QueryInterface(This,riid,ppvObject)	\
+#define ILgLineBreaker_QueryInterface(This,riid,ppvObject)	\
     ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
 
-#define ILgIcuCharPropEngine_AddRef(This)	\
+#define ILgLineBreaker_AddRef(This)	\
     ( (This)->lpVtbl -> AddRef(This) ) 
 
-#define ILgIcuCharPropEngine_Release(This)	\
+#define ILgLineBreaker_Release(This)	\
     ( (This)->lpVtbl -> Release(This) ) 
 
 
-#define ILgIcuCharPropEngine_get_IsWordForming(This,ch,pfRet)	\
-    ( (This)->lpVtbl -> get_IsWordForming(This,ch,pfRet) ) 
+#define ILgLineBreaker_Initialize(This,bstrLocale)	\
+    ( (This)->lpVtbl -> Initialize(This,bstrLocale) ) 
 
-#define ILgIcuCharPropEngine_GetLineBreakProps(This,prgchIn,cchIn,prglbOut)	\
+#define ILgLineBreaker_GetLineBreakProps(This,prgchIn,cchIn,prglbOut)	\
     ( (This)->lpVtbl -> GetLineBreakProps(This,prgchIn,cchIn,prglbOut) ) 
 
-#define ILgIcuCharPropEngine_GetLineBreakInfo(This,prgchIn,cchIn,ichMin,ichLim,prglbsOut,pichBreak)	\
+#define ILgLineBreaker_GetLineBreakInfo(This,prgchIn,cchIn,ichMin,ichLim,prglbsOut,pichBreak)	\
     ( (This)->lpVtbl -> GetLineBreakInfo(This,prgchIn,cchIn,ichMin,ichLim,prglbsOut,pichBreak) ) 
 
-#define ILgIcuCharPropEngine_GetLineBreakText(This,cchMax,prgchOut,pcchOut)	\
+#define ILgLineBreaker_GetLineBreakText(This,cchMax,prgchOut,pcchOut)	\
     ( (This)->lpVtbl -> GetLineBreakText(This,cchMax,prgchOut,pcchOut) ) 
 
-#define ILgIcuCharPropEngine_put_LineBreakText(This,prgchIn,cchMax)	\
+#define ILgLineBreaker_put_LineBreakText(This,prgchIn,cchMax)	\
     ( (This)->lpVtbl -> put_LineBreakText(This,prgchIn,cchMax) ) 
 
-#define ILgIcuCharPropEngine_LineBreakBefore(This,ichIn,pichOut,plbWeight)	\
+#define ILgLineBreaker_LineBreakBefore(This,ichIn,pichOut,plbWeight)	\
     ( (This)->lpVtbl -> LineBreakBefore(This,ichIn,pichOut,plbWeight) ) 
 
-#define ILgIcuCharPropEngine_LineBreakAfter(This,ichIn,pichOut,plbWeight)	\
+#define ILgLineBreaker_LineBreakAfter(This,ichIn,pichOut,plbWeight)	\
     ( (This)->lpVtbl -> LineBreakAfter(This,ichIn,pichOut,plbWeight) ) 
-
-
-#define ILgIcuCharPropEngine_Initialize(This,bstrLanguage,bstrScript,bstrCountry,bstrVariant)	\
-    ( (This)->lpVtbl -> Initialize(This,bstrLanguage,bstrScript,bstrCountry,bstrVariant) ) 
-
-#define ILgIcuCharPropEngine_InitCharOverrides(This,bstrWsCharsList)	\
-    ( (This)->lpVtbl -> InitCharOverrides(This,bstrWsCharsList) ) 
 
 #endif /* COBJMACROS */
 
@@ -9436,7 +9273,7 @@ GraphiteEngine;
 
 
 
-#endif 	/* __ILgIcuCharPropEngine_INTERFACE_DEFINED__ */
+#endif 	/* __ILgLineBreaker_INTERFACE_DEFINED__ */
 
 
 #ifndef __ILgIcuConverterEnumerator_INTERFACE_DEFINED__
@@ -9963,12 +9800,12 @@ class DECLSPEC_UUID("0D9900D2-1693-481F-AA70-7EA64F264EC4")
 LgUnicodeCollater;
 #endif
 
-#define CLSID_LgIcuCharPropEngine __uuidof(LgIcuCharPropEngine)
+#define CLSID_LgLineBreaker __uuidof(LgLineBreaker)
 
 #ifdef __cplusplus
 
-class DECLSPEC_UUID("30D75676-A10F-48FE-9627-EBF4061EA49D")
-LgIcuCharPropEngine;
+class DECLSPEC_UUID("94FBFA34-21E5-4A1E-B576-BA5D76CC051A")
+LgLineBreaker;
 #endif
 
 #define CLSID_LgIcuConverterEnumerator __uuidof(LgIcuConverterEnumerator)

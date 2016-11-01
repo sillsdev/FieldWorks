@@ -2863,10 +2863,10 @@ public:  // we can make anything public since the whole class is private to this
 				}
 				OLECHAR ch;
 				CheckHr(m_pts->Fetch(ichLastBox, ichLastBox + 1, &ch));
-				ILgCharacterPropertyEnginePtr qchprpeng;
-				qchprpeng.CreateInstance(CLSID_LgIcuCharPropEngine);
+				ILgLineBreakerPtr qlb;
+				qlb.CreateInstance(CLSID_LgLineBreaker);
 				byte lbp;
-				CheckHr(qchprpeng->GetLineBreakProps(&ch, 1, &lbp));
+				CheckHr(qlb->GetLineBreakProps(&ch, 1, &lbp));
 				lbp &= 0x1f; // strip 'is it a space' high bit
 				// If it's a space (or other character which provides a break opportunity after),
 				// go ahead and break. Otherwise treat as bad break.
@@ -8391,7 +8391,7 @@ class SpellCheckMethod
 	ICheckWordPtr m_qcw; // last dict obtained.
 	ILgWritingSystemFactoryPtr m_qwsf;
 	int m_ws; // ws to which m_qcpe applies.
-	ILgCharacterPropertyEnginePtr m_qcpe; // valid for chars from m_ich to m_ichLimRun
+	ILgWritingSystemPtr m_qws; // valid for chars from m_ich to m_ichLimRun
 public:
 	SpellCheckMethod(VwParagraphBox * pvpbox)
 	{
@@ -8411,7 +8411,7 @@ public:
 	{
 	}
 
-	void EnsureRightCpe()
+	void EnsureRightWs()
 	{
 		if (m_ich < m_ichLimRun)
 			return;
@@ -8421,8 +8421,7 @@ public:
 		if (chrp.ws == m_ws)
 			return; // new run, but same WS.
 		m_ws = chrp.ws;
-		ILgWritingSystemPtr qws;
-		CheckHr(m_qwsf->get_CharPropEngine(m_ws, &m_qcpe));
+		CheckHr(m_qwsf->get_EngineOrNull(m_ws, &m_qws));
 	}
 
 
@@ -8434,10 +8433,14 @@ public:
 		bool fInWord = false;
 		for (m_ich = 0; m_ich < m_cch; m_ich++)
 		{
-			EnsureRightCpe();
-			ComBool isWordForming;
+			EnsureRightWs();
 			OLECHAR ch = m_text[m_ich];
-			CheckHr(m_qcpe->get_IsWordForming(ch, &isWordForming));
+			ComBool isWordForming;
+			if (m_qws)
+				CheckHr(m_qws->get_IsWordForming(ch, &isWordForming));
+			else
+				isWordForming = StrUtil::IsWordForming(ch);
+
 			// For consistency with double-click, and so we can detect embedded verse numbers, we
 			// also consider numeric characters word-forming here. Often they are eliminated
 			// because a style marks them as do-not-check. We also include the special character

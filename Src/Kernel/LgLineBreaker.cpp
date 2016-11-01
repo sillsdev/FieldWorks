@@ -2,17 +2,6 @@
 Copyright (c) 2002-2013 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
-
-File: LgIcuCharPropEngine.cpp
-Responsibility: Charley Wesley
-Last reviewed: Not yet.
-
-Description:
-	The character property engine provides character properties from the Unicode character
-	property tables, using ICU to do so.  A solution will be implemented that allows the user
-	to add custom characters; at present they can be added only by editing the XML file.
-
-	This is a thread-safe, "agile" component.
 -------------------------------------------------------------------------------*//*:End Ignore*/
 
 //:>********************************************************************************************
@@ -22,14 +11,9 @@ Description:
 #pragma hdrstop
 // any other headers (not precompiled)
 #include <limits.h>
-#include "Set_i.cpp"
-#include "Vector_i.cpp"
-#include "xmlparse.h"
 #if WIN32
 #include <io.h>
 #endif
-#include "FwXml.h"
-#include "FwStyledText.h"
 #undef THIS_FILE
 DEFINE_THIS_FILE
 
@@ -91,35 +75,27 @@ static LgLBP g_rglbp[] = {
 //:>	Constructor/Destructor
 //:>********************************************************************************************
 
-LgIcuCharPropEngine::LgIcuCharPropEngine()
+LgLineBreaker::LgLineBreaker()
 {
 	m_cref = 1;
 	ModuleEntry::ModuleAddRef();
 	m_pLocale = NULL;
 	m_pBrkit = NULL;
-#if WIN32
-	CoCreateFreeThreadedMarshaler(static_cast<IUnknown *>(static_cast<ILgCharacterPropertyEngine *>(this)),
-		&m_qunkMarshaler);
-#endif
 	StrUni stuUserWs(kstidUserWs);
 	// We at least need to initialize the ICU data directory...
-	CheckHr(Initialize(stuUserWs.Bstr(), NULL, NULL, NULL));
+	CheckHr(Initialize(stuUserWs.Bstr()));
 }
 
-LgIcuCharPropEngine::LgIcuCharPropEngine(BSTR bstrLanguage, BSTR bstrScript, BSTR bstrCountry, BSTR bstrVariant)
+LgLineBreaker::LgLineBreaker(BSTR bstrLocale)
 {
 	m_cref = 1;
 	ModuleEntry::ModuleAddRef();
 	m_pLocale = NULL;
 	m_pBrkit = NULL;
-#if WIN32
-	CoCreateFreeThreadedMarshaler(static_cast<IUnknown *>(static_cast<ILgCharacterPropertyEngine *>(this)),
-		&m_qunkMarshaler);
-#endif
-	CheckHr(Initialize(bstrLanguage, bstrScript, bstrCountry, bstrVariant));
+	CheckHr(Initialize(bstrLocale));
 }
 
-LgIcuCharPropEngine::~LgIcuCharPropEngine()
+LgLineBreaker::~LgLineBreaker()
 {
 	ModuleEntry::ModuleRelease();
 	if (m_pLocale)
@@ -137,7 +113,7 @@ LgIcuCharPropEngine::~LgIcuCharPropEngine()
 }
 
 // Set up a break iterator if we don't currently have one.
-void LgIcuCharPropEngine::SetupBreakIterator()
+void LgLineBreaker::SetupBreakIterator()
 {
 	if (m_pBrkit)
 		return;
@@ -160,54 +136,30 @@ void LgIcuCharPropEngine::SetupBreakIterator()
 //:>	Generic factory stuff to allow creating an instance with CoCreateInstance.
 //:>********************************************************************************************
 static GenericFactory g_fact(
-	_T("SIL.Language1.LgIcuCharPropEngine"),
-	&CLSID_LgIcuCharPropEngine,
-	_T("SIL char properties"),
-	_T("Both"),
-	&LgIcuCharPropEngine::CreateCom);
+	_T("SIL.Language1.LgLineBreaker"),
+	&CLSID_LgLineBreaker,
+	_T("SIL line breaker"),
+	_T("Apartment"),
+	&LgLineBreaker::CreateCom);
 
 
-void LgIcuCharPropEngine::CreateCom(IUnknown *punkCtl, REFIID riid, void ** ppv)
+void LgLineBreaker::CreateCom(IUnknown *punkCtl, REFIID riid, void ** ppv)
 {
 	AssertPtr(ppv);
 	Assert(!*ppv);
 	if (punkCtl)
 		ThrowHr(WarnHr(CLASS_E_NOAGGREGATION));
 
-	ComSmartPtr<LgIcuCharPropEngine> qzpropeng;
+	ComSmartPtr<LgLineBreaker> qzpropeng;
 
-	qzpropeng.Attach(NewObj LgIcuCharPropEngine());		// ref count initially 1
+	qzpropeng.Attach(NewObj LgLineBreaker());		// ref count initially 1
 	CheckHr(qzpropeng->QueryInterface(riid, ppv));
-}
-
-/*----------------------------------------------------------------------------------------------
-	Return a singleton character property engine for pure Unicode character manipulation.
-----------------------------------------------------------------------------------------------*/
-HRESULT LgIcuCharPropEngine::GetUnicodeCharProps(ILgCharacterPropertyEngine ** pplcpe)
-{
-	AssertPtr(pplcpe);
-
-	ILgCharacterPropertyEnginePtr qlcpeUnicode;
-	StrUtil::InitIcuDataDir();
-	ISimpleInitPtr qsimi;
-	// Make an instance; initially get the interface we need to initialize it.
-	LgIcuCharPropEngine::CreateCom(NULL, IID_ISimpleInit, (void **)&qsimi);
-	if (!qsimi)
-		ThrowHr(WarnHr(E_UNEXPECTED));
-	// This engine does not need any init data.
-	CheckHr(qsimi->InitNew(NULL, 0));
-	// If initialization succeeds, get the requested interface.
-	CheckHr(qsimi->QueryInterface(IID_ILgCharacterPropertyEngine, (void **)&qlcpeUnicode));
-	AssertPtr(qlcpeUnicode);
-	*pplcpe = qlcpeUnicode.Detach();
-
-	return S_OK;
 }
 
 //:>********************************************************************************************
 //:>	IUnknown Methods
 //:>********************************************************************************************
-STDMETHODIMP LgIcuCharPropEngine::QueryInterface(REFIID riid, void ** ppv)
+STDMETHODIMP LgLineBreaker::QueryInterface(REFIID riid, void ** ppv)
 {
 	AssertPtr(ppv);
 	if (!ppv)
@@ -215,23 +167,17 @@ STDMETHODIMP LgIcuCharPropEngine::QueryInterface(REFIID riid, void ** ppv)
 	*ppv = NULL;
 
 	if (riid == IID_IUnknown)
-		*ppv = static_cast<IUnknown *>(static_cast<ILgCharacterPropertyEngine *>(this));
-	else if (riid == IID_ILgCharacterPropertyEngine)
-		*ppv = static_cast<ILgCharacterPropertyEngine *>(this);
+		*ppv = static_cast<IUnknown *>(static_cast<ILgLineBreaker *>(this));
+	else if (riid == IID_ILgLineBreaker)
+		*ppv = static_cast<ILgLineBreaker *>(this);
 	else if (riid == IID_ISimpleInit)
 		*ppv = static_cast<ISimpleInit *>(this);
-	else if (riid == IID_ILgIcuCharPropEngine)
-		*ppv = static_cast<ILgIcuCharPropEngine *>(this);
 	else if (riid == IID_ISupportErrorInfo)
 	{
-		*ppv = NewObj CSupportErrorInfo2(static_cast<ILgCharacterPropertyEngine *>(this),
-			IID_ISimpleInit, IID_ILgCharacterPropertyEngine);
+		*ppv = NewObj CSupportErrorInfo2(static_cast<ILgLineBreaker *>(this),
+			IID_ISimpleInit, IID_ILgLineBreaker);
 		return S_OK;
 	}
-#if WIN32
-	else if (riid == IID_IMarshal)
-		return m_qunkMarshaler->QueryInterface(riid, ppv);
-#endif
 	else
 		return E_NOINTERFACE;
 
@@ -256,7 +202,7 @@ STDMETHODIMP LgIcuCharPropEngine::QueryInterface(REFIID riid, void ** ppv)
 	hr = qcim->InitNew(CLSID_LgSystemCollater, NULL, 0);
 	}
 ----------------------------------------------------------------------------------------------*/
-STDMETHODIMP LgIcuCharPropEngine::InitNew(const BYTE * prgb, int cb)
+STDMETHODIMP LgLineBreaker::InitNew(const BYTE * prgb, int cb)
 {
 	BEGIN_COM_METHOD
 	ChkComArrayArg(prgb, cb);
@@ -271,7 +217,7 @@ STDMETHODIMP LgIcuCharPropEngine::InitNew(const BYTE * prgb, int cb)
 
 	@param pbstr Pointer to a BSTR for returning the initialization data.
 ----------------------------------------------------------------------------------------------*/
-STDMETHODIMP LgIcuCharPropEngine::get_InitializationData(BSTR * pbstr)
+STDMETHODIMP LgLineBreaker::get_InitializationData(BSTR * pbstr)
 {
 	BEGIN_COM_METHOD
 	ChkComArgPtr (pbstr)
@@ -281,64 +227,33 @@ STDMETHODIMP LgIcuCharPropEngine::get_InitializationData(BSTR * pbstr)
 }
 
 //:>********************************************************************************************
-//:>	ILgCharacterPropertyEngine Methods
+//:>	ILgLineBreaker Methods
 //:>********************************************************************************************
 
-// ENHANCE JohnT: if asked about a character not defined in the standard, should we give
-// some sort of default answer, or report an error? The current implementation does
-// the former.
-
 /*----------------------------------------------------------------------------------------------
-	Check a unicode character is valid and throw an exception if not. This is broken out into
-	a separate routine in case we want to change to some milder form of failure than an
-	internal error.
+Initialize an instance with the proper Locale values.
 ----------------------------------------------------------------------------------------------*/
-void LgIcuCharPropEngine::CheckUnicodeChar(int ch)
-{
-	if (!IsPlausibleUnicodeCh(ch))
-		ThrowNice(E_FAIL, kstidInvalidUnicode);
-}
-
-/*----------------------------------------------------------------------------------------------
-	Is it a word-forming character (Unicode categories L*, Mn, or Mc)
-----------------------------------------------------------------------------------------------*/
-STDMETHODIMP LgIcuCharPropEngine::get_IsWordForming(int ch, ComBool * pfRet)
+STDMETHODIMP LgLineBreaker::Initialize(BSTR bstrLocale)
 {
 	BEGIN_COM_METHOD
-	ChkComOutPtr(pfRet);
-	CheckUnicodeChar(ch);
+	StrAnsi staLocale(bstrLocale);
+	Assert(staLocale.Length());
 
-	LOCK(m_mutex)
+	if (m_pLocale != NULL)
 	{
-		if( m_siWordformingOverrides.IsMember(ch))
-		{
-			*pfRet = true;
-			return S_OK;
-		}
+		delete m_pLocale;
+		m_pLocale = NULL;
 	}
 
-	switch (u_charType(ch))
-	{
-	case U_UPPERCASE_LETTER:
-	case U_LOWERCASE_LETTER:
-	case U_TITLECASE_LETTER:
-	case U_MODIFIER_LETTER:
-	case U_OTHER_LETTER:
-	case U_NON_SPACING_MARK:
-	case U_COMBINING_SPACING_MARK:
-	case U_MODIFIER_SYMBOL:		// per Martin Hosken's reading of UAX#29.  See LT-5518.
-		*pfRet = true;
-		break;
-	default:
-		*pfRet = false;
-		break;
-	}
+	m_pLocale = new Locale(staLocale.Chars());
 
-	END_COM_METHOD(g_fact, IID_ILgCharacterPropertyEngine);
+	SetupBreakIterator();
+
+	END_COM_METHOD(g_fact, IID_ILgLineBreaker);
 }
 
 //:Ignore (no reason to have this table or the comments about it in the web page)
-const byte LgIcuCharPropEngine::s_rglbs[32][32] = {
+const byte LgLineBreaker::s_rglbs[32][32] = {
 //    AI AL B2 BA BB BK CB CL CM CR EX GL HY ID IN IS LF NS NU OP PO PR QU SA SG SP SY XX ZW
 /*AI*/{3, 3, 2, 3, 2, 4, 2, 1, 0, 4, 1, 3, 3, 2, 3, 3, 4, 3, 3, 2, 3, 2, 3, 3, 3, 0, 1, 3, 1},
 /*AL*/{3, 3, 2, 3, 2, 4, 2, 1, 0, 4, 1, 3, 3, 2, 3, 3, 4, 3, 3, 2, 3, 2, 3, 3, 3, 0, 1, 3, 1},
@@ -393,7 +308,7 @@ const byte LgIcuCharPropEngine::s_rglbs[32][32] = {
 	This added bit is used later on to tell the renderer that characters so marked can be
 	ignored if they are at the end of a line.
 ----------------------------------------------------------------------------------------------*/
-STDMETHODIMP LgIcuCharPropEngine::GetLineBreakProps(const OLECHAR * prgchIn, int cchIn,
+STDMETHODIMP LgLineBreaker::GetLineBreakProps(const OLECHAR * prgchIn, int cchIn,
 	byte * prglbpOut)
 {
 	BEGIN_COM_METHOD
@@ -411,7 +326,7 @@ STDMETHODIMP LgIcuCharPropEngine::GetLineBreakProps(const OLECHAR * prgchIn, int
 		++prglbpOut;
 	}
 
-	END_COM_METHOD(g_fact, IID_ILgCharacterPropertyEngine);
+	END_COM_METHOD(g_fact, IID_ILgLineBreaker);
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -419,7 +334,7 @@ STDMETHODIMP LgIcuCharPropEngine::GetLineBreakProps(const OLECHAR * prgchIn, int
 	calling ${#GetLineBreakProps} followed by ${#GetLineBreakStatus} on the whole string.
 	The logic of the method is roughly a combination of that of the other two.
 ----------------------------------------------------------------------------------------------*/
-STDMETHODIMP LgIcuCharPropEngine::GetLineBreakInfo(const OLECHAR * prgchIn, int cchIn,
+STDMETHODIMP LgLineBreaker::GetLineBreakInfo(const OLECHAR * prgchIn, int cchIn,
 	int ichMin, int ichLim, byte * prglbsOut, int * pichBreak)
 {
 	BEGIN_COM_METHOD
@@ -587,68 +502,62 @@ STDMETHODIMP LgIcuCharPropEngine::GetLineBreakInfo(const OLECHAR * prgchIn, int 
 		lbpCurrent = lbpNext;
 		++plbsOut;
 	}
-	END_COM_METHOD(g_fact, IID_ILgCharacterPropertyEngine);
+	END_COM_METHOD(g_fact, IID_ILgLineBreaker);
 }
 
 /*----------------------------------------------------------------------------------------------
 	Sets the text for the LineBreakBefore and the LineBreakAfter functions to use.
 ----------------------------------------------------------------------------------------------*/
-STDMETHODIMP LgIcuCharPropEngine::put_LineBreakText(OLECHAR * prgchIn, int cch)
+STDMETHODIMP LgLineBreaker::put_LineBreakText(OLECHAR * prgchIn, int cch)
 {
 	BEGIN_COM_METHOD;
 	ChkComArgPtr(prgchIn);
 	ChkComArrayArg(prgchIn, cch);
-	LOCK(m_mutex)
-	{
-		Assert(m_pLocale);
-		if (!m_pLocale)
-			return E_UNEXPECTED;
-		// Check that first the character is not a low surrogate.
-	//	Assert(!IsLowSurrogate(*prgchIn));
-		SetupBreakIterator(); //make sure we have one.
 
-		m_cchBrkMax = cch;
-		m_pBrkit->setText(m_usBrkIt.setTo(prgchIn, cch));
-	}
+	Assert(m_pLocale);
+	if (!m_pLocale)
+		return E_UNEXPECTED;
+	SetupBreakIterator(); //make sure we have one.
 
-	END_COM_METHOD(g_fact, IID_ILgCharacterPropertyEngine);
+	m_cchBrkMax = cch;
+	m_pBrkit->setText(m_usBrkIt.setTo(prgchIn, cch));
+
+	END_COM_METHOD(g_fact, IID_ILgLineBreaker);
 }
 
 /*----------------------------------------------------------------------------------------------
 	Gets the text that the LineBreakBefore and LineBreakAfter functions are using.  This
 	function is included for completion.
 ----------------------------------------------------------------------------------------------*/
-STDMETHODIMP LgIcuCharPropEngine::GetLineBreakText(int cchMax, OLECHAR * prgchOut,
+STDMETHODIMP LgLineBreaker::GetLineBreakText(int cchMax, OLECHAR * prgchOut,
 	int * pcchOut)
 {
 	BEGIN_COM_METHOD;
 	ChkComArrayArg(prgchOut, cchMax);
 	ChkComOutPtr(pcchOut);
-	LOCK(m_mutex)
+
+	Assert(m_pLocale);
+	if (!m_pLocale)
+		return E_UNEXPECTED;
+	SetupBreakIterator(); //make sure we have one.
+
+	UnicodeString ustrAns;
+
+	const CharacterIterator & chIter = m_pBrkit->getText();
+	const_cast<CharacterIterator &>(chIter).getText(ustrAns);
+
+	if ((cchMax < ustrAns.length()) && (cchMax > 0))
+		ThrowNice(E_FAIL, kstidBufferTooSmall);
+
+	*pcchOut = ustrAns.length();
+
+	if (cchMax > 0)
 	{
-		Assert(m_pLocale);
-		if (!m_pLocale)
-			return E_UNEXPECTED;
-		SetupBreakIterator(); //make sure we have one.
-
-		UnicodeString ustrAns;
-
-		const CharacterIterator & chIter = m_pBrkit->getText();
-		const_cast<CharacterIterator &>(chIter).getText(ustrAns);
-
-		if ((cchMax < ustrAns.length()) && (cchMax > 0))
-			ThrowNice(E_FAIL, kstidBufferTooSmall);
-
-		*pcchOut = ustrAns.length();
-
-		if (cchMax > 0)
-		{
-			for (int ch = 0; ch < ustrAns.length(); ch++)
-				prgchOut[ch] = ustrAns[ch];
-		}
+		for (int ch = 0; ch < ustrAns.length(); ch++)
+			prgchOut[ch] = ustrAns[ch];
 	}
 
-	END_COM_METHOD(g_fact, IID_ILgCharacterPropertyEngine);
+	END_COM_METHOD(g_fact, IID_ILgLineBreaker);
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -657,26 +566,24 @@ STDMETHODIMP LgIcuCharPropEngine::GetLineBreakText(int cchMax, OLECHAR * prgchOu
 	See http://www.unicode.org/unicode/reports/tr14/ for more information on line breaking
 	properties.  The third parameter is not currently used.
 ----------------------------------------------------------------------------------------------*/
-STDMETHODIMP LgIcuCharPropEngine::LineBreakBefore(int ichIn, int * pichOut,
+STDMETHODIMP LgLineBreaker::LineBreakBefore(int ichIn, int * pichOut,
 	LgLineBreak * plbWeight)
 {
 	BEGIN_COM_METHOD;
 	ChkComOutPtr(pichOut);
 	ChkComArgPtr(plbWeight);
-	LOCK(m_mutex)
-	{
-		Assert(m_pLocale);
-		if (!m_pLocale)
-			return E_UNEXPECTED;
-		SetupBreakIterator(); //make sure we have one.
 
-		if ((ichIn < 0) || (ichIn >= m_cchBrkMax))
-			ThrowNice(E_FAIL, kstidICUBrkRange);
+	Assert(m_pLocale);
+	if (!m_pLocale)
+		return E_UNEXPECTED;
+	SetupBreakIterator(); //make sure we have one.
 
-		*pichOut = m_pBrkit->preceding(ichIn);
-	}
+	if ((ichIn < 0) || (ichIn >= m_cchBrkMax))
+		ThrowNice(E_FAIL, kstidICUBrkRange);
 
-	END_COM_METHOD(g_fact, IID_ILgCharacterPropertyEngine);
+	*pichOut = m_pBrkit->preceding(ichIn);
+
+	END_COM_METHOD(g_fact, IID_ILgLineBreaker);
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -685,75 +592,24 @@ STDMETHODIMP LgIcuCharPropEngine::LineBreakBefore(int ichIn, int * pichOut,
 	See http://www.unicode.org/unicode/reports/tr14/ for more information on line breaking
 	properties.  The third parameter is not currently used.
 ----------------------------------------------------------------------------------------------*/
-STDMETHODIMP LgIcuCharPropEngine::LineBreakAfter(int ichIn, int * pichOut,
+STDMETHODIMP LgLineBreaker::LineBreakAfter(int ichIn, int * pichOut,
 	LgLineBreak * plbWeight)
 {
 	BEGIN_COM_METHOD;
 	ChkComArgPtr(pichOut);
 	ChkComArgPtr(plbWeight);
-	LOCK(m_mutex)
-	{
-		Assert(m_pLocale);
-		if (!m_pLocale)
-			return E_UNEXPECTED;
-		SetupBreakIterator(); //make sure we have one.
 
-		if ((ichIn < 0) || (ichIn >= m_cchBrkMax))
-			ThrowNice(E_FAIL, kstidICUBrkRange);
+	Assert(m_pLocale);
+	if (!m_pLocale)
+		return E_UNEXPECTED;
+	SetupBreakIterator(); //make sure we have one.
+
+	if ((ichIn < 0) || (ichIn >= m_cchBrkMax))
+		ThrowNice(E_FAIL, kstidICUBrkRange);
 
 		*pichOut = m_pBrkit->following(ichIn);
-	}
 
-	END_COM_METHOD(g_fact, IID_ILgCharacterPropertyEngine);
-}
-
-//:>********************************************************************************************
-//:>	ILgIcuCharPropEngine Methods
-//:>********************************************************************************************
-
-/*----------------------------------------------------------------------------------------------
-	Initialize an instance with the proper Locale values.
-----------------------------------------------------------------------------------------------*/
-STDMETHODIMP LgIcuCharPropEngine::Initialize(BSTR bstrLanguage, BSTR bstrScript, BSTR bstrCountry, BSTR bstrVariant)
-{
-	BEGIN_COM_METHOD
-	StrAnsi staLanguage(bstrLanguage);
-	StrAnsi staCountry(bstrCountry);
-	StrAnsi staVariant(bstrVariant);
-	Assert(staLanguage.Length());
-
-	LOCK(m_mutex)
-	{
-		m_pLocale = new Locale(staLanguage.Chars(), staCountry.Chars(), staVariant.Chars());
-
-		SetupBreakIterator();
-	}
-
-	END_COM_METHOD(g_fact, IID_ILgIcuCharPropEngine);
-}
-
-// Enhance JohnT: possibly handle surrogates? DavidO says dialog does not allow them to be added currently.
-STDMETHODIMP LgIcuCharPropEngine::InitCharOverrides(BSTR bstrWsCharsList)
-{
-	BEGIN_COM_METHOD
-	// Todo JohnT: implement; wsCharsList is delimted by \xfffc; between each delimiter if there
-	// is exactly one character and it is not already known to be wordforming add it to m_siWordformingOverrides.
-
-	StrUni wsCharsList(bstrWsCharsList);
-	OLECHAR chPrev = L'\xfffc'; // treat first char as following delimiter.
-	OLECHAR chBefore = L'a'; // already wordforming, not interesting.
-	LOCK(m_mutex)
-	{
-		for (const OLECHAR * pch = wsCharsList.Chars(); pch < wsCharsList.Chars() + wsCharsList.Length(); pch++)
-		{
-			ConsiderAdd(chBefore, chPrev, *pch);
-			chBefore = chPrev;
-			chPrev = *pch;
-		}
-		ConsiderAdd(chBefore, chPrev, L'\xfffc'); // treat end as another delimiter.
-	}
-
-	END_COM_METHOD(g_fact, IID_ILgIcuCharPropEngine);
+	END_COM_METHOD(g_fact, IID_ILgLineBreaker);
 }
 
 //:>********************************************************************************************
@@ -761,74 +617,11 @@ STDMETHODIMP LgIcuCharPropEngine::InitCharOverrides(BSTR bstrWsCharsList)
 //:>********************************************************************************************
 
 /*----------------------------------------------------------------------------------------------
-	Determine whether specified character is in the range of a valid Unicode character.
-	(There are many codepoints within this range that are not yet assigned.)
-	Note that this implementation will accept surrogates, though they are not really valid
-	as stand-along Unicode characters.
-----------------------------------------------------------------------------------------------*/
-bool LgIcuCharPropEngine::IsPlausibleUnicodeCh(int ch)
-{
-	return (ch >= 0 && ch <= 0x10ffff);
-}
-
-/*----------------------------------------------------------------------------------------------
-	Determine whether specified string is composed of characters within the range
-	of valid Unicode characters.
-	Treat well-formed surrogate pairs as valid.
-	ENHANCE JohnT: Currently, this can only fail on malformed surrogate pairs, since no
-	single OLECHAR can be < 0 or > 0xffff.  But we could get more intelligent about what
-	are really valid Unicode chars.
-----------------------------------------------------------------------------------------------*/
-bool LgIcuCharPropEngine::IsPlausibleUnicodeRgch(OLECHAR * prgch, int cch)
-{
-	AssertPtr(prgch);
-	Assert(cch >= 0);
-
-	for (; cch > 0; cch--, prgch++)
-	{
-		if (prgch[0] >= 0xd800 && prgch[0] < 0xdc00)
-		{
-			if  (cch > 1 && prgch[1] >= 0xdc00 && prgch[1] < 0xe000)
-			{
-				// A surrogate pair.
-				prgch++;
-				cch--;
-				continue;
-			}
-			else
-				return false;
-		}
-		else if (prgch[0] >= 0xdc00 && prgch[0] < 0xe000) // Low surrogate with no high before.
-		{
-			return false;
-		}
-	}
-
-	return true;
-}
-
-/*----------------------------------------------------------------------------------------------
 	Cleanup the callback object and the associated break iterator, if any.
 ----------------------------------------------------------------------------------------------*/
-void LgIcuCharPropEngine::CleanupBreakIterator()
+void LgLineBreaker::CleanupBreakIterator()
 {
 	Assert(m_pBrkit != NULL);
 	delete m_pBrkit;
 	m_pBrkit = NULL;
-}
-
-void LgIcuCharPropEngine::ConsiderAdd(OLECHAR chFirst, OLECHAR chSecond, OLECHAR chThird)
-{
-	if (chFirst == 0xfffc && chThird == 0xfffc && chSecond != 0xfffc)
-	{
-		// It's wordforming. Did we already know that?
-		ComBool wf;
-		CheckHr(get_IsWordForming(chSecond, &wf));
-
-		if(!wf)
-		{
-			int newChar = (int)chSecond;
-			m_siWordformingOverrides.Insert(newChar);
-		}
-	}
 }

@@ -138,10 +138,6 @@ protected:
 	// Member variables
 	long m_cref;
 
-	//Pointer to access decomposition property methods in character property engine
-	//this pointer is initialized to null in the constructor.
-	ILgCharacterPropertyEnginePtr m_qcpe;
-
 	ILgWritingSystemFactoryPtr m_qwsf;
 
 	//Count of how many collating elements are in the main array of collating elements.

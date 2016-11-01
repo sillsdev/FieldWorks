@@ -82,7 +82,7 @@ FWKERNEL_OBJ := \
 	$(KERNEL_OBJ)/RomRenderSegment.o \
 	$(KERNEL_OBJ)/GraphiteEngine.o \
 	$(KERNEL_OBJ)/GraphiteSegment.o \
-	$(KERNEL_OBJ)/LgIcuCharPropEngine.o \
+	$(KERNEL_OBJ)/LgLineBreaker.o \
 	$(KERNEL_OBJ)/LocaleIndex.o \
 	$(GENERIC_OBJ)/ModuleEntry.o \
 	$(GENERIC_OBJ)/TextProps1.o \
@@ -123,7 +123,7 @@ $(INT_DIR)/Collection.cpp: testFwKernel.h \
 	MockLgWritingSystemFactory.h \
 	MockLgWritingSystem.h \
 	TestLgCollatingEngine.h \
-	TestLgIcuCharPropEngine.h \
+	TestLgLineBreaker.h \
 	TestRomRenderEngine.h \
 	TestGraphiteEngine.h \
 	RenderEngineTestBase.h

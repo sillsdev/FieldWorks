@@ -394,7 +394,7 @@ LEmptySeg:
 		ichLimText - ichMinSeg, &prgchBuf, citem, (bool)fParaRtoL);
 
 	Vector<int> vichBreak;
-	ILgCharacterPropertyEnginePtr qcpe;
+	ILgLineBreakerPtr qlb;
 
 	int dxSegWidth = 0; // Segment total width.
 	SCRIPT_ITEM * pscri = UniscribeSegment::g_vscri.Begin(); // The current Uniscribe item.
@@ -580,13 +580,18 @@ LEmptySeg:
 					// If the last line break is at the end of the segment, the overall line break
 					// is okay.
 					AssertPtr(m_qwsf);
-					CheckHr(m_qwsf->get_CharPropEngine(chrpThis.ws, &qcpe));
-					AssertPtr(qcpe.Ptr());
-					CheckHr(qcpe->put_LineBreakText(prgchBuf, cchNfc));
+					SmartBstr sbstrLocale;
+					CheckHr(m_qwsf->GetIcuLocaleFromWs(chrpThis.ws, &sbstrLocale));
+
+					if (!qlb)
+						qlb.CreateInstance(CLSID_LgLineBreaker);
+					CheckHr(qlb->Initialize(sbstrLocale));
+
+					CheckHr(qlb->put_LineBreakText(prgchBuf, cchNfc));
 					int ichBreakPoint = ichLimNfc - 1; // Nfc Chars.
 					int ichNextBreak; // Nfc characters.
 					LgLineBreak lb;
-					CheckHr(qcpe->LineBreakAfter(ichBreakPoint, &ichNextBreak, &lb));
+					CheckHr(qlb->LineBreakAfter(ichBreakPoint, &ichNextBreak, &lb));
 					if (ichNextBreak == ichLimNfc) // Hopefully the next possible break is the one we're proposing to use.
 						fOkBreak = true;
 				}
@@ -742,13 +747,17 @@ LEmptySeg:
 			// run then we will need to go back to that run. Note that vichBreak's zeroth
 			// element contains 0 and that ICU line breaks will not be followed by whitespace.
 
-			if (!qcpe)
+			if (!qlb)
 			{
-				// Get a char props engine
+				// Get a line breaker
 				AssertPtr(m_qwsf);
-				CheckHr(m_qwsf->get_CharPropEngine(chrpThis.ws, &qcpe));
-				AssertPtr(qcpe.Ptr());
-				CheckHr(qcpe->put_LineBreakText(prgchBuf, cchNfc));
+				SmartBstr sbstrLocale;
+				CheckHr(m_qwsf->GetIcuLocaleFromWs(chrpThis.ws, &sbstrLocale));
+
+				qlb.CreateInstance(CLSID_LgLineBreaker);
+				CheckHr(qlb->Initialize(sbstrLocale));
+
+				CheckHr(qlb->put_LineBreakText(prgchBuf, cchNfc));
 				Assert(vichBreak.Size() == 0);
 			}
 
@@ -778,7 +787,7 @@ LEmptySeg:
 				{
 					// calculate new value and cache it for possible future use.
 					LgLineBreak lb;
-					CheckHr(qcpe->LineBreakAfter(ichBreakPoint, &ichNextBreak, &lb));
+					CheckHr(qlb->LineBreakAfter(ichBreakPoint, &ichNextBreak, &lb));
 					vichBreak.Push(ichNextBreak);
 				}
 				if (ichNextBreak == BreakIterator::DONE)

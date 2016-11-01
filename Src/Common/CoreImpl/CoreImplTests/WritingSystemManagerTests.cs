@@ -300,26 +300,22 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
-		/// Tests the get_CharPropEngine method
+		/// Tests the get_WordForming method
 		/// </summary>
 		[Test]
-		public void get_CharPropEngine()
+		public void get_IsWordForming()
 		{
 			var wsManager = new WritingSystemManager();
 			CoreWritingSystemDefinition ws = wsManager.Set("zh-CN");
 			ws.CharacterSets.Add(new CharacterSetDefinition("main") {Characters = {"e", "f", "g", "h", "'"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("numeric") {Characters = {"4", "5"}});
 			ws.CharacterSets.Add(new CharacterSetDefinition("punctuation") {Characters = {",", "!", "*"}});
-			ILgCharacterPropertyEngine cpe = wsManager.get_CharPropEngine(ws.Handle);
-			Assert.IsNotNull(cpe);
-			Assert.IsTrue(cpe.get_IsWordForming('\''));
-			Assert.IsFalse(cpe.get_IsWordForming('"'));
+			Assert.IsTrue(ws.get_IsWordForming('\''));
+			Assert.IsFalse(ws.get_IsWordForming('"'));
 
 			ws.CharacterSets.Clear();
-			cpe = wsManager.get_CharPropEngine(ws.Handle);
-			Assert.IsNotNull(cpe);
-			Assert.IsFalse(cpe.get_IsWordForming('\''));
-			Assert.IsFalse(cpe.get_IsWordForming('"'));
+			Assert.IsFalse(ws.get_IsWordForming('\''));
+			Assert.IsFalse(ws.get_IsWordForming('"'));
 			wsManager.Save();
 		}
 

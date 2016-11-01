@@ -98,7 +98,7 @@ protected:
 	// Other protected methods
 //	void AdjustEndForWidth(IVwGraphics * pvg);
 	void FindLineBreak(
-		const OLECHAR * prgch, const ILgCharacterPropertyEnginePtr qcpe,
+		const OLECHAR * prgch, const ILgLineBreakerPtr qlb,
 		const int ichMin, const int ichLim,
 		const LgLineBreak lbrkRequired, const bool fBackFromEnd, int & ichBreak, int & ichDim);
 };

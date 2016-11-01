@@ -155,7 +155,6 @@
     <None Include="App.config" />
     <Compile Include="CaseFunctionsTest.cs" />
     <Compile Include="FwDirectoryFinderTests.cs" />
-    <Compile Include="DummyCharPropEngine.cs" />
     <Compile Include="DummyFwRegistryHelper.cs" />
     <Compile Include="FwLinkArgsTests.cs" />
     <Compile Include="FwRegistryHelperTests.cs" />

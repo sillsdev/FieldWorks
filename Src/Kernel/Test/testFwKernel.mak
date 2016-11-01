@@ -64,7 +64,7 @@ OBJ_KERNELTESTSUITE=\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\RomRenderSegment.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\GraphiteEngine.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\GraphiteSegment.obj\
-	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\LgIcuCharPropEngine.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\LgLineBreaker.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\LgUnicodeCollater.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\FwStyledText.obj\
 
@@ -100,7 +100,7 @@ $(FWKERNELTEST_SRC)\Collection.cpp: $(FWKERNELTEST_SRC)\testFwKernel.h\
  $(FWKERNELTEST_SRC)\MockLgWritingSystemFactory.h\
  $(FWKERNELTEST_SRC)\MockLgWritingSystem.h\
  $(FWKERNELTEST_SRC)\TestLgCollatingEngine.h\
- $(FWKERNELTEST_SRC)\TestLgIcuCharPropEngine.h\
+ $(FWKERNELTEST_SRC)\TestLgLineBreaker.h\
  $(FWKERNELTEST_SRC)\TestUniscribeEngine.h\
  $(FWKERNELTEST_SRC)\TestRomRenderEngine.h\
  $(FWKERNELTEST_SRC)\TestGraphiteEngine.h\
