@@ -49,7 +49,6 @@ OBJ_FWKERNEL=\
 	$(INT_DIR)\autopch\TextServ.obj\
 	$(INT_DIR)\usepch\TextProps1.obj\
 	$(INT_DIR)\autopch\ActionHandler.obj\
-	$(INT_DIR)\autopch\LgIcuWrappers.obj\
 	$(INT_DIR)\autopch\UniscribeEngine.obj\
 	$(INT_DIR)\autopch\UniscribeSegment.obj\
 	$(INT_DIR)\autopch\GraphiteEngine.obj\

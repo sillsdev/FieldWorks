@@ -83,7 +83,6 @@ DEFINE_COM_PTR(GraphiteEngine);
 #include "FwStyledText.h"
 #include "StringToNumHelpers.h"
 #include "xmlparse.h"
-#include "LgIcuWrappers.h"
 
 #if WIN32
 // for parsing XML files; in this DLL, we want the parser to work with wide characters,

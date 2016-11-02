@@ -1,4 +1,4 @@
-#line 1 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+#line 1 "C:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 
 
 
@@ -14,7 +14,7 @@ import "oaidl.idl";
 import "ocidl.idl";
 import "objidl.idl";
 
-#line 1 "C:\\develop\\fwrepo\\fw\\src\\Generic\\common.idh"
+#line 1 "C:\\fwrepo\\fw\\src\\Generic\\common.idh"
 
 
 
@@ -117,11 +117,11 @@ cpp_quote("// This is for code that uses a 64-bit integer for SilTime.")
 cpp_quote("typedef __int64 SilTime;")
 cpp_quote("#endif")
 cpp_quote("")
-#line 17 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+#line 17 "C:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 
 cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76E0-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(",") cpp_quote("FwKernelLib") cpp_quote(");") [ uuid(F1EF76E0-BE04-11d3-8D9A-005004DEFEC4), version(1.0), helpstring("FieldWorks Kernel") ] library FwKernelLib
 {
-	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+	#line 1 "c:\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
 
 
@@ -538,7 +538,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("CF0F1C0B-0E44-4C1E-9912-2048
 {
 	interface IActionHandler;
 };
-#line 418 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 418 "c:\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
 
 
@@ -1694,9 +1694,9 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("24636FD1-DB8D-4b2c-B4C0-44C2
 {
 	interface IDebugReport;
 };
-#line 1574 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 1574 "c:\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
-#line 1576 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 1576 "c:\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
 
 
@@ -1717,10 +1717,10 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IComDisposable") cp
 
 
 
-#line 1597 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 1597 "c:\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
-#line 21 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
-	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
+#line 21 "C:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+	#line 1 "c:\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
 
 
 
@@ -3182,7 +3182,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwStylesheet") cpp
 
 
 
-#line 1463 "c:\\develop\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
+#line 1463 "c:\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
 };
 
 
@@ -3220,10 +3220,10 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 {
 	interface ITsPropsBldr;
 };
-#line 1501 "c:\\develop\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
+#line 1501 "c:\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
 
-#line 22 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
-	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Render.idh"
+#line 22 "C:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+	#line 1 "c:\\fwrepo\\fw\\src\\kernel\\Render.idh"
 
 
 
@@ -3712,7 +3712,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 	{
 		interface IVwGraphicsWin32;
 	};
-	#line 490 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Render.idh"
+	#line 490 "c:\\fwrepo\\fw\\src\\kernel\\Render.idh"
 
 
 	
@@ -4328,7 +4328,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 	{
 		interface IRenderEngine;
 	};
-	#line 1106 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Render.idh"
+	#line 1106 "c:\\fwrepo\\fw\\src\\kernel\\Render.idh"
 
 
 	
@@ -4453,10 +4453,10 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 
 
 
-#line 1231 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Render.idh"
+#line 1231 "c:\\fwrepo\\fw\\src\\kernel\\Render.idh"
 
-#line 23 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
-	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Language.idh"
+#line 23 "C:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+	#line 1 "c:\\fwrepo\\fw\\src\\kernel\\Language.idh"
 
 
 
@@ -4926,181 +4926,6 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgIcuConverterEnumerator") cpp_quote(",") cpp_quote("8E6D558E-8755-4EA1-9FF6-039D375312E9") cpp_quote(");") [ uuid("8E6D558E-8755-4EA1-9FF6-039D375312E9"), object, pointer_default(unique) ] interface ILgIcuConverterEnumerator : IUnknown
-{
-	
-	[propget] HRESULT Count(
-		[out, retval] int * pcconv);
-
-	
-	[propget] HRESULT ConverterName(
-		[in] int iconv,
-		[out,retval] BSTR * pbstrName);
-
-	
-	[propget] HRESULT ConverterId(
-		[in] int iconv,
-		[out,retval] BSTR * pbstrName);
-
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgIcuTransliteratorEnumerator") cpp_quote(",") cpp_quote("50F2492C-6C46-48BA-8B7F-5F04153AB2CC") cpp_quote(");") [ uuid("50F2492C-6C46-48BA-8B7F-5F04153AB2CC"), object, pointer_default(unique) ] interface ILgIcuTransliteratorEnumerator : IUnknown
-{
-	
-	[propget] HRESULT Count(
-		[out, retval] int * pctrans);
-
-	
-	[propget] HRESULT TransliteratorName(
-		[in] int itrans,
-		[out,retval] BSTR * pbstrName);
-
-	
-	[propget] HRESULT TransliteratorId(
-		[in] int iconv,
-		[out,retval] BSTR * pbstrName);
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgIcuLocaleEnumerator") cpp_quote(",") cpp_quote("08F649D0-D8AB-447B-AAB6-21F85CFA743C") cpp_quote(");") [ uuid("08F649D0-D8AB-447B-AAB6-21F85CFA743C"), object, pointer_default(unique) ] interface ILgIcuLocaleEnumerator : IUnknown
-{
-	
-	[propget] HRESULT Count(
-		[out, retval] int * pclocale);
-
-	
-	[propget] HRESULT Name(
-		[in] int iloc,
-		[out, retval] BSTR * pbstrName);
-
-	
-	[propget] HRESULT Language(
-		[in] int iloc,
-		[out, retval] BSTR * pbstrName);
-
-	
-	[propget] HRESULT Country(
-		[in] int iloc,
-		[out, retval] BSTR * pbstrName);
-
-	
-	[propget] HRESULT Variant(
-		[in] int iloc,
-		[out, retval] BSTR * pbstrName);
-
-	
-	
-	
-	[propget] HRESULT DisplayName(
-		[in] int iloc,
-		[in] BSTR bstrLocaleName,
-		[out, retval] BSTR * pbstrName);
-
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgIcuResourceBundle") cpp_quote(",") cpp_quote("C243C72A-0D15-44D9-ABCB-A6E875A7659A") cpp_quote(");") [ uuid("C243C72A-0D15-44D9-ABCB-A6E875A7659A"), object, pointer_default(unique) ] interface ILgIcuResourceBundle : IUnknown
-{
-	
-	
-	HRESULT Init(
-		[in] BSTR bstrPath,
-		[in] BSTR locale);
-
-	
-	[propget] HRESULT Key(
-		[out, retval] BSTR * pbstrKey);
-
-	
-	[propget] HRESULT String(
-		[out, retval] BSTR * pbstrString);
-
-	
-	
-	[propget] HRESULT Name(
-		[out, retval] BSTR * pbstrName);
-
-	
-	
-	[propget] HRESULT GetSubsection(
-		[in] BSTR bstrSectionName,
-		[out, retval] ILgIcuResourceBundle ** pprb);
-
-	
-	
-	[propget] HRESULT HasNext(
-		[out, retval] ComBool * pfHasNext);
-
-	
-	
-	[propget] HRESULT Next(
-		[out, retval] ILgIcuResourceBundle ** pprb);
-
-	
-	[propget] HRESULT Size(
-		[out, retval] int * pcrb);
-
-	
-	[propget] HRESULT StringEx(
-		[in] int irb,
-		[out, retval] BSTR * pbstr);
-};
-
-
-
-
-
 	
 	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("0D9900D2-1693-481F-AA70-7EA64F264EC4") cpp_quote(",") cpp_quote("LgUnicodeCollater") cpp_quote(");") [ uuid(0D9900D2-1693-481F-AA70-7EA64F264EC4) ] coclass LgUnicodeCollater
 	{
@@ -5111,23 +4936,6 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgIcuResourceBundl
 	{
 		interface ILgLineBreaker;
 	};
-
-	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("9E729461-F80D-4796-BA17-086BC61907F1") cpp_quote(",") cpp_quote("LgIcuConverterEnumerator") cpp_quote(");") [ uuid(9E729461-F80D-4796-BA17-086BC61907F1) ] coclass LgIcuConverterEnumerator
-	{
-		interface ILgIcuConverterEnumerator;
-	};
-	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("3F1FD0A4-B2B1-4589-BC82-9CEF5BA84F4E") cpp_quote(",") cpp_quote("LgIcuTransliteratorEnumerator") cpp_quote(");") [ uuid(3F1FD0A4-B2B1-4589-BC82-9CEF5BA84F4E) ] coclass LgIcuTransliteratorEnumerator
-	{
-		interface ILgIcuTransliteratorEnumerator;
-	};
-	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("0DD7FC1A-AB97-4A39-882C-269760D86619") cpp_quote(",") cpp_quote("LgIcuResourceBundle") cpp_quote(");") [ uuid(0DD7FC1A-AB97-4A39-882C-269760D86619) ] coclass LgIcuResourceBundle
-	{
-		interface ILgIcuResourceBundle;
-	};
-	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("E426656C-64F7-480E-92F4-D41A7BFFD066") cpp_quote(",") cpp_quote("LgIcuLocaleEnumerator") cpp_quote(");") [ uuid(E426656C-64F7-480E-92F4-D41A7BFFD066) ] coclass LgIcuLocaleEnumerator
-	{
-		interface ILgIcuLocaleEnumerator;
-	};
-#line 673 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Language.idh"
-#line 24 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+#line 481 "c:\\fwrepo\\fw\\src\\kernel\\Language.idh"
+#line 24 "C:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 };

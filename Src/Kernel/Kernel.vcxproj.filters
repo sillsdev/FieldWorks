@@ -39,9 +39,6 @@
     <ClCompile Include="TsTextProps.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LgIcuWrappers.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="LocaleIndex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -115,9 +112,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TsTextProps.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LgIcuWrappers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LgUnicodeCollateInit.h">
