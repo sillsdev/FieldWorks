@@ -132,17 +132,14 @@ namespace SIL.FieldWorks.IText
 			if (m_fdoCache == null || DesignMode /*|| m_hvoRoot == 0*/)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
 
 			m_vc = new TitleContentsVc(m_fdoCache);
 			SetupVc();
 
 			m_rootb.DataAccess = m_fdoCache.MainCacheAccessor;
 
-			m_rootb.SetRootObject(m_hvoRoot, m_vc, (int)TitleContentsVc.kfragRoot, m_styleSheet);
-
-			base.MakeRoot();
+			m_rootb.SetRootObject(m_hvoRoot, m_vc, TitleContentsVc.kfragRoot, m_styleSheet);
 
 			//TODO:
 			//ptmw->RegisterRootBox(qrootb);

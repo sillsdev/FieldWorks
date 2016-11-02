@@ -800,6 +800,7 @@ public:  // we can make anything public since the whole class is private to this
 	int m_itss;					// index of next item in m_pts to add
 	IVwGraphics * m_pvg;
 	ILgWritingSystemFactoryPtr m_qwsf;
+	IRenderEngineFactoryPtr m_qref;
 
 	int m_dxAvailWidth;			// the available width in which we were asked to lay out
 
@@ -1340,7 +1341,11 @@ public:  // we can make anything public since the whole class is private to this
 
 		ISilDataAccessPtr qsda;
 		if (pvpbox && pvpbox->Root())
+		{
 			qsda = pvpbox->Root()->GetDataAccess();
+			CheckHr(pvpbox->Root()->get_RenderEngineFactory(&m_qref));
+			Assert(m_qref);
+		}
 		if (!qsda)
 			ThrowHr(WarnHr(E_FAIL));
 		CheckHr(qsda->get_WritingSystemFactory(&m_qwsf));
@@ -1726,7 +1731,10 @@ public:  // we can make anything public since the whole class is private to this
 		CheckHr(m_pts->GetCharProps(ich, &m_chrp, &ichMin, &ichLim));
 		m_pts->SetWritingSystemFactory(m_qwsf);		// Just to be safe.
 		CheckHr(m_pvg->SetupGraphics(&m_chrp));
-		CheckHr(m_qwsf->get_Renderer(m_chrp.ws, m_pvg, &m_qre));
+		ILgWritingSystemPtr qws;
+		CheckHr(m_qwsf->get_EngineOrNull(m_chrp.ws, &qws));
+		Assert(qws.Ptr());
+		CheckHr(m_qref->get_Renderer(qws, m_pvg, &m_qre));
 		Assert(m_qre.Ptr());
 	}
 

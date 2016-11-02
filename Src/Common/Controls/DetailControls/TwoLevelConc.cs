@@ -356,23 +356,20 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			public override void MakeRoot()
 			{
 				CheckDisposed();
-				base.MakeRoot();
 
 				if (m_fdoCache == null || DesignMode)
 					return;
 
-				IVwRootBox rootb = VwRootBoxClass.Create();
-				rootb.SetSite(this);
+				base.MakeRoot();
 
-				rootb.DataAccess = m_fdoCache.DomainDataByFlid;
+				m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
 
 				m_cvc = new ConcVc(m_cp, m_gni, m_index);
 
 				// The root object is the one, if any, that the policy gives us for this slice.
 				// If it doesn't give us one the vc will obtain a key string from the policy
 				// directly. The frag argument is arbitrary.
-				rootb.SetRootObject(m_cp.Item(m_index), m_cvc, 1, m_styleSheet);
-				m_rootb = rootb;
+				m_rootb.SetRootObject(m_cp.Item(m_index), m_cvc, 1, m_styleSheet);
 			}
 		}
 

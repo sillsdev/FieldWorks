@@ -75,17 +75,12 @@
   <ItemGroup>
     <ClInclude Include="MockLgWritingSystem.h" />
     <ClInclude Include="MockLgWritingSystemFactory.h" />
-    <ClInclude Include="RenderEngineTestBase.h" />
     <ClInclude Include="testFwKernel.h" />
-    <ClInclude Include="TestGraphiteEngine.h" />
-    <ClInclude Include="TestLgLineBreaker.h" />
-    <ClInclude Include="TestRomRenderEngine.h" />
     <ClInclude Include="TestTsPropsBldr.h" />
     <ClInclude Include="TestTsStrBldr.h" />
     <ClInclude Include="TestTsString.h" />
     <ClInclude Include="TestTsTextProps.h" />
     <ClInclude Include="TestUndoStack.h" />
-    <ClInclude Include="TestUniscribeEngine.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile" />

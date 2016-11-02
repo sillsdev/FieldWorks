@@ -105,25 +105,6 @@ public:
 		return S_OK;
 	}
 
-	STDMETHOD(get_Renderer)(IVwGraphics * pvg, IRenderEngine ** ppreneng)
-	{
-		if (!m_qrenengUni)
-		{
-#if WIN32
-			m_qrenengUni.CreateInstance(CLSID_UniscribeEngine);
-#else
-			m_qrenengUni.CreateInstance(CLSID_RomRenderEngine);
-#endif //WIN32
-			if (!m_qrenengUni)
-				return E_UNEXPECTED;
-			m_qrenengUni->putref_WritingSystemFactory(m_qwsf);
-		}
-		*ppreneng = m_qrenengUni.Ptr();
-		if (*ppreneng)
-			(*ppreneng)->AddRef();
-		return S_OK;
-	}
-
 	STDMETHOD(get_DefaultFontFeatures)(BSTR * pbstr)
 	{
 		if (m_stuDefFontFeats.Length())
@@ -182,6 +163,19 @@ public:
 		return S_OK;
 	}
 
+	STDMETHOD(get_IsGraphiteEnabled)(ComBool * pfRet)
+	{
+		*pfRet = false;
+		return S_OK;
+	}
+
+	STDMETHOD(get_WritingSystemFactory)(ILgWritingSystemFactory ** ppwsf)
+	{
+		*ppwsf = m_qwsf;
+		AddRefObj(*ppwsf);
+		return S_OK;
+	}
+
 private:
 	bool ReplaceChrpFontName(LgCharRenderProps * pchrp)
 	{
@@ -200,7 +194,6 @@ private:
 	ILgWritingSystemFactoryPtr m_qwsf;
 	int m_handle;
 	StrUni m_id;
-	IRenderEnginePtr m_qrenengUni;
 	StrUni m_stuDefFont;
 	StrUni m_stuDefHeadFont;
 	StrUni m_stuDefPubFont;

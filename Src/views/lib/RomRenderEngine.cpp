@@ -113,6 +113,34 @@ STDMETHODIMP RomRenderEngine::InitRenderer(IVwGraphics * pvg, BSTR bstrData)
 {
 	return S_OK;
 }
+
+/*----------------------------------------------------------------------------------------------
+	Gets the render engine factory.
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP RomRenderEngine::get_RenderEngineFactory(IRenderEngineFactory ** ppref)
+{
+	BEGIN_COM_METHOD;
+	ChkComOutPtr(ppref);
+
+	*ppref = m_qref;
+	AddRefObj(*ppref);
+
+	END_COM_METHOD(g_fact, IID_IRenderEngine);
+}
+
+/*----------------------------------------------------------------------------------------------
+	Sets the render engine factory.
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP RomRenderEngine::putref_RenderEngineFactory(IRenderEngineFactory * pref)
+{
+	BEGIN_COM_METHOD;
+	ChkComArgPtr(pref);
+
+	m_qref = pref;
+
+	END_COM_METHOD(g_fact, IID_IRenderEngine);
+}
+
 /*----------------------------------------------------------------------------------------------
 	Return an indication of whether the font is valid for the renderer.
 ----------------------------------------------------------------------------------------------*/

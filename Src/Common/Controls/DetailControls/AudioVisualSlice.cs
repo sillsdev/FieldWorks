@@ -458,18 +458,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public override void MakeRoot()
 		{
 			CheckDisposed();
-			base.MakeRoot();
 
 			if (m_fdoCache == null || DesignMode)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
+
 			m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
 			m_vc = new AudioVisualVc(m_fdoCache, m_flid, "InternalPath");
 			if (m_file != null)
 			{
-				m_rootb.SetRootObject(m_file.Hvo, m_vc, AudioVisualView.kfragPathname,
+				m_rootb.SetRootObject(m_file.Hvo, m_vc, kfragPathname,
 					m_rootb.Stylesheet);
 			}
 

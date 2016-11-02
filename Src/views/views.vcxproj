@@ -103,19 +103,27 @@
     <IncludePath>..\..\include;..\Generic;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">
-    <IncludePath>..\..\include;..\Generic;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\include;..\Generic;..\Kernel;..\AppCore;.\lib;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>..\..\include;..\Generic;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\include;..\Generic;..\Kernel;..\AppCore;.\lib;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>..\..\include;..\Generic;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\include;..\Generic;..\Kernel;..\AppCore;.\lib;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="LgUnicodeCollateInit.h" />
-    <ClInclude Include="LgUnicodeCollater.h" />
+    <ClInclude Include="lib\GraphiteEngine.h" />
+    <ClInclude Include="lib\GraphiteSegment.h" />
+    <ClInclude Include="lib\LgLineBreaker.h" />
+    <ClInclude Include="lib\LgUnicodeCollateInit.h" />
+    <ClInclude Include="lib\LgUnicodeCollater.h" />
+    <ClInclude Include="lib\RomRenderEngine.h" />
+    <ClInclude Include="lib\RomRenderSegment.h" />
+    <ClInclude Include="lib\UniscribeEngine.h" />
+    <ClInclude Include="lib\UniscribeLinux.h" />
+    <ClInclude Include="lib\UniscribeSegment.h" />
     <ClInclude Include="lib\VwBaseDataAccess.h" />
     <ClInclude Include="lib\VwBaseVc.h" />
     <ClInclude Include="lib\VwCacheDa.h" />
@@ -143,7 +151,15 @@
     <ClInclude Include="VwTxtSrc.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="LgUnicodeCollater.cpp" />
+    <ClCompile Include="lib\GraphiteEngine.cpp" />
+    <ClCompile Include="lib\GraphiteSegment.cpp" />
+    <ClCompile Include="lib\LgLineBreaker.cpp" />
+    <ClCompile Include="lib\LgUnicodeCollater.cpp" />
+    <ClCompile Include="lib\RomRenderEngine.cpp" />
+    <ClCompile Include="lib\RomRenderSegment.cpp" />
+    <ClCompile Include="lib\UniscribeEngine.cpp" />
+    <ClCompile Include="lib\UniscribeLinux.cpp" />
+    <ClCompile Include="lib\UniscribeSegment.cpp" />
     <ClCompile Include="lib\VwBaseDataAccess.cpp" />
     <ClCompile Include="lib\VwBaseVc.cpp" />
     <ClCompile Include="lib\VwCacheDa.cpp" />
@@ -173,6 +189,7 @@
   <ItemGroup>
     <None Include="..\..\Bin\mkvw.bat" />
     <None Include="Makefile" />
+    <None Include="Render.idh" />
     <None Include="Views.def" />
     <None Include="Views.idh" />
     <None Include="Views.mak" />

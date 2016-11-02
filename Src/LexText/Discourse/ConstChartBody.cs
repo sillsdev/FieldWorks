@@ -356,8 +356,7 @@ namespace SIL.FieldWorks.Discourse
 		{
 			CheckDisposed();
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
 
 			m_vc = new ConstChartVc(this);
 			m_vc.LineChoices = m_lineChoices;
@@ -367,8 +366,6 @@ namespace SIL.FieldWorks.Discourse
 
 			m_rootb.DataAccess = Cache.MainCacheAccessor;
 			m_rootb.SetRootObject(m_hvoChart, m_vc, ConstChartVc.kfragChart, this.StyleSheet);
-
-			base.MakeRoot();
 			//m_rootb.Activate(VwSelectionState.vssOutOfFocus); // Makes selection visible even before ever got focus.
 		}
 

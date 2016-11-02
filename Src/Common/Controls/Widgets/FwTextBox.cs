@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.Application;
@@ -2342,12 +2343,12 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			if (DesignMode)
 				return;
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+
+			base.MakeRoot();
+
 			m_rootb.DataAccess = m_DataAccess;
 			m_rootb.SetRootObject(khvoRoot, m_vc, kfragRoot, StyleSheet);
 			m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
-			base.MakeRoot();
 			m_DataAccess.AddNotification(this);
 			//Text = "This is a view"; // Todo: remove after preliminary testing.
 			//m_rootb.MakeSimpleSel(true, true, true, true);
@@ -2668,6 +2669,7 @@ namespace SIL.FieldWorks.Common.Widgets
 					sda.WritingSystemFactory = WritingSystemFactory;
 					sda.SetString(khvoRoot, ktagText, FontHeightAdjuster.GetUnadjustedTsString(Tss));
 					IVwRootBox rootb = VwRootBoxClass.Create();
+					rootb.RenderEngineFactory = SingletonsContainer.Get<RenderEngineFactory>();
 					rootb.SetSite(this);
 					rootb.DataAccess = sda;
 					rootb.SetRootObject(khvoRoot, m_vc, kfragRoot, StyleSheet);
@@ -2718,10 +2720,11 @@ namespace SIL.FieldWorks.Common.Widgets
 					sda.WritingSystemFactory = WritingSystemFactory;
 					sda.SetString(khvoRoot, ktagText, FontHeightAdjuster.GetUnadjustedTsString(Tss));
 					IVwRootBox rootb = VwRootBoxClass.Create();
+					rootb.RenderEngineFactory = SingletonsContainer.Get<RenderEngineFactory>();
 					rootb.SetSite(this);
 					rootb.DataAccess = sda;
 					rootb.SetRootObject(khvoRoot, m_vc, kfragRoot, StyleSheet);
-					int dx = 0;
+					int dx;
 					using (new HoldGraphics(this))
 					{
 						rootb.Layout(m_graphicsManager.VwGraphics, GetAvailWidth(rootb));

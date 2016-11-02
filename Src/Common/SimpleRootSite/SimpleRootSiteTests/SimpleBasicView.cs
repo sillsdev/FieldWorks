@@ -571,9 +571,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			base.MakeRoot();
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
-
 			// Set up a new view constructor.
 			m_basicViewVc = new SimpleViewVc(DisplayType, flid);
 			m_basicViewVc.DefaultWs = hvoWs;

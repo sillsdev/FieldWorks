@@ -617,6 +617,7 @@ namespace TestViews
 		bool m_fTestable; // true if we can initialize TSF thread manager.
 		// Created by fixture setup
 		ISilDataAccessPtr m_qsda;
+		IRenderEngineFactoryPtr m_qref;
 		VwCacheDaPtr m_qcda;
 		ITsStrFactoryPtr m_qtsf;
 		IVwGraphicsWin32Ptr m_qvg32;
@@ -2670,6 +2671,8 @@ namespace TestViews
 			CheckHr(m_qcda->QueryInterface(IID_ISilDataAccess, (void **)&m_qsda));
 			CheckHr(m_qsda->putref_WritingSystemFactory(g_qwsf));
 
+			m_qref.Attach(NewObj MockRenderEngineFactory);
+
 			m_qtsf.CreateInstance(CLSID_TsStrFactory);
 			m_qvg32.CreateInstance(CLSID_VwGraphicsWin32);
 			// Create a dummy background window (never visible) to host the view.
@@ -2712,6 +2715,7 @@ namespace TestViews
 			if (!m_fTestable)
 				return;
 			m_qtsf.Clear();
+			m_qref.Clear();
 			m_qsda.Clear();
 			m_qcda.Clear();
 			if (m_qvg32)
@@ -2735,6 +2739,7 @@ namespace TestViews
 			// Make the root box and initialize it.
 			VwRootBox::CreateCom(NULL, IID_IVwRootBox, (void **) &m_qrootb);
 			CheckHr(m_qrootb->putref_DataAccess(m_qsda));
+			CheckHr(m_qrootb->putref_RenderEngineFactory(m_qref));
 			CheckHr(m_qrootb->SetRootObject(m_hvoRoot, m_qvc, kfragStText, NULL));
 			CheckHr(m_qrootb->SetSite(m_qdrs));
 			m_qdrs->SetRootBox(m_qrootb);

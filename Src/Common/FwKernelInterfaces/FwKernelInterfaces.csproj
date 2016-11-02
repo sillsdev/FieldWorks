@@ -62,7 +62,6 @@
     <Compile Include="IcuResourceBundle.cs" />
     <Compile Include="IcuWrappers.cs" />
     <Compile Include="INormalizationCharacterFactory.cs" />
-    <Compile Include="IPicture.cs" />
     <Compile Include="IPuaCharacter.cs" />
     <Compile Include="IPuaCharacterFactory.cs" />
     <Compile Include="IUcdCharacter.cs" />
@@ -72,7 +71,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Rect.cs" />
     <Compile Include="UcdProperty.cs" />
   </ItemGroup>
   <ItemGroup>

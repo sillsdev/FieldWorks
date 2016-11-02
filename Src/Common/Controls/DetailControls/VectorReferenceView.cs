@@ -138,14 +138,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public override void MakeRoot()
 		{
 			CheckDisposed();
-			base.MakeRoot();
 
 			if (m_fdoCache == null || DesignMode)
 				return;
 
 			m_VectorReferenceVc = CreateVectorReferenceVc();
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
 			m_rootb.DataAccess = GetDataAccess();
 			SetupRoot();
 		}

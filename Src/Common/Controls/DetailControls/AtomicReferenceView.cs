@@ -162,8 +162,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return;
 
 			SetReferenceVc();
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
 			m_rootb.DataAccess = GetDataAccess();
 			SetRootBoxObj();
 		}

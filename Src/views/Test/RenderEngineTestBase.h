@@ -14,13 +14,13 @@ Last reviewed:
 
 #pragma once
 
-#include "testFwKernel.h"
+#include "testViews.h"
 
 #ifndef WIN32 // on Linux - symbols for for methods of Vector<int> - This include adds them into testLanguage
 #include "Vector_i.cpp"
 #endif
 
-namespace TestFwKernel
+namespace TestViews
 {
 	// For error reporting:
 	static DummyFactory g_fact(_T("SIL.TestFwKernel.TxtSrc"));
@@ -281,7 +281,7 @@ namespace TestFwKernel
 			if (m_vws.Size() > 1)
 				pchrp->ws = m_vws[1];
 			else
-				pchrp->ws = g_wsTest;
+				pchrp->ws = g_wsFrn;
 			*pichMin = 1000;
 			*pichLim = m_stu.Length() < 2000 ? m_stu.Length() : 2000;
 		}
@@ -290,7 +290,7 @@ namespace TestFwKernel
 			if (m_vws.Size() > 2)
 				pchrp->ws = m_vws[2];
 			else
-				pchrp->ws = g_wsTest2;
+				pchrp->ws = g_wsGer;
 			*pichMin = 2000;
 			*pichLim = m_stu.Length();
 		}
@@ -343,7 +343,7 @@ namespace TestFwKernel
 	{
 	protected:
 		IRenderEnginePtr m_qre;
-		ILgWritingSystemFactoryPtr m_qwsf;
+		IRenderEngineFactoryPtr m_qref;
 		int m_wsEng;
 		int m_wsTest;
 		int m_wsTest2;
@@ -477,13 +477,6 @@ namespace TestFwKernel
 #endif
 		}
 
-		virtual IRenderEnginePtr GetRenderer(IVwGraphics * pvg, LgCharRenderProps* pchrp)
-		{
-			IRenderEnginePtr qreneng;
-			m_qwsf->get_RendererFromChrp(pvg, pchrp, &qreneng);
-			return qreneng;
-		}
-
 		int VerifyBreakPoints(TxtSrc* ts, uint dxMax, int dichLimSeg, IVwGraphics* pvg)
 		{
 			IVwTextSourcePtr qts;
@@ -500,22 +493,7 @@ namespace TestFwKernel
 			int cSegs = 0; // number of segments we identify
 			for (ichMin = 0; ichMin < cch; ichMin += dichLimSeg)
 			{
-				// Must use what the factory says is the right renderer for the properties.
-				// Otherwise it just keeps saying it is the wrong renderer, and we make no
-				// progress.
-				LgCharRenderProps chrp;
-				int ichMinTmp, ichLimTmp;
-				ts->GetCharProps(ichMin, &chrp, &ichMinTmp, &ichLimTmp);
-				IRenderEnginePtr qreneng = GetRenderer(pvg, &chrp);
-				if (!qreneng)
-				{
-					unitpp::assert_true("VerifyBreakPoints - GetRenderer", chrp.ws != g_wsEng);
-					dichLimSeg = ichLimTmp - ichMin;
-					if (!dichLimSeg)
-						dichLimSeg = 1;
-					continue;
-				}
-				hr = qreneng->FindBreakPoint(pvg, qts, NULL, ichMin, cch, cch, FALSE, fStart,
+				hr = m_qre->FindBreakPoint(pvg, qts, NULL, ichMin, cch, cch, FALSE, fStart,
 					dxAvail, klbWordBreak, klbWordBreak, ktwshAll, FALSE,
 					&qseg, &dichLimSeg, &dxWidth, &est,
 					//0, NULL, 0, NULL, &cb0, &dich0,
@@ -608,36 +586,13 @@ namespace TestFwKernel
 	public:
 		virtual void Setup()
 		{
-			m_qwsf.Attach(NewObj MockLgWritingSystemFactory);
-			ILgWritingSystemPtr qws;
-			SmartBstr sbstr;
-			SmartBstr fontStr;
-
-			sbstr.Assign(kszEng);
-			m_qwsf->get_Engine(sbstr, &qws);
-			MockLgWritingSystem* mws = dynamic_cast<MockLgWritingSystem*>(qws.Ptr());
-			fontStr.Assign(L"Lucida Console");
-			mws->put_DefaultFontName(fontStr);
-			qws->get_Handle(&g_wsEng);
-
-			sbstr.Assign(kszTest);
-			m_qwsf->get_Engine(sbstr, &qws);
-			mws = dynamic_cast<MockLgWritingSystem*>(qws.Ptr());
-			fontStr.Assign(L"Lucida Sans Unicode");
-			mws->put_DefaultFontName(fontStr);
-			qws->get_Handle(&g_wsTest);
-
-			sbstr.Assign(kszTest2);
-			m_qwsf->get_Engine(sbstr, &qws);
-			mws = dynamic_cast<MockLgWritingSystem*>(qws.Ptr());
-			fontStr.Assign(L"Times New Roman");
-			mws->put_DefaultFontName(fontStr);
-			qws->get_Handle(&g_wsTest2);
+			CreateTestWritingSystemFactory();
+			m_qref.Attach(NewObj MockRenderEngineFactory);
 		}
 		virtual void Teardown()
 		{
-			m_qwsf.Clear();
-			m_qre.Clear();
+			m_qref.Clear();
+			CloseTestWritingSystemFactory();
 		}
 	};
 }

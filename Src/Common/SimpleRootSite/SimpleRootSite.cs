@@ -354,8 +354,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_messageSequencer = new MessageSequencer(this);
 			m_graphicsManager = CreateGraphicsManager();
 			m_orientationManager = CreateOrientationManager();
-#if !__MonoCS__
-#endif
 			SubscribeToRootSiteEventHandlerEvents();
 		}
 
@@ -376,7 +374,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		private void SubscribeToRootSiteEventHandlerEvents()
 		{
-			if (!KeyboardController.IsInitialized)
+			if (!KeyboardController.IsInitialized || m_rootSiteEventHandler != null)
 				return;
 #if __MonoCS__
 			m_rootSiteEventHandler = new IbusRootSiteEventHandler(this);
@@ -384,6 +382,15 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_rootSiteEventHandler = new WindowsLanguageProfileSink(this);
 #endif
 			KeyboardController.RegisterControl(this, m_rootSiteEventHandler);
+		}
+
+		private void UnsubscribeFromRootSiteEventHandlerEvents()
+		{
+			if (!KeyboardController.IsInitialized || m_rootSiteEventHandler == null)
+				return;
+
+			KeyboardController.UnregisterControl(this);
+			m_rootSiteEventHandler = null;
 		}
 
 		/// <summary>
@@ -432,6 +439,8 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			if (disposing)
 			{
+				UnsubscribeFromRootSiteEventHandlerEvents();
+
 				if (m_rootb != null)
 					CloseRootBox();
 
@@ -461,9 +470,6 @@ namespace SIL.FieldWorks.Common.RootSites
 				}
 				if (components != null)
 					components.Dispose();
-				#if __MonoCS__
-				KeyboardController.UnregisterControl(this);
-				#endif
 			}
 
 			if (m_vdrb != null && Marshal.IsComObject(m_vdrb))
@@ -849,11 +855,14 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				CheckDisposed();
 
+				// check if this property will actually change
+				if (EditingHelper.Editable == !value)
+					return;
+
 				// If this is read-only, it should not try to handle keyboard input in general.
 				if (EditingHelper.Editable && value)
 				{
-					if (KeyboardController.IsInitialized)
-						KeyboardController.UnregisterControl(this);
+					UnsubscribeFromRootSiteEventHandlerEvents();
 				}
 				else if (!EditingHelper.Editable && !value)
 				{
@@ -4596,6 +4605,10 @@ namespace SIL.FieldWorks.Common.RootSites
 #else
 			m_vdrb = new SIL.FieldWorks.Views.VwDrawRootBuffered(); // Managed object on Linux
 #endif
+			m_rootb = VwRootBoxClass.Create();
+			m_rootb.RenderEngineFactory = SingletonsContainer.Get<RenderEngineFactory>();
+			m_rootb.SetSite(this);
+
 			m_fRootboxMade = true;
 		}
 

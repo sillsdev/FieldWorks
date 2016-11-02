@@ -527,6 +527,33 @@ STDMETHODIMP VwRootBox::get_DataAccess(ISilDataAccess ** ppsda)
 	END_COM_METHOD(g_fact, IID_IVwRootBox);
 }
 
+/*----------------------------------------------------------------------------------------------
+	Gets the render engine factory.
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP VwRootBox::get_RenderEngineFactory(IRenderEngineFactory ** ppref)
+{
+	BEGIN_COM_METHOD;
+	ChkComOutPtr(ppref);
+
+	*ppref = m_qref;
+	AddRefObj(*ppref);
+
+	END_COM_METHOD(g_fact, IID_IVwRootBox);
+}
+
+/*----------------------------------------------------------------------------------------------
+	Sets the render engine factory.
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP VwRootBox::putref_RenderEngineFactory(IRenderEngineFactory * pref)
+{
+	BEGIN_COM_METHOD;
+	ChkComArgPtr(pref);
+
+	m_qref = pref;
+
+	END_COM_METHOD(g_fact, IID_IVwRootBox);
+}
+
 //:>********************************************************************************************
 //:>	Selections
 //:>********************************************************************************************
@@ -2596,7 +2623,7 @@ STDMETHODIMP VwRootBox::DrawingErrors(IVwGraphics * pvg)
 
 	HRESULT hr;
 
-	IgnoreHr(hr = Style()->DrawingErrors(pvg));
+	IgnoreHr(hr = Style()->DrawingErrors(m_qref, pvg));
 	if (FAILED(hr))
 		return hr;
 
@@ -3500,6 +3527,7 @@ STDMETHODIMP VwRootBox::Close()
 		m_qsda.Clear();
 	}
 	m_qsync.Clear();
+	m_qref.Clear();
 
 #ifdef ENABLE_TSF
 	// m_qvim gets created in the c'tor, so one could think of destroying it in the

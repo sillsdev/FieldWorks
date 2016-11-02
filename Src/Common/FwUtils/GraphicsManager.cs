@@ -13,7 +13,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Drawing;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Reporting;
 using SIL.Utils;
 

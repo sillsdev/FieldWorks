@@ -8,9 +8,9 @@ This software is licensed under the LGPL, version 2.1 or later
 
 #pragma once
 
-#include "testFwKernel.h"
+#include "testViews.h"
 
-namespace TestFwKernel
+namespace TestViews
 {
 	/*******************************************************************************************
 		Tests for LgLineBreaker

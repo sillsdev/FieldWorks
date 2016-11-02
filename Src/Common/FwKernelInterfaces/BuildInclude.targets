@@ -9,7 +9,6 @@
 		<KernelIdhFiles Include="../../Kernel/FwKernel.idh"/>
 		<KernelIdhFiles Include="../../Kernel/TextServ.idh"/>
 		<KernelIdhFiles Include="../../Kernel/Language.idh"/>
-		<KernelIdhFiles Include="../../Kernel/Render.idh"/>
 	</ItemGroup>
 	<ItemGroup>
 		<KernelInputs Include="@(KernelIdhFiles)" />

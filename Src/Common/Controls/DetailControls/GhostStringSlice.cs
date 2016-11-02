@@ -194,18 +194,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				CheckDisposed();
 
-				base.MakeRoot();
-
-				if (DesignMode)
+				if (m_fdoCache == null || DesignMode)
 					return;
 
-				// Review JohnT: why doesn't the base class do this??
-				m_rootb = VwRootBoxClass.Create();
-				m_rootb.SetSite(this);
+				base.MakeRoot();
 
-
-
-				m_sda = new GhostDaDecorator(m_fdoCache.DomainDataByFlid as ISilDataAccessManaged, m_fdoCache.TsStrFactory.EmptyString(m_wsToCreate), (int)m_clidDst);
+				m_sda = new GhostDaDecorator(m_fdoCache.DomainDataByFlid as ISilDataAccessManaged, m_fdoCache.TsStrFactory.EmptyString(m_wsToCreate), m_clidDst);
 
 				m_rootb.DataAccess = m_sda;
 
@@ -214,7 +208,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// arg1 is a meaningless root HVO, since this VC only displays one dummy property and gets it from the ghostDA,
 				// which ignores the HVO.
 				// arg3 is a meaningless initial fragment, since this VC only displays one thing.
-				m_rootb.SetRootObject(GhostStringSlice.khvoFake, m_vc, 1, m_styleSheet);
+				m_rootb.SetRootObject(khvoFake, m_vc, 1, m_styleSheet);
 			}
 		#endregion // RootSite implementation
 

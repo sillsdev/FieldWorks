@@ -717,21 +717,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public override void MakeRoot()
 		{
 			CheckDisposed();
-			base.MakeRoot();
 
 			if (m_fdoCache == null || DesignMode)
 				return;
 
-			IVwRootBox rootb = VwRootBoxClass.Create();
-			rootb.SetSite(this);
+			base.MakeRoot();
 
 			m_vc = new LiteralLabelVc(m_text, m_fdoCache.WritingSystemFactory.UserWs);
 
-			rootb.DataAccess = m_fdoCache.DomainDataByFlid;
+			m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
 
 			// Since the VC just displays a literal, both the root HVO and the root frag are arbitrary.
-			rootb.SetRootObject(1, m_vc, 2, StyleSheet);
-			m_rootb = rootb;
+			m_rootb.SetRootObject(1, m_vc, 2, StyleSheet);
 			// pathologically (mainly during Refresh, it seems) the slice width may get set before
 			// the root box is created, and no further size adjustment may take place, in which case,
 			// when we have made the root, we need to adjust the width it occupies in the parent slice.

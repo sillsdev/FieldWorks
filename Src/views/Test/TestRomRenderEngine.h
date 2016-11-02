@@ -14,10 +14,10 @@ Last reviewed:
 
 #pragma once
 
-#include "testFwKernel.h"
+#include "testViews.h"
 #include "RenderEngineTestBase.h"
 
-namespace TestFwKernel
+namespace TestViews
 {
 	/*******************************************************************************************
 		Tests for RomRenderEngine
@@ -34,23 +34,18 @@ namespace TestFwKernel
 			RenderEngineTestBase::VerifyBreakPointing();
 		}
 
-		virtual IRenderEnginePtr GetRenderer(LgCharRenderProps*)
-		{
-				return m_qre;
-		}
-
-
-
 	public:
 		TestRomRenderEngine();
 		virtual void Setup()
 		{
 			RenderEngineTestBase::Setup();
 			m_qre = NewObj RomRenderEngine;
-			m_qre->putref_WritingSystemFactory(m_qwsf);
+			m_qre->putref_WritingSystemFactory(g_qwsf);
+			m_qre->putref_RenderEngineFactory(m_qref);
 		}
 		virtual void Teardown()
 		{
+			m_qre.Clear();
 			RenderEngineTestBase::Teardown();
 		}
 	};

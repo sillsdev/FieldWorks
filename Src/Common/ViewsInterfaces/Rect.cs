@@ -3,7 +3,7 @@
 
 using System.Drawing;
 
-namespace SIL.FieldWorks.Common.FwKernelInterfaces
+namespace SIL.FieldWorks.Common.ViewsInterfaces
 {
 	#region Struct Rect
 	/// <summary>

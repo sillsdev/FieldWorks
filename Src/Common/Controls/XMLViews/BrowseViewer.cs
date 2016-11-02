@@ -1917,8 +1917,8 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				CheckDisposed();
 
-				m_rootb = VwRootBoxClass.Create();
-				m_rootb.SetSite(this);
+				base.MakeRoot();
+
 				ReadOnlyView = ReadOnlySelect;
 				Vc.Cache = Cache;
 				m_rootb.SetRootObject(m_hvoRoot, Vc, (int)XmlBrowseViewVc.kfragRoot, m_styleSheet);

@@ -37,6 +37,22 @@ typedef [v1_enum] enum UndoResult
 						// Typically a Refresh is needed along with an error message.
 } UndoResult;
 
+/*------------------------------------------------------------------------------------------
+	Interface for a simple approach to initializing a class by passing it a raw data buffer.
+	Primarily for classes intended to be instantiated via an IClassInitMoniker object.
+	ENHANCE JohnT: Does this definition belong somewhere else?
+	Hungarian: simi
+------------------------------------------------------------------------------------------*/
+DeclareInterface(SimpleInit, Unknown, 6433D19E-2DA2-4041-B202-DB118EE1694D)
+{
+	[restricted] HRESULT InitNew(
+		[in, size_is(cb)] const BYTE * prgb,
+		[in] int cb);
+
+	// Return the initialization data previously passed in.
+	[propget, restricted] HRESULT InitializationData(
+		[out, retval] BSTR * pbstr);
+};
 
 /*******************************************************************************************
 	Interface ICheckWord

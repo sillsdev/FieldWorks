@@ -130,8 +130,8 @@
 		<IdhFiles Include="$(fwrt)/Src/Kernel/FwKernelTlb.idl"/>
 		<IdhFiles Include="$(fwrt)/Src/Kernel/TextServ.idh"/>
 		<IdhFiles Include="$(fwrt)/Src/Kernel/Language.idh"/>
-		<IdhFiles Include="$(fwrt)/Src/Kernel/Render.idh"/>
 		<IdhFiles Include="$(fwrt)/Src/SharpViews/FwComponents/FwComponents.idh"/>
+		<IdhFiles Include="$(fwrt)/Src/views/Render.idh"/>
 		<IdhFiles Include="$(fwrt)/Src/views/Views.idh"/>
 		<IdhFiles Include="$(fwrt)/Src/views/ViewsTlb.idl"/>
 		<FilesToDeleteInOutputCommon Include="$(dir-fwoutputCommon)/*.*" Exclude="$(dir-fwoutputCommon)/bldinc.h" Condition="Exists('$(dir-fwoutputCommon)')"/>

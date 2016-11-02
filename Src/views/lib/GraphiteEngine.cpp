@@ -281,6 +281,33 @@ STDMETHODIMP GraphiteEngine::InitRenderer(IVwGraphics * pvg, BSTR bstrData)
 }
 
 /*----------------------------------------------------------------------------------------------
+	Gets the render engine factory.
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP GraphiteEngine::get_RenderEngineFactory(IRenderEngineFactory ** ppref)
+{
+	BEGIN_COM_METHOD;
+	ChkComOutPtr(ppref);
+
+	*ppref = m_qref;
+	AddRefObj(*ppref);
+
+	END_COM_METHOD(g_fact, IID_IRenderEngine);
+}
+
+/*----------------------------------------------------------------------------------------------
+	Sets the render engine factory.
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP GraphiteEngine::putref_RenderEngineFactory(IRenderEngineFactory * pref)
+{
+	BEGIN_COM_METHOD;
+	ChkComArgPtr(pref);
+
+	m_qref = pref;
+
+	END_COM_METHOD(g_fact, IID_IRenderEngine);
+}
+
+/*----------------------------------------------------------------------------------------------
 	Return an indication of whether the font is valid for the renderer.
 ----------------------------------------------------------------------------------------------*/
 STDMETHODIMP GraphiteEngine::get_FontIsValid(ComBool * pfValid)

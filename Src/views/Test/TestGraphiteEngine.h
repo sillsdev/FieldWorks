@@ -14,10 +14,10 @@ Last reviewed:
 
 #pragma once
 
-#include "testFwKernel.h"
+#include "testViews.h"
 #include "RenderEngineTestBase.h"
 
-namespace TestFwKernel
+namespace TestViews
 {
 	/*******************************************************************************************
 		Tests for TestGraphiteEngine
@@ -35,6 +35,11 @@ namespace TestFwKernel
 			RenderEngineTestBase::VerifyBreakPointing();
 		}
 
+		virtual IRenderEnginePtr GetRenderer(LgCharRenderProps*)
+		{
+			return m_qre;
+		}
+
 		TestGraphiteEngine();
 		virtual void Setup()
 		{
@@ -43,18 +48,15 @@ namespace TestFwKernel
 			SmartBstr sbstr;
 
 			SmartBstr fontStr(L"Charis SIL");
-			sbstr.Assign(kszEng);
-			m_qwsf->get_Engine(sbstr, &qws);
+			g_qwsf->get_EngineOrNull(g_wsEng, &qws);
 			MockLgWritingSystem* mws = dynamic_cast<MockLgWritingSystem*>(qws.Ptr());
 			mws->put_DefaultFontName(fontStr);
 
-			sbstr.Assign(kszTest);
-			m_qwsf->get_Engine(sbstr, &qws);
+			g_qwsf->get_EngineOrNull(g_wsFrn, &qws);
 			mws = dynamic_cast<MockLgWritingSystem*>(qws.Ptr());
 			mws->put_DefaultFontName(fontStr);
 
-			sbstr.Assign(kszTest2);
-			m_qwsf->get_Engine(sbstr, &qws);
+			g_qwsf->get_EngineOrNull(g_wsGer, &qws);
 			mws = dynamic_cast<MockLgWritingSystem*>(qws.Ptr());
 			mws->put_DefaultFontName(fontStr);
 
@@ -78,7 +80,8 @@ namespace TestFwKernel
 
 			m_qre.CreateInstance(CLSID_GraphiteEngine);
 			m_qre->InitRenderer(qvg, NULL);
-			m_qre->putref_WritingSystemFactory(m_qwsf);
+			m_qre->putref_WritingSystemFactory(g_qwsf);
+			m_qre->putref_RenderEngineFactory(m_qref);
 
 			qvg.Clear();
 #ifdef WIN32
@@ -88,6 +91,7 @@ namespace TestFwKernel
 		}
 		virtual void Teardown()
 		{
+			m_qre.Clear();
 			RenderEngineTestBase::Teardown();
 		}
 

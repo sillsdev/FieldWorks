@@ -76,13 +76,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			CheckDisposed();
 
-			base.MakeRoot();
-
 			if (m_fdoCache == null || DesignMode)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
+
 			m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
 			m_vc = new CmObjectUi.CmAnalObjectVc(m_fdoCache);
 

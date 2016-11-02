@@ -114,6 +114,12 @@ namespace XMLViewsTests
 				set;
 			}
 
+			public IRenderEngineFactory RenderEngineFactory
+			{
+				get;
+				set;
+			}
+
 			/// <summary/>
 			public IVwOverlay Overlay
 			{

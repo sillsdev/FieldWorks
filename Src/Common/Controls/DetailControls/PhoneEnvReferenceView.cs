@@ -251,7 +251,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public override void MakeRoot()
 		{
 			CheckDisposed();
-			base.MakeRoot();
 
 			if (m_fdoCache == null || DesignMode)
 				return;
@@ -262,8 +261,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// Populate m_vwCache with data.
 			ResynchListToDatabase();
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
+
 			m_rootb.DataAccess = m_sda;
 			m_rootb.SetRootObject(m_rootObj.Hvo, m_PhoneEnvReferenceVc, kFragEnvironments,
 				null);

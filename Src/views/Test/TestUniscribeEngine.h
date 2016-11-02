@@ -14,10 +14,10 @@ Last reviewed:
 
 #pragma once
 
-#include "testFwKernel.h"
+#include "testViews.h"
 #include "RenderEngineTestBase.h"
 
-namespace TestFwKernel
+namespace TestViews
 {
 	/*******************************************************************************************
 		Tests for TestUniscribeEngine
@@ -61,19 +61,20 @@ namespace TestFwKernel
 			qvg.CreateInstance(CLSID_VwGraphicsWin32);
 			qvg->Initialize(hdc);
 
-			m_qwsf->get_RendererFromChrp(qvg, &chrp, &qreneng);
+			qvg->SetupGraphics(&chrp);
+			ILgWritingSystemPtr qws;
+			g_qwsf->get_EngineOrNull(g_wsEng, &qws);
+			m_qref->get_Renderer(qws, qvg, &m_qre);
 
 			qvg.Clear();
 #ifdef WIN32
 			::DeleteObject(hbm);
 			::DeleteDC(hdc);
 #endif
-
-			m_qre = dynamic_cast<UniscribeEngine *>(qreneng.Ptr());
-			m_qre->get_WritingSystemFactory(&m_qwsf);
 		}
 		virtual void Teardown()
 		{
+			m_qre.Clear();
 			RenderEngineTestBase::Teardown();
 		}
 

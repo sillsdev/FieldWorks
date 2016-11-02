@@ -3870,8 +3870,7 @@ namespace SIL.FieldWorks.IText
 			if (m_caches.MainCache == null || DesignMode)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
 
 			m_vc = new SandboxVc(m_caches, m_choices, IconsForAnalysisChoices, this);
 			m_vc.ShowMorphBundles = m_fShowMorphBundles;
@@ -3884,7 +3883,6 @@ namespace SIL.FieldWorks.IText
 			m_rootb.SetRootObject(kSbWord, m_vc, SandboxVc.kfragBundle, m_stylesheet);
 
 			m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
-			base.MakeRoot();
 			// For some reason, we don't always initialize our control size to be the same as our rootbox.
 			this.Margin = new Padding(3, 0, 3, 1);
 			SyncControlSizeToRootBoxSize();

@@ -1953,6 +1953,9 @@ STDMETHODIMP VwEnv::get_StringWidth(ITsString * ptss, ITsTextProps * pttp, int *
 
 		qrootb.Attach(NewObj VwRootBox(m_qzvps));
 		qrootb->putref_DataAccess(m_qsda);
+		IRenderEngineFactoryPtr qref;
+		m_qrootbox->get_RenderEngineFactory(&qref);
+		qrootb->putref_RenderEngineFactory(qref);
 		pvpboxCont->Container(qrootb);
 
 		pvpbox->Source()->Vpst().Push(VpsTssRec(qzvps, ptss));

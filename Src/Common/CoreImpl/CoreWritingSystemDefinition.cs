@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Xml;
 using SIL.Extensions;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.Utils;
 using SIL.WritingSystems;
 
 namespace SIL.CoreImpl
@@ -17,15 +15,8 @@ namespace SIL.CoreImpl
 	/// </summary>
 	public class CoreWritingSystemDefinition : WritingSystemDefinition, ILgWritingSystem
 	{
-		private WritingSystemManager m_wsManager;
-
 		private CharacterSetDefinition m_mainCharacterSet;
-
-		private readonly Dictionary<Tuple<string, bool, bool>, IRenderEngine> m_renderEngines = new Dictionary<Tuple<string, bool, bool>, IRenderEngine>();
-		private IRenderEngine m_uniscribeEngine;
 		private readonly HashSet<int> m_wordFormingOverrides = new HashSet<int>();
-
-		private readonly object m_syncRoot = new object();
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="CoreWritingSystemDefinition"/> class.
@@ -128,97 +119,6 @@ namespace SIL.CoreImpl
 			get { return Language.Name; }
 		}
 
-		private void SetupRenderEngine(IRenderEngine renderEngine)
-		{
-			renderEngine.WritingSystemFactory = WritingSystemManager;
-			WritingSystemManager.RegisterRenderEngine(renderEngine);
-		}
-
-		/// <summary>
-		/// Get the engine used to render text with the specified properties. At present only
-		/// font, bold, and italic properties are significant.
-		/// Font name may be '&lt;default serif&gt;' which produces a renderer suitable for the default
-		/// serif font.
-		/// </summary>
-		/// <param name="vg"></param>
-		/// <returns></returns>
-		public IRenderEngine get_Renderer(IVwGraphics vg)
-		{
-			lock (m_syncRoot)
-			{
-				LgCharRenderProps chrp = vg.FontCharProperties;
-				string fontName = MarshalEx.UShortToString(chrp.szFaceName);
-				Tuple<string, bool, bool> key = Tuple.Create(fontName, chrp.ttvBold == (int) FwTextToggleVal.kttvForceOn,
-															 chrp.ttvItalic == (int) FwTextToggleVal.kttvForceOn);
-				IRenderEngine renderEngine;
-				if (m_renderEngines.TryGetValue(key, out renderEngine))
-					return renderEngine;
-				Tuple<string, bool, bool> key2 = null;
-				string realFontName;
-				if (TryGetRealFontName(fontName, out realFontName))
-				{
-					MarshalEx.StringToUShort(realFontName, chrp.szFaceName);
-					vg.SetupGraphics(ref chrp);
-					key2 = Tuple.Create(realFontName, key.Item2, key.Item3);
-					if (m_renderEngines.TryGetValue(key2, out renderEngine))
-					{
-						m_renderEngines[key] = renderEngine;
-						return renderEngine;
-					}
-				}
-				else
-				{
-					realFontName = fontName;
-				}
-
-				bool graphiteFont = false;
-				if (IsGraphiteEnabled)
-				{
-					renderEngine = GraphiteEngineClass.Create();
-
-					string fontFeatures = null;
-					if (realFontName == DefaultFontName)
-						fontFeatures = DefaultFontFeatures;
-					renderEngine.InitRenderer(vg, fontFeatures);
-					// check if the font is a valid Graphite font
-					if (renderEngine.FontIsValid)
-					{
-						SetupRenderEngine(renderEngine);
-						graphiteFont = true;
-					}
-				}
-
-				if (!graphiteFont)
-				{
-					if (!MiscUtils.IsUnix)
-					{
-						if (m_uniscribeEngine == null)
-						{
-							m_uniscribeEngine = UniscribeEngineClass.Create();
-							m_uniscribeEngine.InitRenderer(vg, null);
-							SetupRenderEngine(m_uniscribeEngine);
-						}
-						renderEngine = m_uniscribeEngine;
-					}
-					else
-					{
-						// default to the UniscribeEngine unless ROMAN environment variable is set.
-						if (Environment.GetEnvironmentVariable("ROMAN") == null)
-							renderEngine = UniscribeEngineClass.Create();
-						else
-							renderEngine = RomRenderEngineClass.Create();
-						renderEngine.InitRenderer(vg, null);
-						SetupRenderEngine(renderEngine);
-					}
-				}
-
-				m_renderEngines[key] = renderEngine;
-				if (key2 != null)
-					m_renderEngines[key2] = renderEngine;
-				return renderEngine;
-			}
-		}
-
 		/// <summary>
 		/// Get the default serif font; usually used for the main body of text in a document.
 		/// </summary>
@@ -271,9 +171,8 @@ namespace SIL.CoreImpl
 		public void InterpretChrp(ref LgCharRenderProps chrp)
 		{
 			string fontName = MarshalEx.UShortToString(chrp.szFaceName);
-			string realFontName;
-			if (TryGetRealFontName(fontName, out realFontName))
-				MarshalEx.StringToUShort(realFontName, chrp.szFaceName);
+			if (fontName == "<default font>")
+				MarshalEx.StringToUShort(DefaultFontName, chrp.szFaceName);
 
 			if (chrp.ssv != (int) FwSuperscriptVal.kssvOff)
 			{
@@ -378,21 +277,10 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
-		/// Gets the writing system manager.
+		/// Gets the writing system factory.
 		/// </summary>
 		/// <value>The writing system manager.</value>
-		public WritingSystemManager WritingSystemManager
-		{
-			get { return m_wsManager; }
-			internal set
-			{
-				if (m_wsManager != value)
-				{
-					m_wsManager = value;
-					ClearRenderers();
-				}
-			}
-		}
+		public ILgWritingSystemFactory WritingSystemFactory { get; internal set; }
 
 		/// <summary>
 		/// Writes an LDML representation of this writing system to the specified writer.
@@ -402,46 +290,6 @@ namespace SIL.CoreImpl
 		{
 			var ldmlDataMapper = new LdmlDataMapper(new CoreWritingSystemFactory());
 			ldmlDataMapper.Write(writer, this, null);
-		}
-
-		/// <summary>
-		/// Raises the <see cref="E:PropertyChanged"/> event.
-		/// </summary>
-		protected override void OnPropertyChanged(PropertyChangedEventArgs e)
-		{
-			if (e.PropertyName == GetPropertyName(() => DefaultFont) || e.PropertyName == GetPropertyName(() => RightToLeftScript)
-				|| e.PropertyName == GetPropertyName(() => IsGraphiteEnabled))
-			{
-				ClearRenderers();
-			}
-
-			base.OnPropertyChanged(e);
-		}
-
-		/// <summary>
-		/// Updates the language tag.
-		/// </summary>
-		protected override void UpdateLanguageTag()
-		{
-			ClearRenderers();
-			base.UpdateLanguageTag();
-		}
-
-		private bool TryGetRealFontName(string fontName, out string realFontName)
-		{
-			if (fontName == "<default font>")
-			{
-				realFontName = DefaultFontName;
-				return true;
-			}
-			realFontName = null;
-			return false;
-		}
-
-		private void ClearRenderers()
-		{
-			m_renderEngines.Clear();
-			m_uniscribeEngine = null;
 		}
 
 		/// <summary>

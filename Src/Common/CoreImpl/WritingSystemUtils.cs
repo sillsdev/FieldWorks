@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.CoreImpl
 {

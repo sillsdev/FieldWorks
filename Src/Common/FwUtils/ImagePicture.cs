@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils

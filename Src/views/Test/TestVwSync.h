@@ -690,6 +690,8 @@ namespace TestViews
 			m_qcda->QueryInterface(IID_ISilDataAccess, (void **)&m_qsda);
 			m_qsda->putref_WritingSystemFactory(g_qwsf);
 
+			m_qref.Attach(NewObj MockRenderEngineFactory);
+
 			m_qrootb1.CreateInstance(CLSID_VwRootBox);
 			m_qrootb2.CreateInstance(CLSID_VwRootBox);
 
@@ -712,6 +714,9 @@ namespace TestViews
 			// Initialize the root boxes with their data access object, roots, view constructors, etc.
 			m_qrootb1->putref_DataAccess(m_qsda);
 			m_qrootb2->putref_DataAccess(m_qsda);
+
+			m_qrootb1->putref_RenderEngineFactory(m_qref);
+			m_qrootb2->putref_RenderEngineFactory(m_qref);
 
 			// Make a dummy root site which can provide the views with coordinate rects
 			// and Graphics object but doesn't do much else. Initialize the views with it.
@@ -748,6 +753,7 @@ namespace TestViews
 
 			m_qtsf.Clear();
 			m_qcda.Clear();
+			m_qref.Clear();
 			m_qsda.Clear();
 			m_qrootb1.Clear();
 			m_qrootb2.Clear();
@@ -759,6 +765,7 @@ namespace TestViews
 		Rect m_rcSrc;
 		IVwCacheDaPtr m_qcda;
 		ISilDataAccessPtr m_qsda;
+		IRenderEngineFactoryPtr m_qref;
 		IVwRootBoxPtr m_qrootb1;
 		IVwRootBoxPtr m_qrootb2;
 		IVwGraphicsWin32Ptr m_qvg32;

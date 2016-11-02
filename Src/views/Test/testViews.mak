@@ -9,7 +9,7 @@ BUILD_PRODUCT=testViews
 BUILD_EXTENSION=exe
 BUILD_REGSVR=0
 
-DEFS=$(DEFS) /DGR_FW /DVIEWSDLL
+DEFS=$(DEFS) /DGR_FW /DVIEWSDLL /DGRAPHITE2_STATIC
 
 UNITPP_INC=$(BUILD_ROOT)\Include\unit++
 VIEWS_SRC=$(BUILD_ROOT)\Src\Views
@@ -18,9 +18,10 @@ VIEWSTEST_SRC=$(BUILD_ROOT)\Src\Views\Test
 GENERIC_SRC=$(BUILD_ROOT)\Src\Generic
 APPCORE_SRC=$(BUILD_ROOT)\Src\AppCore
 FWKERNELTEST_SRC=$(BUILD_ROOT)\Src\Kernel\Test
+GR2_INC=$(BUILD_ROOT)\Lib\src\graphite2\include
 
 # Set the USER_INCLUDE environment variable.
-UI=$(UNITPP_INC);$(VIEWSTEST_SRC);$(VIEWS_SRC);$(VIEWS_LIB_SRC);$(GENERIC_SRC);$(APPCORE_SRC);$(FWKERNELTEST_SRC)
+UI=$(UNITPP_INC);$(VIEWSTEST_SRC);$(VIEWS_SRC);$(VIEWS_LIB_SRC);$(GENERIC_SRC);$(APPCORE_SRC);$(FWKERNELTEST_SRC);$(GR2_INC)
 
 !IF "$(USER_INCLUDE)"!=""
 USER_INCLUDE=$(UI);$(USER_INCLUDE)
@@ -37,7 +38,7 @@ PATH=$(COM_OUT_DIR);$(PATH)
 
 LINK_OPTS=$(LINK_OPTS:/subsystem:windows=/subsystem:console) /LIBPATH:"$(BUILD_ROOT)\Lib\$(BUILD_CONFIG)"
 CPPUNIT_LIBS=unit++.lib
-LINK_LIBS=$(CPPUNIT_LIBS) Generic.lib xmlparse.lib $(LINK_LIBS)
+LINK_LIBS=$(CPPUNIT_LIBS) Generic.lib xmlparse.lib Usp10.lib graphite2.lib $(LINK_LIBS)
 
 # === Object Lists ===
 
@@ -45,7 +46,6 @@ OBJ_VIEWSTESTSUITE=\
 	$(INT_DIR)\genpch\testViews.obj\
 	$(INT_DIR)\genpch\Collection.obj\
 	$(INT_DIR)\autopch\ModuleEntry.obj\
-	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\LgUnicodeCollater.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwAccessRoot.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwOverlay.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwPropertyStore.obj\
@@ -72,6 +72,14 @@ OBJ_VIEWSTESTSUITE=\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwSynchronizer.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwTextStore.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwLayoutStream.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\UniscribeEngine.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\UniscribeSegment.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\RomRenderEngine.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\RomRenderSegment.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\GraphiteEngine.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\GraphiteSegment.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\LgLineBreaker.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\LgUnicodeCollater.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\ViewsGlobals.obj\
 
 
@@ -122,6 +130,11 @@ $(VIEWSTEST_SRC)\Collection.cpp: $(VIEWSTEST_SRC)\DummyBaseVc.h $(VIEWSTEST_SRC)
  $(VIEWSTEST_SRC)\TestVwGraphics.h \
  $(VIEWSTEST_SRC)\TestVwTextBoxes.h \
  $(VIEWSTEST_SRC)\TestVwTableBox.h \
-
+ $(VIEWSTEST_SRC)\TestLgLineBreaker.h\
+ $(VIEWSTEST_SRC)\TestUniscribeEngine.h\
+ $(VIEWSTEST_SRC)\TestRomRenderEngine.h\
+ $(VIEWSTEST_SRC)\TestGraphiteEngine.h\
+ $(VIEWSTEST_SRC)\RenderEngineTestBase.h\
+ $(VIEWSTEST_SRC)\MockRenderEngineFactory.h
 	$(DISPLAY) Collecting tests for $(BUILD_PRODUCT).$(BUILD_EXTENSION)
 	$(COLLECT) $** $(VIEWSTEST_SRC)\Collection.cpp

@@ -126,6 +126,33 @@ STDMETHODIMP UniscribeEngine::InitRenderer(IVwGraphics * pvg, BSTR bstrData)
 }
 
 /*----------------------------------------------------------------------------------------------
+	Gets the render engine factory.
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP UniscribeEngine::get_RenderEngineFactory(IRenderEngineFactory ** ppref)
+{
+	BEGIN_COM_METHOD;
+	ChkComOutPtr(ppref);
+
+	*ppref = m_qref;
+	AddRefObj(*ppref);
+
+	END_COM_METHOD(g_fact, IID_IRenderEngine);
+}
+
+/*----------------------------------------------------------------------------------------------
+	Sets the render engine factory.
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP UniscribeEngine::putref_RenderEngineFactory(IRenderEngineFactory * pref)
+{
+	BEGIN_COM_METHOD;
+	ChkComArgPtr(pref);
+
+	m_qref = pref;
+
+	END_COM_METHOD(g_fact, IID_IRenderEngine);
+}
+
+/*----------------------------------------------------------------------------------------------
 	Return an indication of whether the font is valid for the renderer.
 ----------------------------------------------------------------------------------------------*/
 STDMETHODIMP UniscribeEngine::get_FontIsValid(ComBool * pfValid)
@@ -470,10 +497,9 @@ LEmptySeg:
 			CheckHr(m_qwsf->get_EngineOrNull(chrp.ws, &qLgWritingSystem));
 			AssertPtr(qLgWritingSystem);
 			CheckHr(qLgWritingSystem->InterpretChrp(&chrp));
+			CheckHr(pvg->SetupGraphics(&chrp));
+			CheckHr(m_qref->get_Renderer(qLgWritingSystem, pvg, &qreneng));
 		}
-		CheckHr(pvg->SetupGraphics(&chrp));
-
-		CheckHr(m_qwsf->get_Renderer(chrp.ws, pvg, &qreneng));
 		if (qreneng.Ptr() != this)
 		{
 			// Not actually another ws, but it requires a different (probably Graphite)

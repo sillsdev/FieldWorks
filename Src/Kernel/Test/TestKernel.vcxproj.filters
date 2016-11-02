@@ -47,19 +47,6 @@
     <ClInclude Include="MockLgWritingSystemFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RenderEngineTestBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TestRomRenderEngine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TestUniscribeEngine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TestGraphiteEngine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TestLgLineBreaker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

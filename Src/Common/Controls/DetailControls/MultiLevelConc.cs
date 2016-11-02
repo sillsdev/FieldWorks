@@ -321,15 +321,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			public override void MakeRoot()
 			{
 				CheckDisposed();
-				base.MakeRoot();
 
 				if (m_fdoCache == null || DesignMode)
 					return;
 
-				IVwRootBox rootb = VwRootBoxClass.Create();
-				rootb.SetSite(this);
+				base.MakeRoot();
 
-				rootb.DataAccess = m_fdoCache.DomainDataByFlid;
+				m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
 
 				m_vc = m_info.Vc;
 				if (m_vc == null)
@@ -348,8 +346,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// If it doesn't give us one the vc will obtain a key string from the policy
 				// directly. The frag argument is arbitrary. Note that we have to use a non-zero
 				// HVO, even when it doesn't mean anything, to avoid triggering an Assert in the Views code.
-				rootb.SetRootObject(m_info.Hvo == 0 ? 1 : m_info.Hvo, m_vc, 1, m_styleSheet);
-				this.m_rootb = rootb;
+				m_rootb.SetRootObject(m_info.Hvo == 0 ? 1 : m_info.Hvo, m_vc, 1, m_styleSheet);
 			}
 		}
 

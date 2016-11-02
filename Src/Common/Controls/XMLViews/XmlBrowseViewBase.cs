@@ -1903,8 +1903,8 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_fdoCache == null || DesignMode)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
+
 			// Only change it if it is null or different.
 			// Otherwise, it does an uneeded disposal/creation of the layout cache.
 			if (m_xbvvc.Cache == null || m_xbvvc.Cache != m_fdoCache)
@@ -1918,7 +1918,6 @@ namespace SIL.FieldWorks.Common.Controls
 			m_rootb.DataAccess = m_sda;
 
 			RootObjectHvo = m_hvoRoot;
-			base.MakeRoot();
 			m_bv.SpecialCache.AddNotification(this);
 			m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
 			// Filter bar uses info from our VC and can't fininish init until we make it.

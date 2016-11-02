@@ -14,16 +14,12 @@ Description:
 #ifndef ROMRENDERSEGMENT_INCLUDED
 #define ROMRENDERSEGMENT_INCLUDED
 
-#if WIN32
+#ifdef WIN32
 ATTACH_GUID_TO_CLASS(class, A124E0C1-DD4B-11d2-8078-0000C0FB81B5, RomRenderSegment);
 #endif
 
 // Trick GUID for getting the actual implementation of the RomRenderSegment object.
 #define CLSID_RomRenderSegment __uuidof(RomRenderSegment)
-
-// ENHANCE JohnT: put this somewhere better (where kdzmpInch is finally put)
-const int kdzptInch = 72;
-const int kdzmpInch = 72000;
 
 
 /*----------------------------------------------------------------------------------------------

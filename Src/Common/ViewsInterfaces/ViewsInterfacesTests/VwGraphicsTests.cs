@@ -18,12 +18,11 @@
 // </remarks>
 
 using System;
-using System.Drawing;
-
-using NUnit.Framework;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
+using NUnit.Framework;
 
-namespace SIL.FieldWorks.Common.FwKernelInterfaces
+namespace SIL.FieldWorks.Common.ViewsInterfaces
 {
 	/// <summary/>
 	[TestFixture]

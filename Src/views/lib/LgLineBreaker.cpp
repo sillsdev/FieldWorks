@@ -11,14 +11,13 @@ This software is licensed under the LGPL, version 2.1 or later
 #pragma hdrstop
 // any other headers (not precompiled)
 #include <limits.h>
-#if WIN32
+#ifdef WIN32
 #include <io.h>
 #endif
 #undef THIS_FILE
 DEFINE_THIS_FILE
 
-#if !WIN32
-#include "LocaleIndex.h"
+#ifndef WIN32
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -81,7 +80,7 @@ LgLineBreaker::LgLineBreaker()
 	ModuleEntry::ModuleAddRef();
 	m_pLocale = NULL;
 	m_pBrkit = NULL;
-	StrUni stuUserWs(kstidUserWs);
+	StrUni stuUserWs(L"en");
 	// We at least need to initialize the ICU data directory...
 	CheckHr(Initialize(stuUserWs.Bstr()));
 }
@@ -128,7 +127,7 @@ void LgLineBreaker::SetupBreakIterator()
 	{
 		if (m_pBrkit)
 			delete m_pBrkit;
-		ThrowNice(E_FAIL, kstidICUBrkInit);
+		ThrowHr(E_FAIL, L"The ICU function to initialize the BreakIterator returned an error.");
 	}
 }
 
@@ -547,7 +546,7 @@ STDMETHODIMP LgLineBreaker::GetLineBreakText(int cchMax, OLECHAR * prgchOut,
 	const_cast<CharacterIterator &>(chIter).getText(ustrAns);
 
 	if ((cchMax < ustrAns.length()) && (cchMax > 0))
-		ThrowNice(E_FAIL, kstidBufferTooSmall);
+		ThrowHr(E_FAIL, L"The buffer passed to this method was too small to hold the result.");
 
 	*pcchOut = ustrAns.length();
 
@@ -579,7 +578,7 @@ STDMETHODIMP LgLineBreaker::LineBreakBefore(int ichIn, int * pichOut,
 	SetupBreakIterator(); //make sure we have one.
 
 	if ((ichIn < 0) || (ichIn >= m_cchBrkMax))
-		ThrowNice(E_FAIL, kstidICUBrkRange);
+		ThrowHr(E_FAIL, L"The line break asked for was out of range of the given text.");
 
 	*pichOut = m_pBrkit->preceding(ichIn);
 
@@ -605,7 +604,7 @@ STDMETHODIMP LgLineBreaker::LineBreakAfter(int ichIn, int * pichOut,
 	SetupBreakIterator(); //make sure we have one.
 
 	if ((ichIn < 0) || (ichIn >= m_cchBrkMax))
-		ThrowNice(E_FAIL, kstidICUBrkRange);
+		ThrowHr(E_FAIL, L"The line break asked for was out of range of the given text.");
 
 		*pichOut = m_pBrkit->following(ichIn);
 

@@ -9,16 +9,17 @@ BUILD_PRODUCT=Views
 BUILD_EXTENSION=dll
 BUILD_REGSVR=1
 
-DEFS=$(DEFS) /DGR_FW /DVIEWSDLL /D_MERGE_PROXYSTUB /I"$(COM_OUT_DIR)" /I"$(COM_OUT_DIR_RAW)"
+DEFS=$(DEFS) /DGRAPHITE2_STATIC /DGR_FW /DVIEWSDLL /D_MERGE_PROXYSTUB /I"$(COM_OUT_DIR)" /I"$(COM_OUT_DIR_RAW)"
 
 VIEWS_SRC=$(BUILD_ROOT)\Src\Views
 GENERIC_SRC=$(BUILD_ROOT)\Src\Generic
 VIEWS_LIB_SRC=$(BUILD_ROOT)\Src\Views\Lib
 AFCORE_SRC=$(BUILD_ROOT)\Src\AppCore
 COMMONDLGS_SRC=$(BUILD_ROOT)\Src\CommonCOMDlgs
+GR2_INC=$(BUILD_ROOT)\Lib\src\graphite2\include
 
 # Set the USER_INCLUDE environment variable.
-UI=$(VIEWS_SRC);$(VIEWS_LIB_SRC);$(GENERIC_SRC);$(AFCORE_SRC);$(COMMONDLGS_SRC)
+UI=$(VIEWS_SRC);$(VIEWS_LIB_SRC);$(GENERIC_SRC);$(AFCORE_SRC);$(COMMONDLGS_SRC);$(GR2_INC)
 
 !IF "$(USER_INCLUDE)"!=""
 USER_INCLUDE=$(UI);$(USER_INCLUDE);
@@ -34,7 +35,7 @@ PATH=$(COM_OUT_DIR);$(PATH)
 
 RCFILE=Views.rc
 DEFFILE=Views.def
-LINK_LIBS= Generic.lib $(LINK_LIBS)
+LINK_LIBS= Generic.lib Usp10.lib graphite2.lib $(LINK_LIBS)
 PS_OBJ_DEPS= $(OBJ_DIR)\Common\FwKernel\FwKernelPs_p.obj $(OBJ_DIR)\Common\FwKernel\FwKernelPs_i.obj
 
 # === Object Lists ===
@@ -42,7 +43,6 @@ PS_OBJ_DEPS= $(OBJ_DIR)\Common\FwKernel\FwKernelPs_p.obj $(OBJ_DIR)\Common\FwKer
 # ModuleEntry must always be included explicitly, because some components need to compile
 # a DLL version of it, others an EXE version.
 OBJ_VIEWS=\
-	$(INT_DIR)\autopch\LgUnicodeCollater.obj\
 	$(INT_DIR)\autopch\ViewsGlobals.obj\
 	$(INT_DIR)\autopch\VwInvertedViews.obj\
 	$(INT_DIR)\autopch\VwAccessRoot.obj\
@@ -72,6 +72,14 @@ OBJ_VIEWS=\
 	$(INT_DIR)\autopch\VwSynchronizer.obj\
 	$(INT_DIR)\autopch\VwTextStore.obj\
 	$(INT_DIR)\autopch\VwBaseVirtualHandler.obj\
+	$(INT_DIR)\autopch\UniscribeEngine.obj\
+	$(INT_DIR)\autopch\UniscribeSegment.obj\
+	$(INT_DIR)\autopch\GraphiteEngine.obj\
+	$(INT_DIR)\autopch\GraphiteSegment.obj\
+	$(INT_DIR)\autopch\RomRenderEngine.obj\
+	$(INT_DIR)\autopch\RomRenderSegment.obj\
+	$(INT_DIR)\autopch\LgLineBreaker.obj\
+	$(INT_DIR)\autopch\LgUnicodeCollater.obj\
 	$(INT_DIR)\autopch\dlldatax.obj\
 
 

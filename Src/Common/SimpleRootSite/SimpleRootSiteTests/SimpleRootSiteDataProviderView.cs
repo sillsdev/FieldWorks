@@ -212,9 +212,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			base.MakeRoot();
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
-
 			m_fragRoot = frag;
 			// Set up a new view constructor.
 			m_vc = vc;

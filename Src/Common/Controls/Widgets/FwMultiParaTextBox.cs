@@ -357,10 +357,8 @@ namespace SIL.FieldWorks.Common.Widgets
 			if (m_sda == null || DesignMode)
 				return;
 
-			if (m_rootb == null)
-				m_rootb = VwRootBoxClass.Create();
+			base.MakeRoot();
 
-			m_rootb.SetSite(this);
 			HorizMargin = 5;
 
 			// Set up a new view constructor.
@@ -370,7 +368,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_rootb.DataAccess = m_sda;
 			m_rootb.SetRootObject(kMemTextHvo, m_vc, (int)StTextFrags.kfrText, m_styleSheet);
 
-			base.MakeRoot();
 			m_dxdLayoutWidth = kForceLayout;
 		}
 

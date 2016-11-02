@@ -21,12 +21,12 @@ Last reviewed:
 #include "CellarConstants.h"
 
 #define NO_EXCEPTIONS 1
-#if WIN32
+#ifdef WIN32
 #include <algorithm>
 #include <mlang.h>
 #endif
 
-#if !WIN32
+#ifndef WIN32
 #include <OleStringLiteral.h>
 #include "BasicTypes.h"
 #include <memory>
@@ -60,30 +60,13 @@ using namespace fwutil;	// Rect and Point classes
 #include "TsPropsFactory.h"
 #include "TextServ.h"
 #include "ActionHandler.h"
-// Engines
-#include "LgLineBreaker.h"
-class RomRenderEngine;
-DEFINE_COM_PTR(RomRenderEngine);
-class UniscribeEngine;
-DEFINE_COM_PTR(UniscribeEngine);
-class GraphiteEngine;
-DEFINE_COM_PTR(GraphiteEngine);
-#include "RomRenderSegment.h"
-#include "RomRenderEngine.h"
-#if !WIN32
-#include "UniscribeLinux.h"
-#endif
-#include "UniscribeSegment.h"
-#include "UniscribeEngine.h"
-#include "GraphiteSegment.h"
-#include "GraphiteEngine.h"
 
 // Other tools
 #include "FwStyledText.h"
 #include "StringToNumHelpers.h"
 #include "xmlparse.h"
 
-#if WIN32
+#ifdef WIN32
 // for parsing XML files; in this DLL, we want the parser to work with wide characters,
 // since we always parse BSTRs.
 #define XML_UNICODE_WCHAR_T

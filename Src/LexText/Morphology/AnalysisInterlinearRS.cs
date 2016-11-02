@@ -130,8 +130,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (m_fdoCache == null || DesignMode || m_wfiAnalysis == null)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
 
 			m_vc = new InterlinVc(m_fdoCache);
 			// Theory has it that the slices that have 'true' in this attribute will allow the sandbox to be used.
@@ -163,8 +162,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			const int selectorId = InterlinVc.kfragSingleInterlinearAnalysisWithLabelsLeftAlign;
 			m_rootb.SetRootObject(m_wfiAnalysis.Hvo, m_vc, selectorId, m_styleSheet);
-
-			base.MakeRoot();
 
 			if (!IsEditable)
 				return;

@@ -192,6 +192,7 @@
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
+    <Compile Include="RenderEngineFactoryTests.cs" />
     <Compile Include="SimpleBasicView.cs">
       <SubType>UserControl</SubType>
     </Compile>

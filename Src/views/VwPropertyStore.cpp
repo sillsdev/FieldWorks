@@ -2294,7 +2294,7 @@ int VwPropertyStore::MarginTrailing(CellSides grfcs)
 	Right now the only error we're checking for is the renderer being not properly set-up
 	(eg, if there were errors loading a Graphite font).
 ----------------------------------------------------------------------------------------------*/
-HRESULT VwPropertyStore::DrawingErrors(IVwGraphics* pvg)
+HRESULT VwPropertyStore::DrawingErrors(IRenderEngineFactory * pref, IVwGraphics* pvg)
 {
 	HRESULT hr;
 
@@ -2305,8 +2305,9 @@ HRESULT VwPropertyStore::DrawingErrors(IVwGraphics* pvg)
 		CheckHr(m_qwsf->get_EngineOrNull(m_chrp.ws, &qws));
 		if (qws)
 		{
+			CheckHr(pvg->SetupGraphics(&m_chrp));
 			IRenderEnginePtr qreneng;
-			CheckHr(m_qwsf->get_RendererFromChrp(pvg, &m_chrp, &qreneng));
+			CheckHr(pref->get_Renderer(qws, pvg, &qreneng));
 			if (qreneng)
 			{
 				ComBool fValid;
@@ -2319,7 +2320,7 @@ HRESULT VwPropertyStore::DrawingErrors(IVwGraphics* pvg)
 
 	if (m_qzvpsReset)
 	{
-		IgnoreHr(hr = m_qzvpsReset->DrawingErrors(pvg));
+		IgnoreHr(hr = m_qzvpsReset->DrawingErrors(pref, pvg));
 		if (FAILED(hr))
 			return hr;
 	}
@@ -2329,7 +2330,7 @@ HRESULT VwPropertyStore::DrawingErrors(IVwGraphics* pvg)
 	for (ithmvprzvps = m_hmttpzvps.Begin(); ithmvprzvps != m_hmttpzvps.End(); ++ithmvprzvps)
 	{
 		VwPropertyStore * pzvps = ithmvprzvps.GetValue();
-		IgnoreHr(hr = pzvps->DrawingErrors(pvg));
+		IgnoreHr(hr = pzvps->DrawingErrors(pref, pvg));
 		if (FAILED(hr))
 			// Found an error.
 			return hr;
@@ -2340,7 +2341,7 @@ HRESULT VwPropertyStore::DrawingErrors(IVwGraphics* pvg)
 	for (ithmipkzvps = m_hmipkzvps.Begin(); ithmipkzvps != m_hmipkzvps.End(); ++ithmipkzvps)
 	{
 		VwPropertyStore * pzvps = ithmipkzvps.GetValue();
-		IgnoreHr(hr = pzvps->DrawingErrors(pvg));
+		IgnoreHr(hr = pzvps->DrawingErrors(pref, pvg));
 		if (FAILED(hr))
 			// Found an error.
 			return hr;
@@ -2350,7 +2351,7 @@ HRESULT VwPropertyStore::DrawingErrors(IVwGraphics* pvg)
 	for (int ispr = 0; ispr < m_vstrprrec.Size(); ++ispr)
 	{
 		VwPropertyStore * pzvps = m_vstrprrec[ispr].m_pzvps;
-		IgnoreHr(hr = pzvps->DrawingErrors(pvg));
+		IgnoreHr(hr = pzvps->DrawingErrors(pref, pvg));
 		if (FAILED(hr))
 			// Found an error.
 			return hr;

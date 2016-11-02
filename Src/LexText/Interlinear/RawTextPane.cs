@@ -423,8 +423,7 @@ namespace SIL.FieldWorks.IText
 			if (m_fdoCache == null || DesignMode || m_hvoRoot == 0)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
 
 			int wsFirstPara = GetWsOfFirstWordOfFirstTextPara();
 			m_vc = new RawTextVc(m_rootb, m_fdoCache, wsFirstPara);
@@ -435,8 +434,6 @@ namespace SIL.FieldWorks.IText
 			m_rootb.DataAccess = m_showSpaceDa;
 
 			m_rootb.SetRootObject(m_hvoRoot, m_vc, (int)StTextFrags.kfrText, m_styleSheet);
-
-			base.MakeRoot();
 		}
 
 		/// <summary>

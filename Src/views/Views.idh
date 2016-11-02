@@ -40,6 +40,7 @@ Last reviewed:
 	interface IVwLayoutStream;
 	interface IVwLayoutManager;
 	interface ILgWritingSystemFactory;
+	interface IRenderEngineFactory;
 
 	typedef int HVO; // Hungarian hvo; Handle to viewable object.
 	typedef int PropTag; // Hungarian tag
@@ -994,7 +995,7 @@ Last reviewed:
 
 		@H3{Hungarian: rootb}
 	*******************************************************************************************/
-	DeclareInterface(VwRootBox, VwNotifyChange, A42600E7-F097-4903-97EA-149C153DD335)
+	DeclareInterface(VwRootBox, VwNotifyChange, E4E04181-7136-4645-89BA-D95D4EA888A6)
 	{
 		//:> Initialization
 
@@ -1013,6 +1014,12 @@ Last reviewed:
 		// involve reading properties.
 		[propputref] HRESULT DataAccess(
 			[in] ISilDataAccess * psda);
+		// Gets the render engine factory.
+		[propget] HRESULT RenderEngineFactory(
+			[out, retval] IRenderEngineFactory ** ppref);
+		// Sets the render engine factory.
+		[propputref] HRESULT RenderEngineFactory(
+			[in] IRenderEngineFactory * pref);
 
 		// This is the main method typically used to initialize a root object. It is passed
 		// three arrays, all the same size (as indicated by chvo); usually all are of size 1.

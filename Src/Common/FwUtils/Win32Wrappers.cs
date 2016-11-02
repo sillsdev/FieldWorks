@@ -14,6 +14,8 @@ using System.Windows.Forms.VisualStyles;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+
 #if __MonoCS__
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;

@@ -273,6 +273,9 @@ namespace TestViews
 			qcda->QueryInterface(IID_ISilDataAccess, (void **)&qsda);
 			qsda->putref_WritingSystemFactory(g_qwsf);
 
+			IRenderEngineFactoryPtr qref;
+			qref.Attach(NewObj MockRenderEngineFactory);
+
 			ITsStrFactoryPtr qtsf;
 			qtsf.CreateInstance(CLSID_TsStrFactory);
 			ITsStringPtr qtss;
@@ -310,6 +313,7 @@ namespace TestViews
 				IVwViewConstructorPtr qvc;
 				qvc.Attach(NewObj NormalizeDummyVc());
 				qrootb->putref_DataAccess(qsda);
+				qrootb->putref_RenderEngineFactory(qref);
 				qrootb->SetRootObject(hvoRoot, qvc, kfragBase, NULL);
 				DummyRootSitePtr qdrs;
 				qdrs.Attach(NewObj DummyRootSite());
@@ -550,6 +554,9 @@ namespace TestViews
 			qcda->QueryInterface(IID_ISilDataAccess, (void **)&qsda);
 			qsda->putref_WritingSystemFactory(g_qwsf);
 
+			IRenderEngineFactoryPtr qref;
+			qref.Attach(NewObj MockRenderEngineFactory);
+
 			IVwRootBoxPtr qrootb;
 #ifdef WIN32
 			qrootb.CreateInstance(CLSID_VwRootBox);
@@ -569,6 +576,7 @@ namespace TestViews
 				IVwViewConstructorPtr qvc;
 				qvc.Attach(NewObj InnerPileDummyVc());
 				qrootb->putref_DataAccess(qsda);
+				qrootb->putref_RenderEngineFactory(qref);
 				qrootb->SetRootObject(hvoRoot, qvc, kfragBase, NULL);
 				DummyRootSitePtr qdrs;
 				qdrs.Attach(NewObj DummyRootSite());
@@ -642,6 +650,9 @@ namespace TestViews
 			qcda->QueryInterface(IID_ISilDataAccess, (void **)&qsda);
 			qsda->putref_WritingSystemFactory(g_qwsf);
 
+			IRenderEngineFactoryPtr qref;
+			qref.Attach(NewObj MockRenderEngineFactory);
+
 			IVwRootBoxPtr qrootb;
 			qrootb.Attach(NewObj MockDictRootBox());		// ref count initialy 1
 			IVwGraphicsWin32Ptr qvg32;
@@ -664,6 +675,7 @@ namespace TestViews
 				IVwViewConstructorPtr qvc;
 				qvc.Attach(NewObj NestedStringDummyVc());
 				qrootb->putref_DataAccess(qsda);
+				qrootb->putref_RenderEngineFactory(qref);
 				qrootb->SetRootObject(hvoRoot, qvc, kfragBase, NULL);
 				DummyRootSitePtr qdrs;
 				qdrs.Attach(NewObj DummyRootSite());

@@ -18,7 +18,7 @@ Description:
 
 #define NO_EXCEPTIONS 1
 #include "common.h"
-#if WIN32
+#ifdef WIN32
 #include <shlobj.h> // for one call to SHGetSpecialFolderPath
 #endif
 
@@ -39,7 +39,7 @@ If you want to show colored boxes around the boxes uncomment the following defin
 #define kchwHardLineBreak (wchar)0x2028
 
 #include "VwResources.h"
-#if WIN32
+#ifdef WIN32
 #include "..\..\..\Src\AppCore\Res\AfAppRes.h"
 #else
 #include <Res/AfAppRes.h> // from AppCore
@@ -73,7 +73,7 @@ class VwTextSelection;
 class VwTableRowBox;
 class VwTableCellBox;
 class SilDataAccess;
-#if WIN32
+#ifdef WIN32
 class VwAccessRoot;
 #endif
 class VwSynchronizer;
@@ -165,6 +165,23 @@ typedef unsigned long int utf32;
 class GrEngine;
 } // gr
 
+#include "LgLineBreaker.h"
+class RomRenderEngine;
+DEFINE_COM_PTR(RomRenderEngine);
+class UniscribeEngine;
+DEFINE_COM_PTR(UniscribeEngine);
+class GraphiteEngine;
+DEFINE_COM_PTR(GraphiteEngine);
+#include "RomRenderSegment.h"
+#include "RomRenderEngine.h"
+#ifndef WIN32
+#include "UniscribeLinux.h"
+#endif
+#include "UniscribeSegment.h"
+#include "UniscribeEngine.h"
+#include "GraphiteSegment.h"
+#include "GraphiteEngine.h"
+
 // obsolete #include "ActualTextProperties.h"
 #include "ViewsGlobals.h"
 #include "VwBaseDataAccess.h"
@@ -184,7 +201,7 @@ class GrEngine;
 #include "VwTableBox.h"
 #include "VwLazyBox.h"
 #include "StringToNumHelpers.h"
-#if WIN32
+#ifdef WIN32
 #include "AfDef.h"
 #include "AfColorTable.h"
 #include "AfGfx.h"
@@ -203,7 +220,7 @@ class GrEngine;
 #include "VwLayoutStream.h"
 #include "VwUndo.h"
 #include "VwInvertedViews.h"
-#if !WIN32
+#ifndef WIN32
 #include "DisplayCapsInfo.h"
 #endif
 

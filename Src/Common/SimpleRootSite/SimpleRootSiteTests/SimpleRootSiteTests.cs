@@ -2,7 +2,6 @@
 using SIL.CoreImpl;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Keyboarding;
-using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {

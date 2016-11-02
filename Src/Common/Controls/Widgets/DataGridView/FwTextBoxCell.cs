@@ -9,6 +9,7 @@ using SIL.FieldWorks.Common.FwKernelInterfaces;
 #if __MonoCS__
 using System.Drawing;
 using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 #endif
 
 namespace SIL.FieldWorks.Common.Widgets

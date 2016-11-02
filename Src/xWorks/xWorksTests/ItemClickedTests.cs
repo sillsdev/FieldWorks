@@ -151,11 +151,12 @@ namespace SIL.FieldWorks.XWorks
 
 		public override void MakeRoot()
 		{
+			Vc = new TestVc(m_cache);
+
+			WritingSystemFactory = m_cache.WritingSystemFactory;
+
 			base.MakeRoot();
 
-			Vc = new TestVc(m_cache);
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
 			m_rootb.DataAccess = m_cache.DomainDataByFlid;
 
 			m_rootb.SetRootObject(m_hvoRoot, Vc, 1, null);

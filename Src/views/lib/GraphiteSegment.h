@@ -19,6 +19,7 @@ ATTACH_GUID_TO_CLASS(class, CFB69FDC-8C5F-4D3E-836C-4BA4F5D9769B, GraphiteSegmen
 #define CLSID_GraphiteSegment __uuidof(GraphiteSegment)
 
 #include <graphite2/Segment.h>
+#include <vector>
 
 /*----------------------------------------------------------------------------------------------
 Class: GraphiteSegment

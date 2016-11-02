@@ -13,7 +13,7 @@ TLB_SRC        = $(OUTPUT)/Common
 
 PACKAGES = gdk-2.0 gtkmm-2.4 cairomm-1.0 pangomm-1.4 freetype2 uuid
 
-DEFINES  = -DGR_FW -DVIEWSDLL -DSUPPRESS_FW_EXCEPTION_HANDLING -DWIN32_KEY_VALUES=1
+DEFINES  = -DGR_FW -DVIEWSDLL -DSUPPRESS_FW_EXCEPTION_HANDLING -DWIN32_KEY_VALUES=1 -DGRAPHITE2_STATIC
 
 ifeq ($(BUILD_CONFIG),Debug)
 	DEBUG_LIBS = $(OUT_DIR)/libDebugProcs.a
@@ -23,10 +23,13 @@ else
 	OPTIMIZATIONS = -O3
 endif
 
+GR2_INC = $(BUILD_ROOT)/Lib/src/graphite2/include
+
 INCLUDES := \
 	$(shell icu-config --detect-prefix --cppflags) \
 	-I. -Ilib \
 	-I$(GENERIC_SRC) -I$(APPCORE_SRC) -I$(DEBUGPROCS_SRC) \
+	-I$(GR2_INC) \
 	-I$(COMMONDLGS_SRC) \
 	-I$(TLB_SRC) -I$(INCLUDE) \
 	-I$(WIN32MORE_INC) \
@@ -61,12 +64,12 @@ LINK_LIBS := \
 	$(COM_OUT_DIR)/libViewsTlb.a \
 	$(OUT_DIR)/libGeneric.a \
 	$(OUT_DIR)/libAppCore.a \
+	$(BUILD_ROOT)/Lib/linux/$(BUILD_CONFIG)/libgraphite2.a \
 	$(DEBUG_LIBS) \
 
 # === Object Lists ===
 
 OBJS = \
-	$(INT_DIR)/LgUnicodeCollater.o \
 	$(INT_DIR)/ViewsGlobals.o \
 	$(INT_DIR)/ExplicitInstantiation.o \
 	$(INT_DIR)/VwEnv.o \
@@ -92,6 +95,15 @@ OBJS = \
 	$(INT_DIR)/lib/VwGraphicsCairo.o \
 	$(INT_DIR)/lib/VwUndo.o \
 	$(INT_DIR)/lib/DisplayCapsInfo.o \
+	$(INT_DIR)/lib/UniscribeLinux.o \
+	$(INT_DIR)/lib/UniscribeSegment.o \
+	$(INT_DIR)/lib/UniscribeEngine.o \
+	$(INT_DIR)/lib/GraphiteSegment.o \
+	$(INT_DIR)/lib/GraphiteEngine.o \
+	$(INT_DIR)/lib/RomRenderEngine.o \
+	$(INT_DIR)/lib/RomRenderSegment.o \
+	$(INT_DIR)/lib/LgLineBreaker.o \
+	$(INT_DIR)/lib/LgUnicodeCollater.o \
 
 VWG_OBJS = \
 	$(INT_DIR)/lib/VwGraphicsCairo.o \
@@ -138,7 +150,7 @@ ComponentsMap: $(OUT_DIR)/libViews.so $(OUT_DIR)/libVwGraphics.so
 $(OBJS): $(PCHNAME)
 
 $(INT_DIR)/%.o: $(GENERIC_SRC)/%.cpp
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(INCLUDES) $(TARGET_ARCH) \
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) \
 	  -c $< -o $@ -MMD -MF $(@:%.o=%.d)
 
 $(OUT_DIR)/libAppCore.a:

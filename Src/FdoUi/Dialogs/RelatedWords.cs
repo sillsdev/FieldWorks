@@ -623,14 +623,10 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 
 			base.MakeRoot();
 
-			IVwRootBox rootb = VwRootBoxClass.Create();
-			rootb.SetSite(this);
-
 			m_vc = new RelatedWordsVc(m_wsUser, m_headword);
 
-			rootb.DataAccess = m_sda;
+			m_rootb.DataAccess = m_sda;
 
-			m_rootb = rootb;
 			m_rootb.SetRootObject(m_hvoRoot, m_vc, RelatedWordsVc.kfragRoot, m_styleSheet);
 			m_fRootboxMade = true;
 		}

@@ -112,8 +112,12 @@ namespace SIL.FieldWorks.Common.Widgets
 			if (DesignMode)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			// The simple root site won't lay out properly until this is done.
+			// It needs to be done before base.MakeRoot or it won't lay out at all ever!
+			WritingSystemFactory = m_realCache.WritingSystemFactory;
+
+			base.MakeRoot();
+
 			m_rootb.DataAccess = m_sda;
 
 			int wsUser = m_realCache.ServiceLocator.WritingSystemManager.UserWs;
@@ -123,10 +127,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			// arg3 is a meaningless initial fragment, since this VC only displays one thing.
 			m_rootb.SetRootObject(khvoRoot, m_vc, 1, m_styleSheet);
 			m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
-			// The simple root site won't lay out properly until this is done.
-			// It needs to be done before base.MakeRoot or it won't lay out at all ever!
-			WritingSystemFactory = m_realCache.WritingSystemFactory;
-			base.MakeRoot();
 		}
 
 		/// <summary>

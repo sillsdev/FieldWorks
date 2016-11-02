@@ -67,6 +67,12 @@
     <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
     <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>..\..\Kernel\test;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>..\..\Kernel\test;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -77,13 +83,19 @@
     <ClInclude Include="BasicVc.h" />
     <ClInclude Include="DummyBaseVc.h" />
     <ClInclude Include="DummyRootsite.h" />
+    <ClInclude Include="MockRenderEngineFactory.h" />
+    <ClInclude Include="RenderEngineTestBase.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="TestAutoLoad.h" />
+    <ClInclude Include="TestGraphiteEngine.h" />
     <ClInclude Include="TestInsertDiffPara.h" />
     <ClInclude Include="TestLayoutPage.h" />
     <ClInclude Include="TestLazyBox.h" />
     <ClInclude Include="TestLgCollatingEngine.h" />
+    <ClInclude Include="TestLgLineBreaker.h" />
     <ClInclude Include="TestNotifier.h" />
+    <ClInclude Include="TestRomRenderEngine.h" />
+    <ClInclude Include="TestUniscribeEngine.h" />
     <ClInclude Include="testViews.h" />
     <ClInclude Include="TestVirtualHandlers.h" />
     <ClInclude Include="TestVwEnv.h" />

@@ -9,7 +9,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace SIL.FieldWorks.Common.FwKernelInterfaces
+namespace SIL.FieldWorks.Common.ViewsInterfaces
 {
 	/// <summary>
 	/// IPicture interface (as found in stdole)

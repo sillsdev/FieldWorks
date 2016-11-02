@@ -314,6 +314,9 @@ namespace TestViews
 			CheckHr(qcda->QueryInterface(IID_ISilDataAccess, (void **)&qsda));
 			CheckHr(qsda->putref_WritingSystemFactory(g_qwsf));
 
+			IRenderEngineFactoryPtr qref;
+			qref.Attach(NewObj MockRenderEngineFactory);
+
 			ITsStrFactoryPtr qtsf;
 			qtsf.CreateInstance(CLSID_TsStrFactory);
 			ITsStringPtr qtss;
@@ -348,6 +351,7 @@ namespace TestViews
 				IVwViewConstructorPtr qvc;
 				qvc.Attach(NewObj DummyParaVc());
 				CheckHr(qrootb->putref_DataAccess(qsda));
+				CheckHr(qrootb->putref_RenderEngineFactory(qref));
 				CheckHr(qrootb->SetRootObject(hvoRoot, qvc, kfragStText, NULL));
 				DummyRootSitePtr qdrs;
 				qdrs.Attach(NewObj DummyRootSite());
@@ -440,6 +444,9 @@ namespace TestViews
 			qcda->QueryInterface(IID_ISilDataAccess, (void **)&qsda);
 			qsda->putref_WritingSystemFactory(g_qwsf);
 
+			IRenderEngineFactoryPtr qref;
+			qref.Attach(NewObj MockRenderEngineFactory);
+
 			ITsStrFactoryPtr qtsf;
 			qtsf.CreateInstance(CLSID_TsStrFactory);
 			ITsStringPtr qtss;
@@ -474,6 +481,7 @@ namespace TestViews
 				IVwViewConstructorPtr qvc;
 				qvc.Attach(NewObj DummyParaVc());
 				qrootb->putref_DataAccess(qsda);
+				qrootb->putref_RenderEngineFactory(qref);
 				qrootb->SetRootObject(hvoRoot, qvc, kfragStText, NULL);
 				DummyRootSitePtr qdrs;
 				qdrs.Attach(NewObj DummyRootSite());
@@ -566,7 +574,7 @@ namespace TestViews
 
 		void testAccessible()
 		{
-#if WIN32
+#ifdef WIN32
 		// TODO-Linux: implement IAccessible
 			// Create test data in a temporary cache.
 			// First make some generic objects.
@@ -575,6 +583,9 @@ namespace TestViews
 			ISilDataAccessPtr qsda;
 			qcda->QueryInterface(IID_ISilDataAccess, (void **)&qsda);
 			qsda->putref_WritingSystemFactory(g_qwsf);
+
+			IRenderEngineFactoryPtr qref;
+			qref.Attach(NewObj MockRenderEngineFactory);
 
 			ITsStrFactoryPtr qtsf;
 			qtsf.CreateInstance(CLSID_TsStrFactory);
@@ -610,6 +621,7 @@ namespace TestViews
 				IVwViewConstructorPtr qvc;
 				qvc.Attach(NewObj DummyParaVc());
 				qrootb->putref_DataAccess(qsda);
+				qrootb->putref_RenderEngineFactory(qref);
 				qrootb->SetRootObject(hvoRoot, qvc, kfragStText, NULL);
 				DummyRootSitePtr qdrs;
 				qdrs.Attach(NewObj DummyRootSite());
@@ -989,6 +1001,9 @@ namespace TestViews
 			qcda->QueryInterface(IID_ISilDataAccess, (void **)&qsda);
 			qsda->putref_WritingSystemFactory(g_qwsf);
 
+			IRenderEngineFactoryPtr qref;
+			qref.Attach(NewObj MockRenderEngineFactory);
+
 			ITsStrFactoryPtr qtsf;
 			qtsf.CreateInstance(CLSID_TsStrFactory);
 			ITsStringPtr qtss;
@@ -1023,6 +1038,7 @@ namespace TestViews
 				IVwViewConstructorPtr qvc;
 				qvc.Attach(NewObj DummyParaVc());
 				qrootb->putref_DataAccess(qsda);
+				qrootb->putref_RenderEngineFactory(qref);
 				qrootb->SetRootObject(hvoRoot, qvc, kfragStText, NULL);
 				DummyRootSitePtr qdrs;
 				qdrs.Attach(NewObj DummyRootSite());

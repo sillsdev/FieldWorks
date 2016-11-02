@@ -41,8 +41,36 @@
     <ClInclude Include="VwTextBoxes.h" />
     <ClInclude Include="VwTextStore.h" />
     <ClInclude Include="VwTxtSrc.h" />
-    <ClInclude Include="LgUnicodeCollateInit.h" />
-    <ClInclude Include="LgUnicodeCollater.h" />
+    <ClInclude Include="lib\GraphiteEngine.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\GraphiteSegment.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\LgLineBreaker.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RomRenderEngine.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RomRenderSegment.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\UniscribeEngine.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\UniscribeSegment.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\UniscribeLinux.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\LgUnicodeCollateInit.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\LgUnicodeCollater.h">
+      <Filter>lib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lib\VwBaseDataAccess.cpp">
@@ -80,7 +108,33 @@
     <ClCompile Include="VwTextBoxes.cpp" />
     <ClCompile Include="VwTextStore.cpp" />
     <ClCompile Include="VwTxtSrc.cpp" />
-    <ClCompile Include="LgUnicodeCollater.cpp" />
+    <ClCompile Include="lib\GraphiteEngine.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\GraphiteSegment.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\LgLineBreaker.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RomRenderEngine.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RomRenderSegment.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\UniscribeEngine.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\UniscribeSegment.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\UniscribeLinux.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\LgUnicodeCollater.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\bin\mkvw.bat" />
@@ -88,6 +142,7 @@
     <None Include="Views.idh" />
     <None Include="Views.mak" />
     <None Include="Makefile" />
+    <None Include="Render.idh" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Views.rc" />

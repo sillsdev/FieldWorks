@@ -189,6 +189,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="RenderEngineFactory.cs" />
     <Compile Include="SelectionRestorer.cs" />
     <Compile Include="TsStringWrapper.cs" />
     <Compile Include="VwSelectionArgs.cs">

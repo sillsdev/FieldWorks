@@ -594,16 +594,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				CheckDisposed();
 
-				base.MakeRoot();
-
 				if (m_fdoCache == null || DesignMode)
 					return;
 
 				// A crude way of making sure the property we want is loaded into the cache.
-				m_sense = (ILexSense)m_fdoCache.ServiceLocator.GetObject(m_hvoObj);
-				// Review JohnT: why doesn't the base class do this??
-				m_rootb = VwRootBoxClass.Create();
-				m_rootb.SetSite(this);
+				m_sense = (ILexSense) m_fdoCache.ServiceLocator.GetObject(m_hvoObj);
+
+				base.MakeRoot();
+
 				if (m_sdaRev == null)
 					m_sdaRev = new ReversalEntryDataAccess(m_fdoCache.DomainDataByFlid as ISilDataAccessManaged);
 

@@ -240,7 +240,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 			// setup controls for default font
 			SetFontInCombo(m_defaultFontComboBox, m_ws.DefaultFontName);
-			m_defaultFontFeaturesButton.WritingSystemFactory = m_ws.WritingSystemManager;
+			m_defaultFontFeaturesButton.WritingSystemFactory = m_ws.WritingSystemFactory;
 			m_defaultFontFeaturesButton.FontName = m_defaultFontComboBox.Text;
 			m_defaultFontFeaturesButton.FontFeatures = m_ws.DefaultFontFeatures;
 

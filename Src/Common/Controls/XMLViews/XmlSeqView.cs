@@ -308,13 +308,10 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
-			base.MakeRoot();
-
 			if (m_fdoCache == null || DesignMode)
 				return;
 
-			IVwRootBox rootb = VwRootBoxClass.Create();
-			rootb.SetSite(this);
+			base.MakeRoot();
 
 			bool fEditable = XmlUtils.GetOptionalBooleanAttributeValue(m_xnSpec, "editable", true);
 			string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
@@ -334,15 +331,14 @@ namespace SIL.FieldWorks.Common.Controls
 				m_fShowFailingItems ? null : ItemDisplayCondition, sda) {IdentifySource = true};
 			ReadOnlyView = !fEditable;
 			if (!fEditable)
-				rootb.MaxParasToScan = 0;
+				m_rootb.MaxParasToScan = 0;
 			m_xmlVc.Cache = m_fdoCache;
 			m_xmlVc.MainSeqFlid = m_mainFlid;
 
-			rootb.DataAccess = sda;
+			m_rootb.DataAccess = sda;
 			m_xmlVc.DataAccess = sda;
 
-			rootb.SetRootObject(m_hvoRoot, m_xmlVc, RootFrag, m_styleSheet);
-			m_rootb = rootb;
+			m_rootb.SetRootObject(m_hvoRoot, m_xmlVc, RootFrag, m_styleSheet);
 		}
 
 		private ISilDataAccess GetSda()

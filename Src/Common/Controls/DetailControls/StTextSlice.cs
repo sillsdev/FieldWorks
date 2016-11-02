@@ -337,13 +337,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public override void MakeRoot()
 		{
 			CheckDisposed();
-			base.MakeRoot();
 
 			if (m_fdoCache == null || DesignMode)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
+
 			m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
 			if (m_text != null)
 				m_rootb.SetRootObject(m_text.Hvo, m_vc, (int)StTextFrags.kfrText, m_styleSheet);

@@ -1459,6 +1459,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			}
 		}
 
+		public IRenderEngineFactory RenderEngineFactory { get; set; }
+
 		public IVwOverlay Overlay
 		{
 			get

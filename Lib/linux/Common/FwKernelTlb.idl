@@ -1,4 +1,4 @@
-#line 1 "C:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+#line 1 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 
 
 
@@ -14,7 +14,7 @@ import "oaidl.idl";
 import "ocidl.idl";
 import "objidl.idl";
 
-#line 1 "C:\\fwrepo\\fw\\src\\Generic\\common.idh"
+#line 1 "C:\\develop\\fwrepo\\fw\\src\\Generic\\common.idh"
 
 
 
@@ -117,11 +117,11 @@ cpp_quote("// This is for code that uses a 64-bit integer for SilTime.")
 cpp_quote("typedef __int64 SilTime;")
 cpp_quote("#endif")
 cpp_quote("")
-#line 17 "C:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+#line 17 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 
 cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76E0-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(",") cpp_quote("FwKernelLib") cpp_quote(");") [ uuid(F1EF76E0-BE04-11d3-8D9A-005004DEFEC4), version(1.0), helpstring("FieldWorks Kernel") ] library FwKernelLib
 {
-	#line 1 "c:\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
 
 
@@ -161,6 +161,22 @@ typedef [v1_enum] enum UndoResult
 						
 } UndoResult;
 
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ISimpleInit") cpp_quote(",") cpp_quote("6433D19E-2DA2-4041-B202-DB118EE1694D") cpp_quote(");") [ uuid("6433D19E-2DA2-4041-B202-DB118EE1694D"), object, pointer_default(unique) ] interface ISimpleInit : IUnknown
+{
+	[restricted] HRESULT InitNew(
+		[in, size_is(cb)] const BYTE * prgb,
+		[in] int cb);
+
+	
+	[propget, restricted] HRESULT InitializationData(
+		[out, retval] BSTR * pbstr);
+};
 
 
 
@@ -538,7 +554,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("CF0F1C0B-0E44-4C1E-9912-2048
 {
 	interface IActionHandler;
 };
-#line 418 "c:\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 434 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
 
 
@@ -1694,9 +1710,9 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("24636FD1-DB8D-4b2c-B4C0-44C2
 {
 	interface IDebugReport;
 };
-#line 1574 "c:\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 1590 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
-#line 1576 "c:\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 1592 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
 
 
@@ -1717,10 +1733,10 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IComDisposable") cp
 
 
 
-#line 1597 "c:\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 1613 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
-#line 21 "C:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
-	#line 1 "c:\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
+#line 21 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
 
 
 
@@ -1766,8 +1782,6 @@ interface ITsStrBldr;
 interface ITsIncStrBldr;
 interface ITsPropsBldr;
 interface ITsMultiString;
-
-interface ILgWritingSystemFactory;
 
 
 
@@ -3182,7 +3196,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwStylesheet") cpp
 
 
 
-#line 1463 "c:\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
+#line 1461 "c:\\develop\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
 };
 
 
@@ -3220,10 +3234,26 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 {
 	interface ITsPropsBldr;
 };
-#line 1501 "c:\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
+#line 1499 "c:\\develop\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
 
-#line 22 "C:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
-	#line 1 "c:\\fwrepo\\fw\\src\\kernel\\Render.idh"
+#line 22 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\Language.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3245,96 +3275,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 	
 	
 	
-	interface ILgInputMethodEditor;
-	interface ILgLineBreakEngine;
-	interface IVwGraphics;
 	interface ILgWritingSystemFactory;
-	interface IJustifyingRenderer;
-
-	
-	typedef [v1_enum] enum LgLineBreak {
-
-		klbNoBreak = 0,			
-		klbWsBreak = 10,
-		klbWordBreak = 15,		
-		klbGoodBreak = 19,		
-		klbHyphenBreak = 20,	
-		klbLetterBreak = 30,	
-		klbClipBreak = 40		
-	} LgLineBreak;  
-
-
-
-
-
-
-
-
-
-
-
-	
-	
-	
-	
-	typedef [v1_enum] enum LgLineBreakStatus
-	{
-		kflbsBrk = 0x1,		
-		kflbsSpace = 0x2,	
-							
-							
-		kflbsBrkL = 0x4		
-	} LgLineBreakStatus;	
-
-	typedef [v1_enum] enum LgIPDrawMode			
-	{
-		kdmNormal,			
-		kdmSplitPrimary,	
-		kdmSplitSecondary	
-	} LgIPDrawMode;
-
-	typedef [v1_enum] enum LgIpValidResult		
-	{
-		kipvrOK,		
-		kipvrBad,		
-		kipvrUnknown	
-	} LgIpValidResult;
-
-	typedef [v1_enum] enum LgTrailingWsHandling		
-	{
-		ktwshAll,		
-		ktwshNoWs,		
-		ktwshOnlyWs,	
-	} LgTrailingWsHandling;
-
-	typedef [v1_enum] enum LgUtfForm
-	{
-		kutf8,
-		kutf16,
-		kutf32
-	} LgUtfForm;
-
-	
-	
-
-	typedef [v1_enum] enum VwGenericFontNames
-	{
-		kvgfnCustom,			
-		kvgfnSerif,
-		kvgfnSansSerif,
-		kvgfnMonospace
-	} VwGenericFontNames;
-
-	typedef [v1_enum] enum VwFontStyle {
-		kfsNormal,
-		kfsItalic,
-		kfsOblique
-	} VwFontStyle;
-
-	typedef [v1_enum] enum VwTextUnderline {
-		ktuNoUnderline,
-		ktuSingleUnderline
-	} VwTextUnderline;
 
 	
 
@@ -3388,1157 +3329,6 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 		OLECHAR szFaceName[32];
 		OLECHAR szFontVar[64];
 	} LgCharRenderProps;	
-
-	
-	typedef enum ScriptDirCode
-	{
-		kfsdcNone			= 0,
-		kfsdcHorizLtr		= 1,	
-		kfsdcHorizRtl		= 2,	
-		kfsdcVertFromLeft	= 4,	
-		kfsdcVertFromRight	= 8,	
-
-	} ScriptDirCode;	
-
-	
-	typedef enum JustGlyphAttr
-	{
-		kjgatStretch = 1,
-		kjgatShrink,
-		kjgatWeight,
-		kjgatStep,
-		kjgatChunk,
-		kjgatWidth,
-		kjgatBreak,
-		
-		kjgatStretchInSteps,
-		kjgatWidthInSteps,
-		
-		kjgatAdvWidth,
-		kjgatAdvHeight,
-		kjgatBbLeft,
-		kjgatBbRight,
-		kjgatBbTop,
-		kjgatBbBottom,
-
-	} JustGlyphAttr;	
-
-	
-	
-	
-	
-	typedef struct
-	{
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-		ScriptDirCode sdcPara;		
-		ScriptDirCode sdcOuter;		
-	} LgParaRenderProps;	
-
-	typedef struct
-	{
-		OLECHAR glyphIndex;
-		int x;
-		int y;
-	} GlyphInfo;
-
-	
-
-
-
-
-
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ISimpleInit") cpp_quote(",") cpp_quote("6433D19E-2DA2-4041-B202-DB118EE1694D") cpp_quote(");") [ uuid("6433D19E-2DA2-4041-B202-DB118EE1694D"), object, pointer_default(unique) ] interface ISimpleInit : IUnknown
-	{
-		[restricted] HRESULT InitNew(
-			[in, size_is(cb)] const BYTE * prgb,
-			[in] int cb);
-
-		
-		[propget, restricted] HRESULT InitializationData(
-			[out, retval] BSTR * pbstr);
-	};
-
-
-	
-
-
-
-
-
-
-
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwGraphics") cpp_quote(",") cpp_quote("F7233278-EA87-4FC9-83E2-CB7CC45DEBE7") cpp_quote(");") [ uuid("F7233278-EA87-4FC9-83E2-CB7CC45DEBE7"), object, pointer_default(unique) ] interface IVwGraphics : IUnknown
-	{
-		
-		
-		HRESULT InvertRect(
-			[in] int xLeft,
-			[in] int yTop,
-			[in] int xRight,
-			[in] int yBottom);
-		
-		[propput] HRESULT ForeColor(
-			[in] int clr);   
-		
-		[propput] HRESULT BackColor(
-			[in] int clr);   
-		
-		HRESULT DrawRectangle(
-			[in] int xLeft,
-			[in] int yTop,
-			[in] int xRight,
-			[in] int yBottom);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		HRESULT DrawHorzLine(
-			[in] int xLeft,
-			[in] int xRight,
-			[in] int y,
-			[in] int dyHeight,
-			[in] int cdx,
-			[in, size_is(cdx)] int * prgdx,
-			[in, out] int * pdxStart);
-		HRESULT DrawLine(
-			[in] int xLeft,
-			[in] int yTop,
-			[in] int xRight,
-			[in] int yBottom);
-		HRESULT DrawText(
-			[in] int x,
-			[in] int y,
-			[in] int cch,
-			[in, size_is(cch)] const OLECHAR * prgch,
-			[in] int xStretch); 
-		HRESULT DrawGlyphs(
-			[in] int x,
-			[in] int y,
-			[in] int cgi,
-			[in, size_is(cgi)] const GlyphInfo * prggi);
-		HRESULT GetTextExtent(
-			[in] int cch,
-			[in, size_is(cch)] const OLECHAR * prgch,
-			[out] int * px,
-			[out] int * py);
-		
-		
-		HRESULT GetTextLeadWidth(
-			[in] int cch,
-			[in, size_is(cch)] const OLECHAR * prgch,
-			[in] int ich,
-			[in] int xStretch,
-			[out, retval] int * px);
-		HRESULT GetClipRect(
-			[out] int * pxLeft,
-			[out] int * pyTop,
-			[out] int * pxRight,
-			[out] int * pyBottom);
-		
-		HRESULT GetFontEmSquare(
-			[out, retval] int * pxyFontEmSquare);
-		HRESULT GetGlyphMetrics(
-			[in] int chw,
-			[out] int * psBoundingWidth,
-			[out] int * pyBoundingHeight,
-			[out] int * pxBoundingX,
-			[out] int * pyBoundingY,
-			[out] int * pxAdvanceX,
-			[out] int * pyAdvanceY);
-		
-		HRESULT GetFontData(
-			[in] int nTableId,
-			[in, out] int * pcbTableSz,
-			[out, size_is(*pcbTableSz)] BYTE * prgb);
-		HRESULT XYFromGlyphPoint(
-			[in] int chw,
-			[in] int nPoint,
-			[out] int * pxRet,
-			[out] int * pyRet);
-		[propget] HRESULT FontAscent(
-			[out, retval] int * py);
-		[propget] HRESULT FontDescent(
-			[out, retval] int * pyRet);
-		[propget] HRESULT FontCharProperties(
-			[out, retval] LgCharRenderProps * pchrp);
-		
-		
-		
-		
-		
-		HRESULT ReleaseDC();
-		
-		
-		
-		[propget] HRESULT XUnitsPerInch(
-			[out, retval] int * pxInch);
-		
-		[propput] HRESULT XUnitsPerInch(
-			[in] int xInch);
-		
-		
-		
-		[propget] HRESULT YUnitsPerInch(
-			[out, retval] int * pyInch);
-		
-		[propput] HRESULT YUnitsPerInch(
-			[in] int yInch);
-
-		
-		
-		HRESULT GetSuperscriptHeightRatio(
-			[out] int * piNumerator,
-			[out] int * piDenominator);
-		
-		
-		HRESULT GetSuperscriptYOffsetRatio(
-			[out] int * piNumerator,
-			[out] int * piDenominator);
-
-		
-		
-		HRESULT GetSubscriptHeightRatio(
-			[out] int * piNumerator,
-			[out] int * piDenominator);
-		
-		
-		HRESULT GetSubscriptYOffsetRatio(
-			[out] int * piNumerator,
-			[out] int * piDenominator);
-
-		
-		
-		
-		HRESULT SetupGraphics(
-		
-			[in, out] LgCharRenderProps * pchrp);
-		
-		
-		HRESULT PushClipRect(
-			[in] RECT rcClip);
-		HRESULT PopClipRect();
-
-		
-		HRESULT DrawPolygon(
-			[in] int cvpnt,
-			[in, size_is(cvpnt)] POINT prgvpnt[]);
-		
-		HRESULT RenderPicture(
-		  [in] IPicture * ppic, 
-		  [in] int x,  
-		  [in] int y,  
-		  [in] int cx, 
-		  [in] int cy, 
-		  [in] OLE_XPOS_HIMETRIC xSrc, 
-		  [in] OLE_YPOS_HIMETRIC ySrc, 
-		  [in] OLE_XSIZE_HIMETRIC cxSrc, 
-		  [in] OLE_YSIZE_HIMETRIC cySrc, 
-		  [in] LPCRECT prcWBounds); 
-		
-		
-		
-		
-		
-		
-		
-		
-		HRESULT MakePicture(
-			[in, size_is(cbData)] byte * pbData,
-			[in] int cbData,
-			[out, retval] IPicture ** pppic);
-		
-		
-	};
-
-	
-
-
-
-
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwGraphicsWin32") cpp_quote(",") cpp_quote("C955E295-A259-47D4-8158-4C7A3539D35E") cpp_quote(");") [ uuid("C955E295-A259-47D4-8158-4C7A3539D35E"), object, pointer_default(unique) ] interface IVwGraphicsWin32 : IVwGraphics
-	{
-		
-		
-		
-		HRESULT Initialize(
-			[in] HDC hdc);
-		
-		HRESULT GetDeviceContext(
-			[out, retval] HDC * phdc);
-		
-		
-		HRESULT SetMeasureDc(
-			[in] HDC hdc);
-		
-		
-		HRESULT SetClipRect(
-			[in] RECT * prcClip);
-		
-		HRESULT GetTextStyleContext( [out, retval] HDC * ppContext);
-	};
-
-
-	
-	
-	
-	
-	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("D888DB98-83A9-4592-AAD2-F18F6F74AB87") cpp_quote(",") cpp_quote("VwGraphicsWin32") cpp_quote(");") [ uuid(D888DB98-83A9-4592-AAD2-F18F6F74AB87) ] coclass VwGraphicsWin32
-	{
-		interface IVwGraphicsWin32;
-	};
-	#line 490 "c:\\fwrepo\\fw\\src\\kernel\\Render.idh"
-
-
-	
-
-
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwTextSource") cpp_quote(",") cpp_quote("6C0465AC-17C5-4C9C-8AF3-62221F2F7707") cpp_quote(");") [ uuid("6C0465AC-17C5-4C9C-8AF3-62221F2F7707"), object, pointer_default(unique) ] interface IVwTextSource : IUnknown
-	{
-		
-		
-		HRESULT Fetch(
-			[in] int ichMin,
-			[in] int ichLim,
-			[out, size_is(ichLim - ichMin)] OLECHAR * prgchBuf);
-		[propget] HRESULT Length(
-			[out, retval] int * pcch);
-		
-		
-		
-		
-		
-		HRESULT FetchSearch(
-			[in] int ichMin,
-			[in] int ichLim,
-			[out, size_is(ichLim - ichMin)] OLECHAR * prgchBuf);
-		
-		[propget] HRESULT LengthSearch(
-			[out, retval] int * pcch);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		HRESULT GetCharProps(
-			[in] int ich,
-			[out] LgCharRenderProps * pchrp,
-			[out] int * pichMin,
-			[out] int * pichLim);
-		
-		HRESULT GetParaProps(
-			[in] int ich,
-			[out] LgParaRenderProps * pchrp,
-			[out] int * pichMin,
-			[out] int * pichLim);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		HRESULT GetCharStringProp(
-			[in] int ich,
-			[in] int nId, 
-			[out] BSTR * pbstr,
-			[out] int * pichMin,
-			[out] int * pichLim);
-		
-		
-		HRESULT GetParaStringProp(
-			[in] int ich,
-			[in] int nId, 
-			[out] BSTR * pbstr,
-			[out] int * pichMin,
-			[out] int * pichLim);
-		
-		
-		
-		HRESULT GetSubString(
-			[in] int ichMin,
-			[in] int ichLim,
-			[out, retval] ITsString ** pptss);
-		
-		HRESULT GetWsFactory(
-			[out, retval] ILgWritingSystemFactory ** ppwsf);
-		
-		
-		HRESULT LogToSearch(
-			[in] int ichlog,
-			[out, retval] int * pichSearch);
-		
-		
-		
-		
-		
-		
-		HRESULT SearchToLog(
-			[in] int ichSearch,
-			[in] ComBool fAssocPrev,
-			[out, retval] int * pichLog);
-		
-		HRESULT LogToRen(
-			[in] int ichLog,
-			[out, retval] int * pichRen);
-		
-		HRESULT RenToLog(
-			[in] int ichRen,
-			[out, retval] int * pichLog);
-		
-		
-		
-		
-		
-		HRESULT SearchToRen(
-			[in] int ichSearch,
-			[in] ComBool fAssocPrev,
-			[out, retval] int * pichRen);
-		
-		HRESULT RenToSearch(
-			[in] int ichRen,
-			[out, retval] int * pichSearch);
-	};
-
-
-	
-
-
-
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwJustifier") cpp_quote(",") cpp_quote("22D5E030-5239-4924-BF1B-6B4F2CBBABA5") cpp_quote(");") [ uuid("22D5E030-5239-4924-BF1B-6B4F2CBBABA5"), object, pointer_default(unique) ] interface IVwJustifier : IUnknown
-	{
-		
-		
-		
-		HRESULT AdjustGlyphWidths(
-			[in] IJustifyingRenderer * pjren,
-			[in] int iGlyphMin,
-			[in] int iGlyphLim,
-			[in] float dxCurrentWidth,
-			[in] float dxDesiredWidth);
-
-		
-
-
-
-
-
-
-
-
-
-	};
-
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgSegment") cpp_quote(",") cpp_quote("3818E245-6A0B-45A7-A5D6-52694931279E") cpp_quote(");") [ uuid("3818E245-6A0B-45A7-A5D6-52694931279E"), object, pointer_default(unique) ] interface ILgSegment : IUnknown
-	{
-		
-		HRESULT DrawText(
-			[in] int ichBase,
-			[in] IVwGraphics * pvg,
-			[in] RECT rcSrc,
-			[in] RECT rcDst,
-			[out] int * dxdWidth);
-
-		
-		
-		
-		HRESULT Recompute(
-			[in] int ichBase,
-			[in] IVwGraphics * pvg);
-		[propget] HRESULT Width(   
-			[in] int ichBase,
-			[in] IVwGraphics * pvg,
-			[out, retval] int * px);
-		[propget] HRESULT RightOverhang( 
-			[in] int ichBase,
-			[in] IVwGraphics * pvg,
-			[out, retval] int * px);
-		[propget] HRESULT LeftOverhang( 
-			[in] int ichBase,
-			[in] IVwGraphics * pvg,
-			[out, retval] int * px);
-		[propget] HRESULT Height(
-			[in] int ichBase,
-			[in] IVwGraphics * pvg,
-			[out, retval] int * py);
-		[propget] HRESULT Ascent(
-			[in] int ichBase,
-			[in] IVwGraphics * pvg,
-			[out, retval] int * py);
-		HRESULT Extent(
-			[in] int ichBase,
-			[in] IVwGraphics * pvg,
-			[out] int* px, 
-			[out] int* py);	 
-		
-		
-		
-		HRESULT BoundingRect(
-			[in] int ichBase,
-			[in] IVwGraphics * pvg,
-			[in] RECT rcSrc,
-			[in] RECT rcDst,
-			[out, retval] RECT * prcBounds);
-		
-		
-		HRESULT GetActualWidth(
-			[in] int ichBase,
-			[in] IVwGraphics * pvg,
-			[in] RECT rcSrc,
-			[in] RECT rcDst,
-			[out] int * dxdWidth);
-		
-		[propget] HRESULT AscentOverhang(
-			[in] int ichBase,
-			[in] IVwGraphics * pvg,
-			[out, retval] int *py);
-		[propget] HRESULT DescentOverhang(	
-			[in] int ichBase,
-			[in] IVwGraphics * pvg,
-			[out, retval] int *py);
-
-		
-		[propget] HRESULT RightToLeft(
-			[in] int ichBase,
-			[out, retval] ComBool * pfResult);
-		
-		
-		[propget] HRESULT DirectionDepth(
-			[in] int ichBase,
-			[out] int * pnDepth,
-			[out,retval] ComBool * pfWeak);
-		
-		
-		HRESULT SetDirectionDepth(
-			[in] int ichwBase,
-			[in] int nNewDepth);
-
-		
-		[propget] HRESULT WritingSystem(
-			[in] int ichBase,
-			[out,retval] int * pws);
-		
-		
-		
-		
-		
-		[propget] HRESULT Lim(
-			[in] int ichBase,
-			[out, retval] int * pdich);
-		
-		
-		
-		
-		
-		[propget] HRESULT LimInterest(
-			[in] int ichBase,
-			[out, retval] int * pdich);
-
-		
-		[propput] HRESULT EndLine( 
-			[in] int ichBase,
-			[in] IVwGraphics * pvg,
-			[in] ComBool fNewVal);
-		[propput] HRESULT StartLine( 
-			[in] int ichBase,
-			[in] IVwGraphics * pvg,
-			[in] ComBool fNewVal);
-		[propget] HRESULT StartBreakWeight(
-			[in] int ichBase,
-			[in] IVwGraphics * pvg,
-			[out, retval] LgLineBreak * plb);
-		[propget] HRESULT EndBreakWeight(
-			[in] int ichBase,
-			[in] IVwGraphics * pvg,
-			[out, retval] LgLineBreak * plb);
-		[propget] HRESULT Stretch( 
-			[in] int ichBase,
-			[out, retval] int * pxs);
-		[propput] HRESULT Stretch(
-			[in] int ichBase,
-			[in] int xs);
-
-		
-		
-		
-		
-		
-		
-		
-		HRESULT IsValidInsertionPoint(
-			[in] int ichBase,
-			[in] IVwGraphics * pvg,
-			[in] int ich,
-			[out, retval] LgIpValidResult * pipvr);
-		HRESULT DoBoundariesCoincide(    
-			[in] int ichBase,
-			[in] IVwGraphics * pvg,
-			[in] ComBool fBoundaryEnd,   
-			[in] ComBool fBoundaryRight, 
-			[out, retval] ComBool * pfResult);
-		HRESULT DrawInsertionPoint(		
-			[in] int ichBase,
-			[in] IVwGraphics * pvg,
-			[in] RECT rcSrc,		
-			[in] RECT rcDst,
-			[in] int ich,				
-			[in] ComBool fAssocPrev,		
-			[in] ComBool fOn,				
-			[in] LgIPDrawMode dm);
-		HRESULT PositionsOfIP(
-			[in] int ichBase,
-			[in] IVwGraphics * pvg,
-			[in] RECT rcSrc,		
-			[in] RECT rcDst,
-			[in] int ich,
-			[in] ComBool fAssocPrev,		
-			[in] LgIPDrawMode dm,
-			[out] RECT * rectPrimary,	
-			[out] RECT * rectSecondary, 
-			[out] ComBool * pfPrimaryHere, 
-			[out] ComBool * pfSecHere); 
-										
-		HRESULT DrawRange(
-			[in] int ichBase,
-			[in] IVwGraphics * pvg,
-			[in] RECT rcSrc,		
-			[in] RECT rcDst,
-			[in] int ichMin,			
-			[in] int ichLim,
-			[in] int ydTop,			
-			[in] int ydBottom,		
-			[in] ComBool bOn,
-			[in] ComBool fIsLastLineOfSelection, 
-			[out, retval] RECT * rsBounds);	
-		HRESULT PositionOfRange(
-			[in] int ichBase,
-			[in] IVwGraphics* pvg,
-			[in] RECT rcSrc,		
-			[in] RECT rcDst,
-			[in] int ichMin,
-			[in] int ichim,
-			[in] int ydTop,			
-			[in] int ydBottom,		
-			[in] ComBool fIsLastLineOfSelection, 
-			[out] RECT * rsBounds,	
-			[out, retval] ComBool * pfAnythingToDraw); 
-		HRESULT PointToChar(
-			[in] int ichBase,
-			[in] IVwGraphics * pvg,
-			[in] RECT rcSrc,		
-			[in] RECT rcDst,
-			[in] POINT ptdClickPosition,	
-			[out] int * pich,
-			[out] ComBool * pfAssocPrev);	
-		HRESULT ArrowKeyPosition(
-			[in] int ichBase,
-			[in] IVwGraphics * pvg,
-			[in,out] int * pich,
-			[in, out] ComBool * pfAssocPrev,	
-			[in] ComBool fRight,		
-			[in] ComBool fMovingIn,		
-			[out] ComBool * pfResult);	
-		HRESULT ExtendSelectionPosition(
-			[in] int ichBase,
-			[in] IVwGraphics * pvg,
-			[in, out] int * pich,
-			[in] ComBool fAssocPrevMatch,	
-											
-			[in] ComBool fAssocPrevNeeded,	
-			[in] int ichAnchor,			
-			[in] ComBool fRight,		
-			[in] ComBool fMovingIn,		
-			[out] ComBool * pfRet);		
-
-		
-		
-		
-		
-		HRESULT GetCharPlacement(
-			[in] int ichBase,
-			[in] IVwGraphics * pvg,
-			[in] int ichMin,
-			[in] int ichLim,
-			[in] RECT rcSrc,		
-			[in] RECT rcDst,
-			
-			[in] ComBool fSkipSpace,
-			[in] int cxdMax , 
-			[out] int * pcxd, 
-			
-			
-			
-			
-			
-			
-			[out, size_is(cxdMax )] int * prgxdLefts,
-			[out, size_is(cxdMax )] int * prgxdRights,
-			[out, size_is(cxdMax )] int * prgydUnderTops);
-
-		
-		
-
-
-
-
-
-
-
-
-
-
-
-		
-		
-
-
-
-
-
-		
-		
-		HRESULT DrawTextNoBackground(
-			[in] int ichBase,
-			[in] IVwGraphics * pvg,
-			[in] RECT rcSrc,
-			[in] RECT rcDst,
-			[out] int * dxdWidth);
-	};
-
-	
-	typedef [v1_enum] enum
-	{
-		
-		kestNoMore,
-		
-		kestMoreLines,
-		
-		
-		
-		kestHardBreak,
-		
-		
-		
-		kestBadBreak,
-		
-		
-		
-		kestOkayBreak,
-		
-		
-		
-		
-		
-		kestWsBreak,
-		
-		
-		
-		kestMoreWhtsp,
-		
-		kestNothingFit
-
-	} LgEndSegmentType; 
-
-	
-
-
-
-
-
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IRenderEngine") cpp_quote(",") cpp_quote("7F4B8F79-2A40-408C-944B-848B14D65D23") cpp_quote(");") [ uuid("7F4B8F79-2A40-408C-944B-848B14D65D23"), object, pointer_default(unique) ] interface IRenderEngine : IUnknown
-	{
-		
-		
-		
-		
-		
-		HRESULT InitRenderer(
-			[in] IVwGraphics * pvg,
-			[in] BSTR bstrData);
-		
-		
-		[propget] HRESULT FontIsValid(
-			[out, retval] ComBool * pfValid);
-
-		
-		
-		
-		
-		[propget] HRESULT SegDatMaxLength(
-			[out, retval] int * cb);
-
-		
-		HRESULT FindBreakPoint(
-			[in] IVwGraphics * pvg,
-			[in] IVwTextSource * pts,
-			[in] IVwJustifier * pvjus,
-			
-			[in] int ichMin,
-			
-			
-			
-			
-			
-			[in] int ichLim,
-			
-			
-			[in] int ichLimBacktrack,
-			
-			
-			
-			
-			[in] ComBool fNeedFinalBreak,
-			[in] ComBool fStartLine,			
-			[in] int dxMaxWidth,				
-			[in] LgLineBreak lbPref,			
-			[in] LgLineBreak lbMax,				
-			[in] LgTrailingWsHandling twsh,		
-			[in] ComBool fParaRightToLeft,		
-
-			[out] ILgSegment ** ppsegRet,		
-			[out] int * pdichLimSeg,			
-			[out] int * pdxWidth,				
-			[out] LgEndSegmentType * pest,		
-			[in] ILgSegment * psegPrev);		
-
-		
-		
-
-		
-		[propget] HRESULT ScriptDirection(
-			[out, retval] int * pgrfsdc);
-
-		
-		[propget] HRESULT ClassId(
-			[out, retval] GUID * pguid);
-
-		
-		[propget] HRESULT WritingSystemFactory(
-			[out, retval] ILgWritingSystemFactory ** ppwsf);
-
-		
-		[propputref] HRESULT WritingSystemFactory(
-			[in] ILgWritingSystemFactory * pwsf);
-	};
-
-	
-	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("6EACAB83-6BDC-49CA-8F66-8C116D3EEBD8") cpp_quote(",") cpp_quote("RomRenderEngine") cpp_quote(");") [ uuid(6EACAB83-6BDC-49CA-8F66-8C116D3EEBD8) ] coclass RomRenderEngine
-	{
-		interface IRenderEngine;
-	};
-	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("1287735C-3CAD-41CD-986C-39D7C0DF0314") cpp_quote(",") cpp_quote("UniscribeEngine") cpp_quote(");") [ uuid(1287735C-3CAD-41CD-986C-39D7C0DF0314) ] coclass UniscribeEngine
-	{
-		interface IRenderEngine;
-	};
-	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("62EBEEBF-14EA-43D9-A27A-EF013E14145A") cpp_quote(",") cpp_quote("GraphiteEngine") cpp_quote(");") [ uuid(62EBEEBF-14EA-43D9-A27A-EF013E14145A) ] coclass GraphiteEngine
-	{
-		interface IRenderEngine;
-	};
-	#line 1106 "c:\\fwrepo\\fw\\src\\kernel\\Render.idh"
-
-
-	
-
-
-
-
-
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IRenderingFeatures") cpp_quote(",") cpp_quote("75AFE861-3C17-4F16-851F-A36F5FFABCC6") cpp_quote(");") [ uuid("75AFE861-3C17-4F16-851F-A36F5FFABCC6"), object, pointer_default(unique) ] interface IRenderingFeatures : IUnknown
-	{
-		
-
-
-
-		
-		
-		HRESULT GetFeatureIDs(
-			[in] int cMax,                         
-			[out, size_is(cMax)] int * prgFids,    
-			[out] int * pcfid);			           
-
-		
-		HRESULT GetFeatureLabel(
-			[in] int fid,
-			[in] int nLanguage,
-			[out] BSTR * pbstrLabel);
-
-		
-		
-		HRESULT GetFeatureValues(
-			[in] int fid,
-			[in] int cfvalMax,                          
-			[out, size_is(cfvalMax)] int * prgfval,     
-			[out] int * pcfval,                         
-			[out] int * pfvalDefault);                  
-
-		
-		HRESULT GetFeatureValueLabel(
-			[in] int fid,
-			[in] int fval,
-			[in] int nLanguage,
-			[out] BSTR * pbstrLabel);
-	};
-
-	
-
-
-
-
-
-
-
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IJustifyingRenderer") cpp_quote(",") cpp_quote("1141174B-923F-4C43-BA43-8A326B76A3F2") cpp_quote(");") [ uuid("1141174B-923F-4C43-BA43-8A326B76A3F2"), object, pointer_default(unique) ] interface IJustifyingRenderer : IUnknown
-	{
-		
-		HRESULT GetGlyphAttributeFloat(
-			[in] int iGlyph,				
-			[in] int kjgatId,				
-			[in] int nLevel,				
-			[out] float * pValueRet);		
-		HRESULT GetGlyphAttributeInt(
-			[in] int iGlyph,				
-			[in] int kjgatId,				
-			[in] int nLevel,				
-			[out] int * pValueRet);			
-
-		
-		HRESULT SetGlyphAttributeFloat(
-			[in] int iGlyph,				
-			[in] int kjgatId,				
-			[in] int nLevel,				
-			[in] float value);				
-		HRESULT SetGlyphAttributeInt(
-			[in] int iGlyph,				
-			[in] int kjgatId,				
-			[in] int nLevel,				
-			[in] int value);				
-	};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#line 1231 "c:\\fwrepo\\fw\\src\\kernel\\Render.idh"
-
-#line 23 "C:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
-	#line 1 "c:\\fwrepo\\fw\\src\\kernel\\Language.idh"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
-	
-	
-	interface IRenderEngine;
-	interface ILgCharacterPropertyEngine;
-	interface ILgCollatingEngine;
-	interface ICollation;
-	interface ILgWritingSystem;
-	interface ILgWritingSystemFactory;
-
-	
-	
-	
-
-	
-	typedef [v1_enum] enum LgLBP
-	{
-				 
-		klbpAI,  
-		klbpAL,  
-		klbpB2,  
-		klbpBA,  
-		klbpBB,  
-		klbpBK,  
-		klbpCB,  
-		klbpCL,  
-		klbpCM,  
-		klbpCR,  
-		klbpEX,  
-		klbpGL,  
-		klbpHY,  
-		klbpID,  
-		klbpIN,  
-		klbpIS,  
-		klbpLF,  
-		klbpNS,  
-		klbpNU,  
-		klbpOP,  
-		klbpPO,  
-		klbpPR,  
-		klbpQU,  
-		klbpSA,  
-		klbpSG,  
-		klbpSP,  
-		klbpSY,  
-		klbpXX,  
-		klbpZW   
-	} LgLBP;  
 
 	
 
@@ -4598,14 +3388,6 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 
 		
 		
-		
-		
-		[propget] HRESULT Renderer(
-			[in] IVwGraphics * pvg,
-			[out, retval] IRenderEngine ** ppreneng);
-
-		
-		
 		[propget] HRESULT DefaultFontFeatures(
 			[out, retval] BSTR * pbstr);
 
@@ -4631,93 +3413,14 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 		
 		[propget] HRESULT IcuLocale(
 			[out, retval] BSTR *pbstr);
-	};
-
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgLineBreaker") cpp_quote(",") cpp_quote("F8D5FDE9-9695-4D63-8843-E27FD880BFF0") cpp_quote(");") [ uuid("F8D5FDE9-9695-4D63-8843-E27FD880BFF0"), object, pointer_default(unique) ] interface ILgLineBreaker : IUnknown
-	{
-		HRESULT Initialize(
-			[in] BSTR bstrLocale);
 
 		
-		
-		
-		
-		
-		[restricted] HRESULT GetLineBreakProps(
-			[in, size_is(cchIn)] const OLECHAR * prgchIn,
-			[in] int cchIn,
-			[out, size_is(cchIn)] byte * prglbOut);
+		[propget] HRESULT IsGraphiteEnabled(
+			[out, retval] ComBool *pfRet);
 
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		[restricted] HRESULT GetLineBreakInfo(
-			[in, size_is(cchIn)] const OLECHAR * prgchIn,
-			[in] int cchIn,
-			[in] int ichMin,
-			[in] int ichLim,
-			[out, size_is(ichLim - ichMin)] byte * prglbsOut,
-			[out] int * pichBreak);
-
-		
-		
-		HRESULT GetLineBreakText(
-			[in] int cchMax,
-			[out] OLECHAR * prgchOut,
-			[out] int * pcchOut);
-		
-		[propput] HRESULT LineBreakText(
-			[in, size_is(cchMax)] OLECHAR * prgchIn,
-			[in] int cchMax);
-
-		
-		
-		
-		
-		HRESULT LineBreakBefore(
-			[in] int ichIn,
-			[out] int * pichOut,
-			[out] LgLineBreak * plbWeight);
-
-		
-		
-		
-		
-		HRESULT LineBreakAfter(
-			[in] int ichIn,
-			[out] int * pichOut,
-			[out] LgLineBreak * plbWeight);
+		[propget] HRESULT WritingSystemFactory(
+			[out, retval] ILgWritingSystemFactory ** ppwsf);
 	};
 
 	
@@ -4779,18 +3482,6 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 			[in] int cws);
 
 		
-		[propget] HRESULT Renderer(
-			[in] int ws,
-			[in] IVwGraphics * pvg,
-			[out, retval] IRenderEngine ** ppre);
-		
-		[propget] HRESULT RendererFromChrp(
-			[in] IVwGraphics * pvg,
-			
-			[in, out] LgCharRenderProps * pchrp,
-			[out, retval] IRenderEngine ** ppre);
-
-		
 		[propget] HRESULT UserWs(
 			[out, retval] int * pws);
 		
@@ -4798,15 +3489,5 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-0050
 		[propput] HRESULT UserWs(
 			[in] int ws);
 	};
-
-
-
-
-
-	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("94FBFA34-21E5-4A1E-B576-BA5D76CC051A") cpp_quote(",") cpp_quote("LgLineBreaker") cpp_quote(");") [ uuid(94FBFA34-21E5-4A1E-B576-BA5D76CC051A) ] coclass LgLineBreaker
-	{
-		interface ILgLineBreaker;
-	};
-#line 352 "c:\\fwrepo\\fw\\src\\kernel\\Language.idh"
-#line 24 "C:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+#line 23 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 };

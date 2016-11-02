@@ -374,7 +374,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			CheckDisposed();
 
 			m_rootb = null;
-			base.MakeRoot();
 
 			if (m_fdoCache == null || DesignMode)
 				return;
@@ -384,10 +383,9 @@ namespace SIL.FieldWorks.Common.Widgets
 			int wsUser = m_fdoCache.WritingSystemFactory.UserWs;
 			m_vc = new InnerLabeledMultiStringViewVc(m_flid, m_rgws, wsUser, m_editable, m_fdoCache.TsStrFactory, this);
 
-			// Review JohnT: why doesn't the base class do this??
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
 
+			Debug.Assert(m_rootb != null);
 			// And maybe this too, at least by default?
 			m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
 

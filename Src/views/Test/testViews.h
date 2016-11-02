@@ -58,6 +58,7 @@ namespace TestViews
 #include "DummyRootsite.h"
 #include "DummyBaseVc.h"
 #include "MockLgWritingSystemFactory.h"
+#include "MockRenderEngineFactory.h"
 
 // Local Variables:
 // mode:C++

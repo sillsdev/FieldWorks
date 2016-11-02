@@ -58,6 +58,8 @@ public:
 
 	// IRenderEngine methods
 	STDMETHOD(InitRenderer)(IVwGraphics * pvg, BSTR bstrData);
+	STDMETHOD(get_RenderEngineFactory)(IRenderEngineFactory ** ppref);
+	STDMETHOD(putref_RenderEngineFactory)(IRenderEngineFactory * pref);
 	STDMETHOD(get_FontIsValid)(ComBool * pfValid);
 	STDMETHOD(get_SegDatMaxLength)(int * cb);
 	STDMETHOD(FindBreakPoint)(IVwGraphics * pvg, IVwTextSource * pts, IVwJustifier * pvjus,
@@ -90,6 +92,8 @@ protected:
 
 	// Writing system factory used by this instance of the rendering engine.
 	ILgWritingSystemFactoryPtr m_qwsf;
+
+	IRenderEngineFactoryPtr m_qref;
 
 	// Static methods
 

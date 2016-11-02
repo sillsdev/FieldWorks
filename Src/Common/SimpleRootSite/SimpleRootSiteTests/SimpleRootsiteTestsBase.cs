@@ -329,6 +329,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_basicView.MakeRoot(m_hvoRoot, SimpleRootsiteTestsConstants.kflidDocFootnotes, m_frag, m_wsEng);
 			m_basicView.CallLayout();
 			m_basicView.AutoScrollPosition = new Point(0, 0);
+			m_basicView.Visible = true;
 		}
 
 		/// ------------------------------------------------------------------------------------

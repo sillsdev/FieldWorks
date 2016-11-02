@@ -80,13 +80,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		public override void MakeRoot()
 		{
-			base.MakeRoot();
-
 			if (m_fdoCache == null || DesignMode)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
+
 			m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
 			m_rootb.SetRootObject(m_msa.Hvo, Vc,
 				(int)VcFrags.kfragFullMSAInterlinearname, m_rootb.Stylesheet);

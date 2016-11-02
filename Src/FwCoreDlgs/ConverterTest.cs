@@ -700,8 +700,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (!GotCacheOrWs || DesignMode)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
+
 			m_svc = new SampleVc();
 			m_svc.FontName = m_fontName;
 
@@ -709,7 +709,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_rootb.DataAccess = m_sda;
 			m_rootb.SetRootObject(m_hvoRoot, m_svc, (int)SampleFrags.kfrText, null);
 			m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
-			base.MakeRoot();
 		}
 
 		/// ------------------------------------------------------------------------------------

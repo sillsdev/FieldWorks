@@ -346,17 +346,15 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				CheckDisposed();
 
-				base.MakeRoot();
-
 				if (m_fdoCache == null || DesignMode)
 					return;
 
 				// A crude way of making sure the property we want is loaded into the cache.
 				m_env = m_fdoCache.ServiceLocator.GetInstance<IPhEnvironmentRepository>().GetObject(m_hvoObj);
 				m_vc = new StringRepSliceVc();
-				// Review JohnT: why doesn't the base class do this??
-				m_rootb = VwRootBoxClass.Create();
-				m_rootb.SetSite(this);
+
+				base.MakeRoot();
+
 				// And maybe this too, at least by default?
 				m_rootb.DataAccess = m_fdoCache.MainCacheAccessor;
 

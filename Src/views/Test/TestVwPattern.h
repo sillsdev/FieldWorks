@@ -1349,6 +1349,9 @@ namespace TestViews
 
 			qsda->putref_WritingSystemFactory(g_qwsf);
 
+			IRenderEngineFactoryPtr qref;
+			qref.Attach(NewObj MockRenderEngineFactory);
+
 			ITsStrFactoryPtr qtsf;
 			qtsf.CreateInstance(CLSID_TsStrFactory);
 			ITsStringPtr qtss;
@@ -1381,6 +1384,7 @@ namespace TestViews
 				IVwViewConstructorPtr qvc;
 				qvc.Attach(NewObj DummySimpleParaVc());
 				qrootb->putref_DataAccess(qsda);
+				qrootb->putref_RenderEngineFactory(qref);
 				qrootb->SetRootObject(hvoRoot, qvc, kfragStText, NULL);
 				DummyRootSitePtr qdrs;
 				qdrs.Attach(NewObj DummyRootSite());

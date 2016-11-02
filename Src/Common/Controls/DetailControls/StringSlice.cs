@@ -542,7 +542,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			public override void MakeRoot()
 			{
 				CheckDisposed();
-				base.MakeRoot();
 
 				if (m_fdoCache == null || DesignMode)
 					return;
@@ -568,9 +567,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					(m_vc as StringSliceVc).ShowWsLabel = m_fShowWsLabel;
 				}
 
-				// Review JohnT: why doesn't the base class do this??
-				m_rootb = VwRootBoxClass.Create();
-				m_rootb.SetSite(this);
+				base.MakeRoot();
 
 				// And maybe this too, at least by default?
 				m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;

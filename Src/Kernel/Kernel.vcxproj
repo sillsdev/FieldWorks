@@ -74,20 +74,11 @@
     <ClCompile Include="ActionHandler.cpp" />
     <ClCompile Include="DebugReport.cpp" />
     <ClCompile Include="dlldatax.c" />
-    <ClCompile Include="GraphiteEngine.cpp" />
-    <ClCompile Include="GraphiteSegment.cpp" />
-    <ClCompile Include="LgLineBreaker.cpp" />
-    <ClCompile Include="LocaleIndex.cpp" />
-    <ClCompile Include="RomRenderEngine.cpp" />
-    <ClCompile Include="RomRenderSegment.cpp" />
     <ClCompile Include="TextServ.cpp" />
     <ClCompile Include="TsPropsFactory.cpp" />
     <ClCompile Include="TsStrFactory.cpp" />
     <ClCompile Include="TsString.cpp" />
     <ClCompile Include="TsTextProps.cpp" />
-    <ClCompile Include="UniscribeEngine.cpp" />
-    <ClCompile Include="UniscribeLinux.cpp" />
-    <ClCompile Include="UniscribeSegment.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FwKernel.def" />
@@ -95,7 +86,6 @@
     <None Include="FwKernel.mak" />
     <None Include="Language.idh" />
     <None Include="Makefile" />
-    <None Include="Render.idh" />
     <None Include="TextServ.idh" />
   </ItemGroup>
   <ItemGroup>
@@ -105,22 +95,13 @@
   <ItemGroup>
     <ClInclude Include="ActionHandler.h" />
     <ClInclude Include="DebugReport.h" />
-    <ClInclude Include="GraphiteEngine.h" />
-    <ClInclude Include="GraphiteSegment.h" />
     <ClInclude Include="LangResource.h" />
-    <ClInclude Include="LgLineBreaker.h" />
-    <ClInclude Include="LocaleIndex.h" />
     <ClInclude Include="Main.h" />
-    <ClInclude Include="RomRenderEngine.h" />
-    <ClInclude Include="RomRenderSegment.h" />
     <ClInclude Include="TextServ.h" />
     <ClInclude Include="TsPropsFactory.h" />
     <ClInclude Include="TsStrFactory.h" />
     <ClInclude Include="TsString.h" />
     <ClInclude Include="TsTextProps.h" />
-    <ClInclude Include="UniscribeEngine.h" />
-    <ClInclude Include="UniscribeLinux.h" />
-    <ClInclude Include="UniscribeSegment.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="FwKernel.rc" />

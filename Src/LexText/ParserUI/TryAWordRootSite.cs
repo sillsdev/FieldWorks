@@ -103,8 +103,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_fdoCache == null || DesignMode)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
 
 			m_vc = new InterlinVc(m_fdoCache);
 			// Theory has it that the slices that have 'true' in this attribute will allow the sandbox to be used.
@@ -125,8 +124,6 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (m_wordform != null)
 				m_rootb.SetRootObject(m_wordform.Hvo, m_vc, m_kfragSingleInterlinearAnalysisWithLabels, m_styleSheet);
-
-			base.MakeRoot();
 
 			SetSandboxSize(); // in case we already have a current annotation.
 			SetBackgroundColor();

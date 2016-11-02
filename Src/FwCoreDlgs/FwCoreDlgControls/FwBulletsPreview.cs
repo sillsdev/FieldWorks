@@ -248,11 +248,10 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 			//if (DesignMode)
 			//    return;
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
+
 			m_rootb.DataAccess = m_DataAccess;
 			m_rootb.SetRootObject(khvoRoot, m_vc, kfragRoot, null);
-			base.MakeRoot();
 		}
 
 		/// ------------------------------------------------------------------------------------

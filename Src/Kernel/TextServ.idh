@@ -44,8 +44,6 @@ interface ITsIncStrBldr;
 interface ITsPropsBldr;
 interface ITsMultiString;
 
-interface ILgWritingSystemFactory;
-
 /*----------------------------------------------------------------------------------------------
 	Note: In some of the interfaces that follow there are method names that end with "At" and
 	similar method names without the "At".  The distinction is as follows.  The "At" suffix

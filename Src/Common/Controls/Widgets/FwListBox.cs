@@ -1432,15 +1432,15 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			if (DesignMode)
 				return;
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+
+			base.MakeRoot();
+
 			m_rootb.DataAccess = m_dataAccess;
 			if (m_vc == null)
 				m_vc = new ListBoxVc(this);
 			m_rootb.SetRootObject(khvoRoot, m_vc, kfragRoot, m_styleSheet);
 			m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
 			EditingHelper.DefaultCursor = Cursors.Arrow;
-			base.MakeRoot();
 		}
 
 		/// <summary>

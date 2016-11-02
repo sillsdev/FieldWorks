@@ -15,7 +15,7 @@ include $(BUILD_ROOT)/Bld/_init.mak.lnx
 UNIT = $(FWINCLUDE)/unit++
 LIB_UNIT = $(BUILD_ROOT)/Lib/src/unit++/build$(ARCH)
 
-DEFINES := -DVIEWSDLL -DSUPPRESS_FW_EXCEPTION_HANDLING -DGRAPHITE2_STATIC
+DEFINES := -DVIEWSDLL -DSUPPRESS_FW_EXCEPTION_HANDLING
 
 ifeq ($(BUILD_CONFIG),Debug)
 	DEFINES  := $(DEFINES) -D_DEBUG
@@ -24,13 +24,9 @@ else
 	OPTIMIZATIONS = -O3
 endif
 
-VIEWS_LIB = $(VIEWS_SRC)/lib
-GR2_INC = $(BUILD_ROOT)/Lib/src/graphite2/include
-
 PACKAGES = gdk-2.0 gtkmm-2.4 gdkmm-2.4 cairomm-1.0 pangomm-1.4
 
 INCLUDES := -I$(KERNEL_SRC) -I$(KERNEL_SRC)/Test -I$(CELLAR_SRC) -I$(GENERIC_SRC) -I$(APPCORE_SRC) -I$(DEBUGPROCS_SRC)
-INCLUDES := $(INCLUDES) -I$(VIEWS_SRC) -I$(VIEWS_LIB) -I$(GR2_INC)
 
 INCLUDES := \
 	$(shell icu-config --detect-prefix --cppflags) \
@@ -64,7 +60,6 @@ LINK_LIBS := \
 	$(OUT_DIR)/libGeneric.a \
 	$(OUT_DIR)/libDebugProcs.a \
 	$(OUT_DIR)/libAppCore.a \
-	$(BUILD_ROOT)/Lib/linux/$(BUILD_CONFIG)/libgraphite2.a \
 	$(COM_OUT_DIR)/libFwKernelTlb.a
 
 all: $(OUT_DIR)/testFwKernel
@@ -77,12 +72,6 @@ FWKERNEL_OBJ := \
 	$(KERNEL_OBJ)/TsPropsFactory.o \
 	$(KERNEL_OBJ)/TextServ.o \
 	$(KERNEL_OBJ)/ActionHandler.o \
-	$(KERNEL_OBJ)/RomRenderEngine.o \
-	$(KERNEL_OBJ)/RomRenderSegment.o \
-	$(KERNEL_OBJ)/GraphiteEngine.o \
-	$(KERNEL_OBJ)/GraphiteSegment.o \
-	$(KERNEL_OBJ)/LgLineBreaker.o \
-	$(KERNEL_OBJ)/LocaleIndex.o \
 	$(GENERIC_OBJ)/ModuleEntry.o \
 	$(GENERIC_OBJ)/TextProps1.o \
 
@@ -120,10 +109,6 @@ $(INT_DIR)/Collection.cpp: testFwKernel.h \
 	TestTsPropsBldr.h \
 	TestTsTextProps.h \
 	MockLgWritingSystemFactory.h \
-	MockLgWritingSystem.h \
-	TestLgLineBreaker.h \
-	TestRomRenderEngine.h \
-	TestGraphiteEngine.h \
-	RenderEngineTestBase.h
+	MockLgWritingSystem.h
 	@echo Collecting tests for testFwKernel
 	$(COLLECT) $^ $@

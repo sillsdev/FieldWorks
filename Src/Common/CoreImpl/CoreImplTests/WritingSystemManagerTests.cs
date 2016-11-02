@@ -2,7 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
@@ -200,69 +199,6 @@ namespace SIL.CoreImpl
 			Assert.That(chWS.Region, Is.EqualTo((RegionSubtag) "CN"));
 			Assert.That(chWS.DefaultFontName, Is.EqualTo("Charis SIL"));
 			Assert.That(chWS.DefaultCollation.ValueEquals(new SystemCollationDefinition {LanguageTag = "zh-CN"}), Is.True);
-		}
-
-		/// <summary>
-		/// Tests the get_RendererFromChrp method with a normal font.
-		/// </summary>
-		[Test]
-		public void get_RendererFromChrp_Uniscribe()
-		{
-			using (var gm = new GraphicsManager(new Form()))
-			{
-				gm.Init(1.0f);
-				try
-				{
-					var wsManager = new WritingSystemManager();
-					CoreWritingSystemDefinition ws = wsManager.Set("en-US");
-					var chrp = new LgCharRenderProps { ws = ws.Handle, szFaceName = new ushort[32] };
-					MarshalEx.StringToUShort("Arial", chrp.szFaceName);
-					IRenderEngine engine = wsManager.get_RendererFromChrp(gm.VwGraphics, ref chrp);
-					Assert.IsNotNull(engine);
-					Assert.AreSame(wsManager, engine.WritingSystemFactory);
-					Assert.IsInstanceOf(typeof(UniscribeEngine), engine);
-					wsManager.Save();
-				}
-				finally
-				{
-					gm.Uninit();
-				}
-			}
-		}
-
-		/// <summary>
-		/// Tests the get_RendererFromChrp method with a Graphite font.
-		/// </summary>
-		[Test]
-		public void get_RendererFromChrp_Graphite()
-		{
-			using (var gm = new GraphicsManager(new Form()))
-			{
-				gm.Init(1.0f);
-				try
-				{
-					var wsManager = new WritingSystemManager();
-					// by default Graphite is disabled
-					CoreWritingSystemDefinition ws = wsManager.Set("en-US");
-					var chrp = new LgCharRenderProps { ws = ws.Handle, szFaceName = new ushort[32] };
-					MarshalEx.StringToUShort("Charis SIL", chrp.szFaceName);
-					IRenderEngine engine = wsManager.get_RendererFromChrp(gm.VwGraphics, ref chrp);
-					Assert.IsNotNull(engine);
-					Assert.AreSame(wsManager, engine.WritingSystemFactory);
-					Assert.IsInstanceOf(typeof(UniscribeEngine), engine);
-
-					ws.IsGraphiteEnabled = true;
-					engine = wsManager.get_RendererFromChrp(gm.VwGraphics, ref chrp);
-					Assert.IsNotNull(engine);
-					Assert.AreSame(wsManager, engine.WritingSystemFactory);
-					Assert.IsInstanceOf(typeof(GraphiteEngine), engine);
-					wsManager.Save();
-				}
-				finally
-				{
-					gm.Uninit();
-				}
-			}
 		}
 
 		/// <summary>

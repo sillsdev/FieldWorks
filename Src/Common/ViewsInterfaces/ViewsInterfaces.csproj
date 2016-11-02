@@ -122,6 +122,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DispPropOverrideFactory.cs" />
+    <Compile Include="IPicture.cs" />
+    <Compile Include="Rect.cs" />
     <Compile Include="Views.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -139,40 +139,6 @@ public:
 		return S_OK;
 	}
 
-	STDMETHOD(get_Renderer)(int ws, IVwGraphics * pvg, IRenderEngine ** ppre)
-	{
-		ILgWritingSystemPtr qws;
-		get_EngineOrNull(ws, &qws);
-		if (qws)
-			return qws->get_Renderer(pvg, ppre);
-
-		return E_INVALIDARG;
-	}
-
-	STDMETHOD(get_RendererFromChrp)(IVwGraphics * pvg, LgCharRenderProps * pchrp, IRenderEngine ** ppre)
-	{
-		HRESULT hr = S_OK;
-#if WIN32
-		// Unfortunately we need a DC before we can call SetupGraphics.
-		HDC hdc = ::CreateDC(TEXT("DISPLAY"),NULL,NULL,NULL);
-#else
-		HDC hdc = NULL; // Linux implementation of VwGraphics can handle this.
-#endif //WIN32
-
-		IVwGraphicsWin32Ptr qvgw;
-		qvgw.CreateInstance(CLSID_VwGraphicsWin32);
-		qvgw->Initialize(hdc);
-		qvgw->SetupGraphics(pchrp);
-		hr = get_Renderer(pchrp->ws, qvgw, ppre);
-		qvgw.Clear();
-
-#if WIN32
-		::DeleteDC(hdc);
-#endif //WIN32
-
-		return hr;
-	}
-
 	STDMETHOD(get_UserWs)(int * pws)
 	{
 		*pws = m_wsUser;

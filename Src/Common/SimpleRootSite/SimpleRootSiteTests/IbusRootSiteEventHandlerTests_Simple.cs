@@ -23,7 +23,10 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	[InitializeRealKeyboardController]
 	public class IbusRootSiteEventHandlerTests_Simple: SimpleRootsiteTestsBase<UndoableRealDataCache>
 	{
-		private IbusRootSiteEventHandler m_Handler;
+		private IbusRootSiteEventHandler Handler
+		{
+			get { return (IbusRootSiteEventHandler) m_basicView.RootSiteEventHandler; }
+		}
 
 		public override void FixtureSetup()
 		{
@@ -35,16 +38,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			base.TestSetup();
 			m_hvoRoot = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStText, 0, -1, -1);
-
-			m_Handler = new IbusRootSiteEventHandler(m_basicView);
-			KeyboardController.RegisterControl(m_basicView, m_Handler);
-			m_basicView.Visible = true;
-		}
-
-		public override void TestTearDown()
-		{
-			KeyboardController.UnregisterControl(m_basicView);
-			base.TestTearDown();
 		}
 
 		private void ShowThisForm()
@@ -120,7 +113,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SetSelection(selectionStart, selectionEnd);
 
 			// Exercise
-			m_Handler.OnUpdatePreeditText(new IBusText(composition), cursorPos);
+			Handler.OnUpdatePreeditText(new IBusText(composition), cursorPos);
 
 			// Verify
 			var selHelper = m_basicView.EditingHelper.CurrentSelection;
@@ -148,10 +141,10 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			// Setup
 			var hvoPara = SetupInitialText(text);
 			SetSelection(selectionStart, selectionEnd);
-			m_Handler.OnUpdatePreeditText(new IBusText(firstComposition), firstCursorPos);
+			Handler.OnUpdatePreeditText(new IBusText(firstComposition), firstCursorPos);
 
 			// Exercise
-			m_Handler.OnUpdatePreeditText(new IBusText(composition), cursorPos);
+			Handler.OnUpdatePreeditText(new IBusText(composition), cursorPos);
 
 			// Verify
 			var selHelper = m_basicView.EditingHelper.CurrentSelection;
@@ -170,11 +163,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			// Setup
 			var hvoPara = SetupInitialText("a");
 			SetSelection(1, 1);
-			m_Handler.OnUpdatePreeditText(new IBusText("b",
+			Handler.OnUpdatePreeditText(new IBusText("b",
 				new [] { new IBusUnderlineAttribute(underline, 0, 1)}), 1);
 
 			// Exercise
-			var ret = m_Handler.CommitOrReset();
+			var ret = Handler.CommitOrReset();
 
 			// Verify
 			Assert.That(ret, Is.EqualTo(expectedRetVal));
@@ -207,10 +200,10 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			// Setup
 			var hvoPara = SetupInitialText(text);
 			SetSelection(selectionStart, selectionEnd);
-			m_Handler.OnUpdatePreeditText(new IBusText(composition), cursorPos);
+			Handler.OnUpdatePreeditText(new IBusText(composition), cursorPos);
 
 			// Exercise
-			m_Handler.OnCommitText(new IBusText(commitText));
+			Handler.OnCommitText(new IBusText(commitText));
 
 			// Verify
 			var selHelper = m_basicView.EditingHelper.CurrentSelection;
@@ -232,7 +225,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SetSelection(1, 1);
 
 			// Exercise
-			m_Handler.OnCommitText(new IBusText("\u014B"));
+			Handler.OnCommitText(new IBusText("\u014B"));
 
 			// Verify
 			var selHelper = m_basicView.EditingHelper.CurrentSelection;
@@ -257,9 +250,9 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SetSelection(1, 1);
 
 			// Exercise
-			m_Handler.OnCommitText(new IBusText("n"));
-			m_Handler.OnIbusKeyPress(KeySymBackspace, ScanCodeBackspace, 0);
-			m_Handler.OnCommitText(new IBusText("\u014B"));
+			Handler.OnCommitText(new IBusText("n"));
+			Handler.OnIbusKeyPress(KeySymBackspace, ScanCodeBackspace, 0);
+			Handler.OnCommitText(new IBusText("\u014B"));
 
 			// Verify
 			var selHelper = m_basicView.EditingHelper.CurrentSelection;
@@ -294,7 +287,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SetSelection(cursorPos, cursorPos);
 
 			// Exercise
-			m_Handler.OnDeleteSurroundingText(offset, nChars);
+			Handler.OnDeleteSurroundingText(offset, nChars);
 
 			// Verify
 			var selHelper = m_basicView.EditingHelper.CurrentSelection;
@@ -311,10 +304,10 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			// Setup
 			var hvoPara = SetupInitialText("b");
 			SetSelection(selStart, selEnd);
-			m_Handler.OnUpdatePreeditText(new IBusText("\u4FDD\u989D"), 0);
+			Handler.OnUpdatePreeditText(new IBusText("\u4FDD\u989D"), 0);
 
 			// Exercise
-			m_Handler.Reset();
+			Handler.Reset();
 
 			// Verify
 			var selHelper = m_basicView.EditingHelper.CurrentSelection;

@@ -35,51 +35,60 @@ Description:
 	//:>****************************************************************************************
 	//:>		Forward declarations
 	//:>****************************************************************************************
-	interface IRenderEngine;
-	interface ILgCharacterPropertyEngine;
-	interface ILgCollatingEngine;
-	interface ICollation;
-	interface ILgWritingSystem;
 	interface ILgWritingSystemFactory;
 
-	//:>****************************************************************************************
-	//:>		Enumerations
-	//:>****************************************************************************************
+	// Properties passed to renderer to tell it how to draw text.
 
-	// Line Breaking Character classes defined by Unicode.
-	typedef [v1_enum] enum LgLBP
+	// An HFONT is typically produced by combining the four font properties specified
+	// into a LOGFONT with lfWidth, lfOrientation, lfEscapement set to zero,
+	// lfUnderline set to false, (Client handles underlining; we want several types)
+	// lfStrikeOut set to false,
+	// lfCharSet set to DEFAULT_CHARSET,
+	// lfOutPrecision set to OUT_TT_ONLY_PRECIS
+	// lfClipPrecision set to CLIP_DEFAULT_PRECIS,
+	// lfQuality set to DEFAULT_QUALITY, and
+	// lfPitchAndFamily set to DEFAULT_PITCH | FF_DONTCARE
+
+	// szFaceName may be an actual font family name, or one of the names <serif>,
+	// <sans-serif>, <monospace>, in which case the renderer must provide an appropriate
+	// interpretation. The magic names must match exactly (including case) and must include
+	// the angle brackets.
+
+	// The dympHeight value is usually modified by the WS before making an HFONT if
+	// superscript or subscript is specified;
+	// other properties may be modified as desired by the old writing system, by default or as
+	// a result of interpreting a old writing system style. For example, the WS may know of a
+	// minimum useful height for a particular font, and enforce this.
+
+	// ENHANCE JohnT: do we need a mechanism like that used in views to allow a list of font
+	// names to be passed? Seems the client could handle working out which of a list of
+	// named fonts is available--unless we need to try multiple ones to cover a code point
+	// range.
+	// ENHANCE JohnT: should we somehow make sure that each thread has only one instance of
+	// a chrp with given values, so we can use the pointer to it as a key to look up an
+	// HFONT?
+	typedef struct
 	{
-				 // '*' indicates normative property
-		klbpAI,  //  0   Ambiguous (Alphabetic or Ideographic)
-		klbpAL,  //  1   Ordinary Alphabetic
-		klbpB2,  //  2   Break Opportunity Before and After
-		klbpBA,  //  3   Break Opportunity After
-		klbpBB,  //  4   Break Opportunity Before
-		klbpBK,  //  5 * Mandatory Break
-		klbpCB,  //  6 * Contingent Break Opportunity
-		klbpCL,  //  7   Closing
-		klbpCM,  //  8 * Combining Marks
-		klbpCR,  //  9 * Carriage Return
-		klbpEX,  // 10   Exclamation
-		klbpGL,  // 11 * Non-breaking ("Glue")
-		klbpHY,  // 12   Hyphen
-		klbpID,  // 13   Ideographic
-		klbpIN,  // 14   Inseparable
-		klbpIS,  // 15   Infix Separator (Numeric)
-		klbpLF,  // 16 * Line Feed
-		klbpNS,  // 17   Non Starter
-		klbpNU,  // 18   Numeric
-		klbpOP,  // 19   Opening
-		klbpPO,  // 20   Postfix (Numeric)
-		klbpPR,  // 21   Prefix (Numeric)
-		klbpQU,  // 22   Ambiguous Quotation
-		klbpSA,  // 23   Complex Context
-		klbpSG,  // 24 * Surrogates
-		klbpSP,  // 25 * Space
-		klbpSY,  // 26   Symbols Allowing Breaks
-		klbpXX,  // 27   Unknown (used for unassigned characters)
-		klbpZW   // 28 * Zero Width Space
-	} LgLBP;  // Hungarian lbp
+		COLORREF clrFore;
+		COLORREF clrBack;
+		COLORREF clrUnder;		// Underline color.
+		int dympOffset;		// Baseline offset (+ve = raise) added to effect of super/subscript
+		int ws;
+		byte fWsRtl;		// true if writing system is right-to-left
+		int nDirDepth;		// number of levels of direction change, para to this run
+		int ssv;			// indicates superscript, subscript or normal.
+		int unt;			// FwUnderlineType.
+		// Remaining properties are the interesting ones for a LOGFONT
+		// Warning: these must be kept together at the end of the struct.
+		// Note that this assumes the client resolves ws-dependent names like Serif,
+		// and also deals with finding the first available font in a list. This array
+		// has room for only one font name.
+		int ttvBold;
+		int ttvItalic;
+		int dympHeight; // normal font size. Superscript or subscript will usually reduce.
+		OLECHAR szFaceName[32];
+		OLECHAR szFontVar[64];
+	} LgCharRenderProps;	// Hungarian: chrp
 
 	/*******************************************************************************************
 		Interface ILgWritingSystem
@@ -137,14 +146,6 @@ Description:
 		[propget] HRESULT RightToLeftScript(
 			[out, retval] ComBool * pfRightToLeft);
 
-		// Get the engine used to render text with the specified properties. At present only
-		// font, bold, and italic properties are significant.
-		// Font name may be '<default serif>' which produces a renderer suitable for the default
-		// serif font.
-		[propget] HRESULT Renderer(
-			[in] IVwGraphics * pvg,
-			[out, retval] IRenderEngine ** ppreneng);
-
 		// Get the "serif font variation" string which is used, for instance, to specify
 		// Graphite features.
 		[propget] HRESULT DefaultFontFeatures(
@@ -172,93 +173,14 @@ Description:
 		// The ICU locale for this writing system.
 		[propget] HRESULT IcuLocale(
 			[out, retval] BSTR *pbstr);
-	};
 
-	/*******************************************************************************************
-		Interface ILgLineBreaker
-		This interface is used to determine possible line break positions in a string.
+		// Returns true if graphite is enabled for this writing system.
+		[propget] HRESULT IsGraphiteEnabled(
+			[out, retval] ComBool *pfRet);
 
-		@h3{When to implement}
-		Clients should not normally implement this interface. There are standard implementations
-		in FwKernel.dll.
-
-		@h3{When to use}
-		Use this interface to determine possible line break positions in a string.
-
-		@h3{How to obtain an instance}
-		For now the only way is to create one using CoCreateInstance, with
-		CLSID_LgLineBreaker.
-
-		@h3{Hungarian: linbrk}
-	*******************************************************************************************/
-	DeclareInterface(LgLineBreaker, Unknown, F8D5FDE9-9695-4D63-8843-E27FD880BFF0)
-	{
-		HRESULT Initialize(
-			[in] BSTR bstrLocale);
-
-		// Get line breaking properties (from enumeration LgLBP) for an array of characters.
-		// This passes an array in, and an array with the same number of elements out, to
-		// improve efficiency when properties are required for a string of characters.
-		// See @HTTP{www.unicode.org/unicode/reports/tr14/}.
-		// @exception E_INVALIDARG if characters in input are not valid Unicode.
-		[restricted] HRESULT GetLineBreakProps(
-			[in, size_is(cchIn)] const OLECHAR * prgchIn,
-			[in] int cchIn,
-			[out, size_is(cchIn)] byte * prglbOut);
-
-		// This combines the functions of ${#GetLineBreakProps} and ${#GetLineBreakStatus},
-		// plus the ability to skip part of the string, and stop at break characters.
-		//
-		// The first two arguments define an array of characters as for ${#GetLineBreakProps}.
-		// The output is basically what would be produced by passing the output of
-		// that method as input to GetLineBreakStatus, with two exceptions:
-		//
-		// 1. We only want line break status info for characters from ichMin to ichLim.
-		// (A larger array is passed in because we may need to look at preceding characters
-		// to confidently know whether we can break after the char at ichMin.)
-		//
-		// 2. If we detect a character which forces a line or segment break in the range
-		// ichMin..ichLim, we stop and do not return any info about subsequent characters.
-		//
-		// Also, we set *pichBreak to the index of the break character.
-		// *pichBreak is set to -1 if we don't find a break character.
-		// Break characters are things like CR, LF, TAB, or the embedded object character.
-		[restricted] HRESULT GetLineBreakInfo(
-			[in, size_is(cchIn)] const OLECHAR * prgchIn,
-			[in] int cchIn,
-			[in] int ichMin,
-			[in] int ichLim,
-			[out, size_is(ichLim - ichMin)] byte * prglbsOut,
-			[out] int * pichBreak);
-
-		// Gets the text that the LineBreakBefore and LineBreakAfter functions are using.  This
-		// function is included for completion.
-		HRESULT GetLineBreakText(
-			[in] int cchMax,
-			[out] OLECHAR * prgchOut,
-			[out] int * pcchOut);
-		// Sets the text for the LineBreakBefore and the LineBreakAfter functions to use.
-		[propput] HRESULT LineBreakText(
-			[in, size_is(cchMax)] OLECHAR * prgchIn,
-			[in] int cchMax);
-
-		// Finds the nearest line break immediately before the given index (ichIn).  The
-		// function returns not only a location but the weight of the line break (currently not
-		// implemented).  See http://www.unicode.org/unicode/reports/tr14/ for more information
-		// on line breaking properties.
-		HRESULT LineBreakBefore(
-			[in] int ichIn,
-			[out] int * pichOut,
-			[out] LgLineBreak * plbWeight);
-
-		// Finds the nearest line break immediately after the given index (ichIn).  The function
-		// returns not only a location but the weight of the line break (currently not
-		// implemented).  See http://www.unicode.org/unicode/reports/tr14/ for more information
-		// on line breaking properties.
-		HRESULT LineBreakAfter(
-			[in] int ichIn,
-			[out] int * pichOut,
-			[out] LgLineBreak * plbWeight);
+		// Gets the language writing system factory that created this writing system.
+		[propget] HRESULT WritingSystemFactory(
+			[out, retval] ILgWritingSystemFactory ** ppwsf);
 	};
 
 	/*******************************************************************************************
@@ -319,18 +241,6 @@ Description:
 			[out, size_is(cws)] int * rgws,
 			[in] int cws);
 
-		// Get the renderer for a particular WS
-		[propget] HRESULT Renderer(
-			[in] int ws,
-			[in] IVwGraphics * pvg,
-			[out, retval] IRenderEngine ** ppre);
-		// Get the renderer for a particular Chrp
-		[propget] HRESULT RendererFromChrp(
-			[in] IVwGraphics * pvg,
-			// should be [in, ref] possibly?
-			[in, out] LgCharRenderProps * pchrp,
-			[out, retval] IRenderEngine ** ppre);
-
 		// Get the default user interface writing system.
 		[propget] HRESULT UserWs(
 			[out, retval] int * pws);
@@ -339,13 +249,3 @@ Description:
 		[propput] HRESULT UserWs(
 			[in] int ws);
 	};
-
-#ifndef NO_COCLASSES
-/*************************************************************************************//*:Ignore
-	CoClass definitions.
-***********************************************************************************************/
-	DeclareCoClass(LgLineBreaker, 94FBFA34-21E5-4A1E-B576-BA5D76CC051A)
-	{
-		interface ILgLineBreaker;
-	};
-#endif /*!NO_COCLASSES*/

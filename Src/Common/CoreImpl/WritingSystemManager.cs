@@ -1,12 +1,9 @@
 using System;
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.Utils;
 using SIL.WritingSystems;
 
 namespace SIL.CoreImpl
@@ -18,70 +15,8 @@ namespace SIL.CoreImpl
 		Justification="m_renderEngines is a singleton and gets disposed by SingletonsContainer")]
 	public class WritingSystemManager : ILgWritingSystemFactory
 	{
-		#region DisposableRenderEngineWrapper class
-		private class DisposableRenderEngineWrapper : IComponent
-		{
-			public IRenderEngine RenderEngine { get; private set;}
-
-			public DisposableRenderEngineWrapper(IRenderEngine renderEngine)
-			{
-				RenderEngine = renderEngine;
-			}
-
-			#region Disposable stuff
-			#if DEBUG
-			/// <summary/>
-			~DisposableRenderEngineWrapper()
-			{
-				Dispose(false);
-			}
-			#endif
-
-			/// <summary/>
-			public bool IsDisposed { get; private set; }
-
-			/// <summary/>
-			public void Dispose()
-			{
-				Dispose(true);
-				GC.SuppressFinalize(this);
-			}
-
-			/// <summary/>
-			protected virtual void Dispose(bool fDisposing)
-			{
-				System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + ". *******");
-				if (fDisposing && !IsDisposed)
-				{
-					// dispose managed and unmanaged objects
-
-					// The render engines hold a reference to the PalasoWritingSystemManager.
-					// Things work better if we call release (FWNX-837).
-					if (Marshal.IsComObject(RenderEngine))
-						Marshal.ReleaseComObject(RenderEngine);
-					RenderEngine = null;
-
-					if (Disposed != null)
-						Disposed(this, EventArgs.Empty);
-				}
-				IsDisposed = true;
-			}
-			#endregion
-
-			#region IComponent implementation
-
-			public event EventHandler Disposed;
-
-			public ISite Site { get; set; }
-
-			#endregion
-		}
-		#endregion
-
 		private IWritingSystemRepository<CoreWritingSystemDefinition> m_repo;
 		private readonly Dictionary<int, CoreWritingSystemDefinition> m_handleWSs = new Dictionary<int, CoreWritingSystemDefinition>();
-		// List of render engines that get created during our lifetime.
-		private readonly Container m_renderEngines = SingletonsContainer.Get<Container>("RenderEngineContainer");
 
 		private CoreWritingSystemDefinition m_userWritingSystem;
 		private int m_nextHandle = 999000001;
@@ -102,16 +37,6 @@ namespace SIL.CoreImpl
 		public WritingSystemManager(IWritingSystemRepository<CoreWritingSystemDefinition> wsRepo)
 		{
 			WritingSystemStore = wsRepo;
-		}
-
-		/// <summary>
-		/// Registers a render engine. This should be called after creating a new render engine.
-		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="DisposableRenderEngineWrapper object gets added to m_renderEngines singleton and disposed there.")]
-		internal void RegisterRenderEngine(IRenderEngine engine)
-		{
-			m_renderEngines.Add(new DisposableRenderEngineWrapper(engine));
 		}
 
 		/// <summary>
@@ -138,7 +63,7 @@ namespace SIL.CoreImpl
 						m_handleWSs.Clear();
 						foreach (CoreWritingSystemDefinition ws in m_repo.AllWritingSystems)
 						{
-							ws.WritingSystemManager = this;
+							ws.WritingSystemFactory = this;
 							ws.Handle = m_nextHandle++;
 							m_handleWSs[ws.Handle] = ws;
 						}
@@ -345,7 +270,7 @@ namespace SIL.CoreImpl
 			lock (m_syncRoot)
 			{
 				m_repo.Set(ws);
-				ws.WritingSystemManager = this;
+				ws.WritingSystemFactory = this;
 				ws.Handle = m_nextHandle++;
 				m_handleWSs[ws.Handle] = ws;
 			}
@@ -430,7 +355,7 @@ namespace SIL.CoreImpl
 					m_handleWSs.Remove(existingWs.Handle);
 					m_repo.Remove(existingWs.Id);
 					m_repo.Set(ws);
-					ws.WritingSystemManager = this;
+					ws.WritingSystemFactory = this;
 					ws.Handle = existingWs.Handle;
 					m_handleWSs[ws.Handle] = ws;
 				}
@@ -703,26 +628,6 @@ namespace SIL.CoreImpl
 				wss[i] = 0;
 
 			MarshalEx.ArrayToNative(rgws, cws, wss);
-		}
-
-		/// <summary>
-		/// Get the renderer for a particular WS
-		/// </summary>
-		/// <param name="ws"></param>
-		/// <param name="vg"></param>
-		/// <returns></returns>
-		public IRenderEngine get_Renderer(int ws, IVwGraphics vg)
-		{
-			return Get(ws).get_Renderer(vg);
-		}
-
-		/// <summary>
-		/// Get the renderer for a particular Chrp
-		/// </summary>
-		public IRenderEngine get_RendererFromChrp(IVwGraphics vg, ref LgCharRenderProps chrp)
-		{
-			vg.SetupGraphics(ref chrp);
-			return get_Renderer(chrp.ws, vg);
 		}
 
 		#endregion

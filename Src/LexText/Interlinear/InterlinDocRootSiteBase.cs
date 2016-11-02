@@ -66,15 +66,12 @@ namespace SIL.FieldWorks.IText
 			if (m_fdoCache == null || DesignMode)
 				return;
 
-			MakeRootInternal();
-
 			base.MakeRoot();
+			MakeRootInternal();
 		}
 
 		protected virtual void MakeRootInternal()
 		{
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
 			// Setting this result too low can result in moving a cursor from an editable field
 			// to a non-editable field (e.g. with Control-Right and Control-Left cursor
 			// commands).  Normally we could set this to only a few (e.g. 4). but in

@@ -39,33 +39,6 @@
     <ClCompile Include="TsTextProps.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LocaleIndex.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RomRenderEngine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RomRenderSegment.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="UniscribeEngine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="UniscribeLinux.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="UniscribeSegment.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphiteEngine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphiteSegment.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LgLineBreaker.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="FwKernel.def">
@@ -75,7 +48,6 @@
     <None Include="FwKernel.mak" />
     <None Include="TextServ.idh" />
     <None Include="Language.idh" />
-    <None Include="Render.idh" />
     <None Include="Makefile" />
   </ItemGroup>
   <ItemGroup>
@@ -113,34 +85,7 @@
     </ClInclude>
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LocaleIndex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RomRenderEngine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RomRenderSegment.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UniscribeEngine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UniscribeLinux.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LangResource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphiteEngine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphiteSegment.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UniscribeSegment.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LgLineBreaker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

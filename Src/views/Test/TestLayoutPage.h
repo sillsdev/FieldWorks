@@ -234,6 +234,7 @@ namespace TestViews
 		DummyRootSitePtr m_qdrs;
 		Rect m_rcSrc;
 		VwLayoutStreamPtr m_qlay;
+		IRenderEngineFactoryPtr m_qref;
 
 	public:
 		TestLayoutPage();
@@ -1888,6 +1889,7 @@ text so that it continues on the next page.");
 			m_qcda.CreateInstance(CLSID_VwCacheDa);
 			m_qcda->QueryInterface(IID_ISilDataAccess, (void **)&m_qsda);
 			m_qsda->putref_WritingSystemFactory(g_qwsf);
+			m_qref.Attach(NewObj MockRenderEngineFactory);
 			m_qtsf.CreateInstance(CLSID_TsStrFactory);
 			// Now make the root box and view constructor and Graphics object.
 			m_qlay.Attach(NewObj VwLayoutStream());
@@ -1896,6 +1898,7 @@ text so that it continues on the next page.");
 			m_hdc = GetTestDC();
 			m_qvg32->Initialize(m_hdc);
 			m_qlay->putref_DataAccess(m_qsda);
+			m_qlay->putref_RenderEngineFactory(m_qref);
 			m_qdrs.Attach(NewObj DummyRootSite());
 			m_rcSrc = Rect(0, 0, 96, 96);
 			m_qdrs->SetRects(m_rcSrc, m_rcSrc);
@@ -1907,6 +1910,7 @@ text so that it continues on the next page.");
 		{
 			m_qcda.Clear();
 			m_qsda.Clear();
+			m_qref.Clear();
 			m_qtsf.Clear();
 			m_qvc.Clear();
 			m_qvg32->ReleaseDC();

@@ -190,9 +190,6 @@ namespace SIL.FieldWorks.Common.RootSites
 
 				base.MakeRoot();
 
-				m_rootb = VwRootBoxClass.Create();
-				m_rootb.SetSite(this);
-
 				// Set up a new view constructor.
 				m_footnoteVc = new DummyFootnoteVc(m_fdoCache);
 				m_footnoteVc.DisplayTranslation = m_displayTranslation;

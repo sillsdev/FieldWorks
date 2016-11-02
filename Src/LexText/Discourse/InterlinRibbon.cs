@@ -257,8 +257,7 @@ namespace SIL.FieldWorks.Discourse
 		{
 			CheckDisposed();
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
 
 			m_vc = new RibbonVc(this);
 
@@ -274,7 +273,6 @@ namespace SIL.FieldWorks.Discourse
 			m_rootb.DataAccess = Decorator;
 			m_rootb.SetRootObject(HvoRoot, m_vc, kfragRibbonWordforms, this.StyleSheet);
 
-			base.MakeRoot();
 			m_rootb.Activate(VwSelectionState.vssOutOfFocus); // Makes selection visible even before ever got focus.\
 			MakeInitialSelection();
 		}
