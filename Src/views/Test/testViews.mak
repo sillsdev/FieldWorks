@@ -45,6 +45,7 @@ OBJ_VIEWSTESTSUITE=\
 	$(INT_DIR)\genpch\testViews.obj\
 	$(INT_DIR)\genpch\Collection.obj\
 	$(INT_DIR)\autopch\ModuleEntry.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\LgUnicodeCollater.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwAccessRoot.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwOverlay.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwPropertyStore.obj\
@@ -105,6 +106,7 @@ $(VIEWSTEST_SRC)\Collection.cpp: $(VIEWSTEST_SRC)\DummyBaseVc.h $(VIEWSTEST_SRC)
  $(FWKERNELTEST_SRC)\MockLgWritingSystem.h\
  $(VIEWSTEST_SRC)\TestNotifier.h\
  $(VIEWSTEST_SRC)\TestLayoutPage.h\
+ $(VIEWSTEST_SRC)\TestLgCollatingEngine.h\
  $(VIEWSTEST_SRC)\TestVirtualHandlers.h\
  $(VIEWSTEST_SRC)\TestVwTxtSrc.h\
  $(VIEWSTEST_SRC)\TestVwParagraph.h\

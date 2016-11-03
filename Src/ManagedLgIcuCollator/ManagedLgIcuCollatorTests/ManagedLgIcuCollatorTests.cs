@@ -4,7 +4,7 @@
 
 using NUnit.Framework;
 using System;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Language
 {

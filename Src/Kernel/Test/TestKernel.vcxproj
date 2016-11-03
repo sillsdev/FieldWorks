@@ -78,7 +78,6 @@
     <ClInclude Include="RenderEngineTestBase.h" />
     <ClInclude Include="testFwKernel.h" />
     <ClInclude Include="TestGraphiteEngine.h" />
-    <ClInclude Include="TestLgCollatingEngine.h" />
     <ClInclude Include="TestLgLineBreaker.h" />
     <ClInclude Include="TestRomRenderEngine.h" />
     <ClInclude Include="TestTsPropsBldr.h" />

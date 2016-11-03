@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 8.00.0603 */
-/* at Wed Nov 02 15:59:41 2016
+/* at Sun Nov 06 18:22:26 2016
  */
 /* Compiler settings for C:\fwrepo\fw\Output\Common\FwKernelTlb.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
@@ -383,13 +383,6 @@ typedef interface IRenderingFeatures IRenderingFeatures;
 #endif 	/* __IRenderingFeatures_FWD_DEFINED__ */
 
 
-#ifndef __ILgCollatingEngine_FWD_DEFINED__
-#define __ILgCollatingEngine_FWD_DEFINED__
-typedef interface ILgCollatingEngine ILgCollatingEngine;
-
-#endif 	/* __ILgCollatingEngine_FWD_DEFINED__ */
-
-
 #ifndef __ILgWritingSystem_FWD_DEFINED__
 #define __ILgWritingSystem_FWD_DEFINED__
 typedef interface ILgWritingSystem ILgWritingSystem;
@@ -402,18 +395,6 @@ typedef interface ILgWritingSystem ILgWritingSystem;
 typedef interface ILgLineBreaker ILgLineBreaker;
 
 #endif 	/* __ILgLineBreaker_FWD_DEFINED__ */
-
-
-#ifndef __LgUnicodeCollater_FWD_DEFINED__
-#define __LgUnicodeCollater_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class LgUnicodeCollater LgUnicodeCollater;
-#else
-typedef struct LgUnicodeCollater LgUnicodeCollater;
-#endif /* __cplusplus */
-
-#endif 	/* __LgUnicodeCollater_FWD_DEFINED__ */
 
 
 #ifndef __LgLineBreaker_FWD_DEFINED__
@@ -1226,20 +1207,6 @@ ILgWritingSystem
 ,
 9C0513AB-1AB9-4741-9C49-FA65FA83B7CC
 );
-typedef /* [v1_enum] */ 
-enum LgCollatingOptions
-    {
-        fcoDefault	= 0,
-        fcoIgnoreCase	= 1,
-        fcoDontIgnoreVariant	= 2,
-        fcoLim	= ( fcoDontIgnoreVariant + 1 ) 
-    } 	LgCollatingOptions;
-
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-ILgCollatingEngine
-,
-D27A3D8C-D3FE-4E25-9097-8F4A1FB30361
-);
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 ILgLineBreaker
 ,
@@ -1249,11 +1216,6 @@ GENERIC_DECLARE_SMART_INTERFACE_PTR(
 ILgWritingSystemFactory
 ,
 CC2BD14F-ACCE-4246-9192-9C29441A5A09
-);
-ATTACH_GUID_TO_CLASS(class,
-0D9900D2-1693-481F-AA70-7EA64F264EC4
-,
-LgUnicodeCollater
 );
 ATTACH_GUID_TO_CLASS(class,
 94FBFA34-21E5-4A1E-B576-BA5D76CC051A
@@ -8610,194 +8572,6 @@ GraphiteEngine;
 #endif 	/* __IRenderingFeatures_INTERFACE_DEFINED__ */
 
 
-#ifndef __ILgCollatingEngine_INTERFACE_DEFINED__
-#define __ILgCollatingEngine_INTERFACE_DEFINED__
-
-/* interface ILgCollatingEngine */
-/* [unique][object][uuid] */ 
-
-
-#define IID_ILgCollatingEngine __uuidof(ILgCollatingEngine)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("D27A3D8C-D3FE-4E25-9097-8F4A1FB30361")
-    ILgCollatingEngine : public IUnknown
-    {
-    public:
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_SortKey( 
-            /* [in] */ BSTR bstrValue,
-            /* [in] */ LgCollatingOptions colopt,
-            /* [retval][out] */ BSTR *pbstrKey) = 0;
-        
-        virtual /* [restricted] */ HRESULT STDMETHODCALLTYPE SortKeyRgch( 
-            /* [size_is][in] */ const OLECHAR *pch,
-            /* [in] */ int cchIn,
-            /* [in] */ LgCollatingOptions colopt,
-            /* [in] */ int cchMaxOut,
-            /* [size_is][out] */ OLECHAR *pchKey,
-            /* [out] */ int *pcchOut) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE Compare( 
-            /* [in] */ BSTR bstrValue1,
-            /* [in] */ BSTR bstrValue2,
-            /* [in] */ LgCollatingOptions colopt,
-            /* [retval][out] */ int *pnVal) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_WritingSystemFactory( 
-            /* [retval][out] */ ILgWritingSystemFactory **ppwsf) = 0;
-        
-        virtual /* [propputref] */ HRESULT STDMETHODCALLTYPE putref_WritingSystemFactory( 
-            /* [in] */ ILgWritingSystemFactory *pwsf) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_SortKeyVariant( 
-            /* [in] */ BSTR bstrValue,
-            /* [in] */ LgCollatingOptions colopt,
-            /* [retval][out] */ VARIANT *psaKey) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE CompareVariant( 
-            /* [in] */ VARIANT saValue1,
-            /* [in] */ VARIANT saValue2,
-            /* [in] */ LgCollatingOptions colopt,
-            /* [retval][out] */ int *pnVal) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE Open( 
-            /* [in] */ BSTR bstrLocale) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE Close( void) = 0;
-        
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct ILgCollatingEngineVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ILgCollatingEngine * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ILgCollatingEngine * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            ILgCollatingEngine * This);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_SortKey )( 
-            ILgCollatingEngine * This,
-            /* [in] */ BSTR bstrValue,
-            /* [in] */ LgCollatingOptions colopt,
-            /* [retval][out] */ BSTR *pbstrKey);
-        
-        /* [restricted] */ HRESULT ( STDMETHODCALLTYPE *SortKeyRgch )( 
-            ILgCollatingEngine * This,
-            /* [size_is][in] */ const OLECHAR *pch,
-            /* [in] */ int cchIn,
-            /* [in] */ LgCollatingOptions colopt,
-            /* [in] */ int cchMaxOut,
-            /* [size_is][out] */ OLECHAR *pchKey,
-            /* [out] */ int *pcchOut);
-        
-        HRESULT ( STDMETHODCALLTYPE *Compare )( 
-            ILgCollatingEngine * This,
-            /* [in] */ BSTR bstrValue1,
-            /* [in] */ BSTR bstrValue2,
-            /* [in] */ LgCollatingOptions colopt,
-            /* [retval][out] */ int *pnVal);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_WritingSystemFactory )( 
-            ILgCollatingEngine * This,
-            /* [retval][out] */ ILgWritingSystemFactory **ppwsf);
-        
-        /* [propputref] */ HRESULT ( STDMETHODCALLTYPE *putref_WritingSystemFactory )( 
-            ILgCollatingEngine * This,
-            /* [in] */ ILgWritingSystemFactory *pwsf);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_SortKeyVariant )( 
-            ILgCollatingEngine * This,
-            /* [in] */ BSTR bstrValue,
-            /* [in] */ LgCollatingOptions colopt,
-            /* [retval][out] */ VARIANT *psaKey);
-        
-        HRESULT ( STDMETHODCALLTYPE *CompareVariant )( 
-            ILgCollatingEngine * This,
-            /* [in] */ VARIANT saValue1,
-            /* [in] */ VARIANT saValue2,
-            /* [in] */ LgCollatingOptions colopt,
-            /* [retval][out] */ int *pnVal);
-        
-        HRESULT ( STDMETHODCALLTYPE *Open )( 
-            ILgCollatingEngine * This,
-            /* [in] */ BSTR bstrLocale);
-        
-        HRESULT ( STDMETHODCALLTYPE *Close )( 
-            ILgCollatingEngine * This);
-        
-        END_INTERFACE
-    } ILgCollatingEngineVtbl;
-
-    interface ILgCollatingEngine
-    {
-        CONST_VTBL struct ILgCollatingEngineVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define ILgCollatingEngine_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define ILgCollatingEngine_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define ILgCollatingEngine_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define ILgCollatingEngine_get_SortKey(This,bstrValue,colopt,pbstrKey)	\
-    ( (This)->lpVtbl -> get_SortKey(This,bstrValue,colopt,pbstrKey) ) 
-
-#define ILgCollatingEngine_SortKeyRgch(This,pch,cchIn,colopt,cchMaxOut,pchKey,pcchOut)	\
-    ( (This)->lpVtbl -> SortKeyRgch(This,pch,cchIn,colopt,cchMaxOut,pchKey,pcchOut) ) 
-
-#define ILgCollatingEngine_Compare(This,bstrValue1,bstrValue2,colopt,pnVal)	\
-    ( (This)->lpVtbl -> Compare(This,bstrValue1,bstrValue2,colopt,pnVal) ) 
-
-#define ILgCollatingEngine_get_WritingSystemFactory(This,ppwsf)	\
-    ( (This)->lpVtbl -> get_WritingSystemFactory(This,ppwsf) ) 
-
-#define ILgCollatingEngine_putref_WritingSystemFactory(This,pwsf)	\
-    ( (This)->lpVtbl -> putref_WritingSystemFactory(This,pwsf) ) 
-
-#define ILgCollatingEngine_get_SortKeyVariant(This,bstrValue,colopt,psaKey)	\
-    ( (This)->lpVtbl -> get_SortKeyVariant(This,bstrValue,colopt,psaKey) ) 
-
-#define ILgCollatingEngine_CompareVariant(This,saValue1,saValue2,colopt,pnVal)	\
-    ( (This)->lpVtbl -> CompareVariant(This,saValue1,saValue2,colopt,pnVal) ) 
-
-#define ILgCollatingEngine_Open(This,bstrLocale)	\
-    ( (This)->lpVtbl -> Open(This,bstrLocale) ) 
-
-#define ILgCollatingEngine_Close(This)	\
-    ( (This)->lpVtbl -> Close(This) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __ILgCollatingEngine_INTERFACE_DEFINED__ */
-
-
 #ifndef __ILgWritingSystem_INTERFACE_DEFINED__
 #define __ILgWritingSystem_INTERFACE_DEFINED__
 
@@ -9159,14 +8933,6 @@ GraphiteEngine;
 
 #endif 	/* __ILgLineBreaker_INTERFACE_DEFINED__ */
 
-
-#define CLSID_LgUnicodeCollater __uuidof(LgUnicodeCollater)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("0D9900D2-1693-481F-AA70-7EA64F264EC4")
-LgUnicodeCollater;
-#endif
 
 #define CLSID_LgLineBreaker __uuidof(LgLineBreaker)
 

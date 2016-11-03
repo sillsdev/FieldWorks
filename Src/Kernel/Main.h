@@ -62,7 +62,6 @@ using namespace fwutil;	// Rect and Point classes
 #include "ActionHandler.h"
 // Engines
 #include "LgLineBreaker.h"
-#include "LgUnicodeCollater.h"
 class RomRenderEngine;
 DEFINE_COM_PTR(RomRenderEngine);
 class UniscribeEngine;

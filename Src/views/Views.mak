@@ -42,6 +42,7 @@ PS_OBJ_DEPS= $(OBJ_DIR)\Common\FwKernel\FwKernelPs_p.obj $(OBJ_DIR)\Common\FwKer
 # ModuleEntry must always be included explicitly, because some components need to compile
 # a DLL version of it, others an EXE version.
 OBJ_VIEWS=\
+	$(INT_DIR)\autopch\LgUnicodeCollater.obj\
 	$(INT_DIR)\autopch\ViewsGlobals.obj\
 	$(INT_DIR)\autopch\VwInvertedViews.obj\
 	$(INT_DIR)\autopch\VwAccessRoot.obj\

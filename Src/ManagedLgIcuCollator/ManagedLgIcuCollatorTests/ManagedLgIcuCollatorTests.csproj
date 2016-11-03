@@ -101,5 +101,11 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\ViewsInterfaces\ViewsInterfaces.csproj">
+      <Project>{afd8fd49-a08c-478e-bc8d-9bced0588b2d}</Project>
+      <Name>ViewsInterfaces</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -71,6 +71,7 @@ LINK_LIBS := \
 	$(OUT_DIR)/libDebugProcs.a
 
 VIEWS_OBJS = \
+	$(VIEWS_OBJ)/LgUnicodeCollater.o \
 	$(VIEWS_OBJ)/ViewsGlobals.o \
 	$(VIEWS_OBJ)/ExplicitInstantiation.o \
 	$(VIEWS_OBJ)/VwEnv.o \
@@ -129,6 +130,7 @@ $(INT_DIR)/Collection.cpp: \
 	testViews.h \
 	$(KERNELTEST_SRC)/MockLgWritingSystemFactory.h \
 	$(KERNELTEST_SRC)/MockLgWritingSystem.h \
+	TestLgCollatingEngine.h \
 	TestNotifier.h \
 	TestLayoutPage.h \
 	TestVwTxtSrc.h \

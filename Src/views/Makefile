@@ -66,6 +66,7 @@ LINK_LIBS := \
 # === Object Lists ===
 
 OBJS = \
+	$(INT_DIR)/LgUnicodeCollater.o \
 	$(INT_DIR)/ViewsGlobals.o \
 	$(INT_DIR)/ExplicitInstantiation.o \
 	$(INT_DIR)/VwEnv.o \

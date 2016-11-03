@@ -94,6 +94,7 @@ DEFINE_COM_PTR(VwSynchronizer); // deals with circularity of root box and synch.
 //:>**********************************************************************************
 #include "FwKernelTlb.h"
 #include "ViewsTlb.h"
+#include "LgUnicodeCollater.h"
 
 //:>**********************************************************************************
 //:>	Types and constants used in View subsystem

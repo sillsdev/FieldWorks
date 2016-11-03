@@ -75,7 +75,6 @@ OBJ_FWKERNEL = \
 	$(INT_DIR)/ActionHandler.o \
 	$(INT_DIR)/DebugReport.o \
 	$(INT_DIR)/LgLineBreaker.o \
-	$(INT_DIR)/LgUnicodeCollater.o \
 	$(INT_DIR)/LocaleIndex.o \
 	$(INT_DIR)/UniscribeLinux.o \
 	$(INT_DIR)/UniscribeSegment.o \

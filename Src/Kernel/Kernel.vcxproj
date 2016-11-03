@@ -77,7 +77,6 @@
     <ClCompile Include="GraphiteEngine.cpp" />
     <ClCompile Include="GraphiteSegment.cpp" />
     <ClCompile Include="LgLineBreaker.cpp" />
-    <ClCompile Include="LgUnicodeCollater.cpp" />
     <ClCompile Include="LocaleIndex.cpp" />
     <ClCompile Include="RomRenderEngine.cpp" />
     <ClCompile Include="RomRenderSegment.cpp" />
@@ -110,8 +109,6 @@
     <ClInclude Include="GraphiteSegment.h" />
     <ClInclude Include="LangResource.h" />
     <ClInclude Include="LgLineBreaker.h" />
-    <ClInclude Include="LgUnicodeCollateInit.h" />
-    <ClInclude Include="LgUnicodeCollater.h" />
     <ClInclude Include="LocaleIndex.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="RomRenderEngine.h" />

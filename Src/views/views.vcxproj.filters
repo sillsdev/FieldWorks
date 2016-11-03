@@ -41,6 +41,8 @@
     <ClInclude Include="VwTextBoxes.h" />
     <ClInclude Include="VwTextStore.h" />
     <ClInclude Include="VwTxtSrc.h" />
+    <ClInclude Include="LgUnicodeCollateInit.h" />
+    <ClInclude Include="LgUnicodeCollater.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lib\VwBaseDataAccess.cpp">
@@ -78,6 +80,7 @@
     <ClCompile Include="VwTextBoxes.cpp" />
     <ClCompile Include="VwTextStore.cpp" />
     <ClCompile Include="VwTxtSrc.cpp" />
+    <ClCompile Include="LgUnicodeCollater.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\bin\mkvw.bat" />

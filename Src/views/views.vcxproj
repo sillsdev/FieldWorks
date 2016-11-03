@@ -27,17 +27,17 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-	<ConfigurationType>Makefile</ConfigurationType>
+    <ConfigurationType>Makefile</ConfigurationType>
     <PlatformToolset>v120</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'" Label="Configuration">
-	<ConfigurationType>Makefile</ConfigurationType>
+    <ConfigurationType>Makefile</ConfigurationType>
     <PlatformToolset>v120</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-	<ConfigurationType>Makefile</ConfigurationType>
+    <ConfigurationType>Makefile</ConfigurationType>
     <PlatformToolset>v120</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
@@ -114,6 +114,8 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="LgUnicodeCollateInit.h" />
+    <ClInclude Include="LgUnicodeCollater.h" />
     <ClInclude Include="lib\VwBaseDataAccess.h" />
     <ClInclude Include="lib\VwBaseVc.h" />
     <ClInclude Include="lib\VwCacheDa.h" />
@@ -141,6 +143,7 @@
     <ClInclude Include="VwTxtSrc.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="LgUnicodeCollater.cpp" />
     <ClCompile Include="lib\VwBaseDataAccess.cpp" />
     <ClCompile Include="lib\VwBaseVc.cpp" />
     <ClCompile Include="lib\VwCacheDa.cpp" />

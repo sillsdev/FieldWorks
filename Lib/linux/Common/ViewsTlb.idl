@@ -4622,6 +4622,140 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 
 
 
+	
+	
+	
+
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	typedef [v1_enum] enum LgCollatingOptions
+	{
+		fcoDefault = 0,
+		fcoIgnoreCase = 1,
+		fcoDontIgnoreVariant = 2,
+		fcoLim 
+	} LgCollatingOptions; 
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILgCollatingEngine") cpp_quote(",") cpp_quote("D27A3D8C-D3FE-4E25-9097-8F4A1FB30361") cpp_quote(");") [ uuid("D27A3D8C-D3FE-4E25-9097-8F4A1FB30361"), object, pointer_default(unique) ] interface ILgCollatingEngine : IUnknown
+	{
+		
+		
+		
+		[propget] HRESULT SortKey(
+			[in] BSTR bstrValue,
+			[in] LgCollatingOptions colopt,
+			[out, retval] BSTR * pbstrKey);
+
+		
+		
+		
+
+		
+		
+		
+		
+		[restricted] HRESULT SortKeyRgch(
+			[in, size_is(cchIn)] const OLECHAR * pch,
+			[in] int cchIn,
+			[in] LgCollatingOptions colopt,
+			[in] int cchMaxOut,
+			[out, size_is(cchMaxOut)] OLECHAR * pchKey,
+			[out] int * pcchOut);
+
+		
+		
+		
+		
+		
+		
+		HRESULT Compare(
+			[in] BSTR bstrValue1,
+			[in] BSTR bstrValue2,
+			[in] LgCollatingOptions colopt,
+			[out, retval] int * pnVal);
+
+		
+		[propget] HRESULT WritingSystemFactory(
+			[out, retval] ILgWritingSystemFactory ** ppwsf);
+		
+		[propputref] HRESULT WritingSystemFactory(
+			[in] ILgWritingSystemFactory * pwsf);
+
+		
+		
+
+		
+		
+		
+		[propget] HRESULT SortKeyVariant(
+			[in] BSTR bstrValue,
+			[in] LgCollatingOptions colopt,
+			[out, retval] VARIANT * psaKey);		
+
+		
+		
+		
+		
+		
+		
+		HRESULT CompareVariant(
+			[in] VARIANT saValue1,			
+			[in] VARIANT saValue2,			
+			[in] LgCollatingOptions colopt,
+			[out, retval] int * pnVal);
+
+		
+		HRESULT Open(
+			[in] BSTR bstrLocale);
+
+		
+		HRESULT Close();
+
+		
+	};
+
+	
+	
+	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("0D9900D2-1693-481F-AA70-7EA64F264EC4") cpp_quote(",") cpp_quote("LgUnicodeCollater") cpp_quote(");") [ uuid(0D9900D2-1693-481F-AA70-7EA64F264EC4) ] coclass LgUnicodeCollater
+	{
+		interface ILgCollatingEngine;
+	};
+	#line 4624 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
+
+
+
+
 
 
 
@@ -4787,7 +4921,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("1CD09E06-6978-4969-A1FC-4627
 {
 	interface IVwLayoutStream;
 };
-#line 4660 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
+#line 4794 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
 
 
 
@@ -4900,7 +5034,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwLayoutManager") 
 	{
 		interface IPictureFactory;
 	};
-#line 4773 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
+#line 4907 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
 
 
 	
@@ -4921,7 +5055,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwLayoutManager") 
 	{
 		interface IVwWindow;
 	};
-	#line 4794 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
+	#line 4928 "c:\\fwrepo\\fw\\src\\views\\Views.idh"
 
 
 typedef [v1_enum] enum VwMouseEvent

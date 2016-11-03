@@ -63,9 +63,6 @@
     <ClCompile Include="GraphiteSegment.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LgUnicodeCollater.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="LgLineBreaker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -114,10 +111,6 @@
     <ClInclude Include="TsTextProps.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LgUnicodeCollateInit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LgUnicodeCollater.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LocaleIndex.h">

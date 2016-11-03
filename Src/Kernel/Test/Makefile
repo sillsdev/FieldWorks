@@ -77,7 +77,6 @@ FWKERNEL_OBJ := \
 	$(KERNEL_OBJ)/TsPropsFactory.o \
 	$(KERNEL_OBJ)/TextServ.o \
 	$(KERNEL_OBJ)/ActionHandler.o \
-	$(KERNEL_OBJ)/LgUnicodeCollater.o \
 	$(KERNEL_OBJ)/RomRenderEngine.o \
 	$(KERNEL_OBJ)/RomRenderSegment.o \
 	$(KERNEL_OBJ)/GraphiteEngine.o \
@@ -122,7 +121,6 @@ $(INT_DIR)/Collection.cpp: testFwKernel.h \
 	TestTsTextProps.h \
 	MockLgWritingSystemFactory.h \
 	MockLgWritingSystem.h \
-	TestLgCollatingEngine.h \
 	TestLgLineBreaker.h \
 	TestRomRenderEngine.h \
 	TestGraphiteEngine.h \

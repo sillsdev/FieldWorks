@@ -50,9 +50,6 @@
     <ClInclude Include="RenderEngineTestBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TestLgCollatingEngine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TestRomRenderEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
