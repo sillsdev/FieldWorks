@@ -62,8 +62,6 @@ namespace SidebarLibrary.WinControls
 		#endregion
 
 		#region Overrides
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "g is a reference")]
 		protected override void OnPaint(PaintEventArgs pe)
 		{
 			base.OnPaint(pe);
@@ -235,8 +233,6 @@ namespace SidebarLibrary.WinControls
 
 	}
 
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="colorPicker is a reference")]
 	internal class ColorPickerEditCtrlHook : System.Windows.Forms.NativeWindow
 	{
 		#region Class Variables

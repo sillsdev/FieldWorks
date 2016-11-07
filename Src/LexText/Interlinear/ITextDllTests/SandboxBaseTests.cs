@@ -377,8 +377,6 @@ namespace SIL.FieldWorks.IText
 		}
 
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "handlerList is a reference")]
 		public void LexEntriesComboHandler_ItemsInComboForInflVariant()
 		{
 			using (var sandbox = SetupSandbox(() =>
@@ -742,8 +740,6 @@ namespace SIL.FieldWorks.IText
 			return SandboxBase.InterlinComboHandler.MakeCombo(null, tagIcon, sandbox, morphIndex) as SandboxBase.InterlinComboHandler;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
-			Justification = "Nothing to dispose here, just needed to avoid a crash on TearDown.")]
 		public class MockComboHandler : IComboHandler, IDisposable
 		{
 			public void SetupCombo() { }

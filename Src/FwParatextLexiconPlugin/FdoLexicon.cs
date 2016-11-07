@@ -875,8 +875,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			public int Number { get; set; }
 		}
 
-		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-			Justification="m_lexicon is a reference")]
 		private class LexEntryComparer : IComparer<ILexEntry>
 		{
 			private readonly FdoLexicon m_lexicon;

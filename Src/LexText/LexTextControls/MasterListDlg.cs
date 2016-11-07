@@ -57,8 +57,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected string s_helpTopic = "khtpInsertInflectionFeature";
 		protected System.Windows.Forms.HelpProvider helpProvider;
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "treeView gets disposed in Dispose")]
 		public MasterListDlg()
 		{
 			GlossListTreeView treeView = new GlossListTreeView();
@@ -273,8 +271,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();

@@ -37,8 +37,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "SilButtonCell gets disposed in Dispose")]
 		public SilButtonColumn() : base(new SilButtonCell())
 		{
 			base.DefaultCellStyle.Font = SystemInformation.MenuFont;
@@ -229,8 +227,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		internal void ShowToolTip()
 		{
 			if ((m_toolTip != null && m_toolTip.Active) ||
@@ -344,8 +340,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// specified row.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "row is a reference")]
 		private bool InternalShowButton(int rowIndex)
 		{
 			bool owningColShowValue =
@@ -524,8 +518,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Draws the button in the cell.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "buttonFont is a reference")]
 		private void DrawButton(Graphics g, Rectangle rcbtn, int rowIndex)
 		{
 			if (!InternalShowButton(rowIndex))

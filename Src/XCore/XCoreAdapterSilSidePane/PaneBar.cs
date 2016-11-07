@@ -47,8 +47,6 @@ namespace XCore
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "g is a reference")]
 		protected override void OnPaintBackground (PaintEventArgs e)
 		{
 			base.OnPaintBackground (e);
@@ -140,8 +138,6 @@ namespace XCore
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="button added to collection")]
 		protected  void  AddHotlink(ChoiceBase choice)
 		{
 			PanelButton button = new PanelButton(choice, m_smallImages);
@@ -152,8 +148,6 @@ namespace XCore
 			WatchPropertyOfButton(button);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="button and spacer added to collection")]
 		protected void AddMenu(ChoiceGroup choice)
 		{
 			bool fAlignmentLeft = GetOptionalMenuAlignment(choice);

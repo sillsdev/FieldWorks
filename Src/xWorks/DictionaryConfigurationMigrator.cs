@@ -19,8 +19,6 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// This class is used to migrate dictionary configurations from the old layout and parts to the new <code>DictionaryConfigurationModel</code> xml.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Cache is a reference")]
 	public class DictionaryConfigurationMigrator
 	{
 		public const int VersionCurrent = 12;

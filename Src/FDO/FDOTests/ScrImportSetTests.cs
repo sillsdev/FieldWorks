@@ -113,8 +113,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Unit test - m_ptHelper gets disposed in FixtureTeardown()")]
 	public class ScrImportSetTests : ScrInMemoryFdoTestBase
 	{
 		#region data members

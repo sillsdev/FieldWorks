@@ -90,8 +90,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// non-administrator logins.
 			/// </summary>
 			/// ------------------------------------------------------------------------------------
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "We're returning an object")]
 			public RegistryKey FieldWorksRegistryKeyLocalMachine
 			{
 				get
@@ -115,8 +113,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// non-administrator logins.
 			/// </summary>
 			/// ------------------------------------------------------------------------------------
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "We're returning an object")]
 			public RegistryKey FieldWorksBridgeRegistryKeyLocalMachine
 			{
 				get
@@ -131,8 +127,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// NOTE: This will throw with non-administrative logons! Be ready for that.
 			/// </summary>
 			/// ------------------------------------------------------------------------------------
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "We're returning an object")]
 			public RegistryKey FieldWorksRegistryKeyLocalMachineForWriting
 			{
 				get
@@ -146,8 +140,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// Gets the default (current user) Registry key for FieldWorks.
 			/// </summary>
 			/// ------------------------------------------------------------------------------------
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "We're returning an object")]
 			public RegistryKey FieldWorksRegistryKey
 			{
 				get { return RegistryHelper.SettingsKey(FieldWorksRegistryKeyName); }
@@ -158,8 +150,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// Gets the default (current user) Registry key for FieldWorks without the version number.
 			/// </summary>
 			/// ------------------------------------------------------------------------------------
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "We're returning an object")]
 			public RegistryKey FieldWorksVersionlessRegistryKey
 			{
 				get { return RegistryHelper.SettingsKey(); }

@@ -26,7 +26,6 @@ namespace XMLViewsTests
 			m_inventory.Merger = new LayoutMerger();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "MSDN says XmlNodeList is not disposable even though Gendarme claims it is.")]
 		[Test]
 		public void TestMergeCustomCopy()
 		{

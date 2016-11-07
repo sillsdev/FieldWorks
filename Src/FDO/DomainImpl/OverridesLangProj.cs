@@ -789,8 +789,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <summary>
 		/// Class that allows us to clear the WS caches when an action that (might have) changed them is undone or redone.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-			Justification="m_cache is a reference and will be disposed in parent class.")]
 		class UndoWsChangeAction : UndoActionBase
 		{
 			public FdoCache Cache { get; set; }

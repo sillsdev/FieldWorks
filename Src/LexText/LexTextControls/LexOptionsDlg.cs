@@ -72,8 +72,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			includeBetasBox.Enabled = checkForUpdatesBox.Checked;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
 			ReportingSettings reportingSettings = CoreImpl.Properties.Settings.Default.Reporting;

@@ -323,8 +323,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "LinkLabel::set_TabStop is missing from Mono.")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
@@ -1252,8 +1250,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Caller is responsible for diposing tool strip items that get added to context menu.")]
 		static internal void PopulateWsContextMenu(ContextMenuStrip cmnuAddWs, IEnumerable<CoreWritingSystemDefinition> wssToAdd,
 			ListBox listToAddTo, EventHandler clickHandlerExistingWs, EventHandler clickHandlerNewWs,
 			EventHandler clickHandlerNewWsFromSelected, CoreWritingSystemDefinition selectedWs)
@@ -1284,8 +1280,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Caller is responsible for diposing tool strip items that get added to context menu.")]
 		private static void AddExistingWssToContextMenu(ContextMenuStrip cmnuAddWs,
 			IEnumerable<CoreWritingSystemDefinition> wssToAdd, ListBox listToAddExistingTo, EventHandler clickHandlerExistingWs)
 		{

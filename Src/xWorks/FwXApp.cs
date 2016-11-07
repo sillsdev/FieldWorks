@@ -226,8 +226,6 @@ namespace SIL.FieldWorks.XWorks
 		/// The RegistryKey for this application.
 		/// </summary>
 		///***********************************************************************************
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		public override RegistryKey SettingsKey
 		{
 			get

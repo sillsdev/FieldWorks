@@ -18,8 +18,6 @@ namespace SIL.FieldWorks.IText
 	/// from a single stream as a dictionary from text name to a stream from which the FlexText for a text
 	/// of that name can be read.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_writer gets disposed in Convert method")]
 	internal class Sfm2FlexText : Sfm2FlexTextBase<InterlinearMapping>
 	{
 		// true when we have already added a "words" element to the current "phrase". Meaningless if there is not a phrase open at all.

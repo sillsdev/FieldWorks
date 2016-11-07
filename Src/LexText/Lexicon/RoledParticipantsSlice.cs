@@ -29,8 +29,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// </summary>
 	public class RoledParticipantsSlice : CustomReferenceVectorSlice
 	{
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "VectorReferenceLauncher gets added to panel's Controls collection and disposed there")]
 		public RoledParticipantsSlice()
 			: base(new VectorReferenceLauncher())
 		{
@@ -186,8 +184,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				m_contextMenuStrip = null;
 			}
 		}
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "imgHelp is a reference; ToolStrip* gets added to menu and disposed there")]
 		private ContextMenuStrip CreateContextMenu()
 		{
 			var contextMenuStrip = new ContextMenuStrip();
@@ -313,8 +309,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return true;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public bool OnDeleteParticipants(object args)
 		{
 			CheckDisposed();

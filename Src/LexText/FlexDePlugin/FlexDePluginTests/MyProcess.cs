@@ -18,8 +18,6 @@ namespace FlexDePluginTests
 {
 	class MyProcess
 	{
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public static bool KillProcess(string search)
 		{
 			bool foundProc = false;

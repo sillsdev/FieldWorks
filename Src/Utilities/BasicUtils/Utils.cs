@@ -275,8 +275,6 @@ namespace SIL.Utils
 		/// Returns <c>true</c> if we're running on Mono , otherwise <c>false</c>.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public static bool IsMono
 		{
 			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type) is
@@ -487,8 +485,6 @@ namespace SIL.Utils
 		/// thread.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-			Justification="m_waitHandle is a reference")]
 		private class ManagementObjectHelper
 		{
 			private ulong m_Memory;
@@ -530,8 +526,6 @@ namespace SIL.Utils
 			/// </summary>
 			/// <param name="stateInfo">The state info.</param>
 			/// --------------------------------------------------------------------------------
-			[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-				Justification = "Offending code compiles only on Windows")]
 			public void GetPhysicalMemoryBytes(object stateInfo)
 			{
 				m_Memory = 0;

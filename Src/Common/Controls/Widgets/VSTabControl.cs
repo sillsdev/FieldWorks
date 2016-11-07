@@ -149,8 +149,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <value></value>
 		/// <returns>true if right-to-left mirror placement is turned on; false for standard child control placement. The default is false.
 		/// </returns>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="RightToLeftLayout is not supported in Mono, but we don't allow RTL here.")]
 		public override bool RightToLeftLayout
 		{
 			get { return base.RightToLeftLayout; }

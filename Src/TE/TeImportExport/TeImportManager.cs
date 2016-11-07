@@ -403,8 +403,6 @@ namespace SIL.FieldWorks.TE
 		/// <param name="fDisplayUi">if set to <c>true</c> shows the UI.</param>
 		/// <returns>The first reference that was imported</returns>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private ScrReference InternalImport(IScrImportSet importSettings, bool fDisplayUi)
 		{
 			ScrReference firstImported = ScrReference.Empty;

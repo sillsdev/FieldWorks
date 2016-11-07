@@ -19,8 +19,6 @@ using SIL.Machine.Matching;
 
 namespace SIL.FieldWorks.IText
 {
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_cache is a reference")]
 	public class ComplexConcPatternModel
 	{
 		private readonly ComplexConcPatternNode m_root;

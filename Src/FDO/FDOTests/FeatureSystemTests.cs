@@ -20,8 +20,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <summary>
 		/// Basic test of adding the simpler kinds of features.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification="Multiline string - git uses platform specific line endings")]
 		[Test]
 		public void AddFeatureFromXml_HandlesClosedFeatures()
 		{
@@ -90,8 +88,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// Make sure we can properly add complex features from XML.
 		/// </summary>
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification="Multiline string - git uses platform specific line endings")]
 		public void AddFeatureFromXml_HandlesComplexFeatures()
 		{
 			// Note: mostly this is a subsection of EticGloss.xml. I have added some ID and guid attributes by hand

@@ -100,8 +100,6 @@ namespace XCore
 	}
 
 	/// <summary></summary>
-	[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
-		Justification = "We derive from Component and therefore can't modify the signature of Dispose(bool)")]
 	public sealed class Mediator : Component, IFWDisposable
 	{
 		#region PendingMessageItem
@@ -144,8 +142,6 @@ namespace XCore
 				m_justCheckingForReceivers = justCheckingForReceivers;
 			}
 
-			[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-				Justification="See TODO-Linux comment")]
 			public override bool Equals(object obj)
 			{
 				if (obj == null)
@@ -565,8 +561,6 @@ namespace XCore
 		private IntPtr m_mainWndPtr = IntPtr.Zero;
 
 		/// <summary>This posts a WM_BROADCAST... msg to the main app window</summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "Add TODO-Linux comment")]
 		private void AddWindowMessage()
 		{
 			if (!ProcessMessages)

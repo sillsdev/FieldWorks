@@ -517,8 +517,6 @@ namespace SIL.FieldWorks.IText
 		/// This method will fill in the DropDownList which replaces the Textbox for searching on certain lines
 		/// </summary>
 		/// <param name="line"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="m_pOSPopupTreeManager gets disposed in Dispose()")]
 		private void FillSearchComboList(ConcordanceLines line)
 		{
 			if(m_pOSPopupTreeManager != null)

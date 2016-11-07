@@ -399,8 +399,6 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 		/// <param name="pNativeData">A pointer to the unmanaged data to be wrapped</param>
 		/// <returns>Returns the managed view of the COM data</returns>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Not sure why Gendarme is complaining here on Windows")]
 		public object MarshalNativeToManaged(IntPtr pNativeData)
 		{
 			return (ArrayPtr)pNativeData;

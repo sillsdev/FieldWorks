@@ -302,8 +302,6 @@ namespace XCore
 		/// <param name="parentControl"></param>
 		/// <param name="nameOfChildToFocus"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "controls contains references")]
 		public static Control FindControl(Control parentControl, string nameOfChildToFocus)
 		{
 			Control firstControl = null;
@@ -473,8 +471,6 @@ namespace XCore
 			m_largeImages.AddList(images, labels);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected void LoadResources(XmlNode configurationNode)
 		{
 			if (configurationNode == null)
@@ -495,8 +491,6 @@ namespace XCore
 		//which are different from the defaults that can be found in the code. That is,
 		//Code should still set default values and not rely on someone including a default definition
 		//in the configuration file.
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected void LoadDefaultProperties(XmlNode configurationNode)
 		{
 			if (configurationNode == null)
@@ -582,8 +576,6 @@ namespace XCore
 		/// They include objects which launch dialog boxes in response to menu items.
 		/// </summary>
 		/// <param name="configurationNode"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected void LoadListeners(XmlNode configurationNode)
 		{
 			if (configurationNode == null)
@@ -996,8 +988,6 @@ namespace XCore
 		/// </summary>
 		/// <param name="m"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public XmlNode GetContextMenuNodeFromMenuId(string menuId)
 		{
 			XmlNode node = m_windowConfigurationNode.SelectSingleNode(String.Format("//menu[@id='{0}']",
@@ -1081,8 +1071,6 @@ namespace XCore
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "activeForm is a reference")]
 		protected void RestoreWindowSettings(bool wasCrashDuringPreviousStartup)
 		{
 			string id = XmlUtils.GetAttributeValue(m_windowConfigurationNode,"settingsId");
@@ -1447,8 +1435,6 @@ namespace XCore
 		/// the contents of this method with the code editor.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="TabStop is not implemented on Mono")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
@@ -1819,8 +1805,6 @@ namespace XCore
 			//m_mediator.AllowCommandsToExecute = true;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		public void SynchronizedOnIdleTime()
 		{
 			CheckDisposed();

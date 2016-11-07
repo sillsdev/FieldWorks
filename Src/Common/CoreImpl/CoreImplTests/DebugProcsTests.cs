@@ -82,8 +82,6 @@ namespace SIL.CoreImpl
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification = "Unit test, testing expected message")]
 		public void GetMessage_AllFit()
 		{
 			var expectedMsg = string.Format(
@@ -114,8 +112,6 @@ failure, see the Visual C++ documentation on asserts
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification = "Unit test, testing expected message")]
 		public void GetMessage_PathToLong()
 		{
 			var expectedMsg = string.Format(
@@ -147,8 +143,6 @@ failure, see the Visual C++ documentation on asserts
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification = "Unit test, testing expected message")]
 		public void GetMessage_FilenameToLong()
 		{
 			var expectedMsg = string.Format(
@@ -180,8 +174,6 @@ failure, see the Visual C++ documentation on asserts
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification = "Unit test, testing expected message")]
 		public void GetMessage_PathAndFilenameToLong()
 		{
 			var expectedMsg = string.Format(

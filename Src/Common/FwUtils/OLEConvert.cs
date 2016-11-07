@@ -33,8 +33,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		: AxHost
 #endif
 	{
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "Offending code compiles only on Windows")]
 		private OLECvt()
 #if !__MonoCS__
 			: base("")
@@ -59,10 +57,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// <param name="image"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "Offending code compiles only on Windows")]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Method returns a reference")]
 		public static IPictureDisp ToOLE_IPictureDisp(Image image)
 		{
 #if !__MonoCS__

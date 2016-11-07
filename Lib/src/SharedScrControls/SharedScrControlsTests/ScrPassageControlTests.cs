@@ -223,9 +223,6 @@ namespace SILUBS.SharedScrControls
 	/// Tests the Scripture Passage Control
 	/// </summary>
 	[TestFixture]
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Unit test - m_ctrlOwner gets disposed in TestTearDown(), m_scp and " +
-		"m_filteredScp get added to m_ctrlOwner.Controls collection")]
 	public class ScrPassageControlTest
 	{
 		private Form m_ctrlOwner;

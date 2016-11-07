@@ -21,10 +21,6 @@ using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using SIL.Utils;
 using SIL.WritingSystems.Migration;
 
-// we can't use an exit code < -1 on Linux. However, this app won't work on Linux anyways
-// since we don't have MS SQL Server there.
-[assembly:SuppressMessage("Gendarme.Rules.Portability", "ExitCodeIsLimitedOnUnixRule",
-		Justification="Not intended to be run on Linux")]
 namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 {
 	/// ----------------------------------------------------------------------------------------

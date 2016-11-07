@@ -114,8 +114,6 @@ namespace SIL.FieldWorks.XWorks
 			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, int.MaxValue, configuration, m_propertyTable, xhtmlPath, progress);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-			Justification = "m_currentClerk is a reference that had *better not* be disposed when ClerkActivator is disposed")]
 		private sealed class ClerkActivator : IDisposable
 		{
 			private static RecordClerk s_dictionaryClerk;
@@ -149,8 +147,6 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "tempClerk must be active when this function returns")]
 			public static ClerkActivator ActivateClerkMatchingExportType(string exportType, PropertyTable  propertyTable, Mediator mediator)
 			{
 				var isDictionary = exportType == DictionaryType;
@@ -188,8 +184,6 @@ namespace SIL.FieldWorks.XWorks
 				return id == clerk.Id;
 			}
 		}
-
-		[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule", Justification = "m_propertyTable and m_clerk are references")]
 		private sealed class ReversalIndexActivator : IDisposable
 		{
 			private readonly string m_sCurrentRevIdxGuid;
@@ -242,8 +236,6 @@ namespace SIL.FieldWorks.XWorks
 				return true;
 			}
 		}
-
-		[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule", Justification = "m_propertyTable is a reference")]
 		internal sealed class PublicationActivator : IDisposable
 		{
 			private readonly string m_currentPublication;

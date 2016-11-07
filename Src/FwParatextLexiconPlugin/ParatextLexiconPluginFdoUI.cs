@@ -147,8 +147,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			get { return m_activityMonitor.LastActivityTime; }
 		}
 
-		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-			Justification="m_activationContext is a reference")]
 		private class SynchronizeInvokeWrapper : ISynchronizeInvoke
 		{
 			private readonly ActivationContextHelper m_activationContext;
@@ -158,8 +156,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				m_activationContext = activationContext;
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "Form.ActiveForm returns a reference")]
 			private ISynchronizeInvoke SynchronizeInvoke
 			{
 				get

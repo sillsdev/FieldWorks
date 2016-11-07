@@ -234,8 +234,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "e.Control returns a reference")]
 		private void ControlWasAdded(object sender, ControlEventArgs e)
 		{
 			DeepAddControl(e.Control);
@@ -247,8 +245,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "e.Control returns a reference")]
 		private void ControlWasRemoved(object sender, ControlEventArgs e)
 		{
 			DeepRemoveControl(e.Control);

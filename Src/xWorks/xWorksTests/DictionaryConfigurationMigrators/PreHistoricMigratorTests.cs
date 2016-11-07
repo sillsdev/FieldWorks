@@ -24,7 +24,6 @@ using XCore;
 
 namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 {
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule", Justification="Cache is a reference")]
 	[SuppressMessage("ReSharper", "InconsistentNaming")]
 	public class PreHistoricMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{

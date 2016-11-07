@@ -45,8 +45,6 @@ namespace XCore
 	///	OnPaint yourself, just don't make the changes to OnPaint. In some cases, we've observed
 	///	infinite loops from calling Invalidate and aborting OnPaint. This has not been fully tested.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-		Justification = "variable is a reference; it is owned by parent")]
 	public sealed class MessageSequencer : IFWDisposable
 	{
 #if TESTMS

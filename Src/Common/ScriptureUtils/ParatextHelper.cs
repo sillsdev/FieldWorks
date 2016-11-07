@@ -315,8 +315,6 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 					importSettings.ParatextNotesProj = null;
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "See REVIEW comment")]
 			private bool LoadProjectMappings(string project, ScrMappingList mappingList, ImportDomain domain)
 			{
 				// If the new project ID is null, then do not load mappings.

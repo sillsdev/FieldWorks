@@ -14,8 +14,6 @@ using SIL.Machine.FeatureModel;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification = "m_cache is a reference and disposed in the parent class")]
 	internal class FwXmlTraceManager : ITraceManager
 	{
 		private readonly FdoCache m_cache;

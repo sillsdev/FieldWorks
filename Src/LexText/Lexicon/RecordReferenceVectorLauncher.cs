@@ -16,8 +16,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// </summary>
 	public class RecordReferenceVectorLauncher : VectorReferenceLauncher
 	{
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		protected override void HandleChooser()
 		{
 			using (var dlg = new RecordGoDlg())

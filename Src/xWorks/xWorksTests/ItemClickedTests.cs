@@ -134,8 +134,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 	}
 
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_cache is a reference")]
 	class TestRootSite : SimpleRootSite
 	{
 		private FdoCache m_cache;
@@ -163,8 +161,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 	}
 
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_cache is a reference")]
 	class TestVc: VwBaseVc
 	{
 		private FdoCache m_cache;

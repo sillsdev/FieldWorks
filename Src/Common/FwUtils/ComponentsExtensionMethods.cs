@@ -45,8 +45,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// items.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "contextMenu.Items[] returns a reference")]
 		public static ContextMenuStrip ContextMenuStrip(this IContainer components, string name,
 			bool clear)
 		{

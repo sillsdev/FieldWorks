@@ -261,7 +261,6 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="parentNode"></param>
 		/// <param name="node"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "TreeNode is owned by the view")]
 		internal void CreateAndAddTreeNodeForNode(ConfigurableDictionaryNode parentNode, ConfigurableDictionaryNode node)
 		{
 			if (node == null)

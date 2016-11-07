@@ -1148,8 +1148,6 @@ namespace SIL.FieldWorks.TE
 		/// loaded.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="REVIEW: ParatextHelper.GetAssociatedProject() returns a reference?")]
 		private void LoadParatextProjectCombos()
 		{
 			ScrText assocProj = ParatextHelper.GetAssociatedProject(m_cache.ProjectId);
@@ -1747,8 +1745,6 @@ namespace SIL.FieldWorks.TE
 		/// project cannot be found, and that's the type of project the user specified,
 		/// then it's not OK to proceed.</returns>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private bool ValidToGoForward()
 		{
 			if (m_settings == null)

@@ -261,8 +261,6 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 		/// in the constructor.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "xrdr is disposed when closed.")]
 		public void ImportData(TextReader rdr, TextWriter wrtrLog, IProgress progress)
 		{
 			bool fRetVal = true;

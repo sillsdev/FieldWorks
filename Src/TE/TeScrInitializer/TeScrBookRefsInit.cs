@@ -116,8 +116,6 @@ namespace SIL.FieldWorks.TE
 		/// <param name="progressDlg">Progress dialog</param>
 		/// <param name="rootNode">The XmlNode from which to read the publication info</param>
 		/// -------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected void SetNamesAndAbbreviations(IProgress progressDlg, XmlNode rootNode)
 		{
 			IScrRefSystem srs = m_cache.ServiceLocator.GetInstance<IScrRefSystemRepository>().Singleton;

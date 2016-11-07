@@ -123,8 +123,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// Check that custom property declarations are sorted.
 		/// </summary>
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification="Newline is in source file and so will be correct according to current platform")]
 		public void CustomPropertiesAreSorted()
 		{
 			const string sortedCustomData =
@@ -167,8 +165,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// Check that a main element is sorted.
 		/// </summary>
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification="Newline is in source file and so will be correct according to current platform")]
 		public void SortMainElement()
 		{
 			const string rt =
@@ -229,8 +225,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// Check that the whole file is sorted.
 		/// </summary>
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification="Newline is in source file and so will be correct according to current platform")]
 		public void SortEntireFile()
 		{
 			const string rt =

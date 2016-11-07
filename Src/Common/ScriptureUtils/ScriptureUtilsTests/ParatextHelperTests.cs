@@ -192,8 +192,6 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// Adds a dummy project to the simulated Paratext collection.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ScrText gets added to Projects collection and disposed there")]
 		public void AddProject(string shortName, string associatedProject, string baseProject,
 			bool editable, bool isResource, string booksPresent, Utilities.Enum<ProjectType> translationType)
 		{
@@ -240,8 +238,6 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	[Platform(Exclude="Linux", Reason = "fails on Linux on build machine in fixture setup")]
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Unit test - m_ptHelper gets disposed in TearDown()")]
 	public class ParatextHelperUnitTests : BaseTest
 	{
 		private MockParatextHelper m_ptHelper;
@@ -300,8 +296,6 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="found is a reference")]
 		public void GetAssociatedProject()
 		{
 			m_ptHelper.AddProject("MNKY", "Soup");

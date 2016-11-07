@@ -1310,8 +1310,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void StoreResidueFromVariant(ICmObject extensible, CmLiftVariant var)
 		{
 			XmlDocument xdResidue = FindOrCreateResidue(extensible);

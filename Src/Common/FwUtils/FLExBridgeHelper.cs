@@ -168,8 +168,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="changesReceived">true if S/R made changes to the project.</param>
 		/// <param name="projectName">Name of the project to be opened after launch returns.</param>
 		/// <returns>true if successful, false otherwise</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ServiceHost gets disposed in KillTheHost()")]
 		public static bool LaunchFieldworksBridge(string projectFolder, string userName, string command, string projectGuid,
 			int fwmodelVersionNumber, string liftModelVersionNumber, string writingSystemId, Action onNonBlockerCommandComplete,
 			out bool changesReceived, out string projectName)
@@ -303,8 +301,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		static IIPCClient _client;
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="REVIEW: It is unclear if disposing the ChannelFactory affects channelClient.")]
 		private static void BeginEmergencyExitChute(string pipeID)
 		{
 			try

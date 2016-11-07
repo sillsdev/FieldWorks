@@ -18,8 +18,6 @@ namespace SidebarLibrary.WinControls
 {
 
 	#region Helper Classes
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="comboBox is a reference")]
 	internal class EditCtrlHook : System.Windows.Forms.NativeWindow
 	{
 
@@ -250,8 +248,6 @@ namespace SidebarLibrary.WinControls
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "g is a reference")]
 		protected override void OnDrawItem(DrawItemEventArgs e)
 		{
 			// Draw bitmap strech to the size of the size of the combobox

@@ -303,8 +303,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			#endregion INotifyControlInCurrentSlice implementation
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification="FindForm() returns a reference")]
 			private void DoValidation(bool refresh)
 			{
 				Form frm = FindForm();

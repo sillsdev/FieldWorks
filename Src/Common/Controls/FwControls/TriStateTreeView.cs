@@ -667,8 +667,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// is a Flags enum).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public TreeNode[] GetNodesOfTypeWithState(Type nodeType, CheckState state)
 		{
 			CheckDisposed();

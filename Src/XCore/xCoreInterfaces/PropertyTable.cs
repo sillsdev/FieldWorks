@@ -23,8 +23,6 @@ namespace XCore
 	/// Summary description for PropertyTable.
 	/// </summary>
 	[Serializable]
-	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-		Justification = "variable is a reference; it is owned by parent")]
 	public sealed class PropertyTable : IFWDisposable
 	{
 		/// <summary>

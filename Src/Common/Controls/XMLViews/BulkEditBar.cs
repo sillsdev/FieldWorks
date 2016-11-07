@@ -665,8 +665,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="colSpec"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "besc gets added to a BulkEditItem and disposed there")]
 		protected virtual BulkEditItem MakeItem(XmlNode colSpec)
 		{
 			string beSpec = XmlUtils.GetOptionalAttributeValue(colSpec, "bulkEdit", "");
@@ -3654,8 +3652,6 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "selectedTab is a reference")]
 		private void m_operationsTabControl_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			m_operationLabel.Text = s_labels[m_operationsTabControl.SelectedIndex];
@@ -3919,8 +3915,6 @@ namespace SIL.FieldWorks.Common.Controls
 			//    combo.SelectedItem = newSelection;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "accessor gets added to a FieldComboItem and disposed there")]
 		private FieldComboItem AddStringFieldItemsToCombo(ComboBox combo, FieldComboItem selectedItem, bool fIsSourceCombo)
 		{
 			FieldComboItem newSelection = null;
@@ -6645,8 +6639,6 @@ namespace SIL.FieldWorks.Common.Controls
 
 	}
 
-	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-		Justification = "m_bar owns this object; circular reference")]
 	class SemanticDomainChooserBEditControl : ComplexListChooserBEditControl, IFWDisposable
 	{
 		private Button m_suggestButton;

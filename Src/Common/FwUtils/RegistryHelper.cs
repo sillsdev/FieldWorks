@@ -215,8 +215,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="subKeys">Zero or more subkeys (e.g., a specific application name, project
 		/// name, etc.)</param>
 		/// ----------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "This code should not be responsible for disposing of the CompanyKeyLocalMachine.")]
 		public static RegistryKey SettingsKeyLocalMachine(params string[] subKeys)
 		{
 			try

@@ -713,8 +713,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="wsGloss"></param>
 		/// <param name="sbJoinedGlossPrepend"></param>
 		/// <param name="sbJoinedGlossAppend"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "cache is a reference")]
 		public static void JoinGlossAffixesOfInflVariantTypes(IEnumerable<ILexEntryType> variantEntryTypesRs, CoreWritingSystemDefinition wsGloss,
 												out ITsIncStrBldr sbJoinedGlossPrepend,
 												out ITsIncStrBldr sbJoinedGlossAppend)
@@ -752,8 +750,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		///<param name="wsGloss"></param>
 		///<param name="variantEntryTypes"></param>
 		///<returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "cache is a reference")]
 		public static ITsString MakeGlossWithReverseAbbrs(IMultiStringAccessor gloss, CoreWritingSystemDefinition wsGloss, IList<ILexEntryType> variantEntryTypes)
 		{
 			if (variantEntryTypes == null || variantEntryTypes.Count() == 0 || variantEntryTypes.First() == null)
@@ -777,8 +773,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="gloss"></param>
 		/// <param name="wsGloss"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "cache is a reference")]
 		public static ITsString MakeGlossOptionWithInflVariantTypes(ILexEntryType variantEntryType, IMultiStringAccessor gloss, CoreWritingSystemDefinition wsGloss)
 		{
 			var inflVariantEntryType = variantEntryType as ILexEntryInflType;

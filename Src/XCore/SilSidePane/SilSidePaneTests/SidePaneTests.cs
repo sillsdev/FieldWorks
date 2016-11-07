@@ -163,8 +163,6 @@ namespace SIL.SilSidePane
 
 		#region ContainingControl
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "containingControl is a reference")]
 		public void ContainingControlTest()
 		{
 			Control containingControl = _sidePane.ContainingControl;

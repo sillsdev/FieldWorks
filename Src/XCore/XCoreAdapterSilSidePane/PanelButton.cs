@@ -53,8 +53,6 @@ namespace XCore
 			return choice.BoolPropertyName == name;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Controls added to collection")]
 		private void SetLabel()
 		{
 			XCore.ChoiceRelatedClass choice = (XCore.ChoiceRelatedClass)this.Tag;

@@ -384,8 +384,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			contextMenu.Show(control, position);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="overflow gets added to ToolStripItemCollection and disposed there")]
 		private static void CalculateOverflow(ContextMenuStrip contextMenu,
 			ToolStripItemCollection items, int maxHeight)
 		{

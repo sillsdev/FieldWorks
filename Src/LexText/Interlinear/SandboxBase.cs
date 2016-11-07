@@ -4154,8 +4154,6 @@ namespace SIL.FieldWorks.IText
 		/// but select the indicated item.
 		/// </summary>
 		/// <param name="e"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "tree is a reference")]
 		protected override void OnKeyPress(KeyPressEventArgs e)
 		{
 			if (!PassKeysToKeyboardHandler)
@@ -4356,8 +4354,6 @@ namespace SIL.FieldWorks.IText
 			return tagRightClickTextProp;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="CmObjectUi.HandleCtrlClick disposes itself when its done")]
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
 			base.OnMouseUp(e);
@@ -4514,8 +4510,6 @@ namespace SIL.FieldWorks.IText
 			return m_caches.RealHvo(hvoTarget);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "container is a reference")]
 		private FocusBoxController Controller
 		{
 			get
@@ -4531,8 +4525,6 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "cache is a reference")]
 		public virtual bool OnJumpToTool(object commandObject)
 		{
 			XCore.Command cmd = (XCore.Command)commandObject;

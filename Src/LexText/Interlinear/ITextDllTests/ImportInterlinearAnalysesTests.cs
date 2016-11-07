@@ -23,8 +23,6 @@ namespace SIL.FieldWorks.IText
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Unit test - m_stream gets disposed in TestTearDown()")]
 	public class ImportInterlinearAnalysesTests : MemoryOnlyBackendProviderReallyRestoredForEachTestTestBase
 	{
 		private MemoryStream m_Stream;

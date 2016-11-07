@@ -16,8 +16,6 @@ namespace SIL.FieldWorks.IText
 	/// </summary>
 	public class ConcordanceContainer : XCore.MultiPane, IRefreshableRoot
 	{
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ReCurseControls() returns a reference")]
 		public bool RefreshDisplay()
 		{
 			ConcordanceControlBase concordanceControl = ReCurseControls(this);

@@ -95,8 +95,6 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "currentFilter is a reference")]
 		private int CurrentFilterIndex
 		{
 			get
@@ -210,8 +208,6 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog.Linux
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Widget is a reference")]
 		protected virtual FileChooserDialog CreateFileChooserDialog()
 		{
 			// TODO: set parent

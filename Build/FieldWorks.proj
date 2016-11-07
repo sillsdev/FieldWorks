@@ -2,6 +2,7 @@
 <Project DefaultTargets="all" InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 
   <UsingTask TaskName="CatenateFiles" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="Clouseau" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="ComputerName" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="CpuArchitecture" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="DownloadFile" AssemblyFile="FwBuildTasks.dll"/>
@@ -26,7 +27,6 @@
   <UsingTask TaskName="WriteTextFile" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Unix'"/>
   <UsingTask TaskName="XslTransformation" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Unix'"/>
   <UsingTask TaskName="Zip" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="Gendarme" AssemblyFile="Gendarme.MsBuild/Gendarme.MsBuild.dll"/>
 
   <Import Project="GlobalInclude.properties" Condition="Exists('GlobalInclude.properties')"/>
   <Import Project="SetupInclude.targets"/>

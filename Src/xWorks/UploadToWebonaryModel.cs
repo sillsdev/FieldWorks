@@ -12,8 +12,6 @@ using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="PropertyTable is a reference")]
 
 	public class UploadToWebonaryModel
 	{
@@ -95,8 +93,6 @@ namespace SIL.FieldWorks.XWorks
 			return decryptMe;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "projectSettings is a reference")]
 		private void LoadFromSettings()
 		{
 			if(!string.IsNullOrEmpty(CoreImpl.Properties.Settings.Default.WebonaryPass))
@@ -114,8 +110,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "projectSettings is a reference")]
 		internal void SaveToSettings()
 		{
 			CoreImpl.Properties.Settings.Default.WebonaryPass = RememberPassword ? EncryptPassword(Password) : null;

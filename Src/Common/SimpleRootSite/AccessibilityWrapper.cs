@@ -188,8 +188,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// One of many methods that delegate to the IAccessible, with a suitable default if it is null.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "m_rootSite.Parent returns a reference")]
 		public override AccessibleObject Parent
 		{
 			get

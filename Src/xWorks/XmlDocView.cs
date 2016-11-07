@@ -101,8 +101,6 @@ namespace SIL.FieldWorks.XWorks
 			return layoutList;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static IEnumerable<Tuple<string, string>> GetBuiltInLayouts(XmlNode configNode)
 		{
 			var configLayouts = XmlUtils.FindNode(configNode, "configureLayouts");
@@ -511,8 +509,6 @@ namespace SIL.FieldWorks.XWorks
 			return true;	//we handled this.
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ToolStripMenuItem gets added to m_contextMenu.Items; ContextMenuStrip is disposed in DisposeContextMenu()")]
 		protected override void OnMouseClick(MouseEventArgs e)
 		{
 			if ((ModifierKeys & Keys.Control) == Keys.Control)
@@ -845,8 +841,6 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private void GiveSimpleWarning(ExclusionReasonCode xrc)
 		{
 			// Tell the user why we aren't jumping to his record

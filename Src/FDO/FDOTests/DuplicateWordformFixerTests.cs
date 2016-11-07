@@ -14,8 +14,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// Tests the DuplicateWordformFixer
 	/// </summary>
 	[TestFixture]
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Unit test - m_progress gets disposed in TestTearDown()")]
 	public class DuplicateWordformFixerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private IWfiWordformFactory m_wfiFactory;

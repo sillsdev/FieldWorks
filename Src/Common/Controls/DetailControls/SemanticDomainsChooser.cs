@@ -402,8 +402,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			domainList.EndUpdate();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "cache is a reference")]
 		private static Font GetFontForFormFromObjectLabels(IEnumerable<ObjectLabel> labelList, IVwStylesheet stylesheet)
 		{
 			var cache = labelList.First().Object.Cache;

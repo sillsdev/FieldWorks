@@ -42,8 +42,6 @@ namespace SILUBS.SharedScrUtils
 		/// Initializes a new instance of the <see cref="DropDownContainer"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public DropDownContainer()
 		{
 			// TODO-Linux: System.Void System.Windows.Forms.Form::set_AutoScaleBaseSize(System.Drawing.Size)

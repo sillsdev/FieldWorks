@@ -50,8 +50,6 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// Constructor to use when using an in-memory cache
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "TeImportNoUi gets disposed in Dispose")]
 		public DummyTeImporter(IScrImportSet settings, FdoTestBase testBase,
 			FwStyleSheet styleSheet) :
 			base(settings, testBase.Cache, styleSheet, new DummyUndoImportManager(testBase),
@@ -816,8 +814,6 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// Initialize a dummy scripture object wrapper.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="DummyScrObjWrapper is assigned to SOWrapper and disposed in Dispose()")]
 		protected override void InitScriptureObject()
 		{
 			// The tests that use this DummyTeImporter do not utilize a scr obj to read real

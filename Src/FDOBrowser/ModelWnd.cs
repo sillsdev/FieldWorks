@@ -36,8 +36,6 @@ namespace FDOBrowser
 		/// Initializes a new instance of the <see cref="ModelWnd"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ThreadHelper gets disposed in Dispose")]
 		public ModelWnd()
 		{
 			InitializeComponent();

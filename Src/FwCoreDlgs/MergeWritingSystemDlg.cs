@@ -40,8 +40,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MergeWritingSystemDlg"/> class.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "infoIcon is a reference")]
 		public MergeWritingSystemDlg(FdoCache cache, CoreWritingSystemDefinition ws, IEnumerable<CoreWritingSystemDefinition> wss, IHelpTopicProvider helpTopicProvider)
 		{
 			m_cache = cache;

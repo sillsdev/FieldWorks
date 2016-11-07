@@ -26,8 +26,6 @@ namespace SIL.Utils
 		/// <returns>
 		/// Returns a collection of KeyValuePair's (Name, Version)
 		/// </returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "StandardOutput is reference")]
 		public static IEnumerable<KeyValuePair<string, string>>
 			FindInstalledPackages(string search)
 		{

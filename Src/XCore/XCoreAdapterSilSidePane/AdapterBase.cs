@@ -18,8 +18,6 @@ namespace XCore
 	/// <summary>
 	/// Base class for all adapters
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Fields are references")]
 	public abstract class AdapterBase : IUIAdapter
 	{
 		#region Data members
@@ -79,8 +77,6 @@ namespace XCore
 		/// <summary>
 		/// The manager for whatever bars can be docked on any of the four main window edges.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="manager is a reference")]
 		protected ToolStripManager Manager
 		{
 			get

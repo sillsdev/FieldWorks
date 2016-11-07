@@ -206,8 +206,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				get { return m_progressBar.Control; }
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "We're returning a reference")]
 			public Form Form
 			{
 				get { return m_progressBar.Control.FindForm(); }

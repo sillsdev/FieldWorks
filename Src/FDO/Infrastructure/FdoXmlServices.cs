@@ -61,8 +61,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 		/// <summary>
 		/// Create reader for reconstituting surrogates.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "XmlTextReader is passed in to XmlReader and hopefully disposed there")]
 		internal static XmlReader CreateReader(MemoryStream inputStream)
 		{
 			var settings = ReaderSettings;

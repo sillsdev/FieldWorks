@@ -2302,8 +2302,6 @@ namespace SIL.FieldWorks.Discourse
 			return FindCellPartInColumn(cell) == null;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ToolStripSeparator gets added to menu and disposed there")]
 		public ContextMenuStrip MakeCellContextMenu(ChartLocation clickedCell)
 		{
 			var irow = clickedCell.Row.IndexInOwner;
@@ -3060,8 +3058,6 @@ namespace SIL.FieldWorks.Discourse
 
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ToolStripMenuItem gets added to menu.Items collection and disposed there.")]
 		private void GeneratePlMenuItems(ContextMenuStrip menu, ICmPossibilityList list,
 			EventHandler clickHandler, ChartLocation cell)
 		{
@@ -4065,8 +4061,6 @@ namespace SIL.FieldWorks.Discourse
 			view.ResumeLayout();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ColumnHeader gets added to the Columns collection and disposed there")]
 		private static void MakeNotesColumnHeader(ListView view)
 		{
 			// Add one more column for notes.
@@ -4075,8 +4069,6 @@ namespace SIL.FieldWorks.Discourse
 			view.Columns.Add(ch);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ColumnHeader gets added to the Columns collection and disposed there")]
 		private void MakeTemplateColumnHeaders(ListView view)
 		{
 			foreach (var col in AllMyColumns)
@@ -4093,8 +4085,6 @@ namespace SIL.FieldWorks.Discourse
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ColumnHeader gets added to the Columns collection and disposed there")]
 		private static void MakeRowNumberColumnHeader(ListView view)
 		{
 			var ch = new ColumnHeader();

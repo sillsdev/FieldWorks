@@ -26,8 +26,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	/// <summary>
 	/// Summary description for M3ToXAmpleTransformerTests.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithNativeFieldsShouldBeDisposableRule",
-		Justification="Unit test - IntPtr get disposed in fixture teardown")]
 	public class M3ToXAmpleTransformerTests : BaseTest
 	{
 		string m_sM3FXTDump;

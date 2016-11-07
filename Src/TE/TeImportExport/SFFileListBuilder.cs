@@ -684,8 +684,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="filename"></param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		protected virtual void ShowBadFileMessage(string filename)
 		{
 			string message = string.Format(TeResourceHelper.GetResourceString("kstidImportFileNoBooks"),

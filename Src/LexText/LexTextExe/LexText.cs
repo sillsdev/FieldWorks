@@ -26,8 +26,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// <param name="rgArgs">Command-line arguments</param>
 		/// <returns>0</returns>
 		/// -----------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "ExitCodeIsLimitedOnUnixRule",
-			Justification = "Gendarme bug on Windows: doesn't recognize that we're returning 0")]
 		[STAThread]
 		public static int Main(string[] rgArgs)
 		{

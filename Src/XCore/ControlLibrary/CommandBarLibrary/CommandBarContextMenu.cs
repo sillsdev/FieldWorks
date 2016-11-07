@@ -60,8 +60,6 @@ namespace Reflector.UserInterface
 			this.UpdateItems();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "shortcutHits is a reference")]
 		[SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
 		protected override bool ProcessCmdKey(ref Message message, Keys keyData)
 		{
@@ -79,8 +77,6 @@ namespace Reflector.UserInterface
 			return base.ProcessCmdKey(ref message, keyData);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Add to MenuItems and disposed in Dispose")]
 		private void UpdateItems()
 		{
 			this.selectedMenuItem = null;
@@ -116,8 +112,6 @@ namespace Reflector.UserInterface
 			get { return this.selectedMenuItem; }
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "image is a reference")]
 		private static Size GetImageSize(CommandBarItemCollection items)
 		{
 			Size imageSize = new Size(16, 16);
@@ -183,8 +177,6 @@ namespace Reflector.UserInterface
 				this.UpdateItems();
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification="Add to MenuItems and disposed in Dispose")]
 			private void UpdateItems()
 			{
 				this.OwnerDraw = true;
@@ -261,8 +253,6 @@ namespace Reflector.UserInterface
 				}
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "graphics is a reference")]
 			protected override void OnMeasureItem(MeasureItemEventArgs e)
 			{
 				base.OnMeasureItem(e);
@@ -303,8 +293,6 @@ namespace Reflector.UserInterface
 				}
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "graphics is a reference")]
 			protected override void OnDrawItem(DrawItemEventArgs e)
 			{
 				base.OnDrawItem(e);
@@ -382,8 +370,6 @@ namespace Reflector.UserInterface
 				}
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "image is a reference")]
 			private void DrawImage(Graphics graphics, Rectangle bounds, bool selected, bool disabled)
 			{
 				Rectangle rectangle = new Rectangle(bounds.X, bounds.Y, imageSize.Width + 6, bounds.Height);

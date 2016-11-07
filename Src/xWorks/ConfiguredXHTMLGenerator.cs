@@ -554,7 +554,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "cache is a reference")]
 		internal static void GenerateLetterHeaderIfNeeded(ICmObject entry, ref string lastHeader, XmlWriter xhtmlWriter, GeneratorSettings settings)
 		{
 			// If performance is an issue these dummy's can be stored between calls

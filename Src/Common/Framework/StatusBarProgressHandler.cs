@@ -202,8 +202,6 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Gets the progress as a form (used for message box owners, etc).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "FindForm() returns a reference")]
 		public Form Form
 		{
 			get { return m_progressBar.Control.FindForm(); }

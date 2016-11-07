@@ -524,8 +524,6 @@ namespace SIL.FieldWorks.Filters
 			/// </summary>
 			/// <param name="obj"></param>
 			/// <returns></returns>
-			[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-				Justification="See TODO-Linux comment")]
 			public override bool Equals(object obj)
 			{
 				if (obj == null)
@@ -637,8 +635,6 @@ namespace SIL.FieldWorks.Filters
 			/// </summary>
 			/// <param name="obj"></param>
 			/// <returns></returns>
-			[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-				Justification="See TODO-Linux comment")]
 			public override bool Equals(object obj)
 			{
 				if (obj == null)
@@ -1135,8 +1131,6 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public override bool Equals(object obj)
 		{
 			if (obj == null)
@@ -1594,8 +1588,6 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public override bool Equals(object obj)
 		{
 			if (obj == null)
@@ -1773,8 +1765,6 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public override bool Equals(object obj)
 		{
 			if (obj == null)
@@ -1896,8 +1886,6 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public override bool Equals(object obj)
 		{
 			if (obj == null)
@@ -2109,8 +2097,6 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public override bool Equals(object obj)
 		{
 			if (obj == null)

@@ -134,8 +134,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// active form is used. Any invoking that is required is handled.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "owner is a reference")]
 		public static DialogResult ShowMessageBox(Form owner, string text, string caption,
 			MessageBoxButtons buttons, MessageBoxIcon icon)
 		{

@@ -154,8 +154,6 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 		/// <see cref="T:System.Object"></see>; otherwise, false.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public override bool Equals(object obj)
 		{
 			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type) is

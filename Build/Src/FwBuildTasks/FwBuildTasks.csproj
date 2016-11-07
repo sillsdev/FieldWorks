@@ -82,6 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Clouseau.cs" />
     <Compile Include="DownloadFile.cs" />
     <Compile Include="DownloadFilesFromTeamCity.cs" />
     <Compile Include="FdoGenerate\Base.cs" />

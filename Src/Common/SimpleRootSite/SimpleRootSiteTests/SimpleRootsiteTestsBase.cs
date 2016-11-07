@@ -154,8 +154,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	/// Rootsite tests.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Unit test. Variable disposed in Teardown method")]
 	public class SimpleRootsiteTestsBase<T> : BaseTest
 		where T: IRealDataCache, new()
 	{

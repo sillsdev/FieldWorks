@@ -1846,8 +1846,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="e"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "scrollBar is a reference")]
 		private bool DoMouseWheelVScroll(MouseEventArgs e)
 		{
 			if (m_bv == null)

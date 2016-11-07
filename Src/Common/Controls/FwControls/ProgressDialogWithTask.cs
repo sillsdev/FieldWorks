@@ -90,8 +90,6 @@ namespace SIL.FieldWorks.Common.Controls
 			m_worker.RunWorkerCompleted += m_worker_RunWorkerCompleted;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="m_worker gets disposed in Dispose()")]
 		private void InitOnOwnerThread()
 		{
 			if (m_synchronizeInvoke != null && m_synchronizeInvoke.InvokeRequired)
@@ -787,8 +785,6 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "owner is a reference")]
 		private void m_progressDialog_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			if (m_worker.IsBusy)

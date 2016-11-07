@@ -25,8 +25,6 @@ using SIL.Machine.Matching;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_cache and m_loadErrorsWriter are references")]
 	internal class HCLoader
 	{
 		public static Language Load(SpanFactory<ShapeNode> spanFactory, FdoCache cache, XmlWriter loadErrorsWriter)

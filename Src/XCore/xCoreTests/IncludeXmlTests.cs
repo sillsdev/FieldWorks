@@ -40,8 +40,6 @@ namespace XCore
 		}
 
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void ReplaceNode()
 		{
 			XmlDocument doc =  new XmlDocument();
@@ -54,8 +52,6 @@ namespace XCore
 		}
 
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void ProcessDomExplicit()
 		{
 			XmlDocument doc =  new XmlDocument();
@@ -70,8 +66,6 @@ namespace XCore
 		/// This document contains nodes to do the inclusion.
 		/// </summary>
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void ExplicitThisDocInclusionBase()
 		{
 			XmlDocument doc = new XmlDocument();
@@ -87,8 +81,6 @@ namespace XCore
 		/// This document contains nodes to do the inclusion.
 		/// </summary>
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void TwoLevelThisDocInclusion()
 		{
 			XmlDocument doc = new XmlDocument();
@@ -104,8 +96,6 @@ namespace XCore
 		/// override
 		/// </summary>
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void InclusionOverrides()
 		{
 			XmlDocument doc = new XmlDocument();
@@ -146,8 +136,6 @@ namespace XCore
 		}
 
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void TwoLevelInclusion()
 		{
 			XmlDocument doc =  new XmlDocument();
@@ -161,8 +149,6 @@ namespace XCore
 		}
 
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void ThreeLevelInclusionWithRelativeDirectory()
 		{
 			XmlDocument doc =  new XmlDocument();

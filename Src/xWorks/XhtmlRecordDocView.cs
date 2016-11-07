@@ -54,7 +54,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Handle a mouse click in the web browser displaying the xhtml.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "element does NOT need to be disposed locally!")]
 		private void OnDomClick(object sender, DomMouseEventArgs e)
 		{
 			XhtmlDocView.CloseContextMenuIfOpen();

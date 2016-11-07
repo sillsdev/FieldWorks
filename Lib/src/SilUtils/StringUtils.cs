@@ -41,8 +41,6 @@ namespace SIL.Utils
 		/// <param name="text">The text.</param>
 		/// <returns>The string with all of the new lines normalized</returns>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification="Replacing/normalizing newlines")]
 		public static string NormalizeNewLines(string text)
 		{
 			return text.Replace("\r\n", "\n");

@@ -465,8 +465,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		#region Construction and initialization
 
 		/// <summary></summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="TabStop is not implemented in Mono, but we set TabStop to false so it's not a problem.")]
 		public Slice()
 		{
 #if SLICE_IS_SPLITCONTAINER
@@ -743,8 +741,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary></summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public virtual void SetCurrentState(bool isCurrent)
 		{
 			CheckDisposed();
@@ -1605,8 +1601,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "parentSlice is a reference")]
 		bool IsDescendant(Slice slice)
 		{
 			var parentSlice = slice.ParentSlice;
@@ -1630,8 +1624,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Collapse this node, which is at position iSlice in its parent.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FieldOrDummyAt() returns a reference")]
 		public virtual void Collapse(int iSlice)
 		{
 			CheckDisposed();
@@ -1754,8 +1746,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="ihvoPosition">Position of this object in owning sequence;
 		/// or current position in cache, if a collection.</param>
 		/// <returns>true if this slice is part of an owning sequence property.</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "cache is a reference")]
 		public bool GetSeqContext(out int hvoOwner, out int flid, out int ihvoPosition)
 		{
 			CheckDisposed();
@@ -1824,8 +1814,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="hvoOwner">Owner of the object this slice is part of.</param>
 		/// <param name="flid">Owning atomic property this is part of.</param>
 		/// <returns>true if this slice is part of an owning atomic property.</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "cache is a reference")]
 		public bool GetAtomicContext(out int hvoOwner, out int flid)
 		{
 			CheckDisposed();
@@ -2273,8 +2261,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Focus the specified slice (or the first of its children that can accept focus).
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public Slice FocusSliceOrChild()
 		{
 			CheckDisposed();
@@ -2375,8 +2361,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// starting with the slice itself. An arbitrary maximum distance (currently 40) is imposed,
 		/// to minimize the time spent getting and using these; usually one of the first few is used.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FieldOrDummyAt() returns a reference")]
 		internal List<Slice> GetCloseSlices()
 		{
 			int index = IndexInContainer;
@@ -2430,8 +2414,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// gives the object hvo hat should be the target of Delete, copy, etc. for menus operating on this slice label.
 		/// </summary>
 		/// <returns>return 0 if this slice is supposed to operate on an atomic field which is currently empty.</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public ICmObject GetObjectForMenusToOperateOn()
 		{
 			CheckDisposed();

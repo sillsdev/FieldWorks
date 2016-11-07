@@ -2093,8 +2093,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <returns>A ScrFootnote with the properties set to the properties in the
 		/// given string representation</returns>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public IScrFootnote CreateFromStringRep(IScrBook book, string sTextRepOfFootnote,
 			int footnoteIndex, string footnoteMarkerStyleName)
 		{

@@ -38,8 +38,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[SetUp]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Unit tests, gets disposed in teardown method")]
 		public void TestSetup()
 		{
 			RegistryHelper.CompanyName = "SIL";

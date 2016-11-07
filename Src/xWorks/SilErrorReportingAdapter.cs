@@ -22,8 +22,6 @@ namespace SIL.FieldWorks.XWorks
 	/// create a Palaso dialog, create an instance of this class, passing it the dialog.
 	/// </summary>
 	/// ------------------------------------------------------------------------------------
-	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-	Justification = "m_parentForm is a reference")]
 	class SilErrorReportingAdapter : IErrorReporter, IFWDisposable
 	{
 		private Form m_parentForm;

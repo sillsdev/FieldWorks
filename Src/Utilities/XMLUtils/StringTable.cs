@@ -133,8 +133,6 @@ namespace SIL.Utils
 		/// Merge some custom set of strings into this table.
 		/// </summary>
 		/// <param name="customTableDocument">XML Document that contains the custom strings.</param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void MergeCustomTable(XmlDocument customTableDocument)
 		{
 			XmlElement customRoot = customTableDocument.DocumentElement;
@@ -147,8 +145,6 @@ namespace SIL.Utils
 			m_sWsLoaded += "+";		// Flag that we've modified the original set of strings.
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void MergeCustomGroups(XmlNode parentNode, XmlNodeList customGroupNodeList)
 		{
 			if (customGroupNodeList == null || customGroupNodeList.Count == 0)

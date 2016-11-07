@@ -132,8 +132,6 @@ namespace SIL.FieldWorks.Common.Controls
 			/// type serviceType.
 			/// </returns>
 			/// ------------------------------------------------------------------------------------
-			[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-				Justification="See TODO-Linux comment")]
 			public object GetService(Type serviceType)
 			{
 				// TODO-Linux: System.Boolean System.Type::op_Equality(System.Type,System.Type)
@@ -200,8 +198,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// if the service cannot be resolved.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		protected override object GetService(Type service)
 		{
 			object obj = base.GetService(service);

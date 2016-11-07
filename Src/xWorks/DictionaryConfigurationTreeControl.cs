@@ -100,8 +100,6 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public bool HighlightEnabled { set { highlight.Enabled = value; } }
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ToolStripMenuItems disposed in Dispose method")]
 		public DictionaryConfigurationTreeControl()
 		{
 			InitializeComponent();

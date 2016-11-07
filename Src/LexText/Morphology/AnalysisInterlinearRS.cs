@@ -184,8 +184,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				TurnOnSandbox();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "parent is a reference")]
 		InterlinearSlice MySlice
 		{
 			get

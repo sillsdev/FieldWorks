@@ -843,8 +843,6 @@ namespace SIL.FieldWorks.Filters
 		/// <returns></returns>
 		/// <remarks>For most subclasses, it is enough if it is the same class and pattern.</remarks>
 		/// ---------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public override bool SameMatcher(IMatcher other)
 		{
 			if (!(other is SimpleStringMatcher))

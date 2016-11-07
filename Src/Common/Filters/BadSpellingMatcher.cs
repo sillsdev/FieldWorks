@@ -37,8 +37,6 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="arg"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="GetDictionary() returns a reference")]
 		public override bool Matches(ITsString arg)
 		{
 			ISpellEngine dict = SpellingHelper.GetSpellChecker(m_ws, WritingSystemFactory);

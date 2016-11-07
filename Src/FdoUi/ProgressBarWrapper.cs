@@ -13,7 +13,6 @@ namespace SIL.FieldWorks.FdoUi
 	/// <summary>
 	/// Wrapper class to allow a ProgressBar to function as an IProgress
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule", Justification="Disposable member is exposed for Dispose call if necessary")]
 	public class ProgressBarWrapper : IProgress
 	{
 		private readonly ProgressBar m_progressBar;

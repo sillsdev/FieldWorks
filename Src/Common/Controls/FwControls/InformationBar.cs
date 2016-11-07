@@ -236,8 +236,6 @@ namespace SIL.FieldWorks.Common.Controls
 		[Category("Appearance")]
 		[DefaultValue(17)]
 		[Description("The default button width.")]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "button is a reference")]
 		public int ButtonWidth
 		{
 			get

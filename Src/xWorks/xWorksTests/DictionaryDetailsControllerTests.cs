@@ -93,8 +93,6 @@ namespace SIL.FieldWorks.XWorks
 			m_staticDDController = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			m_staticDDController.LoadNode(null, new ConfigurableDictionaryNode());
 		}
-		[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-   Justification = "member is disposed through the property")]
 		internal class TestDictionaryDetailsView : IDictionaryDetailsView
 		{
 			private List<StyleComboItem> m_styles;
@@ -228,7 +226,6 @@ namespace SIL.FieldWorks.XWorks
 			return ((TestDictionaryDetailsView)view).OptionsView as IDictionaryGroupingOptionsView;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "ListOptionsView is disposed by its parent")]
 		private static IList<ListViewItem> GetListViewItems(IDictionaryDetailsView view)
 		{
 			return ((TestDictionaryDetailsView)view).GetListViewItems();
@@ -295,7 +292,6 @@ namespace SIL.FieldWorks.XWorks
 
 		#region Note tests
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "optionsView is a reference only")]
 		public void NoteLoadsParagraphStylesWhenShowInParaSet()
 		{
 			var wsOptions = new DictionaryNodeWritingSystemAndParaOptions();
@@ -569,7 +565,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "ListOptionsView is disposed by its parent")]
 		public void ShowGrammaticalInfo_LinksToSense()
 		{
 			var parentSenseOptions = new DictionaryNodeSenseOptions { ShowSharedGrammarInfoFirst = true };
@@ -916,7 +911,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "optionsView is disposed by its parent")]
 		public void LoadWsOptions_DisplayCheckboxEnable()
 		{
 			var wsOptions = new DictionaryNodeWritingSystemOptions
@@ -950,7 +944,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "optionsView is disposed by its parent")]
 		public void LoadSenseOptions_ChecksRightBoxes()
 		{
 			var subSenseConfig = new ConfigurableDictionaryNode
@@ -1065,7 +1058,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "optionsView is disposed by its parent")]
 		public void LoadSenseOptions_NumberingStyleList()
 		{
 			var subSubSenseConfig = new ConfigurableDictionaryNode
@@ -1355,8 +1347,6 @@ namespace SIL.FieldWorks.XWorks
 		#region GroupingNode tests
 
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "optionsView is disposed by its parent")]
 		public void LoadGroupingOptions_SetsAllInfo()
 		{
 			var groupConfig = new ConfigurableDictionaryNode

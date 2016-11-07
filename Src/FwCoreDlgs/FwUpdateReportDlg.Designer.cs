@@ -34,8 +34,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		// TODO-Linux: UseEXDialog is not implemented, will always use default dialog
 		// (printDialog1.UseEXDialog)
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private void InitializeComponent()
 		{
 			System.Windows.Forms.Label spearatorLine;

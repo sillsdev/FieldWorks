@@ -199,8 +199,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="fakeFlid">The fake flid.</param>
 		/// <param name="xbv">The XBV.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public XmlBrowseViewBaseVc(XmlNode xnSpec, int fakeFlid, XmlBrowseViewBase xbv)
 			: this(xbv)
 		{

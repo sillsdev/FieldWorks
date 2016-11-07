@@ -435,7 +435,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns><c>true</c> if the dummy node was replaced by real child node(s)</returns>
 		/// <remarks>protected virtual for unit tests</remarks>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification="FindForm() returns a reference")]
 		protected virtual bool FillInBookChildren(TreeNode bookNode)
 		{
 			IScrBook book = bookNode.Tag as IScrBook;

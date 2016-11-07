@@ -22,8 +22,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// <summary>
 	/// Summary description for LexEntryTypeConverter.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_dlg and m_cache are references")]
 	public abstract class LexEntryTypeConverters : IUtility
 	{
 		protected UtilityDlg m_dlg;
@@ -107,8 +105,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Overridden to provide a chooser with multiple selections (checkboxes and all).
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "mediator is a reference")]
 		protected SimpleListChooser GetChooser(IEnumerable<ObjectLabel> labels, int classId)
 		{
 			var contents = from lexEntryType in m_cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities
@@ -124,8 +120,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 										 m_dlg.PropTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="m_dlg.FindForm() returns a reference")]
 		protected void ShowDialogAndConvert(int targetClassId)
 		{
 			// maybe there's a better way, but

@@ -1561,8 +1561,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		public virtual IVwRootSite CastAsIVwRootSite()
 		{
 			CheckDisposed();

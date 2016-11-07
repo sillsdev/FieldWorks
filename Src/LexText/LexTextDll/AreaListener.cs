@@ -267,8 +267,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// <param name="display"></param>
 		/// <param name="areaId"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private bool FillList(UIListDisplayProperties display, string areaId)
 		{
 			// Don't bother refreshing this list.
@@ -310,8 +308,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// </summary>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private bool FillListAreaList(UIListDisplayProperties display)
 		{
 			var customLists = GetListOfOwnerlessLists();
@@ -509,8 +505,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// <summary>
 		/// Make up for weakness of XmlNode.SelectSingleNode.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static XmlNode FindClerkNode(XmlNode toolNode, string clerkId)
 		{
 			foreach (XmlNode node in toolNode.SelectNodes(GetListClerksXPath() + "/clerk"))
@@ -544,8 +538,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 			m_ctotalLists++;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void LoadAllCustomLists(List<ICmPossibilityList> customLists, XmlNode windowConfig)
 		{
 
@@ -640,8 +632,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 			//display.List.Add(label, value, sbsview, importedToolNode.SelectSingleNode("control"));
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="see REVIEW comment - code is possibly wrong")]
 		private void AddClerkToConfigForList(ICmPossibilityList curList, XmlNode windowConfig)
 		{
 			// Put the clerk node in the window configuration for this list
@@ -717,8 +707,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// <summary>
 		/// Make up for weakness of XmlNode.SelectSingleNode.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private XmlNode FindToolParamNode(XmlNode windowConfig, ICmPossibilityList curList)
 		{
 			string toolname = GetCustomListToolName(curList);
@@ -734,8 +722,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 			return null;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private XmlNode FindToolNode(XmlNode windowConfig, string areaName, string toolName)
 		{
 			foreach (XmlNode node in windowConfig.SelectNodes(GetToolXPath(areaName)))
@@ -1057,8 +1043,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 			return true;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static bool IsToolInArea(string toolName, string area, XmlNode windowConfiguration)
 		{
 			XmlNodeList nodes = windowConfiguration.SelectNodes(GetToolXPath(area));

@@ -2907,8 +2907,6 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-			Justification="m_sandbox is a reference")]
 		class UpdateMorphEntryAction: UndoActionBase
 		{
 			private SandboxBase m_sandbox;
@@ -3400,8 +3398,6 @@ namespace SIL.FieldWorks.IText
 			}
 
 			// We can't add the items until the form loads, or we get a spurious horizontal scroll bar.
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "cache is a reference")]
 			private void m_tree_Load(object sender, EventArgs e)
 			{
 				if (m_pOSPopupTreeManager == null)

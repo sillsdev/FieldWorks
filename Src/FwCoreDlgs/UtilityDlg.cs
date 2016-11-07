@@ -196,8 +196,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void SetDlgInfo(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();

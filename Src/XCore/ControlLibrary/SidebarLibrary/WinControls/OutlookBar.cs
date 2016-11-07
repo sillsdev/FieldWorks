@@ -413,8 +413,6 @@ namespace SidebarLibrary.WinControls
 			get { return new Size(100, 10); }
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "g is a reference")]
 		protected override void OnPaint(PaintEventArgs pe)
 		{
 			base.OnPaint(pe);
@@ -558,8 +556,6 @@ namespace SidebarLibrary.WinControls
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "newBand and childControl are references")]
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
@@ -817,8 +813,6 @@ namespace SidebarLibrary.WinControls
 			OnMouseDown(e);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "band is a reference")]
 		public void OnContextMenu(object sender, EventArgs e)
 		{
 			OutlookBarBand band = bands[currentBandIndex];
@@ -855,8 +849,6 @@ namespace SidebarLibrary.WinControls
 			return currentBandIndex;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Variables are references")]
 		public void SetCurrentBand(int index)
 		{
 			// If in design mode and index equals -1 just don't do anything
@@ -924,8 +916,6 @@ namespace SidebarLibrary.WinControls
 		#endregion
 
 		#region Implementation
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "band is a reference")]
 		void ProcessArrowScrolling(Rectangle arrowButton, ref bool arrowVisible, ref bool arrowPressed, ref bool timerTicking)
 		{
 
@@ -1053,8 +1043,6 @@ namespace SidebarLibrary.WinControls
 
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "band is a reference")]
 		void ScrollingTick(Object timeObject, EventArgs eventArgs)
 		{
 			// Get mouse coordinates
@@ -1393,8 +1381,6 @@ namespace SidebarLibrary.WinControls
 			Capture = false;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "brush and pen are references")]
 		void DrawDropLine(Graphics g, int index, bool drawLine, HitTestType hit)
 		{
 			Brush brush = null;
@@ -1925,8 +1911,6 @@ namespace SidebarLibrary.WinControls
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "band is a reference")]
 		void DrawItems(Graphics g, Rectangle targetRect, OutlookBarBand drawBand)
 		{
 
@@ -1947,8 +1931,6 @@ namespace SidebarLibrary.WinControls
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "band is a reference")]
 		void DrawItem(Graphics g, int index, Rectangle itemRect, bool hot, bool pressed, Rectangle targetRect, OutlookBarBand drawingBand)
 		{
 			OutlookBarBand band = bands[currentBandIndex];
@@ -2193,8 +2175,6 @@ namespace SidebarLibrary.WinControls
 			WindowsAPI.DeleteObject(bmTo);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "child is a reference")]
 		void DrawBandBitmap(IntPtr hDC, OutlookBarBand band, int bandIndex, Rectangle drawingRect)
 		{
 			// Don't do GDI+ calls since you cannot mix them with GDI calls
@@ -2238,8 +2218,6 @@ namespace SidebarLibrary.WinControls
 			return HasChild(currentBandIndex);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "childControl and band are references")]
 		bool HasChild(int index)
 		{
 			// Flag that tell us if the current band
@@ -2253,8 +2231,6 @@ namespace SidebarLibrary.WinControls
 			return childControl != null;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "band is a reference")]
 		void GetVisibleRange(Graphics g, out int first, out int last)
 		{
 			first = firstItem;
@@ -2353,8 +2329,6 @@ namespace SidebarLibrary.WinControls
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "band is a reference")]
 		Rectangle GetIconRect(int index)
 		{
 			Rectangle viewPortRect = GetViewPortRect();
@@ -2391,8 +2365,6 @@ namespace SidebarLibrary.WinControls
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "band is a reference")]
 		Rectangle GetLabelRect(int index)
 		{
 			Rectangle viewPortRect = GetViewPortRect();
@@ -2447,8 +2419,6 @@ namespace SidebarLibrary.WinControls
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="MenuItemEx gets added to contextMenu and disposed there.")]
 		private void CreateContextMenu()
 		{
 			// context menu
@@ -2471,8 +2441,6 @@ namespace SidebarLibrary.WinControls
 			this.ContextMenu = contextMenu;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "band is a reference")]
 		public void ContextMenuPopup(object sender, EventArgs e)
 		{
 			// Update the menu state before displaying it

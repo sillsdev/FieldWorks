@@ -138,8 +138,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Registry key for settings for this Dialog.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		public RegistryKey SettingsKey
 		{
 			get
@@ -574,8 +572,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			SetDlgInfo(cache, morphType, 0, MorphTypeFilterType.Any);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "searchEngine is disposed by the mediator.")]
 		protected void SetDlgInfo(FdoCache cache, IMoMorphType morphType, int wsVern, MorphTypeFilterType filter)
 		{
 			try
@@ -1039,8 +1035,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
@@ -1702,8 +1696,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			UpdateMatches();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
 		private void CheckIfGoto()
 		{
 			bool fEnable = m_matchingObjectsBrowser.SelectedObject != null;

@@ -322,8 +322,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "fontFamilies contains references")]
 		private void ConverterTest_Load(object sender, System.EventArgs e)
 		{
 			// This is a fall-back if the creator does not have a converters object.
@@ -717,8 +715,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			base.OnKeyDown(e);

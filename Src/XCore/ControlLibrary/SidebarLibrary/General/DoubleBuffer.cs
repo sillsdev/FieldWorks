@@ -9,8 +9,6 @@ namespace SidebarLibrary.WinControls
 	/// <summary>
 	/// Summary description for BitmapDoubleBuffer.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-		Justification="surface and buffer get disposed in CleanUp() which gets called from Dispose()")]
 	public class DoubleBuffer: IDisposable
 	{
 		private int bufferWidth;

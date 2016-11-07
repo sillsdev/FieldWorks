@@ -66,8 +66,6 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	/// ---------------------------------------------------------------------------------------
 	[TestFixture]
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Unit test, object is disposed in TearDown method")]
 	public class ProgressDlgTests : BaseTest
 	{
 		private ThreadHelper m_threadHelper;
@@ -80,8 +78,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[SetUp]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Unit test, object is disposed in TearDown method")]
 		public void Setup()
 		{
 			m_threadHelper = new ThreadHelper();

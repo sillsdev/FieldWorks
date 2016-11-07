@@ -1042,8 +1042,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Shows the drop down box.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "parent is a reference")]
 		protected void ShowDropDownBox()
 		{
 			CheckDisposed();
@@ -2023,8 +2021,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Make one.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "m_previousForm is a reference")]
 		public ComboListBox()
 		{
 			m_activateOnShow = true;

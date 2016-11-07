@@ -27,8 +27,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	[Platform(Include = "Linux", Reason="IbusRootSiteEventHandlerTests is Linux only")]
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Unit test. Variable disposed in Teardown method")]
 	public class IbusRootSiteEventHandlerTests: BaseTest
 	{
 		// some lparam values representing keypress that we use for testing.
@@ -95,8 +93,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_dummySimpleRootSite = null;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Keyboard adaptors get disposed when the KeyboardController is shutdown.")]
 		public void ChooseSimulatedKeyboard(ITestableIbusCommunicator ibusCommunicator)
 		{
 			m_dummyIBusCommunicator = ibusCommunicator;
@@ -188,8 +184,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		/// <summary></summary>
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Dummy IBusCommunicator is disposed in TestTearDown()")]
 		public void KillFocus_ShowingPreedit_PreeditIsNotCommitedAndSelectionIsInsertionPoint()
 		{
 			ChooseSimulatedKeyboard(new CommitBeforeUpdateIbusCommunicator());
@@ -210,8 +204,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		/// <summary></summary>
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Dummy IBusCommunicator is disposed in TestTearDown()")]
 		public void Focus_Unfocused_KeypressAcceptedAsNormal()
 		{
 			ChooseSimulatedKeyboard(new CommitBeforeUpdateIbusCommunicator());
@@ -240,8 +232,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		[Test]
 		[TestCase(1, 2, TestName="ReplaceForwardSelectedChar_Replaced")]
 		[TestCase(2, 1, TestName="ReplaceBackwardSelectedChar_Replaced")]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Dummy IBusCommunicator is disposed in TestTearDown()")]
 		public void CorrectPlacementOfTypedChars(int anchor, int end)
 		{
 			// Setup
@@ -270,8 +260,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		/// <summary>Test case for FWNX-1305</summary>
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-		Justification="Dummy IBusCommunicator is disposed in TestTearDown()")]
 		public void HandleNullActionHandler()
 		{
 			// Setup
@@ -314,8 +302,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		[TestCase("dd",  3, 2, "ABddC","dd", 5, 4, TestName="TwoKeysEnd_BackwardSelection_PreeditPlacedBefore")]
 		[TestCase("dd ", 2, 3, "ABD",    "", 3, 3, TestName="Commit_ForwardSelection_IPAfter")]
 		[TestCase("dd ", 3, 2, "ABD",    "", 3, 3, TestName="Commit_BackwardSelection_IPAfter")]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Dummy IBusCommunicator is disposed in TestTearDown()")]
 		public void CorrectPlacementOfPreedit(string input, int anchor, int end, string expectedText,
 			string expectedPreedit, int expectedAnchor, int expectedEnd)
 		{
@@ -1141,8 +1127,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		#endregion
 	}
 
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="reference only")]
 	public class DummyRootBox : IVwRootBox
 	{
 		internal ISilDataAccess m_dummyDataAccess = new DummyDataAccess();

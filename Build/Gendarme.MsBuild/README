@@ -1,5 +1,0 @@
-The Gendarme assemblies are built from master branch of
-https://github.com/mono/mono-tools.git.
-
-The Mono.Cecil assemblies are built from master branch of
-https://github.com/mono/cecil (net_4_0_Release configuration).

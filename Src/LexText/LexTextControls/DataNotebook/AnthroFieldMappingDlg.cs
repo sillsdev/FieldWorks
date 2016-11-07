@@ -325,8 +325,6 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ctrl is a reference")]
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
 			DestinationField dest =  m_cbDestination.SelectedItem as DestinationField;

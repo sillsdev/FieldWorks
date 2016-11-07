@@ -1153,8 +1153,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void m_btnRestoreDefaults_Click(object sender, EventArgs e)
 		{
 			using (new WaitCursor(this))
@@ -4519,8 +4517,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void CopyAndRenameLayout(string className, string layoutName, string suffixCode)
 		{
 			var xnLayout = m_layouts.GetElement("layout", new[] { className, "jtview", layoutName, null });

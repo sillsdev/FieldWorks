@@ -164,10 +164,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Updates the options display.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "The controls are always added to m_insertPanel. They should be disposed when m_insertPanel is diposed.")]
 		public void UpdateOptionsDisplay()
 		{
 			CheckDisposed();

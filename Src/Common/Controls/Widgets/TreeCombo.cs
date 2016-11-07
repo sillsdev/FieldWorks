@@ -177,7 +177,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		[BrowsableAttribute(false),
 			DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "Font is a reference")]
 		public override IVwStylesheet StyleSheet
 		{
 			get

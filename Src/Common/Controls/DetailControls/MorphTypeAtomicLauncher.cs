@@ -54,10 +54,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Override method to handle launching of a chooser for selecting lexical entries.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		protected override void HandleChooser()
 		{
 			string displayWs = "analysis vernacular";
@@ -364,8 +360,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return false;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "dtree is a reference")]
 		private void SwapValues(ILexEntry entry, IMoForm origForm, IMoForm newForm, IMoMorphType type,
 			List<IMoMorphSynAnalysis> rgmsaOld)
 		{

@@ -138,10 +138,6 @@ namespace SIL.Utils
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Variables added to Controls collection and disposed there")]
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ErrorReporter));
@@ -362,8 +358,6 @@ namespace SIL.Utils
 		/// Invoked by a menu command, allows the user to report a problem that didn't crash the program,
 		/// complete with all the context information we attach to crashes (except a stack dump).
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ErrorReporter dialog gets disposed in ModelessClosed method")]
 		public static void ReportProblem(RegistryKey applicationKey, string emailAddress, Form parent)
 		{
 			ErrorReporter e = new ErrorReporter(false, emailAddress);
@@ -380,8 +374,6 @@ namespace SIL.Utils
 		/// <summary>
 		/// This is called when FLEx discovers duplicate GUIDs in the fwdata file.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ErrorReporter dialog gets disposed in ModelessClosed method")]
 		public static void ReportDuplicateGuids(RegistryKey applicationKey, string emailAddress, Form parent, string errorText)
 		{
 			ErrorReporter e = new ErrorReporter(false, emailAddress, true, errorText);
@@ -394,8 +386,6 @@ namespace SIL.Utils
 		/// Invoked by a menu command, allows the user to make a suggestion,
 		/// complete with all the context information we attach to crashes (except a stack dump).
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ErrorReporter dialog gets disposed in ModelessClosed method")]
 		public static void MakeSuggestion(RegistryKey applicationKey, string emailAddress, Form parent)
 		{
 			ErrorReporter e = new ErrorReporter(false, emailAddress);
@@ -786,8 +776,6 @@ namespace SIL.Utils
 		/// </summary>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "e.Graphics returns a reference")]
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			if (m_showChips)

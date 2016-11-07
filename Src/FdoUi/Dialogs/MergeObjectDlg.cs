@@ -63,8 +63,6 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "infoIcon is a reference")]
 		private MergeObjectDlg()
 		{
 			//

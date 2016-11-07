@@ -481,8 +481,6 @@ namespace SIL.Utils
 		/// <returns>
 		/// An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
 		/// </returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return GetEnumerator();

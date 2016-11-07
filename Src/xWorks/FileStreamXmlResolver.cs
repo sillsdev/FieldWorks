@@ -49,8 +49,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="role"></param>
 		/// <param name="ofObjectToReturn"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "This API requires us to return an open stream. Hopefully the client closes it.")]
 		public override object GetEntity(Uri absoluteUri, string role, Type ofObjectToReturn)
 		{
 			if (absoluteUri != null && absoluteUri.IsFile && ofObjectToReturn.IsAssignableFrom(typeof(FileStream)))

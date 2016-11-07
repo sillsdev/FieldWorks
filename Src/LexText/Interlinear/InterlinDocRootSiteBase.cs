@@ -106,7 +106,6 @@ namespace SIL.FieldWorks.IText
 			return true;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "parent is a reference")]
 		public bool OnExportInterlinear(object argument)
 		{
 			// If the currently selected text is from Scripture, then we need to give the dialog
@@ -494,8 +493,6 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ToolStripSeparator gets added to the menu and disposed there")]
 		private ContextMenuStrip MakeContextMenu(int ilineChoice)
 		{
 			var menu = new ContextMenuStrip();
@@ -550,8 +547,6 @@ namespace SIL.FieldWorks.IText
 			return menu;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ToolStripMenuItem added to menu.Items collection and disposed there")]
 		private void AddHideLineMenuItem(ContextMenuStrip menu,
 			InterlinLineChoices curLineChoices, int ilineChoice)
 		{
@@ -571,8 +566,6 @@ namespace SIL.FieldWorks.IText
 			return result;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="menuItem added to addSubMenu.DropDownItems collection and disposed there")]
 		private void AddAdditionalWsMenuItem(ToolStripMenuItem addSubMenu,
 			InterlinLineChoices curLineChoices, int ilineChoice)
 		{
@@ -632,8 +625,6 @@ namespace SIL.FieldWorks.IText
 			return ws;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ToolStripMenuItem gets added to menu.Items collection and disposed there")]
 		private void AddMoveUpMenuItem(ContextMenuStrip menu, int ilineChoice)
 		{
 			var moveUpItem = new ToolStripMenuItem(ITextStrings.ksMoveUp) { Tag = ilineChoice };
@@ -641,8 +632,6 @@ namespace SIL.FieldWorks.IText
 			menu.Items.Add(moveUpItem);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ToolStripMenuItem gets added to menu.Items collection and disposed there")]
 		private void AddMoveDownMenuItem(ContextMenuStrip menu, int ilineChoice)
 		{
 			var moveDownItem = new ToolStripMenuItem(ITextStrings.ksMoveDown) { Tag = ilineChoice };
@@ -650,8 +639,6 @@ namespace SIL.FieldWorks.IText
 			menu.Items.Add(moveDownItem);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="AddLineMenuItem gets added to addLineSubMenu.DropDownItems collection and disposed there")]
 		private void AddNewLineMenuItem(ToolStripMenuItem addLineSubMenu, InterlinLineChoices curLineChoices)
 		{
 			// Add menu options to add lines of flids that are in default list, but don't currently appear.
@@ -926,8 +913,6 @@ namespace SIL.FieldWorks.IText
 			m_rootb.PropChanged(occurrence.Segment.Hvo, SegmentTags.kflidAnalyses, occurrence.Index, 1, 1);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "parentControl is a reference")]
 		internal InterlinMaster GetMaster()
 		{
 			for (Control parentControl = Parent; parentControl != null; parentControl = parentControl.Parent)

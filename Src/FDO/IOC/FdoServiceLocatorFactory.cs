@@ -399,8 +399,6 @@ namespace SIL.FieldWorks.FDO.IOC
 		/// <returns>
 		/// The requested service instance.
 		/// </returns>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public override TService GetInstance<TService>()
 		{
 			// IActionHandler is special - want to return the current one in use.

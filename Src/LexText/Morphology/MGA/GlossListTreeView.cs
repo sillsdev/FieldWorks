@@ -252,8 +252,6 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 			m_sAbbrevNodeXPath = "abbrev[@ws='" + m_sWritingSystemAbbrev + "']";
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void PopulateTreeView(XmlDocument dom, XmlNode treeTop)
 		{
 			XmlNodeList nodes = dom.SelectNodes(m_sTopOfList + "/item");
@@ -270,8 +268,6 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 
 		#endregion
 		#region private methods
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Added to ImageList and disposed there.")]
 		private void CommonInit()
 		{
 			AfterCollapse += new TreeViewEventHandler(OnAfterCollapse);
@@ -430,8 +426,6 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 				tn.ImageIndex = tn.SelectedImageIndex = (int)ImageKind.openFolder;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void AddNode(XmlNode currentNode, TreeNode parentNode, XmlDocument dom)
 		{
 			string sStatus = XmlUtils.GetAttributeValue(currentNode, "status");
@@ -485,8 +479,6 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 			return newNode;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void FleshOutProxy(XmlNode currentNode, XmlDocument dom)
 		{
 			string sTarget = XmlUtils.GetAttributeValue(currentNode, "target");

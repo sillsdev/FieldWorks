@@ -22,8 +22,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 	/// FDO lexicon tests
 	/// </summary>
 	[TestFixture]
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Fields are diposed in test teardown")]
 	public class FdoLexiconTests : BaseTest
 	{
 		private ThreadHelper m_threadHelper;

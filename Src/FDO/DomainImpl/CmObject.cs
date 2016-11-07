@@ -743,8 +743,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="fLoseNoStringData"></param>
 		/// <param name="flidList">List of property flids to consider for merging</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public void MergeSelectedPropertiesOfObject(ICmObject objSrc, bool fLoseNoStringData, int[] flidList)
 		{
 			var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCache;

@@ -50,8 +50,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		///<summary>
 		///</summary>
 		///<param name="line"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="GetLogFile() returns a reference to a singleton")]
 		public static void AddVerboseLine(string line)
 		{
 			if (GetLogFile().VerboseLogging)
@@ -61,8 +59,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		///<summary>
 		///</summary>
 		///<returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="GetLogFile() returns a reference to a singleton")]
 		public static bool IsLogging()
 		{
 			return GetLogFile().Logging;

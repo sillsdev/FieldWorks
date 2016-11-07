@@ -32,8 +32,6 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// Export the lexicon as a LIFT file.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_cache is a reference")]
 	public class LiftExporter
 	{
 		/// <summary></summary>

@@ -749,8 +749,6 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Gets the project specific settings key.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		public RegistryKey ProjectSpecificSettingsKey
 		{
 			get

@@ -80,8 +80,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_objectsLabel.Text = LexTextControls.ksLexicalEntries;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "searchEngine is disposed by the mediator.")]
 		protected override void InitializeMatchingObjects(FdoCache cache)
 		{
 			var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");

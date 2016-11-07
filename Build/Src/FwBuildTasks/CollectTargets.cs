@@ -370,17 +370,8 @@ namespace FwBuildTasks
 							Path.DirectorySeparatorChar, GetProjectSubDir(project), project);
 						writer.WriteLine("\t\t\tToolsVersion=\"4.0\"/>");
 
-						// <Gendarme> verification task
-						writer.WriteLine("\t\t<Gendarme ConfigurationFile=\"$(fwrt)/Build/Gendarme.MsBuild/fw-gendarme-rules.xml\"");
-						writer.WriteLine("\t\t\tRuleSet=\"$({1})\" Assembly=\"$(dir-outputBase)/{0}\"",
-							AssemblyName, isTestProject ? "verifyset-test" : "verifyset");
-						writer.WriteLine("\t\t\tLogType=\"Html\" LogFile=\"$(dir-outputBase){0}{1}-gendarme.html\"",
-							Path.DirectorySeparatorChar, project);
-						writer.WriteLine("\t\t\tIgnoreFile=\"{0}/gendarme-{1}.ignore\"",
-							Path.GetDirectoryName(m_mapProjFile[project].Replace(m_fwroot, "$(fwrt)")),
-							project);
-						writer.WriteLine("\t\t\tAutoUpdateIgnores=\"$(autoUpdateIgnores)\" VerifyFail=\"$(verifyFail)\"");
-						writer.WriteLine("\t\t\tCondition=\"'$(config-capital)'=='Debug'\" />");
+						// <Clouseau> verification task
+						writer.WriteLine("\t\t<Clouseau Assembly=\"$(dir-outputBase)/{0}\"/>", AssemblyName);
 
 						if (isTestProject)
 						{

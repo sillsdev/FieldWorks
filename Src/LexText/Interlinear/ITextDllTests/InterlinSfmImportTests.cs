@@ -22,8 +22,6 @@ namespace SIL.FieldWorks.IText
 	[TestFixture]
 	public class InterlinSfmImportTests : BaseTest
 	{
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification="New lines in input strings are different depending on platform")]
 		public InterlinSfmImportTests()
 		{
 		}

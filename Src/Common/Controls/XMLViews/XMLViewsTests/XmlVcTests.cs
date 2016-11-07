@@ -27,8 +27,6 @@ namespace XMLViewsTests
 	/// Test (some aspects of) XmlVc
 	/// </summary>
 	[TestFixture]
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Unit test - m_sda gets disposed in FixtureTeardown()")]
 	public class XmlVcTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private RealDataCache m_sda;
@@ -234,8 +232,6 @@ namespace XMLViewsTests
 		}
 	}
 
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification = "Cache is a reference and will be disposed in parent class")]
 	class MockDecorator : DomainDataByFlidDecoratorBase
 	{
 		private FdoCache m_cache;

@@ -189,8 +189,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <summary>
 		/// Load the test data into the Semantic Domains list.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification="Multiline string - git uses platform specific line endings")]
 		protected override void CreateTestData()
 		{
 			base.CreateTestData();

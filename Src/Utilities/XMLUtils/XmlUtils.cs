@@ -479,8 +479,6 @@ namespace SIL.Utils
 		/// Steve says one place we do need to make encoded XML is in the content of Residue fields.</remarks>
 		/// <param name="sInput"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification="Replacing new line characters")]
 		public static string ConvertMultiparagraphToSafeXml(string sInput)
 		{
 			string sOutput = sInput;
@@ -594,8 +592,6 @@ namespace SIL.Utils
 		/// </summary>
 		/// <param name="node"></param>
 		/// <returns>Zero-based Index of Node in ParentNode.ChildNodes. -1, if node has no parent.</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public static int GetIndexAmongSiblings(XmlNode node)
 		{
 			XmlNode parent = node.ParentNode;
@@ -679,8 +675,6 @@ namespace SIL.Utils
 		/// <param name="xml"></param>
 		/// <param name="targetType"></param>
 		/// <returns>null if we didn't deserialize the object</returns>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		static public object DeserializeXmlString(string xml, Type targetType)
 		{
 			// TODO-Linux: System.Boolean System.Type::op_{Ine,E}quality(System.Type,System.Type)
@@ -741,8 +735,6 @@ namespace SIL.Utils
 		/// </summary>
 		/// <param name="methodName"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public static MethodInfo GetStaticMethod(string sAssemblyName, string sClassName,
 			string sMethodName, string sContext, out Type typeFound)
 		{

@@ -53,8 +53,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			/// <param name="innerComparer">The inner comparer.</param>
 			/// <param name="sortDirection">The sort direction.</param>
 			/// --------------------------------------------------------------------------------
-			[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-				Justification="See TODO-Linux comment")]
 			public Comparer(string propertyName, IComparer innerComparer,
 				ListSortDirection sortDirection)
 			{
@@ -280,8 +278,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="propertyName">Name of the property.</param>
 		/// <param name="direction">The direction.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public void Sort(string propertyName, ListSortDirection direction)
 		{
 			// Check to see if the property type we are sorting by implements

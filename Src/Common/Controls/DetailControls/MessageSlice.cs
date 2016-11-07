@@ -25,8 +25,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	public class MessageSlice : Slice
 	{
 		/// <summary> Constructor.</summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Label gets added to the Controls collection in the base class and disposed there")]
 		public MessageSlice(string message) : base(new Label())
 		{
 			this.Control.Text = message;

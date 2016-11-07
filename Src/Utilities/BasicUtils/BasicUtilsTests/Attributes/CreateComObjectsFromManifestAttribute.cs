@@ -17,8 +17,6 @@ namespace SIL.Utils.Attributes
 	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class |
 		AttributeTargets.Interface)]
 	[SuppressUnmanagedCodeSecurity]
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_activationContext and m_currentActivation are disposed in AfterTest method")]
 	public class CreateComObjectsFromManifestAttribute : TestActionAttribute
 	{
 #if !__MonoCS__

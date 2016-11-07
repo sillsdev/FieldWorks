@@ -294,8 +294,6 @@ namespace SIL.FieldWorks.FdoUi
 			return MakeUi(cache, hvo, cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo).ClassID);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "result gets returned")]
 		private static CmObjectUi MakeUi(FdoCache cache, int hvo, int clsid)
 		{
 			IFwMetaDataCache mdc = cache.DomainDataByFlid.MetaDataCache;

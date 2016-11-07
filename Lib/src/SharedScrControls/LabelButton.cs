@@ -216,8 +216,6 @@ namespace SILUBS.SharedScrControls
 		/// </summary>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "e.Graphics is a reference")]
 		protected new virtual void OnPaintBackground(PaintEventArgs e)
 		{
 			DeterminePaintState();

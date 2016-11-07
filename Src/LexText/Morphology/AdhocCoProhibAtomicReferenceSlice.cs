@@ -20,8 +20,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <summary>
 		/// Initializes a new instance of the <see cref="AdhocCoProhibAtomicReferenceSlice"/> class.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "AdhocCoProhibAtomicLauncher gets added to panel's Controls collection and disposed there")]
 		public AdhocCoProhibAtomicReferenceSlice()
 			: base(new AdhocCoProhibAtomicLauncher())
 		{

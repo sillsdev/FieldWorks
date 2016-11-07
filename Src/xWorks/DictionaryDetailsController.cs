@@ -88,7 +88,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// (Re)initializes the controller and view to configure the given node
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "View is disposed by its parent")]
 		public void LoadNode(DictionaryConfigurationModel model, ConfigurableDictionaryNode node)
 		{
 			m_node = node;
@@ -325,7 +324,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>Initialize options for DictionaryNodeWritingSystemOptions</summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "wsOptionsView is disposed by its parent")]
 		private UserControl LoadWsOptions(DictionaryNodeWritingSystemOptions wsOptions)
 		{
 			var wsOptionsView = new ListOptionsView
@@ -424,7 +422,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>Initialize options for DictionaryNodeSenseOptions</summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "senseOptionsView is disposed by its parent")]
 		private UserControl LoadSenseOptions(DictionaryNodeSenseOptions senseOptions, bool isSubsense, bool isSubSubsense)
 		{
 			// initialize SenseOptionsView
@@ -493,7 +490,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>Initialize options for DictionaryNodeListOptions other than WritingSystem options</summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "listOptionsView is disposed by its parent")]
 		private UserControl LoadListOptions(DictionaryNodeListOptions listOptions)
 		{
 			var listOptionsView = new ListOptionsView();
@@ -653,7 +649,6 @@ namespace SIL.FieldWorks.XWorks
 			return styleName;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "optionsView is disposed by its parent")]
 		private UserControl LoadGrammaticalInfoOptions()
 		{
 			var optionsView = new ListOptionsView

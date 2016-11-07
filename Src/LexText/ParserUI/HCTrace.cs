@@ -11,8 +11,6 @@ using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_cache and m_mediator are references")]
 	public class HCTrace : IParserTrace
 	{
 		private static ParserTraceUITransform s_traceTransform;

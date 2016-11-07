@@ -196,8 +196,6 @@ namespace Reflector.UserInterface
 			this.UpdateSize();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "shortcutHits is a reference")]
 		[SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
 		public override bool PreProcessMessage(ref Message message)
 		{
@@ -363,8 +361,6 @@ namespace Reflector.UserInterface
 			return false;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "mnemonicHits is a reference")]
 		private bool PreProcessMnemonic(Keys keyCode)
 		{
 			char mnemonic = (char) (int) keyCode;
@@ -729,8 +725,6 @@ namespace Reflector.UserInterface
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "item and image are references")]
 		private void NotifyCustomDrawToolBar(ref Message m)
 		{
 			m.Result = (IntPtr) NativeMethods.CDRF_DODEFAULT;
@@ -838,8 +832,6 @@ namespace Reflector.UserInterface
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "item is a reference")]
 		private void NotifyNeedTextA(ref Message message)
 		{
 			if (this.Style != CommandBarStyle.Menu)
@@ -865,8 +857,6 @@ namespace Reflector.UserInterface
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "item is a reference")]
 		private void NotifyNeedTextW(ref Message message)
 		{
 			if ((this.Style != CommandBarStyle.Menu) && (Marshal.SystemDefaultCharSize == 2))
@@ -924,8 +914,6 @@ namespace Reflector.UserInterface
 			NativeMethods.SendMessage(Handle, NativeMethods.WM_SETREDRAW, 1, 0);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "item is a reference")]
 		private NativeMethods.TBBUTTONINFO GetButtonInfo(int index)
 		{
 			CommandBarItem item = items[index];
@@ -1006,8 +994,6 @@ namespace Reflector.UserInterface
 			return buttonInfo;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "image is a reference")]
 		private void UpdateImageList()
 		{
 			IntPtr handle = IntPtr.Zero;

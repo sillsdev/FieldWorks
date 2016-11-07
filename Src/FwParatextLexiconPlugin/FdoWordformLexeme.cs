@@ -18,8 +18,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 	#region FdoWordformLexeme class
 	/// <summary>
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_lexicon is a reference")]
 	internal class FdoWordformLexeme : Lexeme
 	{
 		private readonly LexemeKey m_key;
@@ -177,8 +175,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			return DisplayString;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-			Justification="m_lexicon is a reference")]
 		private class WfiGlossLexiconSense : LexiconSense
 		{
 			private readonly FdoLexicon m_lexicon;

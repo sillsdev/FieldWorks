@@ -231,8 +231,6 @@ namespace SIL.FieldWorks.IText
 			});
 		}
 
-		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-			Justification="BirdData is a reference")]
 		public class ImportInterlinearOptions
 		{
 			public IThreadedProgress Progress;

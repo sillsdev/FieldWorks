@@ -67,8 +67,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_tbProjectsFolder.TextChanged += m_tbProjectsFolder_TextChanged;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private void m_tbProjectsFolder_TextChanged(object sender, EventArgs e)
 		{
 			m_btnOK.Enabled = true;
@@ -125,8 +123,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Verifies that the user has security permissions to write to the given folder, as well as basic file system read and write permissions
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "MiscUtils.IsUnix used to avoid calling missing file access libraries on Mono")]
 		private bool DirectoryIsSuitable(string folderToTest)
 		{
 			// A directory with invalid characters isn't suitable

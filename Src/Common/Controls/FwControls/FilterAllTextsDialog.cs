@@ -60,8 +60,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// the contents of this method with the code editor.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="m_btnCancel and m_btnHelp get added to Controls collection and disposed there")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();

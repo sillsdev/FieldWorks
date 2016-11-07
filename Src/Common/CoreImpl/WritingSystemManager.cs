@@ -11,8 +11,6 @@ namespace SIL.CoreImpl
 	/// <summary>
 	/// The writing system manager.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_renderEngines is a singleton and gets disposed by SingletonsContainer")]
 	public class WritingSystemManager : ILgWritingSystemFactory
 	{
 		private IWritingSystemRepository<CoreWritingSystemDefinition> m_repo;

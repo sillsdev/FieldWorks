@@ -176,8 +176,6 @@ namespace SIL.FieldWorks.IText
 
 		internal class InterlinearTextsRecordEditView : RecordEditView
 		{
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "StTextDataTree gets disposed in base class")]
 			public InterlinearTextsRecordEditView(InfoPane info)
 				: base(new StTextDataTree())
 			{

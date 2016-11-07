@@ -82,8 +82,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "klm is a reference")]
 		private string[] GetLangFiles()
 		{
 			RegistryKey klm = RegistryHelper.CompanyKeyLocalMachine;

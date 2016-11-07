@@ -75,8 +75,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		internal FdoMetaDataCache()
 		{
 			m_initialized = false;
@@ -107,8 +105,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			m_initialized = true;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private void InitializeMetaDataCache(IEnumerable<Type> cmObjectTypes)
 		{
 			//AddClassesAndProps(cmObjectTypes);

@@ -73,8 +73,6 @@ namespace SIL.Utils
 			return CreateObject(configuration, CreateArgs(configuration));
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static object[] CreateArgs(XmlNode configuration)
 		{
 			List<object> argList = new List<object>();

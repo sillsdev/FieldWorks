@@ -331,8 +331,6 @@ namespace SIL.SilSidePane
 		/// <summary>
 		/// Gets the currently selected tab, or null if there is no tab selected.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "currentTabWidget is a reference")]
 		public Tab CurrentTab
 		{
 			get

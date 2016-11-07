@@ -455,8 +455,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return vs;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="DummyConSlice gets added to control collection and disposed there.")]
 		public void InsertDummies(ConcSlice concSlice, int index, int count)
 		{
 			CheckDisposed();

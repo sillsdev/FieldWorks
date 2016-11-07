@@ -21,8 +21,6 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 	public class DataMigration7000044Tests : DataMigrationTestsBase
 	{
 		/// <summary/>
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification="Newline of sampleLayoutData is in source file and so will be correct according to current platform")]
 		public DataMigration7000044Tests()
 		{
 		}

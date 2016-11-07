@@ -155,8 +155,6 @@ namespace SidebarLibrary.WinControls
 		#endregion
 
 		#region Overrides
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "g is a reference")]
 		protected override void OnPaint(PaintEventArgs pe)
 		{
 			base.OnPaint(pe);
@@ -297,8 +295,6 @@ namespace SidebarLibrary.WinControls
 
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "g is a reference")]
 		void customColorsPage_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
 		{
 			// Paint custom colors

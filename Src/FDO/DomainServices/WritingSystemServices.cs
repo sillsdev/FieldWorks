@@ -2028,8 +2028,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
 		/// </returns>
 		/// <filterpriority>2</filterpriority>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return GetEnumerator();

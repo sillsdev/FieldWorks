@@ -409,8 +409,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
 		/// data.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Added to Rows collection and disposed in DataGridView.Dispose()")]
 		protected override void OnVisibleChanged(EventArgs e)
 		{
 			base.OnVisibleChanged(e);

@@ -234,8 +234,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	/// <summary>
 	/// Undoable real data cache.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
-		Justification = "Unit test")]
 	public class UndoableRealDataCache : IRealDataCache
 	{
 		public enum ObjType
@@ -283,8 +281,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			public object Object { get; private set; }
 		}
 
-		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-			Justification = "m_Cache is a reference")]
 		public class CacheUndoAction: IUndoAction
 		{
 			private IRealDataCache m_Cache;

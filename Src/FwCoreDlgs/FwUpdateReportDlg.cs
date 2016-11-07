@@ -281,8 +281,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Handle BeginPrint event.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "FontFamily.Families contains references")]
 		private void printDocument_BeginPrint(object sender, PrintEventArgs e)
 		{
 			if (m_SansSerifFont == null)

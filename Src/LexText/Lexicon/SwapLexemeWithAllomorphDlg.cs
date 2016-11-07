@@ -53,8 +53,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "infoIcon is a reference")]
 		public SwapLexemeWithAllomorphDlg()
 		{
 			//

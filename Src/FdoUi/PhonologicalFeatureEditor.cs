@@ -32,8 +32,6 @@ namespace SIL.FieldWorks.FdoUi
 	/// sort of makes sense to put it here as a class that is quite specific to a particular
 	/// part of the model.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-		Justification="m_cache and m_mediator are references")]
 	public class PhonologicalFeatureEditor : IBulkEditSpecControl, IFWDisposable
 	{
 		private Mediator m_mediator;

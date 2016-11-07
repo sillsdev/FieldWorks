@@ -1083,8 +1083,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static extern int MessageBox(IntPtr hWnd, string lpText, string lpCaption,
 			uint uType);
 #else
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="temp is a reference")]
 		public static int MessageBox(IntPtr hWnd, string lpText, string lpCaption,
 			uint uType)
 		{
@@ -1380,8 +1378,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
 		public static extern IntPtr GetParent(IntPtr hWnd);
 #else
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="temp is a reference")]
 		public static IntPtr GetParent(IntPtr hWnd)
 		{
 			System.Windows.Forms.Control temp = System.Windows.Forms.Panel.FromHandle(hWnd);
@@ -1397,8 +1393,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[DllImport("user32.dll")]
 		public extern static bool SetForegroundWindow(IntPtr hWnd);
 #else
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="temp is a reference")]
 		public static bool SetForegroundWindow(IntPtr hWnd)
 		{
 			System.Windows.Forms.Control temp = System.Windows.Forms.Panel.FromHandle(hWnd);
@@ -1429,8 +1423,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[DllImport("user32.dll")]
 		public extern static bool GetWindowRect(IntPtr hWnd, out Rect rect);
 #else
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="temp is a reference")]
 		public static bool GetWindowRect(IntPtr hWnd, out Rect rect)
 		{
 			System.Windows.Forms.Control temp = System.Windows.Forms.Panel.FromHandle(hWnd);

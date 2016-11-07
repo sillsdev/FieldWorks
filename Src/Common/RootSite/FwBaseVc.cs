@@ -157,8 +157,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="vwenv">The view environment</param>
 		/// <param name="hvo">The ID of the embedded object</param>
 		/// -----------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="Added TODO-Linux comment")]
 		public override void DisplayEmbeddedObject(IVwEnv vwenv, int hvo)
 		{
 			// See if it is a CmPicture.

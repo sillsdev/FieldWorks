@@ -108,8 +108,6 @@ namespace FDOBrowser
 		/// Setups the custom menus and toolbar items.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ToolStripMenuItem gets added to ContextMenuStrip's item collection and disposed there")]
 		private void SetupCustomMenusAndToolbarItems()
 		{
 			#region Grid context menu items

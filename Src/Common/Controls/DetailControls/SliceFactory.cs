@@ -84,8 +84,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary></summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public static Slice Create(FdoCache cache, string editor, int flid, XmlNode node, ICmObject obj,
 			IPersistenceProvider persistenceProvider, Mediator mediator, PropertyTable propertyTable, XmlNode caller, ObjSeqHashMap reuseMap)
 		{
@@ -397,8 +395,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// appropriate default slice for the custom field indicated in the param attribute of
 		/// the caller.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		static Slice MakeAutoCustomSlice(FdoCache cache, ICmObject obj, XmlNode caller, XmlNode configurationNode)
 		{
 			IFwMetaDataCache mdc = cache.DomainDataByFlid.MetaDataCache;

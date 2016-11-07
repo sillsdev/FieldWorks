@@ -29,8 +29,6 @@ namespace SIL.FieldWorks.Common.Controls
 	/// object whose primary purpose is to allow refactoring of this huge method.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_cache is a reference")]
 	public class XmlVcDisplayVec
 	{
 		#region Member Variables

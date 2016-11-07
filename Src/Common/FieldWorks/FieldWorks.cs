@@ -64,9 +64,6 @@ using SIL.Keyboarding;
 using NetSparkle;
 #endif
 
-[assembly:SuppressMessage("Gendarme.Rules.Portability", "ExitCodeIsLimitedOnUnixRule",
-	Justification="Gendarme bug? We only return values >= 0")]
-
 namespace SIL.FieldWorks
 {
 	#region FieldWorks class
@@ -177,10 +174,6 @@ namespace SIL.FieldWorks
 		/// </summary>
 		/// <param name="rgArgs">The command line arguments.</param>
 		/// ----------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "See TODO-Linux")]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="open GeckoWebBrowser is disposed by Xpcom.Shutdown")]
 		[STAThread]
 		static int Main(string[] rgArgs)
 		{
@@ -503,8 +496,6 @@ namespace SIL.FieldWorks
 		/// <param name="appArgs">The command-line arguments.</param>
 		/// <returns>Indication of whether application was successfully created.</returns>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="app is a reference")]
 		private static bool CreateApp(FwAppArgs appArgs)
 		{
 			FwApp app = GetOrCreateApplication(appArgs);
@@ -840,8 +831,6 @@ namespace SIL.FieldWorks
 		/// cache could not be created.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "owner is a reference")]
 		private static FdoCache CreateCache(ProjectId projectId)
 		{
 			Debug.Assert(projectId.IsValid);
@@ -922,8 +911,6 @@ namespace SIL.FieldWorks
 		/// that as the most recent interesting project to open for the current main window's app.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "settings is a reference")]
 		private static void FieldWorks_OnSave(object sender, SaveEventArgs e)
 		{
 			if (!e.UndoableChanges)
@@ -1172,8 +1159,6 @@ namespace SIL.FieldWorks
 		/// <returns>True if the exception was lethal and the user chose to exit,
 		/// false otherise</returns>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "appKey is a reference")]
 		private static bool SafelyReportException(Exception error, IFwMainWnd parent, bool isLethal)
 		{
 				// Be very, very careful about changing stuff here. Code here MUST not throw exceptions,
@@ -1275,8 +1260,6 @@ namespace SIL.FieldWorks
 		/// <param name="args">The application arguments.</param>
 		/// <returns>The project to run, or null if no project could be determined</returns>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="app is a reference")]
 		private static ProjectId DetermineProject(FwAppArgs args)
 		{
 			// Get project information from one of four places, in this order of preference:
@@ -1378,8 +1361,6 @@ namespace SIL.FieldWorks
 		/// process.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="app is a reference")]
 		private static bool LaunchProject(FwAppArgs args, ref ProjectId projectId)
 		{
 			while (true)
@@ -1582,8 +1563,6 @@ namespace SIL.FieldWorks
 		/// project being opened; <c>null</c> if the user chooses to exit.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="startingApp is a reference")]
 		private static ProjectId ShowWelcomeDialog(FwAppArgs args, FwApp startingApp, ProjectId lastProjectId, StartupException exception)
 		{
 			CloseSplashScreen();
@@ -1769,8 +1748,6 @@ namespace SIL.FieldWorks
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <returns>The chosen project, or null if no project was chosen</returns>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "activeWindow is a reference")]
 		internal static ProjectId ChooseLangProject(Form dialogOwner, IHelpTopicProvider helpTopicProvider)
 		{
 			if (!FwNewLangProject.CheckProjectDirectory(dialogOwner, helpTopicProvider))
@@ -2061,9 +2038,6 @@ namespace SIL.FieldWorks
 			}
 			return true;	// shouldn't ever get here, but be safe if we do.
 		}
-
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private static List<string> GetDriveMountList()
 		{
 			// TODO-Linux: GetDrives() on Mono is only implemented for Linux.
@@ -2651,8 +2625,6 @@ namespace SIL.FieldWorks
 		/// </summary>
 		/// <param name="app">The application.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private static void CheckForMovingExternalLinkDirectory(FwApp app)
 		{
 			// Don't crash here if we have a data problem -- that may be due to another issue that
@@ -2929,8 +2901,6 @@ namespace SIL.FieldWorks
 		/// <param name="projectId">The project id.</param>
 		/// <returns>True if the application was successfully initialized, false otherwise</returns>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "sparkle is disposed by SingletonsContainer")]
 		private static bool InitializeFirstApp(FwApp app, ProjectId projectId)
 		{
 			Debug.Assert(s_cache == null && s_projectId == null, "This should only get called once");
@@ -3459,8 +3429,6 @@ namespace SIL.FieldWorks
 		/// to the ErrorReporter so that it can be reported with a crash.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private static void SetupErrorReportInformation()
 		{
 			string version = Version;
@@ -3830,8 +3798,6 @@ namespace SIL.FieldWorks
 		/// <param name="projectName">Name of the project where we might switch to the newer writing system.</param>
 		/// <returns><c>true</c> to accept newer version; <c>false</c> otherwise</returns>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "owner is a reference")]
 		private static bool ComplainToUserAboutNewWs(string wsLabel, string projectName)
 		{
 			// Assume they want the WS updated when we're not supposed to show a UI.

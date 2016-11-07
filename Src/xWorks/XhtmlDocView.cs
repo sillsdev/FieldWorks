@@ -147,7 +147,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Handle a mouse click in the web browser displaying the xhtml.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "element does NOT need to be disposed locally!")]
 		private void OnDomClick(object sender, DomMouseEventArgs e)
 		{
 			CloseContextMenuIfOpen();
@@ -345,8 +344,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <remarks>
 		/// This is static so that the method can be shared with XhtmlRecordDocView.
 		/// </remarks>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ToolStripMenuItems get added to m_contextMenu.Items; ContextMenuStrip is disposed in DisposeContextMenu()")]
 		internal static void HandleDomRightClick(GeckoWebBrowser browser, DomMouseEventArgs e,
 			GeckoElement element, PropertyTable propertyTable, Mediator mediator, string configObjectName)
 		{
@@ -375,8 +372,6 @@ namespace SIL.FieldWorks.XWorks
 		/// Returns the class hierarchy for a GeckoElement
 		/// </summary>
 		/// <remarks>LT-17213 Internal for use in DictionaryConfigurationDlg</remarks>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "elem does NOT need to be disposed locally!")]
 		internal static List<string> GetClassListFromGeckoElement(GeckoElement element, out Guid topLevelGuid, out GeckoElement entryElement)
 		{
 			topLevelGuid = Guid.Empty;
@@ -804,7 +799,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Remove the style from the previously selected entry.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "GeckoHtmlElement does NOT need to be disposed locally!")]
 		private void RemoveStyleFromPreviousSelectedEntryOnView(GeckoWebBrowser browser)
 		{
 			if (string.IsNullOrEmpty(m_selectedObjectID))
@@ -821,7 +815,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Set the style attribute on the current entry to color the background.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "GeckoHtmlElement does NOT need to be disposed locally!")]
 		private void SetActiveSelectedEntryOnView(GeckoWebBrowser browser)
 		{
 			if (Clerk.CurrentObject == null)

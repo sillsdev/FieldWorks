@@ -169,16 +169,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return true;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="GetView() returns a reference")]
 		public bool OnAlphabeticalOrder(object args)
 		{
 			GetView().RemoveOrdering();
 			return true;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="GetView() returns a reference")]
 		public virtual bool OnDisplayAlphabeticalOrder(object commandObject, ref UIItemDisplayProperties display)
 		{
 			display.Enabled = display.Visible = GetView().RootPropertySupportsVirtualOrdering();

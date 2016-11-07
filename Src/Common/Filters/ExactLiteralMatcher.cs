@@ -53,8 +53,6 @@ namespace SIL.FieldWorks.Filters
 			return Accept(arg);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public bool SameMatcher(IMatcher other)
 		{
 			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)

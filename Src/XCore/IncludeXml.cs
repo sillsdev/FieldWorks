@@ -72,8 +72,6 @@ namespace XCore
 		/// <param name="cachedDoms"></param>=
 		/// <param name="parentPath"></param>=
 		/// <param name="dom"></param>=
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected void ProcessDom(Dictionary<string, XmlDocument> cachedDoms, string parentPath, XmlDocument dom)
 		{
 			XmlNode nodeForError = null;
@@ -128,8 +126,6 @@ namespace XCore
 		/// </summary>
 		/// <param name="includeNode">include" node, possibly containing "overrides" nodes</param>
 		/// <returns>true if we processed an "overrides" node.</returns>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private static bool HandleIncludeOverrides(XmlNode includeNode)
 		{
 			XmlNode parentNode = includeNode.ParentNode;
@@ -389,8 +385,6 @@ namespace XCore
 			return CreateFragmentWithTargetNodes(query, document);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static XmlDocumentFragment CreateFragmentWithTargetNodes(string query, XmlDocument document)
 		{
 			//find the nodes specified in the XML query
@@ -412,8 +406,6 @@ namespace XCore
 		/// the node that it references, from the same file. This is used by PNG branch report filter system.
 		/// </summary>
 		/// <param name="dom"></param>=
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void ProcessCopyElements(XmlDocument dom)
 		{
 			XmlNode nodeForError = null;

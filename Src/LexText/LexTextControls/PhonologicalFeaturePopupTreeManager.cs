@@ -110,8 +110,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="pt is a reference")]
 		protected override void m_treeCombo_AfterSelect(object sender, TreeViewEventArgs e)
 		{
 			HvoTreeNode selectedNode = e.Node as HvoTreeNode;

@@ -1090,8 +1090,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="nodesWithForms"></param>
 		/// <param name="text">text to add material to. Material is from XmlNode, hence non-safe XML (read from XmlNode without re-escaping).</param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ReadFormNodes(XmlNodeList nodesWithForms, LiftMultiText text)
 		{
 			foreach (XmlNode formNode in nodesWithForms)

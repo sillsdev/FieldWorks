@@ -29,8 +29,6 @@ namespace XMLViewsTests
 	/// to the root object of each row.
 	/// </summary>
 	[TestFixture]
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 	public class TestManyOneBrowse : SIL.FieldWorks.Test.TestUtils.BaseTest
 	{
 		private IFwMetaDataCache m_mdc;

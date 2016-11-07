@@ -169,8 +169,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <param name="loadType"></param>
 		/// <param name="settings"></param>
 		/// <returns>a working FdoCache</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ThreadHelper gets disposed in FixtureTeardown")]
 		protected FdoCache BootstrapSystem(IProjectIdentifier projectId, BackendBulkLoadDomain loadType, FdoSettings settings)
 		{
 			var retval = m_internalRestart ? FdoCache.CreateCacheFromExistingData(projectId, "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, settings, new DummyProgressDlg()) :

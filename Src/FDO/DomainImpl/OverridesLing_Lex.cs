@@ -3252,8 +3252,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <summary>
 		/// Overrides the method, so we can also merge similar MSAs and allomorphs, after the main merge.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public override void MergeObject(ICmObject objSrc, bool fLoseNoStringData)
 		{
 			if (!(objSrc is ILexEntry))

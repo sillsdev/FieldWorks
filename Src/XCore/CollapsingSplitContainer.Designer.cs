@@ -77,8 +77,6 @@ namespace XCore
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="TabStop is not implemented on Mono")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();

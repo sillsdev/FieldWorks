@@ -640,8 +640,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// <param name="filezsize"></param>
 		/// <param name="restoreDirectory"></param>
 		/// <param name="fileDateTime">We want this set to the value stored in the zipfile.</param>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "See TODO-Linux comment")]
 		private void UnzipFileToRestoreFolder(ZipInputStream zipIn, string fileName,
 			long filezsize, string restoreDirectory, DateTime fileDateTime)
 		{

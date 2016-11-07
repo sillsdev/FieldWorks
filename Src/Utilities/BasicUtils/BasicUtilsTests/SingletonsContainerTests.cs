@@ -129,8 +129,6 @@ namespace SIL.Utils
 		/// ------------------------------------------------------------------------------------
 		///
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "singleton disposed by using statement")]
 		public void RemoveSingleton()
 		{
 			using (var singleton = new MyDisposable())
@@ -148,8 +146,6 @@ namespace SIL.Utils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "singleton disposed by using statement")]
 		public void RemoveNonExistingSingleton()
 		{
 			using (var singleton = new MyDisposable())
@@ -166,8 +162,6 @@ namespace SIL.Utils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "singleton disposed by using statement")]
 		public void RetrieveSingleton()
 		{
 			using (var singleton = new MyDisposable())
@@ -183,8 +177,6 @@ namespace SIL.Utils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "singleton disposed by using statement")]
 		public void RetrieveNonExistingSingleton()
 		{
 			using (var singleton = new MyDisposable())

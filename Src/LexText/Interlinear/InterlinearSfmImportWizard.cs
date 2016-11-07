@@ -558,8 +558,6 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="RecordClerk.FindClerk() returns a reference")]
 		protected override void OnFinishButton()
 		{
 			base.OnFinishButton();

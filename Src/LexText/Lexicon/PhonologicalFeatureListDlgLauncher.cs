@@ -41,8 +41,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Handle launching of the phonological feature editor.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		protected override void HandleChooser()
 		{
 			// grammar/phonemes/phonological features/[...] (click chooser button)

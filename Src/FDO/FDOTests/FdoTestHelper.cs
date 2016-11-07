@@ -103,8 +103,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <param name="fCreateGlosses">if set to <c>true</c> create a gloss in addition to the
 		/// WfiWordform.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "cache is a reference")]
 		private static void CreateAnalysisForWord(string word, ISegment segment, int ws,
 			bool fCreateGlosses)
 		{

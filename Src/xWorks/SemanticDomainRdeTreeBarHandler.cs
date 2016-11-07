@@ -42,8 +42,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="treeBarControl is a reference")]
 		internal override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode node)
 		{
 			base.Init(mediator, propertyTable, node);
@@ -60,8 +58,6 @@ namespace SIL.FieldWorks.XWorks
 			m_listView.HeaderStyle = ColumnHeaderStyle.None; // We don't want a secondary "Records" title bar
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="PaneBar and Panel get added to controls collection and disposed there")]
 		private void SetupAndShowHeaderPanel(XmlNode node, RecordBar treeBarControl)
 		{
 			if (!treeBarControl.HasHeaderControl)

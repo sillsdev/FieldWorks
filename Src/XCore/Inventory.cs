@@ -301,8 +301,6 @@ namespace XCore
 		///   corresponding layoutType node with a layout name that ends with "#Foo".
 		/// </summary>
 		/// <param name="element"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void PersistOverrideElement(XmlNode element)
 		{
 			string[] keyAttrs = m_keyAttrs[element.Name];
@@ -450,8 +448,6 @@ namespace XCore
 		/// <summary>
 		/// Add (or replace) the given layout type in the inventory.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void AddLayoutTypeToInventory(XmlNode layoutType)
 		{
 			Debug.Assert(m_mainDoc != null);
@@ -478,8 +474,6 @@ namespace XCore
 		/// <summary>
 		/// Return the list of layout types that the inventory knows about.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public List<XmlNode> GetLayoutTypes()
 		{
 			Debug.Assert(m_mainDoc != null);
@@ -689,8 +683,6 @@ namespace XCore
 			return unified;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ChildNodes returns a reference")]
 		private void UnifyChildren(XmlNode alteration, XmlNode baseNode, XmlNode unified)
 		{
 			bool reorder = XmlUtils.GetOptionalBooleanAttributeValue(alteration, "reorder", false);
@@ -1003,8 +995,6 @@ namespace XCore
 		/// </summary>
 		/// <param name="inventoryFilePath"></param>
 		/// <param name="newData"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected void RefreshOneInventoryFile(string inventoryFilePath, List<XmlNode> newData)
 		{
 			XmlDocument xdoc = new XmlDocument();
@@ -1076,8 +1066,6 @@ namespace XCore
 		/// <remarks>
 		/// tests over in XMLVIews need access to this method.
 		/// </remarks>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void AddElementsFromFiles(IEnumerable<string> filePaths, int version, bool loadUserOverRides)
 		{
 			Debug.Assert(filePaths != null);
@@ -1102,8 +1090,6 @@ namespace XCore
 		/// <summary>
 		/// Collect all of the elements up from a string input (used in testing).
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected void AddElementsFromString(string input, int version)
 		{
 			Debug.Assert(m_mainDoc != null);

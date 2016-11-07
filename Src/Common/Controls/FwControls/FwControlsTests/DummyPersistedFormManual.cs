@@ -142,8 +142,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Returns a key in the registry where <see cref="T:SIL.FieldWorks.Common.Controls.Persistence"/> should store settings.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		public RegistryKey SettingsKey
 		{
 			get

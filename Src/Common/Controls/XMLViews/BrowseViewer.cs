@@ -2601,8 +2601,6 @@ namespace SIL.FieldWorks.Common.Controls
 			m_scrollContainer.PerformLayout();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ch gets added to Columns collection and disposed there")]
 		private void RebuildHeaderColumns(List<XmlNode> colSpecs, Dictionary<XmlNode, int> widths)
 		{
 			m_lvHeader.BeginUpdate();
@@ -2684,8 +2682,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "menu is a reference")]
 		private void ConfigItemClicked(object sender, EventArgs args)
 		{
 			// If we have changes we need to commit, do it before we mess up the column sequence.

@@ -11,8 +11,6 @@ namespace SidebarLibrary.Collections
 	/// <summary>
 	/// Summary description for OutlookBarBandCollection.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="parentBar is a reference")]
 	public class OutlookBarBandCollection  : System.Collections.CollectionBase, IEnumerable
 	{
 

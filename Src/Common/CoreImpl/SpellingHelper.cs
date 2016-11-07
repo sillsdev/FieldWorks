@@ -42,8 +42,6 @@ namespace SIL.CoreImpl
 
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "SingletonToDispose is, of course, disposed by the SingletonsContainer")]
 		static SpellingHelper()
 		{
 			// The SingletonToDispose will be disposed during system shutdown.
@@ -58,8 +56,6 @@ namespace SIL.CoreImpl
 		/// </summary>
 		/// <param name="dictId"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "new spelling engines are kept in m_spellers and disposed of when replaced or at end of session")]
 		public static ISpellEngine GetSpellChecker(string dictId)
 		{
 			SpellEngine result;
@@ -215,8 +211,6 @@ namespace SIL.CoreImpl
 			return GetSpellChecker(dictId);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		private static SpellEngine RawGetSpellChecker(string dictId)
 		{
 			SpellEngine result = null;

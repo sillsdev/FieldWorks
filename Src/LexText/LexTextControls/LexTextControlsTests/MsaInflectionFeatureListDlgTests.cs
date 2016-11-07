@@ -96,8 +96,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "tv is a reference")]
 		public void PopulateTreeFromFeatureSystem()
 		{
 			// Set up sample data

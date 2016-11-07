@@ -85,8 +85,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 		// We want to emulate what ReferenceLauncher does, but without the object being created
 		// until the user clicks OK in the simple list chooser.
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		protected override void HandleChooser()
 		{
 			// YAGNI: may eventually need to make configurable how it comes up with the list of candidates.

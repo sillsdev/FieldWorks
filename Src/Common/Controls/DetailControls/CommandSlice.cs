@@ -40,8 +40,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Constructor.
 		/// </summary>
 		/// <param name="node">The "deParams" node in some XDE file.</param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "btn gets assigned to Control")]
 		public CommandSlice(XmlNode node)
 		{
 			Debug.Assert(node != null);

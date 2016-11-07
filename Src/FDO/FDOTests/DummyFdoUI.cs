@@ -13,8 +13,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// <summary>
 	/// Dummy implementation of IFdoUI for unit tests
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_threadHelper is a singleton and disposed by the SingletonsContainer")]
 	public class DummyFdoUI : IFdoUI
 	{
 		private readonly ThreadHelper m_threadHelper = SingletonsContainer.Get<ThreadHelper>();

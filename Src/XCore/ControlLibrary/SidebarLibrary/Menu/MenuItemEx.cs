@@ -94,8 +94,6 @@ namespace SidebarLibrary.Menus
 			this.imageIndex = imageIndex;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Gendarme bug - I don't see a local of type MenuItem")]
 		static public MenuItem CloneMenu(MenuItemEx currentItem)
 		{
 			MenuItemEx clonedItem = new MenuItemEx(currentItem.Text, (Bitmap)currentItem.Icon,
@@ -169,8 +167,6 @@ namespace SidebarLibrary.Menus
 			get { return clickHandler; }
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "parent is a reference")]
 		protected override void OnSelect(EventArgs e)
 		{
 			// This is to support popup menus when using this class
@@ -279,8 +275,6 @@ namespace SidebarLibrary.Menus
 			itemHeight = e.ItemHeight;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "g is a reference")]
 		protected override void OnDrawItem(DrawItemEventArgs e)
 		{
 			base.OnDrawItem(e);
@@ -468,8 +462,6 @@ namespace SidebarLibrary.Menus
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Brush gets disposed in finally block")]
 		public void DrawMenuText(Graphics g, Rectangle bounds, string text, string shortcut, bool enabled, bool toplevel, DrawItemState state)
 		{
 			using (StringFormat stringformat = new StringFormat())

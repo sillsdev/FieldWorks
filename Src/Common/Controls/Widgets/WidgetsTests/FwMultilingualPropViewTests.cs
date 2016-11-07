@@ -21,8 +21,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Dummy implementation of IFwMultilingualPropViewDataSource to allow testing FwMultilingualPropView
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-			Justification="Unit tests - Cache and Grid are never assigned to, so there is no need to call Dispose()")]
 		internal class DummyFwMultilingualPropViewDataSource : IFwMultilingualPropViewDataSource
 		{
 			protected WritingSystemManager m_writingSystemManager = new WritingSystemManager();

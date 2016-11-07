@@ -153,8 +153,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Gets the settings key.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		public RegistryKey SettingsKey
 		{
 			get

@@ -2085,8 +2085,6 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			m_mapWsEncConv.Add(ecc.WritingSystem.Id, ecc);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ReadMarkerSetting(XmlNode xnMarker)
 		{
 			try

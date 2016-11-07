@@ -893,8 +893,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="rcSrcRoot"></param>
 		/// <param name="rcDstRoot"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Context menu - can't dispose right away")]
 		protected override bool OnRightMouseUp(Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
 			var sel = MakeSelectionAt(new MouseEventArgs(MouseButtons.Right, 1, pt.X, pt.Y, 0));

@@ -427,8 +427,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return true;
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "datatree is a reference")]
 			private void SwitchToReal()
 			{
 				// Depending on compile switch for SLICE_IS_SPLITCONTAINER,

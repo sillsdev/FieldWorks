@@ -20,8 +20,6 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 	/// a form that is tractable for exporting to MDF or LIFT.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_cache is a reference")]
 	public class SingleLexReference : ICmObject
 	{
 		/// <summary></summary>

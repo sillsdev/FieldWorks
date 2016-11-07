@@ -23,8 +23,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// Constructor must be public (and with no arguments) for creation by reflection
 		/// based on mention in XML configuration files.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "LexReferencePairLauncher gets added to panel's Controls collection and disposed there")]
 		public LexReferencePairSlice()
 			: base(new LexReferencePairLauncher())
 		{

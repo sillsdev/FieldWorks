@@ -355,8 +355,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// This provides a reasonable sort order for Code Pages supported as encodings.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See comment below")]
 		private int CompareEncInfo(System.Text.EncodingInfo x, System.Text.EncodingInfo y)
 		{
 			// EncodingInfo.DisplayName is marked with MonoTODO since it simply returns Name,
@@ -375,8 +373,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
 		/// data.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private void cboConverter_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			txtMapFile.Text = "";
@@ -953,8 +949,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
 		/// data.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "myParentCtrl is a reference")]
 		private void btnMore_Click(object sender, EventArgs e)
 		{
 			Control myParentCtrl = Parent;
@@ -1014,8 +1008,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "myParentCtrl is a reference")]
 		private void btnModify_Click(object sender, EventArgs e)
 		{
 			// call the v2.2 interface to "AutoConfigure" a converter

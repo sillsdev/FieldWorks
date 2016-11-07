@@ -50,10 +50,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="image gets disposed in finally block")]
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private IPicture LoadPicture()
 		{
 			IPicture picture;

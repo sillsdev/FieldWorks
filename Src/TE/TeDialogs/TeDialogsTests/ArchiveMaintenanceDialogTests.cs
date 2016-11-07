@@ -224,8 +224,6 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "tree is a reference")]
 		public void FillTreeView()
 		{
 			using (DummySavedVersionsDialog dlg = new DummySavedVersionsDialog(Cache))
@@ -276,8 +274,6 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "tree is a reference")]
 		public void DeleteBook()
 		{
 			using (DummySavedVersionsDialog dlg = new DummySavedVersionsDialog(Cache))
@@ -338,8 +334,6 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "tree is a reference")]
 		public void DeleteOnlyBook()
 		{
 			using (DummySavedVersionsDialog dlg = new DummySavedVersionsDialog(Cache))
@@ -390,8 +384,6 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "tree is a reference")]
 		public void DeleteSavedVersion()
 		{
 			using (DummySavedVersionsDialog dlg = new DummySavedVersionsDialog(Cache))
@@ -435,8 +427,6 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "tree is a reference")]
 		public void DisableCompareBtn()
 		{
 			// Add Revelation, archive it and then remove it.
@@ -505,8 +495,6 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "tree is a reference")]
 		public void DeleteAllItems()
 		{
 			using (DummySavedVersionsDialog dlg = new DummySavedVersionsDialog(Cache))

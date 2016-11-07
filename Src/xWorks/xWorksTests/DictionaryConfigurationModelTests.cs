@@ -890,8 +890,6 @@ namespace SIL.FieldWorks.XWorks
 			StringAssert.Contains(Environment.NewLine, File.ReadAllText(modelFile), "Configuration XML should not all be on one line");
 		}
 
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-							  Justification = "Certain types can't be validated. e.g. xs:byte, otherwise implemented enough for us")]
 		private static void ValidateAgainstSchema(string xmlFile)
 		{
 			var schemaLocation = Path.Combine(Path.Combine(FwDirectoryFinder.FlexFolder, "Configuration"), "DictionaryConfiguration.xsd");

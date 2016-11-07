@@ -69,8 +69,6 @@ namespace XCore
 			return m_commandBarManager.HandleAltKey(e, wasDown);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="CommandBarItem added to m_menuBar and disposed in Dispose()")]
 		public void CreateUIForChoiceGroupCollection(ChoiceGroupCollection groupCollection)
 		{
 			bool weCreatedTheBarManager = GetCommandBarManager();
@@ -122,8 +120,6 @@ namespace XCore
 		/// This is called by the OnDisplay() method of some ChoiceGroup
 		/// </summary>
 		/// <param name="group">The group that is the basis for this menu</param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Items get added to menu and hopefully disposed there")]
 		public void CreateUIForChoiceGroup (ChoiceGroup group)
 		{
 			if(group.ReferenceWidget is ContextMenu)
@@ -174,8 +170,6 @@ namespace XCore
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Items get added to menu and hopefully disposed there")]
 		public void CreateContextMenuUIForChoiceGroup (ChoiceGroup group)
 		{
 			CommandBarContextMenu menu = (CommandBarContextMenu) group.ReferenceWidget;
@@ -266,8 +260,6 @@ namespace XCore
 			return menu;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Variables are references or returned")]
 		protected CommandBarItem CreateMenuItem(ChoiceBase choice)
 		{
 			//note that we could handle the details of display in two different ways.
@@ -316,8 +308,6 @@ namespace XCore
 
 		#region ITestableUIAdapter
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Reference only")]
 		public int GetItemCountOfGroup (string groupId)
 		{
 			CommandBarMenu menu = GetMenu(groupId);
@@ -375,8 +365,6 @@ namespace XCore
 		/// </summary>
 		/// <param name="groupId">The id of the menu</param>
 		/// <param name="itemId">the id of the item.  As of this writing, this often defaults to the label without the "_"</param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="GetMenu() returns a reference")]
 		public void ClickItem (string groupId, string itemId)
 		{
 			CommandBarMenu menu = GetMenu(groupId);
@@ -389,8 +377,6 @@ namespace XCore
 			OnClick(item, null);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="GetMenu() returns a reference")]
 		public bool IsItemEnabled(string groupId, string itemId)
 		{
 			CommandBarMenu menu = GetMenu(groupId);
@@ -400,8 +386,6 @@ namespace XCore
 			return item.IsEnabled;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="GetMenu() returns a reference")]
 		public bool HasItem(string groupId, string itemId)
 		{
 			CommandBarMenu menu = GetMenu(groupId);

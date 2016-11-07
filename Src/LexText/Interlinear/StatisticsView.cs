@@ -64,8 +64,6 @@ namespace SIL.FieldWorks.IText
 
 		#region Implementation of IxCoreColleague
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="RecordClerk.FindClerk() returns a reference")]
 		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
@@ -90,10 +88,6 @@ namespace SIL.FieldWorks.IText
 			mediator.SendMessage("AddContextToHistory", new FwLinkArgs(toolName, Guid.Empty), false);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="REVIEW: I'm not sure if/where Font gets disposed)")]
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private void RebuildStatisticsTable()
 		{
 			statisticsBox.Clear();

@@ -586,8 +586,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// to the user and return false. This should prevent the user from closing the
 		/// containing form using OK, but not from cancelling.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		public bool CheckValid()
 		{
 			CheckDisposed();

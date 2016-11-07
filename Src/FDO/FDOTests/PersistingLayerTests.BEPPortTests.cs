@@ -136,8 +136,6 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		/// </summary>
 		[Test]
 		[Combinatorial]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "source/targetDataSetup are singletons; disposed by service locator")]
 		public void PortAllBEPsTestsUsingAnAlreadyOpenedSource(
 			[Values(FDOBackendProviderType.kXML, FDOBackendProviderType.kMemoryOnly)]
 			FDOBackendProviderType sourceType,
@@ -198,8 +196,6 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		/// all targets.</remarks>
 		[Test]
 		[Combinatorial]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "source/targetDataSetup are singletons; disposed by service locator")]
 		public void PortAllBEPsTestsUsingAnUnopenedSource(
 			[Values(FDOBackendProviderType.kXML)]
 			FDOBackendProviderType sourceType,

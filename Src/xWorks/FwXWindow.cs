@@ -101,8 +101,6 @@ namespace SIL.FieldWorks.XWorks
 		/// chance to reload stuff (calling the old OnRefresh methods), then give
 		/// windows a chance to redisplay themselves.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "activeCache is a reference")]
 		public virtual void OnMasterRefresh(object sender)
 		{
 			CheckDisposed();

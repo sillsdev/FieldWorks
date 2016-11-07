@@ -14,8 +14,6 @@ namespace Reflector.UserInterface
 	using System.Globalization;
 	using System.Windows.Forms;
 
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Parent should dispose items in this collectioin.")]
 	public class CommandBarItemCollection : ICollection
 	{
 		private CommandBar commandBar;
@@ -61,8 +59,6 @@ namespace Reflector.UserInterface
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Add to MenuItems and disposed in parent's Dispose")]
 		public void AddSeparator()
 		{
 			this.Add(new CommandBarSeparator());

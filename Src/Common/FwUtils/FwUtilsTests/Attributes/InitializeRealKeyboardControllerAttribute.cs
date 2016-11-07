@@ -25,8 +25,6 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 		/// <summary>
 		/// Initialize keyboard controller
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Keyboard.Controller gets disposed")]
 		public override void BeforeTest(TestDetails testDetails)
 		{
 			base.BeforeTest(testDetails);

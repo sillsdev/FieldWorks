@@ -2952,8 +2952,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public virtual bool IsEquivalent(IFsAbstractStructure other)
 		{
 			if (other == null)
@@ -2997,8 +2995,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public virtual bool IsEquivalent(IFsFeatureSpecification other)
 		{
 			if (other == null)

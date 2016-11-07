@@ -46,8 +46,6 @@ namespace SIL.Utils
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		protected string CreateTempTestFiles(Type resourcesType, string folderName)
 		{
 			string folderPath = Path.Combine(Path.GetTempPath(), folderName);

@@ -460,8 +460,6 @@ namespace SIL.Utils
 		/// <param name="mode">The <see>FileMode</see> to use</param>
 		/// <returns>A stream with write access</returns>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We return the stream, so we can't dispose the StreamWriter")]
 		Stream IFileOS.OpenStreamForWrite(string filename, FileMode mode)
 		{
 			if (mode != FileMode.Open && mode != FileMode.OpenOrCreate)

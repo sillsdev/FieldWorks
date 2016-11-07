@@ -514,8 +514,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// Returns the object of the current slice, or (if no slice is marked current)
 		/// the object of the first slice, or (if there are no slices, or no data entry form) null.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FieldAt() returns a reference")]
 		private ICmObject CurrentSliceObject
 		{
 			get

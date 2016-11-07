@@ -42,8 +42,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[SetUp]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ThreadHelper is disposed in DestroyTestCache()")]
 		public void CreateTestCache()
 		{
 			m_now = DateTime.Now;

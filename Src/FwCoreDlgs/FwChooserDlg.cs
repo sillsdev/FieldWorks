@@ -343,8 +343,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Get the registry key for this dialog.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		public virtual RegistryKey SettingsKey
 		{
 			get

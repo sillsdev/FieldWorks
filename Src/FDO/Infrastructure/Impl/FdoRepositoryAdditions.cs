@@ -1368,8 +1368,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// is true, then match against lexeme forms even if citation forms exist.  (This behavior is needed
 		/// to fix LT-6024 for categorized entry [now called Collect Words].)
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "cache is a reference")]
 		List<ILexEntry> ILexEntryRepositoryInternal.CollectHomographs(string sForm, int hvo, List<ILexEntry> entries,
 														  IMoMorphType morphType, bool fMatchLexForms)
 		{

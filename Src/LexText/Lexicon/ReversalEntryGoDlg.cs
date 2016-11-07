@@ -62,8 +62,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			get { return "ReversalEntryGo"; }
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "searchEngine is disposed by the mediator.")]
 		protected override void InitializeMatchingObjects(FdoCache cache)
 		{
 			var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");

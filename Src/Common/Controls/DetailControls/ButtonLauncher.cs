@@ -54,9 +54,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private IContainer components;
 
 		#region Properties
-
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "parent is a reference")]
 		protected Slice Slice
 		{
 			get

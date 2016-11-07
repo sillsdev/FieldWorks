@@ -1037,8 +1037,6 @@ namespace LexTextControlsTests
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification="Unit test - we're testing with different combinations of newline chars")]
 		public void TestLiftImport4()
 		{
 			// Setup

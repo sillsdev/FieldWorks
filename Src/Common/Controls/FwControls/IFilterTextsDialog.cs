@@ -64,8 +64,6 @@ namespace SIL.FieldWorks.Common.Controls
 	/// using (IFilterScrSectionDialog dlg = (IDisposable)new FilterScrSectionDialog()) {}
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	[SuppressMessage("Gendarme.Rules.BadPractice", "OnlyUseDisposeForIDisposableTypesRule",
-		Justification="We implement a Dispose extension method")]
 	public static class FilterTextDialogExtensions
 	{
 		/// ------------------------------------------------------------------------------------

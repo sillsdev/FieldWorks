@@ -25,8 +25,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		public MasterPhonologicalFeatureListDlg()
 		{
 		}
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "PhonologicalFeaturesTreeView gets disposed in base class")]
 		public MasterPhonologicalFeatureListDlg(string className) : base(className, new PhonologicalFeaturesTreeView())
 		{
 		}

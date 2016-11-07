@@ -356,8 +356,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification="Dispose not used elsewhere for creating XCore.Command objects")]
 		internal virtual void HandleFwMenuSelection(object sender, EventArgs ea)
 		{
 			CheckDisposed();

@@ -176,8 +176,6 @@ namespace SIL.FieldWorks.XWorks
 			get { return Path.Combine(UtilityHtmlPath, "InitialDocument.htm"); }
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		private RegistryKey RegistryKey
 		{
 			get

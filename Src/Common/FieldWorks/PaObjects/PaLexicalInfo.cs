@@ -131,8 +131,6 @@ namespace SIL.FieldWorks.PaObjects
 		/// </returns>
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private bool InternalInitialize(string name, string server, bool loadOnlyWs,
 			int timeToWaitForProcessStart, int timeToWaitForLoadingData)
 		{

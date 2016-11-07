@@ -264,8 +264,6 @@ namespace SIL.Utils
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return GetEnumerator();

@@ -38,8 +38,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "bulkEditBar is a reference")]
 		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			base.Init(mediator, propertyTable, configurationParameters);

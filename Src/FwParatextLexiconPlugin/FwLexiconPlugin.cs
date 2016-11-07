@@ -92,8 +92,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		/// <param name="projectId">The project identifier.</param>
 		/// <param name="langId">The language identifier.</param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "FdoCache is diposed when the plugin is diposed.")]
 		public LexicalProjectValidationResult ValidateLexicalProject(string projectId, string langId)
 		{
 			using (m_activationContext.Activate())
@@ -134,8 +132,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		/// <param name="projectId">The project identifier.</param>
 		/// <param name="langId">The language identifier.</param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "FdoLexicon is diposed when the plugin is diposed.")]
 		public Lexicon GetLexicon(string scrTextName, string projectId, string langId)
 		{
 			using (m_activationContext.Activate())
@@ -149,8 +145,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		/// <param name="projectId">The project identifier.</param>
 		/// <param name="langId">The language identifier.</param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "FdoLexicon is diposed when the plugin is diposed.")]
 		public WordAnalyses GetWordAnalyses(string scrTextName, string projectId, string langId)
 		{
 			using (m_activationContext.Activate())

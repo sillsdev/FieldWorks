@@ -327,8 +327,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// objects.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		public IEnumerator GetEnumerator()
 		{
 			return m_list.Values.GetEnumerator();
@@ -423,8 +421,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Read the TEStyles.xml file to get the default marker mappings
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ReadDefaultMappings()
 		{
 			XmlDocument doc = new XmlDocument();

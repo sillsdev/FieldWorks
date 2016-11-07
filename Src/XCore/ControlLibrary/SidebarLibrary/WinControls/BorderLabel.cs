@@ -23,8 +23,6 @@ namespace SidebarLibrary.WinControls
 		{
 		}
 
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="Added REVIEW-Linux comment")]
 		public BorderLabel(Color BorderColor, Color HoverColor, int Width)
 		{
 			highlight = true;
@@ -42,8 +40,6 @@ namespace SidebarLibrary.WinControls
 		{
 		}
 
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="Added REVIEW-Linux comment")]
 		public BorderLabel(Color BorderColor, int Width)
 		{
 			highlight = false;

@@ -211,8 +211,6 @@ namespace SIL.FieldWorks.XWorks
 			m_wsComboBox.SelectedIndex = 0;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public static List<IdAndString<Guid>> GetListsComboItems(FdoCache cache, XmlNode windowConfiguration)
 		{
 			var result = new List<IdAndString<Guid>>();
@@ -295,8 +293,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="sName"></param>
 		/// <param name="sClassName"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private List<XmlNode> FindAffectedLayouts(string sFieldLabel, string sName, string sClassName)
 		{
 			var xnlResults = new List<XmlNode>();

@@ -15,8 +15,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <summary>
 		/// Initializes a new instance of the <see cref="AdhocCoProhibVectorReferenceSlice"/> class.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "AdhocCoProhibVectorLauncher gets added to panel's Controls collection and disposed there")]
 		public AdhocCoProhibVectorReferenceSlice()
 			: base(new AdhocCoProhibVectorLauncher())
 		{

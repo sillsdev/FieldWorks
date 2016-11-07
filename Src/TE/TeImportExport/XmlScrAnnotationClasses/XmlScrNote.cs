@@ -198,8 +198,6 @@ namespace SIL.FieldWorks.TE
 		/// Serializes the specified annotation and writes it to the specified XML writer.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "cache is a reference")]
 		public static bool Serialize(XmlTextWriter writer, IScrScriptureNote ann,
 			string languageInFocus)
 		{
@@ -800,8 +798,6 @@ namespace SIL.FieldWorks.TE
 		/// information).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "cache is a reference")]
 		private IScrScriptureNote FindOrCreateAnnotation(FwStyleSheet styleSheet)
 		{
 			FdoCache cache = styleSheet.Cache;

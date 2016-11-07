@@ -13,8 +13,6 @@ using SIL.FieldWorks.FwCoreDlgs;
 
 namespace SIL.FieldWorks.IText
 {
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="The creator/owner of this class is responsible to dispose the passed in dialog")]
 	public class DuplicateWordformFixer : IUtility
 	{
 		public string Label

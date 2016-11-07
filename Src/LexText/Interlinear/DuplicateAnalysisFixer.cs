@@ -17,8 +17,6 @@ namespace SIL.FieldWorks.IText
 	/// An entry in UtilityCatalogInclude (in DistFiles/Language Explorer/Configuration) causes an instance to
 	/// be created by reflection when the dialog is initialized.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification = "The creator/owner of this class is responsible to dispose the passed in dialog")]
 	public class DuplicateAnalysisFixer : IUtility
 	{
 		public string Label

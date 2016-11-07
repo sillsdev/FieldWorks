@@ -972,8 +972,6 @@ namespace SIL.SilSidePane
 		}
 
 		/// <summary></summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		private Brush GripBrush
 		{
 			get

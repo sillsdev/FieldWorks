@@ -707,8 +707,6 @@ namespace Utils.MessageBoxExLib
 		/// <summary>
 		/// Layout all the controls
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="buttonCtrl is added to _buttonControlsTable and disposed in Dispose()")]
 		private void LayoutControls()
 		{
 			panelIcon.Location = new Point(LEFT_PADDING, TOP_PADDING);

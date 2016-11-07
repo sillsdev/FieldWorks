@@ -197,8 +197,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return GetSubDirectory(CodeDirectory, subDirectory);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "FwRegistryHelper.FieldWorksBridgeRegistryKeyLocalMachine returns a reference")]
 		private static string GetFLExBridgeFolderPath()
 		{
 			// Setting a Local Machine registry value is problematic for Linux/Mono.  (FWNX-1180)

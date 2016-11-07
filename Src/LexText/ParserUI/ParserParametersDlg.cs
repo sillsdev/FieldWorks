@@ -281,8 +281,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="m_dsParserParameters gets disposed in Dispose()")]
 		public void SetDlgInfo(string title, string parserParameters)
 		{
 			CheckDisposed();
@@ -344,8 +342,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			return new DataView(table) { AllowNew = false };
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "DataColumns get added to collection and disposed there")]
 		private DataTable CreateXAmpleDataTable()
 		{
 			var tblXAmple = new DataTable(XAmple);
@@ -359,8 +355,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			return tblXAmple;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "DataColumns get added to collection and disposed there")]
 		private DataTable CreateHCDataTable()
 		{
 			var tblHC = new DataTable(HC);

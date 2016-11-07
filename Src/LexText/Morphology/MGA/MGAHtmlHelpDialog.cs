@@ -34,10 +34,6 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "Offending code is compiled only on Windows")]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "GeckoWebBrowser gets added to Control collection and disposed there")]
 		public MGAHtmlHelpDialog(FdoCache cache, IHelpTopicProvider helpTopicProvider, string sMorphemeForm)
 			: base(cache, helpTopicProvider, sMorphemeForm)
 		{

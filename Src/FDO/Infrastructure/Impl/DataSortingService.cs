@@ -324,8 +324,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			public abstract void Advance();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-			Justification="See TODO comment")]
 		class FileInputItem : InputItem
 		{
 			// TODO: Should dispose Reader
@@ -347,8 +345,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		}
 
-		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-			Justification="See TODO comment")]
 		class MemoryInputItem : InputItem
 		{
 			// TODO: we should dispose Enumerator

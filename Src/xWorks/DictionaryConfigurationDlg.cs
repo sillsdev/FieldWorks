@@ -171,7 +171,6 @@ namespace SIL.FieldWorks.XWorks
 		private List<GeckoElement> _highlightedElements;
 		private const string HighlightStyle = "background-color:Yellow ";	// LightYellow isn't really bold enough marking to my eyes for this feature.
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "element does NOT need to be disposed locally!")]
 		public void HighlightContent(ConfigurableDictionaryNode configNode, FdoCache cache)
 		{
 			if (m_preview.IsDisposed)
@@ -204,8 +203,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "body is a reference")]
 		private static List<GeckoElement> FindConfiguredItem(ConfigurableDictionaryNode selectedConfigNode, GeckoWebBrowser browser, FdoCache cache)
 		{
 			var elements = new List<GeckoElement>();

@@ -63,8 +63,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "FwTextBoxCell gets disposed in Dispose()")]
 		public FwTextBoxColumn(FdoCache cache) : base(new FwTextBoxCell())
 		{
 			m_DisposeCellTemplate = true;
@@ -568,8 +566,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "fnt and family are references")]
 		public void SetZoomFactor(float factor)
 		{
 			if (DefaultCellStyle != null)

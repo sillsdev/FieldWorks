@@ -94,8 +94,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			return true;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		private void RestoreSelection()
 		{
 			m_selHelper.RestoreSelectionAndScrollPos();

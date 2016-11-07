@@ -24,8 +24,6 @@ namespace LexTextControlsTests
 	[TestFixture]
 	public class WordsSfmImportTests : BaseTest
 	{
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification="New lines in input strings are different depending on platform")]
 		public WordsSfmImportTests()
 		{
 		}

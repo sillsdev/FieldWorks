@@ -27,8 +27,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification="Intentional use of \n")]
 		[TestCase("simple text.", "Title", null, null, TestName="Simple1")]
 		[TestCase("simple text1", "Title", "simple text2", "Conclusion", TestName="Simple2")]
 		// Test some text with paragraph breaks in it. (Note: we intentionally do not use

@@ -296,8 +296,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_soundControls.Clear();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-						Justification="soundFieldControl gets disposed in Dispose method")]
 		private void SetupSoundControls()
 		{
 			if (m_innerView.WritingSystemsToDisplay == null)

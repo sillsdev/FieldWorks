@@ -29,8 +29,6 @@ namespace XCore
 		/// this can be called repeatedly, but only one will be made.
 		/// </summary>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "XMessageBoxExManager is a (per-app) singleton")]
 		public static XMessageBoxExManager CreateXMessageBoxExManager(string appName)
 		{
 			if (!s_singletonMessageBoxExManager.ContainsKey(appName))

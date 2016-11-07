@@ -33,8 +33,6 @@ namespace XCore
 	/// adapts DotNetBar to provide context help
 	/// /summary>
 	[XCore.MediatorDispose]
-	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-		Justification = "variable is a reference; it is owned by parent")]
 	public abstract class BaseContextHelper : IContextHelper, IxCoreColleague, IFWDisposable
 	{
 		protected PropertyTable m_propertyTable;

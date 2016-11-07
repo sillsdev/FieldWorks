@@ -42,8 +42,6 @@ namespace SIL.FieldWorks.Common.Controls.Design
 		/// <param name="pe">A <see cref="T:System.Windows.Forms.PaintEventArgs"></see> the
 		/// designer can use to draw on the control.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="foreBrush is disposed in finally block")]
 		protected override void OnPaintAdornments(System.Windows.Forms.PaintEventArgs pe)
 		{
 			base.OnPaintAdornments(pe);

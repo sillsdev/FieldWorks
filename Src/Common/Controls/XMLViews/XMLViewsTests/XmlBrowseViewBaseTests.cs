@@ -73,8 +73,6 @@ namespace XMLViewsTests
 		}
 
 		/// <summary/>
-		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-			Justification="m_xmlBrowseViewBase is a reference")]
 		public class FakeRootBox : IVwRootBox
 		{
 			/// <summary/>
@@ -505,10 +503,6 @@ namespace XMLViewsTests
 
 	/// <summary/>
 	[TestFixture]
-	[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-		Justification="FakeBrowseViewer gets disposed in TearDown method")]
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_view is a reference; object gets disposed as part of FakeBrowseViewer's control collection")]
 	public class XmlBrowseViewBaseTests : MemoryOnlyBackendProviderTestBase
 	{
 		private FakeXmlBrowseViewBase m_view;

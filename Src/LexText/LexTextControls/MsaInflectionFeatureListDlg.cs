@@ -183,8 +183,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			linkLabel1.Enabled = m_highestPOS != null;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="helpProvider gets disposed in Dispose()")]
 		private Mediator Mediator
 		{
 			set
@@ -448,8 +446,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();

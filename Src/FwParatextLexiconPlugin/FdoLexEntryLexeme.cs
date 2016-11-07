@@ -19,8 +19,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 	#region FdoLexEntryLexeme class
 	/// <summary>
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_lexicon is a reference")]
 	internal class FdoLexEntryLexeme : Lexeme
 	{
 		private readonly LexemeKey m_key;
@@ -317,8 +315,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			return m_key.GetHashCode();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-			Justification="m_lexicon is a reference")]
 		private class LexSenseLexiconSense : LexiconSense
 		{
 			private readonly FdoLexicon m_lexicon;

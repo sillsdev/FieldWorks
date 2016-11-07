@@ -57,8 +57,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			BackColor = System.Drawing.SystemColors.Window;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		protected override void HandleChooser()
 		{
 			Debug.Assert(m_obj.ClassID == LexEntryTags.kClassId);

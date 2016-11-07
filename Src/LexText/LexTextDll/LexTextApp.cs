@@ -306,8 +306,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// <summary>
 		/// Display the import commands only while in the appropriate area.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "mediator is a reference")]
 		public bool OnDisplayLaunchConnectedDialog(object parameters, ref UIItemDisplayProperties display)
 		{
 			display.Enabled = false;

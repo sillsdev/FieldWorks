@@ -90,8 +90,6 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Gendarme is just too dumb to understand the try...finally pattern to ensure disposal of dlg")]
 		private void LaunchFilterTextsDialog(object sender, EventArgs args)
 		{
 			IFilterTextsDialog<IStText> dlg = null;
@@ -128,7 +126,6 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>Export the data according to specifications.</summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "Using using")]
 		protected override void DoExport(string outPath)
 		{
 			using (var dlg = new ProgressDialogWithTask(this) { IsIndeterminate = true, AllowCancel = false, Message = ITextStrings.ksExporting_ })

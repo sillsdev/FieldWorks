@@ -172,8 +172,6 @@ namespace SIL.FieldWorks.TE
 		/// Load the Scr notes categories from the given XML document
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected virtual void CreateScrNoteCategories()
 		{
 			// Save the previous categories for all of the notes.
@@ -298,8 +296,6 @@ namespace SIL.FieldWorks.TE
 		/// <param name="index">0-based position in the list of possibilities</param>
 		/// <param name="node">XML node to get info from</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void CreateNoteCategory(ICmObject owner, int index, XmlNode node)
 		{
 			if (owner is ICmPossibilityList || owner is ICmPossibility)

@@ -13,8 +13,6 @@ namespace SIL.CoreImpl
 {
 	[TestFixture]
 	[SetCulture("en-US")]
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification = "Unit tests, gets disposed in FixtureTearDown()")]
 	public class WritingSystemManagerTests // can't derive from BaseTest, but instantiate DebugProcs instead
 	{
 		private class TestSettingsStore : ISettingsStore

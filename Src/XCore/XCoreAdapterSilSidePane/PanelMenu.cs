@@ -58,8 +58,6 @@ namespace XCore
 			return choice.BoolPropertyName == name;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Image is a reference")]
 		private void Display()
 		{
 			UIItemDisplayProperties display = m_group.GetDisplayProperties();

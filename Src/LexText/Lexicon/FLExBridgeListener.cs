@@ -33,8 +33,6 @@ using XCore;
 namespace SIL.FieldWorks.XWorks.LexEd
 {
 	[MediatorDispose]
-	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-		Justification="_mediator is a reference")]
 	sealed class FLExBridgeListener : IxCoreColleague, IFWDisposable
 	{
 		private Mediator _mediator;
@@ -51,8 +49,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		private static readonly List<string> OldLiftBridgeProjects;
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		static FLExBridgeListener()
 		{
 			OldLiftBridgeProjects = new List<string>();
@@ -283,8 +279,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		/// <param name="commandObject">Includes the XML command element of the OnFLExBridge message</param>
 		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate.</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "newAppWindow is a reference")]
 		public bool OnFLExBridge(object commandObject)
 		{
 			if (!LinkedFilesLocationIsDefault())
@@ -456,8 +450,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		/// <param name="argument">Includes the XML command element of the OnLiftBridge message</param>
 		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate, or somebody should also try to handle the message.</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "newAppWindow is a reference")]
 		public bool OnLiftBridge(object argument)
 		{
 			SaveAllDataToDisk();
@@ -1435,8 +1427,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return Path.Combine(Directory.GetParent(oldProjectFolder).FullName, revisedProjName);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "FwApp is a reference I guess")]
 		private static FwXWindow RefreshCacheWindowAndAll(LexTextApp app, PropertyTable propertyTable, string fullProjectFileName)
 		{
 			var manager = app.FwManager;

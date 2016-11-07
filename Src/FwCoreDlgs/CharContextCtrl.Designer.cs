@@ -41,8 +41,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		// TODO-Linux: VirtualMode is not supported on Mono (gridContext.VirtualMode); TabStops
 		// are not implemented on Mono.
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();

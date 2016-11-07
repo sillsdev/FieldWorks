@@ -29,8 +29,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "GlossListTreeView gets disposed in base class")]
 		public MasterInflectionFeatureListDlg(string className) : base(className, new GlossListTreeView())
 		{
 		}

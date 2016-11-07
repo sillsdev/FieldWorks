@@ -33,8 +33,6 @@ namespace XCore
 		/// <summary>
 		/// Override, so it can create the main menu bar. There is to be only one of these.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="MenuStrip is added to collection and disposed there")]
 		protected override MenuStrip MyMenuStrip
 		{
 			get
@@ -67,8 +65,6 @@ namespace XCore
 		/// Create a menu, but not its items.
 		/// </summary>
 		/// <param name="groupCollection">Collection of menu definitions to create.</param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ToolStripMenuItem gets added to collection and disposed there")]
 		public override void CreateUIForChoiceGroupCollection(ChoiceGroupCollection groupCollection)
 		{
 			MenuStrip myMenuStrip = MyMenuStrip;
@@ -130,8 +126,6 @@ namespace XCore
 		/// This is called by the OnDisplay() method of some ChoiceGroup
 		/// </summary>
 		/// <param name="group">The group that defines this menu item.</param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Objects get added to collection and disposed there")]
 		public override void CreateUIForChoiceGroup(ChoiceGroup group)
 		{
 			//m_control.SuspendLayout();//doesn't help
@@ -292,8 +286,6 @@ namespace XCore
 		/// <param name="location"></param>
 		/// <param name="temporaryColleagueParam"></param>
 		/// <param name="sequencer"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Context menu intentionally not disposed; ToolStripMenuItem added to collection")]
 		public void ShowContextMenu(ChoiceGroup group, Point location,
 			TemporaryColleagueParameter temporaryColleagueParam,
 			MessageSequencer sequencer, Action<ContextMenuStrip> adjustMenu)

@@ -29,8 +29,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// </summary>
 	public class MultiStringSlice : ViewPropertySlice
 	{
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "LabaledMultiStringView gets added to the Controls collection and disposed there")]
 		public MultiStringSlice(ICmObject obj, int flid, int ws, int wsOptional, bool forceIncludeEnglish, bool editable, bool spellCheck)
 		{
 			var view = new LabeledMultiStringView(obj.Hvo, flid, ws, wsOptional, forceIncludeEnglish, editable, spellCheck);

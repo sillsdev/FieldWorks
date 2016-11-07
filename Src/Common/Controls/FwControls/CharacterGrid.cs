@@ -80,8 +80,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Initializes a new instance of the <see cref="CharacterGrid"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="Added a TODO-Linux comment")]
 		public CharacterGrid()
 		{
 			DoubleBuffered = true;

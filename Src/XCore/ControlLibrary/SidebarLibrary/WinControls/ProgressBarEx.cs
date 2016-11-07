@@ -430,8 +430,6 @@ namespace SidebarLibrary.WinControls
 			Invalidate();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "g is a reference")]
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);

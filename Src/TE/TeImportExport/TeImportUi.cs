@@ -280,8 +280,6 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <param name="e">The exception.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public virtual void ErrorMessage(EncodingConverterException e)
 		{
 			CheckDisposed();

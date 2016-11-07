@@ -34,8 +34,6 @@ namespace SIL.ObjectBrowser
 		/// Initializes a new instance of the <see cref="InspectorGrid"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public InspectorGrid()
 		{
 			DoubleBuffered = true;

@@ -19,7 +19,6 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// Currently serves as the controller and the model for the UploadToWebonaryView
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule", Justification="Cache and PropertyTable are references")]
 	public class UploadToWebonaryController : IDisposable
 	{
 		private readonly FdoCache m_cache;

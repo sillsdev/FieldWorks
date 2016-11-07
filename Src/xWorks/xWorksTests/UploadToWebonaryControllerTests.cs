@@ -38,7 +38,6 @@ namespace SIL.FieldWorks.XWorks
 
 		#region Environment
 		[TestFixtureSetUp]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "Clerk disposed in TearDown")]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
@@ -727,7 +726,6 @@ namespace SIL.FieldWorks.XWorks
 			/// <summary>
 			/// Fake web client to allow unit testing of controller code without needing to connect to a server
 			/// </summary>
-			[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule", Justification = "Nothing to dispose in this Mock")]
 			public class MockWebonaryClient : IWebonaryClient
 			{
 				private readonly WebonaryClient.WebonaryException _exceptionResponse;

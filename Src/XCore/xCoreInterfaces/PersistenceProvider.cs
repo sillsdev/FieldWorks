@@ -13,8 +13,6 @@ namespace XCore
 	/// <summary>
 	///  A PersistenceProvider which uses the XCore PropertyTable
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification = "variable is a reference; it is owned by parent")]
 	public class PersistenceProvider : IPersistenceProvider
 	{
 		protected string m_contextString;

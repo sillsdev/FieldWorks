@@ -19,8 +19,6 @@ namespace SIL.CoreImpl
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification = "Unit tests, gets disposed in FixtureTearDown()")]
 	public class UcdCharacterTests // can't derive from BaseTest, but instantiate DebugProcs instead
 	{
 		private DebugProcs m_DebugProcs;

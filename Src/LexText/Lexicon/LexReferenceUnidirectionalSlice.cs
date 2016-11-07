@@ -19,8 +19,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LexReferenceUnidirectionalSlice"/> class.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "LexReferenceUnidirectionalLauncher gets added to panel's Controls collection and disposed there")]
 		public LexReferenceUnidirectionalSlice()
 			: base(new LexReferenceUnidirectionalLauncher())
 		{

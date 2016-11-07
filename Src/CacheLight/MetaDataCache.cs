@@ -143,8 +143,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// See Ling.cm or xmi2cellar3.xml for supported XML data formats.
 		/// Note: This may also be used to load persisted custom fields.
 		/// </remarks>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void InitXml(string pathname, bool clearPrevCache)
 		{
 			if (pathname == null)

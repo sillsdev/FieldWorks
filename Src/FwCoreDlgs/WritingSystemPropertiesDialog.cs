@@ -756,8 +756,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			return !m_wsContainer.AllWritingSystems.Contains(origWs);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "textBrush is a reference")]
 		private void m_listBoxRelatedWSs_DrawItem(object sender, DrawItemEventArgs e)
 		{
 			if (e.Index == -1)
@@ -889,8 +887,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// the contents of this method with the code editor.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WritingSystemPropertiesDialog));

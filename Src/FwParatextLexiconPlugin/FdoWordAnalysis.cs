@@ -63,8 +63,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			return ((IEnumerable<Lexeme>)m_lexemes).GetEnumerator();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Don't need to dispose an IEnumerator.")]
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return GetEnumerator();

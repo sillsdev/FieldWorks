@@ -123,8 +123,6 @@ namespace SIL.PublishingSolution
 		/// <summary>
 		/// Have the utility do what it does.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "applicationKey is a reference")]
 		public void Process()
 		{
 			if (!PathwayUtils.IsPathwayInstalled)
@@ -312,8 +310,6 @@ namespace SIL.PublishingSolution
 		/// <param name="toolChoice">Tool to choose</param>
 		/// <param name="exportFormat">Part of path for format of file to export</param>
 		/// <param name="filePath">path for file to export</param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "mediator is a reference")]
 		protected void ExportTool(string areaChoice, string toolChoice, string exportFormat, string filePath)
 		{
 			if (File.Exists(filePath))
@@ -337,8 +333,6 @@ namespace SIL.PublishingSolution
 		/// <param name="areaChoice">Area to choose</param>
 		/// <param name="toolChoice">Tool to choose</param>
 		/// <param name="exportFormat">Part of path for format of file to export</param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "mediator is a reference")]
 		protected bool ContentsExists(string areaChoice, string toolChoice, string exportFormat)
 		{
 			if (!ChangeAreaTool(areaChoice, toolChoice))
@@ -357,8 +351,6 @@ namespace SIL.PublishingSolution
 		/// <param name="areaChoice">Area to choose</param>
 		/// <param name="toolChoice">Tool to choose</param>
 		/// <returns>True if possible</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "mediator is a reference")]
 		protected bool ChangeAreaTool(string areaChoice, string toolChoice)
 		{
 			var mediator = exportDialog.Mediator;

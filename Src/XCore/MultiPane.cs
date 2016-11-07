@@ -187,8 +187,6 @@ namespace XCore
 
 		#region IxCoreCtrlTabProvider implementation
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "result is a reference")]
 		public Control PopulateCtrlTabTargetCandidateList(List<Control> targetCandidates)
 		{
 			if (targetCandidates == null)
@@ -225,8 +223,6 @@ namespace XCore
 		/// <summary>
 		/// Initialize this has an IxCoreColleague
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();

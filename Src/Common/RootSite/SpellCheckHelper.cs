@@ -185,8 +185,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// SpellCorrectMenuItems returned, but some clients use it in creating other menu options.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="we store a reference to SpellCorrectMenuItem for later use. REVIEW: we never dispose it.")]
 		public ICollection<SpellCorrectMenuItem> GetSuggestions(Point mousePos,
 			SimpleRootSite rootsite, out int hvoObj, out int tag, out int wsAlt, out int wsText,
 			out string word, out ISpellEngine dict, out bool nonSpellingError)
@@ -373,8 +371,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// tssWord to something that does not contain them, and retain the orcs to append to any substitutions (returned in tssKeepOrcs).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="we store a reference to SpellCorrectMenuItem for later use. REVIEW: we never dispose it.")]
 		private IList<SpellCorrectMenuItem> MakeEmbeddedNscSuggestion(ref ITsString tssWord, IVwStylesheet styles, IVwRootBox rootb,
 			int hvoObj, int tag, int wsAlt, int ichMin, int ichLim, out ITsString tssKeepOrcs)
 		{
@@ -461,8 +457,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// writing systems
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="we store a reference to SpellCorrectMenuItem for later use. REVIEW: we never dispose it.")]
 		private ICollection<SpellCorrectMenuItem> MakeWssSuggestions(ITsString tssWord,
 			List<int> wss, IVwRootBox rootb, int hvoObj, int tag, int wsAlt,
 			int ichMin, int ichLim)

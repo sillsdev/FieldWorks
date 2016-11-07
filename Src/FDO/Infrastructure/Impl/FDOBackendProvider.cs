@@ -548,8 +548,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "globalRepo disposed by SingletonsContainer")]
 		private void InitializeWritingSystemManager()
 		{
 			// if there is no project path specified, then just use the default memory-based manager.

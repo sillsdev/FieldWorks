@@ -233,8 +233,6 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		/// <param name="expectedStates">The expected checked state array (one per subitem).</param>
 		/// <param name="menu1">The menu.</param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "item is a reference")]
 		private static void AssertMenuCheckState(bool[] expectedStates, ToolStripItemCollection menu1)
 		{
 			Assert.AreEqual(expectedStates.Length, menu1.Count,

@@ -10,8 +10,6 @@ using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.IText
 {
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_complexImage and m_closedImage are references")]
 	public class InflFeatureTreeModel : TreeModel
 	{
 		private readonly IFsFeatureSystem m_fdoFeatSys;

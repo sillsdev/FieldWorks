@@ -123,8 +123,6 @@ namespace SIL.CoreImpl
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification = "This isn't really a newline character")]
 		public void SerializePropsToXml_BulNumFontInfo()
 		{
 			ITsPropsBldr tpb = TsPropsFactory.GetPropsBldr();
@@ -911,8 +909,6 @@ namespace SIL.CoreImpl
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification = "This isn't really a newline character")]
 		public void DeserializePropsFromXml_BulNumFontInfo()
 		{
 			CheckDeserializeBulFontInfoProp("<BulNumFontInfo backcolor=\"white\" bold=\"on\" fontsize=\"20mpt\"" +

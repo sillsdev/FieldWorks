@@ -30,8 +30,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// Create temporary FdoCache.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ThreadHelper is disposed in FixtureTeardown()")]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();

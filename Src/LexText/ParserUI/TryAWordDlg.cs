@@ -89,8 +89,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_helpProvider = new HelpProvider();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "Code in question is only compiled on Windows")]
 		public void SetDlgInfo(Mediator mediator, PropertyTable propertyTable, IWfiWordform wordform, ParserListener parserListener)
 		{
 			Mediator = mediator;
@@ -132,8 +130,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="TryAWordRootSite gets added to control collection and disposed there")]
 		private void SetRootSite()
 		{
 			m_rootsite = new TryAWordRootSite(m_cache, Mediator, PropTable) { Dock = DockStyle.Top };
@@ -154,8 +150,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			return StringTable.Table.GetString(id, "Linguistics/Morphology/TryAWord");
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="HtmlControl gets added to control collection and disposed there")]
 		private void InitHtmlControl()
 		{
 			m_htmlControl = new HtmlControl

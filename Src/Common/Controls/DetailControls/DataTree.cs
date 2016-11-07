@@ -247,8 +247,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "sc is a reference")]
 		private void InstallSlice(Slice slice, int index)
 		{
 			Debug.Assert(index >= 0 && index <= Slices.Count);
@@ -325,8 +323,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			movedSlice.TakeFocus();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "otherSliceSC is a reference")]
 		private void AdjustSliceSplitPosition(Slice otherSlice)
 		{
 			SplitContainer otherSliceSC = otherSlice.SplitCont;
@@ -704,8 +700,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// if possible, otherwise, the root object. May return null if the nearest Parent is disposed.
 		/// </summary>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "loopSlice is a reference")]
 		private ICmObject DescendantForSlice(Slice slice)
 		{
 			var loopSlice = slice;
@@ -834,8 +828,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Note: This value is a base value and should never include the LabelIndent offset.
 		/// Each Slice will add its own Label length, when its SplitterDistance is set.
 		/// </remarks>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "sc is a reference")]
 		public int SliceSplitPositionBase
 		{
 			get
@@ -1623,8 +1615,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// This actually handles Paint for the contained control that has the slice controls in it.
 		/// </summary>
 		/// <param name="pea">The <see cref="System.Windows.Forms.PaintEventArgs"/> instance containing the event data.</param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "gr is a reference")]
 		void HandlePaintLinesBetweenSlices(PaintEventArgs pea)
 		{
 			Graphics gr = pea.Graphics;
@@ -3050,8 +3040,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		// Get or create the real slice at index i.
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public Slice FieldAt(int i)
 		{
 			CheckDisposed();
@@ -3407,8 +3395,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		//	@param nInd The indent level we want.
 		//	@param idfe An index to the current field. We start looking at the next field.
 		//	@return The index of the next field or 0 if none.
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FieldOrDummyAt() returns a reference")]
 		public int NextFieldAtIndent(int nInd, int iStart)
 		{
 			CheckDisposed();
@@ -3433,8 +3419,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		//	@param nInd The indent level we want.
 		//	@param idfe An index to the current field. We start looking at the previous field.
 		//	@return The index of the desired field or 0 if none.
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FieldOrDummyAt() returns a reference")]
 		public int PrevFieldAtIndent(int nInd, int iStart)
 		{
 			CheckDisposed();
@@ -4104,8 +4088,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Invoked by a slice when the user does something to bring up a context menu
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="See TODO comment.")]
 		public void OnShowContextMenu(object sender, TreeNodeEventArgs e)
 		{
 			CheckDisposed();
@@ -4222,8 +4204,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Focus the first slice that can take focus.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FieldOrDummyAt() and FieldAt() return a reference.")]
 		protected bool FocusFirstPossibleSlice()
 		{
 			int cslice = Slices.Count;

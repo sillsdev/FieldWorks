@@ -272,8 +272,6 @@ namespace SILUBS.SharedScrControls
 		/// Gets or sets the caption to use when displaying an error in a message box.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		public string ErrorCaption
 		{
 			get
@@ -472,8 +470,6 @@ namespace SILUBS.SharedScrControls
 		/// Determine whether or not this control has been placed on a toolstrip control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "parent and txtTmp.Font are references")]
 		protected override void OnParentChanged(EventArgs e)
 		{
 			base.OnParentChanged(e);
@@ -512,8 +508,6 @@ namespace SILUBS.SharedScrControls
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "cboTmp.Font is a reference")]
 		void HandleSizeChanged(object sender, EventArgs e)
 		{
 			if (m_fParentIsToolstrip)
@@ -555,8 +549,6 @@ namespace SILUBS.SharedScrControls
 		///	Scripture reference is valid.)
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		public void DisplayErrorMessage()
 		{
 			MessageBox.Show(FindForm(),
@@ -709,8 +701,6 @@ namespace SILUBS.SharedScrControls
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="spDropDown gets assigned to m_dropdownForm and disposed there")]
 		private void DisplayDropDown()
 		{
 			// Create, position, and display the drop-down form.
@@ -1078,8 +1068,6 @@ namespace SILUBS.SharedScrControls
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "e.Graphics is a reference")]
 		private void btnScrPsgDropDown_PaintOnToolstrip(PaintEventArgs e)
 		{
 			Color clr1 = (Application.RenderWithVisualStyles ?

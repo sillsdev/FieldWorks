@@ -369,8 +369,6 @@ namespace XCore
 		/// make a control to show, for example, the list of tools, or the list of filters.
 		/// </summary>
 		/// <param name="group"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="We're still using the ListView")]
 		protected void MakeListControl(ChoiceGroup group)
 		{
 			ListView list= new ListView();

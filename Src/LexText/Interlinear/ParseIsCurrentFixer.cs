@@ -13,8 +13,6 @@ using XCore;
 
 namespace SIL.FieldWorks.IText
 {
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="The creator/owner of this class is responsible to dispose the passed in dialog")]
 	public class ParseIsCurrentFixer : IUtility
 	{
 		public string Label

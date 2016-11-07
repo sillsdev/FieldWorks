@@ -34,8 +34,6 @@ namespace SidebarLibrary.WinControls
 		#endregion
 
 		#region Overrides
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "g is a reference")]
 		protected override void OnDrawItem(DrawItemEventArgs e)
 		{
 			Graphics g = e.Graphics;

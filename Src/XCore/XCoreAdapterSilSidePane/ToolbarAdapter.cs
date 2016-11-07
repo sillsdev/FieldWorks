@@ -186,8 +186,6 @@ namespace XCore
 		/// Helper method Creates all the ToolStrips based upon m_choiceGroupCollection
 		/// And adds them to m_toolStripManager
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ToolStrip added to collection")]
 		protected void InitializeToolStrips()
 		{
 			if (m_window == null)
@@ -279,8 +277,6 @@ namespace XCore
 		/// <returns>
 		/// Returns true if the ToolStrip is out of date.
 		/// </returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "toolStripItem is a reference")]
 		private bool DoesToolStripNeedRegenerating(ChoiceGroup choiceGroup, ToolStrip toolStrip)
 		{
 			if (m_fullRengenerateRequired)
@@ -373,8 +369,6 @@ namespace XCore
 		/// <summary>
 		/// returns true if it made any changes.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Controls added to collection")]
 		private void FillToolbar(ChoiceGroup choiceGroup, ToolStrip toolStrip)
 		{
 			bool wantsSeparatorBefore = false;

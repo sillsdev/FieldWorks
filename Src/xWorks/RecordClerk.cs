@@ -3048,8 +3048,6 @@ namespace SIL.FieldWorks.XWorks
 			/// <param name="fWasAlreadySuppressed">Usually, clerk.ListLoadingSuppressed. When we know we just
 			/// created the clerk, already in a suppressed state, and want to treat it as if this
 			/// list update helper did the suppressing, pass false, even though the list may in fact be already suppressed.</param>
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "parentClerk is a reference")]
 			public ListUpdateHelper(RecordClerk clerk, bool fWasAlreadySuppressed)
 			{
 				m_clerk = clerk;
@@ -3387,8 +3385,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Make up for weakness of XmlNode.SelectSingleNode.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static XmlNode FindClerkNode(XmlNode parameterNode, string clerk)
 		{
 			foreach (XmlNode node in parameterNode.SelectNodes("ancestor::parameters/clerks/clerk"))

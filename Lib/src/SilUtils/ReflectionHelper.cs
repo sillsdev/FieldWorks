@@ -439,8 +439,6 @@ namespace SIL.Utils
 		/// specified binding.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private static object Invoke(object binding, string name, object[] args, BindingFlags flags)
 		{
 			// If binding is a Type then assume we're invoking a static method, property

@@ -266,8 +266,6 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Create a set of Scripture styles based on the given XML node.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected void CreateStyles()
 		{
 			string label = XmlUtils.GetOptionalAttributeValue(m_sourceStyles, "label", "");
@@ -384,8 +382,6 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// <param name="tagList">List of XML nodes representing factory styles to create</param>
 		/// -------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void CreateAndUpdateStyles(XmlNodeList tagList)
 		{
 			InitReservedStyles();

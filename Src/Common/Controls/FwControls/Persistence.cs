@@ -224,8 +224,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Normally this is the key provided by our parent form.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "key is a reference")]
 		[Browsable(false)]
 		public RegistryKey SettingsKey
 		{
@@ -426,8 +424,6 @@ namespace SIL.FieldWorks.Common.Controls
 		///		Save window position if the Window State is "Normal".
 		/// </summary>
 		///***********************************************************************************
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		private void OnMoveResize(object sender, System.EventArgs e)
 		{
 			// Save position
@@ -556,8 +552,6 @@ namespace SIL.FieldWorks.Common.Controls
 		///
 		/// <param name='key'>The Registry Key.</param>
 		///***********************************************************************************
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		public void SaveWindowState(RegistryKey key)
 		{
 			CheckDisposed();

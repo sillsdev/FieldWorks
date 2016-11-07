@@ -73,8 +73,6 @@ namespace SidebarLibrary.General
 
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "gBitmap is a reference")]
 		static public Bitmap GetStrechedBitmap(Graphics gDest, Rectangle rcDest, Bitmap bitmap)
 		{
 
