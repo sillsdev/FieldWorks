@@ -91,6 +91,7 @@ VIEWS_OBJS = \
 	$(VIEWS_OBJ)/VwTableBox.o \
 	$(VIEWS_OBJ)/VwTextBoxes.o \
 	$(VIEWS_OBJ)/VwTxtSrc.o \
+	$(VIEWS_LIB)/ActionHandler.o \
 	$(VIEWS_LIB)/DisplayCapsInfo.o \
 	$(VIEWS_LIB)/VwBaseDataAccess.o \
 	$(VIEWS_LIB)/VwBaseVirtualHandler.o \
@@ -140,6 +141,7 @@ $(INT_DIR)/Collection.cpp: \
 	$(KERNELTEST_SRC)/MockLgWritingSystem.h \
 	TestLgCollatingEngine.h \
 	TestNotifier.h \
+	TestUndoStack.h \
 	TestLayoutPage.h \
 	TestVwTxtSrc.h \
 	TestVwParagraph.h \

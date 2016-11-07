@@ -64,6 +64,7 @@ OBJ_VIEWSTESTSUITE=\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwPrintContext.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwBaseDataAccess.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwCacheDa.obj\
+	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\ActionHandler.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwUndo.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwBaseVirtualHandler.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwLazyBox.obj\
@@ -113,6 +114,7 @@ $(VIEWSTEST_SRC)\Collection.cpp: $(VIEWSTEST_SRC)\DummyBaseVc.h $(VIEWSTEST_SRC)
  $(FWKERNELTEST_SRC)\MockLgWritingSystemFactory.h\
  $(FWKERNELTEST_SRC)\MockLgWritingSystem.h\
  $(VIEWSTEST_SRC)\TestNotifier.h\
+ $(VIEWSTEST_SRC)\TestUndoStack.h\
  $(VIEWSTEST_SRC)\TestLayoutPage.h\
  $(VIEWSTEST_SRC)\TestLgCollatingEngine.h\
  $(VIEWSTEST_SRC)\TestVirtualHandlers.h\

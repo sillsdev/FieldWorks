@@ -21,8 +21,13 @@
     <ClInclude Include="lib\VwUndo.h">
       <Filter>lib</Filter>
     </ClInclude>
+    <ClInclude Include="lib\UtilView.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\ActionHandler.h">
+      <Filter>lib</Filter>
+    </ClInclude>
     <ClInclude Include="Main.h" />
-    <ClInclude Include="lib\UtilView.h" />
     <ClInclude Include="VwAccessRoot.h" />
     <ClInclude Include="VwEnv.h" />
     <ClInclude Include="VwInvertedViews.h" />
@@ -86,6 +91,9 @@
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\VwUndo.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\ActionHandler.cpp">
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="dlldatax.c" />

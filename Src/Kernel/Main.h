@@ -59,7 +59,6 @@ using namespace fwutil;	// Rect and Point classes
 #include "TsStrFactory.h"
 #include "TsPropsFactory.h"
 #include "TextServ.h"
-#include "ActionHandler.h"
 
 // Other tools
 #include "FwStyledText.h"

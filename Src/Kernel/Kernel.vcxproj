@@ -71,7 +71,6 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ActionHandler.cpp" />
     <ClCompile Include="DebugReport.cpp" />
     <ClCompile Include="dlldatax.c" />
     <ClCompile Include="TextServ.cpp" />
@@ -93,7 +92,6 @@
     <Midl Include="FwKernelTlb.idl" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ActionHandler.h" />
     <ClInclude Include="DebugReport.h" />
     <ClInclude Include="LangResource.h" />
     <ClInclude Include="Main.h" />

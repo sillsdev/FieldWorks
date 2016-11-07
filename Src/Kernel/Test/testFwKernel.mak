@@ -53,7 +53,6 @@ OBJ_KERNELTESTSUITE=\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\TsPropsFactory.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\TextServ.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\usepch\TextProps1.obj\
-	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\ActionHandler.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\FwKernel\autopch\FwStyledText.obj\
 
 OBJ_ALL=$(OBJ_KERNELTESTSUITE)
@@ -80,7 +79,6 @@ COLLECT=$(BUILD_ROOT)\Bin\CollectUnit++Tests.cmd Kernel
 $(INT_DIR)\genpch\Collection.obj: $(FWKERNELTEST_SRC)\Collection.cpp
 
 $(FWKERNELTEST_SRC)\Collection.cpp: $(FWKERNELTEST_SRC)\testFwKernel.h\
- $(FWKERNELTEST_SRC)\TestUndoStack.h\
  $(FWKERNELTEST_SRC)\TestTsStrBldr.h\
  $(FWKERNELTEST_SRC)\TestTsString.h\
  $(FWKERNELTEST_SRC)\TestTsPropsBldr.h\

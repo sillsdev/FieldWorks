@@ -67,7 +67,6 @@ OBJ_FWKERNEL = \
 	$(INT_DIR)/TsStrFactory.o \
 	$(INT_DIR)/TsPropsFactory.o \
 	$(INT_DIR)/TextServ.o \
-	$(INT_DIR)/ActionHandler.o \
 	$(INT_DIR)/DebugReport.o \
 
 OBJ_OTHER = \

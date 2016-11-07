@@ -71,7 +71,6 @@ FWKERNEL_OBJ := \
 	$(KERNEL_OBJ)/TsStrFactory.o \
 	$(KERNEL_OBJ)/TsPropsFactory.o \
 	$(KERNEL_OBJ)/TextServ.o \
-	$(KERNEL_OBJ)/ActionHandler.o \
 	$(GENERIC_OBJ)/ModuleEntry.o \
 	$(GENERIC_OBJ)/TextProps1.o \
 
@@ -103,7 +102,6 @@ COLLECT=$(BUILD_ROOT)/Bin/CollectUnit++Tests.sh Kernel
 
 
 $(INT_DIR)/Collection.cpp: testFwKernel.h \
-	TestUndoStack.h \
 	TestTsStrBldr.h \
 	TestTsString.h \
 	TestTsPropsBldr.h \

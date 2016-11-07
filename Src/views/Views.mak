@@ -65,6 +65,7 @@ OBJ_VIEWS=\
 	$(INT_DIR)\autopch\VwPrintContext.obj\
 	$(INT_DIR)\autopch\VwBaseDataAccess.obj\
 	$(INT_DIR)\autopch\VwCacheDa.obj\
+	$(INT_DIR)\autopch\ActionHandler.obj\
 	$(INT_DIR)\autopch\VwUndo.obj\
 	$(INT_DIR)\autopch\VwLazyBox.obj\
 	$(INT_DIR)\autopch\VwPattern.obj\

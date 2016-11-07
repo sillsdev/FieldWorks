@@ -46,7 +46,6 @@ OBJ_FWKERNEL=\
 	$(INT_DIR)\autopch\TsPropsFactory.obj\
 	$(INT_DIR)\autopch\TextServ.obj\
 	$(INT_DIR)\usepch\TextProps1.obj\
-	$(INT_DIR)\autopch\ActionHandler.obj\
 	$(INT_DIR)\autopch\ModuleEntry.obj\
 	$(INT_DIR)\autopch\FwStyledText.obj\
 	$(INT_DIR)\autopch\DebugReport.obj\

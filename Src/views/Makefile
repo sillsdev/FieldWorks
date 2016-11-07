@@ -88,6 +88,7 @@ OBJS = \
 	$(INT_DIR)/VwTextBoxes.o \
 	$(INT_DIR)/VwTxtSrc.o \
 	$(INT_DIR)/VwInvertedViews.o \
+	$(INT_DIR)/lib/ActionHandler.o \
 	$(INT_DIR)/lib/VwBaseDataAccess.o \
 	$(INT_DIR)/lib/VwBaseVirtualHandler.o \
 	$(INT_DIR)/lib/VwCacheDa.o \

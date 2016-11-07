@@ -131,6 +131,7 @@
     <ClInclude Include="lib\VwUndo.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="lib\UtilView.h" />
+    <ClInclude Include="lib\ActionHandler.h" />
     <ClInclude Include="VwAccessRoot.h" />
     <ClInclude Include="VwEnv.h" />
     <ClInclude Include="VwInvertedViews.h" />
@@ -167,6 +168,7 @@
     <ClCompile Include="lib\VwUndo.cpp" />
     <ClCompile Include="dlldatax.c" />
     <ClCompile Include="ExplicitInstantiation.cpp" />
+    <ClCompile Include="lib\ActionHandler.cpp" />
     <ClCompile Include="VwAccessRoot.cpp" />
     <ClCompile Include="VwEnv.cpp" />
     <ClCompile Include="VwInvertedViews.cpp" />

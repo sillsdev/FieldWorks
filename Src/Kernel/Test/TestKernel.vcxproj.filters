@@ -38,9 +38,6 @@
     <ClInclude Include="TestTsTextProps.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TestUndoStack.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MockLgWritingSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
