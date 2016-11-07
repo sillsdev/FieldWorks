@@ -74,8 +74,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private ToolStripMenuItem menuItem2;
 		private TextBox txtExtLnkEdit;
 		private IContainer components;
-		/// <summary></summary>
-		protected IVwStylesheet m_stylesheet;
 		/// <summary>A change in writing systems has been made that may affect
 		/// current displays.</summary>
 		protected bool m_fWsChanged;
@@ -165,10 +163,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="app">The application (can be <c>null</c>)</param>
 		/// <param name="helpTopicProvider">IHelpTopicProvider object used to get help
 		/// information</param>
-		/// <param name="stylesheet">this is used for the FwTextBox</param>
 		/// ------------------------------------------------------------------------------------
-		public FwProjPropertiesDlg(FdoCache cache, IApp app, IHelpTopicProvider helpTopicProvider,
-			IVwStylesheet stylesheet): this()
+		public FwProjPropertiesDlg(FdoCache cache, IApp app, IHelpTopicProvider helpTopicProvider): this()
 		{
 			if (cache == null)
 				throw new ArgumentNullException("cache", "Null Cache passed to FwProjProperties");
@@ -178,7 +174,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
-			m_stylesheet = stylesheet;
 			m_projectLexiconSettingsDataMapper = new ProjectLexiconSettingsDataMapper(m_cache.ServiceLocator.DataSetup.ProjectSettingsStore);
 			m_projectLexiconSettings = new ProjectLexiconSettings();
 			m_projectLexiconSettingsDataMapper.Read(m_projectLexiconSettings);
@@ -1064,7 +1059,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var userWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
 			m_fProjNameChanged = (m_txtProjName.Text != m_sOrigProjName);
 			if (m_txtProjDescription.Text != m_sOrigDescription)
-				m_langProj.Description.set_String(userWs, m_cache.TsStrFactory.MakeString(m_txtProjDescription.Text, userWs));
+				m_langProj.Description.set_String(userWs, TsStringUtils.MakeString(m_txtProjDescription.Text, userWs));
 
 			var sNewLinkedFilesRootDir = txtExtLnkEdit.Text;
 			SaveLinkedFilesChanges(sNewLinkedFilesRootDir);
@@ -1369,7 +1364,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			IEnumerable<CoreWritingSystemDefinition> newWritingSystems;
 			if (WritingSystemPropertiesDialog.ShowModifyDialog(this, selectedWs, addNewForLangOfSelectedWs, m_cache, CurrentWritingSystemContainer,
-				m_helpTopicProvider, m_app, m_stylesheet, out newWritingSystems))
+				m_helpTopicProvider, m_app, out newWritingSystems))
 			{
 				m_fWsChanged = true;
 				foreach (CoreWritingSystemDefinition newWs in newWritingSystems)
@@ -1529,7 +1524,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			IEnumerable<CoreWritingSystemDefinition> newWritingSystems;
 			if (WritingSystemPropertiesDialog.ShowNewDialog(this, m_cache, m_cache.ServiceLocator.WritingSystemManager, CurrentWritingSystemContainer,
-				m_helpTopicProvider, m_app, m_stylesheet, true, null, out newWritingSystems))
+				m_helpTopicProvider, m_app, true, null, out newWritingSystems))
 			{
 				foreach (CoreWritingSystemDefinition ws in newWritingSystems)
 					list.Items.Add(ws, true);

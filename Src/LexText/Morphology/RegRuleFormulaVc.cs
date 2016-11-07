@@ -44,11 +44,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			tpb.SetIntPropValues((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 			m_charProps = tpb.GetTextProps();
 
-			ITsStrFactory tsf = m_cache.TsStrFactory;
 			int userWs = m_cache.DefaultUserWs;
-			m_arrow = tsf.MakeString("\u2192", userWs);
-			m_slash = tsf.MakeString("/", userWs);
-			m_underscore = tsf.MakeString("__", userWs);
+			m_arrow = TsStringUtils.MakeString("\u2192", userWs);
+			m_slash = TsStringUtils.MakeString("/", userWs);
+			m_underscore = TsStringUtils.MakeString("__", userWs);
 		}
 
 		protected override int GetMaxNumLines()

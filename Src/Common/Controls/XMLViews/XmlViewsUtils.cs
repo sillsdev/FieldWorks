@@ -692,7 +692,6 @@ namespace SIL.FieldWorks.Common.Controls
 		internal static string[] AddStringFromOtherObj(XmlNode frag, int hvoTarget, FdoCache cache, ISilDataAccess sda)
 		{
 			int flid = XmlVc.GetFlid(frag, hvoTarget, sda);
-			ITsStrFactory tsf = cache.TsStrFactory;
 			CellarPropertyType itype = (CellarPropertyType)sda.MetaDataCache.GetFieldType(flid);
 			if (itype == CellarPropertyType.Unicode)
 			{

@@ -767,7 +767,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							(int)FwTextPropVar.ktpvDefault,
 							(int)TptEditable.ktptNotEditable);
 						ITsString tss;
-						ITsStrFactory tsf = m_cache.TsStrFactory;
 						Debug.Assert(hvo != 0);
 #if USEBESTWS
 					if (m_displayWs != null && m_displayWs.StartsWith("best"))
@@ -813,7 +812,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 								if (s is ITsString)
 									tss = (ITsString)s;
 								else
-									tss = tsf.MakeString((string)s, ws);
+									tss = TsStringUtils.MakeString((string)s, ws);
 							}
 							else
 							{

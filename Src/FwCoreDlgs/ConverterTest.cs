@@ -22,6 +22,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SilEncConverters40;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -665,8 +666,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			CheckDisposed();
 
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			AddPara(tsf.MakeString(para, WritingSystemFactory.UserWs));
+			AddPara(TsStringUtils.MakeString(para, WritingSystemFactory.UserWs));
 		}
 
 		/// <summary>

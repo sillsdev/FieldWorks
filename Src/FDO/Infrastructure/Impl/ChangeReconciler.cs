@@ -895,11 +895,10 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 							if (element == null)
 								continue;
 							var wsf = currentObj.Services.WritingSystemFactory;
-							var tsf = currentObj.Cache.TsStrFactory;
 							foreach (var aStrNode in element.Elements("AUni"))
 							{
 								ITsString tss;
-								int ws = MultiUnicodeAccessor.ReadMultiUnicodeAlternative(aStrNode, wsf, tsf, out tss);
+								int ws = MultiUnicodeAccessor.ReadMultiUnicodeAlternative(aStrNode, wsf, out tss);
 								if (ws == 0)
 									continue;
 								var multiString = currentInternal.GetITsMultiStringProperty(flid);

@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.CacheLight;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using System.Linq;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
@@ -46,9 +47,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		private void AddSimpleString(int ws, string s)
 		{
-			ITsStrFactory tsStrFactory = TsStrFactoryClass.Create();
 			VwCache.CacheStringProp(m_hvoRoot, kflidSimpleTsString,
-				tsStrFactory.MakeString(s, ws));
+				TsStringUtils.MakeString(s, ws));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -124,8 +124,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			if (m_displayOptions.LiteralStringLabels)
 			{
-				ITsStrFactory factory = TsStrFactoryClass.Create();
-				vwenv.AddString(factory.MakeString("Label" + m_counter++, m_wsDefault));
+				vwenv.AddString(TsStringUtils.MakeString("Label" + m_counter++, m_wsDefault));
 			}
 			switch (frag)
 			{
@@ -272,11 +271,10 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public void ShowForm(IList<KeyValuePair<int, string>> wsToValues, SimpleRootSiteDataProvider_MultiStringViewVc.DisplayOptions options)
 		{
 			MultiStringInfo = wsToValues;
-			ITsStrFactory tsStrFactory = TsStrFactoryClass.Create();
 			foreach (var kvp in wsToValues)
 			{
 				VwCache.CacheStringAlt(m_hvoRoot, SimpleRootSiteDataProvider_MultiStringViewVc.kflidMultiString, kvp.Key,
-					tsStrFactory.MakeString(kvp.Value, kvp.Key));
+					TsStringUtils.MakeString(kvp.Value, kvp.Key));
 			}
 			var wsOrder = wsToValues.Select(kvPair => kvPair.Key).ToList();
 			MakeRoot(m_hvoRoot, 0, SimpleRootSiteDataProviderBaseVc.kfragRoot, 0, CreateVc(options, wsOrder));
@@ -379,20 +377,18 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 						{
 							using (new VwConstructorServices.InnerPileHelper(vwenv))
 							{
-								ITsStrFactory factory = TsStrFactoryClass.Create();
 								foreach (var ws in WsOrder)
 								{
 									using (new VwConstructorServices.ParagraphBoxHelper(vwenv))
 									{
 										if (m_displayOptions.LiteralStringLabels)
-											vwenv.AddString(factory.MakeString("Label" + ws, ws));
+											vwenv.AddString(TsStringUtils.MakeString("Label" + ws, ws));
 									}
 								}
 							}
 						}
 						using (new VwConstructorServices.InnerPileHelper(vwenv))
 						{
-							ITsStrFactory factory = TsStrFactoryClass.Create();
 							foreach (var ws in WsOrder)
 							{
 								using (new VwConstructorServices.ParagraphBoxHelper(vwenv))
@@ -472,8 +468,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		/// ------------------------------------------------------------------------------------
 		public override ITsString GetStrForGuid(string bstrGuid)
 		{
-			TsStrFactory strFactory = TsStrFactoryClass.Create();
-			return strFactory.MakeString("\uFEFFa", m_wsDefault);
+			return TsStringUtils.MakeString("\uFEFFa", m_wsDefault);
 		}
 		#endregion
 

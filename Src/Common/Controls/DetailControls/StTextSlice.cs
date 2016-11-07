@@ -216,8 +216,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					var sda = m_cache.DomainDataByFlid;
 					textHvo = sda.MakeNewObject(StTextTags.kClassId, m_obj.Hvo, m_flid, -2);
 					var hvoStTxtPara = sda.MakeNewObject(StTxtParaTags.kClassId, textHvo, StTextTags.kflidParagraphs, 0);
-					var tsf = m_cache.TsStrFactory;
-					sda.SetString(hvoStTxtPara, StTxtParaTags.kflidContents, tsf.EmptyString(m_ws == 0 ? m_cache.DefaultAnalWs : m_ws));
+					sda.SetString(hvoStTxtPara, StTxtParaTags.kflidContents, TsStringUtils.EmptyString(m_ws == 0 ? m_cache.DefaultAnalWs : m_ws));
 				});
 				view.StText = m_cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(textHvo);
 			}

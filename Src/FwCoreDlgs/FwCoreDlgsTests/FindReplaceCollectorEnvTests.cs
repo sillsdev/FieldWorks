@@ -11,6 +11,7 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices; // needed for Marshal
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
@@ -134,7 +135,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private IStTxtPara m_para3;
 		private StVc m_vc;
 		private IVwPattern m_pattern;
-		private ITsStrFactory m_strFactory;
 
 		// Member that simulates our current "selection"
 		private FindCollectorEnv.LocationInfo m_sel;
@@ -155,9 +155,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_vc.Cache = Cache;
 
 			m_pattern = VwPatternClass.Create();
-			m_strFactory = TsStrFactoryClass.Create();
 
-			m_pattern.Pattern = m_strFactory.MakeString("a", Cache.DefaultVernWs);
+			m_pattern.Pattern = TsStringUtils.MakeString("a", Cache.DefaultVernWs);
 			m_pattern.MatchOldWritingSystem = false;
 			m_pattern.MatchDiacritics = false;
 			m_pattern.MatchWholeWord = false;
@@ -197,10 +196,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (Marshal.IsComObject(m_pattern))
 				Marshal.ReleaseComObject(m_pattern);
 			m_pattern = null;
-			if (Marshal.IsComObject(m_strFactory))
-				Marshal.ReleaseComObject(m_strFactory);
-			m_strFactory = null;
-
 
 			base.TestTearDown();
 		}
@@ -215,7 +210,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void ReplaceAll()
 		{
-			m_pattern.ReplaceWith = m_strFactory.MakeString("b", Cache.DefaultVernWs);
+			m_pattern.ReplaceWith = TsStringUtils.MakeString("b", Cache.DefaultVernWs);
 
 			ReplaceAllCollectorEnv collectorEnv = new ReplaceAllCollectorEnv(m_vc,
 				Cache.MainCacheAccessor, m_para1.Owner.Hvo, (int)StTextFrags.kfrText,
@@ -275,7 +270,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			m_vc = new DummyScriptureVc(m_para1.Hvo);
 			m_vc.Cache = Cache;
-			m_pattern.ReplaceWith = m_strFactory.MakeString("b", Cache.DefaultVernWs);
+			m_pattern.ReplaceWith = TsStringUtils.MakeString("b", Cache.DefaultVernWs);
 
 			ReplaceAllCollectorEnv collectorEnv = new ReplaceAllCollectorEnv(m_vc,
 				Cache.MainCacheAccessor, m_para1.Owner.Hvo, (int)StTextFrags.kfrText,

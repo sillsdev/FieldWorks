@@ -12,6 +12,7 @@ using SIL.Utils;
 using System.Xml;
 using System.Collections.Generic;
 using System;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests.LingTests
@@ -195,8 +196,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 				var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 				entry.SensesOS.Add(sense);
-				sense.Definition.set_String(ws, Cache.TsStrFactory.MakeString("definition", ws));
-				sense.Gloss.set_String(ws, Cache.TsStrFactory.MakeString("gloss", ws));
+				sense.Definition.set_String(ws, TsStringUtils.MakeString("definition", ws));
+				sense.Gloss.set_String(ws, TsStringUtils.MakeString("gloss", ws));
 
 				var dorg = sense.DefinitionOrGloss;
 				Assert.That(dorg.BestAnalysisAlternative.Text, Contains.Substring("definition"));
@@ -215,7 +216,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 				var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 				entry.SensesOS.Add(sense);
-				sense.Gloss.set_String(ws, Cache.TsStrFactory.MakeString("gloss", ws));
+				sense.Gloss.set_String(ws, TsStringUtils.MakeString("gloss", ws));
 
 				var dorg = sense.DefinitionOrGloss;
 				Assert.That(dorg.BestAnalysisAlternative.Text, Contains.Substring("gloss"));
@@ -234,8 +235,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 				var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 				entry.SensesOS.Add(sense);
-				sense.Definition.set_String(ws, Cache.TsStrFactory.MakeString("", ws));
-				sense.Gloss.set_String(ws, Cache.TsStrFactory.MakeString("gloss", ws));
+				sense.Definition.set_String(ws, TsStringUtils.EmptyString(ws));
+				sense.Gloss.set_String(ws, TsStringUtils.MakeString("gloss", ws));
 
 				var dorg = sense.DefinitionOrGloss;
 				Assert.That(dorg.BestAnalysisAlternative.Text, Contains.Substring("gloss"));
@@ -736,11 +737,11 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			var le = servLoc.GetInstance<ILexEntryFactory>().Create();
 
 			var ws = Cache.DefaultVernWs;
-			le.CitationForm.set_String(ws, Cache.TsStrFactory.MakeString(cf, ws));
+			le.CitationForm.set_String(ws, TsStringUtils.MakeString(cf, ws));
 			var ls = servLoc.GetInstance<ILexSenseFactory>().Create();
 			le.SensesOS.Add(ls);
 			ws = Cache.DefaultAnalWs;
-			ls.Definition.set_String(ws, Cache.TsStrFactory.MakeString(defn, ws));
+			ls.Definition.set_String(ws, TsStringUtils.MakeString(defn, ws));
 			if (domain != null)
 				ls.SemanticDomainsRC.Add(domain);
 			var msa = servLoc.GetInstance<IMoStemMsaFactory>().Create();
@@ -874,7 +875,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			var nodes = MakeNodeList(new[] { "Word (Citation Form)", "Meaning (Gloss)"}, false);
 			nodes.AddRange(MakeNodeList(new[] {"Morph Type"}, true));
 			ITsString[] data = { MakeVernString("kick"),
-				MakeAnalysisString("strike with foot"), Cache.TsStrFactory.EmptyString(Cache.DefaultAnalWs)};
+				MakeAnalysisString("strike with foot"), TsStringUtils.EmptyString(Cache.DefaultAnalWs)};
 
 			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data);
 
@@ -948,12 +949,12 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 
 		private ITsString MakeVernString(string arg)
 		{
-			return Cache.TsStrFactory.MakeString(arg, Cache.DefaultVernWs);
+			return TsStringUtils.MakeString(arg, Cache.DefaultVernWs);
 		}
 
 		private ITsString MakeAnalysisString(string arg)
 		{
-			return Cache.TsStrFactory.MakeString(arg, Cache.DefaultAnalWs);
+			return TsStringUtils.MakeString(arg, Cache.DefaultAnalWs);
 		}
 
 		private ICmSemanticDomain MakeSemanticDomain()

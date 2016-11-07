@@ -6,8 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -156,7 +156,7 @@ namespace SIL.FieldWorks.IText
 			text.ContentsOA = stText;
 			var para = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 			stText.ParagraphsOS.Add(para);
-			para.Contents = Cache.TsStrFactory.MakeString(contents, Cache.DefaultVernWs);
+			para.Contents = TsStringUtils.MakeString(contents, Cache.DefaultVernWs);
 
 			using (var pp = new ParagraphParser(Cache))
 			{
@@ -268,11 +268,11 @@ namespace SIL.FieldWorks.IText
 
 		private ITsString MakeVernString(string content)
 		{
-			return Cache.TsStrFactory.MakeString(content, Cache.DefaultVernWs);
+			return TsStringUtils.MakeString(content, Cache.DefaultVernWs);
 		}
 		private ITsString MakeAnalysisString(string content)
 		{
-			return Cache.TsStrFactory.MakeString(content, Cache.DefaultAnalWs);
+			return TsStringUtils.MakeString(content, Cache.DefaultAnalWs);
 		}
 
 		[Test]

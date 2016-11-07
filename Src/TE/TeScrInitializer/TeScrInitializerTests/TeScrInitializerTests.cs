@@ -273,14 +273,13 @@ namespace SIL.FieldWorks.TE
 
 			// Update section 2's paragraph contents to include the picture
 			ITsStrBldr tsStrBldr = para.Contents.GetBldr();
-			ITsStrFactory factory = TsStrFactoryClass.Create();
 			string filename;
 			if (MiscUtils.IsUnix)
 				filename = "/tmp/junk.jpg";
 			else
 				filename = "c:\\junk.jpg";
 			ICmPicture pict = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create(filename,
-				factory.MakeString("Test picture", Cache.DefaultVernWs), CmFolderTags.LocalPictures);
+				TsStringUtils.MakeString("Test picture", Cache.DefaultVernWs), CmFolderTags.LocalPictures);
 			Assert.IsNotNull(pict);
 			pict.InsertORCAt(tsStrBldr, 11);
 			para.Contents = tsStrBldr.GetString();
@@ -320,7 +319,6 @@ namespace SIL.FieldWorks.TE
 
 			// Update the paragraph contents to include the picture
 			ITsStrBldr tsStrBldr = para.Contents.GetBldr();
-			ITsStrFactory factory = TsStrFactoryClass.Create();
 			TsStringUtils.InsertOrcIntoPara(Guid.NewGuid(), FwObjDataTypes.kodtOwnNameGuidHot,
 				tsStrBldr, 11, 11, Cache.DefaultVernWs);
 			para.Contents = tsStrBldr.GetString();

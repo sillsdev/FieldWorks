@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -47,7 +48,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			string paraContents = "Das buch ist rot";
 			string trans = "The book is red";
-			m_para.Contents = Cache.TsStrFactory.MakeString(paraContents, m_wsVern);
+			m_para.Contents = TsStringUtils.MakeString(paraContents, m_wsVern);
 			var seg = SetFt(m_para, trans, 0);
 			Assert.AreEqual(1, m_para.TranslationsOC.Count, "should have made a CmTranslation");
 			Assert.AreEqual(trans, m_para.TranslationsOC.ToArray()[0].Translation.get_String(m_wsTrans).Text);
@@ -67,7 +68,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string pc1 = "Das buch ist rot. ";
 			string pc2 = "Das Madchen ist shon.";
 			string verse1 = "9";
-			m_para.Contents = Cache.TsStrFactory.MakeString(pc1 + verse1 + pc2, m_wsVern);
+			m_para.Contents = TsStringUtils.MakeString(pc1 + verse1 + pc2, m_wsVern);
 			string trans1 = "The book is red.";
 			string trans2 = "The girl is beautiful";
 			BackTranslationAndFreeTranslationUpdateHelper.Do(m_para, () => SetFt(m_para, trans1, 0));
@@ -121,7 +122,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_para = sttext.AddNewTextPara(null);
 			string paraContents = "Das buch ist rot";
 			string trans = "The book is red";
-			m_para.Contents = Cache.TsStrFactory.MakeString(paraContents, m_wsVern);
+			m_para.Contents = TsStringUtils.MakeString(paraContents, m_wsVern);
 			SetFt(m_para, trans, 0);
 			Assert.AreEqual(0, m_para.TranslationsOC.Count, "should not make CmTranslation for non-Scripture");
 		}

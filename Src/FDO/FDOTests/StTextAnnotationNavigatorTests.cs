@@ -48,9 +48,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_stText = stTextFactory.Create();
 			m_text.ContentsOA = m_stText;
 			m_para0 = m_stText.AddNewTextPara(null);
-			m_para0.Contents = TsStringUtils.MakeTss("Xxxhope xxxthis xxxwill xxxdo. xxxI xxxhope.", Cache.DefaultVernWs);
+			m_para0.Contents = TsStringUtils.MakeString("Xxxhope xxxthis xxxwill xxxdo. xxxI xxxhope.", Cache.DefaultVernWs);
 			m_para1 = m_stText.AddNewTextPara(null);
-			m_para1.Contents = TsStringUtils.MakeTss("Xxxcertain xxxto xxxcatch xxxa xxxfrog. xxxCertainly xxxcan xxxon xxxLake xxxMonroe.", Cache.DefaultVernWs);
+			m_para1.Contents = TsStringUtils.MakeString("Xxxcertain xxxto xxxcatch xxxa xxxfrog. xxxCertainly xxxcan xxxon xxxLake xxxMonroe.", Cache.DefaultVernWs);
 
 			using (ParagraphParser pp = new ParagraphParser(Cache))
 			{

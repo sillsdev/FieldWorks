@@ -165,7 +165,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 		internal readonly ICmObjectIdFactory m_objIdFactory;
 		internal readonly IFwMetaDataCacheManaged m_mdcManaged;
 		internal readonly ILgWritingSystemFactory m_wsf;
-		internal readonly ITsStrFactory m_tsf;
 		internal readonly IUnitOfWorkService m_uowService;
 		internal readonly ICmObjectSurrogateRepository m_surrRepository;
 		internal readonly ICmObjectRepository m_cmObjRepository;
@@ -174,15 +173,13 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 		/// Constructor
 		/// </summary>
 		internal LoadingServices(IDataSetup dataSetup, ICmObjectIdFactory objIdFactory,
-			IFwMetaDataCacheManaged mdcManaged, ILgWritingSystemFactory wsf, ITsStrFactory tsf,
-			IUnitOfWorkService uowService,
+			IFwMetaDataCacheManaged mdcManaged, ILgWritingSystemFactory wsf, IUnitOfWorkService uowService,
 			ICmObjectSurrogateRepository surrRepository, ICmObjectRepository cmObjRepository)
 		{
 			m_dataSetup = dataSetup;
 			m_objIdFactory = objIdFactory;
 			m_mdcManaged = mdcManaged;
 			m_wsf = wsf;
-			m_tsf = tsf;
 			m_uowService = uowService;
 			m_surrRepository = surrRepository;
 			m_cmObjRepository = cmObjRepository;

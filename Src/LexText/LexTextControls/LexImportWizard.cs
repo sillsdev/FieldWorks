@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private bool m_FeasabilityReportGenerated = false;	// has to run before import
 		private FdoCache m_cache;
 		private Mediator m_mediator;
-		private XCore.PropertyTable m_propertyTable;
+		private PropertyTable m_propertyTable;
 		private IApp m_app;
 		private IVwStylesheet m_stylesheet;
 		private bool m_formHasLoaded = false;	// so we don't process text changed msgs
@@ -890,7 +890,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// get list of current Language descriptor values
 			Hashtable langDescs = GetUILanguages();
 
-			using (var dlg = new LexImportWizardLanguage(m_cache, langDescs, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app, m_stylesheet))
+			using (var dlg = new LexImportWizardLanguage(m_cache, langDescs, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app))
 			{
 			if (dlg.ShowDialog(this) == DialogResult.OK)
 			{
@@ -935,7 +935,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 
 			using (var dlg = new LexImportWizardLanguage(m_cache, langDescs,
-					m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app, m_stylesheet))
+					m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app))
 			{
 			dlg.LangToModify(desc, name, map);
 			if (dlg.ShowDialog(this) == DialogResult.OK)
@@ -1165,7 +1165,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			contentMapping = listViewContentMapping.Items[selIndex].Tag as MarkerPresenter.ContentMapping;
 			using (LexImportWizardMarker dlg = new LexImportWizardMarker(m_LexFields))
 			{
-				dlg.Init(contentMapping, langDescs, m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app, m_stylesheet);
+				dlg.Init(contentMapping, langDescs, m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app);
 			DialogResult dr = dlg.ShowDialog(this);
 
 			// Custom fields have to be handled independantly of the dialogresult being ok sense they

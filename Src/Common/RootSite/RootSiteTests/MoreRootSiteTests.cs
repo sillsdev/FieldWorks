@@ -15,6 +15,7 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
 using System;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 
@@ -973,14 +974,13 @@ namespace SIL.FieldWorks.Common.RootSites
 		[Test]
 		public void GetParagraphProps_InPictureCaption()
 		{
-			ITsStrFactory factory = Cache.TsStrFactory;
 			string filename;
 			if (Environment.OSVersion.Platform == PlatformID.Unix)
 				filename = "/junk.jpg";
 			else
 				filename = "c:\\junk.jpg";
 			ICmPicture pict = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create(filename,
-				factory.MakeString("Test picture", Cache.DefaultVernWs),
+				TsStringUtils.MakeString("Test picture", Cache.DefaultVernWs),
 				CmFolderTags.LocalPictures);
 			Assert.IsNotNull(pict);
 
@@ -1383,11 +1383,11 @@ namespace SIL.FieldWorks.Common.RootSites
 			AddRunToMockedTrans(trans1, m_wsEng, "BT1", null);
 
 			int wsfr = m_wsf.GetWsFromStr("fr");
-			trans1.Translation.set_String(wsfr, Cache.TsStrFactory.MakeString("BT1fr", wsfr));
+			trans1.Translation.set_String(wsfr, TsStringUtils.MakeString("BT1fr", wsfr));
 
 			ICmTranslation trans2 = AddBtToMockedParagraph(para2, m_wsEng);
 			AddRunToMockedTrans(trans2, m_wsEng, "BT2", null);
-			trans2.Translation.set_String(wsfr, Cache.TsStrFactory.MakeString("BT2fr", wsfr));
+			trans2.Translation.set_String(wsfr, TsStringUtils.MakeString("BT2fr", wsfr));
 
 			rootBox.PropChanged(text1.Hvo, StTextTags.kflidParagraphs, 1, 1, 0);
 
@@ -1440,7 +1440,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			AddRunToMockedTrans(trans2, m_wsEng, "BT2", null);
 
 			int wsfr = m_wsf.GetWsFromStr("fr");
-			trans2.Translation.set_String(wsfr, Cache.TsStrFactory.MakeString("BT2fr", wsfr));
+			trans2.Translation.set_String(wsfr, TsStringUtils.MakeString("BT2fr", wsfr));
 
 			rootBox.PropChanged(text1.Hvo, StTextTags.kflidParagraphs, 1, 1, 0);
 
@@ -1492,7 +1492,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			ICmTranslation trans2 = AddBtToMockedParagraph(para2, m_wsEng);
 			AddRunToMockedTrans(trans2, m_wsEng, "BT2", null);
 			int wsfr = m_wsf.GetWsFromStr("fr");
-			trans1.Translation.set_String(wsfr, Cache.TsStrFactory.MakeString("BT1fr", wsfr));
+			trans1.Translation.set_String(wsfr, TsStringUtils.MakeString("BT1fr", wsfr));
 
 			rootBox.PropChanged(text1.Hvo, StTextTags.kflidParagraphs, 1, 1, 0);
 

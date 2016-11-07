@@ -593,8 +593,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			{
 				IScrTxtPara para = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(
 					stjt, ScrStyleNames.Remark);
-				ITsStrFactory fact = TsStrFactoryClass.Create();
-				para.Contents = fact.MakeString(paraText, Cache.DefaultAnalWs);
+				para.Contents = TsStringUtils.MakeString(paraText, Cache.DefaultAnalWs);
 			}
 		}
 

@@ -4,6 +4,7 @@
 
 using System.Diagnostics;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.PaObjects;
@@ -44,7 +45,7 @@ namespace SIL.FieldWorks
 			var entry = CreateLexEntry();
 			var etymology = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
 			entry.EtymologyOS.Add(etymology);
-			var firstForm = Cache.TsStrFactory.MakeString("FirstForm", _enWsId);
+			var firstForm = TsStringUtils.MakeString("FirstForm", _enWsId);
 			etymology.Form.set_String(_enWsId, firstForm);
 			// SUT
 			var paEntry = new PaLexEntry(entry);
@@ -66,12 +67,12 @@ namespace SIL.FieldWorks
 			var entry = CreateLexEntry();
 			var etymology = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
 			entry.EtymologyOS.Add(etymology);
-			var firstForm = Cache.TsStrFactory.MakeString("FirstForm", _enWsId);
+			var firstForm = TsStringUtils.MakeString("FirstForm", _enWsId);
 			etymology.Form.set_String(_enWsId, firstForm);
 
 			etymology = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
 			entry.EtymologyOS.Add(etymology);
-			var secondForm = Cache.TsStrFactory.MakeString("SecondForm", _enWsId);
+			var secondForm = TsStringUtils.MakeString("SecondForm", _enWsId);
 			etymology.Form.set_String(_enWsId, secondForm);
 			// SUT
 			var paEntry = new PaLexEntry(entry);

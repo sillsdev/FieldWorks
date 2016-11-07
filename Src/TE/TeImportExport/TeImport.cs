@@ -805,8 +805,6 @@ namespace SIL.FieldWorks.TE
 		/// <summary>Default Annotation style proxy</summary>
 		protected ImportStyleProxy m_DefaultAnnotationStyleProxy;
 
-		/// <summary>Factory for creating TsStrings.</summary>
-		protected ITsStrFactory m_TsStringFactory = TsStrFactoryClass.Create();
 		/// <summary>The writing system of the current back trans para being processed --
 		/// needed to be able to stick BT character runs into the proper BT para</summary>
 		protected int m_wsCurrBtPara;
@@ -1729,7 +1727,7 @@ namespace SIL.FieldWorks.TE
 							ws = GetWsForImportDomain();
 
 						if (m_scrBook != null)
-							m_scrBook.Name.set_String(ws, TsStringUtils.MakeTss(m_sSegmentText.Trim(), ws));
+							m_scrBook.Name.set_String(ws, TsStringUtils.MakeString(m_sSegmentText.Trim(), ws));
 
 						// REVIEW: Should we call SetInCharStyle here?
 						if (m_styleProxy.EndMarker != null)
@@ -2620,7 +2618,7 @@ namespace SIL.FieldWorks.TE
 						ProcessBtParaStart();
 					}
 				}
-				strbldr = TsStringUtils.MakeTss("", m_wsCurrBtPara).GetBldr();
+				strbldr = TsStringUtils.MakeString("", m_wsCurrBtPara).GetBldr();
 				Debug.Assert(m_wsCurrBtPara != 0);
 				m_BTStrBldrs[m_wsCurrBtPara] = strbldr;
 			}
@@ -3012,7 +3010,7 @@ namespace SIL.FieldWorks.TE
 
 				ICmTranslation transl = para.GetOrCreateBT();
 				ITsString btTss = m_BTFootnoteStrBldr.Length == 0 ?
-					m_TsStringFactory.MakeString(string.Empty, m_wsCurrBtPara) :
+					TsStringUtils.EmptyString(m_wsCurrBtPara) :
 					m_BTFootnoteStrBldr.GetString();
 				transl.Translation.set_String(m_wsCurrBtPara, btTss);
 				m_CurrBTFootnote.InsertRefORCIntoTrans(strbldr, ichMarker, m_wsCurrBtPara);
@@ -3265,7 +3263,7 @@ namespace SIL.FieldWorks.TE
 
 			// Set the title of the book in the UI language.
 			CurrentBook.Name.UserDefaultWritingSystem =
-				TsStringUtils.MakeTss(CurrentBook.BestUIName, m_cache.DefaultUserWs);
+				TsStringUtils.MakeString(CurrentBook.BestUIName, m_cache.DefaultUserWs);
 
 			// Create an empty title paragraph in case we don't get a Main Title.
 			FinalizePrevTitle();
@@ -3419,7 +3417,7 @@ namespace SIL.FieldWorks.TE
 			if (m_styleProxy.StyleId == ScrStyleNames.MainBookTitle && sTitle.Length > 0 &&
 				tssBookName != null && String.IsNullOrEmpty(tssBookName.Text))
 			{
-				CurrentBook.Name.set_String(ws, TsStringUtils.MakeTss(sTitle, ws));
+				CurrentBook.Name.set_String(ws, TsStringUtils.MakeString(sTitle, ws));
 
 				// To show the vernacular name in the progress dialog, enable this code
 				//					if (m_progressDlg != null)
@@ -4131,7 +4129,7 @@ namespace SIL.FieldWorks.TE
 					IStTxtPara footnotePara = (IStTxtPara)footnote.ParagraphsOS[0];
 					ICmTranslation transl = footnotePara.GetOrCreateBT();
 					transl.Translation.set_String(ws, info.bldr.Length == 0 ?
-						m_TsStringFactory.MakeString(string.Empty, ws) : info.bldr.GetString());
+						TsStringUtils.EmptyString(ws) : info.bldr.GetString());
 
 					footnote.InsertRefORCIntoTrans(bldr, info.ichOffset + iFootnote, ws);
 					iFootnote++;
@@ -4147,9 +4145,6 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private void AddBTPictureCaptionsAndCopyrights()
 		{
-#pragma warning disable 219
-			ITsStrFactory factory = TsStrFactoryClass.Create();
-#pragma warning restore 219
 			for (int index = 0; index < m_BTPendingPictures.Count; index++)
 			{
 				ICmPicture picture = FindCorrespondingPicture(index);
@@ -4559,7 +4554,6 @@ namespace SIL.FieldWorks.TE
 			m_lastPara = null;
 			m_BookTitleParaProxy = null;
 			m_DefaultFootnoteParaProxy = null;
-			m_TsStringFactory = null;
 			m_BTFootnoteStrBldr = null;
 			m_CurrParaPictures = null;
 			m_CurrParaFootnotes = null;

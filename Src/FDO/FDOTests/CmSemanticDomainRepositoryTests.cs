@@ -237,7 +237,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var result = MakeEntryWithForm(form);
 			var sense = m_senseFactory.Create();
 			result.SensesOS.Add(sense);
-			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(
+			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(
 				gloss, Cache.DefaultAnalWs);
 			return result;
 		}
@@ -246,7 +246,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var entry = m_entryFactory.Create();
 			entry.LexemeFormOA = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
-			entry.LexemeFormOA.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString(
+			entry.LexemeFormOA.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(
 				form, Cache.DefaultVernWs);
 			return entry;
 		}

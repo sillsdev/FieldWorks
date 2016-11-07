@@ -321,8 +321,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_para.Stub(p => p.ClassID).Return(ScrTxtParaTags.kClassId);
 			ICmObjectId paraId = Cache.ServiceLocator.GetInstance<ICmObjectIdFactory>().NewId();
 			m_para.Stub(p => p.Id).Return(paraId);
-			ITsStrFactory fact = TsStrFactoryClass.Create();
-			m_para.Contents = fact.MakeString(string.Empty, Cache.DefaultVernWs);
+			m_para.Contents = TsStringUtils.EmptyString(Cache.DefaultVernWs);
 
 			GetBtDelegate getBtDelegate = () =>
 				m_para.TranslationsOC.FirstOrDefault(trans => trans.TypeRA != null &&
@@ -448,7 +447,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			existingTrans2.TypeRA = btType;
 			IMultiString translation = MockRepository.GenerateStub<IMultiString>();
 			translation.Stub(t => t.get_String(Cache.DefaultAnalWs)).Return(
-				Cache.TsStrFactory.MakeString(string.Empty, Cache.DefaultAnalWs));
+				TsStringUtils.EmptyString(Cache.DefaultAnalWs));
 			translation.Stub(t => t.AvailableWritingSystemIds).Return(new int[] { Cache.DefaultAnalWs });
 			existingTrans2.Stub(t => t.Translation).Return(translation);
 			m_para.TranslationsOC.Add(existingTrans2);
@@ -474,7 +473,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_para.TranslationsOC.Add(existingTrans2);
 			IMultiString translation = MockRepository.GenerateStub<IMultiString>();
 			translation.Stub(t => t.get_String(Cache.DefaultAnalWs)).Return(
-				Cache.TsStrFactory.MakeString("I want a monkey.", Cache.DefaultAnalWs));
+				TsStringUtils.MakeString("I want a monkey.", Cache.DefaultAnalWs));
 			existingTrans2.Stub(t => t.Translation).Return(translation);
 			translation.Stub(t => t.AvailableWritingSystemIds).Return(new int[] { Cache.DefaultAnalWs });
 			ReflectionHelper.CallMethod(typeof(DataStoreInitializationServices), "EnsureBtForPara", m_para);
@@ -501,7 +500,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_para.TranslationsOC.Add(existingTrans2);
 			IMultiString translation = MockRepository.GenerateStub<IMultiString>();
 			translation.Stub(t => t.get_String(Cache.DefaultAnalWs)).Return(
-				Cache.TsStrFactory.MakeString("I want another monkey.", Cache.DefaultAnalWs));
+				TsStringUtils.MakeString("I want another monkey.", Cache.DefaultAnalWs));
 			existingTrans2.Stub(t => t.Translation).Return(translation);
 			translation.Stub(t => t.AvailableWritingSystemIds).Return(new int[] { Cache.DefaultAnalWs });
 			ReflectionHelper.CallMethod(typeof(DataStoreInitializationServices), "EnsureBtForPara", m_para);
@@ -529,7 +528,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_para.TranslationsOC.Add(existingTrans2);
 			IMultiString translation = MockRepository.GenerateStub<IMultiString>();
 			translation.Stub(t => t.get_String(m_wsDe)).Return(
-				Cache.TsStrFactory.MakeString("I want another monkey.", m_wsDe));
+				TsStringUtils.MakeString("I want another monkey.", m_wsDe));
 			translation.Stub(t => t.AvailableWritingSystemIds).Return(new int[]{m_wsDe});
 			existingTrans2.Stub(t => t.Translation).Return(translation);
 			ReflectionHelper.CallMethod(typeof(DataStoreInitializationServices), "EnsureBtForPara", m_para);
@@ -562,9 +561,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_para.TranslationsOC.Add(existingTrans2);
 			IMultiString translation = MockRepository.GenerateStub<IMultiString>();
 			translation.Stub(t => t.get_String(m_wsDe)).Return(
-				Cache.TsStrFactory.MakeString("I want another monkey.", m_wsDe));
+				TsStringUtils.MakeString("I want another monkey.", m_wsDe));
 			translation.Stub(t => t.get_String(Cache.DefaultAnalWs)).Return(
-				Cache.TsStrFactory.MakeString("short def.", Cache.DefaultAnalWs));
+				TsStringUtils.MakeString("short def.", Cache.DefaultAnalWs));
 			translation.Stub(t => t.AvailableWritingSystemIds).Return(new int[] { Cache.DefaultAnalWs, m_wsDe });
 			existingTrans2.Stub(t => t.Translation).Return(translation);
 			ReflectionHelper.CallMethod(typeof(DataStoreInitializationServices), "EnsureBtForPara", m_para);
@@ -755,9 +754,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ReflectionHelper.CallMethod(typeof(DataStoreInitializationServices), "EnsureSegmentsForPara", m_para);
 
 			Assert.AreEqual(2, m_para.SegmentsOS.Count);
-			ITsString tssSeg1 = Cache.TsStrFactory.MakeString("Whatever we want.", Cache.DefaultAnalWs);
+			ITsString tssSeg1 = TsStringUtils.MakeString("Whatever we want.", Cache.DefaultAnalWs);
 			VerifySegment(0, tssSeg1, "Whateverx wex want.", new int[0]);
-			ITsString tssSeg2 = Cache.TsStrFactory.MakeString("The second segment.", Cache.DefaultAnalWs);
+			ITsString tssSeg2 = TsStringUtils.MakeString("The second segment.", Cache.DefaultAnalWs);
 			VerifySegment(1, tssSeg2, "Thex secondx segment.", new int[0]);
 		}
 		#endregion
@@ -1306,11 +1305,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			ReflectionHelper.CallMethod(typeof(DataStoreInitializationServices), "BlowAwaySegments", m_para);
 			VerifyParaSegmentBreaks();
-			VerifySegment(0, Cache.TsStrFactory.MakeString("Monkey. ", Cache.DefaultAnalWs),
+			VerifySegment(0, TsStringUtils.MakeString("Monkey. ", Cache.DefaultAnalWs),
 				"Monkey.x ", new int[0], new int[0], new [] { 1 });
-			VerifySegment(1, Cache.TsStrFactory.MakeString("I want a monkey. ", Cache.DefaultAnalWs),
+			VerifySegment(1, TsStringUtils.MakeString("I want a monkey. ", Cache.DefaultAnalWs),
 				"Ix wantx ax monkey.x ", new int[0], new int[0], new [] { 1 });
-			VerifySegment(2, Cache.TsStrFactory.MakeString("Waaaaaaa", Cache.DefaultAnalWs),
+			VerifySegment(2, TsStringUtils.MakeString("Waaaaaaa", Cache.DefaultAnalWs),
 				"Waaaaaaa", new int[0], new int[0], new [] { 0 });
 		}
 
@@ -1339,11 +1338,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			ReflectionHelper.CallMethod(typeof(DataStoreInitializationServices), "BlowAwaySegments", m_para);
 			VerifyParaSegmentBreaks();
-			VerifySegment(0, Cache.TsStrFactory.MakeString("Monkey. ", Cache.DefaultAnalWs),
+			VerifySegment(0, TsStringUtils.MakeString("Monkey. ", Cache.DefaultAnalWs),
 				"Monkey.x ", new int[0], new int[0], new [] { 1 });
-			VerifySegment(1, Cache.TsStrFactory.MakeString("I want a monkey. ", Cache.DefaultAnalWs),
+			VerifySegment(1, TsStringUtils.MakeString("I want a monkey. ", Cache.DefaultAnalWs),
 				"Ix wantx ax monkey.x ", new int[0], new int[0], new[] { 1 });
-			VerifySegment(2, Cache.TsStrFactory.MakeString("Waaaaaaa", Cache.DefaultAnalWs),
+			VerifySegment(2, TsStringUtils.MakeString("Waaaaaaa", Cache.DefaultAnalWs),
 				"Waaaaaaa", new int[0], new int[0], new [] { 0 });
 		}
 		#endregion
@@ -1410,7 +1409,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_scr.ResourcesOC.Clear();
 
 			IScrBook exodus = CreateExodusData();
-			exodus.TitleOA[0].Contents = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultVernWs);
+			exodus.TitleOA[0].Contents = TsStringUtils.EmptyString(Cache.DefaultVernWs);
 			exodus.TitleOA[0].SegmentsOS.Clear();
 
 			int undoActions = m_actionHandler.UndoableActionCount;
@@ -1667,7 +1666,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
 			VerifySegment(0, expectedSegment0FT, "Ix ate ax whole cow yesterday", new int[] { 1, 2, 1 });
-			VerifySegment(1, Cache.TsStrFactory.MakeString("Wonderful!", Cache.DefaultAnalWs),
+			VerifySegment(1, TsStringUtils.MakeString("Wonderful!", Cache.DefaultAnalWs),
 				"Wonderful!", new int[] { 1 });
 		}
 
@@ -1695,8 +1694,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
-			VerifySegment(0, Cache.TsStrFactory.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 1 });
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
+			VerifySegment(0, TsStringUtils.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 1 });
 			VerifySegment(1, emptyAnalFreeTrans, null, new int[0]);
 			VerifySegment(2, emptyAnalFreeTrans, null, new int[0]);
 		}
@@ -1724,10 +1723,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, emptyAnalFreeTrans, null, new int[0]);
 			VerifySegment(1, emptyAnalFreeTrans, null, new int[0]);
-			VerifySegment(2, Cache.TsStrFactory.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 1 });
+			VerifySegment(2, TsStringUtils.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 1 });
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1763,10 +1762,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, expectedSegment0FT, "Ix ate", new int[] { 1 });
 			VerifySegment(1, emptyAnalFreeTrans, null, new int[0]); // hard line break
-			VerifySegment(2, Cache.TsStrFactory.MakeString("a monkey",
+			VerifySegment(2, TsStringUtils.MakeString("a monkey",
 				Cache.DefaultAnalWs), "ax monkey", new int[] { 1 });
 		}
 
@@ -1802,8 +1801,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
-			VerifySegment(0, Cache.TsStrFactory.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 1 });
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
+			VerifySegment(0, TsStringUtils.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 1 });
 			VerifySegment(1, emptyAnalFreeTrans, null, new int[0]); // hard line break
 			VerifySegment(2, expectedSegment2FT, "ax monkey", new int[] { 1 }); // foootnote and following text
 		}
@@ -1838,12 +1837,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, emptyAnalFreeTrans, null, new int[0]);
-			VerifySegment(1, Cache.TsStrFactory.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 1 });
+			VerifySegment(1, TsStringUtils.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 1 });
 			VerifySegment(2, emptyAnalFreeTrans, null, new int[0]); // hard line break
 			VerifySegment(3, emptyAnalFreeTrans, null, new int[0]); // foootnote and verse number
-			VerifySegment(4, Cache.TsStrFactory.MakeString("a monkey", Cache.DefaultAnalWs), "ax monkey", new int[] { 1 });
+			VerifySegment(4, TsStringUtils.MakeString("a monkey", Cache.DefaultAnalWs), "ax monkey", new int[] { 1 });
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1878,13 +1877,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			CallFixSegmentsForPara();
 
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, emptyAnalFreeTrans, null, new int[0]);
-			VerifySegment(1, Cache.TsStrFactory.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 1 });
+			VerifySegment(1, TsStringUtils.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 1 });
 			VerifySegment(2, emptyAnalFreeTrans, null, new int[0]); // verse number
 			VerifySegment(3, emptyAnalFreeTrans, null, new int[0]); // foootnote
 			VerifySegment(4, emptyAnalFreeTrans, null, new int[0]); // hard line break
-			VerifySegment(5, Cache.TsStrFactory.MakeString("a monkey", Cache.DefaultAnalWs), "ax monkey", new int[] { 1 });
+			VerifySegment(5, TsStringUtils.MakeString("a monkey", Cache.DefaultAnalWs), "ax monkey", new int[] { 1 });
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1919,13 +1918,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			CallFixSegmentsForPara();
 
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, emptyAnalFreeTrans, null, new int[0]);
-			VerifySegment(1, Cache.TsStrFactory.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 1 });
+			VerifySegment(1, TsStringUtils.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 1 });
 			VerifySegment(2, emptyAnalFreeTrans, null, new int[0]); // verse number
 			VerifySegment(3, emptyAnalFreeTrans, null, new int[0]); // foootnote
 			VerifySegment(4, emptyAnalFreeTrans, null, new int[0]); // hard line break
-			VerifySegment(5, Cache.TsStrFactory.MakeString("a monkey", Cache.DefaultAnalWs), "ax monkey", new int[] { 1 });
+			VerifySegment(5, TsStringUtils.MakeString("a monkey", Cache.DefaultAnalWs), "ax monkey", new int[] { 1 });
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1960,7 +1959,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
 			VerifySegment(0, expectedSegment0FT, "Ix ate", new int[] { 2 });
-			VerifySegment(1, Cache.TsStrFactory.MakeString("a monkey", Cache.DefaultAnalWs), "ax monkey", new int[] { 1 });
+			VerifySegment(1, TsStringUtils.MakeString("a monkey", Cache.DefaultAnalWs), "ax monkey", new int[] { 1 });
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1993,7 +1992,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			VerifySegment(0, Cache.TsStrFactory.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 2 });
+			VerifySegment(0, TsStringUtils.MakeString("I ate", Cache.DefaultAnalWs), "Ix ate", new int[] { 2 });
 			VerifySegment(1, expectedSegment1FT, "ax monkey", new int[] { 1 });
 		}
 
@@ -2029,7 +2028,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0);
 			VerifySegment(1);
 		}
@@ -2368,7 +2367,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
 			VerifySegment(0, expectedSegment0FT, "FTx ofx sentence1.", new int[] { 1 });
-			VerifySegment(1, Cache.TsStrFactory.MakeString("FT of Sentence2.", Cache.DefaultAnalWs),
+			VerifySegment(1, TsStringUtils.MakeString("FT of Sentence2.", Cache.DefaultAnalWs),
 				"FTx ofx Sentence2.", new int[] { 2 });
 			VerifySegment(2, expectedSegment2FT, "FTx ofx sentencex 3.", new int[0]);
 		}
@@ -2405,7 +2404,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
 			VerifySegment(0, expectedSegment0FT, "FTx ofx sentence1.", new int[0], new int[0], new int[0], false);
-			VerifySegment(1, Cache.TsStrFactory.MakeString("FT of Sentence2.", Cache.DefaultAnalWs),
+			VerifySegment(1, TsStringUtils.MakeString("FT of Sentence2.", Cache.DefaultAnalWs),
 				"FTx ofx Sentence2.", new int[0], new int[0], new int[0], false);
 		}
 
@@ -2453,7 +2452,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, emptyAnalFreeTrans, null, new int[0]);
 			// ENHANCE: Ideally we wouldn't want the space at the end of the literral translation,
 			// however, the current code adds one and we don't feel like it's critical enough
@@ -2497,13 +2496,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, emptyAnalFreeTrans, null, new int[0]);
 			VerifySegment(1, expectedSegment1FT, null, new int[0]);
 			VerifySegment(2, emptyAnalFreeTrans, null, new int[0]);
 			VerifySegment(3, expectedSegment3FT, null, new int[0]);
 			VerifySegment(4, emptyAnalFreeTrans, null, new int[0]);
-			VerifySegment(5, Cache.TsStrFactory.MakeString("FT of verse 2.", Cache.DefaultAnalWs),
+			VerifySegment(5, TsStringUtils.MakeString("FT of verse 2.", Cache.DefaultAnalWs),
 				"FTx ofx versex 2.", new int[] { 1 });
 		}
 
@@ -2536,7 +2535,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, emptyAnalFreeTrans, null, new int[0]);
 			VerifySegment(1, expectedSegment2FT, "FTx ofx versex 2.", new int[] { 1 });
 		}
@@ -2573,11 +2572,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, emptyAnalFreeTrans, null, new int[0]);
 			VerifySegment(1, expectedSegment2FT, "FTx ofx versex 1.", new int[] { 2 });
 			VerifySegment(2, emptyAnalFreeTrans, null, new int[0]);
-			VerifySegment(3, Cache.TsStrFactory.MakeString("FT of verse 2.", Cache.DefaultAnalWs),
+			VerifySegment(3, TsStringUtils.MakeString("FT of verse 2.", Cache.DefaultAnalWs),
 				"FTx ofx versex 2.", new int[]{ 1 });
 		}
 
@@ -2612,11 +2611,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, emptyAnalFreeTrans, null, new int[0]);
 			VerifySegment(1, expectedSegment1FT, null, new int[0]);
 			VerifySegment(2, emptyAnalFreeTrans, null, new int[0]);
-			VerifySegment(3, Cache.TsStrFactory.MakeString("FT of verse two.", Cache.DefaultAnalWs),
+			VerifySegment(3, TsStringUtils.MakeString("FT of verse two.", Cache.DefaultAnalWs),
 				"FTx ofx versex two.", new int[0]);
 		}
 
@@ -2641,7 +2640,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0);
 			VerifySegment(1);
 			VerifySegment(2);
@@ -2671,9 +2670,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, emptyAnalFreeTrans, null, new int[0]);
-			VerifySegment(1, Cache.TsStrFactory.MakeString("FT of verse 4.", Cache.DefaultAnalWs),
+			VerifySegment(1, TsStringUtils.MakeString("FT of verse 4.", Cache.DefaultAnalWs),
 				"FTx ofx versex 4.", new int[] { 1 });
 		}
 
@@ -2703,9 +2702,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, emptyAnalFreeTrans, null, new int[0]);
-			VerifySegment(1, Cache.TsStrFactory.MakeString("FT of verse 4.", Cache.DefaultAnalWs),
+			VerifySegment(1, TsStringUtils.MakeString("FT of verse 4.", Cache.DefaultAnalWs),
 				"FTx ofx versex 4.", new int[] { 1 });
 		}
 
@@ -2746,11 +2745,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, emptyAnalFreeTrans, null, new int[0]);
 			VerifySegment(1, expectedSegment1FT, "FTx ofx versex 3.", new [] { 1 });
 			VerifySegment(2, emptyAnalFreeTrans, null, new int[0]);
-			VerifySegment(3, Cache.TsStrFactory.MakeString("FT of verse 4.", Cache.DefaultAnalWs),
+			VerifySegment(3, TsStringUtils.MakeString("FT of verse 4.", Cache.DefaultAnalWs),
 				"FTx ofx versex 4.", new [] { 2 });
 		}
 
@@ -2779,9 +2778,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			ITsString emptyAnalFreeTrans = Cache.TsStrFactory.MakeString(String.Empty, Cache.DefaultAnalWs);
+			ITsString emptyAnalFreeTrans = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			VerifySegment(0, emptyAnalFreeTrans, null, new int[0]);
-			VerifySegment(1, Cache.TsStrFactory.MakeString("FT of verse 4.", Cache.DefaultAnalWs),
+			VerifySegment(1, TsStringUtils.MakeString("FT of verse 4.", Cache.DefaultAnalWs),
 				"FTx ofx versex 4.", new int[] { 1 });
 			VerifySegment(2, emptyAnalFreeTrans, null, new int[0]);
 			VerifySegment(3, emptyAnalFreeTrans, null, new int[0]);
@@ -2819,7 +2818,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
 			VerifySegment(0, expectedSegment0FT, "FTx ofx sentence1.", new int[] { 1 });
-			VerifySegment(1, Cache.TsStrFactory.MakeString("FT of Sentence2.", Cache.DefaultAnalWs),
+			VerifySegment(1, TsStringUtils.MakeString("FT of Sentence2.", Cache.DefaultAnalWs),
 				"FTx ofx Sentence2.", new int[] { 2 });
 		}
 
@@ -2911,7 +2910,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
 			VerifySegment(0, expectedSegment0FT, "FTx of sentence1.", new int[] { 1, 2 });
-			VerifySegment(1, Cache.TsStrFactory.MakeString("FT of sentence2.", Cache.DefaultAnalWs),
+			VerifySegment(1, TsStringUtils.MakeString("FT of sentence2.", Cache.DefaultAnalWs),
 				"FTx ofx sentence2.", new int[0]);
 			VerifySegment(2, expectedSegment2FT, "FTx ofx sentencex 3.", new int[0]);
 		}
@@ -2993,7 +2992,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
-			VerifySegment(0, Cache.TsStrFactory.MakeString("FT of sentence 1.", Cache.DefaultAnalWs),
+			VerifySegment(0, TsStringUtils.MakeString("FT of sentence 1.", Cache.DefaultAnalWs),
 				"FTx ofx sentencex 1.", new[] { 1 });
 			VerifySegment(1, expectedSegment1FT, "FTx ofx sentencex 2.", new int[0]);
 		}
@@ -3031,7 +3030,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			CallFixSegmentsForPara();
 			VerifyParaSegmentBreaks();
 			VerifySegment(0, expectedSegment0FT, "FTx ofx sentencex 1.", new[] { 1 });
-			VerifySegment(1, Cache.TsStrFactory.MakeString("FT of sentence 2.", Cache.DefaultAnalWs),
+			VerifySegment(1, TsStringUtils.MakeString("FT of sentence 2.", Cache.DefaultAnalWs),
 				"FTx ofx sentencex 2.", new int[0]);
 		}
 		#endregion

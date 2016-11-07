@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			int wsUser = m_realCache.ServiceLocator.WritingSystemManager.UserWs;
 			int wsEn = m_realCache.ServiceLocator.WritingSystemManager.GetWsFromStr("en");
-			m_vc = new LabeledMultiStringVc(kflid, WritingSystems, wsUser, true, wsEn, m_realCache.TsStrFactory);
+			m_vc = new LabeledMultiStringVc(kflid, WritingSystems, wsUser, true, wsEn);
 
 			// arg3 is a meaningless initial fragment, since this VC only displays one thing.
 			m_rootb.SetRootObject(khvoRoot, m_vc, 1, m_styleSheet);

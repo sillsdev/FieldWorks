@@ -96,24 +96,24 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				var wfFactory = Cache.ServiceLocator.GetInstance<IWfiWordformFactory>();
 				var wsVern = Cache.DefaultVernWs;
 				/* A a a a. */
-				IWfiWordform A = wfFactory.Create(TsStringUtils.MakeTss("A", wsVern));
-				IWfiWordform a = wfFactory.Create(TsStringUtils.MakeTss("a", wsVern));
+				IWfiWordform A = wfFactory.Create(TsStringUtils.MakeString("A", wsVern));
+				IWfiWordform a = wfFactory.Create(TsStringUtils.MakeString("a", wsVern));
 				Words_para0.Add(A);
 				Words_para0.Add(a);
 				Words_para0.Add(a);
 				Words_para0.Add(a);
-				Para0.Contents = TsStringUtils.MakeTss(
+				Para0.Contents = TsStringUtils.MakeString(
 					Words_para0[0].Form.BestVernacularAlternative.Text + " " +
 					Words_para0[1].Form.BestVernacularAlternative.Text + " " +
 					Words_para0[2].Form.BestVernacularAlternative.Text + " " +
 					Words_para0[3].Form.BestVernacularAlternative.Text + ".", wsVern);
 				/* b B. */
-				IWfiWordform b = wfFactory.Create(TsStringUtils.MakeTss("b", wsVern));
-				IWfiWordform B = wfFactory.Create(TsStringUtils.MakeTss("B", wsVern));
+				IWfiWordform b = wfFactory.Create(TsStringUtils.MakeString("b", wsVern));
+				IWfiWordform B = wfFactory.Create(TsStringUtils.MakeString("B", wsVern));
 				Words_para0.Add(b);
 				Words_para0.Add(B);
 				var bldr = Para0.Contents.GetIncBldr();
-				bldr.AppendTsString(TsStringUtils.MakeTss(
+				bldr.AppendTsString(TsStringUtils.MakeString(
 					" " + Words_para0[4].Form.BestVernacularAlternative.Text + " " +
 					Words_para0[5].Form.BestVernacularAlternative.Text + ".", wsVern));
 				Para0.Contents = bldr.GetString();
@@ -333,9 +333,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				var newEntry1 = setup.EntryFactory.Create("a-", "aPrefix", SandboxGenericMSA.Create(MsaType.kInfl, null));
 				var newEntry2 = setup.EntryFactory.Create("-a", "aSuffix", SandboxGenericMSA.Create(MsaType.kDeriv, null));
 				var newEntry3 = setup.EntryFactory.Create("-a-", "aInfix", SandboxGenericMSA.Create(MsaType.kUnclassified, null));
-				var boundedStem = setup.EntryFactory.Create(morphTypeBoundedStem, TsStringUtils.MakeTss("a", Cache.DefaultVernWs),
+				var boundedStem = setup.EntryFactory.Create(morphTypeBoundedStem, TsStringUtils.MakeString("a", Cache.DefaultVernWs),
 					"aboundedstem", SandboxGenericMSA.Create(MsaType.kStem, null));
-				var boundedRoot = setup.EntryFactory.Create(morphTypeBoundedRoot, TsStringUtils.MakeTss("a", Cache.DefaultVernWs),
+				var boundedRoot = setup.EntryFactory.Create(morphTypeBoundedRoot, TsStringUtils.MakeString("a", Cache.DefaultVernWs),
 					"aboundedroot", SandboxGenericMSA.Create(MsaType.kRoot, null));
 				// try to generate analyses for matching entries (should have no results)
 				setup.GuessServices.GenerateEntryGuesses(setup.StText);
@@ -410,7 +410,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			{
 				// create an affix entry
 				var mainEntry = setup.EntryFactory.Create("aMain", "astem", SandboxGenericMSA.Create(MsaType.kStem, setup.Pos_noun));
-				ILexEntryRef ler1 = mainEntry.CreateVariantEntryAndBackRef(setup.Vet_DialectalVariant, TsStringUtils.MakeTss("a", Cache.DefaultVernWs));
+				ILexEntryRef ler1 = mainEntry.CreateVariantEntryAndBackRef(setup.Vet_DialectalVariant, TsStringUtils.MakeString("a", Cache.DefaultVernWs));
 				var variantOfEntry = ler1.OwnerOfClass<ILexEntry>();
 				// try to generate analyses for matching entries (should have no results)
 				setup.GuessServices.GenerateEntryGuesses(setup.StText);
@@ -439,7 +439,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			{
 				// create an affix entry
 				var mainEntry = setup.EntryFactory.Create("aMain", "astem", SandboxGenericMSA.Create(MsaType.kStem, setup.Pos_noun));
-				ILexEntryRef ler = mainEntry.SensesOS[0].CreateVariantEntryAndBackRef(setup.Vet_FreeVariant, TsStringUtils.MakeTss("a", Cache.DefaultVernWs));
+				ILexEntryRef ler = mainEntry.SensesOS[0].CreateVariantEntryAndBackRef(setup.Vet_FreeVariant, TsStringUtils.MakeString("a", Cache.DefaultVernWs));
 				var variantOfSense = ler.OwnerOfClass<ILexEntry>();
 				// try to generate analyses for matching entries (should have no results)
 				setup.GuessServices.GenerateEntryGuesses(setup.StText);
@@ -472,7 +472,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			{
 				// create an affix entry
 				var mainEntry = setup.EntryFactory.Create("aMain", "astem", SandboxGenericMSA.Create(MsaType.kStem, setup.Pos_noun));
-				ILexEntryRef ler = mainEntry.CreateVariantEntryAndBackRef(setup.Vet_FreeVariant, TsStringUtils.MakeTss("a", Cache.DefaultVernWs));
+				ILexEntryRef ler = mainEntry.CreateVariantEntryAndBackRef(setup.Vet_FreeVariant, TsStringUtils.MakeString("a", Cache.DefaultVernWs));
 				var variantOfEntry = ler.OwnerOfClass<ILexEntry>();
 				// make the variant have it's own gloss...should take precendence over main entry gloss info (cf. LT-9681)
 				var senseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();

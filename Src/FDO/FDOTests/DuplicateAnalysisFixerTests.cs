@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			var wa7 = MakeAnalysis(wf);
 			var bundle7 = MakeBundle(wa7, "bank0");
-			bundle7.MorphRA = MorphServices.MakeMorph(entryBank, TsStringUtils.MakeTss("bank", Cache.DefaultVernWs));
+			bundle7.MorphRA = MorphServices.MakeMorph(entryBank, TsStringUtils.MakeString("bank", Cache.DefaultVernWs));
 
 			var wa8 = MakeAnalysis(wf);
 			MakeBundle(wa8, entryBank.SensesOS[0]);
@@ -191,7 +191,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			text.ContentsOA = stText;
 			var para = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 			stText.ParagraphsOS.Add(para);
-			para.Contents = Cache.TsStrFactory.MakeString(contents, Cache.DefaultVernWs);
+			para.Contents = TsStringUtils.MakeString(contents, Cache.DefaultVernWs);
 			var seg = Cache.ServiceLocator.GetInstance<ISegmentFactory>().Create();
 			para.SegmentsOS.Add(seg);
 			return text;
@@ -207,7 +207,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var para = (IStTxtPara)text.ParagraphsOS[0];
 			int length = para.Contents.Length;
 			if (length == 0)
-				para.Contents = Cache.TsStrFactory.MakeString(contents, Cache.DefaultVernWs);
+				para.Contents = TsStringUtils.MakeString(contents, Cache.DefaultVernWs);
 			else
 			{
 				var bldr = para.Contents.GetBldr();
@@ -234,7 +234,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		private ITsString MakeVernString(string text)
 		{
-			return Cache.TsStrFactory.MakeString(text, Cache.DefaultVernWs);
+			return TsStringUtils.MakeString(text, Cache.DefaultVernWs);
 		}
 
 		private IWfiAnalysis MakeAnalysis(IWfiWordform wf)
@@ -252,10 +252,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var form = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA = form;
 			form.Form.VernacularDefaultWritingSystem =
-				Cache.TsStrFactory.MakeString(lf, Cache.DefaultVernWs);
+				TsStringUtils.MakeString(lf, Cache.DefaultVernWs);
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry.SensesOS.Add(sense);
-			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss, Cache.DefaultAnalWs);
+			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss, Cache.DefaultAnalWs);
 			return entry;
 		}
 
@@ -278,7 +278,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private IPartOfSpeech MakePartOfSpeech(string name)
 		{
 			var partOfSpeech = MakePartOfSpeech();
-			partOfSpeech.Name.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(name, Cache.DefaultAnalWs);
+			partOfSpeech.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(name, Cache.DefaultAnalWs);
 			return partOfSpeech;
 		}
 

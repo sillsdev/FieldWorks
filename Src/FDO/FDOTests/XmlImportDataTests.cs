@@ -188,10 +188,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			IMultiString ms = sense.Definition;
 			Assert.AreEqual(2, ms.StringCount, "The definition is given in two writing systems/languages.");
 			tss = ms.get_String(wsEn);
-			ITsString tss0 = m_cache.TsStrFactory.MakeString("a man or woman who is fully grown up", wsEn);
+			ITsString tss0 = TsStringUtils.MakeString("a man or woman who is fully grown up", wsEn);
 			Assert.IsTrue(tss.Equals(tss0), "The English definition imported okay.");
 			tss = ms.get_String(wsFr);
-			tss0 = m_cache.TsStrFactory.MakeString("un homme ou une femme qui est parvenu au terme de la croissance", wsFr);
+			tss0 = TsStringUtils.MakeString("un homme ou une femme qui est parvenu au terme de la croissance", wsFr);
 			Assert.IsTrue(tss.Equals(tss0), "The French definition imported okay.");
 			Assert.AreEqual(4, sense.AnthroCodesRC.Count, "The sense has 4 anthopology category codes.");
 			Assert.AreEqual(3, sense.SemanticDomainsRC.Count, "The sense is linked to 3 semantic domains.");
@@ -450,7 +450,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(1, subsense.Gloss.StringCount);
 			Assert.AreEqual("adolescent", subsense.Gloss.get_String(wsEn.Handle).Text);
 			Assert.AreEqual(1, subsense.Definition.StringCount);
-			ITsString tss0 = m_cache.TsStrFactory.MakeString("a boy or girl from the period of puberty to adulthood", wsEn.Handle);
+			ITsString tss0 = TsStringUtils.MakeString("a boy or girl from the period of puberty to adulthood", wsEn.Handle);
 			Assert.IsTrue(tss0.Equals(subsense.Definition.get_String(wsEn.Handle)));
 			Assert.AreEqual(1, subsense.AnthroCodesRC.Count);
 			ICmAnthroItem anth = subsense.AnthroCodesRC.ToArray()[0];
@@ -948,7 +948,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(rgBase[0], rgIndir[0].AppliesToRS[0]);
 			Assert.AreEqual("Free Translation", rgIndir[0].AnnotationTypeRA.Name.get_String(wsEn).Text);
 			Assert.AreEqual(1, rgIndir[0].Comment.StringCount);
-			ITsString tss = m_cache.TsStrFactory.MakeString("A free translation for an apple.", wsEn);
+			ITsString tss = TsStringUtils.MakeString("A free translation for an apple.", wsEn);
 			Assert.IsTrue(tss.Equals(rgIndir[0].Comment.get_String(wsEn)));
 			Assert.AreEqual("LLImport", rgIndir[0].CompDetails);
 		}
@@ -1010,7 +1010,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.IsNull(para.StyleRules);
 			para = text.ContentsOA.ParagraphsOS[1] as IStTxtPara;
 			Assert.IsNotNull(para);
-			ITsString tss = m_cache.TsStrFactory.MakeString("an apple", wsAme);
+			ITsString tss = TsStringUtils.MakeString("an apple", wsAme);
 			Assert.IsTrue(tss.Equals(para.Contents));
 			Assert.AreEqual(0, para.TranslationsOC.Count);
 			Assert.IsNull(para.StyleRules);
@@ -1046,30 +1046,30 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(1, sub.Gloss.StringCount);
 			Assert.AreEqual("one", sub.Gloss.get_String(wsEn).Text);
 			Assert.AreEqual(1, sub.Definition.StringCount);
-			Assert.IsTrue(m_cache.TsStrFactory.MakeString("one; one sort of", wsEn).Equals(
+			Assert.IsTrue(TsStringUtils.MakeString("one; one sort of", wsEn).Equals(
 				sub.Definition.get_String(wsEn)));
 			sub = le.SensesOS[0].SensesOS[1];
 			Assert.AreEqual(msa, sub.MorphoSyntaxAnalysisRA);
 			Assert.AreEqual(1, sub.Gloss.StringCount);
 			Assert.AreEqual("any", sub.Gloss.get_String(wsEn).Text);
 			Assert.AreEqual(1, sub.Definition.StringCount);
-			Assert.IsTrue(m_cache.TsStrFactory.MakeString("each; any one", wsEn).Equals(
+			Assert.IsTrue(TsStringUtils.MakeString("each; any one", wsEn).Equals(
 				sub.Definition.get_String(wsEn)));
 			sub = le.SensesOS[0].SensesOS[2];
 			Assert.AreEqual(msa, sub.MorphoSyntaxAnalysisRA);
 			Assert.AreEqual(1, sub.Gloss.StringCount);
 			Assert.AreEqual("per", sub.Gloss.get_String(wsEn).Text);
 			Assert.AreEqual(1, sub.Definition.StringCount);
-			Assert.IsTrue(m_cache.TsStrFactory.MakeString("to each; in each; for each;", wsEn).Equals(
+			Assert.IsTrue(TsStringUtils.MakeString("to each; in each; for each;", wsEn).Equals(
 				sub.Definition.get_String(wsEn)));
 			int wsLa = m_cache.WritingSystemFactory.GetWsFromStr("la");
-			Assert.IsTrue(m_cache.TsStrFactory.MakeString("Latin term", wsLa).Equals(sub.ScientificName));
+			Assert.IsTrue(TsStringUtils.MakeString("Latin term", wsLa).Equals(sub.ScientificName));
 			Assert.AreEqual(1, sub.PicturesOS.Count);
 			ICmPicture pict = sub.PicturesOS[0];
 			Assert.AreEqual(String.Format("{1}{0}FDO{0}FDOTests{0}TestData{0}penguin.jpg", Path.DirectorySeparatorChar, sFwSrcDir),
 				pict.PictureFileRA.InternalPath);
 			Assert.AreEqual(1, pict.Caption.StringCount);
-			Assert.IsTrue(m_cache.TsStrFactory.MakeString("English caption", wsEn).Equals(
+			Assert.IsTrue(TsStringUtils.MakeString("English caption", wsEn).Equals(
 				pict.Caption.get_String(wsEn)));
 			Assert.AreEqual(0, le.EntryRefsOS.Count);
 		}
@@ -1092,7 +1092,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(1, ler.ComponentLexemesRS.Count);
 			Assert.AreEqual(leRef, ler.ComponentLexemesRS[0]);
 			Assert.AreEqual(1, ler.Summary.StringCount);
-			Assert.IsTrue(m_cache.TsStrFactory.MakeString("1ps PRES INDIC", wsEn).Equals(
+			Assert.IsTrue(TsStringUtils.MakeString("1ps PRES INDIC", wsEn).Equals(
 				ler.Summary.get_String(wsEn)));
 			Assert.AreEqual(0, le.AlternateFormsOS.Count);
 		}
@@ -1125,7 +1125,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(rgmsa[0], sense.MorphoSyntaxAnalysisRA);
 			Assert.AreEqual(2, sense.SensesOS.Count);
 			ILexSense sub = sense.SensesOS[0];
-			ITsString tss = m_cache.TsStrFactory.MakeString("As a substantive verb:", wsEn);
+			ITsString tss = TsStringUtils.MakeString("As a substantive verb:", wsEn);
 			Assert.IsTrue(tss.Equals(sub.Definition.get_String(wsEn)));
 			Assert.AreEqual(5, sub.SensesOS.Count);
 			ILexSense subsub = sub.SensesOS[0];
@@ -1134,7 +1134,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(1, subsub.Gloss.StringCount);
 			Assert.AreEqual("exist", subsub.Gloss.get_String(wsEn).Text);
 			Assert.AreEqual(1, subsub.Definition.StringCount);
-			tss = m_cache.TsStrFactory.MakeString("to exist; live", wsEn);
+			tss = TsStringUtils.MakeString("to exist; live", wsEn);
 			Assert.IsTrue(tss.Equals(subsub.Definition.get_String(wsEn)));
 			subsub = sub.SensesOS[1];
 			Assert.AreEqual(0, subsub.SensesOS.Count);
@@ -1142,7 +1142,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(1, subsub.Gloss.StringCount);
 			Assert.AreEqual("happen", subsub.Gloss.get_String(wsEn).Text);
 			Assert.AreEqual(1, subsub.Definition.StringCount);
-			tss = m_cache.TsStrFactory.MakeString("to happen or occur", wsEn);
+			tss = TsStringUtils.MakeString("to happen or occur", wsEn);
 			Assert.IsTrue(tss.Equals(subsub.Definition.get_String(wsEn)));
 			subsub = sub.SensesOS[2];
 			Assert.AreEqual(0, subsub.SensesOS.Count);
@@ -1150,7 +1150,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(1, subsub.Gloss.StringCount);
 			Assert.AreEqual("remain", subsub.Gloss.get_String(wsEn).Text);
 			Assert.AreEqual(1, subsub.Definition.StringCount);
-			tss = m_cache.TsStrFactory.MakeString("to remain or continue", wsEn);
+			tss = TsStringUtils.MakeString("to remain or continue", wsEn);
 			Assert.IsTrue(tss.Equals(subsub.Definition.get_String(wsEn)));
 			subsub = sub.SensesOS[3];
 			Assert.AreEqual(0, subsub.SensesOS.Count);
@@ -1158,7 +1158,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(1, subsub.Gloss.StringCount);
 			Assert.AreEqual("belong", subsub.Gloss.get_String(wsEn).Text);
 			Assert.AreEqual(1, subsub.Definition.StringCount);
-			tss = m_cache.TsStrFactory.MakeString("to come to; belong", wsEn);
+			tss = TsStringUtils.MakeString("to come to; belong", wsEn);
 			Assert.IsTrue(tss.Equals(subsub.Definition.get_String(wsEn)));
 			subsub = sub.SensesOS[4];
 			Assert.AreEqual(rgmsa[0], subsub.MorphoSyntaxAnalysisRA);
@@ -1166,10 +1166,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(1, subsub.Gloss.StringCount);
 			Assert.AreEqual("have place", subsub.Gloss.get_String(wsEn).Text);
 			Assert.AreEqual(1, subsub.Definition.StringCount);
-			tss = m_cache.TsStrFactory.MakeString("to have a place or position", wsEn);
+			tss = TsStringUtils.MakeString("to have a place or position", wsEn);
 			Assert.IsTrue(tss.Equals(subsub.Definition.get_String(wsEn)));
 			sub = sense.SensesOS[1];
-			tss = m_cache.TsStrFactory.MakeString("As a copula:", wsEn);
+			tss = TsStringUtils.MakeString("As a copula:", wsEn);
 			Assert.IsTrue(tss.Equals(sub.Definition.get_String(wsEn)));
 			Assert.AreEqual(2, sub.SensesOS.Count);
 			subsub = sub.SensesOS[0];
@@ -1181,7 +1181,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(1, subsubsub.Gloss.StringCount);
 			Assert.AreEqual("is", subsubsub.Gloss.get_String(wsEn).Text);
 			Assert.AreEqual(1, subsubsub.Definition.StringCount);
-			tss = m_cache.TsStrFactory.MakeString("the linker between a subject and a predicate nominative, adjective, or pronoun so as to express attribution", wsEn);
+			tss = TsStringUtils.MakeString("the linker between a subject and a predicate nominative, adjective, or pronoun so as to express attribution", wsEn);
 			Assert.IsTrue(tss.Equals(subsubsub.Definition.get_String(wsEn)));
 			subsubsub = subsub.SensesOS[1];
 			Assert.AreEqual(0, subsubsub.SensesOS.Count);
@@ -1189,7 +1189,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(1, subsubsub.Gloss.StringCount);
 			Assert.AreEqual("equals", subsubsub.Gloss.get_String(wsEn).Text);
 			Assert.AreEqual(1, subsubsub.Definition.StringCount);
-			tss = m_cache.TsStrFactory.MakeString("the linker between a subject and a predicate nominative, adjective, or pronoun so as to express identity", wsEn);
+			tss = TsStringUtils.MakeString("the linker between a subject and a predicate nominative, adjective, or pronoun so as to express identity", wsEn);
 			Assert.IsTrue(tss.Equals(subsubsub.Definition.get_String(wsEn)));
 			subsub = sub.SensesOS[1];
 			Assert.AreEqual("secondary", subsub.SenseTypeRA.Name.get_String(wsEn).Text);
@@ -1200,7 +1200,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(1, subsubsub.Gloss.StringCount);
 			Assert.AreEqual("costs", subsubsub.Gloss.get_String(wsEn).Text);
 			Assert.AreEqual(1, subsubsub.Definition.StringCount);
-			tss = m_cache.TsStrFactory.MakeString("the linker between a subject and a predicate nominative, adjective, or pronoun so as to express value", wsEn);
+			tss = TsStringUtils.MakeString("the linker between a subject and a predicate nominative, adjective, or pronoun so as to express value", wsEn);
 			Assert.IsTrue(tss.Equals(subsubsub.Definition.get_String(wsEn)));
 			subsubsub = subsub.SensesOS[1];
 			Assert.AreEqual(0, subsubsub.SensesOS.Count);
@@ -1208,7 +1208,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(1, subsubsub.Gloss.StringCount);
 			Assert.AreEqual("causes", subsubsub.Gloss.get_String(wsEn).Text);
 			Assert.AreEqual(1, subsubsub.Definition.StringCount);
-			tss = m_cache.TsStrFactory.MakeString("the linker between a subject and a predicate nominative, adjective, or pronoun so as to express cause", wsEn);
+			tss = TsStringUtils.MakeString("the linker between a subject and a predicate nominative, adjective, or pronoun so as to express cause", wsEn);
 			Assert.IsTrue(tss.Equals(subsubsub.Definition.get_String(wsEn)));
 			subsubsub = subsub.SensesOS[2];
 			Assert.AreEqual(0, subsubsub.SensesOS.Count);
@@ -1216,7 +1216,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(1, subsubsub.Gloss.StringCount);
 			Assert.AreEqual("signify", subsubsub.Gloss.get_String(wsEn).Text);
 			Assert.AreEqual(1, subsubsub.Definition.StringCount);
-			tss = m_cache.TsStrFactory.MakeString("the linker between a subject and a predicate nominative, adjective, or pronoun so as to express signification", wsEn);
+			tss = TsStringUtils.MakeString("the linker between a subject and a predicate nominative, adjective, or pronoun so as to express signification", wsEn);
 			Assert.IsTrue(tss.Equals(subsubsub.Definition.get_String(wsEn)));
 
 			sense = le.SensesOS[1];
@@ -1227,7 +1227,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(1, sub.Gloss.StringCount);
 			Assert.AreEqual("PASS", sub.Gloss.get_String(wsEn).Text);
 			Assert.AreEqual(1, sub.Definition.StringCount);
-			tss = m_cache.TsStrFactory.MakeString("used with the past participle of a transitive verb to form the passive voice", wsEn);
+			tss = TsStringUtils.MakeString("used with the past participle of a transitive verb to form the passive voice", wsEn);
 			Assert.IsTrue(tss.Equals(sub.Definition.get_String(wsEn)));
 			Assert.AreEqual(0, sub.SensesOS.Count);
 			sub = sense.SensesOS[1];
@@ -1235,7 +1235,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(1, sub.Gloss.StringCount);
 			Assert.AreEqual("PERF", sub.Gloss.get_String(wsEn).Text);
 			Assert.AreEqual(1, sub.Definition.StringCount);
-			tss = m_cache.TsStrFactory.MakeString("used with the past participle of certain intransitive verbs to form a perfect tense", wsEn);
+			tss = TsStringUtils.MakeString("used with the past participle of certain intransitive verbs to form a perfect tense", wsEn);
 			Assert.IsTrue(tss.Equals(sub.Definition.get_String(wsEn)));
 			Assert.AreEqual(0, sub.SensesOS.Count);
 			sub = sense.SensesOS[2];
@@ -1243,14 +1243,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(1, sub.Gloss.StringCount);
 			Assert.AreEqual("CONT", sub.Gloss.get_String(wsEn).Text);
 			Assert.AreEqual(1, sub.Definition.StringCount);
-			tss = m_cache.TsStrFactory.MakeString("used with the present participle of another verb to express continuation", wsEn);
+			tss = TsStringUtils.MakeString("used with the present participle of another verb to express continuation", wsEn);
 			Assert.IsTrue(tss.Equals(sub.Definition.get_String(wsEn)));
 			Assert.AreEqual(0, sub.SensesOS.Count);
 			sub = sense.SensesOS[3];
 			Assert.IsNotNull(sub.MorphoSyntaxAnalysisRA);
 			Assert.AreEqual("<Not Sure>", sub.MorphoSyntaxAnalysisRA.InterlinearName);
 			Assert.AreEqual(1, sub.Definition.StringCount);
-			tss = m_cache.TsStrFactory.MakeString("IRREALIS", wsEn);
+			tss = TsStringUtils.MakeString("IRREALIS", wsEn);
 			Assert.IsTrue(tss.Equals(sub.Definition.get_String(wsEn)));
 			Assert.AreEqual(4, sub.SensesOS.Count);
 			subsub = sub.SensesOS[0];
@@ -1258,7 +1258,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(1, subsub.Gloss.StringCount);
 			Assert.AreEqual("IRR FUT", subsub.Gloss.get_String(wsEn).Text);
 			Assert.AreEqual(1, subsub.Definition.StringCount);
-			tss = m_cache.TsStrFactory.MakeString("used with the present participle or infinitive of another verb to express futurity", wsEn);
+			tss = TsStringUtils.MakeString("used with the present participle or infinitive of another verb to express futurity", wsEn);
 			Assert.IsTrue(tss.Equals(subsub.Definition.get_String(wsEn)));
 			Assert.AreEqual(0, subsub.SensesOS.Count);
 			subsub = sub.SensesOS[1];
@@ -1266,7 +1266,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(1, subsub.Gloss.StringCount);
 			Assert.AreEqual("IRR OBLIG", subsub.Gloss.get_String(wsEn).Text);
 			Assert.AreEqual(1, subsub.Definition.StringCount);
-			tss = m_cache.TsStrFactory.MakeString("used with the present participle or infinitive of another verb to express obligation", wsEn);
+			tss = TsStringUtils.MakeString("used with the present participle or infinitive of another verb to express obligation", wsEn);
 			Assert.IsTrue(tss.Equals(subsub.Definition.get_String(wsEn)));
 			Assert.AreEqual(0, subsub.SensesOS.Count);
 			subsub = sub.SensesOS[2];
@@ -1274,7 +1274,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(1, subsub.Gloss.StringCount);
 			Assert.AreEqual("IRR POSS", subsub.Gloss.get_String(wsEn).Text);
 			Assert.AreEqual(1, subsub.Definition.StringCount);
-			tss = m_cache.TsStrFactory.MakeString("used with the present participle or infinitive of another verb to express possibility", wsEn);
+			tss = TsStringUtils.MakeString("used with the present participle or infinitive of another verb to express possibility", wsEn);
 			Assert.IsTrue(tss.Equals(subsub.Definition.get_String(wsEn)));
 			Assert.AreEqual(0, subsub.SensesOS.Count);
 			subsub = sub.SensesOS[3];
@@ -1282,7 +1282,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(1, subsub.Gloss.StringCount);
 			Assert.AreEqual("IRR INT", subsub.Gloss.get_String(wsEn).Text);
 			Assert.AreEqual(1, subsub.Definition.StringCount);
-			tss = m_cache.TsStrFactory.MakeString("used with the present participle or infinitive of another verb to express intention", wsEn);
+			tss = TsStringUtils.MakeString("used with the present participle or infinitive of another verb to express intention", wsEn);
 			Assert.IsTrue(tss.Equals(subsub.Definition.get_String(wsEn)));
 			Assert.AreEqual(0, subsub.SensesOS.Count);
 			// Make sure the variant reference does not result in a subentry ordering object

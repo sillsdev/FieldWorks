@@ -127,14 +127,6 @@ namespace SIL.FieldWorks.FDO
 				if (m_serviceLocator != null)
 					m_serviceLocator.WritingSystemManager.Save();
 
-				var tsf = TsStrFactory;
-				if (tsf != null)
-				{
-					// tsf is a global singleton,
-					// so just do a simple release here.
-					Marshal.ReleaseComObject(tsf);
-				}
-
 				// Do NOT do this! It's disposable but often a static from FieldWorks, we are NOT responsible to dispose it.
 				//if (m_threadHelper != null)
 				//    m_threadHelper.Dispose();

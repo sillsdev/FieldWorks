@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_addWritingSystemButton.TabIndex = tabIndex;
 			m_addWritingSystemButton.Text = text;
 			var addWritingSystemButton = ((AddWritingSystemButton)m_addWritingSystemButton);
-			addWritingSystemButton.Initialize(m_cache, helpTopicProvider, app, null, cache.ServiceLocator.WritingSystems.AllWritingSystems);
+			addWritingSystemButton.Initialize(m_cache, helpTopicProvider, app, cache.ServiceLocator.WritingSystems.AllWritingSystems);
 			addWritingSystemButton.WritingSystemAdded += SfmInterlinearMappingDlg_WritingSystemAdded;
 			m_destinationsListBox.SelectedIndexChanged += new EventHandler(m_destinationsListBox_SelectedIndexChanged);
 			LoadConverters(mappingToModify.Converter);

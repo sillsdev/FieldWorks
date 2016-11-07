@@ -22,30 +22,28 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Common code for loading a MultiUnicodeAccessor.
 		/// </summary>
 		internal static void LoadMultiUnicodeAccessor(ICmObject obj, int flid, XElement reader,
-			ref IMultiUnicode multiUnicodeProperty,
-			ILgWritingSystemFactory wsf, ITsStrFactory tsf)
+			ref IMultiUnicode multiUnicodeProperty, ILgWritingSystemFactory wsf)
 		{
 			if (obj == null) throw new ArgumentNullException("obj");
 			if (reader == null) throw new ArgumentNullException("reader");
 
 			// Deal with MultiUnicode data type.
 			multiUnicodeProperty = new MultiUnicodeAccessor(obj, flid);
-			((MultiAccessor)multiUnicodeProperty).LoadFromDataStoreInternal(reader, wsf, tsf);
+			((MultiAccessor)multiUnicodeProperty).LoadFromDataStoreInternal(reader, wsf);
 		}
 
 		/// <summary>
 		/// Common code for loading a MultiStringAccessor.
 		/// </summary>
 		internal static void LoadMultiStringAccessor(ICmObject obj, int flid, XElement reader,
-			ref IMultiString multiStringProperty,
-			ILgWritingSystemFactory wsf, ITsStrFactory tsf)
+			ref IMultiString multiStringProperty, ILgWritingSystemFactory wsf)
 		{
 			if (obj == null) throw new ArgumentNullException("obj");
 			if (reader == null) throw new ArgumentNullException("reader");
 
 			// Deal with MultiUnicode data type.
 			multiStringProperty = new MultiStringAccessor(obj, flid);
-			((MultiAccessor)multiStringProperty).LoadFromDataStoreInternal(reader, wsf, tsf);
+			((MultiAccessor)multiStringProperty).LoadFromDataStoreInternal(reader, wsf);
 		}
 
 		/// <summary>

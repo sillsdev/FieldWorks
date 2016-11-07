@@ -199,7 +199,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 				base.MakeRoot();
 
-				m_sda = new GhostDaDecorator(m_fdoCache.DomainDataByFlid as ISilDataAccessManaged, m_fdoCache.TsStrFactory.EmptyString(m_wsToCreate), m_clidDst);
+				m_sda = new GhostDaDecorator(m_fdoCache.DomainDataByFlid as ISilDataAccessManaged, TsStringUtils.EmptyString(m_wsToCreate), m_clidDst);
 
 				m_rootb.DataAccess = m_sda;
 

@@ -372,7 +372,7 @@ namespace SIL.FieldWorks.IText
 			ISilDataAccess sda = fdoCache.MainCacheAccessor;
 			int cmorph = wa.MorphBundlesOS.Count;
 			if (cmorph == 0)
-				return TsStringUtils.MakeTss(ITextStrings.ksNoMorphemes, fdoCache.DefaultUserWs);
+				return TsStringUtils.MakeString(ITextStrings.ksNoMorphemes, fdoCache.DefaultUserWs);
 			bool fRtl = fdoCache.ServiceLocator.WritingSystemManager.Get(wsVern).RightToLeftScript;
 			int start = 0;
 			int lim = cmorph;

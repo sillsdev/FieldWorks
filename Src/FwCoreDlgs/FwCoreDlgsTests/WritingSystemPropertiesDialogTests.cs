@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		public DummyWritingSystemPropertiesDialog(FdoCache cache)
-			: base(cache, cache.ServiceLocator.WritingSystemManager, cache.ServiceLocator.WritingSystems, null, null, null)
+			: base(cache, cache.ServiceLocator.WritingSystemManager, cache.ServiceLocator.WritingSystems, null, null)
 		{
 		}
 
@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Initializes a new instance of the <see cref="DummyWritingSystemPropertiesDialog"/> class.
 		/// </summary>
 		public DummyWritingSystemPropertiesDialog(WritingSystemManager wsManager, IWritingSystemContainer wsContainer)
-			: base(null, wsManager, wsContainer, null, null, null)
+			: base(null, wsManager, wsContainer, null, null)
 		{
 
 		}

@@ -103,7 +103,7 @@ namespace SIL.FieldWorks.IText
 			m_sttEmptyButWithWs = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 			Cache.ServiceLocator.GetInstance<ITextFactory>().Create().ContentsOA = m_sttEmptyButWithWs;
 			m_sttEmptyButWithWs.AddNewTextPara(null);
-			((IStTxtPara)m_sttEmptyButWithWs.ParagraphsOS[0]).Contents = TsStringUtils.MakeTss(string.Empty, m_wsOtherVern.Handle);
+			((IStTxtPara)m_sttEmptyButWithWs.ParagraphsOS[0]).Contents = TsStringUtils.MakeString(string.Empty, m_wsOtherVern.Handle);
 		}
 
 		[Test]

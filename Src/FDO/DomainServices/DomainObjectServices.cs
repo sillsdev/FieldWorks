@@ -2281,7 +2281,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 			ICmFolder foldr = cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
 			prop.Add(foldr);
-			foldr.Name.AnalysisDefaultWritingSystem = cache.TsStrFactory.MakeString(sFolder,
+			foldr.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(sFolder,
 				WritingSystemServices.FallbackUserWs(cache));
 
 			return foldr;

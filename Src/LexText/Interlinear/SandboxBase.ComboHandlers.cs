@@ -6,7 +6,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -780,8 +779,7 @@ namespace SIL.FieldWorks.IText
 			{
 				CheckDisposed();
 
-				return TsStrFactoryClass.Create().
-					MakeString(str, m_caches.MainCache.DefaultAnalWs);
+				return TsStringUtils.MakeString(str, m_caches.MainCache.DefaultAnalWs);
 			}
 			/// <summary>
 			/// Synchronize the word gloss and POS with the morpheme gloss and MSA info, to the extent possible.
@@ -973,8 +971,6 @@ namespace SIL.FieldWorks.IText
 				{
 					return true;
 				}
-				ITsString tssWord = TsStrFactoryClass.Create().MakeString(newval,
-					m_sandbox.RawWordformWs);
 				// Todo JohnT: clean out old analysis, come up with new defaults.
 				//SetAnalysisTo(DbOps.FindOrCreateWordform(m_fdoCache, tssWord));
 				// Enhance JohnT: consider removing the old WfiWordform, if there are no
@@ -1033,8 +1029,7 @@ namespace SIL.FieldWorks.IText
 					ComboList.Text = currentBreakdown;
 					// The above and every other distinct morpheme breakdown from owned
 					// WfiAnalyses are possible choices.
-					ITsString tssText = TsStrFactoryClass.Create().
-						MakeString(currentBreakdown, m_wsVern);
+					ITsString tssText = TsStringUtils.MakeString(currentBreakdown, m_wsVern);
 					ComboList.Items.Add(tssText);
 				}
 				else
@@ -1096,7 +1091,7 @@ namespace SIL.FieldWorks.IText
 			void AddOtherCase(string other)
 			{
 				// 0 is a reserved value for other case wordform
-				AddIfNotPresent(TsStringUtils.MakeTss(other, m_sandbox.RawWordformWs), null);
+				AddIfNotPresent(TsStringUtils.MakeString(other, m_sandbox.RawWordformWs), null);
 			}
 
 			/// <summary>
@@ -1108,8 +1103,7 @@ namespace SIL.FieldWorks.IText
 				if (wordform == null)
 					return; // no real wordform, can't have analyses.
 				ITsStrBldr builder = TsStrBldrClass.Create();
-				ITsString space = TsStrFactoryClass.Create().
-					MakeString(fBaseWordIsPhrase ? "  " : " ", m_wsVern);
+				ITsString space = TsStringUtils.MakeString(fBaseWordIsPhrase ? "  " : " ", m_wsVern);
 				foreach (IWfiAnalysis wa in wordform.AnalysesOC)
 				{
 					Opinions o = wa.GetAgentOpinion(
@@ -1955,7 +1949,7 @@ namespace SIL.FieldWorks.IText
 							m_wsAnal);
 						tisb.Append("  ");
 
-						ITsString tssSense = TsStringUtils.MakeTss(mi.m_nameSense,
+						ITsString tssSense = TsStringUtils.MakeString(mi.m_nameSense,
 							m_caches.MainCache.DefaultAnalWs);
 
 						tisb.AppendTsString(tssSense);
@@ -2870,9 +2864,9 @@ namespace SIL.FieldWorks.IText
 				// Make and install a secondary object to correspond to the real LexEntry.
 				// (The zero says we are not guessing any more, since the user selected this entry.)
 
-				m_sandbox.LoadSecDataForEntry(morphEntry, senseReal != null ? senseReal : realDefaultSense,
+				m_sandbox.LoadSecDataForEntry(morphEntry, senseReal ?? realDefaultSense,
 					m_hvoSbWord, m_caches.DataAccess as IVwCacheDa,
-					m_wsVern, m_hvoMorph, 0, m_caches.MainCache.MainCacheAccessor, null);
+					m_wsVern, m_hvoMorph, 0, m_caches.MainCache.MainCacheAccessor);
 				m_caches.DataAccess.PropChanged(m_rootb,
 					(int)PropChangeType.kpctNotifyAll, m_hvoMorph, ktagSbMorphEntry, 0,
 					1, WasReal());
@@ -3039,7 +3033,7 @@ namespace SIL.FieldWorks.IText
 					ISilDataAccess sda = m_caches.DataAccess;
 					foreach (int wsId in m_sandbox.m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
 					{
-						ITsString tssGloss = TsStringUtils.MakeTss("", wsId);
+						ITsString tssGloss = TsStringUtils.MakeString("", wsId);
 						sda.SetMultiStringAlt(m_hvoSbWord, ktagSbWordGloss, wsId, tssGloss);
 						sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoSbWord, ktagSbWordGloss,
 							wsId, 0, 0);
@@ -3099,14 +3093,13 @@ namespace SIL.FieldWorks.IText
 				if (item == null)
 					return;
 				m_sandbox.WordGlossHvo = item.Hvo;
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
 				foreach (int ws in m_sandbox.m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
 				{
 					ITsString tss;
 					if (item.Hvo == 0)
 					{
 						// Make an empty string in the specified ws.
-						tss = tsf.MakeString("", ws);
+						tss = TsStringUtils.EmptyString(ws);
 					}
 					else
 					{
@@ -3170,7 +3163,7 @@ namespace SIL.FieldWorks.IText
 					//}
 				}
 				ComboList.Items.Add(new HvoTssComboItem(hvoEmptyGloss,
-					TsStringUtils.MakeTss(ITextStrings.ksNewWordGloss2, m_caches.MainCache.DefaultUserWs)));
+					TsStringUtils.MakeString(ITextStrings.ksNewWordGloss2, m_caches.MainCache.DefaultUserWs)));
 				// Set combo selection to current selection.
 				ComboList.SelectedIndex = this.IndexOfCurrentItem;
 

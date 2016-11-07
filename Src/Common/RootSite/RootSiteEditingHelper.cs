@@ -1133,8 +1133,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			if (!sel.IsRange)
 			{
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
-				tssLink = tsf.MakeString(clip, sda.WritingSystemFactory.UserWs);
+				tssLink = TsStringUtils.MakeString(clip, sda.WritingSystemFactory.UserWs);
 				tsb = tssLink.GetBldr();
 			}
 

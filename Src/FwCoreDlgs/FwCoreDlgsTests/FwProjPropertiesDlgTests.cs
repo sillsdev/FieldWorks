@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="cache">The cache.</param>
 		/// ------------------------------------------------------------------------------------
 		public DummyFwProjPropertiesDlg(FdoCache cache)
-			: base(cache, null, null, null)
+			: base(cache, null, null)
 		{
 		}
 

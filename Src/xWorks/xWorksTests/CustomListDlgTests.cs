@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.True(wsFr > 0, "Test failed because French ws is not installed.");
 				dlg.InitializeMultiString();
 				// setup up multistring controls
-				var nameTss = Cache.TsStrFactory.MakeString("Gens", wsFr);
+				var nameTss = TsStringUtils.MakeString("Gens", wsFr);
 
 				// SUT (actually tests both Set and Get)
 				dlg.SetListNameForWs(nameTss, wsFr);
@@ -83,8 +83,8 @@ namespace SIL.FieldWorks.XWorks
 				Assert.True(wsSp > 0, "Test failed because Spanish ws is not installed.");
 				dlg.InitializeMultiString();
 				// setup up multistring controls
-				var nameTssFr = Cache.TsStrFactory.MakeString("Une description en français!", wsFr);
-				var nameTssSp = Cache.TsStrFactory.MakeString("Un descripción en español?", wsSp);
+				var nameTssFr = TsStringUtils.MakeString("Une description en français!", wsFr);
+				var nameTssSp = TsStringUtils.MakeString("Un descripción en español?", wsSp);
 
 				// SUT (actually tests both Set and Get)
 				dlg.SetDescriptionForWs(nameTssFr, wsFr);
@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.True(wsFr > 0, "Test failed because French ws is not installed.");
 				dlg.InitializeMultiString();
 				// setup up multistring controls
-				var nameTss = Cache.TsStrFactory.MakeString("Gens-test", wsFr);
+				var nameTss = TsStringUtils.MakeString("Gens-test", wsFr);
 				var newList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().CreateUnowned(
 					"testPeople", Cache.DefaultUserWs);
 				newList.Name.set_String(wsFr, nameTss);
@@ -145,7 +145,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.True(wsFr > 0, "Test failed because French ws is not installed.");
 				dlg.InitializeMultiString();
 				// setup up multistring controls
-				var nameTss = Cache.TsStrFactory.MakeString("Gens-test", wsFr);
+				var nameTss = TsStringUtils.MakeString("Gens-test", wsFr);
 				// set dialog list name French alternative to "Gens-test", but don't create a list
 				// with that name.
 				dlg.SetListNameForWs(nameTss, wsFr);

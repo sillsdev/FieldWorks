@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.Discourse
 		public void Test_FiveCallsLeftToRight()
 		{
 			// Setup
-			var tsStr = Cache.TsStrFactory.MakeString("random", Cache.DefaultAnalWs);
+			var tsStr = TsStringUtils.MakeString("random", Cache.DefaultAnalWs);
 			m_spy.IsRtL = false;
 			m_spy.OpenTableCell(1, 1);
 			m_spy.OpenParagraph();
@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.Discourse
 		public void Test_OpenCellAddString()
 		{
 			// Setup
-			var tsStr = Cache.TsStrFactory.MakeString("random", Cache.DefaultAnalWs);
+			var tsStr = TsStringUtils.MakeString("random", Cache.DefaultAnalWs);
 			m_spy.IsRtL = true;
 			m_spy.OpenTableCell(1, 1);
 			m_spy.OpenParagraph();

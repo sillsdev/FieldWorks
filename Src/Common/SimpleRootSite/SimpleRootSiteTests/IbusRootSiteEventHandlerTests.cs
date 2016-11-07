@@ -485,7 +485,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public void GetSelectionString(out ITsString _ptss, string bstrSep)
 		{
-			_ptss = TsStringHelper.MakeTSS(SelectionText,
+			_ptss = TsStringHelper.MakeTss(SelectionText,
 				m_rootBox.m_dummySimpleRootSite.WritingSystemFactory.UserWs);
 		}
 
@@ -1278,7 +1278,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			}
 
 			var ws = m_dummySimpleRootSite.WritingSystemFactory.UserWs;
-			m_dummySelection.ReplaceWithTsString(TsStringHelper.MakeTSS(input, ws));
+			m_dummySelection.ReplaceWithTsString(TsStringHelper.MakeTss(input, ws));
 		}
 
 		public void DeleteRangeIfComplex(IVwGraphics _vg, out bool _fWasComplex)

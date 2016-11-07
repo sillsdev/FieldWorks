@@ -14,6 +14,7 @@ using System.Xml;
 using System.Xml.Xsl;
 using Gecko;
 using Sfm2Xml;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -59,7 +60,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		private FdoCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
-		private IVwStylesheet m_stylesheet;
 		private string m_refFuncString;
 		private string m_refFuncStringOrig;
 		private Button buttonHelp;	// initial value
@@ -87,7 +87,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		public void Init(MarkerPresenter.ContentMapping currentMarker, Hashtable uiLangsHT, FdoCache cache,
-			IHelpTopicProvider helpTopicProvider, IApp app, IVwStylesheet stylesheet)
+			IHelpTopicProvider helpTopicProvider, IApp app)
 		{
 			CheckDisposed();
 
@@ -95,7 +95,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
-			m_stylesheet = stylesheet;
 			helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
 			helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
@@ -709,7 +708,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void btnAddLangDesc_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new LexImportWizardLanguage(m_cache, m_uiLangs, m_helpTopicProvider, m_app, m_stylesheet))
+			using (var dlg = new LexImportWizardLanguage(m_cache, m_uiLangs, m_helpTopicProvider, m_app))
 			{
 			if (dlg.ShowDialog(this) == DialogResult.OK)
 			{
@@ -1158,10 +1157,9 @@ namespace SIL.FieldWorks.LexText.Controls
 						NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 							{
 								owningSeq.Add(newType);
-								var strFact = m_cache.TsStrFactory;
 								var userWs = m_cache.WritingSystemFactory.UserWs;
-								newType.Name.set_String(userWs, strFact.MakeString(funcText, userWs));
-								newType.Description.set_String(userWs, strFact.MakeString(description, userWs));
+								newType.Name.set_String(userWs, TsStringUtils.MakeString(funcText, userWs));
+								newType.Description.set_String(userWs, TsStringUtils.MakeString(description, userWs));
 							});
 					}
 				}

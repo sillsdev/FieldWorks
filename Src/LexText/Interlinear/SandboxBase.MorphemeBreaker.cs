@@ -6,8 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -37,7 +35,6 @@ namespace SIL.FieldWorks.IText
 			int m_hvoSbWord; // HVO of the Sandbox word that will own the new morphs
 			int m_cOldMorphs;
 			int m_cNewMorphs;
-			ITsStrFactory m_tsf = TsStrFactoryClass.Create();
 			int m_wsVern = 0;
 			IMoMorphTypeRepository m_types;
 			int m_imorph = 0;
@@ -60,7 +57,6 @@ namespace SIL.FieldWorks.IText
 				m_input = input;
 				m_hvoSbWord = hvoSbWord;
 				m_cOldMorphs = m_sda.get_VecSize(m_hvoSbWord, ktagSbWordMorphs);
-				ITsStrFactory m_tsf = TsStrFactoryClass.Create();
 				m_wsVern = wsVern;
 				m_types = m_caches.MainCache.ServiceLocator.GetInstance<IMoMorphTypeRepository>();
 				m_sandbox = sandbox;
@@ -149,11 +145,11 @@ namespace SIL.FieldWorks.IText
 				{
 					// This might be redundant, but it isn't expensive.
 					m_cda.CacheStringAlt(hvoSbForm, ktagSbNamedObjName, m_wsVern,
-						m_tsf.MakeString(realForm, m_wsVern));
+						TsStringUtils.MakeString(realForm, m_wsVern));
 					m_cda.CacheStringProp(hvoSbMorph, ktagSbMorphPrefix,
-						m_tsf.MakeString(mmt.Prefix, m_wsVern));
+						TsStringUtils.MakeString(mmt.Prefix, m_wsVern));
 					m_cda.CacheStringProp(hvoSbMorph, ktagSbMorphPostfix,
-						m_tsf.MakeString(mmt.Postfix, m_wsVern));
+						TsStringUtils.MakeString(mmt.Postfix, m_wsVern));
 					//m_cda.CacheIntProp(hvoSbMorph, ktagSbMorphClsid, clsidForm);
 					//m_cda.CacheIntProp(hvoSbMorph, ktagSbMorphRealType, mmt.Hvo);
 					// Fill in defaults.
@@ -788,7 +784,7 @@ namespace SIL.FieldWorks.IText
 			m_ichSel = -1;
 
 			ITsStrBldr builder = TsStrBldrClass.Create();
-			ITsString space = TsStringUtils.MakeTss(" ", ws);
+			ITsString space = TsStringUtils.MakeString(" ", ws);
 			ISilDataAccess sda = m_sandbox.Caches.DataAccess;
 
 			ITsString tssWordform = m_sandbox.SbWordForm(ws);

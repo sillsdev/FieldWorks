@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.TestUtilities;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -721,11 +722,11 @@ namespace SIL.FieldWorks.XWorks
 			CreateSubsenseModel();
 			var entry = CXGTests.CreateInterestingLexEntry(cache);
 			var sense = entry.SensesOS.First();
-			sense.Gloss.set_String(wsId, cache.TsStrFactory.MakeString(gloss, wsId));
+			sense.Gloss.set_String(wsId, TsStringUtils.MakeString(gloss, wsId));
 			var subSensesOne = sense.Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			sense.SensesOS.Add(subSensesOne);
 			var subGloss = "subgloss ";
-			subSensesOne.Gloss.set_String(wsId, cache.TsStrFactory.MakeString(subGloss + "1.1", wsId));
+			subSensesOne.Gloss.set_String(wsId, TsStringUtils.MakeString(subGloss + "1.1", wsId));
 			entry.SensesOS[0].SensesOS[0].Gloss.set_String(wsId, subGloss);
 			entry.SensesOS.First().SensesOS[0].ReversalEntriesRC.Add(riEntry);
 		}

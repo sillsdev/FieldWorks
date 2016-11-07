@@ -284,7 +284,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.DomainDataByFlidTest
 
 		ITsString MakeAnalysisString(string input)
 		{
-			return Cache.TsStrFactory.MakeString(input, Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle);
+			return TsStringUtils.MakeString(input, Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle);
 		}
 
 		/// <summary>
@@ -711,7 +711,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.DomainDataByFlidTest
 			var originalvalue = m_sda.get_StringProp(le.Hvo, LexEntryTags.kflidImportResidue);
 			Assert.IsNull(originalvalue.Text, "Default for null property should have null for the Text of the returned ITsString.");
 
-			le.ImportResidue = Cache.TsStrFactory.MakeString("Junk", Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle);
+			le.ImportResidue = TsStringUtils.MakeString("Junk", Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle);
 
 			var residue = m_sda.get_StringProp(le.Hvo, LexEntryTags.kflidImportResidue);
 			Assert.AreEqual(le.ImportResidue, residue, "Wrong import residue.");
@@ -727,7 +727,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.DomainDataByFlidTest
 			var le = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 
 			Assert.IsNull(le.ImportResidue.Text, "Default for null property should have null for the Text of the returned ITsString.");
-			var residue = Cache.TsStrFactory.MakeString("Junk", Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle);
+			var residue = TsStringUtils.MakeString("Junk", Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle);
 			m_sda.SetString(le.Hvo, LexEntryTags.kflidImportResidue, residue);
 			Assert.AreEqual(le.ImportResidue, residue, "Wrong import residue.");
 		}
@@ -762,7 +762,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.DomainDataByFlidTest
 			var orig = lp.Description.get_String(englishWS);
 
 			// Test for a multistring alt.
-			var viaSda = Cache.TsStrFactory.MakeString("Newby", englishWS);
+			var viaSda = TsStringUtils.MakeString("Newby", englishWS);
 			m_sda.SetMultiStringAlt(
 				lp.Hvo,
 				CmProjectTags.kflidDescription,
@@ -1052,11 +1052,10 @@ namespace SIL.FieldWorks.FDO.CoreTests.DomainDataByFlidTest
 			Assert.IsTrue(m_sda.get_BooleanProp(wf.Hvo, m_customCertifiedFlid), "Custom prop is not 'true'.");
 
 			// Set custom ITsString property.
-			var tsf = Cache.TsStrFactory;
 			var userWs = Cache.WritingSystemFactory.UserWs;
-			var newStringValue = tsf.MakeString("New ITsString", userWs);
-			var emptyStr = tsf.EmptyString(userWs);
-			var emptyVernStr = tsf.EmptyString(Cache.DefaultVernWs);
+			var newStringValue = TsStringUtils.MakeString("New ITsString", userWs);
+			var emptyStr = TsStringUtils.EmptyString(userWs);
+			var emptyVernStr = TsStringUtils.EmptyString(Cache.DefaultVernWs);
 			m_sda.SetString(wf.Hvo, m_customITsStringFlid, newStringValue);
 			Assert.AreSame(newStringValue, m_sda.get_StringProp(wf.Hvo, m_customITsStringFlid), "Wrong TsString in custom property.");
 
@@ -1079,7 +1078,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.DomainDataByFlidTest
 			Assert.AreSame(emptyVernStr, m_sda.get_StringProp(wf.Hvo, m_customVernTsStringFlid), "default value for custom vern string");
 
 			// Set custom MultiUnicode property.
-			var newUnicodeTsStringValue = tsf.MakeString("New unicode ITsString", userWs);
+			var newUnicodeTsStringValue = TsStringUtils.MakeString("New unicode ITsString", userWs);
 			m_sda.SetMultiStringAlt(wf.Hvo, m_customMultiUnicodeFlid, userWs, newUnicodeTsStringValue);
 			Assert.AreSame(newUnicodeTsStringValue, m_sda.get_MultiStringAlt(wf.Hvo, m_customMultiUnicodeFlid, userWs), "MultiUnicode custom property is not newUnicodeTsStringValue.");
 

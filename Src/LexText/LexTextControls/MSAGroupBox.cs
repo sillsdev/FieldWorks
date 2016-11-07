@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		#region Data members
 
-		private XCore.PropertyTable m_propertyTable;
+		private PropertyTable m_propertyTable;
 		private Form m_parentForm;
 		private FdoCache m_cache;
 		private Control m_ctrlAssistant;
@@ -35,7 +35,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		private IPartOfSpeech m_selectedMainPOS = null;
 		private IPartOfSpeech m_selectedSecondaryPOS = null;
 		private IMoInflAffixSlot m_selectedSlot = null;
-		private ITsStrFactory m_tsf = null;
 		private bool m_skipEvents = false;
 		private IMoMorphType m_morphType;
 
@@ -451,7 +450,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		protected override void Dispose( bool disposing )
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
@@ -511,12 +510,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="propertyTable"></param>
 		/// <param name="parentForm"></param>
 		/// <param name="sandboxMSA"></param>
-		public void Initialize(FdoCache cache, Mediator mediator, XCore.PropertyTable propertyTable, Form parentForm, SandboxGenericMSA sandboxMSA)
+		public void Initialize(FdoCache cache, Mediator mediator, PropertyTable propertyTable, Form parentForm, SandboxGenericMSA sandboxMSA)
 		{
 			CheckDisposed();
 
 			m_parentForm = parentForm;
-			m_tsf = cache.TsStrFactory;
 			m_cache = cache;
 			m_propertyTable = propertyTable;
 
@@ -527,9 +525,9 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			m_fwcbAffixTypes.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_fwcbAffixTypes.WritingSystemCode = defAnalWs.Handle;
-			m_fwcbAffixTypes.Items.Add(m_tsf.MakeString(LexTextControls.ksNotSure, defUserWs));
-			m_fwcbAffixTypes.Items.Add(m_tsf.MakeString(LexTextControls.ksInflectional, defUserWs));
-			m_fwcbAffixTypes.Items.Add(m_tsf.MakeString(LexTextControls.ksDerivational, defUserWs));
+			m_fwcbAffixTypes.Items.Add(TsStringUtils.MakeString(LexTextControls.ksNotSure, defUserWs));
+			m_fwcbAffixTypes.Items.Add(TsStringUtils.MakeString(LexTextControls.ksInflectional, defUserWs));
+			m_fwcbAffixTypes.Items.Add(TsStringUtils.MakeString(LexTextControls.ksDerivational, defUserWs));
 			m_fwcbAffixTypes.StyleSheet = stylesheet;
 			m_fwcbAffixTypes.AdjustStringHeight = false;
 
@@ -710,7 +708,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (name != null && name.Length > 0) // Don't add empty strings.
 					{
 						HvoTssComboItem newItem = new HvoTssComboItem(slot.Hvo,
-							m_tsf.MakeString(name, m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle));
+							TsStringUtils.MakeString(name, m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle));
 						itemsToAdd.Add(newItem);
 						if (m_selectedSlot != null && m_selectedSlot.Hvo == newItem.Hvo)
 							matchIdx = itemsToAdd.Count - 1;

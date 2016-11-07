@@ -223,11 +223,10 @@ namespace SIL.FieldWorks.IText
 				{
 					ITsTextProps ttp = LanguageCodeStyle;
 					var labels = new List<ITsString>();
-					ITsStrFactory tsf = TsStrFactoryClass.Create();
 					foreach (CoreWritingSystemDefinition ws in AnalysisWss.Cast<CoreWritingSystemDefinition>())
 					{
 						string sAbbr = ws.Abbreviation;
-						labels.Add(tsf.MakeStringWithPropsRgch(sAbbr, sAbbr.Length, ttp));
+						labels.Add(TsStringUtils.MakeString(sAbbr, ttp));
 					}
 					m_labels = labels.ToArray();
 					m_labelBasis = AnalysisWsIds;
@@ -239,7 +238,7 @@ namespace SIL.FieldWorks.IText
 		public static ITsString WsLabel(FdoCache cache, int ws)
 		{
 			CoreWritingSystemDefinition wsObj = cache.ServiceLocator.WritingSystemManager.Get(ws);
-			ITsString abbr = TsStringUtils.MakeTss(wsObj.Abbreviation, cache.DefaultUserWs, "Language Code");
+			ITsString abbr = TsStringUtils.MakeString(wsObj.Abbreviation, cache.DefaultUserWs, "Language Code");
 			ITsStrBldr tsb = abbr.GetBldr();
 			tsb.SetProperties(0, tsb.Length, LanguageCodeTextProps(cache.DefaultUserWs));
 			return tsb.GetString();
@@ -257,8 +256,7 @@ namespace SIL.FieldWorks.IText
 
 			if (m_tssColon == null)
 			{
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
-				m_tssColon = tsf.MakeString(": ", m_lp.Cache.DefaultUserWs);
+				m_tssColon = TsStringUtils.MakeString(": ", m_lp.Cache.DefaultUserWs);
 			}
 			if (m_ttpLabelStyle == null)
 			{

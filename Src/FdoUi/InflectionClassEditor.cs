@@ -444,7 +444,7 @@ namespace SIL.FieldWorks.FdoUi
 		{
 			CheckDisposed();
 
-			ITsString tss = TsStringUtils.MakeTss(m_selectedLabel, m_cache.DefaultAnalWs);
+			ITsString tss = TsStringUtils.MakeString(m_selectedLabel, m_cache.DefaultAnalWs);
 			// Build a Set of parts of speech that can take this class.
 			Set<int> possiblePOS = GetPossiblePartsOfSpeech();
 

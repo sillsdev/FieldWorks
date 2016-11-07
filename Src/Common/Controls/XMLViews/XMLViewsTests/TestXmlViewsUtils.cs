@@ -10,6 +10,7 @@ using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Filters;
 using NUnit.Framework;
 using System.Xml;
+using SIL.CoreImpl;
 
 namespace XMLViewsTests
 {
@@ -163,7 +164,7 @@ namespace XMLViewsTests
 		public void StringsFor()
 		{
 			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
-			entry.CitationForm.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("kick", Cache.DefaultVernWs);
+			entry.CitationForm.VernacularDefaultWritingSystem = TsStringUtils.MakeString("kick", Cache.DefaultVernWs);
 			var doc = new XmlDocument();
 			doc.LoadXml(@"<string class='LexEntry' field='CitationForm'/>");
 			var node = doc.DocumentElement;

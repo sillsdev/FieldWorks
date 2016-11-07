@@ -42,7 +42,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public override void ReloadVector()
 		{
 			CheckDisposed();
-			ITsStrFactory tsf = m_fdoCache.TsStrFactory;
 			int ws = 0;
 			if (m_rootObj != null && m_rootObj.IsValidObject)
 			{
@@ -73,7 +72,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			if (ws == 0)
 				ws = m_fdoCache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
-			m_sda.Strings[khvoFake] = tsf.EmptyString(ws);
+			m_sda.Strings[khvoFake] = TsStringUtils.EmptyString(ws);
 			base.ReloadVector();
 		}
 
@@ -91,7 +90,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (m_sda == null)
 			{
 				m_sda = new SdaDecorator((ISilDataAccessManaged) m_fdoCache.DomainDataByFlid, m_fdoCache, m_displayNameProperty, m_displayWs);
-				m_sda.Empty = m_fdoCache.TsStrFactory.EmptyString(m_fdoCache.DefaultAnalWs);
+				m_sda.Empty = TsStringUtils.EmptyString(m_fdoCache.DefaultAnalWs);
 			}
 			return m_sda;
 		}
@@ -219,7 +218,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				ObjectLabel label = ObjectLabel.CreateObjectLabel(Cache, obj, DisplayNameProperty, DisplayWs);
 				ITsString tss = label.AsTss;
 				if (tss == null)
-					tss = Cache.TsStrFactory.EmptyString(Cache.DefaultUserWs);
+					tss = TsStringUtils.EmptyString(Cache.DefaultUserWs);
 				Strings[hvo] = tss;
 				return tss; // never return null!
 			}

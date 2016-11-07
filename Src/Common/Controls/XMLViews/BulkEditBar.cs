@@ -3759,16 +3759,15 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			if (ws == -50)
 				ws = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
-			ITsStrFactory tsf = m_cache.TsStrFactory;
 
 			if (m_tssReplace == null)
-				m_tssReplace = tsf.MakeString("", ws);
+				m_tssReplace = TsStringUtils.EmptyString(ws);
 			else
 			{
 				// If we have a replacement TsString, but no pattern, keep the text but
 				// no properties.
 				if (m_pattern == null)
-					m_tssReplace = tsf.MakeString(m_tssReplace.Text, ws);
+					m_tssReplace = TsStringUtils.MakeString(m_tssReplace.Text, ws);
 				else if (!m_pattern.MatchOldWritingSystem)
 				{
 					// We have both a string and a pattern. We want to clear writing system information
@@ -3782,7 +3781,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_pattern != null)
 			{
 				if (m_pattern.Pattern == null)
-					m_pattern.Pattern = tsf.MakeString("", ws);
+					m_pattern.Pattern = TsStringUtils.EmptyString(ws);
 				else if (!m_pattern.MatchOldWritingSystem)
 				{
 					// Enforce the expected writing system; but don't clear styles.
@@ -4938,8 +4937,7 @@ namespace SIL.FieldWorks.Common.Controls
 			ITsString tssNew = m_srcAccessor.CurrentValue(hvo);
 			if (tssNew == null)
 			{
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
-				tssNew = tsf.MakeString("", m_accessor.WritingSystem);
+				tssNew = TsStringUtils.EmptyString(m_accessor.WritingSystem);
 			}
 			if (m_options == NonEmptyTargetOptions.Append)
 			{
@@ -4996,12 +4994,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		protected override ITsString NewValue(int hvo)
 		{
-			ITsString tssSrc = m_srcAccessor.CurrentValue(hvo);
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			if (tssSrc == null)
-			{
-				tssSrc = tsf.MakeString("", m_accessor.WritingSystem);
-			}
+			ITsString tssSrc = m_srcAccessor.CurrentValue(hvo) ?? TsStringUtils.EmptyString(m_accessor.WritingSystem);
 			if (m_fFailed) // once we've had a failure don't try any more this pass.
 				return tssSrc;
 			string old = tssSrc.Text;
@@ -5019,7 +5012,7 @@ namespace SIL.FieldWorks.Common.Controls
 					return tssSrc;
 				}
 			}
-			ITsString tssNew = tsf.MakeString(converted, m_accessor.WritingSystem);
+			ITsString tssNew = TsStringUtils.MakeString(converted, m_accessor.WritingSystem);
 			if (m_options == NonEmptyTargetOptions.Append)
 			{
 				ITsString tssOld = OldValue(hvo);
@@ -5064,12 +5057,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if (!base.OkToChange(hvo))
 				return false;
-			ITsString tss = OldValue(hvo);
-			if (tss == null)
-			{
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
-				tss = tsf.MakeString("", m_accessor.WritingSystem);
-			}
+			ITsString tss = OldValue(hvo) ?? TsStringUtils.EmptyString(m_accessor.WritingSystem);
 			m_textSourceInit.SetString(tss);
 			int ichMin, ichLim;
 			m_pattern.FindIn(m_ts, 0, tss.Length, true, out ichMin, out ichLim, null);
@@ -5083,14 +5071,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns></returns>
 		protected override ITsString NewValue(int hvo)
 		{
-			ITsString tss = OldValue(hvo);
-			if (tss == null)
-			{
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
-				tss = tsf.MakeString("", m_accessor.WritingSystem);
-			}
+			ITsString tss = OldValue(hvo) ?? TsStringUtils.EmptyString(m_accessor.WritingSystem);
 			m_textSourceInit.SetString(tss);
-			int ichMin, ichLim;
 			int ichStartSearch = 0;
 			ITsStrBldr tsb = null;
 			int delta = 0; // Amount added to length of string (negative if shorter).
@@ -5109,6 +5091,7 @@ namespace SIL.FieldWorks.Common.Controls
 			int ichLimLastMatch = -1;
 			for ( ; ichStartSearch <= cch; )
 			{
+				int ichMin, ichLim;
 				m_pattern.FindIn(m_ts, ichStartSearch, cch, true, out ichMin, out ichLim, null);
 				if (ichMin < 0)
 					break;
@@ -5151,12 +5134,11 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	internal class ClearMethod : DoItMethod
 	{
-		ITsString m_newValue;
+		private readonly ITsString m_newValue;
 		public ClearMethod(FdoCache cache, ISilDataAccessManaged sda, FieldReadWriter accessor, XmlNode spec)
 			: base(cache, sda, accessor, spec)
 		{
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			m_newValue = tsf.MakeString("", accessor.WritingSystem);
+			m_newValue = TsStringUtils.EmptyString(accessor.WritingSystem);
 		}
 
 		/// <summary>
@@ -5384,7 +5366,7 @@ namespace SIL.FieldWorks.Common.Controls
 		public override void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
 		{
 			int val = ((IntComboItem) m_combo.SelectedItem).Value;
-			ITsString tssVal = m_cache.TsStrFactory.MakeString(m_combo.SelectedItem.ToString(),
+			ITsString tssVal = TsStringUtils.MakeString(m_combo.SelectedItem.ToString(),
 				m_cache.ServiceLocator.WritingSystemManager.UserWs);
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more
@@ -5524,7 +5506,7 @@ namespace SIL.FieldWorks.Common.Controls
 		public override void FakeDoit(IEnumerable<int> itemsToChange, int tagFakeFlid, int tagEnabled, ProgressState state)
 		{
 			int val = (m_combo.SelectedItem as IntComboItem).Value;
-			ITsString tssVal = TsStringUtils.MakeTss(m_combo.SelectedItem.ToString(), m_cache.DefaultUserWs);
+			ITsString tssVal = TsStringUtils.MakeString(m_combo.SelectedItem.ToString(), m_cache.DefaultUserWs);
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more
 			// (but no more than once per item!)
@@ -6059,8 +6041,8 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			// Don't allow <Not Sure> for MorphType selection.  See FWR-1632.
 			if (m_hvoList != m_cache.LangProject.LexDbOA.MorphTypesOA.Hvo)
-				m_combo.Items.Add(new HvoTssComboItem(0, m_cache.TsStrFactory.MakeString(XMLViewsStrings.ksNotSure, m_cache.WritingSystemFactory.UserWs)));
-			m_combo.SelectedIndexChanged += new EventHandler(m_combo_SelectedIndexChanged);
+				m_combo.Items.Add(new HvoTssComboItem(0, TsStringUtils.MakeString(XMLViewsStrings.ksNotSure, m_cache.WritingSystemFactory.UserWs)));
+			m_combo.SelectedIndexChanged += m_combo_SelectedIndexChanged;
 		}
 
 		private List<HvoLabelItem> GetLabeledList()
@@ -6598,7 +6580,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (sep == null)
 				{
 					// first time create it
-					sep = m_cache.TsStrFactory.MakeString(", ",
+					sep = TsStringUtils.MakeString(", ",
 						 m_cache.ServiceLocator.WritingSystemManager.UserWs);
 				}
 				else
@@ -6609,7 +6591,7 @@ namespace SIL.FieldWorks.Common.Controls
 				bldr.ReplaceTsString(bldr.Length, bldr.Length, tss);
 			}
 			var tssVal = bldr.Length > 0 ? bldr.GetString() :
-				TsStringUtils.MakeTss("", m_cache.ServiceLocator.WritingSystemManager.UserWs);
+				TsStringUtils.MakeString("", m_cache.ServiceLocator.WritingSystemManager.UserWs);
 			return tssVal;
 		}
 		#endregion
@@ -7395,7 +7377,7 @@ namespace SIL.FieldWorks.Common.Controls
 				var ustring = m_sda.get_UnicodeProp(hvoStringOwner, m_flid);
 				// Enhance: For the time being Default Analysis Ws is sufficient. If there is ever
 				// a Unicode vernacular field that is made Bulk Editable, we will need to rethink this code.
-				return m_cache.TsStrFactory.MakeString(ustring ?? string.Empty, m_cache.DefaultAnalWs);
+				return TsStringUtils.MakeString(ustring ?? string.Empty, m_cache.DefaultAnalWs);
 			}
 			return m_sda.get_StringProp(hvoStringOwner, m_flid);
 		}

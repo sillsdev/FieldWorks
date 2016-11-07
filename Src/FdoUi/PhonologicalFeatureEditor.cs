@@ -486,7 +486,7 @@ namespace SIL.FieldWorks.FdoUi
 			{
 				labelToShow = " "; // it is the remove option so we just show nothing after the arrow
 			}
-			ITsString tss = TsStringUtils.MakeTss(labelToShow, m_cache.DefaultAnalWs);
+			ITsString tss = TsStringUtils.MakeString(labelToShow, m_cache.DefaultAnalWs);
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
 			int interval = Math.Min(100, Math.Max(itemsToChange.Count()/50, 1));

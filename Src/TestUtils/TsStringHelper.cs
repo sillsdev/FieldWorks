@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using NMock.Constraints;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Test.TestUtils
@@ -40,10 +41,9 @@ namespace SIL.FieldWorks.Test.TestUtils
 		/// <param name="ws">integer representing a writing system</param>
 		/// <returns>A new TsString</returns>
 		/// ------------------------------------------------------------------------------------
-		public static ITsString MakeTSS(string str, int ws)
+		public static ITsString MakeTss(string str, int ws)
 		{
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			return tsf.MakeString(str, ws);
+			return TsStringUtils.MakeString(str, ws);
 		}
 
 		/// ------------------------------------------------------------------------------------

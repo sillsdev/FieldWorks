@@ -265,7 +265,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			using (m_activationContext.Activate())
 			{
 				wordForm = wordForm.Normalize(NormalizationForm.FormD);
-				ITsString tss = TsStringUtils.MakeTss(wordForm, DefaultVernWs);
+				ITsString tss = TsStringUtils.MakeString(wordForm, DefaultVernWs);
 				ILexEntry matchingEntry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().FindEntryForWordform(m_cache, tss);
 
 				if (matchingEntry == null)
@@ -287,7 +287,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			{
 				bool duplicates = false;
 				return m_cache.ServiceLocator.GetInstance<ILexEntryRepository>()
-					.FindEntriesForWordform(m_cache, m_cache.TsStrFactory.MakeString(wordForm.Normalize(NormalizationForm.FormD), DefaultVernWs), null, ref duplicates)
+					.FindEntriesForWordform(m_cache, TsStringUtils.MakeString(wordForm.Normalize(NormalizationForm.FormD), DefaultVernWs), null, ref duplicates)
 					.Select(GetEntryLexeme).ToArray();
 			}
 		}
@@ -380,7 +380,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 						if (!TryGetWordform(lexemes.Word, out wordform))
 						{
 							wordform = m_cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create(
-								m_cache.TsStrFactory.MakeString(lexemes.Word.Normalize(NormalizationForm.FormD), DefaultVernWs));
+								TsStringUtils.MakeString(lexemes.Word.Normalize(NormalizationForm.FormD), DefaultVernWs));
 						}
 
 						IWfiAnalysis analysis = m_cache.ServiceLocator.GetInstance<IWfiAnalysisFactory>().Create();
@@ -671,12 +671,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		internal bool TryGetWordform(string lexicalForm, out IWfiWordform wordform)
 		{
 			return m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(
-				TsStringUtils.MakeTss(lexicalForm.Normalize(NormalizationForm.FormD), DefaultVernWs), true, out wordform);
+				TsStringUtils.MakeString(lexicalForm.Normalize(NormalizationForm.FormD), DefaultVernWs), true, out wordform);
 		}
 
 		internal IWfiWordform CreateWordform(string lexicalForm)
 		{
-			ITsString tss = m_cache.TsStrFactory.MakeString(lexicalForm.Normalize(NormalizationForm.FormD), DefaultVernWs);
+			ITsString tss = TsStringUtils.MakeString(lexicalForm.Normalize(NormalizationForm.FormD), DefaultVernWs);
 			IWfiWordform wordform = m_cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create(tss);
 			return wordform;
 		}
@@ -691,7 +691,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		{
 			CreateEntryIndexIfNeeded();
 
-			ITsString tss = m_cache.TsStrFactory.MakeString(key.LexicalForm.Normalize(NormalizationForm.FormD), DefaultVernWs);
+			ITsString tss = TsStringUtils.MakeString(key.LexicalForm.Normalize(NormalizationForm.FormD), DefaultVernWs);
 			var msa = new SandboxGenericMSA {MsaType = (key.Type == LexemeType.Stem) ? MsaType.kStem : MsaType.kUnclassified};
 			ILexEntry entry = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(GetMorphTypeForLexemeType(key.Type), tss, (ITsString) null, msa);
 			m_homographNumbers.GetOrCreateValue(entry).Number = key.Homograph;

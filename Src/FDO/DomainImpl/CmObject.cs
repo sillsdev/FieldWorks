@@ -487,7 +487,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				return m_cache.TsStrFactory.MakeString(ShortName, m_cache.DefaultAnalWs);
+				return TsStringUtils.MakeString(ShortName, m_cache.DefaultAnalWs);
 			}
 		}
 
@@ -511,7 +511,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				return Cache.TsStrFactory.MakeString(ShortName + " - " + ClassName + " " + Hvo.ToString(),
+				return TsStringUtils.MakeString(ShortName + " - " + ClassName + " " + Hvo,
 					Cache.DefaultUserWs);
 			}
 		}
@@ -3190,7 +3190,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			//var servLoc = Cache.ServiceLocator;
 			var mdc = loadingServices.m_mdcManaged;
 			var wsf = loadingServices.m_wsf;
-			var tsf = loadingServices.m_tsf;
 			var uowService = loadingServices.m_uowService;
 			var surrRepos = loadingServices.m_surrRepository;
 			var cmObjRepos = loadingServices.m_cmObjRepository;
@@ -3281,11 +3280,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						break;
 					case CellarPropertyType.MultiString:
 						data = new MultiStringAccessor(this, flid);
-						((MultiAccessor)data).LoadFromDataStoreInternal(customPropertyElement, wsf, tsf);
+						((MultiAccessor)data).LoadFromDataStoreInternal(customPropertyElement, wsf);
 						break;
 					case CellarPropertyType.MultiUnicode:
 						data = new MultiUnicodeAccessor(this, flid);
-						((MultiAccessor)data).LoadFromDataStoreInternal(customPropertyElement, wsf, tsf);
+						((MultiAccessor)data).LoadFromDataStoreInternal(customPropertyElement, wsf);
 						break;
 					case CellarPropertyType.OwningCollection:
 						data = new FdoOwningCollection<ICmObject>(

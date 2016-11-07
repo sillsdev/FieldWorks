@@ -7,6 +7,7 @@
 
 using System;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.FDO.FDOTests
@@ -35,7 +36,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
 				{
-					le.CitationForm.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("abc", Cache.DefaultVernWs);
+					le.CitationForm.VernacularDefaultWritingSystem = TsStringUtils.MakeString("abc", Cache.DefaultVernWs);
 				});
 			Assert.IsTrue(DateTime.Compare(le.DateModified, current) > 0,
 				"modify time increased setting string prop");
@@ -62,7 +63,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
 				{
-					ls2.Gloss.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("abc", Cache.DefaultVernWs);
+					ls2.Gloss.VernacularDefaultWritingSystem = TsStringUtils.MakeString("abc", Cache.DefaultVernWs);
 				});
 			Assert.IsTrue(DateTime.Compare(le.DateModified, current) > 0,
 				"modify time increased setting string prop of 2-level child");

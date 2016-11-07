@@ -64,7 +64,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private IMoForm m_rootObj;
 		private int m_rootFlid;
 		private int m_hvoOldSelection = 0;
-		private ITsStrFactory m_tsf;
 		private int m_wsVern;
 		private PhonEnvRecognizer m_validator;
 		private Dictionary<int, IPhEnvironment> m_realEnvs = new Dictionary<int, IPhEnvironment>();
@@ -83,7 +82,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private ITsString DummyString
 		{
-			get { return m_tsf.MakeString("", m_wsVern); }
+			get { return TsStringUtils.EmptyString(m_wsVern); }
 		}
 
 		#endregion Properties
@@ -103,7 +102,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Debug.Assert(rootObj is IMoAffixAllomorph || rootObj is IMoStemAllomorph);
 			Debug.Assert(cache != null && m_fdoCache == null);
 			Cache = cache;
-			m_tsf = cache.TsStrFactory;
 			ResetValidator();
 			m_wsVern = m_fdoCache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
 			m_rootObj = rootObj;
@@ -138,7 +136,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_realEnvs = null;
 			}
 			m_rootObj = null;
-			m_tsf = null;
 			m_sda = null;
 			m_PhoneEnvReferenceVc = null;
 		}
@@ -175,7 +172,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Add new item to the collection (added in the chooser).
 		/// </summary>
-		/// <param name="realHvo">ID of the envirnoment from the chooser.</param>
 		public void AddNewItem(IPhEnvironment env)
 		{
 			CheckDisposed();
@@ -189,7 +185,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Remove an item from the collection (deleted in the chooser).
 		/// </summary>
-		/// <param name="realHvo">ID of the environment from the chooser.</param>
 		public void RemoveItem(IPhEnvironment env)
 		{
 			CheckDisposed();
@@ -513,9 +508,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private void ValidateStringRep(int hvoDummyObj)
 		{
-			ITsString tss = m_sda.get_StringProp(hvoDummyObj, kEnvStringRep);
-			if (tss == null)
-				tss = m_fdoCache.TsStrFactory.MakeString(String.Empty, m_fdoCache.DefaultAnalWs);
+			ITsString tss = m_sda.get_StringProp(hvoDummyObj, kEnvStringRep) ?? TsStringUtils.EmptyString(m_fdoCache.DefaultAnalWs);
 			ITsStrBldr bldr = tss.GetBldr();
 			if (m_validator.Recognize(tss.Text))
 				ClearSquigglyLine(hvoDummyObj, ref tss, ref bldr);
@@ -560,9 +553,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// because the validator doesn't tell us where the problem ends.
 		/// Since it didn't tell us, we don't try to guess.
 		/// </remarks>
-		/// <param name="hvo"></param>
-		/// <param name="validatorMessage"></param>
-		/// <param name="bldr"></param>
 		private void MakeSquigglyLine(int hvo, string validatorMessage, ref ITsString tss,
 			ref ITsStrBldr bldr)
 		{
@@ -649,8 +639,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			ITsString environmentTssRep = m_sda.get_StringProp(
 				localDummyHvoOfAnEnvironmentInEntry, kEnvStringRep);
-			return environmentTssRep ?? m_fdoCache.TsStrFactory.MakeString(
-				String.Empty, m_fdoCache.DefaultAnalWs);
+			return environmentTssRep ?? TsStringUtils.EmptyString(m_fdoCache.DefaultAnalWs);
 		}
 
 		/// <summary>

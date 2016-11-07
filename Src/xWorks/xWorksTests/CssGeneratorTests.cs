@@ -1005,7 +1005,7 @@ namespace SIL.FieldWorks.XWorks
 			var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			var entry = factory.Create();
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			entry.CitationForm.set_String(wsFr, Cache.TsStrFactory.MakeString("homme", wsFr));
+			entry.CitationForm.set_String(wsFr, TsStringUtils.MakeString("homme", wsFr));
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(cssResult, Is.Not.StringContaining(".lexentry"));
@@ -1051,7 +1051,7 @@ namespace SIL.FieldWorks.XWorks
 			var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			var entry = factory.Create();
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			entry.CitationForm.set_String(wsFr, Cache.TsStrFactory.MakeString("HeadWordTest", wsFr));
+			entry.CitationForm.set_String(wsFr, TsStringUtils.MakeString("HeadWordTest", wsFr));
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(cssResult, Is.Not.StringContaining(".headword"));
@@ -1093,7 +1093,7 @@ namespace SIL.FieldWorks.XWorks
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry.SensesOS.Add(sense);
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			sense.Gloss.set_String(wsEn, Cache.TsStrFactory.MakeString("gloss", wsEn));
+			sense.Gloss.set_String(wsEn, TsStringUtils.MakeString("gloss", wsEn));
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .gloss"));
@@ -2586,7 +2586,7 @@ namespace SIL.FieldWorks.XWorks
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry.SensesOS.Add(sense);
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			sense.Gloss.set_String(wsEn, Cache.TsStrFactory.MakeString("gloss", wsEn));
+			sense.Gloss.set_String(wsEn, TsStringUtils.MakeString("gloss", wsEn));
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(".lexentry> .senses .sense> .gloss> span.writingsystemprefix" +

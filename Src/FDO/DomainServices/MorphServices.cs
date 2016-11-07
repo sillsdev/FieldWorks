@@ -162,7 +162,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			return MakeMorph(
 				owningEntry,
-				owningEntry.Cache.TsStrFactory.MakeString(
+				TsStringUtils.MakeString(
 					fullForm,
 					owningEntry.Cache.DefaultVernWs));
 		}
@@ -219,7 +219,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 			var wsVern = TsStringUtils.GetWsAtOffset(tssfullForm, 0);
 			allomorph.Form.set_String(wsVern,
-							owningEntry.Cache.TsStrFactory.MakeString(EnsureNoMarkers(tssfullForm.Text, owningEntry.Cache), wsVern));
+							TsStringUtils.MakeString(EnsureNoMarkers(tssfullForm.Text, owningEntry.Cache), wsVern));
 			return allomorph;
 		}
 
@@ -423,7 +423,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				string postfix;
 				GetAffixMarkers(cache, formWithMarkers.Text, out prefix, out postfix);
 				morphComponents.Prefix = prefix;
-				morphComponents.TssForm = TsStringUtils.MakeTss(form, TsStringUtils.GetWsAtOffset(formWithMarkers, 0));
+				morphComponents.TssForm = TsStringUtils.MakeString(form, TsStringUtils.GetWsAtOffset(formWithMarkers, 0));
 				morphComponents.Postfix = postfix;
 			}
 			return morphComponents;
@@ -676,7 +676,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				sb.AppendTsString(tssGlossAffix);
 			string extractedSeparator = ExtractDivider(tssGlossAffix.Text, prepend ? -1 : 0);
 			if (String.IsNullOrEmpty(extractedSeparator))
-				sb.AppendTsString(TsStringUtils.MakeTss(sSeparator, wsUser.Handle));
+				sb.AppendTsString(TsStringUtils.MakeString(sSeparator, wsUser.Handle));
 			if (!prepend)
 				sb.AppendTsString(tssGlossAffix);
 		}
@@ -762,7 +762,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			AddGloss(sb, gloss, wsGloss);
 			const string sBeginSeparator = kDefaultBeginSeparatorLexEntryTypeReverseAbbr;
 			if (reverseAbbrs.Count() > 0)
-				sb.AppendTsString(TsStringUtils.MakeTss(sBeginSeparator, wsUser.Handle));
+				sb.AppendTsString(TsStringUtils.MakeString(sBeginSeparator, wsUser.Handle));
 			AddVariantTypeGlossInfo(sb, wsGloss, reverseAbbrs, wsUser);
 			return sb.Text.Length > 0 ? sb.GetString() : null;
 		}
@@ -854,7 +854,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				// just concatenate them together separated by comma.
 				if (tssVariantTypeInfo == null || tssVariantTypeInfo.Length <= 0) continue;
 				if (!fBeginSeparator)
-					sb.AppendTsString(TsStringUtils.MakeTss(sSeriesSeparator, wsUser.Handle));
+					sb.AppendTsString(TsStringUtils.MakeString(sSeriesSeparator, wsUser.Handle));
 				sb.AppendTsString((tssVariantTypeInfo));
 				fBeginSeparator = false;
 			}

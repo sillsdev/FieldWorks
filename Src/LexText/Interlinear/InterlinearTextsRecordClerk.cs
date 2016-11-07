@@ -365,7 +365,7 @@ namespace SIL.FieldWorks.IText
 		internal void CreateFirstParagraph(IStText stText, int wsText)
 		{
 			var txtPara = stText.AddNewTextPara(null);
-			txtPara.Contents = TsStringUtils.MakeTss(string.Empty, wsText);
+			txtPara.Contents = TsStringUtils.MakeString(string.Empty, wsText);
 		}
 
 		private int GetWsForNewText()

@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.Filters
 		public void SortIsAlphabeticalForNullSearchString()
 		{
 			var enWs = Cache.DefaultAnalWs;
-			var nullString = Cache.TsStrFactory.MakeString(null, enWs);
+			var nullString = TsStringUtils.MakeString(null, enWs);
 			var sorter = new GenRecordSorter(new StringFinderCompare(new OwnMlPropFinder(Cache.DomainDataByFlid, m_CitationFlid, Cache.DefaultAnalWs),
 				new WritingSystemComparer((CoreWritingSystemDefinition) Cache.WritingSystemFactory.get_EngineOrNull(Cache.DefaultAnalWs))));
 			var resultsSorter = new FindResultSorter(nullString, sorter);
@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.Filters
 		{
 
 			var enWs = Cache.DefaultAnalWs;
-			var noMatchString = Cache.TsStrFactory.MakeString("z", enWs);
+			var noMatchString = TsStringUtils.MakeString("z", enWs);
 			var sorter = new GenRecordSorter(new StringFinderCompare(new OwnMlPropFinder(Cache.DomainDataByFlid, m_CitationFlid, Cache.DefaultAnalWs),
 				new WritingSystemComparer((CoreWritingSystemDefinition) Cache.WritingSystemFactory.get_EngineOrNull(Cache.DefaultAnalWs))));
 			var resultsSorter = new FindResultSorter(noMatchString, sorter);
@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.Filters
 		{
 
 			var enWs = Cache.DefaultAnalWs;
-			var matchString = Cache.TsStrFactory.MakeString("b", enWs);
+			var matchString = TsStringUtils.MakeString("b", enWs);
 			var sorter = new GenRecordSorter(new StringFinderCompare(new OwnMlPropFinder(Cache.DomainDataByFlid, m_CitationFlid, Cache.DefaultAnalWs),
 				new WritingSystemComparer((CoreWritingSystemDefinition) Cache.WritingSystemFactory.get_EngineOrNull(Cache.DefaultAnalWs))));
 			var resultsSorter = new FindResultSorter(matchString, sorter);
@@ -68,7 +68,7 @@ namespace SIL.FieldWorks.Filters
 		{
 
 			var enWs = Cache.DefaultAnalWs;
-			var matchString = Cache.TsStrFactory.MakeString("b", enWs);
+			var matchString = TsStringUtils.MakeString("b", enWs);
 			var sorter = new GenRecordSorter(new StringFinderCompare(new OwnMlPropFinder(Cache.DomainDataByFlid, m_CitationFlid, Cache.DefaultAnalWs),
 				new WritingSystemComparer((CoreWritingSystemDefinition) Cache.WritingSystemFactory.get_EngineOrNull(Cache.DefaultAnalWs))));
 			var resultsSorter = new FindResultSorter(matchString, sorter);
@@ -81,7 +81,7 @@ namespace SIL.FieldWorks.Filters
 		public void FullMatchIsFollowedByStartsWithAlphabeticalAfter()
 		{
 			var enWs = Cache.DefaultAnalWs;
-			var matchString = Cache.TsStrFactory.MakeString("bob", enWs);
+			var matchString = TsStringUtils.MakeString("bob", enWs);
 			var sorter = new GenRecordSorter(new StringFinderCompare(new OwnMlPropFinder(Cache.DomainDataByFlid, m_CitationFlid, Cache.DefaultAnalWs),
 				new WritingSystemComparer((CoreWritingSystemDefinition) Cache.WritingSystemFactory.get_EngineOrNull(Cache.DefaultAnalWs))));
 			var resultsSorter = new FindResultSorter(matchString, sorter);
@@ -94,7 +94,7 @@ namespace SIL.FieldWorks.Filters
 		public void FullMatchIsCaseIgnorant()
 		{
 			var enWs = Cache.DefaultAnalWs;
-			var matchString = Cache.TsStrFactory.MakeString("bob", enWs);
+			var matchString = TsStringUtils.MakeString("bob", enWs);
 			var sorter = new GenRecordSorter(new StringFinderCompare(new OwnMlPropFinder(Cache.DomainDataByFlid, m_CitationFlid, Cache.DefaultAnalWs),
 				new WritingSystemComparer((CoreWritingSystemDefinition) Cache.WritingSystemFactory.get_EngineOrNull(Cache.DefaultAnalWs))));
 			var resultsSorter = new FindResultSorter(matchString, sorter);
@@ -107,7 +107,7 @@ namespace SIL.FieldWorks.Filters
 		public void EmptyDataForIndirectStringPropertyDoesNotCrash()
 		{
 			var enWs = Cache.DefaultAnalWs;
-			var matchString = Cache.TsStrFactory.MakeString("irrelevant", enWs);
+			var matchString = TsStringUtils.MakeString("irrelevant", enWs);
 			// create a sorter that looks at the collection of definitions from the senses
 			var sorter = new GenRecordSorter(new StringFinderCompare(new OneIndirectMlPropFinder(Cache.DomainDataByFlid, LexEntryTags.kflidSenses,
 				m_DefinitionFlid, Cache.DefaultVernWs), new WritingSystemComparer((CoreWritingSystemDefinition) Cache.WritingSystemFactory.get_EngineOrNull(Cache.DefaultVernWs))));
@@ -136,18 +136,18 @@ namespace SIL.FieldWorks.Filters
 		{
 			var results = new ArrayList();
 			var entryfactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
-			var headWord = Cache.TsStrFactory.MakeString(withDef, Cache.DefaultAnalWs);
+			var headWord = TsStringUtils.MakeString(withDef, Cache.DefaultAnalWs);
 			var lexEntry = entryfactory.Create();
 			lexEntry.CitationForm.set_String(Cache.DefaultAnalWs, headWord);
 			var senseFact = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
 			var mainSense = senseFact.Create();
 			lexEntry.SensesOS.Add(mainSense);
-			var gloss = Cache.TsStrFactory.MakeString("definition", Cache.DefaultAnalWs);
+			var gloss = TsStringUtils.MakeString("definition", Cache.DefaultAnalWs);
 			mainSense.Definition.set_String(Cache.DefaultVernWs, gloss);
 			results.Add(new ManyOnePathSortItem(lexEntry));
 
 			var entryWithoutDef = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
-			headWord = Cache.TsStrFactory.MakeString(withoutDef, Cache.DefaultAnalWs);
+			headWord = TsStringUtils.MakeString(withoutDef, Cache.DefaultAnalWs);
 			entryWithoutDef.CitationForm.set_String(Cache.DefaultAnalWs, headWord);
 			results.Add(new ManyOnePathSortItem(entryWithoutDef));
 			return results;
@@ -159,7 +159,7 @@ namespace SIL.FieldWorks.Filters
 			var entryfactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			foreach(var s in strings)
 			{
-				var headWord = Cache.TsStrFactory.MakeString(s, Cache.DefaultAnalWs);
+				var headWord = TsStringUtils.MakeString(s, Cache.DefaultAnalWs);
 				var lexEntry = entryfactory.Create();
 				lexEntry.CitationForm.set_String(Cache.DefaultAnalWs, headWord);
 				results.Add(new ManyOnePathSortItem(lexEntry));

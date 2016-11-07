@@ -655,7 +655,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				// don't bother looking up the lowercased wordform if the instanceOf is already in lowercase form.
 				if (sLower != tssWfBaseline.Text)
 				{
-					ITsString tssLower = TsStringUtils.MakeTss(sLower, TsStringUtils.GetWsAtOffset(tssWfBaseline, 0));
+					ITsString tssLower = TsStringUtils.MakeString(sLower, TsStringUtils.GetWsAtOffset(tssWfBaseline, 0));
 					IWfiWordform lowercaseWf;
 					if (Cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(tssLower, out lowercaseWf))
 					{

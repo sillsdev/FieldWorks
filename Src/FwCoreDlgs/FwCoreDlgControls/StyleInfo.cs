@@ -602,7 +602,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 			m_style = style;
 			style.Name = m_name;
-			style.Usage.UserDefaultWritingSystem = Cache.TsStrFactory.MakeString(
+			style.Usage.UserDefaultWritingSystem = TsStringUtils.MakeString(
 				m_usage,
 				Cache.ServiceLocator.WritingSystemManager.UserWs);
 			style.Type = m_styleType;

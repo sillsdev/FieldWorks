@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
@@ -177,16 +176,16 @@ namespace SIL.FieldWorks.IText
 			Decorator = new InterlinViewDataCache(m_cache);
 			PreferredVernWs = cache.DefaultVernWs;
 			m_selfFlid = m_cache.MetaDataCacheAccessor.GetFieldId2(CmObjectTags.kClassId, "Self", false);
-			m_tssMissingGloss = m_tsf.MakeString(ITextStrings.ksStars, m_wsAnalysis);
-			m_tssMissingGlossPrepend = m_tsf.MakeString(ITextStrings.ksStars + MorphServices.kDefaultSeparatorLexEntryInflTypeGlossAffix, m_wsAnalysis);
-			m_tssMissingGlossAppend = m_tsf.MakeString(MorphServices.kDefaultSeparatorLexEntryInflTypeGlossAffix + ITextStrings.ksStars, m_wsAnalysis);
+			m_tssMissingGloss = TsStringUtils.MakeString(ITextStrings.ksStars, m_wsAnalysis);
+			m_tssMissingGlossPrepend = TsStringUtils.MakeString(ITextStrings.ksStars + MorphServices.kDefaultSeparatorLexEntryInflTypeGlossAffix, m_wsAnalysis);
+			m_tssMissingGlossAppend = TsStringUtils.MakeString(MorphServices.kDefaultSeparatorLexEntryInflTypeGlossAffix + ITextStrings.ksStars, m_wsAnalysis);
 			m_tssMissingSense = m_tssMissingGloss;
 			m_tssMissingMsa = m_tssMissingGloss;
 			m_tssMissingAnalysisPos = m_tssMissingGloss;
-			m_tssEmptyAnalysis = m_tsf.MakeString("", m_wsAnalysis);
+			m_tssEmptyAnalysis = TsStringUtils.EmptyString(m_wsAnalysis);
 			m_WsList = new WsListManager(m_cache);
-			m_tssEmptyPara = m_tsf.MakeString(ITextStrings.ksEmptyPara, m_wsAnalysis);
-			m_tssSpace = m_tsf.MakeString(" ", m_wsAnalysis);
+			m_tssEmptyPara = TsStringUtils.MakeString(ITextStrings.ksEmptyPara, m_wsAnalysis);
+			m_tssSpace = TsStringUtils.MakeString(" ", m_wsAnalysis);
 			m_msaVc = new MoMorphSynAnalysisUi.MsaVc(m_cache);
 			m_vernWss = WritingSystemServices.GetAllWritingSystems(m_cache, "all vernacular",
 				null, 0, 0);
@@ -234,9 +233,9 @@ namespace SIL.FieldWorks.IText
 			if (m_wsVernForDisplay == wsVern)
 				return;	// already setup
 			m_wsVernForDisplay = wsVern;
-			TsStringUtils.ReassignTss(ref m_tssEmptyVern, m_tsf.MakeString("", wsVern));
+			m_tssEmptyVern = TsStringUtils.EmptyString(wsVern);
 			m_fRtl = m_wsManager.Get(wsVern).RightToLeftScript;
-			TsStringUtils.ReassignTss(ref m_tssMissingAnalysis, m_tsf.MakeString(ITextStrings.ksStars, wsVern));
+			m_tssMissingAnalysis = TsStringUtils.MakeString(ITextStrings.ksStars, wsVern);
 			m_tssMissingMorph = m_tssMissingAnalysis;
 			m_tssMissingEntry = m_tssMissingAnalysis;
 		}
@@ -308,18 +307,7 @@ namespace SIL.FieldWorks.IText
 				// dispose managed and unmanaged objects
 				// Dispose managed resources here.
 				if (m_WsList != null)
-					m_WsList.Dispose();
-
-				TsStringUtils.ReassignTss(ref m_tssMissingAnalysis, null);
-				TsStringUtils.ReassignTss(ref m_tssMissingGloss, null);
-				TsStringUtils.ReassignTss(ref m_tssEmptyAnalysis, null);
-				TsStringUtils.ReassignTss(ref m_tssEmptyVern, null);
-				TsStringUtils.ReassignTss(ref m_tssEmptyPara, null);
-				TsStringUtils.ReassignTss(ref m_tssSpace, null);
-				TsStringUtils.ReassignTss(ref m_tssCommaSpace, null);
-
-				if (m_tsf != null)
-					Marshal.ReleaseComObject(m_tsf);
+					m_WsList.Dispose();;
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -331,7 +319,13 @@ namespace SIL.FieldWorks.IText
 			m_tssMissingMsa = null; // Same as m_tssMissingGloss.
 			m_tssMissingAnalysisPos = null; // Same as m_tssMissingGloss.
 			m_tssMissingEntry = null; // Same as m_tssEmptyAnalysis.
-			m_tsf = null;
+			m_tssMissingAnalysis = null;
+			m_tssMissingGloss = null;
+			m_tssEmptyAnalysis = null;
+			m_tssEmptyVern = null;
+			m_tssEmptyPara = null;
+			m_tssSpace = null;
+			m_tssCommaSpace = null;
 			m_WsList = null;
 
 			IsDisposed = true;
@@ -439,7 +433,7 @@ namespace SIL.FieldWorks.IText
 			get
 			{
 				if (m_tssCommaSpace == null)
-					m_tssCommaSpace = m_tsf.MakeString(", ", m_wsAnalysis);
+					m_tssCommaSpace = TsStringUtils.MakeString(", ", m_wsAnalysis);
 				return m_tssCommaSpace;
 			}
 		}
@@ -564,7 +558,7 @@ namespace SIL.FieldWorks.IText
 		protected void AddColoredString(IVwEnv vwenv, int color, string str)
 		{
 			SetColor(vwenv, color);
-			vwenv.AddString(m_tsf.MakeString(str, m_wsUi));
+			vwenv.AddString(TsStringUtils.MakeString(str, m_wsUi));
 		}
 
 		/// <summary>
@@ -612,15 +606,6 @@ namespace SIL.FieldWorks.IText
 
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
 		{
-#if __MonoCS__
-		// TODO-Linux: Randomly m_tsf seem to have been Release.
-		// eg Marshal.ReleaseComObject(m_tsf);
-		// However the Dispose method isn't called (which calls the Release)
-		// Currently unsure what is doing this need to find out - very concerning
-		// Hack - just recreate a new TsStrFactory each time... for now
-		// seems to stop the problem.
-		m_tsf = TsStrFactoryClass.Create();
-#endif
 			CheckDisposed();
 			if (hvo == 0)
 				return;		// Can't do anything without an hvo (except crash -- see LT-9348).
@@ -685,7 +670,7 @@ namespace SIL.FieldWorks.IText
 					(int)SpellingModes.ksmDoNotCheck);
 				vwenv.OpenParagraph();
 				AddSegmentReference(vwenv, hvo);	// Calculate and display the segment reference.
-				AddLabelPile(vwenv, m_tsf, m_cache, true, m_fShowMorphBundles);
+				AddLabelPile(vwenv, m_cache, true, m_fShowMorphBundles);
 				vwenv.AddObjVecItems(SegmentTags.kflidAnalyses, this, kfragBundle);
 				// JohnT, 1 Feb 2008. Took this out as I can see no reason for it; AddObjVecItems handles
 				// the dependency already. Adding it just means that any change to the forms list
@@ -1148,7 +1133,7 @@ namespace SIL.FieldWorks.IText
 			}
 			vwenv.OpenParagraph();
 			m_fHaveOpenedParagraph = true;
-			AddLabelPile(vwenv, m_tsf, m_cache, true, m_fShowMorphBundles);
+			AddLabelPile(vwenv, m_cache, true, m_fShowMorphBundles);
 			try
 			{
 				// We use this rather than AddObj(hvo) so we can easily identify this object and select
@@ -1186,9 +1171,9 @@ namespace SIL.FieldWorks.IText
 			{
 				bool fRtlWs = wsObj.RightToLeftScript;
 				if (fRtlWs)
-					tssDirWs = m_tsf.MakeString("\x200F", ws);	// RTL Marker
+					tssDirWs = TsStringUtils.MakeString("\x200F", ws);	// RTL Marker
 				else
-					tssDirWs = m_tsf.MakeString("\x200E", ws);	// LTR Marker
+					tssDirWs = TsStringUtils.MakeString("\x200E", ws);	// LTR Marker
 				m_mapWsDirTss.Add(wsObj, tssDirWs);
 			}
 			vwenv.AddString(tssDirWs);
@@ -1355,8 +1340,8 @@ namespace SIL.FieldWorks.IText
 					}
 				}
 			}
-			ITsStrBldr tsbSegNum = m_tsf.GetBldr();
-			tsbSegNum.ReplaceTsString(0, tsbSegNum.Length, TsStringUtils.MakeTss(sbSegNum.ToString(), m_cache.DefaultUserWs));
+			ITsStrBldr tsbSegNum = TsStringUtils.MakeStrBldr();
+			tsbSegNum.ReplaceTsString(0, tsbSegNum.Length, TsStringUtils.MakeString(sbSegNum.ToString(), m_cache.DefaultUserWs));
 			tsbSegNum.SetIntPropValues(0, tsbSegNum.Length, (int)FwTextPropType.ktptBold,
 				(int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
 			tssSegNum = tsbSegNum.GetString();
@@ -1692,18 +1677,12 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Add the pile of labels used to identify the lines in interlinear text.
 		/// </summary>
-		/// <param name="vwenv"></param>
-		/// <param name="tsf"></param>
-		/// <param name="cache"></param>
-		/// <param name="wsList">Null if don't want multiple writing systems.</param>
-		/// <param name="fShowMutlilingGlosses"></param>
-		public void AddLabelPile(IVwEnv vwenv, ITsStrFactory tsf, FdoCache cache,
-			bool fWantMultipleSenseGloss, bool fShowMorphemes)
+		public void AddLabelPile(IVwEnv vwenv, FdoCache cache, bool fWantMultipleSenseGloss, bool fShowMorphemes)
 		{
 			CheckDisposed();
 
 			int wsUI = cache.DefaultUserWs;
-			var spaceStr = TsStringUtils.MakeTss(" ", wsUI);
+			var spaceStr = TsStringUtils.MakeString(" ", wsUI);
 			vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing,
 				(int)FwTextPropVar.ktpvMilliPoint, 10000);
 			vwenv.set_IntProperty((int)FwTextPropType.ktptBold,
@@ -2127,7 +2106,7 @@ namespace SIL.FieldWorks.IText
 				// In this case, frag is the writing system we really want the user to type.
 				// We put a zero-width space in that WS at the start of the string since that is the
 				// WS the user will end up typing in.
-				ITsStrBldr bldr = TsStringUtils.MakeTss(ITextStrings.ksEmptyFreeTransPrompt, m_cache.DefaultUserWs).GetBldr();
+				ITsStrBldr bldr = TsStringUtils.MakeString(ITextStrings.ksEmptyFreeTransPrompt, m_cache.DefaultUserWs).GetBldr();
 				bldr.SetIntPropValues(0, bldr.Length, (int)FwTextPropType.ktptSpellCheck,
 										 (int)FwTextPropVar.ktpvEnum, (int)SpellingModes.ksmDoNotCheck);
 				bldr.Replace(0, 0, "\u200B", null);

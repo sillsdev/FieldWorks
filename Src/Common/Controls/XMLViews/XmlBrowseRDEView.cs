@@ -9,6 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -375,7 +376,7 @@ namespace SIL.FieldWorks.Common.Controls
 				int kflid = XMLViewsDataCache.ktagEditColumnBase + i;
 				int wsCol = WritingSystemServices.GetWritingSystem(m_fdoCache, columns[i - 1], null,
 					m_fdoCache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
-				sda.SetMultiStringAlt(XmlRDEBrowseViewVc.khvoNewItem, kflid, wsCol, Cache.TsStrFactory.MakeString("", wsCol));
+				sda.SetMultiStringAlt(XmlRDEBrowseViewVc.khvoNewItem, kflid, wsCol, TsStringUtils.EmptyString(wsCol));
 			}
 			// Set the selection to the first column.
 			SetSelectionToFirstColumnInNewRow();

@@ -14,7 +14,6 @@ using NUnit.Framework;
 using SIL.TestUtilities;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -212,7 +211,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(entry, "HeadWordTest", m_wsFr, Cache);
+			AddHeadwordToEntry(entry, "HeadWordTest", m_wsFr);
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
@@ -239,7 +238,7 @@ namespace SIL.FieldWorks.XWorks
 			//Fill in the LexemeForm
 			var morph = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA = morph;
-			morph.Form.set_String(wsFr, Cache.TsStrFactory.MakeString("LexemeFormTest", wsFr));
+			morph.Form.set_String(wsFr, TsStringUtils.MakeString("LexemeFormTest", wsFr));
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
@@ -283,7 +282,7 @@ namespace SIL.FieldWorks.XWorks
 			Cache.LangProject.LocationsOA = possList1;
 			var location = Cache.ServiceLocator.GetInstance<ICmLocationFactory>().Create();
 			possList1.PossibilitiesOS.Add(location);
-			location.Name.set_String(wsFr, Cache.TsStrFactory.MakeString("Here!", wsFr));
+			location.Name.set_String(wsFr, TsStringUtils.MakeString("Here!", wsFr));
 			pronunciation.LocationRA = location;
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
@@ -508,9 +507,9 @@ namespace SIL.FieldWorks.XWorks
 			};
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 			var entryOne = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(entryOne, "FirstHeadword", m_wsFr, Cache);
+			AddHeadwordToEntry(entryOne, "FirstHeadword", m_wsFr);
 			var entryTwo = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(entryTwo, "SecondHeadword", m_wsFr, Cache);
+			AddHeadwordToEntry(entryTwo, "SecondHeadword", m_wsFr);
 			entryTwo.SensesOS.Clear();
 			var entryOneId = entryOne.Guid;
 			var entryTwoId = entryTwo.Guid;
@@ -1343,7 +1342,7 @@ namespace SIL.FieldWorks.XWorks
 			var entryTwo = CreateInterestingLexEntry(Cache);
 			var entryThree = CreateInterestingLexEntry(Cache);
 			const string entryThreeForm = "MLHW";
-			AddHeadwordToEntry(entryThree, entryThreeForm, m_wsFr, Cache);
+			AddHeadwordToEntry(entryThree, entryThreeForm, m_wsFr);
 			var complexEntryRef = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
 			entryTwo.EntryRefsOS.Add(complexEntryRef);
 			complexEntryRef.RefType = LexEntryRefTags.krtComplexForm;
@@ -1399,8 +1398,8 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var language = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 			Cache.LangProject.LexDbOA.LanguagesOA.PossibilitiesOS.Add(language);
-			language.Abbreviation.set_String(m_wsEn, Cache.TsStrFactory.MakeString("ar", m_wsEn));
-			language.Name.set_String(m_wsEn, Cache.TsStrFactory.MakeString("Arabic", m_wsEn));
+			language.Abbreviation.set_String(m_wsEn, TsStringUtils.MakeString("ar", m_wsEn));
+			language.Name.set_String(m_wsEn, TsStringUtils.MakeString("Arabic", m_wsEn));
 			var entryOne = CreateInterestingLexEntry(Cache);
 			var etym = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
 			entryOne.EtymologyOS.Add(etym);
@@ -1677,7 +1676,7 @@ namespace SIL.FieldWorks.XWorks
 				var textObject = locator.GetInstance<IStTextRepository>().GetObject(multiParaHvo);
 				var paragraph = locator.GetInstance<IStTxtParaFactory>().Create();
 				textObject.ParagraphsOS.Add(paragraph);
-				paragraph.Contents = Cache.TsStrFactory.MakeString(customData, m_wsFr);
+				paragraph.Contents = TsStringUtils.MakeString(customData, m_wsFr);
 				//SUT
 				var type = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(customFieldNode, Cache);
 				Assert.AreEqual(ConfiguredXHTMLGenerator.PropertyType.PrimitiveType, type);
@@ -2781,12 +2780,12 @@ namespace SIL.FieldWorks.XWorks
 			var exampleFact = Cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>();
 			var example = exampleFact.Create();
 			extendedNote.ExamplesOS.Add(example);
-			example.Example.set_String(m_wsFr, Cache.TsStrFactory.MakeString(examples, m_wsFr));
+			example.Example.set_String(m_wsFr, TsStringUtils.MakeString(examples, m_wsFr));
 			if (translation != null)
 			{
 				var type = Cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranFreeTranslation);
 				var cmTranslation = Cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(example, type);
-				cmTranslation.Translation.set_String(m_wsEn, Cache.TsStrFactory.MakeString(translation, m_wsEn));
+				cmTranslation.Translation.set_String(m_wsEn, TsStringUtils.MakeString(translation, m_wsEn));
 				example.TranslationsOC.Add(cmTranslation);
 			}
 		}
@@ -2926,7 +2925,7 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateXHTMLForEntry_GeneratesLinksForPrimaryEntryReferences()
 		{
 			var mainEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(mainEntry, "Test", m_wsFr, Cache);
+			AddHeadwordToEntry(mainEntry, "Test", m_wsFr);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			var otherMainEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
@@ -4318,7 +4317,7 @@ namespace SIL.FieldWorks.XWorks
 			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
 			sense.PicturesOS.Add(sensePic);
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			sensePic.Caption.set_String(wsEn, Cache.TsStrFactory.MakeString("caption", wsEn));
+			sensePic.Caption.set_String(wsEn, TsStringUtils.MakeString("caption", wsEn));
 			var pic = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
 			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
 			Cache.LangProject.MediaOC.Add(folder);
@@ -4345,7 +4344,7 @@ namespace SIL.FieldWorks.XWorks
 			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
 			sense.PicturesOS.Add(sensePic);
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			sensePic.Caption.set_String(wsEn, Cache.TsStrFactory.MakeString("caption", wsEn));
+			sensePic.Caption.set_String(wsEn, TsStringUtils.MakeString("caption", wsEn));
 			var pic = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
 			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
 			Cache.LangProject.MediaOC.Add(folder);
@@ -4571,7 +4570,7 @@ namespace SIL.FieldWorks.XWorks
 				var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 
 				// Set custom field data
-				Cache.MainCacheAccessor.SetString(testEntry.Hvo, customField.Flid, Cache.TsStrFactory.MakeString(customData, wsEn));
+				Cache.MainCacheAccessor.SetString(testEntry.Hvo, customField.Flid, TsStringUtils.MakeString(customData, wsEn));
 				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
@@ -4602,7 +4601,7 @@ namespace SIL.FieldWorks.XWorks
 				var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 
 				// Set custom field data
-				Cache.MainCacheAccessor.SetString(testEntry.Hvo, customField.Flid, Cache.TsStrFactory.MakeString(customData, wsEn));
+				Cache.MainCacheAccessor.SetString(testEntry.Hvo, customField.Flid, TsStringUtils.MakeString(customData, wsEn));
 				//SUT
 				Assert.AreEqual(ConfiguredXHTMLGenerator.PropertyType.PrimitiveType, ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(customFieldNode, Cache));
 			}
@@ -4638,7 +4637,7 @@ namespace SIL.FieldWorks.XWorks
 				var testSence = testEntry.SensesOS[0];
 
 				// Set custom field data
-				Cache.MainCacheAccessor.SetString(testSence.Hvo, customField.Flid, Cache.TsStrFactory.MakeString(customData, wsEn));
+				Cache.MainCacheAccessor.SetString(testSence.Hvo, customField.Flid, TsStringUtils.MakeString(customData, wsEn));
 				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
@@ -4684,7 +4683,7 @@ namespace SIL.FieldWorks.XWorks
 				var exampleSentence = AddExampleToSense(testSense, @"I'm an example");
 
 				// Set custom field data
-				Cache.MainCacheAccessor.SetString(exampleSentence.Hvo, customField.Flid, Cache.TsStrFactory.MakeString(customData, wsEn));
+				Cache.MainCacheAccessor.SetString(exampleSentence.Hvo, customField.Flid, TsStringUtils.MakeString(customData, wsEn));
 				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
@@ -4723,7 +4722,7 @@ namespace SIL.FieldWorks.XWorks
 				var allomorph = AddAllomorphToEntry(testEntry);
 
 				// Set custom field data
-				Cache.MainCacheAccessor.SetString(allomorph.Hvo, customField.Flid, Cache.TsStrFactory.MakeString(customData, m_wsEn));
+				Cache.MainCacheAccessor.SetString(allomorph.Hvo, customField.Flid, TsStringUtils.MakeString(customData, m_wsEn));
 				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
@@ -4755,7 +4754,7 @@ namespace SIL.FieldWorks.XWorks
 				const string customData = @"I am custom data";
 
 				// Set custom field data
-				Cache.MainCacheAccessor.SetMultiStringAlt(testEntry.Hvo, customField.Flid, m_wsEn, Cache.TsStrFactory.MakeString(customData, m_wsEn));
+				Cache.MainCacheAccessor.SetMultiStringAlt(testEntry.Hvo, customField.Flid, m_wsEn, TsStringUtils.MakeString(customData, m_wsEn));
 				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
@@ -4799,9 +4798,9 @@ namespace SIL.FieldWorks.XWorks
 				const string entryCustomData = "Another custom string";
 				const string senseCustomData = "My custom string";
 				Cache.MainCacheAccessor.SetMultiStringAlt(refdEntry.Hvo, entryCustomField.Flid, m_wsEn,
-					Cache.TsStrFactory.MakeString(entryCustomData, m_wsEn));
+					TsStringUtils.MakeString(entryCustomData, m_wsEn));
 				Cache.MainCacheAccessor.SetMultiStringAlt(refdEntry.SensesOS[0].Hvo, senseCustomField.Flid, m_wsEn,
-					Cache.TsStrFactory.MakeString(senseCustomData, m_wsEn));
+					TsStringUtils.MakeString(senseCustomData, m_wsEn));
 				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
@@ -4847,9 +4846,9 @@ namespace SIL.FieldWorks.XWorks
 				const string entryCustomData = "Another custom string";
 				const string senseCustomData = "My custom string";
 				Cache.MainCacheAccessor.SetMultiStringAlt(refdEntry.Hvo, entryCustomField.Flid, m_wsEn,
-					Cache.TsStrFactory.MakeString(entryCustomData, m_wsEn));
+					TsStringUtils.MakeString(entryCustomData, m_wsEn));
 				Cache.MainCacheAccessor.SetMultiStringAlt(refdEntry.SensesOS[0].Hvo, senseCustomField.Flid, m_wsEn,
-					Cache.TsStrFactory.MakeString(senseCustomData, m_wsEn));
+					TsStringUtils.MakeString(senseCustomData, m_wsEn));
 				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
@@ -4885,7 +4884,7 @@ namespace SIL.FieldWorks.XWorks
 				var refdEntry = CreateInterestingLexEntry(Cache);
 				CreateVariantForm(Cache, testEntry, refdEntry);
 				const string customData = "My custom string";
-				Cache.MainCacheAccessor.SetMultiStringAlt(refdEntry.Hvo, customField.Flid, m_wsEn, Cache.TsStrFactory.MakeString(customData, m_wsEn));
+				Cache.MainCacheAccessor.SetMultiStringAlt(refdEntry.Hvo, customField.Flid, m_wsEn, TsStringUtils.MakeString(customData, m_wsEn));
 				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
@@ -5171,7 +5170,7 @@ namespace SIL.FieldWorks.XWorks
 			var entryOne = CreateInterestingLexEntry(Cache);
 			var senseaudio = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entryOne.LexemeFormOA = senseaudio;
-			senseaudio.Form.set_String(wsEnAudio.Handle, Cache.TsStrFactory.MakeString("TestAudio.wav", wsEnAudio.Handle));
+			senseaudio.Form.set_String(wsEnAudio.Handle, TsStringUtils.MakeString("TestAudio.wav", wsEnAudio.Handle));
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
@@ -5208,7 +5207,7 @@ namespace SIL.FieldWorks.XWorks
 			var entryOne = CreateInterestingLexEntry(Cache);
 			var senseaudio = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entryOne.LexemeFormOA = senseaudio;
-			senseaudio.Form.set_String(wsEnAudio.Handle, Cache.TsStrFactory.MakeString("TestAudio.wav", wsEnAudio.Handle));
+			senseaudio.Form.set_String(wsEnAudio.Handle, TsStringUtils.MakeString("TestAudio.wav", wsEnAudio.Handle));
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, true, true, "//audio/source/@src");
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
@@ -5287,7 +5286,7 @@ namespace SIL.FieldWorks.XWorks
 				var entryOne = CreateInterestingLexEntry(Cache);
 				var senseaudio = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 				entryOne.LexemeFormOA = senseaudio;
-				senseaudio.Form.set_String(wsEnAudio.Handle, Cache.TsStrFactory.MakeString("TestAudio.wav", wsEnAudio.Handle));
+				senseaudio.Form.set_String(wsEnAudio.Handle, TsStringUtils.MakeString("TestAudio.wav", wsEnAudio.Handle));
 				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, true, true, "//audio/source/@src");
 
 				// SUT
@@ -5876,7 +5875,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			sensePic.Caption.set_String(wsFr, Cache.TsStrFactory.MakeString("caption", wsFr));
+			sensePic.Caption.set_String(wsFr, TsStringUtils.MakeString("caption", wsFr));
 			entryCorps.SensesOS[0].PicturesOS.Add(sensePic);
 
 			Pronunciation.DoNotPublishInRC.Add(typeTest);
@@ -6245,7 +6244,7 @@ namespace SIL.FieldWorks.XWorks
 			var typeMain = CreatePublicationType("main");
 
 			var entryEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(entryEntry, "entry", m_wsFr, Cache);
+			AddHeadwordToEntry(entryEntry, "entry", m_wsFr);
 
 			var firstComplexForm = CreateInterestingLexEntry(Cache, "entry1", "myComplexForm");
 			CreateComplexForm(Cache, entryEntry, firstComplexForm, false); //Compound
@@ -6300,7 +6299,7 @@ namespace SIL.FieldWorks.XWorks
 			var typeMain = CreatePublicationType("main");
 
 			var entryEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(entryEntry, "entry", m_wsFr, Cache);
+			AddHeadwordToEntry(entryEntry, "entry", m_wsFr);
 
 			var firstComplexForm = CreateInterestingLexEntry(Cache, "entry1", "myComplexForm");
 			CreateComplexForm(Cache, entryEntry, firstComplexForm, false); //Compound
@@ -6519,9 +6518,9 @@ namespace SIL.FieldWorks.XWorks
 		public void SavePublishedHtmlWithStyles_ProduceLetHeadOnlyWhenDesired()
 		{
 			var lexentry1 = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(lexentry1, "femme", m_wsFr, Cache);
+			AddHeadwordToEntry(lexentry1, "femme", m_wsFr);
 			var lexentry2 = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(lexentry2, "homme", m_wsFr, Cache);
+			AddHeadwordToEntry(lexentry2, "homme", m_wsFr);
 			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
 			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }) };
@@ -6583,9 +6582,9 @@ namespace SIL.FieldWorks.XWorks
 			var firstAEntry = CreateInterestingLexEntry(Cache);
 			var firstAHeadword = "alpha1";
 			var bHeadword = "beta";
-			AddHeadwordToEntry(firstAEntry, firstAHeadword, m_wsFr, Cache);
+			AddHeadwordToEntry(firstAEntry, firstAHeadword, m_wsFr);
 			var bEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(bEntry, bHeadword, m_wsFr, Cache);
+			AddHeadwordToEntry(bEntry, bHeadword, m_wsFr);
 			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
 			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
 			var mainHeadwordNode = new ConfigurableDictionaryNode
@@ -6627,11 +6626,11 @@ namespace SIL.FieldWorks.XWorks
 			var firstAHeadword = "alpha1";
 			var secondAHeadword = "alpha2";
 			var bHeadword = "beta";
-			AddHeadwordToEntry(firstAEntry, firstAHeadword, m_wsFr, Cache);
+			AddHeadwordToEntry(firstAEntry, firstAHeadword, m_wsFr);
 			var secondAEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(secondAEntry, secondAHeadword, m_wsFr, Cache);
+			AddHeadwordToEntry(secondAEntry, secondAHeadword, m_wsFr);
 			var bEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(bEntry, bHeadword, m_wsFr, Cache);
+			AddHeadwordToEntry(bEntry, bHeadword, m_wsFr);
 			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
 			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
 			var mainHeadwordNode = new ConfigurableDictionaryNode
@@ -6679,11 +6678,11 @@ namespace SIL.FieldWorks.XWorks
 			var firstAHeadword = "alpha1";
 			var secondAHeadword = "alpha2";
 			var bHeadword = "beta";
-			AddHeadwordToEntry(firstAEntry, firstAHeadword, m_wsFr, Cache);
+			AddHeadwordToEntry(firstAEntry, firstAHeadword, m_wsFr);
 			var secondAEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(secondAEntry, secondAHeadword, m_wsFr, Cache);
+			AddHeadwordToEntry(secondAEntry, secondAHeadword, m_wsFr);
 			var bEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(bEntry, bHeadword, m_wsFr, Cache);
+			AddHeadwordToEntry(bEntry, bHeadword, m_wsFr);
 			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
 			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
 			var mainHeadwordNode = new ConfigurableDictionaryNode
@@ -6734,7 +6733,7 @@ namespace SIL.FieldWorks.XWorks
 			for (var i = 0; i < 21; ++i)
 			{
 				var entry = CreateInterestingLexEntry(Cache);
-				AddHeadwordToEntry(entry, "a" + i, m_wsFr, Cache);
+				AddHeadwordToEntry(entry, "a" + i, m_wsFr);
 				hvos[i] = entry.Hvo;
 			}
 			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
@@ -6785,7 +6784,7 @@ namespace SIL.FieldWorks.XWorks
 			for (var i = 0; i < 21; ++i)
 			{
 				var entry = CreateInterestingLexEntry(Cache);
-				AddHeadwordToEntry(entry, "a" + i, m_wsFr, Cache);
+				AddHeadwordToEntry(entry, "a" + i, m_wsFr);
 				hvos[i] = entry.Hvo;
 			}
 			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
@@ -6873,7 +6872,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var firstHeadword = "homme";
 			var firstEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(firstEntry, firstHeadword, m_wsFr, Cache);
+			AddHeadwordToEntry(firstEntry, firstHeadword, m_wsFr);
 			AddSingleSubSenseToSense("man", firstEntry.SensesOS[0]);
 			var msa1 = CreateMSA(firstEntry, posNoun);
 			firstEntry.SensesOS[0].MorphoSyntaxAnalysisRA = msa1;
@@ -6881,7 +6880,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var secondHeadword = "femme";
 			var secondEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(secondEntry, secondHeadword, m_wsFr, Cache);
+			AddHeadwordToEntry(secondEntry, secondHeadword, m_wsFr);
 			AddSenseAndTwoSubsensesToEntry(secondEntry, "woman");
 			var msa2 = CreateMSA(secondEntry, posNoun);
 			foreach (var sense in secondEntry.SensesOS)
@@ -6893,7 +6892,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var thirdHeadword = "bon";
 			var thirdEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(thirdEntry, thirdHeadword, m_wsFr, Cache);
+			AddHeadwordToEntry(thirdEntry, thirdHeadword, m_wsFr);
 			AddSenseAndTwoSubsensesToEntry(thirdEntry, "good");
 			var msa3 = CreateMSA(thirdEntry, posAdj);
 			foreach (var sense in thirdEntry.SensesOS)
@@ -7041,8 +7040,8 @@ namespace SIL.FieldWorks.XWorks
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
-			var englishStr = Cache.TsStrFactory.MakeString("English", m_wsEn);
-			var frenchString = Cache.TsStrFactory.MakeString("French with  embedded", m_wsFr);
+			var englishStr = TsStringUtils.MakeString("English", m_wsEn);
+			var frenchString = TsStringUtils.MakeString("French with  embedded", m_wsFr);
 			var multiRunString = frenchString.Insert(12, englishStr);
 			entry.Bibliography.set_String(m_wsFr, multiRunString);
 			//SUT
@@ -7316,13 +7315,13 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateAdjustedPageNumbers_NoAdjacentWhenUpButtonConsumesAllEntries()
 		{
 			var firstEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(firstEntry, "homme", m_wsFr, Cache);
+			AddHeadwordToEntry(firstEntry, "homme", m_wsFr);
 
 			var secondEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(secondEntry, "femme", m_wsFr, Cache);
+			AddHeadwordToEntry(secondEntry, "femme", m_wsFr);
 
 			var thirdEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(thirdEntry, "famille", m_wsFr, Cache);
+			AddHeadwordToEntry(thirdEntry, "famille", m_wsFr);
 			var currentPage = new Tuple<int, int>(0, 2);
 			var adjacentPage = new Tuple<int, int>(2, 2);
 			Tuple<int, int> current;
@@ -7340,13 +7339,13 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateAdjustedPageNumbers_NoAdjacentWhenDownButtonConsumesAllEntries()
 		{
 			var firstEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(firstEntry, "homme", m_wsFr, Cache);
+			AddHeadwordToEntry(firstEntry, "homme", m_wsFr);
 
 			var secondEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(secondEntry, "femme", m_wsFr, Cache);
+			AddHeadwordToEntry(secondEntry, "femme", m_wsFr);
 
 			var thirdEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(thirdEntry, "famille", m_wsFr, Cache);
+			AddHeadwordToEntry(thirdEntry, "famille", m_wsFr);
 			var currentPage = new Tuple<int, int>(1, 2);
 			var adjPage = new Tuple<int, int>(0, 1);
 			Tuple<int, int> current;
@@ -7364,16 +7363,16 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateAdjustedPageNumbers_AdjacentAndCurrentPageAdjustCorrectlyUp()
 		{
 			var firstEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(firstEntry, "homme", m_wsFr, Cache);
+			AddHeadwordToEntry(firstEntry, "homme", m_wsFr);
 
 			var secondEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(secondEntry, "femme", m_wsFr, Cache);
+			AddHeadwordToEntry(secondEntry, "femme", m_wsFr);
 
 			var thirdEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(thirdEntry, "famille", m_wsFr, Cache);
+			AddHeadwordToEntry(thirdEntry, "famille", m_wsFr);
 
 			var fourthEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(thirdEntry, "famille", m_wsFr, Cache);
+			AddHeadwordToEntry(thirdEntry, "famille", m_wsFr);
 
 			var currentPage = new Tuple<int, int>(0, 2);
 			var adjPage = new Tuple<int, int>(3, 4);
@@ -7393,16 +7392,16 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateAdjustedPageNumbers_AdjacentAndCurrentPageAdjustCorrectlyDown()
 		{
 			var firstEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(firstEntry, "homme", m_wsFr, Cache);
+			AddHeadwordToEntry(firstEntry, "homme", m_wsFr);
 
 			var secondEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(secondEntry, "femme", m_wsFr, Cache);
+			AddHeadwordToEntry(secondEntry, "femme", m_wsFr);
 
 			var thirdEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(thirdEntry, "famille", m_wsFr, Cache);
+			AddHeadwordToEntry(thirdEntry, "famille", m_wsFr);
 
 			var fourthEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(thirdEntry, "famille", m_wsFr, Cache);
+			AddHeadwordToEntry(thirdEntry, "famille", m_wsFr);
 
 			var adjPage = new Tuple<int, int>(0, 2);
 			var currentPage = new Tuple<int, int>(3, 4);
@@ -7422,16 +7421,16 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateNextFewEntries_UpReturnsRequestedEntries()
 		{
 			var firstEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(firstEntry, "homme", m_wsFr, Cache);
+			AddHeadwordToEntry(firstEntry, "homme", m_wsFr);
 
 			var secondEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(secondEntry, "femme", m_wsFr, Cache);
+			AddHeadwordToEntry(secondEntry, "femme", m_wsFr);
 
 			var thirdEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(thirdEntry, "famille", m_wsFr, Cache);
+			AddHeadwordToEntry(thirdEntry, "famille", m_wsFr);
 
 			var fourthEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(fourthEntry, "familliar", m_wsFr, Cache);
+			AddHeadwordToEntry(fourthEntry, "familliar", m_wsFr);
 
 			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var mainHeadwordNode = new ConfigurableDictionaryNode
@@ -7477,16 +7476,16 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateNextFewEntries_DownReturnsRequestedEntries()
 		{
 			var firstEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(firstEntry, "homme", m_wsFr, Cache);
+			AddHeadwordToEntry(firstEntry, "homme", m_wsFr);
 
 			var secondEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(secondEntry, "femme", m_wsFr, Cache);
+			AddHeadwordToEntry(secondEntry, "femme", m_wsFr);
 
 			var thirdEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(thirdEntry, "famille", m_wsFr, Cache);
+			AddHeadwordToEntry(thirdEntry, "famille", m_wsFr);
 
 			var fourthEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(fourthEntry, "familliar", m_wsFr, Cache);
+			AddHeadwordToEntry(fourthEntry, "familliar", m_wsFr);
 
 			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var mainHeadwordNode = new ConfigurableDictionaryNode
@@ -7643,8 +7642,8 @@ namespace SIL.FieldWorks.XWorks
 				cache.WritingSystemFactory.get_Engine("fr") as CoreWritingSystemDefinition);
 			var wsEn = cache.WritingSystemFactory.GetWsFromStr("en");
 			var wsFr = cache.WritingSystemFactory.GetWsFromStr("fr");
-			AddHeadwordToEntry(entry, headword, wsFr, cache);
-			entry.Comment.set_String(wsEn, cache.TsStrFactory.MakeString("Comment", wsEn));
+			AddHeadwordToEntry(entry, headword, wsFr);
+			entry.Comment.set_String(wsEn, TsStringUtils.MakeString("Comment", wsEn));
 			AddSenseToEntry(entry, gloss, wsEn, cache);
 			return entry;
 		}
@@ -7845,17 +7844,17 @@ namespace SIL.FieldWorks.XWorks
 			return item;
 		}
 
-		private static void AddHeadwordToEntry(ILexEntry entry, string headword, int wsId, FdoCache cache)
+		private static void AddHeadwordToEntry(ILexEntry entry, string headword, int wsId)
 		{
 			// The headword field is special: it uses Citation if available, or LexemeForm if Citation isn't filled in
-			entry.CitationForm.set_String(wsId, cache.TsStrFactory.MakeString(headword, wsId));
+			entry.CitationForm.set_String(wsId, TsStringUtils.MakeString(headword, wsId));
 		}
 
 		private static ILexPronunciation AddPronunciationToEntry(ILexEntry entry, string content, int wsId, FdoCache cache)
 		{
 			var pronunciation = cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
 			entry.PronunciationsOS.Add(pronunciation);
-			pronunciation.Form.set_String(wsId, cache.TsStrFactory.MakeString(content, wsId));
+			pronunciation.Form.set_String(wsId, TsStringUtils.MakeString(content, wsId));
 			return pronunciation;
 		}
 
@@ -7865,7 +7864,7 @@ namespace SIL.FieldWorks.XWorks
 			var sense = senseFactory.Create();
 			entry.SensesOS.Add(sense);
 			if (!string.IsNullOrEmpty(gloss))
-				sense.Gloss.set_String(wsId, cache.TsStrFactory.MakeString(gloss, wsId));
+				sense.Gloss.set_String(wsId, TsStringUtils.MakeString(gloss, wsId));
 		}
 
 		private void AddSenseAndTwoSubsensesToEntry(ICmObject entryOrSense, string gloss)
@@ -7877,33 +7876,33 @@ namespace SIL.FieldWorks.XWorks
 				entry.SensesOS.Add(sense);
 			else
 				((ILexSense)entryOrSense).SensesOS.Add(sense);
-			sense.Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString(gloss, m_wsEn));
+			sense.Gloss.set_String(m_wsEn, TsStringUtils.MakeString(gloss, m_wsEn));
 			var subSensesOne = senseFactory.Create();
 			sense.SensesOS.Add(subSensesOne);
-			subSensesOne.Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString(gloss + "2.1", m_wsEn));
+			subSensesOne.Gloss.set_String(m_wsEn, TsStringUtils.MakeString(gloss + "2.1", m_wsEn));
 			var subSensesTwo = senseFactory.Create();
 			sense.SensesOS.Add(subSensesTwo);
-			subSensesTwo.Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString(gloss + "2.2", m_wsEn));
+			subSensesTwo.Gloss.set_String(m_wsEn, TsStringUtils.MakeString(gloss + "2.2", m_wsEn));
 		}
 
 		private void AddSingleSubSenseToSense(string gloss, ILexSense sense)
 		{
-			sense.Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString(gloss, m_wsEn));
+			sense.Gloss.set_String(m_wsEn, TsStringUtils.MakeString(gloss, m_wsEn));
 			var subSensesOne = sense.Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			sense.SensesOS.Add(subSensesOne);
-			subSensesOne.Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString(gloss + "1.1", m_wsEn));
+			subSensesOne.Gloss.set_String(m_wsEn, TsStringUtils.MakeString(gloss + "1.1", m_wsEn));
 		}
 
 		private ILexExampleSentence AddExampleToSense(ILexSense sense, string content, string translation = null)
 		{
 			var exampleFact = Cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>();
 			var example = exampleFact.Create(new Guid(), sense);
-			example.Example.set_String(m_wsFr, Cache.TsStrFactory.MakeString(content, m_wsFr));
+			example.Example.set_String(m_wsFr, TsStringUtils.MakeString(content, m_wsFr));
 			if (translation != null)
 			{
 				var type = Cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranFreeTranslation);
 				var cmTranslation = Cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(example, type);
-				cmTranslation.Translation.set_String(m_wsEn, Cache.TsStrFactory.MakeString(translation, m_wsEn));
+				cmTranslation.Translation.set_String(m_wsEn, TsStringUtils.MakeString(translation, m_wsEn));
 				example.TranslationsOC.Add(cmTranslation);
 			}
 			return example;
@@ -7914,14 +7913,14 @@ namespace SIL.FieldWorks.XWorks
 			var morphFact = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>();
 			var morph = morphFact.Create();
 			entry.AlternateFormsOS.Add(morph);
-			morph.Form.set_String(m_wsFr, Cache.TsStrFactory.MakeString("Allomorph", m_wsFr));
+			morph.Form.set_String(m_wsFr, TsStringUtils.MakeString("Allomorph", m_wsFr));
 
 			// add environment to the allomorph
 			const int stringRepresentationFlid = 5097008;
 			var env = Cache.ServiceLocator.GetInstance<IPhEnvironmentFactory>().Create();
 			Cache.LangProject.PhonologicalDataOA.EnvironmentsOS.Add(env);
 			morph.PhoneEnvRC.Add(env);
-			Cache.MainCacheAccessor.SetString(env.Hvo, stringRepresentationFlid, Cache.TsStrFactory.MakeString("phoneyEnv", m_wsEn));
+			Cache.MainCacheAccessor.SetString(env.Hvo, stringRepresentationFlid, TsStringUtils.MakeString("phoneyEnv", m_wsEn));
 
 			return morph;
 		}
@@ -7944,19 +7943,18 @@ namespace SIL.FieldWorks.XWorks
 
 		private static ITsString MakeVernTss(string content, FdoCache cache)
 		{
-			return cache.TsStrFactory.MakeString(content, cache.DefaultVernWs);
+			return TsStringUtils.MakeString(content, cache.DefaultVernWs);
 		}
 
 		private ITsString MakeMulitlingualTss(IEnumerable<string> content)
 		{
 			// automatically alternates runs between 'en' and 'fr'
-			var tsFact = Cache.TsStrFactory;
-			var lastWs = m_wsFr;
-			var builder = tsFact.GetIncBldr();
+			int lastWs = m_wsFr;
+			ITsIncStrBldr builder = TsStringUtils.MakeIncStrBldr();
 			foreach (var runContent in content)
 			{
 				lastWs = lastWs == m_wsEn ? m_wsFr : m_wsEn; // switch ws for each run
-				builder.AppendTsString(tsFact.MakeString(runContent, lastWs));
+				builder.AppendTsString(TsStringUtils.MakeString(runContent, lastWs));
 			}
 			return builder.GetString();
 		}
@@ -7965,13 +7963,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			EnsureHebrewExists();
 			// automatically alternates runs between 'en' and 'he' (Hebrew)
-			var tsFact = Cache.TsStrFactory;
-			var lastWs = m_wsEn;
-			var builder = tsFact.GetIncBldr();
+			int lastWs = m_wsEn;
+			ITsIncStrBldr builder = TsStringUtils.MakeIncStrBldr();
 			foreach (var runContent in content)
 			{
 				lastWs = lastWs == m_wsEn ? m_wsHe : m_wsEn; // switch ws for each run
-				builder.AppendTsString(tsFact.MakeString(runContent, lastWs));
+				builder.AppendTsString(TsStringUtils.MakeString(runContent, lastWs));
 			}
 			return builder.GetString();
 		}

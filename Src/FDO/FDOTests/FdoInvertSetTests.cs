@@ -4,6 +4,7 @@
 
 using System.Linq;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
@@ -96,10 +97,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var form = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA = form;
 			form.Form.VernacularDefaultWritingSystem =
-				Cache.TsStrFactory.MakeString(lf, Cache.DefaultVernWs);
+				TsStringUtils.MakeString(lf, Cache.DefaultVernWs);
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry.SensesOS.Add(sense);
-			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss, Cache.DefaultAnalWs);
+			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss, Cache.DefaultAnalWs);
 			return entry;
 		}
 
@@ -113,7 +114,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		private ITsString AnalysisTss(string form)
 		{
-			return Cache.TsStrFactory.MakeString(form, Cache.DefaultAnalWs);
+			return TsStringUtils.MakeString(form, Cache.DefaultAnalWs);
 		}
 	}
 }

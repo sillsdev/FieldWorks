@@ -191,7 +191,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			// handle the unlikely event of no selection props.
 			if (selectionProps == null || selectionProps.Length == 0)
-				return TsStringUtils.MakeTss(text, AssociatedSimpleRootSite.WritingSystemFactory.UserWs);
+				return TsStringUtils.MakeString(text, AssociatedSimpleRootSite.WritingSystemFactory.UserWs);
 
 			var textProps = selectionProps[0];
 			var propsBuilder = TsPropsBldrClass.Create();
@@ -224,9 +224,8 @@ namespace SIL.FieldWorks.Common.RootSites
 					(int)FwTextPropVar.ktpvDefault, colorGray);
 			}
 
-			var tssFactory = TsStrFactoryClass.Create();
-			return tssFactory.MakeStringWithPropsRgch(text, text.Length,
-				propsBuilder.GetTextProps()).get_NormalizedForm(FwNormalizationMode.knmNFD);
+			return TsStringUtils.MakeString(text, propsBuilder.GetTextProps())
+				.get_NormalizedForm(FwNormalizationMode.knmNFD);
 		}
 		private SelectionHelper SetupForTypingEventHandler(bool checkIfFocused,
 			bool rollBackPreviousTask)

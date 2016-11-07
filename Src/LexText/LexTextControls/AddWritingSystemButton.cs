@@ -17,7 +17,6 @@ using System.Windows.Forms;
 
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
@@ -40,7 +39,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		CoreWritingSystemDefinition m_wsNew;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
-		private IVwStylesheet m_stylesheet;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -82,25 +80,23 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="cache">primary FDO data cache</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="app">The app.</param>
-		/// <param name="stylesheet">The stylesheet.</param>
 		/// <param name="wss">The writing systems already displayed.</param>
 		public void Initialize(FdoCache cache, IHelpTopicProvider helpTopicProvider, IApp app,
-			 IVwStylesheet stylesheet, IEnumerable<CoreWritingSystemDefinition> wss)
+			 IEnumerable<CoreWritingSystemDefinition> wss)
 		{
 			CheckDisposed();
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
 			m_existingWsIds = new HashSet<string>(wss.Select(ws => ws.Id).ToList());
-			m_stylesheet = stylesheet;
 		}
 
 		/// <summary>
 		/// Initialize for adding new writing systems.
 		/// </summary>
-		internal void Initialize(FdoCache cache, IHelpTopicProvider helpTopicProvider, IApp app, IVwStylesheet stylesheet)
+		internal void Initialize(FdoCache cache, IHelpTopicProvider helpTopicProvider, IApp app)
 		{
-			Initialize(cache, helpTopicProvider, m_app, stylesheet, cache.ServiceLocator.WritingSystems.AllWritingSystems);
+			Initialize(cache, helpTopicProvider, m_app, cache.ServiceLocator.WritingSystems.AllWritingSystems);
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
@@ -177,7 +173,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				IEnumerable<CoreWritingSystemDefinition> newWritingSystems;
 				if (WritingSystemPropertiesDialog.ShowNewDialog(FindForm(), m_cache, m_cache.ServiceLocator.WritingSystemManager,
-					m_cache.ServiceLocator.WritingSystems, m_helpTopicProvider, m_app, m_stylesheet, true, null,
+					m_cache.ServiceLocator.WritingSystems, m_helpTopicProvider, m_app, true, null,
 					out newWritingSystems))
 				{
 					ws = newWritingSystems.First();

@@ -6,7 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -15,6 +14,7 @@ using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using XCore;
 using System;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks
@@ -130,7 +130,7 @@ namespace SIL.FieldWorks.XWorks
 				// We could just ignore whitespace, but if <Enter> gets in there, somehow it makes the
 				// rest of the string invisible on the screen. So this special case is handled by resetting
 				// the search string to empty if it only contains whitespace.
-				m_textSearch.Tss = m_cache.TsStrFactory.MakeString(string.Empty, m_cache.DefaultAnalWs);
+				m_textSearch.Tss = TsStringUtils.EmptyString(m_cache.DefaultAnalWs);
 			}
 			return searchString.Trim();
 		}

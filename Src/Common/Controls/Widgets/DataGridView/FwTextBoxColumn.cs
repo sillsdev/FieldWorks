@@ -18,7 +18,6 @@ using System.ComponentModel;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using System.Diagnostics.CodeAnalysis;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Widgets
@@ -538,8 +537,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				return strBldr.GetString();
 			}
 
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			return tsf.MakeString(string.Empty, ws);
+			return TsStringUtils.EmptyString(ws);
 		}
 
 		/// ------------------------------------------------------------------------------------

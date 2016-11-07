@@ -1467,9 +1467,8 @@ namespace SIL.FieldWorks.IText
 				m_hvoRoot, StTextTags.kflidParagraphs);
 
 			ITsStrBldr bldr = TsStrBldrClass.Create();
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
 			bool fOpenPunc = false;
-			ITsString space = TsStringUtils.MakeTss(" ", ws);
+			ITsString space = TsStringUtils.MakeString(" ", ws);
 			foreach (var analysis in seg.AnalysesRS)
 			{
 				ITsString insert = null;

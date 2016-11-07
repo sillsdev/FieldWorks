@@ -35,7 +35,6 @@ namespace SIL.FieldWorks.IText
 	public partial class InterlinTaggingChild : InterlinDocRootSiteBase
 	{
 		ContextMenuStrip m_taggingContextMenu;
-		int m_hvoCurSegment; // hvo of segment currently containing the selection
 
 		// Helps determine if a rt-click is opening or closing the context menu.
 		long m_ticksWhenContextMenuClosed = 0;
@@ -58,7 +57,6 @@ namespace SIL.FieldWorks.IText
 		{
 			InitializeComponent();
 			BackColor = Color.FromKnownColor(KnownColor.Window);
-			m_hvoCurSegment = 0;
 		}
 
 		/// <summary>
@@ -111,7 +109,6 @@ namespace SIL.FieldWorks.IText
 				SelLevInfo[] endLevels;
 				if (TryGetAnalysisLevelsAndEndLevels(vwselNew, out analysisLevels, out endLevels))
 				{
-					m_hvoCurSegment = analysisLevels[1].hvo;
 					m_selectedWordforms = GetSelectedOccurrences(analysisLevels, endLevels[0].ihvo);
 					RootBox.MakeTextSelInObj(0, analysisLevels.Length, analysisLevels, endLevels.Length, endLevels, false, false,
 											 false, true, true);
@@ -207,7 +204,6 @@ namespace SIL.FieldWorks.IText
 					selectedWordforms.Add(point);
 			}
 
-			m_hvoCurSegment = hvoSegment;
 			return selectedWordforms;
 		}
 
@@ -725,7 +721,7 @@ namespace SIL.FieldWorks.IText
 			m_lenEndTag = ITextStrings.ksEndTagSymbol.Length;
 			m_lenStartTag = ITextStrings.ksStartTagSymbol.Length;
 			SetAnalysisRightToLeft();
-			m_emptyAnalysisStr = m_cache.ServiceLocator.GetInstance<ITsStrFactory>().EmptyString(Cache.DefaultAnalWs);
+			m_emptyAnalysisStr = TsStringUtils.EmptyString(m_cache.DefaultAnalWs);
 			m_tagRepo = m_cache.ServiceLocator.GetInstance<ITextTagRepository>();
 			m_tagStrings = new Dictionary<Tuple<ISegment, int>, ITsString>();
 		}

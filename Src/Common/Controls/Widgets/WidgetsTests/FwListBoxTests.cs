@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.Common.Widgets
 
 				using (var collection = new FwListBox.ObjectCollection(listBox))
 				{
-					ITsString testString = TsStringHelper.MakeTSS("test", m_hvoEnglishWs);
+					ITsString testString = TsStringHelper.MakeTss("test", m_hvoEnglishWs);
 
 					// The Test
 					collection.Add(testString);
@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				using (var collection = new FwListBox.ObjectCollection(listBox))
 				{
-					ITsString testString = TsStringHelper.MakeTSS("test", m_hvoEnglishWs);
+					ITsString testString = TsStringHelper.MakeTss("test", m_hvoEnglishWs);
 					collection.Add(testString);
 
 					// The Test
@@ -89,7 +89,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				using (var collection = new FwListBox.ObjectCollection(listBox))
 				{
-					ITsString testString = TsStringHelper.MakeTSS("test", m_hvoEnglishWs);
+					ITsString testString = TsStringHelper.MakeTss("test", m_hvoEnglishWs);
 					collection.Add(testString);
 
 					// The Test
@@ -108,8 +108,8 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				using (var collection = new FwListBox.ObjectCollection(listBox))
 				{
-					ITsString testString1 = TsStringHelper.MakeTSS("test1", m_hvoEnglishWs);
-					ITsString testString2 = TsStringHelper.MakeTSS("test2", m_hvoEnglishWs);
+					ITsString testString1 = TsStringHelper.MakeTss("test1", m_hvoEnglishWs);
+					ITsString testString2 = TsStringHelper.MakeTss("test2", m_hvoEnglishWs);
 					collection.Add(testString1);
 
 					// The Test
@@ -185,7 +185,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 					using (var innerFwListBox = new InnerFwListBox(listBox))
 					{
-						ITsString testString1 = TsStringHelper.MakeTSS("test1", m_hvoEnglishWs);
+						ITsString testString1 = TsStringHelper.MakeTss("test1", m_hvoEnglishWs);
 						listBox.Items.Add(testString1);
 						innerFwListBox.MakeRoot();
 						listBox.HighlightedIndex = 0;

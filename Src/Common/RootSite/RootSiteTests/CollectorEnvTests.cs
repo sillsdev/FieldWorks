@@ -85,7 +85,7 @@ namespace SIL.FieldWorks.Common.RootSites
 						break;
 					case 2: // An StText; display the paragraphs.
 						vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out hvoOuter, out tag, out ihvo);
-						tss = TsStringHelper.MakeTSS(
+						tss = TsStringHelper.MakeTss(
 							"Hvo = " + hvoOuter + "; Tag = " + tag + "; Ihvo = " + ihvo,
 							frWs);
 						vwenv.AddString(tss);
@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.Common.RootSites
 						break;
 					case 3: // StTxtPara, display details of our outer object
 						vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out hvoOuter, out tag, out ihvo);
-						tss = TsStringHelper.MakeTSS(
+						tss = TsStringHelper.MakeTss(
 							"Hvo = " + hvoOuter + "; Tag = " + tag + "; Ihvo = " + ihvo,
 							frWs);
 						vwenv.AddString(tss);

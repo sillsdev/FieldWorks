@@ -978,12 +978,10 @@ namespace SIL.FieldWorks.Filters
 
 				if(m_persistNode != null && m_pattern.Pattern == null)
 				{
-					ITsString tss;
-					ITsStrFactory tsf = value.TsStrFactory;
 					int ws = XmlUtils.GetOptionalIntegerValue(m_persistNode,
 						"ws",
 						value.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle);
-					tss = tsf.MakeString(XmlUtils.GetManditoryAttributeValue(m_persistNode, "pattern"), ws);
+					ITsString tss = TsStringUtils.MakeString(XmlUtils.GetManditoryAttributeValue(m_persistNode, "pattern"), ws);
 					m_pattern.Pattern = tss;
 
 					m_pattern.MatchCase = XmlUtils.GetOptionalBooleanAttributeValue(m_persistNode, "matchCase", false);

@@ -129,8 +129,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			IStTxtPara footnotePara = newFootnote.AddNewTextPara(ScrStyleNames.NormalFootnoteParagraph);
 			// Insert an empty run into the footnote paragraph in order to set the
 			// default writing system.
-			ITsStrFactory strFactory = TsStrFactoryClass.Create();
-			footnotePara.Contents =	strFactory.MakeString(string.Empty, m_cache.DefaultVernWs);
+			footnotePara.Contents =	TsStringUtils.EmptyString(m_cache.DefaultVernWs);
 
 			return newFootnote;
 		}
@@ -2477,8 +2476,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		public void Clear()
 		{
 			RemoveOwnedObjectsForString(0, Contents.Length);
-			Contents = Cache.TsStrFactory.MakeString(string.Empty,
-				m_cache.DefaultVernWs);
+			Contents = TsStringUtils.EmptyString(m_cache.DefaultVernWs);
 			TranslationsOC.Clear();
 		}
 		#endregion

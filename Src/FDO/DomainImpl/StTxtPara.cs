@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	internal partial class StTxtPara
 	{
 		#region Member variables
-		internal bool m_paraCloneInProgress = false;
+		internal bool m_paraCloneInProgress;
 		#endregion
 
 		#region Properties
@@ -67,8 +67,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				// Unusual case, possibly hvoPara is not actually a para at all, for example, it may
 				// be a picture caption. For now we make an empty reference so at least it won't crash.
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
-				return tsf.MakeString("", Cache.DefaultUserWs);
+				return TsStringUtils.EmptyString(Cache.DefaultUserWs);
 			}
 			ITsString tssName = null;
 			bool fUsingAbbreviation = false;
@@ -523,7 +522,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					segment.CollectUniqueWordforms(wordforms);
 				}
 			}
-			return;
 		}
 
 		#region Internal event handlers

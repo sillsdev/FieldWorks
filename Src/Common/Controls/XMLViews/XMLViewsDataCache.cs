@@ -257,8 +257,7 @@ namespace SIL.FieldWorks.Common.Controls
 				return result;
 			if (tag == m_tagReversalEntriesBulkText && result1 != null)
 				return result1;
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			return tsf.MakeString("", ws);
+			return TsStringUtils.EmptyString(ws);
 		}
 
 		/// <summary>
@@ -308,17 +307,15 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				if (tss == null)
 				{
-					foreach (var x in m_mlStringCache.Keys)
+					foreach (HvoFlidWSKey x in m_mlStringCache.Keys)
 					{
-						ITsStrFactory tsf = TsStrFactoryClass.Create();
-						return tsf.EmptyString(x.Ws);
+						return TsStringUtils.EmptyString(x.Ws);
 					}
 				}
 				if (tss != null)
 				{
-					ITsStrFactory tsf = TsStrFactoryClass.Create();
 					var ws = TsStringUtils.GetWsOfRun(tss, 0);
-					return tsf.EmptyString(ws);
+					return TsStringUtils.EmptyString(ws);
 				}
 				// Enhance JohnT: might be desirable to return empty string rather than crashing,
 				// but as things stand, we don't know what would be a sensible WS.

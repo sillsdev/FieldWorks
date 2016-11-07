@@ -76,8 +76,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private ILexEntry CreateSimpleEntry(string form, string gloss)
 		{
-			var lexAlt = TsStringUtils.MakeTss(form, m_wsVern);
-			var glossAlt = TsStringUtils.MakeTss(gloss, m_wsAnalysis);
+			var lexAlt = TsStringUtils.MakeString(form, m_wsVern);
+			var glossAlt = TsStringUtils.MakeString(gloss, m_wsAnalysis);
 			var msa = new SandboxGenericMSA { MainPOS = m_noun, MsaType = MsaType.kStem };
 			var leComp = new LexEntryComponents { MSA = msa, MorphType = m_stem };
 			leComp.GlossAlternatives.Add(glossAlt);

@@ -8,7 +8,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using Microsoft.Practices.ServiceLocation;
 using SIL.CoreImpl;
@@ -100,12 +99,6 @@ namespace SIL.FieldWorks.FDO.IOC
 				.For<IFilteredScrBookRepository>()
 				.LifecycleIs(new SingletonLifecycle())
 				.Use<FilteredScrBookRepository>();
-
-			// Add ITsStrFactory
-			registry
-				.For<ITsStrFactory>()
-				.LifecycleIs(new SingletonLifecycle())
-				.Use(c => TsStrFactoryClass.Create());
 
 			// Add MDC
 			registry

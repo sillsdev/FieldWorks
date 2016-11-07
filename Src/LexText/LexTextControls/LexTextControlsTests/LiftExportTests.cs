@@ -15,7 +15,6 @@ using System.Xml;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
@@ -590,21 +589,21 @@ namespace LexTextControlsTests
 				{
 					m_entryTest = entryFact.Create("test & trouble", "trials & tribulations", msaNoun);
 					m_entryTest.CitationForm.VernacularDefaultWritingSystem =
-						m_cache.TsStrFactory.MakeString("citation", m_cache.DefaultVernWs);
+						TsStringUtils.MakeString("citation", m_cache.DefaultVernWs);
 					m_entryTest.Bibliography.AnalysisDefaultWritingSystem =
-						m_cache.TsStrFactory.MakeString("bibliography entry", m_cache.DefaultAnalWs);
+						TsStringUtils.MakeString("bibliography entry", m_cache.DefaultAnalWs);
 					m_entryTest.Comment.AnalysisDefaultWritingSystem =
-						m_cache.TsStrFactory.MakeString("I like this comment.", m_cache.DefaultAnalWs);
+						TsStringUtils.MakeString("I like this comment.", m_cache.DefaultAnalWs);
 					m_entryTest.LiteralMeaning.AnalysisDefaultWritingSystem =
-						m_cache.TsStrFactory.MakeString("Literally we need this.", m_cache.DefaultAnalWs);
+						TsStringUtils.MakeString("Literally we need this.", m_cache.DefaultAnalWs);
 					m_entryTest.Restrictions.AnalysisDefaultWritingSystem =
-						m_cache.TsStrFactory.MakeString("There are some restrictions on where this can be used.",
+						TsStringUtils.MakeString("There are some restrictions on where this can be used.",
 														m_cache.DefaultAnalWs);
 					m_entryTest.SummaryDefinition.AnalysisDefaultWritingSystem =
-						m_cache.TsStrFactory.MakeString("In summary dot dot dot.", m_cache.DefaultAnalWs);
+						TsStringUtils.MakeString("In summary dot dot dot.", m_cache.DefaultAnalWs);
 					m_entryTest.DoNotPublishInRC.Add(m_mapPublications["Main Dictionary"]);
 
-					var tssDefn = m_cache.TsStrFactory.MakeString("Definition for sense.\x2028Another para of defn", m_cache.DefaultAnalWs);
+					var tssDefn = TsStringUtils.MakeString("Definition for sense.\x2028Another para of defn", m_cache.DefaultAnalWs);
 					var bldr = tssDefn.GetBldr();
 					int len = bldr.Length;
 					var otherFileFolder = Path.Combine(MockLinkedFilesFolder, FdoFileHelper.ksOtherLinkedFilesDir);
@@ -616,25 +615,25 @@ namespace LexTextControlsTests
 					var ls = m_entryTest.SensesOS[0];
 					ls.Definition.AnalysisDefaultWritingSystem = bldr.GetString();
 					ls.AnthroNote.AnalysisDefaultWritingSystem =
-						m_cache.TsStrFactory.MakeString("Anthro Note.", m_cache.DefaultAnalWs);
+						TsStringUtils.MakeString("Anthro Note.", m_cache.DefaultAnalWs);
 					ls.Bibliography.AnalysisDefaultWritingSystem =
-						m_cache.TsStrFactory.MakeString("sense Bibliography", m_cache.DefaultAnalWs);
+						TsStringUtils.MakeString("sense Bibliography", m_cache.DefaultAnalWs);
 					ls.DiscourseNote.AnalysisDefaultWritingSystem =
-						m_cache.TsStrFactory.MakeString("sense Discoursing away...", m_cache.DefaultAnalWs);
+						TsStringUtils.MakeString("sense Discoursing away...", m_cache.DefaultAnalWs);
 					ls.EncyclopedicInfo.AnalysisDefaultWritingSystem =
-						m_cache.TsStrFactory.MakeString("sense EncyclopedicInfo", m_cache.DefaultAnalWs);
+						TsStringUtils.MakeString("sense EncyclopedicInfo", m_cache.DefaultAnalWs);
 					ls.GeneralNote.AnalysisDefaultWritingSystem =
-						m_cache.TsStrFactory.MakeString("sense GeneralNote", m_cache.DefaultAnalWs);
+						TsStringUtils.MakeString("sense GeneralNote", m_cache.DefaultAnalWs);
 					ls.GrammarNote.AnalysisDefaultWritingSystem =
-						m_cache.TsStrFactory.MakeString("sense GrammarNote", m_cache.DefaultAnalWs);
+						TsStringUtils.MakeString("sense GrammarNote", m_cache.DefaultAnalWs);
 					ls.PhonologyNote.AnalysisDefaultWritingSystem =
-						m_cache.TsStrFactory.MakeString("sense PhonologyNote", m_cache.DefaultAnalWs);
+						TsStringUtils.MakeString("sense PhonologyNote", m_cache.DefaultAnalWs);
 					ls.Restrictions.AnalysisDefaultWritingSystem =
-						m_cache.TsStrFactory.MakeString("sense Restrictions", m_cache.DefaultAnalWs);
+						TsStringUtils.MakeString("sense Restrictions", m_cache.DefaultAnalWs);
 					ls.SemanticsNote.AnalysisDefaultWritingSystem =
-						m_cache.TsStrFactory.MakeString("sense SemanticsNote", m_cache.DefaultAnalWs);
+						TsStringUtils.MakeString("sense SemanticsNote", m_cache.DefaultAnalWs);
 					ls.SocioLinguisticsNote.AnalysisDefaultWritingSystem =
-						m_cache.TsStrFactory.MakeString("sense SocioLinguisticsNote", m_cache.DefaultAnalWs);
+						TsStringUtils.MakeString("sense SocioLinguisticsNote", m_cache.DefaultAnalWs);
 					ls.DoNotPublishInRC.Add(m_mapPublications["School"]);
 					m_entryTest.LiftResidue =
 						"<lift-residue id=\"songanganya & nganga_63698066-52d6-46bd-8438-64ce2a820dc6\" dateCreated=\"2008-04-27T22:41:26Z\" dateModified=\"2007-07-02T17:00:00Z\"></lift-residue>";
@@ -733,7 +732,7 @@ namespace LexTextControlsTests
 			{
 				entryType = m_cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>().Create();
 				m_cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.Add(entryType);
-				entryType.Name.AnalysisDefaultWritingSystem = m_cache.TsStrFactory.MakeString(complexFormType, m_cache.DefaultAnalWs);
+				entryType.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(complexFormType, m_cache.DefaultAnalWs);
 			}
 			ler.ComplexEntryTypesRS.Add(entryType);
 			return ler;
@@ -784,7 +783,7 @@ namespace LexTextControlsTests
 			m_customFieldEntryIds.Add(fd.Id);
 			AddCustomFieldMultistringText(fd, m_entryTest.Hvo);
 			m_cache.DomainDataByFlid.SetMultiStringAlt(m_entryTest.Hvo, fd.Id, m_audioWsCode,
-				m_cache.TsStrFactory.MakeString(kcustomMultiFileName, m_audioWsCode));
+				TsStringUtils.MakeString(kcustomMultiFileName, m_audioWsCode));
 
 			//---------------------------------------------------------------------------------------------------
 			fd = MakeCustomField("CustomField3-LexEntry Date", LexEntryTags.kClassId,
@@ -832,12 +831,12 @@ namespace LexTextControlsTests
 			m_customFieldEntryIds.Add(fd.Id);
 			AddCustomFieldMultistringText(fd, m_entryTest.Hvo);
 			m_cache.DomainDataByFlid.SetMultiStringAlt(m_entryTest.Hvo, fd.Id, m_audioWsCode,
-				m_cache.TsStrFactory.MakeString(kcustomMultiFileName, m_audioWsCode));
+				TsStringUtils.MakeString(kcustomMultiFileName, m_audioWsCode));
 		}
 
 		private void AddCustomFieldSimpleString(FieldDescription fd, int ws, int hvo)
 		{
-			var tss = m_cache.TsStrFactory.MakeString(fd.Userlabel + " text.", ws);
+			var tss = TsStringUtils.MakeString(fd.Userlabel + " text.", ws);
 			var bldr = tss.GetBldr();
 			bldr.SetIntPropValues(5, 10, (int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, ws == m_cache.DefaultVernWs ? m_cache.DefaultAnalWs : m_cache.DefaultVernWs);
 			m_cache.DomainDataByFlid.SetString(hvo, fd.Id, bldr.GetString());
@@ -931,7 +930,7 @@ namespace LexTextControlsTests
 			var exampleSentence = exampleFact.Create();
 			m_entryTest.SensesOS[0].ExamplesOS.Add(exampleSentence);
 			exampleSentence.Example.VernacularDefaultWritingSystem =
-				m_cache.TsStrFactory.MakeString("sense ExampleSentence", m_cache.DefaultVernWs);
+				TsStringUtils.MakeString("sense ExampleSentence", m_cache.DefaultVernWs);
 
 			// Use this opportunity to also test LexExampleSentence Publish settings export
 			exampleSentence.DoNotPublishInRC.Add(m_cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0]);
@@ -953,7 +952,7 @@ namespace LexTextControlsTests
 		private void AddCustomFieldMultistringText(FieldDescription fd, int hvo)
 		{
 			ITsString tss;
-			tss = m_cache.TsStrFactory.MakeString("MultiString Analysis ws string", m_cache.DefaultAnalWs);
+			tss = TsStringUtils.MakeString("MultiString Analysis ws string", m_cache.DefaultAnalWs);
 			if (fd.Type == CellarPropertyType.MultiString)
 			{
 				// A decent test of a multi-string property (as opposed to Multi-Unicode) requires more than one run.
@@ -963,7 +962,7 @@ namespace LexTextControlsTests
 			}
 			m_cache.DomainDataByFlid.SetMultiStringAlt(hvo, fd.Id, m_cache.DefaultAnalWs, tss);
 
-			tss = m_cache.TsStrFactory.MakeString("MultiString Vernacular ws string", m_cache.DefaultVernWs);
+			tss = TsStringUtils.MakeString("MultiString Vernacular ws string", m_cache.DefaultVernWs);
 			m_cache.DomainDataByFlid.SetMultiStringAlt(hvo, fd.Id, m_cache.DefaultVernWs, tss);
 		}
 
@@ -976,7 +975,7 @@ namespace LexTextControlsTests
 			var para = stText.AddNewTextPara("normal");
 			var seg = m_cache.ServiceLocator.GetInstance<ISegmentFactory>().Create();
 			para.Contents =
-				m_cache.TsStrFactory.MakeString("MultiString Analysis ws string & ampersand check", m_cache.DefaultAnalWs);
+				TsStringUtils.MakeString("MultiString Analysis ws string & ampersand check", m_cache.DefaultAnalWs);
 			m_cache.DomainDataByFlid.SetObjProp(hvo, fd.Id, stText.Hvo);
 		}
 
@@ -986,7 +985,7 @@ namespace LexTextControlsTests
 			var allomorph = m_cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			m_entryTest.AlternateFormsOS.Add(allomorph);
 			var hvo = m_entryTest.AlternateFormsOS[0].Hvo;
-			var tss = m_cache.TsStrFactory.MakeString("Allomorph of LexEntry", m_cache.DefaultVernWs);
+			var tss = TsStringUtils.MakeString("Allomorph of LexEntry", m_cache.DefaultVernWs);
 			m_cache.DomainDataByFlid.SetMultiStringAlt(hvo, MoFormTags.kflidForm, m_cache.DefaultVernWs, tss);
 
 			//Add String custom field to Allomorph
@@ -1468,9 +1467,9 @@ namespace LexTextControlsTests
 			Assert.That(hrefMedia.Value, Is.EqualTo(kpronunciationFileName));
 			VerifyAudio(kpronunciationFileName);
 			var xlf = xentry.SelectSingleNode("lexical-unit");
-			VerifyMultiStringAlt(xlf, m_audioWsCode, 2, m_cache.TsStrFactory.MakeString(klexemeFormFileName, m_audioWsCode));
+			VerifyMultiStringAlt(xlf, m_audioWsCode, 2, TsStringUtils.MakeString(klexemeFormFileName, m_audioWsCode));
 			VerifyAudio(klexemeFormFileName);
-			VerifyMultiStringAlt(citations[0], m_audioWsCode, 2, m_cache.TsStrFactory.MakeString(kcitationFormFileName, m_audioWsCode));
+			VerifyMultiStringAlt(citations[0], m_audioWsCode, 2, TsStringUtils.MakeString(kcitationFormFileName, m_audioWsCode));
 			VerifyAudio(kcitationFormFileName);
 		}
 
@@ -1593,7 +1592,7 @@ namespace LexTextControlsTests
 			Assert.IsNotNull(xdefs);
 			Assert.AreEqual(1, xdefs.Count);
 			VerifyMultiStringAlt(xdefs[0], m_cache.DefaultAnalWs, 2, sense.Definition.AnalysisDefaultWritingSystem);
-			VerifyMultiStringAlt(xdefs[0], m_audioWsCode, 2, m_cache.TsStrFactory.MakeString(kaudioFileName, m_audioWsCode));
+			VerifyMultiStringAlt(xdefs[0], m_audioWsCode, 2, TsStringUtils.MakeString(kaudioFileName, m_audioWsCode));
 
 			// Check the hyperlink
 			var defnSpan = xdefs[0].SelectSingleNode("form/text/span");
@@ -1954,7 +1953,7 @@ namespace LexTextControlsTests
 			var para3 = paraFact.Create();
 			text.ParagraphsOS.Add(para3);
 			para3.StyleName = "Canadian Bacon";
-			para3.Contents = m_cache.TsStrFactory.MakeString("CiCi pizza is cheap, but not really gourmet when it comes to pizza.", m_cache.DefaultAnalWs);
+			para3.Contents = TsStringUtils.MakeString("CiCi pizza is cheap, but not really gourmet when it comes to pizza.", m_cache.DefaultAnalWs);
 
 			//LT-11639   we need to create second StText on another entry and make it empty
 			//to ensure that if it is empty then we do not export it.

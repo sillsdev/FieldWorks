@@ -4,6 +4,7 @@
 
 using System;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -67,7 +68,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var lme = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			lme.LexemeFormOA = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
-			lme.LexemeFormOA.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString(sLexForm, Cache.DefaultVernWs);
+			lme.LexemeFormOA.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(sLexForm, Cache.DefaultVernWs);
 			MakeSense(lme, gloss);
 			return lme;
 		}
@@ -76,7 +77,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			lme.SensesOS.Add(sense);
-			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss, Cache.DefaultAnalWs);
+			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss, Cache.DefaultAnalWs);
 			return sense;
 		}
 
@@ -84,7 +85,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			parentSense.SensesOS.Add(sense);
-			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss, Cache.DefaultAnalWs);
+			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss, Cache.DefaultAnalWs);
 			return sense;
 		}
 

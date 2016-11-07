@@ -16,6 +16,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
@@ -1128,7 +1129,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 			else if (m_obj.ClassID == MoInflAffixTemplateTags.kClassId)
 			{
-				var tssStem = Cache.TsStrFactory.MakeString(m_sStem, Cache.DefaultUserWs);
+				var tssStem = TsStringUtils.MakeString(m_sStem, Cache.DefaultUserWs);
 				return DoXXXReplace(sLabel, tssStem);
 			}
 			else
@@ -1203,8 +1204,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			CheckDisposed();
 			if (m_obj.ClassID == MoInflAffMsaTags.kClassId)
 			{
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
-				return tsf.MakeString(sLabel, Cache.DefaultUserWs);
+				return TsStringUtils.MakeString(sLabel, Cache.DefaultUserWs);
 			}
 			else
 			{
@@ -1226,7 +1226,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				// Display help only if there's a topic linked to the generated ID in the resource file.
 				if (m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(m_ChooseInflectionalAffixHelpTopic) != null)
-					return Cache.TsStrFactory.MakeString(sLabel, Cache.DefaultUserWs);
+					return TsStringUtils.MakeString(sLabel, Cache.DefaultUserWs);
 			}
 			return null;
 		}
@@ -1293,7 +1293,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 			else
 			{
-				return Cache.TsStrFactory.MakeString(MEStrings.ksQuestions, Cache.DefaultUserWs);
+				return TsStringUtils.MakeString(MEStrings.ksQuestions, Cache.DefaultUserWs);
 			}
 		}
 
@@ -1309,8 +1309,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		private ITsString DoReplaceToken(string sSource, ITsString tssReplace, string sToken)
 		{
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			ITsString tss = tsf.MakeString(sSource, Cache.DefaultUserWs);
+			ITsString tss = TsStringUtils.MakeString(sSource, Cache.DefaultUserWs);
 			return DoReplaceToken(tss, tssReplace, sToken);
 		}
 

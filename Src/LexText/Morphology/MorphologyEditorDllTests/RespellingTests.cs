@@ -14,7 +14,6 @@ using NUnit.Framework;
 using Rhino.Mocks;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -360,7 +359,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				{
 					IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(1, out stText);
 					paraT = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(stText, "Monkey");
-					paraT.Contents = TsStringUtils.MakeTss(sParaText, Cache.DefaultVernWs);
+					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
 					object owner = ReflectionHelper.CreateObject("FDO.dll", "SIL.FieldWorks.FDO.Infrastructure.Impl.CmObjectId", BindingFlags.NonPublic,
 						new object[] { book.Guid });
 					ReflectionHelper.SetField(stText, "m_owner", owner);
@@ -373,7 +372,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					text.ContentsOA = stText;
 					paraT = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 					stText.ParagraphsOS.Add(paraT);
-					paraT.Contents = TsStringUtils.MakeTss(sParaText, Cache.DefaultVernWs);
+					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
 				}
 				foreach (ISegment seg in paraT.SegmentsOS)
 				{
@@ -442,7 +441,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				{
 					IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(1, out stText);
 					paraT = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(stText, "Monkey");
-					paraT.Contents = TsStringUtils.MakeTss(sParaText, Cache.DefaultVernWs);
+					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
 					object owner = ReflectionHelper.CreateObject("FDO.dll", "SIL.FieldWorks.FDO.Infrastructure.Impl.CmObjectId", BindingFlags.NonPublic,
 						new object[] { book.Guid });
 					ReflectionHelper.SetField(stText, "m_owner", owner);
@@ -455,7 +454,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					text.ContentsOA = stText;
 					paraT = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 					stText.ParagraphsOS.Add(paraT);
-					paraT.Contents = TsStringUtils.MakeTss(sParaText, Cache.DefaultVernWs);
+					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
 				}
 				foreach (ISegment seg in paraT.SegmentsOS)
 				{
@@ -496,7 +495,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		private void SetMultimorphemicAnalyses(IEnumerable<IParaFragment> thisSegParaFrags, string[] morphsToCreate)
 		{
 			var morphFact = Cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>();
-			var tssFact = Cache.TsStrFactory;
 			// IWfiWordform, IWfiAnalysis, and IWfiGloss objects will have already been created.
 			// Still need to add WfiMorphBundles as per morphsToCreate.
 			foreach (IWfiWordform wordform in thisSegParaFrags.Select(x => x.Analysis))
@@ -508,7 +506,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				{
 					var bundle = morphFact.Create();
 					analysis.MorphBundlesOS.Add(bundle);
-					bundle.Form.VernacularDefaultWritingSystem = tssFact.MakeString(morpheme, Cache.DefaultVernWs);
+					bundle.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(morpheme, Cache.DefaultVernWs);
 				}
 			}
 		}

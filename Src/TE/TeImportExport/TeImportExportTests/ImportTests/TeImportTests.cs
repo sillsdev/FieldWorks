@@ -3677,8 +3677,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			Assert.AreEqual(new ScrReference(1, 1, 0, m_scr.Versification),
 				ReflectionHelper.GetField(m_importer, "m_firstImportedRef") as ScrReference);
 
-			ITsStrFactory fact = TsStrFactoryClass.Create();
-			ITsString tssExpected = fact.MakeString(string.Empty, m_wsVern);
+			ITsString tssExpected = TsStringUtils.EmptyString(m_wsVern);
 
 			// Verify the section head
 			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);

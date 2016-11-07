@@ -237,7 +237,7 @@ namespace SIL.FieldWorks.IText
 			{
 				UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoInsertInvisibleSpace, ITextStrings.ksRedoInsertInvisibleSpace,
 					Cache.ActionHandlerAccessor,
-					() => sel.ReplaceWithTsString(Cache.TsStrFactory.MakeString(AnalysisOccurrence.KstrZws, ws)));
+					() => sel.ReplaceWithTsString(TsStringUtils.MakeString(AnalysisOccurrence.KstrZws, ws)));
 			}
 			helper.SetIch(SelectionHelper.SelLimitType.Anchor, ich + 1);
 			helper.SetIch(SelectionHelper.SelLimitType.End, ich + 1);

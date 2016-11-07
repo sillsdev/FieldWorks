@@ -198,7 +198,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			m_cSensesAdded = 0;
 			m_cache = cache;
-			m_tssEmpty = cache.TsStrFactory.EmptyString(cache.DefaultUserWs);
+			m_tssEmpty = TsStringUtils.EmptyString(cache.DefaultUserWs);
 			m_msImport = msImport;
 			m_fTrustModTimes = fTrustModTimes;
 			m_wsManager = cache.ServiceLocator.WritingSystemManager;
@@ -3051,7 +3051,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (tssForm.Text != realForm)
 				{
 					// make a new tsString with the old ws.
-					tssRealForm = TsStringUtils.MakeTss(realForm,
+					tssRealForm = TsStringUtils.MakeString(realForm,
 						TsStringUtils.GetWsAtOffset(tssForm, 0));
 				}
 				else
@@ -3440,7 +3440,7 @@ namespace SIL.FieldWorks.LexText.Controls
 								ICmFolderFactory factFolder = m_cache.ServiceLocator.GetInstance<ICmFolderFactory>();
 								cmfMedia = factFolder.Create();
 								m_cache.LangProject.MediaOC.Add(cmfMedia);
-								cmfMedia.Name.UserDefaultWritingSystem = m_cache.TsStrFactory.MakeString(CmFolderTags.LocalMedia, m_cache.DefaultUserWs);
+								cmfMedia.Name.UserDefaultWritingSystem = TsStringUtils.MakeString(CmFolderTags.LocalMedia, m_cache.DefaultUserWs);
 							}
 							ICmFile file = null;
 							foreach (ICmFile cf in cmfMedia.FilesOC)
@@ -4039,7 +4039,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				CreateExampleTranslations(les, expl);
 				ProcessExampleNotes(les, expl);
 				if (TsStringIsNullOrEmpty(les.Reference) && !String.IsNullOrEmpty(expl.Source))
-					les.Reference = m_cache.TsStrFactory.MakeString(expl.Source, m_cache.DefaultAnalWs);
+					les.Reference = TsStringUtils.MakeString(expl.Source, m_cache.DefaultAnalWs);
 				ProcessExampleFields(les, expl);
 				ProcessExampleTraits(les, expl);
 				StoreExampleResidue(les, expl);
@@ -4081,7 +4081,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				ProcessExampleFields(les, expl);
 				ProcessExampleTraits(les, expl);
 				if (TsStringIsNullOrEmpty(les.Reference) && !String.IsNullOrEmpty(expl.Source))
-					les.Reference = m_cache.TsStrFactory.MakeString(expl.Source, m_cache.DefaultAnalWs);
+					les.Reference = TsStringUtils.MakeString(expl.Source, m_cache.DefaultAnalWs);
 			}
 		}
 
@@ -4649,7 +4649,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					m_factCmPossibility = m_cache.ServiceLocator.GetInstance<ICmPossibilityFactory>();
 				poss = m_factCmPossibility.Create();
 				m_cache.LangProject.MorphologicalDataOA.ProdRestrictOA.PossibilitiesOS.Add(poss);
-				ITsString tss = m_cache.TsStrFactory.MakeString(sValue, m_cache.DefaultAnalWs);
+				ITsString tss = TsStringUtils.MakeString(sValue, m_cache.DefaultAnalWs);
 				poss.Name.AnalysisDefaultWritingSystem = tss;
 				poss.Abbreviation.AnalysisDefaultWritingSystem = tss;
 				m_rgnewExceptFeat.Add(poss);

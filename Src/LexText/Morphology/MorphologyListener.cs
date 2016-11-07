@@ -1059,11 +1059,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 								int vernWS = TsStringUtils.GetWsAtOffset(tssWord, 0);
 								foreach (string morph in fullForm.Split(SIL.Utils.Unicode.SpaceChars))
 								{
-									if (morph != null && morph.Length != 0)
+									if (!string.IsNullOrEmpty(morph))
 									{
 										IWfiMorphBundle mb = cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>().Create();
 										newAnalysis.MorphBundlesOS.Add(mb);
-										mb.Form.set_String(vernWS, Cache.TsStrFactory.MakeString(morph, vernWS));
+										mb.Form.set_String(vernWS, TsStringUtils.MakeString(morph, vernWS));
 									}
 								}
 							});

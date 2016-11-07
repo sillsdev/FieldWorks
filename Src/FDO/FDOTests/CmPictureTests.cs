@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			m_pictureFactory = Cache.ServiceLocator.GetInstance<ICmPictureFactory>();
 			m_pict = m_pictureFactory.Create(m_internalPath,
-				Cache.TsStrFactory.MakeString("Test picture", Cache.DefaultVernWs),
+				TsStringUtils.MakeString("Test picture", Cache.DefaultVernWs),
 				CmFolderTags.LocalPictures);
 
 			Assert.IsNotNull(m_pict);
@@ -341,7 +341,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_fileOs.AddFile(sNewFile, "456", Encoding.Default);
 
 			m_pict.UpdatePicture(sNewFile,
-				Cache.TsStrFactory.MakeString("Updated Picture", Cache.DefaultVernWs),
+				TsStringUtils.MakeString("Updated Picture", Cache.DefaultVernWs),
 				CmFolderTags.LocalPictures, Cache.DefaultVernWs);
 			Assert.AreEqual("Updated Picture", m_pict.Caption.VernacularDefaultWritingSystem.Text);
 			string internalPathUpdated = m_pict.PictureFileRA.InternalPath;
@@ -360,7 +360,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			string sNewFile = Path.DirectorySeparatorChar + Path.GetRandomFileName();
 			m_pict.UpdatePicture(sNewFile,
-				Cache.TsStrFactory.MakeString("Updated Picture", Cache.DefaultVernWs),
+				TsStringUtils.MakeString("Updated Picture", Cache.DefaultVernWs),
 				CmFolderTags.LocalPictures, Cache.DefaultVernWs);
 			Assert.AreEqual("Updated Picture", m_pict.Caption.VernacularDefaultWritingSystem.Text);
 			string internalPathUpdated = m_pict.PictureFileRA.InternalPath;

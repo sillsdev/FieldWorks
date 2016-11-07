@@ -9,10 +9,10 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -345,11 +345,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			var para2 = stTxtParaFactory.Create();
 			text.ParagraphsOS.Add(para2);
 
-			ITsStrFactory tsf = Cache.TsStrFactory;
-			ITsString tss = tsf.MakeString(firstPara, ws);
+			ITsString tss = TsStringUtils.MakeString(firstPara, ws);
 			para1.Contents = tss;
 
-			tss = tsf.MakeString(secondPara, ws);
+			tss = TsStringUtils.MakeString(secondPara, ws);
 			para2.Contents = tss;
 		}
 

@@ -353,11 +353,11 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 			var le = servLoc.GetInstance<ILexEntryFactory>().Create();
 
 			var ws = Cache.DefaultVernWs;
-			le.CitationForm.set_String(ws, Cache.TsStrFactory.MakeString(cf, ws));
+			le.CitationForm.set_String(ws, TsStringUtils.MakeString(cf, ws));
 			var ls = servLoc.GetInstance<ILexSenseFactory>().Create();
 			le.SensesOS.Add(ls);
 			ws = Cache.DefaultAnalWs;
-			ls.Definition.set_String(ws, Cache.TsStrFactory.MakeString(defn, ws));
+			ls.Definition.set_String(ws, TsStringUtils.MakeString(defn, ws));
 			ls.SemanticDomainsRC.Add(domain);
 			var msa = servLoc.GetInstance<IMoStemMsaFactory>().Create();
 			le.MorphoSyntaxAnalysesOC.Add(msa);
@@ -695,7 +695,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 		{
 			ICmAgent agent = Cache.LangProject.DefaultComputerAgent;
 			IWfiWordform wf = WfiWordformServices.FindOrCreateWordform(Cache,
-				TsStringUtils.MakeTss("xxxyyyzzz12234", Cache.DefaultVernWs));
+				TsStringUtils.MakeString("xxxyyyzzz12234", Cache.DefaultVernWs));
 			IWfiAnalysis wa = Cache.ServiceLocator.GetInstance<IWfiAnalysisFactory>().Create();
 			wf.AnalysesOC.Add(wa);
 			Assert.AreEqual(Opinions.noopinion, wa.GetAgentOpinion(agent));

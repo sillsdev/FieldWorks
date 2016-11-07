@@ -273,7 +273,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void GetCleanTsString_SingleSpace()
 		{
-			var tssClean = TsStringUtils.GetCleanTsString(TsStringUtils.MakeTss(" ", 42), null);
+			var tssClean = TsStringUtils.GetCleanTsString(TsStringUtils.MakeString(" ", 42), null);
 			Assert.AreEqual(0, tssClean.Length);
 		}
 
@@ -286,7 +286,7 @@ namespace SIL.CoreImpl
 		public void GetCleanTsString_Empty()
 		{
 			var tssClean = TsStringUtils.GetCleanTsString(
-				TsStringUtils.MakeTss(String.Empty, 42), null);
+				TsStringUtils.MakeString(String.Empty, 42), null);
 			Assert.AreEqual(0, tssClean.Length);
 			Assert.AreEqual(42, tssClean.get_WritingSystemAt(0));
 		}
@@ -300,7 +300,7 @@ namespace SIL.CoreImpl
 		public void GetCleanTsString_SingleUnknownORC_Remove()
 		{
 			var tssClean = TsStringUtils.GetCleanTsString(
-				TsStringUtils.MakeTss(StringUtils.kChObject.ToString(), 42), null);
+				TsStringUtils.MakeString(StringUtils.kChObject.ToString(), 42), null);
 			Assert.AreEqual(0, tssClean.Length);
 			Assert.AreEqual(42, tssClean.get_WritingSystemAt(0));
 		}
@@ -313,7 +313,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void GetCleanTsString_SingleUnknownORC_Preserve()
 		{
-			var tss = TsStringUtils.MakeTss(StringUtils.kChObject.ToString(), 42);
+			var tss = TsStringUtils.MakeString(StringUtils.kChObject.ToString(), 42);
 			var tssClean = TsStringUtils.GetCleanTsString(tss, null, false, true, false);
 			Assert.AreEqual(1, tssClean.Length);
 			Assert.AreEqual(StringUtils.kChObject, tssClean.get_RunText(0)[0]);
@@ -397,8 +397,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void GetGuidFromRun_NoORC()
 		{
-			ITsStrFactory strFactory = TsStrFactoryClass.Create();
-			var tss = strFactory.MakeString("This string has no ORCS", 1);
+			var tss = TsStringUtils.MakeString("This string has no ORCS", 1);
 
 			var returnGuid = TsStringUtils.GetGuidFromRun(tss, 0);
 			Assert.AreEqual(Guid.Empty, returnGuid);
@@ -698,8 +697,8 @@ namespace SIL.CoreImpl
 			ILgWritingSystemFactory wsf, out int ichMin, out int ichLim)
 		{
 			var ws = wsf.get_Engine("en").Handle;
-			var tssWordForm = TsStringUtils.MakeTss(wordForm, ws);
-			var tssSource = TsStringUtils.MakeTss(source, ws);
+			var tssWordForm = TsStringUtils.MakeString(wordForm, ws);
+			var tssSource = TsStringUtils.MakeString(source, ws);
 			return TsStringUtils.FindWordFormInString(tssWordForm, tssSource, wsf, out ichMin, out ichLim);
 		}
 		#endregion
@@ -939,7 +938,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_IchOutOfRange()
 		{
-			ITsString tss = TsStringUtils.MakeTss("funky munky", m_wsf.UserWs);
+			ITsString tss = TsStringUtils.MakeString("funky munky", m_wsf.UserWs);
 			Assert.Throws(typeof(ArgumentOutOfRangeException), () => tss.FindWordBoundary(4000));
 			Assert.Throws(typeof(ArgumentOutOfRangeException), () => tss.FindWordBoundary(-1));
 		}
@@ -952,7 +951,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_AlreadyAtStartOfWord()
 		{
-			ITsString tss = TsStringUtils.MakeTss("A munky", m_wsf.UserWs);
+			ITsString tss = TsStringUtils.MakeString("A munky", m_wsf.UserWs);
 			Assert.AreEqual(2, tss.FindWordBoundary(2));
 		}
 
@@ -964,7 +963,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_AtStartOfString()
 		{
-			ITsString tss = TsStringUtils.MakeTss("Another munky", m_wsf.UserWs);
+			ITsString tss = TsStringUtils.MakeString("Another munky", m_wsf.UserWs);
 			Assert.AreEqual(0, tss.FindWordBoundary(0));
 		}
 
@@ -976,7 +975,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_AtEndOfString()
 		{
-			ITsString tss = TsStringUtils.MakeTss("One guy", m_wsf.UserWs);
+			ITsString tss = TsStringUtils.MakeString("One guy", m_wsf.UserWs);
 			Assert.AreEqual(7, tss.FindWordBoundary(7));
 		}
 
@@ -988,7 +987,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_MiddleOfWord()
 		{
-			ITsString tss = TsStringUtils.MakeTss("Happiness is good.", m_wsf.UserWs);
+			ITsString tss = TsStringUtils.MakeString("Happiness is good.", m_wsf.UserWs);
 			Assert.AreEqual(0, tss.FindWordBoundary(4));
 			Assert.AreEqual(13, tss.FindWordBoundary(tss.Length - 3));
 		}
@@ -1002,7 +1001,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_EndOfWord()
 		{
-			ITsString tss = TsStringUtils.MakeTss("Gold is good.", m_wsf.UserWs);
+			ITsString tss = TsStringUtils.MakeString("Gold is good.", m_wsf.UserWs);
 			Assert.AreEqual(5, tss.FindWordBoundary(4));
 		}
 
@@ -1014,7 +1013,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_AroundPunctuation()
 		{
-			ITsString tss = TsStringUtils.MakeTss("God 'is good.'", m_wsf.UserWs);
+			ITsString tss = TsStringUtils.MakeString("God 'is good.'", m_wsf.UserWs);
 			Assert.AreEqual(tss.Length, tss.FindWordBoundary(tss.Length - 2));
 			Assert.AreEqual(tss.Length, tss.FindWordBoundary(tss.Length - 1));
 			Assert.AreEqual(tss.Length, tss.FindWordBoundary(tss.Length));
@@ -1029,7 +1028,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_EndOfSentence()
 		{
-			ITsString tss = TsStringUtils.MakeTss("Good. Yeah!", m_wsf.UserWs);
+			ITsString tss = TsStringUtils.MakeString("Good. Yeah!", m_wsf.UserWs);
 			Assert.AreEqual(6, tss.FindWordBoundary(4));
 		}
 
@@ -1041,7 +1040,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_AroundNumbers()
 		{
-			ITsString tss = TsStringUtils.MakeTss("Gideon had 300 men.", m_wsf.UserWs);
+			ITsString tss = TsStringUtils.MakeString("Gideon had 300 men.", m_wsf.UserWs);
 			Assert.AreEqual(11, tss.FindWordBoundary(11));
 			Assert.AreEqual(11, tss.FindWordBoundary(12));
 			Assert.AreEqual(15, tss.FindWordBoundary(14));
@@ -1616,8 +1615,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void Words_OneRun()
 		{
-			ITsStrFactory fact = TsStrFactoryClass.Create();
-			var tss = fact.MakeString("   This is  some text.  ", 1);
+			var tss = TsStringUtils.MakeString("   This is  some text.  ", 1);
 			var expectedWords = new[] { "This", "is", "some", "text." };
 
 			var i = 0;
@@ -1651,10 +1649,9 @@ namespace SIL.CoreImpl
 		[Test]
 		public void LastWord_OneRun()
 		{
-			ITsStrFactory fact = TsStrFactoryClass.Create();
-			var tss = fact.MakeString("  This is  some text. ", 1);
+			var tss = TsStringUtils.MakeString("  This is  some text. ", 1);
 			Assert.AreEqual("text.", tss.LastWord().Text);
-			tss = fact.MakeString("  text. ", 1);
+			tss = TsStringUtils.MakeString("  text. ", 1);
 			Assert.AreEqual("text.", tss.LastWord().Text);
 		}
 
@@ -1717,9 +1714,8 @@ namespace SIL.CoreImpl
 
 		private void VerifyConcatenate(String first, String second, String output)
 		{
-			var strFactory = TsStrFactoryClass.Create();
-			var firstInput = strFactory.MakeString(first, 1);
-			var secondInput = strFactory.MakeString(second, 1);
+			var firstInput = TsStringUtils.MakeString(first, 1);
+			var secondInput = TsStringUtils.MakeString(second, 1);
 
 			Assert.AreEqual(output, firstInput.ConcatenateWithSpaceIfNeeded(secondInput).Text,
 				"Concatenating '" + first + "' and '" + second + "' did not produce correct result.");
@@ -1727,12 +1723,12 @@ namespace SIL.CoreImpl
 
 		string TrimNonWordFormingChars(string test, ILgWritingSystemFactory wsf)
 		{
-			return TsStringUtils.TrimNonWordFormingChars(TsStringUtils.MakeTss(test, wsf.get_Engine("en").Handle), wsf).Text;
+			return TsStringUtils.TrimNonWordFormingChars(TsStringUtils.MakeString(test, wsf.get_Engine("en").Handle), wsf).Text;
 		}
 
 		string TrimNonWordFormingChars(string test, ILgWritingSystemFactory wsf, bool atStart, bool atEnd)
 		{
-			return TsStringUtils.TrimNonWordFormingChars(TsStringUtils.MakeTss(test, wsf.get_Engine("en").Handle), wsf, atStart, atEnd).Text;
+			return TsStringUtils.TrimNonWordFormingChars(TsStringUtils.MakeString(test, wsf.get_Engine("en").Handle), wsf, atStart, atEnd).Text;
 		}
 		#endregion
 
@@ -1797,17 +1793,16 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindStringDiffs()
 		{
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			var tssEmpty1 = tsf.MakeString("", 1);
+			var tssEmpty1 = TsStringUtils.EmptyString(1);
 			VerifyNoStringDiffs(tssEmpty1, tssEmpty1, "empty string equals itself");
-			var tssAbc1 = tsf.MakeString("abc", 1);
+			var tssAbc1 = TsStringUtils.MakeString("abc", 1);
 			VerifyNoStringDiffs(tssAbc1, tssAbc1, "one-run string equals itself");
 			VerifyStringDiffs(tssEmpty1, tssAbc1, 0, 3, 0, "added 3 chars to empty string");
-			var tssEmpty2 = tsf.MakeString("", 2);
+			var tssEmpty2 = TsStringUtils.MakeString("", 2);
 			VerifyStringDiffs(tssEmpty1, tssEmpty2, 0, 0, 0, "two empty strings in different wss are not equal");
-			var tssAbc2 = tsf.MakeString("abc", 2);
+			var tssAbc2 = TsStringUtils.MakeString("abc", 2);
 			VerifyStringDiffs(tssAbc1, tssAbc2, 0, 3, 3, "two non-empty strings in different wss are not equal");
-			var tssAbc1b = tsf.MakeString("abc", 1);
+			var tssAbc1b = TsStringUtils.MakeString("abc", 1);
 			VerifyNoStringDiffs(tssAbc1, tssAbc1b, "one-run string equals an identical string");
 
 			var props1 = TsStringUtils.PropsForWs(1);
@@ -1822,9 +1817,9 @@ namespace SIL.CoreImpl
 			VerifyStringDiffs(tssAbc1Def2, tssAbc1, 3, 0, 3, "two-run string shortened to one-run");
 			VerifyStringDiffs(tssAbc1, tssAbc1Def2, 3, 3, 0, "one-run string added second run");
 
-			var tssAbd1 = tsf.MakeString("abd", 1);
+			var tssAbd1 = TsStringUtils.MakeString("abd", 1);
 			VerifyStringDiffs(tssAbc1, tssAbd1, 2, 1, 1, "one-run string different last character");
-			var tssAb1 = tsf.MakeString("ab", 1);
+			var tssAb1 = TsStringUtils.MakeString("ab", 1);
 			VerifyStringDiffs(tssAbc1, tssAb1, 2, 0, 1, "one-run string remove last character");
 			VerifyStringDiffs(tssAb1, tssAbc1, 2, 1, 0, "one-run string add last character");
 
@@ -1858,15 +1853,15 @@ namespace SIL.CoreImpl
 			VerifyStringDiffs(tssDef2Ghi3, tssAbc1Def2Ghi3, 0, 3, 0, "two-run string added run start");
 			VerifyStringDiffs(tssAbc1Def2Ghi3, tssDef2Ghi3, 0, 0, 3, "three-run string deleted run start");
 
-			var tssAxc1 = tsf.MakeString("axc", 1);
+			var tssAxc1 = TsStringUtils.MakeString("axc", 1);
 			VerifyStringDiffs(tssAbc1, tssAxc1, 1, 1, 1, "one-run string different mid character");
-			var tssAc1 = tsf.MakeString("ac", 1);
+			var tssAc1 = TsStringUtils.MakeString("ac", 1);
 			VerifyStringDiffs(tssAbc1, tssAc1, 1, 0, 1, "one-run string remove mid character");
 			VerifyStringDiffs(tssAc1, tssAbc1, 1, 1, 0, "one-run string add mid character");
 
-			var tssXbc1 = tsf.MakeString("xbc", 1);
+			var tssXbc1 = TsStringUtils.MakeString("xbc", 1);
 			VerifyStringDiffs(tssAbc1, tssXbc1, 0, 1, 1, "one-run string different first character");
-			var tssBc1 = tsf.MakeString("bc", 1);
+			var tssBc1 = TsStringUtils.MakeString("bc", 1);
 			VerifyStringDiffs(tssAbc1, tssBc1, 0, 0, 1, "one-run string remove first character");
 			VerifyStringDiffs(tssBc1, tssAbc1, 0, 1, 0, "one-run string add first character");
 
@@ -1944,18 +1939,18 @@ namespace SIL.CoreImpl
 			VerifyStringDiffs(tssAbc1Def2Ghi3, tssEf2Ghi3, 0, 0, 4, "three-run string delete first and part of mid");
 			VerifyStringDiffs(tssEf2Ghi3, tssAbc1Def2Ghi3, 0, 4, 0, "two-run string insert run and text at start");
 
-			var s1 = tsf.MakeString("abc. def.", 1);
-			var s2 = tsf.MakeString("abc. insert. def.", 1);
+			var s1 = TsStringUtils.MakeString("abc. def.", 1);
+			var s2 = TsStringUtils.MakeString("abc. insert. def.", 1);
 			VerifyStringDiffs(s1, s2, 5, 8, 0, "insert with dup material before and in insert");
 			VerifyStringDiffs(s2, s1, 5, 0, 8, "delete with dup material before and at and of stuff deleted.");
 
-			s1 = tsf.MakeString("xxxabc xxxdef.", 1);
-			s2 = tsf.MakeString("xxxdef.", 1);
+			s1 = TsStringUtils.MakeString("xxxabc xxxdef.", 1);
+			s2 = TsStringUtils.MakeString("xxxdef.", 1);
 			VerifyStringDiffs(s1, s2, 0, 0, 7, "delete whole word ambiguous with delete part of two words");
 			VerifyStringDiffs(s2, s1, 0, 7, 0, "insert whole word ambiguous with insert part of two words");
 
-			s1 = tsf.MakeString("pus pus yalola.", 1);
-			s2 = tsf.MakeString("pus yalola.", 1);
+			s1 = TsStringUtils.MakeString("pus pus yalola.", 1);
+			s2 = TsStringUtils.MakeString("pus yalola.", 1);
 			VerifyStringDiffs(s1, s2, 4, 0, 4, "delete first word ambiguous with delete second word");
 			VerifyStringDiffs(s2, s1, 4, 4, 0, "insert first word ambiguous with insert second words");
 
@@ -1984,7 +1979,7 @@ namespace SIL.CoreImpl
 		public void GetXmlRep_EmptyTss()
 		{
 			// Setup an empty TsString
-			var tssClean = TsStringUtils.GetCleanTsString(TsStringUtils.MakeTss(String.Empty, m_wsf.UserWs), null);
+			var tssClean = TsStringUtils.GetCleanTsString(TsStringUtils.MakeString(String.Empty, m_wsf.UserWs), null);
 			Assert.AreEqual(null, tssClean.Text);
 			Assert.AreEqual(1, tssClean.RunCount);
 			Assert.AreEqual(m_wsf.UserWs, tssClean.get_WritingSystem(0));
@@ -2002,27 +1997,26 @@ namespace SIL.CoreImpl
 		[Test]
 		public void RemoveIllegalXmlChars()
 		{
-			var tsf = TsStrFactoryClass.Create();
 			var ws = m_wsf.UserWs;
-			var empty = tsf.MakeString("", ws);
+			var empty = TsStringUtils.EmptyString(ws);
 			Assert.That(TsStringUtils.RemoveIllegalXmlChars(empty), Is.EqualTo(empty));
-			var good = tsf.MakeString("good", ws);
+			var good = TsStringUtils.MakeString("good", ws);
 			Assert.That(TsStringUtils.RemoveIllegalXmlChars(good), Is.EqualTo(good));
-			var controlChar = tsf.MakeString("ab\x001ecd", ws);
+			var controlChar = TsStringUtils.MakeString("ab\x001ecd", ws);
 			Assert.That(TsStringUtils.RemoveIllegalXmlChars(controlChar).Text, Is.EqualTo("abcd"));
-			var twoBadChars = tsf.MakeString("\x000eabcde\x001f", ws);
+			var twoBadChars = TsStringUtils.MakeString("\x000eabcde\x001f", ws);
 			Assert.That(TsStringUtils.RemoveIllegalXmlChars(twoBadChars).Text, Is.EqualTo("abcde"));
-			var allBad = tsf.MakeString("\x0000\x0008\x000b\x000c\xfffe\xffff", ws);
+			var allBad = TsStringUtils.MakeString("\x0000\x0008\x000b\x000c\xfffe\xffff", ws);
 			Assert.That(string.IsNullOrEmpty(TsStringUtils.RemoveIllegalXmlChars(allBad).Text));
-			var goodSpecial = tsf.MakeString("\x0009\x000a\x000d \xfffd", ws);
+			var goodSpecial = TsStringUtils.MakeString("\x0009\x000a\x000d \xfffd", ws);
 			Assert.That(TsStringUtils.RemoveIllegalXmlChars(goodSpecial), Is.EqualTo(goodSpecial));
-			var badIsolatedLeadingSurrogate = tsf.MakeString("ab\xd800c\xdbff", ws);
+			var badIsolatedLeadingSurrogate = TsStringUtils.MakeString("ab\xd800c\xdbff", ws);
 			Assert.That(TsStringUtils.RemoveIllegalXmlChars(badIsolatedLeadingSurrogate).Text, Is.EqualTo("abc"));
-			var goodSurrogates = tsf.MakeString("\xd800\xdc00 \xdbff\xdfff", ws);
+			var goodSurrogates = TsStringUtils.MakeString("\xd800\xdc00 \xdbff\xdfff", ws);
 			Assert.That(TsStringUtils.RemoveIllegalXmlChars(goodSurrogates), Is.EqualTo(goodSurrogates));
-			var badIsolatedTrailingSurrogate = tsf.MakeString("\xdc00xy\xdcffz", ws);
+			var badIsolatedTrailingSurrogate = TsStringUtils.MakeString("\xdc00xy\xdcffz", ws);
 			Assert.That(TsStringUtils.RemoveIllegalXmlChars(badIsolatedTrailingSurrogate).Text, Is.EqualTo("xyz"));
-			var outOfOrderSurrogates = tsf.MakeString("\xd800\xdc00\xdc00\xdbffz", ws);
+			var outOfOrderSurrogates = TsStringUtils.MakeString("\xd800\xdc00\xdc00\xdbffz", ws);
 			Assert.That(TsStringUtils.RemoveIllegalXmlChars(outOfOrderSurrogates).Text, Is.EqualTo("\xd800\xdc00z"));
 		}
 

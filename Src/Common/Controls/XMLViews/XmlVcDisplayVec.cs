@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
@@ -86,7 +87,6 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		const string strEng = "en";
-		const int kflidSenseMsa = LexSenseTags.kflidMorphoSyntaxAnalysis;
 
 		/// <summary>
 		/// The main entry point to do the work of the original method.
@@ -211,7 +211,7 @@ namespace SIL.FieldWorks.Common.Controls
 				tssBefore = SetBeforeString(specialAttrsNode, listDelimitNode);
 				// We need a line break here to force the inner pile of paragraphs to begin at
 				// the margin, rather than somewhere in the middle of the line.
-				m_vwEnv.AddString(m_cache.TsStrFactory.MakeString(StringUtils.kChHardLB.ToString(),
+				m_vwEnv.AddString(TsStringUtils.MakeString(StringUtils.kChHardLB.ToString(),
 					m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle));
 				m_vwEnv.OpenInnerPile();
 			}
@@ -310,7 +310,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				var sTag = CalculateAndFormatSenseLabel(hvo, ihvo, xaNum.Value);
 
-				ITsStrBldr tsb = m_cache.TsStrFactory.GetBldr();
+				ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 				tsb.Replace(0, 0, sTag, ttpNum);
 				ITsString tss = tsb.GetString();
 				m_numberPartRef = listDelimitNode;
@@ -326,7 +326,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				if (sBefore == null)
 					sBefore = String.Empty;
-				tssBefore = m_cache.TsStrFactory.MakeString(sBefore, m_cache.WritingSystemFactory.UserWs);
+				tssBefore = TsStringUtils.MakeString(sBefore, m_cache.WritingSystemFactory.UserWs);
 				tssBefore = ApplyStyleToBeforeString(listDelimitNode, tssBefore);
 				tssBefore = ApplyDelayedNumber(specialAttrsNode, tssBefore);
 			}

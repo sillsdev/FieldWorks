@@ -5,9 +5,9 @@
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
@@ -695,7 +695,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private ITsString VernacularTss(string form)
 		{
-			return Cache.TsStrFactory.MakeString(form, Cache.DefaultVernWs);
+			return TsStringUtils.MakeString(form, Cache.DefaultVernWs);
 		}
 
 		private ILexEntry MakeEntry()
@@ -732,7 +732,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private ITsString AnalysisTss(string form)
 		{
-			return Cache.TsStrFactory.MakeString(form, Cache.DefaultAnalWs);
+			return TsStringUtils.MakeString(form, Cache.DefaultAnalWs);
 		}
 
 		private ILexSense MakeSense(ILexSense owningSense, string gloss)

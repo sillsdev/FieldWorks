@@ -200,7 +200,7 @@ namespace SIL.FieldWorks.TE
 					foundSegment.LiteralTranslation.set_String(ws.Handle, trans.Replace("Trans", "Literal"));
 					if (note != null)
 					{
-						ITsString tss = TsStrFactoryClass.Create().MakeString("Note" + ws.IcuLocale, ws.Handle);
+						ITsString tss = TsStringUtils.MakeString("Note" + ws.IcuLocale, ws.Handle);
 						note.Content.set_String(ws.Handle, tss);
 					}
 				}
@@ -2489,7 +2489,7 @@ namespace SIL.FieldWorks.TE
 			para2Curr.ParseIsCurrent = fParseIsCurrent;
 			IScrTxtPara para3Curr = AddParaToMockedSectionContent(sectionCurr, ScrStyleNames.NormalParagraph);
 			AddVerseSegment(para3Curr, 0, 2, "Stirring up anger produces strife.", "Stirring trans");
-			para3Curr.Contents = para3Curr.Contents.Insert(0, TsStringUtils.MakeTss(" ", Cache.DefaultVernWs));
+			para3Curr.Contents = para3Curr.Contents.Insert(0, TsStringUtils.MakeString(" ", Cache.DefaultVernWs));
 			para3Curr.ParseIsCurrent = fParseIsCurrent;
 
 			// Build up the "revision" paragraphs

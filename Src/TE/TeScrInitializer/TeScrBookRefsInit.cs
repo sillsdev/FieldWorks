@@ -126,7 +126,6 @@ namespace SIL.FieldWorks.TE
 			progressDlg.Maximum = tagList.Count * BCVRef.LastBook;
 			progressDlg.Position = 0;
 			progressDlg.Title = TeResourceHelper.GetResourceString("kstidCreatingBookNames");
-			ITsStrFactory tsf = m_cache.TsStrFactory;
 			CoreWritingSystemDefinition ws;
 
 			foreach (XmlNode writingSystem in tagList)
@@ -154,11 +153,11 @@ namespace SIL.FieldWorks.TE
 
 					int wsHandle = ws.Handle;
 					if (sName != null)
-						bookRef.BookName.set_String(wsHandle, tsf.MakeString(sName, wsHandle));
+						bookRef.BookName.set_String(wsHandle, TsStringUtils.MakeString(sName, wsHandle));
 					if (sAbbrev != null)
-						bookRef.BookAbbrev.set_String(wsHandle, tsf.MakeString(sAbbrev, wsHandle));
+						bookRef.BookAbbrev.set_String(wsHandle, TsStringUtils.MakeString(sAbbrev, wsHandle));
 					if (sAltName != null)
-						bookRef.BookNameAlt.set_String(wsHandle, tsf.MakeString(sAltName, wsHandle));
+						bookRef.BookNameAlt.set_String(wsHandle, TsStringUtils.MakeString(sAltName, wsHandle));
 				}
 			}
 			// Finally, update resource version in database.

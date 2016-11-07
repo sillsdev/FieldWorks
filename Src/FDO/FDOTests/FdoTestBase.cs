@@ -476,7 +476,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		protected ICmTranslation AddBtToMockedParagraph(IStTxtPara owner, int wsTrans)
 		{
 			ICmTranslation trans = owner.GetOrCreateBT();
-			trans.Translation.set_String(wsTrans, Cache.TsStrFactory.MakeString(string.Empty, wsTrans));
+			trans.Translation.set_String(wsTrans, TsStringUtils.EmptyString(wsTrans));
 			return trans;
 		}
 
@@ -566,7 +566,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		protected IStTxtPara AddParaToMockedText(IStText owner, string paraStyleName)
 		{
 			IStTxtPara para = owner.AddNewTextPara(paraStyleName);
-			para.Contents = Cache.TsStrFactory.MakeString(string.Empty, Cache.DefaultVernWs);
+			para.Contents = TsStringUtils.EmptyString(Cache.DefaultVernWs);
 			return para;
 		}
 
@@ -617,7 +617,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.IsNotNull(itext.ContentsOA);
 			IStTxtPara para = itext.ContentsOA.AddNewTextPara(null);
 			int wsFr = Cache.ServiceLocator.GetInstance<ILgWritingSystemFactory>().GetWsFromStr("fr");
-			para.Contents = TsStringUtils.MakeTss(paraText, wsFr);
+			para.Contents = TsStringUtils.MakeString(paraText, wsFr);
 			return para;
 		}
 

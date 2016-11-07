@@ -261,12 +261,12 @@ namespace SIL.FieldWorks.LexText.Controls
 						{
 							sAllo = StripAlloForm(form, clsidForm, guidEntry, flid);
 						}
-						tsm.set_String(wsHvo, m_cache.TsStrFactory.MakeString(sAllo, wsHvo));
+						tsm.set_String(wsHvo, TsStringUtils.MakeString(sAllo, wsHvo));
 					}
 				}
 			}
 			foreach (int ws in multi.Keys)
-				tsm.set_String(ws, (ITsString)null);
+				tsm.set_String(ws, null);
 		}
 
 		private string StripAlloForm(string form, int clsidForm, Guid guidEntry, int flid)
@@ -356,7 +356,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <returns></returns>
 		private ITsString CreateTsStringFromLiftString(LiftString liftstr, int wsHvo)
 		{
-			ITsStrBldr tsb = m_cache.TsStrFactory.GetBldr();
+			ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 			// LiftString parameter may have come in with escaped characters which need to be
 			// converted to plain text before comparing with existing entries
 			var convertSafeXmlToText = XmlUtils.DecodeXml(liftstr.Text);
@@ -425,11 +425,11 @@ namespace SIL.FieldWorks.LexText.Controls
 						{
 							ITsString tss = tsm.get_String(wsHvo);
 							if (tss == null || tss.Length == 0)
-								tsm.set_String(wsHvo, m_cache.TsStrFactory.MakeString(sText, wsHvo));
+								tsm.set_String(wsHvo, TsStringUtils.MakeString(sText, wsHvo));
 						}
 						else
 						{
-							tsm.set_String(wsHvo, m_cache.TsStrFactory.MakeString(sText, wsHvo));
+							tsm.set_String(wsHvo, TsStringUtils.MakeString(sText, wsHvo));
 						}
 					}
 				}
@@ -1964,7 +1964,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (label.Count > 0)
 				MergeInMultiUnicode(poss.Name, CmPossibilityTags.kflidName, label, poss.Guid);
 			else
-				poss.Name.AnalysisDefaultWritingSystem = m_cache.TsStrFactory.MakeString(id, m_cache.DefaultAnalWs);
+				poss.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(id, m_cache.DefaultAnalWs);
 			MergeInMultiUnicode(poss.Abbreviation, CmPossibilityTags.kflidAbbreviation, abbrev, poss.Guid);
 			MergeInMultiString(poss.Description, CmPossibilityTags.kflidDescription, description, poss.Guid);
 		}

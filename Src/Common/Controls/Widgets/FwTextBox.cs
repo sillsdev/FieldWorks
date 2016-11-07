@@ -14,7 +14,6 @@ using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.Application;
@@ -1453,8 +1452,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			ITsString tss;
 			if (!m_strings.TryGetValue(key, out tss))
 			{
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
-				tss = tsf.MakeString("", ws == 0 ? m_wsf.UserWs : ws);
+				tss = TsStringUtils.EmptyString(ws == 0 ? m_wsf.UserWs : ws);
 				m_strings[key] = tss;
 			}
 			return tss;
@@ -1944,7 +1942,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				// If the contents is currently empty, make sure inital typing will occur in this WS.
 				// (Unless it is zero, which is not a valid WS...hope it gets changed again if so.)
 				if (Tss.Length == 0 && value != 0)
-					Tss = TsStringUtils.MakeTss("", value);
+					Tss = TsStringUtils.MakeString("", value);
 			}
 		}
 
@@ -2138,7 +2136,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			set
 			{
 				CheckDisposed();
-				Tss = TsStringUtils.MakeTss(value, WritingSystemCode);
+				Tss = TsStringUtils.MakeString(value, WritingSystemCode);
 			}
 		}
 
@@ -2271,7 +2269,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			set
 			{
 				CheckDisposed();
-				SelectedTss = TsStringUtils.MakeTss(value, WritingSystemCode);
+				SelectedTss = TsStringUtils.MakeString(value, WritingSystemCode);
 			}
 		}
 

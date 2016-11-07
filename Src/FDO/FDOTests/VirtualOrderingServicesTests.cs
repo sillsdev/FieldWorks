@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 
@@ -528,7 +529,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var form = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA = form;
 			form.Form.VernacularDefaultWritingSystem =
-				Cache.TsStrFactory.MakeString(lf, Cache.DefaultVernWs);
+				TsStringUtils.MakeString(lf, Cache.DefaultVernWs);
 			AddSense(entry, gloss);
 			return entry;
 		}
@@ -536,7 +537,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry.SensesOS.Add(sense);
-			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss,
+			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss,
 				Cache.DefaultAnalWs);
 			return sense;
 		}
@@ -588,7 +589,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var rie = Cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>().Create();
 			ri.EntriesOC.Add(rie);
-			rie.ReversalForm.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss,
+			rie.ReversalForm.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss,
 				Cache.DefaultAnalWs);
 			sense.ReversalEntriesRC.Add(rie);
 			return rie;

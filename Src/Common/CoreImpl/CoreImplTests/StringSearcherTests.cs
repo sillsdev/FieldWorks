@@ -17,7 +17,6 @@ namespace SIL.CoreImpl
 		private WritingSystemManager m_wsManager;
 		private int m_enWs;
 		private int m_frWs;
-		private ITsStrFactory m_tsf;
 
 		/// <summary>
 		/// Setup the test fixture.
@@ -32,7 +31,6 @@ namespace SIL.CoreImpl
 			CoreWritingSystemDefinition frWs;
 			m_wsManager.GetOrSet("fr", out frWs);
 			m_frWs = frWs.Handle;
-			m_tsf = TsStrFactoryClass.Create();
 		}
 
 		private static void CheckSearch(StringSearcher<int> searcher, ITsString tss, int[] expectedResults)
@@ -52,17 +50,17 @@ namespace SIL.CoreImpl
 		public void ExactSearchTest()
 		{
 			var searcher = new StringSearcher<int>(SearchType.Exact, m_wsManager);
-			searcher.Add(0, 0, m_tsf.MakeString("test", m_enWs));
-			searcher.Add(1, 0, m_tsf.MakeString("Hello", m_enWs));
-			searcher.Add(2, 0, m_tsf.MakeString("c'est une phrase", m_frWs));
-			searcher.Add(3, 0, m_tsf.MakeString("hello", m_enWs));
-			searcher.Add(4, 0, m_tsf.MakeString("zebra", m_enWs));
+			searcher.Add(0, 0, TsStringUtils.MakeString("test", m_enWs));
+			searcher.Add(1, 0, TsStringUtils.MakeString("Hello", m_enWs));
+			searcher.Add(2, 0, TsStringUtils.MakeString("c'est une phrase", m_frWs));
+			searcher.Add(3, 0, TsStringUtils.MakeString("hello", m_enWs));
+			searcher.Add(4, 0, TsStringUtils.MakeString("zebra", m_enWs));
 
-			CheckSearch(searcher, m_tsf.MakeString("test", m_enWs), new[] {0});
-			CheckSearch(searcher, m_tsf.MakeString("hello", m_enWs), new[] {1, 3});
-			CheckSearch(searcher, m_tsf.MakeString("zebra", m_enWs), new[] {4});
-			CheckNoResultsSearch(searcher, m_tsf.MakeString("c'est", m_frWs));
-			CheckNoResultsSearch(searcher, m_tsf.MakeString("zebras", m_enWs));
+			CheckSearch(searcher, TsStringUtils.MakeString("test", m_enWs), new[] {0});
+			CheckSearch(searcher, TsStringUtils.MakeString("hello", m_enWs), new[] {1, 3});
+			CheckSearch(searcher, TsStringUtils.MakeString("zebra", m_enWs), new[] {4});
+			CheckNoResultsSearch(searcher, TsStringUtils.MakeString("c'est", m_frWs));
+			CheckNoResultsSearch(searcher, TsStringUtils.MakeString("zebras", m_enWs));
 		}
 
 		/// <summary>
@@ -72,17 +70,17 @@ namespace SIL.CoreImpl
 		public void PrefixSearchTest()
 		{
 			var searcher = new StringSearcher<int>(SearchType.Prefix, m_wsManager);
-			searcher.Add(0, 0, m_tsf.MakeString("test", m_enWs));
-			searcher.Add(1, 0, m_tsf.MakeString("Hello",  m_enWs));
-			searcher.Add(2, 0, m_tsf.MakeString("c'est une phrase", m_frWs));
-			searcher.Add(3, 0, m_tsf.MakeString("hello", m_enWs));
-			searcher.Add(4, 0, m_tsf.MakeString("zebra", m_enWs));
+			searcher.Add(0, 0, TsStringUtils.MakeString("test", m_enWs));
+			searcher.Add(1, 0, TsStringUtils.MakeString("Hello",  m_enWs));
+			searcher.Add(2, 0, TsStringUtils.MakeString("c'est une phrase", m_frWs));
+			searcher.Add(3, 0, TsStringUtils.MakeString("hello", m_enWs));
+			searcher.Add(4, 0, TsStringUtils.MakeString("zebra", m_enWs));
 
-			CheckSearch(searcher, m_tsf.MakeString("test", m_enWs), new[] {0});
-			CheckSearch(searcher, m_tsf.MakeString("hel", m_enWs), new[] {1, 3});
-			CheckSearch(searcher, m_tsf.MakeString("zebra", m_enWs), new[] { 4 });
-			CheckSearch(searcher, m_tsf.MakeString("c'est", m_frWs), new[] {2});
-			CheckNoResultsSearch(searcher, m_tsf.MakeString("zebras", m_enWs));
+			CheckSearch(searcher, TsStringUtils.MakeString("test", m_enWs), new[] {0});
+			CheckSearch(searcher, TsStringUtils.MakeString("hel", m_enWs), new[] {1, 3});
+			CheckSearch(searcher, TsStringUtils.MakeString("zebra", m_enWs), new[] { 4 });
+			CheckSearch(searcher, TsStringUtils.MakeString("c'est", m_frWs), new[] {2});
+			CheckNoResultsSearch(searcher, TsStringUtils.MakeString("zebras", m_enWs));
 		}
 
 		/// <summary>
@@ -92,20 +90,20 @@ namespace SIL.CoreImpl
 		public void FullTextSearchTest()
 		{
 			var searcher = new StringSearcher<int>(SearchType.FullText, m_wsManager);
-			searcher.Add(0, 0, m_tsf.MakeString("test", m_enWs));
-			searcher.Add(1, 0, m_tsf.MakeString("c'est une phrase", m_frWs));
-			ITsIncStrBldr tisb = m_tsf.GetIncBldr();
+			searcher.Add(0, 0, TsStringUtils.MakeString("test", m_enWs));
+			searcher.Add(1, 0, TsStringUtils.MakeString("c'est une phrase", m_frWs));
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, m_frWs);
 			tisb.Append("C'est une sentence. ");
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, m_enWs);
 			tisb.Append("We use it for testing purposes.");
 			searcher.Add(2, 0, tisb.GetString());
-			searcher.Add(3, 0, m_tsf.MakeString("Hello, how are you doing? I am doing fine. That is good to know.", m_enWs));
+			searcher.Add(3, 0, TsStringUtils.MakeString("Hello, how are you doing? I am doing fine. That is good to know.", m_enWs));
 
-			CheckSearch(searcher, m_tsf.MakeString("test", m_enWs), new[] {0, 2});
-			CheckSearch(searcher, m_tsf.MakeString("c'est une", m_frWs), new[] {1, 2});
-			CheckSearch(searcher, m_tsf.MakeString("t", m_enWs), new[] {0, 2, 3});
-			CheckSearch(searcher, m_tsf.MakeString("testing purpose", m_enWs), new[] {2});
+			CheckSearch(searcher, TsStringUtils.MakeString("test", m_enWs), new[] {0, 2});
+			CheckSearch(searcher, TsStringUtils.MakeString("c'est une", m_frWs), new[] {1, 2});
+			CheckSearch(searcher, TsStringUtils.MakeString("t", m_enWs), new[] {0, 2, 3});
+			CheckSearch(searcher, TsStringUtils.MakeString("testing purpose", m_enWs), new[] {2});
 		}
 	}
 }

@@ -17,14 +17,12 @@
 // </remarks>
 
 using System;
-using System.Drawing;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Application;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {
@@ -155,9 +153,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 		/// <summary>The style rules returned by "NormalFontStyle"</summary>
 		private ITsTextProps m_ttpNormalFont;
-
-		// REVIEW TomB: What module should define this?
-		private const int kcbFmtBufMax = 1024;
 
 		/// <summary>Occurs when the style sheet initializes</summary>
 		public event EventHandler InitStylesheet;
@@ -370,7 +365,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 			// Save the style properties in the fdocache's style object
 			fdoStyle.Name = sName;
-			fdoStyle.Usage.UserDefaultWritingSystem = m_fdoCache.TsStrFactory.MakeString(sUsage, m_fdoCache.WritingSystemFactory.UserWs);
+			fdoStyle.Usage.UserDefaultWritingSystem = TsStringUtils.MakeString(sUsage, m_fdoCache.WritingSystemFactory.UserWs);
 			if (hvoBasedOn > 0)
 				fdoStyle.BasedOnRA = m_fdoCache.ServiceLocator.GetInstance<IStStyleRepository>().GetObject(hvoBasedOn);
 			if (hvoNext > 0)

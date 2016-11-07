@@ -436,11 +436,10 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			int cTexts = m_cache.get_VecSize(m_hvoRoot, SimpleRootsiteTestsConstants.kflidDocFootnotes);
 			int hvoFootnote = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStFootnote, m_hvoRoot, SimpleRootsiteTestsConstants.kflidDocFootnotes, cTexts);
 			int hvoPara = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStTxtPara, hvoFootnote, SimpleRootsiteTestsConstants.kflidTextParas, 0);
-			ITsStrFactory tsStrFactory = TsStrFactoryClass.Create();
 			m_cache.CacheStringProp(hvoFootnote, SimpleRootsiteTestsConstants.kflidFootnoteMarker,
-				tsStrFactory.MakeString("a", m_wsFrn));
+				TsStringUtils.MakeString("a", m_wsFrn));
 			m_cache.CacheStringProp(hvoPara, SimpleRootsiteTestsConstants.kflidParaContents,
-				tsStrFactory.MakeString(string.Empty, m_wsFrn));
+				TsStringUtils.MakeString(string.Empty, m_wsFrn));
 			return hvoPara;
 		}
 

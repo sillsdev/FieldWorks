@@ -740,7 +740,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 							revIndex.WritingSystem = wsObj.Id;
 							revIndex.Name.SetUserWritingSystem(wsObj.DisplayLabel);
 							revIndex.PartsOfSpeechOA = m_cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
-							revIndex.PartsOfSpeechOA.Name.set_String(ws, m_cache.TsStrFactory.MakeString(
+							revIndex.PartsOfSpeechOA.Name.set_String(ws, TsStringUtils.MakeString(
 								String.Format(Strings.ksReversalIndexPOSListName, wsObj.DisplayLabel), ws));
 							revIndex.PartsOfSpeechOA.ItemClsid = PartOfSpeechTags.kClassId;
 							revIndex.PartsOfSpeechOA.IsSorted = true;
@@ -850,7 +850,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				string lcForm = cf.ToLower(tssForm.Text);
 				// we want to look up the lower case form only if the given form was not already lowercased.
 				if (lcForm != tssForm.Text)
-					TryGetObject(TsStringUtils.MakeTss(lcForm, ws), false, out wf);
+					TryGetObject(TsStringUtils.MakeString(lcForm, ws), false, out wf);
 			}
 			return wf != null;
 		}
@@ -968,7 +968,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 			// FWR-3119 Won't find a match if 'form' with diacritics is NFC
 			// and wfiWordforms are NFD! This causes AddToDictionary to add duplicate each time.
-			var decompForm = Cache.TsStrFactory.MakeString(form, ws).get_NormalizedForm(
+			var decompForm = TsStringUtils.MakeString(form, ws).get_NormalizedForm(
 				FwNormalizationMode.knmNFD).Text;
 
 			return (from wf in AllInstances()
@@ -1450,8 +1450,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				string wsLocale = cache.ServiceLocator.WritingSystemManager.Get(wsWf).IcuLocale;
 				string sLower = Icu.ToLower(tssWf.Text, wsLocale);
 				ITsTextProps ttp = tssWf.get_PropertiesAt(0);
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
-				tssWf = tsf.MakeStringWithPropsRgch(sLower, sLower.Length, ttp);
+				tssWf = TsStringUtils.MakeString(sLower, ttp);
 				entries = FindEntriesForWordformWorker(cache, tssWf, wfa, ref duplicates);
 			}
 			return entries;

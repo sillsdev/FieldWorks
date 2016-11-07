@@ -1258,7 +1258,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				// Normal non-circumfix case, set the appropriate alternative on the Lexeme form itself
 				// (making sure to include no invalid characters).
-				tssLexemeForm = Cache.TsStrFactory.MakeString(MorphServices.EnsureNoMarkers(tssLexemeForm.Text, m_cache), ws);
+				tssLexemeForm = TsStringUtils.MakeString(MorphServices.EnsureNoMarkers(tssLexemeForm.Text, m_cache), ws);
 			}
 			if (mf != null)
 				mf.Form.set_String(ws, tssLexemeForm);
@@ -5277,7 +5277,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var tisb = TsIncStrBldrClass.Create();
-				var tsf = Cache.TsStrFactory;
 				var wsAnal = Cache.DefaultAnalWs;
 
 				// Add sense number, if there is more than one sense
@@ -5286,7 +5285,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 									|| (owner is ILexSense && ((ILexSense)owner).SensesOS.Count == 1));
 				if (!isSingleSense)
 				{
-					tisb.AppendTsString(tsf.MakeString(SenseNumber, wsAnal));
+					tisb.AppendTsString(TsStringUtils.MakeString(SenseNumber, wsAnal));
 				}
 
 				// Add grammatical info
@@ -5294,7 +5293,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if (msa != null)
 				{
 					if (!string.IsNullOrEmpty(tisb.Text))
-						tisb.AppendTsString(tsf.MakeString(" ", wsAnal));
+						tisb.AppendTsString(TsStringUtils.MakeString(" ", wsAnal));
 					tisb.SetIntPropValues((int) FwTextPropType.ktptItalic,
 						(int) FwTextPropVar.ktpvEnum,
 						(int) FwTextToggleVal.kttvForceOn);
@@ -5308,13 +5307,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if (Gloss.AnalysisDefaultWritingSystem != null && Gloss.AnalysisDefaultWritingSystem.Length > 0)
 				{
 					if (!string.IsNullOrEmpty(tisb.Text))
-						tisb.AppendTsString(tsf.MakeString(" ", wsAnal));
+						tisb.AppendTsString(TsStringUtils.MakeString(" ", wsAnal));
 					tisb.AppendTsString(Gloss.AnalysisDefaultWritingSystem);
 				}
 				else if (Definition.AnalysisDefaultWritingSystem != null && Definition.AnalysisDefaultWritingSystem.Length > 0)
 				{
 					if (!string.IsNullOrEmpty(tisb.Text))
-						tisb.AppendTsString(tsf.MakeString(" ", wsAnal));
+						tisb.AppendTsString(TsStringUtils.MakeString(" ", wsAnal));
 					tisb.AppendTsString(Definition.AnalysisDefaultWritingSystem);
 				}
 
@@ -5322,7 +5321,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				{
 					// This is not just to prevent a blank item in a combo, but an actual crash (FWR-3224):
 					// If nothing has been put in the builder it currently has no WS, and that is not allowed.
-					tisb.AppendTsString(tsf.MakeString(Strings.ksBlankSense, Cache.DefaultUserWs));
+					tisb.AppendTsString(TsStringUtils.MakeString(Strings.ksBlankSense, Cache.DefaultUserWs));
 				}
 
 				return tisb.GetString();
@@ -6121,7 +6120,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				rie = Services.GetInstance<IReversalIndexEntryFactory>().Create();
 				EntriesOC.Add(rie);
-				rie.ReversalForm.set_String(ws, Cache.TsStrFactory.MakeString(topName, ws));
+				rie.ReversalForm.set_String(ws, TsStringUtils.MakeString(topName, ws));
 			}
 			for (int i = 1; i < nameParts.Length; i++)
 			{
@@ -6134,7 +6133,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				{
 					nextRie = Services.GetInstance<IReversalIndexEntryFactory>().Create();
 					rie.SubentriesOS.Add(nextRie);
-					nextRie.ReversalForm.set_String(ws, Cache.TsStrFactory.MakeString(nextName, ws));
+					nextRie.ReversalForm.set_String(ws, TsStringUtils.MakeString(nextName, ws));
 				}
 				rie = nextRie;
 			}
@@ -6167,7 +6166,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				// "{0} has {1} entries referenced by {2} senses.";
 				var sDeletionText = string.Format(Properties.Resources.kstidReversalIndexDeletionText,
 					ShortName, cEntries, senseIds.Count);
-				return m_cache.TsStrFactory.MakeString(sDeletionText, m_cache.WritingSystemFactory.UserWs);
+				return TsStringUtils.MakeString(sDeletionText, m_cache.WritingSystemFactory.UserWs);
 			}
 		}
 
@@ -6305,7 +6304,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				return Cache.TsStrFactory.MakeString(ShortName, WritingSystem);
+				return TsStringUtils.MakeString(ShortName, WritingSystem);
 			}
 		}
 
@@ -6318,7 +6317,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				StringBuilder bldr = new StringBuilder(ShortName);
-				for (IReversalIndexEntry rie = this.Owner as IReversalIndexEntry;
+				for (IReversalIndexEntry rie = Owner as IReversalIndexEntry;
 					 rie != null;
 					 rie = rie.Owner as IReversalIndexEntry)
 				{
@@ -6552,7 +6551,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				{
 					var ws = m_cache.DefaultUserWs;
 					var name = Strings.ksQuestions;		// was "??", not "???"
-					return m_cache.TsStrFactory.MakeString(name, ws);
+					return TsStringUtils.MakeString(name, ws);
 				}
 			}
 		}
@@ -7125,7 +7124,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					if (abbrev != null && abbrev.Length > 0 && abbrev.Text != Abbreviation.NotFoundTss.Text)
 						return abbrev;
 				}
-				return Cache.TsStrFactory.MakeString(
+				return TsStringUtils.MakeString(
 					Strings.ksQuestions,
 					m_cache.DefaultUserWs);
 			}
@@ -7162,14 +7161,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if (envText.Contains(standardOptionalNcReference))
 				{
 					//remove the natural class (and parentheses) from the environment
-					env.StringRepresentation = m_cache.TsStrFactory.MakeString(envText.Replace(standardOptionalNcReference, ""), analysisWs);
+					env.StringRepresentation = TsStringUtils.MakeString(envText.Replace(standardOptionalNcReference, ""), analysisWs);
 				}
 				else if (envText.Contains(indexed))
 				{
 					//mark natural classes indexed in the environment "DELETED"
 					string patternForIndexedNaturalClass = @"\[" + Regex.Escape(naturalClassAbbr) + @"\^\d{1,2}\]"; //e.g. [C^1]
 					string newEnv = Regex.Replace(envText, patternForIndexedNaturalClass, "DELETED");
-					env.StringRepresentation = m_cache.TsStrFactory.MakeString(newEnv, analysisWs);
+					env.StringRepresentation = TsStringUtils.MakeString(newEnv, analysisWs);
 
 					//mark them "DELETED" in the allomorph as well.
 					//MoAffixAllomorph:Form or MoStemAllomorph:Form which refers to the deleted environment
@@ -7186,7 +7185,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 							{
 								string newForm = Regex.Replace(oldForm, patternForIndexedNaturalClass, "DELETED");
 								affixAllomorphReferrer.Form.set_String(vernWs,
-									m_cache.TsStrFactory.MakeString(newForm, vernWs));
+									TsStringUtils.MakeString(newForm, vernWs));
 							}
 						}
 
@@ -7198,7 +7197,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 							{
 								string newForm = Regex.Replace(oldForm, patternForIndexedNaturalClass, "DELETED");
 								stemAllomorphReferrer.Form.set_String(vernWs,
-									m_cache.TsStrFactory.MakeString(newForm, vernWs));
+									TsStringUtils.MakeString(newForm, vernWs));
 							}
 						}
 					}
@@ -7471,7 +7470,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (indices[PhMetathesisRuleTags.kidxMiddle] != -1)
 				middleAssocStr = isMiddleWithLeftSwitch ? ":L" : ":R";
 
-			var tisb = m_cache.TsStrFactory.GetIncBldr();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, m_cache.DefaultUserWs);
 			tisb.Append(string.Format("{0} {1} {2}{3} {4} {5}", indices[0], indices[1], indices[2], middleAssocStr,
 				indices[3], indices[4]));
@@ -8336,15 +8335,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				var lrtOwner = this.Owner as LexRefType;
+				var lrtOwner = (LexRefType) Owner;
 				var analWs = Cache.DefaultAnalWs;
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
-				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+				ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum,
 					(int)FwTextToggleVal.kttvForceOn);
 				// AppendSimpleTsString modifies the TsIncStrBldr passed to it.
 				AppendSimpleTsString(tisb, lrtOwner.Abbreviation.BestAnalysisAlternative);
-				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, analWs);
+				tisb.SetIntPropValues((int) FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, analWs);
 				switch (lrtOwner.MappingType)
 				{
 					case (int)LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair:
@@ -8361,7 +8359,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				tisb.Append(":  ");
 				tisb.SetIntPropValues((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum,
 					(int)FwTextToggleVal.kttvOff);
-				ITsString tsSep = tsf.MakeString(", ", analWs);
+				ITsString tsSep = TsStringUtils.MakeString(", ", analWs);
 				for (int i = 0; i < TargetsRS.Count; ++i)
 				{
 					if (i > 0)
@@ -8527,7 +8525,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				{
 					NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ActionHandlerAccessor, () =>
 						{
-							StringRepresentation = Cache.TsStrFactory.MakeString("/_", m_cache.DefaultUserWs);
+							StringRepresentation = TsStringUtils.MakeString("/_", m_cache.DefaultUserWs);
 						});
 				}
 

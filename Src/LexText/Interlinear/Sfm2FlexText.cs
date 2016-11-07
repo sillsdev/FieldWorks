@@ -4,8 +4,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using SIL.CoreImpl;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.FDO.DomainServices;
 
@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.IText
 			var text = GetString(data, mapping).Trim();
 
 			var ws = m_wsManager.get_Engine(mapping.WritingSystem).Handle; // don't use GetWsFromStr, fails if not a known WS
-			var tss = m_tsf.MakeString(text, ws);
+			var tss = TsStringUtils.MakeString(text, ws);
 			var wordmaker = new WordMaker(tss, m_wsManager);
 			int ichLast = 0;
 			int ichMin, ichLim;

@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.TE
 			m_genesis = AddBookToMockedScripture(1, "Genesis");
 			m_genesisRevision = AddArchiveBookToMockedScripture(1, "Genesis");
 
-			m_tssVerse = TsStringUtils.MakeTss("verse text", Cache.DefaultVernWs);
+			m_tssVerse = TsStringUtils.MakeString("verse text", Cache.DefaultVernWs);
 		}
 
 		/// ------------------------------------------------------------------------------------

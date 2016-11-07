@@ -125,7 +125,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void SerializePropsToXml_BulNumFontInfo()
 		{
-			ITsPropsBldr tpb = TsPropsFactory.GetPropsBldr();
+			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetStringValue(FwTextPropType.ktptBulNumFontInfo,
 				(char) FwTextPropType.ktptItalic + "\u0001\u0000" +
 				(char) FwTextPropType.ktptBold + "\u0001\u0000" +
@@ -575,7 +575,7 @@ namespace SIL.CoreImpl
 			Guid expectedGuid1 = new Guid("3B88FBA7-10C7-4e14-9EE0-3F0DDA060A0D");
 			Guid expectedGuid2 = new Guid("C4F03ECA-BC03-4175-B5AA-13F3ECB7F481");
 
-			ITsPropsBldr tpb = TsPropsFactory.GetPropsBldr();
+			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetStringValue(FwTextPropType.ktptTags, "\uFBA7\u3B88\u10C7\u4e14\uE09E\u0D3F\u06DA\u0D0A"
 				+ "\u3ECA\uC4F0\uBC03\u4175\uAAB5\uF313\uB7EC\u81F4");
 
@@ -2018,7 +2018,7 @@ namespace SIL.CoreImpl
 		/// ------------------------------------------------------------------------------------
 		private void CheckSerializeWsStyleProp(string value, string expectedWSStyleText)
 		{
-			ITsPropsBldr tpb = TsPropsFactory.GetPropsBldr();
+			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetStringValue(FwTextPropType.ktptWsStyle, value);
 
 			string xml = TsPropsSerializer.SerializePropsToXml(tpb.GetTextProps(), WritingSystemManager);
@@ -2035,7 +2035,7 @@ namespace SIL.CoreImpl
 		/// ------------------------------------------------------------------------------------
 		private void CheckSerializeStrObjProp(string propName, FwObjDataTypes propType, Guid expectedGuid)
 		{
-			ITsPropsBldr tpb = TsPropsFactory.GetPropsBldr();
+			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetStringValue(FwTextPropType.ktptObjData, CreateObjData(propType, expectedGuid.ToByteArray()));
 
 			string xml = TsPropsSerializer.SerializePropsToXml(tpb.GetTextProps(), WritingSystemManager);
@@ -2053,7 +2053,7 @@ namespace SIL.CoreImpl
 		/// ------------------------------------------------------------------------------------
 		private void CheckSerializeStrProp(FwTextPropType propType, string value, string expectedPropName, string expectedPropValue)
 		{
-			ITsPropsBldr tpb = TsPropsFactory.GetPropsBldr();
+			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetStringValue(propType, value);
 			ITsTextProps textProps = tpb.GetTextProps();
 			string xml = TsPropsSerializer.SerializePropsToXml(textProps, WritingSystemManager);
@@ -2101,7 +2101,7 @@ namespace SIL.CoreImpl
 		/// ------------------------------------------------------------------------------------
 		private void CheckSerializeIntProp(FwTextPropType propType, int value, FwTextPropVar var, string expectedPropText)
 		{
-			ITsPropsBldr tpb = TsPropsFactory.GetPropsBldr();
+			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntValue(propType, var, value);
 
 			string xml = TsPropsSerializer.SerializePropsToXml(tpb.GetTextProps(), WritingSystemManager);

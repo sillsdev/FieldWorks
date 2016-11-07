@@ -2,11 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -71,15 +68,14 @@ namespace LexEdDllTests
 
 		private ILexEntry MakeEntry(string lf, string gloss)
 		{
-			ILexEntry entry = null;
-			entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			ILexEntry entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			var form = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA = form;
 			form.Form.VernacularDefaultWritingSystem =
-				Cache.TsStrFactory.MakeString(lf, Cache.DefaultVernWs);
+				TsStringUtils.MakeString(lf, Cache.DefaultVernWs);
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry.SensesOS.Add(sense);
-			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss, Cache.DefaultAnalWs);
+			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss, Cache.DefaultAnalWs);
 			return entry;
 		}
 	}

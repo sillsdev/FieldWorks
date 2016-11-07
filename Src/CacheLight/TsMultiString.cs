@@ -12,12 +12,10 @@ namespace SIL.FieldWorks.CacheLight
 {
 	internal class TsMultiString : ITsMultiString
 	{
-		private readonly ITsStrFactory m_tsf;
 		private readonly SmallDictionary<int, ITsString> m_strings;
 
-		public TsMultiString(ITsStrFactory tsf)
+		public TsMultiString()
 		{
-			m_tsf = tsf;
 			m_strings = new SmallDictionary<int, ITsString>();
 		}
 
@@ -44,7 +42,7 @@ namespace SIL.FieldWorks.CacheLight
 		public ITsString get_String(int ws)
 		{
 			ITsString tss;
-			return m_strings.TryGetValue(ws, out tss) ? tss : m_tsf.EmptyString(ws);
+			return m_strings.TryGetValue(ws, out tss) ? tss : TsStringUtils.EmptyString(ws);
 		}
 
 		public void set_String(int ws, ITsString tss)

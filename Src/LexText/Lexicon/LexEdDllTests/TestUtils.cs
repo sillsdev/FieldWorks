@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 
@@ -43,10 +44,10 @@ namespace LexEdDllTests
 				var form = cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 				entry.LexemeFormOA = form;
 				form.Form.VernacularDefaultWritingSystem =
-					cache.TsStrFactory.MakeString(lf, cache.DefaultVernWs);
+					TsStringUtils.MakeString(lf, cache.DefaultVernWs);
 				var sense = cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 				entry.SensesOS.Add(sense);
-				sense.Gloss.AnalysisDefaultWritingSystem = cache.TsStrFactory.MakeString(gloss, cache.DefaultAnalWs);
+				sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss, cache.DefaultAnalWs);
 			});
 			return entry;
 		}

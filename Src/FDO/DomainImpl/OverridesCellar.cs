@@ -423,16 +423,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-#pragma warning disable 219
-				ITsStrFactory tsf = Cache.TsStrFactory;
 				ITsString tss = Name.AnalysisDefaultWritingSystem;
-				int ws = Cache.WritingSystemFactory.UserWs;
-#pragma warning restore 219
 				if (tss == null || tss.Length == 0)
-				{
 					tss = Name.VernacularDefaultWritingSystem;
-					ws = m_cache.DefaultVernWs;
-				}
 				return tss;
 			}
 		}
@@ -1526,9 +1519,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var tisb = TsIncStrBldrClass.Create();
-				var tsf = Cache.TsStrFactory;
 				tisb.AppendTsString(Abbreviation.BestAnalysisAlternative);
-				tisb.AppendTsString(tsf.MakeString(Strings.ksNameAbbrSep, m_cache.DefaultUserWs));
+				tisb.AppendTsString(TsStringUtils.MakeString(Strings.ksNameAbbrSep, m_cache.DefaultUserWs));
 				tisb.AppendTsString(Name.BestAnalysisAlternative);
 				return tisb.GetString();
 			}
@@ -1638,7 +1630,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (pss != null)
 				tss = WritingSystemServices.GetMagicStringAlt(cache, wsMagic, pss.Hvo, flid);
 			if (tss == null || tss.Length == 0)
-				tss = TsStringUtils.MakeTss(defValue, cache.WritingSystemFactory.UserWs);
+				tss = TsStringUtils.MakeString(defValue, cache.WritingSystemFactory.UserWs);
 			return tss;
 		}
 
@@ -1659,7 +1651,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 			if (tss == null || tss.Length == 0)
 			{
-				tss = TsStringUtils.MakeTss(Strings.ksQuestions, cache.WritingSystemFactory.UserWs);
+				tss = TsStringUtils.MakeString(Strings.ksQuestions, cache.WritingSystemFactory.UserWs);
 				// JohnT: how about this?
 				//return TsStringUtils.MakeTss("a " + this.GetType().Name + " with no name", cache.WritingSystemFactory.UserWs);
 			}
@@ -1697,7 +1689,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 			if (tss == null || tss.Length == 0)
 			{
-				tss = TsStringUtils.MakeTss(Strings.ksQuestions, cache.WritingSystemFactory.UserWs);
+				tss = TsStringUtils.MakeString(Strings.ksQuestions, cache.WritingSystemFactory.UserWs);
 			}
 			return tss;
 		}
@@ -2203,27 +2195,26 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
-				ITsStrFactory tsf = Cache.TsStrFactory;
+				ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 				int analWs = m_cache.DefaultAnalWs;
 
-				tisb.AppendTsString(tsf.MakeString("[", analWs));
+				tisb.AppendTsString(TsStringUtils.MakeString("[", analWs));
 
 				IFsFeatDefn feature = FeatureRA;
 				if (feature != null)
-					tisb.AppendTsString(tsf.MakeString(feature.Name.BestAnalysisAlternative.Text, analWs));
+					tisb.AppendTsString(TsStringUtils.MakeString(feature.Name.BestAnalysisAlternative.Text, analWs));
 				else
-					tisb.AppendTsString(tsf.MakeString(Strings.ksQuestions, analWs));
+					tisb.AppendTsString(TsStringUtils.MakeString(Strings.ksQuestions, analWs));
 
-				tisb.AppendTsString(tsf.MakeString(" : ", analWs));
+				tisb.AppendTsString(TsStringUtils.MakeString(" : ", analWs));
 
 				IFsSymFeatVal value = ValueRA;
 				if (value != null)
-					tisb.AppendTsString(tsf.MakeString(value.Name.BestAnalysisAlternative.Text, analWs));
+					tisb.AppendTsString(TsStringUtils.MakeString(value.Name.BestAnalysisAlternative.Text, analWs));
 				else
-					tisb.AppendTsString(tsf.MakeString(Strings.ksQuestions, analWs));
+					tisb.AppendTsString(TsStringUtils.MakeString(Strings.ksQuestions, analWs));
 
-				tisb.AppendTsString(tsf.MakeString("]", analWs));
+				tisb.AppendTsString(TsStringUtils.MakeString("]", analWs));
 
 				return tisb.GetString();
 			}
@@ -2748,7 +2739,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					// do not have any real values for abbrev, name, or description.  Just use the abbreviation
 					foreach (CoreWritingSystemDefinition ws in Services.WritingSystems.AnalysisWritingSystems)
 					{
-						var tss = m_cache.TsStrFactory.MakeString(type, ws.Handle);
+						ITsString tss = TsStringUtils.MakeString(type, ws.Handle);
 						fst.Abbreviation.set_String(ws.Handle, tss);
 						fst.Name.set_String(ws.Handle, tss);
 					}
@@ -2861,7 +2852,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					ws = cache.DefaultAnalWs;
 					newValue = node.InnerXml;
 				}
-				item.set_String(ws, cache.TsStrFactory.MakeString(newValue, ws));
+				item.set_String(ws, TsStringUtils.MakeString(newValue, ws));
 			}
 		}
 	}
@@ -3497,9 +3488,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			foreach (CoreWritingSystemDefinition ws in Services.WritingSystems.AnalysisWritingSystems)
 			{
-				Abbreviation.set_String(ws.Handle, Cache.TsStrFactory.MakeString(sAbbrev, ws.Handle));
+				Abbreviation.set_String(ws.Handle, TsStringUtils.MakeString(sAbbrev, ws.Handle));
 				if (ws.Id == "en")
-					Name.set_String(ws.Handle, Cache.TsStrFactory.MakeString(sName, ws.Handle));
+					Name.set_String(ws.Handle, TsStringUtils.MakeString(sName, ws.Handle));
 			}
 			ShowInGloss = true;
 		}

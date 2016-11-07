@@ -68,7 +68,6 @@ namespace SIL.FieldWorks.IText
 
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
 		{
-			ITsStrFactory tsf = null;
 			switch (frag)
 			{
 				case kfragStText: // The whole text, root object for the InterlinDocChild.
@@ -113,8 +112,7 @@ namespace SIL.FieldWorks.IText
 					else
 					{
 						// just add a blank title.
-						tsf = TsStrFactoryClass.Create();
-						ITsString blankTitle = tsf.MakeString("", m_wsAnalysis);
+						ITsString blankTitle = TsStringUtils.EmptyString(m_wsAnalysis);
 						vwenv.AddString(blankTitle);
 					}
 					vwenv.CloseParagraph();
@@ -132,8 +130,7 @@ namespace SIL.FieldWorks.IText
 					else
 					{
 						// just add a blank source.
-						tsf = TsStrFactoryClass.Create();
-						ITsString tssBlank = tsf.MakeString("", m_wsAnalysis);
+						ITsString tssBlank = TsStringUtils.EmptyString(m_wsAnalysis);
 						vwenv.AddString(tssBlank);
 					}
 					vwenv.set_IntProperty((int)FwTextPropType.ktptMarginBottom,

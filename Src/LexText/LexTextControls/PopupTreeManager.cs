@@ -119,7 +119,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			CheckDisposed();
 
 			if (m_kEmptyNode != null)
-				m_kEmptyNode.Tss = Cache.TsStrFactory.MakeString(label, Cache.WritingSystemFactory.UserWs);
+				m_kEmptyNode.Tss = TsStringUtils.MakeString(label, Cache.WritingSystemFactory.UserWs);
 			if (m_treeCombo != null && m_treeCombo.SelectedNode == m_kEmptyNode)
 				m_treeCombo.Tss = m_kEmptyNode.Tss;
 		}
@@ -488,7 +488,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				ITsString tssLabel = WritingSystemServices.GetMagicStringAlt(Cache,
 					WritingSystemServices.kwsFirstAnalOrVern, hvoChild, tagName);
 				if (tssLabel == null)
-					tssLabel = TsStringUtils.MakeTss(LexTextControls.ksStars, Cache.WritingSystemFactory.UserWs);
+					tssLabel = TsStringUtils.MakeString(LexTextControls.ksStars, Cache.WritingSystemFactory.UserWs);
 				HvoTreeNode node = new HvoTreeNode(tssLabel, hvoChild);
 				nodes.Add(node);
 				TreeNode temp = AddNodes(node.Nodes, hvoChild,
@@ -536,7 +536,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="popupTree"></param>
 		protected void AddMoreItem(PopupTree popupTree)
 		{
-			popupTree.Nodes.Add(new HvoTreeNode(Cache.TsStrFactory.MakeString(LexTextControls.ksMore_, Cache.WritingSystemFactory.UserWs), kMore));
+			popupTree.Nodes.Add(new HvoTreeNode(TsStringUtils.MakeString(LexTextControls.ksMore_, Cache.WritingSystemFactory.UserWs), kMore));
 		}
 
 		/// <summary>
@@ -548,7 +548,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <returns></returns>
 		protected TreeNode AddNotSureItem(PopupTree popupTree)
 		{
-			HvoTreeNode empty = new HvoTreeNode(Cache.TsStrFactory.MakeString(LexTextControls.ks_NotSure_, Cache.WritingSystemFactory.UserWs), kEmpty);
+			HvoTreeNode empty = new HvoTreeNode(TsStringUtils.MakeString(LexTextControls.ks_NotSure_, Cache.WritingSystemFactory.UserWs), kEmpty);
 			popupTree.Nodes.Add(empty);
 			m_kEmptyNode = empty;
 			return empty;
@@ -560,7 +560,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="popupTree"></param>
 		protected void AddTimberLine(PopupTree popupTree)
 		{
-			popupTree.Nodes.Add(new HvoTreeNode(Cache.TsStrFactory.MakeString(TimberLine, Cache.WritingSystemFactory.UserWs), kLine));
+			popupTree.Nodes.Add(new HvoTreeNode(TsStringUtils.MakeString(TimberLine, Cache.WritingSystemFactory.UserWs), kLine));
 		}
 
 		/// <summary>

@@ -12,8 +12,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 
@@ -322,7 +322,7 @@ namespace SIL.FieldWorks.Common.Controls
 								return msa.InterlinearNameTSS;
 							case "LongName":
 							{
-								return m_obj.Cache.TsStrFactory.MakeString(
+								return TsStringUtils.MakeString(
 									msa.LongName,
 									m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle);
 							}
@@ -413,7 +413,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				return m_cache.TsStrFactory.MakeString(
+				return TsStringUtils.MakeString(
 					DisplayName,
 					m_cache.WritingSystemFactory.UserWs);
 			}
@@ -476,8 +476,7 @@ namespace SIL.FieldWorks.Common.Controls
 				Debug.Assert(muaName != null);
 				var muaAbbr = cp.Abbreviation;
 				Debug.Assert(muaAbbr != null);
-				var tisb = TsIncStrBldrClass.Create();
-				var tsf = m_cache.TsStrFactory;
+				ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 				var userWs = m_cache.WritingSystemFactory.UserWs;
 				if (m_bestWs != null)
 				{
@@ -502,7 +501,7 @@ namespace SIL.FieldWorks.Common.Controls
 						if(m_displayNameProperty == "LongName" || m_displayNameProperty == "AbbrAndNameTSS")
 						{
 							tisb.AppendTsString(tssAbbr);
-							tisb.AppendTsString(tsf.MakeString(" - ", userWs));
+							tisb.AppendTsString(TsStringUtils.MakeString(" - ", userWs));
 						}
 						else if (m_displayNameProperty == "BestAbbreviation")
 						{
@@ -528,7 +527,6 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				else
 				{
-					var analWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
 					string name = null;
 					var nameWs = 0;
 					string abbr = null;
@@ -564,11 +562,11 @@ namespace SIL.FieldWorks.Common.Controls
 						&& (m_displayNameProperty == "LongName"))
 					{
 						Debug.Assert(!string.IsNullOrEmpty(abbr));
-						tisb.AppendTsString(tsf.MakeString(abbr, abbrWs));
-						tisb.AppendTsString(tsf.MakeString(" - ", userWs));
+						tisb.AppendTsString(TsStringUtils.MakeString(abbr, abbrWs));
+						tisb.AppendTsString(TsStringUtils.MakeString(" - ", userWs));
 					}
 					Debug.Assert(!string.IsNullOrEmpty(name));
-					tisb.AppendTsString(tsf.MakeString(name, nameWs));
+					tisb.AppendTsString(TsStringUtils.MakeString(name, nameWs));
 				}
 
 				return tisb.GetString();

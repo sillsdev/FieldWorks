@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			var wsObj = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
 			if (wsObj != null)
 			{
-				ITsString tssForm = m_tsf.MakeString(string.Empty, wsObj.Handle);
+				ITsString tssForm = TsStringUtils.EmptyString(wsObj.Handle);
 				var field = new SearchField(WfiWordformTags.kflidForm, tssForm);
 				m_matchingObjectsBrowser.SearchAsync(new[] { field });
 			}
@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_oldSearchKey = searchKey;
 			m_oldSearchWs = wsSelHvo;
 
-			ITsString tssForm = m_tsf.MakeString(form ?? string.Empty, vernWs);
+			ITsString tssForm = TsStringUtils.MakeString(form ?? string.Empty, vernWs);
 			var field = new SearchField(WfiWordformTags.kflidForm, tssForm);
 			m_matchingObjectsBrowser.SearchAsync(new[] { field });
 		}

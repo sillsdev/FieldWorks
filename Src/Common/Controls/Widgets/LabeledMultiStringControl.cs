@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	public class LabeledMultiStringControl : UserControl, IVwNotifyChange, IFWDisposable
 	{
 		InnerLabeledMultiStringControl m_innerControl;
-		bool m_isHot = false;
+		bool m_isHot;
 		bool m_hasBorder;
 		Padding m_textPadding;
 
@@ -389,8 +389,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			CheckDisposed();
 
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			SetValue(ws, tsf.MakeString(txt, ws));
+			SetValue(ws, TsStringUtils.MakeString(txt, ws));
 		}
 
 		/// <summary>

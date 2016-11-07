@@ -357,7 +357,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			var handle = ws == null ? 0 : ws.Handle;
 			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_innerView.Cache.ActionHandlerAccessor,
 				() => m_innerView.Cache.DomainDataByFlid.SetMultiStringAlt(m_innerView.HvoObj, m_innerView.Flid, handle,
-					m_innerView.Cache.TsStrFactory.MakeString("", handle)));
+					TsStringUtils.EmptyString(handle)));
 		}
 
 		void soundFieldControl_BeforeStartingToRecord(object sender, EventArgs e)
@@ -370,7 +370,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			var ws = WsForSoundField(sc, out dummy);
 			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_innerView.Cache.ActionHandlerAccessor,
 				() => m_innerView.Cache.DomainDataByFlid.SetMultiStringAlt(m_innerView.HvoObj, m_innerView.Flid,
-					ws.Handle, m_innerView.Cache.TsStrFactory.MakeString(filename, ws.Handle)));
+					ws.Handle, TsStringUtils.MakeString(filename, ws.Handle)));
 		}
 
 		private string CreateNewSoundFilename(out string path)
@@ -410,7 +410,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_innerView.Cache.ActionHandlerAccessor,
 					() => m_innerView.Cache.DomainDataByFlid.SetMultiStringAlt(m_innerView.HvoObj, m_innerView.Flid,
-						ws.Handle, m_innerView.Cache.TsStrFactory.MakeString(filenameNew, ws.Handle)));
+						ws.Handle, TsStringUtils.MakeString(filenameNew, ws.Handle)));
 			}
 		}
 

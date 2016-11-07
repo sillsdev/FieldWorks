@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
@@ -252,8 +253,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			// If no paragraphs were passed in, then create one to get the user started off.
 			if (memHvos.Count == 0)
 			{
-				ITsStrFactory strFact = TsStrFactoryClass.Create();
-				ITsString paraStr = strFact.MakeString(String.Empty, CurrentWs);
+				ITsString paraStr = TsStringUtils.EmptyString(CurrentWs);
 				m_sda.SetString(kDummyParaHvo, StTxtParaTags.kflidContents, paraStr);
 				memHvos.Add(kDummyParaHvo);
 			}

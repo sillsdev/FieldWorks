@@ -917,20 +917,15 @@ namespace SIL.FieldWorks.Common.Controls
 
 		ITsString MakeLabel(string name)
 		{
-			return MakeLabel(name, m_cache.TsStrFactory, m_userWs);
+			return MakeLabel(name, m_userWs);
 		}
 
 		/// <summary>
 		/// Make the standard sort of label we put in combo items for the filter bar for the specified string.
 		/// </summary>
-		public static ITsString MakeLabel(string name, int userWs)
+		private static ITsString MakeLabel(string name, int userWs)
 		{
-			return MakeLabel(name, TsStrFactoryClass.Create(), userWs);
-		}
-
-		private static ITsString MakeLabel(string name, ITsStrFactory tsf, int userWs)
-		{
-			var bldr = tsf.MakeString(name, userWs).GetBldr();
+			ITsStrBldr bldr = TsStringUtils.MakeString(name, userWs).GetBldr();
 			// per FWR-1256, we want to use the default font for stuff in the UI writing system.
 			bldr.SetStrPropValue(0, bldr.Length, (int)FwTextPropType.ktptNamedStyle, StyleServices.UiElementStylename);
 			return bldr.GetString();
@@ -1102,7 +1097,6 @@ namespace SIL.FieldWorks.Common.Controls
 
 		internal IVwPattern MatchExactPattern(String str)
 		{
-			ITsStrFactory tsf = m_cache.TsStrFactory;
 			int ws = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
 			IVwPattern m_pattern = VwPatternClass.Create();
 			m_pattern.MatchOldWritingSystem = false;
@@ -1110,7 +1104,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_pattern.MatchWholeWord = false;
 			m_pattern.MatchCase = false;
 			m_pattern.UseRegularExpressions = false;
-			m_pattern.Pattern = tsf.MakeString(str, ws);
+			m_pattern.Pattern = TsStringUtils.MakeString(str, ws);
 			return m_pattern;
 		}
 
@@ -1123,8 +1117,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_pattern.MatchCase = false;
 			m_pattern.UseRegularExpressions = false;
 
-			ITsStrFactory tsf = m_cache.TsStrFactory;
-			m_pattern.Pattern = tsf.MakeString(str, ws);
+			m_pattern.Pattern = TsStringUtils.MakeString(str, ws);
 			m_pattern.IcuLocale = m_cache.WritingSystemFactory.GetStrFromWs(ws);
 			return m_pattern;
 		}
@@ -2306,7 +2299,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (filter.Targets[0] == 0)
 				{
 					NullObjectLabel empty = new NullObjectLabel();
-					name = TsStringUtils.MakeTss(m_cache.TsStrFactory, m_cache.WritingSystemFactory.UserWs, empty.DisplayName);
+					name = TsStringUtils.MakeString(empty.DisplayName, m_cache.WritingSystemFactory.UserWs);
 				}
 				else
 				{
@@ -2345,7 +2338,7 @@ namespace SIL.FieldWorks.Common.Controls
 						label = XMLViewsStrings.ksAnyOf_;
 						break;
 				}
-				return m_cache.TsStrFactory.MakeString(label, m_cache.ServiceLocator.WritingSystemManager.UserWs);
+				return TsStringUtils.MakeString(label, m_cache.ServiceLocator.WritingSystemManager.UserWs);
 			}
 		}
 
@@ -2358,8 +2351,8 @@ namespace SIL.FieldWorks.Common.Controls
 		private ITsString ComposeLabel(ITsString name, string sFmt)
 		{
 			string sLabel = String.Format(sFmt, name.Text);
-			ITsString tsLabel = m_cache.TsStrFactory.MakeString(sLabel, m_cache.ServiceLocator.WritingSystemManager.UserWs);
-			int ich = sFmt.IndexOf("{0}");
+			ITsString tsLabel = TsStringUtils.MakeString(sLabel, m_cache.ServiceLocator.WritingSystemManager.UserWs);
+			int ich = sFmt.IndexOf("{0}", StringComparison.Ordinal);
 			if (ich >= 0)
 			{
 				int cchName = name.Text == null ? 0 : name.Text.Length;
@@ -2477,9 +2470,8 @@ namespace SIL.FieldWorks.Common.Controls
 
 				m_matcher = dlg.ResultingMatcher;
 				m_matcher.WritingSystemFactory = m_combo.WritingSystemFactory;
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
 				m_combo.SelectedIndex = -1; // allows setting text to item not in list, see comment in FindComboItem.Invoke().
-				m_combo.Tss = tsf.MakeString(dlg.Pattern, m_ws);
+				m_combo.Tss = TsStringUtils.MakeString(dlg.Pattern, m_ws);
 				ITsString label = m_combo.Tss;
 				m_matcher.Label = label;
 				// We can't call base.Invoke BEFORE we set the label, because it will persist
@@ -2594,9 +2586,8 @@ namespace SIL.FieldWorks.Common.Controls
 
 				m_matcher = dlg.ResultingMatcher;
 				m_matcher.WritingSystemFactory = m_combo.WritingSystemFactory;
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
 				m_combo.SelectedIndex = -1; // allows setting text to item not in list, see comment in FindComboItem.Invoke().
-				m_combo.Tss = tsf.MakeString(dlg.Pattern, m_ws);
+				m_combo.Tss = TsStringUtils.MakeString(dlg.Pattern, m_ws);
 				ITsString label = m_combo.Tss;
 				m_matcher.Label = label;
 				// We can't call base.Invoke BEFORE we set the label, because it will persist

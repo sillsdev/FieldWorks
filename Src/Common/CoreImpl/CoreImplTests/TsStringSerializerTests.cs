@@ -40,7 +40,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void SerializeTsStringToXml_Simple()
 		{
-			ITsString tss = TsStrFactory.MakeString("This is a test!", EnWS);
+			ITsString tss = TsStringUtils.MakeString("This is a test!", EnWS);
 			string xml = TsStringSerializer.SerializeTsStringToXml(tss, WritingSystemManager);
 			Assert.That(StripNewLines(xml), Is.EqualTo("<Str><Run ws=\"en\">This is a test!</Run></Str>"));
 		}
@@ -54,7 +54,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void SerializeTsStringToXml_MultiStringSameAsStr()
 		{
-			ITsString tss = TsStrFactory.MakeString("This is a test!", EnWS);
+			ITsString tss = TsStringUtils.MakeString("This is a test!", EnWS);
 			string xml = TsStringSerializer.SerializeTsStringToXml(tss, WritingSystemManager, EnWS);
 			Assert.That(StripNewLines(xml), Is.EqualTo("<AStr ws=\"en\"><Run ws=\"en\">This is a test!</Run></AStr>"));
 		}
@@ -68,7 +68,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void SerializeTsStringToXml_MultiStringHandlesDifferentWS()
 		{
-			ITsString tss = TsStrFactory.MakeString("This is a test!", EsWS);
+			ITsString tss = TsStringUtils.MakeString("This is a test!", EsWS);
 			string xml = TsStringSerializer.SerializeTsStringToXml(tss, WritingSystemManager, EnWS);
 			Assert.That(StripNewLines(xml), Is.EqualTo("<AStr ws=\"en\"><Run ws=\"es\">This is a test!</Run></AStr>"));
 		}
@@ -82,7 +82,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void SerializeTsStringToXml_Compose()
 		{
-			ITsString tss = TsStrFactory.MakeString("Laa yra la me\u0301n", EnWS);
+			ITsString tss = TsStringUtils.MakeString("Laa yra la me\u0301n", EnWS);
 			string xml = TsStringSerializer.SerializeTsStringToXml(tss, WritingSystemManager);
 			Assert.That(StripNewLines(xml), Is.EqualTo("<Str><Run ws=\"en\">Laa yra la m\u00E9n</Run></Str>"));
 		}
@@ -96,7 +96,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void SerializeTsStringToXml_WithStyle()
 		{
-			ITsString tss = TsStrFactory.MakeStringWithProps("This is a test!", TsPropsFactory.MakeProps("Monkey", EnWS, 0));
+			ITsString tss = TsStringUtils.MakeString("This is a test!", TsStringUtils.MakeProps("Monkey", EnWS));
 			string xml = TsStringSerializer.SerializeTsStringToXml(tss, WritingSystemManager);
 			Assert.That(StripNewLines(xml), Is.EqualTo("<Str><Run ws=\"en\" namedStyle=\"Monkey\">This is a test!</Run></Str>"));
 		}
@@ -110,7 +110,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void SerializeTsStringToXml_MultiStringWithStyle()
 		{
-			ITsString tss = TsStrFactory.MakeStringWithProps("This is a test!", TsPropsFactory.MakeProps("Monkey", EnWS, 0));
+			ITsString tss = TsStringUtils.MakeString("This is a test!", TsStringUtils.MakeProps("Monkey", EnWS));
 			string xml = TsStringSerializer.SerializeTsStringToXml(tss, WritingSystemManager, EnWS);
 			Assert.That(StripNewLines(xml), Is.EqualTo("<AStr ws=\"en\"><Run ws=\"en\" namedStyle=\"Monkey\">This is a test!</Run></AStr>"));
 		}
@@ -125,10 +125,10 @@ namespace SIL.CoreImpl
 		[Test]
 		public void SerializeTsStringToXml_WithEmbeddedData()
 		{
-			ITsPropsBldr tpb = TsPropsFactory.GetPropsBldr();
+			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntValue(FwTextPropType.ktptWs, FwTextPropVar.ktpvDefault, EnWS);
 			tpb.SetStringValue(FwTextPropType.ktptObjData, CreateObjData(FwObjDataTypes.kodtEmbeddedObjectData, "<FN><M>a</M></FN>"));
-			ITsString tss = TsStrFactory.MakeStringWithProps("a", tpb.GetTextProps());
+			ITsString tss = TsStringUtils.MakeString("a", tpb.GetTextProps());
 			string xml = TsStringSerializer.SerializeTsStringToXml(tss, WritingSystemManager);
 			Assert.That(StripNewLines(xml), Is.EqualTo("<Str><Run ws=\"en\" embedded=\"&lt;FN&gt;&lt;M&gt;a&lt;/M&gt;&lt;/FN&gt;\">a</Run></Str>"));
 		}
@@ -143,10 +143,10 @@ namespace SIL.CoreImpl
 		public void SerializeTsStringToXml_WithLink()
 		{
 			Guid expectedGuid = Guid.NewGuid();
-			ITsPropsBldr tpb = TsPropsFactory.GetPropsBldr();
+			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntValue(FwTextPropType.ktptWs, FwTextPropVar.ktpvDefault, EnWS);
 			tpb.SetStringValue(FwTextPropType.ktptObjData, CreateObjData(FwObjDataTypes.kodtNameGuidHot, expectedGuid.ToByteArray()));
-			ITsString tss = TsStrFactory.MakeStringWithProps(StringUtils.kChObject.ToString(), tpb.GetTextProps());
+			ITsString tss = TsStringUtils.MakeString(StringUtils.kChObject.ToString(), tpb.GetTextProps());
 			string xml = TsStringSerializer.SerializeTsStringToXml(tss, WritingSystemManager);
 			Assert.That(StripNewLines(xml), Is.EqualTo(string.Format("<Str><Run ws=\"en\" link=\"{0}\"></Run></Str>", expectedGuid)));
 		}
@@ -161,7 +161,7 @@ namespace SIL.CoreImpl
 		public void SerializeTsStringToXml_WithLinkDoesNotWriteObjData()
 		{
 			Guid expectedGuid = Guid.NewGuid();
-			ITsIncStrBldr tisb = TsStrFactory.GetIncBldr();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntValue(FwTextPropType.ktptWs, FwTextPropVar.ktpvDefault, EnWS);
 			tisb.Append("This is a link:");
 			tisb.ClearProps();
@@ -183,10 +183,10 @@ namespace SIL.CoreImpl
 		public void SerializeTsStringToXml_WithOwningLink()
 		{
 			Guid expectedGuid = Guid.NewGuid();
-			ITsPropsBldr tpb = TsPropsFactory.GetPropsBldr();
+			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntValue(FwTextPropType.ktptWs, FwTextPropVar.ktpvDefault, EnWS);
 			tpb.SetStringValue(FwTextPropType.ktptObjData, CreateObjData(FwObjDataTypes.kodtOwnNameGuidHot, expectedGuid.ToByteArray()));
-			ITsString tss = TsStrFactory.MakeStringWithProps(StringUtils.kChObject.ToString(), tpb.GetTextProps());
+			ITsString tss = TsStringUtils.MakeString(StringUtils.kChObject.ToString(), tpb.GetTextProps());
 			string xml = TsStringSerializer.SerializeTsStringToXml(tss, WritingSystemManager);
 			Assert.That(StripNewLines(xml), Is.EqualTo(string.Format("<Str><Run ws=\"en\" ownlink=\"{0}\"></Run></Str>", expectedGuid)));
 		}
@@ -200,10 +200,10 @@ namespace SIL.CoreImpl
 		[Test]
 		public void SerializeTsStringToXml_WithExternalLink()
 		{
-			ITsPropsBldr tpb = TsPropsFactory.GetPropsBldr();
+			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntValue(FwTextPropType.ktptWs, FwTextPropVar.ktpvDefault, EnWS);
 			tpb.SetStringValue(FwTextPropType.ktptObjData, CreateObjData(FwObjDataTypes.kodtExternalPathName, "C:\\Idont\\exist\\here.doc"));
-			ITsString tss = TsStrFactory.MakeStringWithProps("document", tpb.GetTextProps());
+			ITsString tss = TsStringUtils.MakeString("document", tpb.GetTextProps());
 			string xml = TsStringSerializer.SerializeTsStringToXml(tss, WritingSystemManager);
 			Assert.That(StripNewLines(xml), Is.EqualTo("<Str><Run ws=\"en\" externalLink=\"C:\\Idont\\exist\\here.doc\">document</Run></Str>"));
 		}
@@ -216,7 +216,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void SerializeTsStringToXml_MultipleRuns()
 		{
-			ITsIncStrBldr tisb = TsStrFactory.GetIncBldr();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntValue(FwTextPropType.ktptWs, FwTextPropVar.ktpvDefault, EnWS);
 			tisb.Append("This is a ");
 			tisb.ClearProps();
@@ -237,7 +237,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void SerializeTsStringToXml_MultiStringMultipleRuns()
 		{
-			ITsIncStrBldr tisb = TsStrFactory.GetIncBldr();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntValue(FwTextPropType.ktptWs, FwTextPropVar.ktpvDefault, EnWS);
 			tisb.Append("This is a ");
 			tisb.ClearProps();
@@ -258,7 +258,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void SerializeTsStringToXml_MultiStringLaterRunsLessProps()
 		{
-			ITsIncStrBldr tisb = TsStrFactory.GetIncBldr();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntValue(FwTextPropType.ktptWs, FwTextPropVar.ktpvDefault, EnWS);
 			tisb.SetStringValue(FwTextPropType.ktptNamedStyle, "Monkey");
 			tisb.Append("This is a ");

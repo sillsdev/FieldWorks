@@ -1150,9 +1150,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void GetMarkerForFootnote_Scripture_Nothing()
 		{
-			IScrFootnote footnote = (IScrFootnote)m_genesis.FootnotesOS[1];
-			IStTxtPara para = footnote.AddNewTextPara(ScrStyleNames.NormalFootnoteParagraph);
-			ITsStrFactory factory = TsStrFactoryClass.Create();
+			IScrFootnote footnote = m_genesis.FootnotesOS[1];
+			footnote.AddNewTextPara(ScrStyleNames.NormalFootnoteParagraph);
 			m_scr.FootnoteMarkerType = FootnoteMarkerTypes.NoFootnoteMarker;
 			m_scr.CrossRefMarkerType = FootnoteMarkerTypes.AutoFootnoteMarker;  // Just to make sure it's not using this by mistake
 			AssertEx.AreTsStringsEqual(MakeMarker(""), footnote.FootnoteMarker);
@@ -1167,9 +1166,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void GetMarkerForFootnote_Scripture_LiteralSymbol()
 		{
-			IScrFootnote footnote = (IScrFootnote)m_genesis.FootnotesOS[1];
-			IStTxtPara para = footnote.AddNewTextPara(ScrStyleNames.NormalFootnoteParagraph);
-			ITsStrFactory factory = TsStrFactoryClass.Create();
+			IScrFootnote footnote = m_genesis.FootnotesOS[1];
+			footnote.AddNewTextPara(ScrStyleNames.NormalFootnoteParagraph);
 			m_scr.FootnoteMarkerType = FootnoteMarkerTypes.SymbolicFootnoteMarker;
 			m_scr.FootnoteMarkerSymbol = "$";
 			m_scr.CrossRefMarkerType = FootnoteMarkerTypes.AutoFootnoteMarker;  // Just to make sure it's not using this by mistake
@@ -1210,9 +1208,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void GetMarkerForCrossRef_Scripture_Nothing()
 		{
-			IScrFootnote footnote = (IScrFootnote)m_genesis.FootnotesOS[1];
-			IStTxtPara para = footnote.AddNewTextPara(ScrStyleNames.CrossRefFootnoteParagraph);
-			ITsStrFactory factory = TsStrFactoryClass.Create();
+			IScrFootnote footnote = m_genesis.FootnotesOS[1];
+			footnote.AddNewTextPara(ScrStyleNames.CrossRefFootnoteParagraph);
 			m_scr.CrossRefMarkerType = FootnoteMarkerTypes.NoFootnoteMarker;
 			m_scr.FootnoteMarkerType = FootnoteMarkerTypes.AutoFootnoteMarker; // Just to make sure it's not using this by mistake
 			AssertEx.AreTsStringsEqual(MakeMarker(""), footnote.FootnoteMarker);
@@ -1227,9 +1224,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void GetMarkerForCrossRef_Scripture_LiteralSymbol()
 		{
-			IScrFootnote footnote = (IScrFootnote)m_genesis.FootnotesOS[1];
-			IStTxtPara para = footnote.AddNewTextPara(ScrStyleNames.CrossRefFootnoteParagraph);
-			ITsStrFactory factory = TsStrFactoryClass.Create();
+			IScrFootnote footnote = m_genesis.FootnotesOS[1];
+			footnote.AddNewTextPara(ScrStyleNames.CrossRefFootnoteParagraph);
 			m_scr.CrossRefMarkerType = FootnoteMarkerTypes.SymbolicFootnoteMarker;
 			m_scr.CrossRefMarkerSymbol = "$";
 			m_scr.FootnoteMarkerType = FootnoteMarkerTypes.AutoFootnoteMarker; // Just to make sure it's not using this by mistake

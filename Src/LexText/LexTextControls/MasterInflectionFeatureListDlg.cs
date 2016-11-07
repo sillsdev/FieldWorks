@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					type.CatalogSourceId = "Infl";
 					foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
 					{
-						var tss = m_cache.TsStrFactory.MakeString("Infl", ws.Handle);
+						var tss = TsStringUtils.MakeString("Infl", ws.Handle);
 						type.Abbreviation.set_String(ws.Handle, tss);
 						type.Name.set_String(ws.Handle, tss);
 					}

@@ -34,7 +34,6 @@ namespace SIL.FieldWorks.FDO.Application.Impl
 		private readonly IStTextRepository m_stTxtRepository;
 		private readonly IFwMetaDataCacheManaged m_mdc;
 		private readonly ISilDataAccessHelperInternal m_uowService;
-		private readonly ITsStrFactory m_tsf;
 		private readonly ILgWritingSystemFactory m_wsf;
 
 		/// <summary>
@@ -48,20 +47,18 @@ namespace SIL.FieldWorks.FDO.Application.Impl
 		/// </remarks>
 		internal DomainDataByFlid(ICmObjectRepository cmObjectRepository, IStTextRepository stTxtRepository,
 			IFwMetaDataCacheManaged mdc, ISilDataAccessHelperInternal uowService,
-			ITsStrFactory tsf, ILgWritingSystemFactory wsf)
+			ILgWritingSystemFactory wsf)
 		{
 			if (cmObjectRepository == null) throw new ArgumentNullException("cmObjectRepository");
 			if (stTxtRepository == null) throw new ArgumentNullException("stTxtRepository");
 			if (mdc == null) throw new ArgumentNullException("mdc");
 			if (uowService == null) throw new ArgumentNullException("uowService");
-			if (tsf == null) throw new ArgumentNullException("tsf");
 			if (wsf == null) throw new ArgumentNullException("wsf");
 
 			m_cmObjectRepository = cmObjectRepository;
 			m_stTxtRepository = stTxtRepository;
 			m_mdc = mdc;
 			m_uowService = uowService;
-			m_tsf = tsf;
 			m_wsf = wsf;
 		}
 
@@ -564,7 +561,7 @@ namespace SIL.FieldWorks.FDO.Application.Impl
 					ws = WritingSystemFactory.UserWs; // a desperate default.
 					break;
 			}
-			return m_tsf.EmptyString(ws);
+			return TsStringUtils.EmptyString(ws);
 		}
 
 		/// <summary>
@@ -596,7 +593,7 @@ namespace SIL.FieldWorks.FDO.Application.Impl
 		{
 			ITsMultiString tms = get_MultiStringProp(hvo, tag);
 			if (tms == null)
-				return m_tsf.MakeString("", ws);
+				return TsStringUtils.EmptyString(ws);
 			else
 				return tms.get_String(ws);
 		}

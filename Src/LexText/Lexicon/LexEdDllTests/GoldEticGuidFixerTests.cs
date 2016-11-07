@@ -5,6 +5,7 @@
 using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -118,7 +119,7 @@ namespace LexEdDllTests
 			var myNewPos = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			posList.PossibilitiesOS.Add(myNewPos);
-			myNewPos.Name.set_String(wsEn, Cache.TsStrFactory.MakeString("Mine", wsEn));
+			myNewPos.Name.set_String(wsEn, TsStringUtils.MakeString("Mine", wsEn));
 			var myNewPosGuid = myNewPos.Guid;
 			// SUT
 			Assert.That(GoldEticGuidFixer.ReplacePOSGuidsWithGoldEticGuids(Cache), Is.False);

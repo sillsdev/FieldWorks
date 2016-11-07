@@ -74,8 +74,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void ParseIntegerMatchCriteria_Equality()
 		{
 			// Set the matching criteria for this filter cell
-			ITsStrFactory factory = TsStrFactoryClass.Create();
-			m_cell.Contents = factory.MakeString("= 0", Cache.DefaultUserWs);
+			m_cell.Contents = TsStringUtils.MakeString("= 0", Cache.DefaultUserWs);
 
 			m_cell.ParseIntegerMatchCriteria();
 
@@ -83,7 +82,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(0, m_cell.MatchValue);
 
 			// repeat test with a different value
-			m_cell.Contents = factory.MakeString("= 1", Cache.DefaultUserWs);
+			m_cell.Contents = TsStringUtils.MakeString("= 1", Cache.DefaultUserWs);
 
 			m_cell.ParseIntegerMatchCriteria();
 
@@ -100,8 +99,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void ParseIntegerMatchCriteria_GreaterThanEqual()
 		{
 			// Set the matching criteria for this filter cell
-			ITsStrFactory factory = TsStrFactoryClass.Create();
-			m_cell.Contents = factory.MakeString(">= 5", Cache.DefaultUserWs);
+			m_cell.Contents = TsStringUtils.MakeString(">= 5", Cache.DefaultUserWs);
 
 			m_cell.ParseIntegerMatchCriteria();
 
@@ -109,7 +107,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(5, m_cell.MatchValue);
 
 			// repeat test with a different value
-			m_cell.Contents = factory.MakeString(">= 1", Cache.DefaultUserWs);
+			m_cell.Contents = TsStringUtils.MakeString(">= 1", Cache.DefaultUserWs);
 
 			m_cell.ParseIntegerMatchCriteria();
 
@@ -126,8 +124,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void ParseIntegerMatchCriteria_LessThanEqual()
 		{
 			// Set the matching criteria for this filter cell
-			ITsStrFactory factory = TsStrFactoryClass.Create();
-			m_cell.Contents = factory.MakeString("<= 5", Cache.DefaultUserWs);
+			m_cell.Contents = TsStringUtils.MakeString("<= 5", Cache.DefaultUserWs);
 
 			m_cell.ParseIntegerMatchCriteria();
 
@@ -135,7 +132,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(5, m_cell.MatchValue);
 
 			// repeat test with a different value
-			m_cell.Contents = factory.MakeString("<= 1", Cache.DefaultUserWs);
+			m_cell.Contents = TsStringUtils.MakeString("<= 1", Cache.DefaultUserWs);
 
 			m_cell.ParseIntegerMatchCriteria();
 
@@ -156,15 +153,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_cell.SetIntegerMatchCriteria(ComparisonTypes.kEquals, 0);
 
 			//verify the result
-			ITsStrFactory factory = TsStrFactoryClass.Create();
-			AssertEx.AreTsStringsEqual(factory.MakeString("= 0", Cache.DefaultUserWs),
+			AssertEx.AreTsStringsEqual(TsStringUtils.MakeString("= 0", Cache.DefaultUserWs),
 				m_cell.Contents);
 
 			// repeat test with a different value
 			m_cell.SetIntegerMatchCriteria(ComparisonTypes.kEquals, 1);
 
 			//verify the result
-			AssertEx.AreTsStringsEqual(factory.MakeString("= 1", Cache.DefaultUserWs),
+			AssertEx.AreTsStringsEqual(TsStringUtils.MakeString("= 1", Cache.DefaultUserWs),
 				m_cell.Contents);
 		}
 
@@ -179,15 +175,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_cell.SetIntegerMatchCriteria(ComparisonTypes.kGreaterThanEqual, 5);
 
 			//verify the result
-			ITsStrFactory factory = TsStrFactoryClass.Create();
-			AssertEx.AreTsStringsEqual(factory.MakeString(">= 5", Cache.DefaultUserWs),
+			AssertEx.AreTsStringsEqual(TsStringUtils.MakeString(">= 5", Cache.DefaultUserWs),
 				m_cell.Contents);
 
 			// repeat test with a different value
 			m_cell.SetIntegerMatchCriteria(ComparisonTypes.kGreaterThanEqual, 10);
 
 			//verify the result
-			AssertEx.AreTsStringsEqual(factory.MakeString(">= 10", Cache.DefaultUserWs),
+			AssertEx.AreTsStringsEqual(TsStringUtils.MakeString(">= 10", Cache.DefaultUserWs),
 				m_cell.Contents);
 		}
 
@@ -202,15 +197,14 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_cell.SetIntegerMatchCriteria(ComparisonTypes.kLessThanEqual, 5);
 
 			//verify the result
-			ITsStrFactory factory = TsStrFactoryClass.Create();
-			AssertEx.AreTsStringsEqual(factory.MakeString("<= 5", Cache.DefaultUserWs),
+			AssertEx.AreTsStringsEqual(TsStringUtils.MakeString("<= 5", Cache.DefaultUserWs),
 				m_cell.Contents);
 
 			// repeat test with a different value
 			m_cell.SetIntegerMatchCriteria(ComparisonTypes.kLessThanEqual, 10);
 
 			//verify the result
-			AssertEx.AreTsStringsEqual(factory.MakeString("<= 10", Cache.DefaultUserWs),
+			AssertEx.AreTsStringsEqual(TsStringUtils.MakeString("<= 10", Cache.DefaultUserWs),
 				m_cell.Contents);
 		}
 		#endregion
@@ -228,8 +222,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_cell.SetObjectMatchCriteria(null, false, false);
 
 			//verify the result
-			ITsStrFactory factory = TsStrFactoryClass.Create();
-			AssertEx.AreTsStringsEqual(factory.MakeString("Matches ", Cache.DefaultUserWs),
+			AssertEx.AreTsStringsEqual(TsStringUtils.MakeString("Matches ", Cache.DefaultUserWs),
 				m_cell.Contents);
 		}
 
@@ -425,8 +418,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void ParseObjectMatchCriteria_MatchWithoutSubItemsNoDefault()
 		{
 			// Set the matching criteria for this filter cell
-			ITsStrFactory factory = TsStrFactoryClass.Create();
-			m_cell.Contents = factory.MakeString("Matches ", Cache.DefaultUserWs);
+			m_cell.Contents = TsStringUtils.MakeString("Matches ", Cache.DefaultUserWs);
 
 			m_cell.ParseObjectMatchCriteria();
 

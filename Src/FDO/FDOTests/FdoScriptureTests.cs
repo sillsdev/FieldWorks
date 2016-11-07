@@ -68,13 +68,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				errorType1.IsProtected = true;
 				errorType1.Name.SetUserWritingSystem("Dummy Check 1");
 				errorType1.Description.UserDefaultWritingSystem =
-					TsStringUtils.MakeTss("does nothing", Cache.DefaultUserWs);
+					TsStringUtils.MakeString("does nothing", Cache.DefaultUserWs);
 
 				ICmAnnotationDefn errorType2 = factory.Create(kCheckId2, annDefnChkError);
 				errorType2.IsProtected = true;
 				errorType2.Name.SetUserWritingSystem("Dummy Check 2");
 				errorType2.Description.UserDefaultWritingSystem =
-					TsStringUtils.MakeTss("does nothing", Cache.DefaultUserWs);
+					TsStringUtils.MakeString("does nothing", Cache.DefaultUserWs);
 			});
 		}
 		#endregion
@@ -1233,9 +1233,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ICmPicture pict;
 			using (DummyFileMaker filemaker = new DummyFileMaker("junk.jpg", true))
 			{
-				ITsStrFactory factory = TsStrFactoryClass.Create();
 				pict = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create(filemaker.Filename,
-					factory.MakeString("Test picture caption", Cache.DefaultVernWs),
+					TsStringUtils.MakeString("Test picture caption", Cache.DefaultVernWs),
 					CmFolderTags.LocalPictures);
 				ITsStrBldr bldr = para.Contents.GetBldr();
 				pict.InsertORCAt(bldr, ichPos);

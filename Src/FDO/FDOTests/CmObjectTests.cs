@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
 using Is = NUnit.Framework.Is;
 
@@ -108,7 +109,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var form = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA = form;
 			form.Form.VernacularDefaultWritingSystem =
-				Cache.TsStrFactory.MakeString(lf, Cache.DefaultVernWs);
+				TsStringUtils.MakeString(lf, Cache.DefaultVernWs);
 			AddSense(entry, gloss);
 			return entry;
 		}
@@ -117,7 +118,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry.SensesOS.Add(sense);
-			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss,
+			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss,
 				Cache.DefaultAnalWs);
 			return sense;
 		}
@@ -126,7 +127,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			parent.SensesOS.Add(sense);
-			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss,
+			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss,
 				Cache.DefaultAnalWs);
 			return sense;
 		}
@@ -134,7 +135,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private IWfiMorphBundle MakeBundle(string wordform, ILexSense sense)
 		{
 			var wf = Cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create();
-			wf.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString(wordform, Cache.DefaultVernWs);
+			wf.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(wordform, Cache.DefaultVernWs);
 			var wa = Cache.ServiceLocator.GetInstance<IWfiAnalysisFactory>().Create();
 			wf.AnalysesOC.Add(wa);
 			var mb = Cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>().Create();

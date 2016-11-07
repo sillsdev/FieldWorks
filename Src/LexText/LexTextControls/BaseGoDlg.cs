@@ -33,7 +33,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected ICmObject m_selObject;
 		protected HashSet<int> m_vernHvos;
 		protected HashSet<int> m_analHvos;
-		protected ITsStrFactory m_tsf;
 		/// <summary>
 		/// </summary>
 		protected Mediator m_mediator;
@@ -216,7 +215,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 			}
 			m_cache = null;
-			m_tsf = null;
 
 			base.Dispose(disposing);
 		}
@@ -239,7 +237,6 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			Debug.Assert(cache != null);
 			m_cache = cache;
-			m_tsf = cache.TsStrFactory; // do this very early, other initializers may depend on it.
 
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
@@ -285,7 +282,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_tbForm.WritingSystemFactory = cache.WritingSystemFactory;
 			m_tbForm.WritingSystemCode = ws;
 			m_tbForm.AdjustStringHeight = false;
-			m_tbForm.Tss = m_tsf.MakeString("", ws);
+			m_tbForm.Tss = TsStringUtils.EmptyString(ws);
 			m_tbForm.StyleSheet = stylesheet;
 
 			// Setup the fancy message text box.
@@ -583,7 +580,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		protected void ResetForm()
 		{
-			m_tbForm.Tss = m_tsf.MakeString("", m_tbForm.WritingSystemCode);
+			m_tbForm.Tss = TsStringUtils.EmptyString(m_tbForm.WritingSystemCode);
 			m_tbForm.Select();
 		}
 

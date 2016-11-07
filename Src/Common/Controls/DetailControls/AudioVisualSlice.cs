@@ -14,6 +14,7 @@ using System;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
@@ -506,14 +507,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					vwenv.set_IntProperty((int)FwTextPropType.ktptEditable,
 						(int)FwTextPropVar.ktpvDefault,
 						(int)TptEditable.ktptNotEditable);
-					ITsString tss;
-					ITsStrFactory tsf = m_cache.TsStrFactory;
 					Debug.Assert(hvo != 0);
 					Debug.Assert(m_cache != null);
 					var file = m_cache.ServiceLocator.GetInstance<ICmFileRepository>().GetObject(hvo);
 					Debug.Assert(file != null);
 					string path = file.AbsoluteInternalPath;
-					tss = tsf.MakeString(path, m_cache.WritingSystemFactory.UserWs);
+					ITsString tss = TsStringUtils.MakeString(path, m_cache.WritingSystemFactory.UserWs);
 					vwenv.OpenParagraph();
 					vwenv.NoteDependency( new [] { m_cache.LangProject.Hvo, file.Hvo},
 						new [] {LangProjectTags.kflidLinkedFilesRootDir, CmFileTags.kflidInternalPath}, 2);

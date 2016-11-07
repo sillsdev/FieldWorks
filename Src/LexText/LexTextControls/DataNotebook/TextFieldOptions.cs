@@ -27,10 +27,9 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 	public partial class TextFieldOptions : UserControl
 	{
 		FdoCache m_cache;
-		private IHelpTopicProvider m_helpTopicProvider;
 		IVwStylesheet m_stylesheet;
 		string m_sValidShortLim;
-		bool m_fHandlingTextChanged = false;
+		bool m_fHandlingTextChanged;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TextFieldOptions"/> class.
@@ -55,7 +54,6 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			NotebookImportWiz.RnSfMarker rsfm)
 		{
 			m_cache = cache;
-			m_helpTopicProvider = helpTopicProvider;
 			m_stylesheet = stylesheet;
 			m_chkForEachLine.Checked = rsfm.m_txo.m_fStartParaNewLine;
 			m_chkAfterBlankLine.Checked = rsfm.m_txo.m_fStartParaBlankLine;
@@ -64,7 +62,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			m_tbShortLength.Text = rsfm.m_txo.m_cchShortLim.ToString();
 			m_tbShortLength.Enabled = rsfm.m_txo.m_fStartParaShortLine;
 
-			m_btnAddWritingSystem.Initialize(m_cache, helpTopicProvider, app, stylesheet);
+			m_btnAddWritingSystem.Initialize(m_cache, helpTopicProvider, app);
 			NotebookImportWiz.InitializeWritingSystemCombo(rsfm.m_txo.m_wsId, m_cache,
 				m_cbWritingSystem);
 			InitializeStylesCombo(rsfm.m_txo.m_sStyle);

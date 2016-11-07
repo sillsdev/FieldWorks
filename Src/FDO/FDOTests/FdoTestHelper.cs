@@ -74,7 +74,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 						CreateAnalysisForWord(word, segment, cache.DefaultAnalWs, fCreateGlosses);
 						return true;
 					},
-					(sPunc, iAnalysis) => CreatePuncForm(segment, cache.TsStrFactory.MakeString(sPunc, cache.DefaultVernWs)),
+					(sPunc, iAnalysis) => CreatePuncForm(segment, TsStringUtils.MakeString(sPunc, cache.DefaultVernWs)),
 					(ichOrc, iAnalysis) => CreatePuncForm(segment, paraContents.Substring(segment.BeginOffset + ichOrc, 1)));
 			}
 		}
@@ -112,7 +112,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			IWfiGlossFactory glossFactory = cache.ServiceLocator.GetInstance<IWfiGlossFactory>();
 			IWfiAnalysisFactory wfiAnalysisFactory = cache.ServiceLocator.GetInstance<IWfiAnalysisFactory>();
 
-			ITsString tssForm = cache.TsStrFactory.MakeString(word, cache.DefaultVernWs);
+			ITsString tssForm = TsStringUtils.MakeString(word, cache.DefaultVernWs);
 			IWfiWordform form;
 			IAnalysis analysis;
 			if (wfRepo.TryGetObject(tssForm, out form))

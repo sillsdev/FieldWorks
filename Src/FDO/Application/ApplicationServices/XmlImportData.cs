@@ -141,7 +141,6 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 		private ISilDataAccessManaged m_sda;
 		private IFwMetaDataCacheManaged m_mdc;
 		private ILgWritingSystemFactory m_wsf;
-		private ITsStrFactory m_tsf;
 		private ICmObjectRepository m_repoCmObject;
 		private WritingSystemManager m_wsManager;
 		private IProgress m_progress;
@@ -172,7 +171,6 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			m_sda = cache.DomainDataByFlid as ISilDataAccessManaged;
 			m_mdc = cache.DomainDataByFlid.MetaDataCache as IFwMetaDataCacheManaged;
 			m_wsf = cache.WritingSystemFactory;
-			m_tsf = cache.TsStrFactory;
 			m_createLinks = fCreateMissingLinks;
 		}
 
@@ -1601,7 +1599,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				data = String.Empty;
 			else
 				data = xrdr.ReadString();
-			m_sda.SetMultiStringAlt(fi.Owner.Hvo, fi.FieldId, ws, m_tsf.MakeString(data, ws));
+			m_sda.SetMultiStringAlt(fi.Owner.Hvo, fi.FieldId, ws, TsStringUtils.MakeString(data, ws));
 			if (!fEmpty)
 				xrdr.ReadEndElement();
 			xrdr.MoveToContent();
@@ -1626,7 +1624,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				if (tssOld != null && tssOld.Length > 0)
 				{
 					ITsIncStrBldr tisb = tssOld.GetIncBldr();
-					tisb.AppendTsString(m_cache.TsStrFactory.MakeString("; ", m_cache.DefaultUserWs));
+					tisb.AppendTsString(TsStringUtils.MakeString("; ", m_cache.DefaultUserWs));
 					tisb.AppendTsString(tss);
 					tss = tisb.GetString();
 				}
@@ -2469,7 +2467,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				msa.MsaType = MsaType.kStem;
 			else
 				msa.MsaType = MsaType.kUnclassified;
-			var tssForm = m_cache.TsStrFactory.MakeString(sForm, ws);
+			var tssForm = TsStringUtils.MakeString(sForm, ws);
 			ILexEntry le = m_factLexEntry.Create(morphType, tssForm, (ITsString)null, msa);
 			IncrementCreatedClidCount(LexEntryTags.kClassId);
 			ITsString tssResidue;
@@ -2507,27 +2505,26 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 
 		private string GetCreatedEntryMessage(int flid, int userWs, int hvo, string sForm, out ITsString tssResidue)
 		{
-			var tsFact = m_cache.TsStrFactory;
 			switch (flid)
 			{
 				case kflidLexicalRelations:
-					tssResidue = tsFact.MakeString(AppStrings.ksCheckCreatedForLexicalRelation, userWs);
+					tssResidue = TsStringUtils.MakeString(AppStrings.ksCheckCreatedForLexicalRelation, userWs);
 					return String.Format(AppStrings.ksCreatedForLexicalRelation,
 						m_sFilename, hvo, sForm);
 				case kflidCrossReferences:
-					tssResidue = tsFact.MakeString(AppStrings.ksCheckCreatedForCrossReference, userWs);
+					tssResidue = TsStringUtils.MakeString(AppStrings.ksCheckCreatedForCrossReference, userWs);
 					return String.Format(AppStrings.ksCreatedForCrossReference,
 						m_sFilename, hvo, sForm);
 				case LexEntryRefTags.kflidComponentLexemes:
-					tssResidue = tsFact.MakeString(AppStrings.ksCheckCreatedForComponentsLink, userWs);
+					tssResidue = TsStringUtils.MakeString(AppStrings.ksCheckCreatedForComponentsLink, userWs);
 					return String.Format(AppStrings.ksCreatedForComponentsLink,
 						m_sFilename, hvo, sForm);
 				case LexEntryRefTags.kflidPrimaryLexemes:
-					tssResidue = tsFact.MakeString(AppStrings.ksCheckCreatedForShowSubentryUnderLink, userWs);
+					tssResidue = TsStringUtils.MakeString(AppStrings.ksCheckCreatedForShowSubentryUnderLink, userWs);
 					return String.Format(AppStrings.ksCreatedForShowSubentryUnderLink,
 						m_sFilename, hvo, sForm);
 				default:
-					tssResidue = tsFact.MakeString(AppStrings.ksCheckCreatedForLinkTarget, userWs);
+					tssResidue = TsStringUtils.MakeString(AppStrings.ksCheckCreatedForLinkTarget, userWs);
 					return String.Format(AppStrings.ksCreatedForLinkTarget,
 						m_sFilename, hvo, sForm);
 			}
@@ -2678,10 +2675,10 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				sName = sAbbr;
 			else if (String.IsNullOrEmpty(sAbbr))
 				sAbbr = sName;
-			lrt.Name.set_String(ws, m_cache.TsStrFactory.MakeString(sName, ws));
+			lrt.Name.set_String(ws, TsStringUtils.MakeString(sName, ws));
 			WsString wss = new WsString(ws, sName);
 			m_mapNameLrt[wss] = lrt;
-			lrt.Abbreviation.set_String(ws, m_cache.TsStrFactory.MakeString(sAbbr, ws));
+			lrt.Abbreviation.set_String(ws, TsStringUtils.MakeString(sAbbr, ws));
 			wss = new WsString(ws, sAbbr);
 			m_mapAbbrLrt[wss] = lrt;
 			// We have to choose a type.  This is the most general in some ways.
@@ -3020,12 +3017,11 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 
 		private ITsString SafeAppendToTsString(ITsString existing, string toAppend, int ws)
 		{
-			var tsFact = m_cache.TsStrFactory;
-			var newTsStr = tsFact.MakeString(toAppend, ws);
+			ITsString newTsStr = TsStringUtils.MakeString(toAppend, ws);
 			if (existing == null || existing.Length == 0)
 				return newTsStr;
 			ITsStrBldr tisb = existing.GetBldr();
-			tisb.Append(tsFact.MakeString("; ", ws));
+			tisb.Append(TsStringUtils.MakeString("; ", ws));
 			tisb.Append(newTsStr);
 			return tisb.GetString();
 		}

@@ -312,7 +312,7 @@ namespace SIL.FieldWorks.LexText.Controls
 										Path.Combine(FdoFileHelper.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
 										"audio");
 									if (internalPath != exportedForm)
-										tssString = m_cache.TsStrFactory.MakeString(exportedForm, ws);
+										tssString = TsStringUtils.MakeString(exportedForm, ws);
 								}
 								WriteFormElement(w, ws, tssString);
 							}

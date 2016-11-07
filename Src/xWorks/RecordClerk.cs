@@ -1491,7 +1491,7 @@ namespace SIL.FieldWorks.XWorks
 					if (uiObj.CanDelete(out cannotDeleteMsg))
 						dlg.SetDlgInfo(uiObj, Cache, m_mediator, m_propertyTable);
 					else
-						dlg.SetDlgInfo(uiObj, Cache, m_mediator, m_propertyTable, Cache.TsStrFactory.MakeString(cannotDeleteMsg, Cache.DefaultUserWs));
+						dlg.SetDlgInfo(uiObj, Cache, m_mediator, m_propertyTable, TsStringUtils.MakeString(cannotDeleteMsg, Cache.DefaultUserWs));
 				}
 				var window = m_propertyTable.GetValue<Form>("window");
 				if (DialogResult.Yes == dlg.ShowDialog(window))

@@ -169,7 +169,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				if (!(Owner is RnGenericRec))
-					return Cache.TsStrFactory.EmptyString(Cache.DefaultAnalWs);
+					return TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 				var pattern = Strings.ksNumberOfParent; // typically "{0} of {1}".
 				return FormatNumberOfParent(pattern);
 			}
@@ -307,7 +307,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				ITsStrBldr bldr = m_cache.TsStrFactory.GetBldr();
+				ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 				bldr.SetIntPropValues(0, 0,
 					(int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, m_cache.DefaultAnalWs);
 				return SubrecordIndexTSS(bldr);
@@ -341,8 +341,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				notebook.UpdateAllRecords();
 
 				int flid = m_cache.MetaDataCache.GetFieldId2(RnGenericRecTags.kClassId, "IndexInOwnerTSS", false);
-				ITsString dummy = m_cache.TsStrFactory.MakeString("", m_cache.DefaultAnalWs);
-				RegisterAllSubrecordIndexTSSChanged(this.SubRecordsOS, flid, dummy);
+				ITsString dummy = TsStringUtils.EmptyString(m_cache.DefaultAnalWs);
+				RegisterAllSubrecordIndexTSSChanged(SubRecordsOS, flid, dummy);
 				NoteSubrecordOfChanges(this, e.Index);
 			}
 			base.AddObjectSideEffectsInternal(e);
@@ -366,8 +366,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				notebook.UpdateAllRecords();
 
 				int flid = m_cache.MetaDataCache.GetFieldId2(RnGenericRecTags.kClassId, "IndexInOwnerTSS", false);
-				ITsString dummy = m_cache.TsStrFactory.MakeString("", m_cache.DefaultAnalWs);
-				RegisterAllSubrecordIndexTSSChanged(this.SubRecordsOS, flid, dummy);
+				ITsString dummy = TsStringUtils.EmptyString(m_cache.DefaultAnalWs);
+				RegisterAllSubrecordIndexTSSChanged(SubRecordsOS, flid, dummy);
 				NoteSubrecordOfChanges(this, e.Index);
 			}
 			base.RemoveObjectSideEffectsInternal(e);

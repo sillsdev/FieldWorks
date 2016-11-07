@@ -13,10 +13,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
 using System.Xml;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.Resources;
@@ -429,7 +428,7 @@ namespace SIL.FieldWorks.Common.Framework
 					int ws = GetWs(usage.Attributes);
 					string usageInfo = usage.InnerText;
 					if (ws > 0 && !String.IsNullOrEmpty(usageInfo))
-						style.Usage.set_String(ws, style.Cache.TsStrFactory.MakeString(usageInfo, ws));
+						style.Usage.set_String(ws, TsStringUtils.MakeString(usageInfo, ws));
 				}
 
 				// If the user has modified the style manually, we don't want to overwrite it

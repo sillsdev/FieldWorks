@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		private IVwStylesheet m_stylesheet;
 		private Mediator m_mediator;
 		private WritingSystemManager m_wsManager;
-		private XCore.PropertyTable m_propertyTable;
+		private PropertyTable m_propertyTable;
 		private IStTextFactory m_factStText;
 		private IStTextRepository m_repoStText;
 		private IStTxtParaFactory m_factPara;
@@ -883,7 +883,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			}
 			m_lvMappingLanguages.Sort();
 			IApp app = m_propertyTable.GetValue<IApp>("App");
-			m_btnAddWritingSystem.Initialize(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, m_stylesheet, wss);
+			m_btnAddWritingSystem.Initialize(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, wss);
 		}
 
 		private ListViewItem CreateListViewItemForWS(CoreWritingSystemDefinition ws)
@@ -3281,7 +3281,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 				rgsText.Add(String.Empty);
 				rgcmText.Add(null);
 			}
-			ITsIncStrBldr tisb = m_cache.TsStrFactory.GetIncBldr();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			for (int i = 0; i < rgsText.Count; ++i)
 			{
 				string sRun = rgsText[i];
@@ -4673,7 +4673,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 					possList.Add(item);
 				else
 					itemParent.SubPossibilitiesOS.Add(item);
-				ITsString tss = m_cache.TsStrFactory.MakeString(rgsHier[i], m_cache.DefaultAnalWs);
+				ITsString tss = TsStringUtils.MakeString(rgsHier[i], m_cache.DefaultAnalWs);
 				item.Name.AnalysisDefaultWritingSystem = tss;
 				item.Abbreviation.AnalysisDefaultWritingSystem = tss;
 				map.Add(rgsHier[i].ToLowerInvariant(), item);

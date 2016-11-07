@@ -162,7 +162,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				IPhEnvironment envNew = CreateNewPhEnvironment();
 				m_cache.LangProject.PhonologicalDataOA.EnvironmentsOS.Add(envNew);
-				envNew.StringRepresentation = m_cache.TsStrFactory.MakeString(sEnv, m_cache.DefaultAnalWs);
+				envNew.StringRepresentation = TsStringUtils.MakeString(sEnv, m_cache.DefaultAnalWs);
 				rghvo = new List<IPhEnvironment>();
 				rghvo.Add(envNew);
 				m_dictEnvirons.Add(sEnv, rghvo);

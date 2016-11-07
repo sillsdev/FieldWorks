@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
@@ -19,22 +20,13 @@ namespace SIL.FieldWorks.IText
 	public class ShowSpaceDecoratorTests
 	{
 		private string zws = AnalysisOccurrence.KstrZws;
-		private ITsStrFactory m_tsf;
-
-		[SetUp]
-		public void Setup()
-		{
-			// Must do here rather than in initializer because initializer is called before base constructor
-			// registers COM classes.
-			m_tsf = TsStrFactoryClass.Create();
-		}
 
 		[Test]
 		public void DecoratorDoesNothingWhenTurnedOff()
 		{
 			var mockDa = new MockDa();
 			var underlyingValue = "hello" + zws + "world";
-			mockDa.StringValues[new Tuple<int, int>(27, StTxtParaTags.kflidContents)] = m_tsf.MakeString(underlyingValue, 77);
+			mockDa.StringValues[new Tuple<int, int>(27, StTxtParaTags.kflidContents)] = TsStringUtils.MakeString(underlyingValue, 77);
 			var decorator = new ShowSpaceDecorator(mockDa);
 
 			var tss = decorator.get_StringProp(27, StTxtParaTags.kflidContents);
@@ -47,7 +39,7 @@ namespace SIL.FieldWorks.IText
 		{
 			var mockDa = new MockDa();
 			var underlyingValue = "";
-			mockDa.StringValues[new Tuple<int, int>(27, StTxtParaTags.kflidContents)] = m_tsf.MakeString(underlyingValue, 77);
+			mockDa.StringValues[new Tuple<int, int>(27, StTxtParaTags.kflidContents)] = TsStringUtils.MakeString(underlyingValue, 77);
 			var decorator = new ShowSpaceDecorator(mockDa);
 			decorator.ShowSpaces = true;
 
@@ -61,7 +53,7 @@ namespace SIL.FieldWorks.IText
 		{
 			var mockDa = new MockDa();
 			var underlyingValue = zws + "hello" + zws + "world" + zws + "today";
-			mockDa.StringValues[new Tuple<int, int>(27, StTxtParaTags.kflidContents)] = m_tsf.MakeString(underlyingValue, 77);
+			mockDa.StringValues[new Tuple<int, int>(27, StTxtParaTags.kflidContents)] = TsStringUtils.MakeString(underlyingValue, 77);
 			var decorator = new ShowSpaceDecorator(mockDa);
 			decorator.ShowSpaces = true;
 
@@ -75,7 +67,7 @@ namespace SIL.FieldWorks.IText
 		{
 			var mockDa = new MockDa();
 			var underlyingValue = "hello world today keep these spaces";
-			var bldr = m_tsf.MakeString(underlyingValue, 77).GetBldr();
+			var bldr = TsStringUtils.MakeString(underlyingValue, 77).GetBldr();
 			bldr.SetIntPropValues("hello world".Length, "hello world".Length + 1, (int) FwTextPropType.ktptBackColor,
 				(int) FwTextPropVar.ktpvDefault, ShowSpaceDecorator.KzwsBackColor);
 			bldr.SetIntPropValues("hello".Length, "hello".Length + 1, (int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault,
@@ -93,7 +85,7 @@ namespace SIL.FieldWorks.IText
 		{
 			var mockDa = new MockDa();
 			var underlyingValue = "";
-			var bldr = m_tsf.MakeString(underlyingValue, 77).GetBldr();
+			var bldr = TsStringUtils.MakeString(underlyingValue, 77).GetBldr();
 			var decorator = new ShowSpaceDecorator(mockDa);
 			decorator.ShowSpaces = true;
 			decorator.SetString(27, StTxtParaTags.kflidContents, bldr.GetString());

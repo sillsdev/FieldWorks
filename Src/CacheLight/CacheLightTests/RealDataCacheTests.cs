@@ -540,7 +540,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassJ", "StringProp10", false);
 
-			var tsString = TsStringUtils.MakeTss("/ a _", 42, "Verse");
+			var tsString = TsStringUtils.MakeString("/ a _", 42, "Verse");
 			SilDataAccess.SetString(hvo, tag, tsString);
 
 			var tsStringNew = SilDataAccess.get_StringProp(hvo, tag);
@@ -574,8 +574,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassK", "MultiStringProp11", false);
 
-			var tsf = TsStrFactoryClass.Create();
-			var tss = tsf.MakeString("Verb", 1);
+			var tss = TsStringUtils.MakeString("Verb", 1);
 			SilDataAccess.SetMultiStringAlt(hvo, tag, 1, tss);
 
 			var tssNew = SilDataAccess.get_MultiStringAlt(hvo, tag, 1);
@@ -594,10 +593,9 @@ namespace SIL.FieldWorks.CacheLightTests
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassK", "MultiStringProp11", false);
 
-			var tsf = TsStrFactoryClass.Create();
-			var tss = tsf.MakeString("Verb", 1);
+			var tss = TsStringUtils.MakeString("Verb", 1);
 			SilDataAccess.SetMultiStringAlt(hvo, tag, 1, tss);
-			tss = tsf.MakeString("Verbo", 2);
+			tss = TsStringUtils.MakeString("Verbo", 2);
 			SilDataAccess.SetMultiStringAlt(hvo, tag, 2, tss);
 
 			var tsms = SilDataAccess.get_MultiStringProp(hvo, tag);
@@ -617,8 +615,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassK", "MultiStringProp11", false);
 
-			var tsf = TsStrFactoryClass.Create();
-			var tss = tsf.MakeString("Verb", 1);
+			var tss = TsStringUtils.MakeString("Verb", 1);
 			SilDataAccess.SetMultiStringAlt(hvo, tag, 0, tss);
 		}
 
@@ -635,8 +632,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassK", "MultiStringProp11", false);
 
-			var tsf = TsStrFactoryClass.Create();
-			var tss = tsf.MakeString("Verb", 1);
+			var tss = TsStringUtils.MakeString("Verb", 1);
 			SilDataAccess.SetMultiStringAlt(hvo, tag, -1, tss);
 		}
 

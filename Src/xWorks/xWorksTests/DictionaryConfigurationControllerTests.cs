@@ -4,13 +4,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -1264,7 +1262,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var entryWithHeadword = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			entryWithHeadword.CitationForm.set_String(wsFr, Cache.TsStrFactory.MakeString("Headword", wsFr));
+			entryWithHeadword.CitationForm.set_String(wsFr, TsStringUtils.MakeString("Headword", wsFr));
 			return entryWithHeadword;
 		}
 
@@ -1383,11 +1381,11 @@ namespace SIL.FieldWorks.XWorks
 			var entry = factory.Create();
 			var wsEn = cache.WritingSystemFactory.GetWsFromStr("en");
 			var wsFr = cache.WritingSystemFactory.GetWsFromStr("fr");
-			entry.CitationForm.set_String(wsFr, cache.TsStrFactory.MakeString("mot", wsFr));
+			entry.CitationForm.set_String(wsFr, TsStringUtils.MakeString("mot", wsFr));
 			var senseFactory = cache.ServiceLocator.GetInstance<ILexSenseFactory>();
 			var sense = senseFactory.Create();
 			entry.SensesOS.Add(sense);
-			sense.Gloss.set_String(wsEn, cache.TsStrFactory.MakeString("word", wsEn));
+			sense.Gloss.set_String(wsEn, TsStringUtils.MakeString("word", wsEn));
 		}
 
 		[Test]
@@ -1909,7 +1907,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 		private ITsString AnalysisTss(string form)
 		{
-			return Cache.TsStrFactory.MakeString(form, Cache.DefaultAnalWs);
+			return TsStringUtils.MakeString(form, Cache.DefaultAnalWs);
 		}
 		private void RemoveNewVariantType(ILexEntryType newType)
 		{

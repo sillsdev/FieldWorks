@@ -19,7 +19,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application;
 using System.ComponentModel;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -198,7 +197,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			protected ReversalIndexEntryVc m_vc;
 			protected int m_heightView;
 			protected int m_hvoOldSelection;
-			protected ITsStrFactory m_tsf = TsStrFactoryClass.Create();
 			protected int m_hvoObj;
 			protected ILexSense m_sense;
 			protected List<IReversalIndex> m_usedIndices = new List<IReversalIndex>();
@@ -238,9 +236,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 				m_sense = null;
 				m_vc = null;
-				if (m_tsf != null)
-					System.Runtime.InteropServices.Marshal.ReleaseComObject(m_tsf);
-				m_tsf = null;
 				m_sdaRev = null;
 				m_usedIndices = null;
 			}
@@ -654,7 +649,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					m_sdaRev.CacheUnicodeProp(idx.Hvo, ReversalIndexTags.kflidWritingSystem, idx.WritingSystem, idx.WritingSystem.Length);
 					// Cache the WS abbreviation in the dummy cache.
 					m_sdaRev.CacheStringProp(ws.Handle, ReversalEntryDataAccess.kflidWsAbbr,
-						m_fdoCache.TsStrFactory.MakeString(ws.Abbreviation, m_fdoCache.DefaultUserWs));
+						TsStringUtils.MakeString(ws.Abbreviation, m_fdoCache.DefaultUserWs));
 
 					// Cache entries used by the sense for idx.
 					// Cache the vector of IDs for referenced reversal entries.
@@ -669,7 +664,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						entryIds.Add(rie.Hvo);
 					int wsHandle = m_fdoCache.ServiceLocator.WritingSystemManager.GetWsFromStr(idx.WritingSystem);
 					// Cache a dummy string for each WS.
-					ITsString tssEmpty = m_tsf.EmptyString(wsHandle);
+					ITsString tssEmpty = TsStringUtils.EmptyString(wsHandle);
 					m_sdaRev.CacheStringAlt(m_dummyId, ReversalIndexEntryTags.kflidReversalForm,
 						wsHandle, tssEmpty);
 					entryIds.Add(m_dummyId--);
@@ -712,7 +707,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						}
 						if (form != null)
 						{
-							ITsString tss = m_tsf.MakeString(form, ws);
+							ITsString tss = TsStringUtils.MakeString(form, ws);
 							m_sdaRev.CacheStringAlt(ent.Hvo, ReversalIndexEntryTags.kflidReversalForm, ws, tss);
 						}
 					}
@@ -800,7 +795,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				ITsTextProps props = tss.get_PropertiesAt(0);
 				int nVar;
 				ws = props.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
-				ITsString tssEmpty = m_tsf.EmptyString(ws);
+				ITsString tssEmpty = TsStringUtils.EmptyString(ws);
 				m_sdaRev.CacheStringAlt(m_dummyId, ReversalIndexEntryTags.kflidReversalForm,
 					ws, tssEmpty);
 				// Refresh
@@ -910,7 +905,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				m_cache = null;
 				m_usedIndices = null;
 				m_ttpLabel = null;
-				m_tsf = null;
 				IsDisposed = true;
 			}
 			#endregion
@@ -1074,9 +1068,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 												(int)FwTextPropVar.ktpvDefault, wsAnal);
 											ttpBase = tpbBase.GetTextProps();
 										}
-										ITsString tssWs = m_tsf.MakeStringWithPropsRgch(sWs, sWs.Length, ttpLabel);
+										ITsString tssWs = TsStringUtils.MakeString(sWs, ttpLabel);
 										tisb.AppendTsString(tssWs);
-										ITsString tssSpace = m_tsf.MakeStringWithPropsRgch(" ", 1, ttpBase);
+										ITsString tssSpace = TsStringUtils.MakeString(" ", ttpBase);
 										tisb.AppendTsString(tssSpace);
 									}
 									tisb.SetIntPropValues((int)FwTextPropType.ktptWs,
@@ -1269,7 +1263,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					if (m_mapHvoWsRevForm.TryGetValue(key, out tss))
 						return tss;
 					else
-						return TsStrFactoryClass.Create().EmptyString(ws); // do NOT return null!
+						return TsStringUtils.EmptyString(ws); // do NOT return null!
 				}
 				else
 				{

@@ -77,14 +77,14 @@ namespace SIL.FieldWorks.IText
 				m_fIconsForAnalysisChoices = fIconsForAnalysisChoices;
 				m_wsAnalysis = caches.MainCache.DefaultAnalWs;
 				m_wsUi = caches.MainCache.LanguageWritingSystemFactoryAccessor.UserWs;
-				m_tssMissingMorphs = m_tsf.MakeString(ITextStrings.ksStars, m_sandbox.RawWordformWs);
-				m_tssEmptyAnalysis = m_tsf.MakeString("", m_wsAnalysis);
-				m_tssEmptyVern = m_tsf.MakeString("", m_sandbox.RawWordformWs);
+				m_tssMissingMorphs = TsStringUtils.MakeString(ITextStrings.ksStars, m_sandbox.RawWordformWs);
+				m_tssEmptyAnalysis = TsStringUtils.EmptyString(m_wsAnalysis);
+				m_tssEmptyVern = TsStringUtils.EmptyString(m_sandbox.RawWordformWs);
 				m_tssMissingEntry = m_tssMissingMorphs;
 				// It's tempting to re-use m_tssMissingMorphs, but the analysis and vernacular default
 				// fonts may have different sizes, requiring differnt line heights to align things well.
-				m_tssMissingMorphGloss = m_tsf.MakeString(ITextStrings.ksStars, m_wsAnalysis);
-				m_tssMissingMorphPos = m_tsf.MakeString(ITextStrings.ksStars, m_wsAnalysis);
+				m_tssMissingMorphGloss = TsStringUtils.MakeString(ITextStrings.ksStars, m_wsAnalysis);
+				m_tssMissingMorphPos = TsStringUtils.MakeString(ITextStrings.ksStars, m_wsAnalysis);
 				m_tssMissingWordPos = m_tssMissingMorphPos;
 				m_PulldownArrowPic = OLECvt.ConvertImageToComPicture(ResourceHelper.InterlinPopupArrow);
 				m_dxmpArrowPicWidth = ConvertPictureWidthToMillipoints(m_PulldownArrowPic.Picture);
@@ -140,7 +140,7 @@ namespace SIL.FieldWorks.IText
 			/// <summary/>
 			protected virtual void Dispose(bool fDisposing)
 			{
-				System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().ToString() + " *******");
+				Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().ToString() + " *******");
 				if (fDisposing && !IsDisposed)
 				{
 					// Dispose managed resources here.
@@ -152,7 +152,6 @@ namespace SIL.FieldWorks.IText
 				m_sandbox = null; // Client gave it to us, so has to deal with it.
 				m_caches = null; // Client gave it to us, so has to deal with it.
 				m_PulldownArrowPic = null;
-				m_tsf = null;
 				m_tssMissingEntry = null; // Same as m_tssMissingMorphs, so just null it.
 				m_tssMissingWordPos = null; // Same as m_tssMissingMorphPos, so just null it.
 				m_tssMissingMorphs = null;
@@ -650,7 +649,7 @@ namespace SIL.FieldWorks.IText
 					AddPullDownIcon(vwenv, ktagWordGlossIcon);
 					m_fIconForWordGloss = true;
 				}
-				else if (m_fIconForWordGloss == true && cGlosses == 0)
+				else if (m_fIconForWordGloss && cGlosses == 0)
 				{
 					// reset
 					m_fIconForWordGloss = false;
@@ -661,8 +660,7 @@ namespace SIL.FieldWorks.IText
 					//set directly to the MultipleApproved color rather than the stored one
 					//the state of the two could be different.
 					SetBGColor(vwenv, InterlinVc.MultipleApprovedGuessColor);
-					ITsStrFactory fact = TsStrFactoryClass.Create();
-					ITsString count = TsStringUtils.MakeTss(fact, Cache.DefaultUserWs, "" + cGlosses);
+					ITsString count = TsStringUtils.MakeString("" + cGlosses, Cache.DefaultUserWs);
 					//make the number black.
 					SetColor(vwenv, 0);
 					vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing,

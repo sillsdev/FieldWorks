@@ -9,7 +9,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
@@ -236,7 +235,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private ITsString GetSenseNumberTss(ILexSense sense)
 		{
-			return Cache.TsStrFactory.MakeString(GetSenseNumber(sense),
+			return TsStringUtils.MakeString(GetSenseNumber(sense),
 				Cache.DefaultUserWs);
 		}
 

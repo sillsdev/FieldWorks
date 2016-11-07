@@ -1021,7 +1021,7 @@ namespace SIL.FieldWorks.FdoUi
 						if (CanDelete(out cannotDeleteMsg))
 						dlg.SetDlgInfo(this, m_cache, Mediator, m_propertyTable);
 						else
-							dlg.SetDlgInfo(this, m_cache, Mediator, m_propertyTable, m_cache.TsStrFactory.MakeString(cannotDeleteMsg, m_cache.DefaultUserWs));
+							dlg.SetDlgInfo(this, m_cache, Mediator, m_propertyTable, TsStringUtils.MakeString(cannotDeleteMsg, m_cache.DefaultUserWs));
 						if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
 						{
 							ReallyDeleteUnderlyingObject();
@@ -1281,19 +1281,18 @@ namespace SIL.FieldWorks.FdoUi
 			{
 				ISilDataAccess sda = vwenv.DataAccess;
 				int wsUi = sda.WritingSystemFactory.UserWs;
-				ITsStrFactory tsf = m_cache.TsStrFactory;
 				var co = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 				switch (frag)
 				{
 					case (int)VcFrags.kfragHeadWord:
 						var le = co as ILexEntry;
-						vwenv.AddString(le != null ? le.HeadWord : tsf.MakeString(co.ShortName, wsUi));
+						vwenv.AddString(le != null ? le.HeadWord : TsStringUtils.MakeString(co.ShortName, wsUi));
 						break;
 					case (int)VcFrags.kfragShortName:
-						vwenv.AddString(tsf.MakeString(co.ShortName, wsUi));
+						vwenv.AddString(TsStringUtils.MakeString(co.ShortName, wsUi));
 						break;
 					default:
-						vwenv.AddString(tsf.MakeString(co.ToString(), wsUi));
+						vwenv.AddString(TsStringUtils.MakeString(co.ToString(), wsUi));
 						break;
 				}
 			}
@@ -1315,25 +1314,24 @@ namespace SIL.FieldWorks.FdoUi
 					return;
 
 				int wsAnal = DefaultWs;
-				ITsStrFactory tsf = m_cache.TsStrFactory;
 				ICmObject co;
 				switch (frag)
 				{
 					case (int)VcFrags.kfragHeadWord:
 						co = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 						var le = co as ILexEntry;
-						vwenv.AddString(le != null ? le.HeadWord : tsf.MakeString(co.ShortName, wsAnal));
+						vwenv.AddString(le != null ? le.HeadWord : TsStringUtils.MakeString(co.ShortName, wsAnal));
 						break;
 					case (int)VcFrags.kfragShortName:
 						co = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-						vwenv.AddString(tsf.MakeString(co.ShortName, wsAnal));
+						vwenv.AddString(TsStringUtils.MakeString(co.ShortName, wsAnal));
 						break;
 					case (int)VcFrags.kfragPosAbbrAnalysis:
 						vwenv.AddStringAltMember(CmPossibilityTags.kflidAbbreviation, wsAnal, this);
 						break;
 					default:
 						co = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-						vwenv.AddString(tsf.MakeString(co.ToString(), wsAnal));
+						vwenv.AddString(TsStringUtils.MakeString(co.ToString(), wsAnal));
 						break;
 				}
 			}
@@ -1407,8 +1405,7 @@ namespace SIL.FieldWorks.FdoUi
 				if (m_cache.DomainDataByFlid.get_ObjectProp(hvo, m_flidRef) == 0)
 				{
 					int wsUi = vwenv.DataAccess.WritingSystemFactory.UserWs;
-					ITsStrFactory tsf = m_cache.TsStrFactory;
-					vwenv.AddString(tsf.MakeString(FdoUiStrings.ksQuestions, wsUi));	// was "??", not "???"
+					vwenv.AddString(TsStringUtils.MakeString(FdoUiStrings.ksQuestions, wsUi));	// was "??", not "???"
 					vwenv.NoteDependency(new[] { hvo }, new[] { m_flidRef }, 1);
 					return false;
 				}
@@ -1461,19 +1458,18 @@ namespace SIL.FieldWorks.FdoUi
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
 		{
 			int wsVern = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
-			ITsStrFactory tsf = m_cache.TsStrFactory;
 			var co = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 			switch (frag)
 			{
 				case (int)VcFrags.kfragHeadWord:
 					var le = co as ILexEntry;
-					vwenv.AddString(le != null ? le.HeadWord : tsf.MakeString(co.ShortName, wsVern));
+					vwenv.AddString(le != null ? le.HeadWord : TsStringUtils.MakeString(co.ShortName, wsVern));
 					break;
 				case (int)VcFrags.kfragShortName:
-					vwenv.AddString(tsf.MakeString(co.ShortName, wsVern));
+					vwenv.AddString(TsStringUtils.MakeString(co.ShortName, wsVern));
 					break;
 				default:
-					vwenv.AddString(tsf.MakeString(co.ToString(), wsVern));
+					vwenv.AddString(TsStringUtils.MakeString(co.ToString(), wsVern));
 					break;
 			}
 		}

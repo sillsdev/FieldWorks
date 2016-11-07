@@ -927,7 +927,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				Enumerable.Empty<CoreWritingSystemDefinition>(), Enumerable.Empty<CoreWritingSystemDefinition>(), Enumerable.Empty<CoreWritingSystemDefinition>());
 			IEnumerable<CoreWritingSystemDefinition> newWritingSystems;
 			if (WritingSystemPropertiesDialog.ShowNewDialog(this, null, m_wsManager, wsContainer, m_helpTopicProvider, (IApp) m_helpTopicProvider,
-				null, false, defaultName, out newWritingSystems))
+				false, defaultName, out newWritingSystems))
 			{
 				UpdateLanguageCombos();
 				string selectedWsId = newWritingSystems.First().Id;

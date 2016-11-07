@@ -194,8 +194,7 @@ namespace SIL.FieldWorks.IText
 				return;
 			}
 			textBox.WritingSystemCode = ws.Handle;
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			textBox.Tss = tsf.MakeString(textBox.Text.Trim(), ws.Handle);
+			textBox.Tss = TsStringUtils.MakeString(textBox.Text.Trim(), ws.Handle);
 		}
 
 		private void m_valueComboBox_CreatingEditor(object sender, EditEventArgs e)

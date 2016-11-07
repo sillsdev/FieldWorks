@@ -12747,11 +12747,10 @@ namespace SIL.FieldWorks.TE
 			IScrTxtPara para = (putPicInRev ? paraRev : paraCur);
 
 			// Add picture to revision.
-			ITsStrFactory factory = TsStrFactoryClass.Create();
 			using (DummyFileMaker fileMaker = new DummyFileMaker("junk.jpg", true))
 			{
 				ICmPicture pict = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create(fileMaker.Filename,
-					factory.MakeString("Test picture", Cache.DefaultVernWs),
+					TsStringUtils.MakeString("Test picture", Cache.DefaultVernWs),
 					CmFolderTags.LocalPictures);
 
 				para.Contents = pict.InsertORCAt(para.Contents, picPos);
@@ -24783,7 +24782,7 @@ namespace SIL.FieldWorks.TE
 				  para1Curr, ichMinCurr, ichLimCurr, para1Rev, ichMinRev, ichLimRev);
 
 			// Delete the paragraph from the section contents to simulate editing
-			sectionCurr.ContentOA[0].Contents = Cache.TsStrFactory.MakeString(string.Empty,
+			sectionCurr.ContentOA[0].Contents = TsStringUtils.EmptyString(
 				Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
 
 			m_bookMerger.CallRecalculateDifferences();

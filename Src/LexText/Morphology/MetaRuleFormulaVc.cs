@@ -69,13 +69,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			tpb.SetIntPropValues((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 			m_rowHeaderProps = tpb.GetTextProps();
 
-			var tsf = m_cache.TsStrFactory;
 			var userWs = m_cache.DefaultUserWs;
-			m_inputStr = tsf.MakeString(MEStrings.ksMetaRuleInput, userWs);
-			m_resultStr = tsf.MakeString(MEStrings.ksMetaRuleResult, userWs);
-			m_leftEnvStr = tsf.MakeString(MEStrings.ksMetaRuleLeftEnv, userWs);
-			m_rightEnvStr = tsf.MakeString(MEStrings.ksMetaRuleRightEnv, userWs);
-			m_switchStr = tsf.MakeString(MEStrings.ksMetaRuleSwitch, userWs);
+			m_inputStr = TsStringUtils.MakeString(MEStrings.ksMetaRuleInput, userWs);
+			m_resultStr = TsStringUtils.MakeString(MEStrings.ksMetaRuleResult, userWs);
+			m_leftEnvStr = TsStringUtils.MakeString(MEStrings.ksMetaRuleLeftEnv, userWs);
+			m_rightEnvStr = TsStringUtils.MakeString(MEStrings.ksMetaRuleRightEnv, userWs);
+			m_switchStr = TsStringUtils.MakeString(MEStrings.ksMetaRuleSwitch, userWs);
 		}
 
 		protected override int GetMaxNumLines()

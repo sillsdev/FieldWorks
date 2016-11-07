@@ -4,6 +4,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
@@ -202,7 +203,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var wf2 = MakeWordform("wordXX");
 			var wf3 = MakeWordform("wordXX");
 			int wsSpn = Cache.WritingSystemFactory.GetWsFromStr("es");
-			wf2.Form.set_String(wsSpn, Cache.TsStrFactory.MakeString("Spanish", wsSpn));
+			wf2.Form.set_String(wsSpn, TsStringUtils.MakeString("Spanish", wsSpn));
 			WfiWordformServices.FixDuplicates(Cache, m_progress);
 			var wf = Survivor(wf1, wf2, wf3);
 			Assert.That(wf, Is.Not.EqualTo(wf2)); // otherwise it doesn't prove much
@@ -221,11 +222,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var wf4 = MakeWordform("wordZZ");
 			var wf5 = MakeWordform("wordZZ");
 			int wsSpn = Cache.WritingSystemFactory.GetWsFromStr("es");
-			wf1.Form.set_String(wsSpn, Cache.TsStrFactory.MakeString("Spanish", wsSpn));
-			wf2.Form.set_String(wsSpn, Cache.TsStrFactory.MakeString("SpanishOther", wsSpn));
-			wf3.Form.set_String(wsSpn, Cache.TsStrFactory.MakeString("Spanish", wsSpn));
-			wf4.Form.set_String(wsSpn, Cache.TsStrFactory.MakeString("SpanishOther", wsSpn));
-			wf5.Form.set_String(wsSpn, Cache.TsStrFactory.MakeString("SpanishYetAnother", wsSpn));
+			wf1.Form.set_String(wsSpn, TsStringUtils.MakeString("Spanish", wsSpn));
+			wf2.Form.set_String(wsSpn, TsStringUtils.MakeString("SpanishOther", wsSpn));
+			wf3.Form.set_String(wsSpn, TsStringUtils.MakeString("Spanish", wsSpn));
+			wf4.Form.set_String(wsSpn, TsStringUtils.MakeString("SpanishOther", wsSpn));
+			wf5.Form.set_String(wsSpn, TsStringUtils.MakeString("SpanishYetAnother", wsSpn));
 			var failureList = WfiWordformServices.FixDuplicates(Cache, m_progress);
 
 			// None should be deleted.
@@ -242,7 +243,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		ITsString MakeVernString(string text)
 		{
-			return Cache.TsStrFactory.MakeString(text, Cache.DefaultVernWs);
+			return TsStringUtils.MakeString(text, Cache.DefaultVernWs);
 		}
 
 		IWfiAnalysis MakeAnalysis(IWfiWordform wf)

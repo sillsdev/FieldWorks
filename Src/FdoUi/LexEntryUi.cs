@@ -215,7 +215,7 @@ namespace SIL.FieldWorks.FdoUi
 					string wsLocale = cache.ServiceLocator.WritingSystemManager.Get(wsWf).IcuLocale;
 					string sLower = Icu.ToLower(tssWf.Text, wsLocale);
 					ITsTextProps ttp = tssWf.get_PropertiesAt(0);
-					tssWf = cache.TsStrFactory.MakeStringWithPropsRgch(sLower, sLower.Length, ttp);
+					tssWf = TsStringUtils.MakeString(sLower, ttp);
 					leui = FindEntryForWordform(cache, tssWf);
 				}
 
@@ -676,9 +676,9 @@ namespace SIL.FieldWorks.FdoUi
 						if (tssVariantTypeRevAbbr != null && tssVariantTypeRevAbbr.Length > 0)
 						{
 							if (fNeedInitialPlus)
-								vwenv.AddString(TsStringUtils.MakeTss("+", m_cache.DefaultUserWs));
+								vwenv.AddString(TsStringUtils.MakeString("+", m_cache.DefaultUserWs));
 							else
-								vwenv.AddString(TsStringUtils.MakeTss(",", m_cache.DefaultUserWs));
+								vwenv.AddString(TsStringUtils.MakeString(",", m_cache.DefaultUserWs));
 							vwenv.AddString(tssVariantTypeRevAbbr);
 							fNeedInitialPlus = false;
 						}
@@ -728,7 +728,7 @@ namespace SIL.FieldWorks.FdoUi
 							m_wsActual = wsActual;
 							fGotLabel = true;
 							if (sPrefix != null)
-								vwenv.AddString(TsStringUtils.MakeTss(sPrefix, wsActual));
+								vwenv.AddString(TsStringUtils.MakeString(sPrefix, wsActual));
 							vwenv.AddObjProp(LexEntryTags.kflidLexemeForm, this, kfragFormForm);
 						}
 					}
@@ -739,7 +739,7 @@ namespace SIL.FieldWorks.FdoUi
 						{
 							m_wsActual = wsActual;
 							if (sPrefix != null)
-								vwenv.AddString(TsStringUtils.MakeTss(sPrefix, wsActual));
+								vwenv.AddString(TsStringUtils.MakeString(sPrefix, wsActual));
 							vwenv.AddStringAltMember(LexEntryTags.kflidCitationForm, wsActual, this);
 							fGotLabel = true;
 						}
@@ -749,14 +749,14 @@ namespace SIL.FieldWorks.FdoUi
 					{
 						// If that fails just show two questions marks.
 						if (sPrefix != null)
-							vwenv.AddString(TsStringUtils.MakeTss(sPrefix, wsActual));
-						vwenv.AddString(m_cache.TsStrFactory.MakeString(FdoUiStrings.ksQuestions, defUserWs));	// was "??", not "???"
+							vwenv.AddString(TsStringUtils.MakeString(sPrefix, wsActual));
+						vwenv.AddString(TsStringUtils.MakeString(FdoUiStrings.ksQuestions, defUserWs));	// was "??", not "???"
 					}
 
 					// If we have a lexeme form type show the appropriate postfix.
 					if (hvoType != 0)
 					{
-						vwenv.AddString(TsStringUtils.MakeTss(
+						vwenv.AddString(TsStringUtils.MakeString(
 							sda.get_UnicodeProp(hvoType, MoMorphTypeTags.kflidPostfix), wsActual));
 					}
 

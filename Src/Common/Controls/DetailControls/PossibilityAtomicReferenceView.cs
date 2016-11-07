@@ -11,7 +11,6 @@
 // </remarks>
 
 using System;
-using System.Diagnostics;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
@@ -58,7 +57,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						ObjectLabel label = ObjectLabel.CreateObjectLabel(m_fdoCache, list.PossibilitiesOS[0], m_displayNameProperty, m_displayWs);
 						ws = label.AsTss.get_WritingSystem(0);
 					}
-					m_sda.Tss = m_fdoCache.TsStrFactory.EmptyString(ws);
+					m_sda.Tss = TsStringUtils.EmptyString(ws);
 				}
 			}
 

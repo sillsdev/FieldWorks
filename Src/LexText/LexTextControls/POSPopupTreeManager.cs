@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Widgets;
@@ -102,13 +103,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Add an 'Any' item to the menu. If the current target is zero, it will be selected.
 		/// It is saved as m_kEmptyNode. Also returns the new node.
 		/// </summary>
-		/// <param name="popupTree"></param>
-		/// <param name="hvoTarget"></param>
-		/// <returns></returns>
 		protected TreeNode AddAnyItem(PopupTree popupTree)
 		{
 			HvoTreeNode empty = new HvoTreeNode(
-				Cache.TsStrFactory.MakeString(LexTextControls.ksAny, Cache.WritingSystemFactory.UserWs),
+				TsStringUtils.MakeString(LexTextControls.ksAny, Cache.WritingSystemFactory.UserWs),
 				kEmpty);
 			popupTree.Nodes.Add(empty);
 			m_kEmptyNode = empty;

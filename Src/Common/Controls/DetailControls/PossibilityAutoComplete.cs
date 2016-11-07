@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -241,7 +240,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						{
 							var tisb = TsIncStrBldrClass.Create();
 							tisb.AppendTsString(tss);
-							tisb.AppendTsString(m_cache.TsStrFactory.MakeString(" - ", m_cache.DefaultUserWs));
+							tisb.AppendTsString(TsStringUtils.MakeString(" - ", m_cache.DefaultUserWs));
 							tisb.AppendTsString(name);
 							m_searcher.Add(poss, 0, tisb.GetString());
 						}

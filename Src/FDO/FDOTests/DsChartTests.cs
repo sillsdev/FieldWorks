@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -30,7 +29,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		#region Factories and Repos
 
 		private IFdoServiceLocator m_servloc;
-		private ITsStrFactory m_tssFact;
 		private IConstChartRowFactory m_rowFact;
 		private IConstChartWordGroupFactory m_wordGrpFact;
 		private ICmPossibilityFactory m_possFact;
@@ -51,7 +49,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_text = AddInterlinearTextToLangProj("My Interlinear Text");
 			m_stTextPara = AddParaToInterlinearTextContents(m_text, "Here is a sentence I can chart.");
 			m_stText = m_text.ContentsOA;
-			m_tssFact = Cache.TsStrFactory;
 			m_rowFact = m_servloc.GetInstance<IConstChartRowFactory>();
 			m_wordGrpFact = m_servloc.GetInstance<IConstChartWordGroupFactory>();
 			m_possFact = m_servloc.GetInstance<ICmPossibilityFactory>();
@@ -250,7 +247,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Cache.LangProject.DiscourseDataOA.ChartsOC.Add(chart);
 
 			// Setup the new chart
-			chart.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeTss(name, Cache.DefaultAnalWs);
+			chart.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(name, Cache.DefaultAnalWs);
 			chart.BasedOnRA = stText;
 
 			return chart; // This chart has no template or rows, so far!!
@@ -294,7 +291,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// ------------------------------------------------------------------------------------
 		private IConstChartRow CreateRow(IDsConstChart chart, string rowNumber)
 		{
-			var rowLabel = m_tssFact.MakeString(rowNumber, Cache.DefaultAnalWs);
+			var rowLabel = TsStringUtils.MakeString(rowNumber, Cache.DefaultAnalWs);
 			return m_rowFact.Create(chart, chart.RowsOS.Count, rowLabel);
 		}
 

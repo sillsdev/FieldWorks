@@ -347,7 +347,7 @@ namespace SIL.FieldWorks.FdoUi
 		{
 			CheckDisposed();
 
-			ITsString tss = TsStringUtils.MakeTss(m_selectedLabel, m_cache.DefaultAnalWs);
+			ITsString tss = TsStringUtils.MakeString(m_selectedLabel, m_cache.DefaultAnalWs);
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
 			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));

@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					string word = buffer.Substring(start, length);
 					if (!wordforms.ContainsKey(word))
 					{
-						ITsString tss = m_cache.TsStrFactory.MakeString(word, m_ws.Handle);
+						ITsString tss = TsStringUtils.MakeString(word, m_ws.Handle);
 						wordforms.Add(word, WfiWordformServices.FindOrCreateWordform(m_cache, tss));
 					}
 					length = 0;

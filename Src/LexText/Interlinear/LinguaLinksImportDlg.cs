@@ -14,7 +14,6 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
@@ -859,7 +858,7 @@ namespace SIL.FieldWorks.IText
 			lvItem = listViewMapping.Items[selIndex];
 			IApp app = m_propertyTable.GetValue<IApp>("App");
 			using (LexImportWizardLanguage dlg = new LexImportWizardLanguage(m_cache,
-					m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable)))
+				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app))
 			{
 				llName = lvItem.Text;
 				fwName = lvItem.SubItems[1].Text;

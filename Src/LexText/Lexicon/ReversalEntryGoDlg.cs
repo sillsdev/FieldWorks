@@ -7,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.Widgets;
@@ -78,7 +77,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var wsObj = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
 			if (wsObj != null)
 			{
-				ITsString tss = m_tsf.MakeString(string.Empty, wsObj.Handle);
+				ITsString tss = TsStringUtils.EmptyString(wsObj.Handle);
 				var field = new SearchField(ReversalIndexEntryTags.kflidReversalForm, tss);
 				m_matchingObjectsBrowser.SearchAsync(new[] { field });
 			}
@@ -127,7 +126,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (m_oldSearchKey != string.Empty || searchKey != string.Empty)
 				StartSearchAnimation();
 
-			ITsString tss = m_tsf.MakeString(searchKey, wsObj.Handle);
+			ITsString tss = TsStringUtils.MakeString(searchKey, wsObj.Handle);
 			var field = new SearchField(ReversalIndexEntryTags.kflidReversalForm, tss);
 			m_matchingObjectsBrowser.SearchAsync(new[] { field });
 		}

@@ -223,7 +223,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 		{
 			var lme = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			lme.LexemeFormOA = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
-			lme.LexemeFormOA.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString(sLexForm, Cache.DefaultVernWs);
+			lme.LexemeFormOA.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(sLexForm, Cache.DefaultVernWs);
 			return lme;
 		}
 
@@ -237,7 +237,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			// Make a wordform which has a random number in it in order to reduce the chance to the word is already loaded.
 			string kWordForm = "aaa" + kSpecialCharacter;
 			IWfiWordform word = Cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create();
-			word.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString(kWordForm, Cache.DefaultVernWs);
+			word.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(kWordForm, Cache.DefaultVernWs);
 			Assert.IsTrue(word.Hvo != 0, "Adding word failed, gave hvo = 0");
 
 			int checkIndex = kWordForm.Length - 1;
@@ -253,7 +253,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 		{
 			string kWordForm = "aaa";
 			IWfiWordform word = Cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create();
-			word.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString(kWordForm, Cache.DefaultVernWs);
+			word.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(kWordForm, Cache.DefaultVernWs);
 			Assert.IsTrue(word.Hvo != 0, "Adding word failed, gave hvo = 0");
 			IWfiWordform wf = null;
 			foreach (var x in Cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances())
@@ -505,13 +505,13 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 
 			IPhNCSegments c1 = Cache.ServiceLocator.GetInstance<IPhNCSegmentsFactory>().Create();
 			Cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(c1);
-			c1.Abbreviation.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString("a", Cache.DefaultAnalWs);
+			c1.Abbreviation.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("a", Cache.DefaultAnalWs);
 			IPhNCSegments c2 = Cache.ServiceLocator.GetInstance<IPhNCSegmentsFactory>().Create();
 			Cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(c2);
-			c2.Abbreviation.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString("b", Cache.DefaultAnalWs);
+			c2.Abbreviation.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("b", Cache.DefaultAnalWs);
 			IPhNCFeatures c3 = Cache.ServiceLocator.GetInstance<IPhNCFeaturesFactory>().Create();
 			Cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(c3);
-			c3.Abbreviation.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString("c", Cache.DefaultAnalWs);
+			c3.Abbreviation.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("c", Cache.DefaultAnalWs);
 
 			string[] sa2 = Cache.LangProject.PhonologicalDataOA.AllNaturalClassAbbrs().ToArray();
 			Assert.IsTrue(sa2.Length == 3, "Expect three abbreviations in the set of natural classes");
@@ -963,7 +963,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			le.SensesOS.Add(ls);
 			ls.Definition.set_String(Cache.DefaultAnalWs, "xyzDefn1.1");
 
-			IMoForm m = MorphServices.MakeMorph(le, TsStringUtils.MakeTss("-is", Cache.DefaultVernWs));
+			IMoForm m = MorphServices.MakeMorph(le, TsStringUtils.MakeString("-is", Cache.DefaultVernWs));
 			Assert.AreEqual(mmtSuffix, m.MorphTypeRA);
 			Assert.AreEqual("is", m.Form.get_String(systems.First().Handle).Text);
 			Assert.IsTrue(m is IMoAffixAllomorph, "\"-is\" should have produced an affix allomorph");
@@ -1531,10 +1531,10 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			var form = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA = form;
 			form.Form.VernacularDefaultWritingSystem =
-				Cache.TsStrFactory.MakeString(lf, Cache.DefaultVernWs);
+				TsStringUtils.MakeString(lf, Cache.DefaultVernWs);
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry.SensesOS.Add(sense);
-			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss, Cache.DefaultAnalWs);
+			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss, Cache.DefaultAnalWs);
 			return entry;
 		}
 
@@ -1546,7 +1546,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			result = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
 			Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(result);
 			result.MappingType = (int)LexRefTypeTags.MappingTypes.kmtSenseTree;
-			result.Name.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(name, Cache.DefaultAnalWs);
+			result.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(name, Cache.DefaultAnalWs);
 			return result;
 		}
 
@@ -1665,7 +1665,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			var le = servLoc.GetInstance<ILexEntryFactory>().Create();
 
 			var ws = Cache.DefaultVernWs;
-			le.CitationForm.set_String(ws, Cache.TsStrFactory.MakeString(cf, ws));
+			le.CitationForm.set_String(ws, TsStringUtils.MakeString(cf, ws));
 			AddLexSense(le, defn, domain, null);
 			return le;
 		}
@@ -1676,7 +1676,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			var ws = Cache.DefaultAnalWs;
 			var ls = servLoc.GetInstance<ILexSenseFactory>().Create();
 			le.SensesOS.Add(ls);
-			ls.Definition.set_String(ws, Cache.TsStrFactory.MakeString(defn, ws));
+			ls.Definition.set_String(ws, TsStringUtils.MakeString(defn, ws));
 			if (domain != null)
 				ls.SemanticDomainsRC.Add(domain);
 			var msaToAdd = msa ?? servLoc.GetInstance<IMoStemMsaFactory>().Create();

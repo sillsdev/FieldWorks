@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -20,7 +21,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private IText m_text;
 		private IStText m_stText;
 		private IScrTxtPara m_para;
-		ITsStrFactory m_tsf = TsStrFactoryClass.Create();
 		int m_wsVern;
 
 		/// <summary>
@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string verse2 = "10";
 			string pc3 = "Ich spreche nicht viel Deutsch.";
 
-			ITsStrBldr bldr = m_tsf.MakeString(pc1 + verse1 + pc2 + verse2 + pc3, m_wsVern).GetBldr();
+			ITsStrBldr bldr = TsStringUtils.MakeString(pc1 + verse1 + pc2 + verse2 + pc3, m_wsVern).GetBldr();
 			bldr.SetStrPropValue(pc1.Length, pc1.Length + verse1.Length, (int)FwTextPropType.ktptNamedStyle,
 								 ScrStyleNames.VerseNumber);
 			int ichV2 = pc1.Length + verse1.Length + pc2.Length;
@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string pc5 = "Was ist das?";
 			string pc6 = "Wie gehts?";
 
-			ITsStrBldr bldr = m_tsf.MakeString(pc1 + pc2 + verse1 + pc3 + pc4 + verse2 + pc5 + pc6, m_wsVern).GetBldr();
+			ITsStrBldr bldr = TsStringUtils.MakeString(pc1 + pc2 + verse1 + pc3 + pc4 + verse2 + pc5 + pc6, m_wsVern).GetBldr();
 			bldr.SetStrPropValue(pc1.Length + pc2.Length, pc1.Length + pc2.Length + verse1.Length, (int)FwTextPropType.ktptNamedStyle,
 								 ScrStyleNames.VerseNumber);
 			int ichEndV1 = pc1.Length + pc2.Length + verse1.Length + pc3.Length + pc4.Length;
@@ -135,7 +135,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string pc5 = "Was is das?";
 			string pc6 = "Wie gehts?";
 
-			ITsStrBldr bldr = m_tsf.MakeString(pc1 + pc2 + verse1 + pc3 + pc4 + verse2 + pc5, m_wsVern).GetBldr();
+			ITsStrBldr bldr = TsStringUtils.MakeString(pc1 + pc2 + verse1 + pc3 + pc4 + verse2 + pc5, m_wsVern).GetBldr();
 			bldr.SetStrPropValue(pc1.Length + pc2.Length, pc1.Length + pc2.Length + verse1.Length, (int)FwTextPropType.ktptNamedStyle,
 								 ScrStyleNames.VerseNumber);
 			int ichEndV1 = pc1.Length + pc2.Length + verse1.Length + pc3.Length + pc4.Length;
@@ -144,22 +144,22 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var segments = GetSegments(bldr, m_para);
 
 			string verse8 = "8";
-			bldr = m_tsf.MakeString(verse8 + pc3 + pc4, m_wsVern).GetBldr();
+			bldr = TsStringUtils.MakeString(verse8 + pc3 + pc4, m_wsVern).GetBldr();
 			bldr.SetStrPropValue(0, verse8.Length, (int)FwTextPropType.ktptNamedStyle,
 								 ScrStyleNames.VerseNumber);
 			GetSegments(bldr, paraFirst);
 
-			bldr = m_tsf.MakeString(pc1 + pc2, m_wsVern).GetBldr();
+			bldr = TsStringUtils.MakeString(pc1 + pc2, m_wsVern).GetBldr();
 			GetSegments(bldr, paraPrev);
 
 			string verse11 = "11";
-			bldr = m_tsf.MakeString(pc3 + verse11 + pc4, m_wsVern).GetBldr();
+			bldr = TsStringUtils.MakeString(pc3 + verse11 + pc4, m_wsVern).GetBldr();
 			bldr.SetStrPropValue(pc3.Length, pc3.Length + verse11.Length, (int)FwTextPropType.ktptNamedStyle,
 								 ScrStyleNames.VerseNumber);
 			GetSegments(bldr, paraNext);
 
 			string verse12 = "12";
-			bldr = m_tsf.MakeString(verse12 + pc5 + pc6, m_wsVern).GetBldr();
+			bldr = TsStringUtils.MakeString(verse12 + pc5 + pc6, m_wsVern).GetBldr();
 			bldr.SetStrPropValue(0, verse12.Length, (int)FwTextPropType.ktptNamedStyle,
 								 ScrStyleNames.VerseNumber);
 			GetSegments(bldr, paraLast);

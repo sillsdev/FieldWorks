@@ -11,6 +11,7 @@ using SIL.Utils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using System.Collections.Generic;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.IText;
 
@@ -312,9 +313,9 @@ namespace SIL.FieldWorks.Discourse
 			ITsString newTss;
 			var ws = GetWsFromTsString(tss);
 			if (tss == ((ConstChartVc)m_vc).m_sMovedTextBefore)
-				newTss = m_cache.TsStrFactory.MakeString("Preposed", ws);
+				newTss = TsStringUtils.MakeString("Preposed", ws);
 			else
-				newTss = m_cache.TsStrFactory.MakeString("Postposed", ws);
+				newTss = TsStringUtils.MakeString("Postposed", ws);
 			var hvoTarget = m_sda.get_ObjectProp(m_hvoCurr,
 					ConstChartMovedTextMarkerTags.kflidWordGroup); // the CCWordGroup we refer to
 			if (ConstituentChartLogic.HasPreviousMovedItemOnLine(m_chart, hvoTarget))

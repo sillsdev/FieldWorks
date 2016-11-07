@@ -22,7 +22,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private IText m_text;
 		private IStTxtPara m_para;
 		private ICmTranslation m_trans;
-		ITsStrFactory m_tsf;
 		int m_wsVern;
 		int m_wsTrans;
 
@@ -51,7 +50,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			m_trans = m_para.GetOrCreateBT();
 			Cache.LangProject.TranslatedScriptureOA.UseScriptDigits = false;
-			m_tsf = Cache.TsStrFactory;
 		}
 
 		/// <summary>
@@ -62,7 +60,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			string paraContents = "Das buch ist rot";
 			string trans = "The book is red";
-			m_para.Contents = m_tsf.MakeString(paraContents, m_wsVern);
+			m_para.Contents = TsStringUtils.MakeString(paraContents, m_wsVern);
 			m_trans.Translation.set_String(m_wsTrans, trans);
 			int cseg = m_para.SegmentsOS.Count;
 			Assert.AreEqual(1, cseg, "Para with no EOS or verse should have one segment");
@@ -77,7 +75,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			string paraContents = "";
 			string trans = "";
-			m_para.Contents = m_tsf.MakeString(paraContents, m_wsVern);
+			m_para.Contents = TsStringUtils.MakeString(paraContents, m_wsVern);
 			m_trans.Translation.set_String(m_wsTrans, trans);
 			int cseg = m_para.SegmentsOS.Count;
 			Assert.AreEqual(0, cseg, "Empty para should have no segments");
@@ -93,13 +91,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string paraContents1 = "Das buch ist rot. ";
 			string verse = "12";
 			string paraContents2 = "Das Madchen ist shon.";
-			ITsStrBldr bldr = m_tsf.MakeString(paraContents1 + verse + paraContents2, m_wsVern).GetBldr();
+			ITsStrBldr bldr = TsStringUtils.MakeString(paraContents1 + verse + paraContents2, m_wsVern).GetBldr();
 			bldr.SetStrPropValue(paraContents1.Length, paraContents1.Length + verse.Length, (int)FwTextPropType.ktptNamedStyle,
 								 ScrStyleNames.VerseNumber);
 			m_para.Contents = bldr.GetString();
 			string trans1 = "The book is red.";
 			string trans2 = "The girl is beautiful";
-			bldr = m_tsf.MakeString(trans1 + verse + trans2, m_wsTrans).GetBldr();
+			bldr = TsStringUtils.MakeString(trans1 + verse + trans2, m_wsTrans).GetBldr();
 			bldr.SetStrPropValue(trans1.Length, trans1.Length + verse.Length, (int)FwTextPropType.ktptNamedStyle,
 								 ScrStyleNames.VerseNumber);
 			m_trans.Translation.set_String(m_wsTrans, bldr.GetString());
@@ -145,7 +143,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string pc5 = "Was is das?";
 			string pc6 = "Wie gehts?";
 
-			ITsStrBldr bldr = m_tsf.MakeString(pc1 + pc2 + verse1 + pc3 + pc4 + verse2 + pc5 + pc6, m_wsVern).GetBldr();
+			ITsStrBldr bldr = TsStringUtils.MakeString(pc1 + pc2 + verse1 + pc3 + pc4 + verse2 + pc5 + pc6, m_wsVern).GetBldr();
 			bldr.SetStrPropValue(pc1.Length + pc2.Length, pc1.Length + pc2.Length + verse1.Length, (int)FwTextPropType.ktptNamedStyle,
 								 ScrStyleNames.VerseNumber);
 			int ichEndV1 = pc1.Length + pc2.Length + verse1.Length + pc3.Length + pc4.Length;
@@ -158,7 +156,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			// string trans4 = "I don't speak much German.";
 			string trans5 = "What is that?";
 			// string trans6 = "How's it going?";
-			bldr = m_tsf.MakeString(trans1 + verse1 + trans3 + verse2 + trans5, m_wsTrans).GetBldr();
+			bldr = TsStringUtils.MakeString(trans1 + verse1 + trans3 + verse2 + trans5, m_wsTrans).GetBldr();
 			bldr.SetStrPropValue(trans1.Length, trans1.Length + verse1.Length, (int)FwTextPropType.ktptNamedStyle,
 								 ScrStyleNames.VerseNumber);
 			int ichEndTransV1 = trans1.Length + verse1.Length + trans3.Length;
@@ -238,7 +236,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string pc6 = "Wie gehts?";
 			string verse3 = "11";
 
-			ITsStrBldr bldr = m_tsf.MakeString(pc1 + pc2 + verse1 + pc3 + pc4 + verse2 + pc5 + pc6, m_wsVern).GetBldr();
+			ITsStrBldr bldr = TsStringUtils.MakeString(pc1 + pc2 + verse1 + pc3 + pc4 + verse2 + pc5 + pc6, m_wsVern).GetBldr();
 			bldr.SetStrPropValue(pc1.Length + pc2.Length, pc1.Length + pc2.Length + verse1.Length, (int)FwTextPropType.ktptNamedStyle,
 								 ScrStyleNames.VerseNumber);
 			int ichEndV1 = pc1.Length + pc2.Length + verse1.Length + pc3.Length + pc4.Length;
@@ -251,7 +249,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			// string trans4 = "I don't speak much German.";
 			string trans5 = "What is that?";
 			// string trans6 = "How's it going?";
-			bldr = m_tsf.MakeString(trans1 + verse1 + trans3 + verse3 + trans5, m_wsTrans).GetBldr();
+			bldr = TsStringUtils.MakeString(trans1 + verse1 + trans3 + verse3 + trans5, m_wsTrans).GetBldr();
 			bldr.SetStrPropValue(trans1.Length, trans1.Length + verse1.Length, (int)FwTextPropType.ktptNamedStyle,
 								 ScrStyleNames.VerseNumber);
 			int ichEndTransV1 = trans1.Length + verse1.Length + trans3.Length;
@@ -287,7 +285,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			//string pc6 = "Wie gehts?";
 			string verse3 = "11";
 
-			ITsStrBldr bldr = m_tsf.MakeString(pc1 + verse1 + pc3 + verse2 + pc5, m_wsVern).GetBldr();
+			ITsStrBldr bldr = TsStringUtils.MakeString(pc1 + verse1 + pc3 + verse2 + pc5, m_wsVern).GetBldr();
 			bldr.SetStrPropValue(pc1.Length, pc1.Length + verse1.Length, (int)FwTextPropType.ktptNamedStyle,
 								 ScrStyleNames.VerseNumber);
 			int ichEndV1 = pc1.Length + verse1.Length + pc3.Length;
@@ -300,7 +298,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string trans4 = "I don't speak much German.";
 			string trans5 = "What is that?";
 			string trans6 = "How's it going?";
-			bldr = m_tsf.MakeString(trans1 + trans2 + verse1 + trans3 + trans4 + verse3 + trans5 + trans6, m_wsTrans).GetBldr();
+			bldr = TsStringUtils.MakeString(trans1 + trans2 + verse1 + trans3 + trans4 + verse3 + trans5 + trans6, m_wsTrans).GetBldr();
 			bldr.SetStrPropValue(trans1.Length + trans2.Length, trans1.Length + trans2.Length + verse1.Length,
 								 (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
 			int ichEndTransV1 = trans1.Length + trans2.Length + verse1.Length + trans3.Length + trans4.Length;
@@ -332,7 +330,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string pc5 = "Was is das?";
 			//string pc6 = "Wie gehts?";
 
-			ITsStrBldr bldr = m_tsf.MakeString(pc1 + verse1 + pc3 + verse2 + pc5, m_wsVern).GetBldr();
+			ITsStrBldr bldr = TsStringUtils.MakeString(pc1 + verse1 + pc3 + verse2 + pc5, m_wsVern).GetBldr();
 			bldr.SetStrPropValue(pc1.Length, pc1.Length + verse1.Length, (int)FwTextPropType.ktptNamedStyle,
 								 ScrStyleNames.VerseNumber);
 			int ichEndV1 = pc1.Length + verse1.Length + pc3.Length;
@@ -345,7 +343,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string trans4 = "I don't speak much German.";
 			string trans5 = "What is that?";
 			string trans6 = "How's it going?";
-			bldr = m_tsf.MakeString(trans1 + trans2 + verse1 + trans3 + trans4 + verse2 + trans5 + trans6, m_wsTrans).GetBldr();
+			bldr = TsStringUtils.MakeString(trans1 + trans2 + verse1 + trans3 + trans4 + verse2 + trans5 + trans6, m_wsTrans).GetBldr();
 			bldr.SetStrPropValue(trans1.Length + trans2.Length, trans1.Length + trans2.Length + verse1.Length,
 								 (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
 			int ichEndTransV1 = trans1.Length + trans2.Length + verse1.Length + trans3.Length + trans4.Length;
@@ -389,7 +387,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				bldrV.Append((char)('1' + charOffset));
 				bldrV.Append((char)('0' + charOffset));
 				string verse2V = bldrV.ToString();
-				ITsStrBldr bldr = m_tsf.MakeString(pc1 + verse1V + pc3 + verse2V + pc5, m_wsVern).GetBldr();
+				ITsStrBldr bldr = TsStringUtils.MakeString(pc1 + verse1V + pc3 + verse2V + pc5, m_wsVern).GetBldr();
 				bldr.SetStrPropValue(pc1.Length, pc1.Length + verse1V.Length, (int) FwTextPropType.ktptNamedStyle,
 					ScrStyleNames.VerseNumber);
 				int ichEndV1 = pc1.Length + verse1V.Length + pc3.Length;
@@ -402,7 +400,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				string trans4 = "I don't speak much German.";
 				string trans5 = "What is that?";
 				string trans6 = "How's it going?";
-				bldr = m_tsf.MakeString(trans1 + trans2 + verse1 + trans3 + trans4 + verse2 + trans5 + trans6, m_wsTrans).GetBldr();
+				bldr = TsStringUtils.MakeString(trans1 + trans2 + verse1 + trans3 + trans4 + verse2 + trans5 + trans6, m_wsTrans).GetBldr();
 				bldr.SetStrPropValue(trans1.Length + trans2.Length, trans1.Length + trans2.Length + verse1.Length,
 					(int) FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
 				int ichEndTransV1 = trans1.Length + trans2.Length + verse1.Length + trans3.Length + trans4.Length;
@@ -441,7 +439,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string pc5 = "Was is das?";
 			string pc6 = "Wie gehts?";
 
-			ITsStrBldr bldr = m_tsf.MakeString(pc1 + pc2 + verse1 + pc3 + pc4 + verse2 + pc5 + pc6, m_wsVern).GetBldr();
+			ITsStrBldr bldr = TsStringUtils.MakeString(pc1 + pc2 + verse1 + pc3 + pc4 + verse2 + pc5 + pc6, m_wsVern).GetBldr();
 			bldr.SetStrPropValue(pc1.Length + pc2.Length, pc1.Length + pc2.Length + verse1.Length, (int)FwTextPropType.ktptNamedStyle,
 				ScrStyleNames.VerseNumber);
 			int ichEndV1 = pc1.Length + pc2.Length + verse1.Length + pc3.Length + pc4.Length;
@@ -454,7 +452,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string trans4 = "I don't speak much German.";
 			string trans5 = "What is that?";
 			string trans6 = "How's it going?";
-			bldr = m_tsf.MakeString(trans1 + trans2 + verse2 + trans5 + trans6 + verse1 + trans3 + trans4, m_wsTrans).GetBldr();
+			bldr = TsStringUtils.MakeString(trans1 + trans2 + verse2 + trans5 + trans6 + verse1 + trans3 + trans4, m_wsTrans).GetBldr();
 			bldr.SetStrPropValue(trans1.Length + trans2.Length, trans1.Length + trans2.Length + verse2.Length,
 				(int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
 			int ichEndTransV1 = trans1.Length + trans2.Length + verse2.Length + trans5.Length + trans6.Length;
@@ -490,7 +488,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string pc5 = "Was is das?";
 			string pc6 = "Wie gehts?";
 
-			ITsStrBldr bldr = m_tsf.MakeString(pc1 + pc2 + verse1 + pc3 + pc4 + verse2 + pc5 + pc6, m_wsVern).GetBldr();
+			ITsStrBldr bldr = TsStringUtils.MakeString(pc1 + pc2 + verse1 + pc3 + pc4 + verse2 + pc5 + pc6, m_wsVern).GetBldr();
 			bldr.SetStrPropValue(pc1.Length + pc2.Length, pc1.Length + pc2.Length + verse1.Length, (int)FwTextPropType.ktptNamedStyle,
 								 ScrStyleNames.VerseNumber);
 			int ichEndV1 = pc1.Length + pc2.Length + verse1.Length + pc3.Length + pc4.Length;
@@ -501,7 +499,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string trans2 = "The girl is beautiful";
 			string trans5 = "What is that?";
 			string trans6 = "How's it going?";
-			bldr = m_tsf.MakeString(trans1 + trans2 + verse2 + trans5 + trans6, m_wsTrans).GetBldr();
+			bldr = TsStringUtils.MakeString(trans1 + trans2 + verse2 + trans5 + trans6, m_wsTrans).GetBldr();
 			int ichEndTransV1 = trans1.Length + trans2.Length;
 			bldr.SetStrPropValue(ichEndTransV1, ichEndTransV1 + verse2.Length, (int)FwTextPropType.ktptNamedStyle,
 								 ScrStyleNames.VerseNumber);
@@ -529,7 +527,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string pc3 = "Der Herr ist gross. ";
 			string pc4 = "Ich spreche nicht viel Deutsch. ";
 			string orc = StringUtils.kChObject.ToString();
-			ITsStrBldr bldr = m_tsf.MakeString(pc1 + orc + pc2 + orc + pc3 + pc4, m_wsVern).GetBldr();
+			ITsStrBldr bldr = TsStringUtils.MakeString(pc1 + orc + pc2 + orc + pc3 + pc4, m_wsVern).GetBldr();
 			bldr.SetStrPropValue(pc1.Length, pc1.Length + orc.Length, (int)FwTextPropType.ktptObjData, string.Empty);
 			bldr.SetStrPropValue(pc1.Length + orc.Length + pc2.Length, pc1.Length + orc.Length + pc2.Length + orc.Length,
 				(int)FwTextPropType.ktptObjData, string.Empty);
@@ -539,7 +537,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string trans2 = " The girl is beautiful. ";
 			string trans3 = "The man is big. ";
 			string trans4 = "I don't speak much German. ";
-			bldr = m_tsf.MakeString(trans1 + orc + trans2 + orc + trans3 + trans4, m_wsTrans).GetBldr();
+			bldr = TsStringUtils.MakeString(trans1 + orc + trans2 + orc + trans3 + trans4, m_wsTrans).GetBldr();
 			bldr.SetStrPropValue(trans1.Length, trans1.Length + orc.Length, (int)FwTextPropType.ktptObjData, string.Empty);
 			bldr.SetStrPropValue(trans1.Length + orc.Length + trans2.Length, trans1.Length + orc.Length + trans2.Length + orc.Length,
 				(int)FwTextPropType.ktptObjData, string.Empty);
@@ -569,7 +567,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string pc5 = "Was is das?";
 			string pc6 = "Wie gehts?";
 
-			ITsStrBldr bldr = m_tsf.MakeString(pc1 + pc2 + verse1 + pc3 + pc4 + verse2 + pc5 + pc6, m_wsVern).GetBldr();
+			ITsStrBldr bldr = TsStringUtils.MakeString(pc1 + pc2 + verse1 + pc3 + pc4 + verse2 + pc5 + pc6, m_wsVern).GetBldr();
 			bldr.SetStrPropValue(pc1.Length + pc2.Length, pc1.Length + pc2.Length + verse1.Length, (int)FwTextPropType.ktptNamedStyle,
 								 ScrStyleNames.VerseNumber);
 			int ichEndV1 = pc1.Length + pc2.Length + verse1.Length + pc3.Length + pc4.Length;
@@ -582,7 +580,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string trans4 = "I don't speak much German.";
 			string trans5 = "What is that?";
 			string trans6 = "How's it going?";
-			bldr = m_tsf.MakeString(verse1 + trans3 + trans4 + verse2 + trans5 + trans6, m_wsTrans).GetBldr();
+			bldr = TsStringUtils.MakeString(verse1 + trans3 + trans4 + verse2 + trans5 + trans6, m_wsTrans).GetBldr();
 			bldr.SetStrPropValue(0, verse1.Length,
 								 (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
 			int ichEndTransV1 = verse1.Length + trans3.Length + trans4.Length;
@@ -617,7 +615,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string pc5 = "Was is das?";
 			string pc6 = "Wie gehts?";
 
-			ITsStrBldr bldr = m_tsf.MakeString(verse1 + pc3 + pc4 + verse2 + pc5 + pc6, m_wsVern).GetBldr();
+			ITsStrBldr bldr = TsStringUtils.MakeString(verse1 + pc3 + pc4 + verse2 + pc5 + pc6, m_wsVern).GetBldr();
 			bldr.SetStrPropValue(0, verse1.Length, (int)FwTextPropType.ktptNamedStyle,
 								 ScrStyleNames.VerseNumber);
 			int ichEndV1 = verse1.Length + pc3.Length + pc4.Length;
@@ -630,7 +628,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string trans4 = "I don't speak much German.";
 			string trans5 = "What is that?";
 			string trans6 = "How's it going?";
-			bldr = m_tsf.MakeString(trans1 + trans2 + verse1 + trans3 + trans4 + verse2 + trans5 + trans6, m_wsTrans).GetBldr();
+			bldr = TsStringUtils.MakeString(trans1 + trans2 + verse1 + trans3 + trans4 + verse2 + trans5 + trans6, m_wsTrans).GetBldr();
 			bldr.SetStrPropValue(trans1.Length + trans2.Length, trans1.Length + trans2.Length + verse1.Length,
 								 (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
 			int ichEndTransV1 = trans1.Length + trans2.Length + verse1.Length + trans3.Length + trans4.Length;
@@ -663,7 +661,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string pc5 = "Was is das?";
 			string pc6 = "Wie gehts?";
 
-			ITsStrBldr bldr = m_tsf.MakeString(verse1 + pc3 + pc4 + verse2 + pc5 + pc6, m_wsVern).GetBldr();
+			ITsStrBldr bldr = TsStringUtils.MakeString(verse1 + pc3 + pc4 + verse2 + pc5 + pc6, m_wsVern).GetBldr();
 			bldr.SetStrPropValue(0, verse1.Length, (int)FwTextPropType.ktptNamedStyle,
 								 ScrStyleNames.VerseNumber);
 			int ichEndV1 = verse1.Length + pc3.Length + pc4.Length;
@@ -676,7 +674,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string trans4 = "I don't speak much German.";
 			string trans5 = "What is that?";
 			string trans6 = "How's it going?";
-			bldr = m_tsf.MakeString(verse1 + trans3 + trans4 + verse2 + trans5 + trans6, m_wsTrans).GetBldr();
+			bldr = TsStringUtils.MakeString(verse1 + trans3 + trans4 + verse2 + trans5 + trans6, m_wsTrans).GetBldr();
 			bldr.SetStrPropValue(0, verse1.Length,
 								 (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
 			int ichEndTransV1 = verse1.Length + trans3.Length + trans4.Length;
@@ -710,7 +708,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string pc5 = "Was is das?";
 			string pc6 = "Wie gehts?";
 
-			ITsStrBldr bldr = m_tsf.MakeString(" " + chap1 + " " + verse1 + pc3 + pc4 + verse2 + pc5 + pc6, m_wsVern).GetBldr();
+			ITsStrBldr bldr = TsStringUtils.MakeString(" " + chap1 + " " + verse1 + pc3 + pc4 + verse2 + pc5 + pc6, m_wsVern).GetBldr();
 			bldr.SetStrPropValue(1, chap1.Length, (int)FwTextPropType.ktptNamedStyle,
 								 ScrStyleNames.ChapterNumber);
 			bldr.SetStrPropValue(1 + chap1.Length + 1, 1 + chap1.Length + 1 + verse1.Length, (int)FwTextPropType.ktptNamedStyle,
@@ -725,7 +723,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			//string trans4 = "I don't speak much German.";
 			string trans5 = "What is that?";
 			string trans6 = "How's it going?";
-			bldr = m_tsf.MakeString(chap1 + verse1 + " " + trans3 + verse2 + " " + trans5 + trans6, m_wsTrans).GetBldr();
+			bldr = TsStringUtils.MakeString(chap1 + verse1 + " " + trans3 + verse2 + " " + trans5 + trans6, m_wsTrans).GetBldr();
 			bldr.SetStrPropValue(0, chap1.Length, (int)FwTextPropType.ktptNamedStyle,
 								 ScrStyleNames.ChapterNumber);
 			bldr.SetStrPropValue(chap1.Length, chap1.Length + verse1.Length,
@@ -760,7 +758,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string pc5 = "Was is das?";
 			string pc6 = "Wie gehts?";
 
-			ITsStrBldr bldr = m_tsf.MakeString(pc1 + pc2 + verse1 + pc3 + pc4 + pc5 + pc6, m_wsVern).GetBldr();
+			ITsStrBldr bldr = TsStringUtils.MakeString(pc1 + pc2 + verse1 + pc3 + pc4 + pc5 + pc6, m_wsVern).GetBldr();
 			bldr.SetStrPropValue(pc1.Length + pc2.Length, pc1.Length + pc2.Length + verse1.Length, (int)FwTextPropType.ktptNamedStyle,
 								 ScrStyleNames.VerseNumber);
 			m_para.Contents = bldr.GetString();
@@ -770,7 +768,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string trans4 = "I don't speak much German.";
 			string trans5 = "What is that?";
 			string trans6 = "How's it going?";
-			bldr = m_tsf.MakeString(trans1 + verse1 + trans3 + trans4 + trans5 + trans6, m_wsTrans).GetBldr();
+			bldr = TsStringUtils.MakeString(trans1 + verse1 + trans3 + trans4 + trans5 + trans6, m_wsTrans).GetBldr();
 			bldr.SetStrPropValue(trans1.Length, trans1.Length + verse1.Length,
 								 (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
 			m_trans.Translation.set_String(m_wsTrans, bldr.GetString());
@@ -834,16 +832,16 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void TestStringsEndWithSameWord_DifferByWritingSystem()
 		{
-			ITsString firstTss = m_tsf.MakeString("", m_wsEn);
-			ITsString secondTss = m_tsf.MakeString("", m_wsDe);
+			ITsString firstTss = TsStringUtils.EmptyString(m_wsEn);
+			ITsString secondTss = TsStringUtils.EmptyString(m_wsDe);
 			Assert.IsFalse(BtConverter.StringsEndWithSameWord(firstTss, secondTss));
 
-			firstTss = m_tsf.MakeString(" a  b", m_wsEn);
-			secondTss = m_tsf.MakeString("a b", m_wsDe);
+			firstTss = TsStringUtils.MakeString(" a  b", m_wsEn);
+			secondTss = TsStringUtils.MakeString("a b", m_wsDe);
 			Assert.IsTrue(BtConverter.StringsEndWithSameWord(firstTss, secondTss));
 
-			firstTss = m_tsf.MakeString("ab", m_wsEn).Replace(2, 0, m_tsf.MakeString("cd", m_wsDe));
-			secondTss = m_tsf.MakeString("ab  cd ", m_wsDe);
+			firstTss = TsStringUtils.MakeString("ab", m_wsEn).Replace(2, 0, TsStringUtils.MakeString("cd", m_wsDe));
+			secondTss = TsStringUtils.MakeString("ab  cd ", m_wsDe);
 			Assert.IsTrue(BtConverter.StringsEndWithSameWord(firstTss, secondTss));
 		}
 
@@ -855,16 +853,16 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void TestStringsEndWithSameWord_AppliedStyle()
 		{
-			ITsString firstTss = TsStringUtils.MakeTss("", m_wsEn, "Chapter");
-			ITsString secondTss = TsStringUtils.MakeTss("", m_wsEn, "Verse");
+			ITsString firstTss = TsStringUtils.MakeString("", m_wsEn, "Chapter");
+			ITsString secondTss = TsStringUtils.MakeString("", m_wsEn, "Verse");
 			Assert.IsFalse(BtConverter.StringsEndWithSameWord(firstTss, secondTss));
 
-			firstTss = TsStringUtils.MakeTss("a sd 1", m_wsEn, "Chapter");
-			secondTss = TsStringUtils.MakeTss(" a  sd   1  ", m_wsEn, "Chapter");
+			firstTss = TsStringUtils.MakeString("a sd 1", m_wsEn, "Chapter");
+			secondTss = TsStringUtils.MakeString(" a  sd   1  ", m_wsEn, "Chapter");
 			Assert.IsTrue(BtConverter.StringsEndWithSameWord(firstTss, secondTss));
 
-			firstTss = TsStringUtils.MakeTss("a sd 1", m_wsEn, "Chapter");
-			secondTss = TsStringUtils.MakeTss(" a  sd   1  ", m_wsEn, "Verse");
+			firstTss = TsStringUtils.MakeString("a sd 1", m_wsEn, "Chapter");
+			secondTss = TsStringUtils.MakeString(" a  sd   1  ", m_wsEn, "Verse");
 			Assert.IsFalse(BtConverter.StringsEndWithSameWord(firstTss, secondTss));
 
 			ITsStrBldr bldr = TsStrBldrClass.Create();
@@ -881,10 +879,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			bldr.Append("1", StyleUtils.CharStyleTextProps("Chapter", m_wsEn));
 			bldr.Append("1", StyleUtils.CharStyleTextProps("Verse", m_wsEn));
 			firstTss = bldr.GetString();
-			secondTss = TsStringUtils.MakeTss("11", m_wsEn, "Chapter");
+			secondTss = TsStringUtils.MakeString("11", m_wsEn, "Chapter");
 			Assert.IsFalse(BtConverter.StringsEndWithSameWord(firstTss, secondTss));
 
-			secondTss = TsStringUtils.MakeTss("1", m_wsEn, "Verse");
+			secondTss = TsStringUtils.MakeString("1", m_wsEn, "Verse");
 			Assert.IsTrue(BtConverter.StringsEndWithSameWord(firstTss, secondTss));
 
 			bldr.Clear();
@@ -899,8 +897,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		private void TestStringsEndWithSameWord(string first, string second, bool equal, string label)
 		{
-			ITsString firstTss = m_tsf.MakeString(first, m_wsEn);
-			ITsString secondTss = m_tsf.MakeString(second, m_wsEn);
+			ITsString firstTss = TsStringUtils.MakeString(first, m_wsEn);
+			ITsString secondTss = TsStringUtils.MakeString(second, m_wsEn);
 			Assert.AreEqual(equal, BtConverter.StringsEndWithSameWord(firstTss, secondTss), label + " - forward");
 		}
 		#endregion

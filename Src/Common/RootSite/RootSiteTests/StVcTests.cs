@@ -253,7 +253,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			IScrFootnote footnote = Cache.ServiceLocator.GetInstance<IScrFootnoteFactory>().Create();
 			m_scr.ScriptureBooksOS[0].FootnotesOS.Add(footnote);
-			footnote.FootnoteMarker = Cache.TsStrFactory.MakeString("a", Cache.WritingSystemFactory.GetWsFromStr("en"));
+			footnote.FootnoteMarker = TsStringUtils.MakeString("a", Cache.WritingSystemFactory.GetWsFromStr("en"));
 
 			// Add the guid property so we can get it out as a string.
 			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
@@ -292,7 +292,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			IScrBook book = m_scr.ScriptureBooksOS[0];
 			IScrFootnote footnote = AddFootnote(book, (IStTxtPara)book.TitleOA.ParagraphsOS[0], 0, "This is a footnote");
-			footnote.FootnoteMarker = Cache.TsStrFactory.MakeString("a", Cache.WritingSystemFactory.GetWsFromStr("en"));
+			footnote.FootnoteMarker = TsStringUtils.MakeString("a", Cache.WritingSystemFactory.GetWsFromStr("en"));
 			// Prepare the test by creating a footnote view
 			FwStyleSheet styleSheet = new FwStyleSheet();
 			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
@@ -356,7 +356,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			// add a translation to the footnote
 			ICmTranslation translation = para.GetOrCreateBT();
 			int analWs = Cache.DefaultAnalWs;
-			translation.Translation.set_String(analWs, TsStringHelper.MakeTSS("abcde", analWs));
+			translation.Translation.set_String(analWs, TsStringHelper.MakeTss("abcde", analWs));
 
 			FwStyleSheet styleSheet = new FwStyleSheet();
 			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);

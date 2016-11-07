@@ -25,9 +25,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			var tssFactory = Cache.TsStrFactory;
-			var begin = tssFactory.MakeString("beginning", wsEn);
-			var end = tssFactory.MakeString("end", wsFr);
+			var begin = TsStringUtils.MakeString("beginning", wsEn);
+			var end = TsStringUtils.MakeString("end", wsFr);
 			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
 			tisb.AppendTsString(begin);
 			tisb.AppendTsString(end);
@@ -41,8 +40,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void StringServices_CrawlRunsCanDeleteAllRuns()
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			var tssFactory = Cache.TsStrFactory;
-			var begin = tssFactory.MakeString("beginning", wsEn);
+			var begin = TsStringUtils.MakeString("beginning", wsEn);
 			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
 			tisb.AppendTsString(begin);
 			ITsString result = null;
@@ -56,9 +54,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			var tssFactory = Cache.TsStrFactory;
-			var begin = tssFactory.MakeString("beginning", wsEn);
-			var end = tssFactory.MakeString("end", wsFr);
+			var begin = TsStringUtils.MakeString("beginning", wsEn);
+			var end = TsStringUtils.MakeString("end", wsFr);
 			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
 			tisb.AppendTsString(begin);
 			tisb.AppendTsString(end);
@@ -73,10 +70,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			var tssFactory = Cache.TsStrFactory;
-			var begin = tssFactory.MakeString("beginning", wsEn);
-			var middle = tssFactory.MakeString("middle", wsFr);
-			var end = tssFactory.MakeString("end", wsEn);
+			var begin = TsStringUtils.MakeString("beginning", wsEn);
+			var middle = TsStringUtils.MakeString("middle", wsFr);
+			var end = TsStringUtils.MakeString("end", wsEn);
 			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
 			tisb.AppendTsString(begin);
 			tisb.AppendTsString(middle);
@@ -92,8 +88,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			var tssFactory = Cache.TsStrFactory;
-			var begin = tssFactory.MakeString("beginning", wsEn);
+			var begin = TsStringUtils.MakeString("beginning", wsEn);
 			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
 			tisb.AppendTsString(begin);
 			ITsString result = null;
@@ -107,9 +102,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			var tssFactory = Cache.TsStrFactory;
-			var begin = tssFactory.MakeString("beginning", wsEn);
-			var end = tssFactory.MakeString("end", wsEn);
+			var begin = TsStringUtils.MakeString("beginning", wsEn);
+			var end = TsStringUtils.MakeString("end", wsEn);
 			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
 			tisb.AppendTsString(begin);
 			tisb.AppendTsString(end);
@@ -145,7 +139,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			// And in some simple string properties, and some paragraph styles
 			var sttext = MakeText(new ITsString[] {testString1, testString2, testString1,
-				Cache.TsStrFactory.MakeString("nothing", Cache.DefaultVernWs)},
+				TsStringUtils.MakeString("nothing", Cache.DefaultVernWs)},
 				new string[] { "red", "blue", "purple", "black" });
 
 			StringServices.ReplaceStyles(Cache, specification);
@@ -190,7 +184,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private ITsString MakeStyledString(int ws, string[] parts, string[] styles)
 		{
 			Assert.AreEqual(parts.Length, styles.Length);
-			var bldr = Cache.TsStrFactory.MakeString("", ws).GetBldr();
+			ITsStrBldr bldr = TsStringUtils.EmptyString(ws).GetBldr();
 			for (int i = 0; i < parts.Length; i++)
 			{
 				var content = parts[i];
@@ -208,10 +202,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var form = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA = form;
 			form.Form.VernacularDefaultWritingSystem =
-				Cache.TsStrFactory.MakeString(lf, Cache.DefaultVernWs);
+				TsStringUtils.MakeString(lf, Cache.DefaultVernWs);
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry.SensesOS.Add(sense);
-			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss,
+			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss,
 				Cache.DefaultAnalWs);
 			return entry;
 		}
@@ -251,7 +245,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var paraFactory = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>();
 			var para = paraFactory.Create();
 			sttext.ParagraphsOS.Add(para);
-			para.Contents = Cache.TsStrFactory.MakeString(content, Cache.DefaultVernWs);
+			para.Contents = TsStringUtils.MakeString(content, Cache.DefaultVernWs);
 			return para;
 		}
 
@@ -265,8 +259,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			// Test cases cover multistring, regular string, two matches in same string, and a link that doesn't match.
 			var entry = MakeEntry("kick", "hit with foot");
 			var link = FileUtils.ChangeWindowsPathIfLinux(@"c:\testlangproj\linkedFiles\other\Myfile.wav");
-			var tss = Cache.TsStrFactory.MakeString("This here is a link", Cache.DefaultAnalWs);
-			var bldr = tss.GetBldr();
+			ITsString tss = TsStringUtils.MakeString("This here is a link", Cache.DefaultAnalWs);
+			ITsStrBldr bldr = tss.GetBldr();
 			var linkStyle = MakeStyle("testStyle");
 			StringServices.MarkTextInBldrAsHyperlink(bldr, 5, 9, link, linkStyle);
 			entry.LiteralMeaning.AnalysisDefaultWritingSystem = bldr.GetString();
@@ -400,8 +394,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var entry = MakeEntry("kick", "hit with foot");
 			// Foreign-style path is set by a foreign-platform FieldWorks
 			var link = origPathSetInDatabase;
-			var tss = Cache.TsStrFactory.MakeString("This here is a link", Cache.DefaultAnalWs);
-			var bldr = tss.GetBldr();
+			ITsString tss = TsStringUtils.MakeString("This here is a link", Cache.DefaultAnalWs);
+			ITsStrBldr bldr = tss.GetBldr();
 			var linkStyle = MakeStyle("testStyle");
 			StringServices.MarkTextInBldrAsHyperlink(bldr, 5, 9, link, linkStyle);
 			entry.LiteralMeaning.AnalysisDefaultWritingSystem = bldr.GetString();
@@ -460,7 +454,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var entry = MakeEntry("kick", "hit with foot");
 
 			var link = origPathSetInDatabase;
-			var paragraph = Cache.TsStrFactory.MakeString("abc" + link + "def", Cache.DefaultAnalWs);
+			ITsString paragraph = TsStringUtils.MakeString("abc" + link + "def", Cache.DefaultAnalWs);
 			var linkBeginning = "abc".Length;
 			var linkEnding = linkBeginning + link.Length;
 			var bldr = paragraph.GetBldr();

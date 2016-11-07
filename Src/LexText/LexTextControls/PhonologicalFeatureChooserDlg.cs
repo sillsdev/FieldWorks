@@ -531,7 +531,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						m_sda.SetObjProp(feat.Hvo, PhonologicalFeaturePublisher.ValueFlid, closedValue.ValueRA.Hvo);
 					}
 					else
-					{  
+					{
 						if (m_ctxt != null && ShowFeatureConstraintValues)
 						{
 							string str;
@@ -920,7 +920,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					string str;
 					if (!m_unicodeProps.TryGetValue(hvo, out str))
 						str = "";
-					var tssString = m_cache.TsStrFactory.MakeString(str, m_cache.DefaultUserWs);
+					var tssString = TsStringUtils.MakeString(str, m_cache.DefaultUserWs);
 
 					return tssString;
 				}
@@ -953,7 +953,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				public override int GetFieldId(string bstrClassName, string bstrFieldName, bool fIncludeBaseClasses)
 				{
 					if (bstrClassName == "FsClosedFeature" && bstrFieldName == "DummyPolarity")
-						return PolarityFlid; 
+						return PolarityFlid;
 					if (bstrClassName == "FsClosedFeature" && bstrFieldName == "DummyValue")
 						return ValueFlid;
 					return base.GetFieldId(bstrClassName, bstrFieldName, fIncludeBaseClasses);

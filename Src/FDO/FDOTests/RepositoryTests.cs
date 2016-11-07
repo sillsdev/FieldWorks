@@ -218,7 +218,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 
 			m_actionHandler.EndUndoTask();
 			UndoableUnitOfWorkHelper.Do("undo it", "redo it", m_actionHandler,
-				() => bugAltB.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("bugBB", Cache.DefaultVernWs));
+				() => bugAltB.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("bugBB", Cache.DefaultVernWs));
 			morphData = morphRepo.MonomorphemicMorphData();
 			Assert.That(morphData.ContainsKey(bugAltBKey), Is.False, "changing form causes exclusion");
 			var bugAltBBKey = new Tuple<int, string>(Cache.DefaultVernWs, "bugBB");
@@ -242,7 +242,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 			var form = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA = form;
 			form.Form.VernacularDefaultWritingSystem =
-				Cache.TsStrFactory.MakeString(lf, Cache.DefaultVernWs);
+				TsStringUtils.MakeString(lf, Cache.DefaultVernWs);
 			AddSense(entry, gloss);
 			return entry;
 		}
@@ -251,7 +251,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 		{
 			var result = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.AlternateFormsOS.Add(result);
-			result.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString(form, Cache.DefaultVernWs);
+			result.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(form, Cache.DefaultVernWs);
 			result.MorphTypeRA = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(morphType);
 			return result;
 		}
@@ -260,7 +260,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 		{
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry.SensesOS.Add(sense);
-			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss,
+			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss,
 				Cache.DefaultAnalWs);
 			return sense;
 		}
@@ -302,9 +302,9 @@ namespace SIL.FieldWorks.FDO.CoreTests
 		public void TryGetObject_ORCWithDifferentProps_WsOnly()
 		{
 			IPunctuationForm pf = Cache.ServiceLocator.GetInstance<IPunctuationFormFactory>().Create();
-			pf.Form = Cache.TsStrFactory.MakeString(StringUtils.kszObject, Cache.DefaultAnalWs);
+			pf.Form = TsStringUtils.MakeString(StringUtils.kszObject, Cache.DefaultAnalWs);
 			IPunctuationForm pfDummy;
-			ITsString tssOrcness = Cache.TsStrFactory.MakeString(StringUtils.kszObject, Cache.DefaultVernWs);
+			ITsString tssOrcness = TsStringUtils.MakeString(StringUtils.kszObject, Cache.DefaultVernWs);
 			Assert.IsFalse(m_repo.TryGetObject(tssOrcness, out pfDummy));
 		}
 
@@ -320,12 +320,12 @@ namespace SIL.FieldWorks.FDO.CoreTests
 		public void TryGetObject_ORC_Twice_WsOnly()
 		{
 			IPunctuationForm pfDummy;
-			ITsString tssOrcness = Cache.TsStrFactory.MakeString(StringUtils.kszObject, Cache.DefaultVernWs);
+			ITsString tssOrcness = TsStringUtils.MakeString(StringUtils.kszObject, Cache.DefaultVernWs);
 			Assert.IsFalse(m_repo.TryGetObject(tssOrcness, out pfDummy));
 
 			IPunctuationForm pf = Cache.ServiceLocator.GetInstance<IPunctuationFormFactory>().Create();
-			pf.Form = Cache.TsStrFactory.MakeString(StringUtils.kszObject, Cache.DefaultVernWs);
-			tssOrcness = Cache.TsStrFactory.MakeString(StringUtils.kszObject, Cache.DefaultUserWs);
+			pf.Form = TsStringUtils.MakeString(StringUtils.kszObject, Cache.DefaultVernWs);
+			tssOrcness = TsStringUtils.MakeString(StringUtils.kszObject, Cache.DefaultUserWs);
 			Assert.IsFalse(m_repo.TryGetObject(tssOrcness, out pfDummy));
 		}
 
@@ -339,9 +339,9 @@ namespace SIL.FieldWorks.FDO.CoreTests
 		public void TryGetObject_ORCWithSameProps_WsOnly()
 		{
 			IPunctuationForm pf = Cache.ServiceLocator.GetInstance<IPunctuationFormFactory>().Create();
-			pf.Form = Cache.TsStrFactory.MakeString(StringUtils.kszObject, Cache.DefaultAnalWs);
+			pf.Form = TsStringUtils.MakeString(StringUtils.kszObject, Cache.DefaultAnalWs);
 			IPunctuationForm pfExisting;
-			ITsString tssOrcness = Cache.TsStrFactory.MakeString(StringUtils.kszObject, Cache.DefaultAnalWs);
+			ITsString tssOrcness = TsStringUtils.MakeString(StringUtils.kszObject, Cache.DefaultAnalWs);
 			Assert.IsTrue(m_repo.TryGetObject(tssOrcness, out pfExisting));
 			Assert.AreEqual(pf, pfExisting);
 		}
@@ -397,7 +397,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 		public void TryGetObject_PlainPunctString_NotExists()
 		{
 			IPunctuationForm pfDummy;
-			ITsString tssPunc = Cache.TsStrFactory.MakeString(".", Cache.DefaultVernWs);
+			ITsString tssPunc = TsStringUtils.MakeString(".", Cache.DefaultVernWs);
 			Assert.IsFalse(m_repo.TryGetObject(tssPunc, out pfDummy));
 		}
 
@@ -418,7 +418,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 			pf.Form = bldr.GetString();
 
 			IPunctuationForm pfDummy;
-			ITsString tssPunc = Cache.TsStrFactory.MakeString(".", Cache.DefaultVernWs);
+			ITsString tssPunc = TsStringUtils.MakeString(".", Cache.DefaultVernWs);
 			Assert.IsFalse(m_repo.TryGetObject(tssPunc, out pfDummy));
 		}
 
@@ -433,9 +433,9 @@ namespace SIL.FieldWorks.FDO.CoreTests
 		public void TryGetObject_PlainPunctString_Exists()
 		{
 			IPunctuationForm pf = Cache.ServiceLocator.GetInstance<IPunctuationFormFactory>().Create();
-			pf.Form = Cache.TsStrFactory.MakeString(".", Cache.DefaultAnalWs);
+			pf.Form = TsStringUtils.MakeString(".", Cache.DefaultAnalWs);
 			IPunctuationForm pfExisting;
-			ITsString tssPunc = Cache.TsStrFactory.MakeString(".", Cache.DefaultVernWs);
+			ITsString tssPunc = TsStringUtils.MakeString(".", Cache.DefaultVernWs);
 			Assert.IsTrue(m_repo.TryGetObject(tssPunc, out pfExisting));
 			Assert.AreEqual(pf, pfExisting);
 		}

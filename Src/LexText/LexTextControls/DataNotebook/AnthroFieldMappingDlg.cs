@@ -203,7 +203,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 								m_groupOptions.Text = LexTextControls.ksListRefImportOptions;
 								m_groupOptions.Controls.Add(m_listOpt);
 								m_listOpt.Location = m_locSubCtrl;
-								m_listOpt.Initialize(m_cache, m_helpTopicProvider, m_app, m_stylesheet, m_rsfm, cpt);
+								m_listOpt.Initialize(m_cache, m_helpTopicProvider, m_app, m_rsfm, cpt);
 								break;
 							}
 							throw new ArgumentException(LexTextControls.ksInvalidField);
@@ -226,7 +226,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 							m_groupOptions.Text = LexTextControls.ksListRefImportOptions;
 							m_groupOptions.Controls.Add(m_listOpt);
 							m_listOpt.Location = m_locSubCtrl;
-							m_listOpt.Initialize(m_cache, m_helpTopicProvider, m_app, m_stylesheet, m_rsfm, cpt);
+							m_listOpt.Initialize(m_cache, m_helpTopicProvider, m_app, m_rsfm, cpt);
 							break;
 						case RnGenericRecTags.kClassId:
 							throw new NotImplementedException(LexTextControls.ksUnimplementedField);
@@ -239,13 +239,13 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 					m_groupOptions.Text = LexTextControls.ksMultiStringImportOptions;
 					m_groupOptions.Controls.Add(m_stringOpt);
 					m_stringOpt.Location = m_locSubCtrl;
-					m_stringOpt.Initialize(m_cache, m_helpTopicProvider, m_app, m_stylesheet, m_rsfm);
+					m_stringOpt.Initialize(m_cache, m_helpTopicProvider, m_app, m_rsfm);
 					break;
 				case CellarPropertyType.String:
 					m_groupOptions.Text = LexTextControls.ksStringImportOptions;
 					m_groupOptions.Controls.Add(m_stringOpt);
 					m_stringOpt.Location = m_locSubCtrl;
-					m_stringOpt.Initialize(m_cache, m_helpTopicProvider, m_app, m_stylesheet, m_rsfm);
+					m_stringOpt.Initialize(m_cache, m_helpTopicProvider, m_app, m_rsfm);
 					break;
 				case CellarPropertyType.GenDate:
 					m_groupOptions.Text = LexTextControls.ksGenDateImportOptions;

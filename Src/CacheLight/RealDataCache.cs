@@ -48,7 +48,6 @@ namespace SIL.FieldWorks.CacheLight
 		private IFwMetaDataCache m_metaDataCache;
 		private IActionHandler m_actionhandler;
 		private ILgWritingSystemFactory m_lgWritingSystemFactory;
-		private readonly ITsStrFactory m_tsf;
 
 		// Field ids that need to be set if a test uses them--e.g. if it calls ReplaceWithTsString
 		private int m_paraContentsFlid;
@@ -139,26 +138,6 @@ namespace SIL.FieldWorks.CacheLight
 		}
 
 		#endregion Properties
-
-		#region Construction and Initialization
-
-		/// <summary>
-		/// Constructs the object.
-		/// </summary>
-		public RealDataCache()
-			: this(TsStrFactoryClass.Create())
-		{
-		}
-
-		/// <summary>
-		/// Constructs the object.
-		/// </summary>
-		public RealDataCache(ITsStrFactory tsf)
-		{
-			m_tsf = tsf;
-		}
-
-		#endregion Construction and Initialization
 
 		#region Other methods
 
@@ -278,7 +257,7 @@ namespace SIL.FieldWorks.CacheLight
 						if (m_clids.Count == 0)
 						{
 							var countAllClasses = MetaDataCache.ClassCount;
-							using (var clids = MarshalEx.ArrayToNative<int>(countAllClasses))
+							using (ArrayPtr clids = MarshalEx.ArrayToNative<int>(countAllClasses))
 							{
 								MetaDataCache.GetClassIds(countAllClasses, clids);
 								var uIds = MarshalEx.NativeToArray<int>(clids, countAllClasses);
@@ -1055,8 +1034,7 @@ namespace SIL.FieldWorks.CacheLight
 			{
 				// Note: Normally, this would throw a KeyNotFoundException,
 				// but the interface says we have to return an empty string.
-				var tsf = TsStrFactoryClass.Create();
-				tss = tsf.MakeString(string.Empty, ws);
+				tss = TsStringUtils.EmptyString(ws);
 				// If it is not a Compute every time virtual, go ahead and cache it
 				if (!removeFromCache)
 					SetMultiStringAlt(hvo, tag, ws, tss); // Save it for next time.
@@ -1075,7 +1053,7 @@ namespace SIL.FieldWorks.CacheLight
 		{
 			CheckDisposed();
 
-			var tsms = new TsMultiString(m_tsf);
+			var tsms = new TsMultiString();
 			foreach (var key in m_extendedKeyCache.Keys)
 			{
 				if (key.Hvo == hvo && key.Flid == tag)

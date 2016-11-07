@@ -11,7 +11,6 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -283,7 +282,7 @@ namespace SIL.FieldWorks.XWorks
 				for (var i = 0; i < cws; i++)
 				{
 					var curWs = m_lmscListName.Ws(i);
-					var emptyStr = Cache.TsStrFactory.EmptyString(curWs).Text;
+					var emptyStr = TsStringUtils.EmptyString(curWs).Text;
 					var lmscName = m_lmscListName.Value(curWs).Text;
 					if (repo.AllInstances().Where(
 						list => list.Name.get_String(curWs).Text != emptyStr
@@ -811,7 +810,7 @@ namespace SIL.FieldWorks.XWorks
 				for (var i = 0; i < cws; i++)
 				{
 					var curWs = m_lmscListName.Ws(i);
-					var emptyStr = Cache.TsStrFactory.EmptyString(curWs).Text;
+					var emptyStr = TsStringUtils.EmptyString(curWs).Text;
 					var lmscName = m_lmscListName.Value(curWs).Text;
 					if (repo.AllInstances().Where(
 						list => list != m_curList

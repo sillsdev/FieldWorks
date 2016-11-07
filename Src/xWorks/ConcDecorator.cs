@@ -437,7 +437,7 @@ namespace SIL.FieldWorks.XWorks
 
 		ITsString EmptyUserString()
 		{
-			return TsStrFactoryClass.Create().MakeString("", BaseSda.WritingSystemFactory.UserWs);
+			return TsStringUtils.EmptyString(BaseSda.WritingSystemFactory.UserWs);
 		}
 		public override ITsString get_StringProp(int hvo, int tag)
 		{
@@ -458,21 +458,21 @@ namespace SIL.FieldWorks.XWorks
 						var text = GetStText(hvo);
 						if (text != null)
 							return text.Title.get_String(ws);
-						return TsStrFactoryClass.Create().MakeString("", ws);
+						return TsStringUtils.EmptyString(ws);
 					}
 				case kflidTextSource:
 					{
 						var text = GetStText(hvo);
 						if (text != null)
 							return text.Source.get_String(ws);
-						return TsStrFactoryClass.Create().MakeString("", ws);
+						return TsStringUtils.EmptyString(ws);
 					}
 				case kflidTextComment:
 					{
 						var text = GetStText(hvo);
 						if (text != null)
 							return text.Comment.get_String(ws);
-						return TsStrFactoryClass.Create().MakeString("", ws);
+						return TsStringUtils.EmptyString(ws);
 					}
 			}
 			return base.get_MultiStringAlt(hvo, tag, ws);

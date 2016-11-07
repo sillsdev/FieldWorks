@@ -234,8 +234,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			ichMin = ichMinAdjust;
 			ichLim = ichLimAdjust;
 
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-
 			// Now we have the specific range we will check. Get the actual string.
 			ITsStrBldr bldr = tss.GetBldr();
 			if (ichLim < bldr.Length)
@@ -270,7 +268,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			ICollection<string> suggestions = dict.Suggest(word);
 			foreach (string suggest in suggestions)
 			{
-				ITsString replacement = tsf.MakeStringRgch(suggest, suggest.Length, wsText);
+				ITsString replacement = TsStringUtils.MakeString(suggest, wsText);
 				if (keepOrcs != null)
 				{
 					ITsStrBldr bldrRep = keepOrcs.GetBldr();
@@ -780,7 +778,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				// Create it. (Caller has already started the UOW.)
 				wf = servLoc.GetInstance<IWfiWordformFactory>().Create(
-								m_cache.TsStrFactory.MakeString(word, ws));
+								TsStringUtils.MakeString(word, ws));
 			}
 			wf.SpellingStatus = (int)SpellingStatusStates.correct;
 		}

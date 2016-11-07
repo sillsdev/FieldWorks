@@ -512,7 +512,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void btnAdd_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new LexImportWizardLanguage(m_cache, m_uiLangs, m_helpTopicProvider, m_app, m_stylesheet))
+			using (var dlg = new LexImportWizardLanguage(m_cache, m_uiLangs, m_helpTopicProvider, m_app))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{

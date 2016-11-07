@@ -240,7 +240,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			var citationForm = CitationFormWithAffixTypeStaticForWs(entry, wsVern, defaultCf);
 			if (String.IsNullOrEmpty(citationForm))
-				return entry.Cache.TsStrFactory.EmptyString(wsVern);
+				return TsStringUtils.EmptyString(wsVern);
 			var tisb = TsIncStrBldrClass.Create();
 			AddHeadwordForWsAndHn(entry, wsVern, nHomograph, hv, tisb, citationForm);
 			return tisb.GetString();
@@ -261,7 +261,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			var citationForm = CitationFormWithAffixTypeStaticForWs(entry, wsVern, defaultCf);
 			if (String.IsNullOrEmpty(citationForm))
 			{
-				tisb.AppendTsString(entry.Cache.TsStrFactory.EmptyString(wsVern)); // avoids COM Exception!
+				tisb.AppendTsString(TsStringUtils.EmptyString(wsVern)); // avoids COM Exception!
 				return;
 			}
 			AddHeadwordForWsAndHn(entry, wsVern, nHomograph, hv, tisb, citationForm);
@@ -368,7 +368,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			}
 
 			// Give up.
-			tsb.AppendTsString(entry.Cache.TsStrFactory.MakeString(
+			tsb.AppendTsString(TsStringUtils.MakeString(
 				DefaultHomographString(),
 				entry.Cache.DefaultUserWs));
 		}

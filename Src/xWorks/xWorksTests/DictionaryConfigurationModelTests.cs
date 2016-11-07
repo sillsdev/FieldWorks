@@ -301,7 +301,7 @@ namespace SIL.FieldWorks.XWorks
 						Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
 				result = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(result);
-				result.Name.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(publicationName,
+				result.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(publicationName,
 					Cache.DefaultAnalWs);
 			});
 			return result;

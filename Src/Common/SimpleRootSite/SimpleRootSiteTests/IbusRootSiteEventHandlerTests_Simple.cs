@@ -6,6 +6,7 @@ using System;
 using System.Drawing;
 using IBusDotNet;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils.Attributes;
@@ -65,9 +66,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		private int SetupInitialText(string text)
 		{
 			int cParas = m_cache.get_VecSize(m_hvoRoot, SimpleRootsiteTestsConstants.kflidTextParas);
-			ITsStrFactory tsStrFactory = TsStrFactoryClass.Create();
 			int hvoPara = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStTxtPara, m_hvoRoot, SimpleRootsiteTestsConstants.kflidTextParas, cParas);
-			m_cache.CacheStringProp(hvoPara, SimpleRootsiteTestsConstants.kflidParaContents, tsStrFactory.MakeString(string.Empty, m_wsFrn));
+			m_cache.CacheStringProp(hvoPara, SimpleRootsiteTestsConstants.kflidParaContents, TsStringUtils.EmptyString(m_wsFrn));
 			var propFact = TsPropsFactoryClass.Create();
 			var runStyle = propFact.MakeProps(null, m_wsFrn, 0);
 			ITsString contents = m_cache.get_StringProp(hvoPara, SimpleRootsiteTestsConstants.kflidParaContents);

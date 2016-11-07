@@ -47,11 +47,10 @@ namespace SIL.FieldWorks.IText
 		public ComplexConcPatternVc(FdoCache cache, PropertyTable propertyTable)
 			: base(cache, propertyTable)
 		{
-			ITsStrFactory tsf = m_cache.TsStrFactory;
 			int userWs = m_cache.DefaultUserWs;
-			m_infinity = tsf.MakeString("\u221e", userWs);
-			m_or = tsf.MakeString("OR", userWs);
-			m_hash = tsf.MakeString("#", userWs);
+			m_infinity = TsStringUtils.MakeString("\u221e", userWs);
+			m_or = TsStringUtils.MakeString("OR", userWs);
+			m_hash = TsStringUtils.MakeString("#", userWs);
 		}
 
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
@@ -358,12 +357,12 @@ namespace SIL.FieldWorks.IText
 				case kfragNodeMax:
 					// if the max value is -1, it indicates that it is infinite
 					ComplexConcPatternNode node1 = ((ComplexConcPatternSda) vwenv.DataAccess).Nodes[vwenv.CurrentObject()];
-					tss = node1.Maximum == -1 ? m_infinity : m_cache.TsStrFactory.MakeString(node1.Maximum.ToString(CultureInfo.InvariantCulture), m_cache.DefaultUserWs);
+					tss = node1.Maximum == -1 ? m_infinity : TsStringUtils.MakeString(node1.Maximum.ToString(CultureInfo.InvariantCulture), m_cache.DefaultUserWs);
 					break;
 
 				case kfragNodeMin:
 					ComplexConcPatternNode node2 = ((ComplexConcPatternSda) vwenv.DataAccess).Nodes[vwenv.CurrentObject()];
-					tss = m_cache.TsStrFactory.MakeString(node2.Minimum.ToString(CultureInfo.InvariantCulture), m_cache.DefaultUserWs);
+					tss = TsStringUtils.MakeString(node2.Minimum.ToString(CultureInfo.InvariantCulture), m_cache.DefaultUserWs);
 					break;
 
 				case kfragOR:
@@ -507,7 +506,7 @@ namespace SIL.FieldWorks.IText
 			if (value != null)
 			{
 				if (negated)
-					featLine.AppendTsString(m_tsf.MakeString("!", m_cache.DefaultUserWs));
+					featLine.AppendTsString(TsStringUtils.MakeString("!", m_cache.DefaultUserWs));
 				featLine.AppendTsString(value);
 			}
 			return featLine.GetString();
@@ -515,12 +514,12 @@ namespace SIL.FieldWorks.IText
 
 		public ITsString CreateFeatureLine(string name, ITsString value, bool negated)
 		{
-			return CreateFeatureLine(m_cache.TsStrFactory.MakeString(name, m_cache.DefaultUserWs), value, negated);
+			return CreateFeatureLine(TsStringUtils.MakeString(name, m_cache.DefaultUserWs), value, negated);
 		}
 
 		private ITsString CreateFeatureLine(string name, string value, int ws)
 		{
-			return CreateFeatureLine(name, m_cache.TsStrFactory.MakeString(value, ws), false);
+			return CreateFeatureLine(name, TsStringUtils.MakeString(value, ws), false);
 		}
 
 		private int GetMaxNumLines(IVwEnv vwenv)

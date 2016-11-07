@@ -357,7 +357,7 @@ namespace SIL.FieldWorks.XWorks
 			private AnywhereMatcher CreateAnywhereMatcher(string pattern, int ws)
 			{
 				IVwPattern ivwpattern = VwPatternClass.Create();
-				ivwpattern.Pattern = TsStringUtils.MakeTss(pattern, ws);
+				ivwpattern.Pattern = TsStringUtils.MakeString(pattern, ws);
 				ivwpattern.MatchCase = true;
 				ivwpattern.MatchDiacritics = true;
 
@@ -1517,7 +1517,7 @@ namespace SIL.FieldWorks.XWorks
 				int clsidForm = 0;
 				parentEntry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
 					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm),
-					TsStringUtils.MakeTss(formLexEntry, Cache.DefaultVernWs), "ZZZparentEntry.sense1", null);
+					TsStringUtils.MakeString(formLexEntry, Cache.DefaultVernWs), "ZZZparentEntry.sense1", null);
 				var parentEntrySense1 = parentEntry.SensesOS[0];
 				var parentEntrySense2 = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create(
 					parentEntry, null, "ZZZparentEntry.sense2");

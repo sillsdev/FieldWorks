@@ -76,7 +76,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
 			{
 				m_entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
-				m_entry.CitationForm.VernacularDefaultWritingSystem = TsStringUtils.MakeTss("rubbish", Cache.DefaultVernWs);
+				m_entry.CitationForm.VernacularDefaultWritingSystem = TsStringUtils.MakeString("rubbish", Cache.DefaultVernWs);
 				// We set both alternatives because currently the default part for Bibliography uses vernacular,
 				// but I think this will probably get fixed. Anyway, this way the test is robust.
 				m_entry.Bibliography.SetAnalysisDefaultWritingSystem("My rubbishy bibliography");
@@ -264,7 +264,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_entry.SensesOS.Add(sense2);
 			Cache.MainCacheAccessor.SetString(sense2.Hvo,
 				LexSenseTags.kflidScientificName,
-				TsStringUtils.MakeTss("blah blah", Cache.DefaultAnalWs));
+				TsStringUtils.MakeString("blah blah", Cache.DefaultAnalWs));
 
 			m_mediator.Dispose();
 			m_mediator = new Mediator();
@@ -308,8 +308,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_parent.Dispose();
 			m_parent = null;
 
-			etymology.LanguageNotes.AnalysisDefaultWritingSystem = TsStringUtils.MakeTss("source language", Cache.DefaultAnalWs);
-			etymology.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeTss("rubbish", Cache.DefaultVernWs);
+			etymology.LanguageNotes.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("source language", Cache.DefaultAnalWs);
+			etymology.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("rubbish", Cache.DefaultVernWs);
 
 			m_mediator.Dispose();
 			m_mediator = new Mediator();

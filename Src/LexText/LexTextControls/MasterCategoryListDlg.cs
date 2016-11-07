@@ -642,12 +642,11 @@ namespace SIL.FieldWorks.LexText.Controls
 					int termWs = wsf.GetWsFromStr(m_termWs);
 					int abbrevWs = wsf.GetWsFromStr(m_abbrevWs);
 					int defWs = wsf.GetWsFromStr(m_defWs);
-					ITsStrFactory tsf = cache.TsStrFactory;
 					if (m_node == null)
 					{ // should not happen, but just in case... we still get something useful
-						m_pos.Name.set_String(termWs, tsf.MakeString(m_term, termWs));
-						m_pos.Abbreviation.set_String(abbrevWs, tsf.MakeString(m_abbrev, abbrevWs));
-						m_pos.Description.set_String(defWs, tsf.MakeString(m_def, defWs));
+						m_pos.Name.set_String(termWs, TsStringUtils.MakeString(m_term, termWs));
+						m_pos.Abbreviation.set_String(abbrevWs, TsStringUtils.MakeString(m_abbrev, abbrevWs));
+						m_pos.Description.set_String(defWs, TsStringUtils.MakeString(m_def, defWs));
 					}
 					else
 					{
@@ -663,7 +662,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			private void SetContentFromNode(FdoCache cache, string sNodeName, bool fFixName, ITsMultiString item)
 			{
 				ILgWritingSystemFactory wsf = cache.WritingSystemFactory;
-				ITsStrFactory tsf = cache.TsStrFactory;
 				int iWS;
 				XmlNode nd;
 				bool fContentFound = false; // be pessimistic
@@ -680,12 +678,12 @@ namespace SIL.FieldWorks.LexText.Controls
 					else
 						sNodeContent = nd.InnerText;
 					iWS = wsf.GetWsFromStr(sWS);
-					item.set_String(iWS, (tsf.MakeString(sNodeContent, iWS)));
+					item.set_String(iWS, TsStringUtils.MakeString(sNodeContent, iWS));
 				}
 				if (!fContentFound)
 				{
 					iWS = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
-					item.set_String(iWS, tsf.MakeString("", iWS));
+					item.set_String(iWS, TsStringUtils.EmptyString(iWS));
 				}
 			}
 

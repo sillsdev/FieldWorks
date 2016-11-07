@@ -29,7 +29,6 @@ namespace SIL.CoreImpl
 	{
 		private WritingSystemManager m_wsManager;
 		private TsStringComparer m_comparer;
-		private ITsStrFactory m_tssFact;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -41,7 +40,6 @@ namespace SIL.CoreImpl
 		{
 			m_wsManager = new WritingSystemManager();
 			m_comparer = new TsStringComparer(m_wsManager.Create("en"));
-			m_tssFact = TsStrFactoryClass.Create();
 		}
 
 		/// <summary/>
@@ -69,7 +67,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void OneArgumentNull()
 		{
-			ITsString tss = m_tssFact.MakeString("bla", 1);
+			ITsString tss = TsStringUtils.MakeString("bla", 1);
 			Assert.That(m_comparer.Compare(null, tss), Is.LessThan(0));
 			Assert.That(m_comparer.Compare(tss, null), Is.GreaterThan(0));
 		}
@@ -82,8 +80,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void OneArgumentEmptyString()
 		{
-			ITsString tss = m_tssFact.MakeString("bla", 1);
-			ITsString tssEmpty = m_tssFact.MakeString(string.Empty, 1);
+			ITsString tss = TsStringUtils.MakeString("bla", 1);
+			ITsString tssEmpty = TsStringUtils.EmptyString(1);
 			Assert.That(m_comparer.Compare(tssEmpty, tss), Is.LessThan(0));
 			Assert.That(m_comparer.Compare(tss, tssEmpty), Is.GreaterThan(0));
 		}
@@ -97,7 +95,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void OneArgumentEmptyStringOtherNull()
 		{
-			ITsString tss = m_tssFact.MakeString(string.Empty, 1);
+			ITsString tss = TsStringUtils.EmptyString(1);
 			Assert.That(m_comparer.Compare(null, tss), Is.EqualTo(0));
 			Assert.That(m_comparer.Compare(tss, null), Is.EqualTo(0));
 		}
@@ -110,8 +108,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void CompareTwoStrings()
 		{
-			ITsString tss1 = m_tssFact.MakeString("bla", 1);
-			ITsString tss2 = m_tssFact.MakeString("zzz", 1);
+			ITsString tss1 = TsStringUtils.MakeString("bla", 1);
+			ITsString tss2 = TsStringUtils.MakeString("zzz", 1);
 			Assert.That(m_comparer.Compare(tss1, tss2), Is.LessThan(0));
 			Assert.That(m_comparer.Compare(tss2, tss1), Is.GreaterThan(0));
 		}
@@ -124,8 +122,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void CompareIdenticalStrings()
 		{
-			ITsString tss1 = m_tssFact.MakeString("bla", 1);
-			ITsString tss2 = m_tssFact.MakeString("bla", 1);
+			ITsString tss1 = TsStringUtils.MakeString("bla", 1);
+			ITsString tss2 = TsStringUtils.MakeString("bla", 1);
 			Assert.That(m_comparer.Compare(tss1, tss2), Is.EqualTo(0));
 		}
 
@@ -137,8 +135,8 @@ namespace SIL.CoreImpl
 		[Test]
 		public void CompareTwoStringsWithDifferentWs()
 		{
-			ITsString tss1 = m_tssFact.MakeString("bla", 1);
-			ITsString tss2 = m_tssFact.MakeString("zzz", 2);
+			ITsString tss1 = TsStringUtils.MakeString("bla", 1);
+			ITsString tss2 = TsStringUtils.MakeString("zzz", 2);
 			Assert.That(m_comparer.Compare(tss1, tss2), Is.LessThan(0));
 		}
 
@@ -151,7 +149,7 @@ namespace SIL.CoreImpl
 		[ExpectedException(typeof(ArgumentException))]
 		public void FirstArgumentNotTsString()
 		{
-			ITsString tss = m_tssFact.MakeString("bla", 1);
+			ITsString tss = TsStringUtils.MakeString("bla", 1);
 			m_comparer.Compare(123, tss);
 		}
 
@@ -164,7 +162,7 @@ namespace SIL.CoreImpl
 		[ExpectedException(typeof(ArgumentException))]
 		public void SecondArgumentNotTsString()
 		{
-			ITsString tss = m_tssFact.MakeString("bla", 1);
+			ITsString tss = TsStringUtils.MakeString("bla", 1);
 			m_comparer.Compare(tss, 123);
 		}
 
@@ -177,8 +175,8 @@ namespace SIL.CoreImpl
 		public void CompareTwoStringsWithoutIcu()
 		{
 			var comparer = new TsStringComparer();
-			ITsString tss1 = m_tssFact.MakeString("bla", 1);
-			ITsString tss2 = m_tssFact.MakeString("zzz", 1);
+			ITsString tss1 = TsStringUtils.MakeString("bla", 1);
+			ITsString tss2 = TsStringUtils.MakeString("zzz", 1);
 			Assert.That(comparer.Compare(tss1, tss2), Is.LessThan(0));
 			Assert.That(comparer.Compare(tss2, tss1), Is.GreaterThan(0));
 		}
@@ -192,7 +190,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void CompareTsStringWithRegularString()
 		{
-			ITsString tss = m_tssFact.MakeString("bla", 1);
+			ITsString tss = TsStringUtils.MakeString("bla", 1);
 			Assert.That(m_comparer.Compare(tss, "zzz"), Is.LessThan(0));
 			Assert.That(m_comparer.Compare("zzz", tss), Is.GreaterThan(0));
 		}

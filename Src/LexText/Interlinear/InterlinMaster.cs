@@ -961,7 +961,7 @@ namespace SIL.FieldWorks.IText
 					if(stText.MainWritingSystem == globalDefaultWs)
 					{
 						NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-							((IStTxtPara)stText.ParagraphsOS[0]).Contents = TsStringUtils.MakeTss(string.Empty, Cache.DefaultVernWs));
+							((IStTxtPara)stText.ParagraphsOS[0]).Contents = TsStringUtils.MakeString(string.Empty, Cache.DefaultVernWs));
 					}
 
 					// since we have no text, we should not sit on any of the analyses tabs,

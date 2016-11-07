@@ -764,6 +764,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// </summary>
 		/// <param name="fMakeChangeNow">if set to <c>true</c> make the actual change now;
 		/// otherwise, just figure out what the new contents will be.</param>
+		/// <param name="progress"></param>
 		/// ------------------------------------------------------------------------------------
 		public void MakeNewContents(bool fMakeChangeNow, ProgressDialogWorkingOn progress)
 		{
@@ -910,10 +911,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// </summary>
 		internal int OldWordform { get; private set; }
 
-		// These preserve the old spelling-dictionary status for Undo.
-		bool m_fWasOldSpellingCorrect = false;
-		bool m_fWasNewSpellingCorrect = false;
-
 		// Info to support efficient Undo/Redo for large lists of changes.
 		//readonly List<int> m_hvosToChangeIntProps = new List<int>(); // objects with integer props needing change
 		//readonly List<int> m_tagsToChangeIntProps = new List<int>(); // tags of the properties
@@ -930,9 +927,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <summary>
 		/// Used in tests only at present, assumes default vernacular WS.
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="oldSpelling"></param>
-		/// <param name="newSpelling"></param>
 		internal RespellUndoAction(XMLViewsDataCache sda, FdoCache cache, string oldSpelling, string newSpelling)
 			:this(sda, cache, cache.DefaultVernWs, oldSpelling, newSpelling)
 		{
@@ -1516,18 +1510,16 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		private IWfiWordform FindOrCreateWordform(string sForm, int wsForm)
 		{
 			return RepoWf.GetMatchingWordform(wsForm, sForm) ??
-				FactWf.Create(m_cache.TsStrFactory.MakeString(sForm, wsForm));
+				FactWf.Create(TsStringUtils.MakeString(sForm, wsForm));
 		}
 
 		private void SetOldOccurrencesOfWordforms(int flidOccurrences, IWfiWordform wfOld, IWfiWordform wfNew)
 		{
 			OldWordform = wfOld.Hvo;
-			m_oldOccurrencesOldWf = m_specialSda.VecProp(wfOld.Hvo, flidOccurrences);
-			m_fWasOldSpellingCorrect = wfOld.SpellingStatus == (int)SpellingStatusStates.correct;
+			m_oldOccurrencesOldWf = m_specialSda.VecProp(wfOld.Hvo, flidOccurrences);;
 
 			NewWordform = wfNew.Hvo;
 			m_oldOccurrencesNewWf = m_specialSda.VecProp(wfNew.Hvo, flidOccurrences);
-			m_fWasNewSpellingCorrect = wfNew.SpellingStatus == (int)SpellingStatusStates.correct;
 		}
 
 		private void SetNewOccurrencesOfWordforms(ProgressDialogWorkingOn progress)
@@ -1879,7 +1871,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <summary>
 		/// Remove all changed items from the set of enabled ones.
 		/// </summary>
-		/// <param name="enabledItems"></param>
 		internal void RemoveChangedItems(HashSet<int> enabledItems, int tagEnabled)
 		{
 			foreach (var info in m_changedParas.Values)

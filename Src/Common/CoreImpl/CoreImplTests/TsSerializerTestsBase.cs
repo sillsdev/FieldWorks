@@ -14,8 +14,6 @@ namespace SIL.CoreImpl
 		#region Member Variables
 		protected int EnWS { get; private set; }
 		protected int EsWS { get; private set; }
-		protected ITsStrFactory TsStrFactory { get; private set; }
-		protected ITsPropsFactory TsPropsFactory { get; private set; }
 		private DebugProcs m_DebugProcs;
 		protected WritingSystemManager WritingSystemManager { get; set; }
 		#endregion
@@ -42,9 +40,6 @@ namespace SIL.CoreImpl
 			CoreWritingSystemDefinition esWs;
 			WritingSystemManager.GetOrSet("es", out esWs);
 			EsWS = esWs.Handle;
-
-			TsStrFactory = TsStrFactoryClass.Create();
-			TsPropsFactory = TsPropsFactoryClass.Create();
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -86,8 +86,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			// Handle gloss.
 			if (!string.IsNullOrEmpty(gloss))
 			{
-				var defAnalWs = entry.Cache.DefaultAnalWs;
-				var gls = entry.Cache.TsStrFactory.MakeString(gloss, defAnalWs);
+				int defAnalWs = entry.Cache.DefaultAnalWs;
+				ITsString gls = TsStringUtils.MakeString(gloss, defAnalWs);
 
 				return Create(entry, sandboxMSA, gls);
 			}
@@ -419,7 +419,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <returns></returns>
 		public ILexEntry Create(IMoMorphType morphType, ITsString tssLexemeForm, string gloss, SandboxGenericMSA sandboxMSA)
 		{
-			var tssGloss = m_cache.TsStrFactory.MakeString(gloss, m_cache.DefaultAnalWs);
+			ITsString tssGloss = TsStringUtils.MakeString(gloss, m_cache.DefaultAnalWs);
 			return Create(morphType, tssLexemeForm, tssGloss, sandboxMSA);
 		}
 
@@ -462,11 +462,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <returns></returns>
 		public ILexEntry Create(string entryFullForm, string senseGloss, SandboxGenericMSA msa)
 		{
-			ITsString tssFullForm = TsStringUtils.MakeTss(entryFullForm, m_cache.DefaultVernWs);
+			ITsString tssFullForm = TsStringUtils.MakeString(entryFullForm, m_cache.DefaultVernWs);
 			// create a sense with a matching gloss
 			var entryComponents = MorphServices.BuildEntryComponents(m_cache, tssFullForm);
 			entryComponents.MSA = msa;
-			entryComponents.GlossAlternatives.Add(TsStringUtils.MakeTss(senseGloss, m_cache.DefaultAnalWs));
+			entryComponents.GlossAlternatives.Add(TsStringUtils.MakeString(senseGloss, m_cache.DefaultAnalWs));
 			return m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(entryComponents);
 		}
 
@@ -480,7 +480,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (entryComponents.MorphType == null)
 				throw new ArgumentException("Expected entryComponents to already have MorphType");
 			var tssGloss =
-				entryComponents.GlossAlternatives.DefaultIfEmpty(TsStringUtils.MakeTss("", m_cache.DefaultAnalWs)).
+				entryComponents.GlossAlternatives.DefaultIfEmpty(TsStringUtils.MakeString("", m_cache.DefaultAnalWs)).
 					FirstOrDefault();
 			ILexEntry newEntry = Create(entryComponents.MorphType,
 				entryComponents.LexemeFormAlternatives[0],
@@ -580,14 +580,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				mmt = mmtPrefix; // force a prefix if it's neither a prefix nor an infix
 #pragma warning disable 168
 			var allomorph = MoForm.CreateAllomorph(entry, sense.MorphoSyntaxAnalysisRA,
-												   TsStringUtils.MakeTss(sLeftMember, wsVern), mmt, false);
+												   TsStringUtils.MakeString(sLeftMember, wsVern), mmt, false);
 #pragma warning disable 168
 			mmt = MorphServices.FindMorphType(m_cache, ref sRightMember, out clsidForm);
 			if ((mmt.Hvo != mmtInfix.Hvo) &&
 				(mmt.Hvo != mmtSuffix.Hvo))
 				mmt = mmtSuffix; // force a suffix if it's neither a suffix nor an infix
 			allomorph = MoForm.CreateAllomorph(entry, sense.MorphoSyntaxAnalysisRA,
-											   TsStringUtils.MakeTss(sRightMember, wsVern), mmt, false);
+											   TsStringUtils.MakeString(sRightMember, wsVern), mmt, false);
 
 			return lexemeAllo;
 		}
@@ -1840,7 +1840,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			string sLayoutPos, string sLocationRange, string sCopyright, string sCaption,
 			PictureLocationRangeType locRangeType, string sScaleFactor)
 		{
-			return Create(srcFilename, m_cache.TsStrFactory.MakeString(sCaption, m_cache.DefaultVernWs),
+			return Create(srcFilename, TsStringUtils.MakeString(sCaption, m_cache.DefaultVernWs),
 				sDescription, sLayoutPos, sScaleFactor, locRangeType, anchorLoc, locationParser,
 				sLocationRange, sCopyright, sFolder);
 		}
@@ -2119,7 +2119,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					// Footnote marker
 					if (bla.Name == "M")
 					{
-						createdFootnote.FootnoteMarker = TsStringUtils.MakeTss(bla.InnerText,
+						createdFootnote.FootnoteMarker = TsStringUtils.MakeString(bla.InnerText,
 							m_cache.DefaultVernWs, footnoteMarkerStyleName);
 					}
 					// start of a paragraph
@@ -2393,7 +2393,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			owner.ParagraphsOS.Insert(iPos, newPara);
 			newPara.GetOrCreateBT(); // Make sure the CmTranslation is created.
 			newPara.StyleRules = StyleUtils.ParaStyleTextProps(styleName);
-			newPara.Contents = newPara.Cache.TsStrFactory.EmptyString(newPara.Cache.DefaultVernWs);
+			newPara.Contents = TsStringUtils.EmptyString(newPara.Cache.DefaultVernWs);
 			return newPara;
 		}
 	}

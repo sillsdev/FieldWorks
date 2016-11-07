@@ -3464,16 +3464,14 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (!fCanFormat && tss != null)
 			{
 				// remove formatting from the TsString
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
 				string str = tss.Text;
-				tss = tsf.MakeStringWithPropsRgch(str, str.Length, ttpSel);
+				tss = TsStringUtils.MakeString(str, ttpSel);
 			}
 
 			if (tss == null)
 			{	// all else didn't work, so try with an ordinary string
 				string str = ClipboardUtils.GetText();
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
-				tss = tsf.MakeStringWithPropsRgch(str, str.Length, ttpSel);
+				tss = TsStringUtils.MakeString(str, ttpSel);
 			}
 
 			return tss;

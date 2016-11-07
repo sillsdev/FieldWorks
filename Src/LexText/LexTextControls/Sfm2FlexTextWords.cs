@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -13,7 +12,6 @@ using System.Xml.Serialization;
 using Sfm2Xml;
 using SilEncConverters40;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -129,7 +127,6 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		protected Dictionary<string, TMapping> m_mappings = new Dictionary<string, TMapping>();
 		protected EncConverters m_encConverters;
-		protected ITsStrFactory m_tsf;
 		protected ByteReader m_reader;
 		protected WritingSystemManager m_wsManager;
 		protected XmlWriter m_writer;
@@ -148,7 +145,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			m_reader = reader;
 			m_wsManager = wsManager;
-			m_tsf = TsStrFactoryClass.Create();
 			using (var output = new MemoryStream())
 			{
 				using (m_writer = XmlWriter.Create(output, new XmlWriterSettings() { CloseOutput = true }))

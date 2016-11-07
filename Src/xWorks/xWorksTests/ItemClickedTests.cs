@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
@@ -99,7 +100,7 @@ namespace SIL.FieldWorks.XWorks
 			var form = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA = form;
 			form.Form.VernacularDefaultWritingSystem =
-				Cache.TsStrFactory.MakeString(lf, Cache.DefaultVernWs);
+				TsStringUtils.MakeString(lf, Cache.DefaultVernWs);
 			AddSense(entry, gloss);
 			return entry;
 		}
@@ -108,7 +109,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry.SensesOS.Add(sense);
-			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss,
+			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss,
 				Cache.DefaultAnalWs);
 			return sense;
 		}
@@ -129,7 +130,7 @@ namespace SIL.FieldWorks.XWorks
 			result = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
 			Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(result);
 			result.MappingType = (int) LexRefTypeTags.MappingTypes.kmtSenseSequence;
-			result.Name.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(name, Cache.DefaultAnalWs);
+			result.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(name, Cache.DefaultAnalWs);
 			return result;
 		}
 	}

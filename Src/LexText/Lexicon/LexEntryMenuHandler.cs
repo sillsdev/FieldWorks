@@ -25,11 +25,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// </summary>
 	public class LexEntryMenuHandler : DTMenuHandler
 	{
-		//need a default constructor for dynamic loading
-		public LexEntryMenuHandler()
-		{
-		}
-
 		/// <summary>
 		/// decide whether to display this tree insert Menu Item
 		/// </summary>
@@ -419,7 +414,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				{
 					using (SwapLexemeWithAllomorphDlg dlg = new SwapLexemeWithAllomorphDlg())
 					{
-						dlg.SetDlgInfo(cache, m_mediator, m_propertyTable, entry);
+						dlg.SetDlgInfo(cache, m_propertyTable, entry);
 						if (DialogResult.OK == dlg.ShowDialog(mainWindow))
 						{
 							SwapAllomorphWithLexeme(entry, dlg.SelectedAllomorph, cmd as Command);

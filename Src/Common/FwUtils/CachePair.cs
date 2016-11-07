@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
@@ -341,7 +342,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			CheckDisposed();
 
-			return FindOrCreateSec(hvoReal, clid, hvoOwner, flidOwn, flidName, m_fdoCache.TsStrFactory.MakeString(name, ws));
+			return FindOrCreateSec(hvoReal, clid, hvoOwner, flidOwn, flidName, TsStringUtils.MakeString(name, ws));
 		}
 		/// <summary>
 		/// Like FindOrCreateSec, except the ws is taken automaticaly as the default analysis ws of the main cache.

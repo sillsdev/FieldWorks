@@ -911,8 +911,7 @@ namespace SIL.FieldWorks.Common.Controls
 				sLabel = qws.Id;
 			if (sLabel == null)
 				sLabel = XMLViewsStrings.ksUNK;
-			ITsStrFactory tsf = cache.TsStrFactory;
-			ITsIncStrBldr tisb = tsf.GetIncBldr();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs,
 				0, cache.ServiceLocator.WritingSystemManager.UserWs);
 			tisb.SetIntPropValues((int)FwTextPropType.ktptEditable,
@@ -931,9 +930,8 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				if (!s_fMultiFirst && s_sMultiSep != null && s_sMultiSep != "")
 				{
-					ITsStrFactory tsf = cache.TsStrFactory;
 					int wsUi = cache.WritingSystemFactory.UserWs;
-					ITsString tss = tsf.MakeString(s_sMultiSep, wsUi);
+					ITsString tss = TsStringUtils.MakeString(s_sMultiSep, wsUi);
 					vwenv.AddString(tss);
 				}
 				else
@@ -1078,7 +1076,7 @@ namespace SIL.FieldWorks.Common.Controls
 			ITsString tssSep = null;
 			if (sep != null)
 			{
-				tssSep = m_cache.TsStrFactory.MakeString(sep,
+				tssSep = TsStringUtils.MakeString(sep,
 					m_cache.ServiceLocator.WritingSystemManager.UserWs);
 			}
 			bool fLabel = XmlUtils.GetOptionalBooleanAttributeValue(caller, "showLabels", false); // true to 'separate' using multistring labels.
@@ -1550,7 +1548,7 @@ namespace SIL.FieldWorks.Common.Controls
 								XmlNode dtNode = XmlViewsUtils.CopyWithParamDefaults(frag);
 								string format;
 								if (vwenv is SortCollectorEnv)
-									format = System.Globalization.DateTimeFormatInfo.InvariantInfo.SortableDateTimePattern;
+									format = DateTimeFormatInfo.InvariantInfo.SortableDateTimePattern;
 								else
 									format = XmlUtils.GetOptionalAttributeValue(dtNode, "format");
 								string formattedDateTime;
@@ -1558,23 +1556,21 @@ namespace SIL.FieldWorks.Common.Controls
 								{
 									if (format != null)
 									{
-										formattedDateTime = dt.ToString(format, System.Globalization.DateTimeFormatInfo.CurrentInfo);
+										formattedDateTime = dt.ToString(format, DateTimeFormatInfo.CurrentInfo);
 									}
 									else
 									{
 										// "G" format takes user's system ShortDate format appended by system LongTime format.
-										formattedDateTime = dt.ToString("G", System.Globalization.DateTimeFormatInfo.CurrentInfo);
+										formattedDateTime = dt.ToString("G", DateTimeFormatInfo.CurrentInfo);
 									}
 								}
 								catch (FormatException e)
 								{
 									string errorMsg = "Invalid datetime format attribute (" + format + ") in " + e.Source;
-									formattedDateTime = errorMsg;
-									throw new SIL.Utils.ConfigurationException(errorMsg, frag, e);
+									throw new ConfigurationException(errorMsg, frag, e);
 								}
-								ITsStrFactory tsf = m_cache.TsStrFactory;
 								int systemWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
-								ITsString tss = tsf.MakeString(formattedDateTime, systemWs);
+								ITsString tss = TsStringUtils.MakeString(formattedDateTime, systemWs);
 								if (vwenv is ConfiguredExport)
 									vwenv.AddTimeProp(flid, 0);
 								AddStringThatCounts(vwenv, tss, caller);
@@ -1621,7 +1617,7 @@ namespace SIL.FieldWorks.Common.Controls
 								ws = m_cache.WritingSystemFactory.GetWsFromStr(sWs);
 							else
 								ws = m_cache.WritingSystemFactory.UserWs;
-							vwenv.AddString(m_cache.TsStrFactory.MakeString(literal, ws));
+							vwenv.AddString(TsStringUtils.MakeString(literal, ws));
 							break;
 						}
 					case "if":
@@ -1675,7 +1671,7 @@ namespace SIL.FieldWorks.Common.Controls
 								(value < labels.Length))
 							{
 								int wsUi = m_cache.WritingSystemFactory.UserWs;
-								ITsString tss = m_cache.TsStrFactory.MakeString(labels[value], wsUi);
+								ITsString tss = TsStringUtils.MakeString(labels[value], wsUi);
 								vwenv.AddString(tss);
 								NoteDependency(vwenv, hvo, flid);
 							}
@@ -2760,7 +2756,7 @@ namespace SIL.FieldWorks.Common.Controls
 				else
 					return;
 			}
-			var tss = m_cache.TsStrFactory.MakeString(item,
+			var tss = TsStringUtils.MakeString(item,
 				m_cache.ServiceLocator.WritingSystemManager.UserWs);
 			var tssNumber = GetDelayedNumber(frag, vwenv is TestCollectorEnv);
 			var sStyle = XmlUtils.GetAttributeValue(frag, attrName + "Style");
@@ -3656,8 +3652,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		static void NoteStringValDependency(IVwEnv vwenv, int hvo, int flid, int ws, string val)
 		{
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			vwenv.NoteStringValDependency(hvo, flid, ws, tsf.MakeString(val, ws));
+			vwenv.NoteStringValDependency(hvo, flid, ws, TsStringUtils.MakeString(val, ws));
 		}
 
 		/// <summary>
@@ -3680,11 +3675,10 @@ namespace SIL.FieldWorks.Common.Controls
 					ITsString tsString = sda.get_StringProp(hvo, flid);
 					int var;
 					int realWs = tsString.get_Properties(0).GetIntPropValues((int) FwTextPropType.ktptWs, out var);
-					ITsStrFactory tsf = TsStrFactoryClass.Create();
 					// Third argument must be 0 to indicate a non-multistring.
 					// Fourth argument is the TsString version of the string we are testing against.
 					// The display will update for a change in whether it is true that sda.get_StringProp(hvo, flid) is equal to arg4
-					vwenv.NoteStringValDependency(hvo, flid, 0, tsf.MakeString(stringValue, realWs));
+					vwenv.NoteStringValDependency(hvo, flid, 0, TsStringUtils.MakeString(stringValue, realWs));
 					value = tsString.Text;
 				} // otherwise we don't have an object, and will treat the current value as null.
 				if (value == null && stringValue == "")

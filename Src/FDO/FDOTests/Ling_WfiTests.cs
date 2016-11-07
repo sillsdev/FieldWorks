@@ -5,6 +5,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
 
@@ -115,7 +116,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void UpdatingOccurrencesList()
 		{
 			var wf = MakeAWordform();
-			var form = Cache.TsStrFactory.MakeString("abdThisIsUnlikelyxyz", Cache.DefaultVernWs);
+			var form = TsStringUtils.MakeString("abdThisIsUnlikelyxyz", Cache.DefaultVernWs);
 			wf.Form.VernacularDefaultWritingSystem = form;
 			var wordformRepos = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 			IWfiWordform retval;
@@ -159,7 +160,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			text.ContentsOA = stText;
 			var para = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 			stText.ParagraphsOS.Add(para);
-			para.Contents = Cache.TsStrFactory.MakeString(contents, Cache.DefaultVernWs);
+			para.Contents = TsStringUtils.MakeString(contents, Cache.DefaultVernWs);
 			var seg = Cache.ServiceLocator.GetInstance<ISegmentFactory>().Create();
 			para.SegmentsOS.Add(seg);
 			return text;
@@ -291,7 +292,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.IsTrue(wa.IsComplete);
 
 			// - gloss is incomplete
-			wg.Form.AnalysisDefaultWritingSystem = Cache.TsStrFactory.EmptyString(Cache.DefaultAnalWs);
+			wg.Form.AnalysisDefaultWritingSystem = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			Assert.IsFalse(wa.IsComplete);
 			// - no gloss
 			wa.MeaningsOC.Remove(wg);
@@ -363,7 +364,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private IWfiGloss MakeCompleteGloss(IWfiAnalysis wa)
 		{
 			var wg = MakeGloss(wa);
-			wg.Form.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString("a gloss", Cache.DefaultAnalWs);
+			wg.Form.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("a gloss", Cache.DefaultAnalWs);
 			return wg;
 		}
 		private IWfiMorphBundle MakeCompleteBundle(IWfiAnalysis wa)
@@ -399,15 +400,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var morph = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entryOwner.LexemeFormOA = morph;
 			if (formVern != null)
-				morph.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString(formVern, Cache.DefaultVernWs);
+				morph.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(formVern, Cache.DefaultVernWs);
 			if (formAnalysis != null)
-				morph.Form.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(formAnalysis, Cache.DefaultAnalWs);
+				morph.Form.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(formAnalysis, Cache.DefaultAnalWs);
 			return morph;
 		}
 
 		private void GiveSenseGloss(ILexSense sense)
 		{
-			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString("a sense gloss",
+			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("a sense gloss",
 				Cache.DefaultAnalWs);
 		}
 
@@ -447,28 +448,28 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.IsTrue(bundle.IsComplete); // paranoia, make sure all the restores worked
 
 			// Incomplete parts
-			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.EmptyString(Cache.DefaultAnalWs);
+			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			Assert.IsFalse(bundle.IsComplete);
 			GiveSenseGloss(sense);
 
 			// Test the case where the default analysis WS is set, but another is not.
 			Cache.LangProject.AddToCurrentAnalysisWritingSystems(Cache.LangProject.DefaultVernacularWritingSystem);
 			Assert.IsFalse(bundle.IsComplete);
-			sense.Gloss.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("vern gloss",
+			sense.Gloss.VernacularDefaultWritingSystem = TsStringUtils.MakeString("vern gloss",
 				Cache.DefaultVernWs);
 			Assert.IsTrue(bundle.IsComplete);
 			Cache.LangProject.CurrentAnalysisWritingSystems.Remove(Cache.LangProject.DefaultVernacularWritingSystem);
 
 			// Incomplete MoForm
-			morph.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.EmptyString(Cache.DefaultVernWs);
+			morph.Form.VernacularDefaultWritingSystem = TsStringUtils.EmptyString(Cache.DefaultVernWs);
 			Assert.IsFalse(bundle.IsComplete);
-			morph.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("vern form",
+			morph.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("vern form",
 				Cache.DefaultVernWs);
 			// false if another WS is missing. (Slightly greedy here, this amounts to a test of MoForm.IsComplete.)
 			Cache.LangProject.AddToCurrentVernacularWritingSystems(Cache.LangProject.DefaultAnalysisWritingSystem);
-			morph.Form.AnalysisDefaultWritingSystem = Cache.TsStrFactory.EmptyString(Cache.DefaultAnalWs);
+			morph.Form.AnalysisDefaultWritingSystem = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			Assert.IsFalse(bundle.IsComplete);
-			morph.Form.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString("anal form",
+			morph.Form.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("anal form",
 				Cache.DefaultAnalWs);
 			Assert.IsTrue(bundle.IsComplete);
 			Cache.LangProject.CurrentVernacularWritingSystems.Remove(Cache.LangProject.DefaultAnalysisWritingSystem);
@@ -495,7 +496,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(null, bundle.Form.AnalysisDefaultWritingSystem.Text);
 
 			// test that the bundle form doesn't change with morph form changes.
-			morph1.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("formVernChanged",
+			morph1.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("formVernChanged",
 																					   Cache.DefaultVernWs);
 			Assert.AreEqual("formVern", bundle.Form.VernacularDefaultWritingSystem.Text);
 			Assert.AreEqual(null, bundle.Form.AnalysisDefaultWritingSystem.Text);
@@ -563,11 +564,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		private ITsString MakeVernString(string content)
 		{
-			return Cache.TsStrFactory.MakeString(content, Cache.DefaultVernWs);
+			return TsStringUtils.MakeString(content, Cache.DefaultVernWs);
 		}
 		private ITsString MakeAnalysisString(string content)
 		{
-			return Cache.TsStrFactory.MakeString(content, Cache.DefaultAnalWs);
+			return TsStringUtils.MakeString(content, Cache.DefaultAnalWs);
 		}
 
 		IWfiWordSet MakeSet(IWfiWordform[] wordforms, string name)

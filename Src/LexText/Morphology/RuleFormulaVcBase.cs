@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
@@ -52,11 +53,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		protected RuleFormulaVcBase(FdoCache cache, PropertyTable propertyTable)
 			: base(cache, propertyTable)
 		{
-			ITsStrFactory tsf = m_cache.TsStrFactory;
 			int userWs = m_cache.DefaultUserWs;
 			m_propertyTable = propertyTable;
-			m_infinity = tsf.MakeString("\u221e", userWs);
-			m_x = tsf.MakeString("X", userWs);
+			m_infinity = TsStringUtils.MakeString("\u221e", userWs);
+			m_x = TsStringUtils.MakeString("X", userWs);
 		}
 
 		/// <summary>
@@ -353,7 +353,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				case kfragIterCtxtMax:
 					// if the max value is -1, it indicates that it is infinite
 					int i = m_cache.DomainDataByFlid.get_IntProp(vwenv.CurrentObject(), tag);
-					tss = i == -1 ? m_infinity : m_cache.TsStrFactory.MakeString(Convert.ToString(i), m_cache.DefaultUserWs);
+					tss = i == -1 ? m_infinity : TsStringUtils.MakeString(Convert.ToString(i), m_cache.DefaultUserWs);
 					break;
 
 				case kfragXVariable:
@@ -389,8 +389,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			ITsIncStrBldr varLine = TsIncStrBldrClass.Create();
 			if (!polarity)
-				varLine.AppendTsString(m_cache.TsStrFactory.MakeString("-", m_cache.DefaultUserWs));
-			varLine.AppendTsString(m_cache.TsStrFactory.MakeString(VariableNames[varIndex], m_cache.DefaultUserWs));
+				varLine.AppendTsString(TsStringUtils.MakeString("-", m_cache.DefaultUserWs));
+			varLine.AppendTsString(TsStringUtils.MakeString(VariableNames[varIndex], m_cache.DefaultUserWs));
 			varLine.Append(" ");
 			varLine.AppendTsString(var.FeatureRA == null ? m_questions : var.FeatureRA.Abbreviation.BestAnalysisAlternative);
 			return varLine.GetString();
@@ -548,11 +548,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		int GetMinMaxWidth(IPhIterationContext ctxt, ITsTextProps props, IVwEnv vwenv)
 		{
-			var tsf = m_cache.TsStrFactory;
 			var userWs = m_cache.DefaultUserWs;
-			int minWidth = GetStrWidth(tsf.MakeString(Convert.ToString(ctxt.Minimum), userWs),
+			int minWidth = GetStrWidth(TsStringUtils.MakeString(Convert.ToString(ctxt.Minimum), userWs),
 				props, vwenv);
-			ITsString maxStr = ctxt.Maximum == -1 ? m_infinity : tsf.MakeString(Convert.ToString(ctxt.Maximum), userWs);
+			ITsString maxStr = ctxt.Maximum == -1 ? m_infinity : TsStringUtils.MakeString(Convert.ToString(ctxt.Maximum), userWs);
 			int maxWidth = GetStrWidth(maxStr, props, vwenv);
 			return Math.Max(minWidth, maxWidth);
 		}

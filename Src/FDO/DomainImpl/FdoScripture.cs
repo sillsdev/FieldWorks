@@ -304,7 +304,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						return null;
 					case FootnoteMarkerTypes.SymbolicFootnoteMarker:
 						return CrossRefMarkerSymbol_Effective;
-					case FootnoteMarkerTypes.AutoFootnoteMarker:
 					default:
 						return ScriptureTags.kDefaultAutoFootnoteMarker;
 				}
@@ -1076,17 +1075,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					tssTitle = bldr.GetString();
 				}
 			}
-			else
-			{
-				// throw.
-			}
-			if (tssTitle == null)
-			{
-				// return an empty string.
-				ITsStrFactory isf = TsStrFactoryClass.Create();
-				tssTitle = isf.MakeString("", ws);
-			}
-			return tssTitle;
+			return tssTitle ?? TsStringUtils.EmptyString(ws);
 		}
 
 		/// ------------------------------------------------------------------------------------

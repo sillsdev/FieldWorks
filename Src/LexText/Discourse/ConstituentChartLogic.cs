@@ -5,9 +5,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -39,7 +39,6 @@ namespace SIL.FieldWorks.Discourse
 
 		private readonly IStTextRepository m_textRepo;
 		private readonly ISegmentRepository m_segRepo;
-		private readonly IAnalysisRepository m_analysisRepo;
 		private readonly IConstChartRowFactory m_rowFact;
 		private readonly IConstChartRowRepository m_rowRepo;
 		private readonly IConstituentChartCellPartRepository m_cellPartRepo;
@@ -49,10 +48,8 @@ namespace SIL.FieldWorks.Discourse
 		private readonly IConstChartMovedTextMarkerFactory m_movedTextFact;
 		private readonly IConstChartClauseMarkerRepository m_clauseMkrRepo;
 		private readonly IConstChartClauseMarkerFactory m_clauseMkrFact;
-		private readonly IConstChartTagRepository m_chartTagRepo;
 		private readonly IConstChartTagFactory m_chartTagFact;
 		private readonly ICmPossibilityRepository m_possRepo;
-		private readonly ITsStrFactory m_tssFact;
 
 		#endregion
 
@@ -102,12 +99,9 @@ namespace SIL.FieldWorks.Discourse
 			m_movedTextFact = servLoc.GetInstance<IConstChartMovedTextMarkerFactory>();
 			m_clauseMkrRepo = servLoc.GetInstance<IConstChartClauseMarkerRepository>();
 			m_clauseMkrFact = servLoc.GetInstance<IConstChartClauseMarkerFactory>();
-			m_chartTagRepo	= servLoc.GetInstance<IConstChartTagRepository>();
 			m_chartTagFact	= servLoc.GetInstance<IConstChartTagFactory>();
-			m_analysisRepo	= servLoc.GetInstance<IAnalysisRepository>();
 			m_cellPartRepo	= servLoc.GetInstance<IConstituentChartCellPartRepository>();
 			m_possRepo		= servLoc.GetInstance<ICmPossibilityRepository>();
-			m_tssFact		= servLoc.GetInstance<ITsStrFactory>();
 		}
 
 		public void Init(IHelpTopicProvider helpTopicProvider)
@@ -614,9 +608,6 @@ namespace SIL.FieldWorks.Discourse
 		/// The last wordform in this row is "after" our ChOrph's logical position, but the first isn't
 		/// and the right Following Cell is in this row.
 		/// </summary>
-		/// <param name="iPara"></param>
-		/// <param name="offset"></param>
-		/// <param name="precCell"></param>
 		private int NarrowSearchBackward(int iPara, int offset, ChartLocation precCell, int icolFoll)
 		{
 			Debug.Assert(precCell != null && precCell.IsValidLocation);
@@ -1619,7 +1610,7 @@ namespace SIL.FieldWorks.Discourse
 		{
 			var newRow = m_rowFact.Create();
 			m_chart.RowsOS.Add(newRow);
-			newRow.Label = m_tssFact.MakeString(rowLabel, WsLineNumber);
+			newRow.Label = TsStringUtils.MakeString(rowLabel, WsLineNumber);
 			return newRow;
 		}
 
@@ -1663,7 +1654,7 @@ namespace SIL.FieldWorks.Discourse
 		private void AddLetterToNumberOnlyLabel(int rowIndex, int rowNumber)
 		{
 			m_chart.RowsOS[rowIndex].Label =
-				m_tssFact.MakeString(Convert.ToString(rowNumber) + 'a', WsLineNumber);
+				TsStringUtils.MakeString(Convert.ToString(rowNumber) + 'a', WsLineNumber);
 		}
 
 		/// <summary>
@@ -1759,7 +1750,7 @@ namespace SIL.FieldWorks.Discourse
 				var rowLabel = CalculateMyRowNums(ref csentence, ref cclause, fIsPrevRowEOS, fIsThisRowEOS);
 				if (m_chart.RowsOS[irow].Label.Text != rowLabel)
 				{
-					m_chart.RowsOS[irow].Label = m_tssFact.MakeString(rowLabel, WsLineNumber);
+					m_chart.RowsOS[irow].Label = TsStringUtils.MakeString(rowLabel, WsLineNumber);
 				}
 				if (fIsThisRowEOS && foneSentOnly && foneSentFinished)
 					break;

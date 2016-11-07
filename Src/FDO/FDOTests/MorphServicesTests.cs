@@ -145,7 +145,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				where TItem : IMoForm
 			{
 				var Cache = entry.Cache;
-				ITsString tssAllomorphForm = TsStringUtils.MakeTss(allomorphForm, Cache.DefaultVernWs);
+				ITsString tssAllomorphForm = TsStringUtils.MakeString(allomorphForm, Cache.DefaultVernWs);
 				TAllomorphFactory stemFactory = Cache.ServiceLocator.GetInstance<TAllomorphFactory>();
 				var allomorph = stemFactory.Create();
 				entry.AlternateFormsOS.Add(allomorph);
@@ -157,7 +157,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private void CheckExpected<TMorphExpected>(int expectedMatchCount,
 			string prefixMarker, string form, string postfixMarker)
 		{
-			var targetForm = TsStringUtils.MakeTss(form, Cache.DefaultVernWs);
+			var targetForm = TsStringUtils.MakeString(form, Cache.DefaultVernWs);
 			var matches = MorphServices.GetMatchingMorphs(Cache,
 				prefixMarker, targetForm, postfixMarker);
 			Assert.AreEqual(expectedMatchCount, matches.Count());
@@ -167,7 +167,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		private void CheckEmpty(string prefixMarker, string form, string postfixMarker)
 		{
-			ITsString tssForm = TsStringUtils.MakeTss(form, Cache.DefaultVernWs);
+			ITsString tssForm = TsStringUtils.MakeString(form, Cache.DefaultVernWs);
 			var emptySet = MorphServices.GetMatchingMorphs(Cache,
 																		prefixMarker, tssForm, postfixMarker);
 			Assert.AreEqual(0, emptySet.Count());
@@ -183,7 +183,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			{
 				// match stem morphs
 				var stems = MorphServices.GetMatchingMorphs(Cache,
-					"", TsStringUtils.MakeTss("s", Cache.DefaultVernWs), "");
+					"", TsStringUtils.MakeString("s", Cache.DefaultVernWs), "");
 				Assert.AreEqual(2, stems.Count());
 				foreach (var stem in stems)
 					Assert.IsTrue(stem is IMoStemAllomorph, "Expected stems");
@@ -204,7 +204,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			{
 				// match stem morphs
 				var stemAllomorphs = MorphServices.GetMatchingMorphs(Cache,
-					"", TsStringUtils.MakeTss("sa", Cache.DefaultVernWs), "");
+					"", TsStringUtils.MakeString("sa", Cache.DefaultVernWs), "");
 				Assert.AreEqual(1, stemAllomorphs.Count());
 				foreach (var stem in stemAllomorphs)
 					Assert.IsTrue(stem is IMoStemAllomorph, "Expected stem allomorph");
@@ -224,7 +224,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			using (new SetupMatchingMorphsDisabled(this))
 			{
 				var prefixes = MorphServices.GetMatchingMorphs(Cache,
-					"", TsStringUtils.MakeTss("ipr", Cache.DefaultVernWs), "-");
+					"", TsStringUtils.MakeString("ipr", Cache.DefaultVernWs), "-");
 				Assert.AreEqual(1, prefixes.Count());
 				foreach (var prefix in prefixes)
 					Assert.IsTrue(prefix is IMoAffixAllomorph, "Expected affix");
@@ -243,7 +243,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			using (new SetupMatchingMorphsDisabled(this))
 			{
 				var suffixes = MorphServices.GetMatchingMorphs(Cache,
-					"-", TsStringUtils.MakeTss("isu", Cache.DefaultVernWs), "");
+					"-", TsStringUtils.MakeString("isu", Cache.DefaultVernWs), "");
 				Assert.AreEqual(1, suffixes.Count());
 				foreach (var suffix in suffixes)
 					Assert.IsTrue(suffix is IMoAffixAllomorph, "Expected affix");
@@ -261,7 +261,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			using (new SetupMatchingMorphsDisabled(this))
 			{
-				var procliticForm = TsStringUtils.MakeTss("pro", Cache.DefaultVernWs);
+				var procliticForm = TsStringUtils.MakeString("pro", Cache.DefaultVernWs);
 				var proclitics = MorphServices.GetMatchingMorphs(Cache,
 					"", procliticForm, "=");
 				Assert.AreEqual(1, proclitics.Count());
@@ -283,7 +283,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			using (new SetupMatchingMorphsDisabled(this))
 			{
-				var encliticForm = TsStringUtils.MakeTss("enc", Cache.DefaultVernWs);
+				var encliticForm = TsStringUtils.MakeString("enc", Cache.DefaultVernWs);
 				var enclitics = MorphServices.GetMatchingMorphs(Cache,
 					"=", encliticForm, "");
 				Assert.AreEqual(1, enclitics.Count());
@@ -352,8 +352,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		static internal void SetupLexEntryVariant(FdoCache cache, string morphForm, IVariantComponentLexeme componentLexeme, ILexEntryType let, out ILexEntryRef lef)
 		{
-			ITsStrFactory sf = TsStrFactoryClass.Create();
-			ITsString mf = sf.MakeString(morphForm, cache.DefaultVernWs);
+			ITsString mf = TsStringUtils.MakeString(morphForm, cache.DefaultVernWs);
 			lef = componentLexeme.CreateVariantEntryAndBackRef(let, mf);
 		}
 
@@ -463,17 +462,16 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			// Setup variant data
 			ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, LexEntryTypeTags.kguidLexTypIrregInflectionVar);
 
-			ITsStrFactory sf = TsStrFactoryClass.Create();
 			// Create new variantType
 			var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
 			var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 			ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
-														sf.MakeString("NewPlural", eng.Handle),
-														sf.MakeString("NPl.", eng.Handle),
+														TsStringUtils.MakeString("NewPlural", eng.Handle),
+														TsStringUtils.MakeString("NPl.", eng.Handle),
 														"", ".PL");
 			ILexEntryType letNewPast = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
-													  sf.MakeString("NewPast", eng.Handle),
-													  sf.MakeString("NPst.", eng.Handle),
+													  TsStringUtils.MakeString("NewPast", eng.Handle),
+													  TsStringUtils.MakeString("NPst.", eng.Handle),
 													  "", ".PST");
 			ILexEntryRef newLerPlural;
 			SetupLexEntryVariant(Cache, "vaNewPlural", newMainEntry, letNewPlural, out newLerPlural);
@@ -582,13 +580,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 					// Setup variant data
 					ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, LexEntryTypeTags.kguidLexTypIrregInflectionVar);
 
-					ITsStrFactory sf = TsStrFactoryClass.Create();
 					// Create new variantType
 					var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
 					var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 					ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
-																sf.MakeString("NewPlural", eng.Handle),
-																sf.MakeString("NPl.", eng.Handle),
+																TsStringUtils.MakeString("NewPlural", eng.Handle),
+																TsStringUtils.MakeString("NPl.", eng.Handle),
 																"", "");
 					ILexEntryRef newLerPlural;
 					SetupLexEntryVariant(Cache, "vaNewPlural", newMainEntry, letNewPlural, out newLerPlural);
@@ -621,13 +618,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				// Setup variant data
 				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, LexEntryTypeTags.kguidLexTypIrregInflectionVar);
 
-				ITsStrFactory sf = TsStrFactoryClass.Create();
 				// Create new variantType
 				var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
 				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 				ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
-															sf.MakeString("NewPlural", eng.Handle),
-															sf.MakeString("NPl.", eng.Handle),
+															TsStringUtils.MakeString("NewPlural", eng.Handle),
+															TsStringUtils.MakeString("NPl.", eng.Handle),
 															"GP", "");
 				ILexEntryRef newLerPlural;
 				SetupLexEntryVariant(Cache, "vaNewPlural", newMainEntry, letNewPlural, out newLerPlural);
@@ -660,13 +656,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				// Setup variant data
 				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, LexEntryTypeTags.kguidLexTypIrregInflectionVar);
 
-				ITsStrFactory sf = TsStrFactoryClass.Create();
 				// Create new variantType
 				var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
 				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 				ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
-															sf.MakeString("NewPlural", eng.Handle),
-															sf.MakeString("NPl.", eng.Handle),
+															TsStringUtils.MakeString("NewPlural", eng.Handle),
+															TsStringUtils.MakeString("NPl.", eng.Handle),
 															@"GP\", "");
 				ILexEntryRef newLerPlural;
 				SetupLexEntryVariant(Cache, "vaNewPlural", newMainEntry, letNewPlural, out newLerPlural);
@@ -700,13 +695,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				// Setup variant data
 				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, LexEntryTypeTags.kguidLexTypIrregInflectionVar);
 
-				ITsStrFactory sf = TsStrFactoryClass.Create();
 				// Create new variantType
 				var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
 				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 				ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
-															sf.MakeString("NewPlural", eng.Handle),
-															sf.MakeString("NPl.", eng.Handle),
+															TsStringUtils.MakeString("NewPlural", eng.Handle),
+															TsStringUtils.MakeString("NPl.", eng.Handle),
 															"", "GA");
 				ILexEntryRef newLerPlural;
 				SetupLexEntryVariant(Cache, "vaNewPlural", newMainEntry, letNewPlural, out newLerPlural);
@@ -771,13 +765,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				// Setup variant data
 				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, LexEntryTypeTags.kguidLexTypIrregInflectionVar);
 
-				ITsStrFactory sf = TsStrFactoryClass.Create();
 				// Create new variantType
 				var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
 				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 				ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
-															sf.MakeString("NewPlural", eng.Handle),
-															sf.MakeString("NPl.", eng.Handle),
+															TsStringUtils.MakeString("NewPlural", eng.Handle),
+															TsStringUtils.MakeString("NPl.", eng.Handle),
 															"", "/GA");
 				ILexEntryRef newLerPlural;
 				SetupLexEntryVariant(Cache, "vaNewPlural", newMainEntry, letNewPlural, out newLerPlural);
@@ -811,13 +804,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				// Setup variant data
 				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, LexEntryTypeTags.kguidLexTypIrregInflectionVar);
 
-				ITsStrFactory sf = TsStrFactoryClass.Create();
 				// Create new variantType
 				var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
 				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 				ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
-															sf.MakeString("NewPlural", eng.Handle),
-															sf.MakeString("NPl.", eng.Handle),
+															TsStringUtils.MakeString("NewPlural", eng.Handle),
+															TsStringUtils.MakeString("NPl.", eng.Handle),
 															"", "GA");
 				ILexEntryRef newLerPlural;
 				SetupLexEntryVariant(Cache, "vaNewPlural", newMainEntry, letNewPlural, out newLerPlural);
@@ -851,13 +843,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				// Setup variant data
 				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, LexEntryTypeTags.kguidLexTypIrregInflectionVar);
 
-				ITsStrFactory sf = TsStrFactoryClass.Create();
 				// Create new variantType
 				var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
 				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 				ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
-															sf.MakeString("NewPlural", eng.Handle),
-															sf.MakeString("", eng.Handle),
+															TsStringUtils.MakeString("NewPlural", eng.Handle),
+															TsStringUtils.MakeString("", eng.Handle),
 															"", "");
 				ILexEntryRef newLerPlural;
 				SetupLexEntryVariant(Cache, "vaNewPlural", newMainEntry, letNewPlural, out newLerPlural);
@@ -893,13 +884,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				// Setup variant data
 				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, LexEntryTypeTags.kguidLexTypIrregInflectionVar);
 
-				ITsStrFactory sf = TsStrFactoryClass.Create();
 				// Create new variantType
 				var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
 				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 				ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
-															sf.MakeString("NewPlural", eng.Handle),
-															sf.MakeString("", eng.Handle),
+															TsStringUtils.MakeString("NewPlural", eng.Handle),
+															TsStringUtils.MakeString("", eng.Handle),
 															"", "PL");
 				ILexEntryRef newLerPlural;
 				SetupLexEntryVariant(Cache, "vaNewPlural", newMainEntry, letNewPlural, out newLerPlural);
@@ -936,13 +926,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				// Setup variant data
 				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, LexEntryTypeTags.kguidLexTypIrregInflectionVar);
 
-				ITsStrFactory sf = TsStrFactoryClass.Create();
 				// Create new variantType
 				var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
 				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 				ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
-															sf.MakeString("NewPlural", eng.Handle),
-															sf.MakeString("", eng.Handle),
+															TsStringUtils.MakeString("NewPlural", eng.Handle),
+															TsStringUtils.MakeString("", eng.Handle),
 															"", "PL");
 				ILexEntryRef newLerPlural;
 				SetupLexEntryVariant(Cache, "vaNewPlural", newMainEntry, letNewPlural, out newLerPlural);
@@ -979,17 +968,16 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				// Setup variant data
 				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, LexEntryTypeTags.kguidLexTypIrregInflectionVar);
 
-				ITsStrFactory sf = TsStrFactoryClass.Create();
 				// Create new variantType
 				var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
 				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 				ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
-															sf.MakeString("NewPlural", eng.Handle),
-															sf.MakeString("", eng.Handle),
+															TsStringUtils.MakeString("NewPlural", eng.Handle),
+															TsStringUtils.MakeString("", eng.Handle),
 															"", ".pl");
 				ILexEntryType letNewPst = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
-															sf.MakeString("NewPast", eng.Handle),
-															sf.MakeString("", eng.Handle),
+															TsStringUtils.MakeString("NewPast", eng.Handle),
+															TsStringUtils.MakeString("", eng.Handle),
 															"", "pst");
 				ILexEntryRef newLerPluralPast;
 				SetupLexEntryVariant(Cache, "vaNewPluralPast", newMainEntry, letNewPlural, out newLerPluralPast);
@@ -1025,17 +1013,16 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				// Setup variant data
 				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, LexEntryTypeTags.kguidLexTypIrregInflectionVar);
 
-				ITsStrFactory sf = TsStrFactoryClass.Create();
 				// Create new variantType
 				var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
 				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 				ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
-															sf.MakeString("NewPlural", eng.Handle),
-															sf.MakeString("", eng.Handle),
+															TsStringUtils.MakeString("NewPlural", eng.Handle),
+															TsStringUtils.MakeString("", eng.Handle),
 															"pl", "");
 				ILexEntryType letNewPst = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
-															sf.MakeString("NewPast", eng.Handle),
-															sf.MakeString("", eng.Handle),
+															TsStringUtils.MakeString("NewPast", eng.Handle),
+															TsStringUtils.MakeString("", eng.Handle),
 															"pst.", "");
 				ILexEntryRef newLerPluralPast;
 				SetupLexEntryVariant(Cache, "vaNewPluralPast", newMainEntry, letNewPlural, out newLerPluralPast);
@@ -1070,17 +1057,16 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				// Setup variant data
 				ILexEntryType letIrrInflVariantType = LookupLexEntryType(Cache.ServiceLocator, LexEntryTypeTags.kguidLexTypIrregInflectionVar);
 
-				ITsStrFactory sf = TsStrFactoryClass.Create();
 				// Create new variantType
 				var variantTypesList = Cache.LanguageProject.LexDbOA.VariantEntryTypesOA;
 				var eng = Cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 				ILexEntryType letNewPlural = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
-															sf.MakeString("NewPlural", eng.Handle),
-															sf.MakeString("", eng.Handle),
+															TsStringUtils.MakeString("NewPlural", eng.Handle),
+															TsStringUtils.MakeString("", eng.Handle),
 															"pl.", "");
 				ILexEntryType letNewPst = InsertInflType(letIrrInflVariantType, Cache.ServiceLocator,
-															sf.MakeString("NewPast", eng.Handle),
-															sf.MakeString("", eng.Handle),
+															TsStringUtils.MakeString("NewPast", eng.Handle),
+															TsStringUtils.MakeString("", eng.Handle),
 															"", ".pst");
 				ILexEntryRef newLerPluralPast;
 				SetupLexEntryVariant(Cache, "vaNewPluralPast", newMainEntry, letNewPlural, out newLerPluralPast);
@@ -1175,10 +1161,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(0, Cache.ServiceLocator.GetInstance<ILexSenseRepository>().Count, "Expected no initial senses");
 			Assert.AreEqual(0, Cache.ServiceLocator.GetInstance<IMoFormRepository>().Count, "Expected no initial moForms");
 
-			ITsString tssFullForm = TsStringUtils.MakeTss("entryToUndo", Cache.DefaultVernWs);
+			ITsString tssFullForm = TsStringUtils.MakeString("entryToUndo", Cache.DefaultVernWs);
 			var entryComponents = MorphServices.BuildEntryComponents(Cache,
 																			tssFullForm);
-			entryComponents.GlossAlternatives.Add(TsStringUtils.MakeTss("senseToUndo", Cache.DefaultVernWs));
+			entryComponents.GlossAlternatives.Add(TsStringUtils.MakeString("senseToUndo", Cache.DefaultVernWs));
 			ILexEntry newEntry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(entryComponents);
 
 			Assert.AreEqual(1, Cache.ServiceLocator.GetInstance<ILexEntryRepository>().Count);

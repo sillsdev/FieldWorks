@@ -182,10 +182,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				string criteria = Contents.Text;
 				m_comparisonType = ComparisonTypes.kUndefined;
 				m_matchValue = 0;
-				m_matchSubitems = criteria.IndexOf("+subitems") >= 0;
-				m_matchEmpty = criteria.IndexOf("Empty") >= 0;
+				m_matchSubitems = criteria.IndexOf("+subitems", StringComparison.Ordinal) >= 0;
+				m_matchEmpty = criteria.IndexOf("Empty", StringComparison.Ordinal) >= 0;
 
-				if (criteria.IndexOf("Matches") >= 0)
+				if (criteria.IndexOf("Matches", StringComparison.Ordinal) >= 0)
 					m_comparisonType = ComparisonTypes.kMatches;
 				else if (m_matchEmpty)
 					m_comparisonType = ComparisonTypes.kEmpty;
@@ -301,7 +301,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// ------------------------------------------------------------------------------------
 		private void SaveIntegerMatchCriteria()
 		{
-			ITsStrFactory factory = Cache.TsStrFactory;
 			string sFmtCriteria = "{0} " + m_matchValue;
 			string sOperator;
 
@@ -313,7 +312,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				default:
 					throw new InvalidOperationException("Unexpected comparison type");
 			}
-			Contents = factory.MakeString(string.Format(sFmtCriteria, sOperator), m_cache.DefaultUserWs);
+			Contents = TsStringUtils.MakeString(string.Format(sFmtCriteria, sOperator), m_cache.DefaultUserWs);
 		}
 
 		/// ------------------------------------------------------------------------------------

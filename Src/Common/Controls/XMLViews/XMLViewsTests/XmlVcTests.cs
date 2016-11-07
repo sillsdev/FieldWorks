@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -46,8 +45,6 @@ namespace XMLViewsTests
 		internal const int kclsidLexDb = 1; // consistent with TextCacheModel.xml in resource file
 		internal const int kclsidEntry = 7; // consistent with TextCacheModel.xml in resource file
 
-		private ITsStrFactory m_tsf;
-
 		private LayoutCache m_layouts;
 
 		/// ------------------------------------------------------------------------------------
@@ -83,8 +80,6 @@ namespace XMLViewsTests
 			//m_wsManager.UserWs = m_wsEng;
 			//m_wsUser = m_wsManager.UserWs;
 
-			m_tsf = TsStrFactoryClass.Create();
-
 			m_hvoLexDb = m_sda.MakeNewObject(kclsidLexDb, 0, -1, -1);
 
 			kflidLexDb_Entries = m_sda.MetaDataCache.GetFieldId("LexDb", "Entries", false);
@@ -92,8 +87,8 @@ namespace XMLViewsTests
 			kflidEntry_Summary = m_sda.MetaDataCache.GetFieldId("Entry", "Summary", false);
 
 			m_hvoKick = m_sda.MakeNewObject(kclsidEntry, m_hvoLexDb, kflidLexDb_Entries, 0);
-			m_sda.SetMultiStringAlt(m_hvoKick, kflidEntry_Form, m_wsVern, m_tsf.MakeString("kick", m_wsVern));
-			m_sda.SetString(m_hvoKick, kflidEntry_Summary, m_tsf.MakeString("strike with foot", m_wsAnal));
+			m_sda.SetMultiStringAlt(m_hvoKick, kflidEntry_Form, m_wsVern, TsStringUtils.MakeString("kick", m_wsVern));
+			m_sda.SetString(m_hvoKick, kflidEntry_Summary, TsStringUtils.MakeString("strike with foot", m_wsAnal));
 
 			var keyAttrs = new Dictionary<string, string[]>();
 			keyAttrs["layout"] = new[] { "class", "type", "name", "choiceGuid" };
@@ -245,7 +240,7 @@ namespace XMLViewsTests
 		public override ITsString get_StringProp(int hvo, int tag)
 		{
 			Tag = tag;
-			return m_cache.TsStrFactory.MakeString("77", m_cache.DefaultUserWs);
+			return TsStringUtils.MakeString("77", m_cache.DefaultUserWs);
 		}
 	}
 

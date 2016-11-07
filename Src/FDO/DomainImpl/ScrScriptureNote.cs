@@ -528,7 +528,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (bldr == null)
 			{
 				IStTxtPara para = text.AddNewTextPara(ScrStyleNames.Remark);
-				para.Contents = TsStringUtils.MakeTss(String.Empty, Cache.DefaultAnalWs);
+				para.Contents = TsStringUtils.MakeString(String.Empty, Cache.DefaultAnalWs);
 			}
 			else
 			{

@@ -563,8 +563,7 @@ namespace SIL.FieldWorks.IText
 				return;
 			}
 			m_tbSearchText.WritingSystemCode = ws.Handle;
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			m_tbSearchText.Tss = tsf.MakeString(m_tbSearchText.Text.Trim(), ws.Handle);
+			m_tbSearchText.Tss = TsStringUtils.MakeString(m_tbSearchText.Text.Trim(), ws.Handle);
 		}
 
 		private void m_rbtnUseRegExp_CheckedChanged(object sender, EventArgs e)
@@ -833,7 +832,7 @@ namespace SIL.FieldWorks.IText
 				if (tss == null)
 				{
 					ws = m_cache.DefaultVernWs;
-					tss = m_cache.TsStrFactory.MakeString("", ws);
+					tss = TsStringUtils.EmptyString(ws);
 				}
 				SetDefaultVisibilityOfItems(true, String.Empty);
 				m_fObjectConcorded = false;

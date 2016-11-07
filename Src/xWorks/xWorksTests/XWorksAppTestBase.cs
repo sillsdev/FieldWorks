@@ -8,10 +8,10 @@ using System.IO;
 using System.Xml;
 using System.Linq;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using XCore;
@@ -505,7 +505,6 @@ namespace SIL.FieldWorks.XWorks
 		protected FwXApp m_application;
 		protected string m_configFilePath;
 
-		private ITsStrFactory m_tssFact;
 		private ICmPossibilityFactory m_possFact;
 		private ICmPossibilityRepository m_possRepo;
 		private IPartOfSpeechFactory m_posFact;
@@ -559,7 +558,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Assert.True(Cache != null, "No cache yet!?");
 			var servLoc = Cache.ServiceLocator;
-			m_tssFact = Cache.TsStrFactory;
 			m_possFact = servLoc.GetInstance<ICmPossibilityFactory>();
 			m_possRepo = servLoc.GetInstance<ICmPossibilityRepository>();
 			m_posFact = servLoc.GetInstance<IPartOfSpeechFactory>();
@@ -769,8 +767,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var msa = new SandboxGenericMSA { MainPOS = categoryPoss };
 			var comp = new LexEntryComponents { MorphType = morphTypePoss, MSA = msa };
-			comp.GlossAlternatives.Add(m_tssFact.MakeString(gloss, Cache.DefaultAnalWs));
-			comp.LexemeFormAlternatives.Add(m_tssFact.MakeString(lexForm, Cache.DefaultVernWs));
+			comp.GlossAlternatives.Add(TsStringUtils.MakeString(gloss, Cache.DefaultAnalWs));
+			comp.LexemeFormAlternatives.Add(TsStringUtils.MakeString(lexForm, Cache.DefaultVernWs));
 			var entry = m_entryFact.Create(comp);
 			addList.Add(entry);
 			return entry;
@@ -783,8 +781,8 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsNotNull(varType, "Need a variant entry type!");
 			var msa = new SandboxGenericMSA { MainPOS = categoryPoss };
 			var comp = new LexEntryComponents { MorphType = morphTypePoss, MSA = msa };
-			comp.GlossAlternatives.Add(m_tssFact.MakeString(gloss, Cache.DefaultAnalWs));
-			comp.LexemeFormAlternatives.Add(m_tssFact.MakeString(lexForm, Cache.DefaultVernWs));
+			comp.GlossAlternatives.Add(TsStringUtils.MakeString(gloss, Cache.DefaultAnalWs));
+			comp.LexemeFormAlternatives.Add(TsStringUtils.MakeString(lexForm, Cache.DefaultVernWs));
 			var entry = m_entryFact.Create(comp);
 			var ler = entry.MakeVariantOf(origLe, varType);
 			addList.Add(entry);

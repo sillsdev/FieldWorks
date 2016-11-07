@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml;
 using System.Xml.Schema;
@@ -178,7 +177,7 @@ namespace SIL.FieldWorks.IText
 
 				string formLexEntry = "went";
 				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
-				ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, wsXkal.Handle);
+				ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
 				int clsidForm;
 				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
 					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "go.PST", null);
@@ -298,7 +297,7 @@ namespace SIL.FieldWorks.IText
 
 				string formLexEntry = "went";
 				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
-				ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, wsXkal.Handle);
+				ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
 				int clsidForm;
 				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
 					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "go.PST", null);
@@ -337,7 +336,7 @@ namespace SIL.FieldWorks.IText
 
 				string formLexEntry = "went";
 
-				ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, wsXkal.Handle);
+				ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
 				int clsidForm;
 				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
 					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "go.PST", null);
@@ -391,7 +390,7 @@ namespace SIL.FieldWorks.IText
 				string formLexEntry = "go";
 
 				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
-				ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, wsXkal.Handle);
+				ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
 				int clsidForm;
 				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
 					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "go.PST", null);
@@ -432,7 +431,7 @@ namespace SIL.FieldWorks.IText
 				AssertThatXmlIn.Dom(exportedDoc).HasNoMatchForXpath("//morph/item[@type=\"cf\"]");
 				string formLexEntry = "go";
 
-				ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, wsXkal.Handle);
+				ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
 				int clsidForm;
 				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
 					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "go.PST", null);
@@ -488,7 +487,7 @@ namespace SIL.FieldWorks.IText
 
 				string formLexEntry = "go";
 
-				ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, wsXkal.Handle);
+				ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
 				int clsidForm;
 				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
 					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "go.PST", null);
@@ -539,7 +538,7 @@ namespace SIL.FieldWorks.IText
 				string formLexEntry = "go";
 
 				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
-				ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, wsXkal.Handle);
+				ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
 				int clsidForm;
 				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
 					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "glossgo", null);
@@ -587,7 +586,7 @@ namespace SIL.FieldWorks.IText
 				string formLexEntry = "go";
 
 				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
-				ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, wsXkal.Handle);
+				ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
 				int clsidForm;
 				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
 					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "glossgo", null);
@@ -630,7 +629,7 @@ namespace SIL.FieldWorks.IText
 				string formLexEntry = "go";
 
 				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
-				ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, wsXkal.Handle);
+				ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
 				int clsidForm;
 				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
 					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "glossgo", null);
@@ -686,7 +685,7 @@ namespace SIL.FieldWorks.IText
 				string formLexEntry = "go";
 
 				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
-				ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, wsXkal.Handle);
+				ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
 				int clsidForm;
 				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
 					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "glossgo", null);
@@ -750,7 +749,7 @@ namespace SIL.FieldWorks.IText
 
 				string formLexEntry = "go";
 
-				ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, wsXkal.Handle);
+				ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
 				int clsidForm;
 				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
 					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "glossgo", null);
@@ -811,7 +810,7 @@ namespace SIL.FieldWorks.IText
 
 				string formLexEntry = "go";
 
-				ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, wsXkal.Handle);
+				ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
 				int clsidForm;
 				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
 					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "glossgo", null);
@@ -864,7 +863,7 @@ namespace SIL.FieldWorks.IText
 
 				string formLexEntry = "go";
 
-				ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, wsXkal.Handle);
+				ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
 				int clsidForm;
 				ILexEntry leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
 					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "glossgo", null);
@@ -978,7 +977,7 @@ namespace SIL.FieldWorks.IText
 				text.MediaFilesOA.MediaURIsOC.Add(recording);
 				recGuid = recording.Guid.ToString();
 				IStTxtPara para = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(text.ContentsOA, 0, "special");
-				para.Contents = Cache.ServiceLocator.GetInstance<ITsStrFactory>().MakeString("This is a text. It has two segments.", Cache.LanguageProject.DefaultVernacularWritingSystem.Handle);
+				para.Contents = TsStringUtils.MakeString("This is a text. It has two segments.", Cache.LanguageProject.DefaultVernacularWritingSystem.Handle);
 				ISegment seg = para.SegmentsOS[0];
 				seg.BeginTimeOffset = "Timeslot 1";
 				seg.EndTimeOffset = "Timeslot 2";

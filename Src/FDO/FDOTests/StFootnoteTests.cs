@@ -64,13 +64,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_footnote = servloc.GetInstance<IScrFootnoteFactory>().Create();
 			m_book = AddBookToMockedScripture(1, "Genesis");
 			m_book.FootnotesOS.Add(m_footnote);
-			m_footnote.FootnoteMarker = TsStringUtils.MakeTss("a", m_vernWs);
+			m_footnote.FootnoteMarker = TsStringUtils.MakeString("a", m_vernWs);
 			m_scr.DisplaySymbolInFootnote = true;
 			m_scr.DisplayFootnoteReference = false;
 
 			// create one empty footnote para
 			m_footnotePara = m_footnote.AddNewTextPara(ScrStyleNames.NormalFootnoteParagraph);
-			m_footnotePara.Contents = TsStringUtils.MakeTss(string.Empty, m_vernWs);
+			m_footnotePara.Contents = TsStringUtils.MakeString(string.Empty, m_vernWs);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -107,7 +107,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Test]
 		public void GetTextRepresentation_withBrackets()
 		{
-			m_footnotePara.Contents = TsStringUtils.MakeTss("Text in <brackets>", m_vernWs);
+			m_footnotePara.Contents = TsStringUtils.MakeString("Text in <brackets>", m_vernWs);
 
 			Assert.AreEqual("<FN><M>a</M><P><PS>Note General Paragraph</PS>" +
 				"<RUN WS='fr'>Text in &lt;brackets&gt;</RUN></P></FN>",
@@ -210,7 +210,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		[Ignore("'ValidateAddObjectInternal' won't allow two paras in one footnote.")]
 		public void GetTextRepresentation_twoParas()
 		{
-			m_footnotePara.Contents = TsStringUtils.MakeTss("Paragraph One", m_vernWs);
+			m_footnotePara.Contents = TsStringUtils.MakeString("Paragraph One", m_vernWs);
 
 			// create second para
 			IStTxtPara para = m_footnote.AddNewTextPara("Note Exegesis Paragraph");
@@ -254,7 +254,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			SetupBackTrans();
 
-			m_footnotePara.Contents = TsStringUtils.MakeTss("Text in <brackets>", m_vernWs);
+			m_footnotePara.Contents = TsStringUtils.MakeString("Text in <brackets>", m_vernWs);
 			AddRunToMockedTrans(m_trans, m_wsEs, "Spanish BT in <brackets>", null);
 			AddRunToMockedTrans(m_trans, m_wsDe, "German BT in <brackets>", null);
 

@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		public virtual ITsString FeaturesTSS
 		{
 			get
-			{ return m_cache.TsStrFactory.MakeString("", Cache.DefaultAnalWs); }
+			{ return TsStringUtils.EmptyString(Cache.DefaultAnalWs); }
 		}
 
 		/// <summary>
@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		[VirtualProperty(CellarPropertyType.String)]
 		public virtual ITsString ExceptionFeaturesTSS
 		{
-			get { return m_cache.TsStrFactory.MakeString("", Cache.DefaultAnalWs); }
+			get { return TsStringUtils.EmptyString(Cache.DefaultAnalWs); }
 		}
 
 		/// <summary>
@@ -357,7 +357,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <returns></returns>
 		public virtual ITsString PartOfSpeechForWsTSS(int ws)
 		{
-			return Cache.TsStrFactory.EmptyString(ws);
+			return TsStringUtils.EmptyString(ws);
 		}
 
 		/// <summary>
@@ -367,7 +367,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <returns></returns>
 		public virtual ITsString InflectionClassForWsTSS(int ws)
 		{
-			return Cache.TsStrFactory.EmptyString(ws);
+			return TsStringUtils.EmptyString(ws);
 		}
 
 		/// <summary>
@@ -811,7 +811,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						}
 					}
 				}
-				return Cache.TsStrFactory.MakeString(
+				return TsStringUtils.MakeString(
 					sMsaName,
 					m_cache.DefaultUserWs);
 			}
@@ -833,7 +833,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
 			tisb.AppendTsString(tssFromPartOfSpeech);
-			tisb.AppendTsString(TsStringUtils.MakeTss(">", m_cache.WritingSystemFactory.UserWs));
+			tisb.AppendTsString(TsStringUtils.MakeString(">", m_cache.WritingSystemFactory.UserWs));
 			tisb.AppendTsString(tssToPartOfSpeech);
 			return tisb.GetString();
 		}
@@ -1292,15 +1292,15 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				{
 					// LT-7075 was crashing when it was null,
 					// trying to get the Guid.
-					var guid = System.Guid.Empty;
+					var guid = Guid.Empty;
 					if (form.MorphTypeRA != null)
 						guid = form.MorphTypeRA.Guid;
 					if ((guid != MoMorphTypeTags.kguidMorphClitic) &&
 						(guid != MoMorphTypeTags.kguidMorphEnclitic) &&
 						(guid != MoMorphTypeTags.kguidMorphProclitic))
-						return Cache.TsStrFactory.MakeString(Strings.ksStemNoCatInfo, userWs);
+						return TsStringUtils.MakeString(Strings.ksStemNoCatInfo, userWs);
 				}
-				return Cache.TsStrFactory.MakeString(Strings.ksCliticNoCatInfo, userWs);
+				return TsStringUtils.MakeString(Strings.ksCliticNoCatInfo, userWs);
 			}
 		}
 
@@ -1319,23 +1319,23 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			var userWs = m_cache.WritingSystemFactory.UserWs;
 			if (PartOfSpeechRA == null)
-				return TsStringUtils.MakeTss(Strings.ksNotSure, userWs);
+				return TsStringUtils.MakeString(Strings.ksNotSure, userWs);
 
 			var tssName = tssPartOfSpeech;
 			var bldr = tssName.GetBldr();
 			int cch = bldr.Length;
 			if (InflectionClassRA != null)
 			{
-				bldr.ReplaceTsString(cch, cch, TsStringUtils.MakeTss("  (", userWs));
+				bldr.ReplaceTsString(cch, cch, TsStringUtils.MakeString("  (", userWs));
 				cch = bldr.Length;
 				bldr.ReplaceTsString(cch, cch, InflectionClassRA.Abbreviation.BestAnalysisVernacularAlternative);
 				cch = bldr.Length;
-				bldr.ReplaceTsString(cch, cch, TsStringUtils.MakeTss(")", userWs));
+				bldr.ReplaceTsString(cch, cch, TsStringUtils.MakeString(")", userWs));
 			}
 			cch = bldr.Length;
 			var features = MsFeaturesOA;
 			if (features != null)
-				bldr.ReplaceTsString(cch, cch, TsStringUtils.MakeTss(features.ShortName, userWs));
+				bldr.ReplaceTsString(cch, cch, TsStringUtils.MakeString(features.ShortName, userWs));
 
 			return bldr.GetString();
 		}
@@ -1845,7 +1845,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						}
 					}
 				}
-				return Cache.TsStrFactory.MakeString(
+				return TsStringUtils.MakeString(
 					sMsaName,
 					m_cache.DefaultUserWs);
 			}
@@ -1921,24 +1921,23 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		private ITsString InterlinearInflectionalAffix(ITsString tssPartOfSpeech, int ws)
 		{
 			if (PartOfSpeechRA == null)
-				return TsStringUtils.MakeTss(Strings.ksInflectsAnyCat, m_cache.WritingSystemFactory.UserWs);
+				return TsStringUtils.MakeString(Strings.ksInflectsAnyCat, m_cache.WritingSystemFactory.UserWs);
 
-			var tsf = Cache.TsStrFactory;
-			var tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			var userWs = m_cache.WritingSystemFactory.UserWs;
 
 			tisb.AppendTsString(tssPartOfSpeech);
-			tisb.AppendTsString(tsf.MakeString(":", userWs));
+			tisb.AppendTsString(TsStringUtils.MakeString(":", userWs));
 
 			var cnt = 0;
 			foreach (MoInflAffixSlot slot in SlotsRC)
 			{
 				if (cnt++ > 0)
-					tisb.AppendTsString(tsf.MakeString("/", userWs));
+					tisb.AppendTsString(TsStringUtils.MakeString("/", userWs));
 				tisb.AppendTsString(slot.ShortNameTSSforWS(ws));
 			}
 			if (cnt == 0) // No slots.
-				tisb.AppendTsString(tsf.MakeString(Strings.ksAny, userWs));
+				tisb.AppendTsString(TsStringUtils.MakeString(Strings.ksAny, userWs));
 			return tisb.GetString();
 		}
 
@@ -2415,7 +2414,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 							? Strings.ksAffixAttachesToAny
 							: String.Format(Strings.ksAffixFoundOnX,
 											CmPossibility.BestAnalysisOrVernName(m_cache, PartOfSpeechRA).Text);
-				return Cache.TsStrFactory.MakeString(
+				return TsStringUtils.MakeString(
 					sMsaName,
 					m_cache.DefaultUserWs);
 			}
@@ -2460,11 +2459,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				var tsf = Cache.TsStrFactory;
 				var pos = PartOfSpeechRA;
 				return pos != null
 						? CmPossibility.BestAnalysisOrVernAbbr(Cache, PartOfSpeechRA.Hvo)
-						: tsf.MakeString(
+						: TsStringUtils.MakeString(
 							Strings.ksAttachesToAnyCat,
 							Cache.DefaultUserWs);
 			}
@@ -2775,18 +2773,16 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <returns></returns>
 		public ITsString ShortNameTSSforWS(int wsAnal)
 		{
-			var tsf = Cache.TsStrFactory;
-			var tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 
 			if (Optional)
-				tisb.AppendTsString(tsf.MakeString("(", m_cache.WritingSystemFactory.UserWs));
+				tisb.AppendTsString(TsStringUtils.MakeString("(", m_cache.WritingSystemFactory.UserWs));
 
-			ITsString tss = null;
-			tss = WritingSystemServices.GetMagicStringAlt(Cache, wsAnal, Hvo, (int)MoInflAffixSlotTags.kflidName);
+			ITsString tss = WritingSystemServices.GetMagicStringAlt(Cache, wsAnal, Hvo, MoInflAffixSlotTags.kflidName);
 			tisb.AppendTsString(tss);
 
 			if (Optional)
-				tisb.AppendTsString(tsf.MakeString(")", m_cache.WritingSystemFactory.UserWs));
+				tisb.AppendTsString(TsStringUtils.MakeString(")", m_cache.WritingSystemFactory.UserWs));
 
 			return tisb.GetString();
 		}
@@ -3143,14 +3139,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			else
 			{
 				// create default infix position environment
-				var strFact = cache.TsStrFactory;
 				var defAnalWs = entry.Services.WritingSystems.DefaultAnalysisWritingSystem;
 				var ppd = cache.LangProject.PhonologicalDataOA;
 				env = new PhEnvironment();
 				ppd.EnvironmentsOS.Add(env);
-				env.StringRepresentation = strFact.MakeString(sDefaultPostionEnvironment, cache.DefaultVernWs);
-				env.Description.set_String(defAnalWs.Handle, strFact.MakeString("Default infix position environment", defAnalWs.Handle));
-				env.Name.set_String(defAnalWs.Handle, strFact.MakeString("After stem-initial consonant", defAnalWs.Handle));
+				env.StringRepresentation = TsStringUtils.MakeString(sDefaultPostionEnvironment, cache.DefaultVernWs);
+				env.Description.set_String(defAnalWs.Handle, TsStringUtils.MakeString("Default infix position environment", defAnalWs.Handle));
+				env.Name.set_String(defAnalWs.Handle, TsStringUtils.MakeString("After stem-initial consonant", defAnalWs.Handle));
 				infix.PositionRS.Add(env);
 			}
 		}
@@ -3256,7 +3251,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				var wsVern = TsStringUtils.GetWsAtOffset(value, 0);
 				Form.set_String(wsVern,
-								m_cache.TsStrFactory.MakeString(MorphServices.EnsureNoMarkers(value.Text, m_cache), wsVern));
+								TsStringUtils.MakeString(MorphServices.EnsureNoMarkers(value.Text, m_cache), wsVern));
 			}
 		}
 
@@ -3399,7 +3394,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if (tss != null || tss.Length > 0)
 					return tss;
 
-				return Cache.TsStrFactory.MakeString(
+				return TsStringUtils.MakeString(
 					Strings.ksQuestions,
 					Cache.DefaultUserWs);
 			}

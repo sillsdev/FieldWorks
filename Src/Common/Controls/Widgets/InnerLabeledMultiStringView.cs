@@ -381,7 +381,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_rgws = WritingSystemOptions;
 
 			int wsUser = m_fdoCache.WritingSystemFactory.UserWs;
-			m_vc = new InnerLabeledMultiStringViewVc(m_flid, m_rgws, wsUser, m_editable, m_fdoCache.TsStrFactory, this);
+			m_vc = new InnerLabeledMultiStringViewVc(m_flid, m_rgws, wsUser, m_editable, this);
 
 			base.MakeRoot();
 
@@ -507,12 +507,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		int m_wsEn;
 		internal int m_mDxmpLabelWidth;
 
-		public LabeledMultiStringVc(int flid, List<CoreWritingSystemDefinition> rgws, int wsUser, bool editable, int wsEn, ITsStrFactory tsf)
+		public LabeledMultiStringVc(int flid, List<CoreWritingSystemDefinition> rgws, int wsUser, bool editable, int wsEn)
 		{
 			Reuse(flid, rgws, editable);
 			m_ttpLabel = WritingSystemServices.AbbreviationTextProperties;
 			m_wsEn = wsEn == 0 ? wsUser : wsEn;
-			m_tsf = tsf;
 			// Here's the C++ code which does the same thing using styles.
 			//				StrUni stuLangCodeStyle(L"Language Code");
 			//				ITsPropsFactoryPtr qtpf;
@@ -561,7 +560,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			if (string.IsNullOrEmpty(result))
 				result = "??";
 
-			return m_tsf.MakeString(result, m_wsEn);
+			return TsStringUtils.MakeString(result, m_wsEn);
 		}
 
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
@@ -715,8 +714,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		private InnerLabeledMultiStringView m_view;
 
 		public InnerLabeledMultiStringViewVc(int flid, List<CoreWritingSystemDefinition> rgws, int wsUser, bool editable,
-			ITsStrFactory tsf, InnerLabeledMultiStringView view)
-			: base(flid, rgws, wsUser, editable, view.WritingSystemFactory.GetWsFromStr("en"), tsf)
+			InnerLabeledMultiStringView view)
+			: base(flid, rgws, wsUser, editable, view.WritingSystemFactory.GetWsFromStr("en"))
 		{
 			m_view = view;
 			Debug.Assert(m_view != null);

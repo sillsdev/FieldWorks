@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.IO;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -45,7 +46,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
-				var testPubName = Cache.TsStrFactory.MakeString("TestPub", enId);
+				var testPubName = TsStringUtils.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 				var allPubsConfig = ConfigurationTemplateWithAllPublications;
@@ -76,11 +77,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
-				var testPubName = Cache.TsStrFactory.MakeString("TestPub", enId);
+				var testPubName = TsStringUtils.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 				var notTestPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-				var notTestPubName = Cache.TsStrFactory.MakeString("NotTestPub", enId);
+				var notTestPubName = TsStringUtils.MakeString("NotTestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(notTestPubItem);
 				notTestPubItem.Name.set_String(enId, notTestPubName);
 				var configWithoutTestPub = ConfigurationTemplate.Replace("</Publications>", "<Publication>NotTestPub</Publication></Publications>");
@@ -111,7 +112,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
-				var testPubName = Cache.TsStrFactory.MakeString("TestPub", enId);
+				var testPubName = TsStringUtils.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 				var configWithTestPub = ConfigurationTemplate.Replace("</Publications>", "<Publication>TestPub</Publication></Publications>");
@@ -169,7 +170,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
-				var testPubName = Cache.TsStrFactory.MakeString("TestPub", enId);
+				var testPubName = TsStringUtils.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 				using(var docView = new TestXhtmlDocView())
@@ -200,11 +201,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
-				var testPubName = Cache.TsStrFactory.MakeString("TestPub", enId);
+				var testPubName = TsStringUtils.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 				var notTestPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-				var notTestPubName = Cache.TsStrFactory.MakeString("NotTestPub", enId);
+				var notTestPubName = TsStringUtils.MakeString("NotTestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(notTestPubItem);
 				notTestPubItem.Name.set_String(enId, notTestPubName);
 				var configWithoutTestPub = ConfigurationTemplate.Replace("</Publications>", "<Publication>NotTestPub</Publication></Publications>");
@@ -236,7 +237,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
-				var testPubName = Cache.TsStrFactory.MakeString("TestPub", enId);
+				var testPubName = TsStringUtils.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 				var configWithTestPub = ConfigurationTemplate.Replace("</Publications>", "<Publication>TestPub</Publication></Publications>");
@@ -268,7 +269,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
-				var testPubName = Cache.TsStrFactory.MakeString("TestPub", enId);
+				var testPubName = TsStringUtils.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 				// Change the project path to temp for this test
@@ -301,7 +302,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
-				var testPubName = Cache.TsStrFactory.MakeString("TestPub", enId);
+				var testPubName = TsStringUtils.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 
@@ -333,7 +334,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
-				var testPubName = Cache.TsStrFactory.MakeString("NotTheTestPub", enId);
+				var testPubName = TsStringUtils.MakeString("NotTheTestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 				var configSansTestPub = ConfigurationTemplate.Replace("</Publications>",
@@ -386,11 +387,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
-				var testPubName = Cache.TsStrFactory.MakeString("TestPub", enId);
+				var testPubName = TsStringUtils.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 				var notTestPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-				var notTestPubName = Cache.TsStrFactory.MakeString("NotTestPub", enId);
+				var notTestPubName = TsStringUtils.MakeString("NotTestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(notTestPubItem);
 				notTestPubItem.Name.set_String(enId, notTestPubName);
 				var nonMatchingConfig = ConfigurationTemplate.Replace("</Publications>", "<Publication>NotTestPub</Publication></Publications>");

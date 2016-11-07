@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
@@ -858,8 +859,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private ITsString MakeEmptyCaptionString()
 		{
-			ITsStrFactory factory = TsStrFactoryClass.Create();
-			return factory.MakeString(string.Empty, m_captionWs);
+			return TsStringUtils.EmptyString(m_captionWs);
 		}
 
 		/// ------------------------------------------------------------------------------------

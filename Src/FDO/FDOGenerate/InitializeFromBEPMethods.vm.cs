@@ -63,7 +63,6 @@
 		{
 			var idFactory = loadingServices.m_objIdFactory;
 			var wsf = loadingServices.m_wsf;
-			var tsf = loadingServices.m_tsf;
 			var uowService = loadingServices.m_uowService;
 			XElement currentProperty;
 
@@ -74,7 +73,7 @@
 			currentProperty = root.Element("$prop.NiuginianPropName");
 			if (currentProperty != null)
 			{
-				ReadWriteServices.LoadMultiStringAccessor(this, $prop.Number, currentProperty, ref m_${prop.NiuginianPropName}, wsf, tsf);
+				ReadWriteServices.LoadMultiStringAccessor(this, $prop.Number, currentProperty, ref m_${prop.NiuginianPropName}, wsf);
 				currentProperty.Remove();
 			}
 
@@ -83,7 +82,7 @@
 			currentProperty = root.Element("$prop.NiuginianPropName");
 			if (currentProperty != null)
 			{
-				ReadWriteServices.LoadMultiUnicodeAccessor(this, $prop.Number, currentProperty, ref m_${prop.NiuginianPropName}, wsf, tsf);
+				ReadWriteServices.LoadMultiUnicodeAccessor(this, $prop.Number, currentProperty, ref m_${prop.NiuginianPropName}, wsf);
 				currentProperty.Remove();
 			}
 

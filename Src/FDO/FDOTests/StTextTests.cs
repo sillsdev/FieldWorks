@@ -96,7 +96,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Cache.LangProject.DiscourseDataOA.ChartsOC.Add(chart);
 
 			// Setup the new chart
-			chart.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeTss(name, Cache.DefaultAnalWs);
+			chart.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(name, Cache.DefaultAnalWs);
 			chart.BasedOnRA = stText;
 
 			return chart; // This chart has no template or rows, so far!!

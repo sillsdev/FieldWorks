@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Linq;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.LexText.Controls;
@@ -99,7 +100,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 
 			popupTree.Nodes.Add(new HvoTreeNode(
-					Cache.TsStrFactory.MakeString(LexTextControls.ksRemoveThisFeature, Cache.WritingSystemFactory.UserWs),
+					TsStringUtils.MakeString(LexTextControls.ksRemoveThisFeature, Cache.WritingSystemFactory.UserWs),
 					kRemoveThisFeature));
 			/* Trying this now without using the phonological feature chooser; if users ask for it, will reconsider.
 			 * popupTree.Nodes.Add(new HvoTreeNode(

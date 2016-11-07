@@ -796,27 +796,26 @@ namespace SIL.FieldWorks.FDO
 			// For all PhCodes in the default phoneme set, change the writing system from "en" to icuLocale
 			var phSet = cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0];
 			int wsVern = cache.DefaultVernWs;
-			ITsStrFactory tsf = cache.TsStrFactory;
 			foreach (var phone in phSet.PhonemesOC)
 			{
 				foreach (var code in phone.CodesOS)
 				{
 
 					code.Representation.VernacularDefaultWritingSystem =
-						tsf.MakeString(code.Representation.UserDefaultWritingSystem.Text, wsVern);
+						TsStringUtils.MakeString(code.Representation.UserDefaultWritingSystem.Text, wsVern);
 				}
 				phone.Name.VernacularDefaultWritingSystem =
-					tsf.MakeString(phone.Name.UserDefaultWritingSystem.Text, wsVern);
+					TsStringUtils.MakeString(phone.Name.UserDefaultWritingSystem.Text, wsVern);
 			}
 			foreach (var mrkr in phSet.BoundaryMarkersOC)
 			{
 				foreach (var code in mrkr.CodesOS)
 				{
 					code.Representation.VernacularDefaultWritingSystem =
-						tsf.MakeString(code.Representation.UserDefaultWritingSystem.Text, wsVern);
+						TsStringUtils.MakeString(code.Representation.UserDefaultWritingSystem.Text, wsVern);
 				}
 				mrkr.Name.VernacularDefaultWritingSystem =
-					tsf.MakeString(mrkr.Name.UserDefaultWritingSystem.Text, wsVern);
+					TsStringUtils.MakeString(mrkr.Name.UserDefaultWritingSystem.Text, wsVern);
 			}
 		}
 		#endregion
@@ -958,21 +957,6 @@ namespace SIL.FieldWorks.FDO
 				CheckDisposed();
 
 				return ServiceLocator.ActionHandler;
-			}
-		}
-
-		/// <summary>
-		/// Get a singleton ITsStrFactory for FDO.
-		/// </summary>
-		[Browsable(false)]
-		public ITsStrFactory TsStrFactory
-		{
-			get
-			{
-				CheckDisposed();
-				if (m_serviceLocator == null)
-					return null;
-				return m_serviceLocator.GetInstance<ITsStrFactory>();
 			}
 		}
 
@@ -1456,7 +1440,7 @@ namespace SIL.FieldWorks.FDO
 
 		internal ITsString MakeUserTss(string val)
 		{
-			return TsStrFactory.MakeString(val, WritingSystemFactory.UserWs);
+			return TsStringUtils.MakeString(val, WritingSystemFactory.UserWs);
 		}
 
 		#endregion Internal Methods

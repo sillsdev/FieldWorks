@@ -421,7 +421,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						var lsNew = m_cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 						m_le.SensesOS.Add(lsNew);
 						int defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
-						lsNew.Gloss.set_String(defAnalWs, m_cache.TsStrFactory.MakeString(m_fwtbGloss.Text, defAnalWs));
+						lsNew.Gloss.set_String(defAnalWs, TsStringUtils.MakeString(m_fwtbGloss.Text, defAnalWs));
 
 						lsNew.SandboxMSA = m_msaGroupBox.SandboxMSA;
 						m_newSenseID = lsNew.Hvo;

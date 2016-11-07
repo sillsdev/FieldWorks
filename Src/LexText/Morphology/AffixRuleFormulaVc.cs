@@ -85,13 +85,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
 			m_resultProps = tpb.GetTextProps();
 
-			var tsf = m_cache.TsStrFactory;
 			var userWs = m_cache.DefaultUserWs;
-			m_inputStr = tsf.MakeString(MEStrings.ksAffixRuleInput, userWs);
-			m_indexStr = tsf.MakeString(MEStrings.ksAffixRuleIndex, userWs);
-			m_resultStr = tsf.MakeString(MEStrings.ksAffixRuleResult, userWs);
-			m_doubleArrow = tsf.MakeString("\u21d2", userWs);
-			m_space = tsf.MakeString(" ", userWs);
+			m_inputStr = TsStringUtils.MakeString(MEStrings.ksAffixRuleInput, userWs);
+			m_indexStr = TsStringUtils.MakeString(MEStrings.ksAffixRuleIndex, userWs);
+			m_resultStr = TsStringUtils.MakeString(MEStrings.ksAffixRuleResult, userWs);
+			m_doubleArrow = TsStringUtils.MakeString("\u21d2", userWs);
+			m_space = TsStringUtils.MakeString(" ", userWs);
 		}
 
 		protected override int GetMaxNumLines()
@@ -130,7 +129,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
 		{
-			ITsStrFactory tsf = m_cache.TsStrFactory;
 			int userWs = m_cache.DefaultUserWs;
 			switch (frag)
 			{
@@ -164,7 +162,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					vwenv.NoteDependency(new[] {m_rule.Hvo}, new[] {MoAffixProcessTags.kflidInput}, 1 );
 					for (int i = 0; i < m_rule.InputOS.Count; i++)
 					{
-						int idxWidth = GetStrWidth(tsf.MakeString(Convert.ToString(i + 1), userWs), m_indexProps, vwenv);
+						int idxWidth = GetStrWidth(TsStringUtils.MakeString(Convert.ToString(i + 1), userWs), m_indexProps, vwenv);
 						int ctxtWidth = GetWidth(m_rule.InputOS[i], vwenv);
 						ctxtLens[i].nVal = Math.Max(idxWidth, ctxtWidth) + 8000 + 1000;
 						ctxtLens[i].unit = VwUnit.kunPoint1000;
@@ -255,7 +253,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					{
 						vwenv.Props = m_indexProps;
 						vwenv.OpenTableCell(1, 1);
-						vwenv.AddString(tsf.MakeString(Convert.ToString(i + 1), userWs));
+						vwenv.AddString(TsStringUtils.MakeString(Convert.ToString(i + 1), userWs));
 						vwenv.CloseTableCell();
 					}
 
@@ -430,7 +428,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (tag == ktagIndex)
 			{
 				// pass the index in the frag argument
-				return m_cache.TsStrFactory.MakeString(Convert.ToString(frag), m_cache.DefaultUserWs);
+				return TsStringUtils.MakeString(Convert.ToString(frag), m_cache.DefaultUserWs);
 			}
 			switch (frag)
 			{

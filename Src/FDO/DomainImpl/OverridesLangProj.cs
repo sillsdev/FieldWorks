@@ -424,7 +424,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			var defAnalWs = m_cache.DefaultAnalWs;
 			parent.Name.set_String(
 				defAnalWs,
-				Cache.TsStrFactory.MakeString(
+				TsStringUtils.MakeString(
 					XmlUtils.GetManditoryAttributeValue(spec, "name"),
 					defAnalWs));
 			foreach (XmlNode child in spec.ChildNodes)
@@ -512,12 +512,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		private static void InitItem(XmlNode item, ICmPossibility poss)
 		{
 			var defAnalWs = poss.Cache.DefaultAnalWs;
-			var strFact = poss.Cache.TsStrFactory;
 
 			// Set name property
 			poss.Name.set_String(
 				defAnalWs,
-				strFact.MakeString(
+				TsStringUtils.MakeString(
 					XmlUtils.GetManditoryAttributeValue(item, "name"),
 					defAnalWs));
 
@@ -527,7 +526,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				abbr = poss.Name.AnalysisDefaultWritingSystem.Text;
 			poss.Abbreviation.set_String(
 				defAnalWs,
-				strFact.MakeString(
+				TsStringUtils.MakeString(
 					abbr,
 					defAnalWs));
 

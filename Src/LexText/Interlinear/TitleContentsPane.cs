@@ -222,8 +222,7 @@ namespace SIL.FieldWorks.IText
 		public TitleContentsVc(FdoCache cache)
 		{
 			int wsUser = cache.DefaultUserWs;
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			m_tssTitle = tsf.MakeString(ITextStrings.ksTitle, wsUser);
+			m_tssTitle = TsStringUtils.MakeString(ITextStrings.ksTitle, wsUser);
 			ITsPropsBldr tpb = TsPropsBldrClass.Create();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBold,
 				(int)FwTextPropVar.ktpvEnum,
@@ -268,9 +267,9 @@ namespace SIL.FieldWorks.IText
 				//m_WsLabels[i] = LgWritingSystem.UserAbbr(cache, m_writingSystems[i].Hvo);
 				// For now (August 2008), try English abbreviation before UI writing system.
 				// (See LT-8185.)
-				m_WsLabels[i] = cache.TsStrFactory.MakeString(m_writingSystems[i].Abbreviation, cache.DefaultUserWs);
+				m_WsLabels[i] = TsStringUtils.MakeString(m_writingSystems[i].Abbreviation, cache.DefaultUserWs);
 				if (String.IsNullOrEmpty(m_WsLabels[i].Text))
-					m_WsLabels[i] = cache.TsStrFactory.MakeString(m_writingSystems[i].Abbreviation, cache.DefaultUserWs);
+					m_WsLabels[i] = TsStringUtils.MakeString(m_writingSystems[i].Abbreviation, cache.DefaultUserWs);
 			}
 		}
 

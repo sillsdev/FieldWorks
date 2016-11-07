@@ -2,13 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -35,7 +30,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var root = form.Hvo;
 			var hvos = new [] {-5000, -5001, -5002};
 			sda.CacheVecProp(root, PhoneEnvReferenceView.kMainObjEnvironments, hvos, hvos.Length);
-			sda.SetString(hvos[1], PhoneEnvReferenceView.kEnvStringRep, TsStrFactoryClass.Create().MakeString("abc", 6));
+			sda.SetString(hvos[1], PhoneEnvReferenceView.kEnvStringRep, TsStringUtils.MakeString("abc", 6));
 			using (var view = new PhoneEnvReferenceView())
 			{
 				view.SetSda(sda);

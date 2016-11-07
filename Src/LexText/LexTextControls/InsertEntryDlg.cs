@@ -610,12 +610,11 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (wsVern <= 0)
 					wsVern = defVernWs.Handle;
 				// initialize to empty TsStrings
-				ITsStrFactory tsf = cache.TsStrFactory;
 				//we need to use the wsVern so that tbLexicalForm is sized correctly for the font size.
 				//In Interlinear text the baseline can be in any of the vernacular writing systems, not just
 				//the defaultVernacularWritingSystem.
-				ITsString tssForm = tsf.MakeString("", wsVern);
-				ITsString tssGloss = tsf.MakeString("", defAnalWs.Handle);
+				ITsString tssForm = TsStringUtils.EmptyString(wsVern);
+				ITsString tssGloss = TsStringUtils.EmptyString(defAnalWs.Handle);
 
 				using (m_updateTextMonitor.Enter())
 				{
@@ -804,14 +803,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				TssForm = tssForm;
 
-				TssGloss = TsStringUtils.MakeTss("", wsContainer.DefaultAnalysisWritingSystem.Handle);
+				TssGloss = TsStringUtils.MakeString("", wsContainer.DefaultAnalysisWritingSystem.Handle);
 				// The lexical form is already set, so shift focus to the gloss when
 				// the form is activated.
 				m_fLexicalFormInitialFocus = false;
 			}
 			else
 			{
-				TssForm = TsStringUtils.MakeTss("", wsContainer.DefaultVernacularWritingSystem.Handle);
+				TssForm = TsStringUtils.MakeString("", wsContainer.DefaultVernacularWritingSystem.Handle);
 				TssGloss = tssForm;
 				// The gloss is already set, so shift the focus to the lexical form
 				// when the form is activated.
@@ -946,7 +945,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			ITsString tssForm = TssForm;
 			int vernWs = TsStringUtils.GetWsAtOffset(tssForm, 0);
 			string form = MorphServices.EnsureNoMarkers(tssForm.Text, m_cache);
-			tssForm = m_cache.TsStrFactory.MakeString(form, vernWs);
+			tssForm = TsStringUtils.MakeString(form, vernWs);
 
 			ITsString tssGloss = SelectedOrBestGlossTss;
 
@@ -1442,7 +1441,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			entryComponents.MorphType = m_morphType;
 			CollectValuesFromMultiStringControl(msLexicalForm, entryComponents.LexemeFormAlternatives, BestTssForm);
 			CollectValuesFromMultiStringControl(msGloss, entryComponents.GlossAlternatives,
-				TsStringUtils.MakeTss(Gloss, m_cache.DefaultAnalWs));
+				TsStringUtils.MakeString(Gloss, m_cache.DefaultAnalWs));
 			entryComponents.MSA = m_msaGroupBox.SandboxMSA;
 			if (m_MGAGlossListBoxItems != null)
 			{
@@ -1455,7 +1454,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void CollectValuesFromMultiStringControl(LabeledMultiStringControl lmsControl,
 			IList<ITsString> alternativesCollector, ITsString defaultIfNoMultiString)
 		{
-			var bldr = m_cache.TsStrFactory;
 			if (lmsControl == null)
 			{
 				alternativesCollector.Add(defaultIfNoMultiString);
@@ -1470,7 +1468,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (tss != null && tss.Text != null)
 					{
 						// In the case of copied text, sometimes the string had the wrong ws attached to it. (LT-11950)
-						alternativesCollector.Add(bldr.MakeString(tss.Text, ws));
+						alternativesCollector.Add(TsStringUtils.MakeString(tss.Text, ws));
 					}
 				}
 			}

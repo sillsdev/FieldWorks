@@ -25,7 +25,6 @@ using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.UIAdapters;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -1252,7 +1251,7 @@ namespace SIL.FieldWorks.XWorks
 			bool fDbRenamed = false;
 			string sProject = cache.ProjectId.Name;
 			string sLinkedFilesRootDir = cache.LangProject.LinkedFilesRootDir;
-			using (var dlg = new FwProjPropertiesDlg(cache, m_app, m_app, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable)))
+			using (var dlg = new FwProjPropertiesDlg(cache, m_app, m_app))
 			{
 				dlg.ProjectPropertiesChanged += OnProjectPropertiesChanged;
 				if (startOnWSPage)

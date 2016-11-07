@@ -11,6 +11,7 @@
 using System;
 using System.Windows.Forms;
 using System.Linq;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -132,7 +133,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						pos.AffixSlotsOC.Add(slot);
 						string sNewSlotName = StringTable.Table.GetString("NewSlotName", "Linguistics/Morphology/TemplateTable");
 						int defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
-						slot.Name.set_String(defAnalWs, m_cache.TsStrFactory.MakeString(sNewSlotName, defAnalWs));
+						slot.Name.set_String(defAnalWs, TsStringUtils.MakeString(sNewSlotName, defAnalWs));
 						slot.Optional = m_fOptional;
 					});
 			// Enhance JohnT: usually the newly created slot will also get inserted into a template.

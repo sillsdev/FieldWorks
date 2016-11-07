@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using Ionic.Zip;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.IO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -167,7 +168,7 @@ namespace SIL.FieldWorks.XWorks
 				var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 				var entry = factory.Create();
 				var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-				entry.CitationForm.set_String(wsFr, Cache.TsStrFactory.MakeString("Headword", wsFr));
+				entry.CitationForm.set_String(wsFr, TsStringUtils.MakeString("Headword", wsFr));
 				//SUT
 				Assert.DoesNotThrow(() => controller.UploadToWebonary(mockView.Model, mockView));
 

@@ -94,7 +94,7 @@ $propNotes
 				lock (SyncRoot)
 				{
 					if (m_${prop.NiuginianPropName} == null)
-						return Cache.TsStrFactory.EmptyString(Cache.WritingSystemFactory.UserWs);
+						return TsStringUtils.EmptyString(Cache.WritingSystemFactory.UserWs);
 				}
 				return m_${prop.NiuginianPropName};
 			}

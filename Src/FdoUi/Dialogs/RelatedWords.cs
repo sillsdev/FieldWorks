@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
@@ -744,11 +745,10 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		public RelatedWordsVc(int wsUser, ITsString headword)
 		{
 			m_wsDefault = wsUser;
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			m_tssColon = tsf.MakeString(": ", wsUser);
-			m_tssComma = tsf.MakeString(", ", wsUser);
-			m_tssSdRelation = tsf.MakeString(FdoUiStrings.ksWordsRelatedBySemanticDomain, wsUser);
-			m_tssLexRelation = tsf.MakeString(FdoUiStrings.ksLexicallyRelatedWords, wsUser);
+			m_tssColon = TsStringUtils.MakeString(": ", wsUser);
+			m_tssComma = TsStringUtils.MakeString(", ", wsUser);
+			m_tssSdRelation = TsStringUtils.MakeString(FdoUiStrings.ksWordsRelatedBySemanticDomain, wsUser);
+			m_tssLexRelation = TsStringUtils.MakeString(FdoUiStrings.ksLexicallyRelatedWords, wsUser);
 
 			var semanticDomainStrBuilder = m_tssSdRelation.GetBldr();
 			var index = semanticDomainStrBuilder.Text.IndexOf("{0}");

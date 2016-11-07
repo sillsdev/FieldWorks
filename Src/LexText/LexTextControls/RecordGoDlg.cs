@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			var ws = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
 			if (ws != null)
 			{
-				ITsString tss = m_tsf.MakeString(string.Empty, ws.Handle);
+				ITsString tss = TsStringUtils.EmptyString(ws.Handle);
 				var field = new SearchField(RnGenericRecTags.kflidTitle, tss);
 				m_matchingObjectsBrowser.SearchAsync(new[] { field });
 			}
@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_oldSearchKey != string.Empty || searchKey != string.Empty)
 				StartSearchAnimation();
 
-			ITsString tss = m_tsf.MakeString(searchKey, wsSelHvo);
+			ITsString tss = TsStringUtils.MakeString(searchKey, wsSelHvo);
 			var field = new SearchField(RnGenericRecTags.kflidTitle, tss);
 			m_matchingObjectsBrowser.SearchAsync(new[] { field });
 		}
@@ -89,7 +89,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			using (var dlg = new InsertRecordDlg())
 			{
 				string title = m_tbForm.Text.Trim();
-				ITsString titleTrimmed = TsStringUtils.MakeTss(title, TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0));
+				ITsString titleTrimmed = TsStringUtils.MakeString(title, TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0));
 				dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, m_cache.LanguageProject.ResearchNotebookOA, titleTrimmed);
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{

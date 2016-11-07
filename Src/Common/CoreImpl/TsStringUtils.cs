@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices; // needed for Marshal
 using System.Xml;
 using System.Text.RegularExpressions;
 using SIL.Utils;
@@ -35,6 +34,22 @@ namespace SIL.CoreImpl
 		private static readonly FwObjDataTypes[] HotObjectTypes = { FwObjDataTypes.kodtNameGuidHot, FwObjDataTypes.kodtOwnNameGuidHot };
 		private static readonly FwObjDataTypes[] OwnedObjectTypes = { FwObjDataTypes.kodtGuidMoveableObjDisp, FwObjDataTypes.kodtOwnNameGuidHot };
 		private static readonly FwObjDataTypes[] FootnoteAndPicObjectTypes = { FwObjDataTypes.kodtGuidMoveableObjDisp, FwObjDataTypes.kodtOwnNameGuidHot, FwObjDataTypes.kodtNameGuidHot };
+
+		static TsStringUtils()
+		{
+			TsStrFactory = TsStrFactoryClass.Create();
+			TsPropsFactory = TsPropsFactoryClass.Create();
+		}
+
+		/// <summary>
+		/// Gets or sets the singleton <see cref="ITsString"/> factory that everything uses.
+		/// </summary>
+		public static ITsStrFactory TsStrFactory { get; set; }
+
+		/// <summary>
+		/// Gets or sets the singleton <see cref="ITsTextProps"/> factory that everything uses.
+		/// </summary>
+		public static ITsPropsFactory TsPropsFactory { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -500,7 +515,7 @@ namespace SIL.CoreImpl
 				return source;
 
 			// TS Strings no longer allow the WS to be unspecified, so we just fake it by passing 1.
-			ITsString tss = MakeTss(source, 1).get_NormalizedForm(FwNormalizationMode.knmNFC);
+			ITsString tss = MakeString(source, 1).get_NormalizedForm(FwNormalizationMode.knmNFC);
 			return tss.Text;
 		}
 
@@ -940,7 +955,7 @@ namespace SIL.CoreImpl
 		/// ------------------------------------------------------------------------------------
 		public static ITsString GetCleanSingleRunTsString(ITsString tss)
 		{
-			return MakeTss(tss.Text, tss.get_WritingSystem(0));
+			return MakeString(tss.Text, tss.get_WritingSystem(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1176,7 +1191,7 @@ namespace SIL.CoreImpl
 					}
 				}
 				if (ichMin == -1)
-					return MakeTss("", tssInput.get_WritingSystemAt(0));
+					return MakeString("", tssInput.get_WritingSystemAt(0));
 				// no word-forming characters found in the string
 			}
 
@@ -1201,7 +1216,7 @@ namespace SIL.CoreImpl
 				}
 
 				if (!fFoundWordFormingChar)
-					return MakeTss("", GetWsAtOffset(tssInput, 0));
+					return MakeString("", GetWsAtOffset(tssInput, 0));
 				// no word-forming characters found in the string
 			}
 
@@ -1275,46 +1290,71 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
-		/// Releases a tss string that was created with MakeString, before reassigning it.
-		/// Especially useful in Dispose, since we check whether it is null before doing the release.
+		/// Creates an empty <see cref="ITsString"/> with the specified writing system.
 		/// </summary>
-		/// <param name="tss">tss to reassign a value to</param>
-		/// <param name="tssNewValue">the new tss value (including null)</param>
-		public static void ReassignTss(ref ITsString tss, ITsString tssNewValue)
+		public static ITsString EmptyString(int ws)
 		{
-			if (tss != null)
-				Marshal.ReleaseComObject(tss);
-			tss = tssNewValue;
+			return TsStrFactory.EmptyString(ws);
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Create a new Tss based on the given string and ws.
+		/// Creates a new Tss based on the given string and ws.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static ITsString MakeTss(string src, int ws)
+		public static ITsString MakeString(string text, int ws)
 		{
-			return MakeTss(TsStrFactoryClass.Create(), ws, src);
+			return TsStrFactory.MakeString(text, ws);
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Create an ITsString in the given writing system.
+		/// Creates an ITsString in the given writing system and with the given style name.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static ITsString MakeTss(ITsStrFactory tsf, int wsHvo, string text)
+		public static ITsString MakeString(string text, int ws, string styleName)
 		{
-			return tsf.MakeString(text, wsHvo);
+			return TsStrFactory.MakeStringWithPropsRgch(text, text.Length, StyleUtils.CharStyleTextProps(styleName, ws));
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Create an ITsString in the given writing system and with the given style name.
+		/// Creates an <see cref="ITsString"/> with the specifed text properties.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static ITsString MakeTss(string text, int wsHvo, string styleName)
+		public static ITsString MakeString(string text, ITsTextProps textProps)
 		{
-			return TsStrFactoryClass.Create().MakeStringWithPropsRgch(text, text.Length, StyleUtils.CharStyleTextProps(styleName, wsHvo));
+			return TsStrFactory.MakeStringWithProps(text, textProps);
+		}
+
+		/// <summary>
+		/// Creates an empty <see cref="ITsString"/> builder.
+		/// </summary>
+		public static ITsStrBldr MakeStrBldr()
+		{
+			return TsStrFactory.GetBldr();
+		}
+
+		/// <summary>
+		/// Creates an empty incremental <see cref="ITsString"/> builder.
+		/// </summary>
+		public static ITsIncStrBldr MakeIncStrBldr()
+		{
+			return TsStrFactory.GetIncBldr();
+		}
+
+		/// <summary>
+		/// Creates an <see cref="ITsTextProps"/> with the specified style and writing system.
+		/// </summary>
+		public static ITsTextProps MakeProps(string styleName, int ws)
+		{
+			return TsPropsFactory.MakeProps(styleName, ws, 0);
+		}
+
+		/// <summary>
+		/// Creates an empty <see cref="ITsTextProps"/> builder.
+		/// </summary>
+		public static ITsPropsBldr MakePropsBldr()
+		{
+			return TsPropsFactory.GetPropsBldr();
 		}
 
 		/// ------------------------------------------------------------------------------------

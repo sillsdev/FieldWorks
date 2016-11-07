@@ -8,6 +8,7 @@ using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using System.IO;
 using System.Xml;
+using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.Discourse
 {
@@ -103,7 +104,7 @@ namespace SIL.FieldWorks.Discourse
 
 				// Let's have some notes on row 0.
 				//var notesText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
-				row0.Notes = Cache.TsStrFactory.MakeString("This is a test note", Cache.DefaultAnalWs);
+				row0.Notes = TsStringUtils.MakeString("This is a test note", Cache.DefaultAnalWs);
 				//var notesPara = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 				//notesText.ParagraphsOS.Add(notesPara);
 				//notesPara.Contents = ;

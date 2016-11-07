@@ -10,6 +10,7 @@ using System.Xml;
 using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.Collections;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -122,7 +123,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			IPhEnvironment env = Cache.ServiceLocator.GetInstance<IPhEnvironmentFactory>().Create();
 			Cache.LanguageProject.PhonologicalDataOA.EnvironmentsOS.Add(env);
-			env.StringRepresentation = Cache.TsStrFactory.MakeString(strRep, Cache.DefaultVernWs);
+			env.StringRepresentation = TsStringUtils.MakeString(strRep, Cache.DefaultVernWs);
 			return env;
 		}
 
@@ -230,7 +231,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private void AddBdry(Guid guid, string strRep)
 		{
 			IPhBdryMarker bdry = Cache.ServiceLocator.GetInstance<IPhBdryMarkerFactory>().Create(guid, Cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0]);
-			ITsString tss = Cache.TsStrFactory.MakeString(strRep, Cache.DefaultAnalWs);
+			ITsString tss = TsStringUtils.MakeString(strRep, Cache.DefaultAnalWs);
 			bdry.Name.set_String(Cache.DefaultAnalWs, tss);
 			IPhCode code = Cache.ServiceLocator.GetInstance<IPhCodeFactory>().Create();
 			bdry.CodesOS.Add(code);
@@ -241,7 +242,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			return Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
 				Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(morphType),
-				Cache.TsStrFactory.MakeString(lexemeForm, Cache.DefaultVernWs), gloss, msa);
+				TsStringUtils.MakeString(lexemeForm, Cache.DefaultVernWs), gloss, msa);
 		}
 
 		private IMoInflClass AddInflectionClass(IPartOfSpeech pos, string name)
@@ -1074,7 +1075,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			type.GlossAppend.SetAnalysisDefaultWritingSystem(".pl");
 			type.InflFeatsOA = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
 			CreateFeatStruc(Cache.LanguageProject.MsFeatureSystemOA, m_inflType, type.InflFeatsOA, new FS {{"nounAgr", new FS {{"num", "pl"}}}});
-			entry.CreateVariantEntryAndBackRef(type, Cache.TsStrFactory.MakeString("sau", Cache.DefaultVernWs));
+			entry.CreateVariantEntryAndBackRef(type, TsStringUtils.MakeString("sau", Cache.DefaultVernWs));
 			LoadLanguage();
 
 			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(2));
@@ -1096,7 +1097,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphSuffix, "ɯd", "gloss", new SandboxGenericMSA {MsaType = MsaType.kUnclassified, MainPOS = m_verb});
 			ILexEntryType type = Cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypFreeVar);
-			entry.CreateVariantEntryAndBackRef(type, Cache.TsStrFactory.MakeString("ɯt", Cache.DefaultVernWs));
+			entry.CreateVariantEntryAndBackRef(type, TsStringUtils.MakeString("ɯt", Cache.DefaultVernWs));
 			LoadLanguage();
 
 			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(2));

@@ -6,7 +6,6 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -762,8 +761,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			ITssValue tv = item as ITssValue;
 			if (tv != null)
 				return tv.AsTss;
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			return tsf.MakeString(item != null ? item.ToString() : string.Empty, WritingSystemCode);
+			return TsStringUtils.MakeString(item != null ? item.ToString() : string.Empty, WritingSystemCode);
 		}
 
 		/// ------------------------------------------------------------------------------------

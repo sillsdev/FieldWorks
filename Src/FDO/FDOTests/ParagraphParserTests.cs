@@ -561,7 +561,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				}
 
 				// Find or create the new wordform.
-				IWfiWordform wfAlternateCase = WfiWordformServices.FindOrCreateWordform(m_cache, TsStringUtils.MakeTss(alternateCaseForm, ws));
+				IWfiWordform wfAlternateCase = WfiWordformServices.FindOrCreateWordform(m_cache, TsStringUtils.MakeString(alternateCaseForm, ws));
 
 				// Set the annotation to this wordform.
 				SetAnalysis(iSegment, iSegForm, wfAlternateCase);
@@ -1116,7 +1116,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 					int wsWord = GetWsFromStringNode(StringValueNode(iSegment, iSegForm));
 					var wfFactory =
 						m_cache.ServiceLocator.GetInstance<IWfiWordformFactory>();
-					analysis = wfFactory.Create(TsStringUtils.MakeTss(word, wsWord));
+					analysis = wfFactory.Create(TsStringUtils.MakeString(word, wsWord));
 				}
 				else
 				{
@@ -1207,7 +1207,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				if (m_para.Contents == null)
 				{
 				   // make sure it has an empty content
-					m_para.Contents = TsStringUtils.MakeTss("", m_cache.DefaultVernWs);
+					m_para.Contents = TsStringUtils.MakeString("", m_cache.DefaultVernWs);
 				}
 				return m_para;
 			}
@@ -1316,7 +1316,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				// Now make the one we actually want, even if it already had an item in the Analyses list.
 				string stringValue = StringValue(iSegment, iSegForm);
 				int ws = GetWsFromStringNode(StringValueNode(iSegment, iSegForm));
-				IWfiWordform actualWordform = WfiWordformServices.FindOrCreateWordform(m_cache, TsStringUtils.MakeTss(stringValue, ws));
+				IWfiWordform actualWordform = WfiWordformServices.FindOrCreateWordform(m_cache, TsStringUtils.MakeString(stringValue, ws));
 				XmlNode fileItem = SegmentFormNode(iSegment, iSegForm);
 				fileItem.Attributes["id"].Value = actualWordform.Hvo.ToString();
 				ExportCbaNodeToReal(iSegment, iSegForm);
@@ -2470,15 +2470,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			//// Set an empty text name and check.
 			var text = (IText) sttext.Owner;
-			text.Name.AnalysisDefaultWritingSystem = Cache.TsStrFactory.EmptyString(Cache.DefaultAnalWs);
+			text.Name.AnalysisDefaultWritingSystem = TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 			Assert.That(analysis1.Reference.Text, Is.EqualTo("1.1"));
 
 			//// Try with a name less than 5 chars.
-			text.Name.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString("abc", Cache.DefaultAnalWs);
+			text.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("abc", Cache.DefaultAnalWs);
 			Assert.That(analysis1.Reference.Text, Is.EqualTo("abc 1.1"));
 
 			// It prefers to use the abbreviation.
-			text.Abbreviation.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString("mg", Cache.DefaultAnalWs);
+			text.Abbreviation.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("mg", Cache.DefaultAnalWs);
 			Assert.That(analysis1.Reference.Text, Is.EqualTo("mg 1.1"));
 		}
 
@@ -2501,7 +2501,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			int length = para.Contents.Length;
 			int start = 0;
 			if (length == 0)
-				para.Contents = Cache.TsStrFactory.MakeString(contents, Cache.DefaultVernWs);
+				para.Contents = TsStringUtils.MakeString(contents, Cache.DefaultVernWs);
 			else
 			{
 				var bldr = para.Contents.GetBldr();
@@ -2519,7 +2519,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			//Cache.LangProject.TextsOC.Add(text);
 			var result = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 			text.ContentsOA = result;
-			text.Name.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(title, Cache.DefaultAnalWs);
+			text.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(title, Cache.DefaultAnalWs);
 			var para = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 			result.ParagraphsOS.Add(para);
 			return result;
@@ -2991,9 +2991,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			// Try adding some freeform translations to third segment.
 			segments[2].FreeTranslation.AnalysisDefaultWritingSystem =
-				Cache.TsStrFactory.MakeString("Segment2: Freeform translation.", Cache.DefaultAnalWs);
+				TsStringUtils.MakeString("Segment2: Freeform translation.", Cache.DefaultAnalWs);
 			segments[2].LiteralTranslation.AnalysisDefaultWritingSystem =
-				Cache.TsStrFactory.MakeString("Segment2: Literal translation.", Cache.DefaultAnalWs);
+				TsStringUtils.MakeString("Segment2: Literal translation.", Cache.DefaultAnalWs);
 
 			// make sure the other segments don't have freeform annotations.
 			Assert.That(segments[0].FreeTranslation.AvailableWritingSystemIds.Length, Is.EqualTo(0));
@@ -3026,7 +3026,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string formLexEntry = "xnihimbilira";
 			var morphTypeRepository = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>();
 			var rootMorphType = morphTypeRepository. GetObject(MoMorphTypeTags.kguidMorphRoot);
-			ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, Cache.DefaultVernWs);
+			ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, Cache.DefaultVernWs);
 			var entryFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			ILexEntry xnihimbilira_Entry = entryFactory.Create(rootMorphType, tssLexEntryForm, "xnihimbilira.sense1", null);
 
@@ -3271,7 +3271,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			IStTxtPara paraGlossed = m_text1.ContentsOA.AddNewTextPara("Normal");
 			IStTxtPara paraGuessed = m_text1.ContentsOA.AddNewTextPara("Normal");
 
-			paraGlossed.Contents = TsStringUtils.MakeTss("xxxcrayzee xxxyouneek xxxsintents.", Cache.DefaultVernWs);
+			paraGlossed.Contents = TsStringUtils.MakeString("xxxcrayzee xxxyouneek xxxsintents.", Cache.DefaultVernWs);
 			paraGuessed.Contents = paraGlossed.Contents;
 
 			// collect expected guesses from the glosses in the first paragraph.
@@ -3286,7 +3286,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ValidateGuesses(expectedGuessesBeforeEdit, paraGuessed);
 
 			// now edit the paraGuessed and expected Guesses.
-			paraGuessed.Contents = TsStringUtils.MakeTss("xxxcrayzee xxxguessless xxxyouneek xxxsintents.", Cache.DefaultVernWs);
+			paraGuessed.Contents = TsStringUtils.MakeString("xxxcrayzee xxxguessless xxxyouneek xxxsintents.", Cache.DefaultVernWs);
 			IList<IWfiGloss> expectedGuessesAfterEdit = new List<IWfiGloss>(expectedGuesses);
 			// we don't expect a guess for the inserted word, so insert 0 after first twfic.
 			expectedGuessesAfterEdit.Insert(1, null);

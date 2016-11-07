@@ -11,6 +11,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using System.Diagnostics.CodeAnalysis;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
 using XCore;
@@ -198,10 +199,10 @@ namespace SIL.FieldWorks.IText
 			wgAbc3.Form.AnalysisDefaultWritingSystem = MakeAnalysisString("abc");
 			var wsSpn = Cache.WritingSystemFactory.get_Engine("es").Handle;
 			var wsFrn = Cache.WritingSystemFactory.get_Engine("fr").Handle;
-			wgAbc3.Form.set_String(wsSpn, Cache.TsStrFactory.MakeString("abcS", wsSpn));
-			wgAbc3.Form.set_String(wsFrn, Cache.TsStrFactory.MakeString("abcF", wsFrn));
+			wgAbc3.Form.set_String(wsSpn, TsStringUtils.MakeString("abcS", wsSpn));
+			wgAbc3.Form.set_String(wsFrn, TsStringUtils.MakeString("abcF", wsFrn));
 			wsIds.Add(wsSpn);
-			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, wsSpn, Cache.TsStrFactory.MakeString("abcS", wsSpn));
+			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, wsSpn, TsStringUtils.MakeString("abcS", wsSpn));
 			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc3));
 
 			// Of two partial matches, prefer the one where other alternatives are empty.
@@ -210,9 +211,9 @@ namespace SIL.FieldWorks.IText
 			var wgAbc2 = Cache.ServiceLocator.GetInstance<IWfiGlossFactory>().Create();
 			wa.MeaningsOC.Add(wgAbc2);
 			wgAbc2.Form.AnalysisDefaultWritingSystem = MakeAnalysisString("abc");
-			wgAbc2.Form.set_String(wsSpn, Cache.TsStrFactory.MakeString("abcS", wsSpn));
+			wgAbc2.Form.set_String(wsSpn, TsStringUtils.MakeString("abcS", wsSpn));
 			wsIds.Add(wsFrn);
-			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, wsFrn, Cache.TsStrFactory.MakeString("abcOther", wsFrn));
+			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, wsFrn, TsStringUtils.MakeString("abcOther", wsFrn));
 			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc2));
 
 			// Of two perfect matches, we prefer the one that has no other information.
@@ -220,7 +221,7 @@ namespace SIL.FieldWorks.IText
 			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc2));
 
 			// We will not return one where the WfiGloss has a relevant non-empty alternative, even if the corresponding target is empty.
-			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, wsSpn, Cache.TsStrFactory.MakeString("", wsSpn));
+			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, wsSpn, TsStringUtils.MakeString("", wsSpn));
 			wa.MeaningsOC.Remove(wgAbc);
 			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.Null);
 		}
@@ -832,7 +833,7 @@ namespace SIL.FieldWorks.IText
 			text.ContentsOA = stText;
 			var para = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 			stText.ParagraphsOS.Add(para);
-			para.Contents = Cache.TsStrFactory.MakeString(contents, Cache.DefaultVernWs);
+			para.Contents = TsStringUtils.MakeString(contents, Cache.DefaultVernWs);
 			var seg = Cache.ServiceLocator.GetInstance<ISegmentFactory>().Create();
 			para.SegmentsOS.Add(seg);
 			return text;
@@ -840,11 +841,11 @@ namespace SIL.FieldWorks.IText
 
 		private ITsString MakeVernString(string content)
 		{
-			return Cache.TsStrFactory.MakeString(content, Cache.DefaultVernWs);
+			return TsStringUtils.MakeString(content, Cache.DefaultVernWs);
 		}
 		private ITsString MakeAnalysisString(string content)
 		{
-			return Cache.TsStrFactory.MakeString(content, Cache.DefaultAnalWs);
+			return TsStringUtils.MakeString(content, Cache.DefaultAnalWs);
 		}
 
 		private IWfiWordform MakeWordform(string form)

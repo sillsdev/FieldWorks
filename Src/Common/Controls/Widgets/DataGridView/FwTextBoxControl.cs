@@ -12,6 +12,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Widgets
@@ -138,8 +139,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				if (value is string)
 				{
 					int ws = ((FwTextBoxRow)m_dataGridView.Rows[m_rowIndex]).WritingSystemHandle;
-					ITsStrFactory tsf = TsStrFactoryClass.Create();
-					Tss = tsf.MakeString((string)value, ws);
+					Tss = TsStringUtils.MakeString((string) value, ws);
 				}
 				else if (value is ITsString)
 					Tss = (ITsString)value;

@@ -205,7 +205,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					bookName = Name.AnalysisDefaultWritingSystem;
 				if (bookName == null || string.IsNullOrEmpty(bookName.Text))
 				{
-					bookName = m_cache.TsStrFactory.MakeString(BookId, WritingSystemServices.FallbackUserWs(m_cache));
+					bookName = TsStringUtils.MakeString(BookId, WritingSystemServices.FallbackUserWs(m_cache));
 				}
 
 				Debug.Assert(bookName != null && !string.IsNullOrEmpty(bookName.Text));

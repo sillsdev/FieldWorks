@@ -13,6 +13,7 @@
 using System;
 
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 
@@ -104,7 +105,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		private ITsString AnalysisTss(string form)
 		{
-			return Cache.TsStrFactory.MakeString(form, Cache.DefaultAnalWs);
+			return TsStringUtils.MakeString(form, Cache.DefaultAnalWs);
 		}
 
 		private ICmPossibility MakePossibility(ICmPossibilityList list, string name)
@@ -208,7 +209,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var result = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			var lf = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			result.LexemeFormOA = lf;
-			lf.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString(form, Cache.DefaultVernWs);
+			lf.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(form, Cache.DefaultVernWs);
 			return result;
 		}
 
@@ -722,7 +723,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private ILexSense MakeSense(ILexEntry entry, string gloss)
 		{
 			var sense = MakeSense(entry);
-			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss, Cache.DefaultAnalWs);
+			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss, Cache.DefaultAnalWs);
 			return sense;
 		}
 

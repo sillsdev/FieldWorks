@@ -87,7 +87,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 					m_cbWritingSystem.Items.Add(selectedWs);
 				m_cbWritingSystem.SelectedItem = selectedWs;
 			}
-			m_btnAddWS.Initialize(m_cache, m_helpTopicProvider, m_app, m_stylesheet, m_cache.ServiceLocator.WritingSystems.AllWritingSystems);
+			m_btnAddWS.Initialize(m_cache, m_helpTopicProvider, m_app, m_cache.ServiceLocator.WritingSystems.AllWritingSystems);
 		}
 
 		private void FillStylesCombo(string sStyle)

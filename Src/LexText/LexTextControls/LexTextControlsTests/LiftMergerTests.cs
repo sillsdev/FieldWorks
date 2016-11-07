@@ -18,7 +18,6 @@ using System.Xml.XPath;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
@@ -2173,7 +2172,7 @@ namespace LexTextControlsTests
 			entry.LexemeFormOA = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA.Form.set_String(Cache.DefaultVernWs, "some entry");
 			entry.SensesOS.Add(sense);
-			sense.Gloss.set_String(english, Cache.TsStrFactory.MakeString("blank", english));
+			sense.Gloss.set_String(english, TsStringUtils.MakeString("blank", english));
 			var entryCreationMs = entry.DateCreated.Millisecond;
 			var entryModifiedMs = entry.DateModified.Millisecond;
 			var basicLiftEntry = new[]
@@ -2830,7 +2829,7 @@ namespace LexTextControlsTests
 			Assert.IsNotNull(para);
 			Assert.AreEqual("Numbered List", para.StyleName);
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			var tss = Cache.TsStrFactory.MakeString("This is the fourth paragraph.", wsEn);
+			var tss = TsStringUtils.MakeString("This is the fourth paragraph.", wsEn);
 			Assert.AreEqual(tss.Text, para.Contents.Text);
 			Assert.IsTrue(tss.Equals(para.Contents), "The fourth paragraph contents should not have changed.");
 		}
@@ -3007,19 +3006,19 @@ namespace LexTextControlsTests
 			var para1 = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 			text.ParagraphsOS.Add(para1);
 			para1.StyleName = "Numbered List";
-			para1.Contents = Cache.TsStrFactory.MakeString("This is the first paragraph.", Cache.DefaultAnalWs);
+			para1.Contents = TsStringUtils.MakeString("This is the first paragraph.", Cache.DefaultAnalWs);
 			var para2 = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 			text.ParagraphsOS.Add(para2);
 			para2.StyleName = "Numbered List";
-			para2.Contents = Cache.TsStrFactory.MakeString("This is the second paragraph.", Cache.DefaultAnalWs);
+			para2.Contents = TsStringUtils.MakeString("This is the second paragraph.", Cache.DefaultAnalWs);
 			var para3 = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 			text.ParagraphsOS.Add(para3);
 			para3.StyleName = "Numbered List";
-			para3.Contents = Cache.TsStrFactory.MakeString("This is the third paragraph.", Cache.DefaultAnalWs);
+			para3.Contents = TsStringUtils.MakeString("This is the third paragraph.", Cache.DefaultAnalWs);
 			var para4 = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 			text.ParagraphsOS.Add(para4);
 			para4.StyleName = "Numbered List";
-			para4.Contents = Cache.TsStrFactory.MakeString("This is the fourth paragraph.", Cache.DefaultAnalWs);
+			para4.Contents = TsStringUtils.MakeString("This is the fourth paragraph.", Cache.DefaultAnalWs);
 
 			return flidCustom;
 		}
@@ -3798,9 +3797,9 @@ namespace LexTextControlsTests
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			var statusList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().CreateUnowned("status", wsEn);
 			var confirmed = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(new Guid("bd80cd3e-ea5e-11de-9871-0013722f8dec"), statusList);
-			confirmed.Name.set_String(wsEn, Cache.TsStrFactory.MakeString("Confirmed", wsEn));
+			confirmed.Name.set_String(wsEn, TsStringUtils.MakeString("Confirmed", wsEn));
 			var pending = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(new Guid("bd964254-ea5e-11de-8cdf-0013722f8dec"), statusList);
-			pending.Name.set_String(wsEn, Cache.TsStrFactory.MakeString("Pending", wsEn));
+			pending.Name.set_String(wsEn, TsStringUtils.MakeString("Pending", wsEn));
 			var entryNew = new FieldDescription(Cache)
 			{
 				Type = CellarPropertyType.ReferenceAtomic,
@@ -3876,7 +3875,7 @@ namespace LexTextControlsTests
 			var lexPronunciation = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
 			entry.PronunciationsOS.Add(lexPronunciation);
 			if (ws > 0)
-				lexPronunciation.Form.set_String(ws, Cache.TsStrFactory.MakeString(pronunciation, ws));
+				lexPronunciation.Form.set_String(ws, TsStringUtils.MakeString(pronunciation, ws));
 		}
 
 		[Test]
@@ -4000,10 +3999,10 @@ namespace LexTextControlsTests
 			Assert.That(Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS, Has.Count.EqualTo(1), "Should start out with just the one LRT");
 			var en = Cache.WritingSystemFactory.GetWsFromStr("en");
 			var de = Cache.WritingSystemFactory.GetWsFromStr("de");
-			lrt.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeTss("Antonym", en);
-			lrt.Description.AnalysisDefaultWritingSystem = TsStringUtils.MakeTss("Opposite", en);
-			lrt.Description.set_String(de, TsStringUtils.MakeTss("OppositeG", de));
-			lrt.Abbreviation.set_String(de, TsStringUtils.MakeTss("AntG", de));
+			lrt.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("Antonym", en);
+			lrt.Description.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("Opposite", en);
+			lrt.Description.set_String(de, TsStringUtils.MakeString("OppositeG", de));
+			lrt.Abbreviation.set_String(de, TsStringUtils.MakeString("AntG", de));
 
 			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(_minimalLiftData);

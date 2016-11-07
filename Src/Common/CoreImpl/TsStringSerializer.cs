@@ -26,10 +26,6 @@ namespace SIL.CoreImpl
 	/// ----------------------------------------------------------------------------------------
 	public static class TsStringSerializer
 	{
-		#region Member Variables
-		private static readonly ITsStrFactory s_strFactory = TsStrFactoryClass.Create();
-		#endregion
-
 		#region Public Serialization Methods
 
 		/// <summary>
@@ -264,7 +260,7 @@ namespace SIL.CoreImpl
 						return null; // we handle only single runs with only the ws attribute.
 					// Make sure the text is in the decomposed form (FWR-148)
 					string runText = Icu.Normalize(xml.Value, Icu.UNormalizationMode.UNORM_NFD);
-					return s_strFactory.MakeString(runText, GetWsForId(wsAttribute.Value, lgwsf));
+					return TsStringUtils.MakeString(runText, GetWsForId(wsAttribute.Value, lgwsf));
 				}
 				return null;	// If we don't have any runs, we don't have a string!
 			}
@@ -321,7 +317,7 @@ namespace SIL.CoreImpl
 				return null; // we handle only single runs with only the ws attribute.
 			// Make sure the text is in the decomposed form (FWR-148)
 			string runText = Icu.Normalize(textElement.Value, Icu.UNormalizationMode.UNORM_NFD);
-			return s_strFactory.MakeString(runText, GetWsForId(wsAttribute.Value, lgwsf));
+			return TsStringUtils.MakeString(runText, GetWsForId(wsAttribute.Value, lgwsf));
 		}
 		#endregion
 

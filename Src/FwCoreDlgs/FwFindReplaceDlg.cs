@@ -287,10 +287,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			ILgWritingSystemFactory wsf = m_cache.WritingSystemFactory;
 			fweditFindText.WritingSystemFactory = fweditReplaceText.WritingSystemFactory = wsf;
-			ITsStrFactory strFact = m_cache.TsStrFactory;
 			CoreWritingSystemDefinition defVernWs = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
-			FindText = strFact.MakeString(string.Empty, defVernWs.Handle);
-			ReplaceText = strFact.MakeString(string.Empty, defVernWs.Handle);
+			FindText = TsStringUtils.EmptyString(defVernWs.Handle);
+			ReplaceText = TsStringUtils.EmptyString(defVernWs.Handle);
 			// Make sure each of the edit boxes has a reasonable writing system assigned.
 			// (See LT-5130 for what can happen otherwise.)
 			fweditFindText.WritingSystemCode = wsEdit;
@@ -327,7 +326,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				// Set the TSS of the edit box to an empty string if it isn't set.
 				if (FindText == null)
 				{
-					FindText = m_cache.TsStrFactory.MakeString(
+					FindText = TsStringUtils.MakeString(
 						string.Empty,
 						m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
 				}
@@ -2804,7 +2803,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (m_patternWs != 0)
 			{
 				// create a monoWs pattern text for the new pattern.
-				m_pattern.Pattern = TsStringUtils.MakeTss(m_patternString, m_patternWs);
+				m_pattern.Pattern = TsStringUtils.MakeString(m_patternString, m_patternWs);
 			}
 		}
 
@@ -2855,7 +2854,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (m_replaceWithWs != 0)
 			{
 				// create a monoWs pattern text for the new pattern.
-				m_pattern.ReplaceWith = TsStringUtils.MakeTss(m_replaceWithString, m_replaceWithWs);
+				m_pattern.ReplaceWith = TsStringUtils.MakeString(m_replaceWithString, m_replaceWithWs);
 			}
 		}
 

@@ -260,11 +260,11 @@ namespace SIL.FieldWorks.IText
 				text.ContentsOA = sttext;
 				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
-				para.Contents = Cache.TsStrFactory.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
+				para.Contents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				paraContents = para.Contents;
 				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
-				ITsString wform = TsStringUtils.MakeTss("supercalifragilisticexpialidocious",
+				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",
 					wsf.get_Engine("en").Handle);
 				word = sl.GetInstance<IWfiWordformFactory>().Create(wform);
 				segment.AnalysesRS.Add(word);
@@ -343,11 +343,11 @@ namespace SIL.FieldWorks.IText
 				text.ContentsOA = sttext;
 				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
-				para.Contents = Cache.TsStrFactory.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
+				para.Contents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				paraContents = para.Contents;
 				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
-				ITsString wform = TsStringUtils.MakeTss("supercalifragilisticexpialidocious",
+				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",
 					wsf.get_Engine("en").Handle);
 				word = sl.GetInstance<IWfiWordformFactory>().Create(wform);
 				segment.AnalysesRS.Add(word);
@@ -428,11 +428,11 @@ namespace SIL.FieldWorks.IText
 				text.ContentsOA = sttext;
 				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
-				para.Contents = Cache.TsStrFactory.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
+				para.Contents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				paraContents = para.Contents;
 				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
-				ITsString wform = TsStringUtils.MakeTss("supercalifragilisticexpialidocious",
+				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",
 					wsf.get_Engine("en").Handle);
 				segGuid = segment.Guid;
 				word = sl.GetInstance<IWfiWordformFactory>().Create(wform);
@@ -507,11 +507,11 @@ namespace SIL.FieldWorks.IText
 				text.ContentsOA = sttext;
 				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
-				para.Contents = Cache.TsStrFactory.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
+				para.Contents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				paraContents = para.Contents;
 				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
-				ITsString wform = TsStringUtils.MakeTss("supercalifragilisticexpialidocious",
+				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",
 					wsf.get_Engine("en").Handle);
 				segGuid = segment.Guid;
 				word = sl.GetInstance<IWfiWordformFactory>().Create(wform);
@@ -587,11 +587,11 @@ namespace SIL.FieldWorks.IText
 				text.ContentsOA = sttext;
 				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
-				para.Contents = Cache.TsStrFactory.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
+				para.Contents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				paraContents = para.Contents;
 				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
-				ITsString wform = TsStringUtils.MakeTss("supercalifragilisticexpialidocious",
+				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",
 					wsf.get_Engine("en").Handle);
 				segGuid = segment.Guid;
 				word = sl.GetInstance<IWfiWordformFactory>().Create(wform);
@@ -695,7 +695,7 @@ namespace SIL.FieldWorks.IText
 			{
 				var wf = Cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create();
 				int wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-				wf.Form.set_String(wsEn, Cache.TsStrFactory.MakeString("this is a phrase", wsEn));
+				wf.Form.set_String(wsEn, TsStringUtils.MakeString("this is a phrase", wsEn));
 			});
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
 			var options = CreateImportInterlinearOptions(xml);

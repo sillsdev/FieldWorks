@@ -193,13 +193,13 @@ namespace SIL.FieldWorks.FDO.CoreTests.GeneratedModelTests
 			var defValue = le.ImportResidue;
 			Assert.IsNull(defValue.Text, "Default for null property should have null for the Text of the returned ITsString.");
 
-			var irOriginalValue = Cache.TsStrFactory.MakeString("import residue",
+			var irOriginalValue = TsStringUtils.MakeString("import residue",
 				Cache.WritingSystemFactory.UserWs);
 			le.ImportResidue = irOriginalValue;
 			Assert.AreEqual(irOriginalValue, le.ImportResidue);
 
 			// Set to new value.
-			var irNewValue = Cache.TsStrFactory.MakeString("new import residue",
+			var irNewValue = TsStringUtils.MakeString("new import residue",
 				Cache.WritingSystemFactory.UserWs);
 			le.ImportResidue = irNewValue;
 			Assert.AreEqual(irNewValue, le.ImportResidue);

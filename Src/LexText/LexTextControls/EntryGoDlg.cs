@@ -163,7 +163,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		protected IEnumerable<SearchField> GetFields(string str, int ws)
 		{
-			var tssKey = m_tsf.MakeString(str, ws);
+			var tssKey = TsStringUtils.MakeString(str, ws);
 			if (m_vernHvos.Contains(ws))
 			{
 				if (m_matchingObjectsBrowser.IsVisibleColumn("EntryHeadword") || m_matchingObjectsBrowser.IsVisibleColumn("CitationForm"))
@@ -225,7 +225,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			using (var dlg = new InsertEntryDlg())
 			{
 				string form = m_tbForm.Text.Trim();
-				ITsString tssFormTrimmed = TsStringUtils.MakeTss(form, TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0));
+				ITsString tssFormTrimmed = TsStringUtils.MakeString(form, TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0));
 				dlg.SetDlgInfo(m_cache, tssFormTrimmed, m_mediator, m_propertyTable);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{

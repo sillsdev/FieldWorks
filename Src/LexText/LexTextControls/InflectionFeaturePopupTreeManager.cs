@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Widgets;
@@ -59,7 +60,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						match = node;
 				}
 				item.Nodes.Add(new HvoTreeNode(
-					Cache.TsStrFactory.MakeString(LexTextControls.ksChooseInflFeats, Cache.WritingSystemFactory.UserWs),
+					TsStringUtils.MakeString(LexTextControls.ksChooseInflFeats, Cache.WritingSystemFactory.UserWs),
 					kMore));
 			}
 			return match;

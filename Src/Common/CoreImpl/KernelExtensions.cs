@@ -124,7 +124,7 @@ namespace SIL.CoreImpl
 			var text = tss.Text;
 			if (ws != -1)
 			{
-				return TsStrFactoryClass.Create().MakeString(text, ws);
+				return TsStringUtils.MakeString(text, ws);
 			}
 			// pathologically, the string may include a leading newline where no WS is specified.
 			// Rather than fail, just drop any part of the string that has no WS. Typically we drop at
@@ -133,7 +133,7 @@ namespace SIL.CoreImpl
 			{
 				ws = tss.get_WritingSystemAt(i);
 				if (ws != -1)
-					return TsStrFactoryClass.Create().MakeString(text.Substring(i), ws);
+					return TsStringUtils.MakeString(text.Substring(i), ws);
 			}
 			// This probably never happens.
 			Debug.Assert(false, "trying to paste a TsString that has no WS anywhere!");

@@ -58,11 +58,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				using (DummyFileMaker filemaker = new DummyFileMaker("junk.jpg", true))
 				{
-					ITsStrFactory factory = TsStrFactoryClass.Create();
 					using (var editHelper = new RootSiteEditingHelper(Cache, null))
 					{
 						ICmPicture pict = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create(
-							filemaker.Filename, factory.MakeString("Test picture", Cache.DefaultVernWs),
+							filemaker.Filename, TsStringUtils.MakeString("Test picture", Cache.DefaultVernWs),
 							CmFolderTags.LocalPictures);
 						Assert.IsNotNull(pict);
 						Assert.IsTrue(pict.PictureFileRA.AbsoluteInternalPath == pict.PictureFileRA.InternalPath);

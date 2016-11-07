@@ -45,8 +45,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			System.Diagnostics.Debug.Assert(cache != null);
 			m_cache = cache;
 
-			ITsStrFactory tsStringFactory = cache.TsStrFactory;
-			m_ParaStrBldr = tsStringFactory.GetBldr();
+			m_ParaStrBldr = TsStringUtils.MakeStrBldr();
 
 			// Give the builder a default WS so a created string will be legal. If any text
 			// is added to the builder, it should replace this WS with the correct WS.
