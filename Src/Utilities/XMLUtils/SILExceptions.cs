@@ -61,11 +61,6 @@ namespace SIL.Utils
 			: base(message)
 		{
 		}
-
-		public void ShowDialog()
-		{
-			System.Windows.Forms.MessageBox.Show(this.Message, XmlUtilsStrings.XMLConfigurationError, System.  Windows.Forms.MessageBoxButtons.OK,System.  Windows.  Forms.  MessageBoxIcon.Exclamation);
-		}
 	}
 
 	/// <summary>
