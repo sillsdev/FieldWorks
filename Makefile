@@ -246,7 +246,7 @@ install-tree-fdo:
 	rm -f $(DESTDIR)/usr/lib/fieldworks/lib{ecdriver,IcuConvEC,IcuRegexEC,IcuTranslitEC,PyScriptEncConverter}*.so
 	rm -f $(DESTDIR)/usr/lib/fieldworks/{AIGuesserEC,CcEC,IcuEC,PerlExpressionEC,PyScriptEC,SilEncConverters40,ECInterfaces}.dll{,.config}
 	rm -f $(DESTDIR)/usr/lib/fieldworks/libTECkit{,_Compiler}*.so
-	rm -f $(DESTDIR)/usr/lib/fieldworks/{Geckofx-,Db4objects}*
+	rm -f $(DESTDIR)/usr/lib/fieldworks/Geckofx-*
 
 install-tree: fieldworks-flex.1.gz fieldworks-te.1.gz unicodechareditor.1.gz install-tree-fdo
 	# Create directories
