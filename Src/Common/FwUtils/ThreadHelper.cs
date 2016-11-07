@@ -65,7 +65,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (fDisposing && !IsDisposed)
 			{
 				// dispose managed and unmanaged objects
-				Invoke((MethodInvoker)(m_invokeControl.Dispose));
+				if (InvokeRequired)
+					Invoke((MethodInvoker)(m_invokeControl.Dispose));
+				else
+					m_invokeControl.Dispose();
 			}
 			IsDisposed = true;
 		}
