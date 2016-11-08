@@ -34,7 +34,6 @@ namespace SIL.FieldWorks.Discourse
 		[SetUp]
 		public void CreateTestDecorator()
 		{
-			//var sPopFormatting = Cache.TsStrFactory.MakeString(Convert.ToString(m_PDF), Cache.DefaultAnalWs);
 			m_spy = new VwEnvSpy();
 		}
 

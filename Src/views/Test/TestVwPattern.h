@@ -1342,8 +1342,11 @@ namespace TestViews
 		{
 			m_qpat->put_UseRegularExpressions(false); // in case another test failed
 			unitpp::assert_true("English writing system exists", m_qwsEng.Ptr());
+			ITsStrFactoryPtr qtsf;
+			qtsf.CreateInstance(CLSID_TsStrFactory);
 			IVwCacheDaPtr qcda;
 			qcda.CreateInstance(CLSID_VwCacheDa);
+			qcda->putref_TsStrFactory(qtsf);
 			ISilDataAccessPtr qsda;
 			qcda->QueryInterface(IID_ISilDataAccess, (void **)&qsda);
 
@@ -1352,8 +1355,6 @@ namespace TestViews
 			IRenderEngineFactoryPtr qref;
 			qref.Attach(NewObj MockRenderEngineFactory);
 
-			ITsStrFactoryPtr qtsf;
-			qtsf.CreateInstance(CLSID_TsStrFactory);
 			ITsStringPtr qtss;
 			// Now make two strings, the contents of paragraphs 1 and 2.
 			StrUni stuPara1(L"abc" A_WITH_DIAERESIS COMBINING_DOT_BELOW L"abcA" COMBINING_DOT_BELOW
@@ -1385,6 +1386,7 @@ namespace TestViews
 				qvc.Attach(NewObj DummySimpleParaVc());
 				qrootb->putref_DataAccess(qsda);
 				qrootb->putref_RenderEngineFactory(qref);
+				qrootb->putref_TsStrFactory(qtsf);
 				qrootb->SetRootObject(hvoRootBox, qvc, kfragStText, NULL);
 				DummyRootSitePtr qdrs;
 				qdrs.Attach(NewObj DummyRootSite());

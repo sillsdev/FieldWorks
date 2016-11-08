@@ -5,7 +5,6 @@
 // Original author: MarkS 2012-11-05 XmlBrowseViewBaseTests.cs
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using NUnit.Framework;
@@ -113,6 +112,12 @@ namespace XMLViewsTests
 			}
 
 			public IRenderEngineFactory RenderEngineFactory
+			{
+				get;
+				set;
+			}
+
+			public ITsStrFactory TsStrFactory
 			{
 				get;
 				set;

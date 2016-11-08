@@ -4603,6 +4603,7 @@ namespace SIL.FieldWorks.Common.RootSites
 #endif
 			m_rootb = VwRootBoxClass.Create();
 			m_rootb.RenderEngineFactory = SingletonsContainer.Get<RenderEngineFactory>();
+			m_rootb.TsStrFactory = TsStringUtils.TsStrFactory;
 			m_rootb.SetSite(this);
 
 			m_fRootboxMade = true;

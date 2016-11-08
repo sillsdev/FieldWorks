@@ -62,6 +62,8 @@ _user.mak.lnx
 *.opensdf
 .project
 app.config
+*.VC.db
+*.VC.opendb
 
 .dotest/
 .depend

@@ -1397,7 +1397,6 @@ namespace SIL.FieldWorks.Discourse
 
 			// Decorator makes sure that things get put out in the right order if chart is RtL
 			m_chart = baseObj.m_chart;
-			//var sPopFormatting = m_cache.TsStrFactory.MakeString(Convert.ToString(m_chart.PDF), m_cache.DefaultAnalWs);
 			m_vwenv = new ChartRowEnvDecorator(vwenv);
 
 			m_hvoRow = hvo;

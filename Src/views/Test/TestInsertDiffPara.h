@@ -553,11 +553,12 @@ namespace TestViews
 		virtual void Setup()
 		{
 			CreateTestWritingSystemFactory();
+			m_qtsf.CreateInstance(CLSID_TsStrFactory);
 			m_qcda.CreateInstance(CLSID_VwCacheDa);
+			m_qcda->putref_TsStrFactory(m_qtsf);
 			m_qcda->QueryInterface(IID_ISilDataAccess, (void **)&m_qsda);
 			m_qsda->putref_WritingSystemFactory(g_qwsf);
 			m_qref.Attach(NewObj MockRenderEngineFactory);
-			m_qtsf.CreateInstance(CLSID_TsStrFactory);
 			// Now make the root box and view constructor and Graphics object.
 			VwRootBox::CreateCom(NULL, CLSID_VwRootBox, (void **)&m_qrootb);
 			m_hdc = 0;
@@ -566,6 +567,7 @@ namespace TestViews
 			m_qvg32->Initialize(m_hdc);
 			m_qrootb->putref_DataAccess(m_qsda);
 			m_qrootb->putref_RenderEngineFactory(m_qref);
+			m_qrootb->putref_TsStrFactory(m_qtsf);
 			m_qidrs.Attach(NewObj InsertDiffRootSite());
 			m_rcSrc = Rect(0, 0, 96, 96);
 			m_qidrs->SetRects(m_rcSrc, m_rcSrc);

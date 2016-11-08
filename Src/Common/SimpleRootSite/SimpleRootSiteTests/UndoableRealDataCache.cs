@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using SIL.CoreImpl;
 using SIL.FieldWorks.CacheLight;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
@@ -396,6 +395,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_isDirty = true;
 		}
 
+		public ITsStrFactory TsStrFactory { get; set; }
 
 		/// <summary>
 		/// Member CacheObjProp

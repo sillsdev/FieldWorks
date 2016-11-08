@@ -41,10 +41,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void TestSetup()
 		{
 			RegistryHelper.CompanyName = "SIL";
-			m_ISilDataAccess = VwCacheDaClass.Create();
+			var cda = VwCacheDaClass.Create();
+			cda.TsStrFactory = TsStringUtils.TsStrFactory;
+			m_ISilDataAccess = cda;
 			ILgWritingSystemFactory wsf = new WritingSystemManager();
 			m_ISilDataAccess.WritingSystemFactory = wsf;
-			m_IVwCacheDa = (IVwCacheDa)m_ISilDataAccess;
+			m_IVwCacheDa = cda;
 		}
 
 		/// <summary/>

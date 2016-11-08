@@ -11,6 +11,7 @@ using System.Drawing;
 using System.Drawing.Printing;
 using System.IO;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -142,6 +143,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				// Make a rootbox for printing and initialize it.
 				m_rootb = VwRootBoxClass.Create();
 				m_rootb.RenderEngineFactory = SingletonsContainer.Get<RenderEngineFactory>();
+				m_rootb.TsStrFactory = TsStringUtils.TsStrFactory;
 				m_rootb.SetSite(this);
 				m_rootb.DataAccess = m_sda;
 				m_rootb.SetRootObject(m_hvo, m_vc, m_frags, m_styleSheet);

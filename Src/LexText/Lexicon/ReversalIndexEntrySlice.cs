@@ -598,7 +598,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				base.MakeRoot();
 
 				if (m_sdaRev == null)
-					m_sdaRev = new ReversalEntryDataAccess(m_fdoCache.DomainDataByFlid as ISilDataAccessManaged);
+					m_sdaRev = new ReversalEntryDataAccess(m_fdoCache.DomainDataByFlid as ISilDataAccessManaged) {TsStrFactory = TsStringUtils.TsStrFactory};
 
 				LoadDummyCache(false);
 
@@ -1263,7 +1263,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					if (m_mapHvoWsRevForm.TryGetValue(key, out tss))
 						return tss;
 					else
-						return TsStringUtils.EmptyString(ws); // do NOT return null!
+						return TsStrFactory.EmptyString(ws); // do NOT return null!
 				}
 				else
 				{
@@ -1355,6 +1355,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				throw new NotImplementedException();
 			}
+
+			public ITsStrFactory TsStrFactory { get; set; }
 
 			public void CacheObjProp(int obj, int tag, int val)
 			{

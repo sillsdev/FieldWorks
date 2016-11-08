@@ -3137,6 +3137,7 @@ namespace TestViews
 			VwRootBox::CreateCom(NULL, CLSID_VwRootBox, (void **)&m_qrootb);
 			m_qrootb->putref_DataAccess(m_qsda);
 			m_qrootb->putref_RenderEngineFactory(m_qref);
+			m_qrootb->putref_TsStrFactory(m_qtsf);
 			m_qrootb->SetSite(m_qdrs);
 			m_qdrs->SetRootBox(m_qrootb);
 
@@ -3220,6 +3221,7 @@ namespace TestViews
 			VwRootBox::CreateCom(NULL, CLSID_VwRootBox, (void **)&m_qrootb);
 			m_qrootb->putref_DataAccess(m_qsda);
 			m_qrootb->putref_RenderEngineFactory(m_qref);
+			m_qrootb->putref_TsStrFactory(m_qtsf);
 			m_qrootb->SetSite(m_qdrs);
 			m_qdrs->SetRootBox(m_qrootb);
 
@@ -3374,6 +3376,7 @@ namespace TestViews
 			VwRootBox::CreateCom(NULL, CLSID_VwRootBox, (void **)&m_qrootb);
 			m_qrootb->putref_DataAccess(m_qsda);
 			m_qrootb->putref_RenderEngineFactory(m_qref);
+			m_qrootb->putref_TsStrFactory(m_qtsf);
 			m_qrootb->SetSite(m_qdrs);
 			m_qdrs->SetRootBox(m_qrootb);
 
@@ -3450,6 +3453,7 @@ namespace TestViews
 			VwRootBox::CreateCom(NULL, CLSID_VwRootBox, (void **)&m_qrootb);
 			m_qrootb->putref_DataAccess(m_qsda);
 			m_qrootb->putref_RenderEngineFactory(m_qref);
+			m_qrootb->putref_TsStrFactory(m_qtsf);
 			m_qrootb->SetSite(m_qdrs);
 			m_qdrs->SetRootBox(m_qrootb);
 
@@ -3492,6 +3496,7 @@ namespace TestViews
 			VwRootBox::CreateCom(NULL, CLSID_VwRootBox, (void **)&m_qrootb);
 			m_qrootb->putref_DataAccess(m_qsda);
 			m_qrootb->putref_RenderEngineFactory(m_qref);
+			m_qrootb->putref_TsStrFactory(m_qtsf);
 			m_qrootb->SetSite(m_qdrs);
 			m_qdrs->SetRootBox(m_qrootb);
 
@@ -4048,11 +4053,12 @@ namespace TestViews
 			m_stuBackspace = StrUni(L"\b");
 			m_stuDelForward = StrUni(L"\x7f");
 			CreateTestWritingSystemFactory();
+			m_qtsf.CreateInstance(CLSID_TsStrFactory);
 			m_qcda.Attach(NewObj DummyCache());
+			m_qcda->putref_TsStrFactory(m_qtsf);
 			m_qcda->QueryInterface(IID_ISilDataAccess, (void **)&m_qsda);
 			m_qsda->putref_WritingSystemFactory(g_qwsf);
 			m_qref.Attach(NewObj MockRenderEngineFactory);
-			m_qtsf.CreateInstance(CLSID_TsStrFactory);
 			// Now make the root box and view constructor and Graphics object.
 			VwRootBox::CreateCom(NULL, CLSID_VwRootBox, (void **)&m_qrootb);
 			m_hdc = 0;
@@ -4061,6 +4067,7 @@ namespace TestViews
 			m_qvg32->Initialize(m_hdc);
 			m_qrootb->putref_DataAccess(m_qsda);
 			m_qrootb->putref_RenderEngineFactory(m_qref);
+			m_qrootb->putref_TsStrFactory(m_qtsf);
 			m_qdrs.Attach(NewObj DummyRootSite());
 			m_rcSrc = Rect(0, 0, 96, 96);
 			m_qdrs->SetRects(m_rcSrc, m_rcSrc);

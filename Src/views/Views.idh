@@ -783,8 +783,15 @@ Last reviewed:
 
 		@h3{Hungarian: vcd}
 	*******************************************************************************************/
-	DeclareInterface(VwCacheDa, Unknown, B9ADC49A-E28B-4858-8C04-53E0D2E5A76F)
+	DeclareInterface(VwCacheDa, Unknown, FECFCBC9-4CD2-4DB3-ADBE-1F628B2DAA33)
 	{
+		// Gets the string factory.
+		[propget] HRESULT TsStrFactory(
+			[out, retval] ITsStrFactory ** pptsf);
+		// Sets the string factory.
+		[propputref] HRESULT TsStrFactory(
+			[in] ITsStrFactory * ptsf);
+
 		// Cache the value of an atomic object property (owning or reference does not matter
 		// since we are not changing the underlying data).
 
@@ -995,7 +1002,7 @@ Last reviewed:
 
 		@H3{Hungarian: rootb}
 	*******************************************************************************************/
-	DeclareInterface(VwRootBox, VwNotifyChange, E4E04181-7136-4645-89BA-D95D4EA888A6)
+	DeclareInterface(VwRootBox, VwNotifyChange, 06DAA10B-F69A-4000-8C8B-3F725C3FC368)
 	{
 		//:> Initialization
 
@@ -1020,6 +1027,12 @@ Last reviewed:
 		// Sets the render engine factory.
 		[propputref] HRESULT RenderEngineFactory(
 			[in] IRenderEngineFactory * pref);
+		// Gets the string factory.
+		[propget] HRESULT TsStrFactory(
+			[out, retval] ITsStrFactory ** pptsf);
+		// Sets the string factory.
+		[propputref] HRESULT TsStrFactory(
+			[in] ITsStrFactory * ptsf);
 
 		// This is the main method typically used to initialize a root object. It is passed
 		// three arrays, all the same size (as indicated by chvo); usually all are of size 1.

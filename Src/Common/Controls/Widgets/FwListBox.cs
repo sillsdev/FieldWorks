@@ -1282,6 +1282,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			m_owner = owner;
 			m_cacheDa = VwCacheDaClass.Create();
+			m_cacheDa.TsStrFactory = TsStringUtils.TsStrFactory;
 			m_dataAccess = (ISilDataAccess)m_cacheDa;
 			// So many things blow up so badly if we don't have one of these that I finally decided to just
 			// make one, even though it won't always, perhaps not often, be the one we want.
@@ -1623,7 +1624,6 @@ namespace SIL.FieldWorks.Common.Widgets
 	internal class ListBoxVc : FwBaseVc
 	{
 		protected IFwListBoxSite m_listbox;
-		protected ITsString m_tssBlanks;
 
 		/// <summary>
 		/// Construct one. Must be part of an InnerFwListBox.
@@ -1632,14 +1632,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		internal ListBoxVc(IFwListBoxSite listbox)
 		{
 			m_listbox = listbox;
-			//UpdateBlankString(listbox);
 		}
-
-		//public void UpdateBlankString(IFwListBoxSite listbox)
-		//{
-		//    ITsStrFactory tsf = TsStrFactoryClass.Create();
-		//    m_tssBlanks = tsf.MakeString (new string(' ', 200), m_listbox.WritingSystemCode);
-		//}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

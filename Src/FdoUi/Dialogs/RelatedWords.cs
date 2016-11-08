@@ -117,6 +117,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 				select sd.Hvo).ToArray();
 
 			cdaTemp = VwCacheDaClass.Create();
+			cdaTemp.TsStrFactory = TsStringUtils.TsStrFactory;
 			foreach (var sd in domains)
 			{
 				cdaTemp.CacheStringProp(sd.Hvo, RelatedWordsVc.ktagName,

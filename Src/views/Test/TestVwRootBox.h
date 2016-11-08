@@ -308,8 +308,11 @@ namespace TestViews
 		{
 			// Create test data in a temporary cache.
 			// First make some generic objects.
+			ITsStrFactoryPtr qtsf;
+			qtsf.CreateInstance(CLSID_TsStrFactory);
 			IVwCacheDaPtr qcda;
 			qcda.CreateInstance(CLSID_VwCacheDa);
+			qcda->putref_TsStrFactory(qtsf);
 			ISilDataAccessPtr qsda;
 			CheckHr(qcda->QueryInterface(IID_ISilDataAccess, (void **)&qsda));
 			CheckHr(qsda->putref_WritingSystemFactory(g_qwsf));
@@ -317,8 +320,6 @@ namespace TestViews
 			IRenderEngineFactoryPtr qref;
 			qref.Attach(NewObj MockRenderEngineFactory);
 
-			ITsStrFactoryPtr qtsf;
-			qtsf.CreateInstance(CLSID_TsStrFactory);
 			ITsStringPtr qtss;
 			// Now make two strings, the contents of paragraphs 1 and 2.
 			StrUni stuPara1(L"This is the first test paragraph");
@@ -352,6 +353,7 @@ namespace TestViews
 				qvc.Attach(NewObj DummyParaVc());
 				CheckHr(qrootb->putref_DataAccess(qsda));
 				CheckHr(qrootb->putref_RenderEngineFactory(qref));
+				CheckHr(qrootb->putref_TsStrFactory(qtsf));
 				CheckHr(qrootb->SetRootObject(hvoRootBox, qvc, kfragStText, NULL));
 				DummyRootSitePtr qdrs;
 				qdrs.Attach(NewObj DummyRootSite());
@@ -438,8 +440,11 @@ namespace TestViews
 		{
 			// Create test data in a temporary cache.
 			// First make some generic objects.
+			ITsStrFactoryPtr qtsf;
+			qtsf.CreateInstance(CLSID_TsStrFactory);
 			IVwCacheDaPtr qcda;
 			qcda.CreateInstance(CLSID_VwCacheDa);
+			qcda->putref_TsStrFactory(qtsf);
 			ISilDataAccessPtr qsda;
 			qcda->QueryInterface(IID_ISilDataAccess, (void **)&qsda);
 			qsda->putref_WritingSystemFactory(g_qwsf);
@@ -447,8 +452,6 @@ namespace TestViews
 			IRenderEngineFactoryPtr qref;
 			qref.Attach(NewObj MockRenderEngineFactory);
 
-			ITsStrFactoryPtr qtsf;
-			qtsf.CreateInstance(CLSID_TsStrFactory);
 			ITsStringPtr qtss;
 			// Now make two strings, the contents of paragraphs 1 and 2.
 			StrUni stuPara1(L"This is the first test paragraph");
@@ -482,6 +485,7 @@ namespace TestViews
 				qvc.Attach(NewObj DummyParaVc());
 				qrootb->putref_DataAccess(qsda);
 				qrootb->putref_RenderEngineFactory(qref);
+				qrootb->putref_TsStrFactory(qtsf);
 				qrootb->SetRootObject(hvoRootBox, qvc, kfragStText, NULL);
 				DummyRootSitePtr qdrs;
 				qdrs.Attach(NewObj DummyRootSite());
@@ -578,8 +582,11 @@ namespace TestViews
 		// TODO-Linux: implement IAccessible
 			// Create test data in a temporary cache.
 			// First make some generic objects.
+			ITsStrFactoryPtr qtsf;
+			qtsf.CreateInstance(CLSID_TsStrFactory);
 			IVwCacheDaPtr qcda;
 			qcda.CreateInstance(CLSID_VwCacheDa);
+			qcda->putref_TsStrFactory(qtsf);
 			ISilDataAccessPtr qsda;
 			qcda->QueryInterface(IID_ISilDataAccess, (void **)&qsda);
 			qsda->putref_WritingSystemFactory(g_qwsf);
@@ -587,8 +594,6 @@ namespace TestViews
 			IRenderEngineFactoryPtr qref;
 			qref.Attach(NewObj MockRenderEngineFactory);
 
-			ITsStrFactoryPtr qtsf;
-			qtsf.CreateInstance(CLSID_TsStrFactory);
 			ITsStringPtr qtss;
 			// Now make two strings, the contents of paragraphs 1 and 2.
 			StrUni stuPara1(L"This is the first test paragraph");
@@ -622,6 +627,7 @@ namespace TestViews
 				qvc.Attach(NewObj DummyParaVc());
 				qrootb->putref_DataAccess(qsda);
 				qrootb->putref_RenderEngineFactory(qref);
+				qrootb->putref_TsStrFactory(qtsf);
 				qrootb->SetRootObject(hvoRootBox, qvc, kfragStText, NULL);
 				DummyRootSitePtr qdrs;
 				qdrs.Attach(NewObj DummyRootSite());
@@ -995,8 +1001,11 @@ namespace TestViews
 		{
 			// Create test data in a temporary cache.
 			// First make some generic objects.
+			ITsStrFactoryPtr qtsf;
+			qtsf.CreateInstance(CLSID_TsStrFactory);
 			IVwCacheDaPtr qcda;
 			qcda.CreateInstance(CLSID_VwCacheDa);
+			qcda->putref_TsStrFactory(qtsf);
 			ISilDataAccessPtr qsda;
 			qcda->QueryInterface(IID_ISilDataAccess, (void **)&qsda);
 			qsda->putref_WritingSystemFactory(g_qwsf);
@@ -1004,8 +1013,6 @@ namespace TestViews
 			IRenderEngineFactoryPtr qref;
 			qref.Attach(NewObj MockRenderEngineFactory);
 
-			ITsStrFactoryPtr qtsf;
-			qtsf.CreateInstance(CLSID_TsStrFactory);
 			ITsStringPtr qtss;
 			// Now make two strings, the contents of paragraphs 1 and 2.
 			StrUni stuPara1(L"This is the first test paragraph");
@@ -1039,6 +1046,7 @@ namespace TestViews
 				qvc.Attach(NewObj DummyParaVc());
 				qrootb->putref_DataAccess(qsda);
 				qrootb->putref_RenderEngineFactory(qref);
+				qrootb->putref_TsStrFactory(qtsf);
 				qrootb->SetRootObject(hvoRootBox, qvc, kfragStText, NULL);
 				DummyRootSitePtr qdrs;
 				qdrs.Attach(NewObj DummyRootSite());

@@ -196,7 +196,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void CreateSecCache()
 		{
 			CheckDisposed();
-			DataAccess = VwCacheDaClass.Create();
+			var cda = VwCacheDaClass.Create();
+			cda.TsStrFactory = TsStringUtils.TsStrFactory;
+			DataAccess = cda;
 			DataAccess.WritingSystemFactory = m_fdoCache.WritingSystemFactory;
 		}
 

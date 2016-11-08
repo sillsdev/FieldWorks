@@ -630,10 +630,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			if (m_sda == null)
 			{
-				m_sda = VwCacheDaClass.Create();
+				var cda = VwCacheDaClass.Create();
+				cda.TsStrFactory = TsStringUtils.TsStrFactory;
+				m_sda = cda;
 				if (WritingSystemFactory != null)
 					m_sda.WritingSystemFactory = WritingSystemFactory;
-				m_cd = (IVwCacheDa) m_sda;
+				m_cd = cda;
 			}
 			else
 			{

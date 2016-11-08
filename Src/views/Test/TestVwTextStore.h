@@ -2667,13 +2667,14 @@ namespace TestViews
 				return;
 			}
 			CreateTestWritingSystemFactory();
+			m_qtsf.CreateInstance(CLSID_TsStrFactory);
 			m_qcda.Attach(NewObj VwCacheDa());
+			CheckHr(m_qcda->putref_TsStrFactory(m_qtsf));
 			CheckHr(m_qcda->QueryInterface(IID_ISilDataAccess, (void **)&m_qsda));
 			CheckHr(m_qsda->putref_WritingSystemFactory(g_qwsf));
 
 			m_qref.Attach(NewObj MockRenderEngineFactory);
 
-			m_qtsf.CreateInstance(CLSID_TsStrFactory);
 			m_qvg32.CreateInstance(CLSID_VwGraphicsWin32);
 			// Create a dummy background window (never visible) to host the view.
 			// This is mainly important for the functions that use screen coordinates,
@@ -2740,6 +2741,7 @@ namespace TestViews
 			VwRootBox::CreateCom(NULL, IID_IVwRootBox, (void **) &m_qrootb);
 			CheckHr(m_qrootb->putref_DataAccess(m_qsda));
 			CheckHr(m_qrootb->putref_RenderEngineFactory(m_qref));
+			CheckHr(m_qrootb->putref_TsStrFactory(m_qtsf));
 			CheckHr(m_qrootb->SetRootObject(m_hvoRoot, m_qvc, kfragStText, NULL));
 			CheckHr(m_qrootb->SetSite(m_qdrs));
 			m_qdrs->SetRootBox(m_qrootb);

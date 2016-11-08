@@ -2663,11 +2663,13 @@ namespace SIL.FieldWorks.Common.Widgets
 				try
 				{
 					IVwCacheDa cda = VwCacheDaClass.Create();
+					cda.TsStrFactory = TsStringUtils.TsStrFactory;
 					ISilDataAccess sda = (ISilDataAccess) cda;
 					sda.WritingSystemFactory = WritingSystemFactory;
 					sda.SetString(khvoRoot, ktagText, FontHeightAdjuster.GetUnadjustedTsString(Tss));
 					IVwRootBox rootb = VwRootBoxClass.Create();
 					rootb.RenderEngineFactory = SingletonsContainer.Get<RenderEngineFactory>();
+					rootb.TsStrFactory = TsStringUtils.TsStrFactory;
 					rootb.SetSite(this);
 					rootb.DataAccess = sda;
 					rootb.SetRootObject(khvoRoot, m_vc, kfragRoot, StyleSheet);
@@ -2714,11 +2716,13 @@ namespace SIL.FieldWorks.Common.Widgets
 				{
 					m_vc.SaveSize = true;
 					IVwCacheDa cda = VwCacheDaClass.Create();
+					cda.TsStrFactory = TsStringUtils.TsStrFactory;
 					ISilDataAccess sda = (ISilDataAccess)cda;
 					sda.WritingSystemFactory = WritingSystemFactory;
 					sda.SetString(khvoRoot, ktagText, FontHeightAdjuster.GetUnadjustedTsString(Tss));
 					IVwRootBox rootb = VwRootBoxClass.Create();
 					rootb.RenderEngineFactory = SingletonsContainer.Get<RenderEngineFactory>();
+					rootb.TsStrFactory = TsStringUtils.TsStrFactory;
 					rootb.SetSite(this);
 					rootb.DataAccess = sda;
 					rootb.SetRootObject(khvoRoot, m_vc, kfragRoot, StyleSheet);

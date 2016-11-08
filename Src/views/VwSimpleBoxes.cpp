@@ -51,7 +51,7 @@ VwBox::VwBox(VwPropertyStore * pzvps)
 VwBox::~VwBox()
 {
 	// Inform any IAccessible implementations that they may no longer point at this box.
-#if WIN32
+#ifdef WIN32
 	VwAccessRoot::BoxDeleted(this);
 #endif
 	VwRootBox * prootb = this->Root();
@@ -3204,7 +3204,7 @@ void VwSeparatorBox::DrawForeground(IVwGraphics * pvg, Rect rcSrc, Rect rcDst)
 	int inset = (right - left) / 3;
 	left += inset;
 	right -= inset;
-#if WIN32
+#ifdef WIN32
 	CheckHr(pvg->put_BackColor(::GetSysColor(COLOR_3DFACE)));
 #else //WIN32
 	// TODO-Linux: implement better.

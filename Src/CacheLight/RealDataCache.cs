@@ -337,6 +337,10 @@ namespace SIL.FieldWorks.CacheLight
 		#region ISilDataAccess/IVwCacheDa implementation (Cache/Set/Get)
 
 		#region Object Prop methods (DONE)
+		/// <summary>
+		/// Gets or sets the string factory.
+		/// </summary>
+		public ITsStrFactory TsStrFactory { get; set; }
 
 		/// <summary>Member CacheObjProp</summary>
 		/// <param name='obj'>obj</param>
@@ -1034,7 +1038,7 @@ namespace SIL.FieldWorks.CacheLight
 			{
 				// Note: Normally, this would throw a KeyNotFoundException,
 				// but the interface says we have to return an empty string.
-				tss = TsStringUtils.EmptyString(ws);
+				tss = TsStrFactory.EmptyString(ws);
 				// If it is not a Compute every time virtual, go ahead and cache it
 				if (!removeFromCache)
 					SetMultiStringAlt(hvo, tag, ws, tss); // Save it for next time.

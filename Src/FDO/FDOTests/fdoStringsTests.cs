@@ -159,60 +159,6 @@ namespace SIL.FieldWorks.FDO.CoreTests.MultiFooTests
 			Assert.AreEqual(3, Cache.LangProject.Description.StringCount, "Wrong number of alternatives for Cache.LangProject.DescriptionAccessor");
 		}
 
-		// Since users can change ws in the middle of a line by hitting Alt-Shift, and
-		// our code can't prevent it, we shouldn't kill the program by throwing exceptions.
-		// So the next three tests are now invalid, and hence commented out.
-		///// <summary>
-		/////Make sure it only has one run in it.
-		///// </summary>
-		//[Test]
-		//[ExpectedException(typeof(ArgumentException))]
-		//public void MultipleRunsTest()
-		//{
-		//    var english = Cache.LangProject.CurrentAnalysisWritingSystems.ElementAt(0);
-		//    var spanish = Cache.LangProject.CurrentAnalysisWritingSystems.ElementAt(1);
-		//    var factory = Cache.TsStrFactory;
-		//    var tisb = factory.GetIncBldr();
-		//    var en = factory.MakeString("Mexico", english.Handle);
-		//    tisb.AppendTsString(en);
-		//    var es = factory.MakeString("Mejico", spanish.Handle);
-		//    tisb.AppendTsString(es);
-		//    Cache.LangProject.MainCountry.set_String(english.Handle, tisb.GetString());
-		//}
-
-		///// <summary>
-		///// Make sure the string has no string properties.
-		///// </summary>
-		//[Test]
-		//[ExpectedException(typeof(ArgumentException))]
-		//public void ExtantStringPropertiesTest()
-		//{
-		//    var english = Cache.LangProject.CurrentAnalysisWritingSystems.First();
-		//    var factory = Cache.TsStrFactory;
-		//    var tisb = factory.GetIncBldr();
-		//    tisb.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Arial");
-		//    tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, english.Handle);
-		//    tisb.Append("Mexico");
-		//    Cache.LangProject.MainCountry.set_String(english.Handle, tisb.GetString());
-		//}
-
-		///// <summary>
-		///// Make sure we can't add a string with more than one int property.
-		///// </summary>
-		//[Test]
-		//[ExpectedException(typeof(ArgumentException))]
-		//public void TooManyIntPropertiesTest()
-		//{
-		//    var english = Cache.LangProject.CurrentAnalysisWritingSystems.First();
-		//    var factory = Cache.TsStrFactory;
-		//    var tisb = factory.GetIncBldr();
-		//    tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, english.Handle);
-		//    tisb.SetIntPropValues((int)FwTextPropType.ktptFontSize,
-		//        (int)FwTextPropVar.ktpvMilliPoint, 8000);
-		//    tisb.Append("Mexico");
-		//    Cache.LangProject.MainCountry.set_String(english.Handle, tisb.GetString());
-		//}
-
 		/// <summary>
 		/// Make sure we can add a good string.
 		/// </summary>

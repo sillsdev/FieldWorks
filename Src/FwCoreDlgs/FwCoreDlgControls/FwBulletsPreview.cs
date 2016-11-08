@@ -60,6 +60,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		public BulletsPreview()
 		{
 			m_CacheDa = VwCacheDaClass.Create();
+			m_CacheDa.TsStrFactory = TsStringUtils.TsStrFactory;
 			m_DataAccess = (ISilDataAccess)m_CacheDa;
 			m_vc = new BulletsPreviewVc();
 

@@ -76,7 +76,8 @@ namespace XMLViewsTests
 			// - MoStemMsa (2, 11)
 			// - MoDerivationalMsa (10)
 			m_cda = VwCacheDaClass.Create();
-			m_sda = m_cda as ISilDataAccess;
+			m_cda.TsStrFactory = TsStringUtils.TsStrFactory;
+			m_sda = (ISilDataAccess) m_cda;
 			m_wsManager = new WritingSystemManager();
 			m_sda.WritingSystemFactory = m_wsManager;
 			var parser = new SimpleDataParser(m_mdc, m_cda);

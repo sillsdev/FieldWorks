@@ -840,9 +840,6 @@ namespace SIL.FieldWorks.XWorks
 			for (var i = 0; i < cws; i++)
 			{
 				var curWs = msControl.Ws(i);
-				//if (oldStrings.get_String(curWs).Text != Cache.TsStrFactory.EmptyString(curWs).Text
-				//    && oldStrings.get_String(curWs).Text != msControl.Value(curWs).Text)
-				//    return true;
 				if (oldStrings.get_String(curWs).Text != msControl.Value(curWs).Text)
 					return true;
 			}

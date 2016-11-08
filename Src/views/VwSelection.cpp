@@ -6134,7 +6134,7 @@ public:
 	ComBool Run(ITsString ** pptss)
 	{
 		ITsStrFactoryPtr qtsf;
-		qtsf.CreateInstance(CLSID_TsStrFactory);
+		CheckHr(m_pvwsel->m_pvpbox->Root()->get_TsStrFactory(&qtsf));
 		CheckHr(qtsf->GetBldr(&m_qtsb));
 
 		if (m_pvwsel->IsInsertionPoint())

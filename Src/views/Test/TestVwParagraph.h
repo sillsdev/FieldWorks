@@ -267,8 +267,11 @@ namespace TestViews
 			HRESULT hr;
 			// Create test data in a temporary cache.
 			// First make some generic objects.
+			ITsStrFactoryPtr qtsf;
+			qtsf.CreateInstance(CLSID_TsStrFactory);
 			IVwCacheDaPtr qcda;
 			qcda.CreateInstance(CLSID_VwCacheDa);
+			qcda->putref_TsStrFactory(qtsf);
 			ISilDataAccessPtr qsda;
 			qcda->QueryInterface(IID_ISilDataAccess, (void **)&qsda);
 			qsda->putref_WritingSystemFactory(g_qwsf);
@@ -276,8 +279,6 @@ namespace TestViews
 			IRenderEngineFactoryPtr qref;
 			qref.Attach(NewObj MockRenderEngineFactory);
 
-			ITsStrFactoryPtr qtsf;
-			qtsf.CreateInstance(CLSID_TsStrFactory);
 			ITsStringPtr qtss;
 			// Now make two strings, the contents of paragraphs 1 and 2.
 			StrUni stuPara1(L"This is the first" A_WITH_DIAERESIS_AND_MACRON L" test string");
@@ -314,6 +315,7 @@ namespace TestViews
 				qvc.Attach(NewObj NormalizeDummyVc());
 				qrootb->putref_DataAccess(qsda);
 				qrootb->putref_RenderEngineFactory(qref);
+				qrootb->putref_TsStrFactory(qtsf);
 				qrootb->SetRootObject(hvoRootBox, qvc, kfragBase, NULL);
 				DummyRootSitePtr qdrs;
 				qdrs.Attach(NewObj DummyRootSite());
@@ -548,8 +550,11 @@ namespace TestViews
 		void testInnerPileLayout()
 		{
 			// Now make the root box and view constructor and Graphics object.
+			ITsStrFactoryPtr qtsf;
+			qtsf.CreateInstance(CLSID_TsStrFactory);
 			IVwCacheDaPtr qcda;
 			qcda.CreateInstance(CLSID_VwCacheDa);
+			qcda->putref_TsStrFactory(qtsf);
 			ISilDataAccessPtr qsda;
 			qcda->QueryInterface(IID_ISilDataAccess, (void **)&qsda);
 			qsda->putref_WritingSystemFactory(g_qwsf);
@@ -577,6 +582,7 @@ namespace TestViews
 				qvc.Attach(NewObj InnerPileDummyVc());
 				qrootb->putref_DataAccess(qsda);
 				qrootb->putref_RenderEngineFactory(qref);
+				m_qrootb->putref_TsStrFactory(qtsf);
 				qrootb->SetRootObject(hvoRoot, qvc, kfragBase, NULL);
 				DummyRootSitePtr qdrs;
 				qdrs.Attach(NewObj DummyRootSite());
@@ -644,8 +650,11 @@ namespace TestViews
 		// test spell checking
 		void testSpellCheck()
 		{
+			ITsStrFactoryPtr qtsf;
+			qtsf.CreateInstance(CLSID_TsStrFactory);
 			IVwCacheDaPtr qcda;
 			qcda.CreateInstance(CLSID_VwCacheDa);
+			qcda->putref_TsStrFactory(qtsf);
 			ISilDataAccessPtr qsda;
 			qcda->QueryInterface(IID_ISilDataAccess, (void **)&qsda);
 			qsda->putref_WritingSystemFactory(g_qwsf);
@@ -660,8 +669,6 @@ namespace TestViews
 			// Note: in case this test is ever run with a real dictionary, the second word should be
 			// clearly bad English. To make it fail with the English mock, it must have exactly 8 letters.
 			StrUni testData(L"The xzklymgz string");
-			ITsStrFactoryPtr qtsf;
-			qtsf.CreateInstance(CLSID_TsStrFactory);
 			ITsStringPtr qtss;
 			qtsf->MakeString(testData.Bstr(), g_wsEng, &qtss);
 			qcda->CacheStringProp(hvoRoot, kflidStTxtPara_Contents, qtss);
@@ -676,6 +683,7 @@ namespace TestViews
 				qvc.Attach(NewObj NestedStringDummyVc());
 				qrootb->putref_DataAccess(qsda);
 				qrootb->putref_RenderEngineFactory(qref);
+				qrootb->putref_TsStrFactory(qtsf);
 				qrootb->SetRootObject(hvoRoot, qvc, kfragBase, NULL);
 				DummyRootSitePtr qdrs;
 				qdrs.Attach(NewObj DummyRootSite());

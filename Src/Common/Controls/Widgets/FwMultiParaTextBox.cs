@@ -238,7 +238,9 @@ namespace SIL.FieldWorks.Common.Widgets
 			AutoScroll = true;
 
 			// Sandbox cache.
-			m_sda = VwCacheDaClass.Create();
+			var cda = VwCacheDaClass.Create();
+			cda.TsStrFactory = TsStringUtils.TsStrFactory;
+			m_sda = cda;
 			m_sda.WritingSystemFactory = WritingSystemFactory;
 			m_sda.SetActionHandler(new SimpleActionHandler());
 

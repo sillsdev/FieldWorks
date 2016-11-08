@@ -109,6 +109,8 @@ public:
 	STDMETHOD(get_Overlay)(IVwOverlay ** ppvo);
 	STDMETHOD(get_RenderEngineFactory)(IRenderEngineFactory ** ppref);
 	STDMETHOD(putref_RenderEngineFactory)(IRenderEngineFactory * pref);
+	STDMETHOD(get_TsStrFactory)(ITsStrFactory ** pptsf);
+	STDMETHOD(putref_TsStrFactory)(ITsStrFactory * ptsf);
 
 	// Selections
 	STDMETHOD(get_Selection)(IVwSelection** ppsel);
@@ -275,11 +277,6 @@ public:
 		return m_qsda;
 	}
 
-	IRenderEngineFactory * GetRenderEngineFactory()
-	{
-		return m_qref;
-	}
-
 	IVwOverlay * Overlay()
 	{
 		return m_qvo;
@@ -406,6 +403,8 @@ protected:
 	IVwOverlayPtr m_qvo; // controls overlay/tagging behavior for all text
 
 	IRenderEngineFactoryPtr m_qref;
+
+	ITsStrFactoryPtr m_qtsf;
 
 	// True when a single-click created a new insertion point, or a double-click created a new
 	// selection, but don't yet have a mouse-up.

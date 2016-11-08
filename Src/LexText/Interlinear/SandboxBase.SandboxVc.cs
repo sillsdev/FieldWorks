@@ -279,45 +279,6 @@ namespace SIL.FieldWorks.IText
 					(int)FwTextPropVar.ktpvDefault, color);
 			}
 
-			/// <summary>
-			/// Add the specified string in the specified color to the display, using the UI Writing system.
-			/// </summary>
-			/// <param name="vwenv"></param>
-			/// <param name="color"></param>
-			/// <param name="str"></param>
-			protected static void AddColoredString(IVwEnv vwenv, int color, ITsStrFactory tsf, int ws, string str)
-			{
-				SetColor(vwenv, color);
-				vwenv.AddString(tsf.MakeString(str, ws));
-			}
-
-			/// <summary>
-			/// Add to the vwenv the label(s) for a gloss line.
-			/// If multiple glosses are wanted, it generates a set of labels
-			/// </summary>
-			public void AddGlossLabels(IVwEnv vwenv, ITsStrFactory tsf, int color, string baseLabel,
-				FdoCache cache, WsListManager wsList)
-			{
-				if (wsList != null && wsList.AnalysisWsLabels.Length > 1)
-				{
-					ITsString tssBase = MakeUiElementString(baseLabel, cache.DefaultUserWs, null);
-					ITsString space = tsf.MakeString(" ", cache.DefaultUserWs);
-					foreach (ITsString tssLabel in wsList.AnalysisWsLabels)
-					{
-						SetColor(vwenv, color);
-						vwenv.OpenParagraph();
-						vwenv.AddString(tssBase);
-						vwenv.AddString(space);
-						vwenv.AddString(tssLabel);
-						vwenv.CloseParagraph();
-					}
-				}
-				else
-				{
-					AddColoredString(vwenv, color, tsf, cache.DefaultAnalWs, baseLabel);
-				}
-			}
-
 			private void AddPullDownIcon(IVwEnv vwenv, int tag)
 			{
 				if (m_fIconsForAnalysisChoices)
@@ -340,20 +301,6 @@ namespace SIL.FieldWorks.IText
 					(int)FwTextPropType.ktptLeadingIndent,
 					(int)FwTextPropVar.ktpvMilliPoint,
 					m_dxmpArrowPicWidth + kmpIconMargin);
-			}
-
-			/// <summary>
-			/// If fWantIcon is true, add a pull-down icon; otherwise, set enough indent so the
-			/// next thing in the paragraph will line up with things that have icons.
-			/// </summary>
-			/// <param name="vwenv"></param>
-			/// <param name="fWantIcon"></param>
-			private void SetIndentOrDisplayPullDown(IVwEnv vwenv, int tag, bool fWantIcon)
-			{
-				if (fWantIcon)
-					AddPullDownIcon(vwenv, tag);
-				else
-					SetIndentForMissingIcon(vwenv);
 			}
 
 			public override void Display(IVwEnv vwenv, int hvo, int frag)

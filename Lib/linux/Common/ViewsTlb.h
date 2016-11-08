@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 8.00.0603 */
-/* at Mon Nov 07 10:05:00 2016
+/* at Tue Nov 08 16:11:45 2016
  */
 /* Compiler settings for C:\develop\fwrepo\fw\Output\Common\ViewsTlb.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
@@ -1201,7 +1201,7 @@ IVwVirtualHandler
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 IVwCacheDa
 ,
-B9ADC49A-E28B-4858-8C04-53E0D2E5A76F
+FECFCBC9-4CD2-4DB3-ADBE-1F628B2DAA33
 );
 ATTACH_GUID_TO_CLASS(class,
 81EE73B1-BE31-49cf-BC02-6030113AC56F
@@ -1216,7 +1216,7 @@ VwUndoDa
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 IVwRootBox
 ,
-E4E04181-7136-4645-89BA-D95D4EA888A6
+06DAA10B-F69A-4000-8C8B-3F725C3FC368
 );
 ATTACH_GUID_TO_CLASS(class,
 7C0C6A3C-38B3-4266-AF94-A3A1CBAAD1FC
@@ -6526,10 +6526,16 @@ GraphiteEngine;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
-    MIDL_INTERFACE("B9ADC49A-E28B-4858-8C04-53E0D2E5A76F")
+    MIDL_INTERFACE("FECFCBC9-4CD2-4DB3-ADBE-1F628B2DAA33")
     IVwCacheDa : public IUnknown
     {
     public:
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_TsStrFactory( 
+            /* [retval][out] */ /* external definition not present */ ITsStrFactory **pptsf) = 0;
+        
+        virtual /* [propputref] */ HRESULT STDMETHODCALLTYPE putref_TsStrFactory( 
+            /* [in] */ /* external definition not present */ ITsStrFactory *ptsf) = 0;
+        
         virtual HRESULT STDMETHODCALLTYPE CacheObjProp( 
             /* [in] */ HVO obj,
             /* [in] */ PropTag tag,
@@ -6653,6 +6659,14 @@ GraphiteEngine;
         
         ULONG ( STDMETHODCALLTYPE *Release )( 
             IVwCacheDa * This);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_TsStrFactory )( 
+            IVwCacheDa * This,
+            /* [retval][out] */ /* external definition not present */ ITsStrFactory **pptsf);
+        
+        /* [propputref] */ HRESULT ( STDMETHODCALLTYPE *putref_TsStrFactory )( 
+            IVwCacheDa * This,
+            /* [in] */ /* external definition not present */ ITsStrFactory *ptsf);
         
         HRESULT ( STDMETHODCALLTYPE *CacheObjProp )( 
             IVwCacheDa * This,
@@ -6801,6 +6815,12 @@ GraphiteEngine;
     ( (This)->lpVtbl -> Release(This) ) 
 
 
+#define IVwCacheDa_get_TsStrFactory(This,pptsf)	\
+    ( (This)->lpVtbl -> get_TsStrFactory(This,pptsf) ) 
+
+#define IVwCacheDa_putref_TsStrFactory(This,ptsf)	\
+    ( (This)->lpVtbl -> putref_TsStrFactory(This,ptsf) ) 
+
 #define IVwCacheDa_CacheObjProp(This,obj,tag,val)	\
     ( (This)->lpVtbl -> CacheObjProp(This,obj,tag,val) ) 
 
@@ -6886,7 +6906,7 @@ GraphiteEngine;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
-    MIDL_INTERFACE("E4E04181-7136-4645-89BA-D95D4EA888A6")
+    MIDL_INTERFACE("06DAA10B-F69A-4000-8C8B-3F725C3FC368")
     IVwRootBox : public IVwNotifyChange
     {
     public:
@@ -6904,6 +6924,12 @@ GraphiteEngine;
         
         virtual /* [propputref] */ HRESULT STDMETHODCALLTYPE putref_RenderEngineFactory( 
             /* [in] */ IRenderEngineFactory *pref) = 0;
+        
+        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_TsStrFactory( 
+            /* [retval][out] */ /* external definition not present */ ITsStrFactory **pptsf) = 0;
+        
+        virtual /* [propputref] */ HRESULT STDMETHODCALLTYPE putref_TsStrFactory( 
+            /* [in] */ /* external definition not present */ ITsStrFactory *ptsf) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE SetRootObjects( 
             /* [size_is][in] */ HVO *prghvo,
@@ -7245,6 +7271,14 @@ GraphiteEngine;
         /* [propputref] */ HRESULT ( STDMETHODCALLTYPE *putref_RenderEngineFactory )( 
             IVwRootBox * This,
             /* [in] */ IRenderEngineFactory *pref);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_TsStrFactory )( 
+            IVwRootBox * This,
+            /* [retval][out] */ /* external definition not present */ ITsStrFactory **pptsf);
+        
+        /* [propputref] */ HRESULT ( STDMETHODCALLTYPE *putref_TsStrFactory )( 
+            IVwRootBox * This,
+            /* [in] */ /* external definition not present */ ITsStrFactory *ptsf);
         
         HRESULT ( STDMETHODCALLTYPE *SetRootObjects )( 
             IVwRootBox * This,
@@ -7641,6 +7675,12 @@ GraphiteEngine;
 
 #define IVwRootBox_putref_RenderEngineFactory(This,pref)	\
     ( (This)->lpVtbl -> putref_RenderEngineFactory(This,pref) ) 
+
+#define IVwRootBox_get_TsStrFactory(This,pptsf)	\
+    ( (This)->lpVtbl -> get_TsStrFactory(This,pptsf) ) 
+
+#define IVwRootBox_putref_TsStrFactory(This,ptsf)	\
+    ( (This)->lpVtbl -> putref_TsStrFactory(This,ptsf) ) 
 
 #define IVwRootBox_SetRootObjects(This,prghvo,prgpvwvc,prgfrag,pss,chvo)	\
     ( (This)->lpVtbl -> SetRootObjects(This,prghvo,prgpvwvc,prgfrag,pss,chvo) ) 

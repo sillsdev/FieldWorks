@@ -554,6 +554,33 @@ STDMETHODIMP VwRootBox::putref_RenderEngineFactory(IRenderEngineFactory * pref)
 	END_COM_METHOD(g_fact, IID_IVwRootBox);
 }
 
+/*----------------------------------------------------------------------------------------------
+	Gets the string factory.
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP VwRootBox::get_TsStrFactory(ITsStrFactory ** pptsf)
+{
+	BEGIN_COM_METHOD;
+	ChkComOutPtr(pptsf);
+
+	*pptsf = m_qtsf;
+	AddRefObj(*pptsf);
+
+	END_COM_METHOD(g_fact, IID_IVwRootBox);
+}
+
+/*----------------------------------------------------------------------------------------------
+	Sets the string factory.
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP VwRootBox::putref_TsStrFactory(ITsStrFactory * ptsf)
+{
+	BEGIN_COM_METHOD;
+	ChkComArgPtr(ptsf);
+
+	m_qtsf = ptsf;
+
+	END_COM_METHOD(g_fact, IID_IVwRootBox);
+}
+
 //:>********************************************************************************************
 //:>	Selections
 //:>********************************************************************************************
