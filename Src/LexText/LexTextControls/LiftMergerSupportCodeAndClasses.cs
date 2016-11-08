@@ -360,12 +360,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			// LiftString parameter may have come in with escaped characters which need to be
 			// converted to plain text before comparing with existing entries
 			var convertSafeXmlToText = XmlUtils.DecodeXml(liftstr.Text);
-			tsb.Replace(0, tsb.Length, convertSafeXmlToText, m_tpf.MakeProps(null, wsHvo, 0));
+			tsb.Replace(0, tsb.Length, convertSafeXmlToText, TsStringUtils.MakeProps(null, wsHvo));
 			int wsSpan;
 			// TODO: handle nested spans.
 			foreach (LiftSpan span in liftstr.Spans)
 			{
-				ITsPropsBldr tpb = m_tpf.GetPropsBldr();
+				ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 				if (String.IsNullOrEmpty(span.Lang))
 					wsSpan = wsHvo;
 				else

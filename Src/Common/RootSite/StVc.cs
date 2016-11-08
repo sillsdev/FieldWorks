@@ -182,7 +182,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				if (m_ttpNormal == null)
 				{
 					ITsPropsBldr tsPropsBuilder =
-						TsPropsBldrClass.Create();
+						TsStringUtils.MakePropsBldr();
 
 					tsPropsBuilder.SetStrPropValue(
 						(int)FwTextPropType.ktptNamedStyle,	StyleServices.NormalStyleName);

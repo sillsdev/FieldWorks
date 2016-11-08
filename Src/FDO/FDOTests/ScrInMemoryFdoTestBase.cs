@@ -701,7 +701,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			if (!String.IsNullOrEmpty(sDiscussion))
 			{
 				StTxtParaBldr paraBldr = new StTxtParaBldr(Cache);
-				ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+				ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, Cache.DefaultAnalWs);
 				paraBldr.AppendRun(sDiscussion, propsBldr.GetTextProps());
 				annotation.DiscussionOA = Cache.ServiceLocator.GetInstance<IStJournalTextFactory>().Create();
@@ -933,7 +933,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string format, int ws)
 		{
 			if (strBldr == null)
-				strBldr = TsStrBldrClass.Create();
+				strBldr = TsStringUtils.MakeStrBldr();
 
 			if (string.IsNullOrEmpty(format))
 				strBldr.Replace(0, 0, string.Empty, StyleUtils.CharStyleTextProps(null, ws));

@@ -627,7 +627,7 @@ namespace SIL.FieldWorks.Discourse
 			{
 				if (item is XmlComment)
 					continue;
-				ITsPropsBldr bldr = TsPropsBldrClass.Create();
+				ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 				var color = XmlUtils.GetOptionalAttributeValue(item, "color", null);
 				if (color != null)
 					bldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,

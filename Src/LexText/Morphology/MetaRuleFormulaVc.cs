@@ -34,13 +34,13 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public MetaRuleFormulaVc(FdoCache cache, PropertyTable propertyTable)
 			: base(cache, propertyTable)
 		{
-			ITsPropsBldr tpb = TsPropsBldrClass.Create();
+			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault,
 				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
 			tpb.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalCenter);
 			m_inputCtxtProps = tpb.GetTextProps();
 
-			tpb = TsPropsBldrClass.Create();
+			tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault,
 				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
 			tpb.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalCenter);
@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
 			m_resultCtxtProps = tpb.GetTextProps();
 
-			tpb = TsPropsBldrClass.Create();
+			tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetStrPropValue((int)FwTextPropType.ktptFontFamily, MiscUtils.StandardSansSerif);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 10000);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault,
@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			tpb.SetIntPropValues((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 			m_colHeaderProps = tpb.GetTextProps();
 
-			tpb = TsPropsBldrClass.Create();
+			tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetStrPropValue((int)FwTextPropType.ktptFontFamily, MiscUtils.StandardSansSerif);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 10000);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,

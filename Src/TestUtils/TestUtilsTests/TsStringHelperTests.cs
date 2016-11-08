@@ -10,6 +10,7 @@
 
 using System;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Test.TestUtils
@@ -30,8 +31,8 @@ namespace SIL.FieldWorks.Test.TestUtils
 		[Test]
 		public void TsStringsSame()
 		{
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
-			strBldr.Replace(0, 0, "Test", TsPropsFactoryClass.Create().MakeProps(null, 5, 0));
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
+			strBldr.Replace(0, 0, "Test", TsStringUtils.MakeProps(null, 5));
 			string s;
 			Assert.IsTrue(TsStringHelper.TsStringsAreEqual(strBldr.GetString(),
 				strBldr.GetString(), out s));
@@ -46,8 +47,8 @@ namespace SIL.FieldWorks.Test.TestUtils
 		[Test]
 		public void TsStringsTwoEmpty_ExpectedIntProp()
 		{
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, 45);
 			ITsTextProps propsS2 = propsBldr.GetTextProps();
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptSuperscript, (int)FwTextPropVar.ktpvEnum, 1);
@@ -58,7 +59,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 			ITsString tssExpected = strBldr.GetString();
 
 			// Create TsString #2
-			strBldr = TsStrBldrClass.Create();
+			strBldr = TsStringUtils.MakeStrBldr();
 			strBldr.Replace(0, 0, "", propsS2);
 
 			string s;
@@ -79,8 +80,8 @@ namespace SIL.FieldWorks.Test.TestUtils
 		[Test]
 		public void TsStringsTwoEmpty_WritingSystemsDiffer()
 		{
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, 45);
 			ITsTextProps propsS1 = propsBldr.GetTextProps();
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, 15);
@@ -91,7 +92,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 			ITsString tssExpected = strBldr.GetString();
 
 			// Create TsString #2
-			strBldr = TsStrBldrClass.Create();
+			strBldr = TsStringUtils.MakeStrBldr();
 			strBldr.Replace(0, 0, "", propsS2);
 
 			string s;
@@ -111,9 +112,8 @@ namespace SIL.FieldWorks.Test.TestUtils
 		[Test]
 		public void TsStringDiffersFromNullString()
 		{
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
-			ITsPropsFactory propsFact = TsPropsFactoryClass.Create();
-			strBldr.Replace(0, 0, "Test", propsFact.MakeProps(null, 5, 0));
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
+			strBldr.Replace(0, 0, "Test", TsStringUtils.MakeProps(null, 5));
 			string s;
 			Assert.IsFalse(TsStringHelper.TsStringsAreEqual(null, strBldr.GetString(),
 				out s));
@@ -129,9 +129,8 @@ namespace SIL.FieldWorks.Test.TestUtils
 		[Test]
 		public void NullStringDiffersFromTsString()
 		{
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
-			ITsPropsFactory propsFact = TsPropsFactoryClass.Create();
-			strBldr.Replace(0, 0, "Test", propsFact.MakeProps(null, 5, 0));
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
+			strBldr.Replace(0, 0, "Test", TsStringUtils.MakeProps(null, 5));
 			string s;
 			Assert.IsFalse(TsStringHelper.TsStringsAreEqual(strBldr.GetString(), null,
 				out s));
@@ -159,9 +158,8 @@ namespace SIL.FieldWorks.Test.TestUtils
 		[Test]
 		public void TsStringsDifferByLength()
 		{
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
-			ITsPropsFactory propsFact = TsPropsFactoryClass.Create();
-			ITsTextProps props = propsFact.MakeProps(null, 5, 0);
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
+			ITsTextProps props = TsStringUtils.MakeProps(null, 5);
 			strBldr.Replace(0, 0, "Test", props);
 			ITsString tssExpected = strBldr.GetString();
 			strBldr.Replace(0, 0, "Bad ", props);
@@ -181,9 +179,8 @@ namespace SIL.FieldWorks.Test.TestUtils
 		[Test]
 		public void TsStringsDifferByText()
 		{
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
-			ITsPropsFactory propsFact = TsPropsFactoryClass.Create();
-			ITsTextProps props = propsFact.MakeProps(null, 5, 0);
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
+			ITsTextProps props = TsStringUtils.MakeProps(null, 5);
 			strBldr.Replace(0, 0, "Test", props);
 			ITsString tssExpected = strBldr.GetString();
 			strBldr.Replace(0, 4, "Crud", props);
@@ -203,11 +200,10 @@ namespace SIL.FieldWorks.Test.TestUtils
 		[Test]
 		public void TsStringsDifferByRunCount()
 		{
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
-			ITsPropsFactory propsFact = TsPropsFactoryClass.Create();
-			strBldr.Replace(0, 0, "Bad Test", propsFact.MakeProps(null, 5, 0));
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
+			strBldr.Replace(0, 0, "Bad Test", TsStringUtils.MakeProps(null, 5));
 			ITsString tssExpected = strBldr.GetString();
-			strBldr.Replace(0, 3, "Bad", propsFact.MakeProps("Bogus", 5, 0));
+			strBldr.Replace(0, 3, "Bad", TsStringUtils.MakeProps("Bogus", 5));
 			string s;
 			Assert.IsFalse(TsStringHelper.TsStringsAreEqual(tssExpected, strBldr.GetString(),
 				out s));
@@ -226,8 +222,8 @@ namespace SIL.FieldWorks.Test.TestUtils
 		[Test]
 		public void TsStringsDifferByRunBreaks()
 		{
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, 1);
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "S1");
 			ITsTextProps propsS1 = propsBldr.GetTextProps();
@@ -241,7 +237,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 			ITsString tssExpected = strBldr.GetString();
 
 			// Create TsString #2: "Weird/Tes/tDude"
-			strBldr = TsStrBldrClass.Create();
+			strBldr = TsStringUtils.MakeStrBldr();
 			strBldr.Replace(0, 0, "tDude", propsS1);
 			strBldr.Replace(0, 0, "Tes", propsS2);
 			strBldr.Replace(0, 0, "Weird", propsS1);
@@ -264,8 +260,8 @@ namespace SIL.FieldWorks.Test.TestUtils
 		[Test]
 		public void TsStringsDifferByRunFormat()
 		{
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, 45);
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Bogus");
 			ITsTextProps propsBogus = propsBldr.GetTextProps();
@@ -283,7 +279,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 			ITsString tssExpected = strBldr.GetString();
 
 			// Create TsString #2: "Weird /|Bogle{Test} /Dude"
-			strBldr = TsStrBldrClass.Create();
+			strBldr = TsStringUtils.MakeStrBldr();
 			strBldr.Replace(0, 0, "Dude", propsBungle);
 			strBldr.Replace(0, 0, "Test ", propsBogle);
 			strBldr.Replace(0, 0, "Weird ", propsBugle);

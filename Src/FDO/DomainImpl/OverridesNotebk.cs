@@ -145,7 +145,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+				ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 				if (TypeRA != null)
 					tisb.AppendTsString(TypeRA.Name.BestAnalysisAlternative);
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault,
@@ -264,7 +264,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				var items = SubRecordsOS.Count;
 				if (items > 0)
 				{
-					ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+					ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 					tisb.AppendTsString(ShortNameTSS);
 					tisb.Append(String.Format(SIL.FieldWorks.FDO.Application.ApplicationServices.AppStrings.ksNotebkDeleteSubRecords,items));
 					return tisb.GetString();

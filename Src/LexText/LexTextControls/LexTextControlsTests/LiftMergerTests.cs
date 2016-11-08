@@ -2686,7 +2686,7 @@ namespace LexTextControlsTests
 			Assert.AreEqual(3, text.ParagraphsOS.Count, "The first Long Text field should have three paragraphs.");
 
 			Assert.IsNull(text.ParagraphsOS[0].StyleName);
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsEn);
 			tisb.Append("This test paragraph does not have a style explicitly assigned.");
@@ -2935,7 +2935,7 @@ namespace LexTextControlsTests
 			Assert.AreEqual(cpara, text.ParagraphsOS.Count,
 				String.Format("The first Long Text field should have {0} paragraphs.", cpara));
 			Assert.AreEqual("Bulleted List", text.ParagraphsOS[0].StyleName);
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsEn);
 			tisb.Append("This is a test of sorts.  This field can contain ");

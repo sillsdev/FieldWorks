@@ -194,7 +194,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				return TsStringUtils.MakeString(text, AssociatedSimpleRootSite.WritingSystemFactory.UserWs);
 
 			var textProps = selectionProps[0];
-			var propsBuilder = TsPropsBldrClass.Create();
+			var propsBuilder = TsStringUtils.MakePropsBldr();
 			var colorGray = (int)ColorUtil.ConvertColorToBGR(Color.Gray);
 			for (int i = 0; i < textProps.IntPropCount; i++)
 			{

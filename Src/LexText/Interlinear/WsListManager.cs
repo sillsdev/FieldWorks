@@ -286,7 +286,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		public static ITsTextProps LanguageCodeTextProps(int wsUser)
 		{
-			ITsPropsBldr tpb = TsPropsBldrClass.Create();
+			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault,
 				wsUser);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,

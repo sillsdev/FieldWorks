@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			get
 			{
-				var tpb = TsPropsBldrClass.Create();
+				var tpb = TsStringUtils.MakePropsBldr();
 				tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,
 					(int)ColorUtil.ConvertColorToBGR(Color.FromKnownColor(KnownColor.ControlDarkDark)));
 				//				// This is the formula (red + (blue * 256 + green) * 256) for a FW RGB color,

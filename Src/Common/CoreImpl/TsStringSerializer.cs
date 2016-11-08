@@ -265,7 +265,7 @@ namespace SIL.CoreImpl
 				return null;	// If we don't have any runs, we don't have a string!
 			}
 
-			var strBldr = TsIncStrBldrClass.Create();
+			var strBldr = TsStringUtils.MakeIncStrBldr();
 
 			foreach (XElement runElement in runs)
 			{

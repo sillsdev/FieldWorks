@@ -27,7 +27,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 			var begin = TsStringUtils.MakeString("beginning", wsEn);
 			var end = TsStringUtils.MakeString("end", wsFr);
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.AppendTsString(begin);
 			tisb.AppendTsString(end);
 			ITsString result = null;
@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			var begin = TsStringUtils.MakeString("beginning", wsEn);
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.AppendTsString(begin);
 			ITsString result = null;
 			Assert.DoesNotThrow(() => result = StringServices.CrawlRuns(tisb.GetString(), run => run.get_WritingSystemAt(0) == wsEn ? null : run));
@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 			var begin = TsStringUtils.MakeString("beginning", wsEn);
 			var end = TsStringUtils.MakeString("end", wsFr);
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.AppendTsString(begin);
 			tisb.AppendTsString(end);
 			ITsString result = null;
@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var begin = TsStringUtils.MakeString("beginning", wsEn);
 			var middle = TsStringUtils.MakeString("middle", wsFr);
 			var end = TsStringUtils.MakeString("end", wsEn);
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.AppendTsString(begin);
 			tisb.AppendTsString(middle);
 			tisb.AppendTsString(end);
@@ -89,7 +89,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 			var begin = TsStringUtils.MakeString("beginning", wsEn);
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.AppendTsString(begin);
 			ITsString result = null;
 			Assert.DoesNotThrow(() => result = StringServices.CrawlRuns(tisb.GetString(), run => run.get_WritingSystemAt(0) == wsFr ? null : run));
@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 			var begin = TsStringUtils.MakeString("beginning", wsEn);
 			var end = TsStringUtils.MakeString("end", wsEn);
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.AppendTsString(begin);
 			tisb.AppendTsString(end);
 			ITsString result = null;
@@ -221,7 +221,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				var para = paraFactory.Create();
 				sttext.ParagraphsOS.Add(para);
 				para.Contents = paragraphs[i];
-				var bldr = TsPropsBldrClass.Create();
+				var bldr = TsStringUtils.MakePropsBldr();
 				bldr.SetStrPropValue((int) FwTextPropType.ktptNamedStyle, styles[i]);
 				para.StyleRules = bldr.GetTextProps();
 			}

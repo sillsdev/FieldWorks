@@ -542,7 +542,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var userWs = m_cache.WritingSystemFactory.UserWs;
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 				tisb.Append(String.Format(Strings.ksDeleteLexExampleSentence));
 
@@ -666,7 +666,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var userWs = m_cache.WritingSystemFactory.UserWs;
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 				tisb.Append(String.Format(Strings.ksDeleteLexPronunciation));
 				return tisb.GetString();
@@ -1737,7 +1737,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var userWs = m_cache.WritingSystemFactory.UserWs;
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 				tisb.Append(String.Format(Strings.ksDeleteLexEntry, " "));
 				tisb.AppendTsString(ShortNameTSS);
@@ -1834,7 +1834,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				var wantMainWarningLine = true;
 				// Create a string with its own run of properties, so we don't carry on tisb's properties.
 				// Otherwise, we might append the string as a superscript, running with the homograph properties (cf. LT-3177).
-				var tisb2 = TsIncStrBldrClass.Create();
+				var tisb2 = TsStringUtils.MakeIncStrBldr();
 				if (analCount > 0)
 				{
 					tisb2.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
@@ -3552,7 +3552,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				var userWs = m_cache.DefaultUserWs;
 				var analWs = m_cache.DefaultAnalWs;
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, analWs);
 				tisb.AppendTsString(ShortNameTSS);
 
@@ -4604,7 +4604,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				var deleteTextTssBuilder = TsIncStrBldrClass.Create();
+				var deleteTextTssBuilder = TsStringUtils.MakeIncStrBldr();
 				deleteTextTssBuilder.SetIntPropValues((int) FwTextPropType.ktptEditable,
 					(int) FwTextPropVar.ktpvEnum,
 					(int) TptEditable.ktptNotEditable);
@@ -4873,7 +4873,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+				ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 				GetFullReferenceName(tisb);
 				return tisb.GetString();
 			}
@@ -5130,9 +5130,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		private ITsString ReversalEntriesBulkTextForWs(int ws)
 		{
-			ITsStrBldr tsb = TsStrBldrClass.Create();
+			ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 			ITsTextProps ttpWs;
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetIntPropValues((int) FwTextPropType.ktptWs, (int) FwTextPropVar.ktpvDefault, ws);
 			ttpWs = propsBldr.GetTextProps();
 			tsb.Replace(0, 0, "", ttpWs); // In case it ends up empty, make sure it's empty in the right Ws.
@@ -5276,7 +5276,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				var wsAnal = Cache.DefaultAnalWs;
 
 				// Add sense number, if there is more than one sense
@@ -5441,7 +5441,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		public ITsString OwnerOutlineNameForWs(int wsVern, int hn, HomographConfiguration.HeadwordVariant hv)
 		{
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			AddOwnerOutlineName(tisb, hn, wsVern, hv);
 			return tisb.GetString();
 		}
@@ -6719,7 +6719,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var userWs = m_cache.WritingSystemFactory.UserWs;
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 				tisb.Append(String.Format(Strings.ksDeletePhoneme, " "));
 				tisb.AppendTsString(ShortNameTSS);
@@ -6816,7 +6816,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.WritingSystemFactory.UserWs);
 				tisb.Append(String.Format(Strings.ksDeletePhRepresentation, " "));
 				tisb.AppendTsString(ShortNameTSS);
@@ -6902,7 +6902,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				int userWs = m_cache.DefaultUserWs;
-				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+				ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 				tisb.Append(String.Format(Strings.ksDeleteNaturalClass, " "));
 				tisb.AppendTsString(ShortNameTSS);
@@ -7014,7 +7014,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				int userWs = m_cache.DefaultUserWs;
-				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+				ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 				tisb.Append(String.Format(Strings.ksDeleteNaturalClass, " "));
 				tisb.AppendTsString(ShortNameTSS);
@@ -8123,7 +8123,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				var lrtOwner = Owner as ILexRefType;
 				var analWs = m_cache.DefaultAnalWs;
 				var userWs = m_cache.DefaultUserWs;
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 
 				//If this is a whole/parts kind of relation then show this to the user
 				//because ShortName is always Parts and otherwise we would have to figure out if we
@@ -8411,7 +8411,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var analWs = m_cache.DefaultAnalWs;
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, analWs);
 				tisb.AppendTsString(ShortNameTSS);
 
@@ -8466,7 +8466,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var userWs = m_cache.WritingSystemFactory.UserWs;
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 				tisb.Append(String.Format(Strings.ksDeletePhEnvironment, " "));
 				tisb.AppendTsString(ShortNameTSS);
@@ -9613,7 +9613,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				if (LanguageNotes.BestAnalysisAlternative.Text == "***")
 					return Form.BestVernacularAnalysisAlternative;
-				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+				ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.AppendTsString(Form.BestVernacularAnalysisAlternative);
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
 				tisb.Append(" (");

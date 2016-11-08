@@ -213,7 +213,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						}
 						else
 						{
-							ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+							ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 							if (iMin > 0)
 								tisb.AppendTsString(m_cache.MakeUserTss(sFmt.Substring(0, iMin)));
 							tisb.AppendTsString(tssTitle);

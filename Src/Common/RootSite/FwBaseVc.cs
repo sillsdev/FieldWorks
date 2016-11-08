@@ -239,8 +239,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		protected static ITsString GetFootnoteIconString(int ws, Guid footnoteGuid)
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, ws);
 
 			StringBuilder iconData = FootnoteIconString;
@@ -264,7 +264,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		protected ITsString MakeUiElementString(string text, int uiWs, Action<ITsPropsBldr> SetAdditionalProps)
 		{
 			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, uiWs);
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, StyleServices.UiElementStylename);
 			if (SetAdditionalProps != null)

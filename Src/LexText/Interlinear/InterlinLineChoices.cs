@@ -1294,7 +1294,7 @@ namespace SIL.FieldWorks.IText
 					CoreWritingSystemDefinition wsAnalysis = cache.ServiceLocator.WritingSystemManager.Get(m_ws);
 					label = wsAnalysis.Abbreviation;
 				}
-				ITsStrBldr tsb = TsStrBldrClass.Create();
+				ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 				tsb.Replace(0, tsb.Length, label, WsListManager.LanguageCodeTextProps(cache.DefaultUserWs));
 				m_tssWsLabel = tsb.GetString();
 			}

@@ -861,11 +861,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_dlg.ApplyStyle(m_dlg.FindTextControl, "CStyle3");
 
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "CStyle3");
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs,
 				(int)FwTextPropVar.ktpvDefault, Cache.WritingSystemFactory.GetWsFromStr("en-fonipa-x-etic"));
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
 			strBldr.Replace(0, 0, "Blah", propsBldr.GetTextProps());
 			ITsString tssExpected = strBldr.GetString();
 			AssertEx.AreTsStringsEqual(tssExpected, m_dlg.FindTextControl.Tss);
@@ -917,7 +917,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.ApplyStyle(m_dlg.FindTextControl, "CStyle2");
 
 			// make the string backwards...
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
 			strBldr.Replace(0, 0, ", blah", StyleUtils.CharStyleTextProps("CStyle2", Cache.WritingSystemFactory.GetWsFromStr("de")));
 			strBldr.Replace(0, 0, "Blah", StyleUtils.CharStyleTextProps("CStyle3", Cache.WritingSystemFactory.GetWsFromStr("de")));
 			ITsString tssExpected = strBldr.GetString();
@@ -957,7 +957,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.ApplyStyle(m_dlg.FindTextControl, "CStyle2");
 
 			// make the string backwards...
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
 			strBldr.Replace(0, 0, ", blah", StyleUtils.CharStyleTextProps("CStyle2", Cache.WritingSystemFactory.GetWsFromStr("en-fonipa-x-etic")));
 			strBldr.Replace(0, 0, "Blah", StyleUtils.CharStyleTextProps(null, Cache.WritingSystemFactory.GetWsFromStr("en-fonipa-x-etic")));
 			ITsString tssExpected = strBldr.GetString();
@@ -1012,11 +1012,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.ApplyWS(m_dlg.FindTextControl, Cache.WritingSystemFactory.GetWsFromStr("de"));
 			Assert.IsTrue(m_dlg.FindTextControl.Focused, "Focus should have returned to Find box");
 
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs,
 				(int)FwTextPropVar.ktpvDefault, Cache.WritingSystemFactory.GetWsFromStr("de"));
 
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
 			strBldr.Replace(0, 0, "Blah", propsBldr.GetTextProps());
 			ITsString tssExpected = strBldr.GetString();
 			AssertEx.AreTsStringsEqual(tssExpected, m_dlg.FindTextControl.Tss);
@@ -1055,7 +1055,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.IsTrue(m_dlg.FindTextControl.Focused, "Focus should have returned to Find box");
 
 			// make the string backwards...
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
 			strBldr.Replace(0, 0, ", blah", StyleUtils.CharStyleTextProps(null, Cache.WritingSystemFactory.GetWsFromStr("en")));
 			strBldr.Replace(0, 0, "Blah", StyleUtils.CharStyleTextProps(null, Cache.WritingSystemFactory.GetWsFromStr("de")));
 			ITsString tssExpected = strBldr.GetString();
@@ -1131,7 +1131,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.IsTrue(m_dlg.FindTextControl.Focused, "Focus should have returned to Find box");
 
 			// make the string backwards...
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
 			strBldr.Replace(0, 0, ", blah", StyleUtils.CharStyleTextProps("CStyle3", Cache.WritingSystemFactory.GetWsFromStr("en")));
 			strBldr.Replace(0, 0, "Blah", StyleUtils.CharStyleTextProps("CStyle3", Cache.WritingSystemFactory.GetWsFromStr("de")));
 			ITsString tssExpected = strBldr.GetString();
@@ -1174,7 +1174,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.IsTrue(m_dlg.FindTextControl.Focused, "Focus should have returned to Find box");
 
 			// make the string backwards...
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
 			strBldr.Replace(0, 0, ", blah", StyleUtils.CharStyleTextProps("CStyle2", Cache.WritingSystemFactory.GetWsFromStr("en")));
 			strBldr.Replace(0, 0, "Blah", StyleUtils.CharStyleTextProps("CStyle3", Cache.WritingSystemFactory.GetWsFromStr("de")));
 			ITsString tssExpected = strBldr.GetString();
@@ -1677,7 +1677,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_dlg.FindText = TsStringHelper.MakeTss("Blah", ipaWs);
 			// Change the replace string in the dialog to have 2 styled runs.
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Run 2", StyleUtils.CharStyleTextProps("CStyle1", ipaWs));
 			bldr.Replace(0, 0, "Run 1", StyleUtils.CharStyleTextProps("CStyle3", ipaWs));
 			m_dlg.ReplaceText = bldr.GetString();
@@ -1688,7 +1688,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.VerifySelection(0, 0, 0, 12, 16);
 			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
 
-			bldr = TsStrBldrClass.Create();
+			bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, ", blah, blah!", StyleUtils.CharStyleTextProps(null, ipaWs));
 			bldr.Replace(0, 0, "Run 2", StyleUtils.CharStyleTextProps("CStyle1", ipaWs));
 			bldr.Replace(0, 0, "Run 1", StyleUtils.CharStyleTextProps("CStyle3", ipaWs));
@@ -1740,7 +1740,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private ITsString BuildTssWithStyle(string style)
 		{
 			var wsIpa = m_wsIpa.Handle;
-			var bldrExpected = TsStrBldrClass.Create();
+			var bldrExpected = TsStringUtils.MakeStrBldr();
 			bldrExpected.Replace(0, 0, " last text.", StyleUtils.CharStyleTextProps(null, wsIpa));
 			bldrExpected.Replace(0, 0, "replace this", StyleUtils.CharStyleTextProps(style, wsIpa));
 			bldrExpected.Replace(0, 0, " more text ", StyleUtils.CharStyleTextProps(null, wsIpa));
@@ -1768,7 +1768,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_dlg.FindText = TsStringHelper.MakeTss("Blah", ipaWs);
 			// Change the replace string in the dialog to have 2 runs with different writing systems.
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Run 2", StyleUtils.CharStyleTextProps("CStyle1", deWs));
 			bldr.Replace(0, 0, "Run 1", StyleUtils.CharStyleTextProps("CStyle1", frWs));
 			m_dlg.ReplaceText = bldr.GetString();
@@ -1781,7 +1781,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
 
 			// Create string with expected results.
-			bldr = TsStrBldrClass.Create();
+			bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, ", blah, blah!", StyleUtils.CharStyleTextProps(null, ipaWs));
 			bldr.Replace(0, 0, "Run 2", StyleUtils.CharStyleTextProps("CStyle1", deWs));
 			bldr.Replace(0, 0, "Run 1", StyleUtils.CharStyleTextProps("CStyle1", frWs));

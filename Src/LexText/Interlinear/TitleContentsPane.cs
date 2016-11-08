@@ -223,12 +223,12 @@ namespace SIL.FieldWorks.IText
 		{
 			int wsUser = cache.DefaultUserWs;
 			m_tssTitle = TsStringUtils.MakeString(ITextStrings.ksTitle, wsUser);
-			ITsPropsBldr tpb = TsPropsBldrClass.Create();
+			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBold,
 				(int)FwTextPropVar.ktpvEnum,
 				(int)FwTextToggleVal.kttvForceOn);
 			m_ttpBold = tpb.GetTextProps();
-			tpb = TsPropsBldrClass.Create();
+			tpb = TsStringUtils.MakePropsBldr();
 			// Set some padding all around.
 			tpb.SetIntPropValues((int)FwTextPropType.ktptPadTop,
 				(int) FwTextPropVar.ktpvMilliPoint, 1000);

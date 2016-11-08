@@ -386,7 +386,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var fontOverride = new FontInfo();
 			fontOverride.m_italic.ExplicitValue = true;
 			fontOverrides[fromWs.Handle] = fontOverride;
-			var bldr = TsPropsBldrClass.Create();
+			var bldr = TsStringUtils.MakePropsBldr();
 			BaseStyleInfo.SaveFontOverridesToBuilder(fontOverrides, bldr);
 			style1.Rules = bldr.GetTextProps();
 			m_actionHandler.EndUndoTask();
@@ -420,7 +420,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			fontOverride = new FontInfo();
 			fontOverride.m_bold.ExplicitValue = true;
 			fontOverrides[toWs.Handle] = fontOverride;
-			var bldr = TsPropsBldrClass.Create();
+			var bldr = TsStringUtils.MakePropsBldr();
 			BaseStyleInfo.SaveFontOverridesToBuilder(fontOverrides, bldr);
 			style1.Rules = bldr.GetTextProps();
 			m_actionHandler.EndUndoTask();

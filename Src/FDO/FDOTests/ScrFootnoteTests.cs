@@ -1317,8 +1317,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// ------------------------------------------------------------------------------------
 		private ITsString MakeMarker(string marker)
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
-			ITsPropsBldr propBldr = TsPropsBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
+			ITsPropsBldr propBldr = TsStringUtils.MakePropsBldr();
 			propBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle,
 				ScrStyleNames.FootnoteMarker);
 			propBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0,

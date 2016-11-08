@@ -732,7 +732,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptEditable,
 									  (int)FwTextPropVar.ktpvEnum,
 									  (int)TptEditable.ktptNotEditable);
@@ -969,7 +969,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						++annotationCount;
 					}
 				}
-				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+				ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptEditable,
 					(int)FwTextPropVar.ktpvEnum,
 					(int)TptEditable.ktptNotEditable);
@@ -1185,7 +1185,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				var cnt = 0;
 				var vernWs = m_cache.DefaultVernWs;
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, vernWs);
 				ITsString formSN;
 				foreach (var mb in MorphBundlesOS)
@@ -1236,7 +1236,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				int vernWs = m_cache.DefaultVernWs;
-				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+				ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, vernWs);
 				tisb.AppendTsString(ShortNameTSS);
 

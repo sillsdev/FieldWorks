@@ -218,7 +218,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			// Copy the runs of the replacement string, adjusting the properties.
 			// Make a string builder to accumulate the real replacement string.
-			ITsStrBldr stringBldr = TsStrBldrClass.Create();
+			ITsStrBldr stringBldr = TsStringUtils.MakeStrBldr();
 
 			// Copy the runs of the replacement string, adjusting the properties.
 			for (int irun = 0; irun < replaceRunCount; irun++)

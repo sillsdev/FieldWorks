@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 
@@ -282,7 +283,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			IStStyle mainTitleStyle = AddTestStyle("Title Main", ContextValues.Title,
 				StructureValues.Body, FunctionValues.Prose, false, Cache.LangProject.StylesOC);
-			var props = TsPropsFactoryClass.Create().MakeProps("rubbish", Cache.DefaultAnalWs, 0);
+			var props = TsStringUtils.MakeProps("rubbish", Cache.DefaultAnalWs);
 			var sut = new BaseStyleInfo(mainTitleStyle, props);
 			Assert.That(sut.Cache, Is.EqualTo(Cache));
 		}

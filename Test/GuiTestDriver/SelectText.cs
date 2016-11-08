@@ -181,7 +181,7 @@ namespace GuiTestDriver
 			//UCOMIStream strm = tsw.get_Stream();
 			System.Runtime.InteropServices.ComTypes.IStream strm = tsw.Stream;
 			// Copy the string to our address space.
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.ReplaceTsString(0,0, tssFromApp);
 			ITsString tss = bldr.GetString();
 			int icchIndent = 2;

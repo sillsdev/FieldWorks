@@ -2900,7 +2900,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		public TsStringCollectorEnv(IVwEnv baseEnv, ISilDataAccess sda, int hvoRoot):
 			base(baseEnv, sda, hvoRoot)
 		{
-			m_builder = TsIncStrBldrClass.Create();
+			m_builder = TsStringUtils.MakeIncStrBldr();
 			// In case we add some raw strings, typically numbers, satisfy the constraints of string
 			// builders by giving it SOME writing system.
 			m_builder.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault,

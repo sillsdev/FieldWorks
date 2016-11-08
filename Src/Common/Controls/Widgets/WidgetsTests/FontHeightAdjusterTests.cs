@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			// Create a couple of styles
 			int hvoStyle = m_stylesheet.MakeNewStyle();
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetStrPropValue((int)FwTextStringProp.kstpFontFamily, "Arial");
 			m_stylesheet.PutStyle("StyleA", "bla", hvoStyle, 0, hvoStyle, 1, false, false,
 				propsBldr.GetTextProps());
@@ -144,9 +144,9 @@ namespace SIL.FieldWorks.Common.Widgets
 		[Test]
 		public void TestGetAdjustedTsString()
 		{
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
-			ITsStrBldr strBldrExpected = TsStrBldrClass.Create();
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
+			ITsStrBldr strBldrExpected = TsStringUtils.MakeStrBldr();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "StyleA");
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_hvoGermanWs);

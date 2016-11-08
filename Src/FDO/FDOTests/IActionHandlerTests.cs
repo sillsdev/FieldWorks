@@ -447,11 +447,11 @@ namespace SIL.FieldWorks.FDO.CoreTests
 		public void UnknownTests()
 		{
 			var userWs = Cache.WritingSystemFactory.UserWs;
-			var bldr = TsPropsBldrClass.Create();
+			var bldr = TsStringUtils.MakePropsBldr();
 			bldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Arial");
 			bldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 			var tppOriginal = bldr.GetTextProps();
-			bldr = TsPropsBldrClass.Create();
+			bldr = TsStringUtils.MakePropsBldr();
 			bldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Times new Roman");
 			bldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 			var tppNew = bldr.GetTextProps();

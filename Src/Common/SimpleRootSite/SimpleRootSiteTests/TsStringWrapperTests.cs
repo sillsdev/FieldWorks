@@ -37,8 +37,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public void TestTsStringWrapperRoundTrip(string str1, string namedStyle1, string str2, string namedStyle2)
 		{
 			var wsFact = new WritingSystemManager();
-			ITsStrBldr bldr = TsStrBldrClass.Create();
-			ITsPropsBldr ttpBldr = TsPropsBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
+			ITsPropsBldr ttpBldr = TsStringUtils.MakePropsBldr();
 			try
 			{
 				wsFact.get_Engine("en");

@@ -138,7 +138,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			if (iParaSeg == 0 && igroup > 0 && m_segGroups[igroup - 1].ParaSegs.Count == 0)
 			{
-				ITsStrBldr bldr = TsStrBldrClass.Create();
+				ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 				SegGroup prevGroup = m_segGroups[igroup - 1];
 				foreach (TsStringSegment seg in prevGroup.BtSegs)
 					AppendWithOptionalSpace(bldr, seg.String);

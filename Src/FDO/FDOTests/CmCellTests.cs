@@ -238,7 +238,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_cell.SetObjectMatchCriteria(m_categoryGrammar, false, false);
 
 			//verify the result
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Matches ", StyleUtils.CharStyleTextProps(null, Cache.DefaultUserWs));
 			TsStringUtils.InsertOrcIntoPara(m_categoryGrammar.Guid,
 				FwObjDataTypes.kodtNameGuidHot, bldr, bldr.Length,
@@ -259,7 +259,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_cell.SetObjectMatchCriteria(m_categoryGrammar, false, true);
 
 			//verify the result
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Empty or Matches ", StyleUtils.CharStyleTextProps(null, Cache.DefaultUserWs));
 			TsStringUtils.InsertOrcIntoPara(m_categoryGrammar.Guid,
 				FwObjDataTypes.kodtNameGuidHot, bldr, bldr.Length,
@@ -281,7 +281,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_cell.SetObjectMatchCriteria(m_categoryGrammar, true, true);
 
 			//verify the result
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Empty or Matches  +subitems",
 				StyleUtils.CharStyleTextProps(null, Cache.DefaultUserWs));
 			TsStringUtils.InsertOrcIntoPara(m_categoryGrammar.Guid,
@@ -302,7 +302,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_cell.SetObjectMatchCriteria(null, true, false);
 
 			//verify the result
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Matches +subitems", StyleUtils.CharStyleTextProps(null, Cache.DefaultUserWs));
 
 			AssertEx.AreTsStringsEqual(bldr.GetString(), m_cell.Contents);
@@ -438,7 +438,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void ParseObjectMatchCriteria_MatchWithoutSubItemsDefaultSet()
 		{
 			// Set the matching criteria for this filter cell
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Matches ", StyleUtils.CharStyleTextProps(null, Cache.DefaultUserWs));
 			TsStringUtils.InsertOrcIntoPara(m_categoryGrammar.Guid,
 				FwObjDataTypes.kodtNameGuidHot, bldr, bldr.Length,
@@ -463,7 +463,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void ParseObjectMatchCriteria_MatchWithSubItemsDefaultSet()
 		{
 			// Set the matching criteria for this filter cell
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Matches  +subitems", StyleUtils.CharStyleTextProps(null, Cache.DefaultUserWs));
 			TsStringUtils.InsertOrcIntoPara(m_categoryGrammar.Guid,
 				FwObjDataTypes.kodtNameGuidHot, bldr, 8, 8, Cache.DefaultUserWs);
@@ -487,7 +487,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void ParseObjectMatchCriteria_MatchEmptyOrObjectWithoutSubitems()
 		{
 			// Set the matching criteria for this filter cell
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Empty or Matches ", StyleUtils.CharStyleTextProps(null, Cache.DefaultUserWs));
 			TsStringUtils.InsertOrcIntoPara(m_categoryDiscourse.Guid,
 				FwObjDataTypes.kodtNameGuidHot, bldr, bldr.Length,

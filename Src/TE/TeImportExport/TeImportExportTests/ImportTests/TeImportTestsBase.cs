@@ -305,7 +305,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			m_wsAnal = Cache.DefaultAnalWs;
 
 			// init simple run text props expected by tests
-			ITsPropsBldr tsPropsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr tsPropsBldr = TsStringUtils.MakePropsBldr();
 			tsPropsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_wsVern);
 			m_ttpVernWS = tsPropsBldr.GetTextProps();
 			tsPropsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_wsAnal);

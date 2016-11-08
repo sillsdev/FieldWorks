@@ -313,7 +313,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.AppendTsString(OwnerOfClass<ILexEntry>().HeadWord);
 				tisb.Append(" ");
 				tisb.AppendTsString(InterlinearNameTSS);
@@ -526,7 +526,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				IFsFeatStruc featTo = ToMsFeaturesOA;
 				if (featFrom != null || featTo != null)
 				{
-					ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+					ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 					if (featFrom != null)
 						tisb.AppendTsString(featFrom.ShortNameTSS);
 					else
@@ -552,7 +552,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+				ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 				if (FromProdRestrictRC.Count > 0)
 				{
 					bool fFirst = true;
@@ -831,7 +831,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		private ITsString InterlinearAffix(ITsString tssFromPartOfSpeech, ITsString tssToPartOfSpeech)
 		{
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.AppendTsString(tssFromPartOfSpeech);
 			tisb.AppendTsString(TsStringUtils.MakeString(">", m_cache.WritingSystemFactory.UserWs));
 			tisb.AppendTsString(tssToPartOfSpeech);
@@ -881,7 +881,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			var posTo = ToPartOfSpeechRA;
 			if (posFrom != null || posTo != null)
 			{
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				if (posFrom != null)
 				{
 					var tssPOS = posFrom.Abbreviation.get_String(ws);
@@ -927,7 +927,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			var icTo = ToInflectionClassRA;
 			if (icFrom != null || icTo != null)
 			{
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				if (icFrom != null)
 				{
 					var tssIC = icFrom.Abbreviation.get_String(ws);
@@ -1091,7 +1091,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				if (ProdRestrictRC.Count > 0)
 				{
-					ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+					ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 					bool fFirst = true;
 					foreach (CmPossibility pss in ProdRestrictRC)
 					{
@@ -1258,7 +1258,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				AddChooserName(tisb);
 
 				return tisb.GetString();
@@ -1570,7 +1570,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				if (FromProdRestrictRC.Count > 0)
 				{
-					ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+					ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 					bool fFirst = true;
 					foreach (CmPossibility pss in FromProdRestrictRC)
 					{
@@ -1861,7 +1861,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var entry = Owner as ILexEntry;
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				(entry as LexEntry).CitationFormWithAffixTypeTss(tisb);
 				tisb.Append(" ");
 				var tssGloss = GetFirstGlossOfMSAThatMatchesTss(entry.SensesOS);
@@ -2118,7 +2118,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				IFsFeatStruc featInfl = InflFeatsOA;
 				if (featMS != null && featInfl != null)
 				{
-					ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+					ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 					tisb.AppendTsString(featMS.ShortNameTSS);
 					tisb.AppendTsString(m_cache.MakeUserTss(" / "));
 					tisb.AppendTsString(featInfl.ShortNameTSS);
@@ -2148,7 +2148,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				if (ProdRestrictRC.Count > 0)
 				{
-					ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+					ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 					bool fFirst = true;
 					foreach (CmPossibility pss in ProdRestrictRC)
 					{
@@ -2533,7 +2533,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var userWs = m_cache.WritingSystemFactory.UserWs;
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 				tisb.Append(String.Format(Strings.ksDeleteAffixTemplate));
 				return tisb.GetString();
@@ -2737,7 +2737,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var userWs = m_cache.WritingSystemFactory.UserWs;
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 				tisb.Append(String.Format(Strings.ksDeleteAffixSlot, " "));
 				tisb.AppendTsString(ShortNameTSS);
@@ -2852,7 +2852,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var userWs = m_cache.WritingSystemFactory.UserWs;
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 				tisb.Append(String.Format(Strings.ksDeleteInflectionClass, " "));
 				tisb.AppendTsString(ShortNameTSS);
@@ -3173,7 +3173,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				var vernWs = m_cache.DefaultVernWs;
 				var userWs = m_cache.DefaultUserWs;
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, vernWs);
 				tisb.AppendTsString(ShortNameTSS);
 
@@ -3316,7 +3316,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				string pre = null;
 				string post = null;
 				if (MorphTypeRA != null)
@@ -4557,7 +4557,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var userWs = m_cache.WritingSystemFactory.UserWs;
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 				tisb.Append(String.Format(Strings.ksDeleteStemName));
 				return tisb.GetString();

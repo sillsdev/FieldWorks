@@ -2186,7 +2186,7 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private ITsString ConcatenateScrVerses(List<ScrVerse> scrVerses, int iMin, int iLim)
 		{
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
 
 			Debug.Assert(iMin >= 0 && iLim <= scrVerses.Count);
 			for (int iVerse = iMin; iVerse < iLim; iVerse++)

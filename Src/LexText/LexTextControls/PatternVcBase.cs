@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			int userWs = m_cache.DefaultUserWs;
 			int maxFontSize = Cache.ServiceLocator.WritingSystems.AllWritingSystems.Select(ws => GetFontHeight(ws.Handle)).Max();
 
-			ITsPropsBldr tpb = TsPropsBldrClass.Create();
+			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 			// specify the writing system, so that font info for a specific WS in the normal style does not override these props
 			tpb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, userWs);
 			// use Charis SIL because it supports the special characters that are needed for
@@ -85,7 +85,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			tpb.SetIntPropValues((int) FwTextPropType.ktptFontSize, (int) FwTextPropVar.ktpvMilliPoint, maxFontSize);
 			m_bracketProps = tpb.GetTextProps();
 
-			tpb = TsPropsBldrClass.Create();
+			tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntPropValues((int) FwTextPropType.ktptMarginLeading, (int) FwTextPropVar.ktpvMilliPoint, PileMargin);
 			tpb.SetIntPropValues((int) FwTextPropType.ktptMarginTrailing, (int) FwTextPropVar.ktpvMilliPoint, PileMargin);
 			m_pileProps = tpb.GetTextProps();

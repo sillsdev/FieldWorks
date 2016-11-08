@@ -1466,7 +1466,7 @@ namespace SIL.FieldWorks.IText
 			int wsText = WritingSystemServices.ActualWs(Cache, WritingSystemServices.kwsVernInParagraph,
 				m_hvoRoot, StTextTags.kflidParagraphs);
 
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bool fOpenPunc = false;
 			ITsString space = TsStringUtils.MakeString(" ", ws);
 			foreach (var analysis in seg.AnalysesRS)

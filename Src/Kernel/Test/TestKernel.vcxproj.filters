@@ -47,8 +47,6 @@
     <ClInclude Include="MockLgWritingSystemFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="testFwKernel.mak" />

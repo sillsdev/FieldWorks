@@ -13,7 +13,7 @@ using System.Globalization;
 using System.Threading;
 using System.Linq;
 using NUnit.Framework;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Common.Framework;
@@ -1223,7 +1223,7 @@ namespace SIL.FieldWorks.TE
 			IStTxtPara tPara1 = (IStTxtPara)book.TitleOA.ParagraphsOS[0];
 
 			// Change the paragraph style to something bogus
-			ITsPropsBldr bldr = TsPropsBldrClass.Create();
+			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 			bldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "To Be Replaced");
 			ITsTextProps props = bldr.GetTextProps();
 			hPara0.StyleRules = props;

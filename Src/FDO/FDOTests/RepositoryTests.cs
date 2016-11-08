@@ -357,7 +357,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 		public void TryGetObject_ORCWithDifferentProps_ObjData()
 		{
 			IPunctuationForm pf = Cache.ServiceLocator.GetInstance<IPunctuationFormFactory>().Create();
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			TsStringUtils.InsertOrcIntoPara(Guid.NewGuid(), FwObjDataTypes.kodtNameGuidHot, bldr, 0, 0, Cache.DefaultVernWs);
 			pf.Form = bldr.GetString();
 			IPunctuationForm pfDummy;
@@ -378,7 +378,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 		public void TryGetObject_ORCWithSameProps_ObjData()
 		{
 			IPunctuationForm pf = Cache.ServiceLocator.GetInstance<IPunctuationFormFactory>().Create();
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			TsStringUtils.InsertOrcIntoPara(Guid.NewGuid(), FwObjDataTypes.kodtNameGuidHot, bldr, 0, 0, Cache.DefaultVernWs);
 			pf.Form = bldr.GetString();
 			IPunctuationForm pfExisting;
@@ -413,7 +413,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 		public void TryGetObject_PlainPunctString_NotExists_ORCTableNotEmpty()
 		{
 			IPunctuationForm pf = Cache.ServiceLocator.GetInstance<IPunctuationFormFactory>().Create();
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			TsStringUtils.InsertOrcIntoPara(Guid.NewGuid(), FwObjDataTypes.kodtNameGuidHot, bldr, 0, 0, Cache.DefaultVernWs);
 			pf.Form = bldr.GetString();
 

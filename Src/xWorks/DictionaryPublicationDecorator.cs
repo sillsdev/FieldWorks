@@ -304,7 +304,7 @@ namespace SIL.FieldWorks.XWorks
 			int hn;
 			if (!m_homographNumbers.TryGetValue(entry.Hvo, out hn))
 				hn = entry.HomographNumber; // unknown entry, use its own HN instead of our override
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.AppendTsString(StringServices.HeadWordForWsAndHn(entry, wsVern, hn, "", hv));
 			var hc = sense.Services.GetInstance<HomographConfiguration>();
 			if (hc.ShowSenseNumber(hv) && HasMoreThanOneSense(entry))

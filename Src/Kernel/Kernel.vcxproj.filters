@@ -83,8 +83,6 @@
     <ClInclude Include="TsTextProps.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LangResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>

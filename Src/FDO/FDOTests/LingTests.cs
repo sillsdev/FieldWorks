@@ -306,7 +306,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			Assert.That(mdam.FeaturesTSS.Length, Is.EqualTo(0),
 				"2 with no features, FeaturesTSS should produce an empty string");
 
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			var featStruc2 = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
 			mdam.ToMsFeaturesOA = featStruc2;
 			var featSpec2 = Cache.ServiceLocator.GetInstance<IFsClosedValueFactory>().Create();
@@ -351,7 +351,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			mdsm.InflFeatsOA = featStruc6;
 			var featSpec6 = Cache.ServiceLocator.GetInstance<IFsClosedValueFactory>().Create();
 			featStruc6.FeatureSpecsOC.Add(featSpec6);
-			ITsIncStrBldr tisc = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisc = TsStringUtils.MakeIncStrBldr();
 			tisc.AppendTsString(featStruc5.ShortNameTSS);
 			tisc.AppendTsString(Cache.MakeUserTss(" / "));
 			tisc.AppendTsString(featStruc6.ShortNameTSS);
@@ -383,7 +383,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			var cmPoss = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 			restrictionsList.PossibilitiesOS.Add(cmPoss);
 			msm.ProdRestrictRC.Add(cmPoss);
-			ITsIncStrBldr tisc = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisc = TsStringUtils.MakeIncStrBldr();
 			tisc.AppendTsString(cmPoss.Abbreviation.BestAnalysisVernacularAlternative);
 			Assert.That(msm.ExceptionFeaturesTSS.Text, Is.EqualTo(tisc.Text),
 				"1 with prodRestrict, ExceptionFeaturesTSS should not be an empty string");
@@ -391,7 +391,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			//Test for MoDerivAffMsa
 			IMoDerivAffMsa mdam = Cache.ServiceLocator.GetInstance<IMoDerivAffMsaFactory>().Create();
 			le.MorphoSyntaxAnalysesOC.Add(mdam);
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.AppendTsString(Cache.MakeUserTss(""));
 			Assert.That(mdam.ExceptionFeaturesTSS.Length, Is.EqualTo(0),
 				"2 with no prodRestrict, ExceptionFeaturesTSS should produce an empty string");

@@ -1710,7 +1710,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			// exception to make this check...
 			try
 			{
-				ITsStrBldr bldr = TsStrBldrClass.Create();
+				ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 				m_vc = new TextBoxVc(this);
 				m_fTssRegistered = true;
 			}
@@ -2053,7 +2053,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			if (tss == null || tss.Length == 0)
 				return tss;
 
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			List<ITsString> lines = TsStringUtils.Split(tss, new[] { oldSubStr }, StringSplitOptions.None);
 			for (int i = 0; i < lines.Count; i++)
 			{

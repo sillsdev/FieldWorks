@@ -685,7 +685,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					ITsTextProps ttpNormal = GetStyleRgch(0, StyleServices.NormalStyleName);
 					if (ttpNormal == null) // if no Normal style
 						return null; //not an error
-					ITsPropsBldr tpb = TsPropsBldrClass.Create();
+					ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 					CopyStringProp(ttpNormal, tpb, (int)FwTextStringProp.kstpWsStyle);
 					CopyStringProp(ttpNormal, tpb, (int)FwTextPropType.ktptFontFamily);
 					CopyStringProp(ttpNormal, tpb, (int)FwTextPropType.ktptFontVariations);
@@ -983,7 +983,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				{
 					// If not based on anything, or based on itself; use as is with any applicable overrides.
 					var bldr = (styleInfo.RealStyle.Rules == null)
-						? TsPropsBldrClass.Create()
+						? TsStringUtils.MakePropsBldr()
 						: styleInfo.RealStyle.Rules.GetBldr();
 					ApplyProgrammaticPropOverrides(styleInfo.Name, bldr);
 					styleInfo.TextProps = bldr.GetTextProps();
@@ -1433,7 +1433,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			ITsPropsBldr overridenProps;
 			if (!m_propOverrides.TryGetValue(styleName, out overridenProps))
 			{
-				overridenProps = TsPropsBldrClass.Create();
+				overridenProps = TsStringUtils.MakePropsBldr();
 				m_propOverrides[styleName] = overridenProps;
 			}
 			return overridenProps;

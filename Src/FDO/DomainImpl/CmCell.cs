@@ -323,7 +323,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// ------------------------------------------------------------------------------------
 		private void SaveObjectMatchCriteria(ICmPossibility matchVal)
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			string sCriteria = string.Empty;
 
 			if (m_comparisonType == ComparisonTypes.kMatches)

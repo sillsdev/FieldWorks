@@ -130,7 +130,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_fwtbSenses.AdjustForStyleSheet(this, null, m_propertyTable);
 			m_fwtbSenses.AdjustStringHeight = false;
 
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
 			var msaRepository = m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>();
 			if (hvoOriginalMsa != 0)

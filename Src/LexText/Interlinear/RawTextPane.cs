@@ -1070,18 +1070,18 @@ namespace SIL.FieldWorks.IText
 		{
 			string userPrompt = ITextStrings.ksEnterOrPasteHere;
 
-			ITsPropsBldr ttpBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr ttpBldr = TsStringUtils.MakePropsBldr();
 			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor,
 				(int)FwTextPropVar.ktpvDefault, Color.LightGray.ToArgb());
 			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs,
 				(int)FwTextPropVar.ktpvDefault, Cache.DefaultUserWs);
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, userPrompt, ttpBldr.GetTextProps());
 			// Begin the prompt with a zero-width space in the vernacular writing system (with
 			// no funny colors).  This ensures anything the user types (or pastes from a non-FW
 			// clipboard) is put in that WS.
 			// 200B == zero-width space.
-			ITsPropsBldr ttpBldr2 = TsPropsBldrClass.Create();
+			ITsPropsBldr ttpBldr2 = TsStringUtils.MakePropsBldr();
 			ttpBldr2.SetIntPropValues((int)FwTextPropType.ktptWs,
 				(int)FwTextPropVar.ktpvDefault, Cache.DefaultVernWs);
 			bldr.Replace(0, 0, "\u200B", ttpBldr2.GetTextProps());
@@ -1092,7 +1092,7 @@ namespace SIL.FieldWorks.IText
 		{
 			get
 			{
-				ITsPropsBldr bldr = TsPropsBldrClass.Create();
+				ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 				bldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Dictionary-Pictures");
 				bldr.SetIntPropValues((int)FwTextPropType.ktptEditable,
 					(int)FwTextPropVar.ktpvEnum,

@@ -215,7 +215,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			// create second para
 			IStTxtPara para = m_footnote.AddNewTextPara("Note Exegesis Paragraph");
 
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Paragraph Two", StyleUtils.CharStyleTextProps(
 				"Foreign", m_wsUr));
 			para.Contents = bldr.GetString();
@@ -278,7 +278,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			SetupBackTrans();
 
-			ITsIncStrBldr strBldr = TsIncStrBldrClass.Create();
+			ITsIncStrBldr strBldr = TsStringUtils.MakeIncStrBldr();
 			strBldr.SetIntPropValues((int)FwTextPropType.ktptWs,
 				(int)FwTextPropVar.ktpvDefault, m_vernWs);
 
@@ -410,13 +410,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void CreateFromStringRep_twoCharStylePara()
 		{
 
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs,
 				(int)FwTextPropVar.ktpvDefault,
 				m_vernWs);
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle,
 				"Emphasis");
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Test Text", propsBldr.GetTextProps());
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle,
 				null);
@@ -453,7 +453,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			// create second para
 			IStTxtPara para = m_footnote.AddNewTextPara("Note Exegesis Paragraph");
-			bldr = TsStrBldrClass.Create();
+			bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Paragraph Two", StyleUtils.CharStyleTextProps("Foreign", m_wsUr));
 			para.Contents = bldr.GetString();
 
@@ -479,11 +479,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			SetupBackTrans();
 
 			// Setup expected results for the footnote
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs,
 				(int)FwTextPropVar.ktpvDefault, m_vernWs);
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, null);
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Text in <brackets>", propsBldr.GetTextProps());
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle,
 				null);
@@ -515,7 +515,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			SetupBackTrans();
 
-			ITsIncStrBldr strBldr = TsIncStrBldrClass.Create();
+			ITsIncStrBldr strBldr = TsStringUtils.MakeIncStrBldr();
 			strBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, m_vernWs);
 
 			// Setup expected results for the footnote

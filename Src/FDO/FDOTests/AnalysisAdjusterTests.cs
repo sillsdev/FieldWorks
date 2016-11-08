@@ -573,7 +573,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				MatchingFinalAnalyses = 0,
 				MatchOneMoreInitialTN = true
 			};
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "1Good", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			bldr.SetStrPropValue(0, 1, (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
 			adjuster.SetOldContents(bldr.GetString());
@@ -600,7 +600,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				MatchingFinalAnalyses = 0,
 				MatchOneMoreInitialTN = true,
 			};
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "1Goody 2Bad.", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			bldr.SetStrPropValue(0, 1, (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
 			bldr.SetStrPropValue(7, 8, (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
@@ -624,7 +624,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			{
 				MatchingInitialSegments = 8,
 			};
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			//	                          1         2         3         4         5         6         7         8         9
 			//                  0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
 			bldr.Replace(0, 0, "1Goody 2Bad. But not too bad. 3Wonderful. And nice.", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -652,7 +652,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				MatchingInitialSegments = 2,
 				MatchingFinalSegments = 1,
 			};
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			//	                          1         2         3         4         5         6         7         8         9
 			//                  0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
 			bldr.Replace(0, 0, "1Goody 2Bad. But not too bad. 3Wonderful. And nice.", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -683,7 +683,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				MatchOneMoreInitialTN = true,
 				MatchOneMoreFinalTN = true,
 			};
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "1Goody .Bad.", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			bldr.SetStrPropValue(0, 1, (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
 			adjuster.SetOldContents(bldr.GetString());
@@ -710,7 +710,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				MatchOneMoreInitialTN = true,
 				MatchOneMoreFinalTN = true,
 			};
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "1Goody .Bad.", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			bldr.SetStrPropValue(0, 1, (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
 			adjuster.SetOldContents(bldr.GetString());
@@ -737,7 +737,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				MatchOneMoreInitialTN = true,
 				MatchOneMoreFinalTN = true,
 			};
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "1Goody .Bad.", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			bldr.SetStrPropValue(0, 1, (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
 			adjuster.SetOldContents(bldr.GetString());
@@ -765,7 +765,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				MatchOneMoreInitialTN = false,
 				MatchOneMoreFinalTN = true
 			};
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "1Goody. 2Bad.", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			bldr.SetStrPropValue(0, 1, (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
 			adjuster.SetOldContents(bldr.GetString());
@@ -793,7 +793,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				MatchOneMoreInitialTN = true,
 				MatchOneMoreFinalTN = false
 			};
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "1Goodyr 2Bad.", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			bldr.SetStrPropValue(0, 1, (int)FwTextPropType.ktptNamedStyle, ScrStyleNames.VerseNumber);
 			adjuster.SetOldContents(bldr.GetString());
@@ -817,7 +817,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				MatchOneMoreInitialTN = true,
 			};
 			// Create a string with an ORC in the middle for the old contents
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Start", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			TsStringUtils.InsertOrcIntoPara(Guid.NewGuid(), FwObjDataTypes.kodtOwnNameGuidHot, bldr, bldr.Length, bldr.Length, Cache.DefaultVernWs);
 			bldr.Replace(bldr.Length, bldr.Length, " end", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));

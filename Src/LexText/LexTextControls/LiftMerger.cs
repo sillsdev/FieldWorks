@@ -33,7 +33,6 @@ namespace SIL.FieldWorks.LexText.Controls
 	public partial class FlexLiftMerger : ILexiconMerger<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>
 	{
 		readonly FdoCache m_cache;
-		readonly ITsPropsFactory m_tpf = TsPropsFactoryClass.Create();
 		ITsString m_tssEmpty;
 		readonly GuidConverter m_gconv = (GuidConverter)TypeDescriptor.GetConverter(typeof(Guid));
 		public const string LiftDateTimeFormat = "yyyy-MM-ddTHH:mm:ssK";	// wants UTC, but works with Local
@@ -2786,7 +2785,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			var ich = 0;
 			ParaData para = null;
 			var fNewPara = true;
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, wsText);
 			var wsCurrent = wsText;
 			string styleCurrent = null;

@@ -133,7 +133,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			Assert.IsNull(proxy4.EndMarker);
 
 			// use SetFormat to add formatting props to unmapped proxy3
-			ITsPropsBldr tsPropertiesBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr tsPropertiesBldr = TsStringUtils.MakePropsBldr();
 			tsPropertiesBldr.SetIntPropValues((int)FwTextPropType.ktptItalic,
 				(int)FwTextPropVar.ktpvEnum,
 				(int)FwTextToggleVal.kttvForceOn);

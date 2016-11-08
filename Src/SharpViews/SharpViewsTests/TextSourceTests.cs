@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.SharpViews.SharpViewsTests
 			wsf = new MockWsf();
 			wsEn = wsf.GetWsFromStr("en");
 			wsFrn = wsf.GetWsFromStr("fr");
-			ITsPropsBldr propBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propBldr = TsStringUtils.MakePropsBldr();
 			propBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, wsFrn);
 			ttpFrn = propBldr.GetTextProps();
 		}

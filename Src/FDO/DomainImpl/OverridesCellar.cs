@@ -1518,7 +1518,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.AppendTsString(Abbreviation.BestAnalysisAlternative);
 				tisb.AppendTsString(TsStringUtils.MakeString(Strings.ksNameAbbrSep, m_cache.DefaultUserWs));
 				tisb.AppendTsString(Name.BestAnalysisAlternative);
@@ -2155,7 +2155,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			get
 			{
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.AppendTsString(Name.BestAnalysisAlternative);
 				if (TypeRA != null)
 				{
@@ -2278,7 +2278,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <returns></returns>
 		public ITsString GetFeatureValueString(bool fLongForm)
 		{
-			var tisb = TsIncStrBldrClass.Create();
+			var tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, Cache.DefaultUserWs);
 
 			var sFeature = GetFeatureString(fLongForm);
@@ -2524,7 +2524,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		private ITsString GetFeatureValueString(bool fLongForm)
 		{
-			var tisb = TsIncStrBldrClass.Create();
+			var tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs,
 				0, Cache.DefaultAnalWs);
 			var sFeature = GetFeatureString(fLongForm);
@@ -2536,7 +2536,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		private ITsString GetFeatureValueStringSorted()
 		{
-			var tisb = TsIncStrBldrClass.Create();
+			var tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs,
 				0, Cache.DefaultAnalWs);
 			var sFeature = GetFeatureString(true);
@@ -3557,7 +3557,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var userWs = m_cache.WritingSystemFactory.UserWs;
-				var tisb = TsIncStrBldrClass.Create();
+				var tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 				tisb.Append(String.Format(Strings.ksDeleteFeatureSet, " "));
 				tisb.AppendTsString(LongNameTSS);
@@ -3756,7 +3756,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <returns></returns>
 		public ITsString GetFeatureValueTSS(string featureName)
 		{
-			var tisb = TsIncStrBldrClass.Create();
+			var tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, Cache.DefaultUserWs);
 
 			var features = from s in FeatureSpecsOC
@@ -3965,7 +3965,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		private ITsString GetFeatureValueString(bool fLongForm)
 		{
-			var tisb = TsIncStrBldrClass.Create();
+			var tisb = TsStringUtils.MakeIncStrBldr();
 			var iCount = FeatureSpecsOC.Count;
 			if (fLongForm && iCount > 0)
 			{
@@ -4023,7 +4023,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		internal ITsString GetFeatureValueStringSorted()
 		{
-			var tisb = TsIncStrBldrClass.Create();
+			var tisb = TsStringUtils.MakeIncStrBldr();
 			var iCount = FeatureSpecsOC.Count;
 			if (iCount > 0)
 			{

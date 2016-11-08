@@ -639,7 +639,7 @@ namespace SIL.FieldWorks.IText
 					rgsli[0].tag = ktagSbMorphForm; // leave other slots zero
 
 				// Set writing system of the selection (LT-16593).
-				var propsBuilder = TsPropsBldrClass.Create();
+				var propsBuilder = TsStringUtils.MakePropsBldr();
 				propsBuilder.SetIntPropValues((int)FwTextPropType.ktptWs,
 					(int)FwTextPropVar.ktpvDefault, m_wsVern);
 				try
@@ -783,7 +783,7 @@ namespace SIL.FieldWorks.IText
 			int ws = this.VernWsForPrimaryMorphemeLine;
 			m_ichSel = -1;
 
-			ITsStrBldr builder = TsStrBldrClass.Create();
+			ITsStrBldr builder = TsStringUtils.MakeStrBldr();
 			ITsString space = TsStringUtils.MakeString(" ", ws);
 			ISilDataAccess sda = m_sandbox.Caches.DataAccess;
 

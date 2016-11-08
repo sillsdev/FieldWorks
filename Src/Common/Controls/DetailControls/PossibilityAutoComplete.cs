@@ -238,7 +238,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						m_searcher.Add(poss, 0, tss);
 						if (name != null)
 						{
-							var tisb = TsIncStrBldrClass.Create();
+							var tisb = TsStringUtils.MakeIncStrBldr();
 							tisb.AppendTsString(tss);
 							tisb.AppendTsString(TsStringUtils.MakeString(" - ", m_cache.DefaultUserWs));
 							tisb.AppendTsString(name);

@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Test.TestUtils
@@ -447,7 +448,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 			if (style.Rules != null)
 				propsBldr = style.Rules.GetBldr();
 			else
-				propsBldr = TsPropsBldrClass.Create();
+				propsBldr = TsStringUtils.MakePropsBldr();
 
 			string propsAsString = String.Empty;
 			//Byte[] buffer = new Byte[8 * fontOverrides.Count];

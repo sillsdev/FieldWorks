@@ -918,7 +918,7 @@ namespace SIL.CoreImpl
 		/// ------------------------------------------------------------------------------------
 		internal static ITsPropsBldr GetPropAttributesForElement(XElement xml, ILgWritingSystemFactory lgwsf)
 		{
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			foreach (XAttribute attr in xml.Attributes())
 			{
 				switch (attr.Name.LocalName)

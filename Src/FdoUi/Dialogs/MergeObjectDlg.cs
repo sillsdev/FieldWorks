@@ -216,7 +216,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 				sBase = FdoUiStrings.ksMergeXIntoY;
 			else
 				sBase = FdoUiStrings.ksMergeXIntoSelection;
-			ITsStrBldr tsb = TsStrBldrClass.Create();
+			ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 			tsb.ReplaceTsString(0, tsb.Length, TsStringUtils.MakeString(sBase, userWs));
 			// Replace every "{0}" with the headword we'll be merging, and make it bold.
 			ITsString tssFrom = TsStringUtils.MakeString(m_mainObj.ToString(), m_mainObj.WS);

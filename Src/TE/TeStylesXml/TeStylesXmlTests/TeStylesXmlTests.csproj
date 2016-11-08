@@ -105,6 +105,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
     </Reference>
+    <Reference Include="CoreImpl">
+      <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+    </Reference>
     <Reference Include="FDO">
       <Name>FDO</Name>
       <HintPath>..\..\..\..\Output\Debug\FDO.dll</HintPath>

@@ -169,7 +169,7 @@ namespace SIL.CoreImpl
 			var tssORC2 = TsStringUtils.CreateOrcFromGuid(testGuid2, FwObjDataTypes.kodtOwnNameGuidHot, 1);
 
 			// Embed the ORCs in an ITsString
-			ITsStrBldr tssBldr = TsStrBldrClass.Create();
+			ITsStrBldr tssBldr = TsStringUtils.MakeStrBldr();
 			var plainProps = StyleUtils.CharStyleTextProps(null, 1);
 			tssBldr.ReplaceRgch(0, 0, "String start", 12, plainProps);
 			tssBldr.ReplaceTsString(tssBldr.Length, tssBldr.Length, tssORC1);
@@ -211,7 +211,7 @@ namespace SIL.CoreImpl
 			var tssORC2 = TsStringUtils.CreateOrcFromGuid(testGuid2, FwObjDataTypes.kodtOwnNameGuidHot, 1);
 
 			// Embed the ORCs in an ITsString
-			ITsStrBldr tssBldr = TsStrBldrClass.Create();
+			ITsStrBldr tssBldr = TsStringUtils.MakeStrBldr();
 			var plainProps = StyleUtils.CharStyleTextProps(null, 1);
 			tssBldr.ReplaceRgch(0, 0, "String start", 12, plainProps);
 			tssBldr.ReplaceTsString(tssBldr.Length, tssBldr.Length, tssORC1);
@@ -247,7 +247,7 @@ namespace SIL.CoreImpl
 			var tssORC2 = TsStringUtils.CreateOrcFromGuid(testGuid2, FwObjDataTypes.kodtOwnNameGuidHot, 1);
 
 			// Embed the ORCs in an ITsString
-			ITsStrBldr tssBldr = TsStrBldrClass.Create();
+			ITsStrBldr tssBldr = TsStringUtils.MakeStrBldr();
 			var plainProps = StyleUtils.CharStyleTextProps(null, 1);
 			tssBldr.Replace(0, 0, " 55String start", plainProps);
 			tssBldr.ReplaceTsString(tssBldr.Length, tssBldr.Length, tssORC1);
@@ -412,7 +412,7 @@ namespace SIL.CoreImpl
 		public void TurnOwnedOrcIntoUnownedOrc_OwnedOrc_Run0()
 		{
 			var expectedGuid = Guid.NewGuid();
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			TsStringUtils.InsertOrcIntoPara(expectedGuid, FwObjDataTypes.kodtOwnNameGuidHot, bldr, 0, 0, 5);
 			TsStringUtils.TurnOwnedOrcIntoUnownedOrc(bldr, 0);
 
@@ -436,7 +436,7 @@ namespace SIL.CoreImpl
 		public void TurnOwnedOrcIntoUnownedOrc_OwnedOrc_DifferentRun()
 		{
 			var expectedGuid = Guid.NewGuid();
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "monkey", StyleUtils.CharStyleTextProps(null, 5));
 			TsStringUtils.InsertOrcIntoPara(expectedGuid, FwObjDataTypes.kodtOwnNameGuidHot, bldr, 6, 6, 5);
 			TsStringUtils.TurnOwnedOrcIntoUnownedOrc(bldr, 1);
@@ -464,7 +464,7 @@ namespace SIL.CoreImpl
 		public void TurnOwnedOrcIntoUnownedOrc_UnownedOrc()
 		{
 			var expectedGuid = Guid.NewGuid();
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			TsStringUtils.InsertOrcIntoPara(expectedGuid, FwObjDataTypes.kodtNameGuidHot, bldr, 0, 0, 5);
 			TsStringUtils.TurnOwnedOrcIntoUnownedOrc(bldr, 0);
 
@@ -489,7 +489,7 @@ namespace SIL.CoreImpl
 		public void TurnOwnedOrcIntoUnownedOrc_PictureOrc()
 		{
 			var expectedGuid = Guid.NewGuid();
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			TsStringUtils.InsertOrcIntoPara(expectedGuid, FwObjDataTypes.kodtGuidMoveableObjDisp, bldr, 0, 0, 5);
 			TsStringUtils.TurnOwnedOrcIntoUnownedOrc(bldr, 0);
 
@@ -511,7 +511,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void TurnOwnedOrcIntoUnownedOrc_NoOrc()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "test", StyleUtils.CharStyleTextProps(null, 5));
 			TsStringUtils.TurnOwnedOrcIntoUnownedOrc(bldr, 0);
 
@@ -532,8 +532,8 @@ namespace SIL.CoreImpl
 		public void RemoveIntProp()
 		{
 			// Set up a ITsString with font property set.
-			ITsStrBldr tssBldr = TsStrBldrClass.Create();
-			ITsPropsBldr tppBldr = TsPropsBldrClass.Create();
+			ITsStrBldr tssBldr = TsStringUtils.MakeStrBldr();
+			ITsPropsBldr tppBldr = TsStringUtils.MakePropsBldr();
 			tppBldr.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 9250);
 			tppBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, 17);
 			tssBldr.Replace(tssBldr.Length, tssBldr.Length, "This string has a font size property.", tppBldr.GetTextProps());
@@ -563,8 +563,8 @@ namespace SIL.CoreImpl
 		public void RemoveIntProp_EmptyTss()
 		{
 			// Set up a ITsString with font property set.
-			ITsStrBldr tssBldr = TsStrBldrClass.Create();
-			ITsPropsBldr tppBldr = TsPropsBldrClass.Create();
+			ITsStrBldr tssBldr = TsStringUtils.MakeStrBldr();
+			ITsPropsBldr tppBldr = TsStringUtils.MakePropsBldr();
 			tppBldr.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 9250);
 			tppBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, 17);
 			tssBldr.Replace(0, 0, string.Empty, tppBldr.GetTextProps());
@@ -646,7 +646,7 @@ namespace SIL.CoreImpl
 		public void TrimNonWordFormingCharsTest_WithNewLine()
 		{
 			var ws = m_wsf.get_Engine("en");
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "This is my text", StyleUtils.CharStyleTextProps(null, ws.Handle));
 			bldr.Replace(0, 0, Environment.NewLine, StyleUtils.CharStyleTextProps(null, -1));
 
@@ -1054,7 +1054,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_AroundChapterNumber_Valid()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "12", StyleUtils.CharStyleTextProps("Chap Num", m_wsf.UserWs));
 			bldr.Replace(bldr.Length, bldr.Length, "Some text", StyleUtils.CharStyleTextProps(null, m_wsf.UserWs));
 			ITsString tss = bldr.GetString();
@@ -1072,7 +1072,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_BeforeChapterNumber_MidString()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Preceding text. ", StyleUtils.CharStyleTextProps(null, m_wsf.UserWs));
 			var ichEndOfPrecedingText = bldr.Length;
 			bldr.Replace(bldr.Length, bldr.Length, "2", StyleUtils.CharStyleTextProps("Chap Num", m_wsf.UserWs));
@@ -1092,7 +1092,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_AroundChapterNumber_Invalid()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "a2b", StyleUtils.CharStyleTextProps("Chap Num", m_wsf.UserWs));
 			bldr.Replace(bldr.Length, bldr.Length, "Some text", StyleUtils.CharStyleTextProps(null, m_wsf.UserWs));
 			ITsString tss = bldr.GetString();
@@ -1109,7 +1109,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_BetweenChapterAndVerseNumbers()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "2", StyleUtils.CharStyleTextProps("Chap Num", m_wsf.UserWs));
 			bldr.Replace(1, 1, "5", StyleUtils.CharStyleTextProps("Vers Num", m_wsf.UserWs));
 			bldr.Replace(bldr.Length, bldr.Length, "Some text", StyleUtils.CharStyleTextProps(null, m_wsf.UserWs));
@@ -1128,7 +1128,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_AroundVerseNumber_Valid()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "51", StyleUtils.CharStyleTextProps("Vers Num", m_wsf.UserWs));
 			bldr.Replace(bldr.Length, bldr.Length, "Some text", StyleUtils.CharStyleTextProps(null, m_wsf.UserWs));
 			ITsString tss = bldr.GetString();
@@ -1145,7 +1145,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_AroundVerseNumber_Invalid()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "a1b", StyleUtils.CharStyleTextProps("Vers Num", m_wsf.UserWs));
 			bldr.Replace(bldr.Length, bldr.Length, "Some text", StyleUtils.CharStyleTextProps(null, m_wsf.UserWs));
 			ITsString tss = bldr.GetString();
@@ -1162,7 +1162,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void FindWordBoundary_AroundVerseNumberBridge()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "5-8", StyleUtils.CharStyleTextProps("Vers Num", m_wsf.UserWs));
 			bldr.Replace(bldr.Length, bldr.Length, "Some text", StyleUtils.CharStyleTextProps(null, m_wsf.UserWs));
 			ITsString tss = bldr.GetString();
@@ -1631,7 +1631,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void Words_MultipleRuns()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Append("   This  is", StyleUtils.CharStyleTextProps("Monkey", 1));
 			bldr.Append("some text.  ", StyleUtils.CharStyleTextProps("Soup", 1));
 			var expectedWords = new[] { "This", "is", "some", "text." };
@@ -1663,7 +1663,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void LastWord_MultipleRuns()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Append("This is", StyleUtils.CharStyleTextProps("Monkey", 1));
 			bldr.Append("text.", StyleUtils.CharStyleTextProps("Soup", 1));
 			Assert.AreEqual("text.", bldr.GetString().LastWord().Text);
@@ -1678,7 +1678,7 @@ namespace SIL.CoreImpl
 		[Test]
 		public void LastWord_TrailingSpaceInDifferentRun()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Append("This is", StyleUtils.CharStyleTextProps("Monkey", 1));
 			bldr.Append("text.", StyleUtils.CharStyleTextProps("Soup", 1));
 			bldr.Append(" ", StyleUtils.CharStyleTextProps(null, 1));

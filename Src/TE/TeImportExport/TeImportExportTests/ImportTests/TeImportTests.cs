@@ -1160,7 +1160,6 @@ namespace SIL.FieldWorks.TE.ImportTests
 			m_importer.AddImportStyleProxyForMapping(mapping, m_importer.HtStyleProxy);
 			ImportStyleProxy proxy = ((ImportStyleProxy)m_importer.HtStyleProxy[mapping.BeginMarker]);
 			Assert.AreEqual(StyleType.kstCharacter, proxy.StyleType);
-			ITsPropsFactory pillowtex = TsPropsFactoryClass.Create();
 			ITsTextProps proxyTextProps = proxy.TsTextProps;
 			string sHowDifferent;
 			if (!TsTextPropsHelper.PropsAreEqual(StyleUtils.CharStyleTextProps("Really bold text", wsExpected),
@@ -1179,8 +1178,8 @@ namespace SIL.FieldWorks.TE.ImportTests
 		[Test]
 		public void PrevRunIsVerseNumber()
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
-			ITsPropsBldr props = TsPropsBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
+			ITsPropsBldr props = TsStringUtils.MakePropsBldr();
 
 			// This will do nothing except make sure it doesn't throw an exception
 			Assert.IsFalse(m_importer.PrevRunIsVerseNumber(null));

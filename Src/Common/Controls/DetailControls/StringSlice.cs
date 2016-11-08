@@ -271,7 +271,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				var result = wsys.Abbreviation;
 				if (string.IsNullOrEmpty(result))
 					result = "??";
-				ITsStrBldr tsb = TsStrBldrClass.Create();
+				ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 				tsb.Replace(0, 0, result, WritingSystemServices.AbbreviationTextProperties);
 				tsb.SetIntPropValues(0, tsb.Length, (int)FwTextPropType.ktptWs, 0, m_wsEn);
 				return tsb.GetString();

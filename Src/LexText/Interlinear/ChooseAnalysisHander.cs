@@ -262,7 +262,7 @@ namespace SIL.FieldWorks.IText
 		void AddSeparatorLine()
 		{
 			//review
-			ITsStrBldr builder = TsStrBldrClass.Create();
+			ITsStrBldr builder = TsStringUtils.MakeStrBldr();
 			builder.Replace(0,0,"-------", null);
 			builder.SetIntPropValues(0, builder.Length, (int)FwTextPropType.ktptWs,
 				(int)FwTextPropVar.ktpvDefault, m_cache.DefaultUserWs);
@@ -320,8 +320,8 @@ namespace SIL.FieldWorks.IText
 
 		protected ITsString MakeSimpleString(String str)
 		{
-			ITsStrBldr builder = TsStrBldrClass.Create();
-			ITsPropsBldr bldr = TsPropsBldrClass.Create();
+			ITsStrBldr builder = TsStringUtils.MakeStrBldr();
+			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 			bldr.SetIntPropValues((int)FwTextPropType.ktptWs,
 				(int)FwTextPropVar.ktpvDefault, m_cache.DefaultUserWs);
 			bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize,
@@ -335,7 +335,7 @@ namespace SIL.FieldWorks.IText
 		// Todo: finish implementing (add the gloss!)
 		static internal ITsString MakeGlossStringRep(IWfiGloss wg, FdoCache fdoCache, bool fUseStyleSheet)
 		{
-			ITsStrBldr tsb = TsStrBldrClass.Create();
+			ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 			var wa = wg.Owner as IWfiAnalysis;
 
 			var category = wa.CategoryRA;
@@ -368,7 +368,7 @@ namespace SIL.FieldWorks.IText
 			ITsTextProps posTextProperties = PartOfSpeechTextProperties(fdoCache, true, fUseStyleSheet);
 			ITsTextProps formTextProperties = FormTextProperties(fdoCache, fUseStyleSheet, wsVern);
 			ITsTextProps glossTextProperties = GlossTextProperties(fdoCache, true, fUseStyleSheet);
-			ITsStrBldr tsb = TsStrBldrClass.Create();
+			ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 			ISilDataAccess sda = fdoCache.MainCacheAccessor;
 			int cmorph = wa.MorphBundlesOS.Count;
 			if (cmorph == 0)
@@ -456,7 +456,7 @@ namespace SIL.FieldWorks.IText
 		public static ITsTextProps FormTextProperties(FdoCache fdoCache, bool fUseStyleSheet, int wsVern)
 		{
 			int color =(int) CmObjectUi.RGB(Color.DarkBlue);
-			ITsPropsBldr bldr = TsPropsBldrClass.Create();
+			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 			if (!fUseStyleSheet)
 			{
 				bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize ,
@@ -478,7 +478,7 @@ namespace SIL.FieldWorks.IText
 		public static ITsTextProps GlossTextProperties(FdoCache fdoCache, bool inAnalysisLine, bool fUseStyleSheet)
 		{
 			int color =(int) CmObjectUi.RGB(Color.DarkRed);
-			ITsPropsBldr bldr = TsPropsBldrClass.Create();
+			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 			if (!fUseStyleSheet)
 			{
 				bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize ,
@@ -507,7 +507,7 @@ namespace SIL.FieldWorks.IText
 		public static ITsTextProps PartOfSpeechTextProperties(FdoCache fdoCache, bool inAnalysisLine, bool fUseStyleSheet)
 		{
 			int color =(int) CmObjectUi.RGB(Color.Green);
-			ITsPropsBldr bldr = TsPropsBldrClass.Create();
+			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 			if (!fUseStyleSheet)
 			{
 				bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize ,

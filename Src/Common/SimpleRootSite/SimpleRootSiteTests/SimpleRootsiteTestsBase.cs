@@ -76,7 +76,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public ITsTextProps GetStyleRgch(int cch, string _rgchName)
 		{
-			return TsPropsFactoryClass.Create().MakeProps(null, 0, 0);
+			return TsStringUtils.MakeProps(null, 0);
 		}
 
 		public int GetType(string bstrName)
@@ -101,7 +101,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public ITsTextProps NormalFontStyle
 		{
-			get { return TsPropsFactoryClass.Create().MakeProps(null, 0, 0); }
+			get { return TsStringUtils.MakeProps(null, 0); }
 		}
 
 		public void PutStyle(string bstrName, string bstrUsage, int hvoStyle, int hvoBasedOn, int hvoNext, int nType, bool fBuiltIn, bool fModified, ITsTextProps _ttp)
@@ -393,8 +393,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		/// ------------------------------------------------------------------------------------
 		public void AddRunToMockedPara(int hvoPara, string runText, int ws)
 		{
-			var propFact = TsPropsFactoryClass.Create();
-			var runStyle = propFact.MakeProps(null, ws, 0);
+			var runStyle = TsStringUtils.MakeProps(null, ws);
 			ITsString contents = m_cache.get_StringProp(hvoPara, SimpleRootsiteTestsConstants.kflidParaContents);
 			var bldr = contents.GetBldr();
 			bldr.Replace(bldr.Length, bldr.Length, runText, runStyle);

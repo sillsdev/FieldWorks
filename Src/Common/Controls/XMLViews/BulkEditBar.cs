@@ -3830,7 +3830,7 @@ namespace SIL.FieldWorks.Common.Controls
 					return;
 				m_findReplaceSummaryLabel.BackColor = SystemColors.Control;
 				var wsArgs = TsStringUtils.GetWsAtOffset(m_tssReplace, 0);
-				ITsIncStrBldr bldr = TsIncStrBldrClass.Create();
+				ITsIncStrBldr bldr = TsStringUtils.MakeIncStrBldr();
 				bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 16000);
 				bldr.SetIntPropValues((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
 
@@ -6571,7 +6571,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private ITsString BuildValueString(IEnumerable<ICmObject> chosenObjs)
 		{
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			ITsString sep = null; // also acts as first-time flag.
 			foreach (var obj in chosenObjs)
 			{

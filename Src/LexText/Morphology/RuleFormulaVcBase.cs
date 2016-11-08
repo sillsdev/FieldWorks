@@ -374,7 +374,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		ITsString CreateFeatureLine(IFsClosedValue value)
 		{
-			ITsIncStrBldr featLine = TsIncStrBldrClass.Create();
+			ITsIncStrBldr featLine = TsStringUtils.MakeIncStrBldr();
 			featLine.AppendTsString(value.ValueRA != null ? value.ValueRA.Abbreviation.BestAnalysisAlternative : m_questions);
 			featLine.Append(" ");
 			featLine.AppendTsString(value.FeatureRA != null ? value.FeatureRA.Abbreviation.BestAnalysisAlternative : m_questions);
@@ -387,7 +387,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (varIndex == -1)
 				return m_questions;
 
-			ITsIncStrBldr varLine = TsIncStrBldrClass.Create();
+			ITsIncStrBldr varLine = TsStringUtils.MakeIncStrBldr();
 			if (!polarity)
 				varLine.AppendTsString(TsStringUtils.MakeString("-", m_cache.DefaultUserWs));
 			varLine.AppendTsString(TsStringUtils.MakeString(VariableNames[varIndex], m_cache.DefaultUserWs));
@@ -536,7 +536,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					}
 					int fontHeight = GetFontHeight(m_cache.DefaultUserWs);
 					int superSubHeight = (fontHeight * 2) / 3;
-					ITsPropsBldr tpb = TsPropsBldrClass.Create();
+					ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 					tpb.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, superSubHeight);
 					len += GetMinMaxWidth(ctxt, tpb.GetTextProps(), vwenv);
 				}

@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		//    // context.
 		//    byte[] objData = MiscUtils.GetObjData(this.Guid,
 		//        (byte)FwObjDataTypes.kodtGuidMoveableObjDisp);
-		//    ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+		//    ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 		//    propsBldr.SetStrPropValueRgch((int)FwTextPropType.ktptObjData,
 		//        objData, objData.Length);
 		//    propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, ws);

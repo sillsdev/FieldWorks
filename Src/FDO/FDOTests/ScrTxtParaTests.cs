@@ -198,7 +198,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			IScrSection section = AddSectionToMockedBook(book);
 			IScrTxtPara para = AddParaToMockedSectionContent(section, ScrStyleNames.NormalParagraph);
 			// Add a range of text with a character style.
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, Cache.DefaultVernWs);
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, ScrStyleNames.Doxology);
 			ITsStrBldr tssBldr = para.Contents.GetBldr();
@@ -230,7 +230,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			IScrSection section = AddSectionToMockedBook(book);
 			IScrTxtPara para = AddParaToMockedSectionContent(section, ScrStyleNames.NormalParagraph);
 			// Add a range of text with a character style.
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, Cache.DefaultVernWs);
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, ScrStyleNames.Doxology);
 			ITsStrBldr tssBldr = para.Contents.GetBldr();
@@ -1748,7 +1748,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_book.FootnotesOS.Add(footnote1);
 			m_book.FootnotesOS.Add(footnote2);
 
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Test data", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			TsStringUtils.InsertOrcIntoPara(footnote1.Guid, FwObjDataTypes.kodtOwnNameGuidHot, bldr, 0, 0, Cache.DefaultVernWs);
 			TsStringUtils.InsertOrcIntoPara(footnote2.Guid, FwObjDataTypes.kodtOwnNameGuidHot, bldr, 5, 5, Cache.DefaultVernWs);
@@ -1776,7 +1776,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			IScrFootnote newFootnote = Cache.ServiceLocator.GetInstance<IScrFootnoteFactory>().Create();
 			m_book.FootnotesOS.Add(newFootnote);
 
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Test data", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			TsStringUtils.InsertOrcIntoPara(newFootnote.Guid, FwObjDataTypes.kodtOwnNameGuidHot, bldr, 0, 0, Cache.DefaultVernWs);
 			para.Contents = bldr.GetString();

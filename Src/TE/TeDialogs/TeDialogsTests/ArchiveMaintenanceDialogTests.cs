@@ -15,6 +15,7 @@ using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using System.Diagnostics.CodeAnalysis;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.TE
@@ -434,8 +435,7 @@ namespace SIL.FieldWorks.TE
 			Assert.IsNull(m_scr.FindBook(66),
 				"Revelation should not be in the database. Restore the clean version of TestLangProj.");
 			IScrBook revelation = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(66, out title);
-			ITsPropsFactory propFact = TsPropsFactoryClass.Create();
-			ITsTextProps ttp = propFact.MakeProps(ScrStyleNames.NormalParagraph, Cache.DefaultVernWs, 0);
+			ITsTextProps ttp = TsStringUtils.MakeProps(ScrStyleNames.NormalParagraph, Cache.DefaultVernWs);
 			Cache.ServiceLocator.GetInstance<IScrSectionFactory>().CreateScrSection(revelation, 0, "Text for section", ttp, false);
 			AddArchive("Revelation Archive", new List<IScrBook>(new IScrBook[] { revelation }));
 			m_scr.ScriptureBooksOS.Remove(revelation);

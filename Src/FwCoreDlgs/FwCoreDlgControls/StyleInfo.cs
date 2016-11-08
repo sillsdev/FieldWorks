@@ -640,7 +640,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			style.UserLevel = m_userLevel;
 
 			// Build the text props
-			ITsPropsBldr styleProps = TsPropsBldrClass.Create();
+			ITsPropsBldr styleProps = TsStringUtils.MakePropsBldr();
 
 			if (m_defaultFontInfo.m_fontName.IsExplicit)
 			{

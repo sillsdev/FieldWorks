@@ -37,7 +37,7 @@ namespace SIL.CoreImpl
 		{
 			// Build props for the given writing system.
 			Debug.Assert(ws != 0);
-			ITsPropsBldr bldr = TsPropsBldrClass.Create();
+			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 			bldr.SetIntPropValues((int)FwTextPropType.ktptWs, ws == -1 ? -1 : 0, ws);
 			// If a style name is given, set that too.
 			if (!String.IsNullOrEmpty(styleName))
@@ -59,7 +59,7 @@ namespace SIL.CoreImpl
 			Debug.Assert(!string.IsNullOrEmpty(styleName));
 
 			// Build props for the given para style name
-			ITsPropsBldr tsPropsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr tsPropsBldr = TsStringUtils.MakePropsBldr();
 			tsPropsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, styleName);
 			return tsPropsBldr.GetTextProps();
 		}

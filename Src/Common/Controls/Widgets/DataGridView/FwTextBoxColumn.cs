@@ -532,7 +532,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			int ws = GetWritingSystemHandle(rowIndex);
 			if (ws <= 0)
 			{
-				ITsIncStrBldr strBldr = TsIncStrBldrClass.Create();
+				ITsIncStrBldr strBldr = TsStringUtils.MakeIncStrBldr();
 				strBldr.Append(string.Empty);
 				return strBldr.GetString();
 			}

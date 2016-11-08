@@ -944,7 +944,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					senseNumberStyle.Type = StyleType.kstCharacter;
 					senseNumberStyle.UserLevel = 1;
 					senseNumberStyle.IsBuiltIn = false;
-					var propsBldr = TsPropsBldrClass.Create();
+					var propsBldr = TsStringUtils.MakePropsBldr();
 					propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily, node.NumFont);
 					if (!string.IsNullOrEmpty(node.NumStyle))
 					{

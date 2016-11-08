@@ -14,6 +14,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
@@ -168,7 +169,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			vwps.Stylesheet = styleSheet;
 			vwps.WritingSystemFactory = writingSystemFactory;
 
-			ITsPropsBldr ttpBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr ttpBldr = TsStringUtils.MakePropsBldr();
 			ttpBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, styleName);
 			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, hvoWs);
 			ITsTextProps ttp = ttpBldr.GetTextProps();

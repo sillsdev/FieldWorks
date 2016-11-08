@@ -2138,7 +2138,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 
 			ReflectionHelper.SetField(m_importer, "m_importDomain", ImportDomain.Main);
 
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.ReplaceRgch(0, 0, "Exodus", 6, null);
 			Dictionary<int, ITsStrBldr> bldrs = ReflectionHelper.GetField(m_importer, "m_BTStrBldrs") as Dictionary<int, ITsStrBldr>;
 			bldrs[1] = bldr;
@@ -2516,9 +2516,8 @@ namespace SIL.FieldWorks.TE.ImportTests
 		public void OnlyBT_SecondaryTitle()
 		{
 			IScrBook book = CreateBook(6, "Joshua");
-			ITsStrBldr bldr = TsStrBldrClass.Create();
-			ITsPropsFactory propFact = TsPropsFactoryClass.Create();
-			ITsTextProps secondaryProps = propFact.MakeProps(ScrStyleNames.SecondaryBookTitle, m_wsVern, 0);
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
+			ITsTextProps secondaryProps = TsStringUtils.MakeProps(ScrStyleNames.SecondaryBookTitle, m_wsVern);
 			string mainTitle = "Joshua";
 			bldr.ReplaceRgch(0, 0, mainTitle, mainTitle.Length, StyleUtils.CharStyleTextProps(null, m_wsVern));
 			string secondaryTitle = "The adventures of";

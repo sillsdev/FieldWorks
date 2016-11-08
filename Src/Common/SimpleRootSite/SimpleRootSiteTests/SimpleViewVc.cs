@@ -204,7 +204,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 					vwenv.set_IntProperty((int)FwTextPropType.ktptEditable,
 						(int)FwTextPropVar.ktpvEnum,
 						(int)TptEditable.ktptNotEditable);
-					ITsIncStrBldr strBldr = TsIncStrBldrClass.Create();
+					ITsIncStrBldr strBldr = TsStringUtils.MakeIncStrBldr();
 					strBldr.Append(" ");
 					vwenv.AddString(strBldr.GetString());
 					vwenv.AddStringProp(SimpleRootsiteTestsConstants.kflidParaContents, null);

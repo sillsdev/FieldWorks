@@ -11,6 +11,7 @@
 
 using System;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Test.TestUtils
@@ -41,7 +42,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 		public void PropsAreEqual()
 		{
 			// test of same int prop: writing system
-			ITsPropsBldr tsPropsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr tsPropsBldr = TsStringUtils.MakePropsBldr();
 			tsPropsBldr.SetIntPropValues((int)FwTextPropType.ktptWs,
 				(int)FwTextPropVar.ktpvDefault, 4565754);
 			ITsTextProps ttp1 = tsPropsBldr.GetTextProps();
@@ -67,7 +68,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 		public void PropsDifferByIntProps()
 		{
 			// test of different int prop: writing system
-			ITsPropsBldr tsPropsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr tsPropsBldr = TsStringUtils.MakePropsBldr();
 			tsPropsBldr.SetIntPropValues((int)FwTextPropType.ktptWs,
 				(int)FwTextPropVar.ktpvDefault, 4565754);
 			ITsTextProps ttp1 = tsPropsBldr.GetTextProps();
@@ -79,7 +80,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 			Assert.AreEqual("Props differ in ktptWs property. Expected ws <4565754> and var <0>, but was ws <4565753> and var <0>.", s);
 
 			// test of different int prop: background color
-			tsPropsBldr = TsPropsBldrClass.Create(); // empty builder
+			tsPropsBldr = TsStringUtils.MakePropsBldr(); // empty builder
 			tsPropsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle,
 				"my style"); //string prop, same for both
 			tsPropsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor,
@@ -103,7 +104,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 		public void PropsDifferByStrProps()
 		{
 			// test of different str prop: named style
-			ITsPropsBldr tsPropsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr tsPropsBldr = TsStringUtils.MakePropsBldr();
 			tsPropsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle,
 				"my style");
 			ITsTextProps ttp1 = tsPropsBldr.GetTextProps();
@@ -116,7 +117,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 				+ "Expected <my style>, but was <your style>.", s);
 
 			// test of different str prop: named style
-			tsPropsBldr = TsPropsBldrClass.Create(); // empty builder
+			tsPropsBldr = TsStringUtils.MakePropsBldr(); // empty builder
 			tsPropsBldr.SetIntPropValues((int)FwTextPropType.ktptWs,
 				(int)FwTextPropVar.ktpvDefault, 4565754); // int prop, same for both
 			tsPropsBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily,
@@ -140,7 +141,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 		public void PropsDifferByCount()
 		{
 			// test of different string property counts
-			ITsPropsBldr tsPropsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr tsPropsBldr = TsStringUtils.MakePropsBldr();
 			//note: due to design in PropsAreEqual(), we will get the count message
 			// only when all the str props in the first ttp match in the second ttp, and the
 			// second ttp has additional str props
@@ -154,7 +155,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 			Assert.AreEqual("Props differ in count of strProps. Expected <1>, but was <2>.", s);
 
 			// test of different int property counts
-			tsPropsBldr = TsPropsBldrClass.Create(); // empty builder
+			tsPropsBldr = TsStringUtils.MakePropsBldr(); // empty builder
 			tsPropsBldr.SetIntPropValues((int)FwTextPropType.ktptBorderColor,
 				(int)FwTextPropVar.ktpvDefault, 123);
 			ttp1 = tsPropsBldr.GetTextProps();

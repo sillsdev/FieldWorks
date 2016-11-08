@@ -1030,7 +1030,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 							Debug.Assert(rie != null);
 							List<CoreWritingSystemDefinition> rgWs = WritingSystemServices.GetReversalIndexWritingSystems(m_cache, rie.Hvo, false);
 							int wsAnal = m_cache.DefaultAnalWs;
-							ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+							ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 							tisb.SetIntPropValues((int)FwTextPropType.ktptWs,
 								(int)FwTextPropVar.ktpvDefault, wsAnal);
 							tisb.SetIntPropValues((int)FwTextPropType.ktptEditable,
@@ -1063,7 +1063,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 											// We have to totally replace the properties set by ttpLabel.  The
 											// simplest way is to create another ITsString with the simple base
 											// property of only the default analysis writing system.
-											ITsPropsBldr tpbBase = TsPropsBldrClass.Create();
+											ITsPropsBldr tpbBase = TsStringUtils.MakePropsBldr();
 											tpbBase.SetIntPropValues((int)FwTextPropType.ktptWs,
 												(int)FwTextPropVar.ktpvDefault, wsAnal);
 											ttpBase = tpbBase.GetTextProps();

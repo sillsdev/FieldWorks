@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FDO;
@@ -45,8 +46,7 @@ namespace SIL.FieldWorks.Common.Framework
 			style1.IsBuiltIn = true;
 			style1.IsModified = true;
 			style1.NextRA = style1;
-			var propsFactory = TsPropsFactoryClass.Create();
-			var props1 = propsFactory.MakeProps("mystyle", Cache.DefaultAnalWs, 0);
+			var props1 = TsStringUtils.MakeProps("mystyle", Cache.DefaultAnalWs);
 			style1.Rules = props1;
 			style1.UserLevel = 5;
 
@@ -114,8 +114,7 @@ namespace SIL.FieldWorks.Common.Framework
 			style1.IsBuiltIn = true;
 			style1.IsModified = true;
 			style1.NextRA = style1;
-			var propsFactory = TsPropsFactoryClass.Create();
-			var props1 = propsFactory.MakeProps("mystyle", Cache.DefaultAnalWs, 0);
+			var props1 = TsStringUtils.MakeProps("mystyle", Cache.DefaultAnalWs);
 			style1.Rules = props1;
 			style1.UserLevel = 5;
 

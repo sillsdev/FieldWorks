@@ -430,7 +430,7 @@ namespace SIL.FieldWorks.TE
 			// If m_ttpFormattingProps has not been set up, initialize it now
 			if (m_ttpFormattingProps == null)
 			{
-				ITsPropsBldr tsPropsBldr = TsPropsBldrClass.Create();
+				ITsPropsBldr tsPropsBldr = TsStringUtils.MakePropsBldr();
 				m_ttpFormattingProps = tsPropsBldr.GetTextProps(); // default properties
 			}
 

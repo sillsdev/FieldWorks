@@ -1504,7 +1504,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (ttpNormal != null)
 				styleName = ttpNormal.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
 
-			ITsPropsBldr ttpBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr ttpBldr = TsStringUtils.MakePropsBldr();
 			ttpBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, styleName);
 			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, hvoWs);
 			ITsTextProps ttp = ttpBldr.GetTextProps();
@@ -2214,7 +2214,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				return fRet;
 
 			// Make a new TsTextProps object, and set its NamedStyle.
-			ITsPropsBldr tpb = TsPropsBldrClass.Create();
+			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, strNewVal);
 			ITsTextProps newProps = tpb.GetTextProps();
 
@@ -2539,7 +2539,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				string strStyle;
 				strStyle = ttpHard.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
 				ITsPropsBldr tpbStyle;
-				tpbStyle = TsPropsBldrClass.Create();
+				tpbStyle = TsStringUtils.MakePropsBldr();
 				tpbStyle.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, strStyle);
 				ITsTextProps ttpStyle;
 				ttpStyle = tpbStyle.GetTextProps();
@@ -2547,7 +2547,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				vpsSoftPlusStyle = vpsSoft.get_DerivedPropertiesForTtp(ttpStyle);
 
 				ITsPropsBldr tpbEnc;
-				tpbEnc = TsPropsBldrClass.Create();
+				tpbEnc = TsStringUtils.MakePropsBldr();
 
 				ITsString tss;
 				tss = sda.get_StringProp(hvoPara, ParagraphContentsTag);

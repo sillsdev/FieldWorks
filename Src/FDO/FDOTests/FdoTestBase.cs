@@ -408,8 +408,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// ------------------------------------------------------------------------------------
 		public void AddRunToMockedPara(IStTxtPara para, string runText, string runStyleName)
 		{
-			ITsPropsFactory propFact = TsPropsFactoryClass.Create();
-			ITsTextProps runStyle = propFact.MakeProps(runStyleName, Cache.DefaultVernWs, 0);
+			ITsTextProps runStyle = TsStringUtils.MakeProps(runStyleName, Cache.DefaultVernWs);
 			ITsStrBldr bldr = para.Contents.GetBldr();
 			bldr.Replace(bldr.Length, bldr.Length, runText, runStyle);
 			para.Contents = bldr.GetString();
@@ -425,8 +424,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// ------------------------------------------------------------------------------------
 		public void AddRunToMockedPara(IStTxtPara para, string runText, int ws)
 		{
-			ITsPropsFactory propFact = TsPropsFactoryClass.Create();
-			ITsTextProps runStyle = propFact.MakeProps(null, ws, 0);
+			ITsTextProps runStyle = TsStringUtils.MakeProps(null, ws);
 			ITsStrBldr bldr = para.Contents.GetBldr();
 			bldr.Replace(bldr.Length, bldr.Length, runText, runStyle);
 			para.Contents = bldr.GetString();
@@ -458,8 +456,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// ------------------------------------------------------------------------------------
 		protected void AddRunToMockedTrans(ICmTranslation trans, int btWS, int runWS, string runText, string runStyleName)
 		{
-			ITsPropsFactory propFact = TsPropsFactoryClass.Create();
-			ITsTextProps runProps = propFact.MakeProps(runStyleName, runWS, 0);
+			ITsTextProps runProps = TsStringUtils.MakeProps(runStyleName, runWS);
 			ITsStrBldr bldr = trans.Translation.get_String(btWS).GetBldr();
 			bldr.Replace(bldr.Length, bldr.Length, runText, runProps);
 			trans.Translation.set_String(btWS, bldr.GetString());
@@ -697,7 +694,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			style.Function = function;
 			style.Type = (isCharStyle ? StyleType.kstCharacter : StyleType.kstParagraph);
 			style.UserLevel = userLevel;
-			ITsPropsBldr bldr = TsPropsBldrClass.Create();
+			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 			style.Rules = bldr.GetTextProps();
 			style.IsBuiltIn = isBuiltIn;
 			return style;

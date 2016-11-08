@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				get
 				{
 					CheckDisposed();
-					ITsPropsBldr bldr = TsPropsBldrClass.Create();
+					ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 					bldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Figure caption");
 					return bldr.GetTextProps();
 				}

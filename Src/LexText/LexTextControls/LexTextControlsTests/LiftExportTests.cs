@@ -1930,7 +1930,7 @@ namespace LexTextControlsTests
 			var paraFact = m_cache.ServiceLocator.GetInstance<IStTxtParaFactory>();
 			var para1 = paraFact.Create();
 			text.ParagraphsOS.Add(para1);
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
 			tisb.Append("This is a ");
 			tisb.SetStrPropValue((int) FwTextPropType.ktptNamedStyle, "Emphasized Text");

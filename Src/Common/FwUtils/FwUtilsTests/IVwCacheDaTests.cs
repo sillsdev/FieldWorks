@@ -300,8 +300,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.IsNotNull(tsStringNew);
 			Assert.AreEqual(0, tsStringNew.Length);
 
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Verse");
 			strBldr.Replace(0, 0, "Test", propsBldr.GetTextProps());
 			ITsString tsString = strBldr.GetString();
@@ -344,8 +344,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void StringProp_SimpleString()
 		{
 			// Test StringProp
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Verse");
 			strBldr.Replace(0, 0, "StringPropTest", propsBldr.GetTextProps());
 			ITsString tsString = strBldr.GetString();
@@ -365,8 +365,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Ignore("Writing System 'missing' problem that I decline to track down just yet.")]
 		public void StringProp_ReplaceStringInCache()
 		{
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Verse");
 			strBldr.Replace(0, 0, "StringPropTest", propsBldr.GetTextProps());
 			ITsString tsString = strBldr.GetString();
@@ -411,7 +411,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			object obj = m_ISilDataAccess.get_UnknownProp(1120, 2220);
 			Assert.IsNull(obj);
 
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			ITsTextProps ttp = propsBldr.GetTextProps();
 			m_IVwCacheDa.CacheUnknown(1120, 2220, ttp);
 			obj = m_ISilDataAccess.get_UnknownProp(1120, 2220);
@@ -601,8 +601,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			VerifyCache(1126, 2226,
 				new object[] { 0, 0, 0, Guid.Empty, 0, 987654, null, null, null, null });
 
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Verse");
 			strBldr.Replace(0, 0, "KeyTestMulti", propsBldr.GetTextProps());
 			ITsString tsString = strBldr.GetString();

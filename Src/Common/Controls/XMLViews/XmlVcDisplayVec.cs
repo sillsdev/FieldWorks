@@ -361,7 +361,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private ITsTextProps SetNumberTextProperties(int wsEng, XmlNode listDelimitNode)
 		{
 			ITsTextProps ttpNum;
-			ITsPropsBldr tpb = TsPropsFactoryClass.Create().GetPropsBldr();
+			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 			// TODO: find more appropriate writing system?
 			tpb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, wsEng);
 			string style = XmlUtils.GetOptionalAttributeValue(listDelimitNode, "numstyle", null);

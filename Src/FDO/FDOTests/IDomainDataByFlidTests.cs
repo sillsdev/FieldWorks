@@ -202,7 +202,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.DomainDataByFlidTest
 			Assert.AreEqual(para, stText.ParagraphsOS[0]);
 
 			// Even without a stylesheet, any styles should be copied.
-			ITsPropsBldr bldr = TsPropsBldrClass.Create();
+			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 			bldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "style1");
 			ITsTextProps props = bldr.GetTextProps();
 			IStTxtPara para1 = stText.ParagraphsOS[1] as IStTxtPara;
@@ -424,7 +424,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.DomainDataByFlidTest
 			var style = Cache.ServiceLocator.GetInstance<IStStyleFactory>().Create();
 			Cache.LanguageProject.StylesOC.Add(style);
 			var userWs = Cache.WritingSystemFactory.UserWs;
-			var bldr = TsPropsBldrClass.Create();
+			var bldr = TsStringUtils.MakePropsBldr();
 			bldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Arial");
 			bldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 			var tpp = bldr.GetTextProps();

@@ -125,7 +125,7 @@ namespace SIL.FieldWorks.SharpViews.SharpViewsTests
 		{
 			AssembledStyles astyles = new AssembledStyles();
 			Assert.That(astyles.Chrp.ttvBold, Is.EqualTo((int)FwTextToggleVal.kttvOff));
-			ITsPropsBldr bldr = TsPropsBldrClass.Create();
+			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 			bldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, 47);
 			bldr.SetIntPropValues((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum,
 					(int)FwTextToggleVal.kttvForceOn);
@@ -262,7 +262,7 @@ namespace SIL.FieldWorks.SharpViews.SharpViewsTests
 			var boldFontInfo = new MockCharStyleInfo();
 			styleBold.DefaultCharacterStyleInfo = boldFontInfo;
 			boldFontInfo.Bold = new MockStyleProp<bool>() {Value = true, ValueIsSet = true};
-			ITsPropsBldr bldr = TsPropsBldrClass.Create();
+			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 			bldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "bold");
 			var props = bldr.GetTextProps();
 			var styles2 = styles.ApplyTextProps(props);

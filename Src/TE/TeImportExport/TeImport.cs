@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.TE
 		public BTPictureInfo(string captionText, string sCopyright, int ws, string filename,
 			int lineNumber, string segment, BCVRef reference)
 		{
-			m_strbldrCaption = TsIncStrBldrClass.Create();
+			m_strbldrCaption = TsStringUtils.MakeIncStrBldr();
 			m_strbldrCaption.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, ws);
 			if (!String.IsNullOrEmpty(captionText))
 				m_strbldrCaption.Append(captionText);
@@ -1180,7 +1180,7 @@ namespace SIL.FieldWorks.TE
 
 			// Build generic character props for use with different runs of text and analysis
 			// character properties
-			ITsPropsBldr tsPropsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr tsPropsBldr = TsStringUtils.MakePropsBldr();
 			// analysis character properties
 			tsPropsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_wsAnal);
 			m_analTextProps = tsPropsBldr.GetTextProps();
@@ -1628,7 +1628,7 @@ namespace SIL.FieldWorks.TE
 							InsertPicture(); // Already found a caption for the current picture; treat this as a new picture.
 						if (m_currPictureInfo == null)
 							m_currPictureInfo = new ToolboxPictureInfo();
-						m_currPictureInfo.Caption = TsIncStrBldrClass.Create();
+						m_currPictureInfo.Caption = TsStringUtils.MakeIncStrBldr();
 						m_currPictureInfo.Caption.SetIntPropValues((int)FwTextPropType.ktptWs,
 							(int)FwTextPropVar.ktpvDefault, m_wsVern);
 						m_currPictureInfo.Caption.Append(m_sSegmentText);
@@ -2423,7 +2423,7 @@ namespace SIL.FieldWorks.TE
 			{
 				ws = GetWsForContext(currBldr);
 			}
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, ws);
 			return propsBldr.GetTextProps();
 		}
@@ -2649,7 +2649,7 @@ namespace SIL.FieldWorks.TE
 					// remember that we are now processing a footnote
 					SetInFootnote();
 					CheckDataForFootnoteMarker();
-					m_BTFootnoteStrBldr  = TsStrBldrClass.Create();
+					m_BTFootnoteStrBldr  = TsStringUtils.MakeStrBldr();
 					m_sBtFootnoteParaStyle = (m_styleProxy.StyleType == StyleType.kstCharacter) ?
 						m_DefaultFootnoteParaProxy.StyleId : m_styleProxy.StyleId;
 					if (m_importDomain == ImportDomain.Main)

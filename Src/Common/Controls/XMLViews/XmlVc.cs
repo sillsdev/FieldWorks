@@ -2881,7 +2881,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		internal void AddMarkedString(IVwEnv vwenv, XmlNode whereFrom, string input, int ws)
 		{
-			var bldr = TsIncStrBldrClass.Create();
+			var bldr = TsStringUtils.MakeIncStrBldr();
 			bldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, ws);
 			if (IdentifySource)
 				bldr.SetStrPropValue((int)FwTextPropType.ktptBulNumTxtBef, NodeIdentifier(whereFrom));

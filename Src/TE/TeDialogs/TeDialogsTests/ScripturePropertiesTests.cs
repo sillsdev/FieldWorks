@@ -168,9 +168,8 @@ namespace SIL.FieldWorks.TE
 		{
 			// Add paragraph with empty chapter number run.
 			IStTxtPara para = AddParaToMockedSectionContent(m_exodus.SectionsOS[0], ScrStyleNames.ChapterNumber);
-			ITsPropsFactory propFact = TsPropsFactoryClass.Create();
-			ITsTextProps ttpChapterNumber = propFact.MakeProps(ScrStyleNames.ChapterNumber,
-				Cache.ServiceLocator.WritingSystemManager.GetWsFromStr("fr"), 0);
+			ITsTextProps ttpChapterNumber = TsStringUtils.MakeProps(ScrStyleNames.ChapterNumber,
+				Cache.ServiceLocator.WritingSystemManager.GetWsFromStr("fr"));
 			ITsStrBldr bldr = para.Contents.GetBldr();
 			bldr.SetProperties(0, 0, ttpChapterNumber);
 			para.Contents = bldr.GetString();

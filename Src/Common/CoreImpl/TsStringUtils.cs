@@ -163,7 +163,7 @@ namespace SIL.CoreImpl
 		public static void InsertOrcIntoPara(Guid guid, FwObjDataTypes objDataType, ITsStrBldr tsStrBldr, int ichMin, int ichLim, int ws)
 		{
 			byte[] objData = GetObjData(guid, (byte)objDataType);
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = MakePropsBldr();
 			propsBldr.SetStrPropValueRgch((int)FwTextPropType.ktptObjData, objData, objData.Length);
 			if (ws != 0)
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, ws);
@@ -181,9 +181,9 @@ namespace SIL.CoreImpl
 		/// ------------------------------------------------------------------------------------
 		public static ITsString CreateOrcFromGuid(Guid guid, FwObjDataTypes type, int ws)
 		{
-			ITsStrBldr tsStrBldr = TsStrBldrClass.Create();
+			ITsStrBldr tsStrBldr = MakeStrBldr();
 			byte[] objData = GetObjData(guid, (byte)type);
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = MakePropsBldr();
 			propsBldr.SetStrPropValueRgch((int)FwTextPropType.ktptObjData, objData, objData.Length);
 
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, ws);
@@ -535,7 +535,7 @@ namespace SIL.CoreImpl
 			if (string.IsNullOrEmpty(source))
 				return source;
 
-			ITsStrBldr tssBldr = TsStrBldrClass.Create();
+			ITsStrBldr tssBldr = MakeStrBldr();
 			tssBldr.Replace(0, 0, source, null);
 			ITsString tss = tssBldr.GetString().get_NormalizedForm(FwNormalizationMode.knmNFD);
 			return tss.Text;
@@ -889,7 +889,7 @@ namespace SIL.CoreImpl
 		/// ------------------------------------------------------------------------------------
 		public static ITsString GetOwnedORCs(ITsString tss)
 		{
-			ITsStrBldr tssBldr = TsStrBldrClass.Create();
+			ITsStrBldr tssBldr = MakeStrBldr();
 			for (int iRun = 0; iRun < tss.RunCount; iRun++)
 			{
 				FwObjDataTypes objDataType;
@@ -1006,7 +1006,7 @@ namespace SIL.CoreImpl
 			if (tss == null)
 				return null;
 
-			ITsStrBldr tssBldr = TsStrBldrClass.Create();
+			ITsStrBldr tssBldr = MakeStrBldr();
 			for (int iRun = 0; iRun < tss.RunCount; iRun++)
 			{
 				string runText = tss.get_RunText(iRun);
@@ -1607,7 +1607,7 @@ namespace SIL.CoreImpl
 		/// <returns></returns>
 		public static ITsTextProps PropsForWs(int ws)
 		{
-			ITsPropsBldr tpb = TsPropsBldrClass.Create();
+			ITsPropsBldr tpb = MakePropsBldr();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, ws);
 			return tpb.GetTextProps();
 		}

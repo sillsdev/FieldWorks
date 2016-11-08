@@ -486,7 +486,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 			ClearChanges();
 
 			var userWs = Cache.WritingSystemFactory.UserWs;
-			var bldr = TsPropsBldrClass.Create();
+			var bldr = TsStringUtils.MakePropsBldr();
 			bldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Arial");
 			bldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 			var tpp = bldr.GetTextProps();

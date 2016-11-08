@@ -81,10 +81,10 @@ namespace SIL.FieldWorks.TE.ImportTests
 			var possFactory = cache.ServiceLocator.GetInstance<ICmPossibilityFactory>();
 
 			// Initialize text.
-			ITsPropsBldr ttpBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr ttpBldr = TsStringUtils.MakePropsBldr();
 			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs,
 									 (int)FwTextPropVar.ktpvDefault, ws);
-			ITsStrBldr tsStrBldr = TsStrBldrClass.Create();
+			ITsStrBldr tsStrBldr = TsStringUtils.MakeStrBldr();
 
 			// Set possibilities on top level--"Level 1a"
 			ICmPossibility possibility1a = possFactory.Create();

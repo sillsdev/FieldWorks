@@ -241,7 +241,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			var citationForm = CitationFormWithAffixTypeStaticForWs(entry, wsVern, defaultCf);
 			if (String.IsNullOrEmpty(citationForm))
 				return TsStringUtils.EmptyString(wsVern);
-			var tisb = TsIncStrBldrClass.Create();
+			var tisb = TsStringUtils.MakeIncStrBldr();
 			AddHeadwordForWsAndHn(entry, wsVern, nHomograph, hv, tisb, citationForm);
 			return tisb.GetString();
 		}
@@ -809,7 +809,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <returns></returns>
 		public static ITsString CrawlRuns(ITsString str, Func<ITsString, ITsString> runModifier)
 		{
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			bool modified = false;
 			bool empty = true;
 			for (int i = 0; i < str.RunCount; i++)

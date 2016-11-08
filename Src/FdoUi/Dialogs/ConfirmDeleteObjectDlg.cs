@@ -190,7 +190,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			m_descriptionBox3.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_descriptionBox3.WritingSystemCode = defUserWs;
 			m_descriptionBox3.StyleSheet = stylesheet;
-			ITsIncStrBldr tisb3 = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb3 = TsStringUtils.MakeIncStrBldr();
 			tisb3.AppendTsString(obj.Object.DeletionTextTSS);
 			m_descriptionBox3.Tss = tisb3.GetString();
 			// Adjust the dialog size if needed to display the message (FWNX-857).
@@ -200,7 +200,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			m_descriptionBox4.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_descriptionBox4.WritingSystemCode = defUserWs;
 			m_descriptionBox4.StyleSheet = stylesheet;
-			ITsIncStrBldr tisb4 = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb4 = TsStringUtils.MakeIncStrBldr();
 			tisb4.AppendTsString(tssNote); //this is the default for m_descriptionBox4
 			m_descriptionBox4.Tss = tisb4.GetString();
 			GrowTextBox(panel2, m_descriptionBox4);

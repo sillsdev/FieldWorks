@@ -121,7 +121,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 		[Test]
 		public void AddDeleteStyle()
 		{
-			var tsPropsBldr = TsPropsBldrClass.Create();
+			var tsPropsBldr = TsStringUtils.MakePropsBldr();
 			var ttpFormattingProps = tsPropsBldr.GetTextProps(); // default properties
 			var nStylesOrig = m_styleSheet.CStyles;
 

@@ -246,7 +246,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 
 			ReflectionHelper.SetField(m_importer, "m_importDomain", ImportDomain.BackTrans);
 
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.ReplaceRgch(0, 0, "Exodus", 6, null);
 			Dictionary<int, ITsStrBldr> bldrs = ReflectionHelper.GetField(m_importer, "m_BTStrBldrs") as Dictionary<int, ITsStrBldr>;
 			bldrs[1] = bldr;

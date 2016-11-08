@@ -330,7 +330,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (m_tssSpace == null)
 				{
-					ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+					ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
 					tisb.Append(" ");
 					m_tssSpace = tisb.GetString();
@@ -346,7 +346,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (m_tssCommaSpace == null)
 				{
-					ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+					ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultAnalWs);
 					tisb.Append(", ");
 					m_tssCommaSpace = tisb.GetString();

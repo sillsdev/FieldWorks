@@ -508,7 +508,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		public ITsStrBldr MakeFootnoteMarker(int markerWS)
 		{
 			// create a TsString to hold the marker
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
 			strBldr.Replace(0, 0, MarkerAsString, StyleUtils.CharStyleTextProps(ScrStyleNames.FootnoteMarker, markerWS));
 			return strBldr;
 		}

@@ -229,7 +229,7 @@ namespace SIL.FieldWorks.IText
 			protected static ITsTextProps HighlightProperty(System.Drawing.Color highlightColor)
 			{
 				int color = (int)CmObjectUi.RGB(highlightColor);
-				ITsPropsBldr bldr = TsPropsBldrClass.Create();
+				ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 				bldr.SetIntPropValues((int)FwTextPropType.ktptForeColor,
 					(int)FwTextPropVar.ktpvDefault, color);
 				return bldr.GetTextProps();
@@ -1005,7 +1005,7 @@ namespace SIL.FieldWorks.IText
 				base.SetupCombo();
 				// Any time we pop this up, the text in the box is the text form of the current
 				// analysis, as a starting point.
-				ITsStrBldr builder = TsStrBldrClass.Create();
+				ITsStrBldr builder = TsStringUtils.MakeStrBldr();
 				int cmorphs = MorphCount;
 				Debug.Assert(cmorphs != 0); // we're supposed to be building on one of them!
 
@@ -1102,7 +1102,7 @@ namespace SIL.FieldWorks.IText
 			{
 				if (wordform == null)
 					return; // no real wordform, can't have analyses.
-				ITsStrBldr builder = TsStrBldrClass.Create();
+				ITsStrBldr builder = TsStringUtils.MakeStrBldr();
 				ITsString space = TsStringUtils.MakeString(fBaseWordIsPhrase ? "  " : " ", m_wsVern);
 				foreach (IWfiAnalysis wa in wordform.AnalysesOC)
 				{
@@ -1928,7 +1928,7 @@ namespace SIL.FieldWorks.IText
 			private void AddMorphItemsToComboList()
 			{
 				var coRepository = m_caches.MainCache.ServiceLocator.GetInstance<ICmObjectRepository>();
-				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+				ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 				MorphItem miPrev = new MorphItem();
 				m_morphItems.Sort();
 				foreach (MorphItem mi in m_morphItems)
@@ -2034,7 +2034,7 @@ namespace SIL.FieldWorks.IText
 
 			private void AddUnknownLexEntryToComboList()
 			{
-				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+				ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.Clear();
 				tisb.SetIntPropValues(
 					(int)FwTextPropType.ktptSuperscript,
@@ -2048,7 +2048,7 @@ namespace SIL.FieldWorks.IText
 
 			private void AddItemToComboList(string itemName, EventHandler onSelect, ITsTextProps itemProperties, bool enableItem)
 			{
-				ITsStrBldr tsb = TsStrBldrClass.Create();
+				ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 				tsb.Replace(tsb.Length, tsb.Length, itemName, itemProperties);
 				tsb.SetIntPropValues(0, tsb.Length, (int)FwTextPropType.ktptWs, 0, m_wsUser);
 				ComboList.Items.Add(new InterlinComboHandlerActionComboItem(
@@ -3133,7 +3133,7 @@ namespace SIL.FieldWorks.IText
 
 				base.SetupCombo();
 				int hvoEmptyGloss = 0;
-				ITsStrBldr tsb = TsStrBldrClass.Create();
+				ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 
 				ComboList.WritingSystemFactory =
 					m_caches.MainCache.LanguageWritingSystemFactoryAccessor;
@@ -3205,7 +3205,7 @@ namespace SIL.FieldWorks.IText
 					if (glossCount == 0 && wsids.Count > 0)
 					{
 						hvoEmptyGloss = gloss.Hvo;
-						ITsPropsBldr tpbUserWs = TsPropsBldrClass.Create();
+						ITsPropsBldr tpbUserWs = TsStringUtils.MakePropsBldr();
 						tpbUserWs.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_wsUser);
 						tsb.Replace(tsb.Length, tsb.Length, ITextStrings.ksEmpty, tpbUserWs.GetTextProps());
 					}

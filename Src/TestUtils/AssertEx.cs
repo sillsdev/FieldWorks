@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.Test.TestUtils
@@ -83,7 +84,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 				}
 			}
 
-			ITsTextProps ttp1 = TsPropsFactoryClass.Create().MakeProps(expectedCharStyle, expectedWs, 0);
+			ITsTextProps ttp1 = TsStringUtils.MakeProps(expectedCharStyle, expectedWs);
 			ITsTextProps ttp2 = tss.get_Properties(iRun);
 			string sWhy;
 			if (!TsTextPropsHelper.PropsAreEqual(ttp1, ttp2, out sWhy))

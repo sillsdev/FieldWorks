@@ -334,7 +334,7 @@ namespace SIL.FieldWorks.Common.Framework
 					// properties are already okay).
 					if (IsNormalStyle(styleName))
 					{
-						ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+						ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 						propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily,
 							AppDefaultFont);
 						style.Rules = propsBldr.GetTextProps();
@@ -438,7 +438,7 @@ namespace SIL.FieldWorks.Common.Framework
 				OverwriteOptions option = OverwriteOptions.All;
 
 				// Get props builder with default Text Properties
-				ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+				ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 				if (style.IsModified)
 				{
 					m_userModifiedStyles.Add(style.Name);

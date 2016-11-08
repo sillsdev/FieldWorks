@@ -721,7 +721,7 @@ namespace SIL.FieldWorks.TE
 //					{
 //						//set formatting info in proxy
 //						ITsTextProps tsTextPropsFormat;
-//						ITsPropsBldr tsPropsBldr = TsPropsBldrClass.Create();
+//						ITsPropsBldr tsPropsBldr = TsStringUtils.MakePropsBldr();
 //						//REVIEW: Should we get formatting info from scTag
 //						tsPropsBldr.SetIntPropValues((int)FwTextPropType.ktptItalic,
 //							(int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvInvert); //italic for now

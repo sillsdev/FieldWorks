@@ -1349,7 +1349,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				int ichMinSeg = 0;
 				int ichLimSeg = 0;
 				// Create TsString for Paragraph Contents.
-				ITsStrBldr contentsBldr = TsStrBldrClass.Create();
+				ITsStrBldr contentsBldr = TsStringUtils.MakeStrBldr();
 				contentsBldr.Clear();
 				foreach (XmlNode segment in segments)
 				{
@@ -1463,7 +1463,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			private static ITsTextProps MakeTextProps(int ws)
 			{
-				ITsPropsBldr propBldr = TsPropsBldrClass.Create();
+				ITsPropsBldr propBldr = TsStringUtils.MakePropsBldr();
 				propBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, ws);
 				ITsTextProps props = propBldr.GetTextProps();
 				return props;

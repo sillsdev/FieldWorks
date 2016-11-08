@@ -35,8 +35,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			CheckDisposed();
 
-			ITsPropsFactory propsFact = TsPropsFactoryClass.Create();
-			return GetTextFromClipboard(null, false, propsFact.MakeProps("bla", 1, 0));
+			return GetTextFromClipboard(null, false, TsStringUtils.MakeProps("bla", 1));
 		}
 
 		protected override bool IsParagraphLevelTag(int tag)
@@ -93,14 +92,13 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			int hvoTitlePara1 = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStTxtPara, hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 0);
 			m_cache.CacheStringProp(hvoTitlePara1, SimpleRootsiteTestsConstants.kflidParaContents,
 				TsStringUtils.MakeString("The First Book of the Law given by Moses", m_wsEng));
-			ITsPropsFactory fact  = TsPropsFactoryClass.Create();
-			m_cache.SetUnknown(hvoTitlePara1, SimpleRootsiteTestsConstants.kflidParaProperties, fact.MakeProps("Title", m_wsEng, 0));
+			m_cache.SetUnknown(hvoTitlePara1, SimpleRootsiteTestsConstants.kflidParaProperties, TsStringUtils.MakeProps("Title", m_wsEng));
 
 			int hvoTitlePara2 = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStTxtPara, hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 1);
 			string secondParaContents = "and Aaron";
 			m_cache.CacheStringProp(hvoTitlePara2, SimpleRootsiteTestsConstants.kflidParaContents,
 				TsStringUtils.MakeString(secondParaContents, m_wsEng));
-			m_cache.SetUnknown(hvoTitlePara2, SimpleRootsiteTestsConstants.kflidParaProperties, fact.MakeProps("Conclusion", m_wsEng, 0));
+			m_cache.SetUnknown(hvoTitlePara2, SimpleRootsiteTestsConstants.kflidParaProperties, TsStringUtils.MakeProps("Conclusion", m_wsEng));
 
 			ShowForm(SimpleViewVc.DisplayType.kTitle |
 				SimpleViewVc.DisplayType.kUseParaProperties |
@@ -138,14 +136,13 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			int hvoTitlePara1 = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStTxtPara, hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 0);
 			m_cache.CacheStringProp(hvoTitlePara1, SimpleRootsiteTestsConstants.kflidParaContents,
 				TsStringUtils.MakeString("The First Book of the Law given by Moses", m_wsEng));
-			ITsPropsFactory fact = TsPropsFactoryClass.Create();
-			m_cache.SetUnknown(hvoTitlePara1, SimpleRootsiteTestsConstants.kflidParaProperties, fact.MakeProps("Title", m_wsEng, 0));
+			m_cache.SetUnknown(hvoTitlePara1, SimpleRootsiteTestsConstants.kflidParaProperties, TsStringUtils.MakeProps("Title", m_wsEng));
 
 			int hvoTitlePara2 = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStTxtPara, hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 1);
 			string secondParaContents = "and Aaron";
 			m_cache.CacheStringProp(hvoTitlePara2, SimpleRootsiteTestsConstants.kflidParaContents,
 				TsStringUtils.MakeString(secondParaContents, m_wsEng));
-			m_cache.SetUnknown(hvoTitlePara2, SimpleRootsiteTestsConstants.kflidParaProperties, fact.MakeProps("Title", m_wsEng, 0));
+			m_cache.SetUnknown(hvoTitlePara2, SimpleRootsiteTestsConstants.kflidParaProperties, TsStringUtils.MakeProps("Title", m_wsEng));
 
 			ShowForm(SimpleViewVc.DisplayType.kTitle |
 				SimpleViewVc.DisplayType.kUseParaProperties |

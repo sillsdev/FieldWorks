@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			public ITsString GetMultiStringAlt(int tag, int ws)
 			{
-				var bldr = TsStrBldrClass.Create();
+				var bldr = TsStringUtils.MakeStrBldr();
 				bldr.SetIntPropValues(0, bldr.Length, (int)FwTextPropType.ktptWs, 0, m_list[0]);
 				return bldr.GetString();
 			}

@@ -11,6 +11,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using System.Linq;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.Controls;
@@ -836,7 +837,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 						var analWs = lrtOwner.Services.WritingSystems.DefaultAnalysisWritingSystem.Handle;
 						var userWs = m_cache.WritingSystemFactory.UserWs;
-						var tisb = TsIncStrBldrClass.Create();
+						var tisb = TsStringUtils.MakeIncStrBldr();
 						tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 
 						switch ((LexRefTypeTags.MappingTypes)lrtOwner.MappingType)
@@ -913,7 +914,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						var lrtOwner = lr.Owner as ILexRefType;
 
 						var userWs = m_cache.WritingSystemFactory.UserWs;
-						var tisb = TsIncStrBldrClass.Create();
+						var tisb = TsStringUtils.MakeIncStrBldr();
 						tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 
 						switch ((LexRefTypeTags.MappingTypes)lrtOwner.MappingType)

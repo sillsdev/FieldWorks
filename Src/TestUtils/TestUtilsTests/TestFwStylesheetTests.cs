@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 		public void TestGetStyleRgch()
 		{
 			IVwStylesheet stylesheet = new TestFwStylesheet();
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetStrPropValue((int)FwTextStringProp.kstpFontFamily, "Times");
 			ITsTextProps props1 = propsBldr.GetTextProps();
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor,
@@ -138,7 +138,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 			vwps.Stylesheet = stylesheet;
 			vwps.WritingSystemFactory = wsf;
 
-			ITsPropsBldr ttpBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr ttpBldr = TsStringUtils.MakePropsBldr();
 			ttpBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "FirstStyle");
 			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, hvoGermanWs);
 			ITsTextProps ttp = ttpBldr.GetTextProps();
@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 			var stylesheet = new TestFwStylesheet();
 			int hvoNewStyle1 = stylesheet.MakeNewStyle();
 
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetStrPropValue((int)FwTextStringProp.kstpFontFamily, "Arial");
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptFontSize,
 				(int)FwTextPropVar.ktpvMilliPoint, 23000);
@@ -201,7 +201,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 			vwps.Stylesheet = stylesheet;
 			vwps.WritingSystemFactory = wsf;
 
-			ITsPropsBldr ttpBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr ttpBldr = TsStringUtils.MakePropsBldr();
 			ttpBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "FirstStyle");
 			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, hvoFrenchWs);
 			ITsTextProps ttpFrench = ttpBldr.GetTextProps();

@@ -717,8 +717,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 												out ITsIncStrBldr sbJoinedGlossPrepend,
 												out ITsIncStrBldr sbJoinedGlossAppend)
 		{
-			sbJoinedGlossPrepend = TsIncStrBldrClass.Create();
-			sbJoinedGlossAppend = TsIncStrBldrClass.Create();
+			sbJoinedGlossPrepend = TsStringUtils.MakeIncStrBldr();
+			sbJoinedGlossAppend = TsStringUtils.MakeIncStrBldr();
 
 			const string sSeparator = kDefaultSeparatorLexEntryInflTypeGlossAffix;
 
@@ -758,7 +758,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			var wsUser = cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 			IList<IMultiUnicode> reverseAbbrs = (from variantType in variantEntryTypes
 												 select variantType.ReverseAbbr).ToList();
-			ITsIncStrBldr sb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr sb = TsStringUtils.MakeIncStrBldr();
 			AddGloss(sb, gloss, wsGloss);
 			const string sBeginSeparator = kDefaultBeginSeparatorLexEntryTypeReverseAbbr;
 			if (reverseAbbrs.Count() > 0)
@@ -784,7 +784,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (tssGloss.Length == 0)
 				tssGloss = gloss.NotFoundTss;
 
-			var sb = TsIncStrBldrClass.Create();
+			var sb = TsStringUtils.MakeIncStrBldr();
 			var cache = inflVariantEntryType.Cache;
 			var wsUser = cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 
@@ -817,7 +817,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			CoreWritingSystemDefinition wsGloss, CoreWritingSystemDefinition wsUser)
 		{
 			if (sb == null)
-				sb = TsIncStrBldrClass.Create();
+				sb = TsStringUtils.MakeIncStrBldr();
 			int wsActual1;
 			ITsString tssGlossPrepend = glossAffixAccessor.GetAlternativeOrBestTss(wsGloss.Handle, out wsActual1);
 			if (tssGlossPrepend != null && tssGlossPrepend.Length != 0)

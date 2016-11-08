@@ -12,6 +12,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.Utils;
@@ -424,7 +425,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				m_chkStartAt.Checked = true;
 
 			UpdateBulletInfo(ref m_currentStyleBulletInfo);
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			m_currentStyleBulletInfo.ConvertAsTextProps(propsBldr);
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptSpaceBefore,
 					(int)FwTextPropVar.ktpvMilliPoint, 6000);

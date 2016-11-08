@@ -234,7 +234,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void ReplaceAllWithMultipleRuns()
 		{
-			ITsStrBldr stringBuilder = TsStrBldrClass.Create();
+			ITsStrBldr stringBuilder = TsStringUtils.MakeStrBldr();
 			stringBuilder.Replace(0, 0, "blaBLA", null);
 			stringBuilder.SetIntPropValues(0, 6, (int)FwTextPropType.ktptWs, 0, Cache.DefaultVernWs);
 			stringBuilder.SetStrPropValue(0, 3, (int)FwTextPropType.ktptNamedStyle, "CStyle3");

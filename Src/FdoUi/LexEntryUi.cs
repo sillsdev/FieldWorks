@@ -770,7 +770,7 @@ namespace SIL.FieldWorks.FdoUi
 						// this allows our TsStringCollectorEnv to properly encode the superscript.
 						// ideally, TsStringCollectorEnv could be made smarter to handle SetIntPropValues
 						// since AppendTss treats the given Tss as atomic.
-						ITsIncStrBldr tsBldr = TsIncStrBldrClass.Create();
+						ITsIncStrBldr tsBldr = TsStringUtils.MakeIncStrBldr();
 						tsBldr.SetIntPropValues((int)FwTextPropType.ktptSuperscript,
 							(int)FwTextPropVar.ktpvEnum,
 							(int)FwSuperscriptVal.kssvSub);

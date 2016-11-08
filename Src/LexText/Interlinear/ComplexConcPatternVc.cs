@@ -500,7 +500,7 @@ namespace SIL.FieldWorks.IText
 
 		public ITsString CreateFeatureLine(ITsString name, ITsString value, bool negated)
 		{
-			ITsIncStrBldr featLine = TsIncStrBldrClass.Create();
+			ITsIncStrBldr featLine = TsStringUtils.MakeIncStrBldr();
 			featLine.AppendTsString(name);
 			featLine.Append(": ");
 			if (value != null)

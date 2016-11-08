@@ -68,8 +68,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			int cParas = m_cache.get_VecSize(m_hvoRoot, SimpleRootsiteTestsConstants.kflidTextParas);
 			int hvoPara = m_cache.MakeNewObject(SimpleRootsiteTestsConstants.kclsidStTxtPara, m_hvoRoot, SimpleRootsiteTestsConstants.kflidTextParas, cParas);
 			m_cache.CacheStringProp(hvoPara, SimpleRootsiteTestsConstants.kflidParaContents, TsStringUtils.EmptyString(m_wsFrn));
-			var propFact = TsPropsFactoryClass.Create();
-			var runStyle = propFact.MakeProps(null, m_wsFrn, 0);
+			var runStyle = TsStringUtils.MakeProps(null, m_wsFrn);
 			ITsString contents = m_cache.get_StringProp(hvoPara, SimpleRootsiteTestsConstants.kflidParaContents);
 			var bldr = contents.GetBldr();
 			bldr.Replace(bldr.Length, bldr.Length, text, runStyle);

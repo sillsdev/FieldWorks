@@ -92,7 +92,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				bldr.ReplaceTsString(8, bldr.Length, null);
 
 			// Make a TsTextProps specifying just the writing system.
-			ITsPropsBldr propBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propBldr = TsStringUtils.MakePropsBldr();
 			int dummy;
 			int wsActual = bldr.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out dummy);
 			propBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, wsActual);

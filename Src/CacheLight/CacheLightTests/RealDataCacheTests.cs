@@ -407,7 +407,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassG");
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
 
-			var tsPropsBuilder = TsPropsBldrClass.Create();
+			var tsPropsBuilder = TsStringUtils.MakePropsBldr();
 			var props = tsPropsBuilder.GetTextProps();
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassG", "TextPropsProp7", false);
 			SilDataAccess.SetUnknown(hvo, tag, props);
@@ -443,7 +443,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassE");
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
 
-			var tsPropsBuilder = TsPropsBldrClass.Create();
+			var tsPropsBuilder = TsStringUtils.MakePropsBldr();
 			var props = tsPropsBuilder.GetTextProps();
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassE", "UnicodeProp4", false);
 			SilDataAccess.SetUnknown(hvo, tag, props);
@@ -461,7 +461,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassG");
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
 
-			var tsPropsBuilder = TsPropsBldrClass.Create();
+			var tsPropsBuilder = TsStringUtils.MakePropsBldr();
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassG", "TextPropsProp7", false);
 			SilDataAccess.SetUnknown(hvo, tag, tsPropsBuilder);
 		}

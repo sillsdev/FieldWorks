@@ -393,11 +393,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (FontSize <= 0)
 				return;
 
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
 			strBldr.Replace(0, 0, "______", StyleUtils.CharStyleTextProps(null, m_DefaultWs));
 
 			bool fIsInherited;
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily, m_tbFontName.Text);
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint,
 				FontSize * 1000);

@@ -390,7 +390,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					// The best we can do is take the properties of the first run which should
 					// be fine for most cases.
 					ITsTextProps props = FindText.get_Properties(0);
-					ITsStrBldr replaceBldr = TsStrBldrClass.Create();
+					ITsStrBldr replaceBldr = TsStringUtils.MakeStrBldr();
 					replaceBldr.Replace(0, 0, "", props);
 					ReplaceText = replaceBldr.GetString();
 				}

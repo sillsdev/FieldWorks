@@ -256,7 +256,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			footnote.FootnoteMarker = TsStringUtils.MakeString("a", Cache.WritingSystemFactory.GetWsFromStr("en"));
 
 			// Add the guid property so we can get it out as a string.
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			byte[] objData = TsStringUtils.GetObjData(footnote.Guid, 1);
 			propsBldr.SetStrPropValueRgch(1, objData, objData.Length);
 

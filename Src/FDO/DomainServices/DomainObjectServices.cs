@@ -283,7 +283,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			foreach (int ws in wss)
 			{
 				ITsTextProps wsOnlyProps = StyleUtils.CharStyleTextProps(null, ws);
-				ITsStrBldr bldr = TsStrBldrClass.Create();
+				ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 				bool wantNextSpace = false; // suppresses space before the first thing we add.
 				bool haveBtText = false; // Text that isn't segment label text
 				bool lastSegWasLabel = false;

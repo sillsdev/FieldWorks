@@ -408,7 +408,7 @@ namespace SIL.FieldWorks.Common.RootSites
 						if (bldrWord == null)
 						{
 							bldrWord = tssWord.GetBldr();
-							bldrKeepOrcs = TsStrBldrClass.Create();
+							bldrKeepOrcs = TsStringUtils.MakeStrBldr();
 						}
 						bldrWord.Replace(ich - bldrWordOffset, ich - bldrWordOffset + 1, "", null);
 						bldrKeepOrcs.Replace(bldrKeepOrcs.Length, bldrKeepOrcs.Length, "\xfffc", ttp);

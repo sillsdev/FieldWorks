@@ -191,7 +191,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			string verse3 = "9";
 			string pc3 = "Ich spreche nicht viel Deutsch.";
 
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, verse1, StyleUtils.CharStyleTextProps(ScrStyleNames.VerseNumber, m_wsVern));
 			bldr.Replace(bldr.Length, bldr.Length, pc1, StyleUtils.CharStyleTextProps(null, m_wsVern));
 			bldr.Replace(bldr.Length, bldr.Length, verse2, StyleUtils.CharStyleTextProps(ScrStyleNames.VerseNumber, m_wsVern));
@@ -865,7 +865,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			secondTss = TsStringUtils.MakeString(" a  sd   1  ", m_wsEn, "Verse");
 			Assert.IsFalse(BtConverter.StringsEndWithSameWord(firstTss, secondTss));
 
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Append("3", StyleUtils.CharStyleTextProps("Chapter", m_wsEn));
 			bldr.Append("4", StyleUtils.CharStyleTextProps("Verse", m_wsEn));
 			firstTss = bldr.GetString();

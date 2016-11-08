@@ -2127,7 +2127,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					{
 						IScrTxtPara newPara = m_cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(
 							createdFootnote, ScrStyleNames.NormalFootnoteParagraph);
-						ITsIncStrBldr paraBldr = TsIncStrBldrClass.Create();
+						ITsIncStrBldr paraBldr = TsStringUtils.MakeIncStrBldr();
 						ICmTranslation trans = null;
 						ILgWritingSystemFactory wsf = book.Cache.WritingSystemFactory;
 						foreach (XmlNode paraTextNode in bla.ChildNodes)
@@ -2161,7 +2161,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 								Debug.Assert(transWS != 0, "Unable to find ws from ICU Locale");
 
 								// Build a TsString from the run(s) description.
-								ITsIncStrBldr strBldr = TsIncStrBldrClass.Create();
+								ITsIncStrBldr strBldr = TsStringUtils.MakeIncStrBldr();
 								foreach (XmlNode transTextNode in paraTextNode.ChildNodes)
 								{
 									if (transTextNode.Name != "RUN")
