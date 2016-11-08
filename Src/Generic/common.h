@@ -98,8 +98,10 @@ Last reviewed:
 #include <ole2.h>
 
 #else // !WIN32
-
+#pragma warning(push)
+#pragma warning(disable: 4458) // declaration of 'type' hides class member
 #include "IcuCommon.h" // Enables general access to ICU (International Components for Unicode).
+#pragma warning(pop)
 #include <Hacks.h>
 #include <COM.h>
 #include <COMInterfaces.h>
@@ -157,7 +159,7 @@ Last reviewed:
 #include <Usp10.h> // For Uniscribe (currently only in Language DLL).
 
 #pragma warning(push)
-#pragma warning(disable: 4127)
+#pragma warning(disable: 4127 4458)
 #include "IcuCommon.h" // Enables general access to ICU (International Components for Unicode).
 #pragma warning(pop)
 
@@ -169,8 +171,11 @@ Last reviewed:
 // imagehlp.h must be compiled with packing to eight-byte-boundaries,
 // but does nothing to enforce that.
 #pragma pack( push, before_imagehlp, 8 )
+#pragma warning(push)
+#pragma warning(disable: 4091) // 'typedef' ignored when no variable is declared
 #include <imagehlp.h>
 #include <Tlhelp32.h>
+#pragma warning(pop)
 #pragma pack( pop, before_imagehlp )
 #endif // WIN32
 

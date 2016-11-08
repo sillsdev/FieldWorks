@@ -107,12 +107,12 @@ namespace TestViews
 
 			// And the StTexts to the contents of a dummy property.
 			HVO rghvo[1] = {101};
-			HVO hvoRoot = 1001;
-			CheckHr(m_qcda->CacheVecProp(hvoRoot, kflidTestDummy, rghvo, 1));
+			HVO hvoRootBox = 1001;
+			CheckHr(m_qcda->CacheVecProp(hvoRootBox, kflidTestDummy, rghvo, 1));
 
 			m_qvc.Attach(NewObj DummyVc());
 			((DummyVc*)m_qvc.Ptr())->m_dympParaTrailingMargin = 10000;
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, 1, NULL);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, 1, NULL);
 			HRESULT hr = m_qrootb->Layout(m_qvg32, 300);
 			unitpp::assert_true("Layout succeeded", hr == S_OK);
 
@@ -141,12 +141,12 @@ namespace TestViews
 
 			// And the StTexts to the contents of a dummy property.
 			HVO rghvo[1] = {101};
-			HVO hvoRoot = 1001;
-			CheckHr(m_qcda->CacheVecProp(hvoRoot, kflidTestDummy, rghvo, 1));
+			HVO hvoRootBox = 1001;
+			CheckHr(m_qcda->CacheVecProp(hvoRootBox, kflidTestDummy, rghvo, 1));
 
 			m_qvc.Attach(NewObj DummyVc());
 			((DummyVc*)m_qvc.Ptr())->m_dympParaTrailingMargin = 10000;
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, 1, NULL);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, 1, NULL);
 			HRESULT hr = m_qrootb->Layout(m_qvg32, 300);
 			unitpp::assert_true("Layout succeeded", hr == S_OK);
 
@@ -222,12 +222,12 @@ namespace TestViews
 
 			// And the StTexts to the contents of a dummy property.
 			HVO rghvo[] = {hvoText1, hvoText2};
-			HVO hvoRoot = 1001;
-			CheckHr(m_qcda->CacheVecProp(hvoRoot, kflidTestDummy, rghvo, 2));
+			HVO hvoRootBox = 1001;
+			CheckHr(m_qcda->CacheVecProp(hvoRootBox, kflidTestDummy, rghvo, 2));
 
 			m_qvc.Attach(NewObj DummyVc());
 			((DummyVc*)m_qvc.Ptr())->m_dympParaTrailingMargin = 10000;
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, 6, NULL);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, 6, NULL);
 			HRESULT hr = m_qrootb->Layout(m_qvg32, 300);
 			unitpp::assert_true("Layout succeeded", hr == S_OK);
 
@@ -277,8 +277,8 @@ namespace TestViews
 
 			// And the StTexts to the contents of a dummy property.
 			HVO rghvo[] = {hvoText1, hvoText2};
-			HVO hvoRoot = 1001;
-			CheckHr(m_qcda->CacheVecProp(hvoRoot, kflidTestDummy, rghvo, 2));
+			HVO hvoRootBox = 1001;
+			CheckHr(m_qcda->CacheVecProp(hvoRootBox, kflidTestDummy, rghvo, 2));
 
 			// Set printer resolution on graphics object
 			Rect rcPrinter(0, 0, 1200, 1200);
@@ -289,7 +289,7 @@ namespace TestViews
 
 			m_qvc.Attach(NewObj DummyVc());
 			((DummyVc*)m_qvc.Ptr())->m_dympParaTrailingMargin = 10000;
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, 6, NULL);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, 6, NULL);
 			HRESULT hr = m_qrootb->Layout(m_qvg32, 4000);
 			unitpp::assert_true("Layout succeeded", hr == S_OK);
 
@@ -346,8 +346,8 @@ namespace TestViews
 
 			// And the StTexts to the contents of a dummy property.
 			HVO rghvo[] = {hvoText1};
-			HVO hvoRoot = 1001;
-			CheckHr(m_qcda->CacheVecProp(hvoRoot, kflidTestDummy, rghvo, 1));
+			HVO hvoRootBox = 1001;
+			CheckHr(m_qcda->CacheVecProp(hvoRootBox, kflidTestDummy, rghvo, 1));
 
 			// Set printer resolution on graphics object
 			Rect rcPrinter(0, 0, 1200, 1200);
@@ -358,7 +358,7 @@ namespace TestViews
 
 			m_qvc.Attach(NewObj DummyVc(m_paragraphStyleName));
 			((DummyVc*)m_qvc.Ptr())->m_dympParaTrailingMargin = 10000;
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, 11, m_qvss);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, 11, m_qvss);
 			HRESULT hr = m_qrootb->Layout(m_qvg32, 4000);
 			unitpp::assert_true("Layout should return S_OK", hr == S_OK);
 
@@ -391,8 +391,8 @@ namespace TestViews
 
 			// And the StTexts to the contents of a dummy property.
 			HVO rghvo[] = {hvoText1};
-			HVO hvoRoot = 1001;
-			CheckHr(m_qcda->CacheVecProp(hvoRoot, kflidTestDummy, rghvo, 1));
+			HVO hvoRootBox = 1001;
+			CheckHr(m_qcda->CacheVecProp(hvoRootBox, kflidTestDummy, rghvo, 1));
 
 			// Set printer resolution on graphics object
 			Rect rcPrinter(0, 0, 1200, 1200);
@@ -403,7 +403,7 @@ namespace TestViews
 
 			m_qvc.Attach(NewObj DummyVc(m_paragraphStyleName));
 			((DummyVc*)m_qvc.Ptr())->m_dympParaTrailingMargin = 10000;
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, 11, m_qvss);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, 11, m_qvss);
 			HRESULT hr = m_qrootb->Layout(m_qvg32, 4000);
 			unitpp::assert_true("Layout should return S_OK", hr == S_OK);
 
@@ -436,8 +436,8 @@ namespace TestViews
 
 			// And the StTexts to the contents of a dummy property.
 			HVO rghvo[] = {hvoText1};
-			HVO hvoRoot = 1001;
-			CheckHr(m_qcda->CacheVecProp(hvoRoot, kflidTestDummy, rghvo, 1));
+			HVO hvoRootBox = 1001;
+			CheckHr(m_qcda->CacheVecProp(hvoRootBox, kflidTestDummy, rghvo, 1));
 
 			// Set printer resolution on graphics object
 			Rect rcPrinter(0, 0, 1200, 1200);
@@ -448,7 +448,7 @@ namespace TestViews
 
 			m_qvc.Attach(NewObj DummyVc(m_paragraphStyleName));
 			((DummyVc*)m_qvc.Ptr())->m_dympParaTrailingMargin = 10000;
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, 11, m_qvss);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, 11, m_qvss);
 			HRESULT hr = m_qrootb->Layout(m_qvg32, 4000);
 			unitpp::assert_true("Layout should return S_OK", hr == S_OK);
 
@@ -488,8 +488,8 @@ namespace TestViews
 
 			// And the StTexts to the contents of a dummy property.
 			HVO rghvo[] = {hvoText1};
-			HVO hvoRoot = 1001;
-			CheckHr(m_qcda->CacheVecProp(hvoRoot, kflidTestDummy, rghvo, 1));
+			HVO hvoRootBox = 1001;
+			CheckHr(m_qcda->CacheVecProp(hvoRootBox, kflidTestDummy, rghvo, 1));
 
 			// Set printer resolution on graphics object
 			Rect rcPrinter(0, 0, 1200, 1200);
@@ -500,7 +500,7 @@ namespace TestViews
 
 			m_qvc.Attach(NewObj DummyVc(m_paragraphStyleName));
 			((DummyVc*)m_qvc.Ptr())->m_dympParaTrailingMargin = 10000;
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, 11, m_qvss);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, 11, m_qvss);
 			HRESULT hr = m_qrootb->Layout(m_qvg32, 4000);
 			unitpp::assert_true("Layout should return S_OK", hr == S_OK);
 
@@ -545,8 +545,8 @@ namespace TestViews
 
 			// And the StTexts to the contents of a dummy property.
 			HVO rghvo[] = {hvoText1};
-			HVO hvoRoot = 1001;
-			CheckHr(m_qcda->CacheVecProp(hvoRoot, kflidTestDummy, rghvo, 1));
+			HVO hvoRootBox = 1001;
+			CheckHr(m_qcda->CacheVecProp(hvoRootBox, kflidTestDummy, rghvo, 1));
 
 			// Set printer resolution on graphics object
 			Rect rcPrinter(0, 0, 1200, 1200);
@@ -557,7 +557,7 @@ namespace TestViews
 
 			m_qvc.Attach(NewObj DummyVc(m_paragraphStyleName));
 			((DummyVc*)m_qvc.Ptr())->m_dympParaTrailingMargin = 10000;
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, 11, m_qvss);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, 11, m_qvss);
 			HRESULT hr = m_qrootb->Layout(m_qvg32, 4000);
 			unitpp::assert_true("Layout should return S_OK", hr == S_OK);
 
@@ -599,8 +599,8 @@ namespace TestViews
 
 			// And the StTexts to the contents of a dummy property.
 			HVO rghvo[] = {hvoText1};
-			HVO hvoRoot = 1001;
-			CheckHr(m_qcda->CacheVecProp(hvoRoot, kflidTestDummy, rghvo, 1));
+			HVO hvoRootBox = 1001;
+			CheckHr(m_qcda->CacheVecProp(hvoRootBox, kflidTestDummy, rghvo, 1));
 
 			// Set printer resolution on graphics object
 			Rect rcPrinter(0, 0, 1200, 1200);
@@ -611,7 +611,7 @@ namespace TestViews
 
 			m_qvc.Attach(NewObj DummyVc(m_paragraphStyleName));
 			((DummyVc*)m_qvc.Ptr())->m_dympParaTrailingMargin = 10000;
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, 11, m_qvss);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, 11, m_qvss);
 			HRESULT hr = m_qrootb->Layout(m_qvg32, 4000);
 			unitpp::assert_true("Layout should return S_OK", hr == S_OK);
 
@@ -652,8 +652,8 @@ namespace TestViews
 
 			// And the StTexts to the contents of a dummy property.
 			HVO rghvo[] = {hvoText1};
-			HVO hvoRoot = 1001;
-			CheckHr(m_qcda->CacheVecProp(hvoRoot, kflidTestDummy, rghvo, 1));
+			HVO hvoRootBox = 1001;
+			CheckHr(m_qcda->CacheVecProp(hvoRootBox, kflidTestDummy, rghvo, 1));
 
 			// Set printer resolution on graphics object
 			Rect rcPrinter(0, 0, 1200, 1200);
@@ -664,7 +664,7 @@ namespace TestViews
 
 			m_qvc.Attach(NewObj DummyVc(m_paragraphStyleName));
 			((DummyVc*)m_qvc.Ptr())->m_dympParaTrailingMargin = 10000;
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, 11, m_qvss);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, 11, m_qvss);
 			HRESULT hr = m_qrootb->Layout(m_qvg32, 4000);
 			unitpp::assert_true("Layout should return S_OK", hr == S_OK);
 
@@ -709,8 +709,8 @@ namespace TestViews
 
 			// And the StTexts to the contents of a dummy property.
 			HVO rghvo[] = {hvoText1};
-			HVO hvoRoot = 1001;
-			CheckHr(m_qcda->CacheVecProp(hvoRoot, kflidTestDummy, rghvo, 1));
+			HVO hvoRootBox = 1001;
+			CheckHr(m_qcda->CacheVecProp(hvoRootBox, kflidTestDummy, rghvo, 1));
 
 			// Set printer resolution on graphics object
 			Rect rcPrinter(0, 0, 1200, 1200);
@@ -721,7 +721,7 @@ namespace TestViews
 
 			m_qvc.Attach(NewObj DummyVc(m_paragraphStyleName));
 			((DummyVc*)m_qvc.Ptr())->m_dympParaTrailingMargin = 10000;
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, 11, m_qvss);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, 11, m_qvss);
 			HRESULT hr = m_qrootb->Layout(m_qvg32, 4000);
 			unitpp::assert_true("Layout should return S_OK", hr == S_OK);
 
@@ -773,8 +773,8 @@ namespace TestViews
 
 			// And the StTexts to the contents of a dummy property.
 			HVO rghvo[] = {hvoText1};
-			HVO hvoRoot = 1001;
-			CheckHr(m_qcda->CacheVecProp(hvoRoot, kflidTestDummy, rghvo, 1));
+			HVO hvoRootBox = 1001;
+			CheckHr(m_qcda->CacheVecProp(hvoRootBox, kflidTestDummy, rghvo, 1));
 
 			// Set printer resolution on graphics object
 			Rect rcPrinter(0, 0, 1200, 1200);
@@ -785,7 +785,7 @@ namespace TestViews
 
 			m_qvc.Attach(NewObj DummyVc(m_paragraphStyleName));
 			((DummyVc*)m_qvc.Ptr())->m_dympParaTrailingMargin = 10000;
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, 11, m_qvss);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, 11, m_qvss);
 			HRESULT hr = m_qrootb->Layout(m_qvg32, 4000);
 			unitpp::assert_true("Layout should return S_OK", hr == S_OK);
 
@@ -818,8 +818,8 @@ namespace TestViews
 
 			// And the StTexts to the contents of a dummy property.
 			HVO rghvo[] = {hvoText1};
-			HVO hvoRoot = 1001;
-			CheckHr(m_qcda->CacheVecProp(hvoRoot, kflidTestDummy, rghvo, 1));
+			HVO hvoRootBox = 1001;
+			CheckHr(m_qcda->CacheVecProp(hvoRootBox, kflidTestDummy, rghvo, 1));
 
 			// Set printer resolution on graphics object
 			Rect rcPrinter(0, 0, 1200, 1200);
@@ -830,7 +830,7 @@ namespace TestViews
 
 			m_qvc.Attach(NewObj DummyVc(m_paragraphStyleName));
 			((DummyVc*)m_qvc.Ptr())->m_dympParaTrailingMargin = 10000;
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, 11, m_qvss);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, 11, m_qvss);
 			HRESULT hr = m_qrootb->Layout(m_qvg32, 4000);
 			unitpp::assert_true("Layout should return S_OK", hr == S_OK);
 

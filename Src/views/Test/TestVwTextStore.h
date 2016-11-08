@@ -34,30 +34,30 @@ namespace TestViews
 
 #define assert_exception(msg, hrValue, func) \
 		{ \
-			HRESULT hr = S_OK; \
+			HRESULT hr_ex = S_OK; \
 			try \
 			{ \
 				(func); \
 			} \
 			catch (Throwable& thr) \
 			{ \
-				hr = thr.Result(); \
+				hr_ex = thr.Result(); \
 			} \
-			unitpp::assert_eq((msg), (hrValue), hr); \
+			unitpp::assert_eq((msg), (hrValue), hr_ex); \
 		}
 
 #define assert_exceptionHr(msg, hrValue, func) \
 		{ \
-			HRESULT hr = S_OK; \
+			HRESULT hr_ex = S_OK; \
 			try \
 			{ \
 				CheckHr(func); \
 			} \
 			catch (Throwable& thr) \
 			{ \
-				hr = thr.Result(); \
+				hr_ex = thr.Result(); \
 			} \
-			unitpp::assert_eq((msg), (hrValue), hr); \
+			unitpp::assert_eq((msg), (hrValue), hr_ex); \
 		}
 
 	//******************************************************************************************
@@ -1554,10 +1554,10 @@ namespace TestViews
 
 			const OLECHAR * pszText1 = L"This is a test.";
 			int cchText1 = wcslen(pszText1);
-			int s_cchPara1 = wcslen(s_rgpsz1[0]);
-			LockSetText xlst1(m_qtxs, 0, s_cchPara1, pszText1, &ttc1);
+			int cchPara1 = wcslen(s_rgpsz1[0]);
+			LockSetText xlst1(m_qtxs, 0, cchPara1, pszText1, &ttc1);
 			unitpp::assert_eq("SetText(0, lim) acpStart", 0, ttc1.acpStart);
-			unitpp::assert_eq("SetText(0, lim) acpOldEnd", s_cchPara1, ttc1.acpOldEnd);
+			unitpp::assert_eq("SetText(0, lim) acpOldEnd", cchPara1, ttc1.acpOldEnd);
 			unitpp::assert_eq("SetText(0, lim) acpNewEnd", cchText1, ttc1.acpNewEnd);
 			VerifySelection(0, 0, cchText1, "SetText(0, lim)");
 			VerifyParaContents(0, pszText1, "SetText(0, lim)");
@@ -2138,9 +2138,9 @@ namespace TestViews
 			LockGetTextExt lgte1(m_qtxs, tvc, 5, 6, &rc, &fClipped);
 			VerifyEqualRects(rcSel, rc, "GetTextExt 5, 6");
 
-			int s_cchPara1 = wcslen(s_rgpsz1[0]);
-			LockGetTextExt lgte2(m_qtxs, tvc, 0, s_cchPara1, &rc, &fClipped);
-			MakeSelection(0, 0, s_cchPara1, false, false, &qsel);
+			int cchPara1 = wcslen(s_rgpsz1[0]);
+			LockGetTextExt lgte2(m_qtxs, tvc, 0, cchPara1, &rc, &fClipped);
+			MakeSelection(0, 0, cchPara1, false, false, &qsel);
 			CheckHr(qsel->Location(hg.m_qvg, hg.m_rcSrcRoot, hg.m_rcDstRoot, &rcSel,
 				&rcSecondary, &fSplit, &fEndBeforeAnchor));
 			ClientRectToScreen(rcSel);
@@ -2195,9 +2195,9 @@ namespace TestViews
 			CheckHr(hr = m_qtxs->GetActiveView(&tvc));
 
 			VwTextSelectionPtr qsel;
-			int s_cchPara1 = wcslen(s_rgpsz1[0]);
+			int cchPara1 = wcslen(s_rgpsz1[0]);
 			// First select all the first paragraph, then get its bounds.
-			MakeSelection(0, 0, s_cchPara1, false, true, &qsel);
+			MakeSelection(0, 0, cchPara1, false, true, &qsel);
 			HoldGraphics hg(m_qrootb);
 			RECT rcSel;
 			RECT rcSecondary;

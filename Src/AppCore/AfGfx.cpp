@@ -251,7 +251,7 @@ bool AfGfx::EnsureVisibleRect(Rect & rc)
 			// Causes a run-time crash with a bad stack corruption. I don't know why separating
 			// the parts of the statement fixes things but it does.
 
-			Point pt = rc.TopLeft();
+			pt = rc.TopLeft();
 			HMONITOR hmonT = MonitorFromPoint(pt, MONITOR_DEFAULTTONULL);
 			if (hmonT != hmonTL)
 			{
@@ -275,7 +275,7 @@ bool AfGfx::EnsureVisibleRect(Rect & rc)
 
 			// If the bottom right point is now off the monitor, set it to the bottom right
 			// coordinate of the monitor.
-			Point pt = rc.BottomRight();
+			pt = rc.BottomRight();
 			HMONITOR hmonT = MonitorFromPoint(pt, MONITOR_DEFAULTTONULL);
 			if (hmonT != hmonBR)
 			{
@@ -300,8 +300,8 @@ bool AfGfx::EnsureVisibleRect(Rect & rc)
 			// If the top right point is now off the monitor, set it to the top right
 			// coordinate of the monitor.
 
-			Point pt(rc.right, rc.top);
-			HMONITOR hmonT = MonitorFromPoint(pt, MONITOR_DEFAULTTONULL);
+			Point trpt(rc.right, rc.top);
+			HMONITOR hmonT = MonitorFromPoint(trpt, MONITOR_DEFAULTTONULL);
 			if (hmonT != hmonTR)
 			{
 				rc.top = mi.rcWork.top;
@@ -324,8 +324,8 @@ bool AfGfx::EnsureVisibleRect(Rect & rc)
 
 			// If the bottom left point is now off the monitor, set it to the bottom left
 			// coordinate of the monitor.
-			Point pt(rc.left, rc.bottom);
-			HMONITOR hmonT = MonitorFromPoint(pt, MONITOR_DEFAULTTONULL);
+			Point blpt(rc.left, rc.bottom);
+			HMONITOR hmonT = MonitorFromPoint(blpt, MONITOR_DEFAULTTONULL);
 			if (hmonT != hmonBL)
 			{
 				rc.bottom = mi.rcWork.bottom;

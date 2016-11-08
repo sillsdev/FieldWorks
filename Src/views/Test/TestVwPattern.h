@@ -285,12 +285,12 @@ namespace TestViews
 			// Insert a footnote ORC into the string.
 			StrUni stuData;
 			OLECHAR * prgchData;
-			GUID uidSimulatedFootnote;
-			CheckHr(CoCreateGuid(&uidSimulatedFootnote));
+			GUID uidFootnote;
+			CheckHr(CoCreateGuid(&uidFootnote));
 			// Make large enough for a guid plus the type character at the start.
 			stuData.SetSize(isizeof(GUID) / isizeof(OLECHAR) + 1, &prgchData);
 			*prgchData = kodtOwnNameGuidHot;
-			memmove(prgchData + 1, &uidSimulatedFootnote, isizeof(uidSimulatedFootnote));
+			memmove(prgchData + 1, &uidFootnote, isizeof(uidFootnote));
 			CheckHr(qtpbTextPropsBuilder->SetStrPropValue(ktptObjData, stuData.Bstr()));
 			CheckHr(qtpbTextPropsBuilder->GetTextProps(&qttp));
 			OLECHAR chObj = kchObject;
@@ -343,12 +343,12 @@ namespace TestViews
 			// Insert a footnote ORC into the string.
 			StrUni stuData;
 			OLECHAR * prgchData;
-			GUID uidSimulatedFootnote;
-			CheckHr(CoCreateGuid(&uidSimulatedFootnote));
+			GUID uidFootnote;
+			CheckHr(CoCreateGuid(&uidFootnote));
 			// Make large enough for a guid plus the type character at the start.
 			stuData.SetSize(isizeof(GUID) / isizeof(OLECHAR) + 1, &prgchData);
 			*prgchData = kodtOwnNameGuidHot;
-			memmove(prgchData + 1, &uidSimulatedFootnote, isizeof(uidSimulatedFootnote));
+			memmove(prgchData + 1, &uidFootnote, isizeof(uidFootnote));
 			CheckHr(qtpbTextPropsBuilder->SetStrPropValue(ktptObjData, stuData.Bstr()));
 			CheckHr(qtpbTextPropsBuilder->GetTextProps(&qttp));
 			OLECHAR chObj = kchObject;
@@ -399,12 +399,12 @@ namespace TestViews
 			// Insert a footnote ORC into the string.
 			StrUni stuData;
 			OLECHAR * prgchData;
-			GUID uidSimulatedFootnote;
-			CheckHr(CoCreateGuid(&uidSimulatedFootnote));
+			GUID uidFootnote;
+			CheckHr(CoCreateGuid(&uidFootnote));
 			// Make large enough for a guid plus the type character at the start.
 			stuData.SetSize(isizeof(GUID) / isizeof(OLECHAR) + 1, &prgchData);
 			*prgchData = kodtOwnNameGuidHot;
-			memmove(prgchData + 1, &uidSimulatedFootnote, isizeof(uidSimulatedFootnote));
+			memmove(prgchData + 1, &uidFootnote, isizeof(uidFootnote));
 			CheckHr(qtpbTextPropsBuilder->SetStrPropValue(ktptObjData, stuData.Bstr()));
 			CheckHr(qtpbTextPropsBuilder->GetTextProps(&qttp));
 			OLECHAR chObj = kchObject;
@@ -481,12 +481,12 @@ namespace TestViews
 			// Insert a footnote ORC into the string.
 			StrUni stuData;
 			OLECHAR * prgchData;
-			GUID uidSimulatedFootnote;
-			CheckHr(CoCreateGuid(&uidSimulatedFootnote));
+			GUID uidFootnote;
+			CheckHr(CoCreateGuid(&uidFootnote));
 			// Make large enough for a guid plus the type character at the start.
 			stuData.SetSize(isizeof(GUID) / isizeof(OLECHAR) + 1, &prgchData);
 			*prgchData = kodtOwnNameGuidHot;
-			memmove(prgchData + 1, &uidSimulatedFootnote, isizeof(uidSimulatedFootnote));
+			memmove(prgchData + 1, &uidFootnote, isizeof(uidFootnote));
 			CheckHr(qtpbTextPropsBuilder->SetStrPropValue(ktptObjData, stuData.Bstr()));
 			CheckHr(qtpbTextPropsBuilder->GetTextProps(&qttp));
 			OLECHAR chObj = kchObject;
@@ -1366,8 +1366,8 @@ namespace TestViews
 
 			// Now make them the paragraphs of an StText.
 			HVO rghvo[2] = {khvoOrigPara1, khvoOrigPara2};
-			HVO hvoRoot = 101;
-			qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 2);
+			HVO hvoRootBox = 101;
+			qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 2);
 
 			// Now make the root box and view constructor and Graphics object.
 			IVwRootBoxPtr qrootb;
@@ -1385,7 +1385,7 @@ namespace TestViews
 				qvc.Attach(NewObj DummySimpleParaVc());
 				qrootb->putref_DataAccess(qsda);
 				qrootb->putref_RenderEngineFactory(qref);
-				qrootb->SetRootObject(hvoRoot, qvc, kfragStText, NULL);
+				qrootb->SetRootObject(hvoRootBox, qvc, kfragStText, NULL);
 				DummyRootSitePtr qdrs;
 				qdrs.Attach(NewObj DummyRootSite());
 				Rect rcSrc(0, 0, 96, 96);

@@ -4895,7 +4895,7 @@ STDMETHODIMP VwDrawRootBuffered::DrawTheRoot(IVwRootBox * prootb, HDC hdc, RECT 
 	if (m_hdcMem)
 	{
 		HBITMAP hbmp = (HBITMAP)::GetCurrentObject(m_hdcMem, OBJ_BITMAP);
-		BOOL fSuccess = AfGdi::DeleteObjectBitmap(hbmp);
+		fSuccess = AfGdi::DeleteObjectBitmap(hbmp);
 		Assert(fSuccess);
 		fSuccess = AfGdi::DeleteDC(m_hdcMem);
 		Assert(fSuccess);
@@ -5009,7 +5009,7 @@ STDMETHODIMP VwDrawRootBuffered:: DrawTheRootRotated(IVwRootBox * prootb, HDC hd
 	if (m_hdcMem)
 	{
 		HBITMAP hbmp = (HBITMAP)::GetCurrentObject(m_hdcMem, OBJ_BITMAP);
-		BOOL fSuccess = AfGdi::DeleteObjectBitmap(hbmp);
+		fSuccess = AfGdi::DeleteObjectBitmap(hbmp);
 		Assert(fSuccess);
 		fSuccess = AfGdi::DeleteDC(m_hdcMem);
 		Assert(fSuccess);

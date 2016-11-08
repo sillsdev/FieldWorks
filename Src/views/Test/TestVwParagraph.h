@@ -292,8 +292,8 @@ namespace TestViews
 
 			// Now make them the paragraphs of an StText.
 			HVO rghvo[3] = {khvoString1, khvoString2, khvoString3};
-			HVO hvoRoot = 101;
-			qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 3);
+			HVO hvoRootBox = 101;
+			qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 3);
 
 			// Now make the root box and view constructor and Graphics object.
 			IVwRootBoxPtr qrootb;
@@ -314,7 +314,7 @@ namespace TestViews
 				qvc.Attach(NewObj NormalizeDummyVc());
 				qrootb->putref_DataAccess(qsda);
 				qrootb->putref_RenderEngineFactory(qref);
-				qrootb->SetRootObject(hvoRoot, qvc, kfragBase, NULL);
+				qrootb->SetRootObject(hvoRootBox, qvc, kfragBase, NULL);
 				DummyRootSitePtr qdrs;
 				qdrs.Attach(NewObj DummyRootSite());
 				Rect rcSrc(0, 0, 96, 96);

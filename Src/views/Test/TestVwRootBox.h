@@ -330,8 +330,8 @@ namespace TestViews
 
 			// Now make them the paragraphs of an StText.
 			HVO rghvo[2] = {khvoOrigPara1, khvoOrigPara2};
-			HVO hvoRoot = 101;
-			CheckHr(qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 2));
+			HVO hvoRootBox = 101;
+			CheckHr(qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 2));
 
 			// Now make the root box and view constructor and Graphics object.
 			IVwRootBoxPtr qrootb;
@@ -352,7 +352,7 @@ namespace TestViews
 				qvc.Attach(NewObj DummyParaVc());
 				CheckHr(qrootb->putref_DataAccess(qsda));
 				CheckHr(qrootb->putref_RenderEngineFactory(qref));
-				CheckHr(qrootb->SetRootObject(hvoRoot, qvc, kfragStText, NULL));
+				CheckHr(qrootb->SetRootObject(hvoRootBox, qvc, kfragStText, NULL));
 				DummyRootSitePtr qdrs;
 				qdrs.Attach(NewObj DummyRootSite());
 				Rect rcSrc(0, 0, 96, 96);
@@ -382,31 +382,31 @@ namespace TestViews
 				CheckHr(qsda->get_VecSize(hvoRoot, kflidStText_Paragraphs, &chvoPara));
 				unitpp::assert_true("Should have three paragraphs now", chvoPara == 3);
 				// Check that we are in the second paragraph now.
-				ITsStringPtr qtss;
+				ITsStringPtr qsecondParaTss;
 				int ich;
 				ComBool fAssocPrev;
 				PropTag tag;
 				int ws;
 				HVO hvoPara;
 				CheckHr(qrootb->get_Selection(&qselTemp));
-				CheckHr(qselTemp->TextSelInfo(false, &qtss, &ich, &fAssocPrev, &hvoPara, &tag, &ws));
+				CheckHr(qselTemp->TextSelInfo(false, &qsecondParaTss, &ich, &fAssocPrev, &hvoPara, &tag, &ws));
 				unitpp::assert_true("Should be at the beginning of (new) second para", ich == 0);
 				unitpp::assert_true("New Para 2 should be the original para 1",
 					hvoPara == khvoOrigPara1);
 				int cchw;
 				const OLECHAR * pwrgch;
-				CheckHr(qtss->LockText(&pwrgch, &cchw));
+				CheckHr(qsecondParaTss->LockText(&pwrgch, &cchw));
 				unitpp::assert_true("New para should not be empty", cchw > 0);
 				unitpp::assert_true("New second para should contain contents of original first para",
 					wcscmp(pwrgch, stuPara1.Chars()) == 0);
-				CheckHr(qtss->UnlockText(pwrgch));
+				CheckHr(qsecondParaTss->UnlockText(pwrgch));
 
 				// Move to the first para and check that it isn't either of the original ones
 				CheckHr(qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
 				VwTextSelectionPtr qvwsel = dynamic_cast<VwTextSelection *>(qselTemp.Ptr());
 				unitpp::assert_true("Non-NULL m_qvwsel after MakeSimpleSel", qvwsel);
-				CheckHr(qvwsel->TextSelInfo(false, &qtss, &ich, &fAssocPrev, &hvoPara, &tag, &ws));
-				CheckHr(qtss->get_Length(&cchw));
+				CheckHr(qvwsel->TextSelInfo(false, &qsecondParaTss, &ich, &fAssocPrev, &hvoPara, &tag, &ws));
+				CheckHr(qsecondParaTss->get_Length(&cchw));
 				unitpp::assert_true("New (first) para should be empty", cchw == 0);
 				unitpp::assert_true("New (first) para should have a different hvo from the originals",
 					hvoPara != khvoOrigPara1 && hvoPara != khvoOrigPara2);
@@ -414,7 +414,7 @@ namespace TestViews
 				// Move to the last para and check that it is still 2
 				CheckHr(qrootb->MakeSimpleSel(false, true, false, true, &qselTemp));
 				qvwsel = dynamic_cast<VwTextSelection *>(qselTemp.Ptr());
-				qvwsel->TextSelInfo(false, &qtss, &ich, &fAssocPrev, &hvoPara, &tag, &ws);
+				qvwsel->TextSelInfo(false, &qsecondParaTss, &ich, &fAssocPrev, &hvoPara, &tag, &ws);
 				unitpp::assert_true("Last para's HVO should not have changed",
 					hvoPara == khvoOrigPara2);
 			}
@@ -460,8 +460,8 @@ namespace TestViews
 
 			// Now make them the paragraphs of an StText.
 			HVO rghvo[2] = {khvoOrigPara1, khvoOrigPara2};
-			HVO hvoRoot = 101;
-			qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 2);
+			HVO hvoRootBox = 101;
+			qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 2);
 
 			// Now make the root box and view constructor and Graphics object.
 			IVwRootBoxPtr qrootb;
@@ -482,7 +482,7 @@ namespace TestViews
 				qvc.Attach(NewObj DummyParaVc());
 				qrootb->putref_DataAccess(qsda);
 				qrootb->putref_RenderEngineFactory(qref);
-				qrootb->SetRootObject(hvoRoot, qvc, kfragStText, NULL);
+				qrootb->SetRootObject(hvoRootBox, qvc, kfragStText, NULL);
 				DummyRootSitePtr qdrs;
 				qdrs.Attach(NewObj DummyRootSite());
 				Rect rcSrc(0, 0, 96, 96);
@@ -512,10 +512,10 @@ namespace TestViews
 				qdrs->SimulateEndUnitOfWork();
 
 				int chvoPara;
-				qsda->get_VecSize(hvoRoot, kflidStText_Paragraphs, &chvoPara);
+				qsda->get_VecSize(hvoRootBox, kflidStText_Paragraphs, &chvoPara);
 				unitpp::assert_true("Should have two paragraphs still", chvoPara == 2);
 				// Check that we are in the first paragraph still.
-				ITsStringPtr qtss;
+				ITsStringPtr qfirstParaTss;
 				int ich;
 				ComBool fAssocPrev;
 				PropTag tag;
@@ -523,7 +523,7 @@ namespace TestViews
 				HVO hvoPara;
 				qrootb->get_Selection(&qselTemp);
 				unitpp::assert_true("Should have a selection", qselTemp);
-				qselTemp->TextSelInfo(false, &qtss, &ich, &fAssocPrev, &hvoPara, &tag, &ws);
+				qselTemp->TextSelInfo(false, &qfirstParaTss, &ich, &fAssocPrev, &hvoPara, &tag, &ws);
 				// TODO: Maybe this test could be more explicit.
 				unitpp::assert_true("Should be at the beginning of the second line of the first para",
 					ich == 1);
@@ -531,14 +531,14 @@ namespace TestViews
 					hvoPara == khvoOrigPara1);
 				int cchw;
 				const OLECHAR * pwrgch;
-				qtss->LockText(&pwrgch, &cchw);
+				qfirstParaTss->LockText(&pwrgch, &cchw);
 				unitpp::assert_true("Modified para should not be empty", cchw > 0);
 				StrUni stuMod = stuPara1;
 				wchar chw = kchwHardLineBreak;
 				StrUni stuHardLineBreakChar(&chw, 1);
 				stuMod.Replace(0, 0, stuHardLineBreakChar);
 				int nDiff = wcscmp(pwrgch, stuMod.Chars());
-				qtss->UnlockText(pwrgch); // do this before the assert
+				qfirstParaTss->UnlockText(pwrgch); // do this before the assert
 				unitpp::assert_true("Should have prepended U+2028 to contents of original first para.",
 					nDiff == 0);
 
@@ -550,7 +550,7 @@ namespace TestViews
 				qrootb->get_Selection((IVwSelection**)&qselTemp);
 				unitpp::assert_true("Non-NULL text selection after OnExtendedKey",
 					dynamic_cast<VwTextSelection *>(qselTemp.Ptr()));
-				qselTemp->TextSelInfo(false, &qtss, &ich, &fAssocPrev, &hvoPara, &tag, &ws);
+				qselTemp->TextSelInfo(false, &qfirstParaTss, &ich, &fAssocPrev, &hvoPara, &tag, &ws);
 				unitpp::assert_true("Should still be in first para",
 					hvoPara == khvoOrigPara1);
 				unitpp::assert_true("Should be at the beginning of the first line of the first para",
@@ -604,8 +604,8 @@ namespace TestViews
 
 			// Now make them the paragraphs of an StText.
 			HVO rghvo[3] = {khvoOrigPara1, khvoOrigPara2, khvoOrigPara3};
-			HVO hvoRoot = 101;
-			qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 3);
+			HVO hvoRootBox = 101;
+			qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 3);
 
 			// Now make the root box and view constructor and Graphics object.
 			IVwRootBoxPtr qrootb;
@@ -622,7 +622,7 @@ namespace TestViews
 				qvc.Attach(NewObj DummyParaVc());
 				qrootb->putref_DataAccess(qsda);
 				qrootb->putref_RenderEngineFactory(qref);
-				qrootb->SetRootObject(hvoRoot, qvc, kfragStText, NULL);
+				qrootb->SetRootObject(hvoRootBox, qvc, kfragStText, NULL);
 				DummyRootSitePtr qdrs;
 				qdrs.Attach(NewObj DummyRootSite());
 				Rect rcSrc(0, 0, 96, 96);
@@ -1021,8 +1021,8 @@ namespace TestViews
 
 			// Now make them the paragraphs of an StText.
 			HVO rghvo[3] = {khvoOrigPara1, khvoOrigPara2, khvoOrigPara3};
-			HVO hvoRoot = 101;
-			qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 3);
+			HVO hvoRootBox = 101;
+			qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 3);
 
 			// Now make the root box and view constructor and Graphics object.
 			IVwRootBoxPtr qrootb;
@@ -1039,7 +1039,7 @@ namespace TestViews
 				qvc.Attach(NewObj DummyParaVc());
 				qrootb->putref_DataAccess(qsda);
 				qrootb->putref_RenderEngineFactory(qref);
-				qrootb->SetRootObject(hvoRoot, qvc, kfragStText, NULL);
+				qrootb->SetRootObject(hvoRootBox, qvc, kfragStText, NULL);
 				DummyRootSitePtr qdrs;
 				qdrs.Attach(NewObj DummyRootSite());
 				Rect rcSrc(0, 0, 96, 96);
