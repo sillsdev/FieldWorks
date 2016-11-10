@@ -4,7 +4,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Text;
@@ -305,7 +304,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		[TearDown]
 		public virtual void TestTearDown()
 		{
-			m_basicView.CloseRootBox();
 			m_basicView.Dispose();
 			m_basicView = null;
 		}

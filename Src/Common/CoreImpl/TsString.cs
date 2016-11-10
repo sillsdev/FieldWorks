@@ -3,9 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
+using System.Runtime.InteropServices;
 using System.Threading;
 using SIL.Extensions;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
@@ -18,6 +19,18 @@ namespace SIL.CoreImpl
 	/// </summary>
 	public class TsString : TsStrBase, ITsString, IEquatable<ITsString>, IEquatable<TsString>
 	{
+		private static readonly ConcurrentDictionary<int, TsString> EmptyStringCache = new ConcurrentDictionary<int, TsString>();
+
+		/// <summary>
+		/// Gets the interned empty string for the specified writing system. This ensures that there is only a single
+		/// copy of an empty string for each writing system held in memory. This replicates the behavior of the C++
+		/// implementation. This is done, because some of the FW code depends on empty strings being interned.
+		/// </summary>
+		internal static TsString GetInternedEmptyString(int ws)
+		{
+			return EmptyStringCache.GetOrAdd(ws, handle => new TsString(handle));
+		}
+
 		private readonly string m_text;
 		private readonly TsRun[] m_runs;
 
@@ -31,12 +44,12 @@ namespace SIL.CoreImpl
 		}
 
 		internal TsString(string text, int ws)
-			: this(text, new TsTextProps(ws))
+			: this(text, TsTextProps.GetInternedTextProps(ws))
 		{
 		}
 
 		internal TsString(string text, TsTextProps textProps)
-			: this(text, new TsRun(text == null ? 0 : text.Length, textProps).ToEnumerable())
+			: this(text, new TsRun(text?.Length ?? 0, textProps).ToEnumerable())
 		{
 		}
 
@@ -50,15 +63,9 @@ namespace SIL.CoreImpl
 		/// <summary>
 		/// Gets the text.
 		/// </summary>
-		public override string Text
-		{
-			get { return m_text; }
-		}
+		public override string Text => m_text;
 
-		internal override IList<TsRun> Runs
-		{
-			get { return m_runs; }
-		}
+		internal override IList<TsRun> Runs => m_runs;
 
 		/// <summary>
 		/// Gets the starting offset of the specified run.
@@ -189,7 +196,7 @@ namespace SIL.CoreImpl
 		{
 			if (IsAlreadyNormalized(nm))
 				return true;
-			if (String.IsNullOrEmpty(Text))
+			if (string.IsNullOrEmpty(Text))
 			{
 				NoteAlreadyNormalized(nm);
 				return true;
@@ -207,7 +214,7 @@ namespace SIL.CoreImpl
 			if (nm == FwNormalizationMode.knmNFSC)
 			{
 				// NFSC is a special case, where we just have to normalize and compare.
-				if (this.Equals(get_NormalizedForm(nm)))
+				if (Equals(get_NormalizedForm(nm)))
 				{
 					NoteAlreadyNormalized(nm);
 					return true;
@@ -388,22 +395,21 @@ namespace SIL.CoreImpl
 		/// of a diacritic sequence, it may be moved to the start of the sequence's base character
 		/// (or the start of the string).
 		/// </summary>
-		public void NfdAndFixOffsets(out ITsString ptssRet, int[] rgpichOffsetsToFix, int cichOffsetsToFix)
+		public void NfdAndFixOffsets(out ITsString ptssRet, ArrayPtr rgpichOffsetsToFix, int cichOffsetsToFix)
 		{
 			ptssRet = get_NormalizedFormAndFixOffsets(
 				FwNormalizationMode.knmNFD,
 				rgpichOffsetsToFix,
-				// Paranoia: ensure that buggy calling code can't overstate array length
-				Math.Min(rgpichOffsetsToFix.Length, cichOffsetsToFix));
+				cichOffsetsToFix);
 		}
 
 		// Implementation of both get_NormalizedForm and NfdAndFixOffsets
-		private ITsString get_NormalizedFormAndFixOffsets(FwNormalizationMode nm, int[] oldOffsetsToFix, int numOffsetsToFix)
+		private ITsString get_NormalizedFormAndFixOffsets(FwNormalizationMode nm, ArrayPtr oldOffsetsToFix, int numOffsetsToFix)
 		{
 			// Can we skip unnecessary work?
 			if (IsAlreadyNormalized(nm))
 				return this;
-			if (String.IsNullOrEmpty(Text))
+			if (string.IsNullOrEmpty(Text))
 			{
 				NoteAlreadyNormalized(nm);
 				return this;
@@ -420,7 +426,7 @@ namespace SIL.CoreImpl
 				return nfd.get_NormalizedFormAndFixOffsets(FwNormalizationMode.knmNFSC, oldOffsetsToFix, numOffsetsToFix);
 			}
 
-			bool willFixOffsets = numOffsetsToFix > 0 && oldOffsetsToFix != null && oldOffsetsToFix.Length > 0;
+			bool willFixOffsets = numOffsetsToFix > 0 && oldOffsetsToFix != null && oldOffsetsToFix.IntPtr != IntPtr.Zero;
 			// Keys = offsets into original string, values = offsets into normalized string
 			var stringOffsetMapping = willFixOffsets ? new Dictionary<int, int>() : null; // Don't allocate an object if we'll never use it
 
@@ -516,12 +522,17 @@ namespace SIL.CoreImpl
 			}
 			if (willFixOffsets)
 			{
+				stringOffsetMapping[segmentMin] = resultBuilder.Length;
+				int ptrSize = Marshal.SizeOf(typeof(IntPtr));
 				for (int i = 0; i < numOffsetsToFix; i++)
 				{
-					int oldOffset = oldOffsetsToFix[i];
+					IntPtr offsetPtr = Marshal.ReadIntPtr(oldOffsetsToFix.IntPtr, i * ptrSize);
+					int oldOffset = Marshal.ReadInt32(offsetPtr);
 					int newOffset;
 					if (stringOffsetMapping.TryGetValue(oldOffset, out newOffset))
-						oldOffsetsToFix[i] = newOffset;
+					{
+						Marshal.WriteInt32(offsetPtr, newOffset);
+					}
 					else
 					{
 						// The only likely way for one of the offsets we've been asked to fix up to NOT
@@ -535,44 +546,15 @@ namespace SIL.CoreImpl
 							oldOffset--;
 							found = stringOffsetMapping.TryGetValue(oldOffset, out newOffset);
 						}
-						if (found)
-							oldOffsetsToFix[i] = newOffset;
-						else
-							// Any offset that could not be matched at all will be pointed at the beginning
-							// of the TsString, since that's safe with strings of all sizes (including empty).
-							oldOffsetsToFix[i] = 0;
+						// Any offset that could not be matched at all will be pointed at the beginning
+						// of the TsString, since that's safe with strings of all sizes (including empty).
+						Marshal.WriteInt32(offsetPtr, found ? newOffset : 0);
 					}
 				}
 			}
 			var result = (TsString)resultBuilder.GetString();
 			result.NoteAlreadyNormalized(nm); // So we won't have to do all this work a second time
 			return result;
-		}
-
-		// TODO: XML serialization should not be coupled with the data object, this should be done elsewhere
-
-		/// <summary>
-		/// Writes this instance to the specified stream in the FW XML format.
-		/// </summary>
-		public void WriteAsXml(IStream strm, ILgWritingSystemFactory wsf, int cchIndent, int ws, bool fWriteObjData)
-		{
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
-		/// Gets the FW XML representation of this instance.
-		/// </summary>
-		public string GetXmlString(ILgWritingSystemFactory wsf, int cchIndent, int ws, bool fWriteObjData)
-		{
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
-		/// Writes this <see cref="TsString"/> to the specified stream in the FW XML format.
-		/// </summary>
-		public void WriteAsXmlExtended(IStream strm, ILgWritingSystemFactory wsf, int cchIndent, int ws, bool fWriteObjData, bool fUseRfc4646)
-		{
-			throw new NotImplementedException();
 		}
 
 		/// <summary>
@@ -598,7 +580,7 @@ namespace SIL.CoreImpl
 		public override int GetHashCode()
 		{
 			int code = 23;
-			code = code * 31 + (m_text == null ? 0 : m_text.GetHashCode());
+			code = code * 31 + m_text?.GetHashCode() ?? 0;
 			code = code * 31 + m_runs.GetSequenceHashCode();
 			return code;
 		}

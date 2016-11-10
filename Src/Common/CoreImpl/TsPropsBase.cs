@@ -70,7 +70,7 @@ namespace SIL.CoreImpl
 				return value.Value;
 			}
 
-			// TODO: the original COM object returns an S_FALSE HResult here
+			// the original COM object returns an S_FALSE HResult here
 			nVar = -1;
 			return -1;
 		}
@@ -103,7 +103,7 @@ namespace SIL.CoreImpl
 			if (m_strProps.TryGetValue(tpt, out value))
 				return value;
 
-			// TODO: the original COM object returns an S_FALSE HResult here
+			// the original COM object returns an S_FALSE HResult here
 			return null;
 		}
 

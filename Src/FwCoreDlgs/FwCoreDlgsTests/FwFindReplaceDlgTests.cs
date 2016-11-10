@@ -19,8 +19,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
-using SIL.Utils.Attributes;
-// ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

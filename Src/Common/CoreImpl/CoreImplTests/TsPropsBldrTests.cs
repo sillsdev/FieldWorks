@@ -2,8 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.Utils;
 
 namespace SIL.CoreImpl
 {
@@ -32,7 +34,7 @@ namespace SIL.CoreImpl
 		}
 
 		[Test]
-		public void SetStrPropValue_NonNullValue_InsertsProperty()
+		public void SetStrPropValue_NonEmptyValue_InsertsProperty()
 		{
 			var tpb = new TsPropsBldr();
 			Assert.That(tpb.StrPropCount, Is.EqualTo(0));
@@ -42,12 +44,58 @@ namespace SIL.CoreImpl
 		}
 
 		[Test]
+		public void SetStrPropValue_EmptyValue_InsertsProperty()
+		{
+			var tpb = new TsPropsBldr();
+			Assert.That(tpb.StrPropCount, Is.EqualTo(0));
+			tpb.SetStrPropValue((int)FwTextPropType.ktptFontFamily, string.Empty);
+			Assert.That(tpb.StrPropCount, Is.EqualTo(1));
+			Assert.That(tpb.GetStrPropValue((int)FwTextPropType.ktptFontFamily), Is.Null);
+		}
+
+		[Test]
 		public void SetStrPropValue_NullValue_RemovesProperty()
 		{
 			var tpb = new TsPropsBldr();
-			tpb.SetStrPropValue((int) FwTextPropType.ktptFontFamily, "Arial");
+			tpb.SetStrPropValue((int)FwTextPropType.ktptFontFamily, "Arial");
 			Assert.That(tpb.StrPropCount, Is.EqualTo(1));
-			tpb.SetStrPropValue((int) FwTextPropType.ktptFontFamily, null);
+			tpb.SetStrPropValue((int)FwTextPropType.ktptFontFamily, null);
+			Assert.That(tpb.StrPropCount, Is.EqualTo(0));
+		}
+
+		[Test]
+		public void SetStrPropValueRgch_NonEmptyValue_InsertsProperty()
+		{
+			var tpb = new TsPropsBldr();
+			Assert.That(tpb.StrPropCount, Is.EqualTo(0));
+			Guid guid = Guid.NewGuid();
+			byte[] bytes = TsStringUtils.GetObjData(guid, FwObjDataTypes.kodtNameGuidHot);
+			tpb.SetStrPropValueRgch((int) FwTextPropType.ktptObjData, bytes, bytes.Length);
+			Assert.That(tpb.StrPropCount, Is.EqualTo(1));
+			string str = tpb.GetStrPropValue((int) FwTextPropType.ktptObjData);
+			Assert.That((FwObjDataTypes) str[0], Is.EqualTo(FwObjDataTypes.kodtNameGuidHot));
+			Assert.That(MiscUtils.GetGuidFromObjData(str.Substring(1)), Is.EqualTo(guid));
+		}
+
+		[Test]
+		public void SetStrPropValueRgch_EmptyValue_InsertsProperty()
+		{
+			var tpb = new TsPropsBldr();
+			Assert.That(tpb.StrPropCount, Is.EqualTo(0));
+			tpb.SetStrPropValueRgch((int) FwTextPropType.ktptObjData, new byte[0], 0);
+			Assert.That(tpb.StrPropCount, Is.EqualTo(1));
+			Assert.That(tpb.GetStrPropValue((int)FwTextPropType.ktptObjData), Is.Null);
+		}
+
+		[Test]
+		public void SetStrPropValueRgch_NullValue_RemovesProperty()
+		{
+			var tpb = new TsPropsBldr();
+			Guid guid = Guid.NewGuid();
+			byte[] bytes = TsStringUtils.GetObjData(guid, FwObjDataTypes.kodtNameGuidHot);
+			tpb.SetStrPropValueRgch((int)FwTextPropType.ktptObjData, bytes, bytes.Length);
+			Assert.That(tpb.StrPropCount, Is.EqualTo(1));
+			tpb.SetStrPropValueRgch((int)FwTextPropType.ktptObjData, null, 0);
 			Assert.That(tpb.StrPropCount, Is.EqualTo(0));
 		}
 

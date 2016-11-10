@@ -3,8 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.ComTypes;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.CoreImpl
@@ -14,10 +14,33 @@ namespace SIL.CoreImpl
 	/// </summary>
 	public class TsTextProps : TsPropsBase, ITsTextProps, IEquatable<TsTextProps>
 	{
-		private static readonly TsTextProps EmptyPropsInternal = new TsTextProps();
-		internal static TsTextProps EmptyProps
+		internal static TsTextProps EmptyProps => new TsTextProps();
+
+		private static readonly ConcurrentDictionary<TsTextProps, TsTextProps> TextPropsCache = new ConcurrentDictionary<TsTextProps, TsTextProps>();
+
+		static TsTextProps()
 		{
-			get { return EmptyPropsInternal; }
+			TextPropsCache.TryAdd(EmptyProps, EmptyProps);
+		}
+
+		/// <summary>
+		/// Gets the interned text props for the specified properties. This ensures that there is only a single
+		/// copy of each text props in memory. This replicates the behavior of the C++ implementation. This is
+		/// done, because some of the FW code depends on text props being interned.
+		/// </summary>
+		internal static TsTextProps GetInternedTextProps(IDictionary<int, TsIntPropValue> intProps, IDictionary<int, string> strProps)
+		{
+			var textProps = new TsTextProps(intProps, strProps);
+			return TextPropsCache.GetOrAdd(textProps, textProps);
+		}
+
+		/// <summary>
+		/// Gets the interned text props for the writing system.
+		/// </summary>
+		internal static TsTextProps GetInternedTextProps(int ws)
+		{
+			var textProps = new TsTextProps(ws);
+			return TextPropsCache.GetOrAdd(textProps, textProps);
 		}
 
 		internal TsTextProps(IDictionary<int, TsIntPropValue> intProps, IDictionary<int, string> strProps)
@@ -43,15 +66,6 @@ namespace SIL.CoreImpl
 		public ITsPropsBldr GetBldr()
 		{
 			return new TsPropsBldr(IntProperties, StringProperties);
-		}
-
-		// TODO: XML serialization should not be coupled with the data object, this should be done elsewhere
-		/// <summary>
-		/// Writes this instance to the specified stream in the FW XML format.
-		/// </summary>
-		public void WriteAsXml(IStream strm, ILgWritingSystemFactory wsf, int cchIndent)
-		{
-			throw new NotImplementedException();
 		}
 
 		/// <summary>

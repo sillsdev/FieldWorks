@@ -279,10 +279,8 @@
     </Compile>
     <Compile Include="CharContextCtrlTests.cs" />
     <Compile Include="RestoreProjectPresenterTests.cs" />
-    <Compile Include="ValidCharactersDlgTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FindReplaceCollectorEnvTests.cs" />
+    <Compile Include="ValidCharactersDlgTests.cs" />
+    <Compile Include="FindCollectorEnvTests.cs" />
     <Compile Include="FwFindReplaceDlgTests.cs">
       <SubType>Form</SubType>
     </Compile>

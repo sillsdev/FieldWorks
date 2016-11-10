@@ -399,7 +399,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			TsRunInfo tri, FwObjDataTypes odt, Guid guidOfNewObj)
 		{
 			// build new ObjData properties of the ORC for the new object
-			byte[] objData = TsStringUtils.GetObjData(guidOfNewObj, (byte)odt);
+			byte[] objData = TsStringUtils.GetObjData(guidOfNewObj, odt);
 			ITsPropsBldr propsBldr = ttp.GetBldr();
 			propsBldr.SetStrPropValueRgch((int)FwTextPropType.ktptObjData,
 				objData, objData.Length);

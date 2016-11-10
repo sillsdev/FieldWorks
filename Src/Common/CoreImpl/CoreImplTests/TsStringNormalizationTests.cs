@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
@@ -643,20 +644,26 @@ namespace SIL.CoreImpl
 			builder.SetIntPropValues(30, input.Length, (int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)FwTextColor.kclrGreen);
 			var tsInput = (TsString)builder.GetString();
 
-			int[] origOffsets = { 30, 33, 49, 57, 0, 21, 29, input.Length - 1, 36, 37, 54, 55, 56, 58 };
-			int[] expectedOffsets = { 31, 34, 51, 59, 0, 21, 29, input.Length - 1 + 3, 37, 39, 56, 58, 57, 60 };
-
-			int[] actualOffsets = new int[origOffsets.Length];
-			origOffsets.CopyTo(actualOffsets, 0);
+			int[] origOffsets = { 30, 33, 49, 57, 0, 21, 29, input.Length - 1, 36, 37, 54, 55, 56, 58, 62 };
+			int[] expectedOffsets = { 31, 34, 51, 59, 0, 21, 29, input.Length - 1 + 3, 37, 39, 56, 58, 57, 60, 65 };
 
 			ITsString nfd;
-			tsInput.NfdAndFixOffsets(out nfd, actualOffsets, actualOffsets.Length);
+			int[] actualOffsets;
+			using (ArrayPtr nativeOffsets = ConvertToNativeArray(origOffsets))
+			{
+				tsInput.NfdAndFixOffsets(out nfd, nativeOffsets, origOffsets.Length);
+				actualOffsets = ConvertToManagedArray(nativeOffsets, origOffsets.Length);
+			}
+
 			CollectionAssert.AreEqual(expectedOffsets, actualOffsets);
 
 			// Verify that the characters at the new offsets are still the "same" characters that were at the old offsets
 			// "Same" because some offsets pointed to composed characters, and we expect to find the base character at the new offset
 			for (int i = 0; i < origOffsets.Length; i++)
 			{
+				if (origOffsets[i] == input.Length)
+					continue;
+
 				int oldOffset = origOffsets[i];
 				int newOffset = actualOffsets[i];
 				char oldCh = input[oldOffset];
@@ -671,7 +678,7 @@ namespace SIL.CoreImpl
 					expectedCh = 'e';
 				Assert.That(newCh, Is.EqualTo(expectedCh),
 					String.Format("Old char '{0}' (U+{1:X4}) at {2} should match new char '{3}' (U+{4:X4}) at {5}, but didn't match.",
-					oldCh, (int)oldCh, oldOffset, newCh, newOffset, (int)newCh));
+						oldCh, (int) oldCh, oldOffset, newCh, newOffset, (int) newCh));
 			}
 		}
 
@@ -683,11 +690,13 @@ namespace SIL.CoreImpl
 			int[] origOffsets =     { 21, 22, 23, 24, 25 }; // Offsets 26 through end of string are unchanged by this test
 			int[] expectedOffsets = { 21, 24, 22, 23, 25 };
 
-			int[] actualOffsets = new int[origOffsets.Length];
-			origOffsets.CopyTo(actualOffsets, 0);
-
 			ITsString nfd;
-			input.NfdAndFixOffsets(out nfd, actualOffsets, actualOffsets.Length);
+			int[] actualOffsets;
+			using (ArrayPtr nativeOffsets = ConvertToNativeArray(origOffsets))
+			{
+				input.NfdAndFixOffsets(out nfd, nativeOffsets, origOffsets.Length);
+				actualOffsets = ConvertToManagedArray(nativeOffsets, origOffsets.Length);
+			}
 			CollectionAssert.AreEqual(expectedOffsets, actualOffsets);
 
 			// All the new offsets should still point to the same characters that they did before
@@ -727,12 +736,42 @@ namespace SIL.CoreImpl
 			string input, string expectedNfd, int[] origOffsets, int[] expectedOffsets)
 		{
 			var tsInput = new TsString(input, EnglishWS);
-			int[] actualOffsets = new int[origOffsets.Length];
-			origOffsets.CopyTo(actualOffsets, 0);
 			ITsString nfd;
-			tsInput.NfdAndFixOffsets(out nfd, actualOffsets, actualOffsets.Length);
+			int[] actualOffsets;
+			using (ArrayPtr nativeOffsets = ConvertToNativeArray(origOffsets))
+			{
+				tsInput.NfdAndFixOffsets(out nfd, nativeOffsets, origOffsets.Length);
+				actualOffsets = ConvertToManagedArray(nativeOffsets, origOffsets.Length);
+			}
 			CollectionAssert.AreEqual(expectedOffsets, actualOffsets);
 			Assert.That(nfd.Text, Is.EqualTo(expectedNfd));
+		}
+
+		private static ArrayPtr ConvertToNativeArray(int[] offsets)
+		{
+			int ptrSize = Marshal.SizeOf(typeof(IntPtr));
+			int intSize = Marshal.SizeOf(typeof(int));
+			var nativeArray = new ArrayPtr(offsets.Length * ptrSize);
+			for (int i = 0; i < offsets.Length; i++)
+			{
+				IntPtr offsetPtr = Marshal.AllocCoTaskMem(intSize);
+				Marshal.WriteInt32(offsetPtr, offsets[i]);
+				Marshal.WriteIntPtr(nativeArray.IntPtr, i * ptrSize, offsetPtr);
+			}
+			return nativeArray;
+		}
+
+		private static int[] ConvertToManagedArray(ArrayPtr nativeOffsets, int len)
+		{
+			int ptrSize = Marshal.SizeOf(typeof(IntPtr));
+			var offsets = new int[len];
+			for (int i = 0; i < len; i++)
+			{
+				IntPtr offsetPtr = Marshal.ReadIntPtr(nativeOffsets.IntPtr, i * ptrSize);
+				offsets[i] = Marshal.ReadInt32(offsetPtr);
+				Marshal.FreeCoTaskMem(offsetPtr);
+			}
+			return offsets;
 		}
 	}
 }

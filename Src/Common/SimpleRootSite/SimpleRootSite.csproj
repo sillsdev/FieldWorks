@@ -273,7 +273,4 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-  <ItemGroup>
-    <None Include="gendarme-SimpleRootSite.ignore" />
-  </ItemGroup>
 </Project>

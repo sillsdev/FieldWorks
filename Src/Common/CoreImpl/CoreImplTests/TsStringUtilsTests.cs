@@ -1742,10 +1742,10 @@ namespace SIL.CoreImpl
 		public void ObjDataCorrect()
 		{
 			var guid = Guid.NewGuid();
-			var objData = TsStringUtils.GetObjData(guid, (byte)'X');
+			var objData = TsStringUtils.GetObjData(guid, FwObjDataTypes.kodtNameGuidHot);
 
 			Assert.AreEqual(18, objData.Length);
-			Assert.AreEqual((byte)'X', objData[0]);
+			Assert.AreEqual(FwObjDataTypes.kodtNameGuidHot, (FwObjDataTypes) objData[0]);
 		}
 
 		/// ------------------------------------------------------------------------------------

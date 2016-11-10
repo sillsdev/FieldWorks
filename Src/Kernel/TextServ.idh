@@ -681,7 +681,7 @@ typedef struct TsRunInfo
 	created from instances of TsStrFactory, TsStrBldr and TsIncStrBldr.
 	Hungarian: tss
 ----------------------------------------------------------------------------------------------*/
-DeclareInterface(TsString, Unknown, BC00014B-842F-4A4A-B3F4-2ED3B0BAADF8)
+DeclareInterface(TsString, Unknown, 321B7BB3-29AF-41D1-93DE-4A11BF386C82)
 {
 	// Fetch the raw text.
 	[propget, id(0)] HRESULT Text(
@@ -821,7 +821,7 @@ DeclareInterface(TsString, Unknown, BC00014B-842F-4A4A-B3F4-2ED3B0BAADF8)
 	// (or the end of the string).
 	[restricted, local] HRESULT NfdAndFixOffsets(
 		[out] ITsString ** pptssRet,
-		[in, size_is(cichOffsetsToFix)] int ** prgpichOffsetsToFix, // indirectly in/out
+		[in, out, size_is(cichOffsetsToFix)] int ** prgpichOffsetsToFix, // indirectly in/out
 		[in] int cichOffsetsToFix);
 
 	// Fetch the string from ichMin to ichLim. Return the string as a ITsString.

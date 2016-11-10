@@ -606,14 +606,14 @@ namespace SIL.FieldWorks.TE
 				{
 					IStFootnote footnote = currentFootnote.footnote;
 
-					byte[] footnoteObjData = TsStringUtils.GetObjData(footnote.Guid, (byte)FwObjDataTypes.kodtNameGuidHot);
+					byte[] footnoteObjData = TsStringUtils.GetObjData(footnote.Guid, FwObjDataTypes.kodtNameGuidHot);
 					propsBldr.SetStrPropValueRgch((int)FwTextPropType.ktptObjData, footnoteObjData, footnoteObjData.Length);
 
 					bldr.SetProperties(orc.ich, orc.ich + 1, propsBldr.GetTextProps());
 					currentFootnote.location = orc; // No longer an orphan :-)
 					iFootnote++; // We're now using this one
 
-					issuesToReport.Add(String.Format(Properties.Resources.kstidConnectedFootnoteToMarker, orc.ToString(m_scr)));
+					issuesToReport.Add(string.Format(Properties.Resources.kstidConnectedFootnoteToMarker, orc.ToString(m_scr)));
 				}
 
 				para.Contents = bldr.GetString();

@@ -125,7 +125,10 @@ public:
 	STDMETHOD(get_IsEditable)(ComBool * pfEditable);
 	STDMETHOD(get_IsEnabled)(ComBool * pfEnabled);
 
-	void MarkInvalid() {m_qrootb.Clear();}
+	virtual void MarkInvalid()
+	{
+		m_qrootb.Clear();
+	}
 
 	virtual VwRootBox * RootBox();
 	bool IsValid() { return (bool)m_qrootb; }
@@ -510,6 +513,13 @@ public:
 		bool fAssocPrevious);
 	VwTextSelection(VwParagraphBox * pvpbox, int ichAnchor, int ichEnd,
 		bool fAssocPrevious, VwParagraphBox * pvpboxEnd);
+
+	virtual void MarkInvalid()
+	{
+		VwSelection::MarkInvalid();
+		m_qttp.Clear();
+	}
+
 	virtual bool IsInsertionPoint() // override
 	{
 		return m_ichAnchor == m_ichEnd && !m_pvpboxEnd;

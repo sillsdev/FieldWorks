@@ -3,11 +3,11 @@
 /* this ALWAYS GENERATED file contains the definitions for the interfaces */
 
 
- /* File created by MIDL compiler version 8.00.0603 */
-/* at Tue Nov 08 16:11:26 2016
+ /* File created by MIDL compiler version 8.01.0620 */
+/* at Tue Jan 19 10:14:07 2038
  */
 /* Compiler settings for C:\develop\fwrepo\fw\Output\Common\FwKernelTlb.idl:
-    Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
+    Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.01.0620 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
     VC __declspec() decoration level: 
@@ -29,7 +29,7 @@
 
 #ifndef __RPCNDR_H_VERSION__
 #error this stub requires an updated version of <rpcndr.h>
-#endif // __RPCNDR_H_VERSION__
+#endif /* __RPCNDR_H_VERSION__ */
 
 
 #ifndef __FwKernelTlb_h__
@@ -731,7 +731,7 @@ typedef struct TsRunInfo
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 ITsString
 ,
-BC00014B-842F-4A4A-B3F4-2ED3B0BAADF8
+321B7BB3-29AF-41D1-93DE-4A11BF386C82
 );
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 ITsTextProps
@@ -1600,7 +1600,7 @@ CC2BD14F-ACCE-4246-9192-9C29441A5A09
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
-    MIDL_INTERFACE("BC00014B-842F-4A4A-B3F4-2ED3B0BAADF8")
+    MIDL_INTERFACE("321B7BB3-29AF-41D1-93DE-4A11BF386C82")
     ITsString : public IUnknown
     {
     public:
@@ -1698,7 +1698,7 @@ CC2BD14F-ACCE-4246-9192-9C29441A5A09
         
         virtual /* [local][restricted] */ HRESULT STDMETHODCALLTYPE NfdAndFixOffsets( 
             /* [out] */ ITsString **pptssRet,
-            /* [size_is][in] */ int **prgpichOffsetsToFix,
+            /* [size_is][out][in] */ int **prgpichOffsetsToFix,
             /* [in] */ int cichOffsetsToFix) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE GetSubstring( 
@@ -1845,7 +1845,7 @@ CC2BD14F-ACCE-4246-9192-9C29441A5A09
         /* [local][restricted] */ HRESULT ( STDMETHODCALLTYPE *NfdAndFixOffsets )( 
             ITsString * This,
             /* [out] */ ITsString **pptssRet,
-            /* [size_is][in] */ int **prgpichOffsetsToFix,
+            /* [size_is][out][in] */ int **prgpichOffsetsToFix,
             /* [in] */ int cichOffsetsToFix);
         
         HRESULT ( STDMETHODCALLTYPE *GetSubstring )( 

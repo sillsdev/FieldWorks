@@ -2154,7 +2154,7 @@ void VwPropertyStore::ApplyTtp(ITsTextProps * pttp)
 	// unnecessary. But it seemed safer to leave it in, in case there is some reason for the
 	// change that I haven't realized.)
 	CheckHr(hr = pttp->GetIntPropValues(ktptLineHeight, &xpv, &nVal));
-	if (hr == S_OK)
+	if (hr == S_OK && xpv != -1)
 		CheckHr(put_IntProperty(ktptLineHeight, xpv, nVal));
 
 	if (fDoTableRowStuff)

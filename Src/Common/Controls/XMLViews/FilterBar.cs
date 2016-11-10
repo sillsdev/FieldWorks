@@ -1470,11 +1470,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			m_matcher = null;
 			m_fsi = null; // Disposed elesewhere.
-			if (m_tssName != null)
-			{
-				Marshal.ReleaseComObject(m_tssName);
-				m_tssName = null;
-			}
+			m_tssName = null;
 
 			IsDisposed = true;
 		}
@@ -1497,7 +1493,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		///
 		/// </summary>
-		internal protected virtual void InvokeWithInstalledMatcher()
+		protected internal virtual void InvokeWithInstalledMatcher()
 		{
 			if (m_matcher != null)
 				m_matcher.Label = GetLabelForMatcher();

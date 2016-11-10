@@ -100,6 +100,20 @@ namespace SIL.CoreImpl
 		}
 
 		[Test]
+		public void Replace_OneRunBldrNullTextPartialRange_RemovesText()
+		{
+			TsStrBldr tsb = CreateOneRunBldr();
+			tsb.Replace(5, 8, null, new TsTextProps(FrenchWS));
+			Assert.That(tsb.Text, Is.EqualTo("This a test!"));
+			Assert.That(tsb.RunCount, Is.EqualTo(1));
+			Assert.That(GetWS(tsb, 0), Is.EqualTo(EnglishWS));
+			int ichMin, ichLim;
+			tsb.GetBoundsOfRun(0, out ichMin, out ichLim);
+			Assert.That(ichMin, Is.EqualTo(0));
+			Assert.That(ichLim, Is.EqualTo(tsb.Length));
+		}
+
+		[Test]
 		public void Replace_OneRunBldrNonEmptyTextPartialRange_ReplacesText()
 		{
 			TsStrBldr tsb = CreateOneRunBldr();
@@ -230,13 +244,6 @@ namespace SIL.CoreImpl
 		{
 			TsStrBldr tsb = CreateMixedWSBldr();
 			Assert.That(() => tsb.Replace(25, 24, "text", new TsTextProps(FrenchWS)), Throws.InstanceOf<ArgumentOutOfRangeException>());
-		}
-
-		[Test]
-		public void Replace_StringNull_Throws()
-		{
-			TsStrBldr tsb = CreateMixedWSBldr();
-			Assert.That(() => tsb.Replace(0, tsb.Length, null, new TsTextProps(FrenchWS)), Throws.InstanceOf<ArgumentNullException>());
 		}
 
 		[Test]

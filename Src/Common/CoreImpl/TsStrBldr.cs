@@ -58,9 +58,8 @@ namespace SIL.CoreImpl
 		{
 			ThrowIfCharOffsetOutOfRange("ichMin", ichMin, ichLim);
 			ThrowIfCharOffsetOutOfRange("ichLim", ichLim, Length);
-			ThrowIfParamNull("bstrIns", bstrIns);
 
-			ReplaceRgch(ichMin, ichLim, bstrIns, bstrIns.Length, ttp);
+			ReplaceRgch(ichMin, ichLim, bstrIns, bstrIns == null ? 0 : bstrIns.Length, ttp);
 		}
 
 		/// <summary>

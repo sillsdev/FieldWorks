@@ -39,30 +39,22 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			var wsFact = new WritingSystemManager();
 			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			ITsPropsBldr ttpBldr = TsStringUtils.MakePropsBldr();
-			try
+			wsFact.get_Engine("en");
+			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, wsFact.GetWsFromStr("en"));
+			ttpBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, namedStyle1);
+			bldr.Replace(bldr.Length, bldr.Length, str1, ttpBldr.GetTextProps());
+			if (namedStyle2 != null && str2 != null)
 			{
-				wsFact.get_Engine("en");
-				ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, wsFact.GetWsFromStr("en"));
-				ttpBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, namedStyle1);
-				bldr.Replace(bldr.Length, bldr.Length, str1, ttpBldr.GetTextProps());
-				if (namedStyle2 != null && str2 != null)
-				{
-					ttpBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, namedStyle2);
-					bldr.Replace(bldr.Length, bldr.Length, str2, ttpBldr.GetTextProps());
-				}
-				var tsString1 = bldr.GetString();
-
-				var strWrapper = new TsStringWrapper(tsString1, wsFact);
-
-				var tsString2 = strWrapper.GetTsString(wsFact);
-
-				Assert.AreEqual(tsString1.Text, tsString2.Text);
+				ttpBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, namedStyle2);
+				bldr.Replace(bldr.Length, bldr.Length, str2, ttpBldr.GetTextProps());
 			}
-			finally
-			{
-				Marshal.ReleaseComObject(ttpBldr);
-				Marshal.ReleaseComObject(bldr);
-			}
+			var tsString1 = bldr.GetString();
+
+			var strWrapper = new TsStringWrapper(tsString1, wsFact);
+
+			var tsString2 = strWrapper.GetTsString(wsFact);
+
+			Assert.AreEqual(tsString1.Text, tsString2.Text);
 		}
 	}
 }

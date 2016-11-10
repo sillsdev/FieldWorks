@@ -19,6 +19,9 @@ namespace SIL.CoreImpl
 		{
 			ThrowIfWSInvalid("ws", ws);
 
+			if (string.IsNullOrEmpty(bstr))
+				return EmptyString(ws);
+
 			return new TsString(bstr, ws);
 		}
 
@@ -68,8 +71,7 @@ namespace SIL.CoreImpl
 		{
 			ThrowIfWSInvalid("ws", ws);
 
-			// TODO: should we cache empty strings?
-			return new TsString(ws);
+			return TsString.GetInternedEmptyString(ws);
 		}
 
 		private void ThrowIfWSInvalid(string paramName, int ws)

@@ -257,7 +257,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// Add the guid property so we can get it out as a string.
 			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
-			byte[] objData = TsStringUtils.GetObjData(footnote.Guid, 1);
+			byte[] objData = TsStringUtils.GetObjData(footnote.Guid, FwObjDataTypes.kodtPictEvenHot);
 			propsBldr.SetStrPropValueRgch(1, objData, objData.Length);
 
 			// Get the guid property as a string.

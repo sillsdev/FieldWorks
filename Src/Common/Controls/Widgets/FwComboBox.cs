@@ -1338,11 +1338,7 @@ namespace SIL.FieldWorks.Common.Widgets
 					ListBox.SameItemSelected -= m_listBox_SameItemSelected;
 				}
 			}
-			if (m_tssPrevious != null)
-			{
-				Marshal.ReleaseComObject(m_tssPrevious);
-				m_tssPrevious = null;
-			}
+			m_tssPrevious = null;
 
 			base.Dispose(disposing);
 		}

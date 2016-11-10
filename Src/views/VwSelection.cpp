@@ -6914,10 +6914,11 @@ STDMETHODIMP VwTextSelection::get_CanFormatChar(ComBool * pfRet)
 	for (int ittp = 0; ittp < cttp; ittp++)
 	{
 		HRESULT hr = S_FALSE;
+		nvar = -1;
 		ITsTextProps * pttp = vqttp[ittp];
 		if (pttp)
 			CheckHr(hr = pttp->GetIntPropValues(ktptEditable, &nvar, &nval));
-		if (hr == S_FALSE)
+		if (hr == S_FALSE || nvar == -1)
 			CheckHr(vqvps[ittp]->get_IntProperty(ktptEditable, &nval));
 		if ((nval == ktptNotEditable) || (nval == ktptSemiEditable))
 		{
@@ -13102,13 +13103,19 @@ void VwTextSelection::GetHardAndSoftPropsOneRun(ITsTextProps * pttp,
 	CheckHr(hr = pttp->GetStrPropValue(ktptNamedStyle, &sbstrNamedStyle));
 	if (hr == S_OK)
 	{
-		// (Seems okay to just slap the character style on top of the ws/ows in the
-		// same builder.)
-		ITsTextPropsPtr qttpCharStyle;
-		CheckHr(qtpb->SetStrPropValue(ktptNamedStyle, sbstrNamedStyle));
-		CheckHr(qtpb->GetTextProps(&qttpCharStyle));
+		if (!sbstrNamedStyle) {
+			*ppvpsRet = qvpsTmp.Detach();
+		}
+		else
+		{
+			// (Seems okay to just slap the character style on top of the ws/ows in the
+			// same builder.)
+			ITsTextPropsPtr qttpCharStyle;
+			CheckHr(qtpb->SetStrPropValue(ktptNamedStyle, sbstrNamedStyle));
+			CheckHr(qtpb->GetTextProps(&qttpCharStyle));
 
-		CheckHr(qvpsTmp->get_DerivedPropertiesForTtp(qttpCharStyle, ppvpsRet));
+			CheckHr(qvpsTmp->get_DerivedPropertiesForTtp(qttpCharStyle, ppvpsRet));
+		}
 	}
 	else {
 		if (hr == S_FALSE) {

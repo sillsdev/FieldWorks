@@ -395,7 +395,7 @@
     <Compile Include="ErrorMessage.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FindReplaceCollectorEnv.cs" />
+    <Compile Include="FindCollectorEnv.cs" />
     <Compile Include="FwChooserDlg.cs">
       <SubType>Form</SubType>
     </Compile>

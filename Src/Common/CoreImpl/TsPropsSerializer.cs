@@ -1500,7 +1500,7 @@ namespace SIL.CoreImpl
 		/// ------------------------------------------------------------------------------------
 		private static void AddObjDataToBldr(ITsPropsBldr propsBldr, XAttribute attr, FwObjDataTypes type)
 		{
-			byte[] objData = TsStringUtils.GetObjData(new Guid(attr.Value), (byte)type);
+			byte[] objData = TsStringUtils.GetObjData(new Guid(attr.Value), type);
 			propsBldr.SetStrPropValueRgch((int)FwTextPropType.ktptObjData, objData, objData.Length);
 		}
 
@@ -1514,7 +1514,7 @@ namespace SIL.CoreImpl
 		/// ------------------------------------------------------------------------------------
 		private static void AddObjDataToBldr(ITsIncStrBldr strBldr, XAttribute attr, FwObjDataTypes type)
 		{
-			byte[] objData = TsStringUtils.GetObjData(new Guid(attr.Value), (byte)type);
+			byte[] objData = TsStringUtils.GetObjData(new Guid(attr.Value), type);
 			strBldr.SetStrPropValueRgch((int)FwTextPropType.ktptObjData, objData, objData.Length);
 		}
 

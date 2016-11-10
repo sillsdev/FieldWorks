@@ -37,8 +37,10 @@ namespace SIL.CoreImpl
 
 		static TsStringUtils()
 		{
-			TsStrFactory = TsStrFactoryClass.Create();
-			TsPropsFactory = TsPropsFactoryClass.Create();
+			// this is the one and only ITsStrFactory for all of FW
+			TsStrFactory = new TsStrFactory();
+			// this is the one and only ITsPropsFactory for all of FW
+			TsPropsFactory = new TsPropsFactory();
 		}
 
 		/// <summary>
@@ -136,11 +138,11 @@ namespace SIL.CoreImpl
 		/// <param name="objectDataType">Type of object (e.g. kodtNameGuidHot).</param>
 		/// <returns>byte array</returns>
 		/// ------------------------------------------------------------------------------------
-		public static byte[] GetObjData(Guid guid, byte objectDataType)
+		public static byte[] GetObjData(Guid guid, FwObjDataTypes objectDataType)
 		{
 			byte[] rgGuid = guid.ToByteArray();
 			byte[] rgRet = new byte[rgGuid.Length + 2];
-			rgRet[0] = objectDataType;
+			rgRet[0] = (byte) objectDataType;
 			rgRet[1] = 0;
 			rgGuid.CopyTo(rgRet, 2);
 
@@ -162,7 +164,7 @@ namespace SIL.CoreImpl
 		/// ------------------------------------------------------------------------------------
 		public static void InsertOrcIntoPara(Guid guid, FwObjDataTypes objDataType, ITsStrBldr tsStrBldr, int ichMin, int ichLim, int ws)
 		{
-			byte[] objData = GetObjData(guid, (byte)objDataType);
+			byte[] objData = GetObjData(guid, objDataType);
 			ITsPropsBldr propsBldr = MakePropsBldr();
 			propsBldr.SetStrPropValueRgch((int)FwTextPropType.ktptObjData, objData, objData.Length);
 			if (ws != 0)
@@ -182,7 +184,7 @@ namespace SIL.CoreImpl
 		public static ITsString CreateOrcFromGuid(Guid guid, FwObjDataTypes type, int ws)
 		{
 			ITsStrBldr tsStrBldr = MakeStrBldr();
-			byte[] objData = GetObjData(guid, (byte)type);
+			byte[] objData = GetObjData(guid, type);
 			ITsPropsBldr propsBldr = MakePropsBldr();
 			propsBldr.SetStrPropValueRgch((int)FwTextPropType.ktptObjData, objData, objData.Length);
 

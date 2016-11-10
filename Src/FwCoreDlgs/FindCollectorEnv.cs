@@ -1,448 +1,17 @@
 // Copyright (c) 2006-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FindReplaceCollectorEnvBase.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
+
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using SIL.CoreImpl;
+using System.Runtime.InteropServices;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
-	#region FindReplaceCollectorEnvBase class
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Base class for specialized find and replace collector classes
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	public abstract class FindReplaceCollectorEnvBase : CollectorEnv
-	{
-		#region Data members
-		/// <summary></summary>
-		protected IVwViewConstructor m_vc;
-		/// <summary></summary>
-		protected int m_frag;
-		/// <summary></summary>
-		protected IVwPattern m_Pattern;
-		/// <summary></summary>
-		protected IVwTxtSrcInit2 m_textSourceInit;
-		/// <summary></summary>
-		protected IVwSearchKiller m_searchKiller;
-		#endregion
-
-		#region Constructor
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FindReplaceCollectorEnvBase"/> class.
-		/// </summary>
-		/// <param name="vc">The view constructor.</param>
-		/// <param name="sda">Date access to get prop values etc.</param>
-		/// <param name="hvoRoot">The root object to display.</param>
-		/// <param name="frag">The fragment.</param>
-		/// <param name="vwPattern">The find/replace pattern.</param>
-		/// <param name="searchKiller">Used to interrupt a find/replace</param>
-		/// <remarks>If the base environment is not null, it is used for various things,
-		/// such as obtaining 'outer object' information.</remarks>
-		/// ------------------------------------------------------------------------------------
-		public FindReplaceCollectorEnvBase(IVwViewConstructor vc, ISilDataAccess sda,
-			int hvoRoot, int frag, IVwPattern vwPattern, IVwSearchKiller searchKiller)
-			: base(null, sda, hvoRoot)
-		{
-			m_vc = vc;
-			m_frag = frag;
-			m_Pattern = vwPattern;
-			m_searchKiller = searchKiller;
-			m_textSourceInit = VwMappedTxtSrcClass.Create();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Copy constructor - Initializes a new instance of the
-		/// <see cref="T:FindReplaceCollectorEnvBase"/> class.
-		/// </summary>
-		/// <param name="fc">The FindReplaceCollectorEnvBase object to clone.</param>
-		/// ------------------------------------------------------------------------------------
-		public FindReplaceCollectorEnvBase(FindReplaceCollectorEnvBase fc) :
-			this(fc.m_vc, fc.m_sda, fc.m_hvoCurr, fc.m_frag, fc.m_Pattern, fc.m_searchKiller)
-		{
-		}
-		#endregion
-
-		#region Overrides
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Return true if we don't need to process any further. Some methods may be able
-		/// to truncate operations.
-		/// </summary>
-		/// <value><c>true</c> if finished; otherwise, <c>false</c>.</value>
-		/// ------------------------------------------------------------------------------------
-		protected override bool Finished
-		{
-			get
-			{
-				if (m_searchKiller == null)
-					return false;
-
-				m_searchKiller.FlushMessages();
-				return m_searchKiller.AbortRequest;
-			}
-		}
-		#endregion
-	}
-	#endregion
-
-	#region ReplaceAllCollectorEnv class
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Handles replacing text
-	/// </summary>
-	/// <remarks>The current implementation doesn't work for different styles, tags, and WSs
-	/// that are applied by the VC.</remarks>
-	/// ----------------------------------------------------------------------------------------
-	public class ReplaceAllCollectorEnv : FindReplaceCollectorEnvBase
-	{
-		#region Data Members
-		private int m_cReplace;
-		private bool m_fEmptySearch;
-		private Stack<bool> m_ReadOnlyStack = new Stack<bool>();
-		private bool m_fReadOnly;
-		#endregion
-
-		#region Constructor
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FindReplaceCollectorEnvBase"/> class.
-		/// </summary>
-		/// <param name="vc">The view constructor.</param>
-		/// <param name="sda">Date access to get prop values etc.</param>
-		/// <param name="hvoRoot">The root object to display.</param>
-		/// <param name="frag">The fragment.</param>
-		/// <param name="vwPattern">The find/replace pattern.</param>
-		/// <param name="searchKiller">Used to interrupt a find/replace</param>
-		/// <remarks>If the base environment is not null, it is used for various things,
-		/// such as obtaining 'outer object' information.</remarks>
-		/// ------------------------------------------------------------------------------------
-		public ReplaceAllCollectorEnv(IVwViewConstructor vc, ISilDataAccess sda,
-			int hvoRoot, int frag, IVwPattern vwPattern, IVwSearchKiller searchKiller)
-			: base(vc, sda, hvoRoot, frag, vwPattern, searchKiller)
-		{
-			m_ReadOnlyStack.Push(m_fReadOnly);
-		}
-		#endregion
-
-		#region Public methods
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Replaces all.
-		/// </summary>
-		/// <returns>Number of replacements made</returns>
-		/// ------------------------------------------------------------------------------------
-		public virtual int ReplaceAll()
-		{
-			m_fEmptySearch = (m_Pattern.Pattern.Length == 0);
-			m_vc.Display(this, m_hvoCurr, m_frag);
-			return m_cReplace;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Replaces the string.
-		/// </summary>
-		/// <param name="tsbBuilder">The string builder for the text to be replaced.</param>
-		/// <param name="tssInput">The input string to be replaced.</param>
-		/// <param name="ichMinInput">The start in the input string.</param>
-		/// <param name="ichLimInput">The lim in the input string.</param>
-		/// <param name="tssReplace">The replacement text. This should come from VwPattern.ReplacementText,
-		/// NOT VwPattern.ReplaceWith. The former includes any ORCs that need to be saved from the input, as well as
-		/// properly handling $1, $2 etc. in regular expressions.</param>
-		/// <param name="delta">length difference between tssInput and tsbBuilder from previous
-		/// replacements.</param>
-		/// <param name="fEmptySearch"><c>true</c> if search text is empty (irun.e. we're searching
-		/// for a style or Writing System)</param>
-		/// <param name="fUseWs">if set to <c>true</c> use the writing system used in the
-		/// replace string of the Find/Replace dialog.</param>
-		/// <returns>Change in length of the string.</returns>
-		/// ------------------------------------------------------------------------------------
-		public static int ReplaceString(ITsStrBldr tsbBuilder, ITsString tssInput,
-			int ichMinInput, int ichLimInput, ITsString tssReplace, int delta, bool fEmptySearch,
-			bool fUseWs)
-		{
-			int initialLength = tsbBuilder.Length;
-			int replaceRunCount = tssReplace.RunCount;
-
-			// Determine whether to replace the sStyleName. We do this if any of the runs of
-			// the replacement string have the sStyleName set (to something other than
-			// Default Paragraph Characters).
-			bool fUseStyle = false;
-			bool fUseTags = false;
-
-			// ENHANCE (EberhardB): If we're not doing a RegEx search we could store these flags
-			// since they don't change.
-			TsRunInfo runInfo;
-			for (int irunReplace = 0; irunReplace < replaceRunCount; irunReplace++)
-			{
-				ITsTextProps textProps = tssReplace.FetchRunInfo(irunReplace, out runInfo);
-				string sStyleName =
-					textProps.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
-				if (sStyleName != null && sStyleName.Length > 0)
-					fUseStyle = true;
-
-				//string tags = textProps.GetStrPropValue((int)FwTextPropType.ktptTags);
-				//if (tags.Length > 0)
-				//    fUseTags = true;
-			}
-
-			int iRunInput = tssInput.get_RunAt(ichMinInput);
-			ITsTextProps selProps = tssInput.get_Properties(iRunInput);
-			ITsPropsBldr propsBldr = selProps.GetBldr();
-
-			// Remove all tags that are anywhere in the Find-what string. But also include any
-			// other tags that are present in the first run of the found string. So the resulting
-			// replacement string will have any tags in the first char of the selection plus
-			// any specified replacement tags.
-			//			Vector<StrUni> vstuTagsToRemove;
-			//			GetTagsToRemove(m_qtssFindWhat, &fUseTags, vstuTagsToRemove);
-			//			Vector<StrUni> vstuTagsToInclude;
-			//			GetTagsToInclude(qtssSel, vstuTagsToRemove, vstuTagsToInclude);
-
-			// Make a string builder to accumulate the real replacement string.
-
-			// Copy the runs of the replacement string, adjusting the properties.
-			// Make a string builder to accumulate the real replacement string.
-			ITsStrBldr stringBldr = TsStringUtils.MakeStrBldr();
-
-			// Copy the runs of the replacement string, adjusting the properties.
-			for (int irun = 0; irun < replaceRunCount; irun++)
-			{
-				ITsTextProps ttpReplaceRun = tssReplace.FetchRunInfo(irun, out runInfo);
-				if (TsStringUtils.GetGuidFromRun(tssReplace, irun) != Guid.Empty)
-				{
-					// If the run was a footnote or picture ORC, then just use the run
-					// properties as they are.
-				}
-				else if (fUseWs || fUseStyle || fUseTags)
-				{
-					// Copy only writing system/old writing system, char sStyleName and/or
-					// tag info into the builder.
-					if (fUseWs)
-					{
-						int ttv, ws;
-						ws = ttpReplaceRun.GetIntPropValues((int)FwTextPropType.ktptWs, out ttv);
-						propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, ttv, ws);
-					}
-					if (fUseStyle)
-					{
-						string sStyleName = ttpReplaceRun.GetStrPropValue(
-							(int)FwTextPropType.ktptNamedStyle);
-
-						if (sStyleName == FwStyleSheet.kstrDefaultCharStyle)
-							propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle,
-								null);
-						else
-							propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle,
-								sStyleName);
-					}
-					//if (fUseTags)
-					//{
-					//    string sTagsRepl = ttpReplaceRun.GetStrPropValue(ktptTags);
-					//    string sTags = AddReplacementTags(vstuTagsToInclude, sTagsRepl);
-					//    propsBldr.SetStrPropValue(ktptTags, sTags);
-					//}
-					ttpReplaceRun = propsBldr.GetTextProps();
-				}
-				else
-				{
-					// Its not a footnote so copy all props exactly from (the first run of the) matched text.
-					ttpReplaceRun = selProps;
-				}
-
-				// Insert modified run into string builder.
-				if (fEmptySearch && tssReplace.Length == 0)
-				{
-					// We are just replacing an ws/ows/sStyleName/tags. The text remains unchanged.
-					// ENHANCE (SharonC): Rework this when we get patterns properly implemented.
-					string runText = tssInput.get_RunText(iRunInput);
-					if (runText.Length > ichLimInput - ichMinInput)
-						runText = runText.Substring(0, ichLimInput - ichMinInput);
-					stringBldr.Replace(0, 0, runText, ttpReplaceRun);
-				}
-				else
-				{
-					stringBldr.Replace(runInfo.ichMin, runInfo.ichMin,
-						tssReplace.get_RunText(irun), ttpReplaceRun);
-				}
-			}
-
-			tsbBuilder.ReplaceTsString(delta + ichMinInput, delta + ichLimInput, stringBldr.GetString());
-			int finalLength = tsbBuilder.Length;
-			return finalLength - initialLength;
-		}
-		#endregion
-
-		#region Overrides
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Member AddStringProp
-		/// </summary>
-		/// <param name="tag">tag</param>
-		/// <param name="_vwvc">_vwvc</param>
-		/// ------------------------------------------------------------------------------------
-		public override void AddStringProp(int tag, IVwViewConstructor _vwvc)
-		{
-			ITsString tss = DoReplace(m_sda.get_StringProp(m_hvoCurr, tag));
-			if (tss != null)
-			{
-				m_sda.SetString(m_hvoCurr, tag, tss);
-				// We shouldn't have to do this in the new FDO
-				//m_sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoCurr, tag,
-				//    0, tss.Length, tss.Length);
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Member AddStringAltMember
-		/// </summary>
-		/// <param name="tag">tag</param>
-		/// <param name="ws">ws</param>
-		/// <param name="_vwvc">_vwvc</param>
-		/// ------------------------------------------------------------------------------------
-		public override void AddStringAltMember(int tag, int ws, IVwViewConstructor _vwvc)
-		{
-			ITsString tss = DoReplace(m_sda.get_MultiStringAlt(m_hvoCurr, tag, ws));
-			if (tss != null)
-			{
-				m_sda.SetMultiStringAlt(m_hvoCurr, tag, ws, tss);
-				// We shouldn't have to do this in the new FDO
-				//// For multi-string properties, the "ivMin" parameter to PropChanged is
-				//// really the writing system HVO (per documentation in idh file).
-				//m_sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoCurr, tag,
-				//    ws, tss.Length, tss.Length);
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Opens the object.
-		/// </summary>
-		/// <param name="hvo">The hvo.</param>
-		/// <param name="ihvo">The ihvo.</param>
-		/// ------------------------------------------------------------------------------------
-		protected override void OpenTheObject(int hvo, int ihvo)
-		{
-			base.OpenTheObject(hvo, ihvo);
-			m_ReadOnlyStack.Push(m_fReadOnly);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Closes the object.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected override void CloseTheObject()
-		{
-			m_ReadOnlyStack.Pop();
-			m_fReadOnly = m_ReadOnlyStack.Peek();
-			base.CloseTheObject();
-		}
-
-		/// <summary/>
-		public override void set_IntProperty(int tpt, int tpv, int nValue)
-		{
-			if (tpt == (int)FwTextPropType.ktptEditable)
-				m_fReadOnly |= (nValue == (int)TptEditable.ktptNotEditable);
-			base.set_IntProperty(tpt, tpv, nValue);
-		}
-		#endregion // Overrides
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Does the find or replace.
-		/// </summary>
-		/// <param name="tss">The original string.</param>
-		/// <returns>The replaced string.</returns>
-		/// ------------------------------------------------------------------------------------
-		private ITsString DoReplace(ITsString tss)
-		{
-			if (tss == null || tss.Length == 0)
-				return null;
-
-			m_textSourceInit.SetString(tss, m_vc, m_sda.WritingSystemFactory);
-
-			IVwTextSource textSource = m_textSourceInit as IVwTextSource;
-			int ichMinLog, ichLimLog;
-			ITsStrBldr tsb = null;
-			int cch = tss.Length; // length of old string
-			int delta = 0; // length difference between new and old string
-
-			for (int ichStartLog = 0; ichStartLog <= cch; )
-			{
-				m_Pattern.FindIn(textSource, ichStartLog, cch, true, out ichMinLog, out ichLimLog, null);
-				if (ichMinLog < 0)
-					break;
-				if (tsb == null)
-					tsb = tss.GetBldr();
-
-				if (IsEditable(tss, ichMinLog, ichLimLog))
-				{
-					delta += ReplaceString(tsb, tss, ichMinLog, ichLimLog, m_Pattern.ReplacementText,
-						delta, m_fEmptySearch, m_Pattern.MatchOldWritingSystem);
-					m_cReplace++;
-				}
-				ichStartLog = ichLimLog;
-			}
-
-			if (tsb == null)
-				return null;
-
-			return tsb.GetString().get_NormalizedForm(FwNormalizationMode.knmNFD);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Determines whether the specified string is editable.
-		/// </summary>
-		/// <param name="tss">The string.</param>
-		/// <param name="ichMin">The ich min.</param>
-		/// <param name="ichLim">The ich lim.</param>
-		/// <returns>
-		/// 	<c>true</c> if the specified string is editable; otherwise, <c>false</c>.
-		/// </returns>
-		/// ------------------------------------------------------------------------------------
-		private bool IsEditable(ITsString tss, int ichMin, int ichLim)
-		{
-			if (m_fReadOnly)
-				return false;
-
-			int irunLim = tss.get_RunAt(ichLim);
-			if (tss.get_RunAt(ichMin) == irunLim)
-				irunLim++;
-			for (int irun = tss.get_RunAt(ichMin); irun < irunLim; irun++)
-			{
-				ITsTextProps ttp = tss.get_Properties(irun);
-				int nVar;
-				if (ttp != null)
-				{
-					int nVal = ttp.GetIntPropValues((int)FwTextPropType.ktptEditable, out nVar);
-					if (nVal == (int)TptEditable.ktptNotEditable ||
-						nVal == (int)TptEditable.ktptSemiEditable)
-						return false;
-				}
-			}
-			return true;
-		}
-	}
-	#endregion // ReplaceAllCollectorEnv
-
 	#region FindCollectorEnv class
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -451,7 +20,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// <remarks>The current implementation doesn't work for different styles, tags, and WSs
 	/// that are applied by the VC.</remarks>
 	/// ----------------------------------------------------------------------------------------
-	public class FindCollectorEnv : FindReplaceCollectorEnvBase
+	public class FindCollectorEnv : CollectorEnv, IFWDisposable
 	{
 		#region Data members
 		/// <summary>Found match location</summary>
@@ -463,7 +32,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>True if we have passed the limit, false otherwise</summary>
 		protected bool m_fHitLimit;
 		/// <summary>True if the find has already wrapped, false otherwise</summary>
-		protected bool m_fHaveWrapped = false;
+		protected bool m_fHaveWrapped;
+		/// <summary></summary>
+		protected IVwViewConstructor m_vc;
+		/// <summary></summary>
+		protected int m_frag;
+		/// <summary></summary>
+		protected IVwPattern m_Pattern;
+		/// <summary></summary>
+		protected IVwTxtSrcInit2 m_textSourceInit;
+		/// <summary></summary>
+		protected IVwSearchKiller m_searchKiller;
 		#endregion
 
 		#region Constructor
@@ -482,8 +61,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public FindCollectorEnv(IVwViewConstructor vc, ISilDataAccess sda,
 			int hvoRoot, int frag, IVwPattern vwPattern, IVwSearchKiller searchKiller)
-			: base(vc, sda, hvoRoot, frag, vwPattern, searchKiller)
+			: base(null, sda, hvoRoot)
 		{
+			m_vc = vc;
+			m_frag = frag;
+			m_Pattern = vwPattern;
+			m_searchKiller = searchKiller;
+			m_textSourceInit = VwMappedTxtSrcClass.Create();
 		}
 		#endregion
 
@@ -500,6 +84,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public LocationInfo FindNext(LocationInfo startLocation)
 		{
+			CheckDisposed();
+
 			m_StartLocation = startLocation;
 			m_LocationFound = null;
 			m_fHitLimit = false;
@@ -576,6 +162,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public override void AddString(ITsString tss)
 		{
+			CheckDisposed();
+
 			base.AddString(tss);
 
 			if (!m_fGotNonPropInfo)
@@ -592,14 +180,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Member AddStringProp
 		/// </summary>
 		/// <param name="tag">tag</param>
-		/// <param name="_vwvc">_vwvc</param>
+		/// <param name="vwvc">_vwvc</param>
 		/// ------------------------------------------------------------------------------------
-		public override void AddStringProp(int tag, IVwViewConstructor _vwvc)
+		public override void AddStringProp(int tag, IVwViewConstructor vwvc)
 		{
+			CheckDisposed();
+
 			if (Finished)
 				return;
 
-			base.AddStringProp(tag, _vwvc);
+			base.AddStringProp(tag, vwvc);
 
 			if (m_StartLocation != null && !CurrentLocationIsStartLocation(tag))
 				return;
@@ -616,14 +206,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// <param name="tag">tag</param>
 		/// <param name="ws">ws</param>
-		/// <param name="_vwvc">_vwvc</param>
+		/// <param name="vwvc">_vwvc</param>
 		/// ------------------------------------------------------------------------------------
-		public override void AddStringAltMember(int tag, int ws, IVwViewConstructor _vwvc)
+		public override void AddStringAltMember(int tag, int ws, IVwViewConstructor vwvc)
 		{
+			CheckDisposed();
+
 			if (Finished)
 				return;
 
-			base.AddStringAltMember(tag, ws, _vwvc);
+			base.AddStringAltMember(tag, ws, vwvc);
 
 			if (m_StartLocation != null && !CurrentLocationIsStartLocation(tag))
 				return;
@@ -643,7 +235,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		protected override bool Finished
 		{
-			get { return m_LocationFound != null || m_fHitLimit || base.Finished; }
+			get
+			{
+				if (m_LocationFound != null || m_fHitLimit)
+					return true;
+
+				if (m_searchKiller == null)
+					return false;
+
+				m_searchKiller.FlushMessages();
+				return m_searchKiller.AbortRequest;
+			}
 		}
 		#endregion // Overrides
 
@@ -655,7 +257,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public bool FoundMatch
 		{
-			get	{ return (m_LocationFound != null); }
+			get
+			{
+				CheckDisposed();
+				return (m_LocationFound != null);
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -665,7 +271,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public bool StoppedAtLimit
 		{
-			get { return m_fHitLimit; }
+			get
+			{
+				CheckDisposed();
+				return m_fHitLimit;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -675,8 +285,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public bool HasWrapped
 		{
-			set { m_fHaveWrapped = value; }
-			get { return m_fHaveWrapped; }
+			set
+			{
+				CheckDisposed();
+				m_fHaveWrapped = value;
+			}
+			get
+			{
+				CheckDisposed();
+				return m_fHaveWrapped;
+			}
 		}
 		#endregion
 
@@ -828,6 +446,107 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			return (testIch < 0 || testIch >= m_LimitLocation.m_ichMin);
 		}
 		#endregion
+
+		#region Implementation of IDisposable
+
+		/// <summary>
+		/// Finalizer, in case client doesn't dispose it.
+		/// Force Dispose(false) if not already called (i.e. IsDisposed is true)
+		/// </summary>
+		/// <remarks>
+		/// In case some clients forget to dispose it directly.
+		/// </remarks>
+		~FindCollectorEnv()
+		{
+			Dispose(false);
+			// The base class finalizer is called automatically.
+		}
+
+		/// <summary>
+		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+		/// </summary>
+		/// <filterpriority>2</filterpriority>
+		public void Dispose()
+		{
+			Dispose(true);
+			// This object will be cleaned up by the Dispose method.
+			// Therefore, you should call GC.SupressFinalize to
+			// take this object off the finalization queue
+			// and prevent finalization code for this object
+			// from executing a second time.
+			GC.SuppressFinalize(this);
+		}
+
+		/// <summary>
+		/// Executes in two distinct scenarios.
+		///
+		/// 1. If disposing is true, the method has been called directly
+		/// or indirectly by a user's code via the Dispose method.
+		/// Both managed and unmanaged resources can be disposed.
+		///
+		/// 2. If disposing is false, the method has been called by the
+		/// runtime from inside the finalizer and you should not reference (access)
+		/// other managed objects, as they already have been garbage collected.
+		/// Only unmanaged resources can be disposed.
+		/// </summary>
+		/// <param name="disposing"></param>
+		/// <remarks>
+		/// If any exceptions are thrown, that is fine.
+		/// If the method is being done in a finalizer, it will be ignored.
+		/// If it is thrown by client code calling Dispose,
+		/// it needs to be handled by fixing the underlying issue.
+		///
+		/// If subclasses override this method, they should call the base implementation.
+		/// </remarks>
+		protected virtual void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			// Method can be called several times,
+			// but the main code must not be run more than once.
+			if (IsDisposed)
+				return;
+
+			if (disposing)
+			{
+			}
+
+			// Dispose unmanaged resources here, whether disposing is true or false.
+			if (m_textSourceInit != null)
+			{
+				Marshal.ReleaseComObject(m_textSourceInit);
+				m_textSourceInit = null;
+			}
+
+			IsDisposed = true;
+		}
+
+		#endregion
+
+		#region Implementation of IFWDisposable
+
+		/// <summary>
+		/// Add the public property for knowing if the object has been disposed of yet
+		/// </summary>
+		public bool IsDisposed
+		{
+			get; private set;
+		}
+
+		/// <summary>
+		/// This method throws an ObjectDisposedException if IsDisposed returns
+		/// true.  This is the case where a method or property in an object is being
+		/// used but the object itself is no longer valid.
+		///
+		/// This method should be added to all public properties and methods of this
+		/// object and all other objects derived from it (extensive).
+		/// </summary>
+		public void CheckDisposed()
+		{
+			if (IsDisposed)
+				throw new ObjectDisposedException("FindCollectorEnv", "This object is being used after it has been disposed: this is an Error.");
+		}
+
+		#endregion
 	}
 	#endregion // FindCollectorEnv
 
@@ -872,7 +591,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			m_textSourceInit.SetString(tss, m_vc, m_sda.WritingSystemFactory);
 
-			IVwTextSource textSource = m_textSourceInit as IVwTextSource;
+			var textSource = (IVwTextSource) m_textSourceInit;
 			int ichBegin = textSource.LengthSearch;
 			if (m_StartLocation != null)
 			{

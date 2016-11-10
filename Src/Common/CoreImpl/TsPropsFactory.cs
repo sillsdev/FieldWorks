@@ -36,7 +36,7 @@ namespace SIL.CoreImpl
 				};
 			}
 
-			return new TsTextProps(intProps, strProps);
+			return TsTextProps.GetInternedTextProps(intProps, strProps);
 		}
 
 		/// <summary>

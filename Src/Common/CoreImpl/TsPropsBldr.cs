@@ -43,32 +43,34 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
-		/// Sets a string property. If value is null or empty, the string property is deleted.
+		/// Sets a string property. If value is null, the string property is deleted.
 		/// </summary>
 		public void SetStrPropValue(int tpt, string bstrVal)
 		{
-			if (string.IsNullOrEmpty(bstrVal))
+			if (bstrVal == null)
 				StringProperties.Remove(tpt);
 			else
-				StringProperties[tpt] = bstrVal;
+				StringProperties[tpt] = bstrVal.Length == 0 ? null : bstrVal;
 		}
 
 		/// <summary>
-		/// Set a string property. If value is null or empty, the string property is deleted.
-		/// This method is only used by Views.
+		/// Set a string property. If value is null and the length is 0, the string property is deleted.
 		/// </summary>
 		public void SetStrPropValueRgch(int tpt, byte[] rgchVal, int nValLength)
 		{
-			if (rgchVal == null || nValLength == 0)
+			if (rgchVal == null && nValLength == 0)
 			{
 				StringProperties.Remove(tpt);
 			}
 			else
 			{
+				if (rgchVal == null)
+					throw new ArgumentNullException("rgchVal");
+
 				var sb = new StringBuilder();
 				for (int i = 0; i < nValLength; i += 2)
-					sb.Append((char) (rgchVal[i] << 8 | rgchVal[i + 1]));
-				StringProperties[tpt] = sb.ToString();
+					sb.Append((char) (rgchVal[i + 1] << 8 | rgchVal[i]));
+				StringProperties[tpt] = sb.Length == 0 ? null : sb.ToString();
 			}
 		}
 
@@ -78,7 +80,7 @@ namespace SIL.CoreImpl
 		/// </summary>
 		public ITsTextProps GetTextProps()
 		{
-			return new TsTextProps(IntProperties, StringProperties);
+			return TsTextProps.GetInternedTextProps(IntProperties, StringProperties);
 		}
 
 		/// <summary>

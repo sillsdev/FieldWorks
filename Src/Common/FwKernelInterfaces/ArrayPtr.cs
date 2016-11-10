@@ -18,7 +18,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using SIL.Utils;
 
@@ -45,7 +44,7 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 		/// Default constructor.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public ArrayPtr() : this((IntPtr) IntPtr.Zero)
+		public ArrayPtr() : this(IntPtr.Zero)
 		{
 			m_ownMemory = true;
 		}

@@ -483,7 +483,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 								}
 								// adjust the owned ORC
 								Guid revGuid = archivedBook.FootnotesOS[iFootnote].Guid;
-								objData = TsStringUtils.GetObjData(revGuid, (byte)FwObjDataTypes.kodtOwnNameGuidHot);
+								objData = TsStringUtils.GetObjData(revGuid, FwObjDataTypes.kodtOwnNameGuidHot);
 								propsBldr = ttp.GetBldr();
 								propsBldr.SetStrPropValueRgch(
 									(int)FwTextPropType.ktptObjData,
@@ -506,7 +506,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 								// update the ORC in the revision to point to the new picture
 								objData = TsStringUtils.GetObjData(newPicture.Guid,
-									(byte)FwObjDataTypes.kodtGuidMoveableObjDisp);
+									FwObjDataTypes.kodtGuidMoveableObjDisp);
 								propsBldr = ttp.GetBldr();
 								propsBldr.SetStrPropValueRgch(
 									(int)FwTextPropType.ktptObjData,
@@ -567,7 +567,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						// Guid mapping back to orignal draft found. Update it.
 						byte[] objData;
 						objData = TsStringUtils.GetObjData(newGuid,
-							(byte)FwObjDataTypes.kodtNameGuidHot);
+							FwObjDataTypes.kodtNameGuidHot);
 						ITsPropsBldr propsBldr;
 						propsBldr = ttp.GetBldr();
 						propsBldr.SetStrPropValueRgch(
