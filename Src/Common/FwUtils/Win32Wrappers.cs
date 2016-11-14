@@ -1331,11 +1331,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static bool PostMessage(IntPtr hWnd, int Msg, uint wParam, uint lParam)
 		{
 			if (s_postMessage == null)
+			{
+				var enumType = MonoWinFormsAssembly.GetType("System.Windows.Forms.Msg");
 				s_postMessage = XplatUI.GetMethod("PostMessage",
 					System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static,
 					null,
-					new Type[] { typeof(IntPtr), typeof(int), typeof(IntPtr), typeof(IntPtr) },
+					new Type[] { typeof(IntPtr), enumType, typeof(IntPtr), typeof(IntPtr) },
 					null);
+			}
 			return (bool)s_postMessage.Invoke(null, new object[] {hWnd, Msg, (IntPtr)wParam, (IntPtr)lParam});
 		}
 #endif

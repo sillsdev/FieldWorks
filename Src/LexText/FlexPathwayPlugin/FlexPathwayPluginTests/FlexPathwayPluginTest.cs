@@ -30,7 +30,7 @@ namespace FlexDePluginTests
 	///to contain all FlexDePluginTest Unit Tests
 	///</summary>
 	[TestFixture]
-	public class FlexDePluginTest : FlexDePlugin
+	public class FlexPathwayPluginTest : FlexPathwayPlugin
 	{
 		/// <summary>Mock help provider</summary>
 		private IMock helpProvider;
@@ -49,7 +49,7 @@ namespace FlexDePluginTests
 			// This needs to be set for ReSharper
 			RegistryHelper.CompanyName = "SIL";
 			RegistryHelper.ProductName = "FieldWorks";
-			var path = String.Format("LexText{0}FlexDePlugin{0}FlexDePluginTests{0}Input", Path.DirectorySeparatorChar);
+			var path = String.Format("LexText{0}FlexPathwayPlugin{0}FlexPathwayPluginTests{0}Input", Path.DirectorySeparatorChar);
 			_TestPath = Path.Combine(FwDirectoryFinder.SourceDirectory, path);
 		}
 
@@ -59,7 +59,7 @@ namespace FlexDePluginTests
 		[Test]
 		public void LabelTest()
 		{
-			FlexDePlugin target = new FlexDePlugin();
+			FlexPathwayPlugin target = new FlexPathwayPlugin();
 			string actual;
 			actual = target.Label;
 			Assert.AreEqual("Pathway", actual);
@@ -71,7 +71,7 @@ namespace FlexDePluginTests
 		[Test]
 		public void DialogTest()
 		{
-			FlexDePlugin target = new FlexDePlugin();
+			FlexPathwayPlugin target = new FlexPathwayPlugin();
 			helpProvider = new DynamicMock(typeof (IHelpTopicProvider));
 			using (UtilityDlg expected = new UtilityDlg((IHelpTopicProvider)helpProvider.MockInstance))
 				target.Dialog = expected;
@@ -115,7 +115,7 @@ namespace FlexDePluginTests
 		[Test]
 		public void ToStringTest()
 		{
-			FlexDePlugin target = new FlexDePlugin();
+			FlexPathwayPlugin target = new FlexPathwayPlugin();
 			string expected = "Pathway";
 			string actual;
 			actual = target.ToString();
@@ -128,7 +128,7 @@ namespace FlexDePluginTests
 		[Test]
 		public void OnSelectionTest()
 		{
-			FlexDePlugin target = new FlexDePlugin();
+			FlexPathwayPlugin target = new FlexPathwayPlugin();
 			helpProvider = new DynamicMock(typeof(IHelpTopicProvider));
 			using (UtilityDlg exportDialog = new UtilityDlg((IHelpTopicProvider)helpProvider.MockInstance))
 			{
@@ -144,7 +144,7 @@ namespace FlexDePluginTests
 		[Test]
 		public void LoadUtilitiesTest()
 		{
-			FlexDePlugin target = new FlexDePlugin();
+			FlexPathwayPlugin target = new FlexPathwayPlugin();
 			helpProvider = new DynamicMock(typeof(IHelpTopicProvider));
 			using (UtilityDlg exportDialog = new UtilityDlg((IHelpTopicProvider)helpProvider.MockInstance))
 			{
@@ -161,7 +161,7 @@ namespace FlexDePluginTests
 		[ExpectedException("System.NullReferenceException")]
 		public void ExportToolTest()
 		{
-			FlexDePlugin target = new FlexDePlugin();
+			FlexPathwayPlugin target = new FlexPathwayPlugin();
 			helpProvider = new DynamicMock(typeof(IHelpTopicProvider));
 			using (UtilityDlg exportDialog = new UtilityDlg((IHelpTopicProvider)helpProvider.MockInstance))
 			{
@@ -239,7 +239,7 @@ namespace FlexDePluginTests
 		[Test]
 		public void FlexDePluginConstructorTest()
 		{
-			FlexDePlugin target = new FlexDePlugin();
+			FlexPathwayPlugin target = new FlexPathwayPlugin();
 			// TODO: TODO: Implement code to verify target");
 		}
 	}

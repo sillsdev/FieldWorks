@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0" DefaultTargets="Build">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0" DefaultTargets="Build">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -8,9 +8,9 @@
     <ProjectGuid>{A1C5E366-D80B-4FB8-A03F-CDA5A0DDF176}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>.</AppDesignerFolder>
-    <RootNamespace>FlexDePluginTests</RootNamespace>
-    <AssemblyName>FlexDePluginTests</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <RootNamespace>FlexPathwayPluginTests</RootNamespace>
+    <AssemblyName>FlexPathwayPluginTests</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -42,7 +42,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\..\..\Output\Debug\FlexDePluginTests.xml</DocumentationFile>
+    <DocumentationFile>..\..\..\..\Output\Debug\FlexPathwayPluginTests.xml</DocumentationFile>
     <FileAlignment>4096</FileAlignment>
     <BaseAddress>285212672</BaseAddress>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -69,13 +69,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
     </Reference>
+    <Reference Include="FlexPathwayPlugin, Version=9.0.0.25881, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\FlexPathwayPlugin.dll</HintPath>
+    </Reference>
     <Reference Include="ViewsInterfacesTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\ViewsInterfacesTests.dll</HintPath>
-    </Reference>
-    <Reference Include="FlexDePlugin, Version=1.0.21.814, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\FlexDePlugin.dll</HintPath>
     </Reference>
     <Reference Include="FwCoreDlgs, Version=6.0.1.26258, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -111,7 +111,7 @@
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
-    <Compile Include="FlexDePluginTest.cs" />
+    <Compile Include="FlexPathwayPluginTest.cs" />
     <Compile Include="MyFoldersTest.cs" />
     <Compile Include="MyProcess.cs" />
     <None Include="App.config" />
@@ -143,7 +143,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <ItemGroup>
-    <Folder Include="Input\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

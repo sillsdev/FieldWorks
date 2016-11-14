@@ -24,7 +24,7 @@
     </SccAuxPath>
     <SccProvider>
     </SccProvider>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <NoWin32Manifest>true</NoWin32Manifest>
     <ApplicationIcon>BookOnCubeVersion.ico</ApplicationIcon>
     <PublishUrl>publish\</PublishUrl>

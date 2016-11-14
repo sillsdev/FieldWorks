@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -8,6 +8,7 @@
     <ProjectGuid>{60C33D1A-AE12-4A67-BDFA-D2B3ED8C5FB7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>SIL.FieldWorks.Build.Tasks</RootNamespace>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <AssemblyName>FwBuildTasks</AssemblyName>
     <CodePage>65001</CodePage>
     <FileUpgradeFlags>

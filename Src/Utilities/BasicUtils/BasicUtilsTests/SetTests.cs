@@ -145,9 +145,6 @@ namespace SIL.Utils
 			}
 			catch (InvalidCastException e)
 			{
-				if (Environment.OSVersion.Platform == PlatformID.Unix)
-					Assert.AreEqual("Cannot cast from source type to destination type.", e.Message);
-				else
 				Assert.AreEqual("Specified cast is not valid.", e.Message);
 			}
 		}

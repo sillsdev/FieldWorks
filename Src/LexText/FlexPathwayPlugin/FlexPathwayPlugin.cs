@@ -34,7 +34,7 @@ namespace SIL.PublishingSolution
 	/// <summary>
 	/// Implements Fieldworks Utility Interface for DictionaryExpress
 	/// </summary>
-	public class FlexDePlugin : IUtility, IFeedbackInfoProvider
+	public class FlexPathwayPlugin : IUtility, IFeedbackInfoProvider
 	{
 		#region IUtility implementation
 
@@ -235,11 +235,13 @@ namespace SIL.PublishingSolution
 		{
 			if (!File.Exists(xml))
 				throw new FileNotFoundException();
-			XmlDocument xDoc = new XmlDocument();
+			var xDoc = new XmlDocument();
+			var xmlSettings = new XmlReaderSettings { XmlResolver = null, DtdProcessing = DtdProcessing.Parse };
 			using (var stream = new FileStream(xml, FileMode.Open))
+			using (var reader = XmlReader.Create(stream, xmlSettings))
 			{
-				xDoc.XmlResolver = FileStreamXmlResolver.GetNullResolver(); // Null may not work on Mono; not trying to validate any URLs.
-				xDoc.Load(stream);
+				xDoc.XmlResolver = null;
+				xDoc.Load(reader);
 			}
 		}
 		#endregion Process

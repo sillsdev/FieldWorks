@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2009-2013 SIL International
+﻿// Copyright (c) 2009-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -15,9 +15,8 @@ using System.IO;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.PublishingSolution;
-using SIL.Utils;
 
-namespace FlexDePluginTests
+namespace FlexPathwayPluginTests
 {
 	/// <summary>
 	///This is a test class for MyFoldersTest and is intended
@@ -28,8 +27,6 @@ namespace FlexDePluginTests
 	{
 		/// <summary>Location of test files</summary>
 		protected string _TestPath;
-		//protected string _TestPath = Path.Combine(@"..\..\src", @"LexText\FlexDePlugin\FlexDePluginTests\Input");
-		//protected string _TestPath = Path.Combine(DirectoryFinder.SourceDirectory, @"LexText\FlexDePlugin\FlexDePluginTests\Input");
 
 		/// <summary>
 		/// Runs before all tests. CompanyName must be forced b/c Resharper sets it to itself
@@ -40,7 +37,7 @@ namespace FlexDePluginTests
 			// This needs to be set for ReSharper
 			RegistryHelper.CompanyName = "SIL";
 			RegistryHelper.ProductName = "FieldWorks";
-			var path = String.Format("LexText{0}FlexDePlugin{0}FlexDePluginTests{0}Input", Path.DirectorySeparatorChar);
+			var path = String.Format("LexText{0}FlexPathwayPlugin{0}FlexPathwayPluginTests{0}Input", Path.DirectorySeparatorChar);
 			_TestPath = Path.Combine(FwDirectoryFinder.SourceDirectory, path);
 		}
 
