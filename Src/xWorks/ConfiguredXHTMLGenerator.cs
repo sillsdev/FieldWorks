@@ -1866,12 +1866,11 @@ namespace SIL.FieldWorks.XWorks
 						requestedString = bestStringValue;
 				}
 				if (string.IsNullOrEmpty(lastGrammaticalInfo))
-					lastGrammaticalInfo = requestedString;
-				else if (requestedString == lastGrammaticalInfo)
 				{
+					lastGrammaticalInfo = requestedString;
 					isSameGrammaticalInfo = true;
 				}
-				else
+				else if(requestedString != lastGrammaticalInfo)
 				{
 					return false;
 				}

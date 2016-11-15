@@ -2383,6 +2383,84 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_GeneratesGramInfoFirstEvenSingleSense()
+		{
+			var posNoun = CreatePartOfSpeech("noun", "n");
+
+			var firstHeadword = "homme";
+			var firstEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(firstEntry, firstHeadword, m_wsFr, Cache);
+			AddSingleSubSenseToSense("man", firstEntry.SensesOS[0]);
+			var msa1 = CreateMSA(firstEntry, posNoun);
+			firstEntry.SensesOS[0].MorphoSyntaxAnalysisRA = msa1;
+			firstEntry.SensesOS[0].SensesOS[0].MorphoSyntaxAnalysisRA = msa1;
+
+			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
+
+			var categNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLPartOfSpeech",
+				DictionaryNodeOptions =
+					GetWsOptionsForLanguages(new[] { "analysis" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis),
+				Children = new List<ConfigurableDictionaryNode>()
+			};
+			var gramInfoNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MorphoSyntaxAnalysisRA",
+				CSSClassNameOverride = "morphosyntaxanalysis",
+				Children = new List<ConfigurableDictionaryNode> { categNode }
+			};
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Gloss",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var senseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					BeforeNumber = " ",
+					AfterNumber = ") ",
+					NumberingStyle = "%d",
+					NumberEvenASingleSense = true,
+					ShowSharedGrammarInfoFirst = true
+				},
+				Children = new List<ConfigurableDictionaryNode> { gramInfoNode, glossNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { senseNode },
+				FieldDescription = "LexEntry"
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+
+			string xhtmlPath = null;
+			var letterHeaderXPath = "//div[@class='letHead']";
+			try
+			{
+				xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new[] { firstEntry.Hvo }, pubEverything, model, m_mediator);
+				var xhtml = File.ReadAllText(xhtmlPath);
+				// SUT
+				const string gramInfoPath = "/html/body/div[@class='lexentry']/span[@class='senses']/span[@class='sharedgrammaticalinfo']/span[@class='morphosyntaxanalysis']/span[@class='mlpartofspeech']/span[@lang='en' and text()='n']";
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(gramInfoPath, 1);
+
+				const string senseNumberPath = "/html/body/div[@class='lexentry']/span[@class='senses']/span[2][@class='sensecontent']/span[@class='sensenumber' and text()='1']";
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(senseNumberPath, 1);
+
+				const string senseTextPath = "/html/body/div[@class='lexentry']/span[@class='senses']/span[2][@class='sensecontent']/span[@class='sense']/span[@class='gloss']/span[@lang='en' and text()='man']";
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(senseTextPath, 1);
+			}
+			finally
+			{
+				DeleteTempXhtmlAndCssFiles(xhtmlPath);
+			}
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_SubSensesOfSingleSenses_GetFullNumbers()
 		{
 			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
@@ -7217,7 +7295,7 @@ namespace SIL.FieldWorks.XWorks
 				//System.Diagnostics.Debug.WriteLine(String.Format("GENERATED XHTML = \r\n{0}\r\n=====================", xhtml));
 				// SUT
 				const string allCategsPath = "//span[@class='morphosyntaxanalysis']/span[@class='mlpartofspeech']/span[@lang='en']";
-				const string firstCategPath = "/html/body/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='morphosyntaxanalysis']/span[@class='mlpartofspeech']/span[@lang='en' and text()='n']";
+				const string firstCategPath = "/html/body/div[@class='lexentry']/span[@class='senses']//span[@class='sensecontent']/span[@class='sense']/span[@class='morphosyntaxanalysis']/span[@class='mlpartofspeech']/span[@lang='en' and text()='n']";
 				const string secondCategPath = "/html/body/div[@class='lexentry']/span[@class='senses']/span[@class='sharedgrammaticalinfo']/span[@class='morphosyntaxanalysis']/span[@class='mlpartofspeech']/span[@lang='en' and text()='n']";
 				const string thirdCategPath = "/html/body/div[@class='lexentry']/span[@class='senses']/span[@class='sharedgrammaticalinfo']/span[@class='morphosyntaxanalysis']/span[@class='mlpartofspeech']/span[@lang='en' and text()='adj']";
 				const string fourthCategPath = "/html/body/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='morphosyntaxanalysis']/span[@class='mlpartofspeech']/span[@lang='en' and text()='adj']";
@@ -7225,7 +7303,7 @@ namespace SIL.FieldWorks.XWorks
 
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(allCategsPath, 5);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(firstCategPath, 1);
-				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(secondCategPath, 1);
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(secondCategPath, 2);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(thirdCategPath, 1);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(fourthCategPath, 1);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(fifthCategPath, 1);
