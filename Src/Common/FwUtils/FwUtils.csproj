@@ -197,7 +197,6 @@
     <Compile Include="ShowHelp.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ValidationProgress.cs" />
     <EmbeddedResource Include="FwUtilsStrings.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
@@ -218,7 +217,6 @@
     <Compile Include="OLEConvert.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="PrinterUtils.cs" />
     <Compile Include="ManagedPictureFactory.cs" />
     <Compile Include="GraphicsManager.cs" />
     <Compile Include="IHelpTopicProvider.cs" />

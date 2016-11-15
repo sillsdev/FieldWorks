@@ -155,10 +155,6 @@
     <Compile Include="DummyFileMaker.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="InMemoryRegistryGroup.cs" />
-    <Compile Include="NMockConstraints.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="TempSFFileMaker.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -144,9 +144,6 @@
     <Compile Include="..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
-    <Compile Include="NMockConstraintsTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="TempSFFileMakerTests.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -90,7 +90,6 @@
     <Compile Include="ArrayUtils.cs" />
     <Compile Include="BasicUtils.cs" />
     <Compile Include="Benchmark.cs" />
-    <Compile Include="BidiDictionary.cs" />
     <Compile Include="BidirHashtable.cs" />
     <Compile Include="CharEnumeratorForByteArray.cs" />
     <Compile Include="ConsumerThread.cs" />
@@ -108,7 +107,6 @@
     <Compile Include="FileUtils.cs" />
     <Compile Include="IFWDisposable.cs" />
     <Compile Include="IStorage.cs" />
-    <Compile Include="LcidHelper.cs" />
     <Compile Include="MergeSort.cs" />
     <Compile Include="PriorityQueue.cs" />
     <Compile Include="TreeDictionary.cs" />
@@ -121,8 +119,6 @@
     <Compile Include="ViewSizeEvents.cs" />
     <Compile Include="LinuxPackageUtils.cs" />
     <Compile Include="DirectoryUtils.cs" />
-    <Compile Include="StopClock.cs" />
-    <Compile Include="FileModeOverride.cs" />
     <Compile Include="IFileOS.cs" />
   </ItemGroup>
   <ItemGroup>
