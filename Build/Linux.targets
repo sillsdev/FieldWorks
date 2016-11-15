@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="all" InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="all" InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
 
 	<UsingTask TaskName="ExtractIIDs" AssemblyFile="FwBuildTasks.dll"/>
 
@@ -69,11 +69,7 @@
 		<Exec Command="chmod +x runConfigureICU configure install-sh"
 			  WorkingDirectory="$(fwrt)/Lib/src/icu/source" Condition="'$(action)'!='clean'"/>
 		<!-- build icu -->
-		<CreateProperty Value='--prefix=%24(cd .. &amp;&amp; pwd)/install$(arch)'>
-			<Output TaskParameter="Value" PropertyName="icu-configure-prefix"/>
-		</CreateProperty>
-		<Message Text="icu-configure-prefix='$(icu-configure-prefix)'; icu_lib='$(icu_lib)'; arch='$(arch)'"/>
-		<Exec Command="sh -c './configure $(icu-configure-prefix) &amp;&amp; make &amp;&amp; make install'"
+		<Exec Command="sh -c './configure --prefix=$(fwrt)/Lib/src/icu/install$(arch) &amp;&amp; make &amp;&amp; make install'"
 			  WorkingDirectory="$(fwrt)/Lib/src/icu/source" Condition="'$(action)'!='clean'"/>
 	</Target>
 	<Target Name="linuxLibs" DependsOnTargets="iculibs">
