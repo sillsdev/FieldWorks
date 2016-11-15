@@ -75,6 +75,20 @@ namespace SIL.FieldWorks.XWorks
 			// When a user clicks Publish, it is revealed. This is done within the context of having a resizable table of controls, and having
 			// the output log area be the vertically growing control when a user increases the height of the dialog
 			this.Shown += (sender, args) => { this.Height = this.Height - outputLogTextbox.Height; };
+
+			// Handle localizable explanation area with link.
+			var explanationText = xWorksStrings.toApplyForWebonaryAccountExplanation;
+			var explanationTextLink = xWorksStrings.toApplyForWebonaryAccountLink;
+			var explanationTextLinkStart = explanationText.IndexOf("{", StringComparison.Ordinal);
+			var explanationTextLinkLength = explanationTextLink.Length;
+			explanationLabel.Text = string.Format(explanationText, explanationTextLink);
+			// Don't blow up if a localization didn't allow for the link.
+			if (explanationTextLinkStart < 0)
+			{
+				explanationTextLinkStart = 0;
+				explanationTextLinkLength = 0;
+			}
+			explanationLabel.LinkArea = new LinkArea(explanationTextLinkStart, explanationTextLinkLength);
 		}
 
 		private void UpdateEntriesToBePublishedLabel()
