@@ -2,6 +2,10 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
 	<UsingTask TaskName="RegFree" AssemblyFile="FwBuildTasks.dll"/>
 
+	<PropertyGroup>
+		<DistFilesDir Condition="'$(OutDir)' != ''">$(OutDir)../../DistFiles</DistFilesDir>
+		<DistFilesDir Condition="'$(OutDir)' == ''">$(MSBuildThisFileDirectory)../DistFiles</DistFilesDir>
+	</PropertyGroup>
 	<!-- This file is included in BuildInclude.targets for each of our EXEs which use our COM components.
 	It runs a custom task to create a manifest, then EXEC's a program to embed it in the EXE itself.
 	This allows our programs to run without registering our COM DLLs, which in turn allows different
@@ -13,7 +17,7 @@
 		<DependentAssemblies Include="$(OutDir)Views.X.manifest"/>
 	</ItemGroup>
 	<ItemGroup>
-		<Fragments Include="$(OutDir)/../../DistFiles/*.fragment.manifest"/>
+		<Fragments Include="$(DistFilesDir)/*.fragment.manifest"/>
 	</ItemGroup>
 	<Target Name="CreateManifest" Condition="'$(OS)'=='Windows_NT'" Inputs="@(DependentAssemblies)" Outputs="$(Executable).manifest">
 		<RegFree Executable="$(Executable)" DependentAssemblies="@(DependentAssemblies)" Fragments="@(Fragments)" />
