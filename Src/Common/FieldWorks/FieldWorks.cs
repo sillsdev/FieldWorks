@@ -3374,7 +3374,8 @@ namespace SIL.FieldWorks
 
 			KeyboardController.Shutdown();
 
-			Sldr.Cleanup();
+			if (Sldr.IsInitialized)
+				Sldr.Cleanup();
 
 			GracefullyShutDown();
 
