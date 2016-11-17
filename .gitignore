@@ -142,3 +142,4 @@ DistFiles/Icu*.zip
 DistFiles/Icu*/icudt*l
 DistFiles/Icu*/*.*
 Bin/NUnit/
+.idea/
