@@ -741,10 +741,12 @@ InstallCerts:
 
 Fw-build-package: InstallCerts
 	cd $(BUILD_ROOT)/Build \
+		&& xbuild /t:refreshTargets \
 		&& xbuild '/t:build4package;zipLocalizedLists;localize' /property:config=release /property:packaging=yes
 
 Fw-build-package-fdo: InstallCerts
 	cd $(BUILD_ROOT)/Build \
+		&& xbuild /t:refreshTargets \
 		&& xbuild '/t:build4package-fdo' /property:config=release /property:packaging=yes
 
 TE-run: ComponentsMap-nodep
