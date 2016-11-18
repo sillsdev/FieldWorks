@@ -2000,7 +2000,7 @@ namespace SIL.FieldWorks.Common.Controls
 							{
 								BulkEditItem bei = m_beItems[m_itemIndex];
 								bei.BulkEditControl.DoIt(ItemsToChange(true), state);
-								FixReplacedItems(bei.BulkEditControl);
+								m_bv.RefreshDisplay();
 							}
 						}
 						else if (m_operationsTabControl.SelectedTab == m_findReplaceTab)

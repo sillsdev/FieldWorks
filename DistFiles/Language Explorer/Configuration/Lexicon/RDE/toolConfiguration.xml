@@ -304,8 +304,8 @@
 		  <control>
 			<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
 			<parameters area="lexicon" id="EntryOrSenseBulkEdit" clerk="entriesOrChildren" filterBar="true" bulkEdit="true" selectColumn="true"
-							bulkEditListItemsClasses="LexEntry,LexSense,LexEntryRef,LexPronunciation,LexEtymology,MoForm,LexExampleSentence,CmTranslation"
-							bulkEditListItemsGhostFields="LexDb.AllPossiblePronunciations,LexDb.AllPossibleEtymologies,LexDb.AllPossibleAllomorphs,LexDb.AllExampleSentenceTargets,LexDb.AllExampleTranslationTargets,LexDb.AllComplexEntryRefPropertyTargets">
+							bulkEditListItemsClasses="LexEntry,LexSense,LexEntryRef,LexPronunciation,LexEtymology,MoForm,LexExampleSentence,CmTranslation,LexExtendedNote"
+							bulkEditListItemsGhostFields="LexDb.AllPossiblePronunciations,LexDb.AllPossibleEtymologies,LexDb.AllPossibleAllomorphs,LexDb.AllExampleSentenceTargets,LexDb.AllExampleTranslationTargets,LexDb.AllComplexEntryRefPropertyTargets,LexDb.AllExtendedNoteTargets">
 			  <!--include browse view columns-->
 			  <columns generate="childPartsForParentLayouts">
 				<include path="../browseDialogColumns.xml" query="doc/browseColumns/column">

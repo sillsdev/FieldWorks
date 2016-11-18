@@ -2,6 +2,28 @@
 <!-- Please increment BrowseViewer.kBrowseViewVersion when you change these specs,
  so that XmlBrowseViewBaseVc can invalidate obsoleted columns that have been saved in each current control's ColumnList -->
 <browseColumns>
+	<!-- Tips and notes for making a field bulk editable: [Please edit these as you discover mistakes or new information, this is not authoritative but descriptive notation]
+	A. Steps for adding fields in an area where content is not always displayed ("Ghost" fields)
+		1. If the class that the field is in has no existing bulk editable fields then you will need to add a virtual propery in OverridesLing_Lex.cs to include
+		   a virtual collection that returns all the objects of that class that exist at the location where you want to bulk edit concatenated with the parents of
+		   the location when no content exists (see: AllExampleTranslationTargets)
+		   a. You may also need to add a specialized 'Owner' property so correct content is displayed for other fields when bulk editing your new fields
+		2. Modify the GhostParentHelper class to include cases for the new virtual collection
+		3. Modify the areaConfiguration.xml to include new parts in the ClassOwnershipTree and the ParentClassPathsToChildren elements
+		4. A part to handle unknown field names by directing them to the owner class will need to be added in the 'bin' element for the class we are now handling
+	B. Adding a column to handle a "Ghost" fields children
+		1. You will need a ghostListField attribute with a value that points to the list under LexDb which was added for the parent class items.
+        2. The field(for list reference items) or transduce (for other items) attributes should point to the field name qualified with the parent field.
+	C. Adding any column
+		1. The layout attribute should correspond to a part id with the following form [ParentClassName]-Jt-[AttributeValue] present in an appropriate Parts.xml file.
+			e.g. LexEntry-Jt-DialectLabelsEntry will use the part defined in LexEntryParts.xml
+		2. The visibility attribute can be:
+			a. 'dialog' off by default but available in the dialog
+			b. 'always' on by default
+			c. 'menu' off by default but included in the quick column menu
+			d. any other value will make the column unusable
+		3. A column is available in bulk edit if the 'bulkEdit' or 'transduce' attributes are set to a valid value.
+	-->
 	<!-- These columns typically appear installed in entries browse type tools in this order. -->
 	<column layout="EntryHeadwordForEntry" label="Headword" ws="$ws=vernacular" width="72000" sortmethod="FullSortKey" cansortbylength="true" visibility="always"/>
 	<column layout="LexemeFormForEntry" label="Lexeme Form" common="true" width="72000" ws="$ws=vernacular" sortmethod="MorphSortKey" cansortbylength="true" visibility="always"
@@ -64,9 +86,8 @@
 	<column layout="EtymologyComment" label="Etymology - Following Comment"  multipara="true" ws="$ws=analysis" transduce="LexEtymology.Comment" ghostListField="LexDb.AllPossibleEtymologies" editable="false" visibility="dialog" />
 	<column layout="EtymologyBibliography" label="Etymology - Bibliographic Source"  multipara="true" ws="$ws=analysis" transduce="LexEtymology.Bibliography" ghostListField="LexDb.AllPossibleEtymologies" editable="false" visibility="dialog" />
 	<column layout="EtymologyNote" label="Etymology - Note"  multipara="true" ws="$ws=analysis" transduce="LexEtymology.Note" ghostListField="LexDb.AllPossibleEtymologies" editable="false" visibility="dialog" />
-	<column layout="ExtNoteType" label="Ext. Note Type"  multipara="true" ws="$ws=analysis" transduce="LexExtendedNote.ExtendedNoteType" ghostListField="LexDb.AllPossibleExtendedNotes" editable="false" visibility="dialog" />
-	<column layout="ExtNoteDiscussion" label="Ext. Note Discussion"  multipara="true" ws="$ws=analysis" transduce="LexExtendedNote.Discussion" ghostListField="LexDb.AllPossibleExtendedNotes" editable="false" visibility="dialog" />
-
+	<column layout="ExtNoteType" label="Ext. Note - Type"  multipara="true" field="LexExtendedNote.ExtendedNoteType" ghostListField="LexDb.AllExtendedNoteTargets" visibility="dialog" list="LexDb.ExtendedNoteTypes" bulkEdit="atomicFlatListItem" displayWs="best vernoranal" displayNameProperty="ShortNameTSS" />
+	<column layout="ExtNoteDiscussion" label="Ext. Note - Discussion"  multipara="true" ws="$ws=analysis" ghostListField="LexDb.AllExtendedNoteTargets" transduce="LexExtendedNote.Discussion" editable="true" visibility="dialog" />
 	<column layout="BibliographyForEntry" label="Bibliography (Entry)" transduce="LexEntry.Bibliography" ws="$ws=analysis" visibility="dialog"/>
 	<column layout="LiteralMeaningForEntry" label="Literal Meaning" transduce="LexEntry.LiteralMeaning" ws="$ws=analysis" visibility="dialog"/>
 	<column layout="NoteForEntry" label="Note" transduce="LexEntry.Comment" ws="$ws=analysis" visibility="dialog"/>

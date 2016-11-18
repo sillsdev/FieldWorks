@@ -1003,6 +1003,9 @@
 	</bin>
 	
 	<bin class="LexExtendedNote">
+		<part id="LexExtendedNote-Jt-$fieldName" type="jtview"><!-- for ChildPartGenerator -->
+			<obj class="LexExtendedNote" field="OwningSense" layout="$fieldName"/>
+		</part>
 		<part id="LexExtendedNote-Jt-Summary" type="jtview" menu="mnuDataTree-ExtendedNote">
 			<para>
 				<properties>
@@ -1037,7 +1040,7 @@
 			<string field="Discussion" ws="$ws=analysis"/>
 		</part>
 		<part id="LexExtendedNote-Jt-ExtNoteType" type="jtview">
-			<obj class="LexExtendedNote" field="ExtendedNoteType" targetclass="CmPossibility"/>
+			<obj field="ExtendedNoteType" layout="Abbreviation"/>
 		</part>
 	</bin>
 	
