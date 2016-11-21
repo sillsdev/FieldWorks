@@ -250,9 +250,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="BrowseViewer.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="BrowseViewer.cs" />
     <Compile Include="BulkEditBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -264,9 +262,7 @@
     <Compile Include="DhListView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="FilterBar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="FilterBar.cs" />
     <Compile Include="FilterSdaDecorator.cs" />
     <Compile Include="FlatListView.cs">
       <SubType>UserControl</SubType>
@@ -437,7 +433,4 @@
   <PropertyGroup>
     <DistFiles>../../../../DistFiles</DistFiles>
   </PropertyGroup>
-  <ItemGroup>
-    <None Include="gendarme-XMLViews.ignore" />
-  </ItemGroup>
 </Project>

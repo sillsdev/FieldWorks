@@ -78,7 +78,6 @@
     <Compile Include="ListUtils.cs" />
     <Compile Include="Surrogates.cs" />
     <Compile Include="XmlSerializationHelper.cs" />
-    <None Include="gendarme-SilUtils.ignore" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

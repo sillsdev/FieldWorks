@@ -135,9 +135,6 @@
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\..\Lib\debug\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
-    <Reference Include="Logos.Utility">
-      <HintPath>..\..\DistFiles\Logos.Utility.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
@@ -203,7 +200,6 @@
     <Compile Include="DomainImpl\Virtuals.cs" />
     <Compile Include="DomainServices\AnalysisGuessServices.cs" />
     <Compile Include="DomainServices\AnalysisOccurrence.cs" />
-    <Compile Include="DomainServices\AndIFilter.cs" />
     <Compile Include="DomainServices\BackupRestore\BackupProjectSettings.cs" />
     <Compile Include="DomainServices\BackupRestore\BackupSettings.cs" />
     <Compile Include="DomainServices\BackupRestore\BackupFileSettings.cs" />
@@ -229,7 +225,6 @@
     <Compile Include="DomainImpl\StTxtPara.cs" />
     <Compile Include="DomainServices\BtConverter.cs" />
     <Compile Include="DomainServices\BulletInfo.cs" />
-    <Compile Include="DomainServices\CmPictureServices.cs" />
     <Compile Include="DomainServices\ConstraintFailure.cs" />
     <Compile Include="DomainServices\CopyObject.cs" />
     <Compile Include="DomainServices\DataMigration\DataMigration7000058.cs" />
@@ -504,7 +499,6 @@
     <None Include="FDOGenerate\HandGenerated.xml">
       <SubType>Designer</SubType>
     </None>
-    <None Include="gendarme-FDO.ignore" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FDOGenerate\IntPropTypeOverrides.xml" />

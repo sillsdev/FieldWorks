@@ -243,7 +243,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="BuildInclude.targets" />
-    <None Include="gendarme-FwUtils.ignore" />
     <None Include="FwUtils.dll.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

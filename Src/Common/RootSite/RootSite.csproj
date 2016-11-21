@@ -212,9 +212,11 @@
     </Compile>
     <Compile Include="RequestSelectionHelper.cs" />
     <Compile Include="RootSite.cs">
-      <SubType>Component</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="RootSiteControl.cs" />
+    <Compile Include="RootSiteControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="RootSiteEditingHelper.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -223,9 +225,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>RootSiteStrings.resx</DependentUpon>
     </Compile>
-    <Compile Include="SpellCheckHelper.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="SpellCheckHelper.cs" />
     <Compile Include="StVc.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -250,7 +250,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gendarme-RootSite.ignore" />
     <None Include="Resources\footnote" />
   </ItemGroup>
   <ItemGroup>

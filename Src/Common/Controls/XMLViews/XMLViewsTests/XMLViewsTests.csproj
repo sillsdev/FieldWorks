@@ -250,7 +250,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="gendarme-XMLViewsTests.ignore" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="LayoutMergerTestData\LexEntryParts.xml" />

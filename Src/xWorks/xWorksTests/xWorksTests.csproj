@@ -267,9 +267,7 @@
     <Compile Include="ConfiguredXHTMLGeneratorReversalTests.cs" />
     <Compile Include="ConfiguredXHTMLGeneratorTests.cs" />
     <Compile Include="CssGeneratorTests.cs" />
-    <Compile Include="CustomListDlgTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="CustomListDlgTests.cs" />
     <Compile Include="DeleteCustomListTests.cs" />
     <Compile Include="DictionaryConfigManagerTests.cs" />
     <Compile Include="DictionaryConfigurationControllerTests.cs" />
@@ -290,9 +288,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="InterestingTextsTests.cs" />
-    <Compile Include="ItemClickedTests.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="ItemClickedTests.cs" />
     <Compile Include="MacroListenerTests.cs" />
     <Compile Include="UploadToWebonaryControllerTests.cs" />
     <Compile Include="UploadToWebonaryModelTests.cs" />
@@ -347,7 +343,4 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-  <ItemGroup>
-    <None Include="gendarme-xWorksTests.ignore" />
-  </ItemGroup>
 </Project>

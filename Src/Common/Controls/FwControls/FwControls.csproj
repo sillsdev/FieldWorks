@@ -513,7 +513,6 @@
     <Content Include="resources\GreyChecked.bmp" />
     <None Include="resources\MissingGlyph.png" />
     <Content Include="resources\Unchecked.bmp" />
-    <None Include="gendarme-FwControls.ignore" />
     <Compile Include="FileDialog\FileDialogAdapter.cs" />
     <Compile Include="FileDialog\FileDialogStrings.Designer.cs">
       <DependentUpon>FileDialogStrings.resx</DependentUpon>

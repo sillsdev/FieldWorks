@@ -280,9 +280,7 @@
     <Compile Include="PartOfSpeechUi.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="PhonologicalFeatureEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="PhonologicalFeatureEditor.cs" />
     <Compile Include="ProgressBarWrapper.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -384,9 +382,6 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-  <ItemGroup>
-    <None Include="gendarme-FdoUi.ignore" />
-  </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\question.ico" />
   </ItemGroup>

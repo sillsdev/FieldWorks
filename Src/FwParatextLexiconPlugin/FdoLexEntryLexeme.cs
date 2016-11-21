@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Paratext.LexicalContracts;
@@ -59,14 +58,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		{
 			get
 			{
-				using (m_lexicon.ActivationContext.Activate())
-				{
-					ILexEntry entry;
-					if (!m_lexicon.TryGetEntry(m_key, out entry))
-						return null;
+				ILexEntry entry;
+				if (!m_lexicon.TryGetEntry(m_key, out entry))
+					return null;
 
-					return StringServices.CitationFormWithAffixTypeStaticForWs(entry, m_lexicon.DefaultVernWs);
-				}
+				return StringServices.CitationFormWithAffixTypeStaticForWs(entry, m_lexicon.DefaultVernWs);
 			}
 		}
 
@@ -74,15 +70,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		{
 			get
 			{
-				using (m_lexicon.ActivationContext.Activate())
-				{
-					ILexEntry entry;
-					if (!m_lexicon.TryGetEntry(m_key, out entry))
-						return null;
+				ILexEntry entry;
+				if (!m_lexicon.TryGetEntry(m_key, out entry))
+					return null;
 
-					ITsString tss = entry.CitationForm.StringOrNull(m_lexicon.DefaultVernWs);
-					return tss == null ? null : tss.Text;
-				}
+				ITsString tss = entry.CitationForm.StringOrNull(m_lexicon.DefaultVernWs);
+				return tss == null ? null : tss.Text;
 			}
 		}
 
@@ -90,14 +83,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		{
 			get
 			{
-				using (m_lexicon.ActivationContext.Activate())
-				{
-					ILexEntry entry;
-					if (!m_lexicon.TryGetEntry(m_key, out entry))
-						return 0;
+				ILexEntry entry;
+				if (!m_lexicon.TryGetEntry(m_key, out entry))
+					return 0;
 
-					return entry.HomographNumber;
-				}
+				return entry.HomographNumber;
 			}
 		}
 
@@ -105,17 +95,14 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		{
 			get
 			{
-				using (m_lexicon.ActivationContext.Activate())
-				{
-					ILexEntry entry;
-					if (!m_lexicon.TryGetEntry(m_key, out entry))
-						return Enumerable.Empty<LexiconSense>();
+				ILexEntry entry;
+				if (!m_lexicon.TryGetEntry(m_key, out entry))
+					return Enumerable.Empty<LexiconSense>();
 
-					if (entry.AllSenses.Count == 1 && entry.SensesOS[0].Gloss.StringCount == 0)
-						return Enumerable.Empty<LexiconSense>();
+				if (entry.AllSenses.Count == 1 && entry.SensesOS[0].Gloss.StringCount == 0)
+					return Enumerable.Empty<LexiconSense>();
 
-					return entry.AllSenses.Select(s => new LexSenseLexiconSense(m_lexicon, m_key, s)).ToArray();
-				}
+				return entry.AllSenses.Select(s => new LexSenseLexiconSense(m_lexicon, m_key, s)).ToArray();
 			}
 		}
 
@@ -123,39 +110,36 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		{
 			get
 			{
-				using (m_lexicon.ActivationContext.Activate())
-				{
-					ILexEntry entry;
-					if (!m_lexicon.TryGetEntry(m_key, out entry))
-						return Enumerable.Empty<LexicalRelation>();
+				ILexEntry entry;
+				if (!m_lexicon.TryGetEntry(m_key, out entry))
+					return Enumerable.Empty<LexicalRelation>();
 
-					var relations = new List<LexicalRelation>();
-					foreach (ILexReference lexRef in entry.LexEntryReferences.Union(entry.AllSenses.SelectMany(s => s.LexSenseReferences)))
+				var relations = new List<LexicalRelation>();
+				foreach (ILexReference lexRef in entry.LexEntryReferences.Union(entry.AllSenses.SelectMany(s => s.LexSenseReferences)))
+				{
+					ILexEntry parentEntry;
+					string name = GetLexReferenceName(entry, lexRef, out parentEntry);
+					foreach (ICmObject obj in lexRef.TargetsRS)
 					{
-						ILexEntry parentEntry;
-						string name = GetLexReferenceName(entry, lexRef, out parentEntry);
-						foreach (ICmObject obj in lexRef.TargetsRS)
+						ILexEntry otherEntry = null;
+						switch (obj.ClassID)
 						{
-							ILexEntry otherEntry = null;
-							switch (obj.ClassID)
-							{
-								case LexEntryTags.kClassId:
-									otherEntry = (ILexEntry) obj;
-									break;
-								case LexSenseTags.kClassId:
-									otherEntry = obj.OwnerOfClass<ILexEntry>();
-									break;
-							}
-							if (otherEntry != null && otherEntry != entry)
-							{
-								relations.Add(new FdoLexicalRelation(m_lexicon.GetEntryLexeme(otherEntry),
-									parentEntry != null && parentEntry != entry && parentEntry != otherEntry ? Strings.ksOther : name));
-							}
+							case LexEntryTags.kClassId:
+								otherEntry = (ILexEntry) obj;
+								break;
+							case LexSenseTags.kClassId:
+								otherEntry = obj.OwnerOfClass<ILexEntry>();
+								break;
+						}
+						if (otherEntry != null && otherEntry != entry)
+						{
+							relations.Add(new FdoLexicalRelation(m_lexicon.GetEntryLexeme(otherEntry),
+								parentEntry != null && parentEntry != entry && parentEntry != otherEntry ? Strings.ksOther : name));
 						}
 					}
-
-					return relations;
 				}
+
+				return relations;
 			}
 		}
 
@@ -163,22 +147,19 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		{
 			get
 			{
-				using (m_lexicon.ActivationContext.Activate())
+				ILexEntry entry;
+				if (!m_lexicon.TryGetEntry(m_key, out entry))
+					return Enumerable.Empty<string>();
+
+				var forms = new List<string>();
+				foreach (IMoForm form in entry.AlternateFormsOS)
 				{
-					ILexEntry entry;
-					if (!m_lexicon.TryGetEntry(m_key, out entry))
-						return Enumerable.Empty<string>();
-
-					var forms = new List<string>();
-					foreach (IMoForm form in entry.AlternateFormsOS)
-					{
-						ITsString tss = form.Form.StringOrNull(m_lexicon.DefaultVernWs);
-						if (tss != null)
-							forms.Add(tss.Text.Normalize());
-					}
-
-					return forms;
+					ITsString tss = form.Form.StringOrNull(m_lexicon.DefaultVernWs);
+					if (tss != null)
+						forms.Add(tss.Text.Normalize());
 				}
+
+				return forms;
 			}
 		}
 
@@ -238,30 +219,27 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			m_lexicon.UpdatingEntries = true;
 			try
 			{
-				using (m_lexicon.ActivationContext.Activate())
-				{
-					NonUndoableUnitOfWorkHelper.Do(m_lexicon.Cache.ActionHandlerAccessor, () =>
+				NonUndoableUnitOfWorkHelper.Do(m_lexicon.Cache.ActionHandlerAccessor, () =>
+					{
+						ILexEntry entry;
+						if (!m_lexicon.TryGetEntry(m_key, out entry))
 						{
-							ILexEntry entry;
-							if (!m_lexicon.TryGetEntry(m_key, out entry))
-							{
-								entry = m_lexicon.CreateEntry(m_key);
-								lexemeAdded = true;
-							}
+							entry = m_lexicon.CreateEntry(m_key);
+							lexemeAdded = true;
+						}
 
-							if (entry.AllSenses.Count == 1 && entry.SensesOS[0].Gloss.StringCount == 0)
-							{
-								// An empty sense exists (probably was created during a call to AddLexeme)
-								sense = new LexSenseLexiconSense(m_lexicon, m_key, entry.SensesOS[0]);
-							}
-							else
-							{
-								ILexSense newSense = m_lexicon.Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create(
-									entry, new SandboxGenericMSA(), (string)null);
-								sense = new LexSenseLexiconSense(m_lexicon, m_key, newSense);
-							}
-						});
-				}
+						if (entry.AllSenses.Count == 1 && entry.SensesOS[0].Gloss.StringCount == 0)
+						{
+							// An empty sense exists (probably was created during a call to AddLexeme)
+							sense = new LexSenseLexiconSense(m_lexicon, m_key, entry.SensesOS[0]);
+						}
+						else
+						{
+							ILexSense newSense = m_lexicon.Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create(
+								entry, new SandboxGenericMSA(), (string)null);
+							sense = new LexSenseLexiconSense(m_lexicon, m_key, newSense);
+						}
+					});
 			}
 			finally
 			{
@@ -275,26 +253,23 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		public void RemoveSense(LexiconSense sense)
 		{
-			using (m_lexicon.ActivationContext.Activate())
-			{
-				ILexEntry entry;
-				if (!m_lexicon.TryGetEntry(m_key, out entry))
-					return;
+			ILexEntry entry;
+			if (!m_lexicon.TryGetEntry(m_key, out entry))
+				return;
 
-				NonUndoableUnitOfWorkHelper.Do(m_lexicon.Cache.ActionHandlerAccessor, () =>
+			NonUndoableUnitOfWorkHelper.Do(m_lexicon.Cache.ActionHandlerAccessor, () =>
+				{
+					var leSense = (LexSenseLexiconSense)sense;
+					if (entry.AllSenses.Count == 1)
 					{
-						var leSense = (LexSenseLexiconSense)sense;
-						if (entry.AllSenses.Count == 1)
-						{
-							foreach (int ws in leSense.Sense.Gloss.AvailableWritingSystemIds)
-								leSense.Sense.Gloss.set_String(ws, (ITsString) null);
-						}
-						else
-						{
-							leSense.Sense.Delete();
-						}
-					});
-			}
+						foreach (int ws in leSense.Sense.Gloss.AvailableWritingSystemIds)
+							leSense.Sense.Gloss.set_String(ws, (ITsString) null);
+					}
+					else
+					{
+						leSense.Sense.Delete();
+					}
+				});
 		}
 
 		#endregion
@@ -337,8 +312,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			{
 				get
 				{
-					using (m_lexicon.ActivationContext.Activate())
-						return m_lexSense.Guid.ToString();
+					return m_lexSense.Guid.ToString();
 				}
 			}
 
@@ -346,8 +320,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			{
 				get
 				{
-					using (m_lexicon.ActivationContext.Activate())
-						return m_lexSense.LexSenseOutline.Text;
+					return m_lexSense.LexSenseOutline.Text;
 				}
 			}
 
@@ -355,8 +328,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			{
 				get
 				{
-					using (m_lexicon.ActivationContext.Activate())
-						return m_lexSense.MorphoSyntaxAnalysisRA == null ? "" : m_lexSense.MorphoSyntaxAnalysisRA.PartOfSpeechForWsTSS(m_lexicon.Cache.DefaultAnalWs).Text;
+					return m_lexSense.MorphoSyntaxAnalysisRA == null ? "" : m_lexSense.MorphoSyntaxAnalysisRA.PartOfSpeechForWsTSS(m_lexicon.Cache.DefaultAnalWs).Text;
 				}
 			}
 
@@ -364,18 +336,15 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			{
 				get
 				{
-					using (m_lexicon.ActivationContext.Activate())
+					IMultiString definition = m_lexSense.Definition;
+					var defs = new List<LanguageText>();
+					foreach (CoreWritingSystemDefinition ws in m_lexicon.Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 					{
-						IMultiString definition = m_lexSense.Definition;
-						var defs = new List<LanguageText>();
-						foreach (CoreWritingSystemDefinition ws in m_lexicon.Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
-						{
-							ITsString tss = definition.StringOrNull(ws.Handle);
-							if (tss != null)
-								defs.Add(new FdoLanguageText(ws.Id, tss.Text.Normalize()));
-						}
-						return defs;
+						ITsString tss = definition.StringOrNull(ws.Handle);
+						if (tss != null)
+							defs.Add(new FdoLanguageText(ws.Id, tss.Text.Normalize()));
 					}
+					return defs;
 				}
 			}
 
@@ -383,59 +352,49 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			{
 				get
 				{
-					using (m_lexicon.ActivationContext.Activate())
+					IMultiUnicode gloss = m_lexSense.Gloss;
+					var glosses = new List<LanguageText>();
+					foreach (CoreWritingSystemDefinition ws in m_lexicon.Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 					{
-						IMultiUnicode gloss = m_lexSense.Gloss;
-						var glosses = new List<LanguageText>();
-						foreach (CoreWritingSystemDefinition ws in m_lexicon.Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
-						{
-							ITsString tss = gloss.StringOrNull(ws.Handle);
-							if (tss != null)
-								glosses.Add(new FdoLanguageText(ws.Id, tss.Text.Normalize()));
-						}
-						return glosses;
+						ITsString tss = gloss.StringOrNull(ws.Handle);
+						if (tss != null)
+							glosses.Add(new FdoLanguageText(ws.Id, tss.Text.Normalize()));
 					}
+					return glosses;
 				}
 			}
 
 			public LanguageText AddGloss(string language, string text)
 			{
-				using (m_lexicon.ActivationContext.Activate())
-				{
-					LanguageText lexGloss = null;
-					NonUndoableUnitOfWorkHelper.Do(m_lexSense.Cache.ActionHandlerAccessor, () =>
-						{
-							CoreWritingSystemDefinition ws;
-							if (!m_lexicon.Cache.ServiceLocator.WritingSystemManager.TryGet(language, out ws))
-								throw new ArgumentException("The specified language is unrecognized.", "language");
-							m_lexSense.Gloss.set_String(ws.Handle, text.Normalize(NormalizationForm.FormD));
-							lexGloss = new FdoLanguageText(language, text);
-						});
-					m_lexicon.OnLexiconGlossAdded(new FdoLexEntryLexeme(m_lexicon, m_lexemeKey), this, lexGloss);
-					return lexGloss;
-				}
+				LanguageText lexGloss = null;
+				NonUndoableUnitOfWorkHelper.Do(m_lexSense.Cache.ActionHandlerAccessor, () =>
+					{
+						CoreWritingSystemDefinition ws;
+						if (!m_lexicon.Cache.ServiceLocator.WritingSystemManager.TryGet(language, out ws))
+							throw new ArgumentException("The specified language is unrecognized.", "language");
+						m_lexSense.Gloss.set_String(ws.Handle, text.Normalize(NormalizationForm.FormD));
+						lexGloss = new FdoLanguageText(language, text);
+					});
+				m_lexicon.OnLexiconGlossAdded(new FdoLexEntryLexeme(m_lexicon, m_lexemeKey), this, lexGloss);
+				return lexGloss;
 			}
 
 			public void RemoveGloss(string language)
 			{
-				using (m_lexicon.ActivationContext.Activate())
-				{
-					NonUndoableUnitOfWorkHelper.Do(m_lexSense.Cache.ActionHandlerAccessor, () =>
-						{
-							CoreWritingSystemDefinition ws;
-							if (!m_lexicon.Cache.ServiceLocator.WritingSystemManager.TryGet(language, out ws))
-								throw new ArgumentException("The specified language is unrecognized.", "language");
-							m_lexSense.Gloss.set_String(ws.Handle, (ITsString) null);
-						});
-				}
+				NonUndoableUnitOfWorkHelper.Do(m_lexSense.Cache.ActionHandlerAccessor, () =>
+					{
+						CoreWritingSystemDefinition ws;
+						if (!m_lexicon.Cache.ServiceLocator.WritingSystemManager.TryGet(language, out ws))
+							throw new ArgumentException("The specified language is unrecognized.", "language");
+						m_lexSense.Gloss.set_String(ws.Handle, (ITsString) null);
+					});
 			}
 
 			public IEnumerable<LexiconSemanticDomain> SemanticDomains
 			{
 				get
 				{
-					using (m_lexicon.ActivationContext.Activate())
-						return m_lexSense.SemanticDomainsRC.Select(sd => new FdoSemanticDomain(sd.ShortName.Normalize())).ToArray();
+					return m_lexSense.SemanticDomainsRC.Select(sd => new FdoSemanticDomain(sd.ShortName.Normalize())).ToArray();
 				}
 			}
 

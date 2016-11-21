@@ -4,7 +4,6 @@
 
 using System;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
@@ -15,12 +14,10 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
 	internal class ParatextLexiconPluginFdoUI : IFdoUI
 	{
-		private readonly SynchronizeInvokeWrapper m_synchronizeInvoke;
 		private readonly UserActivityMonitor m_activityMonitor;
 
-		public ParatextLexiconPluginFdoUI(ActivationContextHelper activationContext)
+		public ParatextLexiconPluginFdoUI()
 		{
-			m_synchronizeInvoke = new SynchronizeInvokeWrapper(activationContext);
 			m_activityMonitor = new UserActivityMonitor();
 			m_activityMonitor.StartMonitoring();
 		}
@@ -104,7 +101,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		public void DisplayCircularRefBreakerReport(string report, string caption)
 		{
 			var icon = MessageBoxIcon.Information;
-			m_synchronizeInvoke.Invoke(() => MessageBox.Show(report, caption, MessageBoxButtons.OK, icon));
+			SynchronizeInvoke.Invoke(() => MessageBox.Show(report, caption, MessageBoxButtons.OK, icon));
 		}
 
 		public void ReportException(Exception error, bool isLethal)
@@ -139,69 +136,20 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		public ISynchronizeInvoke SynchronizeInvoke
 		{
-			get { return m_synchronizeInvoke; }
+			get
+			{
+				Form form = Form.ActiveForm;
+				if (form != null)
+					return form;
+				if (Application.OpenForms.Count > 0)
+					return Application.OpenForms[0];
+				return null;
+			}
 		}
 
 		public DateTime LastActivityTime
 		{
 			get { return m_activityMonitor.LastActivityTime; }
-		}
-
-		private class SynchronizeInvokeWrapper : ISynchronizeInvoke
-		{
-			private readonly ActivationContextHelper m_activationContext;
-
-			public SynchronizeInvokeWrapper(ActivationContextHelper activationContext)
-			{
-				m_activationContext = activationContext;
-			}
-
-			private ISynchronizeInvoke SynchronizeInvoke
-			{
-				get
-				{
-					Form form = Form.ActiveForm;
-					if (form != null)
-						return form;
-					if (Application.OpenForms.Count > 0)
-						return Application.OpenForms[0];
-					return null;
-				}
-			}
-
-			public IAsyncResult BeginInvoke(Delegate method, object[] args)
-			{
-				return SynchronizeInvoke.BeginInvoke(new Func<object>(() =>
-				{
-					using (m_activationContext.Activate())
-						return method.DynamicInvoke(args);
-				}), null);
-			}
-
-			public object EndInvoke(IAsyncResult result)
-			{
-				return SynchronizeInvoke.EndInvoke(result);
-			}
-
-			public object Invoke(Delegate method, object[] args)
-			{
-				return SynchronizeInvoke.Invoke(new Func<object>(() =>
-				{
-					using (m_activationContext)
-						return method.DynamicInvoke(args);
-				}), null);
-			}
-
-			public bool InvokeRequired
-			{
-				get
-				{
-					ISynchronizeInvoke si = SynchronizeInvoke;
-					if (si == null)
-						return false;
-					return si.InvokeRequired;
-				}
-			}
 		}
 	}
 }

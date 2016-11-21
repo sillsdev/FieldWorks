@@ -630,9 +630,6 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="gendarme-ITextDll.ignore" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Resources\" />
   </ItemGroup>
 </Project>

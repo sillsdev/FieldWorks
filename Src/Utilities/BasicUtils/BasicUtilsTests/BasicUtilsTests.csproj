@@ -103,7 +103,6 @@
     <Compile Include="..\..\..\AssemblyInfoForUiIndependentTests.cs">
       <Link>AssemblyInfoForUiIndependentTests.cs</Link>
     </Compile>
-    <None Include="gendarme-BasicUtilsTests.ignore" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

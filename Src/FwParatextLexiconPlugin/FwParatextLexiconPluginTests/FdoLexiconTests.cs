@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using NUnit.Framework;
 using Paratext.LexicalContracts;
@@ -15,7 +14,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Test.TestUtils;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
@@ -28,7 +26,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		private ThreadHelper m_threadHelper;
 		private FdoLexicon m_lexicon;
 		private FdoCache m_cache;
-		private ActivationContextHelper m_activationContext;
 
 		/// <summary>
 		/// Set up the unit tests
@@ -37,21 +34,17 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		public void SetUp()
 		{
 			Icu.InitIcuDataDir();
-			m_activationContext = new ActivationContextHelper("FwParatextLexiconPlugin.dll.manifest");
-			using (m_activationContext.Activate())
-			{
-				m_threadHelper = new ThreadHelper();
-				var ui = new DummyFdoUI(m_threadHelper);
-				var projectId = new ParatextLexiconPluginProjectID(FDOBackendProviderType.kMemoryOnly, "Test.fwdata");
-				m_cache = FdoCache.CreateCacheWithNewBlankLangProj(projectId, "en", "fr", "en", ui, ParatextLexiconPluginDirectoryFinder.FdoDirectories, new FdoSettings());
-				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
-					{
-						m_cache.ServiceLocator.WritingSystems.AddToCurrentAnalysisWritingSystems(m_cache.ServiceLocator.WritingSystemManager.Get("fr"));
-						m_cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(m_cache.ServiceLocator.WritingSystemManager.Get("en"));
-						m_cache.LangProject.MorphologicalDataOA.ParserParameters = "<ParserParameters><XAmple><MaxNulls>1</MaxNulls><MaxPrefixes>5</MaxPrefixes><MaxInfixes>1</MaxInfixes><MaxSuffixes>5</MaxSuffixes><MaxInterfixes>0</MaxInterfixes><MaxAnalysesToReturn>10</MaxAnalysesToReturn></XAmple><ActiveParser>XAmple</ActiveParser></ParserParameters>";
-					});
-			}
-			m_lexicon = new FdoLexicon("Test", "FieldWorks:Test", m_cache, m_cache.DefaultVernWs, m_activationContext);
+			m_threadHelper = new ThreadHelper();
+			var ui = new DummyFdoUI(m_threadHelper);
+			var projectId = new ParatextLexiconPluginProjectID(FDOBackendProviderType.kMemoryOnly, "Test.fwdata");
+			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(projectId, "en", "fr", "en", ui, ParatextLexiconPluginDirectoryFinder.FdoDirectories, new FdoSettings());
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+				{
+					m_cache.ServiceLocator.WritingSystems.AddToCurrentAnalysisWritingSystems(m_cache.ServiceLocator.WritingSystemManager.Get("fr"));
+					m_cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(m_cache.ServiceLocator.WritingSystemManager.Get("en"));
+					m_cache.LangProject.MorphologicalDataOA.ParserParameters = "<ParserParameters><XAmple><MaxNulls>1</MaxNulls><MaxPrefixes>5</MaxPrefixes><MaxInfixes>1</MaxInfixes><MaxSuffixes>5</MaxSuffixes><MaxInterfixes>0</MaxInterfixes><MaxAnalysesToReturn>10</MaxAnalysesToReturn></XAmple><ActiveParser>XAmple</ActiveParser></ParserParameters>";
+				});
+			m_lexicon = new FdoLexicon("Test", "FieldWorks:Test", m_cache, m_cache.DefaultVernWs);
 		}
 
 		/// <summary>
@@ -62,7 +55,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		{
 			m_lexicon.Dispose();
 			m_cache.Dispose();
-			m_activationContext.Dispose();
 			m_threadHelper.Dispose();
 		}
 

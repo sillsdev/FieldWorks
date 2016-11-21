@@ -246,7 +246,6 @@
     <Compile Include="AnalysisAdjusterTests.cs" />
     <Compile Include="AnalysisGuessServicesTests.cs" />
     <Compile Include="AnalysisOccurrenceTests.cs" />
-    <Compile Include="AndIFilterTests.cs" />
     <Compile Include="AtomicPropertyTests.cs" />
     <Compile Include="BackupRestore\ProjectRestoreTestService.cs" />
     <Compile Include="BaseStyleInfoTests.cs" />
@@ -407,7 +406,6 @@
     <Compile Include="FdoInvertSetTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="gendarme-FDOTests.ignore" />
     <None Include="TestData\x-kal-fonipa_7000043.ldml" />
     <None Include="TestData\x-kal_7000043.ldml" />
   </ItemGroup>

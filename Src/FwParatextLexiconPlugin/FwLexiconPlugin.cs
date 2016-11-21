@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -39,7 +38,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		private readonly FdoLexiconCollection m_lexiconCache;
 		private readonly FdoCacheCollection m_fdoCacheCache;
 		private readonly object m_syncRoot;
-		private ActivationContextHelper m_activationContext;
 		private readonly ParatextLexiconPluginFdoUI m_ui;
 
 		/// <summary>
@@ -82,8 +80,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			m_syncRoot = new object();
 			m_lexiconCache = new FdoLexiconCollection();
 			m_fdoCacheCache = new FdoCacheCollection();
-			m_activationContext = new ActivationContextHelper("FwParatextLexiconPlugin.dll.manifest");
-			m_ui = new ParatextLexiconPluginFdoUI(m_activationContext);
+			m_ui = new ParatextLexiconPluginFdoUI();
 		}
 
 		/// <summary>
@@ -94,13 +91,10 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		/// <returns></returns>
 		public LexicalProjectValidationResult ValidateLexicalProject(string projectId, string langId)
 		{
-			using (m_activationContext.Activate())
+			lock (m_syncRoot)
 			{
-				lock (m_syncRoot)
-				{
-					FdoCache fdoCache;
-					return TryGetFdoCache(projectId, langId, out fdoCache);
-				}
+				FdoCache fdoCache;
+				return TryGetFdoCache(projectId, langId, out fdoCache);
 			}
 		}
 
@@ -111,7 +105,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		/// <returns></returns>
 		public bool ChooseLexicalProject(out string projectId)
 		{
-			using (m_activationContext.Activate())
 			using (var dialog = new ChooseFdoProjectForm(m_ui, m_fdoCacheCache))
 			{
 				if (dialog.ShowDialog() == DialogResult.OK)
@@ -134,8 +127,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		/// <returns></returns>
 		public Lexicon GetLexicon(string scrTextName, string projectId, string langId)
 		{
-			using (m_activationContext.Activate())
-				return GetFdoLexicon(scrTextName, projectId, langId);
+			return GetFdoLexicon(scrTextName, projectId, langId);
 		}
 
 		/// <summary>
@@ -147,8 +139,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		/// <returns></returns>
 		public WordAnalyses GetWordAnalyses(string scrTextName, string projectId, string langId)
 		{
-			using (m_activationContext.Activate())
-				return GetFdoLexicon(scrTextName, projectId, langId);
+			return GetFdoLexicon(scrTextName, projectId, langId);
 		}
 
 		private FdoLexicon GetFdoLexicon(string scrTextName, string projectId, string langId)
@@ -178,7 +169,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 					DisposeFdoCacheIfUnused(lexicon.Cache);
 				}
 
-				var newLexicon = new FdoLexicon(scrTextName, projectId, fdoCache, fdoCache.ServiceLocator.WritingSystemManager.GetWsFromStr(langId), m_activationContext);
+				var newLexicon = new FdoLexicon(scrTextName, projectId, fdoCache, fdoCache.ServiceLocator.WritingSystemManager.GetWsFromStr(langId));
 				m_lexiconCache.Insert(0, newLexicon);
 				return newLexicon;
 			}
@@ -264,29 +255,20 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		/// </summary>
 		protected override void DisposeManagedResources()
 		{
-			if (m_activationContext != null)
+			lock (m_syncRoot)
 			{
-				using (m_activationContext.Activate())
+				foreach (FdoLexicon lexicon in m_lexiconCache)
+					lexicon.Dispose();
+				m_lexiconCache.Clear();
+				foreach (FdoCache fdoCache in m_fdoCacheCache)
 				{
-					lock (m_syncRoot)
-					{
-						foreach (FdoLexicon lexicon in m_lexiconCache)
-							lexicon.Dispose();
-						m_lexiconCache.Clear();
-						foreach (FdoCache fdoCache in m_fdoCacheCache)
-						{
-							fdoCache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
-							fdoCache.Dispose();
-						}
-						m_fdoCacheCache.Clear();
-					}
+					fdoCache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+					fdoCache.Dispose();
 				}
-
-				Sldr.Cleanup();
-
-				m_activationContext.Dispose();
-				m_activationContext = null;
+				m_fdoCacheCache.Clear();
 			}
+
+			Sldr.Cleanup();
 		}
 
 		private class FdoLexiconCollection : KeyedCollection<string, FdoLexicon>

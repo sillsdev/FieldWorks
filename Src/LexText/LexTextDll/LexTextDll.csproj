@@ -416,7 +416,6 @@
       <Link>XML\Word\Text\toolConfiguration.xml</Link>
     </None>
     <None Include="Resources\LexEntryParts.xml" />
-    <None Include="gendarme-LexTextDll.ignore" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

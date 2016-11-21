@@ -1750,7 +1750,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			int anchorLoc, IPictureLocationBridge locationParser)
 		{
 			string[] tokens = sTextRepOfPicture.Split('|');
-			if (!CmPictureServices.ValidTextRepOfPicture(tokens))
+			if (tokens.Length < 9 || tokens[0] != CmPictureTags.kClassName)
 				throw new ArgumentException("The clipboard format for a Picture was invalid");
 			string sDescription = tokens[1];
 			string srcFilename = tokens[2];
