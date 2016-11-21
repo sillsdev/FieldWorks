@@ -324,7 +324,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 				morphs[allomorph.Morpheme] = morphInfo;
 
-				switch (form.MorphTypeRA.Guid.ToString())
+				switch ((form.MorphTypeRA == null ? Guid.Empty : form.MorphTypeRA.Guid).ToString())
 				{
 					case MoMorphTypeTags.kMorphInfix:
 					case MoMorphTypeTags.kMorphInfixingInterfix:
