@@ -385,12 +385,8 @@
 		<Message Text="Downloading artifacts for ExCss."/>
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(ExCssBuildType)" FlexBridgeBuildType="$(FLExBridgeBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="$(ExCss).dll;$(ExCss).$(DebugInfo)" DownloadsDir="$(DownloadsDir)"/>
 
-		<Message Text="Downloading artifact(s) for ICU.NET."/>
-		<ItemGroup>
-			<IcuFiles Include="icu.net.dll"/>
-			<IcuFiles Include="icu.net.dll.config" Condition="'$(OS)'=='Unix'"/>
-		</ItemGroup>
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(IcuBuildType)" FlexBridgeBuildType="$(FLExBridgeBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="@(IcuFiles)" DownloadsDir="$(DownloadsDir)"/>
+		<Message Text="Downloading an artifact for ICU.NET."/>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(IcuBuildType)" FlexBridgeBuildType="$(FLExBridgeBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="icu.net.dll" DownloadsDir="$(DownloadsDir)"/>
 
 		<Message Text="Downloading artifacts for icu4c." Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(Icu4cBuildType)" FlexBridgeBuildType="$(FLExBridgeBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="gennorm2.exe;icudt$(IcuVersion).dll;icuin$(IcuVersion).dll;icutu$(IcuVersion).dll;icuuc$(IcuVersion).dll;icudt.lib;icuin.lib;icuuc.lib" DownloadsDir="$(DownloadsDir)" Condition="'$(OS)'=='Windows_NT'"/>
@@ -455,7 +451,6 @@
 		<DownloadedFiles Include="$(DownloadsDir)/SIL.Lexicon.$(DebugInfo)"/>
 		<DownloadedFiles Include="$(DownloadsDir)/SIL.TestUtilities.dll"/>
 		<DownloadedFiles Include="$(DownloadsDir)/icu.net.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/icu.net.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(DownloadsDir)/Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(DownloadsDir)/KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(DownloadsDir)/L10NSharp.dll"/>

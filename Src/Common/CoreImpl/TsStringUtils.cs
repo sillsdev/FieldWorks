@@ -169,7 +169,7 @@ namespace SIL.CoreImpl
 			propsBldr.SetStrPropValueRgch((int)FwTextPropType.ktptObjData, objData, objData.Length);
 			if (ws != 0)
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, ws);
-			tsStrBldr.Replace(ichMin, ichLim, new string(StringUtils.kChObject, 1), propsBldr.GetTextProps());
+			tsStrBldr.Replace(ichMin, ichLim, StringUtils.kszObject, propsBldr.GetTextProps());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -189,7 +189,7 @@ namespace SIL.CoreImpl
 			propsBldr.SetStrPropValueRgch((int)FwTextPropType.ktptObjData, objData, objData.Length);
 
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, ws);
-			tsStrBldr.Replace(0, 0, new string(StringUtils.kChObject, 1), propsBldr.GetTextProps());
+			tsStrBldr.Replace(0, 0, StringUtils.kszObject, propsBldr.GetTextProps());
 			return tsStrBldr.GetString();
 		}
 
