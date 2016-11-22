@@ -1823,6 +1823,11 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(xhtml).HasNoMatchForXpath(xpath);
 		}
 
+		/// <summary>
+		/// If the numbering style for Senses says to number it, and
+		/// if this is not the only sense, then number it.
+		/// (See LT-17906.)
+		/// </summary>
 		[Test]
 		public void GenerateXHTMLForEntry_SenseNumbersGeneratedForMultipleSenses()
 		{
@@ -1853,21 +1858,152 @@ namespace SIL.FieldWorks.XWorks
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseNumberOne, 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseNumberTwo, 1);
+
+			// Piggy-back a test for ShouldThisSenseBeNumbered
+			Assert.That(ConfiguredXHTMLGenerator.ShouldThisSenseBeNumbered(testEntry.AllSenses.First(), sensesNode, testEntry.SensesOS), Is.True);
 		}
 
+		/// <summary>
+		/// If the numbering style for subsenses says to number it, and
+		/// if this is not the only subsense, then number the subsense.
+		/// (See LT-17906.)
+		/// </summary>
+		[Test]
+		public void ShouldThisSenseBeNumbered_SubSenseNumbersRequestedForMultipleSubSenses()
+		{
+			var pubDecorator = new DictionaryPublicationDecorator(Cache,
+				(ISilDataAccessManaged)Cache.MainCacheAccessor,
+				Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
+			var senseOptions = new DictionaryNodeSenseOptions
+			{
+				AfterNumber = ")",
+				NumberStyle = "Dictionary-SenseNumber",
+				NumberingStyle = "%d",
+				NumberEvenASingleSense = false
+			};
+			var subSenseOptions = new DictionaryNodeSenseOptions
+			{
+				AfterNumber = ")",
+				NumberStyle = "Dictionary-SenseNumber",
+				NumberingStyle = "%a",
+				NumberEvenASingleSense = false,
+			};
+			var subSenseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = subSenseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode },
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = senseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			subSenseNode.IsEnabled = false;
+			var testEntry = CreateInterestingLexEntry(Cache);
+			AddSubSenseToSense("ss1", testEntry.AllSenses.First());
+			AddSubSenseToSense("ss2", testEntry.AllSenses.First());
+
+			Assert.That(ConfiguredXHTMLGenerator.ShouldThisSenseBeNumbered(testEntry.SensesOS[0].SensesOS[0], subSenseNode,testEntry.SensesOS[0].SensesOS), Is.True);
+		}
+
+		/// <summary>
+		/// Part of LT-17906.
+		/// </summary>
+		[Test]
+		public void AreThereEnabledSubsensesWithNumberingStyle_SubsensesEnabledOrNot()
+		{
+			var subSenseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions=new DictionaryNodeSenseOptions()
+				{
+					NumberStyle = "Dictionary-SenseNumber",
+					NumberingStyle="%d"
+				},
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				Children = new List<ConfigurableDictionaryNode> { subSenseNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(sensesNode);
+			subSenseNode.IsEnabled = false; // Unchecked in the configuration dialog
+
+			Assert.That(ConfiguredXHTMLGenerator.AreThereEnabledSubsensesWithNumberingStyle(sensesNode), Is.False, "Should have noticed that there are no enabled subsense nodes");
+
+			// Okay, but if they are showing...
+			subSenseNode.IsEnabled = true;
+
+			Assert.That(ConfiguredXHTMLGenerator.AreThereEnabledSubsensesWithNumberingStyle(sensesNode), Is.True, "Should have seen the enabled subsense node.");
+		}
+
+		/// <summary>
+		/// Part of LT-17906.
+		/// </summary>
+		[Test]
+		public void AreThereEnabledSubsensesWithNumberingStyle_SubsensesHaveNumberingStyleOrNot()
+		{
+			var subSenseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					NumberStyle = "Dictionary-SenseNumber",
+					NumberingStyle = string.Empty
+				},
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				Children = new List<ConfigurableDictionaryNode> { subSenseNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(sensesNode);
+
+			Assert.That(ConfiguredXHTMLGenerator.AreThereEnabledSubsensesWithNumberingStyle(sensesNode), Is.False, "Should have return false since no numbering style");
+
+			// Okay, but if the style for the subsense does say to number the subsenses...
+			((DictionaryNodeSenseOptions)subSenseNode.DictionaryNodeOptions).NumberingStyle = "%d";
+
+			Assert.That(ConfiguredXHTMLGenerator.AreThereEnabledSubsensesWithNumberingStyle(sensesNode), Is.True, "Should have return true since there is a numbering style");
+		}
+
+		/// <summary>
+		/// If the numbering style for Senses says to number it, and
+		/// if this is the only sense, and
+		/// if the box for "Number even a single sense" is NOT ticked, and
+		/// if there are no subsenses,
+		/// then do not number the sense.
+		/// (See LT-17906.)
+		/// </summary>
 		[Test]
 		public void GenerateXHTMLForEntry_SingleSenseGetsNoSenseNumber()
 		{
 			var pubDecorator = new DictionaryPublicationDecorator(Cache,
-																					(ISilDataAccessManaged)Cache.MainCacheAccessor,
-																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+				(ISilDataAccessManaged)Cache.MainCacheAccessor,
+				Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "Senses",
-				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberEvenASingleSense = false },
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberEvenASingleSense = false, NumberingStyle = "%d"},
 				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -1879,15 +2015,227 @@ namespace SIL.FieldWorks.XWorks
 			var testEntry = CreateInterestingLexEntry(Cache);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			Assert.That(testEntry.AllSenses.Count, Is.EqualTo(1), "Test set up incorrectly. There should just be one sense.");
+			Assert.That(testEntry.AllSenses.First().AllSenses.Count, Is.EqualTo(1), "Test not set up correctly. There should be no subsenses.");
 			// SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
 			const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]/span[@lang='en' and text()='gloss']";
 			// This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(senseNumberOne);
+
+			// Piggy-back a test for ShouldThisSenseBeNumbered
+			Assert.That(ConfiguredXHTMLGenerator.ShouldThisSenseBeNumbered(testEntry.AllSenses.First(), sensesNode, testEntry.SensesOS), Is.False);
+		}
+
+		/// <summary>
+		/// If the numbering style for Senses says to number it, and
+		/// if this is the only sense (at the currently-being examined level), and
+		/// if the box for "Number even a single sense" is NOT ticked, and
+		/// if there ARE subsenses, and
+		/// if the subsenses are not showing (turned off in the config),
+		/// then do not number the sense.
+		/// (See LT-17906.)
+		/// </summary>
+		[Test]
+		public void GenerateXHTMLForEntry_TurnedOffSubsensesCausesSenseToBehaveLikeSingleSense_WithNoSenseNumber()
+		{
+			var pubDecorator = new DictionaryPublicationDecorator(Cache,
+				(ISilDataAccessManaged)Cache.MainCacheAccessor,
+				Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
+			var senseOptions = new DictionaryNodeSenseOptions
+			{
+				AfterNumber = ")",
+				NumberStyle = "Dictionary-SenseNumber",
+				NumberingStyle = "%d",
+				NumberEvenASingleSense = false
+			};
+			var subSenseOptions = new DictionaryNodeSenseOptions
+			{
+				AfterNumber = ")",
+				NumberStyle = "Dictionary-SenseNumber",
+				NumberingStyle = "%a",
+				NumberEvenASingleSense = false,
+			};
+			var subSenseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = subSenseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode },
+				IsEnabled = false // Unchecked in the configuration dialog
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = senseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			subSenseNode.IsEnabled = false;
+			var testEntry = CreateInterestingLexEntry(Cache);
+			AddSubSenseToSense("ss1", testEntry.AllSenses.First());
+			AddSubSenseToSense("ss2", testEntry.AllSenses.First());
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			Assert.That(testEntry.AllSenses.Count, Is.EqualTo(3), "Test set up incorrectly.");
+			Assert.That(testEntry.AllSenses.First().AllSenses.Count, Is.EqualTo(3), "Test not set up correctly.");
+			// SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			const string senseNumberXpath = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sensenumber']";
+			AssertThatXmlIn.String(result).HasNoMatchForXpath(senseNumberXpath); // Should not have a sense number on top sense.
+
+			// Piggy-back a test for ShouldThisSenseBeNumbered
+			Assert.That(ConfiguredXHTMLGenerator.ShouldThisSenseBeNumbered(testEntry.AllSenses.First(), sensesNode, testEntry.SensesOS), Is.False);
+		}
+
+		/// <summary>
+		/// If the numbering style for Senses says to number it, and
+		/// if this is the only sense, and
+		/// if the box for "Number even a single sense" is NOT ticked, and
+		/// if there ARE subsenses, and
+		/// if the subsenses are showing (turned on in the config), and
+		/// if the style for the subsense says NOT to number the subsense,
+		/// then do not number the sense.
+		/// (See LT-17906.)
+		/// </summary>
+		[Test]
+		public void GenerateXHTMLForEntry_EmptyStyleSubsensesCausesSenseToBehaveLikeSingleSense_WithNoSenseNumber()
+		{
+			var pubDecorator = new DictionaryPublicationDecorator(Cache,
+				(ISilDataAccessManaged)Cache.MainCacheAccessor,
+				Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
+			var senseOptions = new DictionaryNodeSenseOptions
+			{
+				AfterNumber = ")",
+				NumberStyle = "Dictionary-SenseNumber",
+				NumberingStyle = "%d",
+				NumberEvenASingleSense = false
+			};
+			var subSenseOptions = new DictionaryNodeSenseOptions
+			{
+				AfterNumber = ")",
+				NumberStyle = "Dictionary-SenseNumber",
+				NumberingStyle = "", // Subsense has empty numbering style
+				NumberEvenASingleSense = false,
+			};
+			var subSenseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = subSenseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode },
+				IsEnabled = true // Checked in the configuration dialog
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = senseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var testEntry = CreateInterestingLexEntry(Cache);
+			AddSubSenseToSense("ss1", testEntry.AllSenses.First());
+			AddSubSenseToSense("ss2", testEntry.AllSenses.First());
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			Assert.That(testEntry.AllSenses.Count, Is.EqualTo(3), "Test set up incorrectly.");
+			Assert.That(testEntry.AllSenses.First().AllSenses.Count, Is.EqualTo(3), "Test not set up correctly.");
+			// SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			const string senseNumberXpath = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sensenumber']";
+			AssertThatXmlIn.String(result).HasNoMatchForXpath(senseNumberXpath); // Should not have a sense number on top sense.
+
+			// Piggy-back a test for ShouldThisSenseBeNumbered
+			Assert.That(ConfiguredXHTMLGenerator.ShouldThisSenseBeNumbered(testEntry.AllSenses.First(), sensesNode, testEntry.SensesOS), Is.False);
+		}
+
+		/// <summary>
+		/// If the numbering style for Senses says to number it, and
+		/// if this is the only sense, and
+		/// if the box for "Number even a single sense" is NOT ticked, and
+		/// if there ARE subsenses, and
+		/// if the subsenses are showing (turned on in the config), and
+		/// if the style for the subsense says to number the subsense,
+		/// then number the sense.
+		/// (See LT-17906.)
+		/// </summary>
+		[Test]
+		public void GenerateXHTMLForEntry_SubsenseStyleInfluencesSenseNumberShown()
+		{
+			var pubDecorator = new DictionaryPublicationDecorator(Cache,
+				(ISilDataAccessManaged)Cache.MainCacheAccessor,
+				Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
+			var senseOptions = new DictionaryNodeSenseOptions
+			{
+				AfterNumber = ")",
+				NumberStyle = "Dictionary-SenseNumber",
+				NumberingStyle = "%d",
+				NumberEvenASingleSense = false
+			};
+			var subSenseOptions = new DictionaryNodeSenseOptions
+			{
+				AfterNumber = ")",
+				NumberStyle = "Dictionary-SenseNumber",
+				NumberingStyle = "%d", // Subsense has numbering style
+				NumberEvenASingleSense = false,
+			};
+			var subSenseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = subSenseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode },
+				IsEnabled = true // Checked in the configuration dialog
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = senseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var testEntry = CreateInterestingLexEntry(Cache);
+			AddSubSenseToSense("ss1", testEntry.AllSenses.First());
+			AddSubSenseToSense("ss2", testEntry.AllSenses.First());
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			Assert.That(testEntry.AllSenses.Count, Is.EqualTo(3), "Test set up incorrectly.");
+			Assert.That(testEntry.AllSenses.First().AllSenses.Count, Is.EqualTo(3), "Test not set up correctly.");
+			// SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			const string senseNumberXpath = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sensenumber']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseNumberXpath,1); // Should have sense number on top sense.
+
+			// Piggy-back a test for ShouldThisSenseBeNumbered
+			Assert.That(ConfiguredXHTMLGenerator.ShouldThisSenseBeNumbered(testEntry.AllSenses.First(), sensesNode, testEntry.SensesOS), Is.True);
 		}
 
 		[Test]
-		public void GenerateXHTMLForEntry_NumberingSingleSenseAlsoCountsSubAndSuperSense()
+		public void GenerateXHTMLForEntry_NumberingSingleSenseAlsoCountsSubSense()
 		{
 			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
@@ -1925,11 +2273,8 @@ namespace SIL.FieldWorks.XWorks
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
-			const string SenseOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
-			const string SubSense = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss1.1']";
-			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
-			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(SenseOne, 1);
-			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(SubSense, 1);
+			const string SenseOneSubSense = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]/span[@class='senses']/span[@class='sensecontent']//span[@lang='en' and text()='gloss1.1']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(SenseOneSubSense, 1);
 		}
 
 		[Test]
@@ -2062,6 +2407,54 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(subSenseNumberTwoTwo, 1);
 		}
 
+		/// <summary>
+		/// If the numbering style for Senses says not to number it, don't.
+		/// (See LT-17906.)
+		/// </summary>
+		[Test]
+		public void GenerateXHTMLForEntry_NoSenseNumberFIfStyleSaysNoNumbering()
+		{
+			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
+			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
+			{
+				BeforeNumber = "",
+				AfterNumber = ")",
+				NumberStyle = "Dictionary-SenseNumber",
+				NumberingStyle = string.Empty,
+				DisplayEachSenseInAParagraph = false,
+				NumberEvenASingleSense = true,
+				ShowSharedGrammarInfoFirst = false
+			};
+
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				DictionaryNodeOptions = DictionaryNodeSenseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode }
+			};
+
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var testEntry = CreateInterestingLexEntry(Cache);
+			AddSenseToEntry(testEntry, "gloss", m_wsEn, Cache);
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			const string senseNumberXpath = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sensenumber']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseNumberXpath, 0); // Should not have produced sense number if style said not to number it.
+
+			// Piggy-back a test for ShouldThisSenseBeNumbered
+			Assert.That(ConfiguredXHTMLGenerator.ShouldThisSenseBeNumbered(testEntry.AllSenses.First(), sensesNode, testEntry.SensesOS), Is.False);
+		}
+
 		[Test]
 		public void GenerateXHTMLForEntry_SensesNoneAndSubSensesWithNumberingStyle()
 		{
@@ -2173,7 +2566,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var SubSubSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%A", ParentSenseNumberingStyle = "%j" };
+			var SubSubSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%A", ParentSenseNumberingStyle = "%j", NumberEvenASingleSense = true };
 			var subSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%a", ParentSenseNumberingStyle = "%j" };
 			var senseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%d" };
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
@@ -2227,7 +2620,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var SubSubSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%A", ParentSenseNumberingStyle = "%." };
+			var SubSubSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%A", ParentSenseNumberingStyle = "%.", NumberEvenASingleSense = true };
 			var subSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%a", ParentSenseNumberingStyle = "%." };
 			var senseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%d" };
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
@@ -2281,7 +2674,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var SubSubSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%A", ParentSenseNumberingStyle = "" };
+			var SubSubSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%A", ParentSenseNumberingStyle = "", NumberEvenASingleSense = true };
 			var subSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%a", ParentSenseNumberingStyle = "" };
 			var senseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%d" };
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
@@ -2567,6 +2960,13 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(subentrySenseNumberOneOne);
 		}
 
+		/// <summary>
+		/// If the numbering style for Senses says to number it, and
+		/// if this is the only sense, and
+		/// if the box for "Number even a single sense" is ticked,
+		/// then number the sense.
+		/// (See LT-17906.)
+		/// </summary>
 		[Test]
 		public void GenerateXHTMLForEntry_SingleSenseGetsNumberWithNumberEvenOneSenseOption()
 		{
@@ -2595,6 +2995,9 @@ namespace SIL.FieldWorks.XWorks
 			const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
 			// This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseNumberOne, 1);
+
+			// Piggy-back a test for ShouldThisSenseBeNumbered
+			Assert.That(ConfiguredXHTMLGenerator.ShouldThisSenseBeNumbered(testEntry.AllSenses.First(), sensesNode, testEntry.SensesOS), Is.True);
 		}
 
 		[Test]
@@ -8200,9 +8603,14 @@ namespace SIL.FieldWorks.XWorks
 		private void AddSingleSubSenseToSense(string gloss, ILexSense sense)
 		{
 			sense.Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString(gloss, m_wsEn));
+			AddSubSenseToSense(gloss + "1.1", sense);
+		}
+
+		private void AddSubSenseToSense(string gloss, ILexSense sense)
+		{
 			var subSensesOne = sense.Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			sense.SensesOS.Add(subSensesOne);
-			subSensesOne.Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString(gloss + "1.1", m_wsEn));
+			subSensesOne.Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString(gloss, m_wsEn));
 		}
 
 		private ILexExampleSentence AddExampleToSense(ILexSense sense, string content, string translation = null)
