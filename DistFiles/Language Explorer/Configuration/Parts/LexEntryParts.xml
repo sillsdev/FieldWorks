@@ -1098,6 +1098,9 @@
 		<part id="LexPronunciation-Jt-$fieldName" type="jtview"><!-- for ChildPartGenerator -->
 			<obj class="LexPronunciation" field="OwningEntry" layout="$fieldName"/>
 		</part>
+		<part id="LexPronunciation-Jt-PublishInForPronunciations" type="JtView">
+			<seq field="PublishIn" layout="Name"/>
+		</part>
 	</bin>
 
 	<bin class="LexEntryRef">

@@ -7,8 +7,11 @@
 		1. If the class that the field is in has no existing bulk editable fields then you will need to add a virtual propery in OverridesLing_Lex.cs to include
 		   a virtual collection that returns all the objects of that class that exist at the location where you want to bulk edit concatenated with the parents of
 		   the location when no content exists (see: AllExampleTranslationTargets)
-		   a. You may also need to add a specialized 'Owner' property so correct content is displayed for other fields when bulk editing your new fields
+				a. You may also need to add a specialized 'Owner' property so correct content is displayed for other fields when bulk editing your new fields
+					OwningSense or OwningEntry and it will need to be added in the overrides for the class.
 		2. Modify the GhostParentHelper class to include cases for the new virtual collection
+				a. CreateIfPossible should construct a helper using the parent class id and field id for the field we are trying to bulk edit
+				b. GetBulkEditDestinationClass should return the classId for the type of the field we are trying to bulk edit
 		3. Modify the areaConfiguration.xml to include new parts in the ClassOwnershipTree and the ParentClassPathsToChildren elements
 		4. A part to handle unknown field names by directing them to the owner class will need to be added in the 'bin' element for the class we are now handling
 	B. Adding a column to handle a "Ghost" fields children
@@ -157,6 +160,10 @@
 	<column layout="PublishInForExamples" multipara="true" label="Publish In (Example)" width="72000"
 			bulkEdit="complexListMultiple" field="LexExampleSentence.PublishIn" list="LexDb.PublicationTypes"
 			displayNameProperty="ShortNameTSS" displayWs="best analysis" visibility="dialog"/>
+	<column layout="PublishInForPronunciations" multipara="true" label="Publish In (Pronunciations)" 
+			width="72000" bulkEdit="complexListMultiple" field="LexPronunciation.PublishIn" list="LexDb.PublicationTypes" ghostListField="LexDb.AllPossiblePronunciations" displayNameProperty="ShortNameTSS" displayWs="best analysis" visibility="dialog"/>
+	<column layout="PublishInForPicture" multipara="true" label="Publish In (Pictures)" 
+			width="72000" bulkEdit="complexListMultiple" field="CmPicture.PublishIn" list="LexDb.PublicationTypes" ghostListField="LexDb.AllPossiblePictures" displayNameProperty="ShortNameTSS" displayWs="best analysis" visibility="dialog"/>
 	<column layout="InflectionClassForAffix" label="Inflection Classes (Affix)" multipara="true" editable="false"
 			chooserFilter="external" visibility="dialog" displayWs="best analysis">
 		<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.InflectionClassEditor">

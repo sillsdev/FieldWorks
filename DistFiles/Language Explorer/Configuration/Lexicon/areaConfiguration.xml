@@ -356,6 +356,7 @@
 											<CmTranslation sourceField="AllExampleTranslationTargets"/>
 										</LexExampleSentence>
 										<LexExtendedNote sourceField="AllExtendedNoteTargets"/>
+										<CmPicture sourceField="AllPossiblePictures"/>
 									</LexSense>
 								</LexEntry>
 							</ClassOwnershipTree>
@@ -416,6 +417,18 @@
 								<part id="LexSense-Jt-AllExampleSentenceTargets" type="jtview">
 									<seq class="LexSense" field="Examples" firstOnly="true" layout="empty">
 										<int class="LexExampleSentence" field="Self"/>
+									</seq>
+								</part>
+								<part id="LexEntry-Jt-AllPossiblePictures" type="jtview">
+									<seq class="LexEntry" field="AllSenses" firstOnly="true" layout="empty">
+										<seq class="LexSense" field="Pictures" firstOnly="true" layout="empty">
+											<int class="CmPicture" field="Self"/>
+										</seq>
+									</seq>
+								</part>
+								<part id="LexSense-Jt-AllPossiblePictures" type="jtview">
+									<seq class="LexSense" field="Pictures" firstOnly="true" layout="empty">
+										<int class="CmPicture" field="Self"/>
 									</seq>
 								</part>
 								<part id="LexEntry-Jt-AllExampleTranslationTargets" type="jtview">
