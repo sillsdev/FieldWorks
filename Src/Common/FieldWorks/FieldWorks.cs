@@ -149,7 +149,8 @@ namespace SIL.FieldWorks
 
 			// We read the registry value and set an environment variable ICU_DATA here so that
 			// FwKernelInterfaces.dll is independent of WinForms.
-			string icuDirValueName = string.Format("Icu{0}DataDir", Icu.Version);
+			string icuDirValueName = string.Format("Icu{0}DataDir",
+				SIL.FieldWorks.Common.FwKernelInterfaces.Icu.Version);
 			using(var userKey = RegistryHelper.CompanyKey)
 			using(var machineKey = RegistryHelper.CompanyKeyLocalMachine)
 			{
@@ -179,6 +180,9 @@ namespace SIL.FieldWorks
 		{
 			Thread.CurrentThread.Name = "Main thread";
 			Logger.Init(FwUtils.ksSuiteName);
+
+			Icu.Wrapper.ConfineIcuVersions(54);
+
 			FdoCache.NewerWritingSystemFound += ComplainToUserAboutNewWs;
 			// Note to developers: Uncomment this line to be able to attach the debugger to a process for a project
 			// other than the initial one that gets started up in VS:
@@ -249,7 +253,7 @@ namespace SIL.FieldWorks
 				SetIcuDataDirEnvironmentVariable();
 
 				// initialize ICU
-				Icu.InitIcuDataDir();
+				SIL.FieldWorks.Common.FwKernelInterfaces.Icu.InitIcuDataDir();
 
 				// initialize the SLDR
 				Sldr.Initialize();
