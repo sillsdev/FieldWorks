@@ -112,17 +112,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-enc-converters"))
 					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("flexbridge"))
 					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-l10n-*"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("mono-sil"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("libgdiplus-sil"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("gtk-sharp2-sil"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("mono-basic-sil"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("*geckofx*"))
+					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("mono4-sil"))
+					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("libgdiplus4-sil"))
+					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("gtk-sharp4-sil"))
+					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("mono-basic4-sil"))
 					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("chmsee"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("pathway"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-mono"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-libgdiplus"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-gtk-sharp2"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-mono-basic")))
+					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("pathway")))
 				{
 					versionInformation.AppendText(String.Format("{0} {1}{2}", info.Key, info.Value, Environment.NewLine));
 				}
