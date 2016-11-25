@@ -1168,7 +1168,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				variantCode = TranslateVariantCode(variantCode, code =>
 				{
 					string[] pieces = variantCode.Split(new[] { '_' }, StringSplitOptions.RemoveEmptyEntries);
-					return Utils.ListUtils.ToString(pieces, "-", item => TranslateVariantCode(item, subItem => subItem.ToLowerInvariant()));
+					return string.Join("-", pieces.Select(item => TranslateVariantCode(item, subItem => subItem.ToLowerInvariant())));
 				});
 				variantSubtag = GetVariantSubtag(variantCode);
 			}

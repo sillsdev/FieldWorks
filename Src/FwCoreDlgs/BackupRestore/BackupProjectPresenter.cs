@@ -6,6 +6,7 @@
 // Responsibility: FW Team
 using System;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
@@ -118,7 +119,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			string backupFile;
 			if (!backupService.BackupProject(progressDlg, out backupFile))
 			{
-				string msg = string.Format(FwCoreDlgs.ksCouldNotBackupSomeFiles, backupService.FailedFiles.ToString(", ", Path.GetFileName));
+				var msg = string.Format(FwCoreDlgs.ksCouldNotBackupSomeFiles,
+					string.Join(", ", backupService.FailedFiles.Select(Path.GetFileName)));
 				if (MessageBox.Show(msg, FwCoreDlgs.ksWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
 					File.Delete(backupFile);
 				backupFile = null;

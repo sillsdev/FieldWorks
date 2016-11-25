@@ -3814,16 +3814,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary>
-		/// Converts a List of integers into a comma-delimited string of numbers.
-		/// </summary>
-		/// <param name="hvoList"></param>
-		/// <returns></returns>
-		private string ConvertHvoListToString(List<int> hvoList)
-		{
-			return hvoList.ToString(",");
-		}
-
-		/// <summary>
 		/// Common logic shared between OnDisplayJumpToTool and OnJumpToTool.
 		/// forEnableOnly is true when called from OnDisplayJumpToTool.
 		/// </summary>

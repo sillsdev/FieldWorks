@@ -351,7 +351,7 @@ namespace SIL.Utils
 		/// ------------------------------------------------------------------------------------
 		public static string CharacterCodepoints(this string chrs)
 		{
-			return chrs.ToString(", ", GetUnicodeValueString);
+			return string.Join(", ", chrs.Select(item => GetUnicodeValueString(item)));
 		}
 
 		/// ------------------------------------------------------------------------------------

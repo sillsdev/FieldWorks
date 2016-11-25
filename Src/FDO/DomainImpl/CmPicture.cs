@@ -349,7 +349,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// ------------------------------------------------------------------------------------
 		private string BuildTextRepParamString(params object[] parms)
 		{
-			return parms.ToString(false, "|");
+			return string.Join("|", parms);
 		}
 		#endregion
 	}

@@ -1566,14 +1566,11 @@ namespace XCore
 			public override string ToString()
 			{
 				var bldr = new StringBuilder();
-				if (!String.IsNullOrEmpty(m_elementName))
+				if (!string.IsNullOrEmpty(m_elementName))
 					bldr.AppendFormat("{0}: ", m_elementName);
 				if (m_attrvals != null)
-					bldr.Append(m_attrvals.ToString("-"));
-				if (bldr.Length > 0)
-					return bldr.ToString();
-
-				return base.ToString();
+					bldr.Append(string.Join("-", m_attrvals));
+				return bldr.Length > 0 ? bldr.ToString() : base.ToString();
 			}
 		}
 

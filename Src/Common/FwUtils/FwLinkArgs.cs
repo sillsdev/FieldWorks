@@ -393,7 +393,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (urlDatabase == project)
 			{
 				properties[idxDatabase] = "database=this$";
-				string fixedUrl = kFwUrlPrefix + HttpUtility.UrlEncode(properties.ToString("&"));
+				string fixedUrl = kFwUrlPrefix + HttpUtility.UrlEncode(string.Join("&", properties));
 				return fixedUrl;
 			}
 			else

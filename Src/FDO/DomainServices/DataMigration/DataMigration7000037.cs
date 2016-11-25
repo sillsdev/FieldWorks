@@ -130,7 +130,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				if (!fChange)
 					continue;
 
-				value = kFwUrlPrefix + HttpUtility.UrlEncode(rgsProps.ToString("&"));
+				value = kFwUrlPrefix + HttpUtility.UrlEncode(string.Join("&", rgsProps));
 				if (attrLink.Value != value)
 				{
 					attrLink.Value = value;

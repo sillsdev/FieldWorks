@@ -208,9 +208,9 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if (m_lblSelectedCategories != null)
 			{
-				m_lblSelectedCategories.Text = (SelectedItems.Count == 0 ?
+				m_lblSelectedCategories.Text = SelectedItems.Count == 0 ?
 					FwCoreDlgs.Properties.Resources.kstidNoPossibilitySelectedText :
-					SelectedItems.ToString(", "));
+					string.Join(", ", SelectedItems);
 			}
 		}
 

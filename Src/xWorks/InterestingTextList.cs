@@ -346,14 +346,14 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public static string MakeIdList(IEnumerable<ICmObject> objects)
 		{
-			return objects.ToString(",", obj => Convert.ToBase64String(obj.Guid.ToByteArray()));
+			return string.Join(",", objects.Select(obj => Convert.ToBase64String(obj.Guid.ToByteArray())));
 		}
 		/// <summary>
 		/// Make a string that corresponds to a list of guids.
 		/// </summary>
 		public static string MakeIdList(IEnumerable<Guid> objects)
 		{
-			return objects.ToString(",", guid => Convert.ToBase64String(guid.ToByteArray()));
+			return string.Join(",", objects.Select(guid => Convert.ToBase64String(guid.ToByteArray())));
 		}
 
 		/// <summary>

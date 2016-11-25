@@ -2482,10 +2482,11 @@ namespace SIL.FieldWorks
 					string backupFile;
 					if (!backupService.BackupProject(progressDlg, out backupFile))
 					{
-						string msg = string.Format(FwCoreDlgs.FwCoreDlgs.ksCouldNotBackupSomeFiles, backupService.FailedFiles.ToString(", ", Path.GetFileName));
+						string msg = string.Format(FwCoreDlgs.FwCoreDlgs.ksCouldNotBackupSomeFiles,
+							string.Join(", ", backupService.FailedFiles.Select(Path.GetFileName)));
 						if (MessageBox.Show(msg, FwCoreDlgs.FwCoreDlgs.ksWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
 							File.Delete(backupFile);
-				}
+					}
 				}
 				catch (FwBackupException e)
 				{
