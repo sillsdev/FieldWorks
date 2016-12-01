@@ -855,7 +855,7 @@
 	</bin>
 	<bin class="CmPicture">
 		<part id="CmPicture-Jt-$fieldName" type="jtview"><!-- for ChildPartGenerator -->
-			<obj class="LexSense" field="OwningSense" layout="$fieldName"/>
+			<obj class="CmPicture" field="OwningSense" layout="$fieldName"/>
 		</part>
 		<part id="CmPicture-Detail-FileName" type="detail">
 			<slice label="File" editor="jtview" layout="PathName" editable="no" menu="mnuDataTree-Picture" />

@@ -131,6 +131,7 @@
 	<string id="LexSense-Plural" txt="Senses"/>
 	<string id="LexPronunciation-Plural" txt="Pronunciations"/>
 	<string id="LexExampleSentence-Plural" txt="Examples"/>
+	<string id="LexEtymology-Plural" txt="Etymologies"/>
 	<string id="LexExtendedNote-Plural" txt="Extended Notes"/>
 	<string id="CmTranslation-Plural" txt="Translations"/>
 	<string id="MoForm-Plural" txt="Allomorphs"/>
