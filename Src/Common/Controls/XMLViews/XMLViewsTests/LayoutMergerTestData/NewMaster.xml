@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout class="LexSense" type="jtview" name="publishRootSub">
+    <part ref="SemanticDomainsConfig" label="Semantic Domains" before="(sem. domains: " after=".) "
+        sep=", " visibility="ifdata" param="publishRootSubSemDom" css="semantic-domains-sub"/>
+</layout>
