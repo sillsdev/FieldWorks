@@ -1,0 +1,6 @@
+root = true
+
+[*.{cs,cpp,h}]
+indent_style = tab
+indent_size = 4
+trim_trailing_whitespace = true
