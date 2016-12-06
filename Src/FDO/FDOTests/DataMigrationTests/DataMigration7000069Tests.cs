@@ -153,7 +153,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 			// Make sure new default types are added.
 			var defaultRefs = dtoRepos.AllInstancesWithSubclasses("LexEntryRef").ToList();
-			XElement data = XElement.Parse(defaultRefs[0].Xml);
+			XElement data = XElement.Parse(defaultRefs[1].Xml);
 			var defTypeElt = data.Element("ComplexEntryTypes");
 			Assert.IsNotNull(defTypeElt);
 			Assert.That(defTypeElt != null && defTypeElt.HasElements, "Should have components (or variants)");
@@ -163,7 +163,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			var refTypeAttr = objSurElem.Attribute("t");
 			Assert.IsNotNull(refTypeAttr, "The type attribute should be set on the 'objsur' element for the default c.f.");
 			Assert.AreEqual(refTypeAttr.Value, "r");
-			data = XElement.Parse(defaultRefs[1].Xml);
+			data = XElement.Parse(defaultRefs[0].Xml);
 			defTypeElt = data.Element("VariantEntryTypes");
 			Assert.IsNotNull(defTypeElt);
 			Assert.That(defTypeElt != null && defTypeElt.HasElements, "Should have components (or variants)");
