@@ -686,6 +686,43 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			TestForWritingSystemOptionsType(configNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
 		}
 
+		[Test]
+		public void MigrateFromConfig83AlphaToBeta10_PathologicalEtymologyCaseDoesNotThrow()
+		{
+			// Custom field etymology caused crash
+			var customEtymology = new ConfigurableDictionaryNode
+			{
+				Label = "Etymology",
+				FieldDescription = "Etymology (Custom)",
+				Children = new List<ConfigurableDictionaryNode> {  new ConfigurableDictionaryNode { Label = "unimportant"} }
+			};
+			var variantNode = new ConfigurableDictionaryNode
+			{
+				Label = "Variant Form",
+				FieldDescription = "VariantEntryBackRefs",
+				Children = new List<ConfigurableDictionaryNode> { customEtymology }
+			};
+			// Weird old etymology node without children (caused crash)
+			var etymologyNode = new ConfigurableDictionaryNode
+			{
+				Label = "Etymology",
+				FieldDescription = "EtymologyOA"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { etymologyNode, variantNode }
+			};
+			var alphaModel = new DictionaryConfigurationModel
+			{
+				Version = FirstAlphaMigrator.VersionAlpha3,
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			var rootModel = m_migrator.LoadBetaDefaultForAlphaConfig(alphaModel);
+			Assert.DoesNotThrow(() => m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, rootModel));
+		}
+
 		private static void TestForWritingSystemOptionsType(ConfigurableDictionaryNode configNode,
 			DictionaryNodeWritingSystemOptions.WritingSystemType expectedWsType)
 		{
