@@ -27,6 +27,12 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			buttonDown.Image = (Image)resources.GetObject("moveDown.Image");
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
+		}
+
 #if __MonoCS__
 		/// <summary>
 		/// Adjust the location of the checkBoxDisplayOption and the height of the listView properly as the

@@ -15,7 +15,7 @@
 		<Project name="DiffViewTests"/>
 		<Project name="MGATests"/>
 	</TimeoutGroup>
-	<TimeoutGroup timeLimit="75">
+	<TimeoutGroup timeLimit="90">
 		<Project name="BasicUtilsTests"/>
 		<Project name="CacheLightTests"/>
 		<Project name="CoreImplTests"/>

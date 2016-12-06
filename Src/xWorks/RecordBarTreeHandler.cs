@@ -19,14 +19,13 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Filters;
 using SIL.Utils;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
-using System.Diagnostics.CodeAnalysis;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgControls;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -275,8 +274,8 @@ namespace SIL.FieldWorks.XWorks
 				&& !(RecordList.OwningObject as ICmPossibilityList).IsSorted)
 			{
 				// Move up and move down items make sense
-				menu.Items.Add(new ToolStripMenuItem(xWorksStrings.MoveUp));
-				menu.Items.Add(new ToolStripMenuItem(xWorksStrings.MoveDown));
+				menu.Items.Add(new DisposableToolStripMenuItem(xWorksStrings.MoveUp));
+				menu.Items.Add(new DisposableToolStripMenuItem(xWorksStrings.MoveDown));
 			}
 			return menu;
 		}
@@ -583,7 +582,7 @@ namespace SIL.FieldWorks.XWorks
 
 		protected virtual ContextMenuStrip CreateTreebarContextMenuStrip()
 		{
-			var promoteMenuItem = new ToolStripMenuItem(xWorksStrings.Promote);
+			var promoteMenuItem = new DisposableToolStripMenuItem(xWorksStrings.Promote);
 			var contStrip = new ContextMenuStrip();
 			contStrip.Items.Add(promoteMenuItem);
 			return contStrip;

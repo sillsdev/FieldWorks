@@ -145,13 +145,11 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 		#endregion
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwContainer"/> class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public FwContainer()
+		/// <summary/>
+		protected override void Dispose(bool disposing)
 		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
 		}
 
 		/// ------------------------------------------------------------------------------------

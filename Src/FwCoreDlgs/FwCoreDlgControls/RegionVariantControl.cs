@@ -76,6 +76,13 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			InitializeComponent();
 		}
 
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
+		}
+
 		#region Component Designer generated code
 		/// <summary>
 		/// Required method for Designer support - do not modify

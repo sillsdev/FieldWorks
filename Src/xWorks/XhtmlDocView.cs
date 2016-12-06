@@ -22,6 +22,7 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
 using SIL.Windows.Forms.HtmlBrowser;
@@ -352,13 +353,13 @@ namespace SIL.FieldWorks.XWorks
 			var classList = GetClassListFromGeckoElement(element, out topLevelGuid, out entryElement);
 			var label = string.Format(xWorksStrings.ksConfigure, configObjectName);
 			s_contextMenu = new ContextMenuStrip();
-			var item = new ToolStripMenuItem(label);
+			var item = new DisposableToolStripMenuItem(label);
 			s_contextMenu.Items.Add(item);
 			item.Click += RunConfigureDialogAt;
 			item.Tag = new object[] { propertyTable, mediator, classList, topLevelGuid };
 			if (e.CtrlKey) // show hidden menu item for tech support
 			{
-				item = new ToolStripMenuItem(xWorksStrings.ksInspect);
+				item = new DisposableToolStripMenuItem(xWorksStrings.ksInspect);
 				s_contextMenu.Items.Add(item);
 				item.Click += RunDiagnosticsDialogAt;
 				item.Tag = new object[] { propertyTable, entryElement, topLevelGuid };

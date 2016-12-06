@@ -740,7 +740,21 @@ namespace SIL.FieldWorks.XWorks
 					ResponseStatusCode = responseStatus;
 				}
 
-				public void Dispose() {}
+				public void Dispose()
+				{
+					Dispose(true);
+					GC.SuppressFinalize(this);
+				}
+
+				protected virtual void Dispose(bool disposing)
+				{
+					System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				}
+
+				~MockWebonaryClient()
+				{
+					Dispose(false);
+				}
 
 				public WebHeaderCollection Headers { get; private set; }
 				public byte[] UploadFileToWebonary(string address, string fileName)

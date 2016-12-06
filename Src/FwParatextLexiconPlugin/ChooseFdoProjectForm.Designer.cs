@@ -11,6 +11,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		[System.Diagnostics.DebuggerNonUserCode()]
 		protected override void Dispose(bool disposing)
 		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
 			if (disposing && components != null) {
 				components.Dispose();
 			}

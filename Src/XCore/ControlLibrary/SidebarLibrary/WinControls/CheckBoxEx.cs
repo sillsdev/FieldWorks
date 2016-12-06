@@ -1,10 +1,8 @@
 // Original author or copyright holder unknown.
 
 using System;
-using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Windows.Forms;
 using System.Diagnostics;
 using SidebarLibrary.General;
@@ -33,7 +31,7 @@ namespace SidebarLibrary.WinControls
 		Color oldControlDarkColor = Color.Empty;
 		#endregion
 
-		#region Constructors
+		#region Constructors and Disposers
 		public CheckBoxEx()
 		{
 			// Our control needs to have Flat style set
@@ -47,6 +45,11 @@ namespace SidebarLibrary.WinControls
 			Debug.Assert(checkMarkUnchecked != null);
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
+		}
 		#endregion
 
 		#region Overrides

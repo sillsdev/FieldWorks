@@ -62,6 +62,12 @@ namespace SIL.ObjectBrowser
 			}
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="InspectorGrid"/> class.

@@ -1853,7 +1853,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			/// <summary/>
 			private void Dispose(bool fDisposing)
 			{
-				System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().ToString() + " *******");
+				Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + " *******");
 				if (fDisposing && !IsDisposed)
 				{
 					// dispose managed and unmanaged objects

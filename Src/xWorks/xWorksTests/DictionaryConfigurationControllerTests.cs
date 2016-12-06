@@ -903,10 +903,25 @@ namespace SIL.FieldWorks.XWorks
 
 			public void Dispose()
 			{
-				application.Dispose();
-				window.Dispose();
-				PropertyTable.Dispose();
-				Mediator.Dispose();
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				if(disposing)
+				{
+					application.Dispose();
+					window.Dispose();
+					PropertyTable.Dispose();
+					Mediator.Dispose();
+				}
+			}
+
+			~MockWindowSetup()
+			{
+				Dispose(false);
 			}
 		}
 
@@ -1304,9 +1319,24 @@ namespace SIL.FieldWorks.XWorks
 
 			public void Dispose()
 			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				if (disposing)
+				{
 					if (DetailsView != null && !DetailsView.IsDisposed)
 						DetailsView.Dispose();
 					m_treeControl.Dispose();
+				}
+			}
+
+			~TestConfigurableDictionaryView()
+			{
+				Dispose(false);
 			}
 
 			public event EventHandler SaveModel;

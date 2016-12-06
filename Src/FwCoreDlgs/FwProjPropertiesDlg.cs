@@ -1866,11 +1866,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_list = list;
 			}
 
-			/// --------------------------------------------------------------------------------
-			/// <summary>
-			///
-			/// </summary>
-			/// --------------------------------------------------------------------------------
+			/// <summary/>
+			protected override void Dispose(bool disposing)
+			{
+				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				if (disposing)
+					m_list?.Dispose();
+				base.Dispose(disposing);
+			}
+
+			/// <summary/>
 			public CoreWritingSystemDefinition WritingSystem
 			{
 				get

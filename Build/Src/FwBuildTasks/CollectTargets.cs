@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2012-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -43,10 +43,10 @@ namespace FwBuildTasks
 			}
 		}
 
-		private string m_fwroot;
-		private Dictionary<string, string> m_mapProjFile = new Dictionary<string, string>();
-		private Dictionary<string, List<string>> m_mapProjDepends = new Dictionary<string, List<string>>();
-		private TaskLoggingHelper Log { get; set; }
+		private readonly string m_fwroot;
+		private readonly Dictionary<string, string> m_mapProjFile = new Dictionary<string, string>();
+		private readonly Dictionary<string, List<string>> m_mapProjDepends = new Dictionary<string, List<string>>();
+		private TaskLoggingHelper Log { get; }
 		private XmlDocument m_csprojFile;
 		private XmlNamespaceManager m_namespaceMgr;
 		private Dictionary<string, int> m_timeoutMap;
@@ -371,7 +371,7 @@ namespace FwBuildTasks
 						writer.WriteLine("\t\t\tToolsVersion=\"14.0\"/>");
 
 						// <Clouseau> verification task
-						writer.WriteLine("\t\t<Clouseau Assembly=\"$(dir-outputBase)/{0}\"/>", AssemblyName);
+						writer.WriteLine("\t\t<Clouseau AssemblyPathname=\"$(dir-outputBase)/{0}\"/>", AssemblyName);
 
 						if (isTestProject)
 						{

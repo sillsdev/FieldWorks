@@ -143,7 +143,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// <summary/>
 			~ValidCharGridsManager()
 			{
-				Debug.WriteLine("****** Missing Dispose() call for " + GetType() + " *******");
 				Dispose(false);
 			}
 			#endif

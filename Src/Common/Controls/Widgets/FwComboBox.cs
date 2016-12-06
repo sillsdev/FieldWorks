@@ -2810,6 +2810,13 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 		}
 
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
+		}
+
 		/// <summary>
 		/// </summary>
 		/// <value></value>

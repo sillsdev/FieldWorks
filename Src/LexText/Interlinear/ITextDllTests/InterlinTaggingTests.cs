@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -18,7 +18,6 @@ using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
-using System.Diagnostics.CodeAnalysis;
 using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.IText
@@ -257,7 +256,7 @@ namespace SIL.FieldWorks.IText
 			// This may eventually fail because there are no occurrences selected.
 			// Should we even make the menu if nothing is selected?
 
-			using (ContextMenuStrip strip = new ContextMenuStrip())
+			using (var strip = new ContextMenuStrip())
 			{
 				m_tagChild.CallMakeContextMenuForTags(strip, m_textMarkupTags);
 

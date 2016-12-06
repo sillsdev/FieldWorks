@@ -76,6 +76,10 @@
     <Reference Include="FwKernelInterfaces">
       <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
+    <Reference Include="ViewsInterfaces, Version=9.0.0.21201, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\AssemblyInfoForTests.cs">
@@ -100,12 +104,6 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Common\ViewsInterfaces\ViewsInterfaces.csproj">
-      <Project>{afd8fd49-a08c-478e-bc8d-9bced0588b2d}</Project>
-      <Name>ViewsInterfaces</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

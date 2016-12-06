@@ -10,8 +10,6 @@
 // </remarks>
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -57,11 +55,14 @@ namespace SIL.FieldWorks.Common.Controls
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
+		}
+
+		/// <summary/>
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			using (HatchBrush br = new HatchBrush(HatchStyle.Percent50, Color.Black, BackColor))

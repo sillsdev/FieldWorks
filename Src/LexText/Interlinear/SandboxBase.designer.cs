@@ -3,9 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Runtime.InteropServices;
-using SIL.FieldWorks.Common.RootSites;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -23,6 +20,8 @@ namespace SIL.FieldWorks.IText
 		/// -----------------------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ******");
+
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;

@@ -24,6 +24,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Drawing.Printing;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.FwCoreDlgControls;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -546,7 +547,7 @@ namespace SIL.FieldWorks.XWorks
 				else
 					label = string.Format(xWorksStrings.ksConfigureIn, nodePath.Split(':')[3], m_configObjectName);
 				var m_contextMenu = new ContextMenuStrip();
-				var item = new ToolStripMenuItem(label);
+				var item = new DisposableToolStripMenuItem(label);
 				m_contextMenu.Items.Add(item);
 				item.Click += RunConfigureDialogAt;
 				item.Tag = nodePath;

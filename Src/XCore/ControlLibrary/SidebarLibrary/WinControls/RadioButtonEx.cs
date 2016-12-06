@@ -22,13 +22,18 @@ namespace SidebarLibrary.WinControls
 		DrawState drawState = DrawState.Normal;
 		#endregion
 
-		#region Constructors
+		#region Constructors and Disposers
 		public RadioButtonEx()
 		{
 			// Our control needs to have Flat style set
 			FlatStyle = FlatStyle.Flat;
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
+		}
 		#endregion
 
 		#region Overrides

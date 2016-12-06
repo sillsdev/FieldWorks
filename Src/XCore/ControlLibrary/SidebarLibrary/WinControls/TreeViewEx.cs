@@ -1,10 +1,7 @@
 // Original author or copyright holder unknown.
 
 using System;
-using System.Collections;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
@@ -14,15 +11,14 @@ using SidebarLibrary.General;
 
 namespace SidebarLibrary.WinControls
 {
-	/// <summary>
-	/// Summary description for TreeViewEx.
-	/// </summary>
-	public class TreeViewEx : System.Windows.Forms.TreeView
+	public class TreeViewEx : TreeView
 	{
-		bool itemHasFocus = false;
+		bool itemHasFocus;
 
-		public TreeViewEx()
+		protected override void Dispose(bool disposing)
 		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
 		}
 
 		protected override  void WndProc(ref Message message)

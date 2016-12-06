@@ -1455,13 +1455,25 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_cache.CheckDisposed();
 		}
 
-		/// <summary/>
 		/// <remarks>
 		/// Must not be virtual.
 		/// </remarks>
 		public void Dispose()
 		{
-			m_cache.Dispose();
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		~UndoableRealDataCache()
+		{
+			Dispose(false);
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			if (disposing)
+				m_cache.Dispose();
 		}
 
 		/// <summary>

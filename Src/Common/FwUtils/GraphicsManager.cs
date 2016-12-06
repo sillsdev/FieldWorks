@@ -108,7 +108,7 @@ namespace SIL.CoreImpl
 		/// ------------------------------------------------------------------------------------
 		protected virtual void Dispose(bool disposing)
 		{
-			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + "******************");
+			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
 			if (disposing)
 			{
 				Debug.Assert(m_cactInitGraphics == 0, "We should release the HDC before disposing");

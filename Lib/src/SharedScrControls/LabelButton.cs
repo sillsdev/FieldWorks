@@ -82,6 +82,19 @@ namespace SILUBS.SharedScrControls
 			SetTextAlignment();
 		}
 
+		/// <summary>Dispose: deregister event handlers</summary>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			if (disposing)
+			{
+				PaintBackground = null;
+				PaintText = null;
+				PaintImage = null;
+			}
+			base.Dispose(disposing);
+		}
+
 		#region Properties
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

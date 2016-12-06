@@ -3,8 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -78,6 +76,13 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if (IsDisposed)
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+		}
+
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
 		}
 
 		/// ------------------------------------------------------------------------------------

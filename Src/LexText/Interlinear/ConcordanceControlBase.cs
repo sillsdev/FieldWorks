@@ -101,6 +101,12 @@ namespace SIL.FieldWorks.IText
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
+		}
+
 		// True after the first time we do it.
 		internal protected bool HasLoadedMatches { get; protected set; }
 		// True while loading matches, to prevent recursive call.

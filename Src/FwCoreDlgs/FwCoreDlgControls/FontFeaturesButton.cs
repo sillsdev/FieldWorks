@@ -606,6 +606,13 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				m_featureIndex = featureIndex;
 			}
 
+			/// <summary/>
+			protected override void Dispose(bool disposing)
+			{
+				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+				base.Dispose(disposing);
+			}
+
 			/// --------------------------------------------------------------------------------
 			/// <summary>
 			/// Gets the index of the feature.

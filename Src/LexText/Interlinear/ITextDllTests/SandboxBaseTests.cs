@@ -12,6 +12,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.IText
@@ -740,7 +741,7 @@ namespace SIL.FieldWorks.IText
 			return SandboxBase.InterlinComboHandler.MakeCombo(null, tagIcon, sandbox, morphIndex) as SandboxBase.InterlinComboHandler;
 		}
 
-		public class MockComboHandler : IComboHandler, IDisposable
+		public class MockComboHandler : FwDisposableBase, IComboHandler
 		{
 			public void SetupCombo() { }
 
@@ -755,7 +756,6 @@ namespace SIL.FieldWorks.IText
 
 			public int SelectedMorphHvo { get; private set; }
 			public void HandleSelectIfActive() { }
-			public void Dispose() { }
 		}
 
 		/// <summary>

@@ -29,6 +29,7 @@ Bin/_setroot.bat
 Lib/debug/DebugProcs.lib
 Lib/debug/Generic.lib
 Lib/debug/unit++.lib
+Lib/debug/unit++.pdb
 Lib/release/DebugProcs.lib
 Lib/release/Generic.lib
 Lib/release/unit++.lib

@@ -40,6 +40,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 		}
 
+#if !__MonoCS__
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ******");
+			base.Dispose(disposing);
+		}
+#endif
+
+
 #if UNUSED
 		/// <summary>
 		///  convert an Image to an OLE Picture object

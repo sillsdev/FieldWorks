@@ -440,6 +440,12 @@ namespace SIL.FieldWorks.IText
 			NewAnalysisTree = new AnalysisTree();
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
+		}
+
 		#region IAnalysisControlInternal Members
 
 		bool IAnalysisControlInternal.HasChanged

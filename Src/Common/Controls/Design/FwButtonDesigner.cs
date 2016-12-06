@@ -63,6 +63,12 @@ namespace SIL.FieldWorks.Common.Controls.Design
 			// Remove Button.FlatStyle attribute, because we have our own
 			properties.Remove("FlatStyle");
 		}
-	}
 
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
+		}
+	}
 }

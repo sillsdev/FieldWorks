@@ -1,13 +1,9 @@
 // Original author or copyright holder unknown.
 
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Drawing.Design;
 using System.Drawing.Drawing2D;
 using System.IO;
 using System.Reflection;
@@ -209,7 +205,7 @@ namespace SidebarLibrary.WinControls
 		#region Events
 		#endregion
 
-		#region Constructors
+		#region Constructors and Disposers
 		public OutlookBarItem(string text, int ImageIndex)
 		{
 			this.text = text;
@@ -229,6 +225,11 @@ namespace SidebarLibrary.WinControls
 			imageIndex = -1;
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
+		}
 		#endregion
 
 		#region Overrides
@@ -397,13 +398,14 @@ namespace SidebarLibrary.WinControls
 
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
 			if (disposing)
 			{
-				if (contextMenu != null)
-					contextMenu.Dispose();
+				contextMenu?.Dispose();
+				textBox?.Dispose();
 			}
 			contextMenu = null;
+			textBox = null;
 			base.Dispose(disposing);
 		}
 

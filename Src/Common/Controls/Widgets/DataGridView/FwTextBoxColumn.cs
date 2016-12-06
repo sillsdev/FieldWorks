@@ -14,7 +14,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Drawing;
 using System.ComponentModel;
-
+using System.Diagnostics.CodeAnalysis;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -86,12 +86,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// set to <c>false</c> if called by GC. If this parameter is <c>false</c> we shouldn't
 		/// access any managed objects since these might already have been destroyed.</param>
 		/// ------------------------------------------------------------------------------------
+		//[SuppressMessage("Clouseau", "MissingDisposeCall", Justification = "Debug.WriteLineIf statement disabled because of a bug in .NET DataGridView:"
+		//	+ "DataGridView.AddRange() creates a temporary clone that it doesn't dispose, so we will always get this warning message and we can't do anything about it.")]
 		protected override void Dispose(bool disposing)
 		{
-			// Debug.WriteLineIf statement disabled because of a bug in .NET DataGridView:
-			// DataGridView.AddRange() creates a temporary clone that it doesn't dispose, so we
-			// will always get this warning message and we can't do anything about it.
-			// Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** (but this might not be your fault)");
 			if (disposing)
 			{
 				if (m_textBoxControl != null)

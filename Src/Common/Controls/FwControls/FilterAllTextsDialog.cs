@@ -11,7 +11,6 @@ using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -50,6 +49,15 @@ namespace SIL.FieldWorks.Common.Controls
 			InitializeComponent();
 			m_treeTexts.AfterCheck += OnCheckedChanged;
 			AccessibleName = "FilterAllTextsDialog";
+		}
+
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			if (disposing)
+				components?.Dispose();
+			base.Dispose(disposing);
 		}
 		#endregion
 

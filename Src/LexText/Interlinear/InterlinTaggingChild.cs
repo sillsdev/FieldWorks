@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -22,6 +22,7 @@ using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FwCoreDlgControls;
 using XCore;
 
 namespace SIL.FieldWorks.IText
@@ -411,7 +412,7 @@ namespace SIL.FieldWorks.IText
 
 		internal ContextMenuStrip MakeContextMenu()
 		{
-			ContextMenuStrip menu = new ContextMenuStrip();
+			var menu = new ContextMenuStrip();
 
 			// A little indirection for when we make more menu options later.
 			// If we have not selected any Wordforms, don't put tags in the context menu.
@@ -437,7 +438,7 @@ namespace SIL.FieldWorks.IText
 			Debug.Assert(tagList.SubPossibilitiesOS.Count > 0, "There should be sub-possibilities here!");
 
 			// Add the main entry first
-			ToolStripMenuItem tagSubmenu = new ToolStripMenuItem(tagList.Name.BestAnalysisAlternative.Text);
+			var tagSubmenu = new DisposableToolStripMenuItem(tagList.Name.BestAnalysisAlternative.Text);
 			menu.Items.Add(tagSubmenu);
 
 			foreach (ICmPossibility poss in tagList.SubPossibilitiesOS)
@@ -669,10 +670,8 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Used for Text Tagging possibility menu items
 		/// </summary>
-		private class TagPossibilityMenuItem : ToolStripMenuItem
+		private class TagPossibilityMenuItem : DisposableToolStripMenuItem
 		{
-			readonly ICmPossibility m_tagPoss;
-
 			/// <summary>
 			/// Initializes a new instance of the <see cref="TagPossibilityMenuItem"/> class
 			/// used for context (right-click) menus.
@@ -682,18 +681,10 @@ namespace SIL.FieldWorks.IText
 			/// </param>
 			public TagPossibilityMenuItem(ICmPossibility poss)
 			{
-				m_tagPoss = poss;
+				Possibility = poss;
 			}
 
-			public ICmPossibility Possibility
-			{
-				get { return m_tagPoss; }
-			}
-
-			public int HvoPoss
-			{
-				get { return m_tagPoss.Hvo; }
-			}
+			public ICmPossibility Possibility { get; }
 		}
 	} // end class InterlinTaggingChild
 

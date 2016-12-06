@@ -4,14 +4,12 @@
 // http://www.aisto.com/roeder
 // roeder@aisto.com
 // ---------------------------------------------------------
-using System.Diagnostics.CodeAnalysis;
 
 
 namespace Reflector.UserInterface
 {
 	using System;
 	using System.Drawing;
-	using System.Collections;
 	using System.Runtime.InteropServices;
 	using System.Security.Permissions;
 	using System.Windows.Forms;
@@ -30,7 +28,7 @@ namespace Reflector.UserInterface
 
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().ToString() + " *******");
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "******* Missing Dispose() call for " + GetType() + " *******");
 			if (disposing)
 			{
 				if (commandBars != null)

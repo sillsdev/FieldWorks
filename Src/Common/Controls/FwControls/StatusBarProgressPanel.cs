@@ -164,7 +164,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		protected override void Dispose( bool disposing )
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (m_isDisposed)
 				return;

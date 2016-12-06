@@ -48,7 +48,7 @@ namespace SidebarLibrary.WinControls
 		DrawState drawState = DrawState.Normal;
 		#endregion
 
-		#region Constructor
+		#region Constructor and Dispose
 		public ArrowButton()
 		{
 		}
@@ -58,6 +58,12 @@ namespace SidebarLibrary.WinControls
 			SetStyle(ControlStyles.AllPaintingInWmPaint|ControlStyles.UserPaint|ControlStyles.Opaque, true);
 			this.colorPicker = colorPicker;
 			TabStop = false;
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
 		}
 		#endregion
 

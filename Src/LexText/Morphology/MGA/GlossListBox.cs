@@ -50,6 +50,12 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
+		}
+
 		private void OnInsertItem(object sender, GlossListEventArgs glea)
 		{
 			// Adds the GlossListBoxItem contained within the GlossListEventArgs object

@@ -64,6 +64,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
+    <Reference Include="FwCoreDlgControls, Version=9.0.0.19294, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\FwCoreDlgControls.dll</HintPath>
+    </Reference>
     <Reference Include="ViewsInterfaces, Version=5.1.0.19833, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
@@ -169,9 +173,7 @@
     <Compile Include="ConstituentChart.Designer.cs">
       <DependentUpon>ConstituentChart.cs</DependentUpon>
     </Compile>
-    <Compile Include="ConstituentChartLogic.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="ConstituentChartLogic.cs" />
     <Compile Include="DiscourseExportDialog.cs">
       <SubType>Form</SubType>
     </Compile>

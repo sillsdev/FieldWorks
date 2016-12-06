@@ -1598,6 +1598,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public event Action<int, int, int> KeyEvent;
 #pragma warning restore 67
 
+		~CommitBeforeUpdateIbusCommunicator()
+		{
+			Dispose(false);
+		}
+
 		public bool IsDisposed { get; private set; }
 
 		public IBusConnection Connection
@@ -1660,6 +1665,13 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public void Dispose()
 		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		private void Dispose(bool fDisposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + " *******");
 			IsDisposed = true;
 		}
 
@@ -1882,6 +1894,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public event Action<int, int, int> KeyEvent;
 #pragma warning restore 67
 
+		~CommitOnlyIbusCommunicator()
+		{
+			Dispose(false);
+		}
+
 		public bool IsDisposed { get; private set; }
 
 		public IBusConnection Connection
@@ -1933,6 +1950,13 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public void Dispose()
 		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		private void Dispose(bool fDisposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + " *******");
 			IsDisposed = true;
 		}
 
@@ -1963,6 +1987,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public event Action HidePreeditText;
 		public event Action<int, int, int> KeyEvent;
 #pragma warning restore 67
+
+		~KeyboardThatSendsDeletesAsCommitsDummyIBusCommunicator()
+		{
+			Dispose(false);
+		}
 
 		public bool IsDisposed { get; private set; }
 
@@ -2030,6 +2059,13 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public void Dispose()
 		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		private void Dispose(bool fDisposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + " *******");
 			IsDisposed = true;
 		}
 
@@ -2059,6 +2095,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public event Action<int, int> DeleteSurroundingText;
 		public event Action HidePreeditText;
 #pragma warning restore 67
+
+		~KeyboardThatSendsBackspacesAsForwardKeyEvents()
+		{
+			Dispose(false);
+		}
 
 		public event Action<int, int, int> KeyEvent;
 
@@ -2129,6 +2170,13 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public void Dispose()
 		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		private void Dispose(bool fDisposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + " *******");
 			IsDisposed = true;
 		}
 

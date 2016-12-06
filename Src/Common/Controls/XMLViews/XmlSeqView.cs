@@ -576,6 +576,7 @@ namespace SIL.FieldWorks.Common.Controls
 		protected override void Dispose(bool fDisposing)
 		{
 			Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			base.Dispose(fDisposing);
 			if (!fDisposing || IsDisposed || m_savedSelection == null || m_rootSite.RootBox.Height <= 0)
 				return;
 

@@ -66,7 +66,6 @@ namespace SIL.FieldWorks.Discourse
 #if DEBUG
 		~DiscourseExporter()
 		{
-			System.Diagnostics.Debug.WriteLine("****** Missing Dispose() call for " + GetType().ToString() + " *******");
 			Dispose(false);
 		}
 #endif
@@ -82,11 +81,11 @@ namespace SIL.FieldWorks.Discourse
 		/// <summary/>
 		protected virtual void Dispose(bool fDisposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (fDisposing && !IsDisposed)
 			{
 				// dispose managed and unmanaged objects
-				((IDisposable)m_writer).Dispose();
+				m_writer.Dispose();
 			}
 
 			IsDisposed = true;

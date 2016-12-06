@@ -2913,7 +2913,7 @@ namespace SIL.FieldWorks.IText
 		{
 			if (m_ComboHandler != null)
 			{
-				(m_ComboHandler as IDisposable).Dispose();
+				m_ComboHandler.Dispose();
 				m_ComboHandler = null;
 			}
 		}

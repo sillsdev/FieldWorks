@@ -103,6 +103,13 @@ namespace SIL.FieldWorks.Common.Framework
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
+		}
+
 		#region Designer generated code
 		private void InitializeComponent()
 		{

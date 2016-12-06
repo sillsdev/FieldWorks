@@ -69,6 +69,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
+		}
+
 		/// <summary>
 		/// Gets the selected writing system.
 		/// </summary>

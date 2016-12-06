@@ -25,6 +25,12 @@ namespace SidebarLibrary.WinControls
 			InitializeComponent();
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
+		}
+
 		protected override void OnPaint(PaintEventArgs pe)
 		{
 			base.OnPaint(pe);

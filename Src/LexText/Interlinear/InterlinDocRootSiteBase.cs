@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -1127,6 +1126,12 @@ namespace SIL.FieldWorks.IText
 			m_ws = ws;
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
+		}
+
 		public int Flid
 		{
 			get { return m_flid; }
@@ -1156,6 +1161,12 @@ namespace SIL.FieldWorks.IText
 		public AddLineMenuItem(int flid)
 		{
 			m_flid = flid;
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
 		}
 
 		public int Flid

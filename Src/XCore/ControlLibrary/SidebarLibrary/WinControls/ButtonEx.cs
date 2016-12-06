@@ -1,21 +1,17 @@
 // Original author or copyright holder unknown.
 
 using System;
-using System.Collections;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Windows.Forms;
 using System.Diagnostics;
 using SidebarLibrary.General;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SidebarLibrary.WinControls
 {
 	/// <summary>
 	/// Summary description for VSNetButton.
 	/// </summary>
-	public class ButtonEx : System.Windows.Forms.Button
+	public class ButtonEx : Button
 	{
 
 		bool gotFocus = false;
@@ -48,6 +44,12 @@ namespace SidebarLibrary.WinControls
 				DrawButtonState(pe.Graphics, DrawState.Normal);
 			else
 				DrawButtonState(pe.Graphics, DrawState.Disable);
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
 		}
 
 		protected override void OnMouseEnter(EventArgs e)

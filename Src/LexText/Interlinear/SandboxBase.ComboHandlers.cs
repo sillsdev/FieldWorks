@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.IText
 	/// An interface common to classes that 'handle' combo boxes that appear when something in
 	/// IText is clicked.
 	/// </summary>
-	internal interface IComboHandler
+	internal interface IComboHandler : IFWDisposable
 	{
 		/// <summary>
 		/// Initialize the combo contents.

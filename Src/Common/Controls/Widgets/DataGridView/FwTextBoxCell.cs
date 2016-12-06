@@ -21,13 +21,11 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// ----------------------------------------------------------------------------------------
 	public class FwTextBoxCell : DataGridViewTextBoxCell
 	{
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwTextBoxCell"/> class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public FwTextBoxCell() : base()
+		/// <summary/>
+		protected override void Dispose(bool disposing)
 		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
 		}
 
 		/// ------------------------------------------------------------------------------------

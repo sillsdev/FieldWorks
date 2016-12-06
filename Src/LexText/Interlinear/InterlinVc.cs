@@ -301,7 +301,7 @@ namespace SIL.FieldWorks.IText
 		/// <summary/>
 		protected virtual void Dispose(bool fDisposing)
 		{
-			Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().ToString() + " *******");
+			Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + " *******");
 			if (fDisposing && !IsDisposed)
 			{
 				// dispose managed and unmanaged objects

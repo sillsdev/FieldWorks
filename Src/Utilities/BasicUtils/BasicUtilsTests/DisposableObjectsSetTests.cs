@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using NUnit.Framework;
 
 namespace SIL.Utils
@@ -26,8 +27,20 @@ namespace SIL.Utils
 				Name = name;
 			}
 
+			~A()
+			{
+				Dispose(false);
+			}
+
 			public void Dispose()
 			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ******");
 				IsDisposed = true;
 			}
 

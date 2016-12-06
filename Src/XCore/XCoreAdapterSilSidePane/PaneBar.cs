@@ -25,6 +25,12 @@ namespace XCore
 			this.ControlAdded += HandleControlAdded;
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
+		}
+
 		void HandleControlAdded (object sender, ControlEventArgs e)
 		{
 			m_widthOfLeftDockedControls = null;

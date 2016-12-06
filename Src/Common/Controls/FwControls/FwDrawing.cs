@@ -191,9 +191,7 @@ namespace SIL.FieldWorks.Common.Drawing
 		/// <param name="disposing"></param>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing)
-			{
-			}
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
 
 			base.Dispose(disposing);
 
@@ -668,9 +666,7 @@ namespace SIL.FieldWorks.Common.Drawing
 		/// <param name="disposing"></param>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing)
-			{
-			}
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
 
 			base.Dispose(disposing);
 			m_isDisposed = true;

@@ -135,6 +135,12 @@ namespace SidebarLibrary.WinControls
 			this.gradientEndColor = gradientEndColor;
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
+		}
+
 		public Color BackgroundColor
 		{
 			set

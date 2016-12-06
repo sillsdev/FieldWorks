@@ -2,17 +2,14 @@
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Reflection;
 using System.Resources;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using SidebarLibrary.CommandBars;
 using SidebarLibrary.General;
 using SidebarLibrary.Win32;
-using SidebarLibrary.WinControls;
 
 namespace SidebarLibrary.Menus
 {
@@ -94,7 +91,13 @@ namespace SidebarLibrary.Menus
 			this.imageIndex = imageIndex;
 		}
 
-		static public MenuItem CloneMenu(MenuItemEx currentItem)
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
+		}
+
+		public static MenuItem CloneMenu(MenuItemEx currentItem)
 		{
 			MenuItemEx clonedItem = new MenuItemEx(currentItem.Text, (Bitmap)currentItem.Icon,
 				(Shortcut)currentItem.Shortcut, currentItem.ClickHandler);

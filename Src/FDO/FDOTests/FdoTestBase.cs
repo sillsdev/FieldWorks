@@ -228,8 +228,25 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// </summary>
 			public void Dispose()
 			{
-				m_customField.MarkForDeletion = true;
-				m_customField.UpdateCustomField();
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+
+			/// <summary/>
+			private void Dispose(bool disposing)
+			{
+				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				if (disposing)
+				{
+					m_customField.MarkForDeletion = true;
+					m_customField.UpdateCustomField();
+				}
+			}
+
+			/// <summary/>
+			~CustomFieldForTest()
+			{
+				Dispose(false);
 			}
 		}
 	}

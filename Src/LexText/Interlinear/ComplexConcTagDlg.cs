@@ -32,6 +32,13 @@ namespace SIL.FieldWorks.IText
 			AccessibleName = GetType().Name;
 		}
 
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
+		}
+
 		public void SetDlgInfo(FdoCache cache, Mediator mediator, PropertyTable propertyTable, ComplexConcTagNode node)
 		{
 			m_cache = cache;

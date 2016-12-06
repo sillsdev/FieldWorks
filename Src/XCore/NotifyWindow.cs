@@ -9,7 +9,6 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Reflection;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
@@ -104,6 +103,7 @@ namespace XCore
 		protected System.Windows.Forms.Timer viewClock;
 		#endregion
 
+		#region Dispose
 		/// <summary>
 		/// Check to see if the object has been disposed.
 		/// All public Properties and Methods should call this
@@ -112,8 +112,15 @@ namespace XCore
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
+
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ******");
+			base.Dispose(disposing);
+		}
+		#endregion Dispose
 
 		#region Constructor
 		/// <param name="title">Title text displayed in the NotifyWindow</param>

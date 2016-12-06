@@ -538,6 +538,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			BackColor = SystemColors.Window;
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
+		}
+
 		protected override Size DefaultSize
 		{
 			get

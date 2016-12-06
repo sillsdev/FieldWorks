@@ -160,7 +160,7 @@ namespace SidebarLibrary.WinControls
 		bool fireOnSelectedIndexChanged = true;
 		#endregion
 
-		#region Constructors
+		#region Constructors and Disposers
 		// I wanted to make this constructor either protected
 		// or internal so that the ComboBoxBase could not be used
 		// as a stand alone class, however the IDE designer complains about it
@@ -190,6 +190,11 @@ namespace SidebarLibrary.WinControls
 				|ControlStyles.UserPaint|ControlStyles.Opaque|ControlStyles.DoubleBuffer, true);
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
+		}
 		#endregion
 
 		#region Overrides

@@ -10,15 +10,12 @@
 // </remarks>
 
 using System;
-using System.Xml;
-using System.Drawing;
 using System.Windows.Forms;  //for ImageList
-using System.Collections;
 using System.Diagnostics;
 
 using System.Collections.Generic;
 
-using SIL.Utils; // for ImageCollection
+// for ImageCollection
 using XCore;
 
 public class PanelCollection : Panel
@@ -30,6 +27,16 @@ public class PanelCollection : Panel
 		var p = new Panel();
 		p.AccessibilityObject.Name = "panelCollection"; // p.GetType().Name;
 		m_panels.Add(p); // Add a default panel for now.
+	}
+
+	protected override void Dispose(bool disposing)
+	{
+		Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+		if(disposing && m_panels != null)
+			foreach(var p in m_panels)
+				p.Dispose();
+		m_panels = null;
+		base.Dispose(disposing);
 	}
 
 	public Panel[] Panels

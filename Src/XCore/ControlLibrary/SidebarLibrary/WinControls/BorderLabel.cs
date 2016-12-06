@@ -1,7 +1,6 @@
 // Original author or copyright holder unknown.
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -49,6 +48,12 @@ namespace SidebarLibrary.WinControls
 			pen.Alignment = PenAlignment.Inset;
 			if ( Width == 1 )
 				gap = 1;
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
 		}
 
 		override protected void OnPaint(PaintEventArgs e)

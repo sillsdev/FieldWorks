@@ -22,7 +22,7 @@ namespace SidebarLibrary.WinControls
 		DrawState drawState = DrawState.Normal;
 		#endregion
 
-		#region Constructors
+		#region Constructors and Disposers
 		public TextBoxEx()
 		{
 			// Make sure we have the 3D look setting which is the one
@@ -30,6 +30,11 @@ namespace SidebarLibrary.WinControls
 			BorderStyle = BorderStyle.Fixed3D;
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
+		}
 		#endregion
 
 		#region Overrides

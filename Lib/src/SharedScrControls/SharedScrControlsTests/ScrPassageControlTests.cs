@@ -1,12 +1,11 @@
 // --------------------------------------------------------------------------------------------
-// Copyright (c) 2011-2015 SIL International
+// Copyright (c) 2011-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // File: ScrPassageControlTest.cs
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 
 using NUnit.Framework;

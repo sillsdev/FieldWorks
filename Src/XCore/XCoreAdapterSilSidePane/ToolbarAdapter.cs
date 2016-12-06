@@ -1,16 +1,9 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ReBarAdapter.cs
-// Authorship History: Randy Regnier
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System;
-using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;  //for ImageList
 using System.Collections.Generic;
@@ -38,6 +31,22 @@ namespace XCore
 
 			// default to a resonable height to reduce window moving.
 			Height = 44;
+		}
+
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			if (disposing)
+			{
+				m_MenuStrip?.Dispose();
+				if(m_toolStripList != null)
+					foreach(var ts in m_toolStripList)
+						ts.Dispose();
+			}
+			m_MenuStrip = null;
+			m_toolStripList = null;
+			base.Dispose(disposing);
 		}
 
 		/// <summary>

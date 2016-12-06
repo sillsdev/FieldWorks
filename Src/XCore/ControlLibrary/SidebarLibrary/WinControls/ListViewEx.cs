@@ -341,7 +341,7 @@ namespace SidebarLibrary.WinControls
 		int counter = 0;
 		#endregion
 
-		#region Constructors
+		#region Constructors and Disposers
 		public ListViewEx()
 		{
 
@@ -365,6 +365,12 @@ namespace SidebarLibrary.WinControls
 			Bitmap checkBox = (Bitmap)rm.GetObject("CheckBox");
 			checkBox.MakeTransparent(Color.FromArgb(0, 128, 128));
 			checkBoxesImageList.Images.AddStrip(checkBox);
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
 		}
 		#endregion
 

@@ -117,8 +117,9 @@ namespace SIL.FieldWorks.XWorks
 				get { return m_optionsView; }
 				set
 				{
-					if (m_optionsView != null)
-						m_optionsView.Dispose();
+					if (IsDisposed)
+						throw new ObjectDisposedException($"{GetType()} in use after being disposed");
+					m_optionsView?.Dispose();
 					m_optionsView = value;
 				}
 			}
@@ -662,23 +663,21 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var node = new ConfigurableDictionaryNode { DictionaryNodeOptions = listOptions };
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			// SUT
-			controller.LoadNode(null, node);
 			using (var view = controller.View)
 			{
+				// SUT
+				controller.LoadNode(null, node);
 				var listViewItems = GetListViewItems(view);
 
 				Assert.AreEqual(XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString(), listViewItems[0].Tag,
 					"The saved selection should be first");
 				Assert.AreEqual(listViewItems.Count, listViewItems.Count(item => item.Checked), "All items should be checked");
-			}
-			Assert.AreEqual(1, listOptions.Options.Count, "Loading the node should not affect the original list");
+				Assert.AreEqual(1, listOptions.Options.Count, "Loading the node should not affect the original list");
 
-			listOptions.Options[0].IsEnabled = false;
-			controller.LoadNode(null, node); // SUT
-			using (var view = controller.View)
-			{
-				var listViewItems = GetListViewItems(view);
+				listOptions.Options[0].IsEnabled = false;
+				// SUT
+				controller.LoadNode(null, node);
+				listViewItems = GetListViewItems(view);
 
 				Assert.AreEqual(XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString(), listViewItems[0].Tag,
 					"The saved item should be first");

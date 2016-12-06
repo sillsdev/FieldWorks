@@ -13,7 +13,7 @@
 
 using System;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
@@ -191,7 +191,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
-			//Debug.WriteLineIf(!disposing, "****************** " + GetType().Name + " 'disposing' is false. ******************");
+			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType() + " ******************");
 			// Must not be run more than once.
 			if (m_isDisposed)
 				return;

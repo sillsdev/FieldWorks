@@ -795,6 +795,13 @@ namespace SIL.FieldWorks.Common.Widgets
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
+		}
+
 		/// <summary>
 		/// We need to be able to handle the TAB key.
 		/// Requires IsInputKey() == true.

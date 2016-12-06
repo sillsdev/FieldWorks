@@ -14,6 +14,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.IText;
 using SIL.Utils;
 
@@ -2568,7 +2569,7 @@ namespace SIL.FieldWorks.Discourse
 			if (part == null || IsMissingMarker(part))
 				return;
 
-			var itemMove = new ToolStripMenuItem(mainLabel);
+			var itemMove = new DisposableToolStripMenuItem(mainLabel);
 			if (TryGetNextCell(srcCell))
 			{
 				var itemMoveForward = new RowColMenuItem(DiscourseStrings.ksForwardMenuItem, srcCell);
@@ -2639,7 +2640,7 @@ namespace SIL.FieldWorks.Discourse
 			bool fAnotherClausePossible = IsAnotherClausePossible(srcCell.Row, text == DiscourseStrings.ksPreposeFromMenuItem);
 			if ((icolStart >= icolLim) && !fMarkerPresent && !fAnotherClausePossible)
 				return;
-			var itemMTSubmenu = new ToolStripMenuItem(text);
+			var itemMTSubmenu = new DisposableToolStripMenuItem(text);
 			menu.Items.Add(itemMTSubmenu);
 			for (int i = icolStart; i < icolLim; i++)
 			{
@@ -3142,7 +3143,7 @@ namespace SIL.FieldWorks.Discourse
 		private ToolStripMenuItem MakeDepClauseItem(ChartLocation srcCell, int irowSrc,
 			string mainLabel, ClauseTypes depType)
 		{
-			var itemMDC = new ToolStripMenuItem(mainLabel);
+			var itemMDC = new DisposableToolStripMenuItem(mainLabel);
 			if (irowSrc > 0)
 			{
 				// put in just one 'previous clause' item.
@@ -3367,7 +3368,7 @@ namespace SIL.FieldWorks.Discourse
 			itemNewClause.Click += new EventHandler(itemNewClause_Click);
 			menu.Items.Add(itemNewClause);
 
-			var itemMT = new ToolStripMenuItem(DiscourseStrings.ksMovedFromMenuItem);
+			var itemMT = new DisposableToolStripMenuItem(DiscourseStrings.ksMovedFromMenuItem);
 			for (int ihvo = 0; ihvo < AllMyColumns.Length; ihvo++)
 			{
 				if (ihvo == icol)
@@ -4318,7 +4319,7 @@ namespace SIL.FieldWorks.Discourse
 		}
 	}
 
-	class DepClauseMenuItem : ToolStripMenuItem
+	internal class DepClauseMenuItem : DisposableToolStripMenuItem
 	{
 		readonly ChartLocation m_srcCell;
 		readonly IConstChartRow[] m_depClauses;
@@ -4363,7 +4364,7 @@ namespace SIL.FieldWorks.Discourse
 		}
 	}
 
-	internal class RowColMenuItem : ToolStripMenuItem
+	internal class RowColMenuItem : DisposableToolStripMenuItem
 	{
 		readonly ChartLocation m_srcCell;
 
@@ -4404,7 +4405,7 @@ namespace SIL.FieldWorks.Discourse
 		}
 	}
 
-	class OneValMenuItem : ToolStripMenuItem
+	internal class OneValMenuItem : DisposableToolStripMenuItem
 	{
 		int m_colSrc;
 		public OneValMenuItem(string label, int colSrc)
@@ -4422,7 +4423,7 @@ namespace SIL.FieldWorks.Discourse
 		}
 	}
 
-	class TwoColumnMenuItem : ToolStripMenuItem
+	internal class TwoColumnMenuItem : DisposableToolStripMenuItem
 	{
 		int m_colDst;
 		int m_colSrc;
@@ -5200,7 +5201,7 @@ namespace SIL.FieldWorks.Discourse
 	#endregion // MakeMovedTextMethod
 
 	// used for user-defined markers
-	public class RowColPossibilityMenuItem : ToolStripMenuItem
+	public class RowColPossibilityMenuItem : DisposableToolStripMenuItem
 	{
 		private readonly ChartLocation m_srcCell;
 		internal int m_hvoPoss;

@@ -7667,7 +7667,7 @@ namespace SIL.FieldWorks.XWorks
 
 		internal sealed class TempGuidOn<T> : IDisposable where T : ICmObject
 		{
-			public T Item { get; private set; }
+			public T Item { get; }
 			private readonly Guid originalGuid;
 
 			public TempGuidOn(T item, Guid tempGuid)
@@ -7679,7 +7679,20 @@ namespace SIL.FieldWorks.XWorks
 
 			public void Dispose()
 			{
-				SetGuidOn(Item, originalGuid);
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				if(disposing)
+					SetGuidOn(Item, originalGuid);
+			}
+
+			~TempGuidOn()
+			{
+				Dispose(false);
 			}
 
 			private static void SetGuidOn(ICmObject item, Guid newGuid)

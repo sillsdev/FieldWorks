@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
@@ -289,6 +288,13 @@ namespace SIL.FieldWorks.Common.Widgets
 		private bool m_mouseOverButton = false;
 		private bool m_mouseDownOnButton = false;
 		private bool m_enabled = true;
+
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

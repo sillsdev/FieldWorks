@@ -6145,7 +6145,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary/>
 		~FlatListChooserBEditControl()
 		{
-			System.Diagnostics.Debug.WriteLine("****** Missing Dispose() call for " + GetType().ToString() + " *******");
 			Dispose(false);
 		}
 		#endif

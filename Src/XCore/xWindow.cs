@@ -2429,7 +2429,7 @@ namespace XCore
 	/// the status bar draw the size grip because the size grip can draw too large at 120dpi
 	/// overlapping adjacent panels.
 	/// </summary>
-	class StatusBarSizeGrip : StatusBarPanel
+	internal class StatusBarSizeGrip : StatusBarPanel
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="StatusBarSizeGrip"/> class.
@@ -2474,6 +2474,12 @@ namespace XCore
 					ControlPaint.DrawSizeGrip(sbdevent.Graphics, sbdevent.BackColor, rect);
 				}
 			}
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
 		}
 	}
 

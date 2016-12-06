@@ -116,6 +116,7 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 		/// ------------------------------------------------------------------------------------
 		~ArrayPtr()
 		{
+			//if (this != s_null) // TODO (Hasso) 2016.11: is this the only place this ugly hack is needed?
 			Dispose(false);
 			// The base class finalizer is called automatically.
 		}
@@ -154,13 +155,14 @@ namespace SIL.FieldWorks.Common.FwKernelInterfaces
 		/// ------------------------------------------------------------------------------------
 		protected virtual void Dispose(bool disposing)
 		{
+			// If you're getting this line it means that you forgot to call Dispose().
+			Debug.WriteLineIf(!disposing,// && this != s_Null, // TODO (Hasso) 2016.11: is this the only place this ugly hack is needed?
+				"****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+
 			// Must not be run more than once.
 			if (m_isDisposed)
 				return;
 
-			// If you're getting this line it means that you forgot to call Dispose().
-			Debug.WriteLineIf(!disposing && this != s_Null,
-				"****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (disposing)
 			{
 				// Dispose managed resources.

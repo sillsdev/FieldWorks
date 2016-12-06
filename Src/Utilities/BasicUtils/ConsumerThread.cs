@@ -184,9 +184,9 @@ namespace SIL.Utils
 			if (fDisposing && !IsDisposed)
 			{
 				// dispose managed and unmanaged objects
-				((IDisposable)m_workEvent).Dispose();
-				((IDisposable)m_stopEvent).Dispose();
-				((IDisposable)m_idleEvent).Dispose();
+				m_workEvent.Dispose();
+				m_stopEvent.Dispose();
+				m_idleEvent.Dispose();
 			}
 			IsDisposed = true;
 		}

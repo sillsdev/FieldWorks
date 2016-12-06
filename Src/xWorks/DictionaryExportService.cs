@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml;
 using SIL.FieldWorks.FDO;
@@ -126,13 +125,25 @@ namespace SIL.FieldWorks.XWorks
 				m_currentClerk = currentClerk;
 			}
 
+			#region disposal
 			public void Dispose()
 			{
-				if (m_currentClerk != null && !m_currentClerk.IsDisposed)
-				{
-					m_currentClerk.ActivateUI(true);
-				}
+				Dispose(true);
+				GC.SuppressFinalize(this);
 			}
+
+			private void Dispose(bool disposing)
+			{
+				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				if (disposing && m_currentClerk != null && !m_currentClerk.IsDisposed)
+					m_currentClerk.ActivateUI(true);
+			}
+
+			~ClerkActivator()
+			{
+				Dispose(false);
+			}
+			#endregion disposal
 
 			private static void CacheClerk(string clerkType, RecordClerk clerk)
 			{
@@ -197,11 +208,26 @@ namespace SIL.FieldWorks.XWorks
 				m_clerk = clerk;
 			}
 
+			#region disposal
 			public void Dispose()
 			{
-				string dummy;
-				ActivateReversalIndexIfNeeded(m_sCurrentRevIdxGuid, m_propertyTable, m_clerk, out dummy);
+				Dispose(true);
+				GC.SuppressFinalize(this);
 			}
+
+			private void Dispose(bool disposing)
+			{
+				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				string dummy;
+				if(disposing)
+					ActivateReversalIndexIfNeeded(m_sCurrentRevIdxGuid, m_propertyTable, m_clerk, out dummy);
+			}
+
+			~ReversalIndexActivator()
+			{
+				Dispose(false);
+			}
+			#endregion disposal
 
 			public static ReversalIndexActivator ActivateReversalIndex(string reversalWs, PropertyTable propertyTable, FdoCache cache)
 			{
@@ -247,11 +273,25 @@ namespace SIL.FieldWorks.XWorks
 				m_propertyTable = propertyTable;
 			}
 
+			#region disposal
 			public void Dispose()
 			{
-				if (!string.IsNullOrEmpty(m_currentPublication))
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				if (disposing && !string.IsNullOrEmpty(m_currentPublication))
 					m_propertyTable.SetProperty("SelectedPublication", m_currentPublication, false);
 			}
+
+			~PublicationActivator()
+			{
+				Dispose(false);
+			}
+			#endregion disposal
 
 			public void ActivatePublication(string publication)
 			{

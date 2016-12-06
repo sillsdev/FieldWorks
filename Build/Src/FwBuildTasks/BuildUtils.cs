@@ -18,6 +18,8 @@ namespace FwBuildTasks
 	/// </summary>
 	public static class BuildUtils
 	{
+		public static bool IsUnix => Environment.OSVersion.Platform == PlatformID.Unix;
+
 		/// <summary>
 		/// Return the executing assembly's location as a directory path.
 		/// </summary>
@@ -54,7 +56,7 @@ namespace FwBuildTasks
 				parameters = new List<XsltParam>();
 			// The DotNet XSLT implementation in Mono can be rather slow, so we'll call into
 			// libxslt.so on Linux.
-			if (Environment.OSVersion.Platform == PlatformID.Unix)
+			if (IsUnix)
 			{
 				ApplyLinuxXslt(stylesheet, resxPath, localizedResxPath, parameters);
 			}

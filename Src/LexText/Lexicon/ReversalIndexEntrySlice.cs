@@ -893,7 +893,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			/// <summary/>
 			protected virtual void Dispose(bool fDisposing)
 			{
-				System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().ToString() + " *******");
+				System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + " *******");
 				if (fDisposing && !IsDisposed)
 				{
 					// Dispose managed resources here.

@@ -1,35 +1,35 @@
 // Original author or copyright holder unknown.
 
 using System;
-using System.Collections;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Windows.Forms;
-using System.Drawing.Design;
 
 using SidebarLibrary.General;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SidebarLibrary.WinControls
 {
 	/// <summary>
 	/// Summary description for ColorListBox.
 	/// </summary>
-	[ToolboxBitmap(typeof(SidebarLibrary.WinControls.ColorListBox),
-		 "SidebarLibrary.WinControls.ColorListBox.bmp")]
-	public class ColorListBox : System.Windows.Forms.ListBox
+	[ToolboxBitmap(typeof(ColorListBox), "SidebarLibrary.WinControls.ColorListBox.bmp")]
+	public class ColorListBox : ListBox
 	{
 
 		#region Class variables
 		string[] colorArray = null;
 		#endregion
 
-		#region Constructors
+		#region Constructors and Disposers
 		public ColorListBox()
 		{
 			DrawMode = DrawMode.OwnerDrawFixed;
 			ItemHeight = ItemHeight + 1;
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
 		}
 		#endregion
 

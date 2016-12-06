@@ -350,5 +350,11 @@ namespace XCore
 		{
 			get { return m_paneBar; }
 		}
+
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ******");
+			base.Dispose(disposing);
+		}
 	}
 }

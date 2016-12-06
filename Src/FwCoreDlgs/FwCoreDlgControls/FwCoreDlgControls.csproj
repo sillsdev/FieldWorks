@@ -211,6 +211,9 @@
       <DependentUpon>ConfigSenseLayout.cs</DependentUpon>
     </Compile>
     <Compile Include="DictionaryConfigComboItems.cs" />
+    <Compile Include="DisposableWindowsForms.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="FontInfoExtensions.cs" />
     <Compile Include="FwBulletsPreview.cs">
       <SubType>UserControl</SubType>

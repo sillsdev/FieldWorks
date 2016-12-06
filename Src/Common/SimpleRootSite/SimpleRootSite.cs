@@ -414,7 +414,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
-			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + "******************");
+			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
@@ -6338,7 +6338,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </remarks>
 		protected virtual void Dispose(bool disposing)
 		{
-			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + "******************");
+			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
 			// Must not be run more than once.
 			if (m_isDisposed)
 				return;

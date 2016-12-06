@@ -369,7 +369,7 @@ namespace XCore
 		/// </remarks>
 		protected override void Dispose(bool disposing)
 		{
-			Debug.WriteLineIf(!disposing, "****************** " + GetType().Name + " 'disposing' is false. ******************");
+			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType() + " ******************");
 			// Can be called more than once, but not run more than once.
 			if (m_isDisposed)
 				return;
