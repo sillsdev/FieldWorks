@@ -541,6 +541,18 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 		public static void CreatePossibilityList(IDomainObjectDTORepository dtoRepo, string listGuid, string ownerGuid,
 			Tuple<string, string, string>[] languageAbbrAndNames, DateTime createTime, int wsSelector, string[] possibilityItems = null, int itemType = 7)
 		{
+			var existingList = FindMatchingCustomList(dtoRepo.AllInstancesWithSubclasses("CmPossibilityList"),
+				languageAbbrAndNames);
+			if (existingList != null)
+			{
+				var listElement = XElement.Parse(existingList.Xml);
+				var names = listElement.Elements("Name");
+				foreach (var titleElement in names.Select(name => name.Element("AUni")).Where(titleElement => titleElement != null))
+				{
+					titleElement.Value = titleElement.Value + "-Custom";
+				}
+				UpdateDTO(dtoRepo, existingList, listElement.ToString());
+			}
 			var sb = new StringBuilder();
 			sb.AppendFormat("<rt class=\"CmPossibilityList\" guid=\"{0}\" ownerguid=\"{1}\">", listGuid,
 							ownerGuid);
@@ -583,6 +595,25 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 
 			var newList = new DomainObjectDTO(listGuid, "CmPossibilityList", sb.ToString());
 			dtoRepo.Add(newList);
+		}
+
+		private static DomainObjectDTO FindMatchingCustomList(IEnumerable<DomainObjectDTO> allInstancesWithSubclasses, Tuple<string, string, string>[] languageAbbrAndNames)
+		{
+			var englishTitle = languageAbbrAndNames.First(t => t.Item1 == "en").Item3;
+			foreach (var list in allInstancesWithSubclasses)
+			{
+				var listElement = XElement.Parse(list.Xml);
+				var names = listElement.Elements("Name").ToList();
+				if (names.Count > 0)
+				{
+					var listEnglishTitle = names.Elements("AUni").First(n => n.Attribute("ws").Value == "en").Value;
+					if (englishTitle == listEnglishTitle)
+					{
+						return list;
+					}
+				}
+			}
+			return null;
 		}
 
 		/// <summary>

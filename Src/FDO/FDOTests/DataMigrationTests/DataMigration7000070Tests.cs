@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 // ReSharper disable PossibleNullReferenceException -- Justification: If the exception is thrown, we'll know to fix the test.
@@ -91,6 +90,42 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			refTypeAttr = objSurElem.Attribute("t");
 			Assert.IsNotNull(refTypeAttr, "The type attribute should be set on the 'objsur' element for the default variant");
 			Assert.AreEqual(refTypeAttr.Value, "r");
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test the migration from version 7000069 to 7000070 when there are duplicated lists (custom and DM generated) to
+		/// prove that custom lists get their titles changed to include -Custom
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void DuplicatedListsAreMarkedAsCustom()
+		{
+			var mockMdc = new MockMDCForDataMigration();
+			mockMdc.AddClass(1, "CmObject", null, new List<string> { "CmPossibilityList", "LanguageProject", "CmCustomItem", "LexDb", "LexEntryRef" });
+			mockMdc.AddClass(2, "CmPossibilityList", "CmObject", new List<string>());
+			mockMdc.AddClass(3, "CmCustomItem", "CmObject", new List<string>());
+			mockMdc.AddClass(4, "LanguageProject", "CmObject", new List<string>());
+			mockMdc.AddClass(5, "LexDb", "CmObject", new List<string>());
+			mockMdc.AddClass(6, "LexEntryRef", "CmObject", new List<string>());
+
+			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000070_DoubledList.xml");
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000069, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
+
+			Assert.AreEqual(2, dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").Count(), "The CmPossibilityList test data has changed");
+
+			m_dataMigrationManager.PerformMigration(dtoRepos, 7000070, new DummyProgressDlg()); // SUT
+
+			var resultingLists = dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").ToList();
+			Assert.AreEqual(2, resultingLists.Count, "The Custom list and new replacement should be all there is");
+			// Make sure that the custom list got a custom name and the 'real' owned list kept the original name
+			foreach (var list in resultingLists)
+			{
+				var listElem = XElement.Parse(list.Xml);
+				var ownerGuid = listElem.Attribute("ownerguid");
+				var firstName = listElem.Element("Name").Elements("AUni").First().Value;
+				Assert.That(firstName, ownerGuid == null ? Is.StringMatching("Languages-Custom") : Is.StringMatching("Languages"));
+			}
 		}
 	}
 }

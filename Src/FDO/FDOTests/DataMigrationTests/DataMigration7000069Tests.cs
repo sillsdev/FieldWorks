@@ -438,11 +438,12 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		public void AddLexEtymologyFieldsMakeSequence()
 		{
 			var mockMdc = new MockMDCForDataMigration();
-			mockMdc.AddClass(1, "CmObject", null, new List<string> { "LexEntry", "LexEtymology", "LangProject", "LexDb" });
+			mockMdc.AddClass(1, "CmObject", null, new List<string> { "LexEntry", "LexEtymology", "LangProject", "LexDb", "CmPossibilityList" });
 			mockMdc.AddClass(2, "LexEntry", "CmObject", new List<string>());
 			mockMdc.AddClass(3, "LexEtymology", "CmObject", new List<string>());
 			mockMdc.AddClass(4, "LangProject", "CmObject", new List<string>());
 			mockMdc.AddClass(5, "LexDb", "CmObject", new List<string>());
+			mockMdc.AddClass(6, "CmPossibilityList", "CmObject", new List<string>());
 
 			var currentFlid = 2000;
 			// These represent the pre-migration state
@@ -1129,6 +1130,47 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			{
 				Assert.IsNull(elt.Element("DialectLabels"));
 			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test the migration from version 7000068 to 7000069 making sure that users who had custom lists which we have made 'real'
+		/// don't end up with problems
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void DuplicatedListsAreMarkedAsCustom()
+		{
+			var mockMdc = new MockMDCForDataMigration();
+			mockMdc.AddClass(1, "CmObject", null, new List<string> { "CmPossibilityList", "LanguageProject", "CmCustomItem", "LexDb", "LexEntryType", "LexSense", "LexEntry" });
+			mockMdc.AddClass(2, "CmPossibilityList", "CmObject", new List<string>());
+			mockMdc.AddClass(3, "CmCustomItem", "CmObject", new List<string>());
+			mockMdc.AddClass(4, "LanguageProject", "CmObject", new List<string>());
+			mockMdc.AddClass(5, "LexDb", "CmObject", new List<string>());
+			mockMdc.AddClass(6, "LexEntryType", "CmObject", new List<string>());
+			mockMdc.AddClass(7, "LexEntryRef", "CmPossibility", new List<string>());
+			mockMdc.AddClass(8, "LexSense", "CmObject", new List<string>());
+			mockMdc.AddClass(9, "LexEntry", "CmObject", new List<string>());
+
+			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000069_CustomList.xml");
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000068, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
+
+			Assert.AreEqual(1, dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").Count(), "The CmPossibilityList test data has changed");
+
+			m_dataMigrationManager.PerformMigration(dtoRepos, 7000069, new DummyProgressDlg()); // SUT
+
+			var resultingLists = dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").ToList();
+			Assert.AreEqual(4, resultingLists.Count, "3 lists were added in addition to the original custom Languages list");
+			var names = new List<string>();
+			foreach (var list in resultingLists)
+			{
+				var listElem = XElement.Parse(list.Xml);
+				var firstName = listElem.Element("Name").Elements("AUni").First().Value;
+				names.Add(firstName);
+			}
+			// Verify that the custom Languages list had -Custom added to the end of it, and that the Languages list was added without incident
+			CollectionAssert.Contains(names, "Languages");
+			CollectionAssert.Contains(names, "Languages-Custom", "The Languages list was not re-named with custom");
 		}
 	}
 }

@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<languageproject version="7000069">
+<rt class="CmPossibilityList" guid="274f48a3-ff00-4b6e-973f-9d6baeafaaed">
+<DateCreated val="2016-12-6 20:20:10.506" />
+<DateModified val="2016-12-6 20:20:42.597" />
+<Depth val="1" />
+<DisplayOption val="0" />
+<IsClosed val="False" />
+<IsSorted val="False" />
+<IsVernacular val="False" />
+<ItemClsid val="27" />
+<ListVersion val="00000000-0000-0000-0000-000000000000" />
+<Name>
+<AUni ws="en">Languages</AUni>
+</Name>
+<Possibilities>
+<objsur guid="d7c0116f-f7c1-4176-96bf-0a4d240f51a4" t="o" />
+</Possibilities>
+<PreventChoiceAboveLevel val="0" />
+<PreventDuplicates val="False" />
+<PreventNodeChoices val="False" />
+<UseExtendedFields val="False" />
+<WsSelector val="-3" />
+</rt>
+<rt class="CmCustomItem" guid="d7c0116f-f7c1-4176-96bf-0a4d240f51a4" ownerguid="274f48a3-ff00-4b6e-973f-9d6baeafaaed">
+<Abbreviation>
+<AUni ws="en">Gk.</AUni>
+</Abbreviation>
+<BackColor val="0" />
+<DateCreated val="2016-12-6 20:20:42.581" />
+<DateModified val="2016-12-6 20:20:54.674" />
+<ForeColor val="0" />
+<Hidden val="False" />
+<IsProtected val="False" />
+<Name>
+<AUni ws="en">Greek</AUni>
+</Name>
+<SortSpec val="0" />
+<UnderColor val="0" />
+<UnderStyle val="0" />
+</rt>
+<rt class="LexDb" guid="af26d792-ea5e-11de-8f7e-0013722f8dec" ownerguid="05994390-ef7d-430b-a9a7-b35ce4093920">
+<Languages>
+<objsur guid="487c15b0-2ced-4417-8b77-9075f4a21e5f" t="o" />
+</Languages>
+</rt>
+<rt class="CmPossibilityList" guid="487c15b0-2ced-4417-8b77-9075f4a21e5f" ownerguid="af26d792-ea5e-11de-8f7e-0013722f8dec">
+<Abbreviation>
+<AUni ws="en">Lgs</AUni>
+<AUni ws="es">Ids</AUni>
+<AUni ws="fr">Lgs</AUni>
+</Abbreviation>
+<DateCreated val="2016-07-25 18:48:18.000" />
+<DateModified val="2016-07-25 18:48:18.000" />
+<Depth val="1" />
+<DisplayOption val="-1073741824" />
+<IsClosed val="False" />
+<IsSorted val="True" />
+<IsVernacular val="False" />
+<ItemClsid val="7" />
+<ListVersion val="00000000-0000-0000-0000-000000000000" />
+<Name>
+<AUni ws="en">Languages</AUni>
+<AUni ws="es">Idiomas</AUni>
+<AUni ws="fr">Langues</AUni>
+</Name>
+<PreventChoiceAboveLevel val="-1073741824" />
+<PreventDuplicates val="True" />
+<PreventNodeChoices val="True" />
+<UseExtendedFields val="False" />
+<WsSelector val="-3" />
+</rt>
+<rt class="LangProject" guid="05994390-ef7d-430b-a9a7-b35ce4093920"/>
+</languageproject>

@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
@@ -24,8 +25,62 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			DataMigrationServices.CheckVersionNumber(repoDto, 7000069);
 
 			CleanOutBadRefTypes(repoDto);
+			RenameDuplicateCustomLists(repoDto);
 
 			DataMigrationServices.IncrementVersionNumber(repoDto);
+		}
+
+		private void RenameDuplicateCustomLists(IDomainObjectDTORepository repoDto)
+		{
+			var allLists = repoDto.AllInstancesWithSubclasses("CmPossibilityList");
+			var namesAndLists = new Dictionary<Tuple<string, string>, DomainObjectDTO>();
+			var duplicates = new List<Tuple<DomainObjectDTO, DomainObjectDTO>>();
+			foreach (var list in allLists)
+			{
+				var listElement = XElement.Parse(list.Xml);
+				var name = listElement.Elements("Name");
+				var listTitles = name.Elements("AUni");
+				foreach (var listTitle in listTitles)
+				{
+					var wsAttrValue = listTitle.Attribute("ws");
+					if (wsAttrValue == null)
+						continue;
+					var key = new Tuple<string, string>(wsAttrValue.Value, listTitle.Value);
+
+					if (namesAndLists.ContainsKey(key))
+					{
+						duplicates.Add(new Tuple<DomainObjectDTO, DomainObjectDTO>(namesAndLists[key], list));
+					}
+					else
+					{
+						namesAndLists.Add(key, list);
+					}
+				}
+			}
+			// This code assumes that one of the duplicates is a custom list which has no ownerguid, the other created by a DM must be owned by LexDb
+			foreach (var duplicate in duplicates)
+			{
+				var listOne = XElement.Parse(duplicate.Item1.Xml);
+				var listTwo = XElement.Parse(duplicate.Item2.Xml);
+				if (listOne.Attribute("ownerguid") != null)
+				{
+					AppendCustomToNamesAndUpdate(repoDto, duplicate.Item2, listTwo);
+				}
+				else
+				{
+					AppendCustomToNamesAndUpdate(repoDto, duplicate.Item1, listOne);
+				}
+			}
+		}
+
+		private void AppendCustomToNamesAndUpdate(IDomainObjectDTORepository repoDto, DomainObjectDTO dto, XElement dtoXml)
+		{
+			var names = dtoXml.Elements("Name");
+			foreach (var titleElement in names.Select(name => name.Element("AUni")).Where(titleElement => titleElement != null))
+			{
+				titleElement.Value = titleElement.Value + "-Custom";
+			}
+			DataMigrationServices.UpdateDTO(repoDto, dto, dtoXml.ToString());
 		}
 
 		private void CleanOutBadRefTypes(IDomainObjectDTORepository repoDto)
@@ -58,7 +113,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				{
 					DataMigration7000069.AddRefType(data, repoDto, dto, "VariantEntryTypes", unspecVariantEntryTypeGuid, false);
 				}
-
 			}
 		}
 	}
