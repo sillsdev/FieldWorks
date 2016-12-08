@@ -508,9 +508,10 @@ common-ViewsInterfaces:
 	(cd $(BUILD_ROOT)/Build && xbuild /t:ViewsInterfaces)
 common-ViewsInterfaces-clean:
 	(cd $(BUILD_ROOT)/Build && xbuild /t:ViewsInterfaces /property:action=clean)
-common-ViewsInterfaces:
+
+common-FwKernelInterfaces:
 	(cd $(BUILD_ROOT)/Build && xbuild /t:FwKernelInterfaces)
-common-ViewsInterfaces-clean:
+common-FwKernelInterfaces-clean:
 	(cd $(BUILD_ROOT)/Build && xbuild /t:FwKernelInterfaces /property:action=clean)
 
 common-Utils:
