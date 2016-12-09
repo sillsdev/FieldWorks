@@ -7966,18 +7966,17 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// LT-17384.
+		/// LT-17384. LT-17762.
 		/// </summary>
 		[Test]
 		public void GenerateXHTMLForEntry_VariantsOfEntryAreOrdered()
 		{
 			var lexentry = CreateInterestingLexEntry(Cache);
 
-			// Because we are testing a sort by Guid, set the Guids instead of leaving them to chance.
-			using (CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordA"), new Guid("00000000-0000-0000-0000-000000000002")))
 			using (CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordB"), new Guid("00000000-0000-0000-0000-000000000001")))
-			using (CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordC"), new Guid("00000000-0000-0000-0000-000000000004")))
-			using (CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordD"), new Guid("00000000-0000-0000-0000-000000000003")))
+			using (CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordA"), new Guid("00000000-0000-0000-0000-000000000003")))
+			using (CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordD"), new Guid("00000000-0000-0000-0000-000000000004")))
+			using (CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordC"), new Guid("00000000-0000-0000-0000-000000000002")))
 			{
 				var variantTypeNameNode = new ConfigurableDictionaryNode
 				{
@@ -8016,13 +8015,13 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
 
-				// Test that variantformentrybackref items are in an order corresponding to their guids.
-				Assert.That(result.IndexOf("headwordB", StringComparison.InvariantCulture),
-					Is.LessThan(result.IndexOf("headwordA", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
+				// Test that variantformentrybackref items are in alphabetical order
 				Assert.That(result.IndexOf("headwordA", StringComparison.InvariantCulture),
-					Is.LessThan(result.IndexOf("headwordD", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
-				Assert.That(result.IndexOf("headwordD", StringComparison.InvariantCulture),
+					Is.LessThan(result.IndexOf("headwordB", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
+				Assert.That(result.IndexOf("headwordB", StringComparison.InvariantCulture),
 					Is.LessThan(result.IndexOf("headwordC", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
+				Assert.That(result.IndexOf("headwordC", StringComparison.InvariantCulture),
+					Is.LessThan(result.IndexOf("headwordD", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
 			}
 		}
 

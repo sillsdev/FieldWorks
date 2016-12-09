@@ -1644,9 +1644,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var bldr = new StringBuilder();
 			var dummy = string.Empty;
-			// Order by guid (to order things consistently; see LT-17384).
-			// Though perhaps another sort key would be better, such as ICmObject.SortKey or ICmObject.SortKey2.
-			var lerCollection = collection.Cast<ILexEntryRef>().OrderBy(ler => ler.Guid).ToList();
+			// Order things consistently; see LT-17384.
+			var lerCollection = collection.Cast<ILexEntryRef>().OrderBy(ler => ler.SortKey).ToList();
 			// Group by Type only if Type is selected for output.
 			if (typeNode.IsEnabled && typeNode.ReferencedOrDirectChildren != null && typeNode.ReferencedOrDirectChildren.Any(y => y.IsEnabled))
 			{
