@@ -16,6 +16,7 @@ using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
@@ -1644,8 +1645,16 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var bldr = new StringBuilder();
 			var dummy = string.Empty;
-			// Order things consistently; see LT-17384.
-			var lerCollection = collection.Cast<ILexEntryRef>().OrderBy(ler => ler.SortKey).ToList();
+
+			var lerCollection = collection.Cast<ILexEntryRef>().ToList();
+			if (lerCollection.Count > 0)
+			{
+				// Order things (LT-17384, LT-17762).
+				var wsId = settings.Cache.ServiceLocator.WritingSystemManager.Get(lerCollection.First().SortKeyWs);
+				var comparer = new WritingSystemComparer(wsId);
+				lerCollection.Sort((left, right) => comparer.Compare(left.SortKey, right.SortKey));
+			}
+
 			// Group by Type only if Type is selected for output.
 			if (typeNode.IsEnabled && typeNode.ReferencedOrDirectChildren != null && typeNode.ReferencedOrDirectChildren.Any(y => y.IsEnabled))
 			{
