@@ -16,7 +16,6 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using SIL.PaToFdoInterfaces;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
@@ -88,7 +87,7 @@ namespace SIL.FieldWorks.PaObjects
 		public bool ShowOpenProject(Form owner, ref Rectangle dialogBounds,
 			ref int dialogSplitterPos, out string name, out string server)
 		{
-			Icu.InitIcuDataDir();
+			Common.COMInterfaces.Icu.InitIcuDataDir();
 			RegistryHelper.ProductName = "FieldWorks"; // inorder to find correct Registry keys
 
 			using (var dlg = new ChooseLangProjectDialog(dialogBounds, dialogSplitterPos))
