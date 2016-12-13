@@ -16,14 +16,17 @@ namespace SIL.CoreImpl
 	{
 		private static string s_CommonAppDataFolder;
 
-		/// <summary>
-		/// Resets the static variables. Used for unit tests.
-		/// </summary>
-		internal static void ResetStaticVars()
+		/// <summary/>
+		public static class UnitTestHelper
 		{
-			s_CommonAppDataFolder = null;
+			/// <summary>
+			/// Resets the static variables. Used for unit tests.
+			/// </summary>
+			public static void ResetStaticVars()
+			{
+				s_CommonAppDataFolder = null;
+			}
 		}
-
 
 		/// <summary>
 		/// Gets the company name (should be SIL).

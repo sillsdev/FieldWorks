@@ -15,7 +15,7 @@ namespace SIL.CoreImpl
 		private void SetupEnvironment(string path)
 		{
 			m_previousEnvironment = Environment.GetEnvironmentVariable("FW_CommonAppData");
-			DirectoryFinder.ResetStaticVars();
+			DirectoryFinder.UnitTestHelper.ResetStaticVars();
 			Environment.SetEnvironmentVariable("FW_CommonAppData", path);
 		}
 
