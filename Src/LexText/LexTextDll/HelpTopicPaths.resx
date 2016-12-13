@@ -3292,4 +3292,19 @@
   <data name="khtpBulkEditDialectLabels(Sense)" xml:space="preserve">
     <value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_choose_Dialect_Labels.htm</value>
   </data>
+  <data name="khtpBulkEditEtym.-SourceLanguage" xml:space="preserve">
+    <value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_Edit_Entries_overview.htm</value>
+  </data>
+  <data name="khtpBulkEditExt.Note-Type" xml:space="preserve">
+    <value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_Edit_Entries_overview.htm</value>
+  </data>
+  <data name="khtpBulkEditPublishIn(Pictures)" xml:space="preserve">
+    <value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_publications.htm</value>
+  </data>
+  <data name="khtpBulkEditPublishIn(Pronunciations)" xml:space="preserve">
+    <value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_publications.htm</value>
+  </data>
+  <data name="khtpBulkEditSenseType" xml:space="preserve">
+    <value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_Edit_Entries_overview.htm</value>
+  </data>
 </root>
