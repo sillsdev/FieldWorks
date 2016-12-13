@@ -201,6 +201,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				var nodesToRemove = new[] {"Etymological Form", "Comment", "Source"};
 				node.Children.RemoveAll(n => nodesToRemove.Contains(n.Label));
 			}
+			// Etymology changed too much to be matched in the PreHistoricMigration and was marked as custom
+			DCM.PerformActionOnNodes(etymNodes, n => {n.IsCustomField = false;});
 		}
 
 		private static bool IsHybrid(DictionaryConfigurationModel model)

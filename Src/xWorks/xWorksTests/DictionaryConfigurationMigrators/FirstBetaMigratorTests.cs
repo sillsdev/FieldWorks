@@ -687,6 +687,48 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 		}
 
 		[Test]
+		public void MigrateFromConfig83AlphaToBeta10_UpdatesCustomFieldForEtymologyCluster()
+		{
+			var name = new ConfigurableDictionaryNode
+			{
+				Label = "Name",
+				FieldDescription = "Name",
+				IsCustomField = true
+			};
+			var sourceNode = new ConfigurableDictionaryNode
+			{
+				Label = "Source Form",
+				FieldDescription = "Form",
+				IsCustomField = true,
+				Children = new List<ConfigurableDictionaryNode> { name }
+			};
+			var etymologyNode = new ConfigurableDictionaryNode
+			{
+				Label = "Etymology",
+				FieldDescription = "EtymologyOA",
+				CSSClassNameOverride = "etymology",
+				Children = new List<ConfigurableDictionaryNode> { sourceNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { etymologyNode }
+			};
+			var alphaModel = new DictionaryConfigurationModel
+			{
+				Version = FirstAlphaMigrator.VersionAlpha3,
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			var rootModel = m_migrator.LoadBetaDefaultForAlphaConfig(alphaModel);
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, rootModel);
+			var etymChildren = etymologyNode.Children;
+			var configNode = etymChildren.Find(node => node.Label == "Source Form");
+			Assert.That(configNode.IsCustomField, Is.False, "Language node should not be custom field");
+			Assert.That(configNode.Children[0].IsCustomField, Is.False, "Name of Language node should not be custom field");
+		}
+
+		[Test]
 		public void MigrateFromConfig83AlphaToBeta10_PathologicalEtymologyCaseDoesNotThrow()
 		{
 			// Custom field etymology caused crash
