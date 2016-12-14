@@ -127,5 +127,38 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 				Assert.That(firstName, ownerGuid == null ? Is.StringMatching("Languages-Custom") : Is.StringMatching("Languages"));
 			}
 		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test that the migration from version 7000069 to 7000070 fixes some bad data in enum fields
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void BadListDisplayOptionAndChoiceOptionAreFixed()
+		{
+			var mockMdc = new MockMDCForDataMigration();
+			mockMdc.AddClass(1, "CmObject", null, new List<string> { "CmPossibilityList", "LanguageProject", "CmCustomItem", "LexDb", "LexEntryRef" });
+			mockMdc.AddClass(2, "CmPossibilityList", "CmObject", new List<string>());
+			mockMdc.AddClass(3, "CmCustomItem", "CmObject", new List<string>());
+			mockMdc.AddClass(4, "LanguageProject", "CmObject", new List<string>());
+			mockMdc.AddClass(5, "LexDb", "CmObject", new List<string>());
+			mockMdc.AddClass(6, "LexEntryRef", "CmObject", new List<string>());
+
+			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000070_DoubledList.xml");
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000069, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
+
+			const string badEnumValue = "-1073741824";
+			Assert.True(dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").Any(dto => dto.Xml.Contains("PreventChoiceAboveLevel val=\"" + badEnumValue + "\"")),
+				"The CmPossibilityList test data has changed");
+			Assert.True(dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").Any(dto => dto.Xml.Contains("DisplayOption val=\"" + badEnumValue + "\"")),
+				"The CmPossibilityList test data has changed");
+
+			m_dataMigrationManager.PerformMigration(dtoRepos, 7000070, new DummyProgressDlg()); // SUT
+
+			var resultingLists = dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").ToList();
+			Assert.False(dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").Any(dto => dto.Xml.Contains(badEnumValue)), "Bad list data was not removed.");
+			Assert.AreEqual(2, resultingLists.Count(dto => dto.Xml.Contains("PreventChoiceAboveLevel val=\"0\"")), "PreventChoiceAbove should have changed to 0");
+			Assert.AreEqual(2, resultingLists.Count(dto => dto.Xml.Contains("DisplayOption val=\"0\"")), "DisplayOption should have changed to 0");
+		}
 	}
 }

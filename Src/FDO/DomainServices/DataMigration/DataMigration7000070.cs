@@ -5,9 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
-using System.Xml.XPath;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 {
@@ -25,12 +23,12 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			DataMigrationServices.CheckVersionNumber(repoDto, 7000069);
 
 			CleanOutBadRefTypes(repoDto);
-			RenameDuplicateCustomLists(repoDto);
+			RenameDuplicateCustomListsAndFixBadLists(repoDto);
 
 			DataMigrationServices.IncrementVersionNumber(repoDto);
 		}
 
-		private void RenameDuplicateCustomLists(IDomainObjectDTORepository repoDto)
+		private void RenameDuplicateCustomListsAndFixBadLists(IDomainObjectDTORepository repoDto)
 		{
 			var allLists = repoDto.AllInstancesWithSubclasses("CmPossibilityList");
 			var namesAndLists = new Dictionary<Tuple<string, string>, DomainObjectDTO>();
@@ -40,6 +38,27 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				var listElement = XElement.Parse(list.Xml);
 				var name = listElement.Elements("Name");
 				var listTitles = name.Elements("AUni");
+				// Grab the elements which had bad numbers put in them and fix them saving the dto
+				var displayOption = listElement.Elements("DisplayOption").FirstOrDefault();
+				if (displayOption != null)
+				{
+					PossNameType option;
+					if (!Enum.TryParse(displayOption.Attribute("val").Value, out option) || !Enum.IsDefined(typeof(PossNameType), option))
+					{
+						displayOption.SetAttributeValue("val", "0");
+						DataMigrationServices.UpdateDTO(repoDto, list, listElement.ToString());
+					}
+				}
+				var preventChoiceAbove = listElement.Elements("PreventChoiceAboveLevel").FirstOrDefault();
+				if (preventChoiceAbove != null)
+				{
+					int preventChoiceAboveVal = -1;
+					if (!int.TryParse(preventChoiceAbove.Attribute("val").Value, out preventChoiceAboveVal) || preventChoiceAboveVal < 0)
+					{
+						preventChoiceAbove.SetAttributeValue("val", "0");
+						DataMigrationServices.UpdateDTO(repoDto, list, listElement.ToString());
+					}
+				}
 				foreach (var listTitle in listTitles)
 				{
 					var wsAttrValue = listTitle.Attribute("ws");

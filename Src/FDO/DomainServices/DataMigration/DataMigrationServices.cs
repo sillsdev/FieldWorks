@@ -565,7 +565,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			sb.AppendFormat("<DateCreated val=\"{0:yyyy-MM-dd HH:mm:ss.fff}\" />", createTime);
 			sb.AppendFormat("<DateModified val=\"{0:yyyy-MM-dd HH:mm:ss.fff}\" />", createTime);
 			sb.Append("<Depth val=\"1\" />");
-			sb.Append("<DisplayOption val=\"-1073741824\" />");
+			sb.Append("<DisplayOption val=\"0\" />");
 			sb.Append("<IsClosed val=\"False\" />");
 			sb.Append("<IsSorted val=\"True\" />");
 			sb.Append("<IsVernacular val=\"False\" />");
@@ -586,7 +586,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				}
 				sb.Append("</Possibilities>");
 			}
-			sb.Append("<PreventChoiceAboveLevel val=\"-1073741824\" />");
+			sb.Append("<PreventChoiceAboveLevel val=\"0\" />");
 			sb.Append("<PreventDuplicates val=\"True\" />");
 			sb.Append("<PreventNodeChoices val=\"True\" />");
 			sb.Append("<UseExtendedFields val=\"False\" />");
