@@ -3,6 +3,8 @@ GeneratedAssemblyInfo.cs
 Collection.cpp
 Build/FieldWorks.targets
 Build/GlobalInclude.properties
+Build/ILRepack/
+Build/NuGet.exe
 Src/Common/COMInterfaces/FwKernel.cs
 Src/Common/COMInterfaces/Views.cs
 Src/Common/CoreImpl/CellarPropertyType.cs
