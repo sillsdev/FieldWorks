@@ -1155,12 +1155,12 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000069_CustomList.xml");
 			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000068, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
 
-			Assert.AreEqual(1, dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").Count(), "The CmPossibilityList test data has changed");
+			Assert.AreEqual(2, dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").Count(), "The CmPossibilityList test data has changed");
 
 			m_dataMigrationManager.PerformMigration(dtoRepos, 7000069, new DummyProgressDlg()); // SUT
 
 			var resultingLists = dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").ToList();
-			Assert.AreEqual(4, resultingLists.Count, "3 lists were added in addition to the original custom Languages list");
+			Assert.AreEqual(5, resultingLists.Count, "3 lists were added in addition to the original custom Languages lists");
 			var names = new List<string>();
 			foreach (var list in resultingLists)
 			{

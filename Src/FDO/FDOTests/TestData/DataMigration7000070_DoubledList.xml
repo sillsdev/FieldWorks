@@ -48,7 +48,7 @@
 <Abbreviation>
 <AUni ws="en">Lgs</AUni>
 <AUni ws="es">Ids</AUni>
-<AUni ws="fr">Lgs</AUni>
+<AUni ws="fr" />
 </Abbreviation>
 <DateCreated val="2016-07-25 18:48:18.000" />
 <DateModified val="2016-07-25 18:48:18.000" />
@@ -62,12 +62,20 @@
 <Name>
 <AUni ws="en">Languages</AUni>
 <AUni ws="es">Idiomas</AUni>
-<AUni ws="fr">Langues</AUni>
+<AUni ws="fr" />
 </Name>
 <PreventChoiceAboveLevel val="-1073741824" />
 <PreventDuplicates val="True" />
 <PreventNodeChoices val="True" />
 <UseExtendedFields val="False" />
+<WsSelector val="-3" />
+</rt>
+<rt class="CmPossibilityList" guid="ac4f48a3-ff00-4b6e-973f-9d6baeafa872">
+<Name>
+<AUni ws="en">Not Languages</AUni>
+<AUni ws="fr" />
+</Name>
+<Possibilities />
 <WsSelector val="-3" />
 </rt>
 <rt class="LangProject" guid="05994390-ef7d-430b-a9a7-b35ce4093920"/>

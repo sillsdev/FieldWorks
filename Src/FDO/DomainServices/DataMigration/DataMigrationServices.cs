@@ -597,17 +597,18 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			dtoRepo.Add(newList);
 		}
 
-		private static DomainObjectDTO FindMatchingCustomList(IEnumerable<DomainObjectDTO> allInstancesWithSubclasses, Tuple<string, string, string>[] languageAbbrAndNames)
+		private static DomainObjectDTO FindMatchingCustomList(IEnumerable<DomainObjectDTO> allCmPossibilityLists,
+			Tuple<string, string, string>[] languageAbbrAndNames)
 		{
 			var englishTitle = languageAbbrAndNames.First(t => t.Item1 == "en").Item3;
-			foreach (var list in allInstancesWithSubclasses)
+			foreach (var list in allCmPossibilityLists)
 			{
 				var listElement = XElement.Parse(list.Xml);
 				var names = listElement.Elements("Name").ToList();
 				if (names.Count > 0)
 				{
-					var listEnglishTitle = names.Elements("AUni").First(n => n.Attribute("ws").Value == "en").Value;
-					if (englishTitle == listEnglishTitle)
+					var listEnglishTitle = names.Elements("AUni").FirstOrDefault(n => n.Attribute("ws").Value == "en");
+					if (listEnglishTitle != null && englishTitle == listEnglishTitle.Value)
 					{
 						return list;
 					}

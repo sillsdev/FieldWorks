@@ -66,6 +66,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 						continue;
 					var key = new Tuple<string, string>(wsAttrValue.Value, listTitle.Value);
 
+					if (string.IsNullOrEmpty(key.Item2)) // If there is no actual name for a writing system ignore it
+						continue;
 					if (namesAndLists.ContainsKey(key))
 					{
 						duplicates.Add(new Tuple<DomainObjectDTO, DomainObjectDTO>(namesAndLists[key], list));

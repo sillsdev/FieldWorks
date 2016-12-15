@@ -112,20 +112,23 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000070_DoubledList.xml");
 			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000069, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
 
-			Assert.AreEqual(2, dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").Count(), "The CmPossibilityList test data has changed");
+			Assert.AreEqual(3, dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").Count(), "The CmPossibilityList test data has changed");
 
 			m_dataMigrationManager.PerformMigration(dtoRepos, 7000070, new DummyProgressDlg()); // SUT
 
 			var resultingLists = dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").ToList();
-			Assert.AreEqual(2, resultingLists.Count, "The Custom list and new replacement should be all there is");
+			Assert.AreEqual(3, resultingLists.Count, "The Custom list and new replacement should be all there is");
 			// Make sure that the custom list got a custom name and the 'real' owned list kept the original name
-			foreach (var list in resultingLists)
-			{
-				var listElem = XElement.Parse(list.Xml);
-				var ownerGuid = listElem.Attribute("ownerguid");
-				var firstName = listElem.Element("Name").Elements("AUni").First().Value;
-				Assert.That(firstName, ownerGuid == null ? Is.StringMatching("Languages-Custom") : Is.StringMatching("Languages"));
-			}
+			var custLanguages = XElement.Parse(resultingLists[0].Xml);
+			var origLanguages = XElement.Parse(resultingLists[1].Xml);
+			var notLanguages = XElement.Parse(resultingLists[2].Xml);
+			Assert.IsTrue(origLanguages.Attribute("ownerguid") != null, "Test data order has changed");
+			var firstName = origLanguages.Element("Name").Elements("AUni").First().Value;
+			Assert.That(firstName, Is.StringMatching("Languages"), "Built in list should not have changed the name");
+			firstName = custLanguages.Element("Name").Elements("AUni").First().Value;
+			Assert.That(firstName, Is.StringMatching("Languages-Custom"), "The custom Languages list did not have its name changed");
+			firstName = notLanguages.Element("Name").Elements("AUni").First().Value;
+			Assert.That(firstName, Is.StringMatching("Not Languages"), "The unrelated list should not have had its name changed");
 		}
 
 		/// ------------------------------------------------------------------------------------

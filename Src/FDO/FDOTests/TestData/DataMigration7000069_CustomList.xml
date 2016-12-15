@@ -39,6 +39,14 @@
 <UnderColor val="0" />
 <UnderStyle val="0" />
 </rt>
+<!-- Add a list with no name in english -->
+<rt class="CmPossibilityList" guid="b24f48a3-ff00-4b6e-973f-9d6baeafaa77">
+<Name>
+<AUni ws="es">no Ingles</AUni>
+</Name>
+<Possibilities>
+</Possibilities>
+</rt>
 <rt class="LexDb" guid="af26d792-ea5e-11de-8f7e-0013722f8dec" ownerguid="05994390-ef7d-430b-a9a7-b35ce4093920">
 <Languages>
 <objsur guid="487c15b0-2ced-4417-8b77-9075f4a21e5f" t="o" />
