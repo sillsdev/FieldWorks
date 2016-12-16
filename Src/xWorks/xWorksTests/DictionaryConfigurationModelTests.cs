@@ -13,7 +13,6 @@ using System.Xml.Schema;
 using NUnit.Framework;
 using Palaso.IO;
 using Palaso.TestUtilities;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -1065,6 +1064,7 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryConfigurationController.LinkReferencedNode(model.SharedItems, configNode, m_reference);
 			Assert.AreEqual(refConfigNode.Label, configNode.ReferenceItem);
 			Assert.AreSame(refConfigNode, configNode.ReferencedNode);
+			Assert.That(refConfigNode.IsEnabled, "Referenced nodes are inaccessible to users, but must be enabled for their children to function");
 		}
 
 		[Test]

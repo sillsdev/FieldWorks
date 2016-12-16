@@ -355,6 +355,8 @@
 										<LexExampleSentence sourceField="AllExampleSentenceTargets">
 											<CmTranslation sourceField="AllExampleTranslationTargets"/>
 										</LexExampleSentence>
+										<LexExtendedNote sourceField="AllExtendedNoteTargets"/>
+										<CmPicture sourceField="AllPossiblePictures"/>
 									</LexSense>
 								</LexEntry>
 							</ClassOwnershipTree>
@@ -417,6 +419,18 @@
 										<int class="LexExampleSentence" field="Self"/>
 									</seq>
 								</part>
+								<part id="LexEntry-Jt-AllPossiblePictures" type="jtview">
+									<seq class="LexEntry" field="AllSenses" firstOnly="true" layout="empty">
+										<seq class="LexSense" field="Pictures" firstOnly="true" layout="empty">
+											<int class="CmPicture" field="Self"/>
+										</seq>
+									</seq>
+								</part>
+								<part id="LexSense-Jt-AllPossiblePictures" type="jtview">
+									<seq class="LexSense" field="Pictures" firstOnly="true" layout="empty">
+										<int class="CmPicture" field="Self"/>
+									</seq>
+								</part>
 								<part id="LexEntry-Jt-AllExampleTranslationTargets" type="jtview">
 									<seq class="LexEntry" field="AllSenses" firstOnly="true" layout="empty">
 										<seq class="LexSense" field="Examples" firstOnly="true" layout="empty">
@@ -436,6 +450,18 @@
 								<part id="LexExampleSentence-Jt-AllExampleTranslationTargets" type="jtview">
 									<seq class="LexExampleSentence" field="Translations" firstOnly="true" layout="empty">
 										<int class="CmTranslation" field="Self"/>
+									</seq>
+								</part>
+								<part id="LexEntry-Jt-AllExtendedNoteTargets" type="jtview">
+									<seq class="LexEntry" field="AllSenses" firstOnly="true" layout="empty">
+										<seq class="LexSense" field="ExtendedNote" firstOnly="true" layout="empty">
+											<int class="LexExtendedNote" field="Self"/>
+										</seq>
+									</seq>
+								</part>
+								<part id="LexSense-Jt-AllExtendedNoteTargets" type="jtview">
+									<seq class="LexSense" field="ExtendedNote" firstOnly="true" layout="empty">
+										<int class="LexExtendedNote" field="Self"/>
 									</seq>
 								</part>
 							</ParentClassPathsToChildren>

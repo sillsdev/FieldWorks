@@ -297,7 +297,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				Style = style,
 				Label = label,
 				FieldDescription = group,
-				DictionaryNodeOptions = new DictionaryNodeGroupingOptions { Description = description, DisplayGroupInParagraph = true }
+				DictionaryNodeOptions = new DictionaryNodeGroupingOptions { Description = description, DisplayEachInAParagraph = true }
 			};
 			var defaultModelWithGroup = new DictionaryConfigurationModel
 			{
@@ -684,6 +684,85 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			Assert.That(configNode.FieldDescription, Is.EqualTo("Bibliography"));
 			Assert.That(configNode.IsEnabled, Is.False, "Bibliography node should not be enabled");
 			TestForWritingSystemOptionsType(configNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
+		}
+
+		[Test]
+		public void MigrateFromConfig83AlphaToBeta10_UpdatesCustomFieldForEtymologyCluster()
+		{
+			var name = new ConfigurableDictionaryNode
+			{
+				Label = "Name",
+				FieldDescription = "Name",
+				IsCustomField = true
+			};
+			var sourceNode = new ConfigurableDictionaryNode
+			{
+				Label = "Source Form",
+				FieldDescription = "Form",
+				IsCustomField = true,
+				Children = new List<ConfigurableDictionaryNode> { name }
+			};
+			var etymologyNode = new ConfigurableDictionaryNode
+			{
+				Label = "Etymology",
+				FieldDescription = "EtymologyOA",
+				CSSClassNameOverride = "etymology",
+				Children = new List<ConfigurableDictionaryNode> { sourceNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { etymologyNode }
+			};
+			var alphaModel = new DictionaryConfigurationModel
+			{
+				Version = FirstAlphaMigrator.VersionAlpha3,
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			var rootModel = m_migrator.LoadBetaDefaultForAlphaConfig(alphaModel);
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, rootModel);
+			var etymChildren = etymologyNode.Children;
+			var configNode = etymChildren.Find(node => node.Label == "Source Form");
+			Assert.That(configNode.IsCustomField, Is.False, "Language node should not be custom field");
+			Assert.That(configNode.Children[0].IsCustomField, Is.False, "Name of Language node should not be custom field");
+		}
+
+		[Test]
+		public void MigrateFromConfig83AlphaToBeta10_PathologicalEtymologyCaseDoesNotThrow()
+		{
+			// Custom field etymology caused crash
+			var customEtymology = new ConfigurableDictionaryNode
+			{
+				Label = "Etymology",
+				FieldDescription = "Etymology (Custom)",
+				Children = new List<ConfigurableDictionaryNode> {  new ConfigurableDictionaryNode { Label = "unimportant"} }
+			};
+			var variantNode = new ConfigurableDictionaryNode
+			{
+				Label = "Variant Form",
+				FieldDescription = "VariantEntryBackRefs",
+				Children = new List<ConfigurableDictionaryNode> { customEtymology }
+			};
+			// Weird old etymology node without children (caused crash)
+			var etymologyNode = new ConfigurableDictionaryNode
+			{
+				Label = "Etymology",
+				FieldDescription = "EtymologyOA"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { etymologyNode, variantNode }
+			};
+			var alphaModel = new DictionaryConfigurationModel
+			{
+				Version = FirstAlphaMigrator.VersionAlpha3,
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			var rootModel = m_migrator.LoadBetaDefaultForAlphaConfig(alphaModel);
+			Assert.DoesNotThrow(() => m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, rootModel));
 		}
 
 		private static void TestForWritingSystemOptionsType(ConfigurableDictionaryNode configNode,

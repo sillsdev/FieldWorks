@@ -270,12 +270,15 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				var refTypeElt = data.Element("RefType");
 				var varientEntryTypeElt = data.Element("VariantEntryTypes");
 				var complexEntryTypeElt = data.Element("ComplexEntryTypes");
-				if (refTypeElt == null) continue;
-				if (refTypeElt.FirstAttribute.Value == "0" && complexEntryTypeElt == null)
+				if (refTypeElt == null)
+				{
+					continue;
+				}
+				if (refTypeElt.FirstAttribute.Value == LexEntryRefTags.krtComplexForm.ToString() && complexEntryTypeElt == null)
 				{
 					AddRefType(data, repoDto, dto, "ComplexEntryTypes", unspecComplexEntryTypeGuid, false);
 				}
-				else if (refTypeElt.FirstAttribute.Value == "1" && varientEntryTypeElt == null)
+				else if (refTypeElt.FirstAttribute.Value == LexEntryRefTags.krtVariant.ToString() && varientEntryTypeElt == null)
 				{
 					AddRefType(data, repoDto, dto, "VariantEntryTypes", unspecVariantEntryTypeGuid, false);
 				}
@@ -325,7 +328,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			repoDto.Update(entryTypeDto);
 		}
 
-		private static void AddRefType(XElement data, IDomainObjectDTORepository repoDto, DomainObjectDTO dto, string tagName, string guid, bool owned)
+		internal static void AddRefType(XElement data, IDomainObjectDTORepository repoDto, DomainObjectDTO dto, string tagName, string guid, bool owned)
 		{
 			var varElementTag = data.Element(tagName);
 			if (varElementTag == null)

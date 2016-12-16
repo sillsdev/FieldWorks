@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Xml;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
@@ -189,8 +190,9 @@ namespace SIL.FieldWorks.Common.Controls
 			if (isInitializing && m_labelAttrSuffix.ContainsKey(key + dup))
 			{
 				if (!dup.Contains(".")) return key + dup;
-				var numCount = dup.Split('.');
-				var numIncr = Int32.Parse(numCount[numCount.Length - 1]) + 1;
+				//numIncr value are getting from the label attribute text which are between the paranthesis
+				var labelKey = Utils.XmlUtils.GetOptionalAttributeValue(node, LabelAttr, ChildStr);
+				var numIncr = Regex.Match(labelKey, @"\(([^)]*)\)").Groups[1].Value;
 				dup = String.Join(".", dup + "-" + numIncr);
 				//Updating dup value in node attribute
 				if (node.Attributes != null) node.Attributes["dup"].Value = dup;

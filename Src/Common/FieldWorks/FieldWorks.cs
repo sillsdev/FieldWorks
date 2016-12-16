@@ -26,7 +26,6 @@ using System.Threading;
 using System.Windows.Forms;
 using Gecko;
 using Microsoft.Win32;
-using Palaso.IO;
 using Palaso.Reporting;
 using Palaso.UI.WindowsForms.HtmlBrowser;
 using Palaso.UI.WindowsForms.Keyboarding;
@@ -57,9 +56,6 @@ using ExceptionHelper = SIL.Utils.ExceptionHelper;
 using Logger = SIL.Utils.Logger;
 using SIL.CoreImpl.Properties;
 using FileUtils = SIL.Utils.FileUtils;
-#if !__MonoCS__
-using NetSparkle;
-#endif
 
 [assembly:SuppressMessage("Gendarme.Rules.Portability", "ExitCodeIsLimitedOnUnixRule",
 	Justification="Gendarme bug? We only return values >= 0")]
@@ -152,6 +148,9 @@ namespace SIL.FieldWorks
 		{
 			Thread.CurrentThread.Name = "Main thread";
 			Logger.Init(FwUtils.ksSuiteName);
+
+			Icu.Wrapper.ConfineIcuVersions(54);
+
 			FdoCache.NewerWritingSystemFound += ComplainToUserAboutNewWs;
 			// Note to developers: Uncomment this line to be able to attach the debugger to a process for a project
 			// other than the initial one that gets started up in VS:
@@ -219,7 +218,7 @@ namespace SIL.FieldWorks
 				Application.EnableVisualStyles();
 
 				// initialize ICU
-				Icu.InitIcuDataDir();
+				Common.COMInterfaces.Icu.InitIcuDataDir();
 
 				// initialize Palaso keyboarding
 				KeyboardController.Initialize();
@@ -3162,33 +3161,6 @@ namespace SIL.FieldWorks
 				if (s_noUserInterface || InitializeApp(app, s_splashScreen))
 				{
 					app.RegistrySettings.LoadingProcessId = 0;
-#if !__MonoCS__
-					if (!WindowsInstallerQuery.IsThisInstalled() || app.ActiveMainWindow == null)
-						return true;
-
-					// Initialize NetSparkle to check for updates:
-					Settings.Default.IsBTE = WindowsInstallerQuery.IsThisBTE();
-
-					var appCastUrl = Settings.Default.IsBTE
-						? (Settings.Default.CheckForBetaUpdates
-							? CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastBteBetasUrl")
-							: CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastBteUrl"))
-						: (Settings.Default.CheckForBetaUpdates
-							? CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastSeBetasUrl")
-							: CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastSeUrl"));
-
-					var sparkle = SingletonsContainer.Get("Sparkle", () => new Sparkle(appCastUrl, app.ActiveMainWindow.Icon));
-					sparkle.AboutToExitForInstallerRun += delegate(object sender, CancelEventArgs args)
-						{
-							CloseAllMainWindows();
-							if(app.ActiveMainWindow != null)
-							{
-								args.Cancel = true;
-							}
-						};
-					if (Settings.Default.AutoCheckForUpdates)
-						sparkle.CheckOnFirstApplicationIdle();
-#endif
 					return true;
 				}
 			}

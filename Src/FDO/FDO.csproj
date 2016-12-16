@@ -181,6 +181,7 @@
     <Compile Include="Application\ReferenceTracker.cs" />
     <Compile Include="CacheKey.cs" />
     <Compile Include="DomainServices\DataMigration\DataMigration7000069.cs" />
+    <Compile Include="DomainServices\DataMigration\DataMigration7000070.cs" />
     <Compile Include="DomainServices\SharedBackendServices.cs" />
     <Compile Include="FdoDataMigrationForbiddenException.cs" />
     <Compile Include="FdoFileLockedException.cs" />

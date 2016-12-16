@@ -176,7 +176,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Note that this implementation is only possible because there are no other possible owners for LexExtendedNote.
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.ReferenceSequence, "CmObject")]
-		public IEnumerable<ICmObject> AllPossibleExtendedNotes
+		public IEnumerable<ICmObject> AllExtendedNoteTargets
 		{
 			get
 			{
@@ -184,6 +184,24 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					.Concat((from sense in Cache.ServiceLocator.GetInstance<ILexSenseRepository>().AllInstances()
 						where sense.ExtendedNoteOS.Count == 0
 						select sense))
+					.ToList();
+			}
+		}
+
+		/// <summary>
+		/// Gets all the bulk-editable things that might be used as the destination of a bulk edit to
+		/// pictures. This includes the senses that do not have extended notes.
+		/// Note that this implementation is only possible because there are no other possible owners for LexExtendedNote.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceSequence, "CmObject")]
+		public IEnumerable<ICmObject> AllPossiblePictures
+		{
+			get
+			{
+				return Cache.ServiceLocator.GetInstance<ICmPictureRepository>().AllInstances().Cast<ICmObject>()
+					.Concat((from sense in Cache.ServiceLocator.GetInstance<ILexSenseRepository>().AllInstances()
+							 where sense.PicturesOS.Count == 0
+							 select sense))
 					.ToList();
 			}
 		}
@@ -605,6 +623,17 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (flid == Cache.MetaDataCacheAccessor.GetFieldId2(LexExtendedNoteTags.kClassId, "ExtendedNoteType", false))
 				return Cache.LangProject.LexDbOA.ExtendedNoteTypesOA;
 			return base.ReferenceTargetOwner(flid);
+		}
+
+		/// <summary>
+		/// Object owner. This virtual may seem redundant with CmObject.Owner, but it is important,
+		/// because we can correctly indicate the destination class. This is used (at least) in
+		/// PartGenerator.GeneratePartsFromLayouts to determine that it needs to generate parts for LexSense.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceAtomic, "LexSense")]
+		public ILexSense OwningSense
+		{
+			get { return (ILexSense)Owner; }
 		}
 	}
 

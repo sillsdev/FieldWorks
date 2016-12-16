@@ -216,22 +216,6 @@ namespace SIL.FieldWorks.XWorks
 					GenerateCssForWritingSystemPrefix(configNode, styleSheet, baseSelection, mediator);
 				}
 			}
-			else if (configNode.DictionaryNodeOptions is DictionaryNodeGroupingOptions
-					&& ((DictionaryNodeGroupingOptions)configNode.DictionaryNodeOptions).DisplayGroupInParagraph)
-			{
-				// In a grouping node with DisplayGroupInParagraph on we should add the block display
-				GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, cache, mediator);
-				rule.Value = baseSelection;
-				rule.Declarations.Add(new Property("display"){ Term = new PrimitiveTerm(UnitType.Ident, "block") });
-				// if the configuration node defines a style then add all the rules generated from that style
-				if (!String.IsNullOrEmpty(configNode.Style))
-				{
-					//Generate the rules for the paragraph style
-					rule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(GenerateCssStyleFromFwStyleSheet(configNode.Style, DefaultStyle, configNode,
-						mediator)));
-				}
-				styleSheet.Rules.Add(rule);
-			}
 			else
 			{
 				if (configNode.DictionaryNodeOptions is DictionaryNodePictureOptions)
@@ -440,9 +424,12 @@ namespace SIL.FieldWorks.XWorks
 					styleSheet.Rules.Add(blockRule);
 					GenerateCssForCounterReset(styleSheet, baseSelection, declaration, true);
 					var bulletRule = AdjustRuleIfParagraphNumberScheme(blockRule, configNode, mediator);
+					// REVIEW (Hasso) 2016.10: could these two lines be moved outside the loop?
+					// REVIEW (Hasso) 2016.10: both of these following lines add all rules but BeforeAfter (so if the condition in the first line
+					// REVIEW (cont) is true, both excluded rule categories will nonetheless be added)
 					styleSheet.Rules.AddRange(DictionaryConfigurationModel.NoteInParaStyles.Contains(configNode.FieldDescription)
-					? RemoveBeforeAndAfterForNoteInParaRules(styleRules)
-					: RemoveBeforeAfterSelectorRules(styleRules));
+						? RemoveBeforeAndAfterForNoteInParaRules(styleRules)
+						: RemoveBeforeAfterSelectorRules(styleRules));
 					styleSheet.Rules.AddRange(RemoveBeforeAfterSelectorRules(styleRules));
 					styleSheet.Rules.Add(bulletRule);
 				}
@@ -458,8 +445,8 @@ namespace SIL.FieldWorks.XWorks
 					};
 					if (!IsEmptyRule(complexContentRule))
 						styleSheet.Rules.Add(complexContentRule);
-					styleSheet.Rules.AddRange(styleRules);
 				}
+				styleSheet.Rules.AddRange(styleRules);
 			}
 		}
 
@@ -645,7 +632,7 @@ namespace SIL.FieldWorks.XWorks
 						dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, mediator));
 					var collectionSelector = "." + GetClassAttributeForConfig(configNode);
 					var itemSelector = " ." + GetClassAttributeForCollectionItem(configNode);
-					var betweenSelector = String.Format("{0} {1}>{2}+{2}:before", parentSelector, collectionSelector, itemSelector);
+					var betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, itemSelector);
 					ConfigurableDictionaryNode dummy;
 					// use default (class-named) between selector for factored references, because "span+span" erroneously matches Type spans
 					if (configNode.DictionaryNodeOptions != null && !ConfiguredXHTMLGenerator.IsFactoredReference(configNode, out dummy))
@@ -872,7 +859,7 @@ namespace SIL.FieldWorks.XWorks
 			// which CSS allows but FieldWorks doesn't use (except maybe in custom fields).
 			if (string.IsNullOrEmpty(configNode.CSSClassNameOverride))
 			{
-				var classAttribute = string.Empty;
+				var classAttribute = string.Empty; // REVIEW (Hasso) 2016.10: use StringBuilder
 				if (configNode.DictionaryNodeOptions is DictionaryNodeGroupingOptions)
 				{
 					classAttribute += "grouping_";

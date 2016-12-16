@@ -1,0 +1,8 @@
+<layout class="LexSense" type="jtview" name="publishRootSub%02" version="24">
+    <part ref="SemanticDomainsConfig" label="Semantic Domains" before="" after="" sep=""
+        visibility="never" param="publishRootSubSemDom%02" css="semantic-domains-sub" dup="1-2.0.0"/>
+    <part ref="SemanticDomainsConfig" label="Semantic Domains (1)" before="" after="" sep=""
+        visibility="never" param="publishRootSubSemDom%02" css="semantic-domains-sub" dup="1-2.0.0"/>
+    <part ref="SemanticDomainsConfig" label="Semantic Domains (2)" before="" after="" sep=""
+        visibility="never" param="publishRootSubSemDom%02" css="semantic-domains-sub" dup="1-2.0.0"/>
+</layout>

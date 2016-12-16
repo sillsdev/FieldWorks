@@ -195,7 +195,7 @@ namespace SIL.FieldWorks.XWorks
 						PanelContents = optionsView,
 						LabelText = xWorksStrings.ThisConfigurationIsShared,
 						LabelToolTip = string.Format(xWorksStrings.SeeAffectedNodesUnder,
-							DictionaryConfigurationMigrator.BuildPathStringFromNode(masterParent), false)
+							DictionaryConfigurationMigrator.BuildPathStringFromNode(masterParent, false))
 					};
 				}
 			}
@@ -603,9 +603,9 @@ namespace SIL.FieldWorks.XWorks
 			var groupOptionsView = new GroupingOptionsView
 			{
 				Description = options.Description,
-				DisplayInParagraph = options.DisplayGroupInParagraph
+				DisplayInParagraph = options.DisplayEachInAParagraph
 			};
-			ToggleViewForShowInPara(options.DisplayGroupInParagraph);
+			ToggleViewForShowInPara(options.DisplayEachInAParagraph);
 			groupOptionsView.Load += GroupingEventHandlerAdder(groupOptionsView, options);
 			return groupOptionsView;
 		}
@@ -616,8 +616,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				groupOptionsView.DisplayInParagraphChanged += (sender, e) =>
 				{
-					groupOptions.DisplayGroupInParagraph = groupOptionsView.DisplayInParagraph;
-					ToggleViewForShowInPara(groupOptions.DisplayGroupInParagraph);
+					groupOptions.DisplayEachInAParagraph = groupOptionsView.DisplayInParagraph;
+					ToggleViewForShowInPara(groupOptions.DisplayEachInAParagraph);
 					RefreshPreview();
 				};
 

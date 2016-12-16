@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.XWorks
 
 		protected override void ShowRecord()
 		{
-			if (!m_fullyInitialized || IsDisposed || m_mainView.IsDisposed)
+			if (!m_fullyInitialized || IsDisposed || m_mainView.IsDisposed || !Visible)
 				return;
 			base.ShowRecord();
 			var cmo = Clerk.CurrentObject;
