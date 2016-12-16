@@ -197,6 +197,29 @@ namespace XMLViewsTests
 			}
 		}
 
+		[Test]
+		public void XHTMLExportGetDigraphMapsFirstCharactersFromSortRulesWithNoMapping()
+		{
+			var ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.SortRules = "b" + Environment.NewLine + "ñe ñ";
+			ws.SortUsing = WritingSystemDefinition.SortRulesType.CustomSimple;
+
+			var exporter = new ConfiguredExport(null, null, 0);
+			string output;
+			using (var stream = new MemoryStream())
+			{
+				using (var writer = new StreamWriter(stream))
+				{
+					exporter.Initialize(Cache, null, writer, null, "xhtml", null, "dicBody");
+					Dictionary<string, string> mapChars;
+					Set<string> ignoreSet;
+					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
+					Assert.AreEqual(data.Count, 2, "Two Digraphs should be returned");
+					Assert.AreEqual(mapChars["ñ"], "ñe");
+				}
+			}
+		}
+
 		/// <summary>
 		/// Test verifies minimal behavior added for sort rules other than Toolbox and ICU
 		/// (which currently does something minimal, enough to prevent crashes).
