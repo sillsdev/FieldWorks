@@ -65,24 +65,6 @@ namespace SIL.FieldWorks.XWorks
 			View = view;
 		}
 
-
-		/// <summary>
-		/// Checks and returns whether all parents nodes are checked
-		/// </summary>
-		/// <param name="node"></param>
-		/// <returns></returns>
-		internal bool IsAllParentsChecked(ConfigurableDictionaryNode node)
-		{
-			if (node.Parent == null) return true; // this should only be the main entry and minor entry nodes
-			while (node != null)
-			{
-				if (!node.IsEnabled)
-					return false;
-				node = node.Parent;
-			}
-			return true;
-		}
-
 		#region LoadModel
 		/// <summary>
 		/// (Re)initializes the controller and view to configure the given node
@@ -314,7 +296,6 @@ namespace SIL.FieldWorks.XWorks
 			view.Visible = true;
 			view.StylesVisible = true;
 			view.StylesEnabled = true;
-			view.Enabled = IsAllParentsChecked(node);
 			view.SurroundingCharsVisible = node.Parent != null; // top-level nodes don't need Surrounding Characters (Before, Between, After)
 		}
 
