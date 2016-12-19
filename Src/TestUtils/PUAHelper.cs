@@ -9,7 +9,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
-using FwIcu = SIL.FieldWorks.Common.COMInterfaces.Icu;
 
 namespace SIL.FieldWorks.Test.TestUtils
 {
@@ -36,9 +35,9 @@ namespace SIL.FieldWorks.Test.TestUtils
 			ILgCharacterPropertyEngine charPropEngine = LgIcuCharPropEngineClass.Create();
 			try
 			{
-				FwIcu.UErrorCode error;
-				const FwIcu.UCharNameChoice choice = FwIcu.UCharNameChoice.U_UNICODE_CHAR_NAME;
-				FwIcu.u_CharName(puaIndex, choice, out name, out error);
+				Icu.UErrorCode error;
+				Icu.UCharNameChoice choice = Icu.UCharNameChoice.U_UNICODE_CHAR_NAME;
+				Icu.u_CharName(puaIndex, choice, out name, out error);
 				genCategory = charPropEngine.get_GeneralCategory(puaIndex);
 			}
 			finally
@@ -46,7 +45,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 				// Must release pointer to free memory-mapping before we try to restore files.
 				Marshal.ReleaseComObject(charPropEngine);
 				charPropEngine = null;
-				FwIcu.Cleanup();		// clean up the ICU files / data
+				Icu.Cleanup();		// clean up the ICU files / data
 			}
 
 			//Check to make sure expected result is the same as actual result, if not, output error
@@ -105,9 +104,9 @@ namespace SIL.FieldWorks.Test.TestUtils
 			ILgCharacterPropertyEngine charPropEngine = LgIcuCharPropEngineClass.Create();
 			try
 			{
-				FwIcu.UErrorCode error;
-				const FwIcu.UCharNameChoice choice = FwIcu.UCharNameChoice.U_UNICODE_CHAR_NAME;
-				FwIcu.u_CharName(puaIndex, choice, out name, out error);
+				Icu.UErrorCode error;
+				Icu.UCharNameChoice choice = Icu.UCharNameChoice.U_UNICODE_CHAR_NAME;
+				Icu.u_CharName(puaIndex, choice, out name, out error);
 				genCategory = charPropEngine.get_GeneralCategory(puaIndex);
 				combiningClass = charPropEngine.get_CombiningClass(puaIndex);
 				bidiCategory = charPropEngine.get_BidiCategory(puaIndex);
@@ -128,7 +127,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 				// Must release pointer to free memory-mapping before we try to restore files.
 				Marshal.ReleaseComObject(charPropEngine);
 				charPropEngine = null;
-				FwIcu.Cleanup();		// clean up the ICU files ÷ data
+				Icu.Cleanup();		// clean up the ICU files / data
 			}
 
 			// StringWriter used to print hexadecimal values in the error messages.
@@ -190,12 +189,12 @@ namespace SIL.FieldWorks.Test.TestUtils
 			int icuDigit = -1;
 
 			//Getting the character name at the memory address specified
-			FwIcu.UErrorCode error;
-			FwIcu.UCharNameChoice choice = FwIcu.UCharNameChoice.U_UNICODE_CHAR_NAME;
-			FwIcu.u_CharName(puaIndex, choice, out name, out error);
+			Icu.UErrorCode error;
+			Icu.UCharNameChoice choice = Icu.UCharNameChoice.U_UNICODE_CHAR_NAME;
+			Icu.u_CharName(puaIndex, choice, out name, out error);
 			// Radix means "base", so this will return the base 10 value of this digit.
 			// (Note, the radix is just used to return an error if the digit isn't valid in the given radix)
-			icuDigit = FwIcu.u_Digit(puaIndex,10);
+			icuDigit = Icu.u_Digit(puaIndex,10);
 
 			//Check to make sure expected result is the same as actual result, if not, output error
 			Assert.AreEqual(digit, icuDigit, "PUA Character " +

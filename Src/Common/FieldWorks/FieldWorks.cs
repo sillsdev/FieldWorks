@@ -26,6 +26,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Gecko;
 using Microsoft.Win32;
+using Palaso.IO;
 using Palaso.Reporting;
 using Palaso.UI.WindowsForms.HtmlBrowser;
 using Palaso.UI.WindowsForms.Keyboarding;
@@ -56,6 +57,9 @@ using ExceptionHelper = SIL.Utils.ExceptionHelper;
 using Logger = SIL.Utils.Logger;
 using SIL.CoreImpl.Properties;
 using FileUtils = SIL.Utils.FileUtils;
+#if !__MonoCS__
+using NetSparkle;
+#endif
 
 [assembly:SuppressMessage("Gendarme.Rules.Portability", "ExitCodeIsLimitedOnUnixRule",
 	Justification="Gendarme bug? We only return values >= 0")]
@@ -148,9 +152,6 @@ namespace SIL.FieldWorks
 		{
 			Thread.CurrentThread.Name = "Main thread";
 			Logger.Init(FwUtils.ksSuiteName);
-
-			Icu.Wrapper.ConfineIcuVersions(54);
-
 			FdoCache.NewerWritingSystemFound += ComplainToUserAboutNewWs;
 			// Note to developers: Uncomment this line to be able to attach the debugger to a process for a project
 			// other than the initial one that gets started up in VS:
@@ -218,7 +219,7 @@ namespace SIL.FieldWorks
 				Application.EnableVisualStyles();
 
 				// initialize ICU
-				Common.COMInterfaces.Icu.InitIcuDataDir();
+				Icu.InitIcuDataDir();
 
 				// initialize Palaso keyboarding
 				KeyboardController.Initialize();

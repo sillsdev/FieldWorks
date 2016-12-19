@@ -9,6 +9,7 @@ using System.Threading;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Test.TestUtils
@@ -88,14 +89,12 @@ namespace SIL.FieldWorks.Test.TestUtils
 			m_debugProcs = new DebugProcs();
 			try
 			{
-				Common.COMInterfaces.Icu.InitIcuDataDir();
+				Icu.InitIcuDataDir();
 			}
 			catch (Exception e)
 			{
 				Console.WriteLine(e.Message);
 			}
-
-			Icu.Wrapper.ConfineIcuVersions(54);
 
 #if __MonoCS__
 			try
