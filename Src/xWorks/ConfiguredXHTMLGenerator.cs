@@ -2583,8 +2583,11 @@ namespace SIL.FieldWorks.XWorks
 				{
 					// This is not a magic writing system, so grab the user requested string
 					wsId = settings.Cache.WritingSystemFactory.GetWsFromStr(option.Id);
-					if (wsId == 0)
-						throw new ArgumentException(string.Format("Writing system requested that is not known in local store: {0}", option.Id), "config");
+					if (wsId == 0) // The config is bad or stale, but we don't need to crash in this instance.
+					{
+						Debug.WriteLine("Writing system requested that is not known in local store: {0}", option.Id);
+						continue;
+					}
 					bestString = multiStringAccessor.get_String(wsId);
 				}
 				else
