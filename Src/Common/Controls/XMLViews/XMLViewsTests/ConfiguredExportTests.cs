@@ -9,6 +9,7 @@ using System.IO;
 using System.Xml;
 using NUnit.Framework;
 using Palaso.WritingSystems;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
@@ -218,6 +219,21 @@ namespace XMLViewsTests
 					Assert.AreEqual(mapChars["ñ"], "ñe");
 				}
 			}
+		}
+
+		[Test]
+		public void XHTMLExportGetLeadChar_SurrogatePairDoesNotCrash()
+		{
+			string data = null;
+			IWritingSystem wsEn;
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("ipo", out wsEn);
+			Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(wsEn);
+			string entryLetter = "\U00016F00\U00016F51\U00016F61\U00016F90";
+			Dictionary<string, Set<string>> wsDigraphMap = new Dictionary<string, Set<string>>();
+			Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap = new Dictionary<string, Dictionary<string, string>>();
+			Dictionary<string, Set<string>> wsIgnorableCharMap = new Dictionary<string, Set<string>>();
+			Assert.DoesNotThrow(() => data = ConfiguredExport.GetLeadChar(entryLetter, "ipo", wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, Cache));
+			Assert.AreEqual(data.Length, 2, "Surrogate pair should contains 2 characters");
 		}
 
 		/// <summary>
