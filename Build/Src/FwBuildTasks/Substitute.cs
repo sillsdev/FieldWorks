@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -50,33 +48,9 @@ namespace FwBuildTasks
 		/// ------------------------------------------------------------------------------------
 		public override bool Execute()
 		{
-
-			var substitutions = new Dictionary<string, string>();
-			if (!string.IsNullOrEmpty(Symbols))
-			{
-				if (!File.Exists(Symbols))
-				{
-					Log.LogMessage(MessageImportance.High, "Symbol file " + Symbols + " not found");
-					return false;
-				}
-				StreamReader reader = new StreamReader(Symbols);
-				int lineNumber = 1;
-				while (!reader.EndOfStream)
-				{
-					var line = reader.ReadLine();
-					// Ignore empty lines, comments, or if we somehow get a null at the end.
-					if (line == null || line.Trim().Length == 0 || line.StartsWith("//"))
-						continue;
-					var items = line.Split('=');
-					if (items.Length != 2 || items[0].Trim().Length == 0)
-					{
-						Log.LogMessage(MessageImportance.High, "Invalid symbol file: " + Symbols + " line " + lineNumber + " should be Name=Value");
-						return false;
-					}
-					lineNumber++;
-					substitutions[items[0].Trim()] = items[1].Trim();
-				}
-			}
+			Dictionary<string, string> substitutions;
+			if (!ParseSymbolFile(Symbols, Log, out substitutions))
+				return false;
 
 			string template = Template;
 			bool addedComment = false;
@@ -116,10 +90,7 @@ namespace FwBuildTasks
 					string strDefault = match.Result("${default}");
 					string strEnvValue;
 					substitutions.TryGetValue(strEnv, out strEnvValue);
-					if (strEnvValue != null && strEnvValue != string.Empty)
-						fileContents = regex.Replace(fileContents, strEnvValue, 1, match.Index);
-					else
-						fileContents = regex.Replace(fileContents, strDefault, 1, match.Index);
+					fileContents = regex.Replace(fileContents, string.IsNullOrEmpty(strEnvValue) ? strDefault : strEnvValue, 1, match.Index);
 
 					match = regex.Match(fileContents);
 				}
@@ -160,6 +131,37 @@ namespace FwBuildTasks
 				Log.LogMessage(MessageImportance.High, "Generating {0} from {1} threw an exception {2}", Output,
 						template, e.Message);
 				return false;
+			}
+			return true;
+		}
+
+		/// <returns>true if substitutions were successfully parsed from the symbol file</returns>
+		public static bool ParseSymbolFile(string symbolFile, TaskLoggingHelper log, out Dictionary<string, string> substitutions)
+		{
+			substitutions = new Dictionary<string, string>();
+			if (string.IsNullOrEmpty(symbolFile))
+				return true;
+			if (!File.Exists(symbolFile))
+			{
+				log.LogMessage(MessageImportance.High, "Symbol file " + symbolFile + " not found");
+				return false;
+			}
+			var reader = new StreamReader(symbolFile);
+			var lineNumber = 0;
+			while (!reader.EndOfStream)
+			{
+				var line = reader.ReadLine();
+				lineNumber++;
+				// Ignore empty lines, comments, or if we somehow get a null at the end.
+				if (string.IsNullOrWhiteSpace(line) || line.StartsWith("//"))
+					continue;
+				var items = line.Split('=');
+				if (items.Length != 2 || items[0].Trim().Length == 0)
+				{
+					log.LogMessage(MessageImportance.High, "Invalid symbol file: '{0}' line {1} should be Name=Value", symbolFile, lineNumber);
+					return false;
+				}
+				substitutions[items[0].Trim()] = items[1].Trim();
 			}
 			return true;
 		}

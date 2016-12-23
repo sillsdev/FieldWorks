@@ -752,19 +752,11 @@ Fw:
 Fw-build:
 	(cd $(BUILD_ROOT)/Build && xbuild /t:remakefw)
 
-# Import certificates so mono applications can check ssl certificates, specifically when a build task
-# downloads dependency dlls. Output md5sum of certificates imported for the record.
-InstallCerts:
-	cd $$(mktemp -d) \
-		&& wget -q -O certdata.txt "http://mxr.mozilla.org/seamonkey/source/security/nss/lib/ckfw/builtins/certdata.txt?raw=1" \
-		&& md5sum certdata.txt \
-		&& mozroots --import --sync --file certdata.txt
-
-Fw-build-package: InstallCerts
+Fw-build-package:
 	cd $(BUILD_ROOT)/Build \
 		&& xbuild '/t:build4package;zipLocalizedLists;localize' /property:config=release /property:packaging=yes
 
-Fw-build-package-fdo: InstallCerts
+Fw-build-package-fdo:
 	cd $(BUILD_ROOT)/Build \
 		&& xbuild '/t:build4package-fdo' /property:config=release /property:packaging=yes
 

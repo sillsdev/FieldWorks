@@ -219,6 +219,8 @@ namespace FwBuildTasks
 
 			private void Write()
 			{
+				if (m_flags != null && m_flags.Contains("fuzzy"))
+					return;
 				m_writer.WriteWhitespace(Environment.NewLine);
 				m_writer.WriteStartElement("msg");
 				m_writer.WriteWhitespace(Environment.NewLine);

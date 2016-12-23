@@ -164,6 +164,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 			foreach (var node in etymNodes)
 			{
+				if (node.IsCustomField) // Unfortunately there are some pathological users who have ancient custom fields named etymology
+					continue; // Leave them be
 				// modify main node
 				var etymSequence = "EtymologyOS";
 				if (oldConfig.IsReversal)
@@ -182,8 +184,13 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				node.Between = " ";
 				node.After = ") ";
 
+				if (node.Children == null)
+					continue;
+
 				// enable Gloss node
-				node.Children.Find(n => n.Label == "Gloss").IsEnabled = true;
+				var glossNode = node.Children.Find(n => n.Label == "Gloss");
+				if(glossNode != null)
+					glossNode.IsEnabled = true;
 
 				// enable Source Language Notes
 				var notesList = node.Children.Find(n => n.FieldDescription == "LanguageNotes");
@@ -194,6 +201,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				var nodesToRemove = new[] {"Etymological Form", "Comment", "Source"};
 				node.Children.RemoveAll(n => nodesToRemove.Contains(n.Label));
 			}
+			// Etymology changed too much to be matched in the PreHistoricMigration and was marked as custom
+			DCM.PerformActionOnNodes(etymNodes, n => {n.IsCustomField = false;});
 		}
 
 		private static bool IsHybrid(DictionaryConfigurationModel model)

@@ -2000,7 +2000,7 @@ namespace SIL.FieldWorks.Common.Controls
 							{
 								BulkEditItem bei = m_beItems[m_itemIndex];
 								bei.BulkEditControl.DoIt(ItemsToChange(true), state);
-								FixReplacedItems(bei.BulkEditControl);
+								m_bv.RefreshDisplay();
 							}
 						}
 						else if (m_operationsTabControl.SelectedTab == m_findReplaceTab)
@@ -3941,7 +3941,7 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					if (fIsSourceCombo)
 						accessor = new ManyOnePathSortItemReadWriter(m_cache, node, m_bv, (IApp)m_mediator.PropertyTable.GetValue("App"));
-					else
+					else if(!IsColumnWsBothVernacularAndAnalysis(node))
 						accessor = FieldReadWriter.Create(node, m_cache, m_bv.RootObjectHvo);
 					if (accessor == null)
 						continue;
@@ -3950,7 +3950,7 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				catch
 				{
-					Debug.Fail(String.Format("There was an error creating Delete combo item for column ({0})"), optionLabel);
+					Debug.Fail(string.Format("There was an error creating Delete combo item for column ({0})"), optionLabel);
 					// skip buggy column
 					continue;
 				}
@@ -3961,6 +3961,26 @@ namespace SIL.FieldWorks.Common.Controls
 					newSelection = item;
 			}
 			return newSelection;
+		}
+
+		/// <summary/>
+		/// <returns>true if the ws attribute for the column indicates both vernacular and analysis writing systems, false otherwise</returns>
+		private bool IsColumnWsBothVernacularAndAnalysis(XmlNode node)
+		{
+			var wsAttributeValue = XmlUtils.GetAttributeValue(node, "ws", null);
+			if (wsAttributeValue != null)
+			{
+				var magicWsId = WritingSystemServices.GetMagicWsIdFromName(wsAttributeValue.Substring("$ws=".Length));
+				switch (magicWsId)
+				{
+					case WritingSystemServices.kwsAnalVerns:
+					case WritingSystemServices.kwsFirstAnalOrVern:
+					case WritingSystemServices.kwsFirstVernOrAnal:
+						return true;
+					default: return false;
+				}
+			}
+			return false;
 		}
 
 		private void xbv_ClickCopy(object sender, ClickCopyEventArgs e)

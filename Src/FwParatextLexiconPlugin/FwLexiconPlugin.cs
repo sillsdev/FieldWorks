@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		private readonly FdoLexiconCollection m_lexiconCache;
 		private readonly FdoCacheCollection m_fdoCacheCache;
 		private readonly object m_syncRoot;
-		private ActivationContextHelper m_activationContext;
+		private readonly ActivationContextHelper m_activationContext;
 		private readonly ParatextLexiconPluginFdoUI m_ui;
 
 		/// <summary>
@@ -277,27 +277,24 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		/// </summary>
 		protected override void DisposeManagedResources()
 		{
-			if (m_activationContext != null)
+			using (m_activationContext.Activate())
 			{
-				using (m_activationContext.Activate())
+				lock (m_syncRoot)
 				{
-					lock (m_syncRoot)
+					foreach (FdoLexicon lexicon in m_lexiconCache)
+						lexicon.Dispose();
+					m_lexiconCache.Clear();
+					foreach (FdoCache fdoCache in m_fdoCacheCache)
 					{
-						foreach (FdoLexicon lexicon in m_lexiconCache)
-							lexicon.Dispose();
-						m_lexiconCache.Clear();
-						foreach (FdoCache fdoCache in m_fdoCacheCache)
-						{
-							fdoCache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
-							fdoCache.Dispose();
-						}
-						m_fdoCacheCache.Clear();
+						fdoCache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
+						fdoCache.Dispose();
 					}
+					m_fdoCacheCache.Clear();
 				}
-
-				m_activationContext.Dispose();
-				m_activationContext = null;
 			}
+
+			m_ui.Dispose();
+			m_activationContext.Dispose();
 		}
 
 		private class FdoLexiconCollection : KeyedCollection<string, FdoLexicon>

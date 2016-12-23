@@ -2366,6 +2366,24 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to To apply for an account at Webonary, please visit {0}..
+        /// </summary>
+        internal static string toApplyForWebonaryAccountExplanation {
+            get {
+                return ResourceManager.GetString("toApplyForWebonaryAccountExplanation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to http://www.webonary.org/.
+        /// </summary>
+        internal static string toApplyForWebonaryAccountLink {
+            get {
+                return ResourceManager.GetString("toApplyForWebonaryAccountLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The application was not able to follow that link. This can happen if you have deleted the object that was pointed to by the link..
         /// </summary>
         internal static string UnableToFollowLink {

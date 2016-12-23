@@ -737,11 +737,12 @@ namespace SIL.FieldWorks.Common.Controls
 			var sortRules = ws.SortRules;
 			var sortType = ws.SortUsing;
 
+			wsDigraphMap[sWs] = digraphs;
+
 			if (!String.IsNullOrEmpty(sortRules) && sortType == WritingSystemDefinition.SortRulesType.CustomICU)
 			{
 				// prime with empty ws in case all the rules affect only the ignore set
 				wsCharEquivalentMap[sWs] = mapChars;
-				wsDigraphMap[sWs] = digraphs;
 				var individualRules = sortRules.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
 				for (var i = 0; i < individualRules.Length; ++i)
 				{
@@ -784,9 +785,6 @@ namespace SIL.FieldWorks.Common.Controls
 
 			// This at least prevents null reference and key not found exceptions.
 			// Possibly we should at least map the ASCII LC letters to UC.
-			Set<string> temp;
-			if (!wsDigraphMap.TryGetValue(sWs, out temp))
-				wsDigraphMap[sWs] = digraphs;
 			if (!wsCharEquivalentMap.TryGetValue(sWs, out mapChars))
 				wsCharEquivalentMap[sWs] = mapChars = new Dictionary<string, string>();
 

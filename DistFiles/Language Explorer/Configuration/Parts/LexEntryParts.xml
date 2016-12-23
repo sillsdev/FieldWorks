@@ -264,11 +264,7 @@
 			</seq>
 		</part>
 		<part id="LexEntry-Jt-EtymologyForm" type="jtview">
-			<seq field="Etymology" layout="Form">
-				<para>
-					<string field="Form" ws="best analorvern"/>
-				</para>
-			</seq>
+			<seq field="Etymology" layout="Form"/>
 		</part>
 		<part id="LexEntry-Jt-EtymologyComment" type="jtview">
 			<seq field="Etymology" layout="Comment">
@@ -1098,6 +1094,9 @@
 		<part id="LexPronunciation-Jt-$fieldName" type="jtview"><!-- for ChildPartGenerator -->
 			<obj class="LexPronunciation" field="OwningEntry" layout="$fieldName"/>
 		</part>
+		<part id="LexPronunciation-Jt-PublishInForPronunciations" type="JtView">
+			<seq field="PublishIn" layout="Name"/>
+		</part>
 	</bin>
 
 	<bin class="LexEntryRef">
@@ -1529,6 +1528,9 @@
 		</part>
 		<part id="LexEtymology-Jt-FormPub">
 			<configureMlString field="Form" />
+		</part>
+		<part id="LexEtymology-Jt-Form">
+			<string field="Form" ws="best vernoranal"/>
 		</part>
 		<part id="LexEtymology-Jt-GlossPub">
 			<configureMlString field="Gloss" />

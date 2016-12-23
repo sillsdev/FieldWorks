@@ -574,6 +574,20 @@ namespace SIL.FieldWorks.XWorks
 				// (LT-9515) restored sorters need to set some properties that could not be persisted.
 				sorter.Cache = cache;
 				sorter.StringTable = m_mediator.StringTbl;
+				if (sorter is GenRecordSorter)
+				{
+					var comparer = ((GenRecordSorter)sorter).Comparer;
+					WritingSystemComparer subComparer = null;
+					if(comparer != null)
+						subComparer = ((StringFinderCompare)comparer).SubComparer as WritingSystemComparer;
+					if (subComparer != null)
+					{
+						var subComparerWsId = subComparer.WsId;
+						var wsId = cache.WritingSystemFactory.GetWsFromStr(subComparerWsId);
+						if (wsId == 0)
+							return false;
+					}
+				}
 				if (m_list.Sorter == sorter)
 					return false;
 				m_list.Sorter = sorter;

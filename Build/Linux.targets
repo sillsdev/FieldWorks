@@ -311,8 +311,9 @@
 	<Target Name="build4package-fdo" DependsOnTargets="Initialize;setRegistryValues;ensureTLBsUpToDate;downloadDlls;allCppNoTest;IcuData;FDO;FixFwDataDll">
 		<ItemGroup>
 			<FilesToCopy Include="$(dir-outputBase)/**"/>
+			<IcuNetFiles Include="$(fwrt)/packages/icu.net.2.0.1/lib/net40/*.*"/>
 		</ItemGroup>
-		<Copy SourceFiles="$(fwrt)/Downloads/icu.net.dll.config"
+		<Copy SourceFiles="@(IcuNetFiles)"
 			DestinationFolder="$(dir-outputBase)" OverwriteReadOnlyFiles="true"/>
 	</Target>
 

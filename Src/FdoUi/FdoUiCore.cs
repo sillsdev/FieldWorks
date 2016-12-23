@@ -2108,7 +2108,8 @@ namespace SIL.FieldWorks.FdoUi
 
 			//Situation not normal.
 			int hvoMsa;
-			var isAffixType = ls.Entry.PrimaryMorphType.IsAffixType;
+			var entryPrimaryMorphType = ls.Entry.PrimaryMorphType; // Guard against corrupted data. Every entry should have a PrimaryMorphType
+			var isAffixType = entryPrimaryMorphType == null ? false : entryPrimaryMorphType.IsAffixType;
 			foreach(var msa in ls.Entry.MorphoSyntaxAnalysesOC) //go through each MSA in the Entry list looking for one with an unknown category
 			{
 				if(!isAffixType && msa is IMoStemMsa && (msa as IMoStemMsa).PartOfSpeechRA == null)

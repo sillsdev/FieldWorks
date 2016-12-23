@@ -338,7 +338,7 @@
 			<seq field="Examples" layout="PublishInForExamples"/>
 		</part>
 		<part id="LexSense-Jt-PublishInForPicture" type="JtView">
-			<seq field="Picture" layout="PublishInForPicture"/>
+			<seq field="Pictures" layout="PublishInForPicture"/>
 		</part>
 		<part id="LexSense-Jt-Example" type="jtview">
 			<seq field="Examples" layout="Example"/>
@@ -854,6 +854,9 @@
 		</part>
 	</bin>
 	<bin class="CmPicture">
+		<part id="CmPicture-Jt-$fieldName" type="jtview"><!-- for ChildPartGenerator -->
+			<obj class="CmPicture" field="OwningSense" layout="$fieldName"/>
+		</part>
 		<part id="CmPicture-Detail-FileName" type="detail">
 			<slice label="File" editor="jtview" layout="PathName" editable="no" menu="mnuDataTree-Picture" />
 			<!-- Using this makes the path name editable, which is not appropriate-->
@@ -1003,6 +1006,9 @@
 	</bin>
 	
 	<bin class="LexExtendedNote">
+		<part id="LexExtendedNote-Jt-$fieldName" type="jtview"><!-- for ChildPartGenerator -->
+			<obj class="LexExtendedNote" field="OwningSense" layout="$fieldName"/>
+		</part>
 		<part id="LexExtendedNote-Jt-Summary" type="jtview" menu="mnuDataTree-ExtendedNote">
 			<para>
 				<properties>
@@ -1037,7 +1043,7 @@
 			<string field="Discussion" ws="$ws=analysis"/>
 		</part>
 		<part id="LexExtendedNote-Jt-ExtNoteType" type="jtview">
-			<obj class="LexExtendedNote" field="ExtendedNoteType" targetclass="CmPossibility"/>
+			<obj field="ExtendedNoteType" layout="Abbreviation"/>
 		</part>
 	</bin>
 	
@@ -1111,13 +1117,7 @@
 			<string field="SenseNumberTSS" />
 		</part>
 		<part id="CmPicture-Jt-PublishInForPicture" type="jtview">
-			<slice field="PublishIn" label="Publish In" tooltip="Remove a publication from this field to completely exclude this picture from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
-				menu="mnuDataTree-Help">
-				<deParams displayProperty="ShortName" ws="best analysis" />
-				<chooserInfo>
-					<chooserLink type="goto" label="Edit the Publications list" tool="publicationsEdit" />
-				</chooserInfo>
-			</slice>
+			<seq field="PublishIn" layout="Name"/>
 		</part>
 	</bin>
 

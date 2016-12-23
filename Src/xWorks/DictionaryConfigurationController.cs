@@ -768,6 +768,7 @@ namespace SIL.FieldWorks.XWorks
 				throw new KeyNotFoundException(String.Format("Could not find Referenced Node named {0} for field {1}.{2}",
 					referenceItem, node.FieldDescription, node.SubField));
 			node.ReferenceItem = referenceItem;
+			node.ReferencedNode.IsEnabled = true;
 			if (node.ReferencedNode.Parent != null)
 				return false;
 			node.ReferencedNode.Parent = node;
@@ -1271,7 +1272,7 @@ namespace SIL.FieldWorks.XWorks
 				// We have a match, so search through the TreeNode tree to find the TreeNode tagged
 				// with the given configuration node.  If found, set that as the SelectedNode.
 				classList.RemoveAt(0);
-				var startingConfigNode = FindStartingConfigNode(topNode, classList);
+				var startingConfigNode = FindConfigNode(topNode, classList);
 				foreach (TreeNode node in View.TreeControl.Tree.Nodes)
 				{
 					var startingTreeNode = FindMatchingTreeNode(node, startingConfigNode);
@@ -1285,40 +1286,36 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Recursively descend the configuration tree, progressively matching nodes against the list of classes.  Stop
+		/// Recursively descend the configuration tree, progressively matching nodes against CSS class path.  Stop
 		/// when we run out of both tree and classes.  Classes can be skipped if not matched.  Running out of tree nodes
-		/// before running out of classes causes one level of backtracking up the configuration tree to look for a better
-		/// match.
+		/// before running out of classes causes one level of backtracking up the configuration tree to look for a better match.
 		/// </summary>
 		/// <remarks>LT-17213 Now 'internal static' so DictionaryConfigurationDlg can use it.</remarks>
-		internal static ConfigurableDictionaryNode FindStartingConfigNode(ConfigurableDictionaryNode topNode, List<string> classList)
+		internal static ConfigurableDictionaryNode FindConfigNode(ConfigurableDictionaryNode topNode, List<string> classPath)
 		{
-			if (classList.Count == 0)
+			if (classPath.Count == 0)
 			{
-				return topNode.IsSharedItem ? topNode.Parent : topNode; // what we have already is the best we can find.
+				return topNode; // what we have already is the best we can find.
 			}
-			// If we have a referenced node, we prefer to use its Children over any Children we might have
-			if (topNode.ReferencedNode != null)
-				topNode = topNode.ReferencedNode;
 
 			// If we can't go further down the configuration tree, but still have classes to match, back up one level
 			// and try matching with the remaining classes.  The configuration tree doesn't always map exactly with
 			// the XHTML tree structure.  For instance, in the XHTML, Examples contains instances of Example, each
 			// of which contains an instance of Translations, which contains instances of Translation.  In the configuration
 			// tree, Examples contains Example and Translations at the same level.
-			if (topNode.Children == null || topNode.Children.Count == 0)
+			if (topNode.ReferencedOrDirectChildren == null || topNode.ReferencedOrDirectChildren.Count == 0)
 			{
-				var match = FindStartingConfigNode(topNode.Parent, classList);
-				if (!ReferenceEquals(match, topNode.Parent))
-					return match;	// we found something better!
-				return topNode;		// this is the best we can find.
+				var match = FindConfigNode(topNode.Parent, classPath);
+				return ReferenceEquals(match, topNode.Parent)
+					? topNode	// this is the best we can find.
+					: match;	// we found something better!
 			}
 			ConfigurableDictionaryNode matchingNode = null;
-			foreach (ConfigurableDictionaryNode node in topNode.Children)
+			foreach (var node in topNode.ReferencedOrDirectChildren)
 			{
 				var cssClass = CssGenerator.GetClassAttributeForConfig(node);
 				// LT-17359 a reference node might have "senses mainentrysubsenses"
-				if (cssClass == classList[0].Split(' ')[0])
+				if (cssClass == classPath[0].Split(' ')[0])
 				{
 					matchingNode = node;
 					break;
@@ -1329,19 +1326,19 @@ namespace SIL.FieldWorks.XWorks
 			// and "sense" among others)
 			if (matchingNode == null)
 				matchingNode = topNode;
-			classList.RemoveAt(0);
-			return FindStartingConfigNode(matchingNode, classList);
+			classPath.RemoveAt(0);
+			return FindConfigNode(matchingNode, classPath);
 		}
 
 		/// <summary>
 		/// Find the TreeNode that has the given configuration node as its Tag value.  (If there were a
 		/// bidirectional link between the two, this method would be unnecessary...)
 		/// </summary>
-		private TreeNode FindMatchingTreeNode(TreeNode node, ConfigurableDictionaryNode configNode)
+		private static TreeNode FindMatchingTreeNode(TreeNode topNode, ConfigurableDictionaryNode configNode)
 		{
-			if (node.Tag as ConfigurableDictionaryNode == configNode)
-				return node;
-			foreach (TreeNode child in node.Nodes)
+			if (ReferenceEquals(topNode.Tag as ConfigurableDictionaryNode, configNode))
+				return topNode;
+			foreach (TreeNode child in topNode.Nodes)
 			{
 				var start = FindMatchingTreeNode(child, configNode);
 				if (start != null)

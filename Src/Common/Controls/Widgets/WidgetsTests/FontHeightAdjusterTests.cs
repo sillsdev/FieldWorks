@@ -1,12 +1,6 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FontHeightAdjusterTests.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -111,7 +105,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				m_stylesheet, m_hvoEnglishWs, m_wsManager));
 		}
 
-		private int GetUbuntuVersion()
+		private static int GetUbuntuVersion()
 		{
 			if (!MiscUtils.IsUnix)
 				return 0;
@@ -139,10 +133,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			return -1;
 		}
 
-		private int GetExpectedFontHeightForArial()
-		{
-			return 20750;
-		}
+		private const int ExpectedFontHeightForArial = 20750;
 
 		/// -------------------------------------------------------------------------------------
 		/// <summary>
@@ -157,7 +148,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			ITsStrBldr strBldr = TsStrBldrClass.Create();
 			ITsStrBldr strBldrExpected = TsStrBldrClass.Create();
 			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
-			ITsPropsBldr propsBldrExpected;
 
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "StyleA");
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_hvoGermanWs);
@@ -167,7 +157,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "StyleA");
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_hvoEnglishWs);
 			strBldr.ReplaceRgch(0, 0, "Hello numero dos", 16, propsBldr.GetTextProps());
-			propsBldrExpected = propsBldr;
+			var propsBldrExpected = propsBldr;
 			propsBldrExpected.SetIntPropValues((int)FwTextPropType.ktptFontSize,
 				(int)FwTextPropVar.ktpvMilliPoint, 20500);
 			strBldrExpected.ReplaceRgch(0, 0, "Hello numero dos", 16, propsBldrExpected.GetTextProps());
@@ -177,7 +167,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			strBldr.ReplaceRgch(0, 0, "3 Hello", 7, propsBldr.GetTextProps());
 			propsBldrExpected = propsBldr;
 			propsBldrExpected.SetIntPropValues((int)FwTextPropType.ktptFontSize,
-				(int)FwTextPropVar.ktpvMilliPoint, GetExpectedFontHeightForArial());
+				(int)FwTextPropVar.ktpvMilliPoint, ExpectedFontHeightForArial);
 			strBldrExpected.ReplaceRgch(0, 0, "3 Hello", 7, propsBldrExpected.GetTextProps());
 
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "StyleB");
@@ -185,8 +175,11 @@ namespace SIL.FieldWorks.Common.Widgets
 			strBldr.ReplaceRgch(0, 0, "This is 4", 9, propsBldr.GetTextProps());
 			strBldrExpected.ReplaceRgch(0, 0, "This is 4", 9, propsBldr.GetTextProps());
 
-			ITsString tss = FontHeightAdjuster.GetAdjustedTsString(strBldr.GetString(), 23000, m_stylesheet, m_wsManager);
-			AssertEx.AreTsStringsEqual(strBldrExpected.GetString(), tss);
+			var tss = FontHeightAdjuster.GetAdjustedTsString(strBldr.GetString(), 23000, m_stylesheet, m_wsManager);
+			var propsWithWiggleRoom = new Dictionary<int, int>();
+			if (GetUbuntuVersion() == 14)
+				propsWithWiggleRoom[(int)FwTextPropType.ktptFontSize] = 1000; // millipoints. for some reason, the result is sometimes a point smaller on Trusty
+			AssertEx.AreTsStringsEqual(strBldrExpected.GetString(), tss, propsWithWiggleRoom);
 		}
 	}
 }

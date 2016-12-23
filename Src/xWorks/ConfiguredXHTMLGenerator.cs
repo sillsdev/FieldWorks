@@ -16,6 +16,7 @@ using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
@@ -1644,9 +1645,16 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var bldr = new StringBuilder();
 			var dummy = string.Empty;
-			// Order by guid (to order things consistently; see LT-17384).
-			// Though perhaps another sort key would be better, such as ICmObject.SortKey or ICmObject.SortKey2.
-			var lerCollection = collection.Cast<ILexEntryRef>().OrderBy(ler => ler.Guid).ToList();
+
+			var lerCollection = collection.Cast<ILexEntryRef>().ToList();
+			if (lerCollection.Count > 0)
+			{
+				// Order things (LT-17384, LT-17762).
+				var wsId = settings.Cache.ServiceLocator.WritingSystemManager.Get(lerCollection.First().SortKeyWs);
+				var comparer = new WritingSystemComparer(wsId);
+				lerCollection.Sort((left, right) => comparer.Compare(left.SortKey, right.SortKey));
+			}
+
 			// Group by Type only if Type is selected for output.
 			if (typeNode.IsEnabled && typeNode.ReferencedOrDirectChildren != null && typeNode.ReferencedOrDirectChildren.Any(y => y.IsEnabled))
 			{
@@ -1746,7 +1754,6 @@ namespace SIL.FieldWorks.XWorks
 				return string.Empty;
 			var bldr = new StringBuilder();
 			var isSubsense = config.Parent != null && config.FieldDescription == config.Parent.FieldDescription;
-			var isSingle = !isSubsense && IsSingleSense(filteredSenseCollection); // A subsense is never its Entry's only Sense
 			string lastGrammaticalInfo, langId;
 			var isSameGrammaticalInfo = IsAllGramInfoTheSame(config, filteredSenseCollection, isSubsense, out lastGrammaticalInfo, out langId);
 			if (isSameGrammaticalInfo && !isSubsense)
@@ -1760,22 +1767,65 @@ namespace SIL.FieldWorks.XWorks
 			var senseNode = (DictionaryNodeSenseOptions)config.DictionaryNodeOptions;
 			if (senseNode != null)
 				info.ParentSenseNumberingStyle = senseNode.ParentSenseNumberingStyle;
+
+			// Calculating isThisSenseNumbered may make sense to do for each item in the foreach loop below, but because of how the answer
+			// is determined, the answer for all sibling senses is the same as for the first sense in the collection.
+			// So calculating outside the loop for performance.
+			var isThisSenseNumbered = ShouldThisSenseBeNumbered(filteredSenseCollection[0], config, filteredSenseCollection);
 			foreach (var item in filteredSenseCollection)
 			{
 				info.SenseCounter++;
-				bldr.Append(GenerateSenseContent(config, publicationDecorator, item, isSingle, settings, isSameGrammaticalInfo, info));
+				bldr.Append(GenerateSenseContent(config, publicationDecorator, item, isThisSenseNumbered, settings, isSameGrammaticalInfo, info));
 			}
 			return bldr.ToString();
 		}
 
 		/// <summary>
-		/// This method will Check for single sense (including no subsenses of the one sense)
+		/// Some behaviour discussed regarding whether to show a sense number while working on LT-17906 is as follows.
+		///
+		/// Does the numbering style for senses say to number it?
+		///  - No? Don't number.
+		/// Yes? Is this the only sense-level sense?
+		///  - No? Number it.
+		/// Yes? Is the box for 'Number even a single sense' checked?
+		///  - Yes? Number it.
+		/// No? Is there a subsense?
+		///  - No? Don't number.
+		/// Yes? Is the subsense showing (enabled in the config)?
+		///  - No? Don't number.
+		/// Yes? Does the style for the subsense say to number the subsense?
+		///  - No? Don't number.
+		///  - Yes? Number it.
 		/// </summary>
-		private static bool IsSingleSense(List<ILexSense> filteredSenseCollection)
+		public static bool ShouldThisSenseBeNumbered(ILexSense sense, ConfigurableDictionaryNode senseConfiguration,
+			IEnumerable<ILexSense> siblingSenses)
 		{
-			var count = filteredSenseCollection.Count;
-			if (count > 1) return false;
-			return filteredSenseCollection.First().SensesOS.Count == 0;
+			var senseOptions = senseConfiguration.DictionaryNodeOptions as DictionaryNodeSenseOptions;
+			if (string.IsNullOrEmpty(senseOptions.NumberingStyle))
+				return false;
+			if (siblingSenses.Count() > 1)
+				return true;
+			if (senseOptions.NumberEvenASingleSense)
+				return true;
+			if (sense.SensesOS.Count == 0)
+				return false;
+			if (!AreThereEnabledSubsensesWithNumberingStyle(senseConfiguration))
+				return false;
+			return true;
+		}
+
+		/// <summary>
+		/// Does this sense node have a subsenses node that is enabled in the configuration and has numbering style?
+		/// </summary>
+		/// <param name="senseNode">sense node that might have subsenses</param>
+		public static bool AreThereEnabledSubsensesWithNumberingStyle(ConfigurableDictionaryNode senseNode)
+		{
+			if (senseNode == null)
+				return false;
+			return senseNode.Children.Any(child =>
+				child.DictionaryNodeOptions is DictionaryNodeSenseOptions &&
+				child.IsEnabled &&
+				!string.IsNullOrEmpty(((DictionaryNodeSenseOptions) child.DictionaryNodeOptions).NumberingStyle));
 		}
 
 		private static string InsertGramInfoBeforeSenses(ILexSense item, ConfigurableDictionaryNode gramInfoNode,
@@ -1866,12 +1916,11 @@ namespace SIL.FieldWorks.XWorks
 						requestedString = bestStringValue;
 				}
 				if (string.IsNullOrEmpty(lastGrammaticalInfo))
-					lastGrammaticalInfo = requestedString;
-				else if (requestedString == lastGrammaticalInfo)
 				{
+					lastGrammaticalInfo = requestedString;
 					isSameGrammaticalInfo = true;
 				}
-				else
+				else if(requestedString != lastGrammaticalInfo)
 				{
 					return false;
 				}
@@ -1880,9 +1929,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static string GenerateSenseContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
-			object item, bool isSingle, GeneratorSettings settings, bool isSameGrammaticalInfo, SenseInfo info)
+			object item, bool isThisSenseNumbered, GeneratorSettings settings, bool isSameGrammaticalInfo, SenseInfo info)
 		{
-			var senseNumberSpan = GenerateSenseNumberSpanIfNeeded(config, isSingle, ref info);
+			var senseNumberSpan = GenerateSenseNumberSpanIfNeeded(config, isThisSenseNumbered, ref info);
 			var bldr = new StringBuilder();
 			if (config.ReferencedOrDirectChildren != null)
 			{
@@ -2098,11 +2147,13 @@ namespace SIL.FieldWorks.XWorks
 				: GenerateXHTMLForCollection(complexEntryRef.ComplexEntryTypesRS, config, publicationDecorator, subEntry, settings);
 		}
 
-		private static string GenerateSenseNumberSpanIfNeeded(ConfigurableDictionaryNode senseConfigNode, bool isSingle, ref SenseInfo info)
+		private static string GenerateSenseNumberSpanIfNeeded(ConfigurableDictionaryNode senseConfigNode, bool isThisSenseNumbered, ref SenseInfo info)
 		{
-			var senseOptions = senseConfigNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
-			if (senseOptions == null || (isSingle && !senseOptions.NumberEvenASingleSense) || string.IsNullOrEmpty(senseOptions.NumberingStyle))
+			if (!isThisSenseNumbered)
 				return string.Empty;
+
+			var senseOptions = senseConfigNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
+
 			var formattedSenseNumber = GetSenseNumber(senseOptions.NumberingStyle, ref info);
 			if (string.IsNullOrEmpty(formattedSenseNumber))
 				return string.Empty;
@@ -2532,8 +2583,11 @@ namespace SIL.FieldWorks.XWorks
 				{
 					// This is not a magic writing system, so grab the user requested string
 					wsId = settings.Cache.WritingSystemFactory.GetWsFromStr(option.Id);
-					if (wsId == 0)
-						throw new ArgumentException(string.Format("Writing system requested that is not known in local store: {0}", option.Id), "config");
+					if (wsId == 0) // The config is bad or stale, but we don't need to crash in this instance.
+					{
+						Debug.WriteLine("Writing system requested that is not known in local store: {0}", option.Id);
+						continue;
+					}
 					bestString = multiStringAccessor.get_String(wsId);
 				}
 				else

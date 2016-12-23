@@ -150,9 +150,6 @@
   <data name="explanationLabel.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
   </data>
-  <data name="explanationLabel.Text" xml:space="preserve">
-    <value>To apply for an account at Webonary, please visit http://www.webonary.org/.</value>
-  </data>
   <data name="&gt;&gt;explanationLabel.Name" xml:space="preserve">
     <value>explanationLabel</value>
   </data>
@@ -316,7 +313,7 @@
     <value>webonaryPasswordTextbox</value>
   </data>
   <data name="&gt;&gt;webonaryPasswordTextbox.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.PasswordBox, Widgets, Version=8.3.0.30507, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Widgets.PasswordBox, Widgets, Version=8.3.2.24332, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;webonaryPasswordTextbox.Parent" xml:space="preserve">
     <value>settingsForWebonaryTableLayoutPanel</value>

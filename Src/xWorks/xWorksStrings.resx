@@ -1025,4 +1025,12 @@ If you are not the one designated user who adds fields, or you are making some o
   <data name="ksParentSenseNumberingStyle" xml:space="preserve">
     <value>Show parent sense number</value>
   </data>
+	<data name="toApplyForWebonaryAccountExplanation" xml:space="preserve">
+    <value>To apply for an account at Webonary, please visit {0}.</value>
+    <comment>Text at the top of the Upload to Webonary dialog. 0 will be the URL in toApplyForWebonaryAccountLink</comment>
+  </data>
+	<data name="toApplyForWebonaryAccountLink" xml:space="preserve">
+    <value>http://www.webonary.org/</value>
+    <comment>URL in toApplyForWebonaryAccountExplanation.</comment>
+  </data>
 </root>

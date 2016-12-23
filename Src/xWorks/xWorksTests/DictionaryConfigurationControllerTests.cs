@@ -1582,6 +1582,48 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void FindStartingConfigNode_FindsSharedNodes()
+		{
+			var subsubsensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS", CSSClassNameOverride = "senses", ReferenceItem = "SharedSubsenses"
+			};
+			var subSensesSharedItem = new ConfigurableDictionaryNode
+			{
+				Label = "SharedSubsenses", FieldDescription = "SensesOS", Children = new List<ConfigurableDictionaryNode> { subsubsensesNode }
+			};
+			var subSensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS", CSSClassNameOverride = "senses", ReferenceItem = "SharedSubsenses"
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS", CSSClassNameOverride = "senses", Children = new List<ConfigurableDictionaryNode> { subSensesNode }
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry", CSSClassNameOverride = "entry", Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(DictionaryConfigurationModelTests.CreateSimpleSharingModel(entryNode, subSensesSharedItem));
+			var node = DictionaryConfigurationController.FindConfigNode(entryNode, new List<string>
+				{
+					"entry",
+					"senses",
+					"sensecontent",
+					"sense",
+					"senses mainentrysubsenses",
+					"sensecontent",
+					"sense mainentrysubsense",
+					"senses mainentrysubsenses",
+					"sensecontent",
+					"sensenumber"
+				});
+			Assert.AreSame(subsubsensesNode, node,
+				"Sense Numbers are configured on the node itself, not its ReferencedOrDirectChildren.{0}Expected: {1}{0}But got:  {2}", Environment.NewLine,
+				DictionaryConfigurationMigrator.BuildPathStringFromNode(subsubsensesNode), DictionaryConfigurationMigrator.BuildPathStringFromNode(node));
+		}
+
+		[Test]
 		public void EnsureValidStylesInModelRemovesMissingStyles()
 		{
 			var sharedKid = new ConfigurableDictionaryNode { Style = "bad" };

@@ -46,8 +46,6 @@ aal	NG	LA	Kotoko
 aal	NG	LA	Mogari
 aam	TZ	L	Aramanik
 aam	TZ	LA	Laramanik
-aam	TZ	LP	Dorobo
-aam	TZ	LP	Ndorobo
 aan	BR	L	Anambé
 aao	DZ	L	Arabic, Algerian Saharan Spoken
 aao	DZ	LA	Saharan Arabic
@@ -63,15 +61,12 @@ aaq	US	L	Abnaki, Eastern
 aaq	US	LA	Abenaki
 aar	DJ	L	Afar
 aar	DJ	LA	Afaraf
-aar	DJ	LP	Danakil
 aar	ER	D	Aussa
 aar	ER	D	Ba'adu
 aar	ER	D	Central Afar
 aar	ER	D	Northern Afar
 aar	ER	L	Afar
 aar	ER	LA	Afaraf
-aar	ER	LP	Danakil
-aar	ER	LP	Denkel
 aar	ET	D	Aussa
 aar	ET	D	Baadu
 aar	ET	D	Central Afar
@@ -81,8 +76,6 @@ aar	ET	L	Afar
 aar	ET	LA	Adal
 aar	ET	LA	'Afar Af
 aar	ET	LA	Afaraf
-aar	ET	LP	Danakil
-aar	ET	LP	Denkel
 aas	TZ	L	Aasáx
 aas	TZ	LA	Aasá
 aas	TZ	LA	Asá
@@ -91,8 +84,6 @@ aas	TZ	LA	Asax
 aas	TZ	LA	Assa
 aas	TZ	LA	Il Konono
 aas	TZ	LA	Lamanik
-aas	TZ	LP	Dorobo
-aas	TZ	LP	Ndorobo
 aat	GR	D	Northwestern Arvanitika
 aat	GR	D	South Central Arvanitika
 aat	GR	D	Thracean Arvanitika
@@ -114,7 +105,6 @@ aax	ID	LA	Kwem
 aax	ID	LA	Mandobbo
 aax	ID	LA	Nub
 aax	ID	LA	Wambon
-aax	ID	LP	Kaeti
 aay	IN	L	Aariya
 aaz	ID	D	Kotos
 aaz	ID	D	Ro'is
@@ -285,7 +275,6 @@ abz	ID	D	Kobola
 abz	ID	L	Abui
 abz	ID	LA	Barue
 abz	ID	LA	Namatalaki
-abz	ID	LP	Barawahing
 aca	CO	L	Achagua
 aca	CO	LA	Ajagua
 aca	CO	LA	Xagua
@@ -1370,9 +1359,6 @@ aiw	ET	LA	Aarai
 aiw	ET	LA	Ara
 aiw	ET	LA	Ari
 aiw	ET	LA	Aro
-aiw	ET	LP	Shankilla
-aiw	ET	LP	Shankilligna
-aiw	ET	LP	Shankillinya
 aix	PG	D	Aighon
 aix	PG	D	Apsokok
 aix	PG	D	Bao
@@ -1847,7 +1833,6 @@ amh	ET	LA	Amarigna
 amh	ET	LA	Amarinya
 amh	ET	LA	Ethiopian
 amh	IL	L	Amharic
-amh	IL	LP	Falasha
 amh	SE	L	Amharic
 amh	US	L	Amharic
 ami	TW	D	Central Amis
@@ -1914,7 +1899,6 @@ amr	PE	D	Kisambaeri
 amr	PE	L	Amarakaeri
 amr	PE	LA	Amaracaire
 amr	PE	LA	Amarakaire
-amr	PE	LP	Mashco
 ams	JP	L	Amami-Oshima, Southern
 ams	JP	LA	Southern Amami-Osima
 amt	PG	D	Amto
@@ -2231,9 +2215,6 @@ aoz	ID	LA	Timoreezen
 aoz	ID	LA	Timorese
 aoz	ID	LA	Uab Atoni Pah Meto
 aoz	ID	LA	Uab Pah Meto
-aoz	ID	LP	Dawan
-aoz	ID	LP	Rawan
-aoz	ID	LP	Timor Dawan
 apb	SB	D	Uki Ni Masi
 apb	SB	D	Ulawa
 apb	SB	DA	Ugi
@@ -2520,7 +2501,6 @@ arn	CL	DA	Ngoluche
 arn	CL	L	Mapudungun
 arn	CL	LA	Mapuche
 arn	CL	LA	Mapudungu
-arn	CL	LP	Araucano
 arn	US	L	Mapudungun
 aro	BO	L	Araona
 aro	BO	LA	Cavina
@@ -2705,8 +2685,6 @@ asg	NG	LA	Kambari
 asg	NG	LA	Kamberchi
 asg	NG	LA	Kamberri
 asg	NG	LA	Yauri
-asg	NG	LP	Maunchi
-asg	NG	LP	Mawanchi
 ash	PE	L	Abishira
 ash	PE	LA	Abigira
 ash	PE	LA	Abiquira
@@ -2977,7 +2955,6 @@ aub	CN	LA	Phula
 aub	CN	LA	Phupha
 auc	EC	L	Waorani
 auc	EC	LA	Sabela
-auc	EC	LP	Auca
 aud	SB	L	Anuta
 aue	BW	D	Nogau
 aue	BW	L	‡Kx'au//'ein
@@ -3315,8 +3292,6 @@ axk	CF	LA	Nyoyaka
 axk	CF	LA	Pygmée de la Lobaye
 axk	CF	LA	Pygmée de Mongoumba
 axk	CF	LA	Pygmées de la Sanghas
-axk	CF	LP	Babinga
-axk	CF	LP	Bambenga
 axk	CG	D	Bambenzele
 axk	CG	D	Basese
 axk	CG	DA	Eastern Aka
@@ -3718,13 +3693,11 @@ bao	BR	L	Waimaha
 bao	BR	LA	Barazana
 bao	BR	LA	Northern Barasano
 bao	BR	LA	Waimaja
-bao	BR	LP	Bará
 bao	CO	D	Eastern Waimaha
 bao	CO	D	Pamoa Bara
 bao	CO	L	Waimaha
 bao	CO	LA	Barasano
 bao	CO	LA	Northern Barasano
-bao	CO	LP	Bará
 bap	BT	L	Bantawa
 bap	BT	LA	Bantaba
 bap	BT	LA	Bantawa Dum
@@ -4042,7 +4015,6 @@ bbu	NG	LA	Kuluno
 bbu	NG	LA	Wo
 bbu	NG	LA	Wurkum
 bbv	PG	L	Karnai
-bbv	PG	LP	Barim
 bbw	CM	L	Baba
 bbw	CM	LA	Baba 1
 bbw	CM	LA	Bapa
@@ -4153,7 +4125,6 @@ bcg	GN	LA	Binari
 bcg	GN	LA	Kalum
 bcg	GN	LA	Mborin
 bch	PG	L	Bariai
-bch	PG	LP	Kabana
 bci	CI	L	Baoulé
 bci	CI	LA	Baule
 bci	CI	LA	Bawule
@@ -6061,7 +6032,6 @@ bkz	ID	D	Tulambatu
 bkz	ID	D	Waia
 bkz	ID	DA	To Rete
 bkz	ID	L	Bungku
-bkz	ID	LP	Nahina
 bla	CA	D	Blood
 bla	CA	D	Piegan
 bla	CA	DA	Peigan
@@ -6393,7 +6363,6 @@ bmw	CM	LA	Bomali
 bmw	CM	LA	Boumoali
 bmw	CM	LA	Bumali
 bmw	CM	LA	Lino
-bmw	CM	LP	Sangasanga
 bmx	PG	L	Baimak
 bmy	CD	L	Bemba
 bmy	CD	LA	Kinyabemba
@@ -6601,7 +6570,6 @@ bob	KE	LA	Waboni
 bob	KE	LA	Wasanye
 bob	KE	LA	Wata
 bob	KE	LA	Wata-Bala
-bob	KE	LP	Boni
 bob	SO	L	Aweer
 bod	BT	L	Tibetan
 bod	BT	LA	Bhokha
@@ -6710,7 +6678,6 @@ bom	NG	LA	Kibbo
 bom	NG	LA	Kibbun
 bom	NG	LA	Kibo
 bom	NG	LA	Kibyen
-bom	NG	LP	Shosho
 bon	PG	D	Boze-Giringarede
 bon	PG	D	Irupi-Drageli
 bon	PG	D	Kunini
@@ -7266,7 +7233,6 @@ bsa	ID	L	Abinomn
 bsa	ID	LA	Avinomen
 bsa	ID	LA	Foja
 bsa	ID	LA	Foya
-bsa	ID	LP	Baso
 bsb	BN	D	Brunei Bisaya
 bsb	BN	D	Sarawak Bisaya
 bsb	BN	D	Tutong 1
@@ -8082,7 +8048,6 @@ bwp	ID	LA	Dumut
 bwp	ID	LA	Kambon
 bwp	ID	LA	Mandobbo
 bwp	ID	LA	Nub
-bwp	ID	LP	Kaeti
 bwq	BF	D	Benge
 bwq	BF	D	Sogokiré
 bwq	BF	D	Syabéré
@@ -8198,9 +8163,6 @@ bxd	CN	LA	Bula
 bxd	CN	LA	Pala
 bxd	CN	LA	Polo
 bxe	ET	L	Ongota
-bxe	ET	LP	Birale
-bxe	ET	LP	Birelle
-bxe	ET	LP	Ifa'Shanqilla
 bxf	PG	L	Bilur
 bxf	PG	LA	Birar
 bxg	CD	L	Bangala
@@ -8347,7 +8309,6 @@ byh	NP	LA	Bujheli
 byh	NP	LA	Bujhyal
 byh	NP	LA	Pukhgyal Ngur
 byh	NP	LA	Western Chepang
-byh	NP	LP	Gharti
 byi	CD	L	Buyu
 byi	CD	LA	Bujwe
 byi	CD	LA	Buyi
@@ -8460,7 +8421,6 @@ bze	NG	LA	Nononke
 bze	NG	LA	Sarkanci
 bze	NG	LA	Sarkawa
 bze	NG	LA	Sorogama
-bze	NG	LP	Boso
 bzf	PG	D	Central Boikin
 bzf	PG	D	East Boikin
 bzf	PG	D	Haripmor
@@ -8560,8 +8520,6 @@ bzw	NG	LA	Abatsa
 bzw	NG	LA	Basa-Benue
 bzw	NG	LA	Rubasa
 bzw	NG	LA	Rubassa
-bzw	NG	LP	Bassa-Komo
-bzw	NG	LP	Bassa-Kwomu
 bzx	ML	L	Bozo, Hainyaxo
 bzx	ML	LA	Boso
 bzx	ML	LA	Hain
@@ -8603,7 +8561,6 @@ cab	BZ	L	Garifuna
 cab	BZ	LA	Black Carib
 cab	BZ	LA	Caribe
 cab	BZ	LA	Central American Carib
-cab	BZ	LP	Moreno
 cab	GT	L	Garifuna
 cab	GT	LA	Black Carib
 cab	GT	LA	Caribe
@@ -8620,7 +8577,6 @@ cab	NI	L	Garifuna
 cab	NI	LA	Black Carib
 cab	NI	LA	Caribe
 cab	NI	LA	Central American Carib
-cab	NI	LP	Moreno
 cab	US	L	Garifuna
 cac	GT	L	Chuj, San Sebastián Coatán
 cad	US	L	Caddo
@@ -8640,20 +8596,12 @@ cag	AR	D	Forest Nivaclé
 cag	AR	D	River Nivaclé
 cag	AR	L	Nivaclé
 cag	AR	LA	Ashlushlay
-cag	AR	LP	Chulupe
-cag	AR	LP	Chulupi
-cag	AR	LP	Chulupie
-cag	AR	LP	Churupi
 cag	PY	D	Forest Nivaclé
 cag	PY	D	River Nivaclé
 cag	PY	L	Nivaclé
 cag	PY	LA	Ashlushlay
 cag	PY	LA	Axluslay
 cag	PY	LA	Nivaklé
-cag	PY	LP	Chulupe
-cag	PY	LP	Chulupí
-cag	PY	LP	Chulupie
-cag	PY	LP	Churupí
 cah	PE	L	Cahuarano
 cak	GT	L	Kaqchikel, Central
 cak	GT	LA	Cakchiquel
@@ -8856,9 +8804,6 @@ cbn	TH	LA	Lawa
 cbn	TH	LA	Niakuol
 cbn	TH	LA	Niakuoll
 cbn	TH	LA	Nyakur
-cbn	TH	LP	Chaobon
-cbn	TH	LP	Chaobun
-cbn	TH	LP	Chaubun
 cbo	NG	L	Izora
 cbr	PE	D	Cacataibo de Mariscal
 cbr	PE	D	Cacataibo de Sinchi Roca
@@ -8912,7 +8857,6 @@ cbv	CO	LA	Macu de Cubeo
 cbv	CO	LA	Macu de Desano
 cbv	CO	LA	Macu de Guanano
 cby	CO	L	Carabayo
-cby	CO	LP	Amazonas Macusa
 cca	CO	L	Cauca
 ccc	PE	L	Chamicuro
 ccc	PE	LA	Chamicolo
@@ -9312,7 +9256,6 @@ cho	US	L	Choctaw
 chp	CA	D	Yellowknife
 chp	CA	L	Dene
 chp	CA	LA	Dëne Súline
-chp	CA	LP	Chipewyan
 chq	MX	D	Yolox Chinanteco
 chq	MX	L	Chinantec, Quiotepec
 chq	MX	LA	Highland Chinantec
@@ -9524,7 +9467,6 @@ cjo	PE	L	Ashéninka Pajonal
 cjo	PE	LA	Ashéninca
 cjo	PE	LA	Atsiri
 cjo	PE	LA	Pajonal
-cjo	PE	LP	Campa
 cjp	CR	D	Chirripó
 cjp	CR	D	Estrella
 cjp	CR	D	Telire
@@ -9698,8 +9640,6 @@ cla	NG	DA	Nafunfia
 cla	NG	DA	Shagau
 cla	NG	DA	Shagawu
 cla	NG	L	Ron
-cla	NG	LP	Chala
-cla	NG	LP	Challa
 clc	CA	L	Chilcotin
 clc	CA	LA	Tzilkotin
 cld	AU	L	Chaldean Neo-Aramaic
@@ -9753,8 +9693,6 @@ clk	IN	LA	Midhi
 clk	IN	LA	Midu
 clk	IN	LA	Sulikota
 clk	IN	LA	Yidu Luoba
-clk	IN	LP	Chulikata
-clk	IN	LP	Chulikotta
 cll	GH	L	Chala
 cll	GH	LA	Cala
 cll	GH	LA	Tshala
@@ -9925,9 +9863,6 @@ cnb	MM	LA	Sho
 cnb	MM	LA	Ütbü
 cnc	VN	L	Côông
 cnc	VN	LA	Khoong
-cnc	VN	LP	Xa Coong
-cnc	VN	LP	Xa Xam
-cnc	VN	LP	Xa Xeng
 cng	CN	D	Cimulin
 cng	CN	D	Luhua
 cng	CN	D	Mawo
@@ -9952,7 +9887,6 @@ cnh	IN	LA	Baungshe
 cnh	IN	LA	Lai
 cnh	IN	LA	Lai Hawlh
 cnh	IN	LA	Lai Pawi
-cnh	IN	LP	Haka
 cnh	MM	D	Klangklang
 cnh	MM	D	Shonshe
 cnh	MM	D	Zokhua
@@ -9964,7 +9898,6 @@ cnh	MM	LA	Hakha
 cnh	MM	LA	Lai
 cni	PE	L	Asháninka
 cni	PE	LA	Asháninca
-cni	PE	LP	Campa
 cnk	BD	D	Khami
 cnk	BD	D	Khimi
 cnk	BD	D	Yindi
@@ -10188,7 +10121,6 @@ cos	VE	L	Corsican
 cot	PE	L	Caquinte
 cot	PE	LA	Caquinte Campa
 cot	PE	LA	Poyenisati
-cot	PE	LP	Cachomashiri
 cou	GN	L	Wamey
 cou	GN	LA	Cogniagui
 cou	GN	LA	Conhague
@@ -10211,8 +10143,6 @@ cov	CN	LA	Sanjiang Miao
 cow	US	L	Cowlitz
 cow	US	LA	Lower Cowlitz
 cox	PE	L	Nanti
-cox	PE	LP	Cogapacori
-cox	PE	LP	Kogapakori
 coy	CO	L	Coyaima
 coz	MX	L	Chocholtec
 coz	MX	LA	Chocho
@@ -10232,8 +10162,6 @@ cpc	PE	LA	Ajyéninka
 cpc	PE	LA	Apurucayali Campa
 cpc	PE	LA	Ashaninca
 cpc	PE	LA	Ashéninca Apurucayali
-cpc	PE	LP	Axininka Campa
-cpc	PE	LP	Campa
 cpg	GR	D	Pharasa
 cpg	GR	D	Sille
 cpg	GR	D	Western Cappadocian
@@ -10249,7 +10177,6 @@ cps	PH	LA	Capisano
 cps	PH	LA	Capiseño
 cpu	PE	L	Ashéninka, Pichis
 cpu	PE	LA	Pichis Ashéninca
-cpu	PE	LP	Pichis Campa
 cpx	CN	D	Putian
 cpx	CN	D	Xianyou
 cpx	CN	DA	Henghua
@@ -10566,14 +10493,12 @@ css	US	DA	Runsien
 css	US	DA	San Carlos
 css	US	DA	San Juan Bautista
 css	US	L	Ohlone, Southern
-css	US	LP	Costanoan
 cst	US	D	East Bay
 cst	US	D	San Francisco
 cst	US	D	Santa Clara
 cst	US	D	Santa Cruz
 cst	US	D	Soledad
 cst	US	L	Ohlone, Northern
-cst	US	LP	Costanoan
 csw	CA	D	Eastern Swampy Cree
 csw	CA	D	Western Swampy Cree
 csw	CA	L	Cree, Swampy
@@ -10709,7 +10634,6 @@ cui	VE	LA	Cuiva
 cuj	PE	L	Mashco Piro
 cuj	PE	LA	Cujareno
 cuj	PE	LA	Cujareño
-cuj	PE	LP	Mashco
 cuk	PA	D	Bayano
 cuk	PA	D	Chuana
 cuk	PA	D	Cueva
@@ -10971,8 +10895,6 @@ dap	IN	LA	Nishi
 dap	IN	LA	Nissi
 dap	IN	LA	Nyishi
 dap	IN	LA	Nyising
-dap	IN	LP	Dafla
-dap	IN	LP	Daphla
 daq	IN	L	Maria, Dandami
 daq	IN	LA	Bastar Koya
 daq	IN	LA	Bison Horn Maria
@@ -11054,7 +10976,6 @@ dax	AU	LA	Dha'i
 dax	AU	LA	Dhay'yi
 daz	ID	L	Dao
 daz	ID	LA	Maniwo
-daz	ID	LP	X-Ray
 dba	ML	L	Bangi Me
 dba	ML	LA	Bangeri Me
 dba	ML	LA	Bangeri Me Dogon
@@ -11220,7 +11141,6 @@ def	IR	LA	Dizfuli
 deg	NG	D	Atala
 deg	NG	D	Usokun
 deg	NG	L	Degema
-deg	NG	LP	Dekema
 deh	PK	L	Dehwari
 deh	PK	LA	Deghwari
 dei	ID	L	Demisa
@@ -11816,8 +11736,6 @@ djk	SR	LA	Ndjuká
 djk	SR	LA	Ndyuka
 djk	SR	LA	Njuká
 djk	SR	LA	Okanisi
-djk	SR	LP	Djoeka
-djk	SR	LP	Djuka
 djl	AU	L	Djiwarli
 djl	AU	LA	Djwarli
 djl	AU	LA	Thiin
@@ -12128,9 +12046,6 @@ dow	CM	LA	Nomai
 dow	CM	LA	Tunga
 dow	CM	LA	Tungbo
 dow	CM	LA	Tuuno
-dow	CM	LP	Namchi
-dow	CM	LP	Namci
-dow	CM	LP	Namshi
 dox	ET	L	Bussa
 dox	ET	LA	Dobase
 dox	ET	LA	D'oopace
@@ -12293,7 +12208,6 @@ dsh	ET	LA	Merille
 dsh	ET	LA	Morille
 dsh	ET	LA	Reshiat
 dsh	ET	LA	Russian Federation
-dsh	ET	LP	Shangilla
 dsh	KE	L	Daasanach
 dsh	KE	LA	Daasanech
 dsh	KE	LA	Dama
@@ -12304,7 +12218,6 @@ dsh	KE	LA	Geleba
 dsh	KE	LA	Gheleba
 dsh	KE	LA	Marille
 dsh	KE	LA	Reshiat
-dsh	KE	LP	Shangilla
 dsi	TD	L	Disa
 dsl	DK	L	Danish Sign Language
 dsn	ID	L	Dusner
@@ -12473,7 +12386,6 @@ duf	NC	LA	Naa Dubea
 duf	NC	LA	Ndumbea
 dug	KE	L	Chiduruma
 dug	KE	LA	Duruma
-dug	KE	LP	Wanyika
 duh	IN	L	Dungra Bhil
 dui	PG	L	Dumun
 dui	PG	LA	Bai
@@ -12793,8 +12705,6 @@ ecs	EC	L	Ecuadorian Sign Language
 eee	CN	L	E
 eee	CN	LA	Eahua
 eee	CN	LA	Kjang E
-eee	CN	LP	Wuse Hua
-eee	CN	LP	Wusehua
 efa	CM	L	Efai
 efa	NG	L	Efai
 efa	NG	LA	Effiat
@@ -12903,7 +12813,6 @@ eky	TH	LA	Karennyi
 eky	TH	LA	Kayah
 eky	TH	LA	Kayay
 eky	TH	LA	Red Karen
-eky	TH	LP	Yang Daeng
 ele	PG	L	Elepi
 ele	PG	LA	Samap
 elh	SD	L	El Hugeirat
@@ -12973,7 +12882,6 @@ elo	KE	LA	Dehes
 elo	KE	LA	Elmolo
 elo	KE	LA	Fura-Pawa
 elo	KE	LA	Ldes
-elo	KE	LP	Ndorobo
 elp	ID	L	Elpaputih
 elp	ID	LA	Elpaputi
 elu	PG	L	Elu
@@ -13102,10 +13010,6 @@ ems	US	LA	Koniag-Chugach
 ems	US	LA	Pacific Yupik
 ems	US	LA	Sugcestun
 ems	US	LA	Suk
-ems	US	LP	Chugach Eskimo
-ems	US	LP	South Alaska Eskimo
-ems	US	LP	Sugpiak Eskimo
-ems	US	LP	Sugpiaq Eskimo
 emu	IN	D	Lanjoda
 emu	IN	D	Raigarh
 emu	IN	L	Muria, Eastern
@@ -13462,7 +13366,6 @@ ese	BO	LA	Ese Eja
 ese	BO	LA	Ese Exa
 ese	BO	LA	Huarayo
 ese	BO	LA	Tiatinagua
-ese	BO	LP	Chama
 ese	PE	L	Ese Ejja
 ese	PE	LA	Ese Eja
 ese	PE	LA	Ese Exa
@@ -13470,7 +13373,6 @@ ese	PE	LA	Ese'ejja
 ese	PE	LA	Huarayo
 ese	PE	LA	Tambopata-Guarayo
 ese	PE	LA	Tiatinagua
-ese	PE	LP	Chama
 esh	IR	L	Eshtehardi
 esi	CA	D	North Slope Inupiatun
 esi	CA	D	West Arctic Inupiatun
@@ -13481,7 +13383,6 @@ esi	CA	L	Inuktitut, North Alaskan
 esi	CA	LA	Inupiaq
 esi	CA	LA	Inupiat
 esi	CA	LA	North Alaskan Inupiat
-esi	CA	LP	Eskimo
 esi	US	D	Anaktuvik Pass Inupiatun
 esi	US	D	North Slope Inupiatun
 esi	US	D	Point Hope Inupiatun
@@ -13491,7 +13392,6 @@ esi	US	L	Inupiatun, North Alaskan
 esi	US	LA	Inupiat
 esi	US	LA	North Alaskan Inuktitut
 esi	US	LA	North Alaskan Inupiat
-esi	US	LP	Eskimo
 esk	US	D	Coastal Inupiatun
 esk	US	D	King Island Inupiatun
 esk	US	D	Kobuk River Inupiatun
@@ -13503,7 +13403,6 @@ esk	US	DA	Bering Strait Inupiatun
 esk	US	L	Inupiatun, Northwest Alaska
 esk	US	LA	Inupiatun
 esk	US	LA	Northwest Alaska Inupiat
-esk	US	LP	Eskimo
 esl	EG	L	Egypt Sign Language
 esn	SV	L	Salvadoran Sign Language
 esn	SV	LA	El Salvadoran Sign Language
@@ -13523,11 +13422,9 @@ ess	RU	LA	Yoit
 ess	RU	LA	Yuit
 ess	RU	LA	Yuk
 ess	RU	LA	Yupik
-ess	RU	LP	Eskimo
 ess	US	D	Chaplino
 ess	US	L	Yupik, Central Siberian
 ess	US	LA	Bering Strait Yupik
-ess	US	LP	St. Lawrence Island Eskimo
 est	AU	L	Estonian
 est	CA	L	Estonian
 est	EE	D	Mulgi
@@ -13601,7 +13498,6 @@ ets	NG	LA	Afenmai
 ets	NG	LA	Etsako
 ets	NG	LA	Etsakor
 ets	NG	LA	Iyekhee
-ets	NG	LP	Kukuruku
 etu	CM	D	Eastern Ejagham
 etu	CM	D	Southern Ejagham
 etu	CM	D	Western Ejagham
@@ -13698,7 +13594,6 @@ evh	NG	LA	Effurun
 evh	NG	LA	Evrie
 evh	NG	LA	Uvhria
 evh	NG	LA	Uvwie
-evh	NG	LP	Evhro
 evn	CN	D	Aoluguya
 evn	CN	D	Chenba'erhu
 evn	CN	D	Haila'er
@@ -13946,9 +13841,7 @@ fax	ES	L	Fala
 fax	ES	LA	A Fala de Xálima
 fax	ES	LA	A Fala do Xãlima
 fax	ES	LA	Galaico-Extremaduran
-fax	ES	LP	Chapurreáu
 fay	IR	L	Fars, Southwestern
-fay	IR	LP	Tajik
 faz	IR	L	Fars, Northwestern
 fcs	CA	L	Quebec Sign Language
 fcs	CA	LA	Langue des Signes
@@ -14113,7 +14006,6 @@ fla	US	D	Pend D'oreille
 fla	US	L	Kalispel-Pend D'oreille
 fla	US	LA	Flathead-Kalispel
 fla	US	LA	Salish
-fla	US	LP	Kalispel-Flathead
 flh	ID	L	Foau
 flh	ID	LA	Doa
 fli	NG	D	Bween
@@ -14195,9 +14087,6 @@ fng	ZA	LA	Lololo
 fng	ZA	LA	Pidgin Bantu
 fng	ZA	LA	Piki
 fng	ZA	LA	Silunguboi
-fng	ZA	LP	Fanakalo
-fng	ZA	LP	Fanekolo
-fng	ZA	LP	Isikula
 fng	ZM	D	Cikabanga
 fng	ZM	L	Fanagalo
 fng	ZM	LA	Basic Zulu
@@ -14206,9 +14095,6 @@ fng	ZM	LA	Isipiki
 fng	ZM	LA	Lololo
 fng	ZM	LA	Pidgin Bantu
 fng	ZM	LA	Piki
-fng	ZM	LP	Fanakalo
-fng	ZM	LP	Fanekolo
-fng	ZM	LP	Isikula
 fng	ZW	D	Chilapalapa
 fng	ZW	L	Fanagalo
 fng	ZW	LA	Isilololo
@@ -14216,9 +14102,6 @@ fng	ZW	LA	Isipiki
 fng	ZW	LA	Lololo
 fng	ZW	LA	Pidgin Bantu
 fng	ZW	LA	Piki
-fng	ZW	LP	Fanakalo
-fng	ZW	LP	Fanekolo
-fng	ZW	LP	Isikula
 fni	TD	D	Northern Fania
 fni	TD	D	Southern Fania
 fni	TD	L	Fania
@@ -14280,8 +14163,6 @@ fos	TW	LA	Sideis
 fos	TW	LA	Sideisch
 fos	TW	LA	Siraia
 fos	TW	LA	Siraiya
-fos	TW	LP	Pepohoan
-fos	TW	LP	Pepo-Hwan
 fpe	GQ	L	Fernando Po Creole English
 fpe	GQ	LA	Criollo
 fpe	GQ	LA	Equatorial Guinean Pidgin
@@ -14968,9 +14849,6 @@ gax	ET	DA	Selale
 gax	ET	L	Oromo, Borana-Arsi-Guji
 gax	ET	LA	Afan Oromo
 gax	ET	LA	Southern Oromo
-gax	ET	LP	Galla
-gax	ET	LP	Galligna
-gax	ET	LP	Gallinya
 gax	KE	D	Boran
 gax	KE	D	Gabbra
 gax	KE	D	Sakuye
@@ -14983,7 +14861,6 @@ gax	KE	LA	Boraan
 gax	KE	LA	Boran
 gax	KE	LA	Oromo
 gax	KE	LA	Southern Oromo
-gax	KE	LP	Galla
 gax	SO	D	Borana
 gax	SO	DA	Booran
 gax	SO	DA	Boran
@@ -15002,7 +14879,6 @@ gaz	ET	L	Oromo, West Central
 gaz	ET	LA	Afan Oromo
 gaz	ET	LA	Oromiffa
 gaz	ET	LA	Oromoo
-gaz	ET	LP	Galla
 gbb	AU	L	Kaytetye
 gbb	AU	LA	Gaididj
 gbb	AU	LA	Kaiditj
@@ -15202,9 +15078,6 @@ gby	NG	LA	Gwari Yamma
 gby	NG	LA	Nkwa
 gby	NG	LA	West Gwari
 gbz	IR	L	Dari, Zoroastrian
-gbz	IR	LP	Gabar
-gbz	IR	LP	Gabri
-gbz	IR	LP	Yazdi
 gcc	PG	L	Mali
 gcc	PG	LA	Gaktai
 gcd	AU	D	Kangkalita
@@ -15669,7 +15542,6 @@ gid	TD	L	Gidar
 gid	TD	LA	Gidder
 gid	TD	LA	Guidar
 gid	TD	LA	Kada
-gid	TD	LP	Baynawa
 gig	PK	L	Goaria
 gil	FJ	D	Banaban
 gil	FJ	L	Kiribati
@@ -15890,7 +15762,6 @@ gla	CA	L	Gaelic, Scottish
 gla	GB	L	Gaelic, Scottish
 gla	GB	LA	Gaelic
 gla	GB	LA	Scots Gaelic
-gla	GB	LP	Erse
 gla	US	L	Gaelic, Scottish
 gla	US	LA	Scottic Gaelic
 glc	TD	L	Bon Gula
@@ -16268,7 +16139,6 @@ gol	SL	L	Gola
 gol	SL	LA	Gula
 gom	AE	L	Konkani, Goan
 gom	AE	LA	Konknni
-gom	AE	LP	Goanese
 gom	IN	D	Bardeskari
 gom	IN	D	Chitpavani
 gom	IN	D	Daldi
@@ -16289,7 +16159,6 @@ gom	KE	L	Konkani, Goan
 gom	KE	LA	Goan
 gom	KE	LA	Gomataki
 gom	KE	LA	Konknni
-gom	KE	LP	Goanese
 goo	FJ	L	Gone Dau
 goo	FJ	LA	Gonedau
 gop	ID	L	Yeretuar
@@ -16652,8 +16521,6 @@ guh	CO	LA	Guaigua
 guh	CO	LA	Guajibo
 guh	CO	LA	Guayba
 guh	CO	LA	Wahibo
-guh	CO	LP	Sicuani
-guh	CO	LP	Sikuani
 guh	VE	L	Guahibo
 guh	VE	LA	Guajibo
 guh	VE	LA	Wahibo
@@ -16663,22 +16530,14 @@ gui	AR	DA	Isocenio
 gui	AR	DA	Izocenyo
 gui	AR	L	Guaraní, Western Argentine
 gui	AR	LA	Eastern Bolivian Guaraní
-gui	AR	LP	Chabanco
-gui	AR	LP	Chaguanco
-gui	AR	LP	Chawuncu
-gui	AR	LP	Chiriguano
 gui	BO	D	Ava
 gui	BO	D	Izoceño
 gui	BO	DA	Izocenio
 gui	BO	L	Guaraní, Eastern Bolivian
 gui	BO	LA	Western Argentine Guaraní
-gui	BO	LP	Chawuncu
-gui	BO	LP	Chiriguano
 gui	PY	L	Guaraní, Eastern Bolivian
 gui	PY	LA	Guarayo
 gui	PY	LA	Guasurango
-gui	PY	LP	Chawuncu
-gui	PY	LP	Chiriguano
 guj	BD	L	Gujarati
 guj	BW	L	Gujarati
 guj	CA	L	Gujarati
@@ -16750,9 +16609,6 @@ guk	ET	LA	Gumis
 guk	ET	LA	Gumuzinya
 guk	ET	LA	Mendeya
 guk	ET	LA	Sigumza
-guk	ET	LP	Shankilligna
-guk	ET	LP	Shankillinya
-guk	ET	LP	Shanqilla
 guk	SD	D	Dakunza
 guk	SD	D	Dekoka
 guk	SD	D	Dewiya
@@ -16819,9 +16675,6 @@ gup	AU	LA	Mayali
 guq	PY	L	Aché
 guq	PY	LA	Axe
 guq	PY	LA	Guayaki-Ache
-guq	PY	LP	Guaiaqui
-guq	PY	LP	Guayakí
-guq	PY	LP	Guoyagui
 gur	BF	D	Booni
 gur	BF	D	Frafra
 gur	BF	D	Gudeni
@@ -17304,7 +17157,6 @@ gyn	SR	LA	Creolese
 gyn	SR	LA	Guyanese Creole
 gyn	US	L	Guyanese Creole English
 gyr	BO	L	Guarayu
-gyr	BO	LP	Guarayo
 gyy	AU	L	Gunya
 gza	ET	L	Ganza
 gza	ET	LA	Ganzo
@@ -17364,10 +17216,6 @@ hae	ET	LA	Harar
 hae	ET	LA	Harer
 hae	ET	LA	Ittu
 hae	ET	LA	Qotu Oromo
-hae	ET	LP	Kwottu
-hae	ET	LP	Qottu
-hae	ET	LP	Quottu
-hae	ET	LP	Qwottu
 haf	VN	L	Haiphong Sign Language
 hag	GH	D	Northern Hanga
 hag	GH	D	Southern Hanga
@@ -17640,7 +17488,6 @@ hed	TD	L	Herdé
 hed	TD	LA	He'dé
 hed	TD	LA	Ka'do Herdé
 hed	TD	LA	Zime
-hed	TD	LP	Kado
 heg	ID	D	Funai
 heg	ID	D	Helong Darat
 heg	ID	D	Helong Pulau
@@ -17683,8 +17530,6 @@ hgm	NA	DA	Heikum
 hgm	NA	DA	Kedde
 hgm	NA	DA	Keddi
 hgm	NA	L	Hai//om
-hgm	NA	LP	Saan
-hgm	NA	LP	San
 hgm	ZA	L	Hai//om
 hgw	PG	D	Kapulika
 hgw	PG	D	Naura
@@ -17723,8 +17568,6 @@ hid	US	LA	Minitari
 hif	AU	L	Hindustani, Fijian
 hif	FJ	L	Hindi, Fiji
 hif	FJ	LA	Fiji Hindustani
-hif	FJ	LP	Fijian Hindi
-hif	FJ	LP	Fijian Hindustani
 hif	US	L	Hindustani, Fijian
 hig	NG	D	Dakwa
 hig	NG	D	Fali of Kiriya
@@ -18005,7 +17848,6 @@ hmt	PG	LA	Hamday
 hmt	PG	LA	Kamea
 hmt	PG	LA	Kapau
 hmt	PG	LA	Watut
-hmt	PG	LP	Kukukuku
 hmu	ID	L	Hamap
 hmv	VN	L	Hmong Dô
 hmw	CN	L	Miao, Western Mashan
@@ -18202,7 +18044,6 @@ hod	NG	L	Holma
 hod	NG	LA	Bali Holma
 hod	NG	LA	Da Holmaci
 hoe	NG	L	Horom
-hoe	NG	LP	Kaleri
 hoh	OM	L	Hobyót
 hoh	OM	LA	Hewbyót
 hoh	OM	LA	Hobi
@@ -18422,7 +18263,6 @@ hts	TZ	LA	Hatsa
 hts	TZ	LA	Kangeju
 hts	TZ	LA	Kindiga
 hts	TZ	LA	Wakindiga
-hts	TZ	LP	Tindiga
 htu	ID	D	Hila
 htu	ID	D	Hitu
 htu	ID	D	Mamala
@@ -18459,7 +18299,6 @@ hug	PE	DA	Tuyuneri
 hug	PE	L	Huachipaeri
 hug	PE	LA	Huachipaire
 hug	PE	LA	Wacipaire
-hug	PE	LP	Mashco
 huh	CL	D	Tsesungún
 huh	CL	L	Huilliche
 huh	CL	LA	Huiliche
@@ -18542,7 +18381,6 @@ hut	NP	D	Upper Humla
 hut	NP	L	Humla
 hut	NP	LA	Dangali
 hut	NP	LA	Phoke
-hut	NP	LP	Humla Bhotia
 huu	CO	L	Huitoto, Murui
 huu	CO	LA	Bue
 huu	CO	LA	Witoto
@@ -19134,8 +18972,6 @@ ike	CA	DP	Labrador Eskimo
 ike	CA	DP	Quebec Eskimo
 ike	CA	L	Inuktitut, Eastern Canadian
 ike	CA	LA	Inuit
-ike	CA	LP	Eastern Arctic Eskimo
-ike	CA	LP	Eastern Canadian Eskimo
 iki	NG	L	Iko
 ikk	NG	L	Ika
 ikl	NG	L	Ikulu
@@ -19236,7 +19072,6 @@ ill	MY	LA	Iranum
 ill	MY	LA	Lanoon
 ill	MY	LA	Lanun
 ill	MY	LA	Ylanos
-ill	MY	LP	Ilanun
 ilo	PH	L	Ilocano
 ilo	PH	LA	Ilokano
 ilo	PH	LA	Iloko
@@ -19307,8 +19142,6 @@ ind	US	L	Indonesian
 ing	US	L	Degexit'an
 ing	US	LA	Deg Xinag
 ing	US	LA	Deg Xit'an
-ing	US	LP	Ingalik
-ing	US	LP	Ingalit
 inh	RU	L	Ingush
 inh	RU	LA	Galgay
 inh	RU	LA	Ghalghay
@@ -19528,9 +19361,6 @@ iso	NG	DA	Iri
 iso	NG	DA	Oleh
 iso	NG	DA	Owhe
 iso	NG	L	Isoko
-iso	NG	LP	Biotu
-iso	NG	LP	Igabo
-iso	NG	LP	Sobo
 isr	IL	L	Israeli Sign Language
 isr	IL	LA	ISL
 ist	HR	L	Istriot
@@ -19701,10 +19531,6 @@ ium	VN	LA	Yao
 ium	VN	LA	Yao Kimmien
 ium	VN	LA	Yao Ogang
 ium	VN	LA	Yu Mien
-ium	VN	LP	Dong
-ium	VN	LP	Mán
-ium	VN	LP	Trai
-ium	VN	LP	Xá
 ivb	PH	L	Ibatan
 ivb	PH	LA	Babuyan
 ivb	PH	LA	Ibataan
@@ -20047,7 +19873,6 @@ jdt	IL	LA	Dzhuhuric
 jdt	IL	LA	Jewish Tat
 jdt	IL	LA	Judeo-Tatic
 jdt	IL	LA	Juhuri
-jdt	IL	LP	Tati
 jdt	RU	D	North Tat
 jdt	RU	D	South Tat
 jdt	RU	L	Judeo-Tat
@@ -20379,11 +20204,6 @@ jnj	ET	D	Toba
 jnj	ET	L	Yemsa
 jnj	ET	LA	Yem
 jnj	ET	LA	Yemma
-jnj	ET	LP	Janjerinya
-jnj	ET	LP	Janjero
-jnj	ET	LP	Janjor
-jnj	ET	LP	Yangaro
-jnj	ET	LP	Zinjero
 jnl	IN	L	Rawat
 jnl	IN	LA	Ban Manus
 jnl	IN	LA	Ban Rauts
@@ -20594,16 +20414,8 @@ jup	BR	LA	Hup
 jup	BR	LA	Hupda
 jup	BR	LA	Jupde
 jup	BR	LA	Ubdé
-jup	BR	LP	Hupdá Makú
-jup	BR	LP	Jupdá Macú
-jup	BR	LP	Macú de Tucano
-jup	BR	LP	Makú-Hupdá
 jup	CO	L	Hupdë
 jup	CO	LA	Ubdé
-jup	CO	LP	Hupdá Makú
-jup	CO	LP	Jupdá Macú
-jup	CO	LP	Macú de Tucano
-jup	CO	LP	Makú-Hupdá
 jur	BR	L	Jurúna
 jur	BR	LA	Iuruna
 jur	BR	LA	Jaruna
@@ -20621,7 +20433,6 @@ juw	NG	LA	Wase
 juw	NG	LA	Wase Tofa
 juy	IN	L	Juray
 jvd	ID	L	Javindo
-jvd	ID	LP	Krontjong
 jvn	GF	L	Javanese, Caribbean
 jvn	SR	L	Javanese, Caribbean
 jvn	SR	LA	Suriname Javanese
@@ -21634,8 +21445,6 @@ kea	CV	LA	Criol
 kea	CV	LA	Crioulo
 kea	CV	LA	Kriol
 kea	CV	LA	Krioulo
-kea	CV	LP	Badiu
-kea	CV	LP	Sampadjudu
 kea	DE	L	Kabuverdianu
 kea	ES	L	Kabuverdianu
 kea	FR	L	Kabuverdianu
@@ -23459,8 +23268,6 @@ knc	CM	LA	Kole
 knc	CM	LA	Kolere
 knc	CM	LA	Sirata
 knc	CM	LA	Yerwa Kanuri
-knc	CM	LP	Baribari
-knc	CM	LP	Beriberi
 knc	ER	L	Kanuri, Central
 knc	NE	D	Movar
 knc	NE	DA	Mavar
@@ -23475,7 +23282,6 @@ knc	NE	LA	Kanoury
 knc	NE	LA	Kole
 knc	NE	LA	Sirata
 knc	NE	LA	Yerwa Kanuri
-knc	NE	LP	Beriberi
 knc	NG	D	Fadawa
 knc	NG	D	Guvja
 knc	NG	D	Kabari
@@ -23519,7 +23325,6 @@ knc	SD	LA	Kanoury
 knc	SD	LA	Kole
 knc	SD	LA	Sirata
 knc	SD	LA	Yerwa Kanuri
-knc	SD	LP	Beriberi
 knc	TD	D	Dagara
 knc	TD	D	Fadawa
 knc	TD	D	Guvja
@@ -23545,8 +23350,6 @@ knc	TD	LA	Kole
 knc	TD	LA	Kolere
 knc	TD	LA	Sirata
 knc	TD	LA	Yerwa Kanuri
-knc	TD	LP	Baribari
-knc	TD	LP	Beriberi
 knd	ID	L	Konda
 knd	ID	LA	Ogit
 knd	ID	LA	Yabin
@@ -24304,8 +24107,6 @@ kqg	BF	LA	Bambadion-Kheso
 kqg	BF	LA	Kheso
 kqg	CI	L	Khe
 kqh	TZ	L	Kisankasa
-kqh	TZ	LP	Dorobo
-kqh	TZ	LP	Ndorobo
 kqi	PG	D	East Koita
 kqi	PG	D	West Koita
 kqi	PG	L	Koitabu
@@ -25033,7 +24834,6 @@ kub	CM	LA	Kuteb
 kub	CM	LA	Kutev
 kub	CM	LA	Mbarike
 kub	CM	LA	Zumper
-kub	CM	LP	Jompre
 kub	NG	D	Fikyu
 kub	NG	D	Jenuwa
 kub	NG	D	Kentin
@@ -25045,7 +24845,6 @@ kub	NG	LA	Kuteb
 kub	NG	LA	Kutev
 kub	NG	LA	Mbarike
 kub	NG	LA	Zumper
-kub	NG	LP	Jompre
 kuc	ID	L	Kwinsu
 kuc	ID	LA	Ansudu
 kud	PG	L	'Auhelawa
@@ -25323,8 +25122,6 @@ kvl	MM	LA	Bre
 kvl	MM	LA	Laku
 kvl	MM	LA	Pramano
 kvl	MM	LA	Pre
-kvl	MM	LP	Brec
-kvl	MM	LP	Kayaw Brek
 kvm	CM	L	Kendem
 kvm	CM	LA	Bokwa-Kendem
 kvn	CO	L	Kuna, Border
@@ -25407,7 +25204,6 @@ kvz	ID	LA	Tsakwambo
 kvz	ID	LA	Tsokwambo
 kwa	BR	L	Dâw
 kwa	BR	LA	Kamã Makú
-kwa	BR	LP	Kamã
 kwb	NG	D	Gyakan
 kwb	NG	D	Kwa
 kwb	NG	L	Kwa
@@ -25691,7 +25487,6 @@ kxj	TD	L	Kulfa
 kxj	TD	LA	Kulfe
 kxj	TD	LA	Kurmi
 kxj	TD	LA	Kurumi
-kxj	TD	LP	Kaba So
 kxk	MM	L	Karen, Zayein
 kxk	MM	LA	Gaungtou
 kxk	MM	LA	Khaungtou
@@ -26056,8 +25851,6 @@ kzy	CD	L	Kango
 kzy	CD	LA	Kango Pygmy
 kzy	CD	LA	Kikango
 kzy	CD	LA	Likango
-kzy	CD	LP	Dibatchua
-kzy	CD	LP	Kibatchua
 kzz	ID	L	Kalabra
 kzz	ID	LA	Beraur
 laa	PH	L	Subanun, Lapuyan
@@ -26260,8 +26053,6 @@ lav	LV	DA	High Latvian
 lav	LV	DA	Latgalian
 lav	LV	DA	Tamian
 lav	LV	L	Latvian
-lav	LV	LP	Lettisch
-lav	LV	LP	Lettish
 lav	NZ	L	Latvian
 lav	RU	L	Latvian
 lav	SE	L	Latvian
@@ -26573,7 +26364,6 @@ lcp	TH	LA	L'wa
 lcp	TH	LA	Mae Hong Son Lawa
 lcp	TH	LA	Mountain Lawa
 lcp	TH	LA	Omphai Lawa
-lcp	TH	LP	Lua
 lcq	ID	D	Batu Merah
 lcq	ID	D	Kelang
 lcq	ID	D	Luhu
@@ -26976,7 +26766,6 @@ lgn	ET	LA	Opo-Shita
 lgn	ET	LA	Opuo
 lgn	ET	LA	Shiita
 lgn	ET	LA	Shita
-lgn	ET	LP	Langa
 lgn	SD	D	Buldit
 lgn	SD	D	Kusgilo
 lgn	SD	L	Opuuo
@@ -26990,7 +26779,6 @@ lgn	SD	LA	Opo-Shita
 lgn	SD	LA	Opuo
 lgn	SD	LA	Shita
 lgn	SD	LA	Shitta
-lgn	SD	LP	Langa
 lgq	GH	L	Logba
 lgq	GH	LA	Ikpana
 lgr	SB	D	Aola
@@ -27554,7 +27342,6 @@ lko	KE	L	Olukhayo
 lko	KE	LA	Khayo
 lko	KE	LA	Xaayo
 lkr	SD	L	Päri
-lkr	SD	LP	Lokoro
 lks	KE	L	Olushisa
 lks	KE	LA	Kisa
 lkt	CA	L	Lakota
@@ -27705,7 +27492,6 @@ lme	TD	L	Pévé
 lme	TD	LA	Ka'do Pevé
 lme	TD	LA	Lamé
 lme	TD	LA	Zime
-lme	TD	LP	Kado
 lmf	ID	L	Lembata, South
 lmg	PG	D	Ibanga
 lmg	PG	D	Lomogai
@@ -27733,13 +27519,9 @@ lmj	ID	LA	Mingar
 lmk	IN	L	Lamkang
 lmk	IN	LA	Lamkaang
 lmk	IN	LA	Lamkang Naga
-lmk	IN	LP	Hiroi-Lamgang
-lmk	IN	LP	Lamgang
 lmk	MM	L	Lamkang
 lmk	MM	LA	Lamkaang
 lmk	MM	LA	Lamkang Naga
-lmk	MM	LP	Hiroi-Lamgang
-lmk	MM	LP	Lamgang
 lml	VU	L	Hano
 lml	VU	LA	Bwatvenua
 lml	VU	LA	Lamalanga
@@ -27990,7 +27772,6 @@ loc	PH	D	Looknon
 loc	PH	L	Inonhan
 loc	PH	LA	Loocnon
 loc	PH	LA	Looknon
-loc	PH	LP	Unhan
 loe	ID	D	Baloa' Kohumamahon
 loe	ID	D	Kahumamahon
 loe	ID	D	Kintom-Pagimana-Boalemo
@@ -28002,7 +27783,6 @@ loe	ID	L	Saluan
 loe	ID	LA	Loinang
 loe	ID	LA	Loindang
 loe	ID	LA	Mondono
-loe	ID	LP	Madi
 lof	SD	L	Logol
 lof	SD	LA	Lukha
 log	CD	D	Bari
@@ -28087,9 +27867,6 @@ lom	LR	L	Loma
 lom	LR	LA	Loghoma
 lom	LR	LA	Looma
 lom	LR	LA	Lorma
-lom	LR	LP	Bouze
-lom	LR	LP	Busy
-lom	LR	LP	Buzi
 lon	MW	L	Lomwe, Malawi
 lon	MW	LA	Anguru
 lon	MW	LA	Nguru
@@ -28557,7 +28334,6 @@ lwl	TH	D	Bo Phawaen
 lwl	TH	D	Bo Sangae
 lwl	TH	L	Lawa, Bo Luang
 lwl	TH	LA	Bo Luang Lawa
-lwl	TH	LP	Lua
 lwm	CN	L	Laomian
 lwm	CN	LA	Bisu
 lwm	CN	LA	Guba
@@ -28679,7 +28455,6 @@ mae	NG	D	Rukul
 mae	NG	L	Bo-Rukul
 mae	NG	LA	Mabo-Barkul
 mae	NG	LA	Mabo-Barukul
-mae	NG	LP	Kaleri
 maf	CM	D	Central Mafa
 maf	CM	D	East Mafa
 maf	CM	D	West Mafa
@@ -28695,13 +28470,11 @@ maf	CM	DA	Soulede
 maf	CM	L	Mafa
 maf	CM	LA	Mofa
 maf	CM	LA	Natakan
-maf	CM	LP	Matakam
 maf	NG	D	Mafa
 maf	NG	L	Mafa
 maf	NG	LA	Bula
 maf	NG	LA	Bulahai
 maf	NG	LA	Natakan
-maf	NG	LP	Matakam
 mag	IN	D	Central Magahi
 mag	IN	D	Northern Magahi
 mag	IN	D	Southern Magahi
@@ -29183,7 +28956,6 @@ mcn	CM	L	Masana
 mcn	CM	LA	Masa
 mcn	CM	LA	Massa
 mcn	CM	LA	Walia
-mcn	CM	LP	Banana
 mcn	TD	D	Bongor
 mcn	TD	D	Bugudum
 mcn	TD	D	Domo
@@ -29203,7 +28975,6 @@ mcn	TD	DA	Yagoua
 mcn	TD	L	Masana
 mcn	TD	LA	Masa
 mcn	TD	LA	Massa
-mcn	TD	LP	Banana
 mco	MX	D	Camotlán Mixe
 mco	MX	D	Coatlán Mixe
 mco	MX	L	Mixe, Coatlán
@@ -29234,8 +29005,6 @@ mcq	PG	D	Numba
 mcq	PG	D	Oko
 mcq	PG	D	Wakue
 mcq	PG	L	Ese
-mcq	PG	LP	Managalasi
-mcq	PG	LP	Managulasi
 mcr	PG	L	Menya
 mcr	PG	LA	Menyama
 mcr	PG	LA	Menye
@@ -29519,9 +29288,6 @@ mdz	BR	LA	Aikewara
 mdz	BR	LA	Akewara
 mdz	BR	LA	Akewere
 mdz	BR	LA	Suruí
-mdz	BR	LP	Mudjétira
-mdz	BR	LP	Mudjetíre
-mdz	BR	LP	Mudjetíre-Suruí
 mea	CM	L	Menka
 mea	CM	LA	Mamwoh
 mea	CM	LA	Wando Bando
@@ -29904,8 +29670,6 @@ mfr	AU	LA	Maridhiel
 mfr	AU	LA	Maridhiyel
 mfr	AU	LA	Marithiyel
 mfr	AU	LA	Marrithiyel
-mfr	AU	LP	Bringen
-mfr	AU	LP	Brinken
 mfs	MX	L	Mexican Sign Language
 mfs	MX	LA	Lengua de Señas Mexicana
 mfs	MX	LA	Lenguaje de las Manos
@@ -30620,7 +30384,6 @@ mjd	US	LA	Secumne
 mjd	US	LA	Sekumne
 mjd	US	LA	Tsamak
 mjd	US	LA	Yuba
-mjd	US	LP	Digger
 mje	TD	L	Muskum
 mje	TD	LA	Muzgum
 mjg	CN	D	Huzhu
@@ -30675,7 +30438,6 @@ mji	VN	LA	Lantin
 mji	VN	LA	Lowland Yao
 mji	VN	LA	Mun
 mji	VN	LA	Red Trouser Yao
-mji	VN	LP	Man Lan-Tien
 mjj	PG	L	Mawak
 mjk	PG	L	Matukar
 mjl	IN	L	Mandeali
@@ -30754,8 +30516,6 @@ mjw	IN	LA	Karbi Karbak
 mjw	IN	LA	Manchati
 mjw	IN	LA	Nihang
 mjw	IN	LA	Puta
-mjw	IN	LP	Mikir
-mjw	IN	LP	Mikiri
 mjx	IN	L	Mahali
 mjx	IN	LA	Mahili
 mjx	IN	LA	Mahle
@@ -30949,8 +30709,6 @@ mlc	VN	LA	Lan-Sán Chi
 mlc	VN	LA	San Chay
 mlc	VN	LA	San Chi
 mlc	VN	LA	Sán-Chi
-mlc	VN	LP	Mán
-mlc	VN	LP	Man Cao-Lan
 mld	AF	L	Malakhel
 mle	PG	L	Manambu
 mlf	LA	L	Mal
@@ -30977,7 +30735,6 @@ mlj	TD	L	Miltu
 mlj	TD	LA	Miltou
 mlk	KE	L	Kiwilwana
 mlk	KE	LA	Ilwana
-mlk	KE	LP	Malakote
 mll	VU	L	Malua Bay
 mll	VU	LA	Espiegle Bay
 mll	VU	LA	Middle Nambas
@@ -31815,8 +31572,6 @@ mqk	PH	L	Manobo, Rajah Kabunsuwan
 mqk	PH	LA	Rajah Kabungsuan Manobo
 mql	BJ	L	Mbelime
 mql	BJ	LA	Mbilme
-mql	BJ	LP	Niende
-mql	BJ	LP	Niendi
 mqm	PF	D	Fatu Hiva
 mqm	PF	D	Hiva Oa
 mqm	PF	D	Tahuta
@@ -31828,7 +31583,6 @@ mqn	ID	DA	Poleang
 mqn	ID	DA	Rumbia
 mqn	ID	L	Moronene
 mqn	ID	LA	Maronene
-mqn	ID	LP	Nahina
 mqo	ID	D	North Modole
 mqo	ID	D	South Modole
 mqo	ID	L	Modole
@@ -31903,7 +31657,6 @@ mrf	ID	LA	Djanggu
 mrf	ID	LA	Janggu
 mrf	ID	LA	Sawa
 mrf	ID	LA	Tabu
-mrf	ID	LP	Morwap
 mrg	IN	L	Miri
 mrg	IN	LA	Mishing
 mrg	IN	LA	Mising
@@ -32232,15 +31985,12 @@ mtp	AR	L	Wichí Lhamtés Nocten
 mtp	AR	LA	Nocten
 mtp	AR	LA	Noctenes
 mtp	AR	LA	Oktenai
-mtp	AR	LP	Mataco Nocten
 mtp	BO	L	Wichí Lhamtés Nocten
 mtp	BO	LA	Bolivian
 mtp	BO	LA	Nocten
 mtp	BO	LA	Noctenes
 mtp	BO	LA	Oktenai
 mtp	BO	LA	Weenhayek
-mtp	BO	LP	Mataco
-mtp	BO	LP	Mataco Nocten
 mtq	VN	D	Ao Tá
 mtq	VN	D	Boi Bi
 mtq	VN	D	Moi 1
@@ -32480,8 +32230,6 @@ muu	KE	LA	Mukoquodo
 muu	KE	LA	Siegu
 muu	KE	LA	Yaakua
 muu	KE	LA	Yiaku
-muu	KE	LP	Ndorobo
-muu	KE	LP	Ntorobo
 muv	IN	D	Eastern
 muv	IN	D	Western
 muv	IN	DA	Malayalam Muthuvan
@@ -33314,7 +33062,6 @@ mza	MX	LA	Mixteco de Santa María Zacatepec
 mza	MX	LA	Southern Putla Mixtec
 mza	MX	LA	Tu'un Va'a
 mza	MX	LA	Zacatepec Mixtec
-mza	MX	LP	Tacuate
 mzb	DZ	L	Tumzabt
 mzb	DZ	LA	Ghardaia
 mzb	DZ	LA	Mzab
@@ -33334,9 +33081,6 @@ mzg	VA	D	Trappist Sign Language
 mzg	VA	L	Monastic Sign Language
 mzh	AR	L	Wichí Lhamtés Güisnay
 mzh	AR	LA	Güisnay
-mzh	AR	LP	Mataco
-mzh	AR	LP	Mataco Güisnay
-mzh	AR	LP	Mataco Pilcomayo
 mzi	MX	L	Mazatec, Ixcatlán
 mzi	MX	LA	Mazateco de San Pedro Ixcatlán
 mzj	GN	D	Koinyaka
@@ -33633,9 +33377,6 @@ naq	BW	LA	Rooi Nasie
 naq	BW	LA	Tama
 naq	BW	LA	Tamakwa
 naq	BW	LA	Tamma
-naq	BW	LP	Hottentot
-naq	BW	LP	Kupkaferrn
-naq	BW	LP	Kupkaffer
 naq	NA	D	Central Damara
 naq	NA	D	Damara
 naq	NA	D	Nama
@@ -33654,9 +33395,6 @@ naq	NA	LA	Rooi Nasie
 naq	NA	LA	Tama
 naq	NA	LA	Tamakwa
 naq	NA	LA	Tamma
-naq	NA	LP	Hottentot
-naq	NA	LP	Khoekhoegowab
-naq	NA	LP	Khoekhoegowap
 naq	ZA	D	Gimsbok Nama
 naq	ZA	L	Nama
 naq	ZA	LA	Berdama
@@ -33676,7 +33414,6 @@ naq	ZA	LA	Rooi Nasie
 naq	ZA	LA	Tama
 naq	ZA	LA	Tamakwa
 naq	ZA	LA	Tamma
-naq	ZA	LP	Hottentot
 nar	NG	L	Iguta
 nar	NG	LA	Anaguta
 nar	NG	LA	Naraguta
@@ -33780,9 +33517,6 @@ nbf	CN	LA	Mu
 nbf	CN	LA	Nahsi
 nbf	CN	LA	Nakhi
 nbf	CN	LA	Nasi
-nbf	CN	LP	Moso
-nbf	CN	LP	Mosso
-nbf	CN	LP	Mo-Su
 nbg	IN	L	Nagarchal
 nbg	IN	LA	Nagar
 nbg	IN	LA	Nagarchi
@@ -34409,7 +34143,6 @@ nev	LA	LA	Nyah Heuny
 nev	LA	LA	Nyahön
 nev	LA	LA	Yaheun
 new	IN	L	Newar
-new	IN	LP	Newari
 new	NP	D	Baglung
 new	NP	D	Bhaktapur
 new	NP	D	Citlang
@@ -34423,7 +34156,6 @@ new	NP	DA	Pahri
 new	NP	L	Newar
 new	NP	LA	Nepal Bhasa
 new	NP	LA	Newal Bhaye
-new	NP	LP	Newari
 nex	PG	L	Neme
 ney	CI	L	Neyo
 ney	CI	LA	Gwibwen
@@ -34924,7 +34656,6 @@ nit	IN	L	Kolami, Southeastern
 niu	CK	L	Niue
 niu	NU	L	Niue
 niu	NU	LA	Niuean
-niu	NU	LP	Niuefekai
 niu	NZ	L	Niue
 niu	TO	L	Niue
 niu	US	L	Niue
@@ -35734,9 +35465,6 @@ nod	LA	LA	Lanna
 nod	LA	LA	Lannatai
 nod	LA	LA	Muang
 nod	LA	LA	Myang
-nod	LA	LP	Youanne
-nod	LA	LP	Youon
-nod	LA	LP	Yuan
 nod	TH	D	Bandu
 nod	TH	D	Nan
 nod	TH	D	Tai Wang
@@ -35762,7 +35490,6 @@ nod	TH	LA	Tai Nya
 nod	TH	LA	Tai Yon
 nod	TH	LA	Tai Yuan
 nod	TH	LA	Western Laotian
-nod	TH	LP	Yuan
 noe	IN	D	Bhuani
 noe	IN	L	Nimadi
 noe	IN	LA	Nemadi
@@ -35816,7 +35543,6 @@ nos	CN	LA	Nisu
 nos	CN	LA	Shiping-Jianshui Nisu
 nos	CN	LA	Shiping-Jianshui Yi
 not	PE	L	Nomatsiguenga
-not	PE	LP	Nomatsiguenga Campa
 nou	PG	D	Ewage-Notu
 nou	PG	D	Yega
 nou	PG	DA	Gona
@@ -35909,9 +35635,6 @@ nrb	ER	LA	Koyta
 nrb	ER	LA	Mogareb
 nrb	ER	LA	Nera
 nrb	ER	LA	Santora
-nrb	ER	LP	Barea
-nrb	ER	LP	Baria
-nrb	ER	LP	Barya
 nre	IN	D	Azonyu
 nre	IN	D	Keteneneyu
 nre	IN	DA	Nzonyu
@@ -36993,7 +36716,6 @@ oki	KE	LA	Akie
 oki	KE	LA	Akiek
 oki	KE	LA	Kinare
 oki	KE	LA	Ogiek
-oki	KE	LP	Ndorobo
 oki	TZ	L	Okiek
 oki	TZ	LA	Akiek
 okj	IN	L	Oko-Juwoi
@@ -37148,7 +36870,6 @@ omt	KE	D	Suiei
 omt	KE	L	Omotik
 omt	KE	LA	Laamoot
 omt	KE	LA	Omotic
-omt	KE	LP	Ndorobo
 omu	PE	L	Omurano
 omu	PE	LA	Humurana
 omu	PE	LA	Mayna
@@ -37537,8 +37258,6 @@ oym	BR	LA	Wajapae
 oym	BR	LA	Wajapuku
 oym	BR	LA	Wayapae
 oym	BR	LA	Wayãpi
-oym	BR	LP	Oiampipucu
-oym	BR	LP	Oyampipuku
 oym	GF	D	Oiyapoque
 oym	GF	D	Wajapuku
 oym	GF	L	Wayampi
@@ -37848,7 +37567,6 @@ pbt	GB	L	Pashto, Southern
 pbt	IR	L	Pashto, Southern
 pbt	IR	LA	Paktu
 pbt	IR	LA	Pashtu
-pbt	IR	LP	Afghani
 pbt	PK	D	Quetta Pashto
 pbt	PK	D	Southeastern Pashto
 pbt	PK	L	Pashto, Southern
@@ -38316,7 +38034,6 @@ pez	BN	DA	Speng
 pez	BN	L	Penan, Eastern
 pez	MY	D	Penan Apoh
 pez	MY	L	Penan, Eastern
-pez	MY	LP	Punan
 pfa	FM	L	Pááfang
 pfe	CM	D	Dan Muure
 pfe	CM	D	Peer Muure
@@ -38511,8 +38228,6 @@ pib	PE	LA	Contaquiro
 pib	PE	LA	Pira
 pib	PE	LA	Pirro
 pib	PE	LA	Simiranch
-pib	PE	LP	Piro
-pib	PE	LP	Simirinche
 pic	GA	L	Pinji
 pic	GA	LA	Apindje
 pic	GA	LA	Apindji
@@ -39006,7 +38721,6 @@ pne	MY	DA	Speng
 pne	MY	L	Penan, Western
 pne	MY	LA	Nibon
 pne	MY	LA	Nibong
-pne	MY	LP	Punan
 png	NG	D	Akwa
 png	NG	D	Asebi
 png	NG	D	Awege
@@ -39050,7 +38764,6 @@ pnp	ID	DA	Lawele
 pnp	ID	DP	Akido
 pnp	ID	L	Pancana
 pnp	ID	LA	Pantjana
-pnp	ID	LP	Akido
 pnq	BF	D	Pana North
 pnq	BF	D	Pana South
 pnq	BF	L	Pana
@@ -39418,7 +39131,6 @@ prd	IR	LA	Parsee-Dari
 prd	IR	LA	Parsi
 pre	ST	L	Principense
 pre	ST	LA	Lun'gwiye
-pre	ST	LP	Moncó
 prg	PL	L	Prussian
 prg	PL	LA	Old Prussian
 prh	PH	L	Porohanon
@@ -39492,7 +39204,6 @@ prp	PK	L	Parsi
 prp	US	L	Parsi
 prq	PE	L	Ashéninka Perené
 prq	PE	LA	Ashéninca Perené
-prq	PE	LP	Perené Campa
 prr	BR	L	Puri
 prr	BR	LA	Coroado
 prs	AF	D	Dari
@@ -40308,7 +40019,6 @@ ray	PF	LA	Rapan
 raz	ID	L	Rahambuu
 raz	ID	LA	Wiaoe
 raz	ID	LA	Wiau
-raz	ID	LP	Noihe
 rbb	CN	L	Palaung, Rumai
 rbb	CN	LA	Gemai
 rbb	CN	LA	Guangjia
@@ -40888,12 +40598,10 @@ rmu	NO	L	Romani, Tavringer
 rmu	NO	LA	Rommani
 rmu	NO	LA	Svensk Rommani
 rmu	NO	LA	Traveller Swedish
-rmu	NO	LP	Tattare
 rmu	SE	L	Romani, Tavringer
 rmu	SE	LA	Rommani
 rmu	SE	LA	Svensk Rommani
 rmu	SE	LA	Traveller Swedish
-rmu	SE	LP	Tattare
 rmw	GB	L	Romani, Welsh
 rmx	VN	L	Romam
 rmy	AL	D	Southern Vlax Romani
@@ -40997,9 +40705,7 @@ rmy	UA	D	Ukrainian Vlax Romani
 rmy	UA	L	Romani, Vlax
 rmy	US	L	Romani, Vlax
 rmz	BD	L	Marma
-rmz	BD	LP	Mogh
 rmz	IN	L	Marma
-rmz	IN	LP	Mogh
 rna	CO	L	Runa
 rnd	AO	L	Ruund
 rnd	AO	LA	Chilu Wunda
@@ -41037,10 +40743,6 @@ rnp	IN	L	Rongpo
 rnp	IN	LA	Rang Po Bhasa
 rnp	IN	LA	Rangkas
 rnp	IN	LA	Rangpa
-rnp	IN	LP	Manchhi Bhassa
-rnp	IN	LP	Marchha
-rnp	IN	LP	Marchha Pahari
-rnp	IN	LP	Tolchha
 rnw	TZ	L	Rungwa
 rnw	TZ	LA	Ichirungwa
 rnw	TZ	LA	Icilungwa
@@ -41731,10 +41433,6 @@ sbe	PG	D	Saliba
 sbe	PG	L	Saliba
 sbf	ET	L	Shabo
 sbf	ET	LA	Sabu
-sbf	ET	LP	Mekeyer
-sbf	ET	LP	Mikair
-sbf	ET	LP	Mikeyir
-sbf	ET	LP	Shako
 sbg	ID	L	Seget
 sbh	PG	D	Harengan
 sbh	PG	D	Sori
@@ -41974,8 +41672,6 @@ scs	CA	L	Slavey, North
 scs	CA	LA	Dene
 scs	CA	LA	Dené
 scs	CA	LA	Mackenzian
-scs	CA	LP	Slave
-scs	CA	LP	Slavi
 scu	IN	L	Shumcho
 scu	IN	LA	Central Kinnauri
 scu	IN	LA	Shumcu
@@ -42143,7 +41839,6 @@ sea	MY	L	Semai
 sea	MY	LA	Sengoi
 sea	MY	LA	Seng'oi
 sea	MY	LA	Senoi
-sea	MY	LP	Central Sakai
 seb	CI	L	Senoufo, Shempire
 seb	CI	LA	Shenpire
 seb	CI	LA	Syempire
@@ -42380,9 +42075,6 @@ sgi	CM	L	Suga
 sgi	CM	LA	Galim
 sgi	CM	LA	Nizaa
 sgi	CM	LA	Ssuga
-sgi	CM	LP	Jemjem
-sgi	CM	LP	Njemnjem
-sgi	CM	LP	Nyamnyam
 sgk	CN	L	Sangkong
 sgk	CN	LA	Buxia
 sgl	AF	D	Ishkashimi
@@ -42579,11 +42271,6 @@ shn	MM	LA	Tai Luang
 shn	MM	LA	Tai Shan
 shn	MM	LA	Tai Yai
 shn	MM	LA	Thai Yai
-shn	MM	LP	Ngeo
-shn	MM	LP	Ngiao
-shn	MM	LP	Ngiaw
-shn	MM	LP	Ngio
-shn	MM	LP	Ngiow
 shn	TH	L	Shan
 shn	TH	LA	Great Thai
 shn	TH	LA	Sam
@@ -42592,11 +42279,6 @@ shn	TH	LA	Tai Luang
 shn	TH	LA	Tai Shan
 shn	TH	LA	Tai Yay
 shn	TH	LA	Thai Yay
-shn	TH	LP	Ngeo
-shn	TH	LP	Ngiao
-shn	TH	LP	Ngiaw
-shn	TH	LP	Ngio
-shn	TH	LP	Ngiow
 sho	NG	L	Shanga
 sho	NG	LA	Shangawa
 sho	NG	LA	Shonga
@@ -42887,15 +42569,11 @@ sjb	ID	LA	Sujau
 sjd	RU	L	Saami, Kildin
 sjd	RU	LA	Saam
 sjd	RU	LA	Saami
-sjd	RU	LP	Kildin Lappish
-sjd	RU	LP	Lapp
 sje	NO	L	Saami, Pite
 sje	NO	LA	Pite
-sje	NO	LP	Lapp
 sje	SE	L	Saami, Pite
 sje	SE	LA	Pite
 sje	SE	LA	Saami
-sje	SE	LP	Lapp
 sjg	TD	D	Sungor
 sjg	TD	D	Walad Dulla
 sjg	TD	L	Assangori
@@ -42948,12 +42626,9 @@ sjs	MA	LA	Sanhaja of Srair
 sjs	MA	LA	Sinhaja Srir
 sjt	RU	L	Saami, Ter
 sjt	RU	LA	Saam
-sjt	RU	LP	Lapp
-sjt	RU	LP	Ter Lappish
 sju	SE	L	Saami, Ume
 sju	SE	LA	Saami
 sju	SE	LA	Ume
-sju	SE	LP	Lapp
 sjw	US	L	Shawnee
 ska	US	L	Skagit
 ska	US	LA	Swinomish
@@ -43196,7 +42871,6 @@ slv	AR	L	Slovene
 slv	AR	LA	Slovenian
 slv	AT	L	Slovene
 slv	AT	LA	Slovenian
-slv	AT	LP	Windisch
 slv	AU	L	Slovene
 slv	AU	LA	Slovenian
 slv	CA	L	Slovene
@@ -43245,11 +42919,8 @@ sma	NO	L	Saami, South
 sma	NO	LA	Saami
 sma	NO	LA	Same
 sma	NO	LA	Samic
-sma	NO	LP	Northern Lappish
-sma	NO	LP	Norwegian Lapp
 sma	SE	L	Saami, South
 sma	SE	LA	Southern Lapp
-sma	SE	LP	Lapp
 smb	PG	L	Simbari
 smb	PG	LA	Chimbari
 smc	PG	L	Som
@@ -43264,7 +42935,6 @@ sme	FI	LA	Davvin
 sme	FI	LA	Northern Lapp
 sme	FI	LA	Saame
 sme	FI	LA	Same
-sme	FI	LP	Lapp
 sme	NO	D	Ruija
 sme	NO	D	Sea Lappish
 sme	NO	D	Torne
@@ -43273,9 +42943,6 @@ sme	NO	LA	Northern Saami
 sme	NO	LA	Saami
 sme	NO	LA	Same
 sme	NO	LA	Samic
-sme	NO	LP	Lapp
-sme	NO	LP	Northern Lappish
-sme	NO	LP	Norwegian Lapp
 sme	SE	D	Ruija
 sme	SE	D	Sea Lappish
 sme	SE	D	Torne
@@ -43286,7 +42953,6 @@ sme	SE	LA	Norwegian Saami
 sme	SE	LA	Saame
 sme	SE	LA	Same
 sme	SE	LA	Samic
-sme	SE	LP	Lapp
 smf	PG	L	Auwe
 smf	PG	LA	Simog
 smg	PG	L	Simbali
@@ -43298,7 +42964,6 @@ smj	NO	LA	Saame
 smj	SE	L	Saami, Lule
 smj	SE	LA	Lule
 smj	SE	LA	Saami
-smj	SE	LP	Lapp
 smk	PH	L	Bolinao
 smk	PH	LA	Binubulinao
 smk	PH	LA	Bolinao Sambal
@@ -43319,9 +42984,6 @@ smn	FI	LA	Saam
 smn	FI	LA	Saame
 smn	FI	LA	Sámi
 smn	FI	LA	Samic
-smn	FI	LP	Finnish Lapp
-smn	FI	LP	Inari Lappish
-smn	FI	LP	Lapp
 smo	AS	L	Samoan
 smo	FJ	L	Samoan
 smo	NZ	L	Samoan
@@ -43348,7 +43010,6 @@ sms	FI	LA	Russian Lapp
 sms	FI	LA	Saame
 sms	FI	LA	Same
 sms	FI	LA	Skolt Lappish
-sms	FI	LP	Lapp
 sms	RU	D	Notozer
 sms	RU	D	Yokan
 sms	RU	L	Saami, Skolt
@@ -43356,9 +43017,6 @@ sms	RU	LA	Kolta
 sms	RU	LA	Lopar
 sms	RU	LA	Saam
 sms	RU	LA	Skolt
-sms	RU	LP	Lapp
-sms	RU	LP	Russian Lapp
-sms	RU	LP	Skolt Lappish
 smt	IN	L	Simte
 smu	KH	L	Somray
 smv	IN	L	Samvedi
@@ -43410,7 +43068,6 @@ sna	ZW	DA	Wazezuru
 sna	ZW	L	Shona
 sna	ZW	LA	Chishona
 sna	ZW	LA	Zezuru
-sna	ZW	LP	Swina
 snb	MY	L	Sebuyau
 snb	MY	LA	Sabuyan
 snb	MY	LA	Sabuyau
@@ -44008,7 +43665,6 @@ spy	KE	DA	Pok
 spy	KE	DA	Pong'om
 spy	KE	L	Sabaot
 spy	KE	LA	Sebei
-spy	KE	LP	Mt. Elgon Maasai
 sqa	NG	D	Sambuga
 sqa	NG	D	Shama
 sqa	NG	L	Shama-Sambuga
@@ -45312,7 +44968,6 @@ taq	ML	LA	Kidal Tamasheq
 taq	ML	LA	Tamashekin
 taq	ML	LA	Timbuktu
 taq	ML	LA	Tomacheck
-taq	ML	LP	Tuareg
 tar	MX	L	Tarahumara, Central
 tar	MX	LA	Alta Tarahumara
 tar	MX	LA	Ralámuli de la Tarahumara Alta
@@ -45457,7 +45112,6 @@ tbl	PH	D	Western Tboli
 tbl	PH	L	Tboli
 tbl	PH	LA	T'boli
 tbl	PH	LA	Tiboli
-tbl	PH	LP	Tagabili
 tbm	CD	L	Tagbu
 tbm	CD	LA	Tagba
 tbm	CD	LA	Tagbo
@@ -45534,7 +45188,6 @@ tbz	BJ	DA	Tamberma
 tbz	BJ	L	Ditammari
 tbz	BJ	LA	Ditamari
 tbz	BJ	LA	Tamari
-tbz	BJ	LP	Somba
 tbz	TG	D	Eastern Ditammari
 tbz	TG	D	Western Ditammari
 tbz	TG	DA	Tamberma
@@ -45543,7 +45196,6 @@ tbz	TG	LA	Soma
 tbz	TG	LA	Some
 tbz	TG	LA	Tamari
 tbz	TG	LA	Tamberma
-tbz	TG	LP	Somba
 tca	BR	L	Ticuna
 tca	BR	LA	Magüta
 tca	BR	LA	Tikuna
@@ -45584,7 +45236,6 @@ tcc	TZ	LA	Datoga
 tcc	TZ	LA	Tatog
 tcc	TZ	LA	Tatoga
 tcc	TZ	LA	Taturu
-tcc	TZ	LP	Mangati
 tcd	GH	L	Tafi
 tcd	GH	LA	Tegbo
 tce	CA	L	Tutchone, Southern
@@ -46500,7 +46151,6 @@ thv	NE	LA	Touareg
 thv	NE	LA	Tourage
 thv	NE	LA	Tuareg
 thw	NP	L	Thudam
-thw	NP	LP	Thudam Bhote
 thx	LA	L	The
 thx	LA	LA	Thae
 thy	NG	L	Tha
@@ -46669,7 +46319,6 @@ tir	ET	LA	Tigray
 tir	ET	LA	Tigrinya
 tir	IL	L	Tigrigna
 tir	IL	LA	Tigrinya
-tir	IL	LP	Falashas
 tis	PH	D	Masadiit Boliney
 tis	PH	D	Masadiit Sallapadan
 tis	PH	L	Itneg, Masadiit
@@ -46683,7 +46332,6 @@ tiu	PH	LA	Addasen Tinguian
 tiu	PH	LA	Itneg Adasen
 tiv	CM	L	Tiv
 tiv	NG	L	Tiv
-tiv	NG	LP	Munshi
 tiw	AU	L	Tiwi
 tix	US	D	Isleta
 tix	US	D	Sandia
@@ -48019,7 +47667,6 @@ ttc	GT	LA	Teco
 ttc	GT	LA	Tectitán Mam
 ttc	GT	LA	Tectitec
 ttc	GT	LA	Tectiteco
-ttc	GT	LP	Teko
 ttc	MX	L	Tectitec
 ttc	MX	LA	Teco
 ttc	MX	LA	Tectitán Mame
@@ -48094,7 +47741,6 @@ ttp	ID	L	Tombelala
 ttp	ID	LA	Bela
 ttp	ID	LA	Belala
 ttp	ID	LA	Mbelala
-ttp	ID	LP	Baria
 ttq	ML	D	Tawallammat Tan Ataram
 ttq	ML	D	Tawallammet Tan Dannag
 ttq	ML	DA	Ioullemmeden
@@ -48105,8 +47751,6 @@ ttq	ML	LA	Tamajeq
 ttq	ML	LA	Tamashekin
 ttq	ML	LA	Tamasheq
 ttq	ML	LA	Tomacheck
-ttq	ML	LP	Tourage
-ttq	ML	LP	Tuareg
 ttq	NE	D	Tawallammat Tan Ataram
 ttq	NE	D	Tawallammat Tan Dannag
 ttq	NE	DA	Ioullemmeden
@@ -48761,15 +48405,11 @@ tye	NG	LA	Tyenga
 tyh	LA	L	O'du
 tyh	LA	LA	Iduh
 tyh	LA	LA	'Iduh
-tyh	LA	LP	Haat
-tyh	LA	LP	Hat
-tyh	LA	LP	Tay Hat
 tyh	VN	L	O'du
 tyh	VN	LA	Haat
 tyh	VN	LA	Hat
 tyh	VN	LA	Iduh
 tyh	VN	LA	'Iduh
-tyh	VN	LP	Tay Hat
 tyi	CG	L	Teke-Tsaayi
 tyi	CG	LA	Getsaayi
 tyi	CG	LA	Tsaya
@@ -48883,10 +48523,8 @@ tyz	VN	LA	Phen
 tyz	VN	LA	Tai Tho
 tyz	VN	LA	Thu Lao
 tyz	VN	LA	T'o
-tyz	VN	LP	Thô
 tza	TZ	L	Tanzanian Sign Language
 tza	TZ	LA	Lugha Ya Alama
-tza	TZ	LP	Lugha Ya Bubu
 tzb	MX	D	Amatenango del Valle
 tzb	MX	L	Tzeltal, Bachajón
 tzb	MX	LA	Lowland Tzeltal
@@ -49185,7 +48823,6 @@ ukr	UA	L	Ukrainian
 ukr	US	L	Ukrainian
 ukr	UZ	L	Ukrainian
 uks	BR	L	Kaapor Sign Language
-uks	BR	LP	Urubú Sign Language
 uku	NG	L	Ukue
 uku	NG	LA	Ekpenmen
 uku	NG	LA	Ekpenmi
@@ -49384,7 +49021,6 @@ urb	BR	LA	Caapor
 urb	BR	LA	Ka'apor
 urb	BR	LA	Kaaporté
 urb	BR	LA	Urubú-Kaapor
-urb	BR	LP	Urubú
 urc	AU	L	Urningangg
 urc	AU	LA	Uningangk
 urc	AU	LA	Wuningak
@@ -49438,7 +49074,6 @@ urh	NG	D	Agbon
 urh	NG	D	Udu
 urh	NG	D	Ujevwe
 urh	NG	L	Urhobo
-urh	NG	LP	Sobo
 uri	PG	D	Kukwo
 uri	PG	D	Yangkolen
 uri	PG	L	Urim
@@ -49780,9 +49415,6 @@ vep	RU	D	Southern Veps
 vep	RU	DA	North Veps
 vep	RU	L	Veps
 vep	RU	LA	Vepsian
-vep	RU	LP	Chudy
-vep	RU	LP	Chuhari
-vep	RU	LP	Chukhari
 ver	CM	L	Mom Jango
 ver	CM	LA	Kobo
 ver	CM	LA	Vere
@@ -50807,7 +50439,6 @@ wlu	AU	L	Wuliwuli
 wlv	AR	D	Bermejo Vejoz
 wlv	AR	L	Wichí Lhamtés Vejoz
 wlv	AR	LA	Vejos
-wlv	AR	LP	Mataco Vejoz
 wlv	BO	L	Wichí Lhamtés Vejoz
 wlw	ID	L	Walak
 wlw	ID	LA	Lower Pyramid
@@ -51168,7 +50799,6 @@ wti	SD	L	Berta
 wti	SD	LA	Barta
 wti	SD	LA	Burta
 wti	SD	LA	Wetawit
-wti	SD	LP	Beni Shangul
 wtk	PG	L	Watakataui
 wtk	PG	LA	Waxe
 wtm	IN	L	Mewati
@@ -51544,7 +51174,6 @@ xho	ZA	L	Xhosa
 xho	ZA	LA	Isixhosa
 xho	ZA	LA	Koosa
 xho	ZA	LA	Xosa
-xho	ZA	LP	Cauzuh
 xhv	LA	L	Khua
 xhv	VN	L	Khua
 xia	CN	L	Xiandao
@@ -51809,7 +51438,6 @@ xmz	ID	D	Tambe'e
 xmz	ID	L	Mori Bawah
 xmz	ID	LA	East Mori
 xmz	ID	LA	Lower Mori
-xmz	ID	LP	Nahina
 xnb	TW	L	Kanakanabu
 xnb	TW	LA	Kanabu
 xnb	TW	LA	Kanakanavu
@@ -51946,8 +51574,6 @@ xsl	CA	LA	Dene
 xsl	CA	LA	Dené
 xsl	CA	LA	Denetha
 xsl	CA	LA	Mackenzian
-xsl	CA	LP	Slave
-xsl	CA	LP	Slavi
 xsm	BF	D	East Kasem
 xsm	BF	D	West Kasem
 xsm	BF	L	Kasem
@@ -52148,8 +51774,6 @@ xuu	AO	LA	Xu
 xuu	AO	LA	Xuhwe
 xuu	AO	LA	Xun
 xuu	AO	LA	Zama
-xuu	AO	LP	Mbarakwena
-xuu	AO	LP	Mbarakwengo
 xuu	BW	D	Buga-Kxoe
 xuu	BW	DA	//Ani-Khoe
 xuu	BW	DA	//Anikxoe
@@ -52163,8 +51787,6 @@ xuu	BW	L	Khwe
 xuu	BW	LA	Khoe
 xuu	BW	LA	Kxoe
 xuu	BW	LA	Xun
-xuu	BW	LP	Mbarakwena
-xuu	BW	LP	Water Bushmen
 xuu	NA	D	//Xo-Kxoe
 xuu	NA	D	//Xom-Kxoe
 xuu	NA	D	Buga-Kxoe
@@ -52174,9 +51796,6 @@ xuu	NA	LA	Khoe
 xuu	NA	LA	Kxoe
 xuu	NA	LA	Kxoedam
 xuu	NA	LA	Xun
-xuu	NA	LP	Barakwena Barakwengo
-xuu	NA	LP	Mbarakwena
-xuu	NA	LP	Water Bushmen
 xuu	ZA	D	//Ani
 xuu	ZA	D	Kxoedam
 xuu	ZA	L	Khwe
@@ -52279,7 +51898,6 @@ yab	BR	LA	Makú-Yahup
 yab	BR	LA	Yahup
 yab	BR	LA	Yahup Makú
 yab	BR	LA	Yëhup
-yab	BR	LP	Maku
 yab	CO	L	Yuhup
 yac	ID	D	Apahapsili
 yac	ID	D	Landikma
@@ -52389,10 +52007,8 @@ yam	CM	LA	Mbem
 yam	CM	LA	Mbubem
 yam	CM	LA	Muzok
 yam	CM	LA	Swe'nga
-yam	CM	LP	Kaka
 yam	NG	L	Yamba
 yam	NG	LA	Mbem
-yam	NG	LP	Kaka
 yao	MW	D	Mangoche
 yao	MW	L	Yao
 yao	MW	LA	Achawa
@@ -52540,7 +52156,6 @@ yay	NG	LA	Agwaguna
 yay	NG	LA	Akurakura
 yay	NG	LA	Gwune
 yay	NG	LA	Okurikan
-yay	NG	LP	Akunakuna
 yaz	NG	D	Nkpam
 yaz	NG	D	Ugep
 yaz	NG	L	Lokaa
@@ -53681,7 +53296,6 @@ yun	NG	LA	Purra
 yun	NG	LA	Yangeru
 yun	NG	LA	Yongor
 yun	NG	LA	Yungur
-yun	NG	LP	Lala
 yup	CO	D	Caño Padilla-La Laguna
 yup	CO	D	Coyaima
 yup	CO	D	Río Casacará

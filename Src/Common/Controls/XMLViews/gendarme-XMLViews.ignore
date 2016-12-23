@@ -71,3 +71,7 @@ R: Gendarme.Rules.Portability.MonoCompatibilityReviewRule
 # not executed on Linux (FWNX-464)
 M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::InitHelpBrowser()
 M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::m_printButton_Click(System.Object,System.EventArgs)
+
+R: Gendarme.Rules.Portability.NewLineLiteralRule
+# Thie complaint is matched in a regular expression for matching all non-whitespace characters
+M: System.String SIL.FieldWorks.Common.Controls.XmlBrowseViewBaseVc::RemoveAttr(System.String,System.String,System.String)
