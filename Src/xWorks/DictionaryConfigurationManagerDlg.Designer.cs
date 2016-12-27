@@ -41,6 +41,7 @@
 			this.removeButton = new System.Windows.Forms.Button();
 			this.copyButton = new System.Windows.Forms.Button();
 			this.configurationsExplanationLabel = new System.Windows.Forms.Label();
+			this.resetButton = new System.Windows.Forms.Button();
 			this.publicationsGroupBox = new System.Windows.Forms.GroupBox();
 			this.publicationsTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.publicationsListView = new System.Windows.Forms.ListView();
@@ -104,6 +105,7 @@
 			this.configurationsTableLayoutPanel.Controls.Add(this.removeButton, 1, 2);
 			this.configurationsTableLayoutPanel.Controls.Add(this.copyButton, 1, 1);
 			this.configurationsTableLayoutPanel.Controls.Add(this.configurationsExplanationLabel, 0, 0);
+			this.configurationsTableLayoutPanel.Controls.Add(this.resetButton, 1, 3);
 			this.configurationsTableLayoutPanel.Name = "configurationsTableLayoutPanel";
 			// 
 			// configurationsListView
@@ -114,7 +116,7 @@
 			this.configurationsListView.LabelEdit = true;
 			this.configurationsListView.MultiSelect = false;
 			this.configurationsListView.Name = "configurationsListView";
-			this.configurationsTableLayoutPanel.SetRowSpan(this.configurationsListView, 3);
+			this.configurationsTableLayoutPanel.SetRowSpan(this.configurationsListView, 4);
 			this.configurationsListView.UseCompatibleStateImageBehavior = false;
 			this.configurationsListView.View = System.Windows.Forms.View.List;
 			// 
@@ -135,6 +137,12 @@
 			resources.ApplyResources(this.configurationsExplanationLabel, "configurationsExplanationLabel");
 			this.configurationsTableLayoutPanel.SetColumnSpan(this.configurationsExplanationLabel, 2);
 			this.configurationsExplanationLabel.Name = "configurationsExplanationLabel";
+			// 
+			// resetButton
+			// 
+			resources.ApplyResources(this.resetButton, "resetButton");
+			this.resetButton.Name = "resetButton";
+			this.resetButton.UseVisualStyleBackColor = true;
 			// 
 			// publicationsGroupBox
 			// 
@@ -202,5 +210,6 @@
 		private System.Windows.Forms.TableLayoutPanel publicationsTableLayoutPanel;
 		public System.Windows.Forms.ListView publicationsListView;
 		private System.Windows.Forms.Label publicationsExplanationLabel;
+		public System.Windows.Forms.Button resetButton;
 	}
 }

@@ -158,6 +158,7 @@ namespace SIL.FieldWorks.XWorks
 			_view.publicationsListView.ItemChecked += OnCheckPublication;
 			_view.copyButton.Click += OnCopyConfiguration;
 			_view.removeButton.Click += OnDeleteConfiguration;
+			_view.resetButton.Click += OnDeleteConfiguration;
 			_view.Closing += (sndr, e) =>
 			{
 				if (SelectedConfiguration != null && Finished != null)
@@ -178,6 +179,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			_view.copyButton.Enabled = false;
 			_view.removeButton.Enabled = false;
+			_view.resetButton.Enabled = false;
 			_view.closeButton.Enabled = false;
 		}
 
@@ -195,15 +197,27 @@ namespace SIL.FieldWorks.XWorks
 				}
 				_view.publicationsListView.Enabled = false;
 				_view.copyButton.Enabled = false;
+				_view.resetButton.Enabled = false;
 				_view.removeButton.Enabled = false;
 				return;
 			}
 
+			if (IsConfigurationACustomizedOriginal(SelectedConfiguration))
+			{
+				_view.resetButton.Enabled = true;
+				_view.removeButton.Enabled = false;
+			}
+			else
+			{
+				_view.removeButton.Enabled = true;
+				_view.resetButton.Enabled = false;
+			}
+
 			_view.publicationsListView.Enabled = true;
 			_view.copyButton.Enabled = true;
-			_view.removeButton.Enabled = true;
 			_view.closeButton.Enabled = true;
-			_view.RemoveButtonToolTip = IsConfigurationACustomizedOriginal(SelectedConfiguration) ? xWorksStrings.Reset : xWorksStrings.Delete;
+			_view.RemoveButtonToolTip = xWorksStrings.Delete;
+			_view.ResetButtonToolTip = xWorksStrings.Reset;
 			var associatedPublications = GetPublications(SelectedConfiguration);
 			foreach (ListViewItem publicationItem in _view.publicationsListView.Items)
 			{
@@ -425,7 +439,7 @@ namespace SIL.FieldWorks.XWorks
 
 			using (var dlg = new ConfirmDeleteObjectDlg(_mediator.HelpTopicProvider))
 			{
-				dlg.WindowTitle = xWorksStrings.Confirm;
+				dlg.WindowTitle = xWorksStrings.Confirm + " " + xWorksStrings.Delete;
 				var kindOfConfiguration = DictionaryConfigurationListener.GetDictionaryConfigurationType(_mediator);
 				dlg.TopBodyText = string.Format("{0} {1}: {2}", kindOfConfiguration, xWorksStrings.Configuration, configurationToDelete.Label);
 
@@ -437,6 +451,7 @@ namespace SIL.FieldWorks.XWorks
 						dlg.TopMessage = xWorksStrings.YouAreResetting;
 					dlg.BottomQuestion = xWorksStrings.WantContinue;
 					dlg.DeleteButtonText = xWorksStrings.Reset;
+					dlg.WindowTitle = xWorksStrings.Confirm + " " + xWorksStrings.Reset;
 				}
 
 				if (dlg.ShowDialog() != DialogResult.Yes)

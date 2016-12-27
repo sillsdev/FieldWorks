@@ -26,6 +26,8 @@ namespace SIL.FieldWorks.XWorks
 
 			m_toolTip = new ToolTip();
 			m_toolTip.SetToolTip(copyButton, xWorksStrings.Duplicate); // the (reset|delete) button's tooltip is set when a config is selected
+			m_toolTip.SetToolTip(removeButton, xWorksStrings.Delete);
+			m_toolTip.SetToolTip(resetButton, xWorksStrings.Reset);
 
 			m_helpTopicProvider = helpTopicProvider;
 
@@ -81,6 +83,8 @@ namespace SIL.FieldWorks.XWorks
 		public string ConfigurationGroupText { set { configurationsGroupBox.Text = value; } }
 
 		public string RemoveButtonToolTip { set { m_toolTip.SetToolTip(removeButton, value); } }
+
+		public string ResetButtonToolTip { set { m_toolTip.SetToolTip(resetButton, value); } }
 
 		private void helpButton_Click(object sender, EventArgs e)
 		{
