@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI <jenkins@sil.org>
+Verified-Linux+1: Jenkins CI <jenkins@sil.org>
+Code-Review+2: James prabu <jamesprabud@gmail.com>
+Submitted-by: Karthik V <vkarthim@gmail.com>
+Submitted-at: Fri, 30 Dec 2016 12:13:23 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/4852
+Project: FieldWorks
+Branch: refs/heads/feature/Dictionary
