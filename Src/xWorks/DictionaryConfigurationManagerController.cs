@@ -158,7 +158,7 @@ namespace SIL.FieldWorks.XWorks
 			_view.publicationsListView.ItemChecked += OnCheckPublication;
 			_view.copyButton.Click += OnCopyConfiguration;
 			_view.removeButton.Click += OnDeleteConfiguration;
-			_view.resetButton.Click += OnDeleteConfiguration;
+			_view.resetButton.Click += OnDeleteConfiguration; // REVIEW (Hasso) 2017.01: should call OnResetConfiguration
 			_view.Closing += (sndr, e) =>
 			{
 				if (SelectedConfiguration != null && Finished != null)
@@ -216,8 +216,6 @@ namespace SIL.FieldWorks.XWorks
 			_view.publicationsListView.Enabled = true;
 			_view.copyButton.Enabled = true;
 			_view.closeButton.Enabled = true;
-			_view.RemoveButtonToolTip = xWorksStrings.Delete;
-			_view.ResetButtonToolTip = xWorksStrings.Reset;
 			var associatedPublications = GetPublications(SelectedConfiguration);
 			foreach (ListViewItem publicationItem in _view.publicationsListView.Items)
 			{
@@ -431,7 +429,7 @@ namespace SIL.FieldWorks.XWorks
 			return false;
 		}
 
-		private void OnDeleteConfiguration(object sender, EventArgs eventArgs)
+		private void OnDeleteConfiguration(object sender, EventArgs eventArgs) // REVIEW (Hasso) 2017.01: this should be two methods, since there are two buttons.
 		{
 			var configurationToDelete = SelectedConfiguration;
 			if (configurationToDelete == null)
