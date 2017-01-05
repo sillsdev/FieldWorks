@@ -2498,7 +2498,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				Label = "Reversal Entry",
 				FieldDescription = "ReversalIndexEntry",
 				Children = new List<ConfigurableDictionaryNode> { newRefSensesNode },
-				IsEnabled = true
+				IsEnabled = true,
+				StyleType = ConfigurableDictionaryNode.StyleTypes.Paragraph,
+				Style = "Reversal-Normal",
+				CSSClassNameOverride = "reversalindexentry"
 			};
 			var currentDefaultModel = new DictionaryConfigurationModel
 			{
@@ -2509,6 +2512,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 			m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, currentDefaultModel);
 			Assert.AreEqual("ReversalIndexEntry", convertedTopNode.FieldDescription, "Converted top node should have FieldDescription=ReversalIndexEntry");
+			Assert.AreEqual("reversalindexentry", convertedTopNode.CSSClassNameOverride, "Converted top node should have CSSClassNameOverride=reversalindexentry");
+			Assert.AreEqual(ConfigurableDictionaryNode.StyleTypes.Paragraph, convertedTopNode.StyleType, "Converted top node should have StyleType=Paragraph");
+			Assert.AreEqual("Reversal-Normal", convertedTopNode.Style, "Converted top node should have Style=Reversal-Normal");
 			// Prior to fixing https://jira.sil.org/browse/LT-16896, convertedTypeNode.FieldDescription was set to "Type".
 			Assert.AreEqual("OwningEntry", convertedTypeNode.FieldDescription, "Converted type node should have FieldDescription=OwningEntry");
 			Assert.AreEqual("Summary", convertedCommentNode.FieldDescription, "Converted comment node should have FieldDescription=Summary");
