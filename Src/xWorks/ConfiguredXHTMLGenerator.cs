@@ -550,9 +550,9 @@ namespace SIL.FieldWorks.XWorks
 				countDown.Wait();
 				threads.Clear();
 				// Throwing the exception out here avoids hanging up the Green screen AND the progress dialog.
-				// The only downside is we only see one exception. See LT-17244.
+				// The only downside is we see only one exception. See LT-17244.
 				if (exceptionThrown != null)
-					throw exceptionThrown;
+					throw new WorkerThreadException("Exception generating Configured XHTML", exceptionThrown);
 			}
 		}
 
