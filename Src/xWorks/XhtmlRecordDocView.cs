@@ -1,4 +1,4 @@
-// Copyright (c) 2016 SIL International
+// Copyright (c) 2016-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -139,18 +139,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (Clerk == null || m_mainView == null || m_mediator == null)
 				return;
-			if (hvo == Clerk.CurrentObjectHvo)
-			{
-				var gb = m_mainView.NativeBrowser as GeckoWebBrowser;
-				if (gb != null && gb.Document != null)
-				{
-					gb.Document.Body.SetAttribute("style", "background-color:#DEDEDE");
-				}
-				if (!m_mediator.IdleQueue.Contains(ShowRecordOnIdle))
-				{
-					m_mediator.IdleQueue.Add(IdleQueuePriority.High, ShowRecordOnIdle);
-				}
-			}
+			if (hvo == Clerk.CurrentObjectHvo && !m_mediator.IdleQueue.Contains(ShowRecordOnIdle))
+				m_mediator.IdleQueue.Add(IdleQueuePriority.High, ShowRecordOnIdle);
 		}
 
 		private bool ShowRecordOnIdle(object arg)
