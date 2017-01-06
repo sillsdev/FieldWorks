@@ -1,3 +1,7 @@
+// Copyright (c) 2017 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 //#define TracingOutput	// used for output in the debug window
 
 using System;
@@ -152,19 +156,25 @@ namespace Sfm2Xml
 		/// acts on the input files that it's given - with Convert being the main entry point.
 		///
 		/// </summary>
-		public Converter()
+		public Converter() : this(new EncConverters())
 		{
+		}
+
+		/// <summary>
+		/// internal method to allow testing of some functionality without requiring setup for EncConverters on a developer machine.
+		/// </summary>
+		internal Converter(EncConverters converters)
+		{
+			m_converters = converters;
 			m_options = new Dictionary<string, bool>(); // maps options (for now a checkbox Checked value) to a key string
 			m_Languages = new Hashtable(); // maps the langId to a ClsLanguage object
-//			m_LangIdToXmlLang = new Hashtable(); // maps the 'id' of a langDef element to the 'xml:lang'
-			m_LangsToIgnore = new Hashtable();	// langDef 'id' values to ignore
+			m_LangsToIgnore = new Hashtable();  // langDef 'id' values to ignore
 			m_FieldsToIgnore = new Hashtable(); // fields that are of a 'lang' that is to be ignored
 			m_Hierarchy = new Hashtable();
-			m_HierarchyChildren = new Hashtable();	// key=string, value=arraylist containing children string names (future StringDictionary)
+			m_HierarchyChildren = new Hashtable();  // key=string, value=arraylist containing children string names (future StringDictionary)
 			m_FieldDescriptionsTable = new Hashtable();
 			m_FieldDescriptionsTableNotFound = new Hashtable();
 			m_InFieldMarkers = new Hashtable();
-			m_converters = new EncConverters();
 			m_BeginMarkerHierarchyEntries = new Hashtable();
 			m_sfmToHierarchy = new Hashtable();
 			m_MarkersNotInHierarchy = new Hashtable();
@@ -2892,14 +2902,14 @@ namespace Sfm2Xml
 				string name = newHierarchy.Name;
 				TreeNode leaf = new TreeNode(name);
 				ArrayList nodes = new ArrayList();
-				ArrayList nextLevel = new ArrayList();
 				nodes.Add(leaf);
 				ImportObject bestParent = null;
 				TreeNode foundNode = null;
 				bool done = false;
 				while (!done)
 				{
-					foreach(TreeNode node in nodes)
+					ArrayList nextLevel = new ArrayList();
+					foreach (TreeNode node in nodes)
 					{
 						ArrayList possibleParents = new ArrayList();
 						GetAncestorsOf(node.Name, ref possibleParents);
