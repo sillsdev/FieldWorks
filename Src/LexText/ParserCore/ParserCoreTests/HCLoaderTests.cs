@@ -468,6 +468,27 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 
 		[Test]
+		public void EnvironmentWithSpaces()
+		{
+			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphStem, "a", "gloss", new SandboxGenericMSA {MsaType = MsaType.kStem});
+			var allo = (IMoStemAllomorph) entry.LexemeFormOA;
+			allo.PhoneEnvRC.Clear();
+			allo.PhoneEnvRC.Add(AddEnvironment("/ _ [C] ([V]) #"));
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(1));
+			LexEntry hcEntry = m_lang.Strata[0].Entries.First();
+
+			Assert.That(hcEntry.Allomorphs.Count, Is.EqualTo(1));
+
+			RootAllomorph hcAllo = hcEntry.PrimaryAllomorph;
+			Assert.That(hcAllo.RequiredEnvironments.Select(e => e.ToEnvString()), Is.EquivalentTo(new[]
+				{
+					"/ _ [cons:+, Type:segment, voc:-]([cons:-, Type:segment, voc:+])?[AnchorType:RightSide, Type:anchor]"
+				}));
+		}
+
+		[Test]
 		public void FullReduplication()
 		{
 			AddEntry(MoMorphTypeTags.kguidMorphPrefix, "[...]", "gloss", new SandboxGenericMSA {MsaType = MsaType.kUnclassified});

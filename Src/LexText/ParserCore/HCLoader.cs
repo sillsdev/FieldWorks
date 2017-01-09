@@ -1614,16 +1614,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return hcPrule;
 		}
 
-		private IEnumerable<string> GetMetathesisGroupNames(IPhMetathesisRule prule, int start, int limit)
-		{
-			for (int i = start; i < limit; i++)
-			{
-				IPhSimpleContext ctxt = prule.StrucDescOS[i];
-				if (!IsWordBoundary(ctxt))
-					yield return i.ToString(CultureInfo.InvariantCulture);
-			}
-		}
-
 		private void LoadAllomorphCoOccurrenceRules(IMoAlloAdhocProhib alloAdhocProhib)
 		{
 			List<Allomorph> firstAllos;
@@ -1906,6 +1896,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						int endOptPos = contextStr.IndexOf(')', pos);
 						yield return contextStr.Substring(pos, endOptPos - pos + 1);
 						pos = endOptPos + 1;
+						break;
+
+					case ' ':
+						pos++;
 						break;
 
 					default:
