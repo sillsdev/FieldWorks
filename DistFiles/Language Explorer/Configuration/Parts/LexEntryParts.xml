@@ -474,6 +474,15 @@
 		<part id="LexEntry-Jt-ExampleTranslationType" type="jtview">
 			<seq class="LexEntry" field="AllSenses" layout="ExampleTranslationType"/>
 		</part>
+		<part id="LexEntry-Jt-ExtendedNote" type="jtview">
+			<seq class="LexEntry" field="AllSenses" layout="ExtendedNote"/>
+		</part>
+		<part id="LexEntry-Jt-ExtNoteType" type="jtview">
+			<seq class="LexEntry" field="AllSenses" layout="ExtendedNoteType"/>
+		</part>		
+		<part id="LexEntry-Jt-ExtNoteDiscussion" type="jtview">
+			<seq class="LexEntry" field="AllSenses" layout="Discussion"/>
+		</part>			
 		<!-- By default let ChildPartGenerator look for missing part layouts under LexSense -->
 		<part id="LexEntry-Jt-$fieldName" type="jtview">
 			<seq class="LexEntry" field="Senses" layout="$fieldName"/>
