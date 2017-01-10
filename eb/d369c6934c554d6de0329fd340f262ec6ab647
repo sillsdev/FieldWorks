@@ -1,0 +1,9 @@
+Code-Review+2: Jason Naylor <jason_naylor@sil.org>
+Verified+1: Hasso Pape <hasso_pape@sil.org>
+Verified+1: Jason Naylor <jason_naylor@sil.org>
+Verified-Linux+1: Jason Naylor <jason_naylor@sil.org>
+Submitted-by: Jason Naylor <jason_naylor@sil.org>
+Submitted-at: Tue, 10 Jan 2017 16:54:51 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/4859
+Project: FieldWorks
+Branch: refs/heads/feature/Dictionary
