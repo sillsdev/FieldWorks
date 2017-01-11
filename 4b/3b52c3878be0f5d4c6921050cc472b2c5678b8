@@ -1,0 +1,8 @@
+Verified-Linux+1: Jenkins CI <jenkins@sil.org>
+Verified+1: Jenkins CI <jenkins@sil.org>
+Code-Review+2: Eberhard Beilharz <eb1@sil.org>
+Submitted-by: Eberhard Beilharz <eb1@sil.org>
+Submitted-at: Wed, 11 Jan 2017 07:42:22 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/4851
+Project: FieldWorks
+Branch: refs/heads/feature/lfmerge
