@@ -222,56 +222,28 @@
 			</para>
 		</part>
 		<part id="LexEntry-Jt-EtymologyPrecComment" type="jtview">
-			<seq field="Etymology" layout="PrecComment">
-				<para>
-					<string field="PrecComment" ws="best analysis"/>
-				</para>
-			</seq>
+			<seq class="LexEntry" field="Etymology" layout="EtymologyPrecComment"/>
 		</part>
 		<part id="LexEntry-Jt-EtymologyNote" type="jtview">
-			<seq field="Etymology" layout="Note">
-				<para>
-					<string field="Note" ws="best analysis"/>
-				</para>
-			</seq>
+			<seq class="LexEntry" field="Etymology" layout="EtymologyNote"/>
 		</part>
 		<part id="LexEntry-Jt-EtymologyBibliography" type="jtview">
-			<seq field="Etymology" layout="Bibliography">
-				<para>
-					<string field="Bibliography" ws="best analysis"/>
-				</para>
-			</seq>
+			<seq class="LexEntry" field="Etymology" layout="EtymologyBibliography"/>
 		</part>
 		<part id="LexEntry-Jt-EtymologyGloss" type="jtview">
-			<seq field="Etymology" layout="Gloss">
-				<para>
-					<string field="Gloss" ws="best analysis"/>
-				</para>
-			</seq>
+			<seq class="LexEntry" field="Etymology" layout="EtymologyGloss"/>
 		</part>
 		<part id="LexEntry-Jt-EtymologyLanguage" type="jtview">
-			<seq field="Etymology" layout="empty">
-				<para>
-					<seq field="Language" layout="Abbreviation" sep="; "/>
-				</para>
-			</seq>
+			<seq class="LexEntry" field="Etymology" layout="EtymologyLanguage"/>
 		</part>
 		<part id="LexEntry-Jt-EtymologyLanguageNotes" type="jtview">
-			<seq field="Etymology" layout="LanguageNotes">
-				<para>
-					<string field="LanguageNotes" ws="best analysis"/>
-				</para>
-			</seq>
+			<seq class="LexEntry" field="Etymology" layout="EtymologyLanguageNotes"/>
 		</part>
 		<part id="LexEntry-Jt-EtymologyForm" type="jtview">
-			<seq field="Etymology" layout="Form"/>
+			<seq class="LexEntry" field="Etymology" layout="Form"/>
 		</part>
 		<part id="LexEntry-Jt-EtymologyComment" type="jtview">
-			<seq field="Etymology" layout="Comment">
-				<para>
-					<string field="Comment" ws="best analysis"/>
-				</para>
-			</seq>
+			<seq class="LexEntry" field="Etymology" layout="EtymologyComment"/>
 		</part>
 		<!-- ForEntryOrSense parts (BulkEdit) -->
 		<!-- 1. Entry Fields -->
@@ -996,6 +968,41 @@
 		</part>
 		<part id="LexEtymology-Detail-PrecComment" type="Detail">
 			<slice field="PrecComment" label="Preceding Annotation" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexEtymology-Jt-EtymologyPrecComment" type="jtview">
+			<para>
+				<string field="PrecComment" ws="best analysis"/>
+			</para>
+		</part>
+		<part id="LexEtymology-Jt-EtymologyNote" type="jtview">
+			<para>
+				<string field="Note" ws="best analysis"/>
+			</para>
+		</part>
+		<part id="LexEtymology-Jt-EtymologyBibliography" type="jtview">
+			<para>
+				<string field="Bibliography" ws="best analysis"/>
+			</para>
+		</part>
+		<part id="LexEtymology-Jt-EtymologyGloss" type="jtview">
+			<para>
+				<string field="Gloss" ws="best analysis"/>
+			</para>
+		</part>
+		<part id="LexEtymology-Jt-EtymologyLanguage" type="jtview">
+			<para>
+				<seq field="Language" layout="Abbreviation" sep="; "/>
+			</para>
+		</part>
+		<part id="LexEtymology-Jt-EtymologyLanguageNotes" type="jtview">
+			<para>
+				<string field="LanguageNotes" ws="best analysis"/>
+			</para>
+		</part>
+		<part id="LexEtymology-Jt-EtymologyComment" type="jtview">
+			<para>
+				<string field="Comment" ws="best analysis"/>
+			</para>
 		</part>
 		<part id="LexEtymology-Detail-Language" type="Detail">
 			<slice field="Language" label="Source Language" editor="possVectorReference" menu="mnuDataTree-Help" indent="true">
