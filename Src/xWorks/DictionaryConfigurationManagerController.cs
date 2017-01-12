@@ -407,9 +407,20 @@ namespace SIL.FieldWorks.XWorks
 			var resettingReversal = IsConfigurationAnOriginalReversal(configurationToDelete);
 			// The reversals will be reset to what the user has configured under All Reversal Indexes. This makes it useful to actually change that.
 			// If the user resets "AllReversalIndexes" it will reset to the shipping version.
-			var pathToDefaultFile = resettingReversal
-				? Path.Combine( _projectConfigDir, allReversalsFileName)
-				: Path.Combine(_defaultConfigDir, filenameOfFilePath);
+			string pathToDefaultFile;
+			if (resettingReversal)
+			{
+				pathToDefaultFile = Path.Combine(_projectConfigDir, allReversalsFileName);
+				// If there are no changes to the AllReversalIndexes in this project then it won't exist, fallback to shipping defaults
+				if (!File.Exists(pathToDefaultFile))
+				{
+					pathToDefaultFile = Path.Combine(_defaultConfigDir, allReversalsFileName);
+				}
+			}
+			else
+			{
+				pathToDefaultFile = Path.Combine(_defaultConfigDir, filenameOfFilePath);
+			}
 
 			configurationToDelete.FilePath = pathToDefaultFile;
 			// Recreate from shipped XML file.

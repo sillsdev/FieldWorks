@@ -318,11 +318,12 @@ namespace SIL.FieldWorks.XWorks
 			Assert.Throws<ArgumentNullException>(() => _controller.DeleteConfiguration(null), "Failed to throw");
 		}
 
+		#region Insufficiently Mocked Tests - When DeleteConfiguration resets a config it loads the default config from the real filesystem
 		[Test]
 		public void DeleteConfigurationResetsForShippedDefaultRatherThanDelete()
 		{
 			var shippedRootDefaultConfigurationPath = Path.Combine(_defaultConfigPath, "Root" + DictionaryConfigurationModel.FileExtension);
-			FileUtils.WriteStringtoFile(shippedRootDefaultConfigurationPath, "shipped root default configuration file contents", Encoding.UTF8);
+			FileUtils.WriteStringtoFile(shippedRootDefaultConfigurationPath, "bogus data that is unread, the file is read from the real defaults", Encoding.UTF8);
 
 			var configurationToDelete = _configurations[0];
 			configurationToDelete.FilePath = Path.Combine("whateverdir", "Root" + DictionaryConfigurationModel.FileExtension);
@@ -335,13 +336,46 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			_controller.DeleteConfiguration(configurationToDelete);
 
-			Assert.That(FileUtils.FileExists(pathToConfiguration), "File should still be there, not deleted.");
-			Assert.That(configurationToDelete.Label, Is.EqualTo("Root-based (complex forms as subentries)"), "Did not seem to reset configuration to shipped defaults.");
-			Assert.Contains(configurationToDelete, _configurations, "Should still have the configuration in the list of configurations");
+			Assert.That(FileUtils.FileExists(pathToConfiguration), "The Root configuration file should have been reset to defaults, not deleted.");
+			Assert.That(configurationToDelete.Label, Is.EqualTo("Root-based (complex forms as subentries)"), "The reset should match the shipped defaults.");
+			Assert.Contains(configurationToDelete, _configurations, "The configuration should still be present in the list after being reset.");
 			Assert.That(_controller.IsDirty, "Resetting is a change that is saved later; should be dirty");
 
 			// Not asserting that the configurationToDelete.FilePath file contents are reset because that will happen later when it is saved.
 		}
+
+		[Test]
+		public void DeleteConfigurationResetsReversalToShippedDefaultIfNoProjectAllReversal()
+		{
+			var defaultReversalPath = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "ReversalIndex");
+			// construct a controller to work in the default reversal directory
+			_controller = new DictionaryConfigurationManagerController(Cache, _configurations, new List<string>(), _projectConfigPath, defaultReversalPath);
+			var allRevFileName = DictionaryConfigurationModel.AllReversalIndexesFilenameBase + DictionaryConfigurationModel.FileExtension;
+			var shippedRootDefaultConfigurationPath = Path.Combine(defaultReversalPath, allRevFileName);
+			FileUtils.WriteStringtoFile(shippedRootDefaultConfigurationPath, "bogus data that is unread, the file is read from the real defaults", Encoding.UTF8);
+
+			var configurationToDelete = _configurations[0];
+			configurationToDelete.FilePath = Path.Combine("whateverdir", "English" + DictionaryConfigurationModel.FileExtension);
+			configurationToDelete.Label = "English";
+			configurationToDelete.WritingSystem = "en";
+
+			var pathToConfiguration = configurationToDelete.FilePath;
+			FileUtils.WriteStringtoFile(pathToConfiguration, "customized file contents", Encoding.UTF8);
+			Assert.That(FileUtils.FileExists(pathToConfiguration), "Unit test not set up right");
+			Assert.IsFalse(FileUtils.FileExists(Path.Combine(_projectConfigPath, allRevFileName)), "Unit test not set up right");
+
+			// SUT
+			_controller.DeleteConfiguration(configurationToDelete);
+
+			Assert.That(FileUtils.FileExists(pathToConfiguration), "The English reversal file should have been reset to defaults, not deleted.");
+			Assert.That(configurationToDelete.Label, Is.EqualTo("English"), "The label should still be English after a reset.");
+			Assert.That(configurationToDelete.IsReversal, Is.True, "The reset configuration files should still be a reversal file.");
+			Assert.Contains(configurationToDelete, _configurations, "The configuration should still be present in the list after being reset.");
+			Assert.That(_controller.IsDirty, "Resetting is a change that is saved later; should be dirty");
+
+			// Not asserting that the configurationToDelete.FilePath file contents are reset because that will happen later when it is saved.
+		}
+		#endregion
 
 		[Test]
 		public void KnowsWhenNotAShippedDefault()
