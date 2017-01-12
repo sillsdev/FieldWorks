@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="all" InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="all" InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+	<Import Project="NuGet.targets"/>
+
+	<UsingTask TaskName="Script" AssemblyFile="MSBuild.Community.Tasks.dll"/>
 	<UsingTask TaskName="ExtractIIDs" AssemblyFile="FwBuildTasks.dll"/>
 
 	<PropertyGroup Condition="'$(OS)'=='Unix'">
@@ -309,13 +312,55 @@
 	</Target>
 
 	<Target Name="build4package-fdo" DependsOnTargets="Initialize;setRegistryValues;ensureTLBsUpToDate;downloadDlls;allCppNoTest;IcuData;FDO;FixFwDataDll">
-		<ItemGroup>
-			<FilesToCopy Include="$(dir-outputBase)/**"/>
-		</ItemGroup>
-		<Copy SourceFiles="$(fwrt)/Downloads/icu.net.dll.config"
-			DestinationFolder="$(dir-outputBase)" OverwriteReadOnlyFiles="true"/>
 	</Target>
 
 	<Target Name="build4package-rest" DependsOnTargets="CopyDlls;mkall">
+	</Target>
+
+	<PropertyGroup>
+		<ILRepackExePath Condition=" '$(ILRepackExePath)' == '' ">$(MSBuildThisFileDirectory)/ILRepack/tools/ILRepack.exe</ILRepackExePath>
+		<ILRepackCommand Condition=" '$(OS)' == 'Windows_NT'">"$(ILRepackExePath)"</ILRepackCommand>
+		<ILRepackCommand Condition=" '$(OS)' != 'Windows_NT' ">mono --runtime=v4.0.30319 $(ILRepackExePath)</ILRepackCommand>
+	</PropertyGroup>
+
+	<Target Name="pack-fdo" DependsOnTargets="Initialize;CheckPrerequisites">
+		<PropertyGroup>
+			<GetPublicTypes>
+				public static string ScriptMain()
+				{
+					// The types of these assemblies should stay public (as well as from the primary assembly FDO.dll)
+					var args = new[] { "$(dir-outputBase)/BasicUtils.dll", "$(dir-outputBase)/COMInterfaces.dll",
+						"$(dir-outputBase)/CoreImpl.dll" };
+					var filename = System.IO.Path.GetTempFileName();
+					using (var stream = new System.IO.StreamWriter(filename))
+					{
+						foreach (var file in args)
+						{
+							if (!System.IO.File.Exists(file))
+								continue;
+
+							var assembly = System.Reflection.Assembly.LoadFile(file);
+							foreach (var type in assembly.GetExportedTypes())
+							{
+								if (!type.IsNested)
+									stream.WriteLine(type.FullName);
+							}
+						}
+					}
+					return filename;
+				}
+			</GetPublicTypes>
+		</PropertyGroup>
+
+		<Exec Command="$(NuGetCommand) install -ExcludeVersion -NonInteractive ILRepack" Condition="!Exists('ILRepack/tools/ILRepack.exe')"/>
+		<Script Language="C#" Code="$(GetPublicTypes)">
+			<Output TaskParameter="ReturnValue" PropertyName="ExcludeFile" />
+		</Script>
+		<Delete Files="$(dir-outputBase)/Palaso.dll.config"/>
+		<Exec Command="$(ILRepackCommand) /log /union /target:library /targetplatform:v4 /xmldocs /parallel /internalize:$(ExcludeFile) /out:$(dir-outputBase)/Packed/FDO.dll FDO.dll BasicUtils.dll COMInterfaces.dll CoreImpl.dll ICSharpCode.SharpZipLib.dll Logos.Utility.dll Microsoft.Practices.ServiceLocation.dll Palaso.dll PhonEnvValidator.dll protobuf-net.dll ScrUtilsInterfaces.dll SharedScrUtils.dll SilUtils.dll StructureMap.dll XMLUtils.dll icu.net.dll Tools.dll NDesk.DBus.dll Db4objects.Db4o.dll Db4objects.Db4o.CS.dll Db4objects.Db4o.Linq.dll Cecil.FlowAnalysis.dll"
+			WorkingDirectory="$(dir-outputBase)" />
+		<Exec Command="$(ILRepackCommand) /log /union /target:library /targetplatform:v4 /xmldocs /parallel /internalize /out:$(dir-outputBase)/Packed/FixFwDataDll.dll FixFwDataDll.dll BasicUtils.dll COMInterfaces.dll CoreImpl.dll Microsoft.Practices.ServiceLocation.dll Palaso.dll SilUtils.dll icu.net.dll NDesk.DBus.dll"
+			WorkingDirectory="$(dir-outputBase)" />
+		<Message Text="ReturndValue=$(ExcludeFile)"/>
 	</Target>
 </Project>
