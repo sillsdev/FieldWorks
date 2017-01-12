@@ -275,6 +275,16 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
+	  	<ConfigurationItem name="Morpheme Type (for affixes)" isEnabled="false" between=" " after=" " field="MorphTypes" cssClassNameOverride="morphtypes">
+	  		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+	  			<Option id="analysis" isEnabled="true" />
+	  		</WritingSystemOptions>
+	  		<ConfigurationItem name="Abbreviation" isEnabled="true" field="Abbreviation">
+	  			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+	  				<Option id="analysis" isEnabled="true" />
+	  			</WritingSystemOptions>
+	  		</ConfigurationItem>
+	  	</ConfigurationItem>	  	
 		<ConfigurationItem name="Inflection Class" between=" " after=" " isEnabled="false" field="MLInflectionClass">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -841,6 +851,16 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
+	  	<ConfigurationItem name="Morpheme Type (for affixes)" isEnabled="false" between=" " after=" " field="MorphTypes" cssClassNameOverride="morphtypes">
+	  		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+	  			<Option id="analysis" isEnabled="true" />
+	  		</WritingSystemOptions>
+	  		<ConfigurationItem name="Abbreviation" isEnabled="true" field="Abbreviation">
+	  			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+	  				<Option id="analysis" isEnabled="true" />
+	  			</WritingSystemOptions>
+	  		</ConfigurationItem>
+	  	</ConfigurationItem>	  	
 		<ConfigurationItem name="Inflection Class" between=" " after=" " isEnabled="false" field="MLInflectionClass">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -1310,6 +1330,16 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
+	  	<ConfigurationItem name="Morpheme Type (for affixes)" isEnabled="false" between=" " after=" " field="MorphTypes" cssClassNameOverride="morphtypes">
+	  		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+	  			<Option id="analysis" isEnabled="true" />
+	  		</WritingSystemOptions>
+	  		<ConfigurationItem name="Abbreviation" isEnabled="true" field="Abbreviation">
+	  			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+	  				<Option id="analysis" isEnabled="true" />
+	  			</WritingSystemOptions>
+	  		</ConfigurationItem>
+	  	</ConfigurationItem>	  	
 		<ConfigurationItem name="Inflection Class" between=" " after=" " isEnabled="false" field="MLInflectionClass">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -1855,6 +1885,16 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
+	  	<ConfigurationItem name="Morpheme Type (for affixes)" isEnabled="false" between=" " after=" " field="MorphTypes" cssClassNameOverride="morphtypes">
+	  		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+	  			<Option id="analysis" isEnabled="true" />
+	  		</WritingSystemOptions>
+	  		<ConfigurationItem name="Abbreviation" isEnabled="true" field="Abbreviation">
+	  			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+	  				<Option id="analysis" isEnabled="true" />
+	  			</WritingSystemOptions>
+	  		</ConfigurationItem>
+	  	</ConfigurationItem>	  	
 		<ConfigurationItem name="Inflection Class" between=" " after=" " isEnabled="false" field="MLInflectionClass">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -2290,6 +2330,16 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
+	  	<ConfigurationItem name="Morpheme Type (for affixes)" isEnabled="false" between=" " after=" " field="MorphTypes" cssClassNameOverride="morphtypes">
+	  		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+	  			<Option id="analysis" isEnabled="true" />
+	  		</WritingSystemOptions>
+	  		<ConfigurationItem name="Abbreviation" isEnabled="true" field="Abbreviation">
+	  			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+	  				<Option id="analysis" isEnabled="true" />
+	  			</WritingSystemOptions>
+	  		</ConfigurationItem>
+	  	</ConfigurationItem>	  	
 		<ConfigurationItem name="Inflection Class" between=" " after=" " isEnabled="false" field="MLInflectionClass">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -2835,6 +2885,16 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
+	  	<ConfigurationItem name="Morpheme Type (for affixes)" isEnabled="false" between=" " after=" " field="MorphTypes" cssClassNameOverride="morphtypes">
+	  		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+	  			<Option id="analysis" isEnabled="true" />
+	  		</WritingSystemOptions>
+	  		<ConfigurationItem name="Abbreviation" isEnabled="true" field="Abbreviation">
+	  			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+	  				<Option id="analysis" isEnabled="true" />
+	  			</WritingSystemOptions>
+	  		</ConfigurationItem>
+	  	</ConfigurationItem>	  	
 		<ConfigurationItem name="Inflection Class" between=" " after=" " isEnabled="false" field="MLInflectionClass">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -2907,6 +2967,16 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
+	  	<ConfigurationItem name="Morpheme Type (for affixes)" isEnabled="false" between=" " after=" " field="MorphTypes" cssClassNameOverride="morphtypes">
+	  		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+	  			<Option id="analysis" isEnabled="true" />
+	  		</WritingSystemOptions>
+	  		<ConfigurationItem name="Abbreviation" isEnabled="true" field="Abbreviation">
+	  			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+	  				<Option id="analysis" isEnabled="true" />
+	  			</WritingSystemOptions>
+	  		</ConfigurationItem>
+	  	</ConfigurationItem>	  	
 		<ConfigurationItem name="Inflection Class" between=" " after=" " isEnabled="false" field="MLInflectionClass">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -3654,6 +3724,16 @@
 			  </WritingSystemOptions>
 			</ConfigurationItem>
 		  </ConfigurationItem>
+		  <ConfigurationItem name="Morpheme Type (for affixes)" isEnabled="false" between=" " after=" " field="MorphTypes" cssClassNameOverride="morphtypes">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+					<Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+				<ConfigurationItem name="Abbreviation" isEnabled="true" field="Abbreviation">
+					<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+						<Option id="analysis" isEnabled="true" />
+					</WritingSystemOptions>
+				</ConfigurationItem>
+		  </ConfigurationItem>			
 		  <ConfigurationItem name="Inflection Class" between=" " after=" " isEnabled="false" field="MLInflectionClass">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true"/>
