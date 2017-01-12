@@ -285,8 +285,6 @@
 	</Target>
 
 	<Target Name="build4package-fdo" DependsOnTargets="Initialize;setRegistryValues;ensureTLBsUpToDate;downloadDlls;allCppNoTest;IcuData;FDO;FixFwDataDll">
-		<Copy SourceFiles="$(fwrt)/Downloads/icu.net.dll.config"
-			DestinationFolder="$(dir-outputBase)" OverwriteReadOnlyFiles="true"/>
 	</Target>
 
 	<Target Name="build4package-rest" DependsOnTargets="CopyDlls;mkall">
