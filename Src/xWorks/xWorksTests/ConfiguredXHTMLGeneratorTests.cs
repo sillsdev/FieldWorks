@@ -8141,6 +8141,80 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <summary>
+		/// LT-18018.
+		/// The implementation code changes were done in GenerateXHTMLForILexEntryRefsByType.
+		/// </summary>
+		[Test]
+		public void GenerateXHTMLForFieldByReflection_VariantFormTypesAreOrderedBasedOnOptionOrdering()
+		{
+			var variantTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+			};
+			var variantTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				CSSClassNameOverride = "variantentrytypes",
+				Children = new List<ConfigurableDictionaryNode> { variantTypeNameNode },
+			};
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				SubField = "MLHeadWord",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var variantFormNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
+				FieldDescription = "VariantFormEntryBackRefs",
+				Children = new List<ConfigurableDictionaryNode> { formNode, variantTypeNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { variantFormNode },
+				FieldDescription = "LexEntry"
+			};
+
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+
+			// Use the second item in the list for testing at this time, since the first item in the list isn't being handled the same way right now (20170111) by the current implementation.
+			var earlyTypeInOptionsListGuid = ((DictionaryNodeListOptions) variantFormNode.DictionaryNodeOptions).Options[1].Id;
+			var lastTypeInOptionsListGuid = (variantFormNode.DictionaryNodeOptions as DictionaryNodeListOptions).Options.Last().Id;
+
+			var earlyTypeInOptionsList = settings.Cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities.First(possibility => possibility.Guid.ToString() == earlyTypeInOptionsListGuid);
+			var lastTypeInOptionsList = settings.Cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities.First(possibility => possibility.Guid.ToString() == lastTypeInOptionsListGuid);
+
+			var lexentry = CreateInterestingLexEntry(Cache);
+
+			CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordA"), earlyTypeInOptionsList.Name.AnalysisDefaultWritingSystem.Text);
+			CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordB"), lastTypeInOptionsList.Name.AnalysisDefaultWritingSystem.Text);
+
+			var lexEntryRefCollection = lexentry.VariantFormEntryBackRefs.ToList();
+
+			var builder = new StringBuilder();
+
+			// SUT1
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForFieldByReflection(lexentry, variantFormNode, null, settings);
+
+			Assert.That(result.IndexOf("headwordA", StringComparison.InvariantCulture),
+				Is.LessThan(result.IndexOf("headwordB", StringComparison.InvariantCulture)), "variant forms not appearing in an order corresponding to their type sorting");
+
+			// Change the order of variantFormNode.DictionaryNodeOptions, which should result in the data being ordered differently.
+
+			((DictionaryNodeListOptions)variantFormNode.DictionaryNodeOptions).Options.Reverse();
+
+			builder = new StringBuilder();
+			// SUT2
+			result = ConfiguredXHTMLGenerator.GenerateXHTMLForFieldByReflection(lexentry, variantFormNode, null, settings);
+
+			Assert.That(result.IndexOf("headwordB", StringComparison.InvariantCulture),
+				Is.LessThan(result.IndexOf("headwordA", StringComparison.InvariantCulture)), "variant forms not appearing in an order corresponding to their type sorting");
+		}
+
 		[Test]
 		public void GenerateAdjustedPageNumbers_NoAdjacentWhenUpButtonConsumesAllEntries()
 		{
@@ -8391,6 +8465,7 @@ namespace SIL.FieldWorks.XWorks
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithGlossOfGloss, 1);
 		}
+
 		#region Helpers
 		private static void DeleteTempXhtmlAndCssFiles(string xhtmlPath)
 		{

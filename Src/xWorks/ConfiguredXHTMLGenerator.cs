@@ -722,7 +722,7 @@ namespace SIL.FieldWorks.XWorks
 		/// write out appropriate XHTML.
 		/// </summary>
 		/// <remarks>We use a significant amount of boilerplate code for fields and subfields. Make sure you update both.</remarks>
-		private static string GenerateXHTMLForFieldByReflection(object field, ConfigurableDictionaryNode config,
+		internal static string GenerateXHTMLForFieldByReflection(object field, ConfigurableDictionaryNode config,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, SenseInfo info = new SenseInfo(),
 			bool fUseReverseSubField = false)
 		{
@@ -1695,7 +1695,15 @@ namespace SIL.FieldWorks.XWorks
 			var lexEntryTypes = isComplex
 				? settings.Cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities
 				: settings.Cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities;
-			foreach (var lexEntryType in lexEntryTypes.Where(lexEntryType => config.DictionaryNodeOptions == null || IsListItemSelectedForExport(config, lexEntryType, null)))
+			var lexEntryTypesFiltered = lexEntryTypes.Where(lexEntryType => config.DictionaryNodeOptions == null || IsListItemSelectedForExport(config, lexEntryType, null));
+			// Order the types by their order in their list in the configuration options, if any (LT-18018).
+			if (config.DictionaryNodeOptions != null)
+				lexEntryTypesFiltered =
+				lexEntryTypesFiltered.OrderBy(
+					leType =>
+						((DictionaryNodeListOptions) config.DictionaryNodeOptions).Options.FindIndex(
+							option => option.Id == leType.Guid.ToString()));
+			foreach (var lexEntryType in lexEntryTypesFiltered)
 			{
 				var innerBldr = new StringBuilder();
 				foreach (var lexEntRef in lerCollection)
@@ -2946,7 +2954,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <remarks>
 		/// Presently, this handles only Sense Info, but if other info needs to be handed down the call stack in the future, we could rename this
 		/// </remarks>
-		private struct SenseInfo
+		internal struct SenseInfo
 		{
 			public int SenseCounter { get; set; }
 			public string SenseOutlineNumber { get; set; }
