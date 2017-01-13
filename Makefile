@@ -228,8 +228,8 @@ install-tree-fdo:
 	install -d $(DESTDIR)/usr/share/fieldworks
 	install -d $(DESTDIR)/var/lib/fieldworks
 	# Install libraries and their support files
-	install -m 644 $(OUT_DIR)/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
-	install -m 644 $(OUT_DIR)/{*.compmap,components.map} $(DESTDIR)/usr/lib/fieldworks
+	install -m 644 $(OUT_DIR)/Packed/{FDO,FixFwDataDll}.dll* $(DESTDIR)/usr/lib/fieldworks
+	install -m 644 $(OUT_DIR)/*.so $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 Lib/src/icu/install$(ARCH)/lib/lib* $(DESTDIR)/usr/lib/fieldworks
 	# Install executables and scripts
 	install Lib/src/icu/install$(ARCH)/bin/* $(DESTDIR)/usr/lib/fieldworks/icu-bin
@@ -758,7 +758,7 @@ Fw-build-package:
 
 Fw-build-package-fdo:
 	cd $(BUILD_ROOT)/Build \
-		&& xbuild '/t:build4package-fdo' /property:config=release /property:packaging=yes
+		&& xbuild '/t:build4package-fdo;pack-fdo' /property:config=release /property:packaging=yes
 
 TE-run: ComponentsMap-nodep
 	(. ./environ && cd $(OUT_DIR) && mono --debug TE.exe -db "$${TE_DATABASE}")
