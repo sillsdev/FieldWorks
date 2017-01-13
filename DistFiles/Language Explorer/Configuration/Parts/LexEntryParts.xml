@@ -450,11 +450,11 @@
 			<seq class="LexEntry" field="AllSenses" layout="ExtendedNote"/>
 		</part>
 		<part id="LexEntry-Jt-ExtNoteType" type="jtview">
-			<seq class="LexEntry" field="AllSenses" layout="ExtendedNoteType"/>
-		</part>		
+			<seq class="LexEntry" field="AllSenses" layout="ExtNoteType"/>
+		</part>
 		<part id="LexEntry-Jt-ExtNoteDiscussion" type="jtview">
-			<seq class="LexEntry" field="AllSenses" layout="Discussion"/>
-		</part>			
+			<seq class="LexEntry" field="AllSenses" layout="ExtNoteDiscussion"/>
+		</part>
 		<!-- By default let ChildPartGenerator look for missing part layouts under LexSense -->
 		<part id="LexEntry-Jt-$fieldName" type="jtview">
 			<seq class="LexEntry" field="Senses" layout="$fieldName"/>
