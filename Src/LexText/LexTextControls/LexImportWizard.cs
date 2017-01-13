@@ -3998,6 +3998,11 @@ namespace SIL.FieldWorks.LexText.Controls
 				// LT-10904 added checkbox
 				listViewContentMapping.Height =
 					tabSteps.Bottom - btnModifyContentMapping.Height - m_chkCreateMissingLinks.Height - listViewContentMapping.Top - 20;
+				var nudge = 0;
+				if (MiscUtils.IsUnix)
+					nudge = 25;
+				// LT-17974 Adjust layout on Linux/Mono so checkbox and modify button are not overlapping.
+				listViewContentMapping.Height -= nudge;
 
 				listViewCharMappings.Width = tabSteps.Width - 40;
 				listViewCharMappings.Height = tabSteps.Bottom - btnModifyCharMapping.Height - listViewCharMappings.Top - 20;
