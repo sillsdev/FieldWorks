@@ -357,6 +357,9 @@
 			<Output TaskParameter="ReturnValue" PropertyName="ExcludeFile" />
 		</Script>
 		<Delete Files="$(dir-outputBase)/Palaso.dll.config"/>
+		<Exec Command="pdb2mdb icu.net.dll" WorkingDirectory="$(dir-outputBase)" />
+		<!-- ILRepack 2.0.12 introduced a bug where it tries to contact the source server which only works on Windows (https://github.com/gluck/il-repack/issues/173). Deleting icu.net.pdb works around it.-->
+		<Delete Files="$(dir-outputBase)/icu.net.pdb" />
 		<Exec Command="$(ILRepackCommand) /log /union /target:library /targetplatform:v4 /xmldocs /parallel /internalize:$(ExcludeFile) /out:$(dir-outputBase)/Packed/FDO.dll FDO.dll BasicUtils.dll COMInterfaces.dll CoreImpl.dll ICSharpCode.SharpZipLib.dll Logos.Utility.dll Microsoft.Practices.ServiceLocation.dll Palaso.dll PhonEnvValidator.dll protobuf-net.dll ScrUtilsInterfaces.dll SharedScrUtils.dll SilUtils.dll StructureMap.dll XMLUtils.dll icu.net.dll Tools.dll NDesk.DBus.dll Db4objects.Db4o.dll Db4objects.Db4o.CS.dll Db4objects.Db4o.Linq.dll Cecil.FlowAnalysis.dll"
 			WorkingDirectory="$(dir-outputBase)" />
 		<Exec Command="$(ILRepackCommand) /log /union /target:library /targetplatform:v4 /xmldocs /parallel /internalize /out:$(dir-outputBase)/Packed/FixFwDataDll.dll FixFwDataDll.dll BasicUtils.dll COMInterfaces.dll CoreImpl.dll Microsoft.Practices.ServiceLocation.dll Palaso.dll SilUtils.dll icu.net.dll NDesk.DBus.dll"
