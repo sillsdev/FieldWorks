@@ -331,20 +331,70 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						throw new ArgumentException(
 							string.Format("transduce attribute of column argument specifies an unhandled class ({0})"), className);
 				}
-				if (mdc.GetFieldType(flid) == (int)CellarPropertyType.String)
+				if (mdc.GetFieldType(flid) == (int) CellarPropertyType.String)
 					ls.Cache.DomainDataByFlid.SetString(hvo, flid, val);
-				else // asssume multistring
-					ls.Cache.DomainDataByFlid.SetMultiStringAlt(hvo, flid, ws, val);
+				else
+				{
+					var list = XmlUtils.GetOptionalAttributeValue(column, "list");
+					if (list == null)
+					{
+						// asssume multistring
+						ls.Cache.DomainDataByFlid.SetMultiStringAlt(hvo, flid, ws, val);
+					}
+					else
+					{
+						var matchedPossibility = FindMatchingPossibilityItem(ls.Cache, list, ws, val);
+						if(matchedPossibility != null)
+						{
+							// Insert the found possibility into the beginning of the list
+							ls.Cache.DomainDataByFlid.Replace(hvo, flid, 0, 0, new[] { matchedPossibility.Hvo }, 1);
+						}
+					}
+				}
 				return true;
 			}
 			throw new ArgumentException("transduce attr for column spec has wrong number of parts " + transduce + " " + column.OuterXml);
+		}
+
+		/// <summary>
+		/// Will attempt to match the name or abbreviation for the given string and writing system in the list.
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="list">e.g. LexDb.DialectLabels</param>
+		/// <param name="ws"></param>
+		/// <param name="item"></param>
+		/// <returns></returns>
+		private static ICmPossibility FindMatchingPossibilityItem(FdoCache cache, string list, int ws, ITsString item)
+		{
+			if (item == null || ws < 0)
+				return null;
+			var mdc = cache.MetaDataCache;
+			var listParts = list.Split('.');
+			var flid = mdc.GetFieldId(listParts[0], listParts[1], true);
+			ICmPossibilityList listItems;
+			switch (listParts[0])
+			{
+				case "LexDb":
+					var lexDbHvo = cache.LangProject.LexDbOA.Hvo;
+					var listHvo = cache.DomainDataByFlid.get_ObjectProp(lexDbHvo, flid);
+					listItems = cache.ServiceLocator.GetObject(listHvo) as ICmPossibilityList;
+					break;
+				default:
+					Debug.Fail("Lists not owned by LexDb are not yet handled.");
+					// ReSharper disable once HeuristicUnreachableCode -- reachable if not debugging.
+					return null;
+			}
+			// ReSharper disable once PossibleNullReferenceException -- listItems always set in switch
+			return listItems.PossibilitiesOS.FirstOrDefault(option => item.Equals(option.Name.get_String(ws))
+				|| item.Equals(option.Abbreviation.get_String(ws)));
 		}
 
 		private ICmTranslation GetOrMakeFirstTranslation(ILexExampleSentence example)
 		{
 			if (example.TranslationsOC.Count == 0)
 			{
-				var cmTranslation = example.Services.GetInstance<ICmTranslationFactory>().Create(example, m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranFreeTranslation));
+				var cmTranslation = example.Services.GetInstance<ICmTranslationFactory>().Create(example,
+					m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranFreeTranslation));
 				example.TranslationsOC.Add(cmTranslation);
 			}
 			return example.TranslationsOC.ToArray()[0];

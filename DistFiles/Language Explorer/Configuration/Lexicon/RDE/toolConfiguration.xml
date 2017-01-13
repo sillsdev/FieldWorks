@@ -175,8 +175,8 @@
 											bulkEdit="external" editable="false" visibility="dialog" displayWs="best analysis"/>
 										<column layout="ExceptionFeatures" label="Exception 'Features'" multipara="true" width="25%"
 											editable="false" visibility="dialog" displayWs="best analysis"/>
-										<column layout="DialectLabelsEntry" label="Dialect Labels (Entry)"  multipara="true" field="LexEntry.DialectLabels" width="72000" visibility="dialog" chooserFilter="complexListMultiple" list="LexDb.DialectLabels" bulkEdit="complexListMultiple" displayWs="best vernoranal" displayNameProperty="VernOrAnalAbbrTSS"/>
-										<column layout="DialectLabelsSense" label="Dialect Labels (Sense)"  multipara="true" field="LexSense.DialectLabels" width="72000" visibility="dialog" chooserFilter="complexListMultiple" list="LexDb.DialectLabels" bulkEdit="complexListMultiple" displayWs="best vernoranal" displayNameProperty="VernOrAnalAbbrTSS" />										
+										<column layout="DialectLabelsEntry" label="Dialect Labels (Entry)"  multipara="true" field="LexEntry.DialectLabels" width="72000" visibility="dialog" chooserFilter="complexListMultiple" list="LexDb.DialectLabels" transduce="LexEntry.DialectLabels" displayWs="best vernoranal" displayNameProperty="VernOrAnalAbbrTSS"/>
+										<column layout="DialectLabelsSense" label="Dialect Labels (Sense)"  multipara="true" field="LexSense.DialectLabels" width="72000" visibility="dialog" chooserFilter="complexListMultiple" list="LexDb.DialectLabels" transduce="LexSense.DialectLabels" displayWs="best vernoranal" displayNameProperty="VernOrAnalAbbrTSS" />										
 										<column layout="DomainsOfSensesForSense" label="Semantic Domains" width="72000" multipara="true" visibility="dialog"
 											displayNameProperty="AbbrAndNameTSS" editable="false"/>
 										<column layout="NumberOfSensesForEntry" label="Number of Senses (Entry)" sortType="integer" blankPossible="false" visibility="dialog" editable="false"/>
