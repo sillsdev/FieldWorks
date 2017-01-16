@@ -230,6 +230,7 @@ install-tree-fdo:
 	# Install libraries and their support files
 	install -m 644 $(OUT_DIR)/Packed/{FDO,FixFwDataDll}.dll* $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 $(OUT_DIR)/*.so $(DESTDIR)/usr/lib/fieldworks
+	install -m 644 $(OUT_DIR)/components.map $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 Lib/src/icu/install$(ARCH)/lib/lib* $(DESTDIR)/usr/lib/fieldworks
 	# Install executables and scripts
 	install Lib/src/icu/install$(ARCH)/bin/* $(DESTDIR)/usr/lib/fieldworks/icu-bin
