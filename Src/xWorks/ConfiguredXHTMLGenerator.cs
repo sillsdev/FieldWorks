@@ -1695,20 +1695,17 @@ namespace SIL.FieldWorks.XWorks
 			var lexEntryTypes = isComplex
 				? settings.Cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities
 				: settings.Cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities;
-			var lexEntryTypesFiltered = lexEntryTypes.Where(lexEntryType => config.DictionaryNodeOptions == null || IsListItemSelectedForExport(config, lexEntryType, null));
 			// Order the types by their order in their list in the configuration options, if any (LT-18018).
-			if (config.DictionaryNodeOptions != null)
-				lexEntryTypesFiltered =
-				lexEntryTypesFiltered.OrderBy(
-					leType =>
-						((DictionaryNodeListOptions) config.DictionaryNodeOptions).Options.FindIndex(
-							option => option.Id == leType.Guid.ToString()));
-			foreach (var lexEntryType in lexEntryTypesFiltered)
+			var listOptions = config.DictionaryNodeOptions as DictionaryNodeListOptions;
+			var lexEntryTypesFiltered = listOptions == null
+				? lexEntryTypes.Select(t => t.Guid)
+				: listOptions.Options.Where(o => o.IsEnabled).Select(o => new Guid(o.Id));
+			foreach (var letGuid in lexEntryTypesFiltered)
 			{
 				var innerBldr = new StringBuilder();
 				foreach (var lexEntRef in lerCollection)
 				{
-					if (isComplex ? lexEntRef.ComplexEntryTypesRS.Contains(lexEntryType) : lexEntRef.VariantEntryTypesRS.Contains(lexEntryType))
+					if (isComplex ? lexEntRef.ComplexEntryTypesRS.Any(t => t.Guid == letGuid) : lexEntRef.VariantEntryTypesRS.Any(t => t.Guid == letGuid))
 					{
 						innerBldr.Append(GenerateCollectionItemContent(config, pubDecorator, lexEntRef, collectionOwner, settings, ref dummy, typeNode));
 					}
@@ -1716,6 +1713,7 @@ namespace SIL.FieldWorks.XWorks
 				// Display the Type iff there were refs of this Type
 				if (innerBldr.Length > 0)
 				{
+					var lexEntryType = lexEntryTypes.First(t => t.Guid.Equals(letGuid));
 					bldr.Append(WriteRawElementContents("span",
 						GenerateCollectionItemContent(typeNode, pubDecorator, lexEntryType,
 							lexEntryType.Owner, settings, ref dummy), typeNode))
