@@ -11,6 +11,7 @@ using Ionic.Zip;
 using SIL.FieldWorks.FDO;
 using XCore;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using SIL.Utils;
 
@@ -176,6 +177,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var credentials = string.Format("{0}:{1}", model.UserName, model.Password);
 				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes(credentials)));
+				client.Headers.Add("user-agent", string.Format("FieldWorks Language Explorer v.{0}", Assembly.GetExecutingAssembly().GetName().Version));
+				client.Headers[HttpRequestHeader.Accept] = "*/*";
 
 				byte[] response = null;
 				try

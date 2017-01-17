@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 using System;
+using System.IO;
 using System.Net;
 
 namespace SIL.FieldWorks.XWorks
@@ -37,9 +38,14 @@ namespace SIL.FieldWorks.XWorks
 			{
 				return UploadFile(address, fileName);
 			}
-			catch (WebException e)
+			catch (WebException ex)
 			{
-				throw new WebonaryException(e);
+				using (var stream = ex.Response.GetResponseStream())
+				using (var reader = new StreamReader(stream))
+				{
+					var response = reader.ReadToEnd();
+					throw new WebonaryException(response, ex);
+				}
 			}
 		}
 
@@ -66,8 +72,18 @@ namespace SIL.FieldWorks.XWorks
 		{
 			public WebException WebException { get; private set; }
 			public HttpStatusCode StatusCode { get; internal set; }
-			public WebonaryException(WebException webException)
+			/// <summary>
+			/// The full response returned by the server. Useful for debugging connection issues.
+			/// </summary>
+			public string FullResponse { get; set; }
+
+			public WebonaryException(WebException webException) : this(null, webException)
 			{
+			}
+
+			internal WebonaryException(string fullResponse, WebException webException)
+			{
+				FullResponse = fullResponse;
 				WebException = webException;
 				if (webException.Response != null)
 				{
