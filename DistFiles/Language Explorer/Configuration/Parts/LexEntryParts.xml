@@ -984,7 +984,7 @@
 				<string field="Bibliography" ws="best analysis"/>
 			</para>
 		</part>
-		<part id="LexEtymology-Jt-Form" type="jtview">
+		<part id="LexEtymology-Jt-EtymologyForm" type="jtview">
 			<string field="Form" ws="best analysis"/>
 		</part>
 		<part id="LexEtymology-Jt-EtymologyGloss" type="jtview">
