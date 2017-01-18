@@ -154,6 +154,8 @@ namespace SIL.FieldWorks.XWorks
 
 		private bool ShowRecordOnIdle(object arg)
 		{
+			if (IsDisposed)
+				return true; // no longer necessary to refresh the view
 			var ui = Cache.ServiceLocator.GetInstance<IFdoUI>();
 			if (ui != null && DateTime.Now - ui.LastActivityTime < TimeSpan.FromMilliseconds(400))
 				return false; // Don't interrupt a user who is busy typing. Wait for a pause to refresh the view.
