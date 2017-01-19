@@ -1214,30 +1214,35 @@ namespace SIL.FieldWorks.XWorks
 					FileUtils.EnsureDirectoryExists(Path.Combine(settings.ExportPath, subFolder));
 					var destination = Path.Combine(settings.ExportPath, filePath);
 					var source = MakeSafeFilePath(audioVisualFile);
-					if (!File.Exists(destination))
+					// If an audio file is referenced by multiple entries they could end up in separate threads.
+					// Locking on the mediator seems safe since it will be the same Mediator for each thread.
+					lock (settings.Mediator)
 					{
-						if (File.Exists(source))
+						if (!File.Exists(destination))
 						{
-							FileUtils.Copy(source, destination);
+							if (File.Exists(source))
+							{
+								FileUtils.Copy(source, destination);
+							}
 						}
-					}
-					else if (!FileUtils.AreFilesIdentical(source, destination))
-					{
-						var fileWithoutExtension = Path.GetFileNameWithoutExtension(filePath);
-						var fileExtension = Path.GetExtension(filePath);
-						var copyNumber = 0;
-						do
+						else if (!FileUtils.AreFilesIdentical(source, destination))
 						{
-							++copyNumber;
-							destination = Path.Combine(settings.ExportPath, subFolder, String.Format("{0}{1}{2}", fileWithoutExtension, copyNumber, fileExtension));
+							var fileWithoutExtension = Path.GetFileNameWithoutExtension(filePath);
+							var fileExtension = Path.GetExtension(filePath);
+							var copyNumber = 0;
+							do
+							{
+								++copyNumber;
+								destination = Path.Combine(settings.ExportPath, subFolder, String.Format("{0}{1}{2}", fileWithoutExtension, copyNumber, fileExtension));
+							}
+							while (File.Exists(destination));
+							if (File.Exists(source))
+							{
+								FileUtils.Copy(source, destination);
+							}
+							// Change the filepath to point to the copied file
+							filePath = Path.Combine(subFolder, String.Format("{0}{1}{2}", fileWithoutExtension, copyNumber, fileExtension));
 						}
-						while (File.Exists(destination));
-						if (File.Exists(source))
-						{
-							FileUtils.Copy(source, destination);
-						}
-						// Change the filepath to point to the copied file
-						filePath = Path.Combine(subFolder, String.Format("{0}{1}{2}", fileWithoutExtension, copyNumber, fileExtension));
 					}
 				}
 			}
