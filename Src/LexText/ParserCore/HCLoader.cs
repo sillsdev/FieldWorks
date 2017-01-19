@@ -2083,6 +2083,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						pos = endOptPos + 1;
 						break;
 
+					case ' ':
+						pos++;
+						break;
+
 					default:
 						int endRepPos = contextStr.IndexOfAny(new[] { '#', '[', '(', ' ' }, pos);
 						if (endRepPos == -1)

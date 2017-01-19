@@ -179,6 +179,8 @@ namespace SIL.FieldWorks.XWorks
 			oldDefaultNode.After = matchingPart.After;
 			oldDefaultNode.Before = matchingPart.Before;
 			oldDefaultNode.Between = matchingPart.Between;
+			oldDefaultNode.StyleType = matchingPart.StyleType;
+			oldDefaultNode.CSSClassNameOverride = matchingPart.CSSClassNameOverride;
 			oldDefaultNode.Style = matchingPart.Style;
 			oldDefaultNode.IsEnabled = matchingPart.IsEnabled;
 			if (oldDefaultNode.Children != null)

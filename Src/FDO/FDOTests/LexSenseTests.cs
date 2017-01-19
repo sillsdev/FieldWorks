@@ -887,6 +887,74 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 		}
 
 		/// <summary>
+		/// Test that we can make a new sense where there is a dialect label that matches the data.
+		/// </summary>
+		[Test]
+		public void RDENewSense_Handles_MatchingDialectLabel()
+		{
+			var senseFactory = Cache.ServiceLocator.GetInstance<LexSenseFactory>();
+			var dialectFactory = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>();
+			var dialectLabel = dialectFactory.Create(Guid.NewGuid(), Cache.LangProject.LexDbOA.DialectLabelsOA);
+			dialectLabel.Name.set_String(Cache.DefaultAnalWs, MakeAnalysisString("east"));
+			var mySd = MakeSemanticDomain();
+			var nodes = MakeNodeList(new string[] { "Word (Citation Form)", "Meaning (Gloss)" }, false);
+			nodes.Add(MakeTransduceListNode("Dialect Labels(Entry)", "LexDb.DialectLabels", "LexEntry.DialectLabels"));
+			ITsString[] data = { MakeVernString("kick"), MakeAnalysisString("strike with foot"), MakeAnalysisString("east")};
+
+			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data, null);
+
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
+			var entry = (ILexEntry)sense.Owner;
+			Assert.That(entry.DialectLabelsRS.First().Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("east"),
+				"Failed to add a dialect label reference. An item from the list specified should have matched the data");
+		}
+
+		/// <summary>
+		/// Test that we can make a new sense even if the dialect label can not be matched and set from the data.
+		/// </summary>
+		[Test]
+		public void RDENewSense_Handles_NonMatchingDialectLabel()
+		{
+			var senseFactory = Cache.ServiceLocator.GetInstance<LexSenseFactory>();
+			var dialectFactory = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>();
+			var dialectLabel = dialectFactory.Create(Guid.NewGuid(), Cache.LangProject.LexDbOA.DialectLabelsOA);
+			dialectLabel.Name.set_String(Cache.DefaultAnalWs, MakeAnalysisString("east"));
+			var mySd = MakeSemanticDomain();
+			var nodes = MakeNodeList(new string[] { "Word (Citation Form)", "Meaning (Gloss)" }, false);
+			nodes.Add(MakeTransduceListNode("Dialect Labels(Entry)", "LexDb.DialectLabels", "LexEntry.DialectLabels"));
+			ITsString[] data = { MakeVernString("kick"), MakeAnalysisString("strike with foot"), MakeAnalysisString("west") };
+
+			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data, null);
+
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
+			var entry = (ILexEntry)sense.Owner;
+			Assert.That(entry.DialectLabelsRS.Count, Is.EqualTo(0));
+		}
+
+		/// <summary>
+		/// Test that we can make a new sense where there is a dialect label that has an abbreviation that matches the data.
+		/// </summary>
+		[Test]
+		public void RDENewSense_Handles_MatchingDialectLabelAbbrev()
+		{
+			var senseFactory = Cache.ServiceLocator.GetInstance<LexSenseFactory>();
+			var dialectFactory = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>();
+			var dialectLabel = dialectFactory.Create(Guid.NewGuid(), Cache.LangProject.LexDbOA.DialectLabelsOA);
+			dialectLabel.Name.set_String(Cache.DefaultAnalWs, MakeAnalysisString("east"));
+			dialectLabel.Abbreviation.set_String(Cache.DefaultAnalWs, MakeAnalysisString("e"));
+			var mySd = MakeSemanticDomain();
+			var nodes = MakeNodeList(new string[] { "Word (Citation Form)", "Meaning (Gloss)" }, false);
+			nodes.Add(MakeTransduceListNode("Dialect Labels(Entry)", "LexDb.DialectLabels", "LexEntry.DialectLabels"));
+			ITsString[] data = { MakeVernString("kick"), MakeAnalysisString("strike with foot"), MakeAnalysisString("e") };
+
+			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data, null);
+
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
+			var entry = (ILexEntry)sense.Owner;
+			Assert.That(entry.DialectLabelsRS.First().Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("east"));
+		}
+
+		/// <summary>
 		/// Test that we can make a new sense where there is a column specifying a transduce
 		/// like LexEntry.Bibliography. Covers all four allowed classes with multistring fields
 		/// and the special case for LexSense of a plain string property.
@@ -946,6 +1014,17 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 				result.Add(node);
 			}
 			return result;
+		}
+
+		private XmlNode MakeTransduceListNode(string label, string list, string transduce)
+		{
+			var doc = new XmlDocument();
+			var node = doc.CreateElement("column");
+			XmlUtils.SetAttribute(node, "label", label);
+			XmlUtils.SetAttribute(node, "transduce", transduce);
+			XmlUtils.SetAttribute(node, "list", list);
+			XmlUtils.SetAttribute(node, "editable", "true");
+			return node;
 		}
 
 		private ITsString MakeVernString(string arg)

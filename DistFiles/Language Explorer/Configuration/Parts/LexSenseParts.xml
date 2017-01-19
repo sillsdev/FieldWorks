@@ -356,14 +356,10 @@
 			<seq field="ExtendedNote" layout="ExtendedNote"/>
 		</part>
 		<part id="LexSense-Jt-ExtNoteType" type="jtview">
-			<seq field="ExtendedNote" layout="ExtendedNoteType" />
+			<seq field="ExtendedNote" layout="ExtNoteType" />
 		</part>
 		<part id="LexSense-Jt-ExtNoteDiscussion" type="jtview">
-			<seq field="ExtendedNote" layout="Discussion">
-				<para>
-					<string field="Discussion" ws="best analysis"/>
-				</para>
-			</seq>
+			<seq field="ExtendedNote" layout="ExtNoteDiscussion"/>
 		</part>
 		<part id="LexSense-Jt-LexicalRelationsForSense" type="jtview">
 			<seq field="MinimalLexReferences" layout="ShowInPara"/>
@@ -1039,11 +1035,11 @@
 				<string field="Discussion" ws="best analysis"/>
 			</para>
 		</part>
-		<part id="LexExtendedNote-Jt-Discussion" type="jtview">
+		<part id="LexExtendedNote-Jt-ExtNoteDiscussion" type="jtview">
 			<string field="Discussion" ws="$ws=analysis"/>
 		</part>
 		<part id="LexExtendedNote-Jt-ExtNoteType" type="jtview">
-			<obj field="ExtendedNoteType" layout="Abbreviation"/>
+			<obj field="ExtendedNoteType" layout="Name"/>
 		</part>
 	</bin>
 	

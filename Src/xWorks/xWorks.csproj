@@ -502,6 +502,7 @@
     <Compile Include="XWorksViewBase.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <None Include="Resources\Reset.png" />
     <EmbeddedResource Include="AddCustomFieldDlg.resx">
       <DependentUpon>AddCustomFieldDlg.cs</DependentUpon>
       <SubType>Designer</SubType>

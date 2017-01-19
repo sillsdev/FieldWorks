@@ -306,7 +306,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
-			int val;
+			long val;
 			if (matcher is RangeIntMatcher)
 			{
 				RangeIntMatcher rm = matcher as RangeIntMatcher;
