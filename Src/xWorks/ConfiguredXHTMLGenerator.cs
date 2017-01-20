@@ -43,6 +43,8 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal static Dictionary<string, Assembly> AssemblyMap = new Dictionary<string, Assembly>();
 
+		internal const string LookupComplexEntryType = "LookupComplexEntryType";
+
 		private const string PublicIdentifier = @"-//W3C//DTD XHTML 1.1//EN";
 
 		/// <summary>
@@ -1581,6 +1583,8 @@ namespace SIL.FieldWorks.XWorks
 					if (lexEntryTypeNode.IsEnabled && lexEntryTypeNode.ReferencedOrDirectChildren != null
 						&& lexEntryTypeNode.ReferencedOrDirectChildren.Any(y => y.IsEnabled))
 					{
+						Debug.Assert(config.DictionaryNodeOptions == null,
+							"double calls to GenerateXHTMLForILexEntryRefsByType don't play nicely with ListOptions. Everything will be generated twice (if it doesn't crash)");
 						// Display typeless refs
 						foreach (var entry in lerCollection.Where(item => !item.ComplexEntryTypesRS.Any() && !item.VariantEntryTypesRS.Any()))
 							bldr.Append(GenerateCollectionItemContent(config, pubDecorator, entry, collectionOwner, settings, ref dummy, lexEntryTypeNode));
@@ -1596,6 +1600,10 @@ namespace SIL.FieldWorks.XWorks
 						foreach (var item in lerCollection)
 							bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings, ref dummy));
 					}
+				}
+				else if (config.FieldDescription.StartsWith("Subentries"))
+				{
+					GenerateXHTMLForSubentries(config, collection, cmOwner, pubDecorator, settings, bldr);
 				}
 				else
 				{
@@ -1623,13 +1631,25 @@ namespace SIL.FieldWorks.XWorks
 
 		internal static bool IsFactoredReference(ConfigurableDictionaryNode node, out ConfigurableDictionaryNode typeChild)
 		{
+			var paraOptions = node.DictionaryNodeOptions as IParaOption;
+			if (paraOptions != null && paraOptions.DisplayEachInAParagraph)
+			{
+				typeChild = null;
+				return false;
+			}
 			return IsVariantEntryType(node, out typeChild) || IsComplexEntryType(node, out typeChild) || IsPrimaryEntryReference(node, out typeChild);
 		}
 
+		/// <summary>
+		/// Whether the selected node represents Complex Entries.
+		/// This does *not* include Subentries, because Subentries are (a) never factored and (b) ILexEntries instead of ILexEntryRefs.
+		/// </summary>
 		private static bool IsComplexEntryType(ConfigurableDictionaryNode config, out ConfigurableDictionaryNode complexEntryTypeNode)
 		{
 			complexEntryTypeNode = null;
-			if (config.FieldDescription == "VisibleComplexFormBackRefs" && config.ReferencedOrDirectChildren != null)
+			// REVIEW (Hasso)2017.01: better to check ListId==Complex && !FieldDesc.StartsWith("Subentries")?
+			if ((config.FieldDescription == "VisibleComplexFormBackRefs" || config.FieldDescription == "ComplexFormsNotSubentries")
+				&& config.ReferencedOrDirectChildren != null)
 			{
 				complexEntryTypeNode = config.ReferencedOrDirectChildren.FirstOrDefault(child => child.FieldDescription == "ComplexEntryTypesRS");
 				return complexEntryTypeNode != null;
@@ -1705,25 +1725,74 @@ namespace SIL.FieldWorks.XWorks
 			var lexEntryTypesFiltered = listOptions == null
 				? lexEntryTypes.Select(t => t.Guid)
 				: listOptions.Options.Where(o => o.IsEnabled).Select(o => new Guid(o.Id));
-			foreach (var letGuid in lexEntryTypesFiltered)
+			// Don't factor out Types when displaying in a paragraph
+			var paraOptions = config.DictionaryNodeOptions as IParaOption;
+			if (paraOptions != null && paraOptions.DisplayEachInAParagraph)
+				typeNode = null;
+			// Generate XHTML by Type
+			foreach (var typeGuid in lexEntryTypesFiltered)
 			{
 				var innerBldr = new StringBuilder();
 				foreach (var lexEntRef in lerCollection)
 				{
-					if (isComplex ? lexEntRef.ComplexEntryTypesRS.Any(t => t.Guid == letGuid) : lexEntRef.VariantEntryTypesRS.Any(t => t.Guid == letGuid))
+					if (isComplex ? lexEntRef.ComplexEntryTypesRS.Any(t => t.Guid == typeGuid) : lexEntRef.VariantEntryTypesRS.Any(t => t.Guid == typeGuid))
 					{
 						innerBldr.Append(GenerateCollectionItemContent(config, pubDecorator, lexEntRef, collectionOwner, settings, ref dummy, typeNode));
 					}
 				}
-				// Display the Type iff there were refs of this Type
-				if (innerBldr.Length > 0)
+				// Display the Type iff there were refs of this Type (and we are factoring)
+				if (innerBldr.Length > 0 && typeNode != null)
 				{
-					var lexEntryType = lexEntryTypes.First(t => t.Guid.Equals(letGuid));
+					var lexEntryType = lexEntryTypes.First(t => t.Guid.Equals(typeGuid));
 					bldr.Append(WriteRawElementContents("span",
 						GenerateCollectionItemContent(typeNode, pubDecorator, lexEntryType,
 							lexEntryType.Owner, settings, ref dummy), typeNode))
 						.Append(innerBldr);
 				}
+			}
+		}
+
+		private static void GenerateXHTMLForSubentries(ConfigurableDictionaryNode config, IEnumerable collection, ICmObject collectionOwner,
+			DictionaryPublicationDecorator pubDecorator, GeneratorSettings settings, StringBuilder bldr)
+		{
+			var dummy = string.Empty;
+			var listOptions = config.DictionaryNodeOptions as DictionaryNodeListOptions;
+			var typeNode = config.ReferencedOrDirectChildren.FirstOrDefault(n => n.FieldDescription == LookupComplexEntryType);
+			if (listOptions != null && typeNode != null && typeNode.IsEnabled
+				&& typeNode.ReferencedOrDirectChildren != null && typeNode.ReferencedOrDirectChildren.Any(n => n.IsEnabled))
+			{
+				// Get a list of Subentries including their relevant ILexEntryRefs. We will remove each Subentry from the list as it is
+				// generated to prevent multiple generations on the odd chance that a Subentry has multiple Complex Form Types
+				var subentries = collection.Cast<ILexEntry>()
+					.Select(le => new Tuple<ILexEntryRef, ILexEntry>(EntryRefForSubentry(le, collectionOwner), le)).ToList();
+
+				// Generate any Subentries with no ComplexFormType
+				for (var i = 0; i < subentries.Count; i++)
+				{
+					if (subentries[i].Item1 == null || !subentries[i].Item1.ComplexEntryTypesRS.Any())
+					{
+						bldr.Append(GenerateCollectionItemContent(config, pubDecorator, subentries[i].Item2, collectionOwner, settings, ref dummy));
+						subentries.RemoveAt(i--);
+					}
+				}
+				// Generate Subentries by ComplexFormType
+				foreach (var typeGuid in listOptions.Options.Where(o => o.IsEnabled).Select(o => new Guid(o.Id)))
+				{
+					for (var i = 0; i < subentries.Count; i++)
+					{
+						if (subentries[i].Item1.ComplexEntryTypesRS.Any(t => t.Guid == typeGuid))
+						{
+							bldr.Append(GenerateCollectionItemContent(config, pubDecorator, subentries[i].Item2, collectionOwner, settings, ref dummy));
+							subentries.RemoveAt(i--);
+						}
+					}
+				}
+			}
+			else
+			{
+				Debug.WriteLine("Unable to group " + config.FieldDescription + " by LexRefType; generating sequentially");
+				foreach (var item in collection)
+					bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings, ref dummy));
 			}
 		}
 
@@ -2053,12 +2122,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				foreach (var child in config.ReferencedOrDirectChildren.Where(child => !ReferenceEquals(child, factoredTypeField)))
 				{
-					string content;
-					if (child.FieldDescription == "LookupComplexEntryType")
-						content = GenerateSubentryTypeChild(child, publicationDecorator, (ILexEntry)item, collectionOwner, settings);
-					else
-						content = GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
-					bldr.Append(content);
+					bldr.Append(child.FieldDescription == LookupComplexEntryType
+						? GenerateSubentryTypeChild(child, publicationDecorator, (ILexEntry)item, collectionOwner, settings)
+						: GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings));
 				}
 			}
 			else if (config.DictionaryNodeOptions is DictionaryNodePictureOptions)
@@ -2165,12 +2231,18 @@ namespace SIL.FieldWorks.XWorks
 			if (!config.IsEnabled)
 				return string.Empty;
 
-			var mainEntry = mainEntryOrSense as ILexEntry ?? ((ILexSense)mainEntryOrSense).Entry;
-			var complexEntryRef = subEntry.ComplexFormEntryRefs.FirstOrDefault(entryRef => entryRef.PrimaryLexemesRS.Contains(mainEntry) // subsubentries
-																				|| entryRef.PrimaryEntryRoots.Contains(mainEntry)); // subs under sense
+			var complexEntryRef = EntryRefForSubentry(subEntry, mainEntryOrSense);
 			return complexEntryRef == null
 				? string.Empty
 				: GenerateXHTMLForCollection(complexEntryRef.ComplexEntryTypesRS, config, publicationDecorator, subEntry, settings);
+		}
+
+		private static ILexEntryRef EntryRefForSubentry(ILexEntry subEntry, object mainEntryOrSense)
+		{
+			var mainEntry = mainEntryOrSense as ILexEntry ?? ((ILexSense)mainEntryOrSense).Entry;
+			var complexEntryRef = subEntry.ComplexFormEntryRefs.FirstOrDefault(entryRef => entryRef.PrimaryLexemesRS.Contains(mainEntry) // subsubentries
+																						|| entryRef.PrimaryEntryRoots.Contains(mainEntry)); // subs under sense
+			return complexEntryRef;
 		}
 
 		private static string GenerateSenseNumberSpanIfNeeded(ConfigurableDictionaryNode senseConfigNode, bool isThisSenseNumbered, ref SenseInfo info)

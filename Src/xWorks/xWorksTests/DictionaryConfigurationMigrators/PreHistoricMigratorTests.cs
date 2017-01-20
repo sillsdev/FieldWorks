@@ -1798,7 +1798,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var complexFormTypeNode = new ConfigurableDictionaryNode
 			{
 				Label = "Complex Form Type",
-				FieldDescription = "LookupComplexEntryType",
+				FieldDescription = ConfiguredXHTMLGenerator.LookupComplexEntryType,
 				Children = new List<ConfigurableDictionaryNode> { abbreviation }
 			};
 			var subentriesNode = new ConfigurableDictionaryNode

@@ -1469,7 +1469,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var refTypeNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LookupComplexEntryType",
+				FieldDescription = ConfiguredXHTMLGenerator.LookupComplexEntryType,
 				CSSClassNameOverride = "complexformtypes",
 				Children = new List<ConfigurableDictionaryNode> { revAbbrevNode }
 			};
@@ -1532,6 +1532,53 @@ namespace SIL.FieldWorks.XWorks
 			VerifyRegex(cssResult, @".lexentry> .visiblecomplexformbackrefs> .complexformtypes .complexformtype> .name> .nam\+ .nam:before{\s*content:',';\s*}",
 				"Between not generated:");
 			VerifyRegex(cssResult, @".lexentry> .visiblecomplexformbackrefs> .complexformtypes .complexformtype> .name:after{\s*content:'>';\s*}",
+				"After not generated:");
+		}
+
+		/// <summary>Verify that Complex Forms are not factored when displayed in paragraphs</summary>
+		[Test]
+		public void GenerateCssForConfiguration_GeneratesComplexFormTypesBeforeBetweenAfterInParagraphs()
+		{
+			var complexFormTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				Before = "<",
+				Between = ",",
+				After = ">"
+			};
+			var complexFormTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ComplexEntryTypesRS",
+				CSSClassNameOverride = "complexformtypes",
+				Children = new List<ConfigurableDictionaryNode> { complexFormTypeNameNode },
+			};
+			var complexFormNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VisibleComplexFormBackRefs",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, DictionaryNodeListOptions.ListIds.Complex),
+				Children = new List<ConfigurableDictionaryNode> { complexFormTypeNode }
+			};
+			((IParaOption)complexFormNode.DictionaryNodeOptions).DisplayEachInAParagraph = true; // displaying in a paragraph should suppress factoring
+			var mainHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				CSSClassNameOverride = "entry"
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode, complexFormNode },
+				FieldDescription = "LexEntry"
+			};
+
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
+			PopulateFieldsForTesting(entry);
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			VerifyRegex(cssResult, @".lexentry> .visiblecomplexformbackrefs .visiblecomplexformbackref> .complexformtypes .complexformtype> .name:before{\s*content:'<';\s*}",
+				"Before not generated:");
+			VerifyRegex(cssResult, @".lexentry> .visiblecomplexformbackrefs .visiblecomplexformbackref> .complexformtypes .complexformtype> .name> .nam\+ .nam:before{\s*content:',';\s*}",
+				"Between not generated:");
+			VerifyRegex(cssResult, @".lexentry> .visiblecomplexformbackrefs .visiblecomplexformbackref> .complexformtypes .complexformtype> .name:after{\s*content:'>';\s*}",
 				"After not generated:");
 		}
 

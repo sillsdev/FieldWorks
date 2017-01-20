@@ -524,7 +524,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Referenced Complex Forms" isEnabled="false" before="" between=", " after=" " field="VisibleComplexFormBackRefs">
+	  <ConfigurationItem name="Referenced Complex Forms" isEnabled="false" before="" between=", " after=" " field="VisibleComplexFormBackRefs"><!-- TODO pH 2017.01: options? (throughout file; also in Reversals) -->
 		<ConfigurationItem name="Complex Form Type" isEnabled="true" between=", " after="" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 		  <ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
