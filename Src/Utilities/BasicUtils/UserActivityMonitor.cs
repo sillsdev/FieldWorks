@@ -3,8 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Input;
 
@@ -19,7 +21,6 @@ namespace SIL.Utils
 	{
 		private IntPtr m_lastMousePosition;
 		private DateTime m_lastActivityTime;
-		private bool m_isKeyDown;
 
 		/// <summary>
 		/// Starts monitoring user activity.
@@ -47,8 +48,34 @@ namespace SIL.Utils
 			get
 			{
 #if !__MonoCS__ // Keyboard doesn't exist in Mono. Linux users must prefer voice-to-text. If this leaves a bug in mono, it needs its own solution
-				if (Enum.GetValues(typeof(Key)).Cast<Key>().Any(key => key > 0 && Keyboard.IsKeyDown(key)))
-					return DateTime.Now; // If the user is holding down e.g. the Backspace key, that counts as current activity
+				var isKeyDown = false;
+				using (var countdown = new CountdownEvent(1))
+				{
+					// ReSharper disable AccessToDisposedClosure -- Justification: staThread is guaranteed to finish before countdown is disposed.
+					var staThread = new Thread(() =>
+					{
+						try
+						{
+							if (Enum.GetValues(typeof(Key)).Cast<Key>().Any(key => key > 0 && Keyboard.IsKeyDown(key)))
+								isKeyDown = true;
+						}
+						catch (InvalidOperationException) { } // most likely explanation is we're not in an STA thread
+						catch (Exception e)
+						{
+							Debug.WriteLine(e); // We really don't care if something is thrown; the worst that can happen is we save too early
+						}
+						finally
+						{
+							countdown.Signal();
+						}
+					});
+					// ReSharper restore AccessToDisposedClosure
+					staThread.SetApartmentState(ApartmentState.STA); // for some reason, Keyboard.IsKeyDown demands to be called in an STA thread
+					staThread.Start();
+					countdown.Wait();
+					if(isKeyDown)
+						return DateTime.Now; // If the user is holding down e.g. the Backspace key, that counts as current activity
+				}
 #endif
 				return m_lastActivityTime;
 			}
