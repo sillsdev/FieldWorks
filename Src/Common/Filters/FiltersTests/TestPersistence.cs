@@ -159,20 +159,6 @@ namespace SIL.FieldWorks.Filters
 		}
 
 		/// <summary>
-		/// Tests max value for ITsString
-		/// </summary>
-		[Test]
-		public void LongMaxValueTest()
-		{
-			IWritingSystem defAnalWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
-			RangeIntMatcher rangeIntMatch = new RangeIntMatcher(0, long.MaxValue);
-			rangeIntMatch.WritingSystemFactory = Cache.WritingSystemFactory;
-			ITsString tssLabel = Cache.TsStrFactory.MakeString("9223372036854775807", defAnalWs.Handle);
-			bool test = rangeIntMatch.Matches(tssLabel);
-			Assert.IsTrue(test);
-		}
-
-		/// <summary>
 		/// This covers all kinds of matchers
 		/// </summary>
 		[Test]
