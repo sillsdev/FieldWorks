@@ -3,12 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Windows.Input;
 
 namespace SIL.Utils
 {
@@ -19,7 +17,9 @@ namespace SIL.Utils
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithNativeFieldsShouldBeDisposableRule", Justification="No unmanaged resources to release")]
 	public class UserActivityMonitor : IMessageFilter
 	{
+		private const int KEYDOWN = 128;
 		private IntPtr m_lastMousePosition;
+		private IntPtr m_keyboardHook;
 		private DateTime m_lastActivityTime;
 
 		/// <summary>
@@ -38,6 +38,14 @@ namespace SIL.Utils
 			Application.RemoveMessageFilter(this);
 		}
 
+#if !__MonoCS__
+		/// <summary>
+		/// WinAPI get keyboard state method to detect keyDown events
+		/// </summary>
+		[DllImport("user32.dll")]
+		public static extern int GetKeyboardState(byte[] keystate);
+#endif
+
 		/// <summary>
 		/// Gets the last user activity time.
 		/// </summary>
@@ -49,33 +57,17 @@ namespace SIL.Utils
 			{
 #if !__MonoCS__ // Keyboard doesn't exist in Mono. Linux users must prefer voice-to-text. If this leaves a bug in mono, it needs its own solution
 				var isKeyDown = false;
-				using (var countdown = new CountdownEvent(1))
+
+				byte[] keys = new byte[256];
+				if (GetKeyboardState(keys) >= 0)
 				{
-					// ReSharper disable AccessToDisposedClosure -- Justification: staThread is guaranteed to finish before countdown is disposed.
-					var staThread = new Thread(() =>
+					if (keys.Any(k => (k & KEYDOWN) > 0))
 					{
-						try
-						{
-							if (Enum.GetValues(typeof(Key)).Cast<Key>().Any(key => key > 0 && Keyboard.IsKeyDown(key)))
-								isKeyDown = true;
-						}
-						catch (InvalidOperationException) { } // most likely explanation is we're not in an STA thread
-						catch (Exception e)
-						{
-							Debug.WriteLine(e); // We really don't care if something is thrown; the worst that can happen is we save too early
-						}
-						finally
-						{
-							countdown.Signal();
-						}
-					});
-					// ReSharper restore AccessToDisposedClosure
-					staThread.SetApartmentState(ApartmentState.STA); // for some reason, Keyboard.IsKeyDown demands to be called in an STA thread
-					staThread.Start();
-					countdown.Wait();
-					if(isKeyDown)
-						return DateTime.Now; // If the user is holding down e.g. the Backspace key, that counts as current activity
+						isKeyDown = true;
+					}
 				}
+				if (isKeyDown)
+					return DateTime.Now; // If the user is holding down e.g. the Backspace key, that counts as current activity
 #endif
 				return m_lastActivityTime;
 			}
