@@ -578,6 +578,35 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForCustomBulletStyleForSenses()
+		{
+			GenerateCustomBulletStyle("Bulleted List1");
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					NumberStyle = "Dictionary-SenseNum",
+					DisplayEachSenseInAParagraph = true
+				},
+				Style = "Bulleted List1"
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "lexentry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
+			PopulateFieldsForTesting(model);
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			const string regExPected = @".lexentry>\s.senses\s>\s.sensecontent:before.*{.*content:'@';.*font-size:14pt;.*color:Green;.*}";
+			Assert.IsTrue(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success, "Custom bullet content not generated.");
+		}
+
+		[Test]
 		public void GenerateCssForStyleName_ParagraphMarginIsAbsolute_NoParent_Works()
 		{
 			GenerateParagraphStyle("Dictionary-Paragraph-Padding");
@@ -3656,6 +3685,28 @@ namespace SIL.FieldWorks.XWorks
 			var bulletinfo = new BulletInfo
 			{
 				m_numberScheme = (VwBulNum)105,
+				FontInfo = fontInfo
+			};
+			var inherbullt = new InheritableStyleProp<BulletInfo>(bulletinfo);
+			var style = new TestStyle(inherbullt, Cache) { Name = name, IsParagraphStyle = true };
+
+			var fontInfo1 = new FontInfo();
+			fontInfo1.m_fontColor.ExplicitValue = Color.Red;
+			fontInfo1.m_fontSize.ExplicitValue = 12000;
+			style.SetDefaultFontInfo(fontInfo1);
+
+			SafelyAddStyleToSheetAndTable(name, style);
+		}
+
+		private void GenerateCustomBulletStyle(string name)
+		{
+			var fontInfo = new FontInfo();
+			fontInfo.m_fontColor.ExplicitValue = Color.Green;
+			fontInfo.m_fontSize.ExplicitValue = 14000;
+			var bulletinfo = new BulletInfo
+			{
+				m_numberScheme = (VwBulNum)100,
+				m_bulletCustom = "@",
 				FontInfo = fontInfo
 			};
 			var inherbullt = new InheritableStyleProp<BulletInfo>(bulletinfo);
