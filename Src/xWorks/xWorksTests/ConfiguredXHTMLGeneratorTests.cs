@@ -8087,27 +8087,38 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>LT-17918. Intermittent failures should NOT be ignored.</summary>
 		[Test]
-		public void GenerateXHTMLForEntry_VariantsOfEntryAreOrderedAsUserSpecified()
+		public void GenerateXHTMLForEntry_ComplexFormsAreOrderedAsUserSpecified(
+			[Values(true, false)] bool useNotSubentries, [Values(true, false)] bool useVirtualOrdering)
 		{
 			var lexentry = CreateInterestingLexEntry(Cache);
 
-			using (var v1 = CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordB"), new Guid("00000000-0000-0000-0000-000000000001")))
-			using (var v3 = CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordA"), new Guid("00000000-0000-0000-0000-000000000003")))
-			using (var v2 = CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordD"), new Guid("00000000-0000-0000-0000-000000000004")))
-			using (var v4 = CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordC"), new Guid("00000000-0000-0000-0000-000000000002")))
+			using (var c1 = CreateComplexForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordB"), new Guid("00000000-0000-0000-0000-000000000001"), false))
+			using (var c3 = CreateComplexForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordA"), new Guid("00000000-0000-0000-0000-000000000003"), false))
+			using (var c2 = CreateComplexForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordD"), new Guid("00000000-0000-0000-0000-000000000004"), false))
+			using (var c4 = CreateComplexForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordC"), new Guid("00000000-0000-0000-0000-000000000002"), false))
 			{
-				var varFlid = Cache.MetaDataCacheAccessor.GetFieldId("LexEntry", "VariantFormEntryBackRefs", true);
-				VirtualOrderingServices.SetVO(lexentry, varFlid, new[] { v1.Item, v2.Item, v3.Item, v4.Item });
-				var variantTypeNameNode = new ConfigurableDictionaryNode
+				var headwords = new[] { "headwordA", "headwordB", "headwordC", "headwordD" };
+				if (useVirtualOrdering)
+				{
+					var varFlid = Cache.MetaDataCacheAccessor.GetFieldId("LexEntry", "VisibleComplexFormBackRefs", true);
+					VirtualOrderingServices.SetVO(lexentry, varFlid, new[] { c1.Item, c2.Item, c3.Item, c4.Item });
+					headwords = new[]
+					{
+						c1.Item.OwningEntry.HomographForm,
+						c2.Item.OwningEntry.HomographForm,
+						c3.Item.OwningEntry.HomographForm,
+						c4.Item.OwningEntry.HomographForm
+					};
+				}
+				var complexTypeNameNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = "Name",
 					DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
 				};
-				var variantTypeNode = new ConfigurableDictionaryNode
+				var complexTypeNode = new ConfigurableDictionaryNode
 				{
-					FieldDescription = "VariantEntryTypesRS",
-					CSSClassNameOverride = "variantentrytypes",
-					Children = new List<ConfigurableDictionaryNode> { variantTypeNameNode },
+					FieldDescription = "ComplexEntryTypesRS",
+					Children = new List<ConfigurableDictionaryNode> { complexTypeNameNode },
 				};
 				var formNode = new ConfigurableDictionaryNode
 				{
@@ -8116,15 +8127,15 @@ namespace SIL.FieldWorks.XWorks
 					IsEnabled = true,
 					DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 				};
-				var variantFormNode = new ConfigurableDictionaryNode
+				var complexFormNode = new ConfigurableDictionaryNode
 				{
-					DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
-					FieldDescription = "VariantFormEntryBackRefs",
-					Children = new List<ConfigurableDictionaryNode> { formNode, variantTypeNode }
+					DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex),
+					FieldDescription = useNotSubentries ? "ComplexFormsNotSubentries" : "VisibleComplexFormBackRefs",
+					Children = new List<ConfigurableDictionaryNode> { formNode, complexTypeNode }
 				};
 				var mainEntryNode = new ConfigurableDictionaryNode
 				{
-					Children = new List<ConfigurableDictionaryNode> { variantFormNode },
+					Children = new List<ConfigurableDictionaryNode> { complexFormNode },
 					FieldDescription = "LexEntry"
 				};
 
@@ -8135,13 +8146,13 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
 
-				// Test that variantformentrybackref items are in alphabetical order
-				Assert.That(result.IndexOf("headwordB", StringComparison.InvariantCulture),
-					Is.LessThan(result.IndexOf("headwordD", StringComparison.InvariantCulture)), "variant form not sorted in expected order\n{0}", result);
-				Assert.That(result.IndexOf("headwordD", StringComparison.InvariantCulture),
-					Is.LessThan(result.IndexOf("headwordA", StringComparison.InvariantCulture)), "variant form not sorted in expected order\n{0}", result);
-				Assert.That(result.IndexOf("headwordA", StringComparison.InvariantCulture),
-					Is.LessThan(result.IndexOf("headwordC", StringComparison.InvariantCulture)), "variant form not sorted in expected order\n{0}", result);
+				// Test that variantformentrybackref items are in (alphabetical or) virtual order
+				Assert.That(result.IndexOf(headwords[0], StringComparison.InvariantCulture),
+					Is.LessThan(result.IndexOf(headwords[1], StringComparison.InvariantCulture)), "complex form not sorted in expected order\n{0}", result);
+				Assert.That(result.IndexOf(headwords[1], StringComparison.InvariantCulture),
+					Is.LessThan(result.IndexOf(headwords[2], StringComparison.InvariantCulture)), "complex form not sorted in expected order\n{0}", result);
+				Assert.That(result.IndexOf(headwords[2], StringComparison.InvariantCulture),
+					Is.LessThan(result.IndexOf(headwords[3], StringComparison.InvariantCulture)), "complex form not sorted in expected order\n{0}", result);
 			}
 		}
 

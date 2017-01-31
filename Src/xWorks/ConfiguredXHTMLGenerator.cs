@@ -1555,7 +1555,6 @@ namespace SIL.FieldWorks.XWorks
 				throw new ArgumentException("The given field is not a recognized collection");
 			}
 			var cmOwner = collectionOwner as ICmObject ?? ((ISenseOrEntry)collectionOwner).Item;
-			collection = OrderByVirtualOrderingIfAny(cmOwner, config, collection, settings);
 
 			if (config.DictionaryNodeOptions is DictionaryNodeSenseOptions)
 			{
@@ -1617,18 +1616,6 @@ namespace SIL.FieldWorks.XWorks
 			return string.Empty;
 		}
 
-		[SuppressMessage("ReSharper", "PossibleMultipleEnumeration", Justification = "Multiple enumeration is necessary for safe cast")]
-		private static IEnumerable OrderByVirtualOrderingIfAny(ICmObject cmOwner, ConfigurableDictionaryNode config, IEnumerable collection, GeneratorSettings settings)
-		{
-			if (!((IFwMetaDataCacheManaged)settings.Cache.MetaDataCacheAccessor).FieldExists(cmOwner.ClassID, config.FieldDescription, true))
-				return collection;
-			var cmCollection = collection.OfType<ICmObject>().ToList(); // safe cast, in case of ISenseOrEntry or other non-ICmObject
-			if (!cmCollection.Any()) // Assuming one ICmObject in the collection means all items in the collection are ICmObjects (can't count typeless IEnumerables)
-				return collection;
-			var collectionFlid = settings.Cache.MetaDataCacheAccessor.GetFieldId2(cmOwner.ClassID, config.FieldDescription, true);
-			return VirtualOrderingServices.GetOrderedValue(cmOwner, collectionFlid, cmCollection);
-		}
-
 		internal static bool IsFactoredReference(ConfigurableDictionaryNode node, out ConfigurableDictionaryNode typeChild)
 		{
 			var paraOptions = node.DictionaryNodeOptions as IParaOption;
@@ -1687,7 +1674,9 @@ namespace SIL.FieldWorks.XWorks
 			var dummy = string.Empty;
 
 			var lerCollection = collection.Cast<ILexEntryRef>().ToList();
-			if (lerCollection.Count > 1 && !VirtualOrderingServices.HasVirtualOrdering(collectionOwner, config.FieldDescription))
+			// ComplexFormsNotSubentries is a filtered version of VisibleComplexFormBackRefs, so it doesn't have it's own VirtualOrdering.
+			var fieldForVO = config.FieldDescription == "ComplexFormsNotSubentries" ? "VisibleComplexFormBackRefs" : config.FieldDescription;
+			if (lerCollection.Count > 1 && !VirtualOrderingServices.HasVirtualOrdering(collectionOwner, fieldForVO))
 			{
 				// Order things (LT-17384) alphabetically (LT-17762) if and only if the user hasn't specified an order (LT-17918).
 				var wsId = settings.Cache.ServiceLocator.WritingSystemManager.Get(lerCollection.First().SortKeyWs);
