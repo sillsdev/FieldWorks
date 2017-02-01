@@ -398,6 +398,43 @@
   <data name="&gt;&gt;configurationsExplanationLabel.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
+  <data name="resetButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29m
+        dHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABAdEVYdENvcHlyaWdodABDb3B5cmlnaHQgqSAyMDA1
+        IGFuZCBmb2xsb3dpbmcgeWVhcnMgRGV2Q29tcG9uZW50cyBMTEMyIOTwAAAB20lEQVQ4T2PABbIZGPzb
+        ZKTjoVzSQJWoSP/5qvL/CyzM9kOFiAMZDAz8fcZG+18tX/z/z9L5/xebmRBvQDoDg/2SyIj3Xw7s/f+7
+        s/n/76bq/zuSEt/PNDCY3wr0DlQZdlApL19/dOqU/3+vXvr/u7nm/6+U2P+/0+P////16/+/N6//P1i+
+        7P96e/vzkxgY9KFaECANKLi3t/f/v3t3/v8qy4dojo/4/zsq+P/vUL//f7JT//+dM/P/v2NH/l/Jz3s/
+        C5tr8hgY4veEh7z/M7UPbDNYc2LU/z8Fmf//pCX+/+Pn+f9PiP//v9On/D/t6/1+MQODPFQrApQDXbLY
+        QO/8167W/79T48CaDzravd9ravL+cWLs/z8p8f//Otn9/zup//82cTHsgdsAjIVZ0pLrn5fk//9TV/l/
+        q642WOFMoAsPamnc/5EU+/9vZOj/+4H+/zdgcwUM9DAw5J/z9vi/Q1sLbtMSoOG7JcTP/wjy+/8zJeH/
+        FgaGfqgUdjAN6KUZaAG2FmjIFS2N9/9iIv5fkJMlLZHBwDagd95YmP6/p676HypEOrgiKnz/iYL8/xNA
+        F0GFSAOHgWH0Vkb6/ylg6oUKkQaANus/4uD4f45cA0AAqLn+PAODPABiSd9Ul34AwwAAAABJRU5ErkJg
+        gg==
+</value>
+  </data>
+  <data name="resetButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>237, 109</value>
+  </data>
+  <data name="resetButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>32, 23</value>
+  </data>
+  <data name="resetButton.TabIndex" type="System.Int32, mscorlib">
+    <value>15</value>
+  </data>
+  <data name="&gt;&gt;resetButton.Name" xml:space="preserve">
+    <value>resetButton</value>
+  </data>
+  <data name="&gt;&gt;resetButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;resetButton.Parent" xml:space="preserve">
+    <value>configurationsTableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;resetButton.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
   <data name="configurationsTableLayoutPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
@@ -426,7 +463,7 @@
     <value>0</value>
   </data>
   <data name="configurationsTableLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="configurationsListView" Row="1" RowSpan="3" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="removeButton" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="copyButton" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="configurationsExplanationLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100,Absolute,38,Absolute,20" /&gt;&lt;Rows Styles="Absolute,30,AutoSize,0,AutoSize,0,Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="configurationsListView" Row="1" RowSpan="4" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="removeButton" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="copyButton" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="configurationsExplanationLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="resetButton" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100,Absolute,38,Absolute,20" /&gt;&lt;Rows Styles="Absolute,30,AutoSize,0,AutoSize,0,Percent,100,Absolute,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="configurationsGroupBox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -610,9 +647,6 @@
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>527, 406</value>
-  </data>
-  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Dictionary Configuration Manager</value>

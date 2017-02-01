@@ -211,7 +211,7 @@
     <value>True</value>
   </data>
   <data name="checkBoxDisplayOption.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 123</value>
+    <value>3, 121</value>
   </data>
   <data name="checkBoxDisplayOption.Size" type="System.Drawing.Size, System.Drawing">
     <value>200, 17</value>
@@ -271,7 +271,7 @@
     <value>NoControl</value>
   </data>
   <data name="checkBoxDisplayOption2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 142</value>
+    <value>3, 140</value>
   </data>
   <data name="checkBoxDisplayOption2.Size" type="System.Drawing.Size, System.Drawing">
     <value>228, 17</value>

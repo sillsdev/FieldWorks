@@ -1,4 +1,4 @@
-// Copyright (c) 2016 SIL International
+// Copyright (c) 2016-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,6 +10,7 @@ using System.Xml;
 using Gecko;
 using Palaso.UI.WindowsForms.HtmlBrowser;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.FDO;
 using XCore;
 using SIL.Utils;
 
@@ -137,24 +138,27 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			if (Clerk == null || m_mainView == null || m_mediator == null)
+			if (Clerk == null || m_mainView == null || m_mediator == null || hvo != Clerk.CurrentObjectHvo)
 				return;
-			if (hvo == Clerk.CurrentObjectHvo)
+
+			var gb = m_mainView.NativeBrowser as GeckoWebBrowser;
+			if (gb != null && gb.Document != null)
 			{
-				var gb = m_mainView.NativeBrowser as GeckoWebBrowser;
-				if (gb != null && gb.Document != null)
-				{
-					gb.Document.Body.SetAttribute("style", "background-color:#DEDEDE");
-				}
-				if (!m_mediator.IdleQueue.Contains(ShowRecordOnIdle))
-				{
-					m_mediator.IdleQueue.Add(IdleQueuePriority.High, ShowRecordOnIdle);
-				}
+				gb.Document.Body.SetAttribute("style", "background-color:#DEDEDE");
+			}
+			if (!m_mediator.IdleQueue.Contains(ShowRecordOnIdle))
+			{
+				m_mediator.IdleQueue.Add(IdleQueuePriority.High, ShowRecordOnIdle);
 			}
 		}
 
 		private bool ShowRecordOnIdle(object arg)
 		{
+			if (IsDisposed)
+				return true; // no longer necessary to refresh the view
+			var ui = Cache.ServiceLocator.GetInstance<IFdoUI>();
+			if (ui != null && DateTime.Now - ui.LastActivityTime < TimeSpan.FromMilliseconds(400))
+				return false; // Don't interrupt a user who is busy typing. Wait for a pause to refresh the view.
 			ShowRecord();
 			return true;
 		}

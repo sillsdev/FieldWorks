@@ -581,6 +581,22 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		}
 
 		/// <summary>
+		/// Test when an entry has a null lexeme form.
+		/// </summary>
+		[Test]
+		public void NullLexemeForm()
+		{
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+			{
+				ILexEntry entry = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem),
+					m_cache.TsStrFactory.MakeString("form", m_cache.ServiceLocator.WritingSystems.VernacularWritingSystems.ElementAt(1).Handle), "gloss", new SandboxGenericMSA());
+				entry.LexemeFormOA = null;
+			});
+			Assert.That(m_lexicon.Lexemes.Count(), Is.EqualTo(1));
+			Assert.That(m_lexicon.Lexemes.Single().LexicalForm, Is.EqualTo(string.Empty));
+		}
+
+		/// <summary>
 		/// Test that the name for entry tree lexical relations are correct.
 		/// </summary>
 		[Test]

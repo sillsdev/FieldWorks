@@ -587,9 +587,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			if (citationFormTss != null)
 				yield return citationFormTss.Text;
 
-			ITsString lexemeFormTss = entry.LexemeFormOA.Form.StringOrNull(m_defaultVernWs);
-			if (lexemeFormTss != null)
-				yield return lexemeFormTss.Text;
+			if (entry.LexemeFormOA != null)
+			{
+				ITsString lexemeFormTss = entry.LexemeFormOA.Form.StringOrNull(m_defaultVernWs);
+				if (lexemeFormTss != null)
+					yield return lexemeFormTss.Text;
+			}
 		}
 
 		private static int LongestCommonSubstringLength(string str1, string str2)
@@ -641,7 +644,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			foreach (ILexEntry entry in m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances())
 			{
 				LexemeType type = GetLexemeTypeForMorphType(entry.PrimaryMorphType);
-				string form = entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text ?? string.Empty;
+				string form = entry.LexemeFormOA == null ? string.Empty : entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text ?? string.Empty;
 				var key = new LexemeKey(type, form.Normalize());
 
 				SortedSet<ILexEntry> entries;
@@ -713,7 +716,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			CreateEntryIndexIfNeeded();
 			LexemeType type = GetLexemeTypeForMorphType(entry.PrimaryMorphType);
 			HomographNumber hn = m_homographNumbers.GetOrCreateValue(entry);
-			string form = entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text ?? string.Empty;
+			string form = entry.LexemeFormOA == null ? string.Empty : entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text ?? string.Empty;
 			return new FdoLexEntryLexeme(this, new LexemeKey(type, form.Normalize(), hn.Number));
 		}
 

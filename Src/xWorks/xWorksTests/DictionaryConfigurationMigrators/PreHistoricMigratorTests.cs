@@ -1138,7 +1138,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 		///<summary/>
 		[Test]
-		public void CopyNewDefaultsIntoConvertedModel_StyleTypeIsMigrated()
+		public void CopyNewDefaultsIntoConvertedModel_NewStyleDefaultsAreAddedWhenStyleIsNotSet()
 		{
 			var convertedParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
 			var convertedChildNode1 = new ConfigurableDictionaryNode { Label = "Little Thing 1" };
@@ -1152,8 +1152,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			const ConfigurableDictionaryNode.StyleTypes parentOverride = ConfigurableDictionaryNode.StyleTypes.Paragraph;
 			const ConfigurableDictionaryNode.StyleTypes child1Override = ConfigurableDictionaryNode.StyleTypes.Character;
 			const ConfigurableDictionaryNode.StyleTypes defaultStyleType = ConfigurableDictionaryNode.StyleTypes.Default;
+			const string baseStyle = "80's";
 			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", StyleType = parentOverride };
-			var baseChildNode1 = new ConfigurableDictionaryNode { Label = "Little Thing 1", StyleType = child1Override };
+			var baseChildNode1 = new ConfigurableDictionaryNode { Label = "Little Thing 1", StyleType = child1Override, Style = baseStyle };
 			var baseChildNode2 = new ConfigurableDictionaryNode { Label = "Little Thing 2" }; // Child2 will have the default StyleType
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode1, baseChildNode2 };
 			var baseModel = new DictionaryConfigurationModel
@@ -1163,9 +1164,51 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 
 			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
-			Assert.AreEqual(parentOverride, convertedModel.Parts[0].StyleType, "CssClassNameOverride for parent node not migrated");
-			Assert.AreEqual(child1Override, convertedModel.Parts[0].Children[0].StyleType, "CssClassNameOverride for child 1 not migrated");
-			Assert.AreEqual(defaultStyleType, convertedModel.Parts[0].Children[1].StyleType, "CssClassNameOverride for child 2 should not be set");
+			Assert.AreEqual(parentOverride, convertedModel.Parts[0].StyleType, "StyleType for parent node not filled in from base");
+			Assert.AreEqual(child1Override, convertedModel.Parts[0].Children[0].StyleType, "StyleType for child 1 not filled in from base");
+			Assert.AreEqual(baseStyle, convertedModel.Parts[0].Children[0].Style, "Style for child 1 not filled in from base");
+			Assert.AreEqual(defaultStyleType, convertedModel.Parts[0].Children[1].StyleType, "StyleType for child 2 not set to Default");
+		}
+
+		///<summary/>
+		[Test]
+		public void CopyNewDefaultsIntoConvertedModel_StyleInfoIsMigratedWhenStyleIsSet()
+		{
+			const ConfigurableDictionaryNode.StyleTypes parentStyleType = ConfigurableDictionaryNode.StyleTypes.Paragraph;
+			const ConfigurableDictionaryNode.StyleTypes childStyleType = ConfigurableDictionaryNode.StyleTypes.Character;
+			const string parentStyle = "bold";
+			var convertedParentNode = new ConfigurableDictionaryNode
+			{ Label = "Parent",
+			  StyleType = parentStyleType,
+			  Style = parentStyle
+			};
+			const string childStyle = "italic";
+			var convertedChildNode1 = new ConfigurableDictionaryNode
+			{
+				Label = "Little Thing 1",
+				StyleType = childStyleType,
+				Style = childStyle
+			};
+			convertedParentNode.Children = new List<ConfigurableDictionaryNode> { convertedChildNode1 };
+			var convertedModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { convertedParentNode },
+				Version = PreHistoricMigrator.VersionPre83
+			};
+			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", StyleType = ConfigurableDictionaryNode.StyleTypes.Character, Style = "unused"};
+			var baseChildNode1 = new ConfigurableDictionaryNode { Label = "Little Thing 1", StyleType = ConfigurableDictionaryNode.StyleTypes.Paragraph, Style = "unused2" };
+			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode1 };
+			var baseModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { baseParentNode },
+				Version = PreHistoricMigrator.VersionAlpha1
+			};
+
+			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
+			Assert.AreEqual(parentStyleType, convertedModel.Parts[0].StyleType, "The parent StyleType was not migrated correctly or was incorrectly overwritten");
+			Assert.AreEqual(parentStyle, convertedModel.Parts[0].Style, "parent Style not migrated");
+			Assert.AreEqual(childStyleType, convertedModel.Parts[0].Children[0].StyleType, "child StyleType not migrated");
+			Assert.AreEqual(childStyle, convertedModel.Parts[0].Children[0].Style, "child Style not migrated");
 		}
 
 		///<summary/>
@@ -2498,7 +2541,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				Label = "Reversal Entry",
 				FieldDescription = "ReversalIndexEntry",
 				Children = new List<ConfigurableDictionaryNode> { newRefSensesNode },
-				IsEnabled = true
+				IsEnabled = true,
+				StyleType = ConfigurableDictionaryNode.StyleTypes.Paragraph,
+				Style = "Reversal-Normal",
+				CSSClassNameOverride = "reversalindexentry"
 			};
 			var currentDefaultModel = new DictionaryConfigurationModel
 			{
@@ -2509,6 +2555,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 			m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, currentDefaultModel);
 			Assert.AreEqual("ReversalIndexEntry", convertedTopNode.FieldDescription, "Converted top node should have FieldDescription=ReversalIndexEntry");
+			Assert.AreEqual("reversalindexentry", convertedTopNode.CSSClassNameOverride, "Converted top node should have CSSClassNameOverride=reversalindexentry");
+			Assert.AreEqual(ConfigurableDictionaryNode.StyleTypes.Paragraph, convertedTopNode.StyleType, "Converted top node should have StyleType=Paragraph");
+			Assert.AreEqual("Reversal-Normal", convertedTopNode.Style, "Converted top node should have Style=Reversal-Normal");
 			// Prior to fixing https://jira.sil.org/browse/LT-16896, convertedTypeNode.FieldDescription was set to "Type".
 			Assert.AreEqual("OwningEntry", convertedTypeNode.FieldDescription, "Converted type node should have FieldDescription=OwningEntry");
 			Assert.AreEqual("Summary", convertedCommentNode.FieldDescription, "Converted comment node should have FieldDescription=Summary");

@@ -873,33 +873,15 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public bool OnFindAndReplaceText(object argument)
 		{
-			using (var findDlg = new BasicFindDialog())
-			{
-				findDlg.FindNext += FindDlgFindNextHandler;
-				findDlg.ShowDialog(this);
-			}
-			return true;
-		}
-
-		void FindDlgFindNextHandler(object sender, IBasicFindView view)
-		{
 			if (m_mainView != null)
 			{
 				var geckoBrowser = m_mainView.NativeBrowser as GeckoWebBrowser;
-				var field = typeof(GeckoWebBrowser).GetField("WebBrowser", BindingFlags.Instance | BindingFlags.NonPublic);
-				nsIWebBrowser browser = (nsIWebBrowser)field.GetValue(geckoBrowser);
-				var browserFind = Xpcom.QueryInterface<nsIWebBrowserFind>(browser);
-				browserFind.SetSearchStringAttribute(Icu.Normalize(view.SearchText, Icu.UNormalizationMode.UNORM_NFD));
-				try
+				if (geckoBrowser != null)
 				{
-					browserFind.SetWrapFindAttribute(true);
-					browserFind.FindNext();
-				}
-				catch (Exception e)
-				{
-					view.StatusText = e.Message;
+					geckoBrowser.Window.Find(string.Empty, false, false, true, false, true, true);
 				}
 			}
+			return true;
 		}
 
 		/// <summary>

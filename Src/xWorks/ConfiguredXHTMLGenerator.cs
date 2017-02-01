@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2016 SIL International
+﻿// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -550,9 +550,9 @@ namespace SIL.FieldWorks.XWorks
 				countDown.Wait();
 				threads.Clear();
 				// Throwing the exception out here avoids hanging up the Green screen AND the progress dialog.
-				// The only downside is we only see one exception. See LT-17244.
+				// The only downside is we see only one exception. See LT-17244.
 				if (exceptionThrown != null)
-					throw exceptionThrown;
+					throw new WorkerThreadException("Exception generating Configured XHTML", exceptionThrown);
 			}
 		}
 
@@ -722,7 +722,7 @@ namespace SIL.FieldWorks.XWorks
 		/// write out appropriate XHTML.
 		/// </summary>
 		/// <remarks>We use a significant amount of boilerplate code for fields and subfields. Make sure you update both.</remarks>
-		private static string GenerateXHTMLForFieldByReflection(object field, ConfigurableDictionaryNode config,
+		internal static string GenerateXHTMLForFieldByReflection(object field, ConfigurableDictionaryNode config,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, SenseInfo info = new SenseInfo(),
 			bool fUseReverseSubField = false)
 		{
@@ -1547,6 +1547,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				throw new ArgumentException("The given field is not a recognized collection");
 			}
+			var cmOwner = collectionOwner as ICmObject ?? ((ISenseOrEntry)collectionOwner).Item;
+			collection = OrderByVirtualOrderingIfAny(cmOwner, config, collection, settings);
+
 			if (config.DictionaryNodeOptions is DictionaryNodeSenseOptions)
 			{
 				bldr.Append(GenerateXHTMLForSenses(config, pubDecorator, settings, collection, info));
@@ -1557,11 +1560,11 @@ namespace SIL.FieldWorks.XWorks
 				ConfigurableDictionaryNode lexEntryTypeNode;
 				if (IsVariantEntryType(config, out lexEntryTypeNode))
 				{
-					bldr.Append(GenerateXHTMLForILexEntryRefCollection(config, collection, collectionOwner, pubDecorator, settings, lexEntryTypeNode, false));
+					bldr.Append(GenerateXHTMLForILexEntryRefCollection(config, collection, cmOwner, pubDecorator, settings, lexEntryTypeNode, false));
 				}
 				else if (IsComplexEntryType(config, out lexEntryTypeNode))
 				{
-					bldr.Append(GenerateXHTMLForILexEntryRefCollection(config, collection, collectionOwner, pubDecorator, settings, lexEntryTypeNode, true));
+					bldr.Append(GenerateXHTMLForILexEntryRefCollection(config, collection, cmOwner, pubDecorator, settings, lexEntryTypeNode, true));
 				}
 				else if (IsPrimaryEntryReference(config, out lexEntryTypeNode))
 				{
@@ -1598,7 +1601,19 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (bldr.Length > 0)
 				return WriteRawElementContents("span", bldr.ToString(), config);
-			return String.Empty;
+			return string.Empty;
+		}
+
+		[SuppressMessage("ReSharper", "PossibleMultipleEnumeration", Justification = "Multiple enumeration is necessary for safe cast")]
+		private static IEnumerable OrderByVirtualOrderingIfAny(ICmObject cmOwner, ConfigurableDictionaryNode config, IEnumerable collection, GeneratorSettings settings)
+		{
+			if (!((IFwMetaDataCacheManaged)settings.Cache.MetaDataCacheAccessor).FieldExists(cmOwner.ClassID, config.FieldDescription, true))
+				return collection;
+			var cmCollection = collection.OfType<ICmObject>().ToList(); // safe cast, in case of ISenseOrEntry or other non-ICmObject
+			if (!cmCollection.Any()) // Assuming one ICmObject in the collection means all items in the collection are ICmObjects (can't count typeless IEnumerables)
+				return collection;
+			var collectionFlid = settings.Cache.MetaDataCacheAccessor.GetFieldId2(cmOwner.ClassID, config.FieldDescription, true);
+			return VirtualOrderingServices.GetOrderedValue(cmOwner, collectionFlid, cmCollection);
 		}
 
 		internal static bool IsFactoredReference(ConfigurableDictionaryNode node, out ConfigurableDictionaryNode typeChild)
@@ -1640,16 +1655,16 @@ namespace SIL.FieldWorks.XWorks
 			return false;
 		}
 
-		private static string GenerateXHTMLForILexEntryRefCollection(ConfigurableDictionaryNode config, IEnumerable collection, object collectionOwner,
+		private static string GenerateXHTMLForILexEntryRefCollection(ConfigurableDictionaryNode config, IEnumerable collection, ICmObject collectionOwner,
 			DictionaryPublicationDecorator pubDecorator, GeneratorSettings settings, ConfigurableDictionaryNode typeNode, bool isComplex)
 		{
 			var bldr = new StringBuilder();
 			var dummy = string.Empty;
 
 			var lerCollection = collection.Cast<ILexEntryRef>().ToList();
-			if (lerCollection.Count > 0)
+			if (lerCollection.Count > 1 && !VirtualOrderingServices.HasVirtualOrdering(collectionOwner, config.FieldDescription))
 			{
-				// Order things (LT-17384, LT-17762).
+				// Order things (LT-17384) alphabetically (LT-17762) if and only if the user hasn't specified an order (LT-17918).
 				var wsId = settings.Cache.ServiceLocator.WritingSystemManager.Get(lerCollection.First().SortKeyWs);
 				var comparer = new WritingSystemComparer(wsId);
 				lerCollection.Sort((left, right) => comparer.Compare(left.SortKey, right.SortKey));
@@ -1680,12 +1695,17 @@ namespace SIL.FieldWorks.XWorks
 			var lexEntryTypes = isComplex
 				? settings.Cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities
 				: settings.Cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities;
-			foreach (var lexEntryType in lexEntryTypes.Where(lexEntryType => config.DictionaryNodeOptions == null || IsListItemSelectedForExport(config, lexEntryType, null)))
+			// Order the types by their order in their list in the configuration options, if any (LT-18018).
+			var listOptions = config.DictionaryNodeOptions as DictionaryNodeListOptions;
+			var lexEntryTypesFiltered = listOptions == null
+				? lexEntryTypes.Select(t => t.Guid)
+				: listOptions.Options.Where(o => o.IsEnabled).Select(o => new Guid(o.Id));
+			foreach (var letGuid in lexEntryTypesFiltered)
 			{
 				var innerBldr = new StringBuilder();
 				foreach (var lexEntRef in lerCollection)
 				{
-					if (isComplex ? lexEntRef.ComplexEntryTypesRS.Contains(lexEntryType) : lexEntRef.VariantEntryTypesRS.Contains(lexEntryType))
+					if (isComplex ? lexEntRef.ComplexEntryTypesRS.Any(t => t.Guid == letGuid) : lexEntRef.VariantEntryTypesRS.Any(t => t.Guid == letGuid))
 					{
 						innerBldr.Append(GenerateCollectionItemContent(config, pubDecorator, lexEntRef, collectionOwner, settings, ref dummy, typeNode));
 					}
@@ -1693,6 +1713,7 @@ namespace SIL.FieldWorks.XWorks
 				// Display the Type iff there were refs of this Type
 				if (innerBldr.Length > 0)
 				{
+					var lexEntryType = lexEntryTypes.First(t => t.Guid.Equals(letGuid));
 					bldr.Append(WriteRawElementContents("span",
 						GenerateCollectionItemContent(typeNode, pubDecorator, lexEntryType,
 							lexEntryType.Owner, settings, ref dummy), typeNode))
@@ -2931,7 +2952,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <remarks>
 		/// Presently, this handles only Sense Info, but if other info needs to be handed down the call stack in the future, we could rename this
 		/// </remarks>
-		private struct SenseInfo
+		internal struct SenseInfo
 		{
 			public int SenseCounter { get; set; }
 			public string SenseOutlineNumber { get; set; }

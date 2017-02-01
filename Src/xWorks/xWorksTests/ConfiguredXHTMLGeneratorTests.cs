@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2016 SIL International
+// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -905,6 +905,64 @@ namespace SIL.FieldWorks.XWorks
 			const string gramInfoPath = "//div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='msas']/span[@class='mlpartofspeech']";
 			AssertThatXmlIn.String(xhtmlString).HasNoMatchForXpath(gramInfoPath);
 			AssertThatXmlIn.String(xhtmlString).HasNoMatchForXpath(sharedGramInfoPath);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_MorphemeType()
+		{
+			var morphemeTypeAbbrev = new ConfigurableDictionaryNode()
+			{
+				FieldDescription = "Abbreviation",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var morphemeType = new ConfigurableDictionaryNode()
+			{
+				FieldDescription = "MorphTypes",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { morphemeTypeAbbrev }
+			};
+			var gramInfoNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MorphoSyntaxAnalysisRA",
+				CSSClassNameOverride = "MorphoSyntaxAnalysis",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { morphemeType }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { gramInfoNode }
+			};
+			var headword = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode>()
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headword, sensesNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var entry = CreateInterestingSuffix(Cache, " ba");
+
+			var sense = entry.SensesOS.First();
+
+			var msa = Cache.ServiceLocator.GetInstance<IMoInflAffMsaFactory>().Create();
+			entry.MorphoSyntaxAnalysesOC.Add(msa);
+			sense.MorphoSyntaxAnalysisRA = msa;
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			// SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
+			const string morphTypePath = "//span[@class='morphosyntaxanalysis']/span[@class='morphtypes']/span[@class='morphtype']/span[@class='abbreviation']/span[@lang='en' and text()='sfx']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(morphTypePath, 1);
 		}
 
 		[Test]
@@ -1871,9 +1929,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void ShouldThisSenseBeNumbered_SubSenseNumbersRequestedForMultipleSubSenses()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache,
-				(ISilDataAccessManaged)Cache.MainCacheAccessor,
-				Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var senseOptions = new DictionaryNodeSenseOptions
@@ -7830,6 +7885,7 @@ namespace SIL.FieldWorks.XWorks
 		/// This tests the fixes for
 		/// - LT-16504: Lexical References should be sorted by LexRefType in the order specified in the configuration
 		/// - LT-17384: Lexical References should be in the same order every time (we accomplish this by sorting by GUID within each LexRefType)
+		/// Intermittent failures should NOT be ignored.
 		/// </summary>
 		[Test]
 		public void GenerateXHTMLForEntry_LexicalReferencesOrderedCorrectly([Values(true, false)] bool usingSubfield)
@@ -7966,7 +8022,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// LT-17384. LT-17762.
+		/// LT-17384. LT-17762. Intermittent failures should NOT be ignored.
 		/// </summary>
 		[Test]
 		public void GenerateXHTMLForEntry_VariantsOfEntryAreOrdered()
@@ -8023,6 +8079,140 @@ namespace SIL.FieldWorks.XWorks
 				Assert.That(result.IndexOf("headwordC", StringComparison.InvariantCulture),
 					Is.LessThan(result.IndexOf("headwordD", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
 			}
+		}
+
+		/// <summary>LT-17918. Intermittent failures should NOT be ignored.</summary>
+		[Test]
+		public void GenerateXHTMLForEntry_VariantsOfEntryAreOrderedAsUserSpecified()
+		{
+			var lexentry = CreateInterestingLexEntry(Cache);
+
+			using (var v1 = CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordB"), new Guid("00000000-0000-0000-0000-000000000001")))
+			using (var v3 = CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordA"), new Guid("00000000-0000-0000-0000-000000000003")))
+			using (var v2 = CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordD"), new Guid("00000000-0000-0000-0000-000000000004")))
+			using (var v4 = CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordC"), new Guid("00000000-0000-0000-0000-000000000002")))
+			{
+				var varFlid = Cache.MetaDataCacheAccessor.GetFieldId("LexEntry", "VariantFormEntryBackRefs", true);
+				VirtualOrderingServices.SetVO(lexentry, varFlid, new[] { v1.Item, v2.Item, v3.Item, v4.Item });
+				var variantTypeNameNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "Name",
+					DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+				};
+				var variantTypeNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "VariantEntryTypesRS",
+					CSSClassNameOverride = "variantentrytypes",
+					Children = new List<ConfigurableDictionaryNode> { variantTypeNameNode },
+				};
+				var formNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "OwningEntry",
+					SubField = "MLHeadWord",
+					IsEnabled = true,
+					DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+				};
+				var variantFormNode = new ConfigurableDictionaryNode
+				{
+					DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
+					FieldDescription = "VariantFormEntryBackRefs",
+					Children = new List<ConfigurableDictionaryNode> { formNode, variantTypeNode }
+				};
+				var mainEntryNode = new ConfigurableDictionaryNode
+				{
+					Children = new List<ConfigurableDictionaryNode> { variantFormNode },
+					FieldDescription = "LexEntry"
+				};
+
+				DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
+				CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+
+				//SUT
+				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
+
+				// Test that variantformentrybackref items are in alphabetical order
+				Assert.That(result.IndexOf("headwordB", StringComparison.InvariantCulture),
+					Is.LessThan(result.IndexOf("headwordD", StringComparison.InvariantCulture)), "variant form not sorted in expected order\n{0}", result);
+				Assert.That(result.IndexOf("headwordD", StringComparison.InvariantCulture),
+					Is.LessThan(result.IndexOf("headwordA", StringComparison.InvariantCulture)), "variant form not sorted in expected order\n{0}", result);
+				Assert.That(result.IndexOf("headwordA", StringComparison.InvariantCulture),
+					Is.LessThan(result.IndexOf("headwordC", StringComparison.InvariantCulture)), "variant form not sorted in expected order\n{0}", result);
+			}
+		}
+
+		/// <summary>
+		/// LT-18018.
+		/// The implementation code changes were done in GenerateXHTMLForILexEntryRefsByType.
+		/// </summary>
+		[Test]
+		public void GenerateXHTMLForFieldByReflection_VariantFormTypesAreOrderedBasedOnOptionOrdering()
+		{
+			var variantTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+			};
+			var variantTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				CSSClassNameOverride = "variantentrytypes",
+				Children = new List<ConfigurableDictionaryNode> { variantTypeNameNode },
+			};
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				SubField = "MLHeadWord",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var variantFormNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
+				FieldDescription = "VariantFormEntryBackRefs",
+				Children = new List<ConfigurableDictionaryNode> { formNode, variantTypeNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { variantFormNode },
+				FieldDescription = "LexEntry"
+			};
+
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+
+			// Use the second item in the list for testing at this time, since the first item in the list isn't being handled the same way right now (20170111) by the current implementation.
+			var earlyTypeInOptionsListGuid = ((DictionaryNodeListOptions) variantFormNode.DictionaryNodeOptions).Options[1].Id;
+			var lastTypeInOptionsListGuid = (variantFormNode.DictionaryNodeOptions as DictionaryNodeListOptions).Options.Last().Id;
+
+			var earlyTypeInOptionsList = settings.Cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities.First(possibility => possibility.Guid.ToString() == earlyTypeInOptionsListGuid);
+			var lastTypeInOptionsList = settings.Cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities.First(possibility => possibility.Guid.ToString() == lastTypeInOptionsListGuid);
+
+			var lexentry = CreateInterestingLexEntry(Cache);
+
+			CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordA"), earlyTypeInOptionsList.Name.AnalysisDefaultWritingSystem.Text);
+			CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordB"), lastTypeInOptionsList.Name.AnalysisDefaultWritingSystem.Text);
+
+			var lexEntryRefCollection = lexentry.VariantFormEntryBackRefs.ToList();
+
+			var builder = new StringBuilder();
+
+			// SUT1
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForFieldByReflection(lexentry, variantFormNode, null, settings);
+
+			Assert.That(result.IndexOf("headwordA", StringComparison.InvariantCulture),
+				Is.LessThan(result.IndexOf("headwordB", StringComparison.InvariantCulture)), "variant forms not appearing in an order corresponding to their type sorting");
+
+			// Change the order of variantFormNode.DictionaryNodeOptions, which should result in the data being ordered differently.
+
+			((DictionaryNodeListOptions)variantFormNode.DictionaryNodeOptions).Options.Reverse();
+
+			builder = new StringBuilder();
+			// SUT2
+			result = ConfiguredXHTMLGenerator.GenerateXHTMLForFieldByReflection(lexentry, variantFormNode, null, settings);
+
+			Assert.That(result.IndexOf("headwordB", StringComparison.InvariantCulture),
+				Is.LessThan(result.IndexOf("headwordA", StringComparison.InvariantCulture)), "variant forms not appearing in an order corresponding to their type sorting");
 		}
 
 		[Test]
@@ -8275,6 +8465,7 @@ namespace SIL.FieldWorks.XWorks
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithGlossOfGloss, 1);
 		}
+
 		#region Helpers
 		private static void DeleteTempXhtmlAndCssFiles(string xhtmlPath)
 		{

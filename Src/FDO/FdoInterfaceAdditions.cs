@@ -1662,6 +1662,9 @@ namespace SIL.FieldWorks.FDO
 
 		/// <summary/>
 		IEnumerable<IMoInflAffixSlot> Slots { get; }
+
+		/// <summary/>
+		IEnumerable<IMoMorphType> MorphTypes { get; }
 	}
 
 	/// <summary>

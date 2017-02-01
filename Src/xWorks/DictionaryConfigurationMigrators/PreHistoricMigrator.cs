@@ -600,7 +600,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			convertedNode.ReferenceItem = currentDefaultNode.ReferenceItem;
 			if (convertedNode.DictionaryNodeOptions == null)
 				convertedNode.DictionaryNodeOptions = currentDefaultNode.DictionaryNodeOptions;
-			convertedNode.StyleType = currentDefaultNode.StyleType;
+			if (string.IsNullOrEmpty(convertedNode.Style))
+			{
+				convertedNode.StyleType = currentDefaultNode.StyleType;
+				convertedNode.Style = currentDefaultNode.Style;
+			}
 			convertedNode.CSSClassNameOverride = currentDefaultNode.CSSClassNameOverride;
 
 			if (convertedModel.Version == VersionPre83 && IsReferencedEntriesNode(convertedNode))

@@ -648,7 +648,8 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				sEntryT = sEntry;
 			} while (fChanged);
-			string sFirst = sEntry.Substring(0, 1);
+			int cnt = GetFirstLetterLength(sEntry);
+			string sFirst = sEntry.Substring(0, cnt);
 			foreach (string sChar in sortChars)
 			{
 				if (sEntry.StartsWith(sChar))
@@ -683,6 +684,16 @@ namespace SIL.FieldWorks.Common.Controls
 				Icu.CloseCollator(col);
 			}
 			return sFirst;
+		}
+
+		/// <returns>
+		/// 2 if the first letter in the string is composed of a Surrogate Pair; 1 otherwise
+		/// </returns>
+		internal static int GetFirstLetterLength(string sEntry)
+		{
+			if (char.IsSurrogatePair(sEntry, 0))
+				return 2;
+			return 1;
 		}
 
 		/// <summary>
@@ -761,7 +772,7 @@ namespace SIL.FieldWorks.Common.Controls
 					rule = rule.Replace("<<<", "=");
 					rule = rule.Replace("<<", "=");
 					// "&N<ng<<<Ng<ny<<<Ny" => "&N<ng=Ng<ny=Ny"
-					// "&N<ñ<<<Ñ" => "&N<ñ=Ñ"
+					// "&N<Ã±<<<Ã‘" => "&N<Ã±=Ã‘"
 					// There are other issues we are not handling proplerly such as the next line
 					// &N<\u006e\u0067
 					var primaryParts = rule.Split('<');

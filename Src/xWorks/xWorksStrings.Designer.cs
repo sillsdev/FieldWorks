@@ -1131,7 +1131,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot generate the display the current publication.
+        ///   Looks up a localized string similar to Cannot generate the display for the current publication.
         /// </summary>
         internal static string ksErrorDisplayingPublication {
             get {
