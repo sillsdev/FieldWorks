@@ -8088,7 +8088,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>LT-17918. Intermittent failures should NOT be ignored.</summary>
 		[Test]
 		public void GenerateXHTMLForEntry_ComplexFormsAreOrderedAsUserSpecified(
-			[Values(true, false)] bool useNotSubentries, [Values(true, false)] bool useVirtualOrdering)
+			[Values(true, false)] bool useNotSubentries, [Values(true, false)] bool useVirtualOrdering, [Values(true, false)] bool showInPara)
 		{
 			var lexentry = CreateInterestingLexEntry(Cache);
 
@@ -8133,6 +8133,7 @@ namespace SIL.FieldWorks.XWorks
 					FieldDescription = useNotSubentries ? "ComplexFormsNotSubentries" : "VisibleComplexFormBackRefs",
 					Children = new List<ConfigurableDictionaryNode> { formNode, complexTypeNode }
 				};
+				((IParaOption)complexFormNode.DictionaryNodeOptions).DisplayEachInAParagraph = showInPara;
 				var mainEntryNode = new ConfigurableDictionaryNode
 				{
 					Children = new List<ConfigurableDictionaryNode> { complexFormNode },

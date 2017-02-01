@@ -1735,9 +1735,9 @@ namespace SIL.FieldWorks.XWorks
 					var lexEntryType = lexEntryTypes.First(t => t.Guid.Equals(typeGuid));
 					bldr.Append(WriteRawElementContents("span",
 						GenerateCollectionItemContent(typeNode, pubDecorator, lexEntryType,
-							lexEntryType.Owner, settings, ref dummy), typeNode))
-						.Append(innerBldr);
+							lexEntryType.Owner, settings, ref dummy), typeNode));
 				}
+				bldr.Append(innerBldr);
 			}
 		}
 
