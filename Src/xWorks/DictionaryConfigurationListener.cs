@@ -325,6 +325,20 @@ namespace SIL.FieldWorks.XWorks
 			mediator.PropertyTable.SetProperty(pubLayoutPropName, currentConfig, fUpdate);
 		}
 
+		public bool OnWritingSystemUpdated(object param)
+		{
+			if (param == null)
+				return false;
+
+			var currentConfig = GetCurrentConfiguration(m_mediator, true, null);
+			var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+			var configuration = new DictionaryConfigurationModel(currentConfig, cache);
+			DictionaryConfigurationController.UpdateWritingSystemInModel(configuration, cache);
+			configuration.Save();
+
+			return true;
+		}
+
 		private static string GetInnerConfigDir(string configFilePath)
 		{
 			return Path.GetFileName(Path.GetDirectoryName(configFilePath));

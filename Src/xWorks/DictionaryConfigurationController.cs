@@ -913,6 +913,156 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		public static void UpdateWritingSystemInModel(DictionaryConfigurationModel model, FdoCache cache)
+		{
+			foreach (var part in model.PartsAndSharedItems)
+			{
+				UpdateWritingSystemInConfigNodes(part, cache);
+			}
+		}
+
+		private static void UpdateWritingSystemInConfigNodes(ConfigurableDictionaryNode node, FdoCache cache)
+		{
+			if (node.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions)
+				UpdateWsOptions((DictionaryNodeWritingSystemOptions)node.DictionaryNodeOptions, cache);
+
+			if (node.Children == null)
+				return;
+
+			foreach (var child in node.Children)
+				UpdateWritingSystemInConfigNodes(child, cache);
+		}
+
+		public static List<ListViewItem> LoadAvailableWsList(DictionaryNodeWritingSystemOptions wsOptions, FdoCache cache)
+		{
+			var wsLists = new List<DictionaryNodeListOptions.DictionaryNodeOption>();
+
+			wsLists = UpdateWsOptions(wsOptions, cache);
+
+			var availableWSs = new List<ListViewItem>();
+			foreach (var wsListItem in wsLists)
+			{
+				int magicId;
+				if (int.TryParse(wsListItem.Id, out magicId))
+				{
+					var wsName = WritingSystemServices.GetMagicWsNameFromId(magicId);
+					availableWSs.Add(new ListViewItem(wsName) { Tag = magicId });
+				}
+				else
+				{
+					var ws = cache.WritingSystemFactory.get_Engine(wsListItem.Id);
+					availableWSs.Add(new ListViewItem(ws.LanguageName) { Tag = ws.Id });
+				}
+			}
+
+			// Find and add available and selected Writing Systems
+			var selectedWSs = wsOptions.Options.Where(ws => ws.IsEnabled).ToList();
+
+			bool atLeastOneWsChecked = false;
+			// Check if the default WS is selected (it will be the one and only)
+			if (selectedWSs.Count == 1)
+			{
+				var selectedWsDefaultId = WritingSystemServices.GetMagicWsIdFromName(selectedWSs[0].Id);
+				if (selectedWsDefaultId < 0)
+				{
+					var defaultWsItem = availableWSs.FirstOrDefault(item => item.Tag.Equals(selectedWsDefaultId));
+					if (defaultWsItem != null)
+					{
+						defaultWsItem.Checked = true;
+						atLeastOneWsChecked = true;
+					}
+				}
+			}
+
+			if (!atLeastOneWsChecked)
+			{
+				// Insert checked named WS's in their saved order, after the Default WS (2 Default WS's if Type is Both)
+				int insertionIdx = wsOptions.WsType == DictionaryNodeWritingSystemOptions.WritingSystemType.Both ? 2 : 1;
+				foreach (var ws in selectedWSs)
+				{
+					var selectedItem = availableWSs.FirstOrDefault(item => ws.Id.Equals(item.Tag));
+					if (selectedItem != null && availableWSs.Remove(selectedItem))
+					{
+						selectedItem.Checked = true;
+						availableWSs.Insert(insertionIdx++, selectedItem);
+						atLeastOneWsChecked = true;
+					}
+				}
+			}
+
+			// If we still haven't checked one, check the first default (the previously-checked WS was removed)
+			if (!atLeastOneWsChecked)
+				availableWSs[0].Checked = true;
+			return availableWSs;
+		}
+
+		public static List<DictionaryNodeListOptions.DictionaryNodeOption> UpdateWsOptions(DictionaryNodeWritingSystemOptions wsOptions, FdoCache cache)
+		{
+			var availableWSs = GetCurrentWritingSystems(wsOptions.WsType, cache);
+
+			if (wsOptions.Options.Count == availableWSs.Count)
+			{
+				int i = 0;
+				foreach (var ws in availableWSs)
+				{
+					int magicId;
+					if (int.TryParse(ws.Id, out magicId))
+					{
+						var wsName = WritingSystemServices.GetMagicWsNameFromId(magicId);
+						wsOptions.Options[i].Id = wsName;
+					}
+					else
+					{
+						wsOptions.Options[i].Id = ws.Id;
+					}
+					i = i + 1;
+				}
+			}
+			return availableWSs;
+		}
+
+		/// <param name="wsType"></param>
+		/// <returns>
+		/// A list of ListViewItem's representing this project's WritingSystems, with "magic" default WS's at the beginning of the list.
+		/// Each LVI's Tag is the WS Id: negative int for "magic" default WS's, and a string like "en" or "fr" for normal WS's.
+		/// </returns>
+		public static List<DictionaryNodeListOptions.DictionaryNodeOption> GetCurrentWritingSystems(DictionaryNodeWritingSystemOptions.WritingSystemType wsType, FdoCache cache)
+		{
+			var wsList = new List<DictionaryNodeListOptions.DictionaryNodeOption>();
+			switch (wsType)
+			{
+				case DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular:
+					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsVern.ToString() });
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(
+							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+					break;
+				case DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis:
+					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsAnal.ToString() });
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(
+							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+					break;
+				case DictionaryNodeWritingSystemOptions.WritingSystemType.Both:
+					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsVern.ToString() });
+					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsAnal.ToString() });
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(
+							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(
+							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+					break;
+				case DictionaryNodeWritingSystemOptions.WritingSystemType.Pronunciation:
+					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsPronunciation.ToString() });
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Select(
+							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+					break;
+				case DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal:
+					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsReversalIndex.ToString() });
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(
+							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+					break;
+			}
+			return wsList;
+		}
+
 		private static void EnsureValidStylesInConfigNodes(ConfigurableDictionaryNode node, Dictionary<string, IStStyle> styles)
 		{
 			if (!String.IsNullOrEmpty(node.Style) && !styles.ContainsKey(node.Style))

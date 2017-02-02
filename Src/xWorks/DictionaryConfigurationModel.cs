@@ -161,6 +161,8 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryConfigurationController.MergeTypesIntoDictionaryModel(this, cache);
 			// Handle any deleted styles.  (See https://jira.sil.org/browse/LT-16501.)
 			DictionaryConfigurationController.EnsureValidStylesInModel(this, cache);
+			//Update Writing System for an entire configuration.
+			DictionaryConfigurationController.UpdateWritingSystemInModel(this, cache);
 		}
 
 		/// <summary>

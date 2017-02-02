@@ -1644,10 +1644,26 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						WritingSystemServices.UpdateWritingSystemId(m_cache, ws.Item1, ws.Item2);
 						//Save incrementally to avoid an inconsistancy between the cache and the manager.
 						m_wsManager.Save();
+						Mediator mediator = GetMediator();
+						if (mediator != null)
+							mediator.SendMessage("WritingSystemUpdated", ws.Item1.Id);
 					}
 				});
 			}
 			m_wsManager.Save();
+		}
+
+		private Mediator GetMediator()
+		{
+			if (m_app == null)
+				return null;
+			Form wndActive = m_app.ActiveMainWindow;
+			if (wndActive == null)
+				return null;
+			PropertyInfo pi = wndActive.GetType().GetProperty("Mediator");
+			if (pi == null)
+				return null;
+			return pi.GetValue(wndActive, null) as Mediator;
 		}
 
 		/// <summary>
