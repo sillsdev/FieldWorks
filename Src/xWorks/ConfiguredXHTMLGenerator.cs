@@ -625,20 +625,16 @@ namespace SIL.FieldWorks.XWorks
 		public static string GenerateXHTMLForEntry(ICmObject entryObj, DictionaryConfigurationModel configuration,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
-			if (IsComplexFormOrVariant(entryObj))
-			{
-				var entry = entryObj as ILexEntry;
-				var bldr = new StringBuilder();
-				if (!entry.PublishAsMinorEntry && (entry.VariantEntryRefs.Any() || configuration.IsRootBased))
-					return bldr.ToString();
-
-				GenerateXHTMLForComplexOrVariantEntry(entry, configuration, publicationDecorator, settings, bldr);
-				return bldr.ToString();
-			}
-			else
-			{
+			if (IsMainEntry(entryObj, configuration))
 				return GenerateXHTMLForEntry(entryObj, configuration.Parts[0], publicationDecorator, settings);
-			}
+
+			var entry = (ILexEntry)entryObj;
+			if (!entry.PublishAsMinorEntry)
+				return string.Empty;
+
+			var bldr = new StringBuilder();
+			GenerateXHTMLForComplexOrVariantEntry(entry, configuration, publicationDecorator, settings, bldr);
+			return bldr.ToString();
 		}
 
 		private static void GenerateXHTMLForComplexOrVariantEntry(ICmObject entry, DictionaryConfigurationModel configuration,
@@ -655,15 +651,20 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// If entry is either a Complex Form or a Variant (or both).
-		/// For Root-based configs, this means the entry is a Minor Entry.
-		/// For Lexeme-based configs, this means the entry is a Main Entry if Complex, but Minor Entry if Variant.
+		/// If entry is a a Main Entry
+		/// For Root-based configs, this means the entry is neither a Variant nor a Complex Form.
+		/// For Lexeme-based configs, Complex Forms are considered Main Entries but Variants are not.
 		/// </summary>
-		internal static bool IsComplexFormOrVariant(ICmObject entry)
+		internal static bool IsMainEntry(ICmObject entry, DictionaryConfigurationModel config)
 		{
-			// owning an ILexEntryRef denotes Complex Forms or Variants
-			// In Lexeme-based configurations, Complex Forms are considered Main Entries, but are still independently configurable
-			return entry is ILexEntry && ((ILexEntry)entry).EntryRefsOS.Any();
+			var lexEntry = entry as ILexEntry;
+			if (lexEntry == null // only LexEntries can be Minor; others (ReversalIndex, etc) are always Main.
+				|| !lexEntry.EntryRefsOS.Any()) // owning an ILexEntryRef denotes Complex Forms or Variants (not owning any denotes Main Entries)
+				return true;
+			if (config.IsRootBased) // Root-based configs consider all Complex Forms and Variants to be Minor Entries
+				return false;
+			// Lexeme-Based and Hybrid configs consider Complex Forms to be Main Entries (Variants are still Minor Entries)
+			return lexEntry.EntryRefsOS.Any(ler => ler.RefType == LexEntryRefTags.krtComplexForm);
 		}
 
 		/// <summary>Generates XHTML for an ICmObject for a specific ConfigurableDictionaryNode</summary>
@@ -674,17 +675,19 @@ namespace SIL.FieldWorks.XWorks
 			{
 				throw new ArgumentNullException();
 			}
-			if (String.IsNullOrEmpty(configuration.FieldDescription))
+			// ReSharper disable LocalizableElement, because seriously, who cares about localized exceptions?
+			if (string.IsNullOrEmpty(configuration.FieldDescription))
 			{
-				throw new ArgumentException(@"Invalid configuration: FieldDescription can not be null", @"configuration");
+				throw new ArgumentException("Invalid configuration: FieldDescription can not be null", "configuration");
 			}
 			if (entry.ClassID != settings.Cache.MetaDataCacheAccessor.GetClassId(configuration.FieldDescription))
 			{
-				throw new ArgumentException(@"The given argument doesn't configure this type", @"configuration");
+				throw new ArgumentException("The given argument doesn't configure this type", "configuration");
 			}
+			// ReSharper restore LocalizableElement
 			if (!configuration.IsEnabled)
 			{
-				return String.Empty;
+				return string.Empty;
 			}
 
 			var pieces = configuration.ReferencedOrDirectChildren

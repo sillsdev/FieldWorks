@@ -19,15 +19,21 @@ namespace SIL.FieldWorks.XWorks
 			var configModel = ConfiguredXHTMLGeneratorTests.CreateInterestingConfigurationModel(Cache);
 			configModel.IsRootBased = true;
 			var mainEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
-			var minorEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
-			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, mainEntry, minorEntry, "Dialectal Variant");
+			var complexEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var variantEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			ConfiguredXHTMLGeneratorTests.CreateComplexForm(Cache, mainEntry, complexEntry, false);
+			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, mainEntry, variantEntry, "Dialectal Variant");
 
-			Assert.AreEqual(1, DictionaryExportService.CountTimesGenerated(Cache, configModel, minorEntry.Hvo), "Should be generated once");
+			Assert.AreEqual(1, DictionaryExportService.CountTimesGenerated(Cache, configModel, complexEntry.Hvo), "Should be generated once");
+			Assert.AreEqual(1, DictionaryExportService.CountTimesGenerated(Cache, configModel, variantEntry.Hvo), "Should be generated once");
 
-			ConfiguredXHTMLGeneratorTests.SetPublishAsMinorEntry(minorEntry, false);
+			ConfiguredXHTMLGeneratorTests.SetPublishAsMinorEntry(complexEntry, false);
+			ConfiguredXHTMLGeneratorTests.SetPublishAsMinorEntry(variantEntry, false);
 
 			//SUT
-			Assert.AreEqual(0, DictionaryExportService.CountTimesGenerated(Cache, configModel, minorEntry.Hvo),
+			Assert.AreEqual(0, DictionaryExportService.CountTimesGenerated(Cache, configModel, complexEntry.Hvo),
+				"Hidden minor entry should not be generated");
+			Assert.AreEqual(0, DictionaryExportService.CountTimesGenerated(Cache, configModel, variantEntry.Hvo),
 				"Hidden minor entry should not be generated");
 			Assert.AreEqual(1, DictionaryExportService.CountTimesGenerated(Cache, configModel, mainEntry.Hvo), "Main entry should still be generated");
 		}
@@ -38,16 +44,22 @@ namespace SIL.FieldWorks.XWorks
 			var configModel = ConfiguredXHTMLGeneratorTests.CreateInterestingConfigurationModel(Cache);
 			configModel.IsRootBased = false;
 			var mainEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
-			var minorEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
-			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, mainEntry, minorEntry, "Dialectal Variant");
+			var complexEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var variantEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			ConfiguredXHTMLGeneratorTests.CreateComplexForm(Cache, mainEntry, complexEntry, false);
+			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, mainEntry, variantEntry, "Dialectal Variant");
 
-			Assert.AreEqual(1, DictionaryExportService.CountTimesGenerated(Cache, configModel, minorEntry.Hvo), "Should be generated once");
+			Assert.AreEqual(1, DictionaryExportService.CountTimesGenerated(Cache, configModel, complexEntry.Hvo), "Should be generated once");
+			Assert.AreEqual(1, DictionaryExportService.CountTimesGenerated(Cache, configModel, variantEntry.Hvo), "Should be generated once");
 
-			ConfiguredXHTMLGeneratorTests.SetPublishAsMinorEntry(minorEntry, false);
+			ConfiguredXHTMLGeneratorTests.SetPublishAsMinorEntry(complexEntry, false);
+			ConfiguredXHTMLGeneratorTests.SetPublishAsMinorEntry(variantEntry, false);
 
 			//SUT
-			Assert.AreEqual(1, DictionaryExportService.CountTimesGenerated(Cache, configModel, minorEntry.Hvo),
-				"Lexeme-based hidden minor entry should still be generated");
+			Assert.AreEqual(1, DictionaryExportService.CountTimesGenerated(Cache, configModel, complexEntry.Hvo),
+				"Lexeme-based hidden minor entry should still be generated, because Complex Forms are Main Entries");
+			Assert.AreEqual(0, DictionaryExportService.CountTimesGenerated(Cache, configModel, variantEntry.Hvo),
+				"Lexeme-based hidden minor entry should not be generated, because Variants are always Minor Entries");
 			Assert.AreEqual(1, DictionaryExportService.CountTimesGenerated(Cache, configModel, mainEntry.Hvo), "Main entry should still be generated");
 		}
 	}

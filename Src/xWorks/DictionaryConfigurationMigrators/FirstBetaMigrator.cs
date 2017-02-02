@@ -17,6 +17,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 	class FirstBetaMigrator : IDictionaryConfigurationMigrator
 	{
 		private ISimpleLogger m_logger;
+		internal const int VersionBeta5 = 13;
 
 		public FirstBetaMigrator() : this(null, null)
 		{
@@ -44,7 +45,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				File.Move(stemPath, lexemePath);
 			}
-			foreach (var config in DictionaryConfigurationMigrator.GetConfigsNeedingMigration(Cache, DCM.VersionCurrent))
+			foreach (var config in DCM.GetConfigsNeedingMigration(Cache, DCM.VersionCurrent))
 			{
 				m_logger.WriteLine(foundOne);
 				if (config.Label.StartsWith("Stem-"))
@@ -102,21 +103,42 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			return false;
 		}
 
-		internal void MigrateFrom83Alpha(ISimpleLogger logger, DictionaryConfigurationModel oldConfig, DictionaryConfigurationModel currentDefaultModel)
+		internal static void MigrateFrom83Alpha(ISimpleLogger logger, DictionaryConfigurationModel oldConfig, DictionaryConfigurationModel currentDefaultModel)
 		{
-			// it may be helpful to have parents in the oldConfig, currentDefaultModel already has them:
+			// it may be helpful to have parents in the oldConfig (currentDefaultModel already has them):
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(oldConfig.Parts, oldConfig.SharedItems);
-			var oldConfigList = new List<ConfigurableDictionaryNode>(oldConfig.PartsAndSharedItems);
+			ConflateMainEntriesIfNecessary(logger, oldConfig);
 			var currentDefaultList = new List<ConfigurableDictionaryNode>(currentDefaultModel.PartsAndSharedItems);
-			for (var part = 0; part < oldConfigList.Count; ++part)
+			foreach (var part in oldConfig.PartsAndSharedItems)
 			{
-				MigratePartFromOldVersionToCurrent(oldConfig, oldConfigList[part], currentDefaultList[part]);
+				MigratePartFromOldVersionToCurrent(logger, oldConfig, part, FindMatchingChildNode(part.Label, currentDefaultList));
 			}
 			oldConfig.Version = DCM.VersionCurrent;
 			logger.WriteLine("Migrated to version " + DCM.VersionCurrent);
 		}
 
-		private void MigratePartFromOldVersionToCurrent(DictionaryConfigurationModel oldConfig,
+		private static void ConflateMainEntriesIfNecessary(ISimpleLogger logger, DictionaryConfigurationModel config)
+		{
+			if (config.Version >= VersionBeta5 || config.IsRootBased || config.IsReversal)
+				return;
+			var mainEntriesComplexForms = config.Parts.FirstOrDefault(n => IsComplexFormsNode(n) && n.IsEnabled)
+				?? config.Parts.FirstOrDefault(IsComplexFormsNode);
+			if (mainEntriesComplexForms == null)
+			{
+				logger.WriteLine(string.Format("Unable to conflate main entries for config '{0}' (version {1})", config.Label, config.Version));
+				return;
+			}
+			MigrateNewChildNodesInto(config.Parts[0], mainEntriesComplexForms);
+			config.Parts.RemoveAll(IsComplexFormsNode);
+		}
+
+		private static bool IsComplexFormsNode(ConfigurableDictionaryNode node)
+		{
+			var options = node.DictionaryNodeOptions as DictionaryNodeListOptions;
+			return options != null && options.ListId == DictionaryNodeListOptions.ListIds.Complex;
+		}
+
+		private static void MigratePartFromOldVersionToCurrent(ISimpleLogger logger, DictionaryConfigurationModel oldConfig,
 			ConfigurableDictionaryNode oldConfigPart, ConfigurableDictionaryNode currentDefaultConfigPart)
 		{
 			var oldVersion = oldConfig.Version;
@@ -126,17 +148,19 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				case FirstAlphaMigrator.VersionAlpha3:
 					MoveNodesIntoNewGroups(oldConfigPart, currentDefaultConfigPart);
-					MigrateNewDefaultNodes(oldConfigPart, currentDefaultConfigPart);
+					MigrateNewChildNodesInto(oldConfigPart, currentDefaultConfigPart);
 					goto case 9;
 				case 9:
 					UpgradeEtymologyCluster(oldConfigPart, oldConfig);
 					goto case 10;
 				case 10:
 				case 11:
-					MigrateNewDefaultNodes(oldConfigPart, currentDefaultConfigPart);
+					MigrateNewChildNodesInto(oldConfigPart, currentDefaultConfigPart);
 					break;
+				case 12:
+					break; // (Conflate Main Entry nodes) Migrated at config level; no nodewise migration.
 				default:
-					m_logger.WriteLine(string.Format(
+					logger.WriteLine(string.Format(
 						"Unable to migrate {0}: no migration instructions for version {1}", oldConfigPart.Label, oldVersion));
 					break;
 			}
@@ -213,25 +237,25 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		/// <summary>
 		/// This recursive method will migrate new nodes from default node to old config node
 		/// </summary>
-		private void MigrateNewDefaultNodes(ConfigurableDictionaryNode oldConfigNode, ConfigurableDictionaryNode defaultNode)
+		private static void MigrateNewChildNodesInto(ConfigurableDictionaryNode destinationNode, ConfigurableDictionaryNode sourceNode)
 		{
-			if (oldConfigNode.Children == null || defaultNode.Children == null)
+			if (destinationNode.Children == null || sourceNode.Children == null)
 				return;
-			if (((defaultNode.FieldDescription == "VariantFormEntryBackRefs" && oldConfigNode.DictionaryNodeOptions == null) ||
-				DictionaryConfigurationModel.NoteInParaStyles.Contains(defaultNode.FieldDescription)) && defaultNode.DictionaryNodeOptions != null)
-				oldConfigNode.DictionaryNodeOptions = defaultNode.DictionaryNodeOptions;
+			if (((sourceNode.FieldDescription == "VariantFormEntryBackRefs" && destinationNode.DictionaryNodeOptions == null) ||
+				DictionaryConfigurationModel.NoteInParaStyles.Contains(sourceNode.FieldDescription)) && sourceNode.DictionaryNodeOptions != null)
+				destinationNode.DictionaryNodeOptions = sourceNode.DictionaryNodeOptions;
 			// First recurse into each matching child node
-			foreach (var newChild in defaultNode.Children)
+			foreach (var newChild in sourceNode.Children)
 			{
-				var matchFromDefault = FindMatchingChildNode(newChild.Label, oldConfigNode.Children);
+				var matchFromDefault = FindMatchingChildNode(newChild.Label, destinationNode.Children);
 				if (matchFromDefault != null)
 				{
-					MigrateNewDefaultNodes(matchFromDefault, newChild);
+					MigrateNewChildNodesInto(matchFromDefault, newChild);
 				}
 				else
 				{
-					int indexOfNewChild = defaultNode.Children.FindIndex(n => n.Label == newChild.Label);
-					InsertNewNodeIntoOldConfig(oldConfigNode, newChild.DeepCloneUnderParent(oldConfigNode, true), defaultNode, indexOfNewChild);
+					var indexOfNewChild = sourceNode.Children.FindIndex(n => n.Label == newChild.Label);
+					InsertNewNodeIntoOldConfig(destinationNode, newChild.DeepCloneUnderParent(destinationNode, true), sourceNode, indexOfNewChild);
 				}
 			}
 		}
@@ -240,7 +264,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		/// This recursive method will create group nodes in the migrated config and move all children in the node
 		/// which belong in the group into it
 		/// </summary>
-		private void MoveNodesIntoNewGroups(ConfigurableDictionaryNode oldConfigNode, ConfigurableDictionaryNode defaultNode)
+		private static void MoveNodesIntoNewGroups(ConfigurableDictionaryNode oldConfigNode, ConfigurableDictionaryNode defaultNode)
 		{
 			if (oldConfigNode.Children == null || defaultNode.Children == null)
 				return;
@@ -278,7 +302,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		/// </summary>
 		/// <returns>first match or null</returns>
 		/// <remarks>it should be the only match, but that is not enforced by this code</remarks>
-		private ConfigurableDictionaryNode FindMatchingChildNode(string label, List<ConfigurableDictionaryNode> defaultChildren)
+		private static ConfigurableDictionaryNode FindMatchingChildNode(string label, List<ConfigurableDictionaryNode> defaultChildren)
 		{
 			var possibleMatches = new List<ConfigurableDictionaryNode>(defaultChildren);
 			// Add the children of default groups as possible matches
@@ -289,19 +313,19 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			}
 			return possibleMatches.FirstOrDefault(n => n.Label == label);
 		}
-
-		private void InsertNewNodeIntoOldConfig(ConfigurableDictionaryNode oldConfigNode, ConfigurableDictionaryNode newNode, ConfigurableDictionaryNode defaultNode, int indexOf)
+		private static void InsertNewNodeIntoOldConfig(ConfigurableDictionaryNode destinationParentNode, ConfigurableDictionaryNode newChildNode,
+			ConfigurableDictionaryNode sourceParentNode, int indexInSourceParentNode)
 		{
-			if (indexOf == 0)
-				oldConfigNode.Children.Insert(0, newNode);
+			if (indexInSourceParentNode == 0)
+				destinationParentNode.Children.Insert(0, newChildNode);
 			else
 			{
-				var olderSiblingLabel = defaultNode.Children[indexOf - 1].Label;
-				var indexOfOlderSibling = oldConfigNode.Children.FindIndex(n => n.Label == olderSiblingLabel);
+				var olderSiblingLabel = sourceParentNode.Children[indexInSourceParentNode - 1].Label;
+				var indexOfOlderSibling = destinationParentNode.Children.FindIndex(n => n.Label == olderSiblingLabel);
 				if (indexOfOlderSibling >= 0)
-					oldConfigNode.Children.Insert(indexOfOlderSibling + 1, newNode);
+					destinationParentNode.Children.Insert(indexOfOlderSibling + 1, newChildNode);
 				else
-					oldConfigNode.Children.Add(newNode);
+					destinationParentNode.Children.Add(newChildNode);
 			}
 		}
 	}

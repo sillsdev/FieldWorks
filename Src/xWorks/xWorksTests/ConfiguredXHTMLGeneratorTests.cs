@@ -1780,24 +1780,39 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void IsMinorEntry_ReturnsTrueForMinorEntry()
+		public void IsMainEntry_ReturnsFalseForMinorEntry()
 		{
 			var mainEntry = CreateInterestingLexEntry(Cache);
-			var minorEntry = CreateInterestingLexEntry(Cache);
-			CreateVariantForm(Cache, mainEntry, minorEntry);
+			var variantEntry = CreateInterestingLexEntry(Cache);
+			CreateVariantForm(Cache, mainEntry, variantEntry);
+			var complexEntry = CreateInterestingLexEntry(Cache);
+			CreateComplexForm(Cache, mainEntry, complexEntry, false);
+			var rootConfig = new DictionaryConfigurationModel(true);
+			var lexemeConfig = new DictionaryConfigurationModel(false);
 			// SUT
-			Assert.That(ConfiguredXHTMLGenerator.IsComplexFormOrVariant(minorEntry));
+			Assert.False(ConfiguredXHTMLGenerator.IsMainEntry(variantEntry, lexemeConfig), "Variant, Lexeme");
+			Assert.False(ConfiguredXHTMLGenerator.IsMainEntry(variantEntry, rootConfig), "Variant, Root");
+			Assert.False(ConfiguredXHTMLGenerator.IsMainEntry(complexEntry, rootConfig), "Complex, Root");
+			// (complex entries are considered main entries in lexeme-based configs)
 		}
 
 		[Test]
-		public void IsMinorEntry_ReturnsFalseWhenNotAMinorEntry()
+		public void IsMainEntry_ReturnsTrueForMainEntry()
 		{
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(Cache, mainEntry, minorEntry);
+			var complexEntry = CreateInterestingLexEntry(Cache);
+			CreateComplexForm(Cache, mainEntry, complexEntry, false);
+			var rootConfig = new DictionaryConfigurationModel(true);
+			var lexemeConfig = new DictionaryConfigurationModel(false);
 			// SUT
-			Assert.False(ConfiguredXHTMLGenerator.IsComplexFormOrVariant(mainEntry));
-			Assert.False(ConfiguredXHTMLGenerator.IsComplexFormOrVariant(Cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>().Create()));
+			Assert.That(ConfiguredXHTMLGenerator.IsMainEntry(mainEntry, rootConfig), "Main, Root");
+			Assert.That(ConfiguredXHTMLGenerator.IsMainEntry(mainEntry, lexemeConfig), "Main, Lexeme");
+			Assert.That(ConfiguredXHTMLGenerator.IsMainEntry(complexEntry, lexemeConfig), "Complex, Lexeme");
+			// (complex entries are considered minor entries in root-based configs)
+			Assert.That(ConfiguredXHTMLGenerator.IsMainEntry(Cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>().Create(),
+				new DictionaryConfigurationModel()), "Reversal Index Entries are always considered Main Entries");
 		}
 
 		[Test]
@@ -1883,6 +1898,28 @@ namespace SIL.FieldWorks.XWorks
 			// this test relies on specific test data from CreateInterestingConfigurationModel
 			const string xpath = "/div[@class='minorentry']/span[@class='entry']";
 			AssertThatXmlIn.String(xhtml).HasNoMatchForXpath(xpath);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_LexemeBasedConsidersComplexFormsMainEntries()
+		{
+			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
+																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+			var configModel = CreateInterestingConfigurationModel(Cache);
+			for (var i = 1; i < configModel.Parts.Count; i++)
+				configModel.Parts[i].IsEnabled = false; // don't display Minor entries
+			var componentEntry = CreateInterestingLexEntry(Cache);
+			var complexEntry = CreateInterestingLexEntry(Cache);
+			CreateComplexForm(Cache, componentEntry, complexEntry, false);
+			configModel.Parts[1].DictionaryNodeOptions = configModel.Parts[2].DictionaryNodeOptions =
+				GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Minor, new ICmPossibility[0]);
+			SetPublishAsMinorEntry(complexEntry, false);
+			//SUT
+			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(complexEntry, configModel, pubDecorator, m_mediator);
+			// this test relies on specific test data from CreateInterestingConfigurationModel
+			const string xpath = "/html/body/div[@class='minorentry']/span[@class='entry']";
+			// only the variant is selected, so the other minor entry should not have been generated
+			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 0);
 		}
 
 		/// <summary>
@@ -6464,6 +6501,7 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(headwordXpath, 1);
 		}
 
+		/// <remarks>Note that the "Unspecified" Types mentioned here are truly unspecified, not the specified Type "Unspecified Form Type"</remarks>
 		[Test]
 		public void GenerateXHTMLForEntry_GeneratesCorrectMinorEntries(
 			[Values(FormType.Specified, FormType.Unspecified, FormType.None)] FormType complexForm,
@@ -6472,8 +6510,9 @@ namespace SIL.FieldWorks.XWorks
 			[Values(true, false)] bool isUnspecifiedVariantTypeEnabled,
 			[Values(true, false)] bool isRootBased)
 		{
-			if (complexForm == FormType.None && variantForm == FormType.None)
-				return; // A Minor entry makes no sense if it's neither complex nor variant
+			if ((variantForm == FormType.None && complexForm == FormType.None) // A Minor entry makes no sense if it's neither complex nor variant
+				|| (complexForm != FormType.None && !isRootBased)) // Only Root-based configurations consider complex forms to be main entries
+				return;
 
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
