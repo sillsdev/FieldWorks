@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.XWorks
 			ResetView(View, node);
 
 			// Populate Styles dropdown
-			var isPara = m_node.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph;
+			var isPara = m_node.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph || m_node.Parent == null;
 			View.SetStyles(isPara ? m_paraStyles : m_charStyles, m_node.Style, isPara);
 
 			// Test for Options type
@@ -441,15 +441,6 @@ namespace SIL.FieldWorks.XWorks
 				LoadParagraphOptions(listAndParaOptions, listOptionsView);
 			}
 			listOptionsView.DisplayOptionCheckBox2Visible = false;
-			// REVIEW (Hasso) 2016.02: could this if block be replaced by config file changes?
-			if (listOptions.ListId == DictionaryNodeListOptions.ListIds.Complex ||
-				listOptions.ListId == DictionaryNodeListOptions.ListIds.Minor)
-			{
-				if (m_node.StyleType != ConfigurableDictionaryNode.StyleTypes.Character)
-				{
-					View.SetStyles(m_paraStyles, m_node.Style, true);
-				}
-			}
 			InternalLoadList(listOptions, listOptionsView);
 
 			// Prevent events from firing while the view is being initialized
