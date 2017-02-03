@@ -278,6 +278,13 @@
     <Compile Include="Archiving\ReapRamp.cs" />
     <Compile Include="ConfigurableDictionaryNode.cs" />
     <Compile Include="ConfiguredXHTMLGenerator.cs" />
+    <Compile Include="HeadWordNumbersController.cs" />
+    <Compile Include="HeadWordNumbersDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HeadWordNumbersDlg.designer.cs">
+      <DependentUpon>HeadWordNumbersDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="CssGenerator.cs" />
     <Compile Include="DictionaryConfigurationController.cs" />
     <Compile Include="DictionaryConfigurationDlg.cs">
@@ -358,6 +365,7 @@
     <Compile Include="IDictionaryDetailsView.cs" />
     <Compile Include="IDictionarySenseOptionsView.cs" />
     <Compile Include="IDictionaryGroupingOptionsView.cs" />
+    <Compile Include="IHeadwordNumbersView.cs" />
     <Compile Include="ILayoutConverter.cs" />
     <Compile Include="IWebonaryClient.cs" />
     <Compile Include="LegacyConfigurationUtils.cs" />
@@ -506,6 +514,9 @@
     <EmbeddedResource Include="AddCustomFieldDlg.resx">
       <DependentUpon>AddCustomFieldDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HeadWordNumbersDlg.resx">
+      <DependentUpon>HeadWordNumbersDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CustomListDlg.resx">
       <DependentUpon>CustomListDlg.cs</DependentUpon>

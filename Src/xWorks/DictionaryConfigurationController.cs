@@ -484,7 +484,16 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="cache"></param>
 		public static void SetConfigureHomographParameters(DictionaryConfigurationModel model, FdoCache cache)
 		{
-			var hc = cache.ServiceLocator.GetInstance<HomographConfiguration>();
+			var cacheHc = cache.ServiceLocator.GetInstance<HomographConfiguration>();
+			var modelHc = model.HomographNumbers;
+			if (modelHc != null)
+			{
+				modelHc.ExportToHomographConfiguration(cacheHc);
+			}
+			else
+			{
+				model.HomographNumbers = new DictionaryHomographConfiguration(cacheHc);
+			}
 			if (model.Parts.Count == 0) return;
 			var mainEntryNode = model.Parts[0];
 			//Sense Node
@@ -492,19 +501,19 @@ namespace SIL.FieldWorks.XWorks
 			var senseNode = mainEntryNode.Children.Where(prop => prop.Label == senseType).FirstOrDefault();
 			if (senseNode == null) return;
 			var senseOptions = (DictionaryNodeSenseOptions)senseNode.DictionaryNodeOptions;
-			hc.ksSenseNumberStyle = senseOptions.NumberingStyle;
+			cacheHc.ksSenseNumberStyle = senseOptions.NumberingStyle;
 			//SubSense Node
 			var subSenseNode = senseNode.Children.Where(prop => prop.Label == "Subsenses").FirstOrDefault();
 			if (subSenseNode == null) return;
 			var subSenseOptions = (DictionaryNodeSenseOptions)subSenseNode.DictionaryNodeOptions;
-			hc.ksSubSenseNumberStyle = subSenseOptions.NumberingStyle;
-			hc.ksParentSenseNumberStyle = subSenseOptions.ParentSenseNumberingStyle;
+			cacheHc.ksSubSenseNumberStyle = subSenseOptions.NumberingStyle;
+			cacheHc.ksParentSenseNumberStyle = subSenseOptions.ParentSenseNumberingStyle;
 			//SubSubSense Node
 			var subSubSenseNode = subSenseNode.ReferencedOrDirectChildren.Where(prop => prop.Label == "Subsenses").FirstOrDefault();
 			if (subSubSenseNode == null) return;
 			var subSubSenseOptions = (DictionaryNodeSenseOptions)subSubSenseNode.DictionaryNodeOptions;
-			hc.ksSubSubSenseNumberStyle = subSubSenseOptions.NumberingStyle;
-			hc.ksParentSubSenseNumberStyle = subSubSenseOptions.ParentSenseNumberingStyle;
+			cacheHc.ksSubSubSenseNumberStyle = subSubSenseOptions.NumberingStyle;
+			cacheHc.ksParentSubSenseNumberStyle = subSubSenseOptions.ParentSenseNumberingStyle;
 		}
 
 		private void SetManagerTypeInfo(DictionaryConfigurationManagerDlg dialog)
@@ -674,6 +683,8 @@ namespace SIL.FieldWorks.XWorks
 		private void SelectCurrentConfigurationAndRefresh()
 		{
 			View.SelectConfiguration(_model);
+			if(_model.HomographNumbers != null)
+				_model.HomographNumbers.ExportToHomographConfiguration(Cache.ServiceLocator.GetInstance<HomographConfiguration>());
 			RefreshView(); // REVIEW pH 2016.02: this is called only in ctor and after ManageViews. do we even want to refresh and set isDirty?
 		}
 

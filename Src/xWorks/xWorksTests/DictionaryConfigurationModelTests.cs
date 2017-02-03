@@ -1083,6 +1083,7 @@ namespace SIL.FieldWorks.XWorks
 				Parts = new List<ConfigurableDictionaryNode> { parentNode },
 				SharedItems = new List<ConfigurableDictionaryNode> { parentNode.DeepCloneUnderSameParent() },
 				Publications = new List<string> { "unabridged", "college", "urban colloquialisms" },
+				HomographNumbers = new DictionaryHomographConfiguration { HomographNumberBefore = true, ShowHwNumber = false }
 			};
 
 			// SUT
@@ -1099,6 +1100,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Assert.AreEqual(model.Publications[i], clone.Publications[i]);
 			}
+			Assert.AreEqual(model.HomographNumbers, clone.HomographNumbers);
 		}
 
 		[Test]

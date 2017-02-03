@@ -3,6 +3,7 @@
 <xs:element name="DictionaryConfiguration">
 	<xs:complexType>
 		<xs:sequence>
+			<xs:element name="HomographConfiguration" type="HomographConfigurationType" maxOccurs="1" minOccurs="0"/>
 			<xs:element name="ConfigurationItem" type="ConfigurationItemType" maxOccurs="unbounded" minOccurs="0"/>
 			<xs:element name="SharedItems" minOccurs="0" maxOccurs="1">
 				<xs:complexType>
@@ -27,6 +28,14 @@
 		<xs:attribute type="xs:boolean" name="isRootBased" use="required"/>
 	</xs:complexType>
 </xs:element>
+<xs:complexType name="HomographConfigurationType">
+	<xs:attribute type="xs:boolean" name="showHwNumInReversalCrossRef"/>
+	<xs:attribute type="xs:boolean" name="showHwNumInCrossRef"/>
+	<xs:attribute type="xs:boolean" name="showHwNumber"/>
+	<xs:attribute type="xs:boolean" name="showSenseNumberReversal"/>
+	<xs:attribute type="xs:boolean" name="showSenseNumber"/>
+	<xs:attribute type="xs:boolean" name="homographNumberBefore"/>
+</xs:complexType>
 <xs:complexType name="SenseOptionsType">
 	<xs:attribute type="xs:string" name="numberStyle"/>
 	<xs:attribute type="xs:string" name="numberBefore"/>

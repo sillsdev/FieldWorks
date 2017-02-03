@@ -196,6 +196,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to These settings affect the current {0} view:{1}{2}.
+        /// </summary>
+        internal static string ConfigureHomograph_ConfigDescription {
+            get {
+                return ResourceManager.GetString("ConfigureHomograph_ConfigDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Configure homograph numbers on all headwords and sense numbers on headwords in cross references.
         /// </summary>
         internal static string ConfigureReferencedHeadwordsTooltip {

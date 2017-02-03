@@ -9,6 +9,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainImpl;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -97,6 +98,9 @@ namespace SIL.FieldWorks.XWorks
 		[XmlIgnore]
 		internal static List<string> NoteInParaStyles = new List<string>() { "AnthroNote", "DiscourseNote", "PhonologyNote", "GrammarNote", "SemanticsNote", "SocioLinguisticsNote", "GeneralNote", "EncyclopedicInfo" };
 
+		[XmlElement("HomographNumbers")]
+		public DictionaryHomographConfiguration HomographNumbers { get; set; }
+
 		/// <summary>
 		/// Checks which folder this will be saved in to determine if it is a reversal
 		/// </summary>
@@ -154,6 +158,11 @@ namespace SIL.FieldWorks.XWorks
 				Publications = DictionaryConfigurationController.GetAllPublications(cache);
 			else
 				DictionaryConfigurationController.FilterInvalidPublicationsFromModel(this, cache);
+			// Update FDO's homograph configuration from the loaded dictionary configuration homograph settings
+			if (HomographNumbers != null)
+			{
+				HomographNumbers.ExportToHomographConfiguration(cache.ServiceLocator.GetInstance<HomographConfiguration>());
+			}
 			// Handle any changes to the custom field definitions.  (See https://jira.sil.org/browse/LT-16430.)
 			// The "Merge" method handles both additions and deletions.
 			DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(this, cache);
@@ -252,5 +261,54 @@ namespace SIL.FieldWorks.XWorks
 		{
 			return Label;
 		}
+	}
+
+	/// <summary>
+	/// Provides per configuration serialization of the HomographConfiguration data (which is a singleton for views purposes)
+	/// </summary>
+	public class DictionaryHomographConfiguration
+	{
+		public DictionaryHomographConfiguration() {}
+
+		public DictionaryHomographConfiguration(HomographConfiguration config)
+		{
+			HomographNumberBefore = config.HomographNumberBefore;
+			ShowSenseNumber = config.ShowSenseNumberRef;
+			ShowSenseNumberReversal = config.ShowSenseNumberReversal;
+			ShowHwNumber = config.ShowHomographNumber(HomographConfiguration.HeadwordVariant.Main);
+			ShowHwNumInCrossRef = config.ShowHomographNumber(HomographConfiguration.HeadwordVariant.DictionaryCrossRef);
+			ShowHwNumInReversalCrossRef = config.ShowHomographNumber(HomographConfiguration.HeadwordVariant.ReversalCrossRef);
+		}
+
+		/// <summary>
+		/// Intended to be used to set the singleton HomographConfiguration in FLEx to the settings from this model
+		/// </summary>
+		public void ExportToHomographConfiguration(HomographConfiguration config)
+		{
+			config.HomographNumberBefore = HomographNumberBefore;
+			config.ShowSenseNumberRef = ShowSenseNumber;
+			config.ShowSenseNumberReversal = ShowSenseNumberReversal;
+			config.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.Main, ShowHwNumber);
+			config.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.DictionaryCrossRef, ShowHwNumInCrossRef);
+			config.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.ReversalCrossRef, ShowHwNumInReversalCrossRef);
+		}
+
+		[XmlAttribute("showHwNumInReversalCrossRef")]
+		public bool ShowHwNumInReversalCrossRef { get; set; }
+
+		[XmlAttribute("showHwNumInCrossRef")]
+		public bool ShowHwNumInCrossRef { get; set; }
+
+		[XmlAttribute("showHwNumber")]
+		public bool ShowHwNumber { get; set; }
+
+		[XmlAttribute("showSenseNumberReversal")]
+		public bool ShowSenseNumberReversal { get; set; }
+
+		[XmlAttribute("showSenseNumber")]
+		public bool ShowSenseNumber { get; set; }
+
+		[XmlAttribute("homographNumberBefore")]
+		public bool HomographNumberBefore { get; set; }
 	}
 }

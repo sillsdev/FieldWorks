@@ -268,6 +268,7 @@
     <Compile Include="CustomListDlgTests.cs" />
     <Compile Include="DeleteCustomListTests.cs" />
     <Compile Include="DictionaryConfigManagerTests.cs" />
+    <Compile Include="HeadwordNumbersControllerTests.cs" />
     <Compile Include="DictionaryConfigurationControllerTests.cs" />
     <Compile Include="DictionaryConfigurationListenerTests.cs" />
     <Compile Include="DictionaryConfigurationManagerControllerTests.cs" />

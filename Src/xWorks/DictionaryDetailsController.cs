@@ -37,8 +37,11 @@ namespace SIL.FieldWorks.XWorks
 		private List<StyleComboItem> m_charStyles;
 		private List<StyleComboItem> m_paraStyles;
 
-		/// <summary>Model for the dictionary element being configured</summary>
+		/// <summary>ConfigurableDictionaryNode to model the dictionary element being configured</summary>
 		private ConfigurableDictionaryNode m_node;
+
+		/// <summary>The DictionaryConfigurationModel that owns the node being configured.</summary>
+		private DictionaryConfigurationModel m_configModel;
 
 		/// <summary>Model for options specific to the element type, such as writing systems or relation types</summary>
 		private DictionaryNodeOptions Options { get { return m_node.DictionaryNodeOptions; } }
@@ -72,6 +75,7 @@ namespace SIL.FieldWorks.XWorks
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "View is disposed by its parent")]
 		public void LoadNode(DictionaryConfigurationModel model, ConfigurableDictionaryNode node)
 		{
+			m_configModel = model;
 			m_node = node;
 
 			View.SuspendLayout();
@@ -837,14 +841,17 @@ namespace SIL.FieldWorks.XWorks
 
 		private void HandleHeadwordNumbersButton()
 		{
-			var hc = m_cache.ServiceLocator.GetInstance<HomographConfiguration>();
-			using (var dlg = new ConfigureHomographDlg())
+			using (var dlg = new HeadwordNumbersDlg())
 			{
-				dlg.SetupDialog(hc, m_cache, m_styleSheet, (IApp)m_mediator.PropertyTable.GetValue("App"), m_mediator.HelpTopicProvider);
+				var controller = new HeadwordNumbersController(dlg, m_configModel, m_cache);
+				// ReSharper disable once AccessToDisposedClosure - can only be used before the dialog is disposed
+				dlg.RunStylesDialog += (sender, e) => HandleStylesBtn((ComboBox) sender, dlg.CurrentHomographStyle);
+				dlg.SetupDialog(m_mediator.HelpTopicProvider);
 				//dlg.StartPosition = FormStartPosition.CenterScreen;
 				if (dlg.ShowDialog(View.TopLevelControl) != DialogResult.OK)
 					return;
-				RefreshStylesAndPreview(); // The Styles dialog is also available through the ConfigureHomographDlg
+				controller.Save();
+				RefreshPreview();
 			}
 		}
 
