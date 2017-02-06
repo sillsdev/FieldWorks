@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016 SIL International
+﻿// Copyright (c) 2016-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -319,24 +319,48 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 		}
 
 		[Test]
-		public void MigrateFrom83Alpha_ConflatesMainEntriesForLexemey()
+		public void MigrateFrom83Alpha_ConflatesMainEntriesForLexemey([Values(true, false)] bool isHybrid)
 		{
 			const string kiddoBefore = "This is mine: ";
 			const string componentsBefore = "Before: ";
+			const string ReferencedComplexForms = "VisibleComplexFormBackRefs";
+			const string OtherRefdComplexForms = "ComplexFormsNotSubentries";
+			var RCFsForThisConfig = isHybrid ? OtherRefdComplexForms : ReferencedComplexForms;
 			var extantChildNode = new ConfigurableDictionaryNode { FieldDescription = KidField, Before = kiddoBefore };
+			var mainGroupingNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Group",
+				DictionaryNodeOptions = new DictionaryNodeGroupingOptions(),
+				Children = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode { FieldDescription = RCFsForThisConfig } }
+			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				Label = "Main Entries", FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { extantChildNode }
+				Label = "Main Entries", FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { extantChildNode, mainGroupingNode }
 			};
 			var componentsNode = new ConfigurableDictionaryNode { FieldDescription = "Components", Before = componentsBefore};
 			var extantChildUnderComplexNode = new ConfigurableDictionaryNode { FieldDescription = KidField, Before = "This is not mine: "};
 			var otherUniqueChildNode =  new ConfigurableDictionaryNode { FieldDescription = "ComplexKid" };
+			var complexGroupingNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Group",
+				DictionaryNodeOptions = new DictionaryNodeGroupingOptions(),
+				Children = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode { FieldDescription = "GroupedChild" },
+					new ConfigurableDictionaryNode { FieldDescription = RCFsForThisConfig }
+				}
+			};
 			var complexMainEntryNode = new ConfigurableDictionaryNode
 			{
 				Label = "Complex Entries", FieldDescription = "LexEntry",
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, DictionaryNodeListOptions.ListIds.Complex),
-				Children = new List<ConfigurableDictionaryNode> { componentsNode, extantChildUnderComplexNode, otherUniqueChildNode }
+				Children = new List<ConfigurableDictionaryNode> { componentsNode, complexGroupingNode, extantChildUnderComplexNode, otherUniqueChildNode }
 			};
+			if (isHybrid)
+			{
+				mainEntryNode.Children.Add(new ConfigurableDictionaryNode { FieldDescription = "Subentries" });
+				complexMainEntryNode.Children.Add(new ConfigurableDictionaryNode { FieldDescription = "Subentries" });
+			}
 			var variantEntryNode = new ConfigurableDictionaryNode
 			{
 				Label = "Variants", FieldDescription = "LexEntry",
@@ -344,7 +368,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			};
 			var alphaModel = new DictionaryConfigurationModel
 			{
-				Version = FirstAlphaMigrator.VersionAlpha3,
+				Version = FirstAlphaMigrator.VersionAlpha3 + 1, // skip the adding of "new" grouping nodes; we already have them
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode, complexMainEntryNode, variantEntryNode }
 			};
 
@@ -358,6 +382,8 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 
 			// add an extraneous Complex node to ensure it is deleted on migration
 			alphaModel.Parts.Add(complexMainEntryNode.DeepCloneUnderSameParent());
+			// earlier versions of Hybrid mistakenly included all Referenced Complex Forms in their grouping node:
+			complexGroupingNode.Children[1].FieldDescription = ReferencedComplexForms;
 
 			CssGeneratorTests.PopulateFieldsForTesting(alphaModel);
 			CssGeneratorTests.PopulateFieldsForTesting(betaModel);
@@ -365,12 +391,17 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			FirstBetaMigrator.MigrateFrom83Alpha(m_logger, alphaModel, betaModel); // SUT
 			Assert.AreEqual(2, alphaModel.Parts.Count, "All root-level Complex Form nodes should have been removed");
 			var mainChildren = alphaModel.Parts[0].Children;
-			Assert.AreEqual(3, mainChildren.Count, "All child nodes of Main Entry (Complex Forms) should have been copied to Main Entry");
+			Assert.AreEqual(isHybrid ? 5 : 4, mainChildren.Count, "All child nodes of Main Entry (Complex Forms) should have been copied to Main Entry");
 			Assert.AreEqual("Components", mainChildren[0].FieldDescription, "Components should have been inserted at the beginning");
-			Assert.AreEqual("Before: ", mainChildren[0].Before, "Components's Before material should have come from the user's configuration");
+			Assert.AreEqual(componentsBefore, mainChildren[0].Before, "Components's Before material should have come from the user's configuration");
 			Assert.AreEqual(KidField, mainChildren[1].FieldDescription, "The existing field should be in the middle");
 			Assert.AreEqual(kiddoBefore, mainChildren[1].Before, "The existing node's Before should have retained its value from Main Entry proper");
 			Assert.AreEqual("ComplexKid", mainChildren[2].FieldDescription, "The other child node should have been inserted after the existing one");
+			Assert.AreEqual(typeof(DictionaryNodeGroupingOptions), mainChildren[3].DictionaryNodeOptions.GetType(), "The final node should be the group");
+			var groupedChildren = mainChildren[3].Children;
+			Assert.AreEqual(2, groupedChildren.Count, "groupedChildren.Count");
+			Assert.AreEqual("GroupedChild", groupedChildren[0].FieldDescription, "Grouped child should have been copied into existing group");
+			Assert.AreEqual(RCFsForThisConfig, groupedChildren[1].FieldDescription, "Subentries should not be included in *Other* Referenced Complex Forms");
 		}
 
 		[Test]

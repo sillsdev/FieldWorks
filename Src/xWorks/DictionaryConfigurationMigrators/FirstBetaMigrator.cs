@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016 SIL International
+﻿// Copyright (c) 2016-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Palaso.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
@@ -130,6 +131,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			}
 			MigrateNewChildNodesInto(config.Parts[0], mainEntriesComplexForms);
 			config.Parts.RemoveAll(IsComplexFormsNode);
+			// Earlier versions of Hybrid mistakenly used VisibleComplexFormBackRefs instead of ComplexFormsNotSubentries under
+			// Main Entry (Complex Forms) (but not under Main Entry). Remove the mistake.
+			if (config.Parts[0].Children.Any(c => c.FieldDescription == "Subentries"))
+				RemoveFromChildrenAndGroups(config.Parts[0].Children, "VisibleComplexFormBackRefs");
 		}
 
 		private static bool IsComplexFormsNode(ConfigurableDictionaryNode node)
@@ -313,6 +318,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			}
 			return possibleMatches.FirstOrDefault(n => n.Label == label);
 		}
+
 		private static void InsertNewNodeIntoOldConfig(ConfigurableDictionaryNode destinationParentNode, ConfigurableDictionaryNode newChildNode,
 			ConfigurableDictionaryNode sourceParentNode, int indexInSourceParentNode)
 		{
@@ -327,6 +333,13 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				else
 					destinationParentNode.Children.Add(newChildNode);
 			}
+		}
+
+		private static void RemoveFromChildrenAndGroups(List<ConfigurableDictionaryNode> children, string fieldDescription)
+		{
+			children.RemoveAll(c => c.FieldDescription == fieldDescription);
+			children.Where(c => c.DictionaryNodeOptions is DictionaryNodeGroupingOptions)
+				.ForEach(c => RemoveFromChildrenAndGroups(c.Children, fieldDescription));
 		}
 	}
 }
