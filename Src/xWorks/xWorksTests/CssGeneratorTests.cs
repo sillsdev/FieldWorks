@@ -918,6 +918,17 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForStyleName_ParagraphLineSpacingAtleastWorks()
+		{
+			int atleast = 12000;
+			var style = GenerateParagraphStyle("Dictionary-Paragraph-LineSpacingAtleast");
+			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLineHeight, (int)FwTextPropVar.ktpvMilliPoint, atleast);
+			//SUT
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-LineSpacingAtleast", CssGenerator.DefaultStyle, m_mediator);
+			Assert.That(styleDeclaration.ToString(), Contains.Substring("flex-line-height:12pt;"));
+		}
+
+		[Test]
 		public void GenerateCssForConfiguration_ConfigWithCharStyleWorks()
 		{
 			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
