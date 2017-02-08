@@ -684,7 +684,7 @@ namespace SIL.FieldWorks.FDO
 				File.Copy(Path.Combine(templateDir,
 					FdoFileHelper.GetXmlDataFileName("NewLangProj")), dbFileName, false);
 				File.SetAttributes(dbFileName, FileAttributes.Normal);
-
+				CreateProjectCustomCss(dbDirName);
 				// Change the LangProject Guid to a new one to make it unique between projects, so Lift Bridge won't get cross with FLEx.
 				var doc = XDocument.Load(dbFileName);
 				var lpElement = doc.Element("languageproject").Elements("rt")
@@ -708,6 +708,25 @@ namespace SIL.FieldWorks.FDO
 				throw new ApplicationException(projectName, e);
 			}
 			return dbFileName;
+		}
+
+		/// <summary>
+		/// Create custom CSS file in the project's folder
+		/// </summary>
+		/// <param name="dbDirName"></param>
+		private static void CreateProjectCustomCss(string dbDirName)
+		{
+			string[] folderNameList = new[] { "Dictionary", "ReversalIndex" };
+			foreach (string folderName in folderNameList)
+			{
+				var projType = folderName;
+				string custCssPath = Path.Combine(FdoFileHelper.GetConfigSettingsDir(dbDirName), projType);
+				Directory.CreateDirectory(custCssPath);
+				if (projType == "ReversalIndex")
+					projType = "Reversal";
+				File.WriteAllText(Path.Combine(custCssPath, "Project" + projType + "Overrides.css"),
+					@"/* This file can be used to add custom css rules that will be applied to the xhtml export */");
+			}
 		}
 
 		/// <summary>

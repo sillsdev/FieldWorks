@@ -84,13 +84,16 @@ namespace SIL.FieldWorks.XWorks
 			}
 			var projectPath = DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator);
 			var previewCssPath = Path.Combine(projectPath, "Preview.css");
+			var projType = !string.IsNullOrEmpty(DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(mediator)) ? new DirectoryInfo(DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(mediator)).Name : string.Empty;
+			var cssName = (projType == "Dictionary" ? "ProjectDictionaryOverrides.css" : "ProjectReversalOverrides.css");
+			var custCssPath = Path.Combine(projectPath, cssName);
 			var stringBuilder = new StringBuilder();
 			using (var writer = XmlWriter.Create(stringBuilder))
 			using (var cssWriter = new StreamWriter(previewCssPath, false, Encoding.UTF8))
 			{
 				var exportSettings = new GeneratorSettings((FdoCache)mediator.PropertyTable.GetValue("cache"), mediator, false, false, null,
 					IsNormalRtl(mediator));
-				GenerateOpeningHtml(previewCssPath, exportSettings, writer);
+				GenerateOpeningHtml(previewCssPath, custCssPath, exportSettings, writer);
 				var content = GenerateXHTMLForEntry(entry, configuration, pubDecorator, exportSettings);
 				writer.WriteRaw(content);
 				GenerateClosingHtml(writer);
@@ -102,7 +105,7 @@ namespace SIL.FieldWorks.XWorks
 			return stringBuilder.ToString();
 		}
 
-		private static void GenerateOpeningHtml(string cssPath, GeneratorSettings exportSettings, XmlWriter xhtmlWriter)
+		private static void GenerateOpeningHtml(string cssPath, string custCssFile, GeneratorSettings exportSettings, XmlWriter xhtmlWriter)
 		{
 			xhtmlWriter.WriteDocType("html", PublicIdentifier, null, null);
 			xhtmlWriter.WriteStartElement("html", "http://www.w3.org/1999/xhtml");
@@ -110,10 +113,8 @@ namespace SIL.FieldWorks.XWorks
 			if (exportSettings.RightToLeft)
 				xhtmlWriter.WriteAttributeString("dir", "rtl");
 			xhtmlWriter.WriteStartElement("head");
-			xhtmlWriter.WriteStartElement("link");
-			xhtmlWriter.WriteAttributeString("href", "file:///" + cssPath);
-			xhtmlWriter.WriteAttributeString("rel", "stylesheet");
-			xhtmlWriter.WriteEndElement(); //</link>
+			CreateLinkElement(cssPath, xhtmlWriter);
+			CreateLinkElement(custCssFile, xhtmlWriter);
 			// write out schema links for writing system metadata
 			xhtmlWriter.WriteStartElement("link");
 			xhtmlWriter.WriteAttributeString("href", "http://purl.org/dc/terms/");
@@ -133,6 +134,17 @@ namespace SIL.FieldWorks.XWorks
 			if (exportSettings.RightToLeft)
 				xhtmlWriter.WriteAttributeString("dir", "rtl");
 			xhtmlWriter.WriteWhitespace(Environment.NewLine);
+		}
+
+		private static void CreateLinkElement(string cssFilePath, XmlWriter xhtmlWriter)
+		{
+			if (string.IsNullOrEmpty(cssFilePath) || !File.Exists(cssFilePath))
+				return;
+
+			xhtmlWriter.WriteStartElement("link");
+			xhtmlWriter.WriteAttributeString("href", "file:///" + cssFilePath);
+			xhtmlWriter.WriteAttributeString("rel", "stylesheet");
+			xhtmlWriter.WriteEndElement(); //</link>
 		}
 
 		private static void GenerateWritingSystemsMetadata(GeneratorSettings exportSettings, XmlWriter xhtmlWriter)
@@ -229,6 +241,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var entryCount = entryHvos.Length;
 			var cssPath = Path.ChangeExtension(xhtmlPath, "css");
+			var projectPath = DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator);
 			var clerk = mediator.PropertyTable.GetValue("ActiveClerk", null) as RecordClerk;
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			// Don't display letter headers if we're showing a preview in the Edit tool.
@@ -236,8 +249,15 @@ namespace SIL.FieldWorks.XWorks
 			using (var xhtmlWriter = XmlWriter.Create(xhtmlPath))
 			using (var cssWriter = new StreamWriter(cssPath, false, Encoding.UTF8))
 			{
+				var custCssPath = string.Empty;
+				var projType = !string.IsNullOrEmpty(DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator)) ? new DirectoryInfo(DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator)).Name : string.Empty;
+				if (!string.IsNullOrEmpty(projType))
+				{
+					var cssName = (projType == "Dictionary" ? "ProjectDictionaryOverrides.css" : "ProjectReversalOverrides.css");
+					custCssPath = CopyCustomCssToTempFolder(projectPath, xhtmlPath, cssName);
+				}
 				var settings = new GeneratorSettings(cache, mediator, true, true, Path.GetDirectoryName(xhtmlPath), IsNormalRtl(mediator));
-				GenerateOpeningHtml(cssPath, settings, xhtmlWriter);
+				GenerateOpeningHtml(cssPath, custCssPath, settings, xhtmlWriter);
 				Tuple<int, int> currentPageBounds = GetPageForCurrentEntry(settings, entryHvos, entriesPerPage);
 				GenerateTopOfPageButtonsIfNeeded(settings, entryHvos, entriesPerPage, currentPageBounds, xhtmlWriter, cssWriter);
 				string lastHeader = null;
@@ -285,6 +305,26 @@ namespace SIL.FieldWorks.XWorks
 				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, mediator));
 				cssWriter.Flush();
 			}
+		}
+
+		/// <summary>
+		/// Method to copy the custom Css file from Project folder to the Temp folder for Fieldworks preview
+		/// </summary>
+		private static string CopyCustomCssToTempFolder(string projType, string xhtmlPath, string custCssFileName)
+		{
+			if (xhtmlPath == null || projType == null)
+				return string.Empty;
+			if (custCssFileName.ToLower().IndexOf("reversal", StringComparison.Ordinal) > 0)
+			{
+				projType = projType.Replace("Dictionary", "ReversalIndex");
+			}
+			var custCssProjectPath = Path.Combine(projType, custCssFileName);
+			var custCssTempPath = Path.Combine(Path.GetDirectoryName(xhtmlPath), custCssFileName);
+			if (File.Exists(custCssProjectPath))
+			{
+				File.Copy(custCssProjectPath, custCssTempPath, true);
+			}
+			return custCssTempPath;
 		}
 
 		private static void GenerateTopOfPageButtonsIfNeeded(GeneratorSettings settings, int[] entryHvos, int entriesPerPage, Tuple<int, int> currentPageBounds, XmlWriter xhtmlWriter, StreamWriter cssWriter)

@@ -7838,6 +7838,24 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void SavePublishedHtmlWithCustomCssFile()
+		{
+			var entries = new int[0];
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode>() };
+			var preferredPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(entries, null, model, m_mediator);
+			try
+			{
+				string previewXhtmlContent = File.ReadAllText(preferredPath);
+				string filePath = Path.Combine(Path.GetTempPath(), "ProjectDictionaryOverrides.css");
+				StringAssert.Contains(filePath, previewXhtmlContent, "Custom css file should added in the XHTML file");
+			}
+			finally
+			{
+				DeleteTempXhtmlAndCssFiles(preferredPath);
+			}
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_EmbeddedWritingSystemGeneratesCorrectResult()
 		{
 			var headwordNode = new ConfigurableDictionaryNode
