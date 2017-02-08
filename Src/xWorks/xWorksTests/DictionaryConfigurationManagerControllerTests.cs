@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Ionic.Zip;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -25,12 +26,13 @@ namespace SIL.FieldWorks.XWorks
 
 		private readonly string _projectConfigPath = Path.GetTempPath();
 		private readonly string _defaultConfigPath = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary");
+		private IFileOS _mockFilesystem = new MockFileOS();
 
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
-			FileUtils.Manager.SetFileAdapter(new MockFileOS());
+			FileUtils.Manager.SetFileAdapter(_mockFilesystem);
 
 			FileUtils.EnsureDirectoryExists(_defaultConfigPath);
 		}
@@ -570,6 +572,8 @@ namespace SIL.FieldWorks.XWorks
 		public void ExportConfiguration_ExportsZip()
 		{
 			// Writing to disk, not just in memory, so can use zip library.
+
+			FileUtils.Manager.Reset();
 			string expectedZipOutput = null;
 			try
 			{
@@ -588,13 +592,39 @@ namespace SIL.FieldWorks.XWorks
 				Assert.That(File.Exists(expectedZipOutput), "File not exported");
 				Assert.That(new FileInfo(expectedZipOutput).Length, Is.GreaterThan(0),
 					"Exported file should have content");
+
+				using (var zip = new ZipFile(expectedZipOutput))
+				{
+					Assert.That(zip.Count, Is.GreaterThanOrEqualTo(4), "Zip file must be missing parts of the export");
+				}
 			}
 			finally
 			{
 				if (expectedZipOutput != null)
 					File.Delete(expectedZipOutput);
+				FileUtils.Manager.SetFileAdapter(_mockFilesystem);
 			}
 		}
 
+		[Test]
+		public void PrepareCustomFieldsExport_Works()
+		{
+			// SUT
+			var filesToIncludeInExportFromCustomFieldsExport = DictionaryConfigurationManagerController.PrepareCustomFieldsExport().ToList();
+			Assert.That(filesToIncludeInExportFromCustomFieldsExport.Count, Is.EqualTo(2), "Not enough files prepared");
+			Assert.That(filesToIncludeInExportFromCustomFieldsExport[0],  Is.StringEnding("CustomFieldsData"));
+			Assert.That(filesToIncludeInExportFromCustomFieldsExport[1], Is.StringEnding("CustomFieldsMoreData"));
+		}
+
+		[Test]
+		public void PrepareStylesheetExport_Works()
+		{
+			// SUT
+			var filesToIncludeInExportFromStylesheetExport =
+				DictionaryConfigurationManagerController.PrepareStylesheetExport().ToList();
+			Assert.That(filesToIncludeInExportFromStylesheetExport.Count, Is.EqualTo(2), "Not enough files prepared");
+			Assert.That(filesToIncludeInExportFromStylesheetExport[0], Is.StringEnding("StylesheetData"));
+			Assert.That(filesToIncludeInExportFromStylesheetExport[1], Is.StringEnding("StylesheetMoreData"));
+		}
 	}
 }

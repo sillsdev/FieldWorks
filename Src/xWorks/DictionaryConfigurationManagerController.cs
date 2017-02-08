@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FdoUi.Dialogs;
@@ -544,10 +545,43 @@ namespace SIL.FieldWorks.XWorks
 			using (var zip = new ZipFile())
 			{
 				zip.AddFile(configurationToExport.FilePath, "/");
+				PrepareCustomFieldsExport().ForEach(file => zip.AddFile(file, "/"));
+				PrepareStylesheetExport().ForEach(file => zip.AddFile(file, "/"));
 				zip.Save(destinationZipPath);
 			}
 		}
 
+		/// <summary>
+		/// Prepare custom fields to be included in dictionary configuration export. LT-17397.
+		/// Returns paths to files to be included in a zipped export.
+		/// </summary>
+		internal static IEnumerable<string> PrepareCustomFieldsExport()
+		{
+			// TODO implement
+
+			var file1=FileUtils.GetTempFile("CustomFieldsData");
+			FileUtils.WriteStringtoFile(file1, "content", Encoding.UTF8);
+			var file2=FileUtils.GetTempFile("CustomFieldsMoreData");
+			FileUtils.WriteStringtoFile(file2, "content", Encoding.UTF8);
+			yield return file1;
+			yield return file2;
+		}
+
+		/// <summary>
+		/// Prepare stylesheet to be included in dictionary configuration export. LT-17397.
+		/// Returns paths to files to be included in a zipped export.
+		/// </summary>
+		internal static IEnumerable<string> PrepareStylesheetExport()
+		{
+			// TODO implement
+
+			var file1 = FileUtils.GetTempFile("StylesheetData");
+			FileUtils.WriteStringtoFile(file1, "content", Encoding.UTF8);
+			var file2 = FileUtils.GetTempFile("StylesheetMoreData");
+			FileUtils.WriteStringtoFile(file2, "content", Encoding.UTF8);
+			yield return file1;
+			yield return file2;
+		}
 
 		/// <summary>
 		/// Handle configuration import request by user.
