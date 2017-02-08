@@ -82,11 +82,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				throw new ArgumentException("pubDecorator");
 			}
-			var projectPath = DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator);
-			var previewCssPath = Path.Combine(projectPath, "Preview.css");
-			var projType = !string.IsNullOrEmpty(DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(mediator)) ? new DirectoryInfo(DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(mediator)).Name : string.Empty;
-			var cssName = (projType == "Dictionary" ? "ProjectDictionaryOverrides.css" : "ProjectReversalOverrides.css");
-			var custCssPath = Path.Combine(projectPath, cssName);
+			var configDir = Path.GetDirectoryName(configuration.FilePath);
+			var previewCssPath = Path.Combine(configDir, "Preview.css");
+			var projType = new DirectoryInfo(configDir).Name;
+			var cssName = projType == "Dictionary" ? "ProjectDictionaryOverrides.css" : "ProjectReversalOverrides.css";
+			var custCssPath = Path.Combine(configDir, cssName);
 			var stringBuilder = new StringBuilder();
 			using (var writer = XmlWriter.Create(stringBuilder))
 			using (var cssWriter = new StreamWriter(previewCssPath, false, Encoding.UTF8))
@@ -241,7 +241,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var entryCount = entryHvos.Length;
 			var cssPath = Path.ChangeExtension(xhtmlPath, "css");
-			var projectPath = DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator);
+			var configDir = Path.GetDirectoryName(configuration.FilePath);
 			var clerk = mediator.PropertyTable.GetValue("ActiveClerk", null) as RecordClerk;
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			// Don't display letter headers if we're showing a preview in the Edit tool.
@@ -250,11 +250,11 @@ namespace SIL.FieldWorks.XWorks
 			using (var cssWriter = new StreamWriter(cssPath, false, Encoding.UTF8))
 			{
 				var custCssPath = string.Empty;
-				var projType = !string.IsNullOrEmpty(DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator)) ? new DirectoryInfo(DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator)).Name : string.Empty;
+				var projType = string.IsNullOrEmpty(configDir) ? null : new DirectoryInfo(configDir).Name;
 				if (!string.IsNullOrEmpty(projType))
 				{
-					var cssName = (projType == "Dictionary" ? "ProjectDictionaryOverrides.css" : "ProjectReversalOverrides.css");
-					custCssPath = CopyCustomCssToTempFolder(projectPath, xhtmlPath, cssName);
+					var cssName = projType == "Dictionary" ? "ProjectDictionaryOverrides.css" : "ProjectReversalOverrides.css";
+					custCssPath = CopyCustomCssToTempFolder(configDir, xhtmlPath, cssName);
 				}
 				var settings = new GeneratorSettings(cache, mediator, true, true, Path.GetDirectoryName(xhtmlPath), IsNormalRtl(mediator));
 				GenerateOpeningHtml(cssPath, custCssPath, settings, xhtmlWriter);
@@ -310,15 +310,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Method to copy the custom Css file from Project folder to the Temp folder for Fieldworks preview
 		/// </summary>
-		private static string CopyCustomCssToTempFolder(string projType, string xhtmlPath, string custCssFileName)
+		private static string CopyCustomCssToTempFolder(string projectPath, string xhtmlPath, string custCssFileName)
 		{
-			if (xhtmlPath == null || projType == null)
+			if (xhtmlPath == null || projectPath == null)
 				return string.Empty;
-			if (custCssFileName.ToLower().IndexOf("reversal", StringComparison.Ordinal) > 0)
-			{
-				projType = projType.Replace("Dictionary", "ReversalIndex");
-			}
-			var custCssProjectPath = Path.Combine(projType, custCssFileName);
+			var custCssProjectPath = Path.Combine(projectPath, custCssFileName);
 			var custCssTempPath = Path.Combine(Path.GetDirectoryName(xhtmlPath), custCssFileName);
 			if (File.Exists(custCssProjectPath))
 			{

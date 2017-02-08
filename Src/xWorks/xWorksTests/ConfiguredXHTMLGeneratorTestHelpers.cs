@@ -14,6 +14,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -25,11 +26,15 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			File.Delete(xhtmlPath);
 			File.Delete(Path.ChangeExtension(xhtmlPath, "css"));
+			var xhtmlDir = Path.GetDirectoryName(xhtmlPath);
+			if (string.IsNullOrEmpty(xhtmlDir))
+				return;
+			File.Delete(Path.Combine(xhtmlDir, "ProjectDictionaryOverrides.css"));
+			File.Delete(Path.Combine(xhtmlDir, "ProjectReversalOverrides.css"));
 		}
 
 		/// <summary>Creates a DictionaryConfigurationModel with one Main and two Minor Entry nodes, all with enabled HeadWord children</summary>
-		/// <param name="cache"></param>
-		internal static DictionaryConfigurationModel CreateInterestingConfigurationModel(FdoCache cache)
+		internal static DictionaryConfigurationModel CreateInterestingConfigurationModel(FdoCache cache, Mediator mediator = null)
 		{
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
@@ -57,7 +62,9 @@ namespace SIL.FieldWorks.XWorks
 			return new DictionaryConfigurationModel
 			{
 				AllPublications = true,
-				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode, minorEntryNode, minorSecondNode }
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode, minorEntryNode, minorSecondNode },
+				FilePath = mediator == null ? null : Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator),
+																	"filename" + DictionaryConfigurationModel.FileExtension)
 			};
 		}
 

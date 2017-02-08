@@ -1829,7 +1829,7 @@ namespace SIL.FieldWorks.XWorks
 				SetDictionaryNormalDirection(new InheritableStyleProp<TriStateBool>(TriStateBool.triTrue));
 				var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
 					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-				var configModel = CreateInterestingConfigurationModel(Cache);
+				var configModel = CreateInterestingConfigurationModel(Cache, m_mediator);
 				var mainEntry = CreateInterestingLexEntry(Cache);
 				//SUT
 				var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(mainEntry, configModel, pubDecorator, m_mediator);
@@ -1848,7 +1848,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
 																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var configModel = CreateInterestingConfigurationModel(Cache);
+			var configModel = CreateInterestingConfigurationModel(Cache, m_mediator);
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(Cache, mainEntry, minorEntry);
@@ -1867,7 +1867,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
 																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var configModel = CreateInterestingConfigurationModel(Cache);
+			var configModel = CreateInterestingConfigurationModel(Cache, m_mediator);
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(Cache, mainEntry, minorEntry);
@@ -1887,7 +1887,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
 																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var configModel = CreateInterestingConfigurationModel(Cache);
+			var configModel = CreateInterestingConfigurationModel(Cache, m_mediator);
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(Cache, mainEntry, minorEntry);
@@ -1905,7 +1905,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
 																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var configModel = CreateInterestingConfigurationModel(Cache);
+			var configModel = CreateInterestingConfigurationModel(Cache, m_mediator);
 			for (var i = 1; i < configModel.Parts.Count; i++)
 				configModel.Parts[i].IsEnabled = false; // don't display Minor entries
 			var componentEntry = CreateInterestingLexEntry(Cache);
@@ -7841,17 +7841,23 @@ namespace SIL.FieldWorks.XWorks
 		public void SavePublishedHtmlWithCustomCssFile()
 		{
 			var entries = new int[0];
-			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode>() };
-			var preferredPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(entries, null, model, m_mediator);
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode>(),
+				FilePath = Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_mediator),
+										"filename" + DictionaryConfigurationModel.FileExtension)
+			};
+			var xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(entries, null, model, m_mediator);
 			try
 			{
-				string previewXhtmlContent = File.ReadAllText(preferredPath);
-				string filePath = Path.Combine(Path.GetTempPath(), "ProjectDictionaryOverrides.css");
+				var previewXhtmlContent = File.ReadAllText(xhtmlPath);
+				// ReSharper disable once AssignNullToNotNullAttribute -- Justification: XHTML is always saved in a directory
+				var filePath = Path.Combine(Path.GetDirectoryName(xhtmlPath), "ProjectDictionaryOverrides.css");
 				StringAssert.Contains(filePath, previewXhtmlContent, "Custom css file should added in the XHTML file");
 			}
 			finally
 			{
-				DeleteTempXhtmlAndCssFiles(preferredPath);
+				DeleteTempXhtmlAndCssFiles(xhtmlPath);
 			}
 		}
 
