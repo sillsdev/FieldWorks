@@ -315,11 +315,10 @@ namespace SIL.FieldWorks.XWorks
 			if (xhtmlPath == null || projectPath == null)
 				return string.Empty;
 			var custCssProjectPath = Path.Combine(projectPath, custCssFileName);
+			if (!File.Exists(custCssProjectPath))
+				return string.Empty;
 			var custCssTempPath = Path.Combine(Path.GetDirectoryName(xhtmlPath), custCssFileName);
-			if (File.Exists(custCssProjectPath))
-			{
-				File.Copy(custCssProjectPath, custCssTempPath, true);
-			}
+			File.Copy(custCssProjectPath, custCssTempPath, true);
 			return custCssTempPath;
 		}
 
