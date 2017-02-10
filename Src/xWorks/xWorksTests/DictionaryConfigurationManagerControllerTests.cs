@@ -179,30 +179,38 @@ namespace SIL.FieldWorks.XWorks
 			Assert.True(_controller.RenameConfiguration(new ListViewItem { Tag = selectedConfig }, new LabelEditEventArgs(0, newLabel)),
 				"Renaming a config to a unique name should complete successfully");
 			Assert.AreEqual(newLabel, selectedConfig.Label, "The configuration should have been renamed");
-			Assert.AreEqual(_controller.FormatFilePath(newLabel), selectedConfig.FilePath, "The FilePath should have been generated");
+			Assert.AreEqual(DictionaryConfigurationManagerController.FormatFilePath(_controller._projectConfigDir, newLabel), selectedConfig.FilePath, "The FilePath should have been generated");
 			Assert.True(_controller.IsDirty, "Made changes; should be dirty");
 		}
 
-		[Test]
-		public void GenerateFilePath()
+
+
+		private DictionaryConfigurationModel GenerateFilePath_Helper(out List<DictionaryConfigurationModel> conflictingConfigs)
 		{
 			var configToRename = new DictionaryConfigurationModel
 			{
-				Label = "configuration3", FilePath = null, Publications = new List<string>()
+				Label = "configuration3",
+				FilePath = null,
+				Publications = new List<string>()
 			};
-			var conflictingConfigs = new List<DictionaryConfigurationModel>
+			conflictingConfigs = new List<DictionaryConfigurationModel>
 			{
 				new DictionaryConfigurationModel
 				{
-					Label = "conflicting file 3-0", FilePath = _controller.FormatFilePath("configuration3"), Publications = new List<string>()
+					Label = "conflicting file 3-0",
+					FilePath = DictionaryConfigurationManagerController.FormatFilePath(_controller._projectConfigDir, "configuration3"),
+					Publications = new List<string>()
 				},
 				new DictionaryConfigurationModel
 				{
-					Label = "conflicting file 3-1", FilePath = _controller.FormatFilePath("configuration3_1"), Publications = new List<string>()
+					Label = "conflicting file 3-1",
+					FilePath = DictionaryConfigurationManagerController.FormatFilePath(_controller._projectConfigDir, "configuration3_1"),
+					Publications = new List<string>()
 				},
 				new DictionaryConfigurationModel
 				{
-					Label = "conflicting file 3-2--in another directory to prove we can't accidentally mask unchanged default configurations",
+					Label =
+						"conflicting file 3-2--in another directory to prove we can't accidentally mask unchanged default configurations",
 					FilePath = Path.Combine(Path.Combine(_projectConfigPath, "subdir"),
 						"configuration3_2" + DictionaryConfigurationModel.FileExtension),
 					Publications = new List<string>()
@@ -210,24 +218,50 @@ namespace SIL.FieldWorks.XWorks
 			};
 			_configurations.Add(configToRename);
 			_configurations.AddRange(conflictingConfigs);
+			return configToRename;
+		}
+
+		[Test]
+		public void GenerateFilePath()
+		{
+			List<DictionaryConfigurationModel> conflictingConfigs;
+			var configToRename = GenerateFilePath_Helper(out conflictingConfigs);
 
 			// SUT
-			_controller.GenerateFilePath(configToRename);
+			DictionaryConfigurationManagerController.GenerateFilePath(_controller._projectConfigDir, _controller._configurations, configToRename);
 
 			var newFilePath = configToRename.FilePath;
 			StringAssert.StartsWith(_projectConfigPath, newFilePath);
 			StringAssert.EndsWith(DictionaryConfigurationModel.FileExtension, newFilePath);
-			Assert.AreEqual(_controller.FormatFilePath("configuration3_3"), configToRename.FilePath, "The file path should be based on the label");
+			Assert.AreEqual(DictionaryConfigurationManagerController.FormatFilePath(_controller._projectConfigDir, "configuration3_3"), configToRename.FilePath, "The file path should be based on the label");
 			foreach (var config in conflictingConfigs)
 			{
 				Assert.AreNotEqual(Path.GetFileName(newFilePath), Path.GetFileName(config.FilePath), "File name should be unique");
 			}
 		}
 
+		/// <summary>
+		/// Also account for files on disk, rather than just considering what is registered in the set of configurations we know about.
+		/// </summary>
+		[Test]
+		public void GenerateFilePath_AccountsForFilesOnDisk()
+		{
+			List<DictionaryConfigurationModel> conflictingConfigs;
+			var configToRename = GenerateFilePath_Helper(out conflictingConfigs);
+
+			FileUtils.WriteStringtoFile(Path.Combine(_projectConfigPath, "configuration3_3.fwdictconfig"), "file contents of config file that is in the way on disk but not actually registered in the list of configurations", Encoding.UTF8);
+
+			// SUT
+			DictionaryConfigurationManagerController.GenerateFilePath(_controller._projectConfigDir, _controller._configurations, configToRename);
+
+			var newFilePath = configToRename.FilePath;
+			Assert.That(newFilePath, Is.EqualTo(Path.Combine(_projectConfigPath, "configuration3_4.fwdictconfig")), "Did not account for collision with unregistered configuration on disk");
+		}
+
 		[Test]
 		public void FormatFilePath()
 		{
-			var formattedFilePath = _controller.FormatFilePath("\nFile\\Name/With\"Chars<?>"); // SUT
+			var formattedFilePath = DictionaryConfigurationManagerController.FormatFilePath(_controller._projectConfigDir, "\nFile\\Name/With\"Chars<?>"); // SUT
 			StringAssert.StartsWith(_projectConfigPath, formattedFilePath);
 			StringAssert.EndsWith(DictionaryConfigurationModel.FileExtension, formattedFilePath);
 			StringAssert.DoesNotContain("\n", formattedFilePath);
@@ -289,7 +323,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var configurationToDelete = _configurations[0];
 
-			_controller.GenerateFilePath(configurationToDelete);
+			DictionaryConfigurationManagerController.GenerateFilePath(_controller._projectConfigDir, _controller._configurations, configurationToDelete);
 			var pathToConfiguration = configurationToDelete.FilePath;
 			FileUtils.WriteStringtoFile(pathToConfiguration, "file contents", Encoding.UTF8);
 			Assert.That(FileUtils.FileExists(pathToConfiguration), "Unit test not set up right");
@@ -517,5 +551,50 @@ namespace SIL.FieldWorks.XWorks
 
 			Assert.That(claimsToBeDerived, Is.False, "Should have reported this as a shipped default configuration.");
 		}
+
+		[Test]
+		public void ExportConfiguration_ThrowsOnBadInput()
+		{
+			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationManagerController.ExportConfiguration(null, "a"));
+			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationManagerController.ExportConfiguration(_configurations[0], null));
+			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationManagerController.ExportConfiguration(null, null));
+			// Empty string
+			Assert.Throws<ArgumentException>(() => DictionaryConfigurationManagerController.ExportConfiguration(_configurations[0], ""));
+
+		}
+
+		/// <summary>
+		/// LT-17397.
+		/// </summary>
+		[Test]
+		public void ExportConfiguration_ExportsZip()
+		{
+			// Writing to disk, not just in memory, so can use zip library.
+			string expectedZipOutput = null;
+			try
+			{
+				var configurationToExport = _configurations[0];
+				DictionaryConfigurationManagerController.GenerateFilePath(_controller._projectConfigDir, _controller._configurations, configurationToExport);
+				var pathToConfiguration = configurationToExport.FilePath;
+				expectedZipOutput = Path.GetTempFileName();
+				File.WriteAllText(pathToConfiguration, "file contents");
+				Assert.That(File.Exists(pathToConfiguration), "Unit test not set up right");
+				Assert.That(new FileInfo(expectedZipOutput).Length, Is.EqualTo(0),
+					"Unit test not set up right. File will exist for convenience of writing the test but should not have any content yet.");
+
+				// SUT
+				DictionaryConfigurationManagerController.ExportConfiguration(configurationToExport, expectedZipOutput);
+
+				Assert.That(File.Exists(expectedZipOutput), "File not exported");
+				Assert.That(new FileInfo(expectedZipOutput).Length, Is.GreaterThan(0),
+					"Exported file should have content");
+			}
+			finally
+			{
+				if (expectedZipOutput != null)
+					File.Delete(expectedZipOutput);
+			}
+		}
+
 	}
 }

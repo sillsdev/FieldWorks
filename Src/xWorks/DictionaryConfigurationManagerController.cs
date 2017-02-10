@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -14,6 +15,8 @@ using SIL.Utils;
 using Palaso.Linq;
 using SIL.CoreImpl;
 using XCore;
+using Ionic.Zip;
+using SIL.Utils.FileDialog;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -28,13 +31,13 @@ namespace SIL.FieldWorks.XWorks
 		private readonly Mediator _mediator;
 		private readonly FdoCache _cache;
 
-		private readonly string _projectConfigDir;
+		internal readonly string _projectConfigDir;
 		private readonly string _defaultConfigDir;
 
 		/// <summary>
 		/// Set of dictionary configurations (aka "views") in project.
 		/// </summary>
-		private readonly List<DictionaryConfigurationModel> _configurations;
+		internal readonly List<DictionaryConfigurationModel> _configurations;
 
 		/// <summary>
 		/// Set of the names of available dictionary publications in project.
@@ -159,6 +162,9 @@ namespace SIL.FieldWorks.XWorks
 			_view.copyButton.Click += OnCopyConfiguration;
 			_view.removeButton.Click += OnDeleteConfiguration;
 			_view.resetButton.Click += OnDeleteConfiguration; // REVIEW (Hasso) 2017.01: should call OnResetConfiguration
+			_view.exportButton.Click += OnExportConfiguration;
+			_view.importButton.Click += OnImportConfiguration;
+
 			_view.Closing += (sndr, e) =>
 			{
 				if (SelectedConfiguration != null && Finished != null)
@@ -181,6 +187,8 @@ namespace SIL.FieldWorks.XWorks
 			_view.removeButton.Enabled = false;
 			_view.resetButton.Enabled = false;
 			_view.closeButton.Enabled = false;
+			_view.exportButton.Enabled = false;
+			_view.importButton.Enabled = false;
 		}
 
 		/// <summary>
@@ -199,6 +207,7 @@ namespace SIL.FieldWorks.XWorks
 				_view.copyButton.Enabled = false;
 				_view.resetButton.Enabled = false;
 				_view.removeButton.Enabled = false;
+				_view.exportButton.Enabled = false;
 				return;
 			}
 
@@ -216,6 +225,8 @@ namespace SIL.FieldWorks.XWorks
 			_view.publicationsListView.Enabled = true;
 			_view.copyButton.Enabled = true;
 			_view.closeButton.Enabled = true;
+			_view.exportButton.Enabled = true;
+			_view.importButton.Enabled = true;
 			var associatedPublications = GetPublications(SelectedConfiguration);
 			foreach (ListViewItem publicationItem in _view.publicationsListView.Items)
 			{
@@ -308,27 +319,28 @@ namespace SIL.FieldWorks.XWorks
 
 			// At this point, the user has chosen a unique name.  See if we should generate the filename.
 			if (!File.Exists(selectedConfig.FilePath))
-				GenerateFilePath(selectedConfig);
+				GenerateFilePath(_projectConfigDir, _configurations, selectedConfig);
 
 			return true;
 		}
 
-		/// <summary>Generates a unique file path for the configuration, based on its label</summary>
-		internal void GenerateFilePath(DictionaryConfigurationModel config)
+		/// <summary>Generates a unique file path for the configuration, based on its label.
+		/// Take into account what files are claimed to be used by configurations as well as what files actually exist on disk.</summary>
+		internal static void GenerateFilePath(string projectConfigDir, List<DictionaryConfigurationModel> existingConfigurations, DictionaryConfigurationModel config)
 		{
-			var filePath = FormatFilePath(config.Label);
+			var filePath = FormatFilePath(projectConfigDir, config.Label);
 			int i = 1;
-			while (_configurations.Any(conf => Path.GetFileName(filePath).Equals(Path.GetFileName(conf.FilePath))))
+			while (existingConfigurations.Any(conf => Path.GetFileName(filePath).Equals(Path.GetFileName(conf.FilePath))) || FileUtils.FileExists(Path.Combine(projectConfigDir,filePath)))
 			{
-				filePath = FormatFilePath(string.Format("{0}_{1}", config.Label, i++));
+				filePath = FormatFilePath(projectConfigDir, String.Format("{0}_{1}", config.Label, i++));
 			}
 			config.FilePath = filePath;
 		}
 
 		/// <summary>Removes illegal characters, appends project config path and extension</summary>
-		internal string FormatFilePath(string label)
+		internal static string FormatFilePath(string projectConfigDir, string label)
 		{
-			return Path.Combine(_projectConfigDir,
+			return Path.Combine(projectConfigDir,
 				MiscUtils.FilterForFileName(label, MiscUtils.FilenameFilterStrength.kFilterBackup) + DictionaryConfigurationModel.FileExtension);
 		}
 
@@ -450,7 +462,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				dlg.WindowTitle = xWorksStrings.Confirm + " " + xWorksStrings.Delete;
 				var kindOfConfiguration = DictionaryConfigurationListener.GetDictionaryConfigurationType(_mediator);
-				dlg.TopBodyText = string.Format("{0} {1}: {2}", kindOfConfiguration, xWorksStrings.Configuration, configurationToDelete.Label);
+				dlg.TopBodyText = String.Format("{0} {1}: {2}", kindOfConfiguration, xWorksStrings.Configuration, configurationToDelete.Label);
 
 				if (IsConfigurationACustomizedOriginal(configurationToDelete))
 				{
@@ -482,6 +494,87 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <summary>
+		/// Respond to an export UI button push by letting the user specify what file to export to, and starting the export process.
+		/// </summary>
+		private void OnExportConfiguration(object sender, EventArgs e)
+		{
+			// Not capable of exporting new configurations yet.
+			if (IsDirty)
+			{
+				MessageBox.Show(_view, "Your list of configurations was just changed. You must close and reopen this dialog to be able to export.");
+				return;
+			}
+
+			var disallowedCharacters = MiscUtils.GetInvalidProjectNameChars(MiscUtils.FilenameFilterStrength.kFilterBackup) + " $%";
+			string outputPath;
+			using (var saveDialog = new SaveFileDialogAdapter())
+			{
+				saveDialog.Title = "Choose filename for export";
+				saveDialog.FileName = StringUtils.FilterForFileName(SelectedConfiguration + "_FLEx-Dictionary-Configuration_" + DateTime.Now.ToString("yyyy-MM-dd"), disallowedCharacters);
+				saveDialog.DefaultExt = "zip";
+				saveDialog.AddExtension = true;
+				saveDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+				var result = saveDialog.ShowDialog(_view);
+				if (result != DialogResult.OK)
+					return;
+				outputPath = saveDialog.FileName;
+			}
+
+			// Append ".zip" if user entered something like "foo.gif", which loses the hidden ".zip" extension.
+			if (!outputPath.EndsWith(".zip", StringComparison.InvariantCultureIgnoreCase))
+				outputPath += ".zip";
+
+			ExportConfiguration(SelectedConfiguration, outputPath);
+		}
+
+		/// <summary>
+		/// Create a zip file containing a dictionary configuration for the user to share, into destinationZipPath. LT-17397.
+		/// </summary>
+		internal static void ExportConfiguration(DictionaryConfigurationModel configurationToExport, string destinationZipPath)
+		{
+			if (configurationToExport == null)
+				throw new ArgumentNullException("configurationToExport");
+			if (destinationZipPath == null)
+				throw new ArgumentNullException("destinationPath");
+			if (destinationZipPath == String.Empty)
+				throw new ArgumentException("destinationDirectory");
+
+			using (var zip = new ZipFile())
+			{
+				zip.AddFile(configurationToExport.FilePath, "/");
+				zip.Save(destinationZipPath);
+			}
+		}
+
+
+		/// <summary>
+		/// Handle configuration import request by user.
+		/// </summary>
+		private void OnImportConfiguration(object sender, EventArgs e)
+		{
+			// Not capable of exporting new configurations yet.
+			if (IsDirty)
+			{
+				MessageBox.Show(_view, "Your list of configurations was just changed. You must close and reopen this dialog to be able to import.");
+				return;
+			}
+
+			var importController = new DictionaryConfigurationImportController(_cache, _projectConfigDir, _configurations );
+			using (var importDialog = new DictionaryConfigurationImportDlg())
+			{
+				importController.DisplayView(importDialog);
+			}
+
+			if (!importController.ImportHappened)
+				return;
+
+			// Update list of configurations in UI and select the just-imported configuration.
+			ReLoadConfigurations();
+			_view.configurationsListView.Items.Cast<ListViewItem>().First(item => item.Text == importController.NewConfigToImport.Label).Selected = true;
+		}
+
 		public bool IsConfigurationACustomizedOriginal(DictionaryConfigurationModel configurationToDelete)
 		{
 			return IsConfigurationACustomizedShippedDefault(configurationToDelete) || IsConfigurationAnOriginalReversal(configurationToDelete);
@@ -511,7 +604,7 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 
 			// No configuration.WritingSystem means it is not a reversal, or that it is the AllReversalIndexes which doesn't act any different from a default config
-			if (!string.IsNullOrWhiteSpace(configuration.WritingSystem))
+			if (!String.IsNullOrWhiteSpace(configuration.WritingSystem))
 			{
 				var writingSystem = (IWritingSystem)_cache.WritingSystemFactory.get_Engine(configuration.WritingSystem);
 				// The reversals start out with the filename matching the ws DisplayLabel, copies will have a different file name

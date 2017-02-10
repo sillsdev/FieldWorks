@@ -16,7 +16,7 @@ using System.IO;
 namespace SIL.FieldWorks.Common.Utils
 {
 	/// <summary>
-	/// Summary description for DataZip.
+	///
 	/// </summary>
 	public class DataZip
 	{
