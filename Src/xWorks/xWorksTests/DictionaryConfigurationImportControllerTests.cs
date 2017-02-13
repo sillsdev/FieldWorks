@@ -232,10 +232,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.DoesNotThrow(() => { _controller.PrepareImport("nonexistentfile.zip"); });
 			Assert.That(_controller.NewConfigToImport, Is.Null, "Did not handle bad data as desired");
 			Assert.That(_controller._originalConfigLabel, Is.Null, "Did not handle bad data as desired");
-			Assert.That(_controller._status, Contains.Substring("Cannot"), "Should have set a failure status message");
-			_controller._status = string.Empty;
 			Assert.DoesNotThrow(() => { _controller.PrepareImport("bad$# \\characters/in!: filename;.~*("); });
-			Assert.That(_controller._status, Contains.Substring("Cannot"), "Should have set a failure status message");
 		}
 
 		[Test]

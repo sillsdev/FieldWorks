@@ -39,11 +39,6 @@ namespace SIL.FieldWorks.XWorks
 		internal string _temporaryImportConfigLocation = null;
 
 		/// <summary>
-		/// Status message to user of what will happen on import.
-		/// </summary>
-		internal string _status = null;
-
-		/// <summary>
 		/// Did the configuration get imported.
 		/// </summary>
 		public bool ImportHappened;
@@ -114,14 +109,13 @@ namespace SIL.FieldWorks.XWorks
 				using (var zip = new ZipFile(configurationZipPath))
 				{
 					var tmpPath = Path.GetTempPath();
-					var configInZip = zip.SelectEntries("*.fwdictconfig").First();
+					var configInZip = zip.SelectEntries("*" + DictionaryConfigurationModel.FileExtension).First();
 					configInZip.Extract(tmpPath, ExtractExistingFileAction.OverwriteSilently);
 					_temporaryImportConfigLocation = tmpPath + configInZip.FileName;
 				}
 			}
 			catch (Exception e)
 			{
-				_status = string.Format("Cannot import file '{0}'. Details: {1}", configurationZipPath, e.Message);
 				ImportHappened = false;
 				NewConfigToImport = null;
 				_originalConfigLabel = null;
@@ -140,7 +134,7 @@ namespace SIL.FieldWorks.XWorks
 			var i = 1;
 			while (_configurations.Any(config => config.Label == newConfigLabel))
 			{
-				newConfigLabel = String.Format("{0}-Imported{1}", NewConfigToImport.Label, i++);
+				newConfigLabel = String.Format(xWorksStrings.kstidImportedSuffix, NewConfigToImport.Label, i++);
 			}
 			NewConfigToImport.Label = newConfigLabel;
 			_proposedNewConfigLabel = newConfigLabel;
@@ -159,15 +153,15 @@ namespace SIL.FieldWorks.XWorks
 			_view.browseButton.Click += (a, b) => OnBrowse();
 			_view.importPathTextBox.TextChanged += (a, b) => RefreshBasedOnNewlySelectedImportFile();
 			_view.importButton.Click += (a, b) => DoImport();
-			_view.overwriteCheckbox.CheckedChanged += (a, b) =>
+			_view.doOverwriteRadioOption.CheckedChanged += (a, b) =>
 			{
-				if (_view.overwriteCheckbox.Checked)
+				if (_view.doOverwriteRadioOption.Checked)
 					UserRequestsOverwrite();
 				else
 					UserRequestsNotOverwrite();
 				RefreshStatusDisplay();
 			};
-			_view.overwriteCheckbox.Enabled = false;
+			_view.overwriteGroupBox.Visible = false;
 			_view.importButton.Enabled = false;
 			_view.ShowDialog();
 		}
@@ -179,8 +173,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using (var openDialog = new OpenFileDialogAdapter())
 			{
-				openDialog.Title = "Choose file for import";
-				openDialog.Filter = "Zip files|*.zip";
+				openDialog.Title = xWorksStrings.kstidChooseFile;
+				openDialog.Filter = xWorksStrings.kstidZipFiles + "|*.zip";
 				openDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
 				var result = openDialog.ShowDialog(_view);
@@ -193,7 +187,29 @@ namespace SIL.FieldWorks.XWorks
 
 		public void RefreshStatusDisplay()
 		{
-			_view.explanationLabel.Text = _status;
+			_view.explanationLabel.Text = "";
+			if (NewConfigToImport == null)
+			{
+				_view.explanationLabel.Text = xWorksStrings.kstidCannotImport;
+				return;
+			}
+			if (_originalConfigLabel == _proposedNewConfigLabel)
+			{
+				_view.explanationLabel.Text = string.Format(xWorksStrings.kstidImportingConfig,
+					NewConfigToImport.Label);
+			}
+			else
+			{
+				if (NewConfigToImport.Label == _proposedNewConfigLabel)
+				{
+					_view.explanationLabel.Text = string.Format(xWorksStrings.kstidImportingConfigNewName, NewConfigToImport.Label);
+				}
+				else
+				{
+					_view.explanationLabel.Text = string.Format(xWorksStrings.kstidImportingAndOverwritingConfiguration,
+						NewConfigToImport.Label);
+				}
+			}
 		}
 
 		/// <summary>
@@ -207,26 +223,26 @@ namespace SIL.FieldWorks.XWorks
 				// We aren't ready to import. Something didn't work right.
 
 				RefreshStatusDisplay();
-				_view.overwriteCheckbox.Enabled = false;
+				_view.overwriteGroupBox.Visible = false;
 				_view.importButton.Enabled = false;
 				return;
 			}
 
-			_view.overwriteCheckbox.Text = string.Format(_view.overwriteCheckbox.Text,
-				_originalConfigLabel,
-				NewConfigToImport.Label,
-				Environment.NewLine);
+			// Reset the overwrite setting when choosing a new file.
+			_view.notOverwriteRadioOption.Checked = true;
+
+			// Update overwrite radio labels
+			_view.doOverwriteRadioOption.Text = string.Format(xWorksStrings.kstidOverwriteConfiguration, _originalConfigLabel);
+			_view.notOverwriteRadioOption.Text = string.Format(xWorksStrings.kstidUseNewConfigName, NewConfigToImport.Label);
 
 			if (_originalConfigLabel == _proposedNewConfigLabel)
 			{
 				// Don't give the option to overwrite if there is nothing to overwrite.
-				_view.overwriteCheckbox.Enabled = false;
-				_status = string.Format("Importing configuration with name '{0}'.", NewConfigToImport.Label);
+				_view.overwriteGroupBox.Visible = false;
 			}
 			else
 			{
-				_view.overwriteCheckbox.Enabled = true;
-				_status = string.Format("Importing configuration with new name '{0}'.", NewConfigToImport.Label);
+				_view.overwriteGroupBox.Visible = true;
 			}
 			RefreshStatusDisplay();
 			_view.importButton.Enabled = true;
@@ -238,7 +254,6 @@ namespace SIL.FieldWorks.XWorks
 		internal void UserRequestsOverwrite()
 		{
 			NewConfigToImport.Label = _originalConfigLabel;
-			_status = string.Format("Import will overwrite the existing configuration named '{0}'.", NewConfigToImport.Label);
 		}
 
 		/// <summary>
@@ -247,7 +262,6 @@ namespace SIL.FieldWorks.XWorks
 		internal void UserRequestsNotOverwrite()
 		{
 			NewConfigToImport.Label = _proposedNewConfigLabel;
-			_status = string.Format("Importing configuration with new name '{0}'.", NewConfigToImport.Label);
 		}
 	}
 }

@@ -35,34 +35,32 @@ namespace SIL.FieldWorks.XWorks
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DictionaryConfigurationImportDlg));
 			this.mainTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-			this.fileImportLabel = new System.Windows.Forms.TextBox();
 			this.explanationLabel = new System.Windows.Forms.TextBox();
 			this.importButton = new System.Windows.Forms.Button();
 			this.cancelButton = new System.Windows.Forms.Button();
-			this.overwriteCheckbox = new System.Windows.Forms.CheckBox();
 			this.importPathTextBox = new System.Windows.Forms.TextBox();
 			this.browseButton = new System.Windows.Forms.Button();
+			this.overwriteGroupBox = new System.Windows.Forms.GroupBox();
+			this.overwriteOptionFlowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
+			this.doOverwriteRadioOption = new System.Windows.Forms.RadioButton();
+			this.notOverwriteRadioOption = new System.Windows.Forms.RadioButton();
+			this.fileImportLabel = new System.Windows.Forms.TextBox();
 			this.mainTableLayoutPanel.SuspendLayout();
+			this.overwriteGroupBox.SuspendLayout();
+			this.overwriteOptionFlowLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// mainTableLayoutPanel
 			// 
 			resources.ApplyResources(this.mainTableLayoutPanel, "mainTableLayoutPanel");
-			this.mainTableLayoutPanel.Controls.Add(this.fileImportLabel, 0, 0);
 			this.mainTableLayoutPanel.Controls.Add(this.explanationLabel, 0, 1);
 			this.mainTableLayoutPanel.Controls.Add(this.importButton, 2, 3);
 			this.mainTableLayoutPanel.Controls.Add(this.cancelButton, 1, 3);
-			this.mainTableLayoutPanel.Controls.Add(this.overwriteCheckbox, 0, 2);
 			this.mainTableLayoutPanel.Controls.Add(this.importPathTextBox, 1, 0);
 			this.mainTableLayoutPanel.Controls.Add(this.browseButton, 2, 0);
+			this.mainTableLayoutPanel.Controls.Add(this.overwriteGroupBox, 1, 1);
+			this.mainTableLayoutPanel.Controls.Add(this.fileImportLabel, 0, 0);
 			this.mainTableLayoutPanel.Name = "mainTableLayoutPanel";
-			// 
-			// fileImportLabel
-			// 
-			this.fileImportLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			resources.ApplyResources(this.fileImportLabel, "fileImportLabel");
-			this.fileImportLabel.Name = "fileImportLabel";
-			this.fileImportLabel.ReadOnly = true;
 			// 
 			// explanationLabel
 			// 
@@ -74,8 +72,8 @@ namespace SIL.FieldWorks.XWorks
 			// 
 			// importButton
 			// 
-			this.importButton.DialogResult = System.Windows.Forms.DialogResult.OK;
 			resources.ApplyResources(this.importButton, "importButton");
+			this.importButton.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.importButton.Name = "importButton";
 			this.importButton.UseVisualStyleBackColor = true;
 			// 
@@ -86,13 +84,6 @@ namespace SIL.FieldWorks.XWorks
 			this.cancelButton.Name = "cancelButton";
 			this.cancelButton.UseVisualStyleBackColor = true;
 			this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
-			// 
-			// overwriteCheckbox
-			// 
-			resources.ApplyResources(this.overwriteCheckbox, "overwriteCheckbox");
-			this.mainTableLayoutPanel.SetColumnSpan(this.overwriteCheckbox, 3);
-			this.overwriteCheckbox.Name = "overwriteCheckbox";
-			this.overwriteCheckbox.UseVisualStyleBackColor = true;
 			// 
 			// importPathTextBox
 			// 
@@ -105,6 +96,42 @@ namespace SIL.FieldWorks.XWorks
 			this.browseButton.Name = "browseButton";
 			this.browseButton.UseVisualStyleBackColor = true;
 			// 
+			// overwriteGroupBox
+			// 
+			resources.ApplyResources(this.overwriteGroupBox, "overwriteGroupBox");
+			this.mainTableLayoutPanel.SetColumnSpan(this.overwriteGroupBox, 3);
+			this.overwriteGroupBox.Controls.Add(this.overwriteOptionFlowLayoutPanel);
+			this.overwriteGroupBox.Name = "overwriteGroupBox";
+			this.overwriteGroupBox.TabStop = false;
+			// 
+			// overwriteOptionFlowLayoutPanel
+			// 
+			resources.ApplyResources(this.overwriteOptionFlowLayoutPanel, "overwriteOptionFlowLayoutPanel");
+			this.overwriteOptionFlowLayoutPanel.Controls.Add(this.doOverwriteRadioOption);
+			this.overwriteOptionFlowLayoutPanel.Controls.Add(this.notOverwriteRadioOption);
+			this.overwriteOptionFlowLayoutPanel.Name = "overwriteOptionFlowLayoutPanel";
+			// 
+			// doOverwriteRadioOption
+			// 
+			resources.ApplyResources(this.doOverwriteRadioOption, "doOverwriteRadioOption");
+			this.doOverwriteRadioOption.Name = "doOverwriteRadioOption";
+			this.doOverwriteRadioOption.UseVisualStyleBackColor = true;
+			// 
+			// notOverwriteRadioOption
+			// 
+			resources.ApplyResources(this.notOverwriteRadioOption, "notOverwriteRadioOption");
+			this.notOverwriteRadioOption.Checked = true;
+			this.notOverwriteRadioOption.Name = "notOverwriteRadioOption";
+			this.notOverwriteRadioOption.TabStop = true;
+			this.notOverwriteRadioOption.UseVisualStyleBackColor = true;
+			// 
+			// fileImportLabel
+			// 
+			this.fileImportLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			resources.ApplyResources(this.fileImportLabel, "fileImportLabel");
+			this.fileImportLabel.Name = "fileImportLabel";
+			this.fileImportLabel.ReadOnly = true;
+			// 
 			// DictionaryConfigurationImportDlg
 			// 
 			resources.ApplyResources(this, "$this");
@@ -114,6 +141,10 @@ namespace SIL.FieldWorks.XWorks
 			this.ShowIcon = false;
 			this.mainTableLayoutPanel.ResumeLayout(false);
 			this.mainTableLayoutPanel.PerformLayout();
+			this.overwriteGroupBox.ResumeLayout(false);
+			this.overwriteGroupBox.PerformLayout();
+			this.overwriteOptionFlowLayoutPanel.ResumeLayout(false);
+			this.overwriteOptionFlowLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -124,10 +155,13 @@ namespace SIL.FieldWorks.XWorks
 		private System.Windows.Forms.TableLayoutPanel mainTableLayoutPanel;
 		private System.Windows.Forms.Button cancelButton;
 		internal System.Windows.Forms.TextBox explanationLabel;
-		internal System.Windows.Forms.CheckBox overwriteCheckbox;
 		internal System.Windows.Forms.TextBox fileImportLabel;
 		internal System.Windows.Forms.TextBox importPathTextBox;
 		internal System.Windows.Forms.Button browseButton;
 		internal System.Windows.Forms.Button importButton;
+		private System.Windows.Forms.FlowLayoutPanel overwriteOptionFlowLayoutPanel;
+		internal System.Windows.Forms.RadioButton doOverwriteRadioOption;
+		internal System.Windows.Forms.RadioButton notOverwriteRadioOption;
+		internal System.Windows.Forms.GroupBox overwriteGroupBox;
 	}
 }

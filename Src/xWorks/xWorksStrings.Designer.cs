@@ -1824,11 +1824,119 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot import. Choose another file..
+        /// </summary>
+        internal static string kstidCannotImport {
+            get {
+                return ResourceManager.GetString("kstidCannotImport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose filename for export.
+        /// </summary>
+        internal static string kstidChooseExportFile {
+            get {
+                return ResourceManager.GetString("kstidChooseExportFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose file for import.
+        /// </summary>
+        internal static string kstidChooseFile {
+            get {
+                return ResourceManager.GetString("kstidChooseFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your list of configurations was just changed. You must close and reopen this dialog to be able to export..
+        /// </summary>
+        internal static string kstidConfigsChanged {
+            get {
+                return ResourceManager.GetString("kstidConfigsChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your list of configurations was just changed. You must close and reopen this dialog to be able to import..
+        /// </summary>
+        internal static string kstidConfigsChangedImport {
+            get {
+                return ResourceManager.GetString("kstidConfigsChangedImport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Writing possibility list contents.
         /// </summary>
         internal static string kstidExportingLists {
             get {
                 return ResourceManager.GetString("kstidExportingLists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}-Imported{1}.
+        /// </summary>
+        internal static string kstidImportedSuffix {
+            get {
+                return ResourceManager.GetString("kstidImportedSuffix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Importing and overwriting existing configuration with name &apos;{0}&apos;..
+        /// </summary>
+        internal static string kstidImportingAndOverwritingConfiguration {
+            get {
+                return ResourceManager.GetString("kstidImportingAndOverwritingConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Importing configuration with name &apos;{0}&apos;..
+        /// </summary>
+        internal static string kstidImportingConfig {
+            get {
+                return ResourceManager.GetString("kstidImportingConfig", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Importing configuration with new name &apos;{0}&apos;..
+        /// </summary>
+        internal static string kstidImportingConfigNewName {
+            get {
+                return ResourceManager.GetString("kstidImportingConfigNewName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Overwrite existing configuration named {0}.
+        /// </summary>
+        internal static string kstidOverwriteConfiguration {
+            get {
+                return ResourceManager.GetString("kstidOverwriteConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use new configuration name {0}.
+        /// </summary>
+        internal static string kstidUseNewConfigName {
+            get {
+                return ResourceManager.GetString("kstidUseNewConfigName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zip files.
+        /// </summary>
+        internal static string kstidZipFiles {
+            get {
+                return ResourceManager.GetString("kstidZipFiles", resourceCulture);
             }
         }
         

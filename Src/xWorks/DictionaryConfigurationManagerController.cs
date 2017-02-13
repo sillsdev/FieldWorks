@@ -503,7 +503,7 @@ namespace SIL.FieldWorks.XWorks
 			// Not capable of exporting new configurations yet.
 			if (IsDirty)
 			{
-				MessageBox.Show(_view, "Your list of configurations was just changed. You must close and reopen this dialog to be able to export.");
+				MessageBox.Show(_view, xWorksStrings.kstidConfigsChanged);
 				return;
 			}
 
@@ -511,7 +511,7 @@ namespace SIL.FieldWorks.XWorks
 			string outputPath;
 			using (var saveDialog = new SaveFileDialogAdapter())
 			{
-				saveDialog.Title = "Choose filename for export";
+				saveDialog.Title = xWorksStrings.kstidChooseExportFile;
 				saveDialog.FileName = StringUtils.FilterForFileName(SelectedConfiguration + "_FLEx-Dictionary-Configuration_" + DateTime.Now.ToString("yyyy-MM-dd"), disallowedCharacters);
 				saveDialog.DefaultExt = "zip";
 				saveDialog.AddExtension = true;
@@ -591,7 +591,7 @@ namespace SIL.FieldWorks.XWorks
 			// Not capable of exporting new configurations yet.
 			if (IsDirty)
 			{
-				MessageBox.Show(_view, "Your list of configurations was just changed. You must close and reopen this dialog to be able to import.");
+				MessageBox.Show(_view, xWorksStrings.kstidConfigsChangedImport);
 				return;
 			}
 
