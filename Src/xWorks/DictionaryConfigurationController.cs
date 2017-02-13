@@ -962,7 +962,7 @@ namespace SIL.FieldWorks.XWorks
 				else
 				{
 					var ws = cache.WritingSystemFactory.get_Engine(wsListItem.Id);
-					availableWSs.Add(new ListViewItem(ws.LanguageName) { Tag = ws.Id });
+					availableWSs.Add(new ListViewItem(((PalasoWritingSystem)ws).DisplayLabel) { Tag = ws.Id });
 				}
 			}
 
