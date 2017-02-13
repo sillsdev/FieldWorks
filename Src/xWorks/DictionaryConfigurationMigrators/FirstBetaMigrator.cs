@@ -131,6 +131,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			}
 			MigrateNewChildNodesInto(config.Parts[0], mainEntriesComplexForms);
 			config.Parts.RemoveAll(IsComplexFormsNode);
+			config.Parts[0].DictionaryNodeOptions = mainEntriesComplexForms.DictionaryNodeOptions;
 			// Earlier versions of Hybrid mistakenly used VisibleComplexFormBackRefs instead of ComplexFormsNotSubentries under
 			// Main Entry (Complex Forms) (but not under Main Entry). Remove the mistake.
 			if (config.Parts[0].Children.Any(c => c.FieldDescription == "Subentries"))

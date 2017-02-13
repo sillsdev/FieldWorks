@@ -2,6 +2,16 @@
 <DictionaryConfiguration name="Lexeme-based (complex forms as main entries)" allPublications="true" isRootBased="false" version="13" lastModified="2017-01-31">
   <!-- Main entries in the dictionary have historically been written out with class="entry" -->
   <ConfigurationItem name="Main Entry" isEnabled="true" style="Dictionary-Normal" styleType="paragraph" field="LexEntry" cssClassNameOverride="entry">
+  	<ListTypeOptions list="complex">
+  		<Option id="a0000000-dd15-4a03-9032-b40faaa9a754" isEnabled="true" />
+  		<Option id="1f6ae209-141a-40db-983c-bee93af0ca3c" isEnabled="true" />
+  		<Option id="73266a3a-48e8-4bd7-8c84-91c730340b7d" isEnabled="true" />
+  		<Option id="98c273c4-f723-4fb0-80df-eede2204dfca" isEnabled="true" />
+  		<Option id="b2276dec-b1a6-4d82-b121-fd114c009c59" isEnabled="true" />
+  		<Option id="35cee792-74c8-444e-a9b7-ed0461d4d3b7" isEnabled="true" />
+  		<Option id="9466d126-246e-400b-8bba-0703e09bc567" isEnabled="true" />
+  		<Option id="fec038ed-6a8c-4fa5-bc96-a4f515a98c50" isEnabled="true" />
+  	</ListTypeOptions>
 	<!-- using a different CSS Class for the main HeadWord and the HeadWords for subentries, references, and (variant|complex) forms
    prevents styles for the main HeadWord from leaking onto other HeadWords -->
 	<ConfigurationItem name="Headword" between=" " after=" " style="Dictionary-Headword" isEnabled="true" field="MLHeadWord" cssClassNameOverride="mainheadword">
