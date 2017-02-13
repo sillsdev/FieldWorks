@@ -123,17 +123,17 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="label6.Location" type="System.Drawing.Point, System.Drawing">
-    <value>15, 162</value>
+    <value>15, 135</value>
   </data>
   <data name="label6.Size" type="System.Drawing.Size, System.Drawing">
-    <value>346, 18</value>
+    <value>346, 28</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="label6.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
   </data>
   <data name="label6.Text" xml:space="preserve">
-    <value>References in Classified Dictionary should include (if significant):</value>
+    <value>References in Reversal Index and Classified Dictionary should include (if significant):</value>
   </data>
   <data name="&gt;&gt;label6.Name" xml:space="preserve">
     <value>label6</value>
@@ -154,7 +154,7 @@
     <value>NoControl</value>
   </data>
   <data name="m_chkShowHomographNumInReversal.Location" type="System.Drawing.Point, System.Drawing">
-    <value>16, 183</value>
+    <value>16, 166</value>
   </data>
   <data name="m_chkShowHomographNumInReversal.Size" type="System.Drawing.Size, System.Drawing">
     <value>121, 17</value>
@@ -184,7 +184,7 @@
     <value>NoControl</value>
   </data>
   <data name="m_chkShowSenseNumInReversal.Location" type="System.Drawing.Point, System.Drawing">
-    <value>36, 206</value>
+    <value>31, 189</value>
   </data>
   <data name="m_chkShowSenseNumInReversal.Size" type="System.Drawing.Size, System.Drawing">
     <value>96, 17</value>
@@ -208,7 +208,7 @@
     <value>9</value>
   </data>
   <data name="m_btnOk.Location" type="System.Drawing.Point, System.Drawing">
-    <value>129, 249</value>
+    <value>129, 244</value>
   </data>
   <data name="m_btnOk.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -232,7 +232,7 @@
     <value>8</value>
   </data>
   <data name="m_btnCancel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>210, 250</value>
+    <value>210, 245</value>
   </data>
   <data name="m_btnCancel.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -256,7 +256,7 @@
     <value>7</value>
   </data>
   <data name="m_btnHelp.Location" type="System.Drawing.Point, System.Drawing">
-    <value>292, 249</value>
+    <value>292, 244</value>
   </data>
   <data name="m_btnHelp.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -414,31 +414,34 @@
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="m_linkConfigHomographNumber.AutoSize" type="System.Boolean, mscorlib">
+  <data name="m_linkConfigSenseRefNumber.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="m_linkConfigHomographNumber.Location" type="System.Drawing.Point, System.Drawing">
-    <value>16, 135</value>
+  <data name="m_linkConfigSenseRefNumber.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
-  <data name="m_linkConfigHomographNumber.Size" type="System.Drawing.Size, System.Drawing">
-    <value>197, 13</value>
+  <data name="m_linkConfigSenseRefNumber.Location" type="System.Drawing.Point, System.Drawing">
+    <value>14, 217</value>
   </data>
-  <data name="m_linkConfigHomographNumber.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_linkConfigSenseRefNumber.Size" type="System.Drawing.Size, System.Drawing">
+    <value>225, 13</value>
+  </data>
+  <data name="m_linkConfigSenseRefNumber.TabIndex" type="System.Int32, mscorlib">
     <value>15</value>
   </data>
-  <data name="m_linkConfigHomographNumber.Text" xml:space="preserve">
-    <value>Configure Style of Homograph Number...</value>
+  <data name="m_linkConfigSenseRefNumber.Text" xml:space="preserve">
+    <value>Configure Style of Sense Reference Number...</value>
   </data>
-  <data name="&gt;&gt;m_linkConfigHomographNumber.Name" xml:space="preserve">
-    <value>m_linkConfigHomographNumber</value>
+  <data name="&gt;&gt;m_linkConfigSenseRefNumber.Name" xml:space="preserve">
+    <value>m_linkConfigSenseRefNumber</value>
   </data>
-  <data name="&gt;&gt;m_linkConfigHomographNumber.Type" xml:space="preserve">
+  <data name="&gt;&gt;m_linkConfigSenseRefNumber.Type" xml:space="preserve">
     <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_linkConfigHomographNumber.Parent" xml:space="preserve">
+  <data name="&gt;&gt;m_linkConfigSenseRefNumber.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;m_linkConfigHomographNumber.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_linkConfigSenseRefNumber.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -448,7 +451,7 @@
     <value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>373, 278</value>
+    <value>373, 277</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Configure Headword Numbers</value>

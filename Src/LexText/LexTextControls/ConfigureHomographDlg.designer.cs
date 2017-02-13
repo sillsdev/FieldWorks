@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_radioAfter = new System.Windows.Forms.RadioButton();
 			this.m_radioHide = new System.Windows.Forms.RadioButton();
 			this.label1 = new System.Windows.Forms.Label();
-			this.m_linkConfigHomographNumber = new System.Windows.Forms.LinkLabel();
+			this.m_linkConfigSenseRefNumber = new System.Windows.Forms.LinkLabel();
 			this.SuspendLayout();
 			// 
 			// label6
@@ -126,18 +126,18 @@ namespace SIL.FieldWorks.LexText.Controls
 			resources.ApplyResources(this.label1, "label1");
 			this.label1.Name = "label1";
 			// 
-			// m_linkConfigHomographNumber
+			// m_linkConfigSenseRefNumber
 			// 
-			resources.ApplyResources(this.m_linkConfigHomographNumber, "m_linkConfigHomographNumber");
-			this.m_linkConfigHomographNumber.Name = "m_linkConfigHomographNumber";
-			this.m_linkConfigHomographNumber.TabStop = true;
-			this.m_linkConfigHomographNumber.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.m_linkConfigHomographNumber_LinkClicked);
+			resources.ApplyResources(this.m_linkConfigSenseRefNumber, "m_linkConfigSenseRefNumber");
+			this.m_linkConfigSenseRefNumber.Name = "m_linkConfigSenseRefNumber";
+			this.m_linkConfigSenseRefNumber.TabStop = true;
+			this.m_linkConfigSenseRefNumber.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.m_linkConfigSenseRefNumber_LinkClicked);
 			// 
 			// ConfigureHomographDlg
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.m_linkConfigHomographNumber);
+			this.Controls.Add(this.m_linkConfigSenseRefNumber);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.m_radioHide);
 			this.Controls.Add(this.m_radioAfter);
@@ -172,7 +172,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private System.Windows.Forms.RadioButton m_radioAfter;
 		private System.Windows.Forms.RadioButton m_radioHide;
 		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.LinkLabel m_linkConfigHomographNumber;
+		private System.Windows.Forms.LinkLabel m_linkConfigSenseRefNumber;
 
 	}
 }
