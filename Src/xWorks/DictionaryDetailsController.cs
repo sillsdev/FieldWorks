@@ -845,8 +845,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var controller = new HeadwordNumbersController(dlg, m_configModel, m_cache);
 				// ReSharper disable once AccessToDisposedClosure - can only be used before the dialog is disposed
-				dlg.RunStylesDialog += (sender, e) => HandleStylesBtn((ComboBox) sender, dlg.CurrentHomographStyle);
+				dlg.RunStylesDialog += (sender, e) => HandleStylesBtn((ComboBox) sender, ((ComboBox)sender).Text);
 				dlg.SetupDialog(m_mediator.HelpTopicProvider);
+				dlg.SetStyleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
 				//dlg.StartPosition = FormStartPosition.CenterScreen;
 				if (dlg.ShowDialog(View.TopLevelControl) != DialogResult.OK)
 					return;

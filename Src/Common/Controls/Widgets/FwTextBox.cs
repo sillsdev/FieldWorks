@@ -73,7 +73,9 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public FwTextBox()
 		{
+			bool inDesigner = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 			m_innerFwTextBox = new InnerFwTextBox();
+			m_innerFwTextBox.InDesigner = inDesigner;
 
 			if (Application.RenderWithVisualStyles)
 				DoubleBuffered = true;
@@ -82,7 +84,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			Padding = Application.RenderWithVisualStyles ? new Padding(2) : new Padding(1, 2, 1, 1);
 			m_innerFwTextBox.Dock = DockStyle.Fill;
 			Controls.Add(m_innerFwTextBox);
-			if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
+			if (!inDesigner)
 			{
 				// This causes us to get a notification when the string gets changed,
 				// so we can fire our TextChanged event.
@@ -1991,7 +1993,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				CheckDisposed();
 
-				if (m_DataAccess == null)
+				if (m_DataAccess == null || InDesigner)
 					return null;
 
 				if (m_wsf == null)
@@ -2153,7 +2155,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				CheckDisposed();
 
-				if (RootBox == null)
+				if (RootBox == null || InDesigner)
 					return 0;
 				IVwSelection sel = RootBox.Selection;
 				if (sel == null)
@@ -2199,7 +2201,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				CheckDisposed();
 
-				if (RootBox == null)
+				if (RootBox == null || InDesigner)
 					return 0;
 				IVwSelection sel = RootBox.Selection;
 				if (sel == null)
@@ -2225,6 +2227,11 @@ namespace SIL.FieldWorks.Common.Widgets
 				Select(SelectionStart, value);
 			}
 		}
+
+		/// <summary>
+		/// Because InnerFwTextBox is an embedded control <code>InDesigner</code> does not return usable information.
+		/// </summary>
+		protected internal bool InDesigner { get; set; }
 
 		/// <summary>
 		/// Gets or sets the selected text.
@@ -2319,7 +2326,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			CheckDisposed();
 
-			if (DesignMode)
+			if (InDesigner)
 				return;
 			m_rootb = VwRootBoxClass.Create();
 			m_rootb.SetSite(this);
@@ -2751,7 +2758,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			CheckDisposed();
 
-			if (!DoAdjustHeight || m_DataAccess == null)
+			if (!DoAdjustHeight || m_DataAccess == null || Tss == null)
 				return false;
 
 			// Reduce the font size of any run in the new string as necessary to keep the text
@@ -2809,7 +2816,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			// string has something in it.  See LT-9472.
 			// Also don't try if we have no selection; this can produce undesirable scrolling when the
 			// window is just too narrow. LT-11073
-			if (m_rootb.Selection == null)
+			if (m_rootb == null || m_rootb.Selection == null)
 				return;
 			ITsString tss = Tss;
 			if (m_WritingSystem != 0 || (tss != null && tss.Text != null))

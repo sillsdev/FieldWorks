@@ -3,6 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -12,12 +15,17 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public interface IHeadwordNumbersView
 	{
-		event EventHandler Shown;
 		event EventHandler RunStylesDialog;
+		event EventHandler CustomDigitsChanged;
 		bool HomographBefore { get; set; }
 		bool ShowHomograph { get; set; }
 		bool ShowHomographOnCrossRef { get; set; }
 		bool ShowSenseNumber { get; set; }
+		bool OkButtonEnabled { get; set; }
 		string Description { get; set; }
+		string HomographWritingSystem { get; set; }
+		IEnumerable<IWritingSystem> AvailableWritingSystems { set; }
+		IEnumerable<string> CustomDigits { get; set; }
+		void SetWsFactoryForCustomDigits(ILgWritingSystemFactory factory);
 	}
 }

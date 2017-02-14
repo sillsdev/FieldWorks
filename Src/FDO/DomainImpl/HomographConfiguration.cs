@@ -2,6 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
@@ -46,6 +48,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			ShowSenseNumberRef = true;
 			ShowSenseNumberReversal = true;
 			HomographNumberBefore = false;
+			CustomHomographNumbers = new List<string>();
 		}
 
 		/// <summary>
@@ -133,6 +136,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			return ShowSenseNumberRef;
 		}
 
+		/// <summary/>
+		public List<string> CustomHomographNumbers { get; set; }
+
 		/// <summary>
 		/// Get/Set a representation of state suitable for persistence
 		/// </summary>
@@ -160,6 +166,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					if (!ShowSenseNumberReversal)
 					{
 						builder.Append("snRev ");
+					}
+					if (CustomHomographNumbers.Any())
+					{
+						builder.Append(string.Format("customHn:{0} ", string.Join(";", CustomHomographNumbers)));
+					}
+					if (!string.IsNullOrEmpty(WritingSystem))
+					{
+						builder.Append(string.Format("ws:{0}", WritingSystem));
 					}
 				}
 				else
@@ -195,9 +209,24 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						case "hn:rcr":
 							SetShowHomographNumber(HeadwordVariant.ReversalCrossRef, false);
 							break;
+						default:
+							if (item.StartsWith("customHn:"))
+							{
+								CustomHomographNumbers = new List<string>(item.Split(new []{';', ':'}).Skip(1));
+							}
+							else if (item.StartsWith("ws:"))
+							{
+								WritingSystem = item.Substring("ws:".Length);
+							}
+							break;
 					}
 				}
 			}
 		}
+
+		/// <summary>
+		/// The writing system to use for the headword numbers
+		/// </summary>
+		public string WritingSystem { get; set; }
 	}
 }

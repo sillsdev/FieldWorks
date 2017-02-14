@@ -3,6 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainImpl;
 
@@ -31,7 +33,25 @@ namespace SIL.FieldWorks.XWorks
 				model.IsReversal ? xWorksStrings.ReversalIndex : xWorksStrings.Dictionary,
 				Environment.NewLine,
 				model.Label);
-			_view.Shown += OnShowDialog;
+			_view.SetWsFactoryForCustomDigits(cache.WritingSystemFactory);
+			_view.AvailableWritingSystems = cache.LangProject.AllWritingSystems;
+			_view.CustomDigits = _homographConfig.CustomHomographNumberList;
+			_view.HomographWritingSystem = string.IsNullOrEmpty(_homographConfig.HomographWritingSystem)
+				? null
+				: _cache.LangProject.AllWritingSystems.First(ws => ws.Id == _homographConfig.HomographWritingSystem).DisplayLabel;
+			_view.HomographBefore = _homographConfig.HomographNumberBefore;
+			_view.ShowHomograph = _homographConfig.ShowHwNumber;
+			_view.ShowHomographOnCrossRef = _model.IsReversal ? _homographConfig.ShowHwNumInReversalCrossRef : _homographConfig.ShowHwNumInCrossRef;
+			_view.ShowSenseNumber = _model.IsReversal ? _homographConfig.ShowSenseNumberReversal : _homographConfig.ShowSenseNumber;
+			_view.OkButtonEnabled = _homographConfig.CustomHomographNumberList == null
+				|| !_homographConfig.CustomHomographNumberList.Any() || _homographConfig.CustomHomographNumberList.Count == 10;
+			_view.CustomDigitsChanged += OnViewCustomDigitsChanged;
+		}
+
+		private void OnViewCustomDigitsChanged(object sender, EventArgs eventArgs)
+		{
+			_view.OkButtonEnabled = !_view.CustomDigits.Any()
+				|| _view.CustomDigits.Count(digit => !string.IsNullOrWhiteSpace(digit)) == 10;
 		}
 
 		/// <summary>
@@ -39,22 +59,11 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private DictionaryHomographConfiguration GetHeadwordConfiguration()
 		{
-			if (_model.HomographNumbers != null)
+			if (_model.HomographConfiguration != null)
 			{
-				return _model.HomographNumbers;
+				return _model.HomographConfiguration;
 			}
 			return new DictionaryHomographConfiguration(_cache.ServiceLocator.GetInstance<HomographConfiguration>());
-		}
-
-		/// <summary>
-		/// Set the model values in the view after layout is complete
-		/// </summary>
-		private void OnShowDialog(object sender, EventArgs eventArgs)
-		{
-			_view.HomographBefore = _homographConfig.HomographNumberBefore;
-			_view.ShowHomograph = _homographConfig.ShowHwNumber;
-			_view.ShowHomographOnCrossRef = _model.IsReversal ? _homographConfig.ShowHwNumInReversalCrossRef : _homographConfig.ShowHwNumInCrossRef;
-			_view.ShowSenseNumber = _model.IsReversal ? _homographConfig.ShowSenseNumberReversal : _homographConfig.ShowSenseNumber;
 		}
 
 		/// <summary>
@@ -75,7 +84,10 @@ namespace SIL.FieldWorks.XWorks
 				_homographConfig.ShowHwNumInCrossRef = _view.ShowHomographOnCrossRef;
 				_homographConfig.ShowSenseNumber = _view.ShowSenseNumber;
 			}
-			_model.HomographNumbers = _homographConfig;
+			_homographConfig.HomographWritingSystem = string.IsNullOrEmpty(_view.HomographWritingSystem) ? null :
+				_cache.LangProject.AllWritingSystems.First(ws => ws.DisplayLabel == _view.HomographWritingSystem).Id;
+			_homographConfig.CustomHomographNumberList = _view.CustomDigits == null ? new List<string>() : new List<string>(_view.CustomDigits);
+			_model.HomographConfiguration = _homographConfig;
 			_homographConfig.ExportToHomographConfiguration(_cache.ServiceLocator.GetInstance<HomographConfiguration>());
 		}
 	}

@@ -454,6 +454,27 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void Save_HomographConfigurationValidatesAgainstSchema()
+		{
+			var modelFile = Path.GetTempFileName();
+			var model = new DictionaryConfigurationModel
+			{
+				FilePath = modelFile,
+				Version = 0,
+				Label = "root",
+				HomographConfiguration = new DictionaryHomographConfiguration
+				{
+					CustomHomographNumbers = "0;1;2;3;4;5;6;7;8;9",
+					HomographNumberBefore = true
+				}
+			};
+			//SUT
+			model.Save();
+			ValidateAgainstSchema(modelFile);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/HomographConfiguration", 1);
+		}
+
+		[Test]
 		public void ShippedFilesValidateAgainstSchema([Values("Dictionary", "ReversalIndex")] string subFolder)
 		{
 			var shippedConfigfolder = Path.Combine(FwDirectoryFinder.FlexFolder, "DefaultConfigurations", subFolder);
@@ -1083,7 +1104,7 @@ namespace SIL.FieldWorks.XWorks
 				Parts = new List<ConfigurableDictionaryNode> { parentNode },
 				SharedItems = new List<ConfigurableDictionaryNode> { parentNode.DeepCloneUnderSameParent() },
 				Publications = new List<string> { "unabridged", "college", "urban colloquialisms" },
-				HomographNumbers = new DictionaryHomographConfiguration { HomographNumberBefore = true, ShowHwNumber = false }
+				HomographConfiguration = new DictionaryHomographConfiguration { HomographNumberBefore = true, ShowHwNumber = false }
 			};
 
 			// SUT
@@ -1100,7 +1121,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Assert.AreEqual(model.Publications[i], clone.Publications[i]);
 			}
-			Assert.AreEqual(model.HomographNumbers, clone.HomographNumbers);
+			Assert.AreEqual(model.HomographConfiguration, clone.HomographConfiguration);
 		}
 
 		[Test]

@@ -485,14 +485,14 @@ namespace SIL.FieldWorks.XWorks
 		public static void SetConfigureHomographParameters(DictionaryConfigurationModel model, FdoCache cache)
 		{
 			var cacheHc = cache.ServiceLocator.GetInstance<HomographConfiguration>();
-			var modelHc = model.HomographNumbers;
+			var modelHc = model.HomographConfiguration;
 			if (modelHc != null)
 			{
 				modelHc.ExportToHomographConfiguration(cacheHc);
 			}
 			else
 			{
-				model.HomographNumbers = new DictionaryHomographConfiguration(cacheHc);
+				model.HomographConfiguration = new DictionaryHomographConfiguration(cacheHc);
 			}
 			if (model.Parts.Count == 0) return;
 			var mainEntryNode = model.Parts[0];
@@ -683,8 +683,8 @@ namespace SIL.FieldWorks.XWorks
 		private void SelectCurrentConfigurationAndRefresh()
 		{
 			View.SelectConfiguration(_model);
-			if(_model.HomographNumbers != null)
-				_model.HomographNumbers.ExportToHomographConfiguration(Cache.ServiceLocator.GetInstance<HomographConfiguration>());
+			if(_model.HomographConfiguration != null)
+				_model.HomographConfiguration.ExportToHomographConfiguration(Cache.ServiceLocator.GetInstance<HomographConfiguration>());
 			RefreshView(); // REVIEW pH 2016.02: this is called only in ctor and after ManageViews. do we even want to refresh and set isDirty?
 		}
 
@@ -1032,11 +1032,9 @@ namespace SIL.FieldWorks.XWorks
 			return availableWSs;
 		}
 
-		/// <param name="wsType"></param>
-		/// <returns>
-		/// A list of ListViewItem's representing this project's WritingSystems, with "magic" default WS's at the beginning of the list.
-		/// Each LVI's Tag is the WS Id: negative int for "magic" default WS's, and a string like "en" or "fr" for normal WS's.
-		/// </returns>
+		/// <summary>
+		/// Return the current writing systems for a given writing system type as a list of DictionaryNodeOption objects
+		/// </summary>
 		public static List<DictionaryNodeListOptions.DictionaryNodeOption> GetCurrentWritingSystems(DictionaryNodeWritingSystemOptions.WritingSystemType wsType, FdoCache cache)
 		{
 			var wsList = new List<DictionaryNodeListOptions.DictionaryNodeOption>();

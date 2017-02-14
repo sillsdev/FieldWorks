@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security;
 using System.Xml;
 using System.Xml.Serialization;
 using SIL.FieldWorks.FDO;
@@ -98,8 +99,8 @@ namespace SIL.FieldWorks.XWorks
 		[XmlIgnore]
 		internal static List<string> NoteInParaStyles = new List<string>() { "AnthroNote", "DiscourseNote", "PhonologyNote", "GrammarNote", "SemanticsNote", "SocioLinguisticsNote", "GeneralNote", "EncyclopedicInfo" };
 
-		[XmlElement("HomographNumbers")]
-		public DictionaryHomographConfiguration HomographNumbers { get; set; }
+		[XmlElement("HomographConfiguration")]
+		public DictionaryHomographConfiguration HomographConfiguration { get; set; }
 
 		/// <summary>
 		/// Checks which folder this will be saved in to determine if it is a reversal
@@ -159,9 +160,9 @@ namespace SIL.FieldWorks.XWorks
 			else
 				DictionaryConfigurationController.FilterInvalidPublicationsFromModel(this, cache);
 			// Update FDO's homograph configuration from the loaded dictionary configuration homograph settings
-			if (HomographNumbers != null)
+			if (HomographConfiguration != null)
 			{
-				HomographNumbers.ExportToHomographConfiguration(cache.ServiceLocator.GetInstance<HomographConfiguration>());
+				HomographConfiguration.ExportToHomographConfiguration(cache.ServiceLocator.GetInstance<HomographConfiguration>());
 			}
 			// Handle any changes to the custom field definitions.  (See https://jira.sil.org/browse/LT-16430.)
 			// The "Merge" method handles both additions and deletions.
@@ -278,6 +279,8 @@ namespace SIL.FieldWorks.XWorks
 			ShowHwNumber = config.ShowHomographNumber(HomographConfiguration.HeadwordVariant.Main);
 			ShowHwNumInCrossRef = config.ShowHomographNumber(HomographConfiguration.HeadwordVariant.DictionaryCrossRef);
 			ShowHwNumInReversalCrossRef = config.ShowHomographNumber(HomographConfiguration.HeadwordVariant.ReversalCrossRef);
+			HomographWritingSystem = config.WritingSystem;
+			CustomHomographNumberList = config.CustomHomographNumbers;
 		}
 
 		/// <summary>
@@ -291,7 +294,12 @@ namespace SIL.FieldWorks.XWorks
 			config.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.Main, ShowHwNumber);
 			config.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.DictionaryCrossRef, ShowHwNumInCrossRef);
 			config.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.ReversalCrossRef, ShowHwNumInReversalCrossRef);
+			config.WritingSystem = HomographWritingSystem;
+			config.CustomHomographNumbers = CustomHomographNumberList;
 		}
+
+		[XmlIgnore]
+		public List<string> CustomHomographNumberList { get; internal set; }
 
 		[XmlAttribute("showHwNumInReversalCrossRef")]
 		public bool ShowHwNumInReversalCrossRef { get; set; }
@@ -310,5 +318,21 @@ namespace SIL.FieldWorks.XWorks
 
 		[XmlAttribute("homographNumberBefore")]
 		public bool HomographNumberBefore { get; set; }
+
+		[XmlAttribute("customHomographNumbers")]
+		public string CustomHomographNumbers
+		{
+			get
+			{
+				return CustomHomographNumberList == null ? string.Empty : SecurityElement.Escape(string.Join(";", CustomHomographNumberList));
+			}
+			set
+			{
+				CustomHomographNumberList = new List<string>(value.Split(new []{';'}, StringSplitOptions.RemoveEmptyEntries));
+			}
+		}
+
+		[XmlAttribute("homographWritingSystem")]
+		public string HomographWritingSystem { get; set; }
 	}
 }

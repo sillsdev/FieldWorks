@@ -2,9 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Xml.Linq;
+using System.Collections.Generic;
 using NUnit.Framework;
-using Palaso.TestUtilities;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.Test.TestUtils;
 
@@ -35,6 +34,35 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.IsFalse(settings.ShowHomographNumber(HomographConfiguration.HeadwordVariant.ReversalCrossRef));
 			Assert.IsFalse(settings.ShowSenseNumberRef);
 			Assert.IsFalse(settings.ShowSenseNumberReversal);
+		}
+
+		/// <summary>
+		/// Test the persistance of writing system and custom homograph numbers
+		/// </summary>
+		[Test]
+		public void HomographConfiguration_Persist_Restores_WritingSystemAndCustomNumbers()
+		{
+			const string oldConfigString = "ws:en customHn:1;2;3;4;00";
+			var settings = new HomographConfiguration();
+			Assert.IsTrue(string.IsNullOrEmpty(settings.WritingSystem));
+			CollectionAssert.IsEmpty(settings.CustomHomographNumbers);
+			settings.PersistData = oldConfigString;
+			Assert.AreEqual("en", settings.WritingSystem);
+			CollectionAssert.AreEqual(new List<string> {"1", "2","3","4", "00"}, settings.CustomHomographNumbers);
+		}
+
+		/// <summary>
+		/// Test the persistance of writing system and custom homograph numbers
+		/// </summary>
+		[Test]
+		public void HomographConfiguration_Persist_Saves_WritingSystemAndCustomNumbers()
+		{
+			var settings = new HomographConfiguration();
+			settings.CustomHomographNumbers = new List<string> { "a", "b", "c"};
+			settings.WritingSystem = "fr";
+			var persistanceString = settings.PersistData;
+			Assert.That(persistanceString, Is.StringContaining("ws:fr"));
+			Assert.That(persistanceString, Is.StringContaining("customHn:a;b;c"));
 		}
 	}
 }

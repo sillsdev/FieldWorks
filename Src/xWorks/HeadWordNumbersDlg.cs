@@ -3,10 +3,15 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Forms;
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -19,32 +24,59 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public partial class HeadwordNumbersDlg : Form, IHeadwordNumbersView
 	{
+		private FwTextBox[] _digitBoxes;
+
 		public HeadwordNumbersDlg()
 		{
 			InitializeComponent();
 			// Initially we want the combo box to show the user what the style is but not let them change it.
 			// Allowing the user to pick the style will be added only at user request.
-			_stylesCombo.Items.Add(HomographConfiguration.ksHomographNumberStyle);
-			_stylesCombo.SelectedIndex = 0;
-			_stylesCombo.Enabled = false;
+			_homographStyleCombo.Items.Add(HomographConfiguration.ksHomographNumberStyle);
+			_homographStyleCombo.SelectedIndex = 0;
+			_homographStyleCombo.Enabled = false;
+			_senseStyleCombo.Items.Add(HomographConfiguration.ksSenseReferenceNumberStyle);
+			_senseStyleCombo.SelectedIndex = 0;
+			_senseStyleCombo.Enabled = false;
+			_digitBoxes = new[]
+			{
+				m_digitZero, m_digitOne, m_digitTwo, m_digitThree, m_digitFour, m_digitFive,
+				m_digitSix, m_digitSeven, m_digitEight, m_digitNine
+			};
+			Shown += (sender, args) => { UpdateWritingSystemCodeInDigits(); };
 		}
 
 		/// <summary>
 		/// convert the sender to the styles combo box for processing by the controller
 		/// </summary>
-		private EventHandler ButtonStylesOnClick(EventHandler handler) { return (sender, e) => handler(_stylesCombo, e); }
+		private EventHandler HomographStyleButtonOnClick(EventHandler value)
+		{
+			return (sender, e) => value(_homographStyleCombo, e);
+		}
+
+		/// <summary>
+		/// convert the sender to the styles combo box for processing by the controller
+		/// </summary>
+		private EventHandler SenseStyleButtonClick(EventHandler value)
+		{
+			return (sender, e) => value(_senseStyleCombo, e);
+		}
 
 		/// <summary>Fired when the Styles... button is clicked. Object sender is the Style ComboBox so it can be updated</summary>
 		public event EventHandler RunStylesDialog
 		{
-			add { _stylesButton.Click += ButtonStylesOnClick(value); }
-			remove { _stylesButton.Click -= ButtonStylesOnClick(value); }
+			add
+			{
+				_homographStyleButton.Click += HomographStyleButtonOnClick(value);
+				_senseNumberStyleBtn.Click += SenseStyleButtonClick(value);
+			}
+			remove
+			{
+				_homographStyleButton.Click -= HomographStyleButtonOnClick(value);
+				_senseNumberStyleBtn.Click -= SenseStyleButtonClick(value);
+			}
 		}
 
-		public DictionaryHomographConfiguration HomographConfig
-		{
-			get; private set;
-		}
+		public DictionaryHomographConfiguration HomographConfig { get; private set; }
 
 		public bool HomographBefore
 		{
@@ -105,8 +137,8 @@ namespace SIL.FieldWorks.XWorks
 
 		public string CurrentHomographStyle
 		{
-			get { return _stylesCombo.Items[0].ToString(); }
-			set { _stylesCombo.Items[0] = value; }
+			get { return _homographStyleCombo.Items[0].ToString(); }
+			set { _homographStyleCombo.Items[0] = value; }
 		}
 
 		public void SetupDialog(IHelpTopicProvider helpTopicProvider)
@@ -152,6 +184,103 @@ namespace SIL.FieldWorks.XWorks
 		private void m_chkShowHomographNumInDict_CheckedChanged(object sender, EventArgs e)
 		{
 			ShowHomographOnCrossRef = m_chkShowHomographNumInDict.Checked;
+		}
+
+		public string HomographWritingSystem
+		{
+			get { return m_writingSystemCombo.Text; }
+			set
+			{
+				m_writingSystemCombo.SelectedIndex = m_writingSystemCombo.FindString(value);
+				if (m_writingSystemCombo.SelectedIndex < 0)
+					m_writingSystemCombo.SelectedIndex = 0;
+			}
+		}
+
+		/// <summary>
+		/// Set the writing system code in each digit textbox
+		/// </summary>
+		private void UpdateWritingSystemCodeInDigits()
+		{
+			var wsHandle = ((IWritingSystem)m_writingSystemCombo.SelectedItem).Handle;
+			foreach (var digit in _digitBoxes)
+			{
+				digit.WritingSystemCode = wsHandle;
+				digit.SelectAll();
+				digit.ApplyWS(wsHandle);
+				digit.RemoveSelection();
+			}
+		}
+
+		public IEnumerable<IWritingSystem> AvailableWritingSystems
+		{
+			set
+			{
+				m_writingSystemCombo.Items.Clear();
+				m_writingSystemCombo.Items.AddRange((from item in value select item as object).ToArray());
+			}
+		}
+
+		public IEnumerable<string> CustomDigits
+		{
+			set
+			{
+				var digitsArray = value.ToArray();
+				if (digitsArray.Length == 0)
+					return;
+				if (digitsArray.Length != 10)
+					throw new ArgumentException();
+				for (var i = 0; i < 10; ++i)
+				{
+					_digitBoxes[i].Text = digitsArray[i];
+				}
+			}
+
+			get { return _digitBoxes.Select(db => db.Text).Where(text => !string.IsNullOrEmpty(text)); }
+		}
+
+		public event EventHandler CustomDigitsChanged
+		{
+			add
+			{
+				foreach (var textBox in _digitBoxes)
+				{
+					textBox.TextChanged += value;
+				}
+			}
+			remove
+			{
+				foreach (var textBox in _digitBoxes)
+				{
+					textBox.TextChanged -= value;
+				}
+			}
+		}
+
+		public bool OkButtonEnabled { get { return m_btnOk.Enabled; } set { m_btnOk.Enabled = value; } }
+
+		public FwStyleSheet SetStyleSheet
+		{
+			set
+			{
+				for (var i = 0; i < 10; ++i)
+				{
+					_digitBoxes[i].StyleSheet = value;
+				}
+			}
+		}
+
+		public void SetWsFactoryForCustomDigits(ILgWritingSystemFactory factory)
+		{
+			for (var i = 0; i < 10; ++i)
+			{
+				_digitBoxes[i].WritingSystemFactory = factory;
+			}
+		}
+
+		private void m_writingSystemCombo_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			UpdateWritingSystemCodeInDigits();
 		}
 	}
 }

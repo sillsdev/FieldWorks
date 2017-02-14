@@ -3,7 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.FDOTests;
 
@@ -53,7 +57,7 @@ namespace SIL.FieldWorks.XWorks
 				HomographNumberBefore = true, ShowHwNumInCrossRef = false, ShowSenseNumber = false
 			};
 			var view = new TestHeadwordNumbersView { HomographBefore = false, ShowHomograph = true, ShowSenseNumber = true};
-			var model = new DictionaryConfigurationModel {  HomographNumbers = testConfig };
+			var model = new DictionaryConfigurationModel {  HomographConfiguration = testConfig };
 			// ReSharper disable once UnusedVariable
 			var testController = new HeadwordNumbersController(view, model, Cache);
 			view.Show();
@@ -72,7 +76,7 @@ namespace SIL.FieldWorks.XWorks
 				ShowSenseNumberReversal = false
 			};
 			var view = new TestHeadwordNumbersView();
-			var model = new DictionaryConfigurationModel { WritingSystem = "en", HomographNumbers = testConfig };
+			var model = new DictionaryConfigurationModel { WritingSystem = "en", HomographConfiguration = testConfig };
 			// ReSharper disable once UnusedVariable
 			var testController = new HeadwordNumbersController(view, model, Cache);
 			view.Show();
@@ -88,10 +92,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				HomographNumberBefore = true,
 				ShowHwNumInCrossRef = false,
-				ShowSenseNumber = false
+				ShowSenseNumber = false,
 			};
 			var view = new TestHeadwordNumbersView { HomographBefore = false, ShowHomograph = true, ShowSenseNumber = true };
-			var model = new DictionaryConfigurationModel { HomographNumbers = testConfig };
+			var model = new DictionaryConfigurationModel { HomographConfiguration = testConfig };
 			// ReSharper disable once UnusedVariable
 			var testController = new HeadwordNumbersController(view, model, Cache);
 			view.Show();
@@ -101,9 +105,9 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			testController.Save();
 			// Verify save in Dictionary Config
-			Assert.IsFalse(model.HomographNumbers.HomographNumberBefore);
-			Assert.IsTrue(model.HomographNumbers.ShowHwNumInCrossRef);
-			Assert.IsTrue(model.HomographNumbers.ShowSenseNumber);
+			Assert.IsFalse(model.HomographConfiguration.HomographNumberBefore);
+			Assert.IsTrue(model.HomographConfiguration.ShowHwNumInCrossRef);
+			Assert.IsTrue(model.HomographConfiguration.ShowSenseNumber);
 		}
 
 		[Test]
@@ -116,7 +120,7 @@ namespace SIL.FieldWorks.XWorks
 				ShowSenseNumberReversal = false
 			};
 			var view = new TestHeadwordNumbersView { HomographBefore = false, ShowHomograph = true, ShowSenseNumber = true };
-			var model = new DictionaryConfigurationModel { WritingSystem = "en", HomographNumbers = testConfig };
+			var model = new DictionaryConfigurationModel { WritingSystem = "en", HomographConfiguration = testConfig };
 			// ReSharper disable once UnusedVariable
 			var testController = new HeadwordNumbersController(view, model, Cache);
 			view.Show();
@@ -126,9 +130,58 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			testController.Save();
 			// Verify save in Dictionary Config
-			Assert.IsFalse(model.HomographNumbers.HomographNumberBefore);
-			Assert.IsTrue(model.HomographNumbers.ShowHwNumInReversalCrossRef);
-			Assert.IsTrue(model.HomographNumbers.ShowSenseNumberReversal);
+			Assert.IsFalse(model.HomographConfiguration.HomographNumberBefore);
+			Assert.IsTrue(model.HomographConfiguration.ShowHwNumInReversalCrossRef);
+			Assert.IsTrue(model.HomographConfiguration.ShowSenseNumberReversal);
+		}
+
+		[Test]
+		public void Ok_Enabled_WithNoCustomNumbers()
+		{
+			// Test enabled on initial setup
+			var view = new TestHeadwordNumbersView {OkButtonEnabled = false};
+			var model = new DictionaryConfigurationModel();
+			var controller = new HeadwordNumbersController(view, model, Cache);
+			// verify ok button enabled on setup with no numbers
+			Assert.IsTrue(view.OkButtonEnabled, "Ok not enabled by controller constructor");
+			view.OkButtonEnabled = false;
+			// verify ok button enabled when event is triggered and there are no custom numbers
+			view.TriggerCustomDigitsChanged();
+			Assert.IsTrue(view.OkButtonEnabled, "Ok button not enabled when event is fired");
+		}
+
+		[Test]
+		public void Ok_Enabled_WithAllTenNumbers()
+		{
+			// Test enabled on initial setup
+			var view = new TestHeadwordNumbersView { OkButtonEnabled = false };
+			var model = new DictionaryConfigurationModel
+			{
+				HomographConfiguration = new DictionaryHomographConfiguration
+				{
+					CustomHomographNumbers = "a;b;c;d;e;f;g;h;i;j"
+				}
+			};
+			var controller = new HeadwordNumbersController(view, model, Cache);
+			// verify ok button enabled on setup with 10 numbers
+			Assert.IsTrue(view.OkButtonEnabled, "Ok not enabled by controller constructor");
+			view.OkButtonEnabled = false;
+			// verify ok button enabled when event is triggered and there are 10 custom numbers
+			view.TriggerCustomDigitsChanged();
+			Assert.IsTrue(view.OkButtonEnabled, "Ok button not enabled when event is fired");
+		}
+
+		[Test]
+		public void Ok_Disabled_WhenNotAllTenNumbersSet()
+		{
+			// Test enabled on initial setup
+			var view = new TestHeadwordNumbersView();
+			var model = new DictionaryConfigurationModel();
+			var controller = new HeadwordNumbersController(view, model, Cache);
+			view.OkButtonEnabled = true;
+			view.CustomDigits = new List<string> { "1" };
+			view.TriggerCustomDigitsChanged();
+			Assert.IsFalse(view.OkButtonEnabled, "Ok button still enabled after event is fired");
 		}
 
 		[Test]
@@ -157,6 +210,36 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(view.Description, Is.StringContaining("PrincePauper"), "Description should include the current configuration label");
 		}
 
+		[Test]
+		public void ConstructorSetsWritingSystemInView()
+		{
+			var view = new TestHeadwordNumbersView();
+			var model = new DictionaryConfigurationModel { HomographConfiguration = new DictionaryHomographConfiguration { HomographWritingSystem = "fr"} };
+			// ReSharper disable once UnusedVariable
+			// SUT
+			var testController = new HeadwordNumbersController(view, model, Cache);
+
+			Assert.That(view.HomographWritingSystem, Is.StringContaining("French"),
+				"The writing system in the view should match the model (but show the pretty name).");
+		}
+
+		[Test]
+		public void ConstructorSetsCustomHeadwordNumbersInView()
+		{
+			var view = new TestHeadwordNumbersView();
+			var model = new DictionaryConfigurationModel
+			{
+				HomographConfiguration = new DictionaryHomographConfiguration
+				{
+					CustomHomographNumbers = "a;b;c;d;e;f;g;h;i;j;k"
+				}
+			};
+			// ReSharper disable once UnusedVariable
+			// SUT
+			var testController = new HeadwordNumbersController(view, model, Cache);
+			CollectionAssert.AreEqual(model.HomographConfiguration.CustomHomographNumberList, view.CustomDigits);
+		}
+
 		public class TestHeadwordNumbersView : IHeadwordNumbersView
 		{
 			public event EventHandler Shown = delegate(object sender, EventArgs args) {  };
@@ -166,7 +249,19 @@ namespace SIL.FieldWorks.XWorks
 			public bool ShowSenseNumber { get; set; }
 			public void Show() { Shown.Invoke(this, new EventArgs());}
 			public string Description { get; set; }
+			public string HomographWritingSystem { get; set; }
+
 			public event EventHandler RunStylesDialog = delegate(object sender, EventArgs args) {  };
+			public IEnumerable<IWritingSystem> AvailableWritingSystems { private get; set; }
+			public IEnumerable<string> CustomDigits { get; set; }
+			public event EventHandler CustomDigitsChanged;
+			public bool OkButtonEnabled { get; set; }
+
+			internal void TriggerCustomDigitsChanged()
+			{
+				CustomDigitsChanged(this, null);
+			}
+			public void SetWsFactoryForCustomDigits(ILgWritingSystemFactory factory) { }
 		}
 	}
 }
