@@ -1,12 +1,16 @@
-﻿using System;
+﻿// Copyright (c) 2017 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Ionic.Zip;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 
@@ -39,6 +43,10 @@ namespace SIL.FieldWorks.XWorks
 		internal string _temporaryImportConfigLocation = null;
 
 		/// <summary>
+		/// New publications that will be added by the import.
+		/// </summary>
+		internal IEnumerable<string> _newPublications = null;
+
 		/// Did the configuration get imported.
 		/// </summary>
 		public bool ImportHappened;
@@ -89,8 +97,39 @@ namespace SIL.FieldWorks.XWorks
 
 			_configurations.Add(NewConfigToImport);
 
+			NewConfigToImport.Publications.ForEach(
+				publication =>
+				{
+					AddPublicationTypeIfNotPresent(publication, _cache);
+				});
+
 			ImportHappened = true;
 		}
+
+		/// <summary>
+		/// Add publication type if it's not in the project's list of publications.
+		/// </summary>
+		private static void AddPublicationTypeIfNotPresent(string name, FdoCache cache)
+		{
+			if (cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS
+				.Select(pub => pub.Name.get_String(cache.DefaultAnalWs).Text).Contains(name))
+				return;
+			AddPublicationType(name, cache);
+		}
+
+		public static ICmPossibility AddPublicationType(string name, FdoCache cache)
+		{
+			Debug.Assert(cache.LangProject.LexDbOA.PublicationTypesOA != null);
+
+			var item = cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+			NonUndoableUnitOfWorkHelper.DoSomehow(cache.ActionHandlerAccessor, () =>
+			{
+				cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(item);
+				item.Name.set_String(cache.DefaultAnalWs, name);
+			});
+			return item;
+		}
+
 
 		/// <summary>
 		/// Prepare this controller to import from a dictionary configuration zip file.
@@ -114,12 +153,13 @@ namespace SIL.FieldWorks.XWorks
 					_temporaryImportConfigLocation = tmpPath + configInZip.FileName;
 				}
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				ImportHappened = false;
 				NewConfigToImport = null;
 				_originalConfigLabel = null;
 				_temporaryImportConfigLocation = null;
+				_newPublications = null;
 				return;
 			}
 
@@ -127,6 +167,12 @@ namespace SIL.FieldWorks.XWorks
 
 			// Reset flag
 			ImportHappened = false;
+
+			_newPublications =
+				DictionaryConfigurationModel.PublicationsInXml(_temporaryImportConfigLocation).Except(NewConfigToImport.Publications);
+
+			// Use the full list of publications in the XML file, even ones that don't exist in the project.
+			NewConfigToImport.Publications = DictionaryConfigurationModel.PublicationsInXml(_temporaryImportConfigLocation).ToList();
 
 			// Make a new, unique label for the imported configuration, if needed.
 			var newConfigLabel = NewConfigToImport.Label;
@@ -187,7 +233,10 @@ namespace SIL.FieldWorks.XWorks
 
 		public void RefreshStatusDisplay()
 		{
+			string mainStatus;
+			var publicationStatus = string.Empty;
 			_view.explanationLabel.Text = "";
+
 			if (NewConfigToImport == null)
 			{
 				_view.explanationLabel.Text = xWorksStrings.kstidCannotImport;
@@ -195,21 +244,22 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (_originalConfigLabel == _proposedNewConfigLabel)
 			{
-				_view.explanationLabel.Text = string.Format(xWorksStrings.kstidImportingConfig,
-					NewConfigToImport.Label);
+				mainStatus = string.Format(xWorksStrings.kstidImportingConfig, NewConfigToImport.Label);
 			}
 			else
 			{
-				if (NewConfigToImport.Label == _proposedNewConfigLabel)
-				{
-					_view.explanationLabel.Text = string.Format(xWorksStrings.kstidImportingConfigNewName, NewConfigToImport.Label);
-				}
-				else
-				{
-					_view.explanationLabel.Text = string.Format(xWorksStrings.kstidImportingAndOverwritingConfiguration,
-						NewConfigToImport.Label);
-				}
+				mainStatus = string.Format(NewConfigToImport.Label == _proposedNewConfigLabel
+						? xWorksStrings.kstidImportingConfigNewName
+						: xWorksStrings.kstidImportingAndOverwritingConfiguration,
+					NewConfigToImport.Label);
 			}
+
+			if (_newPublications != null && _newPublications.Any())
+			{
+				publicationStatus = "The following publications will be added to the project: " + string.Join(", ", _newPublications);
+			}
+
+			_view.explanationLabel.Text = string.Format("{0}{1}{2}", mainStatus, Environment.NewLine, publicationStatus);
 		}
 
 		/// <summary>
@@ -235,15 +285,9 @@ namespace SIL.FieldWorks.XWorks
 			_view.doOverwriteRadioOption.Text = string.Format(xWorksStrings.kstidOverwriteConfiguration, _originalConfigLabel);
 			_view.notOverwriteRadioOption.Text = string.Format(xWorksStrings.kstidUseNewConfigName, NewConfigToImport.Label);
 
-			if (_originalConfigLabel == _proposedNewConfigLabel)
-			{
-				// Don't give the option to overwrite if there is nothing to overwrite.
-				_view.overwriteGroupBox.Visible = false;
-			}
-			else
-			{
-				_view.overwriteGroupBox.Visible = true;
-			}
+			// Give the option to overwrite only if there is something to overwrite.
+			_view.overwriteGroupBox.Visible = _originalConfigLabel != _proposedNewConfigLabel;
+
 			RefreshStatusDisplay();
 			_view.importButton.Enabled = true;
 		}

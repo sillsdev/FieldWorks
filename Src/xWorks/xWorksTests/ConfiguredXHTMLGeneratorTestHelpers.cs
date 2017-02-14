@@ -291,13 +291,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private ICmPossibility CreatePublicationType(string name)
 		{
-			if (Cache.LangProject.LexDbOA.PublicationTypesOA == null)
-				Cache.LangProject.LexDbOA.PublicationTypesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
-			var item = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-			Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(item);
-			item.Name.set_String(m_wsEn, name);
-			Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(item);
-			return item;
+			return DictionaryConfigurationImportController.AddPublicationType(name, Cache);
 		}
 
 		private static void AddHeadwordToEntry(ILexEntry entry, string headword, int wsId, FdoCache cache)

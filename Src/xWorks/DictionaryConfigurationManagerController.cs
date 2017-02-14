@@ -1,11 +1,10 @@
-﻿// Copyright (c) 2014-2016 SIL International
+﻿// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -43,7 +42,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Set of the names of available dictionary publications in project.
 		/// </summary>
-		private readonly List<string> _publications;
+		private List<string> _publications;
 
 		private readonly ListViewItem _allPublicationsItem;
 		private readonly DictionaryConfigurationModel _initialConfig;
@@ -134,11 +133,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// Populate lists of configurations and publications
 			ReLoadConfigurations();
-			foreach (var publication in _publications)
-			{
-				var item = new ListViewItem { Text = publication };
-				_view.publicationsListView.Items.Add(item);
-			}
+			ReLoadPublications();
 
 			_view.Shown += OnShowDialog;
 		}
@@ -149,6 +144,20 @@ namespace SIL.FieldWorks.XWorks
 			_view.configurationsListView.Items.Clear();
 			_view.configurationsListView.Items.AddRange(
 				_configurations.Select(configuration => new ListViewItem { Tag = configuration, Text = configuration.Label }).ToArray());
+		}
+
+		/// <summary>
+		/// Fetch up-to-date list of publications from project and populate the list of publications.
+		/// </summary>
+		private void ReLoadPublications()
+		{
+			_publications = DictionaryConfigurationController.GetAllPublications(_cache);
+			_view.publicationsListView.Items.Clear();
+			foreach (var publication in _publications)
+			{
+				var item = new ListViewItem { Text = publication };
+				_view.publicationsListView.Items.Add(item);
+			}
 		}
 
 		/// <summary>
@@ -604,9 +613,12 @@ namespace SIL.FieldWorks.XWorks
 			if (!importController.ImportHappened)
 				return;
 
+			ReLoadPublications();
+
 			// Update list of configurations in UI and select the just-imported configuration.
 			ReLoadConfigurations();
 			_view.configurationsListView.Items.Cast<ListViewItem>().First(item => item.Text == importController.NewConfigToImport.Label).Selected = true;
+
 		}
 
 		public bool IsConfigurationACustomizedOriginal(DictionaryConfigurationModel configurationToDelete)

@@ -144,9 +144,9 @@ namespace SIL.FieldWorks.XWorks
 		public void Load(FdoCache cache)
 		{
 			var serializer = new XmlSerializer(typeof(DictionaryConfigurationModel));
-			using(var reader = XmlReader.Create(FilePath))
+			using (var reader = XmlReader.Create(FilePath))
 			{
-				var model = (DictionaryConfigurationModel)serializer.Deserialize(reader);
+				var model = (DictionaryConfigurationModel) serializer.Deserialize(reader);
 				model.FilePath = FilePath; // this doesn't get [de]serialized
 				foreach (var property in typeof(DictionaryConfigurationModel).GetProperties().Where(prop => prop.CanWrite))
 					property.SetValue(this, property.GetValue(model, null), null);
@@ -173,6 +173,19 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryConfigurationController.EnsureValidStylesInModel(this, cache);
 			//Update Writing System for an entire configuration.
 			DictionaryConfigurationController.UpdateWritingSystemInModel(this, cache);
+		}
+
+		/// <summary>
+		/// Get the set of publications specified in the configuration XML file at path.
+		/// </summary>
+		internal static IEnumerable<string> PublicationsInXml(string path)
+		{
+			var serializer = new XmlSerializer(typeof(DictionaryConfigurationModel));
+			using (var reader = XmlReader.Create(path))
+			{
+				var model = (DictionaryConfigurationModel) serializer.Deserialize(reader);
+				return model.Publications;
+			}
 		}
 
 		/// <summary>

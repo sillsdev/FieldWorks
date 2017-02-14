@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2016 SIL International
+﻿// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -408,6 +408,30 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			Assert.IsEmpty(model.Publications);
+		}
+
+		/// <summary>
+		/// To help with LT-17397, which allows adding unknown/new publications into the project when importing a configuration.
+		/// </summary>
+		[Test]
+		public void PublicationsInXml_ReportsAll()
+		{
+			// "Main Dictionary" was added by base class
+
+			DictionaryConfigurationModel model;
+			using (var modelFile = new TempFile(
+				new[] {
+					XmlOpenTagsThruRoot,
+					@"<Publications><Publication>Main Dictionary</Publication><Publication>New and unknown publication 1</Publication><Publication>New and unknown publication 2</Publication></Publications>",
+					XmlCloseTagsFromRoot }))
+			{
+				// SUT
+				var result = DictionaryConfigurationModel.PublicationsInXml(modelFile.Path).ToList();
+				Assert.That(result.Count, Is.EqualTo(3), "Did not provide all publications in XML file");
+				Assert.That(result[0], Is.EqualTo("Main Dictionary"), "Did not process and report publications as expected");
+				Assert.That(result[1], Is.EqualTo("New and unknown publication 1"), "Did not process and report publications as expected");
+				Assert.That(result[2], Is.EqualTo("New and unknown publication 2"), "Did not process and report publications as expected");
+			}
 		}
 
 		[Test]
