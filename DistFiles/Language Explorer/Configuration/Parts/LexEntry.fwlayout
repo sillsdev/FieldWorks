@@ -7,7 +7,7 @@
 		<part label="Lexeme Form" ref="LexemeForm"/>
 		<part label="Citation Form" ref="CitationFormAllV"/>
 		<part ref="DialectLabelsEntry" visibility="ifdata"/>
-		<part ref="ComplexFormEntries" visibility="ifdata"/>
+		<part ref="ComplexFormEntries" visibility="always"/>
 		<part ref="EntryRefs" param="Normal" visibility="ifdata"/>
 		<part ref="EntryRefsGhostComponents" visibility="always"/>
 		<part ref="EntryRefsGhostVariantOf" visibility="never"/>
