@@ -28,12 +28,12 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Verify that data from the singleton HomographConfiguration is used when there is no data in the dictionary model
+		/// Verify that data from the default HomographConfiguration is used when there is no data in the dictionary model
 		/// </summary>
 		[Test]
-		public void SetsViewDataFromSingletonIfNoHomographConfigurationInConfigurationModel()
+		public void SetsViewDataFromDefaultsIfNoHomographConfigurationInConfigurationModel()
 		{
-			var hc = Cache.ServiceLocator.GetInstance<HomographConfiguration>();
+			var hc = new HomographConfiguration();
 			var view = new TestHeadwordNumbersView
 			{
 				HomographBefore = !hc.HomographNumberBefore,
@@ -159,7 +159,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				HomographConfiguration = new DictionaryHomographConfiguration
 				{
-					CustomHomographNumbers = "a;b;c;d;e;f;g;h;i;j"
+					CustomHomographNumbers = "a,b,c,d,e,f,g,h,i,j"
 				}
 			};
 			var controller = new HeadwordNumbersController(view, model, Cache);

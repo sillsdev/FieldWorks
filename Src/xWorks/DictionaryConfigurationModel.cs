@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security;
 using System.Xml;
 using System.Xml.Serialization;
@@ -337,11 +338,11 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				return CustomHomographNumberList == null ? string.Empty : SecurityElement.Escape(string.Join(";", CustomHomographNumberList));
+				return CustomHomographNumberList == null ? string.Empty : WebUtility.HtmlEncode(string.Join(",", CustomHomographNumberList));
 			}
 			set
 			{
-				CustomHomographNumberList = new List<string>(value.Split(new []{';'}, StringSplitOptions.RemoveEmptyEntries));
+				CustomHomographNumberList = new List<string>(WebUtility.HtmlDecode(value).Split(new []{','}, StringSplitOptions.RemoveEmptyEntries));
 			}
 		}
 

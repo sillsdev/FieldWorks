@@ -485,15 +485,11 @@ namespace SIL.FieldWorks.XWorks
 		public static void SetConfigureHomographParameters(DictionaryConfigurationModel model, FdoCache cache)
 		{
 			var cacheHc = cache.ServiceLocator.GetInstance<HomographConfiguration>();
-			var modelHc = model.HomographConfiguration;
-			if (modelHc != null)
+			if (model.HomographConfiguration == null)
 			{
-				modelHc.ExportToHomographConfiguration(cacheHc);
+				model.HomographConfiguration = new DictionaryHomographConfiguration(new HomographConfiguration());
 			}
-			else
-			{
-				model.HomographConfiguration = new DictionaryHomographConfiguration(cacheHc);
-			}
+			model.HomographConfiguration.ExportToHomographConfiguration(cacheHc);
 			if (model.Parts.Count == 0) return;
 			var mainEntryNode = model.Parts[0];
 			//Sense Node
@@ -683,8 +679,12 @@ namespace SIL.FieldWorks.XWorks
 		private void SelectCurrentConfigurationAndRefresh()
 		{
 			View.SelectConfiguration(_model);
-			if(_model.HomographConfiguration != null)
-				_model.HomographConfiguration.ExportToHomographConfiguration(Cache.ServiceLocator.GetInstance<HomographConfiguration>());
+			// if the model has no homograph configurations saved then fill it with a default version
+			if (_model.HomographConfiguration == null)
+			{
+				_model.HomographConfiguration = new DictionaryHomographConfiguration(new HomographConfiguration());
+			}
+			_model.HomographConfiguration.ExportToHomographConfiguration(Cache.ServiceLocator.GetInstance<HomographConfiguration>());
 			RefreshView(); // REVIEW pH 2016.02: this is called only in ctor and after ManageViews. do we even want to refresh and set isDirty?
 		}
 

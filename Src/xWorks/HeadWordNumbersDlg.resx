@@ -336,6 +336,23 @@
   <data name="descriptionPanel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
+  <data name="dialogDescription.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="dialogDescription.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 3</value>
+  </data>
+  <data name="dialogDescription.Size" type="System.Drawing.Size, System.Drawing">
+    <value>338, 46</value>
+  </data>
+  <data name="dialogDescription.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="dialogDescription.Text" xml:space="preserve">
+    <value>Configure the homograph and sense numbers that appear on:
+• entry headwords
+• references to entries and senses</value>
+  </data>
   <data name="&gt;&gt;dialogDescription.Name" xml:space="preserve">
     <value>dialogDescription</value>
   </data>
@@ -347,6 +364,22 @@
   </data>
   <data name="&gt;&gt;dialogDescription.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="m_configurationDescription.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 55</value>
+  </data>
+  <data name="m_configurationDescription.Multiline" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_configurationDescription.Size" type="System.Drawing.Size, System.Drawing">
+    <value>338, 31</value>
+  </data>
+  <data name="m_configurationDescription.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="m_configurationDescription.Text" xml:space="preserve">
+    <value>These settings affect the current TYPESTRING configuration:
+Example-string to give a feel for the length</value>
   </data>
   <data name="&gt;&gt;m_configurationDescription.Name" xml:space="preserve">
     <value>m_configurationDescription</value>
@@ -367,7 +400,7 @@
     <value>6, 3</value>
   </data>
   <data name="descriptionPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>360, 112</value>
+    <value>360, 97</value>
   </data>
   <data name="descriptionPanel.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -385,7 +418,7 @@
     <value>0</value>
   </data>
   <data name="referenceNumberGroup.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 294</value>
+    <value>6, 279</value>
   </data>
   <data name="referenceNumberGroup.Size" type="System.Drawing.Size, System.Drawing">
     <value>270, 61</value>
@@ -408,6 +441,24 @@
   <data name="&gt;&gt;referenceNumberGroup.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="m_radioNone.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_radioNone.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="m_radioNone.Location" type="System.Drawing.Point, System.Drawing">
+    <value>153, 20</value>
+  </data>
+  <data name="m_radioNone.Size" type="System.Drawing.Size, System.Drawing">
+    <value>51, 17</value>
+  </data>
+  <data name="m_radioNone.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="m_radioNone.Text" xml:space="preserve">
+    <value>None</value>
+  </data>
   <data name="&gt;&gt;m_radioNone.Name" xml:space="preserve">
     <value>m_radioNone</value>
   </data>
@@ -421,7 +472,7 @@
     <value>0</value>
   </data>
   <data name="groupBox1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 121</value>
+    <value>6, 106</value>
   </data>
   <data name="groupBox1.Size" type="System.Drawing.Size, System.Drawing">
     <value>270, 44</value>
@@ -493,7 +544,7 @@
     <value>m_digitNine</value>
   </data>
   <data name="&gt;&gt;m_digitNine.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.22579, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.25382, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_digitNine.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -520,7 +571,7 @@
     <value>m_digitEight</value>
   </data>
   <data name="&gt;&gt;m_digitEight.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.22579, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.25382, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_digitEight.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -547,7 +598,7 @@
     <value>m_digitSeven</value>
   </data>
   <data name="&gt;&gt;m_digitSeven.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.22579, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.25382, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_digitSeven.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -574,7 +625,7 @@
     <value>m_digitSix</value>
   </data>
   <data name="&gt;&gt;m_digitSix.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.22579, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.25382, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_digitSix.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -601,7 +652,7 @@
     <value>m_digitFive</value>
   </data>
   <data name="&gt;&gt;m_digitFive.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.22579, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.25382, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_digitFive.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -628,7 +679,7 @@
     <value>m_digitFour</value>
   </data>
   <data name="&gt;&gt;m_digitFour.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.22579, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.25382, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_digitFour.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -655,7 +706,7 @@
     <value>m_digitThree</value>
   </data>
   <data name="&gt;&gt;m_digitThree.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.22579, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.25382, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_digitThree.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -682,7 +733,7 @@
     <value>m_digitTwo</value>
   </data>
   <data name="&gt;&gt;m_digitTwo.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.22579, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.25382, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_digitTwo.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -709,7 +760,7 @@
     <value>m_digitOne</value>
   </data>
   <data name="&gt;&gt;m_digitOne.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.22579, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.25382, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_digitOne.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -736,7 +787,7 @@
     <value>m_digitZero</value>
   </data>
   <data name="&gt;&gt;m_digitZero.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.22579, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.25382, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_digitZero.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -1204,7 +1255,7 @@
     <value>3</value>
   </data>
   <data name="customNumbersPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 361</value>
+    <value>6, 346</value>
   </data>
   <data name="customNumbersPanel.Size" type="System.Drawing.Size, System.Drawing">
     <value>341, 138</value>
@@ -1223,243 +1274,6 @@
   </data>
   <data name="&gt;&gt;customNumbersPanel.ZOrder" xml:space="preserve">
     <value>4</value>
-  </data>
-  <data name="&gt;&gt;_homographStyleButton.Name" xml:space="preserve">
-    <value>_homographStyleButton</value>
-  </data>
-  <data name="&gt;&gt;_homographStyleButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_homographStyleButton.Parent" xml:space="preserve">
-    <value>homographStylePanel</value>
-  </data>
-  <data name="&gt;&gt;_homographStyleButton.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;styleLabel.Name" xml:space="preserve">
-    <value>styleLabel</value>
-  </data>
-  <data name="&gt;&gt;styleLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;styleLabel.Parent" xml:space="preserve">
-    <value>homographStylePanel</value>
-  </data>
-  <data name="&gt;&gt;styleLabel.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;_homographStyleCombo.Name" xml:space="preserve">
-    <value>_homographStyleCombo</value>
-  </data>
-  <data name="&gt;&gt;_homographStyleCombo.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_homographStyleCombo.Parent" xml:space="preserve">
-    <value>homographStylePanel</value>
-  </data>
-  <data name="&gt;&gt;_homographStyleCombo.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="homographStylePanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 171</value>
-  </data>
-  <data name="homographStylePanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>341, 57</value>
-  </data>
-  <data name="homographStylePanel.TabIndex" type="System.Int32, mscorlib">
-    <value>21</value>
-  </data>
-  <data name="&gt;&gt;homographStylePanel.Name" xml:space="preserve">
-    <value>homographStylePanel</value>
-  </data>
-  <data name="&gt;&gt;homographStylePanel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;homographStylePanel.Parent" xml:space="preserve">
-    <value>mainLayoutTable</value>
-  </data>
-  <data name="&gt;&gt;homographStylePanel.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="&gt;&gt;_senseNumberStyleBtn.Name" xml:space="preserve">
-    <value>_senseNumberStyleBtn</value>
-  </data>
-  <data name="&gt;&gt;_senseNumberStyleBtn.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_senseNumberStyleBtn.Parent" xml:space="preserve">
-    <value>senseNumberStylePanel</value>
-  </data>
-  <data name="&gt;&gt;_senseNumberStyleBtn.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;_senseStyleLabel.Name" xml:space="preserve">
-    <value>_senseStyleLabel</value>
-  </data>
-  <data name="&gt;&gt;_senseStyleLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_senseStyleLabel.Parent" xml:space="preserve">
-    <value>senseNumberStylePanel</value>
-  </data>
-  <data name="&gt;&gt;_senseStyleLabel.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;_senseStyleCombo.Name" xml:space="preserve">
-    <value>_senseStyleCombo</value>
-  </data>
-  <data name="&gt;&gt;_senseStyleCombo.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_senseStyleCombo.Parent" xml:space="preserve">
-    <value>senseNumberStylePanel</value>
-  </data>
-  <data name="&gt;&gt;_senseStyleCombo.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="senseNumberStylePanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 234</value>
-  </data>
-  <data name="senseNumberStylePanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>341, 54</value>
-  </data>
-  <data name="senseNumberStylePanel.TabIndex" type="System.Int32, mscorlib">
-    <value>23</value>
-  </data>
-  <data name="&gt;&gt;senseNumberStylePanel.Name" xml:space="preserve">
-    <value>senseNumberStylePanel</value>
-  </data>
-  <data name="&gt;&gt;senseNumberStylePanel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;senseNumberStylePanel.Parent" xml:space="preserve">
-    <value>mainLayoutTable</value>
-  </data>
-  <data name="&gt;&gt;senseNumberStylePanel.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="mainLayoutTable.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="mainLayoutTable.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="mainLayoutTable.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>5, 5, 5, 5</value>
-  </data>
-  <data name="mainLayoutTable.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 0, 0, 0</value>
-  </data>
-  <data name="mainLayoutTable.RowCount" type="System.Int32, mscorlib">
-    <value>7</value>
-  </data>
-  <data name="mainLayoutTable.Size" type="System.Drawing.Size, System.Drawing">
-    <value>369, 541</value>
-  </data>
-  <data name="mainLayoutTable.TabIndex" type="System.Int32, mscorlib">
-    <value>16</value>
-  </data>
-  <data name="&gt;&gt;mainLayoutTable.Name" xml:space="preserve">
-    <value>mainLayoutTable</value>
-  </data>
-  <data name="&gt;&gt;mainLayoutTable.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mainLayoutTable.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;mainLayoutTable.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="mainLayoutTable.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="descriptionPanel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="referenceNumberGroup" Row="4" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="groupBox1" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="buttonLayoutPanel" Row="6" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="customNumbersPanel" Row="5" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="homographStylePanel" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="senseNumberStylePanel" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
-  </data>
-  <data name="dialogDescription.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Left, Right</value>
-  </data>
-  <data name="dialogDescription.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 3</value>
-  </data>
-  <data name="dialogDescription.Size" type="System.Drawing.Size, System.Drawing">
-    <value>338, 54</value>
-  </data>
-  <data name="dialogDescription.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="dialogDescription.Text" xml:space="preserve">
-    <value>Configure the homograph and sense numbers that appear on:
-• entry headwords
-• references to entries and senses</value>
-  </data>
-  <data name="&gt;&gt;dialogDescription.Name" xml:space="preserve">
-    <value>dialogDescription</value>
-  </data>
-  <data name="&gt;&gt;dialogDescription.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RichTextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;dialogDescription.Parent" xml:space="preserve">
-    <value>descriptionPanel</value>
-  </data>
-  <data name="&gt;&gt;dialogDescription.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="m_configurationDescription.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 63</value>
-  </data>
-  <data name="m_configurationDescription.Multiline" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="m_configurationDescription.Size" type="System.Drawing.Size, System.Drawing">
-    <value>338, 45</value>
-  </data>
-  <data name="m_configurationDescription.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="m_configurationDescription.Text" xml:space="preserve">
-    <value>These settings affect the current TYPESTRING configuration:
-Example-string to give a feel for the length</value>
-  </data>
-  <data name="&gt;&gt;m_configurationDescription.Name" xml:space="preserve">
-    <value>m_configurationDescription</value>
-  </data>
-  <data name="&gt;&gt;m_configurationDescription.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_configurationDescription.Parent" xml:space="preserve">
-    <value>descriptionPanel</value>
-  </data>
-  <data name="&gt;&gt;m_configurationDescription.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="m_radioNone.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="m_radioNone.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="m_radioNone.Location" type="System.Drawing.Point, System.Drawing">
-    <value>153, 20</value>
-  </data>
-  <data name="m_radioNone.Size" type="System.Drawing.Size, System.Drawing">
-    <value>51, 17</value>
-  </data>
-  <data name="m_radioNone.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="m_radioNone.Text" xml:space="preserve">
-    <value>None</value>
-  </data>
-  <data name="&gt;&gt;m_radioNone.Name" xml:space="preserve">
-    <value>m_radioNone</value>
-  </data>
-  <data name="&gt;&gt;m_radioNone.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_radioNone.Parent" xml:space="preserve">
-    <value>groupBox1</value>
-  </data>
-  <data name="&gt;&gt;m_radioNone.ZOrder" xml:space="preserve">
-    <value>0</value>
   </data>
   <data name="_homographStyleButton.Location" type="System.Drawing.Point, System.Drawing">
     <value>195, 29</value>
@@ -1498,7 +1312,7 @@ Example-string to give a feel for the length</value>
     <value>0</value>
   </data>
   <data name="styleLabel.Text" xml:space="preserve">
-    <value>Character style for Homograph Numbers:</value>
+    <value>Character style for homograph numbers:</value>
   </data>
   <data name="&gt;&gt;styleLabel.Name" xml:space="preserve">
     <value>styleLabel</value>
@@ -1532,6 +1346,27 @@ Example-string to give a feel for the length</value>
   </data>
   <data name="&gt;&gt;_homographStyleCombo.ZOrder" xml:space="preserve">
     <value>2</value>
+  </data>
+  <data name="homographStylePanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 156</value>
+  </data>
+  <data name="homographStylePanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>341, 57</value>
+  </data>
+  <data name="homographStylePanel.TabIndex" type="System.Int32, mscorlib">
+    <value>21</value>
+  </data>
+  <data name="&gt;&gt;homographStylePanel.Name" xml:space="preserve">
+    <value>homographStylePanel</value>
+  </data>
+  <data name="&gt;&gt;homographStylePanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;homographStylePanel.Parent" xml:space="preserve">
+    <value>mainLayoutTable</value>
+  </data>
+  <data name="&gt;&gt;homographStylePanel.ZOrder" xml:space="preserve">
+    <value>5</value>
   </data>
   <data name="_senseNumberStyleBtn.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -1607,6 +1442,63 @@ Example-string to give a feel for the length</value>
   </data>
   <data name="&gt;&gt;_senseStyleCombo.ZOrder" xml:space="preserve">
     <value>2</value>
+  </data>
+  <data name="senseNumberStylePanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 219</value>
+  </data>
+  <data name="senseNumberStylePanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>341, 54</value>
+  </data>
+  <data name="senseNumberStylePanel.TabIndex" type="System.Int32, mscorlib">
+    <value>23</value>
+  </data>
+  <data name="&gt;&gt;senseNumberStylePanel.Name" xml:space="preserve">
+    <value>senseNumberStylePanel</value>
+  </data>
+  <data name="&gt;&gt;senseNumberStylePanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;senseNumberStylePanel.Parent" xml:space="preserve">
+    <value>mainLayoutTable</value>
+  </data>
+  <data name="&gt;&gt;senseNumberStylePanel.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="mainLayoutTable.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="mainLayoutTable.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="mainLayoutTable.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>5, 5, 5, 5</value>
+  </data>
+  <data name="mainLayoutTable.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 0, 0, 0</value>
+  </data>
+  <data name="mainLayoutTable.RowCount" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="mainLayoutTable.Size" type="System.Drawing.Size, System.Drawing">
+    <value>369, 541</value>
+  </data>
+  <data name="mainLayoutTable.TabIndex" type="System.Int32, mscorlib">
+    <value>16</value>
+  </data>
+  <data name="&gt;&gt;mainLayoutTable.Name" xml:space="preserve">
+    <value>mainLayoutTable</value>
+  </data>
+  <data name="&gt;&gt;mainLayoutTable.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mainLayoutTable.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;mainLayoutTable.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="mainLayoutTable.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="descriptionPanel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="referenceNumberGroup" Row="4" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="groupBox1" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="buttonLayoutPanel" Row="6" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="customNumbersPanel" Row="5" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="homographStylePanel" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="senseNumberStylePanel" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>

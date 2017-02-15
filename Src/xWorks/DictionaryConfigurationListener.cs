@@ -9,8 +9,12 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainImpl;
+using SIL.FieldWorks.FwCoreDlgs;
+using SIL.FieldWorks.XWorks.LexText;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -231,6 +235,33 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var model = new DictionaryConfigurationModel(currentConfig, cache);
 			DictionaryConfigurationController.SetConfigureHomographParameters(model, cache);
+		}
+
+		public bool OnConfigureHeadwordNumbers(object commandObject)
+		{
+			// If we are in classified dictionary, or someplace that is not identified with 'Dictionary' or 'Reversal Index'
+			// then bring up the old dialog.
+			if (GetDictionaryConfigurationType(m_mediator) == null)
+				return false;
+			using (var dlg = new HeadwordNumbersDlg())
+			{
+				var styleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+				var window = ((IApp) m_mediator.PropertyTable.GetValue("App")).ActiveMainWindow;
+				var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+				var model = new DictionaryConfigurationModel(GetCurrentConfiguration(m_mediator), cache);
+				var controller = new HeadwordNumbersController(dlg, model, cache);
+				// ReSharper disable once AccessToDisposedClosure - can only be used before the dialog is disposed
+				dlg.RunStylesDialog += (sender, args) => FwStylesDlg.RunStylesDialogForCombo(null, null, ((ComboBox)sender).Text,
+					styleSheet, 0, 0, cache, window, (IApp)m_mediator.PropertyTable.GetValue("App"),
+				m_mediator.HelpTopicProvider, new FlexStylesXmlAccessor(cache.LanguageProject.LexDbOA).SetPropsToFactorySettings);
+				dlg.SetupDialog(m_mediator.HelpTopicProvider);
+				dlg.SetStyleSheet = styleSheet;
+				if (dlg.ShowDialog() != DialogResult.OK)
+					return true;
+				controller.Save();
+			}
+
+			return true;
 		}
 
 		/// <summary>

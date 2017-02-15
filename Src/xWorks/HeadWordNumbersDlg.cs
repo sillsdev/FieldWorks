@@ -208,6 +208,7 @@ namespace SIL.FieldWorks.XWorks
 				digit.WritingSystemCode = wsHandle;
 				digit.SelectAll();
 				digit.ApplyWS(wsHandle);
+				digit.ApplyStyle("UiElement");
 				digit.RemoveSelection();
 			}
 		}
@@ -229,7 +230,7 @@ namespace SIL.FieldWorks.XWorks
 				if (digitsArray.Length == 0)
 					return;
 				if (digitsArray.Length != 10)
-					throw new ArgumentException();
+					return;
 				for (var i = 0; i < 10; ++i)
 				{
 					_digitBoxes[i].Text = digitsArray[i];

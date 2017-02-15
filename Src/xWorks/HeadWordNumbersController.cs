@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Retrieves the configuration from the model, or builds it from the singleton.
+		/// Retrieves the configuration from the model, or builds it from the defaults.
 		/// </summary>
 		private DictionaryHomographConfiguration GetHeadwordConfiguration()
 		{
@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				return _model.HomographConfiguration;
 			}
-			return new DictionaryHomographConfiguration(_cache.ServiceLocator.GetInstance<HomographConfiguration>());
+			return new DictionaryHomographConfiguration(new HomographConfiguration());
 		}
 
 		/// <summary>
