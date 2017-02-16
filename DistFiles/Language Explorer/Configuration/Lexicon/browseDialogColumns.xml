@@ -160,9 +160,9 @@
 	<column layout="PublishInForExamples" multipara="true" label="Publish In (Example)" width="72000"
 			bulkEdit="complexListMultiple" field="LexExampleSentence.PublishIn" list="LexDb.PublicationTypes"
 			displayNameProperty="ShortNameTSS" displayWs="best analysis" visibility="dialog"/>
-	<column layout="PublishInForPronunciations" multipara="true" label="Publish In (Pronunciations)" 
+	<column layout="PublishInForPronunciations" multipara="true" label="Publish In (Pronunciation)" 
 			width="72000" bulkEdit="complexListMultiple" field="LexPronunciation.PublishIn" list="LexDb.PublicationTypes" ghostListField="LexDb.AllPossiblePronunciations" displayNameProperty="ShortNameTSS" displayWs="best analysis" visibility="dialog"/>
-	<column layout="PublishInForPicture" multipara="true" label="Publish In (Pictures)" 
+	<column layout="PublishInForPicture" multipara="true" label="Publish In (Picture)" 
 			width="72000" bulkEdit="complexListMultiple" field="CmPicture.PublishIn" list="LexDb.PublicationTypes" ghostListField="LexDb.AllPossiblePictures" displayNameProperty="ShortNameTSS" displayWs="best analysis" visibility="dialog"/>
 	<column layout="InflectionClassForAffix" label="Inflection Classes (Affix)" multipara="true" editable="false"
 			chooserFilter="external" visibility="dialog" displayWs="best analysis">
