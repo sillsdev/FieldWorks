@@ -262,7 +262,7 @@
 			</seq>
 		</part>
 		<part id="LexSense-Jt-PublishInForPicture" type="jtview">
-			<slice field="PublishIn" label="Publish In (Picture)" tooltip="Remove a publication from this field to completely exclude this picture from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
+			<slice field="PublishIn" label="Publish Picture In" tooltip="Remove a publication from this field to completely exclude only this picture from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
 				menu="mnuDataTree-Help">
 				<deParams displayProperty="ShortName" ws="best analysis" />
 				<chooserInfo>
@@ -462,7 +462,7 @@
 			</slice>
 		</part>
 		<part id="LexSense-Detail-PublishIn" type="Detail">
-			<slice field="PublishIn" label="Publish In (Sense)" tooltip="Remove a publication from this field to completely exclude this sense from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
+			<slice field="PublishIn" label="Publish Sense In" tooltip="Remove a publication from this field to exclude everything in this sense from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
 				menu="mnuDataTree-Help">
 				<deParams displayProperty="ShortName" ws="best analysis" />
 				<chooserInfo>
@@ -744,7 +744,7 @@
 			<slice field="Reference" label="Reference" editor="String" weight="light" menu="mnuDataTree-Help" />
 		</part>
 		<part id="LexExampleSentence-Detail-PublishIn" type="Detail">
-			<slice field="PublishIn" label="Publish In (Example)" tooltip="Remove a publication from this field to completely exclude this example from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
+			<slice field="PublishIn" label="Publish Example In" tooltip="Remove a publication from this field to exclude only this example from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
 				menu="mnuDataTree-Help">
 				<deParams displayProperty="ShortName" ws="best analysis" />
 				<chooserInfo>
@@ -881,7 +881,7 @@
 			<slice label="Picture" editor="picture" thumbnail="true" menu="mnuDataTree-Picture" />
 		</part>
 		<part id="CmPicture-Detail-PublishIn" type="detail">
-			<slice field="PublishIn" label="Publish In (Picture)" tooltip="Remove a publication from this field to completely exclude this picture from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
+			<slice field="PublishIn" label="Publish Picture In" tooltip="Remove a publication from this field to exclude only this picture from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
 				menu="mnuDataTree-Help">
 				<deParams displayProperty="ShortName" ws="best analysis" />
 				<chooserInfo>

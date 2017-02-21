@@ -97,7 +97,7 @@
 		<part ref="CVPattern" label="CV Pattern"/>
 		<part ref="Tone"/>
 		<part ref="Location"/>
-		<part ref="PublishIn" label="Publish In (Pronunciation)"/>
+		<part ref="PublishIn" label="Publish Pronunciation In"/>
 	</layout>
 
 

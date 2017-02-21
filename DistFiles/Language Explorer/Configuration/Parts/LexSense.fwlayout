@@ -83,7 +83,7 @@
 		<part ref="Thumbnail" label="Thumbnail" visibility="never"/>
 		<part ref="CaptionA" label="Caption"/>
 		<part ref="FileName" label="File"/>
-		<part ref="PublishIn" label="Publish In (Picture)"/>
+		<part ref="PublishIn" label="Publish Picture In"/>
 	</layout>
 	<layout class="CmFile" type="detail" name="Normal">
 		<part ref="FileName" label="File"/>

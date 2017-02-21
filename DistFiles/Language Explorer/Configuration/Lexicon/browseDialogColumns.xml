@@ -151,18 +151,18 @@
 	<column layout="EnvironmentsForAllomorphs" multipara="true" label="Environments (Allomorph)" visibility="dialog"/>
 			<!--bulkEdit="customCollection" field="MoForm.PhoneEnv(isnot="MoAffixProcess")"  list="PhPhonData.Environments"
 				displayWs="best analysis" displayNameProperty="ShortNameTSS" /> -->
-	<column layout="PublishInForEntries" multipara="true" label="Publish In (Entry)" width="72000"
+	<column layout="PublishInForEntries" multipara="true" label="Publish Entry In" width="72000"
 			bulkEdit="complexListMultiple" field="LexEntry.PublishIn" list="LexDb.PublicationTypes" displayNameProperty="ShortNameTSS"
 			displayWs="best analysis" visibility="dialog"/>
-	<column layout="PublishInForSenses" multipara="true" label="Publish In (Sense)" width="72000"
+	<column layout="PublishInForSenses" multipara="true" label="Publish Sense In" width="72000"
 			bulkEdit="complexListMultiple" field="LexSense.PublishIn" list="LexDb.PublicationTypes" displayNameProperty="ShortNameTSS"
 			displayWs="best analysis" visibility="dialog"/>
-	<column layout="PublishInForExamples" multipara="true" label="Publish In (Example)" width="72000"
+	<column layout="PublishInForExamples" multipara="true" label="Publish Example In" width="72000"
 			bulkEdit="complexListMultiple" field="LexExampleSentence.PublishIn" list="LexDb.PublicationTypes"
 			displayNameProperty="ShortNameTSS" displayWs="best analysis" visibility="dialog"/>
-	<column layout="PublishInForPronunciations" multipara="true" label="Publish In (Pronunciation)" 
+	<column layout="PublishInForPronunciations" multipara="true" label="Publish Pronunciation In" 
 			width="72000" bulkEdit="complexListMultiple" field="LexPronunciation.PublishIn" list="LexDb.PublicationTypes" ghostListField="LexDb.AllPossiblePronunciations" displayNameProperty="ShortNameTSS" displayWs="best analysis" visibility="dialog"/>
-	<column layout="PublishInForPicture" multipara="true" label="Publish In (Picture)" 
+	<column layout="PublishInForPicture" multipara="true" label="Publish Picture In" 
 			width="72000" bulkEdit="complexListMultiple" field="CmPicture.PublishIn" list="LexDb.PublicationTypes" ghostListField="LexDb.AllPossiblePictures" displayNameProperty="ShortNameTSS" displayWs="best analysis" visibility="dialog"/>
 	<column layout="InflectionClassForAffix" label="Inflection Classes (Affix)" multipara="true" editable="false"
 			chooserFilter="external" visibility="dialog" displayWs="best analysis">

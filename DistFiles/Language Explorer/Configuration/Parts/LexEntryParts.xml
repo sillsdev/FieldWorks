@@ -44,7 +44,7 @@
 	  </if>
 	</part>
 	<part id="LexEntry-Detail-PublishIn" type="Detail">
-		<slice field="PublishIn" label="Publish In (Entry)" tooltip="Remove a publication from this field to completely exclude this entry from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
+		<slice field="PublishIn" label="Publish Entry In" tooltip="Remove a publication from this field to completely exclude this entry from that publication.  Nothing in the entry will appear, and it will not appear in references." editor="defaultVectorReference" visField="DoNotPublishIn"
 			menu="mnuDataTree-Help">
 			<deParams displayProperty="ShortName" ws="best analysis" />
 			<chooserInfo>
@@ -53,7 +53,7 @@
 		</slice>
 	</part>
 	<part id="LexEntry-Detail-PublishInForPronunciations" type="Detail">
-		<slice field="PublishIn" label="Publish In (Pronunciation)" tooltip="Remove a publication from this field to completely exclude this pronunciation from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
+		<slice field="PublishIn" label="Publish Pronunciation In" tooltip="Remove a publication from this field to exclude only this pronunciation from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
 			menu="mnuDataTree-Help">
 			<deParams displayProperty="ShortName" ws="best analysis" />
 			<chooserInfo>
@@ -1087,7 +1087,7 @@
 			<slice field="Tone" label="Tone" editor="String" sameObject="true"/><!-- assume same object as preceding field for formatting lines on display -->
 		</part>
 		<part id="LexPronunciation-Detail-PublishIn" type="Detail">
-			<slice field="PublishIn" label="Publish In (Pronunciation)" tooltip="Remove a publication from this field to completely exclude this pronunciation from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
+			<slice field="PublishIn" label="Publish Pronunciation In" tooltip="Remove a publication from this field to exclude only this pronunciation from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
 				menu="mnuDataTree-Help">
 				<deParams displayProperty="ShortName" ws="best analysis" />
 				<chooserInfo>

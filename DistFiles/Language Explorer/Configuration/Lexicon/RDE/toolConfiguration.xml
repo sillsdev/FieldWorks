@@ -233,11 +233,11 @@
 										<column layout="MorphTypeForAllomorph" multipara="true" label="Morph Type (Allomorph)" visibility="dialog" editable="false"/>
 										<column layout="EnvironmentsForLexemeForm" multipara="true" label="Environments" visibility="dialog" editable="false"/>
 										<column layout="EnvironmentsForAllomorphs" multipara="true" label="Environments (Allomorph)" visibility="dialog" editable="false"/>
-										<column layout="PublishInForEntries" multipara="true" label="Publish In (Entry)" width="72000"
+										<column layout="PublishInForEntries" multipara="true" label="Publish Entry In" width="72000"
 												displayNameProperty="ShortNameTSS"	displayWs="best analysis" visibility="dialog" editable="false"/>
-										<column layout="PublishInForSenses" multipara="true" label="Publish In (Sense)" width="72000"
+										<column layout="PublishInForSenses" multipara="true" label="Publish Sense In" width="72000"
 												displayNameProperty="ShortNameTSS" displayWs="best analysis" visibility="dialog" editable="false"/>
-										<column layout="PublishInForExamples" multipara="true" label="Publish In (Example)" width="72000"
+										<column layout="PublishInForExamples" multipara="true" label="Publish Example In" width="72000"
 												displayNameProperty="ShortNameTSS" displayWs="best analysis" visibility="dialog" editable="false"/>
 										<column layout="InflectionClassForAffix" label="Inflection Classes (Affix)" multipara="true" editable="false"
 												visibility="dialog" displayWs="best analysis"/>
