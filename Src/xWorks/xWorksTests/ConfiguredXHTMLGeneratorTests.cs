@@ -6501,6 +6501,44 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(headwordXpath, 1);
 		}
 
+		[Test]
+		public void GenerateXHTMLForEntry_GeneratesCorrectMainAndMinorEntries()
+		{
+			var firstMainEntry = CreateInterestingLexEntry(Cache);
+			var idiom = CreateInterestingLexEntry(Cache, "entry1", "myComplexForm");
+			CreateComplexForm(Cache, firstMainEntry, idiom, false, 4);
+
+			var idiomGuid = "b2276dec-b1a6-4d82-b121-fd114c009c59";
+
+			var enabledComplexEntryTypes = new List<string>();
+			enabledComplexEntryTypes.Add(idiomGuid);// Idiom
+
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				FieldDescription = "LexEntry",
+				Label = "Main Entry",
+				DictionaryNodeOptions = GetListOptionsForStrings(DictionaryNodeListOptions.ListIds.Complex, enabledComplexEntryTypes)
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForMainEntry(idiom, mainEntryNode, null, settings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath("/div[@class='lexentry']/span[@class='headword']", 1);
+
+			var complexOptions = (DictionaryNodeListOptions)mainEntryNode.DictionaryNodeOptions;
+			complexOptions.Options[0].IsEnabled = false;
+			result = ConfiguredXHTMLGenerator.GenerateXHTMLForMainEntry(idiom, mainEntryNode, null, settings);
+			Assert.IsEmpty(result);
+		}
+
 		/// <remarks>Note that the "Unspecified" Types mentioned here are truly unspecified, not the specified Type "Unspecified Form Type"</remarks>
 		[Test]
 		public void GenerateXHTMLForEntry_GeneratesCorrectMinorEntries(

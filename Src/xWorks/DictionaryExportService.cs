@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var entry = (ILexEntry)cache.ServiceLocator.GetObject(hvo);
 			if (ConfiguredXHTMLGenerator.IsMainEntry(entry, config))
-				return config.Parts[0].IsEnabled ? 1 : 0;
+				return (config.Parts[0].IsEnabled && (!entry.ComplexFormEntryRefs.Any() || ConfiguredXHTMLGenerator.IsListItemSelectedForExport(config.Parts[0], entry, null))) ? 1 : 0;
 			if (!entry.PublishAsMinorEntry)
 				return 0;
 			var matchingMinorParts = 0;

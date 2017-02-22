@@ -34,7 +34,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>Creates a DictionaryConfigurationModel with one Main and two Minor Entry nodes, all with enabled HeadWord children</summary>
-		internal static DictionaryConfigurationModel CreateInterestingConfigurationModel(FdoCache cache, Mediator mediator = null)
+		internal static DictionaryConfigurationModel CreateInterestingConfigurationModel(FdoCache cache, Mediator mediator = null,
+			DictionaryExportServiceTests.ConfigType configType = DictionaryExportServiceTests.ConfigType.Root)
 		{
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
@@ -43,11 +44,21 @@ namespace SIL.FieldWorks.XWorks
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
 				Before = "MainEntry: ",
 			};
+			var subEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode },
+				FieldDescription = "SubentriesOS"
+			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode },
-				FieldDescription = "LexEntry",
+				FieldDescription = "LexEntry"
 			};
+			if (configType == DictionaryExportServiceTests.ConfigType.Hybrid || configType == DictionaryExportServiceTests.ConfigType.Root)
+				mainEntryNode.Children.Add(subEntryNode);
+			if (configType == DictionaryExportServiceTests.ConfigType.Hybrid || configType == DictionaryExportServiceTests.ConfigType.Lexeme)
+				mainEntryNode.DictionaryNodeOptions = GetFullyEnabledListOptions(cache, DictionaryNodeListOptions.ListIds.Complex);
+
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			var minorEntryNode = mainEntryNode.DeepCloneUnderSameParent();
@@ -57,15 +68,21 @@ namespace SIL.FieldWorks.XWorks
 
 			var minorSecondNode = minorEntryNode.DeepCloneUnderSameParent();
 			minorSecondNode.Before = "HalfStep: ";
-			minorEntryNode.DictionaryNodeOptions = GetFullyEnabledListOptions(cache, DictionaryNodeListOptions.ListIds.Variant);
+			minorSecondNode.DictionaryNodeOptions = GetFullyEnabledListOptions(cache, DictionaryNodeListOptions.ListIds.Variant);
 
-			return new DictionaryConfigurationModel
+			var model = new DictionaryConfigurationModel
 			{
 				AllPublications = true,
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode, minorEntryNode, minorSecondNode },
 				FilePath = mediator == null ? null : Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator),
-																	"filename" + DictionaryConfigurationModel.FileExtension)
+																	"filename" + DictionaryConfigurationModel.FileExtension),
+				IsRootBased = configType == DictionaryExportServiceTests.ConfigType.Root ? true : false
 			};
+
+			if (configType != DictionaryExportServiceTests.ConfigType.Root)
+				model.Parts.Remove(minorEntryNode);
+
+			return model;
 		}
 
 		private static ConfigurableDictionaryNode CreatePictureModel()

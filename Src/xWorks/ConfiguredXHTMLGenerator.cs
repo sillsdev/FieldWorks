@@ -661,18 +661,26 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
 			if (IsMainEntry(entryObj, configuration))
-				return GenerateXHTMLForEntry(entryObj, configuration.Parts[0], publicationDecorator, settings);
+				return GenerateXHTMLForMainEntry(entryObj, configuration.Parts[0], publicationDecorator, settings);
 
 			var entry = (ILexEntry)entryObj;
 			if (!entry.PublishAsMinorEntry)
 				return string.Empty;
 
 			var bldr = new StringBuilder();
-			GenerateXHTMLForComplexOrVariantEntry(entry, configuration, publicationDecorator, settings, bldr);
+			GenerateXHTMLForMinorEntry(entry, configuration, publicationDecorator, settings, bldr);
 			return bldr.ToString();
 		}
 
-		private static void GenerateXHTMLForComplexOrVariantEntry(ICmObject entry, DictionaryConfigurationModel configuration,
+		public static string GenerateXHTMLForMainEntry(ICmObject entry, ConfigurableDictionaryNode configuration,
+			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
+		{
+			if (configuration.DictionaryNodeOptions != null && (((ILexEntry)entry).ComplexFormEntryRefs.Any() && !IsListItemSelectedForExport(configuration, entry, null)))
+				return string.Empty;
+			return GenerateXHTMLForEntry(entry, configuration, publicationDecorator, settings);
+		}
+
+		private static void GenerateXHTMLForMinorEntry(ICmObject entry, DictionaryConfigurationModel configuration,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, StringBuilder bldr)
 		{
 			for (var i = 1; i < configuration.Parts.Count; i++)
