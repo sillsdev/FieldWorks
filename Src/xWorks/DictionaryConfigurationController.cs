@@ -944,6 +944,25 @@ namespace SIL.FieldWorks.XWorks
 				UpdateWritingSystemInConfigNodes(child, cache);
 		}
 
+		public static string GetWsDefaultName(string wsType)
+		{
+			switch (wsType)
+			{
+				case "analysis":
+					return xWorksStrings.ksDefaultAnalysis;
+				case "vernacular":
+					return xWorksStrings.ksDefaultVernacular;
+				case "pronunciation":
+					return xWorksStrings.ksDefaultPronunciation;
+				case "reversal":
+					return xWorksStrings.ksCurrentReversal;
+				case "analysis vernacular":
+					return xWorksStrings.ksBestAnalOrVern;
+				default:	// "vernacular analysis"
+					return xWorksStrings.ksBestVernOrAnal;
+			}
+		}
+
 		public static List<ListViewItem> LoadAvailableWsList(DictionaryNodeWritingSystemOptions wsOptions, FdoCache cache)
 		{
 			var wsLists = new List<DictionaryNodeListOptions.DictionaryNodeOption>();
@@ -957,7 +976,7 @@ namespace SIL.FieldWorks.XWorks
 				if (int.TryParse(wsListItem.Id, out magicId))
 				{
 					var wsName = WritingSystemServices.GetMagicWsNameFromId(magicId);
-					availableWSs.Add(new ListViewItem(wsName) { Tag = magicId });
+					availableWSs.Add(new ListViewItem(GetWsDefaultName(wsName)) { Tag = magicId });
 				}
 				else
 				{
