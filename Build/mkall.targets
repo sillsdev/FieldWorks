@@ -302,10 +302,6 @@
 		<ExCssDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt393/.lastSuccessful</ExCssDownloadUrl>
 		<!-- bt395 is the master branch build of ExCss for Linux development. Update when appropriate. -->
 		<ExCssDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt395/.lastSuccessful</ExCssDownloadUrl>
-		<!-- bt469 is the master branch build of icucil for Windows development. Update when appropriate. -->
-		<IcuDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt14/.lastSuccessful</IcuDownloadUrl>
-		<!-- Libraries_IcucilPrecise64icu54Continuous is the ICU 54 master branch build of icucil for Linux development. Update when appropriate. -->
-		<IcuDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/Libraries_IcucilPrecise64icu54Continuous/.lastSuccessful</IcuDownloadUrl>
 		<ProtoBufNetDownloadUrl>https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/protobuf-net/protobuf-net%20r668.zip</ProtoBufNetDownloadUrl>
 		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1/</DownloadsSilOrgDownloadUrl>
 		<HermitCrabDownloadUrl>http://build.palaso.org/guestAuth/repository/download/bt410/fw-8.2.tcbuildtag</HermitCrabDownloadUrl>
@@ -351,6 +347,7 @@
 					  Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/taglib-sharp.dll" LocalFilename="$(fwrt)/Downloads/taglib-sharp.dll"/>
 		<DownloadFile Address="$(PalasoDownloadUrl)/irrKlang.NET4.dll" LocalFilename="$(fwrt)/Downloads/irrKlang.NET4.dll"/>
+		<DownloadFile Address="$(PalasoDownloadUrl)/icu.net.dll" LocalFilename="$(fwrt)/Downloads/icu.net.dll"/>
 
 		<Message Text="Downloading artifacts from Chorus chorus-2.5 branch build."/>
 		<DownloadFile Address="$(ChorusDownloadUrl)/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
@@ -367,10 +364,6 @@
 		<DownloadFile Address="$(ExCssDownloadUrl)/ExCss.dll" LocalFilename="$(fwrt)/Downloads/ExCSS.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFile Address="$(ExCssDownloadUrl)/ExCSS.dll.mdb" LocalFilename="$(fwrt)/Downloads/ExCSS.dll.mdb" Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(ExCssDownloadUrl)/ExCss.pdb" LocalFilename="$(fwrt)/Downloads/ExCss.pdb" Condition="'$(OS)'=='Windows_NT'"/>
-
-		<Message Text="Downloading pinned artifacts for ICU.NET."/>
-		<DownloadFile Address="$(IcuDownloadUrl)/icu.net.dll" LocalFilename="$(fwrt)/Downloads/icu.net.dll"/>
-		<DownloadFile Address="$(IcuDownloadUrl)/icu.net.dll.config" LocalFilename="$(fwrt)/Downloads/icu.net.dll.config" Condition="'$(OS)'=='Unix'"/>
 
 		<Message Text="Downloading protobuf-net." />
 		<DownloadFile Address="$(ProtoBufNetDownloadUrl)" LocalFilename="$(fwrt)/Downloads/protobuf-net.zip" />
@@ -445,7 +438,6 @@
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.dll.mdb" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.pdb" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/icu.net.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/icu.net.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadedFiles Include="$(fwrt)/Downloads/L10NSharp.dll"/>
