@@ -183,7 +183,14 @@ namespace SIL.FieldWorks.XWorks
 		internal void PrepareImport(string configurationZipPath)
 		{
 			if (string.IsNullOrEmpty(configurationZipPath))
-				throw new ArgumentException();
+			{
+				ImportHappened = false;
+				NewConfigToImport = null;
+				_originalConfigLabel = null;
+				_temporaryImportConfigLocation = null;
+				_newPublications = null;
+				return;
+			}
 
 			try
 			{

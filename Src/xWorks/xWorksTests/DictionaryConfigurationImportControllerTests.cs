@@ -253,6 +253,10 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(_controller.NewConfigToImport, Is.Null, "Did not handle bad data as desired");
 			Assert.That(_controller._originalConfigLabel, Is.Null, "Did not handle bad data as desired");
 			Assert.DoesNotThrow(() => { _controller.PrepareImport("bad$# \\characters/in!: filename;.~*("); });
+			Assert.DoesNotThrow(() => { _controller.PrepareImport(""); }, "Don't actually crash for this");
+			Assert.That(_controller.NewConfigToImport, Is.Null, "Did not handle bad data as desired");
+			Assert.DoesNotThrow(() => { _controller.PrepareImport(null); }, "Don't actually crash for this");
+			Assert.That(_controller.NewConfigToImport, Is.Null, "Did not handle bad data as desired");
 		}
 
 		[Test]
