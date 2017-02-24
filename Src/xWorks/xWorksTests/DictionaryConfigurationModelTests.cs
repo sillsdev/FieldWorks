@@ -490,7 +490,8 @@ namespace SIL.FieldWorks.XWorks
 				{
 					CustomHomographNumbers = "0;1;2;3;4;5;6;7;8;9",
 					HomographNumberBefore = true
-				}
+				},
+				Publications = new List<string> { "PublishThis" }
 			};
 			//SUT
 			model.Save();

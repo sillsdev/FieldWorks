@@ -11,7 +11,6 @@
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="HomographConfiguration" type="HomographConfigurationType" maxOccurs="1" minOccurs="0"/>
 			<xs:element name="Publications" minOccurs="0" maxOccurs="1">
 				<xs:complexType>
 					<xs:sequence>
@@ -19,6 +18,7 @@
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
+			<xs:element name="HomographConfiguration" type="HomographConfigurationType" maxOccurs="1" minOccurs="0"/>
 		</xs:sequence>
 		<xs:attribute type="xs:string" name="name" use="required"/>
 		<xs:attribute type="xs:string" name="writingSystem" use="optional"/>
