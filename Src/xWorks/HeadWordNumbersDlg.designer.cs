@@ -440,6 +440,7 @@ namespace SIL.FieldWorks.XWorks
 			// 
 			// m_writingSystemCombo
 			// 
+			this.m_writingSystemCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_writingSystemCombo.FormattingEnabled = true;
 			resources.ApplyResources(this.m_writingSystemCombo, "m_writingSystemCombo");
 			this.m_writingSystemCombo.Name = "m_writingSystemCombo";
