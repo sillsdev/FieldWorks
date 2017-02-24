@@ -109,13 +109,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			ExportLift(w, folderPath, repoLexEntry.AllInstances(), repoLexEntry.Count);
 		}
 
-		private void ExportLift(TextWriter w, string folderPath,
-			IEnumerable<ILexEntry> entries, int cEntries)
+		public void ExportLift(TextWriter w, string folderPath, IEnumerable<ILexEntry> entries, int entryCount)
 		{
 			FolderPath = folderPath;
 			if (SetProgressMessage != null)
 			{
-				var ma = new ProgressMessageArgs { Max = cEntries, MessageId = "ksExportingLift" };
+				var ma = new ProgressMessageArgs { Max = entryCount, MessageId = "ksExportingLift" };
 				SetProgressMessage(this, ma);
 			}
 

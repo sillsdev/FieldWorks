@@ -8,11 +8,18 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using Ionic.Zip;
+using Palaso.Lift.Migration;
+using Palaso.Lift.Parsing;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.LexText.Controls;
+using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
+using File = System.IO.File;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -47,8 +54,18 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal IEnumerable<string> _newPublications = null;
 
-		/// Did the configuration get imported.
+
+		/// <summary>
+		/// Path to the lift file with the custom fields we are planning to import
 		/// </summary>
+		internal string _temporaryImportLiftLocation;
+
+		/// <summary>
+		/// The custom fields found in the lift file which will be added if they aren't present in the project
+		/// </summary>
+		internal IEnumerable<string> _customFieldsToImport;
+
+		/// <summary>Did the configuration get imported.</summary>
 		public bool ImportHappened;
 
 		/// <summary>
@@ -97,6 +114,7 @@ namespace SIL.FieldWorks.XWorks
 
 			_configurations.Add(NewConfigToImport);
 
+			ImportCustomFields(_temporaryImportLiftLocation);
 			NewConfigToImport.Publications.ForEach(
 				publication =>
 				{
@@ -104,6 +122,30 @@ namespace SIL.FieldWorks.XWorks
 				});
 
 			ImportHappened = true;
+		}
+
+		private void ImportCustomFields(string liftPathname)
+		{
+			if (string.IsNullOrEmpty(liftPathname))
+				return;
+			NonUndoableUnitOfWorkHelper.DoSomehow(_cache.ActionHandlerAccessor, () =>
+			{
+				string sFilename;
+				var fMigrationNeeded = Migrator.IsMigrationNeeded(liftPathname);
+				if (fMigrationNeeded)
+				{
+					var sOldVersion = Palaso.Lift.Validation.Validator.GetLiftVersion(liftPathname);
+					sFilename = Migrator.MigrateToLatestVersion(liftPathname);
+				}
+				else
+				{
+					sFilename = liftPathname;
+				}
+				var flexImporter = new FlexLiftMerger(_cache, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, true);
+				var parser = new LiftParser<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>(flexImporter);
+				flexImporter.LiftFile = liftPathname;
+				parser.ReadLiftFile(sFilename);
+			});
 		}
 
 		/// <summary>
@@ -151,6 +193,9 @@ namespace SIL.FieldWorks.XWorks
 					var configInZip = zip.SelectEntries("*" + DictionaryConfigurationModel.FileExtension).First();
 					configInZip.Extract(tmpPath, ExtractExistingFileAction.OverwriteSilently);
 					_temporaryImportConfigLocation = tmpPath + configInZip.FileName;
+					var customFieldLiftFile = zip.SelectEntries("*.lift").First();
+					customFieldLiftFile.Extract(tmpPath, ExtractExistingFileAction.OverwriteSilently);
+					_temporaryImportLiftLocation = tmpPath + customFieldLiftFile.FileName;
 				}
 			}
 			catch (Exception)
@@ -171,6 +216,7 @@ namespace SIL.FieldWorks.XWorks
 			_newPublications =
 				DictionaryConfigurationModel.PublicationsInXml(_temporaryImportConfigLocation).Except(NewConfigToImport.Publications);
 
+			_customFieldsToImport = CustomFieldsInLiftFile(_temporaryImportLiftLocation);
 			// Use the full list of publications in the XML file, even ones that don't exist in the project.
 			NewConfigToImport.Publications = DictionaryConfigurationModel.PublicationsInXml(_temporaryImportConfigLocation).ToList();
 
@@ -187,6 +233,16 @@ namespace SIL.FieldWorks.XWorks
 
 			// Not purporting to use any particular file location yet.
 			NewConfigToImport.FilePath = null;
+		}
+
+		/// <summary>
+		/// Returns all custom fields from the given lift file
+		/// </summary>
+		private IEnumerable<string> CustomFieldsInLiftFile(string liftFilePath)
+		{
+			var liftDoc = XDocument.Load(liftFilePath);
+			var customFields = liftDoc.XPathSelectElements("//field[form[@lang='qaa-x-spec']]");
+			return customFields.Select(cf => cf.Attribute("tag").Value);
 		}
 
 		/// <summary>
@@ -235,6 +291,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			string mainStatus;
 			var publicationStatus = string.Empty;
+			var customFieldStatus = string.Empty;
 			_view.explanationLabel.Text = "";
 
 			if (NewConfigToImport == null)
@@ -256,10 +313,15 @@ namespace SIL.FieldWorks.XWorks
 
 			if (_newPublications != null && _newPublications.Any())
 			{
-				publicationStatus = "The following publications will be added to the project: " + string.Join(", ", _newPublications);
+				publicationStatus = xWorksStrings.kstidPublicationsWillBeAdded + Environment.NewLine + string.Join(", ", _newPublications);
 			}
 
-			_view.explanationLabel.Text = string.Format("{0}{1}{2}", mainStatus, Environment.NewLine, publicationStatus);
+			if (_customFieldsToImport != null && _customFieldsToImport.Any())
+			{
+				customFieldStatus = xWorksStrings.kstidCustomFieldsWillBeAdded + Environment.NewLine + string.Join(", ", _customFieldsToImport);
+			}
+
+			_view.explanationLabel.Text = string.Format("{0}{1}{2}{1}{3}", mainStatus, Environment.NewLine, publicationStatus, customFieldStatus);
 		}
 
 		/// <summary>

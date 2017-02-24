@@ -16,6 +16,7 @@ using Palaso.Linq;
 using SIL.CoreImpl;
 using XCore;
 using Ionic.Zip;
+using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils.FileDialog;
 
 namespace SIL.FieldWorks.XWorks
@@ -536,25 +537,27 @@ namespace SIL.FieldWorks.XWorks
 			if (!outputPath.EndsWith(".zip", StringComparison.InvariantCultureIgnoreCase))
 				outputPath += ".zip";
 
-			ExportConfiguration(SelectedConfiguration, outputPath);
+			ExportConfiguration(SelectedConfiguration, outputPath, _cache);
 		}
 
 		/// <summary>
 		/// Create a zip file containing a dictionary configuration for the user to share, into destinationZipPath. LT-17397.
 		/// </summary>
-		internal static void ExportConfiguration(DictionaryConfigurationModel configurationToExport, string destinationZipPath)
+		internal static void ExportConfiguration(DictionaryConfigurationModel configurationToExport, string destinationZipPath, FdoCache cache)
 		{
 			if (configurationToExport == null)
 				throw new ArgumentNullException("configurationToExport");
 			if (destinationZipPath == null)
-				throw new ArgumentNullException("destinationPath");
-			if (destinationZipPath == String.Empty)
+				throw new ArgumentNullException("destinationZipPath");
+			if (cache == null)
+				throw new ArgumentNullException("cache");
+			if (destinationZipPath == string.Empty)
 				throw new ArgumentException("destinationDirectory");
 
 			using (var zip = new ZipFile())
 			{
 				zip.AddFile(configurationToExport.FilePath, "/");
-				PrepareCustomFieldsExport().ForEach(file => zip.AddFile(file, "/"));
+				PrepareCustomFieldsExport(cache).ForEach(file => zip.AddFile(file, "/"));
 				PrepareStylesheetExport().ForEach(file => zip.AddFile(file, "/"));
 				zip.Save(destinationZipPath);
 			}
@@ -564,16 +567,16 @@ namespace SIL.FieldWorks.XWorks
 		/// Prepare custom fields to be included in dictionary configuration export. LT-17397.
 		/// Returns paths to files to be included in a zipped export.
 		/// </summary>
-		internal static IEnumerable<string> PrepareCustomFieldsExport()
+		internal static IEnumerable<string> PrepareCustomFieldsExport(FdoCache cache)
 		{
-			// TODO implement
-
-			var file1=FileUtils.GetTempFile("CustomFieldsData");
-			FileUtils.WriteStringtoFile(file1, "content", Encoding.UTF8);
-			var file2=FileUtils.GetTempFile("CustomFieldsMoreData");
-			FileUtils.WriteStringtoFile(file2, "content", Encoding.UTF8);
-			yield return file1;
-			yield return file2;
+			var exporter = new LiftExporter(cache);
+			var tempFile = Path.Combine(Path.GetTempPath(), "DictExportCustomLift", "CustomFields.lift");
+			Directory.CreateDirectory(Path.GetDirectoryName(tempFile));
+			using (TextWriter textWriter = new StreamWriter(tempFile))
+			{
+				exporter.ExportLift(textWriter, Path.GetDirectoryName(tempFile), new ILexEntry[0], entryCount:0);
+			}
+			return new[] {tempFile};
 		}
 
 		/// <summary>

@@ -10,7 +10,10 @@ using System.Text;
 using System.Windows.Forms;
 using Ionic.Zip;
 using NUnit.Framework;
+using Palaso.TestUtilities;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
 using FileUtils = SIL.Utils.FileUtils;
@@ -557,11 +560,12 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void ExportConfiguration_ThrowsOnBadInput()
 		{
-			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationManagerController.ExportConfiguration(null, "a"));
-			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationManagerController.ExportConfiguration(_configurations[0], null));
-			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationManagerController.ExportConfiguration(null, null));
+			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationManagerController.ExportConfiguration(null, "a", Cache));
+			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationManagerController.ExportConfiguration(_configurations[0], null, Cache));
+			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationManagerController.ExportConfiguration(_configurations[0], "a", null));
+			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationManagerController.ExportConfiguration(null, null, null));
 			// Empty string
-			Assert.Throws<ArgumentException>(() => DictionaryConfigurationManagerController.ExportConfiguration(_configurations[0], ""));
+			Assert.Throws<ArgumentException>(() => DictionaryConfigurationManagerController.ExportConfiguration(_configurations[0], "", Cache));
 
 		}
 
@@ -587,7 +591,7 @@ namespace SIL.FieldWorks.XWorks
 					"Unit test not set up right. File will exist for convenience of writing the test but should not have any content yet.");
 
 				// SUT
-				DictionaryConfigurationManagerController.ExportConfiguration(configurationToExport, expectedZipOutput);
+				DictionaryConfigurationManagerController.ExportConfiguration(configurationToExport, expectedZipOutput, Cache);
 
 				Assert.That(File.Exists(expectedZipOutput), "File not exported");
 				Assert.That(new FileInfo(expectedZipOutput).Length, Is.GreaterThan(0),
@@ -609,11 +613,16 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void PrepareCustomFieldsExport_Works()
 		{
-			// SUT
-			var filesToIncludeInExportFromCustomFieldsExport = DictionaryConfigurationManagerController.PrepareCustomFieldsExport().ToList();
-			Assert.That(filesToIncludeInExportFromCustomFieldsExport.Count, Is.EqualTo(2), "Not enough files prepared");
-			Assert.That(filesToIncludeInExportFromCustomFieldsExport[0],  Is.StringEnding("CustomFieldsData"));
-			Assert.That(filesToIncludeInExportFromCustomFieldsExport[1], Is.StringEnding("CustomFieldsMoreData"));
+			var customFieldLabel = "TestField";
+			using (new CustomFieldForTest(Cache, customFieldLabel, customFieldLabel, LexEntryTags.kClassId, StTextTags.kClassId, -1,
+				CellarPropertyType.OwningAtomic, Guid.Empty))
+			{
+				// SUT
+				var filesToIncludeInExportFromCustomFieldsExport = DictionaryConfigurationManagerController.PrepareCustomFieldsExport(Cache).ToList();
+				Assert.That(filesToIncludeInExportFromCustomFieldsExport.Count, Is.EqualTo(1), "Not enough files prepared");
+				Assert.That(filesToIncludeInExportFromCustomFieldsExport[0], Is.StringEnding("CustomFields.lift"));
+				AssertThatXmlIn.File(filesToIncludeInExportFromCustomFieldsExport[0]).HasAtLeastOneMatchForXpath("//field[@tag='" + customFieldLabel + "']");
+			}
 		}
 
 		[Test]

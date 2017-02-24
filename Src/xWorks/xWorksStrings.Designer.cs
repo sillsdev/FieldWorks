@@ -1869,6 +1869,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The following custom fields will be added to the project, if not already present:.
+        /// </summary>
+        internal static string kstidCustomFieldsWillBeAdded {
+            get {
+                return ResourceManager.GetString("kstidCustomFieldsWillBeAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Writing possibility list contents.
         /// </summary>
         internal static string kstidExportingLists {
@@ -1919,6 +1928,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string kstidOverwriteConfiguration {
             get {
                 return ResourceManager.GetString("kstidOverwriteConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The following publications will be added to the project: .
+        /// </summary>
+        internal static string kstidPublicationsWillBeAdded {
+            get {
+                return ResourceManager.GetString("kstidPublicationsWillBeAdded", resourceCulture);
             }
         }
         

@@ -2,13 +2,17 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 // ReSharper disable InconsistentNaming
 
@@ -84,7 +88,7 @@ namespace SIL.FieldWorks.XWorks
 			// Export a configuration that we know how to import
 
 			_zipFile = Path.GetTempFileName();
-			DictionaryConfigurationManagerController.ExportConfiguration(configurationToExport, _zipFile);
+			DictionaryConfigurationManagerController.ExportConfiguration(configurationToExport, _zipFile, Cache);
 			Assert.That(File.Exists(_zipFile), "Unit test not set up right");
 			Assert.That(new FileInfo(_zipFile).Length, Is.GreaterThan(0), "Unit test not set up right");
 
@@ -383,6 +387,79 @@ namespace SIL.FieldWorks.XWorks
 
 			Assert.That(Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(publicationTypePossibility => publicationTypePossibility.Name.get_String(Cache.DefaultAnalWs).Text).Contains("pub 1"), "Publication not added to Flex");
 			Assert.That(Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(publicationTypePossibility => publicationTypePossibility.Name.get_String(Cache.DefaultAnalWs).Text).Contains("pub 2"), "Publication not added to Flex");
+		}
+
+		[Test]
+		public void PrepareImport_DoImport_CreatesCustomFieldsFromExportResult()
+		{
+			var customFieldSameLabel = "KeepMeImGood";
+			var customFieldLabel = "TempCustomField";
+			var customFieldWrongType = "WrongTypeField";
+			var zipFile = Path.GetTempFileName();
+			using (var existingSameCf = new CustomFieldForTest(Cache, customFieldSameLabel, customFieldSameLabel, LexSenseTags.kClassId, StTextTags.kClassId, -1,
+					CellarPropertyType.OwningAtomic, Guid.Empty))
+			{
+				using (new CustomFieldForTest(Cache, customFieldLabel, customFieldLabel, LexEntryTags.kClassId, StTextTags.kClassId, -1,
+						CellarPropertyType.OwningAtomic, Guid.Empty))
+				using (new CustomFieldForTest(Cache, customFieldWrongType, customFieldWrongType, LexEntryTags.kClassId, CmPossibilityTags.kClassId, -1,
+						CellarPropertyType.ReferenceAtom, Cache.LangProject.LexDbOA.ComplexEntryTypesOA.Guid))
+				{
+					var importExportDCModel = new DictionaryConfigurationModel
+					{
+						Label = "importexportConfiguration",
+						Publications = new List<string>(),
+						FilePath = Path.GetTempPath() + "importexportConfigurationFile.fwdictconfig",
+					};
+
+					var configurationToExport = importExportDCModel;
+					_pathToConfiguration = configurationToExport.FilePath;
+					File.WriteAllText(_pathToConfiguration,
+						DictionaryConfigurationModelTests.XmlOpenTagsThruHeadword +
+						DictionaryConfigurationModelTests.XmlCloseTagsFromHeadword);
+					// This export should create the zipfile containing the custom field information (currently in LIFT format)
+					DictionaryConfigurationManagerController.ExportConfiguration(configurationToExport, zipFile, Cache);
+				} // Destroy two of the custom fields and verify the state
+				VerifyCustomFieldPresent(customFieldSameLabel, LexSenseTags.kClassId, StTextTags.kClassId, CellarPropertyType.OwningAtomic);
+				VerifyCustomFieldAbsent(customFieldLabel, LexEntryTags.kClassId);
+				VerifyCustomFieldAbsent(customFieldWrongType, LexEntryTags.kClassId);
+				// Re-introduce one of the fields that was in the export, but with a different type
+				using (new CustomFieldForTest(Cache, customFieldWrongType, customFieldWrongType, LexEntryTags.kClassId, StTextTags.kClassId, -1,
+						CellarPropertyType.OwningAtomic, Guid.Empty))
+				{
+					// SUT
+					_controller.PrepareImport(zipFile);
+					// Verify prepare import counted the custom fields
+					CollectionAssert.IsNotEmpty(_controller._customFieldsToImport, "No custom fields found in the lift file by PrepareImport");
+					CollectionAssert.AreEquivalent(_controller._customFieldsToImport, new[] { customFieldLabel, customFieldSameLabel, customFieldWrongType });
+
+					// Make sure the 'wrongType' custom field has been re-introduced by the test with a different type
+					VerifyCustomFieldPresent(customFieldWrongType, LexEntryTags.kClassId, StTextTags.kClassId);
+					// SUT
+					_controller.DoImport();
+					// Assert that the field which was present before the import is still there
+					VerifyCustomFieldPresent(customFieldSameLabel, LexSenseTags.kClassId, StTextTags.kClassId);
+					// Assert that the field which was not present before the import has been added
+					VerifyCustomFieldPresent(customFieldLabel, LexEntryTags.kClassId, StTextTags.kClassId);
+					// Assert that the field which was present with the wrong type is still present.
+					// In the future if we implement overwriting an existing custom field with the data from the export this
+					// is where we would assert the change.
+					VerifyCustomFieldPresent(customFieldWrongType, LexEntryTags.kClassId, StTextTags.kClassId);
+				}
+			}
+		}
+
+		private void VerifyCustomFieldPresent(string customFieldLabel, int classWithCustomField, int expectedType, CellarPropertyType ownerType = CellarPropertyType.Nil)
+		{
+			var mdc = Cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
+			var flid = mdc.GetFieldId2(classWithCustomField, customFieldLabel, false);
+			Assert.IsTrue(mdc.IsCustom(flid));
+			Assert.AreEqual(mdc.GetDstClsId(flid), expectedType, "The {0} custom field was not the correct type.", customFieldLabel);
+		}
+
+		private void VerifyCustomFieldAbsent(string customFieldLabel, int classWithCustomField)
+		{
+			var mdc = Cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
+			Assert.Throws<FDOInvalidFieldException>(() => mdc.GetFieldId2(classWithCustomField, customFieldLabel, false));
 		}
 	}
 }

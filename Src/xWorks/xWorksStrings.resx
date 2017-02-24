@@ -1041,48 +1041,56 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>Importing configuration with new name '{0}'.</value>
     <comment>Explanation on import dialog. 0 is name of a configuration.</comment>
   </data>
-	<data name="kstidImportingAndOverwritingConfiguration" xml:space="preserve">
+  <data name="kstidImportingAndOverwritingConfiguration" xml:space="preserve">
     <value>Importing and overwriting existing configuration with name '{0}'.</value>
     <comment>Explanation on import dialog. 0 is name of a configuration.</comment>
   </data>
-	<data name="kstidOverwriteConfiguration" xml:space="preserve">
+  <data name="kstidOverwriteConfiguration" xml:space="preserve">
     <value>Overwrite existing configuration named {0}</value>
     <comment>Text on radio button on configuration import dialog</comment>
   </data>
-	<data name="kstidUseNewConfigName" xml:space="preserve">
+  <data name="kstidUseNewConfigName" xml:space="preserve">
     <value>Use new configuration name {0}</value>
     <comment>Text on radio button on configuration import dialog</comment>
   </data>
-	<data name="kstidCannotImport" xml:space="preserve">
+  <data name="kstidCannotImport" xml:space="preserve">
     <value>Cannot import. Choose another file.</value>
     <comment>explanation text on import dialog</comment>
   </data>
-	<data name="kstidImportingConfig" xml:space="preserve">
+  <data name="kstidImportingConfig" xml:space="preserve">
     <value>Importing configuration with name '{0}'.</value>
     <comment>explanation on import dialog</comment>
   </data>
-	<data name="kstidChooseFile" xml:space="preserve">
+  <data name="kstidChooseFile" xml:space="preserve">
     <value>Choose file for import</value>
     <comment>title of open file dialog for choosing a configuration to import</comment>
   </data>
-	<data name="kstidImportedSuffix" xml:space="preserve">
+  <data name="kstidImportedSuffix" xml:space="preserve">
     <value>{0}-Imported{1}</value>
     <comment>0 is the name of a configuration. 1 is a number. This string is used to generate a unique suffix, like "-Imported3", to append to a configuration name in instances in which a new and unique name needs suggested for a dictionary configuration being imported. It would be okay to have spaces in the string.</comment>
   </data>
-	<data name="kstidZipFiles" xml:space="preserve">
+  <data name="kstidZipFiles" xml:space="preserve">
     <value>Zip files</value>
     <comment>In configuration import file open dialog, this is the description of what kind of files are *.zip files that are being filtered for.</comment>
   </data>
-	<data name="kstidConfigsChanged" xml:space="preserve">
+  <data name="kstidConfigsChanged" xml:space="preserve">
     <value>Your list of configurations was just changed. You must close and reopen this dialog to be able to export.</value>
     <comment>Message on message box shown from Manage Views dialog.</comment>
   </data>
-	<data name="kstidChooseExportFile" xml:space="preserve">
+  <data name="kstidChooseExportFile" xml:space="preserve">
     <value>Choose filename for export</value>
     <comment>title of save dialog when exporting dictionary configuration</comment>
   </data>
   <data name="kstidConfigsChangedImport" xml:space="preserve">
     <value>Your list of configurations was just changed. You must close and reopen this dialog to be able to import.</value>
     <comment>Message on message box shown from Manage Views dialog</comment>
+  </data>
+  <data name="kstidPublicationsWillBeAdded" xml:space="preserve">
+    <value>The following publications will be added to the project: </value>
+    <comment>Label displayed before the list of any publications that will be added while importing a dictionary configuration view</comment>
+  </data>
+  <data name="kstidCustomFieldsWillBeAdded" xml:space="preserve">
+    <value>The following custom fields will be added to the project, if not already present:</value>
+    <comment>Label displayed before the list of any custom fields that will be added while importing a dictionary configuration view</comment>
   </data>
 </root>
