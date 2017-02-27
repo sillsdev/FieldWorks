@@ -36,6 +36,7 @@
 	<xs:attribute type="xs:boolean" name="showSenseNumber"/>
 	<xs:attribute type="xs:boolean" name="homographNumberBefore"/>
 	<xs:attribute type="xs:string" name="customHomographNumbers"/>
+	<xs:attribute type="xs:string" name="homographWritingSystem"/>
 </xs:complexType>
 <xs:complexType name="SenseOptionsType">
 	<xs:attribute type="xs:string" name="numberStyle"/>

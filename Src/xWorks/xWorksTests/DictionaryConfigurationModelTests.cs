@@ -489,7 +489,11 @@ namespace SIL.FieldWorks.XWorks
 				HomographConfiguration = new DictionaryHomographConfiguration
 				{
 					CustomHomographNumbers = "0;1;2;3;4;5;6;7;8;9",
-					HomographNumberBefore = true
+					HomographNumberBefore = true,
+					HomographWritingSystem = "en",
+					ShowHwNumber = true,
+					ShowHwNumInCrossRef = true,
+					ShowHwNumInReversalCrossRef = true
 				},
 				Publications = new List<string> { "PublishThis" }
 			};
