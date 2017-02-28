@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI <jenkins@sil.org>
+Code-Review+2: Beth Bryson <beth-docs_bryson@sil.org>
+Verified-Linux+1: Beth Bryson <beth-docs_bryson@sil.org>
+Submitted-by: Beth Bryson <beth-docs_bryson@sil.org>
+Submitted-at: Tue, 28 Feb 2017 16:10:20 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/4984
+Project: FieldWorks
+Branch: refs/heads/feature/Dictionary
