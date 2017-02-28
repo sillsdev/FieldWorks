@@ -156,34 +156,12 @@
 										</column>
 										<column layout="GrammaticalCategoryForSense" label="Grammatical Category" multipara="true" visibility="dialog"
 												width="72000" editable="false"/>
-										<column layout="ReversalEntriesForSense" editLayout ="ReversalEntriesForSenseEdit" label="Reversals" multipara="true"
-											  ws="$ws=analysis" visibility="dialog" editable="false"/>
-										<column layout="DialectLabelsEntry" label="Dialect Labels (Entry)"  multipara="true" field="LexEntry.DialectLabels" width="72000" visibility="dialog" chooserFilter="complexListMultiple" list="LexDb.DialectLabels" transduce="LexEntry.DialectLabels" displayWs="best vernoranal" displayNameProperty="VernOrAnalAbbrTSS" ws="$ws=vernacular analysis"/>
 										<column layout="DialectLabelsSense" label="Dialect Labels (Sense)"  multipara="true" field="LexSense.DialectLabels" width="72000" visibility="dialog" chooserFilter="complexListMultiple" list="LexDb.DialectLabels" transduce="LexSense.DialectLabels" displayWs="best vernoranal" displayNameProperty="VernOrAnalAbbrTSS" ws="$ws=vernacular analysis"/>
 										<column layout="DomainsOfSensesForSense" label="Semantic Domains" width="72000" multipara="true" visibility="dialog"
 											displayNameProperty="AbbrAndNameTSS" editable="false"/>
 										<column layout="NumberOfSensesForEntry" label="Number of Senses (Entry)" sortType="integer" blankPossible="false" visibility="dialog" editable="false"/>
-										<column layout="EtymologyPrecComment" label="Etymology - Preceding Annotation"  multipara="true" ws="$ws=analysis" editable="false" visibility="dialog" />
-										<column layout="EtymologySource" label="Etymology - Source Language"  multipara="true" ws="$ws=analysis" editable="false" visibility="dialog" />
-										<column layout="EtymologyForm" label="Etymology - Source Form"  multipara="true" ws="$ws=vernacular analysis" editable="false" visibility="dialog" />
-										<column layout="EtymologyGloss" label="Etymology - Gloss"  multipara="true" ws="$ws=analysis" editable="false" visibility="dialog" />
-										<column layout="EtymologyComment" label="Etymology - Following Comment"  multipara="true" ws="$ws=analysis" editable="false" visibility="dialog" />
-										<column layout="EtymologyBibliography" label="Etymology - Bibliographic Source"  multipara="true" ws="$ws=analysis" editable="false" visibility="dialog" />
-										<column layout="EtymologyNote" label="Etymology - Note"  multipara="true" ws="$ws=analysis" editable="false" visibility="dialog" />
-										<column layout="BibliographyForEntry" label="Bibliography (Entry)" transduce="LexEntry.Bibliography" ws="$ws=analysis" visibility="dialog"/>
-										<column layout="LiteralMeaningForEntry" label="Literal Meaning" transduce="LexEntry.LiteralMeaning" ws="$ws=analysis" visibility="dialog"/>
-										<column layout="NoteForEntry" label="Note" transduce="LexEntry.Comment" ws="$ws=analysis" visibility="dialog"/>
-										<column layout="RestrictionsForEntry" label="Restrictions (Entry)" transduce="LexEntry.Restrictions" ws="$ws=analysis" visibility="dialog"/>
 										<column layout="DateCreatedForEntry" label="Date Created"  sortType="date" blankPossible="false" visibility="dialog" editable="false"/>
 										<column layout="DateModifiedForEntry" label="Date Modified" sortType="date" blankPossible="false" visibility="dialog" editable="false"/>
-										<column layout="Pronunciation" label="Pronunciations" multipara="true" editable="false" ws="$ws=vernacular"
-											cansortbylength="true" visibility="dialog"/>
-										<column layout="CVPattern" label="CV Patterns" multipara="true" editable="false" ws="$ws=pronunciation"
-											cansortbylength="true" visibility="dialog"/>
-										<column layout="Tone" label="Tones" multipara="true" editable="false" ws="$ws=pronunciation"
-												cansortbylength="true" visibility="dialog"/>
-										<column layout="Location" label="Locations" multipara="true" visibility="dialog" editable="false"/>
-										<column layout="SummaryDefinitionForEntry" label="Summary Definition" transduce="LexEntry.SummaryDefinition" ws="$ws=analysis" visibility="dialog"/>
 										<column layout="ScientificNameForSense" label="Scientific Names" multipara="true" ws="$ws=analysis" transduce="LexSense.ScientificName" visibility="dialog" />
 										<column layout="DiscourseNoteForSense" label="Discourse Notes" multipara="true" ws="$ws=analysis" transduce="LexSense.DiscourseNote" visibility="dialog" />
 										<column layout="AnthropologyNoteForSense" label="Anthropology Notes" multipara="true" ws="$ws=analysis" transduce="LexSense.AnthroNote" visibility="dialog" />
@@ -196,14 +174,6 @@
 										<column layout="SemanticsNoteForSense"  label="Semantics Notes" multipara="true" ws="$ws=analysis" transduce="LexSense.SemanticsNote" visibility="dialog" />
 										<column layout="SociolinguisticsNoteForSense"  label="Sociolinguistics Notes" multipara="true" ws="$ws=analysis" transduce="LexSense.SocioLinguisticsNote" visibility="dialog" />
 										<column layout="SourceForSense"  label="Sources" ws="$ws=analysis" multipara="true" transduce="LexSense.Source" visibility="dialog" />
-										<column layout="UsagesForSense" label="Usages" multipara="true" displayWs="best analysis" displayNameProperty="ShortNameTSS"
-											visibility="dialog" editable="false"/>
-										<column layout="AcademicDomainsForSense" label="Academic Domains" multipara="true"
-												displayNameProperty="ShortNameTSS" displayWs="best analysis" visibility="dialog" editable="false"/>
-										<column layout="AnthropologyCategoriesForSense" label="Anthropology Categories" multipara="true"
-												displayNameProperty="AbbrAndNameTSS" visibility="dialog" editable="false"/>
-										<column layout="StatusForSense" label="Status" multipara="true"
-												editable="false" visibility="dialog"/>
 										<column layout="HomographNumberForEntry" label="Homograph number" visibility="dialog" editable="false" sortType="integer" blankPossible="false" />
 										<column layout="ComponentsBrowse" label="Components" multipara="true" editable="false" visibility="dialog" ws="$ws=vernacular" />
 										<column layout="ComplexEntryTypesBrowse" ws="$ws=best analysis" label="Complex Form Types" multipara="true" editable="false"  visibility="dialog"
