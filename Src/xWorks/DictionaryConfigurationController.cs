@@ -1,10 +1,9 @@
-﻿// Copyright (c) 2014-2016 SIL International
+﻿// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
@@ -1270,24 +1269,43 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (parent.Children == null)
 				parent.Children = new List<ConfigurableDictionaryNode>();
-			var children = parent.Children;
-			// Traverse through the children from end to beginning removing any custom fields that no longer exist.
-			for(var i = children.Count - 1; i >= 0; --i)
+			else
 			{
-				var configNode = children[i];
-				if(!configNode.IsCustomField)
-					continue;
-				if(!customFieldNodes.Contains(configNode))
+				MergeCustomFieldLists(parent.Children, customFieldNodes);
+				// If we have children, through the children and grouped children, removing any custom fields that no longer exist.
+				foreach (var group in parent.Children.Where(child => child.DictionaryNodeOptions is DictionaryNodeGroupingOptions && child.Children != null))
 				{
-					children.Remove(configNode); // field no longer exists
+					// Set the parent on the customFieldNodes (for Contains)
+					foreach(var customField in customFieldNodes)
+						customField.Parent = group;
+					MergeCustomFieldLists(group.Children, customFieldNodes);
+				}
+				// Set the parent back on the customFieldNodes (for when new fields are added)
+				foreach(var customField in customFieldNodes)
+					customField.Parent = parent;
+			}
+
+			// Add any custom fields that didn't already exist in the children (at the end).
+			parent.Children.AddRange(customFieldNodes);
+		}
+
+		private static void MergeCustomFieldLists(List<ConfigurableDictionaryNode> existingNodes, List<ConfigurableDictionaryNode> customFieldNodes)
+		{
+			// Traverse through the existing nodes from end to beginning, removing any custom fields that no longer exist.
+			for (var i = existingNodes.Count - 1; i >= 0; --i)
+			{
+				var configNode = existingNodes[i];
+				if (!configNode.IsCustomField)
+					continue;
+				if (!customFieldNodes.Contains(configNode))
+				{
+					existingNodes.Remove(configNode); // field no longer exists
 				}
 				else
 				{
 					customFieldNodes.Remove(configNode); // field found
 				}
 			}
-			// Then add any custom fields that don't yet exist in the children configurationList to the end.
-			children.AddRange(customFieldNodes);
 		}
 
 		/// <summary>

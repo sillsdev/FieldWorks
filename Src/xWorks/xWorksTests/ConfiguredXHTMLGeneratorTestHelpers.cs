@@ -33,7 +33,9 @@ namespace SIL.FieldWorks.XWorks
 			File.Delete(Path.Combine(xhtmlDir, "ProjectReversalOverrides.css"));
 		}
 
-		/// <summary>Creates a DictionaryConfigurationModel with one Main and two Minor Entry nodes, all with enabled HeadWord children</summary>
+		/// <summary>
+		/// Creates a DictionaryConfigurationModel with one Main and one of each neeeded Minor Entry nodes, all with enabled HeadWord children
+		/// </summary>
 		internal static DictionaryConfigurationModel CreateInterestingConfigurationModel(FdoCache cache, Mediator mediator = null,
 			DictionaryExportServiceTests.ConfigType configType = DictionaryExportServiceTests.ConfigType.Root)
 		{
@@ -47,7 +49,7 @@ namespace SIL.FieldWorks.XWorks
 			var subEntryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode },
-				FieldDescription = "SubentriesOS"
+				FieldDescription = "Subentries"
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -76,7 +78,7 @@ namespace SIL.FieldWorks.XWorks
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode, minorEntryNode, minorSecondNode },
 				FilePath = mediator == null ? null : Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator),
 																	"filename" + DictionaryConfigurationModel.FileExtension),
-				IsRootBased = configType == DictionaryExportServiceTests.ConfigType.Root ? true : false
+				IsRootBased = configType == DictionaryExportServiceTests.ConfigType.Root
 			};
 
 			if (configType != DictionaryExportServiceTests.ConfigType.Root)

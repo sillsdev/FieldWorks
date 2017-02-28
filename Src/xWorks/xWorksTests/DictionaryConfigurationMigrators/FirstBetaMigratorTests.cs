@@ -23,6 +23,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 	public class FirstBetaMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private const string KidField = "kiddo";
+		private const string LexEntry = "LexEntry";
 		private FirstBetaMigrator m_migrator;
 		private SimpleLogger m_logger;
 
@@ -79,7 +80,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				Version = FirstAlphaMigrator.VersionAlpha2,
 				Parts = new List<ConfigurableDictionaryNode>()
 			};
-			FirstBetaMigrator.MigrateFrom83Alpha(m_logger, alphaModel, new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode>() }); // SUT
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode>() }); // SUT
 			Assert.AreEqual(DictionaryConfigurationMigrator.VersionCurrent, alphaModel.Version);
 		}
 
@@ -109,7 +110,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 		{
 			var firstPartNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "Test",
+				FieldDescription = LexEntry,
 				Children = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode { FieldDescription = KidField} }
 			};
 			var alphaModel = new DictionaryConfigurationModel { Version = FirstAlphaMigrator.VersionAlpha3, Parts = new List<ConfigurableDictionaryNode> { firstPartNode } };
@@ -123,13 +124,16 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			var defaultModelWithGroup = new DictionaryConfigurationModel
 			{
 				Version = DictionaryConfigurationMigrator.VersionCurrent,
-				Parts = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode { FieldDescription = "Test", Children = new List<ConfigurableDictionaryNode> { groupNode } } }
+				Parts = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode { FieldDescription = LexEntry, Children = new List<ConfigurableDictionaryNode> { groupNode } }
+				}
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(alphaModel);
 			CssGeneratorTests.PopulateFieldsForTesting(defaultModelWithGroup);
 			// reset the kiddo state to false after using the utility methods (they set IsEnabled to true on all nodes)
 			firstPartNode.Children[0].IsEnabled = false;
-			FirstBetaMigrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModelWithGroup); // SUT
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModelWithGroup); // SUT
 			Assert.IsFalse(alphaModel.Parts[0].Children.Any(child => child.FieldDescription == KidField), "The child should have been moved out of the parent and into the group");
 			Assert.IsTrue(alphaModel.Parts[0].Children.Any(child => child.FieldDescription == group), "The group should have been added");
 			Assert.IsTrue(alphaModel.Parts[0].Children[0].Children[0].FieldDescription == KidField, "The child should have ended up inside the group");
@@ -139,10 +143,10 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 		[Test]
 		public void MigrateFrom83Alpha_GroupPlacedAfterThePreceedingSiblingFromDefault()
 		{
-			var olderBroField = "OlderBro";
+			const string olderBroField = "OlderBro";
 			var firstPartNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "Test",
+				FieldDescription = LexEntry,
 				Children = new List<ConfigurableDictionaryNode>
 				{
 					new ConfigurableDictionaryNode { FieldDescription = olderBroField},
@@ -164,14 +168,14 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				Version = DictionaryConfigurationMigrator.VersionCurrent,
 				Parts = new List<ConfigurableDictionaryNode>
 				{
-					new ConfigurableDictionaryNode { FieldDescription = "Test", Children = new List<ConfigurableDictionaryNode> { olderBrother, groupNode } }
+					new ConfigurableDictionaryNode { FieldDescription = LexEntry, Children = new List<ConfigurableDictionaryNode> { olderBrother, groupNode } }
 				}
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(alphaModel);
 			CssGeneratorTests.PopulateFieldsForTesting(defaultModelWithGroup);
 			// reset the kiddo state to false after using the utility methods (they set IsEnabled to true on all nodes)
 			firstPartNode.Children[0].IsEnabled = false;
-			FirstBetaMigrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModelWithGroup); // SUT
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModelWithGroup); // SUT
 			Assert.IsTrue(alphaModel.Parts[0].Children[1].FieldDescription == group, "The group should have ended up following the olderBroField");
 			Assert.IsTrue(alphaModel.Parts[0].Children[2].FieldDescription == "OtherBrotherBob", "The original order of unrelated fields should be retained");
 		}
@@ -182,7 +186,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			var olderBroField = "OlderBro";
 			var firstPartNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "Test",
+				FieldDescription = LexEntry,
 				Children = new List<ConfigurableDictionaryNode>
 				{
 					new ConfigurableDictionaryNode { FieldDescription = "OtherBrotherBob"},
@@ -203,12 +207,12 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				Version = DictionaryConfigurationMigrator.VersionCurrent,
 				Parts = new List<ConfigurableDictionaryNode>
 				{
-					new ConfigurableDictionaryNode { FieldDescription = "Test", Children = new List<ConfigurableDictionaryNode> { olderBrother, groupNode } }
+					new ConfigurableDictionaryNode { FieldDescription = LexEntry, Children = new List<ConfigurableDictionaryNode> { olderBrother, groupNode } }
 				}
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(alphaModel);
 			CssGeneratorTests.PopulateFieldsForTesting(defaultModelWithGroup);
-			FirstBetaMigrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModelWithGroup); // SUT
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModelWithGroup); // SUT
 			Assert.IsTrue(alphaModel.Parts[0].Children[2].FieldDescription == group,
 				"The group should be tacked on the end when the preceeding sibling couldn't be matched");
 		}
@@ -223,7 +227,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			var cousinNode = new ConfigurableDictionaryNode { FieldDescription = cousinField };
 			var firstPartNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "Test",
+				FieldDescription = LexEntry,
 				Children = new List<ConfigurableDictionaryNode>
 				{
 					new ConfigurableDictionaryNode { FieldDescription = olderBroField, Children = new List<ConfigurableDictionaryNode> { cousinNode } },
@@ -259,12 +263,12 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				Version = DictionaryConfigurationMigrator.VersionCurrent,
 				Parts = new List<ConfigurableDictionaryNode>
 				{
-					new ConfigurableDictionaryNode { FieldDescription = "Test", Children = new List<ConfigurableDictionaryNode> { olderBrother, groupNode } }
+					new ConfigurableDictionaryNode { FieldDescription = LexEntry, Children = new List<ConfigurableDictionaryNode> { olderBrother, groupNode } }
 				}
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(alphaModel);
 			CssGeneratorTests.PopulateFieldsForTesting(defaultModelWithGroup);
-			FirstBetaMigrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModelWithGroup); // SUT
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModelWithGroup); // SUT
 
 			var topGroupNode = alphaModel.Parts[0].Children[1];
 			var olderBroNode = alphaModel.Parts[0].Children[0];
@@ -309,7 +313,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(alphaModel);
 			CssGeneratorTests.PopulateFieldsForTesting(defaultModelWithGroup);
-			FirstBetaMigrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModelWithGroup); // SUT
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModelWithGroup); // SUT
 			Assert.IsTrue(alphaModel.Parts[0].Children[0].FieldDescription == group, "The group node was not properly cloned");
 			Assert.IsTrue(alphaModel.Parts[0].Children[0].Label == label, "The group node was not properly cloned");
 			Assert.IsTrue(alphaModel.Parts[0].Children[0].Before == before, "The group node was not properly cloned");
@@ -325,19 +329,26 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			const string componentsBefore = "Before: ";
 			const string ReferencedComplexForms = "VisibleComplexFormBackRefs";
 			const string OtherRefdComplexForms = "ComplexFormsNotSubentries";
+			const string ComponentReferences = "Component References";
 			var RCFsForThisConfig = isHybrid ? OtherRefdComplexForms : ReferencedComplexForms;
 			var extantChildNode = new ConfigurableDictionaryNode { FieldDescription = KidField, Before = kiddoBefore };
+			// LT-17962 was reopened for disappearing Component References nodes. What had happened was, when we split Main Entry,
+			// Main Entry (NOT Complex) did not have Component References, so the corresponding legacy node was marked as Custom.
+			// If this Custom node is not removed before we reconflate the two Main Entry nodes, it blocks the legitimate Component References node
+			// from being added back into Main Entry (now combined).
+			var customProblemNode = new ConfigurableDictionaryNode { FieldDescription = ComponentReferences, IsCustomField = true };
 			var mainGroupingNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Group",
 				DictionaryNodeOptions = new DictionaryNodeGroupingOptions(),
-				Children = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode { FieldDescription = RCFsForThisConfig } }
+				Children = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode { FieldDescription = RCFsForThisConfig }, customProblemNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				Label = "Main Entries", FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { extantChildNode, mainGroupingNode }
+				Label = "Main Entries", FieldDescription = LexEntry, Children = new List<ConfigurableDictionaryNode> { extantChildNode, mainGroupingNode }
 			};
 			var componentsNode = new ConfigurableDictionaryNode { FieldDescription = "Components", Before = componentsBefore};
+			var hiddenByCustomProblemNode = new ConfigurableDictionaryNode { Label = ComponentReferences, FieldDescription = "ComplexFormEntryRefs" };
 			var extantChildUnderComplexNode = new ConfigurableDictionaryNode { FieldDescription = KidField, Before = "This is not mine: "};
 			var otherUniqueChildNode =  new ConfigurableDictionaryNode { FieldDescription = "ComplexKid" };
 			var complexGroupingNode = new ConfigurableDictionaryNode
@@ -347,12 +358,13 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				Children = new List<ConfigurableDictionaryNode>
 				{
 					new ConfigurableDictionaryNode { FieldDescription = "GroupedChild" },
-					new ConfigurableDictionaryNode { FieldDescription = RCFsForThisConfig }
+					new ConfigurableDictionaryNode { FieldDescription = RCFsForThisConfig },
+					hiddenByCustomProblemNode
 				}
 			};
 			var complexMainEntryNode = new ConfigurableDictionaryNode
 			{
-				Label = "Complex Entries", FieldDescription = "LexEntry",
+				Label = "Complex Entries", FieldDescription = LexEntry,
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, DictionaryNodeListOptions.ListIds.Complex),
 				Children = new List<ConfigurableDictionaryNode> { componentsNode, complexGroupingNode, extantChildUnderComplexNode, otherUniqueChildNode }
 			};
@@ -363,7 +375,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			}
 			var variantEntryNode = new ConfigurableDictionaryNode
 			{
-				Label = "Variants", FieldDescription = "LexEntry",
+				Label = "Variants", FieldDescription = LexEntry,
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, DictionaryNodeListOptions.ListIds.Variant)
 			};
 			var alphaModel = new DictionaryConfigurationModel
@@ -383,12 +395,13 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			// add an extraneous Complex node to ensure it is deleted on migration
 			alphaModel.Parts.Add(complexMainEntryNode.DeepCloneUnderSameParent());
 			// earlier versions of Hybrid mistakenly included all Referenced Complex Forms in their grouping node:
-			complexGroupingNode.Children[1].FieldDescription = ReferencedComplexForms;
+			if (isHybrid)
+				complexGroupingNode.Children[1].FieldDescription = ReferencedComplexForms;
 
 			CssGeneratorTests.PopulateFieldsForTesting(alphaModel);
 			CssGeneratorTests.PopulateFieldsForTesting(betaModel);
 
-			FirstBetaMigrator.MigrateFrom83Alpha(m_logger, alphaModel, betaModel); // SUT
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, betaModel); // SUT
 			Assert.AreEqual(2, alphaModel.Parts.Count, "All root-level Complex Form nodes should have been removed");
 			var mainChildren = alphaModel.Parts[0].Children;
 			Assert.AreEqual(isHybrid ? 5 : 4, mainChildren.Count, "All child nodes of Main Entry (Complex Forms) should have been copied to Main Entry");
@@ -399,26 +412,28 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			Assert.AreEqual("ComplexKid", mainChildren[2].FieldDescription, "The other child node should have been inserted after the existing one");
 			Assert.AreEqual(typeof(DictionaryNodeGroupingOptions), mainChildren[3].DictionaryNodeOptions.GetType(), "The final node should be the group");
 			var groupedChildren = mainChildren[3].Children;
-			Assert.AreEqual(2, groupedChildren.Count, "groupedChildren.Count");
+			Assert.AreEqual(3, groupedChildren.Count, "groupedChildren.Count");
 			Assert.AreEqual("GroupedChild", groupedChildren[0].FieldDescription, "Grouped child should have been copied into existing group");
-			Assert.AreEqual(RCFsForThisConfig, groupedChildren[1].FieldDescription, "Subentries should not be included in *Other* Referenced Complex Forms");
+			Assert.AreEqual(RCFsForThisConfig, groupedChildren[isHybrid ? 2 : 1].FieldDescription, "Subentries should not be included in *Other* Referenced Complex Forms");
+			Assert.AreEqual("ComplexFormEntryRefs", groupedChildren[isHybrid ? 1 : 2].FieldDescription, "The legit node should have supplanted the placeholder Custom node");
+			Assert.False(groupedChildren[isHybrid ? 1 : 2].IsCustomField, "Component References is NOT a Custom field");
 		}
 
 		[Test]
 		public void MigrateFrom83Alpha_HandlesDuplicateVariantsNode()
 		{
-			var mainEntryNode = new ConfigurableDictionaryNode { Label = "Main Entries", FieldDescription = "LexEntry" };
+			var mainEntryNode = new ConfigurableDictionaryNode { Label = "Main Entries", FieldDescription = LexEntry };
 			var complexEntryNode = new ConfigurableDictionaryNode
 			{
 				Label = "Complex Entries",
-				FieldDescription = "LexEntry",
+				FieldDescription = LexEntry,
 				Children = new List<ConfigurableDictionaryNode>(),
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, DictionaryNodeListOptions.ListIds.Complex)
 			};
 			var variantEntryNode = new ConfigurableDictionaryNode
 			{
 				Label = "Variants",
-				FieldDescription = "LexEntry",
+				FieldDescription = LexEntry,
 				Children = new List<ConfigurableDictionaryNode>(),
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, DictionaryNodeListOptions.ListIds.Variant)
 			};
@@ -439,7 +454,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			CssGeneratorTests.PopulateFieldsForTesting(betaModel);
 			CssGeneratorTests.PopulateFieldsForTesting(alphaModel);
 
-			FirstBetaMigrator.MigrateFrom83Alpha(m_logger, alphaModel, betaModel);
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, betaModel);
 			var parts = alphaModel.Parts;
 			Assert.AreEqual(4, parts.Count, "No parts should have been lost in migration");
 			Assert.AreEqual("Main Entries", parts[0].Label);
@@ -475,12 +490,12 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				{
 					new ConfigurableDictionaryNode
 					{
-						Label = "Main Entry", FieldDescription = "LexEntry", CSSClassNameOverride = "entry",
+						Label = "Main Entry", FieldDescription = LexEntry, CSSClassNameOverride = "entry",
 						Children = new List<ConfigurableDictionaryNode> {subEntry}
 					},
 					new ConfigurableDictionaryNode
 					{
-						Label = "Main Entry (Complex Forms)", FieldDescription = "LexEntry", CSSClassNameOverride = "mainentrycomplex"
+						Label = "Main Entry (Complex Forms)", FieldDescription = LexEntry, CSSClassNameOverride = "mainentrycomplex"
 					}
 				}
 			};
@@ -494,9 +509,9 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				{
 					new ConfigurableDictionaryNode
 					{
-						Label = "Main Entry", FieldDescription = "LexEntry", CSSClassNameOverride = "entry"
+						Label = "Main Entry", FieldDescription = LexEntry, CSSClassNameOverride = "entry"
 					},
-					new ConfigurableDictionaryNode { Label = "Main Entry (Complex Forms)", FieldDescription = "LexEntry", CSSClassNameOverride = "mainentrycomplex" }
+					new ConfigurableDictionaryNode { Label = "Main Entry (Complex Forms)", FieldDescription = LexEntry, CSSClassNameOverride = "mainentrycomplex" }
 				}
 			};
 			var stemDefault = m_migrator.LoadBetaDefaultForAlphaConfig(stemModel); // SUT
@@ -514,7 +529,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			};
 			var alphaMainEntryNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LexEntry",
+				FieldDescription = LexEntry,
 				Children = new List<ConfigurableDictionaryNode> { alphaSensesNode }
 			};
 			var alphaModel = new DictionaryConfigurationModel { Version = FirstAlphaMigrator.VersionAlpha3, Parts = new List<ConfigurableDictionaryNode> { alphaMainEntryNode } };
@@ -568,7 +583,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LexEntry",
+				FieldDescription = LexEntry,
 				Children = new List<ConfigurableDictionaryNode> { sensesNode }
 			};
 
@@ -577,7 +592,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			CssGeneratorTests.PopulateFieldsForTesting(alphaModel);
 			CssGeneratorTests.PopulateFieldsForTesting(defaultModel);
 			// SUT
-			FirstBetaMigrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModel);
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModel);
 
 			var migratedExtendedNoteNode = alphaModel.Parts[0].Children[0].Children[0];
 
@@ -614,7 +629,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			};
 			var alphaMainEntryNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LexEntry",
+				FieldDescription = LexEntry,
 				Children = new List<ConfigurableDictionaryNode> { alphaSensesNode }
 			};
 			var alphaModel = new DictionaryConfigurationModel { Version = FirstAlphaMigrator.VersionAlpha3, Parts = new List<ConfigurableDictionaryNode> { alphaMainEntryNode } };
@@ -640,7 +655,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LexEntry",
+				FieldDescription = LexEntry,
 				Children = new List<ConfigurableDictionaryNode> { sensesNode }
 			};
 
@@ -649,7 +664,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			CssGeneratorTests.PopulateFieldsForTesting(alphaModel);
 			CssGeneratorTests.PopulateFieldsForTesting(defaultModel);
 			// SUT
-			FirstBetaMigrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModel);
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModel);
 
 			var migratedSenseVariantNode = alphaModel.Parts[0].Children[0].Children[0];
 			Assert.True(migratedSenseVariantNode.DictionaryNodeOptions != null, "ListTypeOptions not migrated");
@@ -673,7 +688,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			};
 			var alphaMainEntryNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LexEntry",
+				FieldDescription = LexEntry,
 				Children = new List<ConfigurableDictionaryNode> { alphaSensesNode }
 			};
 			var alphaModel = new DictionaryConfigurationModel { Version = FirstAlphaMigrator.VersionAlpha3, Parts = new List<ConfigurableDictionaryNode> { alphaMainEntryNode } };
@@ -693,7 +708,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LexEntry",
+				FieldDescription = LexEntry,
 				Children = new List<ConfigurableDictionaryNode> { sensesNode }
 			};
 
@@ -702,7 +717,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			CssGeneratorTests.PopulateFieldsForTesting(alphaModel);
 			CssGeneratorTests.PopulateFieldsForTesting(defaultModel);
 			// SUT
-			FirstBetaMigrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModel);
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModel);
 
 			var migratedNoteDictionaryOptionsNode = alphaModel.Parts[0].Children[0].Children[0];
 			Assert.True(migratedNoteDictionaryOptionsNode.DictionaryNodeOptions != null, "DictionaryNodeOptions should not be null");
@@ -748,7 +763,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Label = "Main Entry",
-				FieldDescription = "LexEntry",
+				FieldDescription = LexEntry,
 				Children = new List<ConfigurableDictionaryNode> { etymologyNode }
 			};
 			var alphaModel = new DictionaryConfigurationModel
@@ -757,7 +772,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
 			var rootModel = m_migrator.LoadBetaDefaultForAlphaConfig(alphaModel);
-			FirstBetaMigrator.MigrateFrom83Alpha(m_logger, alphaModel, rootModel);
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, rootModel);
 			Assert.AreEqual("EtymologyOS", etymologyNode.FieldDescription, "Should have changed to a sequence.");
 			Assert.AreEqual("etymologies", etymologyNode.CSSClassNameOverride, "Should have changed CSS override");
 			Assert.AreEqual("(", etymologyNode.Before, "Should have set Before to '('.");
@@ -845,7 +860,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Label = "Main Entry",
-				FieldDescription = "LexEntry",
+				FieldDescription = LexEntry,
 				Children = new List<ConfigurableDictionaryNode> { etymologyNode }
 			};
 			var alphaModel = new DictionaryConfigurationModel
@@ -854,7 +869,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
 			var rootModel = m_migrator.LoadBetaDefaultForAlphaConfig(alphaModel);
-			FirstBetaMigrator.MigrateFrom83Alpha(m_logger, alphaModel, rootModel);
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, rootModel);
 			var etymChildren = etymologyNode.Children;
 			var configNode = etymChildren.Find(node => node.Label == "Source Form");
 			Assert.That(configNode.IsCustomField, Is.False, "Language node should not be custom field");
@@ -886,7 +901,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Label = "Main Entry",
-				FieldDescription = "LexEntry",
+				FieldDescription = LexEntry,
 				Children = new List<ConfigurableDictionaryNode> { etymologyNode, variantNode }
 			};
 			var alphaModel = new DictionaryConfigurationModel
@@ -895,7 +910,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
 			var rootModel = m_migrator.LoadBetaDefaultForAlphaConfig(alphaModel);
-			Assert.DoesNotThrow(() => FirstBetaMigrator.MigrateFrom83Alpha(m_logger, alphaModel, rootModel));
+			Assert.DoesNotThrow(() => m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, rootModel));
 		}
 
 		private static void TestForWritingSystemOptionsType(ConfigurableDictionaryNode configNode,
@@ -963,7 +978,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
 			var rootModel = m_migrator.LoadBetaDefaultForAlphaConfig(alphaModel);
-			FirstBetaMigrator.MigrateFrom83Alpha(m_logger, alphaModel, rootModel);
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, rootModel);
 			Assert.AreEqual("EtymologyOS", etymologyNode.SubField, "Should have changed to a sequence.");
 			Assert.AreEqual("Entry", etymologyNode.FieldDescription, "Should have changed 'Owner' field for reversal to 'Entry'");
 			Assert.AreEqual("etymologies", etymologyNode.CSSClassNameOverride, "Should have changed CSS override");
