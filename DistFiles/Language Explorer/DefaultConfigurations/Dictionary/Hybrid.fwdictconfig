@@ -178,7 +178,7 @@
 		<!-- Two spaces after Gram Info to separate this "group" from the Definition "group" -->
 	  <ConfigurationItem name="Grammatical Info." isEnabled="true" style="Dictionary-Contrasting" before="" between="" after="  " field="MorphoSyntaxAnalysisRA" cssClassNameOverride="morphosyntaxanalysis">
 		<!-- Internally, no space before or after any of the (normally mutually exclusive) initial items, and a before space (no after) for all of the other items. -->
-		<ConfigurationItem name="Category Info." isEnabled="true" before="" between=" " after="" style="Classified-POS" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
+		<ConfigurationItem name="Category Info." isEnabled="true" before="" between=" " after="" style="Dictionary-POS" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true" />
 		  </WritingSystemOptions>
@@ -586,7 +586,15 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Other Referenced Complex Forms" isEnabled="false" before="" between=", " after=" " field="ComplexFormsNotSubentries">
-		<!-- TODO pH 2017.01: options? (throughout file; also in Reversals) -->
+		<ComplexFormOptions list="complex" displayEachComplexFormInParagraph="false">
+		  <Option isEnabled="true" id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
+		  <Option isEnabled="true" id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
+		  <Option isEnabled="true" id="73266a3a-48e8-4bd7-8c84-91c730340b7d"/>
+		  <Option isEnabled="true" id="98c273c4-f723-4fb0-80df-eede2204dfca"/>
+		  <Option isEnabled="true" id="b2276dec-b1a6-4d82-b121-fd114c009c59"/>
+		  <Option isEnabled="true" id="35cee792-74c8-444e-a9b7-ed0461d4d3b7"/>
+		  <Option isEnabled="true" id="9466d126-246e-400b-8bba-0703e09bc567"/>
+		</ComplexFormOptions>
 		<ConfigurationItem name="Complex Form Type" isEnabled="true" between=", " after="" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 		  <ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -846,6 +854,15 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Component References" isEnabled="true" hideCustomFields="true" before="(" between=", " after=") " field="ComplexFormEntryRefs">
+		<ComplexFormOptions list="complex" displayEachComplexFormInParagraph="false">
+		  <Option isEnabled="true" id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
+		  <Option isEnabled="true" id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
+		  <Option isEnabled="true" id="73266a3a-48e8-4bd7-8c84-91c730340b7d"/>
+		  <Option isEnabled="true" id="98c273c4-f723-4fb0-80df-eede2204dfca"/>
+		  <Option isEnabled="true" id="b2276dec-b1a6-4d82-b121-fd114c009c59"/>
+		  <Option isEnabled="true" id="35cee792-74c8-444e-a9b7-ed0461d4d3b7"/>
+		  <Option isEnabled="true" id="9466d126-246e-400b-8bba-0703e09bc567"/>
+		</ComplexFormOptions>
 		<ConfigurationItem name="Complex Form Type" isEnabled="true" between=", " after="" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 		  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" style="Dictionary-CrossReferences" between=" " field="ReverseAbbr">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -898,7 +915,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 		<ConfigurationItem name="Grammatical Info." isEnabled="false" style="Dictionary-Contrasting" before="" between=", " after=" " field="MorphoSyntaxAnalyses">
-		  <ConfigurationItem name="Category Info." isEnabled="true" before="" between=" " after="" style="Classified-POS" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
+		  <ConfigurationItem name="Category Info." isEnabled="true" before="" between=" " after="" style="Dictionary-POS" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true" />
 			</WritingSystemOptions>
@@ -1580,6 +1597,15 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Referenced Complex Forms" isEnabled="false" before="" between=", " after=" " field="VisibleComplexFormBackRefs">
+		<ComplexFormOptions list="complex" displayEachComplexFormInParagraph="false">
+		  <Option isEnabled="true" id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
+		  <Option isEnabled="true" id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
+		  <Option isEnabled="true" id="73266a3a-48e8-4bd7-8c84-91c730340b7d"/>
+		  <Option isEnabled="true" id="98c273c4-f723-4fb0-80df-eede2204dfca"/>
+		  <Option isEnabled="true" id="b2276dec-b1a6-4d82-b121-fd114c009c59"/>
+		  <Option isEnabled="true" id="35cee792-74c8-444e-a9b7-ed0461d4d3b7"/>
+		  <Option isEnabled="true" id="9466d126-246e-400b-8bba-0703e09bc567"/>
+		</ComplexFormOptions>
 		<ConfigurationItem name="Complex Form Type" isEnabled="true" between=", " after="" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 		  <ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1872,6 +1898,15 @@
 	<ConfigurationItem name="Date Created" isEnabled="false" before="created on: " after=" " field="DateCreated" />
 	<ConfigurationItem name="Date Modified" isEnabled="false" before="modified on: " after=" " field="DateModified" />
 	<ConfigurationItem name="Referenced Complex Forms" isEnabled="false" before=" " between=", " after=" " field="VisibleComplexFormBackRefs">
+		<ComplexFormOptions list="complex" displayEachComplexFormInParagraph="false">
+		  <Option isEnabled="true" id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
+		  <Option isEnabled="true" id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
+		  <Option isEnabled="true" id="73266a3a-48e8-4bd7-8c84-91c730340b7d"/>
+		  <Option isEnabled="true" id="98c273c4-f723-4fb0-80df-eede2204dfca"/>
+		  <Option isEnabled="true" id="b2276dec-b1a6-4d82-b121-fd114c009c59"/>
+		  <Option isEnabled="true" id="35cee792-74c8-444e-a9b7-ed0461d4d3b7"/>
+		  <Option isEnabled="true" id="9466d126-246e-400b-8bba-0703e09bc567"/>
+		</ComplexFormOptions>
 	  <ConfigurationItem name="Complex Form Type" isEnabled="true" between=", " after="" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 		<ConfigurationItem name="Abbreviation" isEnabled="true" between=" " field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -2318,6 +2353,15 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Other Referenced Complex Forms" between=", " after=" " isEnabled="false" field="ComplexFormsNotSubentries">
+		<ComplexFormOptions list="complex" displayEachComplexFormInParagraph="false">
+		  <Option isEnabled="true" id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
+		  <Option isEnabled="true" id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
+		  <Option isEnabled="true" id="73266a3a-48e8-4bd7-8c84-91c730340b7d"/>
+		  <Option isEnabled="true" id="98c273c4-f723-4fb0-80df-eede2204dfca"/>
+		  <Option isEnabled="true" id="b2276dec-b1a6-4d82-b121-fd114c009c59"/>
+		  <Option isEnabled="true" id="35cee792-74c8-444e-a9b7-ed0461d4d3b7"/>
+		  <Option isEnabled="true" id="9466d126-246e-400b-8bba-0703e09bc567"/>
+		</ComplexFormOptions>
 		<ConfigurationItem name="Complex Form Type" between=", " after="" isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 		  <ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -2901,6 +2945,15 @@
 		  </ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Referenced Complex Forms" between=", " after=" " isEnabled="false" field="VisibleComplexFormBackRefs">
+		<ComplexFormOptions list="complex" displayEachComplexFormInParagraph="false">
+		  <Option isEnabled="true" id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
+		  <Option isEnabled="true" id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
+		  <Option isEnabled="true" id="73266a3a-48e8-4bd7-8c84-91c730340b7d"/>
+		  <Option isEnabled="true" id="98c273c4-f723-4fb0-80df-eede2204dfca"/>
+		  <Option isEnabled="true" id="b2276dec-b1a6-4d82-b121-fd114c009c59"/>
+		  <Option isEnabled="true" id="35cee792-74c8-444e-a9b7-ed0461d4d3b7"/>
+		  <Option isEnabled="true" id="9466d126-246e-400b-8bba-0703e09bc567"/>
+		</ComplexFormOptions>
 		  <ConfigurationItem name="Complex Form Type" between=", " after="" isEnabled="true" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 			<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 			  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
