@@ -328,7 +328,8 @@ namespace SIL.FieldWorks.XWorks
 				customFieldStatus = xWorksStrings.kstidCustomFieldsWillBeAdded + Environment.NewLine + string.Join(", ", _customFieldsToImport);
 			}
 
-			_view.explanationLabel.Text = string.Format("{0}{1}{2}{1}{3}", mainStatus, Environment.NewLine, publicationStatus, customFieldStatus);
+			_view.explanationLabel.Text = string.Format("{0}{1}{2}{1}{3}", mainStatus, Environment.NewLine + Environment.NewLine, publicationStatus, customFieldStatus);
+			_view.Refresh();
 		}
 
 		/// <summary>

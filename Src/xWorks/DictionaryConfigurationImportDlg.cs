@@ -4,26 +4,29 @@
 
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
 	public partial class DictionaryConfigurationImportDlg : Form
 	{
-		public DictionaryConfigurationImportDlg()
+		private readonly IHelpTopicProvider m_helpTopicProvider;
+		public DictionaryConfigurationImportDlg(IHelpTopicProvider helpProvider)
 		{
 			InitializeComponent();
+			m_helpTopicProvider = helpProvider;
 		}
 
 		private void cancelButton_Click(object sender, EventArgs e)
 		{
 			Close();
+		}
+
+		private void helpButton_Click(object sender, EventArgs e)
+		{
+			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpDictConfigManager");
 		}
 	}
 }

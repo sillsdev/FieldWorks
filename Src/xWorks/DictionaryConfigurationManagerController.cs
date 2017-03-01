@@ -608,7 +608,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			var importController = new DictionaryConfigurationImportController(_cache, _projectConfigDir, _configurations );
-			using (var importDialog = new DictionaryConfigurationImportDlg())
+			using (var importDialog = new DictionaryConfigurationImportDlg(_mediator.HelpTopicProvider))
 			{
 				importController.DisplayView(importDialog);
 			}

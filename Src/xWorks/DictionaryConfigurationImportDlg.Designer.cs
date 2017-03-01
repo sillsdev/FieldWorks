@@ -36,8 +36,6 @@ namespace SIL.FieldWorks.XWorks
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DictionaryConfigurationImportDlg));
 			this.mainTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.explanationLabel = new System.Windows.Forms.TextBox();
-			this.importButton = new System.Windows.Forms.Button();
-			this.cancelButton = new System.Windows.Forms.Button();
 			this.importPathTextBox = new System.Windows.Forms.TextBox();
 			this.browseButton = new System.Windows.Forms.Button();
 			this.overwriteGroupBox = new System.Windows.Forms.GroupBox();
@@ -45,45 +43,34 @@ namespace SIL.FieldWorks.XWorks
 			this.doOverwriteRadioOption = new System.Windows.Forms.RadioButton();
 			this.notOverwriteRadioOption = new System.Windows.Forms.RadioButton();
 			this.fileImportLabel = new System.Windows.Forms.TextBox();
+			this.cancelButton = new System.Windows.Forms.Button();
+			this.importButton = new System.Windows.Forms.Button();
+			this.buttonLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
+			this.helpButton = new System.Windows.Forms.Button();
 			this.mainTableLayoutPanel.SuspendLayout();
 			this.overwriteGroupBox.SuspendLayout();
 			this.overwriteOptionFlowLayoutPanel.SuspendLayout();
+			this.buttonLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// mainTableLayoutPanel
 			// 
 			resources.ApplyResources(this.mainTableLayoutPanel, "mainTableLayoutPanel");
-			this.mainTableLayoutPanel.Controls.Add(this.explanationLabel, 0, 1);
-			this.mainTableLayoutPanel.Controls.Add(this.importButton, 2, 3);
-			this.mainTableLayoutPanel.Controls.Add(this.cancelButton, 1, 3);
+			this.mainTableLayoutPanel.Controls.Add(this.explanationLabel, 0, 2);
 			this.mainTableLayoutPanel.Controls.Add(this.importPathTextBox, 1, 0);
 			this.mainTableLayoutPanel.Controls.Add(this.browseButton, 2, 0);
 			this.mainTableLayoutPanel.Controls.Add(this.overwriteGroupBox, 1, 1);
 			this.mainTableLayoutPanel.Controls.Add(this.fileImportLabel, 0, 0);
+			this.mainTableLayoutPanel.Controls.Add(this.buttonLayoutPanel, 0, 4);
 			this.mainTableLayoutPanel.Name = "mainTableLayoutPanel";
 			// 
 			// explanationLabel
 			// 
+			resources.ApplyResources(this.explanationLabel, "explanationLabel");
 			this.explanationLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.mainTableLayoutPanel.SetColumnSpan(this.explanationLabel, 3);
-			resources.ApplyResources(this.explanationLabel, "explanationLabel");
 			this.explanationLabel.Name = "explanationLabel";
 			this.explanationLabel.ReadOnly = true;
-			// 
-			// importButton
-			// 
-			resources.ApplyResources(this.importButton, "importButton");
-			this.importButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.importButton.Name = "importButton";
-			this.importButton.UseVisualStyleBackColor = true;
-			// 
-			// cancelButton
-			// 
-			resources.ApplyResources(this.cancelButton, "cancelButton");
-			this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.cancelButton.Name = "cancelButton";
-			this.cancelButton.UseVisualStyleBackColor = true;
-			this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
 			// 
 			// importPathTextBox
 			// 
@@ -132,6 +119,37 @@ namespace SIL.FieldWorks.XWorks
 			this.fileImportLabel.Name = "fileImportLabel";
 			this.fileImportLabel.ReadOnly = true;
 			// 
+			// cancelButton
+			// 
+			resources.ApplyResources(this.cancelButton, "cancelButton");
+			this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.cancelButton.Name = "cancelButton";
+			this.cancelButton.UseVisualStyleBackColor = true;
+			this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+			// 
+			// importButton
+			// 
+			resources.ApplyResources(this.importButton, "importButton");
+			this.importButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+			this.importButton.Name = "importButton";
+			this.importButton.UseVisualStyleBackColor = true;
+			// 
+			// buttonLayoutPanel
+			// 
+			resources.ApplyResources(this.buttonLayoutPanel, "buttonLayoutPanel");
+			this.mainTableLayoutPanel.SetColumnSpan(this.buttonLayoutPanel, 3);
+			this.buttonLayoutPanel.Controls.Add(this.helpButton);
+			this.buttonLayoutPanel.Controls.Add(this.cancelButton);
+			this.buttonLayoutPanel.Controls.Add(this.importButton);
+			this.buttonLayoutPanel.Name = "buttonLayoutPanel";
+			// 
+			// helpButton
+			// 
+			resources.ApplyResources(this.helpButton, "helpButton");
+			this.helpButton.Name = "helpButton";
+			this.helpButton.UseVisualStyleBackColor = true;
+			this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
+			// 
 			// DictionaryConfigurationImportDlg
 			// 
 			resources.ApplyResources(this, "$this");
@@ -145,6 +163,8 @@ namespace SIL.FieldWorks.XWorks
 			this.overwriteGroupBox.PerformLayout();
 			this.overwriteOptionFlowLayoutPanel.ResumeLayout(false);
 			this.overwriteOptionFlowLayoutPanel.PerformLayout();
+			this.buttonLayoutPanel.ResumeLayout(false);
+			this.buttonLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -153,15 +173,17 @@ namespace SIL.FieldWorks.XWorks
 		#endregion
 
 		private System.Windows.Forms.TableLayoutPanel mainTableLayoutPanel;
-		private System.Windows.Forms.Button cancelButton;
 		internal System.Windows.Forms.TextBox explanationLabel;
 		internal System.Windows.Forms.TextBox fileImportLabel;
 		internal System.Windows.Forms.TextBox importPathTextBox;
 		internal System.Windows.Forms.Button browseButton;
-		internal System.Windows.Forms.Button importButton;
 		private System.Windows.Forms.FlowLayoutPanel overwriteOptionFlowLayoutPanel;
 		internal System.Windows.Forms.RadioButton doOverwriteRadioOption;
 		internal System.Windows.Forms.RadioButton notOverwriteRadioOption;
 		internal System.Windows.Forms.GroupBox overwriteGroupBox;
+		private System.Windows.Forms.FlowLayoutPanel buttonLayoutPanel;
+		private System.Windows.Forms.Button cancelButton;
+		internal System.Windows.Forms.Button importButton;
+		private System.Windows.Forms.Button helpButton;
 	}
 }
