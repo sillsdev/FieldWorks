@@ -24,6 +24,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 	{
 		private const string KidField = "kiddo";
 		private const string LexEntry = "LexEntry";
+		private const string ReferencedComplexForms = "VisibleComplexFormBackRefs";
+		private const string OtherRefdComplexForms = "ComplexFormsNotSubentries";
 		private FirstBetaMigrator m_migrator;
 		private SimpleLogger m_logger;
 
@@ -327,10 +329,9 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 		{
 			const string kiddoBefore = "This is mine: ";
 			const string componentsBefore = "Before: ";
-			const string ReferencedComplexForms = "VisibleComplexFormBackRefs";
-			const string OtherRefdComplexForms = "ComplexFormsNotSubentries";
 			const string ComponentReferences = "Component References";
 			var RCFsForThisConfig = isHybrid ? OtherRefdComplexForms : ReferencedComplexForms;
+			var RCFLabelForThisConfig = isHybrid ? "Other Referenced Complex Forms" : "Referenced Complex Forms";
 			var extantChildNode = new ConfigurableDictionaryNode { FieldDescription = KidField, Before = kiddoBefore };
 			// LT-17962 was reopened for disappearing Component References nodes. What had happened was, when we split Main Entry,
 			// Main Entry (NOT Complex) did not have Component References, so the corresponding legacy node was marked as Custom.
@@ -341,7 +342,11 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			{
 				FieldDescription = "Group",
 				DictionaryNodeOptions = new DictionaryNodeGroupingOptions(),
-				Children = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode { FieldDescription = RCFsForThisConfig }, customProblemNode }
+				Children = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode { Label = RCFLabelForThisConfig, FieldDescription = RCFsForThisConfig },
+					customProblemNode
+				}
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -358,7 +363,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				Children = new List<ConfigurableDictionaryNode>
 				{
 					new ConfigurableDictionaryNode { FieldDescription = "GroupedChild" },
-					new ConfigurableDictionaryNode { FieldDescription = RCFsForThisConfig },
+					new ConfigurableDictionaryNode { Label = RCFLabelForThisConfig, FieldDescription = RCFsForThisConfig },
 					hiddenByCustomProblemNode
 				}
 			};
@@ -414,8 +419,8 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			var groupedChildren = mainChildren[3].Children;
 			Assert.AreEqual(3, groupedChildren.Count, "groupedChildren.Count");
 			Assert.AreEqual("GroupedChild", groupedChildren[0].FieldDescription, "Grouped child should have been copied into existing group");
-			Assert.AreEqual(RCFsForThisConfig, groupedChildren[isHybrid ? 2 : 1].FieldDescription, "Subentries should not be included in *Other* Referenced Complex Forms");
-			Assert.AreEqual("ComplexFormEntryRefs", groupedChildren[isHybrid ? 1 : 2].FieldDescription, "The legit node should have supplanted the placeholder Custom node");
+			Assert.AreEqual(RCFsForThisConfig, groupedChildren[1].FieldDescription, "Subentries should not be included in *Other* Referenced Complex Forms");
+			Assert.AreEqual("ComplexFormEntryRefs", groupedChildren[2].FieldDescription, "The legit node should have supplanted the placeholder Custom node");
 			Assert.False(groupedChildren[isHybrid ? 1 : 2].IsCustomField, "Component References is NOT a Custom field");
 		}
 
@@ -677,7 +682,6 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			{
 				FieldDescription = "AnthroNote",
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions(),
-				Children = new List<ConfigurableDictionaryNode>(),
 				IsEnabled = true
 			};
 			var alphaSensesNode = new ConfigurableDictionaryNode
@@ -697,7 +701,6 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			{
 				FieldDescription = "AnthroNote",
 				DictionaryNodeOptions = new DictionaryNodeWritingSystemAndParaOptions(),
-				Children = new List<ConfigurableDictionaryNode>(),
 				IsEnabled = true
 			};
 			var sensesNode = new ConfigurableDictionaryNode
@@ -977,13 +980,154 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				FilePath = string.Empty,
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
-			var rootModel = m_migrator.LoadBetaDefaultForAlphaConfig(alphaModel);
-			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, rootModel);
+			var betaModel = m_migrator.LoadBetaDefaultForAlphaConfig(alphaModel);
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, betaModel);
 			Assert.AreEqual("EtymologyOS", etymologyNode.SubField, "Should have changed to a sequence.");
 			Assert.AreEqual("Entry", etymologyNode.FieldDescription, "Should have changed 'Owner' field for reversal to 'Entry'");
 			Assert.AreEqual("etymologies", etymologyNode.CSSClassNameOverride, "Should have changed CSS override");
 			Assert.AreEqual(7, etymologyNode.Children.Count, "There should be 7 nodes after the conversion.");
 			Assert.IsNull(etymologyNode.DictionaryNodeOptions, "Improper options added to etymology sequence node.");
+		}
+
+		/// <summary>Referenced Complex Forms that are siblings of Subentries should become Other Referenced Complex Forms</summary>
+		[Test]
+		public void MigrateFrom83Alpha_SelectsProperReferencedComplexForms()
+		{
+			var userModel = new DictionaryConfigurationModel
+			{
+				Version = FirstAlphaMigrator.VersionAlpha3 + 1, // skip the adding of new grouping nodes; that's not the SUT
+				Parts = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode
+					{
+						Label = "Main Entry", FieldDescription = LexEntry,
+						Children = new List<ConfigurableDictionaryNode>
+						{
+							new ConfigurableDictionaryNode { Label = "Referenced Complex Forms", FieldDescription = ReferencedComplexForms },
+							new ConfigurableDictionaryNode { FieldDescription = "Subentries" }
+						}
+					},
+					new ConfigurableDictionaryNode
+					{
+						Label = "Minor Entry", FieldDescription = LexEntry,
+						Children = new List<ConfigurableDictionaryNode>
+						{
+							new ConfigurableDictionaryNode { Label = "Referenced Complex Forms", FieldDescription = ReferencedComplexForms }
+						}
+					}
+				}
+			};
+			var betaModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode { Label = "Main Entry", FieldDescription = LexEntry },
+					new ConfigurableDictionaryNode { Label = "Minor Entry", FieldDescription = LexEntry }
+				}
+			};
+			m_migrator.MigrateFrom83Alpha(m_logger, userModel, betaModel); // SUT
+			var mainEntryChildren = userModel.Parts[0].Children;
+			Assert.AreEqual(2, mainEntryChildren.Count, "no children should have been created or deleted");
+			Assert.AreEqual(OtherRefdComplexForms, mainEntryChildren[0].FieldDescription, "should have changed");
+			Assert.AreEqual("Other Referenced Complex Forms", mainEntryChildren[0].Label, "should have changed");
+			Assert.AreEqual("Subentries", mainEntryChildren[1].FieldDescription, "should not have changed");
+			var minorEntryChildren = userModel.Parts[1].Children;
+			Assert.AreEqual(1, minorEntryChildren.Count, "no children should have been added or deleted");
+			Assert.AreEqual(ReferencedComplexForms, minorEntryChildren[0].FieldDescription, "should not have changed");
+			Assert.AreEqual("Referenced Complex Forms", minorEntryChildren[0].Label, "should not have changed");
+		}
+
+		/// <summary>Apart from Category Info, all children of Gram. Info under (Other) Referenced Complex Forms should be removed</summary>
+		[Test]
+		public void MigrateFrom83Alpha_RemovesGramInfoUnderRefdComplexForms()
+		{
+			var gramInfoChildren = new List<ConfigurableDictionaryNode> {
+				new ConfigurableDictionaryNode { FieldDescription = "MLPartOfSpeech" },
+				new ConfigurableDictionaryNode { FieldDescription = "Slots" },
+				new ConfigurableDictionaryNode { FieldDescription = "MorphTypes" },
+				new ConfigurableDictionaryNode { FieldDescription = "MLInflectionClass" },
+				new ConfigurableDictionaryNode { FieldDescription = "FeaturesTSS" },
+				new ConfigurableDictionaryNode { FieldDescription = "ExceptionFeaturesTSS" },
+				new ConfigurableDictionaryNode { FieldDescription = "InterlinearNameTSS" },
+				new ConfigurableDictionaryNode { FieldDescription = "InterlinearAbbrTSS" }
+			};
+			var originalKidCount = gramInfoChildren.Count;
+			var userModel = new DictionaryConfigurationModel
+			{
+				Version = FirstAlphaMigrator.VersionAlpha3 + 1, // skip the adding of new grouping nodes; that's not the SUT
+				Parts = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode
+					{
+						Label = "Main Entry", FieldDescription = LexEntry,
+						Children = new List<ConfigurableDictionaryNode>
+						{
+							new ConfigurableDictionaryNode
+							{
+								FieldDescription = ReferencedComplexForms,
+								Children = new List<ConfigurableDictionaryNode>
+								{
+									new ConfigurableDictionaryNode
+									{
+										FieldDescription = "MorphoSyntaxAnalyses",
+										Children = new List<ConfigurableDictionaryNode>(gramInfoChildren)
+									}
+								}
+							},
+							new ConfigurableDictionaryNode
+							{
+								FieldDescription = "SensesOS",
+								Children = new List<ConfigurableDictionaryNode>
+								{
+									new ConfigurableDictionaryNode
+									{
+										FieldDescription = "MorphoSyntaxAnalysisRA",
+										Children = new List<ConfigurableDictionaryNode>(gramInfoChildren)
+									}
+								}
+							}
+						}
+					}
+				}
+			};
+			// create a Beta model with the appropriate children removed from the appropriate node
+			var betaModel = userModel.DeepClone();
+			betaModel.Parts[0].Children[0].Children[0].Children.RemoveRange(1, originalKidCount - 1);
+
+			m_migrator.MigrateFrom83Alpha(m_logger, userModel, betaModel); // SUT
+			var remainingChildren = userModel.Parts[0].Children[0].Children[0].Children;
+			Assert.AreEqual(1, remainingChildren.Count, "Only one child should remain under GramInfo under (O)RCF's");
+			Assert.AreEqual("MLPartOfSpeech", remainingChildren[0].FieldDescription); // Label in production is Category Info.
+			remainingChildren = userModel.Parts[0].Children[1].Children[0].Children;
+			Assert.AreEqual(originalKidCount, remainingChildren.Count, "No children should have been removed from GramInfo under Senses");
+		}
+
+		[Test]
+		public void MigrateFrom83Alpha_AddsOptionsToRefdComplexForms()
+		{
+			var userModel = new DictionaryConfigurationModel
+			{
+				Version = FirstAlphaMigrator.VersionAlpha3 + 1, // skip the adding of new grouping nodes; that's not the SUT
+				Parts = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode
+					{
+						Label = "Main Entry", FieldDescription = LexEntry,
+						Children = new List<ConfigurableDictionaryNode>
+						{
+							new ConfigurableDictionaryNode { FieldDescription = ReferencedComplexForms }
+						}
+					}
+				}
+			};
+			// create a Beta model with Options set for the ReferencedComplexForms node
+			var betaModel = userModel.DeepClone();
+			betaModel.Parts[0].Children[0].DictionaryNodeOptions = new DictionaryNodeListOptions { ListId = DictionaryNodeListOptions.ListIds.Complex };
+
+			m_migrator.MigrateFrom83Alpha(m_logger, userModel, betaModel); // SUT
+			var migratedOptions = userModel.Parts[0].Children[0].DictionaryNodeOptions as DictionaryNodeListOptions;
+			Assert.NotNull(migratedOptions, "Referenced Complex Forms should have gotten List Options");
+			Assert.AreEqual(DictionaryNodeListOptions.ListIds.Complex, migratedOptions.ListId);
 		}
 	}
 }
