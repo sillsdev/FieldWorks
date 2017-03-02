@@ -342,6 +342,37 @@
 			<Option id="all analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
+		  <ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")"  field="PrimaryEntryRefs">
+			<ConfigurationItem name="Type" isEnabled="true" between="," after="" field="EntryTypes" cssClassNameOverride="entrytypes">
+			  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				  <Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+			  </ConfigurationItem>
+			  <ConfigurationItem name="Reverse Name" isEnabled="false" between=" " field="ReverseName">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				  <Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+			  </ConfigurationItem>
+			</ConfigurationItem>
+			<ConfigurationItem name="Primary Entry(s)" isEnabled="true" before=" " between=", "  field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
+			  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after="" field="HeadWordRef" cssClassNameOverride="headword">
+				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+				  <Option id="vernacular" isEnabled="true" />
+				</WritingSystemOptions>
+			  </ConfigurationItem>
+			  <ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="false" between=" " before=" " field="GlossOrSummary">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				  <Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+			  </ConfigurationItem>
+			</ConfigurationItem>
+			<ConfigurationItem name="Comment" isEnabled="false" between=" " before=" " field="Summary">
+			  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				<Option id="analysis" isEnabled="true" />
+			  </WritingSystemOptions>
+			</ConfigurationItem>
+		  </ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Comment" before=" " between=" " isEnabled="true" field="Summary">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1160,7 +1191,7 @@
 			  </WritingSystemOptions>
 			</ConfigurationItem>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Primary Entry(s)" isEnabled="true" between="," after="" field="ConfigReferencedEntries" cssClassNameOverride="headword">
+		  <ConfigurationItem name="Primary Entry(s)" isEnabled="true" before=" " between=", "  field="ConfigReferencedEntries" cssClassNameOverride="headword">
 		  	<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after="" field="HeadWordRef" cssClassNameOverride="headword">
 			  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 				<Option id="vernacular" isEnabled="true" />
@@ -1226,6 +1257,37 @@
 			<Option id="all analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
+		  <ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")"  field="PrimaryEntryRefs">
+			<ConfigurationItem name="Type" isEnabled="true" between="," after="" field="EntryTypes" cssClassNameOverride="entrytypes">
+			  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				  <Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+			  </ConfigurationItem>
+			  <ConfigurationItem name="Reverse Name" isEnabled="false" between=" " field="ReverseName">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				  <Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+			  </ConfigurationItem>
+			</ConfigurationItem>
+			<ConfigurationItem name="Primary Entry(s)" isEnabled="true" before=" " between=", "  field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
+			  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after="" field="HeadWordRef" cssClassNameOverride="headword">
+				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+				  <Option id="vernacular" isEnabled="true" />
+				</WritingSystemOptions>
+			  </ConfigurationItem>
+			  <ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="false" between=" " before=" " field="GlossOrSummary">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				  <Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+			  </ConfigurationItem>
+			</ConfigurationItem>
+			<ConfigurationItem name="Comment" isEnabled="false" between=" " before=" " field="Summary">
+			  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				<Option id="analysis" isEnabled="true" />
+			  </WritingSystemOptions>
+			</ConfigurationItem>
+		  </ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Comment" before=" " between=" " isEnabled="true" field="Summary">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1405,7 +1467,7 @@
 				</WritingSystemOptions>
 			  </ConfigurationItem>
 			</ConfigurationItem>
-			<ConfigurationItem name="Primary Entry(s)" isEnabled="true" between="," after="" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
+			<ConfigurationItem name="Primary Entry(s)" isEnabled="true" before=" " between=", "  field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
 			  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after="" field="HeadWordRef" cssClassNameOverride="headword">
 				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 				  <Option id="vernacular" isEnabled="true" />
@@ -1954,7 +2016,7 @@
 				</WritingSystemOptions>
 			  </ConfigurationItem>
 			</ConfigurationItem>
-			<ConfigurationItem name="Primary Entry(s)" isEnabled="true" between="," after="" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
+			<ConfigurationItem name="Primary Entry(s)" isEnabled="true" before=" " between=", "  field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
 			  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after="" field="HeadWordRef" cssClassNameOverride="headword">
 				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 				  <Option id="vernacular" isEnabled="true" />
