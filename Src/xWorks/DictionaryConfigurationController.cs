@@ -1,10 +1,9 @@
-﻿// Copyright (c) 2014-2016 SIL International
+﻿// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
@@ -451,7 +450,7 @@ namespace SIL.FieldWorks.XWorks
 
 				View.TreeControl.MoveUpEnabled = CanReorder(node, Direction.Up);
 				View.TreeControl.MoveDownEnabled = CanReorder(node, Direction.Down);
-				View.TreeControl.DuplicateEnabled = !node.IsReadonlyMainEntry;
+				View.TreeControl.DuplicateEnabled = !node.IsMainEntry;
 				View.TreeControl.RemoveEnabled = node.IsDuplicate;
 				View.TreeControl.RenameEnabled = node.IsDuplicate;
 
@@ -484,7 +483,12 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="cache"></param>
 		public static void SetConfigureHomographParameters(DictionaryConfigurationModel model, FdoCache cache)
 		{
-			var hc = cache.ServiceLocator.GetInstance<HomographConfiguration>();
+			var cacheHc = cache.ServiceLocator.GetInstance<HomographConfiguration>();
+			if (model.HomographConfiguration == null)
+			{
+				model.HomographConfiguration = new DictionaryHomographConfiguration(new HomographConfiguration());
+			}
+			model.HomographConfiguration.ExportToHomographConfiguration(cacheHc);
 			if (model.Parts.Count == 0) return;
 			var mainEntryNode = model.Parts[0];
 			//Sense Node
@@ -492,19 +496,19 @@ namespace SIL.FieldWorks.XWorks
 			var senseNode = mainEntryNode.Children.Where(prop => prop.Label == senseType).FirstOrDefault();
 			if (senseNode == null) return;
 			var senseOptions = (DictionaryNodeSenseOptions)senseNode.DictionaryNodeOptions;
-			hc.ksSenseNumberStyle = senseOptions.NumberingStyle;
+			cacheHc.ksSenseNumberStyle = senseOptions.NumberingStyle;
 			//SubSense Node
 			var subSenseNode = senseNode.Children.Where(prop => prop.Label == "Subsenses").FirstOrDefault();
 			if (subSenseNode == null) return;
 			var subSenseOptions = (DictionaryNodeSenseOptions)subSenseNode.DictionaryNodeOptions;
-			hc.ksSubSenseNumberStyle = subSenseOptions.NumberingStyle;
-			hc.ksParentSenseNumberStyle = subSenseOptions.ParentSenseNumberingStyle;
+			cacheHc.ksSubSenseNumberStyle = subSenseOptions.NumberingStyle;
+			cacheHc.ksParentSenseNumberStyle = subSenseOptions.ParentSenseNumberingStyle;
 			//SubSubSense Node
 			var subSubSenseNode = subSenseNode.ReferencedOrDirectChildren.Where(prop => prop.Label == "Subsenses").FirstOrDefault();
 			if (subSubSenseNode == null) return;
 			var subSubSenseOptions = (DictionaryNodeSenseOptions)subSubSenseNode.DictionaryNodeOptions;
-			hc.ksSubSubSenseNumberStyle = subSubSenseOptions.NumberingStyle;
-			hc.ksParentSubSenseNumberStyle = subSubSenseOptions.ParentSenseNumberingStyle;
+			cacheHc.ksSubSubSenseNumberStyle = subSubSenseOptions.NumberingStyle;
+			cacheHc.ksParentSubSenseNumberStyle = subSubSenseOptions.ParentSenseNumberingStyle;
 		}
 
 		private void SetManagerTypeInfo(DictionaryConfigurationManagerDlg dialog)
@@ -674,6 +678,12 @@ namespace SIL.FieldWorks.XWorks
 		private void SelectCurrentConfigurationAndRefresh()
 		{
 			View.SelectConfiguration(_model);
+			// if the model has no homograph configurations saved then fill it with a default version
+			if (_model.HomographConfiguration == null)
+			{
+				_model.HomographConfiguration = new DictionaryHomographConfiguration(new HomographConfiguration());
+			}
+			_model.HomographConfiguration.ExportToHomographConfiguration(Cache.ServiceLocator.GetInstance<HomographConfiguration>());
 			RefreshView(); // REVIEW pH 2016.02: this is called only in ctor and after ManageViews. do we even want to refresh and set isDirty?
 		}
 
@@ -913,6 +923,173 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		public static void UpdateWritingSystemInModel(DictionaryConfigurationModel model, FdoCache cache)
+		{
+			foreach (var part in model.PartsAndSharedItems)
+			{
+				UpdateWritingSystemInConfigNodes(part, cache);
+			}
+		}
+
+		private static void UpdateWritingSystemInConfigNodes(ConfigurableDictionaryNode node, FdoCache cache)
+		{
+			if (node.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions)
+				UpdateWsOptions((DictionaryNodeWritingSystemOptions)node.DictionaryNodeOptions, cache);
+
+			if (node.Children == null)
+				return;
+
+			foreach (var child in node.Children)
+				UpdateWritingSystemInConfigNodes(child, cache);
+		}
+
+		public static string GetWsDefaultName(string wsType)
+		{
+			switch (wsType)
+			{
+				case "analysis":
+					return xWorksStrings.ksDefaultAnalysis;
+				case "vernacular":
+					return xWorksStrings.ksDefaultVernacular;
+				case "pronunciation":
+					return xWorksStrings.ksDefaultPronunciation;
+				case "reversal":
+					return xWorksStrings.ksCurrentReversal;
+				case "analysis vernacular":
+					return xWorksStrings.ksBestAnalOrVern;
+				default:	// "vernacular analysis"
+					return xWorksStrings.ksBestVernOrAnal;
+			}
+		}
+
+		public static List<ListViewItem> LoadAvailableWsList(DictionaryNodeWritingSystemOptions wsOptions, FdoCache cache)
+		{
+			var wsLists = new List<DictionaryNodeListOptions.DictionaryNodeOption>();
+
+			wsLists = UpdateWsOptions(wsOptions, cache);
+
+			var availableWSs = new List<ListViewItem>();
+			foreach (var wsListItem in wsLists)
+			{
+				int magicId;
+				if (int.TryParse(wsListItem.Id, out magicId))
+				{
+					var wsName = WritingSystemServices.GetMagicWsNameFromId(magicId);
+					availableWSs.Add(new ListViewItem(GetWsDefaultName(wsName)) { Tag = magicId });
+				}
+				else
+				{
+					var ws = cache.WritingSystemFactory.get_Engine(wsListItem.Id);
+					availableWSs.Add(new ListViewItem(((PalasoWritingSystem)ws).DisplayLabel) { Tag = ws.Id });
+				}
+			}
+
+			// Find and add available and selected Writing Systems
+			var selectedWSs = wsOptions.Options.Where(ws => ws.IsEnabled).ToList();
+
+			bool atLeastOneWsChecked = false;
+			// Check if the default WS is selected (it will be the one and only)
+			if (selectedWSs.Count == 1)
+			{
+				var selectedWsDefaultId = WritingSystemServices.GetMagicWsIdFromName(selectedWSs[0].Id);
+				if (selectedWsDefaultId < 0)
+				{
+					var defaultWsItem = availableWSs.FirstOrDefault(item => item.Tag.Equals(selectedWsDefaultId));
+					if (defaultWsItem != null)
+					{
+						defaultWsItem.Checked = true;
+						atLeastOneWsChecked = true;
+					}
+				}
+			}
+
+			if (!atLeastOneWsChecked)
+			{
+				// Insert checked named WS's in their saved order, after the Default WS (2 Default WS's if Type is Both)
+				int insertionIdx = wsOptions.WsType == DictionaryNodeWritingSystemOptions.WritingSystemType.Both ? 2 : 1;
+				foreach (var ws in selectedWSs)
+				{
+					var selectedItem = availableWSs.FirstOrDefault(item => ws.Id.Equals(item.Tag));
+					if (selectedItem != null && availableWSs.Remove(selectedItem))
+					{
+						selectedItem.Checked = true;
+						availableWSs.Insert(insertionIdx++, selectedItem);
+						atLeastOneWsChecked = true;
+					}
+				}
+			}
+
+			// If we still haven't checked one, check the first default (the previously-checked WS was removed)
+			if (!atLeastOneWsChecked)
+				availableWSs[0].Checked = true;
+			return availableWSs;
+		}
+
+		public static List<DictionaryNodeListOptions.DictionaryNodeOption> UpdateWsOptions(DictionaryNodeWritingSystemOptions wsOptions, FdoCache cache)
+		{
+			var availableWSs = GetCurrentWritingSystems(wsOptions.WsType, cache);
+
+			if (wsOptions.Options.Count == availableWSs.Count)
+			{
+				int i = 0;
+				foreach (var ws in availableWSs)
+				{
+					int magicId;
+					if (int.TryParse(ws.Id, out magicId))
+					{
+						var wsName = WritingSystemServices.GetMagicWsNameFromId(magicId);
+						wsOptions.Options[i].Id = wsName;
+					}
+					else
+					{
+						wsOptions.Options[i].Id = ws.Id;
+					}
+					i = i + 1;
+				}
+			}
+			return availableWSs;
+		}
+
+		/// <summary>
+		/// Return the current writing systems for a given writing system type as a list of DictionaryNodeOption objects
+		/// </summary>
+		public static List<DictionaryNodeListOptions.DictionaryNodeOption> GetCurrentWritingSystems(DictionaryNodeWritingSystemOptions.WritingSystemType wsType, FdoCache cache)
+		{
+			var wsList = new List<DictionaryNodeListOptions.DictionaryNodeOption>();
+			switch (wsType)
+			{
+				case DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular:
+					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsVern.ToString() });
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(
+							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+					break;
+				case DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis:
+					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsAnal.ToString() });
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(
+							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+					break;
+				case DictionaryNodeWritingSystemOptions.WritingSystemType.Both:
+					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsVern.ToString() });
+					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsAnal.ToString() });
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(
+							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(
+							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+					break;
+				case DictionaryNodeWritingSystemOptions.WritingSystemType.Pronunciation:
+					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsPronunciation.ToString() });
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Select(
+							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+					break;
+				case DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal:
+					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsReversalIndex.ToString() });
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(
+							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+					break;
+			}
+			return wsList;
+		}
+
 		private static void EnsureValidStylesInConfigNodes(ConfigurableDictionaryNode node, Dictionary<string, IStStyle> styles)
 		{
 			if (!String.IsNullOrEmpty(node.Style) && !styles.ContainsKey(node.Style))
@@ -1092,24 +1269,43 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (parent.Children == null)
 				parent.Children = new List<ConfigurableDictionaryNode>();
-			var children = parent.Children;
-			// Traverse through the children from end to beginning removing any custom fields that no longer exist.
-			for(var i = children.Count - 1; i >= 0; --i)
+			else
 			{
-				var configNode = children[i];
-				if(!configNode.IsCustomField)
-					continue;
-				if(!customFieldNodes.Contains(configNode))
+				MergeCustomFieldLists(parent.Children, customFieldNodes);
+				// If we have children, through the children and grouped children, removing any custom fields that no longer exist.
+				foreach (var group in parent.Children.Where(child => child.DictionaryNodeOptions is DictionaryNodeGroupingOptions && child.Children != null))
 				{
-					children.Remove(configNode); // field no longer exists
+					// Set the parent on the customFieldNodes (for Contains)
+					foreach(var customField in customFieldNodes)
+						customField.Parent = group;
+					MergeCustomFieldLists(group.Children, customFieldNodes);
+				}
+				// Set the parent back on the customFieldNodes (for when new fields are added)
+				foreach(var customField in customFieldNodes)
+					customField.Parent = parent;
+			}
+
+			// Add any custom fields that didn't already exist in the children (at the end).
+			parent.Children.AddRange(customFieldNodes);
+		}
+
+		private static void MergeCustomFieldLists(List<ConfigurableDictionaryNode> existingNodes, List<ConfigurableDictionaryNode> customFieldNodes)
+		{
+			// Traverse through the existing nodes from end to beginning, removing any custom fields that no longer exist.
+			for (var i = existingNodes.Count - 1; i >= 0; --i)
+			{
+				var configNode = existingNodes[i];
+				if (!configNode.IsCustomField)
+					continue;
+				if (!customFieldNodes.Contains(configNode))
+				{
+					existingNodes.Remove(configNode); // field no longer exists
 				}
 				else
 				{
 					customFieldNodes.Remove(configNode); // field found
 				}
 			}
-			// Then add any custom fields that don't yet exist in the children configurationList to the end.
-			children.AddRange(customFieldNodes);
 		}
 
 		/// <summary>

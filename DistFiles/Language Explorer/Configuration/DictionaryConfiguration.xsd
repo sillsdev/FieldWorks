@@ -18,6 +18,7 @@
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
+			<xs:element name="HomographConfiguration" type="HomographConfigurationType" maxOccurs="1" minOccurs="0"/>
 		</xs:sequence>
 		<xs:attribute type="xs:string" name="name" use="required"/>
 		<xs:attribute type="xs:string" name="writingSystem" use="optional"/>
@@ -27,6 +28,16 @@
 		<xs:attribute type="xs:boolean" name="isRootBased" use="required"/>
 	</xs:complexType>
 </xs:element>
+<xs:complexType name="HomographConfigurationType">
+	<xs:attribute type="xs:boolean" name="showHwNumInReversalCrossRef"/>
+	<xs:attribute type="xs:boolean" name="showHwNumInCrossRef"/>
+	<xs:attribute type="xs:boolean" name="showHwNumber"/>
+	<xs:attribute type="xs:boolean" name="showSenseNumberReversal"/>
+	<xs:attribute type="xs:boolean" name="showSenseNumber"/>
+	<xs:attribute type="xs:boolean" name="homographNumberBefore"/>
+	<xs:attribute type="xs:string" name="customHomographNumbers"/>
+	<xs:attribute type="xs:string" name="homographWritingSystem"/>
+</xs:complexType>
 <xs:complexType name="SenseOptionsType">
 	<xs:attribute type="xs:string" name="numberStyle"/>
 	<xs:attribute type="xs:string" name="numberBefore"/>

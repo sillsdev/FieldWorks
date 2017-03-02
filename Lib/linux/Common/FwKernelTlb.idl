@@ -1,4 +1,4 @@
-#line 1 "d:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+#line 1 "C:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 
 
 
@@ -14,7 +14,7 @@ import "oaidl.idl";
 import "ocidl.idl";
 import "objidl.idl";
 
-#line 1 "d:\\fwrepo\\fw\\src\\Generic\\common.idh"
+#line 1 "C:\\fwrepo\\fw\\src\\Generic\\common.idh"
 
 
 
@@ -117,11 +117,11 @@ cpp_quote("// This is for code that uses a 64-bit integer for SilTime.")
 cpp_quote("typedef __int64 SilTime;")
 cpp_quote("#endif")
 cpp_quote("")
-#line 17 "d:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+#line 17 "C:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 
 cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76E0-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(",") cpp_quote("FwKernelLib") cpp_quote(");") [ uuid(F1EF76E0-BE04-11d3-8D9A-005004DEFEC4), version(1.0), helpstring("FieldWorks Kernel") ] library FwKernelLib
 {
-	#line 1 "d:\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+	#line 1 "c:\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
 
 
@@ -439,7 +439,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("6A46D810-7F14-4151-80F5-0B13
 {
 	interface IActionHandler;
 };
-#line 319 "d:\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 319 "c:\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
 
 
@@ -826,9 +826,9 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("24636FD1-DB8D-4b2c-B4C0-44C2
 {
 	interface IDebugReport;
 };
-#line 706 "d:\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 706 "c:\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
-#line 708 "d:\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 708 "c:\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
 
 
@@ -869,7 +869,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IUndoGrouper") cpp_
 
 
 
-#line 749 "d:\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 749 "c:\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
 
 
@@ -890,10 +890,10 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IComDisposable") cp
 
 
 
-#line 770 "d:\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 770 "c:\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
-#line 21 "d:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
-	#line 1 "d:\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
+#line 21 "C:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+	#line 1 "c:\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
 
 
 
@@ -1124,6 +1124,7 @@ typedef [v1_enum] enum FwTextPropType
 	ktptTags = 5, 
 	ktptObjData = 6, 
 		
+	ktptCustomBullet = 7,
 
 	
 
@@ -2369,10 +2370,10 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 {
 	interface ITsMultiString;
 };
-#line 1477 "d:\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
+#line 1478 "c:\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
 
-#line 22 "d:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
-	#line 1 "d:\\fwrepo\\fw\\src\\kernel\\Render.idh"
+#line 22 "C:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+	#line 1 "c:\\fwrepo\\fw\\src\\kernel\\Render.idh"
 
 
 
@@ -2861,7 +2862,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 	{
 		interface IVwGraphicsWin32;
 	};
-	#line 490 "d:\\fwrepo\\fw\\src\\kernel\\Render.idh"
+	#line 490 "c:\\fwrepo\\fw\\src\\kernel\\Render.idh"
 
 
 	
@@ -3477,7 +3478,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 	{
 		interface IRenderEngine;
 	};
-	#line 1106 "d:\\fwrepo\\fw\\src\\kernel\\Render.idh"
+	#line 1106 "c:\\fwrepo\\fw\\src\\kernel\\Render.idh"
 
 
 	
@@ -3602,10 +3603,10 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 
 
 
-#line 1231 "d:\\fwrepo\\fw\\src\\kernel\\Render.idh"
+#line 1231 "c:\\fwrepo\\fw\\src\\kernel\\Render.idh"
 
-#line 23 "d:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
-	#line 1 "d:\\fwrepo\\fw\\src\\kernel\\Language.idh"
+#line 23 "C:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+	#line 1 "c:\\fwrepo\\fw\\src\\kernel\\Language.idh"
 
 
 
@@ -5431,7 +5432,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IRegexMatcher") cpp
 	{
 		interface ILgIcuLocaleEnumerator;
 	};
-#line 1827 "d:\\fwrepo\\fw\\src\\kernel\\Language.idh"
+#line 1827 "c:\\fwrepo\\fw\\src\\kernel\\Language.idh"
 
-#line 24 "d:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+#line 24 "C:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 };

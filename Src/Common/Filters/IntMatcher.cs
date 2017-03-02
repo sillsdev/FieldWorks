@@ -2,7 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 using System;
-
+using System.Linq;
 using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
 
@@ -101,8 +101,15 @@ namespace  SIL.FieldWorks.Filters
 		{
 			if (stringval == null || String.IsNullOrEmpty(stringval.Text))
 				return false;
-			long val = long.Parse(stringval.Text);
-			return val >= m_min && val <= m_max;
+			try
+			{
+				var values = stringval.Text.Split(' ').Select(s => long.Parse(s));
+				return values.Any(x => x >= m_min && x <= m_max);
+			}
+			catch (OverflowException)
+			{
+				return false;
+			}
 		}
 
 		/// <summary>

@@ -5493,11 +5493,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			var hc = Services.GetInstance<HomographConfiguration>();
 			if (hc.ShowSenseNumber(hv) && lexEntry.HasMoreThanOneSense)
 			{
-				// These int props may not be needed, but they're safe.
-				tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, Cache.DefaultAnalWs);
-				tisb.SetStrPropValue((int) FwTextPropType.ktptNamedStyle,
-					HomographConfiguration.ksSenseReferenceNumberStyle);
 				tisb.Append(" ");
+				tisb.SetStrPropValue((int)FwTextPropType.ktptNamedStyle,
+					HomographConfiguration.ksSenseReferenceNumberStyle);
+				var senseNumberWs = string.IsNullOrEmpty(hc.WritingSystem)
+					 ? Cache.DefaultAnalWs
+					 : Cache.WritingSystemFactory.GetWsFromStr(hc.WritingSystem);
+				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, senseNumberWs);
 				var referencedSenseNumber = FormatSenseNumber();
 				tisb.Append(referencedSenseNumber);
 			}
@@ -5567,6 +5569,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					break;
 				default: // handles %d and %O. We no longer support "%z" (1  b  iii) because users can hand-configure its equivalent
 					nextNumber = senseNumber;
+					var hc = Cache.ServiceLocator.GetInstance<HomographConfiguration>();
+					if (hc.CustomHomographNumbers.Count == 10)
+					{
+						for (var i = 0; i < 10; ++i)
+						{
+							nextNumber = nextNumber.Replace(i.ToString(), hc.CustomHomographNumbers[i]);
+						}
+					}
 					break;
 			}
 			nextNumber = GenerateSenseOutlineNumber(parentNumberingStyle, nextNumber);
@@ -5575,15 +5585,15 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		private string GenerateSenseOutlineNumber(string parentNumberingStyle, string nextNumber)
 		{
-			string fprmattedNumber;
+			string parentFormatNumber;
 			if (parentNumberingStyle == "%j")
-				fprmattedNumber = string.Format("{0}", nextNumber);
+				parentFormatNumber = string.Format("{0}", nextNumber);
 			else if (parentNumberingStyle == "%.")
-				fprmattedNumber = string.Format(".{0}", nextNumber);
+				parentFormatNumber = string.Format(".{0}", nextNumber);
 			else
-				fprmattedNumber = nextNumber;
+				parentFormatNumber = nextNumber;
 
-			return fprmattedNumber;
+			return parentFormatNumber;
 		}
 
 		private string GetAlphaSenseCounter(string numberingStyle, byte senseNumber)

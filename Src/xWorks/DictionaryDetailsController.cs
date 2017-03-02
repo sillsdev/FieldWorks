@@ -37,8 +37,11 @@ namespace SIL.FieldWorks.XWorks
 		private List<StyleComboItem> m_charStyles;
 		private List<StyleComboItem> m_paraStyles;
 
-		/// <summary>Model for the dictionary element being configured</summary>
+		/// <summary>ConfigurableDictionaryNode to model the dictionary element being configured</summary>
 		private ConfigurableDictionaryNode m_node;
+
+		/// <summary>The DictionaryConfigurationModel that owns the node being configured.</summary>
+		private DictionaryConfigurationModel m_configModel;
 
 		/// <summary>Model for options specific to the element type, such as writing systems or relation types</summary>
 		private DictionaryNodeOptions Options { get { return m_node.DictionaryNodeOptions; } }
@@ -72,6 +75,7 @@ namespace SIL.FieldWorks.XWorks
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "View is disposed by its parent")]
 		public void LoadNode(DictionaryConfigurationModel model, ConfigurableDictionaryNode node)
 		{
+			m_configModel = model;
 			m_node = node;
 
 			View.SuspendLayout();
@@ -79,7 +83,7 @@ namespace SIL.FieldWorks.XWorks
 			ResetView(View, node);
 
 			// Populate Styles dropdown
-			var isPara = m_node.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph;
+			var isPara = m_node.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph || m_node.Parent == null;
 			View.SetStyles(isPara ? m_paraStyles : m_charStyles, m_node.Style, isPara);
 
 			// Test for Options type
@@ -213,49 +217,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private List<ListViewItem> LoadAvailableWsList(DictionaryNodeWritingSystemOptions wsOptions)
-		{
-			// Find and add available and selected Writing Systems
-			var selectedWSs = wsOptions.Options.Where(ws => ws.IsEnabled).ToList();
-			var availableWSs = GetCurrentWritingSystems(wsOptions.WsType);
-
-			bool atLeastOneWsChecked = false;
-			// Check if the default WS is selected (it will be the one and only)
-			if (selectedWSs.Count == 1)
-			{
-				var selectedWsDefaultId = WritingSystemServices.GetMagicWsIdFromName(selectedWSs[0].Id);
-				if (selectedWsDefaultId < 0)
-				{
-					var defaultWsItem = availableWSs.FirstOrDefault(item => item.Tag.Equals(selectedWsDefaultId));
-					if (defaultWsItem != null)
-					{
-						defaultWsItem.Checked = true;
-						atLeastOneWsChecked = true;
-					}
-				}
-			}
-
-			if (!atLeastOneWsChecked)
-			{
-				// Insert checked named WS's in their saved order, after the Default WS (2 Default WS's if Type is Both)
-				int insertionIdx = wsOptions.WsType == DictionaryNodeWritingSystemOptions.WritingSystemType.Both ? 2 : 1;
-				foreach (var ws in selectedWSs)
-				{
-					var selectedItem = availableWSs.FirstOrDefault(item => ws.Id.Equals(item.Tag));
-					if (selectedItem != null && availableWSs.Remove(selectedItem))
-					{
-						selectedItem.Checked = true;
-						availableWSs.Insert(insertionIdx++, selectedItem);
-						atLeastOneWsChecked = true;
-					}
-				}
-			}
-
-			// If we still haven't checked one, check the first default (the previously-checked WS was removed)
-			if (!atLeastOneWsChecked)
-				availableWSs[0].Checked = true;
-			return availableWSs;
-		}
 		private void OnViewOnAfterTextChanged(object sender, EventArgs e)
 		{
 			AfterTextChanged();
@@ -308,7 +269,7 @@ namespace SIL.FieldWorks.XWorks
 				DisplayOptionCheckBoxChecked = wsOptions.DisplayWritingSystemAbbreviations
 			};
 
-			var availableWSs = LoadAvailableWsList(wsOptions);
+			var availableWSs = DictionaryConfigurationController.LoadAvailableWsList(wsOptions, m_cache);
 
 			wsOptionsView.AvailableItems = availableWSs;
 
@@ -336,7 +297,7 @@ namespace SIL.FieldWorks.XWorks
 				DisplayOptionCheckBox2Checked = wsapoptions.DisplayEachInAParagraph
 			};
 
-			var availableWSs = LoadAvailableWsList(wsapoptions);
+			var availableWSs = DictionaryConfigurationController.LoadAvailableWsList(wsapoptions, m_cache);
 
 			wsapOptionsView.AvailableItems = availableWSs;
 
@@ -484,15 +445,6 @@ namespace SIL.FieldWorks.XWorks
 				LoadParagraphOptions(listAndParaOptions, listOptionsView);
 			}
 			listOptionsView.DisplayOptionCheckBox2Visible = false;
-			// REVIEW (Hasso) 2016.02: could this if block be replaced by config file changes?
-			if (listOptions.ListId == DictionaryNodeListOptions.ListIds.Complex ||
-				listOptions.ListId == DictionaryNodeListOptions.ListIds.Minor)
-			{
-				if (m_node.StyleType != ConfigurableDictionaryNode.StyleTypes.Character)
-				{
-					View.SetStyles(m_paraStyles, m_node.Style, true);
-				}
-			}
 			InternalLoadList(listOptions, listOptionsView);
 
 			// Prevent events from firing while the view is being initialized
@@ -652,48 +604,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		#region Load more-static parts
-		/// <param name="wsType"></param>
-		/// <returns>
-		/// A list of ListViewItem's representing this project's WritingSystems, with "magic" default WS's at the beginning of the list.
-		/// Each LVI's Tag is the WS Id: negative int for "magic" default WS's, and a string like "en" or "fr" for normal WS's.
-		/// LVI's are unchecked by default
-		/// </returns>
-		private List<ListViewItem> GetCurrentWritingSystems(DictionaryNodeWritingSystemOptions.WritingSystemType wsType)
-		{
-			var wsList = new List<ListViewItem>();
-			switch (wsType)
-			{
-				case DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular:
-					wsList.Add(new ListViewItem(xWorksStrings.ksDefaultVernacular) { Tag = WritingSystemServices.kwsVern });
-					wsList.AddRange(m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(
-							ws => new ListViewItem(ws.DisplayLabel) { Tag = ws.Id }));
-					break;
-				case DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis:
-					wsList.Add(new ListViewItem(xWorksStrings.ksDefaultAnalysis) { Tag = WritingSystemServices.kwsAnal });
-					wsList.AddRange(m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(
-							ws => new ListViewItem(ws.DisplayLabel) { Tag = ws.Id }));
-					break;
-				case DictionaryNodeWritingSystemOptions.WritingSystemType.Both:
-					wsList.Add(new ListViewItem(xWorksStrings.ksDefaultVernacular) { Tag = WritingSystemServices.kwsVern });
-					wsList.Add(new ListViewItem(xWorksStrings.ksDefaultAnalysis) { Tag = WritingSystemServices.kwsAnal });
-					wsList.AddRange(m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(
-							ws => new ListViewItem(ws.DisplayLabel) { Tag = ws.Id }));
-					wsList.AddRange(m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(
-							ws => new ListViewItem(ws.DisplayLabel) { Tag = ws.Id }));
-					break;
-				case DictionaryNodeWritingSystemOptions.WritingSystemType.Pronunciation:
-					wsList.Add(new ListViewItem(xWorksStrings.ksDefaultPronunciation) { Tag = WritingSystemServices.kwsPronunciation });
-					wsList.AddRange(m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Select(
-							ws => new ListViewItem(ws.DisplayLabel) { Tag = ws.Id }));
-					break;
-				case DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal:
-					wsList.Add(new ListViewItem(xWorksStrings.ksCurrentReversal) { Tag = WritingSystemServices.kwsReversalIndex });
-					wsList.AddRange(m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(
-							ws => new ListViewItem(ws.DisplayLabel) { Tag = ws.Id }));
-					break;
-			}
-			return wsList;
-		}
 
 		private void LoadStylesLists()
 		{
@@ -931,14 +841,18 @@ namespace SIL.FieldWorks.XWorks
 
 		private void HandleHeadwordNumbersButton()
 		{
-			var hc = m_cache.ServiceLocator.GetInstance<HomographConfiguration>();
-			using (var dlg = new ConfigureHomographDlg())
+			using (var dlg = new HeadwordNumbersDlg())
 			{
-				dlg.SetupDialog(hc, m_cache, m_styleSheet, (IApp)m_mediator.PropertyTable.GetValue("App"), m_mediator.HelpTopicProvider);
+				var controller = new HeadwordNumbersController(dlg, m_configModel, m_cache);
+				// ReSharper disable once AccessToDisposedClosure - can only be used before the dialog is disposed
+				dlg.RunStylesDialog += (sender, e) => HandleStylesBtn((ComboBox) sender, ((ComboBox)sender).Text);
+				dlg.SetupDialog(m_mediator.HelpTopicProvider);
+				dlg.SetStyleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
 				//dlg.StartPosition = FormStartPosition.CenterScreen;
 				if (dlg.ShowDialog(View.TopLevelControl) != DialogResult.OK)
 					return;
-				RefreshStylesAndPreview(); // The Styles dialog is also available through the ConfigureHomographDlg
+				controller.Save();
+				RefreshPreview();
 			}
 		}
 

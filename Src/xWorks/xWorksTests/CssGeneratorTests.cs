@@ -578,6 +578,35 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForCustomBulletStyleForSenses()
+		{
+			GenerateCustomBulletStyle("Bulleted List1");
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					NumberStyle = "Dictionary-SenseNum",
+					DisplayEachSenseInAParagraph = true
+				},
+				Style = "Bulleted List1"
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "lexentry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
+			PopulateFieldsForTesting(model);
+			// SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			const string regExPected = @".lexentry>\s.senses\s>\s.sensecontent:before.*{.*content:'@';.*font-size:14pt;.*color:Green;.*}";
+			Assert.IsTrue(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success, "Custom bullet content not generated.");
+		}
+
+		[Test]
 		public void GenerateCssForStyleName_ParagraphMarginIsAbsolute_NoParent_Works()
 		{
 			GenerateParagraphStyle("Dictionary-Paragraph-Padding");
@@ -886,6 +915,17 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-LineSpacingExactly", CssGenerator.DefaultStyle, m_mediator);
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("line-height:12pt;"));
+		}
+
+		[Test]
+		public void GenerateCssForStyleName_ParagraphLineSpacingAtleastWorks()
+		{
+			int atleast = 12000;
+			var style = GenerateParagraphStyle("Dictionary-Paragraph-LineSpacingAtleast");
+			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLineHeight, (int)FwTextPropVar.ktpvMilliPoint, atleast);
+			//SUT
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-LineSpacingAtleast", CssGenerator.DefaultStyle, m_mediator);
+			Assert.That(styleDeclaration.ToString(), Contains.Substring("flex-line-height:12pt;"));
 		}
 
 		[Test]
@@ -1469,7 +1509,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var refTypeNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LookupComplexEntryType",
+				FieldDescription = ConfiguredXHTMLGenerator.LookupComplexEntryType,
 				CSSClassNameOverride = "complexformtypes",
 				Children = new List<ConfigurableDictionaryNode> { revAbbrevNode }
 			};
@@ -1532,6 +1572,53 @@ namespace SIL.FieldWorks.XWorks
 			VerifyRegex(cssResult, @".lexentry> .visiblecomplexformbackrefs> .complexformtypes .complexformtype> .name> .nam\+ .nam:before{\s*content:',';\s*}",
 				"Between not generated:");
 			VerifyRegex(cssResult, @".lexentry> .visiblecomplexformbackrefs> .complexformtypes .complexformtype> .name:after{\s*content:'>';\s*}",
+				"After not generated:");
+		}
+
+		/// <summary>Verify that Complex Forms are not factored when displayed in paragraphs</summary>
+		[Test]
+		public void GenerateCssForConfiguration_GeneratesComplexFormTypesBeforeBetweenAfterInParagraphs()
+		{
+			var complexFormTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				Before = "<",
+				Between = ",",
+				After = ">"
+			};
+			var complexFormTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ComplexEntryTypesRS",
+				CSSClassNameOverride = "complexformtypes",
+				Children = new List<ConfigurableDictionaryNode> { complexFormTypeNameNode },
+			};
+			var complexFormNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VisibleComplexFormBackRefs",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, DictionaryNodeListOptions.ListIds.Complex),
+				Children = new List<ConfigurableDictionaryNode> { complexFormTypeNode }
+			};
+			((IParaOption)complexFormNode.DictionaryNodeOptions).DisplayEachInAParagraph = true; // displaying in a paragraph should suppress factoring
+			var mainHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				CSSClassNameOverride = "entry"
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode, complexFormNode },
+				FieldDescription = "LexEntry"
+			};
+
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
+			PopulateFieldsForTesting(entry);
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			VerifyRegex(cssResult, @".lexentry> .visiblecomplexformbackrefs .visiblecomplexformbackref> .complexformtypes .complexformtype> .name:before{\s*content:'<';\s*}",
+				"Before not generated:");
+			VerifyRegex(cssResult, @".lexentry> .visiblecomplexformbackrefs .visiblecomplexformbackref> .complexformtypes .complexformtype> .name> .nam\+ .nam:before{\s*content:',';\s*}",
+				"Between not generated:");
+			VerifyRegex(cssResult, @".lexentry> .visiblecomplexformbackrefs .visiblecomplexformbackref> .complexformtypes .complexformtype> .name:after{\s*content:'>';\s*}",
 				"After not generated:");
 		}
 
@@ -3609,6 +3696,28 @@ namespace SIL.FieldWorks.XWorks
 			var bulletinfo = new BulletInfo
 			{
 				m_numberScheme = (VwBulNum)105,
+				FontInfo = fontInfo
+			};
+			var inherbullt = new InheritableStyleProp<BulletInfo>(bulletinfo);
+			var style = new TestStyle(inherbullt, Cache) { Name = name, IsParagraphStyle = true };
+
+			var fontInfo1 = new FontInfo();
+			fontInfo1.m_fontColor.ExplicitValue = Color.Red;
+			fontInfo1.m_fontSize.ExplicitValue = 12000;
+			style.SetDefaultFontInfo(fontInfo1);
+
+			SafelyAddStyleToSheetAndTable(name, style);
+		}
+
+		private void GenerateCustomBulletStyle(string name)
+		{
+			var fontInfo = new FontInfo();
+			fontInfo.m_fontColor.ExplicitValue = Color.Green;
+			fontInfo.m_fontSize.ExplicitValue = 14000;
+			var bulletinfo = new BulletInfo
+			{
+				m_numberScheme = (VwBulNum)100,
+				m_bulletCustom = "@",
 				FontInfo = fontInfo
 			};
 			var inherbullt = new InheritableStyleProp<BulletInfo>(bulletinfo);

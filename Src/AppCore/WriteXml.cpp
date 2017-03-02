@@ -636,6 +636,11 @@ void FwXml::WriteStrTextProp(IStream * pstrm, int tpt, BSTR bstrVal)
 		WriteXmlUnicode(pstrm, bstrVal, cch);
 		FormatToStream(pstrm, "\"");
 		break;
+	case ktptCustomBullet:
+		FormatToStream(pstrm, " bulCusTxt=\"");
+		WriteXmlUnicode(pstrm, bstrVal, cch);
+		FormatToStream(pstrm, "\"");
+		break;
 	case ktptBulNumFontInfo:
 		// BulNumFontInfo is written separately.
 		break;

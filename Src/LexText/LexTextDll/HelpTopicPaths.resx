@@ -2713,13 +2713,13 @@
   <data name="khtpBulkEditPublishAsHeadwordIn" xml:space="preserve">
     <value>/Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_publications.htm</value>
   </data>
-  <data name="khtpBulkEditPublishIn(Entry)" xml:space="preserve">
+  <data name="khtpBulkEditPublishEntryIn" xml:space="preserve">
     <value>/Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_publications.htm</value>
   </data>
-  <data name="khtpBulkEditPublishIn(Example)" xml:space="preserve">
+  <data name="khtpBulkEditPublishExampleIn" xml:space="preserve">
     <value>/Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_publications.htm</value>
   </data>
-  <data name="khtpBulkEditPublishIn(Sense)" xml:space="preserve">
+  <data name="khtpBulkEditPublishSenseIn" xml:space="preserve">
     <value>/Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_publications.htm</value>
   </data>
   <data name="khtpConfigureHeadwordNumbers" xml:space="preserve">
@@ -3298,10 +3298,10 @@
   <data name="khtpBulkEditExt.Note-Type" xml:space="preserve">
     <value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_Edit_Entries_overview.htm</value>
   </data>
-  <data name="khtpBulkEditPublishIn(Pictures)" xml:space="preserve">
+  <data name="khtpBulkEditPublishPictureIn" xml:space="preserve">
     <value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_publications.htm</value>
   </data>
-  <data name="khtpBulkEditPublishIn(Pronunciations)" xml:space="preserve">
+  <data name="khtpBulkEditPublishPronunciationIn" xml:space="preserve">
     <value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_publications.htm</value>
   </data>
   <data name="khtpBulkEditSenseType" xml:space="preserve">

@@ -9,8 +9,12 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainImpl;
+using SIL.FieldWorks.FwCoreDlgs;
+using SIL.FieldWorks.XWorks.LexText;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -233,6 +237,24 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryConfigurationController.SetConfigureHomographParameters(model, cache);
 		}
 
+
+		/// <summary>
+		/// If we are in a tool handled by the new configuration then hide this to avoid confusion with the new dialog
+		/// which is accessible from each configuration file.
+		/// </summary>
+		public virtual bool OnDisplayConfigureHeadwordNumbers(object commandObject,
+																		 ref UIItemDisplayProperties display)
+		{
+			// If we are in 'Dictionary' or 'Reversal Index' hide this menu item
+			if (GetDictionaryConfigurationType(m_mediator) != null)
+			{
+				display.Enabled = false;
+				display.Visible = false;
+				return true; // we handled it
+			}
+			return false; //let the other code handle it
+		}
+
 		/// <summary>
 		/// Returns the path to the current Dictionary or ReversalIndex configuration file, based on client specification or the current tool
 		/// Guarantees that the path is set to an existing configuration file, which may cause a redisplay of the XHTML view if fUpdate is true.
@@ -323,6 +345,20 @@ namespace SIL.FieldWorks.XWorks
 				? "DictionaryPublicationLayout"
 				: "ReversalIndexPublicationLayout";
 			mediator.PropertyTable.SetProperty(pubLayoutPropName, currentConfig, fUpdate);
+		}
+
+		public bool OnWritingSystemUpdated(object param)
+		{
+			if (param == null)
+				return false;
+
+			var currentConfig = GetCurrentConfiguration(m_mediator, true, null);
+			var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+			var configuration = new DictionaryConfigurationModel(currentConfig, cache);
+			DictionaryConfigurationController.UpdateWritingSystemInModel(configuration, cache);
+			configuration.Save();
+
+			return true;
 		}
 
 		private static string GetInnerConfigDir(string configFilePath)

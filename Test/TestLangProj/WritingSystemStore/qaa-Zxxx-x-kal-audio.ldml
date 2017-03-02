@@ -10,7 +10,7 @@
 		<script
 			type="Zxxx" />
 		<variant
-			type="x-kal-AUDIO" />
+			type="x-kal-audio" />
 	</identity>
 	<collations />
 	<special xmlns:palaso="urn://palaso.org/ldmlExtensions/v1">
@@ -21,7 +21,7 @@
 		<palaso:languageName
 			value="Kalaba" />
 		<palaso:spellCheckingId
-			value="qaa_Zxxx_x_kal_AUDIO" />
+			value="qaa_Zxxx_x_kal_audio" />
 		<palaso:version
 			value="2" />
 	</special>

@@ -956,6 +956,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.AreEqual(cfNode.Label, "CustomString");
 				Assert.AreEqual(cfNode.FieldDescription, "CustomString");
 				Assert.AreEqual(cfNode.IsCustomField, true);
+				Assert.AreSame(model.Parts[0], cfNode.Parent, "improper Parent set");
 				var wsOptions = cfNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 				Assert.NotNull(wsOptions, "WritingSystemOptions not added");
 				Assert.AreEqual(wsOptions.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Both, "WritingSystemOptions is the wrong type");
@@ -1036,6 +1037,54 @@ namespace SIL.FieldWorks.XWorks
 				Assert.AreEqual(customNode.Label, "CustomString");
 				Assert.AreEqual(customNode.FieldDescription, "CustomString");
 				Assert.AreEqual(customNode.IsCustomField, true);
+				Assert.AreSame(sharedSubsNode, customNode.Parent, "improper Parent set");
+			}
+		}
+
+		[Test]
+		public void MergeCustomFieldsIntoDictionaryModel_WorksUnderGroupingNodes()
+		{
+			using (new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"),
+				WritingSystemServices.GetMagicWsIdFromName("analysis vernacular"), CellarPropertyType.MultiString, Guid.Empty))
+			{
+				var model = new DictionaryConfigurationModel
+				{
+					Parts = new List<ConfigurableDictionaryNode>
+					{
+						new ConfigurableDictionaryNode
+						{
+							Label = "Main Entry", FieldDescription = "LexEntry",
+							Children = new List<ConfigurableDictionaryNode>
+							{
+								new ConfigurableDictionaryNode
+								{
+									Label = "Grouping Node", FieldDescription = "Group",
+									DictionaryNodeOptions = new DictionaryNodeGroupingOptions(),
+									Children = new List<ConfigurableDictionaryNode>
+									{
+										new ConfigurableDictionaryNode { Label = "CustomString", FieldDescription = "CustomString", IsCustomField = true },
+										new ConfigurableDictionaryNode { Label = "OldCustomField", FieldDescription = "OldCustomField", IsCustomField = true }
+									}
+								}
+							}
+						}
+					}
+				};
+				CssGeneratorTests.PopulateFieldsForTesting(model);
+				//SUT
+				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache);
+				var children = model.Parts[0].Children;
+				Assert.AreEqual(1, children.Count,
+					"The only node under Main Entry should be Grouping Node (the Custom Field already under Grouping Node should not be dup'd under ME");
+				var group = children[0];
+				children = group.Children;
+				Assert.IsNotNull(children, "GroupingNode should still have children");
+				Assert.AreEqual(1, children.Count, "One CF under Grouping Node should have been retained, the other deleted");
+				var customNode = children[0];
+				Assert.AreEqual("CustomString", customNode.Label);
+				Assert.AreEqual("CustomString", customNode.FieldDescription);
+				Assert.True(customNode.IsCustomField);
+				Assert.AreSame(group, customNode.Parent, "improper Parent set");
 			}
 		}
 

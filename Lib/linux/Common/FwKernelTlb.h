@@ -4,9 +4,9 @@
 
 
  /* File created by MIDL compiler version 8.00.0603 */
-/* at Tue Oct 20 13:06:58 2015
+/* at Fri Jan 20 12:28:23 2017
  */
-/* Compiler settings for d:\fwrepo\fw\Output\Common\FwKernelTlb.idl:
+/* Compiler settings for C:\fwrepo\fw\Output\Common\FwKernelTlb.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
@@ -834,6 +834,7 @@ enum FwTextPropType
         ktptTabList	= 4,
         ktptTags	= 5,
         ktptObjData	= 6,
+        ktptCustomBullet	= 7,
         ktptRightToLeft	= 128,
         ktptDirectionDepth	= 129,
         ktptFontVariations	= 130,

@@ -548,7 +548,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			using (var process = new Process())
 			{
 				process.StartInfo.UseShellExecute = true;
-				process.StartInfo.FileName = "http://wiki.lingtransoft.info/doku.php?id=tutorials:student_manual";
+				process.StartInfo.FileName = "https://lingtran.net/FLEx+8";
 				process.Start();
 				process.Close();
 			}

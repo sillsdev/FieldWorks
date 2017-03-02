@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.XWorks
 {
 	// ReSharper disable InconsistentNaming
 	[TestFixture]
-	public class ConfiguredXHTMLGeneratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
+	public partial class ConfiguredXHTMLGeneratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
 	{
 		private int m_wsEn, m_wsFr, m_wsHe;
 
@@ -1265,11 +1265,16 @@ namespace SIL.FieldWorks.XWorks
 				CSSClassNameOverride = "complexformtypes",
 				Children = new List<ConfigurableDictionaryNode> { revAbbrevNode }
 			};
+			var orchNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry", SubField = "HeadWordRef",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
 			var orcfNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ComplexFormsNotSubentries",
 				DictionaryNodeOptions = complexformoptions,
-				Children = new List<ConfigurableDictionaryNode> { refTypeNode }
+				Children = new List<ConfigurableDictionaryNode> { refTypeNode, orchNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -1280,8 +1285,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var otherReferencedComplexForm = CreateInterestingLexEntry(Cache);
-			var complexformentryref = CreateComplexFormbasedonNodeOption(mainEntry, otherReferencedComplexForm,
-				complexformoptions.Options.First(), false);
+			var complexformentryref = CreateComplexForm(Cache, mainEntry, otherReferencedComplexForm, false, new Guid(complexformoptions.Options.First().Id));
 
 			var complexRefAbbr = complexformentryref.ComplexEntryTypesRS[0].Abbreviation.BestAnalysisAlternative.Text;
 			var complexRefRevAbbr = complexformentryref.ComplexEntryTypesRS[0].ReverseAbbr.BestAnalysisAlternative.Text;
@@ -1290,10 +1294,10 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
 			var fwdNameXpath = string.Format(
-				"//span[@class='complexformsnotsubentries']/span[@class='complexformsnotsubentry']/span[@class='complexformtypes']/span[@class='complexformtype']/span/span[@lang='en' and text()='{0}']",
+				"//span[@class='complexformsnotsubentries']/span[@class='complexformtypes']/span[@class='complexformtype']/span/span[@lang='en' and text()='{0}']",
 					complexRefAbbr);
 			var revNameXpath = string.Format(
-				"//span[@class='complexformsnotsubentries']/span[@class='complexformsnotsubentry']/span[@class='complexformtypes']/span[@class='complexformtype']/span[@class='reverseabbr']/span[@lang='en' and text()='{0}']",
+				"//span[@class='complexformsnotsubentries']/span[@class='complexformtypes']/span[@class='complexformtype']/span[@class='reverseabbr']/span[@lang='en' and text()='{0}']",
 					complexRefRevAbbr);
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(fwdNameXpath);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(revNameXpath, 1);
@@ -1776,24 +1780,39 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void IsMinorEntry_ReturnsTrueForMinorEntry()
+		public void IsMainEntry_ReturnsFalseForMinorEntry()
 		{
 			var mainEntry = CreateInterestingLexEntry(Cache);
-			var minorEntry = CreateInterestingLexEntry(Cache);
-			CreateVariantForm(Cache, mainEntry, minorEntry);
+			var variantEntry = CreateInterestingLexEntry(Cache);
+			CreateVariantForm(Cache, mainEntry, variantEntry);
+			var complexEntry = CreateInterestingLexEntry(Cache);
+			CreateComplexForm(Cache, mainEntry, complexEntry, false);
+			var rootConfig = new DictionaryConfigurationModel(true);
+			var lexemeConfig = new DictionaryConfigurationModel(false);
 			// SUT
-			Assert.That(ConfiguredXHTMLGenerator.IsComplexFormOrVariant(minorEntry));
+			Assert.False(ConfiguredXHTMLGenerator.IsMainEntry(variantEntry, lexemeConfig), "Variant, Lexeme");
+			Assert.False(ConfiguredXHTMLGenerator.IsMainEntry(variantEntry, rootConfig), "Variant, Root");
+			Assert.False(ConfiguredXHTMLGenerator.IsMainEntry(complexEntry, rootConfig), "Complex, Root");
+			// (complex entries are considered main entries in lexeme-based configs)
 		}
 
 		[Test]
-		public void IsMinorEntry_ReturnsFalseWhenNotAMinorEntry()
+		public void IsMainEntry_ReturnsTrueForMainEntry()
 		{
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(Cache, mainEntry, minorEntry);
+			var complexEntry = CreateInterestingLexEntry(Cache);
+			CreateComplexForm(Cache, mainEntry, complexEntry, false);
+			var rootConfig = new DictionaryConfigurationModel(true);
+			var lexemeConfig = new DictionaryConfigurationModel(false);
 			// SUT
-			Assert.False(ConfiguredXHTMLGenerator.IsComplexFormOrVariant(mainEntry));
-			Assert.False(ConfiguredXHTMLGenerator.IsComplexFormOrVariant(Cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>().Create()));
+			Assert.That(ConfiguredXHTMLGenerator.IsMainEntry(mainEntry, rootConfig), "Main, Root");
+			Assert.That(ConfiguredXHTMLGenerator.IsMainEntry(mainEntry, lexemeConfig), "Main, Lexeme");
+			Assert.That(ConfiguredXHTMLGenerator.IsMainEntry(complexEntry, lexemeConfig), "Complex, Lexeme");
+			// (complex entries are considered minor entries in root-based configs)
+			Assert.That(ConfiguredXHTMLGenerator.IsMainEntry(Cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>().Create(),
+				new DictionaryConfigurationModel()), "Reversal Index Entries are always considered Main Entries");
 		}
 
 		[Test]
@@ -1810,7 +1829,7 @@ namespace SIL.FieldWorks.XWorks
 				SetDictionaryNormalDirection(new InheritableStyleProp<TriStateBool>(TriStateBool.triTrue));
 				var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
 					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-				var configModel = CreateInterestingConfigurationModel(Cache);
+				var configModel = CreateInterestingConfigurationModel(Cache, m_mediator);
 				var mainEntry = CreateInterestingLexEntry(Cache);
 				//SUT
 				var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(mainEntry, configModel, pubDecorator, m_mediator);
@@ -1829,7 +1848,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
 																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var configModel = CreateInterestingConfigurationModel(Cache);
+			var configModel = CreateInterestingConfigurationModel(Cache, m_mediator);
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(Cache, mainEntry, minorEntry);
@@ -1848,7 +1867,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
 																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var configModel = CreateInterestingConfigurationModel(Cache);
+			var configModel = CreateInterestingConfigurationModel(Cache, m_mediator);
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(Cache, mainEntry, minorEntry);
@@ -1868,7 +1887,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
 																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var configModel = CreateInterestingConfigurationModel(Cache);
+			var configModel = CreateInterestingConfigurationModel(Cache, m_mediator);
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(Cache, mainEntry, minorEntry);
@@ -1879,6 +1898,28 @@ namespace SIL.FieldWorks.XWorks
 			// this test relies on specific test data from CreateInterestingConfigurationModel
 			const string xpath = "/div[@class='minorentry']/span[@class='entry']";
 			AssertThatXmlIn.String(xhtml).HasNoMatchForXpath(xpath);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_LexemeBasedConsidersComplexFormsMainEntries()
+		{
+			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
+																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+			var configModel = CreateInterestingConfigurationModel(Cache, m_mediator);
+			for (var i = 1; i < configModel.Parts.Count; i++)
+				configModel.Parts[i].IsEnabled = false; // don't display Minor entries
+			var componentEntry = CreateInterestingLexEntry(Cache);
+			var complexEntry = CreateInterestingLexEntry(Cache);
+			CreateComplexForm(Cache, componentEntry, complexEntry, false);
+			configModel.Parts[1].DictionaryNodeOptions = configModel.Parts[2].DictionaryNodeOptions =
+				GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Minor, new ICmPossibility[0]);
+			SetPublishAsMinorEntry(complexEntry, false);
+			//SUT
+			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(complexEntry, configModel, pubDecorator, m_mediator);
+			// this test relies on specific test data from CreateInterestingConfigurationModel
+			const string xpath = "/html/body/div[@class='minorentry']/span[@class='entry']";
+			// only the variant is selected, so the other minor entry should not have been generated
+			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 0);
 		}
 
 		/// <summary>
@@ -5942,20 +5983,19 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var refTypeNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LookupComplexEntryType",
+				FieldDescription = ConfiguredXHTMLGenerator.LookupComplexEntryType,
 				CSSClassNameOverride = "complexformtypes",
 				Children = new List<ConfigurableDictionaryNode> { revAbbrevNode }
 			};
 			var subentryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { refTypeNode },
-				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions(),
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex),
 				FieldDescription = "Subentries"
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { subentryNode },
-				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions(),
 				FieldDescription = "SensesOS", CSSClassNameOverride = "senses"
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -5996,14 +6036,14 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var refTypeNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LookupComplexEntryType",
+				FieldDescription = ConfiguredXHTMLGenerator.LookupComplexEntryType,
 				CSSClassNameOverride = "complexformtypes",
 				Children = new List<ConfigurableDictionaryNode> { revAbbrevNode }
 			};
 			var subentryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { refTypeNode },
-				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions(),
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex),
 				FieldDescription = "Subentries"
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -6046,7 +6086,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var subsubentryNode = new ConfigurableDictionaryNode
 			{
-				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions(),
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex),
 				FieldDescription = "Subentries", ReferenceItem = "Subentries"
 			};
 			var revAbbrevNode = new ConfigurableDictionaryNode
@@ -6056,7 +6096,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var refTypeNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LookupComplexEntryType",
+				FieldDescription = ConfiguredXHTMLGenerator.LookupComplexEntryType,
 				CSSClassNameOverride = "complexformtypes",
 				Children = new List<ConfigurableDictionaryNode> { revAbbrevNode }
 			};
@@ -6067,7 +6107,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var subentryNode = new ConfigurableDictionaryNode
 			{
-				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions(),
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex),
 				ReferenceItem = "Subentries", FieldDescription = "Subentries"
 			};
 			var senseNode = new ConfigurableDictionaryNode
@@ -6114,7 +6154,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var refTypeNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LookupComplexEntryType", IsEnabled = false,
+				FieldDescription = ConfiguredXHTMLGenerator.LookupComplexEntryType, IsEnabled = false,
 				CSSClassNameOverride = "complexformtypes",
 				Children = new List<ConfigurableDictionaryNode> { revAbbrevNode }
 			};
@@ -6173,7 +6213,7 @@ namespace SIL.FieldWorks.XWorks
 				CSSClassNameOverride = "complexformtypes",
 				Children = new List<ConfigurableDictionaryNode> { complexTypeNameNode },
 			};
-			var complexOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex, true);
+			var complexOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex);
 			var referencedCompFormNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { complexEntryTypeNode, formNode },
@@ -6212,7 +6252,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "ComplexEntryTypesRS",
 				CSSClassNameOverride = "complexformtypes",
 			};
-			var complexOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex, true);
+			var complexOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex);
 			var referencedCompFormNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> {complexEntryTypeNode, formNode },
@@ -6251,10 +6291,10 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var refTypeNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LookupComplexEntryType",
+				FieldDescription = ConfiguredXHTMLGenerator.LookupComplexEntryType,
 				CSSClassNameOverride = "complexformtypes",
 			};
-			var complexOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex, true);
+			var complexOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex);
 			var subentryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { refTypeNode, headwordNode },
@@ -6462,6 +6502,45 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_GeneratesCorrectMainAndMinorEntries()
+		{
+			var firstMainEntry = CreateInterestingLexEntry(Cache);
+			var idiom = CreateInterestingLexEntry(Cache, "entry1", "myComplexForm");
+			CreateComplexForm(Cache, firstMainEntry, idiom, false, 4);
+
+			var idiomGuid = "b2276dec-b1a6-4d82-b121-fd114c009c59";
+
+			var enabledComplexEntryTypes = new List<string>();
+			enabledComplexEntryTypes.Add(idiomGuid);// Idiom
+
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				FieldDescription = "LexEntry",
+				Label = "Main Entry",
+				DictionaryNodeOptions = GetListOptionsForStrings(DictionaryNodeListOptions.ListIds.Complex, enabledComplexEntryTypes)
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForMainEntry(idiom, mainEntryNode, null, settings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath("/div[@class='lexentry']/span[@class='headword']", 1);
+
+			var complexOptions = (DictionaryNodeListOptions)mainEntryNode.DictionaryNodeOptions;
+			complexOptions.Options[0].IsEnabled = false;
+			result = ConfiguredXHTMLGenerator.GenerateXHTMLForMainEntry(idiom, mainEntryNode, null, settings);
+			Assert.IsEmpty(result);
+		}
+
+		/// <remarks>Note that the "Unspecified" Types mentioned here are truly unspecified, not the specified Type "Unspecified Form Type"</remarks>
+		[Test]
 		public void GenerateXHTMLForEntry_GeneratesCorrectMinorEntries(
 			[Values(FormType.Specified, FormType.Unspecified, FormType.None)] FormType complexForm,
 			[Values(true, false)] bool isUnspecifiedComplexTypeEnabled,
@@ -6469,8 +6548,9 @@ namespace SIL.FieldWorks.XWorks
 			[Values(true, false)] bool isUnspecifiedVariantTypeEnabled,
 			[Values(true, false)] bool isRootBased)
 		{
-			if (complexForm == FormType.None && variantForm == FormType.None)
-				return; // A Minor entry makes no sense if it's neither complex nor variant
+			if ((variantForm == FormType.None && complexForm == FormType.None) // A Minor entry makes no sense if it's neither complex nor variant
+				|| (complexForm != FormType.None && !isRootBased)) // Only Root-based configurations consider complex forms to be main entries
+				return;
 
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
@@ -7149,16 +7229,17 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var refTypeNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LookupComplexEntryType",
+				FieldDescription = ConfiguredXHTMLGenerator.LookupComplexEntryType,
 				CSSClassNameOverride = "complexformtypes",
 				Children = new List<ConfigurableDictionaryNode> { revAbbrevNode }
 			};
 			var subentryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { refTypeNode },
-				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions{DisplayEachInAParagraph = true},
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex),
 				FieldDescription = "Subentries"
 			};
+			((IParaOption)subentryNode.DictionaryNodeOptions).DisplayEachInAParagraph = true;
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }) };
 			var SenseNode = new ConfigurableDictionaryNode
 			{
@@ -7221,7 +7302,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "ComplexFormEntryRefs",
 				Label = "Components",
-				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex, true),
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex),
 				Children = new List<ConfigurableDictionaryNode> { refentryNode }
 			};
 			var minorEntryNode = new ConfigurableDictionaryNode
@@ -7795,6 +7876,30 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void SavePublishedHtmlWithCustomCssFile()
+		{
+			var entries = new int[0];
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode>(),
+				FilePath = Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_mediator),
+										"filename" + DictionaryConfigurationModel.FileExtension)
+			};
+			var xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(entries, null, model, m_mediator);
+			try
+			{
+				var previewXhtmlContent = File.ReadAllText(xhtmlPath);
+				// ReSharper disable once AssignNullToNotNullAttribute -- Justification: XHTML is always saved in a directory
+				var filePath = Path.Combine(Path.GetDirectoryName(xhtmlPath), "ProjectDictionaryOverrides.css");
+				StringAssert.Contains(filePath, previewXhtmlContent, "Custom css file should added in the XHTML file");
+			}
+			finally
+			{
+				DeleteTempXhtmlAndCssFiles(xhtmlPath);
+			}
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_EmbeddedWritingSystemGeneratesCorrectResult()
 		{
 			var headwordNode = new ConfigurableDictionaryNode
@@ -8083,27 +8188,38 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>LT-17918. Intermittent failures should NOT be ignored.</summary>
 		[Test]
-		public void GenerateXHTMLForEntry_VariantsOfEntryAreOrderedAsUserSpecified()
+		public void GenerateXHTMLForEntry_ComplexFormsAreOrderedAsUserSpecified(
+			[Values(true, false)] bool useNotSubentries, [Values(true, false)] bool useVirtualOrdering, [Values(true, false)] bool showInPara)
 		{
 			var lexentry = CreateInterestingLexEntry(Cache);
 
-			using (var v1 = CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordB"), new Guid("00000000-0000-0000-0000-000000000001")))
-			using (var v3 = CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordA"), new Guid("00000000-0000-0000-0000-000000000003")))
-			using (var v2 = CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordD"), new Guid("00000000-0000-0000-0000-000000000004")))
-			using (var v4 = CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordC"), new Guid("00000000-0000-0000-0000-000000000002")))
+			using (var c1 = CreateComplexForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordB"), new Guid("00000000-0000-0000-0000-000000000001"), false))
+			using (var c3 = CreateComplexForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordA"), new Guid("00000000-0000-0000-0000-000000000003"), false))
+			using (var c2 = CreateComplexForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordD"), new Guid("00000000-0000-0000-0000-000000000004"), false))
+			using (var c4 = CreateComplexForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordC"), new Guid("00000000-0000-0000-0000-000000000002"), false))
 			{
-				var varFlid = Cache.MetaDataCacheAccessor.GetFieldId("LexEntry", "VariantFormEntryBackRefs", true);
-				VirtualOrderingServices.SetVO(lexentry, varFlid, new[] { v1.Item, v2.Item, v3.Item, v4.Item });
-				var variantTypeNameNode = new ConfigurableDictionaryNode
+				var headwords = new[] { "headwordA", "headwordB", "headwordC", "headwordD" };
+				if (useVirtualOrdering)
+				{
+					var varFlid = Cache.MetaDataCacheAccessor.GetFieldId("LexEntry", "VisibleComplexFormBackRefs", true);
+					VirtualOrderingServices.SetVO(lexentry, varFlid, new[] { c1.Item, c2.Item, c3.Item, c4.Item });
+					headwords = new[]
+					{
+						c1.Item.OwningEntry.HomographForm,
+						c2.Item.OwningEntry.HomographForm,
+						c3.Item.OwningEntry.HomographForm,
+						c4.Item.OwningEntry.HomographForm
+					};
+				}
+				var complexTypeNameNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = "Name",
 					DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
 				};
-				var variantTypeNode = new ConfigurableDictionaryNode
+				var complexTypeNode = new ConfigurableDictionaryNode
 				{
-					FieldDescription = "VariantEntryTypesRS",
-					CSSClassNameOverride = "variantentrytypes",
-					Children = new List<ConfigurableDictionaryNode> { variantTypeNameNode },
+					FieldDescription = "ComplexEntryTypesRS",
+					Children = new List<ConfigurableDictionaryNode> { complexTypeNameNode },
 				};
 				var formNode = new ConfigurableDictionaryNode
 				{
@@ -8112,15 +8228,16 @@ namespace SIL.FieldWorks.XWorks
 					IsEnabled = true,
 					DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 				};
-				var variantFormNode = new ConfigurableDictionaryNode
+				var complexFormNode = new ConfigurableDictionaryNode
 				{
-					DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
-					FieldDescription = "VariantFormEntryBackRefs",
-					Children = new List<ConfigurableDictionaryNode> { formNode, variantTypeNode }
+					DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex),
+					FieldDescription = useNotSubentries ? "ComplexFormsNotSubentries" : "VisibleComplexFormBackRefs",
+					Children = new List<ConfigurableDictionaryNode> { formNode, complexTypeNode }
 				};
+				((IParaOption)complexFormNode.DictionaryNodeOptions).DisplayEachInAParagraph = showInPara;
 				var mainEntryNode = new ConfigurableDictionaryNode
 				{
-					Children = new List<ConfigurableDictionaryNode> { variantFormNode },
+					Children = new List<ConfigurableDictionaryNode> { complexFormNode },
 					FieldDescription = "LexEntry"
 				};
 
@@ -8131,13 +8248,13 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
 
-				// Test that variantformentrybackref items are in alphabetical order
-				Assert.That(result.IndexOf("headwordB", StringComparison.InvariantCulture),
-					Is.LessThan(result.IndexOf("headwordD", StringComparison.InvariantCulture)), "variant form not sorted in expected order\n{0}", result);
-				Assert.That(result.IndexOf("headwordD", StringComparison.InvariantCulture),
-					Is.LessThan(result.IndexOf("headwordA", StringComparison.InvariantCulture)), "variant form not sorted in expected order\n{0}", result);
-				Assert.That(result.IndexOf("headwordA", StringComparison.InvariantCulture),
-					Is.LessThan(result.IndexOf("headwordC", StringComparison.InvariantCulture)), "variant form not sorted in expected order\n{0}", result);
+				// Test that variantformentrybackref items are in (alphabetical or) virtual order
+				Assert.That(result.IndexOf(headwords[0], StringComparison.InvariantCulture),
+					Is.LessThan(result.IndexOf(headwords[1], StringComparison.InvariantCulture)), "complex form not sorted in expected order\n{0}", result);
+				Assert.That(result.IndexOf(headwords[1], StringComparison.InvariantCulture),
+					Is.LessThan(result.IndexOf(headwords[2], StringComparison.InvariantCulture)), "complex form not sorted in expected order\n{0}", result);
+				Assert.That(result.IndexOf(headwords[2], StringComparison.InvariantCulture),
+					Is.LessThan(result.IndexOf(headwords[3], StringComparison.InvariantCulture)), "complex form not sorted in expected order\n{0}", result);
 			}
 		}
 
@@ -8179,40 +8296,93 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 
 			// Use the second item in the list for testing at this time, since the first item in the list isn't being handled the same way right now (20170111) by the current implementation.
-			var earlyTypeInOptionsListGuid = ((DictionaryNodeListOptions) variantFormNode.DictionaryNodeOptions).Options[1].Id;
-			var lastTypeInOptionsListGuid = (variantFormNode.DictionaryNodeOptions as DictionaryNodeListOptions).Options.Last().Id;
+			var earlyTypeInOptionsListGuid = new Guid(((DictionaryNodeListOptions)variantFormNode.DictionaryNodeOptions).Options[1].Id);
+			var finalTypeInOptionsListGuid = new Guid(((DictionaryNodeListOptions)variantFormNode.DictionaryNodeOptions).Options.Last().Id);
 
-			var earlyTypeInOptionsList = settings.Cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities.First(possibility => possibility.Guid.ToString() == earlyTypeInOptionsListGuid);
-			var lastTypeInOptionsList = settings.Cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities.First(possibility => possibility.Guid.ToString() == lastTypeInOptionsListGuid);
+			var earlyTypeInOptionsList = Cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities.First(t => t.Guid == earlyTypeInOptionsListGuid);
+			var finalTypeInOptionsList = Cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities.First(t => t.Guid == finalTypeInOptionsListGuid);
 
 			var lexentry = CreateInterestingLexEntry(Cache);
 
-			CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordA"), earlyTypeInOptionsList.Name.AnalysisDefaultWritingSystem.Text);
-			CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordB"), lastTypeInOptionsList.Name.AnalysisDefaultWritingSystem.Text);
-
-			var lexEntryRefCollection = lexentry.VariantFormEntryBackRefs.ToList();
-
-			var builder = new StringBuilder();
+			CreateInterestingLexEntry(Cache, "headwordA").MakeVariantOf(lexentry, (ILexEntryType)earlyTypeInOptionsList);
+			CreateInterestingLexEntry(Cache, "headwordB").MakeVariantOf(lexentry, (ILexEntryType)finalTypeInOptionsList);
 
 			// SUT1
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForFieldByReflection(lexentry, variantFormNode, null, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForFieldByReflection(lexentry, variantFormNode, null, DefaultSettings);
 
 			Assert.That(result.IndexOf("headwordA", StringComparison.InvariantCulture),
 				Is.LessThan(result.IndexOf("headwordB", StringComparison.InvariantCulture)), "variant forms not appearing in an order corresponding to their type sorting");
 
 			// Change the order of variantFormNode.DictionaryNodeOptions, which should result in the data being ordered differently.
-
 			((DictionaryNodeListOptions)variantFormNode.DictionaryNodeOptions).Options.Reverse();
 
-			builder = new StringBuilder();
 			// SUT2
-			result = ConfiguredXHTMLGenerator.GenerateXHTMLForFieldByReflection(lexentry, variantFormNode, null, settings);
+			result = ConfiguredXHTMLGenerator.GenerateXHTMLForFieldByReflection(lexentry, variantFormNode, null, DefaultSettings);
 
 			Assert.That(result.IndexOf("headwordB", StringComparison.InvariantCulture),
 				Is.LessThan(result.IndexOf("headwordA", StringComparison.InvariantCulture)), "variant forms not appearing in an order corresponding to their type sorting");
+		}
+
+		/// <summary>
+		/// LT-18018.
+		/// The implementation code changes were done in GenerateXHTMLForILexEntryRefsByType.
+		/// </summary>
+		[Test]
+		public void GenerateXHTMLForFieldByReflection_SubentryTypesAreOrderedBasedOnOptionOrdering()
+		{
+			var complexFormTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+			};
+			var complexFormTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = ConfiguredXHTMLGenerator.LookupComplexEntryType,
+				Children = new List<ConfigurableDictionaryNode> { complexFormTypeNameNode },
+			};
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var subentryNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex),
+				FieldDescription = "Subentries",
+				Children = new List<ConfigurableDictionaryNode> { formNode, complexFormTypeNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { subentryNode },
+				FieldDescription = "LexEntry"
+			};
+
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			// Use the second item in the list for testing at this time, since the first item in the list (<none>) isn't being handled the same way right now (20170119) by the current implementation.
+			var earlyTypeInOptionsListGuid = new Guid(((DictionaryNodeListOptions)subentryNode.DictionaryNodeOptions).Options[1].Id);
+			var finalTypeInOptionsListGuid = new Guid(((DictionaryNodeListOptions)subentryNode.DictionaryNodeOptions).Options.Last().Id);
+			var lexentry = CreateInterestingLexEntry(Cache);
+			CreateComplexForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordA"), true, earlyTypeInOptionsListGuid);
+			CreateComplexForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordB"), true, finalTypeInOptionsListGuid);
+
+			// SUT1
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForFieldByReflection(lexentry, subentryNode, null, DefaultSettings);
+
+			Assert.That(result.IndexOf("headwordA", StringComparison.InvariantCulture),
+				Is.LessThan(result.IndexOf("headwordB", StringComparison.InvariantCulture)), "Subentries should be sorted by Type");
+
+			// Reverse the order of the DictionaryNodeOptions, which should result in the data being ordered differently.
+			((DictionaryNodeListOptions)subentryNode.DictionaryNodeOptions).Options.Reverse();
+
+			// SUT2
+			result = ConfiguredXHTMLGenerator.GenerateXHTMLForFieldByReflection(lexentry, subentryNode, null, DefaultSettings);
+
+			Assert.That(result.IndexOf("headwordB", StringComparison.InvariantCulture),
+				Is.LessThan(result.IndexOf("headwordA", StringComparison.InvariantCulture)), "Subentries should be sorted by Type");
 		}
 
 		[Test]
@@ -8465,605 +8635,5 @@ namespace SIL.FieldWorks.XWorks
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithGlossOfGloss, 1);
 		}
-
-		#region Helpers
-		private static void DeleteTempXhtmlAndCssFiles(string xhtmlPath)
-		{
-			if (string.IsNullOrEmpty(xhtmlPath))
-				return;
-			File.Delete(xhtmlPath);
-			File.Delete(Path.ChangeExtension(xhtmlPath, "css"));
-		}
-
-		/// <summary>Creates a DictionaryConfigurationModel with one Main and two Minor Entry nodes, all with enabled HeadWord children</summary>
-		/// <param name="cache"></param>
-		internal static DictionaryConfigurationModel CreateInterestingConfigurationModel(FdoCache cache)
-		{
-			var mainHeadwordNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "HeadWord",
-				CSSClassNameOverride = "entry",
-				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
-				Before = "MainEntry: ",
-			};
-			var mainEntryNode = new ConfigurableDictionaryNode
-			{
-				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode },
-				FieldDescription = "LexEntry",
-			};
-			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
-
-			var minorEntryNode = mainEntryNode.DeepCloneUnderSameParent();
-			minorEntryNode.CSSClassNameOverride = "minorentry";
-			minorEntryNode.Before = "MinorEntry: ";
-			minorEntryNode.DictionaryNodeOptions = GetFullyEnabledListOptions(cache, DictionaryNodeListOptions.ListIds.Complex);
-
-			var minorSecondNode = minorEntryNode.DeepCloneUnderSameParent();
-			minorSecondNode.Before = "HalfStep: ";
-			minorEntryNode.DictionaryNodeOptions = GetFullyEnabledListOptions(cache, DictionaryNodeListOptions.ListIds.Variant);
-
-			return new DictionaryConfigurationModel
-			{
-				AllPublications = true,
-				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode, minorEntryNode, minorSecondNode }
-			};
-		}
-
-		private static ConfigurableDictionaryNode CreatePictureModel()
-		{
-			var thumbNailNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "PictureFileRA", CSSClassNameOverride = "picture"
-			};
-			var pictureNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "PicturesOfSenses",
-				CSSClassNameOverride = "Pictures",
-				Children = new List<ConfigurableDictionaryNode> { thumbNailNode }
-			};
-			var sensesNode = new ConfigurableDictionaryNode { FieldDescription = "Senses" };
-			var mainEntryNode = new ConfigurableDictionaryNode
-			{
-				Children = new List<ConfigurableDictionaryNode> { sensesNode, pictureNode }, FieldDescription = "LexEntry"
-			};
-			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
-			return mainEntryNode;
-		}
-
-		/// <summary>
-		/// Creates an ILexEntry object, optionally with specified headword and gloss
-		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="headword">Optional: defaults to 'Citation'</param>
-		/// <param name="gloss">Optional: defaults to 'gloss'</param>
-		/// <returns></returns>
-		internal static ILexEntry CreateInterestingLexEntry(FdoCache cache, string headword = "Citation", string gloss = "gloss")
-		{
-			var factory = cache.ServiceLocator.GetInstance<ILexEntryFactory>();
-			var entry = factory.Create();
-			cache.LangProject.AddToCurrentAnalysisWritingSystems(
-				cache.WritingSystemFactory.get_Engine("en") as IWritingSystem);
-			cache.LangProject.AddToCurrentVernacularWritingSystems(
-				cache.WritingSystemFactory.get_Engine("fr") as IWritingSystem);
-			var wsEn = cache.WritingSystemFactory.GetWsFromStr("en");
-			var wsFr = cache.WritingSystemFactory.GetWsFromStr("fr");
-			AddHeadwordToEntry(entry, headword, wsFr, cache);
-			entry.Comment.set_String(wsEn, cache.TsStrFactory.MakeString("Comment", wsEn));
-			AddSenseToEntry(entry, gloss, wsEn, cache);
-			return entry;
-		}
-
-		/// <summary>
-		/// Creates an ILexEntry object, optionally with specified headword and gloss
-		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="headword">Optional: defaults to 'Citation'</param>
-		/// <param name="gloss">Optional: defaults to 'gloss'</param>
-		/// <returns></returns>
-		internal static ILexEntry CreateInterestingSuffix(FdoCache cache, string headword = "ba", string gloss = "gloss")
-		{
-			var entry = CreateInterestingLexEntry(cache, headword, gloss);
-			var wsEn = cache.WritingSystemFactory.GetWsFromStr("en");
-			var suffixType = cache.LangProject.LexDbOA.MorphTypesOA.FindOrCreatePossibility("suffix", wsEn);
-			entry.LexemeFormOA = cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>().Create();
-			entry.LexemeFormOA.MorphTypeRA = suffixType as IMoMorphType;
-			return entry;
-		}
-
-		internal sealed class TempGuidOn<T> : IDisposable where T : ICmObject
-		{
-			public T Item { get; private set; }
-			private readonly Guid originalGuid;
-
-			public TempGuidOn(T item, Guid tempGuid)
-			{
-				Item = item;
-				originalGuid = item.Guid;
-				SetGuidOn(item, tempGuid);
-			}
-
-			public void Dispose()
-			{
-				SetGuidOn(Item, originalGuid);
-			}
-
-			private static void SetGuidOn(ICmObject item, Guid newGuid)
-			{
-				var refGuidField = ReflectionHelper.GetField(item, "m_guid");
-				ReflectionHelper.SetField(refGuidField, "m_guid", newGuid);
-			}
-		}
-
-		/// <summary>
-		/// Use reflection to set the guid on a variant form. May not work for all kinds of tests or appropriately be editing the database.
-		/// Because changing the Guid causes teardown problem, it must be reset prior to teardown (hence the Disposable <returns/>)
-		/// </summary>
-		internal static TempGuidOn<ILexEntryRef> CreateVariantForm(FdoCache cache, IVariantComponentLexeme main, ILexEntry variantForm, Guid guid,
-			string type = TestVariantName)
-		{
-			return new TempGuidOn<ILexEntryRef>(CreateVariantForm(cache, main, variantForm, type), guid);
-		}
-
-		/// <summary>
-		/// 'internal static' so Reversal tests can use it
-		/// </summary>
-		internal static ILexEntryRef CreateVariantForm(FdoCache cache, IVariantComponentLexeme main, ILexEntry variantForm, string type = TestVariantName)
-		{
-			var owningList = cache.LangProject.LexDbOA.VariantEntryTypesOA;
-			Assert.IsNotNull(owningList, "No VariantEntryTypes property on Lexicon object.");
-			var varType = owningList.PossibilitiesOS.LastOrDefault(poss => poss.Name.AnalysisDefaultWritingSystem.Text == type) as ILexEntryType;
-			if (varType == null && type != null) // if this type doesn't exist, create it
-			{
-				varType = cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>().Create();
-				owningList.PossibilitiesOS.Add(varType);
-				varType.Name.set_String(cache.DefaultAnalWs, type);
-			}
-			var refOut = variantForm.MakeVariantOf(main, varType);
-			// ILexEntry.MakeVariantOf sets a Type even if null is specified. But we want to test typeless variants, so clear them if null is specified.
-			if (type == null)
-				refOut.VariantEntryTypesRS.Clear();
-			return refOut;
-		}
-
-		/// <summary>
-		/// Use reflection to set the guid on a complex form. May not work for all kinds of tests or appropriately be editing the database.
-		/// Because changing the Guid causes teardown problem, it must be reset prior to teardown (hence the Disposable <returns/>)
-		/// </summary>
-		internal static TempGuidOn<ILexEntryRef> CreateComplexForm(FdoCache cache, IVariantComponentLexeme main, ILexEntry complexForm, Guid guid,
-			bool subentry)
-		{
-			return new TempGuidOn<ILexEntryRef>(CreateComplexForm(cache, main, complexForm, subentry), guid);
-		}
-
-		internal static ILexEntryRef CreateComplexForm(FdoCache fdoCache, ICmObject main, ILexEntry complexForm, bool subentry, byte complexFormTypeIndex = 1)
-		{
-			var complexEntryRef = fdoCache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
-			complexForm.EntryRefsOS.Add(complexEntryRef);
-			var complexEntryType = (ILexEntryType)fdoCache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS[complexFormTypeIndex];
-			var complexEntryTypeAbbrText = complexEntryType.Abbreviation.BestAnalysisAlternative.Text;
-			var complexEntryTypeRevAbbr = complexEntryType.ReverseAbbr;
-			// If there is no reverseAbbr, generate one from the forward abbr (e.g. "comp. of") by trimming the trailing " of"
-			if (complexEntryTypeRevAbbr.BestAnalysisAlternative.Equals(complexEntryTypeRevAbbr.NotFoundTss))
-				complexEntryTypeRevAbbr.SetAnalysisDefaultWritingSystem(complexEntryTypeAbbrText.Substring(0, complexEntryTypeAbbrText.Length - 3));
-			complexEntryRef.ComplexEntryTypesRS.Add(complexEntryType);
-			complexEntryRef.RefType = LexEntryRefTags.krtComplexForm;
-			complexEntryRef.ComponentLexemesRS.Add(main);
-			if (subentry)
-				complexEntryRef.PrimaryLexemesRS.Add(main);
-			else
-				complexEntryRef.ShowComplexFormsInRS.Add(main);
-			return complexEntryRef;
-		}
-
-		private ILexEntryRef CreateComplexFormbasedonNodeOption(ICmObject main, ILexEntry complexForm, DictionaryNodeListOptions.DictionaryNodeOption option, bool subentry)
-		{
-			var complexEntryRef = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
-			complexForm.EntryRefsOS.Add(complexEntryRef);
-			var complexEntryType =
-				(ILexEntryType)
-					Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.First(x => x.Guid.ToString() == option.Id);
-			var complexEntryTypeAbbrText = complexEntryType.Abbreviation.BestAnalysisAlternative.Text;
-			var complexEntryTypeRevAbbr = complexEntryType.ReverseAbbr;
-			// If there is no reverseAbbr, generate one from the forward abbr (e.g. "comp. of") by trimming the trailing " of"
-			if (complexEntryTypeRevAbbr.BestAnalysisAlternative.Equals(complexEntryTypeRevAbbr.NotFoundTss))
-				complexEntryTypeRevAbbr.SetAnalysisDefaultWritingSystem(complexEntryTypeAbbrText.Substring(0, complexEntryTypeAbbrText.Length - 3));
-			complexEntryRef.ComplexEntryTypesRS.Add(complexEntryType);
-			complexEntryRef.RefType = LexEntryRefTags.krtComplexForm;
-			complexEntryRef.ComponentLexemesRS.Add(main);
-			if (subentry)
-				complexEntryRef.PrimaryLexemesRS.Add(main);
-			else
-				complexEntryRef.ShowComplexFormsInRS.Add(main);
-			return complexEntryRef;
-		}
-		/// <summary>
-		/// Generates a Lexical Reference.
-		/// If refTypeReverseName is specified, generates a Ref of an Asymmetric Type (EntryOrSenseTree) with the specified reverse name;
-		/// otherwise, generates a Ref of a Symmetric Type (EntryOrSenseSequence).
-		/// </summary>
-		private void CreateLexicalReference(ICmObject mainEntry, ICmObject referencedForm, string refTypeName, string refTypeReverseName = null)
-		{
-			CreateLexicalReference(mainEntry, referencedForm, null, refTypeName, refTypeReverseName);
-		}
-
-		private void CreateLexicalReference(ICmObject firstEntry, ICmObject secondEntry, ICmObject thirdEntry, string refTypeName, string refTypeReverseName = null)
-		{
-			var lrt = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
-			if(Cache.LangProject.LexDbOA.ReferencesOA == null)
-				Cache.LangProject.LexDbOA.ReferencesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
-			Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(lrt);
-			lrt.Name.set_String(Cache.DefaultAnalWs, refTypeName);
-			if(string.IsNullOrEmpty(refTypeReverseName))
-			{
-				lrt.MappingType = (int)MappingTypes.kmtEntryOrSenseSequence;
-			}
-			else
-			{
-				lrt.ReverseName.set_String(Cache.DefaultAnalWs, refTypeReverseName);
-				lrt.MappingType = (int)MappingTypes.kmtEntryOrSenseTree;
-			}
-			var lexRef = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
-			lrt.MembersOC.Add(lexRef);
-			lexRef.TargetsRS.Add(firstEntry);
-			lexRef.TargetsRS.Add(secondEntry);
-			if (thirdEntry != null)
-				lexRef.TargetsRS.Add(thirdEntry);
-		}
-
-		private ILexRefType CreateLexRefType(LexRefTypeTags.MappingTypes type, string name, string abbr, string revName, string revAbbr)
-		{
-			if (Cache.LangProject.LexDbOA.ReferencesOA == null)
-				Cache.LangProject.LexDbOA.ReferencesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
-			var lrt = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
-			Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(lrt);
-			lrt.MappingType = (int)type;
-			lrt.Name.set_String(m_wsEn, name);
-			lrt.Abbreviation.set_String(m_wsEn, abbr);
-			if (!String.IsNullOrEmpty(revName))
-				lrt.ReverseName.set_String(m_wsEn, revName);
-			if (!String.IsNullOrEmpty(revAbbr))
-				lrt.ReverseAbbreviation.set_String(m_wsEn, revAbbr);
-			return lrt;
-		}
-
-		private void CreateLexReference(ILexRefType lrt, IEnumerable<ICmObject> sensesAndEntries)
-		{
-			CreateLexReference(lrt, sensesAndEntries, Guid.Empty);
-		}
-
-		private void CreateLexReference(ILexRefType lrt, IEnumerable<ICmObject> sensesAndEntries, Guid lexRefGuid)
-		{
-			var lexRef = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create(lexRefGuid, lrt);
-			foreach (var senseOrEntry in sensesAndEntries)
-				lexRef.TargetsRS.Add(senseOrEntry);
-		}
-
-		private ICmPossibility CreatePublicationType(string name)
-		{
-			if (Cache.LangProject.LexDbOA.PublicationTypesOA == null)
-				Cache.LangProject.LexDbOA.PublicationTypesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
-			var item = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-			Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(item);
-			item.Name.set_String(m_wsEn, name);
-			Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(item);
-			return item;
-		}
-
-		private static void AddHeadwordToEntry(ILexEntry entry, string headword, int wsId, FdoCache cache)
-		{
-			// The headword field is special: it uses Citation if available, or LexemeForm if Citation isn't filled in
-			entry.CitationForm.set_String(wsId, cache.TsStrFactory.MakeString(headword, wsId));
-		}
-
-		private static ILexPronunciation AddPronunciationToEntry(ILexEntry entry, string content, int wsId, FdoCache cache)
-		{
-			var pronunciation = cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
-			entry.PronunciationsOS.Add(pronunciation);
-			pronunciation.Form.set_String(wsId, cache.TsStrFactory.MakeString(content, wsId));
-			return pronunciation;
-		}
-
-		private static void AddSenseToEntry(ILexEntry entry, string gloss, int wsId, FdoCache cache)
-		{
-			var senseFactory = cache.ServiceLocator.GetInstance<ILexSenseFactory>();
-			var sense = senseFactory.Create();
-			entry.SensesOS.Add(sense);
-			if (!string.IsNullOrEmpty(gloss))
-				sense.Gloss.set_String(wsId, cache.TsStrFactory.MakeString(gloss, wsId));
-		}
-
-		private void AddSenseAndTwoSubsensesToEntry(ICmObject entryOrSense, string gloss)
-		{
-			var senseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
-			var sense = senseFactory.Create();
-			var entry = entryOrSense as ILexEntry;
-			if (entry != null)
-				entry.SensesOS.Add(sense);
-			else
-				((ILexSense)entryOrSense).SensesOS.Add(sense);
-			sense.Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString(gloss, m_wsEn));
-			var subSensesOne = senseFactory.Create();
-			sense.SensesOS.Add(subSensesOne);
-			subSensesOne.Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString(gloss + "2.1", m_wsEn));
-			var subSensesTwo = senseFactory.Create();
-			sense.SensesOS.Add(subSensesTwo);
-			subSensesTwo.Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString(gloss + "2.2", m_wsEn));
-		}
-
-		private void AddSingleSubSenseToSense(string gloss, ILexSense sense)
-		{
-			sense.Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString(gloss, m_wsEn));
-			AddSubSenseToSense(gloss + "1.1", sense);
-		}
-
-		private void AddSubSenseToSense(string gloss, ILexSense sense)
-		{
-			var subSensesOne = sense.Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
-			sense.SensesOS.Add(subSensesOne);
-			subSensesOne.Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString(gloss, m_wsEn));
-		}
-
-		private ILexExampleSentence AddExampleToSense(ILexSense sense, string content, string translation = null)
-		{
-			var exampleFact = Cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>();
-			var example = exampleFact.Create(new Guid(), sense);
-			example.Example.set_String(m_wsFr, Cache.TsStrFactory.MakeString(content, m_wsFr));
-			if (translation != null)
-			{
-				var type = Cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranFreeTranslation);
-				var cmTranslation = Cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(example, type);
-				cmTranslation.Translation.set_String(m_wsEn, Cache.TsStrFactory.MakeString(translation, m_wsEn));
-				example.TranslationsOC.Add(cmTranslation);
-			}
-			return example;
-		}
-
-		private IMoForm AddAllomorphToEntry(ILexEntry entry)
-		{
-			var morphFact = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>();
-			var morph = morphFact.Create();
-			entry.AlternateFormsOS.Add(morph);
-			morph.Form.set_String(m_wsFr, Cache.TsStrFactory.MakeString("Allomorph", m_wsFr));
-
-			// add environment to the allomorph
-			const int stringRepresentationFlid = 5097008;
-			var env = Cache.ServiceLocator.GetInstance<IPhEnvironmentFactory>().Create();
-			Cache.LangProject.PhonologicalDataOA.EnvironmentsOS.Add(env);
-			morph.PhoneEnvRC.Add(env);
-			Cache.MainCacheAccessor.SetString(env.Hvo, stringRepresentationFlid, Cache.TsStrFactory.MakeString("phoneyEnv", m_wsEn));
-
-			return morph;
-		}
-
-		private static IStText CreateMultiParaText(string content, FdoCache cache)
-		{
-			var text = cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-			//cache.LangProject.
-			var stText = cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
-			cache.LangProject.InterlinearTexts.Add(stText);
-			text.ContentsOA = stText;
-			var para = cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
-			stText.ParagraphsOS.Add(para);
-			para.Contents = MakeVernTss("First para " + content, cache);
-			var para1 = cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
-			stText.ParagraphsOS.Add(para1);
-			para1.Contents = MakeVernTss("Second para " + content, cache);
-			return text.ContentsOA;
-		}
-
-		private static ITsString MakeVernTss(string content, FdoCache cache)
-		{
-			return cache.TsStrFactory.MakeString(content, cache.DefaultVernWs);
-		}
-
-		private ITsString MakeMulitlingualTss(IEnumerable<string> content)
-		{
-			// automatically alternates runs between 'en' and 'fr'
-			var tsFact = Cache.TsStrFactory;
-			var lastWs = m_wsFr;
-			var builder = tsFact.GetIncBldr();
-			foreach (var runContent in content)
-			{
-				lastWs = lastWs == m_wsEn ? m_wsFr : m_wsEn; // switch ws for each run
-				builder.AppendTsString(tsFact.MakeString(runContent, lastWs));
-			}
-			return builder.GetString();
-		}
-
-		private ITsString MakeBidirectionalTss(IEnumerable<string> content)
-		{
-			EnsureHebrewExists();
-			// automatically alternates runs between 'en' and 'he' (Hebrew)
-			var tsFact = Cache.TsStrFactory;
-			var lastWs = m_wsEn;
-			var builder = tsFact.GetIncBldr();
-			foreach (var runContent in content)
-			{
-				lastWs = lastWs == m_wsEn ? m_wsHe : m_wsEn; // switch ws for each run
-				builder.AppendTsString(tsFact.MakeString(runContent, lastWs));
-			}
-			return builder.GetString();
-		}
-
-		private void EnsureHebrewExists()
-		{
-			if (m_wsHe > 0)
-				return;
-			var wsManager = Cache.ServiceLocator.WritingSystemManager;
-			IWritingSystem hebrew;
-			wsManager.GetOrSet("he", out hebrew);
-			hebrew.RightToLeftScript = true;
-			m_wsHe = hebrew.Handle;
-		}
-
-		private void SetDictionaryNormalDirection(InheritableStyleProp<TriStateBool> rightToLeft)
-		{
-			ReflectionHelper.SetField(DictionaryNormalStyle, "m_rtl", rightToLeft);
-		}
-
-		internal static void SetPublishAsMinorEntry(ILexEntry entry, bool publish)
-		{
-			foreach (var ler in entry.EntryRefsOS)
-				ler.HideMinorEntry = publish ? 0 : 1;
-		}
-
-		public static DictionaryNodeOptions GetWsOptionsForLanguages(string[] languages)
-		{
-			return new DictionaryNodeWritingSystemOptions { Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(languages) };
-		}
-
-		public static DictionaryNodeOptions GetWsOptionsForLanguages(string[] languages, DictionaryNodeWritingSystemOptions.WritingSystemType type)
-		{
-			return new DictionaryNodeWritingSystemOptions
-			{
-				Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(languages),
-				WsType = type
-			};
-		}
-
-		public static DictionaryNodeOptions GetWsOptionsForLanguageswithDisplayWsAbbrev(string[] languages)
-		{
-			return new DictionaryNodeWritingSystemOptions
-			{
-				Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(languages),
-				DisplayWritingSystemAbbreviations = true
-			};
-		}
-
-		public static DictionaryNodeOptions GetListOptionsForItems(DictionaryNodeListOptions.ListIds listName, ICmPossibility[] checkedItems)
-		{
-			var listOptions = new DictionaryNodeListOptions {
-				ListId = listName,
-				Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings (checkedItems.Select (id => id.Guid.ToString()).ToList())
-			};
-			return listOptions;
-		}
-
-		public static DictionaryNodeOptions GetListOptionsForStrings(DictionaryNodeListOptions.ListIds listName, IEnumerable<string> checkedItems)
-		{
-			var listOptions = new DictionaryNodeListOptions {
-				ListId = listName,
-				Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(checkedItems)
-			};
-			return listOptions;
-		}
-
-		public DictionaryNodeOptions GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds listName, bool isComplex = false)
-		{
-			return GetFullyEnabledListOptions(Cache, listName, isComplex);
-		}
-
-		public static DictionaryNodeOptions GetFullyEnabledListOptions(FdoCache cache,
-			DictionaryNodeListOptions.ListIds listName, bool isComplex = false)
-		{
-			List<DictionaryNodeListOptions.DictionaryNodeOption> dnoList;
-			switch (listName)
-			{
-				case DictionaryNodeListOptions.ListIds.Minor:
-					dnoList = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(
-						new [] { XmlViewsUtils.GetGuidForUnspecifiedVariantType(), XmlViewsUtils.GetGuidForUnspecifiedComplexFormType() }
-							.Select(guid => guid.ToString())
-						.Union(cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS
-						.Union(cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS).Select(item => item.Guid.ToString())));
-					break;
-				case DictionaryNodeListOptions.ListIds.Variant:
-					isComplex = false;
-					dnoList = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(
-						new [] { XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString() }
-						.Union(cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Select(item => item.Guid.ToString())));
-					break;
-				case DictionaryNodeListOptions.ListIds.Complex:
-					isComplex = true;
-					dnoList = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(
-						new [] { XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString() }
-						.Union(cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.Select(item => item.Guid.ToString())));
-					break;
-				case DictionaryNodeListOptions.ListIds.Note:
-					isComplex = true;
-					dnoList = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(
-						new[] { XmlViewsUtils.GetGuidForUnspecifiedExtendedNoteType().ToString() }
-						.Union(cache.LangProject.LexDbOA.ExtendedNoteTypesOA.PossibilitiesOS.Select(item => item.Guid.ToString())));
-					break;
-				default:
-					throw new NotImplementedException(string.Format("Unknown list id {0}", listName));
-			}
-
-			DictionaryNodeListOptions listOptions = isComplex ? new DictionaryNodeListAndParaOptions() : new DictionaryNodeListOptions();
-
-			listOptions.ListId = listName;
-			listOptions.Options = dnoList;
-			return listOptions;
-		}
-
-		/// <summary>
-		/// Search haystack with regexQuery, and assert that requiredNumberOfMatches matches are found.
-		/// Can be used in place of AssertThatXmlIn.String().HasSpecifiedNumberOfMatchesForXpath(),
-		/// when slashes are needed in an argument to xpath starts-with.
-		/// </summary>
-		private static void AssertRegex(string haystack, string regexQuery, int requiredNumberOfMatches)
-		{
-			var regex = new Regex(regexQuery);
-			var matches = regex.Matches(haystack);
-			Assert.That(matches.Count, Is.EqualTo(requiredNumberOfMatches), "Unexpected number of matches");
-		}
-
-		public IPartOfSpeech CreatePartOfSpeech(string name, string abbr)
-		{
-			var posSeq = Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS;
-			var pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
-			posSeq.Add(pos);
-			pos.Name.set_String(m_wsEn, name);
-			pos.Abbreviation.set_String(m_wsEn, abbr);
-			return pos;
-		}
-
-		public IMoMorphSynAnalysis CreateMSA(ILexEntry entry, IPartOfSpeech pos)
-		{
-			var msa = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
-			entry.MorphoSyntaxAnalysesOC.Add(msa);
-			msa.PartOfSpeechRA = pos;
-			return msa;
-		}
-		#endregion Helpers
 	}
-
-	#region Test classes and interfaces for testing the reflection code in GetPropertyTypeForConfigurationNode
-	class TestRootClass
-	{
-		public ITestInterface RootMember { get; set; }
-		public TestNonInterface ConcreteMember { get; set; }
-	}
-
-	interface ITestInterface : ITestBaseOne, ITestBaseTwo
-	{
-		string TestString { get; }
-	}
-
-	interface ITestBaseOne
-	{
-		IMoForm TestMoForm { get; }
-	}
-
-	interface ITestBaseTwo : ITestGrandParent
-	{
-		ICmObject TestIcmObject { get; }
-	}
-
-	class TestNonInterface
-	{
-// ReSharper disable UnusedMember.Local // Justification: called by reflection
-		string TestNonInterfaceString { get; set; }
-// ReSharper restore UnusedMember.Local
-	}
-
-	interface ITestGrandParent
-	{
-		Stack<TestRootClass> TestCollection { get; }
-	}
-
-	class TestPictureClass
-	{
-		public IFdoList<ICmPicture> Pictures { get; set; }
-	}
-	#endregion
 }
