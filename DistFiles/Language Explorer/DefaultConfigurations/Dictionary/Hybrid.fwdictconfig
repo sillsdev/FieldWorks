@@ -171,7 +171,7 @@
 			<Option id="analysis" isEnabled="true" />
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		  <ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=") " field="PrimaryEntryRefs">
+		  <ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs">
 			<ConfigurationItem name="Type" isEnabled="true" between="," after=" " field="EntryTypes" cssClassNameOverride="entrytypes">
 			  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
 				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -330,7 +330,7 @@
 		  <Option id="all analysis" isEnabled="true" />
 		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Lexical Relations" isEnabled="false" before="" between="; " after=". " field="LexSenseReferences">
+	  <ConfigurationItem name="Lexical Relations" isEnabled="false" before=" " between="; " after="." field="LexSenseReferences">
 		<ListTypeOptions list="sense">
 		  <Option id="" isEnabled="false" />
 		</ListTypeOptions>
@@ -356,7 +356,7 @@
 			  <Option id="all analysis" isEnabled="true" />
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=") " field="PrimaryEntryRefs">
+		  <ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs">
 			<ConfigurationItem name="Type" isEnabled="true" between="," after=" " field="EntryTypes" cssClassNameOverride="entrytypes">
 			  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
 				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -844,7 +844,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Cross References" isEnabled="true" before="" between="; " after=". " field="MinimalLexReferences">
+	  <ConfigurationItem name="Cross References" isEnabled="true" between="; " after=". " field="MinimalLexReferences">
 		<ListTypeOptions list="entry">
 		  <Option id="" isEnabled="false" />
 		</ListTypeOptions>
@@ -869,7 +869,7 @@
 			  <Option id="analysis" isEnabled="true" />
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=") " field="PrimaryEntryRefs">
+		  <ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs">
 			<ConfigurationItem name="Type" isEnabled="true" between="," after=" " field="EntryTypes" cssClassNameOverride="entrytypes">
 			  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
 				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -934,6 +934,37 @@
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true" />
 			</WritingSystemOptions>
+		  </ConfigurationItem>
+		  <ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs">
+			<ConfigurationItem name="Type" isEnabled="true" between="," after=" " field="EntryTypes" cssClassNameOverride="entrytypes">
+			  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				  <Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+			  </ConfigurationItem>
+			  <ConfigurationItem name="Reverse Name" isEnabled="false" between=" " field="ReverseName">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				  <Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+			  </ConfigurationItem>
+			</ConfigurationItem>
+			<ConfigurationItem name="Primary Entry(s)" isEnabled="true" before=" " between=", "  field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
+			  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after="" field="HeadWordRef" cssClassNameOverride="headword">
+				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+				  <Option id="vernacular" isEnabled="true" />
+				</WritingSystemOptions>
+			  </ConfigurationItem>
+			  <ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="false" before=" " between=" " field="GlossOrSummary">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				  <Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+			  </ConfigurationItem>
+			</ConfigurationItem>
+			<ConfigurationItem name="Comment" isEnabled="false" before=" " between=" " field="Summary">
+			  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				<Option id="analysis" isEnabled="true" />
+			  </WritingSystemOptions>
+			</ConfigurationItem>
 		  </ConfigurationItem>
 		</ConfigurationItem>
 		<ConfigurationItem name="Comment" isEnabled="false" before=" " between=" " after="" field="Summary">
@@ -1220,7 +1251,7 @@
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		  <ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=") " field="PrimaryEntryRefs">
+		  <ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs">
 			<ConfigurationItem name="Type" isEnabled="true" between="," after=" " field="EntryTypes" cssClassNameOverride="entrytypes">
 			  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
 				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1384,7 +1415,7 @@
 		  <Option id="all analysis" isEnabled="true" />
 		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Lexical Relations" isEnabled="false" before="" between="; " after=". " field="LexSenseReferences">
+	  <ConfigurationItem name="Lexical Relations" isEnabled="false" before=" " between="; " after="." field="LexSenseReferences">
 		<ListTypeOptions list="sense">
 		  <Option id="" isEnabled="false" />
 		</ListTypeOptions>
@@ -1410,7 +1441,7 @@
 			  <Option id="all analysis" isEnabled="true" />
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=") " field="PrimaryEntryRefs">
+		  <ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs">
 			<ConfigurationItem name="Type" isEnabled="true" between="," after=" " field="EntryTypes" cssClassNameOverride="entrytypes">
 			  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
 				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1865,7 +1896,7 @@
 		<Option id="all analysis" isEnabled="true" />
 	  </WritingSystemOptions>
 	</ConfigurationItem>
-	<ConfigurationItem name="Cross References" isEnabled="false" before="" between="; " after=". " field="MinimalLexReferences">
+	<ConfigurationItem name="Cross References" isEnabled="false" between="; " after=". " field="MinimalLexReferences">
 	  <ListTypeOptions list="entry">
 		<Option id="" isEnabled="false" />
 	  </ListTypeOptions>
@@ -1891,7 +1922,7 @@
 			<Option id="analysis" isEnabled="true" />
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=") " field="PrimaryEntryRefs">
+		<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs">
 		  <ConfigurationItem name="Type" isEnabled="true" between="," after=" " field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
 			<ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
 			  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -2132,7 +2163,7 @@
 		  <Option id="all analysis" isEnabled="true"/>
 		</WritingSystemAndParaOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Lexical Relations" between="; " after=". " isEnabled="false" field="LexSenseReferences">
+	  <ConfigurationItem name="Lexical Relations" before=" " between="; " after="." isEnabled="false" field="LexSenseReferences">
 		<ListTypeOptions list="sense">
 		  <Option isEnabled="true" id="b7862f14-ea5e-11de-8d47-0013722f8dec"/>
 		  <Option isEnabled="true" id="b7921ac2-ea5e-11de-880d-0013722f8dec" />
@@ -2166,7 +2197,7 @@
 			  <Option id="all analysis" isEnabled="true"/>
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=") " field="PrimaryEntryRefs">
+		  <ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs">
 			<ConfigurationItem name="Type" isEnabled="true" between="," after=" " field="EntryTypes" cssClassNameOverride="entrytypes">
 			  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
 				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -2653,7 +2684,7 @@
 				<Option id="analysis" isEnabled="true" />
 				</WritingSystemOptions>
 			</ConfigurationItem>
-		  <ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=") " field="PrimaryEntryRefs">
+		  <ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs">
 			<ConfigurationItem name="Type" isEnabled="true" between="," after=" " field="EntryTypes" cssClassNameOverride="entrytypes">
 			  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
 				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -2807,7 +2838,7 @@
 			<Option id="all analysis" isEnabled="true"/>
 		  </WritingSystemAndParaOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Lexical Relations" between="; " after=". " isEnabled="false" field="LexSenseReferences">
+		<ConfigurationItem name="Lexical Relations" before=" " between="; " after="." isEnabled="false" field="LexSenseReferences">
 		  <ListTypeOptions list="sense">
 			<Option isEnabled="true" id="b7862f14-ea5e-11de-8d47-0013722f8dec"/>
 			<Option isEnabled="true" id="b7921ac2-ea5e-11de-880d-0013722f8dec" />
@@ -2841,7 +2872,7 @@
 				<Option id="all analysis" isEnabled="true"/>
 			  </WritingSystemOptions>
 			</ConfigurationItem>
-			<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=") "  field="PrimaryEntryRefs">
+			<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")"  field="PrimaryEntryRefs">
 			  <ConfigurationItem name="Type" isEnabled="true" between="," after=" " field="EntryTypes" cssClassNameOverride="entrytypes">
 				<ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
 				  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -3339,7 +3370,7 @@
 			  <Option id="analysis" isEnabled="true"/>
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=") "  field="PrimaryEntryRefs">
+		  <ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")"  field="PrimaryEntryRefs">
 			<ConfigurationItem name="Type" isEnabled="true" between="," after=" " field="EntryTypes" cssClassNameOverride="entrytypes">
 			  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
 				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
