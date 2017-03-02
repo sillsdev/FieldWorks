@@ -286,13 +286,13 @@
 
 	<PropertyGroup>
 		<!-- ChorusWin32v25nostrongCont is the chorus-2.5 branch build of Chorus for Windows development. Update when appropriate. -->
-		<ChorusDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.1.tcbuildtag</ChorusDownloadUrl>
+		<ChorusDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.5.tcbuildtag</ChorusDownloadUrl>
 		<!-- ChorusPrecise64v25Cont is the chorus-2.5 branch build of Chorus for Linux development. Update when appropriate. -->
-		<ChorusDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.1.tcbuildtag</ChorusDownloadUrl>
+		<ChorusDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.5.tcbuildtag</ChorusDownloadUrl>
 		<!-- PalasoWin32v26nostrongCont is the libpalaso-2.6 branch build of Palaso for Windows development. Update when appropriate. -->
-		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.1.tcbuildtag</PalasoDownloadUrl>
+		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.5.tcbuildtag</PalasoDownloadUrl>
 		<!-- PalasoPrecise64v26Cont is the libpalaso-2.6 branch build of Palaso for Linux development. Update when appropriate. -->
-		<PalasoDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/fw-8.3.1.tcbuildtag</PalasoDownloadUrl>
+		<PalasoDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/fw-8.3.5.tcbuildtag</PalasoDownloadUrl>
 		<!--Todo: use PalasoDownloadUrl, when it refers to somewhere that has the IPCFramework.-->
 		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
 		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt278/fw-8.2.tcbuildtag</IPCFrameworkDownloadUrl>
