@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<DictionaryConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="All Reversal Indexes" writingSystem="" version="13" lastModified="2017-02-22" allPublications="true" isRootBased="false">
+<DictionaryConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="All Reversal Indexes" writingSystem="" version="14" lastModified="2017-03-02" allPublications="true" isRootBased="false">
 	<ConfigurationItem name="Reversal Entry" isEnabled="true" style="Reversal-Normal" styleType="paragraph" field="ReversalIndexEntry" cssClassNameOverride="reversalindexentry">
 		<ConfigurationItem name="Reversal Form" isEnabled="true" style="Reversal-Headword" between=" " after=" " field="ReversalForm">
 		<!-- Only one space after, because everything following has a Before space, so that will turn into two between this and the rest. -->
@@ -178,7 +178,7 @@
 						</WritingSystemOptions>
 					</ConfigurationItem>
 				</ConfigurationItem>
-				<ConfigurationItem name="Primary Entry(s)" isEnabled="true" before=" " between="," field="PrimarySensesOrEntries" cssClassNameOverride="primarylexemes">
+				<ConfigurationItem name="Primary Entry(s)" isEnabled="true" before=" " between=", " field="PrimarySensesOrEntries" cssClassNameOverride="primarylexemes">
 				<!-- Put the Before space on the parent, not the children. -->
 					<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after="" field="ReversalName" cssClassNameOverride="headword">
 						<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -875,7 +875,7 @@
 							</WritingSystemOptions>
 						</ConfigurationItem>
 					</ConfigurationItem>
-					<ConfigurationItem name="Primary Entry(s)" isEnabled="true" before=" " between="," field="PrimarySensesOrEntries" cssClassNameOverride="primarylexemes">
+					<ConfigurationItem name="Primary Entry(s)" isEnabled="true" before=" " between=", " field="PrimarySensesOrEntries" cssClassNameOverride="primarylexemes">
 						<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" before="" between=" " after="" field="ReversalName" cssClassNameOverride="headword">
 							<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 								<Option id="vernacular" isEnabled="true" />

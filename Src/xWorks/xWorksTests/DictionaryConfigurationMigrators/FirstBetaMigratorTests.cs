@@ -795,8 +795,8 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			Assert.That(configNode.CSSClassNameOverride, Is.EqualTo("languages"), "Should have changed the css override");
 			// Just checking that some 'contexts' have been filled in by the new default config.
 			Assert.That(configNode.Between, Is.EqualTo(", "));
-			Assert.That(configNode.After, Is.EqualTo(" "));
-			Assert.That(configNode.Before, Is.Null);
+			Assert.That(configNode.After, Is.Null.Or.Empty);
+			Assert.That(configNode.Before, Is.Null.Or.Empty);
 			var childNodes = configNode.Children;
 			Assert.That(childNodes.Count, Is.EqualTo(2), "We ought to have Abbreviation and Name nodes here");
 			var abbrNode = childNodes.Find(n => n.Label == "Abbreviation");
