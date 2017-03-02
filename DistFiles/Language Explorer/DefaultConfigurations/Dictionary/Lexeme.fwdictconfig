@@ -236,7 +236,7 @@
 			</ConfigurationItem>
 		  </ConfigurationItem>
 		  <ConfigurationItem name="Primary Entry(s)" isEnabled="true" between="," after="" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
-			<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after="" field="HeadWord" cssClassNameOverride="headword">
+		  	<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after="" field="HeadWordRef" cssClassNameOverride="headword">
 			  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 				<Option id="vernacular" isEnabled="true" />
 			  </WritingSystemOptions>
@@ -522,7 +522,7 @@
 			  </ConfigurationItem>
 			</ConfigurationItem>
 			<ConfigurationItem name="Primary Entry(s)" isEnabled="true" between="," after="" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
-			  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after="" field="HeadWord" cssClassNameOverride="headword">
+			  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after="" field="HeadWordRef" cssClassNameOverride="headword">
 				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 				  <Option id="vernacular" isEnabled="true" />
 				</WritingSystemOptions>
@@ -1161,7 +1161,7 @@
 			</ConfigurationItem>
 		  </ConfigurationItem>
 		  <ConfigurationItem name="Primary Entry(s)" isEnabled="true" between="," after="" field="ConfigReferencedEntries" cssClassNameOverride="headword">
-			<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after="" field="HeadWord" cssClassNameOverride="headword">
+		  	<ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after="" field="HeadWordRef" cssClassNameOverride="headword">
 			  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 				<Option id="vernacular" isEnabled="true" />
 			  </WritingSystemOptions>
@@ -1406,7 +1406,7 @@
 			  </ConfigurationItem>
 			</ConfigurationItem>
 			<ConfigurationItem name="Primary Entry(s)" isEnabled="true" between="," after="" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
-			  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after="" field="HeadWord" cssClassNameOverride="headword">
+			  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after="" field="HeadWordRef" cssClassNameOverride="headword">
 				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 				  <Option id="vernacular" isEnabled="true" />
 				</WritingSystemOptions>
@@ -1955,7 +1955,7 @@
 			  </ConfigurationItem>
 			</ConfigurationItem>
 			<ConfigurationItem name="Primary Entry(s)" isEnabled="true" between="," after="" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
-			  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after="" field="HeadWord" cssClassNameOverride="headword">
+			  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after="" field="HeadWordRef" cssClassNameOverride="headword">
 				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 				  <Option id="vernacular" isEnabled="true" />
 				</WritingSystemOptions>
