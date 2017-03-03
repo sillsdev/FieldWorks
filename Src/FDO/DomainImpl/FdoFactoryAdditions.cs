@@ -343,7 +343,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					}
 					else
 					{
-						var matchedPossibility = FindMatchingPossibilityItem(ls.Cache, list, ws, val);
+						var matchedPossibility = FindMatchingPossibilityItem(ls.Cache, list, val);
 						if(matchedPossibility != null)
 						{
 							// Insert the found possibility into the beginning of the list
@@ -361,12 +361,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="list">e.g. LexDb.DialectLabels</param>
-		/// <param name="ws"></param>
 		/// <param name="item"></param>
 		/// <returns></returns>
-		private static ICmPossibility FindMatchingPossibilityItem(FdoCache cache, string list, int ws, ITsString item)
+		private static ICmPossibility FindMatchingPossibilityItem(FdoCache cache, string list, ITsString item)
 		{
-			if (item == null || ws < 0)
+			if (TsStringUtils.IsNullOrEmpty(item))
 				return null;
 			var mdc = cache.MetaDataCache;
 			var listParts = list.Split('.');
@@ -377,26 +376,18 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				case "LexDb":
 					var lexDbHvo = cache.LangProject.LexDbOA.Hvo;
 					var listHvo = cache.DomainDataByFlid.get_ObjectProp(lexDbHvo, flid);
-					listItems = cache.ServiceLocator.GetObject(listHvo) as ICmPossibilityList;
+					listItems = (ICmPossibilityList)cache.ServiceLocator.GetObject(listHvo);
 					break;
 				default:
 					Debug.Fail("Lists not owned by LexDb are not yet handled.");
 					// ReSharper disable once HeuristicUnreachableCode -- reachable if not debugging.
 					return null;
 			}
-			if (listItems.PossibilitiesOS.Count == 0)
-				return null;
-			foreach (var wsId in listItems.PossibilitiesOS[0].Name.AvailableWritingSystemIds)
-			{
-				ICmPossibility possibilityItem = listItems.PossibilitiesOS.FirstOrDefault(option =>
-					!Convert.ToBoolean(string.Compare(item.Text, option.Abbreviation.get_String(wsId).Text, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase))  ||
-					!Convert.ToBoolean(string.Compare(item.Text, option.Name.get_String(wsId).Text, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase)));
 
-				if (possibilityItem != null)
-					return possibilityItem;
-			}
-
-			return null;
+			var wsHandles = cache.LangProject.AllWritingSystems.Select(ws => ws.Handle).ToList();
+			return listItems.PossibilitiesOS.FirstOrDefault(poss => wsHandles.Any(ws =>
+				string.Compare(item.Text, poss.Abbreviation.get_String(ws).Text, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase) == 0 ||
+				string.Compare(item.Text, poss.Name.get_String(ws).Text, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase) == 0));
 		}
 
 		private ICmTranslation GetOrMakeFirstTranslation(ILexExampleSentence example)
