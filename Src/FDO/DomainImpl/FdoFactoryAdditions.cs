@@ -384,7 +384,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					// ReSharper disable once HeuristicUnreachableCode -- reachable if not debugging.
 					return null;
 			}
-
+			if (listItems.PossibilitiesOS.Count == 0)
+				return null;
 			foreach (var wsId in listItems.PossibilitiesOS[0].Name.AvailableWritingSystemIds)
 			{
 				ICmPossibility possibilityItem = listItems.PossibilitiesOS.FirstOrDefault(option =>
