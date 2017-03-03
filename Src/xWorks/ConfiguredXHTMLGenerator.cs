@@ -665,33 +665,25 @@ namespace SIL.FieldWorks.XWorks
 				return GenerateXHTMLForMainEntry(entryObj, configuration.Parts[0], publicationDecorator, settings);
 
 			var entry = (ILexEntry)entryObj;
-			if (!entry.PublishAsMinorEntry)
-				return string.Empty;
-
-			var bldr = new StringBuilder();
-			GenerateXHTMLForMinorEntry(entry, configuration, publicationDecorator, settings, bldr);
-			return bldr.ToString();
+			return entry.PublishAsMinorEntry
+				? GenerateXHTMLForMinorEntry(entry, configuration, publicationDecorator, settings)
+				: string.Empty;
 		}
 
 		public static string GenerateXHTMLForMainEntry(ICmObject entry, ConfigurableDictionaryNode configuration,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
-			if (configuration.DictionaryNodeOptions != null && (((ILexEntry)entry).ComplexFormEntryRefs.Any() && !IsListItemSelectedForExport(configuration, entry, null)))
+			if (configuration.DictionaryNodeOptions != null && ((ILexEntry)entry).ComplexFormEntryRefs.Any() && !IsListItemSelectedForExport(configuration, entry, null))
 				return string.Empty;
 			return GenerateXHTMLForEntry(entry, configuration, publicationDecorator, settings);
 		}
 
-		private static void GenerateXHTMLForMinorEntry(ICmObject entry, DictionaryConfigurationModel configuration,
-			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, StringBuilder bldr)
+		private static string GenerateXHTMLForMinorEntry(ICmObject entry, DictionaryConfigurationModel configuration,
+			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
-			for (var i = 1; i < configuration.Parts.Count; i++)
-			{
-				if (IsListItemSelectedForExport(configuration.Parts[i], entry, null))
-				{
-					var content = GenerateXHTMLForEntry(entry, configuration.Parts[i], publicationDecorator, settings);
-					bldr.Append(content);
-				}
-			}
+			// LT-15232: show minor entries using only the first applicable Minor Entry node (not more than once)
+			var applicablePart = configuration.Parts.Skip(1).LastOrDefault(part => IsListItemSelectedForExport(part, entry, null));
+			return applicablePart == null ? string.Empty : GenerateXHTMLForEntry(entry, applicablePart, publicationDecorator, settings);
 		}
 
 		/// <summary>
