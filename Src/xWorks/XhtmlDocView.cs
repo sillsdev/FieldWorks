@@ -36,6 +36,7 @@ namespace SIL.FieldWorks.XWorks
 		private DictionaryPublicationDecorator m_pubDecorator;
 		private string m_selectedObjectID = string.Empty;
 		internal string m_configObjectName;
+		internal const string CurrentSelectedEntryClass = "currentSelectedEntry";
 
 		public override void Init(Mediator mediator, XmlNode configurationParameters)
 		{
@@ -810,7 +811,7 @@ namespace SIL.FieldWorks.XWorks
 			var prevSelectedByGuid = browser.Document.GetHtmlElementById("g" + m_selectedObjectID);
 			if (prevSelectedByGuid != null)
 			{
-				prevSelectedByGuid.RemoveAttribute("style");
+				RemoveClassFromHtmlElement(prevSelectedByGuid, CurrentSelectedEntryClass);
 			}
 		}
 
@@ -824,22 +825,59 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			var currentObjectGuid = Clerk.CurrentObject.Guid.ToString();
 			var currSelectedByGuid = browser.Document.GetHtmlElementById("g" + currentObjectGuid);
-			if (currSelectedByGuid != null)
-			{
-				// Adjust active item to be lower down on the page.
-				var currElementRect = currSelectedByGuid.GetBoundingClientRect();
-				var currElementTop = currElementRect.Top + browser.Window.ScrollY;
-				var currElementBottom = currElementRect.Bottom + browser.Window.ScrollY;
-				var yPosition = currElementTop - (browser.Height / 4);
+			if (currSelectedByGuid == null)
+				return;
 
-				// Scroll only if current element is not visible on browser window
-				if (currElementTop < browser.Window.ScrollY || currElementBottom > (browser.Window.ScrollY + browser.Height))
-					browser.Window.ScrollTo(0, yPosition);
+			// Adjust active item to be lower down on the page.
+			var currElementRect = currSelectedByGuid.GetBoundingClientRect();
+			var currElementTop = currElementRect.Top + browser.Window.ScrollY;
+			var currElementBottom = currElementRect.Bottom + browser.Window.ScrollY;
+			var yPosition = currElementTop - (browser.Height / 4);
 
-				currSelectedByGuid.SetAttribute("style", "background-color:LightYellow");
-				m_selectedObjectID = currentObjectGuid;
-			}
+			// Scroll only if current element is not visible on browser window
+			if (currElementTop < browser.Window.ScrollY || currElementBottom > (browser.Window.ScrollY + browser.Height))
+				browser.Window.ScrollTo(0, yPosition);
+
+			AddClassToHtmlElement(currSelectedByGuid, CurrentSelectedEntryClass);
+			m_selectedObjectID = currentObjectGuid;
 		}
+
+		#region Add/Remove GeckoHtmlElement Class
+
+		private const string Space = " ";
+
+		/// <summary>
+		/// Adds 'classToAdd' to the class attribute of 'element', preserving any existing classes.
+		/// Changes nothing if 'classToAdd' is already present.
+		/// </summary>
+		private void AddClassToHtmlElement(GeckoHtmlElement element, string classToAdd)
+		{
+			var classList = element.ClassName.Split(' ');
+			if (classList.Length == 0)
+			{
+				element.ClassName = classToAdd;
+				return;
+			}
+			if (classList.Contains(classToAdd))
+			{
+				return;
+			}
+			element.ClassName += " " + classToAdd;
+		}
+
+		/// <summary>
+		/// Removes 'classToRemove' from the class attribute, preserving any other existing classes.
+		/// Quietly does nothing if 'classToRemove' is not found.
+		/// </summary>
+		private void RemoveClassFromHtmlElement(GeckoHtmlElement element, string classToRemove)
+		{
+			var classList = new List<string>();
+			classList.AddRange(element.ClassName.Split(' '));
+			classList.Remove(classToRemove);
+			element.ClassName = string.Join(" ", classList);
+		}
+
+		#endregion
 
 		/// <summary>
 		/// Method which set the current writing system when selected in ConfigureReversalIndexDialog

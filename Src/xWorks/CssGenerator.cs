@@ -1523,6 +1523,27 @@ namespace SIL.FieldWorks.XWorks
 				pageButton.ToString(true), pageButtonHover.ToString(true), pageButtonActive.ToString(true), currentButtonRule.ToString(true));
 		}
 
+		internal static string GenerateCssForSelectedEntry(bool isRtl)
+		{
+			var selectedEntry = new StyleRule { Value = "." + XhtmlDocView.CurrentSelectedEntryClass + ":before" };
+			selectedEntry.Declarations.Properties.Add(new Property("background-image")
+				{ Term = new PrimitiveTerm(UnitType.Ident, "url(" + ConfiguredXHTMLGenerator.CurrentEntryMarker + ")") });
+			selectedEntry.Declarations.Properties.Add(new Property("background-position")
+				{ Term = new TermList(new PrimitiveTerm(UnitType.Pixel, 0), new PrimitiveTerm(UnitType.Pixel, 3)) });
+			selectedEntry.Declarations.Properties.Add(new Property("background-repeat")
+				{ Term = new PrimitiveTerm(UnitType.Ident, "no-repeat") });
+			selectedEntry.Declarations.Properties.Add(new Property("background-size")
+				{ Term = new TermList(new PrimitiveTerm(UnitType.Percentage, 80), new PrimitiveTerm(UnitType.Percentage, 80)) });
+			selectedEntry.Declarations.Properties.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.Ident, "''") });
+			selectedEntry.Declarations.Properties.Add(new Property("position") { Term = new PrimitiveTerm(UnitType.Ident, "absolute") });
+			selectedEntry.Declarations.Properties.Add(new Property("z-index") { Term = new PrimitiveTerm(UnitType.Number, 10000) });
+			selectedEntry.Declarations.Properties.Add(new Property(isRtl ? "right" : "left") { Term = new PrimitiveTerm(UnitType.Pixel, 2) });
+			selectedEntry.Declarations.Properties.Add(new Property("width") { Term = new PrimitiveTerm(UnitType.Pixel, 20) });
+			selectedEntry.Declarations.Properties.Add(new Property("height") { Term = new PrimitiveTerm(UnitType.Pixel, 20) });
+			var screenRule = new MediaRule { Condition = "screen", RuleSets = { selectedEntry } };
+			return screenRule.ToString(true) + Environment.NewLine;
+		}
+
 		/// <summary>
 		/// This method will build a css term list with all the provided terms separated by the provided separator
 		/// </summary>

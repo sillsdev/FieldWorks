@@ -18,6 +18,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -57,6 +58,9 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <remarks>internal to facilitate unit tests</remarks>
 		internal static int EntriesToAddCount { get; set; }
+
+		internal const string CurrentEntryMarker = "blueBubble.png";
+		private const string ImagesFolder = "Images";
 
 		/// <summary>
 		/// Static initializer setting the AssemblyFile to the default Fieldworks model dll.
@@ -245,8 +249,8 @@ namespace SIL.FieldWorks.XWorks
 			var configDir = Path.GetDirectoryName(configuration.FilePath);
 			var clerk = mediator.PropertyTable.GetValue("ActiveClerk", null) as RecordClerk;
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
-			// Don't display letter headers if we're showing a preview in the Edit tool.
-			var wantLetterHeaders = (entryCount > 1 || publicationDecorator != null) && (IsClerkSortingByHeadword(clerk));
+			// Don't display letter headers if we're showing a preview in the Edit tool or we're not sorting by headword
+			var wantLetterHeaders = (entryCount > 1 || !IsLexEditPreviewOnly(publicationDecorator)) && (IsClerkSortingByHeadword(clerk));
 			using (var xhtmlWriter = XmlWriter.Create(xhtmlPath))
 			using (var cssWriter = new StreamWriter(cssPath, false, Encoding.UTF8))
 			{
@@ -302,10 +306,25 @@ namespace SIL.FieldWorks.XWorks
 
 				if (progress != null)
 					progress.Message = xWorksStrings.ksGeneratingStyleInfo;
+				if (!IsLexEditPreviewOnly(publicationDecorator) && !IsExport(settings))
+				{
+					cssWriter.Write(CssGenerator.GenerateCssForSelectedEntry(IsNormalRtl(mediator)));
+					CopyFileSafely(settings, Path.Combine(FwDirectoryFinder.FlexFolder, ImagesFolder, CurrentEntryMarker), CurrentEntryMarker);
+				}
 				cssWriter.Write(CssGenerator.GenerateLetterHeaderCss(mediator));
 				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, mediator));
 				cssWriter.Flush();
 			}
+		}
+
+		private static bool IsLexEditPreviewOnly(DictionaryPublicationDecorator decorator)
+		{
+			return decorator == null;
+		}
+
+		private static bool IsExport(GeneratorSettings settings)
+		{
+			return !settings.ExportPath.StartsWith(Path.Combine(Path.GetTempPath(), "DictionaryPreview"));
 		}
 
 		/// <summary>
@@ -1204,34 +1223,7 @@ namespace SIL.FieldWorks.XWorks
 				filePath = Path.Combine(subFolder, Path.GetFileName(MakeSafeFilePath(file.InternalPath)));
 				if (settings.CopyFiles)
 				{
-					FileUtils.EnsureDirectoryExists(Path.Combine(settings.ExportPath, subFolder));
-					var destination = Path.Combine(settings.ExportPath, filePath);
-					var source = MakeSafeFilePath(file.AbsoluteInternalPath);
-					if (!File.Exists(destination))
-					{
-						if (File.Exists(source))
-						{
-							FileUtils.Copy(source, destination);
-						}
-					}
-					else if (!FileUtils.AreFilesIdentical(source, destination))
-					{
-						var fileWithoutExtension = Path.GetFileNameWithoutExtension(filePath);
-						var fileExtension = Path.GetExtension(filePath);
-						var copyNumber = 0;
-						do
-						{
-							++copyNumber;
-							destination = Path.Combine(settings.ExportPath, subFolder, String.Format("{0}{1}{2}", fileWithoutExtension, copyNumber, fileExtension));
-						}
-						while (File.Exists(destination));
-						if (File.Exists(source))
-						{
-							FileUtils.Copy(source, destination);
-						}
-						// Change the filepath to point to the copied file
-						filePath = Path.Combine(subFolder, String.Format("{0}{1}{2}", fileWithoutExtension, copyNumber, fileExtension));
-					}
+					filePath = CopyFileSafely(settings, MakeSafeFilePath(file.AbsoluteInternalPath), filePath);
 				}
 			}
 			else
@@ -1240,6 +1232,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return settings.UseRelativePaths ? filePath : new Uri(filePath).ToString();
 		}
+
 		private static string GenerateSrcAttributeForMediaFromFilePath(string filename, string subFolder, GeneratorSettings settings)
 		{
 			string filePath;
@@ -1252,39 +1245,7 @@ namespace SIL.FieldWorks.XWorks
 				filePath = Path.Combine(subFolder, Path.GetFileName(MakeSafeFilePath(filename)));
 				if (settings.CopyFiles)
 				{
-					FileUtils.EnsureDirectoryExists(Path.Combine(settings.ExportPath, subFolder));
-					var destination = Path.Combine(settings.ExportPath, filePath);
-					var source = MakeSafeFilePath(audioVisualFile);
-					// If an audio file is referenced by multiple entries they could end up in separate threads.
-					// Locking on the mediator seems safe since it will be the same Mediator for each thread.
-					lock (settings.Mediator)
-					{
-						if (!File.Exists(destination))
-						{
-							if (File.Exists(source))
-							{
-								FileUtils.Copy(source, destination);
-							}
-						}
-						else if (!FileUtils.AreFilesIdentical(source, destination))
-						{
-							var fileWithoutExtension = Path.GetFileNameWithoutExtension(filePath);
-							var fileExtension = Path.GetExtension(filePath);
-							var copyNumber = 0;
-							do
-							{
-								++copyNumber;
-								destination = Path.Combine(settings.ExportPath, subFolder, String.Format("{0}{1}{2}", fileWithoutExtension, copyNumber, fileExtension));
-							}
-							while (File.Exists(destination));
-							if (File.Exists(source))
-							{
-								FileUtils.Copy(source, destination);
-							}
-							// Change the filepath to point to the copied file
-							filePath = Path.Combine(subFolder, String.Format("{0}{1}{2}", fileWithoutExtension, copyNumber, fileExtension));
-						}
-					}
+					filePath = CopyFileSafely(settings, MakeSafeFilePath(audioVisualFile), filePath);
 				}
 			}
 			else
@@ -1293,6 +1254,48 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return settings.UseRelativePaths ? filePath : new Uri(filePath).ToString();
 		}
+
+		private static string CopyFileSafely(GeneratorSettings settings, string source, string relativeDestination)
+		{
+			var destination = Path.Combine(settings.ExportPath, relativeDestination);
+			var subFolder = Path.GetDirectoryName(relativeDestination);
+			FileUtils.EnsureDirectoryExists(Path.GetDirectoryName(destination));
+			// If an audio file is referenced by multiple entries they could end up in separate threads.
+			// Locking on the mediator seems safe since it will be the same Mediator for each thread.
+			lock (settings.Mediator)
+			{
+				if (!File.Exists(destination))
+				{
+					if (File.Exists(source))
+					{
+						FileUtils.Copy(source, destination);
+					}
+				}
+				else if (!FileUtils.AreFilesIdentical(source, destination))
+				{
+					var fileWithoutExtension = Path.GetFileNameWithoutExtension(relativeDestination);
+					var fileExtension = Path.GetExtension(relativeDestination);
+					var copyNumber = 0;
+					string newFileName;
+					do
+					{
+						++copyNumber;
+						newFileName = string.Format("{0}{1}{2}", fileWithoutExtension, copyNumber, fileExtension);
+						destination = string.IsNullOrEmpty(subFolder) ? Path.Combine(settings.ExportPath, newFileName) :
+								Path.Combine(settings.ExportPath, subFolder, newFileName);
+					}
+					while (File.Exists(destination));
+					if (File.Exists(source))
+					{
+						FileUtils.Copy(source, destination);
+					}
+					// Change the filepath to point to the copied file
+					relativeDestination = string.IsNullOrEmpty(subFolder) ? newFileName : Path.Combine(subFolder, newFileName);
+				}
+			}
+			return relativeDestination;
+		}
+
 		private static string MakeSafeFilePath(string filePath)
 		{
 			if (Unicode.CheckForNonAsciiCharacters(filePath))

@@ -1457,7 +1457,7 @@ namespace SIL.FieldWorks.XWorks
 					if (configNode == null)
 						continue;
 					var cssClass = CssGenerator.GetClassAttributeForConfig(configNode);
-					if (cssClass == classList[0])
+					if (classList[0].Split(' ').Contains(cssClass))
 					{
 						topNode = configNode;
 						break;

@@ -1610,24 +1610,40 @@ namespace SIL.FieldWorks.XWorks
 				Assert.IsNotNull(treeNode, "Passing a partially valid class list should find a TreeNode");
 				Assert.AreSame(sensesNode, treeNode.Tag, "Passing a partially valid class list should find the best node possible");
 
+				// Starting here we need to Unset the controller's SelectedNode to keep from getting false positives
+				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(new List<string> {"entry","mainheadword"});
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.IsNotNull(treeNode, "entry/mainheadword should find a TreeNode");
 				Assert.AreSame(headwordNode, treeNode.Tag, "entry/mainheadword should find the right TreeNode");
 				Assert.AreEqual(headwordNode.Label, treeNode.Text, "The TreeNode for entry/mainheadword should have the right Text");
 
+				ClearSelectedNode(dcc);
+				dcc.SetStartingNode(new List<string> { "entry " + XhtmlDocView.CurrentSelectedEntryClass, "mainheadword" });
+				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
+				Assert.IsNotNull(treeNode, "entry/mainheadword should find a TreeNode, even if this is the selected entry");
+				Assert.AreSame(headwordNode, treeNode.Tag, "entry/mainheadword should find the right TreeNode");
+				Assert.AreEqual(headwordNode.Label, treeNode.Text, "The TreeNode for entry/mainheadword should have the right Text");
+
+				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(new List<string> {"entry","senses","sensecontent","sense","definitionorgloss"});
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.IsNotNull(treeNode, "entry//definitionorgloss should find a TreeNode");
 				Assert.AreSame(defglossNode, treeNode.Tag, "entry//definitionorgloss should find the right TreeNode");
 				Assert.AreEqual(defglossNode.Label, treeNode.Text, "The TreeNode for entry//definitionorgloss should have the right Text");
 
+				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(new List<string> {"entry","senses","sensecontent","sense","examples","example","translations","translation","translation"});
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.IsNotNull(treeNode, "entry//translation should find a TreeNode");
 				Assert.AreSame(translationNode, treeNode.Tag, "entry//translation should find the right TreeNode");
 				Assert.AreEqual(translationNode.Label, treeNode.Text, "The TreeNode for entry//translation should have the right Text");
 			}
+		}
+
+		private void ClearSelectedNode(DictionaryConfigurationController dcc)
+		{
+			dcc.View.TreeControl.Tree.SelectedNode = null;
 		}
 
 		[Test]
@@ -2078,11 +2094,13 @@ namespace SIL.FieldWorks.XWorks
 				Assert.AreSame(glossNode, treeNode.Tag, "Passing a valid class list should find the node");
 
 				//SUT
+				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(subSenseGloss);
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.IsNotNull(treeNode, "Passing a valid class list should find a TreeNode");
 				Assert.AreSame(subGlossNode, treeNode.Tag, "Passing a valid class list should even find the node in a referenced node");
 
+				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(subSenseUndefined);
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.IsNotNull(treeNode, "invalid field should still find a TreeNode");
@@ -2145,13 +2163,13 @@ namespace SIL.FieldWorks.XWorks
 				Assert.IsNotNull(treeNode, "Passing a valid class list should find a TreeNode");
 				Assert.AreSame(subGlossNode, treeNode.Tag, "Passing a valid class list should even find the node in a referenced node");
 
-				dcc.View.TreeControl.Tree.SelectedNode = null;
+				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(subentryUndefined);
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.IsNotNull(treeNode, "invalid field should still find a TreeNode");
 				Assert.AreSame(subentriesNode, treeNode.Tag, "'undefined' field should find the closest TreeNode");
 
-				dcc.View.TreeControl.Tree.SelectedNode = null;
+				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(subentriesClassList);
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.IsNotNull(treeNode, "should find main Subentries node");
