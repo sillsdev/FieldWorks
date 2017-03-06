@@ -783,7 +783,7 @@ namespace SIL.FieldWorks.XWorks
 				var cfChildren = customFieldNodes[0].Children;
 				CollectionAssert.IsNotEmpty(cfChildren, "ListItem Child nodes not created");
 				Assert.AreEqual(2, cfChildren.Count, "custom list type nodes should get a child for Name and Abbreviation");
-				Assert.AreEqual(" ", cfChildren[0].After, "Name and abbreviation not seperated by a space");
+				Assert.IsNullOrEmpty(cfChildren[0].After, "Child nodes should have no After space");
 				CollectionAssert.IsNotEmpty(cfChildren.Where(t => t.Label == "Name" && !t.IsCustomField),
 					"No standard Name node found on custom possibility list reference");
 				CollectionAssert.IsNotEmpty(cfChildren.Where(t => t.Label == "Abbreviation" && !t.IsCustomField),

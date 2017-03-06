@@ -1330,6 +1330,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					Label = metaDataCache.GetFieldLabel(field),
 					IsCustomField = true,
+					Before = " ",
 					IsEnabled = false,
 					// Custom fields in the Map under LexEntryRef are actually LexEntry CustomFields; look for them under OwningEntry
 					FieldDescription = isEntryRefType ? "OwningEntry" : metaDataCache.GetFieldName(field),
@@ -1362,7 +1363,6 @@ namespace SIL.FieldWorks.XWorks
 				{
 					Label = "Name",
 					FieldDescription = "Name",
-					After = " ",
 					DictionaryNodeOptions = BuildWsOptionsForWsType("analysis"),
 					Parent = configNode,
 					IsCustomField = false // the parent node may be for a custom field, but this node is for a standard CmPossibility field
