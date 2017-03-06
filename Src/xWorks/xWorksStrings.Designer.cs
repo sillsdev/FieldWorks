@@ -312,6 +312,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Warning! The styles for this project will be overwritten by the import..
+        /// </summary>
+        internal static string DictionaryConfigurationDictionaryConfigurationUser_StyleOverwriteWarning {
+            get {
+                return ResourceManager.GetString("DictionaryConfigurationDictionaryConfigurationUser_StyleOverwriteWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reversal Configurations.
         /// </summary>
         internal static string DictionaryConfigurationMangager_ReversalConfigurations_GroupLabel {

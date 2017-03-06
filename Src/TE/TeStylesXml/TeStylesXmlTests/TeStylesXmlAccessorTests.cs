@@ -609,7 +609,7 @@ namespace SIL.FieldWorks.TE
 				"<sfm>\\d</sfm>" + Environment.NewLine +
 				"<usage wsId=\"es\">Título hebreo</usage>" + Environment.NewLine +
 				"<font size=\"10 pt\" bold=\"false\" italic=\"false\" color=\"black\" superscript=\"false\" dropCap=\"false\"/>" + Environment.NewLine +
-				"<paragraph basedOn=\"Paragraph\" next=\"Paragraph\" lineSpacing=\"12 pt\" alignment=\"center\" background=\"white\" indentLeft=\"0\" indentRight=\"0\" firstLine=\"8 pt\" spaceBefore=\"0\" spaceAfter=\"0\" border=\"top\"/>" + Environment.NewLine +
+				"<paragraph basedOn=\"Paragraph\" next=\"Paragraph\" lineSpacing=\"12 pt\" lineSpacingType=\"atleast\" alignment=\"center\" background=\"white\" indentLeft=\"0\" indentRight=\"0\" firstLine=\"8 pt\" spaceBefore=\"0\" spaceAfter=\"0\" border=\"top\"/>" + Environment.NewLine +
 				"</tag>" + Environment.NewLine +
 				// Paragraph (must have non-real context, structure, use, etc. to test the
 				// creation of internal styles)

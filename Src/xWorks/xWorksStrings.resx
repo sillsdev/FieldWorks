@@ -1093,4 +1093,8 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>The following custom fields will be added to the project, if not already present:</value>
     <comment>Label displayed before the list of any custom fields that will be added while importing a dictionary configuration view</comment>
   </data>
+	<data name="DictionaryConfigurationDictionaryConfigurationUser_StyleOverwriteWarning" xml:space="preserve">
+    <value>Warning! The styles for this project will be overwritten by the import.</value>
+    <comment>Warning added to the end of the import information after a user selects a zip file.</comment>
+  </data>
 </root>

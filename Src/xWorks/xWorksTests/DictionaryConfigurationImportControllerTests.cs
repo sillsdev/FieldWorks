@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -23,7 +24,7 @@ namespace SIL.FieldWorks.XWorks
 	/// LT-17397.
 	/// These tests write to disk, not just in memory, so they can use the zip library.
 	/// </summary>
-	public class DictionaryConfigurationImportControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
+	public class DictionaryConfigurationImportControllerTests : MemoryOnlyBackendProviderReallyRestoredForEachTestTestBase
 	{
 		private DictionaryConfigurationImportController _controller;
 		private string _projectConfigPath;
@@ -88,7 +89,18 @@ namespace SIL.FieldWorks.XWorks
 			// Export a configuration that we know how to import
 
 			_zipFile = Path.GetTempFileName();
-			DictionaryConfigurationManagerController.ExportConfiguration(configurationToExport, _zipFile, Cache);
+
+			// Add a test style to the cache
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
+				var testStyle = styleFactory.Create(Cache.LangProject.StylesOC, "TestStyle", ContextValues.InternalConfigureView, StructureValues.Body,
+					FunctionValues.Line, true, 2, false);
+				testStyle.Usage.set_String(Cache.DefaultAnalWs, "Test Style");
+
+				DictionaryConfigurationManagerController.ExportConfiguration(configurationToExport, _zipFile, Cache);
+				Cache.LangProject.StylesOC.Clear();
+			});
 			Assert.That(File.Exists(_zipFile), "Unit test not set up right");
 			Assert.That(new FileInfo(_zipFile).Length, Is.GreaterThan(0), "Unit test not set up right");
 
@@ -164,6 +176,21 @@ namespace SIL.FieldWorks.XWorks
 				Is.EqualTo(Path.Combine(_projectConfigPath, "importexportConfiguration.fwdictconfig")),
 				"FilePath of imported config was not set as expected.");
 			Assert.That(_controller.ImportHappened, Is.True, "Alert that import has happened");
+		}
+
+		[Test]
+		public void DoImport_ImportsStyles()
+		{
+			_controller.PrepareImport(_zipFile);
+			CollectionAssert.IsEmpty(Cache.LangProject.StylesOC);
+			// SUT
+			_controller.DoImport();
+			var importedTestStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "TestStyle");
+			Assert.NotNull(importedTestStyle, "test style was not imported.");
+			Assert.That(importedTestStyle.Usage.BestAnalysisAlternative.Text, Is.StringMatching("Test Style"));
+			Assert.AreEqual(importedTestStyle.Context, ContextValues.InternalConfigureView);
+			Assert.AreEqual(importedTestStyle.Type, StyleType.kstCharacter);
+			Assert.AreEqual(importedTestStyle.UserLevel, 2);
 		}
 
 		[Test]

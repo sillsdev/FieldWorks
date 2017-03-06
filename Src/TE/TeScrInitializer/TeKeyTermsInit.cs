@@ -151,9 +151,9 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <returns>The loaded document</returns>
 		/// ------------------------------------------------------------------------------------
-		protected override BiblicalTermsList LoadDoc()
+		protected override BiblicalTermsList LoadDoc(string sourceDocument = null)
 		{
-			return DeserializeBiblicalTermsFile(Path.Combine(FwDirectoryFinder.CodeDirectory,
+			return DeserializeBiblicalTermsFile(sourceDocument ?? Path.Combine(FwDirectoryFinder.CodeDirectory,
 				ResourceFilePathFromFwInstall));
 		}
 

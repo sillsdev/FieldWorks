@@ -43,10 +43,10 @@ namespace SIL.FieldWorks.XWorks
 			this.doOverwriteRadioOption = new System.Windows.Forms.RadioButton();
 			this.notOverwriteRadioOption = new System.Windows.Forms.RadioButton();
 			this.fileImportLabel = new System.Windows.Forms.TextBox();
-			this.cancelButton = new System.Windows.Forms.Button();
-			this.importButton = new System.Windows.Forms.Button();
 			this.buttonLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.helpButton = new System.Windows.Forms.Button();
+			this.cancelButton = new System.Windows.Forms.Button();
+			this.importButton = new System.Windows.Forms.Button();
 			this.mainTableLayoutPanel.SuspendLayout();
 			this.overwriteGroupBox.SuspendLayout();
 			this.overwriteOptionFlowLayoutPanel.SuspendLayout();
@@ -119,21 +119,6 @@ namespace SIL.FieldWorks.XWorks
 			this.fileImportLabel.Name = "fileImportLabel";
 			this.fileImportLabel.ReadOnly = true;
 			// 
-			// cancelButton
-			// 
-			resources.ApplyResources(this.cancelButton, "cancelButton");
-			this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.cancelButton.Name = "cancelButton";
-			this.cancelButton.UseVisualStyleBackColor = true;
-			this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
-			// 
-			// importButton
-			// 
-			resources.ApplyResources(this.importButton, "importButton");
-			this.importButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.importButton.Name = "importButton";
-			this.importButton.UseVisualStyleBackColor = true;
-			// 
 			// buttonLayoutPanel
 			// 
 			resources.ApplyResources(this.buttonLayoutPanel, "buttonLayoutPanel");
@@ -149,6 +134,21 @@ namespace SIL.FieldWorks.XWorks
 			this.helpButton.Name = "helpButton";
 			this.helpButton.UseVisualStyleBackColor = true;
 			this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
+			// 
+			// cancelButton
+			// 
+			resources.ApplyResources(this.cancelButton, "cancelButton");
+			this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.cancelButton.Name = "cancelButton";
+			this.cancelButton.UseVisualStyleBackColor = true;
+			this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+			// 
+			// importButton
+			// 
+			resources.ApplyResources(this.importButton, "importButton");
+			this.importButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+			this.importButton.Name = "importButton";
+			this.importButton.UseVisualStyleBackColor = true;
 			// 
 			// DictionaryConfigurationImportDlg
 			// 

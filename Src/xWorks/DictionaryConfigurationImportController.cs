@@ -13,10 +13,12 @@ using System.Xml.XPath;
 using Ionic.Zip;
 using Palaso.Lift.Migration;
 using Palaso.Lift.Parsing;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
+using SIL.FieldWorks.XWorks.LexText;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 using File = System.IO.File;
@@ -54,12 +56,6 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal IEnumerable<string> _newPublications = null;
 
-
-		/// <summary>
-		/// Path to the lift file with the custom fields we are planning to import
-		/// </summary>
-		internal string _temporaryImportLiftLocation;
-
 		/// <summary>
 		/// The custom fields found in the lift file which will be added if they aren't present in the project
 		/// </summary>
@@ -78,6 +74,17 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal string _proposedNewConfigLabel;
 
+		/// <summary>
+		/// Path to the lift file with the custom fields we are planning to import.
+		/// </summary>
+		private string _importLiftLocation;
+
+		/// <summary>
+		/// Location of the temporary styles file during import process.
+		/// </summary>
+		private string _importStylesLocation;
+
+		/// <summary/>
 		public DictionaryConfigurationImportController(FdoCache cache, string projectConfigDir,
 			List<DictionaryConfigurationModel> configurations)
 		{
@@ -114,14 +121,23 @@ namespace SIL.FieldWorks.XWorks
 
 			_configurations.Add(NewConfigToImport);
 
-			ImportCustomFields(_temporaryImportLiftLocation);
+			ImportCustomFields(_importLiftLocation);
 			NewConfigToImport.Publications.ForEach(
 				publication =>
 				{
 					AddPublicationTypeIfNotPresent(publication, _cache);
 				});
-
+			ImportStyles(_importStylesLocation);
 			ImportHappened = true;
+		}
+
+		private void ImportStyles(string importStylesLocation)
+		{
+			NonUndoableUnitOfWorkHelper.DoSomehow(_cache.ActionHandlerAccessor, () =>
+			{
+				_cache.LangProject.StylesOC.Clear();
+				var stylesAccessor = new FlexStylesXmlAccessor(_cache.LangProject.LexDbOA, true, importStylesLocation);
+			});
 		}
 
 		private void ImportCustomFields(string liftPathname)
@@ -202,7 +218,10 @@ namespace SIL.FieldWorks.XWorks
 					_temporaryImportConfigLocation = tmpPath + configInZip.FileName;
 					var customFieldLiftFile = zip.SelectEntries("*.lift").First();
 					customFieldLiftFile.Extract(tmpPath, ExtractExistingFileAction.OverwriteSilently);
-					_temporaryImportLiftLocation = tmpPath + customFieldLiftFile.FileName;
+					_importLiftLocation = tmpPath + customFieldLiftFile.FileName;
+					var stylesFile = zip.SelectEntries("*.xml").First();
+					stylesFile.Extract(tmpPath, ExtractExistingFileAction.OverwriteSilently);
+					_importStylesLocation = tmpPath + stylesFile.FileName;
 				}
 			}
 			catch (Exception)
@@ -223,7 +242,7 @@ namespace SIL.FieldWorks.XWorks
 			_newPublications =
 				DictionaryConfigurationModel.PublicationsInXml(_temporaryImportConfigLocation).Except(NewConfigToImport.Publications);
 
-			_customFieldsToImport = CustomFieldsInLiftFile(_temporaryImportLiftLocation);
+			_customFieldsToImport = CustomFieldsInLiftFile(_importLiftLocation);
 			// Use the full list of publications in the XML file, even ones that don't exist in the project.
 			NewConfigToImport.Publications = DictionaryConfigurationModel.PublicationsInXml(_temporaryImportConfigLocation).ToList();
 
@@ -233,7 +252,7 @@ namespace SIL.FieldWorks.XWorks
 			var i = 1;
 			while (_configurations.Any(config => config.Label == newConfigLabel))
 			{
-				newConfigLabel = String.Format(xWorksStrings.kstidImportedSuffix, NewConfigToImport.Label, i++);
+				newConfigLabel = string.Format(xWorksStrings.kstidImportedSuffix, NewConfigToImport.Label, i++);
 			}
 			NewConfigToImport.Label = newConfigLabel;
 			_proposedNewConfigLabel = newConfigLabel;
@@ -328,7 +347,9 @@ namespace SIL.FieldWorks.XWorks
 				customFieldStatus = xWorksStrings.kstidCustomFieldsWillBeAdded + Environment.NewLine + string.Join(", ", _customFieldsToImport);
 			}
 
-			_view.explanationLabel.Text = string.Format("{0}{1}{2}{1}{3}", mainStatus, Environment.NewLine + Environment.NewLine, publicationStatus, customFieldStatus);
+			_view.explanationLabel.Text = string.Format("{0}{1}{2}{1}{3}{1}{4}",
+				mainStatus, Environment.NewLine + Environment.NewLine, publicationStatus, customFieldStatus,
+				xWorksStrings.DictionaryConfigurationDictionaryConfigurationUser_StyleOverwriteWarning);
 			_view.Refresh();
 		}
 

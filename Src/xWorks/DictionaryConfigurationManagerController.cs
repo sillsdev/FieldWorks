@@ -9,6 +9,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Xml;
+using System.Xml.Serialization;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.Utils;
@@ -16,7 +18,9 @@ using Palaso.Linq;
 using SIL.CoreImpl;
 using XCore;
 using Ionic.Zip;
+using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.LexText.Controls;
+using SIL.FieldWorks.XWorks.LexText;
 using SIL.Utils.FileDialog;
 
 namespace SIL.FieldWorks.XWorks
@@ -148,15 +152,16 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Fetch up-to-date list of publications from project and populate the list of publications.
+		/// Fetch up-to-date list of publications from project and populate the list of publications retaining the checked information for the config.
 		/// </summary>
 		private void ReLoadPublications()
 		{
 			_publications = DictionaryConfigurationController.GetAllPublications(_cache);
 			_view.publicationsListView.Items.Clear();
+			var currentConfigPublications = GetPublications(SelectedConfiguration);
 			foreach (var publication in _publications)
 			{
-				var item = new ListViewItem { Text = publication };
+				var item = new ListViewItem { Text = publication, Checked = currentConfigPublications.Contains(publication)};
 				_view.publicationsListView.Items.Add(item);
 			}
 		}
@@ -558,7 +563,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				zip.AddFile(configurationToExport.FilePath, "/");
 				PrepareCustomFieldsExport(cache).ForEach(file => zip.AddFile(file, "/"));
-				PrepareStylesheetExport().ForEach(file => zip.AddFile(file, "/"));
+				zip.AddFile(PrepareStylesheetExport(cache), "/");
 				zip.Save(destinationZipPath);
 			}
 		}
@@ -574,7 +579,7 @@ namespace SIL.FieldWorks.XWorks
 			Directory.CreateDirectory(Path.GetDirectoryName(tempFile));
 			using (TextWriter textWriter = new StreamWriter(tempFile))
 			{
-				exporter.ExportLift(textWriter, Path.GetDirectoryName(tempFile), new ILexEntry[0], entryCount:0);
+				exporter.ExportLift(textWriter, Path.GetDirectoryName(tempFile), new ILexEntry[0], 0);
 			}
 			return new[] {tempFile};
 		}
@@ -583,16 +588,18 @@ namespace SIL.FieldWorks.XWorks
 		/// Prepare stylesheet to be included in dictionary configuration export. LT-17397.
 		/// Returns paths to files to be included in a zipped export.
 		/// </summary>
-		internal static IEnumerable<string> PrepareStylesheetExport()
+		internal static string PrepareStylesheetExport(FdoCache cache)
 		{
-			// TODO implement
+			var projectStyles = new FlexStylesXmlAccessor(cache.LangProject.LexDbOA, true);
+			var serializer = new XmlSerializer(typeof(FlexStylesXmlAccessor));
 
-			var file1 = FileUtils.GetTempFile("StylesheetData");
-			FileUtils.WriteStringtoFile(file1, "content", Encoding.UTF8);
-			var file2 = FileUtils.GetTempFile("StylesheetMoreData");
-			FileUtils.WriteStringtoFile(file2, "content", Encoding.UTF8);
-			yield return file1;
-			yield return file2;
+			var tempFile = Path.Combine(Path.GetTempPath(), "DictExportStyles", "CustomStyles.xml");
+			Directory.CreateDirectory(Path.GetDirectoryName(tempFile));
+			using (var textWriter = new StreamWriter(tempFile))
+			{
+				serializer.Serialize(textWriter, projectStyles);
+			}
+			return tempFile;
 		}
 
 		/// <summary>
