@@ -1303,6 +1303,10 @@ namespace SIL.FieldWorks.XWorks
 				// Flex keeps the filename as NFD in memory because it is unicode. We need NFC to actually link to the file
 				filePath = Icu.Normalize(filePath, Icu.UNormalizationMode.UNORM_NFC);
 			}
+			if(!FileUtils.IsFilePathValid(filePath))
+			{
+				return "__INVALID_FILE_NAME__";
+			}
 			return filePath;
 		}
 

@@ -145,19 +145,18 @@ namespace SIL.FieldWorks.XWorks
 			_configurations.Sort((lhs, rhs) => string.Compare(lhs.Label, rhs.Label));
 			_view.configurationsListView.Items.Clear();
 			_view.configurationsListView.Items.AddRange(
-				_configurations.Select(configuration => new ListViewItem { Tag = configuration, Text = configuration.Label }).ToArray());
+				_configurations.Select(configuration => new ListViewItem { Tag = configuration, Text = configuration.Label, Selected = true}).ToArray());
 		}
 
 		/// <summary>
-		/// Fetch up-to-date list of publications from project and populate the list of publications retaining the checked information for the config.
+		/// Fetch up-to-date list of publications from project and populate the list of publications
 		/// </summary>
 		private void ReLoadPublications()
 		{
 			_publications = DictionaryConfigurationController.GetAllPublications(_cache);
-			var currentConfigPublications = GetPublications(SelectedConfiguration);
 			foreach (var publication in _publications)
 			{
-				var item = new ListViewItem { Text = publication, Checked = currentConfigPublications.Contains(publication)};
+				var item = new ListViewItem { Text = publication };
 				_view.publicationsListView.Items.Add(item);
 			}
 		}

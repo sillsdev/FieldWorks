@@ -5175,6 +5175,51 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_BadFileNameDoesNotCrash()
+		{
+			var mainEntryNode = CreatePictureModel();
+			var testEntry = CreateInterestingLexEntry(Cache);
+			var sense = testEntry.SensesOS[0];
+			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			sense.PicturesOS.Add(sensePic);
+			var pic = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			Cache.LangProject.MediaOC.Add(folder);
+			folder.FilesOC.Add(pic);
+			var fileName = ".G.Images\\Marine images\\Cephalopholis leopardus.jpg;1.5\"; 1\";JPG";
+			pic.InternalPath = fileName;
+			sensePic.PictureFileRA = pic;
+
+			var tempFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "ConfigDictPictureExportTest"));
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, true, true, tempFolder.FullName);
+			//SUT
+			string result;
+			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_NullFilePathDoesNotCrash()
+		{
+			var mainEntryNode = CreatePictureModel();
+			var testEntry = CreateInterestingLexEntry(Cache);
+			var sense = testEntry.SensesOS[0];
+			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			sense.PicturesOS.Add(sensePic);
+			var pic = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			Cache.LangProject.MediaOC.Add(folder);
+			folder.FilesOC.Add(pic);
+			pic.InternalPath = string.Empty;
+			sensePic.PictureFileRA = pic;
+
+			var tempFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "ConfigDictPictureExportTest"));
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, true, true, tempFolder.FullName);
+			//SUT
+			string result;
+			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_TwoDifferentLinksToTheSamefileWorks()
 		{
 			var mainEntryNode = CreatePictureModel();
