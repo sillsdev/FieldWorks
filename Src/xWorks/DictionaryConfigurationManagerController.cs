@@ -7,9 +7,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using System.Xml;
 using System.Xml.Serialization;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FdoUi.Dialogs;
@@ -18,7 +16,6 @@ using Palaso.Linq;
 using SIL.CoreImpl;
 using XCore;
 using Ionic.Zip;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.XWorks.LexText;
 using SIL.Utils.FileDialog;
@@ -157,7 +154,6 @@ namespace SIL.FieldWorks.XWorks
 		private void ReLoadPublications()
 		{
 			_publications = DictionaryConfigurationController.GetAllPublications(_cache);
-			_view.publicationsListView.Items.Clear();
 			var currentConfigPublications = GetPublications(SelectedConfiguration);
 			foreach (var publication in _publications)
 			{
