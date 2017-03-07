@@ -77,7 +77,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				configPath = Path.Combine(dictionaryFolder, DCM.RootFileName + DictionaryConfigurationModel.FileExtension);
 			}
-			else if(ConfigHasSubentriesNode(config)) // Hybrid configs have subentries
+			else if (config.IsHybrid) // Hybrid configs have subentries
 			{
 				configPath = Path.Combine(dictionaryFolder, DCM.HybridFileName + DictionaryConfigurationModel.FileExtension);
 			}
@@ -86,22 +86,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				configPath = Path.Combine(dictionaryFolder, DCM.LexemeFileName + DictionaryConfigurationModel.FileExtension);
 			}
 			return new DictionaryConfigurationModel(configPath, Cache);
-		}
-
-		private static bool ConfigHasSubentriesNode(DictionaryConfigurationModel config)
-		{
-			// Perform a breadth first search for Subentries nodes
-			var nodesToCompare = new List<ConfigurableDictionaryNode>(config.PartsAndSharedItems);
-			while (nodesToCompare.Count > 0)
-			{
-				var currentNode = nodesToCompare[0];
-				nodesToCompare.RemoveAt(0);
-				if (currentNode.FieldDescription == "Subentries")
-					return true;
-				if (currentNode.Children != null)
-					nodesToCompare.AddRange(currentNode.Children);
-			}
-			return false;
 		}
 
 		internal void MigrateFrom83Alpha(ISimpleLogger logger, DictionaryConfigurationModel oldConfig, DictionaryConfigurationModel currentDefaultModel)
@@ -126,7 +110,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		/// </summary>
 		private static void ChooseAppropriateComplexForms(DictionaryConfigurationModel migratingModel)
 		{
-			if (!IsHybrid(migratingModel))
+			if (!migratingModel.IsHybrid)
 				return;
 			DCM.PerformActionOnNodes(migratingModel.Parts, parentNode =>
 			{
@@ -229,7 +213,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				else
 				{
 					node.FieldDescription = etymSequence;
-					node.IsEnabled = !IsHybrid(oldConfig);
+					node.IsEnabled = !oldConfig.IsHybrid;
 				}
 				node.CSSClassNameOverride = "etymologies";
 				node.Before = "(";
@@ -255,11 +239,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			}
 			// Etymology changed too much to be matched in the PreHistoricMigration and was marked as custom
 			DCM.PerformActionOnNodes(etymNodes, n => {n.IsCustomField = false;});
-		}
-
-		private static bool IsHybrid(DictionaryConfigurationModel model)
-		{
-			return !model.IsRootBased && ConfigHasSubentriesNode(model);
 		}
 
 		private static void RemoveMostOfGramInfoUnderRefdComplexForms(ConfigurableDictionaryNode part)

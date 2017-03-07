@@ -122,6 +122,14 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Checks if this model is Hybrid type. Not root and has Subentries
+		/// </summary>
+		internal bool IsHybrid
+		{
+			get { return !IsRootBased && Parts[0].Children != null && Parts[0].Children.Any(c => c.FieldDescription == "Subentries"); }
+		}
+
+		/// <summary>
 		/// A concatenation of Parts and SharedItems; useful for migration and synchronization with the FDO model
 		/// </summary>
 		[XmlIgnore]

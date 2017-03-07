@@ -2176,5 +2176,84 @@ namespace SIL.FieldWorks.XWorks
 				Assert.AreSame(subentriesNode, treeNode.Tag, "Passing a valid class list should find it");
 			}
 		}
+
+		[Test]
+		public void CheckBoxEnableForVariantInflectionalType()
+		{
+			var minorEntryVariantNode = new ConfigurableDictionaryNode
+			{
+				Label = "Minor Entry (Variants)",
+				FieldDescription = "LexEntry",
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Variant
+				}
+			};
+			var subentriesNode = new ConfigurableDictionaryNode { FieldDescription = "Subentries" };
+			var variantsNode = new ConfigurableDictionaryNode
+			{
+				Label = "Variant Forms",
+				FieldDescription = "VariantFormEntryBackRefs",
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Variant
+				}
+			};
+
+			var variantsInflectionalNode = new ConfigurableDictionaryNode
+			{
+				Label = "Variant Forms (Inflectional-Variants)",
+				LabelSuffix = "Inflectional-Variants",
+				FieldDescription = "VariantFormEntryBackRefs",
+				IsDuplicate = true,
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Variant
+				}
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Style = "Dictionary-Normal",
+				Children = new List<ConfigurableDictionaryNode> { subentriesNode, variantsNode, variantsInflectionalNode}
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Label = "Hybrid",
+				Parts = new List<ConfigurableDictionaryNode> { entryNode, minorEntryVariantNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+			var let = CreateNewVariantType("Absurd Variant");
+			try
+			{
+				var normTypeGuid = let.Guid.ToString();
+				var inflTypeGuid = Cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities
+					.First(poss => poss.Name.AnalysisDefaultWritingSystem.Text == "Past Variant").Guid.ToString();
+
+				// SUT
+				DictionaryConfigurationController.MergeTypesIntoDictionaryModel(model, Cache);
+				var inflOpts = ((DictionaryNodeListOptions)variantsInflectionalNode.DictionaryNodeOptions).Options;
+				Assert.AreEqual(9, inflOpts.Count, "Should have merged all variant types into options list in Main Entry > Inflectional Variants");
+				Assert.AreEqual(normTypeGuid, inflOpts[7].Id, "New type should appear near end of options list in Inflectional Variants node");
+				Assert.IsFalse(inflOpts[7].IsEnabled, "New type should be false under Inflectional Variants beacuse it is a normal variant type");
+				Assert.AreEqual(inflTypeGuid, inflOpts[5].Id, "Past Variant is not in its expected location");
+				Assert.IsTrue(inflOpts[5].IsEnabled, "Past variant should enabled because of Inflectional");
+				var normOpts = ((DictionaryNodeListOptions)variantsNode.DictionaryNodeOptions).Options;
+				Assert.AreEqual(9, normOpts.Count, "Should have merged all variant types into options list in Main Entry > Variants");
+				Assert.AreEqual(normTypeGuid, normOpts[7].Id, "New type should near end of options list in Main Entry > Variants");
+				Assert.IsTrue(normOpts[7].IsEnabled, "New type should be true beacuse it is normal variant type");
+				Assert.AreEqual(inflTypeGuid, normOpts[5].Id, "Past Variant is not in its expected location");
+				Assert.IsFalse(normOpts[5].IsEnabled, "Past variant should not enabled because of Inflectional");
+				var minorOpts = ((DictionaryNodeListOptions)minorEntryVariantNode.DictionaryNodeOptions).Options;
+				Assert.AreEqual(9, minorOpts.Count, "should have merged all variant types into options list in minor entry top node");
+				Assert.That(minorOpts.All(opt => opt.IsEnabled), "Should have enabled all (new) variant types in options list in minor entry top node");
+			}
+			finally
+			{
+				// Don't mess up other unit tests with an extra variant type.
+				RemoveNewVariantType(let);
+			}
+		}
 	}
 }

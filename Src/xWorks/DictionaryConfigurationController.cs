@@ -852,11 +852,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 			foreach (var part in model.PartsAndSharedItems)
 			{
-				FixTypeListOnNode(part, complexTypes, variantTypes, referenceTypes);
+				FixTypeListOnNode(part, complexTypes, variantTypes, referenceTypes, model.IsHybrid, cache);
 			}
 		}
 
-		private static void FixTypeListOnNode(ConfigurableDictionaryNode node, Set<Guid> complexTypes, Set<Guid> variantTypes, Set<Guid> referenceTypes)
+		private static void FixTypeListOnNode(ConfigurableDictionaryNode node, Set<Guid> complexTypes, Set<Guid> variantTypes, Set<Guid> referenceTypes, bool isHybrid, FdoCache cache)
 		{
 			var listOptions = node.DictionaryNodeOptions as DictionaryNodeListOptions;
 			if (listOptions != null)
@@ -864,33 +864,49 @@ namespace SIL.FieldWorks.XWorks
 				switch (listOptions.ListId)
 				{
 					case DictionaryNodeListOptions.ListIds.Complex:
-						FixOptionsAccordingToCurrentTypes(listOptions.Options, complexTypes);
+						FixOptionsAccordingToCurrentTypes(listOptions.Options, complexTypes, node, false, cache);
 						break;
 					case DictionaryNodeListOptions.ListIds.Variant:
-						FixOptionsAccordingToCurrentTypes(listOptions.Options, variantTypes);
+						FixOptionsAccordingToCurrentTypes(listOptions.Options, variantTypes, node,
+							IsFilteringInflectionalVariantTypes(node, isHybrid), cache);
 						break;
 					case DictionaryNodeListOptions.ListIds.Entry:
-						FixOptionsAccordingToCurrentTypes(listOptions.Options, referenceTypes);
+						FixOptionsAccordingToCurrentTypes(listOptions.Options, referenceTypes, node, false, cache);
 						break;
 					case DictionaryNodeListOptions.ListIds.Sense:
-						FixOptionsAccordingToCurrentTypes(listOptions.Options, referenceTypes);
+						FixOptionsAccordingToCurrentTypes(listOptions.Options, referenceTypes, node, false, cache);
 						break;
 					case DictionaryNodeListOptions.ListIds.Minor:
 						var complexAndVariant = complexTypes.Union(variantTypes);
-						FixOptionsAccordingToCurrentTypes(listOptions.Options, complexAndVariant);
+						FixOptionsAccordingToCurrentTypes(listOptions.Options, complexAndVariant, node, false, cache);
 						break;
 				}
 			}
+
 			//Recurse into child nodes and fix the type lists on them
 			if (node.Children != null)
 			{
 				foreach (var child in node.Children)
-					FixTypeListOnNode(child, complexTypes, variantTypes, referenceTypes);
+					FixTypeListOnNode(child, complexTypes, variantTypes, referenceTypes, isHybrid, cache);
 			}
 		}
 
-		private static void FixOptionsAccordingToCurrentTypes(List<DictionaryNodeListOptions.DictionaryNodeOption> options, Set<Guid> possibilities)
+		/// <summary>Called on nodes with Variant options to determine whether they are sharing Variants with a sibling</summary>
+		private static bool IsFilteringInflectionalVariantTypes(ConfigurableDictionaryNode node, bool isHybrid)
 		{
+			if (!isHybrid)
+				return false;
+			if (node.IsDuplicate)
+				return true;
+			var siblings = node.ReallyReallyAllSiblings;
+			// check whether this node has a duplicate, most likely "Variants (Inflectional Variants)"
+			return siblings != null && siblings.Any(sib => sib.FieldDescription == node.FieldDescription);
+		}
+
+		private static void FixOptionsAccordingToCurrentTypes(List<DictionaryNodeListOptions.DictionaryNodeOption> options, ICollection<Guid> possibilities,
+			ConfigurableDictionaryNode node, bool filterInflectionalVariantTypes, FdoCache cache)
+		{
+			var isDuplicate = node.IsDuplicate;
 			var currentGuids = new Set<Guid>();
 			foreach (var opt in options)
 			{
@@ -898,9 +914,31 @@ namespace SIL.FieldWorks.XWorks
 				if (Guid.TryParse(opt.Id, out guid))	// can be empty string
 					currentGuids.Add(guid);
 			}
-			// add types that do not exist already
-			options.AddRange(possibilities.Where(type => !currentGuids.Contains(type))
-				.Select(type => new DictionaryNodeListOptions.DictionaryNodeOption { Id = type.ToString(), IsEnabled = true }));
+
+			if (filterInflectionalVariantTypes)
+			{
+				foreach (var custVariantType in possibilities.Where(type => !currentGuids.Contains(type)))
+				{
+					//Variants without any type are not Inflectional
+					var showCustomVariant = (custVariantType != XmlViewsUtils.GetGuidForUnspecifiedVariantType()
+							&& cache.ServiceLocator.GetObject(custVariantType) is ILexEntryInflType)
+						^ !isDuplicate;
+
+					// add new custom variant types disabled for the original and enabled for the inflectional variants copy
+					options.Add(new DictionaryNodeListOptions.DictionaryNodeOption
+					{
+						Id = custVariantType.ToString(),
+						IsEnabled = showCustomVariant
+					});
+				}
+			}
+			else
+			{
+				// add types that do not exist already
+				options.AddRange(possibilities.Where(type => !currentGuids.Contains(type))
+					.Select(type => new DictionaryNodeListOptions.DictionaryNodeOption { Id = type.ToString(), IsEnabled = !isDuplicate }));
+			}
+
 			// remove options that no longer exist
 			for (var i = options.Count - 1; i >= 0; --i)
 			{
@@ -964,9 +1002,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public static List<ListViewItem> LoadAvailableWsList(DictionaryNodeWritingSystemOptions wsOptions, FdoCache cache)
 		{
-			var wsLists = new List<DictionaryNodeListOptions.DictionaryNodeOption>();
-
-			wsLists = UpdateWsOptions(wsOptions, cache);
+			var wsLists = UpdateWsOptions(wsOptions, cache);
 
 			var availableWSs = new List<ListViewItem>();
 			foreach (var wsListItem in wsLists)

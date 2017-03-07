@@ -80,6 +80,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var alphaModel = new DictionaryConfigurationModel
 			{
 				Version = FirstAlphaMigrator.VersionAlpha2,
+				IsRootBased = true,
 				Parts = new List<ConfigurableDictionaryNode>()
 			};
 			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode>() }); // SUT
