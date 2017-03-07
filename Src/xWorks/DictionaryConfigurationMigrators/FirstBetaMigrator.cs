@@ -183,6 +183,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				case 12:
 				case 13:
 					RemoveMostOfGramInfoUnderRefdComplexForms(oldConfigPart);
+					goto case 14;
+				case 14:
 					MigrateNewChildNodesAndOptionsInto(oldConfigPart, currentDefaultConfigPart);
 					break;
 				default:

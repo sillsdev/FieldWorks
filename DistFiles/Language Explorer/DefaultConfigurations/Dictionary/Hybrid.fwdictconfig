@@ -3,7 +3,7 @@
  xsi:noNamespaceSchemaLocation="../../Configuration/DictionaryConfiguration.xsd"
  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
  name="Hybrid (complex forms as main entries and mini subentries)"
- version="14" lastModified="2017-03-02"
+ version="15" lastModified="2017-03-06"
  allPublications="true" isRootBased="false">
   <ConfigurationItem name="Main Entry" isEnabled="true" style="Dictionary-Normal" styleType="paragraph" field="LexEntry" cssClassNameOverride="entry">
   	<ListTypeOptions list="complex">
@@ -2043,6 +2043,26 @@
 	  <ConfigurationItem name="Summary Definition" isEnabled="true" before=" " between=" " after="" field="OwningEntry" subField="SummaryDefinition">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="analysis" isEnabled="true" />
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+	</ConfigurationItem>
+	<ConfigurationItem name="Pictures" between="  " after=" " style="Dictionary-Pictures" isEnabled="true" field="PicturesOfSenses" cssClassNameOverride="pictures">
+	  <PictureOptions minimumHeight="0" maximumHeight="1" maximumWidth="0" minimumWidth="0" pictureLocation="right" stackPictures="false" />
+	  <ConfigurationItem name="Thumbnail" after="" isEnabled="true" field="PictureFileRA" cssClassNameOverride="thumbnail"/>
+	  <ConfigurationItem name="Caption" between=" " isEnabled="false" field="Caption">
+		<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+		  <Option id="vernacular" isEnabled="true"/>
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+	  <!-- Using cssClassNameOverride="headword" to show the Configure Headword Numbers button -->
+	  <ConfigurationItem name="Headword" between=" " after="" style="Dictionary-Headword" isEnabled="true" field="Owner" subField="OwnerOutlineName" cssClassNameOverride="headword">
+	  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+		<Option id="vernacular" isEnabled="true"/>
+	  </WritingSystemOptions>
+	  </ConfigurationItem>
+	  <ConfigurationItem name="Gloss" before=" " between=" " after="" isEnabled="false" field="Owner" subField="Gloss">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	</ConfigurationItem>
