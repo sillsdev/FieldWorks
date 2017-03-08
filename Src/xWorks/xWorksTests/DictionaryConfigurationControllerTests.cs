@@ -1354,12 +1354,15 @@ namespace SIL.FieldWorks.XWorks
 					m_treeControl.Dispose();
 			}
 
+			public void Close() { }
+
 			public event EventHandler SaveModel;
 
 #pragma warning disable 67
 			public event EventHandler ManageConfigurations;
 
 			public event SwitchConfigurationEvent SwitchConfiguration;
+
 #pragma warning restore 67
 		}
 		#endregion // Context

@@ -16,6 +16,8 @@ using Palaso.Linq;
 using SIL.CoreImpl;
 using XCore;
 using Ionic.Zip;
+using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.XWorks.LexText;
 using SIL.Utils.FileDialog;
@@ -68,6 +70,8 @@ namespace SIL.FieldWorks.XWorks
 		/// Event fired when the DictionaryConfigurationManager dialog is closed
 		/// </summary>
 		public event Action<DictionaryConfigurationModel> Finished;
+
+		public event Action ConfigurationViewImported;
 
 		/// <summary>Get list of publications using a dictionary configuration.</summary>
 		internal List<string> GetPublications(DictionaryConfigurationModel dictionaryConfiguration)
@@ -145,7 +149,7 @@ namespace SIL.FieldWorks.XWorks
 			_configurations.Sort((lhs, rhs) => string.Compare(lhs.Label, rhs.Label));
 			_view.configurationsListView.Items.Clear();
 			_view.configurationsListView.Items.AddRange(
-				_configurations.Select(configuration => new ListViewItem { Tag = configuration, Text = configuration.Label, Selected = true}).ToArray());
+				_configurations.Select(configuration => new ListViewItem { Tag = configuration, Text = configuration.Label }).ToArray());
 		}
 
 		/// <summary>
@@ -617,13 +621,20 @@ namespace SIL.FieldWorks.XWorks
 
 			if (!importController.ImportHappened)
 				return;
+			CloseDialogAndReloadProject();
+		}
 
-			ReLoadPublications();
-
-			// Update list of configurations in UI and select the just-imported configuration.
-			ReLoadConfigurations();
-			_view.configurationsListView.Items.Cast<ListViewItem>().First(item => item.Text == importController.NewConfigToImport.Label).Selected = true;
-
+		private void CloseDialogAndReloadProject()
+		{
+			_view.Close();
+			if(ConfigurationViewImported != null)
+				ConfigurationViewImported();
+			var projectFolder = _cache.ProjectId.ProjectFolder;
+			var fullProjectFileName = Path.Combine(projectFolder, _cache.ProjectId.Name + FdoFileHelper.ksFwDataXmlFileExtension);
+			var app = (FwApp)_mediator.PropertyTable.GetValue("App");
+			var manager = app.FwManager;
+			var appArgs = new FwAppArgs(fullProjectFileName);
+			manager.ReopenProject(manager.Cache.ProjectId.Name, appArgs);
 		}
 
 		public bool IsConfigurationACustomizedOriginal(DictionaryConfigurationModel configurationToDelete)

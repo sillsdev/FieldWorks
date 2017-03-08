@@ -352,6 +352,12 @@ namespace SIL.FieldWorks.XWorks
 					var configurationManagerController = new DictionaryConfigurationManagerController(dialog, _mediator,
 						_dictionaryConfigurations, GetAllPublications(cache), _projectConfigDir, _defaultConfigDir, _model);
 					configurationManagerController.Finished += SelectModelFromManager;
+					configurationManagerController.ConfigurationViewImported += () =>
+					{
+						SaveModel();
+						MasterRefreshRequired = false; // We're reloading the whole app, that's refresh enough
+						View.Close();
+					};
 					SetManagerTypeInfo(dialog);
 					dialog.ShowDialog(View as Form);
 					managerMadeChanges = configurationManagerController.IsDirty ||  _model != currentModel;
