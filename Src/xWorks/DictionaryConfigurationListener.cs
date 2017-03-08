@@ -103,6 +103,9 @@ namespace SIL.FieldWorks.XWorks
 				case "lexiconBrowse":
 				case "lexiconDictionary":
 				case "lexiconEdit":
+				case "bulkEditEntriesOrSenses":
+				case "rapidDataEntry":
+				case "lexiconClassifiedDictionary":
 					return "Dictionary";
 				default:
 					return null;
