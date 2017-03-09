@@ -418,6 +418,7 @@
     <Compile Include="XmlListTests.cs" />
     <Compile Include="XmlTranslatedListsTests.cs" />
     <Compile Include="FdoInvertSetTests.cs" />
+    <Compile Include="ReadWriteServicesTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="BuildInclude.targets">
