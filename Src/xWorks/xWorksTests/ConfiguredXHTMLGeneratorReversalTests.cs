@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2016 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,6 +10,8 @@ using System.Text;
 using System.Xml;
 using NUnit.Framework;
 using Palaso.TestUtilities;
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
@@ -392,8 +394,9 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(rie, reversalNode, null, DefaultSettings);
-			var reversalFormDataPath = string.Format("/div[@class='reversalindexentry']/span[@class='reversalform']/span[text()='{0}']", rie.LongName);
-			var entryDataPath = string.Format("//span[text()='{0}']", entryHeadWord.Text);
+			var reversalFormDataPath = string.Format("/div[@class='reversalindexentry']/span[@class='reversalform']/span[text()='{0}']",
+				TsStringUtils.Compose(rie.LongName));
+			var entryDataPath = string.Format("//span[text()='{0}']", entryHeadWord.get_NormalizedForm(FwNormalizationMode.knmNFC).Text);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(reversalFormDataPath, 1);
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(entryDataPath);
 		}

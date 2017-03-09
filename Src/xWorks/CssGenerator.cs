@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.XWorks
 				GenerateCssFromConfigurationNode(configNode, styleSheet, null, mediator);
 			}
 			// Pretty-print the stylesheet
-			return styleSheet.ToString(true, 1);
+			return Icu.Normalize(styleSheet.ToString(true, 1), Icu.UNormalizationMode.UNORM_NFC);
 		}
 
 		private static void GenerateCssForDefaultStyles(Mediator mediator, FwStyleSheet mediatorstyleSheet,
@@ -823,7 +823,7 @@ namespace SIL.FieldWorks.XWorks
 				singularBase = classNameBase.Remove(classNameBase.Length - 2);
 			else
 				singularBase = classNameBase.Remove(classNameBase.Length - 1);
-			return singularBase + GetClassAttributeDupSuffix(configNode).ToLower();
+			return Icu.Normalize(singularBase + GetClassAttributeDupSuffix(configNode).ToLower(), Icu.UNormalizationMode.UNORM_NFC);
 		}
 
 		/// <summary>
@@ -849,7 +849,8 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal static string GetClassAttributeForConfig(ConfigurableDictionaryNode configNode)
 		{
-			return (GetClassAttributeBase(configNode) + GetClassAttributeDupSuffix(configNode)).ToLower();
+			return Icu.Normalize((GetClassAttributeBase(configNode) + GetClassAttributeDupSuffix(configNode)).ToLower(),
+				Icu.UNormalizationMode.UNORM_NFC);
 		}
 
 		private static string GetClassAttributeBase(ConfigurableDictionaryNode configNode)

@@ -3598,6 +3598,36 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsTrue(Regex.IsMatch(result, regexSpecific, RegexOptions.Multiline), "The css for the specific language color should be there.");
 		}
 
+		[Test]
+		public void GenerateCssForConfiguration_ContentNormalizedComposed()
+		{
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode
+					{
+						FieldDescription = "LexEntry",
+						CSSClassNameOverride = Icu.Normalize("자ㄱㄴ시", Icu.UNormalizationMode.UNORM_NFD),
+						Children = new List<ConfigurableDictionaryNode>
+						{
+							new ConfigurableDictionaryNode
+							{
+								FieldDescription = "MLHeadWord",
+								Before = Icu.Normalize("garçon", Icu.UNormalizationMode.UNORM_NFD),
+								Between = Icu.Normalize("자ㄱㄴ시", Icu.UNormalizationMode.UNORM_NFD),
+								After = Icu.Normalize("Brötchen", Icu.UNormalizationMode.UNORM_NFD)
+							}
+						}
+					}
+				}
+			};
+			PopulateFieldsForTesting(model);
+			var result = CssGenerator.GenerateCssFromConfiguration(model, m_mediator); // SUT
+			Assert.IsNotNullOrEmpty(result);
+			Assert.That(Cache.TsStrFactory.MakeString(result, 1).get_IsNormalizedForm(FwNormalizationMode.knmNFC));
+		}
+
 		#region Test Helper Methods
 
 		/// <summary>Populate fields that need to be populated on node and its children, including Parent, Label, and IsEnabled</summary>

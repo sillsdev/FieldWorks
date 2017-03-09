@@ -8131,8 +8131,8 @@ namespace SIL.FieldWorks.XWorks
 			const string whSpan = "<span class=\"ownertype_abbreviation\"><span lang=\"en\">wh</span></span>";
 			const string ptSpan = "<span class=\"ownertype_abbreviation\"><span lang=\"en\">pt</span></span>";
 			const string femmeSpan = "<span class=\"headword\"><span lang=\"fr\">femme</span></span>";
-			const string garçonSpan = "<span class=\"headword\"><span lang=\"fr\">garçon</span></span>";
-			const string bêteSpan = "<span class=\"headword\"><span lang=\"fr\">bête</span></span>";
+			var garçonSpan = TsStringUtils.Compose("<span class=\"headword\"><span lang=\"fr\">garçon</span></span>");
+			var bêteSpan = TsStringUtils.Compose("<span class=\"headword\"><span lang=\"fr\">bête</span></span>");
 			const string trucSpan = "<span class=\"headword\"><span lang=\"fr\">truc</span></span>";
 			//SUT
 			var firstResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(firstEntry, mainEntryNode, null, settings);
@@ -8685,6 +8685,36 @@ namespace SIL.FieldWorks.XWorks
 				+ "/span[@class='senses']/span[@class='sense']//span[@lang='en' and text()='gloss']";
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithGlossOfGloss, 1);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_GeneratesNFC()
+		{
+			var node = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "über",
+				Children = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode
+					{
+						FieldDescription = "MLHeadWord",
+						DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "ko" })
+					}
+				}
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(node);
+			Cache.LangProject.AddToCurrentVernacularWritingSystems(Cache.WritingSystemFactory.get_Engine("ko") as IWritingSystem);
+			var wsKo = Cache.WritingSystemFactory.GetWsFromStr("ko");
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			var headword = Cache.TsStrFactory.MakeString("자ㄱㄴ시", wsKo); // Korean NFD
+			entry.CitationForm.set_String(wsKo, headword);
+			Assert.That(entry.CitationForm.get_String(wsKo).get_IsNormalizedForm(FwNormalizationMode.knmNFD), "Should be NFDecomposed in memory");
+			Assert.AreEqual(6, headword.Text.Length);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, node, null, DefaultSettings);
+			var tsResult = Cache.TsStrFactory.MakeString(result, Cache.DefaultAnalWs);
+			Assert.False(TsStringUtils.IsNullOrEmpty(tsResult), "Results should have been generated");
+			Assert.That(tsResult.get_IsNormalizedForm(FwNormalizationMode.knmNFC), "Resulting XHTML should be NFComposed");
 		}
 	}
 }

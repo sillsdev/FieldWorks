@@ -308,7 +308,7 @@ namespace SIL.FieldWorks.XWorks
 					progress.Message = xWorksStrings.ksGeneratingStyleInfo;
 				if (!IsLexEditPreviewOnly(publicationDecorator) && !IsExport(settings))
 				{
-					cssWriter.Write(CssGenerator.GenerateCssForSelectedEntry(IsNormalRtl(mediator)));
+					cssWriter.Write(CssGenerator.GenerateCssForSelectedEntry(settings.RightToLeft));
 					CopyFileSafely(settings, Path.Combine(FwDirectoryFinder.FlexFolder, ImagesFolder, CurrentEntryMarker), CurrentEntryMarker);
 				}
 				cssWriter.Write(CssGenerator.GenerateLetterHeaderCss(mediator));
@@ -474,8 +474,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var firstEntry = settings.Cache.ServiceLocator.GetObject(firstEntryId);
 			var lastEntry = settings.Cache.ServiceLocator.GetObject(lastEntryId);
-			var firstLetters = GetIndexLettersOfHeadword(GetLetHeadbyEntryType(firstEntry), isFirst);
-			var lastLetters = GetIndexLettersOfHeadword(GetLetHeadbyEntryType(lastEntry));
+			var firstLetters = GetIndexLettersOfHeadword(GetHeadwordForLetterHead(firstEntry), isFirst);
+			var lastLetters = GetIndexLettersOfHeadword(GetHeadwordForLetterHead(lastEntry));
 			return firstEntryId == lastEntryId ? firstLetters : firstLetters + " .. " + lastLetters;
 		}
 
@@ -513,7 +513,7 @@ namespace SIL.FieldWorks.XWorks
 			// I don't know if we can have an empty headword. If we can then return empty string instead of crashing.
 			if (headWord.Length == 0)
 				return string.Empty;
-			return headWord.Substring(0, headWord.Length <= 1 || justFirstLetter ? 1 : 2);
+			return TsStringUtils.Compose(headWord.Substring(0, headWord.Length <= 1 || justFirstLetter ? 1 : 2));
 		}
 
 		private static List<Tuple<int, int>> GetPageRanges(int[] entryHvos, int entriesPerPage)
@@ -624,9 +624,9 @@ namespace SIL.FieldWorks.XWorks
 			var wsString = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultVernWs);
 			if (entry is IReversalIndexEntry)
 				wsString = ((IReversalIndexEntry)entry).SortKeyWs;
-			var firstLetter = ConfiguredExport.GetLeadChar(GetLetHeadbyEntryType(entry), wsString,
+			var firstLetter = ConfiguredExport.GetLeadChar(GetHeadwordForLetterHead(entry), wsString,
 																		  dummyOne, dummyTwo, dummyThree, cache);
-			if (firstLetter != lastHeader && !String.IsNullOrEmpty(firstLetter))
+			if (firstLetter != lastHeader && !string.IsNullOrEmpty(firstLetter))
 			{
 				var headerTextBuilder = new StringBuilder();
 				var upperCase = Icu.ToTitle(firstLetter, wsString);
@@ -645,7 +645,7 @@ namespace SIL.FieldWorks.XWorks
 				var wsRightToLeft = cache.WritingSystemFactory.get_Engine(wsString).RightToLeftScript;
 				if (wsRightToLeft != settings.RightToLeft)
 					xhtmlWriter.WriteAttributeString("dir", wsRightToLeft ? "rtl" : "ltr");
-				xhtmlWriter.WriteString(headerTextBuilder.ToString());
+				xhtmlWriter.WriteString(TsStringUtils.Compose(headerTextBuilder.ToString()));
 				xhtmlWriter.WriteEndElement();
 				xhtmlWriter.WriteEndElement();
 				xhtmlWriter.WriteWhitespace(Environment.NewLine);
@@ -655,12 +655,11 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// To generating the letter headers, we need to know which type the entry is to determine to check the first character.
-		/// So, this method will find the correct type by casting the entry with ILexEntry and IReversalIndexEntry
+		/// To generating the letter headings, we need to check the first character of the "headword," which is a different
+		/// field for ILexEntry and IReversalIndexEntry. Get the headword starting from entry-type-agnostic.
 		/// </summary>
-		/// <param name="entry">entry which needs to find the type</param>
-		/// <returns>letHead text</returns>
-		private static string GetLetHeadbyEntryType(ICmObject entry)
+		/// <returns>the "headword" in NFD (the heading letter must be normalized to NFC before writing to XHTML, per LT-18177)</returns>
+		private static string GetHeadwordForLetterHead(ICmObject entry)
 		{
 			var lexEntry = entry as ILexEntry;
 			if (lexEntry == null)
@@ -759,7 +758,7 @@ namespace SIL.FieldWorks.XWorks
 				pieces.ForEach(xw.WriteRaw);
 				xw.WriteEndElement(); // </div>
 				xw.Flush();
-				return bldr.ToString();
+				return Icu.Normalize(bldr.ToString(), Icu.UNormalizationMode.UNORM_NFC); // All content should be in NFC (LT-18177)
 			}
 		}
 
@@ -1927,7 +1926,7 @@ namespace SIL.FieldWorks.XWorks
 		///  - No? Don't number.
 		///  - Yes? Number it.
 		/// </summary>
-		public static bool ShouldThisSenseBeNumbered(ILexSense sense, ConfigurableDictionaryNode senseConfiguration,
+		internal static bool ShouldThisSenseBeNumbered(ILexSense sense, ConfigurableDictionaryNode senseConfiguration,
 			IEnumerable<ILexSense> siblingSenses)
 		{
 			var senseOptions = senseConfiguration.DictionaryNodeOptions as DictionaryNodeSenseOptions;
@@ -1948,7 +1947,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Does this sense node have a subsenses node that is enabled in the configuration and has numbering style?
 		/// </summary>
 		/// <param name="senseNode">sense node that might have subsenses</param>
-		public static bool AreThereEnabledSubsensesWithNumberingStyle(ConfigurableDictionaryNode senseNode)
+		internal static bool AreThereEnabledSubsensesWithNumberingStyle(ConfigurableDictionaryNode senseNode)
 		{
 			if (senseNode == null)
 				return false;
@@ -2820,14 +2819,17 @@ namespace SIL.FieldWorks.XWorks
 		private static string GenerateXHTMLForString(ITsString fieldValue, ConfigurableDictionaryNode config,
 			GeneratorSettings settings, Guid guid, string writingSystem = null)
 		{
+			if (TsStringUtils.IsNullOrEmpty(fieldValue))
+				return string.Empty;
 			if (writingSystem != null && writingSystem.Contains("audio"))
 			{
-				if (fieldValue != null && !String.IsNullOrEmpty(fieldValue.Text) && fieldValue.Text.Contains("."))
+				var fieldText = fieldValue.Text;
+				if (fieldText.Contains("."))
 				{
-					var audioId = fieldValue.Text.Substring(0, fieldValue.Text.IndexOf(".", StringComparison.Ordinal));
-					var srcAttr = GenerateSrcAttributeForMediaFromFilePath(fieldValue.Text, "AudioVisual", settings);
-					var content = GenerateXHTMLForAudioFile(writingSystem, audioId, srcAttr, String.Empty);
-					if (!String.IsNullOrEmpty(content))
+					var audioId = fieldText.Substring(0, fieldText.IndexOf(".", StringComparison.Ordinal));
+					var srcAttr = GenerateSrcAttributeForMediaFromFilePath(fieldText, "AudioVisual", settings);
+					var content = GenerateXHTMLForAudioFile(writingSystem, audioId, srcAttr, string.Empty);
+					if (!string.IsNullOrEmpty(content))
 						return WriteRawElementContents("span", content, null);
 				}
 			}
@@ -2870,7 +2872,7 @@ namespace SIL.FieldWorks.XWorks
 					return bldr.ToString();
 				}
 			}
-			return String.Empty;
+			return string.Empty;
 		}
 
 		private static void GenerateSpanWithPossibleLink(GeneratorSettings settings, string writingSystem, XmlWriter writer, string style,
