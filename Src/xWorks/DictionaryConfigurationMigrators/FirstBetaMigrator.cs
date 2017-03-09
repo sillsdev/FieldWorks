@@ -169,6 +169,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					RemoveMostOfGramInfoUnderRefdComplexForms(oldConfigPart);
 					goto case 14;
 				case 14:
+				case 15:
 					MigrateNewChildNodesAndOptionsInto(oldConfigPart, currentDefaultConfigPart);
 					break;
 				default:
@@ -263,6 +264,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				destinationNode.DictionaryNodeOptions = sourceNode.DictionaryNodeOptions;
 			if (destinationNode.Children == null || sourceNode.Children == null)
 				return;
+			EnsureCssOverrideAndStylesAreUpdated(destinationNode, sourceNode);
 			// First recurse into each matching child node
 			foreach (var newChild in sourceNode.Children)
 			{
@@ -276,6 +278,31 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					var indexOfNewChild = sourceNode.Children.FindIndex(n => n.Label == newChild.Label);
 					InsertNewNodeIntoOldConfig(destinationNode, newChild.DeepCloneUnderParent(destinationNode, true), sourceNode, indexOfNewChild);
 				}
+			}
+		}
+
+		private static void EnsureCssOverrideAndStylesAreUpdated(ConfigurableDictionaryNode destinationNode, ConfigurableDictionaryNode sourceNode)
+		{
+			if (sourceNode.StyleType != ConfigurableDictionaryNode.StyleTypes.Default && destinationNode.StyleType == ConfigurableDictionaryNode.StyleTypes.Default)
+			{
+				var nodeStyleType = sourceNode.StyleType;
+				var nodeParaOpts = destinationNode.DictionaryNodeOptions as IParaOption;
+				if (nodeParaOpts != null)
+				{
+					nodeStyleType = nodeParaOpts.DisplayEachInAParagraph
+						? ConfigurableDictionaryNode.StyleTypes.Paragraph
+						: ConfigurableDictionaryNode.StyleTypes.Character;
+				}
+				destinationNode.StyleType = nodeStyleType;
+			}
+			if (sourceNode.StyleType == destinationNode.StyleType && // in case the user changed, for example, from Paragraph to Character style
+				!string.IsNullOrEmpty(sourceNode.Style) && string.IsNullOrEmpty(destinationNode.Style))
+			{
+				destinationNode.Style = sourceNode.Style;
+			}
+			if (!string.IsNullOrEmpty(sourceNode.CSSClassNameOverride) && string.IsNullOrEmpty(destinationNode.CSSClassNameOverride))
+			{
+				destinationNode.CSSClassNameOverride = sourceNode.CSSClassNameOverride;
 			}
 		}
 
