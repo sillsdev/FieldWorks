@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016 SIL International
+﻿// Copyright (c) 2016-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -45,6 +45,16 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		{
 			add { label.Click += value; }
 			remove { label.Click -= value; }
+		}
+
+		/// <summary>
+		/// Make sure that on Mono, the height of LabelOverPanel is not too small to show its two controls, similar to LT-18097. Set the height to help Mono.
+		/// </summary>
+		protected override void OnSizeChanged(EventArgs e)
+		{
+			base.OnSizeChanged(e);
+			if (Height < panel.Location.Y + panel.Height)
+				Height = panel.Location.Y + panel.Height;
 		}
 	}
 }
