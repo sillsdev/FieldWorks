@@ -166,7 +166,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else if (e.Button == GeckoMouseButton.Right)
 			{
-				HandleDomRightClick(browser, e, element, m_mediator, m_configObjectName);
+				HandleDomRightClick(browser, e, element, m_mediator);
 			}
 		}
 
@@ -345,13 +345,13 @@ namespace SIL.FieldWorks.XWorks
 		/// </remarks>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "ToolStripMenuItems get added to m_contextMenu.Items; ContextMenuStrip is disposed in DisposeContextMenu()")]
-		internal static void HandleDomRightClick(GeckoWebBrowser browser, DomMouseEventArgs e,
-			GeckoElement element, Mediator mediator, string configObjectName)
+		internal static void HandleDomRightClick(GeckoWebBrowser browser, DomMouseEventArgs e, GeckoElement element, Mediator mediator)
 		{
 			Guid topLevelGuid;
 			GeckoElement entryElement;
 			var classList = GetClassListFromGeckoElement(element, out topLevelGuid, out entryElement);
-			var label = string.Format(xWorksStrings.ksConfigure, configObjectName);
+			var localizedName = DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator);
+			var label = string.Format(xWorksStrings.ksConfigure, localizedName);
 			s_contextMenu = new ContextMenuStrip();
 			var item = new ToolStripMenuItem(label);
 			s_contextMenu.Items.Add(item);

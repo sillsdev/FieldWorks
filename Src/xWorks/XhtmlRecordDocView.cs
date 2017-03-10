@@ -74,7 +74,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else if (e.Button == GeckoMouseButton.Right)
 			{
-				XhtmlDocView.HandleDomRightClick(browser, e, element, m_mediator, m_configObjectName);
+				XhtmlDocView.HandleDomRightClick(browser, e, element, m_mediator);
 			}
 		}
 
