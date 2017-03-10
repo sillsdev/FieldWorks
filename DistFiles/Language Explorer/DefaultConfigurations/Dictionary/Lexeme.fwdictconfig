@@ -765,7 +765,7 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Scientific Name" before=" " isEnabled="true" field="ScientificName"/>
 	  <ConfigurationItem name="Source" before=" " isEnabled="false" field="Source"/>
-	  <ConfigurationItem name="Semantic Domains" before="(sem. domains: " between=", " after=".)" isEnabled="false" field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
+	  <ConfigurationItem name="Semantic Domains" before=" (sem. domains: " between=", " after=".)" isEnabled="false" field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
 		<ConfigurationItem name="Abbreviation" between=" " after=" - " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -1723,7 +1723,7 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Semantic Domains" before="(sem. domains: " between=", " after=".)" isEnabled="false" field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
+	  <ConfigurationItem name="Semantic Domains" before=" (sem. domains: " between=", " after=".)" isEnabled="false" field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
 		<ConfigurationItem name="Abbreviation" between=" " after=" - " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -2249,7 +2249,7 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Scientific Name" before=" " isEnabled="true" field="ScientificName"/>
 	  <ConfigurationItem name="Source" before=" " isEnabled="false" field="Source"/>
-	  <ConfigurationItem name="Semantic Domains" before="(sem. domains: " between=", " after=".)" isEnabled="false" field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
+	  <ConfigurationItem name="Semantic Domains" before=" (sem. domains: " between=", " after=".)" isEnabled="false" field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
 		<ConfigurationItem name="Abbreviation" between=" " after=" - " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
