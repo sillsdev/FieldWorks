@@ -823,6 +823,17 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (Clerk.CurrentObject == null)
 				return;
+
+			if (Clerk.Id == "AllReversalEntries")
+			{
+				var currentConfig = m_mediator.PropertyTable.GetStringProperty("ReversalIndexPublicationLayout", string.Empty);
+				if (!currentConfig.Contains(Clerk.CurrentObject.Owner.SortKey + ".fwdictconfig"))
+				{
+					var newConfig = Path.GetDirectoryName(currentConfig) + "\\" + Clerk.CurrentObject.Owner.SortKey + ".fwdictconfig";
+					m_mediator.PropertyTable.SetProperty("ReversalIndexPublicationLayout", newConfig, true);
+				}
+			}
+
 			var currentObjectGuid = Clerk.CurrentObject.Guid.ToString();
 			var currSelectedByGuid = browser.Document.GetHtmlElementById("g" + currentObjectGuid);
 			if (currSelectedByGuid == null)
