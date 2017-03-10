@@ -196,16 +196,16 @@
 	</ConfigurationItem>
 -->
 	</ConfigurationItem>
-	<ConfigurationItem name="Cross References" before=" " between="; " after="." isEnabled="true" field="MinimalLexReferences">
+	<ConfigurationItem name="Cross References" before="" between="; " after=". " isEnabled="true" field="MinimalLexReferences">
 	  <ListTypeOptions list="entry">
 		<Option isEnabled="true" id="b79ba420-ea5e-11de-8f71-0013722f8dec"/>
 	  </ListTypeOptions>
-	  <ConfigurationItem name="Relation Abbreviation" between=" " after=":" style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
+	  <ConfigurationItem name="Relation Abbreviation" before="" between=" " after=":" style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="analysis" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Relation Name" between=" " after=":" style="Dictionary-Contrasting" isEnabled="false" field="OwnerType" subField="Name">
+	  <ConfigurationItem name="Relation Name" before="" between=" " after=":" style="Dictionary-Contrasting" isEnabled="false" field="OwnerType" subField="Name">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="analysis" isEnabled="true"/>
 		</WritingSystemOptions>
@@ -603,7 +603,7 @@
 		  </ConfigurationItem>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variants of Sense" before="(" between=";" after=") " isEnabled="true" field="VariantFormEntryBackRefs">
+	  <ConfigurationItem name="Variants of Sense" before=" (" between=";" after=")" isEnabled="true" field="VariantFormEntryBackRefs">
 		<ListTypeOptions list="variant">
 		  <Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="true" />
 		  <Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
@@ -765,7 +765,7 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Scientific Name" before=" " isEnabled="true" field="ScientificName"/>
 	  <ConfigurationItem name="Source" before=" " isEnabled="false" field="Source"/>
-	  <ConfigurationItem name="Semantic Domains" before="(sem. domains: " between=", " after=".) " isEnabled="false" field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
+	  <ConfigurationItem name="Semantic Domains" before="(sem. domains: " between=", " after=".)" isEnabled="false" field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
 		<ConfigurationItem name="Abbreviation" between=" " after=" - " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -946,8 +946,8 @@
 		  <Option id="vernacular" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Grammatical Info." before=" " between=", " after="" style="Dictionary-Contrasting" isEnabled="false" field="MorphoSyntaxAnalyses">
-		<ConfigurationItem name="Category Info." before=" " between=" " after="" isEnabled="false" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
+	  <ConfigurationItem name="Grammatical Info." before="" between=", " after="" style="Dictionary-Contrasting" isEnabled="false" field="MorphoSyntaxAnalyses">
+		<ConfigurationItem name="Category Info." before="" between=" " after="" isEnabled="false" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -1183,16 +1183,16 @@
 	</ConfigurationItem>
 -->
 	</ConfigurationItem>
-	<ConfigurationItem name="Cross References" before=" " between="; " after="." isEnabled="false" field="MinimalLexReferences">
+	<ConfigurationItem name="Cross References" before="" between="; " after=". " isEnabled="false" field="MinimalLexReferences">
 	  <ListTypeOptions list="entry">
 		<Option isEnabled="true" id="b79ba420-ea5e-11de-8f71-0013722f8dec"/>
 	  </ListTypeOptions>
-	  <ConfigurationItem name="Relation Abbreviation" between=" " after=":" style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
+	  <ConfigurationItem name="Relation Abbreviation" before="" between=" " after=":" style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="analysis" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Relation Name" between=" " after=":" style="Dictionary-Contrasting" isEnabled="false" field="OwnerType" subField="Name">
+	  <ConfigurationItem name="Relation Name" before="" between=" " after=":" style="Dictionary-Contrasting" isEnabled="false" field="OwnerType" subField="Name">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="analysis" isEnabled="true"/>
 		</WritingSystemOptions>
@@ -1723,7 +1723,7 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Semantic Domains" before="(sem. domains: " between=", " after=".) " isEnabled="false" field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
+	  <ConfigurationItem name="Semantic Domains" before="(sem. domains: " between=", " after=".)" isEnabled="false" field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
 		<ConfigurationItem name="Abbreviation" between=" " after=" - " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -1862,7 +1862,7 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Grammatical Info." before=" " between=", " style="Dictionary-Contrasting" isEnabled="false" field="MorphoSyntaxAnalyses">
-		<ConfigurationItem name="Category Info." before=" " between=" " isEnabled="true" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
+		<ConfigurationItem name="Category Info." before="" between=" " isEnabled="true" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -2249,7 +2249,7 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Scientific Name" before=" " isEnabled="true" field="ScientificName"/>
 	  <ConfigurationItem name="Source" before=" " isEnabled="false" field="Source"/>
-	  <ConfigurationItem name="Semantic Domains" before="(sem. domains: " between=", " after=".) " isEnabled="false" field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
+	  <ConfigurationItem name="Semantic Domains" before="(sem. domains: " between=", " after=".)" isEnabled="false" field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
 		<ConfigurationItem name="Abbreviation" between=" " after=" - " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
