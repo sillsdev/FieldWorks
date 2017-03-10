@@ -28,6 +28,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private DictionaryConfigurationImportController _controller;
 		private string _projectConfigPath;
+		private string _projectConfigOverwritePath;
 		private readonly string _defaultConfigPath = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary");
 		private const string configLabel = "importexportConfiguration";
 		private const string configFilename = "importexportConfigurationFile.fwdictconfig";
@@ -64,6 +65,11 @@ namespace SIL.FieldWorks.XWorks
 			if (Directory.Exists(_projectConfigPath))
 				Directory.Delete(_projectConfigPath, true);
 			FileUtils.EnsureDirectoryExists(_projectConfigPath);
+
+			_projectConfigOverwritePath = Path.Combine(Path.GetTempPath(), "dictionaryConfigurationOverridesImportTests");
+			if (Directory.Exists(_projectConfigOverwritePath))
+				Directory.Delete(_projectConfigOverwritePath, true);
+			FileUtils.EnsureDirectoryExists(_projectConfigOverwritePath);
 
 			_controller = new DictionaryConfigurationImportController(Cache, _projectConfigPath,
 				new List<DictionaryConfigurationModel>());
@@ -289,7 +295,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void UserRequestsOverwrite_ResultsInDifferentLabelAndFilename()
 		{
-			UserRequestsOverwrite_Helper();
+			var importOverwriteConfigFilePath = UserRequestsOverwrite_Helper();
 			var configThatShouldBeOverwritten = _controller._configurations.First(config => config.Label == configLabel);
 
 			// SUT
@@ -302,10 +308,9 @@ namespace SIL.FieldWorks.XWorks
 			_controller.DoImport();
 
 			Assert.That(_controller.NewConfigToImport.FilePath,
-				Is.EqualTo(Path.Combine(_projectConfigPath, _controller.NewConfigToImport.Label + DictionaryConfigurationModel.FileExtension)),
+				Is.EqualTo(importOverwriteConfigFilePath),
 				"This is nit-picking, but use a filename based on the original label, not based on a non-colliding label."
 				+ " So ORIGINALLABEL+maybesomething, not NONCOLLIDING+something (so not importexportConfiguration-Imported2)");
-
 			Assert.That(!_controller._configurations.Contains(configThatShouldBeOverwritten),
 				"old config of same label shouldn't still be there if overwritten");
 			var newConfigInRegisteredSet = _controller._configurations.First(config => config.Label == configLabel);
@@ -314,22 +319,25 @@ namespace SIL.FieldWorks.XWorks
 				"Imported config was not what was expected");
 		}
 
-		private void UserRequestsOverwrite_Helper()
+		private string UserRequestsOverwrite_Helper()
 		{
 			var alreadyExistingModelWithSameLabel = new DictionaryConfigurationModel
 			{
 				Label = configLabel,
-				Publications = new List<string>(),
+				Publications = new List<string> { "Main Dictionary", "unknown pub 1", "unknown pub 2" },
+				FilePath = Path.GetTempPath() + configFilename
 			};
-			DictionaryConfigurationManagerController.GenerateFilePath(_projectConfigPath, _controller._configurations,
+			DictionaryConfigurationManagerController.GenerateFilePath(_projectConfigOverwritePath, _controller._configurations,
 				alreadyExistingModelWithSameLabel);
+
 			FileUtils.WriteStringtoFile(alreadyExistingModelWithSameLabel.FilePath, "arbitrary file content", Encoding.UTF8);
 			var anotherAlreadyExistingModel = new DictionaryConfigurationModel
 			{
 				Label = "importexportConfiguration-Imported1",
-				Publications = new List<string>()
+				Publications = new List<string> { "Main Dictionary", "unknown pub 1", "unknown pub 2" },
+				FilePath = Path.GetTempPath() + configFilename
 			};
-			DictionaryConfigurationManagerController.GenerateFilePath(_projectConfigPath, _controller._configurations,
+			DictionaryConfigurationManagerController.GenerateFilePath(_projectConfigOverwritePath, _controller._configurations,
 				anotherAlreadyExistingModel);
 			FileUtils.WriteStringtoFile(anotherAlreadyExistingModel.FilePath, "arbitrary file content", Encoding.UTF8);
 
@@ -337,6 +345,8 @@ namespace SIL.FieldWorks.XWorks
 			_controller._configurations.Add(anotherAlreadyExistingModel);
 
 			_controller.PrepareImport(_zipFile);
+
+			return alreadyExistingModelWithSameLabel.FilePath;
 		}
 
 		[Test]

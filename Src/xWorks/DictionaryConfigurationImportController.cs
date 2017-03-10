@@ -115,9 +115,11 @@ namespace SIL.FieldWorks.XWorks
 			// Set a filename for the new configuration. Use a unique filename that isn't either registered with another configuration, or existing on disk. Note that in this way, we ignore what the original filename was of the configuration file in the .zip file.
 			DictionaryConfigurationManagerController.GenerateFilePath(_projectConfigDir, _configurations, NewConfigToImport);
 
-			var outputConfigPath = NewConfigToImport.FilePath;
+			var outputConfigPath = existingConfigurationInTheWay != null ? existingConfigurationInTheWay.FilePath : NewConfigToImport.FilePath;
 
 			File.Move(_temporaryImportConfigLocation, outputConfigPath);
+
+			NewConfigToImport.FilePath = outputConfigPath;
 
 			_configurations.Add(NewConfigToImport);
 
