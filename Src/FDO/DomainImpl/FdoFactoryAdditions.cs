@@ -1322,6 +1322,33 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	}
 	#endregion
 
+	#region CmCustomItemFactory class
+	internal partial class CmCustomItemFactory
+	{
+		public ICmPossibility Create(Guid guid, ICmPossibilityList owner)
+		{
+			if (owner == null) throw new ArgumentNullException("owner");
+
+			int hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
+
+			var retval = new CmCustomItem(m_cache, hvo, guid);
+			owner.PossibilitiesOS.Add(retval);
+			return retval;
+		}
+
+		public ICmPossibility Create(Guid guid, ICmCustomItem owner)
+		{
+			if (owner == null) throw new ArgumentNullException("owner");
+
+			int hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
+
+			var retval = new CmCustomItem(m_cache, hvo, guid);
+			owner.SubPossibilitiesOS.Add(retval);
+			return retval;
+		}
+	}
+	#endregion
+
 	#region CmAnthroItemFactory class
 	/// <summary>
 	/// Add methods added to ICmAnthroItemFactory.
