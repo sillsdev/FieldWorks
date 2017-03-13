@@ -180,6 +180,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				CloseContextMenuIfOpen();
 				SetActiveSelectedEntryOnView(browser);
+				// Without this we show the entry count in the status bar the first time we open the Dictionary or Rev. Index.
+				Clerk.SelectedRecordChanged(true, true);
 			}
 		}
 
