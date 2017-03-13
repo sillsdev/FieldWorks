@@ -36,9 +36,16 @@ namespace SIL.FieldWorks.XWorks
 			_view.SetWsFactoryForCustomDigits(cache.WritingSystemFactory);
 			_view.AvailableWritingSystems = cache.LangProject.AllWritingSystems;
 			_view.CustomDigits = _homographConfig.CustomHomographNumberList;
-			_view.HomographWritingSystem = string.IsNullOrEmpty(_homographConfig.HomographWritingSystem)
-				? null
-				: _cache.LangProject.AllWritingSystems.First(ws => ws.Id == _homographConfig.HomographWritingSystem).DisplayLabel;
+			if (_cache.LangProject.AllWritingSystems.Any(ws => ws.Id == _homographConfig.HomographWritingSystem))
+			{
+				_view.HomographWritingSystem = string.IsNullOrEmpty(_homographConfig.HomographWritingSystem)
+					? null
+					: _cache.LangProject.AllWritingSystems.First(ws => ws.Id == _homographConfig.HomographWritingSystem).DisplayLabel;
+			}
+			else
+			{
+				_view.HomographWritingSystem = _cache.LangProject.AllWritingSystems.First().DisplayLabel;
+			}
 			_view.HomographBefore = _homographConfig.HomographNumberBefore;
 			_view.ShowHomograph = _homographConfig.ShowHwNumber;
 			_view.ShowHomographOnCrossRef = _model.IsReversal ? _homographConfig.ShowHwNumInReversalCrossRef : _homographConfig.ShowHwNumInCrossRef;
