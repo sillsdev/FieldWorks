@@ -214,43 +214,43 @@
 	  <SenseOptions numberStyle="Dictionary-SenseNumber" numberBefore="" numberingStyle="%d" numberAfter=".&#xA0;" numberSingleSense="false" showSingleGramInfoFirst="true" displayEachSenseInParagraph="false" />
 		<!-- Two spaces after Gram Info to separate this "group" from the Definition "group" -->
 	  <ConfigurationItem name="Grammatical Info." isEnabled="true" style="Dictionary-POS" before="" between="" after="  " field="MorphoSyntaxAnalysisRA" cssClassNameOverride="morphosyntaxanalysis">
-		<!-- Internally, no space before or after any of the (normally mutually exclusive) initial items, and a before space (no after) for all of the other items. -->
-		<ConfigurationItem name="Category Info." isEnabled="true" before="" between=" " after="" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
-		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			<Option id="analysis" isEnabled="true" />
-		  </WritingSystemOptions>
-		</ConfigurationItem>
-		<ConfigurationItem name="Slots (for Infl. Affixes)" isEnabled="false" before=":" between=", " after="" field="Slots">
-		<!-- If the colon is used, then no space between Category and Slot. -->
-		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			<Option id="analysis" isEnabled="true" />
-		  </WritingSystemOptions>
-		  <ConfigurationItem name="Slot Names" isEnabled="true" before="" between=" " after="" field="Name">
-			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			  <Option id="analysis" isEnabled="true" />
-			</WritingSystemOptions>
-		  </ConfigurationItem>
-		</ConfigurationItem>
-		<ConfigurationItem name="Morpheme Type (for affixes)" isEnabled="true" before=" " between=" " after="" field="MorphTypes" cssClassNameOverride="morphtypes">
-		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			<Option id="analysis" isEnabled="true" />
-		  </WritingSystemOptions>
-		  <ConfigurationItem name="Abbreviation" isEnabled="true" field="Abbreviation">
-			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			  <Option id="analysis" isEnabled="true" />
-			</WritingSystemOptions>
-		  </ConfigurationItem>
-		</ConfigurationItem>
-		<ConfigurationItem name="Inflection Class" isEnabled="false" before=" " between=" " after="" field="MLInflectionClass">
-		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			<Option id="analysis" isEnabled="true" />
-		  </WritingSystemOptions>
-		</ConfigurationItem>
-		<ConfigurationItem name="Inflection Features" isEnabled="false" before=" " between=" " after="" field="FeaturesTSS" cssClassNameOverride="inflectionfeatures" />
-		<ConfigurationItem name="Exception Features" isEnabled="false" before=" " between=" " after="" field="ExceptionFeaturesTSS" cssClassNameOverride="exceptionfeatures" />
-		<ConfigurationItem name="Gram Info (Name)" isEnabled="false" before="" between=" " after="" field="InterlinearNameTSS" cssClassNameOverride="graminfoname" />
-		<!-- Gram Info includes the Slot.  Category doesn't. -->
-		<ConfigurationItem name="Gram Info (Abbrev)" isEnabled="false" before="" between=" " after="" field="InterlinearAbbrTSS" cssClassNameOverride="graminfoabbrev" />
+			<!-- Internally, no space before or after any of the (normally mutually exclusive) initial items, and a before space (no after) for all of the other items. -->
+			<ConfigurationItem name="Gram Info (Name)" isEnabled="false" before="" between=" " after="" field="InterlinearNameTSS" cssClassNameOverride="graminfoname" />
+			<!-- Gram Info includes the Slot.  Category doesn't. -->
+			<ConfigurationItem name="Gram Info (Abbrev)" isEnabled="false" before="" between=" " after="" field="InterlinearAbbrTSS" cssClassNameOverride="graminfoabbrev" />
+			<ConfigurationItem name="Category Info." isEnabled="true" before="" between=" " after="" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				<Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+			</ConfigurationItem>
+			<ConfigurationItem name="Slots (for Infl. Affixes)" isEnabled="false" before=":" between=", " after="" field="Slots">
+			<!-- If the colon is used, then no space between Category and Slot. -->
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				<Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+				<ConfigurationItem name="Slot Names" isEnabled="true" before="" between=" " after="" field="Name">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+					<Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+				</ConfigurationItem>
+			</ConfigurationItem>
+			<ConfigurationItem name="Morpheme Type (for affixes)" isEnabled="true" before=" " between=" " after="" field="MorphTypes" cssClassNameOverride="morphtypes">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				<Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+				<ConfigurationItem name="Abbreviation" isEnabled="true" field="Abbreviation">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+					<Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+				</ConfigurationItem>
+			</ConfigurationItem>
+			<ConfigurationItem name="Inflection Class" isEnabled="false" before=" " between=" " after="" field="MLInflectionClass">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				<Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+			</ConfigurationItem>
+			<ConfigurationItem name="Inflection Features" isEnabled="false" before=" " between=" " after="" field="FeaturesTSS" cssClassNameOverride="inflectionfeatures" />
+			<ConfigurationItem name="Exception Features" isEnabled="false" before=" " between=" " after="" field="ExceptionFeaturesTSS" cssClassNameOverride="exceptionfeatures" />
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Sense Type" isEnabled="false" style="Dictionary-Contrasting" before=" (" after=")" field="SenseTypeRA" cssClassNameOverride="sensetype">
 		<ConfigurationItem name="Abbreviation" isEnabled="true" before="" between=" " after="" field="Abbreviation">
@@ -529,15 +529,15 @@
 			<Option id="all analysis" isEnabled="true" />
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Examples" isEnabled="true" styleType="character" before=" " between="  " after="" field="ExamplesOS" cssClassNameOverride="examplescontents">
+		<ConfigurationItem name="Examples" isEnabled="true" styleType="character" before="  " between="  " after="" field="ExamplesOS" cssClassNameOverride="examplescontents">
 		  <ComplexFormOptions displayEachComplexFormInParagraph="false" />
 		  <ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" before="" between=" " after=" " field="Example">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			  <Option id="all vernacular" isEnabled="true" />
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Translations" before=" " isEnabled="true" field="TranslationsOC" cssClassNameOverride="translationcontents">
-			<ConfigurationItem name="Translation" isEnabled="true" before="" between=" " after="" field="Translation">
+		  <ConfigurationItem name="Translations" before="" isEnabled="true" field="TranslationsOC" cssClassNameOverride="translationcontents">
+			<ConfigurationItem name="Translation" isEnabled="true" before=" " between=" " after="" field="Translation">
 			  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 				<Option id="all analysis" isEnabled="true" />
 			  </WritingSystemOptions>
@@ -689,14 +689,85 @@
 		<Option id="analysis" isEnabled="true" />
 	  </WritingSystemOptions>
 	</ConfigurationItem>
-	<ConfigurationItem name="References Section" isEnabled="true" before="" after="" styleType="paragraph" style="Block Quote" field="ReferencesSection">
+	<ConfigurationItem name="References Section" isEnabled="true" before=" " after=" " styleType="paragraph" style="Block Quote" field="ReferencesSection">
 	  <GroupingOptions displayGroupInParagraph="true" />
-	  <ConfigurationItem name="Note" isEnabled="true" style="Dictionary-POS" before="" between=" " after=" " field="Comment">
+	  <ConfigurationItem name="Component References" isEnabled="true" hideCustomFields="true" before="(" between=" + " after=")" field="ComplexFormEntryRefs">
+		<ComplexFormOptions list="complex" displayEachComplexFormInParagraph="false">
+		  <Option isEnabled="true" id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
+		  <Option isEnabled="true" id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
+		  <Option isEnabled="true" id="73266a3a-48e8-4bd7-8c84-91c730340b7d"/>
+		  <Option isEnabled="true" id="98c273c4-f723-4fb0-80df-eede2204dfca"/>
+		  <Option isEnabled="true" id="b2276dec-b1a6-4d82-b121-fd114c009c59"/>
+		  <Option isEnabled="true" id="35cee792-74c8-444e-a9b7-ed0461d4d3b7"/>
+		  <Option isEnabled="true" id="9466d126-246e-400b-8bba-0703e09bc567"/>
+		</ComplexFormOptions>
+		<ConfigurationItem name="Complex Form Type" style="Dictionary-POS" isEnabled="true" between=", " after="" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
+		  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
+			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+			  <Option id="analysis" isEnabled="true" />
+			</WritingSystemOptions>
+		  </ConfigurationItem>
+		  <ConfigurationItem name="Reverse Name" isEnabled="false" between=" " field="ReverseName">
+			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+			  <Option id="analysis" isEnabled="true" />
+			</WritingSystemOptions>
+		  </ConfigurationItem>
+		</ConfigurationItem>
+		<ConfigurationItem name="Referenced Entries" isEnabled="true" before=" " between=", " after="" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
+		  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" before="" between=" " after="" field="HeadWordRef" cssClassNameOverride="headword">
+			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+			  <Option id="vernacular" isEnabled="true" />
+			</WritingSystemOptions>
+		  </ConfigurationItem>
+		  <ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="false" before=" " between=" " after="" field="GlossOrSummary">
+			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+			  <Option id="analysis" isEnabled="true" />
+			</WritingSystemOptions>
+		  </ConfigurationItem>
+		  <ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs" hideCustomFields="true">
+			<ConfigurationItem name="Type" style="Dictionary-POS" isEnabled="true" between="," after=" " field="EntryTypes" cssClassNameOverride="entrytypes">
+			  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				  <Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+			  </ConfigurationItem>
+			  <ConfigurationItem name="Reverse Name" isEnabled="false" between=" " field="ReverseName">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				  <Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+			  </ConfigurationItem>
+			</ConfigurationItem>
+			<ConfigurationItem name="Primary Entry(s)" isEnabled="true" before=" " between=", "  field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
+			  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after="" field="HeadWordRef" cssClassNameOverride="headword">
+				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+				  <Option id="vernacular" isEnabled="true" />
+				</WritingSystemOptions>
+			  </ConfigurationItem>
+			  <ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="false" before=" " between=" " field="GlossOrSummary">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				  <Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+			  </ConfigurationItem>
+			</ConfigurationItem>
+			<ConfigurationItem name="Comment" isEnabled="false" before=" " between=" " field="Summary">
+			  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				<Option id="analysis" isEnabled="true" />
+			  </WritingSystemOptions>
+			</ConfigurationItem>
+		  </ConfigurationItem>
+		</ConfigurationItem>
+		<ConfigurationItem name="Comment" isEnabled="false" before=" " between=" " after="" field="Summary">
+		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+			<Option id="analysis" isEnabled="true" />
+		  </WritingSystemOptions>
+		</ConfigurationItem>
+	  </ConfigurationItem>
+	  <ConfigurationItem name="Note" isEnabled="true" style="Dictionary-POS" before=" " between=" " after="" field="Comment">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="all analysis" isEnabled="true" />
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variant Forms" nameSuffix="Inflectional Variants" isEnabled="true" isDuplicate="true" before="[" between=";" after="] " field="VariantFormEntryBackRefs">
+	  <ConfigurationItem name="Variant Forms" nameSuffix="Inflectional Variants" isEnabled="true" isDuplicate="true" before=" [" between=";" after="]" field="VariantFormEntryBackRefs">
 		<ListTypeOptions list="variant">
 		  <Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="false" />
 		  <Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="false" />
@@ -771,7 +842,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Variant Forms" isEnabled="true" before="" between=";" after=" " field="VariantFormEntryBackRefs">
+	  <ConfigurationItem name="Variant Forms" isEnabled="true" before=" " between=";" after="" field="VariantFormEntryBackRefs">
 		<ListTypeOptions list="variant">
 		  <Option id="b0000000-c40e-433e-80b5-31da08771344" isEnabled="false" />
 		  <Option id="024b62c9-93b3-41a0-ab19-587a0030219a" isEnabled="true" />
@@ -846,7 +917,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Cross References" isEnabled="true" between="; " after=". " field="MinimalLexReferences">
+	  <ConfigurationItem name="Cross References" isEnabled="true" before=" " between="; " after="." field="MinimalLexReferences">
 		<ListTypeOptions list="entry">
 		  <Option id="" isEnabled="false" />
 		</ListTypeOptions>
@@ -904,78 +975,7 @@
 		  </ConfigurationItem>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Component References" isEnabled="true" hideCustomFields="true" before="(" between=" + " after=") " field="ComplexFormEntryRefs">
-		<ComplexFormOptions list="complex" displayEachComplexFormInParagraph="false">
-		  <Option isEnabled="true" id="a0000000-dd15-4a03-9032-b40faaa9a754"/>
-		  <Option isEnabled="true" id="1f6ae209-141a-40db-983c-bee93af0ca3c"/>
-		  <Option isEnabled="true" id="73266a3a-48e8-4bd7-8c84-91c730340b7d"/>
-		  <Option isEnabled="true" id="98c273c4-f723-4fb0-80df-eede2204dfca"/>
-		  <Option isEnabled="true" id="b2276dec-b1a6-4d82-b121-fd114c009c59"/>
-		  <Option isEnabled="true" id="35cee792-74c8-444e-a9b7-ed0461d4d3b7"/>
-		  <Option isEnabled="true" id="9466d126-246e-400b-8bba-0703e09bc567"/>
-		</ComplexFormOptions>
-		<ConfigurationItem name="Complex Form Type" style="Dictionary-POS" isEnabled="true" between=", " after="" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
-		  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
-			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			  <Option id="analysis" isEnabled="true" />
-			</WritingSystemOptions>
-		  </ConfigurationItem>
-		  <ConfigurationItem name="Reverse Name" isEnabled="false" between=" " field="ReverseName">
-			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			  <Option id="analysis" isEnabled="true" />
-			</WritingSystemOptions>
-		  </ConfigurationItem>
-		</ConfigurationItem>
-		<ConfigurationItem name="Referenced Entries" isEnabled="true" before=" " between=", " after="" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
-		  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" before="" between=" " after="" field="HeadWordRef" cssClassNameOverride="headword">
-			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
-			  <Option id="vernacular" isEnabled="true" />
-			</WritingSystemOptions>
-		  </ConfigurationItem>
-		  <ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="false" before=" " between=" " after="" field="GlossOrSummary">
-			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			  <Option id="analysis" isEnabled="true" />
-			</WritingSystemOptions>
-		  </ConfigurationItem>
-		  <ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs" hideCustomFields="true">
-			<ConfigurationItem name="Type" style="Dictionary-POS" isEnabled="true" between="," after=" " field="EntryTypes" cssClassNameOverride="entrytypes">
-			  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
-				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-				  <Option id="analysis" isEnabled="true" />
-				</WritingSystemOptions>
-			  </ConfigurationItem>
-			  <ConfigurationItem name="Reverse Name" isEnabled="false" between=" " field="ReverseName">
-				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-				  <Option id="analysis" isEnabled="true" />
-				</WritingSystemOptions>
-			  </ConfigurationItem>
-			</ConfigurationItem>
-			<ConfigurationItem name="Primary Entry(s)" isEnabled="true" before=" " between=", "  field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
-			  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after="" field="HeadWordRef" cssClassNameOverride="headword">
-				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
-				  <Option id="vernacular" isEnabled="true" />
-				</WritingSystemOptions>
-			  </ConfigurationItem>
-			  <ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="false" before=" " between=" " field="GlossOrSummary">
-				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-				  <Option id="analysis" isEnabled="true" />
-				</WritingSystemOptions>
-			  </ConfigurationItem>
-			</ConfigurationItem>
-			<ConfigurationItem name="Comment" isEnabled="false" before=" " between=" " field="Summary">
-			  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-				<Option id="analysis" isEnabled="true" />
-			  </WritingSystemOptions>
-			</ConfigurationItem>
-		  </ConfigurationItem>
-		</ConfigurationItem>
-		<ConfigurationItem name="Comment" isEnabled="false" before=" " between=" " after="" field="Summary">
-		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			<Option id="analysis" isEnabled="true" />
-		  </WritingSystemOptions>
-		</ConfigurationItem>
-	  </ConfigurationItem>
-	  <ConfigurationItem name="Other Referenced Complex Forms" isEnabled="true" styleType="character" before="" between=", " after=" " field="ComplexFormsNotSubentries">
+	  <ConfigurationItem name="Other Referenced Complex Forms" isEnabled="true" styleType="character" before=" " between=", " after="" field="ComplexFormsNotSubentries">
 		<ComplexFormOptions list="complex" displayEachComplexFormInParagraph="false">
 		  <Option id="" isEnabled="false" />
 		</ComplexFormOptions>
@@ -1304,40 +1304,40 @@
 	<ConfigurationItem name="Senses" isEnabled="true" before=" " between="  " after="" field="SensesOS" cssClassNameOverride="senses">
 	  <SenseOptions numberStyle="Dictionary-SenseNumber" numberBefore="" numberingStyle="%d" numberAfter=".&#xA0;" numberSingleSense="false" showSingleGramInfoFirst="true" displayEachSenseInParagraph="false" />
 	  <ConfigurationItem name="Grammatical Info." isEnabled="true" style="Dictionary-POS" before="" between="" after="  " field="MorphoSyntaxAnalysisRA" cssClassNameOverride="morphosyntaxanalysis">
-		<ConfigurationItem name="Category Info." isEnabled="true" before="" between="" after="" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
-		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			<Option id="analysis" isEnabled="true" />
-		  </WritingSystemOptions>
-		</ConfigurationItem>
-		<ConfigurationItem name="Slots (for Infl. Affixes)" isEnabled="false" before=":" between=", " after="" field="Slots">
-		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			<Option id="analysis" isEnabled="true" />
-		  </WritingSystemOptions>
-		  <ConfigurationItem name="Slot Names" isEnabled="true" before="" between=" " after="" field="Name">
-			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			  <Option id="analysis" isEnabled="true" />
-			</WritingSystemOptions>
-		  </ConfigurationItem>
-		</ConfigurationItem>
-		<ConfigurationItem name="Morpheme Type (for affixes)" isEnabled="true" before=" " between=" " after="" field="MorphTypes" cssClassNameOverride="morphtypes">
-		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			<Option id="analysis" isEnabled="true" />
-		  </WritingSystemOptions>
-		  <ConfigurationItem name="Abbreviation" isEnabled="true" field="Abbreviation">
-			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			  <Option id="analysis" isEnabled="true" />
-			</WritingSystemOptions>
-		  </ConfigurationItem>
-		</ConfigurationItem>
-		<ConfigurationItem name="Inflection Class" isEnabled="false" before=" " between=" " after="" field="MLInflectionClass">
-		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			<Option id="analysis" isEnabled="true" />
-		  </WritingSystemOptions>
-		</ConfigurationItem>
-		<ConfigurationItem name="Inflection Features" isEnabled="false" before=" " between=" " after="" field="FeaturesTSS" cssClassNameOverride="inflectionfeatures" />
-		<ConfigurationItem name="Exception Features" isEnabled="false" before=" " between=" " after="" field="ExceptionFeaturesTSS" cssClassNameOverride="exceptionfeatures" />
-		<ConfigurationItem name="Gram Info (Name)" isEnabled="false" before="" between=" " after="" field="InterlinearNameTSS" cssClassNameOverride="graminfoname" />
-		<ConfigurationItem name="Gram Info (Abbrev)" isEnabled="false" before="" between=" " after="" field="InterlinearAbbrTSS" cssClassNameOverride="graminfoabbrev" />
+			<ConfigurationItem name="Gram Info (Name)" isEnabled="false" before="" between=" " after="" field="InterlinearNameTSS" cssClassNameOverride="graminfoname" />
+			<ConfigurationItem name="Gram Info (Abbrev)" isEnabled="false" before="" between=" " after="" field="InterlinearAbbrTSS" cssClassNameOverride="graminfoabbrev" />
+			<ConfigurationItem name="Category Info." isEnabled="true" before="" between="" after="" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				<Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+			</ConfigurationItem>
+			<ConfigurationItem name="Slots (for Infl. Affixes)" isEnabled="false" before=":" between=", " after="" field="Slots">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				<Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+				<ConfigurationItem name="Slot Names" isEnabled="true" before="" between=" " after="" field="Name">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+					<Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+				</ConfigurationItem>
+			</ConfigurationItem>
+			<ConfigurationItem name="Morpheme Type (for affixes)" isEnabled="true" before=" " between=" " after="" field="MorphTypes" cssClassNameOverride="morphtypes">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				<Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+				<ConfigurationItem name="Abbreviation" isEnabled="true" field="Abbreviation">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+					<Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+				</ConfigurationItem>
+			</ConfigurationItem>
+			<ConfigurationItem name="Inflection Class" isEnabled="false" before=" " between=" " after="" field="MLInflectionClass">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				<Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+			</ConfigurationItem>
+			<ConfigurationItem name="Inflection Features" isEnabled="false" before=" " between=" " after="" field="FeaturesTSS" cssClassNameOverride="inflectionfeatures" />
+			<ConfigurationItem name="Exception Features" isEnabled="false" before=" " between=" " after="" field="ExceptionFeaturesTSS" cssClassNameOverride="exceptionfeatures" />
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Sense Type" isEnabled="false" style="Dictionary-Contrasting" before="(" after=") " field="SenseTypeRA" cssClassNameOverride="sensetype">
 		<ConfigurationItem name="Abbreviation" isEnabled="true" before="" between=" " after="" field="Abbreviation">
@@ -1404,7 +1404,7 @@
 			  </WritingSystemOptions>
 			</ConfigurationItem>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Translation" isEnabled="true" before="" between=" " after="" field="Translation">
+		  <ConfigurationItem name="Translation" isEnabled="true" before=" " between=" " after="" field="Translation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="all analysis" isEnabled="true" />
 			</WritingSystemOptions>
@@ -1621,8 +1621,8 @@
 			  <Option id="all vernacular" isEnabled="true" />
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Translations" before=" " isEnabled="true" field="TranslationsOC" cssClassNameOverride="translationcontents">
-			<ConfigurationItem name="Translation" isEnabled="true" before="" between=" " after="" field="Translation">
+		  <ConfigurationItem name="Translations" before="" isEnabled="true" field="TranslationsOC" cssClassNameOverride="translationcontents">
+			<ConfigurationItem name="Translation" isEnabled="true" before=" " between=" " after="" field="Translation">
 			  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 				<Option id="all analysis" isEnabled="true" />
 			  </WritingSystemOptions>
@@ -2072,40 +2072,40 @@
   <SharedItems>
 	<ConfigurationItem name="MainEntrySubsenses" isEnabled="true" field="SensesOS" cssClassNameOverride="mainentrysubsenses">
 	  <ConfigurationItem name="Grammatical Info." before="" after="  " style="Dictionary-POS" isEnabled="true" field="MorphoSyntaxAnalysisRA" cssClassNameOverride="morphosyntaxanalysis">
-		<ConfigurationItem name="Gram Info (Name)" before="" between=" " after="" isEnabled="false" field="InterlinearNameTSS" cssClassNameOverride="graminfoname"/>
-		<ConfigurationItem name="Gram Info (Abbrev)" before="" between=" " after="" isEnabled="false" field="InterlinearAbbrTSS" cssClassNameOverride="graminfoabbrev"/>
-		<ConfigurationItem name="Category Info." isEnabled="true" before="" between=" " after="" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
-		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			<Option id="analysis" isEnabled="true"/>
-		  </WritingSystemOptions>
-		</ConfigurationItem>
-		<ConfigurationItem name="Slots (for Infl. Affixes)" before=":" between=", " isEnabled="false" field="Slots">
-		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			<Option id="analysis" isEnabled="true"/>
-		  </WritingSystemOptions>
-		  <ConfigurationItem name="Slot Names" before="" between=" " after="" isEnabled="true" field="Name">
-			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			  <Option id="analysis" isEnabled="true"/>
-			</WritingSystemOptions>
-		  </ConfigurationItem>
-		</ConfigurationItem>
-		<ConfigurationItem name="Morpheme Type (for affixes)" isEnabled="true" before=" " between=" " after="" field="MorphTypes" cssClassNameOverride="morphtypes">
-		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			<Option id="analysis" isEnabled="true" />
-		  </WritingSystemOptions>
-		  <ConfigurationItem name="Abbreviation" isEnabled="true" field="Abbreviation">
-			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			  <Option id="analysis" isEnabled="true" />
-			</WritingSystemOptions>
-		  </ConfigurationItem>
-		</ConfigurationItem>
-		<ConfigurationItem name="Inflection Class" before=" " between=" " after="" isEnabled="false" field="MLInflectionClass">
-		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-			<Option id="analysis" isEnabled="true"/>
-		  </WritingSystemOptions>
-		</ConfigurationItem>
-		<ConfigurationItem name="Inflection Features" before=" " isEnabled="false" field="FeaturesTSS" cssClassNameOverride="inflectionfeatures"/>
-		<ConfigurationItem name="Exception Features" before=" " isEnabled="false" field="ExceptionFeaturesTSS" cssClassNameOverride="exceptionfeatures"/>
+			<ConfigurationItem name="Gram Info (Name)" before="" between=" " after="" isEnabled="false" field="InterlinearNameTSS" cssClassNameOverride="graminfoname"/>
+			<ConfigurationItem name="Gram Info (Abbrev)" before="" between=" " after="" isEnabled="false" field="InterlinearAbbrTSS" cssClassNameOverride="graminfoabbrev"/>
+			<ConfigurationItem name="Category Info." isEnabled="true" before="" between=" " after="" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				<Option id="analysis" isEnabled="true"/>
+				</WritingSystemOptions>
+			</ConfigurationItem>
+			<ConfigurationItem name="Slots (for Infl. Affixes)" before=":" between=", " isEnabled="false" field="Slots">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				<Option id="analysis" isEnabled="true"/>
+				</WritingSystemOptions>
+				<ConfigurationItem name="Slot Names" before="" between=" " after="" isEnabled="true" field="Name">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+					<Option id="analysis" isEnabled="true"/>
+				</WritingSystemOptions>
+				</ConfigurationItem>
+			</ConfigurationItem>
+			<ConfigurationItem name="Morpheme Type (for affixes)" isEnabled="true" before=" " between=" " after="" field="MorphTypes" cssClassNameOverride="morphtypes">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				<Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+				<ConfigurationItem name="Abbreviation" isEnabled="true" field="Abbreviation">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+					<Option id="analysis" isEnabled="true" />
+				</WritingSystemOptions>
+				</ConfigurationItem>
+			</ConfigurationItem>
+			<ConfigurationItem name="Inflection Class" before=" " between=" " after="" isEnabled="false" field="MLInflectionClass">
+				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+				<Option id="analysis" isEnabled="true"/>
+				</WritingSystemOptions>
+			</ConfigurationItem>
+			<ConfigurationItem name="Inflection Features" before=" " isEnabled="false" field="FeaturesTSS" cssClassNameOverride="inflectionfeatures"/>
+			<ConfigurationItem name="Exception Features" before=" " isEnabled="false" field="ExceptionFeaturesTSS" cssClassNameOverride="exceptionfeatures"/>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Sense Type" before="(" after=") " style="Dictionary-Contrasting" isEnabled="false" field="SenseTypeRA" cssClassNameOverride="sensetype">
 		<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
@@ -2159,7 +2159,7 @@
 			<Option id="all vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Translations" before=" " isEnabled="true" field="TranslationsOC" cssClassNameOverride="translationcontents">
+		<ConfigurationItem name="Translations" before="" isEnabled="true" field="TranslationsOC" cssClassNameOverride="translationcontents">
 		  <ConfigurationItem name="Type" after=" " isEnabled="false" field="TypeRA" cssClassNameOverride="type">
 			<ConfigurationItem name="Abbreviation" between=" " isEnabled="false" field="Abbreviation">
 			  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -2172,7 +2172,7 @@
 			  </WritingSystemOptions>
 			</ConfigurationItem>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Translation" before="" between=" " after="" isEnabled="true" field="Translation">
+		  <ConfigurationItem name="Translation" before=" " between=" " after="" isEnabled="true" field="Translation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="all analysis" isEnabled="true"/>
 			</WritingSystemOptions>
@@ -2397,8 +2397,8 @@
 			  <Option id="all vernacular" isEnabled="true" />
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Translations" before=" " isEnabled="true" field="TranslationsOC" cssClassNameOverride="translationcontents">
-			<ConfigurationItem name="Translation" isEnabled="true" before="" between=" " after="" field="Translation">
+		  <ConfigurationItem name="Translations" before="" isEnabled="true" field="TranslationsOC" cssClassNameOverride="translationcontents">
+			<ConfigurationItem name="Translation" isEnabled="true" before=" " between=" " after="" field="Translation">
 			  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 				<Option id="all analysis" isEnabled="true" />
 			  </WritingSystemOptions>
@@ -2847,7 +2847,7 @@
 				</WritingSystemOptions>
 			  </ConfigurationItem>
 			</ConfigurationItem>
-			<ConfigurationItem name="Translation" before="" between=" " after="" isEnabled="true" field="Translation">
+			<ConfigurationItem name="Translation" before=" " between=" " after="" isEnabled="true" field="Translation">
 			  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 				<Option id="all analysis" isEnabled="true"/>
 			  </WritingSystemOptions>
@@ -3072,8 +3072,8 @@
 				<Option id="all vernacular" isEnabled="true" />
 			  </WritingSystemOptions>
 			</ConfigurationItem>
-			<ConfigurationItem name="Translations" before=" " isEnabled="true" field="TranslationsOC" cssClassNameOverride="translationcontents">
-			  <ConfigurationItem name="Translation" isEnabled="true" before="" between=" " after="" field="Translation">
+			<ConfigurationItem name="Translations" before="" isEnabled="true" field="TranslationsOC" cssClassNameOverride="translationcontents">
+			  <ConfigurationItem name="Translation" isEnabled="true" before=" " between=" " after="" field="Translation">
 				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 				  <Option id="all analysis" isEnabled="true" />
 				</WritingSystemOptions>
