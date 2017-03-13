@@ -668,14 +668,13 @@ namespace SIL.FieldWorks.LexText.Controls
 
 				Text = GetTitle();
 				m_lnkAssistant.Enabled = false;
-
 				// Set font for the combobox.
-				m_cbMorphType.Font = new Font(defAnalWs.DefaultFontName, 10);
+				m_cbMorphType.Font = new Font(defAnalWs.DefaultFontName, 12);
 
 				// Populate morph type combo.
 				// first Fill ComplexFormType combo, since cbMorphType controls
 				// whether it gets enabled and which index is selected.
-				m_cbComplexFormType.Font = new Font(defAnalWs.DefaultFontName, 10);
+				m_cbComplexFormType.Font = new Font(defAnalWs.DefaultFontName, 12);
 				var rgComplexTypes = new List<ICmPossibility>(m_cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities.ToArray());
 				rgComplexTypes.Sort();
 				m_idxNotComplex = m_cbComplexFormType.Items.Count;

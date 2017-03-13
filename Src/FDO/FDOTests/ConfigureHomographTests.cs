@@ -206,7 +206,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 					{
 						new Run("right", m_wsVern, ""),
 						new Run("1", m_wsVern, HomographConfiguration.ksHomographNumberStyle),
-						new Run(" Ba.1", m_wsAnalysis, "Sense-Reference-Number")
+						new Run(" ", m_wsVern, ""),
+						new Run("Ba.1", m_wsAnalysis, "Sense-Reference-Number")
 					});
 		}
 
@@ -219,7 +220,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				new[] { new Run("right", m_wsVern, ""), new Run("2", m_wsVern, HomographConfiguration.ksHomographNumberStyle) });
 			var numAfterCorrect2Runs = new[] { new Run("right", m_wsVern, ""),
 				new Run("1", m_wsVern, HomographConfiguration.ksHomographNumberStyle),
-				new Run(" 2", m_wsAnalysis, HomographConfiguration.ksSenseReferenceNumberStyle)};
+				new Run(" ", m_wsVern, ""),
+				new Run("2", m_wsAnalysis, HomographConfiguration.ksSenseReferenceNumberStyle)};
 			VerifyTss(reader(m_rightCorrectS2, m_wsVern), numAfterCorrect2Runs);
 			// Owner outline is affected by putting homograph number first.
 			m_hc.HomographNumberBefore = true;
@@ -227,8 +229,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			VerifyTss(reader(m_rightDirectionS1, m_wsVern),
 				new[] {  new Run("2", m_wsVern, HomographConfiguration.ksHomographNumberStyle), new Run("right", m_wsVern, "") });
 			var numBeforeCorrect2Runs = new[] { new Run("1", m_wsVern, HomographConfiguration.ksHomographNumberStyle),
-				new Run("right", m_wsVern, ""),
-				new Run(" 2", m_wsAnalysis, HomographConfiguration.ksSenseReferenceNumberStyle)};
+				new Run("right ", m_wsVern, ""),
+				new Run("2", m_wsAnalysis, HomographConfiguration.ksSenseReferenceNumberStyle)};
 			VerifyTss(reader(m_rightCorrectS2, m_wsVern), numBeforeCorrect2Runs);
 			// Not by hiding HN in main or reversal cross-refs
 			m_hc.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.ReversalCrossRef, false);

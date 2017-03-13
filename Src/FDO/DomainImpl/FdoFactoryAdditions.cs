@@ -385,9 +385,18 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					// ReSharper disable once HeuristicUnreachableCode -- reachable if not debugging.
 					return null;
 			}
-			// ReSharper disable once PossibleNullReferenceException -- listItems always set in switch
-			return listItems.PossibilitiesOS.FirstOrDefault(option => item.Equals(option.Name.get_String(ws))
-				|| item.Equals(option.Abbreviation.get_String(ws)));
+
+			foreach (var wsId in listItems.PossibilitiesOS[0].Name.AvailableWritingSystemIds)
+			{
+				ICmPossibility possibilityItem = listItems.PossibilitiesOS.FirstOrDefault(option =>
+					!Convert.ToBoolean(string.Compare(item.Text, option.Abbreviation.get_String(wsId).Text, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase))  ||
+					!Convert.ToBoolean(string.Compare(item.Text, option.Name.get_String(wsId).Text, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase)));
+
+				if (possibilityItem != null)
+					return possibilityItem;
+			}
+
+			return null;
 		}
 
 		private ICmTranslation GetOrMakeFirstTranslation(ILexExampleSentence example)

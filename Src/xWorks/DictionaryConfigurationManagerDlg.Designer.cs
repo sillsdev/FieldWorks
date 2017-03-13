@@ -37,6 +37,8 @@
 			this.closeButton = new System.Windows.Forms.Button();
 			this.configurationsGroupBox = new System.Windows.Forms.GroupBox();
 			this.configurationsTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.importButton = new System.Windows.Forms.Button();
+			this.exportButton = new System.Windows.Forms.Button();
 			this.configurationsListView = new System.Windows.Forms.ListView();
 			this.removeButton = new System.Windows.Forms.Button();
 			this.copyButton = new System.Windows.Forms.Button();
@@ -101,12 +103,26 @@
 			// configurationsTableLayoutPanel
 			// 
 			resources.ApplyResources(this.configurationsTableLayoutPanel, "configurationsTableLayoutPanel");
+			this.configurationsTableLayoutPanel.Controls.Add(this.importButton, 0, 4);
+			this.configurationsTableLayoutPanel.Controls.Add(this.exportButton, 0, 5);
 			this.configurationsTableLayoutPanel.Controls.Add(this.configurationsListView, 0, 1);
 			this.configurationsTableLayoutPanel.Controls.Add(this.removeButton, 1, 2);
 			this.configurationsTableLayoutPanel.Controls.Add(this.copyButton, 1, 1);
 			this.configurationsTableLayoutPanel.Controls.Add(this.configurationsExplanationLabel, 0, 0);
 			this.configurationsTableLayoutPanel.Controls.Add(this.resetButton, 1, 3);
 			this.configurationsTableLayoutPanel.Name = "configurationsTableLayoutPanel";
+			// 
+			// importButton
+			// 
+			resources.ApplyResources(this.importButton, "importButton");
+			this.importButton.Name = "importButton";
+			this.importButton.UseVisualStyleBackColor = true;
+			// 
+			// exportButton
+			// 
+			resources.ApplyResources(this.exportButton, "exportButton");
+			this.exportButton.Name = "exportButton";
+			this.exportButton.UseVisualStyleBackColor = true;
 			// 
 			// configurationsListView
 			// 
@@ -116,7 +132,7 @@
 			this.configurationsListView.LabelEdit = true;
 			this.configurationsListView.MultiSelect = false;
 			this.configurationsListView.Name = "configurationsListView";
-			this.configurationsTableLayoutPanel.SetRowSpan(this.configurationsListView, 4);
+			this.configurationsTableLayoutPanel.SetRowSpan(this.configurationsListView, 6);
 			this.configurationsListView.UseCompatibleStateImageBehavior = false;
 			this.configurationsListView.View = System.Windows.Forms.View.List;
 			// 
@@ -211,5 +227,7 @@
 		public System.Windows.Forms.ListView publicationsListView;
 		private System.Windows.Forms.Label publicationsExplanationLabel;
 		public System.Windows.Forms.Button resetButton;
+		public System.Windows.Forms.Button importButton;
+		public System.Windows.Forms.Button exportButton;
 	}
 }

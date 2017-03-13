@@ -28,10 +28,12 @@ namespace SIL.FieldWorks.XWorks
 			m_toolTip.SetToolTip(copyButton, xWorksStrings.Duplicate);
 			m_toolTip.SetToolTip(removeButton, xWorksStrings.Delete);
 			m_toolTip.SetToolTip(resetButton, xWorksStrings.Reset);
+			m_toolTip.SetToolTip(exportButton, "Export selected configuration");
+			m_toolTip.SetToolTip(importButton, "Import configuration");
 
 			m_helpTopicProvider = helpTopicProvider;
 
-			// allow renaming via the keyboard
+			// Allow renaming via the keyboard
 			configurationsListView.KeyUp += ConfigurationsListViewKeyUp;
 			// Make the Configuration selection more obvious when the control loses focus (LT-15450).
 			configurationsListView.LostFocus += OnLostFocus;

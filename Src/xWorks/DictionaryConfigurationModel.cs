@@ -6,9 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Security;
 using System.Xml;
 using System.Xml.Serialization;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainImpl;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -97,6 +100,9 @@ namespace SIL.FieldWorks.XWorks
 		[XmlIgnore]
 		internal static List<string> NoteInParaStyles = new List<string>() { "AnthroNote", "DiscourseNote", "PhonologyNote", "GrammarNote", "SemanticsNote", "SocioLinguisticsNote", "GeneralNote", "EncyclopedicInfo" };
 
+		[XmlElement("HomographConfiguration")]
+		public DictionaryHomographConfiguration HomographConfiguration { get; set; }
+
 		/// <summary>
 		/// Checks which folder this will be saved in to determine if it is a reversal
 		/// </summary>
@@ -139,9 +145,9 @@ namespace SIL.FieldWorks.XWorks
 		public void Load(FdoCache cache)
 		{
 			var serializer = new XmlSerializer(typeof(DictionaryConfigurationModel));
-			using(var reader = XmlReader.Create(FilePath))
+			using (var reader = XmlReader.Create(FilePath))
 			{
-				var model = (DictionaryConfigurationModel)serializer.Deserialize(reader);
+				var model = (DictionaryConfigurationModel) serializer.Deserialize(reader);
 				model.FilePath = FilePath; // this doesn't get [de]serialized
 				foreach (var property in typeof(DictionaryConfigurationModel).GetProperties().Where(prop => prop.CanWrite))
 					property.SetValue(this, property.GetValue(model, null), null);
@@ -154,6 +160,11 @@ namespace SIL.FieldWorks.XWorks
 				Publications = DictionaryConfigurationController.GetAllPublications(cache);
 			else
 				DictionaryConfigurationController.FilterInvalidPublicationsFromModel(this, cache);
+			// Update FDO's homograph configuration from the loaded dictionary configuration homograph settings
+			if (HomographConfiguration != null)
+			{
+				HomographConfiguration.ExportToHomographConfiguration(cache.ServiceLocator.GetInstance<HomographConfiguration>());
+			}
 			// Handle any changes to the custom field definitions.  (See https://jira.sil.org/browse/LT-16430.)
 			// The "Merge" method handles both additions and deletions.
 			DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(this, cache);
@@ -161,6 +172,21 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryConfigurationController.MergeTypesIntoDictionaryModel(this, cache);
 			// Handle any deleted styles.  (See https://jira.sil.org/browse/LT-16501.)
 			DictionaryConfigurationController.EnsureValidStylesInModel(this, cache);
+			//Update Writing System for an entire configuration.
+			DictionaryConfigurationController.UpdateWritingSystemInModel(this, cache);
+		}
+
+		/// <summary>
+		/// Get the set of publications specified in the configuration XML file at path.
+		/// </summary>
+		internal static IEnumerable<string> PublicationsInXml(string path)
+		{
+			var serializer = new XmlSerializer(typeof(DictionaryConfigurationModel));
+			using (var reader = XmlReader.Create(path))
+			{
+				var model = (DictionaryConfigurationModel) serializer.Deserialize(reader);
+				return model.Publications;
+			}
 		}
 
 		/// <summary>
@@ -250,5 +276,77 @@ namespace SIL.FieldWorks.XWorks
 		{
 			return Label;
 		}
+	}
+
+	/// <summary>
+	/// Provides per configuration serialization of the HomographConfiguration data (which is a singleton for views purposes)
+	/// </summary>
+	public class DictionaryHomographConfiguration
+	{
+		public DictionaryHomographConfiguration() {}
+
+		public DictionaryHomographConfiguration(HomographConfiguration config)
+		{
+			HomographNumberBefore = config.HomographNumberBefore;
+			ShowSenseNumber = config.ShowSenseNumberRef;
+			ShowSenseNumberReversal = config.ShowSenseNumberReversal;
+			ShowHwNumber = config.ShowHomographNumber(HomographConfiguration.HeadwordVariant.Main);
+			ShowHwNumInCrossRef = config.ShowHomographNumber(HomographConfiguration.HeadwordVariant.DictionaryCrossRef);
+			ShowHwNumInReversalCrossRef = config.ShowHomographNumber(HomographConfiguration.HeadwordVariant.ReversalCrossRef);
+			HomographWritingSystem = config.WritingSystem;
+			CustomHomographNumberList = config.CustomHomographNumbers;
+		}
+
+		/// <summary>
+		/// Intended to be used to set the singleton HomographConfiguration in FLEx to the settings from this model
+		/// </summary>
+		public void ExportToHomographConfiguration(HomographConfiguration config)
+		{
+			config.HomographNumberBefore = HomographNumberBefore;
+			config.ShowSenseNumberRef = ShowSenseNumber;
+			config.ShowSenseNumberReversal = ShowSenseNumberReversal;
+			config.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.Main, ShowHwNumber);
+			config.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.DictionaryCrossRef, ShowHwNumInCrossRef);
+			config.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.ReversalCrossRef, ShowHwNumInReversalCrossRef);
+			config.WritingSystem = HomographWritingSystem;
+			config.CustomHomographNumbers = CustomHomographNumberList;
+		}
+
+		[XmlIgnore]
+		public List<string> CustomHomographNumberList { get; internal set; }
+
+		[XmlAttribute("showHwNumInReversalCrossRef")]
+		public bool ShowHwNumInReversalCrossRef { get; set; }
+
+		[XmlAttribute("showHwNumInCrossRef")]
+		public bool ShowHwNumInCrossRef { get; set; }
+
+		[XmlAttribute("showHwNumber")]
+		public bool ShowHwNumber { get; set; }
+
+		[XmlAttribute("showSenseNumberReversal")]
+		public bool ShowSenseNumberReversal { get; set; }
+
+		[XmlAttribute("showSenseNumber")]
+		public bool ShowSenseNumber { get; set; }
+
+		[XmlAttribute("homographNumberBefore")]
+		public bool HomographNumberBefore { get; set; }
+
+		[XmlAttribute("customHomographNumbers")]
+		public string CustomHomographNumbers
+		{
+			get
+			{
+				return CustomHomographNumberList == null ? string.Empty : WebUtility.HtmlEncode(string.Join(",", CustomHomographNumberList));
+			}
+			set
+			{
+				CustomHomographNumberList = new List<string>(WebUtility.HtmlDecode(value).Split(new []{','}, StringSplitOptions.RemoveEmptyEntries));
+			}
+		}
+
+		[XmlAttribute("homographWritingSystem")]
+		public string HomographWritingSystem { get; set; }
 	}
 }

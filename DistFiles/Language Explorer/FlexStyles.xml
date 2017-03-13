@@ -5,8 +5,8 @@
 	guid. Be sure to validate any changes against ../Styles.dtd.
 	*********************************************************************************************
 -->
-<Styles date="2016-10-11" DTDver="64DE4B02-14DA-42F6-8C1C-CF21E41D3EF7" label="Flex Dictionary">
-	<markup version="001A124E-181E-45E9-8B35-E8F695E1FBDB">
+<Styles date="2017-02-16" DTDver="64DE4B02-14DA-42F6-8C1C-CF21E41D3EF7" label="Flex Dictionary">
+	<markup version="64eb89f8-aa7a-4408-8187-fcd451b16f32">
 		<!--
 		The 'Normal' entry is here mainly as a placeholder, so the DTD will allow things to be based on it.
 		Logically Normal should probably be internal, but it's 'general' in existing projects, and the
@@ -113,7 +113,7 @@
 			<paragraph basedOn="Dictionary-Normal" indentLeft="21 pt" hanging="0 pt" spaceBefore="0 pt"/>
 		</tag>
 		<tag id="Dictionary-Sense" guid="905A485E-4B54-47EB-A8E9-1F86E9C25699" userlevel="1" context="internalConfigureView" type="paragraph">
-			<usage wsId="en">Each paragraph of Sense information that is added to the entry if senses are formatted as paragraphs.</usage>
+			<usage wsId="en">Each paragraph of sense information that is added to the entry if senses are formatted as paragraphs.</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font/>
 			<paragraph basedOn="Dictionary-Normal" indentLeft="21 pt" spaceBefore="0 pt" hanging="12 pt"/>
@@ -124,35 +124,40 @@
 			<font bold="true"/>
 		</tag>
 		<tag id="Dictionary-Subentry" guid="90B94E23-3E77-4460-94FD-C1997ED9A81F" userlevel="1" context="internalConfigureView" type="paragraph">
-			<usage wsId="en">Each paragraph of Subentry information that is added to the entry if there are subentries.</usage>
+			<usage wsId="en">Each paragraph of subentry information that is added to the entry if there are subentries.</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font/>
 			<paragraph basedOn="Dictionary-Normal" indentLeft="21 pt" hanging="0 pt" spaceBefore="0 pt"/>
 		</tag>
 		<tag id="Dictionary-Subsubentry" guid="693AEDEB-1F1A-4F1F-B6CD-4A2A96A1DC37" userlevel="1" context="internalConfigureView" type="paragraph">
-			<usage wsId="en">Each paragraph of Subsubentry information that is added to the entry if there are subsubentries.</usage>
+			<usage wsId="en">Each paragraph of subsubentry information that is added to the entry if there are subsubentries.</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font/>
 			<paragraph basedOn="Dictionary-Normal" indentLeft="33 pt" hanging="0 pt" spaceBefore="0 pt"/>
 		</tag>
 		<tag id="Dictionary-Minor" guid="9132811F-A2E6-43B1-92F2-6E2030BBEA12" userlevel="1" context="internalConfigureView" type="paragraph">
-			<usage wsId="en">Each paragraph of Minor entry information that is added to the entry if there are minor entries.</usage>
+			<usage wsId="en">Each paragraph of minor entry information that is added to the entry if there are minor entries.</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font/>
 			<paragraph basedOn="Dictionary-Normal" spaceBefore="0 pt"/>
 		</tag>
 		<tag id="Dictionary-Headword" guid="3F844794-09D1-45FA-9D75-05C62E2B836D" userlevel="1" context="internalConfigureView" type="character">
-			<usage wsId="en">The main headword at the very start of the entry.</usage>
+			<usage wsId="en">The main headword at the start of the entry.</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font bold="true"/>
 		</tag>
 		<tag id="Dictionary-CrossReferences" guid="ABA229F3-CA42-4727-A903-0ABC3D418607" userlevel="1" context="internalConfigureView" type="character">
-			<usage wsId="en">Used for cross-references to other entries.</usage>
+			<usage wsId="en">Used for the headwords that occur in cross references to other entries.</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font bold="true"/>
 		</tag>
 		<tag id="Dictionary-Contrasting" guid="CB0FBDB3-2CA2-473B-97BB-8F505E18010C" userlevel="1" context="internalConfigureView" type="character">
 			<usage wsId="en">Used for items in the entry that need to be distinguished from neighboring items.</usage>
+			<help category="Flex_Dictionary_Styles"/>
+			<font italic="true"/>
+		</tag>
+		<tag id="Dictionary-POS" guid="f41be047-a4ee-402b-bcfe-9458e502e682" userlevel="1" context="internalConfigureView" type="character">
+			<usage wsId="en">Used for Grammatical Category and other strings that need to be formatted similarly.</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font italic="true"/>
 		</tag>
@@ -162,34 +167,34 @@
 			<font italic="true"/>
 		</tag>
 		<tag id="Classified-MainEntry" guid="1FAFDFA6-34A7-4577-B4AA-0C6518AF623A" userlevel="1" context="internalConfigureView" type="paragraph">
-			<usage wsId="en">In a classified dictionary, the heading giving the classification name</usage>
+			<usage wsId="en">In a Classified Dictionary, the heading giving the classification name</usage>
 			<help category="Flex_Classified_Styles"/>
 			<font bold="true" italic="false" size="12 pt"/>
 			<paragraph basedOn="Normal" next="Classified-Item" spaceBefore="8 pt" spaceAfter="2 pt"/>
 		</tag>
 		<tag id="Classified-Item" guid="945E6502-615B-4863-A18C-111E4D6B36C6" userlevel="1" context="internalConfigureView" type="paragraph">
-			<usage wsId="en">In a classified dictionary, the individual item paragraphs</usage>
+			<usage wsId="en">In a Classified Dictionary, the individual item paragraphs</usage>
 			<help category="Flex_Classified_Styles"/>
 			<font/>
 			<paragraph basedOn="Normal" spaceBefore="2 pt" indentLeft="9 pt" hanging="9 pt"/>
 		</tag>
 		<tag id="Classified-Headword" guid="9FA82BD0-E797-4C40-88D7-CB591613B426" userlevel="1" context="internalConfigureView" type="character">
-			<usage wsId="en">Used for the headword in a classified dictionary.</usage>
+			<usage wsId="en">Used for the headword in a Classified Dictionary.</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font bold="true"/>
 		</tag>
 		<tag id="Classified-POS" guid="FB6450F5-626D-4FBF-ADA5-4CFD5986B5B0" userlevel="1" context="internalConfigureView" type="character">
-			<usage wsId="en">Used for the grammatical information in a classified dictionary.</usage>
+			<usage wsId="en">Used for the grammatical information in a Classified Dictionary.</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font italic="true"/>
 		</tag>
 		<tag id="Classified-Defn" guid="6DE6E4D1-0C06-4102-86E2-82FAF7BF9811" userlevel="1" context="internalConfigureView" type="character">
-			<usage wsId="en">Used for the definition and/or gloss in a classified dictionary.</usage>
+			<usage wsId="en">Used for the definition and/or gloss in a Classified Dictionary.</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font />
 		</tag>
 		<tag id="Reversal-Headword" guid="25D17A96-4130-49C5-8F2B-497C1953556A" userlevel="1" context="internalConfigureView" type="character">
-			<usage wsId="en">The reversal form at the start of a reversal entry.</usage>
+			<usage wsId="en">Used for the reversal form at the start of a reversal entry.</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font bold="true"/>
 		</tag>
@@ -200,7 +205,7 @@
 			<paragraph basedOn="Normal" indentLeft="9 pt" hanging="12 pt" spaceBefore="1 pt" spaceAfter="2 pt"/>
 		</tag>
 		<tag id="Reversal-Subentry" guid="501C3363-065D-465A-BAAD-15D0787F9DED" userlevel="1" context="internalConfigureView" type="paragraph">
-			<usage wsId="en">Each paragraph of Subentry information that is added to a reversal entry if there are subentries.</usage>
+			<usage wsId="en">Each paragraph of subentry information that is added to a reversal entry if there are subentries.</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font/>
 			<paragraph basedOn="Reversal-Normal" indentLeft="21 pt" hanging="0 pt" spaceBefore="0 pt"/>
@@ -222,12 +227,12 @@
 			</font>
 		</tag>
 		<tag id="Homograph-Number" guid="6ED2CB3D-F6DB-4AF5-9DE9-75669CE26F46" userlevel="1" context="internalConfigureView" type="character" basedOn="Dictionary-Headword">
-			<usage wsId="en">Used for homograph numbers</usage>
+			<usage wsId="en">Used for homograph numbers, both in headwords and in references.</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font subscript="true" bold="true"/>
 		</tag>
-		<tag id="Sense-Reference-Number" guid="23EFA4CC-0347-4FC1-A33D-57B57EE852F9" userlevel="1" context="internalConfigureView" type="character">
-			<usage wsId="en">Used for sense numbers in cross-references</usage>
+		<tag id="Sense-Reference-Number" guid="23EFA4CC-0347-4FC1-A33D-57B57EE852F9" userlevel="1" context="internalConfigureView" type="character" basedOn="Dictionary-CrossReferences">
+			<usage wsId="en">Used for sense numbers in cross references.</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font />
 		</tag>

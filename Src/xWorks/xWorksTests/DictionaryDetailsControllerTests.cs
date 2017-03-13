@@ -357,7 +357,7 @@ namespace SIL.FieldWorks.XWorks
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
 			using(var view = controller.View)
 			{
-				controller.LoadNode(null, new ConfigurableDictionaryNode());
+				controller.LoadNode(null, new ConfigurableDictionaryNode {Parent = new ConfigurableDictionaryNode()});
 				AssertShowingCharacterStyles(view);
 			}
 		}
@@ -368,10 +368,12 @@ namespace SIL.FieldWorks.XWorks
 			// Load character styles
 			var node = new ConfigurableDictionaryNode
 			{
+				Parent = new ConfigurableDictionaryNode(), // top-level nodes are always in paragraph. Specify a Parent to allow character styles.
 				DictionaryNodeOptions = new DictionaryNodeListOptions
-					{
-						Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
-					}
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Complex,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
+				}
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
 			node.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
@@ -396,6 +398,12 @@ namespace SIL.FieldWorks.XWorks
 			node.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
 			controller.LoadNode(null, node); // SUT
 			AssertShowingCharacterStyles(controller.View);
+
+			// Load paragraph styles
+			node.Parent = null;
+			controller.LoadNode(null, node); // SUT
+			AssertShowingParagraphStyles(controller.View);
+
 			controller.View.Dispose();
 		}
 
@@ -405,9 +413,9 @@ namespace SIL.FieldWorks.XWorks
 			// Load paragraph styles
 			var node = new ConfigurableDictionaryNode
 			{
+				Parent = new ConfigurableDictionaryNode(),
 				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Complex,
 					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
 					DisplayEachInAParagraph = true
 				}

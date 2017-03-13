@@ -1,4 +1,4 @@
-// Copyright (c) 2016 SIL International
+// Copyright (c) 2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -274,7 +274,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			convertedModel.IsRootBased = alphaDefaultModel.IsRootBased;
 
 			// Stem-based treats Complex Forms as Main Entries. Previously, they had all been configured by the same Main Entries node,
-			// but now, they are configured in a separate "Main Entries (Complex Forms)" node.
+			// but in FLEx versions 8.3.0 through 8.3.4, they were configured in a separate "Main Entries (Complex Forms)" node.
+			// REVIEW (Hasso) 2017.02: would it be safe to rip out this intermediate step?
 			if (Path.GetFileNameWithoutExtension(alphaDefaultModel.FilePath) == DCM.LexemeFileName)
 			{
 				convertedModel.Parts.Insert(0, convertedModel.Parts[0].DeepCloneUnderSameParent()); // Split Main into Main and Main (Complex)

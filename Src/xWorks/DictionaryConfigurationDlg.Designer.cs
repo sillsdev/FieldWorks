@@ -105,8 +105,8 @@ namespace SIL.FieldWorks.XWorks
 			// 
 			// m_txtPubsForConfig
 			// 
-			this.m_txtPubsForConfig.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			resources.ApplyResources(this.m_txtPubsForConfig, "m_txtPubsForConfig");
+			this.m_txtPubsForConfig.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.m_txtPubsForConfig.Name = "m_txtPubsForConfig";
 			this.m_txtPubsForConfig.ReadOnly = true;
 			// 

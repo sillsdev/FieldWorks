@@ -481,8 +481,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (UIAutomationServerProviderFactory == null)
 				UIAutomationServerProviderFactory = () => new SimpleRootSiteDataProvider(this);
 #endif
-			SubscribeToRootSiteEventHandlerEvents();
-
+			if(LicenseManager.UsageMode != LicenseUsageMode.Designtime)
+				SubscribeToRootSiteEventHandlerEvents();
 		}
 
 #if DEBUG
@@ -3304,7 +3304,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			base.OnHandleCreated(e);
 
-			if (DesignMode && !AllowPaintingInDesigner)
+			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime && !AllowPaintingInDesigner)
 				return;
 
 			// If it is the second pane of a split window, it may have been given a copy of the

@@ -6,7 +6,7 @@
 
 *.config -whitespace
 *.csproj -whitespace
-*.Designer.cs -whitespace
+*.[Dd]esigner.cs -whitespace
 *.fwdictconfig -whitespace
 *.patch -whitespace
 *.ReSharper -whitespace

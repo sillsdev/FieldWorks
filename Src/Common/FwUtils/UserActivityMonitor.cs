@@ -17,9 +17,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithNativeFieldsShouldBeDisposableRule", Justification="No unmanaged resources to release")]
 	public class UserActivityMonitor : IMessageFilter
 	{
-		private const int KEYDOWN = 128;
+		private const int Keydown = 128;
 		private IntPtr m_lastMousePosition;
-		private IntPtr m_keyboardHook;
 		private DateTime m_lastActivityTime;
 
 		/// <summary>
@@ -38,7 +37,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Application.RemoveMessageFilter(this);
 		}
 
-#if !__MonoCS__
+#if !__MonoCS__ // GetKeyboardState doesn't exist in Mono.
 		/// <summary>
 		/// WinAPI get keyboard state method to detect keyDown events
 		/// </summary>
@@ -49,25 +48,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Gets the last user activity time.
 		/// </summary>
-		/// <value>
-		/// The last activity user time.
-		/// </value>
 		public DateTime LastActivityTime {
 			get
 			{
-#if !__MonoCS__ // Keyboard doesn't exist in Mono. Linux users must prefer voice-to-text. If this leaves a bug in mono, it needs its own solution
-				var isKeyDown = false;
-
-				byte[] keys = new byte[256];
-				if (GetKeyboardState(keys) >= 0)
-				{
-					if (keys.Any(k => (k & KEYDOWN) > 0))
-					{
-						isKeyDown = true;
-					}
-				}
-				if (isKeyDown)
-					return DateTime.Now; // If the user is holding down e.g. the Backspace key, that counts as current activity
+#if !__MonoCS__ // GetKeyboardState doesn't exist in Mono.
+				var keys = new byte[256];
+				if (GetKeyboardState(keys) >= 0 && keys.Any(k => (k & Keydown) > 0))
+						return DateTime.Now; // If the user is holding down e.g. the Backspace key, that counts as current activity
 #endif
 				return m_lastActivityTime;
 			}

@@ -607,7 +607,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var mainEntryNode = new ConfigurableDictionaryNode { FieldDescription = "LexEntry", CSSClassNameOverride = "entry", Parent = null };
 			Assert.True(mainEntryNode.IsMainEntry, "Main Entry");
-			Assert.True(mainEntryNode.IsReadonlyMainEntry, "Readonly Main Entry");
 		}
 
 		[Test]
@@ -621,7 +620,6 @@ namespace SIL.FieldWorks.XWorks
 				Parent = null
 			};
 			Assert.True(mainEntryNode.IsMainEntry, "Main Entry");
-			Assert.False(mainEntryNode.IsReadonlyMainEntry, "Stem's Complex Main Entry should be duplicable");
 		}
 
 		[Test]
@@ -629,7 +627,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var mainEntryNode = new ConfigurableDictionaryNode { FieldDescription = "ReversalIndexEntry", CSSClassNameOverride = "reversalindexentry", Parent = null };
 			Assert.True(mainEntryNode.IsMainEntry, "Main Entry");
-			Assert.True(mainEntryNode.IsReadonlyMainEntry, "Readonly Main Entry");
 		}
 
 		[Test]
@@ -637,7 +634,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var minorEntryNode = new ConfigurableDictionaryNode { FieldDescription = "LexEntry", CSSClassNameOverride = "minorentry", Parent = null };
 			Assert.False(minorEntryNode.IsMainEntry, "Main Entry");
-			Assert.False(minorEntryNode.IsReadonlyMainEntry, "Readonly Main Entry");
 		}
 
 		[Test]
@@ -646,7 +642,6 @@ namespace SIL.FieldWorks.XWorks
 			var mainEntryNode = new ConfigurableDictionaryNode { FieldDescription = "LexEntry", CSSClassNameOverride = "entry", Parent = null };
 			var someNode = new ConfigurableDictionaryNode { FieldDescription = "MLHeadWord", CSSClassNameOverride = "mainheadword", Parent = mainEntryNode };
 			Assert.False(someNode.IsMainEntry, "Main Entry");
-			Assert.False(someNode.IsReadonlyMainEntry, "Readonly Main Entry");
 		}
 
 		[Test]

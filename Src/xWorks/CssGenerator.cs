@@ -1018,6 +1018,8 @@ namespace SIL.FieldWorks.XWorks
 			if(exportStyleInfo.HasLineSpacing)
 			{
 				var lineHeight = new Property("line-height");
+				if (!exportStyleInfo.LineSpacing.m_relative && exportStyleInfo.LineSpacing.m_lineHeight >= 0)
+					lineHeight = new Property("flex-line-height");
 				//m_relative means single, 1.5 or double line spacing was chosen. The CSS should be a number
 				if(exportStyleInfo.LineSpacing.m_relative)
 				{
@@ -1052,7 +1054,12 @@ namespace SIL.FieldWorks.XWorks
 			if (exportStyleInfo.NumberScheme != 0)
 			{
 				var numScheme = exportStyleInfo.NumberScheme.ToString();
-				if (BulletSymbolsCollection.ContainsKey(exportStyleInfo.NumberScheme.ToString()))
+				if (!string.IsNullOrEmpty(exportStyleInfo.BulletInfo.m_bulletCustom))
+				{
+					string customBullet = exportStyleInfo.BulletInfo.m_bulletCustom;
+					declaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, customBullet) });
+				}
+				else if (BulletSymbolsCollection.ContainsKey(exportStyleInfo.NumberScheme.ToString()))
 				{
 					string selectedBullet = BulletSymbolsCollection[numScheme];
 					declaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, selectedBullet) });

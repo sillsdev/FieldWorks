@@ -32,6 +32,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		public string m_textBefore;
 		/// <summary>Text after the number</summary>
 		public string m_textAfter;
+		/// <summary>Custom Bullet</summary>
+		public string m_bulletCustom;
 		/// <summary>The font information</summary>
 		private FontInfo m_fontInfo;
 
@@ -49,6 +51,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			m_textBefore = other.m_textBefore;
 			m_textAfter = other.m_textAfter;
 			m_fontInfo = new FontInfo(other.FontInfo);
+			m_bulletCustom = other.m_bulletCustom;
 		}
 		#endregion
 
@@ -66,6 +69,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				(m_start == other.m_start) &&
 				(m_textAfter == other.m_textAfter) &&
 				(m_textBefore == other.m_textBefore) &&
+				(m_bulletCustom == other.m_bulletCustom) &&
 				(m_fontInfo == other.m_fontInfo);
 		}
 
@@ -283,7 +287,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					-1, -1);
 				styleProps.SetStrPropValue((int)FwTextPropType.ktptBulNumTxtBef, null);
 				styleProps.SetStrPropValue((int)FwTextPropType.ktptBulNumTxtAft, null);
+				styleProps.SetStrPropValue((int)FwTextPropType.ktptBulNumTxtAft, null);
 				styleProps.SetStrPropValue((int)FwTextPropType.ktptBulNumFontInfo, EncodedFontInfo);
+				styleProps.SetStrPropValue((int)FwTextPropType.ktptCustomBullet, m_bulletCustom);
 			}
 			else
 			{

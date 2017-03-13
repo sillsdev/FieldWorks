@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -952,6 +952,29 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
 			var entry = (ILexEntry)sense.Owner;
 			Assert.That(entry.DialectLabelsRS.First().Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("east"));
+		}
+
+		/// <summary>
+		/// Test that we can make a new sense where there is a dialect label that has an abbreviation that matches the data and ignore Case and Diacritic.
+		/// </summary>
+		[Test]
+		public void RDENewSense_Handles_MatchingDialectLabelIgnoreCaseAndDiacritic()
+		{
+			var senseFactory = Cache.ServiceLocator.GetInstance<LexSenseFactory>();
+			var dialectFactory = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>();
+			var dialectLabel = dialectFactory.Create(Guid.NewGuid(), Cache.LangProject.LexDbOA.DialectLabelsOA);
+			dialectLabel.Name.set_String(Cache.DefaultAnalWs, MakeAnalysisString("ăEast"));
+			var mySd = MakeSemanticDomain();
+			var nodes = MakeNodeList(new string[] { "Word (Citation Form)", "Meaning (Gloss)" }, false);
+			nodes.Add(MakeTransduceListNode("Dialect Labels(Entry)", "LexDb.DialectLabels", "LexEntry.DialectLabels"));
+			ITsString[] data = { MakeVernString("kick"), MakeAnalysisString("strike with foot"), MakeAnalysisString("aeast") };
+
+			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data, null);
+
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
+			var entry = (ILexEntry)sense.Owner;
+			Assert.That(entry.DialectLabelsRS.First().Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("ăEast"),
+				"Failed to add a dialect label reference. An item from the list specified should have matched the data and ignored Case and Diacritic");
 		}
 
 		/// <summary>

@@ -31,7 +31,6 @@
 			<part ref="UsageTypes"   visibility="ifdata" />
 			<part ref="SenseType"   visibility="ifdata" />
 			<part ref="DomainTypes"   visibility="ifdata" />
-			<part ref="PublishIn"   visibility="ifdata" />
 			<!-- part ref="ThesaurusItems" label="Thesaurus Items"/ -->
 
 			<part ref="SemanticDomains"   visibility="always" />
@@ -39,10 +38,11 @@
 	  <!-- part ref="Appendixes"/ -->
 			<part ref="Status"   visibility="ifdata" />
 			<part ref="CurrentLexReferences"/>
-			<part ref="ImportResidue" label="Import Residue" visibility="ifdata"/>
-			<part ref="Pictures" param="Normal"/>
 	  <!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
 			<part customFields="here" />
+			<part ref="ImportResidue" label="Import Residue" visibility="ifdata"/>
+			<part ref="PublishIn"   visibility="ifdata" />
+			<part ref="Pictures" param="Normal"/>
 			<part ref="Senses" label="SubSenses" param="Normal" menu="mnuDataTree-Subsenses"/>
 	</indent>
 	</part>
@@ -83,7 +83,7 @@
 		<part ref="Thumbnail" label="Thumbnail" visibility="never"/>
 		<part ref="CaptionA" label="Caption"/>
 		<part ref="FileName" label="File"/>
-		<part ref="PublishIn" label="Publish In"/>
+		<part ref="PublishIn" label="Publish Picture In"/>
 	</layout>
 	<layout class="CmFile" type="detail" name="Normal">
 		<part ref="FileName" label="File"/>

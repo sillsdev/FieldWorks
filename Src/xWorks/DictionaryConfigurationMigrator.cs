@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.XWorks
 		Justification="Cache is a reference")]
 	public class DictionaryConfigurationMigrator
 	{
-		public const int VersionCurrent = 12;
+		public const int VersionCurrent = 14;
 		internal const string NodePathSeparator = " > ";
 		public const string RootFileName = "Root";
 		public const string HybridFileName = "Hybrid";
@@ -61,6 +61,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					migrator.MigrateIfNeeded(m_logger, m_mediator, versionProvider.ApplicationVersion);
 				}
+				CreateProjectCustomCssIfNeeded(m_mediator);
 				if (m_logger.HasContent)
 				{
 					var configurationDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_mediator,
@@ -70,6 +71,20 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 			m_logger = null;
+		}
+
+		/// <summary>Create custom CSS file in the project's folder</summary>
+		private static void CreateProjectCustomCssIfNeeded(Mediator mediator)
+		{
+			var innerDirectories = new [] { "Dictionary", "ReversalIndex" };
+			foreach (var innerDir in innerDirectories)
+			{
+				var configDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator, innerDir);
+				Directory.CreateDirectory(configDir);
+				var customCssPath = Path.Combine(configDir, string.Format("Project{0}Overrides.css", innerDir == "ReversalIndex" ? "Reversal" : innerDir));
+				if (!File.Exists(customCssPath))
+					File.WriteAllText(customCssPath, "/* This file can be used to add custom css rules that will be applied to the xhtml export */");
+			}
 		}
 
 		internal static string BuildPathStringFromNode(ConfigurableDictionaryNode node, bool includeSharedItems = true)

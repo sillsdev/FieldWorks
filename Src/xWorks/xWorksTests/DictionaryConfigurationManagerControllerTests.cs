@@ -8,8 +8,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Ionic.Zip;
 using NUnit.Framework;
+using Palaso.TestUtilities;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
 using FileUtils = SIL.Utils.FileUtils;
@@ -25,12 +29,13 @@ namespace SIL.FieldWorks.XWorks
 
 		private readonly string _projectConfigPath = Path.GetTempPath();
 		private readonly string _defaultConfigPath = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary");
+		private IFileOS _mockFilesystem = new MockFileOS();
 
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
-			FileUtils.Manager.SetFileAdapter(new MockFileOS());
+			FileUtils.Manager.SetFileAdapter(_mockFilesystem);
 
 			FileUtils.EnsureDirectoryExists(_defaultConfigPath);
 		}
@@ -179,30 +184,38 @@ namespace SIL.FieldWorks.XWorks
 			Assert.True(_controller.RenameConfiguration(new ListViewItem { Tag = selectedConfig }, new LabelEditEventArgs(0, newLabel)),
 				"Renaming a config to a unique name should complete successfully");
 			Assert.AreEqual(newLabel, selectedConfig.Label, "The configuration should have been renamed");
-			Assert.AreEqual(_controller.FormatFilePath(newLabel), selectedConfig.FilePath, "The FilePath should have been generated");
+			Assert.AreEqual(DictionaryConfigurationManagerController.FormatFilePath(_controller._projectConfigDir, newLabel), selectedConfig.FilePath, "The FilePath should have been generated");
 			Assert.True(_controller.IsDirty, "Made changes; should be dirty");
 		}
 
-		[Test]
-		public void GenerateFilePath()
+
+
+		private DictionaryConfigurationModel GenerateFilePath_Helper(out List<DictionaryConfigurationModel> conflictingConfigs)
 		{
 			var configToRename = new DictionaryConfigurationModel
 			{
-				Label = "configuration3", FilePath = null, Publications = new List<string>()
+				Label = "configuration3",
+				FilePath = null,
+				Publications = new List<string>()
 			};
-			var conflictingConfigs = new List<DictionaryConfigurationModel>
+			conflictingConfigs = new List<DictionaryConfigurationModel>
 			{
 				new DictionaryConfigurationModel
 				{
-					Label = "conflicting file 3-0", FilePath = _controller.FormatFilePath("configuration3"), Publications = new List<string>()
+					Label = "conflicting file 3-0",
+					FilePath = DictionaryConfigurationManagerController.FormatFilePath(_controller._projectConfigDir, "configuration3"),
+					Publications = new List<string>()
 				},
 				new DictionaryConfigurationModel
 				{
-					Label = "conflicting file 3-1", FilePath = _controller.FormatFilePath("configuration3_1"), Publications = new List<string>()
+					Label = "conflicting file 3-1",
+					FilePath = DictionaryConfigurationManagerController.FormatFilePath(_controller._projectConfigDir, "configuration3_1"),
+					Publications = new List<string>()
 				},
 				new DictionaryConfigurationModel
 				{
-					Label = "conflicting file 3-2--in another directory to prove we can't accidentally mask unchanged default configurations",
+					Label =
+						"conflicting file 3-2--in another directory to prove we can't accidentally mask unchanged default configurations",
 					FilePath = Path.Combine(Path.Combine(_projectConfigPath, "subdir"),
 						"configuration3_2" + DictionaryConfigurationModel.FileExtension),
 					Publications = new List<string>()
@@ -210,24 +223,50 @@ namespace SIL.FieldWorks.XWorks
 			};
 			_configurations.Add(configToRename);
 			_configurations.AddRange(conflictingConfigs);
+			return configToRename;
+		}
+
+		[Test]
+		public void GenerateFilePath()
+		{
+			List<DictionaryConfigurationModel> conflictingConfigs;
+			var configToRename = GenerateFilePath_Helper(out conflictingConfigs);
 
 			// SUT
-			_controller.GenerateFilePath(configToRename);
+			DictionaryConfigurationManagerController.GenerateFilePath(_controller._projectConfigDir, _controller._configurations, configToRename);
 
 			var newFilePath = configToRename.FilePath;
 			StringAssert.StartsWith(_projectConfigPath, newFilePath);
 			StringAssert.EndsWith(DictionaryConfigurationModel.FileExtension, newFilePath);
-			Assert.AreEqual(_controller.FormatFilePath("configuration3_3"), configToRename.FilePath, "The file path should be based on the label");
+			Assert.AreEqual(DictionaryConfigurationManagerController.FormatFilePath(_controller._projectConfigDir, "configuration3_3"), configToRename.FilePath, "The file path should be based on the label");
 			foreach (var config in conflictingConfigs)
 			{
 				Assert.AreNotEqual(Path.GetFileName(newFilePath), Path.GetFileName(config.FilePath), "File name should be unique");
 			}
 		}
 
+		/// <summary>
+		/// Also account for files on disk, rather than just considering what is registered in the set of configurations we know about.
+		/// </summary>
+		[Test]
+		public void GenerateFilePath_AccountsForFilesOnDisk()
+		{
+			List<DictionaryConfigurationModel> conflictingConfigs;
+			var configToRename = GenerateFilePath_Helper(out conflictingConfigs);
+
+			FileUtils.WriteStringtoFile(Path.Combine(_projectConfigPath, "configuration3_3.fwdictconfig"), "file contents of config file that is in the way on disk but not actually registered in the list of configurations", Encoding.UTF8);
+
+			// SUT
+			DictionaryConfigurationManagerController.GenerateFilePath(_controller._projectConfigDir, _controller._configurations, configToRename);
+
+			var newFilePath = configToRename.FilePath;
+			Assert.That(newFilePath, Is.EqualTo(Path.Combine(_projectConfigPath, "configuration3_4.fwdictconfig")), "Did not account for collision with unregistered configuration on disk");
+		}
+
 		[Test]
 		public void FormatFilePath()
 		{
-			var formattedFilePath = _controller.FormatFilePath("\nFile\\Name/With\"Chars<?>"); // SUT
+			var formattedFilePath = DictionaryConfigurationManagerController.FormatFilePath(_controller._projectConfigDir, "\nFile\\Name/With\"Chars<?>"); // SUT
 			StringAssert.StartsWith(_projectConfigPath, formattedFilePath);
 			StringAssert.EndsWith(DictionaryConfigurationModel.FileExtension, formattedFilePath);
 			StringAssert.DoesNotContain("\n", formattedFilePath);
@@ -289,7 +328,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var configurationToDelete = _configurations[0];
 
-			_controller.GenerateFilePath(configurationToDelete);
+			DictionaryConfigurationManagerController.GenerateFilePath(_controller._projectConfigDir, _controller._configurations, configurationToDelete);
 			var pathToConfiguration = configurationToDelete.FilePath;
 			FileUtils.WriteStringtoFile(pathToConfiguration, "file contents", Encoding.UTF8);
 			Assert.That(FileUtils.FileExists(pathToConfiguration), "Unit test not set up right");
@@ -516,6 +555,85 @@ namespace SIL.FieldWorks.XWorks
 			var claimsToBeDerived = _controller.IsConfigurationACustomizedOriginal(configuration);
 
 			Assert.That(claimsToBeDerived, Is.False, "Should have reported this as a shipped default configuration.");
+		}
+
+		[Test]
+		public void ExportConfiguration_ThrowsOnBadInput()
+		{
+			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationManagerController.ExportConfiguration(null, "a", Cache));
+			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationManagerController.ExportConfiguration(_configurations[0], null, Cache));
+			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationManagerController.ExportConfiguration(_configurations[0], "a", null));
+			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationManagerController.ExportConfiguration(null, null, null));
+			// Empty string
+			Assert.Throws<ArgumentException>(() => DictionaryConfigurationManagerController.ExportConfiguration(_configurations[0], "", Cache));
+
+		}
+
+		/// <summary>
+		/// LT-17397.
+		/// </summary>
+		[Test]
+		public void ExportConfiguration_ExportsZip()
+		{
+			// Writing to disk, not just in memory, so can use zip library.
+
+			FileUtils.Manager.Reset();
+			string expectedZipOutput = null;
+			try
+			{
+				var configurationToExport = _configurations[0];
+				DictionaryConfigurationManagerController.GenerateFilePath(_controller._projectConfigDir, _controller._configurations, configurationToExport);
+				var pathToConfiguration = configurationToExport.FilePath;
+				expectedZipOutput = Path.GetTempFileName();
+				File.WriteAllText(pathToConfiguration, "file contents");
+				Assert.That(File.Exists(pathToConfiguration), "Unit test not set up right");
+				Assert.That(new FileInfo(expectedZipOutput).Length, Is.EqualTo(0),
+					"Unit test not set up right. File will exist for convenience of writing the test but should not have any content yet.");
+
+				// SUT
+				DictionaryConfigurationManagerController.ExportConfiguration(configurationToExport, expectedZipOutput, Cache);
+
+				Assert.That(File.Exists(expectedZipOutput), "File not exported");
+				Assert.That(new FileInfo(expectedZipOutput).Length, Is.GreaterThan(0),
+					"Exported file should have content");
+
+				using (var zip = new ZipFile(expectedZipOutput))
+				{
+					Assert.That(zip.Count, Is.GreaterThanOrEqualTo(4), "Zip file must be missing parts of the export");
+				}
+			}
+			finally
+			{
+				if (expectedZipOutput != null)
+					File.Delete(expectedZipOutput);
+				FileUtils.Manager.SetFileAdapter(_mockFilesystem);
+			}
+		}
+
+		[Test]
+		public void PrepareCustomFieldsExport_Works()
+		{
+			var customFieldLabel = "TestField";
+			using (new CustomFieldForTest(Cache, customFieldLabel, customFieldLabel, LexEntryTags.kClassId, StTextTags.kClassId, -1,
+				CellarPropertyType.OwningAtomic, Guid.Empty))
+			{
+				// SUT
+				var filesToIncludeInExportFromCustomFieldsExport = DictionaryConfigurationManagerController.PrepareCustomFieldsExport(Cache).ToList();
+				Assert.That(filesToIncludeInExportFromCustomFieldsExport.Count, Is.EqualTo(1), "Not enough files prepared");
+				Assert.That(filesToIncludeInExportFromCustomFieldsExport[0], Is.StringEnding("CustomFields.lift"));
+				AssertThatXmlIn.File(filesToIncludeInExportFromCustomFieldsExport[0]).HasAtLeastOneMatchForXpath("//field[@tag='" + customFieldLabel + "']");
+			}
+		}
+
+		[Test]
+		public void PrepareStylesheetExport_Works()
+		{
+			// SUT
+			var filesToIncludeInExportFromStylesheetExport =
+				DictionaryConfigurationManagerController.PrepareStylesheetExport().ToList();
+			Assert.That(filesToIncludeInExportFromStylesheetExport.Count, Is.EqualTo(2), "Not enough files prepared");
+			Assert.That(filesToIncludeInExportFromStylesheetExport[0], Is.StringEnding("StylesheetData"));
+			Assert.That(filesToIncludeInExportFromStylesheetExport[1], Is.StringEnding("StylesheetMoreData"));
 		}
 	}
 }

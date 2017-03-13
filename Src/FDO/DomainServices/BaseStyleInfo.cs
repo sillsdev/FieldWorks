@@ -950,6 +950,15 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						}
 						break;
 
+					case (int)FwTextPropType.ktptCustomBullet:
+						{
+							m_bulletInfo.IsInherited = false;
+							BulletInfo info = m_bulletInfo.Value;
+							info.m_bulletCustom = sProp;
+							m_bulletInfo.ExplicitValue = info;
+						}
+						break;
+
 					case (int)FwTextPropType.ktptBulNumFontInfo:
 						{
 							m_bulletInfo.IsInherited = false;
@@ -1096,6 +1105,15 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						m_bulletInfo.ExplicitValue = info;
 					}
 					return true;
+
+				case (int)FwTextPropType.ktptCustomBullet:
+					{
+						m_bulletInfo.IsInherited = false;
+						BulletInfo info = m_bulletInfo.Value;
+						info.m_bulletCustom = iVal.ToString();
+						m_bulletInfo.ExplicitValue = info;
+					}
+					break;
 
 				case (int)FwTextPropType.ktptBulNumStartAt:
 					{

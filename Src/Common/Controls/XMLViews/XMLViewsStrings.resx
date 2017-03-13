@@ -527,6 +527,7 @@ Do you want to proceed?</value>
   </data>
   <data name="ksPublishIn" xml:space="preserve">
     <value>Publish In</value>
+		<comment>Localizers: All the "Publish x in " strings are labels for fields.  The contents of the fields are one or more publication names.  Thus, the whole command could be read like:  "Publish Sense in" Children's Dictionary (where "Children's Dictionary" is the content of the field). Or "Publish Picture in" Webonary and Academic Dictionary (when the field contains the two publications "Webonary" and "Academic Dictionary".</comment>
   </data>
   <data name="ksShowAsHeadwordIn" xml:space="preserve">
     <value>Show As Headword In</value>

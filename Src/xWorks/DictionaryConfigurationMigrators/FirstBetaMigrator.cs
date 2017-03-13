@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016 SIL International
+﻿// Copyright (c) 2016-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Palaso.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
@@ -14,9 +15,10 @@ using DCM = SIL.FieldWorks.XWorks.DictionaryConfigurationMigrator;
 
 namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 {
-	class FirstBetaMigrator : IDictionaryConfigurationMigrator
+	public class FirstBetaMigrator : IDictionaryConfigurationMigrator
 	{
 		private ISimpleLogger m_logger;
+		internal const int VersionBeta5 = 14;
 
 		public FirstBetaMigrator() : this(null, null)
 		{
@@ -44,7 +46,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				File.Move(stemPath, lexemePath);
 			}
-			foreach (var config in DictionaryConfigurationMigrator.GetConfigsNeedingMigration(Cache, DCM.VersionCurrent))
+			foreach (var config in DCM.GetConfigsNeedingMigration(Cache, DCM.VersionCurrent))
 			{
 				m_logger.WriteLine(foundOne);
 				if (config.Label.StartsWith("Stem-"))
@@ -104,19 +106,64 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 		internal void MigrateFrom83Alpha(ISimpleLogger logger, DictionaryConfigurationModel oldConfig, DictionaryConfigurationModel currentDefaultModel)
 		{
-			// it may be helpful to have parents in the oldConfig, currentDefaultModel already has them:
+			// it may be helpful to have parents and current custom fields in the oldConfig (currentDefaultModel already has them):
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(oldConfig.Parts, oldConfig.SharedItems);
-			var oldConfigList = new List<ConfigurableDictionaryNode>(oldConfig.PartsAndSharedItems);
+			DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(oldConfig, Cache);
+			ChooseAppropriateComplexForms(oldConfig); // 13->14, but needed before rearranging and adding new nodes
+			ConflateMainEntriesIfNecessary(logger, oldConfig); // 12->13, but needed before rearranging and adding new nodes
 			var currentDefaultList = new List<ConfigurableDictionaryNode>(currentDefaultModel.PartsAndSharedItems);
-			for (var part = 0; part < oldConfigList.Count; ++part)
+			foreach (var part in oldConfig.PartsAndSharedItems)
 			{
-				MigratePartFromOldVersionToCurrent(oldConfig, oldConfigList[part], currentDefaultList[part]);
+				MigratePartFromOldVersionToCurrent(logger, oldConfig, part, FindMatchingChildNode(part.Label, currentDefaultList));
 			}
 			oldConfig.Version = DCM.VersionCurrent;
 			logger.WriteLine("Migrated to version " + DCM.VersionCurrent);
 		}
 
-		private void MigratePartFromOldVersionToCurrent(DictionaryConfigurationModel oldConfig,
+		/// <summary>
+		/// Earlier versions of Hybrid mistakenly used VisibleComplexFormBackRefs instead of ComplexFormsNotSubentries. Correct this mistake.
+		/// Referenced Complex Forms should be *Other* Referenced Complex Forms whenever they are siblings of Subentries
+		/// </summary>
+		private static void ChooseAppropriateComplexForms(DictionaryConfigurationModel migratingModel)
+		{
+			if (!IsHybrid(migratingModel))
+				return;
+			DCM.PerformActionOnNodes(migratingModel.Parts, parentNode =>
+			{
+				if (parentNode.ReferencedOrDirectChildren != null && parentNode.ReferencedOrDirectChildren.Any(node => node.FieldDescription == "Subentries"))
+					parentNode.ReferencedOrDirectChildren.Where(sib => sib.FieldDescription == "VisibleComplexFormBackRefs").ForEach(sib =>
+					{
+						sib.Label = "Other Referenced Complex Forms";
+						sib.FieldDescription = "ComplexFormsNotSubentries";
+					});
+			});
+		}
+
+		private static void ConflateMainEntriesIfNecessary(ISimpleLogger logger, DictionaryConfigurationModel config)
+		{
+			if (config.Version >= VersionBeta5 || config.IsRootBased || config.IsReversal)
+				return;
+			var mainEntriesComplexForms = config.Parts.FirstOrDefault(n => IsComplexFormsNode(n) && n.IsEnabled)
+				?? config.Parts.FirstOrDefault(IsComplexFormsNode);
+			if (mainEntriesComplexForms == null)
+			{
+				logger.WriteLine(string.Format("Unable to conflate main entries for config '{0}' (version {1})", config.Label, config.Version));
+				return;
+			}
+			MigrateNewChildNodesAndOptionsInto(config.Parts[0], mainEntriesComplexForms);
+			// Remove all complex form nodes *except* Main Entry
+			for (var i = config.Parts.Count - 1; i >= 1; --i)
+				if (IsComplexFormsNode(config.Parts[i]))
+					config.Parts.RemoveAt(i);
+		}
+
+		private static bool IsComplexFormsNode(ConfigurableDictionaryNode node)
+		{
+			var options = node.DictionaryNodeOptions as DictionaryNodeListOptions;
+			return options != null && options.ListId == DictionaryNodeListOptions.ListIds.Complex;
+		}
+
+		private static void MigratePartFromOldVersionToCurrent(ISimpleLogger logger, DictionaryConfigurationModel oldConfig,
 			ConfigurableDictionaryNode oldConfigPart, ConfigurableDictionaryNode currentDefaultConfigPart)
 		{
 			var oldVersion = oldConfig.Version;
@@ -126,17 +173,20 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				case FirstAlphaMigrator.VersionAlpha3:
 					MoveNodesIntoNewGroups(oldConfigPart, currentDefaultConfigPart);
-					MigrateNewDefaultNodes(oldConfigPart, currentDefaultConfigPart);
+					MigrateNewChildNodesAndOptionsInto(oldConfigPart, currentDefaultConfigPart);
 					goto case 9;
 				case 9:
 					UpgradeEtymologyCluster(oldConfigPart, oldConfig);
 					goto case 10;
 				case 10:
 				case 11:
-					MigrateNewDefaultNodes(oldConfigPart, currentDefaultConfigPart);
+				case 12:
+				case 13:
+					RemoveMostOfGramInfoUnderRefdComplexForms(oldConfigPart);
+					MigrateNewChildNodesAndOptionsInto(oldConfigPart, currentDefaultConfigPart);
 					break;
 				default:
-					m_logger.WriteLine(string.Format(
+					logger.WriteLine(string.Format(
 						"Unable to migrate {0}: no migration instructions for version {1}", oldConfigPart.Label, oldVersion));
 					break;
 			}
@@ -210,28 +260,40 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			return !model.IsRootBased && ConfigHasSubentriesNode(model);
 		}
 
+		private static void RemoveMostOfGramInfoUnderRefdComplexForms(ConfigurableDictionaryNode part)
+		{
+			DCM.PerformActionOnNodes(part.Children, node =>
+			{
+				// GramInfo under (Other) Ref'd Complex Forms is MorphoSystaxAnalyses
+				// GramInfo under Senses  is MorphoSyntaxAnalysisRA and should not lose any children
+				if (node.FieldDescription == "MorphoSyntaxAnalyses")
+					node.Children.RemoveAll(child => child.FieldDescription != "MLPartOfSpeech");
+			});
+		}
+
 		/// <summary>
 		/// This recursive method will migrate new nodes from default node to old config node
 		/// </summary>
-		private void MigrateNewDefaultNodes(ConfigurableDictionaryNode oldConfigNode, ConfigurableDictionaryNode defaultNode)
+		private static void MigrateNewChildNodesAndOptionsInto(ConfigurableDictionaryNode destinationNode, ConfigurableDictionaryNode sourceNode)
 		{
-			if (oldConfigNode.Children == null || defaultNode.Children == null)
+			// REVIEW (Hasso) 2017.03: If this is a NoteInParaStyles node: Rather than overwriting the user's Options, copy their Options into a new WS&ParaOptions
+			if ((destinationNode.DictionaryNodeOptions == null || DictionaryConfigurationModel.NoteInParaStyles.Contains(sourceNode.FieldDescription)) &&
+				sourceNode.DictionaryNodeOptions != null)
+				destinationNode.DictionaryNodeOptions = sourceNode.DictionaryNodeOptions;
+			if (destinationNode.Children == null || sourceNode.Children == null)
 				return;
-			if (((defaultNode.FieldDescription == "VariantFormEntryBackRefs" && oldConfigNode.DictionaryNodeOptions == null) ||
-				DictionaryConfigurationModel.NoteInParaStyles.Contains(defaultNode.FieldDescription)) && defaultNode.DictionaryNodeOptions != null)
-				oldConfigNode.DictionaryNodeOptions = defaultNode.DictionaryNodeOptions;
 			// First recurse into each matching child node
-			foreach (var newChild in defaultNode.Children)
+			foreach (var newChild in sourceNode.Children)
 			{
-				var matchFromDefault = FindMatchingChildNode(newChild.Label, oldConfigNode.Children);
-				if (matchFromDefault != null)
+				var matchFromDestination = FindMatchingChildNode(newChild.Label, destinationNode.Children);
+				if (matchFromDestination != null)
 				{
-					MigrateNewDefaultNodes(matchFromDefault, newChild);
+					MigrateNewChildNodesAndOptionsInto(matchFromDestination, newChild);
 				}
 				else
 				{
-					int indexOfNewChild = defaultNode.Children.FindIndex(n => n.Label == newChild.Label);
-					InsertNewNodeIntoOldConfig(oldConfigNode, newChild.DeepCloneUnderParent(oldConfigNode, true), defaultNode, indexOfNewChild);
+					var indexOfNewChild = sourceNode.Children.FindIndex(n => n.Label == newChild.Label);
+					InsertNewNodeIntoOldConfig(destinationNode, newChild.DeepCloneUnderParent(destinationNode, true), sourceNode, indexOfNewChild);
 				}
 			}
 		}
@@ -240,7 +302,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		/// This recursive method will create group nodes in the migrated config and move all children in the node
 		/// which belong in the group into it
 		/// </summary>
-		private void MoveNodesIntoNewGroups(ConfigurableDictionaryNode oldConfigNode, ConfigurableDictionaryNode defaultNode)
+		private static void MoveNodesIntoNewGroups(ConfigurableDictionaryNode oldConfigNode, ConfigurableDictionaryNode defaultNode)
 		{
 			if (oldConfigNode.Children == null || defaultNode.Children == null)
 				return;
@@ -278,7 +340,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		/// </summary>
 		/// <returns>first match or null</returns>
 		/// <remarks>it should be the only match, but that is not enforced by this code</remarks>
-		private ConfigurableDictionaryNode FindMatchingChildNode(string label, List<ConfigurableDictionaryNode> defaultChildren)
+		private static ConfigurableDictionaryNode FindMatchingChildNode(string label, List<ConfigurableDictionaryNode> defaultChildren)
 		{
 			var possibleMatches = new List<ConfigurableDictionaryNode>(defaultChildren);
 			// Add the children of default groups as possible matches
@@ -290,18 +352,19 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			return possibleMatches.FirstOrDefault(n => n.Label == label);
 		}
 
-		private void InsertNewNodeIntoOldConfig(ConfigurableDictionaryNode oldConfigNode, ConfigurableDictionaryNode newNode, ConfigurableDictionaryNode defaultNode, int indexOf)
+		private static void InsertNewNodeIntoOldConfig(ConfigurableDictionaryNode destinationParentNode, ConfigurableDictionaryNode newChildNode,
+			ConfigurableDictionaryNode sourceParentNode, int indexInSourceParentNode)
 		{
-			if (indexOf == 0)
-				oldConfigNode.Children.Insert(0, newNode);
+			if (indexInSourceParentNode == 0)
+				destinationParentNode.Children.Insert(0, newChildNode);
 			else
 			{
-				var olderSiblingLabel = defaultNode.Children[indexOf - 1].Label;
-				var indexOfOlderSibling = oldConfigNode.Children.FindIndex(n => n.Label == olderSiblingLabel);
+				var olderSiblingLabel = sourceParentNode.Children[indexInSourceParentNode - 1].Label;
+				var indexOfOlderSibling = destinationParentNode.Children.FindIndex(n => n.Label == olderSiblingLabel);
 				if (indexOfOlderSibling >= 0)
-					oldConfigNode.Children.Insert(indexOfOlderSibling + 1, newNode);
+					destinationParentNode.Children.Insert(indexOfOlderSibling + 1, newChildNode);
 				else
-					oldConfigNode.Children.Add(newNode);
+					destinationParentNode.Children.Add(newChildNode);
 			}
 		}
 	}
