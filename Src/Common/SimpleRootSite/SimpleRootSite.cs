@@ -1878,7 +1878,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the (estimated) height of one line
+		/// Gets the (estimated) height of one line in pixels
 		/// </summary>
 		/// <remarks>
 		/// Should we use the selection text properties and stylesheet to get a more specific value?
@@ -1891,7 +1891,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			get
 			{
 				CheckDisposed();
-				return 14 * Dpi.Y / 72; // 14 points is typically about a line.
+				return 14 * Dpi.Y / 72; // 14 points is typically about a line. 72 points/inch.
 			}
 		}
 
