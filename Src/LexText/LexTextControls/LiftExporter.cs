@@ -1662,7 +1662,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		public void ExportLiftRanges(StringWriter w)
 		{
 			w.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			w.WriteLine("<!-- See http://code.google.com/p/lift-standard for more information on the format used here. -->");
+			w.WriteLine("<!-- See http://github.com/sillsdev/lift-standard for more information on the format used here. -->");
 			w.WriteLine("<lift-ranges>");
 			WriteEtymologyRange(w);
 			WriteGrammaticalInfoRange(w);

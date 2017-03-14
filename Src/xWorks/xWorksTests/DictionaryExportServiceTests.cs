@@ -39,9 +39,9 @@ namespace SIL.FieldWorks.XWorks
 			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, mainEntry.Hvo), "Main entry should still be generated");
 		}
 
-		public enum ConfigType { Hybrid, Lexeme, Root }
 		[Test]
-		public void CountDictionaryEntries_StemBasedConfigCountsHiddenMinorEntries([Values(ConfigType.Hybrid, ConfigType.Lexeme)] ConfigType configType)
+		public void CountDictionaryEntries_StemBasedConfigCountsHiddenMinorEntries(
+			[Values(DictionaryConfigurationModel.ConfigType.Hybrid, DictionaryConfigurationModel.ConfigType.Lexeme)] DictionaryConfigurationModel.ConfigType configType)
 		{
 			var configModel = ConfiguredXHTMLGeneratorTests.CreateInterestingConfigurationModel(Cache, null, configType);
 			var mainEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);

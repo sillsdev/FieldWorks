@@ -660,8 +660,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// SUT
 				var customFieldFiles = DictionaryConfigurationManagerController.PrepareCustomFieldsExport(Cache).ToList();
-				Assert.That(customFieldFiles.Count, Is.EqualTo(1), "Not enough files prepared");
+				Assert.That(customFieldFiles.Count, Is.EqualTo(2), "Not enough files prepared");
 				Assert.That(customFieldFiles[0], Is.StringEnding("CustomFields.lift"));
+				Assert.That(customFieldFiles[1], Is.StringEnding("CustomFields.lift-ranges"));
 				AssertThatXmlIn.File(customFieldFiles[0]).HasAtLeastOneMatchForXpath("//field[@tag='" + customFieldLabel + "']");
 			}
 		}

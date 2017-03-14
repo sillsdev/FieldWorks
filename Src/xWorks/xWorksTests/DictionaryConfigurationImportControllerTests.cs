@@ -28,7 +28,6 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private DictionaryConfigurationImportController _controller;
 		private string _projectConfigPath;
-		private string _projectConfigOverwritePath;
 		private readonly string _defaultConfigPath = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary");
 		private const string configLabel = "importexportConfiguration";
 		private const string configFilename = "importexportConfigurationFile.fwdictconfig";
@@ -66,11 +65,6 @@ namespace SIL.FieldWorks.XWorks
 				Directory.Delete(_projectConfigPath, true);
 			FileUtils.EnsureDirectoryExists(_projectConfigPath);
 
-			_projectConfigOverwritePath = Path.Combine(Path.GetTempPath(), "dictionaryConfigurationOverridesImportTests");
-			if (Directory.Exists(_projectConfigOverwritePath))
-				Directory.Delete(_projectConfigOverwritePath, true);
-			FileUtils.EnsureDirectoryExists(_projectConfigOverwritePath);
-
 			_controller = new DictionaryConfigurationImportController(Cache, _projectConfigPath,
 				new List<DictionaryConfigurationModel>());
 
@@ -84,8 +78,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Label = configLabel,
 				Publications = new List<string> { "Main Dictionary", "unknown pub 1", "unknown pub 2" },
+				Parts = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode { FieldDescription = "LexEntry" } },
 				FilePath = Path.GetTempPath() + configFilename
 			};
+			CssGeneratorTests.PopulateFieldsForTesting(configurationToExport);
 
 			_pathToConfiguration = configurationToExport.FilePath;
 
@@ -307,8 +303,7 @@ namespace SIL.FieldWorks.XWorks
 			// SUT 2
 			_controller.DoImport();
 
-			Assert.That(_controller.NewConfigToImport.FilePath,
-				Is.EqualTo(importOverwriteConfigFilePath),
+			Assert.That(_controller.NewConfigToImport.FilePath, Is.EqualTo(importOverwriteConfigFilePath),
 				"This is nit-picking, but use a filename based on the original label, not based on a non-colliding label."
 				+ " So ORIGINALLABEL+maybesomething, not NONCOLLIDING+something (so not importexportConfiguration-Imported2)");
 			Assert.That(!_controller._configurations.Contains(configThatShouldBeOverwritten),
@@ -321,15 +316,13 @@ namespace SIL.FieldWorks.XWorks
 
 		private string UserRequestsOverwrite_Helper()
 		{
+			// This model has the same label but a non-colliding filename. Proves overwrite the code will always overwrite.
 			var alreadyExistingModelWithSameLabel = new DictionaryConfigurationModel
 			{
 				Label = configLabel,
 				Publications = new List<string> { "Main Dictionary", "unknown pub 1", "unknown pub 2" },
-				FilePath = Path.GetTempPath() + configFilename
+				FilePath = Path.Combine(_projectConfigPath, "Different" + configFilename)
 			};
-			DictionaryConfigurationManagerController.GenerateFilePath(_projectConfigOverwritePath, _controller._configurations,
-				alreadyExistingModelWithSameLabel);
-
 			FileUtils.WriteStringtoFile(alreadyExistingModelWithSameLabel.FilePath, "arbitrary file content", Encoding.UTF8);
 			var anotherAlreadyExistingModel = new DictionaryConfigurationModel
 			{
@@ -337,7 +330,7 @@ namespace SIL.FieldWorks.XWorks
 				Publications = new List<string> { "Main Dictionary", "unknown pub 1", "unknown pub 2" },
 				FilePath = Path.GetTempPath() + configFilename
 			};
-			DictionaryConfigurationManagerController.GenerateFilePath(_projectConfigOverwritePath, _controller._configurations,
+			DictionaryConfigurationManagerController.GenerateFilePath(_projectConfigPath, _controller._configurations,
 				anotherAlreadyExistingModel);
 			FileUtils.WriteStringtoFile(anotherAlreadyExistingModel.FilePath, "arbitrary file content", Encoding.UTF8);
 
@@ -419,6 +412,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Label = "blah",
 				Publications = new List<string>() {"pub 1", "pub 2"},
+				Parts = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode() }
 			};
 			// SUT
 			_controller.DoImport();

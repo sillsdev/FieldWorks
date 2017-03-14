@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Creates a DictionaryConfigurationModel with one Main and one of each neeeded Minor Entry nodes, all with enabled HeadWord children
 		/// </summary>
 		internal static DictionaryConfigurationModel CreateInterestingConfigurationModel(FdoCache cache, Mediator mediator = null,
-			DictionaryExportServiceTests.ConfigType configType = DictionaryExportServiceTests.ConfigType.Root)
+			DictionaryConfigurationModel.ConfigType configType = DictionaryConfigurationModel.ConfigType.Root)
 		{
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
@@ -56,9 +56,9 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode },
 				FieldDescription = "LexEntry"
 			};
-			if (configType == DictionaryExportServiceTests.ConfigType.Hybrid || configType == DictionaryExportServiceTests.ConfigType.Root)
+			if (configType == DictionaryConfigurationModel.ConfigType.Hybrid || configType == DictionaryConfigurationModel.ConfigType.Root)
 				mainEntryNode.Children.Add(subEntryNode);
-			if (configType == DictionaryExportServiceTests.ConfigType.Hybrid || configType == DictionaryExportServiceTests.ConfigType.Lexeme)
+			if (configType == DictionaryConfigurationModel.ConfigType.Hybrid || configType == DictionaryConfigurationModel.ConfigType.Lexeme)
 				mainEntryNode.DictionaryNodeOptions = GetFullyEnabledListOptions(cache, DictionaryNodeListOptions.ListIds.Complex);
 
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
@@ -78,10 +78,10 @@ namespace SIL.FieldWorks.XWorks
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode, minorEntryNode, minorSecondNode },
 				FilePath = mediator == null ? null : Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator),
 																	"filename" + DictionaryConfigurationModel.FileExtension),
-				IsRootBased = configType == DictionaryExportServiceTests.ConfigType.Root
+				IsRootBased = configType == DictionaryConfigurationModel.ConfigType.Root
 			};
 
-			if (configType != DictionaryExportServiceTests.ConfigType.Root)
+			if (configType != DictionaryConfigurationModel.ConfigType.Root)
 				model.Parts.Remove(minorEntryNode);
 
 			return model;

@@ -13,7 +13,9 @@ using System.Xml.XPath;
 using Ionic.Zip;
 using Palaso.Lift.Migration;
 using Palaso.Lift.Parsing;
+using Palaso.Reporting;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
@@ -100,11 +102,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Debug.Assert(NewConfigToImport != null);
 
-			// If the configuration to import has the same label as an existing configuration at this point, then overwrite the existing configuration.
-			var existingConfigurationInTheWay = _configurations.FirstOrDefault(config => config.Label == NewConfigToImport.Label);
+			// If the configuration to import has the same label as an existing configuration in the project folder
+			// then overwrite the existing configuration.
+			var existingConfigurationInTheWay = _configurations.FirstOrDefault(config => config.Label == NewConfigToImport.Label &&
+				Path.GetDirectoryName(config.FilePath) == _projectConfigDir);
 			if (existingConfigurationInTheWay != null)
 			{
-				// TODO Account for importing configurations with labels that are the same as the labels of shipped configurations.
 				_configurations.Remove(existingConfigurationInTheWay);
 				if (existingConfigurationInTheWay.FilePath != null)
 				{
@@ -129,8 +132,25 @@ namespace SIL.FieldWorks.XWorks
 				{
 					AddPublicationTypeIfNotPresent(publication, _cache);
 				});
-			ImportStyles(_importStylesLocation);
-			ImportHappened = true;
+			try
+			{
+				ImportStyles(_importStylesLocation);
+				ImportHappened = true;
+			}
+			catch (InstallationException)
+			{
+				// This is the exception thrown if the dtd guid in the style file doesn't match our program
+				_view.explanationLabel.Text = "Incompatible configuration files. Can not import. ";
+			}
+			var configType = NewConfigToImport.Type;
+			var configDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(
+				configType == DictionaryConfigurationModel.ConfigType.Reversal
+					? DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName
+					: DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+			var isCustomizedOriginal = DictionaryConfigurationManagerController.IsConfigurationACustomizedOriginal(NewConfigToImport, configDir, _cache);
+			UsageReporter.SendEvent("DictionaryConfigurationImport", "Import", "Import Config",
+				string.Format("Import of [{0}{1}]:{2}",
+					configType, isCustomizedOriginal ? string.Empty : "-Custom", ImportHappened ? "succeeded" : "failed"), 0);
 		}
 
 		private void ImportStyles(string importStylesLocation)
@@ -162,6 +182,12 @@ namespace SIL.FieldWorks.XWorks
 				var flexImporter = new FlexLiftMerger(_cache, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, true);
 				var parser = new LiftParser<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>(flexImporter);
 				flexImporter.LiftFile = liftPathname;
+				var liftRangesFile = liftPathname + "-ranges";
+				if (File.Exists(liftRangesFile))
+				{
+					flexImporter.LoadLiftRanges(liftRangesFile);
+				}
+
 				parser.ReadLiftFile(sFilename);
 			});
 		}
@@ -218,8 +244,14 @@ namespace SIL.FieldWorks.XWorks
 					var configInZip = zip.SelectEntries("*" + DictionaryConfigurationModel.FileExtension).First();
 					configInZip.Extract(tmpPath, ExtractExistingFileAction.OverwriteSilently);
 					_temporaryImportConfigLocation = tmpPath + configInZip.FileName;
+					if(!FileUtils.IsFileReadableAndWritable(_temporaryImportConfigLocation))
+					{
+						File.SetAttributes(_temporaryImportConfigLocation, FileAttributes.Normal);
+					}
 					var customFieldLiftFile = zip.SelectEntries("*.lift").First();
 					customFieldLiftFile.Extract(tmpPath, ExtractExistingFileAction.OverwriteSilently);
+					var liftRangesFile = zip.SelectEntries("*.lift-ranges").First();
+					liftRangesFile.Extract(tmpPath, ExtractExistingFileAction.OverwriteSilently);
 					_importLiftLocation = tmpPath + customFieldLiftFile.FileName;
 					var stylesFile = zip.SelectEntries("*.xml").First();
 					stylesFile.Extract(tmpPath, ExtractExistingFileAction.OverwriteSilently);

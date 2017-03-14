@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Security;
 using System.Xml;
 using System.Xml.Serialization;
 using SIL.FieldWorks.FDO;
@@ -33,6 +32,8 @@ namespace SIL.FieldWorks.XWorks
 		/// for "all reversal indexes".
 		/// </summary>
 		public const string AllReversalIndexesFilenameBase = "AllReversalIndexes";
+
+		public enum ConfigType { Hybrid, Lexeme, Root, Reversal }
 
 		/// <summary>
 		/// Trees of dictionary elements
@@ -127,6 +128,20 @@ namespace SIL.FieldWorks.XWorks
 		internal bool IsHybrid
 		{
 			get { return !IsRootBased && Parts[0].Children != null && Parts[0].Children.Any(c => c.FieldDescription == "Subentries"); }
+		}
+
+		internal ConfigType Type
+		{
+			get
+			{
+				if (IsReversal)
+					return ConfigType.Reversal;
+				if (IsRootBased)
+					return ConfigType.Root;
+				if (IsHybrid)
+					return ConfigType.Hybrid;
+				return ConfigType.Lexeme;
+			}
 		}
 
 		/// <summary>
