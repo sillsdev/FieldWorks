@@ -2614,7 +2614,7 @@ namespace SIL.FieldWorks.XWorks
 			var senseNumberAfter = @".entry> .pictures .picture> .captionContent .sensenumbertss:after\{\s*content:'\]';";
 			Assert.IsTrue(Regex.Match(cssResult, senseNumberAfter, RegexOptions.Singleline).Success, "expected Sense Number after rule is generated");
 
-			var senseNumberBetween = @".entry> .pictures .picture> .sensenumbertss> .sensenumberts\+ .sensenumberts:before\{\s*content:', ';";
+			var senseNumberBetween = @".entry> .pictures .picture> .captionContent .sensenumbertss> .sensenumberts\+ .sensenumberts:before\{\s*content:', ';";
 			Assert.IsTrue(Regex.Match(cssResult, senseNumberBetween, RegexOptions.Singleline).Success, "expected Sense Number between rule is generated");
 
 			var captionBefore = @".entry> .pictures .picture> .captionContent .caption:before\{\s*content:'\{';";
@@ -2623,7 +2623,7 @@ namespace SIL.FieldWorks.XWorks
 			var captionAfter = @".entry> .pictures .picture> .captionContent .caption:after\{\s*content:'\}';";
 			Assert.IsTrue(Regex.Match(cssResult, captionAfter, RegexOptions.Singleline).Success, "expected Caption after rule is generated");
 
-			var captionBetween = @".entry> .pictures .picture> .caption> .captio\+ .captio:before\{\s*content:' ';";
+			var captionBetween = @".entry> .pictures .picture> .captionContent .caption> .captio\+ .captio:before\{\s*content:' ';";
 			Assert.IsTrue(Regex.Match(cssResult, captionBetween, RegexOptions.Singleline).Success, "expected Caption between rule is generated");
 		}
 

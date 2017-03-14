@@ -614,7 +614,8 @@ namespace SIL.FieldWorks.XWorks
 			// simpleSelector is used for nodes that use before and after.  Collection type nodes produce wrong
 			// results if we use baseSelection in handling before and after content.  See LT-17048.
 			string simpleSelector;
-			if(parentSelector == null)
+			string pictCaptionContent = ".captionContent ";
+			if (parentSelector == null)
 			{
 				baseSelection = SelectClassName(configNode);
 				simpleSelector = SelectBareClassName(configNode);
@@ -631,6 +632,8 @@ namespace SIL.FieldWorks.XWorks
 					if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
 						dec.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, mediator));
 					var collectionSelector = "." + GetClassAttributeForConfig(configNode);
+					if (configNode.Parent.DictionaryNodeOptions is DictionaryNodePictureOptions)
+						collectionSelector = pictCaptionContent + "." + GetClassAttributeForConfig(configNode);
 					var itemSelector = " ." + GetClassAttributeForCollectionItem(configNode);
 					var betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, itemSelector);
 					ConfigurableDictionaryNode dummy;
@@ -680,8 +683,8 @@ namespace SIL.FieldWorks.XWorks
 				// Headword, Gloss, and Caption are contained in a captionContent area.
 				if (configNode.Parent.DictionaryNodeOptions is DictionaryNodePictureOptions)
 				{
-					baseSelection = parentSelector + "> " + ".captionContent " + SelectClassName(configNode, cache);
-					simpleSelector = parentSelector + "> " + ".captionContent " + SelectBareClassName(configNode, cache);
+					baseSelection = parentSelector + "> " + pictCaptionContent + SelectClassName(configNode, cache);
+					simpleSelector = parentSelector + "> " + pictCaptionContent + SelectBareClassName(configNode, cache);
 				}
 				else
 				{
