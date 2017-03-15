@@ -7941,8 +7941,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var previewXhtmlContent = File.ReadAllText(xhtmlPath);
 				// ReSharper disable once AssignNullToNotNullAttribute -- Justification: XHTML is always saved in a directory
-				var filePath = Path.Combine(Path.GetDirectoryName(xhtmlPath), "ProjectDictionaryOverrides.css");
-				StringAssert.Contains(filePath, previewXhtmlContent, "Custom css file should added in the XHTML file");
+				var fileName = "ProjectDictionaryOverrides.css";
+				StringAssert.Contains(fileName, previewXhtmlContent, "Custom css file should added in the XHTML file");
 			}
 			finally
 			{

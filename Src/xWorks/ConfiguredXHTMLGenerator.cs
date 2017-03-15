@@ -147,7 +147,7 @@ namespace SIL.FieldWorks.XWorks
 				return;
 
 			xhtmlWriter.WriteStartElement("link");
-			xhtmlWriter.WriteAttributeString("href", "file:///" + cssFilePath);
+			xhtmlWriter.WriteAttributeString("href", Path.GetFileName(cssFilePath));
 			xhtmlWriter.WriteAttributeString("rel", "stylesheet");
 			xhtmlWriter.WriteEndElement(); //</link>
 		}
