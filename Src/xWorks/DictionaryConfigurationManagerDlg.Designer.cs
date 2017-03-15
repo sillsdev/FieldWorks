@@ -103,8 +103,8 @@
 			// configurationsTableLayoutPanel
 			// 
 			resources.ApplyResources(this.configurationsTableLayoutPanel, "configurationsTableLayoutPanel");
-			this.configurationsTableLayoutPanel.Controls.Add(this.importButton, 0, 4);
-			this.configurationsTableLayoutPanel.Controls.Add(this.exportButton, 0, 5);
+			this.configurationsTableLayoutPanel.Controls.Add(this.importButton, 1, 4);
+			this.configurationsTableLayoutPanel.Controls.Add(this.exportButton, 1, 5);
 			this.configurationsTableLayoutPanel.Controls.Add(this.configurationsListView, 0, 1);
 			this.configurationsTableLayoutPanel.Controls.Add(this.removeButton, 1, 2);
 			this.configurationsTableLayoutPanel.Controls.Add(this.copyButton, 1, 1);
