@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.XWorks
 				Environment.NewLine,
 				model.Label);
 			_view.SetWsFactoryForCustomDigits(cache.WritingSystemFactory);
-			_view.AvailableWritingSystems = cache.LangProject.AllWritingSystems;
+			_view.AvailableWritingSystems = cache.LangProject.CurrentAnalysisWritingSystems.Union(cache.LangProject.CurrentVernacularWritingSystems);
 			_view.CustomDigits = _homographConfig.CustomHomographNumberList;
 			if (_cache.LangProject.AllWritingSystems.Any(ws => ws.Id == _homographConfig.HomographWritingSystem))
 			{
