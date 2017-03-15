@@ -5326,7 +5326,7 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 		</owning>
 		<owning num="51" id="Media" card="col" sig="CmFolder">
 		  <comment>
-			<para>This contains a lit of folders holding media file objects. For now, we will have one CmFolder called "Local Media" that holds all media.</para>
+			<para>This contains a list of folders holding media file objects. For now, we will have one CmFolder called "Local Media" that holds all media.</para>
 		  </comment>
 		</owning>
 		<owning num="52" id="GenreList" card="atomic" sig="CmPossibilityList">
