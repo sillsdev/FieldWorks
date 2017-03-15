@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Xml;
 using System.Xml.Serialization;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainImpl;
 
@@ -153,6 +154,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary></summary>
 		public void Save()
 		{
+			// Don't save model unless the DictionaryConfigurationController has modified the FilePath first.
+			if (FilePath.StartsWith(FwDirectoryFinder.DefaultConfigurations))
+				return;
 			LastModified = DateTime.Now;
 			var serializer = new XmlSerializer(typeof(DictionaryConfigurationModel));
 			var settings = new XmlWriterSettings { Indent = true };
