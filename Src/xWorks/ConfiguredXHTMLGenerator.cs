@@ -118,8 +118,8 @@ namespace SIL.FieldWorks.XWorks
 			if (exportSettings.RightToLeft)
 				xhtmlWriter.WriteAttributeString("dir", "rtl");
 			xhtmlWriter.WriteStartElement("head");
-			CreateLinkElement(cssPath, xhtmlWriter);
-			CreateLinkElement(custCssFile, xhtmlWriter);
+			CreateLinkElement(cssPath, xhtmlWriter, exportSettings.ExportPath);
+			CreateLinkElement(custCssFile, xhtmlWriter, exportSettings.ExportPath);
 			// write out schema links for writing system metadata
 			xhtmlWriter.WriteStartElement("link");
 			xhtmlWriter.WriteAttributeString("href", "http://purl.org/dc/terms/");
@@ -141,13 +141,18 @@ namespace SIL.FieldWorks.XWorks
 			xhtmlWriter.WriteWhitespace(Environment.NewLine);
 		}
 
-		private static void CreateLinkElement(string cssFilePath, XmlWriter xhtmlWriter)
+		private static void CreateLinkElement(string cssFilePath, XmlWriter xhtmlWriter, string exportPath)
 		{
 			if (string.IsNullOrEmpty(cssFilePath) || !File.Exists(cssFilePath))
 				return;
 
+			var hrefValue = Path.GetFileName(cssFilePath);
+			if (exportPath == null)
+				//In some previews exportPath is null then we should use the full path for the link
+				hrefValue = "file:///" + cssFilePath;
+
 			xhtmlWriter.WriteStartElement("link");
-			xhtmlWriter.WriteAttributeString("href", Path.GetFileName(cssFilePath));
+			xhtmlWriter.WriteAttributeString("href", hrefValue);
 			xhtmlWriter.WriteAttributeString("rel", "stylesheet");
 			xhtmlWriter.WriteEndElement(); //</link>
 		}
