@@ -35,6 +35,12 @@ namespace SIL.FieldWorks.XWorks
 	public static class ConfiguredXHTMLGenerator
 	{
 		/// <summary>
+		/// Click-to-play icon for media files
+		/// </summary>
+		internal const string LoudSpeaker = "\uD83D\uDD0A";
+		internal const string MovieCamera = "\U0001F3A5";
+
+		/// <summary>
 		/// The Assembly that the model Types should be loaded from. Allows test code to introduce a test model.
 		/// </summary>
 		internal static string AssemblyFile { get; set; }
@@ -858,6 +864,7 @@ namespace SIL.FieldWorks.XWorks
 					return string.Empty;
 			}
 			ICmFile fileProperty;
+			ICmObject fileOwner;
 			var typeForNode = config.IsCustomField
 										? GetPropertyTypeFromReflectedTypes(propertyValue.GetType(), null)
 										: GetPropertyTypeForConfigurationNode(config, propertyValue.GetType(), cache);
@@ -876,7 +883,10 @@ namespace SIL.FieldWorks.XWorks
 
 				case PropertyType.CmPictureType:
 					fileProperty = propertyValue as ICmFile;
-					return fileProperty != null ? GenerateXHTMLForPicture(fileProperty, config, settings) : GenerateXHTMLForPictureCaption(propertyValue, config, settings);
+					fileOwner = field as ICmObject;
+					return fileProperty != null && fileOwner != null
+						? GenerateXHTMLForPicture(fileProperty, config, fileOwner, settings)
+						: GenerateXHTMLForPictureCaption(propertyValue, config, settings);
 
 				case PropertyType.CmPossibility:
 					return GenerateXHTMLForPossibility(propertyValue, config, publicationDecorator, settings);
@@ -885,13 +895,16 @@ namespace SIL.FieldWorks.XWorks
 					fileProperty = propertyValue as ICmFile;
 					if (fileProperty != null)
 					{
-						const string movieCamera = "\U0001F3A5";
-						const string audioPlayButton = "\u25B6";
 						var srcAttr = GenerateSrcAttributeForMediaFromFilePath(fileProperty.InternalPath, "AudioVisual", settings);
 						if (IsVideo(fileProperty.InternalPath))
-							return GenerateXHTMLForVideoFile(fileProperty.ClassName, srcAttr, movieCamera);
-						var audioId = "g" + fileProperty.Guid;
-						return GenerateXHTMLForAudioFile(fileProperty.ClassName, audioId, srcAttr, audioPlayButton);
+							return GenerateXHTMLForVideoFile(fileProperty.ClassName, srcAttr, MovieCamera);
+						fileOwner = field as ICmObject;
+						if (fileOwner != null)
+						{
+							// the XHTML id attribute must be unique. The owning ICmMedia has a unique guid.
+							// The ICmFile is used for all references to the same file within the project, so its guid is not unique.
+							return GenerateXHTMLForAudioFile(fileProperty.ClassName, fileOwner.Guid.ToString(), srcAttr, LoudSpeaker);
+						}
 					}
 					return string.Empty;
 			}
@@ -1195,7 +1208,8 @@ namespace SIL.FieldWorks.XWorks
 			return String.Empty;
 		}
 
-		private static string GenerateXHTMLForPicture(ICmFile pictureFile, ConfigurableDictionaryNode config, GeneratorSettings settings)
+		private static string GenerateXHTMLForPicture(ICmFile pictureFile, ConfigurableDictionaryNode config, ICmObject owner,
+			GeneratorSettings settings)
 		{
 			var srcAttribute = GenerateSrcAttributeFromFilePath(pictureFile, settings.UseRelativePaths ? "pictures" : null, settings);
 			if (!String.IsNullOrEmpty(srcAttribute))
@@ -1206,7 +1220,9 @@ namespace SIL.FieldWorks.XWorks
 					xw.WriteStartElement("img");
 					WriteClassNameAttributeForConfig(xw, config);
 					xw.WriteAttributeString("src", srcAttribute);
-					xw.WriteAttributeString("id", "g" + pictureFile.Guid);
+					// the XHTML id attribute must be unique. The owning ICmPicture has a unique guid.
+					// The ICmFile is used for all references to the same file within the project, so its guid is not unique.
+					xw.WriteAttributeString("id", GetSafeXHTMLId(owner.Guid.ToString()));
 					xw.WriteEndElement();
 					xw.Flush();
 					return bldr.ToString();
@@ -2822,7 +2838,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static string GenerateXHTMLForString(ITsString fieldValue, ConfigurableDictionaryNode config,
-			GeneratorSettings settings, Guid guid, string writingSystem = null)
+			GeneratorSettings settings, Guid linkTarget, string writingSystem = null)
 		{
 			if (TsStringUtils.IsNullOrEmpty(fieldValue))
 				return string.Empty;
@@ -2865,7 +2881,7 @@ namespace SIL.FieldWorks.XWorks
 						var props = fieldValue.get_Properties(i);
 						var style = props.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
 						writingSystem = settings.Cache.WritingSystemFactory.GetStrFromWs(fieldValue.get_WritingSystem(i));
-						GenerateSpanWithPossibleLink(settings, writingSystem, xw, style, text, guid, rightToLeft);
+						GenerateSpanWithPossibleLink(settings, writingSystem, xw, style, text, linkTarget, rightToLeft);
 					}
 					if (fieldValue.RunCount > 1)
 					{
@@ -2946,11 +2962,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (String.IsNullOrEmpty(audioId) && String.IsNullOrEmpty(srcAttribute) && String.IsNullOrEmpty(caption))
 				return String.Empty;
+			var safeAudioId = GetSafeXHTMLId(audioId);
 			var bldr = new StringBuilder();
 			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
 			{
 				xw.WriteStartElement("audio");
-				xw.WriteAttributeString("id", audioId);
+				xw.WriteAttributeString("id", safeAudioId);
 				xw.WriteStartElement("source");
 				xw.WriteAttributeString("src", srcAttribute);
 				xw.WriteRaw("");
@@ -2958,8 +2975,8 @@ namespace SIL.FieldWorks.XWorks
 				xw.WriteEndElement();
 				xw.WriteStartElement("a");
 				xw.WriteAttributeString("class", classname);
-				xw.WriteAttributeString("href", "#" + audioId);
-				xw.WriteAttributeString("onclick", "document.getElementById('" + audioId + "').play()");
+				xw.WriteAttributeString("href", "#" + safeAudioId);
+				xw.WriteAttributeString("onclick", "document.getElementById('" + safeAudioId + "').play()");
 				if (!String.IsNullOrEmpty(caption))
 					xw.WriteString(caption);
 				else
@@ -2968,6 +2985,13 @@ namespace SIL.FieldWorks.XWorks
 				xw.Flush();
 				return bldr.ToString();
 			}
+		}
+
+		private static string GetSafeXHTMLId(string audioId)
+		{
+			// Prepend a letter, since some filenames start with digits, which gives an invalid id
+			// Are there other characters that are unsafe in XHTML Ids or Javascript?
+			return "g" + audioId.Replace(" ", "_").Replace("'", "_");
 		}
 
 		/// <summary>

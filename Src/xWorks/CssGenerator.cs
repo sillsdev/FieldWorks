@@ -173,7 +173,7 @@ namespace SIL.FieldWorks.XWorks
 					var wsaudioRule = new StyleRule {Value = String.Format("a.{0}:after", aws.RFC5646)};
 					wsaudioRule.Declarations.Properties.Add(new Property("content")
 					{
-						Term = new PrimitiveTerm(UnitType.String, "\uD83D\uDD0A")
+						Term = new PrimitiveTerm(UnitType.String, ConfiguredXHTMLGenerator.LoudSpeaker)
 					});
 					styleSheet.Rules.Add(wsaudioRule);
 					wsaudioRule = new StyleRule {Value = String.Format("a.{0}", aws.RFC5646)};

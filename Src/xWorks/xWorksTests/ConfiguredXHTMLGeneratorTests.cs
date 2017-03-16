@@ -5175,6 +5175,57 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_UniqueIdsForSameFile()
+		{
+			var mainEntryNode = CreatePictureModel();
+			var testEntry = CreateInterestingLexEntry(Cache);
+			AddSenseToEntry(testEntry, "second", m_wsEn, Cache);
+			var sense = testEntry.SensesOS[0];
+			var sensePic1 = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			sense.PicturesOS.Add(sensePic1);
+			var pic = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			var sense2 = testEntry.SensesOS[1];
+			var sensePic2 = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			sense2.PicturesOS.Add(sensePic2);
+			Cache.LangProject.MediaOC.Add(folder);
+			folder.FilesOC.Add(pic);
+			var fileName = Path.GetRandomFileName();
+			var tempPath1 = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+			Directory.CreateDirectory(tempPath1);
+			// Write a couple of jpeg header bytes (for no particular reason)
+			var filePath1 = Path.Combine(tempPath1, fileName);
+			File.WriteAllBytes(filePath1, new byte[] { 0xFF, 0xE0, 0x0, 0x0, 0x1 });
+			pic.InternalPath = filePath1;
+			sensePic1.PictureFileRA = pic;
+			sensePic2.PictureFileRA = pic;
+
+			var tempFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "ConfigDictPictureExportTest"));
+			try
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, true, true, tempFolder.FullName);
+				//SUT
+				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
+				var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(fileName));
+				const string pictureXPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img";
+				var pictureWithComposedPath = pictureXPath + "[contains(@src, '" + pictureRelativePath + "')]";
+				if (!MiscUtils.IsUnix)
+					AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(pictureWithComposedPath, 2);
+				else
+					// that src contains a string, and escaping any Windows path separators
+					AssertRegex(result, string.Format("src=\"[^\"]*{0}[^\"]*\"", pictureRelativePath.Replace(@"\", @"\\")), 2);
+				const string guidXPath = pictureXPath + "[@id='g{0}']";
+				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(string.Format(guidXPath, sensePic1.Guid), 1);
+				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(string.Format(guidXPath, sensePic2.Guid), 1);
+			}
+			finally
+			{
+				Palaso.IO.DirectoryUtilities.DeleteDirectoryRobust(tempFolder.FullName);
+				File.Delete(filePath1);
+			}
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_BadFileNameDoesNotCrash()
 		{
 			var mainEntryNode = CreatePictureModel();
@@ -5193,8 +5244,7 @@ namespace SIL.FieldWorks.XWorks
 			var tempFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "ConfigDictPictureExportTest"));
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, true, true, tempFolder.FullName);
 			//SUT
-			string result;
-			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
+			Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 		}
 
 		[Test]
@@ -5886,7 +5936,8 @@ namespace SIL.FieldWorks.XWorks
 			var entryOne = CreateInterestingLexEntry(Cache);
 			var senseaudio = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entryOne.LexemeFormOA = senseaudio;
-			senseaudio.Form.set_String(wsEnAudio.Handle, Cache.TsStrFactory.MakeString("TestAudio.wav", wsEnAudio.Handle));
+			const string audioFileName = "Test Audi'o.wav";
+			senseaudio.Form.set_String(wsEnAudio.Handle, Cache.TsStrFactory.MakeString(audioFileName, wsEnAudio.Handle));
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
@@ -5894,8 +5945,8 @@ namespace SIL.FieldWorks.XWorks
 			const string audioTagwithSource = "//audio/source/@src";
 			AssertThatXmlIn.String(result)
 				.HasSpecifiedNumberOfMatchesForXpath(audioTagwithSource, 1);
-			const string audioFileUrl =
-				@"Src/xWorks/xWorksTests/TestData/LinkedFiles/AudioVisual/TestAudio.wav";
+			var audioFileUrl =
+				@"Src/xWorks/xWorksTests/TestData/LinkedFiles/AudioVisual/" + audioFileName;
 			Assert.That(result, Contains.Substring(audioFileUrl));
 			const string linkTagwithOnClick =
 				"//span[@class='lexemeformoa']/span/a[@class='en-Zxxx-x-audio' and contains(@onclick,'play()')]";
@@ -5923,17 +5974,21 @@ namespace SIL.FieldWorks.XWorks
 			var entryOne = CreateInterestingLexEntry(Cache);
 			var senseaudio = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entryOne.LexemeFormOA = senseaudio;
-			senseaudio.Form.set_String(wsEnAudio.Handle, Cache.TsStrFactory.MakeString("TestAudio.wav", wsEnAudio.Handle));
+			const string audioFileName = "Test Audi'o.wav";
+			senseaudio.Form.set_String(wsEnAudio.Handle, Cache.TsStrFactory.MakeString(audioFileName, wsEnAudio.Handle));
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, true, true, "//audio/source/@src");
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
 
+			const string safeAudioId = "gTest_Audi_o";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath("//audio[contains(@id," + safeAudioId + ")]", 1);
 			const string audioTagwithSource = "//audio/source/@src";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(audioTagwithSource, 1);
-			var audioFileUrl = Path.Combine("AudioVisual", "TestAudio.wav");
+			var audioFileUrl = Path.Combine("AudioVisual", audioFileName);
 			Assert.That(result, Contains.Substring(audioFileUrl));
-			const string linkTagwithOnClick =
-				"//span[@class='lexemeformoa']/span/a[@class='en-Zxxx-x-audio' and @href!='#' and contains(@onclick,'play()')]";
+			var linkTagwithOnClick = "//span[@class='lexemeformoa']/span/a[@class='en-Zxxx-x-audio'";
+			linkTagwithOnClick += " and @href='#" + safeAudioId + "'";
+			linkTagwithOnClick += " and contains(@onclick,'" + safeAudioId + "') and contains(@onclick,'.play()')]";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(linkTagwithOnClick, 1);
 		}
 
