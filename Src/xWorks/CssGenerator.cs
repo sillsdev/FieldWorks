@@ -1527,24 +1527,34 @@ namespace SIL.FieldWorks.XWorks
 				pageButton.ToString(true), pageButtonHover.ToString(true), pageButtonActive.ToString(true), currentButtonRule.ToString(true));
 		}
 
+		/// <summary>
+		/// Generates css that will apply to the current entry in our preview and highlight it for the user
+		/// </summary>
 		internal static string GenerateCssForSelectedEntry(bool isRtl)
 		{
-			var selectedEntry = new StyleRule { Value = "." + XhtmlDocView.CurrentSelectedEntryClass + ":before" };
-			selectedEntry.Declarations.Properties.Add(new Property("background-image")
-				{ Term = new PrimitiveTerm(UnitType.Ident, "url(" + ConfiguredXHTMLGenerator.CurrentEntryMarker + ")") });
-			selectedEntry.Declarations.Properties.Add(new Property("background-position")
-				{ Term = new TermList(new PrimitiveTerm(UnitType.Pixel, 0), new PrimitiveTerm(UnitType.Pixel, 3)) });
-			selectedEntry.Declarations.Properties.Add(new Property("background-repeat")
-				{ Term = new PrimitiveTerm(UnitType.Ident, "no-repeat") });
-			selectedEntry.Declarations.Properties.Add(new Property("background-size")
-				{ Term = new TermList(new PrimitiveTerm(UnitType.Percentage, 80), new PrimitiveTerm(UnitType.Percentage, 80)) });
-			selectedEntry.Declarations.Properties.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.Ident, "''") });
-			selectedEntry.Declarations.Properties.Add(new Property("position") { Term = new PrimitiveTerm(UnitType.Ident, "absolute") });
-			selectedEntry.Declarations.Properties.Add(new Property("z-index") { Term = new PrimitiveTerm(UnitType.Number, 10000) });
-			selectedEntry.Declarations.Properties.Add(new Property(isRtl ? "right" : "left") { Term = new PrimitiveTerm(UnitType.Pixel, 2) });
-			selectedEntry.Declarations.Properties.Add(new Property("width") { Term = new PrimitiveTerm(UnitType.Pixel, 20) });
-			selectedEntry.Declarations.Properties.Add(new Property("height") { Term = new PrimitiveTerm(UnitType.Pixel, 20) });
-			var screenRule = new MediaRule { Condition = "screen", RuleSets = { selectedEntry } };
+			// Draw a blue gradient behind the entry to highlight it
+			var selectedEntryBefore = new StyleRule { Value = "." + XhtmlDocView.CurrentSelectedEntryClass + ":before" };
+			var directionOfRule = !isRtl ? "right" : "left";
+			selectedEntryBefore.Declarations.Properties.Add(new Property("background")
+			{
+				Term = new PrimitiveTerm(UnitType.Ident,
+				"linear-gradient(to " + directionOfRule + ", rgb(100,200,245), rgb(200,238,252) 2em, rgb(200,238,252), transparent, transparent)")
+			});
+			selectedEntryBefore.Declarations.Properties.Add(new Property("background-position")
+			{
+				Term = new TermList(new PrimitiveTerm(UnitType.Pixel, 0), new PrimitiveTerm(UnitType.Pixel, 3))
+			});
+			selectedEntryBefore.Declarations.Properties.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.Ident, "''") });
+			selectedEntryBefore.Declarations.Properties.Add(new Property("position") { Term = new PrimitiveTerm(UnitType.Ident, "absolute") });
+			selectedEntryBefore.Declarations.Properties.Add(new Property("z-index") { Term = new PrimitiveTerm(UnitType.Number, -10) });
+			selectedEntryBefore.Declarations.Properties.Add(new Property("width") { Term = new PrimitiveTerm(UnitType.Percentage, 75) });
+			var selectedEntry = new StyleRule { Value = "." + XhtmlDocView.CurrentSelectedEntryClass };
+			selectedEntry.Declarations.Properties.Add(new Property("background")
+			{
+				Term = new PrimitiveTerm(UnitType.Ident,
+					"linear-gradient(to bottom " + directionOfRule + ", transparent, rgb(200,238,252) 1em, rgb(200,238,252), rgb(200,238,252), transparent)")
+			});
+			var screenRule = new MediaRule { Condition = "screen", RuleSets = { selectedEntryBefore, selectedEntry } };
 			return screenRule.ToString(true) + Environment.NewLine;
 		}
 
