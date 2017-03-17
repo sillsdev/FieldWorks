@@ -1120,7 +1120,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var ancestorMargin = ancestorIndents.Margin - ancestorIndents.TextIndent;
 			leadingIndent -= ancestorMargin + hangingIndent;
-			return leadingIndent;
+			return (float)Math.Round(leadingIndent, 3);
 		}
 
 		private static AncestorIndents CalculateParagraphIndentsFromAncestors(ConfigurableDictionaryNode currentNode,
@@ -1218,7 +1218,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private static float MilliPtToPt(int millipoints)
 		{
-			return (float)millipoints / 1000;
+			return (float)Math.Round((float)millipoints / 1000, 3);
 		}
 
 		/// <summary>

@@ -829,9 +829,16 @@ namespace SIL.FieldWorks.XWorks
 			if (Clerk.Id == "AllReversalEntries")
 			{
 				var currentConfig = m_mediator.PropertyTable.GetStringProperty("ReversalIndexPublicationLayout", string.Empty);
-				if (!currentConfig.Contains(Clerk.CurrentObject.Owner.SortKey + ".fwdictconfig"))
+				var reversalentry = Clerk.CurrentObject as IReversalIndexEntry;
+				if (reversalentry == null)
+					return;
+				var writingSystem = Cache.ServiceLocator.WritingSystemManager.Get(reversalentry.ReversalIndex.WritingSystem);
+				if (writingSystem == null)
+					return;
+				var reversalFileName = writingSystem.DisplayLabel;
+				if (!currentConfig.Contains(reversalFileName + DictionaryConfigurationModel.FileExtension))
 				{
-					var newConfig = Path.GetDirectoryName(currentConfig) + "\\" + Clerk.CurrentObject.Owner.SortKey + ".fwdictconfig";
+					var newConfig = Path.Combine(Path.GetDirectoryName(currentConfig), reversalFileName + DictionaryConfigurationModel.FileExtension);
 					m_mediator.PropertyTable.SetProperty("ReversalIndexPublicationLayout", newConfig, true);
 				}
 			}
