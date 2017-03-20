@@ -3327,6 +3327,32 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForCustomFieldStartsWithNumber()
+		{
+			var customConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "12Costume",
+				DictionaryNodeOptions = new DictionaryNodeListOptions(),
+				Style = "FooStyle",
+				IsCustomField = true
+			};
+			var entryConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { customConfig }
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryConfig } };
+			PopulateFieldsForTesting(model);
+			using (new CustomFieldForTest(Cache, "Costume", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0, CellarPropertyType.Nil, Guid.Empty))
+			{
+				// SUT
+				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+				const string regexExpected1 = @"\.lexentry>\s.cf12costume{[^}]*}";
+				Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success, "Class name started with number");
+			}
+		}
+
+		[Test]
 		public void GenerateCssForCustomFieldWithSpaces()
 		{
 			var nameConfig = new ConfigurableDictionaryNode

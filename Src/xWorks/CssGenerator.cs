@@ -852,8 +852,11 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal static string GetClassAttributeForConfig(ConfigurableDictionaryNode configNode)
 		{
-			return Icu.Normalize((GetClassAttributeBase(configNode) + GetClassAttributeDupSuffix(configNode)).ToLower(),
+			string classAtt = Icu.Normalize((GetClassAttributeBase(configNode) + GetClassAttributeDupSuffix(configNode)).ToLower(),
 				Icu.UNormalizationMode.UNORM_NFC);
+			// Custom field names might begin with a digit which would cause invalid css, so we prepend 'cf' to those class names.
+			classAtt = Char.IsDigit(Convert.ToChar(classAtt.Substring(0, 1))) ? "cf" + classAtt : classAtt;
+			return classAtt;
 		}
 
 		private static string GetClassAttributeBase(ConfigurableDictionaryNode configNode)
