@@ -17,6 +17,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			InitializeComponent();
 			m_helpTopicProvider = helpProvider;
+			// Clear away example text
+			explanationLabel.Text = string.Empty;
 		}
 
 		private void cancelButton_Click(object sender, EventArgs e)
