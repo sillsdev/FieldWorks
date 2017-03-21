@@ -4,12 +4,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -99,7 +101,12 @@ namespace SIL.FieldWorks.XWorks
 				var testStyle = styleFactory.Create(Cache.LangProject.StylesOC, "TestStyle", ContextValues.InternalConfigureView, StructureValues.Body,
 					FunctionValues.Line, true, 2, false);
 				testStyle.Usage.set_String(Cache.DefaultAnalWs, "Test Style");
-
+				var testParaStyleWithBg = styleFactory.Create(Cache.LangProject.StylesOC, "Normal", ContextValues.InternalConfigureView, StructureValues.Body,
+					FunctionValues.Line, false, 2, false);
+				var propsBldr = TsPropsBldrClass.Create();
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault,
+					(int)ColorUtil.ConvertColorToBGR(Color.Red));
+				testParaStyleWithBg.Rules = propsBldr.GetTextProps();
 				DictionaryConfigurationManagerController.ExportConfiguration(configurationToExport, _zipFile, Cache);
 				Cache.LangProject.StylesOC.Clear();
 			});
@@ -193,6 +200,11 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(importedTestStyle.Context, ContextValues.InternalConfigureView);
 			Assert.AreEqual(importedTestStyle.Type, StyleType.kstCharacter);
 			Assert.AreEqual(importedTestStyle.UserLevel, 2);
+			var importedParaStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Normal");
+			Assert.NotNull(importedParaStyle, "test style was not imported.");
+			int hasColor;
+			importedParaStyle.Rules.GetIntPropValues((int)FwTextPropType.ktptBackColor, out hasColor);
+			Assert.AreNotEqual(hasColor, -1, "Background color should be set");
 		}
 
 		[Test]

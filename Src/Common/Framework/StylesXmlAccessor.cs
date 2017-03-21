@@ -1369,9 +1369,12 @@ namespace SIL.FieldWorks.Common.Framework
 			}
 
 			node = paraAttributes.GetNamedItem("background");
-			if (node != null && node.Value != "white")
-				ReportInvalidInstallation(String.Format(
-					FrameworkStrings.ksUnknownBackgroundValue, styleName, ResourceFileName));
+			var sColor = (node == null ? "default" : node.Value);
+			if (sColor != "default")
+			{
+				setIntProp((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault,
+					ColorVal(sColor, styleName));
+			}
 
 			// set leading indentation
 			node = paraAttributes.GetNamedItem("indentLeft");
