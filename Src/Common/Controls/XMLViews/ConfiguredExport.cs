@@ -771,6 +771,25 @@ namespace SIL.FieldWorks.Common.Controls
 						continue;
 					rule = rule.Replace("<<<", "=");
 					rule = rule.Replace("<<", "=");
+
+					// If the rule contains one or more expansions ('/') remove the expansion portions
+					if (rule.Contains("/"))
+					{
+						bool isExpansion = false;
+						var newRule = new StringBuilder();
+						for (i = 0; i <= rule.Length - 1; i++)
+						{
+							if (rule.Substring(i, 1) == "/")
+								isExpansion = true;
+							else if (rule.Substring(i, 1) == "=" || rule.Substring(i, 1)== "<")
+								isExpansion = false;
+
+							if (!isExpansion)
+								newRule.Append(rule.Substring(i, 1));
+						}
+						rule = newRule.ToString();
+					}
+
 					// "&N<ng<<<Ng<ny<<<Ny" => "&N<ng=Ng<ny=Ny"
 					// "&N<ñ<<<Ñ" => "&N<ñ=Ñ"
 					// There are other issues we are not handling proplerly such as the next line
@@ -778,7 +797,8 @@ namespace SIL.FieldWorks.Common.Controls
 					var primaryParts = rule.Split('<');
 					foreach (var part in primaryParts)
 					{
-						BuildDigraphSet(part, sWs, wsDigraphMap);
+						if (rule.Contains("<"))
+							BuildDigraphSet(part, sWs, wsDigraphMap);
 						MapRuleCharsToPrimary(part, sWs, wsCharEquivalentMap);
 					}
 				}
