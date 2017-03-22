@@ -1221,9 +1221,9 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// <param name="val">Value to interpret (a color name or (red, green, blue).</param>
 		/// <param name="styleName">name of the style (for error reporting)</param>
-		/// <returns></returns>
+		/// <returns>the color as a BGR 6-digit hex int</returns>
 		/// ------------------------------------------------------------------------------------
-		int ColorVal(string val, string styleName)
+		private int ColorVal(string val, string styleName)
 		{
 			if (val[0] == '(')
 			{
@@ -1232,7 +1232,7 @@ namespace SIL.FieldWorks.Common.Framework
 				int secondComma = val.IndexOf(',', firstComma + 1);
 				int green = Convert.ToInt32(val.Substring(firstComma + 1, secondComma - firstComma - 1));
 				int blue = Convert.ToInt32(val.Substring(secondComma + 1, val.Length - secondComma - 2));
-				return red + (blue * 256 + green) * 256;
+				return(blue * 256 + green) * 256 + red;
 			}
 			Color col = Color.FromName(val);
 			if (col.ToArgb() == 0)
@@ -1240,7 +1240,7 @@ namespace SIL.FieldWorks.Common.Framework
 				ReportInvalidInstallation(String.Format(
 					FrameworkStrings.ksUnknownUnderlineColor, styleName, ResourceFileName));
 			}
-			return col.R + (col.B * 256 + col.G) * 256;
+			return (col.B * 256 + col.G) * 256 + col.R;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1251,7 +1251,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <param name="strVal"></param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		static public int InterpretUnderlineType(string strVal)
+		public static int InterpretUnderlineType(string strVal)
 		{
 			int val = (int)FwUnderlineType.kuntSingle; // default
 			switch(strVal)

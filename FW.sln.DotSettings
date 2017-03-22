@@ -55,6 +55,7 @@
 // This software is licensed under the LGPL, version 2.1 or later&#xD;
 // (http://www.gnu.org/licenses/lgpl-2.1.html)&#xD;
 </s:String>
+	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=BGR/@EntryIndexedValue">BGR</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=CSS/@EntryIndexedValue">CSS</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=Db4o/@EntryIndexedValue">Db4o</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=FDO/@EntryIndexedValue">FDO</s:String>
@@ -67,6 +68,7 @@
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=POS/@EntryIndexedValue">POS</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=RA/@EntryIndexedValue">RA</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=RC/@EntryIndexedValue">RC</s:String>
+	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=RGB/@EntryIndexedValue">RGB</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=RS/@EntryIndexedValue">RS</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=UOW/@EntryIndexedValue">UOW</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=URI/@EntryIndexedValue">URI</s:String>

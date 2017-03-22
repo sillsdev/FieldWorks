@@ -479,12 +479,11 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			if (styleRules == null)
 				return;
-			int colorValue;
 			int hasColor;
-			colorValue = styleRules.GetIntPropValues(property, out hasColor);
+			var colorValueBGR = styleRules.GetIntPropValues(property, out hasColor);
 			if (hasColor != -1)
 			{
-				var color = Color.FromArgb(colorValue);
+				var color = Color.FromArgb((int)ColorUtil.ConvertRGBtoBGR((uint)colorValueBGR)); // convert BGR to RGB
 				GetColorValueFromSystemColor(attributeName, resultsList, color);
 			}
 		}
@@ -499,19 +498,13 @@ namespace SIL.FieldWorks.XWorks.LexText
 		}
 
 		/// <summary>
-		/// Takes a system color and writes out a string if it is a known color, or an BGR value that the import code can read
+		/// Takes a system color and writes out a string if it is a known color, or an RGB value that the import code can read
 		/// </summary>
 		private static void GetColorValueFromSystemColor(string attributeName, List<Tuple<string, string>> resultsList, Color color)
 		{
-			string colorString;
-			if (color.IsKnownColor)
-			{
-				colorString = color.Name.ToLowerInvariant();
-			}
-			else
-			{
-				colorString = string.Format("({0},{1},{2})", color.B, color.G, color.R);
-			}
+			var colorString = color.IsKnownColor
+				? color.Name.ToLowerInvariant()
+				: string.Format("({0},{1},{2})", color.R, color.G, color.B);
 			resultsList.Add(new Tuple<string, string>(attributeName, colorString));
 		}
 

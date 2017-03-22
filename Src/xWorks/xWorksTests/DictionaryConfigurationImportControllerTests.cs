@@ -11,7 +11,6 @@ using System.Text;
 using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -33,6 +32,8 @@ namespace SIL.FieldWorks.XWorks
 		private readonly string _defaultConfigPath = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary");
 		private const string configLabel = "importexportConfiguration";
 		private const string configFilename = "importexportConfigurationFile.fwdictconfig";
+		private const int CustomRedBGR = 0x0000FE;
+		private readonly int NamedRedBGR = (int)ColorUtil.ConvertColorToBGR(Color.Red);
 
 		/// <summary>
 		/// Zip file to import during testing.
@@ -44,17 +45,12 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private string _pathToConfiguration;
 
-		[TestFixtureSetUp]
-		public override void FixtureSetup()
-		{
-			base.FixtureSetup();
-
-			FileUtils.EnsureDirectoryExists(_defaultConfigPath);
-		}
-
 		[TestFixtureTearDown]
 		public override void FixtureTeardown()
 		{
+			if (Directory.Exists(_projectConfigPath))
+				Directory.Delete(_projectConfigPath, true); // delete the directory that was created in SetUp
+
 			base.FixtureTeardown();
 		}
 
@@ -101,12 +97,25 @@ namespace SIL.FieldWorks.XWorks
 				var testStyle = styleFactory.Create(Cache.LangProject.StylesOC, "TestStyle", ContextValues.InternalConfigureView, StructureValues.Body,
 					FunctionValues.Line, true, 2, false);
 				testStyle.Usage.set_String(Cache.DefaultAnalWs, "Test Style");
-				var testParaStyleWithBg = styleFactory.Create(Cache.LangProject.StylesOC, "Normal", ContextValues.InternalConfigureView, StructureValues.Body,
+				var normalStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Normal", ContextValues.InternalConfigureView, StructureValues.Body,
 					FunctionValues.Line, false, 2, false);
 				var propsBldr = TsPropsBldrClass.Create();
-				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault,
-					(int)ColorUtil.ConvertColorToBGR(Color.Red));
-				testParaStyleWithBg.Rules = propsBldr.GetTextProps();
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, 0x2BACCA); // arbitrary color to create para element
+				normalStyle.Rules = propsBldr.GetTextProps();
+				var styleWithNamedColors = styleFactory.Create(Cache.LangProject.StylesOC, "Nominal", ContextValues.InternalConfigureView, StructureValues.Body,
+					FunctionValues.Line, false, 2, false);
+				styleWithNamedColors.BasedOnRA = normalStyle;
+				propsBldr = TsPropsBldrClass.Create();
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
+				styleWithNamedColors.Rules = propsBldr.GetTextProps();
+				var styleWithCustomColors = styleFactory.Create(Cache.LangProject.StylesOC, "Abnormal", ContextValues.InternalConfigureView, StructureValues.Body,
+					FunctionValues.Line, false, 2, false);
+				styleWithCustomColors.BasedOnRA = normalStyle;
+				propsBldr = TsPropsBldrClass.Create();
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, CustomRedBGR);
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, CustomRedBGR);
+				styleWithCustomColors.Rules = propsBldr.GetTextProps();
 				DictionaryConfigurationManagerController.ExportConfiguration(configurationToExport, _zipFile, Cache);
 				Cache.LangProject.StylesOC.Clear();
 			});
@@ -190,6 +199,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void DoImport_ImportsStyles()
 		{
+			Assert.IsEmpty(Cache.LangProject.StylesOC);
 			_controller.PrepareImport(_zipFile);
 			CollectionAssert.IsEmpty(Cache.LangProject.StylesOC);
 			// SUT
@@ -200,11 +210,23 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(importedTestStyle.Context, ContextValues.InternalConfigureView);
 			Assert.AreEqual(importedTestStyle.Type, StyleType.kstCharacter);
 			Assert.AreEqual(importedTestStyle.UserLevel, 2);
-			var importedParaStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Normal");
+			var importedParaStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Nominal");
 			Assert.NotNull(importedParaStyle, "test style was not imported.");
 			int hasColor;
-			importedParaStyle.Rules.GetIntPropValues((int)FwTextPropType.ktptBackColor, out hasColor);
-			Assert.AreNotEqual(hasColor, -1, "Background color should be set");
+			var color = importedParaStyle.Rules.GetIntPropValues((int)FwTextPropType.ktptBackColor, out hasColor);
+			Assert.That(hasColor == 0, "Background color should be set");
+			Assert.AreEqual(NamedRedBGR, color, "Background color should be set to Named Red");
+			color = importedParaStyle.Rules.GetIntPropValues((int)FwTextPropType.ktptForeColor, out hasColor);
+			Assert.That(hasColor == 0, "Foreground color should be set");
+			Assert.AreEqual(NamedRedBGR, color, "Foreground color should be set to Named Red");
+			importedParaStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Abnormal");
+			Assert.NotNull(importedParaStyle, "test style was not imported.");
+			color = importedParaStyle.Rules.GetIntPropValues((int)FwTextPropType.ktptBackColor, out hasColor);
+			Assert.That(hasColor == 0, "Background color should be set");
+			Assert.AreEqual(CustomRedBGR, color, "Background color should be set to Custom Red");
+			color = importedParaStyle.Rules.GetIntPropValues((int)FwTextPropType.ktptForeColor, out hasColor);
+			Assert.That(hasColor == 0, "Foreground color should be set");
+			Assert.AreEqual(CustomRedBGR, color, "Foreground color should be set to Custom Red");
 		}
 
 		[Test]
@@ -213,7 +235,7 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			_controller.PrepareImport(_zipFile);
 
-			Assert.That(!File.Exists(_projectConfigPath + configFilename),
+			Assert.That(!File.Exists(Path.Combine(_projectConfigPath, configFilename)),
 				"Configuration should not have been imported if not requested.");
 			Assert.That(_controller._configurations.All(config => config.Label != configLabel),
 				"Configuration should not have been registered.");
@@ -449,7 +471,7 @@ namespace SIL.FieldWorks.XWorks
 			var customFieldLabel = "TempCustomField";
 			var customFieldWrongType = "WrongTypeField";
 			var zipFile = Path.GetTempFileName();
-			using (var existingSameCf = new CustomFieldForTest(Cache, customFieldSameLabel, customFieldSameLabel, LexSenseTags.kClassId, StTextTags.kClassId, -1,
+			using (new CustomFieldForTest(Cache, customFieldSameLabel, customFieldSameLabel, LexSenseTags.kClassId, StTextTags.kClassId, -1,
 					CellarPropertyType.OwningAtomic, Guid.Empty))
 			{
 				using (new CustomFieldForTest(Cache, customFieldLabel, customFieldLabel, LexEntryTags.kClassId, StTextTags.kClassId, -1,

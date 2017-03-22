@@ -119,10 +119,13 @@ namespace SIL.FieldWorks.XWorks
 				ImportStyles(_importStylesLocation);
 				ImportHappened = true;
 			}
-			catch (InstallationException)
+			catch (InstallationException e) // This is the exception thrown if the dtd guid in the style file doesn't match our program
 			{
-				// This is the exception thrown if the dtd guid in the style file doesn't match our program
-				_view.explanationLabel.Text = "Incompatible configuration files. Can not import. ";
+#if DEBUG
+				if (_view == null) // _view is sometimes null in unit tests, and it's helpful to know what exactly went wrong.
+					throw new Exception(xWorksStrings.kstidCannotImport, e);
+#endif
+				_view.explanationLabel.Text = xWorksStrings.kstidCannotImport;
 			}
 
 			// We have re-loaded the model from disk to preserve custom field state so the Label must be set here
@@ -151,6 +154,7 @@ namespace SIL.FieldWorks.XWorks
 			NewConfigToImport.FilePath = outputConfigPath;
 			_configurations.Add(NewConfigToImport);
 
+			// phone home (analytics)
 			var configType = NewConfigToImport.Type;
 			var configDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(
 				configType == DictionaryConfigurationModel.ConfigType.Reversal
