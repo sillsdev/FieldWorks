@@ -829,20 +829,20 @@ namespace SIL.FieldWorks.XWorks
 			if (Clerk.Id == "AllReversalEntries")
 			{
 				var currentConfig = m_mediator.PropertyTable.GetStringProperty("ReversalIndexPublicationLayout", string.Empty);
+				var configuration = new DictionaryConfigurationModel(currentConfig, Cache);
 				var reversalentry = Clerk.CurrentObject as IReversalIndexEntry;
 				if (reversalentry == null)
 					return;
 				var writingSystem = Cache.ServiceLocator.WritingSystemManager.Get(reversalentry.ReversalIndex.WritingSystem);
 				if (writingSystem == null)
 					return;
-				var reversalFileName = writingSystem.DisplayLabel;
-				if (!currentConfig.Contains(reversalFileName + DictionaryConfigurationModel.FileExtension))
+				var currReversalWs = writingSystem.Id;
+				if(configuration.WritingSystem != currReversalWs)
 				{
-					var newConfig = Path.Combine(Path.GetDirectoryName(currentConfig), reversalFileName + DictionaryConfigurationModel.FileExtension);
+					var newConfig = Path.Combine(Path.GetDirectoryName(currentConfig), configuration.Label + DictionaryConfigurationModel.FileExtension);
 					m_mediator.PropertyTable.SetProperty("ReversalIndexPublicationLayout", newConfig, true);
 				}
 			}
-
 			var currentObjectGuid = Clerk.CurrentObject.Guid.ToString();
 			var currSelectedByGuid = browser.Document.GetHtmlElementById("g" + currentObjectGuid);
 			if (currSelectedByGuid == null)
