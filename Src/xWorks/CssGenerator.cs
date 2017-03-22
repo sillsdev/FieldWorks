@@ -50,6 +50,7 @@ namespace SIL.FieldWorks.XWorks
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
 			LoadBulletUnicodes();
 			LoadNumberingStyles();
+			GenerateLetterHeaderCss(mediator, mediatorstyleSheet, styleSheet);
 			GenerateCssForDefaultStyles(mediator, mediatorstyleSheet, styleSheet, model);
 			MakeLinksLookLikePlainText(styleSheet);
 			GenerateBidirectionalCssShim(styleSheet);
@@ -73,6 +74,11 @@ namespace SIL.FieldWorks.XWorks
 
 			if (mediatorstyleSheet.Styles.Contains(DictionaryNormal))
 				GenerateDictionaryNormalParagraphCss(styleSheet, mediator);
+
+			if (mediatorstyleSheet.Styles.Contains(LetterHeadingStyleName))
+			{
+				GenerateCssForWritingSystems(".letter", LetterHeadingStyleName, styleSheet, mediator);
+			}
 
 			GenerateDictionaryMinorParagraphCss(styleSheet, mediator, model);
 		}
@@ -1473,20 +1479,17 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public static string GenerateLetterHeaderCss(Mediator mediator)
+		public static void GenerateLetterHeaderCss(Mediator mediator, FwStyleSheet mediatorStyleSheet, StyleSheet styleSheet)
 		{
 			var letHeadRule = new StyleRule { Value = ".letHead" };
 			letHeadRule.Declarations.Properties.Add(new Property("-moz-column-count") { Term = new PrimitiveTerm(UnitType.Number, 1) });
 			letHeadRule.Declarations.Properties.Add(new Property("-webkit-column-count") { Term = new PrimitiveTerm(UnitType.Number, 1) });
 			letHeadRule.Declarations.Properties.Add(new Property("column-count") { Term = new PrimitiveTerm(UnitType.Number, 1) });
 			letHeadRule.Declarations.Properties.Add(new Property("clear") { Term = new PrimitiveTerm(UnitType.Ident, "both") });
-			letHeadRule.Declarations.Properties.Add(new Property("text-align") { Term = new PrimitiveTerm(UnitType.Ident, "center") });
 			letHeadRule.Declarations.Properties.Add(new Property("width") { Term = new PrimitiveTerm(UnitType.Percentage, 100) });
+			letHeadRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(GenerateCssStyleFromFwStyleSheet(LetterHeadingStyleName, 0, mediator)));
 
-			var letterRule = new StyleRule { Value = ".letter" };
-			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
-			letterRule.Declarations.Properties.AddRange(GenerateCssStyleFromFwStyleSheet(LetterHeadingStyleName, cache.DefaultVernWs, mediator));
-			return letHeadRule.ToString(true) + Environment.NewLine + letterRule.ToString(true) + Environment.NewLine;
+			styleSheet.Rules.Add(letHeadRule);
 		}
 
 		public static string GenerateCssForPageButtons()
