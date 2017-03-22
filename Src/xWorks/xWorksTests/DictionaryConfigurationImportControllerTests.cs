@@ -417,8 +417,13 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void DoImport_AddsNewPublications()
 		{
-			var configFile=FileUtils.GetTempFile("unittest.txt");
-			FileUtils.WriteStringtoFile(configFile, "arbitrary file contents", Encoding.UTF8);
+			var configFile=FileUtils.GetTempFile("unittest.xml");
+			const string XmlOpenTagsThruRoot = @"<?xml version=""1.0"" encoding=""utf-8""?>
+			<DictionaryConfiguration name=""Root"" allPublications=""true"" isRootBased=""true"" version=""1"" lastModified=""2014-02-13"">";
+			const string XmlCloseTagsFromRoot = @"</DictionaryConfiguration>";
+			FileUtils.WriteStringtoFile(configFile, XmlOpenTagsThruRoot +
+				"<ConfigurationItem name=\"Main Entry\" style=\"Dictionary-Normal\" styleType=\"paragraph\" isEnabled=\"true\" field=\"LexEntry\" cssClassNameOverride=\"entry\"></ConfigurationItem>"
+				+ XmlCloseTagsFromRoot, Encoding.UTF8);
 			_controller._temporaryImportConfigLocation = configFile;
 			_controller.NewConfigToImport = new DictionaryConfigurationModel()
 			{
@@ -427,6 +432,7 @@ namespace SIL.FieldWorks.XWorks
 				Parts = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode() }
 			};
 			// SUT
+			_controller._proposedNewConfigLabel = "blah";
 			_controller.DoImport();
 
 			Assert.That(_controller.NewConfigToImport.Publications.Contains("pub 1"), "Should not have lost publication from configuration that was imported");
@@ -460,9 +466,13 @@ namespace SIL.FieldWorks.XWorks
 
 					var configurationToExport = importExportDCModel;
 					_pathToConfiguration = configurationToExport.FilePath;
+					const string XmlOpenTagsThruRoot = @"<?xml version=""1.0"" encoding=""utf-8""?>
+			<DictionaryConfiguration name=""Root"" allPublications=""true"" isRootBased=""true"" version=""1"" lastModified=""2014-02-13"">";
+					const string XmlCloseTagsFromRoot = @"</DictionaryConfiguration>";
+					const string XmlTagsHeaword = @"<ConfigurationItem name=""Main Entry"" isEnabled=""true"" field=""LexEntry"">\r\n\t\t\t\t\t<ConfigurationItem name=""Testword"" nameSuffix=""2b"" before=""["" between="", "" after=""] "" style=""Dictionary-Headword"" isEnabled=""true"" field=""HeadWord"">""\r\n\r\n\r\n\t\t\t\t\t</ConfigurationItem>\r\n\t\t\t\t</ConfigurationItem>\r\n\t\t\t\t<SharedItems/>";
+					const string XmlTagsCustomField = @" <ConfigurationItem name = ""CustomField1"" isEnabled=""true"" isCustomField=""true"" before="" "" field=""OwningEntry"" subField=""CustomField1"" />";
 					File.WriteAllText(_pathToConfiguration,
-						DictionaryConfigurationModelTests.XmlOpenTagsThruHeadword +
-						DictionaryConfigurationModelTests.XmlCloseTagsFromHeadword);
+						XmlOpenTagsThruRoot + XmlTagsHeaword + XmlTagsCustomField + XmlCloseTagsFromRoot);
 					// This export should create the zipfile containing the custom field information (currently in LIFT format)
 					DictionaryConfigurationManagerController.ExportConfiguration(configurationToExport, zipFile, Cache);
 				} // Destroy two of the custom fields and verify the state
@@ -483,6 +493,9 @@ namespace SIL.FieldWorks.XWorks
 					VerifyCustomFieldPresent(customFieldWrongType, LexEntryTags.kClassId, StTextTags.kClassId);
 					// SUT
 					_controller.DoImport();
+					var configToImport = (DictionaryConfigurationModel)_controller.NewConfigToImport;
+					// Assert that the field which was Enabled or not
+					Assert.IsTrue(configToImport.Parts[1].IsEnabled, "CustomField1 should be enabled");
 					// Assert that the field which was present before the import is still there
 					VerifyCustomFieldPresent(customFieldSameLabel, LexSenseTags.kClassId, StTextTags.kClassId);
 					// Assert that the field which was not present before the import has been added

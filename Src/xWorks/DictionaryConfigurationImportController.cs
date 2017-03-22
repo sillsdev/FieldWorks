@@ -102,31 +102,13 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Debug.Assert(NewConfigToImport != null);
 
+			ImportCustomFields(_importLiftLocation);
+
 			// If the configuration to import has the same label as an existing configuration in the project folder
 			// then overwrite the existing configuration.
 			var existingConfigurationInTheWay = _configurations.FirstOrDefault(config => config.Label == NewConfigToImport.Label &&
 				Path.GetDirectoryName(config.FilePath) == _projectConfigDir);
-			if (existingConfigurationInTheWay != null)
-			{
-				_configurations.Remove(existingConfigurationInTheWay);
-				if (existingConfigurationInTheWay.FilePath != null)
-				{
-					FileUtils.Delete(existingConfigurationInTheWay.FilePath);
-				}
-			}
 
-			// Set a filename for the new configuration. Use a unique filename that isn't either registered with another configuration, or existing on disk. Note that in this way, we ignore what the original filename was of the configuration file in the .zip file.
-			DictionaryConfigurationManagerController.GenerateFilePath(_projectConfigDir, _configurations, NewConfigToImport);
-
-			var outputConfigPath = existingConfigurationInTheWay != null ? existingConfigurationInTheWay.FilePath : NewConfigToImport.FilePath;
-
-			File.Move(_temporaryImportConfigLocation, outputConfigPath);
-
-			NewConfigToImport.FilePath = outputConfigPath;
-
-			_configurations.Add(NewConfigToImport);
-
-			ImportCustomFields(_importLiftLocation);
 			NewConfigToImport.Publications.ForEach(
 				publication =>
 				{
@@ -142,6 +124,33 @@ namespace SIL.FieldWorks.XWorks
 				// This is the exception thrown if the dtd guid in the style file doesn't match our program
 				_view.explanationLabel.Text = "Incompatible configuration files. Can not import. ";
 			}
+
+			// We have re-loaded the model from disk to preserve custom field state so the Label must be set here
+			NewConfigToImport.FilePath = _temporaryImportConfigLocation;
+			NewConfigToImport.Load(_cache);
+			if (existingConfigurationInTheWay != null)
+			{
+				_configurations.Remove(existingConfigurationInTheWay);
+				if (existingConfigurationInTheWay.FilePath != null)
+				{
+					FileUtils.Delete(existingConfigurationInTheWay.FilePath);
+				}
+			}
+			else
+			{
+				NewConfigToImport.Label = _proposedNewConfigLabel;
+			}
+
+			// Set a filename for the new configuration. Use a unique filename that isn't either registered with another configuration, or existing on disk. Note that in this way, we ignore what the original filename was of the configuration file in the .zip file.
+			DictionaryConfigurationManagerController.GenerateFilePath(_projectConfigDir, _configurations, NewConfigToImport);
+
+			var outputConfigPath = existingConfigurationInTheWay != null ? existingConfigurationInTheWay.FilePath : NewConfigToImport.FilePath;
+
+			File.Move(_temporaryImportConfigLocation, outputConfigPath);
+
+			NewConfigToImport.FilePath = outputConfigPath;
+			_configurations.Add(NewConfigToImport);
+
 			var configType = NewConfigToImport.Type;
 			var configDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(
 				configType == DictionaryConfigurationModel.ConfigType.Reversal
