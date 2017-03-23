@@ -3,8 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Net;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
@@ -22,13 +22,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			InitializeComponent();
 
+			var instructionsHtml = WebUtility.HtmlDecode(LexEdStrings.SendReceiveForTheFirstTimeContent);
 			// Strip mailto: links until a proper solution can be implemented for LT-16594.
-			if (!MiscUtils.IsUnix)
-				return;
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FLExBridgeFirstSendReceiveInstructionsDlg));
-			var documentText = resources.GetString("htmlControl_Instructions.DocumentText");
-			var documentTextWithNoMailtoLinks = Regex.Replace(documentText, "<a href='mailto:.*'>(.*)</a>", "$1");
-			this.htmlControl_Instructions.DocumentText = documentTextWithNoMailtoLinks;
+			if (MiscUtils.IsUnix && instructionsHtml != null)
+			{
+				instructionsHtml = Regex.Replace(instructionsHtml, "<a href='mailto:.*'>(.*)</a>", "$1");
+			}
+			htmlControl_Instructions.DocumentText = instructionsHtml;
 		}
 
 		private void HelpBtn_Click(object sender, EventArgs e)
