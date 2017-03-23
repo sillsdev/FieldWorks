@@ -427,7 +427,7 @@ Are you SURE you want to delete the field {2}?</value>
     <comment>action on a tree view item</comment>
   </data>
   <data name="Delete" xml:space="preserve">
-    <value>Delete</value>
+    <value>Delete this custom view</value>
     <comment>action on a tree view item</comment>
   </data>
   <data name="EditLabel" xml:space="preserve">
@@ -683,7 +683,7 @@ Are you sure you want to delete this list?</value>
   </data>
   <data name="ksConfigure" xml:space="preserve">
     <value>Configure {0} View...</value>
-    <comment>Sole item in right-click menu in Dictionary view</comment>
+    <comment>Parameter is either Dictionary or Reversal Index</comment>
   </data>
   <data name="ksInspect" xml:space="preserve">
     <value>Inspect entry</value>
@@ -695,7 +695,7 @@ Are you sure you want to delete this list?</value>
   </data>
   <data name="ksConfigureIn" xml:space="preserve">
     <value>Configure {0} in {1} View...</value>
-    <comment>{0} is a label of something in the dictionary configure dialog, {1} is the main object type.</comment>
+    <comment>{0} is a node in the dictionary configure dialog, {1} is the kind of document we are configuring (Dictionary, Reversal Index, Classified Dictionary, etc.).</comment>
   </data>
   <data name="ksDictConfigCopyOf" xml:space="preserve">
     <value>Copy of {0}</value>
@@ -703,19 +703,19 @@ Are you sure you want to delete this list?</value>
   </data>
   <data name="ksConfirmDelete" xml:space="preserve">
     <value>Are you sure you want to delete the {0} View {1}?</value>
-    <comment>used by DictionaryConfigMgrDlg</comment>
+    <comment>First parameter is something like Dictionary or Reversal Index.  Second parameter is the name of a dictionary configuration/view.</comment>
   </data>
   <data name="ksConfirmDeleteTitle" xml:space="preserve">
     <value>Delete {0} View</value>
-    <comment>used by DictionaryConfigMgrDlg</comment>
+    <comment>Parameter is the name of a dictionary configuration/view</comment>
   </data>
   <data name="ksChooseAnotherViewName" xml:space="preserve">
     <value>That name is already in use by another view.</value>
-    <comment>used by DictionaryConfigMgrDlg</comment>
+    <comment>The name of a dictionary configuration/view</comment>
   </data>
   <data name="ksNameInUseTitle" xml:space="preserve">
     <value>Name Already In Use</value>
-    <comment>used by DictionaryConfigMgrDlg</comment>
+    <comment>The name of a dictionary configuration/view</comment>
   </data>
   <data name="ksComplexFormTypes" xml:space="preserve">
     <value>Complex Form Types:</value>
@@ -736,7 +736,7 @@ Are you sure you want to delete this list?</value>
     <value>No Extended Note Type</value>
   </data>
   <data name="ksNoConfiguration" xml:space="preserve">
-    <value>The dictionary display configuration has not been set.</value>
+    <value>The dictionary view has not been set.</value>
   </data>
   <data name="ksNoVariantType" xml:space="preserve">
     <value>No Variant Type</value>
@@ -786,7 +786,7 @@ Are you sure you want to delete this list?</value>
   </data>
   <data name="ksSelectedEntryNotInDict" xml:space="preserve">
     <value>The entry you have selected is not shown in Dictionary view, {0}.</value>
-    <comment>Used in Dictionary view warning dialogs.</comment>
+    <comment>Parameter is the Lexeme Form of the entry.</comment>
   </data>
   <data name="ksParagraphStyle" xml:space="preserve">
     <value>Paragraph Style</value>
@@ -882,42 +882,42 @@ If you are not the one designated user who adds fields, or you are making some o
     <comment>Do Not Translate</comment>
   </data>
   <data name="InvalidRootConfigurationNode" xml:space="preserve">
-    <value>The root node in your configuration is invalid. The field attribute '{0}' must match a class name.</value>
+    <value>The root node in your configured view is invalid. The field attribute '{0}' must match a class name.</value>
     <comment>low priority for localizing, helpful to developers of dictionary configuration files, hopefully users will never see this.</comment>
   </data>
   <data name="NoConfigsMatchPub" xml:space="preserve">
-    <value>No configurations match the current publication.</value>
-    <comment>If a user selects a publication, but has deselected that publication from all their configurations, this will be the content of the dictionary preview pane.</comment>
+    <value>No views match the current publication.</value>
+    <comment>If a user selects a publication, but has deselected that publication from all their configured views, this will be the content of the dictionary preview pane.</comment>
   </data>
   <data name="Confirm" xml:space="preserve">
     <value>Confirm</value>
   </data>
   <data name="Reset" xml:space="preserve">
-    <value>Reset</value>
-    <comment>As in setting some settings back to what they were before customization.</comment>
+    <value>Reset this view to the default settings</value>
+    <comment>Set some dictionary settings back to what they were before customization.</comment>
   </data>
   <data name="YouAreResetting" xml:space="preserve">
     <value>You are resetting the following to factory defaults:</value>
   </data>
   <data name="Configuration" xml:space="preserve">
     <value>Configuration</value>
-    <comment>A generic description of a Dictionary Configuration or a Reversal Index Configuration.</comment>
+    <comment>A generic description of a Dictionary Configuration or a Reversal Index Configuration.  (It should really be "view".)</comment>
   </data>
   <data name="WantContinue" xml:space="preserve">
     <value>Do you want to continue?</value>
-    <comment>whether to continue with the resetting of a configuration</comment>
+    <comment>whether to continue with the resetting of a configured view</comment>
   </data>
   <data name="UploadToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0__publication_using_the__1__configuration" xml:space="preserve">
-    <value>Exporting entries for the {0} publication using the {1} configuration</value>
-    <comment>Displayed in the log when exporting to webonary</comment>
+    <value>Exporting entries for the {0} publication using the {1} view</value>
+    <comment>Displayed in the log when exporting to Webonary. Arguments are: name of publication, name of configured view</comment>
   </data>
   <data name="ExportingEntriesToWebonary" xml:space="preserve">
-    <value>Exporting entries for the {0} publication using the {1} configuration</value>
-    <comment>Displayed in the log box when exporting to Webonary</comment>
+    <value>Exporting entries for the {0} publication using the {1} view</value>
+    <comment>Displayed in the log box when exporting to Webonary.  Arguments are: name of publication, name of configured view</comment>
   </data>
   <data name="ExportingEntriesToWebonaryCompleted" xml:space="preserve">
     <value>Export of lexicon completed.</value>
-    <comment>Displayed in the log box when exporting to Webonary after all entries are exported</comment>
+    <comment>Displayed in the log box when exporting to Webonary after all entries are exported.</comment>
   </data>
   <data name="BeginCompressingDataForWebonary" xml:space="preserve">
     <value>Compressing data before sending to Webonary.</value>
@@ -950,11 +950,11 @@ If you are not the one designated user who adds fields, or you are making some o
   </data>
   <data name="ReversalEntries" xml:space="preserve">
     <value>, {0} {1} reversal entries</value>
-    <comment>Part of message displayed in Upload to Webonary dialog to inform user about what data will be uploaded. Will be inserted into the PublicationEntriesLabel string. 0 is a number. 1 is the name of a language or a reversal index configuration name. This string will be used in cases where there are more than one reversal index configuration to report the count for, and this is not the last one.</comment>
+    <comment>Part of message displayed in Upload to Webonary dialog to inform user about what data will be uploaded. Will be inserted into the PublicationEntriesLabel string. 0 is a number. 1 is the name of a language or a reversal index configuration (view) name. This string will be used in cases where there are more than one reversal index configuration to report the count for, and this is not the last one.</comment>
   </data>
   <data name="ReversalEntries_Last" xml:space="preserve">
     <value>, and {0} {1} reversal entries</value>
-    <comment>Part of message displayed in Upload to Webonary dialog to inform user about what data will be uploaded. Will be inserted into the PublicationEntriesLabel string. 0 is a number. 1 is the name of a language or a reversal index configuration name. This string will be used in cases where there are more than one reversal index configuration to report the count for, and this is the last one.</comment>
+    <comment>Part of message displayed in Upload to Webonary dialog to inform user about what data will be uploaded. Will be inserted into the PublicationEntriesLabel string. 0 is a number. 1 is the name of a language or a reversal index configuration (view) name. This string will be used in cases where there are more than one reversal index configuration to report the count for, and this is the last one.</comment>
   </data>
   <data name="ReversalEntries_Only" xml:space="preserve">
     <value> and {0} {1} reversal entries</value>
@@ -996,14 +996,14 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>Click Cancel to stop loading the Dictionary view and move to Lexicon Edit.</value>
   </data>
   <data name="ReversalIndexConfigurationDlgTitle" xml:space="preserve">
-    <value>Reversal Index Configuration Manager</value>
+    <value>Configure Reversal Index Views</value>
   </data>
   <data name="YouAreResettingReversal" xml:space="preserve">
     <value>You are resetting the following to the 'All Reversal Indexes' settings:</value>
   </data>
   <data name="DictionaryConfigurationMangager_ReversalConfigurations_GroupLabel" xml:space="preserve">
-    <value>Reversal Configurations</value>
-    <comment>Label for the group box which contains the reversal configurations</comment>
+    <value>Reversal Views</value>
+    <comment>Label for the group box which contains the reversal configured views</comment>
   </data>
   <data name="InadvisableToShare" xml:space="preserve">
     <value>It is inadvisable to share '{0}' because a shared node with the same field ({1}) already exists ({2}). No changes have been made.</value>
@@ -1035,31 +1035,31 @@ If you are not the one designated user who adds fields, or you are making some o
   </data>
   <data name="ConfigureHomograph_ConfigDescription" xml:space="preserve">
     <value>These settings affect the current {0} view:{1}{2}</value>
-    <comment>Configure Headword Numbers dialog description text. The first parameter will be the translated version of either "Reversal Index" or "Dictionary"</comment>
+    <comment>The first parameter will be either "Reversal Index" or "Dictionary". Second parameter is a newline.  Third is the name of the configured view.</comment>
   </data>
   <data name="kstidImportingConfigNewName" xml:space="preserve">
-    <value>Importing configuration with new name '{0}'.</value>
-    <comment>Explanation on import dialog. 0 is name of a configuration.</comment>
+    <value>Importing view with new name '{0}'.</value>
+    <comment>Parameter is the name for a new copy of an existing dictionary configuration.</comment>
   </data>
   <data name="kstidImportingAndOverwritingConfiguration" xml:space="preserve">
-    <value>Importing and overwriting existing configuration with name '{0}'.</value>
-    <comment>Explanation on import dialog. 0 is name of a configuration.</comment>
+    <value>Importing and overwriting existing view named '{0}'.</value>
+    <comment>Parameter is the name of an existing dictionary configuration.</comment>
   </data>
   <data name="kstidOverwriteConfiguration" xml:space="preserve">
-    <value>Overwrite existing configuration named {0}</value>
-    <comment>Text on radio button on configuration import dialog</comment>
+    <value>Overwrite existing view named {0}</value>
+    <comment>Parameter is the name of an existing dictionary configuration</comment>
   </data>
   <data name="kstidUseNewConfigName" xml:space="preserve">
-    <value>Use new configuration name {0}</value>
-    <comment>Text on radio button on configuration import dialog</comment>
+    <value>Use new view name {0}</value>
+    <comment>Parameter is proposed new name for a copy of an existing dictionary configuration.</comment>
   </data>
   <data name="kstidCannotImport" xml:space="preserve">
     <value>Cannot import. Choose another file.</value>
     <comment>explanation text on import dialog</comment>
   </data>
   <data name="kstidImportingConfig" xml:space="preserve">
-    <value>Importing configuration with name '{0}'.</value>
-    <comment>explanation on import dialog</comment>
+    <value>Importing view named '{0}'.</value>
+    <comment>Parameter is the name of a dictionary configuration</comment>
   </data>
   <data name="kstidChooseFile" xml:space="preserve">
     <value>Choose file for import</value>
@@ -1067,14 +1067,14 @@ If you are not the one designated user who adds fields, or you are making some o
   </data>
   <data name="kstidImportedSuffix" xml:space="preserve">
     <value>{0}-Imported{1}</value>
-    <comment>0 is the name of a configuration. 1 is a number. This string is used to generate a unique suffix, like "-Imported3", to append to a configuration name in instances in which a new and unique name needs suggested for a dictionary configuration being imported. It would be okay to have spaces in the string.</comment>
+    <comment>First parameter is the name of a dictionary configuration. Second parameter is a digit. This string is used to generate a unique suffix, like "-Imported3", to append to a configuration name in instances in which a new and unique name needs to be suggested for a dictionary configuration being imported. It would be okay to have spaces in the string.</comment>
   </data>
   <data name="kstidZipFiles" xml:space="preserve">
     <value>Zip files</value>
     <comment>In configuration import file open dialog, this is the description of what kind of files are *.zip files that are being filtered for.</comment>
   </data>
   <data name="kstidConfigsChanged" xml:space="preserve">
-    <value>Your list of configurations was just changed. You must close and reopen this dialog to be able to export.</value>
+    <value>Your list of views was just changed. You must close and reopen this dialog to be able to export.</value>
     <comment>Message on message box shown from Manage Views dialog.</comment>
   </data>
   <data name="kstidChooseExportFile" xml:space="preserve">
@@ -1082,7 +1082,7 @@ If you are not the one designated user who adds fields, or you are making some o
     <comment>title of save dialog when exporting dictionary configuration</comment>
   </data>
   <data name="kstidConfigsChangedImport" xml:space="preserve">
-    <value>Your list of configurations was just changed. You must close and reopen this dialog to be able to import.</value>
+    <value>Your list of views was just changed. You must close and reopen this dialog to be able to import.</value>
     <comment>Message on message box shown from Manage Views dialog</comment>
   </data>
   <data name="kstidPublicationsWillBeAdded" xml:space="preserve">

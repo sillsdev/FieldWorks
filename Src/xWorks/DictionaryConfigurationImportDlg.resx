@@ -404,7 +404,7 @@ Lots of explanation here, to be sure.
     <value>9</value>
   </data>
   <data name="fileImportLabel.Text" xml:space="preserve">
-    <value>Configuration file to import</value>
+    <value>File to import</value>
   </data>
   <data name="&gt;&gt;fileImportLabel.Name" xml:space="preserve">
     <value>fileImportLabel</value>
@@ -704,7 +704,7 @@ Lots of explanation here, to be sure.
     <value>514, 340</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
-    <value>Import Dictionary Configuration</value>
+    <value>Import Dictionary View</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>DictionaryConfigurationImportDlg</value>

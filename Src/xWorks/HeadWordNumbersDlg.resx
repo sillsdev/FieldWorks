@@ -379,7 +379,7 @@
   </data>
   <data name="m_configurationDescription.Text" xml:space="preserve">
     <value>These settings affect the current TYPESTRING configuration:
-Example-string to give a feel for the length</value>
+Example-string DO NOT LOCALIZE THIS STRING</value>
   </data>
   <data name="&gt;&gt;m_configurationDescription.Name" xml:space="preserve">
     <value>m_configurationDescription</value>
