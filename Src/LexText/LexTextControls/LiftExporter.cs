@@ -260,7 +260,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			foreach (var etym in entry.EtymologyOS)
 				WriteEtymology(w, etym);
 			foreach (var dialect in entry.DialectLabelsRS)
-				WriteTrait(w, RangeNames.sDbDialectLabelsOA, dialect.Abbreviation, m_wsBestVernAnal);
+				WriteTrait(w, RangeNames.sDbDialectLabelsOA, dialect.Name, m_wsBestVernAnal);
 			foreach (var er in entry.EntryRefsOS)
 				WriteLexEntryRef(w, er);
 			foreach (var ler in entry.LexEntryReferences)
@@ -803,7 +803,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			foreach (var anthro in sense.AnthroCodesRC)
 				WriteTrait(w, RangeNames.sAnthroListOA, anthro.Abbreviation, m_wsBestAnalVern);
 			foreach (var dialect in sense.DialectLabelsRS)
-				WriteTrait(w, RangeNames.sDbDialectLabelsOA, dialect.Abbreviation, m_wsBestVernAnal);
+				WriteTrait(w, RangeNames.sDbDialectLabelsOA, dialect.Name, m_wsBestVernAnal);
 			foreach (var dom in sense.DomainTypesRC)
 				WriteTrait(w, RangeNames.sDbDomainTypesOA, dom.Name, m_wsBestAnalVern);
 			foreach (var reversal in sense.ReversalEntriesRC)

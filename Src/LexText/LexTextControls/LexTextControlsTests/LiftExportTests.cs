@@ -598,6 +598,13 @@ namespace LexTextControlsTests
 						m_cache.TsStrFactory.MakeString("citation", m_cache.DefaultVernWs);
 					m_entryTest.Bibliography.AnalysisDefaultWritingSystem =
 						m_cache.TsStrFactory.MakeString("bibliography entry", m_cache.DefaultAnalWs);
+
+					var dialectFactory = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>();
+					var dialectLabel = dialectFactory.Create(Guid.NewGuid(), Cache.LangProject.LexDbOA.DialectLabelsOA);
+					dialectLabel.Name.set_String(Cache.DefaultAnalWs, "east");
+					dialectLabel.Abbreviation.set_String(Cache.DefaultAnalWs, "e");
+					m_entryTest.DialectLabelsRS.Add(dialectLabel);
+
 					m_entryTest.Comment.AnalysisDefaultWritingSystem =
 						m_cache.TsStrFactory.MakeString("I like this comment.", m_cache.DefaultAnalWs);
 					m_entryTest.LiteralMeaning.AnalysisDefaultWritingSystem =
@@ -1325,7 +1332,7 @@ namespace LexTextControlsTests
 				Assert.IsNotNull(traitlist);
 				if (entry == m_entryTest)
 				{
-					Assert.AreEqual(8, traitlist.Count);
+					Assert.AreEqual(9, traitlist.Count);
 					VerifyPublishInExport(xentry);
 				}
 				else
@@ -1503,6 +1510,12 @@ namespace LexTextControlsTests
 
 			var xpronun = xentry.SelectNodes("pronunciation");
 			Assert.That(xpronun, Has.Count.EqualTo(1));
+
+			var dialectLabelXpath = "trait[@name = 'dialect-labels']";
+			var dialectLabelNodes = xentry.SelectNodes(dialectLabelXpath);
+			Assert.AreEqual(1, dialectLabelNodes.Count, "Should contain dialect label");
+			Assert.AreEqual("east", XmlUtils.GetAttributeValue(dialectLabelNodes[0], "value"), "Wrong dialect label!");
+
 			var xmedia = xpronun[0].SelectNodes("media");
 			Assert.That(xmedia, Has.Count.EqualTo(1));
 			var hrefMedia = xmedia[0].Attributes["href"];
