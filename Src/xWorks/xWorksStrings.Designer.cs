@@ -447,6 +447,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Export the view.
+        /// </summary>
+        internal static string ExportSelected {
+            get {
+                return ResourceManager.GetString("ExportSelected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Export to {0}.
         /// </summary>
         internal static string ExportTo0 {
@@ -551,6 +560,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string HighlightAffectedContent {
             get {
                 return ResourceManager.GetString("HighlightAffectedContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import a view.
+        /// </summary>
+        internal static string ImportView {
+            get {
+                return ResourceManager.GetString("ImportView", resourceCulture);
             }
         }
         
