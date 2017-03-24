@@ -442,10 +442,13 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 								if (i + 1 < spec.Data.Length)
 									writer.Write(";");
 							}
+
 							writer.WriteLine("\"/>");
 						}
+
 						writer.WriteLine("</PuaDefinitions>");
 					}
+
 					var inst = new PUAInstaller();
 					inst.InstallPUACharacters(customCharsFile);
 					if (!String.IsNullOrEmpty(oldFile) && File.Exists(oldFile))
@@ -453,6 +456,13 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 					m_fBakFileCreated = false;
 					m_fDirty = false;
 					return;
+				}
+				catch (PuaException ex)
+				{
+					var res = MessageBox.Show(ex.Message, Properties.Resources.ksMsgHeader,
+						MessageBoxButtons.RetryCancel);
+					if (res == DialogResult.Cancel)
+						return;
 				}
 				catch
 				{
