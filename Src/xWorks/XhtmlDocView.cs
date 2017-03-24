@@ -839,7 +839,7 @@ namespace SIL.FieldWorks.XWorks
 				var currReversalWs = writingSystem.Id;
 				if(configuration.WritingSystem != currReversalWs)
 				{
-					var newConfig = Path.Combine(Path.GetDirectoryName(currentConfig), configuration.Label + DictionaryConfigurationModel.FileExtension);
+					var newConfig = Path.Combine(Path.GetDirectoryName(currentConfig), Path.GetFileNameWithoutExtension(currentConfig) + DictionaryConfigurationModel.FileExtension);
 					m_mediator.PropertyTable.SetProperty("ReversalIndexPublicationLayout", newConfig, true);
 				}
 			}
