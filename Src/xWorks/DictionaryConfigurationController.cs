@@ -1070,23 +1070,14 @@ namespace SIL.FieldWorks.XWorks
 		public static List<DictionaryNodeListOptions.DictionaryNodeOption> UpdateWsOptions(DictionaryNodeWritingSystemOptions wsOptions, FdoCache cache)
 		{
 			var availableWSs = GetCurrentWritingSystems(wsOptions.WsType, cache);
-
-			if (wsOptions.Options.Count == availableWSs.Count)
+			int magicId;
+			wsOptions.Options.AddRange(availableWSs.Where(availWs => !int.TryParse(availWs.Id, out magicId) && wsOptions.Options.All(opt => opt.Id != availWs.Id)));
+			for (var i = wsOptions.Options.Count - 1; i >= 0; --i)
 			{
-				int i = 0;
-				foreach (var ws in availableWSs)
+				if (availableWSs.All(opt => opt.Id != wsOptions.Options[i].Id) &&
+					WritingSystemServices.GetMagicWsIdFromName(wsOptions.Options[i].Id) == 0)
 				{
-					int magicId;
-					if (int.TryParse(ws.Id, out magicId))
-					{
-						var wsName = WritingSystemServices.GetMagicWsNameFromId(magicId);
-						wsOptions.Options[i].Id = wsName;
-					}
-					else
-					{
-						wsOptions.Options[i].Id = ws.Id;
-					}
-					i = i + 1;
+					wsOptions.Options.RemoveAt(i);
 				}
 			}
 			return availableWSs;

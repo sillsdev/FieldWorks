@@ -118,7 +118,7 @@ namespace SIL.FieldWorks.XWorks
 			using (var modelFile = new TempFile(new[]
 			{
 				XmlOpenTagsThruHeadword, @"
-				<WritingSystemOptions writingSystemType=""analysis"" displayWSAbreviation=""true"">
+				<WritingSystemOptions writingSystemType=""vernacular"" displayWSAbreviation=""true"">
 					<Option id=""fr"" isEnabled=""true""/>
 				</WritingSystemOptions>",
 				XmlCloseTagsFromHeadword
@@ -132,7 +132,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsInstanceOf(typeof(DictionaryNodeWritingSystemOptions), testNodeOptions);
 			var wsOptions = (DictionaryNodeWritingSystemOptions)testNodeOptions;
 			Assert.IsTrue(wsOptions.DisplayWritingSystemAbbreviations);
-			Assert.AreEqual(DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis, wsOptions.WsType);
+			Assert.AreEqual(DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular, wsOptions.WsType);
 			Assert.AreEqual(1, wsOptions.Options.Count);
 			Assert.AreEqual("fr", wsOptions.Options[0].Id);
 			Assert.IsTrue(wsOptions.Options[0].IsEnabled);

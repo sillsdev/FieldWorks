@@ -1006,6 +1006,52 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void UpdateWsOptions_OrderAndCheckMaintained()
+		{
+			IWritingSystem wsEs;
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("es", out wsEs);
+			Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(wsEs);
+			var model = new DictionaryConfigurationModel();
+			var customNode = new ConfigurableDictionaryNode()
+			{
+				Label = "CustomString",
+				FieldDescription = "CustomString",
+				IsCustomField = true,
+				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+				{
+					DisplayWritingSystemAbbreviations = true,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						new DictionaryNodeListOptions.DictionaryNodeOption() { Id = "ch", IsEnabled = true },
+						new DictionaryNodeListOptions.DictionaryNodeOption() { Id = "fr", IsEnabled = true },
+						new DictionaryNodeListOptions.DictionaryNodeOption() { Id = "en", IsEnabled = true }
+					},
+					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both
+				}
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { customNode }
+			};
+			model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+
+			//SUT
+			var updatedList = DictionaryConfigurationController.UpdateWsOptions((DictionaryNodeWritingSystemOptions)customNode.DictionaryNodeOptions, Cache);
+			Assert.AreEqual(1, model.Parts[0].Children.Count, "Only the existing custom field node should be present");
+			var wsOptions = model.Parts[0].Children[0].DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+			Assert.NotNull(wsOptions, "Writing system options lost in merge");
+			Assert.IsTrue(wsOptions.DisplayWritingSystemAbbreviations, "WsAbbreviation lost in merge");
+			Assert.AreEqual("fr", wsOptions.Options[0].Id, "Writing system not removed, or order not maintained");
+			Assert.IsTrue(wsOptions.Options[0].IsEnabled, "Selected writing system lost in merge");
+			Assert.AreEqual("en", wsOptions.Options[1].Id);
+			Assert.IsTrue(wsOptions.Options[1].IsEnabled, "Selected writing system lost in merge");
+			Assert.AreEqual("es", wsOptions.Options[2].Id, "New writing system was not added");
+		}
+
+		[Test]
 		public void MergeCustomFieldsIntoDictionaryModel_NewFieldsOnSharedNodesAreAddedToSharedItemsExclusively()
 		{
 			var subSubsNode = new ConfigurableDictionaryNode { Label = "Subsubs", FieldDescription = "Subentries", ReferenceItem = "SharedSubs" };
