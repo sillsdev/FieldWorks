@@ -7,6 +7,8 @@ using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using XCore;
+using SIL.Utils;
+using System.Drawing;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -22,6 +24,12 @@ namespace SIL.FieldWorks.XWorks
 			m_helpTopicProvider = helpProvider;
 			// Clear away example text
 			explanationLabel.Text = string.Empty;
+
+			if (MiscUtils.IsUnix)
+			{
+				var optimalWidthOnMono = 582;
+				MinimumSize = new Size(optimalWidthOnMono, MinimumSize.Height);
+			}
 		}
 
 		private void cancelButton_Click(object sender, EventArgs e)
