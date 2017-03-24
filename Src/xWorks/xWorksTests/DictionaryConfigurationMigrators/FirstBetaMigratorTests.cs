@@ -80,6 +80,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var alphaModel = new DictionaryConfigurationModel
 			{
 				Version = FirstAlphaMigrator.VersionAlpha2,
+				IsRootBased = true,
 				Parts = new List<ConfigurableDictionaryNode>()
 			};
 			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode>() }); // SUT
@@ -1128,6 +1129,40 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			var migratedOptions = userModel.Parts[0].Children[0].DictionaryNodeOptions as DictionaryNodeListOptions;
 			Assert.NotNull(migratedOptions, "Referenced Complex Forms should have gotten List Options");
 			Assert.AreEqual(DictionaryNodeListOptions.ListIds.Complex, migratedOptions.ListId);
+		}
+
+		[Test]
+		public void MigrateFrom83Alpha_UpdatesCssOverrideAndStyles()
+		{
+			var reversalStyle = "Reversal-Normal";
+			var reversalCss = "reversalindexentry";
+			var userModel = new DictionaryConfigurationModel
+			{
+				WritingSystem = "en", // reversal
+				Version = FirstAlphaMigrator.VersionAlpha3 + 1, // skip the adding of new grouping nodes; that's not the SUT
+				Parts = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode
+					{
+						Label = "Reversal Entry", FieldDescription = "ReversalIndexEntry",
+						Children = new List<ConfigurableDictionaryNode>
+						{
+							new ConfigurableDictionaryNode { FieldDescription = "ReversalForm" }
+						}
+					}
+				}
+			};
+			// create a Beta model with Options set for the ReferencedComplexForms node
+			var betaModel = userModel.DeepClone();
+			var topNode = betaModel.Parts[0];
+			topNode.CSSClassNameOverride = reversalCss;
+			topNode.StyleType = ConfigurableDictionaryNode.StyleTypes.Paragraph;
+			topNode.Style = reversalStyle;
+
+			m_migrator.MigrateFrom83Alpha(m_logger, userModel, betaModel); // SUT
+			var migratedReversalNode = userModel.Parts[0];
+			Assert.AreEqual(reversalStyle, migratedReversalNode.Style, "Reversal node should have gotten a Style");
+			Assert.AreEqual(reversalCss, migratedReversalNode.CSSClassNameOverride, "Reversal node should have gotten a CssClassNameOverride");
 		}
 	}
 }

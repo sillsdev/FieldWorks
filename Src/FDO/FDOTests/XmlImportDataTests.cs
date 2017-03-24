@@ -2338,5 +2338,124 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				Assert.That(subentries[0].HeadWord.Text, Is.StringMatching("sub"));
 			}
 		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the method ImportData() to make sure that the appropriate CmFolders are created.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ImportData_CmFolders_EnsureOnlyOneEachForMediaAndPictures()
+		{
+			var xid = new XmlImportData(m_cache, true);
+			using (var rdr = new StringReader(
+				"<LexDb>" + Environment.NewLine +
+				"<Entries>" + Environment.NewLine +
+				"<LexEntry>" + Environment.NewLine +
+				"<LexemeForm>" + Environment.NewLine +
+				"<MoStemAllomorph>" + Environment.NewLine +
+				"<MorphType>" + Environment.NewLine +
+				"<Link ws=\"en\" name=\"stem\" />" + Environment.NewLine +
+				"</MorphType>" + Environment.NewLine +
+				"<Form>" + Environment.NewLine +
+				"<AUni ws=\"fr\">test</AUni>" + Environment.NewLine +
+				"</Form>" + Environment.NewLine +
+				"</MoStemAllomorph>" + Environment.NewLine +
+				"</LexemeForm>" + Environment.NewLine +
+				"<HomographNumber>" + Environment.NewLine +
+				"<Integer val=\"1\" />" + Environment.NewLine +
+				"</HomographNumber>" + Environment.NewLine +
+				"<Pronunciations>" + Environment.NewLine +
+				"<LexPronunciation>" + Environment.NewLine +
+				"<Form>" + Environment.NewLine +
+				"<AUni ws=\"fr\">testpronunc</AUni>" + Environment.NewLine +
+				"</Form>" + Environment.NewLine +
+				"<MediaFiles>" + Environment.NewLine +
+				"<CmMedia>" + Environment.NewLine +
+				"<MediaFile>" + Environment.NewLine +
+				"<Link path=\"AudioVisual\\hello1.wav\" />" + Environment.NewLine +
+				"</MediaFile>" + Environment.NewLine +
+				"</CmMedia>" + Environment.NewLine +
+				"</MediaFiles>" + Environment.NewLine +
+				"</LexPronunciation>" + Environment.NewLine +
+				"</Pronunciations>" + Environment.NewLine +
+				"<Senses>" + Environment.NewLine +
+				"<LexSense>" + Environment.NewLine +
+				"<Pictures>" + Environment.NewLine +
+				"<CmPicture>" + Environment.NewLine +
+				"<PictureFile>" + Environment.NewLine +
+				"<Link path=\"Pictures\\Movie1.jpg\" />" + Environment.NewLine +
+				"</PictureFile>" + Environment.NewLine +
+				"</CmPicture>" + Environment.NewLine +
+				"</Pictures>" + Environment.NewLine +
+				"</LexSense>" + Environment.NewLine +
+				"</Senses>" + Environment.NewLine +
+				"</LexEntry>" + Environment.NewLine +
+				"<LexEntry>" + Environment.NewLine +
+				"<LexemeForm>" + Environment.NewLine +
+				"<MoStemAllomorph>" + Environment.NewLine +
+				"<MorphType>" + Environment.NewLine +
+				"<Link ws=\"en\" name=\"stem\" />" + Environment.NewLine +
+				"</MorphType>" + Environment.NewLine +
+				"<Form>" + Environment.NewLine +
+				"<AUni ws=\"fr\">test</AUni>" + Environment.NewLine +
+				"</Form>" + Environment.NewLine +
+				"</MoStemAllomorph>" + Environment.NewLine +
+				"</LexemeForm>" + Environment.NewLine +
+				"<HomographNumber>" + Environment.NewLine +
+				"<Integer val=\"2\" />" + Environment.NewLine +
+				"</HomographNumber>" + Environment.NewLine +
+				"<Pronunciations>" + Environment.NewLine +
+				"<LexPronunciation>" + Environment.NewLine +
+				"<Form>" + Environment.NewLine +
+				"<AUni ws=\"fr\">pronunc</AUni>" + Environment.NewLine +
+				"</Form>" + Environment.NewLine +
+				"<MediaFiles>" + Environment.NewLine +
+				"<CmMedia>" + Environment.NewLine +
+				"<MediaFile>" + Environment.NewLine +
+				"<Link path=\"AudioVisual\\hello2.wav\" />" + Environment.NewLine +
+				"</MediaFile>" + Environment.NewLine +
+				"</CmMedia>" + Environment.NewLine +
+				"</MediaFiles>" + Environment.NewLine +
+				"</LexPronunciation>" + Environment.NewLine +
+				"</Pronunciations>" + Environment.NewLine +
+				"<Senses>" + Environment.NewLine +
+				"<LexSense>" + Environment.NewLine +
+				"<Pictures>" + Environment.NewLine +
+				"<CmPicture>" + Environment.NewLine +
+				"<PictureFile>" + Environment.NewLine +
+				"<Link path=\"Pictures\\Movie2.jpg\" />" + Environment.NewLine +
+				"</PictureFile>" + Environment.NewLine +
+				"</CmPicture>" + Environment.NewLine +
+				"</Pictures>" + Environment.NewLine +
+				"</LexSense>" + Environment.NewLine +
+				"</Senses>" + Environment.NewLine +
+				"</LexEntry>" + Environment.NewLine +
+				"</Entries>" + Environment.NewLine +
+				"</LexDb>" + Environment.NewLine))
+			{
+				Assert.AreEqual(0, m_cache.LangProject.LexDbOA.Entries.Count(), "The lexicon starts out empty.");
+				Assert.AreEqual(0, m_cache.LangProject.PicturesOC.Count);
+				Assert.AreEqual(0, m_cache.LangProject.MediaOC.Count);
+				var folderRepo = m_cache.ServiceLocator.GetInstance<ICmFolderRepository>();
+				Assert.AreEqual(0, folderRepo.Count);
+				var sbLog = new StringBuilder();
+
+				// SUT
+				xid.ImportData(rdr, new StringWriter(sbLog), null);
+				Assert.AreEqual(2, m_cache.LangProject.LexDbOA.Entries.Count());
+				Assert.AreEqual(2, folderRepo.Count, "Should have created 2 CmFolders");
+				Assert.AreEqual(1, m_cache.LangProject.MediaOC.Count);
+				Assert.AreEqual(1, m_cache.LangProject.PicturesOC.Count);
+				var mediaFolder = m_cache.LangProject.MediaOC.ToArray()[0];
+				var pictureFolder = m_cache.LangProject.PicturesOC.ToArray()[0];
+				Assert.That(mediaFolder.Name.BestAnalysisAlternative.Text, Is.EqualTo("Local Media"));
+				Assert.That(pictureFolder.Name.BestAnalysisAlternative.Text, Is.EqualTo("Local Pictures"));
+				Assert.That(mediaFolder.FilesOC.Any(f => f.InternalPath == "AudioVisual" + Path.DirectorySeparatorChar + "hello1.wav"));
+				Assert.That(mediaFolder.FilesOC.Any(f => f.InternalPath == "AudioVisual" + Path.DirectorySeparatorChar + "hello2.wav"));
+				Assert.That(pictureFolder.FilesOC.Any(f => f.InternalPath == "Pictures" + Path.DirectorySeparatorChar + "Movie1.jpg"));
+				Assert.That(pictureFolder.FilesOC.Any(f => f.InternalPath == "Pictures" + Path.DirectorySeparatorChar + "Movie2.jpg"));
+			}
+		}
 	}
 }

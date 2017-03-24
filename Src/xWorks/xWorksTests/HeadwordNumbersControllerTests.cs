@@ -224,6 +224,18 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void ConstructorSetsDefaultWritingSystemInView()
+		{
+			var view = new TestHeadwordNumbersView();
+			var model = new DictionaryConfigurationModel { HomographConfiguration = new DictionaryHomographConfiguration { HomographWritingSystem = "pt" } };
+			// SUT
+			var testController = new HeadwordNumbersController(view, model, Cache);
+
+			Assert.That(view.HomographWritingSystem, Is.StringContaining("English"),
+				"The default writing system 'English' should be in the view when given HomographWritingSystem is missing.");
+		}
+
+		[Test]
 		public void ConstructorSetsCustomHeadwordNumbersInView()
 		{
 			var view = new TestHeadwordNumbersView();

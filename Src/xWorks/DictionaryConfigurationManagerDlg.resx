@@ -142,7 +142,7 @@
     <value>0</value>
   </data>
   <data name="explanationLabel.Text" xml:space="preserve">
-    <value>Rename, copy, and delete dictionary configurations. Choose which publications are associated with which dictionary configurations.</value>
+    <value>Dictionary views can be duplicated to create custom views, reset to original defaults, associated with publications, or imported and exported.</value>
   </data>
   <data name="&gt;&gt;explanationLabel.Name" xml:space="preserve">
     <value>explanationLabel</value>
@@ -478,7 +478,7 @@
     <value>14</value>
   </data>
   <data name="configurationsExplanationLabel.Text" xml:space="preserve">
-    <value>Choose a configuration to modify.</value>
+    <value>Choose a view to modify.</value>
   </data>
   <data name="&gt;&gt;configurationsExplanationLabel.Name" xml:space="preserve">
     <value>configurationsExplanationLabel</value>
@@ -557,7 +557,7 @@
     <value>0</value>
   </data>
   <data name="configurationsTableLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="importButton" Row="4" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="exportButton" Row="5" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="configurationsListView" Row="1" RowSpan="6" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="removeButton" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="copyButton" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="configurationsExplanationLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="resetButton" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100,Absolute,38" /&gt;&lt;Rows Styles="Absolute,30,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,Percent,100,Absolute,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="importButton" Row="4" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="exportButton" Row="5" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="configurationsListView" Row="1" RowSpan="6" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="removeButton" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="copyButton" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="configurationsExplanationLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="resetButton" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100,Absolute,38" /&gt;&lt;Rows Styles="Absolute,30,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,Percent,100,Absolute,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="configurationsGroupBox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -572,7 +572,7 @@
     <value>0</value>
   </data>
   <data name="configurationsGroupBox.Text" xml:space="preserve">
-    <value>Dictionary Configurations</value>
+    <value>Dictionary Views</value>
   </data>
   <data name="&gt;&gt;configurationsGroupBox.Name" xml:space="preserve">
     <value>configurationsGroupBox</value>
@@ -632,7 +632,7 @@
     <value>15</value>
   </data>
   <data name="publicationsExplanationLabel.Text" xml:space="preserve">
-    <value>Checked Publications are affected by the selected Configuration on the left.</value>
+    <value>Select the publications that will use the highlighted view on the left.</value>
   </data>
   <data name="&gt;&gt;publicationsExplanationLabel.Name" xml:space="preserve">
     <value>publicationsExplanationLabel</value>
@@ -743,7 +743,7 @@
     <value>527, 406</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
-    <value>Dictionary Configuration Manager</value>
+    <value>Manage Dictionary Views</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>DictionaryConfigurationManagerDlg</value>

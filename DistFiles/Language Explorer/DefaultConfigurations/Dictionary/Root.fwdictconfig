@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<DictionaryConfiguration name="Root-based (complex forms as subentries)" allPublications="true" isRootBased="true" version="14" lastModified="2017-03-02">
+<DictionaryConfiguration name="Root-based (complex forms as subentries)" allPublications="true" isRootBased="true" version="16" lastModified="2017-03-08">
   <!-- Main entries in the dictionary have historically been written out with class="entry" -->
   <ConfigurationItem name="Main Entry" style="Dictionary-Normal" styleType="paragraph" isEnabled="true" field="LexEntry" cssClassNameOverride="entry">
 	<!-- using a different CSS Class for the main HeadWord and the HeadWords for subentries, references, and (variant|complex) forms
@@ -11,7 +11,8 @@
 	  </WritingSystemOptions>
 	</ConfigurationItem>
 	<!-- No After on Lexeme Form or Citation Form, because Secondary Homograph may follow. -->
-	<ConfigurationItem name="Lexeme Form" between=" " after="" isEnabled="false" field="LexemeFormOA" cssClassNameOverride="lexemeform">
+	<!-- Custom Allomorph fields would show up on Lexeme Form if we didn't suppress them.  -->
+	<ConfigurationItem name="Lexeme Form" between=" " after="" isEnabled="false" field="LexemeFormOA" cssClassNameOverride="lexemeform" hideCustomFields="true">
 	  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		<Option id="vernacular" isEnabled="true"/>
 	  </WritingSystemOptions>
@@ -195,17 +196,17 @@
 	  <ListTypeOptions list="entry">
 		<Option isEnabled="true" id="b79ba420-ea5e-11de-8f71-0013722f8dec"/>
 	  </ListTypeOptions>
-	  <ConfigurationItem name="Relation Abbreviation" between=" " after=": " style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
+	  <ConfigurationItem name="Relation Abbreviation" before="" between=" " after=":" style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="analysis" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Relation Name" between=" " after=": " style="Dictionary-Contrasting" isEnabled="false" field="OwnerType" subField="Name">
+	  <ConfigurationItem name="Relation Name" before="" between=" " after=":" style="Dictionary-Contrasting" isEnabled="false" field="OwnerType" subField="Name">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="analysis" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Targets" between=", " after="" isEnabled="true" field="ConfigTargets">
+	  <ConfigurationItem name="Targets" before=" " between=", " after="" isEnabled="true" field="ConfigTargets">
 		<!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
 	  	<ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -217,7 +218,7 @@
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")"  field="PrimaryEntryRefs">
+		<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs" hideCustomFields="true">
 		<ConfigurationItem name="Type" isEnabled="true" between="," after="" field="EntryTypes" cssClassNameOverride="entrytypes">
 		  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
 		  	<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -299,7 +300,7 @@
 		<ConfigurationItem name="Inflection Features" before=" " isEnabled="false" field="FeaturesTSS" cssClassNameOverride="inflectionfeatures"/>
 		<ConfigurationItem name="Exception Features" before=" " isEnabled="false" field="ExceptionFeaturesTSS" cssClassNameOverride="exceptionfeatures"/>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Sense Type" before=" (" after=")" style="Dictionary-Contrasting" isEnabled="true" field="SenseTypeRA" cssClassNameOverride="sensetype">
+	  <ConfigurationItem name="Sense Type" before="(" after=") " style="Dictionary-Contrasting" isEnabled="true" field="SenseTypeRA" cssClassNameOverride="sensetype">
 		<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -340,12 +341,12 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Examples" isEnabled="true" styleType="character" before="  " between="  " after="" field="ExamplesOS" cssClassNameOverride="examplescontents">
 		<ComplexFormOptions displayEachComplexFormInParagraph="false"/>
-		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" before=" " between=" " field="Example">
+		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" before="" between=" " field="Example">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="all vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Translations" isEnabled="true" field="TranslationsOC" cssClassNameOverride="translationcontents">
+		<ConfigurationItem name="Translations" before=" " isEnabled="true" field="TranslationsOC" cssClassNameOverride="translationcontents">
 		  <ConfigurationItem name="Type" after=" " isEnabled="false" field="TypeRA" cssClassNameOverride="type">
 			<ConfigurationItem name="Abbreviation" between=" " isEnabled="false" field="Abbreviation">
 			  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -358,7 +359,7 @@
 			  </WritingSystemOptions>
 			</ConfigurationItem>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Translation" before=" " between=" " isEnabled="true" field="Translation">
+		  <ConfigurationItem name="Translation" before="  " between=" " isEnabled="true" field="Translation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="all analysis" isEnabled="true"/>
 			</WritingSystemOptions>
@@ -376,7 +377,7 @@
 		  <Option id="all analysis" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Lexical Relations" between="; " after=". " isEnabled="true" field="LexSenseReferences">
+	  <ConfigurationItem name="Lexical Relations" before=" " between="; " after="." isEnabled="true" field="LexSenseReferences">
 		<ListTypeOptions list="sense">
 		  <Option isEnabled="true" id="b7862f14-ea5e-11de-8d47-0013722f8dec"/>
 		  <Option isEnabled="true" id="b7921ac2-ea5e-11de-880d-0013722f8dec" />
@@ -388,17 +389,17 @@
 		  <Option isEnabled="true" id="b770ba08-ea5e-11de-9ca9-0013722f8dec:r" />
 		  <Option isEnabled="true" id="b77a435c-ea5e-11de-9a66-0013722f8dec" />
 		</ListTypeOptions>
-		<ConfigurationItem name="Relation Abbreviation" between=" " after=": " style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
+		<ConfigurationItem name="Relation Abbreviation" before=" " between=" " after=":" style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Relation Name" between=" " after=": " style="Dictionary-Contrasting" isEnabled="false" field="OwnerType" subField="Name">
+		<ConfigurationItem name="Relation Name" before=" " between=" " after=":" style="Dictionary-Contrasting" isEnabled="false" field="OwnerType" subField="Name">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Targets" between=", " after="" isEnabled="true" field="ConfigTargets">
+		<ConfigurationItem name="Targets" before=" " between=", " after="" isEnabled="true" field="ConfigTargets">
 		  <!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
 		  <ConfigurationItem name="Referenced Sense Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord" cssClassNameOverride="headword">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -410,7 +411,7 @@
 			  <Option id="all analysis" isEnabled="true"/>
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-			<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs">
+			<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs" hideCustomFields="true">
 				<ConfigurationItem name="Type" isEnabled="true" between="," after="" field="EntryTypes" cssClassNameOverride="entrytypes">
 					<ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
 						<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -581,9 +582,9 @@
 				<Option id="all analysis" isEnabled="true" />
 			</WritingSystemOptions>
 		</ConfigurationItem>
-	  	<ConfigurationItem name="Examples" isEnabled="true" styleType="character" between="  " after="" field="ExamplesOS" cssClassNameOverride="examplescontents">
+	  	<ConfigurationItem name="Examples" isEnabled="true" styleType="character" before="  " between="  " after="" field="ExamplesOS" cssClassNameOverride="examplescontents">
 	  		<ComplexFormOptions displayEachComplexFormInParagraph="false" />
-	  		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" before=" " between=" " field="Example">
+	  		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" before="" between=" " field="Example">
 				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 					<Option id="all vernacular" isEnabled="true" />
 				</WritingSystemOptions>
@@ -605,7 +606,7 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Scientific Name" before=" " isEnabled="true" field="ScientificName"/>
 	  <ConfigurationItem name="Source" before=" " isEnabled="false" field="Source"/>
-	  <ConfigurationItem name="Semantic Domains" before=" (sem. domains: " between=", " after=".) " isEnabled="false" field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
+	  <ConfigurationItem name="Semantic Domains" before=" (sem. domains: " between=", " after=".)" isEnabled="false" field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
 		<ConfigurationItem name="Abbreviation" between=" " after=" - " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -641,7 +642,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Usages" before="{" between=", " after="} " isEnabled="true" field="UsageTypesRC" cssClassNameOverride="usages">
+	  <ConfigurationItem name="Usages" before=" {" between=", " after="}" isEnabled="true" field="UsageTypesRC" cssClassNameOverride="usages">
 		<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -884,7 +885,7 @@
 		<Option id="vernacular" isEnabled="true"/>
 	  </WritingSystemOptions>
 	</ConfigurationItem>
-	<ConfigurationItem name="Lexeme Form" between=" " after="" isEnabled="false" field="LexemeFormOA" cssClassNameOverride="lexemeform">
+	<ConfigurationItem name="Lexeme Form" between=" " after="" isEnabled="false" field="LexemeFormOA" cssClassNameOverride="lexemeform" hideCustomFields="true">
 	  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		<Option id="vernacular" isEnabled="true"/>
 	  </WritingSystemOptions>
@@ -1065,17 +1066,17 @@
 	  <ListTypeOptions list="entry">
 		<Option isEnabled="true" id="b79ba420-ea5e-11de-8f71-0013722f8dec"/>
 	  </ListTypeOptions>
-	  <ConfigurationItem name="Relation Abbreviation" between=" " after=": " style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
+	  <ConfigurationItem name="Relation Abbreviation" before="" between=" " after=":" style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="analysis" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Relation Name" between=" " after=": " style="Dictionary-Contrasting" isEnabled="false" field="OwnerType" subField="Name">
+	  <ConfigurationItem name="Relation Name" before="" between=" " after=":" style="Dictionary-Contrasting" isEnabled="false" field="OwnerType" subField="Name">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="analysis" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Targets" between=", " after="" isEnabled="true" field="ConfigTargets">
+	  <ConfigurationItem name="Targets" before=" " between=", " after="" isEnabled="true" field="ConfigTargets">
 		<!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
 	  	<ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -1087,7 +1088,7 @@
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-	  	<ConfigurationItem name="Primary Entry References" isEnabled="true" styleType="character" before=" (" between=", " after=")" field="PrimaryEntryRefs">
+	  	<ConfigurationItem name="Primary Entry References" isEnabled="true" styleType="character" before=" (" between=", " after=")" field="PrimaryEntryRefs" hideCustomFields="true">
 	  		<ConfigurationItem name="Type" isEnabled="true" between="," after="" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 	  			<ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
 	  				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1120,7 +1121,7 @@
 	  	</ConfigurationItem>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Variant of" before="" between=", " after=" " isEnabled="true" field="VisibleVariantEntryRefs">
+	<ConfigurationItem name="Variant of" before="" between=", " after=" " isEnabled="true" field="VisibleVariantEntryRefs" hideCustomFields="true">
 	  <ListTypeOptions list="variant">
 		<Option isEnabled="true" id="b0000000-c40e-433e-80b5-31da08771344"/>
 		<Option isEnabled="true" id="024b62c9-93b3-41a0-ab19-587a0030219a"/>
@@ -1166,7 +1167,7 @@
 			<Option id="all analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")"  field="PrimaryEntryRefs">
+		<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs" hideCustomFields="true">
 		<ConfigurationItem name="Type" isEnabled="true" between="," after="" field="EntryTypes" cssClassNameOverride="entrytypes">
 		  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
 		  	<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1238,6 +1239,37 @@
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
+		<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs" hideCustomFields="true">
+		<ConfigurationItem name="Type" isEnabled="true" between="," after="" field="EntryTypes" cssClassNameOverride="entrytypes">
+		  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
+		  	<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  		<Option id="analysis" isEnabled="true" />
+		  	</WritingSystemOptions>
+		  </ConfigurationItem>
+		  <ConfigurationItem name="Reverse Name" isEnabled="false" between=" " field="ReverseName">
+		  	<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  		<Option id="analysis" isEnabled="true" />
+		  	</WritingSystemOptions>
+		  </ConfigurationItem>
+		</ConfigurationItem>
+		<ConfigurationItem name="Primary Entry(s)" isEnabled="true" before=" " between=", " after="" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
+		  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after="" field="HeadWordRef" cssClassNameOverride="headword">
+		  	<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+		  		<Option id="vernacular" isEnabled="true" />
+		  	</WritingSystemOptions>
+		  </ConfigurationItem>
+		  <ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="false" between=" " before=" " field="GlossOrSummary">
+		  	<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  		<Option id="analysis" isEnabled="false" />
+		  	</WritingSystemOptions>
+		  </ConfigurationItem>
+		</ConfigurationItem>
+		<ConfigurationItem name="Comment" isEnabled="false" between=" " before=" " field="Summary">
+		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  	<Option id="analysis" isEnabled="true" />
+		  </WritingSystemOptions>
+		</ConfigurationItem>
+		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Comment" before=" " between=" " isEnabled="true" field="Summary">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1300,7 +1332,7 @@
 		<ConfigurationItem name="Inflection Features" before=" " isEnabled="false" field="FeaturesTSS" cssClassNameOverride="inflectionfeatures"/>
 		<ConfigurationItem name="Exception Features" before=" " isEnabled="false" field="ExceptionFeaturesTSS" cssClassNameOverride="exceptionfeatures"/>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Sense Type" before=" (" after=")" style="Dictionary-Contrasting" isEnabled="true" field="SenseTypeRA" cssClassNameOverride="sensetype">
+	  <ConfigurationItem name="Sense Type" before="(" after=") " style="Dictionary-Contrasting" isEnabled="true" field="SenseTypeRA" cssClassNameOverride="sensetype">
 		<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -1341,12 +1373,12 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Examples" styleType="character" before="  " between="  " after="" isEnabled="true" field="ExamplesOS" cssClassNameOverride="examplescontents">
 	  	<ComplexFormOptions displayEachComplexFormInParagraph="false"/>
-		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" before=" " between=" " field="Example">
+		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" before="" between=" " field="Example">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="all vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Translations" isEnabled="true" field="TranslationsOC" cssClassNameOverride="translationcontents">
+		<ConfigurationItem name="Translations" before=" " isEnabled="true" field="TranslationsOC" cssClassNameOverride="translationcontents">
 		  <ConfigurationItem name="Type" after=" " isEnabled="false" field="TypeRA" cssClassNameOverride="type">
 			<ConfigurationItem name="Abbreviation" between=" " isEnabled="false" field="Abbreviation">
 			  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1377,7 +1409,7 @@
 		  <Option id="all analysis" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Lexical Relations" between="; " after=". " isEnabled="true" field="LexSenseReferences">
+	  <ConfigurationItem name="Lexical Relations" before=" " between="; " after="." isEnabled="true" field="LexSenseReferences">
 		<ListTypeOptions list="sense">
 		  <Option isEnabled="true" id="b7862f14-ea5e-11de-8d47-0013722f8dec"/>
 		  <Option isEnabled="true" id="b7921ac2-ea5e-11de-880d-0013722f8dec" />
@@ -1389,17 +1421,17 @@
 		  <Option isEnabled="true" id="b770ba08-ea5e-11de-9ca9-0013722f8dec:r" />
 		  <Option isEnabled="true" id="b77a435c-ea5e-11de-9a66-0013722f8dec" />
 		</ListTypeOptions>
-		<ConfigurationItem name="Relation Abbreviation" between=" " after=": " style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
+		<ConfigurationItem name="Relation Abbreviation" before=" " between=" " after=":" style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Relation Name" between=" " after=": " style="Dictionary-Contrasting" isEnabled="false" field="OwnerType" subField="Name">
+		<ConfigurationItem name="Relation Name" before=" " between=" " after=":" style="Dictionary-Contrasting" isEnabled="false" field="OwnerType" subField="Name">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Targets" between=", " after="" isEnabled="true" field="ConfigTargets">
+		<ConfigurationItem name="Targets" before=" " between=", " after="" isEnabled="true" field="ConfigTargets">
 		  <!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
 		  <ConfigurationItem name="Referenced Sense Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord" cssClassNameOverride="headword">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -1411,7 +1443,7 @@
 			  <Option id="all analysis" isEnabled="true"/>
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-			<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs">
+			<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs" hideCustomFields="true">
 				<ConfigurationItem name="Type" isEnabled="true" between="," after="" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 					<ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
 						<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -1582,9 +1614,9 @@
 				<Option id="all analysis" isEnabled="true" />
 			</WritingSystemOptions>
 		</ConfigurationItem>
-	  	<ConfigurationItem name="Examples" isEnabled="true" styleType="character" between="  " after="" field="ExamplesOS" cssClassNameOverride="examplescontents">
+	  	<ConfigurationItem name="Examples" isEnabled="true" styleType="character" before="  " between="  " after="" field="ExamplesOS" cssClassNameOverride="examplescontents">
 	  		<ComplexFormOptions displayEachComplexFormInParagraph="false" />
-	  		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" before=" " between=" " field="Example">
+	  		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" before="" between=" " field="Example">
 				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 					<Option id="all vernacular" isEnabled="true" />
 				</WritingSystemOptions>
@@ -1606,7 +1638,7 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Scientific Name" before=" " isEnabled="true" field="ScientificName"/>
 	  <ConfigurationItem name="Source" before=" " isEnabled="false" field="Source"/>
-	  <ConfigurationItem name="Semantic Domains" before=" (sem. domains: " between=", " after=".) " isEnabled="false" field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
+	  <ConfigurationItem name="Semantic Domains" before=" (sem. domains: " between=", " after=".)" isEnabled="false" field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
 		<ConfigurationItem name="Abbreviation" between=" " after=" - " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -1642,7 +1674,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Usages" before="{" between=", " after="} " isEnabled="true" field="UsageTypesRC" cssClassNameOverride="usages">
+	  <ConfigurationItem name="Usages" before=" {" between=", " after="}" isEnabled="true" field="UsageTypesRC" cssClassNameOverride="usages">
 		<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -1794,8 +1826,8 @@
 		  <Option id="vernacular" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Grammatical Info." between=", " after=" " style="Dictionary-POS" isEnabled="false" field="MorphoSyntaxAnalyses">
-		<ConfigurationItem name="Category Info." before=" " between=" " isEnabled="true" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
+	  <ConfigurationItem name="Grammatical Info." before=" " between=", " after="" style="Dictionary-POS" isEnabled="false" field="MorphoSyntaxAnalyses">
+		<ConfigurationItem name="Category Info." before="" between=" " isEnabled="true" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -1812,6 +1844,26 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Summary Definition" before=" " between=" " after="" isEnabled="true" field="OwningEntry" subField="SummaryDefinition">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true"/>
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+	</ConfigurationItem>
+	<ConfigurationItem name="Pictures" between="  " after=" " style="Dictionary-Pictures" isEnabled="true" field="PicturesOfSenses" cssClassNameOverride="pictures">
+	  <PictureOptions minimumHeight="0" maximumHeight="1" maximumWidth="0" minimumWidth="0" pictureLocation="right" stackPictures="false" />
+	  <ConfigurationItem name="Thumbnail" after="" isEnabled="true" field="PictureFileRA" cssClassNameOverride="thumbnail"/>
+	  <ConfigurationItem name="Caption" between=" " isEnabled="false" field="Caption">
+		<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+		  <Option id="vernacular" isEnabled="true"/>
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+	  <!-- Using cssClassNameOverride="headword" to show the Configure Headword Numbers button -->
+	  <ConfigurationItem name="Headword" between=" " after="" style="Dictionary-Headword" isEnabled="true" field="Owner" subField="OwnerOutlineName" cssClassNameOverride="headword">
+	  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+		<Option id="vernacular" isEnabled="true"/>
+	  </WritingSystemOptions>
+	  </ConfigurationItem>
+	  <ConfigurationItem name="Gloss" before=" " between=" " after="" isEnabled="false" field="Owner" subField="Gloss">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="analysis" isEnabled="true"/>
 		</WritingSystemOptions>
@@ -1834,7 +1886,7 @@
 		<Option id="vernacular" isEnabled="true"/>
 	  </WritingSystemOptions>
 	</ConfigurationItem>
-	<ConfigurationItem name="Lexeme Form" between=" " after="" isEnabled="false" field="LexemeFormOA" cssClassNameOverride="lexemeform">
+	<ConfigurationItem name="Lexeme Form" between=" " after="" isEnabled="false" field="LexemeFormOA" cssClassNameOverride="lexemeform" hideCustomFields="true">
 	  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		<Option id="vernacular" isEnabled="true"/>
 	  </WritingSystemOptions>
@@ -2015,17 +2067,17 @@
 	  <ListTypeOptions list="entry">
 		<Option isEnabled="true" id="b79ba420-ea5e-11de-8f71-0013722f8dec"/>
 	  </ListTypeOptions>
-	  <ConfigurationItem name="Relation Abbreviation" between=" " after=": " style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
+	  <ConfigurationItem name="Relation Abbreviation" before="" between=" " after=":" style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="analysis" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Relation Name" between=" " after=": " style="Dictionary-Contrasting" isEnabled="false" field="OwnerType" subField="Name">
+	  <ConfigurationItem name="Relation Name" before="" between=" " after=":" style="Dictionary-Contrasting" isEnabled="false" field="OwnerType" subField="Name">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="analysis" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Targets" between=", " after="" isEnabled="true" field="ConfigTargets">
+	  <ConfigurationItem name="Targets" before=" " between=", " after="" isEnabled="true" field="ConfigTargets">
 		<!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
 	  	<ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWordRef" cssClassNameOverride="headword">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -2037,7 +2089,7 @@
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-	  	<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs">
+	  	<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs" hideCustomFields="true">
 	  		<ConfigurationItem name="Type" isEnabled="true" between="," after="" field="VariantEntryTypesRS" cssClassNameOverride="variantentrytypes">
 	  			<ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
 	  				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -2070,7 +2122,7 @@
 	  	</ConfigurationItem>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Variant of" before="" between=", " after=" " isEnabled="true" field="VisibleVariantEntryRefs">
+	<ConfigurationItem name="Variant of" before="" between=", " after=" " isEnabled="true" field="VisibleVariantEntryRefs" hideCustomFields="true">
 	  <ListTypeOptions list="variant">
 		<Option isEnabled="true" id="b0000000-c40e-433e-80b5-31da08771344"/>
 		<Option isEnabled="true" id="024b62c9-93b3-41a0-ab19-587a0030219a"/>
@@ -2116,7 +2168,7 @@
 			<Option id="all analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")"  field="PrimaryEntryRefs">
+		<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs" hideCustomFields="true">
 		<ConfigurationItem name="Type" isEnabled="true" between="," after="" field="EntryTypes" cssClassNameOverride="entrytypes">
 		  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
 		  	<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -2188,6 +2240,37 @@
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
+		<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs" hideCustomFields="true">
+		<ConfigurationItem name="Type" isEnabled="true" between="," after="" field="EntryTypes" cssClassNameOverride="entrytypes">
+		  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
+		  	<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  		<Option id="analysis" isEnabled="true" />
+		  	</WritingSystemOptions>
+		  </ConfigurationItem>
+		  <ConfigurationItem name="Reverse Name" isEnabled="false" between=" " field="ReverseName">
+		  	<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  		<Option id="analysis" isEnabled="true" />
+		  	</WritingSystemOptions>
+		  </ConfigurationItem>
+		</ConfigurationItem>
+		<ConfigurationItem name="Primary Entry(s)" isEnabled="true" before=" " between=", " after="" field="ConfigReferencedEntries" cssClassNameOverride="referencedentries">
+		  <ConfigurationItem name="Referenced Headword" isEnabled="true" style="Dictionary-CrossReferences" after="" field="HeadWordRef" cssClassNameOverride="headword">
+		  	<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+		  		<Option id="vernacular" isEnabled="true" />
+		  	</WritingSystemOptions>
+		  </ConfigurationItem>
+		  <ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="false" between=" " before=" " field="GlossOrSummary">
+		  	<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  		<Option id="analysis" isEnabled="false" />
+		  	</WritingSystemOptions>
+		  </ConfigurationItem>
+		</ConfigurationItem>
+		<ConfigurationItem name="Comment" isEnabled="false" between=" " before=" " field="Summary">
+		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  	<Option id="analysis" isEnabled="true" />
+		  </WritingSystemOptions>
+		</ConfigurationItem>
+		</ConfigurationItem>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Comment" before=" " between=" " isEnabled="true" field="Summary">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -2250,7 +2333,7 @@
 		<ConfigurationItem name="Inflection Features" before=" " isEnabled="false" field="FeaturesTSS" cssClassNameOverride="inflectionfeatures"/>
 		<ConfigurationItem name="Exception Features" before=" " isEnabled="false" field="ExceptionFeaturesTSS" cssClassNameOverride="exceptionfeatures"/>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Sense Type" before=" (" after=")" style="Dictionary-Contrasting" isEnabled="true" field="SenseTypeRA" cssClassNameOverride="sensetype">
+	  <ConfigurationItem name="Sense Type" before="(" after=") " style="Dictionary-Contrasting" isEnabled="true" field="SenseTypeRA" cssClassNameOverride="sensetype">
 		<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -2291,12 +2374,12 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Examples" styleType="character" before="  " between="  " after="" isEnabled="true" field="ExamplesOS" cssClassNameOverride="examplescontents">
 	  	<ComplexFormOptions displayEachComplexFormInParagraph="false"/>
-		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" before=" " between=" " field="Example">
+		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" before="" between=" " field="Example">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="all vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Translations" isEnabled="true" field="TranslationsOC" cssClassNameOverride="translationcontents">
+		<ConfigurationItem name="Translations" before=" " isEnabled="true" field="TranslationsOC" cssClassNameOverride="translationcontents">
 		  <ConfigurationItem name="Type" after=" " isEnabled="false" field="TypeRA" cssClassNameOverride="type">
 			<ConfigurationItem name="Abbreviation" between=" " isEnabled="false" field="Abbreviation">
 			  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -2327,7 +2410,7 @@
 		  <Option id="all analysis" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Lexical Relations" between="; " after=". " isEnabled="true" field="LexSenseReferences">
+	  <ConfigurationItem name="Lexical Relations" before=" " between="; " after="." isEnabled="true" field="LexSenseReferences">
 		<ListTypeOptions list="sense">
 		  <Option isEnabled="true" id="b7862f14-ea5e-11de-8d47-0013722f8dec"/>
 		  <Option isEnabled="true" id="b7921ac2-ea5e-11de-880d-0013722f8dec" />
@@ -2339,17 +2422,17 @@
 		  <Option isEnabled="true" id="b770ba08-ea5e-11de-9ca9-0013722f8dec:r" />
 		  <Option isEnabled="true" id="b77a435c-ea5e-11de-9a66-0013722f8dec" />
 		</ListTypeOptions>
-		<ConfigurationItem name="Relation Abbreviation" between=" " after=": " style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
+		<ConfigurationItem name="Relation Abbreviation" before=" " between=" " after=":" style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Relation Name" between=" " after=": " style="Dictionary-Contrasting" isEnabled="false" field="OwnerType" subField="Name">
+		<ConfigurationItem name="Relation Name" before=" " between=" " after=":" style="Dictionary-Contrasting" isEnabled="false" field="OwnerType" subField="Name">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Targets" between=", " after="" isEnabled="true" field="ConfigTargets">
+		<ConfigurationItem name="Targets" before=" " between=", " after="" isEnabled="true" field="ConfigTargets">
 		  <!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
 		  <ConfigurationItem name="Referenced Sense Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord" cssClassNameOverride="headword">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -2361,7 +2444,7 @@
 			  <Option id="all analysis" isEnabled="true"/>
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-			<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs">
+			<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs" hideCustomFields="true">
 				<ConfigurationItem name="Type" isEnabled="true" between="," after="" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 					<ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
 						<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -2532,9 +2615,9 @@
 				<Option id="all analysis" isEnabled="true" />
 			</WritingSystemOptions>
 		</ConfigurationItem>
-	  	<ConfigurationItem name="Examples" isEnabled="true" styleType="character" between="  " after="" field="ExamplesOS" cssClassNameOverride="examplescontents">
+	  	<ConfigurationItem name="Examples" isEnabled="true" styleType="character" before="  " between="  " after="" field="ExamplesOS" cssClassNameOverride="examplescontents">
 	  		<ComplexFormOptions displayEachComplexFormInParagraph="false" />
-	  		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" before=" " between=" " field="Example">
+	  		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" before="" between=" " field="Example">
 				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 					<Option id="all vernacular" isEnabled="true" />
 				</WritingSystemOptions>
@@ -2556,7 +2639,7 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Scientific Name" before=" " isEnabled="true" field="ScientificName"/>
 	  <ConfigurationItem name="Source" before=" " isEnabled="false" field="Source"/>
-	  <ConfigurationItem name="Semantic Domains" before=" (sem. domains: " between=", " after=".) " isEnabled="false" field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
+	  <ConfigurationItem name="Semantic Domains" before=" (sem. domains: " between=", " after=".)" isEnabled="false" field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
 		<ConfigurationItem name="Abbreviation" between=" " after=" - " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -2592,7 +2675,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Usages" before="{" between=", " after="} " isEnabled="true" field="UsageTypesRC" cssClassNameOverride="usages">
+	  <ConfigurationItem name="Usages" before=" {" between=", " after="}" isEnabled="true" field="UsageTypesRC" cssClassNameOverride="usages">
 		<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -2744,8 +2827,8 @@
 		  <Option id="vernacular" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Grammatical Info." between=", " after="" style="Dictionary-POS" isEnabled="false" field="MorphoSyntaxAnalyses">
-		<ConfigurationItem name="Category Info." before=" " between=" " isEnabled="true" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
+	  <ConfigurationItem name="Grammatical Info." before=" " between=", " after="" style="Dictionary-POS" isEnabled="false" field="MorphoSyntaxAnalyses">
+		<ConfigurationItem name="Category Info." before="" between=" " isEnabled="true" field="MLPartOfSpeech" cssClassNameOverride="partofspeech">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
@@ -2762,6 +2845,26 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Summary Definition" before=" " between=" " after="" isEnabled="true" field="OwningEntry" subField="SummaryDefinition">
+		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		  <Option id="analysis" isEnabled="true"/>
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+	</ConfigurationItem>
+	<ConfigurationItem name="Pictures" between="  " after=" " style="Dictionary-Pictures" isEnabled="true" field="PicturesOfSenses" cssClassNameOverride="pictures">
+	  <PictureOptions minimumHeight="0" maximumHeight="1" maximumWidth="0" minimumWidth="0" pictureLocation="right" stackPictures="false" />
+	  <ConfigurationItem name="Thumbnail" after="" isEnabled="true" field="PictureFileRA" cssClassNameOverride="thumbnail"/>
+	  <ConfigurationItem name="Caption" between=" " isEnabled="false" field="Caption">
+		<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+		  <Option id="vernacular" isEnabled="true"/>
+		</WritingSystemOptions>
+	  </ConfigurationItem>
+	  <!-- Using cssClassNameOverride="headword" to show the Configure Headword Numbers button -->
+	  <ConfigurationItem name="Headword" between=" " after="" style="Dictionary-Headword" isEnabled="true" field="Owner" subField="OwnerOutlineName" cssClassNameOverride="headword">
+	  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+		<Option id="vernacular" isEnabled="true"/>
+	  </WritingSystemOptions>
+	  </ConfigurationItem>
+	  <ConfigurationItem name="Gloss" before=" " between=" " after="" isEnabled="false" field="Owner" subField="Gloss">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="analysis" isEnabled="true"/>
 		</WritingSystemOptions>
@@ -2806,7 +2909,7 @@
 		<ConfigurationItem name="Inflection Features" before=" " isEnabled="false" field="FeaturesTSS" cssClassNameOverride="inflectionfeatures"/>
 		<ConfigurationItem name="Exception Features" before=" " isEnabled="false" field="ExceptionFeaturesTSS" cssClassNameOverride="exceptionfeatures"/>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Sense Type" before=" (" after=")" style="Dictionary-Contrasting" isEnabled="true" field="SenseTypeRA" cssClassNameOverride="sensetype">
+	  <ConfigurationItem name="Sense Type" before="(" after=") " style="Dictionary-Contrasting" isEnabled="true" field="SenseTypeRA" cssClassNameOverride="sensetype">
 		<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -2847,12 +2950,12 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Examples" styleType="character" before="  " between="  " after="" isEnabled="true" field="ExamplesOS" cssClassNameOverride="examplescontents">
 	  	<ComplexFormOptions displayEachComplexFormInParagraph="false"/>
-		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" before=" " between=" " field="Example">
+		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" before="" between=" " field="Example">
 		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 			<Option id="all vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Translations" isEnabled="true" field="TranslationsOC" cssClassNameOverride="translationcontents">
+		<ConfigurationItem name="Translations" before=" " isEnabled="true" field="TranslationsOC" cssClassNameOverride="translationcontents">
 		  <ConfigurationItem name="Type" after=" " isEnabled="false" field="TypeRA" cssClassNameOverride="type">
 			<ConfigurationItem name="Abbreviation" between=" " isEnabled="false" field="Abbreviation">
 			  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -2883,7 +2986,7 @@
 		  <Option id="all analysis" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Lexical Relations" between="; " after=". " isEnabled="true" field="LexSenseReferences">
+	  <ConfigurationItem name="Lexical Relations" before=" " between="; " after="." isEnabled="true" field="LexSenseReferences">
 		<ListTypeOptions list="sense">
 		  <Option isEnabled="true" id="b7862f14-ea5e-11de-8d47-0013722f8dec"/>
 		  <Option isEnabled="true" id="b7921ac2-ea5e-11de-880d-0013722f8dec" />
@@ -2895,17 +2998,17 @@
 		  <Option isEnabled="true" id="b770ba08-ea5e-11de-9ca9-0013722f8dec:r" />
 		  <Option isEnabled="true" id="b77a435c-ea5e-11de-9a66-0013722f8dec" />
 		</ListTypeOptions>
-		<ConfigurationItem name="Relation Abbreviation" between=" " after=": " style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
+		<ConfigurationItem name="Relation Abbreviation" before=" " between=" " after=":" style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Relation Name" between=" " after=": " style="Dictionary-Contrasting" isEnabled="false" field="OwnerType" subField="Name">
+		<ConfigurationItem name="Relation Name" before=" " between=" " after=":" style="Dictionary-Contrasting" isEnabled="false" field="OwnerType" subField="Name">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Targets" between=", " after="" isEnabled="true" field="ConfigTargets">
+		<ConfigurationItem name="Targets" before=" " between=", " after="" isEnabled="true" field="ConfigTargets">
 		  <!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
 		  <ConfigurationItem name="Referenced Sense Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord" cssClassNameOverride="headword">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -2917,7 +3020,7 @@
 			  <Option id="all analysis" isEnabled="true"/>
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-			<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs">
+			<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs" hideCustomFields="true">
 				<ConfigurationItem name="Type" isEnabled="true" between="," after="" field="ComplexEntryTypesRS" cssClassNameOverride="complexformtypes">
 					<ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
 						<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -3088,9 +3191,9 @@
 				<Option id="all analysis" isEnabled="true" />
 			</WritingSystemOptions>
 		</ConfigurationItem>
-	  	<ConfigurationItem name="Examples" isEnabled="true" styleType="character" between="  " after="" field="ExamplesOS" cssClassNameOverride="examplescontents">
+	  	<ConfigurationItem name="Examples" isEnabled="true" styleType="character" before="  " between="  " after="" field="ExamplesOS" cssClassNameOverride="examplescontents">
 	  		<ComplexFormOptions displayEachComplexFormInParagraph="false" />
-	  		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" before=" " between=" " field="Example">
+	  		<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" before="" between=" " field="Example">
 				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 					<Option id="all vernacular" isEnabled="true" />
 				</WritingSystemOptions>
@@ -3112,7 +3215,7 @@
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Scientific Name" before=" " isEnabled="true" field="ScientificName"/>
 	  <ConfigurationItem name="Source" before=" " isEnabled="false" field="Source"/>
-	  <ConfigurationItem name="Semantic Domains" before=" (sem. domains: " between=", " after=".) " isEnabled="false" field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
+	  <ConfigurationItem name="Semantic Domains" before=" (sem. domains: " between=", " after=".)" isEnabled="false" field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
 		<ConfigurationItem name="Abbreviation" between=" " after=" - " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -3148,7 +3251,7 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Usages" before="{" between=", " after="} " isEnabled="true" field="UsageTypesRC" cssClassNameOverride="usages">
+	  <ConfigurationItem name="Usages" before=" {" between=", " after="}" isEnabled="true" field="UsageTypesRC" cssClassNameOverride="usages">
 		<ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
@@ -3245,7 +3348,7 @@
 		  <Option id="vernacular" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Lexeme Form" between=" " after="" isEnabled="false" field="LexemeFormOA" cssClassNameOverride="lexemeform">
+	  <ConfigurationItem name="Lexeme Form" between=" " after="" isEnabled="false" field="LexemeFormOA" cssClassNameOverride="lexemeform" hideCustomFields="true">
 		<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		  <Option id="vernacular" isEnabled="true"/>
 		</WritingSystemOptions>
@@ -3438,17 +3541,17 @@
 		<ListTypeOptions list="entry">
 		  <Option isEnabled="true" id="b79ba420-ea5e-11de-8f71-0013722f8dec"/>
 		</ListTypeOptions>
-		<ConfigurationItem name="Relation Abbreviation" between=" " after=": " style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
+		<ConfigurationItem name="Relation Abbreviation" before="" between=" " after=":" style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Relation Name" between=" " after=": " style="Dictionary-Contrasting" isEnabled="false" field="OwnerType" subField="Name">
+		<ConfigurationItem name="Relation Name" before="" between=" " after=":" style="Dictionary-Contrasting" isEnabled="false" field="OwnerType" subField="Name">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Targets" between=", " after="" isEnabled="true" field="ConfigTargets">
+		<ConfigurationItem name="Targets" before=" " between=", " after="" isEnabled="true" field="ConfigTargets">
 		  <!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
 		  <ConfigurationItem name="Referenced Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWordRef" cssClassNameOverride="headword">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -3460,7 +3563,7 @@
 			  <Option id="analysis" isEnabled="true"/>
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-			<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")"  field="PrimaryEntryRefs">
+			<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs" hideCustomFields="true">
 				<ConfigurationItem name="Type" isEnabled="true" between="," after="" field="EntryTypes" cssClassNameOverride="entrytypes">
 					<ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
 						<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -3493,7 +3596,7 @@
 			</ConfigurationItem>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-		<ConfigurationItem name="Variant of" between=", " after=" " isEnabled="true" field="VisibleVariantEntryRefs">
+		<ConfigurationItem name="Variant of" between=", " after=" " isEnabled="true" field="VisibleVariantEntryRefs" hideCustomFields="true">
 			<ListTypeOptions list="variant">
 			<Option isEnabled="true" id="b0000000-c40e-433e-80b5-31da08771344"/>
 			<Option isEnabled="true" id="024b62c9-93b3-41a0-ab19-587a0030219a"/>
@@ -3539,7 +3642,7 @@
 				<Option id="all analysis" isEnabled="true"/>
 				</WritingSystemOptions>
 			</ConfigurationItem>
-		<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")"  field="PrimaryEntryRefs">
+		<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs" hideCustomFields="true">
 		<ConfigurationItem name="Type" isEnabled="true" between="," after="" field="EntryTypes" cssClassNameOverride="entrytypes">
 		  <ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
 		  	<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -3588,7 +3691,7 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 		<!-- We can add a Before space on Senses if we want the sense further from the Complex Form Type, or leave it closer.  For now there are two spaces between.  -->
-	  <ConfigurationItem name="Senses" before=" " between="  " after=" " isEnabled="true" field="SensesOS" cssClassNameOverride="senses">
+	  <ConfigurationItem name="Senses" before=" " between="  " after="" isEnabled="true" field="SensesOS" cssClassNameOverride="senses">
 		<SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=")&#xA0;" numberingStyle="%O" numberSingleSense="false" showSingleGramInfoFirst="true"/>
 		<ConfigurationItem name="Grammatical Info." after="  " style="Dictionary-Contrasting" isEnabled="true" field="MorphoSyntaxAnalysisRA" cssClassNameOverride="morphosyntaxanalysis">
 		  <ConfigurationItem name="Gram Info (Name)" between=" " after="" isEnabled="false" field="InterlinearNameTSS" cssClassNameOverride="graminfoname"/>
@@ -3626,7 +3729,7 @@
 		  <ConfigurationItem name="Inflection Features" before=" " isEnabled="false" field="FeaturesTSS" cssClassNameOverride="inflectionfeatures"/>
 		  <ConfigurationItem name="Exception Features" before=" " isEnabled="false" field="ExceptionFeaturesTSS" cssClassNameOverride="exceptionfeatures"/>
 		</ConfigurationItem>
-		<ConfigurationItem name="Sense Type" before=" (" after=")" style="Dictionary-Contrasting" isEnabled="true" field="SenseTypeRA" cssClassNameOverride="sensetype">
+		<ConfigurationItem name="Sense Type" before="(" after=") " style="Dictionary-Contrasting" isEnabled="true" field="SenseTypeRA" cssClassNameOverride="sensetype">
 		  <ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true"/>
@@ -3667,12 +3770,12 @@
 	  </ConfigurationItem>
 		<ConfigurationItem name="Examples" styleType="character" before="  " between="  " after="" isEnabled="true" field="ExamplesOS" cssClassNameOverride="examplescontents">
 			<ComplexFormOptions displayEachComplexFormInParagraph="false"/>
-			<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" before=" " between=" " field="Example">
+			<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" before="" between=" " field="Example">
 			<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 				<Option id="all vernacular" isEnabled="true"/>
 			</WritingSystemOptions>
 			</ConfigurationItem>
-			<ConfigurationItem name="Translations" isEnabled="true" field="TranslationsOC" cssClassNameOverride="translationcontents">
+			<ConfigurationItem name="Translations" before=" " isEnabled="true" field="TranslationsOC" cssClassNameOverride="translationcontents">
 				<ConfigurationItem name="Type" after=" " isEnabled="false" field="TypeRA" cssClassNameOverride="type">
 					<ConfigurationItem name="Abbreviation" between=" " isEnabled="false" field="Abbreviation">
 					<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -3703,7 +3806,7 @@
 			<Option id="all analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
-		<ConfigurationItem name="Lexical Relations" between="; " after=". " isEnabled="true" field="LexSenseReferences">
+		<ConfigurationItem name="Lexical Relations" before=" " between="; " after="." isEnabled="true" field="LexSenseReferences">
 		  <ListTypeOptions list="sense">
 			<Option isEnabled="true" id="b7862f14-ea5e-11de-8d47-0013722f8dec"/>
 			<Option isEnabled="true" id="b7921ac2-ea5e-11de-880d-0013722f8dec" />
@@ -3715,17 +3818,17 @@
 			<Option isEnabled="true" id="b770ba08-ea5e-11de-9ca9-0013722f8dec:r" />
 			<Option isEnabled="true" id="b77a435c-ea5e-11de-9a66-0013722f8dec" />
 		  </ListTypeOptions>
-		  <ConfigurationItem name="Relation Abbreviation" between=" " after=": " style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
+		  <ConfigurationItem name="Relation Abbreviation" before=" " between=" " after=":" style="Dictionary-Contrasting" isEnabled="true" field="OwnerType" subField="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true"/>
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Relation Name" between=" " after=": " style="Dictionary-Contrasting" isEnabled="false" field="OwnerType" subField="Name">
+		  <ConfigurationItem name="Relation Name" before=" " between=" " after=":" style="Dictionary-Contrasting" isEnabled="false" field="OwnerType" subField="Name">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true"/>
 			</WritingSystemOptions>
 		  </ConfigurationItem>
-		  <ConfigurationItem name="Targets" between=", " after="" isEnabled="true" field="ConfigTargets">
+		  <ConfigurationItem name="Targets" before=" " between=", " after="" isEnabled="true" field="ConfigTargets">
 			<!--ConfiguredXHTMLGenerator uses cssClassNameOverride="headword" as a flag to generate a link to the referenced entry-->
 			<ConfigurationItem name="Referenced Sense Headword" between=" " style="Dictionary-CrossReferences" isEnabled="true" field="HeadWord" cssClassNameOverride="headword">
 			  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
@@ -3737,7 +3840,7 @@
 				<Option id="all analysis" isEnabled="true"/>
 			  </WritingSystemOptions>
 			</ConfigurationItem>
-			<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")"  field="PrimaryEntryRefs">
+			<ConfigurationItem name="Primary Entry References" isEnabled="true" before=" (" between=", " after=")" field="PrimaryEntryRefs" hideCustomFields="true">
 				<ConfigurationItem name="Type" isEnabled="true" between="," after="" field="EntryTypes" cssClassNameOverride="entrytypes">
 					<ConfigurationItem name="Reverse Abbreviation" isEnabled="true" between=" " field="ReverseAbbr">
 						<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -3908,9 +4011,9 @@
 	  				<Option id="all analysis" isEnabled="true" />
 	  			</WritingSystemOptions>
 	  		</ConfigurationItem>
-	  		<ConfigurationItem name="Examples" isEnabled="true" styleType="character" between="  " after="" field="ExamplesOS" cssClassNameOverride="examplescontents">
+	  		<ConfigurationItem name="Examples" isEnabled="true" styleType="character" before="  " between="  " after="" field="ExamplesOS" cssClassNameOverride="examplescontents">
 	  			<ComplexFormOptions displayEachComplexFormInParagraph="false" />
-	  			<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" before=" " between=" " field="Example">
+	  			<ConfigurationItem name="Example Sentence" isEnabled="true" style="Dictionary-Vernacular" before="" between=" " field="Example">
 	  				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 	  					<Option id="all vernacular" isEnabled="true" />
 	  				</WritingSystemOptions>
@@ -3932,7 +4035,7 @@
 		</ConfigurationItem>
 		<ConfigurationItem name="Scientific Name" before=" " isEnabled="true" field="ScientificName"/>
 		<ConfigurationItem name="Source" before=" " isEnabled="false" field="Source"/>
-		<ConfigurationItem name="Semantic Domains" before=" (sem. domains: " between=", " after=".) " isEnabled="false" field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
+		<ConfigurationItem name="Semantic Domains" before=" (sem. domains: " between=", " after=".)" isEnabled="false" field="SemanticDomainsRC" cssClassNameOverride="semanticdomains">
 		  <ConfigurationItem name="Abbreviation" between=" " after=" - " isEnabled="true" field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true"/>
@@ -3968,7 +4071,7 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
-		<ConfigurationItem name="Usages" before="{" between=", " after="} " isEnabled="true" field="UsageTypesRC" cssClassNameOverride="usages">
+		<ConfigurationItem name="Usages" before=" {" between=", " after="}" isEnabled="true" field="UsageTypesRC" cssClassNameOverride="usages">
 		  <ConfigurationItem name="Abbreviation" between=" " isEnabled="true" field="Abbreviation">
 			<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			  <Option id="analysis" isEnabled="true"/>

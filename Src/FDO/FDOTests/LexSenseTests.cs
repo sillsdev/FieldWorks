@@ -978,6 +978,25 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 		}
 
 		/// <summary>
+		/// Test that we can make a new sense where there is a dialect label.
+		/// </summary>
+		[Test]
+		public void RDENewSense_Handles_CrashWhenNoDialectLabel()
+		{
+			var senseFactory = Cache.ServiceLocator.GetInstance<LexSenseFactory>();
+			var mySd = MakeSemanticDomain();
+			var nodes = MakeNodeList(new string[] { "Word (Citation Form)", "Meaning (Gloss)" }, false);
+			nodes.Add(MakeTransduceListNode("Dialect Labels(Entry)", "LexDb.DialectLabels", "LexEntry.DialectLabels"));
+			ITsString[] data = { MakeVernString("kick"), MakeAnalysisString("strike with foot"), MakeAnalysisString("aeast") };
+
+			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data, null);
+
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
+			var entry = (ILexEntry)sense.Owner;
+			Assert.That(entry.DialectLabelsRS.Count, Is.EqualTo(0));
+		}
+
+		/// <summary>
 		/// Test that we can make a new sense where there is a column specifying a transduce
 		/// like LexEntry.Bibliography. Covers all four allowed classes with multistring fields
 		/// and the special case for LexSense of a plain string property.

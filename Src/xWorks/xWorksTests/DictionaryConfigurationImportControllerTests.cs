@@ -4,11 +4,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -23,13 +25,15 @@ namespace SIL.FieldWorks.XWorks
 	/// LT-17397.
 	/// These tests write to disk, not just in memory, so they can use the zip library.
 	/// </summary>
-	public class DictionaryConfigurationImportControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
+	public class DictionaryConfigurationImportControllerTests : MemoryOnlyBackendProviderReallyRestoredForEachTestTestBase
 	{
 		private DictionaryConfigurationImportController _controller;
 		private string _projectConfigPath;
 		private readonly string _defaultConfigPath = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary");
 		private const string configLabel = "importexportConfiguration";
 		private const string configFilename = "importexportConfigurationFile.fwdictconfig";
+		private const int CustomRedBGR = 0x0000FE;
+		private readonly int NamedRedBGR = (int)ColorUtil.ConvertColorToBGR(Color.Red);
 
 		/// <summary>
 		/// Zip file to import during testing.
@@ -41,17 +45,12 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private string _pathToConfiguration;
 
-		[TestFixtureSetUp]
-		public override void FixtureSetup()
-		{
-			base.FixtureSetup();
-
-			FileUtils.EnsureDirectoryExists(_defaultConfigPath);
-		}
-
 		[TestFixtureTearDown]
 		public override void FixtureTeardown()
 		{
+			if (Directory.Exists(_projectConfigPath))
+				Directory.Delete(_projectConfigPath, true); // delete the directory that was created in SetUp
+
 			base.FixtureTeardown();
 		}
 
@@ -77,8 +76,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Label = configLabel,
 				Publications = new List<string> { "Main Dictionary", "unknown pub 1", "unknown pub 2" },
+				Parts = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode { FieldDescription = "LexEntry" } },
 				FilePath = Path.GetTempPath() + configFilename
 			};
+			CssGeneratorTests.PopulateFieldsForTesting(configurationToExport);
 
 			_pathToConfiguration = configurationToExport.FilePath;
 
@@ -88,7 +89,36 @@ namespace SIL.FieldWorks.XWorks
 			// Export a configuration that we know how to import
 
 			_zipFile = Path.GetTempFileName();
-			DictionaryConfigurationManagerController.ExportConfiguration(configurationToExport, _zipFile, Cache);
+
+			// Add a test style to the cache
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
+				var testStyle = styleFactory.Create(Cache.LangProject.StylesOC, "TestStyle", ContextValues.InternalConfigureView, StructureValues.Body,
+					FunctionValues.Line, true, 2, false);
+				testStyle.Usage.set_String(Cache.DefaultAnalWs, "Test Style");
+				var normalStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Normal", ContextValues.InternalConfigureView, StructureValues.Body,
+					FunctionValues.Line, false, 2, false);
+				var propsBldr = TsPropsBldrClass.Create();
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, 0x2BACCA); // arbitrary color to create para element
+				normalStyle.Rules = propsBldr.GetTextProps();
+				var styleWithNamedColors = styleFactory.Create(Cache.LangProject.StylesOC, "Nominal", ContextValues.InternalConfigureView, StructureValues.Body,
+					FunctionValues.Line, false, 2, false);
+				styleWithNamedColors.BasedOnRA = normalStyle;
+				propsBldr = TsPropsBldrClass.Create();
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
+				styleWithNamedColors.Rules = propsBldr.GetTextProps();
+				var styleWithCustomColors = styleFactory.Create(Cache.LangProject.StylesOC, "Abnormal", ContextValues.InternalConfigureView, StructureValues.Body,
+					FunctionValues.Line, false, 2, false);
+				styleWithCustomColors.BasedOnRA = normalStyle;
+				propsBldr = TsPropsBldrClass.Create();
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, CustomRedBGR);
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, CustomRedBGR);
+				styleWithCustomColors.Rules = propsBldr.GetTextProps();
+				DictionaryConfigurationManagerController.ExportConfiguration(configurationToExport, _zipFile, Cache);
+				Cache.LangProject.StylesOC.Clear();
+			});
 			Assert.That(File.Exists(_zipFile), "Unit test not set up right");
 			Assert.That(new FileInfo(_zipFile).Length, Is.GreaterThan(0), "Unit test not set up right");
 
@@ -167,12 +197,45 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void DoImport_ImportsStyles()
+		{
+			Assert.IsEmpty(Cache.LangProject.StylesOC);
+			_controller.PrepareImport(_zipFile);
+			CollectionAssert.IsEmpty(Cache.LangProject.StylesOC);
+			// SUT
+			_controller.DoImport();
+			var importedTestStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "TestStyle");
+			Assert.NotNull(importedTestStyle, "test style was not imported.");
+			Assert.That(importedTestStyle.Usage.BestAnalysisAlternative.Text, Is.StringMatching("Test Style"));
+			Assert.AreEqual(importedTestStyle.Context, ContextValues.InternalConfigureView);
+			Assert.AreEqual(importedTestStyle.Type, StyleType.kstCharacter);
+			Assert.AreEqual(importedTestStyle.UserLevel, 2);
+			var importedParaStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Nominal");
+			Assert.NotNull(importedParaStyle, "test style was not imported.");
+			int hasColor;
+			var color = importedParaStyle.Rules.GetIntPropValues((int)FwTextPropType.ktptBackColor, out hasColor);
+			Assert.That(hasColor == 0, "Background color should be set");
+			Assert.AreEqual(NamedRedBGR, color, "Background color should be set to Named Red");
+			color = importedParaStyle.Rules.GetIntPropValues((int)FwTextPropType.ktptForeColor, out hasColor);
+			Assert.That(hasColor == 0, "Foreground color should be set");
+			Assert.AreEqual(NamedRedBGR, color, "Foreground color should be set to Named Red");
+			importedParaStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Abnormal");
+			Assert.NotNull(importedParaStyle, "test style was not imported.");
+			color = importedParaStyle.Rules.GetIntPropValues((int)FwTextPropType.ktptBackColor, out hasColor);
+			Assert.That(hasColor == 0, "Background color should be set");
+			Assert.AreEqual(CustomRedBGR, color, "Background color should be set to Custom Red");
+			color = importedParaStyle.Rules.GetIntPropValues((int)FwTextPropType.ktptForeColor, out hasColor);
+			Assert.That(hasColor == 0, "Foreground color should be set");
+			Assert.AreEqual(CustomRedBGR, color, "Foreground color should be set to Custom Red");
+		}
+
+		[Test]
 		public void PrepareImport_DoesNotChangeRealData()
 		{
 			// SUT
 			_controller.PrepareImport(_zipFile);
 
-			Assert.That(!File.Exists(_projectConfigPath + configFilename),
+			Assert.That(!File.Exists(Path.Combine(_projectConfigPath, configFilename)),
 				"Configuration should not have been imported if not requested.");
 			Assert.That(_controller._configurations.All(config => config.Label != configLabel),
 				"Configuration should not have been registered.");
@@ -262,7 +325,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void UserRequestsOverwrite_ResultsInDifferentLabelAndFilename()
 		{
-			UserRequestsOverwrite_Helper();
+			var importOverwriteConfigFilePath = UserRequestsOverwrite_Helper();
 			var configThatShouldBeOverwritten = _controller._configurations.First(config => config.Label == configLabel);
 
 			// SUT
@@ -274,11 +337,9 @@ namespace SIL.FieldWorks.XWorks
 			// SUT 2
 			_controller.DoImport();
 
-			Assert.That(_controller.NewConfigToImport.FilePath,
-				Is.EqualTo(Path.Combine(_projectConfigPath, _controller.NewConfigToImport.Label + DictionaryConfigurationModel.FileExtension)),
+			Assert.That(_controller.NewConfigToImport.FilePath, Is.EqualTo(importOverwriteConfigFilePath),
 				"This is nit-picking, but use a filename based on the original label, not based on a non-colliding label."
 				+ " So ORIGINALLABEL+maybesomething, not NONCOLLIDING+something (so not importexportConfiguration-Imported2)");
-
 			Assert.That(!_controller._configurations.Contains(configThatShouldBeOverwritten),
 				"old config of same label shouldn't still be there if overwritten");
 			var newConfigInRegisteredSet = _controller._configurations.First(config => config.Label == configLabel);
@@ -287,20 +348,21 @@ namespace SIL.FieldWorks.XWorks
 				"Imported config was not what was expected");
 		}
 
-		private void UserRequestsOverwrite_Helper()
+		private string UserRequestsOverwrite_Helper()
 		{
+			// This model has the same label but a non-colliding filename. Proves overwrite the code will always overwrite.
 			var alreadyExistingModelWithSameLabel = new DictionaryConfigurationModel
 			{
 				Label = configLabel,
-				Publications = new List<string>(),
+				Publications = new List<string> { "Main Dictionary", "unknown pub 1", "unknown pub 2" },
+				FilePath = Path.Combine(_projectConfigPath, "Different" + configFilename)
 			};
-			DictionaryConfigurationManagerController.GenerateFilePath(_projectConfigPath, _controller._configurations,
-				alreadyExistingModelWithSameLabel);
 			FileUtils.WriteStringtoFile(alreadyExistingModelWithSameLabel.FilePath, "arbitrary file content", Encoding.UTF8);
 			var anotherAlreadyExistingModel = new DictionaryConfigurationModel
 			{
 				Label = "importexportConfiguration-Imported1",
-				Publications = new List<string>()
+				Publications = new List<string> { "Main Dictionary", "unknown pub 1", "unknown pub 2" },
+				FilePath = Path.GetTempPath() + configFilename
 			};
 			DictionaryConfigurationManagerController.GenerateFilePath(_projectConfigPath, _controller._configurations,
 				anotherAlreadyExistingModel);
@@ -310,6 +372,8 @@ namespace SIL.FieldWorks.XWorks
 			_controller._configurations.Add(anotherAlreadyExistingModel);
 
 			_controller.PrepareImport(_zipFile);
+
+			return alreadyExistingModelWithSameLabel.FilePath;
 		}
 
 		[Test]
@@ -375,15 +439,22 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void DoImport_AddsNewPublications()
 		{
-			var configFile=FileUtils.GetTempFile("unittest.txt");
-			FileUtils.WriteStringtoFile(configFile, "arbitrary file contents", Encoding.UTF8);
+			var configFile=FileUtils.GetTempFile("unittest.xml");
+			const string XmlOpenTagsThruRoot = @"<?xml version=""1.0"" encoding=""utf-8""?>
+			<DictionaryConfiguration name=""Root"" allPublications=""true"" isRootBased=""true"" version=""1"" lastModified=""2014-02-13"">";
+			const string XmlCloseTagsFromRoot = @"</DictionaryConfiguration>";
+			FileUtils.WriteStringtoFile(configFile, XmlOpenTagsThruRoot +
+				"<ConfigurationItem name=\"Main Entry\" style=\"Dictionary-Normal\" styleType=\"paragraph\" isEnabled=\"true\" field=\"LexEntry\" cssClassNameOverride=\"entry\"></ConfigurationItem>"
+				+ XmlCloseTagsFromRoot, Encoding.UTF8);
 			_controller._temporaryImportConfigLocation = configFile;
 			_controller.NewConfigToImport = new DictionaryConfigurationModel()
 			{
 				Label = "blah",
 				Publications = new List<string>() {"pub 1", "pub 2"},
+				Parts = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode() }
 			};
 			// SUT
+			_controller._proposedNewConfigLabel = "blah";
 			_controller.DoImport();
 
 			Assert.That(_controller.NewConfigToImport.Publications.Contains("pub 1"), "Should not have lost publication from configuration that was imported");
@@ -400,7 +471,7 @@ namespace SIL.FieldWorks.XWorks
 			var customFieldLabel = "TempCustomField";
 			var customFieldWrongType = "WrongTypeField";
 			var zipFile = Path.GetTempFileName();
-			using (var existingSameCf = new CustomFieldForTest(Cache, customFieldSameLabel, customFieldSameLabel, LexSenseTags.kClassId, StTextTags.kClassId, -1,
+			using (new CustomFieldForTest(Cache, customFieldSameLabel, customFieldSameLabel, LexSenseTags.kClassId, StTextTags.kClassId, -1,
 					CellarPropertyType.OwningAtomic, Guid.Empty))
 			{
 				using (new CustomFieldForTest(Cache, customFieldLabel, customFieldLabel, LexEntryTags.kClassId, StTextTags.kClassId, -1,
@@ -417,9 +488,13 @@ namespace SIL.FieldWorks.XWorks
 
 					var configurationToExport = importExportDCModel;
 					_pathToConfiguration = configurationToExport.FilePath;
+					const string XmlOpenTagsThruRoot = @"<?xml version=""1.0"" encoding=""utf-8""?>
+			<DictionaryConfiguration name=""Root"" allPublications=""true"" isRootBased=""true"" version=""1"" lastModified=""2014-02-13"">";
+					const string XmlCloseTagsFromRoot = @"</DictionaryConfiguration>";
+					const string XmlTagsHeaword = @"<ConfigurationItem name=""Main Entry"" isEnabled=""true"" field=""LexEntry"">\r\n\t\t\t\t\t<ConfigurationItem name=""Testword"" nameSuffix=""2b"" before=""["" between="", "" after=""] "" style=""Dictionary-Headword"" isEnabled=""true"" field=""HeadWord"">""\r\n\r\n\r\n\t\t\t\t\t</ConfigurationItem>\r\n\t\t\t\t</ConfigurationItem>\r\n\t\t\t\t<SharedItems/>";
+					const string XmlTagsCustomField = @" <ConfigurationItem name = ""CustomField1"" isEnabled=""true"" isCustomField=""true"" before="" "" field=""OwningEntry"" subField=""CustomField1"" />";
 					File.WriteAllText(_pathToConfiguration,
-						DictionaryConfigurationModelTests.XmlOpenTagsThruHeadword +
-						DictionaryConfigurationModelTests.XmlCloseTagsFromHeadword);
+						XmlOpenTagsThruRoot + XmlTagsHeaword + XmlTagsCustomField + XmlCloseTagsFromRoot);
 					// This export should create the zipfile containing the custom field information (currently in LIFT format)
 					DictionaryConfigurationManagerController.ExportConfiguration(configurationToExport, zipFile, Cache);
 				} // Destroy two of the custom fields and verify the state
@@ -440,6 +515,9 @@ namespace SIL.FieldWorks.XWorks
 					VerifyCustomFieldPresent(customFieldWrongType, LexEntryTags.kClassId, StTextTags.kClassId);
 					// SUT
 					_controller.DoImport();
+					var configToImport = (DictionaryConfigurationModel)_controller.NewConfigToImport;
+					// Assert that the field which was Enabled or not
+					Assert.IsTrue(configToImport.Parts[1].IsEnabled, "CustomField1 should be enabled");
 					// Assert that the field which was present before the import is still there
 					VerifyCustomFieldPresent(customFieldSameLabel, LexSenseTags.kClassId, StTextTags.kClassId);
 					// Assert that the field which was not present before the import has been added

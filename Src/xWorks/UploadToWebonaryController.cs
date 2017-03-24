@@ -243,9 +243,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		///<summary>This stub is intended for other files related to front- and backmatter (things not really managed by FLEx itself)</summary>
 		private void ExportOtherFilesContent(string tempDirectoryToCompress, UploadToWebonaryModel logTextbox, object outputLogTextbox)
 		{
-			//TODO:Copy the user selected other files into the temp directory
+			//TODO: Copy the user selected other files into the temp directory and normalize filenames to NFC
 		}
 
 		public void UploadToWebonary(UploadToWebonaryModel model, IUploadToWebonaryView view)

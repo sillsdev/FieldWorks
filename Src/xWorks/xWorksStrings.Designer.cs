@@ -232,7 +232,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete.
+        ///   Looks up a localized string similar to Delete this custom view.
         /// </summary>
         internal static string Delete {
             get {
@@ -312,7 +312,16 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reversal Configurations.
+        ///   Looks up a localized string similar to Warning! The styles for this project will be overwritten by the import..
+        /// </summary>
+        internal static string DictionaryConfigurationDictionaryConfigurationUser_StyleOverwriteWarning {
+            get {
+                return ResourceManager.GetString("DictionaryConfigurationDictionaryConfigurationUser_StyleOverwriteWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reversal Views.
         /// </summary>
         internal static string DictionaryConfigurationMangager_ReversalConfigurations_GroupLabel {
             get {
@@ -402,7 +411,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Exporting entries for the {0} publication using the {1} configuration.
+        ///   Looks up a localized string similar to Exporting entries for the {0} publication using the {1} view.
         /// </summary>
         internal static string ExportingEntriesToWebonary {
             get {
@@ -434,6 +443,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string ExportingReversalsToWebonaryCompleted {
             get {
                 return ResourceManager.GetString("ExportingReversalsToWebonaryCompleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export the view.
+        /// </summary>
+        internal static string ExportSelected {
+            get {
+                return ResourceManager.GetString("ExportSelected", resourceCulture);
             }
         }
         
@@ -546,6 +564,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Import a view.
+        /// </summary>
+        internal static string ImportView {
+            get {
+                return ResourceManager.GetString("ImportView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to It is inadvisable to share &apos;{0}&apos; because a shared node with the same field ({1}) already exists ({2}). No changes have been made..
         /// </summary>
         internal static string InadvisableToShare {
@@ -555,7 +582,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The root node in your configuration is invalid. The field attribute &apos;{0}&apos; must match a class name..
+        ///   Looks up a localized string similar to The root node in your configured view is invalid. The field attribute &apos;{0}&apos; must match a class name..
         /// </summary>
         internal static string InvalidRootConfigurationNode {
             get {
@@ -1420,7 +1447,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The dictionary display configuration has not been set..
+        ///   Looks up a localized string similar to The dictionary view has not been set..
         /// </summary>
         internal static string ksNoConfiguration {
             get {
@@ -1851,7 +1878,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your list of configurations was just changed. You must close and reopen this dialog to be able to export..
+        ///   Looks up a localized string similar to Your list of views was just changed. You must close and reopen this dialog to be able to export..
         /// </summary>
         internal static string kstidConfigsChanged {
             get {
@@ -1860,7 +1887,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your list of configurations was just changed. You must close and reopen this dialog to be able to import..
+        ///   Looks up a localized string similar to Your list of views was just changed. You must close and reopen this dialog to be able to import..
         /// </summary>
         internal static string kstidConfigsChangedImport {
             get {
@@ -1896,7 +1923,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Importing and overwriting existing configuration with name &apos;{0}&apos;..
+        ///   Looks up a localized string similar to Importing and overwriting existing view named &apos;{0}&apos;..
         /// </summary>
         internal static string kstidImportingAndOverwritingConfiguration {
             get {
@@ -1905,7 +1932,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Importing configuration with name &apos;{0}&apos;..
+        ///   Looks up a localized string similar to Importing view named &apos;{0}&apos;..
         /// </summary>
         internal static string kstidImportingConfig {
             get {
@@ -1914,7 +1941,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Importing configuration with new name &apos;{0}&apos;..
+        ///   Looks up a localized string similar to Importing view with new name &apos;{0}&apos;..
         /// </summary>
         internal static string kstidImportingConfigNewName {
             get {
@@ -1923,7 +1950,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Overwrite existing configuration named {0}.
+        ///   Looks up a localized string similar to Overwrite existing view named {0}.
         /// </summary>
         internal static string kstidOverwriteConfiguration {
             get {
@@ -1941,7 +1968,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use new configuration name {0}.
+        ///   Looks up a localized string similar to Use new view name {0}.
         /// </summary>
         internal static string kstidUseNewConfigName {
             get {
@@ -2203,7 +2230,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No configurations match the current publication..
+        ///   Looks up a localized string similar to No views match the current publication..
         /// </summary>
         internal static string NoConfigsMatchPub {
             get {
@@ -2339,7 +2366,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reset.
+        ///   Looks up a localized string similar to Reset this view to the default settings.
         /// </summary>
         internal static string Reset {
             get {
@@ -2384,7 +2411,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reversal Index Configuration Manager.
+        ///   Looks up a localized string similar to Configure Reversal Index Views.
         /// </summary>
         internal static string ReversalIndexConfigurationDlgTitle {
             get {
@@ -2573,7 +2600,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Exporting entries for the {0} publication using the {1} configuration.
+        ///   Looks up a localized string similar to Exporting entries for the {0} publication using the {1} view.
         /// </summary>
         internal static string UploadToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0__publication_using_the__1__configuration {
             get {

@@ -1014,7 +1014,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			var id = GetRangeElementDetails(xnElem, out guidAttr, out parent, out description, out label, out abbrev);
 
 			ProcessPossibility(id, guidAttr, parent, MakeSafeLiftMultiText(description), MakeSafeLiftMultiText(label), MakeSafeLiftMultiText(abbrev),
-							   dictCustomList, rgnewCustom, possList);
+							   dictCustomList, rgnewCustom, possList, true);
 		}
 
 		private void ProcessRangeElement(XmlNode xnElem, string range)

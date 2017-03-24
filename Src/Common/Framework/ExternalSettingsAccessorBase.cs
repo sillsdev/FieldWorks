@@ -140,7 +140,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// <returns>The loaded document</returns>
 		/// ------------------------------------------------------------------------------------
-		protected abstract T LoadDoc();
+		protected abstract T LoadDoc(string xmlDocument = null);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

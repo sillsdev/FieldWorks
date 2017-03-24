@@ -74,6 +74,8 @@ namespace SIL.FieldWorks.XWorks
 		protected RecordBarHandler m_recordBarHandler;
 		protected RecordList m_list;
 
+		private const string StatusBarRecordNumber = "StatusPanelRecordNumber";
+
 		/// <summary>
 		/// The record list might need access to this just to check membership of an object quickly.
 		/// </summary>
@@ -252,8 +254,6 @@ namespace SIL.FieldWorks.XWorks
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				//ResetStatusBarPanel("StatusPanelRecordNumber", "");
-				//ResetStatusBarPanel("StatusPanelMessage", "");
 				m_list.ListChanged -= OnListChanged;
 				m_list.AboutToReload -= m_list_AboutToReload;
 				m_list.DoneReload -= m_list_DoneReload;
@@ -1763,13 +1763,21 @@ namespace SIL.FieldWorks.XWorks
 			bool fIgnore = m_mediator.PropertyTable.GetBoolProperty("IgnoreStatusPanel", false);
 			if (fIgnore)
 				return;
+			// JohnT: if we're not controlling the record list, we probably have no business trying to
+			// control the status bar. But we may need a separate control over this.
+			// Note that it can be definitely wrong to update it; this Clerk may not have anything
+			// to do with the current window contents.
 			if (IsControllingTheRecordTreeBar)
 			{
-				// JohnT: if we're not controlling the record list, we probably have no business trying to
-				// control the status bar. But we may need a separate control over this.
-				// Note that it can be definitely wrong to update it; this Clerk may not have anything
-				// to do with the current window contents.
-				UpdateStatusBarRecordNumber();
+				if (WantStatusBarRecordNumber)
+				{
+					UpdateStatusBarRecordNumber();
+				}
+				else
+				{
+					ResetStatusBarPanel(StatusBarRecordNumber, " ");
+					ResetStatusBarMessageForCurrentObject();
+				}
 			}
 
 			//this is used by DependantRecordLists
@@ -1802,6 +1810,15 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		private bool WantStatusBarRecordNumber
+		{
+			get
+			{
+				var currentControlObject = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
+				return !(currentControlObject == "lexiconDictionary" || currentControlObject == "reversalToolEditComplete");
+			}
+		}
+
 		private void UpdateStatusBarRecordNumber()
 		{
 			var noRecordsDefaultText = m_mediator.StringTbl.GetString("No Records", "Misc");// FwXApp.XWorksResources.GetString("stidNoRecords");
@@ -1823,7 +1840,7 @@ namespace SIL.FieldWorks.XWorks
 				s = noRecordsText;
 			}
 
-			ResetStatusBarPanel("StatusPanelRecordNumber", s);
+			ResetStatusBarPanel(StatusBarRecordNumber, s);
 			ResetStatusBarMessageForCurrentObject();
 		}
 

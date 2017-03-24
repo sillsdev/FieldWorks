@@ -691,7 +691,7 @@
     <value>19</value>
   </data>
   <data name="configurationLabel.Text" xml:space="preserve">
-    <value>Configuration:</value>
+    <value>View:</value>
   </data>
   <data name="configurationLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleLeft</value>

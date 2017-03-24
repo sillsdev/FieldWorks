@@ -422,18 +422,30 @@ namespace SIL.FieldWorks.XWorks
 
 		private bool NodeWithSameDisplayLabelExists(string newSuffix, List<ConfigurableDictionaryNode> siblings)
 		{
-			// gather the sibling nodes and all related children of grouping nodes together for comparison
+			return GatherReallyReallyAllSiblings(siblings)
+				.Exists(node => !ReferenceEquals(node, this) && node.Label == Label && node.LabelSuffix == newSuffix);
+		}
+
+		/// <summary>sibling nodes and all related children of grouping nodes together for comparison (null for top-level nodes)</summary>
+		[XmlIgnore]
+		public List<ConfigurableDictionaryNode> ReallyReallyAllSiblings
+		{
+			get { return Parent == null ? null : GatherReallyReallyAllSiblings(Parent.Children); }
+		}
+
+		private List<ConfigurableDictionaryNode> GatherReallyReallyAllSiblings(List<ConfigurableDictionaryNode> siblings)
+		{
 			if (Parent != null && Parent.DictionaryNodeOptions is DictionaryNodeGroupingOptions)
 			{
 				siblings = Parent.IsSharedItem ? Parent.Parent.Parent.ReferencedOrDirectChildren : Parent.Parent.ReferencedOrDirectChildren;
 			}
-			var setForUniqueNodes = new List<ConfigurableDictionaryNode>(siblings);
+			var reallyReallyAllSiblings = new List<ConfigurableDictionaryNode>(siblings);
 			foreach (var sibling in siblings.Where(sibling => sibling.DictionaryNodeOptions is DictionaryNodeGroupingOptions))
 			{
 				if(sibling.ReferencedOrDirectChildren != null)
-					setForUniqueNodes.AddRange(sibling.ReferencedOrDirectChildren);
+					reallyReallyAllSiblings.AddRange(sibling.ReferencedOrDirectChildren);
 			}
-			return setForUniqueNodes.Exists(node => !ReferenceEquals(node, this) && node.Label == Label && node.LabelSuffix == newSuffix);
+			return reallyReallyAllSiblings;
 		}
 	}
 }

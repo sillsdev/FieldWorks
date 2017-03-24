@@ -17,7 +17,10 @@
 		<NuGetCommand Condition=" '$(OS)' != 'Windows_NT' ">[ -d $HOME ] || export XDG_CONFIG_HOME=$(mktemp -d); mono --runtime=v4.0.30319 $(NuGetExePath)</NuGetCommand>
 
 		<!-- Command to download packages -->
-		<RestoreCommand>$(NuGetCommand) restore "$(PackagesConfig)" -NonInteractive -PackagesDirectory "$(fwrt)/packages"</RestoreCommand>
+		<CoreRestoreCommand>$(NuGetCommand) restore "$(PackagesConfig)" -NonInteractive -PackagesDirectory "$(fwrt)/packages"</CoreRestoreCommand>
+		<RestoreCommand Condition="'$(OS)' == 'Windows_NT'">$(CoreRestoreCommand)</RestoreCommand>
+		<!-- 2017-03-17: Sometimes NuGet fails after downloading when running on a build node, such as with message "Object reference not set to an instance of an object". Try it more than once to reduce this random failure. Maybe upgrading NuGet will help actually fix the problem. -->
+		<RestoreCommand Condition="'$(OS)' != 'Windows_NT'">$(CoreRestoreCommand) || (sleep 2m; $(CoreRestoreCommand)) || (sleep 2m; $(CoreRestoreCommand))</RestoreCommand>
 	</PropertyGroup>
 
 	<Target Name="RestoreNuGetPackages" DependsOnTargets="CheckPrerequisites">

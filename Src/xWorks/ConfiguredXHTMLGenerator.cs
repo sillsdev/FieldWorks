@@ -18,6 +18,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -33,6 +34,12 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public static class ConfiguredXHTMLGenerator
 	{
+		/// <summary>
+		/// Click-to-play icon for media files
+		/// </summary>
+		internal const string LoudSpeaker = "\uD83D\uDD0A";
+		internal const string MovieCamera = "\U0001F3A5";
+
 		/// <summary>
 		/// The Assembly that the model Types should be loaded from. Allows test code to introduce a test model.
 		/// </summary>
@@ -57,6 +64,9 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <remarks>internal to facilitate unit tests</remarks>
 		internal static int EntriesToAddCount { get; set; }
+
+		internal const string CurrentEntryMarker = "blueBubble.png";
+		private const string ImagesFolder = "Images";
 
 		/// <summary>
 		/// Static initializer setting the AssemblyFile to the default Fieldworks model dll.
@@ -114,8 +124,8 @@ namespace SIL.FieldWorks.XWorks
 			if (exportSettings.RightToLeft)
 				xhtmlWriter.WriteAttributeString("dir", "rtl");
 			xhtmlWriter.WriteStartElement("head");
-			CreateLinkElement(cssPath, xhtmlWriter);
-			CreateLinkElement(custCssFile, xhtmlWriter);
+			CreateLinkElement(cssPath, xhtmlWriter, exportSettings.ExportPath);
+			CreateLinkElement(custCssFile, xhtmlWriter, exportSettings.ExportPath);
 			// write out schema links for writing system metadata
 			xhtmlWriter.WriteStartElement("link");
 			xhtmlWriter.WriteAttributeString("href", "http://purl.org/dc/terms/");
@@ -137,13 +147,18 @@ namespace SIL.FieldWorks.XWorks
 			xhtmlWriter.WriteWhitespace(Environment.NewLine);
 		}
 
-		private static void CreateLinkElement(string cssFilePath, XmlWriter xhtmlWriter)
+		private static void CreateLinkElement(string cssFilePath, XmlWriter xhtmlWriter, string exportPath)
 		{
 			if (string.IsNullOrEmpty(cssFilePath) || !File.Exists(cssFilePath))
 				return;
 
+			var hrefValue = Path.GetFileName(cssFilePath);
+			if (exportPath == null)
+				//In some previews exportPath is null then we should use the full path for the link
+				hrefValue = "file:///" + cssFilePath;
+
 			xhtmlWriter.WriteStartElement("link");
-			xhtmlWriter.WriteAttributeString("href", "file:///" + cssFilePath);
+			xhtmlWriter.WriteAttributeString("href", hrefValue);
 			xhtmlWriter.WriteAttributeString("rel", "stylesheet");
 			xhtmlWriter.WriteEndElement(); //</link>
 		}
@@ -245,8 +260,8 @@ namespace SIL.FieldWorks.XWorks
 			var configDir = Path.GetDirectoryName(configuration.FilePath);
 			var clerk = mediator.PropertyTable.GetValue("ActiveClerk", null) as RecordClerk;
 			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
-			// Don't display letter headers if we're showing a preview in the Edit tool.
-			var wantLetterHeaders = (entryCount > 1 || publicationDecorator != null) && (IsClerkSortingByHeadword(clerk));
+			// Don't display letter headers if we're showing a preview in the Edit tool or we're not sorting by headword
+			var wantLetterHeaders = (entryCount > 1 || !IsLexEditPreviewOnly(publicationDecorator)) && (IsClerkSortingByHeadword(clerk));
 			using (var xhtmlWriter = XmlWriter.Create(xhtmlPath))
 			using (var cssWriter = new StreamWriter(cssPath, false, Encoding.UTF8))
 			{
@@ -302,10 +317,24 @@ namespace SIL.FieldWorks.XWorks
 
 				if (progress != null)
 					progress.Message = xWorksStrings.ksGeneratingStyleInfo;
-				cssWriter.Write(CssGenerator.GenerateLetterHeaderCss(mediator));
+				if (!IsLexEditPreviewOnly(publicationDecorator) && !IsExport(settings))
+				{
+					cssWriter.Write(CssGenerator.GenerateCssForSelectedEntry(settings.RightToLeft));
+					CopyFileSafely(settings, Path.Combine(FwDirectoryFinder.FlexFolder, ImagesFolder, CurrentEntryMarker), CurrentEntryMarker);
+				}
 				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, mediator));
 				cssWriter.Flush();
 			}
+		}
+
+		private static bool IsLexEditPreviewOnly(DictionaryPublicationDecorator decorator)
+		{
+			return decorator == null;
+		}
+
+		private static bool IsExport(GeneratorSettings settings)
+		{
+			return !settings.ExportPath.StartsWith(Path.Combine(Path.GetTempPath(), "DictionaryPreview"));
 		}
 
 		/// <summary>
@@ -455,8 +484,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var firstEntry = settings.Cache.ServiceLocator.GetObject(firstEntryId);
 			var lastEntry = settings.Cache.ServiceLocator.GetObject(lastEntryId);
-			var firstLetters = GetIndexLettersOfHeadword(GetLetHeadbyEntryType(firstEntry), isFirst);
-			var lastLetters = GetIndexLettersOfHeadword(GetLetHeadbyEntryType(lastEntry));
+			var firstLetters = GetIndexLettersOfHeadword(GetHeadwordForLetterHead(firstEntry), isFirst);
+			var lastLetters = GetIndexLettersOfHeadword(GetHeadwordForLetterHead(lastEntry));
 			return firstEntryId == lastEntryId ? firstLetters : firstLetters + " .. " + lastLetters;
 		}
 
@@ -494,7 +523,7 @@ namespace SIL.FieldWorks.XWorks
 			// I don't know if we can have an empty headword. If we can then return empty string instead of crashing.
 			if (headWord.Length == 0)
 				return string.Empty;
-			return headWord.Substring(0, headWord.Length <= 1 || justFirstLetter ? 1 : 2);
+			return TsStringUtils.Compose(headWord.Substring(0, headWord.Length <= 1 || justFirstLetter ? 1 : 2));
 		}
 
 		private static List<Tuple<int, int>> GetPageRanges(int[] entryHvos, int entriesPerPage)
@@ -605,9 +634,9 @@ namespace SIL.FieldWorks.XWorks
 			var wsString = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultVernWs);
 			if (entry is IReversalIndexEntry)
 				wsString = ((IReversalIndexEntry)entry).SortKeyWs;
-			var firstLetter = ConfiguredExport.GetLeadChar(GetLetHeadbyEntryType(entry), wsString,
+			var firstLetter = ConfiguredExport.GetLeadChar(GetHeadwordForLetterHead(entry), wsString,
 																		  dummyOne, dummyTwo, dummyThree, cache);
-			if (firstLetter != lastHeader && !String.IsNullOrEmpty(firstLetter))
+			if (firstLetter != lastHeader && !string.IsNullOrEmpty(firstLetter))
 			{
 				var headerTextBuilder = new StringBuilder();
 				var upperCase = Icu.ToTitle(firstLetter, wsString);
@@ -626,7 +655,7 @@ namespace SIL.FieldWorks.XWorks
 				var wsRightToLeft = cache.WritingSystemFactory.get_Engine(wsString).RightToLeftScript;
 				if (wsRightToLeft != settings.RightToLeft)
 					xhtmlWriter.WriteAttributeString("dir", wsRightToLeft ? "rtl" : "ltr");
-				xhtmlWriter.WriteString(headerTextBuilder.ToString());
+				xhtmlWriter.WriteString(TsStringUtils.Compose(headerTextBuilder.ToString()));
 				xhtmlWriter.WriteEndElement();
 				xhtmlWriter.WriteEndElement();
 				xhtmlWriter.WriteWhitespace(Environment.NewLine);
@@ -636,12 +665,11 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// To generating the letter headers, we need to know which type the entry is to determine to check the first character.
-		/// So, this method will find the correct type by casting the entry with ILexEntry and IReversalIndexEntry
+		/// To generating the letter headings, we need to check the first character of the "headword," which is a different
+		/// field for ILexEntry and IReversalIndexEntry. Get the headword starting from entry-type-agnostic.
 		/// </summary>
-		/// <param name="entry">entry which needs to find the type</param>
-		/// <returns>letHead text</returns>
-		private static string GetLetHeadbyEntryType(ICmObject entry)
+		/// <returns>the "headword" in NFD (the heading letter must be normalized to NFC before writing to XHTML, per LT-18177)</returns>
+		private static string GetHeadwordForLetterHead(ICmObject entry)
 		{
 			var lexEntry = entry as ILexEntry;
 			if (lexEntry == null)
@@ -665,33 +693,25 @@ namespace SIL.FieldWorks.XWorks
 				return GenerateXHTMLForMainEntry(entryObj, configuration.Parts[0], publicationDecorator, settings);
 
 			var entry = (ILexEntry)entryObj;
-			if (!entry.PublishAsMinorEntry)
-				return string.Empty;
-
-			var bldr = new StringBuilder();
-			GenerateXHTMLForMinorEntry(entry, configuration, publicationDecorator, settings, bldr);
-			return bldr.ToString();
+			return entry.PublishAsMinorEntry
+				? GenerateXHTMLForMinorEntry(entry, configuration, publicationDecorator, settings)
+				: string.Empty;
 		}
 
 		public static string GenerateXHTMLForMainEntry(ICmObject entry, ConfigurableDictionaryNode configuration,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
-			if (configuration.DictionaryNodeOptions != null && (((ILexEntry)entry).ComplexFormEntryRefs.Any() && !IsListItemSelectedForExport(configuration, entry, null)))
+			if (configuration.DictionaryNodeOptions != null && ((ILexEntry)entry).ComplexFormEntryRefs.Any() && !IsListItemSelectedForExport(configuration, entry, null))
 				return string.Empty;
 			return GenerateXHTMLForEntry(entry, configuration, publicationDecorator, settings);
 		}
 
-		private static void GenerateXHTMLForMinorEntry(ICmObject entry, DictionaryConfigurationModel configuration,
-			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, StringBuilder bldr)
+		private static string GenerateXHTMLForMinorEntry(ICmObject entry, DictionaryConfigurationModel configuration,
+			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
-			for (var i = 1; i < configuration.Parts.Count; i++)
-			{
-				if (IsListItemSelectedForExport(configuration.Parts[i], entry, null))
-				{
-					var content = GenerateXHTMLForEntry(entry, configuration.Parts[i], publicationDecorator, settings);
-					bldr.Append(content);
-				}
-			}
+			// LT-15232: show minor entries using only the first applicable Minor Entry node (not more than once)
+			var applicablePart = configuration.Parts.Skip(1).LastOrDefault(part => IsListItemSelectedForExport(part, entry, null));
+			return applicablePart == null ? string.Empty : GenerateXHTMLForEntry(entry, applicablePart, publicationDecorator, settings);
 		}
 
 		/// <summary>
@@ -748,7 +768,7 @@ namespace SIL.FieldWorks.XWorks
 				pieces.ForEach(xw.WriteRaw);
 				xw.WriteEndElement(); // </div>
 				xw.Flush();
-				return bldr.ToString();
+				return Icu.Normalize(bldr.ToString(), Icu.UNormalizationMode.UNORM_NFC); // All content should be in NFC (LT-18177)
 			}
 		}
 
@@ -843,6 +863,7 @@ namespace SIL.FieldWorks.XWorks
 					return string.Empty;
 			}
 			ICmFile fileProperty;
+			ICmObject fileOwner;
 			var typeForNode = config.IsCustomField
 										? GetPropertyTypeFromReflectedTypes(propertyValue.GetType(), null)
 										: GetPropertyTypeForConfigurationNode(config, propertyValue.GetType(), cache);
@@ -861,7 +882,10 @@ namespace SIL.FieldWorks.XWorks
 
 				case PropertyType.CmPictureType:
 					fileProperty = propertyValue as ICmFile;
-					return fileProperty != null ? GenerateXHTMLForPicture(fileProperty, config, settings) : GenerateXHTMLForPictureCaption(propertyValue, config, settings);
+					fileOwner = field as ICmObject;
+					return fileProperty != null && fileOwner != null
+						? GenerateXHTMLForPicture(fileProperty, config, fileOwner, settings)
+						: GenerateXHTMLForPictureCaption(propertyValue, config, settings);
 
 				case PropertyType.CmPossibility:
 					return GenerateXHTMLForPossibility(propertyValue, config, publicationDecorator, settings);
@@ -870,13 +894,16 @@ namespace SIL.FieldWorks.XWorks
 					fileProperty = propertyValue as ICmFile;
 					if (fileProperty != null)
 					{
-						const string movieCamera = "\U0001F3A5";
-						const string audioPlayButton = "\u25B6";
 						var srcAttr = GenerateSrcAttributeForMediaFromFilePath(fileProperty.InternalPath, "AudioVisual", settings);
 						if (IsVideo(fileProperty.InternalPath))
-							return GenerateXHTMLForVideoFile(fileProperty.ClassName, srcAttr, movieCamera);
-						var audioId = "g" + fileProperty.Guid;
-						return GenerateXHTMLForAudioFile(fileProperty.ClassName, audioId, srcAttr, audioPlayButton);
+							return GenerateXHTMLForVideoFile(fileProperty.ClassName, srcAttr, MovieCamera);
+						fileOwner = field as ICmObject;
+						if (fileOwner != null)
+						{
+							// the XHTML id attribute must be unique. The owning ICmMedia has a unique guid.
+							// The ICmFile is used for all references to the same file within the project, so its guid is not unique.
+							return GenerateXHTMLForAudioFile(fileProperty.ClassName, fileOwner.Guid.ToString(), srcAttr, LoudSpeaker);
+						}
 					}
 					return string.Empty;
 			}
@@ -1061,7 +1088,7 @@ namespace SIL.FieldWorks.XWorks
 				s_reportedNodes.Add(config);
 				while (config != null)
 				{
-					Debug.WriteLine(string.Format("    Label={0}, FieldDescription={1}, SubField={2}", config.Label, config.FieldDescription, config.SubField ?? ""));
+					Debug.WriteLine("    Label={0}, FieldDescription={1}, SubField={2}", config.Label, config.FieldDescription, config.SubField ?? "");
 					config = config.Parent;
 				}
 			}
@@ -1180,7 +1207,8 @@ namespace SIL.FieldWorks.XWorks
 			return String.Empty;
 		}
 
-		private static string GenerateXHTMLForPicture(ICmFile pictureFile, ConfigurableDictionaryNode config, GeneratorSettings settings)
+		private static string GenerateXHTMLForPicture(ICmFile pictureFile, ConfigurableDictionaryNode config, ICmObject owner,
+			GeneratorSettings settings)
 		{
 			var srcAttribute = GenerateSrcAttributeFromFilePath(pictureFile, settings.UseRelativePaths ? "pictures" : null, settings);
 			if (!String.IsNullOrEmpty(srcAttribute))
@@ -1191,7 +1219,9 @@ namespace SIL.FieldWorks.XWorks
 					xw.WriteStartElement("img");
 					WriteClassNameAttributeForConfig(xw, config);
 					xw.WriteAttributeString("src", srcAttribute);
-					xw.WriteAttributeString("id", "g" + pictureFile.Guid);
+					// the XHTML id attribute must be unique. The owning ICmPicture has a unique guid.
+					// The ICmFile is used for all references to the same file within the project, so its guid is not unique.
+					xw.WriteAttributeString("id", GetSafeXHTMLId(owner.Guid.ToString()));
 					xw.WriteEndElement();
 					xw.Flush();
 					return bldr.ToString();
@@ -1212,34 +1242,7 @@ namespace SIL.FieldWorks.XWorks
 				filePath = Path.Combine(subFolder, Path.GetFileName(MakeSafeFilePath(file.InternalPath)));
 				if (settings.CopyFiles)
 				{
-					FileUtils.EnsureDirectoryExists(Path.Combine(settings.ExportPath, subFolder));
-					var destination = Path.Combine(settings.ExportPath, filePath);
-					var source = MakeSafeFilePath(file.AbsoluteInternalPath);
-					if (!File.Exists(destination))
-					{
-						if (File.Exists(source))
-						{
-							FileUtils.Copy(source, destination);
-						}
-					}
-					else if (!FileUtils.AreFilesIdentical(source, destination))
-					{
-						var fileWithoutExtension = Path.GetFileNameWithoutExtension(filePath);
-						var fileExtension = Path.GetExtension(filePath);
-						var copyNumber = 0;
-						do
-						{
-							++copyNumber;
-							destination = Path.Combine(settings.ExportPath, subFolder, String.Format("{0}{1}{2}", fileWithoutExtension, copyNumber, fileExtension));
-						}
-						while (File.Exists(destination));
-						if (File.Exists(source))
-						{
-							FileUtils.Copy(source, destination);
-						}
-						// Change the filepath to point to the copied file
-						filePath = Path.Combine(subFolder, String.Format("{0}{1}{2}", fileWithoutExtension, copyNumber, fileExtension));
-					}
+					filePath = CopyFileSafely(settings, MakeSafeFilePath(file.AbsoluteInternalPath), filePath);
 				}
 			}
 			else
@@ -1248,6 +1251,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return settings.UseRelativePaths ? filePath : new Uri(filePath).ToString();
 		}
+
 		private static string GenerateSrcAttributeForMediaFromFilePath(string filename, string subFolder, GeneratorSettings settings)
 		{
 			string filePath;
@@ -1260,39 +1264,7 @@ namespace SIL.FieldWorks.XWorks
 				filePath = Path.Combine(subFolder, Path.GetFileName(MakeSafeFilePath(filename)));
 				if (settings.CopyFiles)
 				{
-					FileUtils.EnsureDirectoryExists(Path.Combine(settings.ExportPath, subFolder));
-					var destination = Path.Combine(settings.ExportPath, filePath);
-					var source = MakeSafeFilePath(audioVisualFile);
-					// If an audio file is referenced by multiple entries they could end up in separate threads.
-					// Locking on the mediator seems safe since it will be the same Mediator for each thread.
-					lock (settings.Mediator)
-					{
-						if (!File.Exists(destination))
-						{
-							if (File.Exists(source))
-							{
-								FileUtils.Copy(source, destination);
-							}
-						}
-						else if (!FileUtils.AreFilesIdentical(source, destination))
-						{
-							var fileWithoutExtension = Path.GetFileNameWithoutExtension(filePath);
-							var fileExtension = Path.GetExtension(filePath);
-							var copyNumber = 0;
-							do
-							{
-								++copyNumber;
-								destination = Path.Combine(settings.ExportPath, subFolder, String.Format("{0}{1}{2}", fileWithoutExtension, copyNumber, fileExtension));
-							}
-							while (File.Exists(destination));
-							if (File.Exists(source))
-							{
-								FileUtils.Copy(source, destination);
-							}
-							// Change the filepath to point to the copied file
-							filePath = Path.Combine(subFolder, String.Format("{0}{1}{2}", fileWithoutExtension, copyNumber, fileExtension));
-						}
-					}
+					filePath = CopyFileSafely(settings, MakeSafeFilePath(audioVisualFile), filePath);
 				}
 			}
 			else
@@ -1301,12 +1273,58 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return settings.UseRelativePaths ? filePath : new Uri(filePath).ToString();
 		}
+
+		private static string CopyFileSafely(GeneratorSettings settings, string source, string relativeDestination)
+		{
+			var destination = Path.Combine(settings.ExportPath, relativeDestination);
+			var subFolder = Path.GetDirectoryName(relativeDestination);
+			FileUtils.EnsureDirectoryExists(Path.GetDirectoryName(destination));
+			// If an audio file is referenced by multiple entries they could end up in separate threads.
+			// Locking on the mediator seems safe since it will be the same Mediator for each thread.
+			lock (settings.Mediator)
+			{
+				if (!File.Exists(destination))
+				{
+					if (File.Exists(source))
+					{
+						FileUtils.Copy(source, destination);
+					}
+				}
+				else if (!FileUtils.AreFilesIdentical(source, destination))
+				{
+					var fileWithoutExtension = Path.GetFileNameWithoutExtension(relativeDestination);
+					var fileExtension = Path.GetExtension(relativeDestination);
+					var copyNumber = 0;
+					string newFileName;
+					do
+					{
+						++copyNumber;
+						newFileName = string.Format("{0}{1}{2}", fileWithoutExtension, copyNumber, fileExtension);
+						destination = string.IsNullOrEmpty(subFolder) ? Path.Combine(settings.ExportPath, newFileName) :
+								Path.Combine(settings.ExportPath, subFolder, newFileName);
+					}
+					while (File.Exists(destination));
+					if (File.Exists(source))
+					{
+						FileUtils.Copy(source, destination);
+					}
+					// Change the filepath to point to the copied file
+					relativeDestination = string.IsNullOrEmpty(subFolder) ? newFileName : Path.Combine(subFolder, newFileName);
+				}
+			}
+			return relativeDestination;
+		}
+
 		private static string MakeSafeFilePath(string filePath)
 		{
 			if (Unicode.CheckForNonAsciiCharacters(filePath))
 			{
 				// Flex keeps the filename as NFD in memory because it is unicode. We need NFC to actually link to the file
 				filePath = Icu.Normalize(filePath, Icu.UNormalizationMode.UNORM_NFC);
+			}
+			if(!FileUtils.IsFilePathValid(filePath))
+			{
+				return "__INVALID_FILE_NAME__";
 			}
 			return filePath;
 		}
@@ -1928,7 +1946,7 @@ namespace SIL.FieldWorks.XWorks
 		///  - No? Don't number.
 		///  - Yes? Number it.
 		/// </summary>
-		public static bool ShouldThisSenseBeNumbered(ILexSense sense, ConfigurableDictionaryNode senseConfiguration,
+		internal static bool ShouldThisSenseBeNumbered(ILexSense sense, ConfigurableDictionaryNode senseConfiguration,
 			IEnumerable<ILexSense> siblingSenses)
 		{
 			var senseOptions = senseConfiguration.DictionaryNodeOptions as DictionaryNodeSenseOptions;
@@ -1949,7 +1967,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Does this sense node have a subsenses node that is enabled in the configuration and has numbering style?
 		/// </summary>
 		/// <param name="senseNode">sense node that might have subsenses</param>
-		public static bool AreThereEnabledSubsensesWithNumberingStyle(ConfigurableDictionaryNode senseNode)
+		internal static bool AreThereEnabledSubsensesWithNumberingStyle(ConfigurableDictionaryNode senseNode)
 		{
 			if (senseNode == null)
 				return false;
@@ -2819,16 +2837,19 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static string GenerateXHTMLForString(ITsString fieldValue, ConfigurableDictionaryNode config,
-			GeneratorSettings settings, Guid guid, string writingSystem = null)
+			GeneratorSettings settings, Guid linkTarget, string writingSystem = null)
 		{
+			if (TsStringUtils.IsNullOrEmpty(fieldValue))
+				return string.Empty;
 			if (writingSystem != null && writingSystem.Contains("audio"))
 			{
-				if (fieldValue != null && !String.IsNullOrEmpty(fieldValue.Text) && fieldValue.Text.Contains("."))
+				var fieldText = fieldValue.Text;
+				if (fieldText.Contains("."))
 				{
-					var audioId = fieldValue.Text.Substring(0, fieldValue.Text.IndexOf(".", StringComparison.Ordinal));
-					var srcAttr = GenerateSrcAttributeForMediaFromFilePath(fieldValue.Text, "AudioVisual", settings);
-					var content = GenerateXHTMLForAudioFile(writingSystem, audioId, srcAttr, String.Empty);
-					if (!String.IsNullOrEmpty(content))
+					var audioId = fieldText.Substring(0, fieldText.IndexOf(".", StringComparison.Ordinal));
+					var srcAttr = GenerateSrcAttributeForMediaFromFilePath(fieldText, "AudioVisual", settings);
+					var content = GenerateXHTMLForAudioFile(writingSystem, audioId, srcAttr, string.Empty);
+					if (!string.IsNullOrEmpty(content))
 						return WriteRawElementContents("span", content, null);
 				}
 			}
@@ -2859,7 +2880,7 @@ namespace SIL.FieldWorks.XWorks
 						var props = fieldValue.get_Properties(i);
 						var style = props.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
 						writingSystem = settings.Cache.WritingSystemFactory.GetStrFromWs(fieldValue.get_WritingSystem(i));
-						GenerateSpanWithPossibleLink(settings, writingSystem, xw, style, text, guid, rightToLeft);
+						GenerateSpanWithPossibleLink(settings, writingSystem, xw, style, text, linkTarget, rightToLeft);
 					}
 					if (fieldValue.RunCount > 1)
 					{
@@ -2871,7 +2892,7 @@ namespace SIL.FieldWorks.XWorks
 					return bldr.ToString();
 				}
 			}
-			return String.Empty;
+			return string.Empty;
 		}
 
 		private static void GenerateSpanWithPossibleLink(GeneratorSettings settings, string writingSystem, XmlWriter writer, string style,
@@ -2940,11 +2961,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (String.IsNullOrEmpty(audioId) && String.IsNullOrEmpty(srcAttribute) && String.IsNullOrEmpty(caption))
 				return String.Empty;
+			var safeAudioId = GetSafeXHTMLId(audioId);
 			var bldr = new StringBuilder();
 			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
 			{
 				xw.WriteStartElement("audio");
-				xw.WriteAttributeString("id", audioId);
+				xw.WriteAttributeString("id", safeAudioId);
 				xw.WriteStartElement("source");
 				xw.WriteAttributeString("src", srcAttribute);
 				xw.WriteRaw("");
@@ -2952,8 +2974,8 @@ namespace SIL.FieldWorks.XWorks
 				xw.WriteEndElement();
 				xw.WriteStartElement("a");
 				xw.WriteAttributeString("class", classname);
-				xw.WriteAttributeString("href", "#" + audioId);
-				xw.WriteAttributeString("onclick", "document.getElementById('" + audioId + "').play()");
+				xw.WriteAttributeString("href", "#" + safeAudioId);
+				xw.WriteAttributeString("onclick", "document.getElementById('" + safeAudioId + "').play()");
 				if (!String.IsNullOrEmpty(caption))
 					xw.WriteString(caption);
 				else
@@ -2962,6 +2984,13 @@ namespace SIL.FieldWorks.XWorks
 				xw.Flush();
 				return bldr.ToString();
 			}
+		}
+
+		private static string GetSafeXHTMLId(string audioId)
+		{
+			// Prepend a letter, since some filenames start with digits, which gives an invalid id
+			// Are there other characters that are unsafe in XHTML Ids or Javascript?
+			return "g" + audioId.Replace(" ", "_").Replace("'", "_");
 		}
 
 		/// <summary>

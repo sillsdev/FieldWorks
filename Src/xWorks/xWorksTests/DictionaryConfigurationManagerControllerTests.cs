@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,9 +13,11 @@ using Ionic.Zip;
 using NUnit.Framework;
 using Palaso.TestUtilities;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using FileUtils = SIL.Utils.FileUtils;
 // ReSharper disable InconsistentNaming
@@ -30,6 +33,9 @@ namespace SIL.FieldWorks.XWorks
 		private readonly string _projectConfigPath = Path.GetTempPath();
 		private readonly string _defaultConfigPath = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary");
 		private IFileOS _mockFilesystem = new MockFileOS();
+		private IStStyle _characterTestStyle;
+		private IStStyle _paraTestStyle;
+		private IStStyle _paraChildTestStyle;
 
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
@@ -38,6 +44,41 @@ namespace SIL.FieldWorks.XWorks
 			FileUtils.Manager.SetFileAdapter(_mockFilesystem);
 
 			FileUtils.EnsureDirectoryExists(_defaultConfigPath);
+			NonUndoableUnitOfWorkHelper.DoSomehow(Cache.ActionHandlerAccessor, () =>
+			{
+				var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
+				_characterTestStyle = styleFactory.Create(Cache.LangProject.StylesOC, "TestStyle", ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, true, 2, false);
+				_characterTestStyle.Usage.set_String(Cache.DefaultAnalWs, "Test Style");
+				var propsBldr = TsPropsBldrClass.Create();
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,
+					(int)ColorUtil.ConvertColorToBGR(Color.Red));
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptUnderline, (int)FwTextPropVar.ktpvDefault,
+					(int)FwUnderlineType.kuntDouble);
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptUnderColor, (int)FwTextPropVar.ktpvDefault,
+					(int)ColorUtil.ConvertColorToBGR(Color.Blue));
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptItalic, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
+				propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily, "times");
+				_characterTestStyle.Rules = propsBldr.GetTextProps();
+				_paraTestStyle = styleFactory.Create(Cache.LangProject.StylesOC, "ParaTestStyle", ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, false, 2, false);
+				propsBldr.Clear();
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault,
+					(int)ColorUtil.ConvertColorToBGR(Color.Lime));
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalCenter);
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptLineHeight, (int)FwTextPropVar.ktpvMilliPoint, -3000);
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptTrailingIndent, (int)FwTextPropVar.ktpvDefault, 4000);
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptFirstIndent, (int)FwTextPropVar.ktpvDefault, -5000);
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptLeadingIndent, (int)FwTextPropVar.ktpvDefault, 6000);
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptSpaceBefore, (int)FwTextPropVar.ktpvDefault, 7000);
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptSpaceAfter, (int)FwTextPropVar.ktpvDefault, 8000);
+				_paraTestStyle.Rules = propsBldr.GetTextProps();
+				_paraChildTestStyle = styleFactory.Create(Cache.LangProject.StylesOC, "ParaChildTesttStyle",
+					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, false, 3, false);
+				propsBldr.Clear();
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalJustify);
+				_paraChildTestStyle.Rules = propsBldr.GetTextProps();
+				_paraChildTestStyle.BasedOnRA = _paraTestStyle;
+			});
 		}
 
 		[TestFixtureTearDown]
@@ -599,7 +640,7 @@ namespace SIL.FieldWorks.XWorks
 
 				using (var zip = new ZipFile(expectedZipOutput))
 				{
-					Assert.That(zip.Count, Is.GreaterThanOrEqualTo(4), "Zip file must be missing parts of the export");
+					Assert.That(zip.Count, Is.GreaterThanOrEqualTo(3), "Zip file must be missing parts of the export");
 				}
 			}
 			finally
@@ -618,10 +659,11 @@ namespace SIL.FieldWorks.XWorks
 				CellarPropertyType.OwningAtomic, Guid.Empty))
 			{
 				// SUT
-				var filesToIncludeInExportFromCustomFieldsExport = DictionaryConfigurationManagerController.PrepareCustomFieldsExport(Cache).ToList();
-				Assert.That(filesToIncludeInExportFromCustomFieldsExport.Count, Is.EqualTo(1), "Not enough files prepared");
-				Assert.That(filesToIncludeInExportFromCustomFieldsExport[0], Is.StringEnding("CustomFields.lift"));
-				AssertThatXmlIn.File(filesToIncludeInExportFromCustomFieldsExport[0]).HasAtLeastOneMatchForXpath("//field[@tag='" + customFieldLabel + "']");
+				var customFieldFiles = DictionaryConfigurationManagerController.PrepareCustomFieldsExport(Cache).ToList();
+				Assert.That(customFieldFiles.Count, Is.EqualTo(2), "Not enough files prepared");
+				Assert.That(customFieldFiles[0], Is.StringEnding("CustomFields.lift"));
+				Assert.That(customFieldFiles[1], Is.StringEnding("CustomFields.lift-ranges"));
+				AssertThatXmlIn.File(customFieldFiles[0]).HasAtLeastOneMatchForXpath("//field[@tag='" + customFieldLabel + "']");
 			}
 		}
 
@@ -629,11 +671,28 @@ namespace SIL.FieldWorks.XWorks
 		public void PrepareStylesheetExport_Works()
 		{
 			// SUT
-			var filesToIncludeInExportFromStylesheetExport =
-				DictionaryConfigurationManagerController.PrepareStylesheetExport().ToList();
-			Assert.That(filesToIncludeInExportFromStylesheetExport.Count, Is.EqualTo(2), "Not enough files prepared");
-			Assert.That(filesToIncludeInExportFromStylesheetExport[0], Is.StringEnding("StylesheetData"));
-			Assert.That(filesToIncludeInExportFromStylesheetExport[1], Is.StringEnding("StylesheetMoreData"));
+			var styleSheetFile = DictionaryConfigurationManagerController.PrepareStylesheetExport(Cache);
+			Assert.False(string.IsNullOrEmpty(styleSheetFile), "No stylesheet data prepared");
+			AssertThatXmlIn.File(styleSheetFile).HasSpecifiedNumberOfMatchesForXpath("/Styles/markup", 1);
+			AssertThatXmlIn.File(styleSheetFile).HasSpecifiedNumberOfMatchesForXpath("/Styles/markup/tag[@id='" + _characterTestStyle.Name + "']", 1);
+			var enWsId = Cache.WritingSystemFactory.GetStrFromWs(_characterTestStyle.Usage.AvailableWritingSystemIds[0]);
+			AssertThatXmlIn.File(styleSheetFile).HasSpecifiedNumberOfMatchesForXpath("/Styles/markup/tag/usage[@wsId='" + enWsId + "']", 1);
+			// Test font color, underline, underline color, bold and italic
+			var attributeTests = "@family='times' and @color='red' and @underline='double' and @underlineColor='blue' and @bold='true' and @italic='true'";
+			AssertThatXmlIn.File(styleSheetFile).HasSpecifiedNumberOfMatchesForXpath("/Styles/markup/tag/font[" + attributeTests + "]", 1);
+
+			AssertThatXmlIn.File(styleSheetFile).HasSpecifiedNumberOfMatchesForXpath("/Styles/markup/tag[@id='" + _paraTestStyle.Name + "']", 1);
+			// Test paragraph alignment margins and spacing
+			attributeTests = "@lineSpacing='3 pt' and @lineSpacingType='exact' and @alignment='center' and @indentRight='4 pt' and @hanging='5 pt' and @indentLeft='6 pt' and @spaceBefore='7 pt' and @spaceAfter='8 pt'";
+			AssertThatXmlIn.File(styleSheetFile).HasSpecifiedNumberOfMatchesForXpath("/Styles/markup/tag/paragraph[" + attributeTests + "]", 1);
+			// Test paragraph background color, TODO border type and bullet info
+			attributeTests = "@background='(0,255,0)'";
+			AssertThatXmlIn.File(styleSheetFile).HasSpecifiedNumberOfMatchesForXpath("/Styles/markup/tag/paragraph[" + attributeTests + "]", 1);
+			// Test that a child style gets the basedOn for paragraph and does not write out inherited values
+			AssertThatXmlIn.File(styleSheetFile).HasSpecifiedNumberOfMatchesForXpath("/Styles/markup/tag[@id='" + _paraChildTestStyle.Name + "']", 1);
+			attributeTests = string.Format("@basedOn='{0}' and @alignment='full' and not(@lineSpacing='3 pt') and not(@indentRight='4 pt')",
+				_paraTestStyle.Name);
+			AssertThatXmlIn.File(styleSheetFile).HasSpecifiedNumberOfMatchesForXpath("/Styles/markup/tag/paragraph[" + attributeTests + "]", 1);
 		}
 	}
 }

@@ -5,7 +5,7 @@
 	guid. Be sure to validate any changes against ../Styles.dtd.
 	*********************************************************************************************
 -->
-<Styles date="2017-02-16" DTDver="64DE4B02-14DA-42F6-8C1C-CF21E41D3EF7" label="Flex Dictionary">
+<Styles date="2017-02-28" DTDver="1610190E-D7A3-42D7-8B48-C0C49320435F" label="Flex Dictionary">
 	<markup version="64eb89f8-aa7a-4408-8187-fcd451b16f32">
 		<!--
 		The 'Normal' entry is here mainly as a placeholder, so the DTD will allow things to be based on it.
@@ -15,7 +15,7 @@
 			<usage wsId="en">Normal is a parent style that all other paragraph styles are usually based on.</usage>
 			<help category="Paragraph_Elements"/>
 			<font size="10 pt"/>
-			<paragraph next="Normal" lineHeight="10000" lineHeightUnit="rel" spaceBefore="0 pt" spaceAfter="6 pt"/>
+			<paragraph next="Normal" lineSpacing="12 pt" lineSpacingType="atleast" spaceBefore="0 pt" spaceAfter="6 pt"/>
 		</tag>
 		<!-- These are currently also defined in NewLangProj. This definition will supercede that -->
 		<tag id="Heading_1" guid="77997501-47D3-4574-AE1D-7300107DFB73" userlevel="1" context="general" type="paragraph">
@@ -93,7 +93,7 @@
 			<usage wsId="en">Letter headings in the dictionary.</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font bold="true" size="14 pt"/>
-			<paragraph basedOn="Dictionary-Normal" next="Dictionary-Normal" spaceBefore="12 pt" spaceAfter="3 pt"/>
+			<paragraph basedOn="Dictionary-Normal" next="Dictionary-Normal" alignment="center" spaceBefore="12 pt" spaceAfter="3 pt"/>
 		</tag>
 		<tag id="Dictionary-Context" guid="89670D4F-71D4-4878-B2FF-815E45512BE1" userlevel="1" context="internalConfigureView" type="character">
 			<usage wsId="en">Base style for Before/After/Between content in Dictionary and Reversal views.</usage>

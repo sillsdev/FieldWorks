@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -35,6 +36,7 @@ namespace SIL.FieldWorks.XWorks
 		private DictionaryPublicationDecorator m_pubDecorator;
 		private string m_selectedObjectID = string.Empty;
 		internal string m_configObjectName;
+		internal const string CurrentSelectedEntryClass = "currentSelectedEntry";
 
 		public override void Init(Mediator mediator, XmlNode configurationParameters)
 		{
@@ -164,7 +166,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else if (e.Button == GeckoMouseButton.Right)
 			{
-				HandleDomRightClick(browser, e, element, m_mediator, m_configObjectName);
+				HandleDomRightClick(browser, e, element, m_mediator);
 			}
 		}
 
@@ -178,6 +180,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				CloseContextMenuIfOpen();
 				SetActiveSelectedEntryOnView(browser);
+				// Without this we show the entry count in the status bar the first time we open the Dictionary or Rev. Index.
+				Clerk.SelectedRecordChanged(true, true);
 			}
 		}
 
@@ -343,13 +347,13 @@ namespace SIL.FieldWorks.XWorks
 		/// </remarks>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "ToolStripMenuItems get added to m_contextMenu.Items; ContextMenuStrip is disposed in DisposeContextMenu()")]
-		internal static void HandleDomRightClick(GeckoWebBrowser browser, DomMouseEventArgs e,
-			GeckoElement element, Mediator mediator, string configObjectName)
+		internal static void HandleDomRightClick(GeckoWebBrowser browser, DomMouseEventArgs e, GeckoElement element, Mediator mediator)
 		{
 			Guid topLevelGuid;
 			GeckoElement entryElement;
 			var classList = GetClassListFromGeckoElement(element, out topLevelGuid, out entryElement);
-			var label = string.Format(xWorksStrings.ksConfigure, configObjectName);
+			var localizedName = DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator);
+			var label = string.Format(xWorksStrings.ksConfigure, localizedName);
 			s_contextMenu = new ContextMenuStrip();
 			var item = new ToolStripMenuItem(label);
 			s_contextMenu.Items.Add(item);
@@ -809,7 +813,7 @@ namespace SIL.FieldWorks.XWorks
 			var prevSelectedByGuid = browser.Document.GetHtmlElementById("g" + m_selectedObjectID);
 			if (prevSelectedByGuid != null)
 			{
-				prevSelectedByGuid.RemoveAttribute("style");
+				RemoveClassFromHtmlElement(prevSelectedByGuid, CurrentSelectedEntryClass);
 			}
 		}
 
@@ -821,24 +825,79 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (Clerk.CurrentObject == null)
 				return;
+
+			if (Clerk.Id == "AllReversalEntries")
+			{
+				var currentConfig = m_mediator.PropertyTable.GetStringProperty("ReversalIndexPublicationLayout", string.Empty);
+				var configuration = new DictionaryConfigurationModel(currentConfig, Cache);
+				var reversalentry = Clerk.CurrentObject as IReversalIndexEntry;
+				if (reversalentry == null)
+					return;
+				var writingSystem = Cache.ServiceLocator.WritingSystemManager.Get(reversalentry.ReversalIndex.WritingSystem);
+				if (writingSystem == null)
+					return;
+				var currReversalWs = writingSystem.Id;
+				if(configuration.WritingSystem != currReversalWs)
+				{
+					var newConfig = Path.Combine(Path.GetDirectoryName(currentConfig), Path.GetFileNameWithoutExtension(currentConfig) + DictionaryConfigurationModel.FileExtension);
+					m_mediator.PropertyTable.SetProperty("ReversalIndexPublicationLayout", newConfig, true);
+				}
+			}
 			var currentObjectGuid = Clerk.CurrentObject.Guid.ToString();
 			var currSelectedByGuid = browser.Document.GetHtmlElementById("g" + currentObjectGuid);
-			if (currSelectedByGuid != null)
-			{
-				// Adjust active item to be lower down on the page.
-				var currElementRect = currSelectedByGuid.GetBoundingClientRect();
-				var currElementTop = currElementRect.Top + browser.Window.ScrollY;
-				var currElementBottom = currElementRect.Bottom + browser.Window.ScrollY;
-				var yPosition = currElementTop - (browser.Height / 4);
+			if (currSelectedByGuid == null)
+				return;
 
-				// Scroll only if current element is not visible on browser window
-				if (currElementTop < browser.Window.ScrollY || currElementBottom > (browser.Window.ScrollY + browser.Height))
-					browser.Window.ScrollTo(0, yPosition);
+			// Adjust active item to be lower down on the page.
+			var currElementRect = currSelectedByGuid.GetBoundingClientRect();
+			var currElementTop = currElementRect.Top + browser.Window.ScrollY;
+			var currElementBottom = currElementRect.Bottom + browser.Window.ScrollY;
+			var yPosition = currElementTop - (browser.Height / 4);
 
-				currSelectedByGuid.SetAttribute("style", "background-color:LightYellow");
-				m_selectedObjectID = currentObjectGuid;
-			}
+			// Scroll only if current element is not visible on browser window
+			if (currElementTop < browser.Window.ScrollY || currElementBottom > (browser.Window.ScrollY + browser.Height))
+				browser.Window.ScrollTo(0, yPosition);
+
+			AddClassToHtmlElement(currSelectedByGuid, CurrentSelectedEntryClass);
+			m_selectedObjectID = currentObjectGuid;
 		}
+
+		#region Add/Remove GeckoHtmlElement Class
+
+		private const string Space = " ";
+
+		/// <summary>
+		/// Adds 'classToAdd' to the class attribute of 'element', preserving any existing classes.
+		/// Changes nothing if 'classToAdd' is already present.
+		/// </summary>
+		private void AddClassToHtmlElement(GeckoHtmlElement element, string classToAdd)
+		{
+			var classList = element.ClassName.Split(' ');
+			if (classList.Length == 0)
+			{
+				element.ClassName = classToAdd;
+				return;
+			}
+			if (classList.Contains(classToAdd))
+			{
+				return;
+			}
+			element.ClassName += " " + classToAdd;
+		}
+
+		/// <summary>
+		/// Removes 'classToRemove' from the class attribute, preserving any other existing classes.
+		/// Quietly does nothing if 'classToRemove' is not found.
+		/// </summary>
+		private void RemoveClassFromHtmlElement(GeckoHtmlElement element, string classToRemove)
+		{
+			var classList = new List<string>();
+			classList.AddRange(element.ClassName.Split(' '));
+			classList.Remove(classToRemove);
+			element.ClassName = string.Join(" ", classList);
+		}
+
+		#endregion
 
 		/// <summary>
 		/// Method which set the current writing system when selected in ConfigureReversalIndexDialog

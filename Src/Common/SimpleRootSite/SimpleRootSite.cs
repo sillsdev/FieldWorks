@@ -1878,12 +1878,11 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the (estimated) height of one line
+		/// Gets the (estimated) height of one line in pixels
 		/// </summary>
 		/// <remarks>
 		/// Should we use the selection text properties and stylesheet to get a more specific value?
 		/// (font height + 4pt?)
-		/// Note: the calculation below returns 18 for what would be 18.6667 (if Dpi.Y==96).
 		/// </remarks>
 		/// ------------------------------------------------------------------------------------
 		public int LineHeight
@@ -1891,7 +1890,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			get
 			{
 				CheckDisposed();
-				return 14 * Dpi.Y / 72; // 14 points is typically about a line.
+				// use Math.Ceiling to make sure sure the height doesn't round down inappropriately
+				return (int)(14 * Math.Ceiling(Dpi.Y / (float)72)); // 14 points is typically about a line. 72 points/inch.
 			}
 		}
 

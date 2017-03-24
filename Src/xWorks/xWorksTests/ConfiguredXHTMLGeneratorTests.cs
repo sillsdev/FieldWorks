@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using NUnit.Framework;
+using Palaso.Linq;
 using Palaso.TestUtilities;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
@@ -46,6 +47,15 @@ namespace SIL.FieldWorks.XWorks
 		private ConfiguredXHTMLGenerator.GeneratorSettings DefaultSettings
 		{
 			get{ return new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null); }
+		}
+
+		private DictionaryPublicationDecorator DefaultDecorator
+		{
+			get
+			{
+				return new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
+					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+			}
 		}
 
 		[TestFixtureSetUp]
@@ -568,15 +578,13 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_DefaultRootGeneratesResult()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
-																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var defaultRoot = string.Concat(
 				Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary", "Root"), DictionaryConfigurationModel.FileExtension);
 			var entry = CreateInterestingLexEntry(Cache);
 			var dictionaryModel = new DictionaryConfigurationModel(defaultRoot, Cache);
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, dictionaryModel.Parts[0], pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, dictionaryModel.Parts[0], DefaultDecorator, settings);
 			var entryExists = "/div[@class='entry' and @id='g" + entry.Guid + "']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(entryExists, 1);
 		}
@@ -1827,12 +1835,10 @@ namespace SIL.FieldWorks.XWorks
 			try
 			{
 				SetDictionaryNormalDirection(new InheritableStyleProp<TriStateBool>(TriStateBool.triTrue));
-				var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
-					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 				var configModel = CreateInterestingConfigurationModel(Cache, m_mediator);
 				var mainEntry = CreateInterestingLexEntry(Cache);
 				//SUT
-				var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(mainEntry, configModel, pubDecorator, m_mediator);
+				var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(mainEntry, configModel, DefaultDecorator, m_mediator);
 				// this test relies on specific test data from CreateInterestingConfigurationModel
 				const string xpath = "/html[@dir='rtl']/body[@dir='rtl']/div[@class='lexentry']/span[@class='entry']";
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 1);
@@ -1844,29 +1850,27 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void GenerateEntryHtmlWithStyles_MinorEntryUsesMinorEntryFormatting()
+		public void GenerateEntryHtmlWithStyles_MinorEntryUsesMinorEntryFormatting(
+			[Values(DictionaryNodeListOptions.ListIds.Complex, DictionaryNodeListOptions.ListIds.Variant)] DictionaryNodeListOptions.ListIds type)
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
-																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var configModel = CreateInterestingConfigurationModel(Cache, m_mediator);
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
-			CreateVariantForm(Cache, mainEntry, minorEntry);
+			if (type == DictionaryNodeListOptions.ListIds.Complex)
+				CreateComplexForm(Cache, mainEntry, minorEntry, false);
+			else
+				CreateVariantForm(Cache, mainEntry, minorEntry);
 			SetPublishAsMinorEntry(minorEntry, true);
-			configModel.Parts[1].DictionaryNodeOptions =
-				configModel.Parts[2].DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Minor);
+			var configModel = CreateInterestingConfigurationModel(Cache, m_mediator);
 			//SUT
-			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(minorEntry, configModel, pubDecorator, m_mediator);
+			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(minorEntry, configModel, DefaultDecorator, m_mediator);
 			// this test relies on specific test data from CreateInterestingConfigurationModel
 			const string xpath = "/html/body/div[@class='minorentry']/span[@class='entry']";
-			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 2);
+			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 1);
 		}
 
 		[Test]
 		public void GenerateEntryHtmlWithStyles_MinorEntryUnCheckedItemsGenerateNothing()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
-																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var configModel = CreateInterestingConfigurationModel(Cache, m_mediator);
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
@@ -1875,7 +1879,7 @@ namespace SIL.FieldWorks.XWorks
 				GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Minor, new ICmPossibility[0]);
 			SetPublishAsMinorEntry(minorEntry, true);
 			//SUT
-			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(minorEntry, configModel, pubDecorator, m_mediator);
+			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(minorEntry, configModel, DefaultDecorator, m_mediator);
 			// this test relies on specific test data from CreateInterestingConfigurationModel
 			const string xpath = "/html/body/div[@class='minorentry']/span[@class='entry']";
 			// only the variant is selected, so the other minor entry should not have been generated
@@ -1885,8 +1889,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateEntryHtmlWithStyles_DoesNotShowHiddenMinorEntries()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
-																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var configModel = CreateInterestingConfigurationModel(Cache, m_mediator);
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
@@ -1894,17 +1896,37 @@ namespace SIL.FieldWorks.XWorks
 			SetPublishAsMinorEntry(minorEntry, false);
 
 			//SUT
-			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(minorEntry, configModel, pubDecorator, m_mediator);
+			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(minorEntry, configModel, DefaultDecorator, m_mediator);
 			// this test relies on specific test data from CreateInterestingConfigurationModel
 			const string xpath = "/div[@class='minorentry']/span[@class='entry']";
 			AssertThatXmlIn.String(xhtml).HasNoMatchForXpath(xpath);
 		}
 
 		[Test]
+		public void GenerateEntryHtmlWithStyles_DoesNotShowMinorEntriesTwice([Values(true, false)] bool verifyPrefersVariant)
+		{
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var minorEntry = CreateInterestingLexEntry(Cache);
+			CreateComplexForm(Cache, mainEntry, minorEntry, false);
+			CreateVariantForm(Cache, mainEntry, minorEntry);
+			SetPublishAsMinorEntry(minorEntry, true);
+			var configModel = CreateInterestingConfigurationModel(Cache, m_mediator);
+			if (verifyPrefersVariant) // Exclude Complex Form Parts from those counted.
+				configModel.Parts.Where(part => part.Label.Contains("Complex")).ForEach(part => part.CSSClassNameOverride = "complexentry");
+			Assert.That(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(configModel.Parts[1], minorEntry, null),
+				"This test is valid only if the minor entry matches more than one node");
+			Assert.That(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(configModel.Parts[2], minorEntry, null),
+				"This test is valid only if the minor entry matches more than one node");
+			//SUT
+			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(minorEntry, configModel, DefaultDecorator, m_mediator);
+			// this test relies on specific test data from CreateInterestingConfigurationModel
+			const string xpath = "/html/body/div[@class='minorentry']/span[@class='entry']";
+			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 1);
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_LexemeBasedConsidersComplexFormsMainEntries()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
-																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var configModel = CreateInterestingConfigurationModel(Cache, m_mediator);
 			for (var i = 1; i < configModel.Parts.Count; i++)
 				configModel.Parts[i].IsEnabled = false; // don't display Minor entries
@@ -1915,7 +1937,7 @@ namespace SIL.FieldWorks.XWorks
 				GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Minor, new ICmPossibility[0]);
 			SetPublishAsMinorEntry(complexEntry, false);
 			//SUT
-			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(complexEntry, configModel, pubDecorator, m_mediator);
+			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(complexEntry, configModel, DefaultDecorator, m_mediator);
 			// this test relies on specific test data from CreateInterestingConfigurationModel
 			const string xpath = "/html/body/div[@class='minorentry']/span[@class='entry']";
 			// only the variant is selected, so the other minor entry should not have been generated
@@ -1930,8 +1952,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_SenseNumbersGeneratedForMultipleSenses()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
-																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var sensesNode = new ConfigurableDictionaryNode
@@ -1951,7 +1971,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseToEntry(testEntry, "second gloss", m_wsEn, Cache);
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
 			const string senseNumberTwo = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2']]//span[@lang='en' and text()='second gloss']";
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
@@ -2090,9 +2110,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_SingleSenseGetsNoSenseNumber()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache,
-				(ISilDataAccessManaged)Cache.MainCacheAccessor,
-				Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var sensesNode = new ConfigurableDictionaryNode
@@ -2114,7 +2132,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(testEntry.AllSenses.Count, Is.EqualTo(1), "Test set up incorrectly. There should just be one sense.");
 			Assert.That(testEntry.AllSenses.First().AllSenses.Count, Is.EqualTo(1), "Test not set up correctly. There should be no subsenses.");
 			// SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]/span[@lang='en' and text()='gloss']";
 			// This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(senseNumberOne);
@@ -2135,9 +2153,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_TurnedOffSubsensesCausesSenseToBehaveLikeSingleSense_WithNoSenseNumber()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache,
-				(ISilDataAccessManaged)Cache.MainCacheAccessor,
-				Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var senseOptions = new DictionaryNodeSenseOptions
@@ -2184,7 +2200,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(testEntry.AllSenses.Count, Is.EqualTo(3), "Test set up incorrectly.");
 			Assert.That(testEntry.AllSenses.First().AllSenses.Count, Is.EqualTo(3), "Test not set up correctly.");
 			// SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumberXpath = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sensenumber']";
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(senseNumberXpath); // Should not have a sense number on top sense.
 
@@ -2205,9 +2221,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_EmptyStyleSubsensesCausesSenseToBehaveLikeSingleSense_WithNoSenseNumber()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache,
-				(ISilDataAccessManaged)Cache.MainCacheAccessor,
-				Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var senseOptions = new DictionaryNodeSenseOptions
@@ -2253,7 +2267,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(testEntry.AllSenses.Count, Is.EqualTo(3), "Test set up incorrectly.");
 			Assert.That(testEntry.AllSenses.First().AllSenses.Count, Is.EqualTo(3), "Test not set up correctly.");
 			// SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumberXpath = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sensenumber']";
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(senseNumberXpath); // Should not have a sense number on top sense.
 
@@ -2274,9 +2288,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_SubsenseStyleInfluencesSenseNumberShown()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache,
-				(ISilDataAccessManaged)Cache.MainCacheAccessor,
-				Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var senseOptions = new DictionaryNodeSenseOptions
@@ -2322,7 +2334,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(testEntry.AllSenses.Count, Is.EqualTo(3), "Test set up incorrectly.");
 			Assert.That(testEntry.AllSenses.First().AllSenses.Count, Is.EqualTo(3), "Test not set up correctly.");
 			// SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumberXpath = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sensenumber']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseNumberXpath,1); // Should have sense number on top sense.
 
@@ -2333,7 +2345,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_NumberingSingleSenseAlsoCountsSubSense()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
 			{
@@ -2368,7 +2379,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSingleSubSenseToSense("gloss", testEntry.SensesOS.First());
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string SenseOneSubSense = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]/span[@class='senses']/span[@class='sensecontent']//span[@lang='en' and text()='gloss1.1']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(SenseOneSubSense, 1);
 		}
@@ -2376,7 +2387,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_SensesAndSubSensesWithDifferentNumberingStyle()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
 			{
@@ -2426,7 +2436,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='A']]//span[@lang='en' and text()='gloss']";
 			const string senseNumberTwo = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='B']]//span[@lang='en' and text()='second gloss']";
 			const string subSensesNumberTwoOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='I']]//span[@lang='en' and text()='second gloss2.1']";
@@ -2441,7 +2451,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_SensesAndSubSensesWithNumberingStyle()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
 			{
@@ -2491,7 +2501,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='A']]//span[@lang='en' and text()='gloss']";
 			const string senseNumberTwo = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='B']]//span[@lang='en' and text()='second gloss']";
 			const string subSensesNumberTwoOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='second gloss2.1']";
@@ -2510,7 +2520,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_NoSenseNumberFIfStyleSaysNoNumbering()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
 			{
@@ -2543,7 +2553,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseToEntry(testEntry, "gloss", m_wsEn, Cache);
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumberXpath = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sensenumber']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseNumberXpath, 0); // Should not have produced sense number if style said not to number it.
 
@@ -2554,7 +2564,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_SensesNoneAndSubSensesWithNumberingStyle()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
 			{
@@ -2603,7 +2613,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string subSensesNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='second gloss2.1']";
 			const string subSenseNumberTwo = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2']]//span[@lang='en' and text()='second gloss2.2']";
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
@@ -2614,7 +2624,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_SensesGeneratedForMultipleSubSenses()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var senseOptions = new DictionaryNodeSenseOptions { AfterNumber = ")", NumberingStyle = "%d", NumberEvenASingleSense = true };
 
@@ -2645,7 +2655,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
 			const string senseNumberTwo = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2']]//span[@lang='en' and text()='second gloss']";
 			const string subSensesNumberTwoOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='second gloss2.1']";
@@ -2661,7 +2671,7 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateXHTMLForEntry_SubSenseParentSenseNumberingStyleJoined()
 		{
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+
 			var SubSubSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%A", ParentSenseNumberingStyle = "%j", NumberEvenASingleSense = true };
 			var subSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%a", ParentSenseNumberingStyle = "%j" };
 			var senseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%d" };
@@ -2700,7 +2710,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseAndTwoSubsensesToEntry(testEntry.SensesOS[1].SensesOS[0], "matte");
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumber =    "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2']]";
 			const string subSenseNumber = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2a']]";
 			const string subSubSenseNumber = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2aA']]";
@@ -2715,7 +2725,7 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateXHTMLForEntry_SubSenseParentSenseNumberingStyleSeparatedByDot()
 		{
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+
 			var SubSubSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%A", ParentSenseNumberingStyle = "%.", NumberEvenASingleSense = true };
 			var subSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%a", ParentSenseNumberingStyle = "%." };
 			var senseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%d" };
@@ -2754,7 +2764,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseAndTwoSubsensesToEntry(testEntry.SensesOS[1].SensesOS[0], "matte");
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumber = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2']]";
 			const string subSenseNumber = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2.a']]";
 			const string subSubSenseNumber = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2.a.A']]";
@@ -2769,7 +2779,7 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateXHTMLForEntry_SubSenseParentSenseNumberingStyleNone()
 		{
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+
 			var SubSubSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%A", ParentSenseNumberingStyle = "", NumberEvenASingleSense = true };
 			var subSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%a", ParentSenseNumberingStyle = "" };
 			var senseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%d" };
@@ -2808,7 +2818,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseAndTwoSubsensesToEntry(testEntry.SensesOS[1].SensesOS[0], "matte");
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumber = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2']]";
 			const string subSenseNumber = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='a']]";
 			const string subSubSenseNumber = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='A']]";
@@ -2822,7 +2832,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_SubSubSensesWithNumberingStyle()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var senseOptions = new DictionaryNodeSenseOptions { AfterNumber = ")", NumberingStyle = "%d", NumberEvenASingleSense = true };
 
@@ -2849,7 +2859,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseAndTwoSubsensesToEntry(testEntry.SensesOS[1].SensesOS[0], "matte");
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseContent = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']";
 			const string senseNumberOne = senseContent + "/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
 			const string senseNumberTwo = senseContent + "/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2']]//span[@lang='en' and text()='second gloss']";
@@ -2952,7 +2962,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_SubSensesOfSingleSenses_GetFullNumbers()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var senseOptions = new DictionaryNodeSenseOptions
 			{
@@ -2991,7 +3001,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseAndTwoSubsensesToEntry(testEntry.SensesOS[0], "subGloss");
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseContent = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']";
 			const string subSenseContent = senseContent + "/span[@class='sense']/span[@class='shares senses']/span[@class='sensecontent']";
 			const string subSenseNumberOneOne = subSenseContent + "/span[@class='share sense' and preceding-sibling::span[@class='sensenumber' and text()='a']]//span[@lang='en' and text()='subGloss']";
@@ -3008,7 +3018,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_SubentriesSensesDontGetMainEntrySensesNumbers()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var senseOptions = new DictionaryNodeSenseOptions { AfterNumber = ")", NumberingStyle = "%O", NumberEvenASingleSense = true };
 
@@ -3044,7 +3054,7 @@ namespace SIL.FieldWorks.XWorks
 			CreateComplexForm(Cache, testEntry.SensesOS[0], subEntry, true);
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseContent = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']";
 			const string senseNumberOne = senseContent + "/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
 			const string subentrySenseContent = senseContent + "/span[@class='sense']/span[@class='subentries']/span[@class='subentry']/span[@class='senses']/span[@class='sensecontent']";
@@ -3066,8 +3076,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_SingleSenseGetsNumberWithNumberEvenOneSenseOption()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
-																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var sensesNode = new ConfigurableDictionaryNode
@@ -3087,7 +3095,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			// SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
 			// This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseNumberOne, 1);
@@ -3099,8 +3107,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_SenseContentWithGuid()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
-																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var sensesNode = new ConfigurableDictionaryNode
@@ -3120,7 +3126,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			// SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseEntryGuid = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and @entryguid]";
 			// This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseEntryGuid, 1);
@@ -5169,6 +5175,101 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_UniqueIdsForSameFile()
+		{
+			var mainEntryNode = CreatePictureModel();
+			var testEntry = CreateInterestingLexEntry(Cache);
+			AddSenseToEntry(testEntry, "second", m_wsEn, Cache);
+			var sense = testEntry.SensesOS[0];
+			var sensePic1 = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			sense.PicturesOS.Add(sensePic1);
+			var pic = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			var sense2 = testEntry.SensesOS[1];
+			var sensePic2 = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			sense2.PicturesOS.Add(sensePic2);
+			Cache.LangProject.MediaOC.Add(folder);
+			folder.FilesOC.Add(pic);
+			var fileName = Path.GetRandomFileName();
+			var tempPath1 = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+			Directory.CreateDirectory(tempPath1);
+			// Write a couple of jpeg header bytes (for no particular reason)
+			var filePath1 = Path.Combine(tempPath1, fileName);
+			File.WriteAllBytes(filePath1, new byte[] { 0xFF, 0xE0, 0x0, 0x0, 0x1 });
+			pic.InternalPath = filePath1;
+			sensePic1.PictureFileRA = pic;
+			sensePic2.PictureFileRA = pic;
+
+			var tempFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "ConfigDictPictureExportTest"));
+			try
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, true, true, tempFolder.FullName);
+				//SUT
+				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
+				var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(fileName));
+				const string pictureXPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img";
+				var pictureWithComposedPath = pictureXPath + "[contains(@src, '" + pictureRelativePath + "')]";
+				if (!MiscUtils.IsUnix)
+					AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(pictureWithComposedPath, 2);
+				else
+					// that src contains a string, and escaping any Windows path separators
+					AssertRegex(result, string.Format("src=\"[^\"]*{0}[^\"]*\"", pictureRelativePath.Replace(@"\", @"\\")), 2);
+				const string guidXPath = pictureXPath + "[@id='g{0}']";
+				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(string.Format(guidXPath, sensePic1.Guid), 1);
+				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(string.Format(guidXPath, sensePic2.Guid), 1);
+			}
+			finally
+			{
+				Palaso.IO.DirectoryUtilities.DeleteDirectoryRobust(tempFolder.FullName);
+				File.Delete(filePath1);
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_BadFileNameDoesNotCrash()
+		{
+			var mainEntryNode = CreatePictureModel();
+			var testEntry = CreateInterestingLexEntry(Cache);
+			var sense = testEntry.SensesOS[0];
+			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			sense.PicturesOS.Add(sensePic);
+			var pic = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			Cache.LangProject.MediaOC.Add(folder);
+			folder.FilesOC.Add(pic);
+			var fileName = ".G.Images\\Marine images\\Cephalopholis leopardus.jpg;1.5\"; 1\";JPG";
+			pic.InternalPath = fileName;
+			sensePic.PictureFileRA = pic;
+
+			var tempFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "ConfigDictPictureExportTest"));
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, true, true, tempFolder.FullName);
+			//SUT
+			Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_NullFilePathDoesNotCrash()
+		{
+			var mainEntryNode = CreatePictureModel();
+			var testEntry = CreateInterestingLexEntry(Cache);
+			var sense = testEntry.SensesOS[0];
+			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			sense.PicturesOS.Add(sensePic);
+			var pic = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			Cache.LangProject.MediaOC.Add(folder);
+			folder.FilesOC.Add(pic);
+			pic.InternalPath = string.Empty;
+			sensePic.PictureFileRA = pic;
+
+			var tempFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "ConfigDictPictureExportTest"));
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, true, true, tempFolder.FullName);
+			//SUT
+			string result;
+			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_TwoDifferentLinksToTheSamefileWorks()
 		{
 			var mainEntryNode = CreatePictureModel();
@@ -5835,7 +5936,8 @@ namespace SIL.FieldWorks.XWorks
 			var entryOne = CreateInterestingLexEntry(Cache);
 			var senseaudio = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entryOne.LexemeFormOA = senseaudio;
-			senseaudio.Form.set_String(wsEnAudio.Handle, Cache.TsStrFactory.MakeString("TestAudio.wav", wsEnAudio.Handle));
+			const string audioFileName = "Test Audi'o.wav";
+			senseaudio.Form.set_String(wsEnAudio.Handle, Cache.TsStrFactory.MakeString(audioFileName, wsEnAudio.Handle));
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
@@ -5843,8 +5945,8 @@ namespace SIL.FieldWorks.XWorks
 			const string audioTagwithSource = "//audio/source/@src";
 			AssertThatXmlIn.String(result)
 				.HasSpecifiedNumberOfMatchesForXpath(audioTagwithSource, 1);
-			const string audioFileUrl =
-				@"Src/xWorks/xWorksTests/TestData/LinkedFiles/AudioVisual/TestAudio.wav";
+			var audioFileUrl =
+				@"Src/xWorks/xWorksTests/TestData/LinkedFiles/AudioVisual/" + audioFileName;
 			Assert.That(result, Contains.Substring(audioFileUrl));
 			const string linkTagwithOnClick =
 				"//span[@class='lexemeformoa']/span/a[@class='en-Zxxx-x-audio' and contains(@onclick,'play()')]";
@@ -5872,17 +5974,21 @@ namespace SIL.FieldWorks.XWorks
 			var entryOne = CreateInterestingLexEntry(Cache);
 			var senseaudio = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entryOne.LexemeFormOA = senseaudio;
-			senseaudio.Form.set_String(wsEnAudio.Handle, Cache.TsStrFactory.MakeString("TestAudio.wav", wsEnAudio.Handle));
+			const string audioFileName = "Test Audi'o.wav";
+			senseaudio.Form.set_String(wsEnAudio.Handle, Cache.TsStrFactory.MakeString(audioFileName, wsEnAudio.Handle));
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, true, true, "//audio/source/@src");
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
 
+			const string safeAudioId = "gTest_Audi_o";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath("//audio[contains(@id," + safeAudioId + ")]", 1);
 			const string audioTagwithSource = "//audio/source/@src";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(audioTagwithSource, 1);
-			var audioFileUrl = Path.Combine("AudioVisual", "TestAudio.wav");
+			var audioFileUrl = Path.Combine("AudioVisual", audioFileName);
 			Assert.That(result, Contains.Substring(audioFileUrl));
-			const string linkTagwithOnClick =
-				"//span[@class='lexemeformoa']/span/a[@class='en-Zxxx-x-audio' and @href!='#' and contains(@onclick,'play()')]";
+			var linkTagwithOnClick = "//span[@class='lexemeformoa']/span/a[@class='en-Zxxx-x-audio'";
+			linkTagwithOnClick += " and @href='#" + safeAudioId + "'";
+			linkTagwithOnClick += " and contains(@onclick,'" + safeAudioId + "') and contains(@onclick,'.play()')]";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(linkTagwithOnClick, 1);
 		}
 
@@ -7890,8 +7996,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var previewXhtmlContent = File.ReadAllText(xhtmlPath);
 				// ReSharper disable once AssignNullToNotNullAttribute -- Justification: XHTML is always saved in a directory
-				var filePath = Path.Combine(Path.GetDirectoryName(xhtmlPath), "ProjectDictionaryOverrides.css");
-				StringAssert.Contains(filePath, previewXhtmlContent, "Custom css file should added in the XHTML file");
+				var fileName = "ProjectDictionaryOverrides.css";
+				StringAssert.Contains(fileName, previewXhtmlContent, "Custom css file should added in the XHTML file");
 			}
 			finally
 			{
@@ -8080,8 +8186,8 @@ namespace SIL.FieldWorks.XWorks
 			const string whSpan = "<span class=\"ownertype_abbreviation\"><span lang=\"en\">wh</span></span>";
 			const string ptSpan = "<span class=\"ownertype_abbreviation\"><span lang=\"en\">pt</span></span>";
 			const string femmeSpan = "<span class=\"headword\"><span lang=\"fr\">femme</span></span>";
-			const string garçonSpan = "<span class=\"headword\"><span lang=\"fr\">garçon</span></span>";
-			const string bêteSpan = "<span class=\"headword\"><span lang=\"fr\">bête</span></span>";
+			var garçonSpan = TsStringUtils.Compose("<span class=\"headword\"><span lang=\"fr\">garçon</span></span>");
+			var bêteSpan = TsStringUtils.Compose("<span class=\"headword\"><span lang=\"fr\">bête</span></span>");
 			const string trucSpan = "<span class=\"headword\"><span lang=\"fr\">truc</span></span>";
 			//SUT
 			var firstResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(firstEntry, mainEntryNode, null, settings);
@@ -8634,6 +8740,36 @@ namespace SIL.FieldWorks.XWorks
 				+ "/span[@class='senses']/span[@class='sense']//span[@lang='en' and text()='gloss']";
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithGlossOfGloss, 1);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_GeneratesNFC()
+		{
+			var node = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "über",
+				Children = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode
+					{
+						FieldDescription = "MLHeadWord",
+						DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "ko" })
+					}
+				}
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(node);
+			Cache.LangProject.AddToCurrentVernacularWritingSystems(Cache.WritingSystemFactory.get_Engine("ko") as IWritingSystem);
+			var wsKo = Cache.WritingSystemFactory.GetWsFromStr("ko");
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			var headword = Cache.TsStrFactory.MakeString("자ㄱㄴ시", wsKo); // Korean NFD
+			entry.CitationForm.set_String(wsKo, headword);
+			Assert.That(entry.CitationForm.get_String(wsKo).get_IsNormalizedForm(FwNormalizationMode.knmNFD), "Should be NFDecomposed in memory");
+			Assert.AreEqual(6, headword.Text.Length);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, node, null, DefaultSettings);
+			var tsResult = Cache.TsStrFactory.MakeString(result, Cache.DefaultAnalWs);
+			Assert.False(TsStringUtils.IsNullOrEmpty(tsResult), "Results should have been generated");
+			Assert.That(tsResult.get_IsNormalizedForm(FwNormalizationMode.knmNFC), "Resulting XHTML should be NFComposed");
 		}
 	}
 }

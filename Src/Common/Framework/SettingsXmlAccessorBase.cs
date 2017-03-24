@@ -6,18 +6,8 @@
 // Responsibility: FieldWorks Team
 
 using System;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using System.Xml;
 using System.Xml.Schema;
-using System.Windows.Forms;
-
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Controls; // for ProgressDialogWithTask
-using SIL.Utils;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.Framework
@@ -79,9 +69,9 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// <returns>The root node</returns>
 		/// ------------------------------------------------------------------------------------
-		protected override XmlNode LoadDoc()
+		protected override XmlNode LoadDoc(string xmlLocation = null)
 		{
-			string sXmlFilePath = FwDirectoryFinder.CodeDirectory + ResourceFilePathFromFwInstall;
+			string sXmlFilePath = xmlLocation ?? FwDirectoryFinder.CodeDirectory + ResourceFilePathFromFwInstall;
 			try
 			{
 				XmlReaderSettings settings = new XmlReaderSettings();

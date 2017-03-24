@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<DictionaryConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="All Reversal Indexes" writingSystem="" version="14" lastModified="2017-03-02" allPublications="true" isRootBased="false">
+<DictionaryConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="All Reversal Indexes" writingSystem="" version="16" lastModified="2017-03-08" allPublications="true" isRootBased="false">
 	<ConfigurationItem name="Reversal Entry" isEnabled="true" style="Reversal-Normal" styleType="paragraph" field="ReversalIndexEntry" cssClassNameOverride="reversalindexentry">
 		<ConfigurationItem name="Reversal Form" isEnabled="true" style="Reversal-Headword" between=" " after=" " field="ReversalForm">
 		<!-- Only one space after, because everything following has a Before space, so that will turn into two between this and the rest. -->
@@ -41,7 +41,7 @@
 					</WritingSystemOptions>
 				</ConfigurationItem>
 			</ConfigurationItem>
-			<ConfigurationItem name="Lexeme Form" isEnabled="false" before=" " between=" " after="" field="Entry" subField="LexemeFormOA" cssClassNameOverride="lexemeform">
+			<ConfigurationItem name="Lexeme Form" isEnabled="false" before=" " between=" " after="" field="Entry" subField="LexemeFormOA" cssClassNameOverride="lexemeform" hideCustomFields="true">
 				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 					<Option id="vernacular" isEnabled="true" />
 				</WritingSystemOptions>
@@ -164,7 +164,7 @@
 					</ConfigurationItem>
 				</ConfigurationItem>
 			</ConfigurationItem>
-			<ConfigurationItem name="Primary Entry References" isEnabled="true" before="  (" between=", " after=")" field="MainEntryRefs">
+			<ConfigurationItem name="Primary Entry References" isEnabled="true" before="  (" between=", " after=")" field="MainEntryRefs" hideCustomFields="true">
 				<ConfigurationItem name="Type" isEnabled="true" between="," after="" field="EntryTypes">
 				<!-- No Before needed because this is the first item in a group, and the parent has it.  -->
 					<ConfigurationItem name="Reverse Abbreviation" between=" " isEnabled="true" field="ReverseAbbr">
@@ -743,7 +743,7 @@
 						</WritingSystemOptions>
 					</ConfigurationItem>
 				</ConfigurationItem>
-				<ConfigurationItem name="Lexeme Form" isEnabled="false" before=" " between=" " after="" field="Entry" subField="LexemeFormOA" cssClassNameOverride="lexemeform">
+				<ConfigurationItem name="Lexeme Form" isEnabled="false" before=" " between=" " after="" field="Entry" subField="LexemeFormOA" cssClassNameOverride="lexemeform" hideCustomFields="true">
 					<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 						<Option id="vernacular" isEnabled="true" />
 					</WritingSystemOptions>
@@ -862,7 +862,7 @@
 						</ConfigurationItem>
 					</ConfigurationItem>
 				</ConfigurationItem>
-				<ConfigurationItem name="Primary Entry References" isEnabled="true" before="  (" between=", " after=")" field="MainEntryRefs">
+				<ConfigurationItem name="Primary Entry References" isEnabled="true" before="  (" between=", " after=")" field="MainEntryRefs" hideCustomFields="true">
 					<ConfigurationItem name="Type" isEnabled="true" before="" between="," after="" field="EntryTypes">
 						<ConfigurationItem name="Reverse Abbreviation" between=" " isEnabled="true" field="ReverseAbbr">
 							<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">

@@ -352,6 +352,12 @@ namespace SIL.FieldWorks.XWorks
 					var configurationManagerController = new DictionaryConfigurationManagerController(dialog, _mediator,
 						_dictionaryConfigurations, GetAllPublications(cache), _projectConfigDir, _defaultConfigDir, _model);
 					configurationManagerController.Finished += SelectModelFromManager;
+					configurationManagerController.ConfigurationViewImported += () =>
+					{
+						SaveModel();
+						MasterRefreshRequired = false; // We're reloading the whole app, that's refresh enough
+						View.Close();
+					};
 					SetManagerTypeInfo(dialog);
 					dialog.ShowDialog(View as Form);
 					managerMadeChanges = configurationManagerController.IsDirty ||  _model != currentModel;
@@ -852,11 +858,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 			foreach (var part in model.PartsAndSharedItems)
 			{
-				FixTypeListOnNode(part, complexTypes, variantTypes, referenceTypes);
+				FixTypeListOnNode(part, complexTypes, variantTypes, referenceTypes, model.IsHybrid, cache);
 			}
 		}
 
-		private static void FixTypeListOnNode(ConfigurableDictionaryNode node, Set<Guid> complexTypes, Set<Guid> variantTypes, Set<Guid> referenceTypes)
+		private static void FixTypeListOnNode(ConfigurableDictionaryNode node, Set<Guid> complexTypes, Set<Guid> variantTypes, Set<Guid> referenceTypes, bool isHybrid, FdoCache cache)
 		{
 			var listOptions = node.DictionaryNodeOptions as DictionaryNodeListOptions;
 			if (listOptions != null)
@@ -864,33 +870,49 @@ namespace SIL.FieldWorks.XWorks
 				switch (listOptions.ListId)
 				{
 					case DictionaryNodeListOptions.ListIds.Complex:
-						FixOptionsAccordingToCurrentTypes(listOptions.Options, complexTypes);
+						FixOptionsAccordingToCurrentTypes(listOptions.Options, complexTypes, node, false, cache);
 						break;
 					case DictionaryNodeListOptions.ListIds.Variant:
-						FixOptionsAccordingToCurrentTypes(listOptions.Options, variantTypes);
+						FixOptionsAccordingToCurrentTypes(listOptions.Options, variantTypes, node,
+							IsFilteringInflectionalVariantTypes(node, isHybrid), cache);
 						break;
 					case DictionaryNodeListOptions.ListIds.Entry:
-						FixOptionsAccordingToCurrentTypes(listOptions.Options, referenceTypes);
+						FixOptionsAccordingToCurrentTypes(listOptions.Options, referenceTypes, node, false, cache);
 						break;
 					case DictionaryNodeListOptions.ListIds.Sense:
-						FixOptionsAccordingToCurrentTypes(listOptions.Options, referenceTypes);
+						FixOptionsAccordingToCurrentTypes(listOptions.Options, referenceTypes, node, false, cache);
 						break;
 					case DictionaryNodeListOptions.ListIds.Minor:
 						var complexAndVariant = complexTypes.Union(variantTypes);
-						FixOptionsAccordingToCurrentTypes(listOptions.Options, complexAndVariant);
+						FixOptionsAccordingToCurrentTypes(listOptions.Options, complexAndVariant, node, false, cache);
 						break;
 				}
 			}
+
 			//Recurse into child nodes and fix the type lists on them
 			if (node.Children != null)
 			{
 				foreach (var child in node.Children)
-					FixTypeListOnNode(child, complexTypes, variantTypes, referenceTypes);
+					FixTypeListOnNode(child, complexTypes, variantTypes, referenceTypes, isHybrid, cache);
 			}
 		}
 
-		private static void FixOptionsAccordingToCurrentTypes(List<DictionaryNodeListOptions.DictionaryNodeOption> options, Set<Guid> possibilities)
+		/// <summary>Called on nodes with Variant options to determine whether they are sharing Variants with a sibling</summary>
+		private static bool IsFilteringInflectionalVariantTypes(ConfigurableDictionaryNode node, bool isHybrid)
 		{
+			if (!isHybrid)
+				return false;
+			if (node.IsDuplicate)
+				return true;
+			var siblings = node.ReallyReallyAllSiblings;
+			// check whether this node has a duplicate, most likely "Variants (Inflectional Variants)"
+			return siblings != null && siblings.Any(sib => sib.FieldDescription == node.FieldDescription);
+		}
+
+		private static void FixOptionsAccordingToCurrentTypes(List<DictionaryNodeListOptions.DictionaryNodeOption> options, ICollection<Guid> possibilities,
+			ConfigurableDictionaryNode node, bool filterInflectionalVariantTypes, FdoCache cache)
+		{
+			var isDuplicate = node.IsDuplicate;
 			var currentGuids = new Set<Guid>();
 			foreach (var opt in options)
 			{
@@ -898,9 +920,31 @@ namespace SIL.FieldWorks.XWorks
 				if (Guid.TryParse(opt.Id, out guid))	// can be empty string
 					currentGuids.Add(guid);
 			}
-			// add types that do not exist already
-			options.AddRange(possibilities.Where(type => !currentGuids.Contains(type))
-				.Select(type => new DictionaryNodeListOptions.DictionaryNodeOption { Id = type.ToString(), IsEnabled = true }));
+
+			if (filterInflectionalVariantTypes)
+			{
+				foreach (var custVariantType in possibilities.Where(type => !currentGuids.Contains(type)))
+				{
+					//Variants without any type are not Inflectional
+					var showCustomVariant = (custVariantType != XmlViewsUtils.GetGuidForUnspecifiedVariantType()
+							&& cache.ServiceLocator.GetObject(custVariantType) is ILexEntryInflType)
+						^ !isDuplicate;
+
+					// add new custom variant types disabled for the original and enabled for the inflectional variants copy
+					options.Add(new DictionaryNodeListOptions.DictionaryNodeOption
+					{
+						Id = custVariantType.ToString(),
+						IsEnabled = showCustomVariant
+					});
+				}
+			}
+			else
+			{
+				// add types that do not exist already
+				options.AddRange(possibilities.Where(type => !currentGuids.Contains(type))
+					.Select(type => new DictionaryNodeListOptions.DictionaryNodeOption { Id = type.ToString(), IsEnabled = !isDuplicate }));
+			}
+
 			// remove options that no longer exist
 			for (var i = options.Count - 1; i >= 0; --i)
 			{
@@ -964,9 +1008,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public static List<ListViewItem> LoadAvailableWsList(DictionaryNodeWritingSystemOptions wsOptions, FdoCache cache)
 		{
-			var wsLists = new List<DictionaryNodeListOptions.DictionaryNodeOption>();
-
-			wsLists = UpdateWsOptions(wsOptions, cache);
+			var wsLists = UpdateWsOptions(wsOptions, cache);
 
 			var availableWSs = new List<ListViewItem>();
 			foreach (var wsListItem in wsLists)
@@ -1028,23 +1070,14 @@ namespace SIL.FieldWorks.XWorks
 		public static List<DictionaryNodeListOptions.DictionaryNodeOption> UpdateWsOptions(DictionaryNodeWritingSystemOptions wsOptions, FdoCache cache)
 		{
 			var availableWSs = GetCurrentWritingSystems(wsOptions.WsType, cache);
-
-			if (wsOptions.Options.Count == availableWSs.Count)
+			int magicId;
+			wsOptions.Options.AddRange(availableWSs.Where(availWs => !int.TryParse(availWs.Id, out magicId) && wsOptions.Options.All(opt => opt.Id != availWs.Id)));
+			for (var i = wsOptions.Options.Count - 1; i >= 0; --i)
 			{
-				int i = 0;
-				foreach (var ws in availableWSs)
+				if (availableWSs.All(opt => opt.Id != wsOptions.Options[i].Id) &&
+					WritingSystemServices.GetMagicWsIdFromName(wsOptions.Options[i].Id) == 0)
 				{
-					int magicId;
-					if (int.TryParse(ws.Id, out magicId))
-					{
-						var wsName = WritingSystemServices.GetMagicWsNameFromId(magicId);
-						wsOptions.Options[i].Id = wsName;
-					}
-					else
-					{
-						wsOptions.Options[i].Id = ws.Id;
-					}
-					i = i + 1;
+					wsOptions.Options.RemoveAt(i);
 				}
 			}
 			return availableWSs;
@@ -1330,6 +1363,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					Label = metaDataCache.GetFieldLabel(field),
 					IsCustomField = true,
+					Before = " ",
 					IsEnabled = false,
 					// Custom fields in the Map under LexEntryRef are actually LexEntry CustomFields; look for them under OwningEntry
 					FieldDescription = isEntryRefType ? "OwningEntry" : metaDataCache.GetFieldName(field),
@@ -1362,7 +1396,6 @@ namespace SIL.FieldWorks.XWorks
 				{
 					Label = "Name",
 					FieldDescription = "Name",
-					After = " ",
 					DictionaryNodeOptions = BuildWsOptionsForWsType("analysis"),
 					Parent = configNode,
 					IsCustomField = false // the parent node may be for a custom field, but this node is for a standard CmPossibility field
@@ -1457,7 +1490,7 @@ namespace SIL.FieldWorks.XWorks
 					if (configNode == null)
 						continue;
 					var cssClass = CssGenerator.GetClassAttributeForConfig(configNode);
-					if (cssClass == classList[0])
+					if (classList[0].Split(' ').Contains(cssClass))
 					{
 						topNode = configNode;
 						break;

@@ -7,8 +7,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
+using System.Xml.Serialization;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.Utils;
@@ -17,6 +17,7 @@ using SIL.CoreImpl;
 using XCore;
 using Ionic.Zip;
 using SIL.FieldWorks.LexText.Controls;
+using SIL.FieldWorks.XWorks.LexText;
 using SIL.Utils.FileDialog;
 
 namespace SIL.FieldWorks.XWorks
@@ -67,6 +68,8 @@ namespace SIL.FieldWorks.XWorks
 		/// Event fired when the DictionaryConfigurationManager dialog is closed
 		/// </summary>
 		public event Action<DictionaryConfigurationModel> Finished;
+
+		public event Action ConfigurationViewImported;
 
 		/// <summary>Get list of publications using a dictionary configuration.</summary>
 		internal List<string> GetPublications(DictionaryConfigurationModel dictionaryConfiguration)
@@ -148,12 +151,11 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Fetch up-to-date list of publications from project and populate the list of publications.
+		/// Fetch up-to-date list of publications from project and populate the list of publications
 		/// </summary>
 		private void ReLoadPublications()
 		{
 			_publications = DictionaryConfigurationController.GetAllPublications(_cache);
-			_view.publicationsListView.Items.Clear();
 			foreach (var publication in _publications)
 			{
 				var item = new ListViewItem { Text = publication };
@@ -343,7 +345,7 @@ namespace SIL.FieldWorks.XWorks
 			int i = 1;
 			while (existingConfigurations.Any(conf => Path.GetFileName(filePath).Equals(Path.GetFileName(conf.FilePath))) || FileUtils.FileExists(Path.Combine(projectConfigDir,filePath)))
 			{
-				filePath = FormatFilePath(projectConfigDir, String.Format("{0}_{1}", config.Label, i++));
+				filePath = FormatFilePath(projectConfigDir, string.Format("{0}_{1}", config.Label, i++));
 			}
 			config.FilePath = filePath;
 		}
@@ -427,7 +429,7 @@ namespace SIL.FieldWorks.XWorks
 			var origReversalWs = configurationToDelete.WritingSystem;
 
 			var allReversalsFileName = "AllReversalIndexes" + DictionaryConfigurationModel.FileExtension;
-			var resettingReversal = IsConfigurationAnOriginalReversal(configurationToDelete);
+			var resettingReversal = IsConfigurationAnOriginalReversal(configurationToDelete, _cache);
 			// The reversals will be reset to what the user has configured under All Reversal Indexes. This makes it useful to actually change that.
 			// If the user resets "AllReversalIndexes" it will reset to the shipping version.
 			string pathToDefaultFile;
@@ -477,7 +479,7 @@ namespace SIL.FieldWorks.XWorks
 
 				if (IsConfigurationACustomizedOriginal(configurationToDelete))
 				{
-					if (IsConfigurationAnOriginalReversal(configurationToDelete) && !IsAllReversalIndexConfig(configurationToDelete))
+					if (IsConfigurationAnOriginalReversal(configurationToDelete, _cache) && !IsAllReversalIndexConfig(configurationToDelete))
 						dlg.TopMessage = xWorksStrings.YouAreResettingReversal;
 					else
 						dlg.TopMessage = xWorksStrings.YouAreResetting;
@@ -515,6 +517,15 @@ namespace SIL.FieldWorks.XWorks
 			{
 				MessageBox.Show(_view, xWorksStrings.kstidConfigsChanged);
 				return;
+			}
+
+			if (string.IsNullOrEmpty(SelectedConfiguration.FilePath))
+				throw new ArgumentNullException("The configuration selected for export has an empty file path.");
+			if (Path.GetDirectoryName(SelectedConfiguration.FilePath) == _defaultConfigDir)
+			{
+				SelectedConfiguration.FilePath = Path.Combine(_projectConfigDir,
+					Path.GetFileName(SelectedConfiguration.FilePath));
+				SelectedConfiguration.Save();
 			}
 
 			var disallowedCharacters = MiscUtils.GetInvalidProjectNameChars(MiscUtils.FilenameFilterStrength.kFilterBackup) + " $%";
@@ -558,7 +569,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				zip.AddFile(configurationToExport.FilePath, "/");
 				PrepareCustomFieldsExport(cache).ForEach(file => zip.AddFile(file, "/"));
-				PrepareStylesheetExport().ForEach(file => zip.AddFile(file, "/"));
+				zip.AddFile(PrepareStylesheetExport(cache), "/");
 				zip.Save(destinationZipPath);
 			}
 		}
@@ -570,29 +581,38 @@ namespace SIL.FieldWorks.XWorks
 		internal static IEnumerable<string> PrepareCustomFieldsExport(FdoCache cache)
 		{
 			var exporter = new LiftExporter(cache);
-			var tempFile = Path.Combine(Path.GetTempPath(), "DictExportCustomLift", "CustomFields.lift");
-			Directory.CreateDirectory(Path.GetDirectoryName(tempFile));
-			using (TextWriter textWriter = new StreamWriter(tempFile))
+			var liftFile = Path.Combine(Path.GetTempPath(), "DictExportCustomLift", "CustomFields.lift");
+			var rangesFile = Path.Combine(Path.GetTempPath(), "DictExportCustomLift", "CustomFields.lift-ranges");
+			Directory.CreateDirectory(Path.GetDirectoryName(liftFile));
+			using (TextWriter textWriter = new StreamWriter(liftFile))
 			{
-				exporter.ExportLift(textWriter, Path.GetDirectoryName(tempFile), new ILexEntry[0], entryCount:0);
+				exporter.ExportLift(textWriter, Path.GetDirectoryName(liftFile), new ILexEntry[0], 0);
 			}
-			return new[] {tempFile};
+			using (var stringWriter = new StringWriter())
+			{
+				exporter.ExportLiftRanges(stringWriter);
+				stringWriter.Flush();
+				File.WriteAllText(rangesFile, stringWriter.ToString());
+			}
+			return new[] {liftFile, rangesFile};
 		}
 
 		/// <summary>
 		/// Prepare stylesheet to be included in dictionary configuration export. LT-17397.
 		/// Returns paths to files to be included in a zipped export.
 		/// </summary>
-		internal static IEnumerable<string> PrepareStylesheetExport()
+		internal static string PrepareStylesheetExport(FdoCache cache)
 		{
-			// TODO implement
+			var projectStyles = new FlexStylesXmlAccessor(cache.LangProject.LexDbOA, true);
+			var serializer = new XmlSerializer(typeof(FlexStylesXmlAccessor));
 
-			var file1 = FileUtils.GetTempFile("StylesheetData");
-			FileUtils.WriteStringtoFile(file1, "content", Encoding.UTF8);
-			var file2 = FileUtils.GetTempFile("StylesheetMoreData");
-			FileUtils.WriteStringtoFile(file2, "content", Encoding.UTF8);
-			yield return file1;
-			yield return file2;
+			var tempFile = Path.Combine(Path.GetTempPath(), "DictExportStyles", "CustomStyles.xml");
+			Directory.CreateDirectory(Path.GetDirectoryName(tempFile));
+			using (var textWriter = new StreamWriter(tempFile))
+			{
+				serializer.Serialize(textWriter, projectStyles);
+			}
+			return tempFile;
 		}
 
 		/// <summary>
@@ -615,30 +635,37 @@ namespace SIL.FieldWorks.XWorks
 
 			if (!importController.ImportHappened)
 				return;
-
-			ReLoadPublications();
-
-			// Update list of configurations in UI and select the just-imported configuration.
-			ReLoadConfigurations();
-			_view.configurationsListView.Items.Cast<ListViewItem>().First(item => item.Text == importController.NewConfigToImport.Label).Selected = true;
-
+			CloseDialogAndRefreshProject();
 		}
 
-		public bool IsConfigurationACustomizedOriginal(DictionaryConfigurationModel configurationToDelete)
+		private void CloseDialogAndRefreshProject()
 		{
-			return IsConfigurationACustomizedShippedDefault(configurationToDelete) || IsConfigurationAnOriginalReversal(configurationToDelete);
+			_view.Close();
+			if(ConfigurationViewImported != null)
+				ConfigurationViewImported();
+			_mediator.BroadcastMessage("MasterRefresh", null);
+		}
+
+		public bool IsConfigurationACustomizedOriginal(DictionaryConfigurationModel configuration)
+		{
+			return IsConfigurationACustomizedOriginal(configuration, _defaultConfigDir, _cache);
+		}
+
+		public static bool IsConfigurationACustomizedOriginal(DictionaryConfigurationModel config, string defaultConfigDir, FdoCache cache)
+		{
+			return IsConfigurationACustomizedShippedDefault(config, defaultConfigDir) || IsConfigurationAnOriginalReversal(config, cache);
 		}
 
 		/// <summary>
 		/// Whether a configuration is, or is a customization of, a shipped default configuration,
 		/// such as the shipped Root-based, Lexeme-based, or Bartholomew configurations.
 		/// </summary>
-		public bool IsConfigurationACustomizedShippedDefault(DictionaryConfigurationModel configuration)
+		public static bool IsConfigurationACustomizedShippedDefault(DictionaryConfigurationModel configuration, string defaultConfigDir)
 		{
 			if (configuration.FilePath == null)
 				return false;
 
-			var defaultConfigurationFiles = FileUtils.GetFilesInDirectory(_defaultConfigDir).Select(Path.GetFileName);
+			var defaultConfigurationFiles = FileUtils.GetFilesInDirectory(defaultConfigDir).Select(Path.GetFileName);
 
 			var filename = Path.GetFileName(configuration.FilePath);
 			return defaultConfigurationFiles.Contains(filename);
@@ -647,7 +674,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Whether a configuration represents a Reversal.
 		/// </summary>
-		public bool IsConfigurationAnOriginalReversal(DictionaryConfigurationModel configuration)
+		public static bool IsConfigurationAnOriginalReversal(DictionaryConfigurationModel configuration, FdoCache cache)
 		{
 			if (configuration.FilePath == null)
 				return false;
@@ -655,7 +682,7 @@ namespace SIL.FieldWorks.XWorks
 			// No configuration.WritingSystem means it is not a reversal, or that it is the AllReversalIndexes which doesn't act any different from a default config
 			if (!String.IsNullOrWhiteSpace(configuration.WritingSystem))
 			{
-				var writingSystem = (IWritingSystem)_cache.WritingSystemFactory.get_Engine(configuration.WritingSystem);
+				var writingSystem = (IWritingSystem)cache.WritingSystemFactory.get_Engine(configuration.WritingSystem);
 				// The reversals start out with the filename matching the ws DisplayLabel, copies will have a different file name
 				return writingSystem.DisplayLabel == Path.GetFileNameWithoutExtension(configuration.FilePath);
 			}

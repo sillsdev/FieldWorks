@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Security;
 using System.Xml;
 using System.Xml.Serialization;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainImpl;
 
@@ -33,6 +33,8 @@ namespace SIL.FieldWorks.XWorks
 		/// for "all reversal indexes".
 		/// </summary>
 		public const string AllReversalIndexesFilenameBase = "AllReversalIndexes";
+
+		public enum ConfigType { Hybrid, Lexeme, Root, Reversal }
 
 		/// <summary>
 		/// Trees of dictionary elements
@@ -122,6 +124,28 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Checks if this model is Hybrid type. Not root and has Subentries
+		/// </summary>
+		internal bool IsHybrid
+		{
+			get { return !IsRootBased && Parts[0].Children != null && Parts[0].Children.Any(c => c.FieldDescription == "Subentries"); }
+		}
+
+		internal ConfigType Type
+		{
+			get
+			{
+				if (IsReversal)
+					return ConfigType.Reversal;
+				if (IsRootBased)
+					return ConfigType.Root;
+				if (IsHybrid)
+					return ConfigType.Hybrid;
+				return ConfigType.Lexeme;
+			}
+		}
+
+		/// <summary>
 		/// A concatenation of Parts and SharedItems; useful for migration and synchronization with the FDO model
 		/// </summary>
 		[XmlIgnore]
@@ -130,6 +154,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary></summary>
 		public void Save()
 		{
+			// Don't save model unless the DictionaryConfigurationController has modified the FilePath first.
+			if (FilePath.StartsWith(FwDirectoryFinder.DefaultConfigurations))
+				return;
 			LastModified = DateTime.Now;
 			var serializer = new XmlSerializer(typeof(DictionaryConfigurationModel));
 			var settings = new XmlWriterSettings { Indent = true };

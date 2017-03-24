@@ -16,7 +16,7 @@
 <!ELEMENT Styles (markup, replacements, ImportMappingSets)>
 <!ATTLIST Styles
 	date CDATA #REQUIRED
-	DTDver (64DE4B02-14DA-42F6-8C1C-CF21E41D3EF7) #REQUIRED
+	DTDver (1610190E-D7A3-42D7-8B48-C0C49320435F) #REQUIRED
 	label CDATA #IMPLIED
 >
 <!ELEMENT markup (tag+)>
@@ -72,11 +72,11 @@
 	basedOn IDREF #IMPLIED
 	next IDREF #IMPLIED
 	alignment (left | center | right | full) #IMPLIED
-	background (white) #IMPLIED
+	background CDATA #IMPLIED
 	indentLeft CDATA #IMPLIED
 	indentRight CDATA #IMPLIED
 	lineSpacing CDATA #IMPLIED
-	lineSpacingType (atleast | exact) 'atleast'
+	lineSpacingType (atleast | exact | rel) 'atleast'
 	firstLine CDATA #IMPLIED
 	hanging CDATA #IMPLIED
 	spaceBefore CDATA #IMPLIED

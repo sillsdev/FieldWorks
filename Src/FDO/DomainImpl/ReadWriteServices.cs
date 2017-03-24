@@ -129,6 +129,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			if (reader == null) throw new ArgumentNullException("reader");
 
+			// ENHANCE: it would be better to use DateTime.Parse instead of parsing this ourselves.
+			// However, this changes the way we interpret the milliseconds. Currently 1:2:3.4 is
+			// incorrectly interpreted as 1 hour, 2 minutes, 3 seconds and 4 milliseconds instead
+			// of 4/10 of a second, i.e. 400 milliseconds.
 			var dtParts = reader.Attribute("val").Value.Split(new[] { '-', ' ', ':', '.' });
 			var asUtc = new DateTime(
 				Int32.Parse(dtParts[0]),
@@ -137,7 +141,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				Int32.Parse(dtParts[3]),
 				Int32.Parse(dtParts[4]),
 				Int32.Parse(dtParts[5]),
-				Int32.Parse(dtParts[6]));
+				dtParts.Length > 6 ? Int32.Parse(dtParts[6]) : 0);
 			return asUtc.ToLocalTime(); // Return local time, not UTC, which is what is stored.
 		}
 

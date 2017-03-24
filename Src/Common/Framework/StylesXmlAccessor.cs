@@ -132,7 +132,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		protected override string DtdRequiredVersion
 		{
-			get { return "64DE4B02-14DA-42F6-8C1C-CF21E41D3EF7"; }
+			get { return "1610190E-D7A3-42D7-8B48-C0C49320435F"; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1163,23 +1163,54 @@ namespace SIL.FieldWorks.Common.Framework
 					int wsId = GetWs(child.Attributes);
 					if (wsId == 0)
 						continue; // WS not in use in this project?
-					string family = XmlUtils.GetOptionalAttributeValue(child, "family");
-					string sizeText = XmlUtils.GetOptionalAttributeValue(child, "size");
 					var fontInfo = new FontInfo();
+					var family = XmlUtils.GetOptionalAttributeValue(child, "family");
 					if (family != null)
 					{
 						fontInfo.m_fontName = new InheritableStyleProp<string>(family);
 					}
+					var sizeText = XmlUtils.GetOptionalAttributeValue(child, "size");
 					if (sizeText != null)
 					{
 						int nSize = InterpretMeasurementAttribute(sizeText, "override.size", styleName, ResourceFileName);
 						fontInfo.m_fontSize = new InheritableStyleProp<int>(nSize);
 					}
+					var color = XmlUtils.GetOptionalAttributeValue(child, "color");
+					if (color != null)
+					{
+						Color parsedColor;
+						if (color.StartsWith("("))
+						{
+							var colorVal = ColorVal(color, styleName);
+							parsedColor = Color.FromArgb(colorVal);
+						}
+						else
+						{
+							parsedColor = Color.FromName(color);
+						}
+						fontInfo.m_fontColor = new InheritableStyleProp<Color>(parsedColor);
+					}
+					var bold = XmlUtils.GetOptionalAttributeValue(child, "bold");
+					if (bold != null)
+					{
+						fontInfo.m_bold = new InheritableStyleProp<bool>(bool.Parse(bold));
+					}
+					var italic = XmlUtils.GetOptionalAttributeValue(child, "italic");
+					if (italic != null)
+					{
+						fontInfo.m_italic = new InheritableStyleProp<bool>(bool.Parse(italic));
+					}
 					overrides[wsId] = fontInfo;
 				}
 			}
 			if (overrides.Count > 0)
-				setStrProp((int)FwTextPropType.ktptWsStyle, StyleInfo.GetOverridesString(overrides));
+			{
+				var overridesString = BaseStyleInfo.GetOverridesString(overrides);
+				if (!string.IsNullOrEmpty(overridesString))
+				{
+					setStrProp((int)FwTextPropType.ktptWsStyle, overridesString);
+				}
+			}
 			// TODO: Handle dropcap attribute
 		}
 
@@ -1190,9 +1221,9 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// <param name="val">Value to interpret (a color name or (red, green, blue).</param>
 		/// <param name="styleName">name of the style (for error reporting)</param>
-		/// <returns></returns>
+		/// <returns>the color as a BGR 6-digit hex int</returns>
 		/// ------------------------------------------------------------------------------------
-		int ColorVal(string val, string styleName)
+		private int ColorVal(string val, string styleName)
 		{
 			if (val[0] == '(')
 			{
@@ -1201,7 +1232,7 @@ namespace SIL.FieldWorks.Common.Framework
 				int secondComma = val.IndexOf(',', firstComma + 1);
 				int green = Convert.ToInt32(val.Substring(firstComma + 1, secondComma - firstComma - 1));
 				int blue = Convert.ToInt32(val.Substring(secondComma + 1, val.Length - secondComma - 2));
-				return red + (blue * 256 + green) * 256;
+				return(blue * 256 + green) * 256 + red;
 			}
 			Color col = Color.FromName(val);
 			if (col.ToArgb() == 0)
@@ -1209,7 +1240,7 @@ namespace SIL.FieldWorks.Common.Framework
 				ReportInvalidInstallation(String.Format(
 					FrameworkStrings.ksUnknownUnderlineColor, styleName, ResourceFileName));
 			}
-			return col.R + (col.B * 256 + col.G) * 256;
+			return (col.B * 256 + col.G) * 256 + col.R;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1220,7 +1251,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <param name="strVal"></param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		static public int InterpretUnderlineType(string strVal)
+		public static int InterpretUnderlineType(string strVal)
 		{
 			int val = (int)FwUnderlineType.kuntSingle; // default
 			switch(strVal)
@@ -1338,9 +1369,12 @@ namespace SIL.FieldWorks.Common.Framework
 			}
 
 			node = paraAttributes.GetNamedItem("background");
-			if (node != null && node.Value != "white")
-				ReportInvalidInstallation(String.Format(
-					FrameworkStrings.ksUnknownBackgroundValue, styleName, ResourceFileName));
+			var sColor = (node == null ? "default" : node.Value);
+			if (sColor != "default")
+			{
+				setIntProp((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault,
+					ColorVal(sColor, styleName));
+			}
 
 			// set leading indentation
 			node = paraAttributes.GetNamedItem("indentLeft");
@@ -1418,26 +1452,6 @@ namespace SIL.FieldWorks.Common.Framework
 					(int)FwTextPropVar.ktpvMilliPoint, nSpaceAfter);
 			}
 
-			// Set lineSpacing
-			node = paraAttributes.GetNamedItem("lineSpacingType");
-			string sLineSpacingType = "";
-			if (node != null)
-			{
-				sLineSpacingType = node.Value;
-				switch (sLineSpacingType)
-				{
-						//verify valid line spacing types
-					case "atleast":
-						break;
-					case "exact":
-						break;
-					default:
-						ReportInvalidInstallation(String.Format(
-							FrameworkStrings.ksUnknownLineSpacingValue, styleName, ResourceFileName));
-						break;
-				}
-			}
-
 			node = paraAttributes.GetNamedItem("lineSpacing");
 			if (node != null)
 			{
@@ -1447,14 +1461,35 @@ namespace SIL.FieldWorks.Common.Framework
 					ReportInvalidInstallation(String.Format(
 						FrameworkStrings.ksNegativeLineSpacing, styleName, ResourceFileName));
 				}
-				if(sLineSpacingType == "exact")
-				{
-					lineSpacing *= -1; // negative lineSpacing indicates exact line spacing
-				}
 
-				setIntProp(
-					(int)FwTextPropType.ktptLineHeight,
-					(int)FwTextPropVar.ktpvMilliPoint, lineSpacing);
+				// Set lineSpacing
+				node = paraAttributes.GetNamedItem("lineSpacingType");
+				string sLineSpacingType = "";
+				if (node != null)
+				{
+					sLineSpacingType = node.Value;
+					switch (sLineSpacingType)
+					{
+						// verify valid line spacing types
+						case "atleast":
+							setIntProp((int)FwTextPropType.ktptLineHeight,
+								(int)FwTextPropVar.ktpvMilliPoint, lineSpacing);
+							break;
+						case "exact":
+							lineSpacing *= -1; // negative lineSpacing indicates exact line spacing
+							setIntProp((int)FwTextPropType.ktptLineHeight,
+								(int)FwTextPropVar.ktpvMilliPoint, lineSpacing);
+							break;
+						case "rel":
+							setIntProp((int) FwTextPropType.ktptLineHeight,
+								(int) FwTextPropVar.ktpvRelative, lineSpacing);
+							break;
+						default:
+							ReportInvalidInstallation(string.Format(
+								FrameworkStrings.ksUnknownLineSpacingValue, styleName, ResourceFileName));
+							break;
+					}
+				}
 			}
 
 			// Set borders

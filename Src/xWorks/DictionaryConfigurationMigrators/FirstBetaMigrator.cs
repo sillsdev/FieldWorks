@@ -77,7 +77,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				configPath = Path.Combine(dictionaryFolder, DCM.RootFileName + DictionaryConfigurationModel.FileExtension);
 			}
-			else if(ConfigHasSubentriesNode(config)) // Hybrid configs have subentries
+			else if (config.IsHybrid) // Hybrid configs have subentries
 			{
 				configPath = Path.Combine(dictionaryFolder, DCM.HybridFileName + DictionaryConfigurationModel.FileExtension);
 			}
@@ -86,22 +86,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				configPath = Path.Combine(dictionaryFolder, DCM.LexemeFileName + DictionaryConfigurationModel.FileExtension);
 			}
 			return new DictionaryConfigurationModel(configPath, Cache);
-		}
-
-		private static bool ConfigHasSubentriesNode(DictionaryConfigurationModel config)
-		{
-			// Perform a breadth first search for Subentries nodes
-			var nodesToCompare = new List<ConfigurableDictionaryNode>(config.PartsAndSharedItems);
-			while (nodesToCompare.Count > 0)
-			{
-				var currentNode = nodesToCompare[0];
-				nodesToCompare.RemoveAt(0);
-				if (currentNode.FieldDescription == "Subentries")
-					return true;
-				if (currentNode.Children != null)
-					nodesToCompare.AddRange(currentNode.Children);
-			}
-			return false;
 		}
 
 		internal void MigrateFrom83Alpha(ISimpleLogger logger, DictionaryConfigurationModel oldConfig, DictionaryConfigurationModel currentDefaultModel)
@@ -126,7 +110,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		/// </summary>
 		private static void ChooseAppropriateComplexForms(DictionaryConfigurationModel migratingModel)
 		{
-			if (!IsHybrid(migratingModel))
+			if (!migratingModel.IsHybrid)
 				return;
 			DCM.PerformActionOnNodes(migratingModel.Parts, parentNode =>
 			{
@@ -183,6 +167,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				case 12:
 				case 13:
 					RemoveMostOfGramInfoUnderRefdComplexForms(oldConfigPart);
+					goto case 14;
+				case 14:
+				case 15:
 					MigrateNewChildNodesAndOptionsInto(oldConfigPart, currentDefaultConfigPart);
 					break;
 				default:
@@ -227,7 +214,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				else
 				{
 					node.FieldDescription = etymSequence;
-					node.IsEnabled = !IsHybrid(oldConfig);
+					node.IsEnabled = !oldConfig.IsHybrid;
 				}
 				node.CSSClassNameOverride = "etymologies";
 				node.Before = "(";
@@ -255,11 +242,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			DCM.PerformActionOnNodes(etymNodes, n => {n.IsCustomField = false;});
 		}
 
-		private static bool IsHybrid(DictionaryConfigurationModel model)
-		{
-			return !model.IsRootBased && ConfigHasSubentriesNode(model);
-		}
-
 		private static void RemoveMostOfGramInfoUnderRefdComplexForms(ConfigurableDictionaryNode part)
 		{
 			DCM.PerformActionOnNodes(part.Children, node =>
@@ -282,6 +264,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				destinationNode.DictionaryNodeOptions = sourceNode.DictionaryNodeOptions;
 			if (destinationNode.Children == null || sourceNode.Children == null)
 				return;
+			EnsureCssOverrideAndStylesAreUpdated(destinationNode, sourceNode);
 			// First recurse into each matching child node
 			foreach (var newChild in sourceNode.Children)
 			{
@@ -295,6 +278,31 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					var indexOfNewChild = sourceNode.Children.FindIndex(n => n.Label == newChild.Label);
 					InsertNewNodeIntoOldConfig(destinationNode, newChild.DeepCloneUnderParent(destinationNode, true), sourceNode, indexOfNewChild);
 				}
+			}
+		}
+
+		private static void EnsureCssOverrideAndStylesAreUpdated(ConfigurableDictionaryNode destinationNode, ConfigurableDictionaryNode sourceNode)
+		{
+			if (sourceNode.StyleType != ConfigurableDictionaryNode.StyleTypes.Default && destinationNode.StyleType == ConfigurableDictionaryNode.StyleTypes.Default)
+			{
+				var nodeStyleType = sourceNode.StyleType;
+				var nodeParaOpts = destinationNode.DictionaryNodeOptions as IParaOption;
+				if (nodeParaOpts != null)
+				{
+					nodeStyleType = nodeParaOpts.DisplayEachInAParagraph
+						? ConfigurableDictionaryNode.StyleTypes.Paragraph
+						: ConfigurableDictionaryNode.StyleTypes.Character;
+				}
+				destinationNode.StyleType = nodeStyleType;
+			}
+			if (sourceNode.StyleType == destinationNode.StyleType && // in case the user changed, for example, from Paragraph to Character style
+				!string.IsNullOrEmpty(sourceNode.Style) && string.IsNullOrEmpty(destinationNode.Style))
+			{
+				destinationNode.Style = sourceNode.Style;
+			}
+			if (!string.IsNullOrEmpty(sourceNode.CSSClassNameOverride) && string.IsNullOrEmpty(destinationNode.CSSClassNameOverride))
+			{
+				destinationNode.CSSClassNameOverride = sourceNode.CSSClassNameOverride;
 			}
 		}
 
