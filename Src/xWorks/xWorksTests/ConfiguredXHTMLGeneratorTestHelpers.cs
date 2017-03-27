@@ -119,18 +119,32 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		internal static ILexEntry CreateInterestingLexEntry(FdoCache cache, string headword = "Citation", string gloss = "gloss")
 		{
-			var factory = cache.ServiceLocator.GetInstance<ILexEntryFactory>();
-			var entry = factory.Create();
-			cache.LangProject.AddToCurrentAnalysisWritingSystems(
-				cache.WritingSystemFactory.get_Engine("en") as IWritingSystem);
-			cache.LangProject.AddToCurrentVernacularWritingSystems(
-				cache.WritingSystemFactory.get_Engine("fr") as IWritingSystem);
-			var wsEn = cache.WritingSystemFactory.GetWsFromStr("en");
-			var wsFr = cache.WritingSystemFactory.GetWsFromStr("fr");
+			var entryFactory = cache.ServiceLocator.GetInstance<ILexEntryFactory>();
+			var entry = entryFactory.Create();
+			var wsEn = EnsureWritingSystemSetup(cache, "en", false);
+			var wsFr = EnsureWritingSystemSetup(cache, "fr", true);
 			AddHeadwordToEntry(entry, headword, wsFr, cache);
 			entry.Comment.set_String(wsEn, cache.TsStrFactory.MakeString("Comment", wsEn));
 			AddSenseToEntry(entry, gloss, wsEn, cache);
 			return entry;
+		}
+
+		private static int EnsureWritingSystemSetup(FdoCache cache, string wsStr, bool isVernacular)
+		{
+			var wsFact = cache.WritingSystemFactory;
+			var result = wsFact.GetWsFromStr(wsStr);
+			if (result < 1)
+			{
+				if (isVernacular)
+				{
+					cache.LangProject.AddToCurrentVernacularWritingSystems(cache.WritingSystemFactory.get_Engine(wsStr) as IWritingSystem);
+				}
+				else
+				{
+					cache.LangProject.AddToCurrentAnalysisWritingSystems(cache.WritingSystemFactory.get_Engine(wsStr) as IWritingSystem);
+				}
+			}
+			return wsFact.GetWsFromStr(wsStr);
 		}
 
 		/// <summary>
@@ -258,16 +272,8 @@ namespace SIL.FieldWorks.XWorks
 
 		private void CreateLexicalReference(ICmObject firstEntry, ICmObject secondEntry, ICmObject thirdEntry, string refTypeName, string refTypeReverseName = null)
 		{
-			var lrt = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
-			if (Cache.LangProject.LexDbOA.ReferencesOA == null)
-				Cache.LangProject.LexDbOA.ReferencesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
-			Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(lrt);
-			lrt.Name.set_String(Cache.DefaultAnalWs, refTypeName);
-			if (string.IsNullOrEmpty(refTypeReverseName))
-			{
-				lrt.MappingType = (int)MappingTypes.kmtEntryOrSenseSequence;
-			}
-			else
+			var lrt = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence, refTypeName, "", refTypeReverseName, "");
+			if (!string.IsNullOrEmpty(refTypeReverseName))
 			{
 				lrt.ReverseName.set_String(Cache.DefaultAnalWs, refTypeReverseName);
 				lrt.MappingType = (int)MappingTypes.kmtEntryOrSenseTree;
@@ -283,15 +289,22 @@ namespace SIL.FieldWorks.XWorks
 		private ILexRefType CreateLexRefType(LexRefTypeTags.MappingTypes type, string name, string abbr, string revName, string revAbbr)
 		{
 			if (Cache.LangProject.LexDbOA.ReferencesOA == null)
+			{
 				Cache.LangProject.LexDbOA.ReferencesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+			}
+			var referencePossibilities = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS;
+			if (referencePossibilities.Any(r => r.Name.BestAnalysisAlternative.Text == name))
+			{
+				return referencePossibilities.First(r => r.Name.BestAnalysisAlternative.Text == name) as ILexRefType;
+			}
 			var lrt = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
-			Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(lrt);
+			referencePossibilities.Add(lrt);
 			lrt.MappingType = (int)type;
 			lrt.Name.set_String(m_wsEn, name);
 			lrt.Abbreviation.set_String(m_wsEn, abbr);
-			if (!String.IsNullOrEmpty(revName))
+			if (!string.IsNullOrEmpty(revName))
 				lrt.ReverseName.set_String(m_wsEn, revName);
-			if (!String.IsNullOrEmpty(revAbbr))
+			if (!string.IsNullOrEmpty(revAbbr))
 				lrt.ReverseAbbreviation.set_String(m_wsEn, revAbbr);
 			return lrt;
 		}
@@ -469,6 +482,11 @@ namespace SIL.FieldWorks.XWorks
 		{
 			foreach (var ler in entry.EntryRefsOS)
 				ler.HideMinorEntry = publish ? 0 : 1;
+		}
+
+		public static DictionaryNodeOptions GetSenseNodeOptions()
+		{
+			return new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = false };
 		}
 
 		public static DictionaryNodeOptions GetWsOptionsForLanguages(string[] languages)
