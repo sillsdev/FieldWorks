@@ -28,10 +28,14 @@ namespace SIL.FieldWorks.XWorks
 	public class DictionaryConfigurationImportControllerTests : MemoryOnlyBackendProviderReallyRestoredForEachTestTestBase
 	{
 		private DictionaryConfigurationImportController _controller;
+		private DictionaryConfigurationImportController _reversalController;
 		private string _projectConfigPath;
+		private string _reversalProjectConfigPath;
 		private readonly string _defaultConfigPath = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary");
 		private const string configLabel = "importexportConfiguration";
+		private const string reversalConfigLabel = "importexportReversalConfiguration";
 		private const string configFilename = "importexportConfigurationFile.fwdictconfig";
+		private const string reversalConfigFilename = "importexportReversalConfigurationFile.fwdictconfig";
 		private const int CustomRedBGR = 0x0000FE;
 		private readonly int NamedRedBGR = (int)ColorUtil.ConvertColorToBGR(Color.Red);
 
@@ -39,17 +43,24 @@ namespace SIL.FieldWorks.XWorks
 		/// Zip file to import during testing.
 		/// </summary>
 		private string _zipFile;
+		private string _reversalZipFile;
 
 		/// <summary>
 		/// Path to a dictionary configuration file that will be deleted after every test.
 		/// </summary>
 		private string _pathToConfiguration;
+		private string _reversalPathToConfiguration;
 
 		[TestFixtureTearDown]
 		public override void FixtureTeardown()
 		{
+			// delete the directory that was created in SetUp
+
 			if (Directory.Exists(_projectConfigPath))
-				Directory.Delete(_projectConfigPath, true); // delete the directory that was created in SetUp
+				Directory.Delete(_projectConfigPath, true);
+
+			if (Directory.Exists(_reversalProjectConfigPath))
+				Directory.Delete(_reversalProjectConfigPath, true);
 
 			base.FixtureTeardown();
 		}
@@ -58,17 +69,26 @@ namespace SIL.FieldWorks.XWorks
 		public void Setup()
 		{
 			// Start out with a clean project configuration directory, and with a non-random name so it's easier to examine during testing.
-			_projectConfigPath = Path.Combine(Path.GetTempPath(), "dictionaryConfigurationImportTests");
+			_projectConfigPath = Path.Combine(Path.GetTempPath(), "Dictionary");
 			if (Directory.Exists(_projectConfigPath))
 				Directory.Delete(_projectConfigPath, true);
 			FileUtils.EnsureDirectoryExists(_projectConfigPath);
 
+			_reversalProjectConfigPath = Path.Combine(Path.GetTempPath(), "ReversalIndex");
+			if (Directory.Exists(_reversalProjectConfigPath))
+				Directory.Delete(_reversalProjectConfigPath, true);
+			FileUtils.EnsureDirectoryExists(_reversalProjectConfigPath);
+
 			_controller = new DictionaryConfigurationImportController(Cache, _projectConfigPath,
+				new List<DictionaryConfigurationModel>());
+
+			_reversalController = new DictionaryConfigurationImportController(Cache, _reversalProjectConfigPath,
 				new List<DictionaryConfigurationModel>());
 
 			// Set up data for import testing.
 
 			_zipFile = null;
+			_reversalZipFile = null;
 
 			// Prepare configuration to export
 
@@ -86,9 +106,23 @@ namespace SIL.FieldWorks.XWorks
 			// Create XML file
 			configurationToExport.Save();
 
+			// Prepare configuration to export
+			var configurationReversalToExport = new DictionaryConfigurationModel
+			{
+				Label = reversalConfigLabel,
+				WritingSystem = "en",
+				Publications = new List<string> { "Main Dictionary", "unknown pub 1", "unknown pub 2" },
+				Parts = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode { FieldDescription = "LexEntry" } },
+				FilePath = Path.GetTempPath() + reversalConfigFilename
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(configurationReversalToExport);
+			_reversalPathToConfiguration = configurationReversalToExport.FilePath;
+			configurationReversalToExport.Save();
+
 			// Export a configuration that we know how to import
 
 			_zipFile = Path.GetTempFileName();
+			_reversalZipFile = Path.GetTempFileName() + 1;
 
 			// Add a test style to the cache
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
@@ -117,6 +151,7 @@ namespace SIL.FieldWorks.XWorks
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, CustomRedBGR);
 				styleWithCustomColors.Rules = propsBldr.GetTextProps();
 				DictionaryConfigurationManagerController.ExportConfiguration(configurationToExport, _zipFile, Cache);
+				DictionaryConfigurationManagerController.ExportConfiguration(configurationReversalToExport, _reversalZipFile, Cache);
 				Cache.LangProject.StylesOC.Clear();
 			});
 			Assert.That(File.Exists(_zipFile), "Unit test not set up right");
@@ -131,6 +166,13 @@ namespace SIL.FieldWorks.XWorks
 				"Unit test not set up right. A config exists with the same label as the config we will import.");
 			Assert.That(_controller._configurations.All(config => config.Label != configLabel),
 				"Unit test set up unexpectedly. Such a config should not be registered.");
+			File.Delete(_reversalPathToConfiguration);
+			Assert.That(!File.Exists(_reversalPathToConfiguration),
+				"Unit test not set up right. Reversal configuration should be out of the way for testing export.");
+			Assert.That(_reversalController._configurations.All(config => config.Label != configLabel),
+				"Unit test not set up right. A reversal config exists with the same label as the reversal config we will import.");
+			Assert.That(_reversalController._configurations.All(config => config.Label != configLabel),
+				"Unit test set up unexpectedly. Such a reversal config should not be registered.");
 		}
 
 		[TearDown]
@@ -140,6 +182,10 @@ namespace SIL.FieldWorks.XWorks
 				File.Delete(_zipFile);
 			if (_pathToConfiguration != null)
 				File.Delete(_pathToConfiguration);
+			if (_reversalZipFile != null)
+				File.Delete(_reversalZipFile);
+			if (_reversalPathToConfiguration != null)
+				File.Delete(_reversalPathToConfiguration);
 		}
 
 		[Test]
@@ -431,6 +477,26 @@ namespace SIL.FieldWorks.XWorks
 			// SUT 2
 			_controller.PrepareImport("nonexistent.zip");
 			Assert.That(_controller.ImportHappened, Is.False, "Also should be false in this case since NewConfigToImport==null");
+		}
+
+		[Test]
+		public void PrepareImport_ValidateImportConfigs()
+		{
+			// Import a Dictionary view into a Dictionary area
+			_controller.PrepareImport(_zipFile);
+			Assert.IsNotNull(_controller.NewConfigToImport, "Dictionary configuration should have been prepared for import, since we requested to import the right kind of configuration (Dictionary into Dictionary area).");
+
+			// Import a Dictionary view into a ReversalIndex area
+			_reversalController.PrepareImport(_zipFile);
+			Assert.IsNull(_reversalController.NewConfigToImport, "No configuration to import should have been prepared since the wrong type of configuration was requested to be imported (Dictionary into Reversal area).");
+
+			// Import a Reversal view into a Dictionary area
+			_controller.PrepareImport(_reversalZipFile);
+			Assert.IsNull(_controller.NewConfigToImport, "No configuration to import should have been prepared since the wrong type of configuration was requested to be imported (Reversal into Dictionary area).");
+
+			// Import a Reversal view into a ReversalIndex area
+			_reversalController.PrepareImport(_reversalZipFile);
+			Assert.IsNotNull(_reversalController.NewConfigToImport, "Reversal configuration should have been prepared for import, since we requested to import the right kind of configuration (Reversal into Reversal area).");
 		}
 
 		/// <summary>

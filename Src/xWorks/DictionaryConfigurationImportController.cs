@@ -86,6 +86,11 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private string _importStylesLocation;
 
+		/// <summary>
+		/// Is the import config is valid to the current view.
+		/// </summary>
+		private bool _isInvalidConfigFile;
+
 		/// <summary/>
 		public DictionaryConfigurationImportController(FdoCache cache, string projectConfigDir,
 			List<DictionaryConfigurationModel> configurations)
@@ -273,15 +278,22 @@ namespace SIL.FieldWorks.XWorks
 			}
 			catch (Exception)
 			{
-				ImportHappened = false;
-				NewConfigToImport = null;
-				_originalConfigLabel = null;
-				_temporaryImportConfigLocation = null;
-				_newPublications = null;
+				ClearValuesOnError();
 				return;
 			}
 
 			NewConfigToImport = new DictionaryConfigurationModel(_temporaryImportConfigLocation, _cache);
+
+			//Validating the user is not trying to import a Dictionary into a Reversal area or a Reversal into a Dictionary area
+			var configDirectory = Path.GetFileName(_projectConfigDir);
+			if (DictionaryConfigurationListener.DictionaryConfigurationDirectoryName.Equals(configDirectory) && NewConfigToImport.IsReversal
+				|| !DictionaryConfigurationListener.DictionaryConfigurationDirectoryName.Equals(configDirectory) && !NewConfigToImport.IsReversal)
+			{
+				_isInvalidConfigFile = true;
+				ClearValuesOnError();
+				return;
+			}
+			_isInvalidConfigFile = false;
 
 			// Reset flag
 			ImportHappened = false;
@@ -306,6 +318,15 @@ namespace SIL.FieldWorks.XWorks
 
 			// Not purporting to use any particular file location yet.
 			NewConfigToImport.FilePath = null;
+		}
+
+		private void ClearValuesOnError()
+		{
+			ImportHappened = false;
+			NewConfigToImport = null;
+			_originalConfigLabel = null;
+			_temporaryImportConfigLocation = null;
+			_newPublications = null;
 		}
 
 		/// <summary>
@@ -369,9 +390,18 @@ namespace SIL.FieldWorks.XWorks
 
 			if (NewConfigToImport == null)
 			{
-				_view.explanationLabel.Text = xWorksStrings.kstidCannotImport;
+				string invalidConfigFileMsg = string.Empty;
+				if (_isInvalidConfigFile)
+				{
+					var configType = Path.GetFileName(_projectConfigDir) == DictionaryConfigurationListener.DictionaryConfigurationDirectoryName
+					? xWorksStrings.ReversalIndex : xWorksStrings.Dictionary;
+					invalidConfigFileMsg = string.Format(xWorksStrings.DictionaryConfigurationMismatch, configType)
+						+ Environment.NewLine;
+				}
+				_view.explanationLabel.Text = invalidConfigFileMsg + xWorksStrings.kstidCannotImport;
 				return;
 			}
+
 			if (_originalConfigLabel == _proposedNewConfigLabel)
 			{
 				mainStatus = string.Format(xWorksStrings.kstidImportingConfig, NewConfigToImport.Label);
@@ -406,7 +436,8 @@ namespace SIL.FieldWorks.XWorks
 		public void RefreshBasedOnNewlySelectedImportFile()
 		{
 			PrepareImport(_view.importPathTextBox.Text);
-			if (NewConfigToImport == null)
+
+			if (NewConfigToImport == null || _isInvalidConfigFile)
 			{
 				// We aren't ready to import. Something didn't work right.
 

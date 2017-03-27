@@ -1097,13 +1097,16 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>Warning! The styles for this project will be overwritten by the import.</value>
     <comment>Warning added to the end of the import information after a user selects a zip file.</comment>
   </data>
+  <data name="DictionaryConfigurationMismatch" xml:space="preserve">
+    <value>Error! The file contains a {0} view.</value>
+    <comment>Error added to the first of the import information after a user selects a Reversal Index view when we're expecting a Dictionary view, or vice versa.</comment>
+  </data>
   <data name="ExportSelected" xml:space="preserve">
     <value>Export the view</value>
     <comment>Tooltip on dictionary configuration manager dialog</comment>
   </data>
   <data name="ImportView" xml:space="preserve">
     <value>Import a view</value>
-    <comment>Tooltip on dictionary configuration manager dialog
-</comment>
-  </data>
+    <comment>Tooltip on dictionary configuration manager dialog</comment>
+ </data>
 </root>
