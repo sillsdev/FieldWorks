@@ -19,8 +19,8 @@ namespace FwBuildTasks
 		/// <summary>times to retry failed downloads</summary>
 		protected const int Retries = 3;
 
-		/// <summary>time to wait before retrying failed downloads (one minute = 60,000ms)</summary>
-		protected const int RetryWaitTime = 60000;
+		/// <summary>time to wait before retrying failed downloads (four minutes = 240,000ms)</summary>
+		protected const int RetryWaitTime = 240000;
 
 		/// <summary>HTTP address to download from</summary>
 		[Required]
