@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2016 SIL International
+﻿// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,14 +8,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using Gecko;
 using Gecko.DOM;
 using Palaso.UI.WindowsForms.HtmlBrowser;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
@@ -839,7 +837,8 @@ namespace SIL.FieldWorks.XWorks
 				var currReversalWs = writingSystem.Id;
 				if(configuration.WritingSystem != currReversalWs)
 				{
-					var newConfig = Path.Combine(Path.GetDirectoryName(currentConfig), Path.GetFileNameWithoutExtension(currentConfig) + DictionaryConfigurationModel.FileExtension);
+					var newConfig = Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_mediator),
+						writingSystem.DisplayLabel + DictionaryConfigurationModel.FileExtension);
 					m_mediator.PropertyTable.SetProperty("ReversalIndexPublicationLayout", newConfig, true);
 				}
 			}
