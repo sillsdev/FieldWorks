@@ -14,12 +14,10 @@ using Ionic.Zip;
 using Palaso.Lift.Migration;
 using Palaso.Lift.Parsing;
 using Palaso.Reporting;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks.LexText;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
@@ -90,6 +88,12 @@ namespace SIL.FieldWorks.XWorks
 		/// Is the import config is valid to the current view.
 		/// </summary>
 		private bool _isInvalidConfigFile;
+
+		/// <summary>
+		/// The following style names are known to have unsupported features. We will avoid wiping out default styles of these types when
+		/// importing a view.
+		/// </summary>
+		public static readonly Set<string> UnsupportedStyles = new Set<string> { "Bulleted List", "Numbered List", "Homograph-Number" };
 
 		/// <summary/>
 		public DictionaryConfigurationImportController(FdoCache cache, string projectConfigDir,
@@ -175,7 +179,11 @@ namespace SIL.FieldWorks.XWorks
 		{
 			NonUndoableUnitOfWorkHelper.DoSomehow(_cache.ActionHandlerAccessor, () =>
 			{
-				_cache.LangProject.StylesOC.Clear();
+				var stylesToRemove = _cache.LangProject.StylesOC.Where(style => !UnsupportedStyles.Contains(style.Name));
+				foreach (var style in stylesToRemove)
+				{
+					_cache.LangProject.StylesOC.Remove(style);
+				}
 				var stylesAccessor = new FlexStylesXmlAccessor(_cache.LangProject.LexDbOA, true, importStylesLocation);
 			});
 		}

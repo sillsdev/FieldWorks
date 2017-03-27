@@ -211,6 +211,8 @@ namespace SIL.FieldWorks.XWorks.LexText
 			writer.WriteAttributeString("version", GetVersion(m_sourceStyles).ToString());
 			foreach (var style in StyleCollection)
 			{
+				if (DictionaryConfigurationImportController.UnsupportedStyles.Contains(style.Name))
+					continue;
 				var exportStyle = new ExportStyleInfo(style, style.Rules);
 				WriteStyleXml(exportStyle, writer);
 			}
