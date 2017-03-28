@@ -1194,6 +1194,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No view was found..
+        /// </summary>
+        internal static string ksErrorNoViewOnPublication {
+            get {
+                return ResourceManager.GetString("ksErrorNoViewOnPublication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exporting Lexicon Items to LIFT Format.
         /// </summary>
         internal static string ksExportingLift {
