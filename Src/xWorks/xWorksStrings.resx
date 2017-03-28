@@ -427,7 +427,7 @@ Are you SURE you want to delete the field {2}?</value>
     <comment>action on a tree view item</comment>
   </data>
   <data name="Delete" xml:space="preserve">
-    <value>Delete this custom view</value>
+    <value>Delete</value>
     <comment>action on a tree view item</comment>
   </data>
   <data name="EditLabel" xml:space="preserve">
@@ -893,15 +893,15 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>Confirm</value>
   </data>
   <data name="Reset" xml:space="preserve">
-    <value>Reset this view to the default settings</value>
+    <value>Reset</value>
     <comment>Set some dictionary settings back to what they were before customization.</comment>
   </data>
   <data name="YouAreResetting" xml:space="preserve">
     <value>You are resetting the following to factory defaults:</value>
   </data>
-  <data name="Configuration" xml:space="preserve">
-    <value>Configuration</value>
-    <comment>A generic description of a Dictionary Configuration or a Reversal Index Configuration.  (It should really be "view".)</comment>
+  <data name="View" xml:space="preserve">
+    <value>View</value>
+    <comment>A generic description of a Dictionary View or a Reversal Index View.</comment>
   </data>
   <data name="WantContinue" xml:space="preserve">
     <value>Do you want to continue?</value>
@@ -945,7 +945,7 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>Export of reversal completed.</value>
   </data>
   <data name="PublicationEntriesLabel" xml:space="preserve">
-    <value>Pressing Submit will send {0} dictionary entries{1} to Webonary.</value>
+    <value>Clicking Submit will send {0} dictionary entries{1} to Webonary.</value>
     <comment>Message displayed in Upload to Webonary dialog to inform user about what data will be uploaded. 0 will be a number. 1 will be either blank or a combination of ReversalEntries, ReversalEntries_Last, and ReversalEntries_Only</comment>
   </data>
   <data name="ReversalEntries" xml:space="preserve">
@@ -996,7 +996,7 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>Click Cancel to stop loading the Dictionary view and move to Lexicon Edit.</value>
   </data>
   <data name="ReversalIndexConfigurationDlgTitle" xml:space="preserve">
-    <value>Configure Reversal Index Views</value>
+    <value>Manage Reversal Index Views</value>
   </data>
   <data name="YouAreResettingReversal" xml:space="preserve">
     <value>You are resetting the following to the 'All Reversal Indexes' settings:</value>
@@ -1102,11 +1102,23 @@ If you are not the one designated user who adds fields, or you are making some o
     <comment>Error added to the first of the import information after a user selects a Reversal Index view when we're expecting a Dictionary view, or vice versa.</comment>
   </data>
   <data name="ExportSelected" xml:space="preserve">
-    <value>Export the view</value>
+    <value>Export the highlighted view</value>
     <comment>Tooltip on dictionary configuration manager dialog</comment>
   </data>
   <data name="ImportView" xml:space="preserve">
     <value>Import a view</value>
     <comment>Tooltip on dictionary configuration manager dialog</comment>
- </data>
+  </data>
+  <data name="DeleteViewTooltip" xml:space="preserve">
+    <value>Delete this custom view</value>
+    <comment>Used in Dictionary Config Mgr dialog</comment>
+  </data>
+  <data name="DuplicateViewToolTip" xml:space="preserve">
+    <value>Duplicate the highlighted view</value>
+    <comment>Used in Dictionary Config Mgr dialog</comment>
+  </data>
+  <data name="ResetViewTooltip" xml:space="preserve">
+    <value>Reset this view</value>
+    <comment>Used in Dictionary Config Mgr dialog</comment>
+  </data>
 </root>
