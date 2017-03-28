@@ -475,7 +475,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				dlg.WindowTitle = xWorksStrings.Confirm + " " + xWorksStrings.Delete;
 				var kindOfConfiguration = DictionaryConfigurationListener.GetDictionaryConfigurationType(_mediator);
-				dlg.TopBodyText = String.Format("{0} {1}: {2}", kindOfConfiguration, xWorksStrings.Configuration, configurationToDelete.Label);
+				dlg.TopBodyText = String.Format("{0} {1}: {2}", kindOfConfiguration, xWorksStrings.View, configurationToDelete.Label);
 
 				if (IsConfigurationACustomizedOriginal(configurationToDelete))
 				{

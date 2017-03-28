@@ -169,15 +169,6 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Configuration.
-        /// </summary>
-        internal static string Configuration {
-            get {
-                return ResourceManager.GetString("Configuration", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Clear All Children.
         /// </summary>
         internal static string ConfigurationTreeControl_ClearAllChildren {
@@ -232,7 +223,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete this custom view.
+        ///   Looks up a localized string similar to Delete.
         /// </summary>
         internal static string Delete {
             get {
@@ -246,6 +237,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string DeletedObjectDetected {
             get {
                 return ResourceManager.GetString("DeletedObjectDetected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete this custom view.
+        /// </summary>
+        internal static string DeleteViewTooltip {
+            get {
+                return ResourceManager.GetString("DeleteViewTooltip", resourceCulture);
             }
         }
         
@@ -357,6 +357,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Duplicate the highlighted view.
+        /// </summary>
+        internal static string DuplicateViewToolTip {
+            get {
+                return ResourceManager.GetString("DuplicateViewToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit Label.
         /// </summary>
         internal static string EditLabel {
@@ -456,7 +465,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Export the view.
+        ///   Looks up a localized string similar to Export the highlighted view.
         /// </summary>
         internal static string ExportSelected {
             get {
@@ -2293,7 +2302,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pressing Submit will send {0} dictionary entries{1} to Webonary..
+        ///   Looks up a localized string similar to Clicking Submit will send {0} dictionary entries{1} to Webonary..
         /// </summary>
         internal static string PublicationEntriesLabel {
             get {
@@ -2375,11 +2384,20 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reset this view to the default settings.
+        ///   Looks up a localized string similar to Reset.
         /// </summary>
         internal static string Reset {
             get {
                 return ResourceManager.GetString("Reset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset this view.
+        /// </summary>
+        internal static string ResetViewTooltip {
+            get {
+                return ResourceManager.GetString("ResetViewTooltip", resourceCulture);
             }
         }
         
@@ -2420,7 +2438,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Configure Reversal Index Views.
+        ///   Looks up a localized string similar to Manage Reversal Index Views.
         /// </summary>
         internal static string ReversalIndexConfigurationDlgTitle {
             get {
@@ -2615,6 +2633,15 @@ namespace SIL.FieldWorks.XWorks {
             get {
                 return ResourceManager.GetString("UploadToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0__" +
                         "publication_using_the__1__configuration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View.
+        /// </summary>
+        internal static string View {
+            get {
+                return ResourceManager.GetString("View", resourceCulture);
             }
         }
         
