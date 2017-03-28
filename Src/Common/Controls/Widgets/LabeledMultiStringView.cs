@@ -345,11 +345,18 @@ namespace SIL.FieldWorks.Common.Widgets
 							path = tryPath;
 					}
 				}
-				soundFieldControl.Path = path;
-				soundFieldControl.BeforeStartingToRecord += soundFieldControl_BeforeStartingToRecord;
-				soundFieldControl.SoundRecorded += soundFieldControl_SoundRecorded;
-				soundFieldControl.SoundDeleted += soundFieldControl_SoundDeleted;
-				Controls.Add(soundFieldControl);
+				try
+				{
+					soundFieldControl.Path = path;
+					soundFieldControl.BeforeStartingToRecord += soundFieldControl_BeforeStartingToRecord;
+					soundFieldControl.SoundRecorded += soundFieldControl_SoundRecorded;
+					soundFieldControl.SoundDeleted += soundFieldControl_SoundDeleted;
+					Controls.Add(soundFieldControl);
+				}
+				catch (Exception e)
+				{
+					Debug.WriteLine(e.Message);
+				}
 			}
 		}
 
