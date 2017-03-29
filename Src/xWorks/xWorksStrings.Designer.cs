@@ -330,6 +330,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error! The file contains a {0} view..
+        /// </summary>
+        internal static string DictionaryConfigurationMismatch {
+            get {
+                return ResourceManager.GetString("DictionaryConfigurationMismatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You did not select a writing system that is valid for this database. Unless you have previously entered data in this database in this writing system, this field will never be shown..
         /// </summary>
         internal static string DidNotSelectValidWsForDb {
