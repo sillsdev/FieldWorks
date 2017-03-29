@@ -365,15 +365,17 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				// and throw and exception
 				if (ret != 0)
 				{
+					var stdOutput = gennormProcess.StandardOutput.ReadToEnd();
+					var stdError = gennormProcess.StandardError.ReadToEnd();
 					if (LogFile.IsLogging())
 					{
 						LogFile.AddErrorLine("Error running gennorm2:");
-						LogFile.AddErrorLine(gennormProcess.StandardOutput.ReadToEnd());
-						LogFile.AddErrorLine(gennormProcess.StandardError.ReadToEnd());
+						LogFile.AddErrorLine(stdOutput);
+						LogFile.AddErrorLine(stdError);
 					}
 					if (ret == (int) IcuErrorCodes.FILE_ACCESS_ERROR)
 						throw new IcuLockedException(ErrorCodes.Gennorm);
-					throw new PuaException(ErrorCodes.Gennorm, gennormProcess.StandardError.ReadToEnd());
+					throw new PuaException(ErrorCodes.Gennorm, stdError);
 				}
 			}
 		}
