@@ -627,8 +627,8 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			}
 
-			var importController = new DictionaryConfigurationImportController(_cache, _projectConfigDir, _configurations );
-			using (var importDialog = new DictionaryConfigurationImportDlg(_mediator.HelpTopicProvider))
+			var importController = new DictionaryConfigurationImportController(_cache, _projectConfigDir, _configurations);
+			using (var importDialog = new DictionaryConfigurationImportDlg(_mediator.HelpTopicProvider) { HelpTopic = _view.HelpTopic })
 			{
 				importController.DisplayView(importDialog);
 			}

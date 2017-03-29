@@ -44,11 +44,11 @@ namespace SIL.FieldWorks.XWorks
 			this.overwriteOptionFlowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.doOverwriteRadioOption = new System.Windows.Forms.RadioButton();
 			this.notOverwriteRadioOption = new System.Windows.Forms.RadioButton();
+			this.explanationLabel = new System.Windows.Forms.TextBox();
 			this.buttonLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.helpButton = new System.Windows.Forms.Button();
 			this.cancelButton = new System.Windows.Forms.Button();
 			this.importButton = new System.Windows.Forms.Button();
-			this.explanationLabel = new System.Windows.Forms.TextBox();
 			this.mainVerticalFlow.SuspendLayout();
 			this.fileBrowseHorizFlow.SuspendLayout();
 			this.overwriteHorizFlow.SuspendLayout();
@@ -124,6 +124,15 @@ namespace SIL.FieldWorks.XWorks
 			this.notOverwriteRadioOption.TabStop = true;
 			this.notOverwriteRadioOption.UseVisualStyleBackColor = true;
 			// 
+			// explanationLabel
+			// 
+			resources.ApplyResources(this.explanationLabel, "explanationLabel");
+			this.explanationLabel.BackColor = System.Drawing.SystemColors.Control;
+			this.explanationLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.explanationLabel.Cursor = System.Windows.Forms.Cursors.Default;
+			this.explanationLabel.Name = "explanationLabel";
+			this.explanationLabel.ReadOnly = true;
+			// 
 			// buttonLayoutPanel
 			// 
 			resources.ApplyResources(this.buttonLayoutPanel, "buttonLayoutPanel");
@@ -137,6 +146,7 @@ namespace SIL.FieldWorks.XWorks
 			resources.ApplyResources(this.helpButton, "helpButton");
 			this.helpButton.Name = "helpButton";
 			this.helpButton.UseVisualStyleBackColor = true;
+			this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
 			// 
 			// cancelButton
 			// 
@@ -151,14 +161,6 @@ namespace SIL.FieldWorks.XWorks
 			this.importButton.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.importButton.Name = "importButton";
 			this.importButton.UseVisualStyleBackColor = true;
-			// 
-			// explanationLabel
-			// 
-			resources.ApplyResources(this.explanationLabel, "explanationLabel");
-			this.explanationLabel.BackColor = System.Drawing.SystemColors.Control;
-			this.explanationLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.explanationLabel.Cursor = System.Windows.Forms.Cursors.Default;
-			this.explanationLabel.Name = "explanationLabel";
 			// 
 			// DictionaryConfigurationImportDlg
 			// 
