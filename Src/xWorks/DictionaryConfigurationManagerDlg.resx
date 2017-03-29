@@ -142,7 +142,7 @@
     <value>0</value>
   </data>
   <data name="explanationLabel.Text" xml:space="preserve">
-    <value>Dictionary views can be duplicated to create custom views, reset to original defaults, associated with publications, or imported and exported.</value>
+    <value>Views can be duplicated to create custom views, reset to original defaults, associated with publications, or imported and exported.</value>
   </data>
   <data name="&gt;&gt;explanationLabel.Name" xml:space="preserve">
     <value>explanationLabel</value>
