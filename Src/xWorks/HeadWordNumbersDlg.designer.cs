@@ -185,14 +185,18 @@ namespace SIL.FieldWorks.XWorks
 			resources.ApplyResources(this.dialogDescription, "dialogDescription");
 			this.dialogDescription.BackColor = System.Drawing.SystemColors.Control;
 			this.dialogDescription.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.dialogDescription.Cursor = System.Windows.Forms.Cursors.Default;
 			this.dialogDescription.Name = "dialogDescription";
+			this.dialogDescription.ReadOnly = true;
 			// 
 			// m_configurationDescription
 			// 
 			this.m_configurationDescription.BackColor = System.Drawing.SystemColors.Control;
 			this.m_configurationDescription.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.m_configurationDescription.Cursor = System.Windows.Forms.Cursors.Default;
 			resources.ApplyResources(this.m_configurationDescription, "m_configurationDescription");
 			this.m_configurationDescription.Name = "m_configurationDescription";
+			this.m_configurationDescription.ReadOnly = true;
 			// 
 			// referenceNumberGroup
 			// 
@@ -435,8 +439,10 @@ namespace SIL.FieldWorks.XWorks
 			// 
 			this.m_customNumbersLabel.BackColor = System.Drawing.SystemColors.Control;
 			this.m_customNumbersLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.m_customNumbersLabel.Cursor = System.Windows.Forms.Cursors.Default;
 			resources.ApplyResources(this.m_customNumbersLabel, "m_customNumbersLabel");
 			this.m_customNumbersLabel.Name = "m_customNumbersLabel";
+			this.m_customNumbersLabel.ReadOnly = true;
 			// 
 			// m_writingSystemCombo
 			// 
@@ -469,8 +475,10 @@ namespace SIL.FieldWorks.XWorks
 			// 
 			this.styleLabel.BackColor = System.Drawing.SystemColors.Control;
 			this.styleLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.styleLabel.Cursor = System.Windows.Forms.Cursors.Default;
 			resources.ApplyResources(this.styleLabel, "styleLabel");
 			this.styleLabel.Name = "styleLabel";
+			this.styleLabel.ReadOnly = true;
 			// 
 			// _homographStyleCombo
 			// 
@@ -495,8 +503,10 @@ namespace SIL.FieldWorks.XWorks
 			// 
 			this._senseStyleLabel.BackColor = System.Drawing.SystemColors.Control;
 			this._senseStyleLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this._senseStyleLabel.Cursor = System.Windows.Forms.Cursors.Default;
 			resources.ApplyResources(this._senseStyleLabel, "_senseStyleLabel");
 			this._senseStyleLabel.Name = "_senseStyleLabel";
+			this._senseStyleLabel.ReadOnly = true;
 			// 
 			// _senseStyleCombo
 			// 
