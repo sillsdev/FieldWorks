@@ -158,7 +158,7 @@ namespace SIL.FieldWorks.XWorks
 			ConfiguredXHTMLGenerator.AssemblyFile = "FDO";
 		}
 
-		const string xpathThruSense = "/div[@class='lexentry']/span[@class='senses']/span[@class='sense']";
+		const string xpathThruSense = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']";
 		private const string TestVariantName = "Crazy Variant";
 
 		[Test]
@@ -501,6 +501,7 @@ namespace SIL.FieldWorks.XWorks
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses",
+				DictionaryNodeOptions = GetSenseNodeOptions(),
 				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -989,6 +990,7 @@ namespace SIL.FieldWorks.XWorks
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses",
+				DictionaryNodeOptions = GetSenseNodeOptions(),
 				Children = new List<ConfigurableDictionaryNode> { gramInfoNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -1153,6 +1155,7 @@ namespace SIL.FieldWorks.XWorks
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses",
+				DictionaryNodeOptions = GetSenseNodeOptions(),
 				Children=new List<ConfigurableDictionaryNode>{gramInfoNode}
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -1913,9 +1916,9 @@ namespace SIL.FieldWorks.XWorks
 			var configModel = CreateInterestingConfigurationModel(Cache, m_mediator);
 			if (verifyPrefersVariant) // Exclude Complex Form Parts from those counted.
 				configModel.Parts.Where(part => part.Label.Contains("Complex")).ForEach(part => part.CSSClassNameOverride = "complexentry");
-			Assert.That(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(configModel.Parts[1], minorEntry, null),
+			Assert.That(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(configModel.Parts[1], minorEntry),
 				"This test is valid only if the minor entry matches more than one node");
-			Assert.That(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(configModel.Parts[2], minorEntry, null),
+			Assert.That(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(configModel.Parts[2], minorEntry),
 				"This test is valid only if the minor entry matches more than one node");
 			//SUT
 			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(minorEntry, configModel, DefaultDecorator, m_mediator);
@@ -3093,9 +3096,8 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			// SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, DefaultSettings);
 			const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
 			// This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseNumberOne, 1);
@@ -3124,9 +3126,8 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			// SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, DefaultSettings);
 			const string senseEntryGuid = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and @entryguid]";
 			// This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseEntryGuid, 1);
@@ -3134,6 +3135,7 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseEntryGuidstatsWithG, 1);
 		}
 
+		[Test]
 		public void GenerateXHTMLForEntry_ExampleAndTranslationAreGenerated()
 		{
 			var translationNode = new ConfigurableDictionaryNode
@@ -3142,7 +3144,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var translationsNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "TranslationsOC", CSSClassNameOverride = "translations",
+				FieldDescription = "TranslationsOC", CSSClassNameOverride = "translationcontents",
 				Children = new List<ConfigurableDictionaryNode> { translationNode }
 			};
 			var exampleNode = new ConfigurableDictionaryNode
@@ -3151,12 +3153,13 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var examplesNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "ExamplesOS", CSSClassNameOverride = "examples",
+				FieldDescription = "ExamplesOS", CSSClassNameOverride = "examplescontents",
 				Children = new List<ConfigurableDictionaryNode> { exampleNode, translationsNode }
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS", CSSClassNameOverride = "senses",
+				DictionaryNodeOptions = GetSenseNodeOptions(),
 				Children = new List<ConfigurableDictionaryNode> { examplesNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -3170,14 +3173,13 @@ namespace SIL.FieldWorks.XWorks
 			var testEntry = CreateInterestingLexEntry(Cache);
 			AddExampleToSense(testEntry.SensesOS[0], example, translation);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
-			const string xpathThruExample = xpathThruSense + "/span[@class='examples']/span[@class='example']";
-			var oneSenseWithExample = string.Format(xpathThruExample + "/span[@lang='fr' and text()='{0}']", example);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, DefaultSettings);
+			const string xpathThruExample = xpathThruSense + "/span[@class='examplescontents']/span[@class='examplescontent']";
+			var oneSenseWithExample = string.Format(xpathThruExample + "/span[@class='example']/span[@lang='fr' and text()='{0}']", example);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithExample, 1);
-			var oneExampleSentenceTranslation = string.Format(
-				xpathThruExample + "/span[@class='translations']/span[@class='translation']/span[@lang='en' and text()='{0}']", translation);
+			var oneExampleSentenceTranslation = string.Format(xpathThruExample +
+				"/span[@class='translationcontents']/span[@class='translationcontent']/span[@class='translation']/span[@lang='en' and text()='{0}']", translation);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneExampleSentenceTranslation, 1);
 		}
 
@@ -3330,6 +3332,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
+				DictionaryNodeOptions = GetSenseNodeOptions(),
 				Children = new List<ConfigurableDictionaryNode> { extendedNoteNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -4154,12 +4157,9 @@ namespace SIL.FieldWorks.XWorks
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
-			var fwdNameFirstXpath = string.Format(
-				"//span[@class='minimallexreferences']/span[@class='minimallexreference' and position()='1']/span[@class='ownertype_name']/span[@lang='en' and text()='{0}']",
-				etyRefTypeName);
-			var fwdNameSecondXpath = string.Format(
-				"//span[@class='minimallexreferences']/span[@class='minimallexreference'and position()='2']/span[@class='ownertype_name']/span[@lang='en' and text()='{0}']",
-				comRefTypeName);
+			const string NameXpath = "//span[@class='minimallexreferences']/span[@class='minimallexreference' and position()='{0}']/span[@class='ownertype_name']/span[@lang='en' and text()='{1}']";
+			var fwdNameFirstXpath = string.Format(NameXpath, "1", etyRefTypeName);
+			var fwdNameSecondXpath = string.Format(NameXpath, "2", comRefTypeName);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(fwdNameFirstXpath, 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(fwdNameSecondXpath, 1);
 			crossReferencesNode.DictionaryNodeOptions = new DictionaryNodeListOptions
@@ -4169,12 +4169,8 @@ namespace SIL.FieldWorks.XWorks
 					DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { comRefType.Guid + ":f", etyRefType.Guid + ":f" })
 			};
 			var resultAfterChange = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
-			var fwdNameChangedFirstXpath = string.Format(
-				"//span[@class='minimallexreferences']/span[@class='minimallexreference' and position()='1']/span[@class='ownertype_name']/span[@lang='en' and text()='{0}']",
-				comRefTypeName);
-			var fwdNameChangedSecondXpath = string.Format(
-				"//span[@class='minimallexreferences']/span[@class='minimallexreference' and position()='2']/span[@class='ownertype_name']/span[@lang='en' and text()='{0}']",
-				etyRefTypeName);
+			var fwdNameChangedFirstXpath = string.Format(NameXpath, "1", comRefTypeName);
+			var fwdNameChangedSecondXpath = string.Format(NameXpath, "2", etyRefTypeName);
 			AssertThatXmlIn.String(resultAfterChange).HasSpecifiedNumberOfMatchesForXpath(fwdNameChangedFirstXpath, 1);
 			AssertThatXmlIn.String(resultAfterChange).HasSpecifiedNumberOfMatchesForXpath(fwdNameChangedSecondXpath, 1);
 		}
@@ -4277,7 +4273,7 @@ namespace SIL.FieldWorks.XWorks
 			var glossNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Gloss",
-				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis)
 			};
 			var refListNode = new ConfigurableDictionaryNode
 			{
@@ -4367,7 +4363,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 			//SUT
-			Assert.IsTrue(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(minorEntryNode, minorEntry, null));
+			Assert.IsTrue(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(minorEntryNode, minorEntry));
 		}
 
 		[Test]
@@ -4867,6 +4863,7 @@ namespace SIL.FieldWorks.XWorks
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS", CSSClassNameOverride = "senses",
+				DictionaryNodeOptions = GetSenseNodeOptions(),
 				Children = new List<ConfigurableDictionaryNode> { rcfsNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -5265,8 +5262,7 @@ namespace SIL.FieldWorks.XWorks
 			var tempFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "ConfigDictPictureExportTest"));
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, true, true, tempFolder.FullName);
 			//SUT
-			string result;
-			Assert.DoesNotThrow(() => result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
+			Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
 		}
 
 		[Test]
@@ -5546,13 +5542,15 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var crossRefs = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "MinimalLexReferences", CSSClassNameOverride = "mlrs", Children = new List<ConfigurableDictionaryNode> { targets }
+				FieldDescription = "MinimalLexReferences", CSSClassNameOverride = "mlrs",
+				Children = new List<ConfigurableDictionaryNode> { targets }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { crossRefs }
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			const string refType = "SomeType";
 			using (var entryCustomField = new CustomFieldForTest(Cache, "EntryCString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
 				CellarPropertyType.MultiString, Guid.Empty))
 			using (var senseCustomField = new CustomFieldForTest(Cache, "SenseCString", Cache.MetaDataCacheAccessor.GetClassId("LexSense"), 0,
@@ -5560,7 +5558,14 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var testEntry = CreateInterestingLexEntry(Cache);
 				var refdEntry = CreateInterestingLexEntry(Cache);
-				CreateLexicalReference(testEntry, refdEntry, "SomeType");
+				CreateLexicalReference(testEntry, refdEntry, refType);
+				var lexrefType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(
+						r => r.Name.BestAnalysisAlternative.Text == refType);
+				crossRefs.DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { lexrefType.Guid.ToString()})
+				};
 				const string entryCustomData = "Another custom string";
 				const string senseCustomData = "My custom string";
 				Cache.MainCacheAccessor.SetMultiStringAlt(refdEntry.Hvo, entryCustomField.Flid, m_wsEn,
@@ -5601,6 +5606,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { crossRefs }
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			const string refType = "SomeType";
 			using (var entryCustomField = new CustomFieldForTest(Cache, "EntryCString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
 				CellarPropertyType.MultiString, Guid.Empty))
 			using (var senseCustomField = new CustomFieldForTest(Cache, "SenseCString", Cache.MetaDataCacheAccessor.GetClassId("LexSense"), 0,
@@ -5608,7 +5614,14 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var testEntry = CreateInterestingLexEntry(Cache);
 				var refdEntry = CreateInterestingLexEntry(Cache);
-				CreateLexicalReference(testEntry, refdEntry.SensesOS[0], "SomeType");
+				CreateLexicalReference(testEntry, refdEntry.SensesOS[0], refType);
+				var lexrefType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(
+						r => r.Name.BestAnalysisAlternative.Text == refType);
+				crossRefs.DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { lexrefType.Guid.ToString() })
+				};
 				const string entryCustomData = "Another custom string";
 				const string senseCustomData = "My custom string";
 				Cache.MainCacheAccessor.SetMultiStringAlt(refdEntry.Hvo, entryCustomField.Flid, m_wsEn,
@@ -8092,36 +8105,204 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(extraDirection1);
 		}
 
-		/// <summary>
-		/// This tests the fixes for
-		/// - LT-16504: Lexical References should be sorted by LexRefType in the order specified in the configuration
-		/// - LT-17384: Lexical References should be in the same order every time (we accomplish this by sorting by GUID within each LexRefType)
-		/// Intermittent failures should NOT be ignored.
-		/// </summary>
+		private const string crossRefOwnerTypeXpath =
+			"//span[@class='minimallexreferences']/span[@class='minimallexreference']/span[@class='ownertype_name']";
+
+		private static string CrossRefOwnerTypeXpath(string type)
+		{
+			return string.Format("//span[@class='minimallexreferences']/span[@class='minimallexreference']/span[@class='ownertype_name']" +
+				"/span[@lang='en' and text()='{0}']", type);
+		}
+
+		private static string HeadwordOrderInCrossRefsXpath(int position, string headword)
+		{
+			return string.Format("//span[@class='minimallexreferences']/span[@class='minimallexreference']/span[@class='configtargets']" +
+				"/span[@class='configtarget' and position()='{0}']/span/span/a[text()='{1}']", position, headword);
+		}
+
 		[Test]
+		public void GenerateXHTMLForEntry_CompareRelations_SimpleSituations_SortByHeadword([Values(true, false)] bool SeparateReferences)
+		{
+			var mainEntry = CreateInterestingLexEntry(Cache, "MainEntry");
+			var compareReferencedEntry1 = CreateInterestingLexEntry(Cache, "b", "b comparable");
+			var compareReferencedEntry2 = CreateInterestingLexEntry(Cache, "a", "a comparable");
+			var compareReferencedEntry3 = CreateInterestingLexEntry(Cache, "c", "c comparable");
+			const string comRefTypeName = "Compare";
+			var comRefType = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntryCollection, comRefTypeName, "cf", string.Empty, string.Empty);
+			if (SeparateReferences)
+			{
+				const string Guid1 = "11111111-f1ac-4950-8562-4d617e0ace18";
+				const string Guid2 = "22222222-e929-4202-8886-b156a4c035f5";
+				const string Guid3 = "33333333-9a03-49bc-8375-2ab9bafbc90b";
+
+				// these have specific Guids so we know they would be in this order if ordered by Guid
+				CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry1 }, new Guid(Guid1));
+				CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry2 }, new Guid(Guid2));
+				CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry3 }, new Guid(Guid3));
+			}
+			else
+			{
+				CreateLexReference(comRefType, new[] { mainEntry, compareReferencedEntry1, compareReferencedEntry2, compareReferencedEntry3 });
+			}
+
+			var mainEntryNode = ModelForCrossReferences(new[] { comRefType.Guid.ToString() });
+			// SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, DefaultSettings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(crossRefOwnerTypeXpath, 1); // ensure there is only one
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(CrossRefOwnerTypeXpath(comRefTypeName), 1); // ...the *correct* one
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(1, "a"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(2, "b"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(3, "c"), 1);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_CompareRelations_ComplexSituation_SortByHeadword()
+		{
+			var mainEntry = CreateInterestingLexEntry(Cache, "MainEntry");
+			var compareReferencedEntry1 = CreateInterestingLexEntry(Cache, "b", "b comparable");
+			var compareReferencedEntry2 = CreateInterestingLexEntry(Cache, "a", "a comparable");
+			var compareReferencedEntry3 = CreateInterestingLexEntry(Cache, "c", "c comparable");
+			var compareReferencedEntry4 = CreateInterestingLexEntry(Cache, "ba", "ba comparable");
+			var compareReferencedEntry5 = CreateInterestingLexEntry(Cache, "ca", "ca comparable");
+			const string comRefTypeName = "Compare";
+			var comRefType = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntryCollection, comRefTypeName, "cf", string.Empty, string.Empty);
+			CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry3, compareReferencedEntry2 });
+			CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry5, compareReferencedEntry4, compareReferencedEntry1 });
+			Assert.IsNotNull(comRefType);
+
+			var mainEntryNode = ModelForCrossReferences(new[] { comRefType.Guid.ToString() });
+			// SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, DefaultSettings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(CrossRefOwnerTypeXpath(comRefTypeName), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(1, "a"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(2, "b"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(3, "ba"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(4, "c"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(5, "ca"), 1);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_CrossRefs_Sequences_SequencePreserved()
+		{
+			var alphaEntry = CreateInterestingLexEntry(Cache, "alpha", "alpha");
+			var redEntry = CreateInterestingLexEntry(Cache, "rouge", "red");
+			var greenEntry = CreateInterestingLexEntry(Cache, "vert", "green");
+			var blueEntry = CreateInterestingLexEntry(Cache, "bleu", "blue");
+			var midAlphabetEntry = CreateInterestingLexEntry(Cache, "omega", "middle of the Roman alphabet; we're not testing Greek :-)");
+			const string colorTypeName = "Color";
+			var colorType = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntrySequence, colorTypeName, "col", string.Empty, string.Empty);
+			CreateLexReference(colorType, new List<ICmObject> { alphaEntry, redEntry, greenEntry, blueEntry });
+			const string greekTypeName = "Greek";
+			var greekType = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntrySequence, greekTypeName, "grk", string.Empty, string.Empty);
+			CreateLexReference(greekType, new List<ICmObject> { alphaEntry, midAlphabetEntry });
+
+			var mainEntryNode = ModelForCrossReferences(new[] { colorType.Guid.ToString(), greekType.Guid.ToString() });
+			// SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(alphaEntry, mainEntryNode, null, DefaultSettings);
+			// first sequence: colors: ARGB
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(CrossRefOwnerTypeXpath(colorTypeName), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(1, "alpha"), 2); // the first in both
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(2, "rouge"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(3, "vert"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(4, "bleu"), 1);
+			// second sequence: greek letters (ok, not *all* of them): AΩ
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(CrossRefOwnerTypeXpath(greekTypeName), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(2, "omega"), 1);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_CrossRefs_Unidirectional_SequencePreserved()
+		{
+			var stoogesEntry = CreateInterestingLexEntry(Cache, "Stooges");
+			var larryEntry = CreateInterestingLexEntry(Cache, "Larry");
+			var curlyEntry = CreateInterestingLexEntry(Cache, "Curly");
+			var moeEntry = CreateInterestingLexEntry(Cache, "Moe");
+			const string characterTypeName = "Character";
+			var characterType = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntryUnidirectional, characterTypeName, "char", string.Empty, string.Empty);
+			CreateLexReference(characterType, new List<ICmObject> { stoogesEntry, larryEntry, curlyEntry, moeEntry });
+
+			var mainEntryNode = ModelForCrossReferences(new[] { characterType.Guid + ":f" });
+			// SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(stoogesEntry, mainEntryNode, null, DefaultSettings);
+			// sequence of Stooges:
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(CrossRefOwnerTypeXpath(characterTypeName), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(1, "Larry"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(2, "Curly"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(3, "Moe"), 1);
+			AssertThatXmlIn.String(result).HasNoMatchForXpath(HeadwordOrderInCrossRefsXpath(4, "Stooges")); // Unidirectional excludes the owner
+		}
+
+		private static ConfigurableDictionaryNode ModelForCrossReferences(IEnumerable<string> types)
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWordRef",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular)
+			};
+			var targetsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ConfigTargets",
+				Children = new List<ConfigurableDictionaryNode> { headwordNode }
+			};
+			var nameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwnerType",
+				SubField = "Name",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var crossReferencesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MinimalLexReferences",
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(types)
+				},
+				Children = new List<ConfigurableDictionaryNode> { nameNode, targetsNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { crossReferencesNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			return mainEntryNode;
+		}
+
+	/// <summary>
+	/// This tests the fixes for
+	/// - LT-16504: Lexical References should be sorted by LexRefType in the order specified in the configuration
+	/// - LT-17384: Lexical References should be in the same order every time
+	///   (we accomplish this by sorting by Headword within each LexRefType)
+	/// Intermittent failures should NOT be ignored.
+	/// </summary>
+	[Test]
 		public void GenerateXHTMLForEntry_LexicalReferencesOrderedCorrectly([Values(true, false)] bool usingSubfield)
 		{
-			var firstEntry = CreateInterestingLexEntry(Cache, "homme", "man");
-			var secondEntry = CreateInterestingLexEntry(Cache, "femme", "woman");
-			var thirdEntry = CreateInterestingLexEntry(Cache, "famille", "family");
-			var fourthEntry = CreateInterestingLexEntry(Cache, "garçon", "boy");
-			var fifthEntry = CreateInterestingLexEntry(Cache, "fille", "girl");
-			var sixthEntry = CreateInterestingLexEntry(Cache, "individuel", "individual");
-			var sevnthEntry = CreateInterestingLexEntry(Cache, "truc", "thing");
-			var eighthEntry = CreateInterestingLexEntry(Cache, "bête", "beast");
+			var manEntry = CreateInterestingLexEntry(Cache, "homme", "man");
+			var womanEntry = CreateInterestingLexEntry(Cache, "femme", "woman");
+			var familyEntry = CreateInterestingLexEntry(Cache, "famille", "family");
+			var boyEntry = CreateInterestingLexEntry(Cache, "garçon", "boy");
+			var girlEntry = CreateInterestingLexEntry(Cache, "fille", "girl");
+			var individualEntry = CreateInterestingLexEntry(Cache, "individuel", "individual");
+			var thingEntry = CreateInterestingLexEntry(Cache, "truc", "thing");
+			var beastEntry = CreateInterestingLexEntry(Cache, "bête", "beast");
+			var armEntry = CreateInterestingLexEntry(Cache, "bras", "arm");
+			var legEntry = CreateInterestingLexEntry(Cache, "jambe", "leg");
 
 			var antonyms = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntryPair, "Antonym", "ant", null, null);
-			// LexReferences are sorted by GUID in XHTML (Dictionaries). Specify GUID's "out of order" to verify this sorting (LT-17384)
-			CreateLexReference(antonyms, new[] { firstEntry, secondEntry }, new Guid("0310ef0c-dd63-4c19-ab03-eda31e0f5309"));
-			CreateLexReference(antonyms, new[] { firstEntry, fourthEntry }, new Guid("0310ef0c-dd63-4c19-ab03-eda31e0f5314"));
-			CreateLexReference(antonyms, new[] { firstEntry, sevnthEntry }, new Guid("0310ef0c-dd63-4c19-ab03-eda31e0f5342"));
-			CreateLexReference(antonyms, new[] { firstEntry, eighthEntry }, new Guid("0310ef0c-dd63-4c19-ab03-eda31e0f5333"));
-			CreateLexReference(antonyms, new[] { fourthEntry, fifthEntry });
-			CreateLexReference(antonyms, new[] { thirdEntry, sixthEntry });
+			CreateLexReference(antonyms, new[] { manEntry, womanEntry });
+			CreateLexReference(antonyms, new[] { manEntry, boyEntry });
+			CreateLexReference(antonyms, new[] { manEntry, thingEntry });
+			CreateLexReference(antonyms, new[] { manEntry, beastEntry });
+			CreateLexReference(antonyms, new[] { familyEntry, individualEntry });
 
 			var wholeparts = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntryTree, "Part", "pt", "Whole", "wh");
-			CreateLexReference(wholeparts, new[] { thirdEntry, firstEntry, secondEntry, fourthEntry, fifthEntry },
-																			new Guid("0310ef0c-dd63-4c19-ab03-eda31e0f5316")); // in between others
+			CreateLexReference(wholeparts, new[] { familyEntry, manEntry, womanEntry, boyEntry, girlEntry });
+			// Girl is both a whole and a part, but has no other refs. When these targets are alphabetized by headword, their types alternate.
+			CreateLexReference(wholeparts, new[] { girlEntry, armEntry, legEntry });
+
 
 			var refHeadwordNode = new ConfigurableDictionaryNode
 			{
@@ -8145,7 +8326,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var relationsNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "MinimalLexReferences", CSSClassNameOverride = "lexrefs",
+				FieldDescription = "MinimalLexReferences", CSSClassNameOverride = "lexrefs", Between = "; ",
 				DictionaryNodeOptions = GetListOptionsForStrings(DictionaryNodeListOptions.ListIds.Sense, new[]
 				{
 					wholeparts.Guid + ":r",
@@ -8181,7 +8362,7 @@ namespace SIL.FieldWorks.XWorks
 				xpathLexRef = "//div/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='lexrefs']/span[@class='lexref']";
 			}
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null);
+			var settings = DefaultSettings;
 			const string antSpan = "<span class=\"ownertype_abbreviation\"><span lang=\"en\">ant</span></span>";
 			const string whSpan = "<span class=\"ownertype_abbreviation\"><span lang=\"en\">wh</span></span>";
 			const string ptSpan = "<span class=\"ownertype_abbreviation\"><span lang=\"en\">pt</span></span>";
@@ -8190,43 +8371,57 @@ namespace SIL.FieldWorks.XWorks
 			var bêteSpan = TsStringUtils.Compose("<span class=\"headword\"><span lang=\"fr\">bête</span></span>");
 			const string trucSpan = "<span class=\"headword\"><span lang=\"fr\">truc</span></span>";
 			//SUT
-			var firstResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(firstEntry, mainEntryNode, null, settings);
-			AssertThatXmlIn.String(firstResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 5);
-			var idxAntonym = firstResult.IndexOf(antSpan, StringComparison.Ordinal);
-			var idxWhole = firstResult.IndexOf(whSpan, StringComparison.Ordinal);
-			var idxPart = firstResult.IndexOf(ptSpan, StringComparison.Ordinal);
-			Assert.Less(0, idxAntonym, "Antonym relation should exist for homme");
-			Assert.Less(0, idxWhole, "Whole relation should exist for homme");
-			Assert.AreEqual(-1, idxPart, "Part relation should not exist for homme");
-			Assert.Less(idxWhole, idxAntonym, "Whole relation should come before Antonym relation for homme");
-			var idxFemme = firstResult.IndexOf(femmeSpan, StringComparison.Ordinal);
-			var idxGarcon = firstResult.IndexOf(garçonSpan, StringComparison.Ordinal);
-			var idxBete = firstResult.IndexOf(bêteSpan, StringComparison.Ordinal);
-			var idxTruc = firstResult.IndexOf(trucSpan, StringComparison.Ordinal);
-			Assert.Less(idxAntonym, idxFemme);
+			//Console.WriteLine(ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new[] { manEntry.Hvo, familyEntry.Hvo, girlEntry.Hvo, individualEntry.Hvo }, null,
+			//	new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } }, m_mediator)); // full output for diagnostics
+			var manResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(manEntry, mainEntryNode, null, settings);
+			AssertThatXmlIn.String(manResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 2); // antonyms are grouped into one span
+			var idxAntonym = manResult.IndexOf(antSpan, StringComparison.Ordinal);
+			var idxWhole = manResult.IndexOf(whSpan, StringComparison.Ordinal);
+			var idxPart = manResult.IndexOf(ptSpan, StringComparison.Ordinal);
+			Assert.Less(0, idxAntonym, "Antonym relation should exist for homme (man)");
+			Assert.Less(0, idxWhole, "Whole relation should exist for homme (man)");
+			Assert.AreEqual(-1, idxPart, "Part relation should not exist for homme (man)");
+			Assert.Less(idxWhole, idxAntonym, "Whole relation should come before Antonym relation for homme (man)");
+			var idxFemme = manResult.IndexOf(femmeSpan, StringComparison.Ordinal);
+			var idxGarcon = manResult.IndexOf(garçonSpan, StringComparison.Ordinal);
+			var idxBete = manResult.IndexOf(bêteSpan, StringComparison.Ordinal);
+			var idxTruc = manResult.IndexOf(trucSpan, StringComparison.Ordinal);
+			// LT-15764 The Antonyms are now sorted by Headword
+			Assert.Less(idxAntonym, idxBete);
+			Assert.Less(idxBete, idxFemme);
 			Assert.Less(idxFemme, idxGarcon);
-			Assert.Less(idxGarcon, idxBete);
-			Assert.Less(idxBete, idxTruc);
+			Assert.Less(idxGarcon, idxTruc);
 
 			// Ignore if usingSubfield. Justification: Part-Whole direction is miscalculated for field=Entry, subfield=MinimalLexReferences (LT-17571)
 			if (!usingSubfield)
 			{
-				var thirdResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(thirdEntry, mainEntryNode, null, settings);
-				AssertThatXmlIn.String(thirdResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 2);
-				idxAntonym = thirdResult.IndexOf(antSpan, StringComparison.Ordinal);
-				idxWhole = thirdResult.IndexOf(whSpan, StringComparison.Ordinal);
-				idxPart = thirdResult.IndexOf(ptSpan, StringComparison.Ordinal);
+				var familyResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(familyEntry, mainEntryNode, null, settings);
+				AssertThatXmlIn.String(familyResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 2);
+				idxAntonym = familyResult.IndexOf(antSpan, StringComparison.Ordinal);
+				idxWhole = familyResult.IndexOf(whSpan, StringComparison.Ordinal);
+				idxPart = familyResult.IndexOf(ptSpan, StringComparison.Ordinal);
 				Assert.Less(0, idxAntonym, "Antonym relation should exist for famille");
 				Assert.AreEqual(-1, idxWhole, "Whole relation should not exist for famille");
 				Assert.Less(0, idxPart, "Part relation should exist for famille");
 				Assert.Less(idxAntonym, idxPart, "Antonym relation should come before Part relation for famille");
+
+				// SUT: Ensure that both directions of part-whole are kept separate
+				var girlResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(girlEntry, mainEntryNode, null, settings);
+				AssertThatXmlIn.String(girlResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 2); // whole and part
+				idxAntonym = girlResult.IndexOf(antSpan, StringComparison.Ordinal);
+				idxWhole = girlResult.IndexOf(whSpan, StringComparison.Ordinal);
+				idxPart = girlResult.IndexOf(ptSpan, StringComparison.Ordinal);
+				Assert.AreEqual(-1, idxAntonym, "Antonym relation should not exist for fille (girl)");
+				Assert.Less(0, idxWhole, "Whole relation should exist for fille (girl)");
+				Assert.Less(0, idxPart, "Part relation should exist for fille (girl)");
+				Assert.Less(idxWhole, idxPart, "Whole relation should come before Part relation for fille (girl)");
 			}
 
-			var sixthResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(sixthEntry, mainEntryNode, null, settings);
-			AssertThatXmlIn.String(sixthResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 1);
-			idxAntonym = sixthResult.IndexOf(antSpan, StringComparison.Ordinal);
-			idxWhole = sixthResult.IndexOf(whSpan, StringComparison.Ordinal);
-			idxPart = sixthResult.IndexOf(ptSpan, StringComparison.Ordinal);
+			var individualResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(individualEntry, mainEntryNode, null, settings);
+			AssertThatXmlIn.String(individualResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 1);
+			idxAntonym = individualResult.IndexOf(antSpan, StringComparison.Ordinal);
+			idxWhole = individualResult.IndexOf(whSpan, StringComparison.Ordinal);
+			idxPart = individualResult.IndexOf(ptSpan, StringComparison.Ordinal);
 			Assert.Less(0, idxAntonym, "Antonym relation should exist for individuel");
 			Assert.AreEqual(-1, idxWhole, "Whole relation should not exist for individuel");
 			Assert.AreEqual(-1, idxPart, "Part relation should not exist for individuel");
