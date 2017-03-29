@@ -9,11 +9,9 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using Palaso.Progress;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -45,7 +43,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			{
 				m_sourceStyles = LoadDoc(sourceDocument);
 				if (!string.IsNullOrEmpty(sourceDocument))
-					CreateStyles(new Common.FwUtils.ConsoleProgress(), new object[] { m_cache.LangProject.StylesOC, m_sourceStyles});
+					CreateStyles(new Common.FwUtils.ConsoleProgress(), new object[] { m_cache.LangProject.StylesOC, m_sourceStyles, false});
 			}
 		}
 

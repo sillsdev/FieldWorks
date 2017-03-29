@@ -66,6 +66,13 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Maps from style name to ReservedStyleInfo.
 		/// </summary>
 		protected Dictionary<string, ReservedStyleInfo> m_htReservedStyles = new Dictionary<string, ReservedStyleInfo>();
+
+		/// <summary>
+		/// This indicates if the style file being imported contains ALL styles, or if it should be considered a partial set.
+		/// If it is a partial set we don't want to delete the missing styles.
+		/// </summary>
+		private bool m_deleteMissingStyles;
+
 		#endregion
 
 		#region OverwriteOptions enum
@@ -191,7 +198,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		protected override void ProcessResources(IThreadedProgress dlg, XmlNode doc)
 		{
-			dlg.RunTask(CreateStyles, StyleCollection, doc);
+			dlg.RunTask(CreateStyles, StyleCollection, doc, true);
 		}
 		#endregion
 
@@ -218,9 +225,10 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		protected object CreateStyles(IProgress progressDlg, params object[] parameters)
 		{
-			Debug.Assert(parameters.Length == 2);
+			Debug.Assert(parameters.Length == 3);
 			m_databaseStyles = (IFdoOwningCollection<IStStyle>)parameters[0];
 			m_sourceStyles = (XmlNode)parameters[1];
+			m_deleteMissingStyles = (bool)parameters[2];
 			m_progressDlg = progressDlg;
 
 			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ActionHandlerAccessor, CreateStyles);
@@ -300,7 +308,10 @@ namespace SIL.FieldWorks.Common.Framework
 
 			// Third pass to delete (and possibly prepare to rename) any styles that used to be
 			// factory styles but aren't any longer
-			DeleteDeprecatedStylesAndDetermineReplacements();
+			if (m_deleteMissingStyles)
+			{
+				DeleteDeprecatedStylesAndDetermineReplacements();
+			}
 
 			// Final step is to walk through the DB and relace any retired styles
 			ReplaceFormerStyles();

@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.TE
 		public void InitLoading(IProgress progressDlg, IScripture scr, XmlNode teStyles)
 		{
 			m_scr = scr;
-			CreateStyles(progressDlg, scr.StylesOC, teStyles);
+			CreateStyles(progressDlg, scr.StylesOC, teStyles, true);
 			s_reservedStyleCount = m_htReservedStyles.Count;
 		}
 
