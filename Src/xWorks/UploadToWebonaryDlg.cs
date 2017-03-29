@@ -93,6 +93,12 @@ namespace SIL.FieldWorks.XWorks
 
 		private void UpdateEntriesToBePublishedLabel()
 		{
+			if (GetSelectedDictionaryModel() == null)
+			{
+				howManyPubsAlertLabel.Text = string.Format(xWorksStrings.ksErrorNoViewOnPublication);
+				return;
+			}
+
 			var countOfDictionaryEntries = m_controller.CountDictionaryEntries(GetSelectedDictionaryModel());
 
 			var reversalCounts = m_controller.GetCountsOfReversalIndexes(GetSelectedReversals());
@@ -246,7 +252,9 @@ namespace SIL.FieldWorks.XWorks
 
 		private DictionaryConfigurationModel GetSelectedDictionaryModel()
 		{
-			return Model.Configurations[configurationBox.SelectedItem.ToString()];
+			return configurationBox.SelectedItem == null
+				? null
+				: Model.Configurations[configurationBox.SelectedItem.ToString()];
 		}
 
 		private void publishButton_Click(object sender, EventArgs e)

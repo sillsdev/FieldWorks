@@ -975,6 +975,10 @@ If you are not the one designated user who adds fields, or you are making some o
   <data name="ksErrorDisplayingPublication" xml:space="preserve">
     <value>Cannot generate the display for the current publication</value>
   </data>
+  <data name="ksErrorNoViewOnPublication" xml:space="preserve">
+    <value>No view was found.</value>
+    <comment>Message displayed in Upload to Webonary dialog to inform user about No view was found</comment>
+  </data>
   <data name="ksObtainingEntriesToDisplay" xml:space="preserve">
     <value>Obtaining the list of entries to display</value>
     <comment>this message is displayed in a progress report dialog</comment>
