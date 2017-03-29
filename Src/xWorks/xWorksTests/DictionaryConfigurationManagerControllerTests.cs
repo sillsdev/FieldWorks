@@ -36,6 +36,9 @@ namespace SIL.FieldWorks.XWorks
 		private IStStyle _characterTestStyle;
 		private IStStyle _paraTestStyle;
 		private IStStyle _paraChildTestStyle;
+		private IStStyle _bulletedTestStyle;
+		private IStStyle _numberedTestStyle;
+		private IStStyle _homographTestStyle;
 
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
@@ -78,6 +81,9 @@ namespace SIL.FieldWorks.XWorks
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalJustify);
 				_paraChildTestStyle.Rules = propsBldr.GetTextProps();
 				_paraChildTestStyle.BasedOnRA = _paraTestStyle;
+				_bulletedTestStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Bulleted List", ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, false, 2, false);
+				_numberedTestStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Numbered List", ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, false, 2, false);
+				_homographTestStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Homograph-Number", ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, true, 2, false);
 			});
 		}
 
@@ -693,6 +699,12 @@ namespace SIL.FieldWorks.XWorks
 			attributeTests = string.Format("@basedOn='{0}' and @alignment='full' and not(@lineSpacing='3 pt') and not(@indentRight='4 pt')",
 				_paraTestStyle.Name);
 			AssertThatXmlIn.File(styleSheetFile).HasSpecifiedNumberOfMatchesForXpath("/Styles/markup/tag/paragraph[" + attributeTests + "]", 1);
+
+			// Verify that each known unsupported style is excluded from the export
+			foreach (var unsupported in DictionaryConfigurationImportController.UnsupportedStyles)
+			{
+				AssertThatXmlIn.File(styleSheetFile).HasNoMatchForXpath("/Styles/markup/tag[@id='" + unsupported.Replace(' ', '_') + "']");
+			}
 		}
 	}
 }

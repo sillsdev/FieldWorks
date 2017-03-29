@@ -276,6 +276,44 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void DoImport_UnhandledStylesLeftUnTouched()
+		{
+			IStStyle bulletStyle = null;
+			IStStyle numberStyle = null;
+			IStStyle homographStyle = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
+				bulletStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Bulleted List",
+					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, false, 2, false);
+				numberStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Numbered List",
+					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, false, 2, false);
+				homographStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Homograph-Number",
+					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, true, 2, false);
+			});
+
+			Assert.AreEqual(3, Cache.LangProject.StylesOC.Count, "Setup problem. Exactly 3 styles should be present.");
+			_controller.PrepareImport(_zipFile);
+			Assert.AreEqual(3, Cache.LangProject.StylesOC.Count, "Setup problem. Exactly 3 styles should be present after PrepareImport.");
+			// SUT
+			_controller.DoImport();
+			Assert.AreEqual(7, Cache.LangProject.StylesOC.Count, "The 3 styles that are unhandled should be present in addition to the 2 styles in the zip file..");
+			var importedTestStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "TestStyle");
+			Assert.NotNull(importedTestStyle, "test style was not imported.");
+			var importedParaStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Nominal");
+			Assert.NotNull(importedParaStyle, "test style was not imported.");
+			var bulletTestStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Bulleted List");
+			Assert.NotNull(bulletTestStyle, "test style was not imported.");
+			Assert.AreEqual(bulletStyle.Guid, bulletTestStyle.Guid);
+			var numberTestStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Numbered List");
+			Assert.NotNull(numberTestStyle, "test style was not imported.");
+			Assert.AreEqual(numberStyle.Guid, numberTestStyle.Guid);
+			var homographTestStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Homograph-Number");
+			Assert.NotNull(homographTestStyle, "test style was not imported.");
+			Assert.AreEqual(homographStyle.Guid, homographTestStyle.Guid);
+		}
+
+		[Test]
 		public void PrepareImport_DoesNotChangeRealData()
 		{
 			// SUT
