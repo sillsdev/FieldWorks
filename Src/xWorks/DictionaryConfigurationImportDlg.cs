@@ -13,6 +13,9 @@ namespace SIL.FieldWorks.XWorks
 	public partial class DictionaryConfigurationImportDlg : Form
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
+
+		internal string HelpTopic { get; set; }
+
 		public DictionaryConfigurationImportDlg(IHelpTopicProvider helpProvider)
 		{
 			InitializeComponent();
@@ -28,7 +31,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void helpButton_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpDictConfigManager");
+			ShowHelp.ShowHelpTopic(m_helpTopicProvider, HelpTopic);
 		}
 	}
 }

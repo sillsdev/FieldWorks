@@ -259,7 +259,7 @@
     <value>35</value>
   </data>
   <data name="m_buttonManageConfigurations.Text" xml:space="preserve">
-    <value>Manage Views...</value>
+    <value>&amp;Manage Views...</value>
   </data>
   <data name="&gt;&gt;m_buttonManageConfigurations.Name" xml:space="preserve">
     <value>m_buttonManageConfigurations</value>
@@ -505,7 +505,7 @@
     <value>7</value>
   </data>
   <data name="helpButton.Text" xml:space="preserve">
-    <value>Help</value>
+    <value>&amp;Help</value>
   </data>
   <data name="&gt;&gt;helpButton.Name" xml:space="preserve">
     <value>helpButton</value>
@@ -532,7 +532,7 @@
     <value>6</value>
   </data>
   <data name="applyButton.Text" xml:space="preserve">
-    <value>Apply</value>
+    <value>&amp;Apply</value>
   </data>
   <data name="&gt;&gt;applyButton.Name" xml:space="preserve">
     <value>applyButton</value>
