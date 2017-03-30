@@ -251,7 +251,7 @@ namespace SIL.FieldWorks.TE
 		public static void CreateFactoryScrStyles(IProgress progressDlg, IScripture scr)
 		{
 			TeStylesXmlAccessor acc = new TeStylesXmlAccessor(scr);
-			acc.CreateStyles(progressDlg, scr.StylesOC, acc.LoadDoc());
+			acc.CreateStyles(progressDlg, scr.StylesOC, acc.LoadDoc(), true);
 		}
 
 		/// ------------------------------------------------------------------------------------
