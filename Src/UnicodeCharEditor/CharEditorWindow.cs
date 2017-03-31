@@ -9,20 +9,21 @@
 // </remarks>
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Resources;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
-using XCore;
-using System.Collections;
-using System.Resources;
 using SIL.FieldWorks.Common.FwUtils;
-using System.Text;
 using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
 {
@@ -343,17 +344,24 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 		internal PUACharacter FindCachedIcuEntry(string sCode)
 		{
-			int code;
-			if (Int32.TryParse(sCode, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code))
+			try
 			{
-				PUACharacter charSpec;
-				if (m_dictCustomChars.TryGetValue(code, out charSpec))
-					return charSpec;
-				if (m_dictModifiedChars.TryGetValue(code, out charSpec))
-					return charSpec;
-				charSpec = new PUACharacter(code);
-				if (charSpec.RefreshFromIcu(true))
-					return charSpec; // known character we have no overrides for
+				int code;
+				if (Int32.TryParse(sCode, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code))
+				{
+					PUACharacter charSpec;
+					if (m_dictCustomChars.TryGetValue(code, out charSpec))
+						return charSpec;
+					if (m_dictModifiedChars.TryGetValue(code, out charSpec))
+						return charSpec;
+					charSpec = new PUACharacter(code);
+					if (charSpec.RefreshFromIcu(true))
+						return charSpec; // known character we have no overrides for
+				}
+			}
+			catch (COMException)
+			{
+				// can happen if it's an invalid character
 			}
 			return null;
 		}
@@ -408,6 +416,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		{
 			if (m_dictCustomChars.Count == 0)
 				return;
+
 			var customCharsFile = CustomCharsFile;
 			string oldFile = null;
 			if (File.Exists(customCharsFile))
