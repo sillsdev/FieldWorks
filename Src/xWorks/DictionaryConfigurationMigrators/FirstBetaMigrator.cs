@@ -167,10 +167,13 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				case 12:
 				case 13:
 					RemoveMostOfGramInfoUnderRefdComplexForms(oldConfigPart);
-					goto case 14;
-				case 14:
+					goto case VersionBeta5;
+				case VersionBeta5:
 				case 15:
 					MigrateNewChildNodesAndOptionsInto(oldConfigPart, currentDefaultConfigPart);
+					goto case 16;
+				case 16:
+					RemoveHiddenChildren(oldConfigPart, logger);
 					break;
 				default:
 					logger.WriteLine(string.Format(
@@ -254,7 +257,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		}
 
 		/// <summary>
-		/// This recursive method will migrate new nodes from default node to old config node
+		/// This recursive method will migrate new nodes from sourceNode into destinationNode node
 		/// </summary>
 		private static void MigrateNewChildNodesAndOptionsInto(ConfigurableDictionaryNode destinationNode, ConfigurableDictionaryNode sourceNode)
 		{
@@ -262,9 +265,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			if ((destinationNode.DictionaryNodeOptions == null || DictionaryConfigurationModel.NoteInParaStyles.Contains(sourceNode.FieldDescription)) &&
 				sourceNode.DictionaryNodeOptions != null)
 				destinationNode.DictionaryNodeOptions = sourceNode.DictionaryNodeOptions;
-			if (destinationNode.Children == null || sourceNode.Children == null)
-				return;
 			EnsureCssOverrideAndStylesAreUpdated(destinationNode, sourceNode);
+			// LT-18286: don't merge direct children into sharing parents.
+			if (destinationNode.ReferencedNode != null || destinationNode.Children == null || sourceNode.Children == null)
+				return;
 			// First recurse into each matching child node
 			foreach (var newChild in sourceNode.Children)
 			{
@@ -339,7 +343,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 						oldConfigNode.Children.RemoveAt(i);
 					}
 				}
-				InsertNewNodeIntoOldConfig(oldConfigNode, groupNode, defaultNode, defaultNode.ReferencedOrDirectChildren.IndexOf(group));
+				InsertNewNodeIntoOldConfig(oldConfigNode, groupNode, defaultNode, defaultNode.Children.IndexOf(group));
 			}
 		}
 
@@ -374,6 +378,19 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				else
 					destinationParentNode.Children.Add(newChildNode);
 			}
+		}
+
+		/// <summary>LT-18286: One Sharing Parent in Hybrid erroneously got direct children (from a migration step). Remove them.</summary>
+		private static void RemoveHiddenChildren(ConfigurableDictionaryNode parent, ISimpleLogger logger)
+		{
+			DCM.PerformActionOnNodes(parent.Children, p =>
+			{
+				if (p.ReferencedNode != null && p.Children != null && p.Children.Any())
+				{
+					logger.WriteLine(DCM.BuildPathStringFromNode(p) + " contains both Referenced And Direct Children. Removing Direct Children.");
+					p.Children = new List<ConfigurableDictionaryNode>();
+				}
+			});
 		}
 	}
 }

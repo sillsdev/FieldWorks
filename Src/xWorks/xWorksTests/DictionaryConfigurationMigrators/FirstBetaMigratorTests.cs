@@ -1164,5 +1164,151 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			Assert.AreEqual(reversalStyle, migratedReversalNode.Style, "Reversal node should have gotten a Style");
 			Assert.AreEqual(reversalCss, migratedReversalNode.CSSClassNameOverride, "Reversal node should have gotten a CssClassNameOverride");
 		}
+
+		[Test]
+		public void MigrateFrom83Alpha_DoesNotAddDirectChildrenToSharingParents() // LT-18286
+		{
+			var version12Model = new DictionaryConfigurationModel(false);
+			var mainEntrySubentries = new ConfigurableDictionaryNode
+			{
+				Label = "Minor Subentries",
+				FieldDescription = "Subentries",
+				ReferenceItem = "MainEntrySubentries",
+				Children = new List<ConfigurableDictionaryNode>(), // If this is null it skips the code we're testing
+				DictionaryNodeOptions = new DictionaryNodeListOptions { ListId = DictionaryNodeListOptions.ListIds.Complex }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { mainEntrySubentries }
+			};
+			var minorEntrySubentries = new ConfigurableDictionaryNode
+			{
+				Label = "Minor Subentries",
+				FieldDescription = "Subentries",
+				Children = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode
+					{
+						FieldDescription = "Headword",
+						Children = new List<ConfigurableDictionaryNode>
+						{
+							new ConfigurableDictionaryNode
+							{
+								Label = "Subsubentries", FieldDescription = "Subentries",
+								DictionaryNodeOptions = new DictionaryNodeListAndParaOptions {ListId = DictionaryNodeListOptions.ListIds.Complex},
+								ReferenceItem = "MainEntrySubentries"
+							}
+						}
+					}
+				}
+			};
+			var minorEntryComplex = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry (Complex Forms)",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { minorEntrySubentries },
+				DictionaryNodeOptions = new DictionaryNodeListOptions { ListId = DictionaryNodeListOptions.ListIds.Complex}
+			};
+			var sharedSubentries = new ConfigurableDictionaryNode
+			{
+				Label = "MainEntrySubentries",
+				FieldDescription = "Subentries",
+				Children = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode { FieldDescription = "Headword", DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions()},
+					new ConfigurableDictionaryNode { Label = "Minor Subsubentries", FieldDescription = "Subentries", ReferenceItem = "MainEntrySubentries"},
+					new ConfigurableDictionaryNode { Label = "Subsubentries", FieldDescription = "Subentries", ReferenceItem = "MainEntrySubentries"}
+				}
+			};
+			version12Model.Parts = new List<ConfigurableDictionaryNode> { mainEntryNode, minorEntryComplex };
+			version12Model.SharedItems = new List<ConfigurableDictionaryNode> { sharedSubentries };
+			version12Model.Version = 12;
+			CssGeneratorTests.PopulateFieldsForTesting(version12Model);
+
+			var version16Model = new DictionaryConfigurationModel(false);
+			var mainEntrySubentries16 = new ConfigurableDictionaryNode
+			{
+				Label = "Minor Subentries",
+				FieldDescription = "Subentries",
+				ReferenceItem = "MainEntrySubentries"
+			};
+			var mainEntryNode16 = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { mainEntrySubentries16 }
+			};
+			var sharedSubentries16 = new ConfigurableDictionaryNode
+			{
+				Label = "MainEntrySubentries",
+				FieldDescription = "Subentries",
+				Children = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode { Label = "Headword", DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions()},
+					new ConfigurableDictionaryNode { Label = "Minor Subsubentries", FieldDescription = "Subentries", ReferenceItem = "MainEntrySubentries"}
+				}
+			};
+			version16Model.Parts = new List<ConfigurableDictionaryNode> { mainEntryNode16 };
+			version16Model.SharedItems = new List<ConfigurableDictionaryNode> { sharedSubentries16 };
+			version16Model.Version = 16;
+			m_migrator.MigrateFrom83Alpha(m_logger, version12Model, version16Model); // SUT
+			VerifyChildrenAndReferenceItem(version12Model);
+		}
+
+		[Test]
+		public void MigrateFrom83Alpha_RemovesErroneouslyAddedChildren() // LT-18286
+		{
+			var version16Model = new DictionaryConfigurationModel(false);
+			var mainEntrySubentries16 = new ConfigurableDictionaryNode
+			{
+				Label = "Minor Subentries",
+				FieldDescription = "Subentries",
+				ReferenceItem = "MainEntrySubentries"
+			};
+			var mainEntryNode16 = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { mainEntrySubentries16 }
+			};
+			var sharedSubentries16 = new ConfigurableDictionaryNode
+			{
+				Label = "MainEntrySubentries",
+				FieldDescription = "Subentries",
+				Children = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode { FieldDescription = "Headword", DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions()},
+					new ConfigurableDictionaryNode { Label = "Minor Subsubentries", FieldDescription = "Subentries", ReferenceItem = "MainEntrySubentries"}
+				}
+			};
+			version16Model.Parts = new List<ConfigurableDictionaryNode> { mainEntryNode16 };
+			version16Model.SharedItems = new List<ConfigurableDictionaryNode> { sharedSubentries16 };
+			version16Model.Version = 16;
+			CssGeneratorTests.PopulateFieldsForTesting(version16Model);
+
+			var version17Model = version16Model.DeepClone();
+			version17Model.Version = 17;
+
+			// Create Problem:
+			mainEntrySubentries16.Children = new List<ConfigurableDictionaryNode>(sharedSubentries16.Children);
+
+			m_migrator.MigrateFrom83Alpha(m_logger, version16Model, version17Model); // SUT
+			VerifyChildrenAndReferenceItem(version16Model);
+		}
+
+		/// <summary>Verify that no nodes have both Children and a ReferenceItem</summary>
+		private static void VerifyChildrenAndReferenceItem(DictionaryConfigurationModel model)
+		{
+			DictionaryConfigurationMigrator.PerformActionOnNodes(model.PartsAndSharedItems, node =>
+			{
+				if (!string.IsNullOrEmpty(node.ReferenceItem))
+				{
+					Assert.IsTrue(node.Children == null || !node.Children.Any(),
+						"Reference Item and children are exclusive:\n" + DictionaryConfigurationMigrator.BuildPathStringFromNode(node));
+				}
+			});
+		}
 	}
 }

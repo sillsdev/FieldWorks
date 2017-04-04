@@ -1196,7 +1196,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public static void MergeCustomFieldsIntoDictionaryModel(DictionaryConfigurationModel model, FdoCache cache)
 		{
-			foreach(var part in model.Parts)
+			foreach(var part in model.Parts)// TODO (Hasso) 2017.04: AndSharedItems) // TODO: here and elsewhere
 			{
 				// Detect a bad configuration file and report it in an intelligable way. We generated bad configs before the migration code was cleaned up
 				// This is only expected to happen to our testers, we don't need to recover, just inform the testers.
