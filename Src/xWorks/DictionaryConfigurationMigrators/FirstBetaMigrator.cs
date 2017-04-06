@@ -174,6 +174,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					goto case 16;
 				case 16:
 					RemoveHiddenChildren(oldConfigPart, logger);
+					goto case 17;
+				case 17:
+					ChangeReferenceSenseHeadwordFieldName(oldConfigPart);
 					break;
 				default:
 					logger.WriteLine(string.Format(
@@ -390,6 +393,16 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					logger.WriteLine(DCM.BuildPathStringFromNode(p) + " contains both Referenced And Direct Children. Removing Direct Children.");
 					p.Children = new List<ConfigurableDictionaryNode>();
 				}
+			});
+		}
+
+		/// <summary>LT-18288: Change Headword to HeadwordRef for All "Referenced Sense Headword" to allow users to select WS</summary>
+		private static void ChangeReferenceSenseHeadwordFieldName(ConfigurableDictionaryNode oldConfigPart)
+		{
+			DCM.PerformActionOnNodes(oldConfigPart.Children, node =>
+			{
+				if (node.Label == "Referenced Sense Headword")
+					node.FieldDescription = "HeadwordRef";
 			});
 		}
 	}

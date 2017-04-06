@@ -494,6 +494,27 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_HeadwordRefConfigurationGeneratesWithTwoWS()
+		{
+			var mainEntry = CreateInterestingLexEntry(Cache, "MainEntry");
+			var compareReferencedEntry = CreateInterestingLexEntry(Cache, "bFR", "b comparable");
+			AddHeadwordToEntry(compareReferencedEntry, "bEN", m_wsEn, Cache);
+
+			const string comRefTypeName = "Compare";
+			var comRefType = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntryCollection, comRefTypeName, "cf", string.Empty, string.Empty);
+
+			CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry });
+
+			var mainEntryNode = ModelForCrossReferences(new[] { comRefType.Guid.ToString() });
+			// SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, DefaultSettings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(crossRefOwnerTypeXpath, 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(CrossRefOwnerTypeXpath(comRefTypeName), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordWsInCrossRefsXpath("en", "bEN"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordWsInCrossRefsXpath("fr", "bFR"), 1);
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_OneSenseWithGlossGeneratesCorrectResult()
 		{
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
@@ -8120,6 +8141,12 @@ namespace SIL.FieldWorks.XWorks
 				"/span[@class='configtarget' and position()='{0}']/span/span/a[text()='{1}']", position, headword);
 		}
 
+		private static string HeadwordWsInCrossRefsXpath(string ws, string headword) // REVIEW (Hasso) 2017.04: move these helpers to Helpers?
+		{
+			return string.Format("//span[@class='minimallexreferences']/span[@class='minimallexreference']/span[@class='configtargets']" +
+				"/span[@class='configtarget']/span/span[@lang='{0}']/a[text()='{1}']", ws, headword);
+		}
+
 		[Test]
 		public void GenerateXHTMLForEntry_CompareRelations_SimpleSituations_SortByHeadword([Values(true, false)] bool SeparateReferences)
 		{
@@ -8238,7 +8265,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "HeadWordRef",
 				CSSClassNameOverride = "headword",
-				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular)
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr", "en" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular)
 			};
 			var targetsNode = new ConfigurableDictionaryNode
 			{

@@ -729,6 +729,81 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 		}
 
 		[Test]
+		public void MigrateFrom83Alpha_ReferencedHeadwordFieldDescriptionNameAreMigrated()
+		{
+			var alphaRefSenseHeadwordTypeNode = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Sense Headword",
+				FieldDescription = "HeadWord",
+				CSSClassNameOverride = "headword",
+				IsEnabled = true
+			};
+			var alphaTargetsNode = new ConfigurableDictionaryNode
+			{
+				Label = "Targets",
+				FieldDescription = "ConfigTargets",
+				Children = new List<ConfigurableDictionaryNode> { alphaRefSenseHeadwordTypeNode },
+				IsEnabled = true
+			};
+			var alphaSensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Children = new List<ConfigurableDictionaryNode> { alphaTargetsNode }
+			};
+			var alphaMainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = LexEntry,
+				Children = new List<ConfigurableDictionaryNode> { alphaSensesNode }
+			};
+			var alphaModel = new DictionaryConfigurationModel
+			{
+				Version = FirstAlphaMigrator.VersionAlpha3, Parts = new List<ConfigurableDictionaryNode> { alphaMainEntryNode }
+			};
+
+			var RefSenseHeadwordTypeNode = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Sense Headword",
+				FieldDescription = "HeadWordRef",
+				CSSClassNameOverride = "headword",
+				IsEnabled = true
+			};
+			var TargetsNode = new ConfigurableDictionaryNode
+			{
+				Label = "Targets",
+				FieldDescription = "ConfigTargets",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, DictionaryNodeListOptions.ListIds.Variant),
+				Children = new List<ConfigurableDictionaryNode> { RefSenseHeadwordTypeNode },
+				IsEnabled = true
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Children = new List<ConfigurableDictionaryNode> { TargetsNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = LexEntry,
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+			var defaultModel = new DictionaryConfigurationModel
+			{
+				Version = DictionaryConfigurationMigrator.VersionCurrent, Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+
+			CssGeneratorTests.PopulateFieldsForTesting(alphaModel);
+			CssGeneratorTests.PopulateFieldsForTesting(defaultModel);
+
+			// SUT
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModel);
+
+			var migratedNoteDictionaryOptionsNode = alphaModel.Parts[0].Children[0].Children[0].Children[0];
+			Assert.AreEqual("HeadwordRef", migratedNoteDictionaryOptionsNode.FieldDescription, "FieldDescription for Referenced Sense Headword should be HeadwordRef");
+			Assert.AreEqual(1, migratedNoteDictionaryOptionsNode.Parent.Children.Count, "no extra nodes should have been added");
+		}
+
+		[Test]
 		public void MigrateFromConfig83AlphaToBeta10_UpdatesEtymologyCluster()
 		{
 			var formNode = new ConfigurableDictionaryNode
