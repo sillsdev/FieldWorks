@@ -239,7 +239,7 @@
 		  </ConfigurationItem>
 		  <ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="false" between=" " before=" " field="GlossOrSummary">
 		  	<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-		  		<Option id="analysis" isEnabled="false" />
+		  		<Option id="analysis" isEnabled="true" />
 		  	</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
@@ -1188,7 +1188,7 @@
 		  </ConfigurationItem>
 		  <ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="false" between=" " before=" " field="GlossOrSummary">
 		  	<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-		  		<Option id="analysis" isEnabled="false" />
+		  		<Option id="analysis" isEnabled="true" />
 		  	</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
@@ -1260,7 +1260,7 @@
 		  </ConfigurationItem>
 		  <ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="false" between=" " before=" " field="GlossOrSummary">
 		  	<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-		  		<Option id="analysis" isEnabled="false" />
+		  		<Option id="analysis" isEnabled="true" />
 		  	</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
@@ -2189,7 +2189,7 @@
 		  </ConfigurationItem>
 		  <ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="false" between=" " before=" " field="GlossOrSummary">
 		  	<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-		  		<Option id="analysis" isEnabled="false" />
+		  		<Option id="analysis" isEnabled="true" />
 		  	</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
@@ -2261,7 +2261,7 @@
 		  </ConfigurationItem>
 		  <ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="false" between=" " before=" " field="GlossOrSummary">
 		  	<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-		  		<Option id="analysis" isEnabled="false" />
+		  		<Option id="analysis" isEnabled="true" />
 		  	</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
@@ -3663,7 +3663,7 @@
 		  </ConfigurationItem>
 		  <ConfigurationItem name="Gloss (or Summary Definition)" isEnabled="false" between=" " before=" " field="GlossOrSummary">
 		  	<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-		  		<Option id="analysis" isEnabled="false" />
+		  		<Option id="analysis" isEnabled="true" />
 		  	</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
