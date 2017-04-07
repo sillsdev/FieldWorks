@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					config.Label = config.Label.Replace("Stem-", "Lexeme-");
 				}
 				m_logger.WriteLine(string.Format("Migrating {0} configuration '{1}' from version {2} to {3}.",
-					config.IsReversal ? "Reversal Index" : "Dictionary", config.Label, config.Version, DCM.VersionCurrent));
+					config.Type, config.Label, config.Version, DCM.VersionCurrent));
 				m_logger.IncreaseIndent();
 				MigrateFrom83Alpha(logger, config, LoadBetaDefaultForAlphaConfig(config));
 				config.Save();
@@ -99,7 +99,14 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var currentDefaultList = new List<ConfigurableDictionaryNode>(currentDefaultModel.PartsAndSharedItems);
 			foreach (var part in oldConfig.PartsAndSharedItems)
 			{
-				MigratePartFromOldVersionToCurrent(logger, oldConfig, part, FindMatchingChildNode(part.Label, currentDefaultList));
+				var defaultPart = FindMatchingChildNode(part.Label, currentDefaultList);
+				if (defaultPart == null)
+				{
+					throw new NullReferenceException(string.Format(
+						"{0} is corrupt. {1} has no corresponding part in the defaults (perhaps it missed a rename migration step).",
+						oldConfig.FilePath, part.Label));
+				}
+				MigratePartFromOldVersionToCurrent(logger, oldConfig, part, defaultPart);
 			}
 			oldConfig.Version = DCM.VersionCurrent;
 			logger.WriteLine("Migrated to version " + DCM.VersionCurrent);
