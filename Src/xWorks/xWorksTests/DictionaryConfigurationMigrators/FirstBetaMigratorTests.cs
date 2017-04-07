@@ -799,7 +799,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModel);
 
 			var migratedNoteDictionaryOptionsNode = alphaModel.Parts[0].Children[0].Children[0].Children[0];
-			Assert.AreEqual("HeadwordRef", migratedNoteDictionaryOptionsNode.FieldDescription, "FieldDescription for Referenced Sense Headword should be HeadwordRef");
+			Assert.AreEqual("HeadWordRef", migratedNoteDictionaryOptionsNode.FieldDescription, "FieldDescription for Referenced Sense Headword should be HeadwordRef");
 			Assert.AreEqual(1, migratedNoteDictionaryOptionsNode.Parent.Children.Count, "no extra nodes should have been added");
 		}
 
