@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -12,15 +13,16 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// </summary>
 	public class RenderEngineFactory : FwDisposableBase, IRenderEngineFactory
 	{
-		private readonly Dictionary<string, Dictionary<Tuple<string, bool, bool>, GraphiteEngine>> m_graphiteEngines;
-		private IRenderEngine m_nonGraphiteEngine;
+		private readonly Dictionary<ILgWritingSystem, Dictionary<Tuple<string, bool, bool>, GraphiteEngine>> m_graphiteEngines;
+		private readonly Dictionary<ILgWritingSystemFactory, IRenderEngine> m_nonGraphiteEngines;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RenderEngineFactory"/> class.
 		/// </summary>
 		public RenderEngineFactory()
 		{
-			m_graphiteEngines = new Dictionary<string, Dictionary<Tuple<string, bool, bool>, GraphiteEngine>>();
+			m_graphiteEngines = new Dictionary<ILgWritingSystem, Dictionary<Tuple<string, bool, bool>, GraphiteEngine>>();
+			m_nonGraphiteEngines = new Dictionary<ILgWritingSystemFactory, IRenderEngine>();
 		}
 
 		/// <summary>
@@ -43,10 +45,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (ws.IsGraphiteEnabled)
 			{
 				Dictionary<Tuple<string, bool, bool>, GraphiteEngine> wsGraphiteEngines;
-				if (!m_graphiteEngines.TryGetValue(ws.Id, out wsGraphiteEngines))
+				if (!m_graphiteEngines.TryGetValue(ws, out wsGraphiteEngines))
 				{
 					wsGraphiteEngines = new Dictionary<Tuple<string, bool, bool>, GraphiteEngine>();
-					m_graphiteEngines[ws.Id] = wsGraphiteEngines;
+					m_graphiteEngines[ws] = wsGraphiteEngines;
 				}
 
 				Tuple<string, bool, bool> key = Tuple.Create(fontName, chrp.ttvBold == (int) FwTextToggleVal.kttvForceOn,
@@ -69,6 +71,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					}
 					else
 					{
+						Marshal.ReleaseComObject(graphiteEngine);
 						graphiteEngine = null;
 					}
 				}
@@ -79,33 +82,35 @@ namespace SIL.FieldWorks.Common.RootSites
 			else
 			{
 				Dictionary<Tuple<string, bool, bool>, GraphiteEngine> wsGraphiteEngines;
-				if (m_graphiteEngines.TryGetValue(ws.Id, out wsGraphiteEngines))
+				if (m_graphiteEngines.TryGetValue(ws, out wsGraphiteEngines))
 				{
-					ReleaseGraphiteRenderEngines(wsGraphiteEngines.Values);
-					m_graphiteEngines.Remove(ws.Id);
+					ReleaseRenderEngines(wsGraphiteEngines.Values);
+					m_graphiteEngines.Remove(ws);
 				}
 			}
 
-			if (m_nonGraphiteEngine == null)
+			IRenderEngine nonGraphiteEngine;
+			if (!m_nonGraphiteEngines.TryGetValue(ws.WritingSystemFactory, out nonGraphiteEngine))
 			{
 				if (!MiscUtils.IsUnix)
 				{
-					m_nonGraphiteEngine = UniscribeEngineClass.Create();
+					nonGraphiteEngine = UniscribeEngineClass.Create();
 				}
 				else
 				{
 					// default to the UniscribeEngine unless ROMAN environment variable is set.
 					if (Environment.GetEnvironmentVariable("ROMAN") == null)
-						m_nonGraphiteEngine = UniscribeEngineClass.Create();
+						nonGraphiteEngine = UniscribeEngineClass.Create();
 					else
-						m_nonGraphiteEngine = RomRenderEngineClass.Create();
+						nonGraphiteEngine = RomRenderEngineClass.Create();
 				}
-				m_nonGraphiteEngine.InitRenderer(vg, null);
-				m_nonGraphiteEngine.RenderEngineFactory = this;
-				m_nonGraphiteEngine.WritingSystemFactory = ws.WritingSystemFactory;
+				nonGraphiteEngine.InitRenderer(vg, null);
+				nonGraphiteEngine.RenderEngineFactory = this;
+				nonGraphiteEngine.WritingSystemFactory = ws.WritingSystemFactory;
+				m_nonGraphiteEngines[ws.WritingSystemFactory] = nonGraphiteEngine;
 			}
 
-			return m_nonGraphiteEngine;
+			return nonGraphiteEngine;
 		}
 
 		/// <summary>
@@ -114,20 +119,37 @@ namespace SIL.FieldWorks.Common.RootSites
 		public void ClearRenderEngines()
 		{
 			foreach (Dictionary<Tuple<string, bool, bool>, GraphiteEngine> wsGraphiteEngines in m_graphiteEngines.Values)
-				ReleaseGraphiteRenderEngines(wsGraphiteEngines.Values);
+				ReleaseRenderEngines(wsGraphiteEngines.Values);
 			m_graphiteEngines.Clear();
 
-			if (m_nonGraphiteEngine != null)
+			ReleaseRenderEngines(m_nonGraphiteEngines.Values);
+			m_nonGraphiteEngines.Clear();
+		}
+
+		/// <summary>
+		/// Clears the renderers associated with the specified writing system factory.
+		/// </summary>
+		public void ClearRenderEngines(ILgWritingSystemFactory wsf)
+		{
+			foreach (KeyValuePair<ILgWritingSystem, Dictionary<Tuple<string, bool, bool>, GraphiteEngine>> kvp in m_graphiteEngines
+				.Where(kvp => kvp.Key.WritingSystemFactory == wsf).ToArray())
 			{
-				Marshal.ReleaseComObject(m_nonGraphiteEngine);
-				m_nonGraphiteEngine = null;
+				ReleaseRenderEngines(kvp.Value.Values);
+				m_graphiteEngines.Remove(kvp.Key);
+			}
+
+			IRenderEngine nonGraphiteRenderEngine;
+			if (m_nonGraphiteEngines.TryGetValue(wsf, out nonGraphiteRenderEngine))
+			{
+				Marshal.ReleaseComObject(nonGraphiteRenderEngine);
+				m_nonGraphiteEngines.Remove(wsf);
 			}
 		}
 
-		private void ReleaseGraphiteRenderEngines(IEnumerable<GraphiteEngine> graphiteEngines)
+		private void ReleaseRenderEngines(IEnumerable<IRenderEngine> renderEngines)
 		{
-			foreach (GraphiteEngine graphiteEngine in graphiteEngines)
-				Marshal.ReleaseComObject(graphiteEngine);
+			foreach (IRenderEngine renderEngine in renderEngines)
+				Marshal.ReleaseComObject(renderEngine);
 		}
 
 		/// <summary>
@@ -135,8 +157,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		protected override void DisposeManagedResources()
 		{
-			base.DisposeManagedResources();
-
 			ClearRenderEngines();
 		}
 	}

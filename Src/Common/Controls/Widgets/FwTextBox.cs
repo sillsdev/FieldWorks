@@ -1831,9 +1831,9 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			if (m_fUsingTempWsFactory)
 			{
+				SingletonsContainer.Get<RenderEngineFactory>().ClearRenderEngines(m_wsf);
 				var disposable = m_wsf as IDisposable;
-				if (disposable != null)
-					disposable.Dispose();
+				disposable?.Dispose();
 				m_wsf = null;
 				m_fUsingTempWsFactory = false;
 			}
