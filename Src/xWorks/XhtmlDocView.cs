@@ -826,8 +826,6 @@ namespace SIL.FieldWorks.XWorks
 
 			if (Clerk.Id == "AllReversalEntries")
 			{
-				var currentConfig = m_mediator.PropertyTable.GetStringProperty("ReversalIndexPublicationLayout", string.Empty);
-				var configuration = new DictionaryConfigurationModel(currentConfig, Cache);
 				var reversalentry = Clerk.CurrentObject as IReversalIndexEntry;
 				if (reversalentry == null)
 					return;
@@ -835,7 +833,9 @@ namespace SIL.FieldWorks.XWorks
 				if (writingSystem == null)
 					return;
 				var currReversalWs = writingSystem.Id;
-				if(configuration.WritingSystem != currReversalWs)
+				var currentConfig = m_mediator.PropertyTable.GetStringProperty("ReversalIndexPublicationLayout", string.Empty);
+				var configuration = File.Exists(currentConfig) ? new DictionaryConfigurationModel(currentConfig, Cache) : null;
+				if (configuration == null || configuration.WritingSystem != currReversalWs)
 				{
 					var newConfig = Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_mediator),
 						writingSystem.DisplayLabel + DictionaryConfigurationModel.FileExtension);
