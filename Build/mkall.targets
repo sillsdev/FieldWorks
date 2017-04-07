@@ -304,10 +304,6 @@
 		<!-- bt395 is the master branch build of ExCss for Linux development. Update when appropriate. -->
 		<ExCssBuildType Condition="'$(OS)'=='Unix'">bt395</ExCssBuildType>
 		<ExCss Condition="'$(OS)'=='Unix'">ExCSS</ExCss>
-		<!-- bt469 is the master branch build of icucil for Windows development. Update when appropriate. -->
-		<IcuBuildType Condition="'$(OS)'=='Windows_NT'">bt14</IcuBuildType>
-		<!-- Libraries_IcucilPrecise64icu54Continuous is the ICU 54 master branch build of icucil for Linux development. Update when appropriate. -->
-		<IcuBuildType Condition="'$(OS)'=='Unix'">Libraries_IcucilPrecise64icu54Continuous</IcuBuildType>
 		<Icu4cBuildType Condition="'$(OS)'=='Windows_NT'">Libraries_Icu4cWin32FieldWorksContinuous</Icu4cBuildType>
 		<HermitCrabBuildType>bt410</HermitCrabBuildType>
 		<HermitCrabBuildTag>fw-8.2.tcbuildtag</HermitCrabBuildTag>
@@ -365,6 +361,7 @@
 			<PalasoFiles Include="taglib-sharp.dll"/>
 			<PalasoFiles Include="Spart.dll"/>
 			<PalasoFiles Include="Newtonsoft.Json.dll"/>
+			<PalasoFiles Include="icu.net.dll"/>
 		</ItemGroup>
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(PalasoBuildType)" FlexBridgeBuildType="$(FLExBridgeBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="@(PalasoFiles)" DownloadsDir="$(DownloadsDir)"/>
 
@@ -384,9 +381,6 @@
 		<!-- Due to platform-specific casing, ExCSS or ExCss is included in a variable -->
 		<Message Text="Downloading artifacts for ExCss."/>
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(ExCssBuildType)" FlexBridgeBuildType="$(FLExBridgeBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="$(ExCss).dll;$(ExCss).$(DebugInfo)" DownloadsDir="$(DownloadsDir)"/>
-
-		<Message Text="Downloading an artifact for ICU.NET."/>
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(IcuBuildType)" FlexBridgeBuildType="$(FLExBridgeBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="icu.net.dll" DownloadsDir="$(DownloadsDir)"/>
 
 		<Message Text="Downloading artifacts for icu4c." Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(Icu4cBuildType)" FlexBridgeBuildType="$(FLExBridgeBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="gennorm2.exe;icudt$(IcuVersion).dll;icuin$(IcuVersion).dll;icutu$(IcuVersion).dll;icuuc$(IcuVersion).dll;icudt.lib;icuin.lib;icuuc.lib" DownloadsDir="$(DownloadsDir)" Condition="'$(OS)'=='Windows_NT'"/>
