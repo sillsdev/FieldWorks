@@ -89,6 +89,14 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public bool MasterRefreshRequired { get; private set; }
 
+		public enum ExclusionReasonCode
+		{
+			NotExcluded,
+			NotInPublication,
+			ExcludedHeadword,
+			ExcludedMinorEntry
+		}
+
 		/// <summary>
 		/// Figure out what alternate dictionaries are available (eg root-, stem-, ...)
 		/// Populate _dictionaryConfigurations with available models.

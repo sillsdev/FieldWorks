@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
@@ -35,6 +36,7 @@ namespace SIL.FieldWorks.XWorks
 		private string m_selectedObjectID = string.Empty;
 		internal string m_configObjectName;
 		internal const string CurrentSelectedEntryClass = "currentSelectedEntry";
+		private string m_currentConfigView; // used when this is a Dictionary view to store which view is active.
 
 		public override void Init(Mediator mediator, XmlNode configurationParameters)
 		{
@@ -138,6 +140,117 @@ namespace SIL.FieldWorks.XWorks
 				default:
 					break;
 			}
+		}
+
+
+
+		/// <summary>
+		/// Used to verify current content control so that Find Lexical Entry behaves differently
+		/// in Dictionary View.
+		/// </summary>
+		private const string ksLexDictionary = "lexiconDictionary";
+
+		/// <summary>
+		/// Check to see if the user needs to be alerted that JumpToRecord is not possible.
+		/// </summary>
+		/// <param name="argument">the hvo of the record</param>
+		/// <returns></returns>
+		public bool OnJumpToRecord(object argument)
+		{
+			var hvoTarget = (int)argument;
+			var currControl = m_mediator.PropertyTable.GetStringProperty("currentContentControl", "");
+			if (hvoTarget > 0 && currControl == ksLexDictionary)
+			{
+				DictionaryConfigurationController.ExclusionReasonCode xrc;
+				// Make sure we explain to the user in case hvoTarget is not visible due to
+				// the current Publication layout or Configuration view.
+				if (!IsObjectVisible(hvoTarget, out xrc))
+				{
+					// Tell the user why we aren't jumping to his record
+					GiveSimpleWarning(xrc);
+				}
+			}
+			return false;
+		}
+
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification = "See TODO-Linux comment")]
+		private void GiveSimpleWarning(DictionaryConfigurationController.ExclusionReasonCode xrc)
+		{
+			// Tell the user why we aren't jumping to his record
+			var msg = xWorksStrings.ksSelectedEntryNotInDict;
+			string caption;
+			string reason;
+			string shlpTopic;
+			switch (xrc)
+			{
+				case DictionaryConfigurationController.ExclusionReasonCode.NotInPublication:
+					caption = xWorksStrings.ksEntryNotPublished;
+					reason = xWorksStrings.ksEntryNotPublishedReason;
+					shlpTopic = "User_Interface/Menus/Edit/Find_a_lexical_entry.htm";		//khtpEntryNotPublished
+					break;
+				case DictionaryConfigurationController.ExclusionReasonCode.ExcludedHeadword:
+					caption = xWorksStrings.ksMainNotShown;
+					reason = xWorksStrings.ksMainNotShownReason;
+					shlpTopic = "khtpMainEntryNotShown";
+					break;
+				case DictionaryConfigurationController.ExclusionReasonCode.ExcludedMinorEntry:
+					caption = xWorksStrings.ksMinorNotShown;
+					reason = xWorksStrings.ksMinorNotShownReason;
+					shlpTopic = "khtpMinorEntryNotShown";
+					break;
+				default:
+					throw new ArgumentException("Unknown ExclusionReasonCode");
+			}
+			msg = String.Format(msg, reason);
+			// TODO-Linux: Help is not implemented on Mono
+			MessageBox.Show(FindForm(), msg, caption, MessageBoxButtons.OK,
+							MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, 0,
+							m_mediator.HelpTopicProvider.HelpFile,
+							HelpNavigator.Topic, shlpTopic);
+		}
+
+		private bool IsObjectVisible(int hvoTarget, out DictionaryConfigurationController.ExclusionReasonCode xrc)
+		{
+			xrc = DictionaryConfigurationController.ExclusionReasonCode.NotExcluded;
+			var objRepo = Cache.ServiceLocator.GetInstance<ICmObjectRepository>();
+			Debug.Assert(objRepo.IsValidObjectId(hvoTarget), "Invalid hvoTarget!");
+			if (!objRepo.IsValidObjectId(hvoTarget))
+				throw new ArgumentException("Unknown object.");
+			var entry = objRepo.GetObject(hvoTarget) as ILexEntry;
+			Debug.Assert(entry != null, "HvoTarget is not a LexEntry!");
+			if (entry == null)
+				throw new ArgumentException("Target is not a LexEntry.");
+
+			// Now we have our LexEntry
+			// First deal with whether the active Publication excludes it.
+			var m_currentPublication = m_mediator.PropertyTable.GetValue("SelectedPublication", null);
+			var publications = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p).Where(p => p.NameHierarchyString == m_currentPublication.ToString()).FirstOrDefault();
+			if (publications.NameHierarchyString != xWorksStrings.AllEntriesPublication)
+			{
+				var currentPubPoss = publications;
+				if (!entry.PublishIn.Contains(currentPubPoss))
+				{
+					xrc = DictionaryConfigurationController.ExclusionReasonCode.NotInPublication;
+					return false;
+				}
+				// Second deal with whether the entry shouldn't be shown as a headword
+				if (!entry.ShowMainEntryIn.Contains(currentPubPoss))
+				{
+					xrc = DictionaryConfigurationController.ExclusionReasonCode.ExcludedHeadword;
+					return false;
+				}
+			}
+			// Third deal with whether the entry shouldn't be shown as a minor entry.
+			// commented out until conditions are clarified (LT-11447)
+			var configuration = new DictionaryConfigurationModel(GetCurrentConfiguration(false), Cache);
+			if (entry.EntryRefsOS.Count > 0 && !entry.PublishAsMinorEntry && configuration.IsRootBased)
+			{
+				xrc = DictionaryConfigurationController.ExclusionReasonCode.ExcludedMinorEntry;
+				return false;
+			}
+			// If we get here, we should be able to display it.
+			return true;
 		}
 
 		/// <summary>
