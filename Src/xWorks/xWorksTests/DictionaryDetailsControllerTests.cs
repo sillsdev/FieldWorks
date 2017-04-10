@@ -890,29 +890,8 @@ namespace SIL.FieldWorks.XWorks
 				Assert.AreEqual("%d", optionsView.NumberingStyle, "proper numbering style loads for Sense");
 				Assert.IsTrue(optionsView.NumberSingleSense, "checkbox set properly for numbering even single Sense");
 				Assert.IsTrue(optionsView.ShowGrammarFirst, "checkbox set properly for show common gram info first for Senses");
-				// controls are private, so work around that limitation.
-				var realView = optionsView as SenseOptionsView;
-				Assert.IsNotNull(realView);
-				var controlsChecked = 0;
-				foreach (Control control in realView.Controls)
-				{
-					if (control is GroupBox && control.Name == "groupBoxSenseNumber")
-					{
-						Assert.AreEqual("Sense Number Configuration", control.Text, "groupBoxSenseNumber has incorrect Text for Sense");
-						++controlsChecked;
-					}
-					else if (control is CheckBox && control.Name == "checkBoxSenseInPara")
-					{
-						Assert.IsTrue(control.Enabled && control.Visible, "checkBoxSenseInPara should be enabled and visible for Sense");
-						++controlsChecked;
-					}
-					else if (control is CheckBox && control.Name == "checkBoxFirstSenseInline")
-					{
-						Assert.IsTrue(control.Enabled && control.Visible, "checkBoxFirstSenseInline should be enabled and visible for Sense");
-						++controlsChecked;
-					}
-				}
-				Assert.AreEqual(3, controlsChecked, "Matched incorrect number of controls for Sense");
+				// controls are not part of IDictionarySenseOptionsView, so work around that limitation.
+				ValidateSenseControls(optionsView, false);
 			}
 
 			var controller2 = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
@@ -927,30 +906,57 @@ namespace SIL.FieldWorks.XWorks
 				Assert.AreEqual("%A", optionsView.NumberingStyle, "proper numbering style loads for Subsense");
 				Assert.IsTrue(optionsView.NumberSingleSense, "checkbox set properly for numbering even single Subsense");
 				Assert.IsTrue(optionsView.ShowGrammarFirst, "checkbox set properly for hide common gram info for Subsenses");
-				// controls are private, so work around that limitation.
-				var realView = optionsView as SenseOptionsView;
-				Assert.IsNotNull(realView);
-				var controlsChecked = 0;
-				foreach (Control control in realView.Controls)
-				{
-					if (control is GroupBox && control.Name == "groupBoxSenseNumber")
-					{
-						Assert.AreEqual(xWorksStrings.ksSubsenseNumberConfig, control.Text, "groupBoxSenseNumber has incorrect Text for Subsense");
-						++controlsChecked;
-					}
-					else if (control is CheckBox && control.Name == "checkBoxSenseInPara")
-					{
-						Assert.IsTrue(control.Enabled && control.Visible, "checkBoxSenseInPara should be enabled and visible for Subsense");
-						++controlsChecked;
-					}
-					else if (control is CheckBox && control.Name == "checkBoxFirstSenseInline")
-					{
-						Assert.IsFalse(control.Enabled || control.Visible, "checkBoxFirstSenseInline should be disabled and invisible when no paras");
-						++controlsChecked;
-					}
-				}
-				Assert.AreEqual(3, controlsChecked, "Matched incorrect number of controls for Subsense");
+				// controls are not part of IDictionarySenseOptionsView, so work around that limitation.
+				ValidateSenseControls(optionsView, true);
 			}
+		}
+
+		// REVIEW (Hasso) 2017.04: This is not the best way to test that the controller properly updates the GUI, since it also asserts GUI structure.
+		// REVIEW (cont): A better way would be to use a view interface with a test implementation. If you break this test, please fix it *properly*
+		// REVIEW (apology): we're too close to a release to be bothered with such a refactor.
+		private static void ValidateSenseControls(object iView, bool isSubsense)
+		{
+			var label = isSubsense ? "Subsense" : "sense";
+			Assert.AreEqual(typeof(SenseOptionsView), iView.GetType());
+			var view = (Control)iView;
+			var controlsChecked = 0;
+			foreach (Control control in view.Controls)
+			{
+				if (control is GroupBox && control.Name == "groupBoxSenseNumber")
+				{
+					Assert.AreEqual(isSubsense ? xWorksStrings.ksSubsenseNumberConfig : "Sense Number Configuration",
+						control.Text, "groupBoxSenseNumber has incorrect Text");
+					++controlsChecked;
+				}
+				else if (control is FlowLayoutPanel && control.Name == "senseStructureVerticalFlow")
+				{
+					var innerControls = 0;
+					foreach (Control innerControl in control.Controls)
+					{
+						if (innerControl is CheckBox && innerControl.Name == "checkBoxShowGrammarFirst")
+						{
+							Assert.IsTrue(innerControl.Enabled && innerControl.Visible, "checkBoxShowGrammarFirst should be enabled and visible for {0}", label);
+							++innerControls;
+						}
+						else if (innerControl is CheckBox && innerControl.Name == "checkBoxSenseInPara")
+						{
+							Assert.IsTrue(innerControl.Enabled && innerControl.Visible, "checkBoxSenseInPara should be enabled and visible for {0}", label);
+							++innerControls;
+						}
+						else if (innerControl is CheckBox && innerControl.Name == "checkBoxFirstSenseInline")
+						{
+							if (isSubsense)
+								Assert.IsFalse(innerControl.Enabled || innerControl.Visible, "checkBoxFirstSenseInline should be disabled and invisible when no paras");
+							else
+								Assert.IsTrue(innerControl.Enabled && innerControl.Visible, "checkBoxFirstSenseInline should be enabled and visible when paras");
+							++innerControls;
+						}
+					}
+					Assert.AreEqual(3, innerControls, "Matched incorrect number of controls within senseStructureVerticalFlow for {0}", label);
+					++controlsChecked;
+				}
+			}
+			Assert.AreEqual(2, controlsChecked, "Matched incorrect number of controls for {0}", label);
 		}
 
 		[Test]
