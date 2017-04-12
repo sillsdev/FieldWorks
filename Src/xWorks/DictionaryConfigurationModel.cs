@@ -195,10 +195,11 @@ namespace SIL.FieldWorks.XWorks
 			// Handle any changes to the custom field definitions.  (See https://jira.sil.org/browse/LT-16430.)
 			// The "Merge" method handles both additions and deletions.
 			DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(this, cache);
-			// Handle changes to the lists of complex form types and variant types.
+			// Handle changes to the lists of complex form types, variant types, lexical reference types, and more!
 			DictionaryConfigurationController.MergeTypesIntoDictionaryModel(this, cache);
 			// Handle any deleted styles.  (See https://jira.sil.org/browse/LT-16501.)
 			DictionaryConfigurationController.EnsureValidStylesInModel(this, cache);
+			// TODO pH 2017.04: ensure valid Numbering Styles
 			//Update Writing System for an entire configuration.
 			DictionaryConfigurationController.UpdateWritingSystemInModel(this, cache);
 		}

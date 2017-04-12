@@ -19,6 +19,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 	{
 		private ISimpleLogger m_logger;
 		internal const int VersionBeta5 = 14;
+		internal const int VersionRC2 = 17; // 8.3.7
 
 		public FirstBetaMigrator() : this(null, null)
 		{
@@ -174,8 +175,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					goto case 16;
 				case 16:
 					RemoveHiddenChildren(oldConfigPart, logger);
-					goto case 17;
-				case 17:
+					goto case VersionRC2;
+				case VersionRC2:
 					ChangeReferenceSenseHeadwordFieldName(oldConfigPart);
 					break;
 				default:

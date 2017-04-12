@@ -269,7 +269,7 @@ namespace SIL.FieldWorks.XWorks
 				DisplayOptionCheckBoxChecked = wsOptions.DisplayWritingSystemAbbreviations
 			};
 
-			var availableWSs = DictionaryConfigurationController.LoadAvailableWsList(wsOptions, m_cache);
+			var availableWSs = DictionaryConfigurationController.LoadAvailableWsList(wsOptions, m_cache); // REVIEW (Hasso) 2017.04: is this redundant to the model.Load sync?
 
 			wsOptionsView.AvailableItems = availableWSs;
 
@@ -289,7 +289,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 
-		private UserControl LoadWsAndParaOptions(DictionaryNodeWritingSystemAndParaOptions wsapoptions)
+		private UserControl LoadWsAndParaOptions(DictionaryNodeWritingSystemAndParaOptions wsapoptions) // REVIEW (Hasso) 2017.04: reuse existing LoadWsOpts
 		{
 			var wsapOptionsView = new ListOptionsView
 			{
@@ -462,6 +462,7 @@ namespace SIL.FieldWorks.XWorks
 			else
 			{
 				string label;
+				// REVIEW (Hasso) 2017.04: verifying available options is already accomplished in model.Load; here it is redundant.
 				var availableOptions = GetListItemsAndLabel(listOptions.ListId, out label);
 				listOptionsView.ListViewLabel = label;
 
@@ -677,7 +678,7 @@ namespace SIL.FieldWorks.XWorks
 					throw new ArgumentException("Unrecognised List ID: " + listId);
 			}
 		}
-
+		// REVIEW (Hasso) 2017.04: clean up some of this boilerplate code (GetXxxTypes) and move to DictionaryConfigurationController or DictionaryModelLoad(er|Controller)
 		private List<ListViewItem> GetMinorEntryTypes()
 		{
 			var result = GetVariantTypes();
@@ -731,8 +732,9 @@ namespace SIL.FieldWorks.XWorks
 			}).ToList();
 		}
 
-		// REVIEW (Hasso) 2014.05: This method is currently optimised for loading and caching both Sense and Entry lists at once. It
-		// could be optimised for loading each as needed without caching: by checking first for whether each relType is applicable.
+		// REVIEW (Hasso) 2014.05: This method is currently optimised for loading and caching both Sense and Entry lists at once.
+		// REVIEW (Hasso) 2017.04: Two years later, is the above comment still the case? Consider before moving to
+		// REVIEW (continued): DictionaryConfigurationController or DictionaryModelLoad(er|Controller)
 		private List<ListViewItem> GetLexicalRelationTypes(DictionaryNodeListOptions.ListIds listId)
 		{
 			var lexRelTypesSubset = new List<ListViewItem>();
