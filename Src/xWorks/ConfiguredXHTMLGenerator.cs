@@ -893,7 +893,7 @@ namespace SIL.FieldWorks.XWorks
 
 				case PropertyType.CmFileType:
 					fileProperty = propertyValue as ICmFile;
-					if (fileProperty != null)
+					if(fileProperty != null && !string.IsNullOrEmpty(fileProperty.InternalPath))
 					{
 						var srcAttr = GenerateSrcAttributeForMediaFromFilePath(fileProperty.InternalPath, "AudioVisual", settings);
 						if (IsVideo(fileProperty.InternalPath))
