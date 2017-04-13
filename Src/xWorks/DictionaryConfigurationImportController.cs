@@ -13,7 +13,9 @@ using System.Xml.XPath;
 using Ionic.Zip;
 using Palaso.Lift.Migration;
 using Palaso.Lift.Parsing;
+using Palaso.Linq;
 using Palaso.Reporting;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -181,11 +183,39 @@ namespace SIL.FieldWorks.XWorks
 			NonUndoableUnitOfWorkHelper.DoSomehow(_cache.ActionHandlerAccessor, () =>
 			{
 				var stylesToRemove = _cache.LangProject.StylesOC.Where(style => !UnsupportedStyles.Contains(style.Name));
+
+				// For LT-18267, record basedon and next properties of styles not
+				// being exported, so they can be reconnected to the imported
+				// styles of the same name.
+				var preimportStyleLinks = _cache.LangProject.StylesOC.Where(style => UnsupportedStyles.Contains(style.Name)).ToDictionary(
+					style => style.Name,
+					style => new
+					{
+						BasedOn = style.BasedOnRA == null ? null : style.BasedOnRA.Name,
+						Next = style.NextRA == null ? null : style.NextRA.Name
+					});
+
+				// Before importing styles, remove all the current styles, except
+				// for styles that we don't support and so we don't expect will
+				// be imported.
 				foreach (var style in stylesToRemove)
 				{
 					_cache.LangProject.StylesOC.Remove(style);
 				}
+
+				// Import styles
 				var stylesAccessor = new FlexStylesXmlAccessor(_cache.LangProject.LexDbOA, true, importStylesLocation);
+
+				var postimportStylesToReconnect = _cache.LangProject.StylesOC.Where(style => UnsupportedStyles.Contains(style.Name));
+
+				postimportStylesToReconnect.ForEach(postimportStyleToRewire =>
+				{
+					var correspondingPreImportStyleInfo = preimportStyleLinks[postimportStyleToRewire.Name];
+
+					postimportStyleToRewire.BasedOnRA = _cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == correspondingPreImportStyleInfo.BasedOn);
+
+					postimportStyleToRewire.NextRA = _cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == correspondingPreImportStyleInfo.Next);
+				});
 			});
 		}
 

@@ -128,22 +128,25 @@ namespace SIL.FieldWorks.XWorks
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
-				var testStyle = styleFactory.Create(Cache.LangProject.StylesOC, "TestStyle", ContextValues.InternalConfigureView, StructureValues.Body,
+
+				styleFactory.Create(Cache.LangProject.StylesOC, "Dictionary-Headword",
+					ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, true, 2, true);
+				var testStyle = styleFactory.Create(Cache.LangProject.StylesOC, "TestStyle", ContextValues.InternalConfigureView, StructureValues.Undefined,
 					FunctionValues.Line, true, 2, false);
 				testStyle.Usage.set_String(Cache.DefaultAnalWs, "Test Style");
-				var normalStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Normal", ContextValues.InternalConfigureView, StructureValues.Body,
-					FunctionValues.Line, false, 2, false);
+				var normalStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Normal", ContextValues.InternalConfigureView, StructureValues.Undefined,
+					FunctionValues.Line, false, 2, true);
 				var propsBldr = TsPropsBldrClass.Create();
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, 0x2BACCA); // arbitrary color to create para element
 				normalStyle.Rules = propsBldr.GetTextProps();
-				var styleWithNamedColors = styleFactory.Create(Cache.LangProject.StylesOC, "Nominal", ContextValues.InternalConfigureView, StructureValues.Body,
+				var styleWithNamedColors = styleFactory.Create(Cache.LangProject.StylesOC, "Nominal", ContextValues.InternalConfigureView, StructureValues.Undefined,
 					FunctionValues.Line, false, 2, false);
 				styleWithNamedColors.BasedOnRA = normalStyle;
 				propsBldr = TsPropsBldrClass.Create();
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
 				styleWithNamedColors.Rules = propsBldr.GetTextProps();
-				var styleWithCustomColors = styleFactory.Create(Cache.LangProject.StylesOC, "Abnormal", ContextValues.InternalConfigureView, StructureValues.Body,
+				var styleWithCustomColors = styleFactory.Create(Cache.LangProject.StylesOC, "Abnormal", ContextValues.InternalConfigureView, StructureValues.Undefined,
 					FunctionValues.Line, false, 2, false);
 				styleWithCustomColors.BasedOnRA = normalStyle;
 				propsBldr = TsPropsBldrClass.Create();
@@ -275,29 +278,48 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(CustomRedBGR, color, "Foreground color should be set to Custom Red");
 		}
 
+		/// <summary>
+		/// LT-18267: In addition, hook BasedOn and Next back up for the not-overwritten/preserved styles like Homograph-Number.
+		/// </summary>
 		[Test]
 		public void DoImport_UnhandledStylesLeftUnTouched()
 		{
 			IStStyle bulletStyle = null;
 			IStStyle numberStyle = null;
 			IStStyle homographStyle = null;
+			IStStyle dictionaryHeadwordStyle = null;
+			IStStyle nominalStyle = null;
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
+				// Set up state of flex before the import happens.
 				var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
 				bulletStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Bulleted List",
-					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, false, 2, false);
+					ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, false, 2, true);
 				numberStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Numbered List",
-					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, false, 2, false);
+					ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, false, 2, true);
+
+				dictionaryHeadwordStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Dictionary-Headword", ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, true, 2, true);
+
+				// Create a style that we can link to before the import happens. It's not
+				// important what it's named, just that it also exists in the exported zip
+				// file made by Setup().
+				nominalStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Nominal",
+					ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, false, 2, false);
+
 				homographStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Homograph-Number",
-					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, true, 2, false);
+					ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, true, 2, true);
+
+				// Style linking to later examine
+				homographStyle.BasedOnRA = dictionaryHeadwordStyle;
+				bulletStyle.NextRA = nominalStyle;
 			});
 
-			Assert.AreEqual(3, Cache.LangProject.StylesOC.Count, "Setup problem. Exactly 3 styles should be present.");
+			Assert.AreEqual(5, Cache.LangProject.StylesOC.Count, "Setup problem. Wrong number of styles present.");
 			_controller.PrepareImport(_zipFile);
-			Assert.AreEqual(3, Cache.LangProject.StylesOC.Count, "Setup problem. Exactly 3 styles should be present after PrepareImport.");
+			Assert.AreEqual(5, Cache.LangProject.StylesOC.Count, "Setup problem. Wrong number of styles present after PrepareImport.");
 			// SUT
 			_controller.DoImport();
-			Assert.AreEqual(7, Cache.LangProject.StylesOC.Count, "The 3 styles that are unhandled should be present in addition to the 2 styles in the zip file..");
+			Assert.AreEqual(8, Cache.LangProject.StylesOC.Count, "The 3 styles that are unhandled, and 2 styles that are handled, should be present in addition to the 4 styles in the zip file, one of which is already present in this unit test's setup, so 8 total.");
 			var importedTestStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "TestStyle");
 			Assert.NotNull(importedTestStyle, "test style was not imported.");
 			var importedParaStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Nominal");
@@ -311,6 +333,11 @@ namespace SIL.FieldWorks.XWorks
 			var homographTestStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Homograph-Number");
 			Assert.NotNull(homographTestStyle, "test style was not imported.");
 			Assert.AreEqual(homographStyle.Guid, homographTestStyle.Guid);
+
+			var dictionaryHeadwordImportedStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Dictionary-Headword");
+			Assert.That(homographTestStyle.BasedOnRA, Is.EqualTo(dictionaryHeadwordImportedStyle), "Failed to rewire basedon to new Dictionary-Headword style. LT-18267");
+			var nominalImportedStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Nominal");
+			Assert.That(bulletTestStyle.NextRA, Is.EqualTo(nominalImportedStyle), "Failed to rewire next to new imported style.");
 		}
 
 		[Test]
