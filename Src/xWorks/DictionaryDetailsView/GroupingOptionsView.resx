@@ -163,7 +163,7 @@
     <value>3</value>
   </data>
   <data name="displayInParagraph.Text" xml:space="preserve">
-    <value>Display group in a paragraph</value>
+    <value>&amp;Display group in a paragraph</value>
   </data>
   <data name="&gt;&gt;displayInParagraph.Name" xml:space="preserve">
     <value>displayInParagraph</value>

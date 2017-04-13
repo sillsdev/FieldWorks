@@ -400,10 +400,10 @@ Are you SURE you want to delete the field {2}?</value>
     <value>(unspecified)</value>
   </data>
   <data name="ksDisplayComplexFormsInParagraphs" xml:space="preserve">
-    <value>Display each Complex Form in a paragraph</value>
+    <value>&amp;Display each Complex Form in a paragraph</value>
   </data>
   <data name="ksDisplayExtendedNoteInParagraphs" xml:space="preserve">
-    <value>Display each Extended Note in a paragraph</value>
+    <value>&amp;Display each Extended Note in a paragraph</value>
   </data>
   <data name="ksCantPromoteGroupToTemplate" xml:space="preserve">
     <value>You cannot promote part of one discourse chart template to a new template. In fact, currently we do not support having more than one template at all.</value>
@@ -936,7 +936,7 @@ If you are not the one designated user who adds fields, or you are making some o
     <comment>Hidden context menu command (Ctrl+Right Click) for clearing a node and all its children in the Configuration Dialog</comment>
   </data>
   <data name="ksDisplaySubentriesInParagraphs" xml:space="preserve">
-    <value>Display each Subentry in a paragraph</value>
+    <value>&amp;Display each Subentry in a paragraph</value>
   </data>
   <data name="ExportingReversalsToWebonary" xml:space="preserve">
     <value>Exporting entries for {0} reversal.</value>
@@ -965,7 +965,7 @@ If you are not the one designated user who adds fields, or you are making some o
     <comment>message displayed on progress report dialog</comment>
   </data>
   <data name="ksArrangingDisplayFragments" xml:space="preserve">
-    <value>Putting the display fragments together with the letter headers</value>
+    <value>Putting the display fragments together with the letter headings</value>
     <comment>this message is displayed on a progress report dialog</comment>
   </data>
   <data name="ksGeneratingStyleInfo" xml:space="preserve">
@@ -1014,13 +1014,13 @@ If you are not the one designated user who adds fields, or you are making some o
     <comment>{0} is the node the user has requested to share. {3} is the field these nodes control. {2} is an existing shared node.</comment>
   </data>
   <data name="ksDisplayExamplesInParagraphs" xml:space="preserve">
-    <value>Display each Example in a paragraph</value>
+    <value>&amp;Display each Example in a paragraph</value>
   </data>
   <data name="ksDisplayEachSubsenseInAParagraph" xml:space="preserve">
-    <value>Display each subsense in a paragraph</value>
+    <value>&amp;Display each subsense in a paragraph</value>
   </data>
   <data name="ksDisplayNoteInParagraphs" xml:space="preserve">
-    <value>Display each Note in a separate paragraph</value>
+    <value>&amp;Display each Note in a separate paragraph</value>
   </data>
   <data name="ksStartingWithTheSecondSubsense" xml:space="preserve">
     <value>starting with second subsense</value>

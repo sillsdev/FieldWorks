@@ -164,8 +164,10 @@ namespace SIL.FieldWorks.XWorks
 			// 
 			// DictionaryConfigurationImportDlg
 			// 
+			this.AcceptButton = this.importButton;
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.CancelButton = this.cancelButton;
 			this.Controls.Add(this.mainVerticalFlow);
 			this.Name = "DictionaryConfigurationImportDlg";
 			this.ShowIcon = false;
