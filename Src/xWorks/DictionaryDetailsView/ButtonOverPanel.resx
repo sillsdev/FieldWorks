@@ -154,7 +154,7 @@
     <value>0</value>
   </data>
   <data name="button.Text" xml:space="preserve">
-    <value>Configure Headword Numbers...</value>
+    <value>Configure &amp;Headword Numbers...</value>
   </data>
   <data name="&gt;&gt;button.Name" xml:space="preserve">
     <value>button</value>

@@ -136,7 +136,7 @@
     <value>3</value>
   </data>
   <data name="checkBoxSenseInPara.Text" xml:space="preserve">
-    <value>Display each sense in a paragraph</value>
+    <value>&amp;Display each sense in a paragraph</value>
   </data>
   <data name="&gt;&gt;checkBoxSenseInPara.Name" xml:space="preserve">
     <value>checkBoxSenseInPara</value>
@@ -166,7 +166,7 @@
     <value>2</value>
   </data>
   <data name="checkBoxShowGrammarFirst.Text" xml:space="preserve">
-    <value>If all senses share the grammatical information, show it first</value>
+    <value>If all senses share the &amp;grammatical information, show it first</value>
   </data>
   <data name="&gt;&gt;checkBoxShowGrammarFirst.Name" xml:space="preserve">
     <value>checkBoxShowGrammarFirst</value>
@@ -202,7 +202,7 @@
     <value>3</value>
   </data>
   <data name="checkBoxFirstSenseInline.Text" xml:space="preserve">
-    <value>starting with second sense</value>
+    <value>s&amp;tarting with second sense</value>
   </data>
   <data name="&gt;&gt;checkBoxFirstSenseInline.Name" xml:space="preserve">
     <value>checkBoxFirstSenseInline</value>
@@ -436,7 +436,7 @@
     <value>6</value>
   </data>
   <data name="checkBoxNumberSingleSense.Text" xml:space="preserve">
-    <value>Number even a single sense</value>
+    <value>&amp;Number even a single sense</value>
   </data>
   <data name="&gt;&gt;checkBoxNumberSingleSense.Name" xml:space="preserve">
     <value>checkBoxNumberSingleSense</value>
@@ -487,7 +487,7 @@
     <value>2</value>
   </data>
   <data name="buttonStyles.Text" xml:space="preserve">
-    <value>Styles...</value>
+    <value>St&amp;yles...</value>
   </data>
   <data name="&gt;&gt;buttonStyles.Name" xml:space="preserve">
     <value>buttonStyles</value>

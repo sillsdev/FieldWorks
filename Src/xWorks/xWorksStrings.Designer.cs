@@ -699,7 +699,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Putting the display fragments together with the letter headers.
+        ///   Looks up a localized string similar to Putting the display fragments together with the letter headings.
         /// </summary>
         internal static string ksArrangingDisplayFragments {
             get {
@@ -1095,7 +1095,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Display each Complex Form in a paragraph.
+        ///   Looks up a localized string similar to &amp;Display each Complex Form in a paragraph.
         /// </summary>
         internal static string ksDisplayComplexFormsInParagraphs {
             get {
@@ -1104,7 +1104,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Display each subsense in a paragraph.
+        ///   Looks up a localized string similar to &amp;Display each subsense in a paragraph.
         /// </summary>
         internal static string ksDisplayEachSubsenseInAParagraph {
             get {
@@ -1113,7 +1113,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Display each Example in a paragraph.
+        ///   Looks up a localized string similar to &amp;Display each Example in a paragraph.
         /// </summary>
         internal static string ksDisplayExamplesInParagraphs {
             get {
@@ -1122,7 +1122,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Display each Extended Note in a paragraph.
+        ///   Looks up a localized string similar to &amp;Display each Extended Note in a paragraph.
         /// </summary>
         internal static string ksDisplayExtendedNoteInParagraphs {
             get {
@@ -1131,7 +1131,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Display each Note in a separate paragraph.
+        ///   Looks up a localized string similar to &amp;Display each Note in a separate paragraph.
         /// </summary>
         internal static string ksDisplayNoteInParagraphs {
             get {
@@ -1140,7 +1140,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Display each Subentry in a paragraph.
+        ///   Looks up a localized string similar to &amp;Display each Subentry in a paragraph.
         /// </summary>
         internal static string ksDisplaySubentriesInParagraphs {
             get {

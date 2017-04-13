@@ -127,7 +127,7 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="browseButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>406, 3</value>
+    <value>344, 3</value>
   </data>
   <data name="browseButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 24</value>
@@ -165,6 +165,24 @@
   <data name="fileBrowseHorizFlow.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
     <value>GrowAndShrink</value>
   </data>
+  <data name="fileImportLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="fileImportLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="fileImportLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 8</value>
+  </data>
+  <data name="fileImportLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>66, 13</value>
+  </data>
+  <data name="fileImportLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="fileImportLabel.Text" xml:space="preserve">
+    <value>File to import</value>
+  </data>
   <data name="&gt;&gt;fileImportLabel.Name" xml:space="preserve">
     <value>fileImportLabel</value>
   </data>
@@ -176,6 +194,18 @@
   </data>
   <data name="&gt;&gt;fileImportLabel.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="importPathTextBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="importPathTextBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>75, 5</value>
+  </data>
+  <data name="importPathTextBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>263, 20</value>
+  </data>
+  <data name="importPathTextBox.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
   </data>
   <data name="&gt;&gt;importPathTextBox.Name" xml:space="preserve">
     <value>importPathTextBox</value>
@@ -215,6 +245,111 @@
   </data>
   <data name="overwriteHorizFlow.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
     <value>GrowAndShrink</value>
+  </data>
+  <data name="overwriteGroupBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left, Right</value>
+  </data>
+  <data name="overwriteOptionFlowLayoutPanel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="overwriteOptionFlowLayoutPanel.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
+    <value>GrowAndShrink</value>
+  </data>
+  <data name="doOverwriteRadioOption.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="doOverwriteRadioOption.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="doOverwriteRadioOption.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 3</value>
+  </data>
+  <data name="doOverwriteRadioOption.Size" type="System.Drawing.Size, System.Drawing">
+    <value>102, 17</value>
+  </data>
+  <data name="doOverwriteRadioOption.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="doOverwriteRadioOption.Text" xml:space="preserve">
+    <value>Overwrite option</value>
+  </data>
+  <data name="&gt;&gt;doOverwriteRadioOption.Name" xml:space="preserve">
+    <value>doOverwriteRadioOption</value>
+  </data>
+  <data name="&gt;&gt;doOverwriteRadioOption.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;doOverwriteRadioOption.Parent" xml:space="preserve">
+    <value>overwriteOptionFlowLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;doOverwriteRadioOption.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="notOverwriteRadioOption.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="notOverwriteRadioOption.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="notOverwriteRadioOption.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 26</value>
+  </data>
+  <data name="notOverwriteRadioOption.Size" type="System.Drawing.Size, System.Drawing">
+    <value>120, 17</value>
+  </data>
+  <data name="notOverwriteRadioOption.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="notOverwriteRadioOption.Text" xml:space="preserve">
+    <value>Not overwrite option</value>
+  </data>
+  <data name="&gt;&gt;notOverwriteRadioOption.Name" xml:space="preserve">
+    <value>notOverwriteRadioOption</value>
+  </data>
+  <data name="&gt;&gt;notOverwriteRadioOption.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;notOverwriteRadioOption.Parent" xml:space="preserve">
+    <value>overwriteOptionFlowLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;notOverwriteRadioOption.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="overwriteOptionFlowLayoutPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="overwriteOptionFlowLayoutPanel.FlowDirection" type="System.Windows.Forms.FlowDirection, System.Windows.Forms">
+    <value>TopDown</value>
+  </data>
+  <data name="overwriteOptionFlowLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 16</value>
+  </data>
+  <data name="overwriteOptionFlowLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>475, 53</value>
+  </data>
+  <data name="overwriteOptionFlowLayoutPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;overwriteOptionFlowLayoutPanel.Name" xml:space="preserve">
+    <value>overwriteOptionFlowLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;overwriteOptionFlowLayoutPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;overwriteOptionFlowLayoutPanel.Parent" xml:space="preserve">
+    <value>overwriteGroupBox</value>
+  </data>
+  <data name="&gt;&gt;overwriteOptionFlowLayoutPanel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="overwriteGroupBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 3</value>
+  </data>
+  <data name="overwriteGroupBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>481, 72</value>
+  </data>
+  <data name="overwriteGroupBox.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
   </data>
   <data name="&gt;&gt;overwriteGroupBox.Name" xml:space="preserve">
     <value>overwriteGroupBox</value>
@@ -300,300 +435,6 @@ Lots of explanation here, to be sure.
   </data>
   <data name="buttonLayoutPanel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
-  </data>
-  <data name="&gt;&gt;helpButton.Name" xml:space="preserve">
-    <value>helpButton</value>
-  </data>
-  <data name="&gt;&gt;helpButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;helpButton.Parent" xml:space="preserve">
-    <value>buttonLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;helpButton.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;cancelButton.Name" xml:space="preserve">
-    <value>cancelButton</value>
-  </data>
-  <data name="&gt;&gt;cancelButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;cancelButton.Parent" xml:space="preserve">
-    <value>buttonLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;cancelButton.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;importButton.Name" xml:space="preserve">
-    <value>importButton</value>
-  </data>
-  <data name="&gt;&gt;importButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;importButton.Parent" xml:space="preserve">
-    <value>buttonLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;importButton.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="buttonLayoutPanel.FlowDirection" type="System.Windows.Forms.FlowDirection, System.Windows.Forms">
-    <value>RightToLeft</value>
-  </data>
-  <data name="buttonLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 259</value>
-  </data>
-  <data name="buttonLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>487, 30</value>
-  </data>
-  <data name="buttonLayoutPanel.TabIndex" type="System.Int32, mscorlib">
-    <value>10</value>
-  </data>
-  <data name="&gt;&gt;buttonLayoutPanel.Name" xml:space="preserve">
-    <value>buttonLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;buttonLayoutPanel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;buttonLayoutPanel.Parent" xml:space="preserve">
-    <value>mainVerticalFlow</value>
-  </data>
-  <data name="&gt;&gt;buttonLayoutPanel.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="mainVerticalFlow.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="mainVerticalFlow.FlowDirection" type="System.Windows.Forms.FlowDirection, System.Windows.Forms">
-    <value>TopDown</value>
-  </data>
-  <data name="mainVerticalFlow.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="mainVerticalFlow.Size" type="System.Drawing.Size, System.Drawing">
-    <value>498, 301</value>
-  </data>
-  <data name="mainVerticalFlow.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;mainVerticalFlow.Name" xml:space="preserve">
-    <value>mainVerticalFlow</value>
-  </data>
-  <data name="&gt;&gt;mainVerticalFlow.Type" xml:space="preserve">
-    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mainVerticalFlow.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;mainVerticalFlow.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="fileImportLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Left</value>
-  </data>
-  <data name="fileImportLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="fileImportLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 8</value>
-  </data>
-  <data name="fileImportLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>128, 13</value>
-  </data>
-  <data name="fileImportLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>9</value>
-  </data>
-  <data name="fileImportLabel.Text" xml:space="preserve">
-    <value>File to import</value>
-  </data>
-  <data name="&gt;&gt;fileImportLabel.Name" xml:space="preserve">
-    <value>fileImportLabel</value>
-  </data>
-  <data name="&gt;&gt;fileImportLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;fileImportLabel.Parent" xml:space="preserve">
-    <value>fileBrowseHorizFlow</value>
-  </data>
-  <data name="&gt;&gt;fileImportLabel.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="importPathTextBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Left</value>
-  </data>
-  <data name="importPathTextBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>137, 5</value>
-  </data>
-  <data name="importPathTextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>263, 20</value>
-  </data>
-  <data name="importPathTextBox.TabIndex" type="System.Int32, mscorlib">
-    <value>8</value>
-  </data>
-  <data name="&gt;&gt;importPathTextBox.Name" xml:space="preserve">
-    <value>importPathTextBox</value>
-  </data>
-  <data name="&gt;&gt;importPathTextBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;importPathTextBox.Parent" xml:space="preserve">
-    <value>fileBrowseHorizFlow</value>
-  </data>
-  <data name="&gt;&gt;importPathTextBox.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="overwriteGroupBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Left, Right</value>
-  </data>
-  <data name="&gt;&gt;overwriteOptionFlowLayoutPanel.Name" xml:space="preserve">
-    <value>overwriteOptionFlowLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;overwriteOptionFlowLayoutPanel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;overwriteOptionFlowLayoutPanel.Parent" xml:space="preserve">
-    <value>overwriteGroupBox</value>
-  </data>
-  <data name="&gt;&gt;overwriteOptionFlowLayoutPanel.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="overwriteGroupBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 3</value>
-  </data>
-  <data name="overwriteGroupBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>481, 72</value>
-  </data>
-  <data name="overwriteGroupBox.TabIndex" type="System.Int32, mscorlib">
-    <value>9</value>
-  </data>
-  <data name="&gt;&gt;overwriteGroupBox.Name" xml:space="preserve">
-    <value>overwriteGroupBox</value>
-  </data>
-  <data name="&gt;&gt;overwriteGroupBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;overwriteGroupBox.Parent" xml:space="preserve">
-    <value>overwriteHorizFlow</value>
-  </data>
-  <data name="&gt;&gt;overwriteGroupBox.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="overwriteOptionFlowLayoutPanel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="overwriteOptionFlowLayoutPanel.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
-    <value>GrowAndShrink</value>
-  </data>
-  <data name="&gt;&gt;doOverwriteRadioOption.Name" xml:space="preserve">
-    <value>doOverwriteRadioOption</value>
-  </data>
-  <data name="&gt;&gt;doOverwriteRadioOption.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;doOverwriteRadioOption.Parent" xml:space="preserve">
-    <value>overwriteOptionFlowLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;doOverwriteRadioOption.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;notOverwriteRadioOption.Name" xml:space="preserve">
-    <value>notOverwriteRadioOption</value>
-  </data>
-  <data name="&gt;&gt;notOverwriteRadioOption.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;notOverwriteRadioOption.Parent" xml:space="preserve">
-    <value>overwriteOptionFlowLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;notOverwriteRadioOption.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="overwriteOptionFlowLayoutPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="overwriteOptionFlowLayoutPanel.FlowDirection" type="System.Windows.Forms.FlowDirection, System.Windows.Forms">
-    <value>TopDown</value>
-  </data>
-  <data name="overwriteOptionFlowLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 16</value>
-  </data>
-  <data name="overwriteOptionFlowLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>475, 53</value>
-  </data>
-  <data name="overwriteOptionFlowLayoutPanel.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;overwriteOptionFlowLayoutPanel.Name" xml:space="preserve">
-    <value>overwriteOptionFlowLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;overwriteOptionFlowLayoutPanel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;overwriteOptionFlowLayoutPanel.Parent" xml:space="preserve">
-    <value>overwriteGroupBox</value>
-  </data>
-  <data name="&gt;&gt;overwriteOptionFlowLayoutPanel.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="doOverwriteRadioOption.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="doOverwriteRadioOption.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="doOverwriteRadioOption.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 3</value>
-  </data>
-  <data name="doOverwriteRadioOption.Size" type="System.Drawing.Size, System.Drawing">
-    <value>102, 17</value>
-  </data>
-  <data name="doOverwriteRadioOption.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="doOverwriteRadioOption.Text" xml:space="preserve">
-    <value>Overwrite option</value>
-  </data>
-  <data name="&gt;&gt;doOverwriteRadioOption.Name" xml:space="preserve">
-    <value>doOverwriteRadioOption</value>
-  </data>
-  <data name="&gt;&gt;doOverwriteRadioOption.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;doOverwriteRadioOption.Parent" xml:space="preserve">
-    <value>overwriteOptionFlowLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;doOverwriteRadioOption.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="notOverwriteRadioOption.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="notOverwriteRadioOption.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="notOverwriteRadioOption.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 26</value>
-  </data>
-  <data name="notOverwriteRadioOption.Size" type="System.Drawing.Size, System.Drawing">
-    <value>120, 17</value>
-  </data>
-  <data name="notOverwriteRadioOption.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="notOverwriteRadioOption.Text" xml:space="preserve">
-    <value>Not overwrite option</value>
-  </data>
-  <data name="&gt;&gt;notOverwriteRadioOption.Name" xml:space="preserve">
-    <value>notOverwriteRadioOption</value>
-  </data>
-  <data name="&gt;&gt;notOverwriteRadioOption.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;notOverwriteRadioOption.Parent" xml:space="preserve">
-    <value>overwriteOptionFlowLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;notOverwriteRadioOption.ZOrder" xml:space="preserve">
-    <value>1</value>
   </data>
   <data name="helpButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -690,6 +531,57 @@ Lots of explanation here, to be sure.
   </data>
   <data name="&gt;&gt;importButton.ZOrder" xml:space="preserve">
     <value>2</value>
+  </data>
+  <data name="buttonLayoutPanel.FlowDirection" type="System.Windows.Forms.FlowDirection, System.Windows.Forms">
+    <value>RightToLeft</value>
+  </data>
+  <data name="buttonLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 259</value>
+  </data>
+  <data name="buttonLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>487, 30</value>
+  </data>
+  <data name="buttonLayoutPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="&gt;&gt;buttonLayoutPanel.Name" xml:space="preserve">
+    <value>buttonLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;buttonLayoutPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonLayoutPanel.Parent" xml:space="preserve">
+    <value>mainVerticalFlow</value>
+  </data>
+  <data name="&gt;&gt;buttonLayoutPanel.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="mainVerticalFlow.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="mainVerticalFlow.FlowDirection" type="System.Windows.Forms.FlowDirection, System.Windows.Forms">
+    <value>TopDown</value>
+  </data>
+  <data name="mainVerticalFlow.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="mainVerticalFlow.Size" type="System.Drawing.Size, System.Drawing">
+    <value>498, 301</value>
+  </data>
+  <data name="mainVerticalFlow.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;mainVerticalFlow.Name" xml:space="preserve">
+    <value>mainVerticalFlow</value>
+  </data>
+  <data name="&gt;&gt;mainVerticalFlow.Type" xml:space="preserve">
+    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mainVerticalFlow.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;mainVerticalFlow.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
