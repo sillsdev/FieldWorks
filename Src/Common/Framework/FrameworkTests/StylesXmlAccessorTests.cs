@@ -1,15 +1,14 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
+
+// ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -19,7 +18,6 @@ namespace SIL.FieldWorks.Common.Framework
 	[TestFixture]
 	public class StylesXmlAccessorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-
 		/// <summary>
 		/// This is not a very comprehensive test. There are important behaviors it does not test, such as the renaming
 		/// when the imported style has different values for the context-releated properties. This test just covers
@@ -163,6 +161,54 @@ namespace SIL.FieldWorks.Common.Framework
 			Assert.That(newStyle2.IsModified, Is.True);
 			Assert.That(newStyle2.NextRA, Is.Null, "should have cleared the invalid next style");
 			Assert.That(newStyle2.BasedOnRA, Is.EqualTo(newStyle1), "should have transferred the base style ref to the replacement");
+		}
+
+		/// <summary>
+		/// When an
+		/// </summary>
+		[Test]
+		public void FindOrCreateStyle_HandlesConflictingUserStyles()
+		{
+			var userStyle = Cache.ServiceLocator.GetInstance<IStStyleFactory>().Create();
+			Cache.LangProject.StylesOC.Add(userStyle);
+			const string styleName = "StyleName";
+
+			userStyle.Name = styleName;
+			userStyle.Type = StyleType.kstParagraph;
+			userStyle.Context = ContextValues.General;
+			userStyle.Structure = StructureValues.Undefined;
+			userStyle.Function = FunctionValues.Prose;
+			userStyle.IsBuiltIn = false;
+			userStyle.IsModified = true;
+			userStyle.NextRA = userStyle;
+			var propsFactory = TsPropsFactoryClass.Create();
+			var props1 = propsFactory.MakeProps("mystyle", Cache.DefaultAnalWs, 0);
+			userStyle.Rules = props1;
+
+			var userGuid = userStyle.Guid;
+			var factoryGuid = Guid.NewGuid();
+
+			var sut = new TestAccessorForFindOrCreateStyle(Cache);
+
+			sut.FindOrCreateStyle(styleName, StyleType.kstCharacter, ContextValues.General, StructureValues.Undefined,
+				FunctionValues.Prose, factoryGuid);
+
+			var userStyle1 = Cache.ServiceLocator.GetInstance<IStStyleRepository>().GetObject(userGuid); // will throw if not found
+			Assert.That(userStyle1, Is.SameAs(userStyle));
+			Assert.That(userStyle1.IsValidObject, "should still be valid");
+			Assert.That(userStyle1.Name, Is.Not.EqualTo(styleName));
+			Assert.That(userStyle1.IsBuiltIn, Is.False, "User style built in");
+			Assert.That(userStyle1.IsModified, Is.True, "user style modified");
+			Assert.That(userStyle1.NextRA, Is.EqualTo(userStyle1), "should have kept the self-referential next style");
+			Assert.That(userStyle1.Rules, Is.EqualTo(props1));
+			Assert.That(userStyle1.Guid, Is.EqualTo(userGuid), "Should have maintained its GUID");
+
+			var factoryStyle = Cache.ServiceLocator.GetInstance<IStStyleRepository>().GetObject(factoryGuid); // will throw if not found
+			Assert.That(factoryStyle.Name, Is.EqualTo(styleName));
+			Assert.That(factoryStyle.IsBuiltIn, Is.True, "factory style built in");
+			Assert.That(factoryStyle.IsModified, Is.False, "factory style modified");
+			Assert.That(factoryStyle.Owner, Is.Not.Null, "factory style owner");
+			Assert.That(factoryStyle.Guid, Is.EqualTo(factoryGuid), "Should have the factory-specifiied GUID");
 		}
 	}
 
