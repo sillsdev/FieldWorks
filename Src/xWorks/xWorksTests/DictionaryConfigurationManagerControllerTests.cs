@@ -84,6 +84,9 @@ namespace SIL.FieldWorks.XWorks
 				_bulletedTestStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Bulleted List", ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, false, 2, false);
 				_numberedTestStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Numbered List", ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, false, 2, false);
 				_homographTestStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Homograph-Number", ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, true, 2, false);
+
+				var characterStyleBasedOnSomething = styleFactory.Create(Cache.LangProject.StylesOC, "CharacterStyleBasedOnSomething", ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, true, 2, false);
+				characterStyleBasedOnSomething.BasedOnRA = _characterTestStyle;
 			});
 		}
 
@@ -694,11 +697,18 @@ namespace SIL.FieldWorks.XWorks
 			// Test paragraph background color, TODO border type and bullet info
 			attributeTests = "@background='(0,255,0)'";
 			AssertThatXmlIn.File(styleSheetFile).HasSpecifiedNumberOfMatchesForXpath("/Styles/markup/tag/paragraph[" + attributeTests + "]", 1);
+
 			// Test that a child style gets the basedOn for paragraph and does not write out inherited values
 			AssertThatXmlIn.File(styleSheetFile).HasSpecifiedNumberOfMatchesForXpath("/Styles/markup/tag[@id='" + _paraChildTestStyle.Name + "']", 1);
 			attributeTests = string.Format("@basedOn='{0}' and @alignment='full' and not(@lineSpacing='3 pt') and not(@indentRight='4 pt')",
 				_paraTestStyle.Name);
 			AssertThatXmlIn.File(styleSheetFile).HasSpecifiedNumberOfMatchesForXpath("/Styles/markup/tag/paragraph[" + attributeTests + "]", 1);
+
+			// LT-18267 Make sure character styles based on another style have their basedOn
+			// information recorded. Assert that there is 1 character style with a non-empty
+			// basedOn attribute, that was successfully exported.
+			attributeTests = "@type='character' and @basedOn!=''";
+			AssertThatXmlIn.File(styleSheetFile).HasSpecifiedNumberOfMatchesForXpath("/Styles/markup/tag[" + attributeTests + "]", 1);
 
 			// Verify that each known unsupported style is excluded from the export
 			foreach (var unsupported in DictionaryConfigurationImportController.UnsupportedStyles)
