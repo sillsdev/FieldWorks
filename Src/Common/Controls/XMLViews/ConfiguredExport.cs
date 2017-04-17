@@ -777,15 +777,15 @@ namespace SIL.FieldWorks.Common.Controls
 					{
 						bool isExpansion = false;
 						var newRule = new StringBuilder();
-						for (i = 0; i <= rule.Length - 1; i++)
+						for (var ruleIndex = 0; ruleIndex <= rule.Length - 1; ruleIndex++)
 						{
-							if (rule.Substring(i, 1) == "/")
+							if (rule.Substring(ruleIndex, 1) == "/")
 								isExpansion = true;
-							else if (rule.Substring(i, 1) == "=" || rule.Substring(i, 1)== "<")
+							else if (rule.Substring(ruleIndex, 1) == "=" || rule.Substring(ruleIndex, 1)== "<")
 								isExpansion = false;
 
 							if (!isExpansion)
-								newRule.Append(rule.Substring(i, 1));
+								newRule.Append(rule.Substring(ruleIndex, 1));
 						}
 						rule = newRule.ToString();
 					}
