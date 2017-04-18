@@ -8303,6 +8303,7 @@ namespace SIL.FieldWorks.XWorks
 	/// - LT-16504: Lexical References should be sorted by LexRefType in the order specified in the configuration
 	/// - LT-17384: Lexical References should be in the same order every time
 	///   (we accomplish this by sorting by Headword within each LexRefType)
+	/// - LT-18294: Relation Abbrev and Relation Name Configuration order ignored
 	/// Intermittent failures should NOT be ignored.
 	/// </summary>
 	[Test]
@@ -8344,6 +8345,14 @@ namespace SIL.FieldWorks.XWorks
 				Between = ", ",
 				Children = new List<ConfigurableDictionaryNode> { refHeadwordNode }
 			};
+			var relNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwnerType",
+				SubField = "Name",
+				After = ": ",
+				DictionaryNodeOptions =
+					GetWsOptionsForLanguages(new[] { "analysis" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis)
+			};
 			var relAbbrNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "OwnerType",
@@ -8354,14 +8363,16 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var relationsNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "MinimalLexReferences", CSSClassNameOverride = "lexrefs", Between = "; ",
+				FieldDescription = "MinimalLexReferences",
+				CSSClassNameOverride = "lexrefs",
+				Between = "; ",
 				DictionaryNodeOptions = GetListOptionsForStrings(DictionaryNodeListOptions.ListIds.Sense, new[]
-				{
-					wholeparts.Guid + ":r",
-					antonyms.Guid.ToString(),
-					wholeparts.Guid + ":f"
-				}),
-				Children = new List<ConfigurableDictionaryNode> { relAbbrNode, targetsNode }
+					{
+						wholeparts.Guid + ":r",
+						antonyms.Guid.ToString(),
+						wholeparts.Guid + ":f"
+					}),
+				Children = new List<ConfigurableDictionaryNode> { relAbbrNode, relNameNode, targetsNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -8391,9 +8402,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var settings = DefaultSettings;
-			const string antSpan = "<span class=\"ownertype_abbreviation\"><span lang=\"en\">ant</span></span>";
+			const string antAbbrSpan = "<span class=\"ownertype_abbreviation\"><span lang=\"en\">ant</span></span>";
 			const string whSpan = "<span class=\"ownertype_abbreviation\"><span lang=\"en\">wh</span></span>";
 			const string ptSpan = "<span class=\"ownertype_abbreviation\"><span lang=\"en\">pt</span></span>";
+			const string antNameSpan = "<span class=\"ownertype_name\"><span lang=\"en\">Antonym</span></span>";
 			const string femmeSpan = "<span class=\"headword\"><span lang=\"fr\">femme</span></span>";
 			var garçonSpan = TsStringUtils.Compose("<span class=\"headword\"><span lang=\"fr\">garçon</span></span>");
 			var bêteSpan = TsStringUtils.Compose("<span class=\"headword\"><span lang=\"fr\">bête</span></span>");
@@ -8403,56 +8415,66 @@ namespace SIL.FieldWorks.XWorks
 			//	new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } }, m_mediator)); // full output for diagnostics
 			var manResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(manEntry, mainEntryNode, null, settings);
 			AssertThatXmlIn.String(manResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 2); // antonyms are grouped into one span
-			var idxAntonym = manResult.IndexOf(antSpan, StringComparison.Ordinal);
+			var idxAntonymAbbr = manResult.IndexOf(antAbbrSpan, StringComparison.Ordinal);
 			var idxWhole = manResult.IndexOf(whSpan, StringComparison.Ordinal);
 			var idxPart = manResult.IndexOf(ptSpan, StringComparison.Ordinal);
-			Assert.Less(0, idxAntonym, "Antonym relation should exist for homme (man)");
+			var idxAntonymName = manResult.IndexOf(antNameSpan, StringComparison.Ordinal);
+			Assert.Less(0, idxAntonymAbbr, "Antonym abbreviation relation should exist for homme (man)");
 			Assert.Less(0, idxWhole, "Whole relation should exist for homme (man)");
 			Assert.AreEqual(-1, idxPart, "Part relation should not exist for homme (man)");
-			Assert.Less(idxWhole, idxAntonym, "Whole relation should come before Antonym relation for homme (man)");
+			Assert.Less(idxWhole, idxAntonymAbbr, "Whole relation should come before Antonym relation for homme (man)");
+			Assert.Less(idxAntonymAbbr, idxAntonymName, "Antonym name should exist after Antonym abbreviation");
 			var idxFemme = manResult.IndexOf(femmeSpan, StringComparison.Ordinal);
 			var idxGarcon = manResult.IndexOf(garçonSpan, StringComparison.Ordinal);
 			var idxBete = manResult.IndexOf(bêteSpan, StringComparison.Ordinal);
 			var idxTruc = manResult.IndexOf(trucSpan, StringComparison.Ordinal);
 			// LT-15764 The Antonyms are now sorted by Headword
-			Assert.Less(idxAntonym, idxBete);
+			Assert.Less(idxAntonymAbbr, idxBete);
 			Assert.Less(idxBete, idxFemme);
 			Assert.Less(idxFemme, idxGarcon);
 			Assert.Less(idxGarcon, idxTruc);
+			Assert.Less(idxAntonymAbbr, idxAntonymName, "Antonym name should come after Antonym abbreviation");
+			Assert.Less(idxAntonymName, idxBete, "Target entry should come after Antonym name");
 
 			// Ignore if usingSubfield. Justification: Part-Whole direction is miscalculated for field=Entry, subfield=MinimalLexReferences (LT-17571)
 			if (!usingSubfield)
 			{
 				var familyResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(familyEntry, mainEntryNode, null, settings);
 				AssertThatXmlIn.String(familyResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 2);
-				idxAntonym = familyResult.IndexOf(antSpan, StringComparison.Ordinal);
+				idxAntonymAbbr = familyResult.IndexOf(antAbbrSpan, StringComparison.Ordinal);
 				idxWhole = familyResult.IndexOf(whSpan, StringComparison.Ordinal);
 				idxPart = familyResult.IndexOf(ptSpan, StringComparison.Ordinal);
-				Assert.Less(0, idxAntonym, "Antonym relation should exist for famille");
+				idxAntonymName = familyResult.IndexOf(antNameSpan, StringComparison.Ordinal);
+				Assert.Less(0, idxAntonymAbbr, "Antonym abbreviation relation should exist for famille");
 				Assert.AreEqual(-1, idxWhole, "Whole relation should not exist for famille");
 				Assert.Less(0, idxPart, "Part relation should exist for famille");
-				Assert.Less(idxAntonym, idxPart, "Antonym relation should come before Part relation for famille");
+				Assert.Less(idxAntonymAbbr, idxPart, "Antonym abbreviation relation should come before Part relation for famille");
+				Assert.Less(idxAntonymAbbr, idxAntonymName, "Antonym name should come after Antonym abbreviation");
 
 				// SUT: Ensure that both directions of part-whole are kept separate
 				var girlResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(girlEntry, mainEntryNode, null, settings);
 				AssertThatXmlIn.String(girlResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 2); // whole and part
-				idxAntonym = girlResult.IndexOf(antSpan, StringComparison.Ordinal);
+				idxAntonymAbbr = girlResult.IndexOf(antAbbrSpan, StringComparison.Ordinal);
 				idxWhole = girlResult.IndexOf(whSpan, StringComparison.Ordinal);
 				idxPart = girlResult.IndexOf(ptSpan, StringComparison.Ordinal);
-				Assert.AreEqual(-1, idxAntonym, "Antonym relation should not exist for fille (girl)");
+				idxAntonymName = girlResult.IndexOf(antNameSpan, StringComparison.Ordinal);
+				Assert.AreEqual(-1, idxAntonymAbbr, "Antonym abbreviation relation should not exist for fille (girl)");
 				Assert.Less(0, idxWhole, "Whole relation should exist for fille (girl)");
 				Assert.Less(0, idxPart, "Part relation should exist for fille (girl)");
 				Assert.Less(idxWhole, idxPart, "Whole relation should come before Part relation for fille (girl)");
+				Assert.AreEqual(-1, idxAntonymName, "Antonym name relation should not exist for fille (girl)");
 			}
 
 			var individualResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(individualEntry, mainEntryNode, null, settings);
 			AssertThatXmlIn.String(individualResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 1);
-			idxAntonym = individualResult.IndexOf(antSpan, StringComparison.Ordinal);
+			idxAntonymAbbr = individualResult.IndexOf(antAbbrSpan, StringComparison.Ordinal);
 			idxWhole = individualResult.IndexOf(whSpan, StringComparison.Ordinal);
 			idxPart = individualResult.IndexOf(ptSpan, StringComparison.Ordinal);
-			Assert.Less(0, idxAntonym, "Antonym relation should exist for individuel");
+			idxAntonymName = individualResult.IndexOf(antNameSpan, StringComparison.Ordinal);
+			Assert.Less(0, idxAntonymAbbr, "Antonym abbreviation relation should exist for individuel");
 			Assert.AreEqual(-1, idxWhole, "Whole relation should not exist for individuel");
 			Assert.AreEqual(-1, idxPart, "Part relation should not exist for individuel");
+			Assert.Less(idxAntonymAbbr, idxAntonymName, "Antonym name relation should exist for individuel");
 		}
 
 		/// <summary>
