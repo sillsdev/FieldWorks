@@ -14,3 +14,5 @@ Some options that are not used in FieldWorks code are not implemented in the ada
 
 There's also a Manager class that allows to replace the implementation with a fake implementation
 for unit testing.
+
+See also the similar project at https://bitbucket.org/hindlemail/dialogadapters and https://www.nuget.org/packages/DialogAdapters/
