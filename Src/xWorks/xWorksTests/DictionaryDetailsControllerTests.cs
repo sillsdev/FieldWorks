@@ -1049,11 +1049,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void CheckNamedWsUnchecksDefault()
 		{
-			var wsOptions = new DictionaryNodeWritingSystemOptions
-			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
-				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular
-			};
+			var wsOptions = (DictionaryNodeWritingSystemOptions)ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "vernacular" },
+				DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular);
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
 			using (var view = controller.View)

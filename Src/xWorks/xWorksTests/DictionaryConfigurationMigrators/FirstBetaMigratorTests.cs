@@ -287,7 +287,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 		{
 			var firstPartNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "Test",
+				FieldDescription = "ReversalIndexEntry",
 				Children = new List<ConfigurableDictionaryNode>()
 			};
 			var alphaModel = new DictionaryConfigurationModel { Version = FirstAlphaMigrator.VersionAlpha3, Parts = new List<ConfigurableDictionaryNode> { firstPartNode } };
@@ -311,7 +311,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				Version = DictionaryConfigurationMigrator.VersionCurrent,
 				Parts = new List<ConfigurableDictionaryNode>
 				{
-					new ConfigurableDictionaryNode { FieldDescription = "Test", Children = new List<ConfigurableDictionaryNode> { groupNode } }
+					new ConfigurableDictionaryNode { FieldDescription = "ReversalIndexEntry", Children = new List<ConfigurableDictionaryNode> { groupNode } }
 				}
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(alphaModel);

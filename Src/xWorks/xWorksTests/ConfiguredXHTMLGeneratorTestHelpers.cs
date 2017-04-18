@@ -503,12 +503,14 @@ namespace SIL.FieldWorks.XWorks
 			};
 		}
 
-		public static DictionaryNodeOptions GetWsOptionsForLanguageswithDisplayWsAbbrev(string[] languages)
+		public static DictionaryNodeOptions GetWsOptionsForLanguageswithDisplayWsAbbrev(string[] languages,
+			DictionaryNodeWritingSystemOptions.WritingSystemType type = 0)
 		{
 			return new DictionaryNodeWritingSystemOptions
 			{
 				Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(languages),
-				DisplayWritingSystemAbbreviations = true
+				DisplayWritingSystemAbbreviations = true,
+				WsType = type
 			};
 		}
 
