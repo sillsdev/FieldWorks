@@ -1295,7 +1295,7 @@
 	  </WritingSystemOptions>
 	</ConfigurationItem>
 	<ConfigurationItem name="Senses" before=" " between="  " after="  " isEnabled="false" field="SensesOS" cssClassNameOverride="senses">
-	  <SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=")&#xA0;" numberingStyle="%O" numberSingleSense="false" showSingleGramInfoFirst="true"/>
+	  <SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=")&#xA0;" numberingStyle="%d" numberSingleSense="false" showSingleGramInfoFirst="true"/>
 	  <ConfigurationItem name="Grammatical Info." after="  " style="Dictionary-POS" isEnabled="true" field="MorphoSyntaxAnalysisRA" cssClassNameOverride="morphosyntaxanalysis">
 		<ConfigurationItem name="Gram Info (Name)" between=" " after="  " isEnabled="false" field="InterlinearNameTSS" cssClassNameOverride="graminfoname"/>
 		<ConfigurationItem name="Gram Info (Abbrev)" between=" " after="" isEnabled="false" field="InterlinearAbbrTSS" cssClassNameOverride="graminfoabbrev"/>
@@ -2296,7 +2296,7 @@
 	  </WritingSystemOptions>
 	</ConfigurationItem>
 	<ConfigurationItem name="Senses" before=" " between="  " after="  " isEnabled="false" field="SensesOS" cssClassNameOverride="senses">
-	  <SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=")&#xA0;" numberingStyle="%O" numberSingleSense="false" showSingleGramInfoFirst="true"/>
+	  <SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=")&#xA0;" numberingStyle="%d" numberSingleSense="false" showSingleGramInfoFirst="true"/>
 	  <ConfigurationItem name="Grammatical Info." after="  " style="Dictionary-POS" isEnabled="true" field="MorphoSyntaxAnalysisRA" cssClassNameOverride="morphosyntaxanalysis">
 		<ConfigurationItem name="Gram Info (Name)" between=" " after="" isEnabled="false" field="InterlinearNameTSS" cssClassNameOverride="graminfoname"/>
 		<ConfigurationItem name="Gram Info (Abbrev)" between=" " after="" isEnabled="false" field="InterlinearAbbrTSS" cssClassNameOverride="graminfoabbrev"/>
@@ -3692,7 +3692,7 @@
 	  </ConfigurationItem>
 		<!-- We can add a Before space on Senses if we want the sense further from the Complex Form Type, or leave it closer.  For now there are two spaces between.  -->
 	  <ConfigurationItem name="Senses" before=" " between="  " after="" isEnabled="true" field="SensesOS" cssClassNameOverride="senses">
-		<SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=")&#xA0;" numberingStyle="%O" numberSingleSense="false" showSingleGramInfoFirst="true"/>
+		<SenseOptions displayEachSenseInParagraph="false" numberStyle="Dictionary-SenseNumber" numberBefore="" numberAfter=")&#xA0;" numberingStyle="%d" numberSingleSense="false" showSingleGramInfoFirst="true"/>
 		<ConfigurationItem name="Grammatical Info." after="  " style="Dictionary-Contrasting" isEnabled="true" field="MorphoSyntaxAnalysisRA" cssClassNameOverride="morphosyntaxanalysis">
 		  <ConfigurationItem name="Gram Info (Name)" between=" " after="" isEnabled="false" field="InterlinearNameTSS" cssClassNameOverride="graminfoname"/>
 		  <ConfigurationItem name="Gram Info (Abbrev)" between=" " after="" isEnabled="false" field="InterlinearAbbrTSS" cssClassNameOverride="graminfoabbrev"/>
