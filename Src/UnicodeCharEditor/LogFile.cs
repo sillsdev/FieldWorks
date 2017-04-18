@@ -130,7 +130,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 								{
 									m_sFileName = (string)regKey.GetValue("InstallLanguageLog");
 									if (m_sFileName != null)
-										m_file = new StreamWriter(m_sFileName, true);
+										m_file = new StreamWriter(m_sFileName, true) { AutoFlush = true};
 									else
 									{
 										Console.WriteLine(

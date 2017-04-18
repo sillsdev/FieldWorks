@@ -58,6 +58,8 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				using (var window = new CharEditorWindow())
 					Application.Run(window);
 			}
+
+			LogFile.Release();
 		}
 	}
 }
