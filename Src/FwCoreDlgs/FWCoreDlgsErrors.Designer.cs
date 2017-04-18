@@ -185,5 +185,14 @@ namespace SIL.FieldWorks.FwCoreDlgs {
                 return ResourceManager.GetString("kstidzeroCodepoint", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Codepoint is not a valid 21-bit Unicode code point ranging from 0 through 10FFFF.
+        /// </summary>
+        internal static string kstidoutsideRange {
+            get {
+                return ResourceManager.GetString("kstidoutsideRange", resourceCulture);
+            }
+        }
     }
 }

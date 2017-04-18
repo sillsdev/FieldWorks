@@ -64,7 +64,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// <summary>Codepoint length must be 4-6 digits</summary>
 			longCodepoint,
 			/// <summary>If there is a decomposition type, you need a decomposition</summary>
-			mustEnterDecomp
+			mustEnterDecomp,
+			/// <summary>Codepoint is not a valid 21-bit Unicode code point ranging from 0 through 10FFFF</summary>
+			outsideRange
 		}
 
 		/// <summary>
