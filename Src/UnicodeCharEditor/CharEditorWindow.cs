@@ -457,17 +457,16 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 					m_fDirty = false;
 					return;
 				}
-				catch (PuaException ex)
+				catch (IcuLockedException)
 				{
-					var res = MessageBox.Show(ex.Message, Properties.Resources.ksMsgHeader,
-						MessageBoxButtons.RetryCancel);
+					var res = MessageBox.Show(Properties.Resources.ksErrorOccurredInstalling,
+						Properties.Resources.ksMsgHeader, MessageBoxButtons.RetryCancel);
 					if (res == DialogResult.Cancel)
 						return;
 				}
-				catch
+				catch (Exception ex)
 				{
-					DialogResult res = MessageBox.Show(Properties.Resources.ksErrorOccurredInstalling,
-						Properties.Resources.ksMsgHeader,
+					var res = MessageBox.Show(ex.Message, Properties.Resources.ksMsgHeader,
 						MessageBoxButtons.RetryCancel);
 					if (res == DialogResult.Cancel)
 						return;
