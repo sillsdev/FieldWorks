@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2014 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -14,7 +14,6 @@ using System.Drawing;
 using System.Globalization;
 using System.Xml;
 
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -505,7 +504,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <summary>
 		/// Find the existing style if there is one; otherwise, create new style object
 		/// These styles are defined in FlexStyles.xml or TeStyles.xml which have fixed guids
-		/// All guids of factory styles will change with release 7.3
+		/// All guids of factory styles changed with release 7.3
 		/// </summary>
 		/// <param name="styleName">Name of style</param>
 		/// <param name="styleType">Type of style (para or char)</param>
@@ -521,26 +520,25 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			IStStyle style;
 			bool fUsingExistingStyle = false;
-			if (m_htOrigStyles.ContainsKey(styleName))
+			// EnsureCompatibleFactoryStyle will rename an incompatible user style to prevent collisions,
+			// but it is our responsibility to update the GUID on a compatible user style.
+			if (m_htOrigStyles.TryGetValue(styleName, out style) && EnsureCompatibleFactoryStyle(style, styleType, context, structure, function))
 			{
-				// These factory styles are already in the project
-				style = m_htOrigStyles[styleName];
-				int hvo = style.Hvo;
-				if (style.Guid != factoryGuid)
-				{   // create a new style with the correct guid.
-					IStStyle oldStyle = style; // is there a copy constructor?
+				// A style with the same name already exists in the project.
+				// It may be a user style or a factory style, but it has compatible context, structure, and function.
+				if (style.Guid != factoryGuid) // This is a user style; give it the factory GUID and update all usages
+				{
+					// create a new style with the correct guid.
+					IStStyle oldStyle = style; // REVIEW LastufkaM 2012.05: is there a copy constructor?
 					style = m_cache.ServiceLocator.GetInstance<IStStyleFactory>().Create(m_cache, factoryGuid);
 
 					// Before we set any data on the new style we should give it an owner.
 					// Don't delete the old one yet, though, because we want to copy things from it (and references to it).
 					var owner = oldStyle.Owner;
-					var scriptureOwner = owner as IScripture;
-					if (scriptureOwner != null)
-						scriptureOwner.StylesOC.Add(style);
-					else
-						((ILangProject)owner).StylesOC.Add(style); // currently the only other option
+					var owningCollection = owner is ILangProject ? ((ILangProject)owner).StylesOC : ((IScripture)owner).StylesOC;
+					owningCollection.Add(style);
 
-					style.IsBuiltIn = oldStyle.IsBuiltIn;
+					style.IsBuiltIn = true; // whether or not it was before, it is now.
 					style.IsModified = oldStyle.IsModified;
 					style.Name = oldStyle.Name;
 					style.Type = oldStyle.Type;
@@ -563,16 +561,9 @@ namespace SIL.FieldWorks.Common.Framework
 					// arrangements of NextStyle). If so, just let those references stay for now (and be cleared when the old style
 					// is deleted).
 					DomainObjectServices.ReplaceReferencesWhereValid(oldStyle, style);
-					if (scriptureOwner != null)
-						scriptureOwner.StylesOC.Remove(oldStyle);
-					else
-						((ILangProject)owner).StylesOC.Remove(oldStyle);
+					owningCollection.Remove(oldStyle);
 				}
-				// Make sure existing style has compatible context, structure, and function.
-				// If not, get a new StStyle object that we can define.
-				style = EnsureCompatibleFactoryStyle(style, styleType, context, structure,
-					function);
-				fUsingExistingStyle = true; // We found a version of this in the current database.
+				m_htUpdatedStyles[styleName] = style; // REVIEW (Hasso) 2017.04: any reason this is shoved in the middle here? Parallel or UOW reasons, perhaps?
 			}
 			else
 			{
@@ -582,12 +573,9 @@ namespace SIL.FieldWorks.Common.Framework
 				m_databaseStyles.Add(style);
 				if (style.Owner == null)
 					throw new ApplicationException("StStyle objects must be owned!");
-			}
 
-			m_htUpdatedStyles[styleName] = style;
+				m_htUpdatedStyles[styleName] = style; // REVIEW (Hasso) 2017.04: any reason this is shoved in the middle here? Parallel or UOW reasons, perhaps?
 
-			if (!fUsingExistingStyle)
-			{
 				// Set properties not passed in as parameters
 				style.IsBuiltIn = true;
 				style.IsModified = false; // not found in our database, so use everything from the XML
@@ -793,22 +781,22 @@ namespace SIL.FieldWorks.Common.Framework
 
 		/// -------------------------------------------------------------------------------------
 		/// <summary>
-		/// If existing style is NOT a factory style, we're about to "clobber" a user style. If
-		/// the context, structure, and function don't match (and maybe even if they do), this
-		/// could be pretty bad. Store info necessary to rename their style and change all the
-		/// uses of it.
+		/// Determine whether the given style is compatible with the given type, context, structure, and function.
+		/// If the style is a factory style, and the context, structure, and function can't be adjusted to match, report an invalid installation.
+		/// If the style is NOT a factory style, and the context, structure, and function don't all match, rename it to prevent collisions.
+		/// If the style is not a factory style, but it is compatible, it is the CLIENT's responsibility to make adjustments.
 		/// </summary>
 		/// <param name="style">Style to check.</param>
 		/// <param name="type">Style type we want</param>
 		/// <param name="context">The context we want</param>
 		/// <param name="structure">The structure we want</param>
 		/// <param name="function">The function we want</param>
-		/// <returns>Either the passed in style, or a new style if the passed in one cannot be
-		/// redefined as requested.</returns>
+		/// <returns>True if the style can be used as-is or redefined as requested; False otherwise</returns>
 		/// -------------------------------------------------------------------------------------
-		public IStStyle EnsureCompatibleFactoryStyle(IStStyle style, StyleType type,
+		public bool EnsureCompatibleFactoryStyle(IStStyle style, StyleType type,
 			ContextValues context, StructureValues structure, FunctionValues function)
 		{
+			// If this is a bult-in style, but the context or function has changed, update them.
 			if (style.IsBuiltIn &&
 				(style.Context != context ||
 				style.Function != function) &&
@@ -825,9 +813,10 @@ namespace SIL.FieldWorks.Common.Framework
 					style.Structure = structure;
 				if (style.Function != function)
 					style.Function = function;
-				return style;
+				return true;
 			}
 
+			// Handle an incompatible Style by renaming a conflicting User style or reporting an invalid installation for an incompatible built-in style.
 			if (style.Type != type ||
 				!CompatibleContext(style.Context, context) ||
 				style.Structure != structure ||
@@ -849,17 +838,15 @@ namespace SIL.FieldWorks.Common.Framework
 					m_styleReplacements[style.Name] = sNewName;
 					style.Name = sNewName;
 				}
-				//The guid for this new style is going to be different.
-				var newFactoryStyle = m_cache.ServiceLocator.GetInstance<IStStyleFactory>().Create();
-				// The new style is only added if its guid is different from every other known style.
-				m_databaseStyles.Add(newFactoryStyle);
-				return newFactoryStyle;
+				return false;
 			}
+
+			// Update context and function as needed
 			if (style.Context != context)
 				style.Context = context;
 			if (style.Function != function)
 				style.Function = function;
-			return style;
+			return true;
 		}
 
 		/// -------------------------------------------------------------------------------------
