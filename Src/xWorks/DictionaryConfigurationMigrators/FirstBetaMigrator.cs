@@ -403,7 +403,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			DCM.PerformActionOnNodes(oldConfigPart.Children, node =>
 			{
 				if (node.Label == "Referenced Sense Headword")
-					node.FieldDescription = "HeadwordRef";
+					node.FieldDescription = "HeadWordRef";
 			});
 		}
 	}
