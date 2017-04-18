@@ -225,6 +225,14 @@ namespace SIL.FieldWorks.XWorks.LexText
 			writer.WriteAttributeString("userlevel", style.UserLevel.ToString());
 			writer.WriteAttributeString("context", GetStyleContext(style));
 			writer.WriteAttributeString("type", GetStyleType(style));
+
+			if (GetStyleType(style) == "character" && style.InheritsFrom != null)
+			{
+				// LT-18267 Character styles put their basedOn in a different place
+				// than paragraph styles.
+				writer.WriteAttributeString("basedOn", GetStyleId(style.InheritsFrom));
+			}
+
 			WriteUsageElement(style.RealStyle.Usage, writer);
 			WriteFontAndParagraphRulesXml(style, writer, style.InheritsFrom, style.NextStyle);
 			writer.WriteEndElement(); // tag
