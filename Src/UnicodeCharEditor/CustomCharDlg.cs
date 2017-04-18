@@ -1316,7 +1316,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			m_lblPUADisplay.Text = PUACharacter.CodepointAsString(m_txtCodepoint.Text);
 			m_lblWarning.Text = "";
 
-			// Don't bother decoding the text if the text box was disabled, becuase then the
+			// Don't bother decoding the text if the text box was disabled, because then the
 			// user didn't type it.
 			if(m_txtCodepoint.Enabled == false)
 				return;
