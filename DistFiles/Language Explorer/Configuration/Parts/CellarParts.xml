@@ -231,7 +231,7 @@
 						</chooserInfo>
 					</slice>
 					<slice editor="ghostvector" ghostClass="RnGenericRec" ghostField="AnthroCodes" label="Anthropology Categories">
-						<chooserInfo helpBrowser="true">
+						<chooserInfo helpBrowser="false">
 							<!-- Duplicates info in RnGenericRec-Detail-AnthroCodes-->
 							<chooserLink type="goto" label="Edit the Anthropology Categories" tool="anthroEdit" />
 						</chooserInfo>
