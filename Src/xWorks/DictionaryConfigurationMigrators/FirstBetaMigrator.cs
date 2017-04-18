@@ -396,5 +396,15 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				}
 			});
 		}
+
+		/// <summary>LT-18288: Change Headword to HeadwordRef for All "Referenced Sense Headword" to allow users to select WS</summary>
+		private static void ChangeReferenceSenseHeadwordFieldName(ConfigurableDictionaryNode oldConfigPart)
+		{
+			DCM.PerformActionOnNodes(oldConfigPart.Children, node =>
+			{
+				if (node.Label == "Referenced Sense Headword")
+					node.FieldDescription = "HeadwordRef";
+			});
+		}
 	}
 }
