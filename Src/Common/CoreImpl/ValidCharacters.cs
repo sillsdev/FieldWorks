@@ -7,17 +7,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.IO;
 using System.Xml;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.CoreImpl;
 using SIL.WritingSystems;
 
-namespace SIL.FieldWorks.FDO.DomainServices
+namespace SIL.CoreImpl
 {
 	/// <summary>
 	/// Enumeration of valid character types

@@ -323,7 +323,6 @@
     <Compile Include="DomainServices\StTxtParaBldr.cs" />
     <Compile Include="DomainServices\StyleInfoTable.cs" />
     <Compile Include="DomainServices\StyleServices.cs" />
-    <Compile Include="DomainServices\ValidCharacters.cs" />
     <Compile Include="DomainServices\VirtualOrderingServices.cs" />
     <Compile Include="DomainServices\WfiWordformServices.cs" />
     <Compile Include="DomainServices\WritingSystemServices.cs" />

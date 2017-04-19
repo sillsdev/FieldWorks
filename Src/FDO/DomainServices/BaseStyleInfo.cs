@@ -829,7 +829,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			// process the rules if they exist
 			ITsTextProps styleProps = style.Rules;
 			SetPropertiesFromRules(styleProps);
-			}
+		}
 
 		private void SetPropertiesFromRules(ITsTextProps styleProps)
 		{

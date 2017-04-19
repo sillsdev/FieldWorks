@@ -122,6 +122,7 @@
     <Compile Include="TsStrFactory.cs" />
     <Compile Include="TsString.cs" />
     <Compile Include="TsTextProps.cs" />
+    <Compile Include="ValidCharacters.cs" />
     <Compile Include="VersionInfoProvider.cs" />
     <Compile Include="StartupException.cs" />
     <Compile Include="GenDate.cs" />

@@ -10,7 +10,6 @@
 
 using System.Collections.Generic;
 using SIL.CoreImpl;
-using SIL.FieldWorks.FDO.DomainServices;
 using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FwCoreDlgs

@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -14,7 +13,6 @@ using System.Xml.Linq;
 using SIL.Collections;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Validation;
 using SIL.HermitCrab;
 using SIL.HermitCrab.MorphologicalRules;

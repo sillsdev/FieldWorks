@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,7 +10,6 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Test.TestUtils;
 using Sfm2Xml;
@@ -24,10 +22,6 @@ namespace LexTextControlsTests
 	[TestFixture]
 	public class WordsSfmImportTests : BaseTest
 	{
-		public WordsSfmImportTests()
-		{
-		}
-
 		/// <summary>
 		/// This tests out most aspects of the conversion.
 		/// </summary>
