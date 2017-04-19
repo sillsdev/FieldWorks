@@ -342,6 +342,7 @@
     <Compile Include="DeleteWritingSystemWarningDialog.Designer.cs">
       <DependentUpon>DeleteWritingSystemWarningDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="FwCharacterCategorizer.cs" />
     <Compile Include="FwCheckAnthroListDlg.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -350,7 +350,6 @@
     <Compile Include="FdoTestHelper.cs" />
     <Compile Include="FieldDescriptionTests.cs" />
     <Compile Include="FreeTransEditMonitorTests.cs" />
-    <Compile Include="FwCharacterCategorizerTests.cs" />
     <Compile Include="LexEntryTests.cs" />
     <Compile Include="LexSenseTests.cs" />
     <Compile Include="LingTests.cs" />

@@ -270,6 +270,7 @@
     <Compile Include="FlatListView.Designer.cs">
       <DependentUpon>FlatListView.cs</DependentUpon>
     </Compile>
+    <Compile Include="GhostParentHelper.cs" />
     <Compile Include="LabelNode.cs" />
     <Compile Include="LayoutMerger.cs" />
     <Compile Include="MatchingObjectsBrowser.cs">

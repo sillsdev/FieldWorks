@@ -4,11 +4,12 @@
 
 using System;
 using System.Linq;
+using SIL.CoreImpl;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.CoreImpl;
 
-namespace SIL.FieldWorks.FDO.DomainServices
+namespace SIL.FieldWorks.Common.Controls
 {
 	/// <summary>
 	/// This class helps manage "ghost" virtual properties. The characteristic of such a property is that

@@ -10,10 +10,10 @@
 
 using System.Collections.Generic;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.FDO.DomainServices;
 using SILUBS.SharedScrUtils;
 
-namespace SIL.FieldWorks.FDO.DomainServices
+namespace SIL.FieldWorks.FwCoreDlgs
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public override bool IsLower(char ch)
 		{
-			return Icu.GetCharType(ch) == Icu.UCharCategory.U_LOWERCASE_LETTER;
+			return Common.FwKernelInterfaces.Icu.GetCharType(ch) == Common.FwKernelInterfaces.Icu.UCharCategory.U_LOWERCASE_LETTER;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public override bool IsUpper(char ch)
 		{
-			return Icu.GetCharType(ch) == Icu.UCharCategory.U_UPPERCASE_LETTER;
+			return Common.FwKernelInterfaces.Icu.GetCharType(ch) == Common.FwKernelInterfaces.Icu.UCharCategory.U_UPPERCASE_LETTER;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public override bool IsDiacritic(char cc)
 		{
-			return Icu.IsDiacritic(cc);
+			return Common.FwKernelInterfaces.Icu.IsDiacritic(cc);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public override bool IsPunctuation(char cc)
 		{
-			return Icu.IsPunct(cc);
+			return Common.FwKernelInterfaces.Icu.IsPunct(cc);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -107,7 +107,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public override bool IsTitle(char ch)
 		{
-			return Icu.GetCharType(ch) == Icu.UCharCategory.U_TITLECASE_LETTER;
+			return Common.FwKernelInterfaces.Icu.GetCharType(ch) == Common.FwKernelInterfaces.Icu.UCharCategory.U_TITLECASE_LETTER;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -138,7 +138,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			// Be careful to make sure that zwnj and zwj are included here for
 			// indic scripts since they should not break words.
-			return Icu.GetCharType(cc) == Icu.UCharCategory.U_CONNECTOR_PUNCTUATION;
+			return Common.FwKernelInterfaces.Icu.GetCharType(cc) == Common.FwKernelInterfaces.Icu.UCharCategory.U_CONNECTOR_PUNCTUATION;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -157,7 +157,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				WordAndPunct wap = new WordAndPunct();
 
 				// Ignore any initial separator characters
-				while (i < text.Length && Icu.IsSeparator(text[i]))
+				while (i < text.Length && Common.FwKernelInterfaces.Icu.IsSeparator(text[i]))
 					i++;
 
 				if (i == text.Length)
@@ -187,7 +187,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						}
 						break;
 					}
-					if (Icu.IsNumeric(cc))
+					if (Common.FwKernelInterfaces.Icu.IsNumeric(cc))
 					{
 						// allow digits in words
 					}
@@ -205,7 +205,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				while (i < text.Length)
 				{
 					cc = text[i];
-					if (IsWordFormingCharacter(cc) || Icu.IsNumeric(cc))
+					if (IsWordFormingCharacter(cc) || Common.FwKernelInterfaces.Icu.IsNumeric(cc))
 						break;
 					i = i + 1;
 				}

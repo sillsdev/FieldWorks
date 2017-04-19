@@ -296,10 +296,8 @@
     <Compile Include="DomainServices\DataMigration\IDataMigration.cs" />
     <Compile Include="DomainServices\DataMigration\IDataMigrationManager.cs" />
     <Compile Include="DomainServices\FontInfo.cs" />
-    <Compile Include="DomainServices\FwCharacterCategorizer.cs" />
     <Compile Include="DomainServices\FwStyleSheet.cs" />
     <Compile Include="DomainServices\GetServicesFromFWClass.cs" />
-    <Compile Include="DomainServices\GhostParentHelper.cs" />
     <Compile Include="DomainServices\ImportFileSource.cs" />
     <Compile Include="DomainServices\ImportMappingInfo.cs" />
     <Compile Include="DomainServices\IScrImportFileInfo.cs" />
