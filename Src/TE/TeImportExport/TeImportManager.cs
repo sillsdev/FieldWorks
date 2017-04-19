@@ -9,7 +9,6 @@
 using System;
 using System.Collections.Specialized; // for StringCollection
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -39,7 +38,6 @@ namespace SIL.FieldWorks.TE
 		#region Member data
 		private readonly FdoCache m_cache;
 		private readonly Form m_mainWnd;
-		private readonly ITeImportCallbacks m_importCallbacks;
 		private readonly FwStyleSheet m_styleSheet;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private readonly IApp m_app;
@@ -51,37 +49,6 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		private UndoImportManager m_undoImportManager;
 		#endregion
-
-		private class DummyImportCallbacks : ITeImportCallbacks
-		{
-			#region ITeImportCallbacks Members
-
-			public FilteredScrBooks BookFilter
-			{
-				get { return null; }
-			}
-
-			public float DraftViewZoomPercent
-			{
-				get { return 1.0f; }
-			}
-
-			public float FootnoteZoomPercent
-			{
-				get { return 1.0f; }
-			}
-
-			public bool GotoVerse(ScrReference targetRef)
-			{
-				throw new NotImplementedException();
-			}
-
-			public void UpdateKeyTermsView()
-			{
-				throw new NotImplementedException();
-			}
-			#endregion
-		}
 
 		#region Constructor
 		/// ------------------------------------------------------------------------------------
@@ -99,7 +66,6 @@ namespace SIL.FieldWorks.TE
 			: this(app.Cache, styleSheet, app, fParatextStreamlinedImport)
 		{
 			m_mainWnd = mainWnd;
-			m_importCallbacks = new DummyImportCallbacks();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -207,9 +173,7 @@ namespace SIL.FieldWorks.TE
 					firstImported = ImportWithUndoTask(importSettings, true, updateDescription);
 				}
 				firstImported = CompleteImport(firstImported);
-				if (!m_fParatextStreamlinedImport)
-					SetSelectionsAfterImport(firstImported);
-				return (firstImported != ScrReference.Empty);
+				return firstImported != ScrReference.Empty;
 			}
 			finally
 			{
@@ -747,34 +711,12 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		protected virtual void DisplayImportedBooksDlg(IScrDraft backupSavedVersion)
 		{
-			using (ImportedBooks dlg = new ImportedBooks(m_cache, m_styleSheet,
-				ImportedVersion, m_importCallbacks.DraftViewZoomPercent,
-				m_importCallbacks.FootnoteZoomPercent, backupSavedVersion, m_importCallbacks.BookFilter,
+			using (ImportedBooks dlg = new ImportedBooks(m_cache, m_styleSheet, ImportedVersion, backupSavedVersion,
 				UndoManager.ImportedBooks.Keys, m_helpTopicProvider, m_app))
 			{
 				dlg.ShowOrSave(m_mainWnd, m_fParatextStreamlinedImport);
 			}
 		}
 		#endregion
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Set selections after import.
-		/// </summary>
-		/// <param name="firstReference">The first reference of imported stuff.</param>
-		/// ------------------------------------------------------------------------------------
-		private void SetSelectionsAfterImport(ScrReference firstReference)
-		{
-			if (!firstReference.IsEmpty)
-			{
-				// Set the IP at the beginning of the imported material (i.e. the first reference,
-				// not the first segment).
-				m_importCallbacks.GotoVerse(firstReference);
-			}
-
-			// If we are in the Key Terms view then update the view in case we imported
-			// a book so that it is possible to select the verse for the current key term.
-			m_importCallbacks.UpdateKeyTermsView();
-		}
 	}
 }

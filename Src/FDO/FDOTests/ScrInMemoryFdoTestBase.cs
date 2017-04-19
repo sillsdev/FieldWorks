@@ -51,18 +51,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		#region Overrides
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Override to TestSetup to clear book filters between tests.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public override void TestSetup()
-		{
-			Cache.ServiceLocator.GetInstance<IFilteredScrBookRepository>().Clear();
-
-			base.TestSetup();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Initializes Scripture for testing.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------

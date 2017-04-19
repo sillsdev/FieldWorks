@@ -227,7 +227,6 @@
     <Compile Include="TeImportExportExtensions.cs" />
     <Compile Include="TeImportExportFileDialog.cs" />
     <Compile Include="TeImport.cs" />
-    <Compile Include="ITeImportCallbacks.cs" />
     <Compile Include="TeImportManager.cs" />
     <Compile Include="TeImportUi.cs" />
     <Compile Include="UndoImportManager.cs" />

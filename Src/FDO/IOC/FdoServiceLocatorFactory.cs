@@ -94,12 +94,6 @@ namespace SIL.FieldWorks.FDO.IOC
 				.LifecycleIs(new SingletonLifecycle())
 				.Use<ParagraphCounterRepository>();
 
-			// Add IFilteredScrBookRepository
-			registry
-				.For<IFilteredScrBookRepository>()
-				.LifecycleIs(new SingletonLifecycle())
-				.Use<FilteredScrBookRepository>();
-
 			// Add MDC
 			registry
 				.For<IFwMetaDataCacheManaged>()

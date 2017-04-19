@@ -292,7 +292,6 @@
     <Compile Include="DomainServices\DataMigration\IDomainObjectDTORepository.cs" />
     <Compile Include="DomainServices\DataStoreInitializationServices.cs" />
     <Compile Include="DomainServices\DomainObjectServices.cs" />
-    <Compile Include="DomainServices\FilteredScrBooks.cs" />
     <Compile Include="DomainServices\DataMigration\IDataMigration.cs" />
     <Compile Include="DomainServices\DataMigration\IDataMigrationManager.cs" />
     <Compile Include="DomainServices\FontInfo.cs" />
@@ -367,7 +366,6 @@
     <Compile Include="Infrastructure\Impl\DataSortingService.cs" />
     <Compile Include="Infrastructure\Impl\FdoInvertSet.cs" />
     <Compile Include="Infrastructure\Impl\FdoRepositoryBase.cs" />
-    <Compile Include="Infrastructure\Impl\FilteredScrBookRepository.cs" />
     <Compile Include="Infrastructure\Impl\GeneratedFDOBackendProvider.cs" />
     <Compile Include="Infrastructure\Impl\CmSemanticDomainRepository.cs" />
     <Compile Include="Infrastructure\Impl\ObjectSurrogateEquater.cs" />

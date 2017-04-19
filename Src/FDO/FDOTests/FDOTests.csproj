@@ -329,7 +329,6 @@
     <Compile Include="DataMigrationTests\DataMigrationTestServices.cs" />
     <Compile Include="DeleteTests.cs" />
     <Compile Include="DsChartTests.cs" />
-    <Compile Include="FilteredScrBooksTests.cs" />
     <Compile Include="LangProjectTests.cs" />
     <Compile Include="CmSemanticDomainRepositoryTests.cs" />
     <Compile Include="LinkedFilesRelativePathHelperTests.cs" />
