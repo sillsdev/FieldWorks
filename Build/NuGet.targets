@@ -2,9 +2,9 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
 		<NuGetToolsPath>$(MSBuildThisFileDirectory)</NuGetToolsPath>
-		<PackagesConfigSource Condition="'$(OS)'=='Windows_NT'">$(NuGetToolsPath)packages-windows.config</PackagesConfigSource>
-		<PackagesConfigSource Condition="'$(OS)'!='Windows_NT'">$(NuGetToolsPath)packages-linux.config</PackagesConfigSource>
-		<PackagesConfig>$(NuGetToolsPath)packages.config</PackagesConfig>
+		<PlatformPackagesConfig Condition="'$(OS)'=='Windows_NT'">$(NuGetToolsPath)nuget-windows/packages.config</PlatformPackagesConfig>
+		<PlatformPackagesConfig Condition="'$(OS)'!='Windows_NT'">$(NuGetToolsPath)nuget-linux/packages.config</PlatformPackagesConfig>
+		<CommonPackagesConfig>$(NuGetToolsPath)nuget-common/packages.config</CommonPackagesConfig>
 
 		<!-- NuGet command -->
 		<NuGetExePath>$(NuGetToolsPath)NuGet.exe</NuGetExePath>
@@ -12,20 +12,29 @@
 		<!--
 		NuGet has trouble when Ubuntu 16.04 pbuilder sets the home directory to /nonexistent, and
 		just setting -ConfigFile is not enough to make nuget not work with config files in the home directory.
-		Setting XDG_CONFIG_HOME prevents nuget from working with config files the home directory.
+		Setting XDG_CONFIG_HOME prevents nuget from working with config files in the home directory.
 		-->
 		<NuGetCommand Condition=" '$(OS)' != 'Windows_NT' ">[ -d $HOME ] || export XDG_CONFIG_HOME=$(mktemp -d); mono --runtime=v4.0.30319 $(NuGetExePath)</NuGetCommand>
 
 		<!-- Command to download packages -->
-		<CoreRestoreCommand>$(NuGetCommand) restore "$(PackagesConfig)" -NonInteractive -PackagesDirectory "$(fwrt)/packages"</CoreRestoreCommand>
-		<RestoreCommand Condition="'$(OS)' == 'Windows_NT'">$(CoreRestoreCommand)</RestoreCommand>
-		<!-- 2017-03-17: Sometimes NuGet fails after downloading when running on a build node, such as with message "Object reference not set to an instance of an object". Try it more than once to reduce this random failure. Maybe upgrading NuGet will help actually fix the problem. -->
-		<RestoreCommand Condition="'$(OS)' != 'Windows_NT'">$(CoreRestoreCommand) || (sleep 2m; $(CoreRestoreCommand)) || (sleep 2m; $(CoreRestoreCommand))</RestoreCommand>
+		<RestoreCommandCommon>$(NuGetCommand) restore "$(CommonPackagesConfig)" -NonInteractive -PackagesDirectory "$(fwrt)/packages"</RestoreCommandCommon>
+		<RestoreCommandPlatformSpecific>$(NuGetCommand) restore "$(PlatformPackagesConfig)" -NonInteractive -PackagesDirectory "$(fwrt)/packages"</RestoreCommandPlatformSpecific>
 	</PropertyGroup>
 
 	<Target Name="RestoreNuGetPackages" DependsOnTargets="CheckPrerequisites">
-		<Copy SourceFiles="$(PackagesConfigSource)" DestinationFiles="$(PackagesConfig)"/>
-		<Exec Command="$(RestoreCommand)"/>
+		<!-- Download packages in packages-common.config. Then download packages in either packages-linux.config or packages-windows.config. -->
+
+		<Exec Condition="'$(OS)' == 'Windows_NT'" Command="$(RestoreCommandCommon)"/>
+		<Exec Condition="'$(OS)' == 'Windows_NT'" Command="$(RestoreCommandPlatformSpecific)"/>
+
+		<!--
+		2017-03-17: Sometimes NuGet fails after downloading when running on a build node,
+		such as with message "Object reference not set to an instance of an object". Try
+		it more than once to reduce this random failure. Maybe upgrading NuGet will help
+		actually fix the problem.
+		-->
+		<Exec Condition="'$(OS)' != 'Windows_NT'" Command="$(RestoreCommandCommon) || (sleep 2m; $(RestoreCommandCommon)) || (sleep 2m; $(RestoreCommandCommon))"/>
+		<Exec Condition="'$(OS)' != 'Windows_NT'" Command="$(RestoreCommandPlatformSpecific) || (sleep 2m; $(RestoreCommandPlatformSpecific)) || (sleep 2m; $(RestoreCommandPlatformSpecific))"/>
 	</Target>
 
 	<PropertyGroup>
