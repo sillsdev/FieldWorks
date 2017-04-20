@@ -610,7 +610,7 @@ function Toggle(node, path, imgOffset)
 					<xsl:text>&#xa0;&#xa0;(Reason: This is a duplicate parse and has been pruned.)</xsl:text>
 				</span>
 			</xsl:when>
-			<xsl:otherwise>
+			<xsl:when test="name() != 'WordSynthesisTrace' and $moreToShow != 'Y'">
 				<xsl:for-each select="FailureReason">
 					<span style="unicode-bidi:embed">
 						<xsl:attribute name="style">
@@ -733,7 +733,7 @@ function Toggle(node, path, imgOffset)
 								<xsl:value-of select="RequiredInflFeatures"/>
 								<xsl:text>.</xsl:text>
 							</xsl:when>
-							<xsl:when test="@type = 'stemName'">
+							<xsl:when test="@type = 'requiredStemName'">
 								<xsl:text>The allomorph '</xsl:text>
 								<span>
 									<xsl:attribute name="style">
@@ -748,6 +748,22 @@ function Toggle(node, path, imgOffset)
 								<xsl:text>' has a stem name of '</xsl:text>
 								<xsl:value-of select="StemName"/>
 								<xsl:text>', therefore it requires some inflectional affixes with inflection features for that stem name, but there aren't any such inflectional affixes.</xsl:text>
+							</xsl:when>
+							<xsl:when test="@type = 'excludedStemName'">
+								<xsl:text>The parse contains inflectional features that match the stem name '</xsl:text>
+								<xsl:value-of select="StemName"/>
+								<xsl:text>', which was specified by another allomorph in the stem/root entry '</xsl:text>
+								<span>
+									<xsl:attribute name="style">
+										<xsl:text>cursor:pointer</xsl:text>
+										<xsl:call-template name="GetVernacularFont"/>
+									</xsl:attribute>
+									<xsl:attribute name="id">
+										<xsl:value-of select="Allomorph/Morpheme/@id"/>
+									</xsl:attribute>
+									<xsl:value-of select="Allomorph/Morpheme/HeadWord"/>
+								</span>
+								<xsl:text>'.</xsl:text>
 							</xsl:when>
 							<xsl:when test="@type = 'environment'">
 								<xsl:choose>
@@ -814,6 +830,9 @@ function Toggle(node, path, imgOffset)
 							<xsl:when test="@type = 'nonFinalTemplate'">
 								<xsl:text>Further derivation is required after a non-final template.</xsl:text>
 							</xsl:when>
+							<xsl:when test="@type = 'noTemplatesApplied'">
+								<xsl:text>Applicable affix templates were found, but none were applied.</xsl:text>
+							</xsl:when>
 							<xsl:when test="@type = 'pos'">
 								<xsl:text>The parse's part of speech '</xsl:text>
 								<xsl:value-of select="Pos"/>
@@ -821,11 +840,20 @@ function Toggle(node, path, imgOffset)
 								<xsl:value-of select="RequiredPos"/>
 								<xsl:text>.</xsl:text>
 							</xsl:when>
+							<xsl:when test="@type = 'nonPartialRuleAfterFinalTemplate'">
+								<xsl:text>Further derivation is prohibited after a final template.</xsl:text>
+							</xsl:when>
+							<xsl:when test="@type = 'partialRuleAfterNonFinalTemplate'">
+								<xsl:text>Further derivation is required after a non-final template, but this affix is not derivational.</xsl:text>
+							</xsl:when>
+							<xsl:when test="@type = 'maxAppCount'">
+								<xsl:text>An affix cannot be applied more than once.</xsl:text>
+							</xsl:when>
 						</xsl:choose>
 						<xsl:text>)</xsl:text>
 					</span>
 				</xsl:for-each>
-			</xsl:otherwise>
+			</xsl:when>
 		</xsl:choose>
 	</xsl:template>
 	<!--

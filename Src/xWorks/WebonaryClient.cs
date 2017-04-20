@@ -40,6 +40,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 			catch (WebException ex)
 			{
+				if(ex.Response == null)
+					throw new WebonaryException("WebException with null response stream.", ex);
 				using (var stream = ex.Response.GetResponseStream())
 				using (var reader = new StreamReader(stream))
 				{

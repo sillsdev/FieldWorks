@@ -286,26 +286,26 @@
 
 	<PropertyGroup>
 		<!-- ChorusWin32v25nostrongCont is the chorus-2.5 branch build of Chorus for Windows development. Update when appropriate. -->
-		<ChorusDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/.lastSuccessful</ChorusDownloadUrl>
+		<ChorusDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.5.tcbuildtag</ChorusDownloadUrl>
 		<!-- ChorusPrecise64v25Cont is the chorus-2.5 branch build of Chorus for Linux development. Update when appropriate. -->
-		<ChorusDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/.lastSuccessful</ChorusDownloadUrl>
+		<ChorusDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.5.tcbuildtag</ChorusDownloadUrl>
 		<!-- PalasoWin32v26nostrongCont is the libpalaso-2.6 branch build of Palaso for Windows development. Update when appropriate. -->
-		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/.lastSuccessful</PalasoDownloadUrl>
+		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.5.tcbuildtag</PalasoDownloadUrl>
 		<!-- PalasoPrecise64v26Cont is the libpalaso-2.6 branch build of Palaso for Linux development. Update when appropriate. -->
-		<PalasoDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/.lastSuccessful</PalasoDownloadUrl>
+		<PalasoDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/fw-8.3.5.tcbuildtag</PalasoDownloadUrl>
 		<!--Todo: use PalasoDownloadUrl, when it refers to somewhere that has the IPCFramework.-->
 		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
 		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt278/fw-8.2.tcbuildtag</IPCFrameworkDownloadUrl>
 		<!-- bt279 is the develop branch build of IPCFramework for Linux development. Update when appropriate. -->
 		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt279/fw-8.2.tcbuildtag</IPCFrameworkDownloadUrl>
 		<!-- bt393 is the master branch build of ExCss for Windows development. Update when appropriate. -->
-		<ExCssDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt393/.lastSuccessful</ExCssDownloadUrl>
+		<ExCssDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt393/fw-8.3.0~alpha3.tcbuildtag</ExCssDownloadUrl>
 		<!-- bt395 is the master branch build of ExCss for Linux development. Update when appropriate. -->
-		<ExCssDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt395/.lastSuccessful</ExCssDownloadUrl>
+		<ExCssDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt395/fw-8.3.0~alpha3.tcbuildtag</ExCssDownloadUrl>
 		<ProtoBufNetDownloadUrl>https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/protobuf-net/protobuf-net%20r668.zip</ProtoBufNetDownloadUrl>
 		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1/</DownloadsSilOrgDownloadUrl>
-		<HermitCrabDownloadUrl>http://build.palaso.org/guestAuth/repository/download/bt410/fw-8.2.tcbuildtag</HermitCrabDownloadUrl>
-		<Icu4cDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/Libraries_Icu4cWin32FieldWorksContinuous/.lastSuccessful</Icu4cDownloadUrl>
+		<HermitCrabDownloadUrl>http://build.palaso.org/guestAuth/repository/download/bt410/fw-8.3.tcbuildtag</HermitCrabDownloadUrl>
+		<Icu4cDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/Libraries_Icu4cWin32FieldWorksContinuous/fw-8.2.tcbuildtag</Icu4cDownloadUrl>
 		<!-- Windows/.Net and Linux/Mono use different extensions for debug information files. -->
 		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>
@@ -359,7 +359,7 @@
 		<Message Text="Downloading pinned artifacts for IPCFramework."/>
 		<DownloadFile Address="$(IPCFrameworkDownloadUrl)/IPCFramework.dll" LocalFilename="$(fwrt)/Downloads/IPCFramework.dll"/>
 
-		<Message Text="Downloading latest successful artifacts for ExCss."/>
+		<Message Text="Downloading artifacts for ExCss."/>
 		<DownloadFile Address="$(ExCssDownloadUrl)/ExCSS.dll" LocalFilename="$(fwrt)/Downloads/ExCSS.dll" Condition="'$(OS)'=='Unix'"/>
 		<DownloadFile Address="$(ExCssDownloadUrl)/ExCss.dll" LocalFilename="$(fwrt)/Downloads/ExCSS.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<DownloadFile Address="$(ExCssDownloadUrl)/ExCSS.dll.mdb" LocalFilename="$(fwrt)/Downloads/ExCSS.dll.mdb" Condition="'$(OS)'=='Unix'"/>
