@@ -139,14 +139,16 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void Load_LoadsSenseOptions()
+		[TestCase("%O")] // It's obsolete,so we changed to %d
+		[TestCase("%d")]
+		public void Load_LoadsSenseOptions(string numberingStyle)
 		{
 			DictionaryConfigurationModel model;
 			using (var modelFile = new TempFile(new[]
 			{
-				XmlOpenTagsThruHeadword, @"
+				XmlOpenTagsThruHeadword, string.Format(@"
 				<SenseOptions displayEachSenseInParagraph=""true"" numberStyle=""bold"" numberBefore=""("" numberAfter="") ""
-						numberingStyle=""%O"" numberFont="""" numberSingleSense=""true"" showSingleGramInfoFirst=""true""/>",
+						numberingStyle=""{0}"" numberFont="""" numberSingleSense=""true"" showSingleGramInfoFirst=""true""/>", numberingStyle),
 				XmlCloseTagsFromHeadword
 			}))
 			{
@@ -158,7 +160,7 @@ namespace SIL.FieldWorks.XWorks
 			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
 			Assert.IsInstanceOf(typeof(DictionaryNodeSenseOptions), testNodeOptions);
 			var senseOptions = (DictionaryNodeSenseOptions)testNodeOptions;
-			Assert.AreEqual("%O", senseOptions.NumberingStyle);
+			Assert.That(senseOptions.NumberingStyle, Is.EqualTo("%d"), "NumberingStyle should be same");
 			Assert.AreEqual("(", senseOptions.BeforeNumber);
 			Assert.AreEqual(") ", senseOptions.AfterNumber);
 			Assert.AreEqual("bold", senseOptions.NumberStyle);
