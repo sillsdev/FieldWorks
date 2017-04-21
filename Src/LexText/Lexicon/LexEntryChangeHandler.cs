@@ -13,7 +13,6 @@ using SIL.FieldWorks.FDO.Infrastructure;
 namespace SIL.FieldWorks.XWorks.LexEd
 {
 	/// <summary/>
-	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule", Justification = "m_cache is a reference")]
 	public class LexEntryChangeHandler : IRecordChangeHandler
 	{
 		#region Data members

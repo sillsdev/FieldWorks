@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
@@ -14,8 +13,6 @@ namespace GenerateHCConfig
 {
 	internal class Program
 	{
-		[SuppressMessage("Gendarme.Rules.Portability", "ExitCodeIsLimitedOnUnixRule",
-			Justification = "Appears to be a bug in Gendarme...not recognizing that 0 and 1 are in correct range (0..255)")]
 		static int Main(string[] args)
 		{
 			if (args.Length < 2)

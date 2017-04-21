@@ -199,7 +199,8 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryConfigurationController.MergeTypesIntoDictionaryModel(this, cache);
 			// Handle any deleted styles.  (See https://jira.sil.org/browse/LT-16501.)
 			DictionaryConfigurationController.EnsureValidStylesInModel(this, cache);
-			// TODO pH 2017.04: ensure valid Numbering Styles
+			// Handle %O numberingStyle, Should be changed as %d.  (See https://jira.sil.org/browse/LT-18297.)
+			DictionaryConfigurationController.EnsureValidNumberingStylesInModel(this.PartsAndSharedItems);
 			//Update Writing System for an entire configuration.
 			DictionaryConfigurationController.UpdateWritingSystemInModel(this, cache);
 		}

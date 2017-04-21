@@ -767,7 +767,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (icuCollation != null && !string.IsNullOrEmpty(icuCollation.IcuRules))
 				{
 					// prime with empty ws in case all the rules affect only the ignore set
-				wsCharEquivalentMap[sWs] = mapChars;
+					wsCharEquivalentMap[sWs] = mapChars;
 					string[] individualRules = icuCollation.IcuRules.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
 					for (int i = 0; i < individualRules.Length; ++i)
 					{
@@ -786,23 +786,23 @@ namespace SIL.FieldWorks.Common.Controls
 						rule = rule.Replace("<<<", "=");
 						rule = rule.Replace("<<", "=");
 
-					// If the rule contains one or more expansions ('/') remove the expansion portions
-					if (rule.Contains("/"))
-					{
-						bool isExpansion = false;
-						var newRule = new StringBuilder();
-						for (var ruleIndex = 0; ruleIndex <= rule.Length - 1; ruleIndex++)
+						// If the rule contains one or more expansions ('/') remove the expansion portions
+						if (rule.Contains("/"))
 						{
-							if (rule.Substring(ruleIndex, 1) == "/")
-								isExpansion = true;
-							else if (rule.Substring(ruleIndex, 1) == "=" || rule.Substring(ruleIndex, 1)== "<")
-								isExpansion = false;
+							bool isExpansion = false;
+							var newRule = new StringBuilder();
+							for (var ruleIndex = 0; ruleIndex <= rule.Length - 1; ruleIndex++)
+							{
+								if (rule.Substring(ruleIndex, 1) == "/")
+									isExpansion = true;
+								else if (rule.Substring(ruleIndex, 1) == "=" || rule.Substring(ruleIndex, 1)== "<")
+									isExpansion = false;
 
-							if (!isExpansion)
-								newRule.Append(rule.Substring(ruleIndex, 1));
+								if (!isExpansion)
+									newRule.Append(rule.Substring(ruleIndex, 1));
+							}
+							rule = newRule.ToString();
 						}
-						rule = newRule.ToString();
-					}
 
 						// "&N<ng<<<Ng<ny<<<Ny" => "&N<ng=Ng<ny=Ny"
 						// "&N<ñ<<<Ñ" => "&N<ñ=Ñ"
@@ -811,8 +811,8 @@ namespace SIL.FieldWorks.Common.Controls
 						var primaryParts = rule.Split('<');
 						foreach (var part in primaryParts)
 						{
-						if (rule.Contains("<"))
-							BuildDigraphSet(part, sWs, wsDigraphMap);
+							if (rule.Contains("<"))
+								BuildDigraphSet(part, sWs, wsDigraphMap);
 							MapRuleCharsToPrimary(part, sWs, wsCharEquivalentMap);
 						}
 					}

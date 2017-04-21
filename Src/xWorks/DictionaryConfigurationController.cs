@@ -988,6 +988,18 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		public static void EnsureValidNumberingStylesInModel(IEnumerable<ConfigurableDictionaryNode> nodes)
+		{
+			DictionaryConfigurationMigrator.PerformActionOnNodes(nodes, n =>
+			{
+				var options = n.DictionaryNodeOptions as DictionaryNodeSenseOptions;
+				if (options != null && options.NumberingStyle == "%O")
+				{
+					options.NumberingStyle = "%d";
+				}
+			});
+		}
+
 		public static void UpdateWritingSystemInModel(DictionaryConfigurationModel model, FdoCache cache)
 		{
 			foreach (var part in model.PartsAndSharedItems)

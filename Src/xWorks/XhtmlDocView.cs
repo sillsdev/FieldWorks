@@ -177,8 +177,6 @@ namespace SIL.FieldWorks.XWorks
 			return false;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "See TODO-Linux comment")]
 		private void GiveSimpleWarning(DictionaryConfigurationController.ExclusionReasonCode xrc)
 		{
 			// Tell the user why we aren't jumping to his record
