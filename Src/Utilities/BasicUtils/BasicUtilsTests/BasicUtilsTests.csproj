@@ -72,7 +72,7 @@
       <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>..\..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="SilUtils">
       <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>

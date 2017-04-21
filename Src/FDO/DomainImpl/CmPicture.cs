@@ -285,6 +285,18 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				return m_cache.MakeUserTss(sNumber);
 			}
 		}
+
+		/// <summary>
+		/// Object owner. This virtual may seem redundant with CmObject.Owner, but it is important,
+		/// because we can correctly indicate the destination class. This is used (at least) in
+		/// PartGenerator.GeneratePartsFromLayouts to determine that it needs to generate parts for LexSense.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceAtomic, "LexSense")]
+		public ILexSense OwningSense
+		{
+			get { return (ILexSense)Owner; }
+		}
+
 		#endregion
 
 		#region Overridden methods

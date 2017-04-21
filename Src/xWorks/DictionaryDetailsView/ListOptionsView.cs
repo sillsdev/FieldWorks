@@ -44,13 +44,28 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
-			if (checkBoxDisplayOption.Location.Y + checkBoxDisplayOption.Height > this.Height)
+			Control firstCheckBox = checkBoxDisplayOption.Visible ? checkBoxDisplayOption : checkBoxDisplayOption2.Visible ? checkBoxDisplayOption2 : null;
+			Control secondCheckBox = firstCheckBox != checkBoxDisplayOption2 ? checkBoxDisplayOption2.Visible ? checkBoxDisplayOption2 : null : null;
+
+			if(firstCheckBox != null && secondCheckBox != null) // Trying to display both option checkboxes
 			{
-				var checkBoxTop = this.Height - checkBoxDisplayOption.Height;
-				checkBoxDisplayOption.Location = new Point(checkBoxDisplayOption.Location.X, checkBoxTop);
-				var listViewBottom = checkBoxTop - 3;	// Allow a little space between the listview and checkbox.
+				// account for the vertical space needed for both checkboxes and a little buffer
+				var listViewBottom = this.Height - firstCheckBox.Height - secondCheckBox.Height - 3;
 				if (listView.Location.Y + listView.Height > listViewBottom)
 					listView.Size = new Size(listView.Width, listViewBottom - listView.Location.Y);
+				var firstCheckBoxTop = listViewBottom + 3;
+				var secondCheckBoxTop = firstCheckBoxTop + firstCheckBox.Height;
+				firstCheckBox.Location = new Point(firstCheckBox.Location.X, firstCheckBoxTop);
+				secondCheckBox.Location = new Point(secondCheckBox.Location.X, secondCheckBoxTop);
+			}
+			else if(firstCheckBox != null) // Only displaying one option checkbox
+			{
+				// account for the vertical space needed for a single checkbox plus buffer
+				var listViewBottom = this.Height - firstCheckBox.Height - 3;
+				if (listView.Location.Y + listView.Height > listViewBottom)
+					listView.Size = new Size(listView.Width, listViewBottom - listView.Location.Y);
+				var firstCheckBoxTop = listViewBottom + 3;
+				firstCheckBox.Location = new Point(firstCheckBox.Location.X, firstCheckBoxTop);
 			}
 		}
 #endif

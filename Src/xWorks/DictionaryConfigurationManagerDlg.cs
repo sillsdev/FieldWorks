@@ -25,11 +25,15 @@ namespace SIL.FieldWorks.XWorks
 			InitializeComponent();
 
 			m_toolTip = new ToolTip();
-			m_toolTip.SetToolTip(copyButton, xWorksStrings.Duplicate); // the (reset|delete) button's tooltip is set when a config is selected
+			m_toolTip.SetToolTip(copyButton, xWorksStrings.DuplicateViewToolTip);
+			m_toolTip.SetToolTip(removeButton, xWorksStrings.DeleteViewTooltip);
+			m_toolTip.SetToolTip(resetButton, xWorksStrings.ResetViewTooltip);
+			m_toolTip.SetToolTip(exportButton, xWorksStrings.ExportSelected);
+			m_toolTip.SetToolTip(importButton, xWorksStrings.ImportView);
 
 			m_helpTopicProvider = helpTopicProvider;
 
-			// allow renaming via the keyboard
+			// Allow renaming via the keyboard
 			configurationsListView.KeyUp += ConfigurationsListViewKeyUp;
 			// Make the Configuration selection more obvious when the control loses focus (LT-15450).
 			configurationsListView.LostFocus += OnLostFocus;
@@ -79,8 +83,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		public string ConfigurationGroupText { set { configurationsGroupBox.Text = value; } }
-
-		public string RemoveButtonToolTip { set { m_toolTip.SetToolTip(removeButton, value); } }
 
 		private void helpButton_Click(object sender, EventArgs e)
 		{

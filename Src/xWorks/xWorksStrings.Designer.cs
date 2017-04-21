@@ -169,15 +169,6 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Configuration.
-        /// </summary>
-        internal static string Configuration {
-            get {
-                return ResourceManager.GetString("Configuration", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Clear All Children.
         /// </summary>
         internal static string ConfigurationTreeControl_ClearAllChildren {
@@ -192,6 +183,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string ConfigurationTreeControl_SelectAllChildren {
             get {
                 return ResourceManager.GetString("ConfigurationTreeControl_SelectAllChildren", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to These settings affect the current {0} view:{1}{2}.
+        /// </summary>
+        internal static string ConfigureHomograph_ConfigDescription {
+            get {
+                return ResourceManager.GetString("ConfigureHomograph_ConfigDescription", resourceCulture);
             }
         }
         
@@ -237,6 +237,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string DeletedObjectDetected {
             get {
                 return ResourceManager.GetString("DeletedObjectDetected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete this custom view.
+        /// </summary>
+        internal static string DeleteViewTooltip {
+            get {
+                return ResourceManager.GetString("DeleteViewTooltip", resourceCulture);
             }
         }
         
@@ -303,11 +312,29 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reversal Configurations.
+        ///   Looks up a localized string similar to Warning! The styles for this project will be overwritten by the import..
+        /// </summary>
+        internal static string DictionaryConfigurationDictionaryConfigurationUser_StyleOverwriteWarning {
+            get {
+                return ResourceManager.GetString("DictionaryConfigurationDictionaryConfigurationUser_StyleOverwriteWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reversal Views.
         /// </summary>
         internal static string DictionaryConfigurationMangager_ReversalConfigurations_GroupLabel {
             get {
                 return ResourceManager.GetString("DictionaryConfigurationMangager_ReversalConfigurations_GroupLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error! The file contains a {0} view..
+        /// </summary>
+        internal static string DictionaryConfigurationMismatch {
+            get {
+                return ResourceManager.GetString("DictionaryConfigurationMismatch", resourceCulture);
             }
         }
         
@@ -326,6 +353,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string Duplicate {
             get {
                 return ResourceManager.GetString("Duplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate the highlighted view.
+        /// </summary>
+        internal static string DuplicateViewToolTip {
+            get {
+                return ResourceManager.GetString("DuplicateViewToolTip", resourceCulture);
             }
         }
         
@@ -393,7 +429,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Exporting entries for the {0} publication using the {1} configuration.
+        ///   Looks up a localized string similar to Exporting entries for the {0} publication using the {1} view.
         /// </summary>
         internal static string ExportingEntriesToWebonary {
             get {
@@ -425,6 +461,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string ExportingReversalsToWebonaryCompleted {
             get {
                 return ResourceManager.GetString("ExportingReversalsToWebonaryCompleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export the highlighted view.
+        /// </summary>
+        internal static string ExportSelected {
+            get {
+                return ResourceManager.GetString("ExportSelected", resourceCulture);
             }
         }
         
@@ -537,6 +582,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Import a view.
+        /// </summary>
+        internal static string ImportView {
+            get {
+                return ResourceManager.GetString("ImportView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to It is inadvisable to share &apos;{0}&apos; because a shared node with the same field ({1}) already exists ({2}). No changes have been made..
         /// </summary>
         internal static string InadvisableToShare {
@@ -546,7 +600,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The root node in your configuration is invalid. The field attribute &apos;{0}&apos; must match a class name..
+        ///   Looks up a localized string similar to The root node in your configured view is invalid. The field attribute &apos;{0}&apos; must match a class name..
         /// </summary>
         internal static string InvalidRootConfigurationNode {
             get {
@@ -645,7 +699,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Putting the display fragments together with the letter headers.
+        ///   Looks up a localized string similar to Putting the display fragments together with the letter headings.
         /// </summary>
         internal static string ksArrangingDisplayFragments {
             get {
@@ -1041,7 +1095,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Display each Complex Form in a paragraph.
+        ///   Looks up a localized string similar to &amp;Display each Complex Form in a paragraph.
         /// </summary>
         internal static string ksDisplayComplexFormsInParagraphs {
             get {
@@ -1050,7 +1104,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Display each subsense in a paragraph.
+        ///   Looks up a localized string similar to &amp;Display each subsense in a paragraph.
         /// </summary>
         internal static string ksDisplayEachSubsenseInAParagraph {
             get {
@@ -1059,7 +1113,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Display each Example in a paragraph.
+        ///   Looks up a localized string similar to &amp;Display each Example in a paragraph.
         /// </summary>
         internal static string ksDisplayExamplesInParagraphs {
             get {
@@ -1068,7 +1122,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Display each Extended Note in a paragraph.
+        ///   Looks up a localized string similar to &amp;Display each Extended Note in a paragraph.
         /// </summary>
         internal static string ksDisplayExtendedNoteInParagraphs {
             get {
@@ -1077,7 +1131,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Display each Note in a separate paragraph.
+        ///   Looks up a localized string similar to &amp;Display each Note in a separate paragraph.
         /// </summary>
         internal static string ksDisplayNoteInParagraphs {
             get {
@@ -1086,7 +1140,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Display each Subentry in a paragraph.
+        ///   Looks up a localized string similar to &amp;Display each Subentry in a paragraph.
         /// </summary>
         internal static string ksDisplaySubentriesInParagraphs {
             get {
@@ -1131,11 +1185,20 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot generate the display the current publication.
+        ///   Looks up a localized string similar to Cannot generate the display for the current publication.
         /// </summary>
         internal static string ksErrorDisplayingPublication {
             get {
                 return ResourceManager.GetString("ksErrorDisplayingPublication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No view was found..
+        /// </summary>
+        internal static string ksErrorNoViewOnPublication {
+            get {
+                return ResourceManager.GetString("ksErrorNoViewOnPublication", resourceCulture);
             }
         }
         
@@ -1411,7 +1474,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The dictionary display configuration has not been set..
+        ///   Looks up a localized string similar to The dictionary view has not been set..
         /// </summary>
         internal static string ksNoConfiguration {
             get {
@@ -1815,11 +1878,137 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot import. Choose another file..
+        /// </summary>
+        internal static string kstidCannotImport {
+            get {
+                return ResourceManager.GetString("kstidCannotImport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose filename for export.
+        /// </summary>
+        internal static string kstidChooseExportFile {
+            get {
+                return ResourceManager.GetString("kstidChooseExportFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose file for import.
+        /// </summary>
+        internal static string kstidChooseFile {
+            get {
+                return ResourceManager.GetString("kstidChooseFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your list of views was just changed. You must close and reopen this dialog to be able to export..
+        /// </summary>
+        internal static string kstidConfigsChanged {
+            get {
+                return ResourceManager.GetString("kstidConfigsChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your list of views was just changed. You must close and reopen this dialog to be able to import..
+        /// </summary>
+        internal static string kstidConfigsChangedImport {
+            get {
+                return ResourceManager.GetString("kstidConfigsChangedImport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The following custom fields will be added to the project, if not already present:.
+        /// </summary>
+        internal static string kstidCustomFieldsWillBeAdded {
+            get {
+                return ResourceManager.GetString("kstidCustomFieldsWillBeAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Writing possibility list contents.
         /// </summary>
         internal static string kstidExportingLists {
             get {
                 return ResourceManager.GetString("kstidExportingLists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}-Imported{1}.
+        /// </summary>
+        internal static string kstidImportedSuffix {
+            get {
+                return ResourceManager.GetString("kstidImportedSuffix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Importing and overwriting existing view named &apos;{0}&apos;..
+        /// </summary>
+        internal static string kstidImportingAndOverwritingConfiguration {
+            get {
+                return ResourceManager.GetString("kstidImportingAndOverwritingConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Importing view named &apos;{0}&apos;..
+        /// </summary>
+        internal static string kstidImportingConfig {
+            get {
+                return ResourceManager.GetString("kstidImportingConfig", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Importing view with new name &apos;{0}&apos;..
+        /// </summary>
+        internal static string kstidImportingConfigNewName {
+            get {
+                return ResourceManager.GetString("kstidImportingConfigNewName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Overwrite existing view named {0}.
+        /// </summary>
+        internal static string kstidOverwriteConfiguration {
+            get {
+                return ResourceManager.GetString("kstidOverwriteConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The following publications will be added to the project: .
+        /// </summary>
+        internal static string kstidPublicationsWillBeAdded {
+            get {
+                return ResourceManager.GetString("kstidPublicationsWillBeAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use new view name {0}.
+        /// </summary>
+        internal static string kstidUseNewConfigName {
+            get {
+                return ResourceManager.GetString("kstidUseNewConfigName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zip files.
+        /// </summary>
+        internal static string kstidZipFiles {
+            get {
+                return ResourceManager.GetString("kstidZipFiles", resourceCulture);
             }
         }
         
@@ -2068,7 +2257,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No configurations match the current publication..
+        ///   Looks up a localized string similar to No views match the current publication..
         /// </summary>
         internal static string NoConfigsMatchPub {
             get {
@@ -2122,7 +2311,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pressing Submit will send {0} dictionary entries{1} to Webonary..
+        ///   Looks up a localized string similar to Clicking Submit will send {0} dictionary entries{1} to Webonary..
         /// </summary>
         internal static string PublicationEntriesLabel {
             get {
@@ -2213,6 +2402,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reset this view.
+        /// </summary>
+        internal static string ResetViewTooltip {
+            get {
+                return ResourceManager.GetString("ResetViewTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to , {0} {1} reversal entries.
         /// </summary>
         internal static string ReversalEntries {
@@ -2249,7 +2447,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reversal Index Configuration Manager.
+        ///   Looks up a localized string similar to Manage Reversal Index Views.
         /// </summary>
         internal static string ReversalIndexConfigurationDlgTitle {
             get {
@@ -2366,6 +2564,24 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to To apply for an account at Webonary, please visit {0}..
+        /// </summary>
+        internal static string toApplyForWebonaryAccountExplanation {
+            get {
+                return ResourceManager.GetString("toApplyForWebonaryAccountExplanation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to http://www.webonary.org/.
+        /// </summary>
+        internal static string toApplyForWebonaryAccountLink {
+            get {
+                return ResourceManager.GetString("toApplyForWebonaryAccountLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The application was not able to follow that link. This can happen if you have deleted the object that was pointed to by the link..
         /// </summary>
         internal static string UnableToFollowLink {
@@ -2420,12 +2636,21 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Exporting entries for the {0} publication using the {1} configuration.
+        ///   Looks up a localized string similar to Exporting entries for the {0} publication using the {1} view.
         /// </summary>
         internal static string UploadToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0__publication_using_the__1__configuration {
             get {
                 return ResourceManager.GetString("UploadToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0__" +
                         "publication_using_the__1__configuration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View.
+        /// </summary>
+        internal static string View {
+            get {
+                return ResourceManager.GetString("View", resourceCulture);
             }
         }
         

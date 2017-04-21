@@ -804,14 +804,6 @@ namespace SIL.FieldWorks.XWorks
 			base.ShowRecord();
 		}
 
-		private enum ExclusionReasonCode
-		{
-			NotExcluded,
-			NotInPublication,
-			ExcludedHeadword,
-			ExcludedMinorEntry
-		}
-
 		/// <summary>
 		/// Used to verify current content control so that Find Lexical Entry behaves differently
 		/// in Dictionary View.
@@ -830,7 +822,7 @@ namespace SIL.FieldWorks.XWorks
 			// Currently this (LT-11447) only applies to Dictionary view
 			if (hvoTarget > 0 && currControl == ksLexDictionary)
 			{
-				ExclusionReasonCode xrc;
+				DictionaryConfigurationController.ExclusionReasonCode xrc;
 				// Make sure we explain to the user in case hvoTarget is not visible due to
 				// the current Publication layout or Configuration view.
 				if (!IsObjectVisible(hvoTarget, out xrc))
@@ -842,7 +834,7 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
-		private void GiveSimpleWarning(ExclusionReasonCode xrc)
+		private void GiveSimpleWarning(DictionaryConfigurationController.ExclusionReasonCode xrc)
 		{
 			// Tell the user why we aren't jumping to his record
 			var msg = xWorksStrings.ksSelectedEntryNotInDict;
@@ -851,17 +843,17 @@ namespace SIL.FieldWorks.XWorks
 			string shlpTopic;
 			switch (xrc)
 			{
-				case ExclusionReasonCode.NotInPublication:
+				case DictionaryConfigurationController.ExclusionReasonCode.NotInPublication:
 					caption = xWorksStrings.ksEntryNotPublished;
 					reason = xWorksStrings.ksEntryNotPublishedReason;
 					shlpTopic = "User_Interface/Menus/Edit/Find_a_lexical_entry.htm";		//khtpEntryNotPublished
 					break;
-				case ExclusionReasonCode.ExcludedHeadword:
+				case DictionaryConfigurationController.ExclusionReasonCode.ExcludedHeadword:
 					caption = xWorksStrings.ksMainNotShown;
 					reason = xWorksStrings.ksMainNotShownReason;
 					shlpTopic = "khtpMainEntryNotShown";
 					break;
-				case ExclusionReasonCode.ExcludedMinorEntry:
+				case DictionaryConfigurationController.ExclusionReasonCode.ExcludedMinorEntry:
 					caption = xWorksStrings.ksMinorNotShown;
 					reason = xWorksStrings.ksMinorNotShownReason;
 					shlpTopic = "khtpMinorEntryNotShown";
@@ -877,9 +869,9 @@ namespace SIL.FieldWorks.XWorks
 							HelpNavigator.Topic, shlpTopic);
 		}
 
-		private bool IsObjectVisible(int hvoTarget, out ExclusionReasonCode xrc)
+		private bool IsObjectVisible(int hvoTarget, out DictionaryConfigurationController.ExclusionReasonCode xrc)
 		{
-			xrc = ExclusionReasonCode.NotExcluded;
+			xrc = DictionaryConfigurationController.ExclusionReasonCode.NotExcluded;
 			var objRepo = Cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			Debug.Assert(objRepo.IsValidObjectId(hvoTarget), "Invalid hvoTarget!");
 			if (!objRepo.IsValidObjectId(hvoTarget))
@@ -896,13 +888,13 @@ namespace SIL.FieldWorks.XWorks
 				var currentPubPoss = Publication;
 				if (!entry.PublishIn.Contains(currentPubPoss))
 				{
-					xrc = ExclusionReasonCode.NotInPublication;
+					xrc = DictionaryConfigurationController.ExclusionReasonCode.NotInPublication;
 					return false;
 				}
 				// Second deal with whether the entry shouldn't be shown as a headword
 				if (!entry.ShowMainEntryIn.Contains(currentPubPoss))
 				{
-					xrc = ExclusionReasonCode.ExcludedHeadword;
+					xrc = DictionaryConfigurationController.ExclusionReasonCode.ExcludedHeadword;
 					return false;
 				}
 			}
@@ -910,7 +902,7 @@ namespace SIL.FieldWorks.XWorks
 			// commented out until conditions are clarified (LT-11447)
 			if (entry.EntryRefsOS.Count > 0 && !entry.PublishAsMinorEntry && IsRootBasedView)
 			{
-				xrc = ExclusionReasonCode.ExcludedMinorEntry;
+				xrc = DictionaryConfigurationController.ExclusionReasonCode.ExcludedMinorEntry;
 				return false;
 			}
 			// If we get here, we should be able to display it.

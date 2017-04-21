@@ -19,28 +19,62 @@ namespace SIL.Utils
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests the Surrogates util class.
+		/// Tests the Surrogates.NextChar() method
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void TestSurrogates()
+		[TestCase("ab\xD800\xDC00c", 0, Result = 1)]
+		[TestCase("ab\xD800\xDC00c", 1, Result = 2)]
+		[TestCase("ab\xD800\xDC00c", 2, Result = 4)]
+		[TestCase("ab\xD800\xDC00c", 4, Result = 5)]
+		[TestCase("ab\xD800\xDC00", 2, Result = 4)]
+		public int NextChar(string st, int ich)
 		{
-			Assert.AreEqual(1, Surrogates.NextChar("ab\xD800\xDC00c", 0));
-			Assert.AreEqual(2, Surrogates.NextChar("ab\xD800\xDC00c", 1));
-			Assert.AreEqual(4, Surrogates.NextChar("ab\xD800\xDC00c", 2));
-			Assert.AreEqual(5, Surrogates.NextChar("ab\xD800\xDC00c", 4));
-			Assert.AreEqual(4, Surrogates.NextChar("ab\xD800\xDC00", 2));
-			Assert.AreEqual(3, Surrogates.NextChar("ab\xD800", 2), "Badly formed pair at end...don't go too far");
-			Assert.AreEqual(3, Surrogates.NextChar("ab\xD800c", 2), "Badly formed pair in middle...don't go too far");
-			Assert.AreEqual(0, Surrogates.PrevChar("ab\xD800\xDC00c", 1));
-			Assert.AreEqual(1, Surrogates.PrevChar("ab\xD800\xDC00c", 2));
-			Assert.AreEqual(2, Surrogates.PrevChar("ab\xD800\xDC00c", 3), "initial ich at a bad position, move back normally to sync");
-			Assert.AreEqual(2, Surrogates.PrevChar("ab\xD800\xDC00c", 4), "double move succeeds");
-			Assert.AreEqual(4, Surrogates.PrevChar("ab\xD800\xDC00c", 5));
-			Assert.AreEqual(3, Surrogates.PrevChar("ab\xD800c", 4), "no double move on bad pair");
-			Assert.AreEqual(0, Surrogates.PrevChar("\xD800\xDC00c", 2), "double move succeeds at start (and end)");
-			Assert.AreEqual(0, Surrogates.PrevChar("\xDC00c", 1), "no double move on bad trailer at start");
-			Assert.AreEqual(0, Surrogates.PrevChar("\xD800c", 1), "no double move on bad leader at start");
+			return Surrogates.NextChar(st, ich);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the Surrogates.NextChar() method with invalid data
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[TestCase(new[] { 'a', 'b', '\xD800'}, 2, Result = 3)] // Badly formed pair at end...don't go too far
+		[TestCase(new[] { 'a', 'b', '\xD800', 'c' }, 2, Result = 3)] // Badly formed pair in middle...don't go too far
+		public int NextChar_InvalidData(char[] st, int ich)
+		{
+			// NUnit doesn't allow tests with invalid strings in a testcase, so we create the
+			// string from the character array when running the test
+			return Surrogates.NextChar(new string(st), ich);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the Surrogates.PrevChar() method
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[TestCase("ab\xD800\xDC00c", 1, Result = 0)]
+		[TestCase("ab\xD800\xDC00c", 2, Result = 1)]
+		[TestCase("ab\xD800\xDC00c", 5, Result = 4)]
+		[TestCase("ab\xD800\xDC00c", 3, Result = 2)] // initial ich at a bad position, move back normally to sync
+		[TestCase("ab\xD800\xDC00c", 4, Result = 2)] // double move succeeds
+		[TestCase("\xD800\xDC00c", 2, Result = 0)] // double move succeeds at start (and end)
+		public int PrevChar(string st, int ich)
+		{
+			return Surrogates.PrevChar(st, ich);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the Surrogates.PrevChar() method with invalid input
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[TestCase(new[] { 'a', 'b', '\xD800', 'c' }, 4, Result = 3)] // no double move on bad pair
+		[TestCase(new[] { '\xDC00', 'c' }, 1, Result = 0)] // no double move on bad trailer at start
+		[TestCase(new[] { '\xD800', 'c' }, 1, Result = 0)] // no double move on bad leader at start
+		public int PrevChar_InvalidChar(char[] st, int ich)
+		{
+			// NUnit doesn't allow tests with invalid strings in a testcase, so we create the
+			// string from the character array when running the test
+			return Surrogates.PrevChar(new string(st), ich);
 		}
 	}
 }

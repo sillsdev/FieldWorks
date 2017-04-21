@@ -211,7 +211,7 @@
     <value>True</value>
   </data>
   <data name="checkBoxDisplayOption.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 123</value>
+    <value>3, 121</value>
   </data>
   <data name="checkBoxDisplayOption.Size" type="System.Drawing.Size, System.Drawing">
     <value>200, 17</value>
@@ -220,7 +220,7 @@
     <value>2</value>
   </data>
   <data name="checkBoxDisplayOption.Text" xml:space="preserve">
-    <value>Display Writing System Abbreviations</value>
+    <value>Display &amp;Writing System Abbreviations</value>
   </data>
   <data name="&gt;&gt;checkBoxDisplayOption.Name" xml:space="preserve">
     <value>checkBoxDisplayOption</value>
@@ -271,7 +271,7 @@
     <value>NoControl</value>
   </data>
   <data name="checkBoxDisplayOption2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 142</value>
+    <value>3, 140</value>
   </data>
   <data name="checkBoxDisplayOption2.Size" type="System.Drawing.Size, System.Drawing">
     <value>228, 17</value>
@@ -280,7 +280,7 @@
     <value>4</value>
   </data>
   <data name="checkBoxDisplayOption2.Text" xml:space="preserve">
-    <value>Display each Note in a separate paragraph</value>
+    <value>&amp;Display each Note in a separate paragraph</value>
   </data>
   <data name="&gt;&gt;checkBoxDisplayOption2.Name" xml:space="preserve">
     <value>checkBoxDisplayOption2</value>

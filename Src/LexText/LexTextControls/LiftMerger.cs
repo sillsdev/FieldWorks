@@ -350,6 +350,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void InitializeReverseLexRefTypesMap()
 		{
+			if (m_cache.LangProject.LexDbOA.ReferencesOA == null)
+				return;
 			int ws;
 			foreach (ILexRefType lrt in m_cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS)
 			{

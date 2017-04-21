@@ -237,7 +237,7 @@ namespace SIL.FieldWorks.XWorks
 			GeckoElement dummyElement;
 			var classListForGeckoElement = XhtmlDocView.GetClassListFromGeckoElement(element, out dummyGuid, out dummyElement);
 			classListForGeckoElement.RemoveAt(0); // don't need the top level class
-			var nodeToMatch = DictionaryConfigurationController.FindStartingConfigNode(topLevelNode, classListForGeckoElement);
+			var nodeToMatch = DictionaryConfigurationController.FindConfigNode(topLevelNode, classListForGeckoElement);
 			return Equals(nodeToMatch, configNode);
 		}
 

@@ -1,198 +1,167 @@
-﻿// Copyright (c) 2016 SIL International
+// Copyright (c) 2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
+// ReSharper disable PossibleNullReferenceException -- Justification: If the exception is thrown, we'll know to fix the test.
 
 namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 {
 	/// <summary>
-	/// Unit tests for DataMigration7000070
+	/// Test framework for migration from version 7000069 to 7000070.
 	/// </summary>
 	[TestFixture]
-	public class DataMigration7000070Tests : DataMigrationTestsBase
+	public sealed class DataMigration7000070Tests : DataMigrationTestsBase
 	{
-		/// <summary/>
-		public DataMigration7000070Tests()
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test the migration from version 7000069 to 7000070 to clean up extra and wrong data inserted in DM69
+		/// which hides in dusty little corners of the model
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void VerifyDefaultTypeInLexEntryRefs()
 		{
+			var mockMdc = new MockMDCForDataMigration();
+			mockMdc.AddClass(1, "CmObject", null, new List<string> { "LexEntryRef", "CmPossibilityList", "LanguageProject", "LexEntryType" });
+			mockMdc.AddClass(2, "LexEntryRef", "CmPossibility", new List<string>());
+			mockMdc.AddClass(3, "CmPossibilityList", "CmObject", new List<string>());
+			mockMdc.AddClass(4, "LanguageProject", "CmObject", new List<string>());
+			mockMdc.AddClass(5, "LexEntryType", "CmObject", new List<string>());
+
+			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000070.xml");
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000069, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
+
+			Assert.AreEqual(4, dtoRepos.AllInstancesWithSubclasses("LexEntryRef").Count(), "The LexEntryRef test data has changed");
+			Assert.AreEqual(2, dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").Count(), "The CmPossibilityList test data has changed");
+
+			m_dataMigrationManager.PerformMigration(dtoRepos, 7000070, new DummyProgressDlg()); // SUT
+
+			// Make sure new default types are added.
+			var lexEntryRefs = dtoRepos.AllInstancesWithSubclasses("LexEntryRef").ToList();
+			var data = XElement.Parse(lexEntryRefs[0].Xml);
+			var defTypeElt = data.Element("VariantEntryTypes");
+			Assert.IsNotNull(defTypeElt);
+			Assert.That(defTypeElt != null && defTypeElt.HasElements, "Should have components (or variants)");
+			var objSurElem = defTypeElt.Element("objsur");
+			Assert.IsNotNull(objSurElem);
+			Assert.AreEqual("3942addb-99fd-43e9-ab7d-99025ceb0d4e", objSurElem.FirstAttribute.Value);
+			var refTypeAttr = objSurElem.Attribute("t");
+			Assert.IsNotNull(refTypeAttr, "The type attribute should be set on the 'objsur' element for the default c.f.");
+			Assert.AreEqual(refTypeAttr.Value, "r");
+			data = XElement.Parse(lexEntryRefs[1].Xml);
+			defTypeElt = data.Element("ComplexEntryTypes");
+			Assert.IsNotNull(defTypeElt);
+			Assert.That(defTypeElt != null && defTypeElt.HasElements, "Should have components (or variants)");
+			objSurElem = defTypeElt.Element("objsur");
+			Assert.IsNotNull(objSurElem);
+			Assert.AreEqual("fec038ed-6a8c-4fa5-bc96-a4f515a98c50", objSurElem.FirstAttribute.Value);
+			refTypeAttr = objSurElem.Attribute("t");
+			Assert.IsNotNull(refTypeAttr, "The type attribute should be set on the 'objsur' element for the default variant");
+			Assert.AreEqual(refTypeAttr.Value, "r");
+			// Make sure that the complex form ref which had bogus VariantTypes was cleaned up
+			data = XElement.Parse(lexEntryRefs[2].Xml);
+			defTypeElt = data.Element("VariantEntryTypes");
+			Assert.IsNull(defTypeElt);
+			defTypeElt = data.Element("ComplexEntryTypes");
+			Assert.IsNotNull(defTypeElt);
+			Assert.That(defTypeElt != null && defTypeElt.HasElements, "Should have components (or variants)");
+			objSurElem = defTypeElt.Element("objsur");
+			Assert.IsNotNull(objSurElem);
+			Assert.AreEqual("1f6ae209-141a-40db-983c-bee93af0ca3c", objSurElem.FirstAttribute.Value);
+			refTypeAttr = objSurElem.Attribute("t");
+			Assert.IsNotNull(refTypeAttr, "The type attribute should be set on the 'objsur' element for the default variant");
+			Assert.AreEqual(refTypeAttr.Value, "r");
+			// Make sure that a variant which had bogus ComplexFormType was cleaned up
+			data = XElement.Parse(lexEntryRefs[3].Xml);
+			defTypeElt = data.Element("ComplexEntryTypes");
+			Assert.IsNull(defTypeElt, "Complex form types should have been removed.");
+			defTypeElt = data.Element("VariantEntryTypes");
+			Assert.IsNotNull(defTypeElt, "default variant type should have been added");
+			Assert.That(defTypeElt != null && defTypeElt.HasElements, "Should have components (or variants)");
+			objSurElem = defTypeElt.Element("objsur");
+			Assert.IsNotNull(objSurElem);
+			Assert.AreEqual("3942addb-99fd-43e9-ab7d-99025ceb0d4e", objSurElem.FirstAttribute.Value);
+			refTypeAttr = objSurElem.Attribute("t");
+			Assert.IsNotNull(refTypeAttr, "The type attribute should be set on the 'objsur' element for the default variant");
+			Assert.AreEqual(refTypeAttr.Value, "r");
 		}
 
-		private string sampleLayoutData =
-			@"<LayoutInventory>
-				<layout class='LexEntry' type='jtview' name='publishStemPara' css='$fwstyle=Dictionary-Normal' version='11'>
-					<part ref='MLHeadWordPub' label='Headword' before='' sep=' ' after='  ' ws='am-Ethi' wsType='vernacular' style='Dictionary-Headword'  />
-					<part ref='MLHeadWordPub' label='Headword' before='' sep=' ' after='  ' ws='vernacular' wsType='vernacular' style='Dictionary-Headword'  />
-					<part ref='MLHeadWordPub' label='Headword' before='' sep=' ' after='  ' ws='$ws=all analysis' wsType='vernacular' style='Dictionary-Headword'  />
-					<part ref='MLHeadWordPub' label='Headword' before='' sep=' ' after='  ' ws='$ws=am-Ethi' wsType='vernacular' style='Dictionary-Headword'  />
-					<part ref='MLHeadWordPub' label='Headword' before='' sep=' ' after='  ' ws='am-Ethi-fonipa,am-Ethi' visibleWritingSystems='am-Ethi-fonipa,am-Ethi' wsType='vernacular' style='Dictionary-Headword'  />
-				</layout>
-			</LayoutInventory>
-			";
-
-		private string sampleLocalSettingsData =
-			"<ArrayOfProperty xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">"
-			+"	<Property>"
-			+" <name>db$local$InterlinConfig_Edit_Interlinearizer</name>"
-			+" <value xsi:type=\"xsd:string\">EditableInterlinLineChoices,5062001%,5062001%am-Ethi,5112002%,5112002%am-Ethi,103%,103%am-Ethi,5112004%,5112004%fr,5112003%,5112003%fr,5060001%en,5060001%fr,5059003%,5059003%fr,-61%en,-61%fr,-63%en,-63%fr,-62%en,-62%fr</value>"
-			+ " </Property> "
-			+"<Property>"
-			+"<name>db$local$LexDb.Entries_sorter</name>"
-			+"<value xsi:type=\"xsd:string\">&lt;sorter assemblyPath=\"Filters.dll\" class=\"SIL.FieldWorks.Filters.GenRecordSorter\"&gt;&lt;comparer assemblyPath=\"Filters.dll\" class=\"SIL.FieldWorks.Filters.StringFinderCompare\"&gt;&lt;finder assemblyPath=\"XMLViews.dll\" class=\"SIL.FieldWorks.Common.Controls.SortMethodFinder\" layout=\"EntryHeadwordForEntry\" sortmethod=\"FullSortKey\" ws=\"vernacular\"&gt;&lt;column layout=\"EntryHeadwordForEntry\" label=\"Headword\" ws=\"$ws=vernacular\" width=\"72000\" sortmethod=\"FullSortKey\" cansortbylength=\"true\" visibility=\"always\" /&gt;&lt;/finder&gt;&lt;comparer assemblyPath=\"Filters.dll\" class=\"SIL.FieldWorks.Filters.WritingSystemComparer\" ws=\"am-Ethi\" /&gt;&lt;/comparer&gt;&lt;/sorter&gt;</value>"
-			+"</Property>"
-			+ "<Property>"
-			+ "<name>db$local$LexDb.Entries_sorter</name>"
-			+ "<value xsi:type=\"xsd:string\">&lt;sorter assemblyPath=\"Filters.dll\" class=\"SIL.FieldWorks.Filters.GenRecordSorter\"&gt;&lt;comparer assemblyPath=\"Filters.dll\" class=\"SIL.FieldWorks.Filters.StringFinderCompare\"&gt;&lt;finder assemblyPath=\"XMLViews.dll\" class=\"SIL.FieldWorks.Common.Controls.SortMethodFinder\" layout=\"EntryHeadwordForEntry\" sortmethod=\"FullSortKey\" ws=\"vernacular\"&gt;&lt;column layout=\"EntryHeadwordForEntry\" label=\"Headword\" ws=\"$ws=vernacular\" width=\"72000\" sortmethod=\"FullSortKey\" cansortbylength=\"true\" visibility=\"always\" /&gt;&lt;/finder&gt;&lt;comparer assemblyPath=\"Filters.dll\" class=\"SIL.FieldWorks.Filters.WritingSystemComparer\" ws=\"$ws=am-Ethi\" /&gt;&lt;/comparer&gt;&lt;/sorter&gt;</value>"
-			+ "</Property>"
-			+ "<Property>"
-			+ "<name>db$local$LexDb.Entries_sorter</name>"
-			+ "<value xsi:type=\"xsd:string\">&lt;sorter assemblyPath=\"Filters.dll\" class=\"SIL.FieldWorks.Filters.GenRecordSorter\"&gt;&lt;comparer assemblyPath=\"Filters.dll\" class=\"SIL.FieldWorks.Filters.StringFinderCompare\"&gt;&lt;finder assemblyPath=\"XMLViews.dll\" class=\"SIL.FieldWorks.Common.Controls.SortMethodFinder\" layout=\"EntryHeadwordForEntry\" sortmethod=\"FullSortKey\" ws=\"vernacular\"&gt;&lt;column layout=\"EntryHeadwordForEntry\" label=\"Headword\" ws=\"$ws=vernacular\" width=\"72000\" sortmethod=\"FullSortKey\" cansortbylength=\"true\" visibility=\"always\" /&gt;&lt;/finder&gt;&lt;comparer assemblyPath=\"Filters.dll\" class=\"SIL.FieldWorks.Filters.WritingSystemComparer\" ws=\"$wsName\" /&gt;&lt;/comparer&gt;&lt;/sorter&gt;</value>"
-			+ "</Property>"
-			+ "<Property>"
-			+ "<name>db$local$LexDb.Entries_sorter</name>"
-			+ "<value xsi:type=\"xsd:string\">&lt;sorter assemblyPath=\"Filters.dll\" class=\"SIL.FieldWorks.Filters.GenRecordSorter\"&gt;&lt;comparer assemblyPath=\"Filters.dll\" class=\"SIL.FieldWorks.Filters.StringFinderCompare\"&gt;&lt;finder assemblyPath=\"XMLViews.dll\" class=\"SIL.FieldWorks.Common.Controls.SortMethodFinder\" layout=\"EntryHeadwordForEntry\" sortmethod=\"FullSortKey\" ws=\"vernacular\"&gt;&lt;column layout=\"EntryHeadwordForEntry\" label=\"Headword\" ws=\"$ws=vernacular\" width=\"72000\" sortmethod=\"FullSortKey\" cansortbylength=\"true\" visibility=\"always\" /&gt;&lt;/finder&gt;&lt;comparer assemblyPath=\"Filters.dll\" class=\"SIL.FieldWorks.Filters.WritingSystemComparer\" ws=\"$ws=reversal\" /&gt;&lt;/comparer&gt;&lt;/sorter&gt;</value>"
-			+ "</Property>"
-			+ "<Property> <name>db$local$ConcordanceWs</name> <value xsi:type=\"xsd:string\">am-Ethi</value></Property>"
-			+ "<Property> <name>db$local$WordformInventory.Wordforms_sorter</name> <value xsi:type=\"xsd:string\">>&lt;sorter assemblyPath=\"Filters.dll\" class=\"SIL.FieldWorks.Filters.GenRecordSorter\"&gt;&lt;comparer assemblyPath=\"Filters.dll\" class=\"SIL.FieldWorks.Filters.StringFinderCompare\"&gt;&lt;finder assemblyPath=\"XMLViews.dll\" class=\"SIL.FieldWorks.Common.Controls.LayoutFinder\" layout=\"\"&gt;&lt;column label=\"Form\" width=\"30%\" cansortbylength=\"true\" ws=\"$ws=best vernacular\" field=\"Form\"&gt;&lt;span&gt;&lt;properties&gt;&lt;bold value=\"off\" /&gt;&lt;/properties&gt;&lt;string field=\"Form\" ws=\"best vernacular\" /&gt;&lt;/span&gt;&lt;/column&gt;&lt;/finder&gt;&lt;comparer assemblyPath=\"Filters.dll\" class=\"SIL.FieldWorks.Filters.WritingSystemComparer\" ws=\"am-Ethi\" /&gt;&lt;/comparer&gt;&lt;/sorter&gt;</value> </Property>"
-			+ "<Property>"
-			+ "<name>db$local$lexiconEdit_lexentryList_ColumnList</name> "
-			+ "<value xsi:type=\"xsd:string\">&lt;root version=\"14\"&gt;&lt;column layout=\"LexemeFormForEntry\" common=\"true\" width=\"72000\" ws=\"$ws=am-Ethi\" sortmethod=\"MorphSortKey\" cansortbylength=\"true\" visibility=\"always\" transduce=\"LexEntry.LexemeForm.Form\" transduceCreateClass=\"MoStemAllomorph\" originalWs=\"vernacular\" originalLabel=\"Lexeme Form\" label=\"Lexeme Form (Sui_ipa)\" /&gt;&lt;column layout=\"EntryHeadwordForEntry\" label=\"Headword\" ws=\"$ws=vernacular\" width=\"72000\" sortmethod=\"FullSortKey\" cansortbylength=\"true\" visibility=\"always\" /&gt;&lt;column layout=\"GlossesForSense\" multipara=\"true\" width=\"72000\" ws=\"$ws=zh-CN\" transduce=\"LexSense.Gloss\" cansortbylength=\"true\" visibility=\"always\" originalWs=\"analysis\" originalLabel=\"Glosses\" label=\"Glosses (ManS)\" /&gt;&lt;column layout=\"GrammaticalInfoFullForSense\" headerlabel=\"Grammatical Info.\" chooserFilter=\"external\" label=\"Grammatical Info. (Full)\" multipara=\"true\" width=\"72000\" visibility=\"always\"&gt;&lt;dynamicloaderinfo assemblyPath=\"FdoUi.dll\" class=\"SIL.FieldWorks.FdoUi.PosFilter\" /&gt;&lt;/column&gt;&lt;/root&gt;</value>"
-			+ "</Property>"
-			+ "</ArrayOfProperty>";
-
+		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test the migration from version 7000069 to 7000070.
+		/// Test the migration from version 7000069 to 7000070 when there are duplicated lists (custom and DM generated) to
+		/// prove that custom lists get their titles changed to include -Custom
 		/// </summary>
+		/// ------------------------------------------------------------------------------------
 		[Test]
-		public void DataMigration7000070Test()
+		public void DuplicatedListsAreMarkedAsCustom()
 		{
-			string projectFolder = Path.Combine(Path.GetTempPath(), "DataMigration7000070Tests");
-			try
-			{
-				if (Directory.Exists(projectFolder))
-					Directory.Delete(projectFolder, true);
-				Directory.CreateDirectory(projectFolder);
-				string storePath = Path.Combine(projectFolder, FdoFileHelper.ksWritingSystemsDir);
-				Directory.CreateDirectory(storePath);
-				string testDataPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "FDO", "FDOTests", "TestData");
-				string testEnglishPath = Path.Combine(storePath, "en.ldml");
-				File.Copy(Path.Combine(testDataPath, "en_7000069.ldml"), testEnglishPath);
-				File.SetAttributes(testEnglishPath, FileAttributes.Normal); // don't want to copy readonly property.
-				string xkalPath = Path.Combine(storePath, "am-Ethi.ldml");
-				File.Copy(Path.Combine(testDataPath, "am-Ethi_7000069.ldml"), xkalPath);
-				File.SetAttributes(xkalPath, FileAttributes.Normal); // don't want to copy readonly property.
-				string xkalFonipaPath = Path.Combine(storePath, "am-Ethi-fonipa.ldml");
-				File.Copy(Path.Combine(testDataPath, "am-Ethi-fonipa_7000069.ldml"), xkalFonipaPath);
-				File.SetAttributes(xkalFonipaPath, FileAttributes.Normal); // don't want to copy readonly property.
+			var mockMdc = new MockMDCForDataMigration();
+			mockMdc.AddClass(1, "CmObject", null, new List<string> { "CmPossibilityList", "LanguageProject", "CmCustomItem", "LexDb", "LexEntryRef" });
+			mockMdc.AddClass(2, "CmPossibilityList", "CmObject", new List<string>());
+			mockMdc.AddClass(3, "CmCustomItem", "CmObject", new List<string>());
+			mockMdc.AddClass(4, "LanguageProject", "CmObject", new List<string>());
+			mockMdc.AddClass(5, "LexDb", "CmObject", new List<string>());
+			mockMdc.AddClass(6, "LexEntryRef", "CmObject", new List<string>());
 
-				HashSet<DomainObjectDTO> dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000070.xml");
-				// Create all the Mock classes for the classes in my test data.
-				var mockMdc = new MockMDCForDataMigration();
-				mockMdc.AddClass(1, "CmObject", null, new List<string>
-				{
-					"LexEntry", "LangProject", "LexSense", "LexDb",
-					"ReversalEntry", "StStyle", "CmPossibilityList", "CmBaseAnnotation"
-				});
-				mockMdc.AddClass(2, "LangProject", "CmObject", new List<string>());
-				mockMdc.AddClass(3, "LexEntry", "CmObject", new List<string>());
-				mockMdc.AddClass(4, "LexSense", "CmObject", new List<string>());
-				mockMdc.AddClass(5, "LexDb", "CmObject", new List<string>());
-				mockMdc.AddClass(6, "ReversalEntry", "CmObject", new List<string>());
-				mockMdc.AddClass(7, "StStyle", "CmObject", new List<string>());
-				mockMdc.AddClass(8, "CmPossibilityList", "CmObject", new List<string>());
-				mockMdc.AddClass(9, "CmBaseAnnotation", "CmObject", new List<string>());
+			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000070_DoubledList.xml");
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000069, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
 
-				string settingsFolder = Path.Combine(projectFolder, FdoFileHelper.ksConfigurationSettingsDir);
-				Directory.CreateDirectory(settingsFolder);
-				string sampleLayout = Path.Combine(settingsFolder, "Test.fwlayout");
-				File.WriteAllText(sampleLayout, sampleLayoutData, Encoding.UTF8);
-				string sampleSettings = Path.Combine(settingsFolder, "db$local$Settings.xml");
-				File.WriteAllText(sampleSettings, sampleLocalSettingsData, Encoding.UTF8);
+			Assert.AreEqual(3, dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").Count(), "The CmPossibilityList test data has changed");
 
-				IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000069, dtos, mockMdc, projectFolder, FwDirectoryFinder.FdoDirectories);
-				// Do the migration.
-				m_dataMigrationManager.PerformMigration(dtoRepos, 7000070, new DummyProgressDlg());
+			m_dataMigrationManager.PerformMigration(dtoRepos, 7000070, new DummyProgressDlg()); // SUT
 
-				// Verification Phase
-				Assert.AreEqual(7000070, dtoRepos.CurrentModelVersion, "Wrong updated version.");
+			var resultingLists = dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").ToList();
+			Assert.AreEqual(3, resultingLists.Count, "The Custom list and new replacement should be all there is");
+			// Make sure that the custom list got a custom name and the 'real' owned list kept the original name
+			var custLanguages = XElement.Parse(resultingLists[0].Xml);
+			var origLanguages = XElement.Parse(resultingLists[1].Xml);
+			var notLanguages = XElement.Parse(resultingLists[2].Xml);
+			Assert.IsTrue(origLanguages.Attribute("ownerguid") != null, "Test data order has changed");
+			var firstName = origLanguages.Element("Name").Elements("AUni").First().Value;
+			Assert.That(firstName, Is.StringMatching("Languages"), "Built in list should not have changed the name");
+			firstName = custLanguages.Element("Name").Elements("AUni").First().Value;
+			Assert.That(firstName, Is.StringMatching("Languages-Custom"), "The custom Languages list did not have its name changed");
+			firstName = notLanguages.Element("Name").Elements("AUni").First().Value;
+			Assert.That(firstName, Is.StringMatching("Not Languages"), "The unrelated list should not have had its name changed");
+		}
 
-				// Todo:
-				// Verify that en.ldml is unchanged.
-				Assert.That(File.Exists(testEnglishPath));
-				// Verify that am-Ethi.ldml is renamed to am and content changed
-				Assert.That(File.Exists(Path.Combine(storePath, "am.ldml")));
-				// Verify that am-Ethi-fonipa.ldml is renamed to am-fonipa and content changed
-				Assert.That(File.Exists(Path.Combine(storePath, "am-fonipa.ldml")));
-				// Verify that AUni data in LexEntry" guid="7ecbb299-bf35-4795-a5cc-8d38ce8b891c tag is changed to am
-				XElement entry = XElement.Parse(dtoRepos.GetDTO("7ecbb299-bf35-4795-a5cc-8d38ce8b891c").Xml);
-				Assert.That(entry.Element("CitationForm").Element("AUni").Attribute("ws").Value, Is.EqualTo("am"));
-				// Verify that AStr data in LexSense" guid="e3c2d179-3ccd-431e-ac2e-100bdb883680" tag is changed to am
-				XElement sense = XElement.Parse(dtoRepos.GetDTO("e3c2d179-3ccd-431e-ac2e-100bdb883680").Xml);
-				Assert.That(sense.Element("Definition").Elements("AStr").Skip(1).First().Attribute("ws").Value, Is.EqualTo("am"));
-				Assert.That(sense.Element("Definition").Elements("AStr").Count(), Is.EqualTo(2), "french should be deleted because empty");
-				// Verify that the empty alternatives get removed.
-				Assert.That(sense.Element("Bibliography").Elements("AUni").First().Attribute("ws").Value, Is.EqualTo("en"));
-				Assert.That(sense.Element("Bibliography").Elements("AUni").Count(), Is.EqualTo(1));
-				// Verify that Run data in LexSense" guid="e3c2d179-3ccd-431e-ac2e-100bdb883680" tag is changed to am
-				Assert.That(sense.Element("Definition").Element("AStr").Elements("Run").Skip(1).First().Attribute("ws").Value, Is.EqualTo("am"));
-				// Check LiftResidue lang attributes are fixed; note that a result containing lang=&quot;am&quot
-				// would also be acceptable, perhaps even more to be expected, but converting the &quot; s here to " is acceptable.
-				Assert.That(sense.Element("LiftResidue").Element("Uni").Value.Contains("lang=\"am\""));
-				// Verify that WsProp data in StStyle guid="4d312f11-439e-11d4-b5e7-00400543a266" is changed to am
-				XElement style = XElement.Parse(dtoRepos.GetDTO("4d312f11-439e-11d4-b5e7-00400543a266").Xml);
-				Assert.That(style.Element("Rules").Element("Prop").Element("WsStyles9999").Elements("WsProp").Skip(1).First().Attribute("ws").Value, Is.EqualTo("am"));
-				// Verify that am-Ethi is changed to am in xWss properties of LangProject b8bdad3d-9006-46f0-83e8-ae1d1726f2ad.
-				XElement langProj = XElement.Parse(dtoRepos.GetDTO("b8bdad3d-9006-46f0-83e8-ae1d1726f2ad").Xml);
-				Assert.That(langProj.Element("AnalysisWss").Element("Uni").Value, Is.EqualTo("en am"));
-				Assert.That(langProj.Element("CurVernWss").Element("Uni").Value, Is.EqualTo("seh am fr"));
-				Assert.That(langProj.Element("CurAnalysisWss").Element("Uni").Value, Is.EqualTo("en am"));
-				Assert.That(langProj.Element("CurPronunWss").Element("Uni").Value, Is.EqualTo("am"));
-				Assert.That(langProj.Element("VernWss").Element("Uni").Value, Is.EqualTo("am"));
-				// Verify that WritingSystem/Uni is changed to am in ReversalIndex" guid="62105696-da6c-405e-b87f-a2a0294bb179
-				XElement ri = XElement.Parse(dtoRepos.GetDTO("62105696-da6c-405e-b87f-a2a0294bb179").Xml);
-				Assert.That(ri.Element("WritingSystem").Element("Uni").Value, Is.EqualTo("am"));
-				//	and CmPossibilityList" guid="b30aa28d-7510-49e6-b9ac-bc1902398ce6"
-				XElement pl = XElement.Parse(dtoRepos.GetDTO("b30aa28d-7510-49e6-b9ac-bc1902398ce6").Xml);
-				Assert.That(pl.Element("WritingSystem").Element("Uni").Value, Is.EqualTo("am"));
-				//  and CmBaseAnnotation" guid="dc747a85-ceb6-491e-8b54-7fc37d7b2f80"
-				XElement cba = XElement.Parse(dtoRepos.GetDTO("dc747a85-ceb6-491e-8b54-7fc37d7b2f80").Xml);
-				Assert.That(cba.Element("WritingSystem").Element("Uni").Value, Is.EqualTo("am"));
-				// Several other classes have WritingSystem, but we're checking ALL objects, so I think three test cases is plenty.
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test that the migration from version 7000069 to 7000070 fixes some bad data in enum fields
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void BadListDisplayOptionAndChoiceOptionAreFixed()
+		{
+			var mockMdc = new MockMDCForDataMigration();
+			mockMdc.AddClass(1, "CmObject", null, new List<string> { "CmPossibilityList", "LanguageProject", "CmCustomItem", "LexDb", "LexEntryRef" });
+			mockMdc.AddClass(2, "CmPossibilityList", "CmObject", new List<string>());
+			mockMdc.AddClass(3, "CmCustomItem", "CmObject", new List<string>());
+			mockMdc.AddClass(4, "LanguageProject", "CmObject", new List<string>());
+			mockMdc.AddClass(5, "LexDb", "CmObject", new List<string>());
+			mockMdc.AddClass(6, "LexEntryRef", "CmObject", new List<string>());
 
-				// Check the layout
-				XElement layoutElt = XElement.Parse(File.ReadAllText(sampleLayout, Encoding.UTF8));
-				Assert.That(layoutElt.Element("layout").Element("part").Attribute("ws").Value, Is.EqualTo("am"));
-				Assert.That(layoutElt.Element("layout").Elements("part").Skip(1).First().Attribute("ws").Value, Is.EqualTo("vernacular"));
-				Assert.That(layoutElt.Element("layout").Elements("part").Skip(2).First().Attribute("ws").Value, Is.EqualTo("$ws=all analysis"));
-				Assert.That(layoutElt.Element("layout").Elements("part").Skip(3).First().Attribute("ws").Value, Is.EqualTo("$ws=am"));
-				Assert.That(layoutElt.Element("layout").Elements("part").Skip(4).First().Attribute("ws").Value, Is.EqualTo("am-fonipa,am"));
-				Assert.That(layoutElt.Element("layout").Elements("part").Skip(4).First().Attribute("visibleWritingSystems").Value, Is.EqualTo("am-fonipa,am"));
+			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000070_DoubledList.xml");
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000069, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
 
-				// Check the local settings.
-				XElement propTable = XElement.Parse(File.ReadAllText(sampleSettings, Encoding.UTF8));
-				Assert.That(propTable.Element("Property").Element("value").Value.Contains("5062001%am"));
-				Assert.That(propTable.Element("Property").Element("value").Value.Contains("5112002%am"));
-				Assert.That(propTable.Element("Property").Element("value").Value.Contains("103%am"));
-				Assert.That(propTable.Elements("Property").Skip(1).First().Element("value").Value.Contains("ws=\"am\""));
-				Assert.That(propTable.Elements("Property").Skip(2).First().Element("value").Value.Contains("ws=\"$ws=am\""));
-				Assert.That(propTable.Elements("Property").Skip(3).First().Element("value").Value.Contains("ws=\"$wsName\""));
-				Assert.That(propTable.Elements("Property").Skip(4).First().Element("value").Value.Contains("ws=\"$ws=reversal\""));
-				Assert.That(propTable.Elements("Property").Skip(5).First().Element("value").Value, Is.EqualTo("am"));
-				Assert.That(propTable.Elements("Property").Skip(6).First().Element("value").Value.Contains("ws=\"am\""));
-				Assert.That(propTable.Elements("Property").Skip(7).First().Element("value").Value.Contains("ws=\"$ws=am\""));
-			}
-			finally
-			{
-				if (Directory.Exists(projectFolder))
-					Directory.Delete(projectFolder, true);
-			}
+			const string badEnumValue = "-1073741824";
+			Assert.True(dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").Any(dto => dto.Xml.Contains("PreventChoiceAboveLevel val=\"" + badEnumValue + "\"")),
+				"The CmPossibilityList test data has changed");
+			Assert.True(dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").Any(dto => dto.Xml.Contains("DisplayOption val=\"" + badEnumValue + "\"")),
+				"The CmPossibilityList test data has changed");
+
+			m_dataMigrationManager.PerformMigration(dtoRepos, 7000070, new DummyProgressDlg()); // SUT
+
+			var resultingLists = dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").ToList();
+			Assert.False(dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").Any(dto => dto.Xml.Contains(badEnumValue)), "Bad list data was not removed.");
+			Assert.AreEqual(2, resultingLists.Count(dto => dto.Xml.Contains("PreventChoiceAboveLevel val=\"0\"")), "PreventChoiceAbove should have changed to 0");
+			Assert.AreEqual(2, resultingLists.Count(dto => dto.Xml.Contains("DisplayOption val=\"0\"")), "DisplayOption should have changed to 0");
 		}
 	}
 }

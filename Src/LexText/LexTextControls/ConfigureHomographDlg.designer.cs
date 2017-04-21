@@ -36,10 +36,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConfigureHomographDlg));
-			this.label5 = new System.Windows.Forms.Label();
-			this.m_chkShowHomographNumInDict = new System.Windows.Forms.CheckBox();
-			this.m_chkShowSenseNumInDict = new System.Windows.Forms.CheckBox();
-			this.label6 = new System.Windows.Forms.Label();
 			this.m_chkShowHomographNumInReversal = new System.Windows.Forms.CheckBox();
 			this.m_chkShowSenseNumInReversal = new System.Windows.Forms.CheckBox();
 			this.m_btnOk = new System.Windows.Forms.Button();
@@ -52,29 +48,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.label1 = new System.Windows.Forms.Label();
 			this.m_linkConfigHomographNumber = new System.Windows.Forms.LinkLabel();
 			this.m_linkConfigSenseRefNumber = new System.Windows.Forms.LinkLabel();
+			this.label6 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
-			// 
-			// label5
-			// 
-			resources.ApplyResources(this.label5, "label5");
-			this.label5.Name = "label5";
-			// 
-			// m_chkShowHomographNumInDict
-			// 
-			resources.ApplyResources(this.m_chkShowHomographNumInDict, "m_chkShowHomographNumInDict");
-			this.m_chkShowHomographNumInDict.Name = "m_chkShowHomographNumInDict";
-			this.m_chkShowHomographNumInDict.UseVisualStyleBackColor = true;
-			// 
-			// m_chkShowSenseNumInDict
-			// 
-			resources.ApplyResources(this.m_chkShowSenseNumInDict, "m_chkShowSenseNumInDict");
-			this.m_chkShowSenseNumInDict.Name = "m_chkShowSenseNumInDict";
-			this.m_chkShowSenseNumInDict.UseVisualStyleBackColor = true;
-			// 
-			// label6
-			// 
-			resources.ApplyResources(this.label6, "label6");
-			this.label6.Name = "label6";
 			// 
 			// m_chkShowHomographNumInReversal
 			// 
@@ -159,6 +134,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_linkConfigSenseRefNumber.TabStop = true;
 			this.m_linkConfigSenseRefNumber.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.m_linkConfigSenseRefNumber_LinkClicked);
 			// 
+			// label6
+			// 
+			resources.ApplyResources(this.label6, "label6");
+			this.label6.Name = "label6";
+			// 
 			// ConfigureHomographDlg
 			// 
 			resources.ApplyResources(this, "$this");
@@ -175,10 +155,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.Controls.Add(this.m_btnOk);
 			this.Controls.Add(this.m_chkShowSenseNumInReversal);
 			this.Controls.Add(this.m_chkShowHomographNumInReversal);
-			this.Controls.Add(this.m_chkShowSenseNumInDict);
 			this.Controls.Add(this.label6);
-			this.Controls.Add(this.m_chkShowHomographNumInDict);
-			this.Controls.Add(this.label5);
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "ConfigureHomographDlg";
@@ -191,10 +168,6 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		#endregion
 
-		private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.CheckBox m_chkShowHomographNumInDict;
-		private System.Windows.Forms.CheckBox m_chkShowSenseNumInDict;
-		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.CheckBox m_chkShowHomographNumInReversal;
 		private System.Windows.Forms.CheckBox m_chkShowSenseNumInReversal;
 		private System.Windows.Forms.Button m_btnOk;
@@ -207,6 +180,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.LinkLabel m_linkConfigHomographNumber;
 		private System.Windows.Forms.LinkLabel m_linkConfigSenseRefNumber;
+		private System.Windows.Forms.Label label6;
 
 	}
 }

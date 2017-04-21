@@ -38,8 +38,11 @@ namespace SIL.FieldWorks.XWorks
 		private List<StyleComboItem> m_charStyles;
 		private List<StyleComboItem> m_paraStyles;
 
-		/// <summary>Model for the dictionary element being configured</summary>
+		/// <summary>ConfigurableDictionaryNode to model the dictionary element being configured</summary>
 		private ConfigurableDictionaryNode m_node;
+
+		/// <summary>The DictionaryConfigurationModel that owns the node being configured.</summary>
+		private DictionaryConfigurationModel m_configModel;
 
 		/// <summary>Model for options specific to the element type, such as writing systems or relation types</summary>
 		private DictionaryNodeOptions Options { get { return m_node.DictionaryNodeOptions; } }
@@ -66,30 +69,13 @@ namespace SIL.FieldWorks.XWorks
 			View = view;
 		}
 
-
-		/// <summary>
-		/// Checks and returns whether all parents nodes are checked
-		/// </summary>
-		/// <param name="node"></param>
-		/// <returns></returns>
-		internal bool IsAllParentsChecked(ConfigurableDictionaryNode node)
-		{
-			if (node.Parent == null) return true; // this should only be the main entry and minor entry nodes
-			while (node != null)
-			{
-				if (!node.IsEnabled)
-					return false;
-				node = node.Parent;
-			}
-			return true;
-		}
-
 		#region LoadModel
 		/// <summary>
 		/// (Re)initializes the controller and view to configure the given node
 		/// </summary>
 		public void LoadNode(DictionaryConfigurationModel model, ConfigurableDictionaryNode node)
 		{
+			m_configModel = model;
 			m_node = node;
 
 			View.SuspendLayout();
@@ -97,7 +83,7 @@ namespace SIL.FieldWorks.XWorks
 			ResetView(View, node);
 
 			// Populate Styles dropdown
-			var isPara = m_node.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph;
+			var isPara = m_node.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph || m_node.Parent == null;
 			View.SetStyles(isPara ? m_paraStyles : m_charStyles, m_node.Style, isPara);
 
 			// Test for Options type
@@ -139,12 +125,7 @@ namespace SIL.FieldWorks.XWorks
 				// Special Grammatical Info. options are needed only if the parent is Senses.
 				optionsView = LoadGrammaticalInfoOptions();
 			}
-			else
-			{
-				// else, show only the default details (style, before, between, after)
-				if (m_node.IsReadonlyMainEntry)
-					View.StylesEnabled = false;
-			}
+			// else, show only the default details (style, before, between, after)
 
 			// Notify users of shared nodes
 			if (node.ReferencedNode != null) //REVIEW: make sure ReferencedNodes always have no options
@@ -200,7 +181,7 @@ namespace SIL.FieldWorks.XWorks
 						PanelContents = optionsView,
 						LabelText = xWorksStrings.ThisConfigurationIsShared,
 						LabelToolTip = string.Format(xWorksStrings.SeeAffectedNodesUnder,
-							DictionaryConfigurationMigrator.BuildPathStringFromNode(masterParent), false)
+							DictionaryConfigurationMigrator.BuildPathStringFromNode(masterParent, false))
 					};
 				}
 			}
@@ -236,49 +217,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private List<ListViewItem> LoadAvailableWsList(DictionaryNodeWritingSystemOptions wsOptions)
-		{
-			// Find and add available and selected Writing Systems
-			var selectedWSs = wsOptions.Options.Where(ws => ws.IsEnabled).ToList();
-			var availableWSs = GetCurrentWritingSystems(wsOptions.WsType);
-
-			bool atLeastOneWsChecked = false;
-			// Check if the default WS is selected (it will be the one and only)
-			if (selectedWSs.Count == 1)
-			{
-				var selectedWsDefaultId = WritingSystemServices.GetMagicWsIdFromName(selectedWSs[0].Id);
-				if (selectedWsDefaultId < 0)
-				{
-					var defaultWsItem = availableWSs.FirstOrDefault(item => item.Tag.Equals(selectedWsDefaultId));
-					if (defaultWsItem != null)
-					{
-						defaultWsItem.Checked = true;
-						atLeastOneWsChecked = true;
-					}
-				}
-			}
-
-			if (!atLeastOneWsChecked)
-			{
-				// Insert checked named WS's in their saved order, after the Default WS (2 Default WS's if Type is Both)
-				int insertionIdx = wsOptions.WsType == DictionaryNodeWritingSystemOptions.WritingSystemType.Both ? 2 : 1;
-				foreach (var ws in selectedWSs)
-				{
-					var selectedItem = availableWSs.FirstOrDefault(item => ws.Id.Equals(item.Tag));
-					if (selectedItem != null && availableWSs.Remove(selectedItem))
-					{
-						selectedItem.Checked = true;
-						availableWSs.Insert(insertionIdx++, selectedItem);
-						atLeastOneWsChecked = true;
-					}
-				}
-			}
-
-			// If we still haven't checked one, check the first default (the previously-checked WS was removed)
-			if (!atLeastOneWsChecked)
-				availableWSs[0].Checked = true;
-			return availableWSs;
-		}
 		private void OnViewOnAfterTextChanged(object sender, EventArgs e)
 		{
 			AfterTextChanged();
@@ -319,7 +257,6 @@ namespace SIL.FieldWorks.XWorks
 			view.Visible = true;
 			view.StylesVisible = true;
 			view.StylesEnabled = true;
-			view.Enabled = IsAllParentsChecked(node);
 			view.SurroundingCharsVisible = node.Parent != null; // top-level nodes don't need Surrounding Characters (Before, Between, After)
 		}
 
@@ -331,7 +268,7 @@ namespace SIL.FieldWorks.XWorks
 				DisplayOptionCheckBoxChecked = wsOptions.DisplayWritingSystemAbbreviations
 			};
 
-			var availableWSs = LoadAvailableWsList(wsOptions);
+			var availableWSs = DictionaryConfigurationController.LoadAvailableWsList(wsOptions, m_cache); // REVIEW (Hasso) 2017.04: is this redundant to the model.Load sync?
 
 			wsOptionsView.AvailableItems = availableWSs;
 
@@ -351,7 +288,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 
-		private UserControl LoadWsAndParaOptions(DictionaryNodeWritingSystemAndParaOptions wsapoptions)
+		private UserControl LoadWsAndParaOptions(DictionaryNodeWritingSystemAndParaOptions wsapoptions) // REVIEW (Hasso) 2017.04: reuse existing LoadWsOpts
 		{
 			var wsapOptionsView = new ListOptionsView
 			{
@@ -359,7 +296,7 @@ namespace SIL.FieldWorks.XWorks
 				DisplayOptionCheckBox2Checked = wsapoptions.DisplayEachInAParagraph
 			};
 
-			var availableWSs = LoadAvailableWsList(wsapoptions);
+			var availableWSs = DictionaryConfigurationController.LoadAvailableWsList(wsapoptions, m_cache);
 
 			wsapOptionsView.AvailableItems = availableWSs;
 
@@ -505,15 +442,6 @@ namespace SIL.FieldWorks.XWorks
 				LoadParagraphOptions(listAndParaOptions, listOptionsView);
 			}
 			listOptionsView.DisplayOptionCheckBox2Visible = false;
-			// REVIEW (Hasso) 2016.02: could this if block be replaced by config file changes?
-			if (listOptions.ListId == DictionaryNodeListOptions.ListIds.Complex ||
-				listOptions.ListId == DictionaryNodeListOptions.ListIds.Minor)
-			{
-				if (m_node.StyleType != ConfigurableDictionaryNode.StyleTypes.Character)
-				{
-					View.SetStyles(m_paraStyles, m_node.Style, true);
-				}
-			}
 			InternalLoadList(listOptions, listOptionsView);
 
 			// Prevent events from firing while the view is being initialized
@@ -531,6 +459,7 @@ namespace SIL.FieldWorks.XWorks
 			else
 			{
 				string label;
+				// REVIEW (Hasso) 2017.04: verifying available options is already accomplished in model.Load; here it is redundant.
 				var availableOptions = GetListItemsAndLabel(listOptions.ListId, out label);
 				listOptionsView.ListViewLabel = label;
 
@@ -605,9 +534,9 @@ namespace SIL.FieldWorks.XWorks
 			var groupOptionsView = new GroupingOptionsView
 			{
 				Description = options.Description,
-				DisplayInParagraph = options.DisplayGroupInParagraph
+				DisplayInParagraph = options.DisplayEachInAParagraph
 			};
-			ToggleViewForShowInPara(options.DisplayGroupInParagraph);
+			ToggleViewForShowInPara(options.DisplayEachInAParagraph);
 			groupOptionsView.Load += GroupingEventHandlerAdder(groupOptionsView, options);
 			return groupOptionsView;
 		}
@@ -618,8 +547,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				groupOptionsView.DisplayInParagraphChanged += (sender, e) =>
 				{
-					groupOptions.DisplayGroupInParagraph = groupOptionsView.DisplayInParagraph;
-					ToggleViewForShowInPara(groupOptions.DisplayGroupInParagraph);
+					groupOptions.DisplayEachInAParagraph = groupOptionsView.DisplayInParagraph;
+					ToggleViewForShowInPara(groupOptions.DisplayEachInAParagraph);
 					RefreshPreview();
 				};
 
@@ -634,12 +563,11 @@ namespace SIL.FieldWorks.XWorks
 		private static string ParagraphStyleForSubentries(bool showInParagraph, string field)
 		{
 			string styleName = null;
-			var noteInParaStyles = new List<string>() { "AnthroNote", "DiscourseNote", "PhonologyNote", "GrammarNote", "SemanticsNote", "SocioLinguisticsNote", "GeneralNote", "EncyclopedicInfo" };
 			if (showInParagraph)
 			{
 				if (field == "SubentriesOS") // only Reversal Subentries use SubentriesOS
 					styleName = "Reversal-Subentry";
-				else if (field == "ExamplesOS" || noteInParaStyles.Contains(field))
+				else if (field == "ExamplesOS" || DictionaryConfigurationModel.NoteInParaStyles.Contains(field))
 					styleName = "Bulleted List";
 				else if (field == "ExtendedNoteOS" || field == "SensesOS")
 					styleName = "Dictionary-Sense";
@@ -673,48 +601,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		#region Load more-static parts
-		/// <param name="wsType"></param>
-		/// <returns>
-		/// A list of ListViewItem's representing this project's WritingSystems, with "magic" default WS's at the beginning of the list.
-		/// Each LVI's Tag is the WS Id: negative int for "magic" default WS's, and a string like "en" or "fr" for normal WS's.
-		/// LVI's are unchecked by default
-		/// </returns>
-		private List<ListViewItem> GetCurrentWritingSystems(DictionaryNodeWritingSystemOptions.WritingSystemType wsType)
-		{
-			var wsList = new List<ListViewItem>();
-			switch (wsType)
-			{
-				case DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular:
-					wsList.Add(new ListViewItem(xWorksStrings.ksDefaultVernacular) { Tag = WritingSystemServices.kwsVern });
-					wsList.AddRange(m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(
-							ws => new ListViewItem(ws.DisplayLabel) { Tag = ws.Id }));
-					break;
-				case DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis:
-					wsList.Add(new ListViewItem(xWorksStrings.ksDefaultAnalysis) { Tag = WritingSystemServices.kwsAnal });
-					wsList.AddRange(m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(
-							ws => new ListViewItem(ws.DisplayLabel) { Tag = ws.Id }));
-					break;
-				case DictionaryNodeWritingSystemOptions.WritingSystemType.Both:
-					wsList.Add(new ListViewItem(xWorksStrings.ksDefaultVernacular) { Tag = WritingSystemServices.kwsVern });
-					wsList.Add(new ListViewItem(xWorksStrings.ksDefaultAnalysis) { Tag = WritingSystemServices.kwsAnal });
-					wsList.AddRange(m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(
-							ws => new ListViewItem(ws.DisplayLabel) { Tag = ws.Id }));
-					wsList.AddRange(m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(
-							ws => new ListViewItem(ws.DisplayLabel) { Tag = ws.Id }));
-					break;
-				case DictionaryNodeWritingSystemOptions.WritingSystemType.Pronunciation:
-					wsList.Add(new ListViewItem(xWorksStrings.ksDefaultPronunciation) { Tag = WritingSystemServices.kwsPronunciation });
-					wsList.AddRange(m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Select(
-							ws => new ListViewItem(ws.DisplayLabel) { Tag = ws.Id }));
-					break;
-				case DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal:
-					wsList.Add(new ListViewItem(xWorksStrings.ksCurrentReversal) { Tag = WritingSystemServices.kwsReversalIndex });
-					wsList.AddRange(m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(
-							ws => new ListViewItem(ws.DisplayLabel) { Tag = ws.Id }));
-					break;
-			}
-			return wsList;
-		}
 
 		private void LoadStylesLists()
 		{
@@ -788,7 +674,7 @@ namespace SIL.FieldWorks.XWorks
 					throw new ArgumentException("Unrecognised List ID: " + listId);
 			}
 		}
-
+		// REVIEW (Hasso) 2017.04: clean up some of this boilerplate code (GetXxxTypes) and move to DictionaryConfigurationController or DictionaryModelLoad(er|Controller)
 		private List<ListViewItem> GetMinorEntryTypes()
 		{
 			var result = GetVariantTypes();
@@ -842,8 +728,9 @@ namespace SIL.FieldWorks.XWorks
 			}).ToList();
 		}
 
-		// REVIEW (Hasso) 2014.05: This method is currently optimised for loading and caching both Sense and Entry lists at once. It
-		// could be optimised for loading each as needed without caching: by checking first for whether each relType is applicable.
+		// REVIEW (Hasso) 2014.05: This method is currently optimised for loading and caching both Sense and Entry lists at once.
+		// REVIEW (Hasso) 2017.04: Two years later, is the above comment still the case? Consider before moving to
+		// REVIEW (continued): DictionaryConfigurationController or DictionaryModelLoad(er|Controller)
 		private List<ListViewItem> GetLexicalRelationTypes(DictionaryNodeListOptions.ListIds listId)
 		{
 			var lexRelTypesSubset = new List<ListViewItem>();
@@ -952,14 +839,18 @@ namespace SIL.FieldWorks.XWorks
 
 		private void HandleHeadwordNumbersButton()
 		{
-			var hc = m_cache.ServiceLocator.GetInstance<HomographConfiguration>();
-			using (var dlg = new ConfigureHomographDlg())
+			using (var dlg = new HeadwordNumbersDlg())
 			{
-				dlg.SetupDialog(hc, m_cache, m_styleSheet, m_propertyTable.GetValue<IApp>("App"), m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+				var controller = new HeadwordNumbersController(dlg, m_configModel, m_cache);
+				// ReSharper disable once AccessToDisposedClosure - can only be used before the dialog is disposed
+				dlg.RunStylesDialog += (sender, e) => HandleStylesBtn((ComboBox) sender, ((ComboBox)sender).Text);
+				dlg.SetupDialog(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+				dlg.SetStyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 				//dlg.StartPosition = FormStartPosition.CenterScreen;
 				if (dlg.ShowDialog(View.TopLevelControl) != DialogResult.OK)
 					return;
-				RefreshStylesAndPreview(); // The Styles dialog is also available through the ConfigureHomographDlg
+				controller.Save();
+				RefreshPreview();
 			}
 		}
 

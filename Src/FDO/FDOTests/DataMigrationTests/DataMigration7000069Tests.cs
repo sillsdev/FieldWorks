@@ -153,83 +153,101 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 			// Make sure new default types are added.
 			var defaultRefs = dtoRepos.AllInstancesWithSubclasses("LexEntryRef").ToList();
-			XElement data = XElement.Parse(defaultRefs[0].Xml);
+			XElement data = XElement.Parse(defaultRefs[1].Xml);
 			var defTypeElt = data.Element("ComplexEntryTypes");
 			Assert.IsNotNull(defTypeElt);
 			Assert.That(defTypeElt != null && defTypeElt.HasElements, "Should have components (or variants)");
-			var objSurAttr = defTypeElt.Element("objsur");
-			Assert.IsNotNull(objSurAttr);
-			Assert.AreEqual("fec038ed-6a8c-4fa5-bc96-a4f515a98c50", objSurAttr.FirstAttribute.Value);
-
-			data = XElement.Parse(defaultRefs[1].Xml);
+			var objSurElem = defTypeElt.Element("objsur");
+			Assert.IsNotNull(objSurElem);
+			Assert.AreEqual("fec038ed-6a8c-4fa5-bc96-a4f515a98c50", objSurElem.FirstAttribute.Value);
+			var refTypeAttr = objSurElem.Attribute("t");
+			Assert.IsNotNull(refTypeAttr, "The type attribute should be set on the 'objsur' element for the default c.f.");
+			Assert.AreEqual(refTypeAttr.Value, "r");
+			data = XElement.Parse(defaultRefs[0].Xml);
 			defTypeElt = data.Element("VariantEntryTypes");
 			Assert.IsNotNull(defTypeElt);
 			Assert.That(defTypeElt != null && defTypeElt.HasElements, "Should have components (or variants)");
-			objSurAttr = defTypeElt.Element("objsur");
-			Assert.IsNotNull(objSurAttr);
-			Assert.AreEqual("3942addb-99fd-43e9-ab7d-99025ceb0d4e", objSurAttr.FirstAttribute.Value);
+			objSurElem = defTypeElt.Element("objsur");
+			Assert.IsNotNull(objSurElem);
+			Assert.AreEqual("3942addb-99fd-43e9-ab7d-99025ceb0d4e", objSurElem.FirstAttribute.Value);
+			refTypeAttr = objSurElem.Attribute("t");
+			Assert.IsNotNull(refTypeAttr, "The type attribute should be set on the 'objsur' element for the default variant");
+			Assert.AreEqual(refTypeAttr.Value, "r");
 
 			// Make sure new default types are added in possiblities
 
-			var possibilityObjs = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").First(
+			var typeListElem = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").First(
 											e => e.Guid.ToString() == "bb372467-5230-43ef-9cc7-4d40b053fb94").Xml);
 
-			var nameElt = possibilityObjs.Element("Name");
+			var nameElt = typeListElem.Element("Name");
 			Assert.IsNotNull(nameElt);
 			var objAUniAttr = nameElt.Element("AUni");
 			Assert.IsNotNull(objAUniAttr);
 			Assert.AreEqual("Variant Types", objAUniAttr.Value);
 
-			var possElt = possibilityObjs.Element("Possibilities");
+			var possElt = typeListElem.Element("Possibilities");
 			Assert.IsNotNull(possElt);
 			var objSurInPossAttr = possElt.Descendants("objsur").ToList();
 			Assert.AreEqual(2, objSurInPossAttr.Count);
-			var uniString1 = objSurInPossAttr.First(e => e.Attribute("guid").Value == "3942addb-99fd-43e9-ab7d-99025ceb0d4e");
-			Assert.IsNotNull(uniString1);
+			var defaultTypeElem = objSurInPossAttr.First(e => e.Attribute("guid").Value == "3942addb-99fd-43e9-ab7d-99025ceb0d4e");
+			Assert.IsNotNull(defaultTypeElem);
+			refTypeAttr = defaultTypeElem.Attribute("t");
+			Assert.IsNotNull(refTypeAttr, "The type attribute should be set on the 'objsur' element for the entry type in the list");
+			Assert.AreEqual(refTypeAttr.Value, "o", "the type should be owned by the list");
 
-			possibilityObjs = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").First(
+
+			typeListElem = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").First(
 											e => e.Guid.ToString() == "1ee09905-63dd-4c7a-a9bd-1d496743ccd6").Xml);
 
-			nameElt = possibilityObjs.Element("Name");
+			nameElt = typeListElem.Element("Name");
 			Assert.IsNotNull(nameElt);
 			objAUniAttr = nameElt.Element("AUni");
 			Assert.IsNotNull(objAUniAttr);
 			Assert.AreEqual("Complex Form Types", objAUniAttr.Value);
 
-			possElt = possibilityObjs.Element("Possibilities");
+			possElt = typeListElem.Element("Possibilities");
 			Assert.IsNotNull(possElt);
 			objSurInPossAttr = possElt.Descendants("objsur").ToList();
 			Assert.AreEqual(2, objSurInPossAttr.Count);
-			uniString1 = objSurInPossAttr.First(e => e.Attribute("guid").Value == "fec038ed-6a8c-4fa5-bc96-a4f515a98c50");
-			Assert.IsNotNull(uniString1);
+			defaultTypeElem = objSurInPossAttr.First(e => e.Attribute("guid").Value == "fec038ed-6a8c-4fa5-bc96-a4f515a98c50");
+			Assert.IsNotNull(defaultTypeElem);
+			refTypeAttr = defaultTypeElem.Attribute("t");
+			Assert.IsNotNull(refTypeAttr, "The type attribute should be set on the 'objsur' element for the entry type in the list");
+			Assert.AreEqual(refTypeAttr.Value, "o", "the type should be owned by the list");
 
 			// Make sure new default types are added in LexEntryType
 
-			var lexEntryObjs = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("LexEntryType").First(
+			var lexEntryTypeElem = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("LexEntryType").First(
 											e => e.Guid.ToString() == "3942addb-99fd-43e9-ab7d-99025ceb0d4e").Xml);
 
-			nameElt = lexEntryObjs.Element("Abbreviation");
+			nameElt = lexEntryTypeElem.Element("Abbreviation");
 			Assert.IsNotNull(nameElt);
 			objAUniAttr = nameElt.Element("AUni");
 			Assert.IsNotNull(objAUniAttr);
 			Assert.AreEqual("unspec. var. of", objAUniAttr.Value);
 
-			nameElt = lexEntryObjs.Element("Name");
+			nameElt = lexEntryTypeElem.Element("Name");
 			Assert.IsNotNull(nameElt);
 			objAUniAttr = nameElt.Element("AUni");
 			Assert.IsNotNull(objAUniAttr);
 			Assert.AreEqual("Unspecified Variant", objAUniAttr.Value);
 
-			lexEntryObjs = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("LexEntryType").First(
+			lexEntryTypeElem = XElement.Parse(dtoRepos.AllInstancesWithSubclasses("LexEntryType").First(
 											e => e.Guid.ToString() == "fec038ed-6a8c-4fa5-bc96-a4f515a98c50").Xml);
 
-			nameElt = lexEntryObjs.Element("Abbreviation");
+			nameElt = lexEntryTypeElem.Element("Abbreviation");
 			Assert.IsNotNull(nameElt);
 			objAUniAttr = nameElt.Element("AUni");
 			Assert.IsNotNull(objAUniAttr);
 			Assert.AreEqual("unspec. comp. form of", objAUniAttr.Value);
 
-			nameElt = lexEntryObjs.Element("Name");
+			nameElt = lexEntryTypeElem.Element("ReverseAbbr");
+			Assert.IsNotNull(nameElt);
+			objAUniAttr = nameElt.Element("AUni");
+			Assert.IsNotNull(objAUniAttr);
+			Assert.AreEqual("unspec. comp. form", objAUniAttr.Value);
+
+			nameElt = lexEntryTypeElem.Element("Name");
 			Assert.IsNotNull(nameElt);
 			objAUniAttr = nameElt.Element("AUni");
 			Assert.IsNotNull(objAUniAttr);
@@ -420,11 +438,12 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		public void AddLexEtymologyFieldsMakeSequence()
 		{
 			var mockMdc = new MockMDCForDataMigration();
-			mockMdc.AddClass(1, "CmObject", null, new List<string> { "LexEntry", "LexEtymology", "LangProject", "LexDb" });
+			mockMdc.AddClass(1, "CmObject", null, new List<string> { "LexEntry", "LexEtymology", "LangProject", "LexDb", "CmPossibilityList" });
 			mockMdc.AddClass(2, "LexEntry", "CmObject", new List<string>());
 			mockMdc.AddClass(3, "LexEtymology", "CmObject", new List<string>());
 			mockMdc.AddClass(4, "LangProject", "CmObject", new List<string>());
 			mockMdc.AddClass(5, "LexDb", "CmObject", new List<string>());
+			mockMdc.AddClass(6, "CmPossibilityList", "CmObject", new List<string>());
 
 			var currentFlid = 2000;
 			// These represent the pre-migration state
@@ -1111,6 +1130,47 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			{
 				Assert.IsNull(elt.Element("DialectLabels"));
 			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test the migration from version 7000068 to 7000069 making sure that users who had custom lists which we have made 'real'
+		/// don't end up with problems
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void DuplicatedListsAreMarkedAsCustom()
+		{
+			var mockMdc = new MockMDCForDataMigration();
+			mockMdc.AddClass(1, "CmObject", null, new List<string> { "CmPossibilityList", "LanguageProject", "CmCustomItem", "LexDb", "LexEntryType", "LexSense", "LexEntry" });
+			mockMdc.AddClass(2, "CmPossibilityList", "CmObject", new List<string>());
+			mockMdc.AddClass(3, "CmCustomItem", "CmObject", new List<string>());
+			mockMdc.AddClass(4, "LanguageProject", "CmObject", new List<string>());
+			mockMdc.AddClass(5, "LexDb", "CmObject", new List<string>());
+			mockMdc.AddClass(6, "LexEntryType", "CmObject", new List<string>());
+			mockMdc.AddClass(7, "LexEntryRef", "CmPossibility", new List<string>());
+			mockMdc.AddClass(8, "LexSense", "CmObject", new List<string>());
+			mockMdc.AddClass(9, "LexEntry", "CmObject", new List<string>());
+
+			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000069_CustomList.xml");
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000068, dtos, mockMdc, null, FwDirectoryFinder.FdoDirectories);
+
+			Assert.AreEqual(2, dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").Count(), "The CmPossibilityList test data has changed");
+
+			m_dataMigrationManager.PerformMigration(dtoRepos, 7000069, new DummyProgressDlg()); // SUT
+
+			var resultingLists = dtoRepos.AllInstancesWithSubclasses("CmPossibilityList").ToList();
+			Assert.AreEqual(5, resultingLists.Count, "3 lists were added in addition to the original custom Languages lists");
+			var names = new List<string>();
+			foreach (var list in resultingLists)
+			{
+				var listElem = XElement.Parse(list.Xml);
+				var firstName = listElem.Element("Name").Elements("AUni").First().Value;
+				names.Add(firstName);
+			}
+			// Verify that the custom Languages list had -Custom added to the end of it, and that the Languages list was added without incident
+			CollectionAssert.Contains(names, "Languages");
+			CollectionAssert.Contains(names, "Languages-Custom", "The Languages list was not re-named with custom");
 		}
 	}
 }

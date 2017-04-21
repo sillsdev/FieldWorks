@@ -27,6 +27,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// a named copy of an entire layout; e.g. 'My Lexeme-based Dictionary').
 		/// </summary>
 		public const char kcMarkLayoutCopy = '#';
+		/// <summary>
+		/// This marks the beginning of a tag added to layout names (and param values) for a language
+		/// specific reversal index.
+		/// </summary>
+		public const char kcMarkReversalIndex = '-';
 
 		/// <summary>
 		/// A defect in some configuration saving code related to either the hideConfig attribute or children of sublayouts
@@ -57,7 +62,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (keyAttributes.Length > 2 && keyAttributes[2] == NameAttr && stdKeyVals.Length > 2)
 			{
 				var userModifiedName = stdKeyVals[2];
-				var index = userModifiedName.IndexOfAny(new[] { kcMarkLayoutCopy, kcMarkNodeCopy });
+				var index = userModifiedName.IndexOfAny(new[] { kcMarkLayoutCopy, kcMarkNodeCopy, kcMarkReversalIndex });
 				var bugSuffixIndex = userModifiedName.IndexOf(kcMarkNodeCopyBug);
 				if (index > 0 || bugSuffixIndex > 0)
 				{

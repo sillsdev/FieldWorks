@@ -176,7 +176,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Note that this implementation is only possible because there are no other possible owners for LexExtendedNote.
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.ReferenceSequence, "CmObject")]
-		public IEnumerable<ICmObject> AllPossibleExtendedNotes
+		public IEnumerable<ICmObject> AllExtendedNoteTargets
 		{
 			get
 			{
@@ -184,6 +184,24 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					.Concat((from sense in Cache.ServiceLocator.GetInstance<ILexSenseRepository>().AllInstances()
 						where sense.ExtendedNoteOS.Count == 0
 						select sense))
+					.ToList();
+			}
+		}
+
+		/// <summary>
+		/// Gets all the bulk-editable things that might be used as the destination of a bulk edit to
+		/// pictures. This includes the senses that do not have extended notes.
+		/// Note that this implementation is only possible because there are no other possible owners for LexExtendedNote.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceSequence, "CmObject")]
+		public IEnumerable<ICmObject> AllPossiblePictures
+		{
+			get
+			{
+				return Cache.ServiceLocator.GetInstance<ICmPictureRepository>().AllInstances().Cast<ICmObject>()
+					.Concat((from sense in Cache.ServiceLocator.GetInstance<ILexSenseRepository>().AllInstances()
+							 where sense.PicturesOS.Count == 0
+							 select sense))
 					.ToList();
 			}
 		}
@@ -605,6 +623,17 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (flid == Cache.MetaDataCacheAccessor.GetFieldId2(LexExtendedNoteTags.kClassId, "ExtendedNoteType", false))
 				return Cache.LangProject.LexDbOA.ExtendedNoteTypesOA;
 			return base.ReferenceTargetOwner(flid);
+		}
+
+		/// <summary>
+		/// Object owner. This virtual may seem redundant with CmObject.Owner, but it is important,
+		/// because we can correctly indicate the destination class. This is used (at least) in
+		/// PartGenerator.GeneratePartsFromLayouts to determine that it needs to generate parts for LexSense.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceAtomic, "LexSense")]
+		public ILexSense OwningSense
+		{
+			get { return (ILexSense)Owner; }
 		}
 	}
 
@@ -3193,7 +3222,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Fake property. Implemented in ConfiguredXHTMLGenerator to enable showing
 		/// ComplexEntry types for subentries. Needed here to enable CSSGenerator functionality.
 		/// </summary>
-		public IFdoReferenceSequence<ILexEntryType> LookupComplexEntryType { get { throw new NotImplementedException("hard-coded in ConfiguredXHTMLGenerator"); } }
+		public IFdoReferenceSequence<ILexEntryType> LookupComplexEntryType { get { throw new NotImplementedException("LookupComplexEntryType is hard-coded in ConfiguredXHTMLGenerator"); } }
 
 		/// <summary>
 		/// If this entry is a complex one, the primary lexemes (under which it is shown as a subentry).
@@ -5461,11 +5490,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			var hc = Services.GetInstance<HomographConfiguration>();
 			if (hc.ShowSenseNumber(hv) && lexEntry.HasMoreThanOneSense)
 			{
-				// These int props may not be needed, but they're safe.
-				tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, Cache.DefaultAnalWs);
-				tisb.SetStrPropValue((int) FwTextPropType.ktptNamedStyle,
-					HomographConfiguration.ksSenseReferenceNumberStyle);
 				tisb.Append(" ");
+				tisb.SetStrPropValue((int)FwTextPropType.ktptNamedStyle,
+					HomographConfiguration.ksSenseReferenceNumberStyle);
+				var senseNumberWs = string.IsNullOrEmpty(hc.WritingSystem)
+					 ? Cache.DefaultAnalWs
+					 : Cache.WritingSystemFactory.GetWsFromStr(hc.WritingSystem);
+				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, senseNumberWs);
 				var referencedSenseNumber = FormatSenseNumber();
 				tisb.Append(referencedSenseNumber);
 			}
@@ -5535,6 +5566,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					break;
 				default: // handles %d and %O. We no longer support "%z" (1  b  iii) because users can hand-configure its equivalent
 					nextNumber = senseNumber;
+					var hc = Cache.ServiceLocator.GetInstance<HomographConfiguration>();
+					if (hc.CustomHomographNumbers.Count == 10)
+					{
+						for (var i = 0; i < 10; ++i)
+						{
+							nextNumber = nextNumber.Replace(i.ToString(), hc.CustomHomographNumbers[i]);
+						}
+					}
 					break;
 			}
 			nextNumber = GenerateSenseOutlineNumber(parentNumberingStyle, nextNumber);
@@ -5543,15 +5582,15 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		private string GenerateSenseOutlineNumber(string parentNumberingStyle, string nextNumber)
 		{
-			string fprmattedNumber;
+			string parentFormatNumber;
 			if (parentNumberingStyle == "%j")
-				fprmattedNumber = string.Format("{0}", nextNumber);
+				parentFormatNumber = string.Format("{0}", nextNumber);
 			else if (parentNumberingStyle == "%.")
-				fprmattedNumber = string.Format(".{0}", nextNumber);
+				parentFormatNumber = string.Format(".{0}", nextNumber);
 			else
-				fprmattedNumber = nextNumber;
+				parentFormatNumber = nextNumber;
 
-			return fprmattedNumber;
+			return parentFormatNumber;
 		}
 
 		private string GetAlphaSenseCounter(string numberingStyle, byte senseNumber)
@@ -9658,16 +9697,16 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
-		public ITsString HeadWordRef
+		public IMultiAccessorBase HeadWordRef
 		{
 			get
 			{
 				var entry = Item as ILexEntry;
 				if (entry != null)
 				{
-					return entry.HeadWordRef.BestVernacularAlternative;
+					return entry.HeadWordRef;
 				}
-				return ((LexSense)Item).OwnerOutlineName;
+				return ((LexSense)Item).OwningEntry.HeadWordRef;
 			}
 		}
 

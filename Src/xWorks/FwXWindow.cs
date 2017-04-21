@@ -1207,6 +1207,7 @@ namespace SIL.FieldWorks.XWorks
 			using (var dialog = new UploadToWebonaryDlg(controller, model, propertyTable))
 			{
 				dialog.ShowDialog();
+				mediator.SendMessage("Refresh", null);
 			}
 		}
 
@@ -1292,9 +1293,8 @@ namespace SIL.FieldWorks.XWorks
 				if (m_app is FwXApp)
 					((FwXApp)m_app).OnMasterRefresh(null);
 
-				ReversalIndexServices.CreateReversalIndexConfigurationFile(m_app.Cache.ServiceLocator.WritingSystemManager,
-					m_app.Cache, FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory,
-					dlg.OriginalProjectName);
+				ReversalIndexServices.CreateOrRemoveReversalIndexConfigurationFiles(m_app.Cache.ServiceLocator.WritingSystemManager,
+					m_app.Cache, FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory, dlg.OriginalProjectName);
 				var selectedWsObj = dlg.AnalysisWsList.SelectedItem as CoreWritingSystemDefinition;
 				SetReversalIndexGuid(selectedWsObj);
 			}

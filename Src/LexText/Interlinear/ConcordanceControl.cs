@@ -685,6 +685,24 @@ namespace SIL.FieldWorks.IText
 			switch (clid)
 			{
 				case WfiGlossTags.kClassId:
+					{
+						var targetGloss = (IWfiGloss) target;
+						analyses.Add(targetGloss);
+						foreach (IWfiGloss gloss in m_cache.ServiceLocator.GetInstance<IWfiGlossRepository>().AllInstances().Where(g => g != targetGloss))
+						{
+							foreach (int ws in targetGloss.Form.AvailableWritingSystemIds)
+							{
+								ITsString targetTss = targetGloss.Form.get_String(ws);
+								ITsString tss = gloss.Form.get_String(ws);
+								if (targetTss.Equals(tss))
+								{
+									analyses.Add(gloss);
+									break;
+								}
+							}
+						}
+						return GetOccurrencesOfAnalyses(analyses);
+					}
 				case WfiAnalysisTags.kClassId:
 					{
 						analyses.Add(m_cache.ServiceLocator.GetObject(m_hvoMatch) as IAnalysis);

@@ -117,204 +117,188 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="m_btnOK.AccessibleName" xml:space="preserve">
+    <value>btnOK</value>
+  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="tabControl1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Bottom, Left, Right</value>
+  <data name="m_btnOK.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Right</value>
   </data>
-  <data name="m_tabInterface.AccessibleName" xml:space="preserve">
-    <value>tabInterface</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="m_autoOpenCheckBox.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="m_btnOK.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="m_autoOpenCheckBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 155</value>
+  <data name="m_btnOK.Location" type="System.Drawing.Point, System.Drawing">
+    <value>117, 249</value>
   </data>
-  <data name="m_autoOpenCheckBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>253, 30</value>
+  <data name="m_btnOK.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
   </data>
-  <data name="m_autoOpenCheckBox.TabIndex" type="System.Int32, mscorlib">
-    <value>15</value>
-  </data>
-  <data name="m_autoOpenCheckBox.Text" xml:space="preserve">
-    <value>When I start Language Explorer,
-always open the last edited project automatically</value>
-  </data>
-  <data name="&gt;&gt;m_autoOpenCheckBox.Name" xml:space="preserve">
-    <value>m_autoOpenCheckBox</value>
-  </data>
-  <data name="&gt;&gt;m_autoOpenCheckBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_autoOpenCheckBox.Parent" xml:space="preserve">
-    <value>m_tabInterface</value>
-  </data>
-  <data name="&gt;&gt;m_autoOpenCheckBox.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="label4.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 116</value>
-  </data>
-  <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>59, 13</value>
-  </data>
-  <data name="label4.TabIndex" type="System.Int32, mscorlib">
-    <value>13</value>
-  </data>
-  <data name="label4.Text" xml:space="preserve">
-    <value>Advanced:</value>
-  </data>
-  <data name="&gt;&gt;label4.Name" xml:space="preserve">
-    <value>label4</value>
-  </data>
-  <data name="&gt;&gt;label4.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label4.Parent" xml:space="preserve">
-    <value>m_tabInterface</value>
-  </data>
-  <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_btnOK.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
-  <data name="updateGlobalWS.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="m_btnOK.Text" xml:space="preserve">
+    <value>OK</value>
   </data>
-  <data name="updateGlobalWS.CheckAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>TopLeft</value>
+  <data name="&gt;&gt;m_btnOK.Name" xml:space="preserve">
+    <value>m_btnOK</value>
   </data>
-  <data name="updateGlobalWS.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 132</value>
+  <data name="&gt;&gt;m_btnOK.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="updateGlobalWS.Size" type="System.Drawing.Size, System.Drawing">
-    <value>275, 17</value>
+  <data name="&gt;&gt;m_btnOK.Parent" xml:space="preserve">
+    <value>$this</value>
   </data>
-  <data name="updateGlobalWS.TabIndex" type="System.Int32, mscorlib">
-    <value>12</value>
-  </data>
-  <data name="updateGlobalWS.Text" xml:space="preserve">
-    <value>Do not copy writing system changes to other projects</value>
-  </data>
-  <data name="updateGlobalWS.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>TopLeft</value>
-  </data>
-  <data name="&gt;&gt;updateGlobalWS.Name" xml:space="preserve">
-    <value>updateGlobalWS</value>
-  </data>
-  <data name="&gt;&gt;updateGlobalWS.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;updateGlobalWS.Parent" xml:space="preserve">
-    <value>m_tabInterface</value>
-  </data>
-  <data name="&gt;&gt;updateGlobalWS.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_btnOK.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="m_userInterfaceChooser.AccessibleName" xml:space="preserve">
-    <value>UserInterfaceChooser</value>
+  <data name="m_btnCancel.AccessibleName" xml:space="preserve">
+    <value>btnCancel</value>
   </data>
-  <data name="m_userInterfaceChooser.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 21</value>
+  <data name="m_btnCancel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Right</value>
   </data>
-  <data name="m_userInterfaceChooser.Size" type="System.Drawing.Size, System.Drawing">
-    <value>161, 21</value>
+  <data name="m_btnCancel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
-  <data name="m_userInterfaceChooser.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
+  <data name="m_btnCancel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>207, 249</value>
   </data>
-  <data name="&gt;&gt;m_userInterfaceChooser.Name" xml:space="preserve">
-    <value>m_userInterfaceChooser</value>
+  <data name="m_btnCancel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
   </data>
-  <data name="&gt;&gt;m_userInterfaceChooser.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.UserInterfaceChooser, Widgets, Version=8.0.2.26264, Culture=neutral, PublicKeyToken=null</value>
+  <data name="m_btnCancel.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
   </data>
-  <data name="&gt;&gt;m_userInterfaceChooser.Parent" xml:space="preserve">
-    <value>groupBox1</value>
+  <data name="m_btnCancel.Text" xml:space="preserve">
+    <value>Cancel</value>
   </data>
-  <data name="&gt;&gt;m_userInterfaceChooser.ZOrder" xml:space="preserve">
-    <value>0</value>
+  <data name="&gt;&gt;m_btnCancel.Name" xml:space="preserve">
+    <value>m_btnCancel</value>
   </data>
-  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 51</value>
+  <data name="&gt;&gt;m_btnCancel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="label3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 0, 0, 0</value>
+  <data name="&gt;&gt;m_btnCancel.Parent" xml:space="preserve">
+    <value>$this</value>
   </data>
-  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>330, 40</value>
-  </data>
-  <data name="label3.TabIndex" type="System.Int32, mscorlib">
-    <value>11</value>
-  </data>
-  <data name="label3.Text" xml:space="preserve">
-    <value>Some localizations are not complete and others need review.  Contact FLEx_Localization@sil.org with any feedback.</value>
-  </data>
-  <data name="&gt;&gt;label3.Name" xml:space="preserve">
-    <value>label3</value>
-  </data>
-  <data name="&gt;&gt;label3.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
-    <value>groupBox1</value>
-  </data>
-  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_btnCancel.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="groupBox1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 7</value>
+  <data name="m_btnHelp.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Right</value>
   </data>
-  <data name="groupBox1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>339, 94</value>
+  <data name="m_btnHelp.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
-  <data name="groupBox1.TabIndex" type="System.Int32, mscorlib">
-    <value>14</value>
+  <data name="m_btnHelp.Location" type="System.Drawing.Point, System.Drawing">
+    <value>297, 249</value>
   </data>
-  <data name="groupBox1.Text" xml:space="preserve">
-    <value>User Interface:</value>
+  <data name="m_btnHelp.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
   </data>
-  <data name="&gt;&gt;groupBox1.Name" xml:space="preserve">
-    <value>groupBox1</value>
-  </data>
-  <data name="&gt;&gt;groupBox1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;groupBox1.Parent" xml:space="preserve">
-    <value>m_tabInterface</value>
-  </data>
-  <data name="&gt;&gt;groupBox1.ZOrder" xml:space="preserve">
+  <data name="m_btnHelp.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
   </data>
-  <data name="m_tabInterface.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="m_btnHelp.Text" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.Name" xml:space="preserve">
+    <value>m_btnHelp</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnHelp.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="PrivacyText.Location" type="System.Drawing.Point, System.Drawing">
+    <value>33, 47</value>
+  </data>
+  <data name="PrivacyText.Multiline" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="PrivacyText.Size" type="System.Drawing.Size, System.Drawing">
+    <value>276, 111</value>
+  </data>
+  <data name="PrivacyText.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="PrivacyText.Text" xml:space="preserve">
+    <value>No personally identifiable information is sent. 
+Global statistics gathered in this way will help with future development.
+The statistics may be made available to trusted partner organizations and summarized for sponsors.
+Usage details will not be made available to third parties (except in the unlikely event that it is required by law)</value>
+  </data>
+  <data name="&gt;&gt;PrivacyText.Name" xml:space="preserve">
+    <value>PrivacyText</value>
+  </data>
+  <data name="&gt;&gt;PrivacyText.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;PrivacyText.Parent" xml:space="preserve">
+    <value>m_tabPrivacy</value>
+  </data>
+  <data name="&gt;&gt;PrivacyText.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="m_okToPingCheckBox.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_okToPingCheckBox.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="m_okToPingCheckBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 24</value>
+  </data>
+  <data name="m_okToPingCheckBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>243, 17</value>
+  </data>
+  <data name="m_okToPingCheckBox.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="m_okToPingCheckBox.Text" xml:space="preserve">
+    <value>Send usage statisitics to the FLEx developers.</value>
+  </data>
+  <data name="&gt;&gt;m_okToPingCheckBox.Name" xml:space="preserve">
+    <value>m_okToPingCheckBox</value>
+  </data>
+  <data name="&gt;&gt;m_okToPingCheckBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_okToPingCheckBox.Parent" xml:space="preserve">
+    <value>m_tabPrivacy</value>
+  </data>
+  <data name="&gt;&gt;m_okToPingCheckBox.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="m_tabPrivacy.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 22</value>
   </data>
-  <data name="m_tabInterface.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 3, 3, 3</value>
-  </data>
-  <data name="m_tabInterface.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="m_tabPrivacy.Size" type="System.Drawing.Size, System.Drawing">
     <value>351, 195</value>
   </data>
-  <data name="m_tabInterface.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
+  <data name="m_tabPrivacy.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
   </data>
-  <data name="m_tabInterface.Text" xml:space="preserve">
-    <value>General</value>
+  <data name="m_tabPrivacy.Text" xml:space="preserve">
+    <value>Privacy</value>
   </data>
-  <data name="&gt;&gt;m_tabInterface.Name" xml:space="preserve">
-    <value>m_tabInterface</value>
+  <data name="&gt;&gt;m_tabPrivacy.Name" xml:space="preserve">
+    <value>m_tabPrivacy</value>
   </data>
-  <data name="&gt;&gt;m_tabInterface.Type" xml:space="preserve">
+  <data name="&gt;&gt;m_tabPrivacy.Type" xml:space="preserve">
     <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_tabInterface.Parent" xml:space="preserve">
+  <data name="&gt;&gt;m_tabPrivacy.Parent" xml:space="preserve">
     <value>tabControl1</value>
   </data>
-  <data name="&gt;&gt;m_tabInterface.ZOrder" xml:space="preserve">
-    <value>0</value>
+  <data name="&gt;&gt;m_tabPrivacy.ZOrder" xml:space="preserve">
+    <value>2</value>
   </data>
   <data name="m_labelRights.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -436,191 +420,213 @@ always open the last edited project automatically</value>
   <data name="&gt;&gt;m_tabPlugins.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="PrivacyText.Location" type="System.Drawing.Point, System.Drawing">
-    <value>33, 47</value>
+  <data name="m_tabInterface.AccessibleName" xml:space="preserve">
+    <value>tabInterface</value>
   </data>
-  <data name="PrivacyText.Multiline" type="System.Boolean, mscorlib">
+  <data name="m_autoOpenCheckBox.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="PrivacyText.Size" type="System.Drawing.Size, System.Drawing">
-    <value>276, 111</value>
+  <data name="m_autoOpenCheckBox.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
-  <data name="PrivacyText.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
+  <data name="m_autoOpenCheckBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 155</value>
   </data>
-  <data name="PrivacyText.Text" xml:space="preserve">
-    <value>No personally identifiable information is sent. 
-Global statistics gathered in this way will help with future development.
-The statistics may be made available to trusted partner organizations and summarized for sponsors.
-Usage details will not be made available to third parties (except in the unlikely event that it is required by law)</value>
+  <data name="m_autoOpenCheckBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>253, 30</value>
   </data>
-  <data name="&gt;&gt;PrivacyText.Name" xml:space="preserve">
-    <value>PrivacyText</value>
+  <data name="m_autoOpenCheckBox.TabIndex" type="System.Int32, mscorlib">
+    <value>15</value>
   </data>
-  <data name="&gt;&gt;PrivacyText.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="m_autoOpenCheckBox.Text" xml:space="preserve">
+    <value>When I start Language Explorer,
+always open the last edited project automatically</value>
   </data>
-  <data name="&gt;&gt;PrivacyText.Parent" xml:space="preserve">
-    <value>m_tabPrivacy</value>
+  <data name="&gt;&gt;m_autoOpenCheckBox.Name" xml:space="preserve">
+    <value>m_autoOpenCheckBox</value>
   </data>
-  <data name="&gt;&gt;PrivacyText.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="m_okToPingCheckBox.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="m_okToPingCheckBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 24</value>
-  </data>
-  <data name="m_okToPingCheckBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>243, 17</value>
-  </data>
-  <data name="m_okToPingCheckBox.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="m_okToPingCheckBox.Text" xml:space="preserve">
-    <value>Send usage statisitics to the FLEx developers.</value>
-  </data>
-  <data name="&gt;&gt;m_okToPingCheckBox.Name" xml:space="preserve">
-    <value>m_okToPingCheckBox</value>
-  </data>
-  <data name="&gt;&gt;m_okToPingCheckBox.Type" xml:space="preserve">
+  <data name="&gt;&gt;m_autoOpenCheckBox.Type" xml:space="preserve">
     <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_okToPingCheckBox.Parent" xml:space="preserve">
-    <value>m_tabPrivacy</value>
+  <data name="&gt;&gt;m_autoOpenCheckBox.Parent" xml:space="preserve">
+    <value>m_tabInterface</value>
   </data>
-  <data name="&gt;&gt;m_okToPingCheckBox.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="&gt;&gt;m_autoOpenCheckBox.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
-  <data name="m_tabPrivacy.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 22</value>
+  <data name="label4.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
   </data>
-  <data name="m_tabPrivacy.Size" type="System.Drawing.Size, System.Drawing">
-    <value>351, 195</value>
+  <data name="label4.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
-  <data name="m_tabPrivacy.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
+  <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 116</value>
   </data>
-  <data name="m_tabPrivacy.Text" xml:space="preserve">
-    <value>Privacy</value>
+  <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
+    <value>59, 13</value>
   </data>
-  <data name="&gt;&gt;m_tabPrivacy.Name" xml:space="preserve">
-    <value>m_tabPrivacy</value>
+  <data name="label4.TabIndex" type="System.Int32, mscorlib">
+    <value>13</value>
   </data>
-  <data name="&gt;&gt;m_tabPrivacy.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="label4.Text" xml:space="preserve">
+    <value>Advanced:</value>
   </data>
-  <data name="&gt;&gt;m_tabPrivacy.Parent" xml:space="preserve">
-    <value>tabControl1</value>
+  <data name="&gt;&gt;label4.Name" xml:space="preserve">
+    <value>label4</value>
   </data>
-  <data name="&gt;&gt;m_tabPrivacy.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="label1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Left, Right</value>
-  </data>
-  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>17, 18</value>
-  </data>
-  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>331, 34</value>
-  </data>
-  <data name="label1.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="label1.Text" xml:space="preserve">
-    <value>These options control whether the program checks online for updates.</value>
-  </data>
-  <data name="&gt;&gt;label1.Name" xml:space="preserve">
-    <value>label1</value>
-  </data>
-  <data name="&gt;&gt;label1.Type" xml:space="preserve">
+  <data name="&gt;&gt;label4.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
-    <value>m_tabUpdates</value>
+  <data name="&gt;&gt;label4.Parent" xml:space="preserve">
+    <value>m_tabInterface</value>
   </data>
-  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="includeBetasBox.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="includeBetasBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>20, 83</value>
-  </data>
-  <data name="includeBetasBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>249, 17</value>
-  </data>
-  <data name="includeBetasBox.TabIndex" type="System.Int32, mscorlib">
+  <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="includeBetasBox.Text" xml:space="preserve">
-    <value>Also notify me when a Beta release is available.</value>
-  </data>
-  <data name="&gt;&gt;includeBetasBox.Name" xml:space="preserve">
-    <value>includeBetasBox</value>
-  </data>
-  <data name="&gt;&gt;includeBetasBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;includeBetasBox.Parent" xml:space="preserve">
-    <value>m_tabUpdates</value>
-  </data>
-  <data name="&gt;&gt;includeBetasBox.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="checkForUpdatesBox.AutoSize" type="System.Boolean, mscorlib">
+  <data name="updateGlobalWS.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="checkForUpdatesBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>20, 55</value>
+  <data name="updateGlobalWS.CheckAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>TopLeft</value>
   </data>
-  <data name="checkForUpdatesBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>208, 17</value>
+  <data name="updateGlobalWS.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
-  <data name="checkForUpdatesBox.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
+  <data name="updateGlobalWS.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 132</value>
   </data>
-  <data name="checkForUpdatesBox.Text" xml:space="preserve">
-    <value>Notify me when an update is available.</value>
+  <data name="updateGlobalWS.Size" type="System.Drawing.Size, System.Drawing">
+    <value>275, 17</value>
   </data>
-  <data name="&gt;&gt;checkForUpdatesBox.Name" xml:space="preserve">
-    <value>checkForUpdatesBox</value>
+  <data name="updateGlobalWS.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
   </data>
-  <data name="&gt;&gt;checkForUpdatesBox.Type" xml:space="preserve">
+  <data name="updateGlobalWS.Text" xml:space="preserve">
+    <value>Do not copy writing system changes to other projects</value>
+  </data>
+  <data name="updateGlobalWS.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>TopLeft</value>
+  </data>
+  <data name="&gt;&gt;updateGlobalWS.Name" xml:space="preserve">
+    <value>updateGlobalWS</value>
+  </data>
+  <data name="&gt;&gt;updateGlobalWS.Type" xml:space="preserve">
     <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;checkForUpdatesBox.Parent" xml:space="preserve">
-    <value>m_tabUpdates</value>
+  <data name="&gt;&gt;updateGlobalWS.Parent" xml:space="preserve">
+    <value>m_tabInterface</value>
   </data>
-  <data name="&gt;&gt;checkForUpdatesBox.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;updateGlobalWS.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="m_tabUpdates.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="m_userInterfaceChooser.AccessibleName" xml:space="preserve">
+    <value>UserInterfaceChooser</value>
+  </data>
+  <data name="m_userInterfaceChooser.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 21</value>
+  </data>
+  <data name="m_userInterfaceChooser.Size" type="System.Drawing.Size, System.Drawing">
+    <value>161, 21</value>
+  </data>
+  <data name="m_userInterfaceChooser.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;m_userInterfaceChooser.Name" xml:space="preserve">
+    <value>m_userInterfaceChooser</value>
+  </data>
+  <data name="&gt;&gt;m_userInterfaceChooser.Type" xml:space="preserve">
+    <value>SIL.FieldWorks.Common.Widgets.UserInterfaceChooser, Widgets, Version=8.3.2.19550, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_userInterfaceChooser.Parent" xml:space="preserve">
+    <value>groupBox1</value>
+  </data>
+  <data name="&gt;&gt;m_userInterfaceChooser.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="label3.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 51</value>
+  </data>
+  <data name="label3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>330, 40</value>
+  </data>
+  <data name="label3.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
+  </data>
+  <data name="label3.Text" xml:space="preserve">
+    <value>Some localizations are not complete and others need review.  Contact FLEx_Localization@sil.org with any feedback.</value>
+  </data>
+  <data name="&gt;&gt;label3.Name" xml:space="preserve">
+    <value>label3</value>
+  </data>
+  <data name="&gt;&gt;label3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
+    <value>groupBox1</value>
+  </data>
+  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="groupBox1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 7</value>
+  </data>
+  <data name="groupBox1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>339, 94</value>
+  </data>
+  <data name="groupBox1.TabIndex" type="System.Int32, mscorlib">
+    <value>14</value>
+  </data>
+  <data name="groupBox1.Text" xml:space="preserve">
+    <value>User Interface:</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.Name" xml:space="preserve">
+    <value>groupBox1</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.Parent" xml:space="preserve">
+    <value>m_tabInterface</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="m_tabInterface.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 22</value>
   </data>
-  <data name="m_tabUpdates.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="m_tabInterface.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="m_tabInterface.Size" type="System.Drawing.Size, System.Drawing">
     <value>351, 195</value>
   </data>
-  <data name="m_tabUpdates.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
+  <data name="m_tabInterface.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
   </data>
-  <data name="m_tabUpdates.Text" xml:space="preserve">
-    <value>Updates</value>
+  <data name="m_tabInterface.Text" xml:space="preserve">
+    <value>General</value>
   </data>
-  <data name="&gt;&gt;m_tabUpdates.Name" xml:space="preserve">
-    <value>m_tabUpdates</value>
+  <data name="&gt;&gt;m_tabInterface.Name" xml:space="preserve">
+    <value>m_tabInterface</value>
   </data>
-  <data name="&gt;&gt;m_tabUpdates.Type" xml:space="preserve">
+  <data name="&gt;&gt;m_tabInterface.Type" xml:space="preserve">
     <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_tabUpdates.Parent" xml:space="preserve">
+  <data name="&gt;&gt;m_tabInterface.Parent" xml:space="preserve">
     <value>tabControl1</value>
   </data>
-  <data name="&gt;&gt;m_tabUpdates.ZOrder" xml:space="preserve">
-    <value>3</value>
+  <data name="&gt;&gt;m_tabInterface.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="tabControl1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Bottom, Left, Right</value>
   </data>
   <data name="tabControl1.Location" type="System.Drawing.Point, System.Drawing">
     <value>13, 13</value>
@@ -643,102 +649,6 @@ Usage details will not be made available to third parties (except in the unlikel
   <data name="&gt;&gt;tabControl1.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
-  <data name="m_btnOK.AccessibleName" xml:space="preserve">
-    <value>btnOK</value>
-  </data>
-  <data name="m_btnOK.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Right</value>
-  </data>
-  <data name="m_btnOK.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="m_btnOK.Location" type="System.Drawing.Point, System.Drawing">
-    <value>117, 249</value>
-  </data>
-  <data name="m_btnOK.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
-  </data>
-  <data name="m_btnOK.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="m_btnOK.Text" xml:space="preserve">
-    <value>OK</value>
-  </data>
-  <data name="&gt;&gt;m_btnOK.Name" xml:space="preserve">
-    <value>m_btnOK</value>
-  </data>
-  <data name="&gt;&gt;m_btnOK.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_btnOK.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;m_btnOK.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="m_btnCancel.AccessibleName" xml:space="preserve">
-    <value>btnCancel</value>
-  </data>
-  <data name="m_btnCancel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Right</value>
-  </data>
-  <data name="m_btnCancel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="m_btnCancel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>207, 249</value>
-  </data>
-  <data name="m_btnCancel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
-  </data>
-  <data name="m_btnCancel.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="m_btnCancel.Text" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
-  <data name="&gt;&gt;m_btnCancel.Name" xml:space="preserve">
-    <value>m_btnCancel</value>
-  </data>
-  <data name="&gt;&gt;m_btnCancel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_btnCancel.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;m_btnCancel.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="m_btnHelp.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Right</value>
-  </data>
-  <data name="m_btnHelp.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="m_btnHelp.Location" type="System.Drawing.Point, System.Drawing">
-    <value>297, 249</value>
-  </data>
-  <data name="m_btnHelp.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
-  </data>
-  <data name="m_btnHelp.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="m_btnHelp.Text" xml:space="preserve">
-    <value>Help</value>
-  </data>
-  <data name="&gt;&gt;m_btnHelp.Name" xml:space="preserve">
-    <value>m_btnHelp</value>
-  </data>
-  <data name="&gt;&gt;m_btnHelp.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_btnHelp.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;m_btnHelp.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
@@ -750,9 +660,6 @@ Usage details will not be made available to third parties (except in the unlikel
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>384, 284</value>
-  </data>
-  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
   </data>
   <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
     <value>400, 300</value>

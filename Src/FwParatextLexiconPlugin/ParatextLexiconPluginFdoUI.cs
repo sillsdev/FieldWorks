@@ -150,6 +150,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		public DateTime LastActivityTime
 		{
 			get { return m_activityMonitor.LastActivityTime; }
+
 		}
 	}
 }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2016 SIL International
+﻿// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,6 +9,7 @@ using System.Linq;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -783,7 +784,7 @@ namespace SIL.FieldWorks.XWorks
 				var cfChildren = customFieldNodes[0].Children;
 				CollectionAssert.IsNotEmpty(cfChildren, "ListItem Child nodes not created");
 				Assert.AreEqual(2, cfChildren.Count, "custom list type nodes should get a child for Name and Abbreviation");
-				Assert.AreEqual(" ", cfChildren[0].After, "Name and abbreviation not seperated by a space");
+				Assert.IsNullOrEmpty(cfChildren[0].After, "Child nodes should have no After space");
 				CollectionAssert.IsNotEmpty(cfChildren.Where(t => t.Label == "Name" && !t.IsCustomField),
 					"No standard Name node found on custom possibility list reference");
 				CollectionAssert.IsNotEmpty(cfChildren.Where(t => t.Label == "Abbreviation" && !t.IsCustomField),
@@ -975,6 +976,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.AreEqual(cfNode.Label, "CustomString");
 				Assert.AreEqual(cfNode.FieldDescription, "CustomString");
 				Assert.AreEqual(cfNode.IsCustomField, true);
+				Assert.AreSame(model.Parts[0], cfNode.Parent, "improper Parent set");
 				var wsOptions = cfNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 				Assert.NotNull(wsOptions, "WritingSystemOptions not added");
 				Assert.AreEqual(wsOptions.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Both, "WritingSystemOptions is the wrong type");
@@ -1024,22 +1026,97 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void UpdateWsOptions_OrderAndCheckMaintained()
+		{
+			CoreWritingSystemDefinition wsEs;
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("es", out wsEs);
+			Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(wsEs);
+			var model = new DictionaryConfigurationModel();
+			var customNode = new ConfigurableDictionaryNode()
+			{
+				Label = "CustomString",
+				FieldDescription = "CustomString",
+				IsCustomField = true,
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguageswithDisplayWsAbbrev(
+					new[] { "ch", "fr", "en" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Both)
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { customNode }
+			};
+			model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+
+			//SUT
+			DictionaryConfigurationController.UpdateWsOptions((DictionaryNodeWritingSystemOptions)customNode.DictionaryNodeOptions, Cache);
+			Assert.AreEqual(1, model.Parts[0].Children.Count, "Only the existing custom field node should be present");
+			var wsOptions = model.Parts[0].Children[0].DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+			Assert.NotNull(wsOptions, "Writing system options lost in merge");
+			Assert.IsTrue(wsOptions.DisplayWritingSystemAbbreviations, "WsAbbreviation lost in merge");
+			Assert.AreEqual("fr", wsOptions.Options[0].Id, "Writing system not removed, or order not maintained");
+			Assert.IsTrue(wsOptions.Options[0].IsEnabled, "Selected writing system lost in merge");
+			Assert.AreEqual("en", wsOptions.Options[1].Id);
+			Assert.IsTrue(wsOptions.Options[1].IsEnabled, "Selected writing system lost in merge");
+			Assert.AreEqual("es", wsOptions.Options[2].Id, "New writing system was not added");
+		}
+
+		[Test]
+		public void UpdateWsOptions_ChecksAtLeastOne()
+		{
+			var model = new DictionaryConfigurationModel();
+			var customNode = new ConfigurableDictionaryNode()
+			{
+				Label = "CustomString",
+				FieldDescription = "CustomString",
+				IsCustomField = true,
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new string[0]) // start without any WS's
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { customNode }
+			};
+			model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+
+			//SUT
+			DictionaryConfigurationController.UpdateWsOptions((DictionaryNodeWritingSystemOptions)customNode.DictionaryNodeOptions, Cache);
+			var wsOptions = (DictionaryNodeWritingSystemOptions)model.Parts[0].Children[0].DictionaryNodeOptions;
+			Assert.IsTrue(wsOptions.Options.Any(ws => ws.IsEnabled), "At least one WS should be enabled");
+		}
+
+		[Test]
 		public void MergeCustomFieldsIntoDictionaryModel_NewFieldsOnSharedNodesAreAddedToSharedItemsExclusively()
 		{
-			var subSubsNode = new ConfigurableDictionaryNode { Label = "Subsubs", FieldDescription = "Subentries", ReferenceItem = "SharedSubs" };
+			// "Shared Shared" node tests that Custom Fields are merged into SharedItems whose (sharing) parents are themselves under SharedItems
+			var sharedsharedSubsubsNode = new ConfigurableDictionaryNode
+			{
+				Label = "SharedsharedSubsubs", FieldDescription = "Subentries"
+			};
+			var subSubsNode = new ConfigurableDictionaryNode
+			{
+				Label = "Subsubs", FieldDescription = "Subentries", ReferenceItem = "SharedsharedSubsubs", Children = new List<ConfigurableDictionaryNode>()
+			};
 			var sharedSubsNode = new ConfigurableDictionaryNode
 			{
 				Label = "SharedSubs", FieldDescription = "Subentries", Children = new List<ConfigurableDictionaryNode> { subSubsNode }
 			};
 			var masterParentSubsNode = new ConfigurableDictionaryNode
 			{
-				Label = "Subs", FieldDescription = "Subentries", ReferenceItem = "SharedSubs"
+				Label = "Subs", FieldDescription = "Subentries", ReferenceItem = "SharedSubs", Children = new List<ConfigurableDictionaryNode>()
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				Label = "Main Entry", FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { masterParentSubsNode }
 			};
-			var model = DictionaryConfigurationModelTests.CreateSimpleSharingModel(mainEntryNode, sharedSubsNode);
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode },
+				SharedItems = new List<ConfigurableDictionaryNode> { sharedSubsNode, sharedsharedSubsubsNode }
+			};
 			CssGeneratorTests.PopulateFieldsForTesting(model);
 			using (new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
 				CellarPropertyType.ReferenceCollection, Guid.Empty))
@@ -1047,14 +1124,70 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache);
 				Assert.AreSame(masterParentSubsNode, model.Parts[0].Children[0], "Custom Field should be added at the end");
-				Assert.IsNull(masterParentSubsNode.Children, "Custom Field should not have been added to the Referring Node");
+				Assert.IsEmpty(masterParentSubsNode.Children, "Custom Field should not have been added to the Referring Node");
 				Assert.AreSame(subSubsNode, sharedSubsNode.Children[0], "Custom Field should be added at the end");
-				Assert.IsNull(subSubsNode.Children, "Custom Field should not have been added to the Referring Node");
+				Assert.IsEmpty(subSubsNode.Children, "Custom Field should not have been added to the Referring Node");
 				Assert.AreEqual(2, sharedSubsNode.Children.Count, "Custom Field was not added to Subentries");
 				var customNode = sharedSubsNode.Children[1];
 				Assert.AreEqual(customNode.Label, "CustomString");
 				Assert.AreEqual(customNode.FieldDescription, "CustomString");
 				Assert.AreEqual(customNode.IsCustomField, true);
+				Assert.AreSame(sharedSubsNode, customNode.Parent, "improper Parent set");
+				// Validate double-shared node:
+				Assert.NotNull(sharedsharedSubsubsNode.Children, "Shared shared Subsubs should have children");
+				Assert.AreEqual(1, sharedsharedSubsubsNode.Children.Count, "One child: the Custom Field");
+				customNode = sharedsharedSubsubsNode.Children[0];
+				Assert.AreEqual(customNode.Label, "CustomString");
+				Assert.AreEqual(customNode.FieldDescription, "CustomString");
+				Assert.AreEqual(customNode.IsCustomField, true);
+				Assert.AreSame(sharedsharedSubsubsNode, customNode.Parent, "improper Parent set");
+			}
+		}
+
+		[Test]
+		public void MergeCustomFieldsIntoDictionaryModel_WorksUnderGroupingNodes()
+		{
+			using (new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"),
+				WritingSystemServices.GetMagicWsIdFromName("analysis vernacular"), CellarPropertyType.MultiString, Guid.Empty))
+			{
+				var model = new DictionaryConfigurationModel
+				{
+					Parts = new List<ConfigurableDictionaryNode>
+					{
+						new ConfigurableDictionaryNode
+						{
+							Label = "Main Entry", FieldDescription = "LexEntry",
+							Children = new List<ConfigurableDictionaryNode>
+							{
+								new ConfigurableDictionaryNode
+								{
+									Label = "Grouping Node", FieldDescription = "Group",
+									DictionaryNodeOptions = new DictionaryNodeGroupingOptions(),
+									Children = new List<ConfigurableDictionaryNode>
+									{
+										new ConfigurableDictionaryNode { Label = "CustomString", FieldDescription = "CustomString", IsCustomField = true },
+										new ConfigurableDictionaryNode { Label = "OldCustomField", FieldDescription = "OldCustomField", IsCustomField = true }
+									}
+								}
+							}
+						}
+					}
+				};
+				CssGeneratorTests.PopulateFieldsForTesting(model);
+				//SUT
+				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache);
+				var children = model.Parts[0].Children;
+				Assert.AreEqual(1, children.Count,
+					"The only node under Main Entry should be Grouping Node (the Custom Field already under Grouping Node should not be dup'd under ME");
+				var group = children[0];
+				children = group.Children;
+				Assert.IsNotNull(children, "GroupingNode should still have children");
+				Assert.AreEqual(1, children.Count, "One CF under Grouping Node should have been retained, the other deleted");
+				var customNode = children[0];
+				Assert.AreEqual("CustomString", customNode.Label);
+				Assert.AreEqual("CustomString", customNode.FieldDescription);
+				Assert.True(customNode.IsCustomField);
+				Assert.AreSame(group, customNode.Parent, "improper Parent set");
 			}
 		}
 
@@ -1133,17 +1266,22 @@ namespace SIL.FieldWorks.XWorks
 			using (new CustomFieldForTest(Cache, "CustomCollection", Cache.MetaDataCacheAccessor.GetClassId("LexExampleSentence"), 0,
 														  CellarPropertyType.ReferenceCollection, Guid.Empty))
 			{
-				var model = new DictionaryConfigurationModel();
 				var examplesNode = new ConfigurableDictionaryNode
 				{
 					Label = "Example Sentences",
 					FieldDescription = "ExamplesOS"
 				};
+				var subsensesNode = new ConfigurableDictionaryNode
+				{
+					Label = "Subsenses",
+					FieldDescription = "SensesOS",
+					ReferenceItem = "SharedSenses"
+				};
 				var senseNode = new ConfigurableDictionaryNode
 				{
 					Label = "Senses",
 					FieldDescription = "SensesOS",
-					Children = new List<ConfigurableDictionaryNode> { examplesNode }
+					Children = new List<ConfigurableDictionaryNode> { examplesNode, subsensesNode }
 				};
 				var entryNode = new ConfigurableDictionaryNode
 				{
@@ -1151,12 +1289,24 @@ namespace SIL.FieldWorks.XWorks
 					FieldDescription = "LexEntry",
 					Children = new List<ConfigurableDictionaryNode> { senseNode }
 				};
-				model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+				var sharedExamplesNode = examplesNode.DeepCloneUnderSameParent();
+				var subsensesSharedItem = new ConfigurableDictionaryNode
+				{
+					Label = "SharedSenses",
+					FieldDescription = "SensesOS",
+					Children = new List<ConfigurableDictionaryNode> { sharedExamplesNode }
+				};
+				var model = new DictionaryConfigurationModel
+				{
+					Parts = new List<ConfigurableDictionaryNode> { entryNode },
+					SharedItems = new List<ConfigurableDictionaryNode> { subsensesSharedItem }
+				};
 				CssGeneratorTests.PopulateFieldsForTesting(model);
 
 				//SUT
 				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache);
 				Assert.AreEqual(1, examplesNode.Children.Count, "Custom field should have been added to ExampleSentence");
+				Assert.AreEqual(1, sharedExamplesNode.Children.Count, "Custom field should have been added to shared ExampleSentence");
 			}
 		}
 
@@ -1339,12 +1489,15 @@ namespace SIL.FieldWorks.XWorks
 				Dispose(false);
 			}
 
+			public void Close() { }
+
 			public event EventHandler SaveModel;
 
 #pragma warning disable 67
 			public event EventHandler ManageConfigurations;
 
 			public event SwitchConfigurationEvent SwitchConfiguration;
+
 #pragma warning restore 67
 		}
 		#endregion // Context
@@ -1432,7 +1585,7 @@ namespace SIL.FieldWorks.XWorks
 				m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
 				Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
 
-				var dcc = new DictionaryConfigurationController(testView, m_propertyTable, entryWithHeadword);
+				var dcc = new DictionaryConfigurationController(testView, m_propertyTable, null, entryWithHeadword);
 				//SUT
 				dcc.View.TreeControl.Tree.TopNode.Checked = false;
 				((TestConfigurableDictionaryView)dcc.View).DoSaveModel();
@@ -1455,7 +1608,7 @@ namespace SIL.FieldWorks.XWorks
 				m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
 				Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
 
-				var dcc = new DictionaryConfigurationController(testView, m_propertyTable, entryWithHeadword);
+				var dcc = new DictionaryConfigurationController(testView, m_propertyTable, null, entryWithHeadword);
 				//SUT
 				dcc.View.TreeControl.Tree.TopNode.Checked = false;
 				Assert.IsFalse(dcc.MasterRefreshRequired, "Should not have saved changes--user did not click OK or Apply");
@@ -1477,7 +1630,7 @@ namespace SIL.FieldWorks.XWorks
 				m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
 				Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
 
-				var dcc = new DictionaryConfigurationController(testView, m_propertyTable, entryWithHeadword);
+				var dcc = new DictionaryConfigurationController(testView, m_propertyTable, null, entryWithHeadword);
 				//SUT
 				((TestConfigurableDictionaryView)dcc.View).DoSaveModel();
 				Assert.IsFalse(dcc.MasterRefreshRequired, "Should not have saved changes--none to save");
@@ -1595,24 +1748,82 @@ namespace SIL.FieldWorks.XWorks
 				Assert.IsNotNull(treeNode, "Passing a partially valid class list should find a TreeNode");
 				Assert.AreSame(sensesNode, treeNode.Tag, "Passing a partially valid class list should find the best node possible");
 
+				// Starting here we need to Unset the controller's SelectedNode to keep from getting false positives
+				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(new List<string> {"entry","mainheadword"});
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.IsNotNull(treeNode, "entry/mainheadword should find a TreeNode");
 				Assert.AreSame(headwordNode, treeNode.Tag, "entry/mainheadword should find the right TreeNode");
 				Assert.AreEqual(headwordNode.Label, treeNode.Text, "The TreeNode for entry/mainheadword should have the right Text");
 
+				ClearSelectedNode(dcc);
+				dcc.SetStartingNode(new List<string> { "entry " + XhtmlDocView.CurrentSelectedEntryClass, "mainheadword" });
+				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
+				Assert.IsNotNull(treeNode, "entry/mainheadword should find a TreeNode, even if this is the selected entry");
+				Assert.AreSame(headwordNode, treeNode.Tag, "entry/mainheadword should find the right TreeNode");
+				Assert.AreEqual(headwordNode.Label, treeNode.Text, "The TreeNode for entry/mainheadword should have the right Text");
+
+				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(new List<string> {"entry","senses","sensecontent","sense","definitionorgloss"});
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.IsNotNull(treeNode, "entry//definitionorgloss should find a TreeNode");
 				Assert.AreSame(defglossNode, treeNode.Tag, "entry//definitionorgloss should find the right TreeNode");
 				Assert.AreEqual(defglossNode.Label, treeNode.Text, "The TreeNode for entry//definitionorgloss should have the right Text");
 
+				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(new List<string> {"entry","senses","sensecontent","sense","examples","example","translations","translation","translation"});
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.IsNotNull(treeNode, "entry//translation should find a TreeNode");
 				Assert.AreSame(translationNode, treeNode.Tag, "entry//translation should find the right TreeNode");
 				Assert.AreEqual(translationNode.Label, treeNode.Text, "The TreeNode for entry//translation should have the right Text");
 			}
+		}
+
+		private void ClearSelectedNode(DictionaryConfigurationController dcc)
+		{
+			dcc.View.TreeControl.Tree.SelectedNode = null;
+		}
+
+		[Test]
+		public void FindStartingConfigNode_FindsSharedNodes()
+		{
+			var subsubsensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS", CSSClassNameOverride = "senses", ReferenceItem = "SharedSubsenses"
+			};
+			var subSensesSharedItem = new ConfigurableDictionaryNode
+			{
+				Label = "SharedSubsenses", FieldDescription = "SensesOS", Children = new List<ConfigurableDictionaryNode> { subsubsensesNode }
+			};
+			var subSensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS", CSSClassNameOverride = "senses", ReferenceItem = "SharedSubsenses"
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS", CSSClassNameOverride = "senses", Children = new List<ConfigurableDictionaryNode> { subSensesNode }
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry", CSSClassNameOverride = "entry", Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(DictionaryConfigurationModelTests.CreateSimpleSharingModel(entryNode, subSensesSharedItem));
+			var node = DictionaryConfigurationController.FindConfigNode(entryNode, new List<string>
+				{
+					"entry",
+					"senses",
+					"sensecontent",
+					"sense",
+					"senses mainentrysubsenses",
+					"sensecontent",
+					"sense mainentrysubsense",
+					"senses mainentrysubsenses",
+					"sensecontent",
+					"sensenumber"
+				});
+			Assert.AreSame(subsubsensesNode, node,
+				"Sense Numbers are configured on the node itself, not its ReferencedOrDirectChildren.{0}Expected: {1}{0}But got:  {2}", Environment.NewLine,
+				DictionaryConfigurationMigrator.BuildPathStringFromNode(subsubsensesNode), DictionaryConfigurationMigrator.BuildPathStringFromNode(node));
 		}
 
 		[Test]
@@ -1711,15 +1922,15 @@ namespace SIL.FieldWorks.XWorks
 			{
 				DictionaryConfigurationController.MergeTypesIntoDictionaryModel(model, Cache);
 				var opts1 = ((DictionaryNodeListOptions)variantsNode.DictionaryNodeOptions).Options;
-				// We have options for the standard six variant types (including the last three shown above, plus one for the
+				// We have options for the standard seven variant types (including the last three shown above, plus one for the
 				// new type we added, plus one for the "No Variant Type" pseudo-type for a total of eight.
-				Assert.AreEqual(8, opts1.Count, "Properly merged variant types to options list in major entry child node");
-				Assert.AreEqual(newType.Guid.ToString(), opts1[6].Id, "New type appears near end of options list in major entry child node");
-				Assert.AreEqual("b0000000-c40e-433e-80b5-31da08771344", opts1[7].Id, "'No Variant Type' type appears at end of options list in major entry child node");
+				Assert.AreEqual(9, opts1.Count, "Properly merged variant types to options list in major entry child node");
+				Assert.AreEqual(newType.Guid.ToString(), opts1[7].Id, "New type appears near end of options list in major entry child node");
+				Assert.AreEqual("b0000000-c40e-433e-80b5-31da08771344", opts1[8].Id, "'No Variant Type' type appears at end of options list in major entry child node");
 				var opts2 = ((DictionaryNodeListOptions)minorEntryVariantNode.DictionaryNodeOptions).Options;
-				Assert.AreEqual(8, opts2.Count, "Properly merged variant types to options list in minor entry top node");
-				Assert.AreEqual(newType.Guid.ToString(), opts2[6].Id, "New type appears near end of options list in minor entry top node");
-				Assert.AreEqual("b0000000-c40e-433e-80b5-31da08771344", opts2[7].Id, "'No Variant Type' type appears near end of options list in minor entry top node");
+				Assert.AreEqual(9, opts2.Count, "Properly merged variant types to options list in minor entry top node");
+				Assert.AreEqual(newType.Guid.ToString(), opts2[7].Id, "New type appears near end of options list in minor entry top node");
+				Assert.AreEqual("b0000000-c40e-433e-80b5-31da08771344", opts2[8].Id, "'No Variant Type' type appears near end of options list in minor entry top node");
 			}
 			finally
 			{
@@ -1790,6 +2001,54 @@ namespace SIL.FieldWorks.XWorks
 				// Don't mess up other unit tests with an extra reference type.
 				RemoveNewReferenceType(newType);
 			}
+		}
+
+		[Test]
+		public void CheckNewAndDeletedNoteTypes()
+		{
+			const string disabledButValid = "7ad06e7d-15d1-42b0-ae19-9c05b7c0b181";
+			const string enabledAndValid = "30115b33-608a-4506-9f9c-2457cab4f4a8";
+			const string doesNotExist = "bad50bad-5050-5000-baad-badbadbadbad";
+			var noteNode = new ConfigurableDictionaryNode
+			{
+				Label = "Extended Note",
+				FieldDescription = "ExtendedNoteOS",
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Note,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id = disabledButValid, IsEnabled = false },
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id = enabledAndValid, IsEnabled = true },
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id = doesNotExist, IsEnabled = true }
+					},
+				},
+			};
+			var senseNode = new ConfigurableDictionaryNode
+			{
+				Label = "Senses",
+				FieldDescription = "SensesOS",
+				Children = new List<ConfigurableDictionaryNode> { noteNode }
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { senseNode }
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryNode } };
+			// SUT
+			DictionaryConfigurationController.MergeTypesIntoDictionaryModel(model, Cache);
+			var opts = ((DictionaryNodeListOptions)noteNode.DictionaryNodeOptions).Options;
+			Assert.AreEqual(6, opts.Count, "Didn't merge properly (or more shipping note types have been added)");
+			var validOption = opts.FirstOrDefault(opt => opt.Id == disabledButValid);
+			Assert.NotNull(validOption, "A valid option has been removed");
+			Assert.False(validOption.IsEnabled, "This option should remain disabled");
+			validOption = opts.FirstOrDefault(opt => opt.Id == enabledAndValid);
+			Assert.NotNull(validOption, "Another valid option has been removed");
+			Assert.True(validOption.IsEnabled, "This option should remain enabled");
+			Assert.That(opts.Any(opt => opt.Id == XmlViewsUtils.GetGuidForUnspecifiedExtendedNoteType().ToString()), "Unspecified Type not added");
+			Assert.That(opts.All(opt => opt.Id != doesNotExist), "Bad Type should have been removed");
 		}
 
 		[Test]
@@ -2021,11 +2280,13 @@ namespace SIL.FieldWorks.XWorks
 				Assert.AreSame(glossNode, treeNode.Tag, "Passing a valid class list should find the node");
 
 				//SUT
+				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(subSenseGloss);
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.IsNotNull(treeNode, "Passing a valid class list should find a TreeNode");
 				Assert.AreSame(subGlossNode, treeNode.Tag, "Passing a valid class list should even find the node in a referenced node");
 
+				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(subSenseUndefined);
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.IsNotNull(treeNode, "invalid field should still find a TreeNode");
@@ -2088,17 +2349,96 @@ namespace SIL.FieldWorks.XWorks
 				Assert.IsNotNull(treeNode, "Passing a valid class list should find a TreeNode");
 				Assert.AreSame(subGlossNode, treeNode.Tag, "Passing a valid class list should even find the node in a referenced node");
 
-				dcc.View.TreeControl.Tree.SelectedNode = null;
+				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(subentryUndefined);
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.IsNotNull(treeNode, "invalid field should still find a TreeNode");
 				Assert.AreSame(subentriesNode, treeNode.Tag, "'undefined' field should find the closest TreeNode");
 
-				dcc.View.TreeControl.Tree.SelectedNode = null;
+				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(subentriesClassList);
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.IsNotNull(treeNode, "should find main Subentries node");
 				Assert.AreSame(subentriesNode, treeNode.Tag, "Passing a valid class list should find it");
+			}
+		}
+
+		[Test]
+		public void CheckBoxEnableForVariantInflectionalType()
+		{
+			var minorEntryVariantNode = new ConfigurableDictionaryNode
+			{
+				Label = "Minor Entry (Variants)",
+				FieldDescription = "LexEntry",
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Variant
+				}
+			};
+			var subentriesNode = new ConfigurableDictionaryNode { FieldDescription = "Subentries" };
+			var variantsNode = new ConfigurableDictionaryNode
+			{
+				Label = "Variant Forms",
+				FieldDescription = "VariantFormEntryBackRefs",
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Variant
+				}
+			};
+
+			var variantsInflectionalNode = new ConfigurableDictionaryNode
+			{
+				Label = "Variant Forms (Inflectional-Variants)",
+				LabelSuffix = "Inflectional-Variants",
+				FieldDescription = "VariantFormEntryBackRefs",
+				IsDuplicate = true,
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Variant
+				}
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Style = "Dictionary-Normal",
+				Children = new List<ConfigurableDictionaryNode> { subentriesNode, variantsNode, variantsInflectionalNode}
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Label = "Hybrid",
+				Parts = new List<ConfigurableDictionaryNode> { entryNode, minorEntryVariantNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+			var let = CreateNewVariantType("Absurd Variant");
+			try
+			{
+				var normTypeGuid = let.Guid.ToString();
+				var inflTypeGuid = Cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities
+					.First(poss => poss.Name.AnalysisDefaultWritingSystem.Text == "Past Variant").Guid.ToString();
+
+				// SUT
+				DictionaryConfigurationController.MergeTypesIntoDictionaryModel(model, Cache);
+				var inflOpts = ((DictionaryNodeListOptions)variantsInflectionalNode.DictionaryNodeOptions).Options;
+				Assert.AreEqual(9, inflOpts.Count, "Should have merged all variant types into options list in Main Entry > Inflectional Variants");
+				Assert.AreEqual(normTypeGuid, inflOpts[7].Id, "New type should appear near end of options list in Inflectional Variants node");
+				Assert.IsFalse(inflOpts[7].IsEnabled, "New type should be false under Inflectional Variants beacuse it is a normal variant type");
+				Assert.AreEqual(inflTypeGuid, inflOpts[5].Id, "Past Variant is not in its expected location");
+				Assert.IsTrue(inflOpts[5].IsEnabled, "Past variant should enabled because of Inflectional");
+				var normOpts = ((DictionaryNodeListOptions)variantsNode.DictionaryNodeOptions).Options;
+				Assert.AreEqual(9, normOpts.Count, "Should have merged all variant types into options list in Main Entry > Variants");
+				Assert.AreEqual(normTypeGuid, normOpts[7].Id, "New type should near end of options list in Main Entry > Variants");
+				Assert.IsTrue(normOpts[7].IsEnabled, "New type should be true beacuse it is normal variant type");
+				Assert.AreEqual(inflTypeGuid, normOpts[5].Id, "Past Variant is not in its expected location");
+				Assert.IsFalse(normOpts[5].IsEnabled, "Past variant should not enabled because of Inflectional");
+				var minorOpts = ((DictionaryNodeListOptions)minorEntryVariantNode.DictionaryNodeOptions).Options;
+				Assert.AreEqual(9, minorOpts.Count, "should have merged all variant types into options list in minor entry top node");
+				Assert.That(minorOpts.All(opt => opt.IsEnabled), "Should have enabled all (new) variant types in options list in minor entry top node");
+			}
+			finally
+			{
+				// Don't mess up other unit tests with an extra variant type.
+				RemoveNewVariantType(let);
 			}
 		}
 	}

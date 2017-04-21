@@ -127,7 +127,7 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="checkBoxSenseInPara.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 177</value>
+    <value>3, 26</value>
   </data>
   <data name="checkBoxSenseInPara.Size" type="System.Drawing.Size, System.Drawing">
     <value>189, 17</value>
@@ -136,7 +136,7 @@
     <value>3</value>
   </data>
   <data name="checkBoxSenseInPara.Text" xml:space="preserve">
-    <value>Display each sense in a paragraph</value>
+    <value>&amp;Display each sense in a paragraph</value>
   </data>
   <data name="&gt;&gt;checkBoxSenseInPara.Name" xml:space="preserve">
     <value>checkBoxSenseInPara</value>
@@ -145,10 +145,10 @@
     <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;checkBoxSenseInPara.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>senseStructureVerticalFlow</value>
   </data>
   <data name="&gt;&gt;checkBoxSenseInPara.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>1</value>
   </data>
   <data name="checkBoxShowGrammarFirst.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
@@ -157,7 +157,7 @@
     <value>True</value>
   </data>
   <data name="checkBoxShowGrammarFirst.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 154</value>
+    <value>3, 3</value>
   </data>
   <data name="checkBoxShowGrammarFirst.Size" type="System.Drawing.Size, System.Drawing">
     <value>299, 17</value>
@@ -166,7 +166,7 @@
     <value>2</value>
   </data>
   <data name="checkBoxShowGrammarFirst.Text" xml:space="preserve">
-    <value>If all senses share the grammatical information, show it first</value>
+    <value>If all senses share the &amp;grammatical information, show it first</value>
   </data>
   <data name="&gt;&gt;checkBoxShowGrammarFirst.Name" xml:space="preserve">
     <value>checkBoxShowGrammarFirst</value>
@@ -175,10 +175,10 @@
     <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;checkBoxShowGrammarFirst.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>senseStructureVerticalFlow</value>
   </data>
   <data name="&gt;&gt;checkBoxShowGrammarFirst.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>0</value>
   </data>
   <data name="checkBoxFirstSenseInline.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
@@ -190,16 +190,19 @@
     <value>NoControl</value>
   </data>
   <data name="checkBoxFirstSenseInline.Location" type="System.Drawing.Point, System.Drawing">
-    <value>22, 200</value>
+    <value>3, 49</value>
+  </data>
+  <data name="checkBoxFirstSenseInline.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>20, 0, 0, 0</value>
   </data>
   <data name="checkBoxFirstSenseInline.Size" type="System.Drawing.Size, System.Drawing">
-    <value>151, 17</value>
+    <value>171, 17</value>
   </data>
   <data name="checkBoxFirstSenseInline.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
   </data>
   <data name="checkBoxFirstSenseInline.Text" xml:space="preserve">
-    <value>starting with second sense</value>
+    <value>s&amp;tarting with second sense</value>
   </data>
   <data name="&gt;&gt;checkBoxFirstSenseInline.Name" xml:space="preserve">
     <value>checkBoxFirstSenseInline</value>
@@ -208,10 +211,10 @@
     <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;checkBoxFirstSenseInline.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>senseStructureVerticalFlow</value>
   </data>
   <data name="&gt;&gt;checkBoxFirstSenseInline.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="labelStyle.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
@@ -433,7 +436,7 @@
     <value>6</value>
   </data>
   <data name="checkBoxNumberSingleSense.Text" xml:space="preserve">
-    <value>Number even a single sense</value>
+    <value>&amp;Number even a single sense</value>
   </data>
   <data name="&gt;&gt;checkBoxNumberSingleSense.Name" xml:space="preserve">
     <value>checkBoxNumberSingleSense</value>
@@ -484,7 +487,7 @@
     <value>2</value>
   </data>
   <data name="buttonStyles.Text" xml:space="preserve">
-    <value>Styles...</value>
+    <value>St&amp;yles...</value>
   </data>
   <data name="&gt;&gt;buttonStyles.Name" xml:space="preserve">
     <value>buttonStyles</value>
@@ -576,6 +579,36 @@
   <data name="&gt;&gt;groupBoxSenseNumber.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="senseStructureVerticalFlow.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="senseStructureVerticalFlow.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
+    <value>GrowAndShrink</value>
+  </data>
+  <data name="senseStructureVerticalFlow.FlowDirection" type="System.Windows.Forms.FlowDirection, System.Windows.Forms">
+    <value>TopDown</value>
+  </data>
+  <data name="senseStructureVerticalFlow.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 151</value>
+  </data>
+  <data name="senseStructureVerticalFlow.Size" type="System.Drawing.Size, System.Drawing">
+    <value>305, 69</value>
+  </data>
+  <data name="senseStructureVerticalFlow.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;senseStructureVerticalFlow.Name" xml:space="preserve">
+    <value>senseStructureVerticalFlow</value>
+  </data>
+  <data name="&gt;&gt;senseStructureVerticalFlow.Type" xml:space="preserve">
+    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;senseStructureVerticalFlow.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;senseStructureVerticalFlow.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
@@ -586,7 +619,7 @@
     <value>True</value>
   </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>306, 220</value>
+    <value>311, 220</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>SenseOptionsView</value>

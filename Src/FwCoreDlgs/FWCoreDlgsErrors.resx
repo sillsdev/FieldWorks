@@ -160,4 +160,7 @@
   <data name="ksInvalidControlCharacterFound" xml:space="preserve">
     <value>Invalid control character found</value>
   </data>
+  <data name="kstidoutsideRange" xml:space="preserve">
+    <value>Codepoint is not a valid 21-bit Unicode code point ranging from 0 through 10FFFF.</value>
+  </data>
 </root>

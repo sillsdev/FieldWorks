@@ -52,7 +52,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 				{'\u200D', "[ZWJ]"},
 				{'\uFEFF', "[ZWNBSP]"},
 				{'\u200C', "[ZWNJ]"},
-				{'\u200B', "[ZWSP]"}
+				{'\u200B', "[ZWSP]"},
+				{'\u00A0', "[NBSP]"},
+				{'\u202F', "[NNBSP]"}
 			};
 		}
 
@@ -88,7 +90,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		/// <summary>
 		/// Substitute visible characters for some invisible ones.
 		/// </summary>
-		private static string InvisibleToVisibleCharacters(string operand)
+		internal static string InvisibleToVisibleCharacters(string operand)
 		{
 			foreach (var replacement in VisibleCharacterSubstitutions)
 				operand = operand.Replace(replacement.Key.ToString(), replacement.Value);

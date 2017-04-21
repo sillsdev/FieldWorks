@@ -1,14 +1,13 @@
-// Copyright (c) 2016 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Windows.Forms;
 using System.Diagnostics;
-
+using System.Windows.Forms;
+using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.FieldWorks.Common.Framework.DetailControls;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -17,8 +16,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// </summary>
 	public class LexReferenceUnidirectionalLauncher : VectorReferenceLauncher
 	{
-		protected ICmObject m_displayParent;
-
 		public LexReferenceUnidirectionalLauncher()
 		{
 			// This call is required by the Windows Form Designer.
@@ -40,38 +37,31 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		protected override void HandleChooser()
 		{
-			var lrt = (ILexRefType)m_obj.Owner;
-			var type = (LexRefTypeTags.MappingTypes)lrt.MappingType;
+			ILexRefType lrt = (ILexRefType)m_obj.Owner;
+			int type = lrt.MappingType;
 			BaseGoDlg dlg = null;
-			string sTitle = string.Empty;
 			try
 			{
-				switch (type)
+				switch ((LexRefTypeTags.MappingTypes)type)
 				{
 					case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
 						dlg = new LinkEntryOrSenseDlg();
 						(dlg as LinkEntryOrSenseDlg).SelectSensesOnly = true;
-						sTitle = String.Format(LexEdStrings.ksIdentifyXSense,
-							lrt.Name.BestAnalysisAlternative.Text);
 						break;
 					case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
 						dlg = new EntryGoDlg();
-						sTitle = String.Format(LexEdStrings.ksIdentifyXLexEntry,
-							lrt.Name.BestAnalysisAlternative.Text);
 						break;
 					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
 						dlg = new LinkEntryOrSenseDlg();
-						sTitle = String.Format(LexEdStrings.ksIdentifyXLexEntryOrSense,
-							lrt.Name.BestAnalysisAlternative.Text);
 						break;
 				}
 				Debug.Assert(dlg != null);
-				var wp = new WindowParams { m_title = sTitle, m_btnText = LexEdStrings.ks_Add };
+				var wp = new WindowParams { m_title = String.Format(LexEdStrings.ksIdentifyXEntry, lrt.Name.BestAnalysisAlternative.Text), m_btnText = LexEdStrings.ks_Add };
 				dlg.SetDlgInfo(m_cache, wp, m_mediator, m_propertyTable);
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
-				if (dlg.ShowDialog(FindForm()) == DialogResult.OK && dlg.SelectedObject != null)
+				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 				{
-					if (!((ILexReference)m_obj).TargetsRS.Contains(dlg.SelectedObject))
+					if (!(m_obj as ILexReference).TargetsRS.Contains(dlg.SelectedObject))
 						AddItem(dlg.SelectedObject);
 				}
 			}
@@ -89,22 +79,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		protected override VectorReferenceView CreateVectorReferenceView()
 		{
-			var lrcv = new LexReferenceUnidirectionalView();
-			if (m_displayParent != null)
-				lrcv.DisplayParent = m_displayParent;
-			return lrcv;
-		}
-
-		public ICmObject DisplayParent
-		{
-			set
-			{
-				CheckDisposed();
-
-				m_displayParent = value;
-				if (m_vectorRefView != null)
-					((LexReferenceUnidirectionalView)m_vectorRefView).DisplayParent = value;
-			}
+			return new LexReferenceUnidirectionalView();
 		}
 
 		#region Designer generated code

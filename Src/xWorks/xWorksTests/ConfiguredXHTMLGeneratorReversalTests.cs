@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2016 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,6 +12,7 @@ using NUnit.Framework;
 using SIL.CoreImpl;
 using SIL.TestUtilities;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
@@ -122,10 +123,13 @@ namespace SIL.FieldWorks.XWorks
 		#region PrimareyEntryReferenceTests
 		// Xpath used by PrimaryEntryReference tests
 		private const string referringSenseXpath = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']";
-		private const string entryRefXpath = referringSenseXpath + "/span[@class='mainentryrefs']/span[@class='mainentryref']";
+		private const string entryRefsXpath = referringSenseXpath + "/span[@class='mainentryrefs']";
+		private const string entryRefXpath = entryRefsXpath + "/span[@class='mainentryref']";
 		private const string entryRefTypeBit = "span[@class='entrytypes']/span[@class='entrytype']";
-		private const string entryRefTypeXpath = entryRefXpath + "/" + entryRefTypeBit;
-		private const string primaryEntryXpath = entryRefXpath + "/span[@class='primarylexemes']/span[@class='primarylexeme']";
+		private const string entryRefTypeXpath = entryRefsXpath + "/" + entryRefTypeBit;
+		private const string primaryLexemeBit = "/span[@class='primarylexemes']/span[@class='primarylexeme']";
+		private const string primaryEntryXpath = entryRefXpath + primaryLexemeBit;
+		//private const string primaryEntryXpath = entryRefXpath + "/span[@class='primarylexemes']/span[@class='primarylexeme']";
 		private const string refHeadwordXpath = primaryEntryXpath + "/span[@class='headword']/span[@lang='fr']/a[text()='parole']";
 
 		[Test]
@@ -200,6 +204,44 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(glossOrSummDefXpath, 1);
 		}
 
+		[Test]
+		public void GenerateXHTMLForEntry_PrimaryEntryReferences_Ordered()
+		{
+			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
+
+			var reversalEntry = CreateInterestingEnglishReversalEntry();
+			var primaryEntry = reversalEntry.ReferringSenses.First().Entry;
+			var refer1 = CXGTests.CreateInterestingLexEntry(Cache, "Component Entry", "CompEntry Sense");
+			var refer2 = CXGTests.CreateInterestingLexEntry(Cache, "Variant Entry");
+			var refer3 = CXGTests.CreateInterestingLexEntry(Cache, "CompSense Entry", "Component Sense").SensesOS.First();
+			var refer4 = CXGTests.CreateInterestingLexEntry(Cache, "Invariant Entry");
+			var refer5 = CXGTests.CreateInterestingLexEntry(Cache, "Variante Entrie");
+			using (CXGTests.CreateComplexForm(Cache, refer3, primaryEntry, new Guid("00000000-0000-0000-cccc-000000000000"), true)) // Compound
+			using (CXGTests.CreateVariantForm(Cache, refer2, primaryEntry, new Guid("00000000-0000-0000-bbbb-000000000000"), "Free Variant"))
+			using (CXGTests.CreateComplexForm(Cache, refer1, primaryEntry, new Guid("00000000-0000-0000-aaaa-000000000000"), true)) // Compound
+			using (CXGTests.CreateVariantForm(Cache, refer4, primaryEntry, new Guid("00000000-0000-0000-dddd-000000000000"), null)) // no Variant Type
+			using (CXGTests.CreateVariantForm(Cache, refer5, primaryEntry, new Guid("00000000-0000-0000-eeee-000000000000"), "Spelling Variant"))
+			{
+				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(reversalEntry, mainRevEntryNode, null, DefaultSettings); // SUT
+				var assertIt = AssertThatXmlIn.String(result);
+				assertIt.HasSpecifiedNumberOfMatchesForXpath(entryRefTypeXpath, 3); // should be one Complex Form Type and two Variant Types.
+				const string headwordBit = "/span[@class='headword']/span[@lang='fr']/a[text()='{1}']";
+				const string entryRefWithSiblingXpath = entryRefsXpath + "/span[@class='mainentryref' and preceding-sibling::";
+				const string typeAndHeadwordXpath = entryRefWithSiblingXpath
+					+ entryRefTypeBit + "/span[@class='abbreviation']/span[@lang='en' and text()='{0}']]" + primaryLexemeBit + headwordBit;
+				var adjacentHeadwordXpath = entryRefWithSiblingXpath
+					+ "span[@class='mainentryref']" + primaryLexemeBit + headwordBit.Replace("{1}", "{0}") + "]" + primaryLexemeBit + headwordBit;
+				// check for proper headings on each referenced headword
+				assertIt.HasSpecifiedNumberOfMatchesForXpath(string.Format(typeAndHeadwordXpath, "comp. of", "Component Entry"), 1);
+				assertIt.HasSpecifiedNumberOfMatchesForXpath(string.Format(adjacentHeadwordXpath, "Component Entry", "CompSense Entry"), 1); // ordered within heading
+				assertIt.HasSpecifiedNumberOfMatchesForXpath(string.Format(typeAndHeadwordXpath, "fr. var. of", "Variant Entry"), 1);
+				assertIt.HasSpecifiedNumberOfMatchesForXpath(string.Format(typeAndHeadwordXpath, "sp. var. of", "Variante Entrie"), 1);
+				// verify there is no heading on the typeless variant
+				assertIt.HasNoMatchForXpath(string.Format(entryRefWithSiblingXpath + "span]" + primaryLexemeBit + headwordBit, null, "Invariant Entry"),
+					message: "Invariant Entry is the only typeless entry ref; it should not have any preceding siblings (Types or other Entry Refs)");
+			}
+		}
+
 		private static ConfigurableDictionaryNode PreparePrimaryEntryReferencesConfigSetup()
 		{
 			var abbrNode = new ConfigurableDictionaryNode
@@ -211,7 +253,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "EntryTypes",
 				Children = new List<ConfigurableDictionaryNode> {abbrNode},
-				Label = "Type"
 			};
 			var refHeadwordNode = new ConfigurableDictionaryNode
 			{
@@ -353,8 +394,9 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(rie, reversalNode, null, DefaultSettings);
-			var reversalFormDataPath = string.Format("/div[@class='reversalindexentry']/span[@class='reversalform']/span[text()='{0}']", rie.LongName);
-			var entryDataPath = string.Format("//span[text()='{0}']", entryHeadWord.Text);
+			var reversalFormDataPath = string.Format("/div[@class='reversalindexentry']/span[@class='reversalform']/span[text()='{0}']",
+				TsStringUtils.Compose(rie.LongName));
+			var entryDataPath = string.Format("//span[text()='{0}']", entryHeadWord.get_NormalizedForm(FwNormalizationMode.knmNFC).Text);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(reversalFormDataPath, 1);
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(entryDataPath);
 		}
@@ -475,7 +517,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var xhtml = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, DefaultSettings);
 			// REVIEW (Hasso) 2016.03: we should probably do something about the leading space in the Sense Number Run, as it is currently in addition to the "between" space.
-			const string subSenseOneOne = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span/span/a[text()=' 1.1']";
+			const string subSenseOneOne = "/div[@class='reversalindexentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span/span/a[text()='1.1']";
 			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(subSenseOneOne, 1);
 		}
 
@@ -536,7 +578,7 @@ namespace SIL.FieldWorks.XWorks
 			var testEntry = CreateInterestingEnglishSubReversalEntryWithSubSense();
 			//SUT
 			var xhtml = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, DefaultSettings);
-			const string subSenseOneOne = "/div[@class='reversalindexentry']/span[@class='subentries']/span[@class='subentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span/span/a[text()=' 1.1']";
+			const string subSenseOneOne = "/div[@class='reversalindexentry']/span[@class='subentries']/span[@class='subentry']/span[@class='referringsenses']/span[@class='sensecontent']/span[@class='referringsense']/span[@class='headword']/span/span/a[text()='1.1']";
 			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(subSenseOneOne, 1);
 		}
 

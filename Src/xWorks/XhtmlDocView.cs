@@ -1,14 +1,14 @@
-﻿// Copyright (c) 2014-2016 SIL International
+﻿// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
@@ -20,7 +20,6 @@ using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
@@ -39,6 +38,8 @@ namespace SIL.FieldWorks.XWorks
 		private DictionaryPublicationDecorator m_pubDecorator;
 		private string m_selectedObjectID = string.Empty;
 		internal string m_configObjectName;
+		internal const string CurrentSelectedEntryClass = "currentSelectedEntry";
+		private string m_currentConfigView; // used when this is a Dictionary view to store which view is active.
 
 		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
@@ -145,6 +146,117 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+
+
+		/// <summary>
+		/// Used to verify current content control so that Find Lexical Entry behaves differently
+		/// in Dictionary View.
+		/// </summary>
+		private const string ksLexDictionary = "lexiconDictionary";
+
+		/// <summary>
+		/// Check to see if the user needs to be alerted that JumpToRecord is not possible.
+		/// </summary>
+		/// <param name="argument">the hvo of the record</param>
+		/// <returns></returns>
+		public bool OnJumpToRecord(object argument)
+		{
+			var hvoTarget = (int)argument;
+			var currControl = m_propertyTable.GetStringProperty("currentContentControl", "");
+			if (hvoTarget > 0 && currControl == ksLexDictionary)
+			{
+				DictionaryConfigurationController.ExclusionReasonCode xrc;
+				// Make sure we explain to the user in case hvoTarget is not visible due to
+				// the current Publication layout or Configuration view.
+				if (!IsObjectVisible(hvoTarget, out xrc))
+				{
+					// Tell the user why we aren't jumping to his record
+					GiveSimpleWarning(xrc);
+				}
+			}
+			return false;
+		}
+
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification = "See TODO-Linux comment")]
+		private void GiveSimpleWarning(DictionaryConfigurationController.ExclusionReasonCode xrc)
+		{
+			// Tell the user why we aren't jumping to his record
+			var msg = xWorksStrings.ksSelectedEntryNotInDict;
+			string caption;
+			string reason;
+			string shlpTopic;
+			switch (xrc)
+			{
+				case DictionaryConfigurationController.ExclusionReasonCode.NotInPublication:
+					caption = xWorksStrings.ksEntryNotPublished;
+					reason = xWorksStrings.ksEntryNotPublishedReason;
+					shlpTopic = "User_Interface/Menus/Edit/Find_a_lexical_entry.htm";		//khtpEntryNotPublished
+					break;
+				case DictionaryConfigurationController.ExclusionReasonCode.ExcludedHeadword:
+					caption = xWorksStrings.ksMainNotShown;
+					reason = xWorksStrings.ksMainNotShownReason;
+					shlpTopic = "khtpMainEntryNotShown";
+					break;
+				case DictionaryConfigurationController.ExclusionReasonCode.ExcludedMinorEntry:
+					caption = xWorksStrings.ksMinorNotShown;
+					reason = xWorksStrings.ksMinorNotShownReason;
+					shlpTopic = "khtpMinorEntryNotShown";
+					break;
+				default:
+					throw new ArgumentException("Unknown ExclusionReasonCode");
+			}
+			msg = String.Format(msg, reason);
+			// TODO-Linux: Help is not implemented on Mono
+			MessageBox.Show(FindForm(), msg, caption, MessageBoxButtons.OK,
+							MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, 0,
+							m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile,
+							HelpNavigator.Topic, shlpTopic);
+		}
+
+		private bool IsObjectVisible(int hvoTarget, out DictionaryConfigurationController.ExclusionReasonCode xrc)
+		{
+			xrc = DictionaryConfigurationController.ExclusionReasonCode.NotExcluded;
+			var objRepo = Cache.ServiceLocator.GetInstance<ICmObjectRepository>();
+			Debug.Assert(objRepo.IsValidObjectId(hvoTarget), "Invalid hvoTarget!");
+			if (!objRepo.IsValidObjectId(hvoTarget))
+				throw new ArgumentException("Unknown object.");
+			var entry = objRepo.GetObject(hvoTarget) as ILexEntry;
+			Debug.Assert(entry != null, "HvoTarget is not a LexEntry!");
+			if (entry == null)
+				throw new ArgumentException("Target is not a LexEntry.");
+
+			// Now we have our LexEntry
+			// First deal with whether the active Publication excludes it.
+			var m_currentPublication = m_propertyTable.GetValue<string>("SelectedPublication", null);
+			var publications = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p).Where(p => p.NameHierarchyString == m_currentPublication.ToString()).FirstOrDefault();
+			if (publications.NameHierarchyString != xWorksStrings.AllEntriesPublication)
+			{
+				var currentPubPoss = publications;
+				if (!entry.PublishIn.Contains(currentPubPoss))
+				{
+					xrc = DictionaryConfigurationController.ExclusionReasonCode.NotInPublication;
+					return false;
+				}
+				// Second deal with whether the entry shouldn't be shown as a headword
+				if (!entry.ShowMainEntryIn.Contains(currentPubPoss))
+				{
+					xrc = DictionaryConfigurationController.ExclusionReasonCode.ExcludedHeadword;
+					return false;
+				}
+			}
+			// Third deal with whether the entry shouldn't be shown as a minor entry.
+			// commented out until conditions are clarified (LT-11447)
+			var configuration = new DictionaryConfigurationModel(GetCurrentConfiguration(false), Cache);
+			if (entry.EntryRefsOS.Count > 0 && !entry.PublishAsMinorEntry && configuration.IsRootBased)
+			{
+				xrc = DictionaryConfigurationController.ExclusionReasonCode.ExcludedMinorEntry;
+				return false;
+			}
+			// If we get here, we should be able to display it.
+			return true;
+		}
+
 		/// <summary>
 		/// Handle a mouse click in the web browser displaying the xhtml.
 		/// </summary>
@@ -168,7 +280,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else if (e.Button == GeckoMouseButton.Right)
 			{
-				HandleDomRightClick(browser, e, element, m_propertyTable, m_mediator, m_configObjectName);
+				HandleDomRightClick(browser, e, element, m_propertyTable, m_mediator);
 			}
 		}
 
@@ -182,6 +294,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				CloseContextMenuIfOpen();
 				SetActiveSelectedEntryOnView(browser);
+				// Without this we show the entry count in the status bar the first time we open the Dictionary or Rev. Index.
+				Clerk.SelectedRecordChanged(true, true);
 			}
 		}
 
@@ -238,7 +352,7 @@ namespace SIL.FieldWorks.XWorks
 				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, "", isNormalRightToLeft);
 				var entries = ConfiguredXHTMLGenerator.GenerateNextFewEntries(PublicationDecorator, entriesToPublish, GetCurrentConfiguration(false), settings, oldCurPageRange,
 					oldAdjPageRange, ConfiguredXHTMLGenerator.EntriesToAddCount, out newCurPageRange, out newAdjPageRange);
-				// Load entries above
+				// Load entries above the first entry
 				foreach (var entry in entries)
 				{
 					var entryElement = browserElement.OwnerDocument.CreateHtmlElement("div");
@@ -262,7 +376,7 @@ namespace SIL.FieldWorks.XWorks
 				// Gecko xpath seems to be sensitive to namespaces, using * instead of span helps
 				var currentPageButton = GetBottomCurrentPageButton(browserElement);
 				if (currentPageButton == null)
-					throw new ArgumentException(@"No page buttons found in the document element is a part of", "element");
+					return;
 				var adjPage = (GeckoHtmlElement)currentPageButton.NextSibling;
 				if (adjPage == null)
 					return;
@@ -271,7 +385,7 @@ namespace SIL.FieldWorks.XWorks
 				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, "", isNormalRightToLeft);
 				var entries = ConfiguredXHTMLGenerator.GenerateNextFewEntries(PublicationDecorator, entriesToPublish, GetCurrentConfiguration(false), settings, currentPageRange,
 					adjacentPageRange, ConfiguredXHTMLGenerator.EntriesToAddCount, out newCurrentPageRange, out newAdjPageRange);
-				// Load entries above
+				// Load entries above the lower navigation buttons
 				foreach (var entry in entries)
 				{
 					var entryElement = browserElement.OwnerDocument.CreateHtmlElement("div"); var entryDoc = XDocument.Parse(entry);
@@ -345,13 +459,13 @@ namespace SIL.FieldWorks.XWorks
 		/// <remarks>
 		/// This is static so that the method can be shared with XhtmlRecordDocView.
 		/// </remarks>
-		internal static void HandleDomRightClick(GeckoWebBrowser browser, DomMouseEventArgs e,
-			GeckoElement element, PropertyTable propertyTable, Mediator mediator, string configObjectName)
+		internal static void HandleDomRightClick(GeckoWebBrowser browser, DomMouseEventArgs e, GeckoElement element, PropertyTable propertyTable, Mediator mediator)
 		{
 			Guid topLevelGuid;
 			GeckoElement entryElement;
 			var classList = GetClassListFromGeckoElement(element, out topLevelGuid, out entryElement);
-			var label = string.Format(xWorksStrings.ksConfigure, configObjectName);
+			var localizedName = DictionaryConfigurationListener.GetDictionaryConfigurationType(propertyTable);
+			var label = string.Format(xWorksStrings.ksConfigure, localizedName);
 			s_contextMenu = new ContextMenuStrip();
 			var item = new DisposableToolStripMenuItem(label);
 			s_contextMenu.Items.Add(item);
@@ -464,7 +578,7 @@ namespace SIL.FieldWorks.XWorks
 					current = cache.ServiceLocator.GetObject(guid);
 				else if (clerk != null)
 					current = clerk.CurrentObject;
-				var controller = new DictionaryConfigurationController(dlg, propertyTable, current);
+				var controller = new DictionaryConfigurationController(dlg, propertyTable, mediator, current);
 				controller.SetStartingNode(classList);
 				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, DictionaryConfigurationListener.GetDictionaryConfigurationType(propertyTable));
 				dlg.HelpTopic = DictionaryConfigurationListener.GetConfigDialogHelpTopic(propertyTable);
@@ -809,7 +923,7 @@ namespace SIL.FieldWorks.XWorks
 			var prevSelectedByGuid = browser.Document.GetHtmlElementById("g" + m_selectedObjectID);
 			if (prevSelectedByGuid != null)
 			{
-				prevSelectedByGuid.RemoveAttribute("style");
+				RemoveClassFromHtmlElement(prevSelectedByGuid, CurrentSelectedEntryClass);
 			}
 		}
 
@@ -820,24 +934,80 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (Clerk.CurrentObject == null)
 				return;
+
+			if (Clerk.Id == "AllReversalEntries")
+			{
+				var reversalentry = Clerk.CurrentObject as IReversalIndexEntry;
+				if (reversalentry == null)
+					return;
+				var writingSystem = Cache.ServiceLocator.WritingSystemManager.Get(reversalentry.ReversalIndex.WritingSystem);
+				if (writingSystem == null)
+					return;
+				var currReversalWs = writingSystem.Id;
+				var currentConfig = m_propertyTable.GetStringProperty("ReversalIndexPublicationLayout", string.Empty);
+				var configuration = File.Exists(currentConfig) ? new DictionaryConfigurationModel(currentConfig, Cache) : null;
+				if (configuration == null || configuration.WritingSystem != currReversalWs)
+				{
+					var newConfig = Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable),
+						writingSystem.DisplayLabel + DictionaryConfigurationModel.FileExtension);
+					m_propertyTable.SetProperty("ReversalIndexPublicationLayout", newConfig, true);
+				}
+			}
 			var currentObjectGuid = Clerk.CurrentObject.Guid.ToString();
 			var currSelectedByGuid = browser.Document.GetHtmlElementById("g" + currentObjectGuid);
-			if (currSelectedByGuid != null)
-			{
-				// Adjust active item to be lower down on the page.
-				var currElementRect = currSelectedByGuid.GetBoundingClientRect();
-				var currElementTop = currElementRect.Top + browser.Window.ScrollY;
-				var currElementBottom = currElementRect.Bottom + browser.Window.ScrollY;
-				var yPosition = currElementTop - (browser.Height / 4);
+			if (currSelectedByGuid == null)
+				return;
 
-				// Scroll only if current element is not visible on browser window
-				if (currElementTop < browser.Window.ScrollY || currElementBottom > (browser.Window.ScrollY + browser.Height))
-					browser.Window.ScrollTo(0, yPosition);
+			// Adjust active item to be lower down on the page.
+			var currElementRect = currSelectedByGuid.GetBoundingClientRect();
+			var currElementTop = currElementRect.Top + browser.Window.ScrollY;
+			var currElementBottom = currElementRect.Bottom + browser.Window.ScrollY;
+			var yPosition = currElementTop - (browser.Height / 4);
 
-				currSelectedByGuid.SetAttribute("style", "background-color:LightYellow");
-				m_selectedObjectID = currentObjectGuid;
-			}
+			// Scroll only if current element is not visible on browser window
+			if (currElementTop < browser.Window.ScrollY || currElementBottom > (browser.Window.ScrollY + browser.Height))
+				browser.Window.ScrollTo(0, yPosition);
+
+			AddClassToHtmlElement(currSelectedByGuid, CurrentSelectedEntryClass);
+			m_selectedObjectID = currentObjectGuid;
 		}
+
+		#region Add/Remove GeckoHtmlElement Class
+
+		private const string Space = " ";
+
+		/// <summary>
+		/// Adds 'classToAdd' to the class attribute of 'element', preserving any existing classes.
+		/// Changes nothing if 'classToAdd' is already present.
+		/// </summary>
+		private void AddClassToHtmlElement(GeckoHtmlElement element, string classToAdd)
+		{
+			var classList = element.ClassName.Split(' ');
+			if (classList.Length == 0)
+			{
+				element.ClassName = classToAdd;
+				return;
+			}
+			if (classList.Contains(classToAdd))
+			{
+				return;
+			}
+			element.ClassName += " " + classToAdd;
+		}
+
+		/// <summary>
+		/// Removes 'classToRemove' from the class attribute, preserving any other existing classes.
+		/// Quietly does nothing if 'classToRemove' is not found.
+		/// </summary>
+		private void RemoveClassFromHtmlElement(GeckoHtmlElement element, string classToRemove)
+		{
+			var classList = new List<string>();
+			classList.AddRange(element.ClassName.Split(' '));
+			classList.Remove(classToRemove);
+			element.ClassName = string.Join(" ", classList);
+		}
+
+		#endregion
 
 		/// <summary>
 		/// Method which set the current writing system when selected in ConfigureReversalIndexDialog
@@ -872,33 +1042,15 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public bool OnFindAndReplaceText(object argument)
 		{
-			using (var findDlg = new BasicFindDialog())
-			{
-				findDlg.FindNext += FindDlgFindNextHandler;
-				findDlg.ShowDialog(this);
-			}
-			return true;
-		}
-
-		void FindDlgFindNextHandler(object sender, IBasicFindView view)
-		{
 			if (m_mainView != null)
 			{
 				var geckoBrowser = m_mainView.NativeBrowser as GeckoWebBrowser;
-				var field = typeof(GeckoWebBrowser).GetField("WebBrowser", BindingFlags.Instance | BindingFlags.NonPublic);
-				nsIWebBrowser browser = (nsIWebBrowser)field.GetValue(geckoBrowser);
-				var browserFind = Xpcom.QueryInterface<nsIWebBrowserFind>(browser);
-				browserFind.SetSearchStringAttribute(Icu.Normalize(view.SearchText, Icu.UNormalizationMode.UNORM_NFD));
-				try
+				if (geckoBrowser != null)
 				{
-					browserFind.SetWrapFindAttribute(true);
-					browserFind.FindNext();
-				}
-				catch (Exception e)
-				{
-					view.StatusText = e.Message;
+					geckoBrowser.Window.Find(string.Empty, false, false, true, false, true, true);
 				}
 			}
+			return true;
 		}
 
 		/// <summary>

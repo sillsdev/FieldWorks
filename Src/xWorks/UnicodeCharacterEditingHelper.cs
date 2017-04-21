@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -92,6 +93,7 @@ namespace SIL.FieldWorks.XWorks
 				var originalSelectionLength = textbox.SelectionLength;
 				var beginningText = textbox.Text.Substring(0, insertionPointLocation);
 				var endingText = textbox.Text.Substring(insertionPointLocation);
+				beginningText = SpecialCharacterHandling.VisibleToInvisibleCharacters(beginningText);
 
 				beginningText = ConvertFinal(beginningText);
 

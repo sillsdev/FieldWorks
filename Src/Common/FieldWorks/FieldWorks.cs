@@ -2793,7 +2793,7 @@ namespace SIL.FieldWorks
 		{
 			var wsMgr = cache.ServiceLocator.WritingSystemManager;
 			cache.DomainDataByFlid.BeginNonUndoableTask();
-			ReversalIndexServices.CreateReversalIndexConfigurationFile(wsMgr, cache,
+			ReversalIndexServices.CreateOrRemoveReversalIndexConfigurationFiles(wsMgr, cache,
 				FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory, cache.LangProject.ShortName);
 			cache.DomainDataByFlid.EndNonUndoableTask();
 		}
@@ -2934,33 +2934,6 @@ namespace SIL.FieldWorks
 				if (s_noUserInterface || InitializeApp(app, s_splashScreen))
 				{
 					app.RegistrySettings.LoadingProcessId = 0;
-#if !__MonoCS__
-					if (!WindowsInstallerQuery.IsThisInstalled() || app.ActiveMainWindow == null)
-						return true;
-
-					// Initialize NetSparkle to check for updates:
-					CoreImpl.Properties.Settings.Default.IsBTE = WindowsInstallerQuery.IsThisBTE();
-
-					var appCastUrl = CoreImpl.Properties.Settings.Default.IsBTE
-						? (CoreImpl.Properties.Settings.Default.CheckForBetaUpdates
-							? CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastBteBetasUrl")
-							: CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastBteUrl"))
-						: (CoreImpl.Properties.Settings.Default.CheckForBetaUpdates
-							? CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastSeBetasUrl")
-							: CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastSeUrl"));
-
-					var sparkle = SingletonsContainer.Get("Sparkle", () => new Sparkle(appCastUrl, app.ActiveMainWindow.Icon));
-					sparkle.AboutToExitForInstallerRun += delegate(object sender, CancelEventArgs args)
-						{
-							CloseAllMainWindows();
-							if(app.ActiveMainWindow != null)
-							{
-								args.Cancel = true;
-							}
-						};
-					if (CoreImpl.Properties.Settings.Default.AutoCheckForUpdates)
-						sparkle.CheckOnFirstApplicationIdle();
-#endif
 					return true;
 				}
 			}

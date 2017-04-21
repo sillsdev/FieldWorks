@@ -383,6 +383,18 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// Return the MorphType objects for the MSA.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceSequence, "MoMorphType")]
+		public virtual IEnumerable<IMoMorphType> MorphTypes
+		{
+			get
+			{
+				return new IMoMorphType[0];
+			}
+		}
+
+		/// <summary>
 		/// Update an extant MSA to the new values in the sandbox MSA,
 		/// or make a new MSA with the values in the sandbox msa.
 		/// </summary>
@@ -515,6 +527,17 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	/// <summary></summary>
 	internal partial class MoDerivAffMsa
 	{
+		/// <summary>
+		/// override to return our MorphTypes.
+		/// </summary>
+		public override IEnumerable<IMoMorphType> MorphTypes
+		{
+			get
+			{
+				return OwningEntry.MorphTypes;
+			}
+		}
+
 		/// <summary>
 		///
 		/// </summary>
@@ -1954,6 +1977,17 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// override to return our MorphTypes.
+		/// </summary>
+		public override IEnumerable<IMoMorphType> MorphTypes
+		{
+			get
+			{
+				return OwningEntry.MorphTypes;
+			}
+		}
+
+		/// <summary>
 		/// Return the Grammatical Info. (POS) TsString for the given writing system.
 		/// </summary>
 		/// <param name="wsAnal">If this is magic WS then return BestAnalorVern. Otherwise return the
@@ -2319,6 +2353,17 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	/// </summary>
 	internal partial class MoUnclassifiedAffixMsa
 	{
+		/// <summary>
+		/// override to return our MorphTypes.
+		/// </summary>
+		public override IEnumerable<IMoMorphType> MorphTypes
+		{
+			get
+			{
+				return OwningEntry.MorphTypes;
+			}
+		}
+
 		/// <summary>
 		/// The way we want to show this in an interlinear view
 		/// </summary>

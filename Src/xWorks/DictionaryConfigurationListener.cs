@@ -9,8 +9,12 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainImpl;
+using SIL.FieldWorks.FwCoreDlgs;
+using SIL.FieldWorks.XWorks.LexText;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -191,7 +195,7 @@ namespace SIL.FieldWorks.XWorks
 			using (var dlg = new DictionaryConfigurationDlg(m_propertyTable))
 			{
 				var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
-				var controller = new DictionaryConfigurationController(dlg, m_propertyTable, clerk != null ? clerk.CurrentObject : null);
+				var controller = new DictionaryConfigurationController(dlg, m_propertyTable, m_mediator, clerk != null ? clerk.CurrentObject : null);
 				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, GetDictionaryConfigurationType(m_propertyTable));
 				dlg.HelpTopic = GetConfigDialogHelpTopic(m_propertyTable);
 				dlg.ShowDialog(m_propertyTable.GetValue<IWin32Window>("window"));
@@ -233,6 +237,20 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var model = new DictionaryConfigurationModel(currentConfig, cache);
 			DictionaryConfigurationController.SetConfigureHomographParameters(model, cache);
+		}
+
+
+		/// <summary>
+		/// If we are in a tool handled by the new configuration then hide this to avoid confusion with the new dialog
+		/// which is accessible from each configuration file.
+		/// </summary>
+		public virtual bool OnDisplayConfigureHeadwordNumbers(object commandObject,
+																		 ref UIItemDisplayProperties display)
+		{
+			// If we are in 'Dictionary' or 'Reversal Index' hide this menu item
+			display.Enabled = false;
+			display.Visible = false;
+			return true; // we handled it
 		}
 
 		/// <summary>
@@ -325,6 +343,20 @@ namespace SIL.FieldWorks.XWorks
 				? "DictionaryPublicationLayout"
 				: "ReversalIndexPublicationLayout";
 			propertyTable.SetProperty(pubLayoutPropName, currentConfig, fUpdate);
+		}
+
+		public bool OnWritingSystemUpdated(object param)
+		{
+			if (param == null)
+				return false;
+
+			var currentConfig = GetCurrentConfiguration(m_propertyTable, true, null);
+			var cache = m_propertyTable.GetValue<FdoCache>("cache");
+			var configuration = new DictionaryConfigurationModel(currentConfig, cache);
+			DictionaryConfigurationController.UpdateWritingSystemInModel(configuration, cache);
+			configuration.Save();
+
+			return true;
 		}
 
 		private static string GetInnerConfigDir(string configFilePath)

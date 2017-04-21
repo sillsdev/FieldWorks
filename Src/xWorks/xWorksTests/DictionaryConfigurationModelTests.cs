@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2016 SIL International
+﻿// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,9 +11,9 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.IO;
 using SIL.TestUtilities;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -120,7 +120,7 @@ namespace SIL.FieldWorks.XWorks
 			using (var modelFile = new TempFile(new[]
 			{
 				XmlOpenTagsThruHeadword, @"
-				<WritingSystemOptions writingSystemType=""analysis"" displayWSAbreviation=""true"">
+				<WritingSystemOptions writingSystemType=""vernacular"" displayWSAbreviation=""true"">
 					<Option id=""fr"" isEnabled=""true""/>
 				</WritingSystemOptions>",
 				XmlCloseTagsFromHeadword
@@ -134,7 +134,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsInstanceOf(typeof(DictionaryNodeWritingSystemOptions), testNodeOptions);
 			var wsOptions = (DictionaryNodeWritingSystemOptions)testNodeOptions;
 			Assert.IsTrue(wsOptions.DisplayWritingSystemAbbreviations);
-			Assert.AreEqual(DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis, wsOptions.WsType);
+			Assert.AreEqual(DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular, wsOptions.WsType);
 			Assert.AreEqual(1, wsOptions.Options.Count);
 			Assert.AreEqual("fr", wsOptions.Options[0].Id);
 			Assert.IsTrue(wsOptions.Options[0].IsEnabled);
@@ -200,8 +200,8 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(DictionaryNodeListOptions.ListIds.Variant, listOptions.ListId);
 			// The first guid (b0000000-c40e-433e-80b5-31da08771344) is a special marker for
 			// "No Variant Type".  The second guid does not exist, so it gets removed from the list.
-			Assert.AreEqual(7, listOptions.Options.Count);
-			Assert.AreEqual(7, listOptions.Options.Count(option => option.IsEnabled));
+			Assert.AreEqual(8, listOptions.Options.Count);
+			Assert.AreEqual(8, listOptions.Options.Count(option => option.IsEnabled));
 			Assert.AreEqual("b0000000-c40e-433e-80b5-31da08771344", listOptions.Options[0].Id);
 		}
 
@@ -231,13 +231,13 @@ namespace SIL.FieldWorks.XWorks
 			var lpOptions = (DictionaryNodeListAndParaOptions)testNodeOptions;
 			Assert.AreEqual(DictionaryNodeListOptions.ListIds.Complex, lpOptions.ListId);
 			Assert.IsTrue(lpOptions.DisplayEachInAParagraph);
-			// There are six complex form types by default in the language project.  (The second and third
+			// There are seven complex form types by default in the language project.  (The second and third
 			// guids above are used by two of those default types.)  Ones that are missing in the configuration
 			// data are added in, ones that the configuration has but which don't exist in the language project
 			// are removed.  Note that the first one above (a0000000-dd15-4a03-9032-b40faaa9a754) is a special
 			// value used to indicate "No Complex Form Type".  The fourth value does not exist.
-			Assert.AreEqual(7, lpOptions.Options.Count);
-			Assert.AreEqual(7, lpOptions.Options.Count(option => option.IsEnabled));
+			Assert.AreEqual(8, lpOptions.Options.Count);
+			Assert.AreEqual(8, lpOptions.Options.Count(option => option.IsEnabled));
 			Assert.AreEqual("a0000000-dd15-4a03-9032-b40faaa9a754", lpOptions.Options[0].Id);
 		}
 
@@ -412,6 +412,30 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsEmpty(model.Publications);
 		}
 
+		/// <summary>
+		/// To help with LT-17397, which allows adding unknown/new publications into the project when importing a configuration.
+		/// </summary>
+		[Test]
+		public void PublicationsInXml_ReportsAll()
+		{
+			// "Main Dictionary" was added by base class
+
+			DictionaryConfigurationModel model;
+			using (var modelFile = new TempFile(
+				new[] {
+					XmlOpenTagsThruRoot,
+					@"<Publications><Publication>Main Dictionary</Publication><Publication>New and unknown publication 1</Publication><Publication>New and unknown publication 2</Publication></Publications>",
+					XmlCloseTagsFromRoot }))
+			{
+				// SUT
+				var result = DictionaryConfigurationModel.PublicationsInXml(modelFile.Path).ToList();
+				Assert.That(result.Count, Is.EqualTo(3), "Did not provide all publications in XML file");
+				Assert.That(result[0], Is.EqualTo("Main Dictionary"), "Did not process and report publications as expected");
+				Assert.That(result[1], Is.EqualTo("New and unknown publication 1"), "Did not process and report publications as expected");
+				Assert.That(result[2], Is.EqualTo("New and unknown publication 2"), "Did not process and report publications as expected");
+			}
+		}
+
 		[Test]
 		public void ShippedFilesHaveNoRedundantChildrenOrOrphans([Values("Dictionary", "ReversalIndex")] string subFolder)
 		{
@@ -453,6 +477,32 @@ namespace SIL.FieldWorks.XWorks
 			model.Save();
 			ValidateAgainstSchema(modelFile);
 			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 0);
+		}
+
+		[Test]
+		public void Save_HomographConfigurationValidatesAgainstSchema()
+		{
+			var modelFile = Path.GetTempFileName();
+			var model = new DictionaryConfigurationModel
+			{
+				FilePath = modelFile,
+				Version = 0,
+				Label = "root",
+				HomographConfiguration = new DictionaryHomographConfiguration
+				{
+					CustomHomographNumbers = "0;1;2;3;4;5;6;7;8;9",
+					HomographNumberBefore = true,
+					HomographWritingSystem = "en",
+					ShowHwNumber = true,
+					ShowHwNumInCrossRef = true,
+					ShowHwNumInReversalCrossRef = true
+				},
+				Publications = new List<string> { "PublishThis" }
+			};
+			//SUT
+			model.Save();
+			ValidateAgainstSchema(modelFile);
+			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/HomographConfiguration", 1);
 		}
 
 		[Test]
@@ -1064,6 +1114,7 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryConfigurationController.LinkReferencedNode(model.SharedItems, configNode, m_reference);
 			Assert.AreEqual(refConfigNode.Label, configNode.ReferenceItem);
 			Assert.AreSame(refConfigNode, configNode.ReferencedNode);
+			Assert.That(refConfigNode.IsEnabled, "Referenced nodes are inaccessible to users, but must be enabled for their children to function");
 		}
 
 		[Test]
@@ -1082,6 +1133,7 @@ namespace SIL.FieldWorks.XWorks
 				Parts = new List<ConfigurableDictionaryNode> { parentNode },
 				SharedItems = new List<ConfigurableDictionaryNode> { parentNode.DeepCloneUnderSameParent() },
 				Publications = new List<string> { "unabridged", "college", "urban colloquialisms" },
+				HomographConfiguration = new DictionaryHomographConfiguration { HomographNumberBefore = true, ShowHwNumber = false }
 			};
 
 			// SUT
@@ -1098,6 +1150,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Assert.AreEqual(model.Publications[i], clone.Publications[i]);
 			}
+			Assert.AreEqual(model.HomographConfiguration, clone.HomographConfiguration);
 		}
 
 		[Test]

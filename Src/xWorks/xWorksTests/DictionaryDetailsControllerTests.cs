@@ -358,124 +358,9 @@ namespace SIL.FieldWorks.XWorks
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			using(var view = controller.View)
 			{
-				controller.LoadNode(null, new ConfigurableDictionaryNode());
+				controller.LoadNode(null, new ConfigurableDictionaryNode {Parent = new ConfigurableDictionaryNode()});
 				AssertShowingCharacterStyles(view);
 			}
-		}
-
-		[Test]
-		public void CheckIsAllParentsChecked()
-		{
-			var pronunciation = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "Form",
-				Label = "Pronunciation"
-			};
-
-			var variantPronunciations = new ConfigurableDictionaryNode
-			{
-				Children = new List<ConfigurableDictionaryNode> { pronunciation },
-				FieldDescription = "OwningEntry",
-				Label = "Variant Pronunciations"
-			};
-
-			var variantForms = new ConfigurableDictionaryNode
-			{
-				Children = new List<ConfigurableDictionaryNode> { variantPronunciations },
-				FieldDescription = "VariantFormEntryBackRefs",
-				Label = "Variant Forms"
-			};
-
-			var mainEntryNode = new ConfigurableDictionaryNode
-			{
-				Children = new List<ConfigurableDictionaryNode> { variantForms },
-				FieldDescription = "LexEntry"
-			};
-
-			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
-
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			controller.LoadNode(null, mainEntryNode);
-			Assert.AreEqual(true, controller.IsAllParentsChecked(pronunciation));
-
-			controller.View.Dispose();
-		}
-
-		[Test]
-		public void CheckIsAllParentsChecked_MinorAndMajorEntries()
-		{
-			var minorEntryTypes = new ConfigurableDictionaryNode
-			{
-				// Should this be something else?
-				FieldDescription = "VariantType"
-			};
-
-			var mainEntryNode = new ConfigurableDictionaryNode
-			{
-				Children = new List<ConfigurableDictionaryNode>(),
-				FieldDescription = "LexEntry"
-			};
-
-			var minorEntryNode = new ConfigurableDictionaryNode
-			{
-				Children = new List<ConfigurableDictionaryNode> { minorEntryTypes },
-				FieldDescription = "MinorEntry"
-			};
-
-			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
-			CssGeneratorTests.PopulateFieldsForTesting(minorEntryNode);
-
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			controller.LoadNode(null, mainEntryNode);
-			Assert.AreEqual(true, controller.IsAllParentsChecked(mainEntryNode));
-
-			controller.LoadNode(null, minorEntryNode);
-			// LT-16459 if IsAllParentsChecked returns false, Minor Entry types are all disabled
-			Assert.AreEqual(true, controller.IsAllParentsChecked(minorEntryNode));
-
-			controller.View.Dispose();
-		}
-
-		[Test]
-		public void CheckIsAnyParentsUnchecked()
-		{
-			var pronunciation = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "Form",
-				Label = "Pronunciation",
-				IsEnabled = false
-			};
-
-			var variantPronunciations = new ConfigurableDictionaryNode
-			{
-				Children = new List<ConfigurableDictionaryNode> { pronunciation },
-				FieldDescription = "OwningEntry",
-				Label = "Variant Pronunciations",
-				IsEnabled = true
-			};
-
-			var variantForms = new ConfigurableDictionaryNode
-			{
-				Children = new List<ConfigurableDictionaryNode> { variantPronunciations },
-				FieldDescription = "VariantFormEntryBackRefs",
-				Label = "Variant Forms",
-				IsEnabled = false
-			};
-
-			var mainEntryNode = new ConfigurableDictionaryNode
-			{
-				Children = new List<ConfigurableDictionaryNode> { variantForms },
-				FieldDescription = "LexEntry",
-				IsEnabled = true
-			};
-
-			DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
-
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			controller.LoadNode(null, mainEntryNode);
-			Assert.AreEqual(false, controller.IsAllParentsChecked(pronunciation));
-
-			controller.View.Dispose();
 		}
 
 		[Test]
@@ -484,10 +369,12 @@ namespace SIL.FieldWorks.XWorks
 			// Load character styles
 			var node = new ConfigurableDictionaryNode
 			{
+				Parent = new ConfigurableDictionaryNode(), // top-level nodes are always in paragraph. Specify a Parent to allow character styles.
 				DictionaryNodeOptions = new DictionaryNodeListOptions
-					{
-						Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
-					}
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Complex,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
+				}
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			node.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
@@ -512,6 +399,12 @@ namespace SIL.FieldWorks.XWorks
 			node.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
 			controller.LoadNode(null, node); // SUT
 			AssertShowingCharacterStyles(controller.View);
+
+			// Load paragraph styles
+			node.Parent = null;
+			controller.LoadNode(null, node); // SUT
+			AssertShowingParagraphStyles(controller.View);
+
 			controller.View.Dispose();
 		}
 
@@ -521,9 +414,9 @@ namespace SIL.FieldWorks.XWorks
 			// Load paragraph styles
 			var node = new ConfigurableDictionaryNode
 			{
+				Parent = new ConfigurableDictionaryNode(),
 				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Complex,
 					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
 					DisplayEachInAParagraph = true
 				}
@@ -993,29 +886,8 @@ namespace SIL.FieldWorks.XWorks
 				Assert.AreEqual("%d", optionsView.NumberingStyle, "proper numbering style loads for Sense");
 				Assert.IsTrue(optionsView.NumberSingleSense, "checkbox set properly for numbering even single Sense");
 				Assert.IsTrue(optionsView.ShowGrammarFirst, "checkbox set properly for show common gram info first for Senses");
-				// controls are private, so work around that limitation.
-				var realView = optionsView as SenseOptionsView;
-				Assert.IsNotNull(realView);
-				var controlsChecked = 0;
-				foreach (Control control in realView.Controls)
-				{
-					if (control is GroupBox && control.Name == "groupBoxSenseNumber")
-					{
-						Assert.AreEqual("Sense Number Configuration", control.Text, "groupBoxSenseNumber has incorrect Text for Sense");
-						++controlsChecked;
-					}
-					else if (control is CheckBox && control.Name == "checkBoxSenseInPara")
-					{
-						Assert.IsTrue(control.Enabled && control.Visible, "checkBoxSenseInPara should be enabled and visible for Sense");
-						++controlsChecked;
-					}
-					else if (control is CheckBox && control.Name == "checkBoxFirstSenseInline")
-					{
-						Assert.IsTrue(control.Enabled && control.Visible, "checkBoxFirstSenseInline should be enabled and visible for Sense");
-						++controlsChecked;
-					}
-				}
-				Assert.AreEqual(3, controlsChecked, "Matched incorrect number of controls for Sense");
+				// controls are not part of IDictionarySenseOptionsView, so work around that limitation.
+				ValidateSenseControls(optionsView, false);
 			}
 
 			var controller2 = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
@@ -1030,30 +902,57 @@ namespace SIL.FieldWorks.XWorks
 				Assert.AreEqual("%A", optionsView.NumberingStyle, "proper numbering style loads for Subsense");
 				Assert.IsTrue(optionsView.NumberSingleSense, "checkbox set properly for numbering even single Subsense");
 				Assert.IsTrue(optionsView.ShowGrammarFirst, "checkbox set properly for hide common gram info for Subsenses");
-				// controls are private, so work around that limitation.
-				var realView = optionsView as SenseOptionsView;
-				Assert.IsNotNull(realView);
-				var controlsChecked = 0;
-				foreach (Control control in realView.Controls)
-				{
-					if (control is GroupBox && control.Name == "groupBoxSenseNumber")
-					{
-						Assert.AreEqual(xWorksStrings.ksSubsenseNumberConfig, control.Text, "groupBoxSenseNumber has incorrect Text for Subsense");
-						++controlsChecked;
-					}
-					else if (control is CheckBox && control.Name == "checkBoxSenseInPara")
-					{
-						Assert.IsTrue(control.Enabled && control.Visible, "checkBoxSenseInPara should be enabled and visible for Subsense");
-						++controlsChecked;
-					}
-					else if (control is CheckBox && control.Name == "checkBoxFirstSenseInline")
-					{
-						Assert.IsFalse(control.Enabled || control.Visible, "checkBoxFirstSenseInline should be disabled and invisible when no paras");
-						++controlsChecked;
-					}
-				}
-				Assert.AreEqual(3, controlsChecked, "Matched incorrect number of controls for Subsense");
+				// controls are not part of IDictionarySenseOptionsView, so work around that limitation.
+				ValidateSenseControls(optionsView, true);
 			}
+		}
+
+		// REVIEW (Hasso) 2017.04: This is not the best way to test that the controller properly updates the GUI, since it also asserts GUI structure.
+		// REVIEW (cont): A better way would be to use a view interface with a test implementation. If you break this test, please fix it *properly*
+		// REVIEW (apology): we're too close to a release to be bothered with such a refactor.
+		private static void ValidateSenseControls(object iView, bool isSubsense)
+		{
+			var label = isSubsense ? "Subsense" : "sense";
+			Assert.AreEqual(typeof(SenseOptionsView), iView.GetType());
+			var view = (Control)iView;
+			var controlsChecked = 0;
+			foreach (Control control in view.Controls)
+			{
+				if (control is GroupBox && control.Name == "groupBoxSenseNumber")
+				{
+					Assert.AreEqual(isSubsense ? xWorksStrings.ksSubsenseNumberConfig : "Sense Number Configuration",
+						control.Text, "groupBoxSenseNumber has incorrect Text");
+					++controlsChecked;
+				}
+				else if (control is FlowLayoutPanel && control.Name == "senseStructureVerticalFlow")
+				{
+					var innerControls = 0;
+					foreach (Control innerControl in control.Controls)
+					{
+						if (innerControl is CheckBox && innerControl.Name == "checkBoxShowGrammarFirst")
+						{
+							Assert.IsTrue(innerControl.Enabled && innerControl.Visible, "checkBoxShowGrammarFirst should be enabled and visible for {0}", label);
+							++innerControls;
+						}
+						else if (innerControl is CheckBox && innerControl.Name == "checkBoxSenseInPara")
+						{
+							Assert.IsTrue(innerControl.Enabled && innerControl.Visible, "checkBoxSenseInPara should be enabled and visible for {0}", label);
+							++innerControls;
+						}
+						else if (innerControl is CheckBox && innerControl.Name == "checkBoxFirstSenseInline")
+						{
+							if (isSubsense)
+								Assert.IsFalse(innerControl.Enabled || innerControl.Visible, "checkBoxFirstSenseInline should be disabled and invisible when no paras");
+							else
+								Assert.IsTrue(innerControl.Enabled && innerControl.Visible, "checkBoxFirstSenseInline should be enabled and visible when paras");
+							++innerControls;
+						}
+					}
+					Assert.AreEqual(3, innerControls, "Matched incorrect number of controls within senseStructureVerticalFlow for {0}", label);
+					++controlsChecked;
+				}
+			}
+			Assert.AreEqual(2, controlsChecked, "Matched incorrect number of controls for {0}", label);
 		}
 
 		[Test]
@@ -1151,11 +1050,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void CheckNamedWsUnchecksDefault()
 		{
-			var wsOptions = new DictionaryNodeWritingSystemOptions
-			{
-				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
-				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular
-			};
+			var wsOptions = (DictionaryNodeWritingSystemOptions)ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "vernacular" },
+				DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular);
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
 			using (var view = controller.View)
@@ -1353,7 +1249,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "grouper",
 				DictionaryNodeOptions = new DictionaryNodeGroupingOptions
 				{
-					DisplayGroupInParagraph = true,
+					DisplayEachInAParagraph = true,
 					Description = "Test"
 				}
 			};

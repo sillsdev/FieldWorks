@@ -1662,6 +1662,9 @@ namespace SIL.FieldWorks.FDO
 
 		/// <summary/>
 		IEnumerable<IMoInflAffixSlot> Slots { get; }
+
+		/// <summary/>
+		IEnumerable<IMoMorphType> MorphTypes { get; }
 	}
 
 	/// <summary>
@@ -5951,7 +5954,7 @@ namespace SIL.FieldWorks.FDO
 		/// <summary>
 		/// The HeadWordRef property if wrapping LexEntry, or the HeadWord virtual property for LexSense
 		/// </summary>
-		ITsString HeadWordRef { get; }
+		IMultiAccessorBase HeadWordRef { get; }
 
 		/// <summary>
 		/// The HeadWord property if wrapping LexEntry, or the HeadWord virtual property for LexSense

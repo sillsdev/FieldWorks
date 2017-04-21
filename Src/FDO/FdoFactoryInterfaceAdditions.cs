@@ -136,6 +136,19 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		ICmPossibility Create(Guid guid, ICmPossibility owner);
 	}
+	public partial interface ICmCustomItemFactory
+	{
+		/// <summary>
+		/// Create a new ICmCustomItem instance with the given guid and owner.
+		/// It will be added to the end of the Possibilities list.
+		/// </summary>
+		ICmPossibility Create(Guid guid, ICmPossibilityList owner);
+		/// <summary>
+		/// Create a new ICmCustomItem instance with the given guid and owner.
+		/// It will be added to the end of the SubPossibilities list.
+		/// </summary>
+		ICmPossibility Create(Guid guid, ICmCustomItem owner);
+	}
 
 	/// <summary>
 	/// Internal interface for use by the persistence code to bootstrap a new CmPossibility.

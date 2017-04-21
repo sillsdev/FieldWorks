@@ -1,4 +1,4 @@
-// Copyright (c) 2016 SIL International
+// Copyright (c) 2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -195,16 +195,17 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 			var newDictionaryConfigLoc = Path.Combine(FwDirectoryFinder.DefaultConfigurations, DCL.DictionaryConfigurationDirectoryName);
 			var newReversalConfigLoc = Path.Combine(FwDirectoryFinder.DefaultConfigurations, DCL.ReversalIndexConfigurationDirectoryName);
-			const string defaultStemName = "Stem" + extension;
-			const string defaultRootName = "Root" + extension;
-			const string defaultReversalName = "AllReversalIndexes" + extension;
+			const string defaultLexemeName = DCM.LexemeFileName + extension;
+			const string defaultRootName = DCM.RootFileName + extension;
+			const string defaultReversalName = DCM.ReversalFileName + extension;
 			switch (layout)
 			{
 				case "publishStem":
 				{
-					convertedModel.FilePath = Path.Combine(projectPath, defaultStemName);
-					alpha83DefaultModel = DCM.LoadConfigWithCurrentDefaults(Path.Combine(alphaConfigsPath, defaultStemName), Cache,
-						Path.Combine(newDictionaryConfigLoc, "Lexeme.fwdictconfig"));
+					convertedModel.FilePath = Path.Combine(projectPath, defaultLexemeName);
+					// Though the name change from Stem to Lexeme happened after we shipped the Alpha we will change the name here for pre-Alpha projects
+					alpha83DefaultModel = DCM.LoadConfigWithCurrentDefaults(Path.Combine(alphaConfigsPath, "Stem.fwdictconfig"), Cache,
+						Path.Combine(newDictionaryConfigLoc, defaultLexemeName));
 					break;
 				}
 				case "publishRoot":
@@ -231,8 +232,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					{
 						var customFileName = string.Format("{0}-Stem-{1}{2}", convertedModel.Label, layout.Substring(customSuffixIndex), extension);
 						convertedModel.FilePath = Path.Combine(projectPath, customFileName);
-						alpha83DefaultModel = DCM.LoadConfigWithCurrentDefaults(Path.Combine(alphaConfigsPath, defaultStemName), Cache,
-							Path.Combine(newDictionaryConfigLoc, "Lexeme.fwdictconfig"));
+						alpha83DefaultModel = DCM.LoadConfigWithCurrentDefaults(Path.Combine(alphaConfigsPath, "Stem.fwdictconfig"), Cache,
+							Path.Combine(newDictionaryConfigLoc, defaultLexemeName));
 					}
 					else if (customSuffixIndex > 0 && layout.StartsWith("publishRoot"))
 					{
@@ -279,8 +280,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			convertedModel.IsRootBased = alphaDefaultModel.IsRootBased;
 
 			// Stem-based treats Complex Forms as Main Entries. Previously, they had all been configured by the same Main Entries node,
-			// but now, they are configured in a separate "Main Entries (Complex Forms)" node.
-			if (Path.GetFileNameWithoutExtension(alphaDefaultModel.FilePath) == "Stem")
+			// but in FLEx versions 8.3.0 through 8.3.4, they were configured in a separate "Main Entries (Complex Forms)" node.
+			// REVIEW (Hasso) 2017.02: would it be safe to rip out this intermediate step?
+			if (Path.GetFileNameWithoutExtension(alphaDefaultModel.FilePath) == DCM.LexemeFileName)
 			{
 				convertedModel.Parts.Insert(0, convertedModel.Parts[0].DeepCloneUnderSameParent()); // Split Main into Main and Main (Complex)
 				CopyDefaultsIntoConfigNode(convertedModel, convertedModel.Parts[0], alphaDefaultModel.Parts[0]); // Main Entry
@@ -605,7 +607,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			convertedNode.ReferenceItem = currentDefaultNode.ReferenceItem;
 			if (convertedNode.DictionaryNodeOptions == null)
 				convertedNode.DictionaryNodeOptions = currentDefaultNode.DictionaryNodeOptions;
-			convertedNode.StyleType = currentDefaultNode.StyleType;
+			if (string.IsNullOrEmpty(convertedNode.Style))
+			{
+				convertedNode.StyleType = currentDefaultNode.StyleType;
+				convertedNode.Style = currentDefaultNode.Style;
+			}
 			convertedNode.CSSClassNameOverride = currentDefaultNode.CSSClassNameOverride;
 
 			if (convertedModel.Version == VersionPre83 && IsReferencedEntriesNode(convertedNode))

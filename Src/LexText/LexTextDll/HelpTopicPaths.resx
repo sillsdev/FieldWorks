@@ -999,7 +999,7 @@
   </data>
   <data name="khtpField-locationsEdit-CmLocation-Subitems" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Locations_fields/subitems_field_(locations).htm</value>
-    <comment>Help TopID for List Location Subitem</comment>
+    <comment>Help TopicID for List Location Subitem</comment>
   </data>
   <data name="khtpField-morphTypeEdit-MoMorphType-Abbreviation" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Morpheme_Types_fields/abbreviation_field_morpheme_types.htm</value>
@@ -2497,7 +2497,7 @@
   </data>
   <data name="khtpField-locationsEdit-CmLocation-" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Locations_fields/subitems_field_(locations).htm</value>
-    <comment>Help TopID for List Location Subitem</comment>
+    <comment>Help TopicID for List Location Subitem</comment>
   </data>
   <data name="khtpLexFind" xml:space="preserve">
     <value>User_Interface/Menus/Edit/Find_and_Replace_Lexicon.htm</value>
@@ -2713,13 +2713,13 @@
   <data name="khtpBulkEditPublishAsHeadwordIn" xml:space="preserve">
     <value>/Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_publications.htm</value>
   </data>
-  <data name="khtpBulkEditPublishIn(Entry)" xml:space="preserve">
+  <data name="khtpBulkEditPublishEntryIn" xml:space="preserve">
     <value>/Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_publications.htm</value>
   </data>
-  <data name="khtpBulkEditPublishIn(Example)" xml:space="preserve">
+  <data name="khtpBulkEditPublishExampleIn" xml:space="preserve">
     <value>/Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_publications.htm</value>
   </data>
-  <data name="khtpBulkEditPublishIn(Sense)" xml:space="preserve">
+  <data name="khtpBulkEditPublishSenseIn" xml:space="preserve">
     <value>/Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_publications.htm</value>
   </data>
   <data name="khtpConfigureHeadwordNumbers" xml:space="preserve">
@@ -2841,7 +2841,7 @@
   </data>
   <data name="khtpChoose-AnthroCodes" xml:space="preserve">
     <value>Using_Tools/Notebook_tools/Record_Edit_overview/Choose_anthropology_categories.htm</value>
-    <comment>Choose  Aanthropology_Categories help button for empty texts in the Info tab</comment>
+    <comment>Choose  Anthropology_Categories help button for empty texts in the Info tab</comment>
   </data>
   <data name="khtpChoose-Locations" xml:space="preserve">
     <value>Using_Tools/Notebook_tools/Record_Edit_overview/Choose_locations.htm</value>
@@ -3285,5 +3285,26 @@
   <data name="khtpField-lexiconEdit-LexSense-DialectLabels" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Dialect_Labels_(Sense).htm</value>
     <comment>Dialect Labels (Sense)</comment>
+  </data>
+  <data name="khtpBulkEditDialectLabels(Entry)" xml:space="preserve">
+    <value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_choose_Dialect_Labels.htm</value>
+  </data>
+  <data name="khtpBulkEditDialectLabels(Sense)" xml:space="preserve">
+    <value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_choose_Dialect_Labels.htm</value>
+  </data>
+  <data name="khtpBulkEditEtym.-SourceLanguage" xml:space="preserve">
+    <value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_Edit_Entries_overview.htm</value>
+  </data>
+  <data name="khtpBulkEditExt.Note-Type" xml:space="preserve">
+    <value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_Edit_Entries_overview.htm</value>
+  </data>
+  <data name="khtpBulkEditPublishPictureIn" xml:space="preserve">
+    <value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_publications.htm</value>
+  </data>
+  <data name="khtpBulkEditPublishPronunciationIn" xml:space="preserve">
+    <value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_publications.htm</value>
+  </data>
+  <data name="khtpBulkEditSenseType" xml:space="preserve">
+    <value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_Edit_Entries_overview.htm</value>
   </data>
 </root>

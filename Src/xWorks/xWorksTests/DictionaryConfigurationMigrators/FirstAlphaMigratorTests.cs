@@ -688,7 +688,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var cfTypeNodeWithRevAbbr2 = cfTypeNodeWithRevAbbr.DeepCloneUnderSameParent();
 
 			var cfTypeNodeLookup = cfTypeNodeWithRevAbbr.DeepCloneUnderSameParent();
-			cfTypeNodeLookup.FieldDescription = "LookupComplexEntryType";
+			cfTypeNodeLookup.FieldDescription = ConfiguredXHTMLGenerator.LookupComplexEntryType;
 
 			var cfTypeNodeLookup2 = cfTypeNodeLookup.DeepCloneUnderSameParent();
 
@@ -835,6 +835,87 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 			m_migrator.MigrateFrom83Alpha(model);
 			Assert.AreEqual("Referenced Headword", headwordNode.Label);
+		}
+
+		[Test]
+		public void MigrateFromConfigV5toV6_UpdatesReferencedHeadwordForSubentryUnder()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				Label = "Form",
+				FieldDescription = "HeadWordRef"
+			};
+			var subentryUnder = new ConfigurableDictionaryNode
+			{
+				Label = "Subentry Under",
+				FieldDescription = "NonTrivialEntryRoots",
+				Children = new List<ConfigurableDictionaryNode> { headwordNode }
+			};
+			var components = new ConfigurableDictionaryNode
+			{
+				Label = "Components",
+				FieldDescription = "ComplexFormEntryRefs",
+				Children = new List<ConfigurableDictionaryNode> { subentryUnder }
+			};
+			var minorEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Minor Entry (Complex Forms)",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { components }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Version = PreHistoricMigrator.VersionAlpha1,
+				FilePath = string.Empty,
+				Parts = new List<ConfigurableDictionaryNode> { minorEntryNode }
+			};
+			m_migrator.MigrateFrom83Alpha(model);
+			Assert.AreEqual("Referenced Headword", headwordNode.Label);
+		}
+
+		[Test]
+		public void MigrateFromConfigV5toV6_SwapsReverseAbbrAndAbbreviation_ReversalIndexes()
+		{
+			var revAbbrNode = new ConfigurableDictionaryNode { Label = "Reverse Abbreviation", FieldDescription = "ReverseAbbr" };
+			var nameNode = new ConfigurableDictionaryNode { Label = "Reverse Name", FieldDescription = "ReverseName" };
+
+			var cfTypeNodeWithRevAbbr = new ConfigurableDictionaryNode
+			{
+				Label = "Complex Form Type",
+				FieldDescription = "ComplexEntryTypesRS",
+				Children = new List<ConfigurableDictionaryNode> { revAbbrNode, nameNode }
+			};
+
+			var variantTypeNodeWithRevAbbr = cfTypeNodeWithRevAbbr.DeepCloneUnderSameParent();
+			variantTypeNodeWithRevAbbr.SubField = "VariantEntryTypesRS";
+
+			var fakeNodeForMinTest = new ConfigurableDictionaryNode
+			{
+				Label = "FakeParentForMinTest", // Root and Hybrid only
+				FieldDescription = "typeholder",
+				Children = new List<ConfigurableDictionaryNode> { cfTypeNodeWithRevAbbr, variantTypeNodeWithRevAbbr }
+			};
+
+			var model = new DictionaryConfigurationModel
+			{
+				Version = FirstAlphaMigrator.VersionAlpha2,
+				Parts = new List<ConfigurableDictionaryNode> { fakeNodeForMinTest },
+				WritingSystem = "en"
+			};
+
+			m_migrator.MigrateFrom83Alpha(model);
+			var cfTypeNode = fakeNodeForMinTest.Children.First();
+			Assert.AreEqual(2, cfTypeNode.Children.Count, "Should only have two children, Abbreviation and Name");
+			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Abbreviation"),
+				"Reverse Abbreviation should be changed to Abbreviation");
+			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Name"),
+				"Reverse Name should be changed to Name");
+			cfTypeNode = fakeNodeForMinTest.Children[1];
+			Assert.AreEqual(2, cfTypeNode.Children.Count, "Should only have two children, Abbreviation and Name");
+			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Abbreviation"),
+				"Reverse Abbreviation should be changed to Abbreviation");
+			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Name"),
+				"Reverse Name should be changed to Name");
 		}
 
 		[Test]

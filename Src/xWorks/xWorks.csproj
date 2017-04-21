@@ -160,9 +160,8 @@
     <Reference Include="Geckofx-Winforms">
       <HintPath>..\..\Output\Debug\Geckofx-Winforms.dll</HintPath>
     </Reference>
-    <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\Ionic.Zip.dll</HintPath>
+    <Reference Include="DotNetZip">
+      <HintPath>..\..\Output\Debug\DotNetZip.dll</HintPath>
     </Reference>
     <Reference Include="L10NSharp, Version=1.1.4981.28556, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -276,6 +275,13 @@
     <Compile Include="Archiving\ReapRamp.cs" />
     <Compile Include="ConfigurableDictionaryNode.cs" />
     <Compile Include="ConfiguredXHTMLGenerator.cs" />
+    <Compile Include="HeadWordNumbersController.cs" />
+    <Compile Include="HeadWordNumbersDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HeadWordNumbersDlg.designer.cs">
+      <DependentUpon>HeadWordNumbersDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="CssGenerator.cs" />
     <Compile Include="DictionaryConfigurationController.cs" />
     <Compile Include="DictionaryConfigurationDlg.cs">
@@ -284,6 +290,7 @@
     <Compile Include="DictionaryConfigurationDlg.Designer.cs">
       <DependentUpon>DictionaryConfigurationDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="DictionaryConfigurationImportController.cs" />
     <Compile Include="DictionaryConfigurationListener.cs" />
     <Compile Include="DictionaryConfigurationManagerController.cs" />
     <Compile Include="DictionaryConfigurationManagerDlg.cs">
@@ -357,7 +364,14 @@
     <Compile Include="IDictionaryDetailsView.cs" />
     <Compile Include="IDictionarySenseOptionsView.cs" />
     <Compile Include="IDictionaryGroupingOptionsView.cs" />
+    <Compile Include="IHeadwordNumbersView.cs" />
     <Compile Include="ILayoutConverter.cs" />
+    <Compile Include="DictionaryConfigurationImportDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DictionaryConfigurationImportDlg.Designer.cs">
+      <DependentUpon>DictionaryConfigurationImportDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="IWebonaryClient.cs" />
     <Compile Include="LegacyConfigurationUtils.cs" />
     <Compile Include="ConcDecorator.cs" />
@@ -500,9 +514,13 @@
     <Compile Include="XWorksViewBase.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <None Include="Resources\Reset.png" />
     <EmbeddedResource Include="AddCustomFieldDlg.resx">
       <DependentUpon>AddCustomFieldDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HeadWordNumbersDlg.resx">
+      <DependentUpon>HeadWordNumbersDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CustomListDlg.resx">
       <DependentUpon>CustomListDlg.cs</DependentUpon>
@@ -522,6 +540,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DictionaryConfigurationManagerDlg.resx">
       <DependentUpon>DictionaryConfigurationManagerDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="DictionaryConfigurationNodeRenameDlg.resx">
       <DependentUpon>DictionaryConfigurationNodeRenameDlg.cs</DependentUpon>
@@ -568,6 +587,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ImageHolder.resx">
       <DependentUpon>ImageHolder.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DictionaryConfigurationImportDlg.resx">
+      <DependentUpon>DictionaryConfigurationImportDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="LiftExportMessageDlg.resx">

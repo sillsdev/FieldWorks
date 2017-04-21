@@ -377,6 +377,20 @@ namespace FwBuildTasks
 			Assert.That(projects.Contains(m_FieldWorksPropertiesFolder), Is.False); // Review: we want to do the resx here, but it isn't a true project folder.
 		}
 
+		/// <summary>
+		/// Create a test Po file with only one string that should be ignored. That will result in a loud complaint for an empty PO file.
+		/// </summary>
+		[Test]
+		public void FuzzyStringsIgnored()
+		{
+			CreateTestPoFile("ge", " comment", "testmsgid", "testmessagestr\"" + Environment.NewLine + "#, fuzzy");
+
+			var result = m_sut.Execute();
+
+			Assert.That(result, Is.False);
+			Assert.That(m_sut.ErrorMessages, Is.StringContaining("VOID PO FILE"));
+		}
+
 		[Test]
 		public void BadBraceLetterReported()
 		{

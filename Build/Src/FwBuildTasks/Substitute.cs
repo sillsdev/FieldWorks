@@ -139,17 +139,18 @@ namespace FwBuildTasks
 			return true;
 		}
 
-		public static bool ParseSymbolFile(string symbols, TaskLoggingHelper log, out Dictionary<string, string> substitutions)
+		/// <returns>true if substitutions were successfully parsed from the symbol file</returns>
+		public static bool ParseSymbolFile(string symbolFile, TaskLoggingHelper log, out Dictionary<string, string> substitutions)
 		{
 			substitutions = new Dictionary<string, string>();
-			if (string.IsNullOrEmpty(symbols))
+			if (string.IsNullOrEmpty(symbolFile))
 				return true;
-			if (!File.Exists(symbols))
+			if (!File.Exists(symbolFile))
 			{
-				log.LogMessage(MessageImportance.High, "Symbol file " + symbols + " not found");
+				log.LogMessage(MessageImportance.High, "Symbol file " + symbolFile + " not found");
 				return false;
 			}
-			var reader = new StreamReader(symbols);
+			var reader = new StreamReader(symbolFile);
 			var lineNumber = 0;
 			while (!reader.EndOfStream)
 			{
@@ -161,7 +162,7 @@ namespace FwBuildTasks
 				var items = line.Split('=');
 				if (items.Length != 2 || items[0].Trim().Length == 0)
 				{
-					log.LogMessage(MessageImportance.High, "Invalid symbol file: '{0}' line {1} should be Name=Value", symbols, lineNumber);
+					log.LogMessage(MessageImportance.High, "Invalid symbol file: '{0}' line {1} should be Name=Value", symbolFile, lineNumber);
 					return false;
 				}
 				substitutions[items[0].Trim()] = items[1].Trim();

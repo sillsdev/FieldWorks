@@ -306,7 +306,7 @@
 		<ExCss Condition="'$(OS)'=='Unix'">ExCSS</ExCss>
 		<Icu4cBuildType Condition="'$(OS)'=='Windows_NT'">Libraries_Icu4cWin32FieldWorksContinuous</Icu4cBuildType>
 		<HermitCrabBuildType>bt410</HermitCrabBuildType>
-		<HermitCrabBuildTag>fw-8.2.tcbuildtag</HermitCrabBuildTag>
+		<HermitCrabBuildTag>fw-8.3.tcbuildtag</HermitCrabBuildTag>
 		<ProtoBufNetDownloadUrl>https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/protobuf-net/protobuf-net%20r668.zip</ProtoBufNetDownloadUrl>
 		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1</DownloadsSilOrgDownloadUrl>
 		<DownloadsSilOrgOSDownloadUrl Condition="'$(OS)'=='Windows_NT'">$(DownloadsSilOrgDownloadUrl)/Windows</DownloadsSilOrgOSDownloadUrl>
@@ -387,7 +387,6 @@
 
 		<Message Text="Downloading artifacts for HermitCrab." />
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(HermitCrabBuildType)" Tag="$(HermitCrabBuildTag)" FlexBridgeBuildType="$(FLExBridgeBuildType)" ProjectId="HermitCrab" VersionInfo="$(MasterVersionInfo)" Artifacts="QuickGraph.dll;SIL.Machine.dll;SIL.Collections.dll;SIL.HermitCrab.dll" DownloadsDir="$(DownloadsDir)"/>
-
 		<Message Text="Downloading protobuf-net." />
 		<ForceDelete Files="$(DownloadsDir)/protobuf-net/" />
 		<DownloadFile Address="$(ProtoBufNetDownloadUrl)" DownloadsDir="$(DownloadsDir)" LocalFilename="protobuf-net.zip"/>
@@ -536,6 +535,7 @@
 			<NuGottenFiles Include="$(GeckoDir)/lib/net40/Geckofx-Winforms.dll.mdb" Condition="'$(OS)'!='Windows_NT'"/>
 			<NuGottenFiles Include="$(GeckoDir)/build/Geckofx-Core.dll.config" Condition="'$(OS)'!='Windows_NT'"/>
 			<NuGottenFiles Include="$(GeckoDir)/content/**/*.*"/>
+			<NuGottenFiles Include="$(fwrt)/packages/DotNetZip.1.10.1/lib/net20/*.*"/>
 		</ItemGroup>
 		<Copy SourceFiles="@(NuGottenFiles)" DestinationFolder="$(dir-outputBase)/%(RecursiveDir)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>

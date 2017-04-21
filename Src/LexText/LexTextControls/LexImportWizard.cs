@@ -25,6 +25,7 @@ using SIL.FieldWorks.Resources;
 using SilEncConverters40;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -417,11 +418,11 @@ namespace SIL.FieldWorks.LexText.Controls
 				// LT-6620 : putting in an invalid path was causing an exception in the openFileDialog.ShowDialog()
 				// Now we make sure parts are valid before setting the values in the openfile dialog.
 				string dir = string.Empty;
-				try
+
+				if (!string.IsNullOrEmpty(currentFile) && FileUtils.IsFilePathValid(currentFile))
 				{
 					dir = Path.GetDirectoryName(currentFile);
 				}
-				catch{}
 				if (Directory.Exists(dir))
 					openFileDialog.InitialDirectory = dir;
 				// if we don't set it to something, it remembers the last file it saw. This can be
@@ -432,10 +433,10 @@ namespace SIL.FieldWorks.LexText.Controls
 				else
 					openFileDialog.FileName = "";
 
-				openFileDialog.Title = String.Format(LexTextControls.ksSelectXFile, fileType.ToString());
+				openFileDialog.Title = string.Format(LexTextControls.ksSelectXFile, fileType);
 				if (openFileDialog.ShowDialog() == DialogResult.OK)
 				{
-					bool isValid = false;
+					bool isValid;
 					string text;
 
 					// Before doing the 'fileType' based tests, make sure it's not a PhaseX file
@@ -447,8 +448,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					else if (fileType == OFType.Database)
 					{
 						text = LexTextControls.ksStandardFormat;
-						Sfm2Xml.IsSfmFile validFile = new Sfm2Xml.IsSfmFile(openFileDialog.FileName);
-						isValid = validFile.IsValid;
+						isValid = new IsSfmFile(openFileDialog.FileName).IsValid;
 					}
 					else if (fileType == OFType.SaveAs)
 					{
@@ -470,15 +470,13 @@ namespace SIL.FieldWorks.LexText.Controls
 							MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 						if (dr == DialogResult.Yes)
 							return openFileDialog.FileName;
-						else if (dr == DialogResult.No)
+						if (dr == DialogResult.No)
 							continue;
-						else
-							break;	// exit with current still
+						break;	// exit with current still
 					}
 					return openFileDialog.FileName;
 				}
-				else
-					done = true;
+				done = true;
 			}
 			return currentFile;
 		}
@@ -488,7 +486,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_formHasLoaded)
 			{
 				m_dirtySenseLastSave = true;
-				m_dirtyMapFile = !(m_processedMapFile == m_SettingsFileName.Text);
+				m_dirtyMapFile = m_processedMapFile != m_SettingsFileName.Text;
 				AllowQuickFinishButton();
 			}
 		}
@@ -3994,6 +3992,11 @@ namespace SIL.FieldWorks.LexText.Controls
 				// LT-10904 added checkbox
 				listViewContentMapping.Height =
 					tabSteps.Bottom - btnModifyContentMapping.Height - m_chkCreateMissingLinks.Height - listViewContentMapping.Top - 20;
+				var nudge = 0;
+				if (MiscUtils.IsUnix)
+					nudge = 25;
+				// LT-17974 Adjust layout on Linux/Mono so checkbox and modify button are not overlapping.
+				listViewContentMapping.Height -= nudge;
 
 				listViewCharMappings.Width = tabSteps.Width - 40;
 				listViewCharMappings.Height = tabSteps.Bottom - btnModifyCharMapping.Height - listViewCharMappings.Top - 20;

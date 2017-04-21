@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				m_logger.WriteLine(foundOne);
 				m_logger.WriteLine(string.Format("Migrating {0} configuration '{1}' from version {2} to {3}.",
-					config.IsReversal ? "Reversal Index" : "Dictionary", config.Label, config.Version, DCM.VersionCurrent));
+					config.Type, config.Label, config.Version, VersionAlpha3));
 				m_logger.IncreaseIndent();
 				MigrateFrom83Alpha(config);
 				config.Save();
@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				case 7:
 					var fileName = Path.GetFileNameWithoutExtension(alphaModel.FilePath);
 					if (!alphaModel.IsRootBased)
-						alphaModel.IsRootBased = fileName == "Root";
+						alphaModel.IsRootBased = fileName == DCM.RootFileName;
 					break;
 				default:
 					m_logger.WriteLine(string.Format(
@@ -291,7 +291,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 						else if (n.FieldDescription.Contains("EntryType"))
 						{
 							var parentFd = n.Parent.FieldDescription;
-							if (n.FieldDescription == "LookupComplexEntryType")
+							if (n.FieldDescription == ConfiguredXHTMLGenerator.LookupComplexEntryType ||
+								isReversal && (n.FieldDescription == "VariantEntryTypesRS" || n.FieldDescription == "ComplexEntryTypesRS"))
 							{
 								if (parentFd == "ComplexFormEntryRefs")
 								{
@@ -315,7 +316,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 								SetEntryTypeChildrenBackward(n);
 							}
 						}
-						else if (n.Label == "Headword" && n.Parent.FieldDescription == "ReferringSenses")
+						else if ((n.Label == "Headword" && n.Parent.FieldDescription == "ReferringSenses") ||
+							(n.Label == "Form" && n.Parent.Label.StartsWith("Subentry Under")))
 						{
 							n.Label = "Referenced Headword";
 						}

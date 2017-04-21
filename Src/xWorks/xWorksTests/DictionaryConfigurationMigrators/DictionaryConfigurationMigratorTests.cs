@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		{
 			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
 			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName,
-				"Stem" + DictionaryConfigurationModel.FileExtension);
+				"Lexeme" + DictionaryConfigurationModel.FileExtension);
 			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
 			Directory.CreateDirectory(configSettingsDir);
 			File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{
@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
 			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName,
-				"Stem" + DictionaryConfigurationModel.FileExtension);
+				"Lexeme" + DictionaryConfigurationModel.FileExtension);
 			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
 			Directory.CreateDirectory(configSettingsDir);
 			File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{
@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var migrator = new DictionaryConfigurationMigrator(m_propertyTable, m_mediator);
 			Assert.DoesNotThrow(() => migrator.MigrateOldConfigurationsIfNeeded(), "ArgumentException indicates localized labels."); // SUT
 			var updatedConfigModel = new DictionaryConfigurationModel(newConfigFilePath, Cache);
-			Assert.AreEqual(3, updatedConfigModel.Parts.Count, "Should have 3 top-level nodes");
+			Assert.AreEqual(2, updatedConfigModel.Parts.Count, "Should have 2 top-level nodes");
 			Assert.AreEqual("Main Entry", updatedConfigModel.Parts[0].Label);
 			DirectoryUtilities.DeleteDirectoryRobust(configSettingsDir);
 		}

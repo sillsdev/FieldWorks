@@ -848,7 +848,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 							case LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection:
 							case LexRefTypeTags.MappingTypes.kmtEntryCollection:
 							case LexRefTypeTags.MappingTypes.kmtSenseCollection:
-							case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
 								if (lr.TargetsRS.Count > 2)
 								{
 									tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
@@ -922,6 +921,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						case LexRefTypeTags.MappingTypes.kmtSenseTree:
 						case LexRefTypeTags.MappingTypes.kmtEntryTree:
 						case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
+						case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
+						case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
+						case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
 							tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, userWs);
 							tisb.Append(String.Format(LexEdStrings.ksDeleteLexTree, StringUtils.kChHardLB));
 							dlg.SetDlgInfo(ui, m_cache, Mediator, m_propertyTable, tisb.GetString());

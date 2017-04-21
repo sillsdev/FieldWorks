@@ -134,9 +134,6 @@
   <data name="explanationLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="explanationLabel.LinkArea" type="System.Windows.Forms.LinkArea, System.Windows.Forms">
-    <value>50, 24</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="explanationLabel.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 3</value>
@@ -145,13 +142,10 @@
     <value>3, 3, 3, 0</value>
   </data>
   <data name="explanationLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>386, 17</value>
+    <value>386, 13</value>
   </data>
   <data name="explanationLabel.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
-  </data>
-  <data name="explanationLabel.Text" xml:space="preserve">
-    <value>To apply for an account at Webonary, please visit http://www.webonary.org/.</value>
   </data>
   <data name="&gt;&gt;explanationLabel.Name" xml:space="preserve">
     <value>explanationLabel</value>
@@ -172,7 +166,7 @@
     <value>NoControl</value>
   </data>
   <data name="publishButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 300</value>
+    <value>3, 296</value>
   </data>
   <data name="publishButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>123, 23</value>
@@ -202,7 +196,7 @@
     <value>NoControl</value>
   </data>
   <data name="closeButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>132, 300</value>
+    <value>132, 296</value>
   </data>
   <data name="closeButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>123, 23</value>
@@ -229,7 +223,7 @@
     <value>Fill</value>
   </data>
   <data name="outputLogTextbox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 329</value>
+    <value>3, 325</value>
   </data>
   <data name="outputLogTextbox.MinimumSize" type="System.Drawing.Size, System.Drawing">
     <value>4, 85</value>
@@ -265,7 +259,7 @@
     <value>NoControl</value>
   </data>
   <data name="helpButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>261, 300</value>
+    <value>261, 296</value>
   </data>
   <data name="helpButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>128, 23</value>
@@ -316,7 +310,7 @@
     <value>webonaryPasswordTextbox</value>
   </data>
   <data name="&gt;&gt;webonaryPasswordTextbox.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.PasswordBox, Widgets, Version=8.3.0.30507, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Widgets.PasswordBox, Widgets, Version=8.3.6.17331, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;webonaryPasswordTextbox.Parent" xml:space="preserve">
     <value>settingsForWebonaryTableLayoutPanel</value>
@@ -601,7 +595,7 @@
     <value>Fill</value>
   </data>
   <data name="webonarySettingsGroupbox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 23</value>
+    <value>3, 19</value>
   </data>
   <data name="webonarySettingsGroupbox.Size" type="System.Drawing.Size, System.Drawing">
     <value>386, 100</value>
@@ -694,7 +688,7 @@
     <value>19</value>
   </data>
   <data name="configurationLabel.Text" xml:space="preserve">
-    <value>Configuration:</value>
+    <value>View:</value>
   </data>
   <data name="configurationLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleLeft</value>
@@ -802,7 +796,7 @@
     <value>23</value>
   </data>
   <data name="howManyPubsAlertLabel.Text" xml:space="preserve">
-    <value>Pressing Submit will send {0} entries and {1} reversal entries to Webonary.</value>
+    <value>Clicking Submit will send {0} entries and {1} reversal entries to Webonary.</value>
   </data>
   <data name="&gt;&gt;howManyPubsAlertLabel.Name" xml:space="preserve">
     <value>howManyPubsAlertLabel</value>
@@ -874,7 +868,7 @@
     <value>Fill</value>
   </data>
   <data name="publicationGroupBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 129</value>
+    <value>3, 125</value>
   </data>
   <data name="publicationGroupBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>386, 165</value>
@@ -883,7 +877,7 @@
     <value>21</value>
   </data>
   <data name="publicationGroupBox.Text" xml:space="preserve">
-    <value>Choose the Publication you wish to send to Webonary</value>
+    <value>Choose the content you want to send to Webonary</value>
   </data>
   <data name="&gt;&gt;publicationGroupBox.Name" xml:space="preserve">
     <value>publicationGroupBox</value>

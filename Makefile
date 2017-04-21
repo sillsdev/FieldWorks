@@ -732,18 +732,17 @@ Fw:
 Fw-build:
 	(cd $(BUILD_ROOT)/Build && xbuild /t:remakefw)
 
-# Import certificates so mono applications can check ssl certificates, specifically when a build task
-# downloads dependency dlls. Output md5sum of certificates imported for the record.
 InstallCerts:
 	cd $$(mktemp -d) \
 		&& wget -q -O certdata.txt "http://mxr.mozilla.org/seamonkey/source/security/nss/lib/ckfw/builtins/certdata.txt?raw=1" \
 		&& md5sum certdata.txt \
 		&& mozroots --import --sync --file certdata.txt
 
+# As of 2017-03-27, localize is more likely to crash running on mono 3 than to actually have a real localization problem. So try it a few times so that a random crash doesn't fail a packaging job that has been running for over an hour.
 Fw-build-package: InstallCerts
 	cd $(BUILD_ROOT)/Build \
-		&& xbuild /t:refreshTargets \
-		&& xbuild '/t:build4package;zipLocalizedLists;localize' /property:config=release /property:packaging=yes
+		&& xbuild '/t:remakefw;zipLocalizedLists' /property:config=release /property:packaging=yes \
+		&& ./multitry xbuild '/t:localize' /property:config=release /property:packaging=yes
 
 Fw-build-package-fdo: InstallCerts
 	cd $(BUILD_ROOT)/Build \

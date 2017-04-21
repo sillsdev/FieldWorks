@@ -104,5 +104,24 @@ namespace SIL.CoreImpl
 		{
 			PUACharacter puaCharacter = new PUACharacter("0669", "ARABIC-INDIC DIGIT NINE;Nd;0;AN;;9;9;9;N;;;;;");
 		}
+
+		[TestCase("1", Result = "\x0001")]
+		[TestCase("12", Result = "\x0012")]
+		[TestCase("123", Result = "\x0123")]
+		[TestCase("1234", Result = "\x1234")]
+		[TestCase("12345", Result = "\xd808\xdf45")]
+		[TestCase("10FFFF", Result = "\xdbff\xdfff")]
+		[TestCase("123456", Result = " ")]
+		[TestCase("110000", Result = " ")]
+		[TestCase("D800", Result = " ")]
+		[TestCase("D801", Result = " ")]
+		[TestCase("DFFF", Result = " ")]
+		[TestCase("", Result = " ")]
+		[TestCase(null, Result = " ")]
+		public string CodepointAsString(string codepoint)
+		{
+			return PUACharacter.CodepointAsString(codepoint);
+		}
+
 	}
 }

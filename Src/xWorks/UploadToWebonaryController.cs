@@ -10,6 +10,7 @@ using Ionic.Zip;
 using SIL.FieldWorks.FDO;
 using XCore;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using SIL.Utils;
 
@@ -176,6 +177,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var credentials = string.Format("{0}:{1}", model.UserName, model.Password);
 				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes(credentials)));
+				client.Headers.Add("user-agent", string.Format("FieldWorks Language Explorer v.{0}", Assembly.GetExecutingAssembly().GetName().Version));
+				client.Headers[HttpRequestHeader.Accept] = "*/*";
 
 				byte[] response = null;
 				try
@@ -240,9 +243,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		///<summary>This stub is intended for other files related to front- and backmatter (things not really managed by FLEx itself)</summary>
 		private void ExportOtherFilesContent(string tempDirectoryToCompress, UploadToWebonaryModel logTextbox, object outputLogTextbox)
 		{
-			//TODO:Copy the user selected other files into the temp directory
+			//TODO: Copy the user selected other files into the temp directory and normalize filenames to NFC
 		}
 
 		public void UploadToWebonary(UploadToWebonaryModel model, IUploadToWebonaryView view)

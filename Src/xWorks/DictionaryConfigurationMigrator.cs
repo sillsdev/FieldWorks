@@ -21,8 +21,13 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public class DictionaryConfigurationMigrator
 	{
-		public const int VersionCurrent = 12;
+		public const int VersionCurrent = 18;
 		internal const string NodePathSeparator = " > ";
+		public const string RootFileName = "Root";
+		public const string HybridFileName = "Hybrid";
+		public const string LexemeFileName = "Lexeme";
+		public const string ReversalFileName = "AllReversalIndexes";
+
 		private readonly Inventory m_layoutInventory;
 		private readonly Inventory m_partInventory;
 		private Mediator m_mediator;
@@ -51,21 +56,42 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using (m_logger = new SimpleLogger())
 			{
-				var versionProvider = new VersionInfoProvider(Assembly.GetExecutingAssembly(), true);
-				// Further migration changes (especially Label changes) may need changes in multiple migrators:
-				foreach (var migrator in m_migrators)
+				try
 				{
+					var versionProvider = new VersionInfoProvider(Assembly.GetExecutingAssembly(), true);
+					// Further migration changes (especially Label changes) may need changes in multiple migrators:
+					foreach (var migrator in m_migrators)
+					{
 					migrator.MigrateIfNeeded(m_logger, m_propertyTable, versionProvider.ApplicationVersion);
+					}
+					CreateProjectCustomCssIfNeeded(m_propertyTable);
 				}
-				if (m_logger.HasContent)
+				finally
 				{
+					if (m_logger.HasContent)
+					{
 					var configurationDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable,
-						DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
-					Directory.CreateDirectory(configurationDir);
-					File.AppendAllText(Path.Combine(configurationDir, "ConfigMigrationLog.txt"), m_logger.Content);
+							DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+						Directory.CreateDirectory(configurationDir);
+						File.AppendAllText(Path.Combine(configurationDir, "ConfigMigrationLog.txt"), m_logger.Content);
+					}
 				}
 			}
 			m_logger = null;
+		}
+
+		/// <summary>Create custom CSS file in the project's folder</summary>
+		private static void CreateProjectCustomCssIfNeeded(PropertyTable propertyTable)
+		{
+			var innerDirectories = new [] { "Dictionary", "ReversalIndex" };
+			foreach (var innerDir in innerDirectories)
+			{
+				var configDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(propertyTable, innerDir);
+				Directory.CreateDirectory(configDir);
+				var customCssPath = Path.Combine(configDir, string.Format("Project{0}Overrides.css", innerDir == "ReversalIndex" ? "Reversal" : innerDir));
+				if (!File.Exists(customCssPath))
+					File.WriteAllText(customCssPath, "/* This file can be used to add custom css rules that will be applied to the xhtml export */");
+			}
 		}
 
 		internal static string BuildPathStringFromNode(ConfigurableDictionaryNode node, bool includeSharedItems = true)
@@ -162,6 +188,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				OverwriteDefaultsWithMatchingNode(partNode, newDefaultConfigs.Parts);
 			}
+			oldDefaultConfigs.FilePath = newDefaultConfigs.FilePath;
+			oldDefaultConfigs.Label = newDefaultConfigs.Label;
 			return oldDefaultConfigs;
 		}
 
@@ -173,6 +201,8 @@ namespace SIL.FieldWorks.XWorks
 			oldDefaultNode.After = matchingPart.After;
 			oldDefaultNode.Before = matchingPart.Before;
 			oldDefaultNode.Between = matchingPart.Between;
+			oldDefaultNode.StyleType = matchingPart.StyleType;
+			oldDefaultNode.CSSClassNameOverride = matchingPart.CSSClassNameOverride;
 			oldDefaultNode.Style = matchingPart.Style;
 			oldDefaultNode.IsEnabled = matchingPart.IsEnabled;
 			if (oldDefaultNode.Children != null)

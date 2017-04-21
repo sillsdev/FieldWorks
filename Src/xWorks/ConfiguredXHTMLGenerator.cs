@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2016 SIL International
+﻿// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -16,8 +17,10 @@ using System.Xml;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -34,6 +37,12 @@ namespace SIL.FieldWorks.XWorks
 	public static class ConfiguredXHTMLGenerator
 	{
 		/// <summary>
+		/// Click-to-play icon for media files
+		/// </summary>
+		internal const string LoudSpeaker = "\uD83D\uDD0A";
+		internal const string MovieCamera = "\U0001F3A5";
+
+		/// <summary>
 		/// The Assembly that the model Types should be loaded from. Allows test code to introduce a test model.
 		/// </summary>
 		internal static string AssemblyFile { get; set; }
@@ -42,6 +51,8 @@ namespace SIL.FieldWorks.XWorks
 		/// Map of the Assembly to the file name, so that different tests can use different models
 		/// </summary>
 		internal static Dictionary<string, Assembly> AssemblyMap = new Dictionary<string, Assembly>();
+
+		internal const string LookupComplexEntryType = "LookupComplexEntryType";
 
 		private const string PublicIdentifier = @"-//W3C//DTD XHTML 1.1//EN";
 
@@ -55,6 +66,9 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <remarks>internal to facilitate unit tests</remarks>
 		internal static int EntriesToAddCount { get; set; }
+
+		internal const string CurrentEntryMarker = "blueBubble.png";
+		private const string ImagesFolder = "Images";
 
 		/// <summary>
 		/// Static initializer setting the AssemblyFile to the default Fieldworks model dll.
@@ -80,15 +94,19 @@ namespace SIL.FieldWorks.XWorks
 			{
 				throw new ArgumentException("pubDecorator");
 			}
+			var configDir = Path.GetDirectoryName(configuration.FilePath);
 			var projectPath = DictionaryConfigurationListener.GetProjectConfigurationDirectory(propertyTable);
 			var previewCssPath = Path.Combine(projectPath, "Preview.css");
+			var projType = new DirectoryInfo(configDir).Name;
+			var cssName = projType == "Dictionary" ? "ProjectDictionaryOverrides.css" : "ProjectReversalOverrides.css";
+			var custCssPath = Path.Combine(configDir, cssName);
 			var stringBuilder = new StringBuilder();
 			using (var writer = XmlWriter.Create(stringBuilder))
 			using (var cssWriter = new StreamWriter(previewCssPath, false, Encoding.UTF8))
 			{
 				var exportSettings = new GeneratorSettings(propertyTable.GetValue<FdoCache>("cache"), propertyTable, false, false, null,
 					IsNormalRtl(propertyTable));
-				GenerateOpeningHtml(previewCssPath, exportSettings, writer);
+				GenerateOpeningHtml(previewCssPath, custCssPath, exportSettings, writer);
 				var content = GenerateXHTMLForEntry(entry, configuration, pubDecorator, exportSettings);
 				writer.WriteRaw(content);
 				GenerateClosingHtml(writer);
@@ -100,7 +118,7 @@ namespace SIL.FieldWorks.XWorks
 			return stringBuilder.ToString();
 		}
 
-		private static void GenerateOpeningHtml(string cssPath, GeneratorSettings exportSettings, XmlWriter xhtmlWriter)
+		private static void GenerateOpeningHtml(string cssPath, string custCssFile, GeneratorSettings exportSettings, XmlWriter xhtmlWriter)
 		{
 			xhtmlWriter.WriteDocType("html", PublicIdentifier, null, null);
 			xhtmlWriter.WriteStartElement("html", "http://www.w3.org/1999/xhtml");
@@ -108,10 +126,8 @@ namespace SIL.FieldWorks.XWorks
 			if (exportSettings.RightToLeft)
 				xhtmlWriter.WriteAttributeString("dir", "rtl");
 			xhtmlWriter.WriteStartElement("head");
-			xhtmlWriter.WriteStartElement("link");
-			xhtmlWriter.WriteAttributeString("href", "file:///" + cssPath);
-			xhtmlWriter.WriteAttributeString("rel", "stylesheet");
-			xhtmlWriter.WriteEndElement(); //</link>
+			CreateLinkElement(cssPath, xhtmlWriter, exportSettings.ExportPath);
+			CreateLinkElement(custCssFile, xhtmlWriter, exportSettings.ExportPath);
 			// write out schema links for writing system metadata
 			xhtmlWriter.WriteStartElement("link");
 			xhtmlWriter.WriteAttributeString("href", "http://purl.org/dc/terms/");
@@ -131,6 +147,22 @@ namespace SIL.FieldWorks.XWorks
 			if (exportSettings.RightToLeft)
 				xhtmlWriter.WriteAttributeString("dir", "rtl");
 			xhtmlWriter.WriteWhitespace(Environment.NewLine);
+		}
+
+		private static void CreateLinkElement(string cssFilePath, XmlWriter xhtmlWriter, string exportPath)
+		{
+			if (string.IsNullOrEmpty(cssFilePath) || !File.Exists(cssFilePath))
+				return;
+
+			var hrefValue = Path.GetFileName(cssFilePath);
+			if (exportPath == null)
+				//In some previews exportPath is null then we should use the full path for the link
+				hrefValue = "file:///" + cssFilePath;
+
+			xhtmlWriter.WriteStartElement("link");
+			xhtmlWriter.WriteAttributeString("href", hrefValue);
+			xhtmlWriter.WriteAttributeString("rel", "stylesheet");
+			xhtmlWriter.WriteEndElement(); //</link>
 		}
 
 		private static void GenerateWritingSystemsMetadata(GeneratorSettings exportSettings, XmlWriter xhtmlWriter)
@@ -206,7 +238,9 @@ namespace SIL.FieldWorks.XWorks
 
 		private static bool IsClerkSortingByHeadword(RecordClerk clerk)
 		{
-			return (clerk.SortName == "Headword" || clerk.SortName == "Lexeme Form" || clerk.SortName == "Citation Form" || clerk.SortName == "Form" || clerk.SortName == "Reversal Form");
+			if (clerk.SortName == null) return false;
+			return clerk.SortName.StartsWith("Headword") || clerk.SortName.StartsWith("Lexeme Form") || clerk.SortName.StartsWith("Citation Form")
+				|| clerk.SortName.StartsWith("Form") || clerk.SortName.StartsWith("Reversal Form");
 		}
 
 		private static bool IsNormalRtl(PropertyTable propertyTable)
@@ -225,15 +259,23 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var entryCount = entryHvos.Length;
 			var cssPath = Path.ChangeExtension(xhtmlPath, "css");
-			var cache = propertyTable.GetValue<FdoCache>("cache");
+			var configDir = Path.GetDirectoryName(configuration.FilePath);
 			var clerk = propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
-			// Don't display letter headers if we're showing a preview in the Edit tool.
-			var wantLetterHeaders = (entryCount > 1 || publicationDecorator != null) && (IsClerkSortingByHeadword(clerk));
+			var cache = propertyTable.GetValue<FdoCache>("cache", null);
+			// Don't display letter headers if we're showing a preview in the Edit tool or we're not sorting by headword
+			var wantLetterHeaders = (entryCount > 1 || !IsLexEditPreviewOnly(publicationDecorator)) && (IsClerkSortingByHeadword(clerk));
 			using (var xhtmlWriter = XmlWriter.Create(xhtmlPath))
 			using (var cssWriter = new StreamWriter(cssPath, false, Encoding.UTF8))
 			{
+				var custCssPath = string.Empty;
+				var projType = string.IsNullOrEmpty(configDir) ? null : new DirectoryInfo(configDir).Name;
+				if (!string.IsNullOrEmpty(projType))
+				{
+					var cssName = projType == "Dictionary" ? "ProjectDictionaryOverrides.css" : "ProjectReversalOverrides.css";
+					custCssPath = CopyCustomCssToTempFolder(configDir, xhtmlPath, cssName);
+				}
 				var settings = new GeneratorSettings(cache, propertyTable, true, true, Path.GetDirectoryName(xhtmlPath), IsNormalRtl(propertyTable));
-				GenerateOpeningHtml(cssPath, settings, xhtmlWriter);
+				GenerateOpeningHtml(cssPath, custCssPath, settings, xhtmlWriter);
 				Tuple<int, int> currentPageBounds = GetPageForCurrentEntry(settings, entryHvos, entriesPerPage);
 				GenerateTopOfPageButtonsIfNeeded(settings, entryHvos, entriesPerPage, currentPageBounds, xhtmlWriter, cssWriter);
 				string lastHeader = null;
@@ -277,10 +319,39 @@ namespace SIL.FieldWorks.XWorks
 
 				if (progress != null)
 					progress.Message = xWorksStrings.ksGeneratingStyleInfo;
-				cssWriter.Write(CssGenerator.GenerateLetterHeaderCss(propertyTable));
+				if (!IsLexEditPreviewOnly(publicationDecorator) && !IsExport(settings))
+				{
+					cssWriter.Write(CssGenerator.GenerateCssForSelectedEntry(settings.RightToLeft));
+					CopyFileSafely(settings, Path.Combine(FwDirectoryFinder.FlexFolder, ImagesFolder, CurrentEntryMarker), CurrentEntryMarker);
+				}
 				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, propertyTable));
 				cssWriter.Flush();
 			}
+		}
+
+		private static bool IsLexEditPreviewOnly(DictionaryPublicationDecorator decorator)
+		{
+			return decorator == null;
+		}
+
+		private static bool IsExport(GeneratorSettings settings)
+		{
+			return !settings.ExportPath.StartsWith(Path.Combine(Path.GetTempPath(), "DictionaryPreview"));
+		}
+
+		/// <summary>
+		/// Method to copy the custom Css file from Project folder to the Temp folder for Fieldworks preview
+		/// </summary>
+		private static string CopyCustomCssToTempFolder(string projectPath, string xhtmlPath, string custCssFileName)
+		{
+			if (xhtmlPath == null || projectPath == null)
+				return string.Empty;
+			var custCssProjectPath = Path.Combine(projectPath, custCssFileName);
+			if (!File.Exists(custCssProjectPath))
+				return string.Empty;
+			var custCssTempPath = Path.Combine(Path.GetDirectoryName(xhtmlPath), custCssFileName);
+			File.Copy(custCssProjectPath, custCssTempPath, true);
+			return custCssTempPath;
 		}
 
 		private static void GenerateTopOfPageButtonsIfNeeded(GeneratorSettings settings, int[] entryHvos, int entriesPerPage, Tuple<int, int> currentPageBounds, XmlWriter xhtmlWriter, StreamWriter cssWriter)
@@ -415,8 +486,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var firstEntry = settings.Cache.ServiceLocator.GetObject(firstEntryId);
 			var lastEntry = settings.Cache.ServiceLocator.GetObject(lastEntryId);
-			var firstLetters = GetIndexLettersOfHeadword(GetLetHeadbyEntryType(firstEntry), isFirst);
-			var lastLetters = GetIndexLettersOfHeadword(GetLetHeadbyEntryType(lastEntry));
+			var firstLetters = GetIndexLettersOfHeadword(GetHeadwordForLetterHead(firstEntry), isFirst);
+			var lastLetters = GetIndexLettersOfHeadword(GetHeadwordForLetterHead(lastEntry));
 			return firstEntryId == lastEntryId ? firstLetters : firstLetters + " .. " + lastLetters;
 		}
 
@@ -454,7 +525,7 @@ namespace SIL.FieldWorks.XWorks
 			// I don't know if we can have an empty headword. If we can then return empty string instead of crashing.
 			if (headWord.Length == 0)
 				return string.Empty;
-			return headWord.Substring(0, headWord.Length <= 1 || justFirstLetter ? 1 : 2);
+			return TsStringUtils.Compose(headWord.Substring(0, headWord.Length <= 1 || justFirstLetter ? 1 : 2));
 		}
 
 		private static List<Tuple<int, int>> GetPageRanges(int[] entryHvos, int entriesPerPage)
@@ -548,9 +619,9 @@ namespace SIL.FieldWorks.XWorks
 				countDown.Wait();
 				threads.Clear();
 				// Throwing the exception out here avoids hanging up the Green screen AND the progress dialog.
-				// The only downside is we only see one exception. See LT-17244.
+				// The only downside is we see only one exception. See LT-17244.
 				if (exceptionThrown != null)
-					throw exceptionThrown;
+					throw new WorkerThreadException("Exception generating Configured XHTML", exceptionThrown);
 			}
 		}
 
@@ -564,9 +635,9 @@ namespace SIL.FieldWorks.XWorks
 			var wsString = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultVernWs);
 			if (entry is IReversalIndexEntry)
 				wsString = ((IReversalIndexEntry)entry).SortKeyWs;
-			var firstLetter = ConfiguredExport.GetLeadChar(GetLetHeadbyEntryType(entry), wsString,
+			var firstLetter = ConfiguredExport.GetLeadChar(GetHeadwordForLetterHead(entry), wsString,
 																		  dummyOne, dummyTwo, dummyThree, cache);
-			if (firstLetter != lastHeader && !String.IsNullOrEmpty(firstLetter))
+			if (firstLetter != lastHeader && !string.IsNullOrEmpty(firstLetter))
 			{
 				var headerTextBuilder = new StringBuilder();
 				var upperCase = Icu.ToTitle(firstLetter, wsString);
@@ -585,7 +656,7 @@ namespace SIL.FieldWorks.XWorks
 				var wsRightToLeft = cache.WritingSystemFactory.get_Engine(wsString).RightToLeftScript;
 				if (wsRightToLeft != settings.RightToLeft)
 					xhtmlWriter.WriteAttributeString("dir", wsRightToLeft ? "rtl" : "ltr");
-				xhtmlWriter.WriteString(headerTextBuilder.ToString());
+				xhtmlWriter.WriteString(TsStringUtils.Compose(headerTextBuilder.ToString()));
 				xhtmlWriter.WriteEndElement();
 				xhtmlWriter.WriteEndElement();
 				xhtmlWriter.WriteWhitespace(Environment.NewLine);
@@ -595,12 +666,11 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// To generating the letter headers, we need to know which type the entry is to determine to check the first character.
-		/// So, this method will find the correct type by casting the entry with ILexEntry and IReversalIndexEntry
+		/// To generating the letter headings, we need to check the first character of the "headword," which is a different
+		/// field for ILexEntry and IReversalIndexEntry. Get the headword starting from entry-type-agnostic.
 		/// </summary>
-		/// <param name="entry">entry which needs to find the type</param>
-		/// <returns>letHead text</returns>
-		private static string GetLetHeadbyEntryType(ICmObject entry)
+		/// <returns>the "headword" in NFD (the heading letter must be normalized to NFC before writing to XHTML, per LT-18177)</returns>
+		private static string GetHeadwordForLetterHead(ICmObject entry)
 		{
 			var lexEntry = entry as ILexEntry;
 			if (lexEntry == null)
@@ -620,45 +690,46 @@ namespace SIL.FieldWorks.XWorks
 		public static string GenerateXHTMLForEntry(ICmObject entryObj, DictionaryConfigurationModel configuration,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
-			if (IsComplexFormOrVariant(entryObj))
-			{
-				var entry = entryObj as ILexEntry;
-				var bldr = new StringBuilder();
-				if (!entry.PublishAsMinorEntry && (entry.VariantEntryRefs.Any() || configuration.IsRootBased))
-					return bldr.ToString();
+			if (IsMainEntry(entryObj, configuration))
+				return GenerateXHTMLForMainEntry(entryObj, configuration.Parts[0], publicationDecorator, settings);
 
-				GenerateXHTMLForComplexOrVariantEntry(entry, configuration, publicationDecorator, settings, bldr);
-				return bldr.ToString();
-			}
-			else
-			{
-				return GenerateXHTMLForEntry(entryObj, configuration.Parts[0], publicationDecorator, settings);
-			}
+			var entry = (ILexEntry)entryObj;
+			return entry.PublishAsMinorEntry
+				? GenerateXHTMLForMinorEntry(entry, configuration, publicationDecorator, settings)
+				: string.Empty;
 		}
 
-		private static void GenerateXHTMLForComplexOrVariantEntry(ICmObject entry, DictionaryConfigurationModel configuration,
-			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, StringBuilder bldr)
+		public static string GenerateXHTMLForMainEntry(ICmObject entry, ConfigurableDictionaryNode configuration,
+			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
-			for (var i = 1; i < configuration.Parts.Count; i++)
-			{
-				if (IsListItemSelectedForExport(configuration.Parts[i], entry, null))
-				{
-					var content = GenerateXHTMLForEntry(entry, configuration.Parts[i], publicationDecorator, settings);
-					bldr.Append(content);
-				}
-			}
+			if (configuration.DictionaryNodeOptions != null && ((ILexEntry)entry).ComplexFormEntryRefs.Any() && !IsListItemSelectedForExport(configuration, entry))
+				return string.Empty;
+			return GenerateXHTMLForEntry(entry, configuration, publicationDecorator, settings);
+		}
+
+		private static string GenerateXHTMLForMinorEntry(ICmObject entry, DictionaryConfigurationModel configuration,
+			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
+		{
+			// LT-15232: show minor entries using only the first applicable Minor Entry node (not more than once)
+			var applicablePart = configuration.Parts.Skip(1).LastOrDefault(part => IsListItemSelectedForExport(part, entry));
+			return applicablePart == null ? string.Empty : GenerateXHTMLForEntry(entry, applicablePart, publicationDecorator, settings);
 		}
 
 		/// <summary>
-		/// If entry is either a Complex Form or a Variant (or both).
-		/// For Root-based configs, this means the entry is a Minor Entry.
-		/// For Lexeme-based configs, this means the entry is a Main Entry if Complex, but Minor Entry if Variant.
+		/// If entry is a a Main Entry
+		/// For Root-based configs, this means the entry is neither a Variant nor a Complex Form.
+		/// For Lexeme-based configs, Complex Forms are considered Main Entries but Variants are not.
 		/// </summary>
-		internal static bool IsComplexFormOrVariant(ICmObject entry)
+		internal static bool IsMainEntry(ICmObject entry, DictionaryConfigurationModel config)
 		{
-			// owning an ILexEntryRef denotes Complex Forms or Variants
-			// In Lexeme-based configurations, Complex Forms are considered Main Entries, but are still independently configurable
-			return entry is ILexEntry && ((ILexEntry)entry).EntryRefsOS.Any();
+			var lexEntry = entry as ILexEntry;
+			if (lexEntry == null // only LexEntries can be Minor; others (ReversalIndex, etc) are always Main.
+				|| !lexEntry.EntryRefsOS.Any()) // owning an ILexEntryRef denotes Complex Forms or Variants (not owning any denotes Main Entries)
+				return true;
+			if (config.IsRootBased) // Root-based configs consider all Complex Forms and Variants to be Minor Entries
+				return false;
+			// Lexeme-Based and Hybrid configs consider Complex Forms to be Main Entries (Variants are still Minor Entries)
+			return lexEntry.EntryRefsOS.Any(ler => ler.RefType == LexEntryRefTags.krtComplexForm);
 		}
 
 		/// <summary>Generates XHTML for an ICmObject for a specific ConfigurableDictionaryNode</summary>
@@ -669,17 +740,19 @@ namespace SIL.FieldWorks.XWorks
 			{
 				throw new ArgumentNullException();
 			}
-			if (String.IsNullOrEmpty(configuration.FieldDescription))
+			// ReSharper disable LocalizableElement, because seriously, who cares about localized exceptions?
+			if (string.IsNullOrEmpty(configuration.FieldDescription))
 			{
-				throw new ArgumentException(@"Invalid configuration: FieldDescription can not be null", @"configuration");
+				throw new ArgumentException("Invalid configuration: FieldDescription can not be null", "configuration");
 			}
 			if (entry.ClassID != settings.Cache.MetaDataCacheAccessor.GetClassId(configuration.FieldDescription))
 			{
-				throw new ArgumentException(@"The given argument doesn't configure this type", @"configuration");
+				throw new ArgumentException("The given argument doesn't configure this type", "configuration");
 			}
+			// ReSharper restore LocalizableElement
 			if (!configuration.IsEnabled)
 			{
-				return String.Empty;
+				return string.Empty;
 			}
 
 			var pieces = configuration.ReferencedOrDirectChildren
@@ -696,7 +769,7 @@ namespace SIL.FieldWorks.XWorks
 				pieces.ForEach(xw.WriteRaw);
 				xw.WriteEndElement(); // </div>
 				xw.Flush();
-				return bldr.ToString();
+				return Icu.Normalize(bldr.ToString(), Icu.UNormalizationMode.UNORM_NFC); // All content should be in NFC (LT-18177)
 			}
 		}
 
@@ -719,7 +792,7 @@ namespace SIL.FieldWorks.XWorks
 		/// write out appropriate XHTML.
 		/// </summary>
 		/// <remarks>We use a significant amount of boilerplate code for fields and subfields. Make sure you update both.</remarks>
-		private static string GenerateXHTMLForFieldByReflection(object field, ConfigurableDictionaryNode config,
+		internal static string GenerateXHTMLForFieldByReflection(object field, ConfigurableDictionaryNode config,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, SenseInfo info = new SenseInfo(),
 			bool fUseReverseSubField = false)
 		{
@@ -791,6 +864,7 @@ namespace SIL.FieldWorks.XWorks
 					return string.Empty;
 			}
 			ICmFile fileProperty;
+			ICmObject fileOwner;
 			var typeForNode = config.IsCustomField
 										? GetPropertyTypeFromReflectedTypes(propertyValue.GetType(), null)
 										: GetPropertyTypeForConfigurationNode(config, propertyValue.GetType(), cache);
@@ -809,22 +883,28 @@ namespace SIL.FieldWorks.XWorks
 
 				case PropertyType.CmPictureType:
 					fileProperty = propertyValue as ICmFile;
-					return fileProperty != null ? GenerateXHTMLForPicture(fileProperty, config, settings) : GenerateXHTMLForPictureCaption(propertyValue, config, settings);
+					fileOwner = field as ICmObject;
+					return fileProperty != null && fileOwner != null
+						? GenerateXHTMLForPicture(fileProperty, config, fileOwner, settings)
+						: GenerateXHTMLForPictureCaption(propertyValue, config, settings);
 
 				case PropertyType.CmPossibility:
 					return GenerateXHTMLForPossibility(propertyValue, config, publicationDecorator, settings);
 
 				case PropertyType.CmFileType:
 					fileProperty = propertyValue as ICmFile;
-					if (fileProperty != null)
+					if(fileProperty != null && !string.IsNullOrEmpty(fileProperty.InternalPath))
 					{
-						const string movieCamera = "\U0001F3A5";
-						const string audioPlayButton = "\u25B6";
 						var srcAttr = GenerateSrcAttributeForMediaFromFilePath(fileProperty.InternalPath, "AudioVisual", settings);
 						if (IsVideo(fileProperty.InternalPath))
-							return GenerateXHTMLForVideoFile(fileProperty.ClassName, srcAttr, movieCamera);
-						var audioId = "g" + fileProperty.Guid;
-						return GenerateXHTMLForAudioFile(fileProperty.ClassName, audioId, srcAttr, audioPlayButton);
+							return GenerateXHTMLForVideoFile(fileProperty.ClassName, srcAttr, MovieCamera);
+						fileOwner = field as ICmObject;
+						if (fileOwner != null)
+						{
+							// the XHTML id attribute must be unique. The owning ICmMedia has a unique guid.
+							// The ICmFile is used for all references to the same file within the project, so its guid is not unique.
+							return GenerateXHTMLForAudioFile(fileProperty.ClassName, fileOwner.Guid.ToString(), srcAttr, LoudSpeaker);
+						}
 					}
 					return string.Empty;
 			}
@@ -1009,7 +1089,7 @@ namespace SIL.FieldWorks.XWorks
 				s_reportedNodes.Add(config);
 				while (config != null)
 				{
-					Debug.WriteLine(string.Format("    Label={0}, FieldDescription={1}, SubField={2}", config.Label, config.FieldDescription, config.SubField ?? ""));
+					Debug.WriteLine("    Label={0}, FieldDescription={1}, SubField={2}", config.Label, config.FieldDescription, config.SubField ?? "");
 					config = config.Parent;
 				}
 			}
@@ -1020,7 +1100,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var options = config.DictionaryNodeOptions as DictionaryNodeListOptions;
 			var unsortedReferences = propertyValue as IEnumerable<ILexReference>;
-			if (options == null || unsortedReferences == null)
+			if (options == null || unsortedReferences == null || !unsortedReferences.Any())
 				return;
 			// Calculate and store the ids for each of the references once for efficiency.
 			var refsAndIds = new List<Tuple<ILexReference, string>>();
@@ -1032,8 +1112,9 @@ namespace SIL.FieldWorks.XWorks
 				refsAndIds.Add(new Tuple<ILexReference, string>(reference, id));
 			}
 			// LT-17384: LexReferences are not ordered (they are put in some order each time FLEx starts), but we want to have a consistent order each
-			// time we export the dictionary (even after restarting FLEx), so we sort them here (the choice of GUID as the search key is arbitrary).
-			refsAndIds.Sort((lhs, rhs) => lhs.Item1.Guid.CompareTo(rhs.Item1.Guid));
+			// time we export the dictionary (even after restarting FLEx), so we sort them here.
+			// LT-15764 We're actually going to sort the ConfigTargets of the LexReference objects later, so what this really accomplishes
+			// is sorting all the LexReferences of the same type together based on the DictionaryNodeListOptions.
 			var sortedReferences = new List<ILexReference>();
 			// REVIEW (Hasso) 2016.03: this Where is redundant to the IsListItemSelectedForExport call in GenerateCollectionItemContent
 			// REVIEW (cont): Filtering here is more performant; the other filter can be removed if it is verifiably redundant.
@@ -1128,7 +1209,8 @@ namespace SIL.FieldWorks.XWorks
 			return String.Empty;
 		}
 
-		private static string GenerateXHTMLForPicture(ICmFile pictureFile, ConfigurableDictionaryNode config, GeneratorSettings settings)
+		private static string GenerateXHTMLForPicture(ICmFile pictureFile, ConfigurableDictionaryNode config, ICmObject owner,
+			GeneratorSettings settings)
 		{
 			var srcAttribute = GenerateSrcAttributeFromFilePath(pictureFile, settings.UseRelativePaths ? "pictures" : null, settings);
 			if (!String.IsNullOrEmpty(srcAttribute))
@@ -1139,7 +1221,9 @@ namespace SIL.FieldWorks.XWorks
 					xw.WriteStartElement("img");
 					WriteClassNameAttributeForConfig(xw, config);
 					xw.WriteAttributeString("src", srcAttribute);
-					xw.WriteAttributeString("id", "g" + pictureFile.Guid);
+					// the XHTML id attribute must be unique. The owning ICmPicture has a unique guid.
+					// The ICmFile is used for all references to the same file within the project, so its guid is not unique.
+					xw.WriteAttributeString("id", GetSafeXHTMLId(owner.Guid.ToString()));
 					xw.WriteEndElement();
 					xw.Flush();
 					return bldr.ToString();
@@ -1160,34 +1244,7 @@ namespace SIL.FieldWorks.XWorks
 				filePath = Path.Combine(subFolder, Path.GetFileName(MakeSafeFilePath(file.InternalPath)));
 				if (settings.CopyFiles)
 				{
-					FileUtils.EnsureDirectoryExists(Path.Combine(settings.ExportPath, subFolder));
-					var destination = Path.Combine(settings.ExportPath, filePath);
-					var source = MakeSafeFilePath(file.AbsoluteInternalPath);
-					if (!File.Exists(destination))
-					{
-						if (File.Exists(source))
-						{
-							FileUtils.Copy(source, destination);
-						}
-					}
-					else if (!FileUtils.AreFilesIdentical(source, destination))
-					{
-						var fileWithoutExtension = Path.GetFileNameWithoutExtension(filePath);
-						var fileExtension = Path.GetExtension(filePath);
-						var copyNumber = 0;
-						do
-						{
-							++copyNumber;
-							destination = Path.Combine(settings.ExportPath, subFolder, String.Format("{0}{1}{2}", fileWithoutExtension, copyNumber, fileExtension));
-						}
-						while (File.Exists(destination));
-						if (File.Exists(source))
-						{
-							FileUtils.Copy(source, destination);
-						}
-						// Change the filepath to point to the copied file
-						filePath = Path.Combine(subFolder, String.Format("{0}{1}{2}", fileWithoutExtension, copyNumber, fileExtension));
-					}
+					filePath = CopyFileSafely(settings, MakeSafeFilePath(file.AbsoluteInternalPath), filePath);
 				}
 			}
 			else
@@ -1196,6 +1253,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return settings.UseRelativePaths ? filePath : new Uri(filePath).ToString();
 		}
+
 		private static string GenerateSrcAttributeForMediaFromFilePath(string filename, string subFolder, GeneratorSettings settings)
 		{
 			string filePath;
@@ -1208,34 +1266,7 @@ namespace SIL.FieldWorks.XWorks
 				filePath = Path.Combine(subFolder, Path.GetFileName(MakeSafeFilePath(filename)));
 				if (settings.CopyFiles)
 				{
-					FileUtils.EnsureDirectoryExists(Path.Combine(settings.ExportPath, subFolder));
-					var destination = Path.Combine(settings.ExportPath, filePath);
-					var source = MakeSafeFilePath(audioVisualFile);
-					if (!File.Exists(destination))
-					{
-						if (File.Exists(source))
-						{
-							FileUtils.Copy(source, destination);
-						}
-					}
-					else if (!FileUtils.AreFilesIdentical(source, destination))
-					{
-						var fileWithoutExtension = Path.GetFileNameWithoutExtension(filePath);
-						var fileExtension = Path.GetExtension(filePath);
-						var copyNumber = 0;
-						do
-						{
-							++copyNumber;
-							destination = Path.Combine(settings.ExportPath, subFolder, String.Format("{0}{1}{2}", fileWithoutExtension, copyNumber, fileExtension));
-						}
-						while (File.Exists(destination));
-						if (File.Exists(source))
-						{
-							FileUtils.Copy(source, destination);
-						}
-						// Change the filepath to point to the copied file
-						filePath = Path.Combine(subFolder, String.Format("{0}{1}{2}", fileWithoutExtension, copyNumber, fileExtension));
-					}
+					filePath = CopyFileSafely(settings, MakeSafeFilePath(audioVisualFile), filePath);
 				}
 			}
 			else
@@ -1244,12 +1275,58 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return settings.UseRelativePaths ? filePath : new Uri(filePath).ToString();
 		}
+
+		private static string CopyFileSafely(GeneratorSettings settings, string source, string relativeDestination)
+		{
+			var destination = Path.Combine(settings.ExportPath, relativeDestination);
+			var subFolder = Path.GetDirectoryName(relativeDestination);
+			FileUtils.EnsureDirectoryExists(Path.GetDirectoryName(destination));
+			// If an audio file is referenced by multiple entries they could end up in separate threads.
+			// Locking on the PropertyTable seems safe since it will be the same PropertyTable for each thread.
+			lock (settings.PropertyTable)
+			{
+				if (!File.Exists(destination))
+				{
+					if (File.Exists(source))
+					{
+						FileUtils.Copy(source, destination);
+					}
+				}
+				else if (!FileUtils.AreFilesIdentical(source, destination))
+				{
+					var fileWithoutExtension = Path.GetFileNameWithoutExtension(relativeDestination);
+					var fileExtension = Path.GetExtension(relativeDestination);
+					var copyNumber = 0;
+					string newFileName;
+					do
+					{
+						++copyNumber;
+						newFileName = string.Format("{0}{1}{2}", fileWithoutExtension, copyNumber, fileExtension);
+						destination = string.IsNullOrEmpty(subFolder) ? Path.Combine(settings.ExportPath, newFileName) :
+								Path.Combine(settings.ExportPath, subFolder, newFileName);
+					}
+					while (File.Exists(destination));
+					if (File.Exists(source))
+					{
+						FileUtils.Copy(source, destination);
+					}
+					// Change the filepath to point to the copied file
+					relativeDestination = string.IsNullOrEmpty(subFolder) ? newFileName : Path.Combine(subFolder, newFileName);
+				}
+			}
+			return relativeDestination;
+		}
+
 		private static string MakeSafeFilePath(string filePath)
 		{
 			if (SIL.Utils.Unicode.CheckForNonAsciiCharacters(filePath))
 			{
 				// Flex keeps the filename as NFD in memory because it is unicode. We need NFC to actually link to the file
 				filePath = Icu.Normalize(filePath, Icu.UNormalizationMode.UNORM_NFC);
+			}
+			if(!FileUtils.IsFilePathValid(filePath))
+			{
+				return "__INVALID_FILE_NAME__";
 			}
 			return filePath;
 		}
@@ -1530,7 +1607,6 @@ namespace SIL.FieldWorks.XWorks
 		private static string GenerateXHTMLForCollection(object collectionField, ConfigurableDictionaryNode config,
 			DictionaryPublicationDecorator pubDecorator, object collectionOwner, GeneratorSettings settings, SenseInfo info = new SenseInfo())
 		{
-			string previousType = "";
 			var bldr = new StringBuilder();
 			IEnumerable collection;
 			if (collectionField is IEnumerable)
@@ -1545,113 +1621,100 @@ namespace SIL.FieldWorks.XWorks
 			{
 				throw new ArgumentException("The given field is not a recognized collection");
 			}
+			var cmOwner = collectionOwner as ICmObject ?? ((ISenseOrEntry)collectionOwner).Item;
+
 			if (config.DictionaryNodeOptions is DictionaryNodeSenseOptions)
 			{
 				bldr.Append(GenerateXHTMLForSenses(config, pubDecorator, settings, collection, info));
 			}
 			else
 			{
-				ConfigurableDictionaryNode complexEntryTypeNode;
-				ConfigurableDictionaryNode variantEntryTypeNode;
-				if (IsVariantEntryType(config, out variantEntryTypeNode))
+				FilterAndSortCollectionIfNeeded(ref collection, pubDecorator, config.SubField ?? config.FieldDescription);
+				ConfigurableDictionaryNode lexEntryTypeNode;
+				if (IsVariantEntryType(config, out lexEntryTypeNode))
 				{
-					if (config.ReferencedOrDirectChildren.Any(
-							x => x.IsEnabled && (x.Children != null && x.Children.Any(y => y.IsEnabled))))
+					bldr.Append(GenerateXHTMLForILexEntryRefCollection(config, collection, cmOwner, pubDecorator, settings, lexEntryTypeNode, false));
+				}
+				else if (IsComplexEntryType(config, out lexEntryTypeNode))
+				{
+					bldr.Append(GenerateXHTMLForILexEntryRefCollection(config, collection, cmOwner, pubDecorator, settings, lexEntryTypeNode, true));
+				}
+				else if (IsPrimaryEntryReference(config, out lexEntryTypeNode))
+				{
+					// Order by guid (to order things consistently; see LT-17384).
+					// Though perhaps another sort key would be better, such as ICmObject.SortKey or ICmObject.SortKey2.
+					var lerCollection = collection.Cast<ILexEntryRef>().OrderBy(ler => ler.Guid).ToList();
+					// Group by Type only if Type is selected for output.
+					if (lexEntryTypeNode.IsEnabled && lexEntryTypeNode.ReferencedOrDirectChildren != null
+						&& lexEntryTypeNode.ReferencedOrDirectChildren.Any(y => y.IsEnabled))
 					{
-						// Order the variants by type and then guid, excluding variants that are not in the publication.
-						// This is using guid to order variants in a consistent way to fix LT-17384. Though perhaps another sort key would be better, such as ICmObject.SortKey or ICmObject.SortKey2.
-						collection = collection.Cast<ILexEntryRef>()
-								.OrderBy(variant => variant.VariantEntryTypesRS.FirstOrDefault())
-								.ThenBy(variant => variant.Guid)
-								.Where(variant => pubDecorator == null || !pubDecorator.IsExcludedObject(variant));
-						var variantFormTypes = settings.Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.ToList();
-						using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings {ConformanceLevel = ConformanceLevel.Fragment}))
-						{
-							foreach (var variantFormType in variantFormTypes)
-							{
-								foreach (var colItem in collection)
-								{
-									if (((ILexEntryRef)colItem).VariantEntryTypesRS.Contains(variantFormType))
-									{
-										if (previousType != variantFormType.SortKey && variantEntryTypeNode.IsEnabled)
-										{
-											xw.WriteRaw(WriteRawElementContents("span",
-												GenerateCollectionItemContent(variantEntryTypeNode, pubDecorator, variantFormType,
-													variantFormType.Owner, settings, ref previousType, ""), variantEntryTypeNode));
-											previousType = variantFormType.SortKey;
-										}
-										xw.WriteRaw(GenerateCollectionItemContent(config, pubDecorator, colItem, collectionOwner, settings, ref previousType, "VariantEntryTypesRS"));
-									}
-								}
-							}
-							foreach (var entry in collection.Cast<ILexEntryRef>().Where(item => !item.VariantEntryTypesRS.Any()))
-							{
-								xw.WriteRaw(GenerateCollectionItemContent(config, pubDecorator, entry, collectionOwner, settings, ref previousType, "VariantEntryTypesRS"));
-							}
-							xw.Flush();
-						}
+						Debug.Assert(config.DictionaryNodeOptions == null,
+							"double calls to GenerateXHTMLForILexEntryRefsByType don't play nicely with ListOptions. Everything will be generated twice (if it doesn't crash)");
+						// Display typeless refs
+						foreach (var entry in lerCollection.Where(item => !item.ComplexEntryTypesRS.Any() && !item.VariantEntryTypesRS.Any()))
+							bldr.Append(GenerateCollectionItemContent(config, pubDecorator, entry, collectionOwner, settings, lexEntryTypeNode));
+						// Display refs of each type
+						GenerateXHTMLForILexEntryRefsByType(config, lerCollection, collectionOwner, pubDecorator, settings, bldr, lexEntryTypeNode,
+							true); // complex
+						GenerateXHTMLForILexEntryRefsByType(config, lerCollection, collectionOwner, pubDecorator, settings, bldr, lexEntryTypeNode,
+							false); // variants
 					}
 					else
 					{
-						Debug.WriteLine("Unable to sort " + config.FieldDescription + " By LexRefType.");
+						Debug.WriteLine("Unable to group " + config.FieldDescription + " by LexRefType; generating sequentially");
+						foreach (var item in lerCollection)
+							bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings));
 					}
 				}
-				else if (IsComplexEntryType(config, out complexEntryTypeNode))
+				else if (config.FieldDescription.StartsWith("Subentries"))
 				{
-					var complexFormTypes = settings.Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.ToList();
-					using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
-					{
-						var entriesWithNoType = new List<ILexEntryRef>();
-						foreach (var complexFormType in complexFormTypes)
-						{
-							foreach (var colItem in collection)
-							{
-								if (((ILexEntryRef)colItem).ComplexEntryTypesRS.Contains(complexFormType))
-								{
-									if (previousType != complexFormType.SortKey)
-									{
-										xw.WriteRaw(WriteRawElementContents("span", GenerateCollectionItemContent(complexEntryTypeNode, pubDecorator, complexFormType,
-											complexFormType.Owner, settings, ref previousType, ""), complexEntryTypeNode));
-										previousType = complexFormType.SortKey;
-									}
-									xw.WriteRaw(GenerateCollectionItemContent(config, pubDecorator, colItem, collectionOwner, settings, ref previousType, "ComplexEntryTypesRS"));
-								}
-							}
-						}
-						foreach (var entry in entriesWithNoType.Distinct())
-						{
-							xw.WriteRaw(GenerateCollectionItemContent(config, pubDecorator, entry, collectionOwner, settings, ref previousType, "ComplexEntryTypesRS"));
-						}
-						xw.Flush();
-					}
+					GenerateXHTMLForSubentries(config, collection, cmOwner, pubDecorator, settings, bldr);
+				}
+				else if (IsLexReferenceCollection(config))
+				{
+					GenerateXHTMLForILexReferenceCollection(config, collection.Cast<ILexReference>(), cmOwner, pubDecorator, settings, bldr);
 				}
 				else
 				{
 					foreach (var item in collection)
-					{
-						if (pubDecorator != null && item is ICmObject && pubDecorator.IsExcludedObject((ICmObject) item))
-						{
-							// Don't show examples or subentries that have been marked to exclude from publication.
-							// See https://jira.sil.org/browse/LT-15697 and https://jira.sil.org/browse/LT-16775.
-							continue;
-						}
-						bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings, ref previousType, ""));
-					}
+						bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings));
 				}
 			}
 			if (bldr.Length > 0)
 				return WriteRawElementContents("span", bldr.ToString(), config);
-			return String.Empty;
+			return string.Empty;
 		}
 
+		private static bool IsLexReferenceCollection(ConfigurableDictionaryNode config)
+		{
+			var opt = config.DictionaryNodeOptions as DictionaryNodeListOptions;
+			return opt != null && (opt.ListId == DictionaryNodeListOptions.ListIds.Entry ||
+				opt.ListId == DictionaryNodeListOptions.ListIds.Sense);
+		}
+
+		internal static bool IsFactoredReference(ConfigurableDictionaryNode node, out ConfigurableDictionaryNode typeChild)
+		{
+			var paraOptions = node.DictionaryNodeOptions as IParaOption;
+			if (paraOptions != null && paraOptions.DisplayEachInAParagraph)
+			{
+				typeChild = null;
+				return false;
+			}
+			return IsVariantEntryType(node, out typeChild) || IsComplexEntryType(node, out typeChild) || IsPrimaryEntryReference(node, out typeChild);
+		}
+
+		/// <summary>
+		/// Whether the selected node represents Complex Entries.
+		/// This does *not* include Subentries, because Subentries are (a) never factored and (b) ILexEntries instead of ILexEntryRefs.
+		/// </summary>
 		private static bool IsComplexEntryType(ConfigurableDictionaryNode config, out ConfigurableDictionaryNode complexEntryTypeNode)
 		{
 			complexEntryTypeNode = null;
-			if (config.FieldDescription == "VisibleComplexFormBackRefs" && config.ReferencedOrDirectChildren != null)
+			// REVIEW (Hasso)2017.01: better to check ListId==Complex && !FieldDesc.StartsWith("Subentries")?
+			if ((config.FieldDescription == "VisibleComplexFormBackRefs" || config.FieldDescription == "ComplexFormsNotSubentries")
+				&& config.ReferencedOrDirectChildren != null)
 			{
-				complexEntryTypeNode = config.ReferencedOrDirectChildren.FirstOrDefault(
-					child => child.FieldDescription == "ComplexEntryTypesRS" && child.IsEnabled && child.Children != null &&
-					child.Children.Any(x => x.IsEnabled));
+				complexEntryTypeNode = config.ReferencedOrDirectChildren.FirstOrDefault(child => child.FieldDescription == "ComplexEntryTypesRS");
 				return complexEntryTypeNode != null;
 			}
 			return false;
@@ -1663,10 +1726,170 @@ namespace SIL.FieldWorks.XWorks
 			var variantOptions = config.DictionaryNodeOptions as DictionaryNodeListOptions;
 			if (variantOptions != null && variantOptions.ListId == DictionaryNodeListOptions.ListIds.Variant)
 			{
-				variantEntryTypeNode = config.Children.FirstOrDefault(x => x.FieldDescription == "VariantEntryTypesRS");
-				return true;
+				variantEntryTypeNode = config.ReferencedOrDirectChildren.FirstOrDefault(x => x.FieldDescription == "VariantEntryTypesRS");
+				return variantEntryTypeNode != null;
 			}
 			return false;
+		}
+
+		private static bool IsPrimaryEntryReference(ConfigurableDictionaryNode config, out ConfigurableDictionaryNode entryTypesNode)
+		{
+			entryTypesNode = null;
+			if (config.FieldDescription == "MainEntryRefs" || config.FieldDescription == "EntryRefsWithThisMainSense")
+			{
+				entryTypesNode = config.ReferencedOrDirectChildren.FirstOrDefault(n => n.FieldDescription == "EntryTypes");
+				return entryTypesNode != null;
+			}
+			return false;
+		}
+
+		private static string GenerateXHTMLForILexEntryRefCollection(ConfigurableDictionaryNode config, IEnumerable collection, ICmObject collectionOwner,
+			DictionaryPublicationDecorator pubDecorator, GeneratorSettings settings, ConfigurableDictionaryNode typeNode, bool isComplex)
+		{
+			var bldr = new StringBuilder();
+
+			var lerCollection = collection.Cast<ILexEntryRef>().ToList();
+			// ComplexFormsNotSubentries is a filtered version of VisibleComplexFormBackRefs, so it doesn't have it's own VirtualOrdering.
+			var fieldForVO = config.FieldDescription == "ComplexFormsNotSubentries" ? "VisibleComplexFormBackRefs" : config.FieldDescription;
+			if (lerCollection.Count > 1 && !VirtualOrderingServices.HasVirtualOrdering(collectionOwner, fieldForVO))
+			{
+				// Order things (LT-17384) alphabetically (LT-17762) if and only if the user hasn't specified an order (LT-17918).
+				var wsId = settings.Cache.ServiceLocator.WritingSystemManager.Get(lerCollection.First().SortKeyWs);
+				var comparer = new WritingSystemComparer(wsId);
+				lerCollection.Sort((left, right) => comparer.Compare(left.SortKey, right.SortKey));
+			}
+
+			// Group by Type only if Type is selected for output.
+			if (typeNode.IsEnabled && typeNode.ReferencedOrDirectChildren != null && typeNode.ReferencedOrDirectChildren.Any(y => y.IsEnabled))
+			{
+				// Display typeless refs
+				foreach (var entry in lerCollection.Where(item => !item.ComplexEntryTypesRS.Any() && !item.VariantEntryTypesRS.Any()))
+					bldr.Append(GenerateCollectionItemContent(config, pubDecorator, entry, collectionOwner, settings, typeNode));
+				// Display refs of each type
+				GenerateXHTMLForILexEntryRefsByType(config, lerCollection, collectionOwner, pubDecorator, settings, bldr, typeNode, isComplex);
+			}
+			else
+			{
+				Debug.WriteLine("Unable to group " + config.FieldDescription + " by LexRefType; generating sequentially");
+				foreach (var item in lerCollection)
+					bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings));
+			}
+			return bldr.ToString();
+		}
+
+		private static void GenerateXHTMLForILexEntryRefsByType(ConfigurableDictionaryNode config, List<ILexEntryRef> lerCollection, object collectionOwner, DictionaryPublicationDecorator pubDecorator,
+			GeneratorSettings settings, StringBuilder bldr, ConfigurableDictionaryNode typeNode, bool isComplex)
+		{
+			var lexEntryTypes = isComplex
+				? settings.Cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities
+				: settings.Cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities;
+			// Order the types by their order in their list in the configuration options, if any (LT-18018).
+			var listOptions = config.DictionaryNodeOptions as DictionaryNodeListOptions;
+			var lexEntryTypesFiltered = listOptions == null
+				? lexEntryTypes.Select(t => t.Guid)
+				: listOptions.Options.Where(o => o.IsEnabled).Select(o => new Guid(o.Id));
+			// Don't factor out Types when displaying in a paragraph
+			var paraOptions = config.DictionaryNodeOptions as IParaOption;
+			if (paraOptions != null && paraOptions.DisplayEachInAParagraph)
+				typeNode = null;
+			// Generate XHTML by Type
+			foreach (var typeGuid in lexEntryTypesFiltered)
+			{
+				var innerBldr = new StringBuilder();
+				foreach (var lexEntRef in lerCollection)
+				{
+					if (isComplex ? lexEntRef.ComplexEntryTypesRS.Any(t => t.Guid == typeGuid) : lexEntRef.VariantEntryTypesRS.Any(t => t.Guid == typeGuid))
+					{
+						innerBldr.Append(GenerateCollectionItemContent(config, pubDecorator, lexEntRef, collectionOwner, settings, typeNode));
+					}
+				}
+				// Display the Type iff there were refs of this Type (and we are factoring)
+				if (innerBldr.Length > 0 && typeNode != null)
+				{
+					var lexEntryType = lexEntryTypes.First(t => t.Guid.Equals(typeGuid));
+					bldr.Append(WriteRawElementContents("span",
+						GenerateCollectionItemContent(typeNode, pubDecorator, lexEntryType,
+							lexEntryType.Owner, settings), typeNode));
+				}
+				bldr.Append(innerBldr);
+			}
+		}
+
+		private static void GenerateXHTMLForSubentries(ConfigurableDictionaryNode config, IEnumerable collection, ICmObject collectionOwner,
+			DictionaryPublicationDecorator pubDecorator, GeneratorSettings settings, StringBuilder bldr)
+		{
+			var listOptions = config.DictionaryNodeOptions as DictionaryNodeListOptions;
+			var typeNode = config.ReferencedOrDirectChildren.FirstOrDefault(n => n.FieldDescription == LookupComplexEntryType);
+			if (listOptions != null && typeNode != null && typeNode.IsEnabled
+				&& typeNode.ReferencedOrDirectChildren != null && typeNode.ReferencedOrDirectChildren.Any(n => n.IsEnabled))
+			{
+				// Get a list of Subentries including their relevant ILexEntryRefs. We will remove each Subentry from the list as it is
+				// generated to prevent multiple generations on the odd chance that a Subentry has multiple Complex Form Types
+				var subentries = collection.Cast<ILexEntry>()
+					.Select(le => new Tuple<ILexEntryRef, ILexEntry>(EntryRefForSubentry(le, collectionOwner), le)).ToList();
+
+				// Generate any Subentries with no ComplexFormType
+				for (var i = 0; i < subentries.Count; i++)
+				{
+					if (subentries[i].Item1 == null || !subentries[i].Item1.ComplexEntryTypesRS.Any())
+					{
+						bldr.Append(GenerateCollectionItemContent(config, pubDecorator, subentries[i].Item2, collectionOwner, settings));
+						subentries.RemoveAt(i--);
+					}
+				}
+				// Generate Subentries by ComplexFormType
+				foreach (var typeGuid in listOptions.Options.Where(o => o.IsEnabled).Select(o => new Guid(o.Id)))
+				{
+					for (var i = 0; i < subentries.Count; i++)
+					{
+						if (subentries[i].Item1.ComplexEntryTypesRS.Any(t => t.Guid == typeGuid))
+						{
+							bldr.Append(GenerateCollectionItemContent(config, pubDecorator, subentries[i].Item2, collectionOwner, settings));
+							subentries.RemoveAt(i--);
+						}
+					}
+				}
+			}
+			else
+			{
+				Debug.WriteLine("Unable to group " + config.FieldDescription + " by LexRefType; generating sequentially");
+				foreach (var item in collection)
+					bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings));
+			}
+		}
+
+		/// <summary>
+		/// Don't show examples or subentries that have been marked to exclude from publication.
+		/// See https://jira.sil.org/browse/LT-15697 and https://jira.sil.org/browse/LT-16775.
+		/// Consistently sort indeterminately-ordered collections. See https://jira.sil.org/browse/LT-17384
+		/// </summary>
+		private static void FilterAndSortCollectionIfNeeded(ref IEnumerable collection, DictionaryPublicationDecorator decorator, string fieldDescr)
+		{
+			if (collection is IEnumerable<ICmObject>)
+			{
+				var cmCollection = collection.Cast<ICmObject>();
+				if(decorator != null)
+					cmCollection = cmCollection.Where(item => !decorator.IsExcludedObject(item));
+				if (IsCollectionInNeedOfSorting(fieldDescr))
+					cmCollection = cmCollection.OrderBy(x => x.SortKey2);
+				collection = cmCollection;
+			}
+			else if (collection is IEnumerable<ISenseOrEntry>)
+			{
+				var seCollection = collection.Cast<ISenseOrEntry>();
+				if(decorator != null)
+					seCollection = seCollection.Where(item => !decorator.IsExcludedObject(item.Item));
+				if (IsCollectionInNeedOfSorting(fieldDescr))
+					seCollection = seCollection.OrderBy(x => x.Item.SortKey2);
+				collection = seCollection;
+			}
+		}
+
+		/// <remarks>Variants and Complex Forms may also need sorting, but it is more efficient to check for them elsewhere</remarks>
+		private static bool IsCollectionInNeedOfSorting(string fieldDescr)
+		{
+			// REVIEW (Hasso) 2016.09: should we check the CellarPropertyType?
+			return fieldDescr.EndsWith("RC") || fieldDescr.EndsWith("OC"); // Reference Collection, Owning Collection (vs. Sequence)
 		}
 
 		/// <summary>
@@ -1688,7 +1911,6 @@ namespace SIL.FieldWorks.XWorks
 				return string.Empty;
 			var bldr = new StringBuilder();
 			var isSubsense = config.Parent != null && config.FieldDescription == config.Parent.FieldDescription;
-			var isSingle = !isSubsense && IsSingleSense(filteredSenseCollection); // A subsense is never its Entry's only Sense
 			string lastGrammaticalInfo, langId;
 			var isSameGrammaticalInfo = IsAllGramInfoTheSame(config, filteredSenseCollection, isSubsense, out lastGrammaticalInfo, out langId);
 			if (isSameGrammaticalInfo && !isSubsense)
@@ -1702,22 +1924,65 @@ namespace SIL.FieldWorks.XWorks
 			var senseNode = (DictionaryNodeSenseOptions)config.DictionaryNodeOptions;
 			if (senseNode != null)
 				info.ParentSenseNumberingStyle = senseNode.ParentSenseNumberingStyle;
+
+			// Calculating isThisSenseNumbered may make sense to do for each item in the foreach loop below, but because of how the answer
+			// is determined, the answer for all sibling senses is the same as for the first sense in the collection.
+			// So calculating outside the loop for performance.
+			var isThisSenseNumbered = ShouldThisSenseBeNumbered(filteredSenseCollection[0], config, filteredSenseCollection);
 			foreach (var item in filteredSenseCollection)
 			{
 				info.SenseCounter++;
-				bldr.Append(GenerateSenseContent(config, publicationDecorator, item, isSingle, settings, isSameGrammaticalInfo, info));
+				bldr.Append(GenerateSenseContent(config, publicationDecorator, item, isThisSenseNumbered, settings, isSameGrammaticalInfo, info));
 			}
 			return bldr.ToString();
 		}
 
 		/// <summary>
-		/// This method will Check for single sense (including no subsenses of the one sense)
+		/// Some behaviour discussed regarding whether to show a sense number while working on LT-17906 is as follows.
+		///
+		/// Does the numbering style for senses say to number it?
+		///  - No? Don't number.
+		/// Yes? Is this the only sense-level sense?
+		///  - No? Number it.
+		/// Yes? Is the box for 'Number even a single sense' checked?
+		///  - Yes? Number it.
+		/// No? Is there a subsense?
+		///  - No? Don't number.
+		/// Yes? Is the subsense showing (enabled in the config)?
+		///  - No? Don't number.
+		/// Yes? Does the style for the subsense say to number the subsense?
+		///  - No? Don't number.
+		///  - Yes? Number it.
 		/// </summary>
-		private static bool IsSingleSense(List<ILexSense> filteredSenseCollection)
+		internal static bool ShouldThisSenseBeNumbered(ILexSense sense, ConfigurableDictionaryNode senseConfiguration,
+			IEnumerable<ILexSense> siblingSenses)
 		{
-			var count = filteredSenseCollection.Count;
-			if (count > 1) return false;
-			return filteredSenseCollection.First().SensesOS.Count == 0;
+			var senseOptions = senseConfiguration.DictionaryNodeOptions as DictionaryNodeSenseOptions;
+			if (string.IsNullOrEmpty(senseOptions.NumberingStyle))
+				return false;
+			if (siblingSenses.Count() > 1)
+				return true;
+			if (senseOptions.NumberEvenASingleSense)
+				return true;
+			if (sense.SensesOS.Count == 0)
+				return false;
+			if (!AreThereEnabledSubsensesWithNumberingStyle(senseConfiguration))
+				return false;
+			return true;
+		}
+
+		/// <summary>
+		/// Does this sense node have a subsenses node that is enabled in the configuration and has numbering style?
+		/// </summary>
+		/// <param name="senseNode">sense node that might have subsenses</param>
+		internal static bool AreThereEnabledSubsensesWithNumberingStyle(ConfigurableDictionaryNode senseNode)
+		{
+			if (senseNode == null)
+				return false;
+			return senseNode.Children.Any(child =>
+				child.DictionaryNodeOptions is DictionaryNodeSenseOptions &&
+				child.IsEnabled &&
+				!string.IsNullOrEmpty(((DictionaryNodeSenseOptions) child.DictionaryNodeOptions).NumberingStyle));
 		}
 
 		private static string InsertGramInfoBeforeSenses(ILexSense item, ConfigurableDictionaryNode gramInfoNode,
@@ -1808,12 +2073,11 @@ namespace SIL.FieldWorks.XWorks
 						requestedString = bestStringValue;
 				}
 				if (string.IsNullOrEmpty(lastGrammaticalInfo))
-					lastGrammaticalInfo = requestedString;
-				else if (requestedString == lastGrammaticalInfo)
 				{
+					lastGrammaticalInfo = requestedString;
 					isSameGrammaticalInfo = true;
 				}
-				else
+				else if(requestedString != lastGrammaticalInfo)
 				{
 					return false;
 				}
@@ -1822,9 +2086,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static string GenerateSenseContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
-			object item, bool isSingle, GeneratorSettings settings, bool isSameGrammaticalInfo, SenseInfo info)
+			object item, bool isThisSenseNumbered, GeneratorSettings settings, bool isSameGrammaticalInfo, SenseInfo info)
 		{
-			var senseNumberSpan = GenerateSenseNumberSpanIfNeeded(config, isSingle, ref info);
+			var senseNumberSpan = GenerateSenseNumberSpanIfNeeded(config, isThisSenseNumbered, ref info);
 			var bldr = new StringBuilder();
 			if (config.ReferencedOrDirectChildren != null)
 			{
@@ -1896,7 +2160,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static string GenerateCollectionItemContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
-			object item, object collectionOwner, GeneratorSettings settings, ref string previousType, string factoredTypeField)
+			object item, object collectionOwner, GeneratorSettings settings, ConfigurableDictionaryNode factoredTypeField = null)
 		{
 			if (item is IMultiStringAccessor)
 				return GenerateXHTMLForStrings((IMultiStringAccessor)item, config, settings);
@@ -1906,24 +2170,13 @@ namespace SIL.FieldWorks.XWorks
 
 			var bldr = new StringBuilder();
 			var listOptions = config.DictionaryNodeOptions as DictionaryNodeListOptions;
-			// sense and entry options types suggest that we are working with a cross reference
-			if (listOptions != null &&
-				(listOptions.ListId == DictionaryNodeListOptions.ListIds.Sense ||
-					listOptions.ListId == DictionaryNodeListOptions.ListIds.Entry))
+			if (listOptions is DictionaryNodeListAndParaOptions)
 			{
-				var contentCrossRef = GenerateCrossReferenceChildren(config, publicationDecorator, (ILexReference)item, collectionOwner, settings, ref previousType);
-				bldr.Append(contentCrossRef);
-			}
-			else if (listOptions is DictionaryNodeListAndParaOptions)
-			{
-				foreach (var child in config.ReferencedOrDirectChildren.Where(child => child.FieldDescription != factoredTypeField))
+				foreach (var child in config.ReferencedOrDirectChildren.Where(child => !ReferenceEquals(child, factoredTypeField)))
 				{
-					string content;
-					if (child.FieldDescription == "LookupComplexEntryType")
-						content = GenerateSubentryTypeChild(child, publicationDecorator, (ILexEntry)item, collectionOwner, settings);
-					else
-						content = GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
-					bldr.Append(content);
+					bldr.Append(child.FieldDescription == LookupComplexEntryType
+						? GenerateSubentryTypeChild(child, publicationDecorator, (ILexEntry)item, collectionOwner, settings)
+						: GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings));
 				}
 			}
 			else if (config.DictionaryNodeOptions is DictionaryNodePictureOptions)
@@ -1933,13 +2186,13 @@ namespace SIL.FieldWorks.XWorks
 			else
 			{
 				// If a type field has been factored out and generated then skip generating it here
-				foreach (var child in config.ReferencedOrDirectChildren.Where(child => child.FieldDescription != factoredTypeField))
+				foreach (var child in config.ReferencedOrDirectChildren.Where(child => !ReferenceEquals(child, factoredTypeField)))
 				{
 					bldr.Append(GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings));
 				}
 			}
 			if (bldr.Length == 0)
-				return String.Empty;
+				return string.Empty;
 			var collectionContent = bldr.ToString();
 			bldr.Clear();
 			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
@@ -1953,100 +2206,183 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private static string GenerateCrossReferenceChildren(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
-			ILexReference reference, object collectionOwner, GeneratorSettings settings, ref string previousType)
+		private static void GenerateXHTMLForILexReferenceCollection(ConfigurableDictionaryNode config,
+			IEnumerable<ILexReference> collection, ICmObject cmOwner, DictionaryPublicationDecorator pubDecorator,
+			GeneratorSettings settings, StringBuilder bldr)
 		{
-			if (config.ReferencedOrDirectChildren == null)
-				return string.Empty;
-			if (LexRefTypeTags.IsUnidirectional((LexRefTypeTags.MappingTypes)reference.OwnerType.MappingType) &&
-				LexRefDirection(reference, collectionOwner) == ":r")
+			// The collection of ILexReferences has already been sorted by type,
+			// so we'll now group all the targets by LexRefType and sort their targets alphabetically before generating XHTML
+			var organizedRefs = SortAndFilterLexRefsAndTargets(collection, cmOwner, config);
+			// Now that we have things in the right order, try outputting one type at a time
+			foreach (var referenceList in organizedRefs)
 			{
-				return string.Empty;
+				var xBldr = GenerateCrossReferenceChildren(config, pubDecorator, referenceList, cmOwner, settings);
+				bldr.Append(xBldr);
 			}
+		}
 
-			var bldrTotal = new StringBuilder();
-			foreach(var child in config.ReferencedOrDirectChildren.Where(c => c.IsEnabled))
+		/// <returns>A list (by Type) of lists of Lex Reference Targets (tupled with their references)</returns>
+		private static List<List<Tuple<ISenseOrEntry, ILexReference>>> SortAndFilterLexRefsAndTargets(
+			IEnumerable<ILexReference> collection, ICmObject cmOwner, ConfigurableDictionaryNode config)
+		{
+			var orderedTargets = new List<List<Tuple<ISenseOrEntry, ILexReference>>>();
+			var curType = new Tuple<ILexRefType, string>(null, null);
+			var allTargetsForType = new List<Tuple<ISenseOrEntry, ILexReference>>();
+			foreach (var lexReference in collection)
 			{
-				var contentChild = string.Empty;
-				if(child.FieldDescription == "ConfigTargets")
+				var type = new Tuple<ILexRefType, string>(lexReference.OwnerType, LexRefDirection(lexReference, cmOwner));
+				if (!type.Item1.Equals(curType.Item1)
+					|| (LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)type.Item1.MappingType) && !type.Item2.Equals(curType.Item2)))
 				{
-					var bldr = new StringBuilder();
-					var ownerGuid = collectionOwner is ILexEntry ? ((ILexEntry)collectionOwner).Guid : ((ILexSense)collectionOwner).Entry.Guid;
-					// "Where" excludes the entry we are displaying. (The LexReference contains all involved entries)
-					// If someone ever uses a "Sequence" type lexical relation, should the current item
-					// be displayed in its location in the sequence?  Just asking...
-					foreach (var target in reference.ConfigTargets.Where(x => x.EntryGuid != ownerGuid ||
-						reference.OwnerType.MappingType == Convert.ToInt32(MappingTypes.kmtSenseSequence) ||
-						reference.OwnerType.MappingType == Convert.ToInt32(MappingTypes.kmtEntryOrSenseSequence)))
-					{
-						var content = GenerateCollectionItemContent(child, publicationDecorator, target, reference, settings, ref previousType, "");
-						bldr.Append(content);
-						if (LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)reference.OwnerType.MappingType) &&
-							LexRefDirection(reference, collectionOwner) == ":r")
-						{
-							// In the reverse direction of an asymmetric lexical reference, we want only the first item.
-							// See https://jira.sil.org/browse/LT-16427.
-							break;
-						}
-					}
-					if (bldr.Length > 0)
-						contentChild = WriteRawElementContents("span", bldr.ToString(), child);
+					MoveTargetsToMasterList(cmOwner, curType.Item1, config, allTargetsForType, orderedTargets);
 				}
-				else if(child.FieldDescription == "OwnerType"
-					// OwnerType is a LexRefType, some of which are asymmetric (e.g. Part/Whole). If this Type is symmetric or we are currently
-					// working in the forward direction, the generic code will work; however, if we are working on an asymmetric LexRefType
-					// in the reverse direction, we need to display the ReverseName or ReverseAbbreviation instead of the Name or Abbreviation.
-					&& LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)reference.OwnerType.MappingType)
-					&& LexRefDirection(reference, collectionOwner) == ":r")
+				curType = type;
+				if (LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)curType.Item1.MappingType) &&
+					LexRefDirection(lexReference, cmOwner) == ":r" && lexReference.ConfigTargets.Any())
 				{
-					// Changing the SubField changes the default CSS Class name.
-					// If there is no override, override with the default before changing the SubField.
-					if(string.IsNullOrEmpty(child.CSSClassNameOverride))
-						child.CSSClassNameOverride = CssGenerator.GetClassAttributeForConfig(child);
-					// Flag to prepend "Reverse" to child.SubField when it is used.
-					contentChild = GenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings, fUseReverseSubField: true);
+					// In the reverse direction of an asymmetric lexical reference, we want only the first item.
+					// See https://jira.sil.org/browse/LT-16427.
+					allTargetsForType.Add(new Tuple<ISenseOrEntry, ILexReference>(lexReference.ConfigTargets.First(t => !IsOwner(t, cmOwner)), lexReference));
 				}
 				else
 				{
-					if (child.FieldDescription == "OwnerType")
+					allTargetsForType.AddRange(lexReference.ConfigTargets
+						.Select(target => new Tuple<ISenseOrEntry, ILexReference>(target, lexReference)));
+				}
+			}
+			MoveTargetsToMasterList(cmOwner, curType.Item1, config, allTargetsForType, orderedTargets);
+			return orderedTargets;
+		}
+
+		private static void MoveTargetsToMasterList(ICmObject cmOwner, ILexRefType curType, ConfigurableDictionaryNode config,
+			List<Tuple<ISenseOrEntry, ILexReference>> bucketList, List<List<Tuple<ISenseOrEntry, ILexReference>>> lexRefTargetList)
+		{
+			if (bucketList.Count == 0)
+				return;
+			if (!IsListItemSelectedForExport(config, bucketList.First().Item2, cmOwner))
+			{
+				bucketList.Clear();
+				return;
+			}
+
+			// In a "Sequence" type lexical relation (e.g. days of the week), the current item should be displayed in its location in the sequence.
+			if (!LexRefTypeTags.IsSequence((LexRefTypeTags.MappingTypes)curType.MappingType))
+			{
+				bucketList.RemoveAll(t => IsOwner(t.Item1, cmOwner));
+				// "Unidirectional" relations, like Sequences, are user-orderable (but only sequences include their owner)
+				if (!LexRefTypeTags.IsUnidirectional((LexRefTypeTags.MappingTypes)curType.MappingType))
+					bucketList.Sort(CompareLexRefTargets);
+			}
+			lexRefTargetList.Add(new List<Tuple<ISenseOrEntry, ILexReference>>(bucketList));
+			bucketList.Clear();
+		}
+
+		private static bool IsOwner(ISenseOrEntry target, ICmObject owner)
+		{
+			return target.EntryGuid.Equals(owner is ILexEntry ? ((ILexEntry)owner).Guid : ((ILexSense)owner).Entry.Guid);
+		}
+
+		private static int CompareLexRefTargets(Tuple<ISenseOrEntry, ILexReference> lhs,
+			Tuple<ISenseOrEntry, ILexReference> rhs)
+		{
+			return string.Compare(lhs.Item1.HeadWord.Text, rhs.Item1.HeadWord.Text, StringComparison.CurrentCultureIgnoreCase);
+		}
+
+		/// <returns>Content for Targets and nodes, except Type, which is returned in ref string typeXHTML</returns>
+		private static string GenerateCrossReferenceChildren(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
+			List<Tuple<ISenseOrEntry, ILexReference>> referenceList, object collectionOwner, GeneratorSettings settings)
+		{
+			if (config.ReferencedOrDirectChildren == null)
+				return string.Empty;
+			var xBldr = new StringBuilder();
+			using (var xw = XmlWriter.Create(xBldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
+			{
+				xw.WriteStartElement(GetElementNameForProperty(config));
+				WriteCollectionItemClassAttribute(config, xw);
+				var targetInfo = referenceList.FirstOrDefault();
+				if(targetInfo == null)
+					return string.Empty;
+				var reference = targetInfo.Item2;
+				if (LexRefTypeTags.IsUnidirectional((LexRefTypeTags.MappingTypes)reference.OwnerType.MappingType) &&
+					LexRefDirection(reference, collectionOwner) == ":r")
+				{
+					return string.Empty;
+				}
+				foreach (var child in config.ReferencedOrDirectChildren.Where(c => c.IsEnabled))
+				{
+					switch (child.FieldDescription)
 					{
-						string LexicalRerelationType = GenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings);
-						if (previousType != LexicalRerelationType)
-						{
-							contentChild = LexicalRerelationType;
-							previousType = LexicalRerelationType;
-						}
-					}
-					else
-					{
-						contentChild = GenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings);
+						case "ConfigTargets":
+							var contentBldr = new StringBuilder();
+							foreach (var referenceListItem in referenceList)
+							{
+								var referenceItem = referenceListItem.Item2;
+								var targetItem = referenceListItem.Item1;
+								contentBldr.Append(GenerateCollectionItemContent(child, publicationDecorator, targetItem, referenceItem, settings));
+							}
+							if (contentBldr.Length > 0)
+							{
+								xw.WriteStartElement(GetElementNameForProperty(child));
+								xw.WriteAttributeString("class", CssGenerator.GetClassAttributeForConfig(child));
+								xw.WriteRaw(contentBldr.ToString());
+								xw.WriteEndElement(); // targets
+							}
+							break;
+						case "OwnerType":
+							// OwnerType is a LexRefType, some of which are asymmetric (e.g. Part/Whole). If this Type is symmetric or we are currently
+							// working in the forward direction, the generic code will work; however, if we are working on an asymmetric LexRefType
+							// in the reverse direction, we need to display the ReverseName or ReverseAbbreviation instead of the Name or Abbreviation.
+							if (LexRefTypeTags.IsAsymmetric((LexRefTypeTags.MappingTypes)reference.OwnerType.MappingType) && LexRefDirection(reference, collectionOwner) == ":r")
+							{
+								// Changing the SubField changes the default CSS Class name.
+								// If there is no override, override with the default before changing the SubField.
+								if (string.IsNullOrEmpty(child.CSSClassNameOverride))
+									child.CSSClassNameOverride = CssGenerator.GetClassAttributeForConfig(child);
+								// Flag to prepend "Reverse" to child.SubField when it is used.
+								xw.WriteRaw(GenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings, fUseReverseSubField: true));
+							}
+							else
+							{
+								xw.WriteRaw(GenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings));
+							}
+							break;
+						default:
+							throw new NotImplementedException("The field " + child.FieldDescription + " is not supported on Cross References or Lexical Relations. Supported fields are OwnerType and ConfigTargets");
 					}
 				}
-				bldrTotal.Append(contentChild);
+				xw.WriteEndElement(); // config
+				xw.Flush();
 			}
-			return bldrTotal.ToString();
+			return xBldr.ToString();
 		}
 
 		private static string GenerateSubentryTypeChild(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
 			ILexEntry subEntry, object mainEntryOrSense, GeneratorSettings settings)
 		{
 			if (!config.IsEnabled)
-				return String.Empty;
+				return string.Empty;
 
-			var mainEntry = mainEntryOrSense as ILexEntry ?? ((ILexSense)mainEntryOrSense).Entry;
-			var entryRefs = subEntry.ComplexFormEntryRefs.Where(entryRef => entryRef.PrimaryEntryRoots.Contains(mainEntry));
-			var complexEntryRef = entryRefs.FirstOrDefault();
-			if (complexEntryRef == null)
-				return String.Empty;
-
-			return GenerateXHTMLForCollection(complexEntryRef.ComplexEntryTypesRS, config, publicationDecorator, subEntry, settings);
+			var complexEntryRef = EntryRefForSubentry(subEntry, mainEntryOrSense);
+			return complexEntryRef == null
+				? string.Empty
+				: GenerateXHTMLForCollection(complexEntryRef.ComplexEntryTypesRS, config, publicationDecorator, subEntry, settings);
 		}
 
-		private static string GenerateSenseNumberSpanIfNeeded(ConfigurableDictionaryNode senseConfigNode, bool isSingle, ref SenseInfo info)
+		private static ILexEntryRef EntryRefForSubentry(ILexEntry subEntry, object mainEntryOrSense)
 		{
-			var senseOptions = senseConfigNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
-			if (senseOptions == null || (isSingle && !senseOptions.NumberEvenASingleSense) || string.IsNullOrEmpty(senseOptions.NumberingStyle))
+			var mainEntry = mainEntryOrSense as ILexEntry ?? ((ILexSense)mainEntryOrSense).Entry;
+			var complexEntryRef = subEntry.ComplexFormEntryRefs.FirstOrDefault(entryRef => entryRef.PrimaryLexemesRS.Contains(mainEntry) // subsubentries
+																						|| entryRef.PrimaryEntryRoots.Contains(mainEntry)); // subs under sense
+			return complexEntryRef;
+		}
+
+		private static string GenerateSenseNumberSpanIfNeeded(ConfigurableDictionaryNode senseConfigNode, bool isThisSenseNumbered, ref SenseInfo info)
+		{
+			if (!isThisSenseNumbered)
 				return string.Empty;
+
+			var senseOptions = senseConfigNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
+
 			var formattedSenseNumber = GetSenseNumber(senseOptions.NumberingStyle, ref info);
 			if (string.IsNullOrEmpty(formattedSenseNumber))
 				return string.Empty;
@@ -2158,7 +2494,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Determines if the user has specified that this item should generate content.
 		/// <returns><c>true</c> if the user has ticked the list item that applies to this object</returns>
 		/// </summary>
-		internal static bool IsListItemSelectedForExport(ConfigurableDictionaryNode config, object listItem, object parent)
+		internal static bool IsListItemSelectedForExport(ConfigurableDictionaryNode config, object listItem, object parent = null)
 		{
 			var listOptions = config.DictionaryNodeOptions as DictionaryNodeListOptions;
 			if (listOptions == null)
@@ -2185,28 +2521,20 @@ namespace SIL.FieldWorks.XWorks
 				case DictionaryNodeListOptions.ListIds.Complex:
 				case DictionaryNodeListOptions.ListIds.Minor:
 				case DictionaryNodeListOptions.ListIds.Note:
-					{
-						return IsListItemSelectedForExportInternal(listOptions.ListId, listItem, selectedListOptions);
-					}
+					return IsListItemSelectedForExportInternal(listOptions.ListId, listItem, selectedListOptions);
 				case DictionaryNodeListOptions.ListIds.Entry:
 				case DictionaryNodeListOptions.ListIds.Sense:
-					{
-						var lexRef = (ILexReference)listItem;
-						var entryTypeGuid = lexRef.OwnerType.Guid;
-						if (selectedListOptions.Contains(entryTypeGuid))
-						{
-							return true;
-						}
-						var entryTypeGuidAndDirection = new Tuple<Guid, string>(entryTypeGuid, LexRefDirection(lexRef, parent));
-						return forwardReverseOptions.Contains(entryTypeGuidAndDirection);
-					}
+					var lexRef = (ILexReference)listItem;
+					var entryTypeGuid = lexRef.OwnerType.Guid;
+					if (selectedListOptions.Contains(entryTypeGuid))
+						return true;
+					var entryTypeGuidAndDirection = new Tuple<Guid, string>(entryTypeGuid, LexRefDirection(lexRef, parent));
+					return forwardReverseOptions.Contains(entryTypeGuidAndDirection);
 				case DictionaryNodeListOptions.ListIds.None:
 					return true;
 				default:
-					{
-						Debug.WriteLine("Unhandled list ID encountered: " + listOptions.ListId);
-						return true;
-					}
+					Debug.WriteLine("Unhandled list ID encountered: " + listOptions.ListId);
+					return true;
 			}
 		}
 
@@ -2216,6 +2544,7 @@ namespace SIL.FieldWorks.XWorks
 			var entryTypeGuids = new Set<Guid>();
 			var entryRef = listItem as ILexEntryRef;
 			var entry = listItem as ILexEntry;
+			var entryType = listItem as ILexEntryType;
 			var note = listItem as ILexExtendedNote;
 			if (entryRef != null)
 			{
@@ -2232,6 +2561,10 @@ namespace SIL.FieldWorks.XWorks
 				if (listId == DictionaryNodeListOptions.ListIds.Complex || listId == DictionaryNodeListOptions.ListIds.Minor)
 					foreach (var complexFormEntryRef in entry.ComplexFormEntryRefs)
 						GetComplexFormTypeGuidsForEntryRef(complexFormEntryRef, entryTypeGuids);
+			}
+			else if (entryType != null)
+			{
+				entryTypeGuids.Add(entryType.Guid);
 			}
 			else if (note != null)
 			{
@@ -2471,8 +2804,11 @@ namespace SIL.FieldWorks.XWorks
 				{
 					// This is not a magic writing system, so grab the user requested string
 					wsId = settings.Cache.WritingSystemFactory.GetWsFromStr(option.Id);
-					if (wsId == 0)
-						throw new ArgumentException(string.Format("Writing system requested that is not known in local store: {0}", option.Id), "config");
+					if (wsId == 0) // The config is bad or stale, but we don't need to crash in this instance.
+					{
+						Debug.WriteLine("Writing system requested that is not known in local store: {0}", option.Id);
+						continue;
+					}
 					bestString = multiStringAccessor.get_String(wsId);
 				}
 				else
@@ -2570,16 +2906,19 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static string GenerateXHTMLForString(ITsString fieldValue, ConfigurableDictionaryNode config,
-			GeneratorSettings settings, Guid guid, string writingSystem = null)
+			GeneratorSettings settings, Guid linkTarget, string writingSystem = null)
 		{
+			if (TsStringUtils.IsNullOrEmpty(fieldValue))
+				return string.Empty;
 			if (writingSystem != null && writingSystem.Contains("audio"))
 			{
-				if (fieldValue != null && !String.IsNullOrEmpty(fieldValue.Text) && fieldValue.Text.Contains("."))
+				var fieldText = fieldValue.Text;
+				if (fieldText.Contains("."))
 				{
-					var audioId = fieldValue.Text.Substring(0, fieldValue.Text.IndexOf(".", StringComparison.Ordinal));
-					var srcAttr = GenerateSrcAttributeForMediaFromFilePath(fieldValue.Text, "AudioVisual", settings);
-					var content = GenerateXHTMLForAudioFile(writingSystem, audioId, srcAttr, String.Empty);
-					if (!String.IsNullOrEmpty(content))
+					var audioId = fieldText.Substring(0, fieldText.IndexOf(".", StringComparison.Ordinal));
+					var srcAttr = GenerateSrcAttributeForMediaFromFilePath(fieldText, "AudioVisual", settings);
+					var content = GenerateXHTMLForAudioFile(writingSystem, audioId, srcAttr, string.Empty);
+					if (!string.IsNullOrEmpty(content))
 						return WriteRawElementContents("span", content, null);
 				}
 			}
@@ -2610,7 +2949,7 @@ namespace SIL.FieldWorks.XWorks
 						var props = fieldValue.get_Properties(i);
 						var style = props.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
 						writingSystem = settings.Cache.WritingSystemFactory.GetStrFromWs(fieldValue.get_WritingSystem(i));
-						GenerateSpanWithPossibleLink(settings, writingSystem, xw, style, text, guid, rightToLeft);
+						GenerateSpanWithPossibleLink(settings, writingSystem, xw, style, text, linkTarget, rightToLeft);
 					}
 					if (fieldValue.RunCount > 1)
 					{
@@ -2622,7 +2961,7 @@ namespace SIL.FieldWorks.XWorks
 					return bldr.ToString();
 				}
 			}
-			return String.Empty;
+			return string.Empty;
 		}
 
 		private static void GenerateSpanWithPossibleLink(GeneratorSettings settings, string writingSystem, XmlWriter writer, string style,
@@ -2649,7 +2988,23 @@ namespace SIL.FieldWorks.XWorks
 				writer.WriteStartElement("a");
 				writer.WriteAttributeString("href", "#g" + linkDestination);
 			}
-			writer.WriteString(text);
+			const char txtlineSplit = (Char)8232; //Line-Seperator Decimal Code
+			if (text.Contains(txtlineSplit))
+			{
+				var txtContents = text.Split(txtlineSplit);
+				for (int i = 0; i < txtContents.Count(); i++)
+				{
+					writer.WriteString(txtContents[i]);
+					if (i == txtContents.Count() - 1)
+						break;
+					writer.WriteStartElement("br");
+					writer.WriteEndElement();
+				}
+			}
+			else
+			{
+				writer.WriteString(text);
+			}
 			if (linkDestination != Guid.Empty)
 			{
 				writer.WriteEndElement(); // </a>
@@ -2675,11 +3030,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (String.IsNullOrEmpty(audioId) && String.IsNullOrEmpty(srcAttribute) && String.IsNullOrEmpty(caption))
 				return String.Empty;
+			var safeAudioId = GetSafeXHTMLId(audioId);
 			var bldr = new StringBuilder();
 			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
 			{
 				xw.WriteStartElement("audio");
-				xw.WriteAttributeString("id", audioId);
+				xw.WriteAttributeString("id", safeAudioId);
 				xw.WriteStartElement("source");
 				xw.WriteAttributeString("src", srcAttribute);
 				xw.WriteRaw("");
@@ -2687,8 +3043,8 @@ namespace SIL.FieldWorks.XWorks
 				xw.WriteEndElement();
 				xw.WriteStartElement("a");
 				xw.WriteAttributeString("class", classname);
-				xw.WriteAttributeString("href", "#" + audioId);
-				xw.WriteAttributeString("onclick", "document.getElementById('" + audioId + "').play()");
+				xw.WriteAttributeString("href", "#" + safeAudioId);
+				xw.WriteAttributeString("onclick", "document.getElementById('" + safeAudioId + "').play()");
 				if (!String.IsNullOrEmpty(caption))
 					xw.WriteString(caption);
 				else
@@ -2697,6 +3053,13 @@ namespace SIL.FieldWorks.XWorks
 				xw.Flush();
 				return bldr.ToString();
 			}
+		}
+
+		private static string GetSafeXHTMLId(string audioId)
+		{
+			// Prepend a letter, since some filenames start with digits, which gives an invalid id
+			// Are there other characters that are unsafe in XHTML Ids or Javascript?
+			return "g" + audioId.Replace(" ", "_").Replace("'", "_");
 		}
 
 		/// <summary>
@@ -2800,7 +3163,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <remarks>
 		/// Presently, this handles only Sense Info, but if other info needs to be handed down the call stack in the future, we could rename this
 		/// </remarks>
-		private struct SenseInfo
+		internal struct SenseInfo
 		{
 			public int SenseCounter { get; set; }
 			public string SenseOutlineNumber { get; set; }

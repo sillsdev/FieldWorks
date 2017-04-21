@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2016 SIL International
+// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,7 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using NUnit.Framework;
-using SIL.TestUtilities;
+using SIL.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
@@ -23,6 +23,7 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
+using SIL.TestUtilities;
 using SIL.Utils;
 using XCore;
 
@@ -30,7 +31,7 @@ namespace SIL.FieldWorks.XWorks
 {
 	// ReSharper disable InconsistentNaming
 	[TestFixture]
-	public class ConfiguredXHTMLGeneratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
+	public partial class ConfiguredXHTMLGeneratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
 	{
 		private int m_wsEn, m_wsFr, m_wsHe;
 
@@ -47,6 +48,15 @@ namespace SIL.FieldWorks.XWorks
 		private ConfiguredXHTMLGenerator.GeneratorSettings DefaultSettings
 		{
 			get { return new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null); }
+		}
+
+		private DictionaryPublicationDecorator DefaultDecorator
+		{
+			get
+			{
+				return new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
+					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+			}
 		}
 
 		[TestFixtureSetUp]
@@ -152,7 +162,7 @@ namespace SIL.FieldWorks.XWorks
 			ConfiguredXHTMLGenerator.AssemblyFile = "FDO";
 		}
 
-		const string xpathThruSense = "/div[@class='lexentry']/span[@class='senses']/span[@class='sense']";
+		const string xpathThruSense = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']";
 		private const string TestVariantName = "Crazy Variant";
 
 		[Test]
@@ -217,6 +227,44 @@ namespace SIL.FieldWorks.XWorks
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
 			const string frenchHeadwordOfHeadwordTest = "/div[@class='lexentry']/span[@class='headword']/span[@lang='fr']/a[text()='HeadWordTest']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(frenchHeadwordOfHeadwordTest, 1);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_SortByHeadwordWithSpecificWsGeneratesLetterHeadings()
+		{
+			var firstAEntry = CreateInterestingLexEntry(Cache, "alpha1");
+			// PublicationDecorator is used to force generation of Letter Headings when there is only one entry
+			var flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
+			var mainHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
+				CSSClassNameOverride = "entry"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode },
+				FieldDescription = "LexEntry"
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+			string xhtmlPath = null;
+			const string letterHeadingXPath = "//div[@class='letHead']";
+			try
+			{
+				var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
+				clerk.SortName = "Headword (fr)";
+				xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new[] { firstAEntry.Hvo }, pubEverything, model, m_propertyTable);
+				AssertThatXmlIn.File(xhtmlPath).HasSpecifiedNumberOfMatchesForXpath(letterHeadingXPath, 1);
+			}
+			finally
+			{
+				DeleteTempXhtmlAndCssFiles(xhtmlPath);
+			}
 		}
 
 		[Test]
@@ -377,9 +425,10 @@ namespace SIL.FieldWorks.XWorks
 			pronunciation.MediaFilesOS.Add(mainMediaFile);
 			var mainFile = cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
 			localMediaFolder.FilesOC.Add(mainFile);
-			mainFile.InternalPath = name;
+			// InternalPath is null by default, but trying to set it to null throws an exception
+			if (name != null)
+				mainFile.InternalPath = name;
 			mainMediaFile.MediaFileRA = mainFile;
-			//return mainMediaFile;
 		}
 
 		private static ConfigurableDictionaryNode CreateMediaNode()
@@ -450,6 +499,27 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_HeadwordRefConfigurationGeneratesWithTwoWS()
+		{
+			var mainEntry = CreateInterestingLexEntry(Cache, "MainEntry");
+			var compareReferencedEntry = CreateInterestingLexEntry(Cache, "bFR", "b comparable");
+			AddHeadwordToEntry(compareReferencedEntry, "bEN", m_wsEn);
+
+			const string comRefTypeName = "Compare";
+			var comRefType = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntryCollection, comRefTypeName, "cf", string.Empty, string.Empty);
+
+			CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry });
+
+			var mainEntryNode = ModelForCrossReferences(new[] { comRefType.Guid.ToString() });
+			// SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, DefaultSettings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(crossRefOwnerTypeXpath, 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(CrossRefOwnerTypeXpath(comRefTypeName), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordWsInCrossRefsXpath("en", "bEN"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordWsInCrossRefsXpath("fr", "bFR"), 1);
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_OneSenseWithGlossGeneratesCorrectResult()
 		{
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
@@ -457,6 +527,7 @@ namespace SIL.FieldWorks.XWorks
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses",
+				DictionaryNodeOptions = GetSenseNodeOptions(),
 				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -534,15 +605,13 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_DefaultRootGeneratesResult()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
-																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var defaultRoot = string.Concat(
 				Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary", "Root"), DictionaryConfigurationModel.FileExtension);
 			var entry = CreateInterestingLexEntry(Cache);
 			var dictionaryModel = new DictionaryConfigurationModel(defaultRoot, Cache);
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, dictionaryModel.Parts[0], pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, dictionaryModel.Parts[0], DefaultDecorator, settings);
 			var entryExists = "/div[@class='entry' and @id='g" + entry.Guid + "']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(entryExists, 1);
 		}
@@ -874,6 +943,64 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_MorphemeType()
+		{
+			var morphemeTypeAbbrev = new ConfigurableDictionaryNode()
+			{
+				FieldDescription = "Abbreviation",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var morphemeType = new ConfigurableDictionaryNode()
+			{
+				FieldDescription = "MorphTypes",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { morphemeTypeAbbrev }
+			};
+			var gramInfoNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MorphoSyntaxAnalysisRA",
+				CSSClassNameOverride = "MorphoSyntaxAnalysis",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { morphemeType }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { gramInfoNode }
+			};
+			var headword = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode>()
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headword, sensesNode },
+				FieldDescription = "LexEntry",
+				IsEnabled = true
+			};
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
+			var entry = CreateInterestingSuffix(Cache, " ba");
+
+			var sense = entry.SensesOS.First();
+
+			var msa = Cache.ServiceLocator.GetInstance<IMoInflAffMsaFactory>().Create();
+			entry.MorphoSyntaxAnalysesOC.Add(msa);
+			sense.MorphoSyntaxAnalysisRA = msa;
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			// SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
+			const string morphTypePath = "//span[@class='morphosyntaxanalysis']/span[@class='morphtypes']/span[@class='morphtype']/span[@class='abbreviation']/span[@lang='en' and text()='sfx']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(morphTypePath, 1);
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_MakesSpanForRA()
 		{
 			var gramInfoAbbrev = new ConfigurableDictionaryNode()
@@ -889,6 +1016,7 @@ namespace SIL.FieldWorks.XWorks
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses",
+				DictionaryNodeOptions = GetSenseNodeOptions(),
 				Children = new List<ConfigurableDictionaryNode> { gramInfoNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -1053,6 +1181,7 @@ namespace SIL.FieldWorks.XWorks
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses",
+				DictionaryNodeOptions = GetSenseNodeOptions(),
 				Children=new List<ConfigurableDictionaryNode>{gramInfoNode}
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -1173,11 +1302,16 @@ namespace SIL.FieldWorks.XWorks
 				CSSClassNameOverride = "complexformtypes",
 				Children = new List<ConfigurableDictionaryNode> { revAbbrevNode }
 			};
+			var orchNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry", SubField = "HeadWordRef",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
 			var orcfNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ComplexFormsNotSubentries",
 				DictionaryNodeOptions = complexformoptions,
-				Children = new List<ConfigurableDictionaryNode> { refTypeNode }
+				Children = new List<ConfigurableDictionaryNode> { refTypeNode, orchNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -1188,8 +1322,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var otherReferencedComplexForm = CreateInterestingLexEntry(Cache);
-			var complexformentryref = CreateComplexFormbasedonNodeOption(mainEntry, otherReferencedComplexForm,
-				complexformoptions.Options.First(), false);
+			var complexformentryref = CreateComplexForm(Cache, mainEntry, otherReferencedComplexForm, false, new Guid(complexformoptions.Options.First().Id));
 
 			var complexRefAbbr = complexformentryref.ComplexEntryTypesRS[0].Abbreviation.BestAnalysisAlternative.Text;
 			var complexRefRevAbbr = complexformentryref.ComplexEntryTypesRS[0].ReverseAbbr.BestAnalysisAlternative.Text;
@@ -1198,10 +1331,10 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
 			var fwdNameXpath = string.Format(
-				"//span[@class='complexformsnotsubentries']/span[@class='complexformsnotsubentry']/span[@class='complexformtypes']/span[@class='complexformtype']/span/span[@lang='en' and text()='{0}']",
+				"//span[@class='complexformsnotsubentries']/span[@class='complexformtypes']/span[@class='complexformtype']/span/span[@lang='en' and text()='{0}']",
 					complexRefAbbr);
 			var revNameXpath = string.Format(
-				"//span[@class='complexformsnotsubentries']/span[@class='complexformsnotsubentry']/span[@class='complexformtypes']/span[@class='complexformtype']/span[@class='reverseabbr']/span[@lang='en' and text()='{0}']",
+				"//span[@class='complexformsnotsubentries']/span[@class='complexformtypes']/span[@class='complexformtype']/span[@class='reverseabbr']/span[@lang='en' and text()='{0}']",
 					complexRefRevAbbr);
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(fwdNameXpath);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(revNameXpath, 1);
@@ -1684,24 +1817,39 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void IsMinorEntry_ReturnsTrueForMinorEntry()
+		public void IsMainEntry_ReturnsFalseForMinorEntry()
 		{
 			var mainEntry = CreateInterestingLexEntry(Cache);
-			var minorEntry = CreateInterestingLexEntry(Cache);
-			CreateVariantForm(Cache, mainEntry, minorEntry);
+			var variantEntry = CreateInterestingLexEntry(Cache);
+			CreateVariantForm(Cache, mainEntry, variantEntry);
+			var complexEntry = CreateInterestingLexEntry(Cache);
+			CreateComplexForm(Cache, mainEntry, complexEntry, false);
+			var rootConfig = new DictionaryConfigurationModel(true);
+			var lexemeConfig = new DictionaryConfigurationModel(false);
 			// SUT
-			Assert.That(ConfiguredXHTMLGenerator.IsComplexFormOrVariant(minorEntry));
+			Assert.False(ConfiguredXHTMLGenerator.IsMainEntry(variantEntry, lexemeConfig), "Variant, Lexeme");
+			Assert.False(ConfiguredXHTMLGenerator.IsMainEntry(variantEntry, rootConfig), "Variant, Root");
+			Assert.False(ConfiguredXHTMLGenerator.IsMainEntry(complexEntry, rootConfig), "Complex, Root");
+			// (complex entries are considered main entries in lexeme-based configs)
 		}
 
 		[Test]
-		public void IsMinorEntry_ReturnsFalseWhenNotAMinorEntry()
+		public void IsMainEntry_ReturnsTrueForMainEntry()
 		{
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(Cache, mainEntry, minorEntry);
+			var complexEntry = CreateInterestingLexEntry(Cache);
+			CreateComplexForm(Cache, mainEntry, complexEntry, false);
+			var rootConfig = new DictionaryConfigurationModel(true);
+			var lexemeConfig = new DictionaryConfigurationModel(false);
 			// SUT
-			Assert.False(ConfiguredXHTMLGenerator.IsComplexFormOrVariant(mainEntry));
-			Assert.False(ConfiguredXHTMLGenerator.IsComplexFormOrVariant(Cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>().Create()));
+			Assert.That(ConfiguredXHTMLGenerator.IsMainEntry(mainEntry, rootConfig), "Main, Root");
+			Assert.That(ConfiguredXHTMLGenerator.IsMainEntry(mainEntry, lexemeConfig), "Main, Lexeme");
+			Assert.That(ConfiguredXHTMLGenerator.IsMainEntry(complexEntry, lexemeConfig), "Complex, Lexeme");
+			// (complex entries are considered minor entries in root-based configs)
+			Assert.That(ConfiguredXHTMLGenerator.IsMainEntry(Cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>().Create(),
+				new DictionaryConfigurationModel()), "Reversal Index Entries are always considered Main Entries");
 		}
 
 		[Test]
@@ -1716,12 +1864,10 @@ namespace SIL.FieldWorks.XWorks
 			try
 			{
 				SetDictionaryNormalDirection(new InheritableStyleProp<TriStateBool>(TriStateBool.triTrue));
-				var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
-					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-				var configModel = CreateInterestingConfigurationModel(Cache);
+				var configModel = CreateInterestingConfigurationModel(Cache, m_propertyTable);
 				var mainEntry = CreateInterestingLexEntry(Cache);
 				//SUT
-				var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(mainEntry, configModel, pubDecorator, m_propertyTable);
+				var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(mainEntry, configModel, DefaultDecorator, m_propertyTable);
 				// this test relies on specific test data from CreateInterestingConfigurationModel
 				const string xpath = "/html[@dir='rtl']/body[@dir='rtl']/div[@class='lexentry']/span[@class='entry']";
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 1);
@@ -1733,30 +1879,28 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void GenerateEntryHtmlWithStyles_MinorEntryUsesMinorEntryFormatting()
+		public void GenerateEntryHtmlWithStyles_MinorEntryUsesMinorEntryFormatting(
+			[Values(DictionaryNodeListOptions.ListIds.Complex, DictionaryNodeListOptions.ListIds.Variant)] DictionaryNodeListOptions.ListIds type)
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
-																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var configModel = CreateInterestingConfigurationModel(Cache);
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
-			CreateVariantForm(Cache, mainEntry, minorEntry);
+			if (type == DictionaryNodeListOptions.ListIds.Complex)
+				CreateComplexForm(Cache, mainEntry, minorEntry, false);
+			else
+				CreateVariantForm(Cache, mainEntry, minorEntry);
 			SetPublishAsMinorEntry(minorEntry, true);
-			configModel.Parts[1].DictionaryNodeOptions =
-				configModel.Parts[2].DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Minor);
+			var configModel = CreateInterestingConfigurationModel(Cache, m_propertyTable);
 			//SUT
-			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(minorEntry, configModel, pubDecorator, m_propertyTable);
+			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(minorEntry, configModel, DefaultDecorator, m_propertyTable);
 			// this test relies on specific test data from CreateInterestingConfigurationModel
 			const string xpath = "/html/body/div[@class='minorentry']/span[@class='entry']";
-			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 2);
+			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 1);
 		}
 
 		[Test]
 		public void GenerateEntryHtmlWithStyles_MinorEntryUnCheckedItemsGenerateNothing()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
-																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var configModel = CreateInterestingConfigurationModel(Cache);
+			var configModel = CreateInterestingConfigurationModel(Cache, m_propertyTable);
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(Cache, mainEntry, minorEntry);
@@ -1764,7 +1908,7 @@ namespace SIL.FieldWorks.XWorks
 				GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Minor, new ICmPossibility[0]);
 			SetPublishAsMinorEntry(minorEntry, true);
 			//SUT
-			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(minorEntry, configModel, pubDecorator, m_propertyTable);
+			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(minorEntry, configModel, DefaultDecorator, m_propertyTable);
 			// this test relies on specific test data from CreateInterestingConfigurationModel
 			const string xpath = "/html/body/div[@class='minorentry']/span[@class='entry']";
 			// only the variant is selected, so the other minor entry should not have been generated
@@ -1774,26 +1918,69 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateEntryHtmlWithStyles_DoesNotShowHiddenMinorEntries()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
-																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var configModel = CreateInterestingConfigurationModel(Cache);
+			var configModel = CreateInterestingConfigurationModel(Cache, m_propertyTable);
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(Cache, mainEntry, minorEntry);
 			SetPublishAsMinorEntry(minorEntry, false);
 
 			//SUT
-			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(minorEntry, configModel, pubDecorator, m_propertyTable);
+			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(minorEntry, configModel, DefaultDecorator, m_propertyTable);
 			// this test relies on specific test data from CreateInterestingConfigurationModel
 			const string xpath = "/div[@class='minorentry']/span[@class='entry']";
 			AssertThatXmlIn.String(xhtml).HasNoMatchForXpath(xpath);
 		}
 
 		[Test]
+		public void GenerateEntryHtmlWithStyles_DoesNotShowMinorEntriesTwice([Values(true, false)] bool verifyPrefersVariant)
+		{
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var minorEntry = CreateInterestingLexEntry(Cache);
+			CreateComplexForm(Cache, mainEntry, minorEntry, false);
+			CreateVariantForm(Cache, mainEntry, minorEntry);
+			SetPublishAsMinorEntry(minorEntry, true);
+			var configModel = CreateInterestingConfigurationModel(Cache, m_propertyTable);
+			if (verifyPrefersVariant) // Exclude Complex Form Parts from those counted.
+				configModel.Parts.Where(part => part.Label.Contains("Complex")).ForEach(part => part.CSSClassNameOverride = "complexentry");
+			Assert.That(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(configModel.Parts[1], minorEntry),
+				"This test is valid only if the minor entry matches more than one node");
+			Assert.That(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(configModel.Parts[2], minorEntry),
+				"This test is valid only if the minor entry matches more than one node");
+			//SUT
+			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(minorEntry, configModel, DefaultDecorator, m_propertyTable);
+			// this test relies on specific test data from CreateInterestingConfigurationModel
+			const string xpath = "/html/body/div[@class='minorentry']/span[@class='entry']";
+			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 1);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_LexemeBasedConsidersComplexFormsMainEntries()
+		{
+			var configModel = CreateInterestingConfigurationModel(Cache, m_propertyTable);
+			for (var i = 1; i < configModel.Parts.Count; i++)
+				configModel.Parts[i].IsEnabled = false; // don't display Minor entries
+			var componentEntry = CreateInterestingLexEntry(Cache);
+			var complexEntry = CreateInterestingLexEntry(Cache);
+			CreateComplexForm(Cache, componentEntry, complexEntry, false);
+			configModel.Parts[1].DictionaryNodeOptions = configModel.Parts[2].DictionaryNodeOptions =
+				GetListOptionsForItems(DictionaryNodeListOptions.ListIds.Minor, new ICmPossibility[0]);
+			SetPublishAsMinorEntry(complexEntry, false);
+			//SUT
+			var xhtml = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(complexEntry, configModel, DefaultDecorator, m_propertyTable);
+			// this test relies on specific test data from CreateInterestingConfigurationModel
+			const string xpath = "/html/body/div[@class='minorentry']/span[@class='entry']";
+			// only the variant is selected, so the other minor entry should not have been generated
+			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 0);
+		}
+
+		/// <summary>
+		/// If the numbering style for Senses says to number it, and
+		/// if this is not the only sense, then number it.
+		/// (See LT-17906.)
+		/// </summary>
+		[Test]
 		public void GenerateXHTMLForEntry_SenseNumbersGeneratedForMultipleSenses()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
-																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var sensesNode = new ConfigurableDictionaryNode
@@ -1813,27 +2000,153 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseToEntry(testEntry, "second gloss", m_wsEn, Cache);
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
 			const string senseNumberTwo = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2']]//span[@lang='en' and text()='second gloss']";
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseNumberOne, 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseNumberTwo, 1);
+
+			// Piggy-back a test for ShouldThisSenseBeNumbered
+			Assert.That(ConfiguredXHTMLGenerator.ShouldThisSenseBeNumbered(testEntry.AllSenses.First(), sensesNode, testEntry.SensesOS), Is.True);
 		}
 
+		/// <summary>
+		/// If the numbering style for subsenses says to number it, and
+		/// if this is not the only subsense, then number the subsense.
+		/// (See LT-17906.)
+		/// </summary>
+		[Test]
+		public void ShouldThisSenseBeNumbered_SubSenseNumbersRequestedForMultipleSubSenses()
+		{
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
+			var senseOptions = new DictionaryNodeSenseOptions
+			{
+				AfterNumber = ")",
+				NumberStyle = "Dictionary-SenseNumber",
+				NumberingStyle = "%d",
+				NumberEvenASingleSense = false
+			};
+			var subSenseOptions = new DictionaryNodeSenseOptions
+			{
+				AfterNumber = ")",
+				NumberStyle = "Dictionary-SenseNumber",
+				NumberingStyle = "%a",
+				NumberEvenASingleSense = false,
+			};
+			var subSenseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = subSenseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode },
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = senseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			subSenseNode.IsEnabled = false;
+			var testEntry = CreateInterestingLexEntry(Cache);
+			AddSubSenseToSense("ss1", testEntry.AllSenses.First());
+			AddSubSenseToSense("ss2", testEntry.AllSenses.First());
+
+			Assert.That(ConfiguredXHTMLGenerator.ShouldThisSenseBeNumbered(testEntry.SensesOS[0].SensesOS[0], subSenseNode,testEntry.SensesOS[0].SensesOS), Is.True);
+		}
+
+		/// <summary>
+		/// Part of LT-17906.
+		/// </summary>
+		[Test]
+		public void AreThereEnabledSubsensesWithNumberingStyle_SubsensesEnabledOrNot()
+		{
+			var subSenseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions=new DictionaryNodeSenseOptions()
+				{
+					NumberStyle = "Dictionary-SenseNumber",
+					NumberingStyle="%d"
+				},
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				Children = new List<ConfigurableDictionaryNode> { subSenseNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(sensesNode);
+			subSenseNode.IsEnabled = false; // Unchecked in the configuration dialog
+
+			Assert.That(ConfiguredXHTMLGenerator.AreThereEnabledSubsensesWithNumberingStyle(sensesNode), Is.False, "Should have noticed that there are no enabled subsense nodes");
+
+			// Okay, but if they are showing...
+			subSenseNode.IsEnabled = true;
+
+			Assert.That(ConfiguredXHTMLGenerator.AreThereEnabledSubsensesWithNumberingStyle(sensesNode), Is.True, "Should have seen the enabled subsense node.");
+		}
+
+		/// <summary>
+		/// Part of LT-17906.
+		/// </summary>
+		[Test]
+		public void AreThereEnabledSubsensesWithNumberingStyle_SubsensesHaveNumberingStyleOrNot()
+		{
+			var subSenseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					NumberStyle = "Dictionary-SenseNumber",
+					NumberingStyle = string.Empty
+				},
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				Children = new List<ConfigurableDictionaryNode> { subSenseNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(sensesNode);
+
+			Assert.That(ConfiguredXHTMLGenerator.AreThereEnabledSubsensesWithNumberingStyle(sensesNode), Is.False, "Should have return false since no numbering style");
+
+			// Okay, but if the style for the subsense does say to number the subsenses...
+			((DictionaryNodeSenseOptions)subSenseNode.DictionaryNodeOptions).NumberingStyle = "%d";
+
+			Assert.That(ConfiguredXHTMLGenerator.AreThereEnabledSubsensesWithNumberingStyle(sensesNode), Is.True, "Should have return true since there is a numbering style");
+		}
+
+		/// <summary>
+		/// If the numbering style for Senses says to number it, and
+		/// if this is the only sense, and
+		/// if the box for "Number even a single sense" is NOT ticked, and
+		/// if there are no subsenses,
+		/// then do not number the sense.
+		/// (See LT-17906.)
+		/// </summary>
 		[Test]
 		public void GenerateXHTMLForEntry_SingleSenseGetsNoSenseNumber()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache,
-																					(ISilDataAccessManaged)Cache.MainCacheAccessor,
-																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "Senses",
-				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberEvenASingleSense = false },
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberEvenASingleSense = false, NumberingStyle = "%d"},
 				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -1845,17 +2158,222 @@ namespace SIL.FieldWorks.XWorks
 			var testEntry = CreateInterestingLexEntry(Cache);
 
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			Assert.That(testEntry.AllSenses.Count, Is.EqualTo(1), "Test set up incorrectly. There should just be one sense.");
+			Assert.That(testEntry.AllSenses.First().AllSenses.Count, Is.EqualTo(1), "Test not set up correctly. There should be no subsenses.");
 			// SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]/span[@lang='en' and text()='gloss']";
 			// This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(senseNumberOne);
+
+			// Piggy-back a test for ShouldThisSenseBeNumbered
+			Assert.That(ConfiguredXHTMLGenerator.ShouldThisSenseBeNumbered(testEntry.AllSenses.First(), sensesNode, testEntry.SensesOS), Is.False);
+		}
+
+		/// <summary>
+		/// If the numbering style for Senses says to number it, and
+		/// if this is the only sense (at the currently-being examined level), and
+		/// if the box for "Number even a single sense" is NOT ticked, and
+		/// if there ARE subsenses, and
+		/// if the subsenses are not showing (turned off in the config),
+		/// then do not number the sense.
+		/// (See LT-17906.)
+		/// </summary>
+		[Test]
+		public void GenerateXHTMLForEntry_TurnedOffSubsensesCausesSenseToBehaveLikeSingleSense_WithNoSenseNumber()
+		{
+
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
+			var senseOptions = new DictionaryNodeSenseOptions
+			{
+				AfterNumber = ")",
+				NumberStyle = "Dictionary-SenseNumber",
+				NumberingStyle = "%d",
+				NumberEvenASingleSense = false
+			};
+			var subSenseOptions = new DictionaryNodeSenseOptions
+			{
+				AfterNumber = ")",
+				NumberStyle = "Dictionary-SenseNumber",
+				NumberingStyle = "%a",
+				NumberEvenASingleSense = false,
+			};
+			var subSenseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = subSenseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode },
+				IsEnabled = false // Unchecked in the configuration dialog
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = senseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			subSenseNode.IsEnabled = false;
+			var testEntry = CreateInterestingLexEntry(Cache);
+			AddSubSenseToSense("ss1", testEntry.AllSenses.First());
+			AddSubSenseToSense("ss2", testEntry.AllSenses.First());
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			Assert.That(testEntry.AllSenses.Count, Is.EqualTo(3), "Test set up incorrectly.");
+			Assert.That(testEntry.AllSenses.First().AllSenses.Count, Is.EqualTo(3), "Test not set up correctly.");
+			// SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
+			const string senseNumberXpath = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sensenumber']";
+			AssertThatXmlIn.String(result).HasNoMatchForXpath(senseNumberXpath); // Should not have a sense number on top sense.
+
+			// Piggy-back a test for ShouldThisSenseBeNumbered
+			Assert.That(ConfiguredXHTMLGenerator.ShouldThisSenseBeNumbered(testEntry.AllSenses.First(), sensesNode, testEntry.SensesOS), Is.False);
+		}
+
+		/// <summary>
+		/// If the numbering style for Senses says to number it, and
+		/// if this is the only sense, and
+		/// if the box for "Number even a single sense" is NOT ticked, and
+		/// if there ARE subsenses, and
+		/// if the subsenses are showing (turned on in the config), and
+		/// if the style for the subsense says NOT to number the subsense,
+		/// then do not number the sense.
+		/// (See LT-17906.)
+		/// </summary>
+		[Test]
+		public void GenerateXHTMLForEntry_EmptyStyleSubsensesCausesSenseToBehaveLikeSingleSense_WithNoSenseNumber()
+		{
+
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
+			var senseOptions = new DictionaryNodeSenseOptions
+			{
+				AfterNumber = ")",
+				NumberStyle = "Dictionary-SenseNumber",
+				NumberingStyle = "%d",
+				NumberEvenASingleSense = false
+			};
+			var subSenseOptions = new DictionaryNodeSenseOptions
+			{
+				AfterNumber = ")",
+				NumberStyle = "Dictionary-SenseNumber",
+				NumberingStyle = "", // Subsense has empty numbering style
+				NumberEvenASingleSense = false,
+			};
+			var subSenseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = subSenseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode },
+				IsEnabled = true // Checked in the configuration dialog
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = senseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var testEntry = CreateInterestingLexEntry(Cache);
+			AddSubSenseToSense("ss1", testEntry.AllSenses.First());
+			AddSubSenseToSense("ss2", testEntry.AllSenses.First());
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			Assert.That(testEntry.AllSenses.Count, Is.EqualTo(3), "Test set up incorrectly.");
+			Assert.That(testEntry.AllSenses.First().AllSenses.Count, Is.EqualTo(3), "Test not set up correctly.");
+			// SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
+			const string senseNumberXpath = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sensenumber']";
+			AssertThatXmlIn.String(result).HasNoMatchForXpath(senseNumberXpath); // Should not have a sense number on top sense.
+
+			// Piggy-back a test for ShouldThisSenseBeNumbered
+			Assert.That(ConfiguredXHTMLGenerator.ShouldThisSenseBeNumbered(testEntry.AllSenses.First(), sensesNode, testEntry.SensesOS), Is.False);
+		}
+
+		/// <summary>
+		/// If the numbering style for Senses says to number it, and
+		/// if this is the only sense, and
+		/// if the box for "Number even a single sense" is NOT ticked, and
+		/// if there ARE subsenses, and
+		/// if the subsenses are showing (turned on in the config), and
+		/// if the style for the subsense says to number the subsense,
+		/// then number the sense.
+		/// (See LT-17906.)
+		/// </summary>
+		[Test]
+		public void GenerateXHTMLForEntry_SubsenseStyleInfluencesSenseNumberShown()
+		{
+
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
+			var senseOptions = new DictionaryNodeSenseOptions
+			{
+				AfterNumber = ")",
+				NumberStyle = "Dictionary-SenseNumber",
+				NumberingStyle = "%d",
+				NumberEvenASingleSense = false
+			};
+			var subSenseOptions = new DictionaryNodeSenseOptions
+			{
+				AfterNumber = ")",
+				NumberStyle = "Dictionary-SenseNumber",
+				NumberingStyle = "%d", // Subsense has numbering style
+				NumberEvenASingleSense = false,
+			};
+			var subSenseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = subSenseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode },
+				IsEnabled = true // Checked in the configuration dialog
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = senseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var testEntry = CreateInterestingLexEntry(Cache);
+			AddSubSenseToSense("ss1", testEntry.AllSenses.First());
+			AddSubSenseToSense("ss2", testEntry.AllSenses.First());
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			Assert.That(testEntry.AllSenses.Count, Is.EqualTo(3), "Test set up incorrectly.");
+			Assert.That(testEntry.AllSenses.First().AllSenses.Count, Is.EqualTo(3), "Test not set up correctly.");
+			// SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
+			const string senseNumberXpath = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sensenumber']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseNumberXpath,1); // Should have sense number on top sense.
+
+			// Piggy-back a test for ShouldThisSenseBeNumbered
+			Assert.That(ConfiguredXHTMLGenerator.ShouldThisSenseBeNumbered(testEntry.AllSenses.First(), sensesNode, testEntry.SensesOS), Is.True);
 		}
 
 		[Test]
-		public void GenerateXHTMLForEntry_NumberingSingleSenseAlsoCountsSubAndSuperSense()
+		public void GenerateXHTMLForEntry_NumberingSingleSenseAlsoCountsSubSense()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
 			{
@@ -1890,18 +2408,14 @@ namespace SIL.FieldWorks.XWorks
 			AddSingleSubSenseToSense("gloss", testEntry.SensesOS.First());
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
-			const string SenseOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
-			const string SubSense = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss1.1']";
-			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
-			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(SenseOne, 1);
-			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(SubSense, 1);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
+			const string SenseOneSubSense = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]/span[@class='senses']/span[@class='sensecontent']//span[@lang='en' and text()='gloss1.1']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(SenseOneSubSense, 1);
 		}
 
 		[Test]
 		public void GenerateXHTMLForEntry_SensesAndSubSensesWithDifferentNumberingStyle()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
 			{
@@ -1951,7 +2465,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='A']]//span[@lang='en' and text()='gloss']";
 			const string senseNumberTwo = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='B']]//span[@lang='en' and text()='second gloss']";
 			const string subSensesNumberTwoOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='I']]//span[@lang='en' and text()='second gloss2.1']";
@@ -1966,7 +2480,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_SensesAndSubSensesWithNumberingStyle()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
 			{
@@ -2016,7 +2530,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='A']]//span[@lang='en' and text()='gloss']";
 			const string senseNumberTwo = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='B']]//span[@lang='en' and text()='second gloss']";
 			const string subSensesNumberTwoOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='second gloss2.1']";
@@ -2028,10 +2542,58 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(subSenseNumberTwoTwo, 1);
 		}
 
+		/// <summary>
+		/// If the numbering style for Senses says not to number it, don't.
+		/// (See LT-17906.)
+		/// </summary>
+		[Test]
+		public void GenerateXHTMLForEntry_NoSenseNumberFIfStyleSaysNoNumbering()
+		{
+
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
+			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
+			{
+				BeforeNumber = "",
+				AfterNumber = ")",
+				NumberStyle = "Dictionary-SenseNumber",
+				NumberingStyle = string.Empty,
+				DisplayEachSenseInAParagraph = false,
+				NumberEvenASingleSense = true,
+				ShowSharedGrammarInfoFirst = false
+			};
+
+			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				DictionaryNodeOptions = DictionaryNodeSenseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode }
+			};
+
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var testEntry = CreateInterestingLexEntry(Cache);
+			AddSenseToEntry(testEntry, "gloss", m_wsEn, Cache);
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
+			const string senseNumberXpath = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sensenumber']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseNumberXpath, 0); // Should not have produced sense number if style said not to number it.
+
+			// Piggy-back a test for ShouldThisSenseBeNumbered
+			Assert.That(ConfiguredXHTMLGenerator.ShouldThisSenseBeNumbered(testEntry.AllSenses.First(), sensesNode, testEntry.SensesOS), Is.False);
+		}
+
 		[Test]
 		public void GenerateXHTMLForEntry_SensesNoneAndSubSensesWithNumberingStyle()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
 			{
@@ -2080,7 +2642,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string subSensesNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='second gloss2.1']";
 			const string subSenseNumberTwo = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2']]//span[@lang='en' and text()='second gloss2.2']";
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
@@ -2091,7 +2653,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_SensesGeneratedForMultipleSubSenses()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var senseOptions = new DictionaryNodeSenseOptions { AfterNumber = ")", NumberingStyle = "%d", NumberEvenASingleSense = true };
 
@@ -2122,7 +2684,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
 			const string senseNumberTwo = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2']]//span[@lang='en' and text()='second gloss']";
 			const string subSensesNumberTwoOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='second gloss2.1']";
@@ -2138,8 +2700,8 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateXHTMLForEntry_SubSenseParentSenseNumberingStyleJoined()
 		{
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var SubSubSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%A", ParentSenseNumberingStyle = "%j" };
+
+			var SubSubSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%A", ParentSenseNumberingStyle = "%j", NumberEvenASingleSense = true };
 			var subSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%a", ParentSenseNumberingStyle = "%j" };
 			var senseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%d" };
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
@@ -2177,7 +2739,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseAndTwoSubsensesToEntry(testEntry.SensesOS[1].SensesOS[0], "matte");
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumber =    "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2']]";
 			const string subSenseNumber = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2a']]";
 			const string subSubSenseNumber = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2aA']]";
@@ -2192,8 +2754,8 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateXHTMLForEntry_SubSenseParentSenseNumberingStyleSeparatedByDot()
 		{
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var SubSubSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%A", ParentSenseNumberingStyle = "%." };
+
+			var SubSubSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%A", ParentSenseNumberingStyle = "%.", NumberEvenASingleSense = true };
 			var subSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%a", ParentSenseNumberingStyle = "%." };
 			var senseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%d" };
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
@@ -2231,7 +2793,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseAndTwoSubsensesToEntry(testEntry.SensesOS[1].SensesOS[0], "matte");
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumber = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2']]";
 			const string subSenseNumber = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2.a']]";
 			const string subSubSenseNumber = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2.a.A']]";
@@ -2246,8 +2808,8 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateXHTMLForEntry_SubSenseParentSenseNumberingStyleNone()
 		{
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			var SubSubSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%A", ParentSenseNumberingStyle = "" };
+
+			var SubSubSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%A", ParentSenseNumberingStyle = "", NumberEvenASingleSense = true };
 			var subSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%a", ParentSenseNumberingStyle = "" };
 			var senseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%d" };
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
@@ -2285,7 +2847,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseAndTwoSubsensesToEntry(testEntry.SensesOS[1].SensesOS[0], "matte");
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseNumber = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2']]";
 			const string subSenseNumber = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='a']]";
 			const string subSubSenseNumber = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='A']]";
@@ -2299,7 +2861,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_SubSubSensesWithNumberingStyle()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var senseOptions = new DictionaryNodeSenseOptions { AfterNumber = ")", NumberingStyle = "%d", NumberEvenASingleSense = true };
 
@@ -2326,7 +2888,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseAndTwoSubsensesToEntry(testEntry.SensesOS[1].SensesOS[0], "matte");
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseContent = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']";
 			const string senseNumberOne = senseContent + "/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
 			const string senseNumberTwo = senseContent + "/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2']]//span[@lang='en' and text()='second gloss']";
@@ -2349,9 +2911,87 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_GeneratesGramInfoFirstEvenSingleSense()
+		{
+			var posNoun = CreatePartOfSpeech("noun", "n");
+
+			var firstHeadword = "homme";
+			var firstEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(firstEntry, firstHeadword, m_wsFr);
+			AddSingleSubSenseToSense("man", firstEntry.SensesOS[0]);
+			var msa1 = CreateMSA(firstEntry, posNoun);
+			firstEntry.SensesOS[0].MorphoSyntaxAnalysisRA = msa1;
+			firstEntry.SensesOS[0].SensesOS[0].MorphoSyntaxAnalysisRA = msa1;
+
+			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
+
+			var categNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLPartOfSpeech",
+				DictionaryNodeOptions =
+					GetWsOptionsForLanguages(new[] { "analysis" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis),
+				Children = new List<ConfigurableDictionaryNode>()
+			};
+			var gramInfoNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MorphoSyntaxAnalysisRA",
+				CSSClassNameOverride = "morphosyntaxanalysis",
+				Children = new List<ConfigurableDictionaryNode> { categNode }
+			};
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Gloss",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var senseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					BeforeNumber = " ",
+					AfterNumber = ") ",
+					NumberingStyle = "%d",
+					NumberEvenASingleSense = true,
+					ShowSharedGrammarInfoFirst = true
+				},
+				Children = new List<ConfigurableDictionaryNode> { gramInfoNode, glossNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { senseNode },
+				FieldDescription = "LexEntry"
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+
+			string xhtmlPath = null;
+			var letterHeaderXPath = "//div[@class='letHead']";
+			try
+			{
+				xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new[] { firstEntry.Hvo }, pubEverything, model, m_propertyTable);
+				var xhtml = File.ReadAllText(xhtmlPath);
+				// SUT
+				const string gramInfoPath = "/html/body/div[@class='lexentry']/span[@class='senses']/span[@class='sharedgrammaticalinfo']/span[@class='morphosyntaxanalysis']/span[@class='mlpartofspeech']/span[@lang='en' and text()='n']";
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(gramInfoPath, 1);
+
+				const string senseNumberPath = "/html/body/div[@class='lexentry']/span[@class='senses']/span[2][@class='sensecontent']/span[@class='sensenumber' and text()='1']";
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(senseNumberPath, 1);
+
+				const string senseTextPath = "/html/body/div[@class='lexentry']/span[@class='senses']/span[2][@class='sensecontent']/span[@class='sense']/span[@class='gloss']/span[@lang='en' and text()='man']";
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(senseTextPath, 1);
+			}
+			finally
+			{
+				DeleteTempXhtmlAndCssFiles(xhtmlPath);
+			}
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_SubSensesOfSingleSenses_GetFullNumbers()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var senseOptions = new DictionaryNodeSenseOptions
 			{
@@ -2390,7 +3030,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseAndTwoSubsensesToEntry(testEntry.SensesOS[0], "subGloss");
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseContent = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']";
 			const string subSenseContent = senseContent + "/span[@class='sense']/span[@class='shares senses']/span[@class='sensecontent']";
 			const string subSenseNumberOneOne = subSenseContent + "/span[@class='share sense' and preceding-sibling::span[@class='sensenumber' and text()='a']]//span[@lang='en' and text()='subGloss']";
@@ -2407,7 +3047,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_SubentriesSensesDontGetMainEntrySensesNumbers()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
+
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var senseOptions = new DictionaryNodeSenseOptions { AfterNumber = ")", NumberingStyle = "%O", NumberEvenASingleSense = true };
 
@@ -2443,7 +3083,7 @@ namespace SIL.FieldWorks.XWorks
 			CreateComplexForm(Cache, testEntry.SensesOS[0], subEntry, true);
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			const string senseContent = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']";
 			const string senseNumberOne = senseContent + "/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
 			const string subentrySenseContent = senseContent + "/span[@class='sense']/span[@class='subentries']/span[@class='subentry']/span[@class='senses']/span[@class='sensecontent']";
@@ -2455,11 +3095,16 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(subentrySenseNumberOneOne);
 		}
 
+		/// <summary>
+		/// If the numbering style for Senses says to number it, and
+		/// if this is the only sense, and
+		/// if the box for "Number even a single sense" is ticked,
+		/// then number the sense.
+		/// (See LT-17906.)
+		/// </summary>
 		[Test]
 		public void GenerateXHTMLForEntry_SingleSenseGetsNumberWithNumberEvenOneSenseOption()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
-																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var sensesNode = new ConfigurableDictionaryNode
@@ -2477,19 +3122,19 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			// SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, DefaultSettings);
 			const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
 			// This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseNumberOne, 1);
+
+			// Piggy-back a test for ShouldThisSenseBeNumbered
+			Assert.That(ConfiguredXHTMLGenerator.ShouldThisSenseBeNumbered(testEntry.AllSenses.First(), sensesNode, testEntry.SensesOS), Is.True);
 		}
 
 		[Test]
 		public void GenerateXHTMLForEntry_SenseContentWithGuid()
 		{
-			var pubDecorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
-																					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var sensesNode = new ConfigurableDictionaryNode
@@ -2507,9 +3152,8 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			// SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, pubDecorator, settings);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, DefaultSettings);
 			const string senseEntryGuid = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and @entryguid]";
 			// This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseEntryGuid, 1);
@@ -2517,6 +3161,7 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseEntryGuidstatsWithG, 1);
 		}
 
+		[Test]
 		public void GenerateXHTMLForEntry_ExampleAndTranslationAreGenerated()
 		{
 			var translationNode = new ConfigurableDictionaryNode
@@ -2525,7 +3170,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var translationsNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "TranslationsOC", CSSClassNameOverride = "translations",
+				FieldDescription = "TranslationsOC", CSSClassNameOverride = "translationcontents",
 				Children = new List<ConfigurableDictionaryNode> { translationNode }
 			};
 			var exampleNode = new ConfigurableDictionaryNode
@@ -2534,12 +3179,13 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var examplesNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "ExamplesOS", CSSClassNameOverride = "examples",
+				FieldDescription = "ExamplesOS", CSSClassNameOverride = "examplescontents",
 				Children = new List<ConfigurableDictionaryNode> { exampleNode, translationsNode }
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS", CSSClassNameOverride = "senses",
+				DictionaryNodeOptions = GetSenseNodeOptions(),
 				Children = new List<ConfigurableDictionaryNode> { examplesNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -2553,14 +3199,13 @@ namespace SIL.FieldWorks.XWorks
 			var testEntry = CreateInterestingLexEntry(Cache);
 			AddExampleToSense(testEntry.SensesOS[0], example, translation);
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
-			const string xpathThruExample = xpathThruSense + "/span[@class='examples']/span[@class='example']";
-			var oneSenseWithExample = string.Format(xpathThruExample + "/span[@lang='fr' and text()='{0}']", example);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, DefaultSettings);
+			const string xpathThruExample = xpathThruSense + "/span[@class='examplescontents']/span[@class='examplescontent']";
+			var oneSenseWithExample = string.Format(xpathThruExample + "/span[@class='example']/span[@lang='fr' and text()='{0}']", example);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithExample, 1);
-			var oneExampleSentenceTranslation = string.Format(
-				xpathThruExample + "/span[@class='translations']/span[@class='translation']/span[@lang='en' and text()='{0}']", translation);
+			var oneExampleSentenceTranslation = string.Format(xpathThruExample +
+				"/span[@class='translationcontents']/span[@class='translationcontent']/span[@class='translation']/span[@lang='en' and text()='{0}']", translation);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneExampleSentenceTranslation, 1);
 		}
 
@@ -2614,6 +3259,60 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_LineSeperatorUnicodeCharBecomesBrElement()
+		{
+			var translationNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Translation",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var translationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "TranslationsOC",
+				CSSClassNameOverride = "translations",
+				Children = new List<ConfigurableDictionaryNode> { translationNode }
+			};
+			var exampleNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Example",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var examplesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ExampleSentences",
+				Children = new List<ConfigurableDictionaryNode> { exampleNode, translationsNode }
+			};
+			var otherRcfsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ComplexFormsNotSubentries",
+				Children = new List<ConfigurableDictionaryNode> { examplesNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { otherRcfsNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			const string example = "Example\u2028Sentence On Variant Form";
+			const string translation = "Translation\u2028of the Sentence";
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var minorEntry = CreateInterestingLexEntry(Cache);
+			CreateComplexForm(Cache, mainEntry, minorEntry, false);
+			AddExampleToSense(minorEntry.SensesOS[0], example, translation);
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
+			const string xpathThruExampleSentence = "/div[@class='lexentry']/span[@class='complexformsnotsubentries']/span[@class='complexformsnotsubentry']/span[@class='examplesentences']/span[@class='examplesentence']";
+			var oneSenseWithExample = string.Format(xpathThruExampleSentence + "//span[@lang='fr']//br");
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithExample, 1);
+			var oneExampleSentenceTranslation = string.Format(
+				xpathThruExampleSentence + "/span[@class='translations']/span[@class='translation']//span[@lang='en']//br");
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneExampleSentenceTranslation, 1);
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_ExtendedNoteChildrenAreGenerated()
 		{
 			var translationNode = new ConfigurableDictionaryNode
@@ -2659,6 +3358,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
+				DictionaryNodeOptions = GetSenseNodeOptions(),
 				Children = new List<ConfigurableDictionaryNode> { extendedNoteNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -3483,12 +4183,9 @@ namespace SIL.FieldWorks.XWorks
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
-			var fwdNameFirstXpath = string.Format(
-				"//span[@class='minimallexreferences']/span[@class='minimallexreference' and position()='1']/span[@class='ownertype_name']/span[@lang='en' and text()='{0}']",
-				etyRefTypeName);
-			var fwdNameSecondXpath = string.Format(
-				"//span[@class='minimallexreferences']/span[@class='minimallexreference'and position()='2']/span[@class='ownertype_name']/span[@lang='en' and text()='{0}']",
-				comRefTypeName);
+			const string NameXpath = "//span[@class='minimallexreferences']/span[@class='minimallexreference' and position()='{0}']/span[@class='ownertype_name']/span[@lang='en' and text()='{1}']";
+			var fwdNameFirstXpath = string.Format(NameXpath, "1", etyRefTypeName);
+			var fwdNameSecondXpath = string.Format(NameXpath, "2", comRefTypeName);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(fwdNameFirstXpath, 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(fwdNameSecondXpath, 1);
 			crossReferencesNode.DictionaryNodeOptions = new DictionaryNodeListOptions
@@ -3498,12 +4195,8 @@ namespace SIL.FieldWorks.XWorks
 					DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { comRefType.Guid + ":f", etyRefType.Guid + ":f" })
 			};
 			var resultAfterChange = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
-			var fwdNameChangedFirstXpath = string.Format(
-				"//span[@class='minimallexreferences']/span[@class='minimallexreference' and position()='1']/span[@class='ownertype_name']/span[@lang='en' and text()='{0}']",
-				comRefTypeName);
-			var fwdNameChangedSecondXpath = string.Format(
-				"//span[@class='minimallexreferences']/span[@class='minimallexreference' and position()='2']/span[@class='ownertype_name']/span[@lang='en' and text()='{0}']",
-				etyRefTypeName);
+			var fwdNameChangedFirstXpath = string.Format(NameXpath, "1", comRefTypeName);
+			var fwdNameChangedSecondXpath = string.Format(NameXpath, "2", etyRefTypeName);
 			AssertThatXmlIn.String(resultAfterChange).HasSpecifiedNumberOfMatchesForXpath(fwdNameChangedFirstXpath, 1);
 			AssertThatXmlIn.String(resultAfterChange).HasSpecifiedNumberOfMatchesForXpath(fwdNameChangedSecondXpath, 1);
 		}
@@ -3606,7 +4299,7 @@ namespace SIL.FieldWorks.XWorks
 			var glossNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Gloss",
-				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis)
 			};
 			var refListNode = new ConfigurableDictionaryNode
 			{
@@ -3696,7 +4389,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 			//SUT
-			Assert.IsTrue(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(minorEntryNode, minorEntry, null));
+			Assert.IsTrue(ConfiguredXHTMLGenerator.IsListItemSelectedForExport(minorEntryNode, minorEntry));
 		}
 
 		[Test]
@@ -4196,6 +4889,7 @@ namespace SIL.FieldWorks.XWorks
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS", CSSClassNameOverride = "senses",
+				DictionaryNodeOptions = GetSenseNodeOptions(),
 				Children = new List<ConfigurableDictionaryNode> { rcfsNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -4504,6 +5198,100 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_UniqueIdsForSameFile()
+		{
+			var mainEntryNode = CreatePictureModel();
+			var testEntry = CreateInterestingLexEntry(Cache);
+			AddSenseToEntry(testEntry, "second", m_wsEn, Cache);
+			var sense = testEntry.SensesOS[0];
+			var sensePic1 = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			sense.PicturesOS.Add(sensePic1);
+			var pic = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			var sense2 = testEntry.SensesOS[1];
+			var sensePic2 = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			sense2.PicturesOS.Add(sensePic2);
+			Cache.LangProject.MediaOC.Add(folder);
+			folder.FilesOC.Add(pic);
+			var fileName = Path.GetRandomFileName();
+			var tempPath1 = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+			Directory.CreateDirectory(tempPath1);
+			// Write a couple of jpeg header bytes (for no particular reason)
+			var filePath1 = Path.Combine(tempPath1, fileName);
+			File.WriteAllBytes(filePath1, new byte[] { 0xFF, 0xE0, 0x0, 0x0, 0x1 });
+			pic.InternalPath = filePath1;
+			sensePic1.PictureFileRA = pic;
+			sensePic2.PictureFileRA = pic;
+
+			var tempFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "ConfigDictPictureExportTest"));
+			try
+			{
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, true, true, tempFolder.FullName);
+				//SUT
+				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
+				var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(fileName));
+				const string pictureXPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img";
+				var pictureWithComposedPath = pictureXPath + "[contains(@src, '" + pictureRelativePath + "')]";
+				if (!MiscUtils.IsUnix)
+					AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(pictureWithComposedPath, 2);
+				else
+					// that src contains a string, and escaping any Windows path separators
+					AssertRegex(result, string.Format("src=\"[^\"]*{0}[^\"]*\"", pictureRelativePath.Replace(@"\", @"\\")), 2);
+				const string guidXPath = pictureXPath + "[@id='g{0}']";
+				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(string.Format(guidXPath, sensePic1.Guid), 1);
+				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(string.Format(guidXPath, sensePic2.Guid), 1);
+			}
+			finally
+			{
+				SIL.IO.DirectoryUtilities.DeleteDirectoryRobust(tempFolder.FullName);
+				File.Delete(filePath1);
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_BadFileNameDoesNotCrash()
+		{
+			var mainEntryNode = CreatePictureModel();
+			var testEntry = CreateInterestingLexEntry(Cache);
+			var sense = testEntry.SensesOS[0];
+			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			sense.PicturesOS.Add(sensePic);
+			var pic = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			Cache.LangProject.MediaOC.Add(folder);
+			folder.FilesOC.Add(pic);
+			var fileName = ".G.Images\\Marine images\\Cephalopholis leopardus.jpg;1.5\"; 1\";JPG";
+			pic.InternalPath = fileName;
+			sensePic.PictureFileRA = pic;
+
+			var tempFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "ConfigDictPictureExportTest"));
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, true, true, tempFolder.FullName);
+			//SUT
+			Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_NullFilePathDoesNotCrash()
+		{
+			var mainEntryNode = CreatePictureModel();
+			var testEntry = CreateInterestingLexEntry(Cache);
+			var sense = testEntry.SensesOS[0];
+			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			sense.PicturesOS.Add(sensePic);
+			var pic = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			Cache.LangProject.MediaOC.Add(folder);
+			folder.FilesOC.Add(pic);
+			pic.InternalPath = string.Empty;
+			sensePic.PictureFileRA = pic;
+
+			var tempFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "ConfigDictPictureExportTest"));
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, true, true, tempFolder.FullName);
+			//SUT
+			Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_TwoDifferentLinksToTheSamefileWorks()
 		{
 			var mainEntryNode = CreatePictureModel();
@@ -4780,13 +5568,15 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var crossRefs = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "MinimalLexReferences", CSSClassNameOverride = "mlrs", Children = new List<ConfigurableDictionaryNode> { targets }
+				FieldDescription = "MinimalLexReferences", CSSClassNameOverride = "mlrs",
+				Children = new List<ConfigurableDictionaryNode> { targets }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { crossRefs }
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			const string refType = "SomeType";
 			using (var entryCustomField = new CustomFieldForTest(Cache, "EntryCString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
 				CellarPropertyType.MultiString, Guid.Empty))
 			using (var senseCustomField = new CustomFieldForTest(Cache, "SenseCString", Cache.MetaDataCacheAccessor.GetClassId("LexSense"), 0,
@@ -4794,7 +5584,14 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var testEntry = CreateInterestingLexEntry(Cache);
 				var refdEntry = CreateInterestingLexEntry(Cache);
-				CreateLexicalReference(testEntry, refdEntry, "SomeType");
+				CreateLexicalReference(testEntry, refdEntry, refType);
+				var lexrefType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(
+						r => r.Name.BestAnalysisAlternative.Text == refType);
+				crossRefs.DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { lexrefType.Guid.ToString()})
+				};
 				const string entryCustomData = "Another custom string";
 				const string senseCustomData = "My custom string";
 				Cache.MainCacheAccessor.SetMultiStringAlt(refdEntry.Hvo, entryCustomField.Flid, m_wsEn,
@@ -4807,7 +5604,7 @@ namespace SIL.FieldWorks.XWorks
 				var entryDataPath = string.Format("/div[@class='lexentry']/span[@class='mlrs']/span[@class='mlr']/span[@class='configtargets']/span[@class='configtarget']/span[@class='entrycstring']/span[text()='{0}']", entryCustomData);
 				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(entryDataPath, 1);
 				var senseDataPath = string.Format("/div[@class='lexentry']/span[@class='mlrs']/span[@class='mlr']/span[@class='configtargets']/span[@class='configtarget']/span[@class='sensecstring']/span[text()='{0}']", senseCustomData);
-				AssertThatXmlIn.String(result).HasNoMatchForXpath(senseDataPath, message:"Ref is to Entry; should be no Sense Custom Data");
+				AssertThatXmlIn.String(result).HasNoMatchForXpath(senseDataPath, message: "Ref is to Entry; should be no Sense Custom Data");
 			}
 		}
 
@@ -4835,6 +5632,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { crossRefs }
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			const string refType = "SomeType";
 			using (var entryCustomField = new CustomFieldForTest(Cache, "EntryCString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
 				CellarPropertyType.MultiString, Guid.Empty))
 			using (var senseCustomField = new CustomFieldForTest(Cache, "SenseCString", Cache.MetaDataCacheAccessor.GetClassId("LexSense"), 0,
@@ -4842,7 +5640,14 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var testEntry = CreateInterestingLexEntry(Cache);
 				var refdEntry = CreateInterestingLexEntry(Cache);
-				CreateLexicalReference(testEntry, refdEntry.SensesOS[0], "SomeType");
+				CreateLexicalReference(testEntry, refdEntry.SensesOS[0], refType);
+				var lexrefType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(
+						r => r.Name.BestAnalysisAlternative.Text == refType);
+				crossRefs.DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { lexrefType.Guid.ToString() })
+				};
 				const string entryCustomData = "Another custom string";
 				const string senseCustomData = "My custom string";
 				Cache.MainCacheAccessor.SetMultiStringAlt(refdEntry.Hvo, entryCustomField.Flid, m_wsEn,
@@ -5170,7 +5975,8 @@ namespace SIL.FieldWorks.XWorks
 			var entryOne = CreateInterestingLexEntry(Cache);
 			var senseaudio = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entryOne.LexemeFormOA = senseaudio;
-			senseaudio.Form.set_String(wsEnAudio.Handle, TsStringUtils.MakeString("TestAudio.wav", wsEnAudio.Handle));
+			const string audioFileName = "Test Audi'o.wav";
+			senseaudio.Form.set_String(wsEnAudio.Handle, TsStringUtils.MakeString(audioFileName, wsEnAudio.Handle));
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
@@ -5178,8 +5984,8 @@ namespace SIL.FieldWorks.XWorks
 			const string audioTagwithSource = "//audio/source/@src";
 			AssertThatXmlIn.String(result)
 				.HasSpecifiedNumberOfMatchesForXpath(audioTagwithSource, 1);
-			const string audioFileUrl =
-				@"Src/xWorks/xWorksTests/TestData/LinkedFiles/AudioVisual/TestAudio.wav";
+			var audioFileUrl =
+				@"Src/xWorks/xWorksTests/TestData/LinkedFiles/AudioVisual/" + audioFileName;
 			Assert.That(result, Contains.Substring(audioFileUrl));
 			const string linkTagwithOnClick =
 				"//span[@class='lexemeformoa']/span/a[@class='en-Zxxx-x-audio' and contains(@onclick,'play()')]";
@@ -5207,17 +6013,21 @@ namespace SIL.FieldWorks.XWorks
 			var entryOne = CreateInterestingLexEntry(Cache);
 			var senseaudio = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entryOne.LexemeFormOA = senseaudio;
-			senseaudio.Form.set_String(wsEnAudio.Handle, TsStringUtils.MakeString("TestAudio.wav", wsEnAudio.Handle));
+			const string audioFileName = "Test Audi'o.wav";
+			senseaudio.Form.set_String(wsEnAudio.Handle, TsStringUtils.MakeString(audioFileName, wsEnAudio.Handle));
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, true, true, "//audio/source/@src");
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
 
+			const string safeAudioId = "gTest_Audi_o";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath("//audio[contains(@id," + safeAudioId + ")]", 1);
 			const string audioTagwithSource = "//audio/source/@src";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(audioTagwithSource, 1);
-			var audioFileUrl = Path.Combine("AudioVisual", "TestAudio.wav");
+			var audioFileUrl = Path.Combine("AudioVisual", audioFileName);
 			Assert.That(result, Contains.Substring(audioFileUrl));
-			const string linkTagwithOnClick =
-				"//span[@class='lexemeformoa']/span/a[@class='en-Zxxx-x-audio' and @href!='#' and contains(@onclick,'play()')]";
+			var linkTagwithOnClick = "//span[@class='lexemeformoa']/span/a[@class='en-Zxxx-x-audio'";
+			linkTagwithOnClick += " and @href='#" + safeAudioId + "'";
+			linkTagwithOnClick += " and contains(@onclick,'" + safeAudioId + "') and contains(@onclick,'.play()')]";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(linkTagwithOnClick, 1);
 		}
 
@@ -5318,20 +6128,19 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var refTypeNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LookupComplexEntryType",
+				FieldDescription = ConfiguredXHTMLGenerator.LookupComplexEntryType,
 				CSSClassNameOverride = "complexformtypes",
 				Children = new List<ConfigurableDictionaryNode> { revAbbrevNode }
 			};
 			var subentryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { refTypeNode },
-				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions(),
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex),
 				FieldDescription = "Subentries"
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { subentryNode },
-				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions(),
 				FieldDescription = "SensesOS", CSSClassNameOverride = "senses"
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -5365,21 +6174,21 @@ namespace SIL.FieldWorks.XWorks
 			var complexRefAbbr = subentryRef.ComplexEntryTypesRS[0].Abbreviation.BestAnalysisAlternative.Text;
 			var complexRefRevAbbr = subentryRef.ComplexEntryTypesRS[0].ReverseAbbr.BestAnalysisAlternative.Text;
 
-			var revAbbrevNode  = new ConfigurableDictionaryNode
+			var revAbbrevNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReverseAbbr",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
 			};
 			var refTypeNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LookupComplexEntryType",
+				FieldDescription = ConfiguredXHTMLGenerator.LookupComplexEntryType,
 				CSSClassNameOverride = "complexformtypes",
 				Children = new List<ConfigurableDictionaryNode> { revAbbrevNode }
 			};
 			var subentryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { refTypeNode },
-				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions(),
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex),
 				FieldDescription = "Subentries"
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -5402,6 +6211,77 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(revNameXpath, 1);
 		}
 
+		/// <param name="isUnderSense">
+		/// Whether the subentry is under a sense of the main entry. We do *not* support subentries under senses of subentries.
+		/// </param>
+		[Test]
+		public void GenerateXHTMLForEntry_GeneratesComplexFormTypeForSubsubentry([Values(true, false)] bool isUnderSense)
+		{
+			var lexentry = CreateInterestingLexEntry(Cache);
+
+			var subentry = CreateInterestingLexEntry(Cache);
+			var otherComplexRefRevAbbr = CreateComplexForm(Cache, isUnderSense ? (ICmObject)lexentry : lexentry.SensesOS.First(), subentry, true, 2)
+				.ComplexEntryTypesRS[0].ReverseAbbr.BestAnalysisAlternative.Text;
+
+			var subsubentry = CreateInterestingLexEntry(Cache);
+			var subsubentryRef = CreateComplexForm(Cache, subentry, subsubentry, true, 4);
+
+			var complexRefAbbr = subsubentryRef.ComplexEntryTypesRS[0].Abbreviation.BestAnalysisAlternative.Text;
+			var complexRefRevAbbr = subsubentryRef.ComplexEntryTypesRS[0].ReverseAbbr.BestAnalysisAlternative.Text;
+
+			var subsubentryNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex),
+				FieldDescription = "Subentries", ReferenceItem = "Subentries"
+			};
+			var revAbbrevNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ReverseAbbr",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var refTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = ConfiguredXHTMLGenerator.LookupComplexEntryType,
+				CSSClassNameOverride = "complexformtypes",
+				Children = new List<ConfigurableDictionaryNode> { revAbbrevNode }
+			};
+			var sharedSubentryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { refTypeNode, subsubentryNode },
+				FieldDescription = "Subentries"
+			};
+			var subentryNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex),
+				ReferenceItem = "Subentries", FieldDescription = "Subentries"
+			};
+			var senseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				Children = new List<ConfigurableDictionaryNode> { subentryNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { senseNode, subentryNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(DictionaryConfigurationModelTests.CreateSimpleSharingModel(mainEntryNode, sharedSubentryNode));
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
+			const string fwdNameXpath =
+				"//span[@class='subentries subentries']/span[@class='subentry subentry']/span[@class='subentries subentries']/span[@class='subentry subentry']"
+				+ "/span[@class='complexformtypes']/span[@class='complexformtype']/span/span[@lang='en' and text()='{0}']";
+			const string revNameXpath =
+				"//span[@class='subentries subentries']/span[@class='subentry subentry']/span[@class='subentries subentries']/span[@class='subentry subentry']"
+				+ "/span[@class='complexformtypes']/span[@class='complexformtype']/span[@class='reverseabbr']/span[@lang='en' and text()='{0}']";
+			AssertThatXmlIn.String(result).HasNoMatchForXpath(string.Format(fwdNameXpath, complexRefAbbr));
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(string.Format(revNameXpath, complexRefRevAbbr), 1);
+			AssertThatXmlIn.String(result).HasNoMatchForXpath(string.Format(revNameXpath, otherComplexRefRevAbbr),
+				message: "should be confined to subentry");
+		}
+
 		[Test]
 		public void GenerateXHTMLForEntry_DoesntGeneratesComplexFormType_WhenDisabled()
 		{
@@ -5419,7 +6299,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var refTypeNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LookupComplexEntryType", IsEnabled = false,
+				FieldDescription = ConfiguredXHTMLGenerator.LookupComplexEntryType, IsEnabled = false,
 				CSSClassNameOverride = "complexformtypes",
 				Children = new List<ConfigurableDictionaryNode> { revAbbrevNode }
 			};
@@ -5478,7 +6358,7 @@ namespace SIL.FieldWorks.XWorks
 				CSSClassNameOverride = "complexformtypes",
 				Children = new List<ConfigurableDictionaryNode> { complexTypeNameNode },
 			};
-			var complexOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex, true);
+			var complexOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex);
 			var referencedCompFormNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { complexEntryTypeNode, formNode },
@@ -5517,7 +6397,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "ComplexEntryTypesRS",
 				CSSClassNameOverride = "complexformtypes",
 			};
-			var complexOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex, true);
+			var complexOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex);
 			var referencedCompFormNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> {complexEntryTypeNode, formNode },
@@ -5537,7 +6417,7 @@ namespace SIL.FieldWorks.XWorks
 			const string refTypeXpath = "//span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='complexformtypes']/span[@class='complexformtype']";
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(refTypeXpath);
 			const string headwordXpath = "//span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='headword']";
-			AssertThatXmlIn.String(result).HasAtLeastOneMatchForXpath(headwordXpath);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(headwordXpath, 1);
 		}
 
 		[Test]
@@ -5556,10 +6436,10 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var refTypeNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LookupComplexEntryType",
+				FieldDescription = ConfiguredXHTMLGenerator.LookupComplexEntryType,
 				CSSClassNameOverride = "complexformtypes",
 			};
-			var complexOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex, true);
+			var complexOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex);
 			var subentryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { refTypeNode, headwordNode },
@@ -5579,7 +6459,7 @@ namespace SIL.FieldWorks.XWorks
 			const string refTypeXpath = "//span[@class='subentries']/span[@class='subentry']/span[@class='complexformtypes']/span[@class='complexformtype']";
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(refTypeXpath);
 			const string headwordXpath = "//span[@class='subentries']/span[@class='subentry']/span[@class='headword']";
-			AssertThatXmlIn.String(result).HasAtLeastOneMatchForXpath(headwordXpath);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(headwordXpath, 1);
 		}
 
 		[Test]
@@ -5674,7 +6554,7 @@ namespace SIL.FieldWorks.XWorks
 			const string refTypeXpath = "//span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@class='variantentrytypesrs']/span[@class='variantentrytypesr']";
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(refTypeXpath);
 			const string headwordXpath = "//span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@class='headword']";
-			AssertThatXmlIn.String(result).HasAtLeastOneMatchForXpath(headwordXpath);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(headwordXpath, 1);
 		}
 
 		[Test]
@@ -5763,9 +6643,48 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
 			const string headwordXpath = "//span[@class='reffingsubs sharedsubentries']/span[@class='reffingsub sharedsubentry']/span[@class='headword']";
-			AssertThatXmlIn.String(result).HasAtLeastOneMatchForXpath(headwordXpath);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(headwordXpath, 1);
 		}
 
+		[Test]
+		public void GenerateXHTMLForEntry_GeneratesCorrectMainAndMinorEntries()
+		{
+			var firstMainEntry = CreateInterestingLexEntry(Cache);
+			var idiom = CreateInterestingLexEntry(Cache, "entry1", "myComplexForm");
+			CreateComplexForm(Cache, firstMainEntry, idiom, false, 4);
+
+			var idiomGuid = "b2276dec-b1a6-4d82-b121-fd114c009c59";
+
+			var enabledComplexEntryTypes = new List<string>();
+			enabledComplexEntryTypes.Add(idiomGuid);// Idiom
+
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				FieldDescription = "LexEntry",
+				Label = "Main Entry",
+				DictionaryNodeOptions = GetListOptionsForStrings(DictionaryNodeListOptions.ListIds.Complex, enabledComplexEntryTypes)
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			//SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForMainEntry(idiom, mainEntryNode, null, settings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath("/div[@class='lexentry']/span[@class='headword']", 1);
+
+			var complexOptions = (DictionaryNodeListOptions)mainEntryNode.DictionaryNodeOptions;
+			complexOptions.Options[0].IsEnabled = false;
+			result = ConfiguredXHTMLGenerator.GenerateXHTMLForMainEntry(idiom, mainEntryNode, null, settings);
+			Assert.IsEmpty(result);
+		}
+
+		/// <remarks>Note that the "Unspecified" Types mentioned here are truly unspecified, not the specified Type "Unspecified Form Type"</remarks>
 		[Test]
 		public void GenerateXHTMLForEntry_GeneratesCorrectMinorEntries(
 			[Values(FormType.Specified, FormType.Unspecified, FormType.None)] FormType complexForm,
@@ -5774,8 +6693,9 @@ namespace SIL.FieldWorks.XWorks
 			[Values(true, false)] bool isUnspecifiedVariantTypeEnabled,
 			[Values(true, false)] bool isRootBased)
 		{
-			if (complexForm == FormType.None && variantForm == FormType.None)
-				return; // A Minor entry makes no sense if it's neither complex nor variant
+			if ((variantForm == FormType.None && complexForm == FormType.None) // A Minor entry makes no sense if it's neither complex nor variant
+				|| (complexForm != FormType.None && !isRootBased)) // Only Root-based configurations consider complex forms to be main entries
+				return;
 
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var minorEntry = CreateInterestingLexEntry(Cache);
@@ -5948,7 +6868,7 @@ namespace SIL.FieldWorks.XWorks
 				CSSClassNameOverride = "headword",
 				SubField = "HeadWordRef",
 				IsEnabled = true,
-				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "vernacular" })
 			};
 			var variantTypeNameNode = new ConfigurableDictionaryNode
 			{
@@ -6200,10 +7120,17 @@ namespace SIL.FieldWorks.XWorks
 				CSSClassNameOverride = "variantentrytypes",
 				Children = new List<ConfigurableDictionaryNode> { variantTypeNameNode },
 			};
+			var variantNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
+				SubField = "HeadWordRef",
+				CSSClassNameOverride = "headword"
+			};
 			var variantNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "VariantFormEntryBackRefs",
-				Children = new List<ConfigurableDictionaryNode> { variantTypeNode },
+				Children = new List<ConfigurableDictionaryNode> { variantTypeNode, variantNameNode },
 				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant)
 			};
 			var mainHeadwordNode = new ConfigurableDictionaryNode
@@ -6239,12 +7166,75 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_GeneratesVariantEntryTypesShowOnlySelectedListItem()
+		{
+			var variantTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+			};
+			var variantTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				CSSClassNameOverride = "variantentrytypes",
+				Children = new List<ConfigurableDictionaryNode> { variantTypeNameNode },
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant)
+			};
+			var variantNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
+				SubField = "HeadWordRef",
+				CSSClassNameOverride = "headword"
+			};
+			var variantNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs",
+				Children = new List<ConfigurableDictionaryNode> { variantTypeNode, variantNameNode },
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant)
+			};
+			var mainHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
+				CSSClassNameOverride = "entry"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode, variantNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			var entryEntry = CreateInterestingLexEntry(Cache);
+
+			var ve1 = CreateInterestingLexEntry(Cache, "variantEntry1");
+			var ve2 = CreateInterestingLexEntry(Cache, "variantEntry2");
+
+			//Uncheck all other variant types except "Free Variant"
+			const string freeVariantGuid = "4343b1ef-b54f-4fa4-9998-271319a6d74c";
+			var variantOptions = (DictionaryNodeListOptions)mainEntryNode.Children[1].DictionaryNodeOptions;
+			foreach (var variantType in variantOptions.Options)
+			{
+				variantType.IsEnabled = variantType.Id == freeVariantGuid;
+			}
+
+			CreateVariantForm(Cache, entryEntry, ve1, "Free Variant"); // unique Type;
+			CreateVariantForm(Cache, entryEntry, ve2, "Spelling Variant"); // unique Type; UnChecked
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			var output = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryEntry, mainEntryNode, null, settings);
+			const string matchFreeVariantRef = "//span[@class='variantentrytypes']/span[@class='variantentrytype']/span[@class='name']/span[@lang='en' and text()='Free Variant']";
+			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFreeVariantRef, 1);
+			const string matchSpellingVariantRef = "//span[@class='variantentrytypes']/span[@class='variantentrytype']/span[@class='name']/span[@lang='en' and text()='Spelling Variant']";
+			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchSpellingVariantRef, 0);
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_GeneratesComplexFormEntryTypesLabelWithNoRepetition()
 		{
 			var typeMain = CreatePublicationType("main");
 
-			var entryEntry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(entryEntry, "entry", m_wsFr);
+			var entryEntry = CreateInterestingLexEntry(Cache, "entry");
 
 			var firstComplexForm = CreateInterestingLexEntry(Cache, "entry1", "myComplexForm");
 			CreateComplexForm(Cache, entryEntry, firstComplexForm, false); //Compound
@@ -6269,10 +7259,17 @@ namespace SIL.FieldWorks.XWorks
 				CSSClassNameOverride = "complexformtypes",
 				Children = new List<ConfigurableDictionaryNode> { complexFormTypeNameNode },
 			};
+			var complexFormNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
+				SubField = "HeadWordRef",
+				CSSClassNameOverride = "headword"
+			};
 			var complexFormNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "VisibleComplexFormBackRefs",
-				Children = new List<ConfigurableDictionaryNode> { complexFormTypeNode },
+				Children = new List<ConfigurableDictionaryNode> { complexFormTypeNode, complexFormNameNode },
 				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex)
 			};
 			var mainHeadwordNode = new ConfigurableDictionaryNode
@@ -6303,7 +7300,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var firstComplexForm = CreateInterestingLexEntry(Cache, "entry1", "myComplexForm");
 			CreateComplexForm(Cache, entryEntry, firstComplexForm, false); //Compound
-			CreateComplexForm(Cache, entryEntry, firstComplexForm, false, 3); //Idiom
+			CreateComplexForm(Cache, entryEntry, firstComplexForm, false, 4); //Idiom
 
 			var secondComplexForm = CreateInterestingLexEntry(Cache, "entry2", "myComplexForm");
 			CreateComplexForm(Cache, entryEntry, secondComplexForm, false); //Compound
@@ -6377,16 +7374,17 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var refTypeNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "LookupComplexEntryType",
+				FieldDescription = ConfiguredXHTMLGenerator.LookupComplexEntryType,
 				CSSClassNameOverride = "complexformtypes",
 				Children = new List<ConfigurableDictionaryNode> { revAbbrevNode }
 			};
 			var subentryNode = new ConfigurableDictionaryNode
 			{
 				Children = new List<ConfigurableDictionaryNode> { refTypeNode },
-				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions{DisplayEachInAParagraph = true},
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex),
 				FieldDescription = "Subentries"
 			};
+			((IParaOption)subentryNode.DictionaryNodeOptions).DisplayEachInAParagraph = true;
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }) };
 			var SenseNode = new ConfigurableDictionaryNode
 			{
@@ -6449,7 +7447,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "ComplexFormEntryRefs",
 				Label = "Components",
-				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex, true),
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex),
 				Children = new List<ConfigurableDictionaryNode> { refentryNode }
 			};
 			var minorEntryNode = new ConfigurableDictionaryNode
@@ -6783,9 +7781,7 @@ namespace SIL.FieldWorks.XWorks
 			//Generate 21 entries for the test
 			for (var i = 0; i < 21; ++i)
 			{
-				var entry = CreateInterestingLexEntry(Cache);
-				AddHeadwordToEntry(entry, "a" + i, m_wsFr);
-				hvos[i] = entry.Hvo;
+				hvos[i] = CreateInterestingLexEntry(Cache, "a" + i).Hvo;
 			}
 			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
 			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
@@ -6983,7 +7979,7 @@ namespace SIL.FieldWorks.XWorks
 				//System.Diagnostics.Debug.WriteLine(String.Format("GENERATED XHTML = \r\n{0}\r\n=====================", xhtml));
 				// SUT
 				const string allCategsPath = "//span[@class='morphosyntaxanalysis']/span[@class='mlpartofspeech']/span[@lang='en']";
-				const string firstCategPath = "/html/body/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='morphosyntaxanalysis']/span[@class='mlpartofspeech']/span[@lang='en' and text()='n']";
+				const string firstCategPath = "/html/body/div[@class='lexentry']/span[@class='senses']//span[@class='sensecontent']/span[@class='sense']/span[@class='morphosyntaxanalysis']/span[@class='mlpartofspeech']/span[@lang='en' and text()='n']";
 				const string secondCategPath = "/html/body/div[@class='lexentry']/span[@class='senses']/span[@class='sharedgrammaticalinfo']/span[@class='morphosyntaxanalysis']/span[@class='mlpartofspeech']/span[@lang='en' and text()='n']";
 				const string thirdCategPath = "/html/body/div[@class='lexentry']/span[@class='senses']/span[@class='sharedgrammaticalinfo']/span[@class='morphosyntaxanalysis']/span[@class='mlpartofspeech']/span[@lang='en' and text()='adj']";
 				const string fourthCategPath = "/html/body/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='morphosyntaxanalysis']/span[@class='mlpartofspeech']/span[@lang='en' and text()='adj']";
@@ -6991,7 +7987,7 @@ namespace SIL.FieldWorks.XWorks
 
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(allCategsPath, 5);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(firstCategPath, 1);
-				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(secondCategPath, 1);
+				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(secondCategPath, 2);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(thirdCategPath, 1);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(fourthCategPath, 1);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(fifthCategPath, 1);
@@ -7021,6 +8017,30 @@ namespace SIL.FieldWorks.XWorks
 			{
 				DeleteTempXhtmlAndCssFiles(preferredPath);
 				DeleteTempXhtmlAndCssFiles(actualPath);
+			}
+		}
+
+		[Test]
+		public void SavePublishedHtmlWithCustomCssFile()
+		{
+			var entries = new int[0];
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode>(),
+				FilePath = Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable),
+										"filename" + DictionaryConfigurationModel.FileExtension)
+			};
+			var xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(entries, null, model, m_propertyTable);
+			try
+			{
+				var previewXhtmlContent = File.ReadAllText(xhtmlPath);
+				// ReSharper disable once AssignNullToNotNullAttribute -- Justification: XHTML is always saved in a directory
+				var fileName = "ProjectDictionaryOverrides.css";
+				StringAssert.Contains(fileName, previewXhtmlContent, "Custom css file should added in the XHTML file");
+			}
+			finally
+			{
+				DeleteTempXhtmlAndCssFiles(xhtmlPath);
 			}
 		}
 
@@ -7111,35 +8131,211 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(extraDirection1);
 		}
 
-		/// <summary>
-		/// This tests the fixes for
-		/// - LT-16504: Lexical References should be sorted by LexRefType in the order specified in the configuration
-		/// - LT-17384: Lexical References should be in the same order every time (we accomplish this by sorting by GUID within each LexRefType)
-		/// </summary>
+		private const string crossRefOwnerTypeXpath =
+			"//span[@class='minimallexreferences']/span[@class='minimallexreference']/span[@class='ownertype_name']";
+
+		private static string CrossRefOwnerTypeXpath(string type)
+		{
+			return string.Format("//span[@class='minimallexreferences']/span[@class='minimallexreference']/span[@class='ownertype_name']" +
+				"/span[@lang='en' and text()='{0}']", type);
+		}
+
+		private static string HeadwordOrderInCrossRefsXpath(int position, string headword)
+		{
+			return string.Format("//span[@class='minimallexreferences']/span[@class='minimallexreference']/span[@class='configtargets']" +
+				"/span[@class='configtarget' and position()='{0}']/span/span/a[text()='{1}']", position, headword);
+		}
+
+		private static string HeadwordWsInCrossRefsXpath(string ws, string headword) // REVIEW (Hasso) 2017.04: move these helpers to Helpers?
+		{
+			return string.Format("//span[@class='minimallexreferences']/span[@class='minimallexreference']/span[@class='configtargets']" +
+				"/span[@class='configtarget']/span/span[@lang='{0}']/a[text()='{1}']", ws, headword);
+		}
+
 		[Test]
+		public void GenerateXHTMLForEntry_CompareRelations_SimpleSituations_SortByHeadword([Values(true, false)] bool SeparateReferences)
+		{
+			var mainEntry = CreateInterestingLexEntry(Cache, "MainEntry");
+			var compareReferencedEntry1 = CreateInterestingLexEntry(Cache, "b", "b comparable");
+			var compareReferencedEntry2 = CreateInterestingLexEntry(Cache, "a", "a comparable");
+			var compareReferencedEntry3 = CreateInterestingLexEntry(Cache, "c", "c comparable");
+			const string comRefTypeName = "Compare";
+			var comRefType = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntryCollection, comRefTypeName, "cf", string.Empty, string.Empty);
+			if (SeparateReferences)
+			{
+				const string Guid1 = "11111111-f1ac-4950-8562-4d617e0ace18";
+				const string Guid2 = "22222222-e929-4202-8886-b156a4c035f5";
+				const string Guid3 = "33333333-9a03-49bc-8375-2ab9bafbc90b";
+
+				// these have specific Guids so we know they would be in this order if ordered by Guid
+				CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry1 }, new Guid(Guid1));
+				CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry2 }, new Guid(Guid2));
+				CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry3 }, new Guid(Guid3));
+			}
+			else
+			{
+				CreateLexReference(comRefType, new[] { mainEntry, compareReferencedEntry1, compareReferencedEntry2, compareReferencedEntry3 });
+			}
+
+			var mainEntryNode = ModelForCrossReferences(new[] { comRefType.Guid.ToString() });
+			// SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, DefaultSettings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(crossRefOwnerTypeXpath, 1); // ensure there is only one
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(CrossRefOwnerTypeXpath(comRefTypeName), 1); // ...the *correct* one
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(1, "a"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(2, "b"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(3, "c"), 1);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_CompareRelations_ComplexSituation_SortByHeadword()
+		{
+			var mainEntry = CreateInterestingLexEntry(Cache, "MainEntry");
+			var compareReferencedEntry1 = CreateInterestingLexEntry(Cache, "b", "b comparable");
+			var compareReferencedEntry2 = CreateInterestingLexEntry(Cache, "a", "a comparable");
+			var compareReferencedEntry3 = CreateInterestingLexEntry(Cache, "c", "c comparable");
+			var compareReferencedEntry4 = CreateInterestingLexEntry(Cache, "ba", "ba comparable");
+			var compareReferencedEntry5 = CreateInterestingLexEntry(Cache, "ca", "ca comparable");
+			const string comRefTypeName = "Compare";
+			var comRefType = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntryCollection, comRefTypeName, "cf", string.Empty, string.Empty);
+			CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry3, compareReferencedEntry2 });
+			CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry5, compareReferencedEntry4, compareReferencedEntry1 });
+			Assert.IsNotNull(comRefType);
+
+			var mainEntryNode = ModelForCrossReferences(new[] { comRefType.Guid.ToString() });
+			// SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, DefaultSettings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(CrossRefOwnerTypeXpath(comRefTypeName), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(1, "a"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(2, "b"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(3, "ba"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(4, "c"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(5, "ca"), 1);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_CrossRefs_Sequences_SequencePreserved()
+		{
+			var alphaEntry = CreateInterestingLexEntry(Cache, "alpha", "alpha");
+			var redEntry = CreateInterestingLexEntry(Cache, "rouge", "red");
+			var greenEntry = CreateInterestingLexEntry(Cache, "vert", "green");
+			var blueEntry = CreateInterestingLexEntry(Cache, "bleu", "blue");
+			var midAlphabetEntry = CreateInterestingLexEntry(Cache, "omega", "middle of the Roman alphabet; we're not testing Greek :-)");
+			const string colorTypeName = "Color";
+			var colorType = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntrySequence, colorTypeName, "col", string.Empty, string.Empty);
+			CreateLexReference(colorType, new List<ICmObject> { alphaEntry, redEntry, greenEntry, blueEntry });
+			const string greekTypeName = "Greek";
+			var greekType = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntrySequence, greekTypeName, "grk", string.Empty, string.Empty);
+			CreateLexReference(greekType, new List<ICmObject> { alphaEntry, midAlphabetEntry });
+
+			var mainEntryNode = ModelForCrossReferences(new[] { colorType.Guid.ToString(), greekType.Guid.ToString() });
+			// SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(alphaEntry, mainEntryNode, null, DefaultSettings);
+			// first sequence: colors: ARGB
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(CrossRefOwnerTypeXpath(colorTypeName), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(1, "alpha"), 2); // the first in both
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(2, "rouge"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(3, "vert"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(4, "bleu"), 1);
+			// second sequence: greek letters (ok, not *all* of them): AΩ
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(CrossRefOwnerTypeXpath(greekTypeName), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(2, "omega"), 1);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_CrossRefs_Unidirectional_SequencePreserved()
+		{
+			var stoogesEntry = CreateInterestingLexEntry(Cache, "Stooges");
+			var larryEntry = CreateInterestingLexEntry(Cache, "Larry");
+			var curlyEntry = CreateInterestingLexEntry(Cache, "Curly");
+			var moeEntry = CreateInterestingLexEntry(Cache, "Moe");
+			const string characterTypeName = "Character";
+			var characterType = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntryUnidirectional, characterTypeName, "char", string.Empty, string.Empty);
+			CreateLexReference(characterType, new List<ICmObject> { stoogesEntry, larryEntry, curlyEntry, moeEntry });
+
+			var mainEntryNode = ModelForCrossReferences(new[] { characterType.Guid + ":f" });
+			// SUT
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(stoogesEntry, mainEntryNode, null, DefaultSettings);
+			// sequence of Stooges:
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(CrossRefOwnerTypeXpath(characterTypeName), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(1, "Larry"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(2, "Curly"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(3, "Moe"), 1);
+			AssertThatXmlIn.String(result).HasNoMatchForXpath(HeadwordOrderInCrossRefsXpath(4, "Stooges")); // Unidirectional excludes the owner
+		}
+
+		private static ConfigurableDictionaryNode ModelForCrossReferences(IEnumerable<string> types)
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWordRef",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr", "en" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular)
+			};
+			var targetsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ConfigTargets",
+				Children = new List<ConfigurableDictionaryNode> { headwordNode }
+			};
+			var nameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwnerType",
+				SubField = "Name",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var crossReferencesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MinimalLexReferences",
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(types)
+				},
+				Children = new List<ConfigurableDictionaryNode> { nameNode, targetsNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { crossReferencesNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			return mainEntryNode;
+		}
+
+	/// <summary>
+	/// This tests the fixes for
+	/// - LT-16504: Lexical References should be sorted by LexRefType in the order specified in the configuration
+	/// - LT-17384: Lexical References should be in the same order every time
+	///   (we accomplish this by sorting by Headword within each LexRefType)
+	/// - LT-18294: Relation Abbrev and Relation Name Configuration order ignored
+	/// Intermittent failures should NOT be ignored.
+	/// </summary>
+	[Test]
 		public void GenerateXHTMLForEntry_LexicalReferencesOrderedCorrectly([Values(true, false)] bool usingSubfield)
 		{
-			var firstEntry = CreateInterestingLexEntry(Cache, "homme", "man");
-			var secondEntry = CreateInterestingLexEntry(Cache, "femme", "woman");
-			var thirdEntry = CreateInterestingLexEntry(Cache, "famille", "family");
-			var fourthEntry = CreateInterestingLexEntry(Cache, "garçon", "boy");
-			var fifthEntry = CreateInterestingLexEntry(Cache, "fille", "girl");
-			var sixthEntry = CreateInterestingLexEntry(Cache, "individuel", "individual");
-			var sevnthEntry = CreateInterestingLexEntry(Cache, "truc", "thing");
-			var eighthEntry = CreateInterestingLexEntry(Cache, "bête", "beast");
+			var manEntry = CreateInterestingLexEntry(Cache, "homme", "man");
+			var womanEntry = CreateInterestingLexEntry(Cache, "femme", "woman");
+			var familyEntry = CreateInterestingLexEntry(Cache, "famille", "family");
+			var boyEntry = CreateInterestingLexEntry(Cache, "garçon", "boy");
+			var girlEntry = CreateInterestingLexEntry(Cache, "fille", "girl");
+			var individualEntry = CreateInterestingLexEntry(Cache, "individuel", "individual");
+			var thingEntry = CreateInterestingLexEntry(Cache, "truc", "thing");
+			var beastEntry = CreateInterestingLexEntry(Cache, "bête", "beast");
+			var armEntry = CreateInterestingLexEntry(Cache, "bras", "arm");
+			var legEntry = CreateInterestingLexEntry(Cache, "jambe", "leg");
 
 			var antonyms = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntryPair, "Antonym", "ant", null, null);
-			// LexReferences are sorted by GUID in XHTML (Dictionaries). Specify GUID's "out of order" to verify this sorting (LT-17384)
-			CreateLexReference(antonyms, new[] { firstEntry, secondEntry }, new Guid("0310ef0c-dd63-4c19-ab03-eda31e0f5309"));
-			CreateLexReference(antonyms, new[] { firstEntry, fourthEntry }, new Guid("0310ef0c-dd63-4c19-ab03-eda31e0f5314"));
-			CreateLexReference(antonyms, new[] { firstEntry, sevnthEntry }, new Guid("0310ef0c-dd63-4c19-ab03-eda31e0f5342"));
-			CreateLexReference(antonyms, new[] { firstEntry, eighthEntry }, new Guid("0310ef0c-dd63-4c19-ab03-eda31e0f5333"));
-			CreateLexReference(antonyms, new[] { fourthEntry, fifthEntry });
-			CreateLexReference(antonyms, new[] { thirdEntry, sixthEntry });
+			CreateLexReference(antonyms, new[] { manEntry, womanEntry });
+			CreateLexReference(antonyms, new[] { manEntry, boyEntry });
+			CreateLexReference(antonyms, new[] { manEntry, thingEntry });
+			CreateLexReference(antonyms, new[] { manEntry, beastEntry });
+			CreateLexReference(antonyms, new[] { familyEntry, individualEntry });
 
 			var wholeparts = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntryTree, "Part", "pt", "Whole", "wh");
-			CreateLexReference(wholeparts, new[] { thirdEntry, firstEntry, secondEntry, fourthEntry, fifthEntry },
-																			new Guid("0310ef0c-dd63-4c19-ab03-eda31e0f5316")); // in between others
+			CreateLexReference(wholeparts, new[] { familyEntry, manEntry, womanEntry, boyEntry, girlEntry });
+			// Girl is both a whole and a part, but has no other refs. When these targets are alphabetized by headword, their types alternate.
+			CreateLexReference(wholeparts, new[] { girlEntry, armEntry, legEntry });
+
 
 			var refHeadwordNode = new ConfigurableDictionaryNode
 			{
@@ -7153,6 +8349,14 @@ namespace SIL.FieldWorks.XWorks
 				Between = ", ",
 				Children = new List<ConfigurableDictionaryNode> { refHeadwordNode }
 			};
+			var relNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwnerType",
+				SubField = "Name",
+				After = ": ",
+				DictionaryNodeOptions =
+					GetWsOptionsForLanguages(new[] { "analysis" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis)
+			};
 			var relAbbrNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "OwnerType",
@@ -7163,14 +8367,16 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var relationsNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "MinimalLexReferences", CSSClassNameOverride = "lexrefs",
+				FieldDescription = "MinimalLexReferences",
+				CSSClassNameOverride = "lexrefs",
+				Between = "; ",
 				DictionaryNodeOptions = GetListOptionsForStrings(DictionaryNodeListOptions.ListIds.Sense, new[]
-				{
-					wholeparts.Guid + ":r",
-					antonyms.Guid.ToString(),
-					wholeparts.Guid + ":f"
-				}),
-				Children = new List<ConfigurableDictionaryNode> { relAbbrNode, targetsNode }
+					{
+						wholeparts.Guid + ":r",
+						antonyms.Guid.ToString(),
+						wholeparts.Guid + ":f"
+					}),
+				Children = new List<ConfigurableDictionaryNode> { relAbbrNode, relNameNode, targetsNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -7199,70 +8405,94 @@ namespace SIL.FieldWorks.XWorks
 				xpathLexRef = "//div/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='lexrefs']/span[@class='lexref']";
 			}
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
-			const string antSpan = "<span class=\"ownertype_abbreviation\"><span lang=\"en\">ant</span></span>";
+			var settings = DefaultSettings;
+			const string antAbbrSpan = "<span class=\"ownertype_abbreviation\"><span lang=\"en\">ant</span></span>";
 			const string whSpan = "<span class=\"ownertype_abbreviation\"><span lang=\"en\">wh</span></span>";
 			const string ptSpan = "<span class=\"ownertype_abbreviation\"><span lang=\"en\">pt</span></span>";
+			const string antNameSpan = "<span class=\"ownertype_name\"><span lang=\"en\">Antonym</span></span>";
 			const string femmeSpan = "<span class=\"headword\"><span lang=\"fr\">femme</span></span>";
-			const string garçonSpan = "<span class=\"headword\"><span lang=\"fr\">garçon</span></span>";
-			const string bêteSpan = "<span class=\"headword\"><span lang=\"fr\">bête</span></span>";
+			var garçonSpan = TsStringUtils.Compose("<span class=\"headword\"><span lang=\"fr\">garçon</span></span>");
+			var bêteSpan = TsStringUtils.Compose("<span class=\"headword\"><span lang=\"fr\">bête</span></span>");
 			const string trucSpan = "<span class=\"headword\"><span lang=\"fr\">truc</span></span>";
 			//SUT
-			var firstResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(firstEntry, mainEntryNode, null, settings);
-			AssertThatXmlIn.String(firstResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 5);
-			var idxAntonym = firstResult.IndexOf(antSpan, StringComparison.Ordinal);
-			var idxWhole = firstResult.IndexOf(whSpan, StringComparison.Ordinal);
-			var idxPart = firstResult.IndexOf(ptSpan, StringComparison.Ordinal);
-			Assert.Less(0, idxAntonym, "Antonym relation should exist for homme");
-			Assert.Less(0, idxWhole, "Whole relation should exist for homme");
-			Assert.AreEqual(-1, idxPart, "Part relation should not exist for homme");
-			Assert.Less(idxWhole, idxAntonym, "Whole relation should come before Antonym relation for homme");
-			var idxFemme = firstResult.IndexOf(femmeSpan, StringComparison.Ordinal);
-			var idxGarcon = firstResult.IndexOf(garçonSpan, StringComparison.Ordinal);
-			var idxBete = firstResult.IndexOf(bêteSpan, StringComparison.Ordinal);
-			var idxTruc = firstResult.IndexOf(trucSpan, StringComparison.Ordinal);
-			Assert.Less(idxAntonym, idxFemme);
+			//Console.WriteLine(ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new[] { manEntry.Hvo, familyEntry.Hvo, girlEntry.Hvo, individualEntry.Hvo }, null,
+			//	new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } }, m_mediator)); // full output for diagnostics
+			var manResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(manEntry, mainEntryNode, null, settings);
+			AssertThatXmlIn.String(manResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 2); // antonyms are grouped into one span
+			var idxAntonymAbbr = manResult.IndexOf(antAbbrSpan, StringComparison.Ordinal);
+			var idxWhole = manResult.IndexOf(whSpan, StringComparison.Ordinal);
+			var idxPart = manResult.IndexOf(ptSpan, StringComparison.Ordinal);
+			var idxAntonymName = manResult.IndexOf(antNameSpan, StringComparison.Ordinal);
+			Assert.Less(0, idxAntonymAbbr, "Antonym abbreviation relation should exist for homme (man)");
+			Assert.Less(0, idxWhole, "Whole relation should exist for homme (man)");
+			Assert.AreEqual(-1, idxPart, "Part relation should not exist for homme (man)");
+			Assert.Less(idxWhole, idxAntonymAbbr, "Whole relation should come before Antonym relation for homme (man)");
+			Assert.Less(idxAntonymAbbr, idxAntonymName, "Antonym name should exist after Antonym abbreviation");
+			var idxFemme = manResult.IndexOf(femmeSpan, StringComparison.Ordinal);
+			var idxGarcon = manResult.IndexOf(garçonSpan, StringComparison.Ordinal);
+			var idxBete = manResult.IndexOf(bêteSpan, StringComparison.Ordinal);
+			var idxTruc = manResult.IndexOf(trucSpan, StringComparison.Ordinal);
+			// LT-15764 The Antonyms are now sorted by Headword
+			Assert.Less(idxAntonymAbbr, idxBete);
+			Assert.Less(idxBete, idxFemme);
 			Assert.Less(idxFemme, idxGarcon);
-			Assert.Less(idxGarcon, idxBete);
-			Assert.Less(idxBete, idxTruc);
+			Assert.Less(idxGarcon, idxTruc);
+			Assert.Less(idxAntonymAbbr, idxAntonymName, "Antonym name should come after Antonym abbreviation");
+			Assert.Less(idxAntonymName, idxBete, "Target entry should come after Antonym name");
 
 			// Ignore if usingSubfield. Justification: Part-Whole direction is miscalculated for field=Entry, subfield=MinimalLexReferences (LT-17571)
 			if (!usingSubfield)
 			{
-				var thirdResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(thirdEntry, mainEntryNode, null, settings);
-				AssertThatXmlIn.String(thirdResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 2);
-				idxAntonym = thirdResult.IndexOf(antSpan, StringComparison.Ordinal);
-				idxWhole = thirdResult.IndexOf(whSpan, StringComparison.Ordinal);
-				idxPart = thirdResult.IndexOf(ptSpan, StringComparison.Ordinal);
-				Assert.Less(0, idxAntonym, "Antonym relation should exist for famille");
+				var familyResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(familyEntry, mainEntryNode, null, settings);
+				AssertThatXmlIn.String(familyResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 2);
+				idxAntonymAbbr = familyResult.IndexOf(antAbbrSpan, StringComparison.Ordinal);
+				idxWhole = familyResult.IndexOf(whSpan, StringComparison.Ordinal);
+				idxPart = familyResult.IndexOf(ptSpan, StringComparison.Ordinal);
+				idxAntonymName = familyResult.IndexOf(antNameSpan, StringComparison.Ordinal);
+				Assert.Less(0, idxAntonymAbbr, "Antonym abbreviation relation should exist for famille");
 				Assert.AreEqual(-1, idxWhole, "Whole relation should not exist for famille");
 				Assert.Less(0, idxPart, "Part relation should exist for famille");
-				Assert.Less(idxAntonym, idxPart, "Antonym relation should come before Part relation for famille");
+				Assert.Less(idxAntonymAbbr, idxPart, "Antonym abbreviation relation should come before Part relation for famille");
+				Assert.Less(idxAntonymAbbr, idxAntonymName, "Antonym name should come after Antonym abbreviation");
+
+				// SUT: Ensure that both directions of part-whole are kept separate
+				var girlResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(girlEntry, mainEntryNode, null, settings);
+				AssertThatXmlIn.String(girlResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 2); // whole and part
+				idxAntonymAbbr = girlResult.IndexOf(antAbbrSpan, StringComparison.Ordinal);
+				idxWhole = girlResult.IndexOf(whSpan, StringComparison.Ordinal);
+				idxPart = girlResult.IndexOf(ptSpan, StringComparison.Ordinal);
+				idxAntonymName = girlResult.IndexOf(antNameSpan, StringComparison.Ordinal);
+				Assert.AreEqual(-1, idxAntonymAbbr, "Antonym abbreviation relation should not exist for fille (girl)");
+				Assert.Less(0, idxWhole, "Whole relation should exist for fille (girl)");
+				Assert.Less(0, idxPart, "Part relation should exist for fille (girl)");
+				Assert.Less(idxWhole, idxPart, "Whole relation should come before Part relation for fille (girl)");
+				Assert.AreEqual(-1, idxAntonymName, "Antonym name relation should not exist for fille (girl)");
 			}
 
-			var sixthResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(sixthEntry, mainEntryNode, null, settings);
-			AssertThatXmlIn.String(sixthResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 1);
-			idxAntonym = sixthResult.IndexOf(antSpan, StringComparison.Ordinal);
-			idxWhole = sixthResult.IndexOf(whSpan, StringComparison.Ordinal);
-			idxPart = sixthResult.IndexOf(ptSpan, StringComparison.Ordinal);
-			Assert.Less(0, idxAntonym, "Antonym relation should exist for individuel");
+			var individualResult = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(individualEntry, mainEntryNode, null, settings);
+			AssertThatXmlIn.String(individualResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 1);
+			idxAntonymAbbr = individualResult.IndexOf(antAbbrSpan, StringComparison.Ordinal);
+			idxWhole = individualResult.IndexOf(whSpan, StringComparison.Ordinal);
+			idxPart = individualResult.IndexOf(ptSpan, StringComparison.Ordinal);
+			idxAntonymName = individualResult.IndexOf(antNameSpan, StringComparison.Ordinal);
+			Assert.Less(0, idxAntonymAbbr, "Antonym abbreviation relation should exist for individuel");
 			Assert.AreEqual(-1, idxWhole, "Whole relation should not exist for individuel");
 			Assert.AreEqual(-1, idxPart, "Part relation should not exist for individuel");
+			Assert.Less(idxAntonymAbbr, idxAntonymName, "Antonym name relation should exist for individuel");
 		}
 
 		/// <summary>
-		/// LT-17384.
+		/// LT-17384. LT-17762. Intermittent failures should NOT be ignored.
 		/// </summary>
 		[Test]
 		public void GenerateXHTMLForEntry_VariantsOfEntryAreOrdered()
 		{
 			var lexentry = CreateInterestingLexEntry(Cache);
 
-			// Because we are testing a sort by Guid, set the Guids instead of leaving them to chance.
-			using (CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordA"), new Guid("00000000-0000-0000-0000-000000000002")))
 			using (CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordB"), new Guid("00000000-0000-0000-0000-000000000001")))
-			using (CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordC"), new Guid("00000000-0000-0000-0000-000000000004")))
-			using (CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordD"), new Guid("00000000-0000-0000-0000-000000000003")))
+			using (CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordA"), new Guid("00000000-0000-0000-0000-000000000003")))
+			using (CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordD"), new Guid("00000000-0000-0000-0000-000000000004")))
+			using (CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordC"), new Guid("00000000-0000-0000-0000-000000000002")))
 			{
 				var variantTypeNameNode = new ConfigurableDictionaryNode
 				{
@@ -7301,14 +8531,278 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
 
-				// Test that variantformentrybackref items are in an order corresponding to their guids.
-				Assert.That(result.IndexOf("headwordB", StringComparison.InvariantCulture),
-					Is.LessThan(result.IndexOf("headwordA", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
+				// Test that variantformentrybackref items are in alphabetical order
 				Assert.That(result.IndexOf("headwordA", StringComparison.InvariantCulture),
-					Is.LessThan(result.IndexOf("headwordD", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
-				Assert.That(result.IndexOf("headwordD", StringComparison.InvariantCulture),
+					Is.LessThan(result.IndexOf("headwordB", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
+				Assert.That(result.IndexOf("headwordB", StringComparison.InvariantCulture),
 					Is.LessThan(result.IndexOf("headwordC", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
+				Assert.That(result.IndexOf("headwordC", StringComparison.InvariantCulture),
+					Is.LessThan(result.IndexOf("headwordD", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
 			}
+		}
+
+		/// <summary>LT-17918. Intermittent failures should NOT be ignored.</summary>
+		[Test]
+		public void GenerateXHTMLForEntry_ComplexFormsAreOrderedAsUserSpecified(
+			[Values(true, false)] bool useNotSubentries, [Values(true, false)] bool useVirtualOrdering, [Values(true, false)] bool showInPara)
+		{
+			var lexentry = CreateInterestingLexEntry(Cache);
+
+			using (var c1 = CreateComplexForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordB"), new Guid("00000000-0000-0000-0000-000000000001"), false))
+			using (var c3 = CreateComplexForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordA"), new Guid("00000000-0000-0000-0000-000000000003"), false))
+			using (var c2 = CreateComplexForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordD"), new Guid("00000000-0000-0000-0000-000000000004"), false))
+			using (var c4 = CreateComplexForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordC"), new Guid("00000000-0000-0000-0000-000000000002"), false))
+			{
+				var headwords = new[] { "headwordA", "headwordB", "headwordC", "headwordD" };
+				if (useVirtualOrdering)
+				{
+					var varFlid = Cache.MetaDataCacheAccessor.GetFieldId("LexEntry", "VisibleComplexFormBackRefs", true);
+					VirtualOrderingServices.SetVO(lexentry, varFlid, new[] { c1.Item, c2.Item, c3.Item, c4.Item });
+					headwords = new[]
+					{
+						c1.Item.OwningEntry.HomographForm,
+						c2.Item.OwningEntry.HomographForm,
+						c3.Item.OwningEntry.HomographForm,
+						c4.Item.OwningEntry.HomographForm
+					};
+				}
+				var complexTypeNameNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "Name",
+					DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+				};
+				var complexTypeNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "ComplexEntryTypesRS",
+					Children = new List<ConfigurableDictionaryNode> { complexTypeNameNode },
+				};
+				var formNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "OwningEntry",
+					SubField = "MLHeadWord",
+					IsEnabled = true,
+					DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+				};
+				var complexFormNode = new ConfigurableDictionaryNode
+				{
+					DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex),
+					FieldDescription = useNotSubentries ? "ComplexFormsNotSubentries" : "VisibleComplexFormBackRefs",
+					Children = new List<ConfigurableDictionaryNode> { formNode, complexTypeNode }
+				};
+				((IParaOption)complexFormNode.DictionaryNodeOptions).DisplayEachInAParagraph = showInPara;
+				var mainEntryNode = new ConfigurableDictionaryNode
+				{
+					Children = new List<ConfigurableDictionaryNode> { complexFormNode },
+					FieldDescription = "LexEntry"
+				};
+
+				DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
+				CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+
+				//SUT
+				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
+
+				// Test that variantformentrybackref items are in (alphabetical or) virtual order
+				Assert.That(result.IndexOf(headwords[0], StringComparison.InvariantCulture),
+					Is.LessThan(result.IndexOf(headwords[1], StringComparison.InvariantCulture)), "complex form not sorted in expected order\n{0}", result);
+				Assert.That(result.IndexOf(headwords[1], StringComparison.InvariantCulture),
+					Is.LessThan(result.IndexOf(headwords[2], StringComparison.InvariantCulture)), "complex form not sorted in expected order\n{0}", result);
+				Assert.That(result.IndexOf(headwords[2], StringComparison.InvariantCulture),
+					Is.LessThan(result.IndexOf(headwords[3], StringComparison.InvariantCulture)), "complex form not sorted in expected order\n{0}", result);
+			}
+		}
+
+		/// <summary>
+		/// LT-18018.
+		/// The implementation code changes were done in GenerateXHTMLForILexEntryRefsByType.
+		/// </summary>
+		[Test]
+		public void GenerateXHTMLForFieldByReflection_VariantFormTypesAreOrderedBasedOnOptionOrdering()
+		{
+			var variantTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+			};
+			var variantTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				CSSClassNameOverride = "variantentrytypes",
+				Children = new List<ConfigurableDictionaryNode> { variantTypeNameNode },
+			};
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				SubField = "MLHeadWord",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var variantFormNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
+				FieldDescription = "VariantFormEntryBackRefs",
+				Children = new List<ConfigurableDictionaryNode> { formNode, variantTypeNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { variantFormNode },
+				FieldDescription = "LexEntry"
+			};
+
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			// Use the second item in the list for testing at this time, since the first item in the list isn't being handled the same way right now (20170111) by the current implementation.
+			var earlyTypeInOptionsListGuid = new Guid(((DictionaryNodeListOptions)variantFormNode.DictionaryNodeOptions).Options[1].Id);
+			var finalTypeInOptionsListGuid = new Guid(((DictionaryNodeListOptions)variantFormNode.DictionaryNodeOptions).Options.Last().Id);
+
+			var earlyTypeInOptionsList = Cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities.First(t => t.Guid == earlyTypeInOptionsListGuid);
+			var finalTypeInOptionsList = Cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities.First(t => t.Guid == finalTypeInOptionsListGuid);
+
+			var lexentry = CreateInterestingLexEntry(Cache);
+
+			CreateInterestingLexEntry(Cache, "headwordA").MakeVariantOf(lexentry, (ILexEntryType)earlyTypeInOptionsList);
+			CreateInterestingLexEntry(Cache, "headwordB").MakeVariantOf(lexentry, (ILexEntryType)finalTypeInOptionsList);
+
+			// SUT1
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForFieldByReflection(lexentry, variantFormNode, null, DefaultSettings);
+
+			Assert.That(result.IndexOf("headwordA", StringComparison.InvariantCulture),
+				Is.LessThan(result.IndexOf("headwordB", StringComparison.InvariantCulture)), "variant forms not appearing in an order corresponding to their type sorting");
+
+			// Change the order of variantFormNode.DictionaryNodeOptions, which should result in the data being ordered differently.
+			((DictionaryNodeListOptions)variantFormNode.DictionaryNodeOptions).Options.Reverse();
+
+			// SUT2
+			result = ConfiguredXHTMLGenerator.GenerateXHTMLForFieldByReflection(lexentry, variantFormNode, null, DefaultSettings);
+
+			Assert.That(result.IndexOf("headwordB", StringComparison.InvariantCulture),
+				Is.LessThan(result.IndexOf("headwordA", StringComparison.InvariantCulture)), "variant forms not appearing in an order corresponding to their type sorting");
+		}
+
+		/// <summary>
+		/// LT-18018.
+		/// The implementation code changes were done in GenerateXHTMLForILexEntryRefsByType.
+		/// </summary>
+		[Test]
+		public void GenerateXHTMLForFieldByReflection_SubentryTypesAreOrderedBasedOnOptionOrdering()
+		{
+			var complexFormTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+			};
+			var complexFormTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = ConfiguredXHTMLGenerator.LookupComplexEntryType,
+				Children = new List<ConfigurableDictionaryNode> { complexFormTypeNameNode },
+			};
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var subentryNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex),
+				FieldDescription = "Subentries",
+				Children = new List<ConfigurableDictionaryNode> { formNode, complexFormTypeNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { subentryNode },
+				FieldDescription = "LexEntry"
+			};
+
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			// Use the second item in the list for testing at this time, since the first item in the list (<none>) isn't being handled the same way right now (20170119) by the current implementation.
+			var earlyTypeInOptionsListGuid = new Guid(((DictionaryNodeListOptions)subentryNode.DictionaryNodeOptions).Options[1].Id);
+			var finalTypeInOptionsListGuid = new Guid(((DictionaryNodeListOptions)subentryNode.DictionaryNodeOptions).Options.Last().Id);
+			var lexentry = CreateInterestingLexEntry(Cache);
+			CreateComplexForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordA"), true, earlyTypeInOptionsListGuid);
+			CreateComplexForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordB"), true, finalTypeInOptionsListGuid);
+
+			// SUT1
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForFieldByReflection(lexentry, subentryNode, null, DefaultSettings);
+
+			Assert.That(result.IndexOf("headwordA", StringComparison.InvariantCulture),
+				Is.LessThan(result.IndexOf("headwordB", StringComparison.InvariantCulture)), "Subentries should be sorted by Type");
+
+			// Reverse the order of the DictionaryNodeOptions, which should result in the data being ordered differently.
+			((DictionaryNodeListOptions)subentryNode.DictionaryNodeOptions).Options.Reverse();
+
+			// SUT2
+			result = ConfiguredXHTMLGenerator.GenerateXHTMLForFieldByReflection(lexentry, subentryNode, null, DefaultSettings);
+
+			Assert.That(result.IndexOf("headwordB", StringComparison.InvariantCulture),
+				Is.LessThan(result.IndexOf("headwordA", StringComparison.InvariantCulture)), "Subentries should be sorted by Type");
+		}
+
+		// <summary>
+		/// LT-18171:Crash displaying entry or doing xhtml export
+		/// </summary>
+		[Test]
+		public void GenerateXHTMLForFieldByReflection_NullOrEmptyMediaFilePathDoesNotCrash()
+		{
+			var pronunciationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "PronunciationsOS",
+				CSSClassNameOverride = "pronunciations",
+				Children = new List<ConfigurableDictionaryNode> { CreateMediaNode() }
+			};
+			var variantPronunciationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				SubField = "PronunciationsOS",
+				CSSClassNameOverride = "variantpronunciations",
+				Children = new List<ConfigurableDictionaryNode> { CreateMediaNode() }
+			};
+			var variantFormTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+			};
+			var variantFormTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				CSSClassNameOverride = "variantentrytypes",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNameNode },
+			};
+			var variantFormsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs",
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant),
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNode, variantPronunciationsNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { pronunciationsNode, variantFormsNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var entry = CreateInterestingLexEntry(Cache);
+			var variant = CreateInterestingLexEntry(Cache);
+			CreateVariantForm(Cache, entry, variant, "Spelling Variant"); // we need a real Variant Type to pass the list options test
+			// Create a folder in the project to hold the media files
+			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			Cache.LangProject.MediaOC.Add(folder);
+			// Create and fill in the media files
+			var pron1 = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
+			entry.PronunciationsOS.Add(pron1);
+			var fileName1 = string.Empty;
+			CreateTestMediaFile(Cache, fileName1, folder, pron1);
+			var pron2 = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
+			variant.PronunciationsOS.Add(pron2);
+			CreateTestMediaFile(Cache, null, folder, pron2);
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+
+			//SUT
+			Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings), "Invalid filename in CmFile should not lead to crash");
 		}
 
 		[Test]
@@ -7561,610 +9055,36 @@ namespace SIL.FieldWorks.XWorks
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithGlossOfGloss, 1);
 		}
-		#region Helpers
-		private static void DeleteTempXhtmlAndCssFiles(string xhtmlPath)
-		{
-			if (string.IsNullOrEmpty(xhtmlPath))
-				return;
-			File.Delete(xhtmlPath);
-			File.Delete(Path.ChangeExtension(xhtmlPath, "css"));
-		}
 
-		/// <summary>Creates a DictionaryConfigurationModel with one Main and two Minor Entry nodes, all with enabled HeadWord children</summary>
-		/// <param name="cache"></param>
-		internal static DictionaryConfigurationModel CreateInterestingConfigurationModel(FdoCache cache)
+		[Test]
+		public void GenerateXHTMLForEntry_GeneratesNFC()
 		{
-			var mainHeadwordNode = new ConfigurableDictionaryNode
+			var node = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "HeadWord",
-				CSSClassNameOverride = "entry",
-				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" }),
-				Before = "MainEntry: ",
-			};
-			var mainEntryNode = new ConfigurableDictionaryNode
-			{
-				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode },
 				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "über",
+				Children = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode
+					{
+						FieldDescription = "MLHeadWord",
+						DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "ko" })
+					}
+				}
 			};
-			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
-			var minorEntryNode = mainEntryNode.DeepCloneUnderSameParent();
-			minorEntryNode.CSSClassNameOverride = "minorentry";
-			minorEntryNode.Before = "MinorEntry: ";
-			minorEntryNode.DictionaryNodeOptions = GetFullyEnabledListOptions(cache, DictionaryNodeListOptions.ListIds.Complex);
-
-			var minorSecondNode = minorEntryNode.DeepCloneUnderSameParent();
-			minorSecondNode.Before = "HalfStep: ";
-			minorEntryNode.DictionaryNodeOptions = GetFullyEnabledListOptions(cache, DictionaryNodeListOptions.ListIds.Variant);
-
-			return new DictionaryConfigurationModel
-			{
-				AllPublications = true,
-				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode, minorEntryNode, minorSecondNode }
-			};
+			CssGeneratorTests.PopulateFieldsForTesting(node);
+			Cache.LangProject.AddToCurrentVernacularWritingSystems(Cache.WritingSystemFactory.get_Engine("ko") as CoreWritingSystemDefinition);
+			var wsKo = Cache.WritingSystemFactory.GetWsFromStr("ko");
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			var headword = TsStringUtils.MakeString("자ㄱㄴ시", wsKo); // Korean NFD
+			entry.CitationForm.set_String(wsKo, headword);
+			Assert.That(entry.CitationForm.get_String(wsKo).get_IsNormalizedForm(FwNormalizationMode.knmNFD), "Should be NFDecomposed in memory");
+			Assert.AreEqual(6, headword.Text.Length);
+			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, node, null, DefaultSettings);
+			var tsResult = TsStringUtils.MakeString(result, Cache.DefaultAnalWs);
+			Assert.False(TsStringUtils.IsNullOrEmpty(tsResult), "Results should have been generated");
+			Assert.That(tsResult.get_IsNormalizedForm(FwNormalizationMode.knmNFC), "Resulting XHTML should be NFComposed");
 		}
-
-		private static ConfigurableDictionaryNode CreatePictureModel()
-		{
-			var thumbNailNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "PictureFileRA", CSSClassNameOverride = "picture"
-			};
-			var pictureNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "PicturesOfSenses",
-				CSSClassNameOverride = "Pictures",
-				Children = new List<ConfigurableDictionaryNode> { thumbNailNode }
-			};
-			var sensesNode = new ConfigurableDictionaryNode { FieldDescription = "Senses" };
-			var mainEntryNode = new ConfigurableDictionaryNode
-			{
-				Children = new List<ConfigurableDictionaryNode> { sensesNode, pictureNode }, FieldDescription = "LexEntry"
-			};
-			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
-			return mainEntryNode;
-		}
-
-		/// <summary>
-		/// Creates an ILexEntry object, optionally with specified headword and gloss
-		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="headword">Optional: defaults to 'Citation'</param>
-		/// <param name="gloss">Optional: defaults to 'gloss'</param>
-		/// <returns></returns>
-		internal static ILexEntry CreateInterestingLexEntry(FdoCache cache, string headword = "Citation", string gloss = "gloss")
-		{
-			var factory = cache.ServiceLocator.GetInstance<ILexEntryFactory>();
-			var entry = factory.Create();
-			cache.LangProject.AddToCurrentAnalysisWritingSystems(
-				cache.WritingSystemFactory.get_Engine("en") as CoreWritingSystemDefinition);
-			cache.LangProject.AddToCurrentVernacularWritingSystems(
-				cache.WritingSystemFactory.get_Engine("fr") as CoreWritingSystemDefinition);
-			var wsEn = cache.WritingSystemFactory.GetWsFromStr("en");
-			var wsFr = cache.WritingSystemFactory.GetWsFromStr("fr");
-			AddHeadwordToEntry(entry, headword, wsFr);
-			entry.Comment.set_String(wsEn, TsStringUtils.MakeString("Comment", wsEn));
-			AddSenseToEntry(entry, gloss, wsEn, cache);
-			return entry;
-		}
-
-		/// <summary>
-		/// Creates an ILexEntry object, optionally with specified headword and gloss
-		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="headword">Optional: defaults to 'Citation'</param>
-		/// <param name="gloss">Optional: defaults to 'gloss'</param>
-		/// <returns></returns>
-		internal static ILexEntry CreateInterestingSuffix(FdoCache cache, string headword = "ba", string gloss = "gloss")
-		{
-			var entry = CreateInterestingLexEntry(cache, headword, gloss);
-			var wsEn = cache.WritingSystemFactory.GetWsFromStr("en");
-			var suffixType = cache.LangProject.LexDbOA.MorphTypesOA.FindOrCreatePossibility("suffix", wsEn);
-			entry.LexemeFormOA = cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>().Create();
-			entry.LexemeFormOA.MorphTypeRA = suffixType as IMoMorphType;
-			return entry;
-		}
-
-		internal sealed class TempGuidOn<T> : IDisposable where T : ICmObject
-		{
-			public T Item { get; }
-			private readonly Guid originalGuid;
-
-			public TempGuidOn(T item, Guid tempGuid)
-			{
-				Item = item;
-				originalGuid = item.Guid;
-				SetGuidOn(item, tempGuid);
-			}
-
-			public void Dispose()
-			{
-				Dispose(true);
-				GC.SuppressFinalize(this);
-			}
-
-			private void Dispose(bool disposing)
-			{
-				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
-				if(disposing)
-					SetGuidOn(Item, originalGuid);
-			}
-
-			~TempGuidOn()
-			{
-				Dispose(false);
-			}
-
-			private static void SetGuidOn(ICmObject item, Guid newGuid)
-			{
-				var refGuidField = ReflectionHelper.GetField(item, "m_guid");
-				ReflectionHelper.SetField(refGuidField, "m_guid", newGuid);
-			}
-		}
-
-		/// <summary>
-		/// Use reflection to set the guid on a variant form. May not work for all kinds of tests or appropriately be editing the database.
-		/// Because changing the Guid causes teardown problem, it must be reset prior to teardown (hence the Disposable <returns/>)
-		/// </summary>
-		internal static TempGuidOn<ILexEntryRef> CreateVariantForm(FdoCache cache, IVariantComponentLexeme main, ILexEntry variantForm, Guid guid,
-			string type = TestVariantName)
-		{
-			return new TempGuidOn<ILexEntryRef>(CreateVariantForm(cache, main, variantForm, type), guid);
-		}
-
-		/// <summary>
-		/// 'internal static' so Reversal tests can use it
-		/// </summary>
-		internal static ILexEntryRef CreateVariantForm(FdoCache cache, IVariantComponentLexeme main, ILexEntry variantForm, string type = TestVariantName)
-		{
-			var owningList = cache.LangProject.LexDbOA.VariantEntryTypesOA;
-			Assert.IsNotNull(owningList, "No VariantEntryTypes property on Lexicon object.");
-			var varType = owningList.PossibilitiesOS.LastOrDefault(poss => poss.Name.AnalysisDefaultWritingSystem.Text == type) as ILexEntryType;
-			if (varType == null && type != null) // if this type doesn't exist, create it
-			{
-				varType = cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>().Create();
-				owningList.PossibilitiesOS.Add(varType);
-				varType.Name.set_String(cache.DefaultAnalWs, type);
-			}
-			var refOut = variantForm.MakeVariantOf(main, varType);
-			// ILexEntry.MakeVariantOf sets a Type even if null is specified. But we want to test typeless variants, so clear them if null is specified.
-			if (type == null)
-				refOut.VariantEntryTypesRS.Clear();
-			return refOut;
-		}
-
-		/// <summary>
-		/// Use reflection to set the guid on a complex form. May not work for all kinds of tests or appropriately be editing the database.
-		/// Because changing the Guid causes teardown problem, it must be reset prior to teardown (hence the Disposable <returns/>)
-		/// </summary>
-		internal static TempGuidOn<ILexEntryRef> CreateComplexForm(FdoCache cache, IVariantComponentLexeme main, ILexEntry complexForm, Guid guid,
-			bool subentry)
-		{
-			return new TempGuidOn<ILexEntryRef>(CreateComplexForm(cache, main, complexForm, subentry), guid);
-		}
-
-		internal static ILexEntryRef CreateComplexForm(FdoCache fdoCache, ICmObject main, ILexEntry complexForm, bool subentry, byte complexFormTypeIndex = 0)
-		{
-			var complexEntryRef = fdoCache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
-			complexForm.EntryRefsOS.Add(complexEntryRef);
-			var complexEntryType = (ILexEntryType)fdoCache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS[complexFormTypeIndex];
-			var complexEntryTypeAbbrText = complexEntryType.Abbreviation.BestAnalysisAlternative.Text;
-			var complexEntryTypeRevAbbr = complexEntryType.ReverseAbbr;
-			// If there is no reverseAbbr, generate one from the forward abbr (e.g. "comp. of") by trimming the trailing " of"
-			if (complexEntryTypeRevAbbr.BestAnalysisAlternative.Equals(complexEntryTypeRevAbbr.NotFoundTss))
-				complexEntryTypeRevAbbr.SetAnalysisDefaultWritingSystem(complexEntryTypeAbbrText.Substring(0, complexEntryTypeAbbrText.Length - 3));
-			complexEntryRef.ComplexEntryTypesRS.Add(complexEntryType);
-			complexEntryRef.RefType = LexEntryRefTags.krtComplexForm;
-			complexEntryRef.ComponentLexemesRS.Add(main);
-			if (subentry)
-				complexEntryRef.PrimaryLexemesRS.Add(main);
-			else
-				complexEntryRef.ShowComplexFormsInRS.Add(main);
-			return complexEntryRef;
-		}
-
-		private ILexEntryRef CreateComplexFormbasedonNodeOption(ICmObject main, ILexEntry complexForm, DictionaryNodeListOptions.DictionaryNodeOption option, bool subentry)
-		{
-			var complexEntryRef = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
-			complexForm.EntryRefsOS.Add(complexEntryRef);
-			var complexEntryType =
-				(ILexEntryType)
-					Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.First(x => x.Guid.ToString() == option.Id);
-			var complexEntryTypeAbbrText = complexEntryType.Abbreviation.BestAnalysisAlternative.Text;
-			var complexEntryTypeRevAbbr = complexEntryType.ReverseAbbr;
-			// If there is no reverseAbbr, generate one from the forward abbr (e.g. "comp. of") by trimming the trailing " of"
-			if (complexEntryTypeRevAbbr.BestAnalysisAlternative.Equals(complexEntryTypeRevAbbr.NotFoundTss))
-				complexEntryTypeRevAbbr.SetAnalysisDefaultWritingSystem(complexEntryTypeAbbrText.Substring(0, complexEntryTypeAbbrText.Length - 3));
-			complexEntryRef.ComplexEntryTypesRS.Add(complexEntryType);
-			complexEntryRef.RefType = LexEntryRefTags.krtComplexForm;
-			complexEntryRef.ComponentLexemesRS.Add(main);
-			if (subentry)
-				complexEntryRef.PrimaryLexemesRS.Add(main);
-			else
-				complexEntryRef.ShowComplexFormsInRS.Add(main);
-			return complexEntryRef;
-		}
-		/// <summary>
-		/// Generates a Lexical Reference.
-		/// If refTypeReverseName is specified, generates a Ref of an Asymmetric Type (EntryOrSenseTree) with the specified reverse name;
-		/// otherwise, generates a Ref of a Symmetric Type (EntryOrSenseSequence).
-		/// </summary>
-		private void CreateLexicalReference(ICmObject mainEntry, ICmObject referencedForm, string refTypeName, string refTypeReverseName = null)
-		{
-			CreateLexicalReference(mainEntry, referencedForm, null, refTypeName, refTypeReverseName);
-		}
-
-		private void CreateLexicalReference(ICmObject firstEntry, ICmObject secondEntry, ICmObject thirdEntry, string refTypeName, string refTypeReverseName = null)
-		{
-			var lrt = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
-			if(Cache.LangProject.LexDbOA.ReferencesOA == null)
-				Cache.LangProject.LexDbOA.ReferencesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
-			Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(lrt);
-			lrt.Name.set_String(Cache.DefaultAnalWs, refTypeName);
-			if(string.IsNullOrEmpty(refTypeReverseName))
-			{
-				lrt.MappingType = (int)MappingTypes.kmtEntryOrSenseSequence;
-			}
-			else
-			{
-				lrt.ReverseName.set_String(Cache.DefaultAnalWs, refTypeReverseName);
-				lrt.MappingType = (int)MappingTypes.kmtEntryOrSenseTree;
-			}
-			var lexRef = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
-			lrt.MembersOC.Add(lexRef);
-			lexRef.TargetsRS.Add(firstEntry);
-			lexRef.TargetsRS.Add(secondEntry);
-			if (thirdEntry != null)
-				lexRef.TargetsRS.Add(thirdEntry);
-		}
-
-		private ILexRefType CreateLexRefType(LexRefTypeTags.MappingTypes type, string name, string abbr, string revName, string revAbbr)
-		{
-			if (Cache.LangProject.LexDbOA.ReferencesOA == null)
-				Cache.LangProject.LexDbOA.ReferencesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
-			var lrt = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
-			Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(lrt);
-			lrt.MappingType = (int)type;
-			lrt.Name.set_String(m_wsEn, name);
-			lrt.Abbreviation.set_String(m_wsEn, abbr);
-			if (!String.IsNullOrEmpty(revName))
-				lrt.ReverseName.set_String(m_wsEn, revName);
-			if (!String.IsNullOrEmpty(revAbbr))
-				lrt.ReverseAbbreviation.set_String(m_wsEn, revAbbr);
-			return lrt;
-		}
-
-		private void CreateLexReference(ILexRefType lrt, IEnumerable<ICmObject> sensesAndEntries)
-		{
-			CreateLexReference(lrt, sensesAndEntries, Guid.Empty);
-		}
-
-		private void CreateLexReference(ILexRefType lrt, IEnumerable<ICmObject> sensesAndEntries, Guid lexRefGuid)
-		{
-			var lexRef = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create(lexRefGuid, lrt);
-			foreach (var senseOrEntry in sensesAndEntries)
-				lexRef.TargetsRS.Add(senseOrEntry);
-		}
-
-		private ICmPossibility CreatePublicationType(string name)
-		{
-			if (Cache.LangProject.LexDbOA.PublicationTypesOA == null)
-				Cache.LangProject.LexDbOA.PublicationTypesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
-			var item = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-			Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(item);
-			item.Name.set_String(m_wsEn, name);
-			Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(item);
-			return item;
-		}
-
-		private static void AddHeadwordToEntry(ILexEntry entry, string headword, int wsId)
-		{
-			// The headword field is special: it uses Citation if available, or LexemeForm if Citation isn't filled in
-			entry.CitationForm.set_String(wsId, TsStringUtils.MakeString(headword, wsId));
-		}
-
-		private static ILexPronunciation AddPronunciationToEntry(ILexEntry entry, string content, int wsId, FdoCache cache)
-		{
-			var pronunciation = cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
-			entry.PronunciationsOS.Add(pronunciation);
-			pronunciation.Form.set_String(wsId, TsStringUtils.MakeString(content, wsId));
-			return pronunciation;
-		}
-
-		private static void AddSenseToEntry(ILexEntry entry, string gloss, int wsId, FdoCache cache)
-		{
-			var senseFactory = cache.ServiceLocator.GetInstance<ILexSenseFactory>();
-			var sense = senseFactory.Create();
-			entry.SensesOS.Add(sense);
-			if (!string.IsNullOrEmpty(gloss))
-				sense.Gloss.set_String(wsId, TsStringUtils.MakeString(gloss, wsId));
-		}
-
-		private void AddSenseAndTwoSubsensesToEntry(ICmObject entryOrSense, string gloss)
-		{
-			var senseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
-			var sense = senseFactory.Create();
-			var entry = entryOrSense as ILexEntry;
-			if (entry != null)
-				entry.SensesOS.Add(sense);
-			else
-				((ILexSense)entryOrSense).SensesOS.Add(sense);
-			sense.Gloss.set_String(m_wsEn, TsStringUtils.MakeString(gloss, m_wsEn));
-			var subSensesOne = senseFactory.Create();
-			sense.SensesOS.Add(subSensesOne);
-			subSensesOne.Gloss.set_String(m_wsEn, TsStringUtils.MakeString(gloss + "2.1", m_wsEn));
-			var subSensesTwo = senseFactory.Create();
-			sense.SensesOS.Add(subSensesTwo);
-			subSensesTwo.Gloss.set_String(m_wsEn, TsStringUtils.MakeString(gloss + "2.2", m_wsEn));
-		}
-
-		private void AddSingleSubSenseToSense(string gloss, ILexSense sense)
-		{
-			sense.Gloss.set_String(m_wsEn, TsStringUtils.MakeString(gloss, m_wsEn));
-			var subSensesOne = sense.Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
-			sense.SensesOS.Add(subSensesOne);
-			subSensesOne.Gloss.set_String(m_wsEn, TsStringUtils.MakeString(gloss + "1.1", m_wsEn));
-		}
-
-		private ILexExampleSentence AddExampleToSense(ILexSense sense, string content, string translation = null)
-		{
-			var exampleFact = Cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>();
-			var example = exampleFact.Create(new Guid(), sense);
-			example.Example.set_String(m_wsFr, TsStringUtils.MakeString(content, m_wsFr));
-			if (translation != null)
-			{
-				var type = Cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranFreeTranslation);
-				var cmTranslation = Cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(example, type);
-				cmTranslation.Translation.set_String(m_wsEn, TsStringUtils.MakeString(translation, m_wsEn));
-				example.TranslationsOC.Add(cmTranslation);
-			}
-			return example;
-		}
-
-		private IMoForm AddAllomorphToEntry(ILexEntry entry)
-		{
-			var morphFact = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>();
-			var morph = morphFact.Create();
-			entry.AlternateFormsOS.Add(morph);
-			morph.Form.set_String(m_wsFr, TsStringUtils.MakeString("Allomorph", m_wsFr));
-
-			// add environment to the allomorph
-			const int stringRepresentationFlid = 5097008;
-			var env = Cache.ServiceLocator.GetInstance<IPhEnvironmentFactory>().Create();
-			Cache.LangProject.PhonologicalDataOA.EnvironmentsOS.Add(env);
-			morph.PhoneEnvRC.Add(env);
-			Cache.MainCacheAccessor.SetString(env.Hvo, stringRepresentationFlid, TsStringUtils.MakeString("phoneyEnv", m_wsEn));
-
-			return morph;
-		}
-
-		private static IStText CreateMultiParaText(string content, FdoCache cache)
-		{
-			var text = cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-			//cache.LangProject.
-			var stText = cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
-			cache.LangProject.InterlinearTexts.Add(stText);
-			text.ContentsOA = stText;
-			var para = cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
-			stText.ParagraphsOS.Add(para);
-			para.Contents = MakeVernTss("First para " + content, cache);
-			var para1 = cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
-			stText.ParagraphsOS.Add(para1);
-			para1.Contents = MakeVernTss("Second para " + content, cache);
-			return text.ContentsOA;
-		}
-
-		private static ITsString MakeVernTss(string content, FdoCache cache)
-		{
-			return TsStringUtils.MakeString(content, cache.DefaultVernWs);
-		}
-
-		private ITsString MakeMulitlingualTss(IEnumerable<string> content)
-		{
-			// automatically alternates runs between 'en' and 'fr'
-			int lastWs = m_wsFr;
-			ITsIncStrBldr builder = TsStringUtils.MakeIncStrBldr();
-			foreach (var runContent in content)
-			{
-				lastWs = lastWs == m_wsEn ? m_wsFr : m_wsEn; // switch ws for each run
-				builder.AppendTsString(TsStringUtils.MakeString(runContent, lastWs));
-			}
-			return builder.GetString();
-		}
-
-		private ITsString MakeBidirectionalTss(IEnumerable<string> content)
-		{
-			EnsureHebrewExists();
-			// automatically alternates runs between 'en' and 'he' (Hebrew)
-			int lastWs = m_wsEn;
-			ITsIncStrBldr builder = TsStringUtils.MakeIncStrBldr();
-			foreach (var runContent in content)
-			{
-				lastWs = lastWs == m_wsEn ? m_wsHe : m_wsEn; // switch ws for each run
-				builder.AppendTsString(TsStringUtils.MakeString(runContent, lastWs));
-			}
-			return builder.GetString();
-		}
-
-		private void EnsureHebrewExists()
-		{
-			if (m_wsHe > 0)
-				return;
-			var wsManager = Cache.ServiceLocator.WritingSystemManager;
-			CoreWritingSystemDefinition hebrew;
-			wsManager.GetOrSet("he", out hebrew);
-			hebrew.RightToLeftScript = true;
-			m_wsHe = hebrew.Handle;
-		}
-
-		private void SetDictionaryNormalDirection(InheritableStyleProp<TriStateBool> rightToLeft)
-		{
-			ReflectionHelper.SetField(DictionaryNormalStyle, "m_rtl", rightToLeft);
-		}
-
-		internal static void SetPublishAsMinorEntry(ILexEntry entry, bool publish)
-		{
-			foreach (var ler in entry.EntryRefsOS)
-				ler.HideMinorEntry = publish ? 0 : 1;
-		}
-
-		public static DictionaryNodeOptions GetWsOptionsForLanguages(string[] languages)
-		{
-			return new DictionaryNodeWritingSystemOptions { Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(languages) };
-		}
-
-		public static DictionaryNodeOptions GetWsOptionsForLanguages(string[] languages, DictionaryNodeWritingSystemOptions.WritingSystemType type)
-		{
-			return new DictionaryNodeWritingSystemOptions
-			{
-				Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(languages),
-				WsType = type
-			};
-		}
-
-		public static DictionaryNodeOptions GetWsOptionsForLanguageswithDisplayWsAbbrev(string[] languages)
-		{
-			return new DictionaryNodeWritingSystemOptions
-			{
-				Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(languages),
-				DisplayWritingSystemAbbreviations = true
-			};
-		}
-
-		public static DictionaryNodeOptions GetListOptionsForItems(DictionaryNodeListOptions.ListIds listName, ICmPossibility[] checkedItems)
-		{
-			var listOptions = new DictionaryNodeListOptions {
-				ListId = listName,
-				Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings (checkedItems.Select (id => id.Guid.ToString()).ToList())
-			};
-			return listOptions;
-		}
-
-		public static DictionaryNodeOptions GetListOptionsForStrings(DictionaryNodeListOptions.ListIds listName, IEnumerable<string> checkedItems)
-		{
-			var listOptions = new DictionaryNodeListOptions {
-				ListId = listName,
-				Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(checkedItems)
-			};
-			return listOptions;
-		}
-
-		public DictionaryNodeOptions GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds listName, bool isComplex = false)
-		{
-			return GetFullyEnabledListOptions(Cache, listName, isComplex);
-		}
-
-		public static DictionaryNodeOptions GetFullyEnabledListOptions(FdoCache cache,
-			DictionaryNodeListOptions.ListIds listName, bool isComplex = false)
-		{
-			List<DictionaryNodeListOptions.DictionaryNodeOption> dnoList;
-			switch (listName)
-			{
-				case DictionaryNodeListOptions.ListIds.Minor:
-					dnoList = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(
-						new [] { XmlViewsUtils.GetGuidForUnspecifiedVariantType(), XmlViewsUtils.GetGuidForUnspecifiedComplexFormType() }
-							.Select(guid => guid.ToString())
-						.Union(cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS
-						.Union(cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS).Select(item => item.Guid.ToString())));
-					break;
-				case DictionaryNodeListOptions.ListIds.Variant:
-					isComplex = false;
-					dnoList = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(
-						new [] { XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString() }
-						.Union(cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Select(item => item.Guid.ToString())));
-					break;
-				case DictionaryNodeListOptions.ListIds.Complex:
-					isComplex = true;
-					dnoList = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(
-						new [] { XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString() }
-						.Union(cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.Select(item => item.Guid.ToString())));
-					break;
-				case DictionaryNodeListOptions.ListIds.Note:
-					isComplex = true;
-					dnoList = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(
-						new[] { XmlViewsUtils.GetGuidForUnspecifiedExtendedNoteType().ToString() }
-						.Union(cache.LangProject.LexDbOA.ExtendedNoteTypesOA.PossibilitiesOS.Select(item => item.Guid.ToString())));
-					break;
-				default:
-					throw new NotImplementedException(string.Format("Unknown list id {0}", listName));
-			}
-
-			DictionaryNodeListOptions listOptions = isComplex ? new DictionaryNodeListAndParaOptions() : new DictionaryNodeListOptions();
-
-			listOptions.ListId = listName;
-			listOptions.Options = dnoList;
-			return listOptions;
-		}
-
-		/// <summary>
-		/// Search haystack with regexQuery, and assert that requiredNumberOfMatches matches are found.
-		/// Can be used in place of AssertThatXmlIn.String().HasSpecifiedNumberOfMatchesForXpath(),
-		/// when slashes are needed in an argument to xpath starts-with.
-		/// </summary>
-		private static void AssertRegex(string haystack, string regexQuery, int requiredNumberOfMatches)
-		{
-			var regex = new Regex(regexQuery);
-			var matches = regex.Matches(haystack);
-			Assert.That(matches.Count, Is.EqualTo(requiredNumberOfMatches), "Unexpected number of matches");
-		}
-
-		public IPartOfSpeech CreatePartOfSpeech(string name, string abbr)
-		{
-			var posSeq = Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS;
-			var pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
-			posSeq.Add(pos);
-			pos.Name.set_String(m_wsEn, name);
-			pos.Abbreviation.set_String(m_wsEn, abbr);
-			return pos;
-		}
-
-		public IMoMorphSynAnalysis CreateMSA(ILexEntry entry, IPartOfSpeech pos)
-		{
-			var msa = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
-			entry.MorphoSyntaxAnalysesOC.Add(msa);
-			msa.PartOfSpeechRA = pos;
-			return msa;
-		}
-		#endregion Helpers
 	}
-
-	#region Test classes and interfaces for testing the reflection code in GetPropertyTypeForConfigurationNode
-	class TestRootClass
-	{
-		public ITestInterface RootMember { get; set; }
-		public TestNonInterface ConcreteMember { get; set; }
-	}
-
-	interface ITestInterface : ITestBaseOne, ITestBaseTwo
-	{
-		string TestString { get; }
-	}
-
-	interface ITestBaseOne
-	{
-		IMoForm TestMoForm { get; }
-	}
-
-	interface ITestBaseTwo : ITestGrandParent
-	{
-		ICmObject TestIcmObject { get; }
-	}
-
-	class TestNonInterface
-	{
-// ReSharper disable UnusedMember.Local // Justification: called by reflection
-		string TestNonInterfaceString { get; set; }
-// ReSharper restore UnusedMember.Local
-	}
-
-	interface ITestGrandParent
-	{
-		Stack<TestRootClass> TestCollection { get; }
-	}
-
-	class TestPictureClass
-	{
-		public IFdoList<ICmPicture> Pictures { get; set; }
-	}
-	#endregion
 }

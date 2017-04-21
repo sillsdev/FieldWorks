@@ -578,6 +578,8 @@ namespace LexTextControlsTests
 		private const string kotherLinkedFileName = "File linked to in defn of test.doc";
 		private const string kcitationFormFileName = "Citation form test.wav";
 		private const string kcustomMultiFileName = "Custom multilingual file.wav";
+		private const string m_CustomPossListReferenced = "CustomCmPossibiltyListReferenced";
+		private const string m_CustomPossListUnreferenced = "CustomCmPossibiltyListNoRef";
 
 		private void AddLexEntries()
 		{
@@ -592,6 +594,13 @@ namespace LexTextControlsTests
 						TsStringUtils.MakeString("citation", m_cache.DefaultVernWs);
 					m_entryTest.Bibliography.AnalysisDefaultWritingSystem =
 						TsStringUtils.MakeString("bibliography entry", m_cache.DefaultAnalWs);
+
+					var dialectFactory = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>();
+					var dialectLabel = dialectFactory.Create(Guid.NewGuid(), Cache.LangProject.LexDbOA.DialectLabelsOA);
+					dialectLabel.Name.set_String(Cache.DefaultAnalWs, "east");
+					dialectLabel.Abbreviation.set_String(Cache.DefaultAnalWs, "e");
+					m_entryTest.DialectLabelsRS.Add(dialectLabel);
+
 					m_entryTest.Comment.AnalysisDefaultWritingSystem =
 						TsStringUtils.MakeString("I like this comment.", m_cache.DefaultAnalWs);
 					m_entryTest.LiteralMeaning.AnalysisDefaultWritingSystem =
@@ -703,6 +712,8 @@ namespace LexTextControlsTests
 
 					// one of these is an example and won't be published in either Publication
 					AddCustomFields();
+					// Add a custom list that has no custom field associated with it.
+					AddCustomList(m_CustomPossListUnreferenced);
 				});
 		}
 
@@ -818,7 +829,7 @@ namespace LexTextControlsTests
 			m_sda.Replace(m_entryTest.Hvo, fd.Id, 0, 0, listRefCollectionItems, 3);
 
 			//------------------------------------------------------------------------------------------------------------
-			m_customPossibilityList = AddCustomList();
+			m_customPossibilityList = AddCustomList(m_CustomPossListReferenced);
 			//---------------------------------------------------------------------------------------------------
 			fd = MakeCustomField("CustomField5-LexEntry CmPossibilityCustomList", LexEntryTags.kClassId, WritingSystemServices.kwsAnal,
 				CustomFieldType.ListRefAtomic, m_customPossibilityList.Guid);
@@ -858,12 +869,12 @@ namespace LexTextControlsTests
 			m_cache.DomainDataByFlid.SetInt(m_entryTest.SensesOS[0].Hvo, fd.Id, 5);
 		}
 
-		private ICmPossibilityList AddCustomList()
+		private ICmPossibilityList AddCustomList(string listName)
 		{
 			var ws = m_cache.DefaultUserWs; // get default ws
 			var customPossibilityList = m_cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().CreateUnowned(
-				"CustomCmPossibiltyList", ws);
-			customPossibilityList.Name.set_String(m_cache.DefaultAnalWs, "CustomCmPossibiltyList");
+				listName, ws);
+			customPossibilityList.Name.set_String(m_cache.DefaultAnalWs, listName);
 
 			// Set various properties of CmPossibilityList
 			customPossibilityList.DisplayOption = (int)PossNameType.kpntName;
@@ -894,7 +905,7 @@ namespace LexTextControlsTests
 			foreach (XmlNode range in ranges)
 			{
 				var xrangeId = XmlUtils.GetOptionalAttributeValue(range, "id");
-				if (xrangeId == "CustomCmPossibiltyList")
+				if (xrangeId == m_CustomPossListReferenced)
 				{
 					xcustomListRef = range;
 					break;
@@ -1148,32 +1159,50 @@ namespace LexTextControlsTests
 		private void VerifyExportRanges(XmlDocument xdoc)
 		{
 			var repo = m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
-			var customList = repo.GetObject(m_customListsGuids[0]);
-			var item1 = customList.FindOrCreatePossibility("list item 1", m_cache.DefaultAnalWs);
-			var item2 = customList.FindOrCreatePossibility("list item 2", m_cache.DefaultAnalWs);
+			var referencedCustomList = repo.GetObject(m_customListsGuids[0]);
+			var item1 = referencedCustomList.FindOrCreatePossibility("list item 1", m_cache.DefaultAnalWs);
+			var item2 = referencedCustomList.FindOrCreatePossibility("list item 2", m_cache.DefaultAnalWs);
+			var unreferencedCustomList = repo.GetObject(m_customListsGuids[1]);
+			var unRefeditem1 = unreferencedCustomList.FindOrCreatePossibility("list item 1", m_cache.DefaultAnalWs);
+			var unrefedItem2 = unreferencedCustomList.FindOrCreatePossibility("list item 2", m_cache.DefaultAnalWs);
 
 			var ranges = xdoc.SelectNodes("//range");
 			Assert.IsNotNull(ranges);
-			Assert.AreEqual(12, ranges.Count);
-			XmlNode xcustomListRef = null;
+			Assert.AreEqual(13, ranges.Count);
+			XmlNode referencedCustomFieldList = null;
+			XmlNode unreferencedCustomFieldList = null;
 			foreach (XmlNode range in ranges)
 			{
 				var xrangeId = XmlUtils.GetOptionalAttributeValue(range, "id");
-				if (xrangeId == "CustomCmPossibiltyList")
+				if (xrangeId == m_CustomPossListReferenced)
 				{
-					xcustomListRef = range;
-					break;
+					referencedCustomFieldList = range;
+				}
+				if (xrangeId == m_CustomPossListUnreferenced)
+				{
+					unreferencedCustomFieldList = range;
 				}
 			}
-			Assert.IsNotNull(xcustomListRef);
-			var xcustomListId = XmlUtils.GetOptionalAttributeValue(xcustomListRef, "id");
-			Assert.AreEqual(customList.Name.BestAnalysisVernacularAlternative.Text, xcustomListId);
+			Assert.IsNotNull(referencedCustomFieldList, "Custom possibility list referenced by a custom field not exported");
+			Assert.IsNotNull(unreferencedCustomFieldList, "Custom possibility list that is not referred to by a custom field not exported");
+			var xcustomListId = XmlUtils.GetOptionalAttributeValue(referencedCustomFieldList, "id");
+			Assert.AreEqual(referencedCustomList.Name.BestAnalysisVernacularAlternative.Text, xcustomListId);
+			xcustomListId = XmlUtils.GetOptionalAttributeValue(unreferencedCustomFieldList, "id");
+			Assert.AreEqual(unreferencedCustomList.Name.BestAnalysisVernacularAlternative.Text, xcustomListId);
 
-			var rangeElements = xcustomListRef.ChildNodes;
+			// verify referenced custom list items
+			var rangeElements = referencedCustomFieldList.ChildNodes;
 			Assert.IsNotNull(rangeElements);
 			Assert.IsTrue(rangeElements.Count == 2);
 			VerifyExportRangeElement(rangeElements[0], item1);
 			VerifyExportRangeElement(rangeElements[1], item2);
+
+			// verify unreferenced custom list items
+			rangeElements = unreferencedCustomFieldList.ChildNodes;
+			Assert.IsNotNull(rangeElements);
+			Assert.IsTrue(rangeElements.Count == 2);
+			VerifyExportRangeElement(rangeElements[0], unRefeditem1);
+			VerifyExportRangeElement(rangeElements[1], unrefedItem2);
 
 			//Verify Academic Domains were output
 			var acaDomList = m_cache.LangProject.LexDbOA.DomainTypesOA;
@@ -1293,7 +1322,7 @@ namespace LexTextControlsTests
 				Assert.IsNotNull(traitlist);
 				if (entry == m_entryTest)
 				{
-					Assert.AreEqual(8, traitlist.Count);
+					Assert.AreEqual(9, traitlist.Count);
 					VerifyPublishInExport(xentry);
 				}
 				else
@@ -1461,6 +1490,12 @@ namespace LexTextControlsTests
 
 			var xpronun = xentry.SelectNodes("pronunciation");
 			Assert.That(xpronun, Has.Count.EqualTo(1));
+
+			var dialectLabelXpath = "trait[@name = 'dialect-labels']";
+			var dialectLabelNodes = xentry.SelectNodes(dialectLabelXpath);
+			Assert.AreEqual(1, dialectLabelNodes.Count, "Should contain dialect label");
+			Assert.AreEqual("east", XmlUtils.GetAttributeValue(dialectLabelNodes[0], "value"), "Wrong dialect label!");
+
 			var xmedia = xpronun[0].SelectNodes("media");
 			Assert.That(xmedia, Has.Count.EqualTo(1));
 			var hrefMedia = xmedia[0].Attributes["href"];

@@ -226,6 +226,7 @@ typedef [v1_enum] enum FwTextPropType
 	ktptTags = 5, // prop holds sequence of 8-char items, each the memcpy-equivalent of a GUID
 	ktptObjData = 6, // prop holds data about an embedded object.
 		// (The first character indicates the nature of the data, see VwTextBoxes.cpp.)
+	ktptCustomBullet = 7,
 
 	/*------------------------------------------------------------------------------------------
 		Properties that originated in the views subsystem.  These are a mixture of integer and

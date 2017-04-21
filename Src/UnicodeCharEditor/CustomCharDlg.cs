@@ -10,16 +10,17 @@
 // </remarks>
 
 using System;
-using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using System.Diagnostics;
-using SIL.FieldWorks.FwCoreDlgs;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Controls;
-using SIL.Utils;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs;
+using SIL.Utils;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
@@ -1031,13 +1032,16 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// <returns></returns>
 		private static ErrorMessageHandler.ErrorMessage ValidCodepoint(string codepoint, bool lessStrict)
 		{
-			if( codepoint.Length == 0 && lessStrict )
+			if( string.IsNullOrEmpty(codepoint) && lessStrict )
 				return ErrorMessageHandler.ErrorMessage.none;
 			if( codepoint.Length < 4)
 				return ErrorMessageHandler.ErrorMessage.shortCodepoint;
 			if( codepoint.Length > 6)
 				return ErrorMessageHandler.ErrorMessage.longCodepoint;
-			if (codepoint.Length > 3 && Convert.ToInt32(codepoint, 16) == 0)
+			var codepointValue = Convert.ToInt32(codepoint, 16);
+			if( codepointValue > 0x10FFFF || codepointValue < 0)
+				return ErrorMessageHandler.ErrorMessage.outsideRange;
+			if (codepointValue == 0)
 				return ErrorMessageHandler.ErrorMessage.zeroCodepoint;
 			if (Icu.IsSurrogate(codepoint))
 				return ErrorMessageHandler.ErrorMessage.inSurrogateRange;
@@ -1311,7 +1315,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			m_lblPUADisplay.Text = PUACharacter.CodepointAsString(m_txtCodepoint.Text);
 			m_lblWarning.Text = "";
 
-			// Don't bother decoding the text if the text box was disabled, becuase then the
+			// Don't bother decoding the text if the text box was disabled, because then the
 			// user didn't type it.
 			if(m_txtCodepoint.Enabled == false)
 				return;

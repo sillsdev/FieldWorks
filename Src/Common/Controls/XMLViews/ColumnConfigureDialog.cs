@@ -31,11 +31,11 @@ namespace SIL.FieldWorks.Common.Controls
 		private Button okButton;
 		private Button cancelButton;
 		private Button helpButton;
-		private Button addButton;
+		internal Button addButton;
 		private Button removeButton;
 		internal Button moveUpButton;
 		internal Button moveDownButton;
-		private FwOverrideComboBox wsCombo;
+		internal FwOverrideComboBox wsCombo;
 		private Label label3;
 		internal ListView currentList;
 
@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.Common.Controls
 		WsComboContent m_wccCurrent = WsComboContent.kwccNone;
 		private int m_hvoRootObj = 0;
 
-		private ListView optionsList;
+		internal ListView optionsList;
 		private HelpProvider helpProvider;
 		private IContainer components;
 		private ColumnHeader columnHeader1;
@@ -224,9 +224,22 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if (wsLabel != "")
 			{
+				var itemToSelect = wsLabel;
+				switch (wsLabel)
+				{
+					case "analysis vernacular":
+					case "vernacular analysis":
+						itemToSelect = wsLabel.Split(' ')[0];
+						break;
+				}
 				foreach (WsComboItem item in wsCombo.Items)
-					if (item.Id == wsLabel)
+				{
+					if (item.Id == itemToSelect)
+					{
 						wsCombo.SelectedItem = item;
+						break;
+					}
+				}
 			}
 		}
 
@@ -564,7 +577,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// or 2) the user deleted the Writing System... try to revert to a default ws
 			//       unless there is a column for that already, in which case return null
 			//       so we can delete this column.
-			if (String.IsNullOrEmpty(dispCategory) && !String.IsNullOrEmpty(wsParam))
+			if (string.IsNullOrEmpty(dispCategory) && !string.IsNullOrEmpty(wsParam))
 			{
 				// Display the language name, not its ICU locale.
 				CoreWritingSystemDefinition ws;
@@ -593,7 +606,7 @@ namespace SIL.FieldWorks.Common.Controls
 				itemWithToolTip .ImageIndex = 0;
 			}
 
-			return itemWithToolTip ;
+			return itemWithToolTip;
 		}
 
 		private string TranslateWsParamToLocalizedDisplayCategory(string wsParam)
@@ -1121,7 +1134,8 @@ namespace SIL.FieldWorks.Common.Controls
 			int index = CurrentListIndex;
 			if (index >= 0)
 				currentList.Items[index].Selected = false;
-			AddCurrentItem(columnBeingAdded).Selected = true;
+			var currentItem = AddCurrentItem(columnBeingAdded);
+			currentItem.Selected = true;
 
 			//When adding the columnBeingAdded, try to adjust the label so that it is unique. This happens when
 			//the column is already one that exists in the list of currentColumns.
@@ -1143,6 +1157,8 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				ShowDuplicatesWarning(GetDuplicateColumns());
 			}
+			// Select the item in the ws combo box by its name (see MakeCurrentItem method for details of item construction)
+			wsCombo.SelectedItem = currentItem.SubItems[1];
 
 			currentList.Focus();
 		}

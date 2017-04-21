@@ -4,19 +4,16 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.Data;
-using System.Linq;
 using System.Windows.Forms;
 
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.FDO.Application;
+using System.Collections.Generic;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -25,8 +22,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// </summary>
 	public class LexReferenceUnidirectionalView : VectorReferenceView
 	{
-		protected ICmObject m_displayParent = null;
-
 		public LexReferenceUnidirectionalView()
 		{
 			// This call is required by the Windows.Forms Form Designer.
@@ -35,50 +30,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		protected override VectorReferenceVc CreateVectorReferenceVc()
 		{
-			LexReferenceUnidirectionalVc vc = new LexReferenceUnidirectionalVc(m_fdoCache, m_rootFlid, m_displayNameProperty, m_displayWs);
-			if (m_displayParent != null)
-				vc.DisplayParent = m_displayParent;
-			return vc;
-		}
-
-		public ICmObject DisplayParent
-		{
-			set
-			{
-				CheckDisposed();
-
-				m_displayParent = value;
-				if (m_VectorReferenceVc != null)
-					(m_VectorReferenceVc as LexReferenceUnidirectionalVc).DisplayParent = value;
-			}
-		}
-
-		protected override List<ICmObject> GetVisibleItemList()
-		{
-			var sda = m_rootb.DataAccess as ISilDataAccessManaged;
-			var objRepo = Cache.ServiceLocator.ObjectRepository;
-			if (sda != null) //sda should never be null
-			{
-				return (from i in sda.VecProp(m_rootObj.Hvo, m_rootFlid)
-						where objRepo.GetObject(i) != m_displayParent
-						select objRepo.GetObject(i)).ToList();
-			}
-			Debug.Assert(false, "Error retrieving DataAccess, crash imminent.");
-			return null;
-		}
-
-		protected override List<ICmObject> GetHiddenItemList()
-		{
-			var sda = m_rootb.DataAccess as ISilDataAccessManaged;
-			var objRepo = Cache.ServiceLocator.ObjectRepository;
-			if (sda != null) //sda should never be null
-			{
-				return (from i in sda.VecProp(m_rootObj.Hvo, m_rootFlid)
-						where objRepo.GetObject(i) == m_displayParent
-						select objRepo.GetObject(i)).ToList();
-			}
-			Debug.Assert(false, "Error retrieving DataAccess, crash imminent.");
-			return null;
+			return new LexReferenceUnidirectionalVc(m_fdoCache, m_rootFlid, m_displayNameProperty, m_displayWs);
 		}
 
 		protected override void Delete()
@@ -97,6 +49,27 @@ namespace SIL.FieldWorks.XWorks.LexEd
 #endif
 		}
 
+		/// <summary>
+		/// Put the hidden item back into the list of visible items to make the list that should be stored in the property.
+		/// </summary>
+		/// <param name="items"></param>
+		protected override void AddHiddenItems(List<ICmObject> items)
+		{
+			var allItems = base.GetVisibleItemList();
+			if (allItems.Count != 0)
+				items.Insert(0, allItems[0]);
+		}
+
+		/// <summary>
+		/// In a unidirectional view the FIRST item is hidden.
+		/// </summary>
+		protected override List<ICmObject> GetVisibleItemList()
+		{
+			var result = base.GetVisibleItemList();
+			result.RemoveAt(0);
+			return result;
+		}
+
 		#region Component Designer generated code
 		/// <summary>
 		/// The Superclass handles everything except our Name property.
@@ -113,14 +86,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// </summary>
 	public class LexReferenceUnidirectionalVc : VectorReferenceVc
 	{
-
-		protected ICmObject m_displayParent = null;
-
 		/// <summary>
 		/// Constructor for the Vector Reference View Constructor Class.
 		/// </summary>
 		public LexReferenceUnidirectionalVc(FdoCache cache, int flid, string displayNameProperty, string displayWs)
-			: base (cache, flid, displayNameProperty, displayWs)
+			: base(cache, flid, displayNameProperty, displayWs)
 		{
 		}
 
@@ -133,20 +103,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			ISilDataAccess da = vwenv.DataAccess;
 			int count = da.get_VecSize(hvo, tag);
-			// Show everything in the collection except the current element from the main display.
-			for (int i = 0; i < count; ++i)
+			// Unidirectional consist of everything FOLLOWING the first element which is the owning root.
+			for (int i = 1; i < count; ++i)
 			{
-				int hvoItem = da.get_VecItem(hvo, tag, i);
-				if (m_displayParent != null && hvoItem == m_displayParent.Hvo)
-					continue;
-				vwenv.AddObj(hvoItem, this,	VectorReferenceView.kfragTargetObj);
+				vwenv.AddObj(da.get_VecItem(hvo, tag, i), this,
+					VectorReferenceView.kfragTargetObj);
 				vwenv.AddSeparatorBar();
 			}
-		}
-
-		public ICmObject DisplayParent
-		{
-			set { m_displayParent = value; }
 		}
 	}
 }

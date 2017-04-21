@@ -7,7 +7,9 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
+using System.Threading;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.Test.TestUtils;
@@ -592,6 +594,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
 				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "es", "en", new DummyFdoUI(),
 				FwDirectoryFinder.FdoDirectories, new FdoSettings());
+			// Verify that we can process integers from lists regardless of mangled culture info LT-18245
+			var culture = Thread.CurrentThread.CurrentCulture;
+			// Make a writable clone
+			culture = (CultureInfo)culture.Clone();
+			culture.NumberFormat.NegativeSign = "!";
+			Thread.CurrentThread.CurrentCulture = culture;
 		}
 
 		/// <summary>

@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.XWorks
 			var reversalIndexConfigWritingSystemLanguage = model.WritingSystem;
 
 			var currentAnalysisWsList = cache.LanguageProject.AnalysisWritingSystems;
-			var wsObj = currentAnalysisWsList.FirstOrDefault(ws => ws.IcuLocale == reversalIndexConfigWritingSystemLanguage);
+			var wsObj = currentAnalysisWsList.FirstOrDefault(ws => ws.Id == reversalIndexConfigWritingSystemLanguage);
 			if (wsObj == null || wsObj.DisplayLabel.ToLower().Contains("audio"))
 				return;
 			var riRepo = cache.ServiceLocator.GetInstance<IReversalIndexRepository>();

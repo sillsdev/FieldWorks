@@ -56,7 +56,7 @@
       <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="Paratext.LexicalContracts">
       <HintPath>..\..\..\DistFiles\Paratext.LexicalContracts.dll</HintPath>

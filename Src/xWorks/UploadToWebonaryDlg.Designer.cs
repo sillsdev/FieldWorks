@@ -88,8 +88,6 @@ namespace SIL.FieldWorks.XWorks
 			resources.ApplyResources(this.explanationLabel, "explanationLabel");
 			this.tableLayoutPanel.SetColumnSpan(this.explanationLabel, 3);
 			this.explanationLabel.Name = "explanationLabel";
-			this.explanationLabel.TabStop = true;
-			this.explanationLabel.UseCompatibleTextRendering = true;
 			// 
 			// publishButton
 			// 
@@ -247,11 +245,11 @@ namespace SIL.FieldWorks.XWorks
 			// 
 			// reversalsCheckedListBox
 			// 
+			this.reversalsCheckedListBox.CheckOnClick = true;
 			this.publicationSelectionTableLayoutPanel.SetColumnSpan(this.reversalsCheckedListBox, 2);
 			resources.ApplyResources(this.reversalsCheckedListBox, "reversalsCheckedListBox");
 			this.reversalsCheckedListBox.FormattingEnabled = true;
 			this.reversalsCheckedListBox.Name = "reversalsCheckedListBox";
-			this.reversalsCheckedListBox.CheckOnClick = true;
 			this.reversalsCheckedListBox.SelectedIndexChanged += new System.EventHandler(this.reversalsCheckedListBox_SelectedIndexChanged);
 			// 
 			// UploadToWebonaryDlg

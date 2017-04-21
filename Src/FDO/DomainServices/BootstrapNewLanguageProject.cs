@@ -389,14 +389,19 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			var eng = servLoc.WritingSystemManager.UserWritingSystem;
 
 			var complexEntryTypesList = lexDb.ComplexEntryTypesOA;
-			var lexEntryTypeFactory = servLoc.GetInstance<ILexEntryTypeFactory>() as ILexEntryTypeFactoryInternal;
-			for (var i = 1; i <= 6; i++)
+			var lexEntryTypeFactory = (ILexEntryTypeFactoryInternal)servLoc.GetInstance<ILexEntryTypeFactory>();
+			for (var i = 0; i <= 6; i++)
 			{
 				var guid = Guid.Empty;
 				ITsString name = null;
 				ITsString abbr = null;
 				switch (i)
 				{
+					case 0:
+						guid = new Guid("fec038ed-6a8c-4fa5-bc96-a4f515a98c50");
+						name = TsStringUtils.MakeString("Unspecified Complex Form", eng.Handle);
+						abbr = TsStringUtils.MakeString("unspec. comp. form of", eng.Handle);
+						break;
 					case 1:
 						guid = new Guid("1f6ae209-141a-40db-983c-bee93af0ca3c");
 						name = TsStringUtils.MakeString("Compound", eng.Handle);
@@ -434,19 +439,24 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					guid,
 					dataReader.GetNextRealHvo(),
 					complexEntryTypesList,
-					i - 1, // Zero based ord.
+					i, // Zero based ord.
 					name, eng.Handle,
 					abbr, eng.Handle);
 			}
 
-			var entryTypesList = lexDb.VariantEntryTypesOA;
-			for (var i = 1; i <= 6; i++)
+			var variantEntryTypesList = lexDb.VariantEntryTypesOA;
+			for (var i = 0; i <= 6; i++)
 			{
 				var guid = Guid.Empty;
 				ITsString name = null;
 				ITsString abbr = null;
 				switch (i)
 				{
+					case 0:
+						guid = new Guid("3942addb-99fd-43e9-ab7d-99025ceb0d4e");
+						name = TsStringUtils.MakeString("Unspecified Variant", eng.Handle);
+						abbr = TsStringUtils.MakeString("unspec. var. of", eng.Handle);
+						break;
 					case 1:
 						guid = new Guid("024b62c9-93b3-41a0-ab19-587a0030219a");
 						name = TsStringUtils.MakeString("Dialectal Variant", eng.Handle);
@@ -484,9 +494,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					guid == LexEntryTypeTags.kguidLexTypPluralVar ||
 					guid == LexEntryTypeTags.kguidLexTypPastVar)
 				{
-					entryTypesList.PossibilitiesOS.Insert(i - 1,
-						new LexEntryInflType(cache, dataReader.GetNextRealHvo(), guid));
-					var leit = entryTypesList.PossibilitiesOS[i - 1] as ILexEntryInflType;
+					variantEntryTypesList.PossibilitiesOS.Insert(i, new LexEntryInflType(cache, dataReader.GetNextRealHvo(), guid));
+					var leit = (ILexEntryInflType)variantEntryTypesList.PossibilitiesOS[i];
 					leit.Name.set_String(eng.Handle, name);
 					leit.Abbreviation.set_String(eng.Handle, abbr);
 					// todo: ReverseAbbr
@@ -497,8 +506,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					lexEntryTypeFactory.Create(
 						guid,
 						dataReader.GetNextRealHvo(),
-						entryTypesList,
-						i - 1, // Zero based ord.
+						variantEntryTypesList,
+						i, // Zero based ord.
 						name, eng.Handle,
 						abbr, eng.Handle);
 				}

@@ -969,6 +969,9 @@ namespace SIL.CoreImpl
 					case "bulNumTxtBef":
 						propsBldr.SetStrPropValue((int)FwTextPropType.ktptBulNumTxtBef, attr.Value);
 						break;
+					case "bulCusTxt":
+						propsBldr.SetStrPropValue((int)FwTextPropType.ktptCustomBullet, attr.Value);
+						break;
 					case "charStyle":
 						Debug.Fail("We don't support the old charStyle attribute!");
 						break;
@@ -1218,6 +1221,9 @@ namespace SIL.CoreImpl
 						break;
 					case "bulNumTxtBef":
 						strBldr.SetStrPropValue((int)FwTextPropType.ktptBulNumTxtBef, attr.Value);
+						break;
+					case "bulCusTxt":
+						strBldr.SetStrPropValue((int)FwTextPropType.ktptCustomBullet, attr.Value);
 						break;
 					case "charStyle":
 						Debug.Fail("We don't support the old charStyle attribute!");

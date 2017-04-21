@@ -75,10 +75,30 @@ namespace SIL.FieldWorks.XWorks
 			// When a user clicks Publish, it is revealed. This is done within the context of having a resizable table of controls, and having
 			// the output log area be the vertically growing control when a user increases the height of the dialog
 			this.Shown += (sender, args) => { this.Height = this.Height - outputLogTextbox.Height; };
+
+			// Handle localizable explanation area with link.
+			var explanationText = xWorksStrings.toApplyForWebonaryAccountExplanation;
+			var explanationTextLink = xWorksStrings.toApplyForWebonaryAccountLink;
+			var explanationTextLinkStart = explanationText.IndexOf("{", StringComparison.Ordinal);
+			var explanationTextLinkLength = explanationTextLink.Length;
+			explanationLabel.Text = string.Format(explanationText, explanationTextLink);
+			// Don't blow up if a localization didn't allow for the link.
+			if (explanationTextLinkStart < 0)
+			{
+				explanationTextLinkStart = 0;
+				explanationTextLinkLength = 0;
+			}
+			explanationLabel.LinkArea = new LinkArea(explanationTextLinkStart, explanationTextLinkLength);
 		}
 
 		private void UpdateEntriesToBePublishedLabel()
 		{
+			if (GetSelectedDictionaryModel() == null)
+			{
+				howManyPubsAlertLabel.Text = string.Format(xWorksStrings.ksErrorNoViewOnPublication);
+				return;
+			}
+
 			var countOfDictionaryEntries = m_controller.CountDictionaryEntries(GetSelectedDictionaryModel());
 
 			var reversalCounts = m_controller.GetCountsOfReversalIndexes(GetSelectedReversals());
@@ -232,7 +252,9 @@ namespace SIL.FieldWorks.XWorks
 
 		private DictionaryConfigurationModel GetSelectedDictionaryModel()
 		{
-			return Model.Configurations[configurationBox.SelectedItem.ToString()];
+			return configurationBox.SelectedItem == null
+				? null
+				: Model.Configurations[configurationBox.SelectedItem.ToString()];
 		}
 
 		private void publishButton_Click(object sender, EventArgs e)

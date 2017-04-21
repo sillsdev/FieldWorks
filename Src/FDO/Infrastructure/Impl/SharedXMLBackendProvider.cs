@@ -290,8 +290,10 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				using (var fs = new FileStream(name, FileMode.CreateNew))
 					fs.SetLength(capacity);
 			}
-#endif
+			return MemoryMappedFile.CreateFromFile(name);
+#else
 			return MemoryMappedFile.CreateOrOpen(name, capacity);
+#endif
 		}
 
 		/// <summary>

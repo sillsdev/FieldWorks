@@ -82,6 +82,32 @@ namespace XMLViewsTests
 		}
 
 		[Test]
+		public void XHTMLExportGetDigraphMapsFromICUSortRules_TestSecondaryTertiaryShouldNotGenerateHeader()
+		{
+			var ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "&b << az / c <<< AZ / C" + Environment.NewLine + "&f << gz"};
+
+			var exporter = new ConfiguredExport(null, null, 0);
+			string output;
+			using (var stream = new MemoryStream())
+			{
+				using (var writer = new StreamWriter(stream))
+				{
+					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
+					Dictionary<string, string> mapChars;
+					Set<string> ignoreSet;
+					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
+					Assert.AreEqual(data.Count, 0, "Header created for two wedges");
+					Assert.AreEqual(mapChars.Count, 3, "Too many characters found equivalents");
+					Assert.AreEqual(mapChars["az"], "b");
+					Assert.AreEqual(mapChars["AZ"], "b");
+					// Rules following the '/' rule should not be skipped LT-18309
+					Assert.AreEqual(mapChars["gz"], "f");
+				}
+			}
+		}
+
+		[Test]
 		public void XHTMLExportGetDigraphMapsFromICUSortRules_TertiaryIgnorableDoesNotCrash()
 		{
 			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultVernacularWritingSystem;
@@ -222,6 +248,43 @@ namespace XMLViewsTests
 					Assert.AreEqual(mapChars["ch"], "c");
 				}
 			}
+		}
+
+		[Test]
+		public void XHTMLExportGetDigraphMapsFirstCharactersFromSortRulesWithNoMapping()
+		{
+			var ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.DefaultCollation = new SimpleRulesCollationDefinition("standard") { SimpleRules = "b" + Environment.NewLine + "ñe ñ"};
+
+			var exporter = new ConfiguredExport(null, null, 0);
+			string output;
+			using (var stream = new MemoryStream())
+			{
+				using (var writer = new StreamWriter(stream))
+				{
+					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
+					Dictionary<string, string> mapChars;
+					Set<string> ignoreSet;
+					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
+					Assert.AreEqual(data.Count, 2, "Two Digraphs should be returned");
+					Assert.AreEqual(mapChars["ñ"], "ñe");
+				}
+			}
+		}
+
+		[Test]
+		public void XHTMLExportGetLeadChar_SurrogatePairDoesNotCrash()
+		{
+			string data = null;
+			CoreWritingSystemDefinition wsEn;
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("ipo", out wsEn);
+			Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(wsEn);
+			string entryLetter = "\U00016F00\U00016F51\U00016F61\U00016F90";
+			Dictionary<string, Set<string>> wsDigraphMap = new Dictionary<string, Set<string>>();
+			Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap = new Dictionary<string, Dictionary<string, string>>();
+			Dictionary<string, Set<string>> wsIgnorableCharMap = new Dictionary<string, Set<string>>();
+			Assert.DoesNotThrow(() => data = ConfiguredExport.GetLeadChar(entryLetter, "ipo", wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, Cache));
+			Assert.AreEqual(data.Length, 2, "Surrogate pair should contains 2 characters");
 		}
 
 		/// <summary>

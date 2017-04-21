@@ -663,11 +663,11 @@ namespace SIL.FieldWorks.XWorks
 
 			foreach (FDWrapper fdw in m_customFields)
 			{
-				if (CheckForRegularFieldDuplicateName(fdw))
+				if (!fdw.Fd.MarkForDeletion && CheckForRegularFieldDuplicateName(fdw))
 				{
 					var sClassName = GetItem(m_locationComboBox, fdw.Fd.Class).Name;
 					var str1 = string.Format(xWorksStrings.ksCustomFieldMatchesNonCustomField,
-						sClassName, fieldName);
+						sClassName, fdw.Fd.Userlabel);
 					MessageBox.Show(str1, xWorksStrings.LabelAlreadyExists, MessageBoxButtons.OK);
 					m_nameTextBox.Select();  // we want focus on the new CustomFieldName.Text
 					return true;

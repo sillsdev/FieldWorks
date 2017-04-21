@@ -1,3 +1,5 @@
 This directory contains the Graphite2 library from http://hg.palaso.org/graphitedev
 Current version derived from upstream changeset 0f9edca71849
 See update.sh for update procedure.
+
+For more recent graphite code, see https://github.com/silnrsi/graphite

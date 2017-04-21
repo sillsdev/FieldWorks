@@ -11,6 +11,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -588,7 +589,9 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			{
 				string sVal = xrdr.GetAttribute("val");
 				int nVal;
-				if (Int32.TryParse(sVal, out nVal))
+				// use InvariantCulture here to avoid problems for people who redefine the '-' char in their locale
+				// even though such anti-social behavior cannot be fully explained
+				if (int.TryParse(sVal, NumberStyles.Integer, CultureInfo.InvariantCulture, out nVal))
 				{
 					xrdr.Read();	// reads <Integer/>
 					xrdr.Read();	// reads end tag.

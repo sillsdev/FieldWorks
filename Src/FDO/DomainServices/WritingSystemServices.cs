@@ -1399,6 +1399,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 			// Where a reversal index is linked to the origWsId, remove the entire reversal index,
 			// not just its references to the origWsId. (See LT-14482.)
+			// FIXME: Modify the reversal index to preserve the reversal index entries
 			var condemnedReversals = servLocator.GetInstance<IReversalIndexRepository>().AllInstances().Where(reversalIndex =>
 				reversalIndex.WritingSystem == origWsId).ToList();
 			foreach (var condemnedReversal in condemnedReversals)

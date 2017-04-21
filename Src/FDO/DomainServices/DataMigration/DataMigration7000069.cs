@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
@@ -77,66 +78,24 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			if (lexDbElt.Element("ExtendedNoteTypes") != null)
 				return; // probably a test involving NewLangProj which is still languishing at v7000062
 			CreateNewLexDbProperty(lexDbElt, "ExtendedNoteTypes", extNoteListGuid);
-			var lexDbGuid = lexDbElt.Attribute("guid").Value;
-
 			// create ExtendedNoteTypes' possibility list
-			var sb = new StringBuilder();
-			sb.AppendFormat("<rt class=\"CmPossibilityList\" guid=\"{0}\" ownerguid=\"{1}\">", extNoteListGuid,
-							lexDbGuid);
-			sb.Append("<Abbreviation>");
-			sb.Append("<AUni ws=\"en\">ExtNoteTyp</AUni>");
-			sb.Append("</Abbreviation>");
-			sb.Append("<DateCreated val=\"2016-06-27 18:48:18.679\" />");
-			sb.Append("<DateModified val=\"2016-06-27 18:48:18.679\" />");
-			sb.Append("<Depth val=\"1\" />");
-			sb.Append("<IsSorted val=\"True\" />");
-			sb.Append("<ItemClsid val=\"7\" />");
-			sb.Append("<Name>");
-			sb.Append("<AUni ws=\"en\">Extended Note Types</AUni>");
-			sb.Append("</Name>");
-			sb.Append("<Possibilities>");
-			sb.Append("<objsur guid=\"2f06d436-b1e0-47ae-a42e-1f7b893c5fc2\" t=\"o\" />");
-			sb.Append("<objsur guid=\"7ad06e7d-15d1-42b0-ae19-9c05b7c0b181\" t=\"o\" />");
-			sb.Append("<objsur guid=\"30115b33-608a-4506-9f9c-2457cab4f4a8\" t=\"o\" />");
-			sb.Append("<objsur guid=\"d3d28628-60c9-4917-8185-ba64c59f20c4\" t=\"o\" />");
-			sb.Append("</Possibilities>");
-			sb.Append("<PreventDuplicates val=\"True\" />");
-			sb.Append("<WsSelector val=\"-3\" />");
-			sb.Append("</rt>");
-			var newCmPossibilityListElt = XElement.Parse(sb.ToString());
-			var dtoCmPossibilityList = new DomainObjectDTO(extNoteListGuid, "CmPossibilityList", newCmPossibilityListElt.ToString());
-			repoDto.Add(dtoCmPossibilityList);
+			var lexDbGuid = lexDbElt.Attribute("guid").Value;
+			var culturalGuid = "7ad06e7d-15d1-42b0-ae19-9c05b7c0b181";
+			var grammarGuid = "30115b33-608a-4506-9f9c-2457cab4f4a8";
+			var inflectionalGuid = "d3d28628-60c9-4917-8185-ba64c59f20c4";
+			var collocationGuid = "2f06d436-b1e0-47ae-a42e-1f7b893c5fc2";
+			DataMigrationServices.CreatePossibilityList(repoDto, extNoteListGuid, lexDbGuid,
+				new[] {new Tuple<string, string, string>("en", "ExtNoteTyp", "Extended Note Types")},
+				new DateTime(2016, 6, 27, 18, 48, 18), WritingSystemServices.kwsAnals, new [] {culturalGuid, collocationGuid, grammarGuid, inflectionalGuid});
 
-			// Now add our 5 default possibilities
-			CreatePossibility(repoDto, extNoteListGuid, "2f06d436-b1e0-47ae-a42e-1f7b893c5fc2", "Collocation", "Coll.");
-			CreatePossibility(repoDto, extNoteListGuid, "7ad06e7d-15d1-42b0-ae19-9c05b7c0b181", "Cultural", "Cult.");
-			CreatePossibility(repoDto, extNoteListGuid, "30115b33-608a-4506-9f9c-2457cab4f4a8", "Grammar", "Gram.");
-			CreatePossibility(repoDto, extNoteListGuid, "d3d28628-60c9-4917-8185-ba64c59f20c4", "Inflectional", "Infl.");
+			// Now add our 4 default possibilities
+			var migrationDate = new DateTime(2016, 06, 27, 18, 48, 18);
+			DataMigrationServices.CreatePossibility(repoDto, extNoteListGuid, collocationGuid, "Collocation", "Coll.", migrationDate);
+			DataMigrationServices.CreatePossibility(repoDto, extNoteListGuid, culturalGuid, "Cultural", "Cult.", migrationDate);
+			DataMigrationServices.CreatePossibility(repoDto, extNoteListGuid, grammarGuid, "Grammar", "Gram.", migrationDate);
+			DataMigrationServices.CreatePossibility(repoDto, extNoteListGuid, inflectionalGuid, "Inflectional", "Infl.", migrationDate);
 
 			DataMigrationServices.UpdateDTO(repoDto, lexDbDTO, lexDbElt.ToString());
-		}
-
-		private static void CreatePossibility(IDomainObjectDTORepository repoDto, string listGuid, string possibilityGuid,
-			string name, string abbr)
-		{
-			var sb = new StringBuilder();
-			sb.AppendFormat("<rt class=\"CmPossibility\" guid=\"{0}\" ownerguid=\"{1}\">", possibilityGuid, listGuid);
-			sb.Append("<Abbreviation>");
-			sb.AppendFormat("<AUni ws=\"en\">{0}</AUni>", abbr);
-			sb.Append("</Abbreviation>");
-			sb.Append("<DateCreated val=\"2016-06-27 18:48:18.679\" />");
-			sb.Append("<DateModified val=\"2016-06-27 18:48:18.679\" />");
-			sb.Append("<BackColor val=\"-1073741824\" />");
-			sb.Append("<ForeColor val=\"-1073741824\" />");
-			sb.Append("<IsProtected val=\"True\" />");
-			sb.Append("<Name>");
-			sb.AppendFormat("<AUni ws=\"en\">{0}</AUni>", name);
-			sb.Append("</Name>");
-			sb.Append("<UnderColor val=\"-1073741824\" />");
-			sb.Append("</rt>");
-			var newCmPossibilityElt = XElement.Parse(sb.ToString());
-			var dtoCmPossibility = new DomainObjectDTO(possibilityGuid, "CmPossibility", newCmPossibilityElt.ToString());
-			repoDto.Add(dtoCmPossibility);
 		}
 
 		private static void CreateNewLexDbProperty(XElement lexDbElt, string propName, string listGuid)
@@ -165,31 +124,14 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			var lexDbGuid = lexDbElt.Attribute("guid").Value;
 
 			// create Languages' possibility list
-			var sb = new StringBuilder();
-			sb.AppendFormat("<rt class=\"CmPossibilityList\" guid=\"{0}\" ownerguid=\"{1}\">", languagesListGuid,
-							lexDbGuid);
-			sb.Append("<Abbreviation>");
-			sb.Append("<AUni ws=\"en\">Lgs</AUni>");
-			sb.Append("<AUni ws=\"es\">Ids</AUni>");
-			sb.Append("<AUni ws=\"fr\">Lgs</AUni>");
-			sb.Append("</Abbreviation>");
-			sb.Append("<DateCreated val=\"2016-07-25 18:48:18.679\" />");
-			sb.Append("<DateModified val=\"2016-07-25 18:48:18.679\" />");
-			sb.Append("<Depth val=\"1\" />");
-			sb.Append("<IsSorted val=\"True\" />");
-			sb.Append("<ItemClsid val=\"7\" />");
-			sb.Append("<Name>");
-			sb.Append("<AUni ws=\"en\">Languages</AUni>");
-			sb.Append("<AUni ws=\"es\">Idiomas</AUni>");
-			sb.Append("<AUni ws=\"fr\">Langues</AUni>");
-			sb.Append("</Name>");
-			sb.Append("<PreventDuplicates val=\"True\" />");
-			sb.Append("<WsSelector val=\"-3\" />");
-			sb.Append("</rt>");
-			// We purposefully didn't add any Possibilities element.
-			var newCmPossibilityListElt = XElement.Parse(sb.ToString());
-			var dtoCmPossibilityList = new DomainObjectDTO(languagesListGuid, "CmPossibilityList", newCmPossibilityListElt.ToString());
-			repoDto.Add(dtoCmPossibilityList);
+			DataMigrationServices.CreatePossibilityList(repoDto, languagesListGuid, lexDbGuid,
+				new[]
+				{
+					new Tuple<string, string, string>("en", "Lgs", "Languages"),
+					new Tuple<string, string, string>("fr", "Lgs", "Langues"),
+					new Tuple<string, string, string>("es", "Ids", "Idiomas")
+				},
+				new DateTime(2016, 7, 25, 18, 48, 18), WritingSystemServices.kwsAnals);
 			DataMigrationServices.UpdateDTO(repoDto, lexDbDTO, lexDbElt.ToString()); // update LexDb object
 
 			// Augment existing Etymologies
@@ -328,14 +270,17 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				var refTypeElt = data.Element("RefType");
 				var varientEntryTypeElt = data.Element("VariantEntryTypes");
 				var complexEntryTypeElt = data.Element("ComplexEntryTypes");
-				if (refTypeElt == null) continue;
-				if (refTypeElt.FirstAttribute.Value == "0" && complexEntryTypeElt == null)
+				if (refTypeElt == null)
 				{
-					AddRefType(data, repoDto, dto, "ComplexEntryTypes", unspecComplexEntryTypeGuid);
+					continue;
 				}
-				else if (refTypeElt.FirstAttribute.Value == "1" && varientEntryTypeElt == null)
+				if (refTypeElt.FirstAttribute.Value == LexEntryRefTags.krtComplexForm.ToString() && complexEntryTypeElt == null)
 				{
-					AddRefType(data, repoDto, dto, "VariantEntryTypes", unspecVariantEntryTypeGuid);
+					AddRefType(data, repoDto, dto, "ComplexEntryTypes", unspecComplexEntryTypeGuid, false);
+				}
+				else if (refTypeElt.FirstAttribute.Value == LexEntryRefTags.krtVariant.ToString() && varientEntryTypeElt == null)
+				{
+					AddRefType(data, repoDto, dto, "VariantEntryTypes", unspecVariantEntryTypeGuid, false);
 				}
 			}
 
@@ -346,32 +291,44 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				if (nameElt != null && nameElt.Value.StartsWith("Variant Types"))
 				{
 					cmPossListGuidForVariantEntryType = dto.Guid;
-					AddRefType(data, repoDto, dto, "Possibilities", unspecVariantEntryTypeGuid);
+					AddRefType(data, repoDto, dto, "Possibilities", unspecVariantEntryTypeGuid, true);
 				}
 				else if (nameElt != null && nameElt.Value.StartsWith("Complex Form Types"))
 				{
 					cmPossListGuidForComplexFormType = dto.Guid;
-					AddRefType(data, repoDto, dto, "Possibilities", unspecComplexEntryTypeGuid);
+					AddRefType(data, repoDto, dto, "Possibilities", unspecComplexEntryTypeGuid, true);
 				}
 			}
 
-			string variantXml = "<rt class=\"LexEntryType\" guid=\"" + unspecVariantEntryTypeGuid + "\"" +
-			" ownerguid=\"" + cmPossListGuidForVariantEntryType + "\"><Abbreviation><AUni ws=\"en\">unspec. var. of</AUni></" +
-			"Abbreviation><IsProtected val=\"true\" /><Name><AUni ws=\"en\">Unspecified Variant</AUni></" +
-			"Name><ReverseAbbr><AUni ws=\"en\">unspec. var.</AUni></ReverseAbbr></rt>";
-			var newDefaultVariantType = new DomainObjectDTO(unspecVariantEntryTypeGuid, "LexEntryType", variantXml);
-			repoDto.Add(newDefaultVariantType);
-
-			string complexXml = "<rt class=\"LexEntryType\" guid=\"" + unspecComplexEntryTypeGuid + "\"" +
-						" ownerguid=\"" + cmPossListGuidForComplexFormType  + "\"><Abbreviation><AUni ws=\"en\">unspec. comp. form of</AUni>" +
-						"</Abbreviation><Description><AStr ws=\"en\"><Run ws=\"en\"></Run></AStr></Description><IsProtected val=\"true\"" +
-						" /><Name><AUni ws=\"en\">Unspecified Complex Form</AUni></Name>" +
-						"<ReverseAbbr><AUni ws=\"en\">unspec. comp. form</AUni></ReverseAbbr></rt>";
-			var newDefaultComplexType = new DomainObjectDTO(unspecComplexEntryTypeGuid, "LexEntryType", complexXml);
-			repoDto.Add(newDefaultComplexType);
+			var dateForTypeCreation = new DateTime(2016, 10, 3, 15, 0, 0);
+			CreateLexEntryType(repoDto, unspecVariantEntryTypeGuid, cmPossListGuidForVariantEntryType,
+				"unspec. var. of", "Unspecified Variant", "unspec. var.", dateForTypeCreation);
+			CreateLexEntryType(repoDto, unspecComplexEntryTypeGuid, cmPossListGuidForComplexFormType,
+				"unspec. comp. form of", "Unspecified Complex Form", "unspec. comp. form", dateForTypeCreation);
 		}
 
-		private static void AddRefType(XElement data, IDomainObjectDTORepository repoDto, DomainObjectDTO dto, string tagName, string guid)
+		/// <summary>
+		/// Creates a LexEntryType with all the basic properties filled in for the xml (necessary for S/R) and adds it to the dto
+		/// </summary>
+		private static void CreateLexEntryType(IDomainObjectDTORepository repoDto, string entryTypeGuid, string entryTypeListGuid,
+			string abbr, string name, string reverseAbbr, DateTime createTime)
+		{
+			var entryTypeDto = DataMigrationServices.CreatePossibility(repoDto, entryTypeListGuid, entryTypeGuid, name, abbr, createTime, "LexEntryType");
+			var letElement = XElement.Parse(entryTypeDto.Xml);
+			//// Add the Reverse Abbreviation
+			var sb = new StringBuilder();
+			sb.Append("<ReverseAbbr>");
+			sb.AppendFormat("<AUni ws=\"en\">{0}</AUni>", reverseAbbr);
+			sb.Append("</ReverseAbbr>");
+			var reverseAbbrElement = XElement.Parse(sb.ToString());
+			var abbrevElement = letElement.Element("Abbreviation");
+			// ReSharper disable once PossibleNullReferenceException -- CreatePossibility always adds an Abbreviation Element
+			abbrevElement.AddAfterSelf(reverseAbbrElement);
+			entryTypeDto.Xml = letElement.ToString();
+			repoDto.Update(entryTypeDto);
+		}
+
+		internal static void AddRefType(XElement data, IDomainObjectDTORepository repoDto, DomainObjectDTO dto, string tagName, string guid, bool owned)
 		{
 			var varElementTag = data.Element(tagName);
 			if (varElementTag == null)
@@ -379,6 +336,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				var varTypeReference = new XElement(tagName);
 				var typeReference = new XElement("objsur");
 				typeReference.SetAttributeValue("guid", guid);
+				typeReference.SetAttributeValue("t", owned ? "o" : "r");
 				varTypeReference.Add(typeReference);
 				data.Add(varTypeReference);
 				DataMigrationServices.UpdateDTO(repoDto, dto, data.ToString());
@@ -388,7 +346,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				varElementTag = data.Element(tagName);
 				var typeObject = new XElement("objsur");
 				typeObject.SetAttributeValue("guid", guid);
-				typeObject.SetAttributeValue("t", "o");
+				typeObject.SetAttributeValue("t", owned ? "o" : "r");
 				if (varElementTag != null) varElementTag.Add(typeObject);
 				DataMigrationServices.UpdateDTO(repoDto, dto, data.ToString());
 			}
@@ -461,28 +419,9 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 			CreateNewLexDbProperty(lexDbElt, "DialectLabels", dialectListGuid);
 			var lexDbGuid = lexDbElt.Attribute("guid").Value;
 
-			// create Languages' possibility list
-			var sb = new StringBuilder();
-			sb.AppendFormat("<rt class=\"CmPossibilityList\" guid=\"{0}\" ownerguid=\"{1}\">", dialectListGuid,
-							lexDbGuid);
-			sb.Append("<Abbreviation>");
-			sb.Append("<AUni ws=\"en\">Dials</AUni>");
-			sb.Append("</Abbreviation>");
-			sb.Append("<DateCreated val=\"2016-08-09 18:48:18.679\" />");
-			sb.Append("<DateModified val=\"2016-08-09 18:48:18.679\" />");
-			sb.Append("<Depth val=\"1\" />");
-			sb.Append("<IsSorted val=\"True\" />");
-			sb.Append("<ItemClsid val=\"7\" />");
-			sb.Append("<Name>");
-			sb.Append("<AUni ws=\"en\">Dialect Labels</AUni>");
-			sb.Append("</Name>");
-			sb.Append("<PreventDuplicates val=\"True\" />");
-			sb.Append("<WsSelector val=\"-6\" />");
-			sb.Append("</rt>");
-			// We purposefully didn't add any Possibilities element.
-			var newCmPossibilityListElt = XElement.Parse(sb.ToString());
-			var dtoCmPossibilityList = new DomainObjectDTO(dialectListGuid, "CmPossibilityList", newCmPossibilityListElt.ToString());
-			repoDto.Add(dtoCmPossibilityList);
+			// create Languages' possibility list with no Possibilities
+			DataMigrationServices.CreatePossibilityList(repoDto, dialectListGuid, lexDbGuid,
+				new[] {new Tuple<string, string, string>("en", "Dials", "Dialect Labels")}, new DateTime(2016, 8, 9, 18, 48, 18), WritingSystemServices.kwsVernAnals);
 			DataMigrationServices.UpdateDTO(repoDto, lexDbDTO, lexDbElt.ToString()); // update LexDb object
 		}
 	}

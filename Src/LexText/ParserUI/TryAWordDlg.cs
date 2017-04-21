@@ -528,19 +528,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				m_parserListener.DisconnectFromParser();
 				m_statusLabel.Text = ParserStoppedMessage();
 				m_tryItButton.Enabled = true;
-				var iree = ex as InvalidReduplicationEnvironmentException;
-				if (iree != null)
-				{
-					string msg = String.Format(ParserUIStrings.ksHermitCrabReduplicationProblem, iree.Morpheme,
-						iree.Message);
-					MessageBox.Show(this, msg, ParserUIStrings.ksBadAffixForm,
-							MessageBoxButtons.OK, MessageBoxIcon.Error);
-				}
-				else
-				{
 					var app = PropTable.GetValue<IApp>("App");
-					ErrorReporter.ReportException(ex, app.SettingsKey, app.SupportEmailAddress, this, false);
-				}
+				ErrorReporter.ReportException(ex, app.SettingsKey, app.SupportEmailAddress, this, false);
 				return;
 			}
 

@@ -29,6 +29,7 @@ using SIL.FieldWorks.Resources;
 using SIL.Windows.Forms.WritingSystems;
 using SIL.WritingSystems;
 using SIL.Utils;
+using XCore;
 using MatchedPair = SIL.WritingSystems.MatchedPair;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -1771,17 +1772,31 @@ namespace SIL.FieldWorks.FwCoreDlgs
 								WritingSystemServices.UpdateWritingSystemId(m_cache, origWS, oldId);
 						}
 						m_fChanged = true;
+						var mediator = GetMediator();
+						if (mediator != null)
+							mediator.SendMessage("WritingSystemUpdated", kvp.Key.Id);
 					}
 				}
 				m_wsManager.Save();
-				if (uowHelper != null)
-					uowHelper.RollBack = false;
 			}
 			finally
 			{
 				if (uowHelper != null)
 					uowHelper.Dispose();
 			}
+		}
+
+		private Mediator GetMediator()
+		{
+			if (m_app == null)
+				return null;
+			Form wndActive = m_app.ActiveMainWindow;
+			if (wndActive == null)
+				return null;
+			PropertyInfo pi = wndActive.GetType().GetProperty("Mediator");
+			if (pi == null)
+				return null;
+			return pi.GetValue(wndActive, null) as Mediator;
 		}
 
 		/// <summary>

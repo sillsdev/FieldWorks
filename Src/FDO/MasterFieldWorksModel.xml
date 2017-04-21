@@ -37,7 +37,8 @@ The original version number was: 7000000. Be sure it has the right number of zer
 editing it.
 
 Change History: (Be sure to update the 'version' attribute in the EntireModel, when needed. (Almost always.))
-  16 March 2015 (7000070): Migrate LDML files to version 3.
+  16 March 2015 (7000071): Migrate LDML files to version 3.
+  05 December 2016 (7000070): No actual model change, but a data migration to clean up bad LexRefTypes [ postponed semantic versioning until version 9 ]
   08 Aug 2016 (7000069): Make multiple model changes:
     * Add/modify LexEtymology fields and make LexEntry->Etymology an owning sequence.
     * Add Language list to LexDb.
@@ -5326,7 +5327,7 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 		</owning>
 		<owning num="51" id="Media" card="col" sig="CmFolder">
 		  <comment>
-			<para>This contains a lit of folders holding media file objects. For now, we will have one CmFolder called "Local Media" that holds all media.</para>
+			<para>This contains a list of folders holding media file objects. For now, we will have one CmFolder called "Local Media" that holds all media.</para>
 		  </comment>
 		</owning>
 		<owning num="52" id="GenreList" card="atomic" sig="CmPossibilityList">

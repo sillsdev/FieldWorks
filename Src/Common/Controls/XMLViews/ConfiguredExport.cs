@@ -646,7 +646,8 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				sEntryT = sEntry;
 			} while (fChanged);
-			string sFirst = sEntry.Substring(0, 1);
+			int cnt = GetFirstLetterLength(sEntry);
+			string sFirst = sEntry.Substring(0, cnt);
 			foreach (string sChar in sortChars)
 			{
 				if (sEntry.StartsWith(sChar))
@@ -681,6 +682,16 @@ namespace SIL.FieldWorks.Common.Controls
 				Icu.CloseCollator(col);
 			}
 			return sFirst;
+		}
+
+		/// <returns>
+		/// 2 if the first letter in the string is composed of a Surrogate Pair; 1 otherwise
+		/// </returns>
+		internal static int GetFirstLetterLength(string sEntry)
+		{
+			if (char.IsSurrogatePair(sEntry, 0))
+				return 2;
+			return 1;
 		}
 
 		/// <summary>
@@ -733,6 +744,8 @@ namespace SIL.FieldWorks.Common.Controls
 			mapChars = new Dictionary<string, string>();
 			CoreWritingSystemDefinition ws = cache.ServiceLocator.WritingSystemManager.Get(sWs);
 
+			wsDigraphMap[sWs] = digraphs;
+
 			var simpleCollation = ws.DefaultCollation as SimpleRulesCollationDefinition;
 			if (simpleCollation != null)
 			{
@@ -755,7 +768,6 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					// prime with empty ws in case all the rules affect only the ignore set
 				wsCharEquivalentMap[sWs] = mapChars;
-				wsDigraphMap[sWs] = digraphs;
 					string[] individualRules = icuCollation.IcuRules.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
 					for (int i = 0; i < individualRules.Length; ++i)
 					{
@@ -773,6 +785,25 @@ namespace SIL.FieldWorks.Common.Controls
 							continue;
 						rule = rule.Replace("<<<", "=");
 						rule = rule.Replace("<<", "=");
+
+					// If the rule contains one or more expansions ('/') remove the expansion portions
+					if (rule.Contains("/"))
+					{
+						bool isExpansion = false;
+						var newRule = new StringBuilder();
+						for (var ruleIndex = 0; ruleIndex <= rule.Length - 1; ruleIndex++)
+						{
+							if (rule.Substring(ruleIndex, 1) == "/")
+								isExpansion = true;
+							else if (rule.Substring(ruleIndex, 1) == "=" || rule.Substring(ruleIndex, 1)== "<")
+								isExpansion = false;
+
+							if (!isExpansion)
+								newRule.Append(rule.Substring(ruleIndex, 1));
+						}
+						rule = newRule.ToString();
+					}
+
 						// "&N<ng<<<Ng<ny<<<Ny" => "&N<ng=Ng<ny=Ny"
 						// "&N<ñ<<<Ñ" => "&N<ñ=Ñ"
 						// There are other issues we are not handling proplerly such as the next line
@@ -780,6 +811,7 @@ namespace SIL.FieldWorks.Common.Controls
 						var primaryParts = rule.Split('<');
 						foreach (var part in primaryParts)
 						{
+						if (rule.Contains("<"))
 							BuildDigraphSet(part, sWs, wsDigraphMap);
 							MapRuleCharsToPrimary(part, sWs, wsCharEquivalentMap);
 						}
@@ -789,9 +821,6 @@ namespace SIL.FieldWorks.Common.Controls
 
 			// This at least prevents null reference and key not found exceptions.
 			// Possibly we should at least map the ASCII LC letters to UC.
-			Set<string> temp;
-			if (!wsDigraphMap.TryGetValue(sWs, out temp))
-				wsDigraphMap[sWs] = digraphs;
 			if (!wsCharEquivalentMap.TryGetValue(sWs, out mapChars))
 				wsCharEquivalentMap[sWs] = mapChars = new Dictionary<string, string>();
 

@@ -23,8 +23,8 @@ namespace FwBuildTasks
 		/// <summary>times to retry failed downloads</summary>
 		protected const int Retries = 3;
 
-		/// <summary>time to wait before retrying failed downloads (one minute = 60,000ms)</summary>
-		protected const int RetryWaitTime = 60000;
+		/// <summary>time to wait before retrying failed downloads (four minutes = 240,000ms)</summary>
+		protected const int RetryWaitTime = 240000;
 
 		/// <summary>HTTP address to download from</summary>
 		[Required]
@@ -33,20 +33,16 @@ namespace FwBuildTasks
 
 		/// <summary>Directory into which to download the file</summary>
 		[Required]
-		public string DownloadsDir
-		{ get; set; }
+		public string DownloadsDir { get; set; }
 
 		/// <summary>Local file to which the downloaded file will be saved (if different from the remote name)</summary>
-		public string LocalFilename
-		{ get; set; }
+		public string LocalFilename { get; set; }
 
 		/// <summary>Credential for HTTP authentication</summary>
-		public string Username
-		{ get; set; }
+		public string Username { get; set; }
 
 		/// <summary>Credential for HTTP authentication</summary>
-		public string Password
-		{ get; set; }
+		public string Password { get; set; }
 
 		public override bool Execute()
 		{
@@ -114,8 +110,8 @@ namespace FwBuildTasks
 				Thread.Sleep(RetryWaitTime); // wait a minute
 			}
 
-			Log.LogError("Could not retrieve latest {0}", remoteUrl);
-			return false; // Presumably can't continue without the local file
+			Log.LogError("Could not retrieve latest {0}. Exceeded retry count.", remoteUrl);
+			return false; // The build can't continue without the local file
 		}
 
 		/// <summary>
