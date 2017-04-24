@@ -14,10 +14,10 @@ Last reviewed:
 
 #pragma once
 
-#include "testFwKernel.h"
+#include "testViews.h"
 
 
-namespace TestFwKernel
+namespace TestViews
 {
 	class TestTsStrBldr : public unitpp::suite
 	{

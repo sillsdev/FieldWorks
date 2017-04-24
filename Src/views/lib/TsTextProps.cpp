@@ -8,7 +8,7 @@ Last reviewed:
 
 	Implementations of ITsTextProps and related interfaces.
 -------------------------------------------------------------------------------*//*:End Ignore*/
-#include "Main.h"
+#include "../Main.h"
 #pragma hdrstop
 
 #include "Vector_i.cpp"
@@ -213,7 +213,7 @@ TsTextProps::TsTextProps(void)
 {
 	ModuleEntry::ModuleAddRef();
 	m_cref = 1;
-#if WIN32
+#ifdef WIN32
 #ifdef DEBUG
 	m_dbw1.m_pzttp = this;
 	m_dbw2.m_pzttp = this;
@@ -253,7 +253,7 @@ STDMETHODIMP TsTextProps::QueryInterface(REFIID iid, void ** ppv)
 //		*ppv = NewObj CSupportErrorInfo(this, IID_ITsTextPropsRaw);
 		return S_OK;
 	}
-#if WIN32
+#ifdef WIN32
 	else if (iid == IID_IMarshal)
 		return m_qunkMarshaler->QueryInterface(iid, ppv);
 #endif
@@ -975,7 +975,7 @@ bool TsTextProps::FindStrProp(int tpt, int * pitsp)
 ----------------------------------------------------------------------------------------------*/
 TsPropsHolder * TsPropsHolder::GetPropsHolder(void)
 {
-	return KernelGlobals::g_tph;
+	return ViewsGlobals::g_tph;
 }
 
 
@@ -1165,7 +1165,7 @@ void TsPropsHolder::Rehash(void)
 ----------------------------------------------------------------------------------------------*/
 TsStrHolder * TsStrHolder::GetStrHolder(void)
 {
-	return KernelGlobals::g_tsh;
+	return ViewsGlobals::g_tsh;
 }
 
 

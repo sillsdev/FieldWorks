@@ -8,7 +8,7 @@ Responsibility: TE Team
 
 	Implementation of the DebugReport class.
 -------------------------------------------------------------------------------*//*:End Ignore*/
-#include "Main.h"
+#include "../Main.h"
 #include "DebugReport.h"
 #pragma hdrstop
 
@@ -123,7 +123,7 @@ STDMETHODIMP DebugReport::SetSink(IDebugReportSink * pSink)
 	BEGIN_COM_METHOD;
 	ChkComArgPtr(pSink);
 
-	KernelGlobals::s_qReportSink = pSink;
+	ViewsGlobals::s_qReportSink = pSink;
 	m_oldAssertProc = ::SetAssertProc(DebugReport::AssertProcWrapper);
 
 	END_COM_METHOD(g_factDbr, IID_IDebugReport);
@@ -136,7 +136,7 @@ STDMETHODIMP DebugReport::ClearSink()
 {
 	BEGIN_COM_METHOD;
 
-	KernelGlobals::s_qReportSink = NULL;
+	ViewsGlobals::s_qReportSink = NULL;
 	::SetAssertProc(m_oldAssertProc);
 	m_oldAssertProc = NULL;
 
@@ -148,19 +148,19 @@ STDMETHODIMP DebugReport::ClearSink()
 ----------------------------------------------------------------------------------------------*/
 void __stdcall DebugReport::ReportHandler(int reportType, char * szMsg)
 {
-	if (KernelGlobals::s_qReportSink)
+	if (ViewsGlobals::s_qReportSink)
 	{
 		StrAnsi sta = szMsg;
 		SmartBstr bstr;
 		sta.GetBstr(&bstr);
-		KernelGlobals::s_qReportSink->Report((CrtReportType)reportType, bstr);
+		ViewsGlobals::s_qReportSink->Report((CrtReportType)reportType, bstr);
 	}
 }
 
 void __stdcall DebugReport::AssertProcWrapper(const char * pszExp, const char * pszFile, int nLine,
 		HMODULE)
 {
-	if (KernelGlobals::s_qReportSink)
+	if (ViewsGlobals::s_qReportSink)
 	{
 		StrAnsi sta = pszExp;
 		SmartBstr exp;
@@ -168,7 +168,7 @@ void __stdcall DebugReport::AssertProcWrapper(const char * pszExp, const char * 
 		SmartBstr file;
 		sta = pszFile;
 		sta.GetBstr(&file);
-		KernelGlobals::s_qReportSink->AssertProc(exp, file, nLine);
+		ViewsGlobals::s_qReportSink->AssertProc(exp, file, nLine);
 	}
 }
 

@@ -9406,13 +9406,6 @@ int VwParagraphBox::BorderBottom()
 	return 0;
 }
 
-// qsort function for sorting an array of pointers to integers by the magnitude of the
-// integers pointed to.
-int compareIntPtrs(const void * ppv1, const void * ppv2)
-{
-	return **((int **)ppv1) - **((int **)ppv2);
-}
-
 /*----------------------------------------------------------------------------------------------
 	Normalize each string in your text source to Nfd (limitation: there may possibly be
 	non-normalized sequences crossing string boundaries). Fix as well as possible any selections

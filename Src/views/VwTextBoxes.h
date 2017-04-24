@@ -546,6 +546,13 @@ protected:
 		int * pxd, Rect rcSrc, Rect rcDst, IVwGraphics * pvg);
 	bool NoSignificantSizeChange(int dysHeight, int dxsWidth);
 
+	// qsort function for sorting an array of pointers to integers by the magnitude of the
+	// integers pointed to.
+	static int compareIntPtrs(const void * ppv1, const void * ppv2)
+	{
+		return **((int **)ppv1) - **((int **)ppv2);
+	}
+
 public:
 	int ComputeOuterWidth();
 protected:

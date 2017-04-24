@@ -16,8 +16,6 @@ LIB_UNIT = $(BUILD_ROOT)/Lib/src/unit++/build$(ARCH)
 
 VIEWS_LIB	= $(VIEWS_OBJ)/lib
 
-KERNELTEST_SRC = $(KERNEL_SRC)/Test
-
 DEFINES := -DGR_FW -DVIEWSDLL -DSUPPRESS_FW_EXCEPTION_HANDLING \
 	-D_VW_GRAPHICS_DEBUG -DVIEWSTEST -DWIN32_KEY_VALUES=1 -DGRAPHITE2_STATIC
 
@@ -28,13 +26,13 @@ else
 	OPTIMIZATIONS = -O3
 endif
 
-PACKAGES = glib-2.0 gtk+-2.0 glibmm-2.4 gtkmm-2.4 gdkmm-2.4 cairomm-1.0 pangomm-1.4 freetype2 uuid
+PACKAGES = gdk-2.0 glib-2.0 gtk+-2.0 glibmm-2.4 gtkmm-2.4 gdkmm-2.4 cairomm-1.0 pangomm-1.4 freetype2 uuid
 
 GR2_INC = $(BUILD_ROOT)/Lib/src/graphite2/include
 
 INCLUDES := -I$(VIEWS_SRC) -I$(VIEWS_SRC)/lib -I$(VIEWS_SRC)/Test \
 		-I$(GENERIC_SRC) -I$(APPCORE_SRC) -I$(CELLAR_SRC) -I$(KERNEL_SRC) \
-		-I$(KERNELTEST_SRC) -I$(GR2_INC) \
+		-I$(GR2_INC) -I$(DEBUGPROCS_SRC) \
 
 INCLUDES := \
 	$(shell icu-config --detect-prefix --cppflags) \
@@ -105,6 +103,12 @@ VIEWS_OBJS = \
 	$(VIEWS_LIB)/LgLineBreaker.o \
 	$(VIEWS_LIB)/LgUnicodeCollater.o \
 	$(GENERIC_OBJ)/ModuleEntry.o \
+	$(VIEWS_LIB)/TsString.o \
+	$(VIEWS_LIB)/TsTextProps.o \
+	$(VIEWS_LIB)/TsStrFactory.o \
+	$(VIEWS_LIB)/TsPropsFactory.o \
+	$(VIEWS_LIB)/TextServ.o \
+	$(VIEWS_OBJ)/TextProps1.o \
 
 DEPS = $(PRECOMPS:%.gch=%.d)
 
@@ -137,8 +141,8 @@ $(INT_DIR)/Collection.cpp: \
 	DummyBaseVc.h \
 	DummyRootsite.h \
 	testViews.h \
-	$(KERNELTEST_SRC)/MockLgWritingSystemFactory.h \
-	$(KERNELTEST_SRC)/MockLgWritingSystem.h \
+	MockLgWritingSystemFactory.h \
+	MockLgWritingSystem.h \
 	TestLgCollatingEngine.h \
 	TestNotifier.h \
 	TestUndoStack.h \
@@ -158,7 +162,11 @@ $(INT_DIR)/Collection.cpp: \
 	TestRomRenderEngine.h \
 	TestGraphiteEngine.h \
 	RenderEngineTestBase.h \
-	MockRenderEngineFactory.h
+	MockRenderEngineFactory.h \
+	TestTsStrBldr.h \
+	TestTsString.h \
+	TestTsPropsBldr.h \
+	TestTsTextProps.h
 	@echo Collecting tests for testViews
 	$(COLLECT) $^ $@
 

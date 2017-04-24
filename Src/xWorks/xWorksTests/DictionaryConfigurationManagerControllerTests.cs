@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.XWorks
 				var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
 				_characterTestStyle = styleFactory.Create(Cache.LangProject.StylesOC, "TestStyle", ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, true, 2, false);
 				_characterTestStyle.Usage.set_String(Cache.DefaultAnalWs, "Test Style");
-				var propsBldr = TsPropsBldrClass.Create();
+				var propsBldr = TsStringUtils.MakePropsBldr();
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,
 					(int)ColorUtil.ConvertColorToBGR(Color.Red));
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptUnderline, (int)FwTextPropVar.ktpvDefault,

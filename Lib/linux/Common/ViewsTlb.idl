@@ -17,7 +17,7 @@ import "oaidl.idl";
 import "ocidl.idl";
 import "objidl.idl";
 
-#line 1 "C:\\Repositories\\fwroot\\fw\\Src\\Generic\\common.idh"
+#line 1 "C:\\develop\\fwrepo\\fw\\Src\\Generic\\common.idh"
 
 
 
@@ -128,7 +128,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	
 	importlib("FwKernelTlb.tlb");	
 
-	#line 1 "c:\\repositories\\fwroot\\fw\\src\\views\\Render.idh"
+	#line 1 "c:\\develop\\fwrepo\\fw\\src\\views\\Render.idh"
 
 
 
@@ -659,7 +659,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwGraphicsWin32;
 	};
-	#line 532 "c:\\repositories\\fwroot\\fw\\src\\views\\Render.idh"
+	#line 532 "c:\\develop\\fwrepo\\fw\\src\\views\\Render.idh"
 
 
 	
@@ -1304,7 +1304,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IRenderEngine;
 	};
-	#line 1177 "c:\\repositories\\fwroot\\fw\\src\\views\\Render.idh"
+	#line 1177 "c:\\develop\\fwrepo\\fw\\src\\views\\Render.idh"
 
 
 	
@@ -1385,7 +1385,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	};
 
 #line 28 ".\\ViewsTlb.idl"
-	#line 1 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
+	#line 1 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
 
 
 
@@ -1911,7 +1911,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 
 
 
-#line 527 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
+#line 527 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
 
 	
 	
@@ -2351,7 +2351,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 		interface IVwCacheDa;
 		interface IStructuredTextDataAccess;
 	};
-	#line 967 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
+	#line 967 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
 
 	
 
@@ -3111,7 +3111,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwRootBox;
 	};
-#line 1727 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
+#line 1727 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
 
 	
 
@@ -4852,7 +4852,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwPropertyStore;
 	};
-	#line 3468 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
+	#line 3468 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
 
 	
 	typedef [v1_enum] enum VwOverlayFlags
@@ -5136,7 +5136,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwOverlay;
 	};
-	#line 3752 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
+	#line 3752 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
 
 	
 	
@@ -5348,7 +5348,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwPrintContext;
 	};
-	#line 3964 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
+	#line 3964 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
 
 
 	
@@ -5659,7 +5659,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwPattern;
 	};
-	#line 4275 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
+	#line 4275 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
 
 
 	
@@ -5693,7 +5693,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 		interface IVwTxtSrcInit2;
 		interface IVwTextSource;
 	};
-	#line 4309 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
+	#line 4309 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
 
 
 	
@@ -5725,7 +5725,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 		interface IVwTxtSrcInit;
 		interface IVwTextSource;
 	};
-	#line 4341 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
+	#line 4341 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
 
 	
 
@@ -5767,7 +5767,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwSearchKiller;
 	};
-	#line 4383 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
+	#line 4383 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
 
 	
 
@@ -5847,7 +5847,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwDrawRootBuffered;
 	};
-	#line 4463 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
+	#line 4463 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
 
 	
 
@@ -5895,7 +5895,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwSynchronizer;
 	};
-	#line 4511 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
+	#line 4511 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
 
 
 
@@ -6028,7 +6028,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface ILgCollatingEngine;
 	};
-	#line 4644 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
+	#line 4644 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
 
 
 
@@ -6198,7 +6198,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("1CD09E06-6978-4969-A1FC-4627
 {
 	interface IVwLayoutStream;
 };
-#line 4814 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
+#line 4814 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
 
 
 
@@ -6311,7 +6311,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwLayoutManager") 
 	{
 		interface IPictureFactory;
 	};
-#line 4927 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
+#line 4927 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
 
 
 	
@@ -6332,7 +6332,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwLayoutManager") 
 	{
 		interface IVwWindow;
 	};
-	#line 4948 "c:\\repositories\\fwroot\\fw\\src\\views\\Views.idh"
+	#line 4948 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
 
 
 typedef [v1_enum] enum VwMouseEvent
@@ -6409,6 +6409,39 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("CCE2A7ED-464C-4ec7-A0B0-E3C1
 {
 	interface IVwStylesheet;
 };
+
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F3359BD1-EFA1-49E6-A82E-E55893FE63E0") cpp_quote(",") cpp_quote("TsStrFactory") cpp_quote(");") [ uuid(F3359BD1-EFA1-49E6-A82E-E55893FE63E0) ] coclass TsStrFactory
+{
+	interface ITsStrFactory;
+	interface IMarshal;
+};
+
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("396D737F-3BFD-4BDA-A8CA-8242098EF798") cpp_quote(",") cpp_quote("TsPropsFactory") cpp_quote(");") [ uuid(396D737F-3BFD-4BDA-A8CA-8242098EF798) ] coclass TsPropsFactory
+{
+	interface ITsPropsFactory;
+	interface IMarshal;
+};
+
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("426038D4-2E52-4329-B697-FB926FF7538C") cpp_quote(",") cpp_quote("TsStrBldr") cpp_quote(");") [ uuid(426038D4-2E52-4329-B697-FB926FF7538C) ] coclass TsStrBldr
+{
+	interface ITsStrBldr;
+};
+
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("BD8EFD5A-2ACC-40AC-B73B-051344525B5B") cpp_quote(",") cpp_quote("TsIncStrBldr") cpp_quote(");") [ uuid(BD8EFD5A-2ACC-40AC-B73B-051344525B5B) ] coclass TsIncStrBldr
+{
+	interface ITsIncStrBldr;
+};
+
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(",") cpp_quote("TsPropsBldr") cpp_quote(");") [ uuid(F1EF76ED-BE04-11d3-8D9A-005004DEFEC4) ] coclass TsPropsBldr
+{
+	interface ITsPropsBldr;
+};
+#line 5057 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
 
 #line 29 ".\\ViewsTlb.idl"
 

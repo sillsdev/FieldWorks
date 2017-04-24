@@ -80,7 +80,7 @@ protected:
 	// Used to track the number of locks.
 	int m_cactLock;
 #endif // DEBUG
-#if WIN32
+#ifdef WIN32
 	IUnknownPtr m_qunkMarshaler;
 #endif
 
@@ -203,7 +203,7 @@ protected:
 	// Used to track the number of locks.
 	int m_cactLock;
 #endif // DEBUG
-#if WIN32
+#ifdef WIN32
 	IUnknownPtr m_qunkMarshaler;
 #endif
 
@@ -580,7 +580,7 @@ public:
 protected:
 	TsStrSingle()
 	{
-#if WIN32
+#ifdef WIN32
 		CoCreateFreeThreadedMarshaler(this, &m_qunkMarshaler);
 #endif
 	}
@@ -604,7 +604,7 @@ public:
 protected:
 	TsStrMulti()
 	{
-#if WIN32
+#ifdef WIN32
 		CoCreateFreeThreadedMarshaler(this, &m_qunkMarshaler);
 #endif
 	}

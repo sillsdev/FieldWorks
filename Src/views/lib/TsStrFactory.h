@@ -42,10 +42,10 @@ public:
 
 private:
 
-	friend class KernelGlobals;
+	friend class ViewsGlobals;
 
 	ComHashMap<int, ITsString> m_hmwsqtssEmptyStrings;
-#if WIN32
+#ifdef WIN32
 	IUnknownPtr m_qunkMarshaler;
 #endif
 	Mutex m_mutex;
@@ -54,7 +54,7 @@ private:
 	{
 		// Don't call ModuleAddRef since there is a global singleton TsStrFact. Its
 		// AddRef and Release call ModuleAddRef and ModuleRelease.
-#if WIN32
+#ifdef WIN32
 		CoCreateFreeThreadedMarshaler(this, &m_qunkMarshaler);
 #endif
 	}

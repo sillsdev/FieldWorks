@@ -11,7 +11,7 @@ Last reviewed:
 
 	This is a thread-safe, "agile" component.
 ----------------------------------------------------------------------------------------------*/
-#include "Main.h"
+#include "../Main.h"
 #pragma hdrstop
 
 #include "Vector_i.cpp"
@@ -42,7 +42,7 @@ void TsStrFact::CreateCom(IUnknown * punkOuter, REFIID iid, void ** ppv)
 	if (punkOuter)
 		ThrowHr(WarnHr(CLASS_E_NOAGGREGATION));
 
-	CheckHr(KernelGlobals::g_strf->QueryInterface(iid, ppv));
+	CheckHr(ViewsGlobals::g_strf->QueryInterface(iid, ppv));
 }
 
 
@@ -65,7 +65,7 @@ STDMETHODIMP TsStrFact::QueryInterface(REFIID iid, void ** ppv)
 		*ppv = NewObj CSupportErrorInfo(this, IID_ITsStrFactory);
 		return S_OK;
 	}
-#if WIN32
+#ifdef WIN32
 	else if (iid == IID_IMarshal)
 		return m_qunkMarshaler->QueryInterface(iid, ppv);
 #endif

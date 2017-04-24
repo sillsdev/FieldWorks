@@ -11,7 +11,7 @@ Last reviewed: 8/25/99
 
 	This is a thread-safe, "agile" component.
 -------------------------------------------------------------------------------*//*:End Ignore*/
-#include "Main.h"
+#include "../Main.h"
 #pragma hdrstop
 
 #include "Vector_i.cpp"
@@ -67,7 +67,7 @@ STDMETHODIMP TsPropsFact::QueryInterface(REFIID iid, void ** ppv)
 		*ppv = NewObj CSupportErrorInfo(this, IID_ITsPropsFactory);
 		return S_OK;
 	}
-#if WIN32
+#ifdef WIN32
 	else if (iid == IID_IMarshal)
 		return m_qunkMarshaler->QueryInterface(iid, ppv);
 #endif

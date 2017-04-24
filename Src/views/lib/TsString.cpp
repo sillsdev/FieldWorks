@@ -9,7 +9,7 @@ Last reviewed: 8/25/99
 
 	Implementations of ITsString and the builder interfaces.
 -------------------------------------------------------------------------------*//*:End Ignore*/
-#include "Main.h"
+#include "../Main.h"
 #pragma hdrstop
 
 #include "Vector_i.cpp"
@@ -1017,13 +1017,6 @@ template<class TxtBuf> STDMETHODIMP TsStrBase<TxtBuf>::get_IsNormalizedForm(
 	END_COM_METHOD(g_fact, IID_ITsString);
 }
 
-// qsort function for sorting an array of pointers to integers by the magnitude of the
-// integers pointed to.
-int compareIntPtrs(const void * ppv1, const void * ppv2)
-{
-	return **((int **)ppv1) - **((int **)ppv2);
-}
-
 /*----------------------------------------------------------------------------------------------
 	Method object that is used in normalization of TsString data.
 ----------------------------------------------------------------------------------------------*/
@@ -1070,6 +1063,14 @@ public:
 		m_prgpichOffsetsToFix = NULL;
 		m_iichNextOffsetToFix = 0;
 	}
+
+	// qsort function for sorting an array of pointers to integers by the magnitude of the
+	// integers pointed to.
+	static int compareIntPtrs(const void * ppv1, const void * ppv2)
+	{
+		return **((int **)ppv1) - **((int **)ppv2);
+	}
+
 	// Set and sort the OffsetsToFix, if any
 	void SetOffsetsToFix(int ** prgpichOffsetsToFix, int cichOffsetsToFix)
 	{
@@ -1696,7 +1697,7 @@ STDMETHODIMP TsStrMulti::QueryInterface(REFIID iid, void ** ppv)
 //		*ppv = NewObj CSupportErrorInfo(this, IID_ITsStringRaw);
 		return S_OK;
 	}
-#if WIN32
+#ifdef WIN32
 	else if (iid == IID_IMarshal)
 		return m_qunkMarshaler->QueryInterface(iid, ppv);
 #endif

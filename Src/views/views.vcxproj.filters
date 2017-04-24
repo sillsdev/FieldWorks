@@ -76,6 +76,25 @@
     <ClInclude Include="lib\LgUnicodeCollater.h">
       <Filter>lib</Filter>
     </ClInclude>
+    <ClInclude Include="lib\DebugReport.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\TextServ.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\TsPropsFactory.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\TsStrFactory.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\TsString.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\TsTextProps.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewsGlobals.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lib\VwBaseDataAccess.cpp">
@@ -143,6 +162,25 @@
     <ClCompile Include="lib\LgUnicodeCollater.cpp">
       <Filter>lib</Filter>
     </ClCompile>
+    <ClCompile Include="lib\DebugReport.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\TextServ.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\TsPropsFactory.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\TsStrFactory.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\TsString.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\TsTextProps.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewsGlobals.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\bin\mkvw.bat" />

@@ -92,7 +92,7 @@ DEFINE_COM_PTR(VwSynchronizer); // deals with circularity of root box and synch.
 //:>**********************************************************************************
 //:>	Interfaces.
 //:>**********************************************************************************
-#include "FwKernelTlb.h"
+#include <FwKernelTlb.h>
 #include "ViewsTlb.h"
 #include "LgUnicodeCollater.h"
 #include "ActionHandler.h"
@@ -207,13 +207,9 @@ DEFINE_COM_PTR(GraphiteEngine);
 #include "AfColorTable.h"
 #include "AfGfx.h"
 #include "VwPattern.h"
-#include "FwStyledText.h"
 #include "VwAccessRoot.h"
 #include "VwSynchronizer.h"
 #include "VwTextStore.h"
-#else
-#include "StringToNumHelpers.h"
-#include "FwStyledText.h"
 #endif
 #include "AfColorTable.h"
 #include "VwPattern.h"
@@ -224,5 +220,23 @@ DEFINE_COM_PTR(GraphiteEngine);
 #ifndef WIN32
 #include "DisplayCapsInfo.h"
 #endif
+#include "TsString.h"
+#include "TsTextProps.h"
+#include "TsStrFactory.h"
+#include "TsPropsFactory.h"
+#include "TextServ.h"
+#include "StringToNumHelpers.h"
+#include "FwStyledText.h"
+#ifdef WIN32
+// for parsing XML files; in this DLL, we want the parser to work with wide characters,
+// since we always parse BSTRs.
+#define XML_UNICODE_WCHAR_T
+#else
+// XML_UNICODE_WCHAR_T causes XML_Char to be wchar_t
+#ifdef XML_UNICODE
+#error "Don't define XML_UNICODE as this causes XML_CHAR to be UTF-16 which expat on Linux can't handle"
+#endif
+#endif
+#include "../Cellar/FwXml.h"
 
 #endif //!VIEWS_H

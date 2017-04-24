@@ -136,20 +136,20 @@ namespace SIL.FieldWorks.XWorks
 				testStyle.Usage.set_String(Cache.DefaultAnalWs, "Test Style");
 				var normalStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Normal", ContextValues.InternalConfigureView, StructureValues.Undefined,
 					FunctionValues.Line, false, 2, true);
-				var propsBldr = TsPropsBldrClass.Create();
+				var propsBldr = TsStringUtils.MakePropsBldr();
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, 0x2BACCA); // arbitrary color to create para element
 				normalStyle.Rules = propsBldr.GetTextProps();
 				var styleWithNamedColors = styleFactory.Create(Cache.LangProject.StylesOC, "Nominal", ContextValues.InternalConfigureView, StructureValues.Undefined,
 					FunctionValues.Line, false, 2, false);
 				styleWithNamedColors.BasedOnRA = normalStyle;
-				propsBldr = TsPropsBldrClass.Create();
+				propsBldr = TsStringUtils.MakePropsBldr();
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
 				styleWithNamedColors.Rules = propsBldr.GetTextProps();
 				var styleWithCustomColors = styleFactory.Create(Cache.LangProject.StylesOC, "Abnormal", ContextValues.InternalConfigureView, StructureValues.Undefined,
 					FunctionValues.Line, false, 2, false);
 				styleWithCustomColors.BasedOnRA = normalStyle;
-				propsBldr = TsPropsBldrClass.Create();
+				propsBldr = TsStringUtils.MakePropsBldr();
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, CustomRedBGR);
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, CustomRedBGR);
 				styleWithCustomColors.Rules = propsBldr.GetTextProps();

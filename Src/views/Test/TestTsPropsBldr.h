@@ -14,9 +14,9 @@ Last reviewed:
 
 #pragma once
 
-#include "testFwKernel.h"
+#include "testViews.h"
 
-namespace TestFwKernel
+namespace TestViews
 {
 	class TestTsPropsBldr : public unitpp::suite
 	{

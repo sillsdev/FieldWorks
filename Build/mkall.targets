@@ -10,7 +10,7 @@
 		<GenerateNUnitReports Condition="'$(action)'=='test'" ReportFiles="@(NUnitReportFiles)"/>
 	</Target>
 
-	<Target Name="allCpp" DependsOnTargets="DebugProcs;GenericLib;testGenericLib;FwKernel;testFwKernel;Views;testViews">
+	<Target Name="allCpp" DependsOnTargets="DebugProcs;GenericLib;testGenericLib;FwKernel;Views;testViews">
 		<CreateItem Include="$(dir-outputBase)/*.compmap">
 			<Output TaskParameter="Include" ItemName="CompMapFiles"/>
 		</CreateItem>
@@ -101,36 +101,6 @@
 			WorkingDirectory="$(fwrt)/Src/Kernel"/>
 		<RegFree Executable="$(dir-outputBase)\FwKernel.dll" Output="$(dir-outputBase)\FwKernel.X.manifest" Condition="'$(OS)'=='Windows_NT'" />
 		<Message Text="Finished building FwKernel."/>
-	</Target>
-
-	<Target Name="testFwKernel" DependsOnTargets="GenericLib;FwKernel;Views;ManagedLgIcuCollator">
-		<Make Condition="'$(OS)'=='Windows_NT'"
-				Makefile="$(fwrt)\Src\Kernel\Test\testFwKernel.mak"
-				Configuration="$(config-capital)"
-				BuildRoot="$(fwrt)"
-				WorkingDirectory="$(fwrt)\Bin"/>
-		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
-				Makefile="$(fwrt)/Src/Kernel/Test/Makefile"
-				Configuration="$(config-capital)" Target="$(make-target)"
-				BuildRoot="$(fwrt)"
-				WorkingDirectory="$(fwrt)/Src/Kernel/Test" ContinueOnError="true"/>
-		<RegFree Executable="$(dir-outputBase)\testFwKernel.exe"
-				DependentAssemblies="$(dir-outputBase)\FwKernel.X.manifest;$(dir-outputBase)\Views.X.manifest"
-				Condition="'$(OS)'=='Windows_NT'"/>
-		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testFwKernel.exe -manifest $(dir-outputBase)\testFwKernel.exe.manifest"
-				Condition="'$(OS)'=='Windows_NT'"/>
-		<CreateItem Include="$(dir-outputBase)/*.compmap">
-			<Output TaskParameter="Include" ItemName="KernelCompMapFiles"/>
-		</CreateItem>
-		<CatenateFiles SourceFiles="@(KernelCompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
-		<Unitpp Condition="'$(action)'=='test'"
-				FixturePath="$(dir-outputBase)/testFwKernel"
-				FudgeFactor="$(timeoutFudgeFactor)"
-				Timeout="75000">
-			<Output TaskParameter="FailedSuites" ItemName="FailedSuites"/>
-		</Unitpp>
-		<Message Text="Finished building testFwKernel." Condition="'$(action)'!='test'"/>
-		<Message Text="Finished building testFwKernel and running tests." Condition="'$(action)'=='test'"/>
 	</Target>
 
 	<Target Name="AppCore" DependsOnTargets="DebugProcs;GenericLib">

@@ -3,11 +3,11 @@
 /* this ALWAYS GENERATED file contains the definitions for the interfaces */
 
 
- /* File created by MIDL compiler version 8.00.0603 */
-/* at Wed Apr 19 12:46:16 2017
+ /* File created by MIDL compiler version 8.01.0620 */
+/* at Tue Jan 19 10:14:07 2038
  */
-/* Compiler settings for C:\Repositories\fwroot\fw\Output\Common\ViewsTlb.idl:
-    Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
+/* Compiler settings for C:\develop\fwrepo\fw\Output\Common\ViewsTlb.idl:
+    Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.01.0620 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
     VC __declspec() decoration level: 
@@ -29,7 +29,7 @@
 
 #ifndef __RPCNDR_H_VERSION__
 #error this stub requires an updated version of <rpcndr.h>
-#endif // __RPCNDR_H_VERSION__
+#endif /* __RPCNDR_H_VERSION__ */
 
 
 #ifndef __ViewsTlb_h__
@@ -546,6 +546,66 @@ typedef struct VwStylesheet VwStylesheet;
 #endif /* __cplusplus */
 
 #endif 	/* __VwStylesheet_FWD_DEFINED__ */
+
+
+#ifndef __TsStrFactory_FWD_DEFINED__
+#define __TsStrFactory_FWD_DEFINED__
+
+#ifdef __cplusplus
+typedef class TsStrFactory TsStrFactory;
+#else
+typedef struct TsStrFactory TsStrFactory;
+#endif /* __cplusplus */
+
+#endif 	/* __TsStrFactory_FWD_DEFINED__ */
+
+
+#ifndef __TsPropsFactory_FWD_DEFINED__
+#define __TsPropsFactory_FWD_DEFINED__
+
+#ifdef __cplusplus
+typedef class TsPropsFactory TsPropsFactory;
+#else
+typedef struct TsPropsFactory TsPropsFactory;
+#endif /* __cplusplus */
+
+#endif 	/* __TsPropsFactory_FWD_DEFINED__ */
+
+
+#ifndef __TsStrBldr_FWD_DEFINED__
+#define __TsStrBldr_FWD_DEFINED__
+
+#ifdef __cplusplus
+typedef class TsStrBldr TsStrBldr;
+#else
+typedef struct TsStrBldr TsStrBldr;
+#endif /* __cplusplus */
+
+#endif 	/* __TsStrBldr_FWD_DEFINED__ */
+
+
+#ifndef __TsIncStrBldr_FWD_DEFINED__
+#define __TsIncStrBldr_FWD_DEFINED__
+
+#ifdef __cplusplus
+typedef class TsIncStrBldr TsIncStrBldr;
+#else
+typedef struct TsIncStrBldr TsIncStrBldr;
+#endif /* __cplusplus */
+
+#endif 	/* __TsIncStrBldr_FWD_DEFINED__ */
+
+
+#ifndef __TsPropsBldr_FWD_DEFINED__
+#define __TsPropsBldr_FWD_DEFINED__
+
+#ifdef __cplusplus
+typedef class TsPropsBldr TsPropsBldr;
+#else
+typedef struct TsPropsBldr TsPropsBldr;
+#endif /* __cplusplus */
+
+#endif 	/* __TsPropsBldr_FWD_DEFINED__ */
 
 
 /* header files for imported files */
@@ -1490,6 +1550,31 @@ ATTACH_GUID_TO_CLASS(class,
 CCE2A7ED-464C-4ec7-A0B0-E3C1F6B94C5A
 ,
 VwStylesheet
+);
+ATTACH_GUID_TO_CLASS(class,
+F3359BD1-EFA1-49E6-A82E-E55893FE63E0
+,
+TsStrFactory
+);
+ATTACH_GUID_TO_CLASS(class,
+396D737F-3BFD-4BDA-A8CA-8242098EF798
+,
+TsPropsFactory
+);
+ATTACH_GUID_TO_CLASS(class,
+426038D4-2E52-4329-B697-FB926FF7538C
+,
+TsStrBldr
+);
+ATTACH_GUID_TO_CLASS(class,
+BD8EFD5A-2ACC-40AC-B73B-051344525B5B
+,
+TsIncStrBldr
+);
+ATTACH_GUID_TO_CLASS(class,
+F1EF76ED-BE04-11d3-8D9A-005004DEFEC4
+,
+TsPropsBldr
 );
 
 #define LIBID_Views __uuidof(Views)
@@ -11236,6 +11321,46 @@ VwWindow;
 
 class DECLSPEC_UUID("CCE2A7ED-464C-4ec7-A0B0-E3C1F6B94C5A")
 VwStylesheet;
+#endif
+
+#define CLSID_TsStrFactory __uuidof(TsStrFactory)
+
+#ifdef __cplusplus
+
+class DECLSPEC_UUID("F3359BD1-EFA1-49E6-A82E-E55893FE63E0")
+TsStrFactory;
+#endif
+
+#define CLSID_TsPropsFactory __uuidof(TsPropsFactory)
+
+#ifdef __cplusplus
+
+class DECLSPEC_UUID("396D737F-3BFD-4BDA-A8CA-8242098EF798")
+TsPropsFactory;
+#endif
+
+#define CLSID_TsStrBldr __uuidof(TsStrBldr)
+
+#ifdef __cplusplus
+
+class DECLSPEC_UUID("426038D4-2E52-4329-B697-FB926FF7538C")
+TsStrBldr;
+#endif
+
+#define CLSID_TsIncStrBldr __uuidof(TsIncStrBldr)
+
+#ifdef __cplusplus
+
+class DECLSPEC_UUID("BD8EFD5A-2ACC-40AC-B73B-051344525B5B")
+TsIncStrBldr;
+#endif
+
+#define CLSID_TsPropsBldr __uuidof(TsPropsBldr)
+
+#ifdef __cplusplus
+
+class DECLSPEC_UUID("F1EF76ED-BE04-11d3-8D9A-005004DEFEC4")
+TsPropsBldr;
 #endif
 #endif /* __Views_LIBRARY_DEFINED__ */
 

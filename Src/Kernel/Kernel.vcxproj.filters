@@ -15,32 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DebugReport.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="dlldatax.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TextServ.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TsPropsFactory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TsStrFactory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TsString.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TsTextProps.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="FwKernel.def">
-      <Filter>Source Files</Filter>
-    </None>
     <None Include="FwKernel.idh" />
     <None Include="FwKernel.mak" />
     <None Include="TextServ.idh" />
@@ -54,36 +28,5 @@
     <Midl Include="FwKernelTlb.idl">
       <Filter>Source Files</Filter>
     </Midl>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="DebugReport.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Main.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TextServ.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TsPropsFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TsStrFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TsString.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TsTextProps.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LangResource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="FwKernel.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
   </ItemGroup>
 </Project>

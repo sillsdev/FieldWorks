@@ -9,11 +9,11 @@ Last reviewed: 8/25/99
 
 	Implementation of the TextServ TLS globals.
 -------------------------------------------------------------------------------*//*:End Ignore*/
-#include "Main.h"
+#include "../Main.h"
 #pragma hdrstop
 
 #include "Vector_i.cpp"
-#if !WIN32
+#ifndef WIN32
 #include <pthread.h>
 #endif
 
@@ -21,7 +21,7 @@ Last reviewed: 8/25/99
 DEFINE_THIS_FILE
 
 /* Key for the thread-specific buffer */
-#if WIN32
+#ifdef WIN32
 ulong TextServGlobals::s_luTls;
 #else
 pthread_key_t TextServGlobals::s_luTls;
@@ -56,7 +56,7 @@ public:
 };
 
 TextServEntry g_tse;
-#if WIN32
+#ifdef WIN32
 CRITICAL_SECTION TextServGlobals::g_crs;
 #else
 pthread_mutex_t TextServGlobals::g_crs = PTHREAD_MUTEX_INITIALIZER;
@@ -68,7 +68,7 @@ pthread_mutex_t TextServGlobals::g_crs = PTHREAD_MUTEX_INITIALIZER;
 ----------------------------------------------------------------------------------------------*/
 void TextServGlobals::ProcessAttach(void)
 {
-#if WIN32
+#ifdef WIN32
 	s_luTls = TlsAlloc();
 	if (0xFFFFFFFF == s_luTls)
 		ThrowHr(WarnHr(E_FAIL));
@@ -76,7 +76,7 @@ void TextServGlobals::ProcessAttach(void)
 	if (pthread_key_create(&s_luTls, 0) != 0)
 		ThrowHr(WarnHr(E_FAIL));
 #endif //WIN32
-#if WIN32
+#ifdef WIN32
 	InitializeCriticalSection(&g_crs);
 #else
 	pthread_mutex_init(&g_crs, 0);
@@ -90,16 +90,16 @@ void TextServGlobals::ProcessAttach(void)
 ----------------------------------------------------------------------------------------------*/
 void TextServGlobals::ProcessDetach(void)
 {
-#if WIN32
+#ifdef WIN32
 	EnterCriticalSection(&g_crs);
 #else
 	pthread_mutex_lock(&g_crs);
 #endif //WIN32
 
-	for (int itsg = 0; itsg < KernelGlobals::g_vptsg->Size(); itsg++)
-		delete (*KernelGlobals::g_vptsg)[itsg];
+	for (int itsg = 0; itsg < ViewsGlobals::g_vptsg->Size(); itsg++)
+		delete (*ViewsGlobals::g_vptsg)[itsg];
 
-#if WIN32
+#ifdef WIN32
 	LeaveCriticalSection(&g_crs);
 	// Assume other threads are gone...
 	DeleteCriticalSection(&g_crs);
@@ -109,7 +109,7 @@ void TextServGlobals::ProcessDetach(void)
 	pthread_mutex_destroy(&g_crs);
 #endif
 
-#if WIN32
+#ifdef WIN32
 	TlsFree(s_luTls);
 	s_luTls = 0xFFFFFFFF;
 #else
@@ -133,7 +133,7 @@ void TextServGlobals::ThreadAttach(void)
 ----------------------------------------------------------------------------------------------*/
 void TextServGlobals::ThreadDetach(void)
 {
-#if WIN32
+#ifdef WIN32
 	TextServGlobals * ptsg = static_cast<TextServGlobals *>(TlsGetValue(s_luTls));
 #else
 	TextServGlobals * ptsg = static_cast<TextServGlobals *>(pthread_getspecific(s_luTls));
@@ -142,7 +142,7 @@ void TextServGlobals::ThreadDetach(void)
 	if (ptsg)
 	{
 		delete ptsg;
-#if WIN32
+#ifdef WIN32
 		TlsSetValue(s_luTls, NULL);
 #else
 		pthread_setspecific(s_luTls, 0);
@@ -156,13 +156,13 @@ void TextServGlobals::ThreadDetach(void)
 ----------------------------------------------------------------------------------------------*/
 void TextServGlobals::AddToTsgVec(TextServGlobals * ptsg)
 {
-#if WIN32
+#ifdef WIN32
 	EnterCriticalSection(&g_crs);
 #else
 	pthread_mutex_lock(&g_crs);
 #endif //WIN32
-	KernelGlobals::g_vptsg->Push(ptsg);
-#if WIN32
+	ViewsGlobals::g_vptsg->Push(ptsg);
+#ifdef WIN32
 	LeaveCriticalSection(&g_crs);
 #else
 	pthread_mutex_unlock(&g_crs);
@@ -173,21 +173,21 @@ void TextServGlobals::AddToTsgVec(TextServGlobals * ptsg)
 ----------------------------------------------------------------------------------------------*/
 void TextServGlobals::RemoveFromTsgVec(TextServGlobals * ptsg)
 {
-#if WIN32
+#ifdef WIN32
 	EnterCriticalSection(&g_crs);
 #else
 	pthread_mutex_lock(&g_crs);
 #endif //WIN32
 
-	for (int itsg = 0; itsg < KernelGlobals::g_vptsg->Size(); itsg++)
+	for (int itsg = 0; itsg < ViewsGlobals::g_vptsg->Size(); itsg++)
 	{
-		if ((*KernelGlobals::g_vptsg)[itsg] == ptsg)
+		if ((*ViewsGlobals::g_vptsg)[itsg] == ptsg)
 		{
-			KernelGlobals::g_vptsg->Delete(itsg);
+			ViewsGlobals::g_vptsg->Delete(itsg);
 			break;
 		}
 	}
-#if WIN32
+#ifdef WIN32
 	LeaveCriticalSection(&g_crs);
 #else
 	pthread_mutex_unlock(&g_crs);
@@ -200,13 +200,13 @@ void TextServGlobals::RemoveFromTsgVec(TextServGlobals * ptsg)
 ----------------------------------------------------------------------------------------------*/
 TextServGlobals * TextServGlobals::GetTsGlobals(void)
 {
-#if !WIN32
+#ifndef WIN32
 	// Ensure ProcessAttach is called exactly once
 	static pthread_once_t once_control = PTHREAD_ONCE_INIT;
 	pthread_once(&once_control, ProcessAttach);
 #endif
 
-#if WIN32
+#ifdef WIN32
 	TextServGlobals * ptsg = static_cast<TextServGlobals *>(TlsGetValue(s_luTls));
 #else
 	TextServGlobals * ptsg = static_cast<TextServGlobals *>(pthread_getspecific(s_luTls));
@@ -216,7 +216,7 @@ TextServGlobals * TextServGlobals::GetTsGlobals(void)
 	if (!ptsg)
 	{
 		ptsg = NewObj TextServGlobals;
-#if WIN32
+#ifdef WIN32
 		TlsSetValue(s_luTls, ptsg);
 #else
 		pthread_setspecific(s_luTls, ptsg);
@@ -265,9 +265,9 @@ void TextServGlobals::GetEmptyString(ITsString ** pptss)
 		if (ptsg->m_cactActive <= 0)
 		{
 			Warn("Empty string requested with no active clients");
-			TsStrSingle::Create((OLECHAR *)NULL, 0, NULL, pptss);
+			TsStrSingle::Create((OLECHAR *)NULL, 0, (TsTextProps *)NULL, pptss);
 		}
-		TsStrSingle::Create((OLECHAR *)NULL, 0, NULL, &ptsg->m_qtssEmpty);
+		TsStrSingle::Create((OLECHAR *)NULL, 0, (TsTextProps *)NULL, &ptsg->m_qtssEmpty);
 	}
 
 	*pptss = ptsg->m_qtssEmpty;

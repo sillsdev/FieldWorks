@@ -48,6 +48,8 @@ namespace TestViews
 	int g_wsEng = 0;
 	int g_wsFrn = 0;
 	int g_wsGer = 0;
+	int g_wsTest = 0;
+	int g_wsTest2 = 0;
 
 	// Create a dummy writing system factory with English and French.
 	void CreateTestWritingSystemFactory()

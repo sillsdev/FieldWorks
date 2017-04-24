@@ -83,6 +83,8 @@
     <ClInclude Include="BasicVc.h" />
     <ClInclude Include="DummyBaseVc.h" />
     <ClInclude Include="DummyRootsite.h" />
+    <ClInclude Include="MockLgWritingSystem.h" />
+    <ClInclude Include="MockLgWritingSystemFactory.h" />
     <ClInclude Include="MockRenderEngineFactory.h" />
     <ClInclude Include="RenderEngineTestBase.h" />
     <ClInclude Include="resource.h" />
@@ -93,6 +95,10 @@
     <ClInclude Include="TestLazyBox.h" />
     <ClInclude Include="TestLgCollatingEngine.h" />
     <ClInclude Include="TestLgLineBreaker.h" />
+    <ClInclude Include="TestTsPropsBldr.h" />
+    <ClInclude Include="TestTsStrBldr.h" />
+    <ClInclude Include="TestTsString.h" />
+    <ClInclude Include="TestTsTextProps.h" />
     <ClInclude Include="TestUndoStack.h" />
     <ClInclude Include="TestNotifier.h" />
     <ClInclude Include="TestRomRenderEngine.h" />

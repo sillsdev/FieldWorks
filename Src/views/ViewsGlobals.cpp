@@ -18,21 +18,56 @@ static ViewsGlobals g_views;
 
 ViewsGlobals::ViewsGlobals()
 {
-#if WIN32
+#ifdef WIN32
 	m_hmboxacc = NewObj BoxAccessorMap;
 #endif
+
+	g_tph = NewObj TsPropsHolder;
+
+	g_vptsg = NewObj TsgVec;
+
+	g_strf = NewObj TsStrFact;
+
+	g_tsh = NewObj TsStrHolder;
 }
 
 ViewsGlobals::~ViewsGlobals()
 {
-#if WIN32
+#ifdef WIN32
 	delete m_hmboxacc;
 #endif
+
+	delete g_tsh;
+	g_tsh = NULL;
+
+	delete g_strf;
+	g_strf = NULL;
+
+	delete g_vptsg;
+	g_vptsg = NULL;
+
+	delete g_tph;
+	g_tph = NULL;
 }
 
-#if WIN32
+#ifdef WIN32
 // Storage for static members
 BoxAccessorMap *ViewsGlobals::m_hmboxacc;
 #endif
 
 ILgCollatingEnginePtr ViewsGlobals::s_qcoleng;
+
+// Storage for static members
+TsPropsHolder *ViewsGlobals::g_tph;
+TsStrHolder *ViewsGlobals::g_tsh;
+
+// There's a single global instance of the ITsStringFactory.
+TsStrFact *ViewsGlobals::g_strf;
+
+// Originally from TextServ.cpp
+TsgVec *ViewsGlobals::g_vptsg;
+
+#ifdef DEBUG
+// Originally from DebugReport.cpp
+IDebugReportSinkPtr ViewsGlobals::s_qReportSink = NULL;
+#endif

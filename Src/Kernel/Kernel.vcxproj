@@ -71,15 +71,7 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DebugReport.cpp" />
     <ClCompile Include="dlldatax.c" />
-    <ClCompile Include="TextServ.cpp" />
-    <ClCompile Include="TsPropsFactory.cpp" />
-    <ClCompile Include="TsStrFactory.cpp" />
-    <ClCompile Include="TsString.cpp" />
-    <ClCompile Include="TsTextProps.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="FwKernel.def" />
     <None Include="FwKernel.idh" />
     <None Include="FwKernel.mak" />
@@ -90,19 +82,6 @@
   <ItemGroup>
     <Midl Include="FwKernelPs.idl" />
     <Midl Include="FwKernelTlb.idl" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="DebugReport.h" />
-    <ClInclude Include="LangResource.h" />
-    <ClInclude Include="Main.h" />
-    <ClInclude Include="TextServ.h" />
-    <ClInclude Include="TsPropsFactory.h" />
-    <ClInclude Include="TsStrFactory.h" />
-    <ClInclude Include="TsString.h" />
-    <ClInclude Include="TsTextProps.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="FwKernel.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

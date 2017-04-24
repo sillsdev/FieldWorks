@@ -14,11 +14,11 @@ Last reviewed:
 
 #pragma once
 
-#include "testFwKernel.h"
+#include "testViews.h"
 //#include "LanguageTlb.h"
 #include <stdio.h>
 
-#if !WIN32 // TODO-Linux FWNX-198: thread callback for testThreadedMakeString
+#ifndef WIN32 // TODO-Linux FWNX-198: thread callback for testThreadedMakeString
 void * TestThreadedMakeString( void *arg )
 {
 	int wsEng = *(int*)arg;
@@ -44,7 +44,7 @@ void * TestThreadedMakeString( void *arg )
 }
 #endif
 
-namespace TestFwKernel
+namespace TestViews
 {
 	// Note: knmFCD is not tested because we don't know what it's supposed to do.
 	FwNormalizationMode g_rgnmNormalizations[] = {knmNFD, knmNFKD, knmNFC, knmNFKC, knmNFSC };

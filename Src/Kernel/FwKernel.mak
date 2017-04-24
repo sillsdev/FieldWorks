@@ -32,23 +32,13 @@ USER_INCLUDE=$(UI)
 
 PATH=$(COM_OUT_DIR);$(PATH)
 
-RCFILE=FwKernel.rc
 DEFFILE=FwKernel.def
-LINK_LIBS=Generic.lib xmlparse-utf16.lib $(LINK_LIBS)
+LINK_LIBS=Generic.lib $(LINK_LIBS)
 
 # === Object Lists ===
 
 OBJ_FWKERNEL=\
-	$(INT_DIR)\autopch\KernelGlobals.obj\
-	$(INT_DIR)\genpch\TsString.obj\
-	$(INT_DIR)\autopch\TsTextProps.obj\
-	$(INT_DIR)\autopch\TsStrFactory.obj\
-	$(INT_DIR)\autopch\TsPropsFactory.obj\
-	$(INT_DIR)\autopch\TextServ.obj\
-	$(INT_DIR)\usepch\TextProps1.obj\
 	$(INT_DIR)\autopch\ModuleEntry.obj\
-	$(INT_DIR)\autopch\FwStyledText.obj\
-	$(INT_DIR)\autopch\DebugReport.obj\
 	$(INT_DIR)\autopch\dlldatax.obj\
 
 
