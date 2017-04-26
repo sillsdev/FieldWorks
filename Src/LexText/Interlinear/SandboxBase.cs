@@ -1194,11 +1194,12 @@ namespace SIL.FieldWorks.IText
 			m_case = cf.StringCase(RawWordform.Text);
 			// empty it in case we're redoing after choose from combo.
 			cda.CacheVecProp(hvoSbWord, ktagSbWordMorphs, new int[0], 0);
-			if (analysis == null)
+			if (gloss == null || analysis == null) // If gloss is null, analysis will be, too, but it doesn't hurt to check.
 			{
 				if (fLookForDefaults)
 				{
-					GetDefaults(CurrentAnalysisTree.Wordform, out analysis, out gloss, fAdjustCase);
+					if (InterlinDoc != null) // it can be null in unit tests, and we don't want to clear an existing analysis.
+						GetDefaults(CurrentAnalysisTree.Wordform, out analysis, out gloss, fAdjustCase);
 					m_hvoWordGloss = gloss != null ? gloss.Hvo : 0;
 					// Make sure the wordform ID is consistent with the analysis we located.
 					if (analysis != null)
@@ -1650,7 +1651,7 @@ namespace SIL.FieldWorks.IText
 			// try to get one. Otherwise, if we've already cached a default, use it...it's surprising for the
 			// user if we move the focus box to something and the default changes. (LT-4643 etc.)
 			int hvoDefault = 0;
-			if (m_occurrenceSelected != null && m_occurrenceSelected.Analysis == wordform)
+			if (m_occurrenceSelected != null && m_occurrenceSelected.Analysis.Wordform == wordform)
 			{
 				// Try to establish a default based on the current occurrence.
 				if (m_fSetWordformInProgress ||
