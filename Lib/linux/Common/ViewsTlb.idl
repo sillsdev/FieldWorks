@@ -6405,11 +6405,11 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IViewInputMgr") cpp
 
 
 
+
 cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("CCE2A7ED-464C-4ec7-A0B0-E3C1F6B94C5A") cpp_quote(",") cpp_quote("VwStylesheet") cpp_quote(");") [ uuid(CCE2A7ED-464C-4ec7-A0B0-E3C1F6B94C5A) ] coclass VwStylesheet
 {
 	interface IVwStylesheet;
 };
-
 
 cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F3359BD1-EFA1-49E6-A82E-E55893FE63E0") cpp_quote(",") cpp_quote("TsStrFactory") cpp_quote(");") [ uuid(F3359BD1-EFA1-49E6-A82E-E55893FE63E0) ] coclass TsStrFactory
 {
@@ -6417,31 +6417,35 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F3359BD1-EFA1-49E6-A82E-E558
 	interface IMarshal;
 };
 
-
 cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("396D737F-3BFD-4BDA-A8CA-8242098EF798") cpp_quote(",") cpp_quote("TsPropsFactory") cpp_quote(");") [ uuid(396D737F-3BFD-4BDA-A8CA-8242098EF798) ] coclass TsPropsFactory
 {
 	interface ITsPropsFactory;
 	interface IMarshal;
 };
 
-
 cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("426038D4-2E52-4329-B697-FB926FF7538C") cpp_quote(",") cpp_quote("TsStrBldr") cpp_quote(");") [ uuid(426038D4-2E52-4329-B697-FB926FF7538C) ] coclass TsStrBldr
 {
 	interface ITsStrBldr;
 };
-
 
 cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("BD8EFD5A-2ACC-40AC-B73B-051344525B5B") cpp_quote(",") cpp_quote("TsIncStrBldr") cpp_quote(");") [ uuid(BD8EFD5A-2ACC-40AC-B73B-051344525B5B) ] coclass TsIncStrBldr
 {
 	interface ITsIncStrBldr;
 };
 
-
 cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76ED-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(",") cpp_quote("TsPropsBldr") cpp_quote(");") [ uuid(F1EF76ED-BE04-11d3-8D9A-005004DEFEC4) ] coclass TsPropsBldr
 {
 	interface ITsPropsBldr;
 };
-#line 5057 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
+
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("24636FD1-DB8D-4b2c-B4C0-44C2592CA482") cpp_quote(",") cpp_quote("DebugReport") cpp_quote(");") [ uuid(24636FD1-DB8D-4b2c-B4C0-44C2592CA482) ] coclass DebugReport
+{
+	interface IDebugReport;
+};
+#line 5059 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
+
+#line 5061 "c:\\develop\\fwrepo\\fw\\src\\views\\Views.idh"
 
 #line 29 ".\\ViewsTlb.idl"
 

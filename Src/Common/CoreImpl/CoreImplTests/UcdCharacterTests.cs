@@ -1,15 +1,9 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: UcdCharacterTests.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
-using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.CoreImpl
 {

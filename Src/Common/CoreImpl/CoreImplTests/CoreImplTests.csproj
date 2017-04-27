@@ -117,7 +117,6 @@
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
-    <Compile Include="DebugProcsTests.cs" />
     <Compile Include="DirectoryFinderTests.cs" />
     <Compile Include="TsIncStrBldrTests.cs" />
     <Compile Include="TsPropsBldrTests.cs" />

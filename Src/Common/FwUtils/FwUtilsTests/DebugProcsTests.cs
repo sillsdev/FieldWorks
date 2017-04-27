@@ -1,19 +1,14 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DebugProcsTest.cs
-// Responsibility: FW Team
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 
-namespace SIL.CoreImpl
+namespace SIL.FieldWorks.Common.FwUtils
 {
 #if DEBUG
 	/// ----------------------------------------------------------------------------------------

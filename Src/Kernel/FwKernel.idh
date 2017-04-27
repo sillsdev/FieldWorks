@@ -1581,13 +1581,6 @@ DeclareInterface(DebugReport, Unknown, 3D6A0880-D17D-4e4a-9DE9-861A85CA4046)
 	HRESULT ClearSink();
 };
 
-#ifndef NO_COCLASSES
-DeclareCoClass(DebugReport, 24636FD1-DB8D-4b2c-B4C0-44C2592CA482)
-{
-	interface IDebugReport;
-};
-#endif // !NO_COCLASSES
-
 #endif // DEBUG
 
 /*******************************************************************************************

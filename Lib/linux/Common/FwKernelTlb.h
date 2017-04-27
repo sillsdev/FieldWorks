@@ -165,18 +165,6 @@ typedef interface IDebugReport IDebugReport;
 #endif 	/* __IDebugReport_FWD_DEFINED__ */
 
 
-#ifndef __DebugReport_FWD_DEFINED__
-#define __DebugReport_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class DebugReport DebugReport;
-#else
-typedef struct DebugReport DebugReport;
-#endif /* __cplusplus */
-
-#endif 	/* __DebugReport_FWD_DEFINED__ */
-
-
 #ifndef __IComDisposable_FWD_DEFINED__
 #define __IComDisposable_FWD_DEFINED__
 typedef interface IComDisposable IComDisposable;
@@ -393,11 +381,6 @@ GENERIC_DECLARE_SMART_INTERFACE_PTR(
 IDebugReport
 ,
 3D6A0880-D17D-4e4a-9DE9-861A85CA4046
-);
-ATTACH_GUID_TO_CLASS(class,
-24636FD1-DB8D-4b2c-B4C0-44C2592CA482
-,
-DebugReport
 );
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 IComDisposable
@@ -740,7 +723,7 @@ IVwStylesheet
 D77C0DBC-C7BC-441d-9587-1E3664E1BCD3
 );
 
-typedef /* [public][public] */ struct __MIDL___MIDL_itf_FwKernelTlb_0001_0087_0001
+typedef /* [public][public] */ struct __MIDL___MIDL_itf_FwKernelTlb_0001_0086_0001
     {
     COLORREF clrFore;
     COLORREF clrBack;
@@ -4534,14 +4517,6 @@ ActionHandler;
 
 #endif 	/* __IDebugReport_INTERFACE_DEFINED__ */
 
-
-#define CLSID_DebugReport __uuidof(DebugReport)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("24636FD1-DB8D-4b2c-B4C0-44C2592CA482")
-DebugReport;
-#endif
 
 #ifndef __IComDisposable_INTERFACE_DEFINED__
 #define __IComDisposable_INTERFACE_DEFINED__

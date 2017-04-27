@@ -171,6 +171,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="CachePair.cs" />
     <Compile Include="ConsoleProgress.cs" />
+    <Compile Include="DebugProcs.cs" />
     <Compile Include="FLExBridgeHelper.cs" />
     <Compile Include="GeneratedFwUtils.cs" />
     <Compile Include="IFocusablePanePortion.cs" />

@@ -132,7 +132,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CoreImplStrings.resx</DependentUpon>
     </Compile>
-    <Compile Include="DebugProcs.cs" />
     <Compile Include="CmObjectFields.cs" />
     <Compile Include="CellarPropertyType.cs" />
     <Compile Include="CellarPropertyTypeFilter.cs" />

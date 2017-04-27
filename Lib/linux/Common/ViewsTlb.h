@@ -608,6 +608,18 @@ typedef struct TsPropsBldr TsPropsBldr;
 #endif 	/* __TsPropsBldr_FWD_DEFINED__ */
 
 
+#ifndef __DebugReport_FWD_DEFINED__
+#define __DebugReport_FWD_DEFINED__
+
+#ifdef __cplusplus
+typedef class DebugReport DebugReport;
+#else
+typedef struct DebugReport DebugReport;
+#endif /* __cplusplus */
+
+#endif 	/* __DebugReport_FWD_DEFINED__ */
+
+
 /* header files for imported files */
 #include "oaidl.h"
 #include "ocidl.h"
@@ -1575,6 +1587,11 @@ ATTACH_GUID_TO_CLASS(class,
 F1EF76ED-BE04-11d3-8D9A-005004DEFEC4
 ,
 TsPropsBldr
+);
+ATTACH_GUID_TO_CLASS(class,
+24636FD1-DB8D-4b2c-B4C0-44C2592CA482
+,
+DebugReport
 );
 
 #define LIBID_Views __uuidof(Views)
@@ -11361,6 +11378,14 @@ TsIncStrBldr;
 
 class DECLSPEC_UUID("F1EF76ED-BE04-11d3-8D9A-005004DEFEC4")
 TsPropsBldr;
+#endif
+
+#define CLSID_DebugReport __uuidof(DebugReport)
+
+#ifdef __cplusplus
+
+class DECLSPEC_UUID("24636FD1-DB8D-4b2c-B4C0-44C2592CA482")
+DebugReport;
 #endif
 #endif /* __Views_LIBRARY_DEFINED__ */
 

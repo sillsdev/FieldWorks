@@ -5013,6 +5013,7 @@ DeclareInterface(ViewInputMgr, Unknown, e41668f7-d506-4c8a-a5d7-feae5630797e)
 	HRESULT OnTextChange();
 }
 
+#ifndef NO_COCLASSES
 /*:Ignore
 The interface is declared in TextServ.idh because it is needed by ISilDataAccess.
 The class is implemented here in Views.
@@ -5022,13 +5023,11 @@ DeclareCoClass(VwStylesheet, CCE2A7ED-464C-4ec7-A0B0-E3C1F6B94C5A)
 	interface IVwStylesheet;
 };
 
-#ifndef NO_COCLASSES
 DeclareCoClass(TsStrFactory, F3359BD1-EFA1-49E6-A82E-E55893FE63E0)
 {
 	interface ITsStrFactory;
 	interface IMarshal;
 };
-
 
 DeclareCoClass(TsPropsFactory, 396D737F-3BFD-4BDA-A8CA-8242098EF798)
 {
@@ -5036,21 +5035,26 @@ DeclareCoClass(TsPropsFactory, 396D737F-3BFD-4BDA-A8CA-8242098EF798)
 	interface IMarshal;
 };
 
-
 DeclareCoClass(TsStrBldr, 426038D4-2E52-4329-B697-FB926FF7538C)
 {
 	interface ITsStrBldr;
 };
-
 
 DeclareCoClass(TsIncStrBldr, BD8EFD5A-2ACC-40AC-B73B-051344525B5B)
 {
 	interface ITsIncStrBldr;
 };
 
-
 DeclareCoClass(TsPropsBldr, F1EF76ED-BE04-11d3-8D9A-005004DEFEC4)
 {
 	interface ITsPropsBldr;
 };
+
+#ifdef DEBUG
+DeclareCoClass(DebugReport, 24636FD1-DB8D-4b2c-B4C0-44C2592CA482)
+{
+	interface IDebugReport;
+};
+#endif // DEBUG
+
 #endif // !NO_COCLASSES

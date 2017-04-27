@@ -1705,14 +1705,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IDebugReport") cpp_
 	HRESULT ClearSink();
 };
 
-
-cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("24636FD1-DB8D-4b2c-B4C0-44C2592CA482") cpp_quote(",") cpp_quote("DebugReport") cpp_quote(");") [ uuid(24636FD1-DB8D-4b2c-B4C0-44C2592CA482) ] coclass DebugReport
-{
-	interface IDebugReport;
-};
-#line 1590 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
-
-#line 1592 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 1585 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
 
 
@@ -1733,7 +1726,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IComDisposable") cp
 
 
 
-#line 1613 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 1606 "c:\\develop\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
 
 #line 21 "C:\\develop\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 	#line 1 "c:\\develop\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
