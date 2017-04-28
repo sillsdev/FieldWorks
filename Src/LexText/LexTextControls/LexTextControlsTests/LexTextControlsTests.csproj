@@ -80,21 +80,17 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
     <Reference Include="BasicUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
     </Reference>
-    <Reference Include="Commons.Xml.Relaxng">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\Commons.Xml.Relaxng.dll</HintPath>
-    </Reference>
     <Reference Include="CoreImpl, Version=7.1.0.21236, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+    </Reference>
+    <Reference Include="CoreImplTests, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
     </Reference>
     <Reference Include="FDO">
       <Name>FDO</Name>
@@ -165,10 +161,6 @@
     <Reference Include="TestUtils">
       <Name>TestUtils</Name>
       <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="ViewsInterfaces, Version=9.0.0.27743, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="xCoreInterfaces">
       <Name>xCoreInterfaces</Name>

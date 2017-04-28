@@ -58,18 +58,18 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CoreImplTests, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Downloads\SIL.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="Mono.Posix" Condition="'$(OS)'=='Unix'" />
     <Reference Include="BasicUtils">
       <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="FwUtils">
-      <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
@@ -80,24 +80,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AlphaOutlineTests.cs" />
-    <Compile Include="ArrayUtilsTests.cs" />
-    <Compile Include="Attributes\CleanupSingletonsAttribute.cs" />
     <Compile Include="Attributes\CreateComObjectsFromManifestAttribute.cs" />
-    <Compile Include="Attributes\RedirectHKCU.cs" />
-    <Compile Include="BagTests.cs" />
     <Compile Include="CharEnumeratorForByteArrayTests.cs" />
-    <Compile Include="FileUtilsTest.cs" />
-    <Compile Include="MiscUtilsTests.cs" />
-    <Compile Include="MockFileOs.cs" />
-    <Compile Include="RecentItemsCacheTests.cs" />
     <Compile Include="Attributes\RegisterComDllsAttribute.cs" />
     <Compile Include="Attributes\RequireAdminPrivilegesAttribute.cs" />
-    <Compile Include="RomanNumeralsTests.cs" />
-    <Compile Include="SetTests.cs" />
     <Compile Include="SimpleLoggerTests.cs" />
-    <Compile Include="SingletonsContainerTests.cs" />
-    <Compile Include="TestSmallDictionary.cs" />
-    <Compile Include="UtilsTest.cs" />
     <Compile Include="DisposableObjectsSetTests.cs" />
     <None Include="App.config" />
     <Compile Include="..\..\..\AssemblyInfoForUiIndependentTests.cs">

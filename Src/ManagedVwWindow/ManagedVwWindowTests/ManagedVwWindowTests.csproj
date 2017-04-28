@@ -58,19 +58,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
     </Reference>
-    <Reference Include="FwKernelInterfaces, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="CoreImplTests, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="ViewsInterfacesTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\ViewsInterfacesTests.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
     </Reference>
     <Reference Include="ManagedVwWindow, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\Output\Debug\ManagedVwWindow.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="SilUtils, Version=7.2.0.22133, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="System" />

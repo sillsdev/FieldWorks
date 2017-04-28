@@ -101,9 +101,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
     </Reference>
-    <Reference Include="ViewsInterfacesTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="CoreImplTests, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\ViewsInterfacesTests.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
     </Reference>
     <Reference Include="FormsTester">
       <HintPath>..\..\..\..\Bin\nunitforms\FormsTester.dll</HintPath>

@@ -104,29 +104,17 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="CoreImplTests, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
     </Reference>
-    <Reference Include="BasicUtilsTests, Version=6.1.0.25994, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SilUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
-    </Reference>
-    <Reference Include="ViewsInterfaces">
-      <Name>ViewsInterfaces</Name>
-      <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="ViewsInterfacesTests, Version=6.1.1.14450, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\ViewsInterfacesTests.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\SilUtilsTests.dll</HintPath>
     </Reference>
     <Reference Include="CoreImpl, Version=6.1.0.1532, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
-    </Reference>
-    <Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86" Condition="'$(OS)'!='Unix'">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\ECInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="ECInterfaces" Condition="'$(OS)'=='Unix'">
       <SpecificVersion>False</SpecificVersion>
@@ -136,10 +124,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
     </Reference>
-    <Reference Include="FwResources, Version=6.9.2.18788, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="FwUtils">
       <Name>FwUtils</Name>
       <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
@@ -148,10 +132,6 @@
     <Reference Include="FwUtilsTests, Version=6.0.0.14896, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
-    </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Lib\debug\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -164,10 +144,6 @@
     <Reference Include="PhonEnvValidator, Version=3.2.0.9, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\PhonEnvValidator.dll</HintPath>
-    </Reference>
-    <Reference Include="ProjectUnpacker, Version=6.0.0.20664, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\ProjectUnpacker.dll</HintPath>
     </Reference>
     <Reference Include="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -192,10 +168,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\SIL.WritingSystems.dll</HintPath>
     </Reference>
-    <Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86" Condition="'$(OS)'!='Unix'">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SilEncConverters40.dll</HintPath>
-    </Reference>
     <Reference Include="SilEncConverters40" Condition="'$(OS)'=='Unix'">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>/usr/lib/fieldworks/SilEncConverters40.dll</HintPath>
@@ -208,15 +180,8 @@
       <Name>System</Name>
     </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
-    </Reference>
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Runtime.Serialization">
-      <RequiredTargetFramework>3.0</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Web" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
@@ -224,9 +189,6 @@
     <Reference Include="TestUtils, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\TestUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="Utilities, Version=7.4.100.36, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="XMLUtils, Version=5.5.0.20976, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -240,8 +202,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\AssemblyInfoForTests.cs">
-      <Link>AssemblyInfo.cs</Link>
+    <Compile Include="..\..\AssemblyInfoForUiIndependentTests.cs">
+      <Link>AssemblyInfoForUiIndependentTests.cs</Link>
     </Compile>
     <Compile Include="AnalysisAdjusterTests.cs" />
     <Compile Include="AnalysisGuessServicesTests.cs" />
@@ -407,6 +369,7 @@
     <Compile Include="ReadWriteServicesTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="TestData\x-kal-fonipa_7000043.ldml" />
     <None Include="TestData\x-kal_7000043.ldml" />
   </ItemGroup>

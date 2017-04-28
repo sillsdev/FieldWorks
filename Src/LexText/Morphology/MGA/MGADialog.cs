@@ -1,13 +1,7 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: MGA.cs
-// Responsibility: Andy Black
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
+
 using System;
 using System.Drawing;
 using System.ComponentModel;
@@ -16,7 +10,6 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using SIL.FieldWorks.FDO;
-using XCore;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Controls;

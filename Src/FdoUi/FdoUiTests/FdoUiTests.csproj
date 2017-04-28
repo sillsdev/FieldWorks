@@ -60,16 +60,16 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicUtils, Version=4.9.0.23576, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
     <Reference Include="BasicUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
     </Reference>
     <Reference Include="CoreImpl, Version=7.3.3.26471, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="CoreImplTests, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
     </Reference>
     <Reference Include="FDO, Version=4.9.0.19895, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -96,11 +96,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\SIL.WritingSystems.dll</HintPath>
     </Reference>
+    <Reference Include="SilUtils, Version=9.0.0.30004, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
       <HintPath>..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>

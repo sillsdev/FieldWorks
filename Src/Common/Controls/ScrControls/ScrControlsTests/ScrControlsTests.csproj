@@ -5,9 +5,12 @@
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{A86C3ACB-E264-4D91-A933-936C01AF3701}</ProjectGuid>
-    <SccProjectName></SccProjectName>
-    <SccLocalPath></SccLocalPath>
-    <SccProvider></SccProvider>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccProvider>
+    </SccProvider>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ApplicationIcon>
@@ -100,21 +103,13 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
     <Reference Include="BasicUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
     </Reference>
-    <Reference Include="ViewsInterfaces">
-      <Name>ViewsInterfaces</Name>
-      <HintPath>..\..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="ViewsInterfacesTests, Version=6.1.1.14450, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="CoreImplTests, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Output\Debug\ViewsInterfacesTests.dll</HintPath>
+      <HintPath>..\..\..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
     </Reference>
     <Reference Include="FDO">
       <Name>FDO</Name>
@@ -125,36 +120,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\FDOTests.dll</HintPath>
     </Reference>
-    <Reference Include="FwControls">
-      <Name>FwControls</Name>
-      <HintPath>..\..\..\..\..\Output\Debug\FwControls.dll</HintPath>
-    </Reference>
-    <Reference Include="NMock">
-      <Name>NMock</Name>
-      <HintPath>..\..\..\..\..\Bin\nmock\NMock.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
       <HintPath>..\..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="ProjectUnpacker">
-      <Name>ProjectUnpacker</Name>
-      <HintPath>..\..\..\..\..\Output\Debug\ProjectUnpacker.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="ScrControls">
       <Name>ScrControls</Name>
       <HintPath>..\..\..\..\..\Output\Debug\ScrControls.dll</HintPath>
       <Private>True</Private>
-    </Reference>
-    <Reference Include="ScriptureUtils">
-      <Name>ScriptureUtils</Name>
-      <HintPath>..\..\..\..\..\Output\Debug\ScriptureUtils.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ScrUtilsInterfaces">
-      <Name>ScrUtilsInterfaces</Name>
-      <HintPath>..\..\..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -166,15 +139,6 @@
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
-    </Reference>
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
-    </Reference>
-    <Reference Include="System.Drawing">
-      <Name>System.Drawing</Name>
-    </Reference>
-    <Reference Include="System.Windows.Forms">
-      <Name>System.Windows.Forms</Name>
     </Reference>
     <Reference Include="System.Xml">
       <Name>System.XML</Name>

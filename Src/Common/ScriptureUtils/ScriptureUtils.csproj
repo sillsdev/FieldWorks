@@ -100,25 +100,13 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SilUtils, Version=9.0.0.25850, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="ViewsInterfaces, Version=5.5.0.24769, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
     <Reference Include="FDO, Version=8.0.9.25086, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
-    </Reference>
-    <Reference Include="FwResources, Version=3.2.0.9, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
-    </Reference>
-    <Reference Include="FwUtils, Version=6.1.0.39181, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
     <Reference Include="ParatextShared, Version=7.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -132,10 +120,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
     </Reference>
-    <Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86" Condition="'$(OS)'!='Unix'">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SilEncConverters40.dll</HintPath>
-    </Reference>
     <Reference Include="SilEncConverters40" Condition="'$(OS)'=='Unix'">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>/usr/lib/fieldworks/SilEncConverters40.dll</HintPath>
@@ -144,12 +128,6 @@
       <Name>System</Name>
     </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
-    </Reference>
-    <Reference Include="System.Xml">
-      <Name>System.XML</Name>
-    </Reference>
     <Reference Include="Utilities, Version=7.4.100.10102, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\Utilities.dll</HintPath>

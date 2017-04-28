@@ -97,10 +97,6 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
     <Reference Include="BasicUtilsTests, Version=6.1.1.26188, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
@@ -108,6 +104,10 @@
     <Reference Include="CoreImpl, Version=6.1.0.26542, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+    </Reference>
+    <Reference Include="CoreImplTests, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
     </Reference>
     <Reference Include="DiffView">
       <Name>DiffView</Name>
@@ -121,22 +121,6 @@
       <Name>FDOTests</Name>
       <HintPath>..\..\..\..\Output\Debug\FDOTests.dll</HintPath>
     </Reference>
-    <Reference Include="Framework">
-      <Name>Framework</Name>
-      <HintPath>..\..\..\..\Output\Debug\Framework.dll</HintPath>
-    </Reference>
-    <Reference Include="FwControls">
-      <Name>FwControls</Name>
-      <HintPath>..\..\..\..\Output\Debug\FwControls.dll</HintPath>
-    </Reference>
-    <Reference Include="FwResources, Version=8.0.6.26892, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\FwResources.dll</HintPath>
-    </Reference>
-    <Reference Include="FwUtils">
-      <Name>FwUtils</Name>
-      <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
@@ -148,10 +132,6 @@
     <Reference Include="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Bin\Rhino\Rhino.Mocks.dll</HintPath>
-    </Reference>
-    <Reference Include="RootSite">
-      <Name>RootSite</Name>
-      <HintPath>..\..\..\..\Output\Debug\RootSite.dll</HintPath>
     </Reference>
     <Reference Include="ScrUtilsInterfaces">
       <Name>ScrUtilsInterfaces</Name>
@@ -173,10 +153,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
-    <Reference Include="SimpleRootSite">
-      <Name>SimpleRootSite</Name>
-      <HintPath>..\..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
-    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -187,14 +163,6 @@
     <Reference Include="TestUtils">
       <Name>TestUtils</Name>
       <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="ViewsInterfaces, Version=9.0.0.15846, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="xCoreInterfaces">
-      <Name>xCoreInterfaces</Name>
-      <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="FwUtilsTests">
       <HintPath>..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>

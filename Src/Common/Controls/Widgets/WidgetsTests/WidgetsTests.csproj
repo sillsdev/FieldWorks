@@ -103,24 +103,25 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicUtils, Version=6.1.1.36416, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
     <Reference Include="BasicUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
     </Reference>
-    <Reference Include="CacheLight, Version=1.0.4002.31848, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="CoreImplTests, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
+    </Reference>
+    <Reference Include="RootSite, Version=9.0.0.30108, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Output\Debug\RootSite.dll</HintPath>
+    </Reference>
+    <Reference Include="SilUtils, Version=9.0.0.30004, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
     <Reference Include="ViewsInterfaces">
       <Name>ViewsInterfaces</Name>
       <HintPath>..\..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="ViewsInterfacesTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Output\Debug\ViewsInterfacesTests.dll</HintPath>
     </Reference>
     <Reference Include="CoreImpl, Version=6.1.1.36573, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -131,12 +132,6 @@
       <Name>nunit.framework</Name>
       <HintPath>..\..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="RootSite, Version=6.9.3.16480, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="RootSiteTests, Version=6.9.3.16481, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Downloads\SIL.Core.dll</HintPath>
@@ -146,9 +141,6 @@
       <HintPath>..\..\..\..\..\Downloads\SIL.WritingSystems.dll</HintPath>
     </Reference>
     <Reference Include="SimpleRootSite, Version=6.9.3.31850, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="SimpleRootSiteTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="System">
@@ -173,9 +165,6 @@
     <Reference Include="FDO, Version=6.9.2.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\FDO.dll</HintPath>
-    </Reference>
-    <Reference Include="FwUtils">
-      <HintPath>..\..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
     <Reference Include="FwUtilsTests">
       <HintPath>..\..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
@@ -216,6 +205,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

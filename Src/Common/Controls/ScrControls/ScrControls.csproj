@@ -106,49 +106,21 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
-    <Reference Include="ViewsInterfaces">
-      <Name>ViewsInterfaces</Name>
-      <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
+    <Reference Include="SilUtils, Version=9.0.0.25850, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
     <Reference Include="FDO">
       <Name>FDO</Name>
       <HintPath>..\..\..\..\Output\debug\FDO.dll</HintPath>
     </Reference>
-    <Reference Include="Framework">
-      <Name>Framework</Name>
-      <HintPath>..\..\..\..\Output\Debug\Framework.dll</HintPath>
-    </Reference>
     <Reference Include="FwControls">
       <Name>FwControls</Name>
       <HintPath>..\..\..\..\Output\Debug\FwControls.dll</HintPath>
     </Reference>
-    <Reference Include="FwResources">
-      <Name>FwResources</Name>
-      <HintPath>..\..\..\..\Output\Debug\FwResources.dll</HintPath>
-    </Reference>
     <Reference Include="FwUtils">
       <Name>FwUtils</Name>
       <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
-    </Reference>
-    <Reference Include="Reporting">
-      <Name>Reporting</Name>
-      <HintPath>..\..\..\..\Output\Debug\Reporting.dll</HintPath>
-    </Reference>
-    <Reference Include="RootSite">
-      <Name>RootSite</Name>
-      <HintPath>..\..\..\..\Output\Debug\RootSite.dll</HintPath>
-    </Reference>
-    <Reference Include="ScriptureUtils">
-      <Name>ScriptureUtils</Name>
-      <HintPath>..\..\..\..\Output\debug\ScriptureUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="ScrUtilsInterfaces">
-      <Name>ScrUtilsInterfaces</Name>
-      <HintPath>..\..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="SharedScrControls, Version=7.2.0.19910, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -159,9 +131,6 @@
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
-    </Reference>
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
     </Reference>
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
@@ -174,10 +143,6 @@
     </Reference>
     <Reference Include="TeScrInitializer, Version=7.1.0.19461, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="xCoreInterfaces">
-      <Name>xCoreInterfaces</Name>
-      <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="XMLUtils, Version=7.1.0.17244, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

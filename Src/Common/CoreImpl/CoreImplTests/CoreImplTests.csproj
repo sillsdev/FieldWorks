@@ -57,21 +57,9 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicUtils, Version=6.1.0.21896, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="BasicUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
-    </Reference>
     <Reference Include="CoreImpl, Version=6.1.0.26994, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
-    </Reference>
-    <Reference Include="nmock, Version=1.0.3551.16891, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Bin\nmock\NMock.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework, Version=2.4.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -97,27 +85,22 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
-    <Reference Include="System.Drawing" />
-    <Reference Include="FwUtils">
-      <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="FwUtilsTests">
-      <HintPath>..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
-    </Reference>
     <Reference Include="FwKernelInterfaces">
       <HintPath>..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\AssemblyInfoForTests.cs">
-      <Link>AssemblyInfoForTests.cs</Link>
-    </Compile>
+    <Compile Include="Attributes\CleanupSingletonsAttribute.cs" />
     <Compile Include="DirectoryFinderTests.cs" />
+    <Compile Include="RecentItemsCacheTests.cs" />
+    <Compile Include="Attributes\SetIcuEnvForTestsAttribute.cs" />
+    <Compile Include="Attributes\RedirectHKCU.cs" />
+    <Compile Include="SingletonsContainerTests.cs" />
     <Compile Include="TsIncStrBldrTests.cs" />
     <Compile Include="TsPropsBldrTests.cs" />
     <Compile Include="TsPropsFactoryTests.cs" />

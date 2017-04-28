@@ -41,9 +41,10 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DocumentationFile>..\..\..\..\Output\Debug\SilUtilsTests.xml</DocumentationFile>
     <ErrorReport>prompt</ErrorReport>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -51,11 +52,16 @@
     <OutputPath>..\..\..\..\Output\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="SIL.Core, Version=3.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Downloads\SIL.Core.dll</HintPath>
+    </Reference>
     <Reference Include="SilUtils, Version=7.0.1.25075, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
@@ -63,15 +69,21 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <Reference Include="Mono.Posix" Condition="'$(OS)'=='Unix'" />
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
-	  <HintPath>..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RomanNumeralsTests.cs" />
+    <Compile Include="TestSmallDictionary.cs" />
     <None Include="App.config" />
+    <Compile Include="BagTests.cs" />
+    <Compile Include="FileUtilsTest.cs" />
+    <Compile Include="MiscUtilsTest.cs" />
+    <Compile Include="MockFileOs.cs" />
+    <Compile Include="SetTests.cs" />
     <Compile Include="StringUtilsTests.cs" />
     <Compile Include="SurrogateTests.cs" />
   </ItemGroup>

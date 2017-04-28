@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.CoreImpl
 {
@@ -13,33 +12,8 @@ namespace SIL.CoreImpl
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class UcdCharacterTests // can't derive from BaseTest, but instantiate DebugProcs instead
+	public class UcdCharacterTests
 	{
-		private DebugProcs m_DebugProcs;
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// If a test overrides this, it should call this base implementation.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[TestFixtureSetUp]
-		public virtual void FixtureSetup()
-		{
-			m_DebugProcs = new DebugProcs();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Cleans up some resources that were used during the test
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[TestFixtureTearDown]
-		public virtual void FixtureTeardown()
-		{
-			m_DebugProcs.Dispose();
-			m_DebugProcs = null;
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the CompareTo() method

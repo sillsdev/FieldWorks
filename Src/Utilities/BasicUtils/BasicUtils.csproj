@@ -60,6 +60,10 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CoreImpl, Version=9.0.0.28474, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
@@ -76,7 +80,6 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
-    <Reference Include="Mono.Posix" Condition="'$(OS)'=='Unix'" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -84,44 +87,22 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ActivationContextHelper.cs" />
-    <Compile Include="IProgress.cs" />
-    <Compile Include="IServiceLocatorBootstrapper.cs" />
-    <Compile Include="IThreadedProgress.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AlphaOutline.cs" />
-    <Compile Include="ArrayUtils.cs" />
     <Compile Include="BasicUtils.cs" />
     <Compile Include="Benchmark.cs" />
-    <Compile Include="BidirHashtable.cs" />
     <Compile Include="CharEnumeratorForByteArray.cs" />
-    <Compile Include="ConsumerThread.cs" />
     <Compile Include="DisposableObjectsSet.cs" />
-    <Compile Include="IRefreshable.cs" />
     <Compile Include="SimpleLogger.cs" />
     <Compile Include="SingleThreadedSynchronizeInvoke.cs" />
-    <Compile Include="SingletonsContainer.cs" />
-    <Compile Include="StringIgnoreCaseComparer.cs" />
-    <Compile Include="SynchronizeInvokeExtensions.cs" />
     <Compile Include="HiMetric.cs" />
-    <Compile Include="RecentItemsCache.cs" />
     <Compile Include="DriveUtil.cs" />
-    <Compile Include="EnvVarTraceListener.cs" />
-    <Compile Include="FileUtils.cs" />
-    <Compile Include="IFWDisposable.cs" />
     <Compile Include="IStorage.cs" />
     <Compile Include="MergeSort.cs" />
-    <Compile Include="PriorityQueue.cs" />
-    <Compile Include="TreeDictionary.cs" />
-    <Compile Include="RomanNumerals.cs" />
-    <Compile Include="Set.cs" />
-    <Compile Include="SimpleBag.cs" />
-    <Compile Include="SmallDictionary.cs" />
     <Compile Include="Unicode.cs" />
-    <Compile Include="Utils.cs" />
     <Compile Include="ViewSizeEvents.cs" />
     <Compile Include="LinuxPackageUtils.cs" />
     <Compile Include="DirectoryUtils.cs" />
-    <Compile Include="IFileOS.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UcdCharacterResources.resx">

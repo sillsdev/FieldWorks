@@ -1,9 +1,6 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: BookMerger.cs
-// Responsibility: TE Team
 
 using System;
 using System.Collections.Generic;
@@ -652,7 +649,7 @@ namespace SIL.FieldWorks.TE
 
 			// Create a difference for the first added/missing section
 			Difference diff = new Difference(cluster.verseRefMin, cluster.verseRefMax, diffType,
-				ArrayUtils.Convert<IScrSection,ICmObject>(cluster.ItemsSource), paraDest, ichDest);
+				cluster.ItemsSource.Cast<IScrSection>(), paraDest, ichDest);
 			ClusterDiffs.Add(diff);
 		}
 

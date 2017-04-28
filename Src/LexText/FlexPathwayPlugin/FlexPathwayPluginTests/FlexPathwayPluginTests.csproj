@@ -61,21 +61,17 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicUtils, Version=6.1.1.19725, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="BasicUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
     </Reference>
+    <Reference Include="CoreImplTests, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
+    </Reference>
     <Reference Include="FlexPathwayPlugin, Version=9.0.0.25881, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\FlexPathwayPlugin.dll</HintPath>
-    </Reference>
-    <Reference Include="ViewsInterfacesTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\ViewsInterfacesTests.dll</HintPath>
     </Reference>
     <Reference Include="FwCoreDlgs, Version=6.0.1.26258, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

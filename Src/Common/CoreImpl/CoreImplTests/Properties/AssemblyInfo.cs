@@ -1,9 +1,10 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Reflection;
 using System.Runtime.InteropServices;
+using SIL.CoreImpl.Attributes;
 using SIL.TestUtilities;
 
 // General Information about an assembly is controlled through the following
@@ -40,3 +41,7 @@ using SIL.TestUtilities;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
+
+// Cleanup all singletons after running tests
+[assembly: CleanupSingletons]
+[assembly: SetIcuEnvForTests]

@@ -1,20 +1,20 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿// Copyright (c) 2017 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Text;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.CoreImpl
 {
 	[TestFixture]
 	public abstract class TsSerializerTestsBase
-	// can't derive from BaseTest, but instantiate DebugProcs instead
 	{
 		#region Member Variables
 		protected int EnWS { get; private set; }
 		protected int EsWS { get; private set; }
-		private DebugProcs m_DebugProcs;
 		protected WritingSystemManager WritingSystemManager { get; set; }
 		#endregion
 
@@ -27,9 +27,6 @@ namespace SIL.CoreImpl
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
-			m_DebugProcs = new DebugProcs();
-			RegistryHelper.CompanyName = "SIL";
-
 			Icu.InitIcuDataDir();
 			WritingSystemManager = new WritingSystemManager();
 
@@ -40,18 +37,6 @@ namespace SIL.CoreImpl
 			CoreWritingSystemDefinition esWs;
 			WritingSystemManager.GetOrSet("es", out esWs);
 			EsWS = esWs.Handle;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Cleans up the writing system factory
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[TestFixtureTearDown]
-		public void FixtureTeardown()
-		{
-			m_DebugProcs.Dispose();
-			m_DebugProcs = null;
 		}
 
 		#endregion

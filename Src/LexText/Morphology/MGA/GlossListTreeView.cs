@@ -1,17 +1,9 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: GLossListTreeView.cs
-// Responsibility: Andy Black
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Text;
 using System.Xml;
@@ -19,8 +11,6 @@ using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.LexText.Controls.MGA

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,7 +10,6 @@ using System.Xml.Linq;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {
@@ -829,7 +828,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 						{
 							var currentItems = (from obj in currentInternal.GetVectorProperty(flid) select obj.Guid).ToArray();
 							var foreignItems = TargetsInForignElement(element);
-							if (ArrayUtils.AreEqual(currentItems, foreignItems))
+							if (currentItems.SequenceEqual(foreignItems))
 								continue;
 							if (processChangeRecord(new FdoVectorPropertyChanged(currentObj, flid, currentItems, foreignItems)))
 								return;

@@ -79,7 +79,11 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
     </Reference>
-    <Reference Include="DiffView, Version=5.5.0.22431, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="CoreImplTests, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
+    </Reference>
+    <Reference Include="DiffView, Version=9.0.0.31519, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\DiffView.dll</HintPath>
     </Reference>
@@ -187,6 +191,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
+    <Reference Include="SilUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\SilUtilsTests.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms" />
@@ -237,17 +245,13 @@
     <Compile Include="ImportTests\TeAnnotationXmlImportTests.cs" />
     <Compile Include="ImportTests\TeImportBtInterleaved.cs" />
     <Compile Include="ImportTests\TeImportBtNonInterleaved.cs" />
-    <Compile Include="ImportTests\TeImportManagerTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="ImportTests\TeImportManagerTests.cs" />
     <Compile Include="ImportTests\TeImportNoUi.cs" />
     <Compile Include="ImportTests\TeImportParatext6Tests.cs" />
     <Compile Include="ImportTests\TeImportTests.cs" />
     <Compile Include="ImportTests\TeImportTestsBase.cs" />
     <Compile Include="SCTextEnumTests.cs" />
-    <Compile Include="SFFileListBuilderTests.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="SFFileListBuilderTests.cs" />
     <Compile Include="TeImportExportExtensionsTests.cs" />
   </ItemGroup>
   <ItemGroup>

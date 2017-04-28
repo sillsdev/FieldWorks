@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -8,7 +8,6 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
-using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace SIL.Utils
@@ -259,20 +258,6 @@ namespace SIL.Utils
 		public static bool IsUnsupportedCultureException(Exception e)
 		{
 			return e is CultureNotFoundException;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a datetime value with the seconds and milliseconds stripped off (does not
-		/// actually round to the nearest minute).
-		/// </summary>
-		/// <param name="value">The value.</param>
-		/// ------------------------------------------------------------------------------------
-		public static DateTime ToTheMinute(this DateTime value)
-		{
-			return (value.Second != 0 || value.Millisecond != 0) ?
-				new DateTime(value.Year, value.Month, value.Day, value.Hour, value.Minute, 0) :
-				value;
 		}
 	}
 }

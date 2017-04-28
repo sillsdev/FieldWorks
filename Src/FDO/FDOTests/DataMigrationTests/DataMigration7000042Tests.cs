@@ -1,9 +1,6 @@
-// Copyright (c) 2011-2013 SIL International
+// Copyright (c) 2011-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DataMigration7000042Tests.cs
-// Responsibility: mcconnel
 
 using System;
 using System.Collections.Generic;
@@ -27,7 +24,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 	{
 		/// <summary>This is used for creating meaningful assertion messages.</summary>
 		private readonly Dictionary<string, string> m_mapGuidToName =
-			new Dictionary<string, string>(new StringIgnoreCaseComparer());
+			new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
 		///<summary>
 		/// Set up the data for the test.

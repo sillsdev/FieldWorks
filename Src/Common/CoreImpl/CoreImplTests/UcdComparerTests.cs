@@ -4,7 +4,6 @@
 
 using System;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.CoreImpl
 {
@@ -15,9 +14,7 @@ namespace SIL.CoreImpl
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	public class UcdComparerTest
-		// can't derive from BaseTest, but instantiate DebugProcs instead
 	{
-		private DebugProcs m_DebugProcs;
 		private BidiCharacter m_bidi;
 		private UCDComparer m_comparer;
 		private PUACharacter m_pua;
@@ -30,24 +27,11 @@ namespace SIL.CoreImpl
 		[TestFixtureSetUp]
 		public void SetUp()
 		{
-			m_DebugProcs = new DebugProcs();
 			m_comparer = new UCDComparer();
 			m_bidi = new BidiCharacter("0669",
 				"ARABIC-INDIC DIGIT NINE;Nd;0;AN;;9;9;9;N;;;;;");
 			m_pua = new PUACharacter("0669",
 				"ARABIC-INDIC DIGIT NINE;Nd;0;AN;;9;9;9;N;;;;;");
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Cleans up some resources that were used during the test
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[TestFixtureTearDown]
-		public virtual void FixtureTeardown()
-		{
-			m_DebugProcs.Dispose();
-			m_DebugProcs = null;
 		}
 
 		/// ------------------------------------------------------------------------------------

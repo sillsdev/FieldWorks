@@ -106,25 +106,19 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FDO.dll</HintPath>
     </Reference>
+    <Reference Include="SilUtils, Version=9.0.0.25850, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SilUtils.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
-    </Reference>
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
-    </Reference>
-    <Reference Include="System.Xml">
-      <Name>System.XML</Name>
-    </Reference>
-    <Reference Include="BasicUtils, Version=6.1.1.31074, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

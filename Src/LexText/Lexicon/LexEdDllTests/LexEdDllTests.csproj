@@ -38,13 +38,13 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicUtils, Version=7.3.2.24228, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="BasicUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
+    </Reference>
+    <Reference Include="CoreImplTests, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
     </Reference>
     <Reference Include="DetailControls, Version=8.0.5.23925, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -57,6 +57,10 @@
     <Reference Include="FDOTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\FDOTests.dll</HintPath>
+    </Reference>
+    <Reference Include="Framework, Version=9.0.0.31044, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\Framework.dll</HintPath>
     </Reference>
     <Reference Include="FwUtils, Version=8.1.0.24240, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -83,10 +87,6 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="TestUtils">
       <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
@@ -115,9 +115,6 @@
     <Reference Include="FwKernelInterfaces">
       <HintPath>..\..\..\..\Output\Debug\FwKernelInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Framework">
-      <HintPath>..\..\..\Common\Framework\Framework.csproj</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">
@@ -126,9 +123,7 @@
     <Compile Include="FlexBridgeListenerTests.cs" />
     <Compile Include="GoldEticGuidFixerTests.cs" />
     <Compile Include="LexEntryChangeHandlerTests.cs" />
-    <Compile Include="LexReferenceTreeRootLauncherTests.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="LexReferenceTreeRootLauncherTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReversalEntryBulkEditTests.cs" />
     <Compile Include="SortReversalSubEntriesTests.cs" />

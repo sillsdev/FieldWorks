@@ -1,11 +1,13 @@
-using System.Diagnostics.CodeAnalysis;
+// Copyright (c) 2017 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Lexicon;
 using SIL.WritingSystems;
 
@@ -13,7 +15,7 @@ namespace SIL.CoreImpl
 {
 	[TestFixture]
 	[SetCulture("en-US")]
-	public class WritingSystemManagerTests // can't derive from BaseTest, but instantiate DebugProcs instead
+	public class WritingSystemManagerTests
 	{
 		private class TestSettingsStore : ISettingsStore
 		{
@@ -43,28 +45,13 @@ namespace SIL.CoreImpl
 			}
 		}
 
-		private DebugProcs m_debugProcs;
-
 		/// <summary>
 		/// If a test overrides this, it should call this base implementation.
 		/// </summary>
 		[TestFixtureSetUp]
 		public virtual void FixtureSetup()
 		{
-			// This needs to be set for ICU
-			RegistryHelper.CompanyName = "SIL";
 			Icu.InitIcuDataDir();
-			m_debugProcs = new DebugProcs();
-		}
-
-		/// <summary>
-		/// Cleans up some resources that were used during the test
-		/// </summary>
-		[TestFixtureTearDown]
-		public virtual void FixtureTeardown()
-		{
-			m_debugProcs.Dispose();
-			m_debugProcs = null;
 		}
 
 		private static string PrepareTempStore(string name)

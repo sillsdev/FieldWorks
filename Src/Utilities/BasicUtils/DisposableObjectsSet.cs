@@ -1,10 +1,9 @@
-// Copyright (c) 2011-2013 SIL International
+// Copyright (c) 2011-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace SIL.Utils
 {
@@ -13,10 +12,10 @@ namespace SIL.Utils
 	/// A set that collects objects for later disposal
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class DisposableObjectsSet<T>: IDisposable where T: class
+	public class DisposableObjectsSet<T> : IDisposable where T : class
 	{
 		/// <summary/>
-		protected readonly Set<IDisposable> m_ObjectsToDispose = new Set<IDisposable>();
+		protected readonly HashSet<IDisposable> m_ObjectsToDispose = new HashSet<IDisposable>();
 
 		#region Disposable stuff
 		#if DEBUG

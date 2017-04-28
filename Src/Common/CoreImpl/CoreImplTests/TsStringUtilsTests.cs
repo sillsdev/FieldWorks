@@ -1,9 +1,6 @@
-// Copyright (c) 2004-2015 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: StringUtilsTest.cs
-// Responsibility: FW Team
 
 using System;
 using System.Collections.Generic;
@@ -13,7 +10,6 @@ using System.Text; // for ILgWritingSystemFactory
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
 namespace SIL.CoreImpl
@@ -26,9 +22,7 @@ namespace SIL.CoreImpl
 	[TestFixture]
 	[SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Our test methods have their own naming convention")]
 	public class TsStringUtilsTests
-	// can't derive from BaseTest, but instantiate DebugProcs instead
 	{
-		private DebugProcs m_DebugProcs;
 		private ILgWritingSystemFactory m_wsf;
 
 		#region Setup and Teardown
@@ -40,23 +34,8 @@ namespace SIL.CoreImpl
 		[TestFixtureSetUp]
 		public void TestFixtureSetup()
 		{
-			// This needs to be set for ICU
-			RegistryHelper.CompanyName = "SIL";
 			Icu.InitIcuDataDir();
 			m_wsf = new WritingSystemManager();
-			m_DebugProcs = new DebugProcs();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Cleans up some resources that were used during the test
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[TestFixtureTearDown]
-		public virtual void FixtureTeardown()
-		{
-			m_DebugProcs.Dispose();
-			m_DebugProcs = null;
 		}
 
 		#endregion
@@ -1985,7 +1964,7 @@ namespace SIL.CoreImpl
 			Assert.AreEqual(m_wsf.UserWs, tssClean.get_WritingSystem(0));
 
 			// Test method GetXmlRep
-			var result = TsStringUtils.GetXmlRep(tssClean, m_wsf, 0, true); // 0 means Str not AStr
+			var result = TsStringUtils.GetXmlRep(tssClean, m_wsf, 0); // 0 means Str not AStr
 
 			// Confirm that the xml output has 'ws' information in it.
 			Assert.AreEqual(String.Format("<Str>{0}<Run ws=\"en\"></Run>{0}</Str>", Environment.NewLine), result);

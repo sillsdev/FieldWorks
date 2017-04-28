@@ -111,13 +111,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
     </Reference>
-    <Reference Include="ViewsInterfaces">
-      <Name>ViewsInterfaces</Name>
-      <HintPath>..\..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="ViewsInterfacesTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="CoreImplTests, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Output\Debug\ViewsInterfacesTests.dll</HintPath>
+      <HintPath>..\..\..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
+    </Reference>
+    <Reference Include="SilUtils, Version=9.0.0.25850, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
     <Reference Include="CoreImpl, Version=6.1.0.20700, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -183,6 +183,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
     </Reference>
+    <Reference Include="ViewsInterfaces, Version=9.0.0.25852, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
+    </Reference>
     <Reference Include="xCore, Version=6.1.0.25855, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\xCore.dll</HintPath>
@@ -222,12 +226,8 @@
     </EmbeddedResource>
     <Compile Include="PhoneEnvReferenceViewTests.cs" />
     <Compile Include="SliceTests.cs" />
-    <Compile Include="AtomicReferenceLauncherTests.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="VectorReferenceLauncherTests.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="AtomicReferenceLauncherTests.cs" />
+    <Compile Include="VectorReferenceLauncherTests.cs" />
     <Compile Include="SliceFactoryTests.cs" />
     <None Include="Test.fwlayout" />
   </ItemGroup>

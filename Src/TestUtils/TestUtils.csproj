@@ -109,6 +109,10 @@
       <Name>nunit.framework</Name>
       <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="SilUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SilUtilsTests.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -118,12 +122,6 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="FwUtils">
       <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="BasicUtils">
-      <HintPath>..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="BasicUtilsTests">
-      <HintPath>..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
     </Reference>
     <Reference Include="CoreImpl">
       <HintPath>..\..\Output\Debug\CoreImpl.dll</HintPath>
