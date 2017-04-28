@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.CodeDom.Compiler;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Security;
 using System.Text;
 using Microsoft.CSharp;
 using Microsoft.Win32;
@@ -34,6 +36,7 @@ namespace NMock.Dynamic
 		private string s_piaPath;
 		private string s_piaPath35;
 		private string s_wcfPath30;
+		private string s_referenceAssembliesPath;
 
 		public ClassGenerator(Type type, IInvocationHandler handler)
 			: this(type, handler, new ArrayList()) {}
@@ -50,6 +53,20 @@ namespace NMock.Dynamic
 		public ClassGenerator(Type type, IInvocationHandler handler, IList methodsToIgnore,
 			Type superclassIfTypeIsInterface, string[] additionalReferences)
 		{
+			if (s_referenceAssembliesPath == null)
+			{
+				var basePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
+					"Reference Assemblies", "Microsoft", "Framework", ".NETFramework");
+				var clrVersion = Environment.Version;
+				var path = Path.Combine(basePath,
+					string.Format("v{0}.{1}", clrVersion.Major, clrVersion.Minor));
+				if (!Directory.Exists(path) && Directory.Exists(basePath))
+				{
+					path = Directory.EnumerateDirectories(basePath).OrderByDescending(f => f).First();
+				}
+				s_referenceAssembliesPath = path;
+			}
+
 			if (s_piaPath35 == null)
 			{
 				RegistryKey key = Registry.LocalMachine.OpenSubKey(
@@ -165,27 +182,37 @@ namespace NMock.Dynamic
 				string dir = Path.GetDirectoryName(referencedAssembly);
 				referencedAssembly = Assembly.GetExecutingAssembly().CodeBase.Substring(filePrefix.Length);
 				opts.ReferencedAssemblies.Add(referencedAssembly);
-				opts.ReferencedAssemblies.Add("System.dll");
-				foreach(AssemblyName reference in Assembly.GetAssembly(type).GetReferencedAssemblies())
+				foreach(var reference in Assembly.GetAssembly(type).GetReferencedAssemblies())
 				{
+					var assemblyName = reference.Name + ".dll";
+					if (assemblyName == "mscorlib.dll")
+						continue;
+
 					// first look in the directory where the mocked assembly is
-					string referencePath = Path.Combine(dir, reference.Name + ".dll");
+					var referencePath = Path.Combine(dir, assemblyName);
 					if (File.Exists(referencePath))
 						opts.ReferencedAssemblies.Add(referencePath);
+					else if (!string.IsNullOrEmpty(s_referenceAssembliesPath) &&
+						File.Exists(Path.Combine(s_referenceAssembliesPath, assemblyName)))
+					{
+						// then try the reference assembly directory
+						referencePath = Path.Combine(s_referenceAssembliesPath, assemblyName);
+						opts.ReferencedAssemblies.Add(referencePath);
+					}
 					else if (!string.IsNullOrEmpty(s_piaPath35) &&
-						File.Exists(Path.Combine(s_piaPath35, reference.Name + ".dll")))
+						File.Exists(Path.Combine(s_piaPath35, assemblyName)))
 					{
 						// then try in the ".Net 3.5 Primary interop assemblies" directory (for things
 						// like System.Core.dll
-						referencePath = Path.Combine(s_piaPath35, reference.Name + ".dll");
+						referencePath = Path.Combine(s_piaPath35, assemblyName);
 						opts.ReferencedAssemblies.Add(referencePath);
 					}
 					else if (!string.IsNullOrEmpty(s_wcfPath30) &&
-						File.Exists(Path.Combine(s_wcfPath30, reference.Name + ".dll")))
+						File.Exists(Path.Combine(s_wcfPath30, assemblyName)))
 					{
 						// then try in the ".Net 3.5 Primary interop assemblies" directory (for things
 						// like System.Core.dll
-						referencePath = Path.Combine(s_wcfPath30, reference.Name + ".dll");
+						referencePath = Path.Combine(s_wcfPath30, assemblyName);
 						opts.ReferencedAssemblies.Add(referencePath);
 					}
 					else
@@ -193,7 +220,7 @@ namespace NMock.Dynamic
 						// then try in the "legacy Primary interop assemblies" directory (for things like
 						// stdole.dll
 						if (!string.IsNullOrEmpty(s_piaPath))
-							referencePath = Path.Combine(s_piaPath, reference.Name + ".dll");
+							referencePath = Path.Combine(s_piaPath, assemblyName);
 						if (File.Exists(referencePath))
 							opts.ReferencedAssemblies.Add(referencePath);
 						else

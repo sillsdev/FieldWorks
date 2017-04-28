@@ -102,6 +102,42 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
+		/// Initializes a new instance of the <see cref="GenDate"/> struct.
+		/// </summary>
+		/// <param name="nVal">integer storage representation of a GenDate value</param>
+		/// <remarks>
+		/// Representing GenDate values as an integer is an artifact of its being stored in SQL databases
+		/// in an earlier incarnation of FieldWorks.  But we're still using integers to persist GenDates.
+		/// </remarks>
+		public GenDate(int nVal)
+		{
+			m_ad = true;
+			if (nVal < 0)
+			{
+				m_ad = false;
+				nVal = -nVal;
+			}
+			m_precision = (GenDate.PrecisionType)(nVal % 10);
+			nVal /= 10;
+			m_day = nVal % 100;
+			nVal /= 100;
+			m_month = nVal % 100;
+			m_year = nVal / 100;
+		}
+
+		/// <summary>
+		/// Convert a GenDate back into the corresponding integer value.
+		/// </summary>
+		public int ToInt()
+		{
+			int nVal = m_year;
+			nVal = (nVal * 100) + m_month;
+			nVal = (nVal * 100) + m_day;
+			nVal = (nVal * 10) + (int)m_precision;
+			return m_ad ? nVal : -nVal;
+		}
+
+		/// <summary>
 		/// If the specified arguments will make a valid GenDate, return null. Otherwise return the name of the bad parameter.
 		/// </summary>
 		/// <param name="month"></param>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ldml>
+	<identity>
+		<version
+			number="" />
+		<generation
+			date="2016-07-15T20:47:57" />
+		<language
+			type="qaa" />
+		<variant
+			type="x-sim" />
+	</identity>
+	<collations />
+	<special xmlns:palaso="urn://palaso.org/ldmlExtensions/v1">
+		<palaso:abbreviation
+			value="Sim" />
+		<palaso:defaultFontFamily
+			value="SimpleGraphiteFont" />
+		<palaso:languageName
+			value="SimpleGraphite" />
+		<palaso:version
+			value="2" />
+	</special>
+	<special xmlns:fw="urn://fieldworks.sil.org/ldmlExtensions/v1">
+		<fw:graphiteEnabled
+			value="True" />
+	</special>
+</ldml>

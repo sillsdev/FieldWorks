@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.FDO
 			// or use Path.GetInvalidPathChars(). But that would pass things on Linux that will fail on Windows,
 			// which both makes unit testing difficult, and also may hide from Linux users the fact that their
 			// paths will cause problems on Windows.
-			var invalidChars = MiscUtils.GetInvalidProjectNameChars(MiscUtils.FilenameFilterStrength.kFilterProjName);
+			var invalidChars = MiscUtils.GetInvalidProjectNameChars(MiscUtils.FilenameFilterStrength.kFilterBackup);
 			// relativeLFPath is allowed to include directories. And it MAY be rooted, meaning on Windows it could start X:
 			invalidChars = invalidChars.Replace(@"\", "").Replace("/", "").Replace(":", "");
 			// colon is allowed only as second character--such a path is probably no good on Linux, but will just be not found, not cause a crash

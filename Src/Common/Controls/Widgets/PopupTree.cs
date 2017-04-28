@@ -806,8 +806,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			if (charCode == '\t')
 				return true;
-			else
-				return base.IsInputChar(charCode);
+			return base.IsInputChar(charCode);
 		}
 
 		/// <summary>
@@ -820,8 +819,17 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			if (keyData == Keys.Tab || keyData == (Keys.Tab | Keys.Shift))
 				return true;
-			else
-				return base.IsInputKey(keyData);
+			return base.IsInputKey(keyData);
+		}
+
+		protected override void WndProc(ref Message m)
+		{
+			// don't try to handle WM_CHAR in TreeView
+			// it causes an annoying beep LT-16007
+			const int wmCharMsg = 258;
+			if (m.Msg == wmCharMsg)
+				return;
+			base.WndProc(ref m);
 		}
 	}
 

@@ -166,7 +166,7 @@ namespace SIL.Utils
 
 	class BagHolder
 	{
-		private SimpleBag<int> m_bag;
+		private SimpleBag<int> m_bag = new SimpleBag<int>();
 
 		public void Add(int item) { m_bag.Add(item); }
 

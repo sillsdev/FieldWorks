@@ -1989,7 +1989,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		protected virtual void IssueBeep()
 		{
-			SystemSounds.Beep.Play();
+			MiscUtils.ErrorBeep();
 		}
 
 		/// ------------------------------------------------------------------------------------

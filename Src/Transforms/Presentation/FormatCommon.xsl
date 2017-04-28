@@ -51,6 +51,19 @@
 										</span>
 									</li>
 								</xsl:when>
+								<xsl:when test="@type = 'duplicate-grapheme'">
+									<li>
+										<xsl:text>The phoneme "</xsl:text>
+										<xsl:value-of select="Name" />
+										<xsl:text>" has the same grapheme as another phoneme. </xsl:text>
+										<span style="cursor:pointer; text-decoration:underline">
+											<xsl:attribute name="id">
+												<xsl:value-of select="Hvo"/>
+											</xsl:attribute>
+											<xsl:text>(Click here to see the phoneme.)</xsl:text>
+										</span>
+									</li>
+								</xsl:when>
 								<xsl:when test="@type = 'invalid-affix-process'">
 									<li>
 										<xsl:text>The </xsl:text>
@@ -65,6 +78,38 @@
 										<xsl:text> of the affix process rule "</xsl:text>
 										<xsl:value-of select="Form" />
 										<xsl:text>" contains an invalid natural class or phoneme. </xsl:text>
+										<span style="cursor:pointer; text-decoration:underline">
+											<xsl:attribute name="id">
+												<xsl:value-of select="Hvo"/>
+											</xsl:attribute>
+											<xsl:text>(Click here to see the entry.)</xsl:text>
+										</span>
+									</li>
+								</xsl:when>
+								<xsl:when test="@type = 'invalid-environment'">
+									<li>
+										<xsl:text>The environment "</xsl:text>
+										<xsl:value-of select="Env" />
+										<xsl:text>" in allomorph "</xsl:text>
+										<xsl:value-of select="Form" />
+										<xsl:text>" is invalid. The environment will be ignored. Reason: </xsl:text>
+										<xsl:value-of select="Reason" />
+										<xsl:text> </xsl:text>
+										<span style="cursor:pointer; text-decoration:underline">
+											<xsl:attribute name="id">
+												<xsl:value-of select="Hvo"/>
+											</xsl:attribute>
+											<xsl:text>(Click here to see the entry.)</xsl:text>
+										</span>
+									</li>
+								</xsl:when>
+								<xsl:when test="@type = 'invalid-redup-form'">
+									<li>
+										<xsl:text>The reduplication form "</xsl:text>
+										<xsl:value-of select="Form" />
+										<xsl:text>" is invalid. Reason: </xsl:text>
+										<xsl:value-of select="Reason" />
+										<xsl:text> </xsl:text>
 										<span style="cursor:pointer; text-decoration:underline">
 											<xsl:attribute name="id">
 												<xsl:value-of select="Hvo"/>

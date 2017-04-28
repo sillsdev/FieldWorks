@@ -2000,7 +2000,7 @@ namespace SIL.FieldWorks.Common.Controls
 							{
 								BulkEditItem bei = m_beItems[m_itemIndex];
 								bei.BulkEditControl.DoIt(ItemsToChange(true), state);
-								FixReplacedItems(bei.BulkEditControl);
+								m_bv.RefreshDisplay();
 							}
 						}
 						else if (m_operationsTabControl.SelectedTab == m_findReplaceTab)
@@ -3941,7 +3941,7 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					if (fIsSourceCombo)
 						accessor = new ManyOnePathSortItemReadWriter(m_cache, node, m_bv, (IApp)m_mediator.PropertyTable.GetValue("App"));
-					else
+					else if(!IsColumnWsBothVernacularAndAnalysis(node))
 						accessor = FieldReadWriter.Create(node, m_cache, m_bv.RootObjectHvo);
 					if (accessor == null)
 						continue;
@@ -3950,7 +3950,7 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				catch
 				{
-					Debug.Fail(String.Format("There was an error creating Delete combo item for column ({0})"), optionLabel);
+					Debug.Fail(string.Format("There was an error creating Delete combo item for column ({0})"), optionLabel);
 					// skip buggy column
 					continue;
 				}
@@ -3961,6 +3961,26 @@ namespace SIL.FieldWorks.Common.Controls
 					newSelection = item;
 			}
 			return newSelection;
+		}
+
+		/// <summary/>
+		/// <returns>true if the ws attribute for the column indicates both vernacular and analysis writing systems, false otherwise</returns>
+		private bool IsColumnWsBothVernacularAndAnalysis(XmlNode node)
+		{
+			var wsAttributeValue = XmlUtils.GetAttributeValue(node, "ws", null);
+			if (wsAttributeValue != null)
+			{
+				var magicWsId = WritingSystemServices.GetMagicWsIdFromName(wsAttributeValue.Substring("$ws=".Length));
+				switch (magicWsId)
+				{
+					case WritingSystemServices.kwsAnalVerns:
+					case WritingSystemServices.kwsFirstAnalOrVern:
+					case WritingSystemServices.kwsFirstVernOrAnal:
+						return true;
+					default: return false;
+				}
+			}
+			return false;
 		}
 
 		private void xbv_ClickCopy(object sender, ClickCopyEventArgs e)
@@ -6985,6 +7005,7 @@ namespace SIL.FieldWorks.Common.Controls
 							var newForms = new Dictionary<IMoForm, ILexEntry>();
 							int interval = Math.Min(80, Math.Max(itemsToChange.Count()/50, 1));
 							int i = 0;
+							var rgmsaOld = new List<IMoMorphSynAnalysis>();
 							foreach (int hvoLexEntry in itemsToChange)
 							{
 								// Guess we're 80% done when through all but deleting leftover objects and moving
@@ -7018,6 +7039,13 @@ namespace SIL.FieldWorks.Common.Controls
 									var entry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(hvoLexEntry);
 									var affix = m_cache.ServiceLocator.GetInstance<IMoAffixAllomorphRepository>().GetObject(hvoLexemeForm);
 									var stem = stemAlloFactory.Create();
+									rgmsaOld.Clear();
+									foreach (var msa in entry.MorphoSyntaxAnalysesOC)
+									{
+										if (!(msa is IMoStemMsa))
+											rgmsaOld.Add(msa);
+									}
+									entry.ReplaceObsoleteMsas(rgmsaOld);
 									SwapFormValues(entry, affix, stem, hvoSelMorphType, idsToDel);
 									foreach (var env in affix.PhoneEnvRC)
 										stem.PhoneEnvRC.Add(env);
@@ -7029,6 +7057,13 @@ namespace SIL.FieldWorks.Common.Controls
 									var entry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(hvoLexEntry);
 									var stem = m_cache.ServiceLocator.GetInstance<IMoStemAllomorphRepository>().GetObject(hvoLexemeForm);
 									var affix = afxAlloFactory.Create();
+									rgmsaOld.Clear();
+									foreach (var msa in entry.MorphoSyntaxAnalysesOC)
+									{
+										if (msa is IMoStemMsa)
+											rgmsaOld.Add(msa);
+									}
+									entry.ReplaceObsoleteMsas(rgmsaOld);
 									SwapFormValues(entry, stem, affix, hvoSelMorphType, idsToDel);
 									foreach (var env in stem.PhoneEnvRC)
 										affix.PhoneEnvRC.Add(env);
@@ -7382,9 +7417,8 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_flidType == (int)CellarPropertyType.Unicode)
 			{
 				var ustring = m_sda.get_UnicodeProp(hvoStringOwner, m_flid);
-				// Enhance: For the time being Default Analysis Ws is sufficient because this is most likely
-				// an Etymology.Source field. If there is ever a Unicode vernacular field that is
-				// made Bulk Editable, we will need to rethink this code.
+				// Enhance: For the time being Default Analysis Ws is sufficient. If there is ever
+				// a Unicode vernacular field that is made Bulk Editable, we will need to rethink this code.
 				return m_cache.TsStrFactory.MakeString(ustring ?? string.Empty, m_cache.DefaultAnalWs);
 			}
 			return m_sda.get_StringProp(hvoStringOwner, m_flid);

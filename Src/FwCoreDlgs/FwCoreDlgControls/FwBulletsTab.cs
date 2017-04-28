@@ -33,6 +33,11 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// </summary>
 		public event EventHandler ChangedToUnspecified;
 
+		/// <summary>
+		/// Fires when a change is made on this tab to style data.
+		/// </summary>
+		public event EventHandler StyleDataChanged;
+
 		/// <summary></summary>
 		/// <returns></returns>
 		public delegate IFontDialog FontDialogHandler(object sender, EventArgs args);
@@ -198,6 +203,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			m_nudStartAt.Value = bulletInfo.m_start;
 			m_chkStartAt.Checked = (bulletInfo.m_start != 1);
 
+			m_tbBulletCustom.Text = bulletInfo.m_bulletCustom;
 			m_tbTextBefore.Text = bulletInfo.m_textBefore;
 			m_tbTextAfter.Text = bulletInfo.m_textAfter;
 
@@ -273,9 +279,17 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				bulInfo.m_numberScheme = VwBulNum.kvbnNone;
 			else if (m_rbBullet.Checked)
 			{
-				bulInfo.m_numberScheme = (VwBulNum)((int)VwBulNum.kvbnBulletBase +
-					m_cboBulletScheme.SelectedIndex);
-				bulInfo.FontInfo = m_BulletsFontInfo;
+				if (m_tbBulletCustom.Text.Length > 0)
+				{
+					bulInfo.m_bulletCustom = m_tbBulletCustom.Text;
+					bulInfo.FontInfo = m_BulletsFontInfo;
+					bulInfo.m_numberScheme = (VwBulNum) ((int) VwBulNum.kvbnBulletBase);
+				}
+				else
+				{
+					bulInfo.m_numberScheme = (VwBulNum) ((int) VwBulNum.kvbnBulletBase + m_cboBulletScheme.SelectedIndex);
+					bulInfo.FontInfo = m_BulletsFontInfo;
+				}
 			}
 			else if (m_rbNumber.Checked)
 			{
@@ -429,6 +443,9 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 			m_preview.SetProps(propsFirst, propsBldr.GetTextProps());
 			m_preview.Refresh();
+
+			if (StyleDataChanged != null)
+				StyleDataChanged(this, null);
 		}
 
 		/// ------------------------------------------------------------------------------------

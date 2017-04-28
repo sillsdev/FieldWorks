@@ -2,14 +2,14 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
-// File: SimpleRootSiteDataProviderTests.cs
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
+#if !__MonoCS__
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Provider;
+#endif
 using System.Windows.Forms;
 using NUnit.Framework;
 
@@ -38,12 +38,14 @@ namespace SIL.FieldWorks.Common.RootSites
 				m_site = view;
 			}
 
+#if !__MonoCS__
 			internal Rect GetRootSiteScreenRect()
 			{
 				var drawingScreenBounds = m_site.RectangleToScreen(m_site.Bounds);
 				return new Rect(drawingScreenBounds.X, drawingScreenBounds.Y,
 					drawingScreenBounds.Width, drawingScreenBounds.Height);
 			}
+#endif
 
 			#region Disposable stuff
 			#if DEBUG
@@ -193,22 +195,190 @@ namespace SIL.FieldWorks.Common.RootSites
 
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Unit tests for <see cref="SimpleRootSiteDataProvider"/>.
+	/// RootSiteDataProvider unit tests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	public class RootSiteDataProviderTests : SimpleRootSiteDataProviderTestsBase
+	{
+		#region StringPropertyCollectorEnv tests
+		[Test]
+		public void StringPropertyCollectorEnv_MultiStringView_ReadOnlyView()
+		{
+			using (var site = new RootSiteDataProvider_MultiStringView(m_cache))
+			{
+				site.StyleSheet = FixtureStyleSheet;
+				site.WritingSystemFactory = m_wsManager;
+				using (var helper = new SimpleRootSiteDataProviderTestsHelper(site))
+				{
+					const string engExpected = "This is the English sentence.";
+					const string frExpected = "This is the French sentence.";
+					string expected = engExpected + Environment.NewLine + frExpected;
+					IList<KeyValuePair<int, string>> vkvp = new List<KeyValuePair<int, string>>();
+					vkvp.Add(m_wsEng, engExpected);
+					vkvp.Add(m_wsFr, frExpected);
+					site.ShowForm(vkvp,
+						new SimpleRootSiteDataProvider_MultiStringViewVc.DisplayOptions { ReadOnlyView = true, LiteralStringLabels = false });
+					var editableSelections = site.CollectEditableStringPropSelections();
+					Assert.AreEqual(0, editableSelections.Count);
+				}
+			}
+		}
+
+		[Test]
+		public void StringPropertyCollectorEnv_MultiStringView_TwoEditableFields()
+		{
+			using (var site = new RootSiteDataProvider_MultiStringView(m_cache))
+			{
+				site.StyleSheet = FixtureStyleSheet;
+				site.WritingSystemFactory = m_wsManager;
+				using (var helper = new SimpleRootSiteDataProviderTestsHelper(site))
+				{
+					const string engExpected = "This is the English sentence.";
+					const string frExpected = "This is the French sentence.";
+					string expected = engExpected + Environment.NewLine + frExpected;
+					IList<KeyValuePair<int, string>> vkvp = new List<KeyValuePair<int, string>>();
+					vkvp.Add(m_wsEng, engExpected);
+					vkvp.Add(m_wsFr, frExpected);
+					site.ShowForm(vkvp,
+						new SimpleRootSiteDataProvider_MultiStringViewVc.DisplayOptions
+						{ReadOnlyView = false, LiteralStringLabels = false});
+					var editableSelections = site.CollectEditableStringPropSelections();
+					Assert.IsNotNull(editableSelections);
+					Assert.AreEqual(2, editableSelections.Count);
+					var sli1 = CollectorEnvServices.MakeLocationInfo(site.RootBox, editableSelections[0]);
+					Assert.AreEqual(0, sli1.m_location.Length);
+					Assert.AreEqual(SimpleRootSiteDataProvider_MultiStringViewVc.kflidMultiString, sli1.m_tag);
+					Assert.AreEqual(m_wsEng, sli1.m_ws);
+					Assert.AreEqual(0, sli1.m_ichMin, "m_ichMin");
+					Assert.AreEqual(0, sli1.m_ichLim, "m_ichLim");
+					Assert.AreEqual(0, sli1.m_cpropPrev);
+
+					var sli2 = CollectorEnvServices.MakeLocationInfo(site.RootBox, editableSelections[1]);
+					Assert.AreEqual(SimpleRootSiteDataProvider_MultiStringViewVc.kflidMultiString, sli2.m_tag);
+					Assert.AreEqual(m_wsFr, sli2.m_ws);
+					Assert.AreEqual(0, sli2.m_ichMin, "m_ichMin");
+					Assert.AreEqual(0, sli2.m_ichLim, "m_ichLim");
+					Assert.AreEqual(1, sli2.m_cpropPrev);
+
+					// Verify we can actually use these to make valid selections.
+					var sel1 = editableSelections[0];
+					Assert.IsNotNull(sel1);
+					Assert.IsTrue(sel1.IsEditable, "sel1.IsEditable");
+					var sel2 = editableSelections[1];
+					Assert.IsNotNull(sel2);
+					Assert.IsTrue(sel2.IsEditable, "sel2.IsEditable");
+				}
+			}
+		}
+
+		[Test]
+		public void StringPropertyCollectorEnv_MultiStringView_WithLabels()
+		{
+			using (var site = new RootSiteDataProvider_MultiStringView(m_cache))
+			{
+				site.StyleSheet = FixtureStyleSheet;
+				site.WritingSystemFactory = m_wsManager;
+				using (new SimpleRootSiteDataProviderTestsHelper(site))
+				{
+					const string engExpected = "This is the English sentence.";
+					const string frExpected = "This is the French sentence.";
+					string expected = engExpected + Environment.NewLine + frExpected;
+					IList<KeyValuePair<int, string>> vkvp = new List<KeyValuePair<int, string>>();
+					vkvp.Add(m_wsEng, engExpected);
+					vkvp.Add(m_wsFr, frExpected);
+					site.ShowForm(vkvp,
+						new SimpleRootSiteDataProvider_MultiStringViewVc.DisplayOptions { ReadOnlyView = false, LiteralStringLabels = true });
+					var editableSelections = site.CollectEditableStringPropSelections();
+					Assert.AreEqual(2, editableSelections.Count);
+					var sel1 = editableSelections[0];
+					Assert.IsNotNull(sel1, "sel1");
+					Assert.IsTrue(sel1.IsEditable, "sel1.IsEditable");
+					var sel2 = editableSelections[1];
+					Assert.IsNotNull(sel2, "sel2");
+					Assert.IsTrue(sel2.IsEditable, "sel2.IsEditable");
+				}
+			}
+		}
+		#endregion
+
+		[Test]
+		public void PictureCollectorEnv_NoPicture()
+		{
+			using (var site = new RootSiteDataProviderViewBase(m_cache))
+			{
+				site.StyleSheet = FixtureStyleSheet;
+				site.WritingSystemFactory = m_wsManager;
+				using (new SimpleRootSiteDataProviderTestsHelper(site))
+				{
+					site.MakeRoot(SimpleRootSiteDataProviderBaseVc.kfragRoot, () => new NoPictureVc());
+					site.ShowForm();
+					var pictureSelections = CollectorEnvServices.CollectPictureSelectionPoints(site.RootBox);
+					Assert.AreEqual(0, pictureSelections.Count());
+				}
+			}
+		}
+
+		[Test]
+		public void PictureCollectorEnv_OnePicture()
+		{
+			using (var site = new RootSiteDataProviderViewBase(m_cache))
+			{
+				site.StyleSheet = FixtureStyleSheet;
+				site.WritingSystemFactory = m_wsManager;
+				using (new SimpleRootSiteDataProviderTestsHelper(site))
+				{
+					site.MakeRoot(SimpleRootSiteDataProviderBaseVc.kfragRoot, () => new OnePictureVc());
+					site.ShowForm();
+					var pictureSelections = CollectorEnvServices.CollectPictureSelectionPoints(site.RootBox);
+					Assert.AreEqual(1, pictureSelections.Count(), "picture count");
+				}
+			}
+		}
+	}
+
+#if !__MonoCS__
+	/// ----------------------------------------------------------------------------------------
+	/// <summary>
+	/// Unit tests for <see cref="SimpleRootSiteDataProvider"/>.
+	/// </summary>
+	/// ----------------------------------------------------------------------------------------
+	[TestFixture]
+	[Platform(Exclude = "Linux", Reason = "UIAutomation disabled on Linux")]
+	public class UIAutomationRootSiteDataProviderTests : SimpleRootSiteDataProviderTestsBase
 	{
 		#region SimpleRootSiteDataProviderTests
 
 		#region FragmentRoot tests
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
+		/// </summary>
+		/// -----------------------------------------------------------------------------------
+		[Test]
+		public void FragmentRoot_DocumentRange_OneString()
+		{
+			using (var site = new RootSiteDataProviderView(m_cache))
+			{
+				site.StyleSheet = FixtureStyleSheet;
+				site.WritingSystemFactory = m_wsManager;
+				using (new SimpleRootSiteDataProviderTestsHelper(site))
+				{
+					const string expected = "Should only show this string";
+					site.ShowForm(m_wsEng, expected, new SimpleRootSiteDataProviderVc.DisplayOptions());
+					var dataProvider = new SimpleRootSiteDataProvider(site);
+					var doc = dataProvider.DocumentRange;
+					Assert.NotNull(doc, "DocumentRange shouldn't be null");
+					Assert.AreEqual(expected, doc.GetText(-1));
+				}
+			}
+		}
+
+		/// -----------------------------------------------------------------------------------
+		/// <summary>
 		/// Test the GetSelectionInfo method passing different combinations of parameters.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "UIAutomation disabled on Linux")]
 		public void GetUIAutomationObject_FragmentRoot()
 		{
 			using (var site = new SimpleRootSiteDataProviderView(m_cache))
@@ -255,30 +425,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
 		[Test]
-		public void FragmentRoot_DocumentRange_OneString()
-		{
-			using (var site = new RootSiteDataProviderView(m_cache))
-						   {
-				site.StyleSheet = FixtureStyleSheet;
-				site.WritingSystemFactory = m_wsManager;
-			using (new SimpleRootSiteDataProviderTestsHelper(site))
-			{
-				const string expected = "Should only show this string";
-				site.ShowForm(m_wsEng, expected, new SimpleRootSiteDataProviderVc.DisplayOptions());
-				var dataProvider = new SimpleRootSiteDataProvider(site);
-				var doc = dataProvider.DocumentRange;
-				Assert.NotNull(doc, "DocumentRange shouldn't be null");
-				Assert.AreEqual(expected, doc.GetText(-1));
-			}
-		}
-		}
-
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		[Test]
-		[Platform(Exclude = "Linux", Reason = "UIAutomation disabled on Linux")]
 		public void FragmentRoot_DocumentRange_OneString_ReadOnly()
 		{
 			using (var site = new RootSiteDataProviderView(m_cache))
@@ -310,7 +456,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude="Linux", Reason="UIAutomation disabled on Linux")]
 		public void FragmentRoot_HasCustomEditControl()
 		{
 			using (var site = new RootSiteDataProviderView(m_cache))
@@ -345,7 +490,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		[Test]
-		[Platform(Exclude="Linux", Reason="UIAutomation disabled on Linux")]
 		public void FragmentRoot_HasCustomEditControl_ChangeValue()
 		{
 			using (var site = new RootSiteDataProviderView(m_cache))
@@ -387,7 +531,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "UIAutomation disabled on Linux")]
 		public void FragmentRoot_MultiString_TwoEditControls()
 		{
 			using (var site = new RootSiteDataProvider_MultiStringView(m_cache))
@@ -452,7 +595,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "UIAutomation disabled on Linux")]
 		public void FragmentRoot_MultiString_ReadOnly()
 		{
 			using (var site = new RootSiteDataProvider_MultiStringView(m_cache))
@@ -484,143 +626,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 		#endregion
 
-		#region StringPropertyCollectorEnv tests
 		[Test]
-		public void StringPropertyCollectorEnv_MultiStringView_ReadOnlyView()
-		{
-			using (var site = new RootSiteDataProvider_MultiStringView(m_cache))
-						   {
-				site.StyleSheet = FixtureStyleSheet;
-				site.WritingSystemFactory = m_wsManager;
-			using (var helper = new SimpleRootSiteDataProviderTestsHelper(site))
-			{
-				const string engExpected = "This is the English sentence.";
-				const string frExpected = "This is the French sentence.";
-				string expected = engExpected + Environment.NewLine + frExpected;
-				IList<KeyValuePair<int, string>> vkvp = new List<KeyValuePair<int, string>>();
-				vkvp.Add(m_wsEng, engExpected);
-				vkvp.Add(m_wsFr, frExpected);
-				site.ShowForm(vkvp,
-							  new SimpleRootSiteDataProvider_MultiStringViewVc.DisplayOptions { ReadOnlyView = true, LiteralStringLabels = false });
-				var editableSelections = site.CollectEditableStringPropSelections();
-				Assert.AreEqual(0, editableSelections.Count);
-			}
-		}
-		}
-
-		[Test]
-		public void StringPropertyCollectorEnv_MultiStringView_TwoEditableFields()
-		{
-			using (var site = new RootSiteDataProvider_MultiStringView(m_cache))
-						   {
-				site.StyleSheet = FixtureStyleSheet;
-				site.WritingSystemFactory = m_wsManager;
-			using (var helper = new SimpleRootSiteDataProviderTestsHelper(site))
-			{
-				const string engExpected = "This is the English sentence.";
-				const string frExpected = "This is the French sentence.";
-				string expected = engExpected + Environment.NewLine + frExpected;
-				IList<KeyValuePair<int, string>> vkvp = new List<KeyValuePair<int, string>>();
-				vkvp.Add(m_wsEng, engExpected);
-				vkvp.Add(m_wsFr, frExpected);
-				site.ShowForm(vkvp,
-						new SimpleRootSiteDataProvider_MultiStringViewVc.DisplayOptions
-							{ReadOnlyView = false, LiteralStringLabels = false});
-				var editableSelections = site.CollectEditableStringPropSelections();
-				Assert.IsNotNull(editableSelections);
-				Assert.AreEqual(2, editableSelections.Count);
-				var sli1 = CollectorEnvServices.MakeLocationInfo(site.RootBox, editableSelections[0]);
-				Assert.AreEqual(0, sli1.m_location.Length);
-				Assert.AreEqual(SimpleRootSiteDataProvider_MultiStringViewVc.kflidMultiString, sli1.m_tag);
-				Assert.AreEqual(m_wsEng, sli1.m_ws);
-				Assert.AreEqual(0, sli1.m_ichMin, "m_ichMin");
-				Assert.AreEqual(0, sli1.m_ichLim, "m_ichLim");
-				Assert.AreEqual(0, sli1.m_cpropPrev);
-
-				var sli2 = CollectorEnvServices.MakeLocationInfo(site.RootBox, editableSelections[1]);
-				Assert.AreEqual(SimpleRootSiteDataProvider_MultiStringViewVc.kflidMultiString, sli2.m_tag);
-				Assert.AreEqual(m_wsFr, sli2.m_ws);
-				Assert.AreEqual(0, sli2.m_ichMin, "m_ichMin");
-				Assert.AreEqual(0, sli2.m_ichLim, "m_ichLim");
-				Assert.AreEqual(1, sli2.m_cpropPrev);
-
-				// Verify we can actually use these to make valid selections.
-				var sel1 = editableSelections[0];
-				Assert.IsNotNull(sel1);
-				Assert.IsTrue(sel1.IsEditable, "sel1.IsEditable");
-				var sel2 = editableSelections[1];
-				Assert.IsNotNull(sel2);
-				Assert.IsTrue(sel2.IsEditable, "sel2.IsEditable");
-			}
-		}
-		}
-
-		[Test]
-		public void StringPropertyCollectorEnv_MultiStringView_WithLabels()
-		{
-			using (var site = new RootSiteDataProvider_MultiStringView(m_cache))
-			{
-				site.StyleSheet = FixtureStyleSheet;
-				site.WritingSystemFactory = m_wsManager;
-			using (new SimpleRootSiteDataProviderTestsHelper(site))
-			{
-				const string engExpected = "This is the English sentence.";
-				const string frExpected = "This is the French sentence.";
-				string expected = engExpected + Environment.NewLine + frExpected;
-				IList<KeyValuePair<int, string>> vkvp = new List<KeyValuePair<int, string>>();
-				vkvp.Add(m_wsEng, engExpected);
-				vkvp.Add(m_wsFr, frExpected);
-				site.ShowForm(vkvp,
-							  new SimpleRootSiteDataProvider_MultiStringViewVc.DisplayOptions { ReadOnlyView = false, LiteralStringLabels = true });
-				var editableSelections = site.CollectEditableStringPropSelections();
-				Assert.AreEqual(2, editableSelections.Count);
-				var sel1 = editableSelections[0];
-				Assert.IsNotNull(sel1, "sel1");
-				Assert.IsTrue(sel1.IsEditable, "sel1.IsEditable");
-				var sel2 = editableSelections[1];
-				Assert.IsNotNull(sel2, "sel2");
-				Assert.IsTrue(sel2.IsEditable, "sel2.IsEditable");
-			}
-		}
-		}
-		#endregion
-
-		[Test]
-		public void PictureCollectorEnv_NoPicture()
-		{
-			using (var site = new RootSiteDataProviderViewBase(m_cache))
-			{
-				site.StyleSheet = FixtureStyleSheet;
-				site.WritingSystemFactory = m_wsManager;
-			using (new SimpleRootSiteDataProviderTestsHelper(site))
-			{
-				site.MakeRoot(SimpleRootSiteDataProviderBaseVc.kfragRoot, () => new NoPictureVc());
-				site.ShowForm();
-				var pictureSelections = CollectorEnvServices.CollectPictureSelectionPoints(site.RootBox);
-				Assert.AreEqual(0, pictureSelections.Count());
-			}
-		}
-		}
-
-		[Test]
-		public void PictureCollectorEnv_OnePicture()
-		{
-			using (var site = new RootSiteDataProviderViewBase(m_cache))
-			{
-				site.StyleSheet = FixtureStyleSheet;
-				site.WritingSystemFactory = m_wsManager;
-			using (new SimpleRootSiteDataProviderTestsHelper(site))
-			{
-				site.MakeRoot(SimpleRootSiteDataProviderBaseVc.kfragRoot, () => new OnePictureVc());
-				site.ShowForm();
-				var pictureSelections = CollectorEnvServices.CollectPictureSelectionPoints(site.RootBox);
-				Assert.AreEqual(1, pictureSelections.Count(), "picture count");
-			}
-		}
-		}
-
-		[Test]
-		[Platform(Exclude="Linux", Reason="UIAutomation disabled on Linux")]
 		public void ImageControl_OnePicture()
 		{
 			using (var site = new RootSiteDataProviderViewBase(m_cache))
@@ -644,7 +650,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		[Test]
-		[Platform(Exclude="Linux", Reason="UIAutomation disabled on Linux")]
 		public void ImageAndEditControls()
 		{
 			using (var site = new RootSiteDataProviderViewBase(m_cache))
@@ -686,7 +691,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		[Test]
-		[Platform(Exclude="Linux", Reason="UIAutomation disabled on Linux")]
 		public void ButtonUIA_OnePicture()
 		{
 			using (var site = new RootSiteDataProviderViewBase(m_cache))
@@ -716,8 +720,9 @@ namespace SIL.FieldWorks.Common.RootSites
 				Assert.AreSame(firstButtonChild, lastButtonChild);
 			}
 		}
-		}
+	}
 
 	#endregion
 	}
+#endif
 }

@@ -1,13 +1,6 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ExportDialog.cs
-// Responsibility: Steve McConnel
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -25,7 +18,7 @@ using Microsoft.Win32;
 
 using Palaso.Lift;
 using Palaso.Lift.Validation;
-using SIL.FieldWorks.Common.Framework;
+using Palaso.Reporting;
 using SIL.FieldWorks.FdoUi;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
@@ -82,7 +75,8 @@ namespace SIL.FieldWorks.XWorks
 			kftLift = 5,
 			kftGrammarSketch,
 			kftClassifiedDict,
-			kftSemanticDomains
+			kftSemanticDomains,
+			kftWebonary
 		}
 		// ReSharper restore InconsistentNaming
 		protected internal struct FxtType
@@ -304,7 +298,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected override void Dispose( bool disposing )
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
@@ -439,31 +433,25 @@ namespace SIL.FieldWorks.XWorks
 		/// and update the appropriate variables from it.
 		/// If this returns a non-null value, it is a newly created object which must be disposed. (See LT-11066.)
 		/// </summary>
-		Control EnsureViewInfo()
+		private Control EnsureViewInfo()
 		{
-			string area = "lexicon";
-			string tool = "lexiconDictionary";
+			string area, tool;
 			m_areaOrig = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
 			if (m_rgFxtTypes.Count == 0)
 				return null; // only non-Fxt exports available (like Discourse chart?)
-			// var ft = m_rgFxtTypes[FxtIndex((string) m_exportList.SelectedItems[0].Tag)].m_ft;
 			var ft = m_rgFxtTypes[FxtIndex((string)m_exportItems[0].Tag)].m_ft;
 			if (m_areaOrig == "notebook")
 			{
-				if (ft != FxtTypes.kftConfigured)
-					return null;	// nothing to do.
+				if (ft != FxtTypes.kftConfigured) // Different from Configured Dictionary; Notebook uses a subclass of ExportDialog
+					return null; // nothing to do.
 				area = m_areaOrig;
 				tool = "notebookDocument";
 			}
 			else
 			{
+				area = "lexicon";
 				switch (ft)
 				{
-					case FxtTypes.kftConfigured:
-						break;
-					case FxtTypes.kftReversal:
-						tool = "reversalToolEditComplete";
-						break;
 					case FxtTypes.kftClassifiedDict:
 						// Should match the tool in DistFiles/Language Explorer/Configuration/RDE/toolConfiguration.xml, the value attribute in
 						// <tool label="Classified Dictionary" value="lexiconClassifiedDictionary" icon="DocumentView">.
@@ -493,8 +481,8 @@ namespace SIL.FieldWorks.XWorks
 			return mainControl;
 		}
 
-		List<int> m_translationWritingSystems;
-		List<ICmPossibilityList> m_translatedLists;
+		private List<int> m_translationWritingSystems;
+		private List<ICmPossibilityList> m_translatedLists;
 		private bool m_allQuestions; // For semantic domains, export missing translations as English?
 
 		private void btnExport_Click(object sender, EventArgs e)
@@ -502,18 +490,13 @@ namespace SIL.FieldWorks.XWorks
 			if (m_exportList.SelectedItems.Count == 0)
 				return;
 
-			//if (ItemDisabled((string)m_exportList.SelectedItems[0].Tag))
-			//    return;
 			m_exportItems.Clear();
 			foreach (ListViewItem sel in m_exportList.SelectedItems)
 				m_exportItems.Add(sel);
-			var mainControl = EnsureViewInfo();
-			try
+			using (EnsureViewInfo())
 			{
-
 				if (!PrepareForExport())
 					return;
-
 				bool fLiftExport = m_exportItems[0].SubItems[2].Text == "lift";
 				string sFileName;
 				string sDirectory;
@@ -606,6 +589,9 @@ namespace SIL.FieldWorks.XWorks
 						case FxtTypes.kftPathway:
 							ProcessPathwayExport();
 							return;
+						case FxtTypes.kftWebonary:
+							ProcessWebonaryExport();
+							return;
 						default:
 							using (var dlg = new SaveFileDialogAdapter())
 							{
@@ -647,11 +633,6 @@ namespace SIL.FieldWorks.XWorks
 					m_mediator.PropertyTable.SetProperty("ExportDlgShowInFolder", "false");
 					m_mediator.PropertyTable.SetPropertyPersistence("ExportDlgShowInFolder", true);
 				}
-			}
-			finally
-			{
-				if (mainControl != null)
-					mainControl.Dispose();
 			}
 		}
 
@@ -730,104 +711,124 @@ namespace SIL.FieldWorks.XWorks
 			string fxtPath = (string)m_exportItems[0].Tag;
 			FxtType ft = m_rgFxtTypes[FxtIndex(fxtPath)];
 			using (new WaitCursor(this))
+			using (var progressDlg = new ProgressDialogWithTask(this))
 			{
-				using (var progressDlg = new ProgressDialogWithTask(this))
+				UsageReporter.SendEvent(m_areaOrig + @"Export", @"Export", ft.m_ft.ToString(),
+					string.Format("{0} {1} {2}", ft.m_sDataType, ft.m_sFormat, ft.m_filtered ? "filtered" : "unfiltered"), 0);
+				try
 				{
-					try
+					progressDlg.Title = String.Format(xWorksStrings.Exporting0,
+						m_exportItems[0].SubItems[0].Text);
+					progressDlg.Message = xWorksStrings.Exporting_;
+
+					switch (ft.m_ft)
 					{
-						progressDlg.Title = String.Format(xWorksStrings.Exporting0,
-							m_exportItems[0].SubItems[0].Text);
-						progressDlg.Message = xWorksStrings.Exporting_;
+						case FxtTypes.kftFxt:
+							m_dumper = new XDumper(m_cache);
+							m_dumper.UpdateProgress += OnDumperUpdateProgress;
+							m_dumper.SetProgressMessage += OnDumperSetProgressMessage;
+							progressDlg.Minimum = 0;
+							progressDlg.Maximum = m_dumper.GetProgressMaximum();
+							progressDlg.AllowCancel = true;
+							progressDlg.Restartable = true;
 
-						switch (ft.m_ft)
-						{
-							case FxtTypes.kftFxt:
-								m_dumper = new XDumper(m_cache);
-								m_dumper.UpdateProgress += OnDumperUpdateProgress;
-								m_dumper.SetProgressMessage += OnDumperSetProgressMessage;
-								progressDlg.Minimum = 0;
-								progressDlg.Maximum = m_dumper.GetProgressMaximum();
-								progressDlg.AllowCancel = true;
-								progressDlg.Restartable = true;
+							progressDlg.RunTask(true, ExportFxt, outPath, fxtPath, fLiftOutput);
+							break;
+						case FxtTypes.kftConfigured:
+						case FxtTypes.kftReversal:
+							progressDlg.Minimum = 0;
+							progressDlg.Maximum = 1; // max will be set by the task, since only it knows how many entries it will export
+							progressDlg.AllowCancel = true;
+							progressDlg.RunTask(true, ExportConfiguredXhtml, outPath);
+							break;
+						case FxtTypes.kftClassifiedDict:
+							progressDlg.Minimum = 0;
+							progressDlg.Maximum = m_seqView.ObjectCount;
+							progressDlg.AllowCancel = true;
 
-								progressDlg.RunTask(true, ExportFxt, outPath, fxtPath, fLiftOutput);
-								break;
-							case FxtTypes.kftConfigured:
-							case FxtTypes.kftReversal:
-							case FxtTypes.kftClassifiedDict:
-								progressDlg.Minimum = 0;
-								progressDlg.Maximum = m_seqView.ObjectCount;
-								progressDlg.AllowCancel = true;
+							IVwStylesheet vss = m_seqView.RootBox == null ? null : m_seqView.RootBox.Stylesheet;
+							progressDlg.RunTask(true, ExportConfiguredDocView,
+								outPath, fxtPath, ft, vss);
+							break;
+						case FxtTypes.kftTranslatedLists:
+							progressDlg.Minimum = 0;
+							progressDlg.Maximum = m_translatedLists.Count;
+							progressDlg.AllowCancel = true;
 
-								IVwStylesheet vss = m_seqView.RootBox == null ? null : m_seqView.RootBox.Stylesheet;
-								progressDlg.RunTask(true, ExportConfiguredDocView,
-									outPath, fxtPath, ft, vss);
-								break;
-							case FxtTypes.kftTranslatedLists:
-								progressDlg.Minimum = 0;
-								progressDlg.Maximum = m_translatedLists.Count;
-								progressDlg.AllowCancel = true;
+							progressDlg.RunTask(true, ExportTranslatedLists, outPath);
+							break;
+						case FxtTypes.kftSemanticDomains:
+							// Potentially, we could count semantic domains and try to make the export update for each.
+							// In practice this only takes a second or two on a typical modern computer
+							// an the main export routine is borrowed from kftTranslatedLists and set up to count each
+							// list as one step. For now, claiming this export just has one step seems good enough.
+							progressDlg.Minimum = 0;
+							progressDlg.Maximum = 1;
+							progressDlg.AllowCancel = true;
 
-								progressDlg.RunTask(true, ExportTranslatedLists, outPath);
-								break;
-							case FxtTypes.kftSemanticDomains:
-								// Potentially, we could count semantic domains and try to make the export update for each.
-								// In practice this only takes a second or two on a typical modern computer
-								// an the main export routine is borrowed from kftTranslatedLists and set up to count each
-								// list as one step. For now, claiming this export just has one step seems good enough.
-								progressDlg.Minimum = 0;
-								progressDlg.Maximum = 1;
-								progressDlg.AllowCancel = true;
-
-								progressDlg.RunTask(true, ExportSemanticDomains, outPath, ft, fxtPath, m_allQuestions);
-								break;
-							case FxtTypes.kftPathway:
-								break;
-							case FxtTypes.kftLift:
-								progressDlg.Minimum = 0;
-								progressDlg.Maximum = 1000;
-								progressDlg.AllowCancel = true;
-								progressDlg.Restartable = true;
-								progressDlg.RunTask(true, ExportLift, outPath, ft.m_filtered);
-								break;
-							case FxtTypes.kftGrammarSketch:
-								progressDlg.Minimum = 0;
-								progressDlg.Maximum = 1000;
-								progressDlg.AllowCancel = true;
-								progressDlg.Restartable = true;
-								progressDlg.RunTask(true, ExportGrammarSketch, outPath, ft.m_sDataType, ft.m_sXsltFiles);
-								break;
-						}
-					}
-					catch (WorkerThreadException e)
-					{
-						if (e.InnerException is CancelException)
-						{
-							MessageBox.Show(this, e.InnerException.Message);
-							m_ce = null;
-						}
-						else if (e.InnerException is LiftFormatException)
-						{
-							// Show the pretty yellow semi-crash dialog box, with instructions for the
-							// user to report the bug.
-							var app = (IApp) m_mediator.PropertyTable.GetValue("App");
-							ErrorReporter.ReportException(new Exception(xWorksStrings.ksLiftExportBugReport, e.InnerException),
-								app.SettingsKey, m_mediator.FeedbackInfoProvider.SupportEmailAddress, this, false);
-						}
-						else
-						{
-							string msg = xWorksStrings.ErrorExporting_ProbablyBug + Environment.NewLine + e.InnerException.Message;
-							MessageBox.Show(this, msg);
-						}
-					}
-					finally
-					{
-						m_progressDlg = null;
-						m_dumper = null;
-						Close();
+							progressDlg.RunTask(true, ExportSemanticDomains, outPath, ft, fxtPath, m_allQuestions);
+							break;
+						case FxtTypes.kftLift:
+							progressDlg.Minimum = 0;
+							progressDlg.Maximum = 1000;
+							progressDlg.AllowCancel = true;
+							progressDlg.Restartable = true;
+							progressDlg.RunTask(true, ExportLift, outPath, ft.m_filtered);
+							break;
+						case FxtTypes.kftGrammarSketch:
+							progressDlg.Minimum = 0;
+							progressDlg.Maximum = 1000;
+							progressDlg.AllowCancel = true;
+							progressDlg.Restartable = true;
+							progressDlg.RunTask(true, ExportGrammarSketch, outPath, ft.m_sDataType, ft.m_sXsltFiles);
+							break;
 					}
 				}
+				catch (WorkerThreadException e)
+				{
+					if (e.InnerException is CancelException)
+					{
+						MessageBox.Show(this, e.InnerException.Message);
+						m_ce = null;
+					}
+					else if (e.InnerException is LiftFormatException)
+					{
+						// Show the pretty yellow semi-crash dialog box, with instructions for the
+						// user to report the bug.
+						var app = (IApp) m_mediator.PropertyTable.GetValue("App");
+						ErrorReporter.ReportException(new Exception(xWorksStrings.ksLiftExportBugReport, e.InnerException),
+							app.SettingsKey, m_mediator.FeedbackInfoProvider.SupportEmailAddress, this, false);
+					}
+					else
+					{
+						string msg = xWorksStrings.ErrorExporting_ProbablyBug + Environment.NewLine + e.InnerException.Message;
+						MessageBox.Show(this, msg);
+					}
+				}
+				finally
+				{
+					m_progressDlg = null;
+					m_dumper = null;
+					Close();
+				}
 			}
+		}
+
+		private object ExportConfiguredXhtml(IThreadedProgress progress, object[] args)
+		{
+			if(args.Length < 1)
+				return null;
+			var xhtmlPath = (string)args[0];
+			switch (m_rgFxtTypes[FxtIndex((string)m_exportItems[0].Tag)].m_ft)
+			{
+				case FxtTypes.kftConfigured:
+					new DictionaryExportService(m_mediator).ExportDictionaryContent(xhtmlPath, progress: progress);
+					break;
+				case FxtTypes.kftReversal:
+					new DictionaryExportService(m_mediator).ExportReversalContent(xhtmlPath, progress: progress);
+					break;
+			}
+			return null;
 		}
 
 		private object ExportGrammarSketch(IThreadedProgress progress, object[] args)
@@ -1202,6 +1203,9 @@ namespace SIL.FieldWorks.XWorks
 				case "pathway":
 					ft.m_ft = FxtTypes.kftPathway;
 					break;
+				case "webonary":
+					ft.m_ft = FxtTypes.kftWebonary;
+					break;
 				case "LIFT":
 					ft.m_ft = FxtTypes.kftLift;
 					break;
@@ -1212,7 +1216,7 @@ namespace SIL.FieldWorks.XWorks
 					ft.m_ft = FxtTypes.kftSemanticDomains;
 					break;
 				default:
-					Debug.Assert(false, "Invalid type attribute value for the template element");
+					Debug.Fail("Invalid type attribute value for the template element");
 					ft.m_ft = FxtTypes.kftFxt;
 					break;
 			}
@@ -1223,7 +1227,7 @@ namespace SIL.FieldWorks.XWorks
 			m_rgFxtTypes.Add(ft);
 			// We can't actually disable a list item, but we can make it look and act like it's
 			// disabled.
-			if (ItemDisabled(ft.m_ft, ft.m_filtered))
+			if (ItemDisabled(ft.m_ft, ft.m_filtered, ft.m_sFormat))
 				item.ForeColor = SystemColors.GrayText;
 		}
 
@@ -1276,15 +1280,17 @@ namespace SIL.FieldWorks.XWorks
 
 		protected virtual bool ItemDisabled(string tag)
 		{
-			return ItemDisabled(m_rgFxtTypes[FxtIndex(tag)].m_ft, m_rgFxtTypes[FxtIndex(tag)].m_filtered);
+			return ItemDisabled(m_rgFxtTypes[FxtIndex(tag)].m_ft, m_rgFxtTypes[FxtIndex(tag)].m_filtered, m_rgFxtTypes[FxtIndex(tag)].m_sFormat);
 		}
 
-		private bool ItemDisabled(FxtTypes ft, bool isFiltered)
+		private bool ItemDisabled(FxtTypes ft, bool isFiltered, string formatType)
 		{
 			//enable unless the type is pathway & pathway is not installed, or if the type is lift and it is filtered, but there is no filter available, or if the filter excludes all items
 			bool fFilterAvailable = DetermineIfFilterIsAvailable();
 			return (ft == FxtTypes.kftPathway && !PathwayUtils.IsPathwayInstalled) ||
-				   (ft == FxtTypes.kftLift && isFiltered && fFilterAvailable);
+				   (ft == FxtTypes.kftLift && isFiltered && fFilterAvailable) ||
+				   (ft == FxtTypes.kftConfigured && (formatType == "htm" || formatType == "sfm")) ||
+				   (ft == FxtTypes.kftReversal && formatType == "sfm");
 		}
 
 		private bool DetermineIfFilterIsAvailable()
@@ -1635,25 +1641,26 @@ namespace SIL.FieldWorks.XWorks
 
 			private void ExportLexEntryTypeFields(TextWriter w, ILexEntryType item)
 			{
-				if (item != null)
-					ExportMultiUnicode(w, item.ReverseAbbr);
+				if (item == null)
+					return;
+				ExportMultiUnicode(w, item.ReverseName);
+				ExportMultiUnicode(w, item.ReverseAbbr);
 			}
 
 			private void ExportLexEntryInflTypeFields(TextWriter w, ILexEntryInflType item)
 			{
 				if (item == null)
 					return;
-				ExportMultiUnicode(w, item.ReverseAbbr);
+				ExportLexEntryTypeFields(w, item);
 				ExportMultiUnicode(w, item.GlossAppend);
 			}
 
 			private void ExportLexRefTypeFields(TextWriter w, ILexRefType item)
 			{
-				if (item != null)
-				{
-					ExportMultiUnicode(w, item.ReverseName);
-					ExportMultiUnicode(w, item.ReverseAbbreviation);
-				}
+				if (item == null)
+					return;
+				ExportMultiUnicode(w, item.ReverseName);
+				ExportMultiUnicode(w, item.ReverseAbbreviation);
 			}
 
 			private void ExportPartOfSpeechFields(TextWriter w, IPartOfSpeech item)
@@ -1802,6 +1809,14 @@ namespace SIL.FieldWorks.XWorks
 			this.Close();
 		}
 
+		/// <summary>
+		/// Hand off to Webonary publishing area.
+		/// </summary>
+		private void ProcessWebonaryExport()
+		{
+			FwXWindow.ShowUploadToWebonaryDialog(m_mediator);
+		}
+
 		private bool SelectOption(string exportFormat)
 		{
 			// LT-12279 selected a user disturbing, different menu item
@@ -1872,16 +1887,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (SelectOption(type))
 			{
-				Control main = EnsureViewInfo();
-				try
+				using (EnsureViewInfo())
 				{
 					DoExport(file);
 					ValidXmlFile(file);
-				}
-				finally
-				{
-					if (main != null)
-						main.Dispose();
 				}
 			}
 		}

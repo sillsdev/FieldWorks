@@ -1,14 +1,9 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: AssertEx.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
 
@@ -99,12 +94,13 @@ namespace SIL.FieldWorks.Test.TestUtils
 		/// <summary>
 		/// Compares two ITsStrings to each other
 		/// </summary>
-		/// <param name="tssExpected"></param>
-		/// <param name="tss"></param>
+		/// <param name="tssExpected">The ITsString expected.</param>
+		/// <param name="tssActual">The actual ITsString.</param>
+		/// <param name="message">The message to insert before the difference explanation.</param>
 		/// ------------------------------------------------------------------------------------
-		public static void AreTsStringsEqual(ITsString tssExpected, ITsString tss)
+		public static void AreTsStringsEqual(ITsString tssExpected, ITsString tssActual, string message = null)
 		{
-			AreTsStringsEqual(tssExpected, tss, string.Empty);
+			AreTsStringsEqual(tssExpected, tssActual, new Dictionary<int, int>(), message);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -112,13 +108,15 @@ namespace SIL.FieldWorks.Test.TestUtils
 		/// Compares two ITsStrings to each other
 		/// </summary>
 		/// <param name="tssExpected">The ITsString expected.</param>
-		/// <param name="tss">The actual ITsString.</param>
+		/// <param name="tssActual">The actual ITsString.</param>
+		/// <param name="propsWithWiggleRoom">dictionary of format properties that needn't be exact, along with their acceptable errors</param>
 		/// <param name="message">The message to insert before the difference explanation.</param>
 		/// ------------------------------------------------------------------------------------
-		public static void AreTsStringsEqual(ITsString tssExpected, ITsString tss, string message)
+		public static void AreTsStringsEqual(ITsString tssExpected, ITsString tssActual, IDictionary<int, int> propsWithWiggleRoom,
+			string message = null)
 		{
 			string sWhy;
-			if (!TsStringHelper.TsStringsAreEqual(tssExpected, tss, out sWhy))
+			if (!TsStringHelper.TsStringsAreEqual(tssExpected, tssActual, propsWithWiggleRoom, out sWhy))
 				Assert.Fail(string.IsNullOrEmpty(message) ? sWhy : message + ": " + sWhy);
 		}
 	}

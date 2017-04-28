@@ -7,8 +7,10 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
+#if !__MonoCS__
 using System.Windows.Automation;
 using System.Windows.Automation.Provider;
+#endif
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -54,12 +56,14 @@ namespace SIL.FieldWorks.Common.RootSites
 		int IndexOf(IRawElementProviderFragment child);
 	}
 
+#if !__MonoCS__
 	/// <summary>
 	/// SimpleRootSiteDataProvider enables Simple Rootsite data to be exposed to
 	/// UI Automation clients. SimpleRootSite class provides this to UI Automation
 	/// via a WM_GETOBJECT message processed in SimpleRootSite.OriginalWndProc().
 	/// </summary>
-	public class SimpleRootSiteDataProvider : BaseFragmentProvider<SimpleRootSiteDataProvider>, IRawElementProviderFragmentRoot, ITextProvider
+	public class SimpleRootSiteDataProvider : BaseFragmentProvider<SimpleRootSiteDataProvider>,
+		IRawElementProviderFragmentRoot, ITextProvider
 	{
 		private SimpleRootSite m_host; // the control hosting this provider
 
@@ -472,9 +476,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get { throw new NotImplementedException(); }
 		}
-
 		#endregion
 	}
+#endif
 
 	/// <summary>
 	/// Basic image control, that does not provide content or clicking.
@@ -490,8 +494,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		public ImageControl(IChildControlNavigation parent, SimpleRootSite site, IVwSelection selection)
 			: base(parent, site, selection)
 		{
+#if !__MonoCS__
 			// Localized string corresponding to the Image control type.
 			AddStaticProperty(AutomationElementIdentifiers.LocalizedControlTypeProperty.Id, Properties.Resources.ksImage);
+#endif
 		}
 
 		#region IRawElementProviderSimple Members
@@ -507,6 +513,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			return null;
 		}
 
+#if !__MonoCS__
 		/// <summary>
 		/// Retrieves the value of a property supported by the UI Automation provider.
 		/// </summary>
@@ -544,10 +551,12 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			return base.GetPropertyValue(propertyId);
 		}
+		#endif
 
 		#endregion
 	}
 
+#if !__MonoCS__
 	/// <summary>
 	/// Button control.
 	/// </summary>
@@ -671,6 +680,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		#endregion
 	}
+#endif
 
 	/// <summary>
 	/// Wraps a given selection so we can provide its information as an edit control
@@ -690,10 +700,12 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			m_rootb = editableSelection.RootBox;
 			Label = label;
+#if !__MonoCS__
 			DocumentRange = new SimpleRootSiteTextRangeProvider(m_site, Selection);
 
 			// Localized string corresponding to the Edit control type.
 			AddStaticProperty(AutomationElementIdentifiers.LocalizedControlTypeProperty.Id, Properties.Resources.ksEdit);
+#endif
 		}
 
 		private string Label { get; set; }
@@ -718,6 +730,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </returns>
 		public override object GetPatternProvider(int patternId)
 		{
+#if !__MonoCS__
 			if (patternId == TextPatternIdentifiers.Pattern.Id)
 			{
 				return this;
@@ -726,9 +739,11 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				return this;
 			}
+#endif
 			return null;
 		}
 
+#if !__MonoCS__
 		/// <summary>
 		/// Retrieves the value of a property supported by the UI Automation provider.
 		/// </summary>
@@ -765,9 +780,11 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			return base.GetPropertyValue(propertyId);
 		}
+#endif
 
 		#endregion
 
+#if !__MonoCS__
 		#region ITextProvider Members
 
 		/// <summary>
@@ -909,7 +926,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		#endregion
-	}
+#endif
+		}
 
 	#endregion
 }

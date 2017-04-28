@@ -290,6 +290,7 @@
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="CircularRefBreaker.cs" />
     <Compile Include="DeleteEntriesSensesWithoutInterlinearization.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -302,12 +303,6 @@
     <Compile Include="FLExBridgeListener.cs" />
     <Compile Include="GhostLexRefSlice.cs">
       <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="CreateReversalIndexDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CreateReversalIndexDlg.Designer.cs">
-      <DependentUpon>CreateReversalIndexDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="EntrySequenceReferenceLauncher.cs">
       <SubType>UserControl</SubType>
@@ -333,6 +328,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>LexEdStrings.resx</DependentUpon>
     </Compile>
+    <Compile Include="LexEntryChangeHandler.cs" />
     <Compile Include="LexEntryImages.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -386,6 +382,15 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="LexReferenceTreeRootView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LexReferenceUnidirectionalLauncher.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LexReferenceUnidirectionalSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LexReferenceUnidirectionalView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="LiftImportFailureServices.cs" />
@@ -462,10 +467,6 @@
     <Compile Include="SwapLexemeWithAllomorphDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <EmbeddedResource Include="CreateReversalIndexDlg.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>CreateReversalIndexDlg.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="EntrySequenceReferenceLauncher.resx">
       <DependentUpon>EntrySequenceReferenceLauncher.cs</DependentUpon>
       <SubType>Designer</SubType>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LayoutInventory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation='ViewsLayout.xsd'>
+	<layout class="LexSense" type="jtview" name="publishStem">
+		<part ref="MorphoSyntaxAnalysisConfig" label="Grammatical Info." before="" after=" " sep="" visibility="ifdata" style="Dictionary-Contrasting" singlegraminfofirst="yes" param="publishStem" css="grammatical-info"/>
+		<part ref="SmartDefinitionPub" label="Definition (or Gloss)" before="" after=" " visibility="ifdata" ws="all analysis" wsType="analysis" sep=" " showLabels="false" css="definition"/>
+		<part ref="SensesConfig" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="ifdata" recurseConfig="false" param="publishStem" css="subsenses" cssNumber="xsensenumber" parastyle="Dictionary-Sense"/>
+	</layout>
+	<layout class="LexSense" type="jtview" name="publishStemMinor">
+		<part ref="MorphoSyntaxAnalysisConfig" label="Grammatical Info." before="" after=" " sep="" visibility="ifdata" style="Dictionary-Contrasting" singlegraminfofirst="yes" param="publishStemMinor" css="grammatical-info-minor"/>
+		<part ref="SmartDefinitionPub" label="Definition (or Gloss)" before="" after=" " visibility="ifdata" ws="all analysis" wsType="analysis" sep=" " showLabels="false" css="definition-minor"/>
+	</layout>
+</LayoutInventory>

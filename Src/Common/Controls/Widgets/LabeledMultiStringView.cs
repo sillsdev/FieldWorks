@@ -3,26 +3,19 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.ComponentModel;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;		// controls and etc...
-using System.Windows.Forms.VisualStyles;
 using System.Xml;
 using Palaso.Media;
 using Palaso.WritingSystems;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 using System.Text;
 using XCore;
 
@@ -352,11 +345,18 @@ namespace SIL.FieldWorks.Common.Widgets
 							path = tryPath;
 					}
 				}
-				soundFieldControl.Path = path;
-				soundFieldControl.BeforeStartingToRecord += soundFieldControl_BeforeStartingToRecord;
-				soundFieldControl.SoundRecorded += soundFieldControl_SoundRecorded;
-				soundFieldControl.SoundDeleted += soundFieldControl_SoundDeleted;
-				Controls.Add(soundFieldControl);
+				try
+				{
+					soundFieldControl.Path = path;
+					soundFieldControl.BeforeStartingToRecord += soundFieldControl_BeforeStartingToRecord;
+					soundFieldControl.SoundRecorded += soundFieldControl_SoundRecorded;
+					soundFieldControl.SoundDeleted += soundFieldControl_SoundDeleted;
+					Controls.Add(soundFieldControl);
+				}
+				catch (Exception e)
+				{
+					Debug.WriteLine(e.Message);
+				}
 			}
 		}
 
@@ -393,7 +393,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			// Make up a unique file name for the new recording. It starts with the shortname of the object
 			// so as to somewhat link them together, then adds a unique timestamp, then if by any chance
 			// that exists it keeps trying.
-			var baseNameForFile = obj.ShortName;
+			var baseNameForFile = obj.ShortName ?? string.Empty;
 			// LT-12926: Path.ChangeExtension checks for invalid filename chars,
 			// so we need to fix the filename before calling it.
 			foreach (var c in Path.GetInvalidFileNameChars())

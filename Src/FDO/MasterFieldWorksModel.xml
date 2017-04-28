@@ -37,6 +37,18 @@ The original version number was: 7000000. Be sure it has the right number of zer
 editing it.
 
 Change History: (Be sure to update the 'version' attribute in the EntireModel, when needed. (Almost always.))
+  05 December 2016 (7000070): No actual model change, but a data migration to clean up bad LexRefTypes [ postponed semantic versioning until version 9 ]
+  08 Aug 2016 (7000069): Make multiple model changes:
+    * Add/modify LexEtymology fields and make LexEntry->Etymology an owning sequence.
+    * Add Language list to LexDb.
+    * Add DoNotPublishIn fields to CmPicture and LexPronunciation.
+    * Make LexEntry and LexSense Restrictions a MultiString field.
+    * Add ReverseName to LexEntryType as a MultiUnicode field. Swap Abbreviation and ReverseAbbr fields.
+    * Add UsageNote to LexSense as a MultiString field.
+    * Add Exemplar to LexSense as a MultiString field.
+    * Add LexExtendedNote cluster, add ExtendedNoteTypes property to LexDb.
+    * Add owning sequence of LexExtendedNote to LexSense as ExtendedNote property.
+    * Add DialectLabels list to LexDb. Also add reference to this list in LexEntry and LexSense.
   9 July 2013 (7000068): Make ReversalIndexEntry subentries be a sequence instead of a collection (LT-6468). No DM needed.
   7 May 2013  (7000067): Remove illegal attributes from <Uni> element. (Appears to come from FW 6.0.x.)
   22 March 2013 (7000066): Redux of DM64, but with real DM code.
@@ -190,7 +202,7 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 	2 September 2009 (NA): Add schema and optional 'singleton' and 'owner' attributes to <class> element. [Nothing at all for data migration.]
 	8 August 2009 (7000000): Original file created
 -->
-<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000068" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
+<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000070" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
   <CellarModule id="Cellar" num="0">
 	<class num="0" id="CmObject" abstract="false" abbr="obj">
 	  <props/>
@@ -1278,6 +1290,11 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 			<para>Depending on the value of LocationRangeType, specifies the maximum Scripture reference or the number of paragraphs after the paragraph containing the ORC reference at which this picture can be laid out.</para>
 		  </comment>
 		</basic>
+		<rel num="10" id="DoNotPublishIn" card="col" sig="CmPossibility">
+		  <comment>
+			<para>This property lists publications in which this picture should not appear.</para>
+		  </comment>
+		</rel>
 	  </props>
 	</class>
 	<class num="49" id="FsFeatureSystem" abstract="false" abbr="fsys" base="CmObject" depth="0">
@@ -2575,12 +2592,12 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 			<para>Bibliographic information</para>
 		  </comment>
 		</basic>
-		<owning num="13" id="Etymology" card="atomic" sig="LexEtymology">
+		<owning num="13" id="Etymology" card="seq" sig="LexEtymology">
 		  <comment>
-			<para>Each entry can have one etymology specification.</para>
+			<para>Each entry may have multiple etymology specifications.</para>
 		  </comment>
 		</owning>
-		<basic num="14" id="Restrictions" sig="MultiUnicode">
+		<basic num="14" id="Restrictions" sig="MultiString">
 		  <comment>
 			<para>Only certain people can use the entry under certain circumstances</para>
 		  </comment>
@@ -2650,6 +2667,11 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 			<para>This property lists publications in which this entry should not appear, either as a main entry or as any kind of link target. Currently the hiding (and consequent adjusting of homograph numbers etc) only takes place in Dictionary view.</para>
 		  </comment>
 		</rel>
+		<rel num="36" id="DialectLabels" card="seq" sig="CmPossibility">
+		  <comment>
+			<para>This property lists dialects in which this entry is used.</para>
+		  </comment>
+		</rel>
 	  </props>
 	</class>
 	<class num="3" id="ConstChartRow" abbr="ccr" abstract="false" base="CmObject" depth="0">
@@ -2675,7 +2697,7 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 	  <props>
 		<basic num="1" id="Example" sig="MultiString">
 		  <comment>
-			<para>This multilingual attribute holds the vernacular example sentence prior to tokenization. After tokenization it is cleared and the contents are transferred to the contents attribute. It is multilingual to allow multiple encodings in the same language (e.g., Thai, Laotian, and Vietnamese). It is multiString rather than multiUnicode to allow formatting - for example, applying bold to the word associated with the LexEntry.</para>
+			<para>This multilingual attribute holds the vernacular example sentence. It is multilingual to allow multiple encodings in the same language (e.g., Thai, Laotian, and Vietnamese). It is multiString rather than multiUnicode to allow formatting - for example, applying bold to the word associated with the LexEntry.</para>
 		  </comment>
 		</basic>
 		<basic num="2" id="Reference" sig="String"/>
@@ -2749,7 +2771,7 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 		</owning>
 		<owning num="23" id="ComplexEntryTypes" card="atomic" sig="CmPossibilityList">
 		  <comment>
-			<para>This Complex Entry Types list is used to classify a LexEntryRef via the ComplexEntryTypes property. ItemClsid should be set to LexEntryType, IsSorted to true, and Depth to 127. The list will typically be flat, but the user is free to introduce a hierarchy if desirable. When entries use this list, they will be displayed as subentries in the dictionary. Entries using this list will be displayed as subentries in the dictionary; usually at the end of the major entry and will typically produce a separate major entry in the dictionary referring to the main entry. The display is dependent on whether a root-based or stem-based view of the dictionary is being printed. The initial list may have:</para>
+			<para>This Complex Entry Types list is used to classify a LexEntryRef via the ComplexEntryTypes property. ItemClsid should be set to LexEntryType, IsSorted to true, and Depth to 127. The list will typically be flat, but the user is free to introduce a hierarchy if desirable. When entries use this list, they will be displayed as subentries in the dictionary. Entries using this list will be displayed as subentries in the dictionary; usually at the end of the major entry and will typically produce a separate major entry in the dictionary referring to the main entry. The display is dependent on whether a root-based or lexeme-based view of the dictionary is being printed. The initial list may have:</para>
 			<para>Acronym</para>
 			<para>Compound</para>
 			<para>Contractions</para>
@@ -2762,6 +2784,26 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 		<owning num="24" id="PublicationTypes" card="atomic" sig="CmPossibilityList">
 		  <comment>
 			<para>This list stores the types of publications that the user defines which may be referenced in various "DoNotPublishIn" properties. By default it contains just one item, "Main Dictionary".</para>
+		  </comment>
+		</owning>
+		<owning num="25" id="ExtendedNoteTypes" card="atomic" sig="CmPossibilityList">
+		  <comment>
+			<para>This Extended Note Type list is used to classify a LexExtendedNote via the ExtendedNoteTypes property. ItemClsid should be set to CmPossibility, IsSorted to true, and Depth to 127. The list will typically be flat, but the user is free to introduce a hierarchy if desirable. The initial list may have:</para>
+			<para>Cultural</para>
+			<para>Grammar</para>
+			<para>Semantic</para>
+			<para>Collocation</para>
+			<para>Discourse</para>
+		  </comment>
+		</owning>
+		<owning num="26" id="Languages" card="atomic" sig="CmPossibilityList">
+		  <comment>
+			<para>This list stores the languages that the user defines which may be selected in the LexEtymology.LanguageRS field.</para>
+		  </comment>
+		</owning>
+		<owning num="27" id="DialectLabels" card="atomic" sig="CmPossibilityList">
+		  <comment>
+			<para>This list stores the dialects that the user defines which may be assigned to any LexEntry or LexSense.</para>
 		  </comment>
 		</owning>
 	  </props>
@@ -2857,6 +2899,11 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 		  </comment>
 		</basic>
 		<basic num="7" id="LiftResidue" sig="Unicode"/>
+		<rel num="8" id="DoNotPublishIn" card="col" sig="CmPossibility">
+		  <comment>
+			<para>This property lists publications in which this pronunciation should not appear.</para>
+		  </comment>
+		</rel>
 	  </props>
 	</class>
 	<class num="16" id="LexSense" abstract="false" abbr="sens" base="CmObject" depth="0">
@@ -2885,7 +2932,7 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 		<basic num="19" id="GeneralNote" sig="MultiString"/>
 		<basic num="20" id="GrammarNote" sig="MultiString"/>
 		<basic num="21" id="PhonologyNote" sig="MultiString"/>
-		<basic num="22" id="Restrictions" sig="MultiUnicode"/>
+		<basic num="22" id="Restrictions" sig="MultiString"/>
 		<basic num="23" id="SemanticsNote" sig="MultiString"/>
 		<basic num="24" id="SocioLinguisticsNote" sig="MultiString"/>
 		<basic num="25" id="Source" sig="String"/>
@@ -2901,6 +2948,14 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 		<rel num="32" id="DoNotPublishIn" card="col" sig="CmPossibility">
 		  <comment>
 			<para>This property lists publications in which this sense should not appear, either in its main place or as any kind of link target. Currently the hiding only takes place in Dictionary view.</para>
+		  </comment>
+		</rel>
+		<basic num="33" id="Exemplar" sig="MultiString"/>
+		<basic num="34" id="UsageNote" sig="MultiString"/>
+		<owning num="35" id="ExtendedNote" card="seq" sig="LexExtendedNote"/>
+		<rel num="36" id="DialectLabels" card="seq" sig="CmPossibility">
+		  <comment>
+			<para>This property lists dialects in which this sense is used.</para>
 		  </comment>
 		</rel>
 	  </props>
@@ -4673,10 +4728,30 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 	  </comment>
 	  <props>
 		<basic num="1" id="Comment" sig="MultiString"/>
-		<basic num="2" id="Form" sig="MultiUnicode"/>
-		<basic num="3" id="Gloss" sig="MultiUnicode"/>
-		<basic num="4" id="Source" sig="Unicode"/>
+		<basic num="2" id="Form" sig="MultiString"/>
+		<basic num="3" id="Gloss" sig="MultiString"/>
+		<rel num="4" id="Language" card="seq" sig="CmPossibility">
+		  <comment>
+			  <para>This will be a choice from the Languages list in the Lists area (list owned by LexDb).</para>
+		  </comment>
+		</rel>
 		<basic num="5" id="LiftResidue" sig="Unicode"/>
+		<basic num="6" id="PrecComment" sig="MultiString"/>
+		<basic num="7" id="Note" sig="MultiString">
+		  <comment>
+			<para>For the lexicographer, not intended for printing. For now, at least, this appears in the UI, but not in the dictionary configurations.</para>
+		  </comment>
+		</basic>
+		<basic num="8" id="Bibliography" sig="MultiString">
+		  <comment>
+			<para>For the lexicographer, not intended for printing.</para>
+		  </comment>
+		</basic>
+		<basic num="9" id="LanguageNotes" sig="MultiString">
+		  <comment>
+			<para>Notes on the source language.</para>
+		  </comment>
+		</basic>
 	  </props>
 	</class>
 	<class num="116" id="ChkRef" abstract="false" abbr="chkr" base="CmObject" depth="0">
@@ -4720,7 +4795,12 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 	  <props>
 		<basic num="1" id="ReverseAbbr" sig="MultiUnicode">
 		  <comment>
-			<para>This abbreviation may be used in the minor/subentry when referring to the major entry. For example, CmPossibility_Abbreviation could have "var." and LexEntryType_ReverseAbbr could have "var. of" </para>
+			<para>This abbreviation may be used in the minor/subentry when referring to the major entry. For example, LexEntryType_Abbreviation could have "var." and LexEntryType_ReverseAbbr could have "var. of" </para>
+		  </comment>
+		</basic>
+		<basic num="2" id="ReverseName" sig="MultiUnicode">
+		  <comment>
+			<para>This name may be used in the minor/subentry when referring to the major entry. For example, LexEntryType_ReverseName could have "Dialectal Variant of" and LexEntryType_Name could have "Dialectal Variant" </para>
 		  </comment>
 		</basic>
 	  </props>
@@ -5126,6 +5206,26 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 		</rel>
 	  </props>
 	</class>
+	<class num="134" id="LexExtendedNote" abstract="false" abbr="lextnt" base="CmObject" depth="0">
+	  <props>
+		<rel num="1" id="ExtendedNoteType" sig="CmPossibility" card="atomic">
+		  <comment>
+			<para>From the LexDb.ExtendedNoteTypes possibility list.</para>
+		  </comment>
+		</rel>
+		<basic num="2" id="Discussion" sig="MultiString">
+		  <comment>
+			<para>User's discussion of the topic.</para>
+		  </comment>
+		</basic>
+		<owning num="3" id="Examples" card="seq" sig="LexExampleSentence">
+		  <comment>
+			<para>These are examples that illustrate the discussion.</para>
+			<para>The LexExample model includes Translation Type and Reference, but they will be empty and not shown.</para>
+		  </comment>
+		</owning>
+	  </props>
+	</class>
   </CellarModule>
   <CellarModule id="LangProj" num="6">
 	<class num="1" id="LangProject" abstract="false" abbr="lgpr" base="CmProject" depth="1" singleton="true" owner="none">
@@ -5226,7 +5326,7 @@ Change History: (Be sure to update the 'version' attribute in the EntireModel, w
 		</owning>
 		<owning num="51" id="Media" card="col" sig="CmFolder">
 		  <comment>
-			<para>This contains a lit of folders holding media file objects. For now, we will have one CmFolder called "Local Media" that holds all media.</para>
+			<para>This contains a list of folders holding media file objects. For now, we will have one CmFolder called "Local Media" that holds all media.</para>
 		  </comment>
 		</owning>
 		<owning num="52" id="GenreList" card="atomic" sig="CmPossibilityList">

@@ -381,7 +381,7 @@ namespace SIL.FieldWorks.TE
 			if (m_invalidPathChars.Contains(e.KeyChar) && e.KeyChar != '\b' &&
 				(int)e.KeyChar != 23 && (int)e.KeyChar != 22 && (int)e.KeyChar != 3)
 			{
-				SystemSounds.Beep.Play();
+				MiscUtils.ErrorBeep();
 				e.KeyChar = '\0';
 				e.Handled = true;
 				return;
@@ -411,7 +411,7 @@ namespace SIL.FieldWorks.TE
 			// Don't allow spaces in at the beginning of the prefix.
 			if (txtPrefix.SelectionStart == 0 && e.KeyChar == ' ')
 			{
-				SystemSounds.Beep.Play();
+				MiscUtils.ErrorBeep();
 				e.KeyChar = '\0';
 				e.Handled = true;
 				return;
@@ -430,7 +430,7 @@ namespace SIL.FieldWorks.TE
 			// Don't allow spaces or periods in the extension.
 			if (e.KeyChar == ' ' || e.KeyChar == '.')
 			{
-				SystemSounds.Beep.Play();
+				MiscUtils.ErrorBeep();
 				e.KeyChar = '\0';
 				e.Handled = true;
 				return;

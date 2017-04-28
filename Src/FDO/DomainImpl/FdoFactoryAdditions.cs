@@ -44,6 +44,30 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	}
 	#endregion
 
+	#region LexReferenceFactory
+	internal partial class LexReferenceFactory
+	{
+		public ILexReference Create(Guid guid, ILexRefType owner)
+		{
+			ILexReference lexReference;
+			if(guid == Guid.Empty)
+			{
+				lexReference = Create();
+			}
+			else
+			{
+				var hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
+				lexReference = new LexReference(m_cache, hvo, guid);
+			}
+			if(owner != null)
+			{
+				owner.MembersOC.Add(lexReference);
+			}
+			return lexReference;
+		}
+	}
+	#endregion
+
 	#region LexSenseFactory class
 	internal partial class LexSenseFactory
 	{
@@ -307,20 +331,71 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						throw new ArgumentException(
 							string.Format("transduce attribute of column argument specifies an unhandled class ({0})"), className);
 				}
-				if (mdc.GetFieldType(flid) == (int)CellarPropertyType.String)
+				if (mdc.GetFieldType(flid) == (int) CellarPropertyType.String)
 					ls.Cache.DomainDataByFlid.SetString(hvo, flid, val);
-				else // asssume multistring
-					ls.Cache.DomainDataByFlid.SetMultiStringAlt(hvo, flid, ws, val);
+				else
+				{
+					var list = XmlUtils.GetOptionalAttributeValue(column, "list");
+					if (list == null)
+					{
+						// asssume multistring
+						ls.Cache.DomainDataByFlid.SetMultiStringAlt(hvo, flid, ws, val);
+					}
+					else
+					{
+						var matchedPossibility = FindMatchingPossibilityItem(ls.Cache, list, val);
+						if(matchedPossibility != null)
+						{
+							// Insert the found possibility into the beginning of the list
+							ls.Cache.DomainDataByFlid.Replace(hvo, flid, 0, 0, new[] { matchedPossibility.Hvo }, 1);
+						}
+					}
+				}
 				return true;
 			}
 			throw new ArgumentException("transduce attr for column spec has wrong number of parts " + transduce + " " + column.OuterXml);
+		}
+
+		/// <summary>
+		/// Will attempt to match the name or abbreviation for the given string and writing system in the list.
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="list">e.g. LexDb.DialectLabels</param>
+		/// <param name="item"></param>
+		/// <returns></returns>
+		private static ICmPossibility FindMatchingPossibilityItem(FdoCache cache, string list, ITsString item)
+		{
+			if (TsStringUtils.IsNullOrEmpty(item))
+				return null;
+			var mdc = cache.MetaDataCache;
+			var listParts = list.Split('.');
+			var flid = mdc.GetFieldId(listParts[0], listParts[1], true);
+			ICmPossibilityList listItems;
+			switch (listParts[0])
+			{
+				case "LexDb":
+					var lexDbHvo = cache.LangProject.LexDbOA.Hvo;
+					var listHvo = cache.DomainDataByFlid.get_ObjectProp(lexDbHvo, flid);
+					listItems = (ICmPossibilityList)cache.ServiceLocator.GetObject(listHvo);
+					break;
+				default:
+					Debug.Fail("Lists not owned by LexDb are not yet handled.");
+					// ReSharper disable once HeuristicUnreachableCode -- reachable if not debugging.
+					return null;
+			}
+
+			var wsHandles = cache.LangProject.AllWritingSystems.Select(ws => ws.Handle).ToList();
+			return listItems.PossibilitiesOS.FirstOrDefault(poss => wsHandles.Any(ws =>
+				string.Compare(item.Text, poss.Abbreviation.get_String(ws).Text, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase) == 0 ||
+				string.Compare(item.Text, poss.Name.get_String(ws).Text, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase) == 0));
 		}
 
 		private ICmTranslation GetOrMakeFirstTranslation(ILexExampleSentence example)
 		{
 			if (example.TranslationsOC.Count == 0)
 			{
-				var cmTranslation = example.Services.GetInstance<ICmTranslationFactory>().Create(example, m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranFreeTranslation));
+				var cmTranslation = example.Services.GetInstance<ICmTranslationFactory>().Create(example,
+					m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranFreeTranslation));
 				example.TranslationsOC.Add(cmTranslation);
 			}
 			return example.TranslationsOC.ToArray()[0];
@@ -496,12 +571,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			return newEntry;
 		}
 		/// <summary>
-		/// Create a new entry with the given guid owned by the given owner.
+		/// Create a new entry with the given guid.
 		/// </summary>
-		public ILexEntry Create(Guid guid, ILexDb owner)
+		public ILexEntry Create(Guid guid, ILexDb ignored)
 		{
-			if (owner == null) throw new ArgumentNullException("owner");
-
 			ILexEntry le;
 			if (guid == Guid.Empty)
 			{
@@ -1243,6 +1316,33 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			int flid = m_cache.MetaDataCache.GetFieldId("CmPossibility", "SubPossibilities", false);
 
 			var retval = new CmPossibility(m_cache, hvo, guid);
+			owner.SubPossibilitiesOS.Add(retval);
+			return retval;
+		}
+	}
+	#endregion
+
+	#region CmCustomItemFactory class
+	internal partial class CmCustomItemFactory
+	{
+		public ICmPossibility Create(Guid guid, ICmPossibilityList owner)
+		{
+			if (owner == null) throw new ArgumentNullException("owner");
+
+			int hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
+
+			var retval = new CmCustomItem(m_cache, hvo, guid);
+			owner.PossibilitiesOS.Add(retval);
+			return retval;
+		}
+
+		public ICmPossibility Create(Guid guid, ICmCustomItem owner)
+		{
+			if (owner == null) throw new ArgumentNullException("owner");
+
+			int hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
+
+			var retval = new CmCustomItem(m_cache, hvo, guid);
 			owner.SubPossibilitiesOS.Add(retval);
 			return retval;
 		}

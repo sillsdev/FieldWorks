@@ -46,6 +46,8 @@ namespace SIL.FieldWorks.FDO
 
 		/// <summary>Lex Complex Form Types Possibility List</summary>
 		public const string kguidLexComplexFormTypes = "1ee09905-63dd-4c7a-a9bd-1d496743ccd6";
+		/// <summary>Unspecified Complex Form item in LexEntry Types list</summary>
+		public const string kguidLexTypeUnspecifiedComplexForm = "fec038ed-6a8c-4fa5-bc96-a4f515a98c50";
 		/// <summary>Compound item in LexEntry Types list</summary>
 		public const string kguidLexTypCompound = "1f6ae209-141a-40db-983c-bee93af0ca3c";
 		/// <summary>Contraction item in LexEntry Types list</summary>
@@ -61,6 +63,8 @@ namespace SIL.FieldWorks.FDO
 
 		/// <summary>Lex Variant Types Possibility List</summary>
 		public const string kguidLexVariantTypes = "bb372467-5230-43ef-9cc7-4d40b053fb94";
+		/// <summary>Unspecified Variant item in LexEntry Types list</summary>
+		public const string kguidLexTypeUnspecifiedVar = "3942addb-99fd-43e9-ab7d-99025ceb0d4e";
 		/// <summary>Dialectal Variant item in LexEntry Types list</summary>
 		public const string kguidLexTypDialectalVar = "024b62c9-93b3-41a0-ab19-587a0030219a";
 		/// <summary>Free Variant item in LexEntry Types list</summary>
@@ -240,9 +244,7 @@ namespace SIL.FieldWorks.FDO
 
 	public abstract partial class LexRefTypeTags
 	{
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		public enum MappingTypes
 		{
 			/// <summary></summary>
@@ -274,13 +276,53 @@ namespace SIL.FieldWorks.FDO
 			/// <summary></summary>
 			kmtEntryOrSenseTree = 13,
 			/// <summary></summary>
-			kmtEntryOrSenseSequence = 14
+			kmtEntryOrSenseSequence = 14,
+			/// <summary></summary>
+			kmtSenseUnidirectional = 15,
+			/// <summary></summary>
+			kmtEntryUnidirectional = 16,
+			/// <summary></summary>
+			kmtEntryOrSenseUnidirectional = 17
 		};
 
+		/// <returns>
+		/// True if the MappingType is directional (asymmetric; like part-whole);
+		/// False if it is the same in any direction (symmetric; like antonym).
+		/// </returns>
+		public static bool IsAsymmetric(MappingTypes type)
+		{
+			return type == MappingTypes.kmtEntryAsymmetricPair
+				|| type == MappingTypes.kmtEntryOrSenseAsymmetricPair
+				|| type == MappingTypes.kmtSenseAsymmetricPair
+				|| type == MappingTypes.kmtEntryTree
+				|| type == MappingTypes.kmtEntryOrSenseTree
+				|| type == MappingTypes.kmtSenseTree
+				|| type == MappingTypes.kmtSenseUnidirectional
+				|| type == MappingTypes.kmtEntryUnidirectional
+				|| type == MappingTypes.kmtEntryOrSenseUnidirectional;
+		}
+
+		/// <returns>True if the MappingType is unidirectional (targets are unaware of their owner); false if it is bidirectional.</returns>
+		public static bool IsUnidirectional(MappingTypes type)
+		{
+			return type == MappingTypes.kmtSenseUnidirectional
+				|| type == MappingTypes.kmtEntryUnidirectional
+				|| type == MappingTypes.kmtEntryOrSenseUnidirectional;
+		}
+
+		/// <returns>True if the MappingType is a sequence (like days of the week); false otherwise.</returns>
+		public static bool IsSequence(MappingTypes type)
+		{
+			return type == MappingTypes.kmtSenseSequence
+				|| type == MappingTypes.kmtEntryOrSenseSequence
+				|| type == MappingTypes.kmtEntrySequence;
+		}
 	}
 
 	public partial class LexEntryTypeTags
 	{
+		/// <summary>Unspecified Complex Form item in LexEntry Types list</summary>
+		public static readonly Guid kguidLexTypeUnspecifiedComplexForm = new Guid("fec038ed-6a8c-4fa5-bc96-a4f515a98c50");
 		/// <summary>Compound item in LexEntry Types list</summary>
 		public static readonly Guid kguidLexTypCompound = new Guid("1f6ae209-141a-40db-983c-bee93af0ca3c");
 		/// <summary>Contraction item in LexEntry Types list</summary>
@@ -294,6 +336,8 @@ namespace SIL.FieldWorks.FDO
 		/// <summary>Saying item in LexEntry Types list</summary>
 		public static readonly Guid kguidLexTypSaying = new Guid("9466d126-246e-400b-8bba-0703e09bc567");
 
+		/// <summary>Unspecified Variant item in LexEntry Types list</summary>
+		public static readonly Guid kguidLexTypeUnspecifiedVar = new Guid("3942addb-99fd-43e9-ab7d-99025ceb0d4e");
 		/// <summary>Dialectal Variant item in LexEntry Types list</summary>
 		public static readonly Guid kguidLexTypDialectalVar = new Guid("024b62c9-93b3-41a0-ab19-587a0030219a");
 		/// <summary>Free Variant item in LexEntry Types list</summary>

@@ -42,7 +42,8 @@ M: System.Void SIL.FieldWorks.FwCoreDlgs.PicturePropertiesDialog::InitializeComp
 M: System.Void SIL.FieldWorks.FwCoreDlgs.BackupRestore.RestoreProjectDlg::InitializeComponent()
 M: System.Void SIL.FieldWorks.FwCoreDlgs.BackupRestore.RestoreProjectDlg::PopulateProjectList(System.String)
 M: System.Void SIL.FieldWorks.FwCoreDlgs.WritingSystemPropertiesDialog::btnAdd_Click(System.Object,System.EventArgs)
-
+M: System.Void SIL.FieldWorks.FwCoreDlgs.WritingSystemPropertiesDialog/<SaveChanges>c__AnonStorey0::<>m__0()
+M: System.Void SIL.FieldWorks.FwCoreDlgs.WritingSystemPropertiesDialog/<>c__DisplayClassb::<SaveChanges>b__9()
 # reference only
 M: System.Void SIL.FieldWorks.FwCoreDlgs.FwProjPropertiesDlg::ShowAddWsContextMenu(System.Windows.Forms.ContextMenuStrip,System.Collections.Generic.IEnumerable`1<SIL.CoreImpl.IWritingSystem>,System.Windows.Forms.ListBox,System.Windows.Forms.Button,System.EventHandler,System.EventHandler,System.EventHandler,SIL.CoreImpl.IWritingSystem)
 M: System.Windows.Forms.DialogResult SIL.FieldWorks.FwCoreDlgs.PicturePropertiesDialog::ShowChoosePictureDlg()

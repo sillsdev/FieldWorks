@@ -102,6 +102,10 @@
       <HintPath>..\..\..\Output\Debug\DetailControls.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="ExCss, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Downloads\ExCSS.dll</HintPath>
+    </Reference>
     <Reference Include="FDO, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -118,8 +122,15 @@
       <HintPath>..\..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="FwCoreDlgControls, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\Output\Debug\FwCoreDlgControls.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="FwUtilsTests, Version=7.0.1.13090, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="DotNetZip">
+      <HintPath>..\..\..\Output\Debug\DotNetZip.dll</HintPath>
     </Reference>
     <Reference Include="LexEdDll, Version=8.0.4.12240, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -130,12 +141,16 @@
       <HintPath>..\..\..\Output\Debug\NMock.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework, Version=2.5.8.10295, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
-      <HintPath>..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="Palaso, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
+    </Reference>
+    <Reference Include="Palaso.TestUtilities, Version=2.6.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\Palaso.TestUtilities.dll</HintPath>
     </Reference>
     <Reference Include="RootSite, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
@@ -201,6 +216,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="TestManager, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\Output\Debug\TestManager.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -243,12 +259,30 @@
     <Compile Include="ArchivingTests.cs" />
     <Compile Include="BulkEditBarTests.cs">
     </Compile>
+    <Compile Include="ConfigurableDictionaryNodeTests.cs" />
+    <Compile Include="ConfiguredXHTMLGeneratorReversalTests.cs" />
+    <Compile Include="ConfiguredXHTMLGeneratorTestHelpers.cs" />
+    <Compile Include="ConfiguredXHTMLGeneratorTests.cs" />
+    <Compile Include="CssGeneratorTests.cs" />
     <Compile Include="CustomListDlgTests.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="DeleteCustomListTests.cs" />
     <Compile Include="DictionaryConfigManagerTests.cs" />
+    <Compile Include="HeadwordNumbersControllerTests.cs" />
+    <Compile Include="DictionaryConfigurationControllerTests.cs" />
+    <Compile Include="DictionaryConfigurationImportControllerTests.cs" />
+    <Compile Include="DictionaryConfigurationListenerTests.cs" />
+    <Compile Include="DictionaryConfigurationManagerControllerTests.cs" />
+    <Compile Include="DictionaryConfigurationMigrators\DictionaryConfigurationMigratorTests.cs" />
+    <Compile Include="DictionaryConfigurationMigrators\FirstAlphaMigratorTests.cs" />
+    <Compile Include="DictionaryConfigurationMigrators\FirstBetaMigratorTests.cs" />
+    <Compile Include="DictionaryConfigurationMigrators\PreHistoricMigratorTests.cs" />
+    <Compile Include="DictionaryConfigurationMigrators\StubContentControlProvider.cs" />
+    <Compile Include="DictionaryConfigurationModelTests.cs" />
     <Compile Include="DictionaryConfigViewerStub.cs" />
+    <Compile Include="DictionaryDetailsControllerTests.cs" />
+    <Compile Include="DictionaryNodeOptionsTests.cs" />
     <Compile Include="DictionaryPublicationDecoratorTests.cs" />
     <Compile Include="ExportDialogTests.cs" />
     <Compile Include="GenericUITests.cs">
@@ -259,14 +293,19 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="MacroListenerTests.cs" />
+    <Compile Include="UploadToWebonaryControllerTests.cs" />
+    <Compile Include="UploadToWebonaryModelTests.cs" />
+    <Compile Include="UnicodeCharacterEditingHelperTests.cs" />
     <Compile Include="WordsUsedOnlyElsewhereFilterTests.cs" />
-    <Compile Include="XmlDocConfigureDlgTests.cs" />
+    <Compile Include="XhtmlDocViewTests.cs" />
     <Compile Include="XWorksAppTestBase.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="DictionaryConfigurationUtilsTests.cs" />
+    <Compile Include="DictionaryExportServiceTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -310,4 +349,5 @@
   <ItemGroup>
     <None Include="gendarme-xWorksTests.ignore" />
   </ItemGroup>
+  <ItemGroup />
 </Project>

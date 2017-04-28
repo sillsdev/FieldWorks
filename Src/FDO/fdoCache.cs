@@ -684,7 +684,6 @@ namespace SIL.FieldWorks.FDO
 				File.Copy(Path.Combine(templateDir,
 					FdoFileHelper.GetXmlDataFileName("NewLangProj")), dbFileName, false);
 				File.SetAttributes(dbFileName, FileAttributes.Normal);
-
 				// Change the LangProject Guid to a new one to make it unique between projects, so Lift Bridge won't get cross with FLEx.
 				var doc = XDocument.Load(dbFileName);
 				var lpElement = doc.Element("languageproject").Elements("rt")

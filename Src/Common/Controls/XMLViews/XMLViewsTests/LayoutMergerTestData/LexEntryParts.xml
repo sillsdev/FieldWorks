@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PartInventory>
+	<bin class="LexEntry">
+		<part id="LexEntry-Jt-MLHeadWordPub" type="jtview">
+			<configureMlString field="MLHeadWord"/>
+		</part>
+		<part id="LexEntry-Jt-SensesConfig">
+			<seq field="Senses" layout="publishStem" inheritSeps="true" />
+		</part>
+		<part id="LexEntry-Jt-MinorEntryConfig" type="jtview">
+			<obj field="Self" layout="publishStemMinorPara" targetclass="LexEntry"/>
+		</part>
+	</bin>
+</PartInventory>

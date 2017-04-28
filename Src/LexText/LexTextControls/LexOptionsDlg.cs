@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -49,9 +49,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		public LexOptionsDlg()
 		{
 			InitializeComponent();
-#if __MonoCS__
-			tabControl1.Controls.Remove(m_tabUpdates);
-#endif
 			optionsTooltip = new ToolTip { AutoPopDelay = 6000, InitialDelay = 400, ReshowDelay = 500, IsBalloon = true };
 			optionsTooltip.SetToolTip(updateGlobalWS, LexTextControls.ksUpdateGlobalWsTooltip);
 			optionsTooltip.SetToolTip(groupBox1, LexTextControls.ksUserInterfaceTooltip);
@@ -67,39 +64,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			base.OnLoad(e);
 			m_autoOpenCheckBox.Checked = AutoOpenLastProject;
 			m_okToPingCheckBox.Checked = Settings.Default.Reporting.OkToPingBasicUsageData;
-			checkForUpdatesBox.Checked = Settings.Default.AutoCheckForUpdates;
-			includeBetasBox.Checked = Settings.Default.CheckForBetaUpdates;
-			includeBetasBox.Enabled = checkForUpdatesBox.Checked;
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
-			var reportingSettings = Settings.Default.Reporting;
-			reportingSettings.OkToPingBasicUsageData = m_okToPingCheckBox.Checked;
-			Settings.Default.AutoCheckForUpdates = checkForUpdatesBox.Checked;
-			Settings.Default.CheckForBetaUpdates = includeBetasBox.Checked;
-
-			Settings.Default.AutoCheckForUpdates = checkForUpdatesBox.Checked;
-			Settings.Default.CheckForBetaUpdates = includeBetasBox.Checked;
-
-#if !__MonoCS__
-			var sparkle = SingletonsContainer.Item("Sparkle") as Sparkle;
-			if (sparkle != null)
-			{
-				var appCastUrl = Settings.Default.IsBTE
-									? (Settings.Default.CheckForBetaUpdates
-										? CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastBteBetasUrl")
-										: CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastBteUrl"))
-									: (Settings.Default.CheckForBetaUpdates
-										? CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastSeBetasUrl")
-										: CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastSeUrl"));
-				sparkle.AppcastUrl = appCastUrl;
-			}
-#endif
-
-
+			Settings.Default.Reporting.OkToPingBasicUsageData = m_okToPingCheckBox.Checked;
 			Settings.Default.Save();
 			m_sNewUserWs = m_userInterfaceChooser.NewUserWs;
 			if (m_sUserWs != m_sNewUserWs)
@@ -314,11 +285,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void updateGlobalWS_MouseHover(object sender, EventArgs e)
 		{
 			;
-		}
-
-		private void checkForUpdatesBox_CheckedChanged(object sender, EventArgs e)
-		{
-			includeBetasBox.Enabled = checkForUpdatesBox.Checked;
 		}
 	}
 }

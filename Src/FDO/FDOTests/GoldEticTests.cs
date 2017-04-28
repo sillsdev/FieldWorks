@@ -4,7 +4,7 @@
 
 using System.IO;
 using System.Xml;
-using Palaso.TestUtilities;
+using PTU = Palaso.TestUtilities;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Test.TestUtils;
 using NUnit.Framework;
@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void AllPOSTemplatePossibilityItemsHaveGUIDs()
 		{
 			var posFilePath = Path.Combine(FwDirectoryFinder.TemplateDirectory, "POS.xml");
-			AssertThatXmlIn.File(posFilePath).HasNoMatchForXpath("//PartOfSpeech[not(@guid)]");
+			PTU.AssertThatXmlIn.File(posFilePath).HasNoMatchForXpath("//PartOfSpeech[not(@guid)]");
 		}
 
 		[Test]
@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				Assert.NotNull(catalogIdNode, "Part of speech list item missing CatalogSourceId: " + posNode.OuterXml);
 				var catalogId = catalogIdNode.InnerText;
 				var posMatchingXpath = string.Format("//item[@id='{0}' and @guid='{1}']", catalogId, guid.Value);
-				AssertThatXmlIn.File(goldEticFilePath).HasSpecifiedNumberOfMatchesForXpath(posMatchingXpath, 1);
+				PTU.AssertThatXmlIn.File(goldEticFilePath).HasSpecifiedNumberOfMatchesForXpath(posMatchingXpath, 1);
 			}
 		}
 	}

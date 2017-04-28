@@ -2409,6 +2409,8 @@ namespace SIL.FieldWorks.Common.Controls
 			if (WsForce < 0) // magic.
 			{
 				// Forced magic ws. Find the corresponding actual WS.
+				if (WsForce == WritingSystemServices.kwsReversalIndex && m_wsReversal > 0)
+					return m_wsReversal;	// we know this one locally.
 				int wsActual;
 				WritingSystemServices.GetMagicStringAlt(m_cache, m_sda, WsForce, hvo, flid, false, out wsActual);
 				// If the magic ws doesn't get changed properly, use the default.
@@ -5933,6 +5935,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Get the string representation used in the part ref attributes.
 		/// </summary>
+		// REVIEW (Hasso) 2014.05: The only places StorageString is used are in the Configuration Dialogs
+		// (DictionaryDetailsController and XmlDocConfigureDlg). Since the newer dialog stores whether an item is enabled as its own property,
+		// we may soon no longer need the leading + or -. (At which point we may no longer need this class)
 		public override string StorageString
 		{
 			get

@@ -3,16 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Windows.Forms;
 using System.Diagnostics;
-
-using SIL.FieldWorks.FDO;
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -83,7 +77,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			AddItem(obj, LexEdStrings.ksUndoAddRef, LexEdStrings.ksRedoAddRef);
 		}
 
-		protected override VectorReferenceView CreateVectorReverenceView()
+		protected override VectorReferenceView CreateVectorReferenceView()
 		{
 			return new LexReferenceTreeBranchesView();
 		}

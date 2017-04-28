@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			base.Dispose( disposing );
 		}
 
-		protected override VectorReferenceView CreateVectorReverenceView()
+		protected override VectorReferenceView CreateVectorReferenceView()
 		{
 			return new RevEntrySensesCollectionReferenceView();
 		}
@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				var wp = new WindowParams {m_title = LexEdStrings.ksIdentifySense, m_btnText = LexEdStrings.ksSetReversal};
 				dlg.SetDlgInfo(m_cache, wp, m_mediator);
 				dlg.SelectSensesOnly = true;
-				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
+				if (dlg.ShowDialog(FindForm()) == DialogResult.OK && dlg.SelectedObject != null)
 					AddItem(dlg.SelectedObject);
 			}
 		}

@@ -42,6 +42,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public const string ksFlexFolderName = FwUtils.ksFlexAppName;
 
+
 		/// <summary>The Scripture-specific stylesheet (ideally, this would be in a TE-specific place, but FDO needs it)</summary>
 		public const string kTeStylesFilename = "TeStyles.xml";
 
@@ -314,15 +315,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private static string GetDirectory(string registryValue, string defaultDir)
 		{
 			using (var userKey = FwRegistryHelper.FieldWorksRegistryKey)
-			using (var machineKey = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine)
 			{
-				var registryKey = userKey;
 				if (userKey == null || userKey.GetValue(registryValue) == null)
-				{
-					registryKey = machineKey;
-				}
-
-				return GetDirectory(registryKey, registryValue, defaultDir);
+					return GetDirectoryLocalMachine(registryValue, defaultDir);
+				return GetDirectory(userKey, registryValue, defaultDir);
 			}
 		}
 
@@ -639,7 +635,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Gets the biblical key terms localization files.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		static public string[] KeyTermsLocalizationFiles
+		public static string[] KeyTermsLocalizationFiles
 		{
 			get
 			{
@@ -651,13 +647,21 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
+		/// <summary>
+		/// Location of the DefaultConfigurations folder (root for  Dictionary, Reversal, and other default configurations)
+		/// </summary>
+		public static string DefaultConfigurations
+		{
+			get { return Path.Combine(FlexFolder, "DefaultConfigurations"); }
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Returns the file name containing the localization of the key terms list for the
 		/// given ICU locale.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		static public string GetKeyTermsLocFilename(string locale)
+		public static string GetKeyTermsLocFilename(string locale)
 		{
 			return Path.Combine(TeFolder, ksBiblicaltermsLocFilePrefix + locale +
 				ksBiblicaltermsLocFileExtension);
@@ -668,7 +672,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Extracts the locale identifier (string) from a key terms localization file name.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		static public string GetLocaleFromKeyTermsLocFile(string locFilename)
+		public static string GetLocaleFromKeyTermsLocFile(string locFilename)
 		{
 			return Path.GetFileName(locFilename).Replace(ksBiblicaltermsLocFilePrefix,
 				String.Empty).Replace(ksBiblicaltermsLocFileExtension, String.Empty);

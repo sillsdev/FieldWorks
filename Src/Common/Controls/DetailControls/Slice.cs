@@ -766,7 +766,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			if (Control != null && Control is INotifyControlInCurrentSlice)
+			if (Control != null && Control is INotifyControlInCurrentSlice && !BeingDiscarded)
 				(Control as INotifyControlInCurrentSlice).SliceIsCurrent = isCurrent;
 			if (TreeNode != null)
 				TreeNode.Invalidate();
@@ -1430,8 +1430,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private string GetGeneratedHelpTopicId(string helpTopicPrefix, String fieldName)
 		{
-			string className = Cache.DomainDataByFlid.MetaDataCache.GetClassName(Object.ClassID);
-			string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
+			var ownerClassName = Object.Owner == null ? null : Object.Owner.ClassName;
+			var className = Cache.DomainDataByFlid.MetaDataCache.GetClassName(Object.ClassID);
+			// Distinguish the Example (sense) field and the expanded example (LexExtendedNote) field
+			className = (fieldName == "Example" && ownerClassName == "LexExtendedNote") ? "LexExtendedNote" : className;
+			// Distinguish the Translation (sense) field and the expanded example (LexExtendedNote) field
+			className = fieldName.StartsWith("Translation")&& (ownerClassName == "LexExtendedNote" || (Object.Owner != null && Object.Owner.ClassName == "LexExtendedNote")) ? "LexExtendedNote" : className;
+			var toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
 
 			String generatedHelpTopicID;
 
@@ -3034,6 +3039,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public virtual void AboutToDiscard()
 		{
 			CheckDisposed();
+			BeingDiscarded = true;	// Remember that we're going away in case we need to know this for subsequent method calls.
 		}
+
+		/// <summary>
+		/// Flag whether this slice is in the process of being thrown away.
+		/// </summary>
+		private bool BeingDiscarded { get; set; }
 	}
 }

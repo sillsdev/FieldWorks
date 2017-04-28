@@ -10,6 +10,7 @@
 // Implements FdoTestBase, the base class for the FDO tests
 // </remarks>
 
+using System;
 using System.IO;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -178,6 +179,61 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var dataSetup = retval.ServiceLocator.GetInstance<IDataSetup>();
 			dataSetup.LoadDomain(loadType);
 			return retval;
+		}
+
+		/// <summary>
+		/// Creates and removes a custom field, designed for using statement
+		/// </summary>
+		protected sealed class CustomFieldForTest : IDisposable
+		{
+			private FieldDescription m_customField;
+			/// <summary>
+			/// Constructs a custom field using the given arguments and adds it into the Cache.
+			/// </summary>
+			public CustomFieldForTest(FdoCache cache, string customFieldLabel, string customFieldName, int classId, int destClass, int ws,
+											  CellarPropertyType fieldType, Guid listGuid)
+			{
+				m_customField = new FieldDescription(cache)
+				{
+					Userlabel = customFieldLabel,
+					Name = customFieldName,
+					HelpString = String.Empty,
+					Class = classId,
+					ListRootId = listGuid,
+					Type = fieldType,
+					DstCls = destClass,
+					WsSelector = ws
+				};
+				m_customField.UpdateCustomField();
+			}
+
+			/// <summary>Constructs a custom field using the given arguments and adds it into the Cache with a default destClassId and ws.</summary>
+			public CustomFieldForTest(FdoCache cache, string customFieldLabel, string customFieldName, int classId,
+											  CellarPropertyType fieldType, Guid listGuid) : this(cache, customFieldLabel, customFieldName, classId, 0, -1, fieldType, listGuid)
+			{
+			}
+
+			/// <summary>
+			/// Constructs a custom field that includes a writing system selector and adds it into the cach with a default destClassId and using the lable as the name
+			/// </summary>
+			public CustomFieldForTest(FdoCache cache, string customFieldLabel, int classId, int ws, CellarPropertyType fieldType,
+				Guid listGuid) : this(cache, customFieldLabel, customFieldLabel, classId, 0, ws, fieldType, listGuid)
+			{
+			}
+
+			/// <summary>
+			/// Return the custom field flid
+			/// </summary>
+			public int Flid { get { return m_customField.Id; } }
+
+			/// <summary>
+			/// Removes the custom field from the cache
+			/// </summary>
+			public void Dispose()
+			{
+				m_customField.MarkForDeletion = true;
+				m_customField.UpdateCustomField();
+			}
 		}
 	}
 	#endregion

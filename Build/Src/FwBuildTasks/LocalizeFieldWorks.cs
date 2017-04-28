@@ -761,7 +761,7 @@ namespace FwBuildTasks
 				POString pos = POString.ReadFromFile(srIn);
 				while (pos != null)
 				{
-					if (!pos.HasEmptyMsgStr)
+					if (!pos.HasEmptyMsgStr && (pos.Flags == null || !pos.Flags.Contains("fuzzy")))
 						dictTrans.Add(pos.MsgIdAsString(), pos);
 					pos = POString.ReadFromFile(srIn);
 				}

@@ -287,8 +287,8 @@
   <data name="khtpField-LexEntry-Comment" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Note_field.htm</value>
   </data>
-  <data name="khtpField-LexEtymology-Comment" xml:space="preserve">
-    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Comment_field_Etymology.htm</value>
+  <data name="khtpField-lexiconEdit-LexEtymology-Comment" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Following_Comment_Etymology.htm</value>
   </data>
   <data name="khtpField-LexEntry-Condition" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Condition_field.htm</value>
@@ -305,8 +305,8 @@
   <data name="khtpField-LexEntry-Environments" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Environments_field.htm</value>
   </data>
-  <data name="khtpField-LexEtymology-Form" xml:space="preserve">
-    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Etymology_field.htm</value>
+  <data name="khtpField-lexiconEdit-LexEtymology-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Etymology_field.htm</value>
   </data>
   <data name="khtpField-LexEtymology-Gloss" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Gloss_field_Etymology.htm</value>
@@ -428,8 +428,8 @@
   <data name="khtpField-lexiconEdit-IsAbstract" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Is_Abstract_Form_field.htm</value>
   </data>
-  <data name="khtpField-LexEtymology-Source" xml:space="preserve">
-    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Source_field_Etymology.htm</value>
+  <data name="khtpField-SourceForm" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Source_Form_Etymology.htm</value>
   </data>
   <data name="khtpField-LexPronunciation-Tone" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Tone_field.htm</value>
@@ -835,6 +835,7 @@
   </data>
   <data name="khtpField-domainTypeEdit-CmPossibility-" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Academic_Domains_fields/subitems_field_academic_domains.htm</value>
+    <comment>Academic Domain - Subtypes</comment>
   </data>
   <data name="khtpField-anthroEdit-CmAnthroItem-Abbreviation" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Anthropology_Categories_fields/abbreviation_field_anthropology_categories.htm</value>
@@ -862,6 +863,7 @@
   </data>
   <data name="khtpField-anthroEdit-CmAnthroItem-" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Anthropology_Categories_fields/Subcategories_field_Anthropology_Categories.htm</value>
+    <comment>Anthropology Subitems</comment>
   </data>
   <data name="khtpField-confidenceEdit-CmPossibility-Abbreviation" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Confidence_Levels_fields/abbreviation_field_confidence_levels.htm</value>
@@ -997,7 +999,7 @@
   </data>
   <data name="khtpField-locationsEdit-CmLocation-Subitems" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Locations_fields/subitems_field_(locations).htm</value>
-    <comment>Help TopID for List Location Subitem</comment>
+    <comment>Help TopicID for List Location Subitem</comment>
   </data>
   <data name="khtpField-morphTypeEdit-MoMorphType-Abbreviation" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Morpheme_Types_fields/abbreviation_field_morpheme_types.htm</value>
@@ -1346,6 +1348,7 @@
   </data>
   <data name="khtpField-educationEdit-CmPossibility-" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Education_Levels_fields/Subitems_field_Education_Levels.htm</value>
+    <comment>Education Levels - Subtypes</comment>
   </data>
   <data name="khtpECAdvanced" xml:space="preserve">
     <value>Advanced_Tasks/Writing_Systems/Encoding_Converters/Encoding_Converters_Advanced_tab.htm</value>
@@ -1636,6 +1639,7 @@
   </data>
   <data name="khtpField-genresEdit-CmPossibility-" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Genres_fields/Subitems_field_Genres.htm</value>
+    <comment>Genres - Subitems</comment>
   </data>
   <data name="khtpChoose-lexiconEdit-DomainTypes" xml:space="preserve">
     <value>Using_Tools/Lexicon_tools/Lexicon_Edit/choose_academic_domains.htm</value>
@@ -1930,6 +1934,7 @@
   </data>
   <data name="khtpField-variantEntryTypeEdit-LexEntryType-Abbreviation" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/abbreviation_fld_variant_types.htm</value>
+    <comment>Most Variants are of type LexEntryType, but some are of type LexEntryInflType (a subclass; see above), so both are necessary here.</comment>
   </data>
   <data name="khtpField-variantEntryTypeEdit-LexEntryType-Confidence" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Confidence_fld_(Variant_Types).htm</value>
@@ -2492,7 +2497,7 @@
   </data>
   <data name="khtpField-locationsEdit-CmLocation-" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Locations_fields/subitems_field_(locations).htm</value>
-    <comment>Help TopID for List Location Subitem</comment>
+    <comment>Help TopicID for List Location Subitem</comment>
   </data>
   <data name="khtpLexFind" xml:space="preserve">
     <value>User_Interface/Menus/Edit/Find_and_Replace_Lexicon.htm</value>
@@ -2648,8 +2653,14 @@
   <data name="khtpField-lexiconEdit-LexEntryRef-PrimaryLexemes" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Publication_Settings_flds/Show_Subentry_under.htm</value>
   </data>
+  <data name="khtpField-lexiconEdit-LexPronunciation-PublishIn" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Publish_In_(Pronunciations).htm</value>
+  </data>
   <data name="khtpField-lexiconEdit-LexExampleSentence-PublishIn" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Publish_In_(Example).htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-CmPicture-PublishIn" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Publish_In_(Pictures).htm</value>
   </data>
   <data name="khtpField-lexiconEdit-LexSense-PublishIn" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Publish_In_(Sense).htm</value>
@@ -2702,18 +2713,34 @@
   <data name="khtpBulkEditPublishAsHeadwordIn" xml:space="preserve">
     <value>/Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_publications.htm</value>
   </data>
-  <data name="khtpBulkEditPublishIn(Entry)" xml:space="preserve">
+  <data name="khtpBulkEditPublishEntryIn" xml:space="preserve">
     <value>/Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_publications.htm</value>
   </data>
-  <data name="khtpBulkEditPublishIn(Example)" xml:space="preserve">
+  <data name="khtpBulkEditPublishExampleIn" xml:space="preserve">
     <value>/Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_publications.htm</value>
   </data>
-  <data name="khtpBulkEditPublishIn(Sense)" xml:space="preserve">
+  <data name="khtpBulkEditPublishSenseIn" xml:space="preserve">
     <value>/Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_publications.htm</value>
   </data>
-  <data name="khtpConfigureHomograph" xml:space="preserve">
-    <value>/User_Interface/Menus/Tools/Configure_Homograph_Number/Configure_Homograph_Number_dialog_box.htm</value>
-    <comment>Configure Homograph Number Dialog box.</comment>
+  <data name="khtpConfigureHeadwordNumbers" xml:space="preserve">
+    <value>/User_Interface/Menus/Tools/Configure_Headword_Numbers/Config_Hdwrd_Numbers_dialog_box.htm</value>
+    <comment>Configure Headword Numbers Dialog box.</comment>
+  </data>
+  <data name="khtpConfigureDictionary" xml:space="preserve">
+    <value>/User_Interface/Menus/Tools/Configure_Dictionary/Configure_Dictionary.htm</value>
+    <comment>Configure Dictionary Dialog box.</comment>
+  </data>
+  <data name="khtpDictConfigManager" xml:space="preserve">
+    <value>/User_Interface/Menus/Tools/Configure_Dictionary/Manage_Dictionary_Views.htm</value>
+    <comment>Configure Dictionary Dialog box.</comment>
+  </data>
+  <data name="khtpConfigureReversalIndex" xml:space="preserve">
+    <value>/User_Interface/Menus/Tools/Configure_Reversal_Index/Configure_Reversal_Index_dialog_box.htm</value>
+    <comment>Configure Dictionary Dialog box.</comment>
+  </data>
+  <data name="khtpRevIndexConfigManager" xml:space="preserve">
+    <value>/User_Interface/Menus/Tools/Configure_Reversal_Index/Manage_Views_Reversal_Index.htm</value>
+    <comment>Configure Dictionary Dialog box.</comment>
   </data>
   <data name="khtpChoose-lexiconEdit-PrimaryLexemes" xml:space="preserve">
     <value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_Show_as_Headwords_In.htm</value>
@@ -2729,7 +2756,7 @@
   </data>
   <data name="khtpChoose-InflectionClass" xml:space="preserve">
     <value>Using_Tools/Lexicon_tools/Lexicon_Edit/choose_an_inflection_class.htm</value>
-    <comment>Help Toopic for Choosing an Inflection Class</comment>
+    <comment>Help Topic for Choosing an Inflection Class</comment>
   </data>
   <data name="khtpField-ReferencedComplexForms-EntryLevel" xml:space="preserve">
     <value>/User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Referenced_Complex_Forms_(sense).htm</value>
@@ -2814,7 +2841,7 @@
   </data>
   <data name="khtpChoose-AnthroCodes" xml:space="preserve">
     <value>Using_Tools/Notebook_tools/Record_Edit_overview/Choose_anthropology_categories.htm</value>
-    <comment>Choose  Aanthropology_Categories help button for empty texts in the Info tab</comment>
+    <comment>Choose  Anthropology_Categories help button for empty texts in the Info tab</comment>
   </data>
   <data name="khtpChoose-Locations" xml:space="preserve">
     <value>Using_Tools/Notebook_tools/Record_Edit_overview/Choose_locations.htm</value>
@@ -2849,7 +2876,7 @@
   </data>
   <data name="khtpEntryNotPublished" xml:space="preserve">
     <value>User_Interface/Menus/Edit/Find_a_lexical_entry.htm</value>
-    <comment>I had to hsardcode the path into the source rsather than the topic because of the way </comment>
+    <comment>I had to hardcode the path into the source rather than the topic because of the way </comment>
   </data>
   <data name="khtpBulkEditShowAsHeadwordIn" xml:space="preserve">
     <value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_Edit_Entries_overview.htm</value>
@@ -2893,6 +2920,7 @@
   </data>
   <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-Abbreviation" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/abbreviation_fld_variant_types.htm</value>
+    <comment>Most Variants are of type LexEntryType (see below), but some are of type LexEntryInflType (a subclass), so both are necessary here.</comment>
   </data>
   <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-Confidence" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Confidence_fld_(Variant_Types).htm</value>
@@ -2990,5 +3018,293 @@
   </data>
   <data name="khtpField-MoAffixProcess-Form" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Lexeme_Form_field.htm</value>
+  </data>
+  <data name="khtpField-complexEntryTypeEdit-LexEntryType-ReverseName" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lists/Complex_Form_Types_flds/Reverse_Name_field_(Complex_Form_Types).htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-ReverseName" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Reverse_Name_field_(Variant_Types).htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryType-ReverseName" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Reverse_Name_field_(Variant_Types).htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEtymology-Bibliography" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Bibliographic_Source_Etymology.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEtymology-Language" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Source_Language_Etymology.htm</value>
+    <comment>LexEtymology - Language</comment>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEtymology-Note" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Etymology_Note_Etymology.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEtymology-PrecedingAnnotation" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Preceding_Annotation_Etymology.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-LexExtendedNote-ExtendedNoteType" xml:space="preserve">
+    <value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_a_note_type.htm</value>
+    <comment>Extended Note - Choose Type Dialog</comment>
+  </data>
+  <data name="khtpField-extNoteTypeEdit-CmPossibility-Abbreviation" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lists/Extended_Note_Types/Abbreviation_field_Extended_Notes.htm</value>
+    <comment>Extended Note - Abbreviation</comment>
+  </data>
+  <data name="khtpField-extNoteTypeEdit-CmPossibility-Confidence" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lists/Extended_Note_Types/Confidence_field_Extended_Notes.htm</value>
+    <comment>Extended Note - List -Confidence</comment>
+  </data>
+  <data name="khtpField-extNoteTypeEdit-CmPossibility-Description" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lists/Extended_Note_Types/Description_field_Extended_Notes.htm</value>
+    <comment>Extended Note - List - Description</comment>
+  </data>
+  <data name="khtpField-extNoteTypeEdit-CmPossibility-Discussion" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lists/Extended_Note_Types/Discussion_field_Extended_Notes.htm</value>
+    <comment>Extended Note - List -Discussion</comment>
+  </data>
+  <data name="khtpField-extNoteTypeEdit-CmPossibility-Name" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lists/Extended_Note_Types/Name_field_Extended_Notes.htm</value>
+    <comment>Extended Note -List - Name</comment>
+  </data>
+  <data name="khtpField-extNoteTypeEdit-CmPossibility-Researchers" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lists/Extended_Note_Types/Researchers_field_Extended_Notes.htm</value>
+    <comment>Extended Note - List -Researchers</comment>
+  </data>
+  <data name="khtpField-extNoteTypeEdit-CmPossibility-Restrictions" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lists/Extended_Note_Types/Restrictions_field_Extended_Notes.htm</value>
+    <comment>Extended Note - List -Restrictions</comment>
+  </data>
+  <data name="khtpField-extNoteTypeEdit-CmPossibility-Status" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lists/Extended_Note_Types/Status_field_Extended-Notes.htm</value>
+    <comment>Extended Note - List -Status</comment>
+  </data>
+  <data name="khtpField-lexiconEdit-LexExtendedNote-Translations" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Extended_Note/Translation_field_(Extended_Note).htm</value>
+    <comment>Extended Note - Lexicon -Examples - Translation no content</comment>
+  </data>
+  <data name="khtpField-lexiconEdit-LexExtendedNote-" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Extended_Note/Extended_Note_field.htm</value>
+    <comment>Extended Note - Unexpanded</comment>
+  </data>
+  <data name="khtpField-lexiconEdit-LexExtendedNote-Discussion" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Extended_Note/Discussion_field_(Extended_Note).htm</value>
+    <comment>Extended Note - Lexicon -Discussion</comment>
+  </data>
+  <data name="khtpField-lexiconEdit-LexExtendedNote-Examples" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Extended_Note/Example_field_(Extended_Note).htm</value>
+    <comment>Extended Note -Lexicon - Examples</comment>
+  </data>
+  <data name="khtpField-lexiconEdit-LexExtendedNote-ExtendedNoteType" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Extended_Note/Type_field_(Extended_Note).htm</value>
+    <comment>Extended Note - Lexicon -Type</comment>
+  </data>
+  <data name="khtpField-lexiconEdit-LexSense-ExtendedNote" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Extended_Note/Extended_Note_field.htm</value>
+    <comment>Extended Note</comment>
+  </data>
+  <data name="khtpField-lexiconEdit-LexExtendedNote-Example" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Extended_Note/Example_field_(Extended_Note).htm</value>
+    <comment>Extended Note - Expanded Example </comment>
+  </data>
+  <data name="khtpField-anthroEdit-CmAnthroItem-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Anthropology_Categories_fields/Subcategories_field_Anthropology_Categories.htm</value>
+    <comment>Anthropology Subitems</comment>
+  </data>
+  <data name="khtpField-chartmarkEdit-CmPossibility-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Text_Chart_Markers_fields/subitems_fld_tcmrkers.htm</value>
+    <comment>Text Chart Markers - Subitem</comment>
+  </data>
+  <data name="khtpField-charttempEdit-CmPossibility-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Text_Chart_Temp_fields/subitems_field_tctemp.htm</value>
+    <comment>Text Constituent Chart Template- Subitems</comment>
+  </data>
+  <data name="khtpField-complexEntryTypeEdit-LexEntryType-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Complex_Form_Types_flds/subtypes_fld_(complex_fm_types).htm</value>
+    <comment>Complex Entry Type - Subtypes</comment>
+  </data>
+  <data name="khtpField-complexEntryTypeEdit-LexEntryType-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Complex_Form_Types_flds/subtypes_fld_(complex_fm_types).htm</value>
+    <comment>Complex Entry Type - Subtype</comment>
+  </data>
+  <data name="khtpField-domainTypeEdit-CmPossibility-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Academic_Domains_fields/subitems_field_academic_domains.htm</value>
+    <comment>Academic Domain - Subtype</comment>
+  </data>
+  <data name="khtpField-educationEdit-CmPossibility-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Education_Levels_fields/Subitems_field_Education_Levels.htm</value>
+    <comment>Education Levels - Subtype</comment>
+  </data>
+  <data name="khtpField-extNoteTypeEdit-CmPossibility-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Extended_Note_Types/Subitems_field_(Extended_Notes).htm</value>
+    <comment>Extended Note - Subitems</comment>
+  </data>
+  <data name="khtpField-extNoteTypeEdit-CmPossibility-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Extended_Note_Types/Subitems_field_(Extended_Notes).htm</value>
+    <comment>Extended Note - Subitems</comment>
+  </data>
+  <data name="khtpField-genresEdit-CmPossibility-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Genres_fields/Subitems_field_Genres.htm</value>
+  </data>
+  <data name="khtpField-languagesListEdit-CmPossibility-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Languages/Subitems_field_(Languages).htm</value>
+    <comment>Languages list -Subitems</comment>
+  </data>
+  <data name="khtpField-languagesListEdit-CmPossibility-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Languages/Subitems_field_(Languages).htm</value>
+    <comment>Languages list -Subitem</comment>
+  </data>
+  <data name="khtpField-positionsEdit-CmPossibility-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Positions_fields/Subitems_field_(Positions).htm</value>
+  </data>
+  <data name="khtpField-positionsEdit-CmPossibility-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Positions_fields/Subitems_field_(Positions).htm</value>
+  </data>
+  <data name="khtpField-publicationsEdit-CmPossibility-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Publications/Subitems_field_(Publications).htm</value>
+  </data>
+  <data name="khtpField-publicationsEdit-CmPossibility-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Publications/Subitems_field_(Publications).htm</value>
+  </data>
+  <data name="khtpField-restrictionsEdit-CmPossibility-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Restrictions_fields/Subitems_field_(Restrictions).htm</value>
+  </data>
+  <data name="khtpField-restrictionsEdit-CmPossibility-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Restrictions_fields/Subitems_field_(Restrictions).htm</value>
+  </data>
+  <data name="khtpField-roleEdit-CmPossibility-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Roles_fields/Subitems_field_(Roles).htm</value>
+  </data>
+  <data name="khtpField-roleEdit-CmPossibility-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Roles_fields/Subitems_field_(Roles).htm</value>
+  </data>
+  <data name="khtpField-semanticDomainEdit-CmSemanticDomain-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Semantic_Domains_fields/Subdomain_Semantic_Domains.htm</value>
+  </data>
+  <data name="khtpField-semanticDomainEdit-CmSemanticDomain-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Semantic_Domains_fields/Subdomains_Semantic_Domains.htm</value>
+  </data>
+  <data name="khtpField-senseTypeEdit-CmPossibility-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Sense_Types_fields/Subitems_field_(Sense_Types).htm</value>
+  </data>
+  <data name="khtpField-senseTypeEdit-CmPossibility-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Sense_Types_fields/Subitems_field_(Sense_Types).htm</value>
+  </data>
+  <data name="khtpField-statusEdit-CmPossibility-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Status_fields/Subitems_field_(Status).htm</value>
+  </data>
+  <data name="khtpField-statusEdit-CmPossibility-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Status_fields/Subitems_field_(Status).htm</value>
+  </data>
+  <data name="khtpField-textMarkupTagsEdit-CmPossibility-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Text_Markup_Tags_fields/Subitems_fld_txtmkup.htm</value>
+  </data>
+  <data name="khtpField-translationTypeEdit-CmPossibility-" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Translation_Types_fields/Subitems_field_(Translation_Types).htm</value>
+  </data>
+  <data name="khtpField-translationTypeEdit-CmPossibility-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Translation_Types_fields/Subitems_field_(Translation_Types).htm</value>
+  </data>
+  <data name="khtpField-usageTypeEdit-CmPossibility-Subitems" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Usages_fields/Subitems_field_Usages.htm</value>
+  </data>
+  <data name="khtpChoose-Language" xml:space="preserve">
+    <value>/Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_a_source_language.htm</value>
+    <comment>Languages -Choose</comment>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEtymology-LanguageNotes" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Source_Language_Notes_(Etymology).htm</value>
+    <comment>LexEtymology - Language Notes</comment>
+  </data>
+  <data name="khtpField-languagesListEdit-CmPossibility-Abbreviation" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Languages/abbreviation_field_Languages.htm</value>
+    <comment>Languages list - Abbreviation</comment>
+  </data>
+  <data name="khtpField-languagesListEdit-CmPossibility-Confidence" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Languages/confidence_field_Languages.htm</value>
+    <comment>Languages list - Confidence</comment>
+  </data>
+  <data name="khtpField-languagesListEdit-CmPossibility-Description" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Languages/description_field_Languages.htm</value>
+    <comment>Languages list -Description</comment>
+  </data>
+  <data name="khtpField-languagesListEdit-CmPossibility-Discussion" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Languages/discussion_field_Languages.htm</value>
+    <comment>Languages list -Discussion</comment>
+  </data>
+  <data name="khtpField-languagesListEdit-CmPossibility-Name" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Languages/name_field_Languages.htm</value>
+    <comment>Languages list - Name</comment>
+  </data>
+  <data name="khtpField-languagesListEdit-CmPossibility-Researchers" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Languages/Researchers_field_Languages.htm</value>
+    <comment>Languages list -Researchers</comment>
+  </data>
+  <data name="khtpField-languagesListEdit-CmPossibility-Restrictions" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Languages/Restrictions_field_Languages.htm</value>
+    <comment>Languages list -Restrictions</comment>
+  </data>
+  <data name="khtpField-languagesListEdit-CmPossibility-Status" xml:space="preserve">
+    <value>/User_Interface/Field_Descriptions/Lists/Languages/status_field_Languages.htm</value>
+    <comment>Languages list - Status</comment>
+  </data>
+  <data name="khtpField-lexiconEdit-LexExtendedNote-Translation" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Extended_Note/Translation_field_(Extended_Note).htm</value>
+    <comment>Extended Note - Lexicon -Examples - Translation - with Content</comment>
+  </data>
+  <data name="khtpChoose-lexiconEdit-LexEntry-DialectLabels" xml:space="preserve">
+    <value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_a_dialect_label.htm</value>
+    <comment>Choose Dialect label (Entry)</comment>
+  </data>
+  <data name="khtpChoose-lexiconEdit-LexEntryRef-VariantEntryDialectLabels" xml:space="preserve">
+    <value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_a_dialect_label.htm</value>
+    <comment>Choose Dialect label (Variant)</comment>
+  </data>
+  <data name="khtpChoose-lexiconEdit-LexSense-DialectLabels" xml:space="preserve">
+    <value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_a_dialect_label.htm</value>
+    <comment>Choose Dialect label (Sense)</comment>
+  </data>
+  <data name="khtpField-dialectsListEdit-CmPossibility-Abbreviation" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lists/Dialect_Labels/Abbreviation_field_(Dialect_Labels).htm</value>
+    <comment>Dialect Labels List: Abbreviation</comment>
+  </data>
+  <data name="khtpField-dialectsListEdit-CmPossibility-Description" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lists/Dialect_Labels/Short_Description_field_(Dialect_Labels).htm</value>
+    <comment>Dialect Labels List: Short Description:</comment>
+  </data>
+  <data name="khtpField-dialectsListEdit-CmPossibility-Name" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lists/Dialect_Labels/Full_Name_field_(Dialect_Labels).htm</value>
+    <comment>Dialect Labels List: Full Name:</comment>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEntry-DialectLabels" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Dialect_Labels_Entry.htm</value>
+    <comment>Dialect Labels (Entry)</comment>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEntryRef-VariantEntryDialectLabels" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Variants_level_fields/Dialect_Labels_(Entry)_variant.htm</value>
+    <comment>Dialect Labels (Entry) variant</comment>
+  </data>
+  <data name="khtpField-lexiconEdit-LexSense-DialectLabels" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Dialect_Labels_(Sense).htm</value>
+    <comment>Dialect Labels (Sense)</comment>
+  </data>
+  <data name="khtpBulkEditDialectLabels(Entry)" xml:space="preserve">
+    <value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_choose_Dialect_Labels.htm</value>
+  </data>
+  <data name="khtpBulkEditDialectLabels(Sense)" xml:space="preserve">
+    <value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_choose_Dialect_Labels.htm</value>
+  </data>
+  <data name="khtpBulkEditEtym.-SourceLanguage" xml:space="preserve">
+    <value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_Edit_Entries_overview.htm</value>
+  </data>
+  <data name="khtpBulkEditExt.Note-Type" xml:space="preserve">
+    <value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_Edit_Entries_overview.htm</value>
+  </data>
+  <data name="khtpBulkEditPublishPictureIn" xml:space="preserve">
+    <value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_publications.htm</value>
+  </data>
+  <data name="khtpBulkEditPublishPronunciationIn" xml:space="preserve">
+    <value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_publications.htm</value>
+  </data>
+  <data name="khtpBulkEditSenseType" xml:space="preserve">
+    <value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_Edit_Entries_overview.htm</value>
   </data>
 </root>

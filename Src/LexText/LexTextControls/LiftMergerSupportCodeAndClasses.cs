@@ -65,6 +65,9 @@ namespace SIL.FieldWorks.LexText.Controls
 											 m_dictExceptFeats);
 				}
 			}
+			if (m_cache.LangProject.LexDbOA.DialectLabelsOA != null)
+				InitializePossibilityMap(m_cache.LangProject.LexDbOA.DialectLabelsOA.PossibilitiesOS,
+										 m_dictDialect);
 			if (m_cache.LangProject.LexDbOA.DomainTypesOA != null)
 				InitializePossibilityMap(m_cache.LangProject.LexDbOA.DomainTypesOA.PossibilitiesOS,
 										 m_dictDomainType);
@@ -83,6 +86,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_cache.LangProject.LocationsOA != null)
 				InitializePossibilityMap(m_cache.LangProject.LocationsOA.PossibilitiesOS,
 										 m_dictLocation);
+			if (m_cache.LangProject.LexDbOA.LanguagesOA != null)
+				InitializePossibilityMap(m_cache.LangProject.LexDbOA.LanguagesOA.PossibilitiesOS,
+										 m_dictLanguage);
 			if (m_cache.LangProject.PhonologicalDataOA != null)
 			{
 				foreach (IPhEnvironment env in m_cache.LangProject.PhonologicalDataOA.EnvironmentsOS)
@@ -1843,7 +1849,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="list"></param>
 		private void ProcessPossibility(string id, string guidAttr, string parent,
 			LiftMultiText description, LiftMultiText label, LiftMultiText abbrev,
-			Dictionary<string, ICmPossibility> dict, List<ICmPossibility> rgNew, ICmPossibilityList list)
+			Dictionary<string, ICmPossibility> dict, List<ICmPossibility> rgNew, ICmPossibilityList list, bool isCustom = false)
 		{
 			ICmPossibility poss = FindExistingPossibility(id, guidAttr, label, abbrev, dict, list);
 			if (poss == null)
@@ -1853,7 +1859,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					possParent = dict[parent];
 				else
 					possParent = list;
-				poss = CreateNewCmPossibility(guidAttr, possParent);
+				poss = isCustom ? CreateNewCustomPossibility(guidAttr, possParent) : CreateNewCmPossibility(guidAttr, possParent);
 				SetNewPossibilityAttributes(id, description, label, abbrev, poss);
 				dict[id] = poss;
 				rgNew.Add(poss);
@@ -3128,6 +3134,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
 				case (int)LexRefTypeTags.MappingTypes.kmtEntryTree:
 				case (int)LexRefTypeTags.MappingTypes.kmtSenseTree:
+				case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
+				case (int)LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
+				case (int)LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
 					StoreTreeRelation(refsAsYetUnmatched, lrt, rgRelation);
 					break;
 			}
@@ -4191,7 +4200,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			if (m_factCmPossibility == null)
 				m_factCmPossibility = m_cache.ServiceLocator.GetInstance<ICmPossibilityFactory>();
-			if (!String.IsNullOrEmpty(guidAttr))
+			if (!string.IsNullOrEmpty(guidAttr))
 			{
 				Guid guid = (Guid)m_gconv.ConvertFrom(guidAttr);
 				if (owner is ICmPossibility)
@@ -4204,6 +4213,29 @@ namespace SIL.FieldWorks.LexText.Controls
 				ICmPossibility csd = m_factCmPossibility.Create();
 				if (owner is ICmPossibility)
 					(owner as ICmPossibility).SubPossibilitiesOS.Add(csd);
+				else
+					(owner as ICmPossibilityList).PossibilitiesOS.Add(csd);
+				return csd;
+			}
+		}
+
+		private ICmPossibility CreateNewCustomPossibility(string guidAttr, ICmObject owner)
+		{
+			var customPossibilityFactory = m_cache.ServiceLocator.GetInstance<ICmCustomItemFactory>();
+			if (!string.IsNullOrEmpty(guidAttr))
+			{
+				Guid guid = (Guid)m_gconv.ConvertFrom(guidAttr);
+				if (owner is ICmPossibility)
+					return customPossibilityFactory.Create(guid, owner as ICmCustomItem);
+				else
+					return customPossibilityFactory.Create(guid, owner as ICmPossibilityList);
+			}
+			else
+			{
+				var csd = customPossibilityFactory.Create();
+				var item = owner as ICmCustomItem;
+				if (item != null)
+					item.SubPossibilitiesOS.Add(csd);
 				else
 					(owner as ICmPossibilityList).PossibilitiesOS.Add(csd);
 				return csd;

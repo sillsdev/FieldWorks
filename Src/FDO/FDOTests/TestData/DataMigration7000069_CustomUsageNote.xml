@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<languageproject version="7000068">
+
+	<rt class="LexEntry" guid="7ecbb299-bf35-4795-a5cc-8d38ce8b891e">
+	</rt>
+
+	<rt class="LexSense" guid="e3c2d179-3ccd-431e-ac2e-100bdb883682" ownerguid="7ecbb299-bf35-4795-a5cc-8d38ce8b891e">
+		<Custom name="UsageNote">
+			<AStr ws="en">
+				<Run ws="en">Custom Usage Note using AStr in English</Run>
+			</AStr>
+		</Custom>
+	</rt>
+
+	<rt class="LexSense" guid="e3c2d179-3ccd-431e-ac2e-100bdb883683" ownerguid="7ecbb299-bf35-4795-a5cc-8d38ce8b891e">
+		<Custom name="UsageNote1">
+			<AStr ws="en">
+				<Run ws="en">Custom Usage Note using AStr in English</Run>
+			</AStr>
+		</Custom>
+	</rt>
+
+	<rt class="LexSense" guid="e3c2d179-3ccd-431e-ac2e-100bdb883684" ownerguid="7ecbb299-bf35-4795-a5cc-8d38ce8b891e">
+		<Custom name="UsageNote">
+			<AUni ws="en">Custom Usage Note in English</AUni>
+			<AUni ws="fr">Note du Usage Custome en Francais</AUni>
+		</Custom>
+	</rt>
+
+	<rt class="LexSense" guid="e3c2d179-3ccd-431e-ac2e-100bdb883685" ownerguid="7ecbb299-bf35-4795-a5cc-8d38ce8b891e">
+		<Custom name="Test Note">
+			<AStr ws="en">
+				<Run ws="en">Custom Test Note using AStr in English</Run>
+			</AStr>
+		</Custom>
+	</rt>
+
+	<rt class="LexSense" guid="e3c2d179-3ccd-431e-ac2e-100bdb883686" ownerguid="7ecbb299-bf35-4795-a5cc-8d38ce8b891e">
+		<Custom name="UsageNote" val="42" />
+	</rt>
+
+</languageproject>

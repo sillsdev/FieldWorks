@@ -5,12 +5,10 @@
 // File: BaseStyleInfoTests.cs
 // Responsibility: TE Team
 
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.COMInterfaces;
 
@@ -125,7 +123,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// <param name="buffer">The buffer.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		private string MakeStringFromBuffer(byte[] buffer)
+		internal static string MakeStringFromBuffer(byte[] buffer)
 		{
 			StringBuilder bldr = new StringBuilder(buffer.Length / 2);
 			for (int i = 0; i < buffer.Length; i += 2)
@@ -347,6 +345,63 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.IsTrue(entry.InheritableBorderColor.IsInherited);
 		}
 
+		/// <summary/>
+		[Test]
+		public void SetBasedOnStyleAndInheritValues_WsOverrideInChildInheritsParentValues()
+		{
+			// Font family override
+			byte[] buffer = new byte[] {
+				0xC1, 0x87, 0x8B, 0x3B, // WS for english (little endian)
+				0x09, 0x00, // FF length
+				(byte)'F', 0,
+				(byte)'o', 0,
+				(byte)'n', 0,
+				(byte)'t', 0,
+				(byte)'a', 0,
+				(byte)'s', 0,
+				(byte)'t', 0,
+				(byte)'i', 0,
+				(byte)'c', 0,
+
+				0x01, 0x00, // Count of int props
+
+				0x06, 0x00, // First int prop: type
+				0x01, 0x00, // Variant
+				0xe0, 0x2e, 0x00, 0x00, // value
+			};
+
+			ITsPropsBldr props;
+
+			var mainTitleStyle = AddTestStyle("Title Main", ContextValues.Title,
+				StructureValues.Body, FunctionValues.Prose, false, Cache.LangProject.StylesOC);
+			var inheritFromMain = AddTestStyle("Inherit Title", ContextValues.Title, StructureValues.Body,
+				FunctionValues.Prose, false, Cache.LangProject.StylesOC);
+			inheritFromMain.BasedOnRA = mainTitleStyle;
+			props = mainTitleStyle.Rules.GetBldr();
+			// set the font property in the mainTitleStyle
+			props.SetStrPropValue((int)FwTextPropType.ktptWsStyle, DummyStyleInfo.MakeStringFromBuffer(buffer));
+			mainTitleStyle.Rules = props.GetTextProps();
+
+			var entry = new DummyStyleInfo(mainTitleStyle);
+			var childEntry = new DummyStyleInfo(inheritFromMain);
+			var styleInfos = new FwStyleSheet.StyleInfoCollection();
+			styleInfos.Add(entry);
+			styleInfos.Add(childEntry);
+			// SUT
+			childEntry.SetBasedOnStyleAndInheritValues(styleInfos);
+			Assert.AreEqual(childEntry.BasedOnStyle, entry,
+				"The child style entry in the StyleInfoCollection was not based on the parent entry");
+			var fontInfoOverrides = entry.FontInfoForWs(Cache.DefaultAnalWs);
+			Assert.True(fontInfoOverrides.m_fontName.IsExplicit, "The fontName was not set properly in the parent entry");
+			Assert.AreEqual(fontInfoOverrides.FontName.Value, "Fontastic",
+				"The fontName was not set properly in the parent entry");
+			var childOverrides = childEntry.FontInfoForWs(Cache.DefaultAnalWs);
+			Assert.True(childOverrides.m_fontName.IsInherited,
+				"The child entry in the StyleInfoCollection did not inherit the fontName properly");
+			Assert.AreEqual(childOverrides.FontName.Value, "Fontastic",
+				"The child entry in the StyleInfoCollection did not inherit the fontName properly");
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests retrieving WS specific overrides from string
@@ -356,7 +411,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void WsSpecificOverrides_OneWs()
 		{
 			byte[] buffer = new byte[] {
-				0x34, 0x12, 0x00, 0x00, // WS
+				0xC1, 0x87, 0x8B, 0x3B, // WS
 				0x00, 0x00, // FF length
 				0x03, 0x00, // Count of int props
 
@@ -378,7 +433,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			List<FontOverrideInfo> overrideInfo = entry.CallProcessWsSpecificOverrides(buffer);
 
 			Assert.AreEqual(1, overrideInfo.Count);
-			Assert.AreEqual(0x1234, overrideInfo[0].m_ws);
+			Assert.AreEqual(999000001, overrideInfo[0].m_ws);
 			Assert.AreEqual(0, overrideInfo[0].m_fontFamily.Length);
 			Assert.AreEqual(0, overrideInfo[0].m_stringProps.Count);
 			Assert.AreEqual(3, overrideInfo[0].m_intProps.Count);

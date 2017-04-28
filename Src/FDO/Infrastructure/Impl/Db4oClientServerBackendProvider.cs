@@ -187,7 +187,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				//--( Load model version number, and check against current number. )--//
 				m_modelVersionNumber = m_dbStore.Query<ModelVersionNumber>()[0];
 				var currentDataStoreVersion = m_modelVersionNumber.m_modelVersionNumber;
-				var needConversion = (currentDataStoreVersion != currentModelVersion);
+				var needConversion = currentDataStoreVersion != currentModelVersion;
 
 				if (m_restarting)
 				{
@@ -202,27 +202,24 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				foreach (CustomFieldInfo customField in m_dbStore.Query<CustomFieldInfo>().ToArray())
 				{
 					CustomFieldInfo dupInfo;
-					if (m_myKnownCustomFields.TryGetValue(customField.Key, out dupInfo))
+					if (m_myKnownCustomFields.TryGetValue(customField.Key, out dupInfo) && dupInfo.AlmostEquals(customField))
 					{
 						// This should never happen, but somehow some databases are around which have the problem.
 						// Try to correct it.  (The flids may not match exactly.  See LT-11486.)
-						if (dupInfo.AlmostEquals(customField))
-						{
-							m_dbStore.Delete(customField);
-							m_dbStore.Commit();
-							continue;
-						}
 						// If they are NOT (almost) equal, we will go ahead and crash :-<
+						m_dbStore.Delete(customField);
+						m_dbStore.Commit();
+						continue;
 					}
 					customFields.Add(customField);
 					m_myKnownCustomFields.Add(customField.Key, customField);
 				}
-				RegisterOriginalCustomProperties(customFields);
+				RegisterOriginalCustomProperties(customFields, currentDataStoreVersion);
 
 				//--( Load surrogates )--/
 				var generations = from CommitData cd in m_dbStore select cd.WriteGeneration;
 				m_lastWriteGenerationSeen = 0;
-				if (generations.Count() > 0)
+				if (generations.Any())
 					m_lastWriteGenerationSeen = generations.Max();
 
 				Db4oServerInfo info = GetDb4OServerInfo(m_host, Db4OServerFinder.ServiceDiscoveryPort);

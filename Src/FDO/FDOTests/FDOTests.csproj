@@ -167,11 +167,15 @@
     </Reference>
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
-      <HintPath>..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
+    </Reference>
+    <Reference Include="Palaso.TestUtilities, Version=2.6.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\Palaso.TestUtilities.dll</HintPath>
     </Reference>
     <Reference Include="PhonEnvValidator, Version=3.2.0.9, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -225,7 +229,7 @@
       <Name>System.XML</Name>
     </Reference>
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="TestUtils, Version=5.5.0.24598, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="TestUtils, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\TestUtils.dll</HintPath>
     </Reference>
@@ -299,17 +303,22 @@
     <Compile Include="DataMigrationTests\DataMigration7000065Tests.cs" />
     <Compile Include="DataMigrationTests\DataMigration7000066Tests.cs" />
     <Compile Include="DataMigrationTests\DataMigration7000067Tests.cs" />
+    <Compile Include="DataMigrationTests\DataMigration7000069Tests.cs" />
+    <Compile Include="DataMigrationTests\DataMigration7000070Tests.cs" />
     <Compile Include="DataSortingServiceTests.cs" />
     <Compile Include="DataStoreInitializationServicesTests.cs" />
     <Compile Include="Db4oServerInfoTests.cs" />
+    <Compile Include="DomainObjectServicesTests.cs" />
     <Compile Include="DummyFdoUI.cs" />
     <Compile Include="DummyProgressDlg.cs" />
     <Compile Include="DuplicateAnalysisFixerTests.cs" />
     <Compile Include="DuplicateWordformFixerTests.cs" />
+    <Compile Include="FdoBackendProviderTests.cs" />
     <Compile Include="FdoFactoryAdditionsTests.cs" />
     <Compile Include="FeatureSystemTests.cs" />
     <Compile Include="FwSetupFixtureClass.cs" />
     <Compile Include="GoldEticTests.cs" />
+    <Compile Include="HomographConfigurationTests.cs" />
     <Compile Include="Ling_WfiTests.cs" />
     <Compile Include="CmCellTests.cs" />
     <Compile Include="CmFilterTests.cs" />
@@ -378,6 +387,7 @@
     <Compile Include="ScrSfFileListTests.cs" />
     <Compile Include="ScrTxtParaTests.cs" />
     <Compile Include="ScrVerseTests.cs" />
+    <Compile Include="SenseOrEntryTests.cs" />
     <Compile Include="SharedBackendServicesTests.cs" />
     <Compile Include="StFootnoteTests.cs" />
     <Compile Include="StringServicesTests.cs" />
@@ -409,6 +419,7 @@
     <Compile Include="XmlListTests.cs" />
     <Compile Include="XmlTranslatedListsTests.cs" />
     <Compile Include="FdoInvertSetTests.cs" />
+    <Compile Include="ReadWriteServicesTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="BuildInclude.targets">
@@ -420,6 +431,16 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="TestData\DataMigration7000042C.xml" />
+    <Content Include="TestData\DataMigration7000042D.xml" />
+    <Content Include="TestData\DataMigration7000042E.xml" />
+    <Content Include="TestData\DataMigration7000069_Dialects.xml" />
+    <Content Include="TestData\DataMigration7000069_Etymology.xml" />
+    <Content Include="TestData\DataMigration7000069_CustomExemplar.xml" />
+    <Content Include="TestData\DataMigration7000069_CustomUsageNote.xml" />
+    <Content Include="TestData\DataMigration7000069.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="TestData\DataMigration7000067TestData.xml" />
     <Content Include="TestData\DataMigration7000058_NonEmptyGlossAppend.xml" />
     <Content Include="TestData\DataMigration7000058_EmptyGlossAppend.xml" />
@@ -440,6 +461,9 @@
     </Content>
     <Content Include="TestData\DataMigration7000066_CustomPropertyMagnet.xml" />
     <Content Include="TestData\DataMigration7000066_RegularPropertyMagnet.xml" />
+    <Content Include="TestData\DataMigration7000069_ExtendedNote.xml" />
+    <Content Include="TestData\DataMigration7000069_UnspecComplexAndVariantType.xml" />
+    <Content Include="TestData\DataMigration7000070.xml" />
     <None Include="BackupRestore\BackupTestProject\BackupTestProject.fwdata" />
     <None Include="BackupRestore\BackupTestProject\BackupTestProject.fwdata.bak" />
     <None Include="BackupRestore\BackupTestProject\SupportingFiles\GrkPolyComp.kmp" />

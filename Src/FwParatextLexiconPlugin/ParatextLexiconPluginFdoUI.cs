@@ -4,7 +4,6 @@
 
 using System;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
@@ -12,7 +11,7 @@ using SIL.Utils;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
-	internal class ParatextLexiconPluginFdoUI : IFdoUI
+	internal class ParatextLexiconPluginFdoUI : FwDisposableBase, IFdoUI
 	{
 		private readonly SynchronizeInvokeWrapper m_synchronizeInvoke;
 		private readonly UserActivityMonitor m_activityMonitor;
@@ -100,6 +99,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			SynchronizeInvoke.Invoke(() => MessageBox.Show(message, caption, MessageBoxButtons.OK, icon));
 		}
 
+		public void DisplayCircularRefBreakerReport(string report, string caption)
+		{
+			var icon = MessageBoxIcon.Information;
+			m_synchronizeInvoke.Invoke(() => MessageBox.Show(report, caption, MessageBoxButtons.OK, icon));
+		}
+
 		public void ReportException(Exception error, bool isLethal)
 		{
 			// do nothing
@@ -140,30 +145,26 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			get { return m_activityMonitor.LastActivityTime; }
 		}
 
-		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-			Justification="m_activationContext is a reference")]
-		private class SynchronizeInvokeWrapper : ISynchronizeInvoke
+		protected override void DisposeManagedResources()
+		{
+			m_synchronizeInvoke.Dispose();
+		}
+
+		private class SynchronizeInvokeWrapper : FwDisposableBase, ISynchronizeInvoke
 		{
 			private readonly ActivationContextHelper m_activationContext;
+			private readonly Control m_control;
 
 			public SynchronizeInvokeWrapper(ActivationContextHelper activationContext)
 			{
 				m_activationContext = activationContext;
+				m_control = new Control();
+				m_control.CreateControl();
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "Form.ActiveForm returns a reference")]
 			private ISynchronizeInvoke SynchronizeInvoke
 			{
-				get
-				{
-					Form form = Form.ActiveForm;
-					if (form != null)
-						return form;
-					if (Application.OpenForms.Count > 0)
-						return Application.OpenForms[0];
-					return null;
-				}
+				get { return m_control; }
 			}
 
 			public IAsyncResult BeginInvoke(Delegate method, object[] args)
@@ -184,20 +185,19 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			{
 				return SynchronizeInvoke.Invoke(new Func<object>(() =>
 				{
-					using (m_activationContext)
+					using (m_activationContext.Activate())
 						return method.DynamicInvoke(args);
 				}), null);
 			}
 
 			public bool InvokeRequired
 			{
-				get
-				{
-					ISynchronizeInvoke si = SynchronizeInvoke;
-					if (si == null)
-						return false;
-					return si.InvokeRequired;
-				}
+				get { return true; }
+			}
+
+			protected override void DisposeManagedResources()
+			{
+				m_control.Dispose();
 			}
 		}
 	}

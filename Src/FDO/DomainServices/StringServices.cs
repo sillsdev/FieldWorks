@@ -23,6 +23,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	/// </summary>
 	public static class StringServices
 	{
+		// Mono is slow with multiple string calls to the resources,
+		// therefore we need a cached member variable.
+		private static string m_CacheQuestions;
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the empty name of the file.
@@ -239,7 +243,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (String.IsNullOrEmpty(citationForm))
 				return entry.Cache.TsStrFactory.EmptyString(wsVern);
 			var tisb = TsIncStrBldrClass.Create();
-			AddHeadwordForWsAndHn(entry, wsVern, nHomograph, hv, tisb, citationForm);
+			AddHeadwordForWsAndHn(entry, wsVern, nHomograph, hv, tisb, citationForm, entry.Cache);
 			return tisb.GetString();
 		}
 
@@ -261,37 +265,45 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				tisb.AppendTsString(entry.Cache.TsStrFactory.EmptyString(wsVern)); // avoids COM Exception!
 				return;
 			}
-			AddHeadwordForWsAndHn(entry, wsVern, nHomograph, hv, tisb, citationForm);
+			AddHeadwordForWsAndHn(entry, wsVern, nHomograph, hv, tisb, citationForm, entry.Cache);
 		}
 
-		private static void AddHeadwordForWsAndHn(ILexEntry entry, int wsVern, int nHomograph,
-			HomographConfiguration.HeadwordVariant hv, ITsIncStrBldr tisb, string citationForm)
+		private static void AddHeadwordForWsAndHn(ILexEntry entry, int wsVern, int nHomograph, HomographConfiguration.HeadwordVariant hv,
+			ITsIncStrBldr tisb, string citationForm, FdoCache cache)
 		{
-			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsVern);
 			var hc = entry.Services.GetInstance<HomographConfiguration>();
 			if (hc.HomographNumberBefore)
-				InsertHomographNumber(tisb, nHomograph, hc, hv);
+				InsertHomographNumber(tisb, nHomograph, hc, hv, cache);
+			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsVern);
 			tisb.Append(citationForm);
 
-			// (EricP) Tried to automatically update the homograph number, but doing that here will
-			// steal away manual changes to the HomographNumber column. Also suppressing PropChanged
-			// is necessary when HomographNumber column is enabled, otherwise changing the entry index can hang.
-			//using (new IgnorePropChanged(cache, PropChangedHandling.SuppressView))
-			//{
-			//	  ValidateExistingHomographs(CollectHomographs(cache, ShortName1StaticForWs(cache, hvo, wsVern), 0, morphType));
-			//}
-
 			if (!hc.HomographNumberBefore)
-				InsertHomographNumber(tisb, nHomograph, hc, hv);
+				InsertHomographNumber(tisb, nHomograph, hc, hv, cache);
 		}
 
 		private static void InsertHomographNumber(ITsIncStrBldr tisb, int nHomograph, HomographConfiguration hc,
-			HomographConfiguration.HeadwordVariant hv)
+			HomographConfiguration.HeadwordVariant hv, FdoCache cache)
 		{
 			if (nHomograph > 0 && hc.ShowHomographNumber(hv))
 			{
 				tisb.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, HomographConfiguration.ksHomographNumberStyle);
-				tisb.Append(nHomograph.ToString());
+				if (!string.IsNullOrEmpty(hc.WritingSystem))
+				{
+					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, cache.WritingSystemFactory.GetWsFromStr(hc.WritingSystem));
+				}
+				else
+				{
+					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, cache.DefaultVernWs);
+				}
+				var hnString = nHomograph.ToString();
+				if (hc.CustomHomographNumbers.Count == 10)
+				{
+					for (var i = 0; i < 10; ++i)
+					{
+						hnString = hnString.Replace(i.ToString(), hc.CustomHomographNumbers[i]);
+					}
+				}
+				tisb.Append(hnString);
 				tisb.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, null);
 			}
 		}
@@ -366,7 +378,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 			// Give up.
 			tsb.AppendTsString(entry.Cache.TsStrFactory.MakeString(
-				Strings.ksQuestions,
+				DefaultHomographString(),
 				entry.Cache.DefaultUserWs));
 		}
 
@@ -430,7 +442,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// </summary>
 		public static string DefaultHomographString()
 		{
-			return Strings.ksQuestions;
+			if (m_CacheQuestions == null)
+				m_CacheQuestions = Strings.ksQuestions;
+			return m_CacheQuestions;
 		}
 
 		/// <summary>

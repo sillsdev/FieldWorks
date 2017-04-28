@@ -3491,6 +3491,74 @@ namespace LexTextControlsTests
 			Assert.That(example0.LiftResidue, Is.Not.StringContaining("do-not-publish-in"));
 		}
 
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Prove that a custom list with custom list items imports correctly.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void TestLiftImportOfCustomList()
+		{
+			var customListGuid = "cd19e27d-e404-4bf1-9be4-baba071a431f";
+			var customListItemGuid = "821105b6-02a0-4ef2-8ea8-225e120142f7";
+			var customListLiftData = new[]
+			{
+				"<?xml version='1.0' encoding='UTF-8' ?>",
+				"<lift producer='SIL.FLEx 8.3.6.42804' version='0.13'>",
+				"<header>",
+				"<ranges>",
+				"<range id='CustomList' href='file://E:/WorkFiles/Lifty/Lifty.lift-ranges'/>",
+				"</ranges>",
+				"<fields/>",
+				"</header>",
+				"</lift>"
+			};
+			var customListRanges = new[]
+			{
+				"<?xml version='1.0' encoding='UTF-8'?>",
+				"<lift-ranges>}",
+				"<range id='CustomList' guid='" + customListGuid + "'>",
+				"<range-element id='CustomItemOne' guid='" + customListItemGuid + "'>",
+				"<label>",
+				"<form lang='en'><text>CustomItemOne</text></form>",
+				"</label>",
+				"<abbrev>",
+				"<form lang='en'><text>cio</text></form>",
+				"</abbrev>",
+				"<description>",
+				"<form lang='en'><text>descriptivo</text></form>",
+				"</description>",
+				"</range-element>",
+				"</range>",
+				"</lift-ranges>"
+			};
+			SetWritingSystems("fr");
+
+			//Create the LIFT data file
+			var sOrigFile = CreateInputFile(customListLiftData);
+			//Create the LIFT ranges file
+			var sOrigRangesFile = CreateInputRangesFile(customListRanges);
+
+			// prove that our setup is good and we are importing these objects
+			Assert.Throws<KeyNotFoundException>(()=>Cache.ServiceLocator.ObjectRepository.GetObject(new Guid(customListGuid)));
+			Assert.Throws<KeyNotFoundException>(() => Cache.ServiceLocator.ObjectRepository.GetObject(new Guid(customListItemGuid)));
+
+			// SUT
+			var logFile = TryImportWithRanges(sOrigFile, sOrigRangesFile, 0);
+			File.Delete(sOrigFile);
+			File.Delete(sOrigRangesFile);
+
+			// Verification
+			Assert.IsNotNull(logFile);
+			File.Delete(logFile);
+
+			var customList = Cache.ServiceLocator.ObjectRepository.GetObject(new Guid(customListGuid)) as ICmPossibilityList;
+			Assert.NotNull(customList);
+			var customListItem = Cache.ServiceLocator.ObjectRepository.GetObject(new Guid(customListItemGuid));
+			Assert.NotNull(customListItem);
+			Assert.IsTrue(customListItem is ICmCustomItem);
+		}
+
 		static private readonly string[] s_BadMorphTypeTestData = new[]
 		{
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",

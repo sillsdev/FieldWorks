@@ -24,8 +24,11 @@ using System.Security;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using Gecko;
 using Microsoft.Win32;
+using Palaso.IO;
 using Palaso.Reporting;
+using Palaso.UI.WindowsForms.HtmlBrowser;
 using Palaso.UI.WindowsForms.Keyboarding;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -44,6 +47,7 @@ using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.PaObjects;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.LexicalProvider;
+using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 using XCore;
@@ -52,7 +56,7 @@ using ConfigurationException = SIL.Utils.ConfigurationException;
 using ExceptionHelper = SIL.Utils.ExceptionHelper;
 using Logger = SIL.Utils.Logger;
 using SIL.CoreImpl.Properties;
-using Gecko;
+using FileUtils = SIL.Utils.FileUtils;
 #if !__MonoCS__
 using NetSparkle;
 #endif
@@ -129,6 +133,10 @@ namespace SIL.FieldWorks
 
 		#region Main Method and Initialization Methods
 
+		[DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		static extern bool SetDllDirectory(string lpPathName);
+
 		/// ----------------------------------------------------------------------------
 		/// <summary>
 		/// The main entry point for the FieldWorks executable.
@@ -151,22 +159,12 @@ namespace SIL.FieldWorks
 			try
 			{
 #region Initialize XULRunner - required to use the geckofx WebBrowser Control (GeckoWebBrowser).
-
-#if __MonoCS__
-				var xulRunnerLocation = XULRunnerLocator.GetXULRunnerLocation();
-				if (string.IsNullOrEmpty(xulRunnerLocation))
-					throw new ApplicationException("The XULRunner library is missing or has the wrong version");
-				var librarySearchPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH") ?? String.Empty;
-				if (!librarySearchPath.Contains(xulRunnerLocation))
-					throw new ApplicationException("LD_LIBRARY_PATH must contain " + xulRunnerLocation);
-#else
-				// LT-16559: Specifying a hint path is necessary on Windows, but causes a crash in Xpcom.Initialize on Linux. Go figure.
-				var xulRunnerLocation = XULRunnerLocator.GetXULRunnerLocation("xulrunner");
-				if (string.IsNullOrEmpty(xulRunnerLocation))
-					throw new ApplicationException("The XULRunner library is missing or has the wrong version");
-#endif
-				Xpcom.Initialize(xulRunnerLocation);
+				var exePath = Path.GetDirectoryName(Application.ExecutablePath);
+				Xpcom.Initialize(Path.Combine(exePath, "Firefox"));
 				GeckoPreferences.User["gfx.font_rendering.graphite.enabled"] = true;
+				// Set default browser for XWebBrowser to use GeckoFX.
+				// This can still be changed per instance by passing a parameter to the constructor.
+				XWebBrowser.DefaultBrowserType = XWebBrowser.BrowserType.GeckoFx;
 #endregion Initialize XULRunner
 
 				Logger.WriteEvent("Starting app");
@@ -373,7 +371,7 @@ namespace SIL.FieldWorks
 					// Doing the shutdown here seems cleaner than using an ApplicationExit
 					// delegate.
 					var foo = new GeckoWebBrowser();
-					Xpcom.Shutdown();
+					Xpcom.Shutdown(); // REVIEW pH 2016.07: likely not necessary with Gecko45
 				}
 			}
 			return 0;
@@ -2933,6 +2931,12 @@ namespace SIL.FieldWorks
 				// It seems to get activated before we connect the Activate event. But it IS active by now;
 				// so just record it now as the active one.
 				s_activeMainWnd = (IFwMainWnd)fwMainWindow;
+				using(new DataUpdateMonitor(fwMainWindow, "Migrating Dictionary Configuration Settings"))
+				{
+					var configMigrator = new DictionaryConfigurationMigrator(s_activeMainWnd.Mediator);
+					configMigrator.MigrateOldConfigurationsIfNeeded();
+				}
+				EnsureValidReversalIndexConfigFile(app.Cache);
 			}
 			catch (StartupException ex)
 			{
@@ -2951,6 +2955,15 @@ namespace SIL.FieldWorks
 			fwMainWindow.Activated += FwMainWindowActivated;
 			fwMainWindow.Closing += FwMainWindowClosing;
 			return true;
+		}
+
+		private static void EnsureValidReversalIndexConfigFile(FdoCache cache)
+		{
+			var wsMgr = cache.ServiceLocator.WritingSystemManager;
+			cache.DomainDataByFlid.BeginNonUndoableTask();
+			ReversalIndexServices.CreateOrRemoveReversalIndexConfigurationFiles(wsMgr, cache,
+				FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory, cache.LangProject.ShortName);
+			cache.DomainDataByFlid.EndNonUndoableTask();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -3149,33 +3162,6 @@ namespace SIL.FieldWorks
 				if (s_noUserInterface || InitializeApp(app, s_splashScreen))
 				{
 					app.RegistrySettings.LoadingProcessId = 0;
-#if !__MonoCS__
-					if (!WindowsInstallerQuery.IsThisInstalled() || app.ActiveMainWindow == null)
-						return true;
-
-					// Initialize NetSparkle to check for updates:
-					Settings.Default.IsBTE = WindowsInstallerQuery.IsThisBTE();
-
-					var appCastUrl = Settings.Default.IsBTE
-						? (Settings.Default.CheckForBetaUpdates
-							? CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastBteBetasUrl")
-							: CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastBteUrl"))
-						: (Settings.Default.CheckForBetaUpdates
-							? CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastSeBetasUrl")
-							: CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastSeUrl"));
-
-					var sparkle = SingletonsContainer.Get("Sparkle", () => new Sparkle(appCastUrl, app.ActiveMainWindow.Icon));
-					sparkle.AboutToExitForInstallerRun += delegate(object sender, CancelEventArgs args)
-						{
-							CloseAllMainWindows();
-							if(app.ActiveMainWindow != null)
-							{
-								args.Cancel = true;
-							}
-						};
-					if (Settings.Default.AutoCheckForUpdates)
-						sparkle.CheckOnFirstApplicationIdle();
-#endif
 					return true;
 				}
 			}

@@ -15,7 +15,6 @@ using System.Drawing.Printing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Windows.Automation.Provider;
 using Accessibility;
 using Palaso.UI.WindowsForms.Keyboarding.Interfaces;
 using Palaso.WritingSystems;
@@ -24,6 +23,9 @@ using Palaso.UI.WindowsForms.Keyboarding.Types;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
+#if !__MonoCS__
+using System.Windows.Automation.Provider;
+#endif
 using XCore;
 
 namespace SIL.FieldWorks.Common.RootSites
@@ -472,9 +474,12 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_messageSequencer = new MessageSequencer(this);
 			m_graphicsManager = CreateGraphicsManager();
 			m_orientationManager = CreateOrientationManager();
+#if !__MonoCS__
 			if (UIAutomationServerProviderFactory == null)
 				UIAutomationServerProviderFactory = () => new SimpleRootSiteDataProvider(this);
-			SubscribeToRootSiteEventHandlerEvents();
+#endif
+			if(LicenseManager.UsageMode != LicenseUsageMode.Designtime)
+				SubscribeToRootSiteEventHandlerEvents();
 		}
 
 #if DEBUG
@@ -955,6 +960,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			set
 			{
 				CheckDisposed();
+
 				// If this is read-only, it should not try to handle keyboard input in general.
 				if (EditingHelper.Editable && value)
 					KeyboardController.Unregister(this);
@@ -1872,12 +1878,11 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the (estimated) height of one line
+		/// Gets the (estimated) height of one line in pixels
 		/// </summary>
 		/// <remarks>
 		/// Should we use the selection text properties and stylesheet to get a more specific value?
 		/// (font height + 4pt?)
-		/// Note: the calculation below returns 18 for what would be 18.6667 (if Dpi.Y==96).
 		/// </remarks>
 		/// ------------------------------------------------------------------------------------
 		public int LineHeight
@@ -1885,7 +1890,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			get
 			{
 				CheckDisposed();
-				return 14 * Dpi.Y / 72; // 14 points is typically about a line.
+				// use Math.Ceiling to make sure sure the height doesn't round down inappropriately
+				return (int)(14 * Math.Ceiling(Dpi.Y / (float)72)); // 14 points is typically about a line. 72 points/inch.
 			}
 		}
 
@@ -3295,7 +3301,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			base.OnHandleCreated(e);
 
-			if (DesignMode && !AllowPaintingInDesigner)
+			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime && !AllowPaintingInDesigner)
 				return;
 
 			// If it is the second pane of a split window, it may have been given a copy of the
@@ -6202,6 +6208,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			base.WndProc(ref msg);
 		}
 
+#if !__MonoCS__
 		#region UIAutomationServerProvider
 
 		/// <summary>
@@ -6212,6 +6219,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{ get; set; }
 
 		#endregion
+#endif
 
 		/// <summary>
 		/// Required by interface, but not used, because we don't user the MessageSequencer

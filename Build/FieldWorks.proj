@@ -1,24 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="all" InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 
+  <UsingTask TaskName="CatenateFiles" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="ComputerName" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="CpuArchitecture" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="DownloadFile" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="DownloadFilesFromTeamCity" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="FdoGenerate" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="ForceDelete" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="GenerateFwTargets" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="GenerateNUnitReports" AssemblyFile="FwBuildTasks.dll" />
+  <UsingTask TaskName="GenerateTestCoverageReport" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="Make" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="Md5Checksum" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="NUnit" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="ParentDirectory" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="PathCombine" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="SetEnvVar" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="Unzip" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="RegFree" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="GenerateNUnitReports" AssemblyFile="FwBuildTasks.dll" />
-  <UsingTask TaskName="XslTransformation" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Unix'"/>
-  <UsingTask TaskName="WriteTextFile" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Unix'"/>
-  <UsingTask TaskName="CatenateFiles" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="Md5Checksum" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="RegisterForTests" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="SetEnvVar" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="Unitpp" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="Unzip" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="VerifyFilesIdentical" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="WriteRegistry" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="WriteTextFile" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Unix'"/>
+  <UsingTask TaskName="XslTransformation" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Unix'"/>
+  <UsingTask TaskName="Zip" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="Gendarme" AssemblyFile="Gendarme.MsBuild/Gendarme.MsBuild.dll"/>
 
   <Import Project="GlobalInclude.properties" Condition="Exists('GlobalInclude.properties')"/>
@@ -47,5 +54,5 @@
   <Import Project="FieldWorks.targets" Condition="Exists('FieldWorks.targets')"/>
   <Import Project="mkall.targets"/>
   <Import Project="Localize.targets"/>
-
+  <Import Project="NuGet.targets"/>
 </Project>

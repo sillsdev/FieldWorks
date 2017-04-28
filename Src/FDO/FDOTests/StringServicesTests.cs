@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
@@ -170,6 +171,31 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			}
 		}
 
+		/// <summary/>
+		[Test]
+		public void StringServices_HeadwordForWsAndWritingSystem_CustomHeadwordNumbers()
+		{
+			var entry1 = MakeEntry("a", "first homograph");
+			var hc = Cache.ServiceLocator.GetInstance<HomographConfiguration>();
+			hc.WritingSystem = "fr";
+			hc.CustomHomographNumbers = new List<string> { "O", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX" };
+			var headwordForWs = StringServices.HeadWordForWsAndHn(entry1, Cache.DefaultVernWs, 1, "???");
+			VerifyString(headwordForWs, new []{ "a", "I"}, new [] { Cache.DefaultVernWs, Cache.DefaultVernWs });
+			hc.CustomHomographNumbers = new List<string>();
+		}
+
+		/// <summary/>
+		[Test]
+		public void StringServices_HeadwordForWsAndWritingSystem_NumberBeforeKeepsWsForHw()
+		{
+			var entry1 = MakeEntry("a", "first homograph");
+			var hc = Cache.ServiceLocator.GetInstance<HomographConfiguration>();
+			hc.WritingSystem = "en";
+			hc.HomographNumberBefore = true;
+			var headwordForWs = StringServices.HeadWordForWsAndHn(entry1, Cache.DefaultVernWs, 1, "???");
+			VerifyString(headwordForWs, new[] { "1", "a" }, new[] { Cache.DefaultAnalWs, Cache.DefaultVernWs });
+		}
+
 
 		private void VerifyString(ITsString tss, string[] parts, string[] expectedStyles)
 		{
@@ -185,6 +211,25 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				Assert.That(sub.Text, Is.EqualTo(parts[i]));
 				Assert.That(sub.get_Properties(0).GetStrPropValue((int)FwTextPropType.ktptNamedStyle), Is.EqualTo(expectedStyles[i]),
 					" part " + i + " (" + parts[i] + ") has the wrong style " + tss.Text);
+				start = end;
+			}
+		}
+
+		private void VerifyString(ITsString tss, string[] parts, int[] expectedWritingSystems)
+		{
+			// The number of runs is not necessarily the same as the number of parts, because some runs may have merged.
+			Assert.AreEqual(parts.Length, expectedWritingSystems.Length);
+			Assert.That(tss.Length, Is.EqualTo((from item in parts select item.Length).Sum()));
+			int start = 0;
+			for (int i = 0; i < parts.Length; i++)
+			{
+				int end = start + parts[i].Length;
+				var sub = tss.GetSubstring(start, end);
+				Assert.That(sub.RunCount, Is.EqualTo(1), " part " + i + " (" + parts[i] + ") has too many runs in string " + tss.Text);
+				Assert.That(sub.Text, Is.EqualTo(parts[i]));
+				int ignore;
+				Assert.That(sub.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out ignore), Is.EqualTo(expectedWritingSystems[i]),
+					" part " + i + " (" + parts[i] + ") has the wrong ws " + tss.Text);
 				start = end;
 			}
 		}

@@ -74,6 +74,8 @@ namespace SIL.FieldWorks.XWorks
 		protected RecordBarHandler m_recordBarHandler;
 		protected RecordList m_list;
 
+		private const string StatusBarRecordNumber = "StatusPanelRecordNumber";
+
 		/// <summary>
 		/// The record list might need access to this just to check membership of an object quickly.
 		/// </summary>
@@ -156,8 +158,9 @@ namespace SIL.FieldWorks.XWorks
 		/// being sorted or that the current sorting should not be displayed (i.e. the default column
 		/// is being sorted).
 		/// </summary>
-		private string m_sortName = null;
+
 		private bool m_isDefaultSort = false;
+		public string SortName { get; internal set; }
 
 		#region Event Handling
 		public event EventHandler SorterChangedByClerk;
@@ -251,8 +254,6 @@ namespace SIL.FieldWorks.XWorks
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				//ResetStatusBarPanel("StatusPanelRecordNumber", "");
-				//ResetStatusBarPanel("StatusPanelMessage", "");
 				m_list.ListChanged -= OnListChanged;
 				m_list.AboutToReload -= m_list_AboutToReload;
 				m_list.DoneReload -= m_list_DoneReload;
@@ -529,7 +530,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <c>false</c>if the one installed matches the one we had stored to persist.</returns>
 		protected virtual bool TryRestoreSorter(Mediator mediator, XmlNode clerkConfiguration, FdoCache cache)
 		{
-			m_sortName = mediator.PropertyTable.GetStringProperty(SortNamePropertyTableId, null, PropertyTable.SettingsGroup.LocalSettings);
+			SortName = mediator.PropertyTable.GetStringProperty(SortNamePropertyTableId, null, PropertyTable.SettingsGroup.LocalSettings);
 
 			string persistSorter = mediator.PropertyTable.GetStringProperty(SorterPropertyTableId, null, PropertyTable.SettingsGroup.LocalSettings);
 			var fwdisposable = m_list.Sorter as IFWDisposable;
@@ -561,7 +562,7 @@ namespace SIL.FieldWorks.XWorks
 				if (sorterNode != null)
 				{
 					sorter = PropertyRecordSorter.Create(cache, sorterNode);
-					m_sortName = XmlUtils.GetOptionalAttributeValue(sorterNode, "label");
+					SortName = XmlUtils.GetOptionalAttributeValue(sorterNode, "label");
 				}
 			}
 			// If sorter is null, allow any sorter which may have been installed during
@@ -571,6 +572,20 @@ namespace SIL.FieldWorks.XWorks
 				// (LT-9515) restored sorters need to set some properties that could not be persisted.
 				sorter.Cache = cache;
 				sorter.StringTable = m_mediator.StringTbl;
+				if (sorter is GenRecordSorter)
+				{
+					var comparer = ((GenRecordSorter)sorter).Comparer;
+					WritingSystemComparer subComparer = null;
+					if(comparer != null)
+						subComparer = ((StringFinderCompare)comparer).SubComparer as WritingSystemComparer;
+					if (subComparer != null)
+					{
+						var subComparerWsId = subComparer.WsId;
+						var wsId = cache.WritingSystemFactory.GetWsFromStr(subComparerWsId);
+						if (wsId == 0)
+							return false;
+					}
+				}
 				if (m_list.Sorter == sorter)
 					return false;
 				m_list.Sorter = sorter;
@@ -781,14 +796,14 @@ namespace SIL.FieldWorks.XWorks
 			{
 				CheckDisposed();
 
-				if (m_rch != null)
+				if (m_rch != null && !ReferenceEquals(m_rch, value))
 				{
 					// Store it, since we need to clear out the
 					// data member to avoid an infinite loop in calling its Dispose method,
 					// which then tries to call this setter with null.
-					var gonner = m_rch;
+					var goner = m_rch;
 					m_rch = null;
-					gonner.Dispose();
+					goner.Dispose();
 				}
 				m_rch = value;
 			}
@@ -1748,13 +1763,21 @@ namespace SIL.FieldWorks.XWorks
 			bool fIgnore = m_mediator.PropertyTable.GetBoolProperty("IgnoreStatusPanel", false);
 			if (fIgnore)
 				return;
+			// JohnT: if we're not controlling the record list, we probably have no business trying to
+			// control the status bar. But we may need a separate control over this.
+			// Note that it can be definitely wrong to update it; this Clerk may not have anything
+			// to do with the current window contents.
 			if (IsControllingTheRecordTreeBar)
 			{
-				// JohnT: if we're not controlling the record list, we probably have no business trying to
-				// control the status bar. But we may need a separate control over this.
-				// Note that it can be definitely wrong to update it; this Clerk may not have anything
-				// to do with the current window contents.
-				UpdateStatusBarRecordNumber();
+				if (WantStatusBarRecordNumber)
+				{
+					UpdateStatusBarRecordNumber();
+				}
+				else
+				{
+					ResetStatusBarPanel(StatusBarRecordNumber, " ");
+					ResetStatusBarMessageForCurrentObject();
+				}
 			}
 
 			//this is used by DependantRecordLists
@@ -1787,6 +1810,15 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		private bool WantStatusBarRecordNumber
+		{
+			get
+			{
+				var currentControlObject = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
+				return !(currentControlObject == "lexiconDictionary" || currentControlObject == "reversalToolEditComplete");
+			}
+		}
+
 		private void UpdateStatusBarRecordNumber()
 		{
 			var noRecordsDefaultText = m_mediator.StringTbl.GetString("No Records", "Misc");// FwXApp.XWorksResources.GetString("stidNoRecords");
@@ -1808,7 +1840,7 @@ namespace SIL.FieldWorks.XWorks
 				s = noRecordsText;
 			}
 
-			ResetStatusBarPanel("StatusPanelRecordNumber", s);
+			ResetStatusBarPanel(StatusBarRecordNumber, s);
 			ResetStatusBarMessageForCurrentObject();
 		}
 
@@ -2037,7 +2069,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Tell the RecordClerk that it may now be the new master of the tree bar, if it is not a dependent clerk.
 		/// Use DeactivatedGui to tell RecordClerk that it's not currently being used in a Gui.
 		/// </summary>
-		virtual public void ActivateUI(bool useRecordTreeBar)
+		virtual public void ActivateUI(bool useRecordTreeBar, bool updateStatusBar = true)
 		{
 			m_fIsActiveInGui = true;
 			CheckDisposed();
@@ -2052,6 +2084,8 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
+			if (!updateStatusBar)
+				return;
 			UpdateFilterStatusBarPanel();
 			UpdateSortStatusBarPanel();
 		}
@@ -2305,6 +2339,18 @@ namespace SIL.FieldWorks.XWorks
 				CheckDisposed();
 				return m_list.OnLast;
 			}
+		}
+
+		public void JumpToRecord(Guid jumpToGuid)
+		{
+			JumpToRecord(jumpToGuid, false);
+		}
+
+		public void JumpToRecord(Guid jumpToGuid, bool suppressFocusChange)
+		{
+			ICmObject obj;
+			if (Cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(jumpToGuid, out obj))
+				JumpToRecord(obj.Hvo, suppressFocusChange);
 		}
 
 		public void JumpToRecord(int jumpToHvo)
@@ -2757,7 +2803,7 @@ namespace SIL.FieldWorks.XWorks
 			if (b == null) //Other xworks apps may not have this panel
 				return;
 
-			if (m_list.Sorter == null || m_sortName == null
+			if (m_list.Sorter == null || SortName == null
 				|| (m_isDefaultSort && ToolConfiguration.GetDefaultSorter(m_clerkConfiguration) != null))
 			{
 				b.BackBrush = System.Drawing.Brushes.Transparent;
@@ -2766,7 +2812,7 @@ namespace SIL.FieldWorks.XWorks
 			else
 			{
 				b.BackBrush = System.Drawing.Brushes.Lime;
-				b.TextForReal = string.Format(xWorksStrings.SortedBy, m_sortName);
+				b.TextForReal = string.Format(xWorksStrings.SortedBy, SortName);
 			}
 		}
 
@@ -2831,8 +2877,8 @@ namespace SIL.FieldWorks.XWorks
 
 			m_isDefaultSort = isDefaultSort;
 
-			m_sortName = sortName;
-			m_mediator.PropertyTable.SetProperty(SortNamePropertyTableId, m_sortName, PropertyTable.SettingsGroup.LocalSettings);
+			SortName = sortName;
+			m_mediator.PropertyTable.SetProperty(SortNamePropertyTableId, SortName, PropertyTable.SettingsGroup.LocalSettings);
 
 			m_list.ChangeSorter(sorter);
 			// Remember how we're sorted.
@@ -3199,7 +3245,7 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public class TemporaryRecordClerk : RecordClerk
 	{
-		public override void ActivateUI(bool useRecordTreeBar)
+		public override void ActivateUI(bool useRecordTreeBar, bool updateStatusBar = true)
 		{
 			// by default, we won't publish that we're the "ActiveClerk" or other usual effects.
 			// but we do want to say that we're being actively used in a gui.
@@ -3360,7 +3406,9 @@ namespace SIL.FieldWorks.XWorks
 		static public XmlNode GetClerkNodeFromToolParamsNode(XmlNode parameterNode)
 		{
 			string clerk = XmlUtils.GetManditoryAttributeValue(parameterNode, "clerk");
-			string xpath = String.Format("ancestor::parameters/clerks/clerk[@id='{0}']",
+			// REVIEW (Hasso) 2014.02: while //clerks is probably an improvement over ancestors::parameters/clerks, this XPath should be
+			// either thorouhly reviewed or reverted before merging with our main codebase.
+			string xpath = String.Format("//clerks/clerk[@id='{0}']",
 				XmlUtils.MakeSafeXmlAttribute(clerk));
 			XmlNode clerkNode = parameterNode.SelectSingleNode(xpath);
 			if (clerkNode == null)

@@ -34,10 +34,16 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// Fires when a change is made on the font tab to an unspecified state.
 		/// </summary>
 		public event EventHandler ChangedToUnspecified;
+
 		/// <summary>
 		/// Fires when the font tab needs to have the style property inheritance recalculated
 		/// </summary>
 		public event EventHandler RequestStyleReconnect;
+
+		/// <summary>
+		/// Fires when a change is made on this tab to style data.
+		/// </summary>
+		public event EventHandler StyleDataChanged;
 
 		private bool m_dontUpdateInheritance = true;
 		private bool m_fIgnoreWsSelectedIndexChange = false;
@@ -199,6 +205,9 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 					ChangedToUnspecified(this, EventArgs.Empty);
 				SaveToInfo(m_currentStyleInfo);
 				UpdateWritingSystemDescriptions();
+
+				if (StyleDataChanged != null)
+					StyleDataChanged(this, null);
 			}
 		}
 

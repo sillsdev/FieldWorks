@@ -459,7 +459,7 @@ namespace SIL.FieldWorks.TE
 				cboShortName.Text = ShortName;
 				cboShortName.SelectAll();
 				cboShortName.TextChanged += cboShortName_TextChanged;
-				System.Media.SystemSounds.Beep.Play();
+				SIL.Utils.MiscUtils.ErrorBeep();
 				return;
 			}
 

@@ -60,6 +60,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			{
 				case "LexDb.AllPossiblePronunciations":
 					return new GhostParentHelper(services, LexEntryTags.kClassId, LexEntryTags.kflidPronunciations);
+				case "LexDb.AllPossibleEtymologies":
+					return new GhostParentHelper(services, LexEntryTags.kClassId, LexEntryTags.kflidEtymology);
 				case "LexDb.AllPossibleAllomorphs":
 					return new GphAllPossibleAllomorphs(services, LexEntryTags.kClassId, LexEntryTags.kflidAlternateForms);
 				case "LexDb.AllExampleSentenceTargets":
@@ -70,6 +72,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					return new GphComplexEntries(services);
 				case "LexDb.AllVariantEntryRefPropertyTargets":
 					return new GphVariants(services);
+				case "LexDb.AllExtendedNoteTargets":
+					return new GhostParentHelper(services, LexSenseTags.kClassId, LexSenseTags.kflidExtendedNote);
+				case "LexDb.AllPossiblePictures":
+					return new GhostParentHelper(services, LexSenseTags.kClassId, LexSenseTags.kflidPictures);
 				default:
 					return null;
 			}
@@ -100,6 +106,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						return LexExampleSentenceTags.kClassId;
 					case "AllPossiblePronunciations":
 						return LexPronunciationTags.kClassId;
+					case "AllPossibleEtymologies":
+						return LexEtymologyTags.kClassId;
 					case "AllPossibleAllomorphs":
 						return MoFormTags.kClassId;
 					case "AllExampleTranslationTargets":
@@ -107,6 +115,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					case "AllComplexEntryRefPropertyTargets":
 					case "AllVariantEntryRefPropertyTargets":
 						return LexEntryRefTags.kClassId;
+					case "AllExtendedNoteTargets":
+						return LexExtendedNoteTags.kClassId;
+					case "AllPossiblePictures":
+						return CmPictureTags.kClassId;
 				}
 			}
 			return destClass;

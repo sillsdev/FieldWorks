@@ -71,7 +71,7 @@
       <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>..\..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="SilUtils">
       <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
@@ -109,6 +109,7 @@
     <Compile Include="RomanNumeralsTests.cs" />
     <Compile Include="Attributes\SetMessageBoxAdapterAttribute.cs" />
     <Compile Include="SetTests.cs" />
+    <Compile Include="SimpleLoggerTests.cs" />
     <Compile Include="SingletonsContainerTests.cs" />
     <Compile Include="TestSmallDictionary.cs" />
     <Compile Include="UtilsTest.cs" />

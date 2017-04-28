@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		// These are used to identify the <Not Complex> and <Unknown Complex Form>
 		// entries in the combobox list.
 		int m_idxNotComplex;
-		int m_idxUnknownComplex;
+		private const string UnSpecifiedComplex = "Unspecified Complex Form";
 		private GroupBox m_glossGroupBox;
 		private LinkLabel m_lnkAssistant;
 
@@ -667,20 +667,17 @@ namespace SIL.FieldWorks.LexText.Controls
 
 				Text = GetTitle();
 				m_lnkAssistant.Enabled = false;
-
 				// Set font for the combobox.
-				m_cbMorphType.Font = new Font(defAnalWs.DefaultFontName, 10);
+				m_cbMorphType.Font = new Font(defAnalWs.DefaultFontName, 12);
 
 				// Populate morph type combo.
 				// first Fill ComplexFormType combo, since cbMorphType controls
 				// whether it gets enabled and which index is selected.
-				m_cbComplexFormType.Font = new Font(defAnalWs.DefaultFontName, 10);
+				m_cbComplexFormType.Font = new Font(defAnalWs.DefaultFontName, 12);
 				var rgComplexTypes = new List<ICmPossibility>(m_cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities.ToArray());
 				rgComplexTypes.Sort();
 				m_idxNotComplex = m_cbComplexFormType.Items.Count;
 				m_cbComplexFormType.Items.Add(new DummyEntryType(LexTextControls.ksNotApplicable, false));
-				m_idxUnknownComplex = m_cbComplexFormType.Items.Count;
-				m_cbComplexFormType.Items.Add(new DummyEntryType(LexTextControls.ksUnknownComplexForm, true));
 				for (int i = 0; i < rgComplexTypes.Count; ++i)
 				{
 					var type = (ILexEntryType)rgComplexTypes[i];
@@ -1600,9 +1597,14 @@ namespace SIL.FieldWorks.LexText.Controls
 				case MoMorphTypeTags.kMorphDiscontiguousPhrase:
 				case MoMorphTypeTags.kMorphPhrase:
 					m_cbComplexFormType.Enabled = true;
-					// default to "Unknown" for "phrase"
+					// default to "Unspecified Complex Form" if found, else set to "0" for "phrase"
 					if (m_cbComplexFormType.SelectedIndex == m_idxNotComplex)
-						m_cbComplexFormType.SelectedIndex = m_idxUnknownComplex;
+					{
+						int unSpecCompFormIndex = m_cbComplexFormType.FindStringExact(UnSpecifiedComplex);
+						m_cbComplexFormType.SelectedIndex = unSpecCompFormIndex != -1
+							? unSpecCompFormIndex
+							: 0;
+					}
 					break;
 				default:
 					m_cbComplexFormType.SelectedIndex = 0;

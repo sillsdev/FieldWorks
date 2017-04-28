@@ -506,17 +506,15 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			var mainEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetHomographs("mainEntry").FirstOrDefault();
 			var variantRefsOfmainEntry = mainEntry.VariantFormEntryBackRefs;
-			Assert.That(variantRefsOfmainEntry.Count(), Is.EqualTo(2));
-			{
-				var newInflVariantType1 = variantRefsOfmainEntry.ElementAt(0).VariantEntryTypesRS[0] as ILexEntryInflType;
-				Assert.That(newInflVariantType1, Is.Not.Null);
-				Assert.That(newInflVariantType1.Name.UserDefaultWritingSystem.Text, Is.EqualTo("NewPlural"));
-			}
-			{
-				var newInflVariantType2 = variantRefsOfmainEntry.ElementAt(1).VariantEntryTypesRS[0] as ILexEntryInflType;
-				Assert.That(newInflVariantType2, Is.Not.Null);
-				Assert.That(newInflVariantType2.Name.UserDefaultWritingSystem.Text, Is.EqualTo("NewPast"));
-			}
+			Assert.That(variantRefsOfmainEntry.Count(), Is.EqualTo(2), "Not enough variant refs created.");
+			CollectionAssert.AllItemsAreInstancesOfType(variantRefsOfmainEntry, typeof(ILexEntryRef), "Variant reference was of an unexpected type.");
+			var newInflVariantType1 = variantRefsOfmainEntry.ElementAt(0).VariantEntryTypesRS[0] as ILexEntryInflType;
+			var newInflVariantType2 = variantRefsOfmainEntry.ElementAt(1).VariantEntryTypesRS[0] as ILexEntryInflType;
+
+			CollectionAssert.Contains(new [] {"NewPlural", "NewPast"}, newInflVariantType1.Name.UserDefaultWritingSystem.Text,
+				"One of the inflectional variant types didn't have any expected contents");
+			CollectionAssert.Contains(new[] { "NewPlural", "NewPast" }, newInflVariantType2.Name.UserDefaultWritingSystem.Text,
+				"One of the inflectional variant types didn't have any expected contents");
 		}
 
 		private static void GetMainVariantGloss(ILexEntryRef variantRef, out IMultiUnicode gloss)

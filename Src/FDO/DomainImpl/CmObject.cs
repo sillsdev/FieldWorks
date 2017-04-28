@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// Colletions and Sequences which have not been fully fluffed may not be included. (A potential source is included
 		/// iff it has a pointer to the actual object, rather than one to its ObjectId.)
 		/// </summary>
-		internal SimpleBag<IReferenceSource> m_incomingRefs;
+		internal SimpleBag<IReferenceSource> m_incomingRefs = new SimpleBag<IReferenceSource>();
 
 		#endregion Data Members
 
@@ -2266,6 +2266,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			var seq = GetNonModelPropertyForSDA(flid);
 			if (seq is IFdoList<ICmObject>)
 				((IFdoList<ICmObject>)seq).Replace(start, numberToDelete, thingsToAdd);
+			else if (seq is IFdoList<ICmPossibility>)
+				((IFdoList<ICmPossibility>)seq).Replace(start, numberToDelete, thingsToAdd);
 			else
 				throw new InvalidOperationException("Attempted to perform Replace on a property that is not a known sequence: " + flid);
 		}
@@ -2292,7 +2294,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			switch (flid)
 			{
 				default:
-					return (int)GetNonModelPropertyForSDA(flid);
+					var val = GetNonModelPropertyForSDA(flid);
+					if (val is GenDate)
+						return ((GenDate)val).ToInt();
+					return (int)val;
 				case (int)CmObjectFields.kflidCmObject_Class:
 					return ClassID;
 				case (int)CmObjectFields.kflidCmObject_OwnFlid:
@@ -3544,7 +3549,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
-		/// Ensure that all objects that refer to this one are properly inclued in its m_incomingRefs collection.
+		/// Ensure that all objects that refer to this one are properly included in its m_incomingRefs collection.
 		/// </summary>
 		public void EnsureCompleteIncomingRefs()
 		{

@@ -87,7 +87,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			AddItem(obj, LexEdStrings.ksUndoAddRef, LexEdStrings.ksRedoAddRef);
 		}
 
-		protected override VectorReferenceView CreateVectorReverenceView()
+		protected override VectorReferenceView CreateVectorReferenceView()
 		{
 			var lrcv = new LexReferenceCollectionView();
 			if (m_displayParent != null)

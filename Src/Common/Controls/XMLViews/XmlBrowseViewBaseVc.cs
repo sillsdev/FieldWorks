@@ -296,6 +296,14 @@ namespace SIL.FieldWorks.Common.Controls
 						case 15:
 							savedCols = FixVersion16Columns(savedCols);
 							savedCols = savedCols.Replace("root version=\"15\"", "root version=\"16\"");
+							goto case 16;
+						case 16:
+							savedCols = FixVersion17Columns(savedCols);
+							savedCols = savedCols.Replace("root version=\"16\"", "root version=\"17\"");
+							goto case 17;
+						case 17:
+							savedCols = FixVersion18Columns(savedCols);
+							savedCols = savedCols.Replace("root version=\"17\"", "root version=\"18\"");
 							mediator.PropertyTable.SetProperty(colListId, savedCols);
 							doc.LoadXml(savedCols);
 							break;
@@ -320,6 +328,47 @@ namespace SIL.FieldWorks.Common.Controls
 				doc = null;
 			}
 			return doc;
+		}
+
+		/// <summary>
+		/// Handles the changes we made to browse columns between 8.3 Alpha and 8.3 Beta 2
+		/// 8.3 (version 18, Nov 11, 2016).
+		/// </summary>
+		/// <param name="savedColsInput"></param>
+		/// <returns></returns>
+		internal static string FixVersion18Columns(string savedColsInput)
+		{
+			var savedCols = savedColsInput;
+			savedCols = ChangeAttrValue(savedCols, "ExtNoteType", "ghostListField", "LexDb.AllPossibleExtendedNotes", "LexDb.AllExtendedNoteTargets");
+			savedCols = ChangeAttrValue(savedCols, "ExtNoteType", "label", "Ext. Note Type", "Ext. Note - Type");
+			savedCols = RemoveAttr(savedCols, "ExtNoteType", "editable");
+			savedCols = RemoveAttr(savedCols, "ExtNoteType", "ws");
+			savedCols = RemoveAttr(savedCols, "ExtNoteType", "transduce");
+			savedCols = AppendAttrValue(savedCols, "ExtNoteType", "list", "LexDb.ExtendedNoteTypes");
+			savedCols = AppendAttrValue(savedCols, "ExtNoteType", "field", "LexExtendedNote.ExtendedNoteType");
+			savedCols = AppendAttrValue(savedCols, "ExtNoteType", "bulkEdit", "atomicFlatListItem");
+			savedCols = AppendAttrValue(savedCols, "ExtNoteType", "displayWs", "best vernoranal");
+			savedCols = AppendAttrValue(savedCols, "ExtNoteType", "displayNameProperty", "ShortNameTSS");
+			savedCols = ChangeAttrValue(savedCols, "ExtNoteDiscussion", "ghostListField", "LexDb.AllPossibleExtendedNotes", "LexDb.AllExtendedNoteTargets");
+			savedCols = ChangeAttrValue(savedCols, "ExtNoteDiscussion", "label", "Ext. Note Discussion", "Ext. Note - Discussion");
+			savedCols = ChangeAttrValue(savedCols, "ExtNoteDiscussion", "editable", "false", "true");
+			return savedCols;
+		}
+
+		/// <summary>
+		/// Handles the changes we made to browse columns (other than additions) between roughly 7.3 (March 12, 2013) and
+		/// 8.3 (version 17, June 15, 2016).
+		/// </summary>
+		/// <param name="savedColsInput"></param>
+		/// <returns></returns>
+		internal static string FixVersion17Columns(string savedColsInput)
+		{
+			var savedCols = savedColsInput;
+			savedCols = ChangeAttrValue(savedCols, "EtymologyGloss", "transduce", "LexEntry.Etymology.Gloss", "LexEtymology.Gloss");
+			savedCols = ChangeAttrValue(savedCols, "EtymologySource", "transduce", "LexEntry.Etymology.Source", "LexEtymology.Source");
+			savedCols = ChangeAttrValue(savedCols, "EtymologyForm", "transduce", "LexEntry.Etymology.Form", "LexEtymology.Form");
+			savedCols = ChangeAttrValue(savedCols, "EtymologyComment", "transduce", "LexEntry.Etymology.Comment", "LexEtymology.Comment");
+			return savedCols;
 		}
 
 		/// <summary>
@@ -402,6 +451,21 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			return savedCols;
 		}
+
+		private static string RemoveAttr(string savedCols, string layoutName, string attrName)
+		{
+			var pattern = new Regex("<column [^>]*layout *= *\"" + layoutName + "\"[^>]*(" + attrName + "=\"[^\r\n\t\f ]*\" )");
+			var match = pattern.Match(savedCols);
+			if (match.Success)
+			{
+				int index = match.Groups[1].Index;
+				// It is better to use Groups(1).Length here rather than attrValue.Length, because there may be some RE pattern
+				// in attrValue (e.g., \\$) which would make a discrepancy.
+				savedCols = savedCols.Substring(0, index) + savedCols.Substring(index + match.Groups[1].Length);
+			}
+			return savedCols;
+		}
+
 		private static string AppendAttrValue(string savedCols, string layoutName, string attrName, string attrValue)
 		{
 			return AppendAttrValue(savedCols, layoutName, false, attrName, attrValue);
