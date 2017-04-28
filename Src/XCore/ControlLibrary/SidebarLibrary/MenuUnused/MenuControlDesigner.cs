@@ -1,7 +1,5 @@
 // Original author or copyright holder unknown.
 
-#if USE_THIS
-
 using System;
 using System.Drawing;
 using System.Collections;
@@ -31,4 +29,3 @@ namespace SidebarLibrary.Menus
 		}
 	}
 }
-#endif

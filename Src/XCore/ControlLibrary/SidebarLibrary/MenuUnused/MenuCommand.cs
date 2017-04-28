@@ -1,6 +1,5 @@
 // Original author or copyright holder unknown.
 
-#if USE_THIS
 using System;
 using System.Collections;
 using System.Windows.Forms;
@@ -39,6 +38,7 @@ namespace SidebarLibrary.Menus
 
 		// Instance fields
 		protected bool visible;
+
 		protected bool _break;
 		protected string text;
 		protected bool enabled;
@@ -56,6 +56,7 @@ namespace SidebarLibrary.Menus
 
 		// Exposed events
 		public event EventHandler Click;
+
 		public event EventHandler Update;
 
 		public MenuCommand()
@@ -94,7 +95,7 @@ namespace SidebarLibrary.Menus
 		}
 
 		public MenuCommand(string text, ImageList imageList, int imageIndex,
-						   Shortcut shortcut, EventHandler clickHandler)
+			Shortcut shortcut, EventHandler clickHandler)
 		{
 			InternalConstruct(text, imageList, imageIndex, shortcut, clickHandler, null, null);
 		}
@@ -112,7 +113,7 @@ namespace SidebarLibrary.Menus
 
 
 		protected void InternalConstruct(string text, ImageList imageList, int imageIndex,
-										 Shortcut shortcut, EventHandler clickHandler, Bitmap bitmap, object realOwner)
+			Shortcut shortcut, EventHandler clickHandler, Bitmap bitmap, object realOwner)
 		{
 			// Save parameters
 			this.text = text;
@@ -421,10 +422,10 @@ namespace SidebarLibrary.Menus
 		{
 			if (Click != null)
 			{
-				if ( realOwner != null )
+				if (realOwner != null)
 					Click(realOwner, e);
 				else
-				  Click(this, e);
+					Click(this, e);
 			}
 		}
 
@@ -435,4 +436,3 @@ namespace SidebarLibrary.Menus
 		}
 	}
 }
-#endif

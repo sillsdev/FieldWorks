@@ -166,10 +166,6 @@
       <Name>nunit.framework</Name>
       <HintPath>..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="Palaso.TestUtilities, Version=2.6.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\Palaso.TestUtilities.dll</HintPath>
-    </Reference>
     <Reference Include="SIL.TestUtilities">
       <HintPath>..\..\..\..\Downloads\SIL.TestUtilities.dll</HintPath>
     </Reference>

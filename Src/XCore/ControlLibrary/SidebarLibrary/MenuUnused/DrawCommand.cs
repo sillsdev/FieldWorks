@@ -2,7 +2,7 @@
 
 using System;
 using System.Drawing;
-#if USE_THIS
+
 namespace SidebarLibrary.Menus
 {
 	internal class DrawCommand
@@ -150,4 +150,3 @@ namespace SidebarLibrary.Menus
 		}
 	}
 }
-#endif

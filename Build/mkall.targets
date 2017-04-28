@@ -151,7 +151,7 @@
 		<Unitpp Condition="'$(action)'=='test'"
 				FixturePath="$(dir-outputBase)/testViews"
 				FudgeFactor="$(timeoutFudgeFactor)"
-				Timeout="100000">
+				Timeout="200000">
 			<Output TaskParameter="FailedSuites" ItemName="FailedSuites"/>
 		</Unitpp>
 		<Message Text="Finished building testViews." Condition="'$(action)'!='test'"/>
@@ -289,7 +289,7 @@
 	</PropertyGroup>
 
 
-	<Target Name="downloadDlls" DependsOnTargets="RestoreNuGetPackages">
+	<Target Name="downloadDlls" DependsOnTargets="RestoreNuGetPackages" Condition="'$(disableDownloads)'!='true'">
 		<MakeDir Directories="$(DownloadsDir)"/>
 		<Message Text="Downloading artifacts for Palaso, including  L10NSharp, Enchant.Net, ibusdotnet, NDesk.DBus, Spart, and Newtonsoft.Json."/>
 		<ItemGroup>

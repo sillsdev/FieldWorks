@@ -1,6 +1,5 @@
 // Original author or copyright holder unknown.
 
-#if USE_THIS
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -139,4 +138,3 @@ namespace SidebarLibrary.WinControls
 
 
 }
-#endif
