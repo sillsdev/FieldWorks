@@ -113,9 +113,6 @@
       <Name>System</Name>
     </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml">
-      <Name>System.XML</Name>
-    </Reference>
     <Reference Include="TestUtils, Version=6.1.0.43066, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
@@ -129,7 +126,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
@@ -137,53 +136,9 @@
     <Compile Include="ErrorReporterTests.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="StringTableTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="TestBaseForTestsThatCreateTempFilesBasedOnResources.cs" />
     <Compile Include="XmlUtilsTest.cs">
       <SubType>Code</SubType>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="food\fruit\citrus\strings-en.xml" />
-    <EmbeddedResource Include="food\fruit\sortOfFruitInclude.xml" />
-    <EmbeddedResource Include="food\fruit\strings-en.xml" />
-    <EmbeddedResource Include="food\veggiesInclude.xml" />
-    <EmbeddedResource Include="food\veggiesIncludeWithSubInclude.xml" />
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="TransformTestFiles\ResultNoParams.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="TransformTestFiles\ResultNoParamsMSXML2.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="TransformTestFiles\ResultWithParams.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="TransformTestFiles\ResultWithParamsMSXML2.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="TransformTestFiles\Test.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="TransformTestFiles\Test.xsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="TransformTestFiles\ResultWithParams-Linux.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="TransformTestFiles\ResultNoParams-Linux.xml" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -201,6 +156,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

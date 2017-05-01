@@ -161,20 +161,8 @@
       <Name>LexTextControls</Name>
       <HintPath>..\..\..\Output\Debug\LexTextControls.dll</HintPath>
     </Reference>
-    <Reference Include="MessageBoxExLib, Version=1.0.2958.18799, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\MessageBoxExLib.dll</HintPath>
-    </Reference>
-    <Reference Include="MGA">
-      <Name>MGA</Name>
-      <HintPath>..\..\..\Output\Debug\MGA.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="ParserCore">
-      <Name>ParserCore</Name>
-      <HintPath>..\..\..\Output\Debug\ParserCore.dll</HintPath>
     </Reference>
     <Reference Include="PhonEnvValidator">
       <Name>PhonEnvValidator</Name>
@@ -185,10 +173,6 @@
       <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Sfm2Xml">
-      <Name>Sfm2Xml</Name>
-      <HintPath>..\..\..\Output\Debug\Sfm2Xml.dll</HintPath>
-    </Reference>
     <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\SIL.Core.dll</HintPath>
@@ -196,10 +180,6 @@
     <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\SIL.WritingSystems.dll</HintPath>
-    </Reference>
-    <Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86" Condition="'$(OS)'!='Unix'">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SilEncConverters40.dll</HintPath>
     </Reference>
     <Reference Include="SilEncConverters40" Condition="'$(OS)'=='Unix'">
       <SpecificVersion>False</SpecificVersion>
@@ -216,9 +196,6 @@
       <Name>System</Name>
     </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
-    </Reference>
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>

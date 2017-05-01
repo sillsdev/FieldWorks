@@ -1,11 +1,6 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LangProject.cs
-// Responsibility: Randy Regnier
-// Last reviewed: never
-//
 //
 // <remarks>
 // Implementation of:
@@ -13,17 +8,16 @@
 // </remarks>
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Xml;
 
 using SIL.FieldWorks.Common.FwKernelInterfaces;
-using SIL.Utils; // Needed for Set class.
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {

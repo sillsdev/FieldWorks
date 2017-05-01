@@ -1,16 +1,14 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// Authorship History: John Hatton
-// Last reviewed:
+
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using SIL.Utils;
 using System.Windows.Forms;
+using SIL.CoreImpl;
 
 namespace XCore
 {

@@ -97,10 +97,16 @@
   <ItemGroup>
     <Compile Include="Attributes\CleanupSingletonsAttribute.cs" />
     <Compile Include="DirectoryFinderTests.cs" />
+    <Compile Include="Properties\TestResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TestResources.resx</DependentUpon>
+    </Compile>
     <Compile Include="RecentItemsCacheTests.cs" />
     <Compile Include="Attributes\SetIcuEnvForTestsAttribute.cs" />
     <Compile Include="Attributes\RedirectHKCU.cs" />
     <Compile Include="SingletonsContainerTests.cs" />
+    <Compile Include="StringTableTests.cs" />
     <Compile Include="TsIncStrBldrTests.cs" />
     <Compile Include="TsPropsBldrTests.cs" />
     <Compile Include="TsPropsFactoryTests.cs" />
@@ -142,6 +148,14 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="food\fruit\citrus\strings-en.xml" />
+    <EmbeddedResource Include="food\fruit\strings-en.xml" />
+    <EmbeddedResource Include="Properties\TestResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>TestResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

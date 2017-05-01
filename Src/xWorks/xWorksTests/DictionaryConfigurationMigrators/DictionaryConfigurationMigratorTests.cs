@@ -1,10 +1,11 @@
-﻿// Copyright (c) 2014-2016 SIL International
+﻿// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.IO;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
@@ -13,7 +14,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
 using XCore;
-// ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 {
@@ -77,8 +77,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			// Localize a Part's label to German (sufficient to cause a mismatched nodes crash if one config's labels are localized)
 			var localizedPartLabels = new Dictionary<string, string>();
 			localizedPartLabels["Main Entry"] = "Haupteintrag";
-			var pathsToL10nStrings = (Dictionary<string, Dictionary<string, string>>)ReflectionHelper.GetField(StringTable.Table, "m_pathsToStrings");
-			pathsToL10nStrings["group[@id = 'LocalizedAttributes']/"] = localizedPartLabels;
+			var pathsToL10NStrings = (Dictionary<string, Dictionary<string, string>>)ReflectionHelper.GetField(StringTable.Table, "m_pathsToStrings");
+			pathsToL10NStrings["group[@id = 'LocalizedAttributes']/"] = localizedPartLabels;
 
 			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
 			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName,

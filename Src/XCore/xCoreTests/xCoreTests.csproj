@@ -205,6 +205,7 @@
     <Compile Include="XWindowTestsBase.cs">
       <SubType>Code</SubType>
     </Compile>
+    <None Include="App.config" />
     <None Include="BuildInclude.targets">
       <SubType>Designer</SubType>
     </None>
@@ -212,6 +213,11 @@
     <None Include="InventoryBaseTestFiles\Base2Layouts.xml" />
     <None Include="InventoryLaterTestFiles\Override1Layouts.xml" />
     <None Include="CreateOverrideTestData.xml" />
+    <Content Include="food\fruit\sortOfFruitInclude.xml" />
+    <Content Include="food\veggiesInclude.xml" />
+    <Content Include="food\veggiesIncludeWithSubInclude.xml" />
+    <Content Include="IncludeXmlTestSource.xml" />
+    <Content Include="IncludeXmlTestSourceB.xml" />
     <Content Include="listitems.bmp" />
     <Compile Include="..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfo.cs</Link>

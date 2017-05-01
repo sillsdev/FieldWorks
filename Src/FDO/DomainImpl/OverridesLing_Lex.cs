@@ -1,10 +1,6 @@
-// Copyright (c) 2002-2015 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: OverridesLing.cs
-// Responsibility: Randy Regnier
-// Last reviewed:
 //
 // <remarks>
 // This file holds the overrides of the generated classes for the Ling module.
@@ -12,7 +8,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
@@ -2897,7 +2892,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						idxEnd = sStartTag.IndexOf(cQuote, idx);
 						if (idxEnd > 0)
 						{
-							return XmlUtils.DecodeXmlAttribute(sStartTag.Substring(idx, idxEnd - idx));
+							return StringServices.DecodeXmlAttribute(sStartTag.Substring(idx, idxEnd - idx));
 						}
 					}
 				}

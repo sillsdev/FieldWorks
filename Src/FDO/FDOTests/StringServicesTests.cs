@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2013 SIL International
+﻿// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -561,6 +561,19 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			int ichMinActual, ichLimActual;
 			tss.GetBoundsOfRun(tss.get_RunAt(ichMin), out ichMinActual, out ichLimActual);
 			Assert.That(ichLimActual, Is.EqualTo(ichLim));
+		}
+
+		/// <summary>
+		/// Tests StringServices.DecodeXmlAttribute()
+		/// </summary>
+		[Test]
+		public void DecodeXmlAttributeTest()
+		{
+			string sFixed = StringServices.DecodeXmlAttribute("abc&amp;def&lt;ghi&gt;jkl&quot;mno&apos;pqr&amp;stu");
+			Assert.AreEqual("abc&def<ghi>jkl\"mno'pqr&stu", sFixed, "Failed to decode reserved characters");
+
+			sFixed = StringServices.DecodeXmlAttribute("abc&amp;def&#xD;&#xA;ghi&#x1F;jkl&#x7F;&#x9F;mno");
+			Assert.AreEqual("abc&def\r\nghi\u001Fjkl\u007F\u009Fmno", sFixed, "Failed to decode escaped unicode characters");
 		}
 	}
 }

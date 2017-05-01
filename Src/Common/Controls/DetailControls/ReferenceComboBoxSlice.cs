@@ -1,18 +1,16 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ReferenceComboBoxSlice.cs
-// Responsibility: RandyR
-// Last reviewed:
 //
 // <remarks>
 // Implements the "referenceComboBox" XDE editor.
 // </remarks>
+
 using System;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Xml;
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;

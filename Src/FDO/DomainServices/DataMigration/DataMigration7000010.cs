@@ -1,12 +1,6 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DataMigration7000010.cs
-// Responsibility: RandyR
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -608,7 +602,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					var cch = ichLim - ichMin;
 					var details = Encoding.UTF8.GetString(oldCCR, ichMin, cch);
 					if (details.Contains("&"))
-						details = XmlUtils.DecodeXmlAttribute(details);
+						details = StringServices.DecodeXmlAttribute(details);
 					var compDetailsElement = XElement.Parse(details);
 					var optionalAttr = compDetailsElement.Attribute("dependent");
 					var foundOverride = false;
@@ -1402,7 +1396,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 				writingSystems.Add(ws);
 				var ichText = runBounds.EndOfStartTag + 1;	// move past the >
 				var runText = Encoding.UTF8.GetString(xmlStTxtPara, ichText, runBounds.EndTagOffset - ichText);
-				retval.Add(XmlUtils.DecodeXmlAttribute(runText));
+				retval.Add(StringServices.DecodeXmlAttribute(runText));
 				runBounds.Reset(runBounds.EndTagOffset, contentsBounds.EndTagOffset);
 			}
 			return retval;

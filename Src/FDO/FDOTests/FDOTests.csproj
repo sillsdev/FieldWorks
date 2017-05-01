@@ -104,6 +104,10 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BasicUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
+    </Reference>
     <Reference Include="CoreImplTests, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
@@ -202,8 +206,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\AssemblyInfoForUiIndependentTests.cs">
-      <Link>AssemblyInfoForUiIndependentTests.cs</Link>
+    <Compile Include="..\..\AssemblyInfoForTests.cs">
+      <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
     <Compile Include="AnalysisAdjusterTests.cs" />
     <Compile Include="AnalysisGuessServicesTests.cs" />

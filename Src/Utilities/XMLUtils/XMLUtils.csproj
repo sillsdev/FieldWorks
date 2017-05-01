@@ -91,6 +91,10 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CoreImpl, Version=9.0.0.24646, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+    </Reference>
     <Reference Include="SilUtils, Version=9.0.0.25850, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
@@ -129,9 +133,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SILExceptions.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="StringTable.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="XmlUtils.cs">

@@ -1,21 +1,14 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File:
-// Authorship History:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;  //for ImageList
 using System.Xml;
-using SIL.Utils; // for ImageCollection
+using SIL.CoreImpl;
 using SIL.SilSidePane;
 
 namespace XCore

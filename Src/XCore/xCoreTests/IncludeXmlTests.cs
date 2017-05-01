@@ -1,17 +1,14 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: StringTableTests.cs
-// Authorship History: John Hatton
-// --------------------------------------------------------------------------------------------
-using System.Diagnostics.CodeAnalysis;
+
 using NUnit.Framework;
 using System.Xml;
 using System.Collections.Generic;
 using SIL.Utils;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Test.TestUtils;
 
 namespace XCore
 {
@@ -19,7 +16,7 @@ namespace XCore
 	/// Summary description for IncludeXmlTests.
 	/// </summary>
 	[TestFixture]
-	public class IncludeXmlTests : TestBaseForTestsThatCreateTempFilesBasedOnResources
+	public class IncludeXmlTests : BaseTest
 	{
 		protected XmlIncluder m_includer;
 
@@ -29,10 +26,10 @@ namespace XCore
 			SimpleResolver resolver = new SimpleResolver();
 
 			string source = FwDirectoryFinder.SourceDirectory;
-			string path = System.IO.Path.Combine(source, @"Utilities/XMLUtils/XMLUtilsTests");
+			string path = System.IO.Path.Combine(source, "XCore", "xCoreTests");
 			if (!System.IO.Directory.Exists(path))
 			{
-				Debug.Fail(path + " not found.  Have the XmlUtilsTests been moved?");
+				Debug.Fail(path + " not found.");
 			}
 
 			resolver.BaseDirectory = path;

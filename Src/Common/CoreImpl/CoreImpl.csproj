@@ -116,6 +116,7 @@
     <Compile Include="SpellEngine.cs" />
     <Compile Include="SpellingHelper.cs" />
     <Compile Include="StringSearcher.cs" />
+    <Compile Include="StringTable.cs" />
     <Compile Include="TsIncStrBldr.cs" />
     <Compile Include="TsIntPropValue.cs" />
     <Compile Include="TsPropsBase.cs" />

@@ -98,11 +98,11 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\CoreImplTests.dll</HintPath>
     </Reference>
-    <Reference Include="FwCoreDlgs, Version=9.0.0.26832, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="FwCoreDlgs, Version=9.0.0.28238, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
     </Reference>
-    <Reference Include="RootSite, Version=9.0.0.26830, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="RootSite, Version=9.0.0.28237, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
     </Reference>
@@ -226,9 +226,9 @@
       <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="XMLUtils, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
+    <Reference Include="XMLUtils, Version=9.0.0.28068, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
     </Reference>
     <Reference Include="XMLViews, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\Output\Debug\XMLViews.dll</HintPath>

@@ -1,21 +1,16 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: StringTable.cs
-// History: John Hatton
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
-using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Xml;
-using System.IO;
-using System.Collections.Generic;
-using System.Reflection;
 
-namespace SIL.Utils
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Xml;
+using SIL.Utils;
+using SIL.Xml;
+
+namespace SIL.CoreImpl
 {
 	/// <summary>
 	/// Get strings according to the current culture from one or more XML files
@@ -24,15 +19,15 @@ namespace SIL.Utils
 	{
 		private static StringTable s_singletonStringTable;
 
-		protected string m_baseDirectory;
-		protected StringTable m_parent;
-		protected XmlDocument m_document;
+		private readonly string m_baseDirectory;
+		private StringTable m_parent;
+		private XmlDocument m_document;
 		private string m_sWsLoaded;
 		/// <summary>
 		/// This table is keyed by the groupXPathFragment passed to GetStringWithXPath.
 		/// The value is another Dictioanry, from the id string to the string value we want.
 		/// </summary>
-		readonly Dictionary<string, Dictionary<string, string>> m_pathsToStrings = new Dictionary<string, Dictionary<string, string>>();
+		private readonly Dictionary<string, Dictionary<string, string>> m_pathsToStrings = new Dictionary<string, Dictionary<string, string>>();
 
 		/// <summary>
 		/// Return the singleton StringTable instance.
@@ -82,11 +77,11 @@ namespace SIL.Utils
 		/// <param name="sWs"></param>
 		private void Load(string sWs)
 		{
-			string path = String.Empty;
 			try
 			{
 				// Always load the neutral English strings first so that every string has a
 				// fallback definition.
+				string path;
 				if (m_sWsLoaded != "en")
 				{
 					path = ChooseStringFile(m_baseDirectory, "en");
@@ -108,7 +103,7 @@ namespace SIL.Utils
 			}
 			catch (FileNotFoundException ex)
 			{
-				throw ex;
+				throw;
 			}
 			catch (Exception error)
 			{
@@ -201,8 +196,6 @@ namespace SIL.Utils
 		/// <summary>
 		/// choose the best string file we can find for the given writing system/language.
 		/// </summary>
-		/// <param name="baseDirectory"></param>
-		/// <returns></returns>
 		protected string ChooseStringFile(string baseDirectory, string sWs)
 		{
 			string path = Path.Combine(baseDirectory, String.Format("strings-{0}.xml", sWs));
@@ -231,7 +224,7 @@ namespace SIL.Utils
 			}
 		}
 
-		protected void FindParent(string baseDirectory)
+		private void FindParent(string baseDirectory)
 		{
 			XmlNode node = m_document.SelectSingleNode("strings");
 			if (node == null)
@@ -327,7 +320,7 @@ namespace SIL.Utils
 		/// get a string out of the table, specifying an XML path to the group which contains the string
 		/// </summary>
 		/// <param name="id"></param>
-		/// <param name="groupPath">this path should start *underneath* the root <strings/> node.
+		/// <param name="groupXPathFragment">this path should start *underneath* the root <strings/> node.
 		///					e.g. "group[@id='linguistics']/group[@id='phonology']"
 		///	</param>
 		/// <returns></returns>
@@ -401,7 +394,7 @@ namespace SIL.Utils
 		/// <summary>
 		/// creat an XPATH for use with GetString, based on a simpler notation
 		/// </summary>
-		/// <param name="path">e.g. "linguistics/morphology" </param>
+		/// <param name="simplePath">e.g. "linguistics/morphology" </param>
 		/// <returns></returns>
 		protected string GetXPathFragmentFromSimpleNotation(string simplePath)
 		{

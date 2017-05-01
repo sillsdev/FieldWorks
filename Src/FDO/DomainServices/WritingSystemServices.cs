@@ -20,6 +20,7 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using SIL.WritingSystems;
 using SIL.WritingSystems.Migration;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {

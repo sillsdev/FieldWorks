@@ -101,6 +101,10 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CoreImplTests, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\CoreImplTests.dll</HintPath>
+    </Reference>
     <Reference Include="NMock">
       <Name>NMock</Name>
       <HintPath>..\..\Bin\nmock\NMock.dll</HintPath>
@@ -152,6 +156,7 @@
     <Compile Include="BaseTest.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="TestBaseForTestsThatCreateTempFilesBasedOnResources.cs" />
     <Compile Include="XmlHelper.cs" />
     <Compile Include="DummyFileMaker.cs">
       <SubType>Code</SubType>

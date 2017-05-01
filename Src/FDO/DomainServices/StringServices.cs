@@ -1,9 +1,10 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,7 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {
@@ -256,7 +258,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="defaultCf"></param>
 		/// <param name="hv"></param>
 		internal static void AddHeadWordForWsAndHn(ITsIncStrBldr tisb, ILexEntry entry, int wsVern, int nHomograph, string defaultCf,
-	HomographConfiguration.HeadwordVariant hv)
+			HomographConfiguration.HeadwordVariant hv)
 		{
 			var citationForm = CitationFormWithAffixTypeStaticForWs(entry, wsVern, defaultCf);
 			if (String.IsNullOrEmpty(citationForm))
@@ -838,6 +840,46 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				return null;
 
 			return modified ? tisb.GetString() : str;
+		}
+
+		/// <summary>
+		/// Convert an encoded attribute string into plain text.
+		/// </summary>
+		internal static string DecodeXmlAttribute(string sInput)
+		{
+			string sOutput = sInput;
+			if (!String.IsNullOrEmpty(sOutput) && sOutput.Contains("&"))
+			{
+				sOutput = sOutput.Replace("&gt;", ">");
+				sOutput = sOutput.Replace("&lt;", "<");
+				sOutput = sOutput.Replace("&apos;", "'");
+				sOutput = sOutput.Replace("&quot;", "\"");
+				sOutput = sOutput.Replace("&amp;", "&");
+			}
+			for (int idx = sOutput.IndexOf("&#"); idx >= 0; idx = sOutput.IndexOf("&#"))
+			{
+				int idxEnd = sOutput.IndexOf(';', idx);
+				if (idxEnd < 0)
+					break;
+				string sOrig = sOutput.Substring(idx, (idxEnd - idx) + 1);
+				string sNum = sOutput.Substring(idx + 2, idxEnd - (idx + 2));
+				string sReplace = null;
+				int chNum = 0;
+				if (sNum[0] == 'x' || sNum[0] == 'X')
+				{
+					if (Int32.TryParse(sNum.Substring(1), NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo, out chNum))
+						sReplace = Char.ConvertFromUtf32(chNum);
+				}
+				else
+				{
+					if (Int32.TryParse(sNum, out chNum))
+						sReplace = Char.ConvertFromUtf32(chNum);
+				}
+				if (sReplace == null)
+					sReplace = sNum;
+				sOutput = sOutput.Replace(sOrig, sReplace);
+			}
+			return sOutput;
 		}
 	}
 }

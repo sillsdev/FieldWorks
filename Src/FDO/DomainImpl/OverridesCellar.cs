@@ -1,11 +1,8 @@
-// Copyright (c) 2008-2013 SIL International
+// Copyright (c) 2008-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: OverridesCellar.cs
-// Responsibility: FW Team
+
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text; // StringBuilder
@@ -18,6 +15,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
 using SIL.WritingSystems;
+using SIL.Xml;
 
 // This is a hack to apply changes from develop branch (where we already got of rid of TE related
 // classes) to lfmerge branch. Things are more complicated here in lfmerge branch: We want to

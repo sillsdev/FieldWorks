@@ -1,20 +1,14 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XmlUtils.cs
-// Responsibility: Andy Black
-// Last reviewed:
 //
 // <remarks>
 // This makes available some utilities for handling XML Nodes
 // </remarks>
-// --------------------------------------------------------------------------------------------
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -22,13 +16,14 @@ using System.Xml;
 using System.Globalization;
 using System.Xml.Serialization;
 using System.Xml.Xsl;
+using SIL.CoreImpl;
 
 namespace SIL.Utils
 {
 	/// <summary>
 	/// Summary description for XmlUtils.
 	/// </summary>
-	public class XmlUtils
+	public static class XmlUtils
 	{
 		/// <summary>
 		/// Returns true if value of attrName is 'true' or 'yes' (case ignored)
@@ -524,48 +519,6 @@ namespace SIL.Utils
 		}
 
 		/// <summary>
-		/// Convert an encoded attribute string into plain text.
-		/// </summary>
-		/// <param name="sInput"></param>
-		/// <returns></returns>
-		public static string DecodeXmlAttribute(string sInput)
-		{
-			string sOutput = sInput;
-			if (!String.IsNullOrEmpty(sOutput) && sOutput.Contains("&"))
-			{
-				sOutput = sOutput.Replace("&gt;", ">");
-				sOutput = sOutput.Replace("&lt;", "<");
-				sOutput = sOutput.Replace("&apos;", "'");
-				sOutput = sOutput.Replace("&quot;", "\"");
-				sOutput = sOutput.Replace("&amp;", "&");
-			}
-			for (int idx = sOutput.IndexOf("&#"); idx >= 0; idx = sOutput.IndexOf("&#"))
-			{
-				int idxEnd = sOutput.IndexOf(';', idx);
-				if (idxEnd < 0)
-					break;
-				string sOrig = sOutput.Substring(idx, (idxEnd - idx) + 1);
-				string sNum = sOutput.Substring(idx + 2, idxEnd - (idx + 2));
-				string sReplace = null;
-				int chNum = 0;
-				if (sNum[0] == 'x' || sNum[0] == 'X')
-				{
-					if (Int32.TryParse(sNum.Substring(1), NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo, out chNum))
-						sReplace = Char.ConvertFromUtf32(chNum);
-				}
-				else
-				{
-					if (Int32.TryParse(sNum, out chNum))
-						sReplace = Char.ConvertFromUtf32(chNum);
-				}
-				if (sReplace == null)
-					sReplace = sNum;
-				sOutput = sOutput.Replace(sOrig, sReplace);
-			}
-			return sOutput;
-		}
-
-		/// <summary>
 		/// build an xpath to the given node in its document.
 		/// </summary>
 		/// <param name="node"></param>
@@ -782,7 +735,8 @@ namespace SIL.Utils
 			}
 			return mi;
 		}
-		static protected string MakeGetStaticMethodErrorMessage(string sMainMsg, string sContext)
+
+		private static string MakeGetStaticMethodErrorMessage(string sMainMsg, string sContext)
 		{
 			string sResult = "GetStaticMethod() could not find the " + sMainMsg +
 				" while processing " + sContext;
@@ -820,25 +774,27 @@ namespace SIL.Utils
 		public static XslCompiledTransform CreateTransform(string xslName, string assemblyName)
 		{
 			var transform = new XslCompiledTransform();
-#if !__MonoCS__
-			// Assumes the XSL has been precompiled.  xslName is the name of the precompiled class
-			Type type = Type.GetType(xslName + "," + assemblyName);
-			Debug.Assert(type != null);
-			transform.Load(type);
-#else
-			string libPath = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
-			Assembly transformAssembly = Assembly.LoadFrom(Path.Combine(libPath, assemblyName + ".dll"));
-			using (Stream stream = transformAssembly.GetManifestResourceStream(xslName + ".xsl"))
+			if (MiscUtils.IsDotNet)
 			{
-				Debug.Assert(stream != null);
-				using (XmlReader reader = XmlReader.Create(stream))
-					transform.Load(reader, new XsltSettings(true, false), new XmlResourceResolver(transformAssembly));
+				// Assumes the XSL has been precompiled.  xslName is the name of the precompiled class
+				Type type = Type.GetType(xslName + "," + assemblyName);
+				Debug.Assert(type != null);
+				transform.Load(type);
 			}
-#endif
+			else
+			{
+				string libPath = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+				Assembly transformAssembly = Assembly.LoadFrom(Path.Combine(libPath, assemblyName + ".dll"));
+				using (Stream stream = transformAssembly.GetManifestResourceStream(xslName + ".xsl"))
+				{
+					Debug.Assert(stream != null);
+					using (XmlReader reader = XmlReader.Create(stream))
+						transform.Load(reader, new XsltSettings(true, false), new XmlResourceResolver(transformAssembly));
+				}
+			}
 			return transform;
 		}
 
-#if __MonoCS__
 		private class XmlResourceResolver : XmlUrlResolver
 		{
 			private readonly Assembly m_assembly;
@@ -855,8 +811,6 @@ namespace SIL.Utils
 				return base.ResolveUri(baseUri, relativeUri);
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "Method returns a reference")]
 			public override object GetEntity(Uri absoluteUri, string role, Type ofObjectToReturn)
 			{
 				switch (absoluteUri.Scheme)
@@ -871,7 +825,6 @@ namespace SIL.Utils
 				}
 			}
 		}
-#endif
 	}
 
 	/// <summary>

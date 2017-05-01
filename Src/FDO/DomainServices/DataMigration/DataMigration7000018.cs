@@ -1,9 +1,6 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DataMigration7000018.cs
-// Responsibility: mcconnel
 //
 // <remarks>
 // This implements FWR-648, FWR-741, and part of FWR-1163.
@@ -18,6 +15,7 @@ using System.Linq;
 using System.Xml.Linq;
 
 using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 {
