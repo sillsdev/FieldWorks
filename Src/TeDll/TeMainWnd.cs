@@ -1506,7 +1506,7 @@ namespace SIL.FieldWorks.TE
 				return false;
 
 			EnsureEnglishLdsExists();
-			ScrText assocProj = ParatextHelper.GetAssociatedProject(m_cache.ProjectId);
+			IScrText assocProj = ParatextHelper.GetAssociatedProject(m_cache.ProjectId);
 			if (assocProj != null && m_app.MainWindows.Count == 1)
 			{
 				MessageBox.Show(this, string.Format(TeResourceHelper.GetResourceString("kstidNoExportStartupMsg"),
@@ -4357,7 +4357,7 @@ namespace SIL.FieldWorks.TE
 		{
 			AdjustScriptureAnnotations();
 
-			ScrText assocProj = ParatextHelper.GetAssociatedProject(Cache.ProjectId);
+			IScrText assocProj = ParatextHelper.GetAssociatedProject(Cache.ProjectId);
 			if (assocProj != null)
 			{
 				MessageBox.Show(this, String.Format(TeResourceHelper.GetResourceString("kstidParatextExportNotAvailable"),
