@@ -1,3 +1,4 @@
+using SIL.CoreImpl.Scripture;
 
 namespace SILUBS.SharedScrUtils
 {

@@ -14,6 +14,7 @@ using System.Text;
 using System.Xml.Serialization;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO;
+using SIL.CoreImpl.Scripture;
 using System.Xml;
 using System.Diagnostics;
 using SIL.Utils;

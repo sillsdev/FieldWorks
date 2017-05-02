@@ -12,6 +12,7 @@ using SIL.Utils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 using System.Text;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.FDO.DomainServices;

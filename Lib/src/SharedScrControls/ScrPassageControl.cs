@@ -1,15 +1,11 @@
-// --------------------------------------------------------------------------------------------
 // Copyright (c) 2011-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ScrPassageControl.cs
-// --------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -18,7 +14,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Windows.Forms;
-using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 
 namespace SILUBS.SharedScrControls
 {

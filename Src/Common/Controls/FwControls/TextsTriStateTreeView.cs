@@ -10,6 +10,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Paratext;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;

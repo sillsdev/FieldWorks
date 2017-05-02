@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Xml;
 
 using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;

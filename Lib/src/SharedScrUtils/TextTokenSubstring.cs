@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
+using SIL.CoreImpl.Scripture;
 
 namespace SILUBS.SharedScrUtils
 {

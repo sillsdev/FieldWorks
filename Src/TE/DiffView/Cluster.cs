@@ -17,6 +17,7 @@ using SIL.FieldWorks.FDO;
 using System.Diagnostics;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 

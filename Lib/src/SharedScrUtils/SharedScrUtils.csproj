@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
   <PropertyGroup>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -56,6 +56,10 @@
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+	<Reference Include="CoreImpl, Version=9.0.0.27100, Culture=neutral, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+	</Reference>
 	<Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
@@ -70,27 +74,19 @@
 	<Compile Include="..\..\..\Src\CommonAssemblyInfo.cs">
 	  <Link>CommonAssemblyInfo.cs</Link>
 	</Compile>
-	<Compile Include="BCVRef.cs" />
 	<Compile Include="CharacterCategorizer.cs" />
 	<Compile Include="IChecksDataSource.cs" />
-	<Compile Include="IMultilingScrBooks.cs" />
 	<Compile Include="IScriptureCheck.cs" />
-	<Compile Include="IScrProjMetaDataProvider.cs" />
 	<Compile Include="ITextToken.cs" />
-	<Compile Include="IVerseReference.cs" />
 	<Compile Include="AssemblyInfo.cs" />
 	<Compile Include="MatchedPairs.cs" />
-	<Compile Include="MultilingScrBooks.cs" />
 	<Compile Include="PunctuationPatterns.cs" />
 	<Compile Include="QuotationMarks.cs" />
 	<Compile Include="RecordErrorEventArgs.cs" />
-	<Compile Include="ScrReference.cs" />
-	<Compile Include="ScrVers.cs" />
 	<Compile Include="StandardCheckIds.cs" />
 	<Compile Include="StyleMarkupInfo.cs" />
 	<Compile Include="TextFileDataSource.cs" />
 	<Compile Include="TextTokenSubstring.cs" />
-	<Compile Include="Versification.cs" />
   </ItemGroup>
   <ItemGroup>
 	<Folder Include="Properties\" />

@@ -1,5 +1,5 @@
 
-namespace SILUBS.SharedScrUtils
+namespace SIL.CoreImpl.Scripture
 {
 	public enum ScrVers
 	{

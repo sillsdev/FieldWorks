@@ -12,6 +12,7 @@ using System;
 using System.Reflection;
 using System.Resources;
 using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 
 namespace SIL.FieldWorks.Common.ScriptureUtils
 {

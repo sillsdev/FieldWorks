@@ -5,6 +5,7 @@
 using System.Linq;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;

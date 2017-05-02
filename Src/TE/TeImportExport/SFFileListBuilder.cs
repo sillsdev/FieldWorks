@@ -32,6 +32,7 @@ using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.TE;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 
 namespace SIL.FieldWorks.Common.Controls
 {

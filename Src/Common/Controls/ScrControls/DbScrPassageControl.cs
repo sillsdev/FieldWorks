@@ -9,6 +9,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Reporting;
 using SILUBS.SharedScrControls;
 using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 
 namespace SIL.FieldWorks.Common.Controls
 {

@@ -8,7 +8,7 @@ using System.Text;
 using System.IO;
 using System.Diagnostics;
 
-namespace SILUBS.SharedScrUtils
+namespace SIL.CoreImpl.Scripture
 {
 	/// <summary>
 	/// Manipulate information for standard chatper/verse schemes

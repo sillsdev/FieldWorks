@@ -16,6 +16,7 @@ using SILUBS.SharedScrUtils;
 using System.Collections.Generic;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {

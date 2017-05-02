@@ -11,6 +11,7 @@ using System.Text;
 using NUnit.Framework;
 using SIL.FieldWorks.Test.TestUtils;
 using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 
 namespace SIL.FieldWorks.Common.ScriptureUtils
 {

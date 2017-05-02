@@ -1,16 +1,12 @@
-// --------------------------------------------------------------------------------------------
 // Copyright (c) 2011-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: MultilingScrBooksTest.cs
-// --------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
-using SIL.CoreImpl.Scripture;
 using NUnit.Framework;
 
-namespace SILUBS.SharedScrUtils
+namespace SIL.CoreImpl.Scripture
 {
 	/// <summary>
 	/// Test the <see cref="MultilingScrBooks"/> class.

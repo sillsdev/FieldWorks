@@ -61,6 +61,16 @@ namespace SIL.CoreImpl.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] eng {
+            get {
+                object obj = ResourceManager.GetObject("eng", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
         ///&lt;strings inheritPath=&quot;..&quot;&gt;
         ///  &lt;string id=&quot;orange&quot; txt=&quot;orng&quot;/&gt;
@@ -91,6 +101,26 @@ namespace SIL.CoreImpl.Properties {
         internal static string food__fruit__strings_DASH_en_xml {
             get {
                 return ResourceManager.GetString("food__fruit__strings_DASH_en_xml", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] lxx {
+            get {
+                object obj = ResourceManager.GetObject("lxx", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] org {
+            get {
+                object obj = ResourceManager.GetObject("org", resourceCulture);
+                return ((byte[])(obj));
             }
         }
     }

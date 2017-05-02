@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace SILUBS.SharedScrUtils
+namespace SIL.CoreImpl.Scripture
 {
 #if __MonoCS__
 // The mono compiler has a bug (#463613) that causes warnings on most of the operators.

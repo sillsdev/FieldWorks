@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwKernelInterfaces;

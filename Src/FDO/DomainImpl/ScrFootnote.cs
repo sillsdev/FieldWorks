@@ -13,6 +13,7 @@ using SIL.Utils;
 using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {

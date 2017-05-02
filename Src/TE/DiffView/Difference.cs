@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using SIL.FieldWorks.FDO;
 using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.TE

@@ -1,18 +1,10 @@
-// --------------------------------------------------------------------------------------------
 // Copyright (c) 2008-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: VersificationTests.cs
-// Responsibility: TE Team
-// --------------------------------------------------------------------------------------------
-using System;
-using System.IO;
-using NUnit.Framework;
-using Microsoft.Win32;
-using System.Reflection;
 
-namespace SILUBS.SharedScrUtils
+using NUnit.Framework;
+
+namespace SIL.CoreImpl.Scripture
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

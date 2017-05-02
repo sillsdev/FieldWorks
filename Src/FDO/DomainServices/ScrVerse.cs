@@ -15,6 +15,7 @@ using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using System.Collections.Generic;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {

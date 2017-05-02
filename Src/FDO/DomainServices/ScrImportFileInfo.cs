@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;

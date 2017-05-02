@@ -11,7 +11,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {

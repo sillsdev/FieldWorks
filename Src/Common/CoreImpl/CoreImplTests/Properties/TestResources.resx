@@ -118,6 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="eng" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>../eng.vrs;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="lxx" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>../lxx.vrs;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="org" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>../org.vrs;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="food__fruit__citrus__strings_DASH_en_xml" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>../food/fruit/citrus/strings-en.xml;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>

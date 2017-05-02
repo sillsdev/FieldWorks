@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using SILUBS.ScriptureChecks;
 using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 using System.Diagnostics;
 
 namespace SILUBS.ScriptureChecks

@@ -12,6 +12,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
 using System.Xml.XPath;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;

@@ -12,7 +12,7 @@
 
 using System;
 using SIL.FieldWorks.FDO.DomainServices;
-using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {

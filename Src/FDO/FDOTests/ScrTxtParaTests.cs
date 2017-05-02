@@ -12,6 +12,7 @@ using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Test.TestUtils;
 using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 using System.Collections.Generic;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwKernelInterfaces;

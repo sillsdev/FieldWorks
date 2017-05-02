@@ -11,6 +11,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
 using System.Collections.Generic;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SILUBS.SharedScrUtils;

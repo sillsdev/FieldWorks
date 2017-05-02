@@ -5,6 +5,7 @@
 //
 // File: MultilingScrBooks.cs
 // --------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,7 +13,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace SILUBS.SharedScrUtils
+namespace SIL.CoreImpl.Scripture
 {
 	/// <summary>
 	/// Summary description for MultilingScrBooks.

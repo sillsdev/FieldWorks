@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 
 // NOT Paratext dependendent
 

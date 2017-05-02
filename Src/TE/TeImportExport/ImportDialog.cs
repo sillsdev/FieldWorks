@@ -16,6 +16,7 @@ using SIL.Reporting;
 using SIL.Utils;
 using SILUBS.SharedScrControls;
 using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 
 namespace SIL.FieldWorks.TE
 {

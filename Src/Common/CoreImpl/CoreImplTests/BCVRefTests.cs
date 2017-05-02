@@ -1,17 +1,13 @@
-// --------------------------------------------------------------------------------------------
 // Copyright (c) 2011-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: BCVRefTests.cs
-// Responsibility: TE Team
-// --------------------------------------------------------------------------------------------
+
 using System;
 using System.IO;
 using NUnit.Framework;
 using System.Reflection;
 
-namespace SILUBS.SharedScrUtils
+namespace SIL.CoreImpl.Scripture
 {
 	#region BCVRefTests
 	/// ----------------------------------------------------------------------------------------
@@ -31,11 +27,11 @@ namespace SILUBS.SharedScrUtils
 		{
 			string vrsPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 			File.WriteAllBytes(Path.Combine(vrsPath,
-				VersificationTable.GetFileNameForVersification(ScrVers.English)), Properties.Resource.eng);
+				VersificationTable.GetFileNameForVersification(ScrVers.English)), Properties.TestResources.eng);
 			File.WriteAllBytes(Path.Combine(vrsPath,
-				VersificationTable.GetFileNameForVersification(ScrVers.Septuagint)), Properties.Resource.lxx);
+				VersificationTable.GetFileNameForVersification(ScrVers.Septuagint)), Properties.TestResources.lxx);
 			File.WriteAllBytes(Path.Combine(vrsPath,
-				VersificationTable.GetFileNameForVersification(ScrVers.Original)), Properties.Resource.org);
+				VersificationTable.GetFileNameForVersification(ScrVers.Original)), Properties.TestResources.org);
 			VersificationTable.Initialize(vrsPath);
 		}
 

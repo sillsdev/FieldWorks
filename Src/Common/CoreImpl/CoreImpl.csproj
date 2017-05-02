@@ -45,7 +45,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <NoWarn>168,169,219,414,649,1591,1635,1702,1701</NoWarn>
     <OutputPath>..\..\..\Output\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -118,6 +118,14 @@
     <Compile Include="Phonology\phonenv.parser.cs" />
     <Compile Include="Phonology\PhonEnvRecognizer.cs" />
     <Compile Include="RecentItemsCache.cs" />
+    <Compile Include="Scripture\BCVRef.cs" />
+    <Compile Include="Scripture\IMultilingScrBooks.cs" />
+    <Compile Include="Scripture\IScrProjMetaDataProvider.cs" />
+    <Compile Include="Scripture\IVerseReference.cs" />
+    <Compile Include="Scripture\MultilingScrBooks.cs" />
+    <Compile Include="Scripture\ScrReference.cs" />
+    <Compile Include="Scripture\ScrVers.cs" />
+    <Compile Include="Scripture\Versification.cs" />
     <Compile Include="SilTime.cs" />
     <Compile Include="SingletonsContainer.cs" />
     <Compile Include="SpellEngine.cs" />

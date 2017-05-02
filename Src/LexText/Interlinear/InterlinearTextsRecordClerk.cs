@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Paratext;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;

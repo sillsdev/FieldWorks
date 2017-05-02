@@ -6,11 +6,12 @@
 // File: BCVRef.cs
 // Responsibility: TE Team
 // ---------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace SILUBS.SharedScrUtils
+namespace SIL.CoreImpl.Scripture
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

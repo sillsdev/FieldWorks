@@ -12,6 +12,7 @@ using System.Text;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 
 namespace SILUBS.ScriptureChecks
 {

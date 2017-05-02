@@ -22,6 +22,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 using XCore;
 
 namespace SIL.FieldWorks.TE

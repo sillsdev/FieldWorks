@@ -7,7 +7,7 @@
 // --------------------------------------------------------------------------------------------
 using System.Collections.Generic;
 
-namespace SILUBS.SharedScrUtils
+namespace SIL.CoreImpl.Scripture
 {
 	#region class BookLabel
 	/// ----------------------------------------------------------------------------------------

@@ -5,6 +5,8 @@
 // File: IScrImportFileInfo.cs
 // Responsibility: TE Team
 
+using SIL.CoreImpl.Scripture;
+
 namespace SIL.FieldWorks.FDO.DomainServices
 {
 	/// ----------------------------------------------------------------------------------------
@@ -109,7 +111,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Gets the starting reference for the file
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		SILUBS.SharedScrUtils.ScrReference StartRef { get; }
+		ScrReference StartRef { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

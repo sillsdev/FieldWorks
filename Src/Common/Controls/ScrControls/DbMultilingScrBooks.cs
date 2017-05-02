@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using SILUBS.SharedScrUtils;
+using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FDO.DomainServices

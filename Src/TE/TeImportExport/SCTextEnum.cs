@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using ECInterfaces;
 using SIL.Utils;
