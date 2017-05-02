@@ -147,10 +147,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="PhonEnvValidator">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\PhonEnvValidator.dll</HintPath>
-    </Reference>
     <Reference Include="RootSite">
       <HintPath>..\..\..\..\Output\Debug\RootSite.dll</HintPath>
     </Reference>

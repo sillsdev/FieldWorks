@@ -23,8 +23,8 @@ using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.Validation;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Phonology;
 
 namespace SIL.FieldWorks.FDO.DomainImpl
 {

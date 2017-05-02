@@ -97,6 +97,7 @@
   <ItemGroup>
     <Compile Include="Attributes\CleanupSingletonsAttribute.cs" />
     <Compile Include="DirectoryFinderTests.cs" />
+    <Compile Include="Phonology\PhonEnvRecognizerTests.cs" />
     <Compile Include="Properties\TestResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

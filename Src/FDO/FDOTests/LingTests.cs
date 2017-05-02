@@ -1,13 +1,6 @@
-﻿// Copyright (c) 2002-2013 SIL International
+﻿// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LingTests.cs
-// Responsibility: John Hatton
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -15,11 +8,11 @@ using System.Linq;
 using System.Xml;
 using NUnit.Framework;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Phonology;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests.CellarTests;
-using SIL.FieldWorks.FDO.Validation;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests.LingTests

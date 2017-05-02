@@ -94,6 +94,10 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
+    <Reference Include="Tools, Version=4.4.1400.37688, Culture=neutral, PublicKeyToken=f7660c0f5438cda5">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Bin\CSharpLexYaccTool\Tools.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -110,6 +114,9 @@
     <Compile Include="IServiceLocatorBootstrapper.cs" />
     <Compile Include="ISpellEngine.cs" />
     <Compile Include="MemoryWritingSystemRepository.cs" />
+    <Compile Include="Phonology\PhonEnv.lexer.cs" />
+    <Compile Include="Phonology\phonenv.parser.cs" />
+    <Compile Include="Phonology\PhonEnvRecognizer.cs" />
     <Compile Include="RecentItemsCache.cs" />
     <Compile Include="SilTime.cs" />
     <Compile Include="SingletonsContainer.cs" />
@@ -210,6 +217,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Phonology\PhonEnv.lexer" />
+    <None Include="Phonology\phonenv.parser" />
+    <None Include="Phonology\PhonEnvError.dtd" />
     <None Include="Properties\Settings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

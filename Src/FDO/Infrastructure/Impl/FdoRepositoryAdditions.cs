@@ -1,9 +1,6 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FdoRepositoryAdditions.cs
-// Responsibility: FW Team
 //
 // <remarks>
 // Add additional methods/properties to Repository interfaces in this file.
@@ -18,11 +15,10 @@ using System.Linq;
 using System.Text;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.Validation;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
-using System.Diagnostics.CodeAnalysis;
+using SIL.CoreImpl.Phonology;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {

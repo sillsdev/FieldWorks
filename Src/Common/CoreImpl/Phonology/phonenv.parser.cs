@@ -1,10 +1,10 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Text;
 using System;using Tools;
-namespace SIL.FieldWorks.FDO.Validation {
+namespace SIL.CoreImpl.Phonology {
 /// <summary/>
 public class Environment : SYMBOL {
 /// <summary/>
@@ -47,19 +47,16 @@ public class OptionalSegment : SYMBOL {
 	public OptionalSegment(Parser yyq):base(yyq) { }
 /// <summary/>
   public override string yyname() { return "OptionalSegment"; }}
-
 /// <summary/>
 public class OptionalSegment_1 : OptionalSegment {
 /// <summary/>
 /// <param name='yyq'></param>
   public OptionalSegment_1(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class OptionalSegment_2 : OptionalSegment {
 /// <summary/>
 /// <param name='yyq'></param>
   public OptionalSegment_2(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class OptionalSegment_2_1 : OptionalSegment_2 {
 /// <summary/>
@@ -78,19 +75,16 @@ public class OptionalSegment_2_1 : OptionalSegment_2 {
 	((error)(yyq.StackAt(0).m_value))
 	.pos;
 					}}
-
 /// <summary/>
 public class OptionalSegment_3 : OptionalSegment {
 /// <summary/>
 /// <param name='yyq'></param>
   public OptionalSegment_3(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class OptionalSegment_4 : OptionalSegment {
 /// <summary/>
 /// <param name='yyq'></param>
   public OptionalSegment_4(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class OptionalSegment_4_1 : OptionalSegment_4 {
 /// <summary/>
@@ -123,19 +117,16 @@ public class Class : SYMBOL {
 	public Class(Parser yyq):base(yyq) { }
 /// <summary/>
   public override string yyname() { return "Class"; }}
-
 /// <summary/>
 public class Class_1 : Class {
 /// <summary/>
 /// <param name='yyq'></param>
   public Class_1(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class Class_2 : Class {
 /// <summary/>
 /// <param name='yyq'></param>
   public Class_2(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class Class_2_1 : Class_2 {
 /// <summary/>
@@ -154,19 +145,16 @@ public class Class_2_1 : Class_2 {
 	((error)(yyq.StackAt(0).m_value))
 	.pos;
 		   }}
-
 /// <summary/>
 public class Class_3 : Class {
 /// <summary/>
 /// <param name='yyq'></param>
   public Class_3(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class Class_4 : Class {
 /// <summary/>
 /// <param name='yyq'></param>
   public Class_4(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class Class_4_1 : Class_4 {
 /// <summary/>
@@ -185,19 +173,16 @@ public class Class_4_1 : Class_4 {
 	((Ident)(yyq.StackAt(2).m_value))
 	.pos;
 		   }}
-
 /// <summary/>
 public class Class_5 : Class {
 /// <summary/>
 /// <param name='yyq'></param>
   public Class_5(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class Class_6 : Class {
 /// <summary/>
 /// <param name='yyq'></param>
   public Class_6(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class Class_6_1 : Class_6 {
 /// <summary/>
@@ -223,19 +208,16 @@ public class Class_6_1 : Class_6 {
 	.pos);
 			}
 			}}
-
 /// <summary/>
 public class Class_7 : Class {
 /// <summary/>
 /// <param name='yyq'></param>
   public Class_7(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class Class_8 : Class {
 /// <summary/>
 /// <param name='yyq'></param>
   public Class_8(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class Class_8_1 : Class_8 {
 /// <summary/>
@@ -265,19 +247,16 @@ public class Class_8_1 : Class_8 {
 	.pos);
 			}
 			}}
-
 /// <summary/>
 public class Class_9 : Class {
 /// <summary/>
 /// <param name='yyq'></param>
   public Class_9(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class Class_10 : Class {
 /// <summary/>
 /// <param name='yyq'></param>
   public Class_10(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class Class_10_1 : Class_10 {
 /// <summary/>
@@ -309,19 +288,16 @@ public class Class_10_1 : Class_10 {
 	.pos);
 			}
 			}}
-
 /// <summary/>
 public class Class_11 : Class {
 /// <summary/>
 /// <param name='yyq'></param>
   public Class_11(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class Class_12 : Class {
 /// <summary/>
 /// <param name='yyq'></param>
   public Class_12(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class Class_12_1 : Class_12 {
 /// <summary/>
@@ -366,19 +342,16 @@ public class Literal : SYMBOL {
 	public Literal(Parser yyq):base(yyq) { }
 /// <summary/>
   public override string yyname() { return "Literal"; }}
-
 /// <summary/>
 public class Literal_1 : Literal {
 /// <summary/>
 /// <param name='yyq'></param>
   public Literal_1(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class Literal_2 : Literal {
 /// <summary/>
 /// <param name='yyq'></param>
   public Literal_2(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class Literal_2_1 : Literal_2 {
 /// <summary/>
@@ -412,97 +385,81 @@ public class yyPhonEnvParser
 	switch(yyact) {
 	 case -1: break; //// keep compiler happy
 }  return null; }
-
 /// <summary/>
 public class Environment_1 : Environment {
 /// <summary/>
 /// <param name='yyq'></param>
   public Environment_1(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class Environment_2 : Environment {
 /// <summary/>
 /// <param name='yyq'></param>
   public Environment_2(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class RightContext_1 : RightContext {
 /// <summary/>
 /// <param name='yyq'></param>
   public RightContext_1(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class RightContext_2 : RightContext {
 /// <summary/>
 /// <param name='yyq'></param>
   public RightContext_2(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class RightContext_3 : RightContext {
 /// <summary/>
 /// <param name='yyq'></param>
   public RightContext_3(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class Environment_3 : Environment {
 /// <summary/>
 /// <param name='yyq'></param>
   public Environment_3(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class LeftContext_1 : LeftContext {
 /// <summary/>
 /// <param name='yyq'></param>
   public LeftContext_1(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class LeftContext_2 : LeftContext {
 /// <summary/>
 /// <param name='yyq'></param>
   public LeftContext_2(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class LeftContext_3 : LeftContext {
 /// <summary/>
 /// <param name='yyq'></param>
   public LeftContext_3(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class TermSequence_1 : TermSequence {
 /// <summary/>
 /// <param name='yyq'></param>
   public TermSequence_1(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class TermSequence_2 : TermSequence {
 /// <summary/>
 /// <param name='yyq'></param>
   public TermSequence_2(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class Term_1 : Term {
 /// <summary/>
 /// <param name='yyq'></param>
   public Term_1(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class OptionalSegment_5 : OptionalSegment {
 /// <summary/>
 /// <param name='yyq'></param>
   public OptionalSegment_5(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class Term_2 : Term {
 /// <summary/>
 /// <param name='yyq'></param>
   public Term_2(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class Segment_1 : Segment {
 /// <summary/>
 /// <param name='yyq'></param>
   public Segment_1(Parser yyq):base(yyq){}}
-
 /// <summary/>
 public class Segment_2 : Segment {
 /// <summary/>
@@ -1422,8 +1379,6 @@ public PhonEnvParser
 /// <summary/>
 public PhonEnvParser
 (Symbols syms,ErrorHandler erh):base(syms,new tokens(erh)) {}
-#region
-#endregion
 bool m_fSuccess;
 System.Collections.SortedList m_NaturalClasses;
 System.Collections.SortedList m_Segments;
@@ -1460,9 +1415,8 @@ SyntaxErrType m_syntaxErrType;
 		{
 			list = new System.Collections.SortedList();
 			foreach (string s in saContents)
-				if (s != null && !list.ContainsKey(s))
+				if (!list.ContainsKey(s))
 					list.Add(s, s);
-
 #if TestingOnly
 			Console.WriteLine("sorted list contains:");
 			for ( int i = 0; i < list.Count; i++ )
@@ -1595,6 +1549,5 @@ SyntaxErrType m_syntaxErrType;
 			m_syntaxErrType = value;
 		}
 	}
-
  }
 }

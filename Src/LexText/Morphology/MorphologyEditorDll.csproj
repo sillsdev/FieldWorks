@@ -164,10 +164,6 @@
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="PhonEnvValidator">
-      <Name>PhonEnvValidator</Name>
-      <HintPath>..\..\..\Output\Debug\PhonEnvValidator.dll</HintPath>
-    </Reference>
     <Reference Include="RootSite">
       <Name>RootSite</Name>
       <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>

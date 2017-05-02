@@ -1,23 +1,14 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: PhonEnvValidator.cs
-// Responsibility: AndyBlack
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Diagnostics;
-using System.Collections;
 using System.Text;
-
-using Tools;
 using System.Xml;
+using Tools;
 
-namespace SIL.FieldWorks.FDO.Validation
+namespace SIL.CoreImpl.Phonology
 {
 	/// <summary>
 	/// Summary description for PhonEnvRecognizer.
@@ -136,7 +127,7 @@ namespace SIL.FieldWorks.FDO.Validation
 			// (This is one way to keep track of this,
 			// given the nature of the parser generator we're using.)
 			m_parser.Success = true;
-			m_parser.SyntaxErrorType = SIL.FieldWorks.FDO.Validation.PhonEnvParser.SyntaxErrType.unknown;
+			m_parser.SyntaxErrorType = PhonEnvParser.SyntaxErrType.unknown;
 			m_parser.Position = -1;
 		}
 
@@ -321,37 +312,37 @@ namespace SIL.FieldWorks.FDO.Validation
 			// to put the right places in the right writing systems. note that
 			//there is a different constructor we can use which takes a sttext.
 			StringBuilder bldrMsg = new StringBuilder();
-			bldrMsg.AppendFormat(SIL.FieldWorks.Validator.Strings.ksBadEnv, strRep);
+			bldrMsg.AppendFormat(Properties.Resources.ksBadEnv, strRep);
 			if (sStatus == "class")
 			{
 				int iRightBracket = strRep.Substring(pos).IndexOf(']');
 				string sClass = strRep.Substring(pos, iRightBracket);
-				bldrMsg.AppendFormat(SIL.FieldWorks.Validator.Strings.ksBadClassInEnv, sClass);
+				bldrMsg.AppendFormat(Properties.Resources.ksBadClassInEnv, sClass);
 			}
 			if (sStatus == "segment")
 			{
 				string sPhoneme = strRep.Substring(pos);
-				bldrMsg.AppendFormat(SIL.FieldWorks.Validator.Strings.ksBadPhonemeInEnv, sPhoneme);
+				bldrMsg.AppendFormat(Properties.Resources.ksBadPhonemeInEnv, sPhoneme);
 			}
 			if (sStatus == "missingClosingParen")
 			{
-				bldrMsg.AppendFormat(SIL.FieldWorks.Validator.Strings.ksMissingCloseParenInEnv, strRep.Substring(pos));
+				bldrMsg.AppendFormat(Properties.Resources.ksMissingCloseParenInEnv, strRep.Substring(pos));
 			}
 			if (sStatus == "missingOpeningParen")
 			{
-				bldrMsg.AppendFormat(SIL.FieldWorks.Validator.Strings.ksMissingOpenParenInEnv, strRep.Substring(pos));
+				bldrMsg.AppendFormat(Properties.Resources.ksMissingOpenParenInEnv, strRep.Substring(pos));
 			}
 			if (sStatus == "missingClosingSquareBracket")
 			{
-				bldrMsg.AppendFormat(SIL.FieldWorks.Validator.Strings.ksMissingCloseBracketInEnv, strRep.Substring(pos));
+				bldrMsg.AppendFormat(Properties.Resources.ksMissingCloseBracketInEnv, strRep.Substring(pos));
 			}
 			if (sStatus == "missingOpeningSquareBracket")
 			{
-				bldrMsg.AppendFormat(SIL.FieldWorks.Validator.Strings.ksMissingOpenBracketInEnv, strRep.Substring(pos));
+				bldrMsg.AppendFormat(Properties.Resources.ksMissingOpenBracketInEnv, strRep.Substring(pos));
 			}
 			if (sStatus == "syntax")
 			{
-				bldrMsg.AppendFormat(SIL.FieldWorks.Validator.Strings.ksBadEnvSyntax, strRep.Substring(pos));
+				bldrMsg.AppendFormat(Properties.Resources.ksBadEnvSyntax, strRep.Substring(pos));
 			}
 			sMessage = bldrMsg.ToString();
 		}

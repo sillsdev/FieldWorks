@@ -1,33 +1,26 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: PhonEnvValidatorTest.cs
-// Responsibility: AndyBlack
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using NUnit.Framework;
 
-namespace SIL.FieldWorks.FDO.Validation
+namespace SIL.CoreImpl.Phonology
 {
 	[TestFixture]
-	public class PhonEnvRecognizerTest: SIL.FieldWorks.Test.TestUtils.BaseTest
+	public class PhonEnvRecognizerTests
 	{
-		PhonEnvRecognizer m_per;
-		string[] m_saSegments = { "a", "ai", "b", "c", "d", "e", "f", "fl", "fr",
-									"a", // test duplicate
-									"\u00ED",  // single combined Unicode acute i (í)
-									"H"
-								};
-		string[] m_saNaturalClasses = { "V", "Vowels", "C", "+son", "C", "+lab, +vd", "+ant, -cor, -vd" };
+		private PhonEnvRecognizer m_per;
 
-		public PhonEnvRecognizerTest()
+		private readonly string[] m_saSegments =
 		{
-		}
+			"a", "ai", "b", "c", "d", "e", "f", "fl", "fr",
+			"a", // test duplicate
+			"\u00ED",  // single combined Unicode acute i (í)
+			"H"
+		};
+
+		private readonly string[] m_saNaturalClasses = {"V", "Vowels", "C", "+son", "C", "+lab, +vd", "+ant, -cor, -vd"};
 
 		/// <summary>
 		/// This method is called once, before any test is run.
