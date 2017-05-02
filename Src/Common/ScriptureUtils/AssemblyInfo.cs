@@ -8,3 +8,5 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTitle("Scripture helper objects")]
 
 [assembly: System.Runtime.InteropServices.ComVisible(false)]
+
+[assembly: InternalsVisibleTo("ScriptureUtilsTests")]

@@ -120,6 +120,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
+    <Reference Include="Paratext.LexicalContracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9a5af29a0e638a7b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\Paratext.LexicalContracts.dll</HintPath>
+    </Reference>
     <Reference Include="ParatextShared, Version=7.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\ParatextShared.dll</HintPath>
@@ -163,6 +167,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ParatextHelper.cs" />
+    <Compile Include="ScriptureProvider.cs" />
     <Compile Include="ScriptureReferenceComparer.cs" />
     <Compile Include="ScrReferencePositionComparer.cs" />
     <Compile Include="SCTextSegment.cs">
