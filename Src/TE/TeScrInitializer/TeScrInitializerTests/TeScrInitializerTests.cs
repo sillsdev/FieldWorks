@@ -15,7 +15,6 @@ using SIL.FieldWorks.FDO;
 using SIL.Utils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO.FDOTests;
-using SILUBS.SharedScrUtils;
 using SIL.CoreImpl.Scripture;
 
 namespace SIL.FieldWorks.TE

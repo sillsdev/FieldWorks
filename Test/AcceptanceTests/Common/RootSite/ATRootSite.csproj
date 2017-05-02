@@ -110,10 +110,6 @@
 	  <Name>ScrUtilsInterfaces</Name>
 	  <HintPath>..\..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
 	</Reference>
-	<Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
-	</Reference>
 	<Reference Include="SimpleRootSite">
 	  <Name>SimpleRootSite</Name>
 	  <HintPath>..\..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>

@@ -20,7 +20,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Reporting;
 using SIL.Utils;
-using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.TE
 {

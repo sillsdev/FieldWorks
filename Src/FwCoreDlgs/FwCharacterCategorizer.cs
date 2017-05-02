@@ -10,7 +10,7 @@
 
 using System.Collections.Generic;
 using SIL.CoreImpl;
-using SILUBS.SharedScrUtils;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

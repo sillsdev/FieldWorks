@@ -12,7 +12,6 @@ using NUnit.Framework;
 
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
 using SIL.CoreImpl.Scripture;

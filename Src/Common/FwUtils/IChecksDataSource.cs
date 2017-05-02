@@ -4,7 +4,7 @@
 
 using System.Collections.Generic;
 
-namespace SILUBS.SharedScrUtils
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	public static class CheckUtils
 	{

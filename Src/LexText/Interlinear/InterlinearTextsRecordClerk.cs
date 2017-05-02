@@ -19,7 +19,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
-using SILUBS.SharedScrUtils;
 using XCore;
 
 namespace SIL.FieldWorks.IText

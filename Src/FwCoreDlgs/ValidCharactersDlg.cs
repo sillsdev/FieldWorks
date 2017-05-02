@@ -29,7 +29,6 @@ using SIL.FieldWorks.Resources;
 using SIL.Keyboarding;
 using SIL.Utils;
 using SIL.Windows.Forms;
-using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

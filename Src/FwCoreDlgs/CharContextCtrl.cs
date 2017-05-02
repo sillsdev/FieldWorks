@@ -20,7 +20,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.Windows.Forms;
-using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using Paratext;
@@ -16,7 +15,6 @@ using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Language;
 using SIL.FieldWorks.Resources;
-using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.Common.Controls
 {

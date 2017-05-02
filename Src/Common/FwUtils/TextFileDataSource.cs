@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using SIL.CoreImpl.Scripture;
 
-namespace SILUBS.SharedScrUtils
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	#region class TextFileDataSource
 	/// ----------------------------------------------------------------------------------------
@@ -170,7 +170,7 @@ namespace SILUBS.SharedScrUtils
 			try
 			{
 				Assembly asm = Assembly.LoadFile(m_scrChecksDllFile);
-				Type type = asm.GetType("SILUBS.ScriptureChecks." + m_scrCheck);
+				Type type = asm.GetType("SIL.FieldWorks.Common.FwUtils." + m_scrCheck);
 				IScrCheckInventory scrCharInventoryBldr =
 					Activator.CreateInstance(type, this) as IScrCheckInventory;
 

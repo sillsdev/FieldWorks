@@ -24,7 +24,6 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Reporting;
 using SIL.Utils;
-using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.TE
 {

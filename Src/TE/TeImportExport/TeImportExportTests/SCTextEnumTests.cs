@@ -20,7 +20,6 @@ using SIL.Utils;
 using ECInterfaces;
 using SilEncConverters40;
 using SIL.FieldWorks.Common.FwUtils;
-using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.TE

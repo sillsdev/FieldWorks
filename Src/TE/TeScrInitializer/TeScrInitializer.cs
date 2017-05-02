@@ -14,7 +14,6 @@ using SIL.CoreImpl;
 using SIL.CoreImpl.Scripture;
 using System.Collections.Generic;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SILUBS.SharedScrUtils;
 using System;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using XCore;

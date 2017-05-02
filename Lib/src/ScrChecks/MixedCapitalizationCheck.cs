@@ -5,8 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using SILUBS.SharedScrUtils;
 using SIL.CoreImpl.Scripture;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SILUBS.ScriptureChecks
 {

@@ -8,9 +8,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using SILUBS.ScriptureChecks;
-using SILUBS.SharedScrUtils;
 using SIL.CoreImpl.Scripture;
 using System.Diagnostics;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SILUBS.ScriptureChecks
 {

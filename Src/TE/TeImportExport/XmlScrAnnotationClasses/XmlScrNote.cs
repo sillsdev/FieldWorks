@@ -12,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
-using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO;
 using SIL.CoreImpl.Scripture;
 using System.Xml;
@@ -21,6 +20,7 @@ using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 using System.Diagnostics.CodeAnalysis;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.TE
 {

@@ -1,14 +1,10 @@
-// ---------------------------------------------------------------------------------------------
 // Copyright (c) 2009-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: StandardCheckIds.cs
-// Responsibility: TE Team
-// ---------------------------------------------------------------------------------------------
+
 using System;
 
-namespace SILUBS.SharedScrUtils
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

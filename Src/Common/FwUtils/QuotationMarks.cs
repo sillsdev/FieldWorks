@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using SIL.Utils;
 
-namespace SILUBS.SharedScrUtils
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary></summary>
 	[Flags]
@@ -124,7 +124,7 @@ namespace SILUBS.SharedScrUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the <see cref="T:SILUBS.SharedScrUtils.QuotationMarks"/> with the specified index.
+		/// Gets the <see cref="T:SIL.FieldWorks.Common.FwUtils.QuotationMarks"/> with the specified index.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public QuotationMarks this[int i]
@@ -469,7 +469,10 @@ namespace SILUBS.SharedScrUtils
 		/// ------------------------------------------------------------------------------------
 		public bool IsComplete
 		{
-			get	{return (!string.IsNullOrEmpty(Opening.Trim()) && !string.IsNullOrEmpty(Closing.Trim())); }
+			get
+			{
+				return (!string.IsNullOrEmpty(Opening.Trim()) && !string.IsNullOrEmpty(Closing.Trim()));
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------

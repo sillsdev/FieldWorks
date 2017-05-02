@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SILUBS.SharedScrUtils
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

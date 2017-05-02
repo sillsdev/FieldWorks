@@ -5,10 +5,10 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.WritingSystems;
-using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

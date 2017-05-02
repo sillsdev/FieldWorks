@@ -16,7 +16,6 @@ using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
-using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.TE
 {

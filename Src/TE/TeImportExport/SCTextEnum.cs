@@ -18,7 +18,6 @@ using SIL.CoreImpl.Scripture;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using ECInterfaces;
 using SIL.Utils;
-using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {

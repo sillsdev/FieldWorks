@@ -6,7 +6,6 @@
 // Responsibility: TE Team
 
 using System;
-using SILUBS.SharedScrUtils;
 using SIL.CoreImpl.Scripture;
 
 namespace SIL.FieldWorks.Common.ScriptureUtils

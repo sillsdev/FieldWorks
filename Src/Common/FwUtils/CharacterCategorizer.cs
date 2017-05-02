@@ -2,13 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Globalization;
-using System.Diagnostics;
 
-namespace SILUBS.SharedScrUtils
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
 	/// (optional) key string followed by (optional) punctuation/whitespace string.

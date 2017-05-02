@@ -8,7 +8,6 @@
 using System.IO;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SILUBS.SharedScrUtils;
 using SIL.CoreImpl.Scripture;
 using SilEncConverters40;
 using ECInterfaces;

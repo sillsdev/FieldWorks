@@ -20,8 +20,6 @@ using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
-using SILUBS.SharedScrUtils;
-
 #if __MonoCS__
 #pragma warning disable 419 // ambiguous reference; mono bug #639867
 #endif

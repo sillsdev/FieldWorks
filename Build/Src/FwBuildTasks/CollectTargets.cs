@@ -84,10 +84,8 @@ namespace FwBuildTasks
 			CollectInfo(infoEth);
 			var infoScr = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/SharedScrControls"));
 			CollectInfo(infoScr);
-			var infoScr2 = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/SharedScrUtils"));
+			var infoScr2 = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ScrChecks"));
 			CollectInfo(infoScr2);
-			var infoScr3 = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ScrChecks"));
-			CollectInfo(infoScr3);
 			var infoPhr = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/PhraseTranslationHelper"));
 			CollectInfo(infoPhr);
 			var infoObj = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ObjectBrowser"));

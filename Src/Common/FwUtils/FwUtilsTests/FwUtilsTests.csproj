@@ -151,6 +151,7 @@
     <Compile Include="Attributes\HandleApplicationThreadExceptionAttribute.cs" />
     <Compile Include="Attributes\SuppressErrorBeepsAttribute.cs" />
     <Compile Include="DebugProcsTests.cs" />
+    <Compile Include="InterfacesTests.cs" />
     <Compile Include="IVwCacheDaTests.cs" />
     <Compile Include="LayoutKeyUtilsTests.cs" />
     <Compile Include="TempSFFileMaker.cs" />
@@ -165,8 +166,10 @@
     <Compile Include="DummyFwRegistryHelper.cs" />
     <Compile Include="FwLinkArgsTests.cs" />
     <Compile Include="FwRegistryHelperTests.cs" />
+    <Compile Include="MatchedPairsTests.cs" />
     <Compile Include="MeasurementUtilsTest.cs" />
     <Compile Include="ParagraphCorrelationTests.cs" />
+    <Compile Include="QuotationMarksTests.cs" />
     <Compile Include="ClipboardStub.cs" />
     <Compile Include="ImagePictureTest.cs" />
     <Compile Include="MessageBoxStub.cs" />

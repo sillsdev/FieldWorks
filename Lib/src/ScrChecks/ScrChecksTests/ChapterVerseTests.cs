@@ -11,9 +11,9 @@ using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using System.Runtime.InteropServices;
-using SILUBS.SharedScrUtils;
 using SIL.CoreImpl.Scripture;
 using System.Reflection;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SILUBS.ScriptureChecks
 {

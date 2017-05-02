@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using SIL.Utils;
 
-namespace SILUBS.SharedScrUtils
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	#region MatchedPairList class
 	/// ----------------------------------------------------------------------------------------

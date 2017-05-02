@@ -9,7 +9,6 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.FwKernelInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
-using SILUBS.SharedScrUtils;
 using SIL.CoreImpl.Scripture;
 using XCore;
 

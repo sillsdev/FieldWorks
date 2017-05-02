@@ -8,7 +8,7 @@ using System.Text;
 using System.Diagnostics;
 using SIL.CoreImpl.Scripture;
 
-namespace SILUBS.SharedScrUtils
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

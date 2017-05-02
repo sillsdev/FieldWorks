@@ -154,9 +154,6 @@
     <Reference Include="ScrUtilsInterfaces">
       <HintPath>..\..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="SharedScrUtils">
-      <HintPath>..\..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
-    </Reference>
     <Reference Include="xCore">
       <HintPath>..\..\..\..\Output\Debug\xCore.dll</HintPath>
     </Reference>

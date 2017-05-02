@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using SIL.Utils;
 
-namespace SILUBS.SharedScrUtils
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -96,7 +96,7 @@ namespace SILUBS.SharedScrUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the <see cref="T:SILUBS.SharedScrUtils.PuncPattern"/> with the specified index.
+		/// Gets the <see cref="T:SIL.FieldWorks.Common.FwUtils.PuncPattern"/> with the specified index.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public new PuncPattern this[int i]

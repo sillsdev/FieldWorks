@@ -21,6 +21,7 @@ using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
+using StyleInfo = SIL.FieldWorks.FwCoreDlgControls.StyleInfo;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

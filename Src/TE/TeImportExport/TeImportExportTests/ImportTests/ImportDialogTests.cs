@@ -11,7 +11,6 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
 using SILUBS.SharedScrControls;
-using SILUBS.SharedScrUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.TE.ImportTests

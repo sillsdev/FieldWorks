@@ -150,14 +150,6 @@
       <Name>ScriptureUtils</Name>
       <HintPath>..\..\..\..\Output\Debug\ScriptureUtils.dll</HintPath>
     </Reference>
-    <Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="SharedScrUtilsTests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\SharedScrUtilsTests.dll</HintPath>
-    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>

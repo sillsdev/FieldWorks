@@ -58,7 +58,7 @@
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
-    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <NoWarn>168,169,219,414,649,1591,1635,1702,1701</NoWarn>
     <Optimize>false</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
@@ -122,10 +122,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\IPCFramework.dll</HintPath>
     </Reference>
-    <Reference Include="SharedScrUtils, Version=7.0.1.18991, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
-    </Reference>
     <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Downloads\SIL.Core.dll</HintPath>
@@ -163,10 +159,12 @@
     </Compile>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="CachePair.cs" />
+    <Compile Include="CharacterCategorizer.cs" />
     <Compile Include="ConsoleProgress.cs" />
     <Compile Include="DebugProcs.cs" />
     <Compile Include="FLExBridgeHelper.cs" />
     <Compile Include="GeneratedFwUtils.cs" />
+    <Compile Include="IChecksDataSource.cs" />
     <Compile Include="IFocusablePanePortion.cs" />
     <Compile Include="FwDirectoryFinder.cs" />
     <Compile Include="FwLinkArgs.cs" />
@@ -180,12 +178,18 @@
     </Compile>
     <Compile Include="InstallationException.cs" />
     <Compile Include="IProjectSpecificSettingsKeyProvider.cs" />
+    <Compile Include="IScriptureCheck.cs" />
+    <Compile Include="ITextToken.cs" />
     <Compile Include="LayoutKeyUtils.cs" />
+    <Compile Include="MatchedPairs.cs" />
     <Compile Include="MeasurementUtils.cs" />
     <Compile Include="Folders.cs" />
     <Compile Include="ParagraphCorrelation.cs" />
     <Compile Include="PictureHolder.cs" />
     <Compile Include="ProgressMessageArgs.cs" />
+    <Compile Include="PunctuationPatterns.cs" />
+    <Compile Include="QuotationMarks.cs" />
+    <Compile Include="RecordErrorEventArgs.cs" />
     <Compile Include="SearchTimer.cs" />
     <Compile Include="SelectionEvents.cs" />
     <Compile Include="ShowHelp.cs">
@@ -200,6 +204,10 @@
     <Compile Include="Pathway\SilSubKey.cs" />
     <Compile Include="Pathway\PathwayUtils.cs" />
     <Compile Include="ComponentsExtensionMethods.cs" />
+    <Compile Include="StandardCheckIds.cs" />
+    <Compile Include="StyleMarkupInfo.cs" />
+    <Compile Include="TextFileDataSource.cs" />
+    <Compile Include="TextTokenSubstring.cs" />
     <Compile Include="Win32Wrappers.cs" />
     <Compile Include="RegistryHelper.cs" />
     <Compile Include="UserActivityMonitor.cs" />
